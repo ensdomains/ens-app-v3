@@ -23,7 +23,8 @@ const ItemWrapper = styled.div(
 export const PrimarySection = () => {
   const { t } = useTranslation('settings')
 
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showSelectPrimaryNameInput = prepareDataInput('SelectPrimaryName')
 
   const chainId = useChainId()
 
@@ -44,7 +45,7 @@ export const PrimarySection = () => {
   const isLoading = basicLoading || primaryLoading
 
   const changePrimary = () =>
-    showDataInput(`changePrimary-${address}`, 'SelectPrimaryName', {
+    showSelectPrimaryNameInput(`changePrimary-${address}`, {
       address,
       existingPrimary: name,
     })

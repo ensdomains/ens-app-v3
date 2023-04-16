@@ -12,7 +12,7 @@ const contentHashToProtocols = {
   swarm: ['bzz'],
   onion: ['onion', 'onion3'],
   skynet: ['sia'],
-  arweave: ['arweave'],
+  arweave: ['arweave', 'ar'],
 }
 
 export const validateContentHash =

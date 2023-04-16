@@ -1,10 +1,9 @@
 /* eslint-disable no-multi-assign */
 import { sha256 } from '@ethersproject/sha2'
-import { useMutation } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useSignTypedData } from 'wagmi'
+import { useMutation, useSignTypedData } from 'wagmi'
 
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 

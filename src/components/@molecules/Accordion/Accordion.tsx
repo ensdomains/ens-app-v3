@@ -155,18 +155,21 @@ interface AccordionProps {
 
 const Accordion = ({ data, name }: AccordionProps) => {
   const { t } = useTranslation('profile')
-  const { showDataInput } = useTransactionFlow()
+
+  const { prepareDataInput } = useTransactionFlow()
+  const showEditResolverInput = prepareDataInput('EditResolver')
+  const showBurnFusesInput = prepareDataInput('BurnFuses')
 
   const [activeItem, setActiveItem] = useState(0)
 
   const handleEditClick = (idx: number) => {
     if (data[idx].name === 'resolverDetails') {
-      showDataInput(`resolver-upgrade-${name}`, 'EditResolver', {
+      showEditResolverInput(`resolver-upgrade-${name}`, {
         name,
       })
     }
     if (data[idx].name === 'fuses') {
-      showDataInput(`burn-fuses-${name}`, 'BurnFuses', {
+      showBurnFusesInput(`burn-fuses-${name}`, {
         name,
       })
     }

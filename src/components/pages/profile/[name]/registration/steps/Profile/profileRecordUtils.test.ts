@@ -1,6 +1,11 @@
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 
-import { getProfileRecordsDiff, profileRecordsToRecordOptions } from './profileRecordUtils'
+import { DetailedProfile } from '../../../../../../../hooks/useNameDetails'
+import {
+  getProfileRecordsDiff,
+  profileRecordsToRecordOptions,
+  profileToProfileRecords,
+} from './profileRecordUtils'
 
 describe('profileRecordsToRecordOptions', () => {
   it('should convert profile records to record options', () => {
@@ -548,6 +553,173 @@ describe('profileRecordsToRecordOptions', () => {
         },
       ]
       expect(getProfileRecordsDiff(currentRecords, previousRecords)).toEqual(result)
+    })
+  })
+})
+
+describe('profileToProfileRecords', () => {
+  describe('contenthash', () => {
+    it('should correctly convert ipfs contenthash', () => {
+      const profile: DetailedProfile = {
+        records: {
+          contentHash: 'ipfs://QmRAQB6YaCyidP37UdDnjFY5vQuiBrcqdyoW1CuDgwxkD4',
+        },
+        isMigrated: true,
+        createdAt: '2020-01-01T00:00:00.000Z',
+      }
+      const records = [
+        {
+          key: 'ipfs',
+          type: 'contenthash',
+          group: 'website',
+          value: 'ipfs://QmRAQB6YaCyidP37UdDnjFY5vQuiBrcqdyoW1CuDgwxkD4',
+        },
+      ]
+      expect(profileToProfileRecords(profile)).toEqual(records)
+    })
+
+    it('should correctly convert ipns contenthash', () => {
+      const profile: DetailedProfile = {
+        records: {
+          contentHash: 'ipns://k2k4r8kgnix5x0snul9112xdpqgiwc5xmvi8ja0szfhntep2d7qv8zz3',
+        },
+        isMigrated: true,
+        createdAt: '2020-01-01T00:00:00.000Z',
+      }
+      const records = [
+        {
+          key: 'ipfs',
+          type: 'contenthash',
+          group: 'website',
+          value: 'ipns://k2k4r8kgnix5x0snul9112xdpqgiwc5xmvi8ja0szfhntep2d7qv8zz3',
+        },
+      ]
+      expect(profileToProfileRecords(profile)).toEqual(records)
+    })
+
+    it('should correctly convert sia contenthash', () => {
+      const profile: DetailedProfile = {
+        records: {
+          contentHash: 'sia://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+        isMigrated: true,
+        createdAt: '2020-01-01T00:00:00.000Z',
+      }
+      const records = [
+        {
+          key: 'skynet',
+          type: 'contenthash',
+          group: 'website',
+          value: 'sia://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+      ]
+      expect(profileToProfileRecords(profile)).toEqual(records)
+    })
+
+    it('should correctly convert bzz contenthash', () => {
+      const profile: DetailedProfile = {
+        records: {
+          contentHash: 'bzz://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+        isMigrated: true,
+        createdAt: '2020-01-01T00:00:00.000Z',
+      }
+      const records = [
+        {
+          key: 'swarm',
+          type: 'contenthash',
+          group: 'website',
+          value: 'bzz://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+      ]
+      expect(profileToProfileRecords(profile)).toEqual(records)
+    })
+
+    it('should correctly convert onion contenthash', () => {
+      const profile: DetailedProfile = {
+        records: {
+          contentHash: 'onion://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+        isMigrated: true,
+        createdAt: '2020-01-01T00:00:00.000Z',
+      }
+      const records = [
+        {
+          key: 'onion',
+          type: 'contenthash',
+          group: 'website',
+          value: 'onion://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+      ]
+      expect(profileToProfileRecords(profile)).toEqual(records)
+    })
+
+    it('should correctly convert onion3 contenthash', () => {
+      const profile: DetailedProfile = {
+        records: {
+          contentHash: 'onion3://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+        isMigrated: true,
+        createdAt: '2020-01-01T00:00:00.000Z',
+      }
+      const records = [
+        {
+          key: 'onion',
+          type: 'contenthash',
+          group: 'website',
+          value: 'onion3://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+      ]
+      expect(profileToProfileRecords(profile)).toEqual(records)
+    })
+
+    it('should correctly convert arweave contenthash', () => {
+      const profile: DetailedProfile = {
+        records: {
+          contentHash: 'arweave://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+        isMigrated: true,
+        createdAt: '2020-01-01T00:00:00.000Z',
+      }
+      const records = [
+        {
+          key: 'arweave',
+          type: 'contenthash',
+          group: 'website',
+          value: 'arweave://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+      ]
+      expect(profileToProfileRecords(profile)).toEqual(records)
+    })
+
+    it('should correctly convert ar contenthash', () => {
+      const profile: DetailedProfile = {
+        records: {
+          contentHash: 'ar://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+        isMigrated: true,
+        createdAt: '2020-01-01T00:00:00.000Z',
+      }
+      const records = [
+        {
+          key: 'arweave',
+          type: 'contenthash',
+          group: 'website',
+          value: 'ar://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+      ]
+      expect(profileToProfileRecords(profile)).toEqual(records)
+    })
+
+    it('should return empty if contenthash does not match', () => {
+      const profile: DetailedProfile = {
+        records: {
+          contentHash: 'notvalid://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+        },
+        isMigrated: true,
+        createdAt: '2020-01-01T00:00:00.000Z',
+      }
+      expect(profileToProfileRecords(profile)).toEqual([])
     })
   })
 })

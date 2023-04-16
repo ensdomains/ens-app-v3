@@ -8,7 +8,15 @@ type EncodedContentHash = {
   error?: string
 }
 
-export type ContentHashProtocol = 'ipfs' | 'ipns' | 'bzz' | 'onion' | 'onion3' | 'sia' | 'arweave'
+export type ContentHashProtocol =
+  | 'ipfs'
+  | 'ipns'
+  | 'bzz'
+  | 'onion'
+  | 'onion3'
+  | 'sia'
+  | 'arweave'
+  | 'ar'
 
 export type ContentHashProvider = 'ipfs' | 'swarm' | 'onion' | 'skynet' | 'arweave'
 
@@ -68,7 +76,7 @@ const supportedCodecs = [
 
 const matchProtocol = (text: string) => {
   return (
-    text.match(/^(ipfs|sia|ipns|bzz|onion|onion3|arweave):\/\/(.*)/) ||
+    text.match(/^(ipfs|sia|ipns|bzz|onion|onion3|arweave|ar):\/\/(.*)/) ||
     text.match(/\/(ipfs)\/(.*)/) ||
     text.match(/\/(ipns)\/(.*)/)
   )
@@ -173,7 +181,7 @@ export const encodeContentId = (protocolType: ContentHashProtocol, contentId: st
       encoded = `0x${contentHash.encode('onion3', contentId)}`
     else if (protocolType === 'sia' && contentId.length === 46)
       encoded = `0x${contentHash.encode('skynet-ns', contentId)}`
-    else if (protocolType === 'arweave' && contentId.length === 43)
+    else if (['arweave', 'ar'].includes(protocolType) && contentId.length === 43)
       encoded = `0x${contentHash.encode('arweave-ns', contentId)}`
     else error = 'Invalid content id'
   } catch (e: unknown) {
@@ -213,6 +221,7 @@ const contentHashProtocolToProviderMap: { [key: string]: ContentHashProvider | u
   onion3: 'onion',
   sia: 'skynet',
   arweave: 'arweave',
+  ar: 'arweave',
 }
 
 export const contentHashProtocolToContentHashProvider = (protocol?: string) => {

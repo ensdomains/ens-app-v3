@@ -13,23 +13,24 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider'
 
 import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
-import type { DataInputComponent } from './input'
+import { DataInputComponent, DataInputComponents } from './input'
 import { helpers, initialState, reducer } from './reducer'
 import { GenericTransaction, InternalTransactionFlow, TransactionFlowItem } from './types'
 
-type ShowDataInput = <C extends keyof DataInputComponent>(
+type ShowDataInput<C extends keyof DataInputComponent> = (
   key: string,
-  name: C,
   data: ComponentProps<DataInputComponent[C]>['data'],
   options?: {
     disableBackgroundClick?: boolean
   },
 ) => void
 
+type PrepareDataInput = <C extends keyof DataInputComponent>(name: C) => ShowDataInput<C>
+
 export type CreateTransactionFlow = (key: string, flow: TransactionFlowItem) => void
 
 type ProviderValue = {
-  showDataInput: ShowDataInput
+  prepareDataInput: PrepareDataInput
   createTransactionFlow: CreateTransactionFlow
   resumeTransactionFlow: (key: string) => void
   getTransactionIndex: (key: string) => number
@@ -43,7 +44,7 @@ type ProviderValue = {
 }
 
 const TransactionContext = React.createContext<ProviderValue>({
-  showDataInput: () => {},
+  prepareDataInput: () => () => {},
   createTransactionFlow: () => {},
   resumeTransactionFlow: () => {},
   getTransactionIndex: () => 0,
@@ -154,15 +155,19 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const providerValue: ProviderValue = useMemo(() => {
     return {
-      showDataInput: ((key, name, data, options = {}) =>
-        dispatch({
-          name: 'showDataInput',
-          payload: {
-            input: { name, data },
-            disableBackgroundClick: options.disableBackgroundClick,
-          },
-          key,
-        })) as ShowDataInput,
+      prepareDataInput: <C extends keyof DataInputComponent>(name: C) => {
+        ;(DataInputComponents[name] as any).render.preload()
+        const func: ShowDataInput<C> = (key, data, options = {}) =>
+          dispatch({
+            name: 'showDataInput',
+            payload: {
+              input: { name, data },
+              disableBackgroundClick: options.disableBackgroundClick,
+            },
+            key,
+          })
+        return func
+      },
       createTransactionFlow: ((key, flow) =>
         dispatch({
           name: 'startFlow',

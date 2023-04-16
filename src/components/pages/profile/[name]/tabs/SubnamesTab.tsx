@@ -111,7 +111,8 @@ export const SubnamesTab = ({
 }) => {
   const { t } = useTranslation('profile')
   const { address } = useAccount()
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showCreateSubnameInput = prepareDataInput('CreateSubname')
 
   const [sortType, setSortType] = useQueryParameterState<SubnameSortType>('sort', 'creationDate')
   const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
@@ -137,7 +138,7 @@ export const SubnamesTab = ({
   }, [isIntersecting, fetchNextPage, hasNextPage, isFetching])
 
   const createSubname = () =>
-    showDataInput(`make-subname-${name}`, 'CreateSubname', {
+    showCreateSubnameInput(`make-subname-${name}`, {
       parent: name,
       isWrapped,
     })

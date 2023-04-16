@@ -12,7 +12,7 @@ export const useExists = (name: string, skip?: any) => {
     data,
     isLoading: loading,
     status,
-  } = useQuery(['getOwner', name], () => getOwner(name), {
+  } = useQuery(['getOwner', name], () => getOwner(name).then((d) => d || null), {
     enabled: ready && !skip && name !== '',
   })
 

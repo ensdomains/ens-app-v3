@@ -54,7 +54,7 @@ export const useNamesFromAddress = ({
         type: 'all',
         orderBy: 'labelName',
         orderDirection: 'desc',
-      }),
+      }).then((d) => d || null),
     {
       enabled: ready && !!address && !isBlockTimestampLoading,
     },
