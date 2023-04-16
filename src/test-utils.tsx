@@ -33,6 +33,7 @@ jest.mock('wagmi', () => {
     WagmiConfig: _WagmiConfig,
     useAccount: jest.fn(),
     useNetwork: jest.fn(),
+    useFeeData: jest.fn(),
     useProvider: jest.fn(),
     useSigner: jest.fn(),
     useSignTypedData: jest.fn(),

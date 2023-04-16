@@ -6,6 +6,7 @@ import { useFeeData } from 'wagmi'
 
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
 
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
@@ -246,7 +247,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           children: t('action.next', { ns: 'common' }),
         }
 
-  if (isFeeDataLoading || isEstimateGasLoading || priceLoading) {
+  if (isFeeDataLoading || priceLoading) {
     return (
       <Container>
         <TransactionLoader />
@@ -272,26 +273,28 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   }}
                 />
               </PlusMinusWrapper>
-              <OptionBar>
-                <GasDisplay gasPrice={gasPrice} />
-                <CurrencyToggle
-                  size="small"
-                  checked={userConfig.currency === 'fiat'}
-                  onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
-                  data-testid="extend-names-currency-toggle"
-                />
-              </OptionBar>
-              {rentFee && transactionFee && (
-                <RegistrationTimeComparisonBanner
-                  rentFee={rentFee}
-                  transactionFee={transactionFee}
-                  message={t('input.extendNames.bannerMsg')}
-                />
-              )}
-              <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
-              {!!estimateGasLimitError && (
-                <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
-              )}
+              <CacheableComponent $isCached={isEstimateGasLoading}>
+                <OptionBar data-testid="option-bar">
+                  <GasDisplay gasPrice={gasPrice} />
+                  <CurrencyToggle
+                    size="small"
+                    checked={userConfig.currency === 'fiat'}
+                    onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
+                    data-testid="extend-names-currency-toggle"
+                  />
+                </OptionBar>
+                {rentFee && transactionFee && (
+                  <RegistrationTimeComparisonBanner
+                    rentFee={rentFee}
+                    transactionFee={transactionFee}
+                    message={t('input.extendNames.bannerMsg')}
+                  />
+                )}
+                <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
+                {!!estimateGasLimitError && (
+                  <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
+                )}
+              </CacheableComponent>
             </>
           )}
         </InnerContainer>
@@ -302,7 +305,13 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
             {t('action.back', { ns: 'common' })}
           </Button>
         }
-        trailing={<Button {...trailingButtonProps} data-testid="extend-names-confirm" />}
+        trailing={
+          <Button
+            {...trailingButtonProps}
+            data-testid="extend-names-confirm"
+            disabled={isEstimateGasLoading}
+          />
+        }
       />
     </Container>
   )
