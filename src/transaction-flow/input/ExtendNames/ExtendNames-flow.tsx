@@ -72,7 +72,7 @@ const PlusMinusWrapper = styled.div(({ theme }) => [
   mq.sm.min(css``),
 ])
 
-const OptionBar = styled.div(
+const OptionBar = styled(CacheableComponent)(
   () => css`
     width: 100%;
     display: flex;
@@ -124,12 +124,6 @@ const NamesListItemSubtitle = styled.div(
     font-size: ${theme.space['3.5']};
     line-height: 1.43;
     color: ${theme.colors.textTertiary};
-  `,
-)
-
-const OptionBarCacheableComponent = styled(CacheableComponent)(
-  () => css`
-    width: 100%;
   `,
 )
 
@@ -288,17 +282,15 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   }}
                 />
               </PlusMinusWrapper>
-              <OptionBarCacheableComponent $isCached={isFeeDataLoading}>
-                <OptionBar>
-                  <GasDisplay gasPrice={gasPrice} />
-                  <CurrencyToggle
-                    size="small"
-                    checked={userConfig.currency === 'fiat'}
-                    onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
-                    data-testid="extend-names-currency-toggle"
-                  />
-                </OptionBar>
-              </OptionBarCacheableComponent>
+              <OptionBar $isCached={isFeeDataLoading}>
+                <GasDisplay gasPrice={gasPrice} />
+                <CurrencyToggle
+                  size="small"
+                  checked={userConfig.currency === 'fiat'}
+                  onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
+                  data-testid="extend-names-currency-toggle"
+                />
+              </OptionBar>
               <GasEstimationCacheableComponent $isCached={isEstimateGasLoading}>
                 {rentFee && transactionFee && (
                   <RegistrationTimeComparisonBanner
