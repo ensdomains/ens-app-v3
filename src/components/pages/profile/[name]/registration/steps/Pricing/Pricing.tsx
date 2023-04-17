@@ -456,7 +456,7 @@ const Pricing = ({
 
   const [years, setYears] = useState(registrationData.years)
   const [reverseRecord, setReverseRecord] = useState(
-    registrationData.reverseRecord || !hasPrimaryName,
+    registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,
   )
 
   const hasPendingMoonpayTransaction = moonpayTransactionStatus === 'pending'
@@ -525,19 +525,21 @@ const Pricing = ({
           />
         )
       )}
-      <PaymentChoice
-        {...{
-          paymentMethodChoice,
-          setPaymentMethodChoice,
-          address,
-          breakpoints,
-          reverseRecord,
-          setReverseRecord,
-          hasEnoughEth: true,
-          hasPendingMoonpayTransaction,
-          hasFailedMoonpayTransaction,
-        }}
-      />
+      {address && (
+        <PaymentChoice
+          {...{
+            paymentMethodChoice,
+            setPaymentMethodChoice,
+            address,
+            breakpoints,
+            reverseRecord,
+            setReverseRecord,
+            hasEnoughEth: true,
+            hasPendingMoonpayTransaction,
+            hasFailedMoonpayTransaction,
+          }}
+        />
+      )}
       <MobileFullWidth>
         <ActionButton
           {...{
