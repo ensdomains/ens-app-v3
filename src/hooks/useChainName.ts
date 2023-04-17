@@ -7,5 +7,5 @@ export const useChainName = () => {
     const name = chain.network.toLowerCase()
     return name === 'homestead' ? 'mainnet' : name
   }
-  return 'goerli'
+  return 'mainnet'
 }

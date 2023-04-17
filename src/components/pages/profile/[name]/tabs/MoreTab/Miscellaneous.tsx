@@ -159,7 +159,8 @@ const Miscellaneous = ({
   const { data: registrationData, isCachedData: registrationCachedData } = useRegistrationDate(name)
   const { canExtend, canEdit } = useSelfAbilities(address, name)
 
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showExtendNamesInput = prepareDataInput('ExtendNames')
 
   const makeEvent: () => CalendarEvent = useCallback(
     () => ({
@@ -215,7 +216,7 @@ const Miscellaneous = ({
           <ButtonContainer>
             <Button
               onClick={() => {
-                showDataInput(`extend-names-${name}`, 'ExtendNames', {
+                showExtendNamesInput(`extend-names-${name}`, {
                   names: [name],
                   isSelf: canEdit,
                 })

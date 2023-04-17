@@ -3,6 +3,7 @@
   "version": "0.1.123",
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
+    "dev:https": "next-dev-https --https --qr --port 3000",
     "dev:nlocal": "NEXT_PUBLIC_PROVIDER=http://localhost:8545 NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
     "dev:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_AVUP_ENDPOINT=\"http://$(\"hostname\"):8787\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm dev",
     "dev:glocal": "rm -rf .next && NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens pnpm dev:nlocal",
@@ -27,7 +28,7 @@
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
     "synpress:start": "synpress run -cf ./e2e/synpress.config.js",
-    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost TRANSACTION_WAIT_TIME=5000 synpress run -ne -cf ./e2e/synpress.config.js --spec ./e2e/specs/stateless/01_settings.spec.js",
+    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost TRANSACTION_WAIT_TIME=5000 synpress run -ne -cf ./e2e/synpress.config.js --spec ./e2e/specs/stateless/08_registerName.spec.js",
     "synpress:local": "synpress run -ne -cf ./e2e/synpress.config.js",
     "synpress:stateful": "NETWORK_NAME=mainnet synpress run -cf ./e2e/synpress-stateful.config.js",
     "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ci-build-id $CI_BUILD_ID --group stateless",
@@ -54,9 +55,9 @@
     "@ensdomains/dnssecoraclejs": "^0.2.7",
     "@ensdomains/ens-contracts": "0.0.16",
     "@ensdomains/ens-validation": "^0.1.0",
-    "@ensdomains/ensjs": "3.0.0-alpha.55",
+    "@ensdomains/ensjs": "3.0.0-alpha.59",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "@ensdomains/thorin": "0.6.35",
+    "@ensdomains/thorin": "0.6.37",
     "@ethersproject/abi": "^5.6.4",
     "@ethersproject/abstract-provider": "^5.7.0",
     "@ethersproject/abstract-signer": "^5.7.0",
@@ -73,7 +74,7 @@
     "@ethersproject/transactions": "^5.7.0",
     "@ethersproject/units": "^5.7.0",
     "@ethersproject/web": "^5.7.1",
-    "@rainbow-me/rainbowkit": "0.12.1",
+    "@rainbow-me/rainbowkit": "0.12.7",
     "@sentry/nextjs": "^7.43.0",
     "@svgr/webpack": "^6.3.1",
     "@tanstack/query-persist-client-core": "4.14.5",
@@ -181,6 +182,7 @@
     "jest-environment-jsdom": "^27.5.1",
     "jest-localstorage-mock": "^2.4.22",
     "next-compose-plugins": "^2.2.1",
+    "next-dev-https": "^0.1.2",
     "node-fetch": "2.6.1",
     "node-fetch-commonjs": "^3.1.1",
     "postcss-scss": "^4.0.4",
@@ -217,8 +219,9 @@
     },
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
-      "@rainbow-me/rainbowkit@0.12.1": "patches/@rainbow-me__rainbowkit@0.12.1.patch",
-      "@synthetixio/synpress@3.5.1": "patches/@synthetixio__synpress@3.5.1.patch"
+      "@synthetixio/synpress@3.5.1": "patches/@synthetixio__synpress@3.5.1.patch",
+      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
+      "@rainbow-me/rainbowkit@0.12.7": "patches/@rainbow-me__rainbowkit@0.12.7.patch"
     }
   }
 }

@@ -243,7 +243,7 @@ const DNSOwnerSection = ({
       </Helper>
       <ButtonsContainer>
         <Button width="auto" colorStyle="accentSecondary" onClick={handleRefresh}>
-          Refresh DNS
+          {t('tabs.more.ownership.refreshDNS')}
         </Button>
         {!canSend && (
           <Button width="auto" onClick={handleSyncManager} loading={isLoading} disabled={!data}>
@@ -272,10 +272,10 @@ const Ownership = ({
 }) => {
   const { t } = useTranslation('profile')
 
-  const { showDataInput } = useTransactionFlow()
-
+  const { prepareDataInput } = useTransactionFlow()
+  const showSendNameInput = prepareDataInput('SendName')
   const handleSend = () => {
-    showDataInput(`send-name-${name}`, 'SendName', {
+    showSendNameInput(`send-name-${name}`, {
       name,
     })
   }

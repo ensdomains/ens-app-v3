@@ -115,7 +115,8 @@
         "permissions": {
           "canExtendExpiry": {
             "label": "可以延长有效期",
-            "description": "该名称的权限有效期 ({{date}}) 可以由 {{managerOrOwner}} 延长。"
+            "description": "该名称的权限有效期可以由 {{managerOrOwner}} 延长。",
+            "description_date": "该名称的权限有效期 ({{date}}) 可以由 {{managerOrOwner}} 延长。"
           },
           "cannotExtendExpiry": {
             "label": "不能延长有效期",
@@ -175,6 +176,14 @@
           "cannotSetTTL": {
             "label": "不能设置 TTL",
             "description": "该名称的{{owner}}不能设置和更改它的 TTL。"
+          },
+          "canApprove": {
+            "label": "可以更改续期管理员",
+            "description": "对于已经得到子名称续期权限的管理员，该名称的所有者可以更改这些管理员。"
+          },
+          "cannotApprove": {
+            "label": "不能更改续期管理员",
+            "description": "对于已经得到子名称续期权限的管理员，该名称的所有者不能更改这些管理员。"
           }
         },
         "action": {
@@ -302,7 +311,6 @@
       }
     }
   },
-
   "advancedEditor": {
     "title": "{{name}} 的记录",
     "tabs": {

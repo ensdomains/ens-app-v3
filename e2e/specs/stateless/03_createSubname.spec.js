@@ -62,4 +62,28 @@ describe('Create Subname', () => {
     cy.findByTestId('add-subname-input').clear().type('test')
     cy.findByTestId('create-subname-next').should('be.disabled')
   })
+
+  it('should allow creating an expired wrapped subname', () => {
+    cy.visit('/wrapped-expired-subnames.eth?tab=subnames')
+    cy.findByTestId('add-subname-action').click()
+    cy.findByTestId('add-subname-input').clear().type('hour-expired')
+    cy.findByTestId('create-subname-next').should('not.be.disabled')
+    cy.findByTestId('create-subname-next').click()
+    cy.findByTestId('transaction-modal-confirm-button').click()
+    cy.confirmMetamaskTransaction()
+    cy.findByTestId('transaction-modal-complete-button').click()
+    cy.findByTestId('name-item-hour-expired.wrapped-expired-subnames.eth').within(() => {
+      cy.findByTestId('tag-name.manager-true').should('be.visible')
+    })
+  })
+
+  it('should allow creating an expired wrapped subname from the profile page', () => {
+    cy.visit('/day-expired.wrapped-expired-subnames.eth')
+    cy.findByTestId('profile-action-Recreate name').click()
+    cy.findByTestId('transaction-modal-confirm-button').click()
+    cy.confirmMetamaskTransaction()
+    cy.findByTestId('transaction-modal-complete-button').click()
+    cy.findByTestId('profile-action-Recreate name').should('not.exist')
+  })
+  
 })

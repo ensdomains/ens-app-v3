@@ -46,6 +46,7 @@ const mockCreateTransactionFlow = jest.fn()
 const mockResumeTransactionFlow = jest.fn()
 const mockGetResumeable = jest.fn()
 const mockShowDataInput = jest.fn()
+const mockPrepareDataInput = () => mockShowDataInput
 
 describe('WrapperCallToAction', () => {
   mockUseNFTImage.mockReturnValue({ isCompatible: true, image: '#' })
@@ -53,7 +54,7 @@ describe('WrapperCallToAction', () => {
     resumeTransactionFlow: mockResumeTransactionFlow,
     createTransactionFlow: mockCreateTransactionFlow,
     getResumable: mockGetResumeable,
-    showDataInput: mockShowDataInput,
+    prepareDataInput: mockPrepareDataInput,
   })
   mockUseEns.mockReturnValue({
     ready: true,
@@ -267,13 +268,12 @@ describe('WrapperCallToAction', () => {
     expect(args[0]).toBe(
       'wrapName-[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
     )
-    expect(args[1]).toBe('UnknownLabels')
-    expect(args[2].name).toBe(
+    expect(args[1].name).toBe(
       '[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
     )
     const {
       transactionFlowItem: { transactions },
-    } = args[2]
+    } = args[1]
     expect(transactions[0].name).toEqual('approveNameWrapper')
     expect(transactions[0].data).toEqual({ address: '0x123' })
     expect(transactions[1].name).toEqual('wrapName')

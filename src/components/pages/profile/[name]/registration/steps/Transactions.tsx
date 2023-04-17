@@ -331,17 +331,14 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
             <div>
               <AlertSVG />
             </div>
-            <DialogTitle>You will lose your transaction</DialogTitle>
+            <DialogTitle>{t('cancelRegistration.heading')}</DialogTitle>
           </DialogHeading>
-          <DialogContent>
-            Going back will reset your first transaction. If you go back you will need to complete
-            the transaction again and pay the associated fees.
-          </DialogContent>
-          <DialogContent>Are you sure you want to continue?</DialogContent>
+          <DialogContent>{t('cancelRegistration.contentOne')}</DialogContent>
+          <DialogContent>{t('cancelRegistration.contentTwo')}</DialogContent>
           <Dialog.Footer
             trailing={
               <Button onClick={resetTransactions} colorStyle="redSecondary">
-                Reset transaction and go back
+                {t('cancelRegistration.footer')}
               </Button>
             }
           />

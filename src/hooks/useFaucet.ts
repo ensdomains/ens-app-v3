@@ -1,5 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { useMutation, useQuery } from 'wagmi'
+import { useMutation, useQuery, useQueryClient } from 'wagmi'
 
 import { useAccountSafely } from './useAccountSafely'
 import { useChainId } from './useChainId'

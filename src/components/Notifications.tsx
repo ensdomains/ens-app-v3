@@ -1,7 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useQueryClient } from 'wagmi'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
@@ -79,7 +79,7 @@ export const Notifications = () => {
               data-testid="notification-continue-button"
               onClick={() => resumeTransactionFlow(key)}
             >
-              Continue
+              {t('action.continue')}
             </Button>
           </ButtonContainer>
         ) : (
@@ -107,7 +107,6 @@ export const Notifications = () => {
   useEffect(() => {
     if (currentNotification) {
       queryClient.invalidateQueries()
-      queryClient.resetQueries({ exact: false, queryKey: ['getSubnames'] })
     }
   }, [currentNotification, queryClient])
 

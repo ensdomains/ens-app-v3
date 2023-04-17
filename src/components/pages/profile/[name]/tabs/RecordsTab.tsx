@@ -174,14 +174,10 @@ export const RecordsTab = ({
     }
   }, [name, network, contentHash])
 
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showAdvancedEditorInput = prepareDataInput('AdvancedEditor')
   const handleShowEditor = () =>
-    showDataInput(
-      `advanced-editor-${name}`,
-      `AdvancedEditor`,
-      { name },
-      { disableBackgroundClick: true },
-    )
+    showAdvancedEditorInput(`advanced-editor-${name}`, { name }, { disableBackgroundClick: true })
 
   const chainId = useChainId()
 
@@ -262,7 +258,7 @@ export const RecordsTab = ({
               {abi ? (
                 <>
                   <SectionTitle data-testid="abi-heading" fontVariant="bodyBold">
-                    ABI
+                    {t('details.tabs.records.abi')}
                   </SectionTitle>
                 </>
               ) : (

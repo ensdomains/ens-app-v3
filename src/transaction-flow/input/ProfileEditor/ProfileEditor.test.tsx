@@ -191,13 +191,14 @@ describe('ProfileEditor', () => {
     mockUseContractAddress.mockReturnValue('0x0')
 
     mockUseResolverStatus.mockReturnValue({
-      status: {
+      data: {
         hasResolver: true,
         hasLatestResolver: true,
         isMigratedProfileEqual: true,
         hasMigratedProfile: true,
       },
-      loading: false,
+      isLoading: false,
+      isFetching: false,
     })
     mockUseChainId.mockReturnValue(1)
     mockUseBasicName.mockReturnValue({ isWrapped: false })
@@ -233,13 +234,14 @@ describe('ProfileEditor with old resolver', () => {
     mockUseContractAddress.mockReturnValue('0x123')
 
     mockUseResolverStatus.mockReturnValue({
-      status: {
+      data: {
         hasResolver: true,
         hasLatestResolver: false,
         isMigratedProfileEqual: true,
         hasMigratedProfile: true,
       },
-      loading: false,
+      isLoading: false,
+      isFetching: false,
     })
 
     mockUseNetwork.mockReturnValue({ chain: { id: 1 } })

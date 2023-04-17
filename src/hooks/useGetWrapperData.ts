@@ -14,7 +14,7 @@ export const useGetWrapperData = (name: string, skip?: any) => {
     // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching: _,
-  } = useQuery(['getWrapperData', name], () => getWrapperData(name), {
+  } = useQuery(['getWrapperData', name], () => getWrapperData(name).then((d) => d || null), {
     enabled: ready && !skip && name !== '',
   })
 

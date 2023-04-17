@@ -90,6 +90,9 @@ describe('Register Name', () => {
 
     // should show the correct details on completion
     cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0032 ETH')
+
+    cy.findByTestId('view-name').click()
+    cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
   })
   it('should not direct to the registration page on search, and show all records from registration', () => {
     cy.visit('/')
@@ -126,8 +129,8 @@ describe('Register Name', () => {
     cy.findByTestId('finish-button').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
-    cy.findByTestId('view-name').click()
     cy.wait(10000)
+    cy.findByTestId('view-name').click()
     cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
   })
   it('should allow registering a premium name', () => {
@@ -146,6 +149,7 @@ describe('Register Name', () => {
     cy.findByTestId('finish-button').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
+    cy.wait(10000)
     cy.findByTestId('view-name').click()
     cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
   })

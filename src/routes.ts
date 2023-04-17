@@ -23,6 +23,8 @@ export type PublicRoute =
   | 'terms'
   | 'privacy'
   | 'oldApp'
+  | 'ipfsApp'
+  | 'feedback'
 export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings'
 export type AnyRoute = PublicRoute | ConnectedRoute | 'unknown'
 
@@ -105,16 +107,16 @@ export const routes: RouteItemObj[] = [
     connected: false,
   },
   {
-    name: 'oldApp',
-    href: 'https://app.ens.domains',
-    label: 'navigation.oldApp',
+    name: 'feedback',
+    href: '#',
+    label: 'navigation.feedback',
     disabled: false,
     connected: false,
     onlyDropdown: true,
   },
   {
     name: 'governance',
-    href: 'https://ens.domains/governance',
+    href: 'https://ensdao.org/',
     label: 'navigation.governance',
     disabled: false,
     connected: false,
@@ -153,6 +155,22 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.privacy',
     disabled: false,
     connected: false,
+  },
+  {
+    name: 'oldApp',
+    href: 'https://app.ens.domains',
+    label: 'navigation.oldApp',
+    disabled: false,
+    connected: false,
+    onlyDropdown: true,
+  },
+  {
+    name: 'ipfsApp',
+    href: 'https://app.ens.eth.limo/',
+    label: 'navigation.ipfsApp',
+    disabled: false,
+    connected: false,
+    onlyDropdown: true,
   },
 ]
 
@@ -250,13 +268,11 @@ export const getDestination = (url: UrlObject | string) => {
   if (href?.startsWith('/')) {
     //  for static html compilation
     href = `.${href}`
-    // <IPFSLink href="/about"> => <a class="jsx-2055897931" href="./about">About</a>
 
     // on the client
     //   document is unavailable when compiling on the server
     if (typeof document !== 'undefined') {
       href = new URL(href, document.baseURI).href
-      // => <a href="https://gateway.ipfs.io/ipfs/Qm<hash>/about">About</a>
     }
   }
   return makeURLString()

@@ -23,6 +23,7 @@ interface ResolverAddresses {
 export const RESOLVER_ADDRESSES: ResolverAddresses = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   '1': [
+    '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
     '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
     '0xdaaf96c344f63131acadd0ea35170e7892d3dfba',
     '0x226159d592e2b063810a10ebf6dcbada94ed68b8',
@@ -50,7 +51,7 @@ export const RESOLVER_ADDRESSES: ResolverAddresses = {
 
 export const NAMEWRAPPER_AWARE_RESOLVERS: ResolverAddresses = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  '1': [],
+  '1': ['0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63'],
   // eslint-disable-next-line @typescript-eslint/naming-convention
   '5': [
     '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',

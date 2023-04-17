@@ -35,6 +35,10 @@
         },
         "editProfile": {
           "label": "Edit profile"
+        },
+        "reclaim": {
+          "label": "Recreate name",
+          "warning": "This subname has expired and is not owned. You can recreate this subname."
         }
       },
       "warnings": {
@@ -227,6 +231,7 @@
       },
       "ownership": {
         "label": "Ownership",
+        "refreshDNS": "Refresh DNS",
         "dnsOwnerWarning": {
           "isDnsOwner": "You cannot make changes to this name because you are the DNS Owner, but not the Manager. You can sync the manager to fix this.",
           "isManager": "You are the Manager but not DNS Owner of this name. DNS names can be reclaimed by the DNS Owner at any time. You can send this name to the Owner, or update the DNS record to match.",

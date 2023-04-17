@@ -9,6 +9,7 @@ import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
+import { nameParts } from '@app/utils/name'
 
 import { useSelfAbilities } from './useSelfAbilities'
 import { useSubnameAbilities } from './useSubnameAbilities'
@@ -20,6 +21,8 @@ type Action = {
   disabled?: boolean
   tooltipContent?: string
   skip2LDEth?: boolean
+  warning?: string
+  fullMobileWidth?: boolean
 }
 
 type Props = {
@@ -37,9 +40,15 @@ export const useProfileActions = ({
   selfAbilities,
   subnameAbilities,
 }: Props) => {
-  const { name: primaryName, loading: primaryLoading } = usePrimary(address || '')
-  const { createTransactionFlow, showDataInput } = useTransactionFlow()
   const { t } = useTranslation('profile')
+
+  const { name: primaryName, loading: primaryLoading } = usePrimary(address || '')
+  const { createTransactionFlow, prepareDataInput } = useTransactionFlow()
+  const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
+  const showProfileEditorInput = prepareDataInput('ProfileEditor')
+  const showDeleteEmancipatedSubnameWarningInput = prepareDataInput(
+    'DeleteEmancipatedSubnameWarning',
+  )
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
@@ -75,7 +84,7 @@ export const useProfileActions = ({
       actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),
         onClick: !checkIsDecrypted(name)
-          ? () => showDataInput(key, 'UnknownLabels', { name, key, transactionFlowItem })
+          ? () => showUnknownLabelsInput(key, { name, key, transactionFlowItem })
           : () => createTransactionFlow(key, transactionFlowItem),
       })
     }
@@ -84,9 +93,8 @@ export const useProfileActions = ({
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
         onClick: () =>
-          showDataInput(
+          showProfileEditorInput(
             `edit-profile-${name}`,
-            'ProfileEditor',
             { name },
             { disableBackgroundClick: true },
           ),
@@ -98,9 +106,8 @@ export const useProfileActions = ({
         ? {
             label: t('tabs.profile.actions.deleteSubname.label'),
             onClick: () => {
-              showDataInput(
+              showDeleteEmancipatedSubnameWarningInput(
                 `delete-emancipated-subname-warning-${name}`,
-                'DeleteEmancipatedSubnameWarning',
                 { name },
               )
             },
@@ -134,22 +141,45 @@ export const useProfileActions = ({
       })
     }
 
+    if (subnameAbilities.canReclaim) {
+      const { label, parent } = nameParts(name)
+      actions.push({
+        label: t('tabs.profile.actions.reclaim.label'),
+        warning: t('tabs.profile.actions.reclaim.warning'),
+        fullMobileWidth: true,
+        onClick: () => {
+          createTransactionFlow(`reclaim-${name}`, {
+            transactions: [
+              makeTransactionItem('createSubname', {
+                contract: 'nameWrapper',
+                label,
+                parent,
+              }),
+            ],
+          })
+        },
+      })
+    }
+
     if (actions.length === 0) return undefined
     return actions
   }, [
     address,
-    createTransactionFlow,
-    name,
-    primaryName,
-    profile?.address,
     selfAbilities.canEdit,
-    showDataInput,
+    profile?.address,
+    primaryName,
+    name,
     subnameAbilities.canDelete,
     subnameAbilities.canDeleteContract,
     subnameAbilities.canDeleteError,
-    subnameAbilities.canDeleteMethod,
+    subnameAbilities.canReclaim,
     subnameAbilities.isPCCBurned,
+    subnameAbilities.canDeleteMethod,
     t,
+    showUnknownLabelsInput,
+    createTransactionFlow,
+    showProfileEditorInput,
+    showDeleteEmancipatedSubnameWarningInput,
   ])
 
   return {

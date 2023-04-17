@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Typography, mq } from '@ensdomains/thorin'
+import { Button, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -10,6 +10,7 @@ import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.jso
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { checkETH2LDFromName, formatExpiry } from '@app/utils/utils'
 
 import {
@@ -101,6 +102,19 @@ const RecordsStack = styled.div(
   `,
 )
 
+const ActionsContainer = styled.div(({ theme }) => [
+  css`
+    border-top: ${theme.space.px} solid ${theme.colors.border};
+    padding: ${theme.space['4']};
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+  `,
+  mq.sm.min(css`
+    padding: ${theme.space['4']} ${theme.space['6']};
+  `),
+])
+
 const Actions = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -108,9 +122,6 @@ const Actions = styled.div(
     justify-content: flex-end;
     flex-flow: row wrap;
     gap: ${theme.space['2']};
-
-    border-top: 1px solid ${theme.colors.border};
-    padding: ${theme.space['4']};
 
     ${mq.sm.min(css`
       & > .leading {
@@ -123,11 +134,33 @@ const Actions = styled.div(
           width: min-content;
         }
       }
-
-      padding: ${theme.space['4']} ${theme.space['6']};
     `)}
   `,
 )
+
+const ActionWrapper = styled.div<{
+  leading?: boolean
+  fullMobileWidth?: boolean
+}>(({ leading, fullMobileWidth }) => [
+  css`
+    ${fullMobileWidth &&
+    css`
+      width: 100%;
+    `}
+  `,
+  mq.sm.min(css`
+    width: initial;
+    ${leading &&
+    css`
+      flex-grow: 1;
+      order: -1;
+      & > div,
+      button {
+        width: min-content;
+      }
+    `}
+  `),
+])
 
 type Action = NonNullable<ReturnType<typeof useProfileActions>['profileActions']>[number]
 const getAction = (action: Action, is2LDEth: boolean) => {
@@ -267,6 +300,8 @@ export const ProfileDetails = ({
   name: string
   gracePeriodEndDate?: Date
 }) => {
+  const breakpoint = useBreakpoint()
+
   const otherRecords = [
     ...textRecords
       .filter(
@@ -280,6 +315,10 @@ export const ProfileDetails = ({
   const mappedOwners = ownershipInfoCalc(name, pccExpired, owners, gracePeriodEndDate, expiryDate)
 
   const is2LDEth = checkETH2LDFromName(name)
+
+  const actionWarnings = actions
+    ?.filter((action) => !!action.warning)
+    .map((action) => action.warning)
 
   return (
     <ProfileInfoBox $isCached={isCached}>
@@ -315,13 +354,26 @@ export const ProfileDetails = ({
         />
       </RecordsStack>
       {actions && actions?.length > 0 && (
-        <Actions data-testid="profile-actions">
-          {actions.map((action) => (
-            <div className={action.red ? 'leading' : ''} key={action.label}>
-              {getAction(action, is2LDEth)}
-            </div>
-          ))}
-        </Actions>
+        <ActionsContainer>
+          {!!actionWarnings &&
+            actionWarnings.length > 0 &&
+            actionWarnings.map((warning) => (
+              <Helper type="warning" alignment={breakpoint.sm ? 'horizontal' : 'vertical'}>
+                {warning}
+              </Helper>
+            ))}
+          <Actions data-testid="profile-actions">
+            {actions.map((action) => (
+              <ActionWrapper
+                key={action.label}
+                leading={!!action.red}
+                fullMobileWidth={action.fullMobileWidth}
+              >
+                {getAction(action, is2LDEth)}
+              </ActionWrapper>
+            ))}
+          </Actions>
+        </ActionsContainer>
       )}
     </ProfileInfoBox>
   )

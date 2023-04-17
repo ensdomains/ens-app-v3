@@ -1,6 +1,5 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
-import { useQuery } from 'wagmi'
+import { useQuery, useQueryClient } from 'wagmi'
 
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
@@ -77,8 +76,13 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         if (!data) return
         const waitingForBlock = findTransactionHigherThanBlock(data)
         if (waitingForBlock) return
-        queryClient.invalidateQueries({ exact: false, queryKey: ['graph'], refetchType: 'all' })
-        queryClient.resetQueries({ exact: false, queryKey: ['getSubnames'] })
+        queryClient.resetQueries({ exact: false, queryKey: ['getSubnames', 'infinite'] }).then(() =>
+          queryClient.invalidateQueries({
+            exact: false,
+            queryKey: ['graph'],
+            refetchType: 'all',
+          }),
+        )
       },
     },
   )

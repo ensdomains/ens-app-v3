@@ -78,9 +78,10 @@ const Resolver = ({
 
   const chainId = useChainId()
 
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showEditResolverInput = prepareDataInput('EditResolver')
   const handleEditClick = () => {
-    showDataInput(`resolver-upgrade-${name}`, 'EditResolver', {
+    showEditResolverInput(`resolver-upgrade-${name}`, {
       name,
     })
   }

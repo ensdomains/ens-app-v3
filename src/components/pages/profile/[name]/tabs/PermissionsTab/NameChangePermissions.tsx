@@ -86,7 +86,8 @@ export const NameChangePermissions = ({
   isUserOwner,
 }: Props) => {
   const { t } = useTranslation('profile')
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showRevokePermissionsInput = prepareDataInput('RevokePermissions')
 
   const isParentLocked = parentState === 'locked'
 
@@ -114,7 +115,7 @@ export const NameChangePermissions = ({
 
   const handleRevokePermissions = () => {
     if (!wrapperData) return
-    showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
+    showRevokePermissionsInput(`revoke-permissions-${name}`, {
       name,
       owner: wrapperData.owner,
       parentFuses: wrapperData.parent,

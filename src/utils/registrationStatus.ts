@@ -32,7 +32,7 @@ export const getRegistrationStatus = ({
   wrapperData?: ReturnedENS['getWrapperData']
   expiryData?: ReturnedENS['getExpiry']
   priceData?: ReturnedENS['getPrice']
-  supportedTLD?: boolean
+  supportedTLD?: boolean | null
 }): RegistrationStatus => {
   if (isETH && is2LD && isShort) {
     return 'short'
