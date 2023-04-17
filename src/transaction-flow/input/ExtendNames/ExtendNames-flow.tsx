@@ -127,6 +127,21 @@ const NamesListItemSubtitle = styled.div(
   `,
 )
 
+const OptionBarCacheableComponent = styled(CacheableComponent)(
+  () => css`
+    width: 100%;
+  `,
+)
+
+const GasEstimationCacheableComponent = styled(CacheableComponent)(
+  ({ theme }) => css`
+    width: 100%;
+    gap: ${theme.space['4']};
+    display: flex;
+    flex-direction: column;
+  `,
+)
+
 const NamesListItem = ({ name }: { name: string }) => {
   const chainId = useChainId()
   const { avatar } = useAvatar(name, chainId)
@@ -273,8 +288,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   }}
                 />
               </PlusMinusWrapper>
-              <CacheableComponent $isCached={isEstimateGasLoading}>
-                <OptionBar data-testid="option-bar">
+              <OptionBarCacheableComponent $isCached={isFeeDataLoading}>
+                <OptionBar>
                   <GasDisplay gasPrice={gasPrice} />
                   <CurrencyToggle
                     size="small"
@@ -283,6 +298,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     data-testid="extend-names-currency-toggle"
                   />
                 </OptionBar>
+              </OptionBarCacheableComponent>
+              <GasEstimationCacheableComponent $isCached={isEstimateGasLoading}>
                 {rentFee && transactionFee && (
                   <RegistrationTimeComparisonBanner
                     rentFee={rentFee}
@@ -294,7 +311,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                 {!!estimateGasLimitError && (
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}
-              </CacheableComponent>
+              </GasEstimationCacheableComponent>
             </>
           )}
         </InnerContainer>
