@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 import { useMemo } from 'react'
-import { useFeeData, useQuery } from 'wagmi'
+import { useQuery } from 'wagmi'
 
 import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
 
@@ -27,8 +27,10 @@ const BASE_LIMIT = 240664
 const byteLengthToDataInx = (byteLength: number) =>
   byteLength > 1 ? Math.ceil(byteLength / 32) + 1 : byteLength
 
-const useEstimateRegistration = (data: RegistrationProps | undefined) => {
-  const { data: feeData, isLoading: feeDataLoading } = useFeeData()
+const useEstimateRegistration = (
+  gasPrice: BigNumber | undefined,
+  data: RegistrationProps | undefined,
+) => {
   const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(['gas-costs'], async () => {
     const addr = (await import('@app/assets/gas-costs/addr.json'))
       .default as unknown as GasCostData[]
@@ -39,7 +41,7 @@ const useEstimateRegistration = (data: RegistrationProps | undefined) => {
   })
 
   const estimate = useMemo(() => {
-    if (!feeData || !gasCosts || !data) return BigNumber.from(0)
+    if (!gasPrice || !gasCosts || !data) return BigNumber.from(0)
 
     const { addr, text } = gasCosts
     const { reverseRecord, hasResolverSet, textRecords, addressRecords, clearRecords } = data
@@ -72,10 +74,10 @@ const useEstimateRegistration = (data: RegistrationProps | undefined) => {
       limit += addr.find(([dataInx]) => bytesAsDataInx >= dataInx)![1]
     }
 
-    return BigNumber.from(limit).mul(feeData.maxFeePerGas!)
-  }, [gasCosts, data, feeData])
+    return BigNumber.from(limit).mul(gasPrice)
+  }, [gasCosts, data, gasPrice])
 
-  return { estimate, isLoading: feeDataLoading || gasCostsLoading }
+  return { estimate, isLoading: gasCostsLoading }
 }
 
 type FullProps = {
@@ -92,7 +94,7 @@ export const useEstimateFullRegistration = ({
   const { transactionFee: commitGasFee, gasPrice } = estimatedCommitData || {}
   const records = profileRecordsToRecordOptions(_records)
   const { estimate: registrationGasFee, isLoading: registrationGasLoading } =
-    useEstimateRegistration({
+    useEstimateRegistration(gasPrice, {
       reverseRecord,
       addressRecords: records.coinTypes || [],
       textRecords: records.texts || [],
