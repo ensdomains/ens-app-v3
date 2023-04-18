@@ -1,6 +1,6 @@
 import useThrottledCallback from '@app/hooks/useThrottledCallback'
 import { isAddress } from '@ethersproject/address'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -38,24 +38,33 @@ export const DogFood = (
 
   const inputWatch: string | undefined = watch('dogfoodRaw')
 
-  const throttledGetAddr = useThrottledCallback(getAddr, 500)
+  // Throttle the change of the input
+  const [ethNameInput, setEthNameInput] = useState<string | undefined>(undefined)
+  const throttledSetEthNameInput = useThrottledCallback(setEthNameInput, 500)
+  useEffect(() => {
+      throttledSetEthNameInput(inputWatch)
+  }, [inputWatch, throttledSetEthNameInput])
 
+  // Attempt to get address of ENS name
   const { data: ethNameAddress, refetch } = useQuery(
-    ['getAddr', inputWatch],
+    ['getAddr', ethNameInput],
     async ({ queryKey: [, name] }) => {
       try {
-      const result = await throttledGetAddr(name!)
-      return result as string ?? '' 
+      const result = await getAddr(name!, 'ETH')
+      return (result as any)?.addr || ''
       } catch (e) {
         return ''
       }
     },
     { enabled: !!inputWatch?.includes('.') },
   )
+
+  // Update react value of address
   const finalValue = inputWatch?.includes('.') ? ethNameAddress : inputWatch
   useEffect(() => { 
     setValue('address', finalValue)
   }, [finalValue, setValue])
+
   const errorMessage = formState.errors.dogfoodRaw?.message
 
   return (
@@ -80,7 +89,7 @@ export const DogFood = (
               if(value?.includes('.')) {
                 try {
                   const result = await refetch({ queryKey: ['getAddr', value] })
-                  if (result) { return undefined }
+                  if (result.data) { return undefined }
                 // eslint-disable-next-line no-empty
                 } catch {}
                 return 'ENS Name has no address record'
