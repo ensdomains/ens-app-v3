@@ -50,9 +50,11 @@ export const useProfileActions = ({
     'DeleteEmancipatedSubnameWarning',
   )
 
+  const isLoading = primaryLoading
+
   const profileActions = useMemo(() => {
     const actions: Action[] = []
-    if (!address) return actions
+    if (!address || isLoading) return actions
     if ((selfAbilities.canEdit || profile?.address === address) && primaryName !== name) {
       const setAsPrimaryTransactions: GenericTransaction[] = [
         makeTransactionItem('setPrimaryName', {
@@ -168,6 +170,7 @@ export const useProfileActions = ({
     selfAbilities.canEdit,
     profile?.address,
     primaryName,
+    isLoading,
     name,
     subnameAbilities.canDelete,
     subnameAbilities.canDeleteContract,
@@ -184,6 +187,6 @@ export const useProfileActions = ({
 
   return {
     profileActions,
-    loading: primaryLoading,
+    loading: isLoading,
   }
 }

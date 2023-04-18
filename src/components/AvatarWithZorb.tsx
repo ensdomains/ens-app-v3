@@ -1,4 +1,4 @@
-import { ComponentProps } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Avatar, Space, mq } from '@ensdomains/thorin'
@@ -49,7 +49,7 @@ type Address = {
 }
 
 export const NameAvatar = ({
-  src,
+  src: _,
   name,
   network,
   size,
@@ -58,9 +58,15 @@ export const NameAvatar = ({
 }: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
   const { avatar } = useAvatar(name, network, noCache)
   const zorb = useZorb(name, 'name')
+
+  const [src, setSrc] = useState<string | undefined>(undefined)
+  useEffect(() => {
+    setSrc(avatar || zorb)
+  }, [avatar, zorb])
+
   return (
     <Wrapper $size={size}>
-      <Avatar {...props} src={avatar || zorb} />
+      <Avatar {...props} src={src} />
     </Wrapper>
   )
 }
