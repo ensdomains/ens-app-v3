@@ -127,8 +127,9 @@ const SlideContainer = styled.div<{ $direction: 'backwards' | 'forwards' }>(
 )
 
 const StyledDialog = styled(Dialog)(
-  () => css`
+  ({ theme }) => css`
     z-index: 10001;
+    height: 70vh;
 
     & > div {
       padding: 0;
@@ -140,18 +141,9 @@ const StyledDialog = styled(Dialog)(
     }
 
     ${mq.sm.min(css`
-      max-width: 70vw;
-      width: 60vw;
-      height: 90vh;
-
-      & > div {
-        max-width: 60vw;
-        width: 60vw;
-        padding: 0;
-      }
-      & > div > div {
-        max-width: 60vw;
-      }
+      width: calc(80vw - 2 * ${theme.space['6']});
+      max-width: ${theme.space['128']};
+      height: 60vh;
     `)}
   `,
 )
