@@ -1,7 +1,7 @@
 import { useAccount } from 'wagmi'
 
+import type { uniqueTransactionIdentifierGenerator } from '@app/components/@molecules/TransactionDialogManager/stage/TransactionStageModal'
 import { useChainId } from '@app/hooks/useChainId'
-import type { uniqueTransactionIdentifierGenerator } from '@app/hooks/useTransactionStageModal'
 import type { TransactionItem } from '@app/transaction-flow/transaction'
 
 export const useQueryKeys = () => {
@@ -14,7 +14,7 @@ export const useQueryKeys = () => {
     dogfood: (inputString?: string) => [...globalKeys, 'getAddr', inputString],
     transactionStageModal: {
       prepareTransaction: (
-        uniqueTransactionIdentifiers: ReturnType<uniqueTransactionIdentifierGenerator>,
+        uniqueTransactionIdentifiers: ReturnType<typeof uniqueTransactionIdentifierGenerator>,
       ) => [...globalKeys, 'prepareTx', uniqueTransactionIdentifiers],
       transactionError: (transactionHash?: string) => [...globalKeys, 'txError', transactionHash],
     },
@@ -63,7 +63,7 @@ export const useQueryKeys = () => {
     ethPrice: [...globalKeys, 'use-eth-price'],
     exists: (name: string) => [...globalKeys, 'getOwner', name],
     expiry: (name: string) => [...globalKeys, 'useExpiry', name],
-    faucet: (localAddress: string) => [...globalKeys, 'getFaucetEligibility', localAddress],
+    faucet: (localAddress?: string) => [...globalKeys, 'getFaucetEligibility', localAddress],
     getABI: (name: string) => [...globalKeys, 'useGetABI', name],
     getHistory: (name: string) => [...globalKeys, 'graph', 'getHistory', name],
     getWrapperData: (name: string) => [...globalKeys, 'getWrapperData', name],

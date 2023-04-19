@@ -253,7 +253,7 @@ export const uniqueTransactionIdentifierGenerator = (
   transactionName: ManagedDialogPropsTwo['transaction']['name'],
   transactionData: ManagedDialogPropsTwo['transaction']['data'],
   chainName: string,
-  address: string,
+  address?: string,
 ) => ({
   key: txKey,
   step: currentStep,
