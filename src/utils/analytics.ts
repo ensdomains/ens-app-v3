@@ -14,8 +14,7 @@ function isProduction() {
 }
 
 function isMainnet(chain: string) {
-  // Change to 'mainnet' after the mainnet release
-  return chain === 'goerli'
+  return chain === 'mainnet'
 }
 
 export function setUtm() {
