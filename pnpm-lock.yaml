@@ -145,6 +145,7 @@ importers:
       node-fetch: 2.6.1
       node-fetch-commonjs: ^3.1.1
       p-memoize: ^7.1.1
+      polyfill-crypto.getrandomvalues: ^1.0.0
       postcss-scss: ^4.0.4
       prettier: 2.6.2
       react: ^17.0.2
@@ -306,6 +307,7 @@ importers:
       next-dev-https: 0.1.2_q5l3x5627ujg3rak6l6v24c2cq_next@12.1.6+react@17.0.2
       node-fetch: 2.6.1
       node-fetch-commonjs: 3.2.4
+      polyfill-crypto.getrandomvalues: 1.0.0
       postcss-scss: 4.0.5
       prettier: 2.6.2
       sitemap: 7.1.1
@@ -3379,12 +3381,13 @@ packages:
       '@types/node-fetch': 2.6.2
       ethers: 5.7.2
       mkdirp: 0.5.6
-      node-fetch: 2.6.1
+      node-fetch: 2.6.7
       solc: 0.6.12
       ts-generator: 0.1.1
       typechain: 3.0.0_typescript@4.9.5
     transitivePeerDependencies:
       - bufferutil
+      - encoding
       - supports-color
       - typescript
       - utf-8-validate
@@ -12832,6 +12835,8 @@ packages:
       eth-query: 2.1.2
       json-rpc-engine: 6.1.0
       pify: 5.0.0
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /eth-json-rpc-filters/5.1.0:
@@ -12861,7 +12866,9 @@ packages:
       eth-json-rpc-middleware: 6.0.0
       eth-rpc-errors: 3.0.0
       json-rpc-engine: 5.4.0
-      node-fetch: 2.6.1
+      node-fetch: 2.6.7
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /eth-json-rpc-middleware/1.6.0:
@@ -12897,9 +12904,11 @@ packages:
       ethereumjs-vm: 2.6.0
       json-rpc-engine: 5.4.0
       json-stable-stringify: 1.0.1
-      node-fetch: 2.6.1
+      node-fetch: 2.6.7
       pify: 3.0.0
       safe-event-emitter: 1.0.1
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /eth-json-rpc-middleware/6.0.0:
@@ -12913,9 +12922,11 @@ packages:
       ethereumjs-util: 5.2.1
       json-rpc-engine: 5.4.0
       json-stable-stringify: 1.0.1
-      node-fetch: 2.6.1
+      node-fetch: 2.6.7
       pify: 3.0.0
       safe-event-emitter: 1.0.1
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /eth-lib/0.1.29:
@@ -18026,6 +18037,10 @@ packages:
       semaphore: 1.1.0
     dev: false
 
+  /mersenne-twister/1.1.0:
+    resolution: {integrity: sha512-mUYWsMKNrm4lfygPkL3OfGzOPTR2DBlTkBNHM//F6hGp8cLThY897crAlk3/Jo17LEOOjQUrNAx6DvgO77QJkA==}
+    dev: true
+
   /methods/1.1.2:
     resolution: {integrity: sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==}
     engines: {node: '>= 0.6'}
@@ -20081,6 +20096,12 @@ packages:
       axios: 0.18.1
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /polyfill-crypto.getrandomvalues/1.0.0:
+    resolution: {integrity: sha512-GIkU6bg4auRnDFOqUNit7eLn9hzznrJU1CGFuivQzDeVp4Ys8cY4OY6GhAdndJwo4jryz5cJyjg9ELhvQjdrtw==}
+    dependencies:
+      mersenne-twister: 1.1.0
     dev: true
 
   /posix-character-classes/0.1.1:
