@@ -7,7 +7,9 @@ const gasLimitDictionary = {
 }
 
 const useEstimateTransactionCost = (...transactions: (keyof typeof gasLimitDictionary)[]) => {
-  const { data: feeData, isLoading } = useFeeData()
+  const { data: feeData, isLoading } = useFeeData({
+    watch: true,
+  })
 
   const data = useMemo(() => {
     if (!feeData || isLoading) return undefined
@@ -18,7 +20,7 @@ const useEstimateTransactionCost = (...transactions: (keyof typeof gasLimitDicti
       .map((transaction) => gasLimitDictionary[transaction])
       .reduce((a, b) => a + b)
     const gasPrice = lastBaseFeePerGas.add(maxPriorityFeePerGas)
-    const transactionFee = gasPrice.mul(totalGasLimit).mul(110).div(100)
+    const transactionFee = gasPrice.mul(totalGasLimit)
     return {
       transactionFee,
       gasPrice,
