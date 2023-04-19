@@ -2,6 +2,7 @@ import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
 import { tryBeautify } from '@app/utils/beautify'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 type Result = {
   name: string | null
@@ -18,7 +19,7 @@ export const usePrimary = (address: string, skip?: any): Result => {
     isLoading: loading,
     status,
   } = useQuery(
-    ['getName', address],
+    useQueryKeys().primary(address),
     async () => {
       const res = await getName(address)
       if (!res || !res.name || !res.match) return null

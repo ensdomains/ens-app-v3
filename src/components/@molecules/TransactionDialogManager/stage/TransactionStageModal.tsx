@@ -25,6 +25,7 @@ import {
   TransactionStage,
 } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
@@ -246,6 +247,22 @@ export const handleBackToInput = (dispatch: Dispatch<TransactionFlowAction>) => 
   dispatch({ name: 'resetTransactionStep' })
 }
 
+export const uniqueTransactionIdentifierGenerator = (
+  txKey: ManagedDialogPropsTwo['txKey'],
+  currentStep: number,
+  transactionName: ManagedDialogPropsTwo['transaction']['name'],
+  transactionData: ManagedDialogPropsTwo['transaction']['data'],
+  chainName: string,
+  address: string,
+) => ({
+  key: txKey,
+  step: currentStep,
+  name: transactionName,
+  data: transactionData,
+  chainName,
+  address,
+})
+
 export const TransactionStageModal = ({
   actionName,
   currentStep,
@@ -274,14 +291,15 @@ export const TransactionStageModal = ({
   )
 
   const uniqueTxIdentifiers = useMemo(
-    () => ({
-      key: txKey,
-      step: currentStep,
-      name: transaction?.name,
-      data: transaction?.data,
-      chainName,
-      address,
-    }),
+    () =>
+      uniqueTransactionIdentifierGenerator(
+        txKey,
+        currentStep,
+        transaction?.name,
+        transaction?.data,
+        chainName,
+        address,
+      ),
     [txKey, currentStep, transaction?.name, transaction?.data, chainName, address],
   )
 
@@ -307,7 +325,7 @@ export const TransactionStageModal = ({
     isLoading: requestLoading,
     error: _requestError,
   } = useQuery(
-    ['prepareTx', uniqueTxIdentifiers],
+    useQueryKeys().transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
     async () => {
       const populatedTransaction = await transactions[transaction.name].transaction(
         signer as JsonRpcSigner,
@@ -470,7 +488,7 @@ export const TransactionStageModal = ({
   const provider = useProvider()
 
   const { data: upperError } = useQuery(
-    ['txError', transaction.hash],
+    useQueryKeys().transactionStageModal.transactionError(transaction.hash),
     async () => {
       if (!transaction || !transaction.hash || transactionStatus !== 'failed') return null
       const a = await provider.getTransaction(transaction.hash!)

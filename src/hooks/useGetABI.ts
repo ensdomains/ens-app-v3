@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 type AbiData = NonNullable<Awaited<ReturnType<ReturnType<typeof useEns>['getABI']>>>
 
@@ -13,7 +14,7 @@ export const useGetABI = (name: string, skip?: boolean) => {
     isLoading: loading,
     ...rest
   } = useQuery(
-    ['useGetABI', name],
+    useQueryKeys().getABI(name),
     async () => {
       try {
         const result = await getABI(name)

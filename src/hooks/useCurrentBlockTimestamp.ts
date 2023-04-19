@@ -1,10 +1,12 @@
 import { useProvider, useQuery } from 'wagmi'
 
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+
 import { useInvalidateOnBlock } from './useInvalidateOnBlock'
 
 const useCurrentBlockTimestamp = () => {
   const provider = useProvider()
-  const { data } = useQuery(['currentBlockTimestamp'], async () => {
+  const { data } = useQuery(useQueryKeys().currentBlockTimestamp, async () => {
     const { timestamp } = await provider.getBlock('latest')
     return timestamp
   })

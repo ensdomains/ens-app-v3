@@ -4,6 +4,7 @@ import { useQuery } from 'wagmi'
 import type { Name } from '@ensdomains/ensjs/functions/getNames'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { GRACE_PERIOD } from '@app/utils/constants'
 import { validateExpiry } from '@app/utils/utils'
 
@@ -47,7 +48,7 @@ export const useNamesFromAddress = ({
   const { data: blockTimestamp, isLoading: isBlockTimestampLoading } = useBlockTimestamp()
 
   const { data, isLoading, status, refetch } = useQuery(
-    ['graph', 'names', address],
+    useQueryKeys().namesFromAddress(address),
     () =>
       getNames({
         address: address!,

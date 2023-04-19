@@ -6,6 +6,7 @@ import AggregatorInterface from '@ensdomains/ens-contracts/build/contracts/Aggre
 
 import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 const ORACLE_ENS = 'eth-usd.data.eth'
 const ORACLE_GOERLI = '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e'
@@ -16,7 +17,7 @@ export const useEthPrice = () => {
   const chainId = useChainId()
 
   const { data, isLoading: loading } = useQuery(
-    ['use-eth-price'],
+    useQueryKeys().ethPrice,
     async () => {
       let address
       // Goerli

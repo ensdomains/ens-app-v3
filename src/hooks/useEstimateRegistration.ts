@@ -6,6 +6,7 @@ import { useQuery } from 'wagmi'
 import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
 
 import { RegistrationData } from '@app/components/pages/profile/[name]/registration/types'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { emptyAddress } from '@app/utils/constants'
 
 import { profileRecordsToRecordOptions } from '../components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
@@ -31,14 +32,17 @@ const useEstimateRegistration = (
   gasPrice: BigNumber | undefined,
   data: RegistrationProps | undefined,
 ) => {
-  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(['gas-costs'], async () => {
-    const addr = (await import('@app/assets/gas-costs/addr.json'))
-      .default as unknown as GasCostData[]
-    const text = (await import('@app/assets/gas-costs/text.json'))
-      .default as unknown as GasCostData[]
+  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(
+    useQueryKeys().estimateRegistration,
+    async () => {
+      const addr = (await import('@app/assets/gas-costs/addr.json'))
+        .default as unknown as GasCostData[]
+      const text = (await import('@app/assets/gas-costs/text.json'))
+        .default as unknown as GasCostData[]
 
-    return { addr, text }
-  })
+      return { addr, text }
+    },
+  )
 
   const estimate = useMemo(() => {
     if (!gasPrice || !gasCosts || !data) return BigNumber.from(0)

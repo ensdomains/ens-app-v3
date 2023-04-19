@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNetwork, useProvider, useQuery } from 'wagmi'
 
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { ContractInterface } from '@app/validators/validateContract'
 
 import { errorToString } from '../utils/errorToString'
@@ -31,7 +32,7 @@ export const useResolverHasInterfaces = (
     status,
     error,
   } = useQuery(
-    ['validateResolver', resolverAddress, interfaceNames.join(','), chain?.id],
+    useQueryKeys().resolverHasInterfaces(interfaceNames.join(','), resolverAddress),
     async () => {
       const results = await validateResolver(interfaceNames, resolverAddress!, provider, {
         networkId: chain!.id,
