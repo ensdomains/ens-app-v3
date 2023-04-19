@@ -291,4 +291,33 @@ describe('useNamesFromAddress', () => {
       names[0].registration.expiryDate.getTime(),
     )
   })
+  it('should add name to root domain', async () => {
+    const names = [
+      {
+        id: '0x0000000000000000000000000000000000000000000000000000000000000000',
+        labelName: null,
+        labelhash: null,
+        truncatedName: null,
+        name: null,
+        isMigrated: true,
+        parent: null,
+        type: 'domain',
+      },
+    ]
+
+    mockGetNames.mockResolvedValue(names)
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useNamesFromAddress({
+        page: 1,
+        resultsPerPage: 5,
+        sort: {
+          orderDirection: 'desc',
+          type: 'expiryDate',
+        },
+        address: '0x123',
+      }),
+    )
+    await waitForNextUpdate()
+    expect(result.current.currentPage![0].name).toBe('[root]')
+  })
 })
