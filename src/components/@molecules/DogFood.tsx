@@ -28,9 +28,10 @@ export const DogFood = (
       disabled,
       validations,
       label, 
-      hideLabel
+      hideLabel,
+      trigger
     // eslint-disable-next-line prettier/prettier
-    }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'watch' | 'formState' | 'setValue'> 
+    }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'watch' | 'formState' | 'setValue' | 'trigger'> 
     & { label?: string, validations?: any, disabled?: boolean, hideLabel?: boolean },
 ) => {
   const { t } = useTranslation('profile')
@@ -64,7 +65,8 @@ export const DogFood = (
   const finalValue = inputWatch?.includes('.') ? ethNameAddress : inputWatch
   useEffect(() => { 
     setValue('address', finalValue)
-  }, [finalValue, setValue])
+    if (finalValue) trigger('dogfoodRaw')
+  }, [finalValue, setValue, trigger])
 
   const errorMessage = formState.errors.dogfoodRaw?.message
 
