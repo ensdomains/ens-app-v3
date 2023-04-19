@@ -1,15 +1,15 @@
-import useThrottledCallback from '@app/hooks/useThrottledCallback'
 import { isAddress } from '@ethersproject/address'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useQuery } from 'wagmi'
+import { useQuery, useQueryClient } from 'wagmi'
 
 import { Input } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { useEns } from '@app/utils/EnsProvider'
+import useDebouncedCallback from '@app/hooks/useDebouncedCallback';
 import { DisplayItems } from './TransactionDialogManager/DisplayItems'
 
 
@@ -34,29 +34,30 @@ export const DogFood = (
     & { label?: string, validations?: any, disabled?: boolean, hideLabel?: boolean },
 ) => {
   const { t } = useTranslation('profile')
-  const { getAddr } = useEns()
+  const { getAddr, ready } = useEns()
+  const queryClient = useQueryClient()
 
   const inputWatch: string | undefined = watch('dogfoodRaw')
 
   // Throttle the change of the input
   const [ethNameInput, setEthNameInput] = useState<string | undefined>(undefined)
-  const throttledSetEthNameInput = useThrottledCallback(setEthNameInput, 500)
+  const throttledSetEthNameInput = useDebouncedCallback(setEthNameInput, 500)
   useEffect(() => {
       throttledSetEthNameInput(inputWatch)
   }, [inputWatch, throttledSetEthNameInput])
 
   // Attempt to get address of ENS name
-  const { data: ethNameAddress, refetch } = useQuery(
+  const { data: ethNameAddress } = useQuery(
     ['getAddr', ethNameInput],
-    async ({ queryKey: [, name] }) => {
+    async () => {
       try {
-      const result = await getAddr(name!, 'ETH')
+      const result = await getAddr(ethNameInput!, '60')
       return (result as any)?.addr || ''
       } catch (e) {
         return ''
       }
     },
-    { enabled: !!inputWatch?.includes('.') },
+    { enabled: !!ethNameInput?.includes('.') && ready },
   )
 
   // Update react value of address
@@ -88,8 +89,8 @@ export const DogFood = (
             hasAddressRecord: async (value) => {
               if(value?.includes('.')) {
                 try {
-                  const result = await refetch({ queryKey: ['getAddr', value] })
-                  if (result.data) { return undefined }
+                  const result = await queryClient.getQueryData(['getAddr', value])
+                  if (result) { return undefined }
                 // eslint-disable-next-line no-empty
                 } catch {}
                 return 'ENS Name has no address record'
