@@ -2,7 +2,6 @@ import { useRouter } from 'next/router'
 import { ReactElement, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { Button, Spinner } from '@ensdomains/thorin'
 
@@ -25,6 +24,7 @@ import {
   SortDirection,
   SortType,
 } from '../components/@molecules/NameTableHeader/NameTableHeader'
+import { useAccountSafely } from '../hooks/useAccountSafely'
 import { useChainId } from '../hooks/useChainId'
 import { useQueryParameterState } from '../hooks/useQueryParameterState'
 
@@ -61,7 +61,7 @@ const Page = () => {
   const { t } = useTranslation('address')
   const router = useRouter()
   const { isReady, query } = router
-  const { address: _address } = useAccount()
+  const { address: _address } = useAccountSafely()
 
   const address = query.address as string
   const chainId = useChainId()

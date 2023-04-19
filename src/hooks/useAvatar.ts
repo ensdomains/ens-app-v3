@@ -50,7 +50,7 @@ export const useNFTImage = (name: string | undefined, network: number) => {
   const { ready, contracts } = useEns()
   const { data: baseRegistrarAddress } = useQuery(
     useQueryKeys().avatar.baseRegistrar,
-    () => contracts?.getBaseRegistrar()!.then((c) => c.address),
+    () => contracts?.getBaseRegistrar()!.then((c: any) => c.address),
     {
       enabled: ready && !!name,
       staleTime: 60000,
