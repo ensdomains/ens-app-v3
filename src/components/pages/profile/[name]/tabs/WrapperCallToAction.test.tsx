@@ -115,6 +115,32 @@ describe('WrapperCallToAction', () => {
     expect(args[1].transactions[1].name).toEqual('wrapName')
     expect(args[1].transactions[1].data).toEqual({ name: 'test123.eth' })
   })
+  it('should create a transaction flow for wrapName when already using wrapper aware resolver', async () => {
+    mockUseNameDetails.mockReturnValue({
+      ownerData: { owner: '0x123' },
+      profile: {
+        resolverAddress: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
+        records: {
+          coinTypes: [
+            {
+              key: 'coin1',
+            },
+            {
+              key: 'coin2',
+            },
+          ],
+        },
+      },
+      isLoading: false,
+    })
+    render(<WrapperCallToAction name="test123.eth" />)
+    screen.getByTestId('wrapper-cta-button').click()
+    const args = mockCreateTransactionFlow.mock.lastCall
+
+    expect(args[0]).toBe('wrapName-test123.eth')
+    expect(args[1].transactions[0].name).toEqual('wrapName')
+    expect(args[1].transactions[0].data).toEqual({ name: 'test123.eth' })
+  })
 
   it('should create a transaction flow for a .eth 2LD with no profile', () => {
     mockUseNameDetails.mockReturnValue({
@@ -160,6 +186,33 @@ describe('WrapperCallToAction', () => {
     expect(args[1].transactions[0].data).toEqual({ name: 'test123.eth' })
     expect(args[1].transactions[1].name).toEqual('migrateProfile')
     expect(args[1].transactions[1].data).toEqual({ name: 'test123.eth', resolverAddress: '0x456' })
+  })
+  it('should create a transaction flow for a .eth 2LD with a profile, a different owner, and a name wrapper aware resolver', () => {
+    mockUseNameDetails.mockReturnValue({
+      ownerData: { owner: '0x124' },
+      profile: {
+        resolverAddress: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
+        records: {
+          coinTypes: [
+            {
+              key: 'coin1',
+            },
+            {
+              key: 'coin2',
+            },
+          ],
+        },
+      },
+      isLoading: false,
+    })
+    render(<WrapperCallToAction name="test123.eth" />)
+    screen.getByTestId('wrapper-cta-button').click()
+    const args = mockCreateTransactionFlow.mock.lastCall
+
+    expect(args[0]).toBe('wrapName-test123.eth')
+    expect(args[1].transactions[0].name).toEqual('wrapName')
+    expect(args[1].transactions[0].data).toEqual({ name: 'test123.eth' })
+    expect(args[1].transactions).toHaveLength(1)
   })
 
   it('should create a transaction flow for a subname with no registry approval', () => {
