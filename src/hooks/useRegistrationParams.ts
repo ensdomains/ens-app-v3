@@ -10,7 +10,10 @@ import { yearsToSeconds } from '@app/utils/utils'
 type Props = {
   name: string
   owner: string
-  registrationData: RegistrationReducerDataItem
+  registrationData: Pick<
+    RegistrationReducerDataItem,
+    'years' | 'resolver' | 'secret' | 'records' | 'clearRecords' | 'permissions' | 'reverseRecord'
+  >
 }
 
 const useRegistrationParams = ({ name, owner, registrationData }: Props) => {
