@@ -5,6 +5,7 @@ import { labelhash } from '@ensdomains/ensjs/utils/labels'
 
 import { useChainId } from '@app/hooks/useChainId'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'
 import { getLabelFromName } from '@app/utils/utils'
 
@@ -44,7 +45,7 @@ export const useMoonpayRegistration = (
 
   // Monitor current transaction
   const { data: transactionData } = useQuery(
-    ['currentExternalTransactionId', currentExternalTransactionId],
+    useQueryKeys().moonpayRegistration(currentExternalTransactionId),
     async () => {
       const response = await fetch(
         `${MOONPAY_WORKER_URL[chainId]}/transactionInfo?externalTransactionId=${currentExternalTransactionId}`,

@@ -1,6 +1,7 @@
 import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 const useDNSOwner = (name: string, valid: boolean | undefined) => {
   const { ready, getDNSOwner } = useEns()
@@ -15,7 +16,7 @@ const useDNSOwner = (name: string, valid: boolean | undefined) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,
   } = useQuery(
-    ['getDNSOwner', name],
+    useQueryKeys().getDNSOwner(name),
     () =>
       getDNSOwner(name)
         .then((d) => d || null)

@@ -5,6 +5,7 @@ import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 
 import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { emptyAddress } from '@app/utils/constants'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
@@ -37,7 +38,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     isFetchedAfterMount,
     status,
   } = useQuery(
-    ['batch', 'getOwner', 'getExpiry', normalisedName],
+    useQueryKeys().basicName(normalisedName),
     (): Promise<[] | BaseBatchReturn | NormalBatchReturn | ETH2LDBatchReturn | undefined> => {
       // exception for "[root]", get owner of blank name
       if (normalisedName === '[root]') {
