@@ -8,7 +8,7 @@ export const useSupportsTLD = (name = '') => {
   const labels = name?.split('.') || []
   const tld = labels[labels.length - 1]
   return useQuery(
-    useQueryKeys().supportsTLD(tld),
+    useQueryKeys().isSupportedTLD(tld),
     async () => {
       // if using "[root]", not really a valid TLD but return true for display purposes
       if (tld === '[root]') return true

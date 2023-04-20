@@ -15,7 +15,6 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainName } from '@app/hooks/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
 import { transactions } from '@app/transaction-flow/transaction'
@@ -252,15 +251,11 @@ export const uniqueTransactionIdentifierGenerator = (
   currentStep: number,
   transactionName: ManagedDialogPropsTwo['transaction']['name'],
   transactionData: ManagedDialogPropsTwo['transaction']['data'],
-  chainName: string,
-  address?: string,
 ) => ({
   key: txKey,
   step: currentStep,
   name: transactionName,
   data: transactionData,
-  chainName,
-  address,
 })
 
 export const TransactionStageModal = ({
@@ -280,7 +275,6 @@ export const TransactionStageModal = ({
 
   const addRecentTransaction = useAddRecentTransaction()
   const { data: signer } = useSigner()
-  const { address } = useAccountSafely()
   const ens = useEns()
 
   const stage = transaction.stage || 'confirm'
@@ -297,10 +291,8 @@ export const TransactionStageModal = ({
         currentStep,
         transaction?.name,
         transaction?.data,
-        chainName,
-        address,
       ),
-    [txKey, currentStep, transaction?.name, transaction?.data, chainName, address],
+    [txKey, currentStep, transaction?.name, transaction?.data],
   )
 
   // if not all unique identifiers are defined, there could be incorrect cached data
@@ -320,12 +312,14 @@ export const TransactionStageModal = ({
     [transaction, signer, ens, stage, isUniquenessDefined],
   )
 
+  const queryKeys = useQueryKeys()
+
   const {
     data: request,
     isLoading: requestLoading,
     error: _requestError,
   } = useQuery(
-    useQueryKeys().transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
+    queryKeys.transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
     async () => {
       const populatedTransaction = await transactions[transaction.name].transaction(
         signer as JsonRpcSigner,
@@ -353,7 +347,7 @@ export const TransactionStageModal = ({
   const requestError = _requestError as TxError | null
   useInvalidateOnBlock({
     enabled: canEnableTransactionRequest,
-    queryKey: ['prepareTx', uniqueTxIdentifiers],
+    queryKey: queryKeys.transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
   })
 
   const {

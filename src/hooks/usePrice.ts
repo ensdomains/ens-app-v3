@@ -19,7 +19,7 @@ export const usePrice = (nameOrNames: string | string[], legacy?: boolean) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,
   } = useQuery(
-    useQueryKeys().price(type, names),
+    useQueryKeys().getPrice(type, names),
     async () => getPrice(nameOrNames, yearsToSeconds(1), legacy).then((d) => d || null),
     {
       enabled: !!(ready && nameOrNames && nameOrNames.length > 0),

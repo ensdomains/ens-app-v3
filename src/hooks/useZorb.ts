@@ -8,8 +8,9 @@ export const useZorb = (input: string, type: 'address' | 'name' | 'hash') => {
   const {
     colors: { background: bg, text: fg, accentLight: accent },
   } = useTheme()
-  const { data: zorb } = useQuery(useQueryKeys().zorb(input, type, bg, fg, accent), () =>
-    zorbImageDataURI(input, type, { bg, fg, accent }),
+  const { data: zorb } = useQuery(
+    useQueryKeys().globalIndependent.zorb(input, type, bg, fg, accent),
+    () => zorbImageDataURI(input, type, { bg, fg, accent }),
   )
   return zorb
 }

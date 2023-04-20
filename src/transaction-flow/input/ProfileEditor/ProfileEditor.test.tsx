@@ -253,10 +253,9 @@ describe('ProfileEditor with old resolver', () => {
   })
 
   it('should submit to key value to alternative dispatch if resolver address is not current', async () => {
-    const { debug } = render(
+    render(
       <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
     )
-    debug()
 
     await userEvent.click(screen.getByTestId('warning-overlay-secondary-action'))
     await userEvent.click(screen.getByTestId('show-add-profile-records-modal-button'))

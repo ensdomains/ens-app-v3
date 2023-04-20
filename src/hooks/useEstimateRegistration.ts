@@ -38,12 +38,13 @@ const useEstimateRegistration = (
 ) => {
   const chainId = useChainId()
   const { ready, contracts } = useEns()
+  const queryKeys = useQueryKeys()
   const {
     data: gasUsed,
     isLoading: gasUsedLoading,
     isError,
   } = useQuery(
-    useQueryKeys().estimateRegistration(data),
+    queryKeys.estimateRegistration(data),
     async () => {
       const resolver = await contracts?.getPublicResolver()
       if (!resolver) return null
@@ -73,14 +74,17 @@ const useEstimateRegistration = (
     },
   )
 
-  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(['gas-costs'], async () => {
-    const addr = (await import('@app/assets/gas-costs/addr.json'))
-      .default as unknown as GasCostData[]
-    const text = (await import('@app/assets/gas-costs/text.json'))
-      .default as unknown as GasCostData[]
+  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(
+    queryKeys.globalIndependent.gasCostJson,
+    async () => {
+      const addr = (await import('@app/assets/gas-costs/addr.json'))
+        .default as unknown as GasCostData[]
+      const text = (await import('@app/assets/gas-costs/text.json'))
+        .default as unknown as GasCostData[]
 
-    return { addr, text }
-  })
+      return { addr, text }
+    },
+  )
 
   const fallbackEstimate = useMemo(() => {
     if (!gasPrice || !gasCosts || !data) return BigNumber.from(0)

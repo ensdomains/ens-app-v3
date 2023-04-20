@@ -6,14 +6,15 @@ import { useInvalidateOnBlock } from './useInvalidateOnBlock'
 
 const useCurrentBlockTimestamp = () => {
   const provider = useProvider()
-  const { data } = useQuery(useQueryKeys().currentBlockTimestamp, async () => {
+  const queryKeys = useQueryKeys().currentBlockTimestamp
+  const { data } = useQuery(queryKeys, async () => {
     const { timestamp } = await provider.getBlock('latest')
     return timestamp
   })
 
   useInvalidateOnBlock({
     enabled: true,
-    queryKey: ['currentBlockTimestamp'],
+    queryKey: queryKeys,
   })
 
   return data

@@ -6,7 +6,7 @@ import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 export const useResolver = (name: string) => {
   const { ready, getResolver } = useEns()
   return useQuery(
-    useQueryKeys().resolver(name),
+    useQueryKeys().getResolver(name),
     async () => {
       const resolver = await getResolver(name)
       if (!resolver) return ''

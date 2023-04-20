@@ -17,19 +17,12 @@ export const useQueryKeys = () => {
       prepareTransaction: (
         uniqueTransactionIdentifiers: ReturnType<typeof uniqueTransactionIdentifierGenerator>,
       ) => [...globalKeys, uniqueTransactionIdentifiers, 'prepareTransaction'],
-      getTransactionError: (transactionHash?: string) => [
+      transactionError: (transactionHash?: string) => [
         ...globalKeys,
         transactionHash,
         'transactionError',
       ],
     },
-    claimDomain: (name: string, syncWarning: boolean) => [
-      ...globalKeys,
-      'proverResult',
-      name,
-      syncWarning,
-      'claimDomain',
-    ],
     nameSnippet: (localAddress: string) => [...globalKeys, 'getName', localAddress, 'nameSnippet'],
     moonpayRegistration: (currentExternalTransactionId: string) => [
       ...globalKeys,
@@ -38,14 +31,7 @@ export const useQueryKeys = () => {
       'moonpayRegistration',
     ],
     avatar: {
-      avatar: (network: number, name: string | null | undefined) => [
-        ...globalKeys,
-        'getAvatar',
-        name,
-        network,
-        'avatar',
-      ],
-      baseRegistrar: [...globalKeys, 'base-registrar-address', 'baseRegistrar'],
+      avatar: (name: string | null | undefined) => [...globalKeys, 'getAvatar', name, 'avatar'],
       getNFTImage: (name: string | null | undefined) => [...globalKeys, name, 'getNFTImage'],
     },
     basicName: (normalisedName: string) => [
@@ -84,22 +70,32 @@ export const useQueryKeys = () => {
     namesFromAddress: (localAddress?: string) => [
       ...globalKeys,
       'graph',
-      'names',
+      'getNames',
       localAddress,
       'namesFromAddress',
     ],
-    price: (type: 'legacy' | 'new', names: string[]) => [...globalKeys, type, ...names, 'price'],
+    getPrice: (type: 'legacy' | 'new', names: string[]) => [
+      ...globalKeys,
+      type,
+      ...names,
+      'getPrice',
+    ],
     primary: (localAddress: string) => [...globalKeys, 'getName', localAddress, 'primary'],
-    profile: (name: string) => [...globalKeys, 'garph', name, 'profile'],
-    registrationDate: (name: string) => [...globalKeys, 'garph', name, 'registrationDate'],
-    resolver: (name: string) => [...globalKeys, name, 'resolver'],
-    resolverExists: (name: string) => [...globalKeys, 'graph', name, 'resolverExists'],
+    profile: (name: string) => [...globalKeys, 'graph', name, 'profile'],
+    registrationDate: (name: string) => [...globalKeys, 'graph', name, 'registrationDate'],
+    getResolver: (name: string) => [...globalKeys, name, 'getResolver'],
+    resolverExists: (name: string) => [
+      ...globalKeys,
+      'graph',
+      'getResolver',
+      name,
+      'resolverExists',
+    ],
     resolverHasInterfaces: (interfaceNames: string, resolverAddress?: string) => [
       ...globalKeys,
       'validateResolver',
       resolverAddress,
       interfaceNames,
-      chainId,
       'resolverHasInterfaces',
     ],
     resolverStatus: (
@@ -107,7 +103,7 @@ export const useQueryKeys = () => {
       options: { skip?: boolean; skipCompare?: boolean },
       profileResolverAddress?: string,
     ) => [...globalKeys, name, { profileResolverAddress, options }, 'resolverStatus'],
-    supportsTLD: (tld: string) => [...globalKeys, tld, 'supportedTLD'],
+    isSupportedTLD: (tld: string) => [...globalKeys, tld, 'isSupportedTLD'],
     validate: (input: string) => [...globalKeys, input, 'validate'],
     validateSubnameLabel: (validationName: string) => [
       ...globalKeys,
@@ -116,18 +112,25 @@ export const useQueryKeys = () => {
       validationName,
       'validateSubnameLabel',
     ],
-    wrapperApprovedForAll: (nameWrapperAddress: string, localAddress: string) => [
+    wrapperApprovedForAll: (localAddress: string) => [
       ...globalKeys,
-      nameWrapperAddress,
       localAddress,
       'wrapperApprovedForAll',
     ],
-    zorb: (input: string, type: string, bg: string, fg: string, accent: string) => [
-      ...globalKeys,
-      input,
-      type,
-      { bg, fg, accent },
-      'zorb',
-    ],
+    globalIndependent: {
+      zorb: (input: string, type: string, bg: string, fg: string, accent: string) => [
+        input,
+        type,
+        { bg, fg, accent },
+        'zorb',
+      ],
+      gasCostJson: ['gasCostJson'],
+      claimDomain: (name: string, syncWarning: boolean) => [
+        'proverResult',
+        name,
+        syncWarning,
+        'claimDomain',
+      ],
+    },
   }
 }

@@ -4,6 +4,8 @@ import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { ensNftImageUrl, imageUrlUnknownRecord } from '@app/utils/utils'
 
+import { useContractAddress } from './useContractAddress'
+
 const fetchImg = async (url: string) =>
   new Promise<string | null>((resolve) => {
     const img = new Image()
@@ -33,7 +35,7 @@ const fetchImg = async (url: string) =>
 
 export const useAvatar = (name: string | null | undefined, network: number, noCache?: boolean) => {
   const { data, isLoading, status } = useQuery(
-    useQueryKeys().avatar.avatar(network, name),
+    useQueryKeys().avatar.avatar(name),
     () => fetchImg(imageUrlUnknownRecord(name!, network)),
     {
       enabled: !!name,
@@ -47,15 +49,9 @@ export const useAvatar = (name: string | null | undefined, network: number, noCa
 
 export const useNFTImage = (name: string | undefined, network: number) => {
   const isCompatible = !!(name && name.split('.').length === 2)
-  const { ready, contracts } = useEns()
-  const { data: baseRegistrarAddress } = useQuery(
-    useQueryKeys().avatar.baseRegistrar,
-    () => contracts?.getBaseRegistrar()!.then((c: any) => c.address),
-    {
-      enabled: ready && !!name,
-      staleTime: 60000,
-    },
-  )
+  const { ready } = useEns()
+  const baseRegistrarAddress = useContractAddress('BaseRegistrarImplementation')
+
   const { data, isLoading, status } = useQuery(
     useQueryKeys().avatar.getNFTImage(name),
     () => fetchImg(ensNftImageUrl(name!, network, baseRegistrarAddress!)),

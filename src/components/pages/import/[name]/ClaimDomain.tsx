@@ -134,7 +134,7 @@ export const ClaimDomain = ({
   const { t } = useTranslation('dnssec')
 
   const { data: proverResult } = useQuery(
-    useQueryKeys().claimDomain(name, syncWarning),
+    useQueryKeys().globalIndependent.claimDomain(name, syncWarning),
     async () => {
       if (name) {
         const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)

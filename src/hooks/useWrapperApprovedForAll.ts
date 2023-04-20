@@ -9,7 +9,7 @@ const useWrapperApprovedForAll = (address: string, isSubdomain: boolean) => {
   const { contracts } = useEns()
   const nameWrapperAddress = useContractAddress('NameWrapper')
   const { data: approvedForAll, isLoading } = useQuery(
-    useQueryKeys().wrapperApprovedForAll(nameWrapperAddress, address),
+    useQueryKeys().wrapperApprovedForAll(address),
     async () => {
       const registry = await contracts!.getRegistry()
       return registry.isApprovedForAll(address, nameWrapperAddress)
