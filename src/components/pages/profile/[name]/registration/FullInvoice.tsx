@@ -37,7 +37,6 @@ const FullInvoice = ({
   estimatedGasFee,
   hasPremium,
   premiumFee,
-  estimatedGasLoading,
   gasPrice,
 }: Props) => {
   const { t } = useTranslation('register')
@@ -67,8 +66,6 @@ const FullInvoice = ({
     ],
     [t, years, totalYearlyFee, estimatedGasFee, hasPremium, premiumFee],
   )
-
-  if (estimatedGasLoading) return <InvoiceContainer />
 
   return (
     <InvoiceContainer>

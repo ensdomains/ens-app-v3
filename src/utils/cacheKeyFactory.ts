@@ -2,6 +2,7 @@ import { useAccount } from 'wagmi'
 
 import type { uniqueTransactionIdentifierGenerator } from '@app/components/@molecules/TransactionDialogManager/stage/TransactionStageModal'
 import { useChainId } from '@app/hooks/useChainId'
+import type { RegistrationProps } from '@app/hooks/useEstimateRegistration'
 import type { TransactionItem } from '@app/transaction-flow/transaction'
 
 export const useQueryKeys = () => {
@@ -59,7 +60,11 @@ export const useQueryKeys = () => {
       ...transactions,
       ...extraKeys,
     ],
-    estimateRegistration: [...globalKeys, 'gas-costs'],
+    estimateRegistration: (data?: RegistrationProps) => [
+      ...globalKeys,
+      'getRegistrationGasEsimtate',
+      data,
+    ],
     ethPrice: [...globalKeys, 'use-eth-price'],
     exists: (name: string) => [...globalKeys, 'getOwner', name],
     expiry: (name: string) => [...globalKeys, 'useExpiry', name],

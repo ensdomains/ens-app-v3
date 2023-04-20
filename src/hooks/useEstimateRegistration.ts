@@ -4,26 +4,30 @@ import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
 import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
+import {
+  BaseRegistrationParams,
+  makeRegistrationData,
+} from '@ensdomains/ensjs/utils/registerHelpers'
 
-import { RegistrationData } from '@app/components/pages/profile/[name]/registration/types'
+import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
+import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
-import { emptyAddress } from '@app/utils/constants'
 
-import { profileRecordsToRecordOptions } from '../components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+import { useAccountSafely } from './useAccountSafely'
+import { useChainId } from './useChainId'
 import useEstimateTransactionCost from './useEstimateTransactionCost'
 import { useNameDetails } from './useNameDetails'
+import useRegistrationParams from './useRegistrationParams'
 
-type RecordItem = { key: string; value: string }
-type RegistrationProps = {
-  reverseRecord: boolean
-  hasResolverSet: boolean
-  textRecords: RecordItem[]
-  addressRecords: RecordItem[]
-  clearRecords: boolean
+export type RegistrationProps = Omit<
+  BaseRegistrationParams,
+  'resolver' | 'duration' | 'secret' | 'resolverAddress'
+> & {
+  name: string
 }
 type GasCostData = [index: number, gas: number]
 
-const BASE_LIMIT = 240664
+const BASE_LIMIT = 265428
 
 const byteLengthToDataInx = (byteLength: number) =>
   byteLength > 1 ? Math.ceil(byteLength / 32) + 1 : byteLength
@@ -32,29 +36,65 @@ const useEstimateRegistration = (
   gasPrice: BigNumber | undefined,
   data: RegistrationProps | undefined,
 ) => {
-  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(
-    useQueryKeys().estimateRegistration,
+  const chainId = useChainId()
+  const { ready, contracts } = useEns()
+  const {
+    data: gasUsed,
+    isLoading: gasUsedLoading,
+    isError,
+  } = useQuery(
+    useQueryKeys().estimateRegistration(data),
     async () => {
-      const addr = (await import('@app/assets/gas-costs/addr.json'))
-        .default as unknown as GasCostData[]
-      const text = (await import('@app/assets/gas-costs/text.json'))
-        .default as unknown as GasCostData[]
-
-      return { addr, text }
+      const resolver = await contracts?.getPublicResolver()
+      if (!resolver) return null
+      const registrationTuple = makeRegistrationData({
+        ...data!,
+        resolver,
+        duration: 31557600,
+        secret: 'placeholder',
+      })
+      const result = await fetch('https://gas-estimate-worker.ens-cf.workers.dev/registration', {
+        method: 'POST',
+        body: JSON.stringify({
+          networkId: chainId,
+          label: registrationTuple[0],
+          owner: registrationTuple[1],
+          resolver: registrationTuple[4],
+          data: registrationTuple[5],
+          reverseRecord: registrationTuple[6],
+          ownerControlledFuses: registrationTuple[7],
+        }),
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+      }).then((res) => res.json<{ gas_used: number }>())
+      return result.gas_used
+    },
+    {
+      enabled: !!data && ready,
     },
   )
 
-  const estimate = useMemo(() => {
+  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(['gas-costs'], async () => {
+    const addr = (await import('@app/assets/gas-costs/addr.json'))
+      .default as unknown as GasCostData[]
+    const text = (await import('@app/assets/gas-costs/text.json'))
+      .default as unknown as GasCostData[]
+
+    return { addr, text }
+  })
+
+  const fallbackEstimate = useMemo(() => {
     if (!gasPrice || !gasCosts || !data) return BigNumber.from(0)
 
     const { addr, text } = gasCosts
-    const { reverseRecord, hasResolverSet, textRecords, addressRecords, clearRecords } = data
+    const { reverseRecord } = data
+    const {
+      texts: textRecords = [],
+      coinTypes: addressRecords = [],
+      clearRecords,
+    } = data.records || {}
 
     let limit = BASE_LIMIT
 
-    if (hasResolverSet) {
-      limit += 24764
-    }
     if (reverseRecord) {
       limit += 116396
     }
@@ -81,29 +121,45 @@ const useEstimateRegistration = (
     return BigNumber.from(limit).mul(gasPrice)
   }, [gasCosts, data, gasPrice])
 
-  return { estimate, isLoading: gasCostsLoading }
+  const estimate = useMemo(() => {
+    if (!gasUsed || !gasPrice) return undefined
+    return gasPrice.mul(gasUsed)
+  }, [gasUsed, gasPrice])
+
+  return isError
+    ? {
+        estimate: fallbackEstimate,
+        isLoading: gasCostsLoading,
+      }
+    : {
+        estimate,
+        isLoading: gasUsedLoading,
+      }
 }
 
 type FullProps = {
-  registration: Omit<RegistrationData, 'secret' | 'started' | 'paymentMethodChoice'>
+  registrationData: RegistrationReducerDataItem
   price: ReturnType<typeof useNameDetails>['priceData']
+  name: string
 }
 
-export const useEstimateFullRegistration = ({
-  registration: { reverseRecord, records: _records, resolver, years, clearRecords },
-  price,
-}: FullProps) => {
+export const useEstimateFullRegistration = ({ registrationData, price, name }: FullProps) => {
   const { data: estimatedCommitData, isLoading: commitGasLoading } =
     useEstimateTransactionCost('COMMIT')
   const { transactionFee: commitGasFee, gasPrice } = estimatedCommitData || {}
-  const records = profileRecordsToRecordOptions(_records)
+  const { address } = useAccountSafely()
+  const { owner, fuses, records, reverseRecord } = useRegistrationParams({
+    name,
+    owner: address || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+    registrationData,
+  })
   const { estimate: registrationGasFee, isLoading: registrationGasLoading } =
     useEstimateRegistration(gasPrice, {
+      name,
+      owner,
+      fuses,
+      records,
       reverseRecord,
-      addressRecords: records.coinTypes || [],
-      textRecords: records.texts || [],
-      hasResolverSet: resolver !== emptyAddress,
-      clearRecords: !!clearRecords,
     })
   const estimatedGasLoading = commitGasLoading || registrationGasLoading
   const estimatedGasFee = useMemo(() => {
@@ -113,7 +169,7 @@ export const useEstimateFullRegistration = ({
   const yearlyFee = price?.base
   const premiumFee = price?.premium
   const hasPremium = premiumFee?.gt(0)
-  const totalYearlyFee = yearlyFee?.mul(years)
+  const totalYearlyFee = yearlyFee?.mul(registrationData.years)
 
   return {
     estimatedGasFee,
@@ -123,7 +179,7 @@ export const useEstimateFullRegistration = ({
     hasPremium,
     premiumFee,
     gasPrice,
-    years,
+    years: registrationData.years,
   }
 }
 

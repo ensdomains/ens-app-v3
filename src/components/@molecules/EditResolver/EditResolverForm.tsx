@@ -111,6 +111,7 @@ const EditResolverForm = ({
               watch,
               setValue,
               hideLabel: true,
+              trigger,
               validations: {
                 isCurrentResolver: (value: string) =>
                   resolverChoice === 'custom' && value === resolverAddress
