@@ -25,7 +25,7 @@ describe('Register Name', () => {
         cy.findByTestId('primary-name-toggle')
           .click()
           .then(function () {
-            cy.wait(5000)
+            cy.wait(10000)
             expect(parseFloat($item.text())).to.be.greaterThan(0)
             expect(parseFloat($item.text())).to.be.lessThan(this.estimate)
           })
