@@ -42,7 +42,8 @@
     "skip": "Skip",
     "changeNetwork": "Change Network",
     "understand": "I understand",
-    "feedback": "Feedback"
+    "feedback": "Feedback",
+    "migrate": "Migrate"
   },
   "unit": {
     "years_one": "{{count}} year",

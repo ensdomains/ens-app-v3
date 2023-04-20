@@ -95,30 +95,64 @@
         }
       },
       "warningOverlay": {
-        "resumable": {
-          "title": "Resumable transaction",
-          "subtitle": "You have previously started a transaction. Click resume to continue.",
-          "action": "Resume"
+        "action": {
+          "learnMoreResolvers": "Learn more about resolvers",
+          "updateResolver": "Update resolver",
+          "setResolver": "Set resolver",
+          "ignoreUpdate": "Ignore this and continue using your current resolver. You will be asked again next time."
         },
-        "migrate": {
-          "title": "Migrate resolver",
-          "subtitle": "You have migrated your profile but haven't updated your resolver. Click upgrade to update to the latest resolver.",
-          "action": "Update"
+        "invalidResolver": {
+          "title": "Unauthorized resolver",
+          "subtitle": "You do not have permission to set records for this resolver. You will need to update to the latest resolver to make changes.",
+          "action": "Update resolver"
         },
-        "noResolver": {
-          "title": "No resolver assigned",
-          "subtitle": "You need to set a resolver to edit your profile.",
-          "action": "Update"
+        "migrateProfileSelector": {
+          "title": "Profile",
+          "subtitle": "The profile records on each resolver do not match. Which set of records would you like to use?",
+          "option": {
+            "latest": "Profile records on new resolver",
+            "current": "Current profile records",
+            "reset": "Reset you profile",
+            "resetSubtitle": "Remove all profile records"
+          }
         },
-        "oldRegistry": {
-          "title": "Your registry is out of date",
-          "subtitle": "Migration to the new registry is not available, but you can still migrate this name in the old app.",
+        "migrateRegistry": {
+          "title": "Registry out of date",
+          "subtitle": "You will need to migrate the registry before making changes to this name.",
           "action": "Migrate"
         },
-        "default": {
-          "title": "Your resolver is out of date",
-          "subtitle": "Profile editing is disabled until you update your resolver.",
+        "noResolver": {
+          "title": "No resolver set",
+          "subtitle": "A resolver needs to be set before editing your profile.",
           "action": "Update"
+        },
+        "resetProfile": {
+          "title": "Reset profile",
+          "subtitle": "You are resetting your profile records. You will lose all existing profile information, such as ETH address, avatar and social records. These can be re-added by editing your profile."
+        },
+        "resolverNotNameWrapperAware": {
+          "title": "Resolver not compatible",
+          "subtitle": "Your resolver is not compatible with your name. Upgrade your resolver to make changes to this name."
+        },
+        "resolverOutOfDate": {
+          "title": "Resolver out of date",
+          "subtitle": "The resolver is out of date. It’s recommended you update it before editing your profile."
+        },
+        "resolverOutOfSync": {
+          "title": "Resolver out of sync",
+          "subtitle": "You are not using the latest public resolver, but you have profile records stored there. It’s recommended that you switch to the latest public resolver before editing your profile."
+        },
+        "transferOrResetProfile": {
+          "title": "Profile",
+          "subtitle": "You can transfer your current profile to the new resolver, or reset it and remove all profile records."
+        },
+        "updateResolverOrResetProfile": {
+          "title": "Profile",
+          "subtitle": "You can keep your current profile on the new resolver, or reset it and remove all profile records.",
+          "toggle": {
+            "title": "Keep current profile",
+            "subtitle": "Unselecting this will reset your profile."
+          }
         },
         "links": {
           "learnMoreResolvers": "Learn more about resolvers"

@@ -8,7 +8,7 @@ import { useEns } from '@app/utils/EnsProvider'
 
 import useDecryptName from './useDecryptName'
 
-export const useProfile = (name: string, skip?: any) => {
+export const useProfile = (name: string, skip?: any, resolverAddress?: string) => {
   const { ready, getProfile } = useEns()
 
   const {
@@ -21,13 +21,14 @@ export const useProfile = (name: string, skip?: any) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,
   } = useQuery(
-    ['graph', 'getProfile', name],
+    ['graph', 'getProfile', name, resolverAddress],
     () =>
       getProfile(name, {
         fallback: {
           coinTypes: supportedAddresses,
           texts: [...supportedTexts, ...supportedProfileItems],
         },
+        resolverAddress,
       }).then((d) => d || null),
     {
       enabled: ready && !skip && name !== '',

@@ -216,13 +216,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const resolverAddress = useContractAddress('PublicResolver')
 
-  const {
-    data: status,
-    isLoading: statusLoading,
-    isFetching,
-  } = useResolverStatus(name, profile, {
+  const { status, isLoading: statusLoading } = useResolverStatus(name, profile, {
     skip: profileLoading,
-    skipCompare: resumable,
+    skipCompare: false,
   })
 
   const chainId = useChainId()
@@ -230,23 +226,21 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
       const records = profileEditorFormToProfileRecords(form)
-      if (!profile?.resolverAddress || !resolverAddress) return
-      if (status?.hasLatestResolver) {
-        dispatch({
-          name: 'setTransactions',
-          payload: [
-            makeTransactionItem('updateProfileRecords', {
-              name,
-              resolver: profile.resolverAddress,
-              records,
-              previousRecords: existingRecords,
-              clearRecords: false,
-            }),
-          ],
-        })
-        dispatch({ name: 'setFlowStage', payload: 'transaction' })
-        return
-      }
+      if (!profile?.resolverAddress) return
+      dispatch({
+        name: 'setTransactions',
+        payload: [
+          makeTransactionItem('updateProfileRecords', {
+            name,
+            resolver: profile.resolverAddress,
+            records,
+            previousRecords: existingRecords,
+            clearRecords: false,
+          }),
+        ],
+      })
+      dispatch({ name: 'setFlowStage', payload: 'transaction' })
+      return
 
       dispatch({
         name: 'startFlow',
@@ -282,10 +276,10 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
 
   useEffect(() => {
-    if ((!statusLoading && !status?.hasLatestResolver) || resumable) {
+    if (!statusLoading && !status?.hasLatestResolver && transactions.length === 0) {
       setView('warning')
     }
-  }, [statusLoading, status?.hasLatestResolver, resumable])
+  }, [statusLoading, status?.hasLatestResolver, transactions.length])
 
   useEffect(() => {
     if (!profileLoading && !profile?.isMigrated) {
@@ -411,7 +405,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                 trailing={
                   <SubmitButton
                     control={control}
-                    disabled={hasErrors || isFetching}
+                    disabled={hasErrors}
                     previousRecords={existingRecords}
                     canEdit={canEditRecordsWhenWrapped}
                   />
@@ -432,6 +426,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           warning: (
             <ResolverWarningOverlay
               name={name}
+              status={status}
               isWrapped={isWrapped}
               hasOldRegistry={!profile?.isMigrated}
               resumable={resumable}

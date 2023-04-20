@@ -1,11 +1,14 @@
-import { useMemo, useState } from 'react'
-import { useQuery } from 'wagmi'
+import { useMemo } from 'react'
 
 import { Profile, ReturnedENS } from '@app/types'
-import { useEns } from '@app/utils/EnsProvider'
 import { contentHashToString } from '@app/utils/contenthash'
+import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
+import { emptyAddress } from '../utils/constants'
+import { useChainId } from './useChainId'
 import { useContractAddress } from './useContractAddress'
+import { useProfile } from './useProfile'
+import { useResolverIsAuthorized } from './useResolverIsAuthorized'
 
 const areRecordsEqual = (a: Profile['records'], b: Profile['records']): boolean => {
   const areTextsEqual = Object.values(
@@ -52,69 +55,83 @@ export const useResolverStatus = (
   profile: ReturnedENS['getProfile'],
   { skip, ...options }: Options = {},
 ) => {
-  const [dummy, setDummy] = useState(false)
-  const { ready, getProfile } = useEns()
+  const chainId = useChainId()
+  const { data: isAuthorized, isLoading: isAuthorizedLoading } = useResolverIsAuthorized(
+    name,
+    profile?.resolverAddress,
+  )
 
-  // Profile resolver address check
   const latestResolverAddress = useContractAddress('PublicResolver')
+  const { profile: latestResolverProfile, loading: isLatestResolverProfileLoading } = useProfile(
+    name,
+    options.skipCompare,
+    latestResolverAddress,
+  )
 
   const profileResolverAddress = profile?.resolverAddress
 
-  const { data, isLoading, isFetching } = useQuery(
-    ['resolverStatus', name, { profileResolverAddress, options }],
-    async () => {
-      if (!profileResolverAddress)
-        return {
-          hasResolver: false,
-          hasLatestResolver: false,
-          hasMigratedProfile: false,
-          isMigratedProfileEqual: false,
-        }
-      if (profileResolverAddress === latestResolverAddress)
-        return {
-          hasResolver: true,
-          hasLatestResolver: true,
-          hasMigratedProfile: true,
-          isMigratedProfileEqual: true,
-        }
-      if (options?.skipCompare)
-        return {
-          hasResolver: true,
-          hasLatestResolver: false,
-          hasMigratedProfile: false,
-          isMigratedProfileEqual: false,
-        }
+  return useMemo(() => {
+    const defaultResults = {
+      hasResolver: false,
+      hasLatestResolver: false,
+      hasValidResolver: false,
+      hasMigratedProfile: false,
+      isMigratedProfileEqual: false,
+      isNameWrapperAware: false,
+    }
 
-      const resolverProfile = await getProfile(name, {
-        resolverAddress: latestResolverAddress,
-      })
-
-      const resolverRecords = resolverProfile?.records || {}
-
-      if (Object.keys(resolverRecords).length === 0)
-        return {
-          hasResolver: true,
-          hasLatestResolver: false,
-          hasMigratedProfile: false,
-          isMigratedProfileEqual: false,
-        }
-
+    if (!profileResolverAddress || profileResolverAddress === emptyAddress)
       return {
-        hasResolver: true,
-        hasLatestResolver: false,
-        hasMigratedProfile: true,
-        isMigratedProfileEqual: areRecordsEqual(profile?.records, resolverRecords),
+        status: defaultResults,
+        isLoading: false,
       }
-    },
-    {
-      enabled: ready && !skip,
-      onSettled: () => setDummy((d) => !d),
-    },
-  )
 
-  // why does this work?
-  // idk, but it does
-  // (something something react lifecycle re-render logic, apparently this is fixed in react 18)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => ({ data, isLoading, isFetching }), [dummy])
+    const baseResults = {
+      ...defaultResults,
+      hasResolver: true,
+      hasLatestResolver: profileResolverAddress === latestResolverAddress,
+      isNameWrapperAware: canEditRecordsWhenWrappedCalc(true, profileResolverAddress, chainId),
+      hasValidResolver: !!isAuthorized,
+    }
+
+    if (!isAuthorizedLoading && (baseResults.hasLatestResolver || options?.skipCompare))
+      return {
+        status: baseResults,
+        isLoading: false,
+      }
+
+    const resolverRecords = latestResolverProfile?.records || {}
+    const keys = ['texts', 'coinTypes', 'contentHash'] as const
+    const hasMigratedProfile = keys.some((key) => {
+      if (!resolverRecords[key]) return false
+      if (key === 'contentHash') return !!resolverRecords[key]
+      const arrayValue = resolverRecords[key]?.length || 0
+      return arrayValue > 0
+    })
+
+    if (!isLatestResolverProfileLoading)
+      return {
+        status: {
+          ...baseResults,
+          hasMigratedProfile,
+          isMigratedProfileEqual: areRecordsEqual(profile?.records, resolverRecords),
+        },
+        isLoading: false,
+      }
+
+    return {
+      status: undefined,
+      isLoading: true,
+    }
+  }, [
+    chainId,
+    isAuthorized,
+    isAuthorizedLoading,
+    isLatestResolverProfileLoading,
+    latestResolverAddress,
+    latestResolverProfile,
+    options?.skipCompare,
+    profile?.records,
+    profileResolverAddress,
+  ])
 }
