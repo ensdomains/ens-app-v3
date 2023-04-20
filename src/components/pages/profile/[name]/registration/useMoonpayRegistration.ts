@@ -3,6 +3,7 @@ import { useMutation, useQuery } from 'wagmi'
 
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 
+import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainId } from '@app/hooks/useChainId'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
@@ -18,6 +19,7 @@ export const useMoonpayRegistration = (
   item: ReturnType<typeof useRegistrationReducer>['item'],
 ) => {
   const chainId = useChainId()
+  const { address } = useAccountSafely()
   const [hasMoonpayModal, setHasMoonpayModal] = useState(false)
   const [moonpayUrl, setMoonpayUrl] = useState('')
   const [isCompleted, setIsCompleted] = useState(false)
@@ -27,7 +29,7 @@ export const useMoonpayRegistration = (
     const label = getLabelFromName(normalisedName)
     const tokenId = labelhash(label)
 
-    const requestUrl = `${MOONPAY_WORKER_URL[chainId]}/signedurl?tokenId=${tokenId}&name=${normalisedName}&duration=${duration}`
+    const requestUrl = `${MOONPAY_WORKER_URL[chainId]}/signedurl?tokenId=${tokenId}&name=${normalisedName}&duration=${duration}&walletAddress=${address}`
     const response = await fetch(requestUrl)
     const textResponse = await response.text()
     setMoonpayUrl(textResponse)

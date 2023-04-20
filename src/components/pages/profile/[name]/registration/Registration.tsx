@@ -61,8 +61,8 @@ type Props = {
 
 const StyledInnerDialog = styled(InnerDialog)(({ theme }) => [
   css`
-    height: min(640px, 80vh);
-    max-height: min(640px, 80vh);
+    height: 85vh;
+    max-height: 85vh;
     margin: -${theme.space['4']};
     width: calc(100% + 2 * ${theme.space['4']});
     gap: 0;
@@ -71,6 +71,8 @@ const StyledInnerDialog = styled(InnerDialog)(({ theme }) => [
     border-top-right-radius: ${theme.radii['3xLarge']};
   `,
   mq.sm.min(css`
+    height: 90vh;
+    max-height: 720px;
     width: calc(80vw - 2 * ${theme.space['6']});
     max-width: ${theme.space['128']};
     margin: -${theme.space['6']};
