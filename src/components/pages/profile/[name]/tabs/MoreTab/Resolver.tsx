@@ -25,7 +25,7 @@ const Container = styled(TabWrapper)(
 
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,
@@ -78,9 +78,10 @@ const Resolver = ({
 
   const chainId = useChainId()
 
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showEditResolverInput = prepareDataInput('EditResolver')
   const handleEditClick = () => {
-    showDataInput(`resolver-upgrade-${name}`, 'EditResolver', {
+    showEditResolverInput(`resolver-upgrade-${name}`, {
       name,
     })
   }
@@ -123,8 +124,9 @@ const Resolver = ({
                   content: t(`errors.permissionRevoked`),
                   buttonText: 'Edit',
                   mobileWidth: 150,
-                  buttonWidth: 'initial',
+                  buttonWidth: '15',
                   mobileButtonWidth: 'initial',
+                  colorStyle: 'transparent',
                 }}
               />
             )}

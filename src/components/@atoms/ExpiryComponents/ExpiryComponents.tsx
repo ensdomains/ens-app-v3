@@ -4,9 +4,11 @@ import styled, { css } from 'styled-components'
 import { Typography } from '@ensdomains/thorin'
 
 import ClockSVG from '@app/assets/Clock.svg'
-import { daysToSeconds, secondsToDays, secondsToHours } from '@app/utils/utils'
+import { secondsToDays, secondsToHours } from '@app/utils/utils'
 
 import { useBlockTimestamp } from '../../../hooks/useBlockTimestamp'
+
+const GRACE_PERIOD_S = 90 * 24 * 60 * 60
 
 type Color = 'red' | 'orange' | 'grey'
 
@@ -50,6 +52,13 @@ export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
   return <ClockIcon data-testid="expiry-clock-grey" $color="grey" as={ClockSVG} />
 }
 
+const makeTransPrefix = (inverse: boolean, hasGracePeriod: boolean) => {
+  if (inverse) {
+    return hasGracePeriod ? 'name.gracePeriod.expires' : 'name.expired'
+  }
+  return 'name.expires'
+}
+
 export const ShortExpiry = ({
   expiry,
   textOnly = false,
@@ -63,14 +72,19 @@ export const ShortExpiry = ({
   const blockTimestamp = useBlockTimestamp()
   const currentDate = new Date(blockTimestamp.data!)
   let secondsDiff = (expiry.getTime() - currentDate.getTime()) / 1000
-  const inverse =
-    (!hasGracePeriod && secondsDiff < 0) || (hasGracePeriod && secondsDiff < -daysToSeconds(90))
-  if (inverse) secondsDiff = -secondsDiff
+  const inverse = secondsDiff < 0
+  if (inverse) {
+    if (hasGracePeriod) {
+      secondsDiff += GRACE_PERIOD_S
+    } else {
+      secondsDiff = -secondsDiff
+    }
+  }
   let difference = secondsToDays(secondsDiff)
 
   const months = Math.floor(difference / 30)
   const years = Math.floor(difference / 365)
-  const transPrefix = inverse ? 'name.expired' : 'name.expires'
+  const transPrefix = makeTransPrefix(inverse, !!hasGracePeriod)
 
   let text = t(`${transPrefix}InYears`, { count: years })
   let color: 'grey' | 'red' | 'orange' = 'grey'
@@ -80,7 +94,7 @@ export const ShortExpiry = ({
     text = t(`${transPrefix}InHours`, { count: difference })
     color = 'red'
   } else if (difference < 0) {
-    text = t(`${transPrefix}InDays`, { count: hasGracePeriod ? difference + 90 : difference })
+    text = t(`${transPrefix}InDays`, { count: difference })
     color = 'red'
   } else if (difference < 30) {
     text = t(`${transPrefix}InDays`, { count: difference })
@@ -93,15 +107,17 @@ export const ShortExpiry = ({
     color = 'grey'
   }
 
-  const processedColor = inverse ? 'red' : color
+  if (inverse) {
+    color = 'red'
+  }
 
   if (textOnly) return <>{text}</>
   return (
     <ExpiryText
       data-testid="short-expiry"
-      data-color={processedColor}
+      data-color={color}
       data-timestamp={expiry.getTime()}
-      $color={processedColor}
+      $color={color}
       fontVariant="small"
     >
       {text}

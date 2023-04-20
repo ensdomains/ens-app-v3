@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { ComponentProps, Dispatch, SetStateAction, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -7,8 +7,9 @@ import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules
 
 import CameraIcon from '@app/assets/Camera.svg'
 
-const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
-  ({ theme, $validated, $error }) => css`
+const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty?: boolean }>(
+  ({ theme, $validated, $dirty, $error }) => css`
+    position: relative;
     width: 90px;
     height: 90px;
     border-radius: 50%;
@@ -34,6 +35,15 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
     css`
       :after {
         background-color: ${theme.colors.blue};
+        border-color: ${theme.colors.backgroundPrimary};
+        transform: translate(-20%, 20%) scale(1);
+      }
+    `}
+
+    ${$dirty &&
+    css`
+      :after {
+        background-color: ${theme.colors.green};
         border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
       }
@@ -74,29 +84,34 @@ const IconMask = styled.div(
 
 export type AvatarClickType = 'upload' | 'nft'
 
+type PickedDropdownProps = Pick<ComponentProps<typeof Dropdown>, 'isOpen' | 'setIsOpen'>
+
 type Props = {
   validated?: boolean
+  dirty?: boolean
   error?: boolean
   src?: string
   onSelectOption?: (value: AvatarClickType) => void
   onAvatarChange?: (avatar?: string) => void
   onAvatarSrcChange?: (src?: string) => void
   onAvatarFileChange?: (file?: File) => void
-}
+} & PickedDropdownProps
 
 const AvatarButton = ({
   validated,
+  dirty,
   error,
   src,
   onSelectOption,
   onAvatarChange,
   onAvatarSrcChange,
   onAvatarFileChange,
+  isOpen,
+  setIsOpen,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-
   const handleSelectOption = (value: AvatarClickType | 'remove') => () => {
     if (value === 'remove') {
       onAvatarChange?.(undefined)
@@ -107,6 +122,10 @@ const AvatarButton = ({
       onSelectOption?.(value)
     }
   }
+
+  const dropdownProps = setIsOpen
+    ? ({ isOpen, setIsOpen } as { isOpen: boolean; setIsOpen: Dispatch<SetStateAction<boolean>> })
+    : ({} as { isOpen: never; setIsOpen: never })
 
   return (
     <Dropdown
@@ -135,8 +154,9 @@ const AvatarButton = ({
       }
       keepMenuOnTop
       shortThrow
+      {...dropdownProps}
     >
-      <Container $validated={validated} $error={error} type="button">
+      <Container $validated={validated} $error={error} $dirty={dirty} type="button">
         <Avatar label="profile-button-avatar" src={src} noBorder />
         {!validated && !error && (
           <IconMask>

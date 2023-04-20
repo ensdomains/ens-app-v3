@@ -71,6 +71,7 @@ export const NameTableFooter = ({
               props.onChange(1)
             }
           }}
+          id="select-page-size"
         />
       </div>
     </Container>

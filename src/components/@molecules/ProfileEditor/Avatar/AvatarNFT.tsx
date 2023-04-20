@@ -5,9 +5,10 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useInfiniteQuery } from 'wagmi'
 
-import { Button, Dialog, Heading, Input, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Heading, Input, Typography, mq } from '@ensdomains/thorin'
 
 import MagnifyingGlassSVG from '@app/assets/MagnifyingGlass.svg'
+import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainName } from '@app/hooks/useChainName'
 
@@ -105,10 +106,9 @@ const NFTName = styled(Typography)(
   `,
 )
 
-const SelectedNFTContainer = styled.div(
-  ({ theme }) => css`
-    padding: ${theme.space['4']} ${theme.space['16']};
-    max-width: 540px;
+const SelectedNFTContainer = styled.div(({ theme }) => [
+  css`
+    width: 100%;
     & div {
       padding: 0 ${theme.radii['2.5xLarge']};
       &:first-of-type {
@@ -116,18 +116,30 @@ const SelectedNFTContainer = styled.div(
       }
     }
   `,
+  mq.sm.min(css`
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
+  `),
+])
+
+const SelectedNFTImageWrapper = styled.div(
+  () => css`
+    display: flex;
+    justify-content: center;
+  `,
 )
 
 const SelectedNFTImage = styled.img(
   ({ theme }) => css`
     width: ${theme.space.full};
+    max-width: ${theme.space['72']};
     border-radius: ${theme.radii['2.5xLarge']};
     margin-bottom: ${theme.space['2']};
   `,
 )
 
-const LoadingContainer = styled.div(
-  ({ theme }) => css`
+const LoadingContainer = styled.div(({ theme }) => [
+  css`
     width: ${theme.space.full};
     height: ${theme.space['32']};
 
@@ -137,7 +149,12 @@ const LoadingContainer = styled.div(
     flex-direction: column;
     gap: ${theme.space['4']};
   `,
-)
+  mq.sm.min(css`
+    gap: ${theme.space['6']};
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
+  `),
+])
 
 export const AvatarNFT = ({
   handleCancel,
@@ -212,7 +229,9 @@ export const AvatarNFT = ({
           subtitle={t('input.profileEditor.tabs.avatar.nft.selected.subtitle')}
         />
         <SelectedNFTContainer>
-          <SelectedNFTImage src={nftReference.media[0].gateway} />
+          <SelectedNFTImageWrapper>
+            <SelectedNFTImage src={nftReference.media[0].gateway} />
+          </SelectedNFTImageWrapper>
           <Typography weight="bold">
             {nftReference.title || t('input.profileEditor.tabs.avatar.nft.unknown')}
           </Typography>
@@ -220,7 +239,7 @@ export const AvatarNFT = ({
         </SelectedNFTContainer>
         <Dialog.Footer
           leading={
-            <Button colorStyle="greySecondary" onClick={() => setSelectedNFT(null)}>
+            <Button colorStyle="accentSecondary" onClick={() => setSelectedNFT(null)}>
               {t('action.back', { ns: 'common' })}
             </Button>
           }
@@ -243,7 +262,7 @@ export const AvatarNFT = ({
     )
   } else if (NFTs && (NFTs.length > 0 || searchedInput !== '')) {
     innerContent = (
-      <>
+      <InnerDialog>
         <Input
           icon={<MagnifyingGlassSVG />}
           hideLabel
@@ -282,7 +301,7 @@ export const AvatarNFT = ({
             <Heading>{t('input.profileEditor.tabs.avatar.nft.noResults')}</Heading>
           </LoadingContainer>
         )}
-      </>
+      </InnerDialog>
     )
   } else {
     innerContent = (
@@ -298,7 +317,7 @@ export const AvatarNFT = ({
       {innerContent}
       <Dialog.Footer
         leading={
-          <Button colorStyle="greySecondary" onClick={handleCancel}>
+          <Button colorStyle="accentSecondary" onClick={handleCancel}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

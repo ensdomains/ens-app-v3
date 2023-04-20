@@ -17,23 +17,29 @@ import { DeepPartial } from './types'
 jest.mock('wagmi', () => {
   const {
     useQuery,
+    useQueryClient,
     useInfiniteQuery,
+    useMutation,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
   } = jest.requireActual('wagmi')
 
   return {
     useQuery,
+    useQueryClient,
     useInfiniteQuery,
+    useMutation,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
     useAccount: jest.fn(),
     useNetwork: jest.fn(),
+    useFeeData: jest.fn(),
     useProvider: jest.fn(),
     useSigner: jest.fn(),
     useSignTypedData: jest.fn(),
     useBlockNumber: jest.fn(),
     useSendTransaction: jest.fn(),
+    configureChains: jest.fn(() => ({})),
   }
 })
 
@@ -47,7 +53,8 @@ jest.mock('react-i18next', () => ({
       isInitialized: true,
     },
   }),
-  Trans: ({ i18nKey }: { i18nKey: string }) => i18nKey,
+  Trans: ({ i18nKey, values }: { i18nKey: string; values: string[] }) =>
+    `${i18nKey} ${values ? Object.values(values).join(', ') : ''}`,
 }))
 
 const queryClient = new QueryClient({
@@ -80,10 +87,14 @@ const wagmiClient = createClient({
       options: {
         signer: new Wallet(privateKey, new EthersProviderWrapper()),
       },
-    }),
+    }) as any,
   ],
   provider: () => new EthersProviderWrapper(),
 })
+
+jest.mock('@app/utils/query', () => ({
+  wagmiClientWithRefetch: wagmiClient,
+}))
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (

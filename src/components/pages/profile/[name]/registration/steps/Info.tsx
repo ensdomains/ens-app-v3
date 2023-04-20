@@ -19,7 +19,7 @@ const StyledCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
     `)}
@@ -34,7 +34,7 @@ const InfoItems = styled.div(
     justify-content: flex-start;
     gap: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       flex-direction: row;
       align-items: stretch;
     `)}
@@ -106,13 +106,17 @@ type Props = {
 
 const Info = ({
   registrationData,
-  nameDetails: { priceData },
+  nameDetails: { normalisedName, priceData },
   callback,
   onProfileClick,
 }: Props) => {
   const { t } = useTranslation('register')
 
-  const estimate = useEstimateFullRegistration({ registration: registrationData, price: priceData })
+  const estimate = useEstimateFullRegistration({
+    name: normalisedName,
+    registrationData,
+    price: priceData,
+  })
 
   return (
     <StyledCard>

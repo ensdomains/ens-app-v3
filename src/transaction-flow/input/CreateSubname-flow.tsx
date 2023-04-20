@@ -12,12 +12,6 @@ import { useValidateSubnameLabel } from '../../hooks/useValidateSubnameLabel'
 import { makeTransactionItem } from '../transaction'
 import { TransactionDialogPassthrough } from '../types'
 
-const StyledInnerDialog = styled(InnerDialog)(
-  () => css`
-    overflow-y: hidden;
-  `,
-)
-
 type Data = {
   parent: string
   isWrapped: boolean
@@ -74,7 +68,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
   return (
     <>
       <Dialog.Heading title={t('details.tabs.subnames.addSubname.dialog.title')} />
-      <StyledInnerDialog>
+      <InnerDialog>
         <Input
           data-testid="add-subname-input"
           label="Label"
@@ -96,10 +90,10 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
               : undefined
           }
         />
-      </StyledInnerDialog>
+      </InnerDialog>
       <Dialog.Footer
         leading={
-          <Button colorStyle="greySecondary" onClick={onDismiss}>
+          <Button colorStyle="accentSecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

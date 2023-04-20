@@ -1,15 +1,16 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Typography, mq } from '@ensdomains/thorin'
+import { Button, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
-import supportedAddresses from '@app/constants/supportedAddresses.json'
+import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { checkETH2LDFromName, formatExpiry } from '@app/utils/utils'
 
 import {
@@ -95,11 +96,24 @@ const RecordsStack = styled.div(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,
 )
+
+const ActionsContainer = styled.div(({ theme }) => [
+  css`
+    border-top: ${theme.space.px} solid ${theme.colors.border};
+    padding: ${theme.space['4']};
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+  `,
+  mq.sm.min(css`
+    padding: ${theme.space['4']} ${theme.space['6']};
+  `),
+])
 
 const Actions = styled.div(
   ({ theme }) => css`
@@ -109,10 +123,7 @@ const Actions = styled.div(
     flex-flow: row wrap;
     gap: ${theme.space['2']};
 
-    border-top: 1px solid ${theme.colors.border};
-    padding: ${theme.space['4']};
-
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       & > .leading {
         flex-grow: 1;
         order: -1;
@@ -123,11 +134,33 @@ const Actions = styled.div(
           width: min-content;
         }
       }
-
-      padding: ${theme.space['4']} ${theme.space['6']};
     `)}
   `,
 )
+
+const ActionWrapper = styled.div<{
+  leading?: boolean
+  fullMobileWidth?: boolean
+}>(({ leading, fullMobileWidth }) => [
+  css`
+    ${fullMobileWidth &&
+    css`
+      width: 100%;
+    `}
+  `,
+  mq.sm.min(css`
+    width: initial;
+    ${leading &&
+    css`
+      flex-grow: 1;
+      order: -1;
+      & > div,
+      button {
+        width: min-content;
+      }
+    `}
+  `),
+])
 
 type Action = NonNullable<ReturnType<typeof useProfileActions>['profileActions']>[number]
 const getAction = (action: Action, is2LDEth: boolean) => {
@@ -140,7 +173,6 @@ const getAction = (action: Action, is2LDEth: boolean) => {
         buttonText={action.label}
         mobileWidth={150}
         mobileButtonWidth="initial"
-        buttonWidth="initial"
         mobilePlacement="top"
         placement="right"
       />
@@ -158,6 +190,95 @@ const getAction = (action: Action, is2LDEth: boolean) => {
   )
 }
 
+export const ownershipInfoCalc = (
+  name: string,
+  pccExpired: boolean,
+  owners: ReturnType<typeof useOwners>,
+  gracePeriodEndDate?: Date,
+  expiryDate?: Date,
+) => {
+  let parentName = name.split('.').slice(1).join('.')
+  // exception for TLDs, show parent as "[root]"
+  if (parentName === '' && name !== '[root]' && name !== '') parentName = '[root]'
+  if (pccExpired) {
+    return [
+      {
+        key: 'name.owner',
+        type: 'text',
+        value: '',
+      },
+      {
+        key: 'name.parent',
+        type: 'text',
+        value: parentName,
+      },
+    ]
+  }
+
+  if (gracePeriodEndDate && gracePeriodEndDate < new Date() && !pccExpired) {
+    const managerDetails = owners.find((x) => x.transferType === 'manager')
+
+    return [
+      {
+        key: 'name.owner',
+        type: 'text',
+        value: '',
+      },
+      {
+        key: 'name.manager',
+        type: 'text',
+        value: managerDetails?.address || '',
+      },
+      {
+        key: 'name.expiry',
+        type: 'text',
+        value: expiryDate ? formatExpiry(expiryDate) : '',
+        timestamp: expiryDate ? expiryDate.getTime() : 0,
+      },
+      {
+        key: 'name.parent',
+        type: 'text',
+        value: parentName,
+      },
+    ]
+  }
+
+  if (!owners)
+    return [
+      {
+        key: 'name.owner',
+        type: 'text',
+        value: '',
+      },
+      {
+        key: 'name.expiry',
+        type: 'text',
+        value: expiryDate ? formatExpiry(expiryDate) : '',
+        timestamp: expiryDate ? expiryDate.getTime() : 0,
+      },
+      {
+        key: 'name.parent',
+        type: 'text',
+        value: parentName,
+      },
+    ]
+
+  return [
+    ...owners.map((x) => ({ key: x.label, value: x.address })),
+    {
+      key: 'name.expiry',
+      type: 'text',
+      value: expiryDate ? formatExpiry(expiryDate) : '',
+      timestamp: expiryDate ? expiryDate.getTime() : 0,
+    },
+    {
+      key: 'name.parent',
+      type: 'text',
+      value: parentName,
+    },
+  ]
+}
+
 export const ProfileDetails = ({
   textRecords = [],
   addresses = [],
@@ -167,6 +288,7 @@ export const ProfileDetails = ({
   actions,
   isCached,
   name,
+  gracePeriodEndDate,
 }: {
   textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
@@ -176,7 +298,10 @@ export const ProfileDetails = ({
   actions: ReturnType<typeof useProfileActions>['profileActions']
   isCached?: boolean
   name: string
+  gracePeriodEndDate?: Date
 }) => {
+  const breakpoint = useBreakpoint()
+
   const otherRecords = [
     ...textRecords
       .filter(
@@ -187,25 +312,13 @@ export const ProfileDetails = ({
       .map((x) => ({ ...x, type: 'text' })),
   ]
 
-  const mappedOwners = [
-    ...((pccExpired
-      ? [
-          {
-            key: 'owner',
-            type: 'text',
-            value: '',
-          },
-        ]
-      : owners?.map((x) => ({ key: x.label, value: x.address }))) || []),
-    {
-      key: 'expiry',
-      type: 'text',
-      value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
-      timestamp: expiryDate ? expiryDate.getTime() : 0,
-    },
-  ]
+  const mappedOwners = ownershipInfoCalc(name, pccExpired, owners, gracePeriodEndDate, expiryDate)
 
   const is2LDEth = checkETH2LDFromName(name)
+
+  const actionWarnings = actions
+    ?.filter((action) => !!action.warning)
+    .map((action) => action.warning)
 
   return (
     <ProfileInfoBox $isCached={isCached}>
@@ -223,7 +336,7 @@ export const ProfileDetails = ({
           label="addresses"
           type="address"
           condition={addresses && addresses.length > 0}
-          supported={supportedAddresses}
+          supported={coinsWithIcons}
           array={addresses}
           button={AddressProfileButton}
         />
@@ -241,13 +354,26 @@ export const ProfileDetails = ({
         />
       </RecordsStack>
       {actions && actions?.length > 0 && (
-        <Actions data-testid="profile-actions">
-          {actions.map((action) => (
-            <div className={action.red ? 'leading' : ''} key={action.label}>
-              {getAction(action, is2LDEth)}
-            </div>
-          ))}
-        </Actions>
+        <ActionsContainer>
+          {!!actionWarnings &&
+            actionWarnings.length > 0 &&
+            actionWarnings.map((warning) => (
+              <Helper type="warning" alignment={breakpoint.sm ? 'horizontal' : 'vertical'}>
+                {warning}
+              </Helper>
+            ))}
+          <Actions data-testid="profile-actions">
+            {actions.map((action) => (
+              <ActionWrapper
+                key={action.label}
+                leading={!!action.red}
+                fullMobileWidth={action.fullMobileWidth}
+              >
+                {getAction(action, is2LDEth)}
+              </ActionWrapper>
+            ))}
+          </Actions>
+        </ActionsContainer>
       )}
     </ProfileInfoBox>
   )

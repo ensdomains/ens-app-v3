@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import type { UrlObject } from 'url'
@@ -42,14 +43,26 @@ export const Outlink = ({
   ComponentProps<typeof StyledAnchor> & {
     href: string | UrlObject
   }) => {
+  const InnerContent = (
+    <StyledAnchor {...props} rel="noreferrer noopener" target="_blank">
+      <OutlinkTypography fontVariant="smallBold" color="blue">
+        {children}
+      </OutlinkTypography>
+      <OutlinkIcon as={OutlinkSVG} />
+    </StyledAnchor>
+  )
+
+  if (typeof href === 'string' && href.startsWith('http')) {
+    return (
+      <Link href={href} passHref>
+        {InnerContent}
+      </Link>
+    )
+  }
+
   return (
     <BaseLink href={href} passHref>
-      <StyledAnchor {...props} rel="noreferrer noopener" target="_blank">
-        <OutlinkTypography fontVariant="smallBold" color="blue">
-          {children}
-        </OutlinkTypography>
-        <OutlinkIcon as={OutlinkSVG} />
-      </StyledAnchor>
+      {InnerContent}
     </BaseLink>
   )
 }

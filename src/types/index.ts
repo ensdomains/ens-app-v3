@@ -1,5 +1,5 @@
 import type { PopulatedTransaction } from '@ethersproject/contracts'
-import type { JsonRpcSigner } from '@ethersproject/providers'
+import type { JsonRpcSigner, TransactionReceipt } from '@ethersproject/providers'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 
@@ -84,9 +84,17 @@ export type AllChildFuses = Required<ChildFuses['options']>
 
 export type EthAddress = string
 
-export type CurrencyUnit = 'eth' | 'fiat'
-export type FiatUnit = 'usd'
-export type CurrencyDisplay = 'eth' | FiatUnit
+export type UserTheme = 'light' | 'dark'
+// fiat is placeholder for now, not actually implemented
+export type UserFiat = 'usd' | 'eur' | 'gbp' | 'aud'
+export type UserCurrency = 'eth' | 'fiat'
+export type CurrencyDisplay = UserFiat | 'eth'
+
+export type UserConfig = {
+  theme: UserTheme
+  fiat: UserFiat
+  currency: UserCurrency
+}
 
 export type QuerySpace =
   | Space
@@ -112,3 +120,11 @@ export type OwnerArray = {
   transferType?: 'manager' | 'owner'
   testId: string
 }[]
+
+export type MinedData = TransactionReceipt & {
+  timestamp: number
+}
+
+export type Prettify<T> = {
+  [K in keyof T]: T[K]
+} & {}

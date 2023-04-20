@@ -91,8 +91,8 @@ describe('useNamesFromAddress', () => {
         new Date(Date.now() - 60 * 60 * 24 * 1000 * 5).getDate(),
       )
     })
-    it('should sort by expiry date', async () => {
-      const names = Array.from({ length: 10 }, makeNameItem(false))
+    it('should sort by expiry date (descending)', async () => {
+      const names = [...Array.from({ length: 9 }, makeNameItem(false)), makeNameItem(true)(null, 9)]
 
       mockGetNames.mockResolvedValue(names)
 
@@ -109,12 +109,40 @@ describe('useNamesFromAddress', () => {
       )
       await waitForNextUpdate()
       const first = result.current.currentPage![0]
+      const second = result.current.currentPage![1]
       const last = result.current.currentPage![4]
-      expect(first.expiryDate?.getDate()).toBe(
-        new Date(Date.now() + 60 * 60 * 24 * 1000 * 9).getDate(),
+      expect(first.expiryDate).toBeUndefined()
+      expect(second.expiryDate?.getDate()).toBe(
+        new Date(Date.now() + 60 * 60 * 24 * 1000 * 8).getDate(),
       )
       expect(last.expiryDate?.getDate()).toBe(
         new Date(Date.now() + 60 * 60 * 24 * 1000 * 5).getDate(),
+      )
+    })
+    it('should show names without expiry at top when sorting by asc expiryDate', async () => {
+      const names = [...Array.from({ length: 9 }, makeNameItem(false)), makeNameItem(true)(null, 9)]
+
+      mockGetNames.mockResolvedValue(names)
+
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useNamesFromAddress({
+          page: 1,
+          resultsPerPage: 5,
+          sort: {
+            orderDirection: 'asc',
+            type: 'expiryDate',
+          },
+          address: '0x123',
+        }),
+      )
+      await waitForNextUpdate()
+      const first = result.current.currentPage![0]
+      const last = result.current.currentPage![4]
+      expect(first.expiryDate?.getDate()).toBe(
+        new Date(Date.now() + 60 * 60 * 24 * 1000 * 0).getDate(),
+      )
+      expect(last.expiryDate?.getDate()).toBe(
+        new Date(Date.now() + 60 * 60 * 24 * 1000 * 4).getDate(),
       )
     })
     it('should sort by label name', async () => {
@@ -262,5 +290,34 @@ describe('useNamesFromAddress', () => {
     expect(result.current.currentPage![0].expiryDate!.getTime()).toBe(
       names[0].registration.expiryDate.getTime(),
     )
+  })
+  it('should add name to root domain', async () => {
+    const names = [
+      {
+        id: '0x0000000000000000000000000000000000000000000000000000000000000000',
+        labelName: null,
+        labelhash: null,
+        truncatedName: null,
+        name: null,
+        isMigrated: true,
+        parent: null,
+        type: 'domain',
+      },
+    ]
+
+    mockGetNames.mockResolvedValue(names)
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useNamesFromAddress({
+        page: 1,
+        resultsPerPage: 5,
+        sort: {
+          orderDirection: 'desc',
+          type: 'expiryDate',
+        },
+        address: '0x123',
+      }),
+    )
+    await waitForNextUpdate()
+    expect(result.current.currentPage![0].name).toBe('[root]')
   })
 })

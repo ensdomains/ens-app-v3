@@ -30,7 +30,6 @@ export default function Page() {
   return (
     <Content singleColumnContent title={t('title')}>
       {{
-        leading: null,
         trailing: (
           <OtherWrapper>
             <WalletSection />

@@ -5,20 +5,23 @@ import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 
 import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
+import { emptyAddress } from '@app/utils/constants'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
-import { checkETH2LDName, checkETHName, isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
+import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
+import { usePccExpired } from './fuses/usePccExpired'
+import { useContractAddress } from './useContractAddress'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
-import { useWrapperExists } from './useWrapperExists'
 
-type BaseBatchReturn = [ReturnedENS['getOwner'], ReturnedENS['getWrapperData']]
-type ETH2LDBatchReturn = [...BaseBatchReturn, ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
+type BaseBatchReturn = [ReturnedENS['getOwner']]
+type NormalBatchReturn = [...BaseBatchReturn, ReturnedENS['getWrapperData']]
+type ETH2LDBatchReturn = [...NormalBatchReturn, ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
 
 export const useBasicName = (name?: string | null, normalised?: boolean) => {
   const ens = useEns()
 
-  const { name: _normalisedName, valid, labelCount } = useValidate(name!, !name)
+  const { name: _normalisedName, isValid, ...validation } = useValidate(name!, !name)
 
   const normalisedName = normalised ? name! : _normalisedName
 
@@ -28,15 +31,22 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     data: batchData,
     isLoading: batchLoading,
     isFetched,
-    internal: { isFetchedAfterMount },
+    /** DO NOT REMOVE */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isFetching,
+    isFetchedAfterMount,
     status,
   } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],
-    (): Promise<[] | BaseBatchReturn | ETH2LDBatchReturn | undefined> => {
+    (): Promise<[] | BaseBatchReturn | NormalBatchReturn | ETH2LDBatchReturn | undefined> => {
+      // exception for "[root]", get owner of blank name
+      if (normalisedName === '[root]') {
+        return Promise.all([ens.getOwner('', 'registry')])
+      }
+
       const labels = normalisedName.split('.')
-      const isDotETH = checkETHName(labels)
-      if (checkETH2LDName(isDotETH, labels, true)) {
-        if (labels[0].length < 3) {
+      if (validation.isETH && validation.is2LD) {
+        if (validation.isShort) {
           return Promise.resolve([])
         }
         return ens.batch(
@@ -50,10 +60,9 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
       return ens.batch(ens.getOwner.batch(normalisedName), ens.getWrapperData.batch(normalisedName))
     },
     {
-      enabled: !!(ens.ready && name && valid),
+      enabled: !!(ens.ready && name && isValid),
     },
   )
-
   const [ownerData, _wrapperData, expiryData, priceData] = batchData || []
 
   const wrapperData = useMemo(() => {
@@ -67,7 +76,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const registrationStatus = batchData
     ? getRegistrationStatus({
-        name: normalisedName,
+        validation,
         ownerData,
         wrapperData,
         expiryData,
@@ -85,15 +94,28 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
-  const nameWrapperExists = useWrapperExists()
+  const nameWrapperAddress = useContractAddress('NameWrapper')
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+  const canBeWrapped = useMemo(
+    () =>
+      !!(
+        ens.ready &&
+        nameWrapperAddress &&
+        nameWrapperAddress !== emptyAddress &&
+        !isWrapped &&
+        normalisedName?.endsWith('.eth') &&
+        !isLabelTooLong(normalisedName)
+      ),
+    [ens.ready, nameWrapperAddress, isWrapped, normalisedName],
+  )
+  const pccExpired = usePccExpired({ ownerData, wrapperData })
 
   const isLoading = !ens.ready || batchLoading || supportedTLDLoading
 
   return {
+    ...validation,
     normalisedName,
-    valid,
-    labelCount,
+    isValid,
     ownerData,
     wrapperData,
     priceData,
@@ -103,11 +125,8 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     truncatedName,
     registrationStatus,
     isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
-    canBeWrapped:
-      nameWrapperExists &&
-      !isWrapped &&
-      normalisedName?.endsWith('.eth') &&
-      !isLabelTooLong(normalisedName),
+    pccExpired,
+    canBeWrapped,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }

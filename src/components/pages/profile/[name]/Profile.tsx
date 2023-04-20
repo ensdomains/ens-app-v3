@@ -13,9 +13,11 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
+import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
+import { formatFullExpiry } from '@app/utils/utils'
 
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
 import MoreTab from './tabs/MoreTab/MoreTab'
@@ -72,6 +74,35 @@ type Props = {
   name: string
 }
 
+export const NameAvailableBanner = ({
+  normalisedName,
+  expiryDate,
+}: {
+  normalisedName: string
+  expiryDate?: Date
+}) => {
+  const { t } = useTranslation('profile')
+  return (
+    <BaseLink href={`/register/${normalisedName}`} passHref legacyBehavior>
+      <Banner
+        alert="info"
+        as="a"
+        icon={<CheckCircleSVG />}
+        title={t('banner.available.title', { name: normalisedName })}
+      >
+        <Trans
+          ns="profile"
+          i18nKey="banner.available.description"
+          values={{
+            date: formatFullExpiry(expiryDate),
+          }}
+          components={{ strong: <strong /> }}
+        />
+      </Banner>
+    </BaseLink>
+  )
+}
+
 const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
@@ -81,11 +112,14 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
 
   const {
     error,
+    errorTitle,
     profile,
     ownerData,
     gracePeriodEndDate,
+    expiryDate,
     normalisedName,
-    valid,
+    beautifiedName,
+    isValid,
     profileIsCachedData,
     basicIsCachedData,
     isWrapped,
@@ -96,6 +130,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
 
   const _canBeWrapped =
     canBeWrapped &&
+    !!address &&
     (ownerData?.ownershipLevel === 'registrar'
       ? ownerData?.registrant === address
       : ownerData?.owner === address)
@@ -113,17 +148,17 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     if (isSelf) {
       return [t('yourProfile'), '']
     }
-    if (normalisedName) {
+    if (beautifiedName) {
       return [
         t('meta.title', {
-          name: normalisedName,
+          name: beautifiedName,
         }),
         t('meta.description', {
-          name: normalisedName,
+          name: beautifiedName,
         }),
       ]
     }
-    if (typeof valid === 'boolean' && valid === false) {
+    if (typeof isValid === 'boolean' && isValid === false) {
       return [t('errors.invalidName'), t('errors.invalidName')]
     }
     return [
@@ -134,19 +169,9 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         name,
       }),
     ]
-  }, [isSelf, normalisedName, valid, name, t])
+  }, [isSelf, beautifiedName, isValid, name, t])
 
-  const tab = (router.query.tab as Tab) || 'profile'
-  const setTab = (newTab: Tab) => {
-    const url = new URL(router.asPath, window.location.origin)
-    for (const [key, value] of Object.entries(router.query)) {
-      url.searchParams.set(key, value as string)
-    }
-    url.searchParams.set('tab', newTab)
-    router._replace(url.toString(), undefined, {
-      shallow: true,
-    })
-  }
+  const [tab, setTab] = useQueryParameterState<Tab>('tab', 'profile')
   const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
 
   const selfAbilities = useSelfAbilities(address, name)
@@ -194,29 +219,13 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
 
   const infoBanner = useMemo(() => {
     if (gracePeriodEndDate && gracePeriodEndDate < new Date()) {
-      return (
-        <BaseLink href={`/register/${normalisedName}`} passHref legacyBehavior>
-          <Banner
-            alert="info"
-            as="a"
-            icon={<CheckCircleSVG />}
-            title={t('banner.available.title', { name: normalisedName })}
-          >
-            <Trans
-              ns="profile"
-              i18nKey="banner.available.description"
-              values={{ date: gracePeriodEndDate.toString() }}
-              components={{ strong: <strong /> }}
-            />
-          </Banner>
-        </BaseLink>
-      )
+      return <NameAvailableBanner {...{ normalisedName, expiryDate }} />
     }
     if (_canBeWrapped) {
       return <WrapperCallToAction name={normalisedName} />
     }
     return undefined
-  }, [gracePeriodEndDate, normalisedName, t, _canBeWrapped])
+  }, [gracePeriodEndDate, normalisedName, _canBeWrapped, expiryDate])
 
   return (
     <>
@@ -226,9 +235,9 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
       </Head>
       <Content
         noTitle
-        title={isSelf ? t('yourProfile') : normalisedName}
-        subtitle={isSelf ? normalisedName : 'Profile'}
+        title={beautifiedName}
         loading={isLoading || detailsLoading}
+        copyValue={beautifiedName}
       >
         {{
           info: infoBanner,
@@ -236,6 +245,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
             ? {
                 type: 'warning',
                 message: error,
+                title: errorTitle,
               }
             : undefined,
           header: (
@@ -263,8 +273,11 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                 texts={(profile?.records?.texts as any) || []}
                 addresses={(profile?.records?.coinTypes as any) || []}
                 contentHash={profile?.records?.contentHash}
+                abi={profile?.records?.abi}
+                resolverAddress={profile?.resolverAddress}
                 canEdit={selfAbilities.canEdit}
                 isCached={profileIsCachedData}
+                isWrapped={isWrapped}
               />
             ),
             subnames: (

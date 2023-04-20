@@ -1,0 +1,114 @@
+diff --git a/commands/metamask.js b/commands/metamask.js
+index b32c62856e518052c2b9e837ceb5c247084152f3..c92e4fcbf797b7d134b2ef3d720276a00dcf4f53 100644
+--- a/commands/metamask.js
++++ b/commands/metamask.js
+@@ -1,5 +1,6 @@
+ const log = require('debug')('synpress:metamask');
+ const playwright = require('./playwright');
++const sleep = require('util').promisify(setTimeout);
+ 
+ const {
+   onboardingWelcomePageElements,
+@@ -358,6 +359,18 @@ const metamask = {
+     await module.exports.closePopupAndTooltips();
+     await playwright.waitAndClick(mainPageElements.accountMenu.button);
+     if (typeof accountNameOrAccountNumber === 'number') {
++      const page = await playwright.metamaskWindow();
++      await playwright.waitFor(mainPageElements.accountMenu.accountButton(1), page);
++      for (let i = 2; i <= accountNameOrAccountNumber; i++) {
++        if (!(await page.locator(mainPageElements.accountMenu.accountButton(i)).count())) {
++          await playwright.waitAndClick(
++            mainPageElements.accountMenu.createAccountButton,
++          );
++          await playwright.waitAndClick(mainPageElements.createAccount.createButton);
++          await playwright.waitAndClick(mainPageElements.accountMenu.button);
++        }
++      }
++
+       await playwright.waitAndClick(
+         mainPageElements.accountMenu.accountButton(accountNameOrAccountNumber),
+       );
+@@ -817,6 +830,7 @@ const metamask = {
+     return true;
+   },
+   async confirmTransaction(gasConfig) {
++    if (process.env.TRANSACTION_WAIT_TIME) await sleep(parseInt(process.env.TRANSACTION_WAIT_TIME));
+     let txData = {};
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     if (gasConfig) {
+@@ -948,27 +962,6 @@ const metamask = {
+         }
+       }
+     }
+-    log('[confirmTransaction] Checking if recipient address is present..');
+-    if (
+-      await playwright
+-        .metamaskNotificationWindow()
+-        .locator(confirmPageElements.recipientButton)
+-        .isVisible()
+-    ) {
+-      log('[confirmTransaction] Getting recipient address..');
+-      await playwright.waitAndClick(
+-        confirmPageElements.recipientButton,
+-        notificationPage,
+-      );
+-      txData.recipientPublicAddress = await playwright.waitAndGetValue(
+-        recipientPopupElements.recipientPublicAddress,
+-        notificationPage,
+-      );
+-      await playwright.waitAndClick(
+-        recipientPopupElements.popupCloseButton,
+-        notificationPage,
+-      );
+-    }
+     log('[confirmTransaction] Checking if network name is present..');
+     if (
+       await playwright
+diff --git a/commands/playwright.js b/commands/playwright.js
+index 26df7862263b8c9ec37da4e7d12d7c324d102c48..0f2a509cf7b8ef5e0bc39a7ce788f407df01dd88 100644
+--- a/commands/playwright.js
++++ b/commands/playwright.js
+@@ -157,21 +157,15 @@ module.exports = {
+         force: args.force,
+       });
+     } else if (args.numberOfClicks && args.waitForEvent) {
+-      await Promise.all([
+-        page.waitForEvent(args.waitForEvent),
+-        element.click({ clickCount: args.numberOfClicks, force: args.force }),
+-      ]);
++      element.click({ clickCount: args.numberOfClicks, force: args.force });
++      await page.waitForEvent(args.waitForEvent);
+     } else if (args.waitForEvent) {
+       if (args.waitForEvent.includes('navi')) {
+-        await Promise.all([
+-          page.waitForNavigation(),
+-          element.click({ force: args.force }),
+-        ]);
++        element.click({ force: args.force })
++        await page.waitForNavigation();
+       } else {
+-        await Promise.all([
+-          page.waitForEvent(args.waitForEvent),
+-          element.click({ force: args.force }),
+-        ]);
++        element.click({ force: args.force });
++        await page.waitForEvent(args.waitForEvent);
+       }
+     } else {
+       await element.click({ force: args.force });
+diff --git a/synpress.js b/synpress.js
+index cf7b4ecc9eee4232fe4e94902b161ddb4f015656..a375c1074f0e19e1daea84004254c7ed0cca9df5 100755
+--- a/synpress.js
++++ b/synpress.js
+@@ -99,7 +99,10 @@ program
+     'specify mocha reporter options, separate multiple values with comma',
+   )
+   // dashboard
+-  .option('-cid, --ciBuildId', '[dashboard] add custom ci build id to the run')
++  .option(
++    '--ci-build-id <id>',
++    '[dashboard] the unique identifier for a run on your CI provider. typically a "BUILD_ID" env var. this value is automatically detected for most CI providers'
++  )
+   .option(
+     '-r, --record',
+     '[dashboard] record video of tests running after setting up your project to record',

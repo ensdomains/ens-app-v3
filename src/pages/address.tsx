@@ -2,7 +2,6 @@ import { useRouter } from 'next/router'
 import { ReactElement, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { Button, Spinner } from '@ensdomains/thorin'
 
@@ -25,7 +24,9 @@ import {
   SortDirection,
   SortType,
 } from '../components/@molecules/NameTableHeader/NameTableHeader'
+import { useAccountSafely } from '../hooks/useAccountSafely'
 import { useChainId } from '../hooks/useChainId'
+import { useQueryParameterState } from '../hooks/useQueryParameterState'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -58,8 +59,10 @@ const EmptyDetailContainer = styled.div(
 
 const Page = () => {
   const { t } = useTranslation('address')
-  const { query, isReady } = useRouter()
-  const { address: _address } = useAccount()
+  const router = useRouter()
+  const { isReady, query } = router
+  const { address: _address } = useAccountSafely()
+
   const address = query.address as string
   const chainId = useChainId()
   const isSelf = _address === address
@@ -74,9 +77,12 @@ const Page = () => {
     }
   }
 
-  const [sortType, setSortType] = useState<SortType | undefined>()
-  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.desc)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
+  const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
+    'direction',
+    'asc',
+  )
+  const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
 
   const { profile: primaryProfile, loading: primaryProfileLoading } = usePrimaryProfile(address)
 
@@ -93,7 +99,7 @@ const Page = () => {
   } = useNamesFromAddress({
     address,
     sort: {
-      type: sortType || SortType.expiryDate,
+      type: sortType || 'expiryDate',
       orderDirection: sortDirection,
     },
     page,
@@ -109,11 +115,12 @@ const Page = () => {
     [mode],
   )
 
-  const { showDataInput, getTransactionFlowStage } = useTransactionFlow()
+  const { prepareDataInput, getTransactionFlowStage } = useTransactionFlow()
+  const showExtendNamesInput = prepareDataInput('ExtendNames')
   const transactionKey = `extend-names-${selectedNames.join('-')}`
   const handleExtend = () => {
     if (selectedNames.length === 0) return
-    showDataInput(transactionKey, 'ExtendNames', {
+    showExtendNamesInput(transactionKey, {
       names: selectedNames,
       isSelf,
     })
@@ -136,12 +143,7 @@ const Page = () => {
   const error = hasErrors ? t('errors.names') : ''
 
   return (
-    <Content
-      alwaysShowSubtitle
-      subtitle={t('addressDetails')}
-      title={shortenAddress(address)}
-      loading={loading}
-    >
+    <Content title={shortenAddress(address)} copyValue={address} loading={loading}>
       {{
         warning: error
           ? {
@@ -169,11 +171,7 @@ const Page = () => {
               selectable={!!_address}
               mode={mode}
               sortType={sortType}
-              sortTypeOptionValues={[
-                SortType.expiryDate,
-                SortType.labelName,
-                SortType.creationDate,
-              ]}
+              sortTypeOptionValues={['expiryDate', 'labelName', 'creationDate']}
               sortDirection={sortDirection}
               searchQuery={searchQuery}
               selectedCount={selectedNames.length}
@@ -191,6 +189,7 @@ const Page = () => {
                   onClick={handleExtend}
                   data-testid="extend-names-button"
                   prefix={<FastForwardSVG />}
+                  disabled={selectedNames.length === 0}
                 >
                   {t('action.extend', { ns: 'common' })}
                 </Button>

@@ -10,7 +10,7 @@ const PAGE_SIZE = 25
 
 export type Subname = ReturnedENS['getSubnames']['subnames'][number]
 
-export type SubnameSortType = Exclude<SortType, SortType.expiryDate>
+export type SubnameSortType = Exclude<SortType, 'expiryDate'>
 
 export const useSubnameInfiniteQuery = (
   name: string,
@@ -20,12 +20,12 @@ export const useSubnameInfiniteQuery = (
 ) => {
   const { getSubnames } = useEns()
 
-  const queryKey = ['getSubnames', name, orderBy, orderDirection, search]
+  const queryKey = ['graph', 'getSubnames', 'infinite', name, orderBy, orderDirection, search]
   const { data, isLoading, isFetching, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery(
     queryKey,
     async ({ pageParam }) => {
       const result = await getSubnames({
-        name,
+        name: name === '[root]' ? '' : name,
         lastSubnames: pageParam,
         orderBy: orderBy === 'creationDate' ? 'createdAt' : 'labelName',
         orderDirection: orderDirection === 'asc' ? 'asc' : 'desc',

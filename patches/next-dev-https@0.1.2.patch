@@ -1,0 +1,39 @@
+diff --git a/src/server.js b/src/server.js
+index c10643e5f595aa9430179b719434b031fea1cc00..b7f25fbb8aed36cc17e17b1382215d9be44352c2 100644
+--- a/src/server.js
++++ b/src/server.js
+@@ -165,10 +165,10 @@ Options
+           }
+           qrcode.generate(qrcodeUrl, { small: !big });
+         });
+-      
++
+       const acceptsInput =
+         process.stdin.isTTY && typeof process.stdin.setRawMode === "function";
+-      
++
+       if (qrPrint) {
+         qrPrint();
+         acceptsInput &&
+@@ -256,13 +256,6 @@ function startServer(opts) {
+         reject(err);
+       }
+     });
+-    /** @type { ReturnType<import("next/dist/server/next").NextServer["getUpgradeHandler"]> } */
+-    let upgradeHandler;
+-    if (!opts.dev) {
+-      server.on("upgrade", (req, socket, upgrade) => {
+-        upgradeHandler(req, socket, upgrade);
+-      });
+-    }
+     server.on("listening", () => {
+       const addr = server.address();
+       const hostname =
+@@ -277,7 +270,6 @@ function startServer(opts) {
+         port: addr && typeof addr === "object" ? addr.port : port,
+       });
+       requestHandler = app.getRequestHandler();
+-      upgradeHandler = app.getUpgradeHandler();
+       resolve(app);
+     });
+     server.listen(port, opts.hostname);

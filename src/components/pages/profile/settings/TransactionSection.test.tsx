@@ -1,4 +1,4 @@
-import { mockFunction, render, screen } from '@app/test-utils'
+import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 
 import { act } from '@testing-library/react'
 
@@ -32,6 +32,14 @@ describe('TransactionSection', () => {
   mockUseChainName.mockReturnValue('mainnet')
   mockUseClearRecentTransactions.mockReturnValue(mockClearTransactions)
 
+  beforeAll(() => {
+    Element.prototype.getBoundingClientRect = () =>
+      ({
+        width: 300,
+        height: 300,
+      } as any)
+  })
+
   it('should render', () => {
     mockUseRecentTransactions.mockReturnValue([])
     render(<TransactionSection />)
@@ -39,22 +47,28 @@ describe('TransactionSection', () => {
     expect(screen.getByText('section.transaction.title')).toBeVisible()
     expect(screen.getByText('section.transaction.noRecentTransactions')).toBeVisible()
   })
-  it('should only show 4 transactions on initial render', () => {
+
+  it('should only show 5 transactions on initial render', () => {
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 9 }, makeRecentTransaction()))
     render(<TransactionSection />)
-    expect(screen.getAllByTestId('transaction-confirmed')).toHaveLength(4)
+    expect(screen.getAllByTestId('transaction-confirmed')).toHaveLength(5)
   })
-  it('should have correct height when "View More" button is visiable', () => {
+
+  it('should have correct height when "View More" button is visiable', async () => {
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 9 }, makeRecentTransaction()))
     render(<TransactionSection />)
     const element = screen.getByTestId('transaction-section-container')
-    expect(element).toHaveStyle(`height: calc( 5 * 4.5rem );`)
+    await waitFor(() => {
+      expect(element).toHaveStyle(`height: 300px;`)
+    })
   })
-  it('should have correct height when "View More" button is NOT visiable', () => {
+  it('should have correct height when "View More" button is NOT visiable', async () => {
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 4 }, makeRecentTransaction()))
     render(<TransactionSection />)
     const element = screen.getByTestId('transaction-section-container')
-    expect(element).toHaveStyle(`height: calc( 4 * 4.5rem );`)
+    await waitFor(() => {
+      expect(element).toHaveStyle(`height: 300px;`)
+    })
   })
   it('should not show View More button if there is less than 5 transactions', () => {
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 4 }, makeRecentTransaction()))
@@ -89,5 +103,53 @@ describe('TransactionSection', () => {
       screen.getByTestId('transaction-clear-button').click()
     })
     expect(mockClearTransactions).toHaveBeenCalled()
+  })
+  it('should correctly display registration transactions with hyphens', () => {
+    mockUseRecentTransactions.mockReturnValue([
+      {
+        status: 'confirmed',
+        action: 'registerName',
+        hash: '0x4d6cf7e1c8620a59c8a0d2d2c9bf9bbca6dbf65e694f01d1e5f85c87315e20c7',
+        key: 'register-test-hyphens.eth-0x99b7A9E80F46F7d0eB11b5147e6fF64E47698b6C',
+      },
+    ])
+    render(<TransactionSection />)
+    expect(screen.getByText('transaction.description.registerName: test-hyphens.eth')).toBeVisible()
+  })
+  it('should correctly display registration transactions without hyphens', () => {
+    mockUseRecentTransactions.mockReturnValue([
+      {
+        status: 'confirmed',
+        action: 'registerName',
+        hash: '0x4d6cf7e1c8620a59c8a0d2d2c9bf9bbca6dbf65e694f01d1e5f85c87315e20c7',
+        key: 'register-test.eth-0x99b7A9E80F46F7d0eB11b5147e6fF64E47698b6C',
+      },
+    ])
+    render(<TransactionSection />)
+    expect(screen.getByText('transaction.description.registerName: test.eth')).toBeVisible()
+  })
+  it('should correctly display commit transactions with hyphens', () => {
+    mockUseRecentTransactions.mockReturnValue([
+      {
+        status: 'confirmed',
+        action: 'commitName',
+        hash: '0x4d6cf7e1c8620a59c8a0d2d2c9bf9bbca6dbf65e694f01d1e5f85c87315e20c7',
+        key: 'commit-test-hyphens.eth-0x99b7A9E80F46F7d0eB11b5147e6fF64E47698b6C',
+      },
+    ])
+    render(<TransactionSection />)
+    expect(screen.getByText('transaction.description.commitName: test-hyphens.eth')).toBeVisible()
+  })
+  it('should correctly display commit transactions without hyphens', () => {
+    mockUseRecentTransactions.mockReturnValue([
+      {
+        status: 'confirmed',
+        action: 'commitName',
+        hash: '0x4d6cf7e1c8620a59c8a0d2d2c9bf9bbca6dbf65e694f01d1e5f85c87315e20c7',
+        key: 'commit-test.eth-0x99b7A9E80F46F7d0eB11b5147e6fF64E47698b6C',
+      },
+    ])
+    render(<TransactionSection />)
+    expect(screen.getByText('transaction.description.commitName: test.eth')).toBeVisible()
   })
 })

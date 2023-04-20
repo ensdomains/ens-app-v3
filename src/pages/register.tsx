@@ -14,20 +14,19 @@ export default function Page() {
 
   const initial = useInitial()
 
-  const { address, isConnecting, isReconnecting } = useAccount()
-  const accountLoading = isConnecting || isReconnecting
+  const { address } = useAccount()
 
   const nameDetails = useNameDetails(name)
   const { isLoading: detailsLoading, registrationStatus } = nameDetails
 
-  const isLoading = detailsLoading || accountLoading || initial
+  const isLoading = detailsLoading || initial
 
   if (!isLoading && registrationStatus !== 'available' && registrationStatus !== 'premium') {
     let redirect = true
 
-    if (nameDetails.ownerData?.owner === address) {
+    if (nameDetails.ownerData?.owner === address && !!address) {
       const registrationData = JSON.parse(
-        localStorage.getItem('registration-status') || '{items:[]}',
+        localStorage.getItem('registration-status') || '{"items":[]}',
       )
       const index = getSelectedIndex(registrationData, {
         address: address!,

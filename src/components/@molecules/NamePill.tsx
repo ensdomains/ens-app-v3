@@ -36,14 +36,22 @@ const TypographyWrapper = styled.div(
   `,
 )
 
-export const NamePill = ({ name, network }: { name: string; network: number }) => {
+export const NamePill = ({
+  name,
+  truncatedName = name,
+  network,
+}: {
+  name: string
+  truncatedName?: string
+  network: number
+}) => {
   return (
     <Container>
       <AvatarWrapper>
-        <NameAvatar label={name} name={name} network={network} />
+        <NameAvatar label={name} name={truncatedName} network={network} />
       </AvatarWrapper>
       <TypographyWrapper>
-        <Typography ellipsis>{name}</Typography>
+        <Typography ellipsis>{truncatedName}</Typography>
       </TypographyWrapper>
     </Container>
   )

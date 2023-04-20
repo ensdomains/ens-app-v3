@@ -3,7 +3,7 @@ import type { JsonRpcSigner } from '@ethersproject/providers'
 import { toUtf8String } from '@ethersproject/strings'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css, keyframes } from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
 
 import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
@@ -15,6 +15,7 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainName } from '@app/hooks/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
 import { transactions } from '@app/transaction-flow/transaction'
@@ -46,8 +47,8 @@ const WalletIcon = styled.svg(
   `,
 )
 
-const Bar = styled.div(
-  ({ theme }) => css`
+const Bar = styled.div<{ $status: Status }>(
+  ({ theme, $status }) => css`
     width: ${theme.space.full};
     height: ${theme.space['9']};
     border-radius: ${theme.radii.full};
@@ -57,6 +58,17 @@ const Bar = styled.div(
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+
+    --bar-color: ${theme.colors.blue};
+
+    ${$status === 'complete' &&
+    css`
+      --bar-color: ${theme.colors.green};
+    `}
+    ${$status === 'failed' &&
+    css`
+      --bar-color: ${theme.colors.red};
+    `}
   `,
 )
 
@@ -99,43 +111,51 @@ const MessageTypography = styled(Typography)(
 
 type Status = Omit<TransactionStage, 'confirm'>
 
-const progressAnimation = keyframes`
- 0% { width: 6rem; }
- 100% { width: 100%; }
-`
-
-const InnerBar = styled.div<{ $progress: number; $status: Status }>(
-  ({ theme, $progress, $status }) => css`
-    height: ${theme.space['9']};
-    border-radius: ${theme.radii.full};
+const BarPrefix = styled.div(
+  ({ theme }) => css`
     padding: ${theme.space['2']} ${theme.space['4']};
+    width: min-content;
+    height: ${theme.space['9']};
+    margin-right: -1px;
 
-    animation-name: ${progressAnimation};
-    animation-duration: 45s;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
+    border-radius: ${theme.radii.full};
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: var(--bar-color);
+  `,
+)
 
-    ${$progress === 100 &&
-    css`
+const InnerBar = styled.div(
+  ({ theme }) => css`
+    padding: ${theme.space['2']} ${theme.space['4']};
+    height: ${theme.space['9']};
+
+    border-radius: ${theme.radii.full};
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    transition: width 1s linear;
+    &.progress-complete {
+      width: 100% !important;
       padding-right: ${theme.space['2']};
-      animation-timing-function: ease-in-out;
-      animation-duration: 0.5s;
-    `}
+      transition: width 0.5s ease-in-out;
+    }
+
+    background-color: var(--bar-color);
 
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
 
-    background-color: ${theme.colors.blue};
-    ${$status === 'complete' &&
-    css`
-      background-color: ${theme.colors.green};
-    `}
-    ${$status === 'failed' &&
-    css`
-      background-color: ${theme.colors.red};
-    `}
+    position: relative;
+
+    & > svg {
+      position: absolute;
+      right: ${theme.space['2']};
+      top: 50%;
+      transform: translateY(-50%);
+    }
   `,
 )
 
@@ -203,9 +223,14 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
   return (
     <>
       <BarContainer data-testid="load-bar-container">
-        <Bar>
-          <InnerBar $progress={status !== 'sent' ? 100 : progress} $status={status}>
+        <Bar $status={status} key={sendTime}>
+          <BarPrefix>
             <BarTypography>{t(`transaction.dialog.${status}.progress.title`)}</BarTypography>
+          </BarPrefix>
+          <InnerBar
+            style={{ width: `${progress}%` }}
+            className={progress === 100 || status !== 'sent' ? 'progress-complete' : ''}
+          >
             {EndElement}
           </InnerBar>
         </Bar>
@@ -238,6 +263,7 @@ export const TransactionStageModal = ({
 
   const addRecentTransaction = useAddRecentTransaction()
   const { data: signer } = useSigner()
+  const { address } = useAccountSafely()
   const ens = useEns()
 
   const stage = transaction.stage || 'confirm'
@@ -247,18 +273,48 @@ export const TransactionStageModal = ({
     [recentTransactions, transaction.hash],
   )
 
+  const uniqueTxIdentifiers = useMemo(
+    () => ({
+      key: txKey,
+      step: currentStep,
+      name: transaction?.name,
+      data: transaction?.data,
+      chainName,
+      address,
+    }),
+    [txKey, currentStep, transaction?.name, transaction?.data, chainName, address],
+  )
+
+  // if not all unique identifiers are defined, there could be incorrect cached data
+  const isUniquenessDefined = useMemo(
+    // number check is for if step = 0
+    () => Object.values(uniqueTxIdentifiers).every((val) => typeof val === 'number' || !!val),
+    [uniqueTxIdentifiers],
+  )
+
+  const canEnableTransactionRequest = useMemo(
+    () =>
+      !!transaction &&
+      !!signer &&
+      !!ens &&
+      !(stage === 'sent' || stage === 'complete') &&
+      isUniquenessDefined,
+    [transaction, signer, ens, stage, isUniquenessDefined],
+  )
+
   const {
     data: request,
     isLoading: requestLoading,
     error: _requestError,
   } = useQuery(
-    ['prepareTx', txKey, currentStep],
+    ['prepareTx', uniqueTxIdentifiers],
     async () => {
       const populatedTransaction = await transactions[transaction.name].transaction(
         signer as JsonRpcSigner,
         ens,
         transaction.data,
       )
+
       let gasLimit = await signer!.estimateGas(populatedTransaction)
 
       if (transaction.name === 'registerName') {
@@ -272,13 +328,14 @@ export const TransactionStageModal = ({
       }
     },
     {
-      enabled: !!transaction && !!signer && !!ens && !(stage === 'sent' || stage === 'complete'),
+      enabled: canEnableTransactionRequest,
+      onError: console.error,
     },
   )
   const requestError = _requestError as TxError | null
   useInvalidateOnBlock({
-    enabled: !!transaction && !!signer && !!ens,
-    queryKey: ['prepareTx', txKey, currentStep],
+    enabled: canEnableTransactionRequest,
+    queryKey: ['prepareTx', uniqueTxIdentifiers],
   })
 
   const {
@@ -348,7 +405,7 @@ export const TransactionStageModal = ({
       return (
         <Button
           onClick={() => sendTransaction!()}
-          disabled={requestLoading || !sendTransaction}
+          disabled={!canEnableTransactionRequest || requestLoading || !sendTransaction}
           colorStyle="redSecondary"
           data-testid="transaction-modal-failed-button"
         >
@@ -380,7 +437,9 @@ export const TransactionStageModal = ({
     }
     return (
       <Button
-        disabled={requestLoading || !sendTransaction || !!requestError}
+        disabled={
+          !canEnableTransactionRequest || requestLoading || !sendTransaction || !!requestError
+        }
         onClick={() => sendTransaction!()}
         data-testid="transaction-modal-confirm-button"
       >
@@ -388,6 +447,7 @@ export const TransactionStageModal = ({
       </Button>
     )
   }, [
+    canEnableTransactionRequest,
     currentStep,
     dispatch,
     onDismiss,
@@ -458,15 +518,16 @@ export const TransactionStageModal = ({
         {lowerError && <Helper type="error">{lowerError}</Helper>}
       </InnerDialog>
       <Dialog.Footer
-        center
         currentStep={currentStep}
         stepCount={stepCount > 1 ? stepCount : undefined}
         stepStatus={stepStatus}
-        leading={ActionButton}
-        trailing={
+        trailing={ActionButton}
+        leading={
           backToInput &&
           !(stage === 'sent' || stage === 'complete') && (
-            <Button onClick={handleBackToInput(dispatch)}>{t('action.back')}</Button>
+            <Button colorStyle="accentSecondary" onClick={handleBackToInput(dispatch)}>
+              {t('action.back')}
+            </Button>
           )
         }
       />

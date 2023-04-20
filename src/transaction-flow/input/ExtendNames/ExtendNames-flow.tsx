@@ -6,6 +6,7 @@ import { useFeeData } from 'wagmi'
 
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
 
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
@@ -17,7 +18,7 @@ import { useZorb } from '@app/hooks/useZorb'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { CurrencyUnit } from '@app/types'
+import useUserConfig from '@app/utils/useUserConfig'
 import { yearsToSeconds } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
@@ -30,14 +31,15 @@ const Container = styled.form(
   ({ theme }) => css`
     display: flex;
     width: 100%;
-    max-height: 90vh;
+    max-height: 60vh;
     flex-direction: column;
     align-items: center;
     gap: ${theme.space['4']};
 
     ${mq.sm.min(
       css`
-        min-width: 600px;
+        width: calc(80vw - 2 * ${theme.space['6']});
+        max-width: ${theme.space['128']};
       `,
     )}
   `,
@@ -60,16 +62,17 @@ const InnerContainer = styled.div(
   `,
 )
 
-const PlusMinusWrapper = styled.div(
-  () => css`
+const PlusMinusWrapper = styled.div(({ theme }) => [
+  css`
     width: 100%;
-    max-width: 60%;
+    max-width: ${theme.space['80']};
     overflow: hidden;
     display: flex;
   `,
-)
+  mq.sm.min(css``),
+])
 
-const OptionBar = styled.div(
+const OptionBar = styled(CacheableComponent)(
   () => css`
     width: 100%;
     display: flex;
@@ -121,6 +124,15 @@ const NamesListItemSubtitle = styled.div(
     font-size: ${theme.space['3.5']};
     line-height: 1.43;
     color: ${theme.colors.textTertiary};
+  `,
+)
+
+const GasEstimationCacheableComponent = styled(CacheableComponent)(
+  ({ theme }) => css`
+    width: 100%;
+    gap: ${theme.space['4']};
+    display: flex;
+    flex-direction: column;
   `,
 )
 
@@ -192,9 +204,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const [years, setYears] = useState(1)
   const duration = yearsToSeconds(years)
 
-  const [currencyUnit, setCurrencyUnit] = useState<CurrencyUnit>('eth')
-  const fiatUnit = 'usd'
-  const currencyDisplay = currencyUnit === 'fiat' ? fiatUnit : 'eth'
+  const { userConfig, setCurrency } = useUserConfig()
+  const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
   const { base: rentFee, loading: priceLoading } = usePrice(names, true)
 
@@ -207,7 +218,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     gasLimit: estimatedGasLimit,
     error: estimateGasLimitError,
     isLoading: isEstimateGasLoading,
-  } = useEstimateGasLimitForTransactions(transactions)
+  } = useEstimateGasLimitForTransactions(transactions, !!rentFee)
 
   const hardcodedGasLimit = gasLimitDictionary.RENEW(names.length)
   const gasLimit = estimatedGasLimit || hardcodedGasLimit
@@ -245,7 +256,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           children: t('action.next', { ns: 'common' }),
         }
 
-  if (isFeeDataLoading || isEstimateGasLoading || priceLoading) {
+  if (isFeeDataLoading || priceLoading) {
     return (
       <Container>
         <TransactionLoader />
@@ -271,37 +282,45 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   }}
                 />
               </PlusMinusWrapper>
-              <OptionBar>
+              <OptionBar $isCached={isFeeDataLoading}>
                 <GasDisplay gasPrice={gasPrice} />
                 <CurrencyToggle
                   size="small"
-                  checked={currencyUnit === 'fiat'}
-                  onChange={() => setCurrencyUnit(currencyUnit === 'eth' ? 'fiat' : 'eth')}
+                  checked={userConfig.currency === 'fiat'}
+                  onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
                   data-testid="extend-names-currency-toggle"
                 />
               </OptionBar>
-              {rentFee && transactionFee && (
-                <RegistrationTimeComparisonBanner
-                  rentFee={rentFee}
-                  transactionFee={transactionFee}
-                  message={t('input.extendNames.bannerMsg')}
-                />
-              )}
-              <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
-              {!!estimateGasLimitError && (
-                <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
-              )}
+              <GasEstimationCacheableComponent $isCached={isEstimateGasLoading}>
+                <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
+                {!!estimateGasLimitError && (
+                  <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
+                )}
+                {rentFee && transactionFee && (
+                  <RegistrationTimeComparisonBanner
+                    rentFee={rentFee}
+                    transactionFee={transactionFee}
+                    message={t('input.extendNames.bannerMsg')}
+                  />
+                )}
+              </GasEstimationCacheableComponent>
             </>
           )}
         </InnerContainer>
       </ScrollBoxWrapper>
       <Dialog.Footer
         leading={
-          <Button colorStyle="greySecondary" onClick={onDismiss}>
+          <Button colorStyle="accentSecondary" onClick={onDismiss}>
             {t('action.back', { ns: 'common' })}
           </Button>
         }
-        trailing={<Button {...trailingButtonProps} data-testid="extend-names-confirm" />}
+        trailing={
+          <Button
+            {...trailingButtonProps}
+            data-testid="extend-names-confirm"
+            disabled={isEstimateGasLoading}
+          />
+        }
       />
     </Container>
   )

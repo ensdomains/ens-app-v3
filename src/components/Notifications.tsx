@@ -1,16 +1,14 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useQueryClient } from 'wagmi'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
-import useCallbackOnTransaction, {
-  UpdateCallback,
-} from '@app/hooks/transactions/useCallbackOnTransaction'
 import { useChainName } from '@app/hooks/useChainName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { trackEvent } from '../utils/analytics'
@@ -47,7 +45,7 @@ export const Notifications = () => {
 
   const updateCallback = useCallback<UpdateCallback>(
     ({ action, key, status, hash }) => {
-      if (status === 'pending') return
+      if (status === 'pending' || status === 'repriced') return
       if (status === 'confirmed') {
         switch (action) {
           case 'registerName':
@@ -81,7 +79,7 @@ export const Notifications = () => {
               data-testid="notification-continue-button"
               onClick={() => resumeTransactionFlow(key)}
             >
-              Continue
+              {t('action.continue')}
             </Button>
           </ButtonContainer>
         ) : (
@@ -109,7 +107,6 @@ export const Notifications = () => {
   useEffect(() => {
     if (currentNotification) {
       queryClient.invalidateQueries()
-      queryClient.resetQueries({ exact: false, queryKey: ['getSubnames'] })
     }
   }, [currentNotification, queryClient])
 
@@ -123,7 +120,7 @@ export const Notifications = () => {
         )
       }}
       open={open}
-      variant={breakpoints.md ? 'desktop' : 'touch'}
+      variant={breakpoints.sm ? 'desktop' : 'touch'}
       {...currentNotification}
     />
   )

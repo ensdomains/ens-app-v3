@@ -13,17 +13,19 @@ export const useHasSubnames = (name: string) => {
   const { getSubnames, ready } = useEns()
 
   const isSubname = name && name.split('.').length > 2
+  const enabled = !!(ready && name && isSubname)
 
   const {
     data: hasSubnames,
     isLoading,
     isFetched,
-    internal: { isFetchedAfterMount },
+    isFetchedAfterMount,
     status,
+    // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching: _isFetching,
   } = useQuery(
-    ['getSubnames', name],
+    ['graph', 'getSubnames', name],
     async () => {
       let cursor: Subnames = []
       let done = false
@@ -48,13 +50,13 @@ export const useHasSubnames = (name: string) => {
       return false
     },
     {
-      enabled: !!(ready && name && isSubname),
+      enabled,
     },
   )
 
   return {
     hasSubnames,
     isLoading,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    isCachedData: enabled && status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }

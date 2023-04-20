@@ -58,6 +58,10 @@ const PERMISSION_TRANSLATION_KEY: {
     burned: 'cannotSetTTL',
     unburned: 'canSetTTL',
   },
+  CANNOT_APPROVE: {
+    burned: 'cannotApprove',
+    unburned: 'canApprove',
+  },
 }
 
 const TypographyGreyDim = styled(Typography)(
@@ -82,7 +86,8 @@ export const NameChangePermissions = ({
   isUserOwner,
 }: Props) => {
   const { t } = useTranslation('profile')
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showRevokePermissionsInput = prepareDataInput('RevokePermissions')
 
   const isParentLocked = parentState === 'locked'
 
@@ -110,7 +115,7 @@ export const NameChangePermissions = ({
 
   const handleRevokePermissions = () => {
     if (!wrapperData) return
-    showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
+    showRevokePermissionsInput(`revoke-permissions-${name}`, {
       name,
       owner: wrapperData.owner,
       parentFuses: wrapperData.parent,
@@ -132,7 +137,6 @@ export const NameChangePermissions = ({
           placement="left"
           mobilePlacement="top"
           mobileWidth={150}
-          buttonWidth="100%"
           mobileButtonWidth="100%"
         />
       )

@@ -14,9 +14,10 @@ const labels = {
   sub: '0xfa1ea47215815692a5f1391cff19abbaf694c82fb2151a4c351b6c0eeaaf317b',
 }
 
-const renderHelper = (data: ComponentProps<typeof UnknownLabels>['data']) => {
+const renderHelper = (data: Omit<ComponentProps<typeof UnknownLabels>['data'], 'key'>) => {
   const newData = {
     ...data,
+    key: 'test',
     name: data.name
       .split('.')
       .map((label) => encodeLabel(label))
@@ -26,17 +27,24 @@ const renderHelper = (data: ComponentProps<typeof UnknownLabels>['data']) => {
 }
 
 describe('UnknownLabels', () => {
+  beforeEach(() => {
+    mockDispatch.mockClear()
+  })
   it('should render', () => {
     renderHelper({
       name: `${labels.sub}.test123.eth`,
-      transactions: [],
+      transactionFlowItem: {
+        transactions: [],
+      },
     })
     expect(screen.getByText('input.unknownLabels.title')).toBeVisible()
   })
   it('should render inputs for all labels', () => {
     renderHelper({
       name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
-      transactions: [],
+      transactionFlowItem: {
+        transactions: [],
+      },
     })
     expect(screen.getByTestId('unknown-label-input-cool')).toBeVisible()
     expect(screen.getByTestId(`unknown-label-input-${labels.sub}`)).toBeVisible()
@@ -47,7 +55,9 @@ describe('UnknownLabels', () => {
   it('should only allow inputs for unknown labels', () => {
     renderHelper({
       name: `${labels.sub}.test123.eth`,
-      transactions: [],
+      transactionFlowItem: {
+        transactions: [],
+      },
     })
     expect(screen.getByText('input.unknownLabels.title')).toBeVisible()
     expect(screen.getByTestId(`unknown-label-input-${labels.sub}`)).toBeEnabled()
@@ -58,7 +68,9 @@ describe('UnknownLabels', () => {
     beforeEach(async () => {
       renderHelper({
         name: `${labels.sub}.test123.eth`,
-        transactions: [],
+        transactionFlowItem: {
+          transactions: [],
+        },
       })
       input = screen.getByTestId(`unknown-label-input-${labels.sub}`)
       await userEvent.click(input)
@@ -85,7 +97,9 @@ describe('UnknownLabels', () => {
   it('should only allow inputs for unknown labels where there are known labels in between them', () => {
     renderHelper({
       name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
-      transactions: [],
+      transactionFlowItem: {
+        transactions: [],
+      },
     })
     expect(screen.getByTestId('unknown-label-input-cool')).toBeDisabled()
     expect(screen.getByTestId(`unknown-label-input-${labels.sub}`)).toBeEnabled()
@@ -96,7 +110,9 @@ describe('UnknownLabels', () => {
   it('should show TLD on last input as suffix', () => {
     renderHelper({
       name: `${labels.sub}.test123.eth`,
-      transactions: [],
+      transactionFlowItem: {
+        transactions: [],
+      },
     })
     expect(
       screen.getByTestId(`unknown-label-input-test123`).parentElement!.querySelector('label'),
@@ -105,14 +121,18 @@ describe('UnknownLabels', () => {
   it('should not allow submit when inputs are empty', () => {
     renderHelper({
       name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
-      transactions: [],
+      transactionFlowItem: {
+        transactions: [],
+      },
     })
     expect(screen.getByTestId('unknown-labels-confirm')).toBeDisabled()
   })
   it('should not allow submit when inputs have errors', async () => {
     renderHelper({
       name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
-      transactions: [],
+      transactionFlowItem: {
+        transactions: [],
+      },
     })
 
     await userEvent.type(screen.getByTestId(`unknown-label-input-${labels.sub}`), 'aaa')
@@ -123,7 +143,9 @@ describe('UnknownLabels', () => {
   it('should allow submit when inputs are filled and valid', async () => {
     renderHelper({
       name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
-      transactions: [],
+      transactionFlowItem: {
+        transactions: [],
+      },
     })
 
     await userEvent.type(screen.getByTestId(`unknown-label-input-${labels.sub}`), 'sub')
@@ -134,26 +156,28 @@ describe('UnknownLabels', () => {
   it('should replace all unknown label names in transactions array with the new ones', async () => {
     renderHelper({
       name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
-      transactions: [
-        {
-          name: 'approveNameWrapper',
-          data: {
-            address: '0x123',
+      transactionFlowItem: {
+        transactions: [
+          {
+            name: 'approveNameWrapper',
+            data: {
+              address: '0x123',
+            },
           },
-        },
-        {
-          name: 'migrateProfile',
-          data: {
-            name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
+          {
+            name: 'migrateProfile',
+            data: {
+              name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
+            },
           },
-        },
-        {
-          name: 'wrapName',
-          data: {
-            name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
+          {
+            name: 'wrapName',
+            data: {
+              name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
+            },
           },
-        },
-      ],
+        ],
+      },
     })
 
     await userEvent.type(screen.getByTestId(`unknown-label-input-${labels.sub}`), 'sub')
@@ -164,7 +188,7 @@ describe('UnknownLabels', () => {
 
     expect(mockDispatch).toHaveBeenCalledWith({
       name: 'startFlow',
-      key: `wrapName-cool.sub.nice.test.test123.eth`,
+      key: 'test',
       payload: {
         transactions: [
           {
@@ -186,9 +210,39 @@ describe('UnknownLabels', () => {
             },
           },
         ],
-        resumable: true,
+      },
+    })
+  })
+  it('should replace name in intro with new name', async () => {
+    renderHelper({
+      name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
+      transactionFlowItem: {
+        transactions: [],
         intro: {
-          title: 'details.wrap.startTitle',
+          title: ['test'],
+          content: {
+            name: 'WrapName',
+            data: {
+              name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
+            },
+          },
+        },
+      },
+    })
+
+    await userEvent.type(screen.getByTestId(`unknown-label-input-${labels.sub}`), 'sub')
+    await userEvent.type(screen.getByTestId(`unknown-label-input-${labels.test}`), 'test')
+
+    expect(screen.getByTestId('unknown-labels-confirm')).toBeEnabled()
+    await userEvent.click(screen.getByTestId('unknown-labels-confirm'))
+
+    expect(mockDispatch).toHaveBeenCalledWith({
+      name: 'startFlow',
+      key: 'test',
+      payload: {
+        transactions: [],
+        intro: {
+          title: ['test'],
           content: {
             name: 'WrapName',
             data: {
@@ -196,6 +250,32 @@ describe('UnknownLabels', () => {
             },
           },
         },
+      },
+    })
+  })
+  it('should pass through all other transaction item props', async () => {
+    renderHelper({
+      name: `cool.${labels.sub}.nice.${labels.test}.test123.eth`,
+      transactionFlowItem: {
+        transactions: [],
+        resumable: true,
+        resumeLink: 'test123',
+      },
+    })
+
+    await userEvent.type(screen.getByTestId(`unknown-label-input-${labels.sub}`), 'sub')
+    await userEvent.type(screen.getByTestId(`unknown-label-input-${labels.test}`), 'test')
+
+    expect(screen.getByTestId('unknown-labels-confirm')).toBeEnabled()
+    await userEvent.click(screen.getByTestId('unknown-labels-confirm'))
+
+    expect(mockDispatch).toHaveBeenCalledWith({
+      name: 'startFlow',
+      key: 'test',
+      payload: {
+        transactions: [],
+        resumable: true,
+        resumeLink: 'test123',
       },
     })
   })

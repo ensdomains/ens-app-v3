@@ -25,6 +25,8 @@ describe('Register Name', () => {
         cy.findByTestId('primary-name-toggle')
           .click()
           .then(function () {
+            cy.wait(10000)
+            expect(parseFloat($item.text())).to.be.greaterThan(0)
             expect(parseFloat($item.text())).to.be.lessThan(this.estimate)
           })
           .then(() => {
@@ -33,8 +35,8 @@ describe('Register Name', () => {
       })
 
     // should show cost comparison accurately
-    cy.findByTestId('year-marker-0').should('include.text', '18% gas')
-    cy.findByTestId('year-marker-1').should('include.text', '10% gas')
+    cy.findByTestId('year-marker-0').should('include.text', '16% gas')
+    cy.findByTestId('year-marker-1').should('include.text', '8% gas')
     cy.findByTestId('year-marker-2').should('include.text', '4% gas')
 
     // should show correct price for yearly registration
@@ -90,9 +92,12 @@ describe('Register Name', () => {
 
     // should show the correct details on completion
     cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0032 ETH')
+
+    cy.findByTestId('view-name').click()
+    cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
   })
   it('should not direct to the registration page on search, and show all records from registration', () => {
-    cy.findByTestId('home-button').click()
+    cy.visit('/')
     cy.wait(1000)
     cy.findByTestId('search-input-box').click().type('registration-normal.eth{enter}')
     cy.url().should('eq', 'http://localhost:8788/registration-normal.eth')
@@ -126,8 +131,8 @@ describe('Register Name', () => {
     cy.findByTestId('finish-button').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
-    cy.findByTestId('view-name').click()
     cy.wait(10000)
+    cy.findByTestId('view-name').click()
     cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
   })
   it('should allow registering a premium name', () => {
@@ -146,6 +151,7 @@ describe('Register Name', () => {
     cy.findByTestId('finish-button').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
+    cy.wait(10000)
     cy.findByTestId('view-name').click()
     cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
   })

@@ -2,9 +2,7 @@ import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
-import { OwnerArray, ReturnedENS } from '@app/types'
-
-import { networkName } from './constants'
+import { NAMEWRAPPER_AWARE_RESOLVERS, networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
   networkName[`${networkId}` as keyof typeof networkName] || 'unknown'
@@ -44,10 +42,10 @@ export const yearsToSeconds = (years: number) => years * 60 * 60 * 24 * 365
 
 export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365)
 
-export const formatExpiry = (expiry: Date) => `
-${expiry.toLocaleDateString(undefined, {
-  month: 'long',
-})} ${expiry.getDate()}, ${expiry.getFullYear()}`
+export const formatExpiry = (expiry: Date) =>
+  `${expiry.toLocaleDateString(undefined, {
+    month: 'long',
+  })} ${expiry.getDate()}, ${expiry.getFullYear()}`
 
 export const formatDateTime = (date: Date) => {
   const baseFormatted = date.toLocaleTimeString('en', {
@@ -57,15 +55,14 @@ export const formatDateTime = (date: Date) => {
     hour12: false,
     timeZoneName: 'short',
   })
-  const timezoneString = date
-    .toTimeString()
-    .split('(')[1]
-    .replace(/\b(\w)\w*[\s)]?/g, '$1')
-  return `${baseFormatted} (${timezoneString})`
+  return `${baseFormatted}`
 }
 
-export const makeEtherscanLink = (hash: string, network?: string) =>
-  `https://${!network || network === 'ethereum' ? '' : `${network}.`}etherscan.io/tx/${hash}`
+export const formatFullExpiry = (expiryDate?: Date) =>
+  expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
+
+export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
+  `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`
 
 export const isBrowser = !!(
   typeof window !== 'undefined' &&
@@ -79,14 +76,11 @@ export const checkDNSName = (name: string): boolean => {
   return !!labels && labels[labels.length - 1] !== 'eth'
 }
 
-export const checkETHName = (labels: string[]) => labels[labels.length - 1] === 'eth'
-
-export const checkETH2LDName = (isDotETH: boolean, labels: string[], canBeShort?: boolean) =>
-  isDotETH && labels.length === 2 && (canBeShort || labels[0].length >= 3)
-
 export const checkETH2LDFromName = (name: string) => {
   const labels = name.split('.')
-  return checkETH2LDName(checkETHName(labels), labels, true)
+  if (labels.length !== 2) return false
+  if (labels[1] !== 'eth') return false
+  return true
 }
 
 export const checkSubname = (name: string) => name.split('.').length > 2
@@ -130,14 +124,11 @@ export const validateExpiry = (
   return pccExpired || fuses.parent.PARENT_CANNOT_CONTROL ? expiry : undefined
 }
 
-export const checkPCCExpired = (
-  owners: OwnerArray,
-  wrapperData: ReturnedENS['getWrapperData'] | undefined,
-  nameWrapperAddress: string,
-) =>
-  !!(
-    owners.length === 1 &&
-    owners[0].address === nameWrapperAddress &&
-    wrapperData?.expiryDate &&
-    wrapperData.expiryDate < new Date()
-  )
+export const canEditRecordsWhenWrappedCalc = (
+  isWrapped: boolean,
+  resolverAddress: string = '',
+  chainId: number = 1,
+) => {
+  if (!isWrapped) return true
+  return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
+}

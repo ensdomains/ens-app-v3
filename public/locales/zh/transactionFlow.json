@@ -53,9 +53,9 @@
           "noOptions": "没有可用的账户",
           "placeholder": {
             "default": "在此添加用户名",
-            "com.twitter": "例如 yogicodes",
-            "com.github": "例如 yogicodes",
-            "com.discord": "例如 yogicodes#4323"
+            "com.twitter": "例如 ensdomains",
+            "com.github": "例如 ensdomains",
+            "com.discord": "例如 alisha.eth#0001"
           }
         },
         "address": {
@@ -80,7 +80,7 @@
             "default": "在此添加 url",
             "ipfs": "ipfs://...",
             "skynet": "sia://...",
-            "arweave": "arweave://...",
+            "arweave": "ar://...",
             "swarm": "bzz://...",
             "onion": "onion3://..."
           }
@@ -119,6 +119,9 @@
           "title": "您的解析器已经过时了",
           "subtitle": "在更新解析器之前，个人资料编辑将被禁用。",
           "action": "更新"
+        },
+        "links": {
+          "learnMoreResolvers": "了解更多关于解析器的信息"
         }
       }
     },
@@ -161,7 +164,7 @@
           "title": "更改权限",
           "fuses": {
             "CAN_EXTEND_EXPIRY": "授予此权限: 延长有效期"
-          } 
+          }
         },
         "setExpiry": {
           "title": "设置名称的有效期",
@@ -202,7 +205,8 @@
             "CANNOT_TRANSFER": "撤销此权限: 发送名称",
             "CANNOT_SET_RESOLVER": "撤销此权限: 设置解析器",
             "CANNOT_SET_TTL": "撤销此权限: 设置 TTL",
-            "CANNOT_BURN_FUSES": "撤销此权限: 更改权限"
+            "CANNOT_BURN_FUSES": "撤销此权限: 更改权限",
+            "CANNOT_APPROVE": "撤销此权限: 更改续期管理员"
           }
         },
         "revokeChangeFuses": {
@@ -214,7 +218,7 @@
         },
         "revokeChangeFusesWarning": {
           "title": "剩余的权限将被锁定",
-          "subtitle": "在撤销 “更改权限” 后，权限和自定义保险丝将永久锁定在其当前状态。只有在名称过期时才会重置。"    
+          "subtitle": "在撤销 “更改权限” 后，权限和自定义保险丝将永久锁定在其当前状态。只有在名称过期时才会重置。"
         }
       },
       "action": {
@@ -242,8 +246,9 @@
   },
   "intro": {
     "migrateAndUpdateResolver": {
-      "title": "您需要先升级解析器，然后才能保存您编辑的个人资料。",
-      "link": "了解有关解析器升级的更多信息",
+      "title": "需要先完成一项操作",
+      "heading": "您需要先升级解析器，然后才能保存您编辑的个人资料。",
+      "link": "了解更多关于解析器升级的信息",
       "warning": "请注意，一旦您取消该选项，那您的更改将无法保存。"
     },
     "syncManager": {

@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useQueryClient } from 'wagmi'
 
 import {
   decodeLabelhash,
@@ -14,21 +15,16 @@ import { Button, Dialog, Input, Typography, mq } from '@ensdomains/thorin'
 
 import { isLabelTooLong } from '@app/utils/utils'
 
-import { makeIntroItem } from '../../intro'
-import { GenericTransaction, TransactionDialogPassthrough } from '../../types'
+import { TransactionDialogPassthrough, TransactionFlowItem } from '../../types'
 
 const Container = styled.div(
   ({ theme }) => css`
-    width: calc(100% + 2 * ${theme.space['3.5']});
-    height: calc(100% + 2 * ${theme.space['3.5']});
-
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    gap: ${theme.space['6']};
-
-    padding: 0 ${theme.space['2']};
+    gap: ${theme.space['4']};
 
     & > div {
       text-align: center;
@@ -37,7 +33,8 @@ const Container = styled.div(
     }
 
     ${mq.sm.min(css`
-      width: 95vw;
+      gap: ${theme.space['6']};
+      width: calc(80vw - 2 * ${theme.space['6']});
       max-width: ${theme.space['128']};
     `)}
   `,
@@ -62,7 +59,8 @@ type FormData = Record<string, string>
 
 type Data = {
   name: string
-  transactions: GenericTransaction[]
+  key: string
+  transactionFlowItem: TransactionFlowItem
 }
 
 type UnknownLabelItem = [index: number, hash: string]
@@ -94,7 +92,13 @@ const validateLabel = (hash: string) => (label: string) => {
   return true
 }
 
-const UnknownLabels = ({ data: { name, transactions }, dispatch, onDismiss }: Props) => {
+const UnknownLabels = ({
+  data: { name, key, transactionFlowItem },
+  dispatch,
+  onDismiss,
+}: Props) => {
+  const queryClient = useQueryClient()
+
   const { t } = useTranslation('transactionFlow')
 
   const formRef = useRef<HTMLFormElement>(null)
@@ -160,22 +164,33 @@ const UnknownLabels = ({ data: { name, transactions }, dispatch, onDismiss }: Pr
 
     saveName(newName)
 
+    const { transactions, intro } = transactionFlowItem
+
+    const newKey = key.replace(name, newName)
+
     const newTransactions = transactions.map((tx) =>
       typeof tx.data === 'object' && tx.data.name
         ? { ...tx, data: { ...tx.data, name: newName } }
         : tx,
     )
 
+    const newIntro =
+      intro && typeof intro.content.data === 'object' && intro.content.data.name
+        ? {
+            ...intro,
+            content: { ...intro.content, data: { ...intro.content.data, name: newName } },
+          }
+        : intro
+
+    queryClient.resetQueries({ exact: true, queryKey: ['validate', name] })
+
     dispatch({
       name: 'startFlow',
-      key: `wrapName-${newName}`,
+      key: newKey,
       payload: {
+        ...transactionFlowItem,
         transactions: newTransactions,
-        resumable: true,
-        intro: {
-          title: t('details.wrap.startTitle', { ns: 'profile' }),
-          content: makeIntroItem('WrapName', { name: newName }),
-        },
+        intro: newIntro as any,
       },
     })
   }
@@ -215,7 +230,7 @@ const UnknownLabels = ({ data: { name, transactions }, dispatch, onDismiss }: Pr
       </Container>
       <Dialog.Footer
         leading={
-          <Button colorStyle="greySecondary" onClick={onDismiss}>
+          <Button colorStyle="accentSecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

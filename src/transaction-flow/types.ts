@@ -1,8 +1,10 @@
+import { TOptions } from 'i18next'
 import { ComponentProps, Dispatch, ReactNode } from 'react'
 
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
-import { TransactionDisplayItem } from '@app/types'
+import { Transaction } from '@app/hooks/transactions/transactionStore'
+import { MinedData, TransactionDisplayItem } from '@app/types'
 
 import type { DataInputComponent } from './input'
 import type { IntroComponentName } from './intro'
@@ -24,6 +26,7 @@ export type GenericTransaction = {
   sendTime?: number
   finaliseTime?: number
   stage?: TransactionStage
+  minedData?: MinedData
 }
 
 type GenericIntro = {
@@ -31,10 +34,12 @@ type GenericIntro = {
   data: any
 }
 
+type StoredTranslationReference = [key: string, options?: TOptions]
+
 export type TransactionIntro = {
-  title: string
-  leadingLabel?: string
-  trailingLabel?: string
+  title: StoredTranslationReference
+  leadingLabel?: StoredTranslationReference
+  trailingLabel?: StoredTranslationReference
   content: GenericIntro
 }
 
@@ -123,12 +128,7 @@ export type TransactionFlowAction =
     }
   | {
       name: 'setTransactionStageFromUpdate'
-      payload: {
-        key: string
-        hash: string
-        status: 'confirmed' | 'failed'
-        timestamp: number
-      }
+      payload: Transaction
     }
   | {
       name: 'resetTransactionStep'

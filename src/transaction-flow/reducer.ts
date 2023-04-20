@@ -74,6 +74,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         payload: { push },
       } = action
       const item = draft.items[key]
+      if (!item) break // item no longer exists because transactions were completed
       if (item.resumeLink && getAllTransactionsComplete(item)) {
         push(item.resumeLink)
         break
@@ -83,6 +84,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
     case 'resumeFlow': {
       const { key } = action
       const item = draft.items[key]
+      if (!item) break // item no longer exists because transactions were completed
       if (item.intro) {
         item.currentFlowStage = 'intro'
       }
@@ -127,14 +129,20 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       break
     }
     case 'setTransactionStageFromUpdate': {
-      const { hash, key, status, timestamp } = action.payload
-      const selectedItem = draft.items[key]
+      const { hash, key, status, minedData, newHash } = action.payload
+      const selectedItem = draft.items[key!]
       if (!selectedItem) break
       const transaction = selectedItem.transactions.find((x) => x.hash === hash)
       if (transaction) {
+        if (status === 'repriced') {
+          transaction.hash = newHash
+          transaction.stage = 'sent'
+          break
+        }
         const stage = status === 'confirmed' ? 'complete' : 'failed'
         transaction.stage = stage
-        transaction.finaliseTime = timestamp
+        transaction.minedData = minedData
+        transaction.finaliseTime = minedData!.timestamp
         if (
           key === draft.selectedKey &&
           selectedItem.autoClose &&

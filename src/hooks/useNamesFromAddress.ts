@@ -54,7 +54,7 @@ export const useNamesFromAddress = ({
         type: 'all',
         orderBy: 'labelName',
         orderDirection: 'desc',
-      }),
+      }).then((d) => d || null),
     {
       enabled: ready && !!address && !isBlockTimestampLoading,
     },
@@ -63,6 +63,14 @@ export const useNamesFromAddress = ({
   const mergedData = useMemo(() => {
     if (!data) return []
     const nameMap = data.reduce((map, curr) => {
+      if (curr.id === '0x0000000000000000000000000000000000000000000000000000000000000000') {
+        // eslint-disable-next-line no-param-reassign
+        curr = {
+          ...curr,
+          name: '[root]',
+          truncatedName: '[root]',
+        }
+      }
       const existingEntry = map[curr.name] || {}
       const isController = curr.type === 'domain'
       const isRegistrant = curr.type === 'registration'
@@ -96,7 +104,7 @@ export const useNamesFromAddress = ({
       // filter out names with expiry beyond grace period
       if (n.expiryDate && blockTimestamp && n?.expiryDate.getTime() < blockTimestamp - GRACE_PERIOD)
         return false
-      return n.parent.name !== 'addr.reverse'
+      return n.parent?.name !== 'addr.reverse'
     }
     let secondaryFilter: (n: ReturnedName) => boolean = () => true
     let searchFilter: (n: ReturnedName) => boolean = () => true
@@ -126,14 +134,11 @@ export const useNamesFromAddress = ({
         (a.registrationDate?.getTime() || a.createdAt?.getTime() || 0)
     }
     if (sort.orderDirection === 'asc') {
-      return (a: Name, b: Name) => {
-        if (!a.expiryDate) {
-          return 1
-        }
-        return (a.expiryDate?.getTime() || 0) - (b.expiryDate?.getTime() || 0)
-      }
+      return (a: Name, b: Name) =>
+        (a.expiryDate?.getTime() || Infinity) - (b.expiryDate?.getTime() || Infinity)
     }
-    return (a: Name, b: Name) => (b.expiryDate?.getTime() || 0) - (a.expiryDate?.getTime() || 0)
+    return (a: Name, b: Name) =>
+      (b.expiryDate?.getTime() || Infinity) - (a.expiryDate?.getTime() || Infinity)
   }, [sort.orderDirection, sort.type])
 
   useEffect(() => {

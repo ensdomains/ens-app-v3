@@ -32,6 +32,7 @@ describe('Import DNSSEC name', () => {
     ).should('be.visible')
     cy.findByText('Continue').click()
     cy.findByText('You are importing a DNS name that you appear to not own.').should('be.visible')
+    cy.wait(10000)
     cy.findByText('Claim').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
@@ -50,6 +51,7 @@ describe('Import DNSSEC name', () => {
       'be.visible',
     )
     cy.findByText('Claim').click()
+    cy.wait(10000)
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button', {

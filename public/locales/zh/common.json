@@ -52,10 +52,9 @@
   },
   "navigation": {
     "home": "首页",
-    "names": "名称",
+    "names": "我的名称",
     "favourites": "收藏",
     "settings": "设置",
-    "faq": "常见问题",
     "governance": "治理",
     "community": "社区",
     "developers": "开发者",
@@ -64,12 +63,13 @@
     "terms": "使用条款",
     "privacy": "隐私策略",
     "back": "返回",
-    "oldApp": "旧版 ENS App"
+    "oldApp": "旧版 ENS App",
+    "syncMessage": "正在进行网络同步，您在交易中更改的内容可能还看不到。"
   },
   "wallet": {
     "myProfile": "个人资料",
     "disconnect": "断开连接",
-    "connect": "连接钱包",
+    "connect": "连接",
     "noPrimaryName": "未设置主名",
     "viewProfile": "查看个人资料",
     "viewDetails": "查看详情",
@@ -79,6 +79,9 @@
     "registered": "已注册",
     "expires": "到期时间",
     "noExpiry": "无限期",
+    "expiry": "到期",
+    "parent": "父名称",
+    "noParent": "无父名称",
     "registrant": "注册人",
     "controller": "管理员",
     "dnsOwner": "DNS 所有者",
@@ -104,6 +107,17 @@
     "expiredInMonths_other": "{{count}} 个月前已过期",
     "expiredInYears_one": "{{count}} 年前已过期",
     "expiredInYears_other": "{{count}} 年前已过期",
+    "gracePeriod": {
+      "expiresInYears_one": "宽限期将在 {{count}} 年后到期",
+      "expiresInYears_other": "宽限期将在 {{count}} 年后到期",
+      "expiresInMonths_one": "宽限期将在 {{count}} 个月后到期",
+      "expiresInMonths_other": "宽限期将在 {{count}} 个月后到期",
+      "expiresInDays_one": "宽限期将在 {{count}} 天后到期",
+      "expiresInDays_other": "宽限期将在 {{count}} 天后到期",
+      "expiresInHours_one": "宽限期将在 {{count}} 个小时后到期",
+      "expiresInHours_other": "宽限期将在 {{count}} 个小时后到期",
+      "expiresInHours_zero": "宽限期将在 1 小时内到期"
+    },
     "extend": "续期",
     "send": "发送",
     "transfer": "转移",
@@ -155,7 +169,8 @@
       "updateRecords": "更新记录",
       "transferName": "转移名称",
       "changePermissions": "更改权限",
-      "syncManager": "同步管理员"
+      "syncManager": "同步管理员",
+      "updateProfileRecords": "更新个人资料"
     },
     "info": {
       "sendName": "设置名称的管理员和注册人",
@@ -182,7 +197,8 @@
         "CANNOT_SET_RESOLVER": "设置解析器",
         "CANNOT_SET_TTL": "设置 TTL",
         "CANNOT_TRANSFER": "转移该名称",
-        "CANNOT_BURN_FUSES": "更改权限"
+        "CANNOT_BURN_FUSES": "更改权限",
+        "CANNOT_APPROVE": "更改续期管理员"
       }
     },
     "itemLabel": {

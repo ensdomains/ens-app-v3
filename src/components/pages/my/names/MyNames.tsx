@@ -12,6 +12,8 @@ import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/Name
 import {
   NameTableHeader,
   NameTableMode,
+  SortDirection,
+  SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useChainId } from '@app/hooks/useChainId'
@@ -20,16 +22,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-export enum SortType {
-  expiryDate = 'expiryDate',
-  labelName = 'labelName',
-  creationDate = 'creationDate',
-}
-
-export enum SortDirection {
-  asc = 'asc',
-  desc = 'desc',
-}
+import { useQueryParameterState } from '../../../../hooks/useQueryParameterState'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -55,7 +48,7 @@ const TabWrapperWithButtons = styled(TabWrapper)(
 const MyNames = () => {
   const { t } = useTranslation('names')
   const router = useRouter()
-  const { address: _address, isConnecting, isReconnecting } = useAccount()
+  const { address: _address } = useAccount()
   const address = (router.query.address as string) || (_address as string)
   const isSelf = true
   const chainId = useChainId()
@@ -69,9 +62,13 @@ const MyNames = () => {
       setSelectedNames([...selectedNames, name])
     }
   }
-  const [sortType, setSortType] = useState<SortType | undefined>()
-  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.desc)
-  const [searchQuery, setSearchQuery] = useState('')
+
+  const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
+  const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
+    'direction',
+    'asc',
+  )
+  const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
 
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
@@ -84,7 +81,7 @@ const MyNames = () => {
   } = useNamesFromAddress({
     address,
     sort: {
-      type: sortType || SortType.expiryDate,
+      type: sortType || 'expiryDate',
       orderDirection: sortDirection,
     },
     page,
@@ -96,10 +93,12 @@ const MyNames = () => {
     setPage(1)
   }, [address])
 
-  const { showDataInput, getTransactionFlowStage } = useTransactionFlow()
+  const { prepareDataInput, getTransactionFlowStage } = useTransactionFlow()
+  const showExtendNamesInput = prepareDataInput('ExtendNames')
+
   const handleExtend = () => {
     if (selectedNames.length === 0) return
-    showDataInput(`extend-names-${selectedNames.join('-')}`, 'ExtendNames', {
+    showExtendNamesInput(`extend-names-${selectedNames.join('-')}`, {
       names: selectedNames,
       isSelf,
     })
@@ -123,32 +122,19 @@ const MyNames = () => {
     [mode],
   )
 
-  const loading =
-    isConnecting || isReconnecting || namesLoading || namesStatus === 'loading' || !router.isReady
+  const loading = namesLoading || namesStatus === 'loading' || !router.isReady
 
   useProtectedRoute('/', loading ? true : address && address !== '')
 
   return (
-    <Content
-      title={t('title')}
-      subtitle={`${t('subtitle.start')} ${isSelf ? t('subtitle.your') : t('subtitle.this')} ${t(
-        'subtitle.wallet',
-      )}`}
-      alwaysShowSubtitle
-      singleColumnContent
-      loading={loading}
-    >
+    <Content title={t('title')} singleColumnContent loading={loading}>
       {{
         trailing: (
           <TabWrapperWithButtons>
             <NameTableHeader
               mode={mode}
               sortType={sortType}
-              sortTypeOptionValues={[
-                SortType.expiryDate,
-                SortType.labelName,
-                SortType.creationDate,
-              ]}
+              sortTypeOptionValues={['expiryDate', 'labelName', 'creationDate']}
               sortDirection={sortDirection}
               searchQuery={searchQuery}
               selectedCount={selectedNames.length}
@@ -166,6 +152,7 @@ const MyNames = () => {
                   onClick={handleExtend}
                   data-testid="extend-names-button"
                   prefix={<FastForwardSVG />}
+                  disabled={selectedNames.length === 0}
                 >
                   {t('action.extend', { ns: 'common' })}
                 </Button>

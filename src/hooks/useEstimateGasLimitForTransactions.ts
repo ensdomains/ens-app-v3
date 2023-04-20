@@ -22,7 +22,9 @@ export const fetchEstimateWithConfig =
       ens,
       transaction.data,
     )
+
     const gasLimit = await signer!.estimateGas(populatedTransaction)
+
     return {
       name: transactionName,
       gasLimit,
@@ -34,14 +36,14 @@ export const useEstimateGasLimitForTransactions = (
   isEnabled: boolean = true,
   extraKeys: string[] = [],
 ) => {
-  const keys = transactions.map((t) => t.name)
-
   const ens = useEns()
   const { ready: ensReady } = ens
   const { data: signer, isLoading: isSignerLoading } = useSigner()
 
-  const { data, ...results } = useQuery(
-    ['use-estimate-gas-limit-for-transactions', ...keys, ...extraKeys],
+  const queryKey = ['use-estimate-gas-limit-for-transactions', ...transactions, ...extraKeys]
+
+  const { data, isLoading, isFetching, ...results } = useQuery(
+    queryKey,
     async () => {
       if (!signer) throw new Error('No signer available')
       if (!ens) throw new Error('ensjs did not load')
@@ -63,6 +65,8 @@ export const useEstimateGasLimitForTransactions = (
     },
     {
       enabled: ensReady && !isSignerLoading && isEnabled,
+      onError: console.error,
+      staleTime: 0,
     },
   )
 
@@ -70,6 +74,8 @@ export const useEstimateGasLimitForTransactions = (
     gasLimit: data?.gasLimit,
     gasCostEth: formatEther(data?.gasCost || 0),
     estimates: data?.estimates,
+    isLoading,
+    isFetching,
     ...results,
   }
 }

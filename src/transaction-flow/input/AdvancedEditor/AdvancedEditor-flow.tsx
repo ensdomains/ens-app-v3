@@ -9,34 +9,31 @@ import AddRecord from '@app/components/@molecules/AdvancedEditor/AddRecord'
 import AdvancedEditorContent from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabContent'
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
-import { useProfile } from '@app/hooks/useProfile'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 const Container = styled.form(({ theme }) => [
   css`
-    width: calc(100% + 2 * ${theme.space['3.5']});
-    height: calc(100% + 2 * ${theme.space['3.5']});
-    max-height: 90vh;
-    margin: -${theme.space[3.5]};
+    width: 100%;
+    max-height: 60vh;
     background: ${theme.colors.backgroundPrimary};
     border-radius: ${theme.space['5']};
     overflow: hidden;
     display: flex;
     flex-direction: column;
   `,
-  mq.sm.min`
-    width: 95vw;
-    max-width: 600px;
-  `,
+  mq.sm.min(css`
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
+  `),
 ])
 
 const NameContainer = styled.div(({ theme }) => [
   css`
     display: block;
     width: 100%;
-    padding-top: ${theme.space['6']};
-    padding-left: ${theme.space['7']};
+    padding-left: ${theme.space['2']};
     padding-right: ${theme.space['4']};
     letter-spacing: ${theme.letterSpacings['-0.01']};
     line-height: 45px;
@@ -69,7 +66,6 @@ const FooterContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     gap: ${theme.space['3']};
-    padding: 0 ${theme.space['4']} ${theme.space['4']} ${theme.space['4']};
     width: 100%;
     max-width: ${theme.space['96']};
     margin: 0 auto;
@@ -90,7 +86,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
   const name = data?.name || ''
   const transaction = transactions.find((item: TransactionItem) => item.name === 'updateProfile')
 
-  const { profile, loading } = useProfile(name, name !== '')
+  const { profile, isLoading: loading } = useNameDetails(name)
 
   const handleCreateTransaction = useCallback(
     (records: RecordOptions) => {
@@ -126,7 +122,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
   } = advancedEditorForm
 
   const handleCancel = () => {
-    if (onDismiss) onDismiss()
+    onDismiss?.()
   }
 
   if (loading || isLoadingABIInterface || isLoadingPublicKeyInterface) return null
@@ -138,7 +134,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
         <AdvancedEditorContent {...advancedEditorForm} />
         <AddRecord control={control} AddButtonProps={AddButtonProps} />
         <FooterContainer>
-          <Button colorStyle="greySecondary" onClick={handleCancel}>
+          <Button colorStyle="accentSecondary" onClick={handleCancel}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
           <Button disabled={hasErrors || !hasChanges} type="submit">

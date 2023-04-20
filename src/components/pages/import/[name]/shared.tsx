@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { Button, mq } from '@ensdomains/thorin'
+import { Button, Dropdown, mq } from '@ensdomains/thorin'
 
 import type { Transaction } from '@app/hooks/transactions/transactionStore'
 
@@ -49,3 +49,15 @@ export const hasPendingTransaction = (transactions: Transaction[]) => {
   const transaction = latestTransaction(transactions)
   return transaction && transaction.status === 'pending'
 }
+
+export const AlignedDropdown = styled(Dropdown)(
+  () => css`
+    & > div {
+      justify-content: flex-start;
+      & > div:first-child,
+      & > div:last-child {
+        margin-top: -0.5rem;
+      }
+    }
+  `,
+)
