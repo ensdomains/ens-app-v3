@@ -12,6 +12,7 @@ import { TransactionDialogPassthrough } from '../../types'
 
 type Data = {
   name: string
+  isWrapped: boolean
 }
 
 export type Props = { data: Data } & TransactionDialogPassthrough
@@ -23,18 +24,18 @@ const TransferProfile = ({ data, dispatch }: Props) => {
   const { profile, loading } = useProfile(data.name)
   const oldResolverAddress = profile?.resolverAddress
 
+  const updateResolverTransaction = makeTransactionItem('updateResolver', {
+    name: data.name,
+    resolver: resolverAddress,
+    oldResolver: oldResolverAddress,
+    contract: data.isWrapped ? 'nameWrapper' : 'registry',
+  })
+
   const handleReset = () => {
     if (!resolverAddress) return
     dispatch({
       name: 'setTransactions',
-      payload: [
-        makeTransactionItem('updateResolver', {
-          name: data.name,
-          resolver: resolverAddress,
-          oldResolver: oldResolverAddress,
-          contract: 'registry',
-        }),
-      ],
+      payload: [updateResolverTransaction],
     })
 
     dispatch({
@@ -51,12 +52,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
       payload: {
         transactions: [
           makeTransactionItem('migrateProfile', { name: data.name }),
-          makeTransactionItem('updateResolver', {
-            name: data.name,
-            resolver: resolverAddress,
-            oldResolver: oldResolverAddress,
-            contract: 'registry',
-          }),
+          updateResolverTransaction,
         ],
         resumable: true,
         disableBackgroundClick: true,
@@ -65,7 +61,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
   }
   const footerLeading = (
     <Button
-      colorStyle="greySecondary"
+      colorStyle="accentSecondary"
       onClick={handleReset}
       data-testid="transfer-profile-leading-btn"
     >

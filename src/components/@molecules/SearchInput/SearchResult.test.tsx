@@ -18,7 +18,7 @@ const mockUsePrimary = mockFunction(usePrimary)
 
 describe('SearchResult', () => {
   mockUseChainId.mockReturnValue(1)
-  mockUseBasicName.mockReturnValue({ registrationStatus: 'available' })
+  mockUseBasicName.mockReturnValue({ registrationStatus: 'available', beautifiedName: 'nick.eth' })
 
   const baseMockData: ComponentProps<typeof SearchResult> = {
     type: 'name',
@@ -58,6 +58,7 @@ describe('SearchResult', () => {
     mockUsePrimary.mockReturnValue({
       loading: false,
       name: 'test.eth',
+      beautifiedName: 'test.eth',
       status: 'success',
     })
     const mockData: ComponentProps<typeof SearchResult> = {
@@ -80,5 +81,19 @@ describe('SearchResult', () => {
     const element = screen.getByText('nick.eth')
     fireEvent.click(element)
     expect(baseMockData.clickCallback).toHaveBeenCalledWith(0)
+  })
+  it('should show address as clickable', () => {
+    mockUsePrimary.mockReturnValue({
+      loading: false,
+      name: null,
+      status: 'success',
+    })
+    const mockData: ComponentProps<typeof SearchResult> = {
+      ...baseMockData,
+      type: 'address',
+      value: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+    }
+    render(<SearchResult {...mockData} />)
+    expect(screen.getByTestId('search-result-address')).toHaveStyle('cursor: pointer')
   })
 })

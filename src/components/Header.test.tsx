@@ -7,6 +7,7 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useInitial } from '@app/hooks/useInitial'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
+import Hamburger from './@molecules/Hamburger/Hamburger'
 import { HeaderConnect } from './ConnectButton'
 import { Header } from './Header'
 
@@ -14,6 +15,7 @@ jest.mock('next/router')
 jest.mock('@app/hooks/transactions/useRecentTransactions')
 jest.mock('@app/hooks/useInitial')
 jest.mock('@app/utils/BreakpointProvider')
+jest.mock('./@molecules/Hamburger/Hamburger')
 jest.mock('./ConnectButton')
 
 const mockRouter = mockFunction(useRouter)
@@ -22,6 +24,7 @@ const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseInitial = mockFunction(useInitial)
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockHeaderConnect = mockFunction(HeaderConnect)
+const mockHamburger = mockFunction(Hamburger)
 
 const baseBreakpoints: ReturnType<typeof useBreakpoint> = {
   xs: true,
@@ -55,10 +58,11 @@ describe('Header', () => {
   mockUseInitial.mockReturnValue(false)
   mockUseBreakpoint.mockReturnValue(baseBreakpoints)
   mockHeaderConnect.mockImplementation(() => <div>Connect</div>)
+  mockHamburger.mockImplementation(() => <div>burger</div>)
   describe('search', () => {
-    it('should expand on focus and hide icons if md breakpoint', () => {
+    it('should expand on focus and hide icons if sm breakpoint', () => {
       render(<Header />)
-      expect(screen.getByTestId('search-wrapper')).toHaveStyle('margin-right: 8rem')
+      expect(screen.getByTestId('search-wrapper')).toHaveStyle('margin-right: 6rem')
       checkRoutesPlacement(true)
 
       fireEvent.focus(screen.getByTestId('search-input-box'))

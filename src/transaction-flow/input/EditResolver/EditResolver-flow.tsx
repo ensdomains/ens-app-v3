@@ -13,12 +13,13 @@ import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { makeTransactionItem } from '../../transaction'
 
-const EditResolverFormContainer = styled.div(() => [
+const EditResolverFormContainer = styled.div(({ theme }) => [
   css`
     width: 100%;
   `,
   mq.sm.min(css`
-    width: 510px;
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
   `),
 ])
 
@@ -73,7 +74,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
       </EditResolverFormContainer>
       <Dialog.Footer
         leading={
-          <Button colorStyle="greySecondary" onClick={onDismiss}>
+          <Button colorStyle="accentSecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

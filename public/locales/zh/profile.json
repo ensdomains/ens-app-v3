@@ -62,7 +62,7 @@
         "title": "所有者权限",
         "parentCanControl": {
           "label": "该名称可以受到父名称的控制 (<parentLink>{{parent}}</parentLink>)",
-          "list" : {
+          "list": {
             "title": "父名称的所有者可以:",
             "item1": "控制和修改该名称的设置和记录",
             "item2": "重新获得或重新分配该名称的所有权",
@@ -72,7 +72,7 @@
         "parentCannotControl": {
           "label": "该名称不受父名称的控制 (<parentLink>{{parent}}</parentLink>)",
           "sublabel": "父名称的所有者不能控制、修改、删除或重新获得该名称的所有权。",
-          "list" : {
+          "list": {
             "title": "该名称的所有权不会发生变化，除非发生下列情况之一:",
             "item1": "该名称在 {{date}} 到期 (可以续期)",
             "item2": "父名称在 {{date}} 到期",
@@ -113,15 +113,16 @@
       },
       "expiry": {
         "permissions": {
-            "canExtendExpiry": {
-              "label": "可以延长有效期",
-              "description": "该名称的权限有效期 ({{date}}) 可以由 {{managerOrOwner}} 延长。"
-            },
-            "cannotExtendExpiry": {
-              "label": "不能延长有效期",
-              "description": "该名称的权限有效期不能由其管理员延长。",
-              "description_date": "该名称的权限有效期 ({{date}}) 不能由其管理员延长。"
-            }
+          "canExtendExpiry": {
+            "label": "可以延长有效期",
+            "description": "该名称的权限有效期可以由 {{managerOrOwner}} 延长。",
+            "description_date": "该名称的权限有效期 ({{date}}) 可以由 {{managerOrOwner}} 延长。"
+          },
+          "cannotExtendExpiry": {
+            "label": "不能延长有效期",
+            "description": "该名称的权限有效期不能由其管理员延长。",
+            "description_date": "该名称的权限有效期 ({{date}}) 不能由其管理员延长。"
+          }
         },
         "manager": "管理员",
         "owner": "所有者",
@@ -138,43 +139,51 @@
         "permissions": {
           "canUnwrap": {
             "label": "可以解除包装",
-            "description": "该名称的所有者 {{owner}} 可以解除它的包装。"
+            "description": "该名称的{{owner}}可以解除它的包装。"
           },
           "cannotUnwrap": {
             "label": "不能解除包装",
-            "description": "该名称的所有者 {{owner}} 不能解除它的包装。"
+            "description": "该名称的{{owner}}不能解除它的包装。"
           },
           "canCreateSubnames": {
             "label": "可以创建子名称",
-            "description": "该名称的所有者 {{owner}} 可以创建子名称。"
+            "description": "该名称的{{owner}}可以创建子名称。"
           },
           "cannotCreateSubnames": {
             "label": "不能创建子名称",
-            "description": "该名称的所有者 {{owner}} 不能创建子名称。"
+            "description": "该名称的{{owner}}不能创建子名称。"
           },
           "canSend": {
             "label": "可以发送名称",
-            "description": "该名称的所有者 {{owner}} 可以将它发送给其他人。"
+            "description": "该名称的{{owner}}可以将它发送给其他人。"
           },
           "cannotSend": {
             "label": "不能发送名称",
-            "description": "该名称的所有者 {{owner}} 不能将它发送给其他人。"
+            "description": "该名称的{{owner}}不能将它发送给其他人。"
           },
           "canSetResolver": {
             "label": "可以设置解析器",
-            "description": "该名称的所有者 {{owner}} 可以设置和更改它的解析器。"
+            "description": "该名称的{{owner}}可以设置和更改它的解析器。"
           },
           "cannotSetResolver": {
             "label": "不能设置解析器",
-            "description": "该名称的所有者 {{owner}} 不能设置和更改它的解析器。"
+            "description": "该名称的{{owner}}不能设置和更改它的解析器。"
           },
           "canSetTTL": {
             "label": "可以设置 TTL",
-            "description": "该名称的所有者 {{owner}} 可以设置和更改它的 TTL。"
+            "description": "该名称的{{owner}}可以设置和更改它的 TTL。"
           },
           "cannotSetTTL": {
             "label": "不能设置 TTL",
-            "description": "该名称的所有者 {{owner}} 不能设置和更改它的 TTL。"
+            "description": "该名称的{{owner}}不能设置和更改它的 TTL。"
+          },
+          "canApprove": {
+            "label": "可以更改续期管理员",
+            "description": "对于已经得到子名称续期权限的管理员，该名称的所有者可以更改这些管理员。"
+          },
+          "cannotApprove": {
+            "label": "不能更改续期管理员",
+            "description": "对于已经得到子名称续期权限的管理员，该名称的所有者不能更改这些管理员。"
           }
         },
         "action": {
@@ -273,7 +282,10 @@
         "text": "文本",
         "contentHash": "内容哈希",
         "noContentHash": "无内容哈希",
-        "editRecords": "编辑记录"
+        "editRecords": "编辑记录",
+        "noAbi": "无 ABI",
+        "abi": "ABI",
+        "editRecordsDisabled": "当前解析器不适用于经过包装的名称"
       },
       "subnames": {
         "label": "子名称",
@@ -299,7 +311,6 @@
       }
     }
   },
-
   "advancedEditor": {
     "title": "{{name}} 的记录",
     "tabs": {
@@ -340,7 +351,8 @@
   "errors": {
     "invalidName": "该名称无效。",
     "invalidAddress": "不是一个有效的地址",
-    "expiringSoon": "该名称即将过期。",
+    "expiringSoon": "该名称的宽限期将在 {{date}} 结束。如果在此之前没有进行续期，它将变成可以注册的状态。",
+    "hasExpired": "{{ name }} 已过期",
     "ownerManagerChoice": "必须发送所有者或管理员",
     "unknown": "未知错误",
     "notMigrated": "该名称没有迁移到新的注册表。",
@@ -352,6 +364,7 @@
     "unsupportedTLD": "不支持该 TLD",
     "keyInUse": "{{value}} 已经在使用了",
     "hasSubnames": "该名称拥有子名称",
-    "permissionRevoked": "该名称撤销了执行此操作所需的权限。"
+    "permissionRevoked": "该名称撤销了执行此操作所需的权限。",
+    "invalidJSON": "无效 JSON"
   }
 }

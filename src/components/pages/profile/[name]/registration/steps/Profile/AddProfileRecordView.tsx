@@ -3,22 +3,22 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, ScrollBox } from '@ensdomains/thorin'
+import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, ScrollBox, mq } from '@ensdomains/thorin'
 
+import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import {
   ProfileRecord,
   ProfileRecordGroup,
   grouped as options,
 } from '@app/constants/profileRecordOptions'
-import { RegistrationForm } from '@app/hooks/useRegistrationForm'
-import mq from '@app/mediaQuery'
+import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
 import useDebouncedCallback from '../../../../../../../hooks/useDebouncedCallback'
 import { OptionButton } from './OptionButton'
 import { OptionGroup } from './OptionGroup'
 
-const Container = styled.div(() => [
+const Container = styled.div(({ theme }) => [
   css`
     display: flex;
     flex-direction: column;
@@ -26,7 +26,8 @@ const Container = styled.div(() => [
     max-height: 600px;
   `,
   mq.sm.min(css`
-    width: 520px;
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
   `),
 ])
 
@@ -110,22 +111,36 @@ const OptionsGrid = styled.div(
   `,
 )
 
-const FooterWrapper = styled.div(
-  ({ theme }) => css`
+const FooterWrapper = styled.div(({ theme }) => [
+  css`
     border-top: 1px solid ${theme.colors.border};
     padding: ${theme.space[4]};
     padding-bottom: 0;
-    margin: 0 -${theme.space['3.5']};
+    margin: 0 -${theme.space['4']};
+  `,
+  mq.sm.min(css`
+    padding: ${theme.space[6]};
+    padding-bottom: 0;
+    margin: 0 -${theme.space['6']};
+  `),
+])
+
+const DismissButtonWrapper = styled.div(
+  ({ theme }) => css`
+    position: absolute;
+    top: ${theme.space[3]};
+    right: ${theme.space[3]};
   `,
 )
 
 type Props = {
-  control: Control<RegistrationForm, any>
+  control: Control<ProfileEditorForm, any>
   onAdd?: (records: ProfileRecord[]) => void
   onClose?: () => void
+  showDismiss?: boolean
 }
 
-export const AddProfileRecordView = ({ control, onAdd }: Props) => {
+export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: Props) => {
   const { t, i18n } = useTranslation('register')
 
   const currentRecords = useWatch({ control, name: 'records' })
@@ -135,18 +150,15 @@ export const AddProfileRecordView = ({ control, onAdd }: Props) => {
 
   const filteredOptions = useMemo(() => {
     if (!i18n.isInitialized || !search) return options
+    const matchSearch = (s: string) => s.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
     return options.map((option) => {
-      const groupLabel = t(`steps.profile.options.groups.${option.group}.label`)
+      // If search matches group label, return all items
+      if (matchSearch(t(`steps.profile.options.groups.${option.group}.label`))) return option
       const items = option.items.filter((item) => {
-        const { key: record } = item
-        const matchSearch = (s: string) =>
-          s.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
-        if (matchSearch(record) || matchSearch(groupLabel)) return true
-        if (['address', 'website'].includes(option.group)) {
-          return false
-        }
-        const label = t(`steps.profile.options.groups.${option.group}.items.${record}`)
-        return matchSearch(label)
+        const { key: record, group } = item
+        // if website or address match the record name, else match the translated record name
+        if (['address', 'website'].includes(group)) return matchSearch(record)
+        return matchSearch(t(`steps.profile.options.groups.${option.group}.items.${record}`))
       })
       return {
         ...option,
@@ -363,17 +375,38 @@ export const AddProfileRecordView = ({ control, onAdd }: Props) => {
         </OptionsContainer>
       </Content>
       <FooterWrapper>
-        <Button
-          size="medium"
-          onClick={() => onAdd?.(selectedRecords)}
-          count={selectedRecords.length}
-          fullWidthContent
-          disabled={selectedRecords.length === 0}
-          data-testid="add-profile-records-button"
-        >
-          {t('action.add', { ns: 'common' })}
-        </Button>
+        <Dialog.Footer
+          leading={
+            !showDismiss &&
+            onClose && (
+              <Button
+                data-testid="add-profile-records-close"
+                onClick={() => onClose()}
+                colorStyle="accentSecondary"
+              >
+                {t('action.back', { ns: 'common' })}
+              </Button>
+            )
+          }
+          trailing={
+            <Button
+              size="medium"
+              onClick={() => onAdd?.(selectedRecords)}
+              count={selectedRecords.length}
+              fullWidthContent
+              disabled={selectedRecords.length === 0}
+              data-testid="add-profile-records-button"
+            >
+              {t('action.add', { ns: 'common' })}
+            </Button>
+          }
+        />
       </FooterWrapper>
+      {onClose && showDismiss && (
+        <DismissButtonWrapper>
+          <DismissDialogButton data-testid="dismiss-dialog-btn" onClick={onClose} />
+        </DismissButtonWrapper>
+      )}
     </Container>
   )
 }

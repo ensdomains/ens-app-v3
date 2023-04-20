@@ -1,12 +1,132 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
+import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
+
+const dummyABI = [
+  {
+    type: 'event',
+    anonymous: false,
+    name: 'ABIChanged',
+    inputs: [
+      {
+        type: 'bytes32',
+        indexed: true,
+      },
+      {
+        type: 'uint256',
+        indexed: true,
+      },
+    ],
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    name: 'VersionChanged',
+    inputs: [
+      {
+        type: 'bytes32',
+        indexed: true,
+      },
+      {
+        type: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'ABI',
+    constant: true,
+    stateMutability: 'view',
+    payable: false,
+    inputs: [
+      {
+        type: 'bytes32',
+      },
+      {
+        type: 'uint256',
+      },
+    ],
+    outputs: [
+      {
+        type: 'uint256',
+      },
+      {
+        type: 'bytes',
+      },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'clearRecords',
+    constant: false,
+    payable: false,
+    inputs: [
+      {
+        type: 'bytes32',
+      },
+    ],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'recordVersions',
+    constant: true,
+    stateMutability: 'view',
+    payable: false,
+    inputs: [
+      {
+        type: 'bytes32',
+      },
+    ],
+    outputs: [
+      {
+        type: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'setABI',
+    constant: false,
+    payable: false,
+    inputs: [
+      {
+        type: 'bytes32',
+      },
+      {
+        type: 'uint256',
+      },
+      {
+        type: 'bytes',
+      },
+    ],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'supportsInterface',
+    constant: true,
+    stateMutability: 'view',
+    payable: false,
+    inputs: [
+      {
+        type: 'bytes4',
+      },
+    ],
+    outputs: [
+      {
+        type: 'bool',
+      },
+    ],
+  },
+]
 
 type Name = {
   label: string
@@ -24,6 +144,10 @@ type Name = {
       value: string
     }[]
     contenthash?: string
+    abi?: {
+      contentType: number
+      data: any
+    }
   }
   subnames?: {
     label: string
@@ -37,11 +161,39 @@ const names: Name[] = [
     label: 'test123',
     namedOwner: 'owner',
     namedAddr: 'owner',
+    records: {
+      text: [
+        { key: 'description', value: 'Hello2' },
+        { key: 'url', value: 'https://twitter.com' },
+        { key: 'blankrecord', value: '' },
+        { key: 'email', value: 'fakeemail@fake.com' },
+      ],
+      addr: [
+        { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 0, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
+        { key: 2, value: '0x0000000000000000000000000000000000000000' },
+      ],
+      contenthash: '0xe301017012204edd2984eeaf3ddf50bac238ec95c5713fb40b5e428b508fdbe55d3b9f155ffe',
+    },
   },
   {
     label: 'to-be-wrapped',
     namedOwner: 'owner',
     namedAddr: 'owner',
+    records: {
+      text: [
+        { key: 'description', value: 'Hello2' },
+        { key: 'url', value: 'https://twitter.com' },
+        { key: 'blankrecord', value: '' },
+        { key: 'email', value: 'fakeemail@fake.com' },
+      ],
+      addr: [
+        { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 0, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
+        { key: 2, value: '0x0000000000000000000000000000000000000000' },
+      ],
+      contenthash: '0xe301017012204edd2984eeaf3ddf50bac238ec95c5713fb40b5e428b508fdbe55d3b9f155ffe',
+    },
   },
   {
     label: 'resume-and-wrap',
@@ -82,7 +234,7 @@ const names: Name[] = [
     records: {
       text: [
         { key: 'description', value: 'Hello2' },
-        { key: 'url', value: 'twitter.com' },
+        { key: 'url', value: 'https://twitter.com' },
         { key: 'blankrecord', value: '' },
         { key: 'email', value: 'fakeemail@fake.com' },
       ],
@@ -130,6 +282,12 @@ const names: Name[] = [
     customDuration: 5011200,
   },
   {
+    label: 'grace-period-starting-soon',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    customDuration: 12900600,
+  },
+  {
     label: 'unwrapped-with-wrapped-subnames',
     namedOwner: 'owner',
     namedAddr: 'owner',
@@ -148,6 +306,17 @@ const names: Name[] = [
     label: 'aaa123',
     namedOwner: 'owner',
     namedAddr: 'owner',
+  },
+  {
+    label: 'with-abi',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    records: {
+      abi: {
+        contentType: 1,
+        data: dummyABI,
+      },
+    },
   },
 ]
 
@@ -277,8 +446,22 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         console.log(` - ${records.contenthash} (tx: ${setContenthashTx.hash})...`)
         nonceRef += 1
       }
-
-      return nonceRef - nonce
+      if (records.abi) {
+        console.log('ABI')
+        const { contentType, data } = records.abi
+        console.log(data)
+        const setAbiTx = await _publicResolver.setABI(
+          hash,
+          contentType,
+          toUtf8Bytes(JSON.stringify(data)),
+          {
+            nonce: nonceRef,
+          },
+        )
+        console.log(` - ${records.abi} (tx: ${setAbiTx.hash})...`)
+        nonceRef += 1
+      }
+      return nonceRef - nonce - index
     }
 
   const makeSubnames =

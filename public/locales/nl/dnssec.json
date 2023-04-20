@@ -13,6 +13,7 @@
     "godaddy": "GoDaddy",
     "bluehost": "Bluehost",
     "hostgator": "HostGator",
+    "cloudflare": "Cloudflare",
     "findYourRegistrar": "Vind je registrar"
   },
   "addTextRecord": {

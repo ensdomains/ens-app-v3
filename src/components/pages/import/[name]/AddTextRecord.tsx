@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { DNSProver } from '@ensdomains/dnsprovejs'
-import { Button, Dropdown, Helper, Typography } from '@ensdomains/thorin'
+import { Button, Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
@@ -15,7 +15,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { shortenAddress } from '@app/utils/utils'
 
 import { Steps } from './Steps'
-import { ButtonContainer, CheckButton } from './shared'
+import { AlignedDropdown, ButtonContainer, CheckButton } from './shared'
 import { DNS_OVER_HTTP_ENDPOINT, getDnsOwner } from './utils'
 
 const HelperLinks = [
@@ -46,6 +46,10 @@ const HelperLinks = [
   {
     label: 'registrars.bluehost',
     href: 'https://www.bluehost.com/help/article/dns-management-add-edit-or-delete-dns-entries',
+  },
+  {
+    label: 'registrars.cloudflare',
+    href: 'https://developers.cloudflare.com/dns/additional-options/dnssec/#enable-dnssec',
   },
   {
     label: 'registrars.hostgator',
@@ -181,13 +185,23 @@ export const AddTextRecord = ({
       <Spacer $height="3" />
       <Typography>{t('addTextRecord.explanation')}</Typography>
       <Spacer $height="3" />
-      <Dropdown
+      <AlignedDropdown
+        // needed for no line breaks in buttons
+        width={200}
+        height={200}
         align="left"
         items={HelperLinks.map((link) => ({
           label: t(link.label),
           onClick: () => null,
           wrapper: (children, key) => (
-            <a href={link.href} target="_blank" key={key} rel="noreferrer">
+            <a
+              href={link.href}
+              target="_blank"
+              key={key}
+              rel="noreferrer"
+              // needed for buttons to maintain the width of the dropdown
+              style={{ width: '100%', textAlign: 'left' }}
+            >
               {children}
             </a>
           ),

@@ -16,6 +16,7 @@ const mockFusesResponse = {
     CANNOT_TRANSFER: false,
     CANNOT_SET_RESOLVER: false,
     CANNOT_SET_TTL: false,
+    CANNOT_APPROVE: false,
     CANNOT_CREATE_SUBDOMAIN: false,
     PARENT_CANNOT_CONTROL: true,
     CAN_DO_EVERYTHING: false,

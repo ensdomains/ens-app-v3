@@ -1,13 +1,20 @@
 import { UrlObject } from 'url'
 
-import CogSVG from './assets/Cog.svg'
-import GridSVG from './assets/Grid.svg'
-import HeartSVG from './assets/Heart.svg'
-import MagnifyingGlassSVG from './assets/MagnifyingGlass.svg'
+import {
+  CogActiveSVG,
+  CogSVG,
+  DotGridActiveSVG,
+  DotGridSVG,
+  HeartActiveSVG,
+  HeartSVG,
+  MagnifyingGlassActiveSVG,
+  MagnifyingGlassSVG,
+  PersonActiveSVG,
+  PersonSVG,
+} from '@ensdomains/thorin'
 
 export type PublicRoute =
   | 'search'
-  | 'faq'
   | 'governance'
   | 'community'
   | 'developers'
@@ -16,6 +23,8 @@ export type PublicRoute =
   | 'terms'
   | 'privacy'
   | 'oldApp'
+  | 'ipfsApp'
+  | 'feedback'
 export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings'
 export type AnyRoute = PublicRoute | ConnectedRoute | 'unknown'
 
@@ -25,7 +34,10 @@ export type RouteItemObj = {
   label: string
   disabled: boolean
   connected: boolean
-  icon?: any
+  icon?: {
+    inactive: any
+    active: any
+  }
   onlyDropdown?: boolean
 }
 
@@ -36,7 +48,10 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.home',
     disabled: false,
     connected: false,
-    icon: MagnifyingGlassSVG,
+    icon: {
+      inactive: MagnifyingGlassSVG,
+      active: MagnifyingGlassActiveSVG,
+    },
   },
   {
     name: 'names',
@@ -44,7 +59,10 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.names',
     disabled: false,
     connected: true,
-    icon: GridSVG,
+    icon: {
+      inactive: DotGridSVG,
+      active: DotGridActiveSVG,
+    },
   },
   {
     name: 'favourites',
@@ -52,7 +70,10 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.favourites',
     disabled: true,
     connected: true,
-    icon: HeartSVG,
+    icon: {
+      inactive: HeartSVG,
+      active: HeartActiveSVG,
+    },
   },
   {
     name: 'settings',
@@ -60,7 +81,11 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.settings',
     disabled: false,
     connected: true,
-    icon: CogSVG,
+    icon: {
+      inactive: CogSVG,
+      active: CogActiveSVG,
+    },
+    onlyDropdown: true,
   },
   {
     name: 'profile',
@@ -68,25 +93,30 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.profile',
     disabled: false,
     connected: true,
+    icon: {
+      inactive: PersonSVG,
+      active: PersonActiveSVG,
+    },
+    onlyDropdown: true,
   },
   {
-    name: 'faq',
-    href: '/faq',
-    label: 'navigation.faq',
+    name: 'support',
+    href: 'https://support.ens.domains',
+    label: 'navigation.support',
     disabled: false,
     connected: false,
   },
   {
-    name: 'oldApp',
-    href: 'https://app.ens.domains',
-    label: 'navigation.oldApp',
+    name: 'feedback',
+    href: '#',
+    label: 'navigation.feedback',
     disabled: false,
     connected: false,
     onlyDropdown: true,
   },
   {
     name: 'governance',
-    href: 'https://ens.domains/governance',
+    href: 'https://ensdao.org/',
     label: 'navigation.governance',
     disabled: false,
     connected: false,
@@ -102,13 +132,6 @@ export const routes: RouteItemObj[] = [
     name: 'developers',
     href: 'https://docs.ens.domains/',
     label: 'navigation.developers',
-    disabled: false,
-    connected: false,
-  },
-  {
-    name: 'support',
-    href: 'https://ens.domains/#get-support',
-    label: 'navigation.support',
     disabled: false,
     connected: false,
   },
@@ -132,6 +155,22 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.privacy',
     disabled: false,
     connected: false,
+  },
+  {
+    name: 'oldApp',
+    href: 'https://app.ens.domains',
+    label: 'navigation.oldApp',
+    disabled: false,
+    connected: false,
+    onlyDropdown: true,
+  },
+  {
+    name: 'ipfsApp',
+    href: 'https://app.ens.eth.limo/',
+    label: 'navigation.ipfsApp',
+    disabled: false,
+    connected: false,
+    onlyDropdown: true,
   },
 ]
 
@@ -229,13 +268,11 @@ export const getDestination = (url: UrlObject | string) => {
   if (href?.startsWith('/')) {
     //  for static html compilation
     href = `.${href}`
-    // <IPFSLink href="/about"> => <a class="jsx-2055897931" href="./about">About</a>
 
     // on the client
     //   document is unavailable when compiling on the server
     if (typeof document !== 'undefined') {
       href = new URL(href, document.baseURI).href
-      // => <a href="https://gateway.ipfs.io/ipfs/Qm<hash>/about">About</a>
     }
   }
   return makeURLString()

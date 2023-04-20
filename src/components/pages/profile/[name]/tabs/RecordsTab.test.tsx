@@ -1,19 +1,25 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { useChainId } from '@app/hooks/useChainId'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { RecordsTab } from './RecordsTab'
 
 jest.mock('@app/utils/BreakpointProvider')
+jest.mock('@app/hooks/useChainId')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
+const mockUseChainId = mockFunction(useChainId)
 mockUseBreakpoint.mockReturnValue({ sm: true, md: true, lg: true })
 
 describe('RecordsTab', () => {
   const baseMockData = {
     name: 'nick.eth',
     network: 1,
+    resolverAddress: '0x123',
+    isWrapped: false,
   }
+  mockUseChainId.mockReturnValue(1)
 
   it('should render if no records provided', () => {
     render(<RecordsTab {...baseMockData} />)

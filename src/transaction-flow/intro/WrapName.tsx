@@ -40,7 +40,7 @@ export const WrapName = ({ name }: { name: string }) => {
         <Typography>
           {t('details.wrap.description')}{' '}
           <span>
-            <Outlink href="/faq/managing-a-name#what-is-the-name-wrapper">
+            <Outlink href="https://support.ens.domains/docs/faq/manager/managing-names#what-is-the-name-wrapper">
               {t('action.learnMore', { ns: 'common' })}
             </Outlink>
           </span>

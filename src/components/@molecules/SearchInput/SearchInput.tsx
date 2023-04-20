@@ -3,18 +3,19 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { useQueryClient } from '@tanstack/react-query'
+import { isAddress } from '@ethersproject/address'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
+import { useQueryClient } from 'wagmi'
 
-import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'
 import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { ValidationResult, useValidate, validate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
@@ -23,12 +24,12 @@ import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
 import { AnyItem, HistoryItem, SearchItem } from './types'
 
-const Container = styled.div<{ $size: 'large' | 'extraLarge' }>(
+const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
     width: 100%;
     position: relative;
     ${$size === 'extraLarge' &&
-    mq.md.min(css`
+    mq.sm.min(css`
       padding-left: 48px;
       padding-right: 48px;
     `)}
@@ -37,9 +38,8 @@ const Container = styled.div<{ $size: 'large' | 'extraLarge' }>(
 
 const SearchResultsContainer = styled.div<{
   $state: TransitionState
-  $error?: boolean
 }>(
-  ({ theme, $state, $error }) => css`
+  ({ theme, $state }) => css`
     position: absolute;
     width: 100%;
     height: min-content;
@@ -48,8 +48,10 @@ const SearchResultsContainer = styled.div<{
     background-color: #f7f7f7;
     box-shadow: 0 2px 12px ${theme.colors.border};
     border-radius: ${theme.radii.extraLarge};
-    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      ${$error ? theme.colors.red : theme.colors.border};
+    border: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};
+    &[data-error='true'] {
+      border-color: ${theme.colors.red};
+    }
 
     overflow: hidden;
 
@@ -175,7 +177,7 @@ export const SearchInput = ({
   size = 'extraLarge',
   setSearchState,
 }: {
-  size?: 'large' | 'extraLarge'
+  size?: 'medium' | 'extraLarge'
   setSearchState?: (value: TransitionState) => void
 }) => {
   const { t } = useTranslation('common')
@@ -207,37 +209,16 @@ export const SearchInput = ({
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
 
-  const [normalisedName, isValid, inputType, isEmpty, isTLD, hasNormalisedValue] = useMemo(() => {
-    if (inputVal) {
-      let _normalisedName: string
-      let _inputType: any
-      let _isValid = true
-      try {
-        _normalisedName = validateName(inputVal.replace(/ /g, ''))
-        _inputType = parseInputType(_normalisedName)
-      } catch (e) {
-        _normalisedName = ''
-        _isValid = false
-        _inputType = {
-          type: 'unknown',
-          info: 'unsupported',
-        }
-      }
-
-      return [
-        _normalisedName,
-        _isValid &&
-          _inputType.type !== 'unknown' &&
-          _inputType.info !== 'unsupported' &&
-          _inputType.info !== 'short',
-        _inputType,
-        false,
-        !_normalisedName.includes('.'),
-        !!_normalisedName,
-      ]
-    }
-    return ['', true, { type: 'name', info: 'supported' }, true, false]
-  }, [inputVal])
+  const isEmpty = inputVal === ''
+  const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
+  const { isValid, isETH, is2LD, isShort, type, name } = useValidate(
+    inputVal,
+    inputIsAddress || isEmpty,
+  )
+  const normalisedOutput = useMemo(
+    () => (inputIsAddress ? inputVal : name),
+    [inputIsAddress, inputVal, name],
+  )
 
   const searchItem: SearchItem = useMemo(() => {
     if (isEmpty) {
@@ -246,26 +227,24 @@ export const SearchInput = ({
         value: t('search.emptyText'),
       }
     }
-    if (!isValid) {
-      if (inputType.info === 'short') {
-        return {
-          type: 'error',
-          value: t('search.errors.tooShort'),
-        }
-      }
-      if (!hasNormalisedValue) {
-        return {
-          type: 'error',
-          value: t('search.errors.invalid'),
-        }
-      }
-    }
-    if (inputType.type === 'address') {
+    if (inputIsAddress) {
       return {
         type: 'address',
       }
     }
-    if (isTLD) {
+    if (!isValid) {
+      return {
+        type: 'error',
+        value: t('search.errors.invalid'),
+      }
+    }
+    if (isETH && is2LD && isShort) {
+      return {
+        type: 'error',
+        value: t('search.errors.tooShort'),
+      }
+    }
+    if (type === 'label') {
       return {
         type: 'nameWithDotEth',
       }
@@ -273,43 +252,45 @@ export const SearchInput = ({
     return {
       type: 'name',
     }
-  }, [isEmpty, isValid, inputType.type, inputType.info, isTLD, t, hasNormalisedValue])
+  }, [isEmpty, inputIsAddress, isValid, isETH, is2LD, isShort, type, t])
 
   const extraItems = useMemo(() => {
     if (history.length > 0) {
-      if (normalisedName === '') {
-        return history
+      let historyRef = history
+      if (normalisedOutput !== '') {
+        historyRef = history.filter(
+          (item) =>
+            item.value !== normalisedOutput &&
+            item.value.includes(normalisedOutput) &&
+            (searchItem.type === 'nameWithDotEth'
+              ? item.value !== `${normalisedOutput}.eth`
+              : true),
+        )
       }
-      return history.filter(
-        (item) =>
-          item.value !== normalisedName &&
-          item.value.includes(normalisedName) &&
-          (searchItem.type === 'nameWithDotEth' ? item.value !== `${normalisedName}.eth` : true),
-      )
+      return historyRef
+        .sort((a, b) => b.lastAccessed - a.lastAccessed)
+        .map((item) => ({ ...item, isHistory: true }))
     }
     return []
-  }, [normalisedName, searchItem.type, history])
+  }, [history, normalisedOutput, searchItem.type])
 
   const searchItems: AnyItem[] = useMemo(() => {
     const _searchItem = { ...searchItem, isHistory: false }
-    const _extraItems = extraItems.map((item) => ({ ...item, isHistory: true }))
+    const _extraItems = extraItems
     if (searchItem.type === 'error') {
       return [_searchItem]
     }
     if (searchItem.type === 'text') {
       if (extraItems.length > 0) {
-        return [..._extraItems]
+        return [..._extraItems.slice(0, 5)]
       }
       return [_searchItem]
     }
-    const _searchItems: SearchItem[] =
+    const _searchItems: AnyItem[] =
       _searchItem.type === 'nameWithDotEth'
         ? [_searchItem, { type: 'name', isHistory: false }]
         : [_searchItem]
-    return [
-      ..._searchItems.map((item) => ({ ...item, isHistory: false })),
-      ...extraItems.map((item) => ({ ...item, isHistory: true })),
-    ]
+    return [..._searchItems, ...extraItems].slice(0, 5)
   }, [searchItem, extraItems])
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
@@ -322,11 +303,11 @@ export const SearchInput = ({
     if (selectedItem.type === 'nameWithDotEth') {
       selectedItem = {
         type: 'name',
-        value: `${normalisedName}.eth`,
+        value: `${normalisedOutput}.eth`,
       }
     }
     if (!selectedItem.value) {
-      selectedItem.value = normalisedName
+      selectedItem.value = normalisedOutput
     }
     if (selectedItem.type === 'name') {
       const labels = selectedItem.value.split('.')
@@ -340,6 +321,12 @@ export const SearchInput = ({
         ? `/address/${selectedItem.value}`
         : `/profile/${selectedItem.value}`
     if (selectedItem.type === 'nameWithDotEth' || selectedItem.type === 'name') {
+      const currentValidation =
+        queryClient.getQueryData<ValidationResult>(['validate', selectedItem.value]) ||
+        validate(selectedItem.value)
+      if (currentValidation.is2LD && currentValidation.isETH && currentValidation.isShort) {
+        return
+      }
       const currentQuery = queryClient.getQueryData<any[]>([
         'batch',
         'getOwner',
@@ -349,7 +336,7 @@ export const SearchInput = ({
       if (currentQuery) {
         const [ownerData, wrapperData, expiryData, priceData] = currentQuery
         const registrationStatus = getRegistrationStatus({
-          name: selectedItem.value,
+          validation: currentValidation,
           ownerData,
           wrapperData,
           expiryData,
@@ -360,20 +347,19 @@ export const SearchInput = ({
         }
       }
     }
-    setHistory((prev) =>
-      [
-        ...prev.filter(
-          (item) => !(item.value === selectedItem.value && item.type === selectedItem.type),
-        ),
-        selectedItem as HistoryItem,
-      ]
-        .reverse()
-        .slice(0, 5),
-    )
+    if ('isHistory' in selectedItem) {
+      delete (selectedItem as SearchItem & { isHistory?: boolean }).isHistory
+    }
+    setHistory((prev) => [
+      ...prev
+        .filter((item) => !(item.value === selectedItem.value && item.type === selectedItem.type))
+        .slice(0, 25),
+      { ...selectedItem, lastAccessed: Date.now() } as HistoryItem,
+    ])
     setInputVal('')
     searchInputRef.current?.blur()
     router.pushWithHistory(path)
-  }, [normalisedName, queryClient, router, searchItems, selected, setHistory])
+  }, [normalisedOutput, queryClient, router, searchItems, selected, setHistory])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -452,8 +438,8 @@ export const SearchInput = ({
       }}
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}
-      $error={!isValid && inputVal !== ''}
       data-testid="search-input-results"
+      data-error={!isValid && !inputIsAddress && inputVal !== ''}
     >
       {searchItems.map((item, index) => (
         <SearchResult
@@ -464,13 +450,13 @@ export const SearchInput = ({
           type={item.type}
           usingPlaceholder={item.isHistory ? false : usingPlaceholder}
           key={`${item.type}-${item.value}`}
-          value={item.value || normalisedName}
+          value={item.value || normalisedOutput}
         />
       ))}
     </SearchResultsContainer>
   )
 
-  if (breakpoints.md) {
+  if (breakpoints.sm) {
     return (
       <Container data-testid="search-input-desktop" $size={size}>
         {SearchInputElement}

@@ -17,7 +17,7 @@ const TableHeader = styled.div(
     border-bottom: 1px solid ${theme.colors.border};
     padding: ${theme.space['3']} ${theme.space['4']};
     gap: ${theme.space['2']};
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       flex-direction: row;
       align-items: center;
       padding: ${theme.space['3']} ${theme.space['4.5']};
@@ -42,7 +42,7 @@ const TableHeaderLeadingLeft = styled.div<{ $isFullWidth: boolean }>(
     align-items: center;
     color: ${theme.colors.text};
     ${$isFullWidth && `flex: 1;`}
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       gap: ${theme.space['4']};
       flex-basis: auto;
       flex-grow: 0;
@@ -74,7 +74,7 @@ const TableHeaderTrailing = styled.div(
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       flex: 0 0 ${theme.space['32']};
       width: ${theme.space['32']};
     `)}
@@ -107,16 +107,9 @@ const DirectionButton = styled.button<{ $active: boolean }>(
   `,
 )
 
-export enum SortType {
-  expiryDate = 'expiryDate',
-  labelName = 'labelName',
-  creationDate = 'creationDate',
-}
+export type SortType = 'expiryDate' | 'labelName' | 'creationDate'
 
-export enum SortDirection {
-  asc = 'asc',
-  desc = 'desc',
-}
+export type SortDirection = 'asc' | 'desc'
 
 export type SortValue = {
   type: SortType
@@ -186,18 +179,19 @@ export const NameTableHeader = ({
                   onSortTypeChange?.(e.target.value as SortType)
                 }}
                 options={sortTypeOptions}
+                id="sort-by"
               />
               <DirectionButton
-                $active={sortDirection === SortDirection.desc}
-                onClick={() => onSortDirectionChange?.(SortDirection.desc)}
-              >
-                <UpDirectionSVG />
-              </DirectionButton>
-              <DirectionButton
-                $active={sortDirection === SortDirection.asc}
-                onClick={() => onSortDirectionChange?.(SortDirection.asc)}
+                $active={sortDirection === 'asc'}
+                onClick={() => onSortDirectionChange?.('asc')}
               >
                 <DownDirectionSVG />
+              </DirectionButton>
+              <DirectionButton
+                $active={sortDirection === 'desc'}
+                onClick={() => onSortDirectionChange?.('desc')}
+              >
+                <UpDirectionSVG />
               </DirectionButton>
             </TableHeaderLeftControlsContainer>
           )}

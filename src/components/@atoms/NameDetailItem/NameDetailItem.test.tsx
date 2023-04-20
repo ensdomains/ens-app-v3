@@ -34,17 +34,14 @@ describe('NameDetailitem', () => {
         {...{
           name: 'name',
           id: 'test',
-          truncatedName: 'truncatedName',
+          truncatedName: 'truncatedname',
           network: 1,
         }}
       >
         <div>child</div>
       </NameDetailItem>,
     )
-    expect(screen.getByText('truncatedName').closest('a')).toHaveAttribute(
-      'href',
-      '/tld/name?from=currentpath',
-    )
+    expect(screen.getByText('truncatedname').closest('a')).toHaveAttribute('href', '/tld/name')
   })
   it('should show zorb when there is no avatar', () => {
     mockUseZorb.mockReturnValue('zorb')
@@ -71,14 +68,14 @@ describe('NameDetailitem', () => {
         {...{
           name: 'name',
           id: 'test',
-          truncatedName: 'truncatedName',
+          truncatedName: 'truncatedname',
           network: 1,
         }}
       >
         <div>child</div>
       </NameDetailItem>,
     )
-    expect(screen.getByText('truncatedName')).toBeInTheDocument()
+    expect(screen.getByText('truncatedname')).toBeInTheDocument()
   })
   it('should render children', () => {
     mockUseZorb.mockReturnValue('zorb')
@@ -88,7 +85,7 @@ describe('NameDetailitem', () => {
         {...{
           name: 'name',
           id: 'test',
-          truncatedName: 'truncatedName',
+          truncatedName: 'truncatedname',
           network: 1,
         }}
       >
@@ -104,7 +101,7 @@ describe('NameDetailitem', () => {
         {...{
           name: 'name',
           id: 'test',
-          truncatedName: 'truncatedName',
+          truncatedName: 'truncatedname',
           network: 1,
         }}
         expiryDate={'2020-01-01' as any}
@@ -122,7 +119,7 @@ describe('NameDetailitem', () => {
         {...{
           name: 'name',
           id: 'test',
-          truncatedName: 'truncatedName',
+          truncatedName: 'truncatedname',
           network: 1,
         }}
         expiryDate={null as any}

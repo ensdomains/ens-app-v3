@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { ChildFuses } from '@ensdomains/ensjs'
-import { BaseRegistrationParams } from '@ensdomains/ensjs/utils/registerHelpers'
 import {
   AlertSVG,
   Button,
@@ -20,12 +18,11 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { yearsToSeconds } from '@app/utils/utils'
 
 import { RegistrationReducerDataItem } from '../types'
-import { profileRecordsToRecordOptions } from './Profile/profileRecordUtils'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -35,7 +32,7 @@ const StyledCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
     `)}
@@ -82,6 +79,7 @@ const DialogTitle = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.headingThree};
     font-weight: bold;
+    text-align: center;
   `,
 )
 
@@ -154,29 +152,11 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
     commitTimestamp && commitTimestamp + 60000 < Date.now(),
   )
 
-  const registrationParams: BaseRegistrationParams & { name: string } = useMemo(
-    () => ({
-      name: nameDetails.normalisedName,
-      owner: address!,
-      duration: yearsToSeconds(registrationData.years),
-      resolverAddress: registrationData.resolver,
-      secret: registrationData.secret,
-      records: profileRecordsToRecordOptions(
-        registrationData.records,
-        registrationData.clearRecords,
-      ),
-      fuses: {
-        named: registrationData.permissions
-          ? (Object.keys(registrationData.permissions).filter(
-              (key) => !!registrationData.permissions?.[key as ChildFuses['fuse']],
-            ) as ChildFuses['fuse'][])
-          : [],
-        unnamed: [],
-      },
-      reverseRecord: registrationData.reverseRecord,
-    }),
-    [address, nameDetails, registrationData],
-  )
+  const registrationParams = useRegistrationParams({
+    name: nameDetails.normalisedName,
+    owner: address!,
+    registrationData,
+  })
 
   const makeCommitNameFlow = useCallback(() => {
     onStart()
@@ -330,17 +310,14 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
             <div>
               <AlertSVG />
             </div>
-            <DialogTitle>You will lose your transaction</DialogTitle>
+            <DialogTitle>{t('cancelRegistration.heading')}</DialogTitle>
           </DialogHeading>
-          <DialogContent>
-            Going back will reset your first transaction. If you go back you will need to complete
-            the transaction again and pay the associated fees.
-          </DialogContent>
-          <DialogContent>Are you sure you want to continue?</DialogContent>
+          <DialogContent>{t('cancelRegistration.contentOne')}</DialogContent>
+          <DialogContent>{t('cancelRegistration.contentTwo')}</DialogContent>
           <Dialog.Footer
             trailing={
               <Button onClick={resetTransactions} colorStyle="redSecondary">
-                Reset transaction and go back
+                {t('cancelRegistration.footer')}
               </Button>
             }
           />

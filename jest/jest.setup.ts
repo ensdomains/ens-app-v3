@@ -1,6 +1,5 @@
 // Optional: configure or set up a testing framework before each test.
 // If you delete this file, remove `setupFilesAfterEnv` from `jest.config.js`
-
 // Used for __tests__/testing-library.js
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
@@ -17,4 +16,6 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
   }),
+  Trans: ({ i18nKey, values }: { i18nKey: string; values: string[] }) =>
+    `${i18nKey} ${values ? Object.values(values).join(', ') : ''}`,
 }))

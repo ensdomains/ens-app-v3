@@ -7,12 +7,12 @@ import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
 import { validateCryptoAddress } from '@app/utils/validate'
+import { validateAbi } from '@app/validators/validateAbi'
 import { validateContentHash } from '@app/validators/validateContentHash'
 
 const TabContentsContainer = styled.div(
-  ({ theme }) => css`
+  () => css`
     position: relative;
-    padding: 0 ${theme.space['1']};
     flex: 1;
     overflow: hidden;
     display: flex;
@@ -25,7 +25,6 @@ const TabContentContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space['3']};
-    padding: 0 ${theme.space['2']};
     overflow: hidden;
     flex: 1;
   `,
@@ -53,7 +52,6 @@ const AdvancedEditorContent = ({
   register,
   getSelectedAddressOption,
   tab,
-  hasPublicKeyInterface,
   hasABIInterface,
   setValue,
 }: Props) => {
@@ -192,34 +190,21 @@ const AdvancedEditorContent = ({
                   />
                   <RecordInput
                     deletable={false}
-                    disabled={!hasPublicKeyInterface}
-                    labelDisabled={t('advancedEditor.tabs.other.labelDisabled')}
-                    label={t('advancedEditor.tabs.other.publicKey.label')}
-                    placeholder={t('advancedEditor.tabs.other.publicKey.placeholder')}
-                    showDot
-                    validated={getFieldState('other.publicKey', formState).isDirty}
-                    error={getFieldState('other.publicKey', formState).error?.message}
-                    autoComplete="off"
-                    onClear={() => {
-                      setValue('other.publicKey', '')
-                      clearErrors(['other.publicKey'])
-                    }}
-                    {...register('other.publicKey', {})}
-                  />
-                  <RecordInput
-                    deletable={false}
                     disabled={!hasABIInterface}
                     labelDisabled={t('advancedEditor.tabs.other.labelDisabled')}
                     label={t('advancedEditor.tabs.other.abi.label')}
                     placeholder={t('advancedEditor.tabs.other.abi.placeholder')}
                     showDot
-                    validated={getFieldState('other.abi', formState).isDirty}
+                    validated={getFieldState('other.abi.data', formState).isDirty}
+                    error={getFieldState('other.abi.data', formState).error?.message}
                     autoComplete="off"
                     onClear={() => {
-                      setValue('other.abi', '')
-                      clearErrors(['other.abi'])
+                      setValue('other.abi.data', '')
+                      clearErrors(['other.abi.data'])
                     }}
-                    {...register('other.abi', {})}
+                    {...register('other.abi.data', {
+                      validate: validateAbi(t),
+                    })}
                   />
                 </>
               ),

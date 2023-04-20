@@ -42,8 +42,16 @@ describe('ShortExpiry', () => {
     expect(screen.getByTestId('short-expiry')).toHaveAttribute('data-color', 'orange')
   })
 
-  it('show be red if expired', () => {
+  it('should be red if expired', () => {
     render(<ShortExpiry expiry={expired} />)
+    expect(screen.getByTestId('short-expiry')).toHaveAttribute('data-color', 'red')
+  })
+  it('should be red if expiring in less than 24 hours', () => {
+    render(<ShortExpiry expiry={hourExpired} />)
+    expect(screen.getByTestId('short-expiry')).toHaveAttribute('data-color', 'red')
+  })
+  it('should be red if expired for less than 90 days and has grace period', () => {
+    render(<ShortExpiry expiry={expired} hasGracePeriod />)
     expect(screen.getByTestId('short-expiry')).toHaveAttribute('data-color', 'red')
   })
   it('should show year units if expiry is more than a year away', () => {
@@ -62,9 +70,9 @@ describe('ShortExpiry', () => {
     render(<ShortExpiry expiry={expired} />)
     expect(screen.getByText('name.expiredInDays.1')).toBeVisible()
   })
-  it('should not inverse numbers if expired for less than 90 days and has grace period', () => {
+  it('should show grace period message if expired for less than 90 days and has grace period', () => {
     render(<ShortExpiry expiry={expired} hasGracePeriod />)
-    expect(screen.getByText('name.expiresInDays.88')).toBeVisible()
+    expect(screen.getByText('name.gracePeriod.expiresInMonths.2')).toBeVisible()
   })
   it('should always show red text for inversed numbers', () => {
     render(<ShortExpiry expiry={yearExpired} />)

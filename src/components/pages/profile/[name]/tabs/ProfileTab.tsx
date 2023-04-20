@@ -1,20 +1,20 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { Helper } from '@ensdomains/thorin'
 
+import { Outlink } from '@app/components/Outlink'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useChainId } from '@app/hooks/useChainId'
-import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useSubnameAbilities } from '@app/hooks/useSubnameAbilities'
-import { checkPCCExpired, validateExpiry } from '@app/utils/utils'
+import { validateExpiry } from '@app/utils/utils'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
@@ -33,9 +33,10 @@ type Props = {
 }
 
 const ProfileTab = ({ nameDetails, name }: Props) => {
+  const { t } = useTranslation('profile')
+
   const chainId = useChainId()
   const { address } = useAccount()
-  const { t } = useTranslation('profile')
 
   const {
     profile,
@@ -47,6 +48,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     expiryDate,
     dnsOwner,
     isWrapped,
+    pccExpired,
     gracePeriodEndDate,
   } = nameDetails
 
@@ -58,8 +60,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     dnsOwner,
     selfAbilities,
   })
-  const nameWrapperAddress = useContractAddress('NameWrapper')
-  const pccExpired = checkPCCExpired(owners, wrapperData, nameWrapperAddress)
   const { abilities: subnameAbilities, isCachedData: subnameAbilitiesCachedData } =
     useSubnameAbilities({ address, name, ownerData, wrapperData, pccExpired })
   const profileActions = useProfileActions({
@@ -90,6 +90,17 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         button={snippetButton}
         canEdit={selfAbilities.canEdit}
       >
+        {nameDetails.isNonASCII && (
+          <Helper type="warning" alignment="horizontal">
+            <Trans
+              i18nKey="tabs.profile.warnings.homoglyph"
+              ns="profile"
+              components={{
+                a: <Outlink href="https://support.ens.domains/faq/normalization/homoglyphs/" />,
+              }}
+            />
+          </Helper>
+        )}
         {isWrapped && !normalisedName.endsWith('.eth') && (
           <Helper type="warning" alignment="horizontal">
             {t('tabs.profile.warnings.wrappedDNS')}
@@ -115,6 +126,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         owners={owners}
         name={normalisedName}
         actions={profileActions.profileActions}
+        gracePeriodEndDate={gracePeriodEndDate}
       />
     </DetailsWrapper>
   )

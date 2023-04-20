@@ -11,7 +11,7 @@ import styled, { css } from 'styled-components'
 
 import { Dialog, Input, RadioButton, Typography } from '@ensdomains/thorin'
 
-import { dateTimeLocalToDate, dateToDateTimeLocal } from '@app/utils/datetime-local'
+import { dateTimeLocalToDate, dateToDateTimeLocal, stripDateMs } from '@app/utils/datetime-local'
 
 import type { FormData } from '../RevokePermissions-flow'
 import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
@@ -71,7 +71,7 @@ export const SetExpiryView = ({
   const formState = useFormState({ control, name: 'expiryCustom' })
   const customErrorLabel = formState.errors.expiryCustom?.message
 
-  const minDate = minExpiry ? new Date(minExpiry * 1000) : new Date()
+  const minDate = new Date(Math.max((minExpiry || 0) * 1000, Date.now()))
   const maxDate = new Date(maxExpiry * 1000)
 
   const minDateTime = dateToDateTimeLocal(minDate)
@@ -156,8 +156,9 @@ export const SetExpiryView = ({
                 hideLabel
                 error={formState.errors.expiryCustom}
                 clearable={false}
-                min={minDateTime}
-                max={maxDateTime}
+                min={stripDateMs(minDateTime)}
+                max={stripDateMs(maxDateTime)}
+                step={60}
                 {...register('expiryCustom', {
                   validate: (value) => {
                     const expiryType = getValues('expiryType')
@@ -170,6 +171,9 @@ export const SetExpiryView = ({
                           month: 'short',
                           day: 'numeric',
                           year: 'numeric',
+                          hour: 'numeric',
+                          minute: 'numeric',
+                          second: 'numeric',
                         },
                       )
                       return t('input.revokePermissions.views.setExpiry.error.min', {
@@ -183,6 +187,9 @@ export const SetExpiryView = ({
                           month: 'short',
                           day: 'numeric',
                           year: 'numeric',
+                          hour: 'numeric',
+                          minute: 'numeric',
+                          second: 'numeric',
                         },
                       )
                       return t('input.revokePermissions.views.setExpiry.error.max', {

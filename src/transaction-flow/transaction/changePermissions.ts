@@ -19,6 +19,7 @@ export const CHILD_FUSES: ChildFuse[] = [
   'CANNOT_TRANSFER',
   'CANNOT_SET_RESOLVER',
   'CANNOT_SET_TTL',
+  'CANNOT_APPROVE',
   'CANNOT_BURN_FUSES',
 ]
 

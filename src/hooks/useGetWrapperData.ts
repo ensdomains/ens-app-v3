@@ -10,8 +10,11 @@ export const useGetWrapperData = (name: string, skip?: any) => {
     isLoading,
     status,
     isFetched,
-    internal: { isFetchedAfterMount },
-  } = useQuery(['getWrapperData', name], () => getWrapperData(name), {
+    isFetchedAfterMount,
+    // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isFetching: _,
+  } = useQuery(['getWrapperData', name], () => getWrapperData(name).then((d) => d || null), {
     enabled: ready && !skip && name !== '',
   })
 

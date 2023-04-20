@@ -1,5 +1,5 @@
-import { QueryKey, useQueryClient } from '@tanstack/react-query'
-import { useBlockNumber } from 'wagmi'
+import type { QueryKey } from '@tanstack/react-query'
+import { useBlockNumber, useQueryClient } from 'wagmi'
 
 export function useInvalidateOnBlock({
   enabled,

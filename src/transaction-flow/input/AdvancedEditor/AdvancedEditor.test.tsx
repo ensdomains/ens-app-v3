@@ -10,7 +10,7 @@ import {
   within,
 } from '@app/test-utils'
 
-import { useProfile } from '@app/hooks/useProfile'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { Profile } from '@app/types'
 import { formSafeKey } from '@app/utils/editor'
@@ -100,15 +100,16 @@ const mockProfileData = {
     isMigrated: true,
     createdAt: '1630553876',
   },
-  loading: false,
+  isLoading: false,
+  isWrapped: false,
 }
 
 jest.mock('@app/utils/EnsProvider')
-jest.mock('@app/hooks/useProfile')
+jest.mock('@app/hooks/useNameDetails')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useResolverHasInterfaces')
 
-const mockUseProfile = mockFunction(useProfile)
+const mockUseProfile = mockFunction(useNameDetails)
 const mockUseResolverHasInterfaces = mockFunction(useResolverHasInterfaces)
 
 const mockIntersectionObserver = jest.fn()

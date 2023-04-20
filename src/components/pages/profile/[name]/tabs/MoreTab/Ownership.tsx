@@ -6,7 +6,7 @@ import { useAccount, useQueryClient } from 'wagmi'
 import { Button, Helper, Tag, Typography, mq } from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
-import BaseLink from '@app/components/@atoms/BaseLink'
+import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
@@ -54,7 +54,7 @@ const HeadingContainer = styled.div(
     font-weight: ${theme.fontWeights.bold};
     font-size: ${theme.fontSizes.headingThree};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,
@@ -84,7 +84,7 @@ const OwnerContainer = styled.div(
       background-color: ${theme.colors.backgroundSecondary};
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['4']} ${theme.space['6']};
     `)}
   `,
@@ -125,11 +125,11 @@ const OwnerDetailContainer = styled.div(
 
 const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
   const { t } = useTranslation('common')
-  const { name: primary } = usePrimary(address)
+  const { name: primary, beautifiedName } = usePrimary(address)
   const network = useChainId()
 
   return (
-    <BaseLink passHref href={`/address/${address}`}>
+    <BaseLinkWithHistory passHref href={`/address/${address}`}>
       <OwnerContainer as="a">
         <OwnerDetailContainer>
           <AvatarWithZorb
@@ -141,7 +141,7 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
           />
           <TextContainer>
             <Name ellipsis data-testid={`owner-button-name-${label}`}>
-              {primary || shortenAddress(address)}
+              {beautifiedName || shortenAddress(address)}
             </Name>
             {primary && (
               <Typography data-testid={`owner-button-address-${label}`}>
@@ -152,7 +152,7 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
         </OwnerDetailContainer>
         <Tag colorStyle="accentSecondary">{t(label)}</Tag>
       </OwnerContainer>
-    </BaseLink>
+    </BaseLinkWithHistory>
   )
 }
 
@@ -165,7 +165,7 @@ const DNSOwnerSectionContainer = styled.div(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,
@@ -195,7 +195,7 @@ const DNSOwnerSection = ({
   const { address } = useAccount()
   const { t } = useTranslation('profile')
   const { createTransactionFlow } = useTransactionFlow()
-  const { resetQueries } = useQueryClient()
+  const queryClient = useQueryClient()
 
   const canShow = useMemo(() => {
     let hasMatchingAddress = false
@@ -221,7 +221,7 @@ const DNSOwnerSection = ({
 
     createTransactionFlow(`sync-manager-${name}-${address}`, {
       intro: {
-        title: t('tabs.more.ownership.dnsOwnerWarning.syncManager'),
+        title: ['tabs.more.ownership.dnsOwnerWarning.syncManager', { ns: 'profile' }],
         content: makeIntroItem('SyncManager', { isWrapped, manager: currentManager!.address }),
       },
       transactions: [
@@ -231,7 +231,7 @@ const DNSOwnerSection = ({
   }
 
   const handleRefresh = () => {
-    resetQueries({ exact: true, queryKey: ['getDNSOwner', name] })
+    queryClient.resetQueries({ exact: true, queryKey: ['getDNSOwner', name] })
   }
 
   if (!canShow) return null
@@ -243,7 +243,7 @@ const DNSOwnerSection = ({
       </Helper>
       <ButtonsContainer>
         <Button width="auto" colorStyle="accentSecondary" onClick={handleRefresh}>
-          Refresh DNS
+          {t('tabs.more.ownership.refreshDNS')}
         </Button>
         {!canSend && (
           <Button width="auto" onClick={handleSyncManager} loading={isLoading} disabled={!data}>
@@ -272,10 +272,10 @@ const Ownership = ({
 }) => {
   const { t } = useTranslation('profile')
 
-  const { showDataInput } = useTransactionFlow()
-
+  const { prepareDataInput } = useTransactionFlow()
+  const showSendNameInput = prepareDataInput('SendName')
   const handleSend = () => {
-    showDataInput(`send-name-${name}`, 'SendName', {
+    showSendNameInput(`send-name-${name}`, {
       name,
     })
   }
@@ -302,7 +302,6 @@ const Ownership = ({
                 buttonId: 'send-name-disabled-button',
                 buttonText: t('action.send', { ns: 'common' }),
                 mobileWidth: 150,
-                buttonWidth: 'initial',
                 mobileButtonWidth: 'initial',
                 prefix: <AeroplaneIcon as={AeroplaneSVG} />,
               }}

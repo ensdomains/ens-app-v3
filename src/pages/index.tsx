@@ -5,12 +5,11 @@ import styled, { css } from 'styled-components'
 import { Typography, mq } from '@ensdomains/thorin'
 
 import FaucetBanner from '@app/components/@molecules/FaucetBanner'
-import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
+import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
-import { LanugageDropdown } from '@app/components/LanguageDropdown'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 
-import ENSWithGradient from '../assets/ENSWithGradient.svg'
+import ENSFull from '../assets/ENSFull.svg'
 
 const GradientTitle = styled.h1(
   ({ theme }) => css`
@@ -64,7 +63,7 @@ const Stack = styled.div(
 
 const StyledENS = styled.div(
   ({ theme }) => css`
-    height: ${theme.space['12']};
+    height: ${theme.space['8.5']};
   `,
 )
 
@@ -81,7 +80,7 @@ const LogoAndLanguage = styled.div(
 
 const StyledLeadingHeading = styled(LeadingHeading)(
   () => css`
-    ${mq.md.min(
+    ${mq.sm.min(
       css`
         display: none;
       `,
@@ -99,10 +98,9 @@ export default function Page() {
       </Head>
       <StyledLeadingHeading>
         <LogoAndLanguage>
-          <StyledENS as={ENSWithGradient} />
-          <LanugageDropdown />
+          <StyledENS as={ENSFull} />
         </LogoAndLanguage>
-        <HamburgerRoutes />
+        <Hamburger />
       </StyledLeadingHeading>
       <FaucetBanner />
       <Container>

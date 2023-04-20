@@ -10,11 +10,11 @@ import CalendarSVG from '@app/assets/Calendar.svg'
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
-import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import { useNameDates } from '@app/hooks/useNameDates'
+import { useChainName } from '@app/hooks/useChainName'
+import useRegistrationDate from '@app/hooks/useRegistrationData'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { formatDateTime, formatExpiry } from '@app/utils/utils'
+import { formatDateTime, formatExpiry, makeEtherscanLink } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../TabWrapper'
 
@@ -60,17 +60,14 @@ const MiscellaneousContainer = styled(TabWrapper)(
 const DatesContainer = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: column;
+    position: relative;
+    flex-wrap: wrap;
     align-items: stretch;
-    justify-content: center;
+    justify-content: space-between;
     gap: ${theme.space['4']};
-
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
-      flex-direction: row;
-      align-items: flex-end;
-      justify-content: space-between;
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,
@@ -132,43 +129,74 @@ const FastForwardIcon = styled.svg(
   `,
 )
 
-const Miscellaneous = ({ name }: { name: string }) => {
+const ButtonContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 100%;
+    ${mq.sm.min(css`
+      width: fit-content;
+      min-width: ${theme.space['40']};
+      max-width: max-content;
+    `)}
+  `,
+)
+
+const Miscellaneous = ({
+  name,
+  expiryDate,
+  isCachedData,
+}: {
+  name: string
+  expiryDate: Date | undefined
+  isCachedData: boolean
+}) => {
   const { t } = useTranslation('common')
 
   const { address } = useAccount()
-  const { data: nameDates, isCachedData } = useNameDates(name)
+  const chainName = useChainName()
+  const { data: registrationData, isCachedData: registrationCachedData } = useRegistrationDate(name)
   const { canExtend, canEdit } = useSelfAbilities(address, name)
 
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showExtendNamesInput = prepareDataInput('ExtendNames')
 
   const makeEvent: () => CalendarEvent = useCallback(
     () => ({
       title: `Renew ${name}`,
-      start: nameDates?.expiryDate,
+      start: expiryDate,
       duration: [10, 'minute'],
       url: window.location.href,
     }),
-    [name, nameDates],
+    [name, expiryDate],
   )
 
-  if (!nameDates) return null
+  if (!expiryDate) return null
 
   return (
-    <MiscellaneousContainer $isCached={isCachedData}>
+    <MiscellaneousContainer $isCached={isCachedData || registrationCachedData}>
       <DatesContainer>
-        <DateLayout>
-          <Typography>{t('name.registered')}</Typography>
-          <Typography>{formatExpiry(nameDates.registrationDate)}</Typography>
-          <Typography>{formatDateTime(nameDates.registrationDate)}</Typography>
-          <a href="#">
-            {t('action.view')}
-            <OutlinkSVG />
-          </a>
-        </DateLayout>
+        {registrationData && (
+          <DateLayout>
+            <Typography>{t('name.registered')}</Typography>
+            <Typography>{formatExpiry(registrationData.registrationDate)}</Typography>
+            <Typography>{formatDateTime(registrationData.registrationDate)}</Typography>
+            <a
+              target="_blank"
+              href={makeEtherscanLink(registrationData.transactionHash, chainName)}
+              rel="noreferrer"
+              data-testid="etherscan-registration-link"
+            >
+              {t('action.view')}
+              <OutlinkSVG />
+            </a>
+          </DateLayout>
+        )}
         <DateLayout>
           <Typography>{t('name.expires')}</Typography>
-          <Typography data-testid="expiry-data">{formatExpiry(nameDates.expiryDate)}</Typography>
-          <Typography>{formatDateTime(nameDates.expiryDate)}</Typography>
+          <Typography data-testid="expiry-data">{formatExpiry(expiryDate)}</Typography>
+          <Typography>{formatDateTime(expiryDate)}</Typography>
           <Dropdown
             shortThrow
             keepMenuOnTop
@@ -185,10 +213,10 @@ const Miscellaneous = ({ name }: { name: string }) => {
           </Dropdown>
         </DateLayout>
         {canExtend && (
-          <MobileFullWidth>
+          <ButtonContainer>
             <Button
               onClick={() => {
-                showDataInput(`extend-names-${name}`, 'ExtendNames', {
+                showExtendNamesInput(`extend-names-${name}`, {
                   names: [name],
                   isSelf: canEdit,
                 })
@@ -197,7 +225,7 @@ const Miscellaneous = ({ name }: { name: string }) => {
             >
               {t('action.extend')}
             </Button>
-          </MobileFullWidth>
+          </ButtonContainer>
         )}
       </DatesContainer>
     </MiscellaneousContainer>

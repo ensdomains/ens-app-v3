@@ -3,9 +3,9 @@ import styled, { css } from 'styled-components'
 
 import { Select } from '@ensdomains/thorin'
 
-import { AddressIconType, DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
-import coinList from '@app/constants/coinList'
-import supportedAddresses from '@app/constants/supportedAddresses.json'
+import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
+import coinsWithIcons from '@app/constants/coinsWithIcons.json'
+import coinsWithoutIcons from '@app/constants/coinsWithoutIcons.json'
 import { formSafeKey } from '@app/utils/editor'
 
 const IconWrapper = styled.div(
@@ -34,29 +34,24 @@ const UnsupportedAddressWrapper = styled.div(
   `,
 )
 
-const addressOptions = coinList.reduce((acc, coin) => {
-  if (supportedAddresses.includes(coin.toLowerCase())) {
-    return [
-      {
-        value: formSafeKey(coin),
-        label: coin,
-        node: <AddressWrapper>{coin}</AddressWrapper>,
-        prefix: (
-          <IconWrapper>
-            <DynamicAddressIcon name={coin.toLowerCase() as AddressIconType} />
-          </IconWrapper>
-        ),
-      },
-      ...acc,
-    ]
-  }
-  return [
-    ...acc,
-    {
-      value: formSafeKey(coin),
-      label: coin,
-      node: <UnsupportedAddressWrapper>{coin}</UnsupportedAddressWrapper>,
-    },
-  ]
-}, [] as ComponentProps<typeof Select>['options'])
+const coinsWithIconsOptions = coinsWithIcons.map((coin) => ({
+  value: formSafeKey(coin.toUpperCase()),
+  label: coin.toUpperCase(),
+  node: <AddressWrapper>{coin}</AddressWrapper>,
+  prefix: (
+    <IconWrapper>
+      <DynamicAddressIcon name={coin.toLowerCase()} />
+    </IconWrapper>
+  ),
+}))
+
+const coinsWithoutIconsOptions = coinsWithoutIcons.map((coin) => ({
+  value: formSafeKey(coin.toUpperCase()),
+  label: coin.toUpperCase(),
+  node: <UnsupportedAddressWrapper>{coin.toUpperCase}</UnsupportedAddressWrapper>,
+}))
+
+const addressOptions = [...coinsWithIconsOptions, ...coinsWithoutIconsOptions] as ComponentProps<
+  typeof Select
+>['options']
 export default addressOptions

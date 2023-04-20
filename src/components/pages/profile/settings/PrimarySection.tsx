@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { Button, Typography } from '@ensdomains/thorin'
 
@@ -11,6 +10,7 @@ import { usePrimary } from '@app/hooks/usePrimary'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
+import { useAccountSafely } from '../../../../hooks/useAccountSafely'
 import { SectionContainer } from './Section'
 
 const ItemWrapper = styled.div(
@@ -23,11 +23,12 @@ const ItemWrapper = styled.div(
 export const PrimarySection = () => {
   const { t } = useTranslation('settings')
 
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showSelectPrimaryNameInput = prepareDataInput('SelectPrimaryName')
 
   const chainId = useChainId()
 
-  const { address: _address } = useAccount()
+  const { address: _address } = useAccountSafely()
   const address = _address as string
 
   const { name, loading: primaryLoading } = usePrimary(address, !address)
@@ -44,7 +45,7 @@ export const PrimarySection = () => {
   const isLoading = basicLoading || primaryLoading
 
   const changePrimary = () =>
-    showDataInput(`changePrimary-${address}`, 'SelectPrimaryName', {
+    showSelectPrimaryNameInput(`changePrimary-${address}`, {
       address,
       existingPrimary: name,
     })
@@ -72,7 +73,7 @@ export const PrimarySection = () => {
           />
         </ItemWrapper>
       ) : (
-        <Typography data-testid="primary-section-text">
+        <Typography data-testid="primary-section-text" fontVariant="bodyBold" color="grey">
           {isLoading ? t('section.primary.loading') : t('section.primary.noName')}
         </Typography>
       )}

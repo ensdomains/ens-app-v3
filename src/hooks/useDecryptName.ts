@@ -15,10 +15,17 @@ const useDecryptName = (name: string, skip?: boolean) => {
     isLoading,
     status,
     isFetched,
-    internal: { isFetchedAfterMount },
-  } = useQuery(['graph', 'decryptName', name], () => getDecryptedName(name, true), {
-    enabled: !!(!skip && ready && name && nameIsEncrypted),
-  })
+    isFetchedAfterMount,
+    // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isFetching,
+  } = useQuery(
+    ['graph', 'decryptName', name],
+    () => getDecryptedName(name, true).then((d) => d || null),
+    {
+      enabled: !!(!skip && ready && name && nameIsEncrypted),
+    },
+  )
 
   return {
     decryptedName,

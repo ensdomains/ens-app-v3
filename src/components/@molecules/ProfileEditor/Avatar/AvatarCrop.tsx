@@ -104,7 +104,7 @@ export const AvCancelButton = ({ handleCancel }: { handleCancel: () => void }) =
   const { t } = useTranslation('common')
 
   return (
-    <Button data-testid="avatar-cancel-button" colorStyle="greySecondary" onClick={handleCancel}>
+    <Button data-testid="avatar-cancel-button" colorStyle="accentSecondary" onClick={handleCancel}>
       {t('action.back')}
     </Button>
   )
@@ -155,7 +155,6 @@ export const CropComponent = ({
   }
 
   const draw = useCallback(() => {
-    const resolutionMultiplier = resolutionMultiplierRef.current
     const image = imageRef.current
     const canvas = canvasRef.current
     if (!canvas) return
@@ -181,8 +180,8 @@ export const CropComponent = ({
       moving,
     }
     if (!moving) {
-      coordinatesRef.current.mx = calcMomentum(x, max, w, cropSize, resolutionMultiplier)
-      coordinatesRef.current.my = calcMomentum(y, max, h, cropSize, resolutionMultiplier)
+      coordinatesRef.current.mx = calcMomentum(x, max, w, cropSize)
+      coordinatesRef.current.my = calcMomentum(y, max, h, cropSize)
       if (coordinatesRef.current.mx !== 0 || coordinatesRef.current.my !== 0) {
         window.requestAnimationFrame(draw)
       }
@@ -290,6 +289,7 @@ export const CropComponent = ({
       // multi-touch pinch to zoom
       if (e.targetTouches.length === 2 && e.changedTouches.length > 0 && pointInxs.length === 2) {
         const [touch1, touch2] = e.changedTouches
+        if (!touch2) return
         const diff1 = touch1.clientX / tpCache[pointInxs[0]].clientX
         const diff2 = touch2.clientX / tpCache[pointInxs[1]].clientX
         const zoomDiff = 1 - diff1 * diff2
@@ -324,7 +324,7 @@ export const CropComponent = ({
   )
 
   const handleWindowResize = useCallback(() => {
-    const adjustedWidth = window.innerWidth / 3 - 25
+    const adjustedWidth = window.innerWidth * 0.8 - 25
     const adjustedHeight = window.innerHeight / 2
     const minBound = Math.max(Math.min(adjustedWidth, adjustedHeight, 384), 208)
     const canvas = canvasRef.current

@@ -67,8 +67,8 @@ describe('Extend Names', () => {
     cy.visit('/other-registrant.eth')
     connectFromExisting()
     cy.findByTestId('extend-button').should('be.visible')
-    cy.findByTestId('owner-profile-button-expiry').should('be.visible')
-    cy.findByTestId('owner-profile-button-expiry')
+    cy.findByTestId('owner-profile-button-name.expiry').should('be.visible')
+    cy.findByTestId('owner-profile-button-name.expiry')
       .invoke('attr', 'data-timestamp')
       .then((timestamp) => {
         cy.log(`timestamp: ${timestamp}`)
@@ -120,7 +120,7 @@ describe('Extend Names', () => {
     cy.wait(5000)
     cy.get('@timestamp').then((timestamp) => {
       const newTimestamp = parseInt(timestamp) + 31536000000
-      cy.findByTestId('owner-profile-button-expiry')
+      cy.findByTestId('owner-profile-button-name.expiry')
         .invoke('attr', 'data-timestamp')
         .should('eq', newTimestamp.toString())
     })
@@ -134,8 +134,8 @@ describe('Extend Names', () => {
     cy.findByTestId('extend-button').as('extend-button')
 
     cy.get('@extend-button').should('be.visible')
-    cy.findByTestId('owner-profile-button-expiry').should('be.visible')
-    cy.findByTestId('owner-profile-button-expiry')
+    cy.findByTestId('owner-profile-button-name.expiry').should('be.visible')
+    cy.findByTestId('owner-profile-button-name.expiry')
       .invoke('attr', 'data-timestamp')
       .then((timestamp) => {
         cy.log(`timestamp: ${timestamp}`)
@@ -153,7 +153,7 @@ describe('Extend Names', () => {
     cy.wait(5000)
     cy.get('@timestamp').then((timestamp) => {
       const newTimestamp = parseInt(timestamp) + 31536000000
-      cy.findByTestId('owner-profile-button-expiry')
+      cy.findByTestId('owner-profile-button-name.expiry')
         .invoke('attr', 'data-timestamp')
         .should('eq', newTimestamp.toString())
     })
@@ -170,7 +170,7 @@ describe('Extend Names', () => {
     acceptMetamaskAccess(2)
     cy.visit('/my/names')
 
-    cy.findByTestId('select-page-size').click()
+    cy.findByTestId('select-page-size').should('be.visible').click()
     cy.wait(1000)
     cy.findByTestId('select-option-100').click()
 

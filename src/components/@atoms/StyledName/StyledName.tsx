@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components'
 
+import useBeautifiedName from '@app/hooks/useBeautifiedName'
+
 const Container = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -34,7 +36,8 @@ const Tld = styled.span(
 )
 
 export const StyledName = ({ name, disabled = false }: { name: string; disabled?: boolean }) => {
-  const [label, ...restName] = name.split('.')
+  const beautifiedName = useBeautifiedName(name)
+  const [label, ...restName] = beautifiedName.split('.')
 
   return (
     <Container>

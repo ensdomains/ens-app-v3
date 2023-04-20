@@ -7,9 +7,9 @@ import { Dispatch, ForwardedRef, MouseEvent, SetStateAction, forwardRef } from '
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Input } from '@ensdomains/thorin'
+import { Input, MagnifyingGlassSVG } from '@ensdomains/thorin'
 
-const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
+const SearchInputWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ theme, $size }) => css`
     z-index: 1;
     box-shadow: ${theme.boxShadows['0.25']};
@@ -20,23 +20,34 @@ const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
       color: ${theme.colors.greyPrimary};
       font-weight: ${theme.fontWeights.bold};
     }
-    ${$size === 'large' &&
+    ${$size === 'medium' &&
     css`
       max-width: ${theme.space['96']};
-      box-shadow: ${theme.boxShadows['0.25']};
+      box-shadow: none;
+      border-radius: ${theme.radii.full};
       & input::placeholder {
         color: ${theme.colors.greyPrimary};
+        font-weight: ${theme.fontWeights.normal};
       }
     `}
   `,
 )
 
-const StyledInputParent = () =>
+const StyledInputParent = (size: 'medium' | 'extraLarge') =>
   css(
     ({ theme }) => css`
-      border-radius: ${theme.radii['2.5xLarge']};
+      border-radius: ${theme.radii.full};
       background-color: ${theme.colors.backgroundSecondary};
       transition: background-color 0.35s ease-in-out;
+      ${size === 'medium' &&
+      css`
+        & > div {
+          border-radius: ${theme.radii.full};
+          input {
+            padding-left: ${theme.space['12']};
+          }
+        }
+      `}
       &:focus-within {
         background-color: ${theme.colors.backgroundPrimary};
         & input::placeholder {
@@ -45,6 +56,13 @@ const StyledInputParent = () =>
       }
     `,
   )
+
+const MagnifyingGlassIcon = styled.svg(
+  ({ theme }) => css`
+    width: ${theme.space['4']};
+    height: ${theme.space['4']};
+  `,
+)
 
 // const ResetButton = styled.div(
 //   ({ theme }) => css`
@@ -70,7 +88,7 @@ export const SearchInputBox = forwardRef(
       setInput,
       containerRef,
     }: {
-      size?: 'large' | 'extraLarge'
+      size?: 'medium' | 'extraLarge'
       input: string
       setInput: Dispatch<SetStateAction<string>>
       containerRef: ForwardedRef<HTMLDivElement>
@@ -91,7 +109,8 @@ export const SearchInputBox = forwardRef(
           clearable
           autoComplete="off"
           autoCorrect="off"
-          parentStyles={StyledInputParent()}
+          parentStyles={StyledInputParent(size)}
+          icon={size === 'medium' ? <MagnifyingGlassIcon as={MagnifyingGlassSVG} /> : undefined}
           spellCheck="false"
           data-testid="search-input-box"
         />
@@ -106,7 +125,7 @@ export const FakeSearchInputBox = forwardRef(
       size = 'extraLarge',
       onClick,
     }: {
-      size?: 'large' | 'extraLarge'
+      size?: 'medium' | 'extraLarge'
       onClick: (e: MouseEvent<HTMLInputElement>) => void
     },
     ref,
@@ -124,7 +143,7 @@ export const FakeSearchInputBox = forwardRef(
           readOnly
           autoComplete="off"
           autoCorrect="off"
-          parentStyles={StyledInputParent()}
+          parentStyles={StyledInputParent(size)}
           spellCheck="false"
           data-testid="search-input-box-fake"
         />

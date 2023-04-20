@@ -37,13 +37,14 @@ describe('Permissions', () => {
     cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
     cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
     cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+    cy.findByTestId('unburned-CANNOT_APPROVE').should('be.visible')
 
     // revoke-permissions flow
     cy.findByTestId('button-revoke-permissions').click()
     cy.findByTestId('permissions-next-button').click()
     cy.findByTestId('checkbox-CANNOT_UNWRAP').click()
     cy.findByTestId('permissions-next-button').should('not.be.disabled').click()
-    const fuses = ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER', 'CANNOT_SET_RESOLVER', 'CANNOT_SET_TTL']
+    const fuses = ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER', 'CANNOT_SET_RESOLVER', 'CANNOT_SET_TTL', 'CANNOT_APPROVE']
     for (const fuse of fuses) {
       cy.findByTestId(`checkbox-${fuse}`).click()
     }
@@ -59,6 +60,7 @@ describe('Permissions', () => {
     cy.findByTestId('burned-CANNOT_TRANSFER').should('be.visible')
     cy.findByTestId('burned-CANNOT_SET_RESOLVER').should('be.visible')
     cy.findByTestId('burned-CANNOT_SET_TTL').should('be.visible')
+    cy.findByTestId('burned-CANNOT_APPROVE').should('be.visible')
 
     // Create subname button should be disabled
     cy.findByTestId('subnames-tab').click()
@@ -70,7 +72,7 @@ describe('Permissions', () => {
     cy.findByTestId('set-resolver-disabled-button').should('be.visible')
   })
 
-  it('should show correct buttons for managing subname', () => {
+  it('should show correct buttons for managing subname (Parent owner settings)', () => {
     acceptMetamaskAccess(2)
     cy.visit('/sub.wrapped.eth')
     // Parent owner settings
@@ -80,6 +82,8 @@ describe('Permissions', () => {
     cy.findByTestId('more-tab').click()
     cy.findByTestId('send-name-button').should('be.visible')
     cy.findByTestId('edit-resolver-button').should('not.exist')
+  })
+  it('should show correct buttons for managing subname (Name owner settings)', () => {
     // Name owner settings
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')
@@ -108,6 +112,7 @@ describe('Permissions', () => {
      cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
      cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
      cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_APPROVE').should('be.visible')
 
     cy.findByTestId('button-extend-expiry').click()
     cy.findByTestId('permissions-next-button').click()
@@ -131,6 +136,7 @@ describe('Permissions', () => {
       cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
       cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
       cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+      cy.findByTestId('unburned-CANNOT_APPROVE').should('be.visible')
 
       // Button should disappear
       cy.findByTestId('button-extend-expiry').should('not.exist')
@@ -152,6 +158,7 @@ describe('Permissions', () => {
      cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
      cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
      cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_APPROVE').should('be.visible')
 
     cy.findByTestId('button-revoke-pcc').click()
     cy.findByTestId('permissions-next-button').click()
@@ -177,6 +184,7 @@ describe('Permissions', () => {
      cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
      cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
      cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_APPROVE').should('be.visible')
 
     // Button should disappear
     cy.findByTestId('button-revoke-pcc').should('not.exist')
@@ -198,10 +206,11 @@ describe('Permissions', () => {
     cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
     cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
     cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+    cy.findByTestId('unburned-CANNOT_APPROVE').should('be.visible')
 
     cy.findByTestId('button-revoke-permissions').click()
     cy.findByTestId('permissions-next-button').click()
-    const fuses = ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER', 'CANNOT_SET_RESOLVER']
+    const fuses = ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER', 'CANNOT_SET_RESOLVER', 'CANNOT_APPROVE']
     for (const fuse of fuses) {
       cy.findByTestId(`checkbox-${fuse}`).click()
     }
@@ -221,6 +230,7 @@ describe('Permissions', () => {
      cy.findByTestId('burned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
      cy.findByTestId('burned-CANNOT_TRANSFER').should('be.visible')
      cy.findByTestId('burned-CANNOT_SET_RESOLVER').should('be.visible')
+     cy.findByTestId('burned-CANNOT_APPROVE').should('be.visible')
      cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
 
   })
@@ -240,6 +250,7 @@ describe('Permissions', () => {
   cy.findByTestId('burned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
   cy.findByTestId('burned-CANNOT_TRANSFER').should('be.visible')
   cy.findByTestId('burned-CANNOT_SET_RESOLVER').should('be.visible')
+  cy.findByTestId('burned-CANNOT_APPROVE').should('be.visible')
   cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
 
     cy.findByTestId('button-revoke-change-fuses').click()
@@ -263,6 +274,7 @@ describe('Permissions', () => {
       cy.findByTestId('burned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
       cy.findByTestId('burned-CANNOT_TRANSFER').should('be.visible')
       cy.findByTestId('burned-CANNOT_SET_RESOLVER').should('be.visible')
+      cy.findByTestId('burned-CANNOT_APPROVE').should('be.visible')
       cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
 
       // Button should disappear
@@ -272,7 +284,7 @@ describe('Permissions', () => {
       cy.findByTestId('button-revoke-permissions-disabled').should('be.visible')
   })
 
-  it('should show correct buttons for managing subname', () => {
+  it('should show correct buttons for managing subname (Parent owner settings)', () => {
     acceptMetamaskAccess(2)
     cy.visit('/sub.wrapped.eth')
     // Parent owner settings
@@ -282,6 +294,9 @@ describe('Permissions', () => {
     cy.findByTestId('more-tab').click()
     cy.findByTestId('send-name-button').should('not.exist')
     cy.findByTestId('edit-resolver-button').should('not.exist')
+  })
+
+  it('should show correct buttons for managing subname (Name owner settings)', () => {
     // Name owner settings
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')

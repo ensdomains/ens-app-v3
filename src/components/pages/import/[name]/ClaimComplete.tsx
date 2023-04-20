@@ -41,6 +41,7 @@ const DomainTextContainer = styled.div(
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 
     ${mq.sm.min(css`
       gap: ${theme.space['2']};
@@ -82,7 +83,7 @@ export const ClaimComplete = ({ name }: { name: string }) => {
       <Typography fontVariant="headingFour">{t('claimComplete.title')}</Typography>{' '}
       <DomainTextContainer>
         <Typography fontVariant="extraLargeBold">{t('claimComplete.ownerOf')}</Typography>
-        <FunkyTypography fontVariant="largeBold">{name}</FunkyTypography>
+        <FunkyTypography fontVariant="extraLargeBold">{name}</FunkyTypography>
       </DomainTextContainer>
       <Spacer $height="4" />
       <Typography>{t('claimComplete.successMessage')}</Typography>

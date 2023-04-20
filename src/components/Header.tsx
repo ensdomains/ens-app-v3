@@ -14,16 +14,17 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
 import BaseLink from './@atoms/BaseLink'
-import { HamburgerMenu } from './@atoms/HamburgerMenu'
 import { RouteItem } from './@atoms/RouteItem/RouteItem'
+import Hamburger from './@molecules/Hamburger/Hamburger'
 import { SearchInput } from './@molecules/SearchInput/SearchInput'
 import { ConditionalWrapper } from './ConditionalWrapper'
 import { HeaderConnect } from './ConnectButton'
 
 const HeaderWrapper = styled.header(
-  () => css`
-    height: min-content;
-    ${mq.md.max(css`
+  ({ theme }) => css`
+    height: ${theme.space['12']};
+
+    ${mq.sm.max(css`
       display: none;
     `)}
   `,
@@ -45,14 +46,6 @@ const LogoAnchor = styled.a(
   `,
 )
 
-const VerticalLine = styled.div(
-  ({ theme }) => css`
-    width: 1px;
-    height: ${theme.space['14']};
-    background-color: ${theme.colors.border};
-  `,
-)
-
 const NavContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -62,10 +55,6 @@ const NavContainer = styled.div(
     flex-gap: ${theme.space['3']};
     gap: ${theme.space['3']};
     height: ${theme.space['12']};
-
-    ${mq.md.min(css`
-      height: ${theme.space['18']};
-    `)}
 
     ${mq.lg.min(css`
       flex-gap: ${theme.space['6']};
@@ -82,12 +71,13 @@ const RouteContainer = styled.div<{ $state: TransitionState }>(
     justify-content: flex-end;
     flex-gap: ${theme.space['1']};
     gap: ${theme.space['1']};
-    transition: transform 0.15s ease-in-out;
+    transition: transform 0.15s ease-in-out, opacity 0.15s ease-in-out;
     position: absolute;
     right: 0;
     top: 0;
     bottom: 0;
     transform: translateX(125%);
+    opacity: 0;
 
     ${mq.lg.min(css`
       flex-gap: ${theme.space['6']};
@@ -98,6 +88,7 @@ const RouteContainer = styled.div<{ $state: TransitionState }>(
     ${$state === 'entered' &&
     css`
       transform: translateX(0%);
+      opacity: 1;
     `}
   `,
 )
@@ -111,15 +102,16 @@ const RouteWrapper = styled.div(
 const SearchWrapper = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
     width: ${theme.space.full};
+    max-width: ${theme.space['80']};
     & > div > div {
       max-width: ${theme.space.full};
       ${mq.lg.min(css`
-        max-width: ${theme.space['96']};
+        max-width: ${theme.space['80']};
       `)}
     }
 
     transition: margin 0.15s ease-in-out;
-    margin-right: ${theme.space['32']};
+    margin-right: ${theme.space['24']};
     ${$state !== 'entered' &&
     css`
       margin-right: 0;
@@ -130,14 +122,9 @@ const SearchWrapper = styled.div<{ $state: TransitionState }>(
   `,
 )
 
-const routesNoSearch = routes.filter((route) => route.name !== 'search' && route.icon)
-
-const disconnectedRoutes = routes.filter(
-  (route) => route.name !== 'search' && route.connected === false,
+const routesNoSearch = routes.filter(
+  (route) => route.name !== 'search' && route.icon && !route.onlyDropdown && !route.disabled,
 )
-
-const alwaysVisibleRoutes = disconnectedRoutes.filter((r) => !r.onlyDropdown).slice(0, 4)
-const dropdownOnlyRoutes = disconnectedRoutes.filter((r) => !alwaysVisibleRoutes.includes(r))
 
 export const Header = () => {
   const { space } = useTheme()
@@ -159,13 +146,6 @@ export const Header = () => {
     initialEntered: true,
   })
 
-  // eslint-disable-next-line no-nested-ternary
-  const dropdownRoutes = isConnected
-    ? disconnectedRoutes
-    : breakpoints.lg
-    ? dropdownOnlyRoutes
-    : disconnectedRoutes
-
   let RouteItems: ReactNode
 
   if (!isInitial && isConnected) {
@@ -177,12 +157,6 @@ export const Header = () => {
         hasNotification={route.name === 'settings' && pendingTransactions.length > 0}
       />
     ))
-  } else if (breakpoints.lg) {
-    RouteItems = alwaysVisibleRoutes.map((route) => (
-      <RouteItem key={route.name} route={route} asText />
-    ))
-  } else {
-    RouteItems = null
   }
 
   const toggleRoutesShowing = useCallback(
@@ -210,7 +184,7 @@ export const Header = () => {
   }, [searchWrapperRef.current])
 
   return (
-    <HeaderWrapper>
+    <HeaderWrapper id="header">
       <NavContainer>
         <ConditionalWrapper
           condition={router.asPath !== '/'}
@@ -226,22 +200,18 @@ export const Header = () => {
             <ENSWithGradient height={space['12']} />
           )}
         </ConditionalWrapper>
-        {!isInitial && isConnected && <HamburgerMenu align="left" dropdownItems={dropdownRoutes} />}
-        {router.asPath !== '/' && breakpoints.md && (
+        {router.asPath !== '/' && breakpoints.sm && (
           <>
-            <VerticalLine />
             <SearchWrapper
               data-testid="search-wrapper"
               ref={searchWrapperRef}
               $state={breakpoints.lg ? 'entered' : state}
             >
-              <SearchInput size="large" />
+              <SearchInput size="medium" />
             </SearchWrapper>
           </>
         )}
-        {(isInitial ||
-          (isConnected && (breakpoints.lg || router.asPath === '/')) ||
-          !isConnected) && <div style={{ flexGrow: 1 }} />}
+        <div style={{ flexGrow: 1 }} />
         <RouteWrapper>
           <RouteContainer
             data-testid="route-container"
@@ -251,7 +221,7 @@ export const Header = () => {
             {RouteItems}
           </RouteContainer>
         </RouteWrapper>
-        {!isInitial && !isConnected && <HamburgerMenu dropdownItems={dropdownRoutes} />}
+        <Hamburger />
         <HeaderConnect />
       </NavContainer>
     </HeaderWrapper>
