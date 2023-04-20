@@ -4,6 +4,7 @@ import { ParsedInputResult, parseInput } from '@ensdomains/ensjs/utils/validatio
 
 import { Prettify } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 export type ValidationResult = Prettify<
   Partial<Omit<ParsedInputResult, 'normalised' | 'labelDataArray'>> & {
@@ -44,7 +45,7 @@ const defaultData = Object.freeze({
 })
 
 export const useValidate = (input: string, skip?: any): ValidationResult => {
-  const { data } = useQuery(['validate', input], () => validate(input), {
+  const { data } = useQuery(useQueryKeys().validate(input), () => validate(input), {
     enabled: !skip,
     initialData: () => (skip ? defaultData : validate(input)),
   })

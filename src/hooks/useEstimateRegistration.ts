@@ -11,6 +11,7 @@ import {
 
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { useAccountSafely } from './useAccountSafely'
 import { useChainId } from './useChainId'
@@ -18,7 +19,7 @@ import useEstimateTransactionCost from './useEstimateTransactionCost'
 import { useNameDetails } from './useNameDetails'
 import useRegistrationParams from './useRegistrationParams'
 
-type RegistrationProps = Omit<
+export type RegistrationProps = Omit<
   BaseRegistrationParams,
   'resolver' | 'duration' | 'secret' | 'resolverAddress'
 > & {
@@ -37,12 +38,13 @@ const useEstimateRegistration = (
 ) => {
   const chainId = useChainId()
   const { ready, contracts } = useEns()
+  const queryKeys = useQueryKeys()
   const {
     data: gasUsed,
     isLoading: gasUsedLoading,
     isError,
   } = useQuery(
-    ['getRegistrationGasEstimate', data],
+    queryKeys.estimateRegistration(data),
     async () => {
       const resolver = await contracts?.getPublicResolver()
       if (!resolver) return null
@@ -72,14 +74,17 @@ const useEstimateRegistration = (
     },
   )
 
-  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(['gas-costs'], async () => {
-    const addr = (await import('@app/assets/gas-costs/addr.json'))
-      .default as unknown as GasCostData[]
-    const text = (await import('@app/assets/gas-costs/text.json'))
-      .default as unknown as GasCostData[]
+  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(
+    queryKeys.globalIndependent.gasCostJson,
+    async () => {
+      const addr = (await import('@app/assets/gas-costs/addr.json'))
+        .default as unknown as GasCostData[]
+      const text = (await import('@app/assets/gas-costs/text.json'))
+        .default as unknown as GasCostData[]
 
-    return { addr, text }
-  })
+      return { addr, text }
+    },
+  )
 
   const fallbackEstimate = useMemo(() => {
     if (!gasPrice || !gasCosts || !data) return BigNumber.from(0)

@@ -1,14 +1,18 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+
 import { useEns } from '../utils/EnsProvider'
 import { useContractAddress } from './useContractAddress'
 import { useResolverStatus } from './useResolverStatus'
 
 jest.mock('@app/utils/EnsProvider')
+jest.mock('@app/utils/cacheKeyFactory')
 jest.mock('@app/hooks/useContractAddress')
 
 const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseEns = mockFunction(useEns)
+const mockCacheKeyFactory = mockFunction(useQueryKeys)
 
 const mockLocalStorage = jest.fn()
 const mockGetItem = jest.fn()
@@ -58,10 +62,12 @@ const setup = (overrides?: any) => {
 }
 
 describe('useResolverStatus', () => {
+  beforeEach(() => {
+    mockCacheKeyFactory.mockReturnValue({ resolverStatus: () => ['cacheKey'] })
+  })
   afterEach(() => {
     jest.resetAllMocks()
   })
-
   it('should return hasResolver is false if profile does not have resolver', async () => {
     setup()
 
@@ -194,7 +200,7 @@ describe('useResolverStatus', () => {
       setup({
         getProfile: defaultProfile,
       })
-      const { result, waitForNextUpdate } = renderHook(() =>
+      const { result, waitForNextUpdate, rerender } = renderHook(() =>
         useResolverStatus('test.eth', defaultProfile as any),
       )
       await waitForNextUpdate()

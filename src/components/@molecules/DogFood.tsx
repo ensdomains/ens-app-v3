@@ -10,6 +10,7 @@ import { Input } from '@ensdomains/thorin'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { useEns } from '@app/utils/EnsProvider'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback';
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { DisplayItems } from './TransactionDialogManager/DisplayItems'
 
 
@@ -49,7 +50,7 @@ export const DogFood = (
 
   // Attempt to get address of ENS name
   const { data: ethNameAddress } = useQuery(
-    ['getAddr', ethNameInput],
+     useQueryKeys().dogfood(ethNameInput),
     async () => {
       try {
       const result = await getAddr(ethNameInput!, '60')
