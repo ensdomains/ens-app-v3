@@ -5,6 +5,7 @@ import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import useDecryptName from './useDecryptName'
 
@@ -21,7 +22,7 @@ export const useProfile = (name: string, skip?: any) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,
   } = useQuery(
-    ['graph', 'getProfile', name],
+    useQueryKeys().profile(name),
     () =>
       getProfile(name, {
         fallback: {

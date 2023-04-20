@@ -3,6 +3,7 @@ import { useQuery } from 'wagmi'
 
 import { Profile, ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { contentHashToString } from '@app/utils/contenthash'
 
 import { useContractAddress } from './useContractAddress'
@@ -61,7 +62,7 @@ export const useResolverStatus = (
   const profileResolverAddress = profile?.resolverAddress
 
   const { data, isLoading, isFetching } = useQuery(
-    ['resolverStatus', name, { profileResolverAddress, options }],
+    useQueryKeys().resolverStatus(name, options, profileResolverAddress),
     async () => {
       if (!profileResolverAddress)
         return {

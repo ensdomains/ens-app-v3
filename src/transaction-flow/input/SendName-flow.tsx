@@ -137,16 +137,25 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const basicNameData = useBasicName(name as string)
   const { address = '' } = useAccount()
 
-  const { register, watch, getFieldState, handleSubmit, setValue, getValues, setError, formState } =
-    useForm<FormData>({
-      mode: 'onChange',
-      defaultValues: {
-        managerChoice: 'manager',
-        ownerChoice: 'owner',
-        dogfoodRaw: '',
-        address: '',
-      },
-    })
+  const {
+    register,
+    watch,
+    getFieldState,
+    handleSubmit,
+    setValue,
+    getValues,
+    setError,
+    formState,
+    trigger,
+  } = useForm<FormData>({
+    mode: 'onChange',
+    defaultValues: {
+      managerChoice: 'manager',
+      ownerChoice: 'owner',
+      dogfoodRaw: '',
+      address: '',
+    },
+  })
 
   const managerChoiceWatch = watch('managerChoice')
   const ownerChoiceWatch = watch('ownerChoice')
@@ -228,6 +237,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
               setError,
               label: 'Send to',
               formState,
+              trigger,
             }}
           />
         </InnerContainer>

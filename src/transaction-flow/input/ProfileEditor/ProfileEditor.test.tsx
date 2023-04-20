@@ -9,7 +9,7 @@ import {
   waitFor,
 } from '@app/test-utils'
 
-import { useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
@@ -126,6 +126,7 @@ const mockUseNameDetails = mockFunction(useNameDetails)
 const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseResolverStatus = mockFunction(useResolverStatus)
 const mockUseNetwork = mockFunction(useNetwork)
+const mockUseAccount = mockFunction(useAccount)
 const mockUseChainId = mockFunction(useChainId)
 const mockUseBasicName = mockFunction(useBasicName)
 
@@ -176,6 +177,7 @@ describe('ProfileEditor', () => {
     )
 
     mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
+    mockUseAccount.mockReturnValue({ address: '0x123' })
 
     mockUseBreakpoint.mockReturnValue({
       xs: true,
@@ -247,6 +249,7 @@ describe('ProfileEditor with old resolver', () => {
     mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
     mockUseChainId.mockReturnValue(1)
     mockUseBasicName.mockReturnValue({ isWrapped: false })
+    mockUseAccount.mockReturnValue({ address: '0x123' })
   })
 
   it('should submit to key value to alternative dispatch if resolver address is not current', async () => {
