@@ -9,11 +9,10 @@ import { ContentContainer } from '../components/ContentContainer'
 import { StyledInnerDialog } from '../components/StyledInnerDialog'
 
 type Props = {
-  onConfirm?: () => void
-  onCancel?: () => void
-  onSkip?: () => void
+  onConfirm: () => void
+  onCancel: () => void
 }
-export const NoResolverView = ({ onConfirm, onCancel, onSkip }: Props) => {
+export const NoResolverView = ({ onConfirm, onCancel }: Props) => {
   const { t } = useTranslation('transactionFlow')
   return (
     <>
@@ -24,9 +23,9 @@ export const NoResolverView = ({ onConfirm, onCancel, onSkip }: Props) => {
       <StyledInnerDialog>
         <ContentContainer>
           <CenteredTypography>
-            {t('input.profileEditor.warningOverlay.noResolver.subtitle')}{' '}
+            {t('input.profileEditor.warningOverlay.noResolver.subtitle')}
           </CenteredTypography>
-          <Outlink href="">
+          <Outlink href="https://support.ens.domains/faq/manager/managing-names/#what-is-a-resolver">
             {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
           </Outlink>
         </ContentContainer>
@@ -36,13 +35,13 @@ export const NoResolverView = ({ onConfirm, onCancel, onSkip }: Props) => {
           <Button
             colorStyle="accentSecondary"
             onClick={onCancel}
-            data-testid="warning-overlay-secondary-action"
+            data-testid="warning-overlay-back-button"
           >
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button onClick={onConfirm} data-testid="profile-editor-overlay-button">
+          <Button onClick={onConfirm} data-testid="warning-overlay-next-button">
             {t('input.profileEditor.warningOverlay.action.setResolver')}
           </Button>
         }

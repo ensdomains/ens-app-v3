@@ -74,12 +74,8 @@ export const MigrateProfileSelectorView = ({
               {t('input.profileEditor.warningOverlay.migrateProfileSelector.subtitle')}
             </CenteredTypography>
             <RadioGroupContainer>
-              {/* <StyledRadioButtonGroup
-              style={{ width: '100%' }}
-              value={selected}
-              onChange={(e) => onChangeSelected(e.currentTarget.value as SelectedProfile)}
-            > */}
               <RadioButton
+                data-testid="migrate-profile-selector-latest"
                 label={
                   <RadioLabelContainer>
                     <RadioInfoContainer>
@@ -98,6 +94,7 @@ export const MigrateProfileSelectorView = ({
                 onChange={() => onChangeSelected('latest')}
               />
               <RadioButton
+                data-testid="migrate-profile-selector-current"
                 label={
                   <RadioLabelContainer>
                     <RadioInfoContainer>
@@ -116,6 +113,7 @@ export const MigrateProfileSelectorView = ({
                 onChange={() => onChangeSelected('current')}
               />
               <RadioButton
+                data-testid="migrate-profile-selector-reset"
                 label={
                   <RadioInfoContainer>
                     <Typography fontVariant="bodyBold">
@@ -133,7 +131,6 @@ export const MigrateProfileSelectorView = ({
                 checked={selected === 'reset'}
                 onChange={() => onChangeSelected('reset')}
               />
-              {/* </StyledRadioButtonGroup> */}
             </RadioGroupContainer>
           </ContentContainer>
         </ScrollBox>
@@ -143,13 +140,13 @@ export const MigrateProfileSelectorView = ({
           <Button
             colorStyle="accentSecondary"
             onClick={onBack}
-            data-testid="warning-overlay-secondary-action"
+            data-testid="warning-overlay-back-button"
           >
             {t('action.back', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button onClick={onNext} data-testid="profile-editor-overlay-button">
+          <Button onClick={onNext} data-testid="warning-overlay-next-button">
             {t('action.next', { ns: 'common' })}
           </Button>
         }

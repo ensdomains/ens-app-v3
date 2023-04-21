@@ -43,9 +43,9 @@ type Props = {
   onClick?: () => void
 }
 
-export const SkipButton = ({ description, actionLabel = 'Skip', onClick }: Props) => {
+export const SkipButton = ({ description, actionLabel = 'Skip', onClick, ...props }: Props) => {
   return (
-    <Container type="button" onClick={onClick}>
+    <Container type="button" onClick={onClick} {...props}>
       <StyledTypography fontVariant="small">{description}</StyledTypography>
       <SkipLabel>
         <Typography fontVariant="bodyBold" color="yellowDim">

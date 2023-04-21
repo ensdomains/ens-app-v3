@@ -15,7 +15,7 @@ type Props = {
 }
 export const TransferOrResetProfileView = ({
   selected,
-  onChangeSelected: onChangeShouldReset,
+  onChangeSelected,
   onNext,
   onBack,
 }: Props) => {
@@ -31,10 +31,12 @@ export const TransferOrResetProfileView = ({
           {t('input.profileEditor.warningOverlay.transferOrResetProfile.subtitle')}
         </CenteredTypography>
         <DetailedSwitch
-          title="Transfer current profile"
-          description="Unselecting this will reset your profile."
-          checked={!selected}
-          onChange={(e) => onChangeShouldReset(e.currentTarget.checked ? 'latest' : 'reset')}
+          title={t('input.profileEditor.warningOverlay.transferOrResetProfile.toggle.title')}
+          description={t(
+            'input.profileEditor.warningOverlay.transferOrResetProfile.toggle.subtitle',
+          )}
+          checked={selected !== 'reset'}
+          onChange={(e) => onChangeSelected(e.currentTarget.checked ? 'latest' : 'reset')}
         />
       </StyledInnerDialog>
       <Dialog.Footer
@@ -42,13 +44,13 @@ export const TransferOrResetProfileView = ({
           <Button
             colorStyle="accentSecondary"
             onClick={onBack}
-            data-testid="warning-overlay-secondary-action"
+            data-testid="warning-overlay-back-button"
           >
             {t('action.back', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button onClick={onNext} data-testid="profile-editor-overlay-button">
+          <Button onClick={onNext} data-testid="warning-overlay-next-button">
             {t('action.next', { ns: 'common' })}
           </Button>
         }

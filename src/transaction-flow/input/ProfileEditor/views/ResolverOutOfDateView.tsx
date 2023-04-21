@@ -27,11 +27,12 @@ export const ResolverOutOfDateView = ({ onConfirm, onCancel, onSkip }: Props) =>
           <CenteredTypography>
             {t('input.profileEditor.warningOverlay.resolverOutOfDate.subtitle')}
           </CenteredTypography>
-          <Outlink href="">
+          <Outlink href="https://support.ens.domains/faq/manager/managing-names/#what-is-a-resolver">
             {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
           </Outlink>
         </ContentContainer>
         <SkipButton
+          data-testid="warning-overlay-skip-button"
           description={t('input.profileEditor.warningOverlay.action.ignoreUpdate')}
           actionLabel={t('action.skip', { ns: 'common' })}
           onClick={onSkip}
@@ -42,13 +43,13 @@ export const ResolverOutOfDateView = ({ onConfirm, onCancel, onSkip }: Props) =>
           <Button
             colorStyle="accentSecondary"
             onClick={onCancel}
-            data-testid="warning-overlay-secondary-action"
+            data-testid="warning-overlay-back-button"
           >
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button onClick={onConfirm} data-testid="profile-editor-overlay-button">
+          <Button onClick={onConfirm} data-testid="warning-overlay-next-button">
             {t('input.profileEditor.warningOverlay.action.updateResolver')}
           </Button>
         }

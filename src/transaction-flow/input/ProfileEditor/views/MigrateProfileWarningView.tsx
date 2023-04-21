@@ -7,21 +7,22 @@ import { ContentContainer } from '../components/ContentContainer'
 import { StyledInnerDialog } from '../components/StyledInnerDialog'
 
 type Props = {
-  name: string
-  onCancel?: () => void
+  onBack: () => void
+  onNext: () => void
 }
-export const MigrateRegistryView = ({ name, onCancel }: Props) => {
+
+export const MigrateProfileWarningView = ({ onNext, onBack }: Props) => {
   const { t } = useTranslation('transactionFlow')
   return (
     <>
       <Dialog.Heading
-        title={t('input.profileEditor.warningOverlay.migrateRegistry.title')}
-        alert="error"
+        title={t('input.profileEditor.warningOverlay.migrateProfileWarning.title')}
+        alert="warning"
       />
       <StyledInnerDialog>
         <ContentContainer>
           <CenteredTypography>
-            {t('input.profileEditor.warningOverlay.migrateRegistry.subtitle')}
+            {t('input.profileEditor.warningOverlay.migrateProfileWarning.subtitle')}
           </CenteredTypography>
         </ContentContainer>
       </StyledInnerDialog>
@@ -29,20 +30,15 @@ export const MigrateRegistryView = ({ name, onCancel }: Props) => {
         leading={
           <Button
             colorStyle="accentSecondary"
-            onClick={onCancel}
+            onClick={onBack}
             data-testid="warning-overlay-back-button"
           >
-            {t('action.cancel', { ns: 'common' })}
+            {t('action.back', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button
-            as="a"
-            href={`https://app.ens.domains/name/${name}`}
-            target="_blank"
-            data-testid="warning-overlay-next-button"
-          >
-            {t('input.profileEditor.warningOverlay.migrateRegistry.action')}
+          <Button onClick={onNext} data-testid="warning-overlay-next-button">
+            {t('action.understand', { ns: 'common' })}
           </Button>
         }
       />

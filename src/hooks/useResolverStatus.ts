@@ -46,16 +46,18 @@ const areRecordsEqual = (a: Profile['records'], b: Profile['records']): boolean 
 }
 
 type Options = {
-  skip?: boolean
   skipCompare?: boolean
 }
 
 export const useResolverStatus = (
   name: string,
   profile: ReturnedENS['getProfile'],
-  { skip, ...options }: Options = {},
+  options: Options = {},
 ) => {
   const chainId = useChainId()
+
+  const skip = !name || !profile
+
   const { data: isAuthorized, isLoading: isAuthorizedLoading } = useResolverIsAuthorized(
     name,
     profile?.resolverAddress,
@@ -64,23 +66,24 @@ export const useResolverStatus = (
   const latestResolverAddress = useContractAddress('PublicResolver')
   const { profile: latestResolverProfile, loading: isLatestResolverProfileLoading } = useProfile(
     name,
-    options.skipCompare,
+    skip || options.skipCompare,
     latestResolverAddress,
   )
 
   const profileResolverAddress = profile?.resolverAddress
-
+  console.log(profileResolverAddress)
   return useMemo(() => {
     const defaultResults = {
       hasResolver: false,
       hasLatestResolver: false,
       hasValidResolver: false,
+      isNameWrapperAware: false,
       hasMigratedProfile: false,
       isMigratedProfileEqual: false,
-      isNameWrapperAware: false,
     }
 
-    if (!profileResolverAddress || profileResolverAddress === emptyAddress)
+    // If the profile doesn't have a resolver, we don't need to continue checks
+    if (!profileResolverAddress || profileResolverAddress === emptyAddress || skip)
       return {
         status: defaultResults,
         isLoading: false,
@@ -91,14 +94,32 @@ export const useResolverStatus = (
       hasResolver: true,
       hasLatestResolver: profileResolverAddress === latestResolverAddress,
       isNameWrapperAware: canEditRecordsWhenWrappedCalc(true, profileResolverAddress, chainId),
-      hasValidResolver: !!isAuthorized,
     }
 
-    if (!isAuthorizedLoading && (baseResults.hasLatestResolver || options?.skipCompare))
+    // If the profile has the latest resolver, we don't need to continue checks
+    if (baseResults.hasLatestResolver)
       return {
-        status: baseResults,
+        status: {
+          ...baseResults,
+          hasValidResolver: true,
+        },
         isLoading: false,
       }
+
+    console.log(isAuthorizedLoading)
+    // If autorization is loading, we don't need to continue checks
+    if (isAuthorizedLoading)
+      return {
+        status: baseResults,
+        isLoading: true,
+      }
+
+    const authorizedResults = {
+      ...baseResults,
+      hasValidResolver: isAuthorized,
+    }
+
+    if (options.skipCompare) return { status: authorizedResults, isLoading: false }
 
     const resolverRecords = latestResolverProfile?.records || {}
     const keys = ['texts', 'coinTypes', 'contentHash'] as const
@@ -112,7 +133,7 @@ export const useResolverStatus = (
     if (!isLatestResolverProfileLoading)
       return {
         status: {
-          ...baseResults,
+          ...authorizedResults,
           hasMigratedProfile,
           isMigratedProfileEqual: areRecordsEqual(profile?.records, resolverRecords),
         },
@@ -120,7 +141,7 @@ export const useResolverStatus = (
       }
 
     return {
-      status: undefined,
+      status: authorizedResults,
       isLoading: true,
     }
   }, [
@@ -133,5 +154,6 @@ export const useResolverStatus = (
     options?.skipCompare,
     profile?.records,
     profileResolverAddress,
+    skip,
   ])
 }

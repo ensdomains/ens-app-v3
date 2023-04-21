@@ -4,15 +4,24 @@ import { Button, Dialog } from '@ensdomains/thorin'
 
 import { Outlink } from '@app/components/Outlink'
 
+import type { SelectedProfile } from '../ResolverWarningOverlay'
 import { CenteredTypography } from '../components/CenteredTypography'
 import { ContentContainer } from '../components/ContentContainer'
+import { DetailedSwitch } from '../components/DetailedSwitch'
 import { StyledInnerDialog } from '../components/StyledInnerDialog'
 
 type Props = {
-  onCancel?: () => void
-  onNext?: () => void
+  selected: SelectedProfile
+  onChangeSelected: (selected: SelectedProfile) => void
+  onCancel: () => void
+  onNext: () => void
 }
-export const ResolverNotNameWrapperAwareView = ({ onNext, onCancel }: Props) => {
+export const ResolverNotNameWrapperAwareView = ({
+  selected,
+  onChangeSelected,
+  onNext,
+  onCancel,
+}: Props) => {
   const { t } = useTranslation('transactionFlow')
   return (
     <>
@@ -25,23 +34,31 @@ export const ResolverNotNameWrapperAwareView = ({ onNext, onCancel }: Props) => 
           <CenteredTypography>
             {t('input.profileEditor.warningOverlay.resolverNotNameWrapperAware.subtitle')}
           </CenteredTypography>
-          <Outlink href="">
+          <Outlink href="https://support.ens.domains/faq/manager/managing-names/#what-is-a-resolver">
             {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
           </Outlink>
         </ContentContainer>
+        <DetailedSwitch
+          title={t('input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.title')}
+          description={t(
+            'input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.subtitle',
+          )}
+          checked={selected !== 'reset'}
+          onChange={(e) => onChangeSelected(e.target.checked ? 'latest' : 'reset')}
+        />
       </StyledInnerDialog>
       <Dialog.Footer
         leading={
           <Button
             colorStyle="accentSecondary"
             onClick={onCancel}
-            data-testid="warning-overlay-secondary-action"
+            data-testid="warning-overlay-back-button"
           >
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button onClick={onNext} data-testid="profile-editor-overlay-button">
+          <Button onClick={onNext} data-testid="warning-overlay-next-button">
             {t('input.profileEditor.warningOverlay.action.updateResolver')}
           </Button>
         }

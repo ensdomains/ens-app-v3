@@ -30,13 +30,13 @@ export const ResetProfileView = ({ onNext, onBack }: Props) => {
           <Button
             colorStyle="accentSecondary"
             onClick={onBack}
-            data-testid="warning-overlay-secondary-action"
+            data-testid="warning-overlay-back-button"
           >
             {t('action.back', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button onClick={onNext} data-testid="profile-editor-overlay-button">
+          <Button onClick={onNext} data-testid="warning-overlay-next-button">
             {t('action.understand', { ns: 'common' })}
           </Button>
         }

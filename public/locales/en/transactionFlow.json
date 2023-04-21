@@ -102,8 +102,8 @@
           "ignoreUpdate": "Ignore this and continue using your current resolver. You will be asked again next time."
         },
         "invalidResolver": {
-          "title": "Unauthorized resolver",
-          "subtitle": "You do not have permission to set records for this resolver. You will need to update to the latest resolver to make changes.",
+          "title": "Unauthorised resolver",
+          "subtitle": "You do not have permission to set records for this resolver. You will need to update to the latest resolver to edit your profile.",
           "action": "Update resolver"
         },
         "migrateProfileSelector": {
@@ -112,9 +112,13 @@
           "option": {
             "latest": "Profile records on new resolver",
             "current": "Current profile records",
-            "reset": "Reset you profile",
+            "reset": "Reset your profile",
             "resetSubtitle": "Remove all profile records"
           }
+        },
+        "migrateProfileWarning": {
+          "title": "Migrate profile",
+          "subtitle": "You are migrating your profile records to the latest resolver. This will permanently clear any existing records on the latest resolver and replace them with your current records."
         },
         "migrateRegistry": {
           "title": "Registry out of date",
@@ -131,8 +135,12 @@
           "subtitle": "You are resetting your profile records. You will lose all existing profile information, such as ETH address, avatar and social records. These can be re-added by editing your profile."
         },
         "resolverNotNameWrapperAware": {
-          "title": "Resolver not compatible",
-          "subtitle": "Your resolver is not compatible with your name. Upgrade your resolver to make changes to this name."
+          "title": "Resolver incompatible",
+          "subtitle": "Your current resolver is incompatible with wrapped names. You will need to update the resolver before editing your profile.",
+          "toggle": {
+            "title": "Transfer current profile",
+            "subtitle": "Unselecting this will only update your resolver."
+          }
         },
         "resolverOutOfDate": {
           "title": "Resolver out of date",
@@ -144,7 +152,11 @@
         },
         "transferOrResetProfile": {
           "title": "Profile",
-          "subtitle": "You can transfer your current profile to the new resolver, or reset it and remove all profile records."
+          "subtitle": "You can transfer your current profile to the new resolver before updating your resolver.",
+          "toggle": {
+            "title": "Transfer current profile",
+            "subtitle": "Unselecting this will only update your resolver."
+          }
         },
         "updateResolverOrResetProfile": {
           "title": "Profile",
@@ -156,6 +168,20 @@
         },
         "links": {
           "learnMoreResolvers": "Learn more about resolvers"
+        }
+      },
+      "intro": {
+        "resetProfile": {
+          "title": "Reset profile",
+          "description": "This will remove all profile records from the latest resolver and then update the resolver."
+        },
+        "migrateProfile": {
+          "title": "Migrate profile",
+          "description": "This will migrate your current profile records to the latest resolver."
+        },
+        "migrateCurrentProfile": {
+          "title": "Migrate profile",
+          "description": "This will migrate your current profile records to the latest resolver."
         }
       }
     },

@@ -32,7 +32,7 @@ type Props = {
 
 export const DetailedSwitch = ({ title, description, ...toggleProps }: Props) => {
   return (
-    <Container>
+    <Container data-testid="detailed-switch">
       <ContentContainer>
         {title && <Typography fontVariant="bodyBold">{title}</Typography>}{' '}
         {description && <Typography fontVariant="small">{description}</Typography>}

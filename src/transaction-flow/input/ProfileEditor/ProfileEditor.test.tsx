@@ -1,13 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import {
-  cleanup,
-  fireEvent,
-  mockFunction,
-  render,
-  screen,
-  userEvent,
-  waitFor,
-} from '@app/test-utils'
+import { cleanup, mockFunction, render, screen, userEvent, waitFor, within } from '@app/test-utils'
 
 import { useNetwork } from 'wagmi'
 
@@ -15,6 +7,7 @@ import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useProfile } from '@app/hooks/useProfile'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -120,6 +113,7 @@ jest.mock('@app/hooks/useResolverStatus')
 jest.mock('wagmi')
 jest.mock('@app/hooks/useChainId')
 jest.mock('@app/hooks/useBasicName')
+jest.mock('@app/hooks/useProfile')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseNameDetails = mockFunction(useNameDetails)
@@ -128,6 +122,7 @@ const mockUseResolverStatus = mockFunction(useResolverStatus)
 const mockUseNetwork = mockFunction(useNetwork)
 const mockUseChainId = mockFunction(useChainId)
 const mockUseBasicName = mockFunction(useBasicName)
+const mockUseProfile = mockFunction(useProfile)
 
 const mockDispatch = jest.fn()
 
@@ -169,6 +164,24 @@ export function setupIntersectionObserverMock({
   })
 }
 
+const makeResolverStatus = (keys?: string[], isLoading = false) => ({
+  status: {
+    hasResolver: false,
+    hasLatestResolver: false,
+    hasValidResolver: false,
+    hasMigratedProfile: false,
+    isMigratedProfileEqual: false,
+    isNameWrapperAware: false,
+    ...(keys || []).reduce((acc, key) => {
+      return {
+        ...acc,
+        [key]: true,
+      }
+    }, {}),
+  },
+  isLoading,
+})
+
 describe('ProfileEditor', () => {
   beforeEach(() => {
     mockUseNameDetails.mockReturnValue(
@@ -190,16 +203,9 @@ describe('ProfileEditor', () => {
 
     mockUseContractAddress.mockReturnValue('0x0')
 
-    mockUseResolverStatus.mockReturnValue({
-      data: {
-        hasResolver: true,
-        hasLatestResolver: true,
-        isMigratedProfileEqual: true,
-        hasMigratedProfile: true,
-      },
-      isLoading: false,
-      isFetching: false,
-    })
+    mockUseResolverStatus.mockReturnValue(
+      makeResolverStatus(['hasResolver', 'hasLatestResolver', 'hasValidResolver']),
+    )
     mockUseChainId.mockReturnValue(1)
     mockUseBasicName.mockReturnValue({ isWrapped: false })
   })
@@ -225,61 +231,508 @@ describe('ProfileEditor', () => {
   })
 })
 
-describe('ProfileEditor with old resolver', () => {
+describe('ResolverWarningOverlay', () => {
+  const UPDATE_RESOLVER_DISPATCH = {
+    name: 'setTransactions',
+    payload: [
+      {
+        data: {
+          contract: 'registry',
+          name: 'test.eth',
+          resolver: '0x123',
+        },
+        name: 'updateResolver',
+      },
+    ],
+  }
+
+  const MIGRATE_PROFILE_DISPATCH = {
+    key: 'migrate-profile-test.eth',
+    name: 'startFlow',
+    payload: {
+      intro: {
+        content: {
+          data: {
+            description: 'input.profileEditor.intro.migrateProfile.description',
+          },
+          name: 'GenericWithDescription',
+        },
+        title: [
+          'input.profileEditor.intro.migrateProfile.title',
+          {
+            ns: 'transactionFlow',
+          },
+        ],
+      },
+      transactions: [
+        {
+          data: {
+            name: 'test.eth',
+          },
+          name: 'migrateProfile',
+        },
+        {
+          data: {
+            contract: 'registry',
+            name: 'test.eth',
+            resolver: '0x123',
+          },
+          name: 'updateResolver',
+        },
+      ],
+    },
+  }
+
+  const RESET_RESOLVER_DISPATCH = {
+    key: 'reset-profile-test.eth',
+    name: 'startFlow',
+    payload: {
+      intro: {
+        content: {
+          data: {
+            description: 'input.profileEditor.intro.resetProfile.description',
+          },
+          name: 'GenericWithDescription',
+        },
+        title: [
+          'input.profileEditor.intro.resetProfile.title',
+          {
+            ns: 'transactionFlow',
+          },
+        ],
+      },
+      transactions: [
+        {
+          data: {
+            name: 'test.eth',
+            resolver: '0x123',
+          },
+          name: 'resetProfile',
+        },
+        {
+          data: {
+            contract: 'registry',
+            name: 'test.eth',
+            resolver: '0x123',
+          },
+          name: 'updateResolver',
+        },
+      ],
+    },
+  }
+
+  const MIGRATE_CURRENT_PROFILE_DISPATCH = {
+    key: 'migrate-profile-with-reset-test.eth',
+    name: 'startFlow',
+    payload: {
+      intro: {
+        content: {
+          data: {
+            description: 'input.profileEditor.intro.migrateCurrentProfile.description',
+          },
+          name: 'GenericWithDescription',
+        },
+        title: [
+          'input.profileEditor.intro.migrateCurrentProfile.title',
+          {
+            ns: 'transactionFlow',
+          },
+        ],
+      },
+      transactions: [
+        {
+          data: {
+            name: 'test.eth',
+            resolver: '0x123',
+          },
+          name: 'migrateProfileWithReset',
+        },
+        {
+          data: {
+            contract: 'registry',
+            name: 'test.eth',
+            resolver: '0x123',
+          },
+          name: 'updateResolver',
+        },
+      ],
+    },
+  }
+
   beforeEach(() => {
     mockUseNameDetails.mockReturnValue(
       mockProfileData as unknown as { profile: Profile; loading: boolean },
     )
-
     mockUseContractAddress.mockReturnValue('0x123')
-
-    mockUseResolverStatus.mockReturnValue({
-      data: {
-        hasResolver: true,
-        hasLatestResolver: false,
-        isMigratedProfileEqual: true,
-        hasMigratedProfile: true,
-      },
-      isLoading: false,
-      isFetching: false,
-    })
-
     mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
     mockUseChainId.mockReturnValue(1)
     mockUseBasicName.mockReturnValue({ isWrapped: false })
+    mockUseProfile.mockReturnValue({
+      profile: mockProfileData.profile as any,
+      loading: false,
+    })
+    mockDispatch.mockClear()
   })
 
-  it('should submit to key value to alternative dispatch if resolver address is not current', async () => {
-    render(
-      <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
-    )
-
-    await userEvent.click(screen.getByTestId('warning-overlay-secondary-action'))
-    await userEvent.click(screen.getByTestId('show-add-profile-records-modal-button'))
-    await userEvent.click(screen.getByTestId('profile-record-option-DOT'))
-    await userEvent.click(screen.getByTestId('add-profile-records-button'))
-    await userEvent.type(
-      screen.getByTestId('profile-record-input-input-DOT'),
-      '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
-    )
-
-    const submitButton = screen.getByTestId('profile-submit-button')
-    await waitFor(() => {
-      expect(submitButton).not.toHaveAttribute('disabled')
+  describe('No Resolver', () => {
+    beforeEach(() => {
+      mockUseResolverStatus.mockReturnValue(makeResolverStatus([]))
     })
-    fireEvent.click(submitButton)
 
-    await waitFor(() => {
-      expect(mockDispatch.mock.calls[0][0].name).toBe('startFlow')
-      expect(
-        mockDispatch.mock.calls[0][0].payload.transactions[0].data.records.find(
-          (r: any) => r.key === 'DOT',
-        ),
-      ).toEqual({
-        group: 'address',
-        key: 'DOT',
-        type: 'addr',
-        value: '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
+    it('should dispatch update resolver', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.noResolver.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+      })
+    })
+  })
+
+  describe('Resolver not name wrapper aware', () => {
+    beforeEach(() => {
+      mockUseNameDetails.mockReturnValueOnce({ ...mockProfileData, isWrapped: true } as unknown as {
+        profile: Profile
+        loading: boolean
+      })
+      mockUseResolverStatus.mockReturnValue(makeResolverStatus(['hasResolver', 'hasValidResolver']))
+    })
+
+    it('should be able to migrate profile', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.notNameWrapperAware.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(MIGRATE_PROFILE_DISPATCH)
+      })
+    })
+
+    it('should be able to update resolver', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.notNameWrapperAware.title'),
+        ).toBeVisible()
+      })
+
+      const switchEl = screen.getByTestId('detailed-switch')
+      const toggle = within(switchEl).getByRole('checkbox')
+      await userEvent.click(toggle)
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+      })
+    })
+  })
+
+  describe('Invalid Resolver', () => {
+    beforeEach(() => {
+      mockUseResolverStatus.mockReturnValue(makeResolverStatus(['hasResolver']))
+    })
+
+    it('should dispatch update resolver', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.invalidResolver.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+      })
+    })
+  })
+
+  describe('Resolver out of date', () => {
+    beforeEach(() => {
+      mockUseResolverStatus.mockReturnValue(makeResolverStatus(['hasResolver', 'hasValidResolver']))
+    })
+
+    it('should be able to go to profile editor', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resolverOutOfDate.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-skip-button'))
+
+      await waitFor(() => {
+        expect(screen.getByTestId('profile-editor')).toBeVisible()
+      })
+    })
+
+    it('should be able to migrate profile and resolver', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resolverOutOfDate.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.transferOrResetProfile.title'),
+        ).toBeVisible()
+      })
+
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(MIGRATE_PROFILE_DISPATCH)
+      })
+    })
+
+    it('should be able to update resolver', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resolverOutOfDate.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.transferOrResetProfile.title'),
+        ).toBeVisible()
+      })
+
+      const switchEl = screen.getByTestId('detailed-switch')
+      const toggle = within(switchEl).getByRole('checkbox')
+      await userEvent.click(toggle)
+
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+      })
+    })
+  })
+
+  describe('Resolver out of sync ( profiles do not match )', () => {
+    beforeEach(() => {
+      mockUseResolverStatus.mockReturnValue(
+        makeResolverStatus(['hasResolver', 'hasValidResolver', 'hasMigratedProfile']),
+      )
+    })
+
+    it('should be able to go to profile editor', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resolverOutOfSync.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-skip-button'))
+
+      await waitFor(() => {
+        expect(screen.getByTestId('profile-editor')).toBeVisible()
+      })
+    })
+
+    it('should be able to update resolver', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resolverOutOfSync.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      // Select latest profile
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.migrateProfileSelector.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('migrate-profile-selector-latest'))
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+      })
+    })
+
+    it('should be able to migrate current profile', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resolverOutOfSync.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      // select migrate current profile
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.migrateProfileSelector.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('migrate-profile-selector-current'))
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      // migrate profile warning
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.migrateProfileWarning.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(MIGRATE_CURRENT_PROFILE_DISPATCH)
+      })
+    })
+
+    it('should be able to reset profile', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resolverOutOfSync.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      // Select reset option
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.migrateProfileSelector.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('migrate-profile-selector-reset'))
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      // Reset profile view
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resetProfile.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(RESET_RESOLVER_DISPATCH)
+      })
+    })
+  })
+
+  describe('Resolver out of sync ( profiles match )', () => {
+    beforeEach(() => {
+      mockUseResolverStatus.mockReturnValue(
+        makeResolverStatus([
+          'hasResolver',
+          'hasValidResolver',
+          'hasMigratedProfile',
+          'isMigratedProfileEqual',
+        ]),
+      )
+    })
+
+    it('should be able to go to profile editor', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resolverOutOfSync.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-skip-button'))
+
+      await waitFor(() => {
+        expect(screen.getByTestId('profile-editor')).toBeVisible()
+      })
+    })
+
+    it('should be able to update resolver', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resolverOutOfSync.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      // Select latest profile
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.updateResolverOrResetProfile.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+      })
+    })
+
+    it('should be able to reset profile', async () => {
+      render(
+        <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resolverOutOfSync.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      // Select reset option
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.updateResolverOrResetProfile.title'),
+        ).toBeVisible()
+      })
+      const switchEl = screen.getByTestId('detailed-switch')
+      const toggle = within(switchEl).getByRole('checkbox')
+      await userEvent.click(toggle)
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      // Reset profile view
+      await waitFor(() => {
+        expect(
+          screen.getByText('input.profileEditor.warningOverlay.resetProfile.title'),
+        ).toBeVisible()
+      })
+      await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
+
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith(RESET_RESOLVER_DISPATCH)
       })
     })
   })

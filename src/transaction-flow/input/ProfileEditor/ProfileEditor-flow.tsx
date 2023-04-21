@@ -8,12 +8,20 @@ import { Button, Dialog, PlusSVG, ScrollBox, mq } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
+import { AddProfileRecordView } from '@app/components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
 import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
 import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
+import {
+  getProfileRecordsDiff,
+  profileEditorFormToProfileRecords,
+  profileToProfileRecords,
+} from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
@@ -21,14 +29,6 @@ import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/tran
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
-import { AddProfileRecordView } from '../../../components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
-import {
-  getProfileRecordsDiff,
-  profileEditorFormToProfileRecords,
-  profileToProfileRecords,
-} from '../../../components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
-import { ProfileRecord } from '../../../constants/profileRecordOptions'
-import { ProfileEditorForm, useProfileEditorForm } from '../../../hooks/useProfileEditorForm'
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
 
@@ -217,7 +217,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const resolverAddress = useContractAddress('PublicResolver')
 
   const { status, isLoading: statusLoading } = useResolverStatus(name, profile, {
-    skip: profileLoading,
     skipCompare: false,
   })
 
