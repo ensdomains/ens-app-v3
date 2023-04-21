@@ -11,4 +11,8 @@ describe('useValidate', () => {
     const { result } = renderHook(() => useValidate('test❤️'))
     expect(result.current.isNonASCII).toEqual(true)
   })
+  it('should not error if % symbol is in input', async () => {
+    const { result } = renderHook(() => useValidate('%'))
+    expect(result.current.isValid).toEqual(false)
+  })
 })
