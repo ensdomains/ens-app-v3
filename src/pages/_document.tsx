@@ -14,18 +14,19 @@ const ipfsPathScript = `
 `
 
 const hiddenCheckScript = `
-  let wasHidden = document.hidden
-  document.addEventListener(
-    'visibilitychange',
-    () => {
-      if (!document.hidden && wasHidden && typeof window.ethereum !== 'undefined') {
-        window.location.reload()
-      }
-    },
-    {
-      once: true,
-    },
-  )
+  if (document.hidden) {
+    document.addEventListener(
+      'visibilitychange',
+      () => {
+        if (!document.hidden && typeof window.ethereum !== 'undefined') {
+          window.location.reload()
+        }
+      },
+      {
+        once: true,
+      },
+    ) 
+  }
 `
 
 const makeIPFSURL = (url: string) => {
