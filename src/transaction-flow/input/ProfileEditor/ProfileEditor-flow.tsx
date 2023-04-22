@@ -24,7 +24,6 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
-import { makeIntroItem } from '@app/transaction-flow/intro'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
@@ -239,36 +238,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         ],
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
-      return
-
-      dispatch({
-        name: 'startFlow',
-        key: `edit-profile-flow-${name}`,
-        payload: {
-          intro: {
-            title: ['Action Required', { ns: 'transactionFlow' }],
-            content: makeIntroItem('MigrateAndUpdateResolver', { name }),
-          },
-          transactions: [
-            makeTransactionItem('updateProfileRecords', {
-              name,
-              records,
-              resolver: resolverAddress,
-              clearRecords: false,
-            }),
-            makeTransactionItem('updateResolver', {
-              name,
-              resolver: resolverAddress,
-              oldResolver: profile!.resolverAddress!,
-              contract: isWrapped ? 'nameWrapper' : 'registry',
-            }),
-          ],
-          resumable: true,
-        },
-      })
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [profile, status, resolverAddress],
+    [profile, name, existingRecords, dispatch],
   )
 
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()

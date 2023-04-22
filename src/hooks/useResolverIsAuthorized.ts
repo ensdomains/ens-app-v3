@@ -1,8 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { useProvider, useQuery, useSigner } from 'wagmi'
+import { useQuery, useSigner } from 'wagmi'
 
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
+
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 const setAddrABI = [
   {
@@ -58,7 +60,7 @@ const setAddrABI = [
 export const useResolverIsAuthorized = (name: string, resolver?: string) => {
   const { data: signer, isLoading: isSignerLoading } = useSigner()
   const { data, isLoading } = useQuery(
-    ['resolverIsAuthorised', name, resolver],
+    useQueryKeys().resolverIsAuthorized(name, resolver!),
     async () => {
       try {
         const contract = new Contract(resolver!, setAddrABI, signer!)
