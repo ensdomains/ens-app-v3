@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useQuery } from 'wagmi'
+import { useAccount, useQuery } from 'wagmi'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 
@@ -12,6 +12,7 @@ import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
 import { usePccExpired } from './fuses/usePccExpired'
 import { useContractAddress } from './useContractAddress'
+import useRegistrationReducer from './useRegistrationReducer'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
@@ -21,10 +22,14 @@ type ETH2LDBatchReturn = [...NormalBatchReturn, ReturnedENS['getExpiry'], Return
 
 export const useBasicName = (name?: string | null, normalised?: boolean) => {
   const ens = useEns()
+  const { address } = useAccount()
 
   const { name: _normalisedName, isValid, ...validation } = useValidate(name!, !name)
 
   const normalisedName = normalised ? name! : _normalisedName
+
+  const selected = { name: normalisedName, address: address! }
+  const { item } = useRegistrationReducer(selected)
 
   const { data: supportedTLD, isLoading: supportedTLDLoading } = useSupportsTLD(normalisedName)
 
@@ -38,7 +43,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     isFetchedAfterMount,
     status,
   } = useQuery(
-    useQueryKeys().basicName(normalisedName),
+    useQueryKeys().basicName(normalisedName, item.stepIndex),
     (): Promise<[] | BaseBatchReturn | NormalBatchReturn | ETH2LDBatchReturn | undefined> => {
       // exception for "[root]", get owner of blank name
       if (normalisedName === '[root]') {
