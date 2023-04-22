@@ -8,6 +8,10 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   ? I
   : never
 
+type Prettify<T> = {
+  [K in keyof T]: T[K]
+} & {}
+
 export enum PaymentMethod {
   ethereum = 'ethereum',
   moonpay = 'moonpay',
@@ -35,16 +39,18 @@ export type RegistrationStepData = {
 
 export type BackObj = { back: boolean }
 
-export type RegistrationData = UnionToIntersection<RegistrationStepData[RegistrationStep]>
+export type RegistrationData = Prettify<UnionToIntersection<RegistrationStepData[RegistrationStep]>>
 
 export type SelectedItemProperties = { address: string; name: string }
 
-export type RegistrationReducerDataItem = Omit<RegistrationData, 'paymentMethodChoice'> & {
-  stepIndex: number
-  queue: RegistrationStep[]
-  isMoonpayFlow: boolean
-  externalTransactionId: string
-} & SelectedItemProperties
+export type RegistrationReducerDataItem = Prettify<
+  Omit<RegistrationData, 'paymentMethodChoice'> & {
+    stepIndex: number
+    queue: RegistrationStep[]
+    isMoonpayFlow: boolean
+    externalTransactionId: string
+  } & SelectedItemProperties
+>
 
 export type RegistrationReducerData = {
   items: RegistrationReducerDataItem[]

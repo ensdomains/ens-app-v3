@@ -11,12 +11,12 @@ import { RouteItemObj } from '@app/routes'
 import BaseLink from '../BaseLink'
 
 const LinkWrapper = styled.a<{
-  $hasNotification?: boolean
   $asText?: boolean
   $disabled?: boolean
   $isActive: boolean
 }>(
-  ({ theme, $hasNotification, $asText, $disabled, $isActive }) => css`
+  ({ theme, $asText, $disabled, $isActive }) => css`
+    --indicator-color: ${theme.colors.accent};
     position: relative;
     display: flex;
     align-items: center;
@@ -52,20 +52,13 @@ const LinkWrapper = styled.a<{
     css`
       color: ${theme.colors.accent};
     `}
-    ${$hasNotification &&
-    css`
-      &::after {
-        content: '';
-        position: absolute;
-        height: ${theme.space['4']};
-        width: ${theme.space['4']};
-        border: ${theme.space['0.5']} solid ${theme.colors.background};
-        background-color: ${theme.colors.red};
-        border-radius: ${theme.radii.full};
-        top: calc(-1 * ${theme.space['2']});
-        right: ${theme.space['0.5']};
-      }
-    `}
+    &::after {
+      height: ${theme.space['2']};
+      width: ${theme.space['2']};
+      border: none;
+      top: ${theme.space['0.5']};
+      right: ${theme.space['0.5']};
+    }
   `,
 )
 
@@ -111,9 +104,10 @@ export const RouteItem = ({
     >
       <LinkWrapper
         $asText={asText}
-        $hasNotification={hasNotification}
         $isActive={isActive}
         $disabled={route.disabled}
+        className="indicator-container"
+        data-indicator={hasNotification}
       >
         {asText ? (
           <>

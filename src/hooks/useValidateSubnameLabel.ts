@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { emptyAddress } from '@app/utils/constants'
 import { isLabelTooLong } from '@app/utils/utils'
 
@@ -19,7 +20,7 @@ export const useValidateSubnameLabel = (name: string, label: string, isWrapped: 
 
   const skipGetOwner = skipValidation || !validation.isValid || validation.labelCount > 1
   const { data: ownership, isLoading: isGetOwnerLoading } = useQuery(
-    [validation.name, 'createSubname', 'getOwner'],
+    useQueryKeys().validateSubnameLabel(validation.name),
     async () => {
       const owner = await getOwner(`${validation.name}.${name}`)
       return owner || null

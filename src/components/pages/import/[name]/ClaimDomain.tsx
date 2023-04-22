@@ -16,6 +16,7 @@ import {
   useTransactionFlow,
 } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { emptyAddress } from '@app/utils/constants'
 import { shortenAddress } from '@app/utils/utils'
 
@@ -132,13 +133,16 @@ export const ClaimDomain = ({
   const [pendingTransaction, setPendingTransaction] = useState(false)
   const { t } = useTranslation('dnssec')
 
-  const { data: proverResult } = useQuery([`proverResult`, name, syncWarning], async () => {
-    if (name) {
-      const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
-      const result = await prover.queryWithProof('TXT', `_ens.${name}`)
-      return result
-    }
-  })
+  const { data: proverResult } = useQuery(
+    useQueryKeys().globalIndependent.claimDomain(name, syncWarning),
+    async () => {
+      if (name) {
+        const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
+        const result = await prover.queryWithProof('TXT', `_ens.${name}`)
+        return result
+      }
+    },
+  )
 
   const gasEstimate = useEstimateGasLimitForTransactions(
     [

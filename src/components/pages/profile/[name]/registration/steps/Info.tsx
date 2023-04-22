@@ -106,13 +106,17 @@ type Props = {
 
 const Info = ({
   registrationData,
-  nameDetails: { priceData },
+  nameDetails: { normalisedName, priceData },
   callback,
   onProfileClick,
 }: Props) => {
   const { t } = useTranslation('register')
 
-  const estimate = useEstimateFullRegistration({ registration: registrationData, price: priceData })
+  const estimate = useEstimateFullRegistration({
+    name: normalisedName,
+    registrationData,
+    price: priceData,
+  })
 
   return (
     <StyledCard>

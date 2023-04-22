@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 export const useExists = (name: string, skip?: any) => {
   const { ready, getOwner } = useEns()
@@ -12,7 +13,7 @@ export const useExists = (name: string, skip?: any) => {
     data,
     isLoading: loading,
     status,
-  } = useQuery(['getOwner', name], () => getOwner(name).then((d) => d || null), {
+  } = useQuery(useQueryKeys().exists(name), () => getOwner(name).then((d) => d || null), {
     enabled: ready && !skip && name !== '',
   })
 
