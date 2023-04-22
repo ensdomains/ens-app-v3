@@ -42,10 +42,10 @@ export const DogFood = (
   const inputWatch: string | undefined = watch('dogfoodRaw')
 
   // Throttle the change of the input
-  const [ethNameInput, setEthNameInput] = useState<string | undefined>(undefined)
+  const [ethNameInput, setEthNameInput] = useState('')
   const throttledSetEthNameInput = useDebouncedCallback(setEthNameInput, 500)
   useEffect(() => {
-      throttledSetEthNameInput(inputWatch)
+      throttledSetEthNameInput((inputWatch || '').toLocaleLowerCase())
   }, [inputWatch, throttledSetEthNameInput])
 
   const queryKeyGenerator = useQueryKeys().dogfood 
@@ -55,7 +55,7 @@ export const DogFood = (
      queryKeyGenerator(ethNameInput),
     async () => {
       try {
-      const result = await getAddr(ethNameInput!, '60')
+      const result = await getAddr(ethNameInput, '60')
       return (result as any)?.addr || ''
       } catch (e) {
         return ''
@@ -94,7 +94,7 @@ export const DogFood = (
             hasAddressRecord: async (value) => {
               if(value?.includes('.')) {
                 try {
-                  const result = await queryClient.getQueryData(queryKeyGenerator(value))
+                  const result = await queryClient.getQueryData(queryKeyGenerator(value.toLowerCase()))
                   if (result) { return undefined }
                 // eslint-disable-next-line no-empty
                 } catch (e){
