@@ -232,21 +232,21 @@ describe('ProfileEditor', () => {
 })
 
 describe('ResolverWarningOverlay', () => {
-  const UPDATE_RESOLVER_DISPATCH = {
+  const makeUpdateResolverDispatch = (contract = 'registry') => ({
     name: 'setTransactions',
     payload: [
       {
         data: {
-          contract: 'registry',
+          contract,
           name: 'test.eth',
           resolver: '0x123',
         },
         name: 'updateResolver',
       },
     ],
-  }
+  })
 
-  const MIGRATE_PROFILE_DISPATCH = {
+  const makeMigrateProfileDispatch = (contract = 'registry') => ({
     key: 'migrate-profile-test.eth',
     name: 'startFlow',
     payload: {
@@ -273,7 +273,7 @@ describe('ResolverWarningOverlay', () => {
         },
         {
           data: {
-            contract: 'registry',
+            contract,
             name: 'test.eth',
             resolver: '0x123',
           },
@@ -281,7 +281,7 @@ describe('ResolverWarningOverlay', () => {
         },
       ],
     },
-  }
+  })
 
   const RESET_RESOLVER_DISPATCH = {
     key: 'reset-profile-test.eth',
@@ -390,14 +390,14 @@ describe('ResolverWarningOverlay', () => {
       })
       await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
       await waitFor(() => {
-        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+        expect(mockDispatch).toHaveBeenCalledWith(makeUpdateResolverDispatch())
       })
     })
   })
 
   describe('Resolver not name wrapper aware', () => {
     beforeEach(() => {
-      mockUseNameDetails.mockReturnValueOnce({ ...mockProfileData, isWrapped: true } as unknown as {
+      mockUseNameDetails.mockReturnValue({ ...mockProfileData, isWrapped: true } as unknown as {
         profile: Profile
         loading: boolean
       })
@@ -410,12 +410,12 @@ describe('ResolverWarningOverlay', () => {
       )
       await waitFor(() => {
         expect(
-          screen.getByText('input.profileEditor.warningOverlay.notNameWrapperAware.title'),
+          screen.getByText('input.profileEditor.warningOverlay.resolverNotNameWrapperAware.title'),
         ).toBeVisible()
       })
       await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
       await waitFor(() => {
-        expect(mockDispatch).toHaveBeenCalledWith(MIGRATE_PROFILE_DISPATCH)
+        expect(mockDispatch).toHaveBeenCalledWith(makeMigrateProfileDispatch('nameWrapper'))
       })
     })
 
@@ -425,7 +425,7 @@ describe('ResolverWarningOverlay', () => {
       )
       await waitFor(() => {
         expect(
-          screen.getByText('input.profileEditor.warningOverlay.notNameWrapperAware.title'),
+          screen.getByText('input.profileEditor.warningOverlay.resolverNotNameWrapperAware.title'),
         ).toBeVisible()
       })
 
@@ -434,7 +434,7 @@ describe('ResolverWarningOverlay', () => {
       await userEvent.click(toggle)
       await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
       await waitFor(() => {
-        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+        expect(mockDispatch).toHaveBeenCalledWith(makeUpdateResolverDispatch('nameWrapper'))
       })
     })
   })
@@ -455,7 +455,7 @@ describe('ResolverWarningOverlay', () => {
       })
       await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
       await waitFor(() => {
-        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+        expect(mockDispatch).toHaveBeenCalledWith(makeUpdateResolverDispatch())
       })
     })
   })
@@ -501,7 +501,7 @@ describe('ResolverWarningOverlay', () => {
       await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
 
       await waitFor(() => {
-        expect(mockDispatch).toHaveBeenCalledWith(MIGRATE_PROFILE_DISPATCH)
+        expect(mockDispatch).toHaveBeenCalledWith(makeMigrateProfileDispatch())
       })
     })
 
@@ -529,7 +529,7 @@ describe('ResolverWarningOverlay', () => {
       await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
 
       await waitFor(() => {
-        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+        expect(mockDispatch).toHaveBeenCalledWith(makeUpdateResolverDispatch())
       })
     })
   })
@@ -578,7 +578,7 @@ describe('ResolverWarningOverlay', () => {
       await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
 
       await waitFor(() => {
-        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+        expect(mockDispatch).toHaveBeenCalledWith(makeUpdateResolverDispatch())
       })
     })
 
@@ -697,7 +697,7 @@ describe('ResolverWarningOverlay', () => {
       await userEvent.click(screen.getByTestId('warning-overlay-next-button'))
 
       await waitFor(() => {
-        expect(mockDispatch).toHaveBeenCalledWith(UPDATE_RESOLVER_DISPATCH)
+        expect(mockDispatch).toHaveBeenCalledWith(makeUpdateResolverDispatch())
       })
     })
 

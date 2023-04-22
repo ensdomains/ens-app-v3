@@ -33,18 +33,16 @@ const setAddrABI = [
 export const useResolverIsAuthorized = (name: string, resolver?: string) => {
   const { data: signer, isLoading: isSignerLoading } = useSigner()
 
-  return useQuery(
+  const { data, isLoading } = useQuery(
     ['resolverIsAuthorised', name, resolver],
     async () => {
       try {
-        console.log('testing', name, resolver)
         const contract = new Contract(resolver!, setAddrABI, signer!)
-        const estGas = await contract.estimateGas.setAddr(
+        await contract.estimateGas.setAddr(
           namehash(name),
           BigNumber.from(60),
           '0x0000000000000000000000000000000000000000',
         )
-        console.log('estGas', estGas.toString())
         return true
       } catch {
         return false
@@ -54,4 +52,9 @@ export const useResolverIsAuthorized = (name: string, resolver?: string) => {
       enabled: !!name && !!resolver && !!signer && !isSignerLoading,
     },
   )
+
+  return {
+    isAuthorized: !!data,
+    isLoading,
+  }
 }

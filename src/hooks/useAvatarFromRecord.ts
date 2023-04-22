@@ -46,7 +46,6 @@ const getAvatarSrc = async (record: string) => {
         method: 'GET',
         redirect: 'follow',
       }).then((res) => res.json())
-      console.log('resp', resp)
       return (resp as any)?.media?.[0]?.gateway
     }
 
@@ -61,7 +60,6 @@ export const useAvatarFromRecord = (avatarRecord?: string) => {
   const [avatar, setAvatar] = useState<string | undefined>()
   const [isLoading, setIsLoading] = useState(true)
   useEffect(() => {
-    console.log('avatarRecord', avatarRecord)
     let mounted = true
     if (avatarRecord)
       getAvatarSrc(avatarRecord)

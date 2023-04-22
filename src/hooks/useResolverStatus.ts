@@ -58,7 +58,7 @@ export const useResolverStatus = (
 
   const skip = !name || !profile
 
-  const { data: isAuthorized, isLoading: isAuthorizedLoading } = useResolverIsAuthorized(
+  const { isAuthorized, isLoading: isAuthorizedLoading } = useResolverIsAuthorized(
     name,
     profile?.resolverAddress,
   )
@@ -71,7 +71,6 @@ export const useResolverStatus = (
   )
 
   const profileResolverAddress = profile?.resolverAddress
-  console.log(profileResolverAddress)
   return useMemo(() => {
     const defaultResults = {
       hasResolver: false,
@@ -106,7 +105,6 @@ export const useResolverStatus = (
         isLoading: false,
       }
 
-    console.log(isAuthorizedLoading)
     // If autorization is loading, we don't need to continue checks
     if (isAuthorizedLoading)
       return {

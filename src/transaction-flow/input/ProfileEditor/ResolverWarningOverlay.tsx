@@ -87,8 +87,6 @@ const ResolverWarningOverlay = ({
     selectedProfile,
   ])
 
-  console.log(status)
-
   const [index, setIndex] = useState(0)
   const view = flow[index]
 
