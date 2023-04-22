@@ -48,9 +48,11 @@ export const DogFood = (
       throttledSetEthNameInput(inputWatch)
   }, [inputWatch, throttledSetEthNameInput])
 
+  const queryKeyGenerator = useQueryKeys().dogfood 
+
   // Attempt to get address of ENS name
   const { data: ethNameAddress } = useQuery(
-     useQueryKeys().dogfood(ethNameInput),
+     queryKeyGenerator(ethNameInput),
     async () => {
       try {
       const result = await getAddr(ethNameInput!, '60')
@@ -92,10 +94,12 @@ export const DogFood = (
             hasAddressRecord: async (value) => {
               if(value?.includes('.')) {
                 try {
-                  const result = await queryClient.getQueryData(['getAddr', value])
+                  const result = await queryClient.getQueryData(queryKeyGenerator(value))
                   if (result) { return undefined }
                 // eslint-disable-next-line no-empty
-                } catch {}
+                } catch (e){
+                  console.error('validation error: ', e)
+                }
                 return 'ENS Name has no address record'
                 }
               },
