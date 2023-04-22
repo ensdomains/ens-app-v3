@@ -3,6 +3,7 @@ import { cleanup, mockFunction, render, screen, userEvent, waitFor, within } fro
 
 import { useNetwork } from 'wagmi'
 
+import { useAvatar } from '@app/hooks/useAvatar'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
@@ -11,6 +12,7 @@ import { useProfile } from '@app/hooks/useProfile'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import ProfileEditor from './ProfileEditor-flow'
 
@@ -114,6 +116,11 @@ jest.mock('wagmi')
 jest.mock('@app/hooks/useChainId')
 jest.mock('@app/hooks/useBasicName')
 jest.mock('@app/hooks/useProfile')
+jest.mock('@app/utils/cacheKeyFactory')
+jest.mock('@app/transaction-flow/input/ProfileEditor/components/ProfileBlurb', () => ({
+  ProfileBlurb: () => <div>Profile Blurb</div>,
+}))
+jest.mock('@app/hooks/useAvatar')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseNameDetails = mockFunction(useNameDetails)
@@ -123,6 +130,8 @@ const mockUseNetwork = mockFunction(useNetwork)
 const mockUseChainId = mockFunction(useChainId)
 const mockUseBasicName = mockFunction(useBasicName)
 const mockUseProfile = mockFunction(useProfile)
+const mockUseQueryKeys = mockFunction(useQueryKeys)
+const mockUseAvatar = mockFunction(useAvatar)
 
 const mockDispatch = jest.fn()
 
@@ -208,6 +217,15 @@ describe('ProfileEditor', () => {
     )
     mockUseChainId.mockReturnValue(1)
     mockUseBasicName.mockReturnValue({ isWrapped: false })
+
+    mockUseQueryKeys.mockReturnValue({
+      profile: () => ['profile', 'test.eth'],
+    })
+
+    mockUseAvatar.mockReturnValue({
+      avatar: 'avatar',
+      isLoading: false,
+    })
   })
 
   afterEach(() => {
@@ -370,6 +388,13 @@ describe('ResolverWarningOverlay', () => {
     mockUseProfile.mockReturnValue({
       profile: mockProfileData.profile as any,
       loading: false,
+    })
+    mockUseQueryKeys.mockReturnValue({
+      profile: () => ['profile', 'test.eth'],
+    })
+    mockUseAvatar.mockReturnValue({
+      avatar: 'avatar',
+      isLoading: false,
     })
     mockDispatch.mockClear()
   })
