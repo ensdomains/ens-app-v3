@@ -63,8 +63,9 @@ const ResolverWarningOverlay = ({
   const flow: View[] = useMemo(() => {
     if (hasOldRegistry) return ['migrateRegistry']
     if (!status?.hasResolver) return ['noResolver']
-    if (!status?.isNameWrapperAware && isWrapped) return ['resolverNotNameWrapperAware']
     if (!status?.hasValidResolver) return ['invalidResolver']
+    if (!status?.isNameWrapperAware && isWrapped) return ['resolverNotNameWrapperAware']
+    if (!status?.isAuthorized) return ['invalidResolver']
     if (status?.hasMigratedProfile && status.isMigratedProfileEqual)
       return ['resolverOutOfSync', 'updateResolverOrResetProfile', 'resetProfile']
     if (status?.hasMigratedProfile)
@@ -82,6 +83,7 @@ const ResolverWarningOverlay = ({
     status?.hasResolver,
     status?.isNameWrapperAware,
     status?.hasValidResolver,
+    status?.isAuthorized,
     status?.hasMigratedProfile,
     status?.isMigratedProfileEqual,
     selectedProfile,

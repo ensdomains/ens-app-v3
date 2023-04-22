@@ -58,10 +58,11 @@ export const useResolverStatus = (
 
   const skip = !name || !profile
 
-  const { isAuthorized, isLoading: isAuthorizedLoading } = useResolverIsAuthorized(
-    name,
-    profile?.resolverAddress,
-  )
+  const {
+    isAuthorized,
+    isValid,
+    isLoading: isAuthorizedLoading,
+  } = useResolverIsAuthorized(name, profile?.resolverAddress)
 
   const latestResolverAddress = useContractAddress('PublicResolver')
   const { profile: latestResolverProfile, loading: isLatestResolverProfileLoading } = useProfile(
@@ -76,6 +77,7 @@ export const useResolverStatus = (
       hasResolver: false,
       hasLatestResolver: false,
       hasValidResolver: false,
+      isAuthorized: false,
       isNameWrapperAware: false,
       hasMigratedProfile: false,
       isMigratedProfileEqual: false,
@@ -114,7 +116,8 @@ export const useResolverStatus = (
 
     const authorizedResults = {
       ...baseResults,
-      hasValidResolver: isAuthorized,
+      hasValidResolver: isValid,
+      isAuthorized,
     }
 
     if (options.skipCompare) return { status: authorizedResults, isLoading: false }
@@ -145,6 +148,7 @@ export const useResolverStatus = (
   }, [
     chainId,
     isAuthorized,
+    isValid,
     isAuthorizedLoading,
     isLatestResolverProfileLoading,
     latestResolverAddress,

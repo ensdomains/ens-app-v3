@@ -57,6 +57,30 @@ const setAddrABI = [
   },
 ]
 
+const checkInterface = async (contract: Contract) => {
+  try {
+    const supportsInterface = await contract.supportsInterface('0xf1cb7e06')
+    if (!supportsInterface) throw new Error('No interface')
+  } catch (e: unknown) {
+    console.error(e)
+    throw new Error('notValid')
+  }
+}
+
+const checkAuthorization = async (contract: Contract, name: string) => {
+  try {
+    const estGas = await contract.estimateGas.setAddr(
+      namehash(name),
+      BigNumber.from('60'),
+      '0x0000000000000000000000000000000000000000',
+    )
+    if (!estGas) throw new Error('No gas')
+  } catch (e: unknown) {
+    console.error(e)
+    throw new Error('notAuthorized')
+  }
+}
+
 export const useResolverIsAuthorized = (name: string, resolver?: string) => {
   const { data: signer, isLoading: isSignerLoading } = useSigner()
   const { data, isLoading } = useQuery(
@@ -64,20 +88,17 @@ export const useResolverIsAuthorized = (name: string, resolver?: string) => {
     async () => {
       try {
         const contract = new Contract(resolver!, setAddrABI, signer!)
-
-        // For some reason if we don't check interface first then estimateGas could return a false positive
-        await contract.supportsInterface('0xf1cb7e06')
-        await contract.estimateGas.setAddr(
-          namehash(name),
-          BigNumber.from('60'),
-          '0x0000000000000000000000000000000000000000',
-        )
-
-        return true
-      } catch (e) {
+        await checkInterface(contract)
+        await checkAuthorization(contract, name)
+      } catch (e: unknown) {
         console.error(e)
-        return false
+        if (e instanceof Error && e.message === 'notAuthorized') {
+          return { isValid: true, isAuthorized: false }
+        }
+        return { isValid: false, isAuthorized: false }
       }
+
+      return { isValid: true, isAuthorized: true }
     },
     {
       enabled: !!name && !!resolver && !!signer && !isSignerLoading,
@@ -85,7 +106,8 @@ export const useResolverIsAuthorized = (name: string, resolver?: string) => {
   )
 
   return {
-    isAuthorized: !!data,
+    isAuthorized: !!data?.isAuthorized,
+    isValid: !!data?.isValid,
     isLoading,
   }
 }

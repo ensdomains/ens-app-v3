@@ -67,6 +67,7 @@ jest.mock('@app/hooks/useResolverIsAuthorized')
 const mockUseResolverIsAuthorized = mockFunction(useResolverIsAuthorized)
 mockUseResolverIsAuthorized.mockReturnValue({
   isAuthorized: true,
+  isValid: true,
   isLoading: false,
 })
 
@@ -75,6 +76,7 @@ const makeResult = (keys?: string[], isLoading = false) => ({
     hasResolver: false,
     hasLatestResolver: false,
     hasValidResolver: false,
+    isAuthorized: false,
     hasMigratedProfile: false,
     isMigratedProfileEqual: false,
     isNameWrapperAware: false,
@@ -136,12 +138,13 @@ describe('useResolverStatus', () => {
     const { result } = renderHook(() =>
       useResolverStatus('test.eth', makeProfile({}), { skipCompare: true }),
     )
-    expect(result.current).toEqual(makeResult(['hasResolver', 'hasValidResolver']))
+    expect(result.current).toEqual(makeResult(['hasResolver', 'hasValidResolver', 'isAuthorized']))
   })
 
-  it('should return isValidResolver is false if authorization fails', () => {
+  it('should return isAuthorized is false if authorization fails', () => {
     mockUseResolverIsAuthorized.mockReturnValueOnce({
       isAuthorized: false,
+      isValid: false,
       isLoading: false,
     })
     const { result } = renderHook(() =>
@@ -159,7 +162,7 @@ describe('useResolverStatus', () => {
       ),
     )
     expect(result.current).toEqual(
-      makeResult(['hasResolver', 'hasValidResolver', 'isNameWrapperAware']),
+      makeResult(['hasResolver', 'hasValidResolver', 'isAuthorized', 'isNameWrapperAware']),
     )
   })
 
@@ -169,7 +172,9 @@ describe('useResolverStatus', () => {
       profile: makeProfile({}),
     })
     const { result } = renderHook(() => useResolverStatus('test.eth', makeProfile({})))
-    expect(result.current).toEqual(makeResult(['hasResolver', 'hasValidResolver'], true))
+    expect(result.current).toEqual(
+      makeResult(['hasResolver', 'hasValidResolver', 'isAuthorized'], true),
+    )
   })
 
   it('should return isMigratedProfileEqual is false if profile is not equal to latestResolverProfile', () => {
@@ -179,7 +184,7 @@ describe('useResolverStatus', () => {
     })
     const { result } = renderHook(() => useResolverStatus('test.eth', makeProfile({})))
     expect(result.current).toEqual(
-      makeResult(['hasResolver', 'hasValidResolver', 'hasMigratedProfile']),
+      makeResult(['hasResolver', 'hasValidResolver', 'isAuthorized', 'hasMigratedProfile']),
     )
   })
 
@@ -193,6 +198,7 @@ describe('useResolverStatus', () => {
       makeResult([
         'hasResolver',
         'hasValidResolver',
+        'isAuthorized',
         'hasMigratedProfile',
         'isMigratedProfileEqual',
       ]),
