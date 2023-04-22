@@ -61,12 +61,10 @@ export const useResolverIsAuthorized = (name: string, resolver?: string) => {
     ['resolverIsAuthorised', name, resolver],
     async () => {
       try {
-        console.log(name, resolver, isSignerLoading)
         const contract = new Contract(resolver!, setAddrABI, signer!)
 
-        const check = await contract.supportsInterface('0xf1cb7e06')
-        console.log('supportsInterface', check)
-        console.log('resolver', contract.address, contract)
+        // For some reason if we don't check interface first then estimateGas could return a false positive
+        await contract.supportsInterface('0xf1cb7e06')
         await contract.estimateGas.setAddr(
           namehash(name),
           BigNumber.from('60'),

@@ -81,7 +81,7 @@ export const useQueryKeys = () => {
       'getPrice',
     ],
     primary: (localAddress: string) => [...globalKeys, 'getName', localAddress, 'primary'],
-    profile: (name: string) => [...globalKeys, 'graph', name, 'profile'],
+    profile: (name: string, resolverAddress?: string) => [...globalKeys, 'graph', name, 'profile', resolverAddress],
     registrationDate: (name: string) => [...globalKeys, 'graph', name, 'registrationDate'],
     getResolver: (name: string) => [...globalKeys, name, 'getResolver'],
     resolverExists: (name: string) => [
