@@ -5,6 +5,7 @@ import {
   profileRecordsToRecordOptions,
   profileToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+import { getABISafely, normaliseABI } from '@app/hooks/useGetABI'
 import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
 import { DetailedProfile } from '../../hooks/useNameDetails'
@@ -37,12 +38,17 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   const currentProfile = await ens.getProfile(data.name)
   const profileRecords = profileToProfileRecords(currentProfile as DetailedProfile)
   const recordOptions = profileRecordsToRecordOptions(profileRecords)
+  const abiData = await getABISafely(ens.getABI)(data.name)
+  const abi = normaliseABI(abiData)
+
+  const records = {
+    ...recordOptions,
+    ...(abi ? { abi } : {}),
+    clearRecords: true,
+  }
 
   return ens.setRecords.populateTransaction(data.name, {
-    records: {
-      ...recordOptions,
-      clearRecords: true,
-    },
+    records,
     resolverAddress: latestResolver,
     signer,
   })

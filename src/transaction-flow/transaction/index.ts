@@ -8,7 +8,6 @@ import extendNames from './extendNames'
 import importDNSSECName from './importDNSSECName'
 import migrateProfile from './migrateProfile'
 import migrateProfileWithReset from './migrateProfileWithReset'
-import migrateProfileWithSync from './migrateProfileWithSync'
 import registerName from './registerName'
 import resetProfile from './resetProfile'
 import setPrimaryName from './setPrimaryName'
@@ -32,7 +31,6 @@ export const transactions = {
   setPrimaryName,
   updateEthAddress,
   migrateProfileWithReset,
-  migrateProfileWithSync,
   burnFuses,
   createSubname,
   extendNames,
