@@ -12,23 +12,6 @@ const ipfsPathScript = `
     document.head.append(base)
   })();
 `
-
-const hiddenCheckScript = `
-  let wasHidden = document.hidden
-  document.addEventListener(
-    'visibilitychange',
-    () => {
-      console.log('visibilityChange')
-      if (!document.hidden && wasHidden && typeof window.ethereum !== 'undefined') {
-        window.location.reload()
-      }
-    },
-    {
-      once: true,
-    },
-  )
-`
-
 const makeIPFSURL = (url: string) => {
   if (process.env.NEXT_PUBLIC_IPFS) {
     return `.${url}`
@@ -67,8 +50,6 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          {/* eslint-disable-next-line react/no-danger */}
-          <script dangerouslySetInnerHTML={{ __html: hiddenCheckScript }} />
           {process.env.NEXT_PUBLIC_IPFS && (
             <>
               {/* eslint-disable-next-line react/no-danger */}
