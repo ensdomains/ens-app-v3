@@ -14,6 +14,8 @@ import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 
 import { DeepPartial } from './types'
 
+jest.mock('@app/hooks/useRegistrationReducer', () => jest.fn(() => ({ item: { stepIndex: 0 } })))
+
 jest.mock('wagmi', () => {
   const {
     useQuery,
