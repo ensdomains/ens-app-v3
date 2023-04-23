@@ -5,6 +5,7 @@ import { contentHashToString } from '@app/utils/contenthash'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
 import { emptyAddress } from '../utils/constants'
+import { profileHasRecords } from '../utils/profile'
 import { useChainId } from './useChainId'
 import { useContractAddress } from './useContractAddress'
 import { useProfile } from './useProfile'
@@ -79,6 +80,7 @@ export const useResolverStatus = (
       hasValidResolver: false,
       isAuthorized: false,
       isNameWrapperAware: false,
+      hasProfile: false,
       hasMigratedProfile: false,
       isMigratedProfileEqual: false,
     }
@@ -95,6 +97,7 @@ export const useResolverStatus = (
       hasResolver: true,
       hasLatestResolver: profileResolverAddress === latestResolverAddress,
       isNameWrapperAware: canEditRecordsWhenWrappedCalc(true, profileResolverAddress, chainId),
+      hasProfile: profileHasRecords(profile),
     }
 
     // If the profile has the latest resolver, we don't need to continue checks
@@ -123,13 +126,7 @@ export const useResolverStatus = (
     if (options.skipCompare) return { status: authorizedResults, isLoading: false }
 
     const resolverRecords = latestResolverProfile?.records || {}
-    const keys = ['texts', 'coinTypes', 'contentHash'] as const
-    const hasMigratedProfile = keys.some((key) => {
-      if (!resolverRecords[key]) return false
-      if (key === 'contentHash') return !!resolverRecords[key]
-      const arrayValue = resolverRecords[key]?.length || 0
-      return arrayValue > 0
-    })
+    const hasMigratedProfile = profileHasRecords(latestResolverProfile)
 
     if (!isLatestResolverProfileLoading)
       return {
@@ -154,7 +151,7 @@ export const useResolverStatus = (
     latestResolverAddress,
     latestResolverProfile,
     options?.skipCompare,
-    profile?.records,
+    profile,
     profileResolverAddress,
     skip,
   ])

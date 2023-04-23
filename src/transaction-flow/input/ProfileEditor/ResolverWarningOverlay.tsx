@@ -205,6 +205,7 @@ const ResolverWarningOverlay = ({
         name={name}
         currentResolver={oldResolver}
         latestResolver={latestResolver}
+        hasCurrentProfile={status?.hasProfile}
         selected={selectedProfile}
         onChangeSelected={setSelectedProfile}
         onBack={onDecrement}
@@ -225,10 +226,11 @@ const ResolverWarningOverlay = ({
     resolverNotNameWrapperAware: (
       <ResolverNotNameWrapperAwareView
         selected={selectedProfile}
+        hasProfile={status?.hasProfile}
         onChangeSelected={setSelectedProfile}
         onCancel={onDismiss}
         onNext={() => {
-          if (selectedProfile === 'reset') handleUpdateResolver()
+          if (selectedProfile === 'reset' || !status?.hasProfile) handleUpdateResolver()
           else handleMigrateProfile()
         }}
       />

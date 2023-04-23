@@ -218,11 +218,6 @@ describe('Profile Editor', () => {
         cy.contains('Resolver incompatible').should('be.visible')
         cy.findByTestId('warning-overlay-next-button').click()
 
-        cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
-        cy.findByTestId('transaction-modal-confirm-button').should('not.be.disabled').click()
-        cy.confirmMetamaskTransaction()
-        cy.findByTestId('transaction-modal-complete-button').click()
-        cy.wait(CYPRESS_WAIT_TIME)
         cy.findByTestId('transaction-modal-confirm-button').should('not.be.disabled').click()
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
