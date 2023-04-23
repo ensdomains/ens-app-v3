@@ -18,6 +18,7 @@ const hiddenCheckScript = `
   document.addEventListener(
     'visibilitychange',
     () => {
+      console.log('visibilityChange')
       if (!document.hidden && wasHidden && typeof window.ethereum !== 'undefined') {
         window.location.reload()
       }
