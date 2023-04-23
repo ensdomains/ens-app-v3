@@ -9,7 +9,7 @@ import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import useDecryptName from './useDecryptName'
 
-export const useProfile = (name: string, skip?: any) => {
+export const useProfile = (name: string, skip?: any, resolverAddress?: string) => {
   const { ready, getProfile } = useEns()
 
   const {
@@ -22,13 +22,14 @@ export const useProfile = (name: string, skip?: any) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,
   } = useQuery(
-    useQueryKeys().profile(name),
+    useQueryKeys().profile(name, resolverAddress),
     () =>
       getProfile(name, {
         fallback: {
           coinTypes: supportedAddresses,
           texts: [...supportedTexts, ...supportedProfileItems],
         },
+        resolverAddress,
       }).then((d) => d || null),
     {
       enabled: ready && !skip && name !== '',
