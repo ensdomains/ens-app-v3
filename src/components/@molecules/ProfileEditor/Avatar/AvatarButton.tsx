@@ -6,6 +6,7 @@ import { Avatar, Dropdown } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import CameraIcon from '@app/assets/Camera.svg'
+import { LegacyDropdown } from '@app/components/@molecules/LegacyDropdown/LegacyDropdown'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty?: boolean }>(
   ({ theme, $validated, $dirty, $error }) => css`
@@ -128,7 +129,7 @@ const AvatarButton = ({
     : ({} as { isOpen: never; setIsOpen: never })
 
   return (
-    <Dropdown
+    <LegacyDropdown
       items={
         [
           {
@@ -176,7 +177,7 @@ const AvatarButton = ({
           }}
         />
       </Container>
-    </Dropdown>
+    </LegacyDropdown>
   )
 }
 
