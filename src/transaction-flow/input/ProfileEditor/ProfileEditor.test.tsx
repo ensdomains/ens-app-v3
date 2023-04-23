@@ -177,7 +177,9 @@ const makeResolverStatus = (keys?: string[], isLoading = false) => ({
   status: {
     hasResolver: false,
     hasLatestResolver: false,
+    isAuthorized: false,
     hasValidResolver: false,
+    hasProfile: true,
     hasMigratedProfile: false,
     isMigratedProfileEqual: false,
     isNameWrapperAware: false,
@@ -487,7 +489,9 @@ describe('ResolverWarningOverlay', () => {
 
   describe('Resolver out of date', () => {
     beforeEach(() => {
-      mockUseResolverStatus.mockReturnValue(makeResolverStatus(['hasResolver', 'hasValidResolver']))
+      mockUseResolverStatus.mockReturnValue(
+        makeResolverStatus(['hasResolver', 'hasValidResolver', 'isAuthorized']),
+      )
     })
 
     it('should be able to go to profile editor', async () => {
@@ -562,7 +566,12 @@ describe('ResolverWarningOverlay', () => {
   describe('Resolver out of sync ( profiles do not match )', () => {
     beforeEach(() => {
       mockUseResolverStatus.mockReturnValue(
-        makeResolverStatus(['hasResolver', 'hasValidResolver', 'hasMigratedProfile']),
+        makeResolverStatus([
+          'hasResolver',
+          'hasValidResolver',
+          'isAuthorized',
+          'hasMigratedProfile',
+        ]),
       )
     })
 
@@ -680,6 +689,7 @@ describe('ResolverWarningOverlay', () => {
         makeResolverStatus([
           'hasResolver',
           'hasValidResolver',
+          'isAuthorized',
           'hasMigratedProfile',
           'isMigratedProfileEqual',
         ]),
