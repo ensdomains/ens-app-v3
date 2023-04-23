@@ -49,7 +49,7 @@ export const getContentHashLink = (
   if (protocol === 'sia') {
     return `https://siasky.net/${hash}`
   }
-  if (protocol === 'arweave') {
+  if (protocol === 'arweave' || protocol === 'ar') {
     return `https://arweave.net/${hash}`
   }
   return null
