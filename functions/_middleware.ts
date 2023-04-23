@@ -28,6 +28,12 @@ class AttributeModifier {
 }
 
 export const onRequest: PagesFunction = async ({ request, next }) => {
+  const secPurpose = request.headers.get('sec-purpose')
+
+  if (secPurpose === 'prefetch') {
+    return new Response('Prefetching is not allowed', { status: 400 })
+  }
+
   const url = new URL(request.url)
 
   const paths = url.pathname.split('/')
