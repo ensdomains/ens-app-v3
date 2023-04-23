@@ -44,6 +44,7 @@
     "local:remove:thorin": "node ./scripts/removeWorkspace.mjs @ensdomains/thorin && yalc remove @ensdomains/thorin && pnpm install",
     "wrangle": "npx wrangler pages dev ./out --log-level none",
     "wrangle:dev": "wrangler pages dev ./next",
+    "wrangle:list": "wrangler deployments list",
     "generate:sitemaps": "node ./generate-site-map.mjs",
     "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml"
@@ -200,7 +201,7 @@
     "typescript-styled-plugin": "^0.18.2",
     "wagmi-cjs": "npm:wagmi@0.12.1-cjs",
     "wait-on": "^6.0.1",
-    "wrangler": "2.13.0",
+    "wrangler": "2.16.0",
     "yalc": "^1.0.0-pre.53"
   },
   "pnpm": {

@@ -34,12 +34,13 @@ export const useQueryKeys = () => {
       avatar: (name: string | null | undefined) => [...globalKeys, 'getAvatar', name, 'avatar'],
       getNFTImage: (name: string | null | undefined) => [...globalKeys, name, 'getNFTImage'],
     },
-    basicName: (normalisedName: string) => [
+    basicName: (normalisedName: string, registrationStepIndex: number) => [
       ...globalKeys,
       'batch',
       'getOwner',
       'getExpiry',
       normalisedName,
+      registrationStepIndex,
       'basicName',
     ],
     beautifiedName: (name: string) => [...globalKeys, name, 'beautifiedName'],
