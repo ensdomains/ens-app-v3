@@ -47,6 +47,7 @@ type Props = {
   name: string
   currentResolver: string
   latestResolver: string
+  hasCurrentProfile: boolean
   selected: SelectedProfile
   onChangeSelected: (selected: SelectedProfile) => void
   onNext: () => void
@@ -56,6 +57,7 @@ export const MigrateProfileSelectorView = ({
   name,
   currentResolver,
   latestResolver,
+  hasCurrentProfile,
   selected,
   onChangeSelected,
   onNext,
@@ -93,25 +95,27 @@ export const MigrateProfileSelectorView = ({
                 checked={selected === 'latest'}
                 onChange={() => onChangeSelected('latest')}
               />
-              <RadioButton
-                data-testid="migrate-profile-selector-current"
-                label={
-                  <RadioLabelContainer>
-                    <RadioInfoContainer>
-                      <Typography fontVariant="bodyBold">
-                        {t(
-                          'input.profileEditor.warningOverlay.migrateProfileSelector.option.current',
-                        )}
-                      </Typography>
-                    </RadioInfoContainer>
-                    <ProfileBlurb name={name} resolver={currentResolver} />
-                  </RadioLabelContainer>
-                }
-                name="resolver-option"
-                value="current"
-                checked={selected === 'current'}
-                onChange={() => onChangeSelected('current')}
-              />
+              {hasCurrentProfile && (
+                <RadioButton
+                  data-testid="migrate-profile-selector-current"
+                  label={
+                    <RadioLabelContainer>
+                      <RadioInfoContainer>
+                        <Typography fontVariant="bodyBold">
+                          {t(
+                            'input.profileEditor.warningOverlay.migrateProfileSelector.option.current',
+                          )}
+                        </Typography>
+                      </RadioInfoContainer>
+                      <ProfileBlurb name={name} resolver={currentResolver} />
+                    </RadioLabelContainer>
+                  }
+                  name="resolver-option"
+                  value="current"
+                  checked={selected === 'current'}
+                  onChange={() => onChangeSelected('current')}
+                />
+              )}
               <RadioButton
                 data-testid="migrate-profile-selector-reset"
                 label={

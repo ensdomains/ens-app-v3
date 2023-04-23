@@ -12,12 +12,14 @@ import { StyledInnerDialog } from '../components/StyledInnerDialog'
 
 type Props = {
   selected: SelectedProfile
+  hasProfile: boolean
   onChangeSelected: (selected: SelectedProfile) => void
   onCancel: () => void
   onNext: () => void
 }
 export const ResolverNotNameWrapperAwareView = ({
   selected,
+  hasProfile,
   onChangeSelected,
   onNext,
   onCancel,
@@ -38,14 +40,16 @@ export const ResolverNotNameWrapperAwareView = ({
             {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
           </Outlink>
         </ContentContainer>
-        <DetailedSwitch
-          title={t('input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.title')}
-          description={t(
-            'input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.subtitle',
-          )}
-          checked={selected !== 'reset'}
-          onChange={(e) => onChangeSelected(e.target.checked ? 'latest' : 'reset')}
-        />
+        {hasProfile && (
+          <DetailedSwitch
+            title={t('input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.title')}
+            description={t(
+              'input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.subtitle',
+            )}
+            checked={selected !== 'reset'}
+            onChange={(e) => onChangeSelected(e.target.checked ? 'latest' : 'reset')}
+          />
+        )}
       </StyledInnerDialog>
       <Dialog.Footer
         leading={
