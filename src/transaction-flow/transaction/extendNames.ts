@@ -37,7 +37,8 @@ const displayItems = (
     label: 'cost',
     value: t('transaction.extendNames.costValue', {
       ns: 'transactionFlow',
-      value: makeDisplay(rentPrice, 5, 'eth'),
+      // value: makeDisplay(rentPrice, 5, 'eth'),
+      value: 'Extension',
     }),
   },
 ]
