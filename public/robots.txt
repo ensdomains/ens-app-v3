@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://alpha.ens.domains/sitemap.xml
+Sitemap: https://app.ens.domains/sitemap.xml

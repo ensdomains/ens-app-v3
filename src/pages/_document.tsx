@@ -78,7 +78,7 @@ export default class MyDocument extends Document {
           <meta name="theme-color" content="#F7F7F7" />
           <script
             defer
-            data-domain="alpha.ens.domains"
+            data-domain="app.ens.domains"
             src="https://plausible.io/js/script.outbound-links.js"
           />
         </Head>
