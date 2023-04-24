@@ -2,6 +2,7 @@ import { useQuery } from 'wagmi'
 
 import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { emptyAddress } from '../utils/constants'
 
@@ -25,7 +26,7 @@ export const useHasSubnames = (name: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching: _isFetching,
   } = useQuery(
-    ['graph', 'getSubnames', name],
+    useQueryKeys().hasSubnames(name),
     async () => {
       let cursor: Subnames = []
       let done = false

@@ -509,12 +509,14 @@ const Pricing = ({
   ])
 
   const fullEstimate = useEstimateFullRegistration({
-    registration: {
+    name: normalisedName,
+    registrationData: {
+      ...registrationData,
+      reverseRecord,
+      years,
       records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
       clearRecords: resolverExists,
       resolver: resolverAddress,
-      reverseRecord,
-      years,
     },
     price: nameDetails.priceData,
   })

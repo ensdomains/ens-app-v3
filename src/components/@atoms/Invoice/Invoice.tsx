@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import styled, { css } from 'styled-components'
 
-import { Colors } from '@ensdomains/thorin'
+import { Colors, Skeleton } from '@ensdomains/thorin'
 
 import { CurrencyDisplay } from '@app/types'
 
@@ -47,26 +47,29 @@ type Props = {
 }
 
 export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }: Props) => {
-  const total = items
-    .map(({ value }) => value)
-    .filter((x) => !!x)
-    .reduce((a, b) => a!.add(b!), BigNumber.from(0))
+  const filteredItems = items.map(({ value }) => value).filter((x) => !!x)
+  const total = filteredItems.reduce((a, b) => a!.add(b!), BigNumber.from(0))
+  const hasEmptyItems = filteredItems.length !== items.length
 
   return (
     <Container>
       {items.map(({ label, value, color }, inx) => (
         <LineItem data-testid={`invoice-item-${inx}`} $color={color} key={label}>
           <div>{label}</div>
-          <div data-testid={`invoice-item-${inx}-amount`}>
-            <CurrencyText eth={value} currency={unit} />
-          </div>
+          <Skeleton loading={!value}>
+            <div data-testid={`invoice-item-${inx}-amount`}>
+              <CurrencyText eth={value || BigNumber.from(0)} currency={unit} />
+            </div>
+          </Skeleton>
         </LineItem>
       ))}
       <Total>
         <div>{totalLabel}</div>
-        <div data-testid="invoice-total">
-          <CurrencyText eth={total} currency={unit} />
-        </div>
+        <Skeleton loading={hasEmptyItems}>
+          <div data-testid="invoice-total">
+            <CurrencyText eth={hasEmptyItems ? BigNumber.from(0) : total} currency={unit} />
+          </div>
+        </Skeleton>
       </Total>
     </Container>
   )

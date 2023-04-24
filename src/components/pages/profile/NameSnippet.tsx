@@ -10,6 +10,7 @@ import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { shortenAddress } from '@app/utils/utils'
 
 const Container = styled(CacheableComponent)(
@@ -58,7 +59,7 @@ const OwnerWithEns = styled.div(
 
 const NameOwnerItem = ({ address = '', network }: { address?: string; network: number }) => {
   const { getName } = useEns()
-  const { data } = useQuery(['getName', address], () => getName(address), {
+  const { data } = useQuery(useQueryKeys().nameSnippet(address), () => getName(address), {
     enabled: !!address,
   })
   const hasEns = data?.match && data?.name

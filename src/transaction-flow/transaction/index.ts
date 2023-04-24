@@ -7,8 +7,9 @@ import deleteSubname from './deleteSubname'
 import extendNames from './extendNames'
 import importDNSSECName from './importDNSSECName'
 import migrateProfile from './migrateProfile'
-import migrateProfileWithSync from './migrateProfileWithSync'
+import migrateProfileWithReset from './migrateProfileWithReset'
 import registerName from './registerName'
+import resetProfile from './resetProfile'
 import setPrimaryName from './setPrimaryName'
 import syncManager from './syncManager'
 import testSendName from './testSendName'
@@ -29,13 +30,14 @@ export const transactions = {
   updateProfile,
   setPrimaryName,
   updateEthAddress,
-  migrateProfileWithSync,
+  migrateProfileWithReset,
   burnFuses,
   createSubname,
   extendNames,
   deleteSubname,
   commitName,
   registerName,
+  resetProfile,
   transferName,
   transferSubname,
   transferController,

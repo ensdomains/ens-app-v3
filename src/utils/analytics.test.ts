@@ -12,7 +12,7 @@ jest.mock('react-ga4', () => ({
   initialize: jest.fn(),
   send: jest.fn(),
 }))
-const network = 'goerli'
+const network = 'mainnet'
 
 describe('analytics', () => {
   beforeEach(() => {

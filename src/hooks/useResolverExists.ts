@@ -3,6 +3,7 @@ import { useQuery } from 'wagmi'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 const query = `
   query getResolverExists($id: String!) {
@@ -15,7 +16,7 @@ const query = `
 const useResolverExists = (name: string, address: string) => {
   const { ready, gqlInstance } = useEns()
   const { data, isLoading } = useQuery(
-    ['graph', 'getResolverExists', name],
+    useQueryKeys().resolverExists(name),
     async () => {
       const { resolver } = await gqlInstance.client.request(query, {
         id: `${address}-${namehash(name)}`,

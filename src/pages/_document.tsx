@@ -12,7 +12,6 @@ const ipfsPathScript = `
     document.head.append(base)
   })();
 `
-
 const makeIPFSURL = (url: string) => {
   if (process.env.NEXT_PUBLIC_IPFS) {
     return `.${url}`
