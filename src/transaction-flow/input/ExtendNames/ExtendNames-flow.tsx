@@ -292,7 +292,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                 />
               </OptionBar>
               <GasEstimationCacheableComponent $isCached={isEstimateGasLoading}>
-                <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
+                {/* <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" /> */}
                 {!!estimateGasLimitError && (
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}

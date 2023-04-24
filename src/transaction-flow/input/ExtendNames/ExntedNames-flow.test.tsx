@@ -76,16 +76,16 @@ describe('Extendnames', () => {
     const { parentElement } = optionBar
     expect(parentElement).toHaveStyle('opacity: 0.5')
   })
-  it('should have Invoice greyed out if gas limit estimation is still loading', () => {
-    render(
-      <ExtendNames
-        {...{ data: { names: ['nick.eth'] }, dispatch: () => null, onDismiss: () => null }}
-      />,
-    )
-    const optionBar = screen.getByText('Invoice')
-    const { parentElement } = optionBar
-    expect(parentElement).toHaveStyle('opacity: 0.5')
-  })
+  // it('should have Invoice greyed out if gas limit estimation is still loading', () => {
+  //   render(
+  //     <ExtendNames
+  //       {...{ data: { names: ['nick.eth'] }, dispatch: () => null, onDismiss: () => null }}
+  //     />,
+  //   )
+  //   const optionBar = screen.getByText('Invoice')
+  //   const { parentElement } = optionBar
+  //   expect(parentElement).toHaveStyle('opacity: 0.5')
+  // })
   it('should disabled next button if gas limit estimation is still loading', () => {
     render(
       <ExtendNames
