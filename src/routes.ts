@@ -158,7 +158,7 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'oldApp',
-    href: 'https://app.ens.domains',
+    href: 'https://legacy.ens.domains',
     label: 'navigation.oldApp',
     disabled: false,
     connected: false,
