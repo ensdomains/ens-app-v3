@@ -14,18 +14,22 @@ const ipfsPathScript = `
 `
 
 const hiddenCheckScript = `
-  if (document.hidden) {
-    document.addEventListener(
-      'visibilitychange',
-      () => {
-        if (!document.hidden && typeof window.ethereum !== 'undefined') {
-          window.location.reload()
-        }
-      },
-      {
-        once: true,
-      },
-    ) 
+  if (document.prerendering) {
+    document.addEventListener('prerenderingchange', () => {
+      if (typeof window.ethereum !== 'undefined') {
+        window.location.reload()
+      }
+    }, {
+      once: true,
+    })
+  } else if (document.hidden || document.visibilityState === 'hidden') {
+    document.addEventListener('visibilitychange', () => {
+      if (typeof window.ethereum !== 'undefined') {
+        window.location.reload()
+      }
+    }, {
+      once: true,
+    })
   }
 `
 
