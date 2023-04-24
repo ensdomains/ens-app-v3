@@ -43,7 +43,7 @@ importers:
       '@ensdomains/ens-validation': ^0.1.0
       '@ensdomains/ensjs': 3.0.0-alpha.61
       '@ensdomains/eth-ens-namehash': ^2.0.15
-      '@ensdomains/thorin': 0.6.38
+      '@ensdomains/thorin': 0.6.39
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
       '@ethersproject/abstract-signer': ^5.7.0
@@ -145,13 +145,13 @@ importers:
       node-fetch: 2.6.1
       node-fetch-commonjs: ^3.1.1
       p-memoize: ^7.1.1
+      polyfill-crypto.getrandomvalues: ^1.0.0
       postcss-scss: ^4.0.4
       prettier: 2.6.2
       react: ^17.0.2
       react-confetti: ^6.1.0
       react-dom: ^17.0.2
       react-ga: ^3.3.1
-      react-ga4: ^2.0.0
       react-hook-form: ^7.34.2
       react-i18next: ^11.18.5
       react-is: ^17.0.2
@@ -185,7 +185,7 @@ importers:
       '@ensdomains/ens-validation': 0.1.0
       '@ensdomains/ensjs': 3.0.0-alpha.61_4wk6sblqc5kfzwjkcabkhle2du
       '@ensdomains/eth-ens-namehash': 2.0.15
-      '@ensdomains/thorin': 0.6.38_6haozuff5ofofiwuoke6ixqiri
+      '@ensdomains/thorin': 0.6.39_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
       '@ethersproject/abstract-provider': 5.7.0
       '@ethersproject/abstract-signer': 5.7.0
@@ -227,7 +227,6 @@ importers:
       react-confetti: 6.1.0_bbuxkxhxbyez4jmqgptuoucij4_react@17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-ga: 3.3.1_at7mkepldmzoo6silmqc5bca74
-      react-ga4: 2.0.0
       react-hook-form: 7.36.1_react@17.0.2
       react-i18next: 11.18.6_jlvubkh2ypz6tastophpvdjiqq
       react-is: 17.0.2
@@ -306,6 +305,7 @@ importers:
       next-dev-https: 0.1.2_q5l3x5627ujg3rak6l6v24c2cq_next@12.1.6+react@17.0.2
       node-fetch: 2.6.1
       node-fetch-commonjs: 3.2.4
+      polyfill-crypto.getrandomvalues: 1.0.0
       postcss-scss: 4.0.5_postcss@8.4.17
       prettier: 2.6.2
       sitemap: 7.1.1
@@ -3404,8 +3404,8 @@ packages:
       hash-test-vectors: 1.3.2
     dev: false
 
-  /@ensdomains/thorin/0.6.38_6haozuff5ofofiwuoke6ixqiri:
-    resolution: {integrity: sha512-KRClKUv+D9bhntF0T3eCfpk9x7mBA1UAofIYV57gcQV85IWaUdtH96xu9aWr2LnHkvxpOvjKM6qqSVuPe95nbQ==}
+  /@ensdomains/thorin/0.6.39_6haozuff5ofofiwuoke6ixqiri:
+    resolution: {integrity: sha512-Glbcikw+ycgKAdjGNIWqNNlotpeo7RYNTj8ReZrVCC9n+SkvpV1dOkEt3CiXNX93DBHXOPttMzUtN0l+ACMjzw==}
     peerDependencies:
       react: ^17
       react-dom: ^17
@@ -18496,6 +18496,10 @@ packages:
       semaphore: 1.1.0
     dev: false
 
+  /mersenne-twister/1.1.0:
+    resolution: {integrity: sha512-mUYWsMKNrm4lfygPkL3OfGzOPTR2DBlTkBNHM//F6hGp8cLThY897crAlk3/Jo17LEOOjQUrNAx6DvgO77QJkA==}
+    dev: true
+
   /methods/1.1.2:
     resolution: {integrity: sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==}
     engines: {node: '>= 0.6'}
@@ -20553,6 +20557,12 @@ packages:
       - supports-color
     dev: true
 
+  /polyfill-crypto.getrandomvalues/1.0.0:
+    resolution: {integrity: sha512-GIkU6bg4auRnDFOqUNit7eLn9hzznrJU1CGFuivQzDeVp4Ys8cY4OY6GhAdndJwo4jryz5cJyjg9ELhvQjdrtw==}
+    dependencies:
+      mersenne-twister: 1.1.0
+    dev: true
+
   /posix-character-classes/0.1.1:
     resolution: {integrity: sha512-xTgYBc3fuo7Yt7JbiuFxSYGToMoz8fLoE6TC9Wx1P/u+LfeThMOAqmuyECnlBaaJb+u1m9hHiXUEtwW4OzfUJg==}
     engines: {node: '>=0.10.0'}
@@ -21121,10 +21131,6 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 17.0.2
-    dev: false
-
-  /react-ga4/2.0.0:
-    resolution: {integrity: sha512-WHi98hMunzh4ngRdNil8NN6Qly3ZZUkprhbgSqA+NFzovp8zqpYV3jcbKL9FnMdeBQHGhv8AVNCT2oFEE+EFXA==}
     dev: false
 
   /react-hook-form/7.36.1_react@17.0.2:

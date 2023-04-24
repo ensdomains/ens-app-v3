@@ -76,8 +76,10 @@ const UploadComponent = ({
   })
 
   const { mutate: signAndUpload, isLoading } = useMutation(async () => {
-    const baseURL =
-      process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://avatar-upload.ens-cf.workers.dev/${network}`
+    let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://ens.xyz`
+    if (network !== 'mainnet') {
+      baseURL = `${baseURL}/${network}`
+    }
     const endpoint = `${baseURL}/${name}`
 
     const sig = await signTypedDataAsync()

@@ -42,7 +42,8 @@
     "skip": "Skip",
     "changeNetwork": "Change Network",
     "understand": "I understand",
-    "feedback": "Feedback"
+    "feedback": "Feedback",
+    "migrate": "Migrate"
   },
   "unit": {
     "years_one": "{{count}} year",
@@ -157,6 +158,7 @@
       "addSuccess": "Add success",
       "sendName": "Send name",
       "migrateProfile": "Migrate profile",
+      "migrateProfileWithReset": "Migrate profile",
       "migrateProfileWithSync": "Migrate and update profile",
       "wrapName": "Wrap name",
       "updateResolver": "Update resolver",
@@ -177,11 +179,13 @@
       "transferName": "Transfer name",
       "changePermissions": "Change permissions",
       "syncManager": "Sync manager",
-      "updateProfileRecords": "Update profile"
+      "updateProfileRecords": "Update profile",
+      "resetProfile": "Reset profile"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
       "migrateProfile": "Set existing records on new resolver",
+      "migrateProfileWithReset": "Set existing records on new resolver",
       "migrateProfileWithSync": "Set existing records on new resolver",
       "wrapName": "Wrap name and set new resolver",
       "updateResolver": "Change resolver to",
@@ -217,7 +221,8 @@
       "subname": "Subname",
       "duration": "Duration",
       "cost": "Cost",
-      "update": "Update"
+      "update": "Update",
+      "resolver": "Resolver"
     },
     "itemValue": {
       "records_one": "{{count}} record",
