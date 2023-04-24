@@ -9,6 +9,7 @@ import {
   makeTransactionItem,
 } from '@app/transaction-flow/transaction'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 type ENS = ReturnType<typeof useEns>
 type TransactionItem = ReturnType<typeof makeTransactionItem>
@@ -40,10 +41,8 @@ export const useEstimateGasLimitForTransactions = (
   const { ready: ensReady } = ens
   const { data: signer, isLoading: isSignerLoading } = useSigner()
 
-  const queryKey = ['use-estimate-gas-limit-for-transactions', ...transactions, ...extraKeys]
-
   const { data, isLoading, isFetching, ...results } = useQuery(
-    queryKey,
+    useQueryKeys().estimateGasLimitForTransactions(transactions, extraKeys),
     async () => {
       if (!signer) throw new Error('No signer available')
       if (!ens) throw new Error('ensjs did not load')

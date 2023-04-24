@@ -119,7 +119,7 @@ describe('useMoonpayRegistration', () => {
     await waitFor(
       () =>
         expect(global.fetch).toHaveBeenCalledWith(
-          `${MOONPAY_WORKER_URL[chainId]}/signedurl?tokenId=${tokenId}&name=${normalisedName}&duration=${registrationDuration}`,
+          `${MOONPAY_WORKER_URL[chainId]}/signedurl?tokenId=${tokenId}&name=${normalisedName}&duration=${registrationDuration}&walletAddress=0x123`,
         ),
       { timeout: 2000 },
     )

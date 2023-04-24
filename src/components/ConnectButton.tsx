@@ -16,6 +16,7 @@ import {
 } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
+import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
@@ -133,6 +134,7 @@ const HeaderProfile = ({ address }: { address: string }) => {
   const zorb = useZorb(address, 'address')
   const { disconnect } = useDisconnect()
   const { copy, copied } = useCopied(300)
+  const hasPendingTransactions = useHasPendingTransactions()
 
   return (
     <Profile
@@ -165,6 +167,7 @@ const HeaderProfile = ({ address }: { address: string }) => {
             ),
             as: 'a',
             icon: <CogSVG />,
+            showIndicator: hasPendingTransactions,
           },
           <SectionDivider key="divider" />,
           {

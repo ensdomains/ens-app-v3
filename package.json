@@ -28,7 +28,7 @@
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
     "synpress:start": "synpress run -cf ./e2e/synpress.config.js",
-    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost TRANSACTION_WAIT_TIME=5000 synpress run -ne -cf ./e2e/synpress.config.js --spec ./e2e/specs/stateless/08_registerName.spec.js",
+    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost TRANSACTION_WAIT_TIME=5000 synpress run -ne -cf ./e2e/synpress.config.js --spec ./e2e/specs/stateless/07_profileEditor.spec.js",
     "synpress:local": "synpress run -ne -cf ./e2e/synpress.config.js",
     "synpress:stateful": "NETWORK_NAME=mainnet synpress run -cf ./e2e/synpress-stateful.config.js",
     "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ci-build-id $CI_BUILD_ID --group stateless",
@@ -44,6 +44,7 @@
     "local:remove:thorin": "node ./scripts/removeWorkspace.mjs @ensdomains/thorin && yalc remove @ensdomains/thorin && pnpm install",
     "wrangle": "npx wrangler pages dev ./out --log-level none",
     "wrangle:dev": "wrangler pages dev ./next",
+    "wrangle:list": "wrangler deployments list",
     "generate:sitemaps": "node ./generate-site-map.mjs",
     "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml"
@@ -57,7 +58,7 @@
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "3.0.0-alpha.61",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "@ensdomains/thorin": "0.6.37",
+    "@ensdomains/thorin": "0.6.39",
     "@ethersproject/abi": "^5.6.4",
     "@ethersproject/abstract-provider": "^5.7.0",
     "@ethersproject/abstract-signer": "^5.7.0",
@@ -199,7 +200,7 @@
     "typescript-styled-plugin": "^0.18.2",
     "wagmi-cjs": "npm:wagmi@0.12.1-cjs",
     "wait-on": "^6.0.1",
-    "wrangler": "2.13.0",
+    "wrangler": "2.16.0",
     "yalc": "^1.0.0-pre.53"
   },
   "pnpm": {

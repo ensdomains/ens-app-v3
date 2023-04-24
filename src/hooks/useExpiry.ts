@@ -1,6 +1,7 @@
 import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 export const useExpiry = (name: string, skip?: boolean) => {
   const { ready, getExpiry } = useEns()
@@ -10,7 +11,7 @@ export const useExpiry = (name: string, skip?: boolean) => {
     isLoading: loading,
     error,
   } = useQuery(
-    ['useExpiry', name],
+    useQueryKeys().expiry(name),
     async () => {
       const results = await getExpiry(name)
       return {

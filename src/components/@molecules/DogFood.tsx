@@ -10,6 +10,7 @@ import { Input } from '@ensdomains/thorin'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { useEns } from '@app/utils/EnsProvider'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback';
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { DisplayItems } from './TransactionDialogManager/DisplayItems'
 
 
@@ -41,18 +42,20 @@ export const DogFood = (
   const inputWatch: string | undefined = watch('dogfoodRaw')
 
   // Throttle the change of the input
-  const [ethNameInput, setEthNameInput] = useState<string | undefined>(undefined)
+  const [ethNameInput, setEthNameInput] = useState('')
   const throttledSetEthNameInput = useDebouncedCallback(setEthNameInput, 500)
   useEffect(() => {
-      throttledSetEthNameInput(inputWatch)
+      throttledSetEthNameInput((inputWatch || '').toLocaleLowerCase())
   }, [inputWatch, throttledSetEthNameInput])
+
+  const queryKeyGenerator = useQueryKeys().dogfood 
 
   // Attempt to get address of ENS name
   const { data: ethNameAddress } = useQuery(
-    ['getAddr', ethNameInput],
+     queryKeyGenerator(ethNameInput),
     async () => {
       try {
-      const result = await getAddr(ethNameInput!, '60')
+      const result = await getAddr(ethNameInput, '60')
       return (result as any)?.addr || ''
       } catch (e) {
         return ''
@@ -91,10 +94,12 @@ export const DogFood = (
             hasAddressRecord: async (value) => {
               if(value?.includes('.')) {
                 try {
-                  const result = await queryClient.getQueryData(['getAddr', value])
+                  const result = await queryClient.getQueryData(queryKeyGenerator(value.toLowerCase()))
                   if (result) { return undefined }
                 // eslint-disable-next-line no-empty
-                } catch {}
+                } catch (e){
+                  console.error('validation error: ', e)
+                }
                 return 'ENS Name has no address record'
                 }
               },
