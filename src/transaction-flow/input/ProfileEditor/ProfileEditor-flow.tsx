@@ -416,13 +416,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               handleCancel={() => setView('editor')}
               type="upload"
               handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
-                if (type === 'nft') {
-                  setAvatar(uri)
-                  setAvatarSrc(display)
-                } else {
-                  setAvatar(`${uri}?timestamp=${Date.now()}`)
-                  setAvatarSrc(display)
-                }
+                setAvatar(uri)
+                setAvatarSrc(display)
                 setView('editor')
                 trigger()
               }}
@@ -435,13 +430,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               handleCancel={() => setView('editor')}
               type="nft"
               handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
-                if (type === 'nft') {
-                  setAvatar(uri)
-                  setAvatarSrc(display)
-                } else {
-                  setAvatar(`${uri}?timestamp=${Date.now()}`)
-                  setAvatarSrc(display)
-                }
+                setAvatar(uri)
+                setAvatarSrc(display)
                 setView('editor')
                 trigger()
               }}
