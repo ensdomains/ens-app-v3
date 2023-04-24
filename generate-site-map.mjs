@@ -9,7 +9,7 @@ import {
   parseSitemapIndex,
 } from 'sitemap'
 
-const baseURL = 'https://alpha.ens.domains'
+const baseURL = 'https://app.ens.domains'
 const graphAPI = 'https://api.thegraph.com/subgraphs/name/ensdomains/ens'
 
 const queryAll = gql`
