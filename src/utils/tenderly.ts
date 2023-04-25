@@ -1,4 +1,4 @@
-const TENDERLY_WORKER_URL = 'http://localhost:8787'
+const TENDERLY_WORKER_URL = 'https://gas-estimate-worker.ens-cf.workers.dev'
 
 type BaseRequest = {
   networkId: number
