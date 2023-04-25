@@ -2,7 +2,6 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useFeeData } from 'wagmi'
 
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
 
@@ -207,7 +206,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
-  const { base: rentFee, loading: priceLoading } = usePrice(names, true)
+  const { total: rentFee, loading: priceLoading } = usePrice(names, false)
 
   const totalRentFee = rentFee ? rentFee.mul(years) : undefined
   const transactions = [
@@ -218,13 +217,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     gasLimit: estimatedGasLimit,
     error: estimateGasLimitError,
     isLoading: isEstimateGasLoading,
+    gasPrice,
   } = useEstimateGasLimitForTransactions(transactions, !!rentFee)
 
   const hardcodedGasLimit = gasLimitDictionary.RENEW(names.length)
   const gasLimit = estimatedGasLimit || hardcodedGasLimit
 
-  const { data: feeData, isLoading: isFeeDataLoading } = useFeeData()
-  const gasPrice = feeData?.maxFeePerGas || undefined
   const transactionFee = gasPrice ? gasLimit.mul(gasPrice) : BigNumber.from('0')
 
   const items = [
@@ -256,7 +254,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           children: t('action.next', { ns: 'common' }),
         }
 
-  if (isFeeDataLoading || priceLoading) {
+  if (isEstimateGasLoading || priceLoading) {
     return (
       <Container>
         <TransactionLoader />
@@ -282,7 +280,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   }}
                 />
               </PlusMinusWrapper>
-              <OptionBar $isCached={isFeeDataLoading}>
+              <OptionBar $isCached={isEstimateGasLoading}>
                 <GasDisplay gasPrice={gasPrice} />
                 <CurrencyToggle
                   size="small"
@@ -292,7 +290,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                 />
               </OptionBar>
               <GasEstimationCacheableComponent $isCached={isEstimateGasLoading}>
-                {/* <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" /> */}
+                <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
                 {!!estimateGasLimitError && (
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}

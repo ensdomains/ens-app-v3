@@ -37,8 +37,7 @@ const displayItems = (
     label: 'cost',
     value: t('transaction.extendNames.costValue', {
       ns: 'transactionFlow',
-      // value: makeDisplay(rentPrice, 5, 'eth'),
-      value: 'Extension',
+      value: makeDisplay(rentPrice, 5, 'eth'),
     }),
   },
 ]
@@ -60,7 +59,7 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
     return parts[0]
   })
 
-  const price = await ens.getPrice(labels, duration, true)
+  const price = await ens.getPrice(labels, duration, false)
   const priceWithBuffer = price?.base.mul(110).div(100)
 
   if (!priceWithBuffer) throw new Error('No price found')

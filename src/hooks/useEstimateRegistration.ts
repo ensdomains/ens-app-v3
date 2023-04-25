@@ -12,6 +12,7 @@ import {
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { fetchTenderlyEstimate } from '@app/utils/tenderly'
 
 import { useAccountSafely } from './useAccountSafely'
 import { useChainId } from './useChainId'
@@ -54,20 +55,16 @@ const useEstimateRegistration = (
         duration: 31557600,
         secret: 'placeholder',
       })
-      const result = await fetch('https://gas-estimate-worker.ens-cf.workers.dev/registration', {
-        method: 'POST',
-        body: JSON.stringify({
-          networkId: chainId,
-          label: registrationTuple[0],
-          owner: registrationTuple[1],
-          resolver: registrationTuple[4],
-          data: registrationTuple[5],
-          reverseRecord: registrationTuple[6],
-          ownerControlledFuses: registrationTuple[7],
-        }),
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-      }).then((res) => res.json<{ gas_used: number }>())
-      return result.gas_used
+      return fetchTenderlyEstimate({
+        type: 'registration',
+        networkId: chainId,
+        label: registrationTuple[0],
+        owner: registrationTuple[1],
+        resolver: registrationTuple[4],
+        data: registrationTuple[5],
+        reverseRecord: registrationTuple[6],
+        ownerControlledFuses: registrationTuple[7],
+      })
     },
     {
       enabled: !!data && ready,
