@@ -12,12 +12,19 @@ import {
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { fetchTenderlyEstimate } from '@app/utils/tenderly'
 
 import { useAccountSafely } from './useAccountSafely'
 import { useChainId } from './useChainId'
-import useEstimateTransactionCost from './useEstimateTransactionCost'
+import useGasPrice from './useGasPrice'
 import { useNameDetails } from './useNameDetails'
 import useRegistrationParams from './useRegistrationParams'
+
+const gasLimitDictionary = {
+  COMMIT: 42000,
+  RENEW: 61818,
+  REGISTER: 265428,
+}
 
 export type RegistrationProps = Omit<
   BaseRegistrationParams,
@@ -26,8 +33,6 @@ export type RegistrationProps = Omit<
   name: string
 }
 type GasCostData = [index: number, gas: number]
-
-const BASE_LIMIT = 265428
 
 const byteLengthToDataInx = (byteLength: number) =>
   byteLength > 1 ? Math.ceil(byteLength / 32) + 1 : byteLength
@@ -54,20 +59,16 @@ const useEstimateRegistration = (
         duration: 31557600,
         secret: 'placeholder',
       })
-      const result = await fetch('https://gas-estimate-worker.ens-cf.workers.dev/registration', {
-        method: 'POST',
-        body: JSON.stringify({
-          networkId: chainId,
-          label: registrationTuple[0],
-          owner: registrationTuple[1],
-          resolver: registrationTuple[4],
-          data: registrationTuple[5],
-          reverseRecord: registrationTuple[6],
-          ownerControlledFuses: registrationTuple[7],
-        }),
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-      }).then((res) => res.json<{ gas_used: number }>())
-      return result.gas_used
+      return fetchTenderlyEstimate({
+        type: 'registration',
+        networkId: chainId,
+        label: registrationTuple[0],
+        owner: registrationTuple[1],
+        resolver: registrationTuple[4],
+        data: registrationTuple[5],
+        reverseRecord: registrationTuple[6],
+        ownerControlledFuses: registrationTuple[7],
+      })
     },
     {
       enabled: !!data && ready,
@@ -97,7 +98,7 @@ const useEstimateRegistration = (
       clearRecords,
     } = data.records || {}
 
-    let limit = BASE_LIMIT
+    let limit = gasLimitDictionary.REGISTER
 
     if (reverseRecord) {
       limit += 116396
@@ -148,9 +149,7 @@ type FullProps = {
 }
 
 export const useEstimateFullRegistration = ({ registrationData, price, name }: FullProps) => {
-  const { data: estimatedCommitData, isLoading: commitGasLoading } =
-    useEstimateTransactionCost('COMMIT')
-  const { transactionFee: commitGasFee, gasPrice } = estimatedCommitData || {}
+  const { gasPrice, isLoading: gasPriceLoading } = useGasPrice()
   const { address } = useAccountSafely()
   const { owner, fuses, records, reverseRecord } = useRegistrationParams({
     name,
@@ -165,10 +164,10 @@ export const useEstimateFullRegistration = ({ registrationData, price, name }: F
       records,
       reverseRecord,
     })
-  const estimatedGasLoading = commitGasLoading || registrationGasLoading
+  const estimatedGasLoading = gasPriceLoading || registrationGasLoading
   const estimatedGasFee = useMemo(() => {
-    return commitGasFee && registrationGasFee ? commitGasFee.add(registrationGasFee) : undefined
-  }, [commitGasFee, registrationGasFee])
+    return registrationGasFee ? registrationGasFee.add(gasLimitDictionary.COMMIT) : undefined
+  }, [registrationGasFee])
 
   const yearlyFee = price?.base
   const premiumFee = price?.premium

@@ -280,6 +280,12 @@
         "gasLimit": "The gas limit on your transaction wasn't high enough, please try again."
       }
     },
+    "error": {
+      "request": {
+        "INSUFFICIENT_FUNDS": "Insufficient funds in wallet",
+        "UNPREDICTABLE_GAS_LIMIT": "An unknown error occurred"
+      }
+    },
     "viewEtherscan": "View on Etherscan",
     "viewMore": "View More"
   },
