@@ -2,6 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount, useBalance } from 'wagmi'
 
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
 
@@ -195,6 +196,11 @@ export type Props = {
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
+  const { address } = useAccount()
+  const { data: balance } = useBalance({
+    address,
+  })
+
   const [view, setView] = useState<'name-list' | 'registration'>(
     names.length > 1 ? 'name-list' : 'registration',
   )
@@ -283,7 +289,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
               </OptionBar>
               <GasEstimationCacheableComponent $isCached={isEstimateGasLoading}>
                 <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
-                {!!estimateGasLimitError && (
+                {(!!estimateGasLimitError ||
+                  (estimatedGasLimit && balance?.value.lt(estimatedGasLimit))) && (
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}
                 {rentFee && transactionFee && (
