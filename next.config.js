@@ -79,6 +79,30 @@ let nextConfig = {
       },
     ]
   },
+  async redirects() {
+    return [
+      {
+        source: '/name/:name',
+        destination: '/:name',
+        permanent: false,
+      },
+      {
+        source: '/name/:name/(.*)',
+        destination: '/:name',
+        permanent: false,
+      },
+      {
+        source: '/address/:address',
+        destination: '/:address',
+        permanent: false,
+      },
+      {
+        source: '/address/:address/(.*)',
+        destination: '/:address',
+        permanent: false,
+      },
+    ]
+  },
   generateBuildId: () => {
     const hash = execSync('git rev-parse HEAD').toString().trim()
     return hash
