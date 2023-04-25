@@ -31,7 +31,7 @@ export const getContentHashLink = (
   const useEthLink =
     name.endsWith('.eth') && network === 1 && (protocol === 'ipfs' || protocol === 'ipns')
   if (useEthLink) {
-    return `https://${name}.link`
+    return `https://${name}.limo`
   }
 
   if (protocol === 'ipfs') {

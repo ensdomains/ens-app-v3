@@ -51,9 +51,13 @@ export const transactions = {
 export type Transaction = typeof transactions
 export type TransactionName = keyof Transaction
 
+export type TransactionData<T extends TransactionName> = Parameters<
+  Transaction[T]['transaction']
+>[2]
+
 export const makeTransactionItem = <T extends TransactionName>(
   name: T,
-  data: Parameters<Transaction[T]['transaction']>[2],
+  data: TransactionData<T>,
 ) => ({
   name,
   data,

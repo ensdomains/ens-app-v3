@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useFeeData } from 'wagmi'
+import { useAccount, useBalance } from 'wagmi'
 
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
 
@@ -15,7 +15,6 @@ import gasLimitDictionary from '@app/constants/gasLimits'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useEstimateGasLimitForTransactions } from '@app/hooks/useEstimateGasLimitForTransactions'
 import { useZorb } from '@app/hooks/useZorb'
-import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import useUserConfig from '@app/utils/useUserConfig'
@@ -197,6 +196,11 @@ export type Props = {
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
+  const { address } = useAccount()
+  const { data: balance } = useBalance({
+    address,
+  })
+
   const [view, setView] = useState<'name-list' | 'registration'>(
     names.length > 1 ? 'name-list' : 'registration',
   )
@@ -207,7 +211,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
-  const { base: rentFee, loading: priceLoading } = usePrice(names, true)
+  const { total: rentFee, loading: priceLoading } = usePrice(names, false)
 
   const totalRentFee = rentFee ? rentFee.mul(years) : undefined
   const transactions = [
@@ -218,13 +222,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     gasLimit: estimatedGasLimit,
     error: estimateGasLimitError,
     isLoading: isEstimateGasLoading,
+    gasPrice,
   } = useEstimateGasLimitForTransactions(transactions, !!rentFee)
 
   const hardcodedGasLimit = gasLimitDictionary.RENEW(names.length)
   const gasLimit = estimatedGasLimit || hardcodedGasLimit
 
-  const { data: feeData, isLoading: isFeeDataLoading } = useFeeData()
-  const gasPrice = feeData?.maxFeePerGas || undefined
   const transactionFee = gasPrice ? gasLimit.mul(gasPrice) : BigNumber.from('0')
 
   const items = [
@@ -256,13 +259,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           children: t('action.next', { ns: 'common' }),
         }
 
-  if (isFeeDataLoading || priceLoading) {
-    return (
-      <Container>
-        <TransactionLoader />
-      </Container>
-    )
-  }
   return (
     <Container data-testid="extend-names-modal">
       <Dialog.Heading title={title} />
@@ -282,7 +278,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   }}
                 />
               </PlusMinusWrapper>
-              <OptionBar $isCached={isFeeDataLoading}>
+              <OptionBar $isCached={priceLoading}>
                 <GasDisplay gasPrice={gasPrice} />
                 <CurrencyToggle
                   size="small"
@@ -292,8 +288,9 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                 />
               </OptionBar>
               <GasEstimationCacheableComponent $isCached={isEstimateGasLoading}>
-                {/* <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" /> */}
-                {!!estimateGasLimitError && (
+                <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
+                {(!!estimateGasLimitError ||
+                  (estimatedGasLimit && balance?.value.lt(estimatedGasLimit))) && (
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}
                 {rentFee && transactionFee && (

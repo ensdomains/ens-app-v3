@@ -41,6 +41,7 @@ export const useAvatar = (name: string | null | undefined, network: number, noCa
       enabled: !!name,
       cacheTime: noCache ? 0 : 60000,
       staleTime: 60000,
+      refetchOnMount: false,
     },
   )
 

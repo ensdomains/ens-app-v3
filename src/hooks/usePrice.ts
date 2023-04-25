@@ -20,7 +20,12 @@ export const usePrice = (nameOrNames: string | string[], legacy?: boolean) => {
     isFetching,
   } = useQuery(
     useQueryKeys().getPrice(type, names),
-    async () => getPrice(nameOrNames, yearsToSeconds(1), legacy).then((d) => d || null),
+    async () =>
+      getPrice(
+        names.map((n) => n.split('.')[0]),
+        yearsToSeconds(1),
+        legacy,
+      ).then((d) => d || null),
     {
       enabled: !!(ready && nameOrNames && nameOrNames.length > 0),
     },
@@ -28,11 +33,13 @@ export const usePrice = (nameOrNames: string | string[], legacy?: boolean) => {
 
   const base = data?.base
   const premium = data?.premium
+  const total = data?.base ? data.base.add(data.premium) : undefined
   const hasPremium = data?.premium.gt(0)
 
   return {
     base,
     premium,
+    total,
     hasPremium,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
     loading,
