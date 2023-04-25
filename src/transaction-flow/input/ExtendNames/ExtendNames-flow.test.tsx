@@ -1,7 +1,5 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { useFeeData } from 'wagmi'
-
 import { useEstimateGasLimitForTransactions } from '@app/hooks/useEstimateGasLimitForTransactions'
 
 import { usePrice } from '../../../hooks/usePrice'
@@ -11,7 +9,6 @@ jest.mock('@app/hooks/useEstimateGasLimitForTransactions')
 jest.mock('../../../hooks/usePrice')
 
 const mockUseEstimateGasLimitForTransactions = mockFunction(useEstimateGasLimitForTransactions)
-const mockUseFeeData = mockFunction(useFeeData)
 const mockUsePrice = mockFunction(usePrice)
 
 jest.mock('@ensdomains/thorin', () => {
@@ -47,14 +44,8 @@ describe('Extendnames', () => {
     error: null,
     isLoading: true,
   })
-  mockUseFeeData.mockReturnValue({
-    feeData: {
-      gasPrice: '0x3b9aca00',
-      gasLimit: '0x5',
-    },
-  })
   mockUsePrice.mockReturnValue({
-    base: {
+    total: {
       mul: () => 0.1,
     },
     loading: false,

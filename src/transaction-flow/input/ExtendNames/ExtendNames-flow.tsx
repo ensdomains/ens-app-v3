@@ -14,7 +14,6 @@ import gasLimitDictionary from '@app/constants/gasLimits'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useEstimateGasLimitForTransactions } from '@app/hooks/useEstimateGasLimitForTransactions'
 import { useZorb } from '@app/hooks/useZorb'
-import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import useUserConfig from '@app/utils/useUserConfig'
@@ -254,13 +253,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           children: t('action.next', { ns: 'common' }),
         }
 
-  if (isEstimateGasLoading || priceLoading) {
-    return (
-      <Container>
-        <TransactionLoader />
-      </Container>
-    )
-  }
   return (
     <Container data-testid="extend-names-modal">
       <Dialog.Heading title={title} />
@@ -280,7 +272,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   }}
                 />
               </PlusMinusWrapper>
-              <OptionBar $isCached={isEstimateGasLoading}>
+              <OptionBar $isCached={priceLoading}>
                 <GasDisplay gasPrice={gasPrice} />
                 <CurrencyToggle
                   size="small"

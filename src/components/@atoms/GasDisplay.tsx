@@ -1,6 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import styled, { css } from 'styled-components'
 
+import { Skeleton } from '@ensdomains/thorin'
+
 import GasSVG from '@app/assets/Gas.svg'
 import { makeDisplay } from '@app/utils/currency'
 
@@ -30,7 +32,7 @@ const GasDisplay = ({ gasPrice }: Props) => {
   return (
     <Container>
       <GasSVG />
-      {gasLabel}
+      <Skeleton loading={!gasPrice}>{gasLabel}</Skeleton>
     </Container>
   )
 }

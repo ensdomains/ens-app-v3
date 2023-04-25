@@ -28,24 +28,18 @@ export const fetchTenderlyEstimate = async (
   const result = await fetch(`${TENDERLY_WORKER_URL}/${type}`, {
     method: 'POST',
     body: JSON.stringify(bodyData),
-  }).then((res) =>
-    res.json<{
+  }).then((res) => {
+    return res.json<{
       /* eslint-disable @typescript-eslint/naming-convention */
-      gas_used: number
-      status?: boolean
-      error_details?: { error_message: string; address: string }
+      gasUsed: number
+      status: boolean
       /* eslint-enable @typescript-eslint/naming-convention */
-    }>(),
-  )
+    }>()
+  })
 
   if (typeof result.status === 'boolean' && result.status === false) {
-    if (result.error_details) {
-      throw new Error(
-        `Tenderly estimate failed: ${result.error_details.error_message} (address=${result.error_details.address})`,
-      )
-    }
-    throw new Error('Tenderly estimate failed: Unknown error')
+    throw new Error(`Tenderly estimate failed: ${JSON.stringify(result)}`)
   }
 
-  return result.gas_used
+  return result.gasUsed
 }
