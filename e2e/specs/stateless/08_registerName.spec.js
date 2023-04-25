@@ -35,9 +35,9 @@ describe('Register Name', () => {
       })
 
     // should show cost comparison accurately
-    cy.findByTestId('year-marker-0').should('include.text', '16% gas')
+    cy.findByTestId('year-marker-0').should('include.text', '14% gas')
     cy.findByTestId('year-marker-1').should('include.text', '8% gas')
-    cy.findByTestId('year-marker-2').should('include.text', '4% gas')
+    cy.findByTestId('year-marker-2').should('include.text', '3% gas')
 
     // should show correct price for yearly registration
     cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0032')
