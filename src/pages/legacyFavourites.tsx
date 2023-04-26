@@ -31,7 +31,8 @@ export default function Page() {
 
   useEffect(() => {
     if (!ens.getExpiry.batch) return
-    const rawFavourites = JSON.parse(window?.localStorage?.getItem('ensFavourites') || '{}') || []
+    const rawFavourites =
+      JSON.parse(globalThis?.localStorage?.getItem('ensFavourites') || '{}') || []
 
     if (!rawFavourites?.length) {
       setFavourites(null)
