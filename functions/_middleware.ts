@@ -30,6 +30,8 @@ class AttributeModifier {
 export const onRequest: PagesFunction = async ({ request, next }) => {
   const secPurpose = request.headers.get('sec-purpose')
 
+  console.log('log test')
+
   if (secPurpose === 'prefetch;prerender') {
     return new Response('Prefetching is not allowed', { status: 400 })
   }
