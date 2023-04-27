@@ -13,7 +13,7 @@ import {
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { Profile } from '@app/types'
-import { formSafeKey } from '@app/utils/editor'
+import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
 
 import AdvancedEditor from './AdvancedEditor-flow'
 
@@ -207,6 +207,36 @@ describe('AdvancedEditor', () => {
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.texts.length).toBe(1)
   })
 
+  it('should submit key/value when new text with special characters is added', async () => {
+    render(
+      <AdvancedEditor dispatch={mockDispatch} onDismiss={() => {}} data={{ name: 'test.eth' }} />,
+    )
+    const addButton = await screen.findByTestId('add-record-button')
+    const addInput = within(addButton).getByTestId('add-record-button-input')
+    await userEvent.type(addInput, "'")
+    const addRecordBtn = await within(addButton).findByText('action.add')
+    await userEvent.click(addRecordBtn)
+
+    const newInput = await screen.findByTestId("record-input-'")
+    await userEvent.type(within(newInput).getByTestId('record-input-input'), 'testValue')
+
+    const submitBtn = screen.getByText('action.save')
+    await waitFor(() => {
+      expect(submitBtn).not.toHaveAttribute('disabled')
+    })
+    fireEvent.click(submitBtn)
+    fireEvent.submit(screen.getByTestId('advanced-editor'))
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalled()
+    })
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.texts[0]).toEqual({
+      key: "'",
+      value: 'testValue',
+    })
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.texts.length).toBe(1)
+  })
+
   it('should submit key with empty string in an existing address record is deleted', async () => {
     render(
       <AdvancedEditor dispatch={mockDispatch} onDismiss={() => {}} data={{ name: 'test.eth' }} />,
@@ -369,7 +399,7 @@ describe('AdvancedEditor', () => {
       await userEvent.click(tabEl)
 
       for (const { label, value } of records) {
-        const record = await screen.findByTestId(`record-input-${label}`)
+        const record = await screen.findByTestId(`record-input-${convertFormSafeKey(label)}`)
         const recordInput = await within(record).getByTestId('record-input-input')
         expect(recordInput).toHaveValue(value)
       }
