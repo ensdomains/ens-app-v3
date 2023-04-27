@@ -32,20 +32,24 @@ export const useHasSubnames = (name: string) => {
       let done = false
 
       while (!done) {
-        // eslint-disable-next-line no-await-in-loop
-        const { subnames } = await getSubnames({
-          name,
-          lastSubnames: cursor,
-          orderBy: 'labelName',
-          orderDirection: 'desc',
-          pageSize: FETCH_PAGE_SIZE,
-        })
-        const anyHasOwner = subnames.some((subname) => subname.owner !== emptyAddress)
-        if (anyHasOwner) {
-          return true
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          const { subnames } = await getSubnames({
+            name,
+            lastSubnames: cursor,
+            orderBy: 'labelName',
+            orderDirection: 'desc',
+            pageSize: FETCH_PAGE_SIZE,
+          })
+          const anyHasOwner = subnames.some((subname) => subname.owner !== emptyAddress)
+          if (anyHasOwner) {
+            return true
+          }
+          done = subnames.length !== FETCH_PAGE_SIZE
+          cursor = subnames
+        } catch {
+          return false
         }
-        done = subnames.length !== FETCH_PAGE_SIZE
-        cursor = subnames
       }
 
       return false
