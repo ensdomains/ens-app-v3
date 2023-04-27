@@ -31,7 +31,6 @@ export default function Page() {
       JSON.parse(globalThis?.localStorage?.getItem('ensFavourites') || '{}') || []
 
     if (!rawFavourites?.length) {
-      setFavourites(null)
       return
     }
 
