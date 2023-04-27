@@ -15,6 +15,7 @@ import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
+import { GlobalStateProvider } from '@app/utils/GlobalStateProvider'
 import { SyncProvider } from '@app/utils/SyncProvider'
 import { setupAnalytics } from '@app/utils/analytics'
 import { chains, wagmiClient } from '@app/utils/query'
@@ -147,8 +148,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                   <ThorinGlobalStyles />
                   <SyncProvider>
                     <TransactionFlowProvider>
-                      <Notifications />
-                      <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                      <GlobalStateProvider>
+                        <Notifications />
+                        <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                      </GlobalStateProvider>
                     </TransactionFlowProvider>
                   </SyncProvider>
                 </BreakpointProvider>

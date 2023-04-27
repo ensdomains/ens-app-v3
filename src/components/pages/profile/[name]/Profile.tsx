@@ -16,7 +16,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
-import { Content } from '@app/layouts/Content'
+import { Content, ContentWarning } from '@app/layouts/Content'
 import { formatFullExpiry } from '@app/utils/utils'
 
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
@@ -227,6 +227,16 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     return undefined
   }, [gracePeriodEndDate, normalisedName, _canBeWrapped, expiryDate])
 
+  const warning: ContentWarning = useMemo(() => {
+    if (error)
+      return {
+        type: 'warning',
+        message: error,
+        title: errorTitle,
+      }
+    return undefined
+  }, [error, errorTitle])
+
   return (
     <>
       <Head>
@@ -241,13 +251,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
       >
         {{
           info: infoBanner,
-          warning: error
-            ? {
-                type: 'warning',
-                message: error,
-                title: errorTitle,
-              }
-            : undefined,
+          warning,
           header: (
             <TabButtonContainer>
               {visibileTabs.map((tabItem) => (

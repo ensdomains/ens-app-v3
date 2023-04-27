@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from 'wagmi'
 
 import type { Name } from '@ensdomains/ensjs/functions/getNames'
+import { ENSJSError } from '@ensdomains/ensjs/utils/errors'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { useGlobalStateDispatch } from '@app/utils/GlobalStateProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { GRACE_PERIOD } from '@app/utils/constants'
 import { validateExpiry } from '@app/utils/utils'
@@ -44,26 +46,55 @@ export const useNamesFromAddress = ({
   search?: string
 }) => {
   const { ready, getNames } = useEns()
+  const globalStateDispatch = useGlobalStateDispatch()
 
   const { data: blockTimestamp, isLoading: isBlockTimestampLoading } = useBlockTimestamp()
 
   const { data, isLoading, status, refetch } = useQuery(
     useQueryKeys().namesFromAddress(address),
-    () =>
-      getNames({
-        address: address!,
-        type: 'all',
-        orderBy: 'labelName',
-        orderDirection: 'desc',
-      }).then((d) => d || null),
+    async () => {
+      try {
+        const names = await getNames({
+          address: address!,
+          type: 'all',
+          orderBy: 'labelName',
+          orderDirection: 'desc',
+        }).then((d) => d || null)
+        return { names }
+      } catch (e: unknown) {
+        if (!(e instanceof ENSJSError)) {
+          globalStateDispatch({
+            type: 'SET_NETWORK_ERROR',
+          })
+          return { names: [] }
+        }
+
+        const ensjsError = e as ENSJSError<Name[]>
+        if (ensjsError.name === 'ENSJSSubgraphIndexingError') {
+          globalStateDispatch({
+            type: 'SET_INDEXING_ERROR',
+            payload: {
+              timestamp: ensjsError.timestamp,
+            },
+          })
+          return { names: ensjsError.data || [] }
+        }
+
+        globalStateDispatch({
+          type: 'SET_NETWORK_ERROR',
+        })
+        return { names: [] }
+      }
+    },
     {
       enabled: ready && !!address && !isBlockTimestampLoading,
+      refetchOnMount: true,
     },
   )
 
   const mergedData = useMemo(() => {
-    if (!data) return []
-    const nameMap = data.reduce((map, curr) => {
+    const names = data?.names || []
+    const nameMap = names.reduce((map, curr) => {
       if (curr.id === '0x0000000000000000000000000000000000000000000000000000000000000000') {
         // eslint-disable-next-line no-param-reassign
         curr = {
@@ -96,7 +127,7 @@ export const useNamesFromAddress = ({
       return newMap
     }, {} as { [key: string]: ReturnedName })
     return Object.values(nameMap)
-  }, [data])
+  }, [data?.names])
 
   const [sortedData, setSortedData] = useState<Name[] | null>(null)
 
