@@ -14,6 +14,8 @@ import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 
 import { DeepPartial } from './types'
 
+jest.mock('@app/hooks/useRegistrationReducer', () => jest.fn(() => ({ item: { stepIndex: 0 } })))
+
 jest.mock('wagmi', () => {
   const {
     useQuery,
@@ -32,6 +34,7 @@ jest.mock('wagmi', () => {
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
     useAccount: jest.fn(() => ({ address: '0x123' })),
+    useBalance: jest.fn(() => ({ data: { value: { lt: () => false } } })),
     useNetwork: jest.fn(() => ({ chainId: 1 })),
     useFeeData: jest.fn(),
     useProvider: jest.fn(),

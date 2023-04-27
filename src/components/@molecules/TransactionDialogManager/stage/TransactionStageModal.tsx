@@ -167,6 +167,8 @@ type TxError = {
   error: Error
 }
 
+const SUPPORTED_REQUEST_ERRORS = ['INSUFFICIENT_FUNDS', 'UNPREDICTABLE_GAS_LIMIT']
+
 export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
   const { t } = useTranslation()
 
@@ -506,13 +508,13 @@ export const TransactionStageModal = ({
       return transactionError.message.split('(')[0].trim()
     }
     if (requestError) {
-      if (requestError.code === 'UNPREDICTABLE_GAS_LIMIT') {
-        return 'An unknown error occurred.'
+      if (SUPPORTED_REQUEST_ERRORS.includes(requestError.code)) {
+        return t(`transaction.error.request.${requestError.code}`)
       }
       return requestError.reason
     }
     return null
-  }, [stage, transactionError, requestError])
+  }, [t, stage, transactionError, requestError])
 
   return (
     <>

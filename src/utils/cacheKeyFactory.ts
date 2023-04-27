@@ -34,12 +34,13 @@ export const useQueryKeys = () => {
       avatar: (name: string | null | undefined) => [...globalKeys, 'getAvatar', name, 'avatar'],
       getNFTImage: (name: string | null | undefined) => [...globalKeys, name, 'getNFTImage'],
     },
-    basicName: (normalisedName: string) => [
+    basicName: (normalisedName: string, registrationStepIndex: number) => [
       ...globalKeys,
       'batch',
       'getOwner',
       'getExpiry',
       normalisedName,
+      registrationStepIndex,
       'basicName',
     ],
     beautifiedName: (name: string) => [...globalKeys, name, 'beautifiedName'],
@@ -81,7 +82,13 @@ export const useQueryKeys = () => {
       'getPrice',
     ],
     primary: (localAddress: string) => [...globalKeys, 'getName', localAddress, 'primary'],
-    profile: (name: string) => [...globalKeys, 'graph', name, 'profile'],
+    profile: (name: string, resolverAddress?: string) => [
+      ...globalKeys,
+      'graph',
+      name,
+      'profile',
+      resolverAddress,
+    ],
     registrationDate: (name: string) => [...globalKeys, 'graph', name, 'registrationDate'],
     getResolver: (name: string) => [...globalKeys, name, 'getResolver'],
     resolverExists: (name: string) => [
@@ -97,6 +104,12 @@ export const useQueryKeys = () => {
       resolverAddress,
       interfaceNames,
       'resolverHasInterfaces',
+    ],
+    resolverIsAuthorized: (name: string, resolver: string) => [
+      ...globalKeys,
+      'resolverIsAuthorised',
+      name,
+      resolver,
     ],
     resolverStatus: (
       name: string,

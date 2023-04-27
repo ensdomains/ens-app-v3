@@ -16,8 +16,16 @@ export type ValidationResult = Prettify<
   }
 >
 
+const tryDecodeURIComponent = (input: string) => {
+  try {
+    return decodeURIComponent(input)
+  } catch {
+    return input
+  }
+}
+
 export const validate = (input: string) => {
-  const decodedInput = decodeURIComponent(input)
+  const decodedInput = tryDecodeURIComponent(input)
   const { normalised: name, ...parsedInput } = parseInput(decodedInput)
   const isNonASCII = parsedInput.labelDataArray.some((dataItem) => dataItem.type !== 'ASCII')
   const outputName = name || input

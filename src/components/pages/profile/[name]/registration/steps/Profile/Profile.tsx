@@ -205,13 +205,8 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
             handleCancel={() => setModalOpen(false)}
             type={modalOption}
             handleSubmit={(type: 'nft' | 'upload', uri: string, display?: string) => {
-              if (type === 'nft') {
-                setAvatar(uri)
-                setAvatarSrc(display)
-              } else {
-                setAvatar(`${uri}?timestamp=${Date.now()}`)
-                setAvatarSrc(display)
-              }
+              setAvatar(uri)
+              setAvatarSrc(display)
               setModalOpen(false)
               trigger()
             }}

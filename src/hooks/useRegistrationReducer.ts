@@ -7,9 +7,13 @@ import {
 } from '@app/components/pages/profile/[name]/registration/types'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 
-const randomSecret = () => {
-  const bytes = Buffer.allocUnsafe(32)
-  return `0x${window.crypto.getRandomValues(bytes).toString('hex')}`
+export const randomSecret = () => {
+  // the first 4 bytes of the namehash of enslabs.eth
+  const platformSource = '9923eb94'
+  // v3
+  const version = '00000003'
+  const bytes = Buffer.allocUnsafe(24)
+  return '0x' + platformSource + version + window.crypto.getRandomValues(bytes).toString('hex')
 }
 
 const defaultData: RegistrationReducerDataItem = {

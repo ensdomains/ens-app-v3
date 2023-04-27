@@ -31,7 +31,7 @@ export const getContentHashLink = (
   const useEthLink =
     name.endsWith('.eth') && network === 1 && (protocol === 'ipfs' || protocol === 'ipns')
   if (useEthLink) {
-    return `https://${name}.link`
+    return `https://${name}.limo`
   }
 
   if (protocol === 'ipfs') {
@@ -49,7 +49,7 @@ export const getContentHashLink = (
   if (protocol === 'sia') {
     return `https://siasky.net/${hash}`
   }
-  if (protocol === 'arweave') {
+  if (protocol === 'arweave' || protocol === 'ar') {
     return `https://arweave.net/${hash}`
   }
   return null
