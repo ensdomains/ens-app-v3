@@ -10,7 +10,6 @@ import { Outlink } from '@app/components/Outlink'
 import { useChainId } from '@app/hooks/useChainId'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
-import { useEns } from '@app/utils/EnsProvider'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -25,40 +24,26 @@ type Favourites = Favourite[]
 
 export default function Page() {
   const [favourites, setFavourites] = useState<Favourites | null>(null)
-  const ens = useEns()
   const chainId = useChainId()
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (!ens.getExpiry.batch) return
     const rawFavourites =
       JSON.parse(globalThis?.localStorage?.getItem('ensFavourites') || '{}') || []
 
     if (!rawFavourites?.length) {
       setFavourites(null)
-      setIsLoading(false)
       return
     }
 
-    const simplifiedFavourites = rawFavourites.map((favourite: any) => {
-      return favourite.name
-    })
-    const batches = simplifiedFavourites.map((name: string) => ens.getExpiry.batch(name))
-
-    ens.batch(...batches).then((result) => {
-      const finalFavourites = simplifiedFavourites.map((favourite: string, index: number) => {
-        return {
-          name: favourite,
-          expiry: result?.[index]?.expiry,
-        }
-      })
-      setFavourites(finalFavourites)
-      setIsLoading(false)
-    })
-  }, [ens])
+    const simplifiedFavourites = rawFavourites.map((favourite: any) => ({
+      name: favourite.name,
+      expiry: favourite.expiryTime ? new Date(favourite.expiryTime) : null,
+    }))
+    setFavourites(simplifiedFavourites)
+  }, [])
 
   return (
-    <Content title="Legacy Favourites" singleColumnContent loading={isLoading}>
+    <Content title="Legacy Favourites" singleColumnContent>
       {{
         trailing: (
           <>
