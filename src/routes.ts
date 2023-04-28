@@ -234,6 +234,11 @@ export const rewrites = [
     destination: '/address?address=$2',
     flattenedDestination: '/$2',
   },
+  {
+    source: '/legacyFavourites',
+    destination: '/legacyfavourites',
+    flattenedDestination: '/legacyfavourites',
+  },
 ]
 export const getDestination = (url: UrlObject | string) => {
   const isIPFS = !!process.env.NEXT_PUBLIC_IPFS
