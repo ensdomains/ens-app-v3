@@ -77,6 +77,10 @@ let nextConfig = {
         source: '/tld/:tld/import',
         destination: '/import?name=:tld',
       },
+      {
+        source: '/legacyFavourites',
+        destination: '/legacyfavourites',
+      }
     ]
   },
   generateBuildId: () => {
