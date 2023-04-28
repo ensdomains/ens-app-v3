@@ -58,6 +58,9 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
     url.pathname = '/my/names'
     url.searchParams.set('address', paths[2])
     rewrite = true
+  } else if (paths[1] === 'legacyFavourites') {
+    url.pathname = '/legacyfavourites'
+    rewrite = true
   } else if (paths[1].match(/\./g) || paths[1] === 'tld') {
     const isTLD = paths[1] === 'tld'
     url.pathname = `/${(isTLD ? paths[3] : paths[2]) || 'profile'}`
