@@ -176,7 +176,7 @@ export const routes: RouteItemObj[] = [
 
 export const legacyFavouritesRoute: RouteItemObj = {
   name: 'favourites',
-  href: '/legacyFavourites',
+  href: '/legacyfavourites',
   label: 'navigation.favourites',
   disabled: false,
   connected: false,
