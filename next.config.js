@@ -34,6 +34,10 @@ let nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/legacyFavourites',
+        destination: '/legacyfavourites'
+      },
+      {
         source: '/my/profile',
         destination: '/profile?connected=true',
       },
