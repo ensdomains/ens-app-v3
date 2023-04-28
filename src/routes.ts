@@ -241,6 +241,7 @@ export const rewrites = [
   },
 ]
 export const getDestination = (url: UrlObject | string) => {
+  console.log('getDestination', url)
   const isIPFS = !!process.env.NEXT_PUBLIC_IPFS
   const isObj = typeof url !== 'string'
   let href = isObj ? url.pathname! : url
