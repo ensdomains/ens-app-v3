@@ -11,7 +11,7 @@ import { useAvatar } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
-import { getDestination, getRoute } from '@app/routes'
+import { getDestination, getRoute, legacyFavouritesRoute } from '@app/routes'
 
 import { DisconnectButton, RouteItem } from './@atoms/RouteItem/RouteItem'
 import { ConnectButton } from './ConnectButton'
@@ -256,7 +256,9 @@ export const TabBar = () => {
             {address && (
               <>
                 <RouteItem route={getRoute('names')} />
-                {/* <RouteItem route={getRoute('favourites')} /> */}
+                {globalThis?.localStorage?.getItem('ensFavourites') && (
+                  <RouteItem route={legacyFavouritesRoute} />
+                )}
                 <TabBarProfile
                   address={address}
                   isOpen={isOpen}

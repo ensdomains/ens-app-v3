@@ -8,7 +8,7 @@ import { mq } from '@ensdomains/thorin'
 
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useInitial } from '@app/hooks/useInitial'
-import { routes } from '@app/routes'
+import { legacyFavouritesRoute, routes } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import ENSFull from '../assets/ENSFull.svg'
@@ -148,8 +148,14 @@ export const Header = () => {
 
   let RouteItems: ReactNode
 
+  let routesNoSearchWithFavourites = routesNoSearch
+
+  if (globalThis?.localStorage?.getItem('ensFavourites')) {
+    routesNoSearchWithFavourites = [...routesNoSearchWithFavourites, legacyFavouritesRoute]
+  }
+
   if (!isInitial && isConnected) {
-    RouteItems = routesNoSearch.map((route) => (
+    RouteItems = routesNoSearchWithFavourites.map((route) => (
       <RouteItem
         key={route.name}
         route={route}
