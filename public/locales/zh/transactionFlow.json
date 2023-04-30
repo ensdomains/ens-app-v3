@@ -95,33 +95,93 @@
         }
       },
       "warningOverlay": {
-        "resumable": {
-          "title": "可继续执行的交易",
-          "subtitle": "您以前已经启动了一个交易，请单击 “继续” 来恢复执行。",
-          "action": "继续"
+        "action": {
+          "learnMoreResolvers": "了解更多关于解析器的信息",
+          "updateResolver": "更新解析器",
+          "setResolver": "设置解析器",
+          "ignoreUpdate": "忽略该提示并继续使用当前的解析器。下次会重新提示您。"
         },
-        "migrate": {
-          "title": "迁移解析器",
-          "subtitle": "您已经迁移了您的个人资料，但还没有更新您的解析器。单击 “升级” 可更新到最新的解析器。",
-          "action": "更新"
+        "invalidResolver": {
+          "title": "未经授权的解析器",
+          "subtitle": "您没有权限设置此解析器的记录。需要更新到最新的解析器来编辑您的个人资料。",
+          "action": "更新解析器"
+        },
+        "migrateProfileSelector": {
+          "title": "个人资料",
+          "subtitle": "不同解析器上的个人资料记录不匹配。您需要使用哪组记录？",
+          "option": {
+            "latest": "新解析器上的个人资料记录",
+            "current": "当前的个人资料记录",
+            "reset": "重置您的个人资料",
+            "resetSubtitle": "删除所有个人资料记录"
+          }
+        },
+        "migrateProfileWarning": {
+          "title": "迁移个人资料",
+          "subtitle": "正在将个人资料记录迁移到最新的解析器。这将彻底清除最新解析器上原有的记录，并用当前记录替换它们。"
+        },
+        "migrateRegistry": {
+          "title": "注册表过期",
+          "subtitle": "在对该名称进行操作之前，您需要迁移注册表。",
+          "action": "迁移"
         },
         "noResolver": {
           "title": "未指定解析器",
-          "subtitle": "您需要设置一个解析器来编辑您的个人资料。",
+          "subtitle": "在编辑个人资料之前，需要设置解析器。",
           "action": "更新"
         },
-        "oldRegistry": {
-          "title": "您的注册已经过时了",
-          "subtitle": "现在不能迁移到新的注册表，但是您仍然可以在旧的 app 中迁移该名称。",
-          "action": "迁移"
+        "resetProfile": {
+          "title": "重置个人资料",
+          "subtitle": "正在重置您的个人资料记录。当前所有的个人资料信息将会丢失，如 ETH 地址，头像和社交平台等记录。通过编辑您的个人资料可以重新添加这些记录。"
         },
-        "default": {
-          "title": "您的解析器已经过时了",
-          "subtitle": "在更新解析器之前，个人资料编辑将被禁用。",
-          "action": "更新"
+        "resolverNotNameWrapperAware": {
+          "title": "解析器不兼容",
+          "subtitle": "您当前的解析器与包装名称不兼容。在编辑个人资料之前，需要先更新解析器。",
+          "toggle": {
+            "title": "转移个人资料",
+            "subtitle": "取消选择将只更新您的解析器。"
+          }
+        },
+        "resolverOutOfDate": {
+          "title": "解析器已过时",
+          "subtitle": "解析器已经过时了。建议您在编辑个人资料之前更新解析器。"
+        },
+        "resolverOutOfSync": {
+          "title": "解析器未同步",
+          "subtitle": "您使用的不是最新的公共解析器，但您在那里存储了个人资料记录。建议您在编辑个人资料之前切换到最新的公共解析器。"
+        },
+        "transferOrResetProfile": {
+          "title": "个人资料",
+          "subtitle": "您可以在更新解析器之前将当前个人资料转移到新的解析器。",
+          "toggle": {
+            "title": "转移个人资料",
+            "subtitle": "取消选择将只更新您的解析器。"
+          }
+        },
+        "updateResolverOrResetProfile": {
+          "title": "个人资料",
+          "subtitle": "您可以将当前个人资料保留到新解析器上，或者重置解析器并删除所有个人资料记录。",
+          "toggle": {
+            "title": "保留当前的个人资料",
+            "subtitle": "取消选择将重置您的个人资料。"
+          }
         },
         "links": {
           "learnMoreResolvers": "了解更多关于解析器的信息"
+        }
+      },
+      "intro": {
+        "resetProfile": {
+          "title": "重置个人资料",
+          "description": "从最新的解析器中删除所有个人资料记录，然后更新解析器。"
+        },
+        "migrateProfile": {
+          "title": "迁移个人资料",
+          "description": "将您当前的个人资料记录迁移到最新的解析器。"
+        },
+        "migrateCurrentProfile": {
+          "title": "迁移个人资料",
+          "description": "将您当前的个人资料记录迁移到最新的解析器。"
         }
       }
     },
