@@ -68,7 +68,7 @@ const AdvancedEditorContent = ({
                   {existingTextKeys.map((key) => (
                     <RecordInput
                       key={key}
-                      label={key}
+                      label={convertFormSafeKey(key)}
                       placeholder={t([
                         `advancedEditor.tabs.text.placeholder.${convertFormSafeKey(key)}`,
                         `advancedEditor.tabs.text.placeholder.default`,
@@ -86,7 +86,7 @@ const AdvancedEditorContent = ({
                   {newTextKeys.map((key) => (
                     <RecordInput
                       key={key}
-                      label={key}
+                      label={convertFormSafeKey(key)}
                       placeholder={t([
                         `advancedEditor.tabs.text.placeholder.${convertFormSafeKey(key)}`,
                         `advancedEditor.tabs.text.placeholder.default`,
