@@ -38,7 +38,7 @@ const removeFirefoxCsp = (response: Response) => {
     // firefox
     userAgent.indexOf('firefox/') !== -1
   ) {
-    response.headers.delete('Content-Security-Policy')
+    response.headers.delete('content-security-policy')
   }
   return response
 }
