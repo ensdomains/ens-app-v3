@@ -29,8 +29,8 @@ class AttributeModifier {
 
 // remove csp headers for firefox
 // to fix metamask compatibility
-const removeFirefoxCsp = (response: Response) => {
-  const userAgent = response.headers.get('user-agent')?.toLowerCase()
+const removeFirefoxCsp = (request: Request) => (response: Response) => {
+  const userAgent = request.headers.get('user-agent')?.toLowerCase()
   if (
     userAgent &&
     // desktop gecko browsers
@@ -44,7 +44,7 @@ const removeFirefoxCsp = (response: Response) => {
 }
 
 const rewriteRequest = async (url: URL, request: Request) =>
-  fetch(new Request(url.toString(), request)).then(removeFirefoxCsp)
+  fetch(new Request(url.toString(), request)).then(removeFirefoxCsp(request))
 
 export const onRequest: PagesFunction = async ({ request, next }) => {
   const secPurpose = request.headers.get('sec-purpose')
@@ -117,5 +117,5 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
     return rewriteRequest(url, request)
   }
 
-  return next()
+  return next().then(removeFirefoxCsp(request))
 }
