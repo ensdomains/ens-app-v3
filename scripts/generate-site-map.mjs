@@ -47,7 +47,7 @@ const getPreviousLast = async () => {
   )
   const lastItem = lastSiteMap[lastSiteMap.length - 1]
 
-  const previousName = lastItem.url.replace(`${baseURL}/profile/`, '')
+  const previousName = lastItem.url.replace(`${baseURL}/`, '')
   const { domains } = await request(graphAPI, querySpecific, { previousName })
   const previousCreatedAt = domains[0].createdAt
 
@@ -106,7 +106,7 @@ const main = async () => {
     }
     lastCreatedAt = domains[domains.length - 1].createdAt
     for (const domain of domains) {
-      sitemap.write({ url: `${baseURL}/profile/${domain.name}` })
+      sitemap.write({ url: `${baseURL}/${domain.name}` })
     }
     // eslint-disable-next-line no-constant-condition
   } while (true)
