@@ -310,14 +310,14 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
             <div>
               <AlertSVG />
             </div>
-            <DialogTitle>{t('cancelRegistration.heading')}</DialogTitle>
+            <DialogTitle>{t('steps.cancelRegistration.heading')}</DialogTitle>
           </DialogHeading>
-          <DialogContent>{t('cancelRegistration.contentOne')}</DialogContent>
-          <DialogContent>{t('cancelRegistration.contentTwo')}</DialogContent>
+          <DialogContent>{t('steps.cancelRegistration.contentOne')}</DialogContent>
+          <DialogContent>{t('steps.cancelRegistration.contentTwo')}</DialogContent>
           <Dialog.Footer
             trailing={
               <Button onClick={resetTransactions} colorStyle="redSecondary">
-                {t('cancelRegistration.footer')}
+                {t('steps.cancelRegistration.footer')}
               </Button>
             }
           />

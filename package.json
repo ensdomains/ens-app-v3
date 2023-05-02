@@ -42,7 +42,7 @@
     "local:remove:ensjs": "node ./scripts/removeWorkspace.mjs @ensdomains/ensjs && yalc remove @ensdomains/ensjs && pnpm install",
     "local:add:thorin": "yalc add @ensdomains/thorin --workspace && pnpm install",
     "local:remove:thorin": "node ./scripts/removeWorkspace.mjs @ensdomains/thorin && yalc remove @ensdomains/thorin && pnpm install",
-    "wrangle": "npx wrangler pages dev ./out --log-level none",
+    "wrangle": "npx wrangler pages dev ./out",
     "wrangle:dev": "wrangler pages dev ./next",
     "wrangle:list": "wrangler deployments list",
     "generate:sitemaps": "node ./generate-site-map.mjs",
@@ -107,6 +107,7 @@
     "react-use": "^17.4.0",
     "react-use-error-boundary": "^3.0.0",
     "styled-components": "^5.3.5",
+    "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
     "wagmi": "0.12.1"
   },
