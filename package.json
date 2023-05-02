@@ -45,7 +45,7 @@
     "wrangle": "npx wrangler pages dev ./out",
     "wrangle:dev": "wrangler pages dev ./next",
     "wrangle:list": "wrangler deployments list",
-    "generate:sitemaps": "node ./generate-site-map.mjs",
+    "generate:sitemaps": "node ./scripts/generate-site-map.mjs",
     "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml"
   },
