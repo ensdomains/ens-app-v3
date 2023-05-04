@@ -158,7 +158,7 @@ const Token = ({ name, isWrapped, canBeWrapped, wrapperData, ownerData, profile 
         )}
       </HeaderContainer>
       {hasToken && (
-        <ItemsContainer>
+        <ItemsContainer data-testid="token-ids">
           <IdsContainer>
             <RecordItem itemKey={t('tabs.more.token.hex')} value={hex} type="text" />
             <RecordItem itemKey={t('tabs.more.token.decimal')} value={tokenId} type="text" />
