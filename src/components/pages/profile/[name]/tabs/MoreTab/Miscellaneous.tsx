@@ -1,10 +1,10 @@
 import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-link'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Dropdown, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dialog, Dropdown, Typography, mq } from '@ensdomains/thorin'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
 import FastForwardSVG from '@app/assets/FastForward.svg'
@@ -153,6 +153,7 @@ const Miscellaneous = ({
   isCachedData: boolean
 }) => {
   const { t } = useTranslation('common')
+  const [hasEarnifiDialog, setHasEarnifiDialog] = useState(false)
 
   const { address } = useAccount()
   const chainName = useChainName()
@@ -175,60 +176,108 @@ const Miscellaneous = ({
   if (!expiryDate) return null
 
   return (
-    <MiscellaneousContainer $isCached={isCachedData || registrationCachedData}>
-      <DatesContainer>
-        {registrationData && (
-          <DateLayout>
-            <Typography>{t('name.registered')}</Typography>
-            <Typography>{formatExpiry(registrationData.registrationDate)}</Typography>
-            <Typography>{formatDateTime(registrationData.registrationDate)}</Typography>
-            <a
-              target="_blank"
-              href={makeEtherscanLink(registrationData.transactionHash, chainName)}
-              rel="noreferrer"
-              data-testid="etherscan-registration-link"
-            >
-              {t('action.view')}
-              <OutlinkSVG />
-            </a>
-          </DateLayout>
-        )}
-        <DateLayout>
-          <Typography>{t('name.expires')}</Typography>
-          <Typography data-testid="expiry-data">{formatExpiry(expiryDate)}</Typography>
-          <Typography>{formatDateTime(expiryDate)}</Typography>
-          <Dropdown
-            shortThrow
-            keepMenuOnTop
-            items={calendarOptions.map((opt) => ({
-              label: opt.label,
-              onClick: () => window.open(opt.function(makeEvent()), '_blank'),
-              color: 'text',
-            }))}
-          >
-            <button id="remind-me-button" type="button">
-              {t('action.remindMe')}
-              <CalendarSVG />
-            </button>
-          </Dropdown>
-        </DateLayout>
-        {canExtend && (
-          <ButtonContainer>
+    <>
+      <Dialog open={hasEarnifiDialog} variant="blank" onDismiss={() => null}>
+        <Dialog.Heading title="Earni.fi Reminders" />
+        <div style={{ width: '500px', textAlign: 'center' }}>
+          Receive{' '}
+          <a href="" target="_blank">
+            Earni.fi
+          </a>{' '}
+          Reminders through Email, PUSH, XMTP, Blockscan Chat, and Mailchain.
+        </div>
+        <Dialog.Footer
+          leading={<Button colorStyle="accentSecondary">Leading</Button>}
+          trailing={
             <Button
-              onClick={() => {
-                showExtendNamesInput(`extend-names-${name}`, {
-                  names: [name],
-                  isSelf: canEdit,
-                })
+              onClick={async () => {
+                const response = await fetch(
+                  'https://notifications-api.vercel.app/api/v1/ens/subscribe',
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      name: 'dawsonbotsford@gmail.com',
+                      address: 'example.eth',
+                      chainId: 5,
+                    }),
+                  },
+                )
+                const data = await response.json()
+                console.log(data)
               }}
-              prefix={<FastForwardIcon as={FastForwardSVG} />}
             >
-              {t('action.extend')}
+              Trailing
             </Button>
-          </ButtonContainer>
-        )}
-      </DatesContainer>
-    </MiscellaneousContainer>
+          }
+        />
+      </Dialog>
+      <MiscellaneousContainer $isCached={isCachedData || registrationCachedData}>
+        <DatesContainer>
+          {registrationData && (
+            <DateLayout>
+              <Typography>{t('name.registered')}</Typography>
+              <Typography>{formatExpiry(registrationData.registrationDate)}</Typography>
+              <Typography>{formatDateTime(registrationData.registrationDate)}</Typography>
+              <a
+                target="_blank"
+                href={makeEtherscanLink(registrationData.transactionHash, chainName)}
+                rel="noreferrer"
+                data-testid="etherscan-registration-link"
+              >
+                {t('action.view')}
+                <OutlinkSVG />
+              </a>
+            </DateLayout>
+          )}
+          <DateLayout>
+            <Typography>{t('name.expires')}</Typography>
+            <Typography data-testid="expiry-data">{formatExpiry(expiryDate)}</Typography>
+            <Typography>{formatDateTime(expiryDate)}</Typography>
+            <Dropdown
+              shortThrow
+              keepMenuOnTop
+              items={[
+                {
+                  value: 'earnifi',
+                  label: 'Earn.fi reminders',
+                  onClick: () => {
+                    setHasEarnifiDialog(true)
+                  },
+                },
+                ...calendarOptions.map((option) => ({
+                  label: option.label,
+                  onClick: () => window.open(option.function(makeEvent()), '_blank'),
+                  color: 'text',
+                })),
+              ]}
+            >
+              <button id="remind-me-button" type="button">
+                {t('action.remindMe')}
+                <CalendarSVG />
+              </button>
+            </Dropdown>
+          </DateLayout>
+          {canExtend && (
+            <ButtonContainer>
+              <Button
+                onClick={() => {
+                  showExtendNamesInput(`extend-names-${name}`, {
+                    names: [name],
+                    isSelf: canEdit,
+                  })
+                }}
+                prefix={<FastForwardIcon as={FastForwardSVG} />}
+              >
+                {t('action.extend')}
+              </Button>
+            </ButtonContainer>
+          )}
+        </DatesContainer>
+      </MiscellaneousContainer>
+    </>
   )
 }
 export default Miscellaneous
