@@ -1,15 +1,19 @@
 import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-link'
 import { useCallback, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
-import { Button, Dialog, Dropdown, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dialog, Dropdown, Input, Typography, mq } from '@ensdomains/thorin'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { Spacer } from '@app/components/@atoms/Spacer'
+import { useChainId } from '@app/hooks/useChainId'
 import { useChainName } from '@app/hooks/useChainName'
 import useRegistrationDate from '@app/hooks/useRegistrationData'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
@@ -17,6 +21,10 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { formatDateTime, formatExpiry, makeEtherscanLink } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../TabWrapper'
+
+const EARNFI_ENDPOINT = 'https://notifications-api.vercel.app/api/v1/ens/subscribe'
+
+const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
 
 const calendarOptions = [
   {
@@ -143,6 +151,15 @@ const ButtonContainer = styled.div(
   `,
 )
 
+const Form = styled.form(
+  ({ theme }) => css`
+    width: 100%;
+    ${mq.sm.min(css`
+      width: 500px;
+    `)}
+  `,
+)
+
 const Miscellaneous = ({
   name,
   expiryDate,
@@ -154,9 +171,11 @@ const Miscellaneous = ({
 }) => {
   const { t } = useTranslation('common')
   const [hasEarnifiDialog, setHasEarnifiDialog] = useState(false)
+  const [hasCreatedReminder, setHasCreatedReminder] = useState(false)
 
   const { address } = useAccount()
   const chainName = useChainName()
+  const chainId = useChainId()
   const { data: registrationData, isCachedData: registrationCachedData } = useRegistrationDate(name)
   const { canExtend, canEdit } = useSelfAbilities(address, name)
 
@@ -173,46 +192,118 @@ const Miscellaneous = ({
     [name, expiryDate],
   )
 
+  const {
+    register,
+    handleSubmit,
+    setError,
+    clearErrors,
+    formState: { errors, isSubmitting },
+  } = useForm({ mode: 'onChange' })
+
+  const onSubmit = async ({ email }) => {
+    console.log('email: ', email)
+    try {
+      const response = await fetch(EARNFI_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          address: name,
+          chainId,
+        }),
+      })
+      // const data = await response.json()
+      // console.log(data)
+      setHasCreatedReminder(true)
+    } catch (e) {
+      setHasCreatedReminder(false)
+      setError('submit', {
+        type: 'submitError',
+        message: 'Form submission failed. Please try again.',
+      })
+      setTimeout(() => {
+        clearErrors('submit')
+      }, 3000)
+    }
+  }
+
   if (!expiryDate) return null
 
   return (
     <>
       <Dialog open={hasEarnifiDialog} variant="blank" onDismiss={() => null}>
         <Dialog.Heading title="Earni.fi Reminders" />
-        <div style={{ width: '500px', textAlign: 'center' }}>
-          Receive{' '}
-          <a href="" target="_blank">
-            Earni.fi
-          </a>{' '}
-          Reminders through Email, PUSH, XMTP, Blockscan Chat, and Mailchain.
-        </div>
-        <Dialog.Footer
-          leading={<Button colorStyle="accentSecondary">Leading</Button>}
-          trailing={
-            <Button
-              onClick={async () => {
-                const response = await fetch(
-                  'https://notifications-api.vercel.app/api/v1/ens/subscribe',
-                  {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      name: 'dawsonbotsford@gmail.com',
-                      address: 'example.eth',
-                      chainId: 5,
-                    }),
+        {match(hasCreatedReminder)
+          .with(false, () => (
+            <Form onSubmit={handleSubmit(onSubmit)}>
+              <Typography style={{ textAlign: 'center' }}>
+                Receive{' '}
+                <a href="" target="_blank">
+                  Earni.fi
+                </a>{' '}
+                Reminders through Email, PUSH, XMTP, Blockscan Chat, and Mailchain.
+              </Typography>
+              <Spacer $height="3" />
+              <Input
+                type="email"
+                id="email"
+                label="Enter your email"
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: emailRegex,
+                    message: 'Invalid email address',
                   },
-                )
-                const data = await response.json()
-                console.log(data)
-              }}
-            >
-              Trailing
-            </Button>
-          }
-        />
+                })}
+                error={errors.email?.message || errors.submit?.message}
+              />
+              <Spacer $height="3" />
+              <Dialog.Footer
+                leading={
+                  <Button
+                    onClick={() => {
+                      setHasEarnifiDialog(false)
+                      setHasCreatedReminder(false)
+                    }}
+                    colorStyle="accentSecondary"
+                  >
+                    Cancel
+                  </Button>
+                }
+                trailing={
+                  <Button
+                    type="submit"
+                    disabled={errors.email || errors.submit}
+                    loading={isSubmitting}
+                  >
+                    Continue
+                  </Button>
+                }
+              />
+            </Form>
+          ))
+          .with(true, () => (
+            <>
+              <div style={{ width: '500px', textAlign: 'center' }}>
+                You're almost done. Please check your email to confirm your subscription.
+              </div>
+              <Dialog.Footer
+                trailing={
+                  <Button
+                    onClick={() => {
+                      setHasEarnifiDialog(false)
+                      setHasCreatedReminder(false)
+                    }}
+                  >
+                    Close
+                  </Button>
+                }
+              />
+            </>
+          ))
+          .exhaustive()}
       </Dialog>
       <MiscellaneousContainer $isCached={isCachedData || registrationCachedData}>
         <DatesContainer>
@@ -281,3 +372,11 @@ const Miscellaneous = ({
   )
 }
 export default Miscellaneous
+
+/*
+{
+  name: 'dawsonbotsford@gmail.com',
+  address: 'example.eth',
+  chainId: 5,
+}
+*/
