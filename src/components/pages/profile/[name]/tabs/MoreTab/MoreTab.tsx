@@ -4,12 +4,12 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
-import { checkETH2LDFromName, validateExpiry } from '@app/utils/utils'
+import { validateExpiry } from '@app/utils/utils'
 
 import Miscellaneous from './Miscellaneous'
 import Ownership from './Ownership'
 import Resolver from './Resolver'
-import Token from './Token'
+import Token from './Token/Token'
 
 const MoreContainer = styled(CacheableComponent)(
   ({ theme }) => css`
@@ -31,6 +31,7 @@ type Props = {
 
 const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
   const {
+    canBeWrapped,
     ownerData,
     wrapperData,
     dnsOwner,
@@ -70,7 +71,16 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
           isWrapped={isWrapped}
         />
       )}
-      {(checkETH2LDFromName(name) || isWrapped) && <Token isWrapped={isWrapped} name={name} />}
+      {ownerData && (
+        <Token
+          isWrapped={isWrapped}
+          wrapperData={wrapperData}
+          name={name}
+          canBeWrapped={canBeWrapped}
+          ownerData={ownerData}
+          profile={profile}
+        />
+      )}
       <Resolver
         name={name}
         canEdit={selfAbilities.canEdit}

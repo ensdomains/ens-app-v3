@@ -241,8 +241,18 @@
       },
       "token": {
         "label": "Token",
+        "noToken": "No token",
         "hex": "hex",
-        "decimal": "decimal"
+        "decimal": "decimal",
+        "wrapper": "wrapper",
+        "wrapName": "Wrap Name",
+        "unwrap": "Unwrap",
+        "status": {
+          "unwrapped": "unwrapped",
+          "wrapped": "wrapped",
+          "emancipated": "wrapped, emancipated",
+          "locked": "wrapped, locked"
+        }
       },
       "misc": {
         "registered": "Registered",

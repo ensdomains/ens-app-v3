@@ -180,7 +180,8 @@
       "changePermissions": "Change permissions",
       "syncManager": "Sync manager",
       "updateProfileRecords": "Update profile",
-      "resetProfile": "Reset profile"
+      "resetProfile": "Reset profile",
+      "unwrapName": "Unwrap name"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
