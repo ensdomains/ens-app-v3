@@ -23,6 +23,10 @@ import { formatDateTime, formatExpiry, makeEtherscanLink } from '@app/utils/util
 
 import { TabWrapper } from '../../../TabWrapper'
 
+interface FormData {
+  email: string
+}
+
 const EARNIFI_ENDPOINT = 'https://notifications-api.vercel.app/api/v1/ens/subscribe'
 const EARNIFI_OUTLINK =
   'https://earni.fi/?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'
@@ -205,11 +209,11 @@ const Miscellaneous = ({
     setError,
     clearErrors,
     formState: { errors, isSubmitting },
-  } = useForm({ mode: 'onChange' })
+  } = useForm<FormData>({ mode: 'onChange' })
 
-  const onSubmit = async ({ email }) => {
+  const onSubmit = async ({ email }: FormData) => {
     try {
-      await fetch(EARNIFI_ENDPOINT, {
+      const response = await fetch(EARNIFI_ENDPOINT, {
         method: 'POST',
         headers: {
           // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -221,16 +225,23 @@ const Miscellaneous = ({
           chainId,
         }),
       })
-      setHasCreatedReminder(true)
-    } catch (e) {
-      setError('submit', {
+      if (response?.ok) {
+        setHasCreatedReminder(true)
+        return
+      }
+      setError('email', {
         type: 'submitError',
         message: 'Form submission failed. Please try again.',
       })
-      setTimeout(() => {
-        clearErrors('submit')
-      }, 3000)
+    } catch (e) {
+      setError('email', {
+        type: 'submitError',
+        message: 'Form submission failed. Please try again.',
+      })
     }
+    setTimeout(() => {
+      clearErrors('email')
+    }, 3000)
   }
 
   if (!expiryDate) return null
@@ -264,7 +275,7 @@ const Miscellaneous = ({
                     message: t('errors.emailInvalid'),
                   },
                 })}
-                error={errors.email?.message || errors.submit?.message}
+                error={errors.email?.message}
               />
               <Spacer $height="3" />
               <Dialog.Footer
@@ -280,11 +291,7 @@ const Miscellaneous = ({
                   </Button>
                 }
                 trailing={
-                  <Button
-                    type="submit"
-                    disabled={errors.email || errors.submit}
-                    loading={isSubmitting}
-                  >
+                  <Button type="submit" disabled={!!errors.email} loading={isSubmitting}>
                     {t('action.continue')}
                   </Button>
                 }
@@ -349,7 +356,6 @@ const Miscellaneous = ({
                 ...calendarOptions.map((option) => ({
                   label: t(option.label, { ns: 'profile' }),
                   onClick: () => window.open(option.function(makeEvent()), '_blank'),
-                  color: 'text',
                 })),
               ]}
             >
