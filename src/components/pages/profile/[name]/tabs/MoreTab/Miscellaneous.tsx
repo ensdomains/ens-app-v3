@@ -1,7 +1,7 @@
 import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-link'
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
@@ -13,6 +13,7 @@ import FastForwardSVG from '@app/assets/FastForward.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { Outlink } from '@app/components/Outlink'
 import { useChainId } from '@app/hooks/useChainId'
 import { useChainName } from '@app/hooks/useChainName'
 import useRegistrationDate from '@app/hooks/useRegistrationData'
@@ -22,34 +23,36 @@ import { formatDateTime, formatExpiry, makeEtherscanLink } from '@app/utils/util
 
 import { TabWrapper } from '../../../TabWrapper'
 
-const EARNFI_ENDPOINT = 'https://notifications-api.vercel.app/api/v1/ens/subscribe'
+const EARNIFI_ENDPOINT = 'https://notifications-api.vercel.app/api/v1/ens/subscribe'
+const EARNIFI_OUTLINK =
+  'https://earni.fi/?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
 
 const calendarOptions = [
   {
     value: 'google',
-    label: 'Google',
+    label: 'tabs.more.misc.reminderOptions.google',
     function: google,
   },
   {
     value: 'outlook',
-    label: 'Outlook',
+    label: 'tabs.more.misc.reminderOptions.outlook',
     function: outlook,
   },
   {
     value: 'office365',
-    label: 'Office 365',
+    label: 'tabs.more.misc.reminderOptions.office365',
     function: office365,
   },
   {
     value: 'yahoo',
-    label: 'Yahoo',
+    label: 'tabs.more.misc.reminderOptions.yahoo',
     function: yahoo,
   },
   {
     value: 'ics',
-    label: 'iCal',
+    label: 'tabs.more.misc.reminderOptions.ical',
     function: ics,
   },
 ]
@@ -107,6 +110,10 @@ const DateLayout = styled.div(
       font-size: ${theme.fontSizes.small};
     }
 
+    #remind-me-button {
+      cursor: pointer;
+    }
+
     #remind-me-button,
     & > a {
       display: flex;
@@ -155,7 +162,7 @@ const Form = styled.form(
   ({ theme }) => css`
     width: 100%;
     ${mq.sm.min(css`
-      width: 500px;
+      width: ${theme.space['128']};
     `)}
   `,
 )
@@ -201,11 +208,11 @@ const Miscellaneous = ({
   } = useForm({ mode: 'onChange' })
 
   const onSubmit = async ({ email }) => {
-    console.log('email: ', email)
     try {
-      const response = await fetch(EARNFI_ENDPOINT, {
+      await fetch(EARNIFI_ENDPOINT, {
         method: 'POST',
         headers: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -214,11 +221,8 @@ const Miscellaneous = ({
           chainId,
         }),
       })
-      // const data = await response.json()
-      // console.log(data)
       setHasCreatedReminder(true)
     } catch (e) {
-      setHasCreatedReminder(false)
       setError('submit', {
         type: 'submitError',
         message: 'Form submission failed. Please try again.',
@@ -234,27 +238,30 @@ const Miscellaneous = ({
   return (
     <>
       <Dialog open={hasEarnifiDialog} variant="blank" onDismiss={() => null}>
-        <Dialog.Heading title="Earni.fi Reminders" />
+        <Dialog.Heading title={t('tabs.more.misc.earnfi.title', { ns: 'profile' })} />
         {match(hasCreatedReminder)
           .with(false, () => (
             <Form onSubmit={handleSubmit(onSubmit)}>
               <Typography style={{ textAlign: 'center' }}>
-                Receive{' '}
-                <a href="" target="_blank">
-                  Earni.fi
-                </a>{' '}
-                Reminders through Email, PUSH, XMTP, Blockscan Chat, and Mailchain.
+                <Trans
+                  style={{ textAlign: 'center' }}
+                  i18nKey="tabs.more.misc.earnfi.enterEmail"
+                  ns="profile"
+                  components={{
+                    a: <Outlink href={EARNIFI_OUTLINK} />,
+                  }}
+                />
               </Typography>
               <Spacer $height="3" />
               <Input
                 type="email"
                 id="email"
-                label="Enter your email"
+                label={t('action.enterEmail')}
                 {...register('email', {
-                  required: 'Email is required',
+                  required: t('errors.emailRequired'),
                   pattern: {
                     value: emailRegex,
-                    message: 'Invalid email address',
+                    message: t('errors.emailInvalid'),
                   },
                 })}
                 error={errors.email?.message || errors.submit?.message}
@@ -269,7 +276,7 @@ const Miscellaneous = ({
                     }}
                     colorStyle="accentSecondary"
                   >
-                    Cancel
+                    {t('action.cancel')}
                   </Button>
                 }
                 trailing={
@@ -278,7 +285,7 @@ const Miscellaneous = ({
                     disabled={errors.email || errors.submit}
                     loading={isSubmitting}
                   >
-                    Continue
+                    {t('action.continue')}
                   </Button>
                 }
               />
@@ -287,7 +294,7 @@ const Miscellaneous = ({
           .with(true, () => (
             <>
               <div style={{ width: '500px', textAlign: 'center' }}>
-                You're almost done. Please check your email to confirm your subscription.
+                {t('tabs.more.misc.earnfi.emailConfirmation', { ns: 'profile' })}
               </div>
               <Dialog.Footer
                 trailing={
@@ -297,7 +304,7 @@ const Miscellaneous = ({
                       setHasCreatedReminder(false)
                     }}
                   >
-                    Close
+                    {t('action.close')}
                   </Button>
                 }
               />
@@ -330,16 +337,17 @@ const Miscellaneous = ({
             <Dropdown
               shortThrow
               keepMenuOnTop
+              width={220}
               items={[
                 {
                   value: 'earnifi',
-                  label: 'Earn.fi reminders',
+                  label: t('tabs.more.misc.reminderOptions.earnifi', { ns: 'profile' }),
                   onClick: () => {
                     setHasEarnifiDialog(true)
                   },
                 },
                 ...calendarOptions.map((option) => ({
-                  label: option.label,
+                  label: t(option.label, { ns: 'profile' }),
                   onClick: () => window.open(option.function(makeEvent()), '_blank'),
                   color: 'text',
                 })),
@@ -372,11 +380,3 @@ const Miscellaneous = ({
   )
 }
 export default Miscellaneous
-
-/*
-{
-  name: 'dawsonbotsford@gmail.com',
-  address: 'example.eth',
-  chainId: 5,
-}
-*/

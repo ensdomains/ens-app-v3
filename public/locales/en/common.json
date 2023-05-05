@@ -43,6 +43,7 @@
     "changeNetwork": "Change Network",
     "understand": "I understand",
     "feedback": "Feedback",
+    "enterEmail": "Enter your email",
     "migrate": "Migrate"
   },
   "unit": {
@@ -147,6 +148,8 @@
   },
   "errors": {
     "noResults": "No results found",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email address",
     "invalidAddress": "Invalid address",
     "addressRequired": "Address required"
   },
