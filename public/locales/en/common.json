@@ -188,7 +188,7 @@
       "migrateProfile": "Set existing records on new resolver",
       "migrateProfileWithReset": "Set existing records on new resolver",
       "migrateProfileWithSync": "Set existing records on new resolver",
-      "wrapName": "Wrap name and set new resolver",
+      "wrapName": "Wrap the name",
       "updateResolver": "Change resolver to",
       "updateProfile": "Update records on existing resolver",
       "setPrimaryName": "Set the primary name for your address",
