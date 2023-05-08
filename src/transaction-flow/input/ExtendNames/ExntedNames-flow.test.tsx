@@ -52,7 +52,7 @@ describe('Extendnames', () => {
       gasPrice: '0x3b9aca00',
       gasLimit: '0x5',
     },
-  })
+  } as any)
   mockUsePrice.mockReturnValue({
     base: {
       mul: () => 0.1,
