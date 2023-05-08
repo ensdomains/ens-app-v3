@@ -174,7 +174,7 @@ const getAction = (action: Action, is2LDEth: boolean) => {
         mobileWidth={150}
         mobileButtonWidth="initial"
         mobilePlacement="top"
-        placement="right"
+        placement={action.tooltipPlacement || 'right'}
       />
     )
   }

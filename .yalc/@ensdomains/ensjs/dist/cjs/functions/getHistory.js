@@ -24,6 +24,7 @@ module.exports = __toCommonJS(getHistory_exports);
 var import_address_encoder = require("@ensdomains/address-encoder");
 var import_bytes = require("@ethersproject/bytes");
 var import_contentHash = require("../utils/contentHash");
+var import_errors = require("../utils/errors");
 var import_normalise = require("../utils/normalise");
 var import_validation = require("../utils/validation");
 const eventFormat = {
@@ -103,7 +104,7 @@ const mapEvents = (eventArray, type) => eventArray.map(
     data: eventFormat[type][event.__typename](event)
   })
 );
-async function getHistory({ gqlInstance }, name) {
+async function getHistory({ gqlInstance, provider }, name) {
   const { client } = gqlInstance;
   const query = gqlInstance.gql`
       query getHistory($namehash: String!) {
@@ -233,8 +234,9 @@ async function getHistory({ gqlInstance }, name) {
     namehash: nameHash
   });
   const domain = response == null ? void 0 : response.domain;
+  const meta = response == null ? void 0 : response._meta;
   if (!domain)
-    return;
+    return (0, import_errors.returnOrThrow)(void 0, meta, provider);
   const {
     events: domainEvents,
     resolver: { events: resolverEvents }
@@ -251,14 +253,22 @@ async function getHistory({ gqlInstance }, name) {
       registration: { events: registrationEvents }
     } = domain;
     const registrationHistory = mapEvents(registrationEvents, "Registration");
-    return {
-      domain: domainHistory,
-      registration: registrationHistory,
-      resolver: resolverHistory
-    };
+    return (0, import_errors.returnOrThrow)(
+      {
+        domain: domainHistory,
+        registration: registrationHistory,
+        resolver: resolverHistory
+      },
+      meta,
+      provider
+    );
   }
-  return {
-    domain: domainHistory,
-    resolver: resolverHistory
-  };
+  return (0, import_errors.returnOrThrow)(
+    {
+      domain: domainHistory,
+      resolver: resolverHistory
+    },
+    meta,
+    provider
+  );
 }

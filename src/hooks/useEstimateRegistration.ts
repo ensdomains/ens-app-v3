@@ -67,7 +67,7 @@ const useEstimateRegistration = (
         }),
         // eslint-disable-next-line @typescript-eslint/naming-convention
       }).then((res) => res.json<{ gas_used: number }>())
-      return result.gas_used
+      return result.gas_used || null
     },
     {
       enabled: !!data && ready,

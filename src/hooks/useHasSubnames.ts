@@ -5,6 +5,7 @@ import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { emptyAddress } from '../utils/constants'
+import { useGlobalError } from './errors/useGlobalError'
 
 const FETCH_PAGE_SIZE = 50
 
@@ -16,6 +17,11 @@ export const useHasSubnames = (name: string) => {
   const isSubname = name && name.split('.').length > 2
   const enabled = !!(ready && name && isSubname)
 
+  const queryKey = useQueryKeys().hasSubnames(name)
+  const { watchedFunc: watchedGetSubnames } = useGlobalError<typeof getSubnames>({
+    queryKey,
+    func: getSubnames,
+  })
   const {
     data: hasSubnames,
     isLoading,
@@ -26,20 +32,21 @@ export const useHasSubnames = (name: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching: _isFetching,
   } = useQuery(
-    useQueryKeys().hasSubnames(name),
+    queryKey,
     async () => {
       let cursor: Subnames = []
       let done = false
 
       while (!done) {
         // eslint-disable-next-line no-await-in-loop
-        const { subnames } = await getSubnames({
+        const response = await watchedGetSubnames({
           name,
           lastSubnames: cursor,
           orderBy: 'labelName',
           orderDirection: 'desc',
           pageSize: FETCH_PAGE_SIZE,
         })
+        const subnames = (response?.subnames || []) as Subnames
         const anyHasOwner = subnames.some((subname) => subname.owner !== emptyAddress)
         if (anyHasOwner) {
           return true

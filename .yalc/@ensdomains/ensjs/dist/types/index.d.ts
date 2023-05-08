@@ -155,6 +155,7 @@ export declare class ENS {
             texts?: string[] | undefined;
             coinTypes?: string[] | undefined;
         } | undefined;
+        skipGraph?: boolean | undefined;
     }) | undefined) => Promise<{
         isMigrated: boolean | null;
         createdAt: string | null;
@@ -258,45 +259,7 @@ export declare class ENS {
             };
         } | undefined>;
     }>;
-    getHistory: (name: string) => Promise<{
-        domain: {
-            type: "Transfer" | "NewOwner" | "NewResolver" | "NewTTL" | "ExpiryExtended" | "FusesSet" | "NameUnwrapped" | "NameWrapped" | "WrappedTransfer";
-            blockNumber: number;
-            transactionHash: string;
-            id: string;
-            data: object;
-        }[];
-        registration: {
-            type: "NameRegistered" | "NameRenewed" | "NameTransferred";
-            blockNumber: number;
-            transactionHash: string;
-            id: string;
-            data: object;
-        }[];
-        resolver: {
-            type: "AddrChanged" | "ContenthashChanged" | "InterfaceChanged" | "NameChanged" | "PubkeyChanged" | "TextChanged" | "VersionChanged" | "MulticoinAddrChanged" | "AbiChanged" | "AuthorisationChanged";
-            blockNumber: number;
-            transactionHash: string;
-            id: string;
-            data: object;
-        }[];
-    } | {
-        domain: {
-            type: "Transfer" | "NewOwner" | "NewResolver" | "NewTTL" | "ExpiryExtended" | "FusesSet" | "NameUnwrapped" | "NameWrapped" | "WrappedTransfer";
-            blockNumber: number;
-            transactionHash: string;
-            id: string;
-            data: object;
-        }[];
-        resolver: {
-            type: "AddrChanged" | "ContenthashChanged" | "InterfaceChanged" | "NameChanged" | "PubkeyChanged" | "TextChanged" | "VersionChanged" | "MulticoinAddrChanged" | "AbiChanged" | "AuthorisationChanged";
-            blockNumber: number;
-            transactionHash: string;
-            id: string;
-            data: object;
-        }[];
-        registration?: undefined;
-    } | undefined>;
+    getHistory: (name: string) => Promise<import("./functions/getHistory").ReturnData | undefined>;
     getContentHash: GeneratedRawFunction<{
         raw: ({ contracts, universalWrapper }: ENSArgs<"contracts" | "universalWrapper">, name: string) => Promise<{
             to: string;
@@ -392,16 +355,17 @@ export declare class ENS {
         } | undefined>;
     }>;
     getOwner: GeneratedRawFunction<{
-        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string, contract?: "nameWrapper" | "registrar" | "registry" | undefined) => Promise<{
+        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string, options?: {
+            contract?: "nameWrapper" | "registrar" | "registry" | undefined;
+            skipGraph?: boolean | undefined;
+        }) => Promise<{
             to: string;
             data: string;
         }>;
-        decode: ({ contracts, multicallWrapper, gqlInstance, }: ENSArgs<"contracts" | "gqlInstance" | "multicallWrapper">, data: string, name: string, contract?: "nameWrapper" | "registrar" | "registry" | undefined) => Promise<{
-            registrant?: string | undefined;
-            owner?: string | undefined;
-            ownershipLevel: "nameWrapper" | "registrar" | "registry";
-            expired?: boolean | undefined;
-        } | undefined>;
+        decode: ({ contracts, multicallWrapper, gqlInstance, provider, }: ENSArgs<"provider" | "contracts" | "gqlInstance" | "multicallWrapper">, data: string, name: string, options?: {
+            contract?: "nameWrapper" | "registrar" | "registry" | undefined;
+            skipGraph?: boolean | undefined;
+        }) => Promise<import("./functions/getOwner").Owner | undefined>;
     }>;
     getExpiry: GeneratedRawFunction<{
         raw: (ensArgs: ENSArgs<"contracts" | "multicallWrapper">, name: string, { contract }?: {

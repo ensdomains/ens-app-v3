@@ -1,4 +1,5 @@
 import { ENSArgs } from '..'
+import { returnOrThrow } from '../utils/errors'
 import { truncateFormat } from '../utils/format'
 import { AllCurrentFuses, checkPCCBurned, decodeFuses } from '../utils/fuses'
 import { decryptName } from '../utils/labels'
@@ -31,6 +32,11 @@ type WrappedSubname = BaseSubname & {
 
 type Subname = WrappedSubname | UnwrappedSubname
 
+type ReturnData = {
+  subnames: Subname[]
+  subnameCount: number
+}
+
 type Params = {
   name: string
   page?: number
@@ -42,7 +48,7 @@ type Params = {
 }
 
 const largeQuery = async (
-  { gqlInstance }: ENSArgs<'gqlInstance'>,
+  { gqlInstance, provider }: ENSArgs<'gqlInstance' | 'provider'>,
   {
     name,
     pageSize = 10,
@@ -128,6 +134,7 @@ const largeQuery = async (
     search: search?.toLowerCase(),
   }
   const response = await client.request(finalQuery, queryVars)
+  const meta = response?._meta
   const domain = response?.domain
   const subdomains = domain.subdomains.map(
     ({ wrappedDomain, ...subname }: Domain) => {
@@ -165,16 +172,20 @@ const largeQuery = async (
     },
   )
 
-  return {
-    subnames: subdomains as Subname[],
-    subnameCount: domain.subdomainCount,
-  }
+  return returnOrThrow<ReturnData>(
+    {
+      subnames: subdomains as Subname[],
+      subnameCount: domain.subdomainCount,
+    },
+    meta,
+    provider,
+  )
 }
 
 const getSubnames = (
-  injected: ENSArgs<'gqlInstance'>,
+  injected: ENSArgs<'gqlInstance' | 'provider'>,
   functionArgs: Params,
-): Promise<{ subnames: Subname[]; subnameCount: number }> => {
+): Promise<ReturnData> => {
   return largeQuery(injected, functionArgs)
 }
 

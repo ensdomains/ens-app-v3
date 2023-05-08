@@ -6,6 +6,7 @@ import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { emptyAddress } from '@app/utils/constants'
 import { isLabelTooLong } from '@app/utils/utils'
 
+import { useGlobalError } from './errors/useGlobalError'
 import { usePccExpired } from './fuses/usePccExpired'
 import { useGetWrapperData } from './useGetWrapperData'
 import { useValidate } from './useValidate'
@@ -19,12 +20,14 @@ export const useValidateSubnameLabel = (name: string, label: string, isWrapped: 
   const validation = useValidate(label, skipValidation)
 
   const skipGetOwner = skipValidation || !validation.isValid || validation.labelCount > 1
+  const queryKey = useQueryKeys().validateSubnameLabel(`${validation.name}.${name}`)
+  const { watchedFunc: watchedGetOwner } = useGlobalError<typeof getOwner>({
+    queryKey,
+    func: getOwner,
+  })
   const { data: ownership, isLoading: isGetOwnerLoading } = useQuery(
-    useQueryKeys().validateSubnameLabel(validation.name),
-    async () => {
-      const owner = await getOwner(`${validation.name}.${name}`)
-      return owner || null
-    },
+    queryKey,
+    () => watchedGetOwner(`${validation.name}.${name}`).then((r) => r || null),
     {
       refetchOnMount: true,
       enabled: !skipGetOwner,

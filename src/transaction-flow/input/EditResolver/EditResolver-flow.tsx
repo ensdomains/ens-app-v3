@@ -35,7 +35,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const { name } = data
-  const { isWrapped } = useBasicName(name)
+  const { isWrapped } = useBasicName(name, { skipGraph: false })
   const formRef = useRef<HTMLFormElement>(null)
 
   const { profile = { resolverAddress: '' } } = useProfile(name as string)

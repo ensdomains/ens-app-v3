@@ -18,6 +18,8 @@ import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { NAMEWRAPPER_AWARE_RESOLVERS } from '@app/utils/constants'
 
+import { useHasGlobalError } from '../../../../../hooks/errors/useHasGlobalError'
+
 const Container = styled(Card)(
   ({ theme }) => css`
     flex-direction: column;
@@ -96,9 +98,10 @@ const UpgradeButton = styled(Button)(
 export const WrapperCallToAction = ({ name }: { name: string }) => {
   const { t } = useTranslation('profile')
 
+  const hasGlobalError = useHasGlobalError()
   const { address } = useAccount()
   const chainId = useChainId()
-  const { ownerData, profile, isLoading: isNameDetailsLoading } = useNameDetails(name)
+  const { ownerData, profile, isLoading: isNameDetailsLoading } = useNameDetails(name, true)
   const hasOwnerData = !!ownerData && !isNameDetailsLoading
   const isOwner = ownerData?.owner === address
   const resolverAddress = profile?.resolverAddress
@@ -179,6 +182,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
     }
   }
 
+  if (hasGlobalError) return null
   return (
     <NightSky>
       <Container data-testid="wrapper-cta-container">

@@ -1,9 +1,10 @@
 // src/functions/getSubnames.ts
+import { returnOrThrow } from "../utils/errors.mjs";
 import { truncateFormat } from "../utils/format.mjs";
 import { checkPCCBurned, decodeFuses } from "../utils/fuses.mjs";
 import { decryptName } from "../utils/labels.mjs";
 import { namehash } from "../utils/normalise.mjs";
-var largeQuery = async ({ gqlInstance }, {
+var largeQuery = async ({ gqlInstance, provider }, {
   name,
   pageSize = 10,
   orderDirection,
@@ -77,6 +78,7 @@ var largeQuery = async ({ gqlInstance }, {
     search: search?.toLowerCase()
   };
   const response = await client.request(finalQuery, queryVars);
+  const meta = response?._meta;
   const domain = response?.domain;
   const subdomains = domain.subdomains.map(
     ({ wrappedDomain, ...subname }) => {
@@ -102,10 +104,14 @@ var largeQuery = async ({ gqlInstance }, {
       return obj;
     }
   );
-  return {
-    subnames: subdomains,
-    subnameCount: domain.subdomainCount
-  };
+  return returnOrThrow(
+    {
+      subnames: subdomains,
+      subnameCount: domain.subdomainCount
+    },
+    meta,
+    provider
+  );
 };
 var getSubnames = (injected, functionArgs) => {
   return largeQuery(injected, functionArgs);

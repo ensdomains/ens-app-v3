@@ -6,6 +6,7 @@ import { ENSArgs } from '..'
 import { decodeContenthash, DecodedContentHash } from '../utils/contentHash'
 import { hexEncodeName } from '../utils/hexEncodedName'
 import { namehash } from '../utils/normalise'
+import { GraphMeta, returnOrThrow } from '../utils/errors'
 
 type InternalProfileOptions = {
   contentHash?: boolean | string | DecodedContentHash
@@ -48,6 +49,11 @@ type ResolvedProfile = {
   resolverAddress?: string
   isInvalidResolverAddress?: boolean
   reverseResolverAddress?: string
+}
+
+type ResolvedProfileWithMeta = {
+  meta?: GraphMeta
+  result?: ResolvedProfile
 }
 
 type CallObj = {
@@ -359,7 +365,10 @@ const graphFetch = async (
   name: string,
   wantedRecords?: ProfileOptions,
   resolverAddress?: string,
+  skipGraph = true,
 ) => {
+  if (skipGraph) return { meta: undefined, result: undefined }
+
   const query = gqlInstance.gql`
     query getRecords($id: String!) {
       domain(id: $id) {
@@ -402,11 +411,12 @@ const graphFetch = async (
 
   let domain: any
   let resolverResponse: any
-
+  let meta: GraphMeta | undefined
   if (!resolverAddress) {
     const response = await client.request(query, { id })
     domain = response?.domain
     resolverResponse = domain?.resolver
+    meta = response?._meta
   } else {
     const resolverId = `${resolverAddress.toLowerCase()}-${id}`
     const response = await client.request(customResolverQuery, {
@@ -415,16 +425,17 @@ const graphFetch = async (
     })
     resolverResponse = response?.resolver
     domain = response?.domain
+    meta = response?._meta
   }
 
-  if (!domain) return
+  if (!domain) return { meta }
 
   const { isMigrated, createdAt, name: decryptedName } = domain
 
   const returnedRecords: ProfileResponse = {}
 
   if (!resolverResponse || !wantedRecords)
-    return { isMigrated, createdAt, decryptedName }
+    return { meta, result: { isMigrated, createdAt, decryptedName } }
 
   Object.keys(wantedRecords).forEach((key: string) => {
     const data = wantedRecords[key as keyof ProfileOptions]
@@ -438,10 +449,13 @@ const graphFetch = async (
   })
 
   return {
-    ...returnedRecords,
-    decryptedName,
-    isMigrated,
-    createdAt,
+    meta,
+    result: {
+      ...returnedRecords,
+      decryptedName,
+      isMigrated,
+      createdAt,
+    },
   }
 }
 
@@ -454,6 +468,7 @@ type ProfileOptions = {
 type InputProfileOptions = ProfileOptions & {
   resolverAddress?: string
   fallback?: FallbackRecords
+  skipGraph?: boolean
 }
 
 const getProfileFromName = async (
@@ -476,8 +491,8 @@ const getProfileFromName = async (
   >,
   name: string,
   options?: InputProfileOptions,
-): Promise<ResolvedProfile | undefined> => {
-  const { resolverAddress, fallback, ..._options } = options || {}
+): Promise<ResolvedProfileWithMeta> => {
+  const { resolverAddress, fallback, skipGraph, ..._options } = options || {}
   const optsLength = Object.keys(_options).length
   let usingOptions: InputProfileOptions | undefined
   if (!optsLength || _options?.texts === true || _options?.coinTypes === true) {
@@ -485,18 +500,20 @@ const getProfileFromName = async (
     else usingOptions = { contentHash: true, texts: true, coinTypes: true }
   }
 
-  const graphResult = await graphFetch(
+  const { meta, result: graphResult } = await graphFetch(
     { gqlInstance },
     name,
     usingOptions,
     resolverAddress,
+    !!skipGraph,
   )
+
   let isMigrated: boolean | null = null
   let createdAt: string | null = null
   let decryptedName: string | null = null
   let result: Awaited<ReturnType<typeof getDataForName>> | null = null
   if (!graphResult) {
-    if (!fallback) return
+    if (!fallback) return { meta }
     result = await getDataForName(
       {
         contracts,
@@ -552,13 +569,25 @@ const getProfileFromName = async (
   }
   if (!result?.resolverAddress)
     return {
+      meta,
+      result: {
+        isMigrated,
+        createdAt,
+        message: !result
+          ? "Records fetch didn't complete"
+          : "Name doesn't have a resolver",
+      },
+    }
+  return {
+    meta,
+    result: {
+      ...result,
       isMigrated,
       createdAt,
-      message: !result
-        ? "Records fetch didn't complete"
-        : "Name doesn't have a resolver",
-    }
-  return { ...result, isMigrated, createdAt, decryptedName, message: undefined }
+      decryptedName,
+      message: undefined,
+    },
+  }
 }
 
 const getProfileFromAddress = async (
@@ -583,16 +612,19 @@ const getProfileFromAddress = async (
   >,
   address: string,
   options?: InputProfileOptions,
-) => {
+): Promise<ResolvedProfileWithMeta> => {
   let name
   try {
     name = await getName(address)
   } catch (e) {
-    return
+    return {}
   }
-  if (!name || !name.name || name.name === '') return
-  if (!name.match) return { ...name, isMigrated: null, createdAt: null }
-  const result = await getProfileFromName(
+  if (!name || !name.name || name.name === '') return {}
+  if (!name.match)
+    return {
+      result: { ...name, isMigrated: null, createdAt: null },
+    }
+  const { meta, result } = await getProfileFromName(
     {
       contracts,
       gqlInstance,
@@ -605,12 +637,15 @@ const getProfileFromAddress = async (
     name.name,
     options,
   )
-  if (!result || result.message) return
+  if (!result || result.message) return { meta }
   delete (result as any).address
   return {
-    ...result,
-    ...name,
-    message: undefined,
+    meta,
+    result: {
+      ...result,
+      ...name,
+      message: undefined,
+    },
   }
 }
 
@@ -631,6 +666,7 @@ export default async function (
     _getText,
     resolverMulticallWrapper,
     multicallWrapper,
+    provider,
   }: ENSArgs<
     | 'contracts'
     | 'gqlInstance'
@@ -640,6 +676,7 @@ export default async function (
     | '_getContentHash'
     | 'resolverMulticallWrapper'
     | 'multicallWrapper'
+    | 'provider'
   >,
   nameOrAddress: string,
   options?: InputProfileOptions,
@@ -656,7 +693,7 @@ export default async function (
   const inputIsAddress = isAddress(nameOrAddress)
 
   if (inputIsAddress) {
-    return getProfileFromAddress(
+    const { meta, result } = await getProfileFromAddress(
       {
         contracts,
         gqlInstance,
@@ -670,9 +707,10 @@ export default async function (
       nameOrAddress,
       options,
     )
+    return returnOrThrow(result, meta, provider)
   }
 
-  return getProfileFromName(
+  const { meta, result } = await getProfileFromName(
     {
       contracts,
       gqlInstance,
@@ -685,4 +723,5 @@ export default async function (
     nameOrAddress,
     options,
   )
+  return returnOrThrow(result, meta, provider)
 }

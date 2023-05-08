@@ -16,7 +16,7 @@ type BannerProps = ComponentProps<typeof Banner>
 export type ContentWarning =
   | {
       type: BannerProps['alert']
-      title: BannerProps['title']
+      title?: BannerProps['title']
       message: BannerProps['children']
     }
   | undefined

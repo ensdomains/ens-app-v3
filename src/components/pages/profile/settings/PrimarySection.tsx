@@ -38,7 +38,7 @@ export const PrimarySection = () => {
     truncatedName,
     isLoading: basicLoading,
     wrapperData,
-  } = useBasicName(name, true)
+  } = useBasicName(name, { normalised: true, skipGraph: false })
 
   const { canSendOwner, canSendManager } = useSelfAbilities(address, name)
 

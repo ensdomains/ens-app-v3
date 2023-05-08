@@ -28,6 +28,7 @@ var import_bytes = require("@ethersproject/bytes");
 var import_contentHash = require("../utils/contentHash");
 var import_hexEncodedName = require("../utils/hexEncodedName");
 var import_normalise = require("../utils/normalise");
+var import_errors = require("../utils/errors");
 const makeMulticallData = async ({
   _getAddr,
   _getContentHash,
@@ -247,7 +248,9 @@ const getDataForName = async ({
     resolverAddress
   };
 };
-const graphFetch = async ({ gqlInstance }, name, wantedRecords, resolverAddress) => {
+const graphFetch = async ({ gqlInstance }, name, wantedRecords, resolverAddress, skipGraph = true) => {
+  if (skipGraph)
+    return { meta: void 0, result: void 0 };
   const query = gqlInstance.gql`
     query getRecords($id: String!) {
       domain(id: $id) {
@@ -286,10 +289,12 @@ const graphFetch = async ({ gqlInstance }, name, wantedRecords, resolverAddress)
   const id = (0, import_normalise.namehash)(name);
   let domain;
   let resolverResponse;
+  let meta;
   if (!resolverAddress) {
     const response = await client.request(query, { id });
     domain = response == null ? void 0 : response.domain;
     resolverResponse = domain == null ? void 0 : domain.resolver;
+    meta = response == null ? void 0 : response._meta;
   } else {
     const resolverId = `${resolverAddress.toLowerCase()}-${id}`;
     const response = await client.request(customResolverQuery, {
@@ -298,13 +303,14 @@ const graphFetch = async ({ gqlInstance }, name, wantedRecords, resolverAddress)
     });
     resolverResponse = response == null ? void 0 : response.resolver;
     domain = response == null ? void 0 : response.domain;
+    meta = response == null ? void 0 : response._meta;
   }
   if (!domain)
-    return;
+    return { meta };
   const { isMigrated, createdAt, name: decryptedName } = domain;
   const returnedRecords = {};
   if (!resolverResponse || !wantedRecords)
-    return { isMigrated, createdAt, decryptedName };
+    return { meta, result: { isMigrated, createdAt, decryptedName } };
   Object.keys(wantedRecords).forEach((key) => {
     const data = wantedRecords[key];
     if (typeof data === "boolean" && data) {
@@ -316,10 +322,13 @@ const graphFetch = async ({ gqlInstance }, name, wantedRecords, resolverAddress)
     }
   });
   return {
-    ...returnedRecords,
-    decryptedName,
-    isMigrated,
-    createdAt
+    meta,
+    result: {
+      ...returnedRecords,
+      decryptedName,
+      isMigrated,
+      createdAt
+    }
   };
 };
 const getProfileFromName = async ({
@@ -331,7 +340,7 @@ const getProfileFromName = async ({
   resolverMulticallWrapper,
   multicallWrapper
 }, name, options) => {
-  const { resolverAddress, fallback, ..._options } = options || {};
+  const { resolverAddress, fallback, skipGraph, ..._options } = options || {};
   const optsLength = Object.keys(_options).length;
   let usingOptions;
   if (!optsLength || (_options == null ? void 0 : _options.texts) === true || (_options == null ? void 0 : _options.coinTypes) === true) {
@@ -340,11 +349,12 @@ const getProfileFromName = async ({
     else
       usingOptions = { contentHash: true, texts: true, coinTypes: true };
   }
-  const graphResult = await graphFetch(
+  const { meta, result: graphResult } = await graphFetch(
     { gqlInstance },
     name,
     usingOptions,
-    resolverAddress
+    resolverAddress,
+    !!skipGraph
   );
   let isMigrated = null;
   let createdAt = null;
@@ -352,7 +362,7 @@ const getProfileFromName = async ({
   let result = null;
   if (!graphResult) {
     if (!fallback)
-      return;
+      return { meta };
     result = await getDataForName(
       {
         contracts,
@@ -396,11 +406,23 @@ const getProfileFromName = async ({
   }
   if (!(result == null ? void 0 : result.resolverAddress))
     return {
+      meta,
+      result: {
+        isMigrated,
+        createdAt,
+        message: !result ? "Records fetch didn't complete" : "Name doesn't have a resolver"
+      }
+    };
+  return {
+    meta,
+    result: {
+      ...result,
       isMigrated,
       createdAt,
-      message: !result ? "Records fetch didn't complete" : "Name doesn't have a resolver"
-    };
-  return { ...result, isMigrated, createdAt, decryptedName, message: void 0 };
+      decryptedName,
+      message: void 0
+    }
+  };
 };
 const getProfileFromAddress = async ({
   contracts,
@@ -416,13 +438,15 @@ const getProfileFromAddress = async ({
   try {
     name = await getName(address);
   } catch (e) {
-    return;
+    return {};
   }
   if (!name || !name.name || name.name === "")
-    return;
+    return {};
   if (!name.match)
-    return { ...name, isMigrated: null, createdAt: null };
-  const result = await getProfileFromName(
+    return {
+      result: { ...name, isMigrated: null, createdAt: null }
+    };
+  const { meta, result } = await getProfileFromName(
     {
       contracts,
       gqlInstance,
@@ -436,12 +460,15 @@ const getProfileFromAddress = async ({
     options
   );
   if (!result || result.message)
-    return;
+    return { meta };
   delete result.address;
   return {
-    ...result,
-    ...name,
-    message: void 0
+    meta,
+    result: {
+      ...result,
+      ...name,
+      message: void 0
+    }
   };
 };
 const mapCoinTypes = (coin) => {
@@ -458,7 +485,8 @@ async function getProfile_default({
   _getContentHash,
   _getText,
   resolverMulticallWrapper,
-  multicallWrapper
+  multicallWrapper,
+  provider
 }, nameOrAddress, options) {
   if (options) {
     if (options.coinTypes && typeof options.coinTypes !== "boolean") {
@@ -470,7 +498,7 @@ async function getProfile_default({
   }
   const inputIsAddress = (0, import_address.isAddress)(nameOrAddress);
   if (inputIsAddress) {
-    return getProfileFromAddress(
+    const { meta: meta2, result: result2 } = await getProfileFromAddress(
       {
         contracts,
         gqlInstance,
@@ -484,8 +512,9 @@ async function getProfile_default({
       nameOrAddress,
       options
     );
+    return (0, import_errors.returnOrThrow)(result2, meta2, provider);
   }
-  return getProfileFromName(
+  const { meta, result } = await getProfileFromName(
     {
       contracts,
       gqlInstance,
@@ -498,4 +527,5 @@ async function getProfile_default({
     nameOrAddress,
     options
   );
+  return (0, import_errors.returnOrThrow)(result, meta, provider);
 }

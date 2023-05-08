@@ -18,6 +18,7 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { ValidationResult, useValidate, validate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
@@ -184,6 +185,7 @@ export const SearchInput = ({
   const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
   const queryClient = useQueryClient()
+  const queryKeys = useQueryKeys()
 
   const [inputVal, setInputVal] = useState('')
 
@@ -327,12 +329,8 @@ export const SearchInput = ({
       if (currentValidation.is2LD && currentValidation.isETH && currentValidation.isShort) {
         return
       }
-      const currentQuery = queryClient.getQueryData<any[]>([
-        'batch',
-        'getOwner',
-        'getExpiry',
-        selectedItem.value,
-      ])
+      const queryKey = queryKeys.basicName(selectedItem.value, 0)
+      const currentQuery = queryClient.getQueryData<any[]>(queryKey)
       if (currentQuery) {
         const [ownerData, wrapperData, expiryData, priceData] = currentQuery
         const registrationStatus = getRegistrationStatus({

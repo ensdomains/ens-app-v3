@@ -156,7 +156,12 @@
     },
     "networkError": {
       "title": "Network error",
-      "message": "The ENS app is currently experiencing network issues. Please proceed with caution."
+      "message": "The ENS app is currently experiencing network issues. Please proceed with caution.",
+      "blurb": "This button will be disabled until network issues are resolved."
+    },
+    "networkLatency": {
+      "title": "Network slow",
+      "message": "The ENS app is currently experiencing network latency issues."
     }
   },
   "transaction": {

@@ -427,6 +427,7 @@ export class ENS {
       '_getAddr',
       '_getContentHash',
       '_getText',
+      'provider',
     ],
     'getProfile',
   )
@@ -448,7 +449,7 @@ export class ENS {
 
   public getHistory = this.generateFunction<FunctionTypes['getHistory']>(
     'getHistory',
-    ['gqlInstance'],
+    ['gqlInstance', 'provider'],
     'getHistory',
   )
 
@@ -498,7 +499,7 @@ export class ENS {
 
   public getOwner = this.generateRawFunction<FunctionTypes['getOwner']>(
     'initialGetters',
-    ['contracts', 'multicallWrapper', 'gqlInstance'],
+    ['contracts', 'multicallWrapper', 'gqlInstance', 'provider'],
     'getOwner',
   )
 
@@ -510,7 +511,7 @@ export class ENS {
 
   public getSubnames = this.generateFunction<FunctionTypes['getSubnames']>(
     'initialGetters',
-    ['gqlInstance'],
+    ['gqlInstance', 'provider'],
     'getSubnames',
   )
 

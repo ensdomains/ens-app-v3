@@ -39,8 +39,8 @@ const addresses: Record<
     '5': '0x56522d00c410a43bffdf00a9a569489297385790',
   },
   BulkRenewal: {
-    '1': '0xfF252725f6122A92551A5FA9a6b6bf10eb0Be035',
-    '5': '0xa9e1df95a79C768aA435805b28E1B54Bb5ead063',
+    '1': '0xa12159e5131b1eEf6B4857EEE3e1954744b5033A',
+    '5': '0xeA64C81d0d718620daBC02D61f3B255C641f475F',
   },
   /* eslint-enable @typescript-eslint/naming-convention */
 }

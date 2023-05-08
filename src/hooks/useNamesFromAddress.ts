@@ -2,14 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from 'wagmi'
 
 import type { Name } from '@ensdomains/ensjs/functions/getNames'
-import { ENSJSError } from '@ensdomains/ensjs/utils/errors'
 
 import { useEns } from '@app/utils/EnsProvider'
-import { useGlobalStateDispatch } from '@app/utils/GlobalStateProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { GRACE_PERIOD } from '@app/utils/constants'
 import { validateExpiry } from '@app/utils/utils'
 
+import { useGlobalError } from './errors/useGlobalError'
 import { useBlockTimestamp } from './useBlockTimestamp'
 
 export type ReturnedName = Name & {
@@ -46,44 +45,27 @@ export const useNamesFromAddress = ({
   search?: string
 }) => {
   const { ready, getNames } = useEns()
-  const globalStateDispatch = useGlobalStateDispatch()
 
   const { data: blockTimestamp, isLoading: isBlockTimestampLoading } = useBlockTimestamp()
 
+  const queryKey = useQueryKeys().namesFromAddress(address)
+
+  const { watchedFunc: watchedGetNames } = useGlobalError<typeof getNames>({
+    queryKey,
+    func: getNames,
+  })
+
   const { data, isLoading, status, refetch } = useQuery(
-    useQueryKeys().namesFromAddress(address),
+    queryKey,
     async () => {
-      try {
-        const names = await getNames({
-          address: address!,
-          type: 'all',
-          orderBy: 'labelName',
-          orderDirection: 'desc',
-        }).then((d) => d || null)
-        return { names }
-      } catch (e: unknown) {
-        if (!(e instanceof ENSJSError)) {
-          globalStateDispatch({
-            type: 'SET_NETWORK_ERROR',
-          })
-          return { names: [] }
-        }
-
-        const ensjsError = e as ENSJSError<Name[]>
-        if (ensjsError.name === 'ENSJSSubgraphIndexingError') {
-          globalStateDispatch({
-            type: 'SET_INDEXING_ERROR',
-            payload: {
-              timestamp: ensjsError.timestamp,
-            },
-          })
-          return { names: ensjsError.data || [] }
-        }
-
-        globalStateDispatch({
-          type: 'SET_NETWORK_ERROR',
-        })
-        return { names: [] }
+      const names = await watchedGetNames({
+        address: address!,
+        type: 'all',
+        orderBy: 'labelName',
+        orderDirection: 'desc',
+      })
+      return {
+        names: (names || []) as ReturnedName[],
       }
     },
     {

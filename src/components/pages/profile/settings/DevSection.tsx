@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { JsonRpcProvider } from '@ethersproject/providers'
+import { useEffect, useState } from 'react'
 import { usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
 
+import { ENSJSError } from '@ensdomains/ensjs/src/utils/errors'
 import { Button } from '@ensdomains/thorin'
 
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { DetailedSwitch } from '@app/transaction-flow/input/ProfileEditor/components/DetailedSwitch'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 
 import { SectionContainer } from './Section'
@@ -26,6 +29,8 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
       })),
     ),
   })
+
+type ErrorName = ENSJSError<any>['name'] | ''
 
 export const DevSection = () => {
   const provider: JsonRpcProvider = useProvider()
@@ -85,14 +90,53 @@ export const DevSection = () => {
     )
   }
 
+  const [ensjsError, setEnsjsError] = useState<ErrorName>('')
+  useEffect(() => {
+    if (typeof localStorage !== 'undefined') {
+      const value = (localStorage.getItem('ensjs-debug') || '') as ErrorName
+      setEnsjsError(value)
+    }
+  }, [])
+
   return (
     <SectionContainer title="Developer">
-      <Button onClick={() => addSuccess()}>Add Successful Transaction</Button>
-      <Button onClick={() => sendName()}>Test Send Name</Button>
-      <Button onClick={() => addFailure()}>Add Failing Transaction</Button>
-      <Button onClick={() => startAutoMine()}>Start Automine</Button>
-      <Button onClick={() => stopAutoMine()}>Stop Automine</Button>
-      <Button onClick={() => revert()}>Revert</Button>
+      {process.env.NEXT_PUBLIC_PROVIDER && (
+        <>
+          <Button onClick={() => addSuccess()}>Add Successful Transaction</Button>
+          <Button onClick={() => sendName()}>Test Send Name</Button>
+          <Button onClick={() => addFailure()}>Add Failing Transaction</Button>
+          <Button onClick={() => startAutoMine()}>Start Automine</Button>
+          <Button onClick={() => stopAutoMine()}>Stop Automine</Button>
+          <Button onClick={() => revert()}>Revert</Button>
+        </>
+      )}
+      <DetailedSwitch
+        title="ENSJS Subgraph Indexing Error"
+        checked={ensjsError === 'ENSJSSubgraphIndexingError'}
+        onChange={(e) => {
+          const value = e.currentTarget.checked ? 'ENSJSSubgraphIndexingError' : ''
+          localStorage.setItem('ensjs-debug', value)
+          setEnsjsError(value)
+        }}
+      />
+      <DetailedSwitch
+        title="ENSJS Unknown Error"
+        checked={ensjsError === 'ENSJSUnknownError'}
+        onChange={(e) => {
+          const value = e.currentTarget.checked ? 'ENSJSUnknownError' : ''
+          localStorage.setItem('ensjs-debug', value)
+          setEnsjsError(value)
+        }}
+      />
+      <DetailedSwitch
+        title="Network Latency Error"
+        checked={ensjsError === 'ENSJSNetworkLatencyError'}
+        onChange={(e) => {
+          const value = e.currentTarget.checked ? 'ENSJSNetworkLatencyError' : ''
+          localStorage.setItem('ensjs-debug', value)
+          setEnsjsError(value)
+        }}
+      />
     </SectionContainer>
   )
 }

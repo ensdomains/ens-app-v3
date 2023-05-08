@@ -4,16 +4,23 @@ import { useQuery } from 'wagmi'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
+import { useGlobalError } from './errors/useGlobalError'
+
 export const useExists = (name: string, skip?: any) => {
   const { ready, getOwner } = useEns()
 
   const [exists, setExists] = useState(false)
 
+  const queryKey = useQueryKeys().exists(name)
+  const { watchedFunc: watchedGetOwner } = useGlobalError<typeof getOwner>({
+    queryKey,
+    func: getOwner,
+  })
   const {
     data,
     isLoading: loading,
     status,
-  } = useQuery(useQueryKeys().exists(name), () => getOwner(name).then((d) => d || null), {
+  } = useQuery(queryKey, () => watchedGetOwner(name).then((r) => r || null), {
     enabled: ready && !skip && name !== '',
   })
 

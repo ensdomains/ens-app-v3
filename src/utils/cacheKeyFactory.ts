@@ -34,13 +34,14 @@ export const useQueryKeys = () => {
       avatar: (name: string | null | undefined) => [...globalKeys, 'getAvatar', name, 'avatar'],
       getNFTImage: (name: string | null | undefined) => [...globalKeys, name, 'getNFTImage'],
     },
-    basicName: (normalisedName: string, registrationStepIndex: number) => [
+    basicName: (normalisedName: string, registrationStepIndex: number, skipGraph: boolean) => [
       ...globalKeys,
       'batch',
       'getOwner',
       'getExpiry',
       normalisedName,
       registrationStepIndex,
+      skipGraph,
       'basicName',
     ],
     beautifiedName: (name: string) => [...globalKeys, name, 'beautifiedName'],
@@ -68,6 +69,15 @@ export const useQueryKeys = () => {
     getHistory: (name: string) => [...globalKeys, 'graph', name, 'getHistory'],
     getWrapperData: (name: string) => [...globalKeys, name, 'getWrapperData'],
     hasSubnames: (name: string) => [...globalKeys, 'graph', name, 'hasSubnames'],
+    subnames: (name: string, orderBy = '', orderDirection = '', search = '') => [
+      ...globalKeys,
+      'graph',
+      name,
+      orderBy,
+      orderDirection,
+      search,
+      'getSubnames',
+    ],
     namesFromAddress: (localAddress?: string) => [
       ...globalKeys,
       'graph',
@@ -82,12 +92,13 @@ export const useQueryKeys = () => {
       'getPrice',
     ],
     primary: (localAddress: string) => [...globalKeys, 'getName', localAddress, 'primary'],
-    profile: (name: string, resolverAddress?: string) => [
+    profile: (name: string, resolverAddress?: string, skipGraph?: boolean) => [
       ...globalKeys,
       'graph',
       name,
       'profile',
       resolverAddress,
+      skipGraph,
     ],
     registrationDate: (name: string) => [...globalKeys, 'graph', name, 'registrationDate'],
     getResolver: (name: string) => [...globalKeys, name, 'getResolver'],

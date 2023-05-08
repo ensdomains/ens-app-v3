@@ -17,7 +17,7 @@ export default async function (
 
     if (tld === 'eth') return true
 
-    const tldOwner = await getOwner(tld, 'registry')
+    const tldOwner = await getOwner(tld, { contract: 'registry' })
     if (!tldOwner?.owner) return false
 
     const dnsRegistrar = DNSRegistrar__factory.connect(

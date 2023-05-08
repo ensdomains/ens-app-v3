@@ -17,7 +17,7 @@ export type DetailedProfile = Omit<Profile, 'records'> & {
   records: DetailedProfileRecords
 }
 
-export const useNameDetails = (name: string) => {
+export const useNameDetails = (name: string, skipGraph = false) => {
   const { t } = useTranslation('profile')
   const { ready } = useEns()
 
@@ -30,14 +30,17 @@ export const useNameDetails = (name: string) => {
     expiryDate,
     gracePeriodEndDate,
     ...basicName
-  } = useBasicName(name)
+  } = useBasicName(name, { normalised: false, skipGraph })
 
   const {
     profile: baseProfile,
     loading: profileLoading,
     status,
     isCachedData: profileIsCachedData,
-  } = useProfile(normalisedName, !normalisedName || normalisedName === '[root]')
+  } = useProfile(normalisedName, {
+    skip: !normalisedName || normalisedName === '[root]',
+    skipGraph,
+  })
 
   const { abi, loading: abiLoading } = useGetABI(
     normalisedName,
@@ -97,7 +100,7 @@ export const useNameDetails = (name: string) => {
       status !== 'idle' &&
       status !== 'loading'
     ) {
-      return t('errors.unknown')
+      return t('errors.networkError.message', { ns: 'common' })
     }
     return null
   }, [
@@ -117,7 +120,28 @@ export const useNameDetails = (name: string) => {
     if (registrationStatus === 'gracePeriod') {
       return t('errors.hasExpired', { name })
     }
-  }, [registrationStatus, name, t])
+    if (
+      normalisedName !== '[root]' &&
+      !profile &&
+      !profileLoading &&
+      !abiLoading &&
+      ready &&
+      status !== 'idle' &&
+      status !== 'loading'
+    ) {
+      return t('errors.networkError.title', { ns: 'common' })
+    }
+  }, [
+    registrationStatus,
+    name,
+    t,
+    profile,
+    profileLoading,
+    abiLoading,
+    ready,
+    status,
+    normalisedName,
+  ])
 
   const isLoading = !ready || profileLoading || abiLoading || basicLoading || dnsOwnerLoading
 

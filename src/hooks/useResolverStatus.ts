@@ -68,8 +68,7 @@ export const useResolverStatus = (
   const latestResolverAddress = useContractAddress('PublicResolver')
   const { profile: latestResolverProfile, loading: isLatestResolverProfileLoading } = useProfile(
     name,
-    skip || options.skipCompare,
-    latestResolverAddress,
+    { skip: skip || options.skipCompare, resolverAddress: latestResolverAddress },
   )
 
   const profileResolverAddress = profile?.resolverAddress

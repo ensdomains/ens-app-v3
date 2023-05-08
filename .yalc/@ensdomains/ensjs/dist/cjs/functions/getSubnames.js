@@ -21,11 +21,12 @@ __export(getSubnames_exports, {
   default: () => getSubnames_default
 });
 module.exports = __toCommonJS(getSubnames_exports);
+var import_errors = require("../utils/errors");
 var import_format = require("../utils/format");
 var import_fuses = require("../utils/fuses");
 var import_labels = require("../utils/labels");
 var import_normalise = require("../utils/normalise");
-const largeQuery = async ({ gqlInstance }, {
+const largeQuery = async ({ gqlInstance, provider }, {
   name,
   pageSize = 10,
   orderDirection,
@@ -99,6 +100,7 @@ const largeQuery = async ({ gqlInstance }, {
     search: search == null ? void 0 : search.toLowerCase()
   };
   const response = await client.request(finalQuery, queryVars);
+  const meta = response == null ? void 0 : response._meta;
   const domain = response == null ? void 0 : response.domain;
   const subdomains = domain.subdomains.map(
     ({ wrappedDomain, ...subname }) => {
@@ -124,10 +126,14 @@ const largeQuery = async ({ gqlInstance }, {
       return obj;
     }
   );
-  return {
-    subnames: subdomains,
-    subnameCount: domain.subdomainCount
-  };
+  return (0, import_errors.returnOrThrow)(
+    {
+      subnames: subdomains,
+      subnameCount: domain.subdomainCount
+    },
+    meta,
+    provider
+  );
 };
 const getSubnames = (injected, functionArgs) => {
   return largeQuery(injected, functionArgs);

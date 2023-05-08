@@ -2,6 +2,7 @@ import { formatsByCoinType } from '@ensdomains/address-encoder'
 import { hexStripZeros } from '@ethersproject/bytes'
 import { ENSArgs } from '..'
 import { decodeContenthash } from '../utils/contentHash'
+import { returnOrThrow } from '../utils/errors'
 import { namehash } from '../utils/normalise'
 import {
   AbiChanged,
@@ -148,8 +149,16 @@ const mapEvents = <T extends EventTypes>(eventArray: any[], type: T) =>
     }),
   )
 
+type MappedEvents = ReturnType<typeof mapEvents>
+
+export type ReturnData = {
+  domain: MappedEvents
+  registration?: MappedEvents
+  resolver: MappedEvents
+}
+
 export async function getHistory(
-  { gqlInstance }: ENSArgs<'gqlInstance'>,
+  { gqlInstance, provider }: ENSArgs<'gqlInstance' | 'provider'>,
   name: string,
 ) {
   const { client } = gqlInstance
@@ -283,8 +292,9 @@ export async function getHistory(
     namehash: nameHash,
   })
   const domain = response?.domain
+  const meta = response?._meta
 
-  if (!domain) return
+  if (!domain) return returnOrThrow(undefined, meta, provider)
 
   const {
     events: domainEvents,
@@ -305,15 +315,23 @@ export async function getHistory(
       registration: { events: registrationEvents },
     } = domain
     const registrationHistory = mapEvents(registrationEvents, 'Registration')
-    return {
-      domain: domainHistory,
-      registration: registrationHistory,
-      resolver: resolverHistory,
-    }
+    return returnOrThrow<ReturnData>(
+      {
+        domain: domainHistory,
+        registration: registrationHistory,
+        resolver: resolverHistory,
+      },
+      meta,
+      provider,
+    )
   }
 
-  return {
-    domain: domainHistory,
-    resolver: resolverHistory,
-  }
+  return returnOrThrow<ReturnData>(
+    {
+      domain: domainHistory,
+      resolver: resolverHistory,
+    },
+    meta,
+    provider,
+  )
 }

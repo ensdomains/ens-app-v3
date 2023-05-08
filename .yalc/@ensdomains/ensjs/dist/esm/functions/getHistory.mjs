@@ -2,6 +2,7 @@
 import { formatsByCoinType } from "@ensdomains/address-encoder";
 import { hexStripZeros } from "@ethersproject/bytes";
 import { decodeContenthash } from "../utils/contentHash.mjs";
+import { returnOrThrow } from "../utils/errors.mjs";
 import { namehash } from "../utils/normalise.mjs";
 import { checkIsDotEth } from "../utils/validation.mjs";
 var eventFormat = {
@@ -81,7 +82,7 @@ var mapEvents = (eventArray, type) => eventArray.map(
     data: eventFormat[type][event.__typename](event)
   })
 );
-async function getHistory({ gqlInstance }, name) {
+async function getHistory({ gqlInstance, provider }, name) {
   const { client } = gqlInstance;
   const query = gqlInstance.gql`
       query getHistory($namehash: String!) {
@@ -211,8 +212,9 @@ async function getHistory({ gqlInstance }, name) {
     namehash: nameHash
   });
   const domain = response?.domain;
+  const meta = response?._meta;
   if (!domain)
-    return;
+    return returnOrThrow(void 0, meta, provider);
   const {
     events: domainEvents,
     resolver: { events: resolverEvents }
@@ -229,16 +231,24 @@ async function getHistory({ gqlInstance }, name) {
       registration: { events: registrationEvents }
     } = domain;
     const registrationHistory = mapEvents(registrationEvents, "Registration");
-    return {
-      domain: domainHistory,
-      registration: registrationHistory,
-      resolver: resolverHistory
-    };
+    return returnOrThrow(
+      {
+        domain: domainHistory,
+        registration: registrationHistory,
+        resolver: resolverHistory
+      },
+      meta,
+      provider
+    );
   }
-  return {
-    domain: domainHistory,
-    resolver: resolverHistory
-  };
+  return returnOrThrow(
+    {
+      domain: domainHistory,
+      resolver: resolverHistory
+    },
+    meta,
+    provider
+  );
 }
 export {
   getHistory

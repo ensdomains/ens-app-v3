@@ -5,12 +5,18 @@ import { ENSArgs } from '..'
 import { labelhash } from '../utils/labels'
 import { namehash as makeNamehash } from '../utils/normalise'
 import { checkIsDotEth } from '../utils/validation'
+import { GraphMeta, returnOrThrow } from '../utils/errors'
 
-type Owner = {
+export type Owner = {
   registrant?: string
   owner?: string
   ownershipLevel: 'nameWrapper' | 'registry' | 'registrar'
   expired?: boolean
+}
+
+type GetOwnerOptions = {
+  contract?: 'nameWrapper' | 'registry' | 'registrar'
+  skipGraph?: boolean
 }
 
 const singleContractOwnerRaw = async (
@@ -53,8 +59,10 @@ const singleContractOwnerRaw = async (
 const raw = async (
   { contracts, multicallWrapper }: ENSArgs<'contracts' | 'multicallWrapper'>,
   name: string,
-  contract?: 'nameWrapper' | 'registry' | 'registrar',
+  options: GetOwnerOptions = {},
 ) => {
+  const { contract } = options
+
   const namehash = makeNamehash(name)
   const labels = name.split('.')
 
@@ -115,12 +123,16 @@ const decode = async (
     contracts,
     multicallWrapper,
     gqlInstance,
-  }: ENSArgs<'contracts' | 'multicallWrapper' | 'gqlInstance'>,
+    provider,
+  }: ENSArgs<'contracts' | 'multicallWrapper' | 'gqlInstance' | 'provider'>,
   data: string,
   name: string,
-  contract?: 'nameWrapper' | 'registry' | 'registrar',
+  options: GetOwnerOptions = {},
 ): Promise<Owner | undefined> => {
   if (!data) return
+
+  const { contract, skipGraph = true } = options
+
   const labels = name.split('.')
   if (contract || labels.length === 1) {
     const singleOwner = singleContractOwnerDecode(data)
@@ -157,10 +169,12 @@ const decode = async (
 
   // check for only .eth names
   if (labels[labels.length - 1] === 'eth') {
+    let meta: GraphMeta | undefined
+
     // if there is no registrar owner, the name is expired
     // but we still want to get the registrar owner prior to expiry
     if (labels.length === 2) {
-      if (!registrarOwner) {
+      if (!registrarOwner && !skipGraph) {
         const graphRegistrantResult = await gqlInstance.client.request(
           registrantQuery,
           {
@@ -172,43 +186,59 @@ const decode = async (
         baseReturnObject = {
           expired: true,
         }
+        meta = graphRegistrantResult._meta
       } else {
         baseReturnObject = {
-          expired: false,
+          expired: !registrarOwner,
         }
       }
     }
     // if the owner on the registrar is the namewrapper, then the namewrapper owner is the owner
     // there is no "registrant" for wrapped names
-    if (registrarOwner?.toLowerCase() === nameWrapper.address.toLowerCase()) {
-      return {
-        owner: nameWrapperOwner,
-        ownershipLevel: 'nameWrapper',
-        ...baseReturnObject,
-      }
+    if (
+      registrarOwner?.toLowerCase() === nameWrapper.address.toLowerCase() ||
+      registryOwner?.toLowerCase() === nameWrapper.address.toLowerCase()
+    ) {
+      return returnOrThrow<Owner>(
+        {
+          owner: nameWrapperOwner,
+          ownershipLevel: 'nameWrapper',
+          ...baseReturnObject,
+        },
+        meta,
+        provider,
+      )
     }
     // if there is a registrar owner, then it's not a subdomain but we have also passed the namewrapper clause
     // this means that it's an unwrapped second-level name
     // the registrant is the owner of the NFT
     // the owner is the controller of the records
     if (registrarOwner) {
-      return {
-        registrant: registrarOwner,
-        owner: registryOwner,
-        ownershipLevel: 'registrar',
-        ...baseReturnObject,
-      }
+      return returnOrThrow<Owner>(
+        {
+          registrant: registrarOwner,
+          owner: registryOwner,
+          ownershipLevel: 'registrar',
+          ...baseReturnObject,
+        },
+        meta,
+        provider,
+      )
     }
     if (hexStripZeros(registryOwner) !== '0x') {
       // if there is no registrar owner, but the label length is two, then the domain is an expired 2LD .eth
       // so we still want to return the ownership values
       if (labels.length === 2) {
-        return {
-          registrant: undefined,
-          owner: registryOwner,
-          ownershipLevel: 'registrar',
-          expired: true,
-        }
+        return returnOrThrow<Owner>(
+          {
+            registrant: undefined,
+            owner: registryOwner,
+            ownershipLevel: 'registrar',
+            expired: true,
+          },
+          meta,
+          provider,
+        )
       }
       // this means that the subname is wrapped
       if (
@@ -216,19 +246,27 @@ const decode = async (
         nameWrapperOwner &&
         hexStripZeros(nameWrapperOwner) !== '0x'
       ) {
-        return {
-          owner: nameWrapperOwner,
-          ownershipLevel: 'nameWrapper',
-        }
+        return returnOrThrow<Owner>(
+          {
+            owner: nameWrapperOwner,
+            ownershipLevel: 'nameWrapper',
+          },
+          meta,
+          provider,
+        )
       }
       // unwrapped subnames do not have NFTs associated, so do not have a registrant
-      return {
-        owner: registryOwner,
-        ownershipLevel: 'registry',
-      }
+      return returnOrThrow<Owner>(
+        {
+          owner: registryOwner,
+          ownershipLevel: 'registry',
+        },
+        meta,
+        provider,
+      )
     }
     // .eth names with no registrar owner are either unregistered or expired
-    return
+    return returnOrThrow(undefined, meta, provider)
   }
 
   // non .eth names inherit the owner from the registry

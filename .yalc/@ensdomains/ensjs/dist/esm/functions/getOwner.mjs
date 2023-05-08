@@ -4,6 +4,7 @@ import { hexStripZeros } from "@ethersproject/bytes";
 import { labelhash } from "../utils/labels.mjs";
 import { namehash as makeNamehash } from "../utils/normalise.mjs";
 import { checkIsDotEth } from "../utils/validation.mjs";
+import { returnOrThrow } from "../utils/errors.mjs";
 var singleContractOwnerRaw = async ({ contracts }, contract, namehash, labels) => {
   switch (contract) {
     case "nameWrapper": {
@@ -31,7 +32,8 @@ var singleContractOwnerRaw = async ({ contracts }, contract, namehash, labels) =
     }
   }
 };
-var raw = async ({ contracts, multicallWrapper }, name, contract) => {
+var raw = async ({ contracts, multicallWrapper }, name, options = {}) => {
+  const { contract } = options;
   const namehash = makeNamehash(name);
   const labels = name.split(".");
   if (contract || labels.length === 1) {
@@ -81,10 +83,12 @@ var singleContractOwnerDecode = (data) => defaultAbiCoder.decode(["address"], da
 var decode = async ({
   contracts,
   multicallWrapper,
-  gqlInstance
-}, data, name, contract) => {
+  gqlInstance,
+  provider
+}, data, name, options = {}) => {
   if (!data)
     return;
+  const { contract, skipGraph = true } = options;
   const labels = name.split(".");
   if (contract || labels.length === 1) {
     const singleOwner = singleContractOwnerDecode(data);
@@ -114,8 +118,9 @@ var decode = async ({
   let registrarOwner = decodedData[2]?.[0];
   let baseReturnObject = {};
   if (labels[labels.length - 1] === "eth") {
+    let meta;
     if (labels.length === 2) {
-      if (!registrarOwner) {
+      if (!registrarOwner && !skipGraph) {
         const graphRegistrantResult = await gqlInstance.client.request(
           registrantQuery,
           {
@@ -126,48 +131,69 @@ var decode = async ({
         baseReturnObject = {
           expired: true
         };
+        meta = graphRegistrantResult._meta;
       } else {
         baseReturnObject = {
-          expired: false
+          expired: !registrarOwner
         };
       }
     }
-    if (registrarOwner?.toLowerCase() === nameWrapper.address.toLowerCase()) {
-      return {
-        owner: nameWrapperOwner,
-        ownershipLevel: "nameWrapper",
-        ...baseReturnObject
-      };
+    if (registrarOwner?.toLowerCase() === nameWrapper.address.toLowerCase() || registryOwner?.toLowerCase() === nameWrapper.address.toLowerCase()) {
+      return returnOrThrow(
+        {
+          owner: nameWrapperOwner,
+          ownershipLevel: "nameWrapper",
+          ...baseReturnObject
+        },
+        meta,
+        provider
+      );
     }
     if (registrarOwner) {
-      return {
-        registrant: registrarOwner,
-        owner: registryOwner,
-        ownershipLevel: "registrar",
-        ...baseReturnObject
-      };
+      return returnOrThrow(
+        {
+          registrant: registrarOwner,
+          owner: registryOwner,
+          ownershipLevel: "registrar",
+          ...baseReturnObject
+        },
+        meta,
+        provider
+      );
     }
     if (hexStripZeros(registryOwner) !== "0x") {
       if (labels.length === 2) {
-        return {
-          registrant: void 0,
-          owner: registryOwner,
-          ownershipLevel: "registrar",
-          expired: true
-        };
+        return returnOrThrow(
+          {
+            registrant: void 0,
+            owner: registryOwner,
+            ownershipLevel: "registrar",
+            expired: true
+          },
+          meta,
+          provider
+        );
       }
       if (registryOwner === nameWrapper.address && nameWrapperOwner && hexStripZeros(nameWrapperOwner) !== "0x") {
-        return {
-          owner: nameWrapperOwner,
-          ownershipLevel: "nameWrapper"
-        };
+        return returnOrThrow(
+          {
+            owner: nameWrapperOwner,
+            ownershipLevel: "nameWrapper"
+          },
+          meta,
+          provider
+        );
       }
-      return {
-        owner: registryOwner,
-        ownershipLevel: "registry"
-      };
+      return returnOrThrow(
+        {
+          owner: registryOwner,
+          ownershipLevel: "registry"
+        },
+        meta,
+        provider
+      );
     }
-    return;
+    return returnOrThrow(void 0, meta, provider);
   }
   if (registryOwner === nameWrapper.address && nameWrapperOwner && hexStripZeros(nameWrapperOwner) !== "0x") {
     return {

@@ -47,7 +47,7 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
   const validParentName = isValidParent ? parentName : ''
   const { wrapperData: parentWrapperData, isCachedData: _isParentBasicCachedData } = useBasicName(
     validParentName,
-    false,
+    { normalised: false, skipGraph: false },
   )
   const isParentBasicCachedData = isValidParent && _isParentBasicCachedData
 

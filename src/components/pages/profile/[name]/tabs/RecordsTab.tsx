@@ -13,6 +13,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { getContentHashLink } from '@app/utils/contenthash'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
+import { useHasGlobalError } from '../../../../../hooks/errors/useHasGlobalError'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
 type TextRecord = {
@@ -152,6 +153,7 @@ export const RecordsTab = ({
   isWrapped: boolean
 }) => {
   const { t } = useTranslation('profile')
+  const hasGlobalError = useHasGlobalError()
 
   const filteredTexts = useMemo(() => texts?.filter(({ value }) => value), [texts])
   const filteredAddresses = useMemo(() => addresses?.filter(({ addr }) => addr), [addresses])
@@ -274,14 +276,18 @@ export const RecordsTab = ({
       {canEdit && (
         <Actions>
           <div>
-            {canEditRecordsWhenWrapped ? (
+            {canEditRecordsWhenWrapped && !hasGlobalError ? (
               <Button onClick={handleShowEditor} size="small">
                 {t('details.tabs.records.editRecords')}
               </Button>
             ) : (
               <DisabledButtonWithTooltip
                 buttonId="records-tab-edit-records-disabled"
-                content={t('details.tabs.records.editRecordsDisabled')}
+                content={
+                  hasGlobalError
+                    ? t('errors.networkError.blurb', { ns: 'common' })
+                    : t('details.tabs.records.editRecordsDisabled')
+                }
                 buttonText={t('details.tabs.records.editRecords')}
                 mobileWidth={150}
                 mobileButtonWidth="initial"

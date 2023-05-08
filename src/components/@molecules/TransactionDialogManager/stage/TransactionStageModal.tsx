@@ -160,6 +160,7 @@ const InnerBar = styled.div(
 )
 
 type TxError = {
+  name?: string
   reason: string
   code: string
   method: string
@@ -509,10 +510,16 @@ export const TransactionStageModal = ({
       if (requestError.code === 'UNPREDICTABLE_GAS_LIMIT') {
         return 'An unknown error occurred.'
       }
+      if (
+        requestError.name &&
+        ['ENSJSSubgraphIndexingError', 'ENSJSUnknownError'].includes(requestError.name)
+      ) {
+        return t(`errors.networkError.title`)
+      }
       return requestError.reason
     }
     return null
-  }, [stage, transactionError, requestError])
+  }, [stage, transactionError, requestError, t])
 
   return (
     <>

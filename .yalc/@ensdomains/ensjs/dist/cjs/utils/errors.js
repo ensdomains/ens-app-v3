@@ -34,8 +34,37 @@ class ENSJSError extends Error {
     this.timestamp = timestamp;
   }
 }
+const debugFlow = async (data, meta, provider) => {
+  var _a;
+  if (!meta)
+    return;
+  const testName = localStorage.getItem("ensjs-debug") || "";
+  if (testName === "ENSJSSubgraphIndexingError") {
+    const blockNumber = (_a = meta == null ? void 0 : meta.block) == null ? void 0 : _a.number;
+    const block = blockNumber ? await (provider == null ? void 0 : provider.getBlock(blockNumber - 1)) : void 0;
+    const timestamp = block == null ? void 0 : block.timestamp;
+    throw new ENSJSError({
+      name: "ENSJSSubgraphIndexingError",
+      data,
+      timestamp
+    });
+  }
+  if (testName === "ENSJSUnknownError") {
+    throw new ENSJSError({
+      name: "ENSJSUnknownError"
+    });
+  }
+  if (testName === "ENSJSNetworkLatencyError") {
+    await new Promise((resolve) => {
+      setTimeout(() => resolve(true), 1e4);
+    });
+  }
+};
 const returnOrThrow = async (data, meta, provider) => {
   var _a;
+  if (true) {
+    await debugFlow(data, meta, provider);
+  }
   if ((meta == null ? void 0 : meta.hasIndexingErrors) && provider) {
     const blockNumber = (_a = meta.block) == null ? void 0 : _a.number;
     const block = await (provider == null ? void 0 : provider.getBlock(blockNumber));

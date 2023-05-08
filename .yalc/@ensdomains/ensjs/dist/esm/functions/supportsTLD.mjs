@@ -7,7 +7,7 @@ async function supportsTLD_default({ getOwner, provider }, name) {
     const tld = labels[labels.length - 1];
     if (tld === "eth")
       return true;
-    const tldOwner = await getOwner(tld, "registry");
+    const tldOwner = await getOwner(tld, { contract: "registry" });
     if (!tldOwner?.owner)
       return false;
     const dnsRegistrar = DNSRegistrar__factory.connect(

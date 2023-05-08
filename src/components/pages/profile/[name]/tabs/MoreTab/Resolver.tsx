@@ -7,6 +7,7 @@ import { Tag, Typography, mq } from '@ensdomains/thorin'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
@@ -77,6 +78,7 @@ const Resolver = ({
   const { t } = useTranslation('profile')
 
   const chainId = useChainId()
+  const hasGlobalError = useHasGlobalError()
 
   const { prepareDataInput } = useTransactionFlow()
   const showEditResolverInput = prepareDataInput('EditResolver')
@@ -106,7 +108,7 @@ const Resolver = ({
           </Typography>
           <Tag colorStyle={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
         </InnerHeading>
-        {canEdit && (
+        {canEdit && !hasGlobalError && (
           <>
             {canEditResolver ? (
               <button

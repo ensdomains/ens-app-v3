@@ -22,6 +22,10 @@ declare type WrappedSubname = BaseSubname & {
     type: 'wrappedDomain';
 };
 declare type Subname = WrappedSubname | UnwrappedSubname;
+declare type ReturnData = {
+    subnames: Subname[];
+    subnameCount: number;
+};
 declare type Params = {
     name: string;
     page?: number;
@@ -31,8 +35,5 @@ declare type Params = {
     lastSubnames?: Array<any>;
     search?: string;
 };
-declare const getSubnames: (injected: ENSArgs<'gqlInstance'>, functionArgs: Params) => Promise<{
-    subnames: Subname[];
-    subnameCount: number;
-}>;
+declare const getSubnames: (injected: ENSArgs<'gqlInstance' | 'provider'>, functionArgs: Params) => Promise<ReturnData>;
 export default getSubnames;

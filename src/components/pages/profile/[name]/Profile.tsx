@@ -68,7 +68,6 @@ const tabs = ['profile', 'records', 'subnames', 'permissions', 'more'] as const
 type Tab = typeof tabs[number]
 
 type Props = {
-  nameDetails: ReturnType<typeof useNameDetails>
   isSelf: boolean
   isLoading: boolean
   name: string
@@ -103,13 +102,14 @@ export const NameAvailableBanner = ({
   )
 }
 
-const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
+const ProfileContent = ({ isSelf, isLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const chainId = useChainId()
   const { address } = useAccount()
   const transactions = useRecentTransactions()
 
+  const nameDetails = useNameDetails(name)
   const {
     error,
     errorTitle,

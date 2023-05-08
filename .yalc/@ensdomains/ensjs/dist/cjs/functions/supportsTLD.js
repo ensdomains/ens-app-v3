@@ -29,7 +29,7 @@ async function supportsTLD_default({ getOwner, provider }, name) {
     const tld = labels[labels.length - 1];
     if (tld === "eth")
       return true;
-    const tldOwner = await getOwner(tld, "registry");
+    const tldOwner = await getOwner(tld, { contract: "registry" });
     if (!(tldOwner == null ? void 0 : tldOwner.owner))
       return false;
     const dnsRegistrar = import_DNSRegistrar_factory.DNSRegistrar__factory.connect(

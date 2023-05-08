@@ -27,6 +27,7 @@ export default function Page() {
 
   useProtectedRoute('/', isConnecting || isReconnecting ? true : address)
 
+  const showDevPanel = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_PROVIDER
   return (
     <Content singleColumnContent title={t('title')}>
       {{
@@ -35,7 +36,7 @@ export default function Page() {
             <WalletSection />
             <PrimarySection />
             <TransactionSection />
-            {process.env.NEXT_PUBLIC_PROVIDER && <DevSection />}
+            {showDevPanel && <DevSection />}
           </OtherWrapper>
         ),
       }}

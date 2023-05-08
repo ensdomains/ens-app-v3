@@ -1,15 +1,35 @@
 import { ENS } from '..'
 import setup from '../tests/setup'
+import { ENSJSError } from '../utils/errors'
 import { decodeFuses } from '../utils/fuses'
 
 let ensInstance: ENS
+let spyOnRequest: any
 
 beforeAll(async () => {
   ;({ ensInstance } = await setup())
+  spyOnRequest = jest.spyOn(ensInstance.gqlInstance.client, 'request')
 })
 
 const testProperties = (obj: object, ...properties: string[]) =>
   properties.map((property) => expect(obj).toHaveProperty(property))
+
+const makeSubdomain = () => ({
+  id: '0x4495b77d4335be2b9a55ae7b9e7eb256b2bfab1f1d0e0cdf5e11cca93ba74fea',
+  labelName: 'legacy',
+  labelhash:
+    '0xb7ccb6878fbded310d2d05350bca9c84568ecb568d4b626c83e0508c3193ce89',
+  isMigrated: true,
+  name: 'legacy.wrapped-with-subnames.eth',
+  subdomainCount: 0,
+  createdAt: '1671168105',
+  owner: { id: '0xe6e340d132b5f46d1e472debcd681b2abc16e57e' },
+  wrappedDomain: {
+    fuses: 0,
+    expiryDate: '1710479985',
+    owner: { id: '0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc' },
+  },
+})
 
 describe('getSubnames', () => {
   it('should get the subnames for a name ordered by createdAt in desc order', async () => {
@@ -1575,6 +1595,35 @@ describe('getSubnames', () => {
           'truncatedName',
         )
       })
+    })
+  })
+
+  describe('indexing errors', () => {
+    beforeEach(() => {
+      spyOnRequest.mockImplementation(() => ({
+        _meta: {
+          hasIndexingErrors: true,
+          block: { number: 271 },
+        },
+        domain: {
+          subdomainCount: 1,
+          subdomains: [makeSubdomain()],
+        },
+      }))
+    })
+
+    it('should throw an error if meta data returns hasIndexingErrors', async () => {
+      try {
+        const result = await ensInstance.getSubnames({
+          name: 'with-subnames.eth',
+          pageSize: 10,
+          orderBy: 'createdAt',
+          orderDirection: 'desc',
+        })
+        expect(result).toBeFalsy()
+      } catch (e) {
+        expect(e).toBeInstanceOf(ENSJSError)
+      }
     })
   })
 })
