@@ -65,7 +65,7 @@ const main = async () => {
       })
       const path = `/sitemap-${i}.xml`
       return [
-        new URL(path, baseURL).toString(),
+        new URL(`/sitemaps${path}`, baseURL).toString(),
         sitemapStream,
         sitemapStream.pipe(createWriteStream(`./out/sitemaps${path}`)),
       ]
@@ -85,7 +85,10 @@ const main = async () => {
     const oldSitemapIndex = await parseSitemapIndex(oldSitemapIndexRes.body)
 
     for (const sitemapIndex of oldSitemapIndex) {
-      const res = await fetch(sitemapIndex.url)
+      const url = sitemapIndex.url.includes('/sitemaps')
+        ? sitemapIndex.url
+        : sitemapIndex.url.replace(`${baseURL}/`, `${baseURL}/sitemaps/`)
+      const res = await fetch(url)
       res.body.pipe(new XMLToSitemapItemStream()).pipe(sitemap, {
         end: false,
       })
