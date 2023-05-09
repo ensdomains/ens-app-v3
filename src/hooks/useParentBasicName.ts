@@ -7,7 +7,7 @@ const useParentBasicName = (name: string) => {
   const isValidParent = parentName.split('.').length > 1
 
   const validParentName = isValidParent ? parentName : ''
-  return useBasicName(validParentName, false)
+  return useBasicName(validParentName, { skipGraph: true})
 }
 
 export default useParentBasicName

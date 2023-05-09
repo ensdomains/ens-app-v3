@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
 
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainId } from '@app/hooks/useChainId'
 import { DetailedProfile } from '@app/hooks/useNameDetails'
@@ -13,19 +14,8 @@ import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
 import { NAMEWRAPPER_AWARE_RESOLVERS } from '@app/utils/constants'
-import styled, { css } from 'styled-components'
-import { Card} from '@ensdomains/thorin'
 
-import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import BaseWrapButton from './BaseWrapButton'
-
-const Container = styled(Card)(
-  ({ theme }) => css`
-    flex-direction: column;
-    align-items: center;
-    gap: ${theme.space['3']};
-    padding: ${theme.space['3']};
-    `)
 
 type Props = {
   name: string
@@ -38,7 +28,7 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
   const hasGlobalError = useHasGlobalError()
-  const hasOwnerData = !!ownerData 
+  const hasOwnerData = !!ownerData
   const { address } = useAccountSafely()
   const chainId = useChainId()
 

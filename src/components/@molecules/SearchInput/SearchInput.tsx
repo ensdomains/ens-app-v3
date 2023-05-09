@@ -357,7 +357,7 @@ export const SearchInput = ({
     setInputVal('')
     searchInputRef.current?.blur()
     router.pushWithHistory(path)
-  }, [normalisedOutput, queryClient, router, searchItems, selected, setHistory])
+  }, [normalisedOutput, queryClient, router, searchItems, selected, setHistory, queryKeys])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
