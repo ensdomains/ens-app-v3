@@ -27,39 +27,75 @@ class AttributeModifier {
   }
 }
 
-const rewriteRequest = async (url: URL, request: Request) =>
-  fetch(new Request(url.toString(), request))
+class ScriptWriter {
+  private src: string
 
-export const onRequest: PagesFunction = async ({ request, next }) => {
+  constructor(src: string) {
+    this.src = src
+  }
+
+  element(element: Element) {
+    element.append(`<script src="${this.src}"></script>`, { html: true })
+  }
+}
+
+// exception for static files
+const staticHandler: PagesFunction = async ({ request, next, env }) => {
   const url = new URL(request.url)
   const paths = url.pathname.split('/')
 
-  // exception for static files
-  if (paths.length === 2 && paths[1].match(/^.*\.(png|xml|ico|json|webmanifest|txt|svg|map)$/i)) {
-    return next()
+  if (paths[paths.length - 1].match(/^.*\.(png|xml|ico|json|webmanifest|txt|svg|map|js)$/i)) {
+    return env.ASSETS.fetch(request)
   }
+
+  return next()
+}
+
+const firefoxRewrite: PagesFunction = async ({ request, next }) => {
+  const userAgent = request.headers.get('user-agent')?.toLowerCase()
+
+  if (
+    userAgent &&
+    // desktop gecko browsers
+    userAgent.indexOf('gecko/20100101') !== -1 &&
+    // firefox
+    userAgent.indexOf('firefox/') !== -1
+  ) {
+    return new HTMLRewriter()
+      .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask.js'))
+      .transform(await next())
+  }
+
+  return next()
+}
+
+const pathRewriter: PagesFunction = async ({ request, next }) => {
+  const url = new URL(request.url)
+  const paths = url.pathname.split('/')
+
+  const nextWithUpdate = () => next(new Request(url.toString(), request))
 
   if (paths[1].match(/^0x[a-fA-F0-9]{40}$/)) {
     url.pathname = '/address'
     url.searchParams.set('address', paths[1])
-    return rewriteRequest(url, request)
+    return nextWithUpdate()
   }
 
   if (paths[1] === 'my' && paths[2] === 'profile') {
     url.pathname = '/profile'
     url.searchParams.set('connected', 'true')
-    return rewriteRequest(url, request)
+    return nextWithUpdate()
   }
 
   if (paths[1] === 'names' && !!paths[2]) {
     url.pathname = '/my/names'
     url.searchParams.set('address', paths[2])
-    return rewriteRequest(url, request)
+    return nextWithUpdate()
   }
 
   if (paths[1] === 'legacyFavourites') {
     url.pathname = '/legacyfavourites'
-    return rewriteRequest(url, request)
+    return nextWithUpdate()
   }
 
   if (paths[1].match(/\./g) || paths[1] === 'tld') {
@@ -70,7 +106,7 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
     if (url.pathname === '/expired-profile') {
       url.pathname = '/profile'
       url.searchParams.set('expired', 'true')
-      return rewriteRequest(url, request)
+      return nextWithUpdate()
     }
 
     if (url.pathname === '/profile') {
@@ -89,11 +125,13 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
       return new HTMLRewriter()
         .on('title', new ContentModifier(newTitle))
         .on('meta[name="description"]', new AttributeModifier('content', newDescription))
-        .transform(await rewriteRequest(url, request))
+        .transform(await nextWithUpdate())
     }
 
-    return rewriteRequest(url, request)
+    return nextWithUpdate()
   }
 
   return next()
 }
+
+export const onRequest = [staticHandler, firefoxRewrite, pathRewriter]

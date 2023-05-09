@@ -35,7 +35,7 @@ let nextConfig = {
     return [
       {
         source: '/legacyFavourites',
-        destination: '/legacyfavourites'
+        destination: '/legacyfavourites',
       },
       {
         source: '/my/profile',
@@ -80,7 +80,7 @@ let nextConfig = {
       {
         source: '/tld/:tld/import',
         destination: '/import?name=:tld',
-      }
+      },
     ]
   },
   generateBuildId: () => {
@@ -163,6 +163,33 @@ let nextConfig = {
       __dirname,
       'src/stub.js',
     )
+
+    if (!options.isServer) {
+      const originalEntry = config.entry
+      config.entry = async (...args) => {
+        const entryConfig = await originalEntry(...args)
+        console.log(entryConfig)
+        return {
+          ...entryConfig,
+          'initialise-metamask.js': {
+            import: [
+              './src/utils/initialiseMetamask.ts',
+              '@metamask/inpage-provider',
+              '@metamask/post-message-stream',
+            ],
+            filename: 'static/chunks/initialise-metamask.js',
+            chunkLoading: false,
+          },
+        }
+      }
+
+      const originalSplitChunks = config.optimization.splitChunks
+      config.optimization.splitChunks = {
+        ...originalSplitChunks,
+        chunks: (chunk) =>
+          !/^(initialise-metamask\.js|polyfills|main|pages\/_app)$/.test(chunk.name),
+      }
+    }
 
     return config
   },

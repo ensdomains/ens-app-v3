@@ -75,6 +75,8 @@
     "@ethersproject/transactions": "^5.7.0",
     "@ethersproject/units": "^5.7.0",
     "@ethersproject/web": "^5.7.1",
+    "@metamask/inpage-provider": "^8.1.0",
+    "@metamask/post-message-stream": "^6.1.2",
     "@rainbow-me/rainbowkit": "0.12.7",
     "@sentry/nextjs": "^7.43.0",
     "@svgr/webpack": "^6.3.1",
