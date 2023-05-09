@@ -56,8 +56,7 @@ jobs:
         run: pnpm build:preview --profile && pnpm export
 
       - name: Generate sitemap
-        if: false
-        # if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           mkdir -p ./out/sitemaps
           pnpm generate:sitemaps
@@ -73,4 +72,4 @@ jobs:
 
       - name: Submit sitemap
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: curl https://www.google.com/ping\?sitemap=https://alpha.ens.domains/sitemap.xml
+        run: curl https://www.google.com/ping\?sitemap=https://app.ens.domains/sitemap.xml

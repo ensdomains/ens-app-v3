@@ -1,24 +1,23 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
-import { Button, Typography, mq } from '@ensdomains/thorin'
 
-import { NightSky } from '@app/assets/NightSky'
-import SparklesSVG from '@app/assets/Sparkles.svg'
-import { Card } from '@app/components/Card'
+import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainId } from '@app/hooks/useChainId'
-import { useNameDetails } from '@app/hooks/useNameDetails'
+import { DetailedProfile } from '@app/hooks/useNameDetails'
 import useWrapperApprovedForAll from '@app/hooks/useWrapperApprovedForAll'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
+import { ReturnedENS } from '@app/types'
 import { NAMEWRAPPER_AWARE_RESOLVERS } from '@app/utils/constants'
+import styled, { css } from 'styled-components'
+import { Card} from '@ensdomains/thorin'
 
-import { useHasGlobalError } from '../../../../../hooks/errors/useHasGlobalError'
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
+import BaseWrapButton from './BaseWrapButton'
 
 const Container = styled(Card)(
   ({ theme }) => css`
@@ -26,85 +25,31 @@ const Container = styled(Card)(
     align-items: center;
     gap: ${theme.space['3']};
     padding: ${theme.space['3']};
+    `)
 
-    ${mq.sm.min(css`
-      flex-direction: row;
-      padding-right: ${theme.space['5']};
-    `)}
-  `,
-)
+type Props = {
+  name: string
+  canBeWrapped: boolean
+  ownerData: ReturnedENS['getOwner']
+  profile: DetailedProfile | undefined
+}
 
-const InnerContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: ${theme.space.full};
-
-    padding: 0 ${theme.space['2']};
-    padding-top: ${theme.space['1']};
-
-    ${mq.sm.min(css`
-      flex-grow: 1;
-      flex-direction: row-reverse;
-      justify-content: flex-end;
-      gap: ${theme.space['6']};
-      padding: ${theme.space['2']};
-    `)}
-  `,
-)
-
-const Heading = styled(Typography)(
-  ({ theme }) => css`
-    color: ${theme.colors.background};
-    line-height: ${theme.lineHeights.body};
-  `,
-)
-
-const Subheading = styled(Typography)(
-  ({ theme }) => css`
-    color: ${theme.colors.background};
-    opacity: 0.8;
-  `,
-)
-
-const Sparkles = styled.svg(
-  ({ theme }) => css`
-    width: ${theme.space['12']};
-    height: ${theme.space['12']};
-  `,
-)
-
-const TextContainer = styled.div(
-  () => css`
-    width: fit-content;
-  `,
-)
-
-const UpgradeButton = styled(Button)(
-  ({ theme }) => css`
-    background: rgba(255, 255, 255, 0.25);
-    color: ${theme.colors.backgroundPrimary};
-    &:hover {
-      background: rgba(255, 255, 255, 0.45);
-    }
-    ${mq.sm.min(css`
-      max-width: 40%;
-    `)}
-  `,
-)
-
-export const WrapperCallToAction = ({ name }: { name: string }) => {
+const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
   const hasGlobalError = useHasGlobalError()
-  const { address } = useAccount()
+  const hasOwnerData = !!ownerData 
+  const { address } = useAccountSafely()
   const chainId = useChainId()
-  const { ownerData, profile, isLoading: isNameDetailsLoading } = useNameDetails(name, true)
-  const hasOwnerData = !!ownerData && !isNameDetailsLoading
+
   const isOwner = ownerData?.owner === address
+  const isRegistrant = ownerData?.registrant === address
   const resolverAddress = profile?.resolverAddress
+
+  const _canBeWrapped =
+    canBeWrapped &&
+    !!address &&
+    (ownerData?.ownershipLevel === 'registrar' ? isRegistrant : isOwner)
 
   const hasExistingRecords = useMemo(() => {
     if (profile?.records) {
@@ -123,7 +68,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
   const isSubdomain = name.split('.').length > 2
   const { approvedForAll, isLoading: approvalLoading } = useWrapperApprovedForAll(
     address!,
-    isSubdomain,
+    !_canBeWrapped && isSubdomain,
   )
 
   const { createTransactionFlow, resumeTransactionFlow, getResumable, prepareDataInput } =
@@ -131,7 +76,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
   const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
   const resumable = getResumable(`wrapName-${name}`)
 
-  const handleUpgradeClick = () => {
+  const handleWrapClick = () => {
     if (resumable) return resumeTransactionFlow(`wrapName-${name}`)
     if (hasOwnerData) {
       const transactions: GenericTransaction[] = [
@@ -183,25 +128,17 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
   }
 
   if (hasGlobalError) return null
+  if (!_canBeWrapped) return null
+
   return (
-    <NightSky>
-      <Container data-testid="wrapper-cta-container">
-        <InnerContainer>
-          <TextContainer>
-            <Heading fontVariant="extraLargeBold">{t('details.wrap.boxTitle')}</Heading>
-            <Subheading>{t('details.wrap.boxDescription')}</Subheading>
-          </TextContainer>
-          <Sparkles as={SparklesSVG} />
-        </InnerContainer>
-        <UpgradeButton
-          data-testid="wrapper-cta-button"
-          disabled={approvalLoading}
-          size="medium"
-          onClick={handleUpgradeClick}
-        >
-          {resumable ? t('details.wrap.resumeLabel') : t('details.wrap.startLabel')}
-        </UpgradeButton>
-      </Container>
-    </NightSky>
+    <BaseWrapButton
+      data-testid="wrap-name-btn"
+      disabled={approvalLoading}
+      onClick={handleWrapClick}
+    >
+      {t('tabs.more.token.wrapName')}
+    </BaseWrapButton>
   )
 }
+
+export default WrapButton

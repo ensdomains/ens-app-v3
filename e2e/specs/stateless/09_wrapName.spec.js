@@ -4,28 +4,31 @@ describe('Wrap Name', () => {
   before(() => {
     acceptMetamaskAccess(2, true)
   })
-  it('should not show wrap notification if the connected wallet is not the registrant', () => {
+  it('should not show wrap button if the connected wallet is not the registrant', () => {
     cy.visit('/other-registrant.eth')
     connectFromExisting()
-    cy.findByTestId('wrapper-cta-container').should('not.exist')
+    cy.findByTestId('more-tab').click()
+    cy.findByTestId('wrap-name-btn').should('not.exist')
   })
   it('should not show wrap notification if the name is already wrapped', () => {
     cy.visit('/wrapped.eth')
     connectFromExisting()
-    cy.findByTestId('wrapper-cta-container').should('not.exist')
+    cy.findByTestId('more-tab').click()
+    cy.findByTestId('wrap-name-btn').should('not.exist')
   })
   it('should show wrap notification on unwrapped name', () => {
     cy.visit('/to-be-wrapped.eth')
     connectFromExisting()
-    cy.findByTestId('wrapper-cta-container').should('be.visible')
-    cy.findByTestId('wrapper-cta-button').should('contain.text', 'Upgrade')
+    cy.findByTestId('more-tab').click()
+    cy.findByTestId('wrap-name-btn').should('exist')
   })
   it('should wrap name', () => {
     cy.visit('/to-be-wrapped.eth')
     connectFromExisting()
+    cy.findByTestId('more-tab').click()
 
     // should migrate the profile
-    cy.findByTestId('wrapper-cta-button').click()
+    cy.findByTestId('wrap-name-btn').click()
     cy.findByTestId('transaction-modal-inner').should('be.visible')
     cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
@@ -41,23 +44,25 @@ describe('Wrap Name', () => {
 
     // should remove the notification once the name is wrapped
     cy.findByTestId('transaction-modal-inner').should('not.exist')
-    cy.findByTestId('wrapper-cta-container').should('not.exist')
+    cy.findByTestId('more-tab').click()
+    cy.findByTestId('wrap-name-btn').should('not.exist')
   })
   it('should show resume state if wrap steps are incomplete', () => {
     cy.visit('/resume-and-wrap.eth')
     connectFromExisting()
-    cy.findByTestId('wrapper-cta-button').click()
+    cy.findByTestId('more-tab').click()
+
+    cy.findByTestId('wrap-name-btn').click()
     cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
     cy.findByTestId('toast-close-icon').click()
     cy.findAllByTestId('close-icon').last().click()
-    cy.findByTestId('wrapper-cta-button').should('contain.text', 'Resume Upgrade')
 
     // should open to correctly resumed state
     cy.wait(1000)
-    cy.findByTestId('wrapper-cta-button').click()
+    cy.findByTestId('wrap-name-btn').click()
     cy.findByTestId('display-item-Step 1-fade').should('be.visible')
     cy.findByTestId('transaction-dialog-intro-trailing-btn').should('contain.text', 'Resume')
 
@@ -69,16 +74,17 @@ describe('Wrap Name', () => {
 
     // should remove the notification once the resumed steps are complete
     cy.findByTestId('transaction-modal-inner').should('not.exist')
-    cy.findByTestId('wrapper-cta-container').should('not.exist')
+    cy.findByTestId('wrap-name-btn').should('not.exist')
   })
   it('should allow wrapping a subdomain', () => {
     cy.visit('/sub.unwrapped-with-wrapped-subnames.eth')
     connectFromExisting()
-    cy.findByTestId('wrapper-cta-container').should('be.visible')
-    cy.findByTestId('wrapper-cta-button').should('contain.text', 'Upgrade')
+    cy.findByTestId('more-tab').click()
+
+    cy.findByTestId('wrap-name-btn').should('be.visible')
 
     // should approve name wrapper for address
-    cy.findByTestId('wrapper-cta-button').click()
+    cy.findByTestId('wrap-name-btn').click()
     cy.findByTestId('transaction-modal-inner').should('be.visible')
     cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
@@ -96,15 +102,16 @@ describe('Wrap Name', () => {
 
     // should remove the notification once the name is wrapped
     cy.findByTestId('transaction-modal-inner').should('not.exist')
-    cy.findByTestId('wrapper-cta-container').should('not.exist')
+    cy.findByTestId('wrap-name-btn').should('not.exist')
   })
   it('should allow wrapping a name with an unknown label', () => {
     acceptMetamaskAccess(3, false)
     cy.visit(
       '/[5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04].unknown-labels.eth',
     )
-    cy.findByTestId('wrapper-cta-container').should('be.visible')
-    cy.findByTestId('wrapper-cta-button').should('contain.text', 'Upgrade').click()
+    cy.findByTestId('more-tab').click()
+
+    cy.findByTestId('wrap-name-btn').should('be.visible').click()
 
     const input = cy.findByTestId(
       'unknown-label-input-0x5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04',
@@ -132,7 +139,7 @@ describe('Wrap Name', () => {
     cy.findByTestId('transaction-modal-complete-button').click()
 
     cy.findByTestId('transaction-modal-inner').should('not.exist')
-    cy.findByTestId('wrapper-cta-container').should('not.exist')
+    cy.findByTestId('wrap-name-btn').should('not.exist')
 
     // should direct to the known label page
     cy.url().should('contain', 'aaa123xyz000.unknown-labels.eth')

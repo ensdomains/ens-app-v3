@@ -113,6 +113,6 @@ describe('AddRecordButton', () => {
     const submit = await screen.findByText('action.add')
     fireEvent.click(submit)
 
-    expect(mockHandleAddRecord).toHaveBeenCalledWith('com\u2024example')
+    expect(mockHandleAddRecord).toHaveBeenCalledWith('com%2Eexample')
   })
 })

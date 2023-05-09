@@ -6,7 +6,7 @@ import type { useEns } from '@app/utils/EnsProvider'
 type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
 type WrapperData = Awaited<ReturnType<GetWrapperDataFunc>>
 
-type NameWrapperState = 'unwrapped' | 'wrapped' | 'emancipated' | 'locked'
+export type NameWrapperState = 'unwrapped' | 'wrapped' | 'emancipated' | 'locked'
 
 type Results = {
   parentState: NameWrapperState

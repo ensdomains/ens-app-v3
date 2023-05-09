@@ -3,6 +3,8 @@
   "description": "您在 web3 上的身份，一个名称就能解析到您所有的加密地址和您的去中心化网站。",
   "loading": "加载中",
   "unsupportedNetwork": "不支持的网络",
+  "notFound": "404 未找到",
+  "etherscan": "Etherscan",
   "action": {
     "cancel": "取消",
     "change": "更改",
@@ -39,7 +41,9 @@
     "finish": "完成",
     "skip": "跳过",
     "changeNetwork": "更改网络",
-    "understand": "我了解"
+    "understand": "我了解",
+    "feedback": "反馈",
+    "migrate": "迁移"
   },
   "unit": {
     "years_one": "{{count}} 年",
@@ -64,6 +68,10 @@
     "privacy": "隐私策略",
     "back": "返回",
     "oldApp": "旧版 ENS App",
+    "language": "语言",
+    "currency": "货币",
+    "ipfsApp": "IPFS ENS App",
+    "feedback": "反馈",
     "syncMessage": "正在进行网络同步，您在交易中更改的内容可能还看不到。"
   },
   "wallet": {
@@ -150,6 +158,7 @@
       "addSuccess": "添加成功",
       "sendName": "发送名称",
       "migrateProfile": "迁移个人资料",
+      "migrateProfileWithReset": "迁移个人资料",
       "migrateProfileWithSync": "迁移并更新个人资料",
       "wrapName": "包装名称",
       "updateResolver": "更新解析器",
@@ -170,11 +179,13 @@
       "transferName": "转移名称",
       "changePermissions": "更改权限",
       "syncManager": "同步管理员",
-      "updateProfileRecords": "更新个人资料"
+      "updateProfileRecords": "更新个人资料",
+      "resetProfile": "重置个人资料"
     },
     "info": {
       "sendName": "设置名称的管理员和注册人",
       "migrateProfile": "将现有记录设置到新的解析器上",
+      "migrateProfileWithReset": "将现有记录设置到新的解析器上",
       "migrateProfileWithSync": "将现有记录设置到新的解析器上",
       "wrapName": "包装名称并设置新的解析器",
       "updateResolver": "将解析器更改为",
@@ -210,7 +221,8 @@
       "subname": "子名称",
       "duration": "时长",
       "cost": "费用",
-      "update": "更新"
+      "update": "更新",
+      "resolver": "解析器"
     },
     "itemValue": {
       "records_one": "{{count}} 条记录",
@@ -268,6 +280,12 @@
         "gasLimit": "这笔交易的网络费限额不够高，请再试一次。"
       }
     },
+    "error": {
+      "request": {
+        "INSUFFICIENT_FUNDS": "钱包余额不足",
+        "UNPREDICTABLE_GAS_LIMIT": "发生未知错误"
+      }
+    },
     "viewEtherscan": "在 Etherscan 上查看",
     "viewMore": "查看详情"
   },
@@ -298,5 +316,9 @@
     "add": "添加",
     "placeholder": "选择一项",
     "empty": "未找到选项"
+  },
+  "testnetFaucet": {
+    "explanation": "Goerli 上的每个地址都可以申请 {{amount}} ETH 来测试 ENS 管理器 app 以及所有新合约。",
+    "note": "它可能在几分钟后才能出现在你的钱包里。"
   }
 }

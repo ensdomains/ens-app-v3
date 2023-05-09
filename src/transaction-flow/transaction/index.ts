@@ -16,6 +16,7 @@ import testSendName from './testSendName'
 import transferController from './transferController'
 import transferName from './transferName'
 import transferSubname from './transferSubname'
+import unwrapName from './unwrapName'
 import updateEthAddress from './updateEthAddress'
 import updateProfile from './updateProfile'
 import updateProfileRecords from './updateProfileRecords'
@@ -23,37 +24,42 @@ import updateResolver from './updateResolver'
 import wrapName from './wrapName'
 
 export const transactions = {
-  updateResolver,
-  migrateProfile,
-  wrapName,
-  testSendName,
-  updateProfile,
-  setPrimaryName,
-  updateEthAddress,
-  migrateProfileWithReset,
+  approveNameWrapper,
   burnFuses,
-  createSubname,
-  extendNames,
-  deleteSubname,
+  changePermissions,
   commitName,
+  createSubname,
+  deleteSubname,
+  extendNames,
+  importDNSSECName,
+  migrateProfile,
+  migrateProfileWithReset,
   registerName,
   resetProfile,
+  setPrimaryName,
+  syncManager,
+  testSendName,
+  transferController,
   transferName,
   transferSubname,
-  transferController,
-  importDNSSECName,
-  approveNameWrapper,
-  changePermissions,
-  syncManager,
+  unwrapName,
+  updateEthAddress,
+  updateProfile,
   updateProfileRecords,
+  updateResolver,
+  wrapName,
 }
 
 export type Transaction = typeof transactions
 export type TransactionName = keyof Transaction
 
+export type TransactionData<T extends TransactionName> = Parameters<
+  Transaction[T]['transaction']
+>[2]
+
 export const makeTransactionItem = <T extends TransactionName>(
   name: T,
-  data: Parameters<Transaction[T]['transaction']>[2],
+  data: TransactionData<T>,
 ) => ({
   name,
   data,

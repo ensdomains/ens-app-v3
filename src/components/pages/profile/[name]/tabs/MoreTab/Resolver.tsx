@@ -56,7 +56,7 @@ const InnerHeading = styled.div(
     gap: ${theme.space['4']};
 
     & > div:first-of-type {
-      font-size: ${theme.fontSizes.headingThree};
+      font-size: ${theme.fontSizes.headingFour};
       font-weight: ${theme.fontWeights.bold};
     }
   `,
@@ -103,7 +103,7 @@ const Resolver = ({
     <Container $isCached={isCachedData}>
       <HeadingContainer>
         <InnerHeading>
-          <Typography color="text" weight="bold">
+          <Typography color="text" fontVariant="headingFour" weight="bold">
             {t('tabs.more.resolver.label')}
           </Typography>
           <Tag colorStyle={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>

@@ -13,7 +13,7 @@ import { wagmiClientWithRefetch } from '@app/utils/query'
 
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
-import InputComponentWrapper from './InputComponentWrapper'
+// import InputComponentWrapper from './InputComponentWrapper'
 import { IntroStageModal } from './stage/Intro'
 import { TransactionStageModal } from './stage/TransactionStageModal'
 
@@ -57,16 +57,16 @@ export const TransactionDialogManager = ({
         const Component = DataInputComponents[selectedItem.input.name]
         return (
           <WagmiConfig client={wagmiClientWithRefetch}>
-            <InputComponentWrapper>
-              <Component
-                {...{
-                  data: selectedItem.input.data,
-                  transactions: selectedItem.transactions,
-                  dispatch,
-                  onDismiss,
-                }}
-              />
-            </InputComponentWrapper>
+            <Component
+              {...{
+                data: selectedItem.input.data,
+                transactions: selectedItem.transactions,
+                dispatch,
+                onDismiss,
+              }}
+            />
+            {/* <InputComponentWrapper>
+            </InputComponentWrapper> */}
           </WagmiConfig>
         )
       }

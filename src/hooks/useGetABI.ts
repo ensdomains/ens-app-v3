@@ -25,7 +25,8 @@ export const getABISafely = (getABI: GetABIFunc) => async (name: string) => {
       // getABI doesn't have support for this error so we catch here
       return { abi: '' }
     }
-    throw e
+    // temporary fix for non-existent fn error
+    return { abi: '' }
   }
 }
 
