@@ -180,14 +180,15 @@
       "changePermissions": "Change permissions",
       "syncManager": "Sync manager",
       "updateProfileRecords": "Update profile",
-      "resetProfile": "Reset profile"
+      "resetProfile": "Reset profile",
+      "unwrapName": "Unwrap name"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
       "migrateProfile": "Set existing records on new resolver",
       "migrateProfileWithReset": "Set existing records on new resolver",
       "migrateProfileWithSync": "Set existing records on new resolver",
-      "wrapName": "Wrap name and set new resolver",
+      "wrapName": "Wrap the name",
       "updateResolver": "Change resolver to",
       "updateProfile": "Update records on existing resolver",
       "setPrimaryName": "Set the primary name for your address",

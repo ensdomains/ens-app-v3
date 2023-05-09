@@ -7,7 +7,7 @@ import BaseLink from '@app/components/@atoms/BaseLink'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
 import { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
-import { useBasicName } from '@app/hooks/useBasicName'
+import useParentBasicName from '@app/hooks/useParentBasicName'
 import { useEns } from '@app/utils/EnsProvider'
 
 import { ExpiryPermissions } from './ExpiryPermissions'
@@ -41,15 +41,10 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
   const parentName = nameParts.slice(1).join('.')
 
   const is2LDEth = nameParts.length === 2 && nameParts[1] === 'eth'
-  const isValidParent = parentName.split('.').length > 1
   const isSubname = nameParts.length > 2
 
-  const validParentName = isValidParent ? parentName : ''
-  const { wrapperData: parentWrapperData, isCachedData: _isParentBasicCachedData } = useBasicName(
-    validParentName,
-    false,
-  )
-  const isParentBasicCachedData = isValidParent && _isParentBasicCachedData
+  const { wrapperData: parentWrapperData, isCachedData: isParentBasicCachedData } =
+    useParentBasicName(name)
 
   const { fusesSetDates } = useGetFusesSetDates(name)
   const fusesStatus = useFusesStates({
