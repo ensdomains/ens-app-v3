@@ -7,7 +7,10 @@ const useParentBasicName = (name: string) => {
   const isValidParent = parentName.split('.').length > 1
 
   const validParentName = isValidParent ? parentName : ''
-  return useBasicName(validParentName, { skipGraph: true})
+
+  // So far the use of this hook is for the wrapper data which does not rely on the graph so
+  // it is safe to skip the graph
+  return useBasicName(validParentName, { skipGraph: true })
 }
 
 export default useParentBasicName
