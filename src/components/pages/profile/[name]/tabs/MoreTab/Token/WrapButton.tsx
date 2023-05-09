@@ -27,7 +27,9 @@ type Props = {
 const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
+  // Need error check because of dependency on ownerData and profile
   const hasGlobalError = useHasGlobalError()
+
   const hasOwnerData = !!ownerData
   const { address } = useAccountSafely()
   const chainId = useChainId()
@@ -117,8 +119,7 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
     }
   }
 
-  if (hasGlobalError) return null
-  if (!_canBeWrapped) return null
+  if (!_canBeWrapped || hasGlobalError) return null
 
   return (
     <BaseWrapButton

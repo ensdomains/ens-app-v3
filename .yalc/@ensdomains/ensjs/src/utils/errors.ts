@@ -69,7 +69,10 @@ export const returnOrThrow = async <T>(
   meta?: GraphMeta,
   provider?: any,
 ) => {
-  if (process.env.NODE_ENV === 'development') {
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.NEXT_PUBLIC_ENSJS_DEBUG
+  ) {
     await debugFlow<T>(data, meta, provider)
   }
   if (meta?.hasIndexingErrors && provider) {

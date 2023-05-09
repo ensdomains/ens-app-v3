@@ -20,7 +20,7 @@ export const useExists = (name: string, skip?: any) => {
     data,
     isLoading: loading,
     status,
-  } = useQuery(queryKey, () => watchedGetOwner(name).then((r) => r || null), {
+  } = useQuery(queryKey, () => watchedGetOwner(name, { skipGraph: false }).then((r) => r || null), {
     enabled: ready && !skip && name !== '',
   })
 

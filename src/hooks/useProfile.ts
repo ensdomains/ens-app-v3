@@ -39,17 +39,15 @@ export const useProfile = (
     isFetching,
   } = useQuery(
     queryKey,
-    async () => {
-      const data = await watchedGetProfile(name, {
+    () =>
+      watchedGetProfile(name, {
         fallback: {
           coinTypes: supportedAddresses,
           texts: [...supportedTexts, ...supportedProfileItems],
         },
         resolverAddress,
         skipGraph,
-      })
-      return data || null
-    },
+      }).then((r) => r || null),
     {
       enabled: ready && !skip && name !== '',
     },

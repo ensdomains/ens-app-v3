@@ -38,14 +38,14 @@ export const useSubnameInfiniteQuery = (
         orderDirection: orderDirection === 'asc' ? 'asc' : 'desc',
         pageSize: PAGE_SIZE,
         search,
-      })
-      const ownedSubnames = result?.subnames.filter((subname) => subname.owner !== emptyAddress)
-      const isPageSize = (result?.subnames.length || 0) >= PAGE_SIZE
-      const lastSubname = isPageSize ? result?.subnames[result.subnames.length - 1] : undefined
+      }).then((res) => res || { subnames: [], subnameCount: 0 })
+      const ownedSubnames = result.subnames.filter((subname) => subname.owner !== emptyAddress)
+      const isPageSize = (result.subnames.length || 0) >= PAGE_SIZE
+      const lastSubname = isPageSize ? result.subnames[result.subnames.length - 1] : undefined
       return {
         subnames: ownedSubnames,
         lastSubname,
-        subnameCount: result?.subnameCount || 0,
+        subnameCount: result.subnameCount,
       }
     },
     {

@@ -57,26 +57,22 @@ export const useNamesFromAddress = ({
 
   const { data, isLoading, status, refetch } = useQuery(
     queryKey,
-    async () => {
-      const names = await watchedGetNames({
+    () =>
+      watchedGetNames({
         address: address!,
         type: 'all',
         orderBy: 'labelName',
         orderDirection: 'desc',
-      })
-      return {
-        names: (names || []) as ReturnedName[],
-      }
-    },
+      }).then((r) => r || null),
     {
       enabled: ready && !!address && !isBlockTimestampLoading,
-      refetchOnMount: true,
     },
   )
 
   const mergedData = useMemo(() => {
-    const names = data?.names || []
-    const nameMap = names.reduce((map, curr) => {
+    if (!data) return []
+    console.log('data', data)
+    const nameMap = data.reduce((map, curr) => {
       if (curr.id === '0x0000000000000000000000000000000000000000000000000000000000000000') {
         // eslint-disable-next-line no-param-reassign
         curr = {
@@ -109,7 +105,7 @@ export const useNamesFromAddress = ({
       return newMap
     }, {} as { [key: string]: ReturnedName })
     return Object.values(nameMap)
-  }, [data?.names])
+  }, [data])
 
   const [sortedData, setSortedData] = useState<Name[] | null>(null)
 

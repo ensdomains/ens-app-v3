@@ -125,6 +125,9 @@ export const useProfileActions = ({
                 { name },
               )
             },
+            tooltipContent: hasGlobalError
+              ? t('errors.networkError.blurb', { ns: 'common' })
+              : undefined,
             red: true,
             skip2LDEth: true,
           }
@@ -140,6 +143,9 @@ export const useProfileActions = ({
                   }),
                 ],
               }),
+            tooltipContent: hasGlobalError
+              ? t('errors.networkError.blurb', { ns: 'common' })
+              : undefined,
             red: true,
             skip2LDEth: true,
           }

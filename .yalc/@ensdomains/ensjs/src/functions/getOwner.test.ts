@@ -125,40 +125,50 @@ describe('getOwner', () => {
     })
     afterAll(() => {
       process.env.NODE_ENV = 'test'
+      localStorage.removeItem('ensjs-debug')
     })
 
-    it('should return correct ownership level and values for an expired wrapped .eth name', async () => {
-      try {
-        await ensInstance.getOwner('expired-wrapped.eth')
-      } catch (e: unknown) {
-        const error = e as ENSJSError<Owner>
-        expect(error).toBeInstanceOf(ENSJSError)
-        expect(error.name).toBe('ENSJSSubgraphIndexingError')
-        expect(error.data).toEqual({
-          registrant: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
-          owner: '0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E',
-          ownershipLevel: 'registrar',
-          expired: true,
-        })
-        expect(error.timestamp).toBe(1682524901)
-      }
-    })
+    describe('ENSJSSubgraphIndexingError', () => {
+      beforeAll(() => {
+        localStorage.setItem('ensjs-debug', 'ENSJSSubgraphIndexingError')
+      })
+      afterAll(() => {
+        localStorage.removeItem('ensjs-debug')
+      })
 
-    it('should return correct ownership level and values for an expired unwrapped .eth name', async () => {
-      try {
-        await ensInstance.getOwner('expired.eth')
-      } catch (e) {
-        const error = e as ENSJSError<Owner>
-        expect(error).toBeInstanceOf(ENSJSError)
-        expect(error.name).toBe('ENSJSSubgraphIndexingError')
-        expect(error.data).toEqual({
-          registrant: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
-          owner: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
-          ownershipLevel: 'registrar',
-          expired: true,
-        })
-        expect(error.timestamp).toBe(1682524901)
-      }
+      it('should return correct ownership level and values for an expired wrapped .eth name', async () => {
+        try {
+          await ensInstance.getOwner('expired-wrapped.eth')
+        } catch (e: unknown) {
+          const error = e as ENSJSError<Owner>
+          expect(error).toBeInstanceOf(ENSJSError)
+          expect(error.name).toBe('ENSJSSubgraphIndexingError')
+          expect(error.data).toEqual({
+            registrant: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
+            owner: '0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E',
+            ownershipLevel: 'registrar',
+            expired: true,
+          })
+          expect(error.timestamp).toBe(1682524901)
+        }
+      })
+
+      it('should return correct ownership level and values for an expired unwrapped .eth name', async () => {
+        try {
+          await ensInstance.getOwner('expired.eth')
+        } catch (e) {
+          const error = e as ENSJSError<Owner>
+          expect(error).toBeInstanceOf(ENSJSError)
+          expect(error.name).toBe('ENSJSSubgraphIndexingError')
+          expect(error.data).toEqual({
+            registrant: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
+            owner: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+            ownershipLevel: 'registrar',
+            expired: true,
+          })
+          expect(error.timestamp).toBe(1682524901)
+        }
+      })
     })
 
     describe('ENSJSUnknownError', () => {
