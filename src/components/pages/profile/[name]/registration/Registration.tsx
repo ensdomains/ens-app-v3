@@ -216,6 +216,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   }
 
   const onComplete = (toProfile: boolean) => {
+    queryClient.removeQueries(queryKeys.basicNameRoot(normalisedName))
     router.push(toProfile ? `/profile/${normalisedName}` : '/')
   }
 
@@ -225,7 +226,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         dispatch({ name: 'clearItem', selected })
         cleanupFlow(commitKey)
         cleanupFlow(registerKey)
-        queryClient.invalidateQueries(queryKeys.basicNameRoot(normalisedName))
+        queryClient.removeQueries(queryKeys.basicNameRoot(normalisedName))
       }
     }
     router.events.on('routeChangeComplete', handleRouteChange)
