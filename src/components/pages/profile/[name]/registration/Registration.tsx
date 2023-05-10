@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
+import { useAccount, useQueryClient } from 'wagmi'
 
 import { Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
 
@@ -20,6 +20,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { isLabelTooLong } from '@app/utils/utils'
 
 import { ProfileRecord } from '../../../../../constants/profileRecordOptions'
+import { useQueryKeys } from '../../../../../utils/cacheKeyFactory'
 import Complete from './steps/Complete'
 import Info from './steps/Info'
 import Pricing from './steps/Pricing/Pricing'
@@ -108,6 +109,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const router = useRouterWithHistory()
   const chainId = useChainId()
+  const queryClient = useQueryClient()
+  const queryKeys = useQueryKeys()
   const { address } = useAccount()
   const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
   const selected = { name: nameDetails.normalisedName, address: address! }
@@ -222,6 +225,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         dispatch({ name: 'clearItem', selected })
         cleanupFlow(commitKey)
         cleanupFlow(registerKey)
+        queryClient.invalidateQueries(queryKeys.basicNameRoot(normalisedName))
       }
     }
     router.events.on('routeChangeComplete', handleRouteChange)

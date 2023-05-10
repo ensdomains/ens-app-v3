@@ -44,6 +44,13 @@ export const useQueryKeys = () => {
       skipGraph,
       'basicName',
     ],
+    basicNameRoot: (normalisedName: string) => [
+      ...globalKeys,
+      'batch',
+      'getOwner',
+      'getExpiry',
+      normalisedName,
+    ],
     beautifiedName: (name: string) => [...globalKeys, name, 'beautifiedName'],
     blockTimestamp: [...globalKeys, 'blockTimestamp'],
     currentBlockTimestamp: [...globalKeys, 'currentBlockTimestamp'],
