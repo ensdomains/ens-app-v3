@@ -142,7 +142,6 @@ const decode = async ({
   const nameWrapperOwner = decodedData[1][0];
   let registrarOwner = (_b = decodedData[2]) == null ? void 0 : _b[0];
   let baseReturnObject = {};
-  console.log("owners", registryOwner, nameWrapperOwner, registrarOwner);
   if (isEth) {
     let meta;
     if (is2LD) {
@@ -163,6 +162,17 @@ const decode = async ({
           expired: !registrarOwner
         };
       }
+    }
+    if (baseReturnObject.expired && (registryOwner == null ? void 0 : registryOwner.toLowerCase()) === nameWrapper.address.toLowerCase()) {
+      return (0, import_errors.returnOrThrow)(
+        {
+          owner: nameWrapperOwner,
+          ownershipLevel: "nameWrapper",
+          ...baseReturnObject
+        },
+        meta,
+        provider
+      );
     }
     if ((registrarOwner == null ? void 0 : registrarOwner.toLowerCase()) === nameWrapper.address.toLowerCase()) {
       return (0, import_errors.returnOrThrow)(

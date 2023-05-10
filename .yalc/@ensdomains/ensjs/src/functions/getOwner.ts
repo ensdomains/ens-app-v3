@@ -171,7 +171,6 @@ const decode = async (
     expired?: boolean
   } = {}
 
-  console.log('owners', registryOwner, nameWrapperOwner, registrarOwner)
   // check for only .eth names
   if (isEth) {
     let meta: GraphMeta | undefined
@@ -198,9 +197,24 @@ const decode = async (
         }
       }
     }
+
+    if (
+      baseReturnObject.expired &&
+      registryOwner?.toLowerCase() === nameWrapper.address.toLowerCase()
+    ) {
+      return returnOrThrow<Owner>(
+        {
+          owner: nameWrapperOwner,
+          ownershipLevel: 'nameWrapper',
+          ...baseReturnObject,
+        },
+        meta,
+        provider,
+      )
+    }
+
     // if the owner on the registrar is the namewrapper, then the namewrapper owner is the owner
     // there is no "registrant" for wrapped names.
-
     if (registrarOwner?.toLowerCase() === nameWrapper.address.toLowerCase()) {
       return returnOrThrow<Owner>(
         {

@@ -2,7 +2,6 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import { ENS } from '..'
 import setup from '../tests/setup'
 import { ENSJSError } from '../utils/errors'
-import { namehash } from '../utils/normalise'
 import { Owner } from './getOwner'
 
 let ensInstance: ENS
@@ -65,6 +64,7 @@ describe('getOwner', () => {
       expired: true,
     })
   })
+
   describe('subname', () => {
     it('should return correct ownership level and values for a unwrapped name', async () => {
       const result = await ensInstance.getOwner('test.with-subnames.eth')
@@ -82,27 +82,11 @@ describe('getOwner', () => {
         owner: accounts[2],
       })
     })
+
     it('should return correct ownership level and values for an expired wrapped name', async () => {
       const result = await ensInstance.getOwner('test.expired-wrapped.eth')
-      const expiry = await ensInstance.getExpiry('test.expired-wrapped.eth')
-      const wrapperData = await ensInstance.getWrapperData(
-        'test.expired-wrapped.eth',
-      )
-      const namewrapper = await ensInstance.contracts?.getNameWrapper()
-      const block = await provider.getBlock('latest')
-      console.log(block)
-      // 1683684184 > block.timestamp
-      // 1682522887
-      const test = await namewrapper!.getData(
-        namehash('test.expired-wrapped.eth'),
-      )
-      console.log('test', test)
-      console.log('wrapperData', wrapperData)
-      console.log('expiry', test.expiry.toNumber())
-      console.log('expiry', expiry?.expiry?.getTime())
-      console.log('now', Date.now())
       expect(result).toEqual({
-        ownershipLevel: 'registry',
+        ownershipLevel: 'nameWrapper',
         owner: accounts[2],
       })
     })
