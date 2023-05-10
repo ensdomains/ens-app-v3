@@ -296,10 +296,8 @@ export async function getHistory(
 
   if (!domain) return returnOrThrow(undefined, meta, provider)
 
-  const {
-    events: domainEvents,
-    resolver: { events: resolverEvents },
-  } = domain
+  const domainEvents = domain.events || []
+  const resolverEvents = domain.resolver?.events || []
 
   const domainHistory = mapEvents(domainEvents, 'Domain')
   const resolverHistory = mapEvents(
@@ -311,9 +309,7 @@ export async function getHistory(
   )
 
   if (is2ldEth) {
-    const {
-      registration: { events: registrationEvents },
-    } = domain
+    const registrationEvents = domain.registration?.events || []
     const registrationHistory = mapEvents(registrationEvents, 'Registration')
     return returnOrThrow<ReturnData>(
       {

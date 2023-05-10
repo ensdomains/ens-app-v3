@@ -90,6 +90,8 @@ var decode = async ({
     return;
   const { contract, skipGraph = true } = options;
   const labels = name.split(".");
+  const isEth = labels[labels.length - 1] === "eth";
+  const is2LD = labels.length === 2;
   if (contract || labels.length === 1) {
     const singleOwner = singleContractOwnerDecode(data);
     const obj = {
@@ -117,9 +119,10 @@ var decode = async ({
   const nameWrapperOwner = decodedData[1][0];
   let registrarOwner = decodedData[2]?.[0];
   let baseReturnObject = {};
-  if (labels[labels.length - 1] === "eth") {
+  console.log("owners", registryOwner, nameWrapperOwner, registrarOwner);
+  if (isEth) {
     let meta;
-    if (labels.length === 2) {
+    if (is2LD) {
       if (!registrarOwner && !skipGraph) {
         const graphRegistrantResult = await gqlInstance.client.request(
           registrantQuery,
@@ -138,7 +141,7 @@ var decode = async ({
         };
       }
     }
-    if (registrarOwner?.toLowerCase() === nameWrapper.address.toLowerCase() || registryOwner?.toLowerCase() === nameWrapper.address.toLowerCase()) {
+    if (registrarOwner?.toLowerCase() === nameWrapper.address.toLowerCase()) {
       return returnOrThrow(
         {
           owner: nameWrapperOwner,

@@ -105,6 +105,7 @@ const mapEvents = (eventArray, type) => eventArray.map(
   })
 );
 async function getHistory({ gqlInstance, provider }, name) {
+  var _a, _b;
   const { client } = gqlInstance;
   const query = gqlInstance.gql`
       query getHistory($namehash: String!) {
@@ -237,10 +238,8 @@ async function getHistory({ gqlInstance, provider }, name) {
   const meta = response == null ? void 0 : response._meta;
   if (!domain)
     return (0, import_errors.returnOrThrow)(void 0, meta, provider);
-  const {
-    events: domainEvents,
-    resolver: { events: resolverEvents }
-  } = domain;
+  const domainEvents = domain.events || [];
+  const resolverEvents = ((_a = domain.resolver) == null ? void 0 : _a.events) || [];
   const domainHistory = mapEvents(domainEvents, "Domain");
   const resolverHistory = mapEvents(
     resolverEvents.filter(
@@ -249,9 +248,7 @@ async function getHistory({ gqlInstance, provider }, name) {
     "Resolver"
   );
   if (is2ldEth) {
-    const {
-      registration: { events: registrationEvents }
-    } = domain;
+    const registrationEvents = ((_b = domain.registration) == null ? void 0 : _b.events) || [];
     const registrationHistory = mapEvents(registrationEvents, "Registration");
     return (0, import_errors.returnOrThrow)(
       {

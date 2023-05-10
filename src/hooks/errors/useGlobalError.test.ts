@@ -1,0 +1,65 @@
+import { mockFunction, renderHook, waitFor } from '@app/test-utils'
+
+import { useGlobalErrorDispatch } from '@app/utils/GlobalErrorProvider'
+
+import { useGlobalError } from './useGlobalError'
+
+jest.mock('@app/utils/GlobalErrorProvider')
+const mockDispatch = mockFunction(useGlobalErrorDispatch)
+mockDispatch.mockReturnValue(mockDispatch)
+
+describe('useGlobalError', () => {
+  describe('register/unregister keys', () => {
+    it('should dispatch register key when mounted', async () => {
+      renderHook(() => useGlobalError({ queryKey: ['test'], func: () => Promise.resolve({}) }))
+      expect(mockDispatch).toHaveBeenCalledWith({
+        type: 'REGISTER_KEY',
+        payload: {
+          key: ['test'],
+        },
+      })
+    })
+
+    it('should not dispatch register key when mounted and skip is true', async () => {
+      renderHook(() =>
+        useGlobalError({ queryKey: ['test'], func: () => Promise.resolve({}), skip: true }),
+      )
+      expect(mockDispatch).toHaveBeenCalledWith({
+        type: 'REGISTER_KEY',
+        payload: {
+          key: ['test'],
+        },
+      })
+    })
+
+    it('should dispatch unregister key when unmounted', async () => {
+      const { unmount } = renderHook(() =>
+        useGlobalError({ queryKey: ['test'], func: () => Promise.resolve({}) }),
+      )
+      unmount()
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith({
+          type: 'UNREGISTER_KEY',
+          payload: {
+            key: ['test'],
+          },
+        })
+      })
+    })
+
+    it('should not dispatch unregister key when unmounted if skip is true', async () => {
+      const { unmount } = renderHook(() =>
+        useGlobalError({ queryKey: ['test'], func: () => Promise.resolve({}), skip: true }),
+      )
+      unmount()
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith({
+          type: 'UNREGISTER_KEY',
+          payload: {
+            key: ['test'],
+          },
+        })
+      })
+    })
+  })
+})
