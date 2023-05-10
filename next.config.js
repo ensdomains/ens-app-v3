@@ -168,12 +168,11 @@ let nextConfig = {
       const originalEntry = config.entry
       config.entry = async (...args) => {
         const entryConfig = await originalEntry(...args)
-        console.log(entryConfig)
         return {
           ...entryConfig,
-          'initialise-metamask.js': {
+          firefoxMetamask: {
             import: [
-              './src/utils/initialiseMetamask.ts',
+              './src/utils/metamask/firefox.ts',
               '@metamask/inpage-provider',
               '@metamask/post-message-stream',
             ],
@@ -186,8 +185,7 @@ let nextConfig = {
       const originalSplitChunks = config.optimization.splitChunks
       config.optimization.splitChunks = {
         ...originalSplitChunks,
-        chunks: (chunk) =>
-          !/^(initialise-metamask\.js|polyfills|main|pages\/_app)$/.test(chunk.name),
+        chunks: (chunk) => !/^(firefoxMetamask|polyfills|main|pages\/_app)$/.test(chunk.name),
       }
     }
 

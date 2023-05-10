@@ -62,6 +62,7 @@ importers:
       '@ethersproject/wallet': ^5.7.0
       '@ethersproject/web': ^5.7.1
       '@metamask/inpage-provider': ^8.1.0
+      '@metamask/mobile-provider': ^2.1.0
       '@metamask/post-message-stream': ^6.1.2
       '@next/bundle-analyzer': ^12.2.5
       '@next/swc-linux-x64-gnu': 12.1.4
@@ -206,6 +207,7 @@ importers:
       '@ethersproject/units': 5.7.0
       '@ethersproject/web': 5.7.1
       '@metamask/inpage-provider': 8.1.0
+      '@metamask/mobile-provider': 2.1.0
       '@metamask/post-message-stream': 6.1.2
       '@rainbow-me/rainbowkit': 0.12.7_f2ny37ockjryajfu6zcn2nezee_vwgfuivoohbeopgq6vyae2p5py
       '@sentry/nextjs': 7.43.0_next@12.1.6+react@17.0.2
@@ -4300,6 +4302,11 @@ packages:
       json-rpc-middleware-stream: 3.0.0
       pump: 3.0.0
       webextension-polyfill-ts: 0.25.0
+    dev: false
+
+  /@metamask/mobile-provider/2.1.0:
+    resolution: {integrity: sha512-VuVUIZ5jEQmLaU8SJC8692crxtNncsxyR9q5j1J6epyMHUU75WTtQdq7VSsu1ghkmP9NXNAz3inlWOGsbT8lLA==}
+    engines: {node: '>=12.0.0'}
     dev: false
 
   /@metamask/object-multiplex/1.2.0:
