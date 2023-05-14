@@ -31,7 +31,7 @@ const EARNIFI_ENDPOINT = 'https://notifications-api.vercel.app/api/v1/ens/subscr
 const EARNIFI_OUTLINK =
   'https://earni.fi/?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'
 
-const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
+const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$/i
 
 const calendarOptions = [
   {
