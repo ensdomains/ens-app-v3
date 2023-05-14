@@ -229,14 +229,19 @@ const Miscellaneous = ({
         setHasCreatedReminder(true)
         return
       }
-      setError('email', {
-        type: 'submitError',
-        message: 'Form submission failed. Please try again.',
-      })
+      if (response?.status === 400) {
+        const responseMessage = (await response.json())?.message
+        setError('email', {
+          type: 'submitError',
+          message: responseMessage || 'Submission failed. Please try again.',
+        })
+        return
+      }
+      throw new Error('Submission error')
     } catch (e) {
       setError('email', {
         type: 'submitError',
-        message: 'Form submission failed. Please try again.',
+        message: 'Submission failed. Please try again.',
       })
     }
     setTimeout(() => {
