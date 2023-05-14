@@ -335,6 +335,7 @@ importers:
       react-dom: ^17
       react-transition-state: ^1.1.4
       styled-components: ^5.3.3
+      ts-pattern: ^4.3.0
     dependencies:
       clsx: 1.2.1
       focus-visible: 5.2.0
@@ -343,6 +344,7 @@ importers:
       react-dom: 17.0.2_react@17.0.2
       react-transition-state: 1.1.5_sfoxds7t5ydpegc3knd667wn6m
       styled-components: 5.3.6_fane7jikarojcev26y27hpbhu4
+      ts-pattern: 4.3.0
 
 packages:
 
@@ -23847,6 +23849,10 @@ packages:
 
   /ts-pattern/4.2.2:
     resolution: {integrity: sha512-qzJMo2pbkUJWusRH5o8xR+xogn6RmvViyUgwBFTtRENLse470clCGjHDf6haWGZ1AOmk8XkEohUoBW8Uut6Scg==}
+    dev: false
+
+  /ts-pattern/4.3.0:
+    resolution: {integrity: sha512-pefrkcd4lmIVR0LA49Imjf9DYLK8vtWhqBPA3Ya1ir8xCW0O2yjL9dsCVvI7pCodLC5q7smNpEtDR2yVulQxOg==}
     dev: false
 
   /tsconfig-paths/3.14.1:
