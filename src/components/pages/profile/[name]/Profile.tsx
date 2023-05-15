@@ -8,7 +8,6 @@ import { getEncryptedLabelAmount } from '@ensdomains/ensjs/utils/labels'
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
-import { WrapperCallToAction } from '@app/components/pages/profile/[name]/tabs/WrapperCallToAction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -114,7 +113,6 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     error,
     errorTitle,
     profile,
-    ownerData,
     gracePeriodEndDate,
     expiryDate,
     normalisedName,
@@ -124,16 +122,8 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     basicIsCachedData,
     isWrapped,
     isLoading: detailsLoading,
-    canBeWrapped,
     wrapperData,
   } = nameDetails
-
-  const _canBeWrapped =
-    canBeWrapped &&
-    !!address &&
-    (ownerData?.ownershipLevel === 'registrar'
-      ? ownerData?.registrant === address
-      : ownerData?.owner === address)
 
   useProtectedRoute(
     '/',
@@ -221,11 +211,8 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     if (gracePeriodEndDate && gracePeriodEndDate < new Date()) {
       return <NameAvailableBanner {...{ normalisedName, expiryDate }} />
     }
-    if (_canBeWrapped) {
-      return <WrapperCallToAction name={normalisedName} />
-    }
     return undefined
-  }, [gracePeriodEndDate, normalisedName, _canBeWrapped, expiryDate])
+  }, [gracePeriodEndDate, normalisedName, expiryDate])
 
   return (
     <>
