@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { DropdownItem } from './Dropdown';
-export declare const ActionSheet: ({ isOpen, screenSize, items, setIsOpen, DropdownChild, }: {
+type Props = {
     isOpen: boolean;
     screenSize: number;
     items: DropdownItem[];
@@ -9,4 +9,7 @@ export declare const ActionSheet: ({ isOpen, screenSize, items, setIsOpen, Dropd
         setIsOpen: (isOpen: boolean) => void;
         item: React.ReactElement<React.PropsWithRef<any>>;
     }>;
-}) => JSX.Element;
+    cancelLabel?: string;
+};
+export declare const ActionSheet: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLDivElement>>;
+export {};

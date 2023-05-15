@@ -230,7 +230,7 @@ const Miscellaneous = ({
         return
       }
       if (response?.status === 400) {
-        const responseMessage = (await response.json())?.message
+        const responseMessage = ((await response.json()) as any)?.message
         setError('email', {
           type: 'submitError',
           message: responseMessage || 'Submission failed. Please try again.',

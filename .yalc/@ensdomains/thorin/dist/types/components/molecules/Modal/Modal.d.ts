@@ -12,9 +12,11 @@ type Props = {
     alignTop?: boolean;
     /** A callback fired on the render of children */
     renderCallback?: () => void;
+    /** if true, modal will remain centered to bottom of page */
+    mobileOnly?: boolean;
 } & NativeDivProps;
 export declare const Modal: {
-    ({ children, backdropSurface, onDismiss, open, alignTop, renderCallback, ...props }: Props): JSX.Element;
+    ({ children, backdropSurface, onDismiss, open, alignTop, renderCallback, mobileOnly, ...props }: Props): JSX.Element;
     displayName: string;
 };
 export {};

@@ -4,7 +4,7 @@ import { randomSecret } from './useRegistrationReducer'
 
 Object.defineProperty(window, 'crypto', {
   value: {
-    getRandomValues: getRandomValues,
+    getRandomValues,
   },
 })
 

@@ -47,8 +47,10 @@ type Props = {
     height?: string | number;
     /** The colour of the indicator */
     indicatorColor?: Colors;
-    /**  */
+    /** If true, displays an action sheet when in mobile */
     responsive?: boolean;
+    /** The label for the cancel button when showing an action sheet */
+    cancelLabel?: string;
 } & NativeDivProps;
 type PropsWithIsOpen = {
     isOpen: boolean;
@@ -60,7 +62,7 @@ type PropsWithoutIsOpen = {
 };
 type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
 export declare const Dropdown: {
-    ({ children, buttonProps, items, chevron, align, menuLabelAlign, width, mobileWidth, shortThrow, keepMenuOnTop, label, direction, isOpen: _isOpen, setIsOpen: _setIsOpen, indicatorColor, responsive, ...props }: Props & (PropsWithIsOpen | PropsWithoutIsOpen)): JSX.Element;
+    ({ children, buttonProps, items, chevron, align, menuLabelAlign, width, mobileWidth, shortThrow, keepMenuOnTop, label, direction, isOpen: _isOpen, setIsOpen: _setIsOpen, indicatorColor, responsive, cancelLabel, ...props }: Props & (PropsWithIsOpen | PropsWithoutIsOpen)): JSX.Element;
     displayName: string;
 };
 export {};
