@@ -63,12 +63,14 @@ const InnerHeading = styled.div(
 
 const Resolver = ({
   name,
+  isWrapped,
   canEditResolver,
   canEdit,
   resolverAddress,
   isCachedData,
 }: {
   name: string
+  isWrapped: boolean
   canEditResolver: boolean
   canEdit: boolean
   resolverAddress: string | undefined
@@ -91,11 +93,11 @@ const Resolver = ({
     if (resolverAddressIndex === -1) {
       return ['custom', 'greySecondary'] as const
     }
-    if (resolverAddressIndex === 0) {
+    if (resolverAddressIndex === 0 || (!isWrapped && resolverAddressIndex === 1)) {
       return ['latest', 'greenSecondary'] as const
     }
     return ['outdated', 'redSecondary'] as const
-  }, [resolverAddressIndex])
+  }, [resolverAddressIndex, isWrapped])
 
   return (
     <Container $isCached={isCachedData}>
