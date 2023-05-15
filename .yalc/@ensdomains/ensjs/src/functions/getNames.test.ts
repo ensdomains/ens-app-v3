@@ -9,12 +9,10 @@ import { ENSJSError } from '../utils/errors'
 let ensInstance: ENS
 let provider: ethers.providers.JsonRpcProvider
 let accounts: string[]
-let spyOnRequest: any
 
 beforeAll(async () => {
   ;({ ensInstance, provider } = await setup())
   accounts = await provider.listAccounts()
-  spyOnRequest = jest.spyOn(ensInstance.gqlInstance.client, 'request')
 })
 
 const testProperties = (obj: object, ...properties: string[]) =>
@@ -55,39 +53,6 @@ const domainLetterItems = [
   ...Array(11).fill('1'),
   '0',
 ]
-
-const makeName = () => ({
-  expiryDate: '2023-12-14T20:23:53.000Z',
-  registrationDate: '2022-12-14T20:23:53.000Z',
-  fuses: 0,
-  id: '0x6795e4e9369e4d0f3d4046bd0e5265ad34721b47164ec688461055c67779e235',
-  labelName: '0-dummy',
-  labelhash:
-    '0xcdb02d2e0fba3102e50c6fa2f06f253ae47f59df932141cf0a8e8729ed99783b',
-  name: '0-dummy.eth',
-  isMigrated: true,
-  parent: {
-    name: 'eth',
-    id: '0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae',
-  },
-  createdAt: ' 2022-12-14T20:23:53.000Z',
-  truncatedName: '0-dummy.eth',
-  type: 'registration',
-  domain: {
-    id: '0x25f67b3beed01f6f4f507fb9262c86ffaf97caf28274dbffb990b5ddd07ecf7c',
-    labelName: 'test',
-    labelhash:
-      '0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658',
-    name: 'test.wrapped-with-subnames.eth',
-    isMigrated: true,
-    parent: {
-      name: 'wrapped-with-subnames.eth',
-      id: '0xdf47b9278aaef2dfff71549176a6f05ec020bf188a378e40d6f8a01eca829f16',
-    },
-    createdAt: '1671055808',
-    registration: null,
-  },
-})
 
 describe('getNames', () => {
   let totalRegistrations: number = 0
@@ -428,18 +393,14 @@ describe('getNames', () => {
   })
 
   describe('error', () => {
-    beforeEach(() => {
-      spyOnRequest.mockImplementation(() => ({
-        _meta: {
-          hasIndexingErrors: true,
-          block: { number: 271 },
-        },
-        account: {
-          domains: [makeName()],
-          registrations: [makeName()],
-          wrappedDomains: [makeName()],
-        },
-      }))
+    beforeAll(() => {
+      process.env.NEXT_PUBLIC_ENSJS_DEBUG = 'on'
+      localStorage.setItem('ensjs-debug', 'ENSJSSubgraphError')
+    })
+
+    afterAll(() => {
+      process.env.NEXT_PUBLIC_ENSJS_DEBUG = ''
+      localStorage.removeItem('ensjs-debug')
     })
 
     it('should throw an ENSJSError for type "all"', async () => {
@@ -448,77 +409,12 @@ describe('getNames', () => {
           address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
           type: 'all',
         })
+        expect(true).toBeFalsy()
       } catch (e) {
-        if (e instanceof ENSJSError) {
-          const error = e as ENSJSError<Name[]>
-          expect(error.name).toBe('ENSJSSubgraphIndexingError')
-          expect(error.data?.length).toBeTruthy()
-          expect(error.timestamp).toBeTruthy()
-        }
-      }
-    })
-
-    it('should throw an ENSJSError for type "resolverAddress"', async () => {
-      try {
-        await ensInstance.getNames({
-          address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-          type: 'resolvedAddress',
-        })
-      } catch (e) {
-        if (e instanceof ENSJSError) {
-          const error = e as ENSJSError<Name[]>
-          expect(error.name).toBe('ENSJSSubgraphIndexingError')
-          expect(error.data?.length).toBeTruthy()
-          expect(error.timestamp).toBeTruthy()
-        }
-      }
-    })
-
-    it('should throw an ENSJSError for type "owner"', async () => {
-      try {
-        await ensInstance.getNames({
-          address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-          type: 'owner',
-        })
-      } catch (e) {
-        if (e instanceof ENSJSError) {
-          const error = e as ENSJSError<Name[]>
-          expect(error.name).toBe('ENSJSSubgraphIndexingError')
-          expect(error.data?.length).toBeTruthy()
-          expect(error.timestamp).toBeTruthy()
-        }
-      }
-    })
-
-    it('should throw an ENSJSError for type "wrappedOwner"', async () => {
-      try {
-        await ensInstance.getNames({
-          address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-          type: 'wrappedOwner',
-        })
-      } catch (e) {
-        if (e instanceof ENSJSError) {
-          const error = e as ENSJSError<Name[]>
-          expect(error.name).toBe('ENSJSSubgraphIndexingError')
-          expect(error.data?.length).toBeTruthy()
-          expect(error.timestamp).toBeTruthy()
-        }
-      }
-    })
-
-    it('should throw an ENSJSError for type "registrant"', async () => {
-      try {
-        await ensInstance.getNames({
-          address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-          type: 'registrant',
-        })
-      } catch (e) {
-        if (e instanceof ENSJSError) {
-          const error = e as ENSJSError<Name[]>
-          expect(error.name).toBe('ENSJSSubgraphIndexingError')
-          expect(error.data?.length).toBeTruthy()
-          expect(error.timestamp).toBeTruthy()
-        }
+        expect(e).toBeInstanceOf(ENSJSError)
+        const error = e as ENSJSError<Name[]>
+        expect(error.name).toBe('ENSJSSubgraphError')
+        expect(error.data?.length).toBe(0)
       }
     })
   })

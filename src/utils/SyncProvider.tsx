@@ -103,6 +103,14 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     previousTransactions.current = JSON.parse(JSON.stringify(transactions))
     const callbacksRef = Object.values(callbacks.current)
     updatedTransactions.forEach((transaction) => {
+      console.log('updated transaction', transaction)
+      if (transaction.status === 'confirmed' && transaction.action === 'registerName') {
+        const name = transaction.key?.match(/-(.*)-/)?.[1]
+        console.log('invalidating', name)
+        if (name) {
+          // queryClient.removeQueries(queryKeys.basicNameRoot(name))
+        }
+      }
       callbacksRef.forEach((callback) => callback(transaction))
     })
   }, [transactions])

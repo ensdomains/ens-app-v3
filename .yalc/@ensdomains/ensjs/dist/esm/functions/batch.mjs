@@ -33,26 +33,20 @@ var decode = async ({ multicallWrapper }, data, passthrough, ...items) => {
       if (result.status === "fulfilled") {
         return { ...acc, data: [...acc.data, result.value] };
       }
-      const error = result.reason;
-      if (error instanceof ENSJSError) {
-        return {
-          error: error.name,
-          timestamp: error.timestamp,
-          data: [...acc.data, error.data]
-        };
-      }
+      const error = result.reason instanceof ENSJSError ? result.reason : void 0;
+      const itemData = error?.data;
+      const itemErrors = error?.errors || [{ message: "unknown_error" }];
       return {
-        error: acc.error || "ENSJSUnknownError",
-        data: [...acc.data, void 0]
+        errors: [...acc.errors, ...itemErrors],
+        data: [...acc.data, itemData]
       };
     },
-    { data: [] }
+    { data: [], errors: [] }
   );
-  if (reducedResults.error)
+  if (reducedResults.errors.length)
     throw new ENSJSError({
-      name: reducedResults.error,
-      timestamp: reducedResults.timestamp,
-      data: reducedResults.data
+      data: reducedResults.data,
+      errors: reducedResults.errors
     });
   return reducedResults.data;
 };

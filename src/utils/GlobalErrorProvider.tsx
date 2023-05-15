@@ -5,34 +5,45 @@ import { useQueryClient } from 'wagmi'
 
 import { ENSJSErrorName } from '@ensdomains/ensjs/utils/errors'
 
-type GlobalErrorState = {
+import { useMetaData } from '@app/hooks/errors/useMetaData'
+
+export type GlobalErrorState = {
   errors: {
     [hash: string]: {
-      title: string
-      message: string
+      title?: string
+      message?: string
       key: QueryKey
       type: ENSJSErrorName | 'NetworkLatencyError' | string
       priority?: number
     }
   }
   activeHashes: string[]
+  meta: {
+    hasSubgraphError: boolean
+    hasIndexingErrors: boolean
+    timestamp: number
+  }
 }
 
-type GlobalErrorDispatch = Dispatch<any>
+export type GlobalErrorDispatch = Dispatch<any>
 
 const GlobalErrorStateContext = createContext<GlobalErrorState>({
   errors: {},
   activeHashes: [],
+  meta: {
+    hasSubgraphError: false,
+    hasIndexingErrors: false,
+    timestamp: 0,
+  },
 })
 
 const GlobalErrorDispatchContext = createContext<GlobalErrorDispatch>(() => {})
 
 type Action =
   | {
-      type: 'SET_INDEXING_ERROR'
+      type: 'SET_SUBGRAPH_ERROR'
       payload: {
         key: QueryKey
-        timestamp?: number
       }
     }
   | {
@@ -69,6 +80,10 @@ type Action =
         key: QueryKey
       }
     }
+  | {
+      type: 'SET_META'
+      payload: Partial<GlobalErrorState['meta']>
+    }
 
 export const GlobalErrorProvider = ({ children }: { children: React.ReactNode }) => {
   const { t } = useTranslation('common')
@@ -76,33 +91,22 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
 
   const reducer = (state: GlobalErrorState, action: Action) => {
     switch (action.type) {
-      case 'SET_INDEXING_ERROR': {
-        const { timestamp, key } = action.payload
+      case 'SET_SUBGRAPH_ERROR': {
+        const { key } = action.payload
         const hash = hashQueryKey(key)
-        const datetime = timestamp
-          ? new Date(timestamp * 1000).toLocaleDateString(undefined, {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: 'numeric',
-              second: 'numeric',
-            })
-          : undefined
         return {
           ...state,
           errors: {
             ...state.errors,
             [hash]: {
-              title: t('errors.indexingErrors.title'),
-              message: t('errors.indexingErrors.message', {
-                datetime,
-                context: datetime ? 'datetime' : undefined,
-              }),
               key,
-              type: 'ENSJSSubgraphIndexingError',
+              type: 'ENSJSSubgraphError',
               priority: 5,
             },
+          },
+          meta: {
+            ...state.meta,
+            hasSubgraphError: true,
           },
         }
       }
@@ -176,6 +180,15 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
           activeHashes: state.activeHashes.filter((h) => h !== hash),
         }
       }
+      case 'SET_META': {
+        return {
+          ...state,
+          meta: {
+            ...state.meta,
+            ...action.payload,
+          },
+        }
+      }
       default: {
         return state
       }
@@ -184,7 +197,14 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
   const [state, dispatch] = useReducer<Reducer<GlobalErrorState, Action>>(reducer, {
     errors: {},
     activeHashes: [],
+    meta: {
+      hasSubgraphError: true,
+      hasIndexingErrors: false,
+      timestamp: 0,
+    },
   })
+
+  useMetaData(state, dispatch)
 
   return (
     <GlobalErrorStateContext.Provider value={state}>

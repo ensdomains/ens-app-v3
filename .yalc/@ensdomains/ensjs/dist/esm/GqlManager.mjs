@@ -1,4 +1,5 @@
 // src/GqlManager.ts
+import { debugSubgraphError } from "./utils/errors.mjs";
 import { namehash } from "./utils/normalise.mjs";
 var generateSelection = (selection) => ({
   kind: "Field",
@@ -11,55 +12,6 @@ var generateSelection = (selection) => ({
   alias: void 0,
   selectionSet: void 0
 });
-var metaSelection = {
-  kind: "Field",
-  name: {
-    kind: "Name",
-    value: "_meta"
-  },
-  alias: void 0,
-  arguments: [],
-  directives: [],
-  selectionSet: {
-    kind: "SelectionSet",
-    selections: [
-      {
-        kind: "Field",
-        alias: void 0,
-        name: {
-          kind: "Name",
-          value: "hasIndexingErrors"
-        },
-        arguments: [],
-        directives: []
-      },
-      {
-        kind: "Field",
-        alias: void 0,
-        name: {
-          kind: "Name",
-          value: "block"
-        },
-        arguments: [],
-        directives: [],
-        selectionSet: {
-          kind: "SelectionSet",
-          selections: [
-            {
-              kind: "Field",
-              name: {
-                kind: "Name",
-                value: "number"
-              },
-              arguments: [],
-              directives: []
-            }
-          ]
-        }
-      }
-    ]
-  }
-};
 var enter = (node) => {
   let hasName = false;
   let hasId = false;
@@ -77,23 +29,13 @@ var enter = (node) => {
   }
 };
 var requestMiddleware = (visit, parse, print) => (request) => {
+  debugSubgraphError(request);
   const requestBody = JSON.parse(request.body);
   const rawQuery = requestBody.query;
   const parsedQuery = parse(rawQuery);
   const updatedQuery = visit(parsedQuery, {
     SelectionSet: {
       enter
-    },
-    OperationDefinition: {
-      enter: (node) => {
-        if (node.operation === "query") {
-          node.selectionSet.selections = [
-            metaSelection,
-            ...node.selectionSet.selections
-          ];
-        }
-        return node;
-      }
     }
   });
   return {
@@ -102,6 +44,8 @@ var requestMiddleware = (visit, parse, print) => (request) => {
   };
 };
 var responseMiddleware = (traverse) => (response) => {
+  if (response instanceof Error)
+    return response;
   traverse(response).forEach(function(responseItem) {
     if (responseItem instanceof Object && responseItem.name) {
       if (responseItem.name && responseItem.name.includes("[")) {

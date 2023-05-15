@@ -4,7 +4,6 @@ import type { JsonRpcProvider } from '@ethersproject/providers'
 import { useEffect, useState } from 'react'
 import { usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
 
-import { ENSJSError } from '@ensdomains/ensjs/src/utils/errors'
 import { Button } from '@ensdomains/thorin'
 
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
@@ -30,7 +29,17 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
     ),
   })
 
-type ErrorName = ENSJSError<any>['name'] | ''
+const useLocalStorageString = (key: string, defaultValue = '') => {
+  const [value, _setValue] = useState(defaultValue)
+  useEffect(() => {
+    _setValue(localStorage.getItem(key) || defaultValue)
+  }, [])
+  const setValue = (newValue: string) => {
+    localStorage.setItem(key, newValue)
+    _setValue(newValue)
+  }
+  return [value, setValue] as const
+}
 
 export const DevSection = () => {
   const provider: JsonRpcProvider = useProvider()
@@ -90,13 +99,8 @@ export const DevSection = () => {
     )
   }
 
-  const [ensjsError, setEnsjsError] = useState<ErrorName>('')
-  useEffect(() => {
-    if (typeof localStorage !== 'undefined') {
-      const value = (localStorage.getItem('ensjs-debug') || '') as ErrorName
-      setEnsjsError(value)
-    }
-  }, [])
+  const [ensjsError, setEnsjsError] = useLocalStorageString('ensjs-debug')
+  const [subgraphError, setSubgraphError] = useLocalStorageString('subgraph-debug')
 
   return (
     <SectionContainer title="Developer">
@@ -112,29 +116,30 @@ export const DevSection = () => {
       )}
       <DetailedSwitch
         title="ENSJS Subgraph Indexing Error"
-        checked={ensjsError === 'ENSJSSubgraphIndexingError'}
+        checked={
+          ensjsError === 'ENSJSSubgraphError' && subgraphError === 'ENSJSSubgraphIndexingError'
+        }
         onChange={(e) => {
-          const value = e.currentTarget.checked ? 'ENSJSSubgraphIndexingError' : ''
-          localStorage.setItem('ensjs-debug', value)
-          setEnsjsError(value)
+          setSubgraphError(e.currentTarget.checked ? 'ENSJSSubgraphIndexingError' : '')
+          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
         }}
       />
       <DetailedSwitch
         title="ENSJS Unknown Error"
-        checked={ensjsError === 'ENSJSUnknownError'}
+        checked={
+          ensjsError === 'ENSJSSubgraphError' && subgraphError !== 'ENSJSSubgraphIndexingError'
+        }
         onChange={(e) => {
-          const value = e.currentTarget.checked ? 'ENSJSUnknownError' : ''
-          localStorage.setItem('ensjs-debug', value)
-          setEnsjsError(value)
+          setSubgraphError('')
+          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
         }}
       />
       <DetailedSwitch
         title="Network Latency Error"
-        checked={ensjsError === 'ENSJSNetworkLatencyError'}
+        checked={ensjsError === 'ENSJSSubgraphLatency'}
         onChange={(e) => {
-          const value = e.currentTarget.checked ? 'ENSJSNetworkLatencyError' : ''
-          localStorage.setItem('ensjs-debug', value)
-          setEnsjsError(value)
+          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphLatency' : '')
+          setSubgraphError('')
         }}
       />
     </SectionContainer>

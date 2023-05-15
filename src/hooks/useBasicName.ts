@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useAccount, useQuery } from 'wagmi'
+import { useQuery } from 'wagmi'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 
@@ -13,7 +13,6 @@ import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 import { useGlobalError } from './errors/useGlobalError'
 import { usePccExpired } from './fuses/usePccExpired'
 import { useContractAddress } from './useContractAddress'
-import useRegistrationReducer from './useRegistrationReducer'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
@@ -58,18 +57,18 @@ type UseBasicNameOptions = {
 export const useBasicName = (name?: string | null, options: UseBasicNameOptions = {}) => {
   const { normalised = false, skipGraph = true } = options
   const ens = useEns()
-  const { address } = useAccount()
+  // const { address } = useAccount()
 
   const { name: _normalisedName, isValid, ...validation } = useValidate(name!, !name)
 
   const normalisedName = normalised ? name! : _normalisedName
 
-  const selected = { name: normalisedName, address: address! }
-  const { item } = useRegistrationReducer(selected)
+  // const selected = { name: normalisedName, address: address! }
+  // const { item } = useRegistrationReducer(selected)
 
   const { data: supportedTLD, isLoading: supportedTLDLoading } = useSupportsTLD(normalisedName)
 
-  const queryKey = useQueryKeys().basicName(normalisedName, item.stepIndex, skipGraph)
+  const queryKey = useQueryKeys().basicName(normalisedName, 0, skipGraph)
   const { watchedFunc: watchedGetBatchData } = useGlobalError<typeof getBatchData>({
     queryKey,
     func: getBatchData,

@@ -7,6 +7,7 @@ import type {
 } from 'graphql'
 import type { gql, GraphQLClient } from 'graphql-request'
 import type Traverse from 'traverse'
+import { debugSubgraphError } from './utils/errors'
 import { namehash } from './utils/normalise'
 
 const generateSelection = (selection: any) => ({
@@ -20,56 +21,6 @@ const generateSelection = (selection: any) => ({
   alias: undefined,
   selectionSet: undefined,
 })
-
-const metaSelection = {
-  kind: 'Field' as Kind.FIELD,
-  name: {
-    kind: 'Name' as Kind.NAME,
-    value: '_meta',
-  },
-  alias: undefined,
-  arguments: [],
-  directives: [],
-  selectionSet: {
-    kind: 'SelectionSet' as Kind.SELECTION_SET,
-    selections: [
-      {
-        kind: 'Field' as Kind.FIELD,
-        alias: undefined,
-        name: {
-          kind: 'Name' as Kind.NAME,
-          value: 'hasIndexingErrors',
-        },
-        arguments: [],
-        directives: [],
-      },
-      {
-        kind: 'Field' as Kind.FIELD,
-        alias: undefined,
-        name: {
-          kind: 'Name' as Kind.NAME,
-          value: 'block',
-        },
-        arguments: [],
-        directives: [],
-        selectionSet: {
-          kind: 'SelectionSet' as Kind.SELECTION_SET,
-          selections: [
-            {
-              kind: 'Field' as Kind.FIELD,
-              name: {
-                kind: 'Name' as Kind.NAME,
-                value: 'number',
-              },
-              arguments: [],
-              directives: [],
-            },
-          ],
-        },
-      },
-    ],
-  },
-}
 
 export const enter = (node: SelectionSetNode) => {
   let hasName = false
@@ -92,6 +43,9 @@ export const enter = (node: SelectionSetNode) => {
 export const requestMiddleware =
   (visit: typeof Visit, parse: typeof Parse, print: typeof Print) =>
   (request: any) => {
+    // Debug here because response middleware will resolve any error thrown
+    debugSubgraphError(request)
+
     const requestBody = JSON.parse(request.body)
     const rawQuery = requestBody.query
     const parsedQuery = parse(rawQuery)
@@ -99,17 +53,6 @@ export const requestMiddleware =
       // eslint-disable-next-line @typescript-eslint/naming-convention
       SelectionSet: {
         enter,
-      },
-      OperationDefinition: {
-        enter: (node) => {
-          if (node.operation === 'query') {
-            node.selectionSet.selections = [
-              metaSelection,
-              ...node.selectionSet.selections,
-            ]
-          }
-          return node
-        },
       },
     })
 
@@ -121,6 +64,9 @@ export const requestMiddleware =
 
 export const responseMiddleware =
   (traverse: typeof Traverse) => (response: any) => {
+    // If response is of type error, we do not need to further process it
+    if (response instanceof Error) return response
+
     // eslint-disable-next-line func-names
     traverse(response).forEach(function (responseItem: any) {
       if (responseItem instanceof Object && responseItem.name) {

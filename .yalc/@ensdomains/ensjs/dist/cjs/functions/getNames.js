@@ -100,7 +100,7 @@ const mapResolvedAddress = ({
     manager: domain.owner.id
   };
 };
-const getNames = async ({ gqlInstance, provider }, {
+const getNames = async ({ gqlInstance }, {
   address: _address,
   type,
   page,
@@ -384,11 +384,16 @@ const getNames = async ({ gqlInstance, provider }, {
       expiryDate: Math.floor(Date.now() / 1e3) - 90 * 24 * 60 * 60
     };
   }
-  const response = await client.request(finalQuery, queryVars);
+  const response = await client.request(finalQuery, queryVars).catch((e) => {
+    console.error(e);
+    throw new import_errors.ENSJSError({
+      errors: (0, import_errors.getClientErrors)(e),
+      data: []
+    });
+  }).finally(import_errors.debugSubgraphLatency);
   const account = response == null ? void 0 : response.account;
-  const meta = response == null ? void 0 : response._meta;
   if (type === "all") {
-    const data2 = [
+    const data = [
       ...(account == null ? void 0 : account.domains.map(mapDomain)) || [],
       ...(account == null ? void 0 : account.registrations.map(mapRegistration)) || [],
       ...(account == null ? void 0 : account.wrappedDomains.map(mapWrappedDomain).filter((d) => d)) || []
@@ -404,21 +409,17 @@ const getNames = async ({ gqlInstance, provider }, {
       }
       return a.createdAt.getTime() - b.createdAt.getTime();
     });
-    return (0, import_errors.returnOrThrow)(data2, meta, provider);
+    return data;
   }
   if (type === "resolvedAddress") {
-    const data2 = (response == null ? void 0 : response.domains.map(mapResolvedAddress).filter((d) => d)) || [];
-    return (0, import_errors.returnOrThrow)(data2, meta, provider);
+    return (response == null ? void 0 : response.domains.map(mapResolvedAddress).filter((d) => d)) || [];
   }
   if (type === "owner") {
-    const data2 = (account == null ? void 0 : account.domains.map(mapDomain)) || [];
-    return (0, import_errors.returnOrThrow)(data2, meta, provider);
+    return (account == null ? void 0 : account.domains.map(mapDomain)) || [];
   }
   if (type === "wrappedOwner") {
-    const data2 = (account == null ? void 0 : account.wrappedDomains.map(mapWrappedDomain).filter((d) => d)) || [];
-    return (0, import_errors.returnOrThrow)(data2, meta, provider);
+    return (account == null ? void 0 : account.wrappedDomains.map(mapWrappedDomain).filter((d) => d)) || [];
   }
-  const data = (account == null ? void 0 : account.registrations.map(mapRegistration)) || [];
-  return (0, import_errors.returnOrThrow)(data, meta, provider);
+  return (account == null ? void 0 : account.registrations.map(mapRegistration)) || [];
 };
 var getNames_default = getNames;

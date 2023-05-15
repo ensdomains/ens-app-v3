@@ -150,18 +150,18 @@
     "invalidAddress": "Invalid address",
     "addressRequired": "Address required",
     "indexingErrors": {
-      "title": "Network error",
-      "message": "The ENS app is currently unable to fetch the latest data. Please proceed with caution.",
-      "message_datetime": "The last time this data was updated was at {{datetime}}, please proceed with caution"
+      "title": "Error syncing data",
+      "message": "This data may be out of date. Please use caution.",
+      "message_datetime": "This data was last update at {{datetime}} and may be out of date. Please use caution"
     },
     "networkError": {
-      "title": "Network error",
-      "message": "The ENS app is currently experiencing network issues. Please proceed with caution.",
-      "blurb": "This button will be disabled until network issues are resolved."
+      "title": "Error syncing data",
+      "message": "This data may be out of date. Please use caution.",
+      "blurb": "This button is currently disabled due to data sync issues."
     },
     "networkLatency": {
-      "title": "Network slow",
-      "message": "The ENS app is currently experiencing network latency issues."
+      "title": "Slow data syncing",
+      "message": "The ENS app is experiencing slow downs due to network latency issues."
     }
   },
   "transaction": {

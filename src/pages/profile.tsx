@@ -26,7 +26,7 @@ export default function Page() {
   const nameDetails = useNameDetails(name, true)
   const { isLoading: detailsLoading, registrationStatus, gracePeriodEndDate } = nameDetails
 
-  const isLoading = detailsLoading || primaryLoading || initial
+  const isLoading = detailsLoading || primaryLoading || initial || !router.isReady
 
   if (isViewingExpired && gracePeriodEndDate && gracePeriodEndDate > new Date()) {
     router.push(`/profile/${name}`)

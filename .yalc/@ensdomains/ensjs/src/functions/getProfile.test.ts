@@ -294,35 +294,48 @@ describe('getProfile', () => {
 
   describe('errors', () => {
     beforeAll(() => {
-      process.env.NODE_ENV = 'development'
-      jest
-        .spyOn(provider, 'getBlock')
-        .mockImplementation(() =>
-          Promise.resolve({ timestamp: 1671169189 } as any),
-        )
+      process.env.NEXT_PUBLIC_ENSJS_DEBUG = 'on'
+      localStorage.setItem('ensjs-debug', 'ENSJSSubgraphError')
     })
 
     afterAll(() => {
-      process.env.NODE_ENV = 'test'
+      process.env.NEXT_PUBLIC_ENSJS_DEBUG = ''
       localStorage.removeItem('ensjs-debug')
     })
 
-    it('should throw an ensjs error with data and timestamp', async () => {
-      localStorage.setItem('ensjs-debug', 'ENSJSSubgraphIndexingError')
+    it('should throw an ensjs error with no data', async () => {
       try {
         await ensInstance.getProfile('with-profile.eth')
         expect(true).toBeFalsy()
       } catch (e) {
         expect(e).toBeInstanceOf(ENSJSError)
         const error = e as ENSJSError<any>
-        expect(error.name).toBe('ENSJSSubgraphIndexingError')
-        expect(error.data).not.toBeUndefined()
-        expect(error.timestamp).toBe(1671169189)
+        expect(error.name).toBe('ENSJSSubgraphError')
+        expect(error.data).toBeUndefined()
+      }
+    })
+
+    it('should throw error with data of fallback records', async () => {
+      try {
+        await ensInstance.getProfile(
+          '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
+          {
+            fallback: {
+              texts: ['description', 'url'],
+              coinTypes: ['ETC_LEGACY', '0'],
+            },
+          },
+        )
+        expect(true).toBeFalsy()
+      } catch (e) {
+        expect(e).toBeInstanceOf(ENSJSError)
+        const error = e as ENSJSError<any>
+        expect(error.name).toBe('ENSJSSubgraphError')
+        checkRecords(error.data, 2, 3)
       }
     })
 
     it('should not throw an ensjs error if skipGraph is true', async () => {
-      localStorage.setItem('ensjs-debug', 'ENSJSSubgraphIndexingError')
       try {
         const result = await ensInstance.getProfile('with-profile.eth', {
           skipGraph: true,
@@ -334,20 +347,6 @@ describe('getProfile', () => {
         checkRecords(result, 2, 3)
       } catch (e) {
         expect(true).toBeFalsy()
-      }
-    })
-
-    it('should throw an ensjs error without data if type is ENSJSUnknownError', async () => {
-      localStorage.setItem('ensjs-debug', 'ENSJSUnknownError')
-      try {
-        await ensInstance.getProfile('with-profile.eth')
-        expect(true).toBeFalsy()
-      } catch (e) {
-        expect(e).toBeInstanceOf(ENSJSError)
-        const error = e as ENSJSError<any>
-        expect(error.name).toBe('ENSJSUnknownError')
-        expect(error.data).toBeUndefined()
-        expect(error.timestamp).toBeUndefined()
       }
     })
   })

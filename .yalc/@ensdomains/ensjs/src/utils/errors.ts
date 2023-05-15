@@ -1,89 +1,55 @@
-export type ENSJSErrorName =
-  | 'ENSJSSubgraphIndexingError'
-  | 'ENSJSUnknownError'
-  | 'ENSJSNetworkLatencyError'
+import { ClientError } from 'graphql-request'
+import { GraphQLError } from 'graphql'
+
+export type ENSJSErrorName = 'ENSJSSubgraphError'
 
 export class ENSJSError<T> extends Error {
-  name: ENSJSErrorName
+  name = 'ENSJSSubgraphError'
 
-  data: T | undefined
+  errors?: GraphQLError[]
 
-  timestamp: number | undefined
+  data?: T
 
-  constructor({
-    name,
-    data,
-    timestamp,
-  }: {
-    name: ENSJSErrorName
-    data?: T
-    timestamp?: number
-  }) {
+  constructor({ data, errors }: { data?: T; errors?: GraphQLError[] }) {
     super()
-    this.name = name
     this.data = data
-    this.timestamp = timestamp
+    this.errors = errors
   }
 }
 
-export type GraphMeta = {
-  hasIndexingErrors: boolean
-  block: {
-    number: number
-  }
+export const getClientErrors = (e: unknown) => {
+  const error = e instanceof ClientError ? (e as ClientError) : undefined
+  return error?.response?.errors || [new GraphQLError('unknown_error')]
 }
 
-const debugFlow = async <T>(data: T, meta?: GraphMeta, provider?: any) => {
-  // If meta is undefined, then subgraph was not called and we dont need to simulate an error
-  if (!meta) return
-
-  const testName = (localStorage.getItem('ensjs-debug') || '') as ENSJSErrorName
-  if (testName === 'ENSJSSubgraphIndexingError') {
-    const blockNumber = meta?.block?.number
-    const block = blockNumber
-      ? await provider?.getBlock(blockNumber - 1)
-      : undefined
-    const timestamp = block?.timestamp
-    throw new ENSJSError<T>({
-      name: 'ENSJSSubgraphIndexingError',
-      data,
-      timestamp,
-    })
-  }
-
-  if (testName === 'ENSJSUnknownError') {
-    throw new ENSJSError<T>({
-      name: 'ENSJSUnknownError',
-    })
-  }
-
-  if (testName === 'ENSJSNetworkLatencyError') {
-    await new Promise((resolve) => {
-      setTimeout(() => resolve(true), 10000)
-    })
-  }
-}
-
-export const returnOrThrow = async <T>(
-  data: T,
-  meta?: GraphMeta,
-  provider?: any,
-) => {
+export const debugSubgraphError = (request: any) => {
   if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.NEXT_PUBLIC_ENSJS_DEBUG
+    process.env.NEXT_PUBLIC_ENSJS_DEBUG === 'on' &&
+    typeof localStorage !== 'undefined' &&
+    localStorage.getItem('ensjs-debug') === 'ENSJSSubgraphError'
   ) {
-    await debugFlow<T>(data, meta, provider)
+    if (/query getMeta/.test(request.body)) return
+    throw new ClientError(
+      {
+        data: undefined,
+        errors: [new GraphQLError('ensjs-debug')],
+        status: 200,
+      },
+      request,
+    )
   }
-  if (meta?.hasIndexingErrors && provider) {
-    const blockNumber = meta.block?.number
-    const block = await provider?.getBlock(blockNumber)
-    const timestamp = block?.timestamp
-    throw new ENSJSError({
-      name: 'ENSJSSubgraphIndexingError',
-      timestamp,
-      data,
+}
+
+export const debugSubgraphLatency = (): Promise<void> | undefined => {
+  if (
+    process.env.NEXT_PUBLIC_ENSJS_DEBUG === 'on' &&
+    typeof localStorage !== 'undefined' &&
+    localStorage.getItem('ensjs-debug') === 'ENSJSSubgraphLatency'
+  ) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, 10000)
     })
   }
-  return data
 }

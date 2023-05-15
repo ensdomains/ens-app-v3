@@ -105,8 +105,7 @@ const singleContractOwnerDecode = (data) => import_abi.defaultAbiCoder.decode(["
 const decode = async ({
   contracts,
   multicallWrapper,
-  gqlInstance,
-  provider
+  gqlInstance
 }, data, name, options = {}) => {
   var _a, _b, _c, _d, _e;
   if (!data)
@@ -143,20 +142,20 @@ const decode = async ({
   let registrarOwner = (_b = decodedData[2]) == null ? void 0 : _b[0];
   let baseReturnObject = {};
   if (isEth) {
-    let meta;
+    let graphErrors;
     if (is2LD) {
       if (!registrarOwner && !skipGraph) {
-        const graphRegistrantResult = await gqlInstance.client.request(
-          registrantQuery,
-          {
-            namehash: (0, import_normalise.namehash)(name)
-          }
-        );
-        registrarOwner = (_e = (_d = (_c = graphRegistrantResult.domain) == null ? void 0 : _c.registration) == null ? void 0 : _d.registrant) == null ? void 0 : _e.id;
+        const graphRegistrantResult = await gqlInstance.client.request(registrantQuery, {
+          namehash: (0, import_normalise.namehash)(name)
+        }).catch((e) => {
+          console.error(e);
+          graphErrors = (0, import_errors.getClientErrors)(e);
+          return void 0;
+        }).finally(import_errors.debugSubgraphLatency);
+        registrarOwner = (_e = (_d = (_c = graphRegistrantResult == null ? void 0 : graphRegistrantResult.domain) == null ? void 0 : _c.registration) == null ? void 0 : _d.registrant) == null ? void 0 : _e.id;
         baseReturnObject = {
           expired: true
         };
-        meta = graphRegistrantResult._meta;
       } else {
         baseReturnObject = {
           expired: !registrarOwner
@@ -164,72 +163,81 @@ const decode = async ({
       }
     }
     if (baseReturnObject.expired && (registryOwner == null ? void 0 : registryOwner.toLowerCase()) === nameWrapper.address.toLowerCase()) {
-      return (0, import_errors.returnOrThrow)(
-        {
-          owner: nameWrapperOwner,
-          ownershipLevel: "nameWrapper",
-          ...baseReturnObject
-        },
-        meta,
-        provider
-      );
+      const owner = {
+        owner: nameWrapperOwner,
+        ownershipLevel: "nameWrapper",
+        ...baseReturnObject
+      };
+      if (graphErrors) {
+        throw new import_errors.ENSJSError({
+          data: owner,
+          errors: graphErrors
+        });
+      }
+      return owner;
     }
     if ((registrarOwner == null ? void 0 : registrarOwner.toLowerCase()) === nameWrapper.address.toLowerCase()) {
-      return (0, import_errors.returnOrThrow)(
-        {
-          owner: nameWrapperOwner,
-          ownershipLevel: "nameWrapper",
-          ...baseReturnObject
-        },
-        meta,
-        provider
-      );
+      const owner = {
+        owner: nameWrapperOwner,
+        ownershipLevel: "nameWrapper",
+        ...baseReturnObject
+      };
+      if (graphErrors) {
+        throw new import_errors.ENSJSError({
+          data: owner,
+          errors: graphErrors
+        });
+      }
+      return owner;
     }
     if (registrarOwner) {
-      return (0, import_errors.returnOrThrow)(
-        {
-          registrant: registrarOwner,
-          owner: registryOwner,
-          ownershipLevel: "registrar",
-          ...baseReturnObject
-        },
-        meta,
-        provider
-      );
+      const owner = {
+        registrant: registrarOwner,
+        owner: registryOwner,
+        ownershipLevel: "registrar",
+        ...baseReturnObject
+      };
+      if (graphErrors) {
+        throw new import_errors.ENSJSError({
+          data: owner,
+          errors: graphErrors
+        });
+      }
+      return owner;
     }
     if ((0, import_bytes.hexStripZeros)(registryOwner) !== "0x") {
       if (labels.length === 2) {
-        return (0, import_errors.returnOrThrow)(
-          {
-            registrant: void 0,
-            owner: registryOwner,
-            ownershipLevel: "registrar",
-            expired: true
-          },
-          meta,
-          provider
-        );
+        const owner = {
+          registrant: void 0,
+          owner: registryOwner,
+          ownershipLevel: "registrar",
+          expired: true
+        };
+        if (graphErrors) {
+          throw new import_errors.ENSJSError({
+            data: owner,
+            errors: graphErrors
+          });
+        }
+        return owner;
       }
       if (registryOwner === nameWrapper.address && nameWrapperOwner && (0, import_bytes.hexStripZeros)(nameWrapperOwner) !== "0x") {
-        return (0, import_errors.returnOrThrow)(
-          {
-            owner: nameWrapperOwner,
-            ownershipLevel: "nameWrapper"
-          },
-          meta,
-          provider
-        );
+        return {
+          owner: nameWrapperOwner,
+          ownershipLevel: "nameWrapper"
+        };
       }
-      return (0, import_errors.returnOrThrow)(
-        {
-          owner: registryOwner,
-          ownershipLevel: "registry"
-        },
-        meta,
-        provider
-      );
+      return {
+        owner: registryOwner,
+        ownershipLevel: "registry"
+      };
     }
-    return (0, import_errors.returnOrThrow)(void 0, meta, provider);
+    if (graphErrors) {
+      throw new import_errors.ENSJSError({
+        errors: graphErrors
+      });
+    }
+    return void 0;
   }
   if (registryOwner === nameWrapper.address && nameWrapperOwner && (0, import_bytes.hexStripZeros)(nameWrapperOwner) !== "0x") {
     return {

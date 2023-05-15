@@ -104,7 +104,7 @@ const mapEvents = (eventArray, type) => eventArray.map(
     data: eventFormat[type][event.__typename](event)
   })
 );
-async function getHistory({ gqlInstance, provider }, name) {
+async function getHistory({ gqlInstance }, name) {
   var _a, _b;
   const { client } = gqlInstance;
   const query = gqlInstance.gql`
@@ -233,11 +233,14 @@ async function getHistory({ gqlInstance, provider }, name) {
   const is2ldEth = (0, import_validation.checkIsDotEth)(labels);
   const response = await client.request(query, {
     namehash: nameHash
-  });
+  }).catch((e) => {
+    throw new import_errors.ENSJSError({
+      errors: (0, import_errors.getClientErrors)(e)
+    });
+  }).finally(import_errors.debugSubgraphLatency);
   const domain = response == null ? void 0 : response.domain;
-  const meta = response == null ? void 0 : response._meta;
   if (!domain)
-    return (0, import_errors.returnOrThrow)(void 0, meta, provider);
+    return void 0;
   const domainEvents = domain.events || [];
   const resolverEvents = ((_a = domain.resolver) == null ? void 0 : _a.events) || [];
   const domainHistory = mapEvents(domainEvents, "Domain");
@@ -250,22 +253,14 @@ async function getHistory({ gqlInstance, provider }, name) {
   if (is2ldEth) {
     const registrationEvents = ((_b = domain.registration) == null ? void 0 : _b.events) || [];
     const registrationHistory = mapEvents(registrationEvents, "Registration");
-    return (0, import_errors.returnOrThrow)(
-      {
-        domain: domainHistory,
-        registration: registrationHistory,
-        resolver: resolverHistory
-      },
-      meta,
-      provider
-    );
-  }
-  return (0, import_errors.returnOrThrow)(
-    {
+    return {
       domain: domainHistory,
+      registration: registrationHistory,
       resolver: resolverHistory
-    },
-    meta,
-    provider
-  );
+    };
+  }
+  return {
+    domain: domainHistory,
+    resolver: resolverHistory
+  };
 }

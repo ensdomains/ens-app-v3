@@ -1,10 +1,14 @@
 // src/functions/getSubnames.ts
-import { returnOrThrow } from "../utils/errors.mjs";
+import {
+  ENSJSError,
+  getClientErrors,
+  debugSubgraphLatency
+} from "../utils/errors.mjs";
 import { truncateFormat } from "../utils/format.mjs";
 import { checkPCCBurned, decodeFuses } from "../utils/fuses.mjs";
 import { decryptName } from "../utils/labels.mjs";
 import { namehash } from "../utils/normalise.mjs";
-var largeQuery = async ({ gqlInstance, provider }, {
+var largeQuery = async ({ gqlInstance }, {
   name,
   pageSize = 10,
   orderDirection,
@@ -77,8 +81,15 @@ var largeQuery = async ({ gqlInstance, provider }, {
     orderDirection,
     search: search?.toLowerCase()
   };
-  const response = await client.request(finalQuery, queryVars);
-  const meta = response?._meta;
+  const response = await client.request(finalQuery, queryVars).catch((e) => {
+    throw new ENSJSError({
+      data: {
+        subnames: [],
+        subnameCount: 0
+      },
+      errors: getClientErrors(e)
+    });
+  }).finally(debugSubgraphLatency);
   const domain = response?.domain;
   const subdomains = domain.subdomains.map(
     ({ wrappedDomain, ...subname }) => {
@@ -104,14 +115,10 @@ var largeQuery = async ({ gqlInstance, provider }, {
       return obj;
     }
   );
-  return returnOrThrow(
-    {
-      subnames: subdomains,
-      subnameCount: domain.subdomainCount
-    },
-    meta,
-    provider
-  );
+  return {
+    subnames: subdomains,
+    subnameCount: domain.subdomainCount
+  };
 };
 var getSubnames = (injected, functionArgs) => {
   return largeQuery(injected, functionArgs);

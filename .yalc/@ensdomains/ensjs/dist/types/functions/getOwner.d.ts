@@ -14,6 +14,6 @@ declare const _default: {
         to: string;
         data: string;
     }>;
-    decode: ({ contracts, multicallWrapper, gqlInstance, provider, }: ENSArgs<"provider" | "contracts" | "gqlInstance" | "multicallWrapper">, data: string, name: string, options?: GetOwnerOptions) => Promise<Owner | undefined>;
+    decode: ({ contracts, multicallWrapper, gqlInstance, }: ENSArgs<"contracts" | "gqlInstance" | "multicallWrapper">, data: string, name: string, options?: GetOwnerOptions) => Promise<Owner | undefined>;
 };
 export default _default;

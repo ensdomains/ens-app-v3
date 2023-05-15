@@ -1,5 +1,9 @@
 import { ENSArgs } from '..'
-import { returnOrThrow } from '../utils/errors'
+import {
+  ENSJSError,
+  getClientErrors,
+  debugSubgraphLatency,
+} from '../utils/errors'
 import { truncateFormat } from '../utils/format'
 import { AllCurrentFuses, checkPCCBurned, decodeFuses } from '../utils/fuses'
 import { decryptName } from '../utils/labels'
@@ -48,7 +52,7 @@ type Params = {
 }
 
 const largeQuery = async (
-  { gqlInstance, provider }: ENSArgs<'gqlInstance' | 'provider'>,
+  { gqlInstance }: ENSArgs<'gqlInstance'>,
   {
     name,
     pageSize = 10,
@@ -133,8 +137,19 @@ const largeQuery = async (
     orderDirection,
     search: search?.toLowerCase(),
   }
-  const response = await client.request(finalQuery, queryVars)
-  const meta = response?._meta
+  const response = await client
+    .request(finalQuery, queryVars)
+    .catch((e) => {
+      throw new ENSJSError({
+        data: {
+          subnames: [],
+          subnameCount: 0,
+        },
+        errors: getClientErrors(e),
+      })
+    })
+    .finally(debugSubgraphLatency)
+
   const domain = response?.domain
   const subdomains = domain.subdomains.map(
     ({ wrappedDomain, ...subname }: Domain) => {
@@ -172,18 +187,14 @@ const largeQuery = async (
     },
   )
 
-  return returnOrThrow<ReturnData>(
-    {
-      subnames: subdomains as Subname[],
-      subnameCount: domain.subdomainCount,
-    },
-    meta,
-    provider,
-  )
+  return {
+    subnames: subdomains as Subname[],
+    subnameCount: domain.subdomainCount,
+  }
 }
 
 const getSubnames = (
-  injected: ENSArgs<'gqlInstance' | 'provider'>,
+  injected: ENSArgs<'gqlInstance'>,
   functionArgs: Params,
 ): Promise<ReturnData> => {
   return largeQuery(injected, functionArgs)

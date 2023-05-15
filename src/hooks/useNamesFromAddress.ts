@@ -71,7 +71,6 @@ export const useNamesFromAddress = ({
 
   const mergedData = useMemo(() => {
     if (!data) return []
-    console.log('data', data)
     const nameMap = data.reduce((map, curr) => {
       if (curr.id === '0x0000000000000000000000000000000000000000000000000000000000000000') {
         // eslint-disable-next-line no-param-reassign

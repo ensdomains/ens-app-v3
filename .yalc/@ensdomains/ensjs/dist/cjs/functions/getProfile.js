@@ -250,7 +250,7 @@ const getDataForName = async ({
 };
 const graphFetch = async ({ gqlInstance }, name, wantedRecords, resolverAddress, skipGraph = true) => {
   if (skipGraph)
-    return { meta: void 0, result: void 0 };
+    return { status: void 0, result: void 0 };
   const query = gqlInstance.gql`
     query getRecords($id: String!) {
       domain(id: $id) {
@@ -289,28 +289,35 @@ const graphFetch = async ({ gqlInstance }, name, wantedRecords, resolverAddress,
   const id = (0, import_normalise.namehash)(name);
   let domain;
   let resolverResponse;
-  let meta;
+  let graphErrors;
   if (!resolverAddress) {
-    const response = await client.request(query, { id });
+    const response = await client.request(query, { id }).catch((e) => {
+      graphErrors = (0, import_errors.getClientErrors)(e);
+      return void 0;
+    }).finally(import_errors.debugSubgraphLatency);
     domain = response == null ? void 0 : response.domain;
     resolverResponse = domain == null ? void 0 : domain.resolver;
-    meta = response == null ? void 0 : response._meta;
   } else {
     const resolverId = `${resolverAddress.toLowerCase()}-${id}`;
     const response = await client.request(customResolverQuery, {
       id,
       resolverId
-    });
+    }).catch((e) => {
+      graphErrors = (0, import_errors.getClientErrors)(e);
+      return void 0;
+    }).finally(import_errors.debugSubgraphLatency);
     resolverResponse = response == null ? void 0 : response.resolver;
     domain = response == null ? void 0 : response.domain;
-    meta = response == null ? void 0 : response._meta;
   }
   if (!domain)
-    return { meta };
+    return { errors: graphErrors };
   const { isMigrated, createdAt, name: decryptedName } = domain;
   const returnedRecords = {};
   if (!resolverResponse || !wantedRecords)
-    return { meta, result: { isMigrated, createdAt, decryptedName } };
+    return {
+      errors: graphErrors,
+      result: { isMigrated, createdAt, decryptedName }
+    };
   Object.keys(wantedRecords).forEach((key) => {
     const data = wantedRecords[key];
     if (typeof data === "boolean" && data) {
@@ -322,7 +329,7 @@ const graphFetch = async ({ gqlInstance }, name, wantedRecords, resolverAddress,
     }
   });
   return {
-    meta,
+    errors: graphErrors,
     result: {
       ...returnedRecords,
       decryptedName,
@@ -349,7 +356,7 @@ const getProfileFromName = async ({
     else
       usingOptions = { contentHash: true, texts: true, coinTypes: true };
   }
-  const { meta, result: graphResult } = await graphFetch(
+  const { errors, result: graphResult } = await graphFetch(
     { gqlInstance },
     name,
     usingOptions,
@@ -362,7 +369,7 @@ const getProfileFromName = async ({
   let result = null;
   if (!graphResult) {
     if (!fallback)
-      return { meta };
+      return { errors };
     result = await getDataForName(
       {
         contracts,
@@ -406,7 +413,7 @@ const getProfileFromName = async ({
   }
   if (!(result == null ? void 0 : result.resolverAddress))
     return {
-      meta,
+      errors,
       result: {
         isMigrated,
         createdAt,
@@ -414,7 +421,7 @@ const getProfileFromName = async ({
       }
     };
   return {
-    meta,
+    errors,
     result: {
       ...result,
       isMigrated,
@@ -446,7 +453,7 @@ const getProfileFromAddress = async ({
     return {
       result: { ...name, isMigrated: null, createdAt: null }
     };
-  const { meta, result } = await getProfileFromName(
+  const { errors, result } = await getProfileFromName(
     {
       contracts,
       gqlInstance,
@@ -460,10 +467,10 @@ const getProfileFromAddress = async ({
     options
   );
   if (!result || result.message)
-    return { meta };
+    return { errors };
   delete result.address;
   return {
-    meta,
+    errors,
     result: {
       ...result,
       ...name,
@@ -485,8 +492,7 @@ async function getProfile_default({
   _getContentHash,
   _getText,
   resolverMulticallWrapper,
-  multicallWrapper,
-  provider
+  multicallWrapper
 }, nameOrAddress, options) {
   if (options) {
     if (options.coinTypes && typeof options.coinTypes !== "boolean") {
@@ -498,7 +504,7 @@ async function getProfile_default({
   }
   const inputIsAddress = (0, import_address.isAddress)(nameOrAddress);
   if (inputIsAddress) {
-    const { meta: meta2, result: result2 } = await getProfileFromAddress(
+    const { errors: errors2, result: result2 } = await getProfileFromAddress(
       {
         contracts,
         gqlInstance,
@@ -512,9 +518,11 @@ async function getProfile_default({
       nameOrAddress,
       options
     );
-    return (0, import_errors.returnOrThrow)(result2, meta2, provider);
+    if (errors2)
+      throw new import_errors.ENSJSError({ data: result2, errors: errors2 });
+    return result2;
   }
-  const { meta, result } = await getProfileFromName(
+  const { errors, result } = await getProfileFromName(
     {
       contracts,
       gqlInstance,
@@ -527,5 +535,7 @@ async function getProfile_default({
     nameOrAddress,
     options
   );
-  return (0, import_errors.returnOrThrow)(result, meta, provider);
+  if (errors)
+    throw new import_errors.ENSJSError({ data: result, errors });
+  return result;
 }

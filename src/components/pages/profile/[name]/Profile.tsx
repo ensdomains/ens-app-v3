@@ -101,7 +101,7 @@ export const NameAvailableBanner = ({
   )
 }
 
-const ProfileContent = ({ isSelf, isLoading, name }: Props) => {
+const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const chainId = useChainId()
@@ -124,6 +124,8 @@ const ProfileContent = ({ isSelf, isLoading, name }: Props) => {
     isLoading: detailsLoading,
     wrapperData,
   } = nameDetails
+
+  const isLoading = _isLoading || detailsLoading
 
   useProtectedRoute(
     '/',
@@ -230,12 +232,7 @@ const ProfileContent = ({ isSelf, isLoading, name }: Props) => {
         <title>{titleContent}</title>
         <meta name="description" content={descriptionContent} />
       </Head>
-      <Content
-        noTitle
-        title={beautifiedName}
-        loading={isLoading || detailsLoading}
-        copyValue={beautifiedName}
-      >
+      <Content noTitle title={beautifiedName} loading={isLoading} copyValue={beautifiedName}>
         {{
           info: infoBanner,
           warning,

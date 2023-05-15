@@ -1,18 +1,14 @@
-export declare type ENSJSErrorName = 'ENSJSSubgraphIndexingError' | 'ENSJSUnknownError' | 'ENSJSNetworkLatencyError';
+import { GraphQLError } from 'graphql';
+export declare type ENSJSErrorName = 'ENSJSSubgraphError';
 export declare class ENSJSError<T> extends Error {
-    name: ENSJSErrorName;
-    data: T | undefined;
-    timestamp: number | undefined;
-    constructor({ name, data, timestamp, }: {
-        name: ENSJSErrorName;
+    name: string;
+    errors?: GraphQLError[];
+    data?: T;
+    constructor({ data, errors }: {
         data?: T;
-        timestamp?: number;
+        errors?: GraphQLError[];
     });
 }
-export declare type GraphMeta = {
-    hasIndexingErrors: boolean;
-    block: {
-        number: number;
-    };
-};
-export declare const returnOrThrow: <T>(data: T, meta?: GraphMeta, provider?: any) => Promise<T>;
+export declare const getClientErrors: (e: unknown) => GraphQLError[];
+export declare const debugSubgraphError: (request: any) => void;
+export declare const debugSubgraphLatency: () => Promise<void> | undefined;

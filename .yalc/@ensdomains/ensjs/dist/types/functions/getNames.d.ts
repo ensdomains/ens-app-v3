@@ -54,5 +54,5 @@ declare type ResolvedAddressParams = {
     pageSize?: never;
 };
 declare type Params = BaseParams & (RegistrantParams | OwnerParams | WrappedOwnerParams | AllParams | ResolvedAddressParams);
-declare const getNames: ({ gqlInstance, provider }: ENSArgs<'gqlInstance' | 'provider'>, { address: _address, type, page, pageSize, orderDirection, orderBy, }: Params) => Promise<Name[]>;
+declare const getNames: ({ gqlInstance }: ENSArgs<'gqlInstance'>, { address: _address, type, page, pageSize, orderDirection, orderBy, }: Params) => Promise<Name[]>;
 export default getNames;

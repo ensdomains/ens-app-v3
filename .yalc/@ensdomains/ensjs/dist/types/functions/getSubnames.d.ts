@@ -35,5 +35,5 @@ declare type Params = {
     lastSubnames?: Array<any>;
     search?: string;
 };
-declare const getSubnames: (injected: ENSArgs<'gqlInstance' | 'provider'>, functionArgs: Params) => Promise<ReturnData>;
+declare const getSubnames: (injected: ENSArgs<'gqlInstance'>, functionArgs: Params) => Promise<ReturnData>;
 export default getSubnames;

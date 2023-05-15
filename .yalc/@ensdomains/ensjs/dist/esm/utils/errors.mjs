@@ -1,61 +1,46 @@
 // src/utils/errors.ts
+import { ClientError } from "graphql-request";
+import { GraphQLError } from "graphql";
 var ENSJSError = class extends Error {
-  name;
+  name = "ENSJSSubgraphError";
+  errors;
   data;
-  timestamp;
-  constructor({
-    name,
-    data,
-    timestamp
-  }) {
+  constructor({ data, errors }) {
     super();
-    this.name = name;
     this.data = data;
-    this.timestamp = timestamp;
+    this.errors = errors;
   }
 };
-var debugFlow = async (data, meta, provider) => {
-  if (!meta)
-    return;
-  const testName = localStorage.getItem("ensjs-debug") || "";
-  if (testName === "ENSJSSubgraphIndexingError") {
-    const blockNumber = meta?.block?.number;
-    const block = blockNumber ? await provider?.getBlock(blockNumber - 1) : void 0;
-    const timestamp = block?.timestamp;
-    throw new ENSJSError({
-      name: "ENSJSSubgraphIndexingError",
-      data,
-      timestamp
-    });
-  }
-  if (testName === "ENSJSUnknownError") {
-    throw new ENSJSError({
-      name: "ENSJSUnknownError"
-    });
-  }
-  if (testName === "ENSJSNetworkLatencyError") {
-    await new Promise((resolve) => {
-      setTimeout(() => resolve(true), 1e4);
-    });
+var getClientErrors = (e) => {
+  const error = e instanceof ClientError ? e : void 0;
+  return error?.response?.errors || [new GraphQLError("unknown_error")];
+};
+var debugSubgraphError = (request) => {
+  if (process.env.NEXT_PUBLIC_ENSJS_DEBUG === "on" && typeof localStorage !== "undefined" && localStorage.getItem("ensjs-debug") === "ENSJSSubgraphError") {
+    if (/query getMeta/.test(request.body))
+      return;
+    throw new ClientError(
+      {
+        data: void 0,
+        errors: [new GraphQLError("ensjs-debug")],
+        status: 200
+      },
+      request
+    );
   }
 };
-var returnOrThrow = async (data, meta, provider) => {
-  if (true) {
-    await debugFlow(data, meta, provider);
-  }
-  if (meta?.hasIndexingErrors && provider) {
-    const blockNumber = meta.block?.number;
-    const block = await provider?.getBlock(blockNumber);
-    const timestamp = block?.timestamp;
-    throw new ENSJSError({
-      name: "ENSJSSubgraphIndexingError",
-      timestamp,
-      data
+var debugSubgraphLatency = () => {
+  if (process.env.NEXT_PUBLIC_ENSJS_DEBUG === "on" && typeof localStorage !== "undefined" && localStorage.getItem("ensjs-debug") === "ENSJSSubgraphLatency") {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 1e4);
     });
   }
-  return data;
 };
 export {
   ENSJSError,
-  returnOrThrow
+  debugSubgraphError,
+  debugSubgraphLatency,
+  getClientErrors
 };

@@ -161,8 +161,7 @@ var ENS = class {
       "multicallWrapper",
       "_getAddr",
       "_getContentHash",
-      "_getText",
-      "provider"
+      "_getText"
     ],
     "getProfile"
   );
@@ -178,7 +177,7 @@ var ENS = class {
   getWrapperData = this.generateRawFunction("getWrapperData", ["contracts"]);
   getHistory = this.generateFunction(
     "getHistory",
-    ["gqlInstance", "provider"],
+    ["gqlInstance"],
     "getHistory"
   );
   getContentHash = this.generateRawFunction("initialGetters", ["contracts", "universalWrapper"], "getContentHash");
@@ -215,7 +214,7 @@ var ENS = class {
   );
   getOwner = this.generateRawFunction(
     "initialGetters",
-    ["contracts", "multicallWrapper", "gqlInstance", "provider"],
+    ["contracts", "multicallWrapper", "gqlInstance"],
     "getOwner"
   );
   getExpiry = this.generateRawFunction(
@@ -225,12 +224,12 @@ var ENS = class {
   );
   getSubnames = this.generateFunction(
     "initialGetters",
-    ["gqlInstance", "provider"],
+    ["gqlInstance"],
     "getSubnames"
   );
   getNames = this.generateFunction(
     "initialGetters",
-    ["gqlInstance", "provider"],
+    ["gqlInstance"],
     "getNames"
   );
   getPrice = this.generateRawFunction(

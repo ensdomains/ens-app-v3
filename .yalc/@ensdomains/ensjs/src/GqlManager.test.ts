@@ -1,5 +1,6 @@
 import { parse, print, visit } from 'graphql'
 import traverse from 'traverse'
+import { ClientError } from 'graphql-request'
 
 import { requestMiddleware, responseMiddleware } from './GqlManager'
 import { namehash } from './utils/normalise'
@@ -168,6 +169,22 @@ query getNames($id: ID!, $expiryDate: Int) {
           '0xb54c7c79c89d571f1fbf4c67f524e336a04441eeee4d76f156e835da99a46ddb',
         ),
       )
+    })
+  })
+
+  describe('errors', () => {
+    beforeAll(() => {
+      process.env.NEXT_PUBLIC_ENSJS_DEBUG = 'on'
+      localStorage.setItem('ensjs-debug', 'ENSJSSubgraphError')
+    })
+
+    afterAll(() => {
+      process.env.NEXT_PUBLIC_ENSJS_DEBUG = ''
+      localStorage.removeItem('ensjs-debug')
+    })
+
+    it('should throw error when reqest middleware is run', async () => {
+      expect(requestMiddleware(visit, parse, print)).toThrow(ClientError)
     })
   })
 })

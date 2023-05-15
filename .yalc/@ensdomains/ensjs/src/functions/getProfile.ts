@@ -2,11 +2,16 @@ import { formatsByName } from '@ensdomains/address-encoder'
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { isAddress } from '@ethersproject/address'
 import { hexStripZeros, isBytesLike } from '@ethersproject/bytes'
+import { GraphQLError } from 'graphql'
 import { ENSArgs } from '..'
 import { decodeContenthash, DecodedContentHash } from '../utils/contentHash'
 import { hexEncodeName } from '../utils/hexEncodedName'
 import { namehash } from '../utils/normalise'
-import { GraphMeta, returnOrThrow } from '../utils/errors'
+import {
+  ENSJSError,
+  debugSubgraphLatency,
+  getClientErrors,
+} from '../utils/errors'
 
 type InternalProfileOptions = {
   contentHash?: boolean | string | DecodedContentHash
@@ -51,8 +56,8 @@ type ResolvedProfile = {
   reverseResolverAddress?: string
 }
 
-type ResolvedProfileWithMeta = {
-  meta?: GraphMeta
+type ResolvedProfileWithErrors = {
+  errors?: GraphQLError[]
   result?: ResolvedProfile
 }
 
@@ -367,7 +372,7 @@ const graphFetch = async (
   resolverAddress?: string,
   skipGraph = true,
 ) => {
-  if (skipGraph) return { meta: undefined, result: undefined }
+  if (skipGraph) return { status: undefined, result: undefined }
 
   const query = gqlInstance.gql`
     query getRecords($id: String!) {
@@ -411,31 +416,44 @@ const graphFetch = async (
 
   let domain: any
   let resolverResponse: any
-  let meta: GraphMeta | undefined
+  let graphErrors: GraphQLError[] | undefined
   if (!resolverAddress) {
-    const response = await client.request(query, { id })
+    const response = await client
+      .request(query, { id })
+      .catch((e: unknown) => {
+        graphErrors = getClientErrors(e)
+        return undefined
+      })
+      .finally(debugSubgraphLatency)
     domain = response?.domain
     resolverResponse = domain?.resolver
-    meta = response?._meta
   } else {
     const resolverId = `${resolverAddress.toLowerCase()}-${id}`
-    const response = await client.request(customResolverQuery, {
-      id,
-      resolverId,
-    })
+    const response = await client
+      .request(customResolverQuery, {
+        id,
+        resolverId,
+      })
+      .catch((e: unknown) => {
+        graphErrors = getClientErrors(e)
+        return undefined
+      })
+      .finally(debugSubgraphLatency)
     resolverResponse = response?.resolver
     domain = response?.domain
-    meta = response?._meta
   }
 
-  if (!domain) return { meta }
+  if (!domain) return { errors: graphErrors }
 
   const { isMigrated, createdAt, name: decryptedName } = domain
 
   const returnedRecords: ProfileResponse = {}
 
   if (!resolverResponse || !wantedRecords)
-    return { meta, result: { isMigrated, createdAt, decryptedName } }
+    return {
+      errors: graphErrors,
+      result: { isMigrated, createdAt, decryptedName },
+    }
 
   Object.keys(wantedRecords).forEach((key: string) => {
     const data = wantedRecords[key as keyof ProfileOptions]
@@ -449,7 +467,7 @@ const graphFetch = async (
   })
 
   return {
-    meta,
+    errors: graphErrors,
     result: {
       ...returnedRecords,
       decryptedName,
@@ -491,7 +509,7 @@ const getProfileFromName = async (
   >,
   name: string,
   options?: InputProfileOptions,
-): Promise<ResolvedProfileWithMeta> => {
+): Promise<ResolvedProfileWithErrors> => {
   const { resolverAddress, fallback, skipGraph, ..._options } = options || {}
   const optsLength = Object.keys(_options).length
   let usingOptions: InputProfileOptions | undefined
@@ -500,7 +518,7 @@ const getProfileFromName = async (
     else usingOptions = { contentHash: true, texts: true, coinTypes: true }
   }
 
-  const { meta, result: graphResult } = await graphFetch(
+  const { errors, result: graphResult } = await graphFetch(
     { gqlInstance },
     name,
     usingOptions,
@@ -513,7 +531,7 @@ const getProfileFromName = async (
   let decryptedName: string | null = null
   let result: Awaited<ReturnType<typeof getDataForName>> | null = null
   if (!graphResult) {
-    if (!fallback) return { meta }
+    if (!fallback) return { errors }
     result = await getDataForName(
       {
         contracts,
@@ -569,7 +587,7 @@ const getProfileFromName = async (
   }
   if (!result?.resolverAddress)
     return {
-      meta,
+      errors,
       result: {
         isMigrated,
         createdAt,
@@ -579,7 +597,7 @@ const getProfileFromName = async (
       },
     }
   return {
-    meta,
+    errors,
     result: {
       ...result,
       isMigrated,
@@ -612,7 +630,7 @@ const getProfileFromAddress = async (
   >,
   address: string,
   options?: InputProfileOptions,
-): Promise<ResolvedProfileWithMeta> => {
+): Promise<ResolvedProfileWithErrors> => {
   let name
   try {
     name = await getName(address)
@@ -624,7 +642,7 @@ const getProfileFromAddress = async (
     return {
       result: { ...name, isMigrated: null, createdAt: null },
     }
-  const { meta, result } = await getProfileFromName(
+  const { errors, result } = await getProfileFromName(
     {
       contracts,
       gqlInstance,
@@ -637,10 +655,10 @@ const getProfileFromAddress = async (
     name.name,
     options,
   )
-  if (!result || result.message) return { meta }
+  if (!result || result.message) return { errors }
   delete (result as any).address
   return {
-    meta,
+    errors,
     result: {
       ...result,
       ...name,
@@ -666,7 +684,6 @@ export default async function (
     _getText,
     resolverMulticallWrapper,
     multicallWrapper,
-    provider,
   }: ENSArgs<
     | 'contracts'
     | 'gqlInstance'
@@ -676,7 +693,6 @@ export default async function (
     | '_getContentHash'
     | 'resolverMulticallWrapper'
     | 'multicallWrapper'
-    | 'provider'
   >,
   nameOrAddress: string,
   options?: InputProfileOptions,
@@ -693,7 +709,7 @@ export default async function (
   const inputIsAddress = isAddress(nameOrAddress)
 
   if (inputIsAddress) {
-    const { meta, result } = await getProfileFromAddress(
+    const { errors, result } = await getProfileFromAddress(
       {
         contracts,
         gqlInstance,
@@ -707,10 +723,11 @@ export default async function (
       nameOrAddress,
       options,
     )
-    return returnOrThrow(result, meta, provider)
+    if (errors) throw new ENSJSError({ data: result, errors })
+    return result
   }
 
-  const { meta, result } = await getProfileFromName(
+  const { errors, result } = await getProfileFromName(
     {
       contracts,
       gqlInstance,
@@ -723,5 +740,6 @@ export default async function (
     nameOrAddress,
     options,
   )
-  return returnOrThrow(result, meta, provider)
+  if (errors) throw new ENSJSError({ data: result, errors })
+  return result
 }

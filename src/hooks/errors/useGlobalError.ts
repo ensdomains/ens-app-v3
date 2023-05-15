@@ -34,19 +34,14 @@ export const useGlobalError = <Func extends BaseFunc>({
         },
       })
     }
+
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-        timeoutRef.current = null
-      }
-      if (!skip) {
-        globalStateDispatch({
-          type: 'UNREGISTER_KEY',
-          payload: {
-            key: queryKey,
-          },
-        })
-      }
+      globalStateDispatch({
+        type: 'UNREGISTER_KEY',
+        payload: {
+          key: queryKey,
+        },
+      })
     }
     // Do not include queryKey in deps, otherwise it will could cause infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,8 +50,12 @@ export const useGlobalError = <Func extends BaseFunc>({
   const watchedFunc = useCallback(
     async (...args: Parameters<Func>): Promise<ReturnType<Func> | undefined> => {
       try {
+        console.log('watchedFunc', skip, queryKey)
         if (skip || typeof window === 'undefined') return await func(...args)
 
+        // useQuery may call a function twice at the same time in certain cases, such as when cache is
+        // removed/invalidate or keys change. We only follow the latest call and cancel the previous one.
+        if (timeoutRef.current !== null) clearTimeout(timeoutRef.current)
         timeoutRef.current = window.setTimeout(() => {
           globalStateDispatch({
             type: 'SET_ERROR',
@@ -93,12 +92,11 @@ export const useGlobalError = <Func extends BaseFunc>({
         timeoutRef.current = null
 
         const error = e as ENSJSError<Awaited<ReturnType<Func>>>
-        if (error instanceof ENSJSError && error.name === 'ENSJSSubgraphIndexingError') {
+        if (error instanceof ENSJSError && error.name === 'ENSJSSubgraphError') {
           globalStateDispatch({
-            type: 'SET_INDEXING_ERROR',
+            type: 'SET_SUBGRAPH_ERROR',
             payload: {
               key: queryKey,
-              timestamp: error.timestamp,
             },
           })
           return error.data

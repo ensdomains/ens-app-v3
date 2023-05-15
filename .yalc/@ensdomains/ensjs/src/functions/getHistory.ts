@@ -2,7 +2,11 @@ import { formatsByCoinType } from '@ensdomains/address-encoder'
 import { hexStripZeros } from '@ethersproject/bytes'
 import { ENSArgs } from '..'
 import { decodeContenthash } from '../utils/contentHash'
-import { returnOrThrow } from '../utils/errors'
+import {
+  debugSubgraphLatency,
+  ENSJSError,
+  getClientErrors,
+} from '../utils/errors'
 import { namehash } from '../utils/normalise'
 import {
   AbiChanged,
@@ -158,7 +162,7 @@ export type ReturnData = {
 }
 
 export async function getHistory(
-  { gqlInstance, provider }: ENSArgs<'gqlInstance' | 'provider'>,
+  { gqlInstance }: ENSArgs<'gqlInstance'>,
   name: string,
 ) {
   const { client } = gqlInstance
@@ -288,13 +292,20 @@ export async function getHistory(
   const labels = name.split('.')
   const is2ldEth = checkIsDotEth(labels)
 
-  const response = await client.request(query, {
-    namehash: nameHash,
-  })
-  const domain = response?.domain
-  const meta = response?._meta
+  const response = await client
+    .request(query, {
+      namehash: nameHash,
+    })
+    .catch((e: unknown) => {
+      throw new ENSJSError({
+        errors: getClientErrors(e),
+      })
+    })
+    .finally(debugSubgraphLatency)
 
-  if (!domain) return returnOrThrow(undefined, meta, provider)
+  const domain = response?.domain
+
+  if (!domain) return undefined
 
   const domainEvents = domain.events || []
   const resolverEvents = domain.resolver?.events || []
@@ -311,23 +322,15 @@ export async function getHistory(
   if (is2ldEth) {
     const registrationEvents = domain.registration?.events || []
     const registrationHistory = mapEvents(registrationEvents, 'Registration')
-    return returnOrThrow<ReturnData>(
-      {
-        domain: domainHistory,
-        registration: registrationHistory,
-        resolver: resolverHistory,
-      },
-      meta,
-      provider,
-    )
+    return {
+      domain: domainHistory,
+      registration: registrationHistory,
+      resolver: resolverHistory,
+    }
   }
 
-  return returnOrThrow<ReturnData>(
-    {
-      domain: domainHistory,
-      resolver: resolverHistory,
-    },
-    meta,
-    provider,
-  )
+  return {
+    domain: domainHistory,
+    resolver: resolverHistory,
+  }
 }

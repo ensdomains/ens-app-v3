@@ -19,61 +19,46 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var errors_exports = {};
 __export(errors_exports, {
   ENSJSError: () => ENSJSError,
-  returnOrThrow: () => returnOrThrow
+  debugSubgraphError: () => debugSubgraphError,
+  debugSubgraphLatency: () => debugSubgraphLatency,
+  getClientErrors: () => getClientErrors
 });
 module.exports = __toCommonJS(errors_exports);
+var import_graphql_request = require("graphql-request");
+var import_graphql = require("graphql");
 class ENSJSError extends Error {
-  constructor({
-    name,
-    data,
-    timestamp
-  }) {
+  constructor({ data, errors }) {
     super();
-    this.name = name;
+    this.name = "ENSJSSubgraphError";
     this.data = data;
-    this.timestamp = timestamp;
+    this.errors = errors;
   }
 }
-const debugFlow = async (data, meta, provider) => {
+const getClientErrors = (e) => {
   var _a;
-  if (!meta)
-    return;
-  const testName = localStorage.getItem("ensjs-debug") || "";
-  if (testName === "ENSJSSubgraphIndexingError") {
-    const blockNumber = (_a = meta == null ? void 0 : meta.block) == null ? void 0 : _a.number;
-    const block = blockNumber ? await (provider == null ? void 0 : provider.getBlock(blockNumber - 1)) : void 0;
-    const timestamp = block == null ? void 0 : block.timestamp;
-    throw new ENSJSError({
-      name: "ENSJSSubgraphIndexingError",
-      data,
-      timestamp
-    });
-  }
-  if (testName === "ENSJSUnknownError") {
-    throw new ENSJSError({
-      name: "ENSJSUnknownError"
-    });
-  }
-  if (testName === "ENSJSNetworkLatencyError") {
-    await new Promise((resolve) => {
-      setTimeout(() => resolve(true), 1e4);
-    });
+  const error = e instanceof import_graphql_request.ClientError ? e : void 0;
+  return ((_a = error == null ? void 0 : error.response) == null ? void 0 : _a.errors) || [new import_graphql.GraphQLError("unknown_error")];
+};
+const debugSubgraphError = (request) => {
+  if (process.env.NEXT_PUBLIC_ENSJS_DEBUG === "on" && typeof localStorage !== "undefined" && localStorage.getItem("ensjs-debug") === "ENSJSSubgraphError") {
+    if (/query getMeta/.test(request.body))
+      return;
+    throw new import_graphql_request.ClientError(
+      {
+        data: void 0,
+        errors: [new import_graphql.GraphQLError("ensjs-debug")],
+        status: 200
+      },
+      request
+    );
   }
 };
-const returnOrThrow = async (data, meta, provider) => {
-  var _a;
-  if (true) {
-    await debugFlow(data, meta, provider);
-  }
-  if ((meta == null ? void 0 : meta.hasIndexingErrors) && provider) {
-    const blockNumber = (_a = meta.block) == null ? void 0 : _a.number;
-    const block = await (provider == null ? void 0 : provider.getBlock(blockNumber));
-    const timestamp = block == null ? void 0 : block.timestamp;
-    throw new ENSJSError({
-      name: "ENSJSSubgraphIndexingError",
-      timestamp,
-      data
+const debugSubgraphLatency = () => {
+  if (process.env.NEXT_PUBLIC_ENSJS_DEBUG === "on" && typeof localStorage !== "undefined" && localStorage.getItem("ensjs-debug") === "ENSJSSubgraphLatency") {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 1e4);
     });
   }
-  return data;
 };

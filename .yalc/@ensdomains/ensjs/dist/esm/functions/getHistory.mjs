@@ -2,7 +2,11 @@
 import { formatsByCoinType } from "@ensdomains/address-encoder";
 import { hexStripZeros } from "@ethersproject/bytes";
 import { decodeContenthash } from "../utils/contentHash.mjs";
-import { returnOrThrow } from "../utils/errors.mjs";
+import {
+  debugSubgraphLatency,
+  ENSJSError,
+  getClientErrors
+} from "../utils/errors.mjs";
 import { namehash } from "../utils/normalise.mjs";
 import { checkIsDotEth } from "../utils/validation.mjs";
 var eventFormat = {
@@ -82,7 +86,7 @@ var mapEvents = (eventArray, type) => eventArray.map(
     data: eventFormat[type][event.__typename](event)
   })
 );
-async function getHistory({ gqlInstance, provider }, name) {
+async function getHistory({ gqlInstance }, name) {
   const { client } = gqlInstance;
   const query = gqlInstance.gql`
       query getHistory($namehash: String!) {
@@ -210,11 +214,14 @@ async function getHistory({ gqlInstance, provider }, name) {
   const is2ldEth = checkIsDotEth(labels);
   const response = await client.request(query, {
     namehash: nameHash
-  });
+  }).catch((e) => {
+    throw new ENSJSError({
+      errors: getClientErrors(e)
+    });
+  }).finally(debugSubgraphLatency);
   const domain = response?.domain;
-  const meta = response?._meta;
   if (!domain)
-    return returnOrThrow(void 0, meta, provider);
+    return void 0;
   const domainEvents = domain.events || [];
   const resolverEvents = domain.resolver?.events || [];
   const domainHistory = mapEvents(domainEvents, "Domain");
@@ -227,24 +234,16 @@ async function getHistory({ gqlInstance, provider }, name) {
   if (is2ldEth) {
     const registrationEvents = domain.registration?.events || [];
     const registrationHistory = mapEvents(registrationEvents, "Registration");
-    return returnOrThrow(
-      {
-        domain: domainHistory,
-        registration: registrationHistory,
-        resolver: resolverHistory
-      },
-      meta,
-      provider
-    );
-  }
-  return returnOrThrow(
-    {
+    return {
       domain: domainHistory,
+      registration: registrationHistory,
       resolver: resolverHistory
-    },
-    meta,
-    provider
-  );
+    };
+  }
+  return {
+    domain: domainHistory,
+    resolver: resolverHistory
+  };
 }
 export {
   getHistory
