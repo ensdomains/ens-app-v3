@@ -1,3 +1,4 @@
+// @ts-expect-error
 import getRandomValues from 'polyfill-crypto.getrandomvalues'
 
 import { randomSecret } from './useRegistrationReducer'

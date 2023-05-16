@@ -131,7 +131,8 @@
     "send": "Send",
     "transfer": "Transfer",
     "sendManager": "Send Manager",
-    "sendOwner": "Send Owner"
+    "sendOwner": "Send Owner",
+    "renew": "Renew {{name}}"
   },
   "address": {
     "label": "Address",

@@ -195,12 +195,12 @@ const Miscellaneous = ({
 
   const makeEvent: () => CalendarEvent = useCallback(
     () => ({
-      title: `Renew ${name}`,
+      title: t('name.renew', { name }),
       start: expiryDate,
       duration: [10, 'minute'],
       url: window.location.href,
     }),
-    [name, expiryDate],
+    [name, expiryDate, t],
   )
 
   const {
@@ -233,7 +233,7 @@ const Miscellaneous = ({
         const responseMessage = ((await response.json()) as any)?.message
         setError('email', {
           type: 'submitError',
-          message: responseMessage || 'Submission failed. Please try again.',
+          message: responseMessage || t('tabs.more.misc.earnfi.submitError', { ns: 'profile' }),
         })
         return
       }
@@ -241,7 +241,7 @@ const Miscellaneous = ({
     } catch (e) {
       setError('email', {
         type: 'submitError',
-        message: 'Submission failed. Please try again.',
+        message: t('tabs.more.misc.earnfi.submitError', { ns: 'profile' }),
       })
     }
     setTimeout(() => {
