@@ -20,7 +20,6 @@ type Variables = {
 }
 
 const subscribeToEarnifi = async (params: Variables): Promise<void> => {
-  console.log('params', params)
   const response = await fetch(EARNIFI_ENDPOINT, {
     method: 'POST',
     headers: {
