@@ -3,9 +3,9 @@ import { acceptMetamaskAccess } from '../../setup'
 const accountOneShort = '0xf39...92266'
 
 describe('Send Flow', () => {
-    before(() => {
-      acceptMetamaskAccess(2, true)
-    })
+  before(() => {
+    acceptMetamaskAccess(2, true)
+  })
 
   describe('Unwrapped subnames', () => {
     it('Should allow unwrapped subname to be sent by owner (setOwner)', () => {
@@ -41,7 +41,7 @@ describe('Send Flow', () => {
     it('should NOT show send button when subname is wrapped and parent is unwrapped', () => {
       cy.visit('/sub.test123.eth')
       cy.findByText('More').click({ force: true })
-      cy.findByTestId('wrapper-cta-button').click()
+      cy.findByTestId('wrap-name-btn').click()
       cy.findByTestId('transaction-modal-inner').should('be.visible')
       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
       cy.findByTestId('transaction-modal-confirm-button').click()
@@ -203,8 +203,6 @@ describe('Send Flow', () => {
       cy.findByTestId('transaction-modal-complete-button').click()
       cy.wait(10000)
       cy.findByTestId('owner-button-name-name.owner').should('have.text', '0xf39...92266')
-
-      
     })
   })
 })
