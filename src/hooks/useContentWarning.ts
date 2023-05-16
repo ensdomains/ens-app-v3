@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next'
 import type { ContentWarning } from '@app/layouts/Content'
 import { useGlobalErrorState } from '@app/utils/GlobalErrorProvider'
 
-export const useContentWarning = (otherErrors: ContentWarning[] = []) => {
+export const useContentWarning = (
+  otherErrors: ContentWarning[] = [],
+): ContentWarning | undefined => {
   const { t } = useTranslation('common')
   const globalState = useGlobalErrorState()
 
@@ -53,7 +55,7 @@ export const useContentWarning = (otherErrors: ContentWarning[] = []) => {
         type: 'warning',
         title: activeErrors[0].title,
         message: activeErrors[0].message,
-      }
+      } as ContentWarning
     }
 
     return undefined
