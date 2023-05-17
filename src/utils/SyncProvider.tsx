@@ -110,7 +110,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         const name = transaction.key?.match(/-(.*)-/)?.[1]
         console.log('invalidating', name)
         if (name) {
-          queryClient.removeQueries(queryKeys.basicNameRoot(name))
+          queryClient.invalidateQueries(queryKeys.basicNameRoot(name))
         }
       }
       callbacksRef.forEach((callback) => callback(transaction))
