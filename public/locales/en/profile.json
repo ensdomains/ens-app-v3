@@ -256,7 +256,21 @@
       },
       "misc": {
         "registered": "Registered",
-        "expires": "Expires"
+        "expires": "Expires",
+        "earnfi": {
+          "title": "Earni.fi Reminders",
+          "enterEmail": "Receive <a>Earni.fi</a> Reminders through Email, PUSH, XMTP, Blockscan Chat, and Mailchain.",
+          "emailConfirmation": "You're almost done. Please check your email to confirm your subscription.",
+          "submitError": "Submission failed. Please try again."
+        },
+        "reminderOptions": {
+          "google": "Google calendar",
+          "outlook": "Outlook calendar",
+          "office365": "Office 365 calendar",
+          "yahoo": "Yahoo calendar",
+          "ical": "iCal download (.ics)",
+          "earnifi": "Earni.fi Reminders"
+        }
       }
     }
   },

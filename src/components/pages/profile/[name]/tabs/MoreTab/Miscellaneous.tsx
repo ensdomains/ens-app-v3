@@ -1,5 +1,5 @@
 import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-link'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -17,31 +17,32 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { formatDateTime, formatExpiry, makeEtherscanLink } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../TabWrapper'
+import { EarnifiDialog } from './EarnifiDialog'
 
 const calendarOptions = [
   {
     value: 'google',
-    label: 'Google',
+    label: 'tabs.more.misc.reminderOptions.google',
     function: google,
   },
   {
     value: 'outlook',
-    label: 'Outlook',
+    label: 'tabs.more.misc.reminderOptions.outlook',
     function: outlook,
   },
   {
     value: 'office365',
-    label: 'Office 365',
+    label: 'tabs.more.misc.reminderOptions.office365',
     function: office365,
   },
   {
     value: 'yahoo',
-    label: 'Yahoo',
+    label: 'tabs.more.misc.reminderOptions.yahoo',
     function: yahoo,
   },
   {
     value: 'ics',
-    label: 'iCal',
+    label: 'tabs.more.misc.reminderOptions.ical',
     function: ics,
   },
 ]
@@ -97,6 +98,10 @@ const DateLayout = styled.div(
       color: ${theme.colors.textTertiary};
       font-weight: ${theme.fontWeights.normal};
       font-size: ${theme.fontSizes.small};
+    }
+
+    #remind-me-button {
+      cursor: pointer;
     }
 
     #remind-me-button,
@@ -164,71 +169,89 @@ const Miscellaneous = ({
 
   const makeEvent: () => CalendarEvent = useCallback(
     () => ({
-      title: `Renew ${name}`,
+      title: t('name.renew', { name }),
       start: expiryDate,
       duration: [10, 'minute'],
       url: window.location.href,
     }),
-    [name, expiryDate],
+    [name, expiryDate, t],
   )
+
+  const [showEarnifiDialog, setShowEarnifiDialog] = useState(false)
 
   if (!expiryDate) return null
 
   return (
-    <MiscellaneousContainer $isCached={isCachedData || registrationCachedData}>
-      <DatesContainer>
-        {registrationData && (
+    <>
+      <EarnifiDialog
+        name={name}
+        open={showEarnifiDialog}
+        onDismiss={() => setShowEarnifiDialog(false)}
+      />
+      <MiscellaneousContainer $isCached={isCachedData || registrationCachedData}>
+        <DatesContainer>
+          {registrationData && (
+            <DateLayout>
+              <Typography>{t('name.registered')}</Typography>
+              <Typography>{formatExpiry(registrationData.registrationDate)}</Typography>
+              <Typography>{formatDateTime(registrationData.registrationDate)}</Typography>
+              <a
+                target="_blank"
+                href={makeEtherscanLink(registrationData.transactionHash, chainName)}
+                rel="noreferrer"
+                data-testid="etherscan-registration-link"
+              >
+                {t('action.view')}
+                <OutlinkSVG />
+              </a>
+            </DateLayout>
+          )}
           <DateLayout>
-            <Typography>{t('name.registered')}</Typography>
-            <Typography>{formatExpiry(registrationData.registrationDate)}</Typography>
-            <Typography>{formatDateTime(registrationData.registrationDate)}</Typography>
-            <a
-              target="_blank"
-              href={makeEtherscanLink(registrationData.transactionHash, chainName)}
-              rel="noreferrer"
-              data-testid="etherscan-registration-link"
+            <Typography>{t('name.expires')}</Typography>
+            <Typography data-testid="expiry-data">{formatExpiry(expiryDate)}</Typography>
+            <Typography>{formatDateTime(expiryDate)}</Typography>
+            <Dropdown
+              shortThrow
+              keepMenuOnTop
+              width={220}
+              items={[
+                {
+                  value: 'earnifi',
+                  label: t('tabs.more.misc.reminderOptions.earnifi', { ns: 'profile' }),
+                  onClick: () => {
+                    setShowEarnifiDialog(true)
+                  },
+                },
+                ...calendarOptions.map((option) => ({
+                  label: t(option.label, { ns: 'profile' }),
+                  onClick: () => window.open(option.function(makeEvent()), '_blank'),
+                })),
+              ]}
             >
-              {t('action.view')}
-              <OutlinkSVG />
-            </a>
+              <button id="remind-me-button" type="button">
+                {t('action.remindMe')}
+                <CalendarSVG />
+              </button>
+            </Dropdown>
           </DateLayout>
-        )}
-        <DateLayout>
-          <Typography>{t('name.expires')}</Typography>
-          <Typography data-testid="expiry-data">{formatExpiry(expiryDate)}</Typography>
-          <Typography>{formatDateTime(expiryDate)}</Typography>
-          <Dropdown
-            shortThrow
-            keepMenuOnTop
-            items={calendarOptions.map((opt) => ({
-              label: opt.label,
-              onClick: () => window.open(opt.function(makeEvent()), '_blank'),
-              color: 'text',
-            }))}
-          >
-            <button id="remind-me-button" type="button">
-              {t('action.remindMe')}
-              <CalendarSVG />
-            </button>
-          </Dropdown>
-        </DateLayout>
-        {canExtend && (
-          <ButtonContainer>
-            <Button
-              onClick={() => {
-                showExtendNamesInput(`extend-names-${name}`, {
-                  names: [name],
-                  isSelf: canEdit,
-                })
-              }}
-              prefix={<FastForwardIcon as={FastForwardSVG} />}
-            >
-              {t('action.extend')}
-            </Button>
-          </ButtonContainer>
-        )}
-      </DatesContainer>
-    </MiscellaneousContainer>
+          {canExtend && (
+            <ButtonContainer>
+              <Button
+                onClick={() => {
+                  showExtendNamesInput(`extend-names-${name}`, {
+                    names: [name],
+                    isSelf: canEdit,
+                  })
+                }}
+                prefix={<FastForwardIcon as={FastForwardSVG} />}
+              >
+                {t('action.extend')}
+              </Button>
+            </ButtonContainer>
+          )}
+        </DatesContainer>
+      </MiscellaneousContainer>
+    </>
   )
 }
 export default Miscellaneous
