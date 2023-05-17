@@ -29,9 +29,7 @@ const makeTransaction = ({
 
 jest.mock('@app/utils/cacheKeyFactory')
 const mockQueryKey = jest.fn()
-console.log(useQueryKeys)
 const mockUseQueryKeys = mockFunction(useQueryKeys)
-console.log(mockUseQueryKeys)
 mockUseQueryKeys.mockReturnValue({
   basicNameRoot: mockQueryKey,
 })

@@ -8,13 +8,13 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { emptyAddress } from '@app/utils/constants'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
-import { useHasGlobalError } from '../../../../../hooks/errors/useHasGlobalError'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
 type TextRecord = {

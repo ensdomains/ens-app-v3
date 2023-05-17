@@ -26,7 +26,7 @@ const debugSubgraphIndexingErrors = () => {
   )
 }
 
-const getMetaData = async ({
+export const getMetaData = async ({
   gqlInstance,
   provider,
   dispatch,
@@ -68,7 +68,6 @@ export const useMetaData = (state: GlobalErrorState, dispatch: GlobalErrorDispat
 
   useEffect(() => {
     if (ready && meta.hasSubgraphError) {
-      console.log(ready, meta.hasSubgraphError)
       getMetaData({ gqlInstance, provider, dispatch })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

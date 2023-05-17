@@ -9,6 +9,10 @@ const mockDispatch = mockFunction(useGlobalErrorDispatch)
 mockDispatch.mockReturnValue(mockDispatch)
 
 describe('useGlobalError', () => {
+  beforeEach(() => {
+    mockDispatch.mockClear()
+  })
+
   describe('register/unregister keys', () => {
     it('should dispatch register key when mounted', async () => {
       renderHook(() => useGlobalError({ queryKey: ['test'], func: () => Promise.resolve({}) }))
@@ -24,7 +28,7 @@ describe('useGlobalError', () => {
       renderHook(() =>
         useGlobalError({ queryKey: ['test'], func: () => Promise.resolve({}), skip: true }),
       )
-      expect(mockDispatch).toHaveBeenCalledWith({
+      expect(mockDispatch).not.toHaveBeenCalledWith({
         type: 'REGISTER_KEY',
         payload: {
           key: ['test'],
@@ -47,7 +51,7 @@ describe('useGlobalError', () => {
       })
     })
 
-    it('should not dispatch unregister key when unmounted if skip is true', async () => {
+    it('should dispatch unregister key when unmounted if skip is true', async () => {
       const { unmount } = renderHook(() =>
         useGlobalError({ queryKey: ['test'], func: () => Promise.resolve({}), skip: true }),
       )

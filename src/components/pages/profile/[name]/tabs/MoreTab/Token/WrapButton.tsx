@@ -27,13 +27,11 @@ type Props = {
 const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
-  // Need error check because of dependency on ownerData and profile
   const hasGlobalError = useHasGlobalError()
-
-  const hasOwnerData = !!ownerData
   const { address } = useAccountSafely()
   const chainId = useChainId()
 
+  const hasOwnerData = !!ownerData
   const isOwner = ownerData?.owner === address
   const isRegistrant = ownerData?.registrant === address
   const resolverAddress = profile?.resolverAddress

@@ -50,7 +50,6 @@ export const useGlobalError = <Func extends BaseFunc>({
   const watchedFunc = useCallback(
     async (...args: Parameters<Func>): Promise<ReturnType<Func> | undefined> => {
       try {
-        console.log('watchedFunc', skip, queryKey)
         if (skip || typeof window === 'undefined') return await func(...args)
 
         // useQuery may call a function twice at the same time in certain cases, such as when cache is

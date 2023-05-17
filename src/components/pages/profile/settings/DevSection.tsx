@@ -123,6 +123,7 @@ export const DevSection = () => {
           setSubgraphError(e.currentTarget.checked ? 'ENSJSSubgraphIndexingError' : '')
           setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
         }}
+        data-testid="subgraph-indexing-error"
       />
       <DetailedSwitch
         title="ENSJS Unknown Error"
@@ -141,6 +142,7 @@ export const DevSection = () => {
           setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphLatency' : '')
           setSubgraphError('')
         }}
+        data-testid="network-latency-error"
       />
     </SectionContainer>
   )

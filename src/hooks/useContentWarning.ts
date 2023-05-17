@@ -20,7 +20,6 @@ export const useContentWarning = (
       .filter((error) => error)
       .sort(({ priority: left = 0 }, { priority: right = 0 }) => right - left)
 
-    console.log(activeErrors, globalState)
     if (activeErrors[0]?.type === 'ENSJSSubgraphError') {
       const datetime = globalState?.meta?.timestamp
         ? new Date(globalState.meta.timestamp * 1000).toLocaleDateString(undefined, {
