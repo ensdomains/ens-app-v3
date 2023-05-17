@@ -17,7 +17,7 @@ var getClientErrors = (e) => {
 };
 var debugSubgraphError = (request) => {
   if (process.env.NEXT_PUBLIC_ENSJS_DEBUG === "on" && typeof localStorage !== "undefined" && localStorage.getItem("ensjs-debug") === "ENSJSSubgraphError") {
-    if (/query getMeta/.test(request.body))
+    if (/_meta {/.test(request.body))
       return;
     throw new ClientError(
       {
