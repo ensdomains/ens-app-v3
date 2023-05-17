@@ -5,6 +5,7 @@ import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 export type UpdateCallback = (transaction: Transaction) => void
 type AddCallback = (key: string, callback: UpdateCallback) => void
@@ -44,6 +45,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient()
   const { gqlInstance } = useEns()
   const chainId = useChainId()
+  const queryKeys = useQueryKeys()
 
   const callbacks = useRef<Record<string, UpdateCallback>>({})
 
@@ -108,12 +110,12 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         const name = transaction.key?.match(/-(.*)-/)?.[1]
         console.log('invalidating', name)
         if (name) {
-          // queryClient.removeQueries(queryKeys.basicNameRoot(name))
+          queryClient.removeQueries(queryKeys.basicNameRoot(name))
         }
       }
       callbacksRef.forEach((callback) => callback(transaction))
     })
-  }, [transactions])
+  }, [transactions, queryKeys, queryClient])
 
   const isOutOfSync = useMemo(() => {
     if (typeof currentGraphBlock !== 'number') return false
