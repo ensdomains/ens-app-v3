@@ -1,11 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import { useQuery, useQueryClient } from 'wagmi'
 
+import { useRegisterNameCallback } from '@app/hooks/registration/useRegisterNameCallback'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 export type UpdateCallback = (transaction: Transaction) => void
 type AddCallback = (key: string, callback: UpdateCallback) => void
@@ -45,8 +45,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient()
   const { gqlInstance } = useEns()
   const chainId = useChainId()
-  const queryKeys = useQueryKeys()
 
+  const registerNameCallback = useRegisterNameCallback()
   const callbacks = useRef<Record<string, UpdateCallback>>({})
 
   const transactions = useRecentTransactions()
@@ -105,17 +105,10 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     previousTransactions.current = JSON.parse(JSON.stringify(transactions))
     const callbacksRef = Object.values(callbacks.current)
     updatedTransactions.forEach((transaction) => {
-      console.log('updated transaction', transaction)
-      if (transaction.status === 'confirmed' && transaction.action === 'registerName') {
-        const name = transaction.key?.match(/-(.*)-/)?.[1]
-        console.log('invalidating', name)
-        if (name) {
-          queryClient.invalidateQueries(queryKeys.basicNameRoot(name))
-        }
-      }
+      registerNameCallback(transaction)
       callbacksRef.forEach((callback) => callback(transaction))
     })
-  }, [transactions, queryKeys, queryClient])
+  }, [transactions, registerNameCallback])
 
   const isOutOfSync = useMemo(() => {
     if (typeof currentGraphBlock !== 'number') return false

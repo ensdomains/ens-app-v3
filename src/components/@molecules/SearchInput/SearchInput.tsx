@@ -329,7 +329,7 @@ export const SearchInput = ({
       if (currentValidation.is2LD && currentValidation.isETH && currentValidation.isShort) {
         return
       }
-      const queryKey = queryKeys.basicName(selectedItem.value, 0, false)
+      const queryKey = queryKeys.basicName(selectedItem.value, false)
       const currentQuery = queryClient.getQueryData<any[]>(queryKey)
       if (currentQuery) {
         const [ownerData, wrapperData, expiryData, priceData] = currentQuery
