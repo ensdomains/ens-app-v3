@@ -1,9 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import { useQuery, useQueryClient } from 'wagmi'
 
-import { useRegisterNameCallback } from '@app/hooks/registration/useRegisterNameCallback'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { useRegisterNameCallback } from '@app/hooks/transactions/useRegisterNameCallback'
 import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
 

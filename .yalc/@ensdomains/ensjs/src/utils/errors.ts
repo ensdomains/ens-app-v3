@@ -22,9 +22,16 @@ export const getClientErrors = (e: unknown) => {
   return error?.response?.errors || [new GraphQLError('unknown_error')]
 }
 
+const isDebugEnvironmentActive = () => {
+  return (
+    process.env.NODE_ENV === 'development' ||
+    process.env.NEXT_PUBLIC_ENSJS_DEBUG === 'on'
+  )
+}
+
 export const debugSubgraphError = (request: any) => {
   if (
-    process.env.NEXT_PUBLIC_ENSJS_DEBUG === 'on' &&
+    isDebugEnvironmentActive() &&
     typeof localStorage !== 'undefined' &&
     localStorage.getItem('ensjs-debug') === 'ENSJSSubgraphError'
   ) {
@@ -43,7 +50,7 @@ export const debugSubgraphError = (request: any) => {
 
 export const debugSubgraphLatency = (): Promise<void> | undefined => {
   if (
-    process.env.NEXT_PUBLIC_ENSJS_DEBUG === 'on' &&
+    isDebugEnvironmentActive() &&
     typeof localStorage !== 'undefined' &&
     localStorage.getItem('ensjs-debug') === 'ENSJSSubgraphLatency'
   ) {

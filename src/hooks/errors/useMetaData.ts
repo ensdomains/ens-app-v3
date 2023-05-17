@@ -19,7 +19,7 @@ const query = `
 
 const debugSubgraphIndexingErrors = () => {
   return (
-    process.env.NEXT_PUBLIC_ENSJS_DEBUG === 'on' &&
+    (process.env.NEXT_PUBLIC_ENSJS_DEBUG === 'on' || process.env.NODE_ENV === 'development') &&
     typeof localStorage !== 'undefined' &&
     localStorage.getItem('ensjs-debug') === 'ENSJSSubgraphError' &&
     localStorage.getItem('subgraph-debug') === 'ENSJSSubgraphIndexingError'

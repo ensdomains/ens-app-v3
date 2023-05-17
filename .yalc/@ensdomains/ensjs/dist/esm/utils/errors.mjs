@@ -15,8 +15,11 @@ var getClientErrors = (e) => {
   const error = e instanceof ClientError ? e : void 0;
   return error?.response?.errors || [new GraphQLError("unknown_error")];
 };
+var isDebugEnvironmentActive = () => {
+  return true;
+};
 var debugSubgraphError = (request) => {
-  if (process.env.NEXT_PUBLIC_ENSJS_DEBUG === "on" && typeof localStorage !== "undefined" && localStorage.getItem("ensjs-debug") === "ENSJSSubgraphError") {
+  if (isDebugEnvironmentActive() && typeof localStorage !== "undefined" && localStorage.getItem("ensjs-debug") === "ENSJSSubgraphError") {
     if (/_meta {/.test(request.body))
       return;
     throw new ClientError(
@@ -30,7 +33,7 @@ var debugSubgraphError = (request) => {
   }
 };
 var debugSubgraphLatency = () => {
-  if (process.env.NEXT_PUBLIC_ENSJS_DEBUG === "on" && typeof localStorage !== "undefined" && localStorage.getItem("ensjs-debug") === "ENSJSSubgraphLatency") {
+  if (isDebugEnvironmentActive() && typeof localStorage !== "undefined" && localStorage.getItem("ensjs-debug") === "ENSJSSubgraphLatency") {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve();

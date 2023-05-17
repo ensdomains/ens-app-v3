@@ -17,7 +17,6 @@ import {
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useChainId } from '@app/hooks/useChainId'
-import { useContentWarning } from '@app/hooks/useContentWarning'
 import { ReturnedName, useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
@@ -123,8 +122,6 @@ const MyNames = () => {
     [mode],
   )
 
-  const warning = useContentWarning()
-
   const loading = namesLoading || namesStatus === 'loading' || !router.isReady
 
   useProtectedRoute('/', loading ? true : address && address !== '')
@@ -132,7 +129,6 @@ const MyNames = () => {
   return (
     <Content title={t('title')} singleColumnContent loading={loading}>
       {{
-        warning,
         trailing: (
           <TabWrapperWithButtons>
             <NameTableHeader
