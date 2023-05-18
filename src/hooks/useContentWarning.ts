@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { ContentWarning } from '@app/layouts/Content'
-import { useGlobalErrorState } from '@app/utils/GlobalErrorProvider'
+import { useGlobalErrorState } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
 
 export const useContentWarning = (
   otherErrors: ContentWarning[] = [],

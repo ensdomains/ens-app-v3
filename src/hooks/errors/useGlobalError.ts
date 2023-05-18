@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { ENSJSError } from '@ensdomains/ensjs/utils/errors'
 
-import { useGlobalErrorDispatch } from '@app/utils/GlobalErrorProvider'
+import { useGlobalErrorDispatch } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
 
 type BaseFunc = (...args: any[]) => Promise<any>
 

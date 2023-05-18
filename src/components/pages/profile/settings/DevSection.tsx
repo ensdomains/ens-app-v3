@@ -116,6 +116,7 @@ export const DevSection = () => {
       )}
       <DetailedSwitch
         title="ENSJS Subgraph Indexing Error"
+        description="An error caused by the subgraph not indexing. In theory, should still be able to get meta data from graph."
         checked={
           ensjsError === 'ENSJSSubgraphError' && subgraphError === 'ENSJSSubgraphIndexingError'
         }
@@ -126,7 +127,8 @@ export const DevSection = () => {
         data-testid="subgraph-indexing-error"
       />
       <DetailedSwitch
-        title="ENSJS Unknown Error"
+        title="ENSJS Network Error"
+        description="An error caused by the subgraph network failing"
         checked={
           ensjsError === 'ENSJSSubgraphError' && subgraphError !== 'ENSJSSubgraphIndexingError'
         }

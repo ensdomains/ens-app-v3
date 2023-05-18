@@ -35,8 +35,13 @@ export const debugSubgraphError = (request: any) => {
     typeof localStorage !== 'undefined' &&
     localStorage.getItem('ensjs-debug') === 'ENSJSSubgraphError'
   ) {
-    // Allow _meta queries to pass through
-    if (/_meta {/.test(request.body)) return
+    // If we are testing indexing errors, we will allow _meta queries
+    // to pass through.
+    if (
+      localStorage.getItem('subgraph-debug') === 'ENSJSSubgraphIndexingError' &&
+      /_meta {/.test(request.body)
+    )
+      return
     throw new ClientError(
       {
         data: undefined,

@@ -5,7 +5,7 @@ import { useQueryClient } from 'wagmi'
 
 import { ENSJSErrorName } from '@ensdomains/ensjs/utils/errors'
 
-import { useMetaData } from '@app/hooks/errors/useMetaData'
+import { useSubgraphMetaSync } from './useSubgraphMetaSync'
 
 export type GlobalErrorState = {
   errors: {
@@ -22,10 +22,9 @@ export type GlobalErrorState = {
     hasSubgraphError: boolean
     hasIndexingErrors: boolean
     timestamp: number
+    forceUpdate: boolean
   }
 }
-
-export type GlobalErrorDispatch = Dispatch<any>
 
 const GlobalErrorStateContext = createContext<GlobalErrorState>({
   errors: {},
@@ -34,10 +33,23 @@ const GlobalErrorStateContext = createContext<GlobalErrorState>({
     hasSubgraphError: false,
     hasIndexingErrors: false,
     timestamp: 0,
+    forceUpdate: false,
   },
 })
 
+export const useGlobalErrorState = () => {
+  const context = useContext(GlobalErrorStateContext)
+  return context
+}
+
+export type GlobalErrorDispatch = Dispatch<any>
+
 const GlobalErrorDispatchContext = createContext<GlobalErrorDispatch>(() => {})
+
+export const useGlobalErrorDispatch = () => {
+  const context = useContext(GlobalErrorDispatchContext)
+  return context
+}
 
 type Action =
   | {
@@ -198,13 +210,14 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
     errors: {},
     activeHashes: [],
     meta: {
-      hasSubgraphError: true,
+      hasSubgraphError: false,
       hasIndexingErrors: false,
       timestamp: 0,
+      forceUpdate: false,
     },
   })
 
-  useMetaData(state, dispatch)
+  useSubgraphMetaSync(state, dispatch)
 
   return (
     <GlobalErrorStateContext.Provider value={state}>
@@ -213,14 +226,4 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
       </GlobalErrorDispatchContext.Provider>
     </GlobalErrorStateContext.Provider>
   )
-}
-
-export const useGlobalErrorState = () => {
-  const context = useContext(GlobalErrorStateContext)
-  return context
-}
-
-export const useGlobalErrorDispatch = () => {
-  const context = useContext(GlobalErrorDispatchContext)
-  return context
 }

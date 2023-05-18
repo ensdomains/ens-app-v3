@@ -20,7 +20,7 @@ var isDebugEnvironmentActive = () => {
 };
 var debugSubgraphError = (request) => {
   if (isDebugEnvironmentActive() && typeof localStorage !== "undefined" && localStorage.getItem("ensjs-debug") === "ENSJSSubgraphError") {
-    if (/_meta {/.test(request.body))
+    if (localStorage.getItem("subgraph-debug") === "ENSJSSubgraphIndexingError" && /_meta {/.test(request.body))
       return;
     throw new ClientError(
       {

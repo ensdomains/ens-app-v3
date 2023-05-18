@@ -1,10 +1,10 @@
 import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
-import { useGlobalErrorDispatch } from '@app/utils/GlobalErrorProvider'
+import { useGlobalErrorDispatch } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
 
 import { useGlobalError } from './useGlobalError'
 
-jest.mock('@app/utils/GlobalErrorProvider')
+jest.mock('@app/utils/GlobalErrorProvider/GlobalErrorProvider')
 const mockDispatch = mockFunction(useGlobalErrorDispatch)
 mockDispatch.mockReturnValue(mockDispatch)
 

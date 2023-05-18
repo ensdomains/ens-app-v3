@@ -121,6 +121,22 @@ describe.skip('Set Primary Name', () => {
         wrapper.should('include.text', 'test123.eth')
       })
     })
+    describe('subgraph errors', () => {
+      it('should be able to turn on subgraph indexing error', () => {
+        cy.visit('/my/settings')
+        cy.findByTestId('subgraph-indexing-error').click()
+      })
+  
+      it('should disable button for unwrapped subname', () => {
+        cy.visit('/test123.eth')
+        cy.contains('Set as primary name').should('be.disabled')
+      })
+  
+      it('should disable button for wrapped subname', () => {
+        cy.visit('/wrapped.eth')
+        cy.contains('Set as primary name').should('be.disabled')
+      })
+    })
   })
   describe('settings', () => {
     it('should show modal', () => {
