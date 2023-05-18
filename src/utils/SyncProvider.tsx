@@ -9,6 +9,8 @@ import { useRegisterNameCallback } from '@app/hooks/transactions/useRegisterName
 import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
 
+import { debugSubgraphIndexingErrors } from './GlobalErrorProvider/useSubgraphMetaSync'
+
 export type UpdateCallback = (transaction: Transaction) => void
 type AddCallback = (key: string, callback: UpdateCallback) => void
 type RemoveCallback = (key: string) => void
@@ -67,7 +69,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     ['graphBlock', chainId, transactions],
     () =>
       gqlInstance.client.request(query).then((res: GraphResponse | null) => {
-        if (res!._meta.hasIndexingErrors) throw new Error('indexing_errors')
+        if (res!._meta.hasIndexingErrors || debugSubgraphIndexingErrors())
+          throw new Error('indexing_errors')
         return res!._meta.block.number
       }),
     {

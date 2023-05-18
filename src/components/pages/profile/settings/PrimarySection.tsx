@@ -5,14 +5,14 @@ import { Button, Typography } from '@ensdomains/thorin'
 
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
+import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-import { useHasGlobalError } from '../../../../hooks/errors/useHasGlobalError'
-import { useAccountSafely } from '../../../../hooks/useAccountSafely'
 import { SectionContainer } from './Section'
 
 const ItemWrapper = styled.div(

@@ -230,7 +230,6 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
     },
   })
 
-  console.log('state', state)
   useSubgraphMetaSync(state, dispatch)
 
   return (

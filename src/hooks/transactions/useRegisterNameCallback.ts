@@ -15,7 +15,9 @@ export const useRegisterNameCallback = () => {
       const name = transaction.key?.match(/-(.*)-/)?.[1]
       if (!name) return
 
-      queryClient.invalidateQueries(queryKeys.basicNameRoot(name))
+      // We use remove queries instead of invalidate queries because we do not want the possibility
+      // of stale data to be used when the data is used for page redirects.
+      queryClient.removeQueries(queryKeys.basicNameRoot(name))
     },
     [queryClient, queryKeys],
   )

@@ -57,14 +57,10 @@ type UseBasicNameOptions = {
 export const useBasicName = (name?: string | null, options: UseBasicNameOptions = {}) => {
   const { normalised = false, skipGraph = true } = options
   const ens = useEns()
-  // const { address } = useAccount()
 
   const { name: _normalisedName, isValid, ...validation } = useValidate(name!, !name)
 
   const normalisedName = normalised ? name! : _normalisedName
-
-  // const selected = { name: normalisedName, address: address! }
-  // const { item } = useRegistrationReducer(selected)
 
   const { data: supportedTLD, isLoading: supportedTLDLoading } = useSupportsTLD(normalisedName)
 

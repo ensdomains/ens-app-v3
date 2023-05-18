@@ -20,7 +20,7 @@ const query = `
   }  
 `
 
-const debugSubgraphIndexingErrors = () => {
+export const debugSubgraphIndexingErrors = () => {
   return (
     (process.env.NEXT_PUBLIC_ENSJS_DEBUG === 'on' || process.env.NODE_ENV === 'development') &&
     typeof localStorage !== 'undefined' &&
