@@ -43,7 +43,7 @@ importers:
       '@ensdomains/ens-validation': ^0.1.0
       '@ensdomains/ensjs': workspace:*
       '@ensdomains/eth-ens-namehash': ^2.0.15
-      '@ensdomains/thorin': 0.6.39
+      '@ensdomains/thorin': 0.6.40
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
       '@ethersproject/abstract-signer': ^5.7.0
@@ -186,7 +186,7 @@ importers:
       '@ensdomains/ens-validation': 0.1.0
       '@ensdomains/ensjs': link:.yalc/@ensdomains/ensjs
       '@ensdomains/eth-ens-namehash': 2.0.15
-      '@ensdomains/thorin': 0.6.39_6haozuff5ofofiwuoke6ixqiri
+      '@ensdomains/thorin': 0.6.40_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
       '@ethersproject/abstract-provider': 5.7.0
       '@ethersproject/abstract-signer': 5.7.0
@@ -3057,8 +3057,8 @@ packages:
       hash-test-vectors: 1.3.2
     dev: false
 
-  /@ensdomains/thorin/0.6.39_6haozuff5ofofiwuoke6ixqiri:
-    resolution: {integrity: sha512-Glbcikw+ycgKAdjGNIWqNNlotpeo7RYNTj8ReZrVCC9n+SkvpV1dOkEt3CiXNX93DBHXOPttMzUtN0l+ACMjzw==}
+  /@ensdomains/thorin/0.6.40_6haozuff5ofofiwuoke6ixqiri:
+    resolution: {integrity: sha512-OhrytIvMraNT8B9xYF9HTp1cKzs3dT9z2LYTV9/kNTqsIJZYTzpwABhfKBHvnYNHx5gM0pVVcOem/93sVt2UMg==}
     peerDependencies:
       react: ^17
       react-dom: ^17
@@ -3072,6 +3072,7 @@ packages:
       react-dom: 17.0.2_react@17.0.2
       react-transition-state: 1.1.5_sfoxds7t5ydpegc3knd667wn6m
       styled-components: 5.3.6_fane7jikarojcev26y27hpbhu4
+      ts-pattern: 4.3.0
     dev: false
 
   /@esbuild-plugins/node-globals-polyfill/0.1.1_esbuild@0.16.3:
@@ -14839,6 +14840,7 @@ packages:
       graphql: 16.6.0
     transitivePeerDependencies:
       - encoding
+    dev: false
 
   /graphql/16.6.0:
     resolution: {integrity: sha512-KPIBPDlW7NxrbT/eh4qPXz5FiFdL5UbaA0XUNz2Rp3Z3hqBSkbj0GVjwFDztsWVauZUWsbKHgMg++sk8UX0bkw==}
@@ -23322,6 +23324,10 @@ packages:
 
   /ts-pattern/4.2.2:
     resolution: {integrity: sha512-qzJMo2pbkUJWusRH5o8xR+xogn6RmvViyUgwBFTtRENLse470clCGjHDf6haWGZ1AOmk8XkEohUoBW8Uut6Scg==}
+    dev: false
+
+  /ts-pattern/4.3.0:
+    resolution: {integrity: sha512-pefrkcd4lmIVR0LA49Imjf9DYLK8vtWhqBPA3Ya1ir8xCW0O2yjL9dsCVvI7pCodLC5q7smNpEtDR2yVulQxOg==}
     dev: false
 
   /tsconfig-paths/3.14.1:
