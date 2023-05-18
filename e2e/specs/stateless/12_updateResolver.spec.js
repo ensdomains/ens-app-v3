@@ -68,12 +68,12 @@ describe('Update Resolver', () => {
 
     it('should disable button for unwrapped subname', () => {
       cy.visit('/test123.eth?tab=more')
-      cy.findByTestId('edit-resolver-button').should('not.be.visible')
+      cy.findByTestId('edit-resolver-button').should('not.exist')
     })
 
     it('should disable button for wrapped subname', () => {
       cy.visit('/wrapped.eth?tab=more')
-      cy.findByTestId('edit-resolver-button').should('not.be.visible')
+      cy.findByTestId('edit-resolver-button').should('not.exist')
     })
   })
 })
