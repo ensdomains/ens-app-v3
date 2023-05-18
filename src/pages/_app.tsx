@@ -146,14 +146,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 <BreakpointProvider queries={breakpoints}>
                   <GlobalStyle />
                   <ThorinGlobalStyles />
-                  <SyncProvider>
-                    <TransactionFlowProvider>
-                      <GlobalErrorProvider>
+                  <GlobalErrorProvider>
+                    <SyncProvider>
+                      <TransactionFlowProvider>
                         <Notifications />
                         <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                      </GlobalErrorProvider>
-                    </TransactionFlowProvider>
-                  </SyncProvider>
+                      </TransactionFlowProvider>
+                    </SyncProvider>
+                  </GlobalErrorProvider>
                 </BreakpointProvider>
               </ThemeProvider>
             </EnsProvider>

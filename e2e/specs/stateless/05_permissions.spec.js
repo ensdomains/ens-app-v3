@@ -301,7 +301,7 @@ describe('Permissions', () => {
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')
     cy.findByTestId('profile-tab').click()
-    cy.findByTestId('delete-subname-disabled-button').should('be.visible')
+    cy.findByTestId('disabled-profile-action-Delete subname').should('be.visible')
     cy.findByTestId('subnames-tab').click()
     cy.findByTestId('add-subname-disabled-button').should('be.visible')
     cy.findByTestId('more-tab').click()

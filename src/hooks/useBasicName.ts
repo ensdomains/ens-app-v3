@@ -10,7 +10,7 @@ import { emptyAddress } from '@app/utils/constants'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
-import { useGlobalError } from './errors/useGlobalError'
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 import { usePccExpired } from './fuses/usePccExpired'
 import { useContractAddress } from './useContractAddress'
 import { useSupportsTLD } from './useSupportsTLD'
@@ -69,7 +69,7 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
   const { data: supportedTLD, isLoading: supportedTLDLoading } = useSupportsTLD(normalisedName)
 
   const queryKey = useQueryKeys().basicName(normalisedName, skipGraph)
-  const { watchedFunc: watchedGetBatchData } = useGlobalError<typeof getBatchData>({
+  const { watchedFunc: watchedGetBatchData } = useGlobalErrorFunc<typeof getBatchData>({
     queryKey,
     func: getBatchData,
     skip: skipGraph,

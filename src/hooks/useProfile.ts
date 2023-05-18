@@ -7,7 +7,7 @@ import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
-import { useGlobalError } from './errors/useGlobalError'
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 import useDecryptName from './useDecryptName'
 
 type UseProfileOptions = {
@@ -23,7 +23,7 @@ export const useProfile = (
   const { ready, getProfile } = useEns()
 
   const queryKey = useQueryKeys().profile(name, resolverAddress, skipGraph)
-  const { watchedFunc: watchedGetProfile } = useGlobalError<typeof getProfile>({
+  const { watchedFunc: watchedGetProfile } = useGlobalErrorFunc<typeof getProfile>({
     queryKey,
     func: getProfile,
     skip: skipGraph,

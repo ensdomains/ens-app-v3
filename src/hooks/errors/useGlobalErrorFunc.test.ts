@@ -2,7 +2,7 @@ import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
 import { useGlobalErrorDispatch } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
 
-import { useGlobalError } from './useGlobalError'
+import { useGlobalErrorFunc } from './useGlobalErrorFunc'
 
 jest.mock('@app/utils/GlobalErrorProvider/GlobalErrorProvider')
 const mockDispatch = mockFunction(useGlobalErrorDispatch)
@@ -15,7 +15,7 @@ describe('useGlobalError', () => {
 
   describe('register/unregister keys', () => {
     it('should dispatch register key when mounted', async () => {
-      renderHook(() => useGlobalError({ queryKey: ['test'], func: () => Promise.resolve({}) }))
+      renderHook(() => useGlobalErrorFunc({ queryKey: ['test'], func: () => Promise.resolve({}) }))
       expect(mockDispatch).toHaveBeenCalledWith({
         type: 'REGISTER_KEY',
         payload: {
@@ -26,7 +26,7 @@ describe('useGlobalError', () => {
 
     it('should not dispatch register key when mounted and skip is true', async () => {
       renderHook(() =>
-        useGlobalError({ queryKey: ['test'], func: () => Promise.resolve({}), skip: true }),
+        useGlobalErrorFunc({ queryKey: ['test'], func: () => Promise.resolve({}), skip: true }),
       )
       expect(mockDispatch).not.toHaveBeenCalledWith({
         type: 'REGISTER_KEY',
@@ -38,7 +38,7 @@ describe('useGlobalError', () => {
 
     it('should dispatch unregister key when unmounted', async () => {
       const { unmount } = renderHook(() =>
-        useGlobalError({ queryKey: ['test'], func: () => Promise.resolve({}) }),
+        useGlobalErrorFunc({ queryKey: ['test'], func: () => Promise.resolve({}) }),
       )
       unmount()
       await waitFor(() => {
@@ -53,7 +53,7 @@ describe('useGlobalError', () => {
 
     it('should dispatch unregister key when unmounted if skip is true', async () => {
       const { unmount } = renderHook(() =>
-        useGlobalError({ queryKey: ['test'], func: () => Promise.resolve({}), skip: true }),
+        useGlobalErrorFunc({ queryKey: ['test'], func: () => Promise.resolve({}), skip: true }),
       )
       unmount()
       await waitFor(() => {

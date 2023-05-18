@@ -3,13 +3,13 @@ import { useQuery } from 'wagmi'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
-import { useGlobalError } from './errors/useGlobalError'
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 
 export const useGetHistory = (name: string, skip?: any) => {
   const { ready, getHistory } = useEns()
 
   const queryKey = useQueryKeys().getHistory(name)
-  const { watchedFunc: watchedGetHistory } = useGlobalError<typeof getHistory>({
+  const { watchedFunc: watchedGetHistory } = useGlobalErrorFunc<typeof getHistory>({
     queryKey,
     func: getHistory,
   })

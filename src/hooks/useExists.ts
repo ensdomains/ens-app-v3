@@ -4,7 +4,7 @@ import { useQuery } from 'wagmi'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
-import { useGlobalError } from './errors/useGlobalError'
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 
 export const useExists = (name: string, skip?: any) => {
   const { ready, getOwner } = useEns()
@@ -12,7 +12,7 @@ export const useExists = (name: string, skip?: any) => {
   const [exists, setExists] = useState(false)
 
   const queryKey = useQueryKeys().exists(name)
-  const { watchedFunc: watchedGetOwner } = useGlobalError<typeof getOwner>({
+  const { watchedFunc: watchedGetOwner } = useGlobalErrorFunc<typeof getOwner>({
     queryKey,
     func: getOwner,
   })

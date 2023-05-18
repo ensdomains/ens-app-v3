@@ -136,12 +136,12 @@ describe('Delete subnames', () => {
 
     it('should disable delete button for unwrapped subname', () => {
       cy.visit('/legacy.with-subnames.eth')
-      cy.findByTestId('delete-subname-disabled-button').should('be.visible')
+      cy.findByTestId('disabled-profile-action-Delete subname').should('be.visible')
     })
 
     it('should disable delete button for wrapped subname', () => {
       cy.visit('/legacy.wrapped.eth')
-      cy.findByTestId('delete-subname-disabled-button').should('be.visible')
+      cy.findByTestId('disabled-profile-action-Delete subname').should('be.visible')
     })
   })
 })

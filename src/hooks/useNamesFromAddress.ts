@@ -8,7 +8,7 @@ import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { GRACE_PERIOD } from '@app/utils/constants'
 import { validateExpiry } from '@app/utils/utils'
 
-import { useGlobalError } from './errors/useGlobalError'
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 import { useBlockTimestamp } from './useBlockTimestamp'
 
 export type ReturnedName = Name & {
@@ -50,7 +50,7 @@ export const useNamesFromAddress = ({
 
   const queryKey = useQueryKeys().namesFromAddress(address)
 
-  const { watchedFunc: watchedGetNames } = useGlobalError<typeof getNames>({
+  const { watchedFunc: watchedGetNames } = useGlobalErrorFunc<typeof getNames>({
     queryKey,
     func: getNames,
   })

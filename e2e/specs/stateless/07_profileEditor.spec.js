@@ -266,12 +266,12 @@ describe('Profile Editor', () => {
 
     it('should disable button for unwrapped subname', () => {
       cy.visit('/test123.eth')
-      cy.contains('Edit profile').should('be.disabled')
+      cy.findByTestId('disabled-profile-action-Edit profile').should('be.visible')
     })
 
     it('should disable button for wrapped subname', () => {
       cy.visit('/wrapped.eth')
-      cy.contains('Edit profile').should('be.disabled')
+      cy.findByTestId('disabled-profile-action-Edit profile').should('be.visible')
     })
   })
 })

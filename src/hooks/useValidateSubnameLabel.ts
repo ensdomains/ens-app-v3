@@ -6,7 +6,7 @@ import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { emptyAddress } from '@app/utils/constants'
 import { isLabelTooLong } from '@app/utils/utils'
 
-import { useGlobalError } from './errors/useGlobalError'
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 import { usePccExpired } from './fuses/usePccExpired'
 import { useGetWrapperData } from './useGetWrapperData'
 import { useValidate } from './useValidate'
@@ -21,7 +21,7 @@ export const useValidateSubnameLabel = (name: string, label: string, isWrapped: 
 
   const skipGetOwner = skipValidation || !validation.isValid || validation.labelCount > 1
   const queryKey = useQueryKeys().validateSubnameLabel(`${validation.name}.${name}`)
-  const { watchedFunc: watchedGetOwner } = useGlobalError<typeof getOwner>({
+  const { watchedFunc: watchedGetOwner } = useGlobalErrorFunc<typeof getOwner>({
     queryKey,
     func: getOwner,
   })

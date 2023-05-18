@@ -171,9 +171,22 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
           }
         }
 
+        const clearMeta =
+          currentError?.type &&
+          ['ENSJSSubgraphError', 'ENSJSUnknownError'].includes(currentError.type)
+
         return {
           ...state,
           errors,
+          ...(clearMeta
+            ? {
+                meta: {
+                  ...state.meta,
+                  hasSubgraphError: false,
+                  hasIndexingErrors: false,
+                },
+              }
+            : {}),
         }
       }
       case 'REGISTER_KEY': {
@@ -217,6 +230,7 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
     },
   })
 
+  console.log('state', state)
   useSubgraphMetaSync(state, dispatch)
 
   return (

@@ -5,7 +5,7 @@ import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { emptyAddress } from '../utils/constants'
-import { useGlobalError } from './errors/useGlobalError'
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 
 const FETCH_PAGE_SIZE = 50
 
@@ -18,7 +18,7 @@ export const useHasSubnames = (name: string) => {
   const enabled = !!(ready && name && isSubname)
 
   const queryKey = useQueryKeys().hasSubnames(name)
-  const { watchedFunc: watchedGetSubnames } = useGlobalError({
+  const { watchedFunc: watchedGetSubnames } = useGlobalErrorFunc({
     queryKey,
     func: getSubnames,
   })
