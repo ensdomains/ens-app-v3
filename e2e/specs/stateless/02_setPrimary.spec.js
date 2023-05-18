@@ -172,5 +172,11 @@ describe.skip('Set Primary Name', () => {
       cy.visit('/wrapped.eth')
       cy.findByTestId('disabled-profile-action-Set as primary name').should('be.visible')
     })
+
+    it('should disable button in settings', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('disabled-primary-section-button').should('be.visible')
+    })
+    
   })
 })
