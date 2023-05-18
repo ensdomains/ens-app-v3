@@ -9,9 +9,9 @@ import { Button, Dialog, Input, Typography, mq } from '@ensdomains/thorin'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
-import { useSubscribeToEarnifi } from '@app/hooks/earnify/useSubscribeToEarnifi'
+import { useSubscribeToEarnifi } from '@app/components/pages/profile/[name]/tabs/MoreTab/Miscellaneous/useSubscribeToEarnifi'
 
-import { useChainId } from '../../../../../../hooks/useChainId'
+import { useChainId } from '../../../../../../../hooks/useChainId'
 
 const EARNIFI_OUTLINK =
   'https://earni.fi/?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'

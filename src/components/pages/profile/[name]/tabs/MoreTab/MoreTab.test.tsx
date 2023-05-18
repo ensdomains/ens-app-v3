@@ -3,7 +3,7 @@ import { mockFunction, render, screen } from '@app/test-utils'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 
-import Miscellaneous from './Miscellaneous'
+import Miscellaneous from './Miscellaneous/Miscellaneous'
 import MoreTab from './MoreTab'
 import Ownership from './Ownership'
 import Resolver from './Resolver'
