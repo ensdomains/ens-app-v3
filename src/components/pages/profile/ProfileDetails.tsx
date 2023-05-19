@@ -168,13 +168,13 @@ const getAction = (action: Action, is2LDEth: boolean) => {
   if (action.tooltipContent) {
     return (
       <DisabledButtonWithTooltip
-        buttonId="delete-subname-disabled-button"
+        buttonId={`disabled-profile-action-${action.label}`}
         content={action.tooltipContent}
         buttonText={action.label}
         mobileWidth={150}
         mobileButtonWidth="initial"
         mobilePlacement="top"
-        placement="right"
+        placement={action.tooltipPlacement || 'right'}
       />
     )
   }

@@ -152,7 +152,21 @@
     "emailRequired": "Email is required",
     "emailInvalid": "Invalid email address",
     "invalidAddress": "Invalid address",
-    "addressRequired": "Address required"
+    "addressRequired": "Address required",
+    "indexingErrors": {
+      "title": "Error syncing data",
+      "message": "This data may be out of date. Please use caution.",
+      "message_datetime": "This data was last update at {{datetime}} and may be out of date. Please use caution"
+    },
+    "networkError": {
+      "title": "Error syncing data",
+      "message": "This data may be out of date. Please use caution.",
+      "blurb": "This button is currently disabled due to data sync issues."
+    },
+    "networkLatency": {
+      "title": "Slow data syncing",
+      "message": "The ENS app is experiencing slow downs due to network latency issues."
+    }
   },
   "transaction": {
     "description": {

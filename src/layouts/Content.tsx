@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { ComponentProps, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Banner, Button, Skeleton, Typography, mq } from '@ensdomains/thorin'
@@ -7,8 +7,19 @@ import { Banner, Button, Skeleton, Typography, mq } from '@ensdomains/thorin'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { LeadingHeading } from '@app/components/LeadingHeading'
+import { useContentWarning } from '@app/hooks/useContentWarning'
 import { useCopied } from '@app/hooks/useCopied'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+
+type BannerProps = ComponentProps<typeof Banner>
+
+export type ContentWarning =
+  | {
+      type: BannerProps['alert']
+      title?: BannerProps['title']
+      message: BannerProps['children']
+    }
+  | undefined
 
 const HeadingItems = styled.div(
   ({ theme }) => css`
@@ -235,11 +246,7 @@ export const Content = ({
   inlineHeading?: boolean
   copyValue?: string
   children: {
-    warning?: {
-      type: 'warning' | 'error' | 'info'
-      message: string | React.ReactNode
-      title?: string
-    }
+    warning?: ContentWarning
     info?: React.ReactNode
     header?: React.ReactNode
     leading?: React.ReactNode
@@ -249,10 +256,11 @@ export const Content = ({
   const breakpoints = useBreakpoint()
   const isDesktopMode = breakpoints.sm
 
-  const WarningComponent = !loading && children.warning && (
+  const warning = useContentWarning([children.warning])
+  const WarningComponent = !loading && warning && (
     <WarningWrapper>
-      <Banner title={children.warning.title} alert={children.warning.type}>
-        {children.warning.message}
+      <Banner title={warning.title} alert={warning.type}>
+        {warning.message}
       </Banner>
     </WarningWrapper>
   )

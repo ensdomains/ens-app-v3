@@ -5,18 +5,21 @@ describe.skip('Set Primary Name', () => {
   before(() => {
     acceptMetamaskAccess(2, true)
   })
-  it('should show no primary message if no primary is set in settings', () => {
-    cy.visit('/my/settings')
-    cy.findByTestId('primary-section-text').should('contain.text', 'No primary name set.')
-  })
 
-  it('should not show profile button in header dropdown', () => {
-    cy.findByTestId('header-profile').as('header-profile')
-    cy.get('@header-profile').click()
-    // length 4 = 3 buttons + 1 divider
-    cy.findByTestId('dropdown-menu').children().should('have.length', 4)
+  describe('ui', () => {
+    it('should show no primary message if no primary is set in settings', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('primary-section-text').should('contain.text', 'No primary name set.')
+    })
+    
+    it('should not show profile button in header dropdown', () => {
+      cy.findByTestId('header-profile').as('header-profile')
+      cy.get('@header-profile').click()
+      // length 4 = 3 buttons + 1 divider
+      cy.findByTestId('dropdown-menu').children().should('have.length', 4)
+    })
   })
-
+    
   describe('profile', () => {
     describe('differening ETH record', () => {
       it('should show primary name action in profile dropdown', () => {
@@ -153,5 +156,27 @@ describe.skip('Set Primary Name', () => {
       wrapper.should('exist')
       wrapper.should('include.text', 'other-controller.eth')
     })
+  })
+  describe('subgraph errors', () => {
+    it('should be able to turn on subgraph indexing error', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('subgraph-indexing-error').click()
+    })
+
+    it('should disable button for unwrapped subname in profile', () => {
+      cy.visit('/test123.eth')
+      cy.findByTestId('disabled-profile-action-Set as primary name').should('be.visible')
+    })
+
+    it('should disable button for wrapped subname in profile', () => {
+      cy.visit('/wrapped.eth')
+      cy.findByTestId('disabled-profile-action-Set as primary name').should('be.visible')
+    })
+
+    it('should disable button in settings', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('disabled-primary-section-button').should('be.visible')
+    })
+    
   })
 })
