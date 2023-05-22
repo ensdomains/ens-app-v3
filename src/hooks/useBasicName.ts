@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useAccount, useQuery } from 'wagmi'
+import { useQuery } from 'wagmi'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 
@@ -10,28 +10,66 @@ import { emptyAddress } from '@app/utils/constants'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 import { usePccExpired } from './fuses/usePccExpired'
 import { useContractAddress } from './useContractAddress'
-import useRegistrationReducer from './useRegistrationReducer'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
+type ENS = ReturnType<typeof useEns>
 type BaseBatchReturn = [ReturnedENS['getOwner']]
 type NormalBatchReturn = [...BaseBatchReturn, ReturnedENS['getWrapperData']]
 type ETH2LDBatchReturn = [...NormalBatchReturn, ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
+type BatchReturn = [] | BaseBatchReturn | NormalBatchReturn | ETH2LDBatchReturn | undefined
 
-export const useBasicName = (name?: string | null, normalised?: boolean) => {
+const getBatchData = (
+  name: string,
+  validation: any,
+  ens: ENS,
+  skipGraph: boolean,
+): Promise<BatchReturn> => {
+  // exception for "[root]", get owner of blank name
+  if (name === '[root]') {
+    return Promise.all([ens.getOwner('', { contract: 'registry' })])
+  }
+
+  const labels = name.split('.')
+  if (validation.isETH && validation.is2LD) {
+    if (validation.isShort) {
+      return Promise.resolve([])
+    }
+    return ens.batch(
+      ens.getOwner.batch(name, { skipGraph }),
+      ens.getWrapperData.batch(name),
+      ens.getExpiry.batch(name),
+      ens.getPrice.batch(labels[0], yearsToSeconds(1), false),
+    )
+  }
+
+  return ens.batch(ens.getOwner.batch(name), ens.getWrapperData.batch(name))
+}
+
+type UseBasicNameOptions = {
+  normalised?: boolean
+  skipGraph?: boolean
+}
+
+export const useBasicName = (name?: string | null, options: UseBasicNameOptions = {}) => {
+  const { normalised = false, skipGraph = true } = options
   const ens = useEns()
-  const { address } = useAccount()
 
   const { name: _normalisedName, isValid, ...validation } = useValidate(name!, !name)
 
   const normalisedName = normalised ? name! : _normalisedName
 
-  const selected = { name: normalisedName, address: address! }
-  const { item } = useRegistrationReducer(selected)
-
   const { data: supportedTLD, isLoading: supportedTLDLoading } = useSupportsTLD(normalisedName)
+
+  const queryKey = useQueryKeys().basicName(normalisedName, skipGraph)
+  const { watchedFunc: watchedGetBatchData } = useGlobalErrorFunc<typeof getBatchData>({
+    queryKey,
+    func: getBatchData,
+    skip: skipGraph,
+  })
 
   const {
     data: batchData,
@@ -43,28 +81,9 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     isFetchedAfterMount,
     status,
   } = useQuery(
-    useQueryKeys().basicName(normalisedName, item.stepIndex),
-    (): Promise<[] | BaseBatchReturn | NormalBatchReturn | ETH2LDBatchReturn | undefined> => {
-      // exception for "[root]", get owner of blank name
-      if (normalisedName === '[root]') {
-        return Promise.all([ens.getOwner('', 'registry')])
-      }
-
-      const labels = normalisedName.split('.')
-      if (validation.isETH && validation.is2LD) {
-        if (validation.isShort) {
-          return Promise.resolve([])
-        }
-        return ens.batch(
-          ens.getOwner.batch(normalisedName),
-          ens.getWrapperData.batch(normalisedName),
-          ens.getExpiry.batch(normalisedName),
-          ens.getPrice.batch(labels[0], yearsToSeconds(1), false),
-        )
-      }
-
-      return ens.batch(ens.getOwner.batch(normalisedName), ens.getWrapperData.batch(normalisedName))
-    },
+    queryKey,
+    async () =>
+      watchedGetBatchData(normalisedName, validation, ens, skipGraph).then((r) => r || null),
     {
       enabled: !!(ens.ready && name && isValid),
     },

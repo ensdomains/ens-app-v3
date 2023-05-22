@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { JsonRpcProvider } from '@ethersproject/providers'
+import { useEffect, useState } from 'react'
 import { usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
 
 import { Button } from '@ensdomains/thorin'
 
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { DetailedSwitch } from '@app/transaction-flow/input/ProfileEditor/components/DetailedSwitch'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 
 import { SectionContainer } from './Section'
@@ -26,6 +28,18 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
       })),
     ),
   })
+
+const useLocalStorageString = (key: string, defaultValue = '') => {
+  const [value, _setValue] = useState(defaultValue)
+  useEffect(() => {
+    _setValue(localStorage.getItem(key) || defaultValue)
+  }, [])
+  const setValue = (newValue: string) => {
+    localStorage.setItem(key, newValue)
+    _setValue(newValue)
+  }
+  return [value, setValue] as const
+}
 
 export const DevSection = () => {
   const provider: JsonRpcProvider = useProvider()
@@ -85,14 +99,53 @@ export const DevSection = () => {
     )
   }
 
+  const [ensjsError, setEnsjsError] = useLocalStorageString('ensjs-debug')
+  const [subgraphError, setSubgraphError] = useLocalStorageString('subgraph-debug')
+
   return (
     <SectionContainer title="Developer">
-      <Button onClick={() => addSuccess()}>Add Successful Transaction</Button>
-      <Button onClick={() => sendName()}>Test Send Name</Button>
-      <Button onClick={() => addFailure()}>Add Failing Transaction</Button>
-      <Button onClick={() => startAutoMine()}>Start Automine</Button>
-      <Button onClick={() => stopAutoMine()}>Stop Automine</Button>
-      <Button onClick={() => revert()}>Revert</Button>
+      {process.env.NEXT_PUBLIC_PROVIDER && (
+        <>
+          <Button onClick={() => addSuccess()}>Add Successful Transaction</Button>
+          <Button onClick={() => sendName()}>Test Send Name</Button>
+          <Button onClick={() => addFailure()}>Add Failing Transaction</Button>
+          <Button onClick={() => startAutoMine()}>Start Automine</Button>
+          <Button onClick={() => stopAutoMine()}>Stop Automine</Button>
+          <Button onClick={() => revert()}>Revert</Button>
+        </>
+      )}
+      <DetailedSwitch
+        title="ENSJS Subgraph Indexing Error"
+        description="An error caused by the subgraph not indexing. In theory, should still be able to get meta data from graph."
+        checked={
+          ensjsError === 'ENSJSSubgraphError' && subgraphError === 'ENSJSSubgraphIndexingError'
+        }
+        onChange={(e) => {
+          setSubgraphError(e.currentTarget.checked ? 'ENSJSSubgraphIndexingError' : '')
+          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
+        }}
+        data-testid="subgraph-indexing-error"
+      />
+      <DetailedSwitch
+        title="ENSJS Network Error"
+        description="An error caused by the subgraph network failing"
+        checked={
+          ensjsError === 'ENSJSSubgraphError' && subgraphError !== 'ENSJSSubgraphIndexingError'
+        }
+        onChange={(e) => {
+          setSubgraphError('')
+          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
+        }}
+      />
+      <DetailedSwitch
+        title="Network Latency Error"
+        checked={ensjsError === 'ENSJSSubgraphLatency'}
+        onChange={(e) => {
+          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphLatency' : '')
+          setSubgraphError('')
+        }}
+        data-testid="network-latency-error"
+      />
     </SectionContainer>
   )
 }

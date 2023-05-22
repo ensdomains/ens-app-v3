@@ -140,7 +140,7 @@ export const useSubnameAbilities = ({
     ownerData: parentOwnerData,
     isLoading: parentLoading,
     isCachedData: parentCachedData,
-  } = useBasicName(parentName)
+  } = useBasicName(parentName, { skipGraph: false })
 
   const isOwner = ownerData?.owner === address
   const isParentOwner = parentOwnerData?.owner === address

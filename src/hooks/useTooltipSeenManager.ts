@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 
 export const useTooltipSeenManager = (targetId: string) => {
   const [shouldShowTooltipIndicator, setShouldShowTooltipIndicator] = useState(
-    !localStorage.getItem(`tooltipTarget-${targetId}`),
+    typeof localStorage !== 'undefined' && !localStorage.getItem(`tooltipTarget-${targetId}`),
   )
 
   const onSeen = useCallback(() => {

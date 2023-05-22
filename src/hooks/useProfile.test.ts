@@ -26,6 +26,7 @@ describe('useProfile', () => {
         coinTypes: supportedAddresses,
         texts: [...supportedTexts, ...supportedProfileItems],
       },
+      skipGraph: false,
     })
   })
 })
