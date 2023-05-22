@@ -27,6 +27,7 @@ export const useProfile = (
     queryKey,
     func: getProfile,
     skip: skipGraph,
+    ms: 10000,
   })
   const {
     data: profile,
