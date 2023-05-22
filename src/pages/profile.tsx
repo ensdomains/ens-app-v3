@@ -22,10 +22,11 @@ export default function Page() {
 
   const name = isSelf && ensName ? ensName : _name
 
-  const nameDetails = useNameDetails(name)
+  // Skip graph for for initial load and router redirect
+  const nameDetails = useNameDetails(name, true)
   const { isLoading: detailsLoading, registrationStatus, gracePeriodEndDate } = nameDetails
 
-  const isLoading = detailsLoading || primaryLoading || initial
+  const isLoading = detailsLoading || primaryLoading || initial || !router.isReady
 
   if (isViewingExpired && gracePeriodEndDate && gracePeriodEndDate > new Date()) {
     router.push(`/profile/${name}`)
@@ -50,7 +51,6 @@ export default function Page() {
   return (
     <ProfileContent
       {...{
-        nameDetails,
         isSelf,
         isLoading,
         name,

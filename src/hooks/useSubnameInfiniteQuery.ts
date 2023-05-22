@@ -6,6 +6,9 @@ import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { emptyAddress } from '@app/utils/constants'
 
+import { useQueryKeys } from '../utils/cacheKeyFactory'
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
+
 const PAGE_SIZE = 25
 
 export type Subname = ReturnedENS['getSubnames']['subnames'][number]
@@ -20,21 +23,24 @@ export const useSubnameInfiniteQuery = (
 ) => {
   const { getSubnames } = useEns()
 
-  const queryKey = ['graph', 'getSubnames', 'infinite', name, orderBy, orderDirection, search]
+  const queryKey = useQueryKeys().subnames(name, orderBy, orderDirection, search)
+  const { watchedFunc: watchedGetSubnames } = useGlobalErrorFunc<typeof getSubnames>({
+    queryKey,
+    func: getSubnames,
+  })
   const { data, isLoading, isFetching, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery(
     queryKey,
     async ({ pageParam }) => {
-      const result = await getSubnames({
+      const result = await watchedGetSubnames({
         name: name === '[root]' ? '' : name,
         lastSubnames: pageParam,
         orderBy: orderBy === 'creationDate' ? 'createdAt' : 'labelName',
         orderDirection: orderDirection === 'asc' ? 'asc' : 'desc',
         pageSize: PAGE_SIZE,
         search,
-      })
-
+      }).then((res) => res || { subnames: [], subnameCount: 0 })
       const ownedSubnames = result.subnames.filter((subname) => subname.owner !== emptyAddress)
-      const isPageSize = result.subnames.length >= PAGE_SIZE
+      const isPageSize = (result.subnames.length || 0) >= PAGE_SIZE
       const lastSubname = isPageSize ? result.subnames[result.subnames.length - 1] : undefined
       return {
         subnames: ownedSubnames,
@@ -52,9 +58,10 @@ export const useSubnameInfiniteQuery = (
   const subnames: Subname[] = useMemo(() => {
     return (
       data?.pages.reduce<Subname[]>((acc, curr) => {
+        const currentSubnames = curr?.subnames || []
         return [
           ...acc,
-          ...curr.subnames.map(
+          ...currentSubnames.map(
             (s) =>
               ({
                 ...s,

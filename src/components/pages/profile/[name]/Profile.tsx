@@ -15,7 +15,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
-import { Content } from '@app/layouts/Content'
+import { Content, ContentWarning } from '@app/layouts/Content'
 import { formatFullExpiry } from '@app/utils/utils'
 
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
@@ -67,7 +67,6 @@ const tabs = ['profile', 'records', 'subnames', 'permissions', 'more'] as const
 type Tab = typeof tabs[number]
 
 type Props = {
-  nameDetails: ReturnType<typeof useNameDetails>
   isSelf: boolean
   isLoading: boolean
   name: string
@@ -102,13 +101,14 @@ export const NameAvailableBanner = ({
   )
 }
 
-const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
+const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const chainId = useChainId()
   const { address } = useAccount()
   const transactions = useRecentTransactions()
 
+  const nameDetails = useNameDetails(name)
   const {
     error,
     errorTitle,
@@ -124,6 +124,8 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     isLoading: detailsLoading,
     wrapperData,
   } = nameDetails
+
+  const isLoading = _isLoading || detailsLoading
 
   useProtectedRoute(
     '/',
@@ -214,27 +216,26 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     return undefined
   }, [gracePeriodEndDate, normalisedName, expiryDate])
 
+  const warning: ContentWarning = useMemo(() => {
+    if (error)
+      return {
+        type: 'warning',
+        message: error,
+        title: errorTitle,
+      }
+    return undefined
+  }, [error, errorTitle])
+
   return (
     <>
       <Head>
         <title>{titleContent}</title>
         <meta name="description" content={descriptionContent} />
       </Head>
-      <Content
-        noTitle
-        title={beautifiedName}
-        loading={isLoading || detailsLoading}
-        copyValue={beautifiedName}
-      >
+      <Content noTitle title={beautifiedName} loading={isLoading} copyValue={beautifiedName}>
         {{
           info: infoBanner,
-          warning: error
-            ? {
-                type: 'warning',
-                message: error,
-                title: errorTitle,
-              }
-            : undefined,
+          warning,
           header: (
             <TabButtonContainer>
               {visibileTabs.map((tabItem) => (

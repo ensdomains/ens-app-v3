@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
 
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainId } from '@app/hooks/useChainId'
 import { DetailedProfile } from '@app/hooks/useNameDetails'
@@ -26,6 +27,7 @@ type Props = {
 const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
+  const hasGlobalError = useHasGlobalError()
   const { address } = useAccountSafely()
   const chainId = useChainId()
 
@@ -115,7 +117,7 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
     }
   }
 
-  if (!_canBeWrapped) return null
+  if (!_canBeWrapped || hasGlobalError) return null
 
   return (
     <BaseWrapButton
