@@ -27,6 +27,7 @@ export const useSubnameInfiniteQuery = (
   const { watchedFunc: watchedGetSubnames } = useGlobalErrorFunc<typeof getSubnames>({
     queryKey,
     func: getSubnames,
+    ms: 10000,
   })
   const { data, isLoading, isFetching, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery(
     queryKey,
