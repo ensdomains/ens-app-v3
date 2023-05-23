@@ -1,4 +1,4 @@
-import type { TFunction } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 
 import { OutlinkSVG, Typography } from '@ensdomains/thorin'
 
@@ -10,21 +10,20 @@ import { DateLayout } from './components/DateLayout'
 
 export const RegistrationDate = ({
   registrationData,
-  t,
 }: {
   registrationData: ReturnType<typeof useRegistrationDate>['data']
-  t: TFunction<'common', undefined>
 }) => {
+  const { t } = useTranslation('common')
   const chainName = useChainName()
   if (!registrationData) return null
   return (
     <DateLayout>
       <Typography>{t('name.registered')}</Typography>
-      <Typography>{formatExpiry(registrationData?.registrationDate)}</Typography>
-      <Typography>{formatDateTime(registrationData?.registrationDate)}</Typography>
+      <Typography>{formatExpiry(registrationData.registrationDate)}</Typography>
+      <Typography>{formatDateTime(registrationData.registrationDate)}</Typography>
       <a
         target="_blank"
-        href={makeEtherscanLink(registrationData?.transactionHash, chainName)}
+        href={makeEtherscanLink(registrationData.transactionHash, chainName)}
         rel="noreferrer"
         data-testid="etherscan-registration-link"
       >
