@@ -158,7 +158,7 @@ importers:
       react-transition-state: ^1.1.5
       react-use: ^17.4.0
       react-use-error-boundary: ^3.0.0
-      react-use-intercom: latest
+      react-use-intercom: ^5.1.4
       sitemap: ^7.1.1
       styled-components: ^5.3.5
       stylelint: 14.11.0
