@@ -10,7 +10,7 @@ import Resolver from './Resolver'
 import Token from './Token/Token'
 
 jest.mock('@app/hooks/useOwners')
-jest.mock('./Miscellaneous')
+jest.mock('./Miscellaneous/Miscellaneous')
 jest.mock('./Ownership')
 jest.mock('./Resolver')
 jest.mock('./Token/Token')

@@ -8,7 +8,6 @@ import useRegistrationData from '@app/hooks/useRegistrationData'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-// import { EarnifiDialog } from './EarnifiDialog'
 import Miscellaneous from './Miscellaneous'
 
 jest.mock('@app/hooks/useChainName')
@@ -20,7 +19,9 @@ jest.mock('./EarnifiDialog', () => ({
   ...jest.requireActual('./EarnifiDialog'),
   EarnifiDialog: jest.fn(({ onDismiss, open }) => (
     <div>
-      <div onClick={onDismiss}>Dismiss</div>
+      <button type="button" onClick={onDismiss}>
+        Dismiss
+      </button>
       {open ? 'open' : 'closed'}
     </div>
   )),

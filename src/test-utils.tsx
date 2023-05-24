@@ -15,10 +15,10 @@ import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 // import { useChainId } from '@app/hooks/useChainId'
 import { DeepPartial } from './types'
 
+window.scroll = jest.fn()
+
 jest.mock('@app/hooks/useRegistrationReducer', () => jest.fn(() => ({ item: { stepIndex: 0 } })))
-jest.mock('@app/hooks/useChainId', () => ({
-  useChainId: () => 'mainnet',
-}))
+jest.mock('@app/hooks/useChainId', () => ({ useChainId: () => 1 }))
 
 jest.mock('wagmi', () => {
   const {
@@ -130,9 +130,6 @@ export type PartialMockedFunction<T extends (...args: any) => any> = (
 
 export const mockFunction = <T extends (...args: any) => any>(func: T) =>
   func as unknown as jest.MockedFunction<PartialMockedFunction<T>>
-
-// const mockUseChainId = mockFunction(useChainId)
-// mockUseChainId.mockReturnValue(1)
 
 export * from '@testing-library/react'
 export { customRender as render }

@@ -1,4 +1,4 @@
-import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
+import { fireEvent, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { ExpirationDate } from './ExpirationDate'
 

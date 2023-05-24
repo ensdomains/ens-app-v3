@@ -79,13 +79,12 @@ describe('EarnifiDialog', () => {
 
     expect(subscribeMock).toHaveBeenCalledWith({
       address: 'name',
-      chainId: 'mainnet',
+      chainId: 1,
       email: 'validemail@example.com',
     })
   })
 
   it('should show error message when one is passed', async () => {
-    const subscribeMock = jest.fn()
     ;(useSubscribeToEarnifi as jest.Mock).mockImplementation(({ onError }) => ({
       subscribe: () => onError(new Error('Bad Request')),
       status: 'idle',
@@ -102,7 +101,6 @@ describe('EarnifiDialog', () => {
   })
 
   it('should show default error when no error message is passed', async () => {
-    const subscribeMock = jest.fn()
     ;(useSubscribeToEarnifi as jest.Mock).mockImplementation(({ onError }) => ({
       subscribe: () => onError(new Error()),
       status: 'idle',
@@ -119,7 +117,6 @@ describe('EarnifiDialog', () => {
   })
 
   it('should clear error after error timeout', async () => {
-    const subscribeMock = jest.fn()
     ;(useSubscribeToEarnifi as jest.Mock).mockImplementation(({ onError }) => ({
       subscribe: () => onError(new Error()),
       status: 'idle',
