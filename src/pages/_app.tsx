@@ -25,7 +25,6 @@ import i18n from '../i18n'
 import '../styles.css'
 
 const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 'eotmigir'
-console.log(process.env)
 
 const rainbowKitTheme: Theme = {
   ...lightTheme({
