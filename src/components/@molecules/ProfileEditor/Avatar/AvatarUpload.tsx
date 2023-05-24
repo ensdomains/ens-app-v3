@@ -78,7 +78,7 @@ const UploadComponent = ({
   })
 
   const { mutate: signAndUpload, isLoading } = useMutation(async () => {
-    let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://ens.xyz`
+    let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
     if (network !== 'mainnet') {
       baseURL = `${baseURL}/${network}`
     }

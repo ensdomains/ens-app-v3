@@ -62,7 +62,7 @@ describe('<AvatarUpload />', () => {
     fireEvent.click(screen.getByTestId('continue-button'))
     fireEvent.click(screen.getByTestId('upload-button'))
     await waitFor(() =>
-      expect(global.fetch).toBeCalledWith('https://ens.xyz/test.eth', {
+      expect(global.fetch).toBeCalledWith('https://euc.li/test.eth', {
         method: 'PUT',
         headers: {
           // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -79,7 +79,7 @@ describe('<AvatarUpload />', () => {
     await waitFor(() =>
       expect(mockHandleSubmit).toHaveBeenCalledWith(
         'upload',
-        'https://ens.xyz/test.eth',
+        'https://euc.li/test.eth',
         mockFileDataURL,
       ),
     )
@@ -99,7 +99,7 @@ describe('<AvatarUpload />', () => {
     fireEvent.click(screen.getByTestId('continue-button'))
     fireEvent.click(screen.getByTestId('upload-button'))
     await waitFor(() =>
-      expect(global.fetch).toBeCalledWith('https://ens.xyz/goerli/test.eth', {
+      expect(global.fetch).toBeCalledWith('https://euc.li/goerli/test.eth', {
         method: 'PUT',
         headers: {
           // eslint-disable-next-line @typescript-eslint/naming-convention

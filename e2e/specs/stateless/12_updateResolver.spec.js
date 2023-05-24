@@ -59,4 +59,21 @@ describe('Update Resolver', () => {
       cy.findByTestId('update-button').should('be.disabled')
     })
   })
+
+  describe('subgraph errors', () => {
+    it('should be able to turn on subgraph indexing error', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('subgraph-indexing-error').click()
+    })
+
+    it('should disable button for unwrapped subname', () => {
+      cy.visit('/test123.eth?tab=more')
+      cy.findByTestId('edit-resolver-button').should('not.exist')
+    })
+
+    it('should disable button for wrapped subname', () => {
+      cy.visit('/wrapped.eth?tab=more')
+      cy.findByTestId('edit-resolver-button').should('not.exist')
+    })
+  })
 })
