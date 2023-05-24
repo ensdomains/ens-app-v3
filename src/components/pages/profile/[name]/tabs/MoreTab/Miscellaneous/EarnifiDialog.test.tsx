@@ -10,6 +10,7 @@ jest.mock('./useSubscribeToEarnifi', () => ({
 const pageObject = {
   emailInput: () => screen.getByLabelText('action.enterEmail'),
   continueButton: () => screen.getByRole('button', { name: 'action.continue' }),
+  cancelButton: () => screen.getByRole('button', { name: 'action.cancel' }),
 }
 
 const defaultProps = {
@@ -137,5 +138,68 @@ describe('EarnifiDialog', () => {
         expect(screen.findByText('tabs.more.misc.earnfi.submitError')).not.toBeInTheDocument()
       })
     }, 3000)
+  })
+
+  it('should call _onDismiss when modal is cancelled on email input', async () => {
+    const onDismissMock = jest.fn()
+    ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
+      subscribe: jest.fn(),
+      status: 'idle',
+      reset: jest.fn(),
+    })
+
+    render(<EarnifiDialog {...{ ...defaultProps, onDismiss: onDismissMock }} />)
+
+    await fireEvent.click(pageObject.cancelButton())
+
+    await waitFor(() => expect(onDismissMock).toHaveBeenCalled())
+  })
+
+  it('should show success dialog when subscribe is successful', async () => {
+    const subscribeMock = jest.fn()
+    ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
+      subscribe: subscribeMock,
+      status: 'success',
+    })
+
+    render(<EarnifiDialog {...defaultProps} />)
+
+    await waitFor(() =>
+      expect(screen.getByText('tabs.more.misc.earnfi.emailConfirmation')).toBeInTheDocument(),
+    )
+  })
+
+  it('should call _onDismiss when modal is closed on success dialog', async () => {
+    const onDismissMock = jest.fn()
+    ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
+      subscribe: jest.fn(),
+      status: 'success',
+      reset: jest.fn(),
+    })
+
+    render(<EarnifiDialog {...{ ...defaultProps, onDismiss: onDismissMock }} />)
+
+    await waitFor(() =>
+      expect(screen.getByText('tabs.more.misc.earnfi.emailConfirmation')).toBeInTheDocument(),
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'action.close' }))
+
+    await waitFor(() => expect(onDismissMock).toHaveBeenCalled())
+  })
+
+  it('_onDismiss should call reset', async () => {
+    const resetMock = jest.fn()
+    ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
+      subscribe: jest.fn(),
+      status: 'idle',
+      reset: resetMock,
+    })
+
+    render(<EarnifiDialog {...defaultProps} />)
+
+    await fireEvent.click(pageObject.cancelButton())
+
+    await waitFor(() => expect(resetMock).toHaveBeenCalled())
   })
 })
