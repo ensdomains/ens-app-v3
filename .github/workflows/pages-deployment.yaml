@@ -2,6 +2,7 @@ name: Cloudflare Pages
 
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  NEXT_PUBLIC_INTERCOM_ID: re9q5yti
 
 on: [push]
 jobs:
@@ -46,11 +47,6 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-
-      - name: Set env for production
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: |
-          echo "NEXT_PUBLIC_INTERCOM_ID=re9q5yti" >> $GITHUB_ENV
 
       - name: Build and Export
         if: ${{ github.ref == 'refs/heads/main' }}
