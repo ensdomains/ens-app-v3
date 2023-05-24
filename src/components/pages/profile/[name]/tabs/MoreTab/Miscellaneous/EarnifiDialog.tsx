@@ -10,10 +10,9 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
 import { useSubscribeToEarnifi } from '@app/components/pages/profile/[name]/tabs/MoreTab/Miscellaneous/useSubscribeToEarnifi'
+import { useChainId } from '@app/hooks/useChainId'
 
-import { useChainId } from '../../../../../../../hooks/useChainId'
-
-const EARNIFI_OUTLINK =
+export const EARNIFI_OUTLINK =
   'https://earni.fi/?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$/i
@@ -86,7 +85,7 @@ export const EarnifiDialog = ({ name, open, onDismiss: _onDismiss }: Props) => {
                 i18nKey="tabs.more.misc.earnfi.enterEmail"
                 ns="profile"
                 components={{
-                  a: <Outlink href={EARNIFI_OUTLINK} />,
+                  a: <Outlink href={EARNIFI_OUTLINK} role="link" />,
                 }}
               />
             </Typography>
@@ -119,7 +118,7 @@ export const EarnifiDialog = ({ name, open, onDismiss: _onDismiss }: Props) => {
               }
               trailing={
                 <Button
-                  disabled={!!errors.email}
+                  disabled={!!errors.email || status === 'loading'}
                   loading={status === 'loading'}
                   onClick={handleClick}
                 >
