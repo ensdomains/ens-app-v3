@@ -2,6 +2,7 @@ name: Cloudflare Pages
 
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  NEXT_PUBLIC_INTERCOM_ID: re9q5yti
 
 on: [push]
 jobs:

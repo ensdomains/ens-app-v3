@@ -158,6 +158,7 @@ importers:
       react-transition-state: ^1.1.5
       react-use: ^17.4.0
       react-use-error-boundary: ^3.0.0
+      react-use-intercom: ^5.1.4
       sitemap: ^7.1.1
       styled-components: ^5.3.5
       stylelint: 14.11.0
@@ -234,6 +235,7 @@ importers:
       react-transition-state: 1.1.5_sfoxds7t5ydpegc3knd667wn6m
       react-use: 17.4.0_sfoxds7t5ydpegc3knd667wn6m
       react-use-error-boundary: 3.0.0_react@17.0.2
+      react-use-intercom: 5.1.4_sfoxds7t5ydpegc3knd667wn6m
       styled-components: 5.3.6_fane7jikarojcev26y27hpbhu4
       ts-pattern: 4.2.2
       use-immer: 0.7.0_immer@9.0.15+react@17.0.2
@@ -20866,6 +20868,16 @@ packages:
       react: '>= 16.8'
     dependencies:
       react: 17.0.2
+    dev: false
+
+  /react-use-intercom/5.1.4_sfoxds7t5ydpegc3knd667wn6m:
+    resolution: {integrity: sha512-37dMuCg3H5KgMqpUMiZiu7Ni1LcRAkO8T7F1Zg4Xc+hL89j8OYFHzWWBy29EFgRsTdvCEJ2X8J5wAXerU9uuqw==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
     dev: false
 
   /react-use/17.4.0_sfoxds7t5ydpegc3knd667wn6m:
