@@ -9,11 +9,10 @@ import { Button, Dialog, Input, Typography, mq } from '@ensdomains/thorin'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
-import { useSubscribeToEarnifi } from '@app/hooks/earnify/useSubscribeToEarnifi'
+import { useSubscribeToEarnifi } from '@app/components/pages/profile/[name]/tabs/MoreTab/Miscellaneous/useSubscribeToEarnifi'
+import { useChainId } from '@app/hooks/useChainId'
 
-import { useChainId } from '../../../../../../hooks/useChainId'
-
-const EARNIFI_OUTLINK =
+export const EARNIFI_OUTLINK =
   'https://earni.fi/?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$/i
@@ -33,7 +32,7 @@ type Props = {
   name: string
 } & Pick<ComponentProps<typeof Dialog>, 'onDismiss' | 'open'>
 
-export const EarnifiDialog = ({ name, open, onDismiss: _onDismiss }: Props) => {
+export const EarnifiDialog = ({ name, open, onDismiss }: Props) => {
   const { t } = useTranslation('common')
   const chainId = useChainId()
   const formRef = useRef<HTMLFormElement>(null)
@@ -66,13 +65,13 @@ export const EarnifiDialog = ({ name, open, onDismiss: _onDismiss }: Props) => {
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
   }
 
-  const onDismiss = () => {
+  const _onDismiss = () => {
     reset()
-    _onDismiss?.()
+    onDismiss?.()
   }
 
   return (
-    <Dialog open={open} variant="blank" onDismiss={() => status !== 'loading' && onDismiss?.()}>
+    <Dialog open={open} variant="blank" onDismiss={() => status !== 'loading' && _onDismiss()}>
       <Dialog.Heading title={t('tabs.more.misc.earnfi.title', { ns: 'profile' })} />
       {match(status)
         .with(P.not('success'), () => (
@@ -86,7 +85,7 @@ export const EarnifiDialog = ({ name, open, onDismiss: _onDismiss }: Props) => {
                 i18nKey="tabs.more.misc.earnfi.enterEmail"
                 ns="profile"
                 components={{
-                  a: <Outlink href={EARNIFI_OUTLINK} />,
+                  a: <Outlink href={EARNIFI_OUTLINK} role="link" />,
                 }}
               />
             </Typography>
@@ -107,19 +106,13 @@ export const EarnifiDialog = ({ name, open, onDismiss: _onDismiss }: Props) => {
             <Spacer $height="3" />
             <Dialog.Footer
               leading={
-                <Button
-                  disabled={status === 'loading'}
-                  onClick={() => {
-                    onDismiss?.()
-                  }}
-                  colorStyle="accentSecondary"
-                >
+                <Button onClick={_onDismiss} colorStyle="accentSecondary">
                   {t('action.cancel')}
                 </Button>
               }
               trailing={
                 <Button
-                  disabled={!!errors.email}
+                  disabled={!!errors.email || status === 'loading'}
                   loading={status === 'loading'}
                   onClick={handleClick}
                 >
@@ -134,17 +127,7 @@ export const EarnifiDialog = ({ name, open, onDismiss: _onDismiss }: Props) => {
             <div style={{ textAlign: 'center' }}>
               {t('tabs.more.misc.earnfi.emailConfirmation', { ns: 'profile' })}
             </div>
-            <Dialog.Footer
-              trailing={
-                <Button
-                  onClick={() => {
-                    onDismiss?.()
-                  }}
-                >
-                  {t('action.close')}
-                </Button>
-              }
-            />
+            <Dialog.Footer trailing={<Button onClick={_onDismiss}>{t('action.close')}</Button>} />
           </InnerDialog>
         ))
         .exhaustive()}

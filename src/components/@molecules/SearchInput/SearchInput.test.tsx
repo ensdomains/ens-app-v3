@@ -2,7 +2,6 @@ import { mockFunction, render, screen, userEvent } from '@app/test-utils'
 
 import { act, waitFor } from '@testing-library/react'
 
-import { useChainId } from '@app/hooks/useChainId'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
@@ -10,17 +9,14 @@ import { SearchInput } from './SearchInput'
 
 jest.mock('@app/utils/BreakpointProvider')
 jest.mock('@app/hooks/useLocalStorage')
-jest.mock('@app/hooks/useChainId')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseLocalStorage = mockFunction(useLocalStorage)
-const mockUseChainId = mockFunction(useChainId)
 
 window.scroll = jest.fn()
 
 describe('SearchInput', () => {
   mockUseLocalStorage.mockReturnValue([[]])
-  mockUseChainId.mockReturnValue(1)
   window.ResizeObserver = jest.fn()
   ;(window.ResizeObserver as jest.Mock).mockImplementation(() => ({
     observe: jest.fn(),

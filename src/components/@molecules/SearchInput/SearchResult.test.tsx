@@ -3,21 +3,17 @@ import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 import { ComponentProps } from 'react'
 
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 
 import { SearchResult } from './SearchResult'
 
 jest.mock('@app/hooks/useBasicName')
-jest.mock('@app/hooks/useChainId')
 jest.mock('@app/hooks/usePrimary')
 
 const mockUseBasicName = mockFunction(useBasicName)
-const mockUseChainId = mockFunction(useChainId)
 const mockUsePrimary = mockFunction(usePrimary)
 
 describe('SearchResult', () => {
-  mockUseChainId.mockReturnValue(1)
   mockUseBasicName.mockReturnValue({ registrationStatus: 'available', beautifiedName: 'nick.eth' })
 
   const baseMockData: ComponentProps<typeof SearchResult> = {

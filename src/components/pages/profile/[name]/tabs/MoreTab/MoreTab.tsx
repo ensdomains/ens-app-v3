@@ -6,7 +6,7 @@ import useOwners from '@app/hooks/useOwners'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { validateExpiry } from '@app/utils/utils'
 
-import Miscellaneous from './Miscellaneous'
+import Miscellaneous from './Miscellaneous/Miscellaneous'
 import Ownership from './Ownership'
 import Resolver from './Resolver'
 import Token from './Token/Token'

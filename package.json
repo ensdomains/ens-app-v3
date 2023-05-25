@@ -184,6 +184,7 @@
     "jest-canvas-mock": "^2.4.0",
     "jest-environment-jsdom": "^27.5.1",
     "jest-localstorage-mock": "^2.4.22",
+    "msw": "^1.2.1",
     "next-compose-plugins": "^2.2.1",
     "next-dev-https": "^0.1.2",
     "node-fetch": "2.6.1",

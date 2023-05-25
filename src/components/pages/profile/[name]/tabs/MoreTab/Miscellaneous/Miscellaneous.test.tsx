@@ -1,5 +1,6 @@
-import { mockFunction, render, screen } from '@app/test-utils'
+import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
+import React from 'react'
 import { useAccount } from 'wagmi'
 
 import { useChainName } from '@app/hooks/useChainName'
@@ -13,6 +14,24 @@ jest.mock('@app/hooks/useChainName')
 jest.mock('@app/hooks/useRegistrationData')
 jest.mock('@app/hooks/useSelfAbilities')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
+
+jest.mock('./EarnifiDialog', () => ({
+  ...jest.requireActual('./EarnifiDialog'),
+  EarnifiDialog: jest.fn(({ onDismiss, open }) => (
+    <div>
+      <button type="button" onClick={onDismiss}>
+        Dismiss
+      </button>
+      {open ? 'open' : 'closed'}
+    </div>
+  )),
+}))
+
+const mockSetStateFunction = jest.fn()
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useState: (defaultState) => [defaultState, mockSetStateFunction],
+}))
 
 const mockUseAccount = mockFunction(useAccount)
 const mockUseChainName = mockFunction(useChainName)
@@ -53,5 +72,18 @@ describe('Miscellaneous', () => {
       'href',
       'https://etherscan.io/tx/0x123',
     )
+  })
+  it('should return null if there is no expiryDate', () => {
+    const { container } = render(
+      <Miscellaneous name="x.test.eth" expiryDate={undefined} isCachedData={false} />,
+    )
+    expect(container.firstChild).toBeNull()
+  })
+  it('should set showEarnifiDialog to false when EarnifiDialog is dismissed', async () => {
+    render(<Miscellaneous name="x.test.eth" expiryDate={new Date()} isCachedData={false} />)
+    expect(screen.getByText('closed')).toBeVisible()
+    const dismissButton = screen.getByText('Dismiss')
+    userEvent.click(dismissButton)
+    await waitFor(() => expect(mockSetStateFunction).toHaveBeenCalledWith(false))
   })
 })
