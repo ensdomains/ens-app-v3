@@ -29,7 +29,7 @@ type Props = {
   hasNoResolver?: boolean
   latestResolver: string
   oldResolver: string
-  status: ReturnType<typeof useResolverStatus>['status']
+  status: ReturnType<typeof useResolverStatus>['data']
   onDismissOverlay: () => void
 } & TransactionDialogPassthrough
 
@@ -205,7 +205,7 @@ const ResolverWarningOverlay = ({
         name={name}
         currentResolver={oldResolver}
         latestResolver={latestResolver}
-        hasCurrentProfile={status?.hasProfile}
+        hasCurrentProfile={!!status?.hasProfile}
         selected={selectedProfile}
         onChangeSelected={setSelectedProfile}
         onBack={onDecrement}
@@ -226,7 +226,7 @@ const ResolverWarningOverlay = ({
     resolverNotNameWrapperAware: (
       <ResolverNotNameWrapperAwareView
         selected={selectedProfile}
-        hasProfile={status?.hasProfile}
+        hasProfile={!!status?.hasProfile}
         onChangeSelected={setSelectedProfile}
         onCancel={onDismiss}
         onNext={() => {

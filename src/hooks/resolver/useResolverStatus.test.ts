@@ -1,7 +1,6 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { ReturnedENS } from '@app/types/index'
 import { NAMEWRAPPER_AWARE_RESOLVERS } from '@app/utils/constants'
@@ -70,10 +69,6 @@ jest.mock('@app/hooks/useProfile', () => ({
 jest.mock('@app/hooks/useContractAddress')
 const mockUseContractAddress = mockFunction(useContractAddress)
 mockUseContractAddress.mockReturnValue('0xlatest')
-
-jest.mock('@app/hooks/useChainId')
-const mockUseChainId = mockFunction(useChainId)
-mockUseChainId.mockReturnValue(1)
 
 const mockUseResolverIsAuthorized = jest.fn().mockReturnValue({
   data: { isAuthorized: true, isValid: true },
@@ -288,124 +283,4 @@ describe('useResolverStatus', () => {
     expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
     expect(mockUseLatestResolverProfile).not.toHaveBeenCalled()
   })
-
-  // describe('loading', () => {
-  //   it('should return isLoading true if useResolverIsAuthorized loading', () => {
-  //     mockUseResolverIsAuthorized.mockReturnValueOnce({
-  //       data: { isAuthorized: true },
-  //       isLoading: true,
-  //     })
-  //     const { result } = renderHook(() =>
-  //       useResolverStatus('test.eth', false, makeProfile({}), { skipCompare: false }),
-  //     )
-  //     expect(result.current).toEqual(makeResult(['hasResolver', 'hasProfile'], true))
-  //   })
-  // })
-
-  // it('should return default if profile does not have resolver', () => {
-  //   const { result } = renderHook(() =>
-  //     useResolverStatus('test.eth', false, makeProfile({ resolverAddress: '' }), {
-  //       skipCompare: false,
-  //     }),
-  //   )
-  //   expect(result.current).toEqual(makeResult())
-  // })
-
-  // it('should return default if profile resolver is empty address', () => {
-  //   const { result } = renderHook(() =>
-  //     useResolverStatus('test.eth', false, makeProfile({ resolverAddress: emptyAddress }), {
-  //       skipCompare: false,
-  //     }),
-  //   )
-  //   expect(result.current).toEqual(makeResult())
-  // })
-
-  // it('should return authorized results if skipCompare is true', () => {
-  //   const { result } = renderHook(() =>
-  //     useResolverStatus('test.eth', false, makeProfile({}), { skipCompare: true }),
-  //   )
-  //   expect(result.current).toEqual(
-  //     makeResult(['hasResolver', 'hasValidResolver', 'isAuthorized', 'hasProfile']),
-  //   )
-  // })
-
-  // it('should return isAuthorized is false if authorization fails', () => {
-  //   mockUseResolverIsAuthorized.mockReturnValueOnce({
-  //     data: { isAuthorized: false, isValid: false },
-  //     isLoading: false,
-  //   })
-  //   const { result } = renderHook(() =>
-  //     useResolverStatus('test.eth', false, makeProfile({}), { skipCompare: true }),
-  //   )
-  //   expect(result.current).toEqual(makeResult(['hasResolver', 'hasProfile']))
-  // })
-
-  // it('should return isNameWrapperAware is true if resolver is in list', () => {
-  //   const { result } = renderHook(() =>
-  //     useResolverStatus(
-  //       'test.eth',
-  //       false,
-  //       makeProfile({ resolverAddress: NAMEWRAPPER_AWARE_RESOLVERS[1][0] }),
-  //       { skipCompare: true },
-  //     ),
-  //   )
-  //   expect(result.current).toEqual(
-  //     makeResult([
-  //       'hasResolver',
-  //       'hasValidResolver',
-  //       'isAuthorized',
-  //       'hasProfile',
-  //       'isNameWrapperAware',
-  //     ]),
-  //   )
-  // })
-
-  // it('should return authorized results if latestResolverProfile is loading', () => {
-  //   mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
-  //   mockUseProfile.mockReturnValueOnce({
-  //     loading: true,
-  //     profile: makeProfile({}),
-  //   })
-  //   const { result } = renderHook(() => useResolverStatus('test.eth', false, makeProfile({})))
-  //   expect(result.current).toEqual(
-  //     makeResult(['hasResolver', 'hasValidResolver', 'isAuthorized', 'hasProfile'], true),
-  //   )
-  // })
-
-  // it('should return isMigratedProfileEqual is false if profile is not equal to latestResolverProfile', () => {
-  //   mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
-  //   mockUseProfile.mockReturnValueOnce({
-  //     loading: false,
-  //     profile: makeProfile({ texts: [{ key: 'test', value: 'different' }] }),
-  //   })
-  //   const { result } = renderHook(() => useResolverStatus('test.eth', false, makeProfile({})))
-  //   expect(result.current).toEqual(
-  //     makeResult([
-  //       'hasResolver',
-  //       'hasValidResolver',
-  //       'isAuthorized',
-  //       'hasProfile',
-  //       'hasMigratedProfile',
-  //     ]),
-  //   )
-  // })
-
-  // it('should return isMigratedProfileEqual is true if profile is equal to latestResolverProfile', () => {
-  //   mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
-  //   mockUseProfile.mockReturnValueOnce({
-  //     loading: false,
-  //     profile: makeProfile({}),
-  //   })
-  //   const { result } = renderHook(() => useResolverStatus('test.eth', false, makeProfile({})))
-  //   expect(result.current).toEqual(
-  //     makeResult([
-  //       'hasResolver',
-  //       'hasValidResolver',
-  //       'isAuthorized',
-  //       'hasProfile',
-  //       'hasMigratedProfile',
-  //       'isMigratedProfileEqual',
-  //     ]),
-  //   )
-  // })
 })

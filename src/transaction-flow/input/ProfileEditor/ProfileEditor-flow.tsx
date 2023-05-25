@@ -26,6 +26,7 @@ import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEd
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { Profile } from '@app/types'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
@@ -216,7 +217,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const resolverAddress = useContractAddress('PublicResolver')
 
   const { data: status, isLoading: statusLoading } = useResolverStatus(name, {
-    profile,
+    profile: profile as Profile,
     isWrapped,
     skipCompare: false,
   })

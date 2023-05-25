@@ -171,7 +171,7 @@ export function setupIntersectionObserverMock({
 }
 
 const makeResolverStatus = (keys?: string[], isLoading = false) => ({
-  status: {
+  data: {
     hasResolver: false,
     hasLatestResolver: false,
     isAuthorized: false,
