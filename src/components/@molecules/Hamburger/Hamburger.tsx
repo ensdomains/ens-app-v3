@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
@@ -10,6 +9,8 @@ import { useGraphOutOfSync } from '@app/utils/SyncProvider'
 
 import LanguageMenu from './LanguageMenu'
 import MainMenu from './MainMenu'
+
+const FEEDBACK_URL = 'https://app.deform.cc/form/2ae7b77b-2628-4a30-8f1f-a3ca3224734b/'
 
 const Button = styled.button<{ $active: boolean }>(
   ({ theme, $active }) => css`
@@ -168,7 +169,6 @@ const Hamburger = () => {
   } | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [currentView, _setCurrentView] = useState<View>('main')
-  const router = useRouter()
 
   const setCurrentView = useCallback((view: View) => {
     _setCurrentView((prev) => {
@@ -277,7 +277,7 @@ const Hamburger = () => {
           width="100%"
           height="100%"
           style={{ borderRadius: 25 }}
-          src={`https://docs.google.com/forms/d/e/1FAIpQLSfAVFlV7LC2oCEBtZEK0uKpAU32-eYyY307Ji07wyGSFaZU8Q/viewform?usp=pp_url&entry.435573398=${router.asPath}`}
+          src={FEEDBACK_URL}
         />
       </StyledDialog>
       {button}
