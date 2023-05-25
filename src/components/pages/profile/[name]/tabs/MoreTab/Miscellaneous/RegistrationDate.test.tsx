@@ -24,13 +24,8 @@ describe('RegistrationDate', () => {
   it('should render the registration time correctly', () => {
     const registrationDate = new Date('2021-01-01T00:00:00.000Z')
     render(<RegistrationDate {...{ registrationData: { registrationDate } }} />)
-    const expectedTime = formatDateTime(registrationDate).match(
-      /\d{2}:\d{2}:\d{2} GMT\+\d{1,2}/,
-    )?.[0]
-    const element = screen.getByText((content) => {
-      const actualTime = content.match(/\d{2}:\d{2}:\d{2} GMT\+\d{1,2}/)?.[0]
-      return actualTime === expectedTime
-    })
+    const expectedTime = formatDateTime(registrationDate)
+    const element = screen.getByText(expectedTime)
     expect(element).toBeInTheDocument()
   })
 
