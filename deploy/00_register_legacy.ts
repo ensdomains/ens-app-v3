@@ -229,6 +229,12 @@ const names: Name[] = [
     namedController: 'owner',
   },
   {
+    label: 'almost-latest-resolver',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    namedController: 'owner',
+  },
+  {
     label: 'migrated-resolver-to-be-updated',
     namedOwner: 'owner',
     namedAddr: 'owner',
@@ -341,7 +347,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const registrant = allNamedAccts[namedOwner]
     const owner = namedController ? allNamedAccts[namedController] : undefined
     const addr = allNamedAccts[namedAddr]
-    const resolver = publicResolver.address
+    const resolver = rest.resolver ?? publicResolver.address
     const duration = customDuration || 31536000
 
     return {
