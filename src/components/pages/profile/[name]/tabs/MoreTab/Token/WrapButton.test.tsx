@@ -2,18 +2,15 @@ import { mockFunction, render, screen } from '@app/test-utils'
 
 import { useAccount } from 'wagmi'
 
-import { useChainId } from '@app/hooks/useChainId'
 import useWrapperApprovedForAll from '@app/hooks/useWrapperApprovedForAll'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import WrapButton from './WrapButton'
 
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
-jest.mock('@app/hooks/useChainId')
 jest.mock('@app/hooks/useWrapperApprovedForAll')
 
 const mockUseTransaction = mockFunction(useTransactionFlow)
-const mockUseChainId = mockFunction(useChainId)
 const mockUseAccount = mockFunction(useAccount)
 const mockUseWrapperApprovedForAll = mockFunction(useWrapperApprovedForAll)
 
@@ -30,7 +27,6 @@ describe('WrapButton', () => {
     getResumable: mockGetResumable,
     prepareDataInput: mockPrepareDataInput,
   })
-  mockUseChainId.mockReturnValue(1)
   mockUseAccount.mockReturnValue({ address: '0x123' })
   mockUseWrapperApprovedForAll.mockReturnValue({
     approvedForAll: true,

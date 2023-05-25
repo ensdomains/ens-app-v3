@@ -4,6 +4,7 @@ import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
+import { IntercomProvider } from 'react-use-intercom'
 import { ThemeProvider, createGlobalStyle, keyframes } from 'styled-components'
 import { WagmiConfig } from 'wagmi'
 
@@ -22,6 +23,8 @@ import { chains, wagmiClient } from '@app/utils/query'
 
 import i18n from '../i18n'
 import '../styles.css'
+
+const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 'eotmigir'
 
 const rainbowKitTheme: Theme = {
   ...lightTheme({
@@ -144,16 +147,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             <EnsProvider>
               <ThemeProvider theme={thorinLightTheme}>
                 <BreakpointProvider queries={breakpoints}>
-                  <GlobalStyle />
-                  <ThorinGlobalStyles />
-                  <GlobalErrorProvider>
-                    <SyncProvider>
-                      <TransactionFlowProvider>
-                        <Notifications />
-                        <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                      </TransactionFlowProvider>
-                    </SyncProvider>
-                  </GlobalErrorProvider>
+                  <IntercomProvider appId={INTERCOM_ID}>
+                    <GlobalStyle />
+                    <ThorinGlobalStyles />
+                    <GlobalErrorProvider>
+                      <SyncProvider>
+                        <TransactionFlowProvider>
+                          <Notifications />
+                          <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                        </TransactionFlowProvider>
+                      </SyncProvider>
+                    </GlobalErrorProvider>
+                  </IntercomProvider>
                 </BreakpointProvider>
               </ThemeProvider>
             </EnsProvider>
