@@ -9,8 +9,6 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
-import { emptyAddress } from '../src/utils/constants'
-
 const dummyABI = [
   {
     type: 'event',
