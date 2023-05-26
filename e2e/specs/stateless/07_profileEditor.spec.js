@@ -279,6 +279,7 @@ describe('Profile Editor', () => {
   describe('resolver status', () => {
     it('should be able to set resolver to dummy resolver address', () => {
       cy.visit('/almost-latest-resolver.eth?tab=more')
+      connectFromExisting()
       cy.findByTest('Outdated').should('be.visible')
       cy.findByTestId('edit-resolver-button').click()
       cy.findByTestId('custom-resolver-radio').should('not.be.disabled').click()
@@ -292,11 +293,13 @@ describe('Profile Editor', () => {
 
     it('should show latest label for dummy resolver', () => {
       cy.visit('/almost-latest-resolver.eth?tab=more')
+      connectFromExisting()
       cy.findByTest('Latest').should('be.visible')
     })
 
     it('should now show an overlay when editing profile', () => {
       cy.visit('/almost-latest-resolver.eth')
+      connectFromExisting()
       cy.contains('Edit profile').click()
       cy.findByText('Edit your profile').should('be.visible')
     })
