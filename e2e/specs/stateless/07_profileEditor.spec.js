@@ -263,7 +263,7 @@ describe('Profile Editor', () => {
     it('should be able to set resolver to dummy resolver address', () => {
       cy.visit('/almost-latest-resolver.eth?tab=more')
       connectFromExisting()
-      cy.findByTest('Outdated').should('be.visible')
+      cy.findByText('Outdated').should('be.visible')
       cy.findByTestId('edit-resolver-button').click()
       cy.findByTestId('custom-resolver-radio').should('not.be.disabled').click()
       cy.findByTestId('dogfood').type('0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750')
@@ -277,7 +277,7 @@ describe('Profile Editor', () => {
     it('should show latest label for dummy resolver', () => {
       cy.visit('/almost-latest-resolver.eth?tab=more')
       connectFromExisting()
-      cy.findByTest('Latest').should('be.visible')
+      cy.findByText('Latest').should('be.visible')
     })
 
     it('should now show an overlay when editing profile', () => {
