@@ -33,6 +33,7 @@ describe('Profile Editor', () => {
         cy.contains('Edit profile').click()
         cy.contains('No resolver set').should('be.visible')
         cy.findByTestId('warning-overlay-back-button').should('have.text', 'Cancel').click()
+        cy.wait(10000)
 
         cy.contains('Edit profile').click()
         cy.findByTestId('warning-overlay-next-button').click()
