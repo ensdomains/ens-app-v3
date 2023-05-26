@@ -259,23 +259,6 @@ describe('Profile Editor', () => {
     })
   })
 
-  describe('subgraph errors', () => {
-    it('should be able to turn on subgraph indexing error', () => {
-      cy.visit('/my/settings')
-      cy.findByTestId('subgraph-indexing-error').click()
-    })
-
-    it('should disable button for unwrapped subname', () => {
-      cy.visit('/test123.eth')
-      cy.findByTestId('disabled-profile-action-Edit profile').should('be.visible')
-    })
-
-    it('should disable button for wrapped subname', () => {
-      cy.visit('/wrapped.eth')
-      cy.findByTestId('disabled-profile-action-Edit profile').should('be.visible')
-    })
-  })
-
   describe('resolver status', () => {
     it('should be able to set resolver to dummy resolver address', () => {
       cy.visit('/almost-latest-resolver.eth?tab=more')
@@ -302,6 +285,23 @@ describe('Profile Editor', () => {
       connectFromExisting()
       cy.contains('Edit profile').click()
       cy.findByText('Edit your profile').should('be.visible')
+    })
+  })
+  
+  describe('subgraph errors', () => {
+    it('should be able to turn on subgraph indexing error', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('subgraph-indexing-error').click()
+    })
+
+    it('should disable button for unwrapped subname', () => {
+      cy.visit('/test123.eth')
+      cy.findByTestId('disabled-profile-action-Edit profile').should('be.visible')
+    })
+
+    it('should disable button for wrapped subname', () => {
+      cy.visit('/wrapped.eth')
+      cy.findByTestId('disabled-profile-action-Edit profile').should('be.visible')
     })
   })
 })
