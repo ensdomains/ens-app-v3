@@ -355,4 +355,18 @@ describe('WrapButton', () => {
       name: '[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
     })
   })
+
+  it('should call useWrapperApprovedForAll with the correct canBeWrapped state', async () => {
+    render(
+      <WrapButton
+        name="sub.test123.eth"
+        canBeWrapped
+        ownerData={{ owner: '0x123', ownershipLevel: 'registrar', registrant: '0x123' } as any}
+        profile={{ resolverAddress: '0x456' } as any}
+      />,
+    )
+    expect(
+      mockUseWrapperApprovedForAll.mock.calls[mockUseWrapperApprovedForAll.mock.calls.length - 1],
+    ).toEqual(['0x123', true, true])
+  })
 })
