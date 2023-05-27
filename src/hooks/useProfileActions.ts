@@ -157,7 +157,7 @@ export const useProfileActions = ({
         disabled: true,
         red: true,
         skip2LDEth: true,
-        tooltipContent: t('errors.permissionRevoked'),
+        tooltipContent: subnameAbilities.canDeleteError,
       })
     }
 
