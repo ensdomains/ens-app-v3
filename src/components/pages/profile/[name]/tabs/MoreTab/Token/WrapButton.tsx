@@ -58,7 +58,7 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
   const isSubdomain = name.split('.').length > 2
   const { approvedForAll, isLoading: approvalLoading } = useWrapperApprovedForAll(
     address!,
-    !_canBeWrapped && isSubdomain,
+    _canBeWrapped && isSubdomain,
   )
 
   const { createTransactionFlow, resumeTransactionFlow, getResumable, prepareDataInput } =

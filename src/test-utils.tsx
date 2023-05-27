@@ -12,7 +12,6 @@ import { WagmiConfig, createClient } from 'wagmi'
 
 import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 
-// import { useChainId } from '@app/hooks/useChainId'
 import { DeepPartial } from './types'
 
 window.scroll = jest.fn()
