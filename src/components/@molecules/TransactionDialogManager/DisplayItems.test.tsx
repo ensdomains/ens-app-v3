@@ -1,16 +1,13 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { TransactionDisplayItem } from '@app/types'
 
 import { DisplayItems } from './DisplayItems'
 
 jest.mock('@app/hooks/usePrimary')
-jest.mock('@app/hooks/useChainId')
 
 const mockUsePrimary = mockFunction(usePrimary)
-const mockUseChainId = mockFunction(useChainId)
 
 const genericItem: TransactionDisplayItem = {
   label: 'GenericItem',
@@ -30,7 +27,6 @@ const nameItem: TransactionDisplayItem = {
 }
 
 describe('DisplayItems', () => {
-  mockUseChainId.mockReturnValue(1)
   it('should show a generic item', () => {
     render(<DisplayItems displayItems={[genericItem]} />)
     expect(screen.getByText('transaction.itemLabel.GenericItem')).toBeVisible()

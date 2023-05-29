@@ -49,7 +49,7 @@ const getTextRecordByKey = (profile: ReturnedENS['getProfile'], key: string) => 
 }
 
 export const ProfileBlurb = ({ name, resolver }: Props) => {
-  const { profile } = useProfile(name, !name, resolver)
+  const { profile } = useProfile(name, { skip: !name, resolverAddress: resolver })
   const avatarRecord = getTextRecordByKey(profile, 'avatar')
   const { avatar } = useAvatarFromRecord(avatarRecord)
   const zorb = useZorb(name, 'name')

@@ -257,4 +257,21 @@ describe('Profile Editor', () => {
       })
     })
   })
+
+  describe('subgraph errors', () => {
+    it('should be able to turn on subgraph indexing error', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('subgraph-indexing-error').click()
+    })
+
+    it('should disable button for unwrapped subname', () => {
+      cy.visit('/test123.eth')
+      cy.findByTestId('disabled-profile-action-Edit profile').should('be.visible')
+    })
+
+    it('should disable button for wrapped subname', () => {
+      cy.visit('/wrapped.eth')
+      cy.findByTestId('disabled-profile-action-Edit profile').should('be.visible')
+    })
+  })
 })

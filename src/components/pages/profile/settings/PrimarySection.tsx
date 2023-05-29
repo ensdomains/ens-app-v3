@@ -4,13 +4,15 @@ import styled, { css } from 'styled-components'
 import { Button, Typography } from '@ensdomains/thorin'
 
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
+import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-import { useAccountSafely } from '../../../../hooks/useAccountSafely'
 import { SectionContainer } from './Section'
 
 const ItemWrapper = styled.div(
@@ -38,9 +40,11 @@ export const PrimarySection = () => {
     truncatedName,
     isLoading: basicLoading,
     wrapperData,
-  } = useBasicName(name, true)
+  } = useBasicName(name, { normalised: true, skipGraph: false })
 
   const { canSendOwner, canSendManager } = useSelfAbilities(address, name)
+
+  const hasGlobalError = useHasGlobalError()
 
   const isLoading = basicLoading || primaryLoading
 
@@ -54,9 +58,17 @@ export const PrimarySection = () => {
     <SectionContainer
       title={t('section.primary.title')}
       action={
-        <Button data-testid="primary-section-button" size="small" onClick={() => changePrimary()}>
-          {t(`action.${name ? 'change' : 'set'}`, { ns: 'common' })}
-        </Button>
+        hasGlobalError ? (
+          <DisabledButtonWithTooltip
+            buttonId="disabled-primary-section-button"
+            content={t('errors.networkError.blurb', { ns: 'common' })}
+            buttonText={t(`action.${name ? 'change' : 'set'}`, { ns: 'common' })}
+          />
+        ) : (
+          <Button data-testid="primary-section-button" size="small" onClick={() => changePrimary()}>
+            {t(`action.${name ? 'change' : 'set'}`, { ns: 'common' })}
+          </Button>
+        )
       }
       fill={!!name}
     >
