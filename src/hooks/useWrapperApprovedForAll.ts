@@ -5,7 +5,7 @@ import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { useContractAddress } from './useContractAddress'
 
-const useWrapperApprovedForAll = (address: string, isSubdomain: boolean) => {
+const useWrapperApprovedForAll = (address: string, isSubdomain: boolean, canBeWrapped: boolean) => {
   const { contracts } = useEns()
   const nameWrapperAddress = useContractAddress('NameWrapper')
   const { data: approvedForAll, isLoading } = useQuery(
@@ -15,7 +15,7 @@ const useWrapperApprovedForAll = (address: string, isSubdomain: boolean) => {
       return registry.isApprovedForAll(address, nameWrapperAddress)
     },
     {
-      enabled: !!address && !!nameWrapperAddress && isSubdomain,
+      enabled: !!address && !!nameWrapperAddress && isSubdomain && canBeWrapped,
     },
   )
 
