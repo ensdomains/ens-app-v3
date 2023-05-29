@@ -3,7 +3,6 @@ import { mockFunction, renderHook } from '@app/test-utils'
 import { NAMEWRAPPER_AWARE_RESOLVERS, emptyAddress } from '@app/utils/constants'
 
 import { ReturnedENS } from '../types/index'
-import { useChainId } from './useChainId'
 import { useContractAddress } from './useContractAddress'
 import { useProfile } from './useProfile'
 import { useResolverIsAuthorized } from './useResolverIsAuthorized'
@@ -58,10 +57,6 @@ mockUseProfile.mockReturnValue({
 jest.mock('@app/hooks/useContractAddress')
 const mockUseContractAddress = mockFunction(useContractAddress)
 mockUseContractAddress.mockReturnValue('0xlatest')
-
-jest.mock('@app/hooks/useChainId')
-const mockUseChainId = mockFunction(useChainId)
-mockUseChainId.mockReturnValue(1)
 
 jest.mock('@app/hooks/useResolverIsAuthorized')
 const mockUseResolverIsAuthorized = mockFunction(useResolverIsAuthorized)

@@ -13,7 +13,7 @@ export const randomSecret = () => {
   // v3
   const version = '00000003'
   const bytes = Buffer.allocUnsafe(24)
-  return '0x' + platformSource + version + window.crypto.getRandomValues(bytes).toString('hex')
+  return `0x${platformSource}${version}${window.crypto.getRandomValues(bytes).toString('hex')}`
 }
 
 const defaultData: RegistrationReducerDataItem = {

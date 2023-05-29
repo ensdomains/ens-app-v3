@@ -134,7 +134,7 @@ const FooterContainer = styled.div`
 export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { name } = data
   const { t } = useTranslation('profile')
-  const basicNameData = useBasicName(name as string)
+  const basicNameData = useBasicName(name as string, { skipGraph: false })
   const { address = '' } = useAccount()
 
   const {

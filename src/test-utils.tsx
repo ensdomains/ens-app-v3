@@ -14,7 +14,10 @@ import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 
 import { DeepPartial } from './types'
 
+window.scroll = jest.fn()
+
 jest.mock('@app/hooks/useRegistrationReducer', () => jest.fn(() => ({ item: { stepIndex: 0 } })))
+jest.mock('@app/hooks/useChainId', () => ({ useChainId: () => 1 }))
 
 jest.mock('wagmi', () => {
   const {

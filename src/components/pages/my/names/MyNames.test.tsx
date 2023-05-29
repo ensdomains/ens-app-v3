@@ -4,19 +4,16 @@ import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 
 import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/NameTableFooter'
-import { useChainId } from '@app/hooks/useChainId'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { Content } from '@app/layouts/Content'
 
 import MyNames from './MyNames'
 
-jest.mock('@app/hooks/useChainId')
 jest.mock('next/router')
 jest.mock('@app/hooks/useNamesFromAddress')
 jest.mock('@app/components/@molecules/NameTableFooter/NameTableFooter')
 jest.mock('@app/layouts/Content')
 
-const mockUseChainId = mockFunction(useChainId)
 const mockUseRouter = mockFunction(useRouter)
 const mockUseAccount = mockFunction(useAccount)
 const mockUseNamesFromAddress = mockFunction(useNamesFromAddress)
@@ -40,7 +37,6 @@ const expectQuery = (address: string, page: number) => {
 
 describe('MyNames', () => {
   mockContent.mockImplementation(({ children }) => <div>{children.trailing}</div>)
-  mockUseChainId.mockReturnValue(1)
   mockUseRouter.mockReturnValue({
     query: {},
     isReady: true,

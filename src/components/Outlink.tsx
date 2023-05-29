@@ -44,7 +44,7 @@ export const Outlink = ({
     href: string | UrlObject
   }) => {
   const InnerContent = (
-    <StyledAnchor {...props} rel="noreferrer noopener" target="_blank">
+    <StyledAnchor {...props} rel="noreferrer noopener" target="_blank" role="link">
       <OutlinkTypography fontVariant="smallBold" color="blue">
         {children}
       </OutlinkTypography>
