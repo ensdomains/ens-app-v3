@@ -11,7 +11,6 @@ import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
-import { useGetRegistryResolver } from '../../../../../../hooks/useGetRegistryResolver'
 import { TabWrapper } from '../../../TabWrapper'
 
 const Container = styled(TabWrapper)(
@@ -66,7 +65,7 @@ const Resolver = ({
   name,
   canEditResolver,
   canEdit,
-  // resolverAddress: universalResolverAddress,
+  resolverAddress,
   isCachedData,
 }: {
   name: string
@@ -77,7 +76,6 @@ const Resolver = ({
 }) => {
   const { t } = useTranslation('profile')
 
-  const { resolver: resolverAddress } = useGetRegistryResolver(name)
   const chainId = useChainId()
 
   const { prepareDataInput } = useTransactionFlow()

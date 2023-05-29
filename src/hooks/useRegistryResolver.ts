@@ -25,7 +25,7 @@ export const getRegistryResolver = async (name: string, contracts: Contracts) =>
   }
 }
 
-export const useGetRegistryResolver = (name: string) => {
+export const useRegistryResolver = (name: string) => {
   const { ready, contracts } = useEns()
 
   const { data, isLoading, ...rest } = useQuery(

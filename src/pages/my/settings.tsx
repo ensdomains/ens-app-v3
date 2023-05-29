@@ -81,7 +81,7 @@ export default function Page() {
                       setDialogProps(null)
                     }}
                   >
-                    {dialogProps?.actionLabel}
+                    {dialogProps?.actionLabel || t('action.next', { ns: 'common' })}
                   </Button>
                 }
               />

@@ -30,8 +30,8 @@ import { makeIntroItem } from '@app/transaction-flow/intro/index'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
+import { canResolverSetPrimaryName } from '@app/utils/canResolverSetPrimaryName'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
-import { canResolverSetPrimaryName } from '@app/utils/utils'
 
 const DEFAULT_PAGE_SIZE = 10
 
@@ -142,7 +142,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const chainId = useChainId()
   const lastestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
 
-  const { ready: isEnsReady, getResolver } = useEns()
+  const { ready: isEnsReady, getResolver, getDecryptedName } = useEns()
 
   const [view, setView] = useState<'main' | 'decrypt'>('main')
 
@@ -174,79 +174,120 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     name: 'name.name',
   })
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const onSubmit = async (data: FormData) => {
-    if (!data.name || isLoading) return
+    try {
+      setIsSubmitting(true)
+      if (!data.name || isLoading) return
 
-    let validName = data.name.name
+      let validName = data.name.name
 
-    const hasEncodedLabel = validName.split('.').some((label) => isEncodedLabelhash(label))
-    const hasValidDecodedLabels =
-      data.unknownLabels.labels.length === validName.split('.').length - 1 &&
-      data.unknownLabels.labels.every(
-        ({ label, value }) => label === value || label === labelhash(value),
+      let hasEncodedLabel = validName.split('.').some((label) => isEncodedLabelhash(label))
+      if (hasEncodedLabel) {
+        const decryptedName = await getDecryptedName(validName, true)
+        if (decryptedName) {
+          validName = decryptedName as string
+          hasEncodedLabel = validName.split('.').some((label) => isEncodedLabelhash(label))
+        }
+      }
+
+      const hasValidDecodedLabels =
+        data.unknownLabels.labels.length === validName.split('.').length - 1 &&
+        data.unknownLabels.labels.every(
+          ({ label, value }) => label === value || label === labelhash(value),
+        )
+
+      // If name has encoded labels and we do not have the decoded labels, switch to decrypt view
+      if (hasEncodedLabel && !hasValidDecodedLabels) {
+        setValue('unknownLabels', nameToFormData(data.name.name).unknownLabels)
+        setView('decrypt')
+        return
+      }
+
+      // If name has encoded labels and we have the decoded labels, set the final name
+      if (hasEncodedLabel && hasValidDecodedLabels) {
+        validName = [
+          ...data.unknownLabels.labels.map((label) => label.value),
+          data.unknownLabels.tld,
+        ].join('.')
+
+        saveName(validName)
+        queryClient.resetQueries({ exact: true, queryKey: ['validate', data.name.name] })
+      }
+
+      // If resolved address is already set, then one step transaction
+      if (data.name.isResolvedAddress) {
+        dispatch({
+          name: 'setTransactions',
+          payload: [
+            makeTransactionItem('setPrimaryName', {
+              address,
+              name: validName,
+            }),
+          ],
+        })
+        dispatch({
+          name: 'setFlowStage',
+          payload: 'transaction',
+        })
+        return
+      }
+
+      // If name does not have resolver, then three step transaction
+      const isWrapped = !!data.name.fuses
+      const resolver = await getResolver(validName)
+      const isResolverValid = await canResolverSetPrimaryName(
+        resolver,
+        isWrapped,
+        provider,
+        chainId,
       )
+      if (!isResolverValid) {
+        return dispatch({
+          name: 'startFlow',
+          key: 'ChangePrimaryName',
+          payload: {
+            intro: {
+              title: ['intro.selectPrimaryName.noResolver.title', { ns: 'transactionFlow' }],
+              content: makeIntroItem('GenericWithDescription', {
+                description: t('intro.selectPrimaryName.noResolver.description'),
+              }),
+            },
+            transactions: [
+              makeTransactionItem('migrateProfileWithEthAddress', {
+                name: validName,
+                ethAddress: address,
+                resolverAddress: lastestResolverAddress,
+              }),
+              makeTransactionItem('updateResolver', {
+                name: validName,
+                contract: isWrapped ? 'nameWrapper' : 'registry',
+                resolver: lastestResolverAddress,
+              }),
+              makeTransactionItem('setPrimaryName', {
+                address,
+                name: validName!,
+              }),
+            ],
+          },
+        })
+      }
 
-    // If name has encoded labels and we do not have the decoded labels, switch to decrypt view
-    if (hasEncodedLabel && !hasValidDecodedLabels) {
-      setValue('unknownLabels', nameToFormData(data.name.name).unknownLabels)
-      setView('decrypt')
-      return
-    }
-
-    // If name has encoded labels and we have the decoded labels, set the final name
-    if (hasEncodedLabel && hasValidDecodedLabels) {
-      validName = [
-        ...data.unknownLabels.labels.map((label) => label.value),
-        data.unknownLabels.tld,
-      ].join('.')
-
-      saveName(validName)
-      queryClient.resetQueries({ exact: true, queryKey: ['validate', data.name.name] })
-    }
-
-    // If resolved address is already set, then one step transaction
-    if (data.name.isResolvedAddress) {
+      // Name has resolver but not resolved address, then two step transaction
       dispatch({
-        name: 'setTransactions',
-        payload: [
-          makeTransactionItem('setPrimaryName', {
-            address,
-            name: validName,
-          }),
-        ],
-      })
-      dispatch({
-        name: 'setFlowStage',
-        payload: 'transaction',
-      })
-      return
-    }
-
-    // If name does not have resolver, then three step transaction
-    const isWrapped = !!data.name.fuses
-    const resolver = await getResolver(validName)
-    const isResolverValid = await canResolverSetPrimaryName(resolver, isWrapped, provider, chainId)
-    if (!isResolverValid) {
-      return dispatch({
         name: 'startFlow',
         key: 'ChangePrimaryName',
         payload: {
           intro: {
-            title: ['intro.selectPrimaryName.noResolver.title', { ns: 'transactionFlow' }],
+            title: ['intro.selectPrimaryName.updateEthAddress.title', { ns: 'transactionFlow' }],
             content: makeIntroItem('GenericWithDescription', {
-              description: t('intro.selectPrimaryName.noResolver.description'),
+              description: t('intro.selectPrimaryName.updateEthAddress.description'),
             }),
           },
           transactions: [
-            makeTransactionItem('migrateProfileWithEthAddress', {
+            makeTransactionItem('updateEthAddress', {
+              address: address!,
               name: validName,
-              ethAddress: address,
-              resolverAddress: lastestResolverAddress,
-            }),
-            makeTransactionItem('updateResolver', {
-              name: validName,
-              contract: isWrapped ? 'nameWrapper' : 'registry',
-              resolver: lastestResolverAddress,
             }),
             makeTransactionItem('setPrimaryName', {
               address,
@@ -255,31 +296,9 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
           ],
         },
       })
+    } finally {
+      setIsSubmitting(false)
     }
-
-    // Name has resolver but not resolved address, then two step transaction
-    dispatch({
-      name: 'startFlow',
-      key: 'ChangePrimaryName',
-      payload: {
-        intro: {
-          title: ['intro.selectPrimaryName.updateEthAddress.title', { ns: 'transactionFlow' }],
-          content: makeIntroItem('GenericWithDescription', {
-            description: t('intro.selectPrimaryName.updateEthAddress.description'),
-          }),
-        },
-        transactions: [
-          makeTransactionItem('updateEthAddress', {
-            address: address!,
-            name: validName,
-          }),
-          makeTransactionItem('setPrimaryName', {
-            address,
-            name: validName!,
-          }),
-        ],
-      },
-    })
   }
 
   const onConfirm = () => {
@@ -369,7 +388,12 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
           </Button>
         }
         trailing={
-          <Button data-testid="primary-next" onClick={onConfirm} disabled={!selectedName}>
+          <Button
+            data-testid="primary-next"
+            onClick={onConfirm}
+            disabled={!selectedName}
+            loading={isSubmitting}
+          >
             {t('action.next', { ns: 'common' })}
           </Button>
         }

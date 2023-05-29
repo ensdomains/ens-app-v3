@@ -1,6 +1,6 @@
 import { useChainId, useProvider, useQuery } from 'wagmi'
 
-import { canResolverSetPrimaryName } from '@app/utils/utils'
+import { canResolverSetPrimaryName } from '@app/utils/canResolverSetPrimaryName'
 
 export const useCanResolverSetPrimaryName = (
   resolver?: string,
@@ -19,6 +19,5 @@ export const useCanResolverSetPrimaryName = (
   return {
     canResolverSetPrimaryName: data,
     isLoading,
-    refetchOnMount: true,
   }
 }
