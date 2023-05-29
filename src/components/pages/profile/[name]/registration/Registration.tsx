@@ -8,6 +8,7 @@ import { Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
+import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -19,7 +20,6 @@ import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { isLabelTooLong } from '@app/utils/utils'
 
-import { ProfileRecord } from '../../../../../constants/profileRecordOptions'
 import Complete from './steps/Complete'
 import Info from './steps/Info'
 import Pricing from './steps/Pricing/Pricing'
@@ -61,8 +61,8 @@ type Props = {
 
 const StyledInnerDialog = styled(InnerDialog)(({ theme }) => [
   css`
-    height: min(640px, 80vh);
-    max-height: min(640px, 80vh);
+    height: 85vh;
+    max-height: 85vh;
     margin: -${theme.space['4']};
     width: calc(100% + 2 * ${theme.space['4']});
     gap: 0;
@@ -71,6 +71,8 @@ const StyledInnerDialog = styled(InnerDialog)(({ theme }) => [
     border-top-right-radius: ${theme.radii['3xLarge']};
   `,
   mq.sm.min(css`
+    height: 90vh;
+    max-height: 720px;
     width: calc(80vw - 2 * ${theme.space['6']});
     max-width: ${theme.space['128']};
     margin: -${theme.space['6']};
@@ -320,11 +322,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         <StyledInnerDialog>
           <MoonPayHeader>
             <Typography fontVariant="bodyBold" color="grey">
-              MoonPay Checkout
+              {t('steps.info.moonpayModalHeader')}
             </Typography>
             {chainId === 5 && (
               <Typography fontVariant="body" color="grey">
-                Test card details: 4000 0209 5159 5032, 12/2030, 123
+                {`${t('steps.info.moonpayTestCard')}: 4000 0209 5159 5032, 12/2030, 123`}
               </Typography>
             )}
           </MoonPayHeader>

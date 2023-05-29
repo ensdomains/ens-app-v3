@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from 'wagmi'
 
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+
 import { useAccountSafely } from './useAccountSafely'
 import { useChainId } from './useChainId'
 
@@ -37,7 +39,7 @@ const useFaucet = () => {
   const { address } = useAccountSafely()
   const chainId = useChainId()
   const { data, error, isLoading } = useQuery(
-    ['getFaucetEligibility', address],
+    useQueryKeys().faucet(address),
     async () => {
       const result: JsonRpc<{ eligible: boolean; next: number; status: FaucetStatus }> =
         await fetch(ENDPOINT, {

@@ -2,11 +2,13 @@ import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-util
 
 import { useSignTypedData } from 'wagmi'
 
+import { useChainName } from '@app/hooks/useChainName'
+
 import { AvatarUpload } from './AvatarUpload'
 
-jest.mock('@app/hooks/useChainName', () => ({
-  useChainName: () => 'mainnet',
-}))
+jest.mock('@app/hooks/useChainName')
+
+const mockUseChainName = mockFunction(useChainName)
 
 const mockHandleCancel = jest.fn()
 const mockHandleSubmit = jest.fn()
@@ -27,6 +29,7 @@ describe('<AvatarUpload />', () => {
   mockUseSignTypedData.mockImplementation(() => ({
     signTypedDataAsync: mockSignTypedDataAsync,
   }))
+  mockUseChainName.mockImplementation(() => 'mainnet')
 
   beforeAll(() => {
     URL.createObjectURL = jest.fn(() => 'https://localhost/test.png')
@@ -59,29 +62,55 @@ describe('<AvatarUpload />', () => {
     fireEvent.click(screen.getByTestId('continue-button'))
     fireEvent.click(screen.getByTestId('upload-button'))
     await waitFor(() =>
-      expect(global.fetch).toBeCalledWith(
-        'https://avatar-upload.ens-cf.workers.dev/mainnet/test.eth',
-        {
-          method: 'PUT',
-          headers: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            expiry: `${1588994800000 + 1000 * 60 * 60 * 24 * 7}`,
-            dataURL: mockFileDataURL,
-            sig: 'sig',
-          }),
+      expect(global.fetch).toBeCalledWith('https://euc.li/test.eth', {
+        method: 'PUT',
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'Content-Type': 'application/json',
         },
-      ),
+        body: JSON.stringify({
+          expiry: `${1588994800000 + 1000 * 60 * 60 * 24 * 7}`,
+          dataURL: mockFileDataURL,
+          sig: 'sig',
+        }),
+      }),
     )
 
     await waitFor(() =>
       expect(mockHandleSubmit).toHaveBeenCalledWith(
         'upload',
-        'https://avatar-upload.ens-cf.workers.dev/mainnet/test.eth',
+        'https://euc.li/test.eth',
         mockFileDataURL,
       ),
+    )
+  })
+  it('calls handleSubmit with network path if network is not mainnet', async () => {
+    mockUseChainName.mockImplementation(() => 'goerli')
+    global.fetch = jest.fn().mockImplementation(() =>
+      Promise.resolve({
+        json: () => ({ message: 'uploaded' }),
+      }),
+    )
+    jest.spyOn(Date, 'now').mockImplementation(() => 1588994800000)
+    jest.spyOn(Uint8Array, 'from').mockImplementation(() => new Uint8Array())
+    mockSignTypedDataAsync.mockResolvedValue('sig')
+
+    render(<AvatarUpload {...props} />)
+    fireEvent.click(screen.getByTestId('continue-button'))
+    fireEvent.click(screen.getByTestId('upload-button'))
+    await waitFor(() =>
+      expect(global.fetch).toBeCalledWith('https://euc.li/goerli/test.eth', {
+        method: 'PUT',
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          expiry: `${1588994800000 + 1000 * 60 * 60 * 24 * 7}`,
+          dataURL: mockFileDataURL,
+          sig: 'sig',
+        }),
+      }),
     )
   })
   it('does not call handleSubmit if upload is unsuccessful', async () => {

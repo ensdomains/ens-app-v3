@@ -3,6 +3,8 @@ import { useQuery } from 'wagmi'
 
 import { DNS_OVER_HTTP_ENDPOINT } from '@ensdomains/ensjs/functions/importDNSSECName'
 
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+
 const useDNSProof = (name: string, skip?: any) => {
   const {
     data: fetchedData,
@@ -14,7 +16,7 @@ const useDNSProof = (name: string, skip?: any) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,
   } = useQuery(
-    ['getDNSProof', name],
+    useQueryKeys().getDNSProof(name),
     async () => {
       const { DNSProver } = await import('@ensdomains/dnsprovejs')
       const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)

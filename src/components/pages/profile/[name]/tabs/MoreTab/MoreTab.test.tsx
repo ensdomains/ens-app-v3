@@ -3,17 +3,17 @@ import { mockFunction, render, screen } from '@app/test-utils'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 
-import Miscellaneous from './Miscellaneous'
+import Miscellaneous from './Miscellaneous/Miscellaneous'
 import MoreTab from './MoreTab'
 import Ownership from './Ownership'
 import Resolver from './Resolver'
-import Token from './Token'
+import Token from './Token/Token'
 
 jest.mock('@app/hooks/useOwners')
-jest.mock('./Miscellaneous')
+jest.mock('./Miscellaneous/Miscellaneous')
 jest.mock('./Ownership')
 jest.mock('./Resolver')
-jest.mock('./Token')
+jest.mock('./Token/Token')
 
 const mockUseOwners = mockFunction(useOwners)
 const mockMiscellaneous = mockFunction(Miscellaneous)
@@ -58,20 +58,12 @@ const renderHelper = ({
 
 describe('MoreTab', () => {
   describe('Token', () => {
-    it('should show token section for wrapped name', () => {
-      renderHelper({ name: 'test.xyz', isWrapped: true })
+    it('should show token section if ownerData is defined', () => {
+      renderHelper({ name: 'test', isWrapped: false, ownerData: {} as any })
       expect(screen.getByText('Token')).toBeVisible()
     })
-    it('should show token section for eth2ld name', () => {
-      renderHelper({ name: 'test.eth', isWrapped: false })
-      expect(screen.getByText('Token')).toBeVisible()
-    })
-    it('should not show token section for unwrapped non .eth subname', () => {
-      renderHelper({ name: 'something.test.xyz', isWrapped: false })
-      expect(screen.queryByText('Token')).not.toBeInTheDocument()
-    })
-    it('should not show token section for unwrapped .eth subname', () => {
-      renderHelper({ name: 'something.test.eth', isWrapped: false })
+    it('should not show token section if ownerData is undefined', () => {
+      renderHelper({ name: 'test', isWrapped: false })
       expect(screen.queryByText('Token')).not.toBeInTheDocument()
     })
   })

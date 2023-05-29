@@ -86,6 +86,7 @@
             "label": "网站",
             "items": {
               "ipfs": "IPFS",
+              "ipns": "IPNS",
               "swarm": "Swarm",
               "onion": "Onion",
               "skynet": "Skynet",
@@ -169,7 +170,9 @@
       "failedMoonpayTransaction": "您的 Moonpay 交易失败。请重试或选择 “以太坊” 支付方式。",
       "ethereum": "以太坊",
       "processing": "处理中",
-      "poweredBy": "技术支持来自"
+      "poweredBy": "技术支持来自",
+      "moonpayModalHeader": "MoonPay 结账",
+      "moonpayTestCard": "测试卡详细信息"
     },
     "transactions": {
       "heading": "接近完成",
@@ -178,6 +181,12 @@
       "wait": "等待",
       "transactionFailed": "交易失败",
       "transactionProgress": "交易正在处理"
+    },
+    "cancelRegistration": {
+      "heading": "您的交易将会丢失",
+      "contentOne": "返回将重置您的第一次交易。如果您返回，则需要再次完成交易并支付相关费用。",
+      "contentTwo": "确定继续吗？",
+      "footer": "重置交易并返回"
     }
   }
 }

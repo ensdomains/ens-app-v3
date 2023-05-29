@@ -8,7 +8,6 @@ import { getEncryptedLabelAmount } from '@ensdomains/ensjs/utils/labels'
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
-import { WrapperCallToAction } from '@app/components/pages/profile/[name]/tabs/WrapperCallToAction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -16,7 +15,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
-import { Content } from '@app/layouts/Content'
+import { Content, ContentWarning } from '@app/layouts/Content'
 import { formatFullExpiry } from '@app/utils/utils'
 
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
@@ -68,7 +67,6 @@ const tabs = ['profile', 'records', 'subnames', 'permissions', 'more'] as const
 type Tab = typeof tabs[number]
 
 type Props = {
-  nameDetails: ReturnType<typeof useNameDetails>
   isSelf: boolean
   isLoading: boolean
   name: string
@@ -103,18 +101,18 @@ export const NameAvailableBanner = ({
   )
 }
 
-const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
+const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const chainId = useChainId()
   const { address } = useAccount()
   const transactions = useRecentTransactions()
 
+  const nameDetails = useNameDetails(name)
   const {
     error,
     errorTitle,
     profile,
-    ownerData,
     gracePeriodEndDate,
     expiryDate,
     normalisedName,
@@ -124,16 +122,10 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     basicIsCachedData,
     isWrapped,
     isLoading: detailsLoading,
-    canBeWrapped,
     wrapperData,
   } = nameDetails
 
-  const _canBeWrapped =
-    canBeWrapped &&
-    !!address &&
-    (ownerData?.ownershipLevel === 'registrar'
-      ? ownerData?.registrant === address
-      : ownerData?.owner === address)
+  const isLoading = _isLoading || detailsLoading
 
   useProtectedRoute(
     '/',
@@ -221,11 +213,18 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     if (gracePeriodEndDate && gracePeriodEndDate < new Date()) {
       return <NameAvailableBanner {...{ normalisedName, expiryDate }} />
     }
-    if (_canBeWrapped) {
-      return <WrapperCallToAction name={normalisedName} />
-    }
     return undefined
-  }, [gracePeriodEndDate, normalisedName, _canBeWrapped, expiryDate])
+  }, [gracePeriodEndDate, normalisedName, expiryDate])
+
+  const warning: ContentWarning = useMemo(() => {
+    if (error)
+      return {
+        type: 'warning',
+        message: error,
+        title: errorTitle,
+      }
+    return undefined
+  }, [error, errorTitle])
 
   return (
     <>
@@ -233,21 +232,10 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         <title>{titleContent}</title>
         <meta name="description" content={descriptionContent} />
       </Head>
-      <Content
-        noTitle
-        title={beautifiedName}
-        loading={isLoading || detailsLoading}
-        copyValue={beautifiedName}
-      >
+      <Content noTitle title={beautifiedName} loading={isLoading} copyValue={beautifiedName}>
         {{
           info: infoBanner,
-          warning: error
-            ? {
-                type: 'warning',
-                message: error,
-                title: errorTitle,
-              }
-            : undefined,
+          warning,
           header: (
             <TabButtonContainer>
               {visibileTabs.map((tabItem) => (

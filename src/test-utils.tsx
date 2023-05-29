@@ -12,7 +12,13 @@ import { WagmiConfig, createClient } from 'wagmi'
 
 import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 
+// import { useChainId } from '@app/hooks/useChainId'
 import { DeepPartial } from './types'
+
+window.scroll = jest.fn()
+
+jest.mock('@app/hooks/useRegistrationReducer', () => jest.fn(() => ({ item: { stepIndex: 0 } })))
+jest.mock('@app/hooks/useChainId', () => ({ useChainId: () => 1 }))
 
 jest.mock('wagmi', () => {
   const {
@@ -31,8 +37,10 @@ jest.mock('wagmi', () => {
     useMutation,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
-    useAccount: jest.fn(),
-    useNetwork: jest.fn(),
+    useAccount: jest.fn(() => ({ address: '0x123' })),
+    useBalance: jest.fn(() => ({ data: { value: { lt: () => false } } })),
+    useNetwork: jest.fn(() => ({ chainId: 1 })),
+    useFeeData: jest.fn(),
     useProvider: jest.fn(),
     useSigner: jest.fn(),
     useSignTypedData: jest.fn(),

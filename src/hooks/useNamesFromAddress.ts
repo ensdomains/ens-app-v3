@@ -4,9 +4,11 @@ import { useQuery } from 'wagmi'
 import type { Name } from '@ensdomains/ensjs/functions/getNames'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { GRACE_PERIOD } from '@app/utils/constants'
 import { validateExpiry } from '@app/utils/utils'
 
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 import { useBlockTimestamp } from './useBlockTimestamp'
 
 export type ReturnedName = Name & {
@@ -46,15 +48,22 @@ export const useNamesFromAddress = ({
 
   const { data: blockTimestamp, isLoading: isBlockTimestampLoading } = useBlockTimestamp()
 
+  const queryKey = useQueryKeys().namesFromAddress(address)
+
+  const { watchedFunc: watchedGetNames } = useGlobalErrorFunc<typeof getNames>({
+    queryKey,
+    func: getNames,
+  })
+
   const { data, isLoading, status, refetch } = useQuery(
-    ['graph', 'names', address],
+    queryKey,
     () =>
-      getNames({
+      watchedGetNames({
         address: address!,
         type: 'all',
         orderBy: 'labelName',
         orderDirection: 'desc',
-      }).then((d) => d || null),
+      }).then((r) => r || null),
     {
       enabled: ready && !!address && !isBlockTimestampLoading,
     },
@@ -63,6 +72,14 @@ export const useNamesFromAddress = ({
   const mergedData = useMemo(() => {
     if (!data) return []
     const nameMap = data.reduce((map, curr) => {
+      if (curr.id === '0x0000000000000000000000000000000000000000000000000000000000000000') {
+        // eslint-disable-next-line no-param-reassign
+        curr = {
+          ...curr,
+          name: '[root]',
+          truncatedName: '[root]',
+        }
+      }
       const existingEntry = map[curr.name] || {}
       const isController = curr.type === 'domain'
       const isRegistrant = curr.type === 'registration'
@@ -96,7 +113,7 @@ export const useNamesFromAddress = ({
       // filter out names with expiry beyond grace period
       if (n.expiryDate && blockTimestamp && n?.expiryDate.getTime() < blockTimestamp - GRACE_PERIOD)
         return false
-      return n.parent.name !== 'addr.reverse'
+      return n.parent?.name !== 'addr.reverse'
     }
     let secondaryFilter: (n: ReturnedName) => boolean = () => true
     let searchFilter: (n: ReturnedName) => boolean = () => true

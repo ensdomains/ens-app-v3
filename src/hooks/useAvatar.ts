@@ -1,7 +1,10 @@
 import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { ensNftImageUrl, imageUrlUnknownRecord } from '@app/utils/utils'
+
+import { useContractAddress } from './useContractAddress'
 
 const fetchImg = async (url: string) =>
   new Promise<string | null>((resolve) => {
@@ -32,12 +35,13 @@ const fetchImg = async (url: string) =>
 
 export const useAvatar = (name: string | null | undefined, network: number, noCache?: boolean) => {
   const { data, isLoading, status } = useQuery(
-    ['getAvatar', name, network],
+    useQueryKeys().avatar.avatar(name),
     () => fetchImg(imageUrlUnknownRecord(name!, network)),
     {
       enabled: !!name,
       cacheTime: noCache ? 0 : 60000,
       staleTime: 60000,
+      refetchOnMount: false,
     },
   )
 
@@ -46,17 +50,11 @@ export const useAvatar = (name: string | null | undefined, network: number, noCa
 
 export const useNFTImage = (name: string | undefined, network: number) => {
   const isCompatible = !!(name && name.split('.').length === 2)
-  const { ready, contracts } = useEns()
-  const { data: baseRegistrarAddress } = useQuery(
-    ['base-registrar-address'],
-    () => contracts?.getBaseRegistrar()!.then((c) => c.address),
-    {
-      enabled: ready && !!name,
-      staleTime: 60000,
-    },
-  )
+  const { ready } = useEns()
+  const baseRegistrarAddress = useContractAddress('BaseRegistrarImplementation')
+
   const { data, isLoading, status } = useQuery(
-    ['getNFTImage', name],
+    useQueryKeys().avatar.getNFTImage(name),
     () => fetchImg(ensNftImageUrl(name!, network, baseRegistrarAddress!)),
     {
       enabled: ready && !!name && !!baseRegistrarAddress && isCompatible,

@@ -2,10 +2,11 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useFeeData } from 'wagmi'
+import { useAccount, useBalance } from 'wagmi'
 
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
 
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
@@ -14,7 +15,6 @@ import gasLimitDictionary from '@app/constants/gasLimits'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useEstimateGasLimitForTransactions } from '@app/hooks/useEstimateGasLimitForTransactions'
 import { useZorb } from '@app/hooks/useZorb'
-import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import useUserConfig from '@app/utils/useUserConfig'
@@ -71,7 +71,7 @@ const PlusMinusWrapper = styled.div(({ theme }) => [
   mq.sm.min(css``),
 ])
 
-const OptionBar = styled.div(
+const OptionBar = styled(CacheableComponent)(
   () => css`
     width: 100%;
     display: flex;
@@ -123,6 +123,15 @@ const NamesListItemSubtitle = styled.div(
     font-size: ${theme.space['3.5']};
     line-height: 1.43;
     color: ${theme.colors.textTertiary};
+  `,
+)
+
+const GasEstimationCacheableComponent = styled(CacheableComponent)(
+  ({ theme }) => css`
+    width: 100%;
+    gap: ${theme.space['4']};
+    display: flex;
+    flex-direction: column;
   `,
 )
 
@@ -187,6 +196,11 @@ export type Props = {
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
+  const { address } = useAccount()
+  const { data: balance } = useBalance({
+    address,
+  })
+
   const [view, setView] = useState<'name-list' | 'registration'>(
     names.length > 1 ? 'name-list' : 'registration',
   )
@@ -197,7 +211,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
-  const { base: rentFee, loading: priceLoading } = usePrice(names, true)
+  const { total: rentFee, loading: priceLoading } = usePrice(names, false)
 
   const totalRentFee = rentFee ? rentFee.mul(years) : undefined
   const transactions = [
@@ -208,13 +222,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     gasLimit: estimatedGasLimit,
     error: estimateGasLimitError,
     isLoading: isEstimateGasLoading,
+    gasPrice,
   } = useEstimateGasLimitForTransactions(transactions, !!rentFee)
 
   const hardcodedGasLimit = gasLimitDictionary.RENEW(names.length)
   const gasLimit = estimatedGasLimit || hardcodedGasLimit
 
-  const { data: feeData, isLoading: isFeeDataLoading } = useFeeData()
-  const gasPrice = feeData?.maxFeePerGas || undefined
   const transactionFee = gasPrice ? gasLimit.mul(gasPrice) : BigNumber.from('0')
 
   const items = [
@@ -246,13 +259,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           children: t('action.next', { ns: 'common' }),
         }
 
-  if (isFeeDataLoading || isEstimateGasLoading || priceLoading) {
-    return (
-      <Container>
-        <TransactionLoader />
-      </Container>
-    )
-  }
   return (
     <Container data-testid="extend-names-modal">
       <Dialog.Heading title={title} />
@@ -272,7 +278,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   }}
                 />
               </PlusMinusWrapper>
-              <OptionBar>
+              <OptionBar $isCached={priceLoading}>
                 <GasDisplay gasPrice={gasPrice} />
                 <CurrencyToggle
                   size="small"
@@ -281,17 +287,20 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   data-testid="extend-names-currency-toggle"
                 />
               </OptionBar>
-              {rentFee && transactionFee && (
-                <RegistrationTimeComparisonBanner
-                  rentFee={rentFee}
-                  transactionFee={transactionFee}
-                  message={t('input.extendNames.bannerMsg')}
-                />
-              )}
-              <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
-              {!!estimateGasLimitError && (
-                <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
-              )}
+              <GasEstimationCacheableComponent $isCached={isEstimateGasLoading}>
+                <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
+                {(!!estimateGasLimitError ||
+                  (estimatedGasLimit && balance?.value.lt(estimatedGasLimit))) && (
+                  <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
+                )}
+                {rentFee && transactionFee && (
+                  <RegistrationTimeComparisonBanner
+                    rentFee={rentFee}
+                    transactionFee={transactionFee}
+                    message={t('input.extendNames.bannerMsg')}
+                  />
+                )}
+              </GasEstimationCacheableComponent>
             </>
           )}
         </InnerContainer>
@@ -302,7 +311,13 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
             {t('action.back', { ns: 'common' })}
           </Button>
         }
-        trailing={<Button {...trailingButtonProps} data-testid="extend-names-confirm" />}
+        trailing={
+          <Button
+            {...trailingButtonProps}
+            data-testid="extend-names-confirm"
+            disabled={isEstimateGasLoading}
+          />
+        }
       />
     </Container>
   )

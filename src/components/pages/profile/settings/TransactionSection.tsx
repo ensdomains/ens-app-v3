@@ -243,7 +243,7 @@ export const TransactionSection = ({
                     {resumable && (
                       <ContinueContainer>
                         <Button size="small" onClick={() => resumeTransactionFlow(key)}>
-                          Continue
+                          {t('action.continue', { ns: 'common' })}
                         </Button>
                       </ContinueContainer>
                     )}

@@ -1,7 +1,6 @@
 import ISO6391 from 'iso-639-1'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useFeeData } from 'wagmi'
 
 import {
   CurrencyToggle,
@@ -23,6 +22,7 @@ import SocialYoutube from '@app/assets/social/SocialYoutube.svg'
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { SocialIcon } from '@app/components/SocialIcon'
 import { useChainName } from '@app/hooks/useChainName'
+import useGasPrice from '@app/hooks/useGasPrice'
 import { routes } from '@app/routes'
 import { useGraphOutOfSync } from '@app/utils/SyncProvider'
 import { makeDisplay } from '@app/utils/currency'
@@ -217,7 +217,7 @@ const NetworkSection = () => {
   const { t } = useTranslation('common')
   const graphOutOfSync = useGraphOutOfSync()
   const chainName = useChainName()
-  const feeData = useFeeData()
+  const { gasPrice } = useGasPrice()
 
   return (
     <NetworkSectionContainer>
@@ -226,10 +226,8 @@ const NetworkSection = () => {
         <Typography id="chain-name" weight="bold" color="text">
           {chainName}
         </Typography>
-        {feeData?.data?.maxFeePerGas && (
-          <Typography color="grey">
-            {makeDisplay(feeData?.data?.maxFeePerGas, undefined, 'Gwei', 9)}
-          </Typography>
+        {gasPrice && (
+          <Typography color="grey">{makeDisplay(gasPrice, undefined, 'Gwei', 9)}</Typography>
         )}
       </NetworkSectionRow>
       {graphOutOfSync && (
@@ -269,7 +267,7 @@ const MainMenu = ({
         <HoverableSettingsItem onClick={() => setCurrentView('language')}>
           <div>
             <LanguageSVG />
-            <Typography weight="bold">Language</Typography>
+            <Typography weight="bold">{t('navigation.language')}</Typography>
           </div>
           <div>
             <Typography>
@@ -281,7 +279,7 @@ const MainMenu = ({
         <SettingsItem>
           <div>
             <WalletSVG />
-            <Typography weight="bold">Currency</Typography>
+            <Typography weight="bold">{t('navigation.currency')}</Typography>
           </div>
           <div>
             <CurrencyToggle

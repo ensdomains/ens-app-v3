@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -11,6 +11,7 @@ import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySe
 import { TransactionSection } from '@app/components/pages/profile/settings/TransactionSection'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
+import { useGlobalErrorDispatch } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
 
 export type SettingsDialogProps = {
   actionLabel: string
@@ -41,9 +42,34 @@ export default function Page() {
   const { t } = useTranslation('settings')
   const { address, isConnecting, isReconnecting } = useAccount()
 
+  // There are no subgraph calls on the settings page so we need to force
+  // an update in order to know if there is an error
+  const globalErrorDispatch = useGlobalErrorDispatch()
+  useEffect(() => {
+    globalErrorDispatch({
+      type: 'SET_META',
+      payload: {
+        forceUpdate: true,
+      },
+    })
+    return () => {
+      globalErrorDispatch({
+        type: 'SET_META',
+        payload: {
+          forceUpdate: false,
+        },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useProtectedRoute('/', isConnecting || isReconnecting ? true : address)
 
   const [dialogProps, setDialogProps] = useState<SettingsDialogProps | null>(null)
+  const showDevPanel =
+    process.env.NEXT_PUBLIC_ENSJS_DEBUG ||
+    process.env.NODE_ENV === 'development' ||
+    process.env.NEXT_PUBLIC_PROVIDER
 
   return (
     <Content singleColumnContent title={t('title')}>
@@ -53,7 +79,7 @@ export default function Page() {
             <OtherWrapper>
               <PrimarySection />
               <TransactionSection onShowDialog={setDialogProps} />
-              {process.env.NEXT_PUBLIC_PROVIDER && <DevSection />}
+              {showDevPanel && <DevSection />}
             </OtherWrapper>
             <Dialog
               open={!!dialogProps}

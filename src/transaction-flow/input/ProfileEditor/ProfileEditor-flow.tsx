@@ -8,27 +8,27 @@ import { Button, Dialog, PlusSVG, ScrollBox, mq } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
+import { AddProfileRecordView } from '@app/components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
 import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
 import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
-import { useChainId } from '@app/hooks/useChainId'
-import { useContractAddress } from '@app/hooks/useContractAddress'
-import { useNameDetails } from '@app/hooks/useNameDetails'
-import { useResolverStatus } from '@app/hooks/useResolverStatus'
-import TransactionLoader from '@app/transaction-flow/TransactionLoader'
-import { makeIntroItem } from '@app/transaction-flow/intro'
-import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
-import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
-
-import { AddProfileRecordView } from '../../../components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
 import {
   getProfileRecordsDiff,
   profileEditorFormToProfileRecords,
   profileToProfileRecords,
-} from '../../../components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
-import { ProfileRecord } from '../../../constants/profileRecordOptions'
-import { ProfileEditorForm, useProfileEditorForm } from '../../../hooks/useProfileEditorForm'
+} from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+import { ProfileRecord } from '@app/constants/profileRecordOptions'
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
+import { useChainId } from '@app/hooks/useChainId'
+import { useContractAddress } from '@app/hooks/useContractAddress'
+import { useNameDetails } from '@app/hooks/useNameDetails'
+import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
+import TransactionLoader from '@app/transaction-flow/TransactionLoader'
+import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
+import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { Profile } from '@app/types'
+import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
+
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
 
@@ -216,13 +216,10 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const resolverAddress = useContractAddress('PublicResolver')
 
-  const {
-    data: status,
-    isLoading: statusLoading,
-    isFetching,
-  } = useResolverStatus(name, profile, {
-    skip: profileLoading,
-    skipCompare: resumable,
+  const { data: status, isLoading: statusLoading } = useResolverStatus(name, {
+    profile: profile as Profile,
+    isWrapped,
+    skipCompare: false,
   })
 
   const chainId = useChainId()
@@ -230,62 +227,32 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
       const records = profileEditorFormToProfileRecords(form)
-      if (!profile?.resolverAddress || !resolverAddress) return
-      if (status?.hasLatestResolver) {
-        dispatch({
-          name: 'setTransactions',
-          payload: [
-            makeTransactionItem('updateProfileRecords', {
-              name,
-              resolver: profile.resolverAddress,
-              records,
-              previousRecords: existingRecords,
-              clearRecords: false,
-            }),
-          ],
-        })
-        dispatch({ name: 'setFlowStage', payload: 'transaction' })
-        return
-      }
-
+      if (!profile?.resolverAddress) return
       dispatch({
-        name: 'startFlow',
-        key: `edit-profile-flow-${name}`,
-        payload: {
-          intro: {
-            title: ['Action Required', { ns: 'transactionFlow' }],
-            content: makeIntroItem('MigrateAndUpdateResolver', { name }),
-          },
-          transactions: [
-            makeTransactionItem('updateProfileRecords', {
-              name,
-              records,
-              resolver: resolverAddress,
-              clearRecords: false,
-            }),
-            makeTransactionItem('updateResolver', {
-              name,
-              resolver: resolverAddress,
-              oldResolver: profile!.resolverAddress!,
-              contract: isWrapped ? 'nameWrapper' : 'registry',
-            }),
-          ],
-          resumable: true,
-        },
+        name: 'setTransactions',
+        payload: [
+          makeTransactionItem('updateProfileRecords', {
+            name,
+            resolver: profile.resolverAddress,
+            records,
+            previousRecords: existingRecords,
+            clearRecords: false,
+          }),
+        ],
       })
+      dispatch({ name: 'setFlowStage', payload: 'transaction' })
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [profile, status, resolverAddress],
+    [profile, name, existingRecords, dispatch],
   )
 
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
 
   useEffect(() => {
-    if ((!statusLoading && !status?.hasLatestResolver) || resumable) {
+    if (!statusLoading && !status?.hasLatestResolver && transactions.length === 0) {
       setView('warning')
     }
-  }, [statusLoading, status?.hasLatestResolver, resumable])
+  }, [statusLoading, status?.hasLatestResolver, transactions.length])
 
   useEffect(() => {
     if (!profileLoading && !profile?.isMigrated) {
@@ -411,7 +378,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                 trailing={
                   <SubmitButton
                     control={control}
-                    disabled={hasErrors || isFetching}
+                    disabled={hasErrors}
                     previousRecords={existingRecords}
                     canEdit={canEditRecordsWhenWrapped}
                   />
@@ -432,6 +399,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           warning: (
             <ResolverWarningOverlay
               name={name}
+              status={status}
               isWrapped={isWrapped}
               hasOldRegistry={!profile?.isMigrated}
               resumable={resumable}
@@ -451,13 +419,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               handleCancel={() => setView('editor')}
               type="upload"
               handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
-                if (type === 'nft') {
-                  setAvatar(uri)
-                  setAvatarSrc(display)
-                } else {
-                  setAvatar(`${uri}?timestamp=${Date.now()}`)
-                  setAvatarSrc(display)
-                }
+                setAvatar(uri)
+                setAvatarSrc(display)
                 setView('editor')
                 trigger()
               }}
@@ -470,13 +433,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               handleCancel={() => setView('editor')}
               type="nft"
               handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
-                if (type === 'nft') {
-                  setAvatar(uri)
-                  setAvatarSrc(display)
-                } else {
-                  setAvatar(`${uri}?timestamp=${Date.now()}`)
-                  setAvatarSrc(display)
-                }
+                setAvatar(uri)
+                setAvatarSrc(display)
                 setView('editor')
                 trigger()
               }}

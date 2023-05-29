@@ -14,13 +14,12 @@ export default function Page() {
 
   const initial = useInitial()
 
-  const { address, isConnecting, isReconnecting } = useAccount()
-  const accountLoading = isConnecting || isReconnecting
+  const { address } = useAccount()
 
-  const nameDetails = useNameDetails(name)
+  const nameDetails = useNameDetails(name, true)
   const { isLoading: detailsLoading, registrationStatus } = nameDetails
 
-  const isLoading = detailsLoading || accountLoading || initial
+  const isLoading = detailsLoading || initial
 
   if (!isLoading && registrationStatus !== 'available' && registrationStatus !== 'premium') {
     let redirect = true

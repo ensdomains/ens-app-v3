@@ -48,7 +48,7 @@ const TabWrapperWithButtons = styled(TabWrapper)(
 const MyNames = () => {
   const { t } = useTranslation('names')
   const router = useRouter()
-  const { address: _address, isConnecting, isReconnecting } = useAccount()
+  const { address: _address } = useAccount()
   const address = (router.query.address as string) || (_address as string)
   const isSelf = true
   const chainId = useChainId()
@@ -122,8 +122,7 @@ const MyNames = () => {
     [mode],
   )
 
-  const loading =
-    isConnecting || isReconnecting || namesLoading || namesStatus === 'loading' || !router.isReady
+  const loading = namesLoading || namesStatus === 'loading' || !router.isReady
 
   useProtectedRoute('/', loading ? true : address && address !== '')
 

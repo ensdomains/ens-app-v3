@@ -35,6 +35,10 @@
         },
         "editProfile": {
           "label": "编辑个人资料"
+        },
+        "reclaim": {
+          "label": "重新创建名称",
+          "warning": "该子名称已过期，并且无人持有。您可以重新创建此子名称。"
         }
       },
       "warnings": {
@@ -227,6 +231,7 @@
       },
       "ownership": {
         "label": "所有权",
+        "refreshDNS": "刷新 DNS",
         "dnsOwnerWarning": {
           "isDnsOwner": "您不能更改该名称，因为您是 DNS 所有者，而不是管理员。您可以通过同步管理员来修复此问题。",
           "isManager": "您是该名称的管理员，但不是 DNS 所有者。DNS 所有者可以随时收回他的 DNS 域名。您可以将该名称发送给所有者，或是通过更新 DNS 记录来匹配所有者。",

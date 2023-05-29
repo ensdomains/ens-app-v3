@@ -1,10 +1,15 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import { useQuery, useQueryClient } from 'wagmi'
 
+import { useGlobalError } from '@app/hooks/errors/useGlobalError'
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { useRegisterNameCallback } from '@app/hooks/transactions/useRegisterNameCallback'
 import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
+
+import { debugSubgraphIndexingErrors } from './GlobalErrorProvider/useSubgraphMetaSync'
 
 export type UpdateCallback = (transaction: Transaction) => void
 type AddCallback = (key: string, callback: UpdateCallback) => void
@@ -19,6 +24,7 @@ type SyncContext = {
 const query = `
   {
     _meta {
+      hasIndexingErrors
       block {
         number
       }
@@ -27,6 +33,7 @@ const query = `
 `
 type GraphResponse = {
   _meta: {
+    hasIndexingErrors: boolean
     block: {
       number: number
     }
@@ -45,6 +52,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const { gqlInstance } = useEns()
   const chainId = useChainId()
 
+  const registerNameCallback = useRegisterNameCallback()
   const callbacks = useRef<Record<string, UpdateCallback>>({})
 
   const transactions = useRecentTransactions()
@@ -55,15 +63,20 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     [transactions],
   )
 
+  const { resetMeta, setMetaError } = useGlobalError()
+  const hasGlobalError = useHasGlobalError()
   const { data: currentGraphBlock } = useQuery<number>(
     ['graphBlock', chainId, transactions],
     () =>
-      gqlInstance.client
-        .request(query)
-        .then((res: GraphResponse | null) => res!._meta.block.number),
+      gqlInstance.client.request(query).then((res: GraphResponse | null) => {
+        if (res!._meta.hasIndexingErrors || debugSubgraphIndexingErrors())
+          throw new Error('indexing_errors')
+        return res!._meta.block.number
+      }),
     {
       initialData: 0,
       refetchInterval: (data) => {
+        if (hasGlobalError) return false
         if (!data) return 1000
         const waitingForBlock = findTransactionHigherThanBlock(data)
         if (waitingForBlock) {
@@ -71,8 +84,10 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         }
         return false
       },
-      enabled: !!gqlInstance && !!transactions.find((x) => x.minedData?.blockNumber),
+      enabled:
+        !!gqlInstance && !!transactions.find((x) => x.minedData?.blockNumber) && !hasGlobalError,
       onSuccess: (data) => {
+        resetMeta()
         if (!data) return
         const waitingForBlock = findTransactionHigherThanBlock(data)
         if (waitingForBlock) return
@@ -83,6 +98,9 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
             refetchType: 'all',
           }),
         )
+      },
+      onError: () => {
+        setMetaError()
       },
     },
   )
@@ -103,9 +121,10 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     previousTransactions.current = JSON.parse(JSON.stringify(transactions))
     const callbacksRef = Object.values(callbacks.current)
     updatedTransactions.forEach((transaction) => {
+      registerNameCallback(transaction)
       callbacksRef.forEach((callback) => callback(transaction))
     })
-  }, [transactions])
+  }, [transactions, registerNameCallback])
 
   const isOutOfSync = useMemo(() => {
     if (typeof currentGraphBlock !== 'number') return false

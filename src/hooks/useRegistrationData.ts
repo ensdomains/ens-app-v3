@@ -3,6 +3,7 @@ import { useQuery } from 'wagmi'
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 const query = `
@@ -29,7 +30,7 @@ const useRegistrationData = (name: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching: _isFetching,
   } = useQuery(
-    ['graph', 'getRegistrationDate', name],
+    useQueryKeys().registrationDate(name),
     async () =>
       gqlInstance.client.request<{
         registration?: {

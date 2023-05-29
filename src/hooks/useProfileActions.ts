@@ -12,6 +12,7 @@ import { ReturnedENS } from '@app/types'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 import { nameParts } from '@app/utils/name'
 
+import { useHasGlobalError } from './errors/useHasGlobalError'
 import { useCanResolverSetPrimaryName } from './reverseRecord/useCanResolverSetPrimaryName'
 import { useNameDetails } from './useNameDetails'
 import { useSelfAbilities } from './useSelfAbilities'
@@ -23,6 +24,7 @@ type Action = {
   red?: boolean
   disabled?: boolean
   tooltipContent?: string
+  tooltipPlacement?: 'left' | 'right'
   skip2LDEth?: boolean
   warning?: string
   fullMobileWidth?: boolean
@@ -57,13 +59,15 @@ export const useProfileActions = ({
 
   const { name: primaryName, loading: primaryLoading } = usePrimary(address || '')
 
-  const isLoading = primaryLoading || isCanResolverSetPrimaryNameLoading
+  const hasGlobalError = useHasGlobalError()
 
   const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
   const showProfileEditorInput = prepareDataInput('ProfileEditor')
   const showDeleteEmancipatedSubnameWarningInput = prepareDataInput(
     'DeleteEmancipatedSubnameWarning',
   )
+
+  const isLoading = primaryLoading || isCanResolverSetPrimaryNameLoading
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
@@ -113,6 +117,10 @@ export const useProfileActions = ({
       const key = `setPrimaryName-${name}-${address}`
       actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),
+        tooltipContent: hasGlobalError
+          ? t('errors.networkError.blurb', { ns: 'common' })
+          : undefined,
+        tooltipPlacement: 'left',
         onClick: !checkIsDecrypted(name)
           ? () => showUnknownLabelsInput(key, { name, key, transactionFlowItem })
           : () => createTransactionFlow(key, transactionFlowItem),
@@ -122,6 +130,10 @@ export const useProfileActions = ({
     if (selfAbilities.canEdit) {
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
+        tooltipContent: hasGlobalError
+          ? t('errors.networkError.blurb', { ns: 'common' })
+          : undefined,
+        tooltipPlacement: 'left',
         onClick: () =>
           showProfileEditorInput(
             `edit-profile-${name}`,
@@ -141,6 +153,9 @@ export const useProfileActions = ({
                 { name },
               )
             },
+            tooltipContent: hasGlobalError
+              ? t('errors.networkError.blurb', { ns: 'common' })
+              : undefined,
             red: true,
             skip2LDEth: true,
           }
@@ -156,6 +171,9 @@ export const useProfileActions = ({
                   }),
                 ],
               }),
+            tooltipContent: hasGlobalError
+              ? t('errors.networkError.blurb', { ns: 'common' })
+              : undefined,
             red: true,
             skip2LDEth: true,
           }
@@ -195,9 +213,9 @@ export const useProfileActions = ({
     return actions
   }, [
     address,
+    profile?.address,
     name,
     primaryName,
-    profile?.address,
     profile?.resolverAddress,
     selfAbilities.canEdit,
     subnameAbilities.canDelete,
@@ -215,6 +233,7 @@ export const useProfileActions = ({
     showProfileEditorInput,
     showDeleteEmancipatedSubnameWarningInput,
     isLoading,
+    hasGlobalError,
   ])
 
   return {

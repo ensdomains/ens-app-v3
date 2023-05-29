@@ -134,6 +134,7 @@ type Name = {
   namedAddr: string
   subname?: string
   namedController?: string
+  resolver?: string
   records?: {
     text?: {
       key: string
@@ -232,6 +233,12 @@ const names: Name[] = [
     label: 'other-registrant-2',
     namedOwner: 'deployer',
     namedAddr: 'deployer',
+    namedController: 'owner',
+  },
+  {
+    label: 'almost-latest-resolver',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
     namedController: 'owner',
   },
   {
@@ -347,7 +354,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const registrant = allNamedAccts[namedOwner]
     const owner = namedController ? allNamedAccts[namedController] : undefined
     const addr = allNamedAccts[namedAddr]
-    const resolver = publicResolver.address
+    const resolver = rest.resolver ?? publicResolver.address
     const duration = customDuration || 31536000
 
     return {

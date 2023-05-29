@@ -52,7 +52,7 @@ const HeadingContainer = styled.div(
     padding: ${theme.space['4']};
 
     font-weight: ${theme.fontWeights.bold};
-    font-size: ${theme.fontSizes.headingThree};
+    font-size: ${theme.fontSizes.headingFour};
 
     ${mq.sm.min(css`
       padding: ${theme.space['6']};
@@ -243,7 +243,7 @@ const DNSOwnerSection = ({
       </Helper>
       <ButtonsContainer>
         <Button width="auto" colorStyle="accentSecondary" onClick={handleRefresh}>
-          Refresh DNS
+          {t('tabs.more.ownership.refreshDNS')}
         </Button>
         {!canSend && (
           <Button width="auto" onClick={handleSyncManager} loading={isLoading} disabled={!data}>
@@ -283,7 +283,7 @@ const Ownership = ({
   return (
     <Container $isCached={isCachedData}>
       <HeadingContainer>
-        <Typography fontVariant="headingThree">{t('tabs.more.ownership.label')}</Typography>
+        <Typography fontVariant="headingFour">{t('tabs.more.ownership.label')}</Typography>
         <div>
           {canSend && (
             <Button

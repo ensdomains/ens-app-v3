@@ -8,8 +8,10 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { emptyAddress } from '@app/utils/constants'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
@@ -152,6 +154,7 @@ export const RecordsTab = ({
   isWrapped: boolean
 }) => {
   const { t } = useTranslation('profile')
+  const hasGlobalError = useHasGlobalError()
 
   const filteredTexts = useMemo(() => texts?.filter(({ value }) => value), [texts])
   const filteredAddresses = useMemo(() => addresses?.filter(({ addr }) => addr), [addresses])
@@ -258,7 +261,7 @@ export const RecordsTab = ({
               {abi ? (
                 <>
                   <SectionTitle data-testid="abi-heading" fontVariant="bodyBold">
-                    ABI
+                    {t('details.tabs.records.abi')}
                   </SectionTitle>
                 </>
               ) : (
@@ -271,17 +274,21 @@ export const RecordsTab = ({
           {abi && <RecordItem type="text" value={abi.data} />}
         </RecordSection>
       </AllRecords>
-      {canEdit && (
+      {canEdit && resolverAddress !== emptyAddress && (
         <Actions>
           <div>
-            {canEditRecordsWhenWrapped ? (
+            {canEditRecordsWhenWrapped && !hasGlobalError ? (
               <Button onClick={handleShowEditor} size="small">
                 {t('details.tabs.records.editRecords')}
               </Button>
             ) : (
               <DisabledButtonWithTooltip
                 buttonId="records-tab-edit-records-disabled"
-                content={t('details.tabs.records.editRecordsDisabled')}
+                content={
+                  hasGlobalError
+                    ? t('errors.networkError.blurb', { ns: 'common' })
+                    : t('details.tabs.records.editRecordsDisabled')
+                }
                 buttonText={t('details.tabs.records.editRecords')}
                 mobileWidth={150}
                 mobileButtonWidth="initial"

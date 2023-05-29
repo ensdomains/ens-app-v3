@@ -3,12 +3,13 @@ import { sha256 } from '@ethersproject/sha2'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useMutation, useSignTypedData } from 'wagmi'
+import { useMutation, useQueryClient, useSignTypedData } from 'wagmi'
 
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/useChainName'
 
+import { useQueryKeys } from '../../../../utils/cacheKeyFactory'
 import { AvCancelButton, CropComponent } from './AvatarCrop'
 
 const Container = styled.div(({ theme }) => [
@@ -49,7 +50,8 @@ const UploadComponent = ({
   name: string
 }) => {
   const { t } = useTranslation('transactionFlow')
-
+  const queryClient = useQueryClient()
+  const queryKeys = useQueryKeys().avatar.avatar(name)
   const urlHash = useMemo(() => sha256(dataURLToBytes(dataURL)), [dataURL])
   const expiry = useMemo(() => `${Date.now() + 1000 * 60 * 60 * 24 * 7}`, [])
   const network = useChainName()
@@ -76,8 +78,10 @@ const UploadComponent = ({
   })
 
   const { mutate: signAndUpload, isLoading } = useMutation(async () => {
-    const baseURL =
-      process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://avatar-upload.ens-cf.workers.dev/${network}`
+    let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
+    if (network !== 'mainnet') {
+      baseURL = `${baseURL}/${network}`
+    }
     const endpoint = `${baseURL}/${name}`
 
     const sig = await signTypedDataAsync()
@@ -95,6 +99,7 @@ const UploadComponent = ({
     }).then((res) => res.json())) as any
 
     if (fetched.message === 'uploaded') {
+      queryClient.invalidateQueries(queryKeys)
       return handleSubmit('upload', endpoint, dataURL)
     }
     throw new Error(fetched.message)

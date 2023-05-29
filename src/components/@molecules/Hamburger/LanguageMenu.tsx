@@ -139,7 +139,7 @@ const LanguageMenu = ({
 }: {
   setCurrentView: (view: 'main' | 'language') => void
 }) => {
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialLanguage = useMemo(() => i18n.resolvedLanguage, [])
   const languages = (i18n.options.supportedLngs || [])
@@ -161,7 +161,7 @@ const LanguageMenu = ({
           <LeftArrowSVG />
           <InnerHeading>
             <LanguageSVG />
-            <Typography weight="bold">Language</Typography>
+            <Typography weight="bold">{t('navigation.language')}</Typography>
           </InnerHeading>
         </Heading>
       </HeadingWrapper>

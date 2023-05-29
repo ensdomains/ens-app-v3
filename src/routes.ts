@@ -158,7 +158,7 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'oldApp',
-    href: 'https://app.ens.domains',
+    href: 'https://legacy.ens.domains',
     label: 'navigation.oldApp',
     disabled: false,
     connected: false,
@@ -173,6 +173,18 @@ export const routes: RouteItemObj[] = [
     onlyDropdown: true,
   },
 ]
+
+export const legacyFavouritesRoute: RouteItemObj = {
+  name: 'favourites',
+  href: '/legacyfavourites',
+  label: 'navigation.favourites',
+  disabled: false,
+  connected: false,
+  icon: {
+    inactive: HeartSVG,
+    active: HeartActiveSVG,
+  },
+}
 
 export const getRoute = (name: PublicRoute | ConnectedRoute): RouteItemObj =>
   routes.find((route) => route.name === name) as RouteItemObj
@@ -268,13 +280,11 @@ export const getDestination = (url: UrlObject | string) => {
   if (href?.startsWith('/')) {
     //  for static html compilation
     href = `.${href}`
-    // <IPFSLink href="/about"> => <a class="jsx-2055897931" href="./about">About</a>
 
     // on the client
     //   document is unavailable when compiling on the server
     if (typeof document !== 'undefined') {
       href = new URL(href, document.baseURI).href
-      // => <a href="https://gateway.ipfs.io/ipfs/Qm<hash>/about">About</a>
     }
   }
   return makeURLString()

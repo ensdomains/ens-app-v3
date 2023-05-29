@@ -127,4 +127,21 @@ describe('Delete subnames', () => {
       cy.get('button').contains('Delete subname', { timeout: 10000 }).should('not.exist')
     })
   })
+
+  describe('subgraph errors', () => {
+    it('should be able to turn on subgraph indexing error', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('subgraph-indexing-error').click()
+    })
+
+    it('should disable delete button for unwrapped subname', () => {
+      cy.visit('/legacy.with-subnames.eth')
+      cy.findByTestId('disabled-profile-action-Delete subname').should('be.visible')
+    })
+
+    it('should disable delete button for wrapped subname', () => {
+      cy.visit('/legacy.wrapped.eth')
+      cy.findByTestId('disabled-profile-action-Delete subname').should('be.visible')
+    })
+  })
 })

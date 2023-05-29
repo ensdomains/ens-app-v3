@@ -45,6 +45,7 @@ export const RESOLVER_ADDRESSES: ResolverAddresses = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   '1337': [
     '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF',
+    '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750', // This is fill in resolver. Not actual contract address
     '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB',
   ],
 }
@@ -103,7 +104,7 @@ export const MOONPAY_WORKER_URL: { [key: number]: string } = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   1: 'https://moonpay-worker.ens-cf.workers.dev',
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  5: 'https://moopnay-worker-goerli.ens-cf.workers.dev',
+  5: 'https://moonpay-worker-goerli.ens-cf.workers.dev',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   1337: 'https://moonpay-goerli.ens-cf.workers.dev',
 }

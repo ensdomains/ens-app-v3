@@ -5,12 +5,13 @@ import styled, { css } from 'styled-components'
 
 import { CrossSVG, LeftChevronSVG, PersonSVG, mq } from '@ensdomains/thorin'
 
+import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
-import { getDestination, getRoute } from '@app/routes'
+import { getDestination, getRoute, legacyFavouritesRoute } from '@app/routes'
 
 import { DisconnectButton, RouteItem } from './@atoms/RouteItem/RouteItem'
 import { ConnectButton } from './ConnectButton'
@@ -187,6 +188,7 @@ const TabBarProfile = ({
   const chainId = useChainId()
   const { avatar } = useAvatar(name, chainId)
   const zorb = useZorb(address, 'address')
+  const hasPendingTransactions = useHasPendingTransactions()
 
   return (
     <ExtraNavWrapper $isOpen={isOpen}>
@@ -207,7 +209,7 @@ const TabBarProfile = ({
           active={router.asPath === getDestination(`/profile/${name}`)}
         />
       )}
-      <RouteItem route={getRoute('settings')} />
+      <RouteItem route={getRoute('settings')} hasNotification={hasPendingTransactions} />
       <DisconnectButton />
     </ExtraNavWrapper>
   )
@@ -254,7 +256,9 @@ export const TabBar = () => {
             {address && (
               <>
                 <RouteItem route={getRoute('names')} />
-                {/* <RouteItem route={getRoute('favourites')} /> */}
+                {globalThis?.localStorage?.getItem('ensFavourites') && (
+                  <RouteItem route={legacyFavouritesRoute} />
+                )}
                 <TabBarProfile
                   address={address}
                   isOpen={isOpen}

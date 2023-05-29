@@ -13,6 +13,26 @@ const ipfsPathScript = `
   })();
 `
 
+const hiddenCheckScript = `
+  if (document.prerendering) {
+    document.addEventListener('prerenderingchange', () => {
+      if (typeof window.ethereum !== 'undefined') {
+        window.location.reload()
+      }
+    }, {
+      once: true,
+    })
+  } else if (document.hidden || document.visibilityState === 'hidden') {
+    document.addEventListener('visibilitychange', () => {
+      if (typeof window.ethereum !== 'undefined') {
+        window.location.reload()
+      }
+    }, {
+      once: true,
+    })
+  }
+`
+
 const makeIPFSURL = (url: string) => {
   if (process.env.NEXT_PUBLIC_IPFS) {
     return `.${url}`
@@ -51,6 +71,8 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          {/* eslint-disable-next-line react/no-danger */}
+          <script dangerouslySetInnerHTML={{ __html: hiddenCheckScript }} />
           {process.env.NEXT_PUBLIC_IPFS && (
             <>
               {/* eslint-disable-next-line react/no-danger */}
@@ -79,7 +101,7 @@ export default class MyDocument extends Document {
           <meta name="theme-color" content="#F7F7F7" />
           <script
             defer
-            data-domain="alpha.ens.domains"
+            data-domain="app.ens.domains"
             src="https://plausible.io/js/script.outbound-links.js"
           />
         </Head>

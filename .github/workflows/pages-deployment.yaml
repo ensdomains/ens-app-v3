@@ -2,6 +2,7 @@ name: Cloudflare Pages
 
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  NEXT_PUBLIC_INTERCOM_ID: re9q5yti
 
 on: [push]
 jobs:
@@ -53,11 +54,10 @@ jobs:
 
       - name: Build and Export with Profiler
         if: ${{ github.ref != 'refs/heads/main' }}
-        run: pnpm build --profile && pnpm export
+        run: pnpm build:preview && pnpm export
 
       - name: Generate sitemap
-        if: false
-        # if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           mkdir -p ./out/sitemaps
           pnpm generate:sitemaps
@@ -73,4 +73,4 @@ jobs:
 
       - name: Submit sitemap
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: curl https://www.google.com/ping\?sitemap=https://alpha.ens.domains/sitemap.xml
+        run: curl https://www.google.com/ping\?sitemap=https://app.ens.domains/sitemap.xml

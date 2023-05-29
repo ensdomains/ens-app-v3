@@ -13,6 +13,9 @@ import {
   mq,
 } from '@ensdomains/thorin'
 
+import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useBasicName } from '@app/hooks/useBasicName'
@@ -141,7 +144,14 @@ export const PrimarySection = () => {
   const { avatar } = useAvatar(name, chain?.id || 1)
   const zorb = useZorb(name || '', 'name')
 
-  const { truncatedName, isLoading: basicLoading } = useBasicName(name, true)
+  const {
+    expiryDate,
+    truncatedName,
+    isLoading: basicLoading,
+    wrapperData,
+  } = useBasicName(name, { normalised: true, skipGraph: false })
+
+  const hasGlobalError = useHasGlobalError()
 
   const isLoading = basicLoading || primaryLoading
 
@@ -160,54 +170,128 @@ export const PrimarySection = () => {
   }
 
   return (
-    <Skeleton loading={isLoading} as={SkeletonFiller as any}>
-      <Card>
-        {name ? (
-          <PrimaryNameContainer data-testid="primary-name-section">
-            <PrimaryNameInfo>
-              <Typography fontVariant="bodyBold" color="grey">
-                {t('section.primary.title')}
-              </Typography>
-              <Typography data-testid="primary-name-label" fontVariant="headingTwo" ellipsis>
-                {truncatedName}
-              </Typography>
-            </PrimaryNameInfo>
-            <AvatarContainer>
-              <Avatar label="primary name avatar" src={avatar || zorb} />
-            </AvatarContainer>
-            <ActionsContainer>
-              <Button
-                data-testid="reset-primary-name-button"
-                prefix={<CrossSVG />}
-                colorStyle="redSecondary"
-                onClick={resetPrimary}
-              >
-                {t('action.reset', { ns: 'common' })}
-              </Button>
-              <Button
-                data-testid="change-primary-name-button"
-                prefix={<PersonPlusSVG />}
-                onClick={changePrimary}
-              >
-                {t('action.change', { ns: 'common' })}
-              </Button>
-            </ActionsContainer>
-          </PrimaryNameContainer>
+    <>
+      <Skeleton loading={isLoading} as={SkeletonFiller as any}>
+        <Card>
+          {name ? (
+            <PrimaryNameContainer data-testid="primary-name-section">
+              <PrimaryNameInfo>
+                <Typography fontVariant="bodyBold" color="grey">
+                  {t('section.primary.title')}
+                </Typography>
+                <Typography data-testid="primary-name-label" fontVariant="headingTwo" ellipsis>
+                  {truncatedName}
+                </Typography>
+              </PrimaryNameInfo>
+              <AvatarContainer>
+                <Avatar label="primary name avatar" src={avatar || zorb} />
+              </AvatarContainer>
+              <ActionsContainer>
+                {hasGlobalError ? (
+                  <>
+                    <Button
+                      data-testid="reset-primary-name-button"
+                      prefix={<CrossSVG />}
+                      colorStyle="redSecondary"
+                      onClick={resetPrimary}
+                    >
+                      {t('action.reset', { ns: 'common' })}
+                    </Button>
+                    <Button
+                      data-testid="change-primary-name-button"
+                      prefix={<PersonPlusSVG />}
+                      onClick={changePrimary}
+                    >
+                      {t('action.change', { ns: 'common' })}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      data-testid="reset-primary-name-button"
+                      prefix={<CrossSVG />}
+                      colorStyle="redSecondary"
+                      onClick={resetPrimary}
+                    >
+                      {t('action.reset', { ns: 'common' })}
+                    </Button>
+                    <Button
+                      data-testid="change-primary-name-button"
+                      prefix={<PersonPlusSVG />}
+                      onClick={changePrimary}
+                    >
+                      {t('action.change', { ns: 'common' })}
+                    </Button>
+                  </>
+                )}
+              </ActionsContainer>
+            </PrimaryNameContainer>
+          ) : (
+            <NoNameContainer data-testid="no-primary-name-section">
+              <NoNameTitle fontVariant="headingFour">{t('section.primary.title')}</NoNameTitle>
+              {hasGlobalError ? (
+                <>
+                  <NoNameButton
+                    data-testid="set-primary-name-button"
+                    size="small"
+                    prefix={<PersonPlusSVG />}
+                    onClick={changePrimary}
+                  >
+                    {t('section.primary.choosePrimaryName')}
+                  </NoNameButton>
+                </>
+              ) : (
+                <>
+                  <NoNameButton
+                    data-testid="set-primary-name-button"
+                    size="small"
+                    prefix={<PersonPlusSVG />}
+                    onClick={changePrimary}
+                  >
+                    {t('section.primary.choosePrimaryName')}
+                  </NoNameButton>
+                </>
+              )}
+              <NoNameDescription>{t('section.primary.noNameDescription')}</NoNameDescription>
+            </NoNameContainer>
+          )}
+        </Card>
+      </Skeleton>
+      {/* <SectionContainer
+      title={t('section.primary.title')}
+      action={
+        hasGlobalError ? (
+          <DisabledButtonWithTooltip
+            buttonId="disabled-primary-section-button"
+            content={t('errors.networkError.blurb', { ns: 'common' })}
+            buttonText={t(`action.${name ? 'change' : 'set'}`, { ns: 'common' })}
+          />
         ) : (
-          <NoNameContainer data-testid="no-primary-name-section">
-            <NoNameTitle fontVariant="headingFour">{t('section.primary.title')}</NoNameTitle>
-            <NoNameButton
-              data-testid="set-primary-name-button"
-              size="small"
-              prefix={<PersonPlusSVG />}
-              onClick={changePrimary}
-            >
-              {t('section.primary.choosePrimaryName')}
-            </NoNameButton>
-            <NoNameDescription>{t('section.primary.noNameDescription')}</NoNameDescription>
-          </NoNameContainer>
-        )}
-      </Card>
-    </Skeleton>
+          <Button data-testid="primary-section-button" size="small" onClick={() => changePrimary()}>
+            {t(`action.${name ? 'change' : 'set'}`, { ns: 'common' })}
+          </Button>
+        )
+      }
+      fill={!!name}
+    >
+      {name ? (
+        <ItemWrapper data-testid="primary-wrapper">
+          <TaggedNameItem
+            name={name}
+            network={chainId}
+            expiryDate={expiryDate || undefined}
+            isController={canSendManager}
+            isRegistrant={canSendOwner}
+            truncatedName={truncatedName}
+            fuses={wrapperData}
+          />
+        </ItemWrapper>
+      ) : (
+        <Typography data-testid="primary-section-text" fontVariant="bodyBold" color="grey">
+          {isLoading ? t('section.primary.loading') : t('section.primary.noName')}
+        </Typography>
+      )}
+    </SectionContainer> */}
+    </>
   )
 }

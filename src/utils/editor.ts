@@ -4,9 +4,13 @@ import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
 import { DetailedProfile } from '@app/hooks/useNameDetails'
 import { RecordItem } from '@app/types/index'
 
-export const formSafeKey = (key: string) => key.replace(/\./g, '\u2024')
+export const formSafeKey = (key: string) =>
+  encodeURIComponent(key).replace(
+    /[.!'()*]/g,
+    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+  )
 
-export const convertFormSafeKey = (key: string) => key.replace(/\u2024/g, '.')
+export const convertFormSafeKey = (key: string) => decodeURIComponent(key)
 
 export type ProfileFormObject = {
   avatar?: string
@@ -84,9 +88,7 @@ export const convertProfileToProfileFormObject = (profile: DetailedProfile): Pro
       }
     },
     {
-      general: {
-        name: '',
-      },
+      general: {},
       accounts: {},
       other: {},
     },

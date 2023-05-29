@@ -8,15 +8,17 @@ import extendNames from './extendNames'
 import importDNSSECName from './importDNSSECName'
 import migrateProfile from './migrateProfile'
 import migrateProfileWithEthAddress from './migrateProfileWithEthAddress'
-import migrateProfileWithSync from './migrateProfileWithSync'
+import migrateProfileWithReset from './migrateProfileWithReset'
 import registerName from './registerName'
 import resetPrimaryName from './resetPrimaryName'
+import resetProfile from './resetProfile'
 import setPrimaryName from './setPrimaryName'
 import syncManager from './syncManager'
 import testSendName from './testSendName'
 import transferController from './transferController'
 import transferName from './transferName'
 import transferSubname from './transferSubname'
+import unwrapName from './unwrapName'
 import updateEthAddress from './updateEthAddress'
 import updateProfile from './updateProfile'
 import updateProfileRecords from './updateProfileRecords'
@@ -32,30 +34,36 @@ export const transactions = {
   setPrimaryName,
   resetPrimaryName,
   updateEthAddress,
-  migrateProfileWithSync,
   migrateProfileWithEthAddress,
+  approveNameWrapper,
   burnFuses,
-  createSubname,
-  extendNames,
-  deleteSubname,
+  changePermissions,
   commitName,
+  createSubname,
+  deleteSubname,
+  extendNames,
+  importDNSSECName,
+  migrateProfileWithReset,
   registerName,
+  resetProfile,
+  syncManager,
+  transferController,
   transferName,
   transferSubname,
-  transferController,
-  importDNSSECName,
-  approveNameWrapper,
-  changePermissions,
-  syncManager,
+  unwrapName,
   updateProfileRecords,
 }
 
 export type Transaction = typeof transactions
 export type TransactionName = keyof Transaction
 
+export type TransactionData<T extends TransactionName> = Parameters<
+  Transaction[T]['transaction']
+>[2]
+
 export const makeTransactionItem = <T extends TransactionName>(
   name: T,
-  data: Parameters<Transaction[T]['transaction']>[2],
+  data: TransactionData<T>,
 ) => ({
   name,
   data,

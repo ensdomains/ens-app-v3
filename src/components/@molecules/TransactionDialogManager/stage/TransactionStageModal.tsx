@@ -15,7 +15,6 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainName } from '@app/hooks/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
 import { transactions } from '@app/transaction-flow/transaction'
@@ -25,6 +24,7 @@ import {
   TransactionStage,
 } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
@@ -167,6 +167,8 @@ type TxError = {
   error: Error
 }
 
+const SUPPORTED_REQUEST_ERRORS = ['INSUFFICIENT_FUNDS', 'UNPREDICTABLE_GAS_LIMIT']
+
 export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
   const { t } = useTranslation()
 
@@ -246,6 +248,18 @@ export const handleBackToInput = (dispatch: Dispatch<TransactionFlowAction>) => 
   dispatch({ name: 'resetTransactionStep' })
 }
 
+export const uniqueTransactionIdentifierGenerator = (
+  txKey: ManagedDialogPropsTwo['txKey'],
+  currentStep: number,
+  transactionName: ManagedDialogPropsTwo['transaction']['name'],
+  transactionData: ManagedDialogPropsTwo['transaction']['data'],
+) => ({
+  key: txKey,
+  step: currentStep,
+  name: transactionName,
+  data: transactionData,
+})
+
 export const TransactionStageModal = ({
   actionName,
   currentStep,
@@ -263,7 +277,6 @@ export const TransactionStageModal = ({
 
   const addRecentTransaction = useAddRecentTransaction()
   const { data: signer } = useSigner()
-  const { address } = useAccountSafely()
   const ens = useEns()
 
   const stage = transaction.stage || 'confirm'
@@ -274,15 +287,14 @@ export const TransactionStageModal = ({
   )
 
   const uniqueTxIdentifiers = useMemo(
-    () => ({
-      key: txKey,
-      step: currentStep,
-      name: transaction?.name,
-      data: transaction?.data,
-      chainName,
-      address,
-    }),
-    [txKey, currentStep, transaction?.name, transaction?.data, chainName, address],
+    () =>
+      uniqueTransactionIdentifierGenerator(
+        txKey,
+        currentStep,
+        transaction?.name,
+        transaction?.data,
+      ),
+    [txKey, currentStep, transaction?.name, transaction?.data],
   )
 
   // if not all unique identifiers are defined, there could be incorrect cached data
@@ -302,12 +314,14 @@ export const TransactionStageModal = ({
     [transaction, signer, ens, stage, isUniquenessDefined],
   )
 
+  const queryKeys = useQueryKeys()
+
   const {
     data: request,
     isLoading: requestLoading,
     error: _requestError,
   } = useQuery(
-    ['prepareTx', uniqueTxIdentifiers],
+    queryKeys.transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
     async () => {
       const populatedTransaction = await transactions[transaction.name].transaction(
         signer as JsonRpcSigner,
@@ -335,7 +349,7 @@ export const TransactionStageModal = ({
   const requestError = _requestError as TxError | null
   useInvalidateOnBlock({
     enabled: canEnableTransactionRequest,
-    queryKey: ['prepareTx', uniqueTxIdentifiers],
+    queryKey: queryKeys.transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
   })
 
   const {
@@ -470,7 +484,7 @@ export const TransactionStageModal = ({
   const provider = useProvider()
 
   const { data: upperError } = useQuery(
-    ['txError', transaction.hash],
+    useQueryKeys().transactionStageModal.transactionError(transaction.hash),
     async () => {
       if (!transaction || !transaction.hash || transactionStatus !== 'failed') return null
       const a = await provider.getTransaction(transaction.hash!)
@@ -494,13 +508,13 @@ export const TransactionStageModal = ({
       return transactionError.message.split('(')[0].trim()
     }
     if (requestError) {
-      if (requestError.code === 'UNPREDICTABLE_GAS_LIMIT') {
-        return 'An unknown error occurred.'
+      if (SUPPORTED_REQUEST_ERRORS.includes(requestError.code)) {
+        return t(`transaction.error.request.${requestError.code}`)
       }
       return requestError.reason
     }
     return null
-  }, [stage, transactionError, requestError])
+  }, [t, stage, transactionError, requestError])
 
   return (
     <>
