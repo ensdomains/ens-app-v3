@@ -3410,13 +3410,12 @@ packages:
       '@types/node-fetch': 2.6.2
       ethers: 5.7.2
       mkdirp: 0.5.6
-      node-fetch: 2.6.7
+      node-fetch: 2.6.1
       solc: 0.6.12
       ts-generator: 0.1.1
       typechain: 3.0.0_typescript@4.9.5
     transitivePeerDependencies:
       - bufferutil
-      - encoding
       - supports-color
       - typescript
       - utf-8-validate
@@ -13074,8 +13073,6 @@ packages:
       eth-query: 2.1.2
       json-rpc-engine: 6.1.0
       pify: 5.0.0
-    transitivePeerDependencies:
-      - encoding
     dev: true
 
   /eth-json-rpc-filters/5.1.0:
@@ -13105,9 +13102,7 @@ packages:
       eth-json-rpc-middleware: 6.0.0
       eth-rpc-errors: 3.0.0
       json-rpc-engine: 5.4.0
-      node-fetch: 2.6.7
-    transitivePeerDependencies:
-      - encoding
+      node-fetch: 2.6.1
     dev: true
 
   /eth-json-rpc-middleware/1.6.0:
@@ -13143,11 +13138,9 @@ packages:
       ethereumjs-vm: 2.6.0
       json-rpc-engine: 5.4.0
       json-stable-stringify: 1.0.1
-      node-fetch: 2.6.7
+      node-fetch: 2.6.1
       pify: 3.0.0
       safe-event-emitter: 1.0.1
-    transitivePeerDependencies:
-      - encoding
     dev: true
 
   /eth-json-rpc-middleware/6.0.0:
@@ -13161,11 +13154,9 @@ packages:
       ethereumjs-util: 5.2.1
       json-rpc-engine: 5.4.0
       json-stable-stringify: 1.0.1
-      node-fetch: 2.6.7
+      node-fetch: 2.6.1
       pify: 3.0.0
       safe-event-emitter: 1.0.1
-    transitivePeerDependencies:
-      - encoding
     dev: true
 
   /eth-lib/0.1.29:
