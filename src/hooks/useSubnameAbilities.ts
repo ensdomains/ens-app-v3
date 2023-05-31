@@ -70,7 +70,7 @@ const getCanDeleteAbilities = (
       canDelete: !hasSubnames && !isCannotTransferBurned,
       canDeleteContract: 'nameWrapper',
       canDeleteError: isCannotTransferBurned
-        ? 'permissionRevoked'
+        ? t('errors.permissionRevoked')
         : hasSubnames
         ? t('errors.hasSubnames')
         : undefined,
