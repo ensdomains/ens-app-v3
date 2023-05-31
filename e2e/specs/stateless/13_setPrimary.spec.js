@@ -85,7 +85,19 @@ describe('Set Primary Name from profile page', () => {
       cy.visit('/sub.wrapped-without-resolver.eth')
       connectFromExisting()
 
+      // Set resolver to unauthorized resolver
+      cy.findByTestId('more-tab').click()
+      cy.findByTestId('edit-resolver-button').click()
+      cy.findByTestId('custom-resolver-radio').click()
+      cy.findByTestId('dogfood').type('0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB')
+      cy.findByTestId('update-button').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
       // Assert state
+      cy.findByTestId('profile-tab').click()
       cy.findByTestId('owner-profile-button-name.manager').should('have.text', 'managerother-controller.eth')
       cy.findByTestId('address-profile-button-eth').should('not.exist')
 
@@ -113,48 +125,6 @@ describe('Set Primary Name from profile page', () => {
 
       // Assertion
       cy.findByTestId('profile-title').should('contain.text', 'sub.wrapped-without-resolver.eth')
-    })
-
-    it('should allow setting a name that user is manager of but whose resolver is invalid', () => {
-      cy.clearLocalStorage()
-      acceptMetamaskAccess(2)
-
-       // Set resolver to invalid resolver
-       cy.visit('/wrapped-without-resolver.eth?tab=more')
-       cy.findByTestId('edit-resolver-button').click()
-       cy.findByTestId('custom-resolver-radio').click()
-       cy.findByTestId('dogfood').type('0x71C7656EC7ab88b098defB751B7401B5f6d8976F')
-       cy.findByTestId('update-button').click()
-       cy.findByTestId('transaction-modal-confirm-button').click()
-       cy.confirmMetamaskTransaction()
-       cy.findByTestId('transaction-modal-complete-button').click()
-       cy.wait(10000)
-
-      cy.visit('/wrapped-without-resolver.eth')
-      cy.findByText('Set as primary name').click()
-
-       // Intro modal
-       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
-
-       // Migrate profile and update eth address modal
-       cy.findByTestId('transaction-modal-confirm-button').click()
-       cy.confirmMetamaskTransaction()
-       cy.findByTestId('transaction-modal-complete-button').click()
- 
-       // Set Resolver modal
-       cy.findByTestId('transaction-modal-confirm-button').click()
-       cy.confirmMetamaskTransaction()
-       cy.findByTestId('transaction-modal-complete-button').click()
- 
-       // Set Primary Name modal
-       cy.findByTestId('transaction-modal-confirm-button').click()
-       cy.confirmMetamaskTransaction()
-       cy.findByTestId('transaction-modal-complete-button').click()
-
-      cy.wait(10000)
-
-      // Assertion
-      cy.findByTestId('profile-title').should('contain.text', 'wrapped-without-resolver.eth')
     })
 
     it('should allow setting primary name from name with encrypted label', () => {
@@ -192,4 +162,11 @@ describe('Set Primary Name from profile page', () => {
       cy.findByTestId('profile-title').should('contain.text', 'aaa123xyz000.unknown-labels.eth')
     })
   })
+
+  describe('subgraph error', () => {
+    it('should be able to set error', () => {
+      
+    })
+  })
+  
 })

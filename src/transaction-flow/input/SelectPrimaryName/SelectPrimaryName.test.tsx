@@ -1,13 +1,13 @@
-import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
+import { render, screen, userEvent, waitFor } from '@app/test-utils'
 
-import { useAvailablePrimaryNamesForAddress } from '@app/hooks/useAvailablePrimaryNamesForAddress'
-import { useEns } from '@app/utils/EnsProvider'
+import { decodeLabelhash, labelhash } from '@ensdomains/ensjs/utils/labels'
 
-import SelectPrimaryName from './SelectPrimaryName-flow'
+import SelectPrimaryName, {
+  getNameFromUnknownLabels,
+  hasEncodedLabel,
+} from './SelectPrimaryName-flow'
 
-jest.mock('@app/hooks/useChainId', () => ({
-  useChainId: jest.fn().mockReturnValue(1),
-}))
+const encodeLabel = (label: string) => `[${labelhash(label).slice(2)}]`
 
 const mockInvalidateQueries = jest.fn()
 jest.mock('wagmi', () =>
@@ -17,40 +17,57 @@ jest.mock('wagmi', () =>
     }),
   }),
 )
+
 jest.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem', () => ({
   TaggedNameItem: ({ name, ...props }: any) => <div {...props}>{name}</div>,
 }))
 
-jest.mock('@app/utils/EnsProvider')
-const mockUseEns = mockFunction(useEns)
-const mockGetResolver = jest.fn()
-mockGetResolver.mockReturnValue('0xresolver')
-
-const mockGetDecryptedName = jest.fn()
-mockGetDecryptedName.mockReturnValue('sub.test.eth')
-
-mockUseEns.mockReturnValue({
+const mockGetDecryptedName = jest.fn().mockImplementation((name: string) => Promise.resolve(name))
+const mockUseEns = jest.fn().mockReturnValue({
   ready: true,
-  getResolver: mockGetResolver,
-  getDecryptedName: mockGetDecryptedName,
+  getDecryptedName: () => mockGetDecryptedName(),
 })
-
-jest.mock('@app/hooks/useAvailablePrimaryNamesForAddress')
-const mockUseAvailablePrimaryNamesForAddress = mockFunction(useAvailablePrimaryNamesForAddress)
+jest.mock('@app/utils/EnsProvider', () => ({
+  useEns: () => mockUseEns(),
+}))
 
 const makeName = (index: number, overwrites?: any) => ({
   name: `test${index}.eth`,
   id: `0x${index}`,
   ...overwrites,
 })
-
-mockUseAvailablePrimaryNamesForAddress.mockReturnValue({
+const mockUseAvailablePrimaryNamesForAddress = jest.fn().mockReturnValue({
   names: new Array(5)
     .fill(0)
     .map((_, i) => makeName(i))
     .flat(),
   isLoading: false,
 })
+jest.mock('@app/hooks/useAvailablePrimaryNamesForAddress', () => ({
+  useAvailablePrimaryNamesForAddress: () => mockUseAvailablePrimaryNamesForAddress(),
+}))
+
+jest.mock('@app/hooks/useContractAddress', () => ({
+  useContractAddress: () => '0xPublicResolver',
+}))
+
+const mockUseResolverStatus = jest.fn().mockReturnValue({
+  data: {
+    isAuthorized: true,
+  },
+  isLoading: false,
+})
+jest.mock('@app/hooks/resolver/useResolverStatus', () => ({
+  useResolverStatus: () => mockUseResolverStatus(),
+}))
+
+const mockUseBasicName = jest.fn().mockReturnValue({
+  isWrapped: true,
+  isLoading: false,
+})
+jest.mock('@app/hooks/useBasicName', () => ({
+  useBasicName: () => mockUseBasicName(),
+}))
 
 const mockDispatch = jest.fn()
 
@@ -111,6 +128,54 @@ const makeResult = (
 
 afterEach(() => {
   jest.clearAllMocks()
+})
+
+describe('hasEncodedLabel', () => {
+  it('should return true if an encoded label exists', () => {
+    expect(hasEncodedLabel(`${encodeLabel('test')}.eth`)).toBe(true)
+  })
+
+  it('should return false if an encoded label does not exist', () => {
+    expect(hasEncodedLabel('test.test.test.eth')).toBe(false)
+  })
+})
+
+describe('getNameFromUnknownLabels', () => {
+  it('should return the name if no encoded label exists', () => {
+    expect(getNameFromUnknownLabels('test.test.eth', { labels: [], tld: '' })).toBe('test.test.eth')
+  })
+
+  it('should return the decoded name if encoded label exists', () => {
+    expect(
+      getNameFromUnknownLabels(
+        `${encodeLabel('test1')}.${encodeLabel('test2')}.${encodeLabel('test3')}.eth`,
+        {
+          labels: [
+            { label: decodeLabelhash(encodeLabel('test1')), value: 'test1', disabled: false },
+            { label: decodeLabelhash(encodeLabel('test2')), value: 'test2', disabled: false },
+            { label: decodeLabelhash(encodeLabel('test3')), value: 'test3', disabled: false },
+          ],
+          tld: 'eth',
+        },
+      ),
+    ).toBe('test1.test2.test3.eth')
+  })
+
+  it('should skip unknown labels if they do not match the original labels', () => {
+    expect(
+      getNameFromUnknownLabels(
+        `${encodeLabel('test1')}.${encodeLabel('test2')}.${encodeLabel('test3')}.eth`,
+        {
+          labels: [
+            { label: decodeLabelhash(encodeLabel('test2')), value: 'test2', disabled: false },
+            { label: decodeLabelhash(encodeLabel('test2')), value: 'test2', disabled: false },
+            { label: decodeLabelhash(encodeLabel('test2')), value: 'test2', disabled: false },
+          ],
+          tld: 'eth',
+        },
+      ),
+    ).toBe(`${encodeLabel('test1')}.test2.${encodeLabel('test3')}.eth`)
+  })
 })
 
 describe('SelectPrimaryName', () => {
@@ -193,12 +258,13 @@ describe('SelectPrimaryName', () => {
       names: [
         ...new Array(5).fill(0).map((_, i) => makeName(i)),
         {
-          name: '[2fcba40a1a605acf57a88f10820dd7f474036e9c73660ce1bafdbb9004b92ded].eth',
+          name: `${encodeLabel('test')}.eth`,
           id: '0xhash',
         },
       ],
       isLoading: false,
     })
+    mockGetDecryptedName.mockReturnValueOnce('test.eth')
     render(
       <SelectPrimaryName
         data={{ address: '0x123' }}
@@ -206,35 +272,36 @@ describe('SelectPrimaryName', () => {
         onDismiss={() => {}}
       />,
     )
-    await userEvent.click(
-      screen.getByText('[2fcba40a1a605acf57a88f10820dd7f474036e9c73660ce1bafdbb9004b92ded].eth'),
-    )
+    await userEvent.click(screen.getByText(`${encodeLabel('test')}.eth`))
     await userEvent.click(screen.getByTestId('primary-next'))
     expect(mockDispatch).toHaveBeenCalled()
   })
 
   it('should show decrypt view if name cannot be decrypted', async () => {
-    mockGetDecryptedName.mockReturnValueOnce(undefined)
-    mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
+    mockUseAvailablePrimaryNamesForAddress.mockReturnValue({
       names: [
-        ...new Array(5).fill(0).map((_, i) => makeName(i)),
+        ...new Array(3).fill(0).map((_, i) => makeName(i)),
         {
-          name: '[2fcba40a1a605acf57a88f10820dd7f474036e9c73660ce1bafdbb9004b92ded].eth',
+          name: `${encodeLabel('test')}.eth`,
           id: '0xhash',
         },
       ],
       isLoading: false,
     })
+    mockGetDecryptedName.mockReturnValueOnce(`${encodeLabel('test')}.eth`)
     render(
-      <SelectPrimaryName data={{ address: '0x123' }} dispatch={() => {}} onDismiss={() => {}} />,
+      <SelectPrimaryName
+        data={{ address: '0x123' }}
+        dispatch={mockDispatch}
+        onDismiss={() => {}}
+      />,
     )
     expect(screen.getByTestId('primary-next')).toBeDisabled()
-    await userEvent.click(
-      screen.getByText('[2fcba40a1a605acf57a88f10820dd7f474036e9c73660ce1bafdbb9004b92ded].eth'),
-    )
+    await userEvent.click(screen.getByText(`${encodeLabel('test')}.eth`))
     await waitFor(() => expect(screen.getByTestId('primary-next')).not.toBeDisabled())
     await userEvent.click(screen.getByTestId('primary-next'))
     await waitFor(() => expect(screen.getByTestId('unknown-labels-form')).toBeInTheDocument())
+    expect(mockDispatch).not.toHaveBeenCalled()
   })
 
   describe('One step transactions', () => {
@@ -289,6 +356,31 @@ describe('SelectPrimaryName', () => {
       await userEvent.click(screen.getByText('test1.eth'))
       await userEvent.click(screen.getByTestId('primary-next'))
       expect(mockDispatch).toBeCalledWith(makeResult('test1.eth', 'two-step'))
+    })
+  })
+
+  describe('Three step transactions', () => {
+    it('should dispatch three step transaction if unwrapped name with other eth address and invalid resolver', async () => {
+      mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
+        names: [makeName(1, { isResolvedAddress: false })],
+        isLoading: false,
+      })
+      mockUseResolverStatus.mockReturnValueOnce({
+        data: {
+          isAuthorized: false,
+        },
+        isLoading: false,
+      })
+      render(
+        <SelectPrimaryName
+          data={{ address: '0x123' }}
+          dispatch={mockDispatch}
+          onDismiss={() => {}}
+        />,
+      )
+      await userEvent.click(screen.getByText('test1.eth'))
+      await userEvent.click(screen.getByTestId('primary-next'))
+      expect(mockDispatch).toBeCalledWith(makeResult('test1.eth', 'three-step'))
     })
   })
 })

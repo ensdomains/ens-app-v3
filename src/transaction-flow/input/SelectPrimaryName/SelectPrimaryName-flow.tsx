@@ -1,10 +1,15 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { UseFormReturn, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useProvider, useQueryClient } from 'wagmi'
+import { useMutation, useQueryClient } from 'wagmi'
 
-import { isEncodedLabelhash, labelhash, saveName } from '@ensdomains/ensjs/utils/labels'
+import {
+  decodeLabelhash,
+  isEncodedLabelhash,
+  labelhash,
+  saveName,
+} from '@ensdomains/ensjs/utils/labels'
 import { Button, Dialog, Heading, Typography, mq } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
@@ -15,11 +20,14 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import {
   Name,
   useAvailablePrimaryNamesForAddress,
 } from '@app/hooks/useAvailablePrimaryNamesForAddress'
+import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
+import { useContractAddress } from '@app/hooks/useContractAddress'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import {
   UnknownLabelsForm,
@@ -30,10 +38,31 @@ import { makeIntroItem } from '@app/transaction-flow/intro/index'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
-import { canResolverSetPrimaryName } from '@app/utils/canResolverSetPrimaryName'
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 const DEFAULT_PAGE_SIZE = 10
+
+export const hasEncodedLabel = (name: string) =>
+  name.split('.').some((label) => isEncodedLabelhash(label))
+
+export const getNameFromUnknownLabels = (
+  name: string,
+  unknownLabels: UnknownLabelsFormData['unknownLabels'],
+) => {
+  const [tld, ...reversedLabels] = name.split('.').reverse()
+  const labels = reversedLabels.reverse()
+  const processedLabels = labels.map((label, index) => {
+    const unknownLabel = unknownLabels.labels[index]
+    if (
+      !!unknownLabel &&
+      decodeLabelhash(label) === unknownLabel.label &&
+      unknownLabel.label === labelhash(unknownLabel.value)
+    )
+      return unknownLabel.value
+    return label
+  })
+  return [...processedLabels, tld].join('.')
+}
 
 type Data = {
   address: string
@@ -102,15 +131,21 @@ const NameTableHeaderWrapper = styled.div(({ theme }) => [
   `),
 ])
 
-const StyledScrollBox = styled(ScrollBoxWithSpinner)(
-  ({ theme }) => css`
-    width: ${theme.space.full};
+const StyledScrollBox = styled(ScrollBoxWithSpinner)(({ theme }) => [
+  css`
+    width: calc(100% + 2 * ${theme.space['4']});
+    margin: 0 -${theme.space['4']};
 
     & > div:nth-last-child(2) {
       border-bottom: none;
     }
   `,
-)
+  mq.sm.min(css`
+    width: calc(100% + 2 * ${theme.space['6']});
+    margin: 0 -${theme.space['6']};
+    max-width: calc(${theme.space['128']} + 2 * ${theme.space['6']});
+  `),
+])
 
 const ErrorContainer = styled.div(
   ({ theme }) => css`
@@ -138,11 +173,10 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   })
   const { handleSubmit, control, setValue } = form
 
-  const provider = useProvider()
   const chainId = useChainId()
-  const lastestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
+  const lastestResolverAddress = useContractAddress('PublicResolver')
 
-  const { ready: isEnsReady, getResolver, getDecryptedName } = useEns()
+  const { ready: isEnsReady, getDecryptedName } = useEns()
 
   const [view, setView] = useState<'main' | 'decrypt'>('main')
 
@@ -167,62 +201,35 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     resultsPerPage: DEFAULT_PAGE_SIZE,
   })
 
-  const isLoading = !isEnsReady || isLoadingNames
-
   const selectedName = useWatch({
     control,
     name: 'name.name',
   })
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const onSubmit = async (data: FormData) => {
-    try {
-      setIsSubmitting(true)
-      if (!data.name || isLoading) return
+  const { isWrapped, isLoading: isBasicNameLoading } = useBasicName(selectedName, {
+    enabled: !!selectedName,
+    skipGraph: true,
+  })
 
-      let validName = data.name.name
+  const { data: resolverStatus, isLoading: isResolverStatusLoading } = useResolverStatus(
+    selectedName,
+    {
+      enabled: !!selectedName && !isBasicNameLoading,
+      isWrapped,
+    },
+  )
 
-      let hasEncodedLabel = validName.split('.').some((label) => isEncodedLabelhash(label))
-      if (hasEncodedLabel) {
-        const decryptedName = await getDecryptedName(validName, true)
-        if (decryptedName) {
-          validName = decryptedName as string
-          hasEncodedLabel = validName.split('.').some((label) => isEncodedLabelhash(label))
-        }
-      }
-
-      const hasValidDecodedLabels =
-        data.unknownLabels.labels.length === validName.split('.').length - 1 &&
-        data.unknownLabels.labels.every(
-          ({ label, value }) => label === value || label === labelhash(value),
-        )
-
-      // If name has encoded labels and we do not have the decoded labels, switch to decrypt view
-      if (hasEncodedLabel && !hasValidDecodedLabels) {
-        setValue('unknownLabels', nameToFormData(data.name.name).unknownLabels)
-        setView('decrypt')
-        return
-      }
-
-      // If name has encoded labels and we have the decoded labels, set the final name
-      if (hasEncodedLabel && hasValidDecodedLabels) {
-        validName = [
-          ...data.unknownLabels.labels.map((label) => label.value),
-          data.unknownLabels.tld,
-        ].join('.')
-
-        saveName(validName)
-        queryClient.resetQueries({ exact: true, queryKey: ['validate', data.name.name] })
-      }
-
+  // Dispatches the needed transactions to set the primary name
+  const dispatchTransactions = useCallback(
+    async (name: string, isResolvedAddress: boolean) => {
       // If resolved address is already set, then one step transaction
-      if (data.name.isResolvedAddress) {
+      if (isResolvedAddress) {
         dispatch({
           name: 'setTransactions',
           payload: [
             makeTransactionItem('setPrimaryName', {
               address,
-              name: validName,
+              name,
             }),
           ],
         })
@@ -234,15 +241,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       }
 
       // If name does not have resolver, then three step transaction
-      const isWrapped = !!data.name.fuses
-      const resolver = await getResolver(validName)
-      const isResolverValid = await canResolverSetPrimaryName(
-        resolver,
-        isWrapped,
-        provider,
-        chainId,
-      )
-      if (!isResolverValid) {
+      if (!resolverStatus?.isAuthorized) {
         return dispatch({
           name: 'startFlow',
           key: 'ChangePrimaryName',
@@ -255,18 +254,18 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
             },
             transactions: [
               makeTransactionItem('migrateProfileWithEthAddress', {
-                name: validName,
+                name,
                 ethAddress: address,
                 resolverAddress: lastestResolverAddress,
               }),
               makeTransactionItem('updateResolver', {
-                name: validName,
+                name,
                 contract: isWrapped ? 'nameWrapper' : 'registry',
                 resolver: lastestResolverAddress,
               }),
               makeTransactionItem('setPrimaryName', {
                 address,
-                name: validName!,
+                name,
               }),
             ],
           },
@@ -287,23 +286,66 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
           transactions: [
             makeTransactionItem('updateEthAddress', {
               address: address!,
-              name: validName,
+              name,
             }),
             makeTransactionItem('setPrimaryName', {
               address,
-              name: validName!,
+              name,
             }),
           ],
         },
       })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+    },
+    [address, resolverStatus?.isAuthorized, dispatch, t, isWrapped, lastestResolverAddress],
+  )
+
+  // Checks if name has encrptyed labels and attempts decrypt them if they exist
+  const validateKey = useQueryKeys().validate
+  const { mutate: mutateName, isLoading: isMutationLoading } = useMutation(
+    async (data: FormData) => {
+      if (!data.name) throw new Error('no_name')
+
+      let validName = data.name.name
+      if (!hasEncodedLabel(validName)) return validName
+
+      // build name from unkown labels
+      validName = getNameFromUnknownLabels(validName, data.unknownLabels)
+      if (!hasEncodedLabel(validName)) {
+        saveName(validName)
+        queryClient.resetQueries(validateKey(data.name?.name))
+        return validName
+      }
+
+      // Attempt to decrypt name
+      validName = await getDecryptedName(validName, true)
+      if (!hasEncodedLabel(validName)) {
+        saveName(validName)
+        queryClient.resetQueries(validateKey(data.name?.name))
+        return validName
+      }
+
+      throw new Error('invalid_name')
+    },
+    {
+      onSuccess: (data, variables) => {
+        dispatchTransactions(data, !!variables.name?.isResolvedAddress)
+      },
+      onError: (error, variables) => {
+        if (!(error instanceof Error)) return
+        if (error.message === 'invalid_name') {
+          setValue('unknownLabels', nameToFormData(variables.name?.name || '').unknownLabels)
+          setView('decrypt')
+        }
+      },
+    },
+  )
 
   const onConfirm = () => {
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
   }
+
+  const isLoading = !isEnsReady || isLoadingNames || isMutationLoading
+  const isLoadingName = isResolverStatusLoading || isBasicNameLoading
 
   if (isLoading)
     return (
@@ -312,11 +354,12 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
         <SpinnerRow />
       </LoadingContainer>
     )
+
   return view === 'decrypt' ? (
     <UnknownLabelsForm
       {...(form as UseFormReturn<UnknownLabelsFormData>)}
       ref={formRef}
-      onSubmit={onSubmit}
+      onSubmit={mutateName}
       onCancel={() => {
         setValue('unknownLabels', nameToFormData('').unknownLabels)
         setView('main')
@@ -328,7 +371,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       <HeaderWrapper>
         <Dialog.Heading title={t('input.selectPrimaryName.title')} />
       </HeaderWrapper>
-      <ContentContainer ref={formRef} onSubmit={handleSubmit(onSubmit)}>
+      <ContentContainer ref={formRef} onSubmit={handleSubmit((data) => mutateName(data))}>
         <Divider />
         {namesCount > DEFAULT_PAGE_SIZE && (
           <>
@@ -391,8 +434,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
           <Button
             data-testid="primary-next"
             onClick={onConfirm}
-            disabled={!selectedName}
-            loading={isSubmitting}
+            disabled={!selectedName || isLoadingName}
+            loading={isLoadingName}
           >
             {t('action.next', { ns: 'common' })}
           </Button>

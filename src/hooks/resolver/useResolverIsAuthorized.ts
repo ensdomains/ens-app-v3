@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
+import { Signer } from '@wagmi/core'
 import { useQuery, useSigner } from 'wagmi'
 
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
@@ -83,6 +84,30 @@ const checkAuthorization = async (contract: Contract, name: string) => {
   }
 }
 
+export const getAuthorizationData = async ({
+  resolverAddress,
+  name,
+  signer,
+}: {
+  resolverAddress?: string
+  name: string
+  signer?: Signer | null
+}) => {
+  try {
+    if (!resolverAddress || !signer) return { isValid: false, isAuthorized: false }
+    const contract = new Contract(resolverAddress!, setAddrABI, signer)
+    await checkInterface(contract)
+    await checkAuthorization(contract, name)
+    return { isValid: true, isAuthorized: true }
+  } catch (e: unknown) {
+    console.error(e)
+    if (e instanceof Error && e.message === 'notAuthorized') {
+      return { isValid: true, isAuthorized: false }
+    }
+    return { isValid: false, isAuthorized: false }
+  }
+}
+
 type Options = {
   enabled?: boolean
   resolverAddress?: string
@@ -101,21 +126,8 @@ export const useResolverIsAuthorized = (name: string, options: Options = {}) => 
   const isLoading = isProfileLoading || isSignerLoading
 
   return useQuery(
-    useQueryKeys().resolverIsAuthorized(name, resolver!),
-    async () => {
-      try {
-        const contract = new Contract(resolver!, setAddrABI, signer!)
-        await checkInterface(contract)
-        await checkAuthorization(contract, name)
-        return { isValid: true, isAuthorized: true }
-      } catch (e: unknown) {
-        console.error(e)
-        if (e instanceof Error && e.message === 'notAuthorized') {
-          return { isValid: true, isAuthorized: false }
-        }
-        return { isValid: false, isAuthorized: false }
-      }
-    },
+    useQueryKeys().resolverIsAuthorized(name, resolver),
+    async () => getAuthorizationData({ resolverAddress: resolver, name, signer }),
     {
       enabled: enabled && !isLoading && !!signer,
     },

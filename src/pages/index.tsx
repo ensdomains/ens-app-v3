@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useQuery } from 'wagmi'
 
 import { Typography, mq } from '@ensdomains/thorin'
 
@@ -91,13 +90,6 @@ const StyledLeadingHeading = styled(LeadingHeading)(
 
 export default function Page() {
   const { t } = useTranslation('common')
-
-  const results = useQuery(['testing'], () => Promise.resolve('hello world'), {
-    enabled: false,
-  })
-  console.log(results)
-  const [one, two] = undefined ?? []
-  console.log(one, two)
 
   return (
     <>
