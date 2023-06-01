@@ -187,16 +187,13 @@ describe('Set Primary Name from settings', () => {
   })
 
   describe('subgraph errors', () => {
-    it('should be able to turn on subgraph indexing error', () => {
-      cy.visit('/my/settings')
-      cy.findByTestId('subgraph-indexing-error').click()
-    })
-
     it('should disable button for unwrapped subname in profile', () => {
       cy.clearLocalStorage()
       acceptMetamaskAccess(3)
       cy.visit('/my/settings')
-      cy.wait(20000)
+      cy.findByTestId('subgraph-indexing-error').click()
+      cy.reload()
+      cy.wait(10000)
       cy.findByTestId('disabled-set-primary-name-button').should('be.visible')
     })
 
@@ -204,7 +201,9 @@ describe('Set Primary Name from settings', () => {
       cy.clearLocalStorage()
       acceptMetamaskAccess(1)
       cy.visit('/my/settings')
-      cy.wait(20000)
+      cy.findByTestId('subgraph-indexing-error').click()
+      cy.reload()
+      cy.wait(10000)
       cy.findByTestId('disabled-change-primary-name-button').should('be.visible')
       cy.findByTestId('disabled-reset-primary-name-button').should('be.visible')
 
