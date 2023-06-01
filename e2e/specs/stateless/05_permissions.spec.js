@@ -73,6 +73,7 @@ describe('Permissions', () => {
   })
 
   it('should show correct buttons for managing subname (Parent owner settings)', () => {
+    cy.clearLocalStorage()
     acceptMetamaskAccess(2)
     cy.visit('/sub.wrapped.eth')
     cy.wait(10000)
@@ -86,6 +87,7 @@ describe('Permissions', () => {
   })
   it('should show correct buttons for managing subname (Name owner settings)', () => {
     // Name owner settings
+    cy.clearLocalStorage()
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')
     cy.wait(10000)
