@@ -192,12 +192,9 @@ describe('Set Primary Name from settings', () => {
       acceptMetamaskAccess(3)
       cy.visit('/my/settings')
       cy.findByTestId('subgraph-network-error').click()
-      cy.wait(10000)
-      cy.visit('/wrapped.eth')
-      cy.wait(10000)
-      cy.visit('/my/settings')
-      cy.wait(10000)
-      cy.findByTestId('disabled-set-primary-name-button').should('be.visible')
+      cy.reload()
+      cy.findByTestId('disabled-change-primary-name-button').should('be.visible')
+      cy.findByTestId('disabled-reset-primary-name-button').should('be.visible')
     })
 
     it('should disable button for wrapped subname in profile', () => {
@@ -205,12 +202,8 @@ describe('Set Primary Name from settings', () => {
       acceptMetamaskAccess(1)
       cy.visit('/my/settings')
       cy.findByTestId('subgraph-network-error').click()
-      cy.wait(10000)
-      cy.visit('/my/settings')
-      cy.wait(10000)
-      cy.findByTestId('disabled-change-primary-name-button').should('be.visible')
-      cy.findByTestId('disabled-reset-primary-name-button').should('be.visible')
-
+      cy.reload()
+      cy.findByTestId('disabled-set-primary-name-button').should('be.visible')    
     })
     
   })
