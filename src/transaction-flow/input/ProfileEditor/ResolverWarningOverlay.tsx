@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useResolverStatus } from '@app/hooks/useResolverStatus'
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -29,7 +29,7 @@ type Props = {
   hasNoResolver?: boolean
   latestResolver: string
   oldResolver: string
-  status: ReturnType<typeof useResolverStatus>['status']
+  status: ReturnType<typeof useResolverStatus>['data']
   onDismissOverlay: () => void
 } & TransactionDialogPassthrough
 
@@ -205,7 +205,7 @@ const ResolverWarningOverlay = ({
         name={name}
         currentResolver={oldResolver}
         latestResolver={latestResolver}
-        hasCurrentProfile={status?.hasProfile}
+        hasCurrentProfile={!!status?.hasProfile}
         selected={selectedProfile}
         onChangeSelected={setSelectedProfile}
         onBack={onDecrement}
@@ -226,7 +226,7 @@ const ResolverWarningOverlay = ({
     resolverNotNameWrapperAware: (
       <ResolverNotNameWrapperAwareView
         selected={selectedProfile}
-        hasProfile={status?.hasProfile}
+        hasProfile={!!status?.hasProfile}
         onChangeSelected={setSelectedProfile}
         onCancel={onDismiss}
         onNext={() => {
