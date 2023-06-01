@@ -18,7 +18,7 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('header-profile').as('header-profile')
       cy.get('@header-profile').click()
       // length 4 = 3 buttons + 1 divider
-      cy.findByTestId('dropdown-menu').children().should('have.length', 4)
+      cy.findByTestId('dropdown-menu').children().first().children().should('have.length', 4)
     })
 
     it('should allow setting unmanaged name that has eth record set to address', () => {
@@ -129,7 +129,6 @@ describe('Set Primary Name from settings', () => {
     it('should not show current primary name in list', () => {
       cy.visit('/my/settings')
       cy.findByTestId('change-primary-name-button').click()
-      cy.findByTestId('name-table-header-search').type('wrapped-without')
       cy.findByTestId('name-item-sub.wrapped-without-resolver.eth').should('not.exist')
     })
 

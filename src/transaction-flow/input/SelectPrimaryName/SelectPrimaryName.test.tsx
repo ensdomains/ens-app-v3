@@ -176,6 +176,19 @@ describe('getNameFromUnknownLabels', () => {
       ),
     ).toBe(`${encodeLabel('test1')}.test2.${encodeLabel('test3')}.eth`)
   })
+
+  it('should be able to handle mixed encoded and decoded names', () => {
+    expect(
+      getNameFromUnknownLabels(`${encodeLabel('test1')}.test2.${encodeLabel('test3')}.eth`, {
+        labels: [
+          { label: decodeLabelhash(encodeLabel('test2')), value: 'test2', disabled: false },
+          { label: 'test2', value: 'test2', disabled: true },
+          { label: decodeLabelhash(encodeLabel('test2')), value: 'test2', disabled: false },
+        ],
+        tld: 'eth',
+      }),
+    ).toBe(`${encodeLabel('test1')}.test2.${encodeLabel('test3')}.eth`)
+  })
 })
 
 describe('SelectPrimaryName', () => {

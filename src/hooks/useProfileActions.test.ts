@@ -1,4 +1,4 @@
-import { fireEvent, mockFunction, render, renderHook, screen } from '@app/test-utils'
+import { mockFunction, renderHook } from '@app/test-utils'
 
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -6,6 +6,15 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { useHasGlobalError } from './errors/useHasGlobalError'
 import { useProfileActions } from './useProfileActions'
 
+const mockUseResolverStatus = jest.fn().mockReturnValue({
+  data: {
+    isAuthorized: true,
+  },
+  isLoading: false,
+})
+jest.mock('@app/hooks/resolver/useResolverStatus', () => ({
+  useResolverStatus: () => mockUseResolverStatus(),
+}))
 jest.mock('@app/hooks/usePrimary')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('./errors/useHasGlobalError')

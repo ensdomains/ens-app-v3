@@ -55,6 +55,7 @@ export const getNameFromUnknownLabels = (
     const unknownLabel = unknownLabels.labels[index]
     if (
       !!unknownLabel &&
+      isEncodedLabelhash(label) &&
       decodeLabelhash(label) === unknownLabel.label &&
       unknownLabel.label === labelhash(unknownLabel.value)
     )
