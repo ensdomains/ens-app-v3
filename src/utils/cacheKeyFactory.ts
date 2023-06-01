@@ -149,6 +149,7 @@ export const useQueryKeys = () => {
       'wrapperApprovedForAll',
     ],
     globalIndependent: {
+      isSupportedTLD: (tld: string) => [tld, 'isSupportedTLD'],
       zorb: (input: string, type: string, bg: string, fg: string, accent: string) => [
         input,
         type,
