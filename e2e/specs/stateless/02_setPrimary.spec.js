@@ -192,8 +192,9 @@ describe('Set Primary Name from settings', () => {
       acceptMetamaskAccess(3)
       cy.visit('/my/settings')
       cy.findByTestId('subgraph-indexing-error').click()
+      cy.wait(10000)
       cy.reload(true)
-      cy.wait(30000)
+      cy.wait(10000)
       cy.findByTestId('disabled-set-primary-name-button').should('be.visible')
     })
 
@@ -202,8 +203,9 @@ describe('Set Primary Name from settings', () => {
       acceptMetamaskAccess(1)
       cy.visit('/my/settings')
       cy.findByTestId('subgraph-indexing-error').click()
+      cy.wait(10000)
       cy.reload()
-      cy.wait(30000)
+      cy.wait(10000)
       cy.findByTestId('disabled-change-primary-name-button').should('be.visible')
       cy.findByTestId('disabled-reset-primary-name-button').should('be.visible')
 
