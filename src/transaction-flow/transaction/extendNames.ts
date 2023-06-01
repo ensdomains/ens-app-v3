@@ -37,7 +37,7 @@ const displayItems = (
     label: 'cost',
     value: t('transaction.extendNames.costValue', {
       ns: 'transactionFlow',
-      value: makeDisplay(rentPrice, 5, 'eth'),
+      value: makeDisplay(rentPrice.mul(102).div(100), 5, 'eth'),
     }),
   },
 ]
@@ -60,7 +60,8 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   })
 
   const price = await ens.getPrice(labels, duration, false)
-  const priceWithBuffer = price?.base.mul(110).div(100)
+  // 102% of price as buffer for fluctuations
+  const priceWithBuffer = price?.base.mul(102).div(100)
 
   if (!priceWithBuffer) throw new Error('No price found')
   return ens.renewNames.populateTransaction(names, {

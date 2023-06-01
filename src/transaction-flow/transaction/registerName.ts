@@ -31,8 +31,8 @@ const displayItems = (
 
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   const price = await ens.getPrice(data.name.split('.')[0], data.duration)
-  // 110% of price as buffer for fluctuations
-  const value = price!.base.add(price!.premium).mul(110).div(100)
+  // 102% of price as buffer for fluctuations
+  const value = price!.base.add(price!.premium).mul(102).div(100)
 
   return ens.registerName.populateTransaction(data.name, {
     signer,

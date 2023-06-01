@@ -12,7 +12,7 @@ const mockEns = {
   },
 }
 
-it('adds a 10% value buffer to the transaction from the real price', async () => {
+it('adds a 2% value buffer to the transaction from the real price', async () => {
   const result = (await registerName.transaction(
     {} as any,
     mockEns as any,
@@ -21,5 +21,5 @@ it('adds a 10% value buffer to the transaction from the real price', async () =>
     } as any,
   )) as [string, { value: BigNumber }]
   const data = result[1]
-  expect(data.value).toEqual(BigNumber.from(110))
+  expect(data.value).toEqual(BigNumber.from(102))
 })
