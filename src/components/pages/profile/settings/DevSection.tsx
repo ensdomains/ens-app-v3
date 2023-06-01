@@ -36,8 +36,10 @@ const useLocalStorageString = (key: string, defaultValue = '') => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const setValue = (newValue: string) => {
+    console.log('set local storage', key, newValue)
     localStorage.setItem(key, newValue)
     _setValue(newValue)
+    console.log('verify local storage', key, localStorage.getItem(key))
   }
   return [value, setValue] as const
 }
@@ -137,6 +139,7 @@ export const DevSection = () => {
           setSubgraphError('')
           setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
         }}
+        data-testid="subgraph-network-error"
       />
       <DetailedSwitch
         title="Network Latency Error"
