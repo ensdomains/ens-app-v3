@@ -128,6 +128,7 @@ export const useQueryKeys = () => {
       name,
       resolver,
     ],
+    registryResolver: (name: string) => [...globalKeys, name, 'registryResolver'],
     resolverStatus: (
       name: string,
       options: { skip?: boolean; skipCompare?: boolean },

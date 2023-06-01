@@ -18,14 +18,15 @@ import {
   profileToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { Profile } from '@app/types'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
@@ -215,7 +216,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const resolverAddress = useContractAddress('PublicResolver')
 
-  const { status, isLoading: statusLoading } = useResolverStatus(name, profile, {
+  const { data: status, isLoading: statusLoading } = useResolverStatus(name, {
+    profile: profile as Profile,
+    isWrapped,
     skipCompare: false,
   })
 
