@@ -196,6 +196,7 @@ describe('Set Primary Name from settings', () => {
       cy.clearLocalStorage()
       acceptMetamaskAccess(3)
       cy.visit('/my/settings')
+      cy.wait(10000)
       cy.findByTestId('disabled-set-primary-name-button').should('be.visible')
     })
 
@@ -203,6 +204,7 @@ describe('Set Primary Name from settings', () => {
       cy.clearLocalStorage()
       acceptMetamaskAccess(1)
       cy.visit('/my/settings')
+      cy.wait(10000)
       cy.findByTestId('disabled-change-primary-name-button').should('be.visible')
       cy.findByTestId('disabled-reset-primary-name-button').should('be.visible')
 
