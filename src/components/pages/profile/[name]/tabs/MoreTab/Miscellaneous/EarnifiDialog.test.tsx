@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, userEvent, waitFor } from '@app/test-utils'
+import { render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { EarnifiDialog } from './EarnifiDialog'
 import { useSubscribeToEarnifi } from './useSubscribeToEarnifi'
@@ -39,10 +39,8 @@ describe('EarnifiDialog', () => {
   it('should show error if email address is invalid', async () => {
     render(<EarnifiDialog {...defaultProps} />)
 
-    await act(async () => {
-      await userEvent.type(pageObject.emailInput(), 'invalid-email')
-      userEvent.click(pageObject.continueButton())
-    })
+    await userEvent.type(pageObject.emailInput(), 'invalid-email')
+    await userEvent.click(pageObject.continueButton())
 
     expect(await screen.findByText('errors.emailInvalid')).toBeInTheDocument()
   })
@@ -55,10 +53,8 @@ describe('EarnifiDialog', () => {
 
     render(<EarnifiDialog {...defaultProps} />)
 
-    await act(async () => {
-      await userEvent.type(pageObject.emailInput(), 'valid-email@example.com')
-      userEvent.click(pageObject.continueButton())
-    })
+    await userEvent.type(pageObject.emailInput(), 'valid-email@example.com')
+    await userEvent.click(pageObject.continueButton())
 
     expect(pageObject.continueButton()).toBeDisabled()
   })
@@ -72,10 +68,8 @@ describe('EarnifiDialog', () => {
 
     render(<EarnifiDialog {...defaultProps} />)
 
-    await act(async () => {
-      await userEvent.type(pageObject.emailInput(), 'validemail@example.com')
-      fireEvent.click(pageObject.continueButton())
-    })
+    await userEvent.type(pageObject.emailInput(), 'validemail@example.com')
+    await userEvent.click(pageObject.continueButton())
 
     expect(subscribeMock).toHaveBeenCalledWith({
       address: 'name',
@@ -92,10 +86,8 @@ describe('EarnifiDialog', () => {
 
     render(<EarnifiDialog {...defaultProps} />)
 
-    await act(async () => {
-      await userEvent.type(pageObject.emailInput(), 'validemail@example.com')
-      fireEvent.click(pageObject.continueButton())
-    })
+    await userEvent.type(pageObject.emailInput(), 'validemail@example.com')
+    await userEvent.click(pageObject.continueButton())
 
     expect(await screen.findByText('Bad Request')).toBeInTheDocument()
   })
@@ -108,10 +100,8 @@ describe('EarnifiDialog', () => {
 
     render(<EarnifiDialog {...defaultProps} />)
 
-    await act(async () => {
-      await userEvent.type(pageObject.emailInput(), 'validemail@example.com')
-      fireEvent.click(pageObject.continueButton())
-    })
+    await userEvent.type(pageObject.emailInput(), 'validemail@example.com')
+    await userEvent.click(pageObject.continueButton())
 
     expect(await screen.findByText('tabs.more.misc.earnfi.submitError')).toBeInTheDocument()
   })
@@ -124,10 +114,8 @@ describe('EarnifiDialog', () => {
 
     render(<EarnifiDialog {...defaultProps} />)
 
-    await act(async () => {
-      await userEvent.type(pageObject.emailInput(), 'validemail@example.com')
-      fireEvent.click(pageObject.continueButton())
-    })
+    await userEvent.type(pageObject.emailInput(), 'validemail@example.com')
+    await userEvent.click(pageObject.continueButton())
 
     expect(await screen.findByText('tabs.more.misc.earnfi.submitError')).toBeInTheDocument()
     setTimeout(async () => {
@@ -147,7 +135,7 @@ describe('EarnifiDialog', () => {
 
     render(<EarnifiDialog {...{ ...defaultProps, onDismiss: onDismissMock }} />)
 
-    await fireEvent.click(pageObject.cancelButton())
+    await userEvent.click(pageObject.cancelButton())
 
     await waitFor(() => expect(onDismissMock).toHaveBeenCalled())
   })
@@ -180,7 +168,7 @@ describe('EarnifiDialog', () => {
       expect(screen.getByText('tabs.more.misc.earnfi.emailConfirmation')).toBeInTheDocument(),
     )
 
-    fireEvent.click(screen.getByRole('button', { name: 'action.close' }))
+    await userEvent.click(screen.getByRole('button', { name: 'action.close' }))
 
     await waitFor(() => expect(onDismissMock).toHaveBeenCalled())
   })
@@ -195,7 +183,7 @@ describe('EarnifiDialog', () => {
 
     render(<EarnifiDialog {...defaultProps} />)
 
-    await fireEvent.click(pageObject.cancelButton())
+    await userEvent.click(pageObject.cancelButton())
 
     await waitFor(() => expect(resetMock).toHaveBeenCalled())
   })

@@ -128,6 +128,7 @@ export const useQueryKeys = () => {
       name,
       resolver,
     ],
+    registryResolver: (name: string) => [...globalKeys, name, 'registryResolver'],
     resolverStatus: (
       name: string,
       options: { skip?: boolean; skipCompare?: boolean },
@@ -148,6 +149,7 @@ export const useQueryKeys = () => {
       'wrapperApprovedForAll',
     ],
     globalIndependent: {
+      isSupportedTLD: (tld: string) => [tld, 'isSupportedTLD'],
       zorb: (input: string, type: string, bg: string, fg: string, accent: string) => [
         input,
         type,

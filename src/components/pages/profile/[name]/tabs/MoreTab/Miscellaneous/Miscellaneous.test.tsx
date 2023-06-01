@@ -30,6 +30,7 @@ jest.mock('./EarnifiDialog', () => ({
 const mockSetStateFunction = jest.fn()
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
+  // @ts-expect-error
   useState: (defaultState) => [defaultState, mockSetStateFunction],
 }))
 

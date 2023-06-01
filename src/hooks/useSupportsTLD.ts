@@ -1,21 +1,21 @@
 import { useQuery } from 'wagmi'
 
-import { useEns } from '@app/utils/EnsProvider'
+import { isDnsSecEnabled } from '@app/components/pages/import/[name]/utils'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 export const useSupportsTLD = (name = '') => {
-  const { ready, supportsTLD } = useEns()
   const labels = name?.split('.') || []
   const tld = labels[labels.length - 1]
   return useQuery(
     useQueryKeys().isSupportedTLD(tld),
     async () => {
       // if using "[root]", not really a valid TLD but return true for display purposes
-      if (tld === '[root]') return true
-      return supportsTLD(tld).then((d) => d || null)
+      if (tld === '[root]' || tld === 'eth') return true
+      const isSupported = await isDnsSecEnabled(tld)
+      return isSupported
     },
     {
-      enabled: ready && !!tld,
+      enabled: !!tld,
     },
   )
 }
