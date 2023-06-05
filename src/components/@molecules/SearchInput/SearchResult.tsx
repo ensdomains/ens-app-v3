@@ -149,9 +149,9 @@ const SpinnerWrapper = styled.div(
 
 const AddressResultItem = ({ address }: { address: string }) => {
   const { t } = useTranslation('common')
-  const primary = usePrimary(address)
+  const { data: primary } = usePrimary(address)
   const network = useChainId()
-  const { avatar } = useAvatar(primary.name || undefined, network)
+  const { avatar } = useAvatar(primary?.name, network)
   const zorb = useZorb(address, 'address')
 
   return (
@@ -162,7 +162,7 @@ const AddressResultItem = ({ address }: { address: string }) => {
         </AvatarWrapper>
         <AddressAndName>
           <Typography weight="bold">{shortenAddress(address, undefined, 8, 6)}</Typography>
-          {primary.name && <AddressPrimary>{primary.beautifiedName}</AddressPrimary>}
+          {primary?.name && <AddressPrimary>{primary.beautifiedName}</AddressPrimary>}
         </AddressAndName>
       </LeadingSearchItem>
       <AddressTag>{t('address.label')}</AddressTag>

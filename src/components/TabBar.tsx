@@ -182,7 +182,7 @@ const TabBarProfile = ({
   address: string
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  name: string | null
+  name?: string
 }) => {
   const router = useRouter()
   const chainId = useChainId()
@@ -219,7 +219,7 @@ export const TabBar = () => {
   const router = useRouter()
 
   const { address } = useAccountSafely()
-  const { name } = usePrimary(address!, !!address)
+  const { data: { name } = {} } = usePrimary(address!, !!address)
 
   const hasPrimary = !!name
   const hasBack = !!router.query.from

@@ -62,7 +62,7 @@ export const useProfileActions = ({
   })
   const canSetPrimaryName = !!resolverStatus?.isAuthorized
 
-  const { name: primaryName, loading: primaryLoading } = usePrimary(address || '')
+  const { data: { name: primaryName } = {}, isLoading: primaryLoading } = usePrimary(address || '')
 
   const hasGlobalError = useHasGlobalError()
 

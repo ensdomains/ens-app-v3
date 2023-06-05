@@ -48,57 +48,6 @@ const areRecordsEqual = (a: Profile['records'], b: Profile['records']): boolean 
   return true
 }
 
-export const getBaseResolverStatus = ({
-  resolverAddress,
-  resolverType,
-  chainId,
-  profile,
-  authData,
-}: {
-  resolverAddress: string
-  resolverType: ReturnType<typeof useResolverType>['data']
-  chainId: number
-  profile: ReturnedENS['getProfile']
-  authData: ReturnType<typeof useResolverIsAuthorized>['data']
-}) => {
-  const defaultResults = {
-    hasResolver: false,
-    hasLatestResolver: false,
-    hasValidResolver: false,
-    isAuthorized: false,
-    isNameWrapperAware: false,
-    hasProfile: false,
-    hasMigratedProfile: false,
-    isMigratedProfileEqual: false,
-  }
-
-  if (!resolverAddress || resolverAddress === emptyAddress) return defaultResults
-
-  const baseResults = {
-    ...defaultResults,
-    hasResolver: true,
-    hasLatestResolver: resolverType?.type === 'latest',
-    isNameWrapperAware: canEditRecordsWhenWrappedCalc(true, resolverAddress, chainId),
-    hasProfile: profileHasRecords(profile),
-  }
-
-  // If the profile has the latest resolver, we don't need to continue checks
-  if (baseResults.hasLatestResolver)
-    return {
-      ...baseResults,
-      hasValidResolver: true,
-      isAuthorized: true,
-      hasMigratedProfile: true,
-      isMigratedProfileEqual: true,
-    }
-
-  return {
-    ...baseResults,
-    hasValidResolver: authData?.isValid,
-    isAuthorized: authData?.isAuthorized,
-  }
-}
-
 type Options = {
   enabled?: boolean
   isWrapped?: boolean

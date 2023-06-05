@@ -101,23 +101,23 @@ const AddressSubtitle = styled(Typography)(
 )
 
 const AddressValue = ({ value }: { value: string }) => {
-  const primary = usePrimary(value)
+  const { data: primary } = usePrimary(value)
   const network = useChainId()
 
   const AddressTypography = useMemo(
     () =>
-      primary.name ? (
+      primary?.name ? (
         <AddressSubtitle color="grey">{shortenAddress(value)}</AddressSubtitle>
       ) : (
         <ValueTypography fontVariant="bodyBold">{shortenAddress(value)}</ValueTypography>
       ),
-    [primary.name, value],
+    [primary?.name, value],
   )
 
   return (
     <ValueWithAvatarContainer>
       <InnerValueWrapper>
-        {primary.name && (
+        {primary?.name && (
           <ValueTypography fontVariant="bodyBold" color="text">
             {primary.beautifiedName}
           </ValueTypography>
@@ -127,7 +127,7 @@ const AddressValue = ({ value }: { value: string }) => {
       <AvatarWrapper>
         <AvatarWithZorb
           address={value}
-          name={primary.name || undefined}
+          name={primary?.name}
           label={`${value}-avatar`}
           network={network}
         />

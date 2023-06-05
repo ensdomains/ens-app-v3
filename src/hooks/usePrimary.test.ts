@@ -23,9 +23,9 @@ describe('usePrimary', () => {
 
     const { result, waitForNextUpdate } = renderHook(() => usePrimary('0x123'))
     await waitForNextUpdate()
-    expect(result.current.name).toBe('test.eth')
+    expect(result.current.data?.name).toBe('test.eth')
   })
-  it("should return null if name doesn't match", async () => {
+  it("should return undefined if name doesn't match", async () => {
     mockGetName.mockResolvedValue({
       name: 'test.eth',
       match: false,
@@ -33,6 +33,6 @@ describe('usePrimary', () => {
 
     const { result, waitForNextUpdate } = renderHook(() => usePrimary('0x123'))
     await waitForNextUpdate()
-    expect(result.current.name).toBe(null)
+    expect(result.current.data!.name).toBe(undefined)
   })
 })

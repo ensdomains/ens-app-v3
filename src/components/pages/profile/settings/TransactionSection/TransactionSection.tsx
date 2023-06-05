@@ -4,17 +4,17 @@ import styled, { css } from 'styled-components'
 
 import { Button, Spinner, Typography, mq } from '@ensdomains/thorin'
 
+import { Card } from '@app/components/Card'
+import { Outlink } from '@app/components/Outlink'
 import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainName } from '@app/hooks/useChainName'
 import useThrottledCallback from '@app/hooks/useThrottledCallback'
-import type { SettingsDialogProps } from '@app/pages/my/settings'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
-import { Card } from '../../../Card'
-import { Outlink } from '../../../Outlink'
-import { SectionContainer } from './Section'
+import { SectionContainer } from '../Section'
+import { ClearTransactionsDialog } from './ClearTransactionsDialog'
 
 const TransactionSectionContainer = styled.div<{
   $height: string
@@ -136,11 +136,7 @@ const getTransactionExtraInfo = (action: string, key?: string) => {
   return ''
 }
 
-export const TransactionSection = ({
-  onShowDialog,
-}: {
-  onShowDialog?: (props: SettingsDialogProps) => void
-}) => {
+export const TransactionSection = () => {
   const { t: tc } = useTranslation()
   const { t } = useTranslation('settings')
 
@@ -183,89 +179,92 @@ export const TransactionSection = ({
     setHeight(_height ? `${_height}px` : 'auto')
   }, [nonRepricedTransactions.length, hasViewMore, width])
 
-  const handleClearTransactions = () => {
-    onShowDialog?.({
-      title: t('section.transaction.clearTransactions.title'),
-      description: t('section.transaction.clearTransactions.description'),
-      actionLabel: t('section.transaction.clearTransactions.actionLabel'),
-      callBack: () => {
-        clearTransactions()
-        setViewAmt(5)
-      },
-    })
-  }
+  const [showClearDialog, setShowClearDialog] = useState(false)
+
   return (
-    <SectionContainer
-      data-testid="transaction-section"
-      title={t('section.transaction.title')}
-      action={
-        <Button
-          size="small"
-          colorStyle="accentSecondary"
-          onClick={handleClearTransactions}
-          disabled={!canClear}
-          data-testid="transaction-clear-button"
-        >
-          {tc('action.clear')}
-        </Button>
-      }
-      fill
-    >
-      <TransactionSectionContainer $height={height} data-testid="transaction-section-container">
-        <TransactionSectionInner ref={ref}>
-          {nonRepricedTransactions.length > 0 ? (
-            <>
-              {visibleTransactions.map(({ hash, status, action, key }, i) => {
-                const resumable = key && getResumable(key)
-                return (
-                  <TransactionContainer
-                    data-testid={`transaction-${status}`}
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={`${hash}-${i}`}
-                  >
-                    <InfoContainer>
-                      {status === 'pending' && (
-                        <Spinner data-testid="pending-spinner" color="accent" />
+    <>
+      <SectionContainer
+        data-testid="transaction-section"
+        title={t('section.transaction.title')}
+        action={
+          <Button
+            size="small"
+            colorStyle="accentSecondary"
+            onClick={() => setShowClearDialog(true)}
+            disabled={!canClear}
+            data-testid="transaction-clear-button"
+          >
+            {tc('action.clear')}
+          </Button>
+        }
+        fill
+      >
+        <TransactionSectionContainer $height={height} data-testid="transaction-section-container">
+          <TransactionSectionInner ref={ref}>
+            {nonRepricedTransactions.length > 0 ? (
+              <>
+                {visibleTransactions.map(({ hash, status, action, key }, i) => {
+                  const resumable = key && getResumable(key)
+                  return (
+                    <TransactionContainer
+                      data-testid={`transaction-${status}`}
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={`${hash}-${i}`}
+                    >
+                      <InfoContainer>
+                        {status === 'pending' && (
+                          <Spinner data-testid="pending-spinner" color="accent" />
+                        )}
+                        <TransactionInfoContainer>
+                          <Typography weight="bold">{`${tc(
+                            `transaction.description.${action}`,
+                          )}${getTransactionExtraInfo(action, key)}`}</Typography>
+                          <StyledOutlink
+                            $error={status === 'failed'}
+                            href={makeEtherscanLink(hash, chainName)}
+                            target="_blank"
+                          >
+                            {tc(`transaction.status.${status}.regular`)}
+                          </StyledOutlink>
+                        </TransactionInfoContainer>
+                      </InfoContainer>
+                      {resumable && (
+                        <ContinueContainer>
+                          <Button size="small" onClick={() => resumeTransactionFlow(key)}>
+                            {t('action.continue', { ns: 'common' })}
+                          </Button>
+                        </ContinueContainer>
                       )}
-                      <TransactionInfoContainer>
-                        <Typography weight="bold">{`${tc(
-                          `transaction.description.${action}`,
-                        )}${getTransactionExtraInfo(action, key)}`}</Typography>
-                        <StyledOutlink
-                          $error={status === 'failed'}
-                          href={makeEtherscanLink(hash, chainName)}
-                          target="_blank"
-                        >
-                          {tc(`transaction.status.${status}.regular`)}
-                        </StyledOutlink>
-                      </TransactionInfoContainer>
-                    </InfoContainer>
-                    {resumable && (
-                      <ContinueContainer>
-                        <Button size="small" onClick={() => resumeTransactionFlow(key)}>
-                          {t('action.continue', { ns: 'common' })}
-                        </Button>
-                      </ContinueContainer>
-                    )}
+                    </TransactionContainer>
+                  )
+                })}
+                {hasViewMore && (
+                  <TransactionContainer
+                    onClick={() => setViewAmt((curr) => curr + 5)}
+                    data-testid="transaction-view-more-button"
+                  >
+                    <ViewMoreInner weight="bold">{tc('transaction.viewMore')}</ViewMoreInner>
                   </TransactionContainer>
-                )
-              })}
-              {hasViewMore && (
-                <TransactionContainer
-                  onClick={() => setViewAmt((curr) => curr + 5)}
-                  data-testid="transaction-view-more-button"
-                >
-                  <ViewMoreInner weight="bold">{tc('transaction.viewMore')}</ViewMoreInner>
-                </TransactionContainer>
-              )}
-            </>
-          ) : (
-            <RecentTransactionsMessage weight="bold">
-              {t('section.transaction.noRecentTransactions')}
-            </RecentTransactionsMessage>
-          )}
-        </TransactionSectionInner>
-      </TransactionSectionContainer>
-    </SectionContainer>
+                )}
+              </>
+            ) : (
+              <RecentTransactionsMessage weight="bold">
+                {t('section.transaction.noRecentTransactions')}
+              </RecentTransactionsMessage>
+            )}
+          </TransactionSectionInner>
+        </TransactionSectionContainer>
+      </SectionContainer>
+      <ClearTransactionsDialog
+        open={showClearDialog}
+        onClose={() => setShowClearDialog(false)}
+        onDismiss={() => setShowClearDialog(false)}
+        onClear={() => {
+          clearTransactions()
+          setShowClearDialog(false)
+          setViewAmt(5)
+        }}
+      />
+    </>
   )
 }

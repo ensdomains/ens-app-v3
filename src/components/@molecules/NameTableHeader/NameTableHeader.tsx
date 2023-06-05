@@ -9,9 +9,9 @@ import UpDirectionSVG from '@app/assets/SortDescending.svg'
 import { CheckButton } from '@app/components/@atoms/CheckButton/CheckButton'
 
 const TableHeader = styled.div<{
-  $minimizeRowGap?: boolean
+  $desktopGap?: 'small' | 'medium'
 }>(
-  ({ theme, $minimizeRowGap: $increaseRowGap }) => css`
+  ({ theme, $desktopGap }) => css`
     width: 100%;
     display: flex;
     flex-direction: column-reverse;
@@ -23,7 +23,7 @@ const TableHeader = styled.div<{
       flex-direction: row;
       align-items: center;
       padding: ${theme.space['3']} ${theme.space['4.5']};
-      gap: ${$increaseRowGap ? theme.space['2'] : theme.space['6']};
+      gap: ${$desktopGap === 'medium' ? theme.space['6'] : theme.space['2']};
     `)}
   `,
 )
@@ -71,16 +71,16 @@ const TableHeaderLeftControlsContainer = styled.div<{
 const TableHeaderLeadingRight = styled.div(() => css``)
 
 const TableHeaderTrailing = styled.div<{
-  $fixedWidth?: boolean
+  $isDesktopFlexibleWidth?: boolean
 }>(
-  ({ theme, $fixedWidth }) => css`
+  ({ theme, $isDesktopFlexibleWidth }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     ${mq.sm.min(css`
-      flex: ${$fixedWidth ? `0 0 ${theme.space['32']}` : '2'};
+      flex: ${$isDesktopFlexibleWidth ? '2' : `0 0 ${theme.space['32']}`};
       width: ${theme.space['32']};
     `)}
   `,
@@ -161,7 +161,7 @@ export const NameTableHeader = ({
   }))
 
   return (
-    <TableHeader $minimizeRowGap={selectable}>
+    <TableHeader $desktopGap={selectable ? 'small' : 'medium'}>
       <TableHeaderLeading>
         <TableHeaderLeadingLeft $isFullWidth={!selectable}>
           {selectable && (
@@ -203,7 +203,7 @@ export const NameTableHeader = ({
         </TableHeaderLeadingLeft>
         <TableHeaderLeadingRight>{children}</TableHeaderLeadingRight>
       </TableHeaderLeading>
-      <TableHeaderTrailing $fixedWidth={selectable}>
+      <TableHeaderTrailing $isDesktopFlexibleWidth={!selectable}>
         <Input
           data-testid="name-table-header-search"
           size="small"

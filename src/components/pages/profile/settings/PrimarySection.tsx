@@ -148,7 +148,7 @@ export const PrimarySection = () => {
   const showSelectPrimaryNameInput = prepareDataInput('SelectPrimaryName')
   const showResetPrimaryNameInput = prepareDataInput('ResetPrimaryName')
 
-  const { name, loading: primaryLoading } = usePrimary(address!, !address)
+  const { data: { name } = {}, isLoading: primaryLoading } = usePrimary(address!, !address)
   const { chain } = useNetwork()
   const { avatar } = useAvatar(name, chain?.id || 1)
   const zorb = useZorb(name || '', 'name')

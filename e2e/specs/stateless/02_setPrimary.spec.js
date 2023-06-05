@@ -77,7 +77,7 @@ describe('Set Primary Name from settings', () => {
 
     it('should allow setting wrapped name that user is manager of but whose resolved address is not the same as the user and has a owned resolver', () => {
       // Set resolver to unauthorized resolver
-      cy.visit('/sub.wrapped-without-resolver.eth?tab=more')
+      cy.visit('/sub.wrapped.eth?tab=more')
       connectFromExisting()
       cy.findByTestId('edit-resolver-button').click()
       cy.findByTestId('custom-resolver-radio').click()
@@ -92,7 +92,7 @@ describe('Set Primary Name from settings', () => {
       cy.visit('/my/settings')
 
       cy.findByTestId('change-primary-name-button').click()
-      cy.findByTestId('name-item-sub.wrapped-without-resolver.eth')
+      cy.findByTestId('name-item-sub.wrapped.eth')
         .within(() => {
           cy.findByTestId('tag-name.manager-true').should('be.visible')
         })
@@ -122,14 +122,14 @@ describe('Set Primary Name from settings', () => {
       // Assertion
       cy.findByTestId('primary-name-label').should(
         'contain.text',
-        'sub.wrapped-without-resolver.eth',
+        'sub.wrapped.eth',
       )
     })
 
     it('should not show current primary name in list', () => {
       cy.visit('/my/settings')
       cy.findByTestId('change-primary-name-button').click()
-      cy.findByTestId('name-item-sub.wrapped-without-resolver.eth').should('not.exist')
+      cy.findByTestId('name-item-sub.wrapped.eth').should('not.exist')
     })
 
     it('should allow resetting primary name', () => {

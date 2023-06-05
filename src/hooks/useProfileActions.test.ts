@@ -24,7 +24,7 @@ const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 const mockUseHasGlobalError = mockFunction(useHasGlobalError)
 
 describe('useProfileActions', () => {
-  const props = {
+  const props: any = {
     name: 'testname',
     address: '0x1234567890',
     profile: {
@@ -41,12 +41,16 @@ describe('useProfileActions', () => {
       canReclaim: true,
       isPCCBurned: false,
     },
+    ownerData: {
+      ownershipLevel: 'nameWrapper',
+    },
+    chainId: 1,
   }
 
   beforeEach(() => {
     mockUsePrimary.mockReturnValue({
-      loading: false,
-      name: null,
+      data: { name: undefined, beautifiedName: undefined },
+      isLoading: false,
       status: 'success',
     })
     mockUseTransactionFlow.mockReturnValue({
@@ -69,8 +73,8 @@ describe('useProfileActions', () => {
 
   it('returns an empty array for profileActions if isLoading is true', () => {
     mockUsePrimary.mockReturnValue({
-      loading: true,
-      name: null,
+      data: { name: undefined, beautifiedName: undefined },
+      isLoading: true,
       status: 'success',
     })
     const { result } = renderHook(() => useProfileActions({ ...props, isLoading: true }))

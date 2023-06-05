@@ -37,15 +37,22 @@ const makeName = (index: number, overwrites?: any) => ({
   ...overwrites,
 })
 const mockUseAvailablePrimaryNamesForAddress = jest.fn().mockReturnValue({
-  names: new Array(5)
-    .fill(0)
-    .map((_, i) => makeName(i))
-    .flat(),
+  data: {
+    pages: [
+      new Array(5)
+        .fill(0)
+        .map((_, i) => makeName(i))
+        .flat(),
+    ],
+  },
   isLoading: false,
 })
-jest.mock('@app/hooks/useAvailablePrimaryNamesForAddress', () => ({
-  useAvailablePrimaryNamesForAddress: () => mockUseAvailablePrimaryNamesForAddress(),
-}))
+jest.mock(
+  '@app/hooks/names/useAvailablePrimaryNamesForAddress/useAvailablePrimaryNamesForAddress',
+  () => ({
+    useAvailablePrimaryNamesForAddress: () => mockUseAvailablePrimaryNamesForAddress(),
+  }),
+)
 
 jest.mock('@app/hooks/useContractAddress', () => ({
   useContractAddress: () => '0xPublicResolver',
@@ -194,7 +201,7 @@ describe('getNameFromUnknownLabels', () => {
 describe('SelectPrimaryName', () => {
   it('should show loading if data hook is loading', async () => {
     mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
-      names: undefined,
+      data: undefined,
       isLoading: true,
     })
     render(
@@ -220,7 +227,9 @@ describe('SelectPrimaryName', () => {
 
   it('should show no name message if data returns an empty array', async () => {
     mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
-      names: [],
+      data: {
+        pages: [[]],
+      },
       isLoading: false,
     })
     render(
@@ -268,13 +277,17 @@ describe('SelectPrimaryName', () => {
 
   it('should call dispatch if encrpyted name can be decrypted', async () => {
     mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
-      names: [
-        ...new Array(5).fill(0).map((_, i) => makeName(i)),
-        {
-          name: `${encodeLabel('test')}.eth`,
-          id: '0xhash',
-        },
-      ],
+      data: {
+        pages: [
+          [
+            ...new Array(5).fill(0).map((_, i) => makeName(i)),
+            {
+              name: `${encodeLabel('test')}.eth`,
+              id: '0xhash',
+            },
+          ],
+        ],
+      },
       isLoading: false,
     })
     mockGetDecryptedName.mockReturnValueOnce('test.eth')
@@ -292,13 +305,17 @@ describe('SelectPrimaryName', () => {
 
   it('should show decrypt view if name cannot be decrypted', async () => {
     mockUseAvailablePrimaryNamesForAddress.mockReturnValue({
-      names: [
-        ...new Array(3).fill(0).map((_, i) => makeName(i)),
-        {
-          name: `${encodeLabel('test')}.eth`,
-          id: '0xhash',
-        },
-      ],
+      data: {
+        pages: [
+          [
+            ...new Array(3).fill(0).map((_, i) => makeName(i)),
+            {
+              name: `${encodeLabel('test')}.eth`,
+              id: '0xhash',
+            },
+          ],
+        ],
+      },
       isLoading: false,
     })
     mockGetDecryptedName.mockReturnValueOnce(`${encodeLabel('test')}.eth`)
@@ -320,7 +337,7 @@ describe('SelectPrimaryName', () => {
   describe('One step transactions', () => {
     it('should dispatch one step if unwrapped name with resolved address is selected', async () => {
       mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
-        names: [makeName(1, { isResolvedAddress: true })],
+        data: { pages: [[makeName(1, { isResolvedAddress: true })]] },
         isLoading: false,
       })
       render(
@@ -337,7 +354,7 @@ describe('SelectPrimaryName', () => {
 
     it('should dispatch one step if wrapped name with resolved address is selected', async () => {
       mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
-        names: [makeName(1, { isResolvedAddress: true, fuses: {} })],
+        data: { pages: [[makeName(1, { isResolvedAddress: true, fuses: {} })]] },
         isLoading: false,
       })
       render(
@@ -356,7 +373,7 @@ describe('SelectPrimaryName', () => {
   describe('Two step transactions', () => {
     it('should dispatch two step transaction if unwrapped name with other eth address and valid resolver', async () => {
       mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
-        names: [makeName(1, { isResolvedAddress: false })],
+        data: { pages: [[makeName(1, { isResolvedAddress: false })]] },
         isLoading: false,
       })
       render(
@@ -375,7 +392,7 @@ describe('SelectPrimaryName', () => {
   describe('Three step transactions', () => {
     it('should dispatch three step transaction if unwrapped name with other eth address and invalid resolver', async () => {
       mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
-        names: [makeName(1, { isResolvedAddress: false })],
+        data: { pages: [[makeName(1, { isResolvedAddress: false })]] },
         isLoading: false,
       })
       mockUseResolverStatus.mockReturnValueOnce({

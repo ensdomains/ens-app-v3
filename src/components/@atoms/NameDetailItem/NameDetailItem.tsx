@@ -121,7 +121,7 @@ type Name = {
 export const NameDetailItem = ({
   name,
   truncatedName,
-  expiryDate: _expiryDate,
+  expiryDate,
   network,
   mode,
   selected = false,
@@ -145,7 +145,7 @@ export const NameDetailItem = ({
     onClick?.()
   }
 
-  const expiryDate = safeDateObj(_expiryDate)
+  const _expiryDate = safeDateObj(expiryDate)
 
   return (
     <OptionalLink active={mode !== 'select'} href={`/profile/${name}`} passHref>
@@ -172,9 +172,9 @@ export const NameDetailItem = ({
           </AvatarWrapper>
           <NameItemContent>
             <TitleWrapper name={truncatedName || name} disabled={disabled} />
-            {expiryDate && (
+            {_expiryDate && (
               <SubtitleWrapper>
-                <ShortExpiry expiry={expiryDate} hasGracePeriod={checkETH2LDFromName(name)} />
+                <ShortExpiry expiry={_expiryDate} hasGracePeriod={checkETH2LDFromName(name)} />
               </SubtitleWrapper>
             )}
           </NameItemContent>

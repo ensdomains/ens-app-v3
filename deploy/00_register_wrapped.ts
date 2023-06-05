@@ -51,11 +51,6 @@ const names: Name[] = [
     ],
   },
   {
-    name: 'wrapped-without-resolver.eth',
-    namedOwner: 'owner',
-    subnames: [{ label: 'sub', namedOwner: 'deployer' }],
-  },
-  {
     name: 'wrapped-expired-subnames.eth',
     namedOwner: 'owner',
     fuses: {

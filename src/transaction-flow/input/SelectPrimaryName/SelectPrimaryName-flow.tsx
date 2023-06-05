@@ -20,11 +20,11 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
-import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import {
   Name,
   useAvailablePrimaryNamesForAddress,
-} from '@app/hooks/useAvailablePrimaryNamesForAddress'
+} from '@app/hooks/names/useAvailablePrimaryNamesForAddress/useAvailablePrimaryNamesForAddress'
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
@@ -188,9 +188,9 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const setSearchQuery = useDebouncedCallback(_setSearchQuery, 300, [])
 
   const {
-    names: currentPage,
-    count: namesCount,
-    loadMore: loadMoreNames,
+    data: namesData,
+    hasNextPage,
+    fetchNextPage: loadMoreNames,
     isLoading: isLoadingNames,
   } = useAvailablePrimaryNamesForAddress({
     address,
@@ -348,6 +348,10 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const isLoading = !isEnsReady || isLoadingNames || isMutationLoading
   const isLoadingName = isResolverStatusLoading || isBasicNameLoading
 
+  const showHeader = (!!namesData && namesData?.pages.length > 1) || hasNextPage
+  const hasNoEligibleNames =
+    !searchQuery && namesData?.pages.length === 1 && namesData.pages[0].length === 0
+
   if (isLoading)
     return (
       <LoadingContainer>
@@ -374,7 +378,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       </HeaderWrapper>
       <ContentContainer ref={formRef} onSubmit={handleSubmit((data) => mutateName(data))}>
         <Divider />
-        {namesCount > DEFAULT_PAGE_SIZE && (
+        {showHeader && (
           <>
             <NameTableHeaderWrapper>
               <NameTableHeader
@@ -398,27 +402,29 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
           </>
         )}
         <StyledScrollBox hideDividers onReachedBottom={loadMoreNames}>
-          {!!currentPage && currentPage.length > 0 ? (
+          {!!namesData && namesData.pages[0].length > 0 ? (
             <>
-              {currentPage?.map((name) => (
-                <TaggedNameItem
-                  key={name.id}
-                  {...name}
-                  network={chainId}
-                  mode="select"
-                  selected={selectedName === name.name}
-                  onClick={() => {
-                    setValue('name', selectedName === name.name ? undefined : name)
-                  }}
-                />
-              ))}
+              {namesData.pages?.map((page: Name[]) =>
+                page.map((name: Name) => (
+                  <TaggedNameItem
+                    key={name.id}
+                    {...name}
+                    network={chainId}
+                    mode="select"
+                    selected={selectedName === name.name}
+                    onClick={() => {
+                      setValue('name', selectedName === name.name ? undefined : name)
+                    }}
+                  />
+                )),
+              )}
             </>
           ) : (
             <ErrorContainer>
               <Typography fontVariant="bodyBold" color="grey">
-                {namesCount > 0
-                  ? t('input.selectPrimaryName.errors.noNamesFound')
-                  : t('input.selectPrimaryName.errors.noEligibleNames')}
+                {hasNoEligibleNames
+                  ? t('input.selectPrimaryName.errors.noEligibleNames')
+                  : t('input.selectPrimaryName.errors.noNamesFound')}
               </Typography>
             </ErrorContainer>
           )}

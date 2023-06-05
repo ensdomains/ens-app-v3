@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { mockFunction, renderHook } from '@app/test-utils'
 
+import { usePrimary } from '@app/hooks/usePrimary'
+
+import { useNamesFromAddress } from '../useNamesFromAddress/useNamesFromAddress'
+import { useNamesFromResolvedAddress } from '../useNamesFromResolvedAddress/useNamesFromResolvedAddress'
 import {
   Name as BaseName,
   useAvailablePrimaryNamesForAddress,
 } from './useAvailablePrimaryNamesForAddress'
-import { useNamesFromAddress } from './useNamesFromAddress'
-import { useNamesFromResolvedAddress } from './useNamesFromResolvedAddress'
-import { usePrimary } from './usePrimary'
 
 type Name = BaseName & { shouldReturn?: boolean }
 
@@ -398,17 +399,20 @@ const MOCK_NAMES_FROM_RESOLVED_ADDRESS: Name[] = [
 jest.useFakeTimers().setSystemTime(new Date('2023-01-08T20:34:09.000Z'))
 
 jest.mock('@app/hooks/usePrimary')
-jest.mock('@app/hooks/useNamesFromAddress')
-jest.mock('@app/hooks/useNamesFromResolvedAddress')
+jest.mock('@app/hooks/names/useNamesFromAddress/useNamesFromAddress')
+jest.mock('@app/hooks/names/useNamesFromResolvedAddress/useNamesFromResolvedAddress')
 
 const mockUsePrimary = mockFunction(usePrimary)
 const mockUseNamesFromAddress = mockFunction(useNamesFromAddress)
 const mockUseNamesFromResolvedAddress = mockFunction(useNamesFromResolvedAddress)
 
-mockUsePrimary.mockReturnValue({ name: 'primary.eth', loading: false })
-mockUseNamesFromAddress.mockReturnValue({ currentPage: MOCK_NAMES_FROM_ADDRESS, isLoading: false })
+mockUsePrimary.mockReturnValue({ data: { name: 'primary.eth' }, isLoading: false })
+mockUseNamesFromAddress.mockReturnValue({
+  data: { names: MOCK_NAMES_FROM_ADDRESS },
+  isLoading: false,
+})
 mockUseNamesFromResolvedAddress.mockReturnValue({
-  names: MOCK_NAMES_FROM_RESOLVED_ADDRESS,
+  data: MOCK_NAMES_FROM_RESOLVED_ADDRESS,
   isLoading: false,
 })
 
@@ -429,7 +433,9 @@ describe('useAvailablePrimaryNamesFromAddress', () => {
         search: '',
       }),
     )
-    expect(result.current.names.every((n) => RETURNED_NAMES.includes(n.name))).toBe(true)
-    expect(result.current.names.every((n) => !NOT_RETURN_NAMES.includes(n.name))).toBe(true)
+    expect(result.current.data?.pages[0].every((n) => RETURNED_NAMES.includes(n.name))).toBe(true)
+    expect(result.current.data?.pages[0].every((n) => !NOT_RETURN_NAMES.includes(n.name))).toBe(
+      true,
+    )
   })
 })

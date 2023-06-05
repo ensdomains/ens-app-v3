@@ -91,6 +91,13 @@ export const useQueryKeys = () => {
       localAddress,
       'namesFromAddress',
     ],
+    namesFromResolvedAddress: (resolvedAddress?: string) => [
+      ...globalKeys,
+      'graph',
+      'getNames',
+      resolvedAddress,
+      'namesFromResolvedAddress',
+    ],
     getPrice: (type: 'legacy' | 'new', names: string[]) => [
       ...globalKeys,
       type,

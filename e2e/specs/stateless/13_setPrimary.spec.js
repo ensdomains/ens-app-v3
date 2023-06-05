@@ -82,7 +82,7 @@ describe('Set Primary Name from profile page', () => {
     })
 
     it('should allow setting wrapped name that user is manager of but whose resolved address is not the same as the user with an owned resolver', () => {
-      cy.visit('/sub.wrapped-without-resolver.eth')
+      cy.visit('/sub.wrapped.eth')
       connectFromExisting()
 
       // Set resolver to unauthorized resolver
@@ -124,7 +124,7 @@ describe('Set Primary Name from profile page', () => {
       cy.wait(10000)
 
       // Assertion
-      cy.findByTestId('profile-title').should('contain.text', 'sub.wrapped-without-resolver.eth')
+      cy.findByTestId('profile-title').should('contain.text', 'sub.wrapped.eth')
     })
 
     it('should allow setting primary name from name with encrypted label', () => {

@@ -109,7 +109,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const router = useRouterWithHistory()
   const chainId = useChainId()
   const { address } = useAccount()
-  const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
+  const { data: { name: primaryName } = {}, isLoading: primaryLoading } = usePrimary(
+    address!,
+    !address,
+  )
   const selected = { name: nameDetails.normalisedName, address: address! }
   const { normalisedName, beautifiedName } = nameDetails
   const defaultResolverAddress = useContractAddress('PublicResolver')

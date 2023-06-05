@@ -207,13 +207,6 @@ const names: Name[] = [
     namedAddr: 'deployer',
   },
   {
-    label: 'without-resolver',
-    namedOwner: 'owner',
-    namedAddr: 'owner',
-    namedController: 'owner',
-    subnames: [{ label: 'sub', namedOwner: 'deployer' }],
-  },
-  {
     label: 'other-eth-record',
     namedOwner: 'owner',
     namedAddr: 'deployer',
@@ -481,15 +474,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const makeSubnames =
     (nonce: number) =>
     async (
-      { label, subnames, registrant, owner, resolver }: ReturnType<typeof makeData>,
+      { label, subnames, registrant, resolver }: ReturnType<typeof makeData>,
       index: number,
     ) => {
       if (!subnames) return 0
-      const manager = owner || registrant
       for (let i = 0; i < subnames.length; i += 1) {
         const { label: subnameLabel, namedOwner: namedSubOwner } = subnames[i]
         const subOwner = allNamedAccts[namedSubOwner]
-        const _registry = registry.connect(await ethers.getSigner(manager))
+        const _registry = registry.connect(await ethers.getSigner(registrant))
         const subnameTx = await _registry.setSubnodeRecord(
           namehash(`${label}.eth`),
           labelhash(subnameLabel),

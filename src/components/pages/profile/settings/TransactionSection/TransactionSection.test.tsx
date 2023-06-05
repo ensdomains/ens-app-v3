@@ -96,15 +96,16 @@ describe('TransactionSection', () => {
     render(<TransactionSection />)
     expect(screen.getByTestId('transaction-clear-button')).toBeDisabled()
   })
-  it('should call clearRecentTransactions if clear is pressed', () => {
-    const mockOnShowDialog = jest.fn()
+  it('should call clearRecentTransactions if clear transaction flow is executed', async () => {
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 1 }, makeRecentTransaction()))
-    render(<TransactionSection onShowDialog={mockOnShowDialog} />)
+    render(<TransactionSection />)
     act(() => {
       screen.getByTestId('transaction-clear-button').click()
     })
-    expect(mockOnShowDialog).toHaveBeenCalled()
-    mockOnShowDialog.mock.calls[0][0].callBack()
+    await waitFor(() => {
+      expect(screen.getByText('section.transaction.clearTransactions.description')).toBeVisible()
+    })
+    screen.getByText('section.transaction.clearTransactions.actionLabel').click()
     expect(mockClearTransactions).toHaveBeenCalled()
   })
   it('should correctly display registration transactions with hyphens', () => {

@@ -17,8 +17,10 @@ export default function Page() {
 
   const { address } = useAccount()
 
-  const primary = usePrimary(address as string, !address)
-  const { name: ensName, loading: primaryLoading } = primary
+  const { data: { name: ensName } = {}, isLoading: primaryLoading } = usePrimary(
+    address as string,
+    !address,
+  )
 
   const name = isSelf && ensName ? ensName : _name
 
