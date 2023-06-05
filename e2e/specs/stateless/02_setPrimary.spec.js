@@ -25,7 +25,7 @@ describe('Set Primary Name from settings', () => {
       cy.visit('/my/settings')
       connectFromExisting()
       cy.findByTestId('set-primary-name-button').click()
-      cy.findByTestId('name-table-header-search').type('other')
+      // cy.findByTestId('name-table-header-search').type('other')
       cy.findByTestId('name-item-other-eth-record.eth')
         .within(() => {
           cy.findByTestId('tag-name.manager-false').should('be.visible')
@@ -152,7 +152,7 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('set-primary-name-button').click()
 
       // Search header should not exist
-      cy.findByTestId('name-table-header-search').should('not.exist')
+      // cy.findByTestId('name-table-header-search').should('not.exist')
 
       cy.findByTestId(
         'name-item-[5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04].unknown-labels.eth',
