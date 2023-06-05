@@ -48,7 +48,7 @@ describe('useNamesFromAddress', () => {
     ready: true,
     getNames: mockGetNames,
   })
-  it('should return  thecorrect amount of result per page', async () => {
+  it('should return  the correct amount of result per page', async () => {
     const names = Array.from({ length: 10 }, makeNameItem(false))
 
     mockGetNames.mockResolvedValue(names)

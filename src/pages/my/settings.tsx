@@ -10,13 +10,6 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { useGlobalErrorDispatch } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
 
-export type SettingsDialogProps = {
-  actionLabel: string
-  title: string
-  description: string
-  callBack: () => void
-}
-
 const OtherWrapper = styled.div(
   ({ theme }) => css`
     grid-area: other;
@@ -65,13 +58,11 @@ export default function Page() {
     <Content singleColumnContent title={t('title')}>
       {{
         trailing: (
-          <>
-            <OtherWrapper>
-              <PrimarySection />
-              <TransactionSection />
-              {showDevPanel && <DevSection />}
-            </OtherWrapper>
-          </>
+          <OtherWrapper>
+            <PrimarySection />
+            <TransactionSection />
+            {showDevPanel && <DevSection />}
+          </OtherWrapper>
         ),
       }}
     </Content>
