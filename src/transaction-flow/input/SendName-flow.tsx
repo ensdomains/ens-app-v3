@@ -11,6 +11,7 @@ import { Outlink } from '@app/components/Outlink'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 import { makeTransactionItem } from '../transaction'
 
@@ -188,7 +189,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     <>
       <Typography fontVariant="headingFour">{t('details.sendName.title')}</Typography>
       <Typography style={{ textAlign: 'center' }}>{t('details.sendName.description')}</Typography>
-      <Outlink href="https://support.ens.domains/docs/faq/manager/managing-names#what-are-managers-and-owners">
+      <Outlink href={getSupportLink('managersAndOwners')}>
         {t('details.sendName.learnMore')}
       </Outlink>
       {canSendOwner && (
