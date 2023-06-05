@@ -52,10 +52,11 @@ const getBatchData = (
 type UseBasicNameOptions = {
   normalised?: boolean
   skipGraph?: boolean
+  enabled?: boolean
 }
 
 export const useBasicName = (name?: string | null, options: UseBasicNameOptions = {}) => {
-  const { normalised = false, skipGraph = true } = options
+  const { normalised = false, skipGraph = true, enabled = true } = options
   const ens = useEns()
 
   const { name: _normalisedName, isValid, ...validation } = useValidate(name!, !name)
@@ -85,7 +86,7 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
     async () =>
       watchedGetBatchData(normalisedName, validation, ens, skipGraph).then((r) => r || null),
     {
-      enabled: !!(ens.ready && name && isValid),
+      enabled: !!(enabled && ens.ready && name && isValid),
     },
   )
   const [ownerData, _wrapperData, expiryData, priceData] = batchData || []

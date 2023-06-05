@@ -8,6 +8,9 @@ import {
   parseSitemap,
   parseSitemapIndex,
 } from 'sitemap'
+import { Transform } from 'stream'
+
+import { normalise } from '@ensdomains/ensjs/utils/normalise'
 
 const baseURL = 'https://app.ens.domains'
 const graphAPI = 'https://api.thegraph.com/subgraphs/name/ensdomains/ens'
@@ -54,6 +57,25 @@ const getPreviousLast = async () => {
   return previousCreatedAt
 }
 
+const makeNormaliseTransform = () =>
+  new Transform({
+    objectMode: true,
+    transform: (chunk, encoding, callback) => {
+      const name = chunk.url.replace(`${baseURL}/`, '')
+      try {
+        const normalisedName = normalise(name)
+        if (name === normalisedName)
+          return callback(null, {
+            img: [],
+            video: [],
+            links: [],
+            url: `${baseURL}/${normalisedName}`,
+          })
+      } catch {}
+      callback(null, undefined)
+    },
+  })
+
 const writeStream = createWriteStream('./out/sitemap.xml')
 
 const main = async () => {
@@ -85,15 +107,17 @@ const main = async () => {
     const oldSitemapIndex = await parseSitemapIndex(oldSitemapIndexRes.body)
 
     for (const sitemapIndex of oldSitemapIndex) {
+      const normaliseTransform = makeNormaliseTransform()
       const url = sitemapIndex.url.includes('/sitemaps')
         ? sitemapIndex.url
         : sitemapIndex.url.replace(`${baseURL}/`, `${baseURL}/sitemaps/`)
       const res = await fetch(url)
-      res.body.pipe(new XMLToSitemapItemStream()).pipe(sitemap, {
+      // only allow normalised names from backlog
+      res.body.pipe(new XMLToSitemapItemStream()).pipe(normaliseTransform).pipe(sitemap, {
         end: false,
       })
       await new Promise((resolve) => {
-        res.body.on('end', resolve)
+        normaliseTransform.on('end', resolve)
       })
     }
   }
@@ -102,12 +126,21 @@ const main = async () => {
 
   do {
     // eslint-disable-next-line no-await-in-loop
-    const { domains } = await request(graphAPI, queryAll, { lastCreatedAt })
+    let { domains } = await request(graphAPI, queryAll, { lastCreatedAt })
     console.log('FETCHED 1000 ITEMS')
     if (domains.length === 0) {
       break
     }
     lastCreatedAt = domains[domains.length - 1].createdAt
+
+    // make sure all names are normalised
+    domains = domains.filter((domain) => {
+      try {
+        const normalisedName = normalise(domain.name)
+        if (domain.name === normalisedName) return true
+      } catch {}
+      return false
+    })
     for (const domain of domains) {
       sitemap.write({ url: `${baseURL}/${domain.name}` })
     }
