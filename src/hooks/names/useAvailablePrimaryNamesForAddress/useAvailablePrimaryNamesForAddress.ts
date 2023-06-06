@@ -8,7 +8,7 @@ import { chunkArr } from '@app/utils/array'
 import { usePrimary } from '../../usePrimary'
 import { filterBySearch, sortByType } from '../useNamesFromAddress/utils'
 import { useNamesFromResolvedAddress } from '../useNamesFromResolvedAddress/useNamesFromResolvedAddress'
-import { isAvailablePrimaryName, mergeNames } from './utils'
+import { checkAvailablePrimaryName, mergeNames } from './utils'
 
 export type Name = BaseName & {
   isController?: boolean
@@ -66,7 +66,7 @@ export const useAvailablePrimaryNamesForAddress = ({
   const resolvedOrManagedNames = useMemo(() => {
     if (!ownedOrManagedNamesData || !resolvedAddressNames) return undefined
     return mergeNames(resolvedAddressNames, ownedOrManagedNamesData.names)
-      .filter(isAvailablePrimaryName(primaryName))
+      .filter(checkAvailablePrimaryName(primaryName))
       .sort(sortByType(sort.type, sort.orderDirection))
   }, [ownedOrManagedNamesData, resolvedAddressNames, primaryName, sort.type, sort.orderDirection])
 

@@ -120,10 +120,7 @@ describe('Set Primary Name from settings', () => {
       cy.wait(10000)
 
       // Assertion
-      cy.findByTestId('primary-name-label').should(
-        'contain.text',
-        'sub.wrapped.eth',
-      )
+      cy.findByTestId('primary-name-label').should('contain.text', 'sub.wrapped.eth')
     })
 
     it('should not show current primary name in list', () => {
@@ -141,6 +138,55 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-complete-button').click()
 
       cy.findByTestId('no-primary-name-section').should('be.visible')
+    })
+
+    it('should not show a wrapped name where CSR is burned, resolver is not authorized, and is not a resolved address', () => {
+      cy.clearLocalStorage()
+      acceptMetamaskAccess(2)
+      cy.visit('/my/settings')
+
+      // Validate that the name is in the list
+      cy.findByTestId('set-primary-name-button').click()
+      cy.findByTestId('name-table-header-search').type('wrapped.eth')
+      cy.findByTestId('name-item-wrapped.eth').should('exist')
+      cy.findByTestId('close-icon').click()
+
+      // Set resolver to unauthorized resolver
+      cy.visit('/wrapped.eth?tab=more')
+      cy.findByTestId('edit-resolver-button').click()
+      cy.findByTestId('custom-resolver-radio').click()
+      cy.findByTestId('dogfood').type('0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB')
+      cy.findByTestId('update-button').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
+      // Validate that the name is in the list
+      cy.visit('/my/settings')
+      cy.findByTestId('set-primary-name-button').click()
+      cy.findByTestId('name-table-header-search').type('wrapped.eth')
+      cy.findByTestId('name-item-wrapped.eth').should('exist')
+      cy.findByTestId('close-icon').click()
+
+      // Burn CSR fuse
+      cy.visit('/wrapped.eth?tab=permissions')
+      cy.findByTestId('button-revoke-permissions').click()
+      cy.findByTestId('permissions-next-button').click()
+      cy.findByTestId('checkbox-CANNOT_UNWRAP').click()
+      cy.findByTestId('permissions-next-button').should('not.be.disabled').click()
+      cy.findByTestId('checkbox-CANNOT_SET_RESOLVER').click()
+      cy.findByTestId('permissions-next-button').should('not.be.disabled').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
+       // Validate that the name is NOT in the list
+       cy.visit('/my/settings')
+       cy.findByTestId('set-primary-name-button').click()
+       cy.findByTestId('name-table-header-search').type('wrapped.eth')
+       cy.findByTestId('name-item-wrapped.eth').should('not.exist')
     })
 
     it('should allow setting primary name from name with encrypted label', () => {
@@ -177,7 +223,7 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-complete-button').click()
 
       cy.wait(10000)
-      
+
       // Assertion
       cy.findByTestId('primary-name-label').should('have.text', 'aaa123xyz000.unknown-labels.eth')
     })
@@ -200,8 +246,7 @@ describe('Set Primary Name from settings', () => {
       cy.visit('/my/settings')
       cy.findByTestId('subgraph-network-error').click()
       cy.reload()
-      cy.findByTestId('disabled-set-primary-name-button').should('be.visible')    
+      cy.findByTestId('disabled-set-primary-name-button').should('be.visible')
     })
-    
   })
 })

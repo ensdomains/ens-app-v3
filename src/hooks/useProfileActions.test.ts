@@ -8,6 +8,9 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { useHasGlobalError } from './errors/useHasGlobalError'
 import { useProfileActions } from './useProfileActions'
 
+const NOW_TIMESTAMP = 1588994800000
+jest.spyOn(Date, 'now').mockImplementation(() => NOW_TIMESTAMP)
+
 const mockUseResolverStatus = jest.fn().mockReturnValue({
   data: {
     isAuthorized: true,
@@ -30,10 +33,11 @@ const mockPrepareDataInput = jest.fn()
 
 describe('useProfileActions', () => {
   const props: any = {
-    name: 'testname',
+    name: 'test.eth',
     address: '0x1234567890',
     profile: {
       address: '0x1234567890',
+      isMigrated: true,
     },
     selfAbilities: {
       canEdit: true,
@@ -48,8 +52,14 @@ describe('useProfileActions', () => {
     },
     ownerData: {
       ownershipLevel: 'nameWrapper',
+      owner: '0x1234567890',
     },
-    chainId: 1,
+    wrapperData: {
+      child: {
+        CANNOT_SET_RESOLVER: false,
+      },
+    },
+    expiryDate: new Date(NOW_TIMESTAMP + 1),
   }
 
   beforeEach(() => {
@@ -93,16 +103,6 @@ describe('useProfileActions', () => {
     expect(result.current.profileActions).toEqual([])
   })
 
-  it('returns the correct action if selfAbilities.canEdit is true', () => {
-    const { result } = renderHook(() => useProfileActions(props))
-    expect(result.current.profileActions).toContainEqual(
-      expect.objectContaining({
-        label: 'tabs.profile.actions.setAsPrimaryName.label',
-        onClick: expect.any(Function),
-      }),
-    )
-  })
-
   it('returns the correct action if subnameAbilities.canDelete is true', () => {
     const { result } = renderHook(() => useProfileActions(props))
     expect(result.current.profileActions).toContainEqual(
@@ -143,29 +143,27 @@ describe('useProfileActions', () => {
   })
 
   describe('set primary name', () => {
-    it('should return an action for a single transaction with base mock data', () => {
+    it('should return an action for a single transaction with base mock data', async () => {
       const { result } = renderHook(() => useProfileActions(props))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
+      expect(setPrimaryAction).toBeDefined()
       setPrimaryAction?.onClick()
       expect(mockCreateTransactionFlow).toHaveBeenCalled()
       expect(mockCreateTransactionFlow.mock.calls[0][0]).toBe(
-        'setPrimaryName-testname-0x1234567890',
+        'setPrimaryName-test.eth-0x1234567890',
       )
       expect(mockCreateTransactionFlow.mock.calls[0][1].transactions.length).toBe(1)
     })
 
-    it('should not return an action if profile address does not match user address and selfAbility canEdit is false', () => {
+    it('should not return an action if profile is not migrated', () => {
       const { result } = renderHook(() =>
         useProfileActions({
           ...props,
           profile: {
-            address: '0xotheraddress',
-          },
-          selfAbilities: {
-            ...props.selfAbilites,
-            canEdit: false,
+            ...props.profile,
+            isMigrated: false,
           },
         }),
       )
@@ -175,16 +173,36 @@ describe('useProfileActions', () => {
       expect(setPrimaryAction).toBeUndefined()
     })
 
-    it('should return an action if profile address matches user address and selfAbility canEdit is false', () => {
+    it('should not return an action if profile user is not controller or wrapped owner or resolved address', () => {
       const { result } = renderHook(() =>
         useProfileActions({
           ...props,
           profile: {
-            address: '0x1234567890',
+            ...props.profile,
+            address: '0xotheraddress',
           },
-          selfAbilities: {
-            ...props.selfAbilites,
-            canEdit: false,
+          ownerData: {
+            owner: '0xotherowner',
+          },
+        }),
+      )
+      const setPrimaryAction = result.current.profileActions?.find(
+        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
+      )
+      expect(setPrimaryAction).toBeUndefined()
+    })
+
+    it('should return an action if profile user is controller but not wrapped owner or resolved address', () => {
+      const { result } = renderHook(() =>
+        useProfileActions({
+          ...props,
+          profile: {
+            ...props.profile,
+            address: '0xotheraddress',
+          },
+          ownerData: {
+            ...props.ownerData,
+            ownershipLevel: 'registry',
           },
         }),
       )
@@ -194,16 +212,17 @@ describe('useProfileActions', () => {
       expect(setPrimaryAction).toBeDefined()
     })
 
-    it('should return an action if profile address != user address if selfAbility canEdit is true', () => {
+    it('should return an action if profile user is wrapped owner but not controller or resolved address', () => {
       const { result } = renderHook(() =>
         useProfileActions({
           ...props,
           profile: {
+            ...props.profile,
             address: '0xotheraddress',
           },
-          selfAbilities: {
-            ...props.selfAbilites,
-            canEdit: true,
+          ownerData: {
+            ...props.ownerData,
+            ownershipLevel: 'nameWrapper',
           },
         }),
       )
@@ -211,11 +230,44 @@ describe('useProfileActions', () => {
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
       expect(setPrimaryAction).toBeDefined()
+    })
+
+    it('should return an action if profile user is resolved address but not controller or wrapped owner', () => {
+      const { result } = renderHook(() =>
+        useProfileActions({
+          ...props,
+          profile: {
+            ...props.profile,
+            address: '0x1234567890',
+          },
+          ownerData: {
+            ...props.ownerData,
+            owner: '0xotherowner',
+          },
+        }),
+      )
+      const setPrimaryAction = result.current.profileActions?.find(
+        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
+      )
+      expect(setPrimaryAction).toBeDefined()
+    })
+
+    it('should return an action if expiry date is less than now', () => {
+      const { result } = renderHook(() =>
+        useProfileActions({
+          ...props,
+          expiryDate: new Date(NOW_TIMESTAMP - 1),
+        }),
+      )
+      const setPrimaryAction = result.current.profileActions?.find(
+        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
+      )
+      expect(setPrimaryAction).toBeUndefined()
     })
 
     it('should return not return action if primary name matches current name', () => {
       mockUsePrimary.mockReturnValueOnce({
-        data: { name: 'testname' },
+        data: { name: 'test.eth' },
         isLoading: false,
       })
       const { result } = renderHook(() => useProfileActions(props))
@@ -225,16 +277,129 @@ describe('useProfileActions', () => {
       expect(setPrimaryAction).toBeUndefined()
     })
 
+    it('should not return action if profile address does not match, is wrapped owner and CSR fuse is burned and resolver status isAuthorized is false', () => {
+      mockUseResolverStatus.mockReturnValueOnce({
+        data: { isAuthorized: false },
+        isLoading: false,
+      })
+      const { result } = renderHook(() =>
+        useProfileActions({
+          ...props,
+          profile: {
+            ...props.profile,
+            address: '0xotheraddress',
+          },
+          ownerData: {
+            ...props.ownerData,
+            ownershipLevel: 'nameWrapper',
+          },
+          wrapperData: {
+            child: {
+              CANNOT_SET_RESOLVER: true,
+            },
+          },
+        }),
+      )
+      const setPrimaryAction = result.current.profileActions?.find(
+        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
+      )
+      expect(setPrimaryAction).toBeUndefined()
+    })
+
+    it('should return action if profile address does not match, is wrapped owner and CSR fuse is burned and resolver status isAuthorized is true', () => {
+      mockUseResolverStatus.mockReturnValueOnce({
+        data: { isAuthorized: true },
+        isLoading: false,
+      })
+      const { result } = renderHook(() =>
+        useProfileActions({
+          ...props,
+          profile: {
+            ...props.profile,
+            address: '0xotheraddress',
+          },
+          ownerData: {
+            ...props.ownerData,
+            ownershipLevel: 'nameWrapper',
+          },
+          wrapperData: {
+            child: {
+              CANNOT_SET_RESOLVER: true,
+            },
+          },
+        }),
+      )
+      const setPrimaryAction = result.current.profileActions?.find(
+        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
+      )
+      expect(setPrimaryAction).toBeDefined()
+    })
+
+    it('should return action if CSR is not burned and resolver is not authorized ', () => {
+      mockUseResolverStatus.mockReturnValueOnce({
+        data: { isAuthorized: false },
+        isLoading: false,
+      })
+      const { result } = renderHook(() =>
+        useProfileActions({
+          ...props,
+          profile: {
+            ...props.profile,
+            address: '0xotheraddress',
+          },
+          ownerData: {
+            ...props.ownerData,
+            ownershipLevel: 'nameWrapper',
+          },
+          wrapperData: {
+            child: {
+              CANNOT_SET_RESOLVER: false,
+            },
+          },
+        }),
+      )
+      const setPrimaryAction = result.current.profileActions?.find(
+        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
+      )
+      expect(setPrimaryAction).toBeDefined()
+    })
+
+    it('should return action if CSR is burned and resolver is not authorized but name is not wrapped owner (technically not possible)', () => {
+      mockUseResolverStatus.mockReturnValueOnce({
+        data: { isAuthorized: false },
+        isLoading: false,
+      })
+      const { result } = renderHook(() =>
+        useProfileActions({
+          ...props,
+          profile: {
+            ...props.profile,
+            address: '0xotheraddress',
+          },
+          ownerData: {
+            ...props.ownerData,
+            ownershipLevel: 'registry',
+          },
+          wrapperData: {
+            child: {
+              CANNOT_SET_RESOLVER: true,
+            },
+          },
+        }),
+      )
+      const setPrimaryAction = result.current.profileActions?.find(
+        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
+      )
+      expect(setPrimaryAction).toBeDefined()
+    })
+
     it('should return an action with 2 transaction steps if profile address does not match user address', () => {
       const { result } = renderHook(() =>
         useProfileActions({
           ...props,
           profile: {
+            ...props.profile,
             address: '0xotheraddress',
-          },
-          selfAbilities: {
-            ...props.selfAbilites,
-            canEdit: true,
           },
         }),
       )
@@ -248,18 +413,23 @@ describe('useProfileActions', () => {
 
     it('should return an action with 3 transaction steps if profile address does not match user address and resolver is not authorized', () => {
       mockUseResolverStatus.mockReturnValueOnce({
-        data: { isAuthorised: false },
+        data: { isAuthorized: false },
         isLoading: false,
       })
       const { result } = renderHook(() =>
         useProfileActions({
           ...props,
           profile: {
+            ...props.profile,
             address: '0xotheraddress',
           },
           selfAbilities: {
             ...props.selfAbilites,
             canEdit: true,
+          },
+          ownerData: {
+            ...props.ownerData,
+            ownershipLevel: 'nameWrapper',
           },
         }),
       )

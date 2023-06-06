@@ -13,7 +13,6 @@ import {
 import { Button, Dialog, Heading, Typography, mq } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
-import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import {
   NameTableHeader,
   SortDirection,
@@ -39,6 +38,8 @@ import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+
+import { TaggedNameItemWithFuseCheck } from './components/TaggedNameItemWithFuseCheck'
 
 const DEFAULT_PAGE_SIZE = 10
 
@@ -348,7 +349,10 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const isLoading = !isEnsReady || isLoadingNames || isMutationLoading
   const isLoadingName = isResolverStatusLoading || isBasicNameLoading
 
-  const showHeader = (!!namesData && namesData?.pages.length > 1) || hasNextPage
+  // Show header if more than one page has been loaded, if only one page has been loaded but there is another page, or if there is an active search query
+  const showHeader =
+    (!!namesData && namesData?.pages.length > 1 && !searchQuery) || hasNextPage || !!searchQuery
+
   const hasNoEligibleNames =
     !searchQuery && namesData?.pages.length === 1 && namesData.pages[0].length === 0
 
@@ -406,7 +410,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
             <>
               {namesData.pages?.map((page: Name[]) =>
                 page.map((name: Name) => (
-                  <TaggedNameItem
+                  <TaggedNameItemWithFuseCheck
                     key={name.id}
                     {...name}
                     network={chainId}

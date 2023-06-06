@@ -9,11 +9,12 @@ import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 import { nameParts } from '@app/utils/name'
 
 import { useHasGlobalError } from './errors/useHasGlobalError'
+import { checkAvailablePrimaryName } from './names/useAvailablePrimaryNamesForAddress/utils'
 import { useResolverStatus } from './resolver/useResolverStatus'
+import { useContractAddress } from './useContractAddress'
 import { useNameDetails } from './useNameDetails'
 import { useSelfAbilities } from './useSelfAbilities'
 import { useSubnameAbilities } from './useSubnameAbilities'
@@ -37,7 +38,8 @@ type Props = {
   selfAbilities: ReturnType<typeof useSelfAbilities>
   subnameAbilities: ReturnType<typeof useSubnameAbilities>['abilities']
   ownerData: ReturnType<typeof useNameDetails>['ownerData']
-  chainId: number
+  wrapperData: ReturnType<typeof useNameDetails>['wrapperData']
+  expiryDate: ReturnType<typeof useNameDetails>['expiryDate']
 }
 
 export const useProfileActions = ({
@@ -47,13 +49,13 @@ export const useProfileActions = ({
   selfAbilities,
   subnameAbilities,
   ownerData,
-  chainId,
+  wrapperData,
+  expiryDate,
 }: Props) => {
   const { t } = useTranslation('profile')
   const { createTransactionFlow, prepareDataInput } = useTransactionFlow()
 
-  const latestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
-  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+  const latestResolverAddress = useContractAddress('PublicResolver')
 
   const { data: resolverStatus, isLoading: isResolverStatusLoading } = useResolverStatus(name, {
     isWrapped: true,
@@ -63,6 +65,32 @@ export const useProfileActions = ({
   const canSetPrimaryName = !!resolverStatus?.isAuthorized
 
   const { data: { name: primaryName } = {}, isLoading: primaryLoading } = usePrimary(address || '')
+
+  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+
+  const isAvailablePrimaryName = checkAvailablePrimaryName(
+    primaryName,
+    resolverStatus,
+  )({
+    name,
+    isMigrated: !!profile?.isMigrated,
+    isResolvedAddress: profile?.address === address,
+    isController: !isWrapped && ownerData?.owner === address,
+    isWrappedOwner: isWrapped && ownerData?.owner === address,
+    expiryDate,
+    fuses: wrapperData,
+  })
+  console.log(
+    name,
+    profile?.isMigrated,
+    profile?.address,
+    address,
+    isWrapped,
+    expiryDate,
+    wrapperData,
+    isAvailablePrimaryName,
+    resolverStatus,
+  )
 
   const hasGlobalError = useHasGlobalError()
 
@@ -78,7 +106,7 @@ export const useProfileActions = ({
     const actions: Action[] = []
     if (!address || isLoading) return actions
 
-    if ((selfAbilities.canEdit || profile?.address === address) && primaryName !== name) {
+    if (isAvailablePrimaryName) {
       const setAsPrimaryTransactions: GenericTransaction[] = [
         makeTransactionItem('setPrimaryName', {
           name,
@@ -220,7 +248,6 @@ export const useProfileActions = ({
     address,
     profile?.address,
     name,
-    primaryName,
     profile?.resolverAddress,
     selfAbilities.canEdit,
     subnameAbilities.canDelete,
@@ -239,6 +266,7 @@ export const useProfileActions = ({
     showDeleteEmancipatedSubnameWarningInput,
     isLoading,
     hasGlobalError,
+    isAvailablePrimaryName,
   ])
 
   return {

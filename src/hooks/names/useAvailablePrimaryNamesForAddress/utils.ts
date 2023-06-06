@@ -1,29 +1,61 @@
+import type { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { safeDateObj } from '@app/utils/date'
 
 import type { Name } from './useAvailablePrimaryNamesForAddress'
 
-const isMigratedName = (n: Name) => n.isMigrated
+const isMigratedName = (n: Pick<Name, 'isMigrated'>) => n.isMigrated
 
-const isNotTLD = (n: Name) => n.name.split('.').length > 1
+const isNotTLD = (n: Pick<Name, 'name'>) => n.name.split('.').length > 1
 
-const isResolvedOrManagedName = (n: Name) =>
-  n.isResolvedAddress || n.isController || n.isWrappedOwner
+const isResolvedOrManagedName = (
+  n: Pick<Name, 'isResolvedAddress' | 'isController' | 'isWrappedOwner'>,
+) => n.isResolvedAddress || n.isController || n.isWrappedOwner
 
-const isNotPrimaryName = (primaryName?: string | null) => (n: Name) =>
+const isNotPrimaryName = (primaryName?: string | null) => (n: Pick<Name, 'name'>) =>
   !primaryName || n.name !== primaryName
 
-const isNotExpired = (n: Name) => {
+const isNotExpired = (n: Pick<Name, 'expiryDate'>) => {
   const now = Date.now()
   const date = safeDateObj(n.expiryDate)
   return !date || date.getTime() > now
 }
 
-export const isAvailablePrimaryName = (primaryName?: string | null) => (name: Name) =>
-  isMigratedName(name) &&
-  isNotTLD(name) &&
-  isResolvedOrManagedName(name) &&
-  isNotPrimaryName(primaryName)(name) &&
-  isNotExpired(name)
+type ResolverStatus = ReturnType<typeof useResolverStatus>['data']
+const isAuthorized =
+  (resolverStatus: ResolverStatus) =>
+  (n: Pick<Name, 'fuses' | 'isWrappedOwner' | 'isResolvedAddress'>) => {
+    if (
+      !n.isResolvedAddress &&
+      n.isWrappedOwner &&
+      n.fuses?.child.CANNOT_SET_RESOLVER &&
+      resolverStatus
+    ) {
+      return resolverStatus.isAuthorized
+    }
+    return true
+  }
+
+export const checkAvailablePrimaryName =
+  (primaryName?: string | null, resolverStatus?: ResolverStatus) =>
+  (
+    name: Pick<
+      Name,
+      | 'isMigrated'
+      | 'isController'
+      | 'isRegistrant'
+      | 'isWrappedOwner'
+      | 'isResolvedAddress'
+      | 'name'
+      | 'expiryDate'
+      | 'fuses'
+    >,
+  ) =>
+    isMigratedName(name) &&
+    isNotTLD(name) &&
+    isResolvedOrManagedName(name) &&
+    isNotPrimaryName(primaryName)(name) &&
+    isNotExpired(name) &&
+    isAuthorized(resolverStatus)(name)
 
 export const mergeNames = (namesA: Name[], namesB: Name[]) => {
   const mergedNamesMap = [...namesA, ...namesB].reduce<{ [key: string]: Name }>((acc, curr) => {

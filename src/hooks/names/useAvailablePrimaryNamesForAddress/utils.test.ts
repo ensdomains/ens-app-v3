@@ -1,4 +1,4 @@
-import { isAvailablePrimaryName, mergeNames } from './utils'
+import { checkAvailablePrimaryName, mergeNames } from './utils'
 
 describe('isAvailablePrimaryName', () => {
   jest.spyOn(Date, 'now').mockImplementation(() => 1588994800000)
@@ -13,20 +13,20 @@ describe('isAvailablePrimaryName', () => {
   }
 
   it('should return true for base name', () => {
-    expect(isAvailablePrimaryName('primary')(baseName)).toBe(true)
+    expect(checkAvailablePrimaryName('primary')(baseName)).toBe(true)
   })
 
   it('should return false if name is not migrated', () => {
-    expect(isAvailablePrimaryName('primary')({ ...baseName, isMigrated: false })).toBe(false)
+    expect(checkAvailablePrimaryName('primary')({ ...baseName, isMigrated: false })).toBe(false)
   })
 
   it('should return false if name is TLD', () => {
-    expect(isAvailablePrimaryName('primary')({ ...baseName, name: 'eth' })).toBe(false)
+    expect(checkAvailablePrimaryName('primary')({ ...baseName, name: 'eth' })).toBe(false)
   })
 
   it('should return false if name is not resolved address, managed name or wrapped name', () => {
     expect(
-      isAvailablePrimaryName('primary')({
+      checkAvailablePrimaryName('primary')({
         ...baseName,
         isResolvedAddress: false,
         isController: false,
@@ -37,7 +37,7 @@ describe('isAvailablePrimaryName', () => {
 
   it('should return true if name is not managed name or wrapped name', () => {
     expect(
-      isAvailablePrimaryName('primary')({
+      checkAvailablePrimaryName('primary')({
         ...baseName,
         isController: false,
         isWrappedOwner: false,
@@ -47,7 +47,7 @@ describe('isAvailablePrimaryName', () => {
 
   it('should return true if name is not resolved address or wrapped name', () => {
     expect(
-      isAvailablePrimaryName('primary')({
+      checkAvailablePrimaryName('primary')({
         ...baseName,
         isResolvedAddress: false,
         isWrappedOwner: false,
@@ -57,7 +57,7 @@ describe('isAvailablePrimaryName', () => {
 
   it('should return true if name is not resolved address, managed name', () => {
     expect(
-      isAvailablePrimaryName('primary')({
+      checkAvailablePrimaryName('primary')({
         ...baseName,
         isResolvedAddress: false,
         isController: false,
@@ -67,7 +67,7 @@ describe('isAvailablePrimaryName', () => {
 
   it('should return false if name is primary name', () => {
     expect(
-      isAvailablePrimaryName('primary.eth')({
+      checkAvailablePrimaryName('primary.eth')({
         ...baseName,
         name: 'primary.eth',
       }),
@@ -76,11 +76,68 @@ describe('isAvailablePrimaryName', () => {
 
   it('should return false if name expiry date is less than now', () => {
     expect(
-      isAvailablePrimaryName('primary')({
+      checkAvailablePrimaryName('primary')({
         ...baseName,
         expiryDate: new Date(1588994800000 - 1),
       }),
     ).toBe(false)
+  })
+
+  describe('with optional resolver status paramter', () => {
+    it('should return false if CSR is burned, is not resolved address, is wrapped owner and resolver is not authorized', () => {
+      expect(
+        checkAvailablePrimaryName('primary', { isAuthorized: false } as any)({
+          ...baseName,
+          isWrappedOwner: true,
+          isResolvedAddress: false,
+          fuses: { child: { CANNOT_SET_RESOLVER: true } },
+        }),
+      ).toBe(false)
+    })
+
+    it('should return true if CSR is not burned, is not resolved address, is wrapped owner and resolver is not authorized', () => {
+      expect(
+        checkAvailablePrimaryName('primary', { isAuthorized: false } as any)({
+          ...baseName,
+          isWrappedOwner: true,
+          isResolvedAddress: false,
+          fuses: { child: { CANNOT_SET_RESOLVER: false } },
+        }),
+      ).toBe(true)
+    })
+
+    it('should return true if CSR is burned, is not resolved address, is wrapped owner and resolver is authorized', () => {
+      expect(
+        checkAvailablePrimaryName('primary', { isAuthorized: true } as any)({
+          ...baseName,
+          isWrappedOwner: true,
+          isResolvedAddress: false,
+          fuses: { child: { CANNOT_SET_RESOLVER: true } },
+        }),
+      ).toBe(true)
+    })
+
+    it('should return true if CSR is burned, is not resolved address, is not wrapped owner and resolver is not authorized', () => {
+      expect(
+        checkAvailablePrimaryName('primary', { isAuthorized: false } as any)({
+          ...baseName,
+          isWrappedOwner: false,
+          isResolvedAddress: false,
+          fuses: { child: { CANNOT_SET_RESOLVER: true } },
+        }),
+      ).toBe(true)
+    })
+
+    it('should return true if CSR is burned, is resolved address, is wrapped owner and resolver is not authorized', () => {
+      expect(
+        checkAvailablePrimaryName('primary', { isAuthorized: false } as any)({
+          ...baseName,
+          isWrappedOwner: true,
+          isResolvedAddress: true,
+          fuses: { child: { CANNOT_SET_RESOLVER: true } },
+        }),
+      ).toBe(true)
+    })
   })
 })
 
