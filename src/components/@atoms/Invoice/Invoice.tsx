@@ -51,7 +51,7 @@ type Props = {
 export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }: Props) => {
   const filteredItems = items
     .map(({ value, bufferPercentage }) =>
-      value && unit === 'eth' && bufferPercentage ? value.mul(bufferPercentage) : value,
+      value && unit === 'eth' && bufferPercentage ? value.mul(bufferPercentage).div(100) : value,
     )
     .filter((x) => !!x)
   const total = filteredItems.reduce((a, b) => a!.add(b!), BigNumber.from(0))
