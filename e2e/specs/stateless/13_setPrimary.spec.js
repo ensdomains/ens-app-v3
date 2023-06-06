@@ -143,7 +143,6 @@ describe('Set Primary Name from profile page', () => {
       ).type('aaa123xyz000')
       cy.findByTestId('unknown-labels-confirm').should('be.enabled').click()
 
-      // cy.location('pathname').should('equal', '/aaa123xyz000.unknown-labels.eth')
       cy.findByText('Set your primary name').should('be.visible')
       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
 

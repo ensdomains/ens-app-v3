@@ -303,7 +303,7 @@ describe('SelectPrimaryName', () => {
     expect(mockDispatch).toHaveBeenCalled()
   })
 
-  it('should show decrypt view if name cannot be decrypted', async () => {
+  it('should be able to decrpyt name and dispatch', async () => {
     mockUseAvailablePrimaryNamesForAddress.mockReturnValue({
       data: {
         pages: [
@@ -331,7 +331,15 @@ describe('SelectPrimaryName', () => {
     await waitFor(() => expect(screen.getByTestId('primary-next')).not.toBeDisabled())
     await userEvent.click(screen.getByTestId('primary-next'))
     await waitFor(() => expect(screen.getByTestId('unknown-labels-form')).toBeInTheDocument())
-    expect(mockDispatch).not.toHaveBeenCalled()
+    await userEvent.type(screen.getByTestId(`unknown-label-input-${labelhash('test')}`), 'test')
+    await waitFor(() => expect(screen.getByTestId('unknown-labels-confirm')).not.toBeDisabled())
+    await userEvent.click(screen.getByTestId('unknown-labels-confirm'))
+    expect(mockDispatch).toHaveBeenCalled()
+    expect(
+      mockDispatch.mock.calls[0][0].payload.transactions.every(
+        (transaction: any) => transaction.data.name === 'test.eth',
+      ),
+    ).toBe(true)
   })
 
   describe('One step transactions', () => {
