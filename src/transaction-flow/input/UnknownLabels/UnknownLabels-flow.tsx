@@ -4,6 +4,8 @@ import { useQueryClient } from 'wagmi'
 
 import { saveName } from '@ensdomains/ensjs/utils/labels'
 
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+
 import { TransactionDialogPassthrough, TransactionFlowItem } from '../../types'
 import { FormData, UnknownLabelsForm, nameToFormData } from './views/UnknownLabelsForm'
 
@@ -35,6 +37,7 @@ const UnknownLabels = ({
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
   }
 
+  const validateKey = useQueryKeys().validate
   const onSubmit = (data: FormData) => {
     const newName = [
       ...data.unknownLabels.labels.map((label) => label.value),
@@ -61,7 +64,7 @@ const UnknownLabels = ({
           }
         : intro
 
-    queryClient.resetQueries({ exact: true, queryKey: ['validate', name] })
+    queryClient.resetQueries(validateKey(newKey))
 
     dispatch({
       name: 'startFlow',

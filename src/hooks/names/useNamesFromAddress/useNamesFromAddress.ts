@@ -71,7 +71,6 @@ export const useNamesFromAddress = ({
       enabled: ready && !!address && !isBlockTimestampLoading,
     },
   )
-  console.log(mixedNames)
 
   // memoize the data before search to avoid reprocessing the data on every search
   const presearchNames = useMemo(() => {

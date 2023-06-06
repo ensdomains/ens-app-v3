@@ -194,7 +194,8 @@ describe('Extend Names', () => {
     cy.log('show the extend modal')
     cy.findByTestId('extend-names-button').click()
     cy.findByTestId('extend-names-names-list').should('be.visible')
-    cy.get('button').contains('Next').should('not.be.disabled').click()
+    cy.wait(10000)
+    cy.findByTestId('extend-names-confirm').should('not.be.disabled').click()
 
     cy.log('check the invoice details')
     cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0128')
