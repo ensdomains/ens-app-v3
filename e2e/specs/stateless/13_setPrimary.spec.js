@@ -127,6 +127,47 @@ describe('Set Primary Name from profile page', () => {
       cy.findByTestId('profile-title').should('contain.text', 'sub.wrapped.eth')
     })
 
+    it('should not show set primary name button for a wrapped name that has CSR burned, is not a resolved address, and an unauthorized resolver', () => {
+      cy.clearLocalStorage()
+      acceptMetamaskAccess(2)
+
+      // Validate that the button is there
+      cy.visit('/wrapped.eth')
+      cy.findByTestId('profile-action-Set as primary name').should('exist')
+
+      // Set resolver to unauthorized resolver
+      cy.visit('/wrapped.eth?tab=more')
+      cy.findByTestId('edit-resolver-button').click()
+      cy.findByTestId('custom-resolver-radio').click()
+      cy.findByTestId('dogfood').type('0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB')
+      cy.findByTestId('update-button').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
+      // Validate that the name is in the list
+      cy.visit('/wrapped.eth')
+      cy.findByTestId('profile-action-Set as primary name').should('exist')
+
+      // Burn CSR fuse
+      cy.visit('/wrapped.eth?tab=permissions')
+      cy.findByTestId('button-revoke-permissions').click()
+      cy.findByTestId('permissions-next-button').click()
+      cy.findByTestId('checkbox-CANNOT_UNWRAP').click()
+      cy.findByTestId('permissions-next-button').should('not.be.disabled').click()
+      cy.findByTestId('checkbox-CANNOT_SET_RESOLVER').click()
+      cy.findByTestId('permissions-next-button').should('not.be.disabled').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
+       // Validate that the name is NOT in the list
+       cy.visit('/wrapped.eth')
+      cy.findByTestId('profile-action-Set as primary name').should('not.exist')
+    })
+
     it('should allow setting primary name from name with encrypted label', () => {
       cy.clearLocalStorage()
       acceptMetamaskAccess(3)
