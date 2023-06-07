@@ -83,6 +83,7 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
       )}
       <Resolver
         name={name}
+        isWrapped={isWrapped}
         canEdit={selfAbilities.canEdit}
         canEditResolver={selfAbilities.canEditResolver}
         isCachedData={profileIsCachedData}

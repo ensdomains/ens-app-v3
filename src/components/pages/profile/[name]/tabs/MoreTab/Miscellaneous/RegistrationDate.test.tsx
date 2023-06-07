@@ -16,6 +16,7 @@ describe('RegistrationDate', () => {
 
   it('should render the registration date', () => {
     const registrationDate = new Date('2021-01-01T00:00:00.000Z')
+    // @ts-expect-error
     render(<RegistrationDate {...{ registrationData: { registrationDate } }} />)
     const element = screen.getByText('January 1, 2021')
     expect(element).toBeInTheDocument()
@@ -23,6 +24,7 @@ describe('RegistrationDate', () => {
 
   it('should render the registration time correctly', () => {
     const registrationDate = new Date('2021-01-01T00:00:00.000Z')
+    // @ts-expect-error
     render(<RegistrationDate {...{ registrationData: { registrationDate } }} />)
     const expectedTime = formatDateTime(registrationDate)
     const element = screen.getByText(expectedTime)

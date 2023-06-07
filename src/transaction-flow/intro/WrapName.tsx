@@ -7,6 +7,7 @@ import { WrapNameGift } from '@app/assets/WrapNameGift'
 import { Outlink } from '@app/components/Outlink'
 import { useNFTImage } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 const GiftWrapper = styled.div(
   ({ theme }) => css`
@@ -40,7 +41,7 @@ export const WrapName = ({ name }: { name: string }) => {
         <Typography>
           {t('details.wrap.description')}{' '}
           <span>
-            <Outlink href="https://support.ens.domains/docs/faq/manager/managing-names#what-is-the-name-wrapper">
+            <Outlink href={getSupportLink('nameWrapper')}>
               {t('action.learnMore', { ns: 'common' })}
             </Outlink>
           </span>
