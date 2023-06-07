@@ -64,7 +64,7 @@ const UnknownLabels = ({
           }
         : intro
 
-    queryClient.resetQueries(validateKey(newKey))
+    queryClient.resetQueries(validateKey(name))
 
     dispatch({
       name: 'startFlow',

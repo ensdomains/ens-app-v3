@@ -42,8 +42,7 @@ describe('Set Primary Name from profile page', () => {
       cy.wait(1000)
       cy.visit('/my/settings')
       const wrapper = cy.findByTestId('primary-name-label')
-      wrapper.should('exist')
-      wrapper.should('include.text', 'other-eth-record.eth')
+      wrapper.should('exist').should('include.text', 'other-eth-record.eth')
     })
 
     it('should allow setting unwrapped name that user is manager of but whose resolved address is not the same as the user', () => {
@@ -201,12 +200,5 @@ describe('Set Primary Name from profile page', () => {
 
       cy.findByTestId('profile-title').should('contain.text', 'aaa123xyz000.unknown-labels.eth')
     })
-  })
-
-  describe('subgraph error', () => {
-    it('should be able to set error', () => {
-      
-    })
-  })
-  
+  })  
 })

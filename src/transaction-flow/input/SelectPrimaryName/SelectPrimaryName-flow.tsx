@@ -87,12 +87,12 @@ const LoadingContainer = styled(InnerDialog)(
   `,
 )
 
-const HeaderWrapper = styled.div(({ theme }) => [
-  css`
-    margin: 0 -${theme.space['4']};
-  `,
-  mq.sm.min(css``),
-])
+const HeaderWrapper = styled.div(
+  ({ theme }) =>
+    css`
+      margin: 0 -${theme.space['4']};
+    `,
+)
 
 const ContentContainer = styled.form(({ theme }) => [
   css`

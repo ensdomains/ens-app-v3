@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useNetwork } from 'wagmi'
 
 import {
   Avatar,
@@ -18,16 +17,17 @@ import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useBasicName } from '@app/hooks/useBasicName'
+import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-const SkeletonFiller = styled.div(({ theme }) => [
-  css`
+const SkeletonFiller = styled.div(
+  ({ theme }) => css`
     width: ${theme.space.full};
     border-radius: ${theme.radii['2xLarge']};
   `,
-])
+)
 
 const NoNameContainer = styled.div(({ theme }) => [
   css`
@@ -149,8 +149,8 @@ export const PrimarySection = () => {
   const showResetPrimaryNameInput = prepareDataInput('ResetPrimaryName')
 
   const { data: { name } = {}, isLoading: primaryLoading } = usePrimary(address!, !address)
-  const { chain } = useNetwork()
-  const { avatar } = useAvatar(name, chain?.id || 1)
+  const chainId = useChainId()
+  const { avatar } = useAvatar(name, chainId)
   const zorb = useZorb(name || '', 'name')
 
   const { truncatedName, isLoading: basicLoading } = useBasicName(name, {

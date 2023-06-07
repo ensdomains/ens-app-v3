@@ -209,7 +209,6 @@
       "migrateProfileWithReset": "Set existing records on new resolver",
       "migrateProfileWithSync": "Set existing records on new resolver",
       "migrateProfileWithEthAddress": "Set existing records and eth address on new resolver",
-      "wrapName2": "Wrap name and set new resolver",
       "wrapName": "Wrap the name",
       "updateResolver": "Change resolver to",
       "updateProfile": "Update records on existing resolver",

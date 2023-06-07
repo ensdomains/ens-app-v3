@@ -263,7 +263,7 @@ export const TabBar = () => {
                   address={address}
                   isOpen={isOpen}
                   setIsOpen={setIsOpen}
-                  name={name}
+                  name={name || undefined}
                 />
               </>
             )}

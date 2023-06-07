@@ -24,10 +24,6 @@ const baseProps: any = {
   fuses: {},
 }
 
-afterEach(() => {
-  // jest.clearAllMocks()
-})
-
 describe('TaggedNameItemWithFuseCheck', () => {
   it('should render a tagged name item with mock data', () => {
     render(<TaggedNameItemWithFuseCheck {...baseProps} />)
@@ -74,7 +70,7 @@ describe('TaggedNameItemWithFuseCheck', () => {
     expect(screen.getByText('test.eth')).toBeVisible()
   })
 
-  it('should render a tagged name item if isResolvedAddress is true', async () => {
+  it('should render a tagged name item if isResolvedAddress is true', () => {
     mockUseResolverStatus.mockReturnValueOnce({
       data: {
         isAuthorized: false,

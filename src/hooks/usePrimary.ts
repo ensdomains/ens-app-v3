@@ -13,8 +13,8 @@ export const usePrimary = (address: string, skip?: any) => {
       const res = await getName(address)
       if (!res || !res.name || !res.match)
         return {
-          name: undefined,
-          beautifiedName: undefined,
+          name: null,
+          beautifiedName: null,
         }
       return {
         ...res,

@@ -80,17 +80,6 @@ export const useProfileActions = ({
     expiryDate,
     fuses: wrapperData,
   })
-  console.log(
-    name,
-    profile?.isMigrated,
-    profile?.address,
-    address,
-    isWrapped,
-    expiryDate,
-    wrapperData,
-    isAvailablePrimaryName,
-    resolverStatus,
-  )
 
   const hasGlobalError = useHasGlobalError()
 

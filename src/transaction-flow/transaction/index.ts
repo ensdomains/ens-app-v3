@@ -26,15 +26,6 @@ import updateResolver from './updateResolver'
 import wrapName from './wrapName'
 
 export const transactions = {
-  updateResolver,
-  migrateProfile,
-  wrapName,
-  testSendName,
-  updateProfile,
-  setPrimaryName,
-  resetPrimaryName,
-  updateEthAddress,
-  migrateProfileWithEthAddress,
   approveNameWrapper,
   burnFuses,
   changePermissions,
@@ -43,15 +34,24 @@ export const transactions = {
   deleteSubname,
   extendNames,
   importDNSSECName,
+  migrateProfile,
+  migrateProfileWithEthAddress,
   migrateProfileWithReset,
   registerName,
+  resetPrimaryName,
   resetProfile,
+  setPrimaryName,
   syncManager,
+  testSendName,
   transferController,
   transferName,
   transferSubname,
   unwrapName,
+  updateEthAddress,
+  updateProfile,
   updateProfileRecords,
+  updateResolver,
+  wrapName,
 }
 
 export type Transaction = typeof transactions

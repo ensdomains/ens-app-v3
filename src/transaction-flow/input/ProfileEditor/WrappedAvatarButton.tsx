@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react'
 import { Control, useFormState } from 'react-hook-form'
-import { useNetwork } from 'wagmi'
+import { useChainId } from 'wagmi'
 
 import AvatarButton from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { useAvatar } from '@app/hooks/useAvatar'
@@ -12,8 +12,8 @@ type Props = {
 } & Omit<ComponentProps<typeof AvatarButton>, 'validated'>
 
 export const WrappedAvatarButton = ({ control, name, src, ...props }: Props) => {
-  const { chain } = useNetwork()
-  const { avatar } = useAvatar(name, chain?.id || 1)
+  const chainId = useChainId()
+  const { avatar } = useAvatar(name, chainId)
   const formState = useFormState<ProfileEditorForm>({
     control,
     name: 'avatar',
