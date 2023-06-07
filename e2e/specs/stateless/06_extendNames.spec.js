@@ -32,9 +32,9 @@ describe('Extend Names', () => {
     cy.findByTestId('extend-names-button').click()
 
     cy.log('check the invoice details')
-    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0032')
+    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0033')
     cy.findByTestId('invoice-item-1-amount').should('contain.text', '0.0001')
-    cy.findByTestId('invoice-total').should('contain.text', '0.0033')
+    cy.findByTestId('invoice-total').should('contain.text', '0.0034')
     cy.findByText('1 year extension').should('be.visible')
 
     cy.log('check the price comparison table')
@@ -82,9 +82,9 @@ describe('Extend Names', () => {
     cy.findByTestId('extend-names-names-list').should('not.exist')
 
     cy.log('should show the correct price data')
-    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0032')
+    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0033')
     cy.findByTestId('invoice-item-1-amount').should('contain.text', '0.0001')
-    cy.findByTestId('invoice-total').should('contain.text', '0.0033')
+    cy.findByTestId('invoice-total').should('contain.text', '0.0034')
     cy.findByText('1 year extension').should('be.visible')
 
     cy.log('should show the cost comparison data')
@@ -94,11 +94,11 @@ describe('Extend Names', () => {
 
     cy.log('should not be able to set duration below 1')
     cy.findByTestId('plus-minus-control-minus').should('be.disabled')
-    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0032')
+    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0033')
 
     cy.log('should show the correct price for yearly registration')
     cy.findByTestId('plus-minus-control-plus').click()
-    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0064')
+    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0065')
     cy.findByText('2 year extension').should('be.visible')
 
     cy.log('should show the correct fiat values')
@@ -194,12 +194,13 @@ describe('Extend Names', () => {
     cy.log('show the extend modal')
     cy.findByTestId('extend-names-button').click()
     cy.findByTestId('extend-names-names-list').should('be.visible')
-    cy.get('button').contains('Next').click()
+    cy.wait(10000)
+    cy.findByTestId('extend-names-confirm').should('be.enabled').click()
 
     cy.log('check the invoice details')
-    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0128')
+    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0131')
     cy.findByTestId('invoice-item-1-amount').should('contain.text', '0.0004')
-    cy.findByTestId('invoice-total').should('contain.text', '0.0132')
+    cy.findByTestId('invoice-total').should('contain.text', '0.0135')
     cy.findByText('1 year extension').should('be.visible')
 
     cy.log('check the price comparison table')
