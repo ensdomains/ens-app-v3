@@ -43,6 +43,7 @@
     "changeNetwork": "更改网络",
     "understand": "我了解",
     "feedback": "反馈",
+    "enterEmail": "输入您的 Email",
     "migrate": "迁移"
   },
   "unit": {
@@ -130,7 +131,8 @@
     "send": "发送",
     "transfer": "转移",
     "sendManager": "发送管理权",
-    "sendOwner": "发送所有权"
+    "sendOwner": "发送所有权",
+    "renew": "为 {{name}} 续期"
   },
   "address": {
     "label": "地址",
@@ -147,8 +149,24 @@
   },
   "errors": {
     "noResults": "未找到结果",
-    "invalidAddress": "无效地址",
-    "addressRequired": "请填写地址"
+    "emailRequired": "请填写 Email",
+    "emailInvalid": "Email 地址无效",
+    "invalidAddress": "地址无效",
+    "addressRequired": "请填写地址",
+    "indexingErrors": {
+      "title": "数据同步错误",
+      "message": "此数据可能已经过时了，请谨慎使用。",
+      "message_datetime": "此数据最后更新时间为 {{datetime}}，可能已过期，请谨慎使用。"
+    },
+    "networkError": {
+      "title": "数据同步错误",
+      "message": "此数据可能已经过时了，请谨慎使用。",
+      "blurb": "由于数据同步问题，此按钮暂时被禁用。"
+    },
+    "networkLatency": {
+      "title": "数据同步缓慢",
+      "message": "由于网络延迟问题，ENS app 的运行速度正在受到影响。"
+    }
   },
   "transaction": {
     "description": {
@@ -180,14 +198,15 @@
       "changePermissions": "更改权限",
       "syncManager": "同步管理员",
       "updateProfileRecords": "更新个人资料",
-      "resetProfile": "重置个人资料"
+      "resetProfile": "重置个人资料",
+      "unwrapName": "将名称解除包装"
     },
     "info": {
       "sendName": "设置名称的管理员和注册人",
       "migrateProfile": "将现有记录设置到新的解析器上",
       "migrateProfileWithReset": "将现有记录设置到新的解析器上",
       "migrateProfileWithSync": "将现有记录设置到新的解析器上",
-      "wrapName": "包装名称并设置新的解析器",
+      "wrapName": "包装该名称",
       "updateResolver": "将解析器更改为",
       "updateProfile": "更新现有解析器上的记录",
       "setPrimaryName": "为您的地址设置主名",
