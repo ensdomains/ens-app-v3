@@ -164,7 +164,7 @@ let nextConfig = {
       'src/stub.js',
     )
 
-    if (!options.isServer) {
+    if (!options.isServer && !options.dev) {
       const originalEntry = config.entry
       config.entry = async (...args) => {
         const entryConfig = await originalEntry(...args)
