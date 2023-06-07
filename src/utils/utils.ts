@@ -1,8 +1,13 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
-import { NAMEWRAPPER_AWARE_RESOLVERS, networkName } from './constants'
+import {
+  CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
+  NAMEWRAPPER_AWARE_RESOLVERS,
+  networkName,
+} from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
   networkName[`${networkId}` as keyof typeof networkName] || 'unknown'
@@ -132,3 +137,6 @@ export const canEditRecordsWhenWrappedCalc = (
   if (!isWrapped) return true
   return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
 }
+
+export const calculateValueWithBuffer = (value: BigNumber) =>
+  value.mul(CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE).div(100)
