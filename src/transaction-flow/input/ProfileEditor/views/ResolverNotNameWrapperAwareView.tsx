@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, Dialog } from '@ensdomains/thorin'
 
 import { Outlink } from '@app/components/Outlink'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 import type { SelectedProfile } from '../ResolverWarningOverlay'
 import { CenteredTypography } from '../components/CenteredTypography'
@@ -36,7 +37,7 @@ export const ResolverNotNameWrapperAwareView = ({
           <CenteredTypography>
             {t('input.profileEditor.warningOverlay.resolverNotNameWrapperAware.subtitle')}
           </CenteredTypography>
-          <Outlink href="https://support.ens.domains/faq/manager/managing-names/#what-is-a-resolver">
+          <Outlink href={getSupportLink('resolver')}>
             {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
           </Outlink>
         </ContentContainer>

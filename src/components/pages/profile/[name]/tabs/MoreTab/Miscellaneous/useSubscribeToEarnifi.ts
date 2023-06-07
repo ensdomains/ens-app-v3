@@ -1,9 +1,9 @@
 import { UseMutationOptions } from '@tanstack/react-query'
 import { useMutation } from 'wagmi'
 
-const EARNIFI_ENDPOINT = 'https://notifications-api.vercel.app/api/v1/ens/subscribe'
+export const EARNIFI_ENDPOINT = 'https://notifications-api.vercel.app/api/v1/ens/subscribe'
 
-const getErrorMessage = async (response: Response) => {
+export const getErrorMessage = async (response: Response) => {
   try {
     const json = await response.json()
     return (json as any)?.message

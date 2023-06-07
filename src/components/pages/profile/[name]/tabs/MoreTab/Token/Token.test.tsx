@@ -6,15 +6,11 @@ import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
-import { useChainId } from '@app/hooks/useChainId'
-import { useChainName } from '@app/hooks/useChainName'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import Token from './Token'
 
-jest.mock('@app/hooks/useChainId')
-jest.mock('@app/hooks/useChainName')
 jest.mock('@app/hooks/useContractAddress')
 jest.mock('@app/hooks/fuses/useFusesStates')
 jest.mock('@app/utils/BreakpointProvider')
@@ -23,13 +19,9 @@ jest.mock('./WrapButton', () => () => <div data-testid="wrap-button" />)
 jest.mock('./UnwrapButton', () => () => <div data-testid="unwrap-button" />)
 
 const mockUseFusesStates = mockFunction(useFusesStates)
-const mockUseChainId = mockFunction(useChainId)
-const mockUseChainName = mockFunction(useChainName)
 const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 
-mockUseChainId.mockReturnValue(1)
-mockUseChainName.mockReturnValue('mainnet')
 mockUseContractAddress.mockImplementation((contractName) => {
   if (contractName === 'NameWrapper') return 'wrapped'
   return 'unwrapped'

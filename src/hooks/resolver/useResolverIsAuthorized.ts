@@ -6,6 +6,8 @@ import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
+import { useProfile } from '../useProfile'
+
 const setAddrABI = [
   {
     inputs: [
@@ -81,15 +83,31 @@ const checkAuthorization = async (contract: Contract, name: string) => {
   }
 }
 
-export const useResolverIsAuthorized = (name: string, resolver?: string) => {
+type Options = {
+  enabled?: boolean
+  resolverAddress?: string
+}
+
+export const useResolverIsAuthorized = (name: string, options: Options = {}) => {
+  const enabled = (options.enabled ?? true) && !!name
+
   const { data: signer, isLoading: isSignerLoading } = useSigner()
-  const { data, isLoading } = useQuery(
+
+  const { profile: internalProfile, loading: isProfileLoading } = useProfile(name, {
+    skip: !enabled || !!options.resolverAddress,
+  })
+  const resolver = options.resolverAddress ?? internalProfile?.resolverAddress ?? ''
+
+  const isLoading = isProfileLoading || isSignerLoading
+
+  return useQuery(
     useQueryKeys().resolverIsAuthorized(name, resolver!),
     async () => {
       try {
         const contract = new Contract(resolver!, setAddrABI, signer!)
         await checkInterface(contract)
         await checkAuthorization(contract, name)
+        return { isValid: true, isAuthorized: true }
       } catch (e: unknown) {
         console.error(e)
         if (e instanceof Error && e.message === 'notAuthorized') {
@@ -97,17 +115,9 @@ export const useResolverIsAuthorized = (name: string, resolver?: string) => {
         }
         return { isValid: false, isAuthorized: false }
       }
-
-      return { isValid: true, isAuthorized: true }
     },
     {
-      enabled: !!name && !!resolver && !!signer && !isSignerLoading,
+      enabled: enabled && !isLoading && !!signer,
     },
   )
-
-  return {
-    isAuthorized: !!data?.isAuthorized,
-    isValid: !!data?.isValid,
-    isLoading,
-  }
 }

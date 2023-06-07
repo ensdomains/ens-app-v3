@@ -6,7 +6,7 @@ import useOwners from '@app/hooks/useOwners'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { validateExpiry } from '@app/utils/utils'
 
-import Miscellaneous from './Miscellaneous'
+import Miscellaneous from './Miscellaneous/Miscellaneous'
 import Ownership from './Ownership'
 import Resolver from './Resolver'
 import Token from './Token/Token'
@@ -83,6 +83,7 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
       )}
       <Resolver
         name={name}
+        isWrapped={isWrapped}
         canEdit={selfAbilities.canEdit}
         canEditResolver={selfAbilities.canEditResolver}
         isCachedData={profileIsCachedData}

@@ -33,6 +33,7 @@ describe('Profile Editor', () => {
         cy.contains('Edit profile').click()
         cy.contains('No resolver set').should('be.visible')
         cy.findByTestId('warning-overlay-back-button').should('have.text', 'Cancel').click()
+        cy.wait(10000)
 
         cy.contains('Edit profile').click()
         cy.findByTestId('warning-overlay-next-button').click()
@@ -258,6 +259,35 @@ describe('Profile Editor', () => {
     })
   })
 
+  describe('resolver status', () => {
+    it('should be able to set resolver to dummy resolver address', () => {
+      cy.visit('/almost-latest-resolver.eth?tab=more')
+      connectFromExisting()
+      cy.findByText('Outdated').should('be.visible')
+      cy.findByTestId('edit-resolver-button').click()
+      cy.findByTestId('custom-resolver-radio').should('not.be.disabled').click()
+      cy.findByTestId('dogfood').type('0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750')
+      cy.findByTestId('update-button').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+    })
+
+    it('should show latest label for dummy resolver', () => {
+      cy.visit('/almost-latest-resolver.eth?tab=more')
+      connectFromExisting()
+      cy.findByText('Latest').should('be.visible')
+    })
+
+    it('should now show an overlay when editing profile', () => {
+      cy.visit('/almost-latest-resolver.eth')
+      connectFromExisting()
+      cy.contains('Edit profile').click()
+      cy.findByText('Edit your profile').should('be.visible')
+    })
+  })
+  
   describe('subgraph errors', () => {
     it('should be able to turn on subgraph indexing error', () => {
       cy.visit('/my/settings')

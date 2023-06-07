@@ -17,6 +17,7 @@ import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { SubnameSortType, useSubnameInfiniteQuery } from '@app/hooks/useSubnameInfiniteQuery'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { emptyAddress } from '@app/utils/constants'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 import useDebouncedCallback from '../../../../../hooks/useDebouncedCallback'
 import { useQueryParameterState } from '../../../../../hooks/useQueryParameterState'
@@ -203,7 +204,7 @@ export const SubnamesTab = ({
         <AddSubnamesCard>
           <Typography>
             {t('details.tabs.subnames.addSubname.title')}{' '}
-            <Outlink href="https://support.ens.domains/docs/faq/manager/managing-names#what-is-the-difference-between-a-name-and-a-subname">
+            <Outlink href={getSupportLink('namesAndSubnames')}>
               {t('details.tabs.subnames.addSubname.learn')}
             </Outlink>
           </Typography>

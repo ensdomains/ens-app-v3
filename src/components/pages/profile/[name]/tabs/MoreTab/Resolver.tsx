@@ -1,16 +1,14 @@
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Tag, Typography, mq } from '@ensdomains/thorin'
+import { Skeleton, Tag, Typography, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
-import { useChainId } from '@app/hooks/useChainId'
+import { useResolverType } from '@app/hooks/resolver/useResolverType'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 import { TabWrapper } from '../../../TabWrapper'
 
@@ -62,14 +60,26 @@ const InnerHeading = styled.div(
   `,
 )
 
+const TagsContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['1']};
+  `,
+)
+
 const Resolver = ({
   name,
+  isWrapped,
   canEditResolver,
   canEdit,
   resolverAddress,
   isCachedData,
 }: {
   name: string
+  isWrapped: boolean
   canEditResolver: boolean
   canEdit: boolean
   resolverAddress: string | undefined
@@ -77,7 +87,6 @@ const Resolver = ({
 }) => {
   const { t } = useTranslation('profile')
 
-  const chainId = useChainId()
   const hasGlobalError = useHasGlobalError()
 
   const { prepareDataInput } = useTransactionFlow()
@@ -88,55 +97,57 @@ const Resolver = ({
     })
   }
 
-  const resolverAddressIndex = RESOLVER_ADDRESSES[`${chainId}`]?.indexOf(resolverAddress ?? '')
-  const [resolverAddressType, tone] = useMemo(() => {
-    if (resolverAddressIndex === -1) {
-      return ['custom', 'greySecondary'] as const
-    }
-    if (resolverAddressIndex === 0) {
-      return ['latest', 'greenSecondary'] as const
-    }
-    return ['outdated', 'redSecondary'] as const
-  }, [resolverAddressIndex])
+  const { data: { type: resolverType, tone, isWildcard } = {}, isLoading: isResolverTypeLoading } =
+    useResolverType(name, {
+      isWrapped,
+      resolverAddress,
+    })
 
   return (
-    <Container $isCached={isCachedData}>
-      <HeadingContainer>
-        <InnerHeading>
-          <Typography color="text" fontVariant="headingFour" weight="bold">
-            {t('tabs.more.resolver.label')}
-          </Typography>
-          <Tag colorStyle={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
-        </InnerHeading>
-        {canEdit && !hasGlobalError && (
-          <>
-            {canEditResolver ? (
-              <button
-                style={{ cursor: 'pointer' }}
-                type="button"
-                onClick={handleEditClick}
-                data-testid="edit-resolver-button"
-              >
-                {t('action.edit', { ns: 'common' })}
-              </button>
-            ) : (
-              <DisabledButtonWithTooltip
-                {...{
-                  buttonId: 'set-resolver-disabled-button',
-                  content: t(`errors.permissionRevoked`),
-                  buttonText: 'Edit',
-                  mobileWidth: 150,
-                  buttonWidth: '15',
-                  mobileButtonWidth: 'initial',
-                  colorStyle: 'transparent',
-                }}
-              />
-            )}
-          </>
-        )}
-      </HeadingContainer>
-      <RecordItem type="text" data-testid="resolver-address" value={resolverAddress || ''} />
-    </Container>
+    <Skeleton loading={isResolverTypeLoading} style={{ width: '100%', borderRadius: '16px' }}>
+      <Container $isCached={isCachedData}>
+        <HeadingContainer>
+          <InnerHeading>
+            <Typography color="text" fontVariant="headingFour" weight="bold">
+              {t('tabs.more.resolver.label')}
+            </Typography>
+            <TagsContainer>
+              <Tag colorStyle={tone!}>{t(`tabs.more.resolver.${resolverType}`)}</Tag>
+              {isWildcard && (
+                <Tag colorStyle="greySecondary">{t('tabs.more.resolver.wildcard')}</Tag>
+              )}
+            </TagsContainer>
+          </InnerHeading>
+          {canEdit && !hasGlobalError && (
+            <>
+              {canEditResolver ? (
+                <button
+                  style={{ cursor: 'pointer' }}
+                  type="button"
+                  onClick={handleEditClick}
+                  data-testid="edit-resolver-button"
+                >
+                  {t('action.edit', { ns: 'common' })}
+                </button>
+              ) : (
+                <DisabledButtonWithTooltip
+                  {...{
+                    buttonId: 'set-resolver-disabled-button',
+                    content: t(`errors.permissionRevoked`),
+                    buttonText: 'Edit',
+                    mobileWidth: 150,
+                    buttonWidth: '15',
+                    mobileButtonWidth: 'initial',
+                    colorStyle: 'transparent',
+                  }}
+                />
+              )}
+            </>
+          )}
+        </HeadingContainer>
+        <RecordItem type="text" data-testid="resolver-address" value={resolverAddress || ''} />
+      </Container>
+    </Skeleton>
   )
 }
 

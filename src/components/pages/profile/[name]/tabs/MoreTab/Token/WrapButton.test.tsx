@@ -2,18 +2,15 @@ import { mockFunction, render, screen } from '@app/test-utils'
 
 import { useAccount } from 'wagmi'
 
-import { useChainId } from '@app/hooks/useChainId'
 import useWrapperApprovedForAll from '@app/hooks/useWrapperApprovedForAll'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import WrapButton from './WrapButton'
 
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
-jest.mock('@app/hooks/useChainId')
 jest.mock('@app/hooks/useWrapperApprovedForAll')
 
 const mockUseTransaction = mockFunction(useTransactionFlow)
-const mockUseChainId = mockFunction(useChainId)
 const mockUseAccount = mockFunction(useAccount)
 const mockUseWrapperApprovedForAll = mockFunction(useWrapperApprovedForAll)
 
@@ -30,7 +27,6 @@ describe('WrapButton', () => {
     getResumable: mockGetResumable,
     prepareDataInput: mockPrepareDataInput,
   })
-  mockUseChainId.mockReturnValue(1)
   mockUseAccount.mockReturnValue({ address: '0x123' })
   mockUseWrapperApprovedForAll.mockReturnValue({
     approvedForAll: true,
@@ -358,5 +354,19 @@ describe('WrapButton', () => {
     expect(transactions[1].data).toEqual({
       name: '[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
     })
+  })
+
+  it('should call useWrapperApprovedForAll with the correct canBeWrapped state', async () => {
+    render(
+      <WrapButton
+        name="sub.test123.eth"
+        canBeWrapped
+        ownerData={{ owner: '0x123', ownershipLevel: 'registrar', registrant: '0x123' } as any}
+        profile={{ resolverAddress: '0x456' } as any}
+      />,
+    )
+    expect(
+      mockUseWrapperApprovedForAll.mock.calls[mockUseWrapperApprovedForAll.mock.calls.length - 1],
+    ).toEqual(['0x123', true, true])
   })
 })
