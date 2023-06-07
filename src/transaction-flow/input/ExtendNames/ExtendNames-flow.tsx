@@ -7,7 +7,7 @@ import { useAccount, useBalance } from 'wagmi'
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
-import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
+import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
@@ -230,10 +230,11 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
 
   const transactionFee = gasPrice ? gasLimit.mul(gasPrice) : BigNumber.from('0')
 
-  const items = [
+  const items: InvoiceItem[] = [
     {
       label: t('input.extendNames.invoice.extension', { count: years }),
       value: totalRentFee,
+      bufferPercentage: 102,
     },
     {
       label: t('input.extendNames.invoice.transaction'),
