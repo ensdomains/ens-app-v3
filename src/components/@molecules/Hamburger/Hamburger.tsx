@@ -6,7 +6,7 @@ import { CrossSVG, Dialog, DynamicPopover, MenuSVG, Modal, Spinner, mq } from '@
 
 import { useInitial } from '@app/hooks/useInitial'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useGraphOutOfSync } from '@app/utils/SyncProvider'
+import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 
 import LanguageMenu from './LanguageMenu'
 import MainMenu from './MainMenu'

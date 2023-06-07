@@ -104,6 +104,9 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       draft.selectedKey = null
       break
     }
+    case 'setFailedTransaction': {
+      break
+    }
     case 'incrementTransaction': {
       getSelectedItem().currentTransaction += 1
       break

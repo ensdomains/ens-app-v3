@@ -5,7 +5,7 @@ import { act } from '@testing-library/react'
 import type { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useChainName } from '@app/hooks/useChainName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider'
+import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 
 import { Notifications } from './Notifications'
 

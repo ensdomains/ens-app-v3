@@ -10,7 +10,7 @@ import React, {
 
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider'
+import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 
 import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
 import { DataInputComponent, DataInputComponents } from './input'
@@ -174,6 +174,8 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
           key,
           payload: flow,
         })) as CreateTransactionFlow,
+      dispatch,
+      test: (arg) => dispatch(arg),
       resumeTransactionFlow,
       getTransactionIndex,
       getTransaction,

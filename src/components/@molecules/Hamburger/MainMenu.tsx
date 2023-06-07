@@ -24,7 +24,7 @@ import { SocialIcon } from '@app/components/SocialIcon'
 import { useChainName } from '@app/hooks/useChainName'
 import useGasPrice from '@app/hooks/useGasPrice'
 import { routes } from '@app/routes'
-import { useGraphOutOfSync } from '@app/utils/SyncProvider'
+import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 import { makeDisplay } from '@app/utils/currency'
 import useUserConfig from '@app/utils/useUserConfig'
 
