@@ -326,11 +326,14 @@ export const TransactionStageModal = ({
         transaction.data,
       )
 
-      const gasLimit = await signer!.estimateGas({
+      let gasLimit = await signer!.estimateGas({
         ...populatedTransaction,
         maxFeePerGas: 0,
         maxPriorityFeePerGas: 0,
       })
+
+      // this addition is arbitrary, something to do with a gas refund but not 100% sure
+      if (transaction.name === 'registerName') gasLimit = gasLimit.add(2000)
 
       return {
         ...populatedTransaction,
