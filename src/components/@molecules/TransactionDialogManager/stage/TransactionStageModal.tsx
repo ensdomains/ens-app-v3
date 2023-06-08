@@ -333,7 +333,7 @@ export const TransactionStageModal = ({
       })
 
       // this addition is arbitrary, something to do with a gas refund but not 100% sure
-      if (transaction.name === 'registerName') gasLimit = gasLimit.add(2000)
+      if (transaction.name === 'registerName') gasLimit = gasLimit.add(5000)
 
       return {
         ...populatedTransaction,
