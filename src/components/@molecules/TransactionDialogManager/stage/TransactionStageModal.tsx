@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { toUtf8String } from '@ethersproject/strings'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
@@ -28,8 +27,6 @@ import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
-
-const COMMIT_GAS_COST = 45000
 
 const BarContainer = styled.div(
   ({ theme }) => css`
@@ -329,11 +326,11 @@ export const TransactionStageModal = ({
         transaction.data,
       )
 
-      let gasLimit = await signer!.estimateGas(populatedTransaction)
-
-      if (transaction.name === 'registerName') {
-        gasLimit = gasLimit.add(BigNumber.from(COMMIT_GAS_COST))
-      }
+      const gasLimit = await signer!.estimateGas({
+        ...populatedTransaction,
+        maxFeePerGas: 0,
+        maxPriorityFeePerGas: 0,
+      })
 
       return {
         ...populatedTransaction,
