@@ -32,7 +32,9 @@ const displayItems = (
 ]
 
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const resolverAddress = data?.latestResolver ? await ens.getPublicResolver() : undefined
+  const resolverAddress = data?.latestResolver
+    ? (await ens.contracts!.getPublicResolver()).address
+    : undefined
   return ens.setRecord.populateTransaction(data.name, {
     signer,
     record: { key: 'ETH', value: data.address },
