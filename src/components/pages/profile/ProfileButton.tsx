@@ -177,10 +177,8 @@ export const OwnerProfileButton = ({
     return isTLD ? 'tld' : 'name'
   }, [addressOrNameOrDate, label])
 
-  const { data: { name: primary, beautifiedName } = {} } = usePrimary(
-    addressOrNameOrDate,
-    dataType !== 'address',
-  )
+  const { data: primaryData } = usePrimary(addressOrNameOrDate, dataType !== 'address')
+  const { name: primary, beautifiedName } = primaryData || {}
 
   const recordItemPartialProps = useMemo(() => {
     const base = {

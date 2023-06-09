@@ -411,9 +411,39 @@ describe('useProfileActions', () => {
       expect(mockCreateTransactionFlow.mock.calls[0][1].transactions.length).toBe(2)
     })
 
+    it('should return an action with 2 transaction steps if profile address does not match user address and resolver is not authorized but the latest resolver has eth record', () => {
+      mockUseResolverStatus.mockReturnValueOnce({
+        data: { isAuthorized: false, hasMigratedRecord: true },
+        isLoading: false,
+      })
+      const { result } = renderHook(() =>
+        useProfileActions({
+          ...props,
+          profile: {
+            ...props.profile,
+            address: '0xotheraddress',
+          },
+          selfAbilities: {
+            ...props.selfAbilites,
+            canEdit: true,
+          },
+          ownerData: {
+            ...props.ownerData,
+            ownershipLevel: 'nameWrapper',
+          },
+        }),
+      )
+      const setPrimaryAction = result.current.profileActions?.find(
+        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
+      )
+      setPrimaryAction?.onClick()
+      expect(mockCreateTransactionFlow).toHaveBeenCalled()
+      expect(mockCreateTransactionFlow.mock.calls[0][1].transactions.length).toBe(2)
+    })
+
     it('should return an action with 3 transaction steps if profile address does not match user address and resolver is not authorized', () => {
       mockUseResolverStatus.mockReturnValueOnce({
-        data: { isAuthorized: false },
+        data: { isAuthorized: false, hasMigratedRecord: false },
         isLoading: false,
       })
       const { result } = renderHook(() =>

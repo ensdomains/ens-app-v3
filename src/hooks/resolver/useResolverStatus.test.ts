@@ -2,8 +2,9 @@ import { mockFunction, renderHook } from '@app/test-utils'
 
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useContractAddress } from '@app/hooks/useContractAddress'
-import { ReturnedENS } from '@app/types/index'
+import { RecordItem, ReturnedENS } from '@app/types/index'
 import { NAMEWRAPPER_AWARE_RESOLVERS } from '@app/utils/constants'
+import { makeEthRecordItem, mergeRecords } from '@app/utils/records'
 
 const makeProfile = ({
   texts: _texts,
@@ -13,7 +14,7 @@ const makeProfile = ({
   resolverAddress: _resolverAddress,
 }: {
   texts?: { key: string; value: string }[]
-  coinTypes?: { coin: string; addr: string }[]
+  coinTypes?: { key: string; coin: string; addr: string }[]
   contentHash?: { protocolType: string; decoded: string }
   abi?: { contentType: number; data: string }
   resolverAddress?: string
@@ -24,12 +25,10 @@ const makeProfile = ({
       [key]: value,
     })),
   ).map(([key, value]) => ({ key, value, type: 'text' }))
-  const coinTypes = Object.entries(
-    [{ coin: 'ETH', addr: '0x123' }, ...(_coinTypes || [])].reduce((acc, { coin, addr }) => ({
-      ...acc,
-      [coin]: addr,
-    })),
-  ).map(([coin, addr]) => ({ coin, addr, type: 'addr' }))
+  const coinTypes = mergeRecords(
+    [makeEthRecordItem('0x123')],
+    _coinTypes as unknown as RecordItem[],
+  )
   const contentHash = _contentHash || { protocolType: 'ipfs', decoded: '0x123' }
   const abi = _abi || { contentType: 1, data: '[{}]' }
   const resolverAddress = _resolverAddress ?? NAMEWRAPPER_AWARE_RESOLVERS['1'][0]
@@ -225,6 +224,63 @@ describe('useResolverStatus', () => {
       loading: false,
     })
     const { result } = renderHook(() => useResolverStatus('test.eth'))
+    expect(result.current).toMatchObject(
+      makeResult([
+        'hasProfile',
+        'hasResolver',
+        'hasValidResolver',
+        'isAuthorized',
+        'hasMigratedProfile',
+        'isNameWrapperAware',
+      ]),
+    )
+    expect(mockBasicName).toHaveBeenCalled()
+    expect(mockUseProfile).toHaveBeenCalled()
+    expect(mockUseResolverType).toHaveBeenCalled()
+    expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
+    expect(mockUseLatestResolverProfile).toHaveBeenCalled()
+  })
+
+  it('should return hasMigratedRecord is true if migratedRecordsMatch matches on latest resolver profile', () => {
+    mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
+    mockUseLatestResolverProfile.mockReturnValueOnce({
+      profile: makeProfile({ coinTypes: [{ key: '60', coin: 'ETH', addr: '0xotheraddress' }] }),
+      loading: false,
+    })
+    const { result } = renderHook(() =>
+      useResolverStatus('test.eth', {
+        migratedRecordsMatch: { key: '60', type: 'addr', addr: '0xotheraddress' },
+      }),
+    )
+    expect(result.current).toMatchObject(
+      makeResult([
+        'hasProfile',
+        'hasResolver',
+        'hasValidResolver',
+        'isAuthorized',
+        'hasMigratedProfile',
+        'isNameWrapperAware',
+        'hasMigratedRecord',
+      ]),
+    )
+    expect(mockBasicName).toHaveBeenCalled()
+    expect(mockUseProfile).toHaveBeenCalled()
+    expect(mockUseResolverType).toHaveBeenCalled()
+    expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
+    expect(mockUseLatestResolverProfile).toHaveBeenCalled()
+  })
+
+  it('should return hasMigratedRecord is false if migratedRecordsMatch does not match on latest resolver profile', () => {
+    mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
+    mockUseLatestResolverProfile.mockReturnValueOnce({
+      profile: makeProfile({ coinTypes: [{ key: '60', coin: 'ETH', addr: '0xothermatch' }] }),
+      loading: false,
+    })
+    const { result } = renderHook(() =>
+      useResolverStatus('test.eth', {
+        migratedRecordsMatch: { key: '60', type: 'addr', addr: '0xotheraddress' },
+      }),
+    )
     expect(result.current).toMatchObject(
       makeResult([
         'hasProfile',

@@ -126,6 +126,58 @@ describe('Set Primary Name from profile page', () => {
       cy.findByTestId('profile-title').should('contain.text', 'sub.wrapped.eth')
     })
 
+    it('should skip setting eth record if user is manager of name and resolver is not authorized if eth record is set on latest resolver', () => {
+       // Set profile record to user address
+       cy.visit('/legacy.wrapped.eth')
+       connectFromExisting()
+       cy.findByTestId('profile-action-Edit profile').click()
+       cy.findByTestId('show-add-profile-records-modal-button').click()
+       cy.findByTestId('profile-record-option-ETH').click()
+       cy.findByTestId('add-profile-records-button').click()
+       cy.findByTestId('profile-record-input-input-ETH').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
+       cy.findByTestId('profile-submit-button').should('be.enabled').click()
+       cy.findByTestId('transaction-modal-confirm-button').click()
+       cy.confirmMetamaskTransaction()
+       cy.findByTestId('transaction-modal-complete-button').click()
+       cy.wait(10000)
+
+        // Set resolver to unauthorized resolver
+      cy.findByTestId('more-tab').click()
+      cy.findByTestId('edit-resolver-button').click()
+      cy.findByTestId('custom-resolver-radio').click()
+      cy.findByTestId('dogfood').type('0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB')
+      cy.findByTestId('update-button').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
+      // Assert state
+      cy.findByTestId('profile-tab').click()
+      cy.findByTestId('owner-profile-button-name.manager').should('have.text', 'managerother-controller.eth')
+      cy.findByTestId('address-profile-button-eth').should('not.exist')
+
+      cy.findByText('Set as primary name').click()
+
+      // Intro modal
+      cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
+
+       // Update resolver
+       cy.findByTestId('transaction-modal-confirm-button').click()
+       cy.confirmMetamaskTransaction()
+       cy.findByTestId('transaction-modal-complete-button').click()
+
+      // Set Primary Name modal
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+
+      cy.wait(10000)
+
+      // Assertion
+      cy.findByTestId('profile-title').should('contain.text', 'legacy.wrapped.eth')
+    })
+
     it('should not show set primary name button for a wrapped name that has CSR burned, is not a resolved address, and an unauthorized resolver', () => {
       cy.clearLocalStorage()
       acceptMetamaskAccess(2)

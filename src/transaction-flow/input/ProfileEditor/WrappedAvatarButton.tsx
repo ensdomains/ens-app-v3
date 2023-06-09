@@ -1,9 +1,9 @@
 import { ComponentProps } from 'react'
 import { Control, useFormState } from 'react-hook-form'
-import { useChainId } from 'wagmi'
 
 import AvatarButton from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { useAvatar } from '@app/hooks/useAvatar'
+import { useChainId } from '@app/hooks/useChainId'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
 type Props = {

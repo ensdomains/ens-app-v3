@@ -185,6 +185,7 @@
       "setPrimaryName": "Set primary name",
       "resetPrimaryName": "Remove primary name",
       "updateEthAddress": "Update ETH address",
+      "updateEthAddressOnLatestResolver": "Update ETH address on latest resolver",
       "testSendName": "Send name",
       "burnFuses": "Burn permissions",
       "createSubname": "Create subname",

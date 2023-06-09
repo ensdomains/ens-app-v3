@@ -11,11 +11,7 @@ export const usePrimary = (address: string, skip?: any) => {
     useQueryKeys().primary(address),
     async () => {
       const res = await getName(address)
-      if (!res || !res.name || !res.match)
-        return {
-          name: null,
-          beautifiedName: null,
-        }
+      if (!res || !res.name || !res.match) return null
       return {
         ...res,
         name: res.name as string | undefined,

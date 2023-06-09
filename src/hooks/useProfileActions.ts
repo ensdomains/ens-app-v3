@@ -60,11 +60,11 @@ export const useProfileActions = ({
   const { data: resolverStatus, isLoading: isResolverStatusLoading } = useResolverStatus(name, {
     isWrapped: true,
     profile,
-    skipCompare: true,
+    migratedRecordsMatch: address ? { key: '60', type: 'addr', addr: address } : undefined,
   })
-  const canSetPrimaryName = !!resolverStatus?.isAuthorized
 
-  const { data: { name: primaryName } = {}, isLoading: primaryLoading } = usePrimary(address || '')
+  const { data: primaryData, isLoading: primaryLoading } = usePrimary(address || '')
+  const { name: primaryName } = primaryData || {}
 
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
 
@@ -102,7 +102,7 @@ export const useProfileActions = ({
           address: address!,
         }),
       ]
-      if (profile?.address !== address && canSetPrimaryName) {
+      if (profile?.address !== address && resolverStatus?.isAuthorized) {
         setAsPrimaryTransactions.unshift(
           makeTransactionItem('updateEthAddress', {
             address: address!,
@@ -110,19 +110,23 @@ export const useProfileActions = ({
           }),
         )
       }
-      if (profile?.address !== address && !canSetPrimaryName) {
+      if (profile?.address !== address && !resolverStatus?.isAuthorized) {
         setAsPrimaryTransactions.unshift(
-          makeTransactionItem('migrateProfileWithEthAddress', {
-            name,
-            ethAddress: address!,
-            resolverAddress: profile?.resolverAddress,
-          }),
           makeTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolver: latestResolverAddress,
           }),
         )
+        if (!resolverStatus?.hasMigratedRecord) {
+          setAsPrimaryTransactions.unshift(
+            makeTransactionItem('updateEthAddress', {
+              name,
+              address: address!,
+              latestResolver: true,
+            }),
+          )
+        }
       }
       const transactionFlowItem: TransactionFlowItem = {
         transactions: setAsPrimaryTransactions,
@@ -247,7 +251,8 @@ export const useProfileActions = ({
     subnameAbilities.canReclaim,
     isWrapped,
     latestResolverAddress,
-    canSetPrimaryName,
+    resolverStatus?.isAuthorized,
+    resolverStatus?.isMigratedProfileEqual,
     t,
     showUnknownLabelsInput,
     createTransactionFlow,

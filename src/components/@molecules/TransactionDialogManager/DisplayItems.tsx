@@ -127,7 +127,7 @@ const AddressValue = ({ value }: { value: string }) => {
       <AvatarWrapper>
         <AvatarWithZorb
           address={value}
-          name={primary?.name}
+          name={primary?.name || undefined}
           label={`${value}-avatar`}
           network={network}
         />

@@ -176,7 +176,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const { handleSubmit, control, setValue } = form
 
   const chainId = useChainId()
-  const lastestResolverAddress = useContractAddress('PublicResolver')
+  const latestResolverAddress = useContractAddress('PublicResolver')
 
   const { ready: isEnsReady, getDecryptedName } = useEns()
 
@@ -218,6 +218,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     {
       enabled: !!selectedName && !isBasicNameLoading,
       isWrapped,
+      migratedRecordsMatch: { key: '60', type: 'addr', addr: address },
     },
   )
 
@@ -255,15 +256,19 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
               }),
             },
             transactions: [
-              makeTransactionItem('migrateProfileWithEthAddress', {
-                name,
-                ethAddress: address,
-                resolverAddress: lastestResolverAddress,
-              }),
+              ...(!resolverStatus?.hasMigratedRecord
+                ? [
+                    makeTransactionItem('updateEthAddress', {
+                      name,
+                      address,
+                      latestResolver: true,
+                    }),
+                  ]
+                : []),
               makeTransactionItem('updateResolver', {
                 name,
                 contract: isWrapped ? 'nameWrapper' : 'registry',
-                resolver: lastestResolverAddress,
+                resolver: latestResolverAddress,
               }),
               makeTransactionItem('setPrimaryName', {
                 address,
@@ -298,7 +303,15 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
         },
       })
     },
-    [address, resolverStatus?.isAuthorized, dispatch, t, isWrapped, lastestResolverAddress],
+    [
+      address,
+      resolverStatus?.isAuthorized,
+      resolverStatus?.hasMigratedRecord,
+      dispatch,
+      t,
+      isWrapped,
+      latestResolverAddress,
+    ],
   )
 
   // Checks if name has encrptyed labels and attempts decrypt them if they exist

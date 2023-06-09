@@ -125,7 +125,8 @@ const OwnerDetailContainer = styled.div(
 
 const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
   const { t } = useTranslation('common')
-  const { data: { name: primary, beautifiedName } = {} } = usePrimary(address)
+  const { data: primaryData } = usePrimary(address)
+  const { name: primary, beautifiedName } = primaryData || {}
   const network = useChainId()
 
   return (

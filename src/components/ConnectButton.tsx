@@ -128,7 +128,8 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
 const HeaderProfile = ({ address }: { address: string }) => {
   const { t } = useTranslation('common')
 
-  const { data: { name, beautifiedName } = {} } = usePrimary(address!, !address)
+  const { data: primaryData } = usePrimary(address!, !address)
+  const { name, beautifiedName } = primaryData || {}
   const chainId = useChainId()
   const { avatar } = useAvatar(name || undefined, chainId)
   const zorb = useZorb(address, 'address')

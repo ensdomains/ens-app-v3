@@ -1,8 +1,9 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
+import { getABISafely, normaliseABI } from '@app/hooks/useGetABI'
 import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
-import { contentHashToString } from '@app/utils/contenthash'
+import { makeProfileRecordsWithEthRecordItem, profileRecordsToKeyValue } from '@app/utils/records'
 
 type Data = {
   name: string
@@ -17,7 +18,7 @@ const displayItems = (
   {
     label: 'name',
     value: name,
-    type: 'name'
+    type: 'name',
   },
   {
     label: 'action',
@@ -35,25 +36,12 @@ const transaction = async (
   { name, ethAddress, resolverAddress }: Data,
 ) => {
   const profile = await ens.getProfile(name, resolverAddress ? { resolverAddress } : undefined)
+  const abiData = await getABISafely(ens.getABI)(name)
+  const abi = normaliseABI(abiData)
   const latestResolverAddress = (await ens.contracts!.getPublicResolver()!).address
 
-  const contentHashString = contentHashToString(profile?.records?.contentHash)
-  const records = {
-    contentHash: contentHashString || undefined,
-    texts: profile?.records?.texts as { key: string; value: string }[] | undefined,
-    coinTypes: [
-      ...(profile?.records?.coinTypes || [])
-        .filter((coinType) => coinType.key !== 'ETH')
-        .map((coinType) => ({
-          key: coinType.key as string,
-          value: (coinType as any).addr as string,
-        })),
-      {
-        key: 'ETH',
-        value: ethAddress,
-      },
-    ],
-  }
+  const profileRecords = makeProfileRecordsWithEthRecordItem(profile?.records, ethAddress)
+  const records = profileRecordsToKeyValue(profileRecords, abi)
 
   return ens.setRecords.populateTransaction(name, {
     records,

@@ -32,10 +32,11 @@ export const useAvailablePrimaryNamesForAddress = ({
   search?: string
 }) => {
   const {
-    data: { name: primaryName } = {},
+    data: primaryData,
     isLoading: isPrimaryLoading,
     isFetching: isPrimaryFetching,
   } = usePrimary(address!, !!address)
+  const { name: primaryName } = primaryData || {}
 
   const {
     data: ownedOrManagedNamesData,

@@ -123,6 +123,62 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('primary-name-label').should('contain.text', 'sub.wrapped.eth')
     })
 
+    it('should skip set eth record step when setting a name where the user is manager and whose resolved address is not the same as the user and the resolver is unauthorized if the latest resolver already has the eth record set to user address', () => {
+      // Set profile record to user address
+      cy.visit('/legacy.wrapped.eth')
+      connectFromExisting()
+      cy.findByTestId('profile-action-Edit profile').click()
+      cy.findByTestId('show-add-profile-records-modal-button').click()
+      cy.findByTestId('profile-record-option-ETH').click()
+      cy.findByTestId('add-profile-records-button').click()
+      cy.findByTestId('profile-record-input-input-ETH').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
+      cy.findByTestId('profile-submit-button').should('be.enabled').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
+       // Set resolver to unauthorized resolver
+       cy.visit('/legacy.wrapped.eth?tab=more')
+       cy.findByTestId('edit-resolver-button').click()
+       cy.findByTestId('custom-resolver-radio').click()
+       cy.findByTestId('dogfood').type('0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB')
+       cy.findByTestId('update-button').click()
+       cy.findByTestId('transaction-modal-confirm-button').click()
+       cy.confirmMetamaskTransaction()
+       cy.findByTestId('transaction-modal-complete-button').click()
+       cy.wait(10000)
+ 
+       // Set primary name
+       cy.visit('/my/settings')
+ 
+       cy.findByTestId('change-primary-name-button').click()
+       cy.findByTestId('name-item-legacy.wrapped.eth')
+         .within(() => {
+           cy.findByTestId('tag-name.manager-true').should('be.visible')
+         })
+         .click()
+       cy.findByTestId('primary-next').click()
+ 
+       // Intro modal
+       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
+ 
+       // Update resolver
+       cy.findByTestId('transaction-modal-confirm-button').click()
+       cy.confirmMetamaskTransaction()
+       cy.findByTestId('transaction-modal-complete-button').click()
+ 
+       // Set Primary Name modal
+       cy.findByTestId('transaction-modal-confirm-button').click()
+       cy.confirmMetamaskTransaction()
+       cy.findByTestId('transaction-modal-complete-button').click()
+ 
+       cy.wait(10000)
+ 
+       // Assertion
+       cy.findByTestId('primary-name-label').should('contain.text', 'sub.wrapped.eth')
+    })
+
     it('should not show current primary name in list', () => {
       cy.visit('/my/settings')
       cy.findByTestId('change-primary-name-button').click()

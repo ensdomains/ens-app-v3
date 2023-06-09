@@ -5,54 +5,24 @@ import { useResolverType } from '@app/hooks/resolver/useResolverType'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useProfile } from '@app/hooks/useProfile'
-import { Profile, ReturnedENS } from '@app/types'
+import { ReturnedENS } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
-import { contentHashToString } from '@app/utils/contenthash'
 import { profileHasRecords } from '@app/utils/profile'
+import {
+  RecordMatch,
+  checkProfileRecordsContains,
+  checkProfileRecordsEqual,
+} from '@app/utils/records'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
 import { useBasicName } from '../useBasicName'
-
-const areRecordsEqual = (a: Profile['records'], b: Profile['records']): boolean => {
-  const areTextsEqual = Object.values(
-    [...(a?.texts || []), ...(b?.texts || [])].reduce<{
-      [key: string]: number
-    }>((acc, text) => {
-      const key = `${text.key}-${text.value}`
-      if (acc[key]) acc[key] += 1
-      else acc[key] = 1
-      return acc
-    }, {}),
-  ).every((count) => count === 2)
-  if (!areTextsEqual) return false
-
-  const areCoinTypesEqual = Object.values(
-    [...(a?.coinTypes || []), ...(b?.coinTypes || [])].reduce<{
-      [key: string]: number
-    }>((acc, coinType) => {
-      const key = `${coinType.coin}-${(coinType as any).addr}`
-      if (acc[key]) acc[key] += 1
-      else acc[key] = 1
-      return acc
-    }, {}),
-  ).every((count) => count === 2)
-  if (!areCoinTypesEqual) return false
-
-  const isContentHashEqual = (() => {
-    const contentHashA = contentHashToString(a?.contentHash)
-    const contentHashB = contentHashToString(b?.contentHash)
-    return contentHashA === contentHashB
-  })()
-
-  if (!isContentHashEqual) return false
-  return true
-}
 
 type Options = {
   enabled?: boolean
   isWrapped?: boolean
   profile?: ReturnedENS['getProfile']
   skipCompare?: boolean
+  migratedRecordsMatch?: RecordMatch
 }
 
 export const useResolverStatus = (name: string, options: Options = {}) => {
@@ -130,6 +100,7 @@ export const useResolverStatus = (name: string, options: Options = {}) => {
       hasProfile: false,
       hasMigratedProfile: false,
       isMigratedProfileEqual: false,
+      hasMigratedRecord: undefined,
     }
 
     // If the profile doesn't have a resolver, we don't need to continue checks
@@ -163,11 +134,15 @@ export const useResolverStatus = (name: string, options: Options = {}) => {
 
     const resolverRecords = latestResolverProfile?.records || {}
     const hasMigratedProfile = profileHasRecords(latestResolverProfile)
+    const hasMigratedRecord = options?.migratedRecordsMatch
+      ? checkProfileRecordsContains(resolverRecords, options.migratedRecordsMatch)
+      : undefined
 
     return {
       ...authorizedResults,
       hasMigratedProfile,
-      isMigratedProfileEqual: areRecordsEqual(profile?.records, resolverRecords),
+      isMigratedProfileEqual: checkProfileRecordsEqual(profile?.records, resolverRecords),
+      hasMigratedRecord,
     }
   }, [
     chainId,
@@ -175,6 +150,7 @@ export const useResolverStatus = (name: string, options: Options = {}) => {
     authData?.isValid,
     latestResolverProfile,
     options?.skipCompare,
+    options?.migratedRecordsMatch,
     profile,
     profileResolverAddress,
     typeData?.type,

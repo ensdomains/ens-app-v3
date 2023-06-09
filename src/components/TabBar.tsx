@@ -219,7 +219,8 @@ export const TabBar = () => {
   const router = useRouter()
 
   const { address } = useAccountSafely()
-  const { data: { name } = {} } = usePrimary(address!, !!address)
+  const { data: primaryData } = usePrimary(address!, !!address)
+  const { name } = primaryData || {}
 
   const hasPrimary = !!name
   const hasBack = !!router.query.from

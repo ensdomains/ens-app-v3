@@ -9,10 +9,11 @@ export const usePrimaryProfile = (address: string, skip?: any) => {
   const [profile, setProfile] = useState<Profile | undefined>(undefined)
 
   const {
-    data: { name: primaryName } = {},
+    data: primaryData,
     isLoading: primaryLoading,
     status: primaryStatus,
   } = usePrimary(address || '', skip)
+  const { name: primaryName } = primaryData || {}
 
   const {
     profile: primaryProfile,
