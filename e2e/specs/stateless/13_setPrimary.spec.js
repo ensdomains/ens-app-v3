@@ -158,6 +158,7 @@ describe('Set Primary Name from profile page', () => {
       cy.findByTestId('address-profile-button-eth').should('not.exist')
 
       cy.findByText('Set as primary name').click()
+      cy.wait(10000)
 
       // Intro modal
       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
