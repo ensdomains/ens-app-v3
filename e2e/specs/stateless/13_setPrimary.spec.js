@@ -153,7 +153,7 @@ describe('Set Primary Name from profile page', () => {
       cy.wait(10000)
 
       // Assert state
-      cy.findByTestId('profile-tab').click()
+      cy.visit('/legacy.wrapped.eth')
       cy.findByTestId('owner-profile-button-name.manager').should('have.text', 'managersub.wrapped.eth')
       cy.findByTestId('address-profile-button-eth').should('not.exist')
 
