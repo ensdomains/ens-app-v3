@@ -9,7 +9,7 @@ import { MinedData } from '@app/types'
 
 const storageKey = 'transaction-data'
 
-type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'repriced'
+type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'repriced' | 'searching' | 'unknown'
 
 interface BaseTransaction {
   hash: string
@@ -106,7 +106,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
 
     updateTransactions(account, chainId, (transactions) => {
       return [
-        { ...transaction, status: 'pending' },
+        { ...transaction, status: 'searching' },
         ...transactions.filter(({ hash }) => {
           // Omit any duplicate transactions
           return hash !== transaction.hash
@@ -118,6 +118,24 @@ export function createTransactionStore({ provider: initialProvider }: { provider
   function clearTransactions(account: string, chainId: number): void {
     updateTransactions(account, chainId, () => {
       return []
+    })
+  }
+
+  function updateTransactionStatus(
+    account: string,
+    chainId: number,
+    hash: string,
+    status: 'pending' | 'unknown',
+  ): void {
+    updateTransactions(account, chainId, (transactions) => {
+      return transactions.map((transaction) =>
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              status,
+            } as Transaction)
+          : transaction,
+      )
     })
   }
 
@@ -282,6 +300,8 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     onChange,
     setProvider,
     waitForPendingTransactions,
+    setTransactionStatus,
+    updateTransactionStatus,
   }
 }
 

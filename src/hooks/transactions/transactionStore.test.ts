@@ -99,4 +99,5 @@ describe('transactionStore', () => {
       minedData: { status: 0, hash: cancelledHash, blockHash: 'blockHash', timestamp: 1000 },
     })
   })
+  it.todo("should update a transaction's status correctly")
 })

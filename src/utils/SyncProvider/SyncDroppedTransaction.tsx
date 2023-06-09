@@ -1,8 +1,10 @@
 import { useEffect, useRef } from 'react'
 import { useProvider } from 'wagmi'
 
+import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
+import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 function useInterval(callback: () => void, delay: number | null, dependency: any) {
@@ -24,37 +26,45 @@ function useInterval(callback: () => void, delay: number | null, dependency: any
   }, [delay, dependency])
 }
 
+const checkForReplacementTransaction = async (provider, address, pendingTransaction) => {
+  const etherscanEndpoint = `https://api.etherscan.io/api?module=account&action=txlist&address=0x5C7b61a99D922e9a4451Ed62EBbBEdBF1627aB47&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
+  const etherscanResponse = await fetch(etherscanEndpoint)
+  const etherscanJson = await etherscanResponse.json()
+  const accountTransactionHistory = etherscanJson?.result
+  const currentNonce = await provider.getTransactionCount(address)
+
+  // Just mark the transaction as failed if we can't get the couunt history for some reason
+  if (!accountTransactionHistory) return false
+  console.log('accountTransactionHistory: ', accountTransactionHistory)
+
+  // Filter by from address
+  const filteredTransactionHistory = etherscanJson.result.filter((tx: any) => {
+    return tx.from === address?.toLowerCase()
+  })
+  const latestTransaction = filteredTransactionHistory[0]
+  const lastNonceFromHistory = latestTransaction.nonce
+
+  console.log('latestTransaction: ', latestTransaction)
+
+  // const pendingTransactionDetails = await provider.getTransaction(pendingTransaction.hash)
+
+  console.log('currentNonce: ', currentNonce)
+  console.log('lastNonceFromHistory: ', lastNonceFromHistory)
+  console.log('pendingTransaction: ', pendingTransaction)
+  // console.log('pendingTransactinDetails: ', pendingTransactionDetails)
+}
+
 export const SyncDroppedTransaction = ({ children }: { children: React.ReactNode }) => {
   const provider = useProvider()
   const { dispatch } = useTransactionFlow()
   const { address } = useAccountSafely()
   const transactions = useRecentTransactions()
+  const store = useTransactionStore()
+  const chainId = useChainId()
 
   useInterval(
     async () => {
       console.log('transactions: ', transactions)
-      const currentNonce = await provider.getTransactionCount(address)
-
-      const etherscanEndpoint = `https://api.etherscan.io/api?module=account&action=txlist&address=0x5C7b61a99D922e9a4451Ed62EBbBEdBF1627aB47&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
-      const etherscanResponse = await fetch(etherscanEndpoint)
-      const etherscanJson = await etherscanResponse.json()
-      const accountTransactionHistory = etherscanJson?.result
-
-      if (!accountTransactionHistory) return
-
-      console.log('accountTransactionHistory: ', accountTransactionHistory)
-
-      // Filter by from address
-      const filteredTransactionHistory = etherscanJson.result.filter((tx: any) => {
-        return tx.from === address?.toLowerCase()
-      })
-      console.log('filteredTransactionHistory: ', filteredTransactionHistory)
-
-      const latestTransaction = filteredTransactionHistory[0]
-      const lastNonceFromHistory = latestTransaction.nonce
-
-      console.log('currentNonce: ', currentNonce)
-      console.log('lastNonceFromHistory: ', lastNonceFromHistory)
 
       const pendingTransactions = transactions.filter(
         (transaction) => transaction.status === 'pending',
@@ -65,9 +75,22 @@ export const SyncDroppedTransaction = ({ children }: { children: React.ReactNode
         const getPendingTransactionEndpoint = `https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${pendingTransaction.hash}&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
         const pendingTransactionResponse = await fetch(getPendingTransactionEndpoint)
         const pendingJson = await pendingTransactionResponse.json()
+        console.log('pendingJson: ', pendingJson)
 
         if (!pendingJson.result) {
-          dispatch({ name: 'setTransactionStage', payload: 'failed' })
+          // Check to see if user's last transaction was a replacement for this one
+          if (pendingTransaction.status === 'pending') {
+            store.updateTransactionStatus(address, chainId, pendingTransaction.hash, 'failed')
+            // dispatch({
+            //   name: 'setFailedTransaction',
+            //   payload: pendingTransaction,
+            // })
+            return
+          }
+          // if not, we can assume that the transaction has failed
+          await checkForReplacementTransaction(provider, address, pendingTransaction)
+
+          // dispatch({ name: 'setFailedTransaction', payload: 'failed' })
           return
         }
 

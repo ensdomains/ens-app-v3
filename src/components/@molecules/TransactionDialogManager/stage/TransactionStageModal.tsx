@@ -360,6 +360,9 @@ export const TransactionStageModal = ({
     mode: 'prepared',
     request,
     onSuccess: (tx) => {
+      console.log('tx: ', tx)
+      console.log('transaction: ', transaction)
+      console.log('request: ', request)
       addRecentTransaction({
         hash: tx.hash,
         action: actionName,
