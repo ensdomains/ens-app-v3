@@ -154,7 +154,7 @@ describe('Set Primary Name from profile page', () => {
 
       // Assert state
       cy.findByTestId('profile-tab').click()
-      cy.findByTestId('owner-profile-button-name.manager').should('have.text', 'managerother-controller.eth')
+      cy.findByTestId('owner-profile-button-name.manager').should('have.text', 'managersub.wrapped.eth')
       cy.findByTestId('address-profile-button-eth').should('not.exist')
 
       cy.findByText('Set as primary name').click()
