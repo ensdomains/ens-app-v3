@@ -176,13 +176,13 @@ describe('Set Primary Name from settings', () => {
        cy.wait(10000)
  
        // Assertion
-       cy.findByTestId('primary-name-label').should('contain.text', 'sub.wrapped.eth')
+       cy.findByTestId('primary-name-label').should('contain.text', 'legacy.wrapped.eth')
     })
 
     it('should not show current primary name in list', () => {
       cy.visit('/my/settings')
       cy.findByTestId('change-primary-name-button').click()
-      cy.findByTestId('name-item-sub.wrapped.eth').should('not.exist')
+      cy.findByTestId('name-item-legacy.wrapped.eth').should('not.exist')
     })
 
     it('should allow resetting primary name', () => {

@@ -138,10 +138,6 @@ export const useResolverStatus = (name: string, options: Options = {}) => {
       ? checkProfileRecordsContains(resolverRecords, options.migratedRecordsMatch)
       : undefined
 
-    console.log('resolverRecords', resolverRecords)
-    console.log('hasMigratedProfile', options?.migratedRecordsMatch)
-    console.log('hasMigratedRecord', hasMigratedRecord)
-
     return {
       ...authorizedResults,
       hasMigratedProfile,
