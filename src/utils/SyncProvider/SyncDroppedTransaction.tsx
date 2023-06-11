@@ -95,9 +95,7 @@ export const SyncDroppedTransaction = ({ children }: { children: React.ReactNode
 
       for (const pendingTransaction of pendingTransactions) {
         console.log('pendingTransaction: ', pendingTransaction)
-        // const getPendingTransactionEndpoint = `https://api-goerli.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${pendingTransaction.hash}&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
-        // const pendingTransactionResponse = await fetch(getPendingTransactionEndpoint)
-        // const pendingJson = await pendingTransactionResponse.json()
+
         const currentNonce = await provider.getTransactionCount(address)
         console.log('currentNonce: ', currentNonce)
 
@@ -125,71 +123,22 @@ export const SyncDroppedTransaction = ({ children }: { children: React.ReactNode
               pendingTransaction.hash,
               matchingNonceTransaction,
             )
-            // If replacement then count the transaction as sucessful
           }
 
-          console.log('accountTransactionHistory: ', accountTransactionHistory)
-
-          // If Transaction got replaced, then mark that transaction as sucessful with updated data (nonce, hash, etc)
           // If the transaction was not replaced then it is a failed transaction
+          store.setFailedTransaction(address, chainId, pendingTransaction.hash)
         }
 
-        if (false && !pendingJson.result) {
-          // Check to see if user's last transaction was a replacement for this one
-          if (pendingTransaction.status === 'pending') {
-            // store.updateTransactionStatus(address, chainId, pendingTransaction.hash, 'failed')
-            // dispatch({
-            //   name: 'setFailedTransaction',
-            //   payload: pendingTransaction,
-            // })
-            return
-          }
-          // if not, we can assume that the transaction has failed
-          // await checkForReplacementTransaction(provider, address, pendingTransaction)
+        // If the transaction has not been cancelled or replaced, it may have been dropped
 
-          // dispatch({ name: 'setFailedTransaction', payload: 'failed' })
+        const getPendingTransactionEndpoint = `https://api-goerli.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${pendingTransaction.hash}&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
+        const pendingTransactionResponse = await fetch(getPendingTransactionEndpoint)
+        const pendingJson = await pendingTransactionResponse.json()
+
+        if (!pendingJson.result) {
+          // If a pending transaction is not found, it has been dropped
+          store.setFailedTransaction(address, chainId, pendingTransaction.hash)
           return
-        }
-
-        // console.log('pendingJson: ', pendingJson)
-      }
-
-      return
-
-      for (const transaction of transactions) {
-        if (transaction.status === 'pending') {
-          console.log('pending: ', transaction)
-
-          const getPendingTransactionEndpoint = `https://api-goerli.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${transaction.hash}&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
-          const pendingTransactionResponse = await fetch(getPendingTransactionEndpoint)
-          const pendingJson = await pendingTransactionResponse.json()
-          console.log('pendingJson: ', pendingJson)
-
-          const pendingTransactionNonce = pendingJson.result?.nonce
-
-          // const detailedTransaction = await provider.getTransaction(transaction.hash)
-
-          // If the nonce of the last transaction in history is equal to or greater than
-          // the current nonce of the pending transaction, then the pending transaction
-          // has already been mined.
-
-          const lastNonceFromHistory = filteredTransactionHistory[0].nonce
-
-          console.log('currentNonce: ', currentNonce)
-          console.log('lastNonceFromHistory: ', lastNonceFromHistory)
-          const pendingTransactionNonceDecimal = parseInt(pendingTransactionNonce, 16)
-
-          console.log('pendingTransactionNonce: ', pendingTransactionNonceDecimal)
-
-          if (currentNonce - lastNonceFromHistory > 1) {
-            console.log('transaction out of date')
-            // Next we need to determine if the replacement transaction was a replacement
-            // for this particular transaction or not
-          }
-
-          // If transaction is mined, update the status
-
-          // console.log('detailedTransaction: ', detailedTransaction)
         }
       }
     },

@@ -240,6 +240,19 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     })
   }
 
+  function setFailedTransaction(account: string, chainId: number, hash: string): void {
+    updateTransactions(account, chainId, (transactions) => {
+      return transactions.map((transaction) =>
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              status: 'failed',
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
+
   function setTransactionStatus(
     account: string,
     chainId: number,
@@ -406,6 +419,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     foundTransaction,
     updateRetries,
     setReplacedTransaction,
+    setFailedTransaction,
   }
 }
 
