@@ -2,9 +2,9 @@
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // this is taken from rainbowkit
+import { BigNumber } from '@ethersproject/bignumber'
 import type { BaseProvider, Block, TransactionReceipt } from '@ethersproject/providers'
 import { waitForTransaction } from '@wagmi/core'
-import { ethers } from 'hardhat'
 
 import { MinedData } from '@app/types'
 
@@ -99,6 +99,8 @@ function etherscanDataToMinedData(
 ): MinedData | EtherscanMinedData {
   return {
     ...etherscanMinedData,
+    effectiveGasPrice: BigNumber.from(etherscanMinedData.gasPrice),
+    cumulativeGasUsed: BigNumber.from(etherscanMinedData.cumulativeGasUsed),
     timestamp: parseInt(etherscanMinedData.timeStamp, 10),
   }
 }
