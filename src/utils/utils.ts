@@ -132,3 +132,5 @@ export const canEditRecordsWhenWrappedCalc = (
   if (!isWrapped) return true
   return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
 }
+
+export const hexToNumber = (hex: string) => parseInt(hex, 16)

@@ -4,6 +4,7 @@
 // this is taken from rainbowkit
 import type { BaseProvider, Block, TransactionReceipt } from '@ethersproject/providers'
 import { waitForTransaction } from '@wagmi/core'
+import { ethers } from 'hardhat'
 
 import { MinedData } from '@app/types'
 
@@ -19,6 +20,14 @@ interface BaseTransaction {
   status: TransactionStatus
   minedData?: MinedData
   newHash?: string
+  nonce: number
+  searchRetries: number
+}
+
+interface SearchingTransaction extends BaseTransaction {
+  status: 'searching'
+  minedData?: never
+  nonce: never
 }
 
 interface PendingTransaction extends BaseTransaction {
@@ -36,7 +45,35 @@ interface RepricedTransaction extends BaseTransaction {
   newHash: string
 }
 
-export type Transaction = PendingTransaction | MinedTransaction | RepricedTransaction
+interface EtherscanMinedData {
+  blockHash: string
+  blockNumber: string
+  confirmations: string
+  contractAddress: string
+  cumulativeGasUsed: string
+  from: string
+  functionName: string
+  gas: string
+  gasPrice: string
+  gasUsed: string
+  hash: string
+  input: string
+  isError: string
+  methodId: string
+  nonce: string
+  timeStamp: string
+  to: string
+  transactionIndex: string
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  txreceipt_status: string
+  value: string
+}
+
+export type Transaction =
+  | PendingTransaction
+  | MinedTransaction
+  | RepricedTransaction
+  | SearchingTransaction
 
 export type NewTransaction = Omit<Transaction, 'status' | 'minedData'>
 
@@ -55,6 +92,15 @@ function loadData(): Data {
   return safeParseJsonData(
     typeof localStorage !== 'undefined' ? localStorage.getItem(storageKey) : null,
   )
+}
+
+function etherscanDataToMinedData(
+  etherscanMinedData: EtherscanMinedData,
+): MinedData | EtherscanMinedData {
+  return {
+    ...etherscanMinedData,
+    timestamp: parseInt(etherscanMinedData.timeStamp, 10),
+  }
 }
 
 const transactionHashRegex = /^0x([A-Fa-f0-9]{64})$/
@@ -106,7 +152,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
 
     updateTransactions(account, chainId, (transactions) => {
       return [
-        { ...transaction, status: 'searching' },
+        { ...transaction, status: 'searching', searchRetries: 0 },
         ...transactions.filter(({ hash }) => {
           // Omit any duplicate transactions
           return hash !== transaction.hash
@@ -125,7 +171,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     account: string,
     chainId: number,
     hash: string,
-    status: 'pending' | 'unknown',
+    status: 'pending' | 'unknown' | 'dropped',
   ): void {
     updateTransactions(account, chainId, (transactions) => {
       return transactions.map((transaction) =>
@@ -133,6 +179,59 @@ export function createTransactionStore({ provider: initialProvider }: { provider
           ? ({
               ...transaction,
               status,
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
+
+  function setReplacedTransaction(
+    account: string,
+    chainId: number,
+    hash: string,
+    minedData: EtherscanMinedData,
+  ): void {
+    updateTransactions(account, chainId, (transactions) => {
+      return transactions.map((transaction) =>
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              minedData: etherscanDataToMinedData(minedData),
+              status: 'confirmed',
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
+
+  function foundTransaction(
+    account: string,
+    chainId: number,
+    hash: string,
+    nonce: number,
+    transactionInput: string,
+  ): void {
+    updateTransactions(account, chainId, (transactions) => {
+      return transactions.map((transaction) =>
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              nonce,
+              transactionInput,
+              status: 'pending',
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
+
+  function updateRetries(account: string, chainId: number, hash: string): void {
+    updateTransactions(account, chainId, (transactions) => {
+      return transactions.map((transaction) =>
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              searchRetries: transaction.searchRetries + 1,
             } as Transaction)
           : transaction,
       )
@@ -302,6 +401,9 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     waitForPendingTransactions,
     setTransactionStatus,
     updateTransactionStatus,
+    foundTransaction,
+    updateRetries,
+    setReplacedTransaction,
   }
 }
 

@@ -159,6 +159,9 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       const selectedItem = draft.items[key!]
       if (!selectedItem) break
       const transaction = selectedItem.transactions.find((x) => x.hash === hash)
+      console.log('action: ', action)
+      console.log('minedData: ', minedData)
+
       if (transaction) {
         if (status === 'repriced') {
           transaction.hash = newHash
@@ -169,6 +172,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         transaction.stage = stage
         transaction.minedData = minedData
         transaction.finaliseTime = minedData!.timestamp
+        console.log('current: ', current(transaction))
         if (
           key === draft.selectedKey &&
           selectedItem.autoClose &&

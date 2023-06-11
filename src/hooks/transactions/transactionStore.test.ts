@@ -101,3 +101,11 @@ describe('transactionStore', () => {
   })
   it.todo("should update a transaction's status correctly")
 })
+
+describe('foundTransaction', () => {
+  it.todo('should update found transaction correctly')
+})
+
+describe('etherscanDataToMinedData', () => {
+  it.todo('should convert etherscan data to mined data correctly')
+})
