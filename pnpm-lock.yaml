@@ -14,9 +14,9 @@ overrides:
   wagmi: 0.12.1
 
 patchedDependencies:
-  '@rainbow-me/rainbowkit@0.12.13':
-    hash: fl56blplvazhywxcprgpeowikq
-    path: patches/@rainbow-me__rainbowkit@0.12.13.patch
+  '@rainbow-me/rainbowkit@0.12.15-canary.1':
+    hash: ids4vnpwyenrujupancx6kn4ci
+    path: patches/@rainbow-me__rainbowkit@0.12.15-canary.1.patch
   '@synthetixio/synpress@3.5.1':
     hash: vmj4yqu63ybssl4vru7rjexy6m
     path: patches/@synthetixio__synpress@3.5.1.patch
@@ -69,7 +69,7 @@ importers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
       '@openzeppelin/contracts': ^4.7.3
       '@openzeppelin/test-helpers': ^0.5.16
-      '@rainbow-me/rainbowkit': 0.12.13
+      '@rainbow-me/rainbowkit': 0.12.15-canary.1
       '@sentry/nextjs': ^7.43.0
       '@svgr/webpack': ^6.3.1
       '@synthetixio/synpress': 3.5.1
@@ -211,7 +211,7 @@ importers:
       '@metamask/inpage-provider': 8.1.0
       '@metamask/mobile-provider': 2.1.0
       '@metamask/post-message-stream': 6.1.2
-      '@rainbow-me/rainbowkit': 0.12.13_fl56blplvazhywxcprgpeowikq_vwgfuivoohbeopgq6vyae2p5py
+      '@rainbow-me/rainbowkit': 0.12.15-canary.1_ids4vnpwyenrujupancx6kn4ci_vwgfuivoohbeopgq6vyae2p5py
       '@sentry/nextjs': 7.43.0_next@12.1.6+react@17.0.2
       '@svgr/webpack': 6.4.0
       '@tanstack/query-persist-client-core': 4.14.5
@@ -5130,11 +5130,11 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@rainbow-me/rainbowkit/0.12.13_fl56blplvazhywxcprgpeowikq_vwgfuivoohbeopgq6vyae2p5py:
-    resolution: {integrity: sha512-1rZ1j/bawW2HbV3Kh1gRX0Owel8E3RbFTi9ydLv59aHqMiHwGUmuxDOLKdhOPMHm9PgdoR7p0k+jH9fYvEAPYw==}
+  /@rainbow-me/rainbowkit/0.12.15-canary.1_ids4vnpwyenrujupancx6kn4ci_vwgfuivoohbeopgq6vyae2p5py:
+    resolution: {integrity: sha512-1vWTpZmRNwpRofyjITp3ZoWNMY0KExWu5GAxtGccetOOsUnfp59zkiWM52Q1DGXujcIqcTGaczp04Ca0WNE+sg==}
     engines: {node: '>=12.4'}
     peerDependencies:
-      ethers: '>=5.5.1'
+      ethers: '>=5.6.8'
       react: '>=17'
       react-dom: '>=17'
       wagmi: 0.12.x
@@ -8686,7 +8686,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
     transitivePeerDependencies:
       - debug
 
@@ -14412,7 +14412,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: true
 
   /follow-redirects/1.15.2_debug@4.3.4:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}

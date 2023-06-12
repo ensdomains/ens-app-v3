@@ -1,8 +1,8 @@
-diff --git a/dist/chunk-D5YMUYJ7.js b/dist/chunk-D5YMUYJ7.js
-index 20d1650769bae430249fca66fee22461106c54c6..df6076a47f4debb719a2c5978ec550145af4e5b9 100644
---- a/dist/chunk-D5YMUYJ7.js
-+++ b/dist/chunk-D5YMUYJ7.js
-@@ -4438,19 +4438,19 @@ function ModalProvider({ children }) {
+diff --git a/dist/chunk-HOY3SQCF.js b/dist/chunk-HOY3SQCF.js
+index 8024ec03f4499eea4a03953f3d047e21ee0673a9..5c75a65146fc93a1299240b7c925327f8afbfd37 100644
+--- a/dist/chunk-HOY3SQCF.js
++++ b/dist/chunk-HOY3SQCF.js
+@@ -4502,19 +4502,19 @@ function ModalProvider({ children }) {
    const connectionStatus = useConnectionStatus();
    const { chain } = useNetwork6();
    const chainSupported = !(chain == null ? void 0 : chain.unsupported);
@@ -14,7 +14,7 @@ index 20d1650769bae430249fca66fee22461106c54c6..df6076a47f4debb719a2c5978ec55014
 +  const isUnauthenticated = useAuthenticationStatus() === "unauthenticated";
 +
 +  const closeModals = useCallback(() => {
-+    if (!isUnauthenticated) {
++  if (!isUnauthenticated) {
        closeConnectModal();
      }
      closeAccountModal();
