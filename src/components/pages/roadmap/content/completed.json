@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Manager app V3",
+    "description": "A complete rebuild of the manager app.",
+    "tag": "Launched April 2023",
+    "icon": "PlusCircle"
+  },
+  {
+    "title": "NameWrapper",
+    "description": "New functionality for creating a trustless ecosystem of names.",
+    "tag": "Launched March 2023",
+    "icon": "FastForward"
+  },
+  {
+    "title": "CCIP Read",
+    "description": "Supporting offchain and gasless name creation.",
+    "tag": "Launched October 2022",
+    "icon": "Flame"
+  }
+]

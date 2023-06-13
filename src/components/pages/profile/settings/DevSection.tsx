@@ -33,6 +33,7 @@ const useLocalStorageString = (key: string, defaultValue = '') => {
   const [value, _setValue] = useState(defaultValue)
   useEffect(() => {
     _setValue(localStorage.getItem(key) || defaultValue)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const setValue = (newValue: string) => {
     localStorage.setItem(key, newValue)

@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router'
+import { NextRouter, useRouter } from 'next/router'
 import { ReactNode, useCallback, useEffect, useRef } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
@@ -19,6 +19,10 @@ import Hamburger from './@molecules/Hamburger/Hamburger'
 import { SearchInput } from './@molecules/SearchInput/SearchInput'
 import { ConditionalWrapper } from './ConditionalWrapper'
 import { HeaderConnect } from './ConnectButton'
+
+const showFullENSIcon = (router: NextRouter) => {
+  return router.asPath === '/' || router.asPath === '/roadmap'
+}
 
 const HeaderWrapper = styled.header(
   ({ theme }) => css`
@@ -200,13 +204,13 @@ export const Header = () => {
             </BaseLink>
           )}
         >
-          {router.asPath === '/' ? (
+          {showFullENSIcon(router) ? (
             <ENSFull height={space['12']} />
           ) : (
             <ENSWithGradient height={space['12']} />
           )}
         </ConditionalWrapper>
-        {router.asPath !== '/' && breakpoints.sm && (
+        {!showFullENSIcon(router) && breakpoints.sm && (
           <>
             <SearchWrapper
               data-testid="search-wrapper"
@@ -228,7 +232,7 @@ export const Header = () => {
           </RouteContainer>
         </RouteWrapper>
         <Hamburger />
-        <HeaderConnect />
+        {router.asPath !== '/roadmap' && <HeaderConnect />}
       </NavContainer>
     </HeaderWrapper>
   )

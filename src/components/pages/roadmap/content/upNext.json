@@ -1,0 +1,17 @@
+[
+  {
+    "title": "L2 support",
+    "description": "Exploring how ENS will work with Layer 2 ecosystems.",
+    "icon": "Eth"
+  },
+  {
+    "title": "Subname registrars",
+    "description": "Understanding the best practices for subname registrars with the new namewrapper. [Join the discussion](https://support.ens.domains) in the community",
+    "icon": "Nametag"
+  },
+  {
+    "title": "Gasless DNS imports",
+    "description": "Importing DNS names without gas using CCIP read.",
+    "icon": "GasPump"
+  }
+]

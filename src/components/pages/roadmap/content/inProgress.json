@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Dark mode",
+    "description": "You asked for it, it's happening. We're adding dark mode to the manager app!",
+    "icon": "Moon"
+  },
+  {
+    "title": "SIWE & Favourites",
+    "description": "Don't worry, we didn't forget favourites. We just wanted to make it more powerful.",
+    "icon": "Heart"
+  }
+]
