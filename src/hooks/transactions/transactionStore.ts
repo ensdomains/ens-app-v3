@@ -241,6 +241,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
   }
 
   function setFailedTransaction(account: string, chainId: number, hash: string): void {
+    console.log('setFailedTransaction')
     updateTransactions(account, chainId, (transactions) => {
       return transactions.map((transaction) =>
         transaction.hash === hash

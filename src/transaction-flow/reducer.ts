@@ -151,10 +151,12 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       break
     }
     case 'setTransactionStageFromUpdate': {
+      // console.log('setTransactionStageFromUpdate')
+      // debugger
       const { hash, key, status, minedData, newHash } = action.payload
 
       // Updating the state of a transaction that hasn't been mined yet
-      if (!minedData) return
+      // if (!minedData) return
 
       const selectedItem = draft.items[key!]
       if (!selectedItem) break
@@ -171,7 +173,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         const stage = status === 'confirmed' ? 'complete' : 'failed'
         transaction.stage = stage
         transaction.minedData = minedData
-        transaction.finaliseTime = minedData!.timestamp
+        transaction.finaliseTime = minedData?.timestamp
         console.log('current: ', current(transaction))
         if (
           key === draft.selectedKey &&

@@ -121,6 +121,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const updateCallback = useCallback<UpdateCallback>(
     (transaction) => {
+      console.log('upodateCallback: ', transaction)
       if (transaction.status !== 'pending' && transaction.key) {
         dispatch({
           name: 'setTransactionStageFromUpdate',

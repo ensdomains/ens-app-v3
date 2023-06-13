@@ -8,6 +8,25 @@ import { useChainId } from '@app/hooks/useChainId'
 
 import { hexToNumber } from '../utils'
 
+function useIntervalStrict(callback: () => void, delay: number | null) {
+  const savedCallback = useRef<() => void>(() => {})
+
+  useEffect(() => {
+    savedCallback.current = callback
+  }, [callback])
+
+  useEffect(() => {
+    function tick() {
+      savedCallback.current()
+    }
+
+    if (delay !== null) {
+      const id = setInterval(tick, delay)
+      return () => clearInterval(id)
+    }
+  }, [delay])
+}
+
 function useInterval(callback: () => void, delay: number | null, dependencies: any[]) {
   const savedCallback = useRef<() => void>(() => {})
 
@@ -33,6 +52,8 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
   // Transactions are all tied to an address and a chain
   if (!address || !store || !chainId || !provider || !transactions?.length) return
   console.log('***run***')
+
+  // store.setFailedTransaction(address, chainId, transactions[0].hash)
 
   const pendingTransactions = transactions.filter((transaction) => transaction.status === 'pending')
   const searchingTransactions = transactions.filter(
@@ -78,7 +99,7 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
       console.log('matchingNonceTransaction: ', matchingNonceTransaction)
 
       // See if matching nonce transaction is a replacement
-      if (matchingNonceTransaction.input === pendingTransaction.transactionInput) {
+      if (matchingNonceTransaction?.input === pendingTransaction?.transactionInput) {
         console.log('replacement!')
         store.setReplacedTransaction(
           address,
@@ -86,6 +107,7 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
           pendingTransaction.hash,
           matchingNonceTransaction,
         )
+        return
       }
 
       // If the transaction was not replaced then it is a failed transaction
@@ -119,9 +141,9 @@ export const SyncDroppedTransaction = ({ children }: { children: React.ReactNode
   //   JSON.stringify(transactions.map((transaction) => transaction.hash)),
   // )
 
-  useInterval(
+  useIntervalStrict(
     () => findDroppedTransactions(transactions, address, store, chainId, provider),
-    100000,
+    10000,
     [transactions, address, store, chainId, provider],
   )
 
