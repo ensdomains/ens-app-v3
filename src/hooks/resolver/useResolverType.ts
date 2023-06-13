@@ -18,34 +18,29 @@ export const useResolverType = (name: string, options: Options = {}) => {
 
   const chainId = useChainId()
 
-  const { isWrapped: internalIsWrapped, isLoading: isBasicNameLoading } = useBasicName(name, {
+  const basicName = useBasicName(name, {
     skipGraph: false,
     enabled: enabled && typeof options.isWrapped === 'undefined',
   })
-  const isWrapped = options.isWrapped ?? internalIsWrapped
+  const isWrapped = options.isWrapped ?? basicName.isWrapped
 
-  const { profile: internalProfile, loading: isProfileLoading } = useProfile(name, {
+  const profile = useProfile(name, {
     skip: !enabled || !!options.resolverAddress,
   })
-  const resolverAddress = options.resolverAddress ?? internalProfile?.resolverAddress ?? ''
+  const resolverAddress = options.resolverAddress ?? profile.profile?.resolverAddress ?? ''
 
-  const {
-    data: registryResolverAddress,
-    isLoading: isRegistryResolverLoading,
-    isFetching: isRegistyResolverFetching,
-    isError: isRegistryResolverError,
-  } = useRegistryResolver(name, {
+  const registryResolver = useRegistryResolver(name, {
     enabled,
   })
 
-  const isLoading = isBasicNameLoading || isProfileLoading || isRegistryResolverLoading
-  const isFetching = isRegistyResolverFetching
-  const isError = isRegistryResolverError
+  const isLoading = basicName.isLoading || profile.loading || registryResolver.isLoading
+  const { isFetching } = registryResolver
+  const { isError } = registryResolver
 
   const isWildcard =
-    !isRegistryResolverError &&
-    (!registryResolverAddress || registryResolverAddress === emptyAddress) &&
-    resolverAddress !== registryResolverAddress
+    !registryResolver.isError &&
+    (!registryResolver.data || registryResolver.data === emptyAddress) &&
+    resolverAddress !== registryResolver.data
 
   const data = useMemo(() => {
     if (!enabled || isLoading) return

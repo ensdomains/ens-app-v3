@@ -213,14 +213,11 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     skipGraph: true,
   })
 
-  const { data: resolverStatus, isLoading: isResolverStatusLoading } = useResolverStatus(
-    selectedName,
-    {
-      enabled: !!selectedName && !isBasicNameLoading,
-      isWrapped,
-      migratedRecordsMatch: { key: '60', type: 'addr', addr: address },
-    },
-  )
+  const resolverStatus = useResolverStatus(selectedName, {
+    enabled: !!selectedName && !isBasicNameLoading,
+    isWrapped,
+    migratedRecordsMatch: { key: '60', type: 'addr', addr: address },
+  })
 
   // Dispatches the needed transactions to set the primary name
   const dispatchTransactions = useCallback(
@@ -244,7 +241,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       }
 
       // If name does not have resolver, then three step transaction
-      if (!resolverStatus?.isAuthorized) {
+      if (!resolverStatus.data?.isAuthorized) {
         return dispatch({
           name: 'startFlow',
           key: 'ChangePrimaryName',
@@ -256,7 +253,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
               }),
             },
             transactions: [
-              ...(!resolverStatus?.hasMigratedRecord
+              ...(!resolverStatus.data?.hasMigratedRecord
                 ? [
                     makeTransactionItem('updateEthAddress', {
                       name,
@@ -305,8 +302,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     },
     [
       address,
-      resolverStatus?.isAuthorized,
-      resolverStatus?.hasMigratedRecord,
+      resolverStatus.data?.isAuthorized,
+      resolverStatus.data?.hasMigratedRecord,
       dispatch,
       t,
       isWrapped,
@@ -360,7 +357,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   }
 
   const isLoading = !isEnsReady || isLoadingNames || isMutationLoading
-  const isLoadingName = isResolverStatusLoading || isBasicNameLoading
+  const isLoadingName = resolverStatus.isLoading || isBasicNameLoading
 
   // Show header if more than one page has been loaded, if only one page has been loaded but there is another page, or if there is an active search query
   const showHeader =

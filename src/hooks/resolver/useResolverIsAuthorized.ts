@@ -91,20 +91,20 @@ type Options = {
 export const useResolverIsAuthorized = (name: string, options: Options = {}) => {
   const enabled = (options.enabled ?? true) && !!name
 
-  const { data: signer, isLoading: isSignerLoading } = useSigner()
+  const signer = useSigner()
 
-  const { profile: internalProfile, loading: isProfileLoading } = useProfile(name, {
+  const internalProfile = useProfile(name, {
     skip: !enabled || !!options.resolverAddress,
   })
-  const resolver = options.resolverAddress ?? internalProfile?.resolverAddress ?? ''
+  const resolver = options.resolverAddress ?? internalProfile.profile?.resolverAddress ?? ''
 
-  const isLoading = isProfileLoading || isSignerLoading
+  const isLoading = internalProfile.loading || signer.isLoading
 
   return useQuery(
     useQueryKeys().resolverIsAuthorized(name, resolver!),
     async () => {
       try {
-        const contract = new Contract(resolver!, setAddrABI, signer!)
+        const contract = new Contract(resolver!, setAddrABI, signer.data!)
         await checkInterface(contract)
         await checkAuthorization(contract, name)
         return { isValid: true, isAuthorized: true }
@@ -117,7 +117,7 @@ export const useResolverIsAuthorized = (name: string, options: Options = {}) => 
       }
     },
     {
-      enabled: enabled && !isLoading && !!signer,
+      enabled: enabled && !isLoading && !!signer.data,
     },
   )
 }

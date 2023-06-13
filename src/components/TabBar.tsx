@@ -219,10 +219,9 @@ export const TabBar = () => {
   const router = useRouter()
 
   const { address } = useAccountSafely()
-  const { data: primaryData } = usePrimary(address!, !!address)
-  const { name } = primaryData || {}
+  const primary = usePrimary(address!, !!address)
 
-  const hasPrimary = !!name
+  const hasPrimary = !!primary.data?.name
   const hasBack = !!router.query.from
 
   const [isOpen, setIsOpen] = useState(false)
@@ -264,7 +263,7 @@ export const TabBar = () => {
                   address={address}
                   isOpen={isOpen}
                   setIsOpen={setIsOpen}
-                  name={name || undefined}
+                  name={primary.data?.name}
                 />
               </>
             )}

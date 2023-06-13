@@ -31,18 +31,9 @@ export const useAvailablePrimaryNamesForAddress = ({
   resultsPerPage: number | 'all'
   search?: string
 }) => {
-  const {
-    data: primaryData,
-    isLoading: isPrimaryLoading,
-    isFetching: isPrimaryFetching,
-  } = usePrimary(address!, !!address)
-  const { name: primaryName } = primaryData || {}
+  const primary = usePrimary(address!, !!address)
 
-  const {
-    data: ownedOrManagedNamesData,
-    isLoading: isOwnedOrManagedNamesLoading,
-    isFetching: isOwnedOrManagedNamesFetching,
-  } = useNamesFromAddress({
+  const namesFromAddress = useNamesFromAddress({
     address,
     sort: {
       type: 'labelName',
@@ -52,24 +43,26 @@ export const useAvailablePrimaryNamesForAddress = ({
     resultsPerPage: 'all',
   })
 
-  const {
-    data: resolvedAddressNames,
-    isLoading: isResolvedAddressNamesLoading,
-    isFetching: isResolvedAddressNamesFetching,
-  } = useNamesFromResolvedAddress(address!)
+  const namesFromResolvedAddress = useNamesFromResolvedAddress(address!)
 
   const isLoading =
-    isOwnedOrManagedNamesLoading || isResolvedAddressNamesLoading || isPrimaryLoading
+    namesFromAddress.isLoading || namesFromResolvedAddress.isLoading || primary.isLoading
   const isFetching =
-    isResolvedAddressNamesFetching || isPrimaryFetching || isOwnedOrManagedNamesFetching
+    namesFromResolvedAddress.isFetching || primary.isFetching || namesFromAddress.isFetching
 
   // memoize names before search to prevent recalculations
   const resolvedOrManagedNames = useMemo(() => {
-    if (!ownedOrManagedNamesData || !resolvedAddressNames) return undefined
-    return mergeNames(resolvedAddressNames, ownedOrManagedNamesData.names)
-      .filter(checkAvailablePrimaryName(primaryName))
+    if (!namesFromAddress.data || !namesFromResolvedAddress.data) return undefined
+    return mergeNames(namesFromResolvedAddress.data, namesFromAddress.data.names)
+      .filter(checkAvailablePrimaryName(primary.data?.name))
       .sort(sortByType(sort.type, sort.orderDirection))
-  }, [ownedOrManagedNamesData, resolvedAddressNames, primaryName, sort.type, sort.orderDirection])
+  }, [
+    namesFromAddress.data,
+    namesFromResolvedAddress.data,
+    primary.data?.name,
+    sort.type,
+    sort.orderDirection,
+  ])
 
   // memoize pages to prevent recalculations for each page
   const pages = useMemo(() => {

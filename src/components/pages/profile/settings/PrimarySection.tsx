@@ -148,20 +148,19 @@ export const PrimarySection = () => {
   const showSelectPrimaryNameInput = prepareDataInput('SelectPrimaryName')
   const showResetPrimaryNameInput = prepareDataInput('ResetPrimaryName')
 
-  const { data: primaryData, isLoading: primaryLoading } = usePrimary(address!, !address)
-  const { name } = primaryData || {}
+  const primary = usePrimary(address!, !address)
   const chainId = useChainId()
-  const { avatar } = useAvatar(name, chainId)
-  const zorb = useZorb(name || '', 'name')
+  const { avatar } = useAvatar(primary.data?.name, chainId)
+  const zorb = useZorb(primary.data?.name || '', 'name')
 
-  const { truncatedName, isLoading: basicLoading } = useBasicName(name, {
+  const { truncatedName, isLoading: basicLoading } = useBasicName(primary.data?.name, {
     normalised: true,
     skipGraph: false,
   })
 
   const hasGlobalError = useHasGlobalError()
 
-  const isLoading = basicLoading || primaryLoading
+  const isLoading = basicLoading || primary.isLoading
 
   const changePrimary = () => {
     showSelectPrimaryNameInput(`changePrimary-${address}`, {
@@ -172,7 +171,7 @@ export const PrimarySection = () => {
   const resetPrimary = () => {
     if (!address) return
     showResetPrimaryNameInput(`resetPrimary-${address}`, {
-      name: name!,
+      name: primary.data?.name!,
       address,
     })
   }
@@ -180,7 +179,7 @@ export const PrimarySection = () => {
   return (
     <Skeleton loading={isLoading} as={SkeletonFiller as any}>
       <Card>
-        {name ? (
+        {primary.data?.name ? (
           <PrimaryNameContainer data-testid="primary-name-section">
             <PrimaryNameInfo>
               <Typography fontVariant="bodyBold" color="grey">

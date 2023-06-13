@@ -57,20 +57,19 @@ export const useProfileActions = ({
 
   const latestResolverAddress = useContractAddress('PublicResolver')
 
-  const { data: resolverStatus, isLoading: isResolverStatusLoading } = useResolverStatus(name, {
-    isWrapped: true,
-    profile,
-    migratedRecordsMatch: address ? { key: '60', type: 'addr', addr: address } : undefined,
-  })
-
-  const { data: primaryData, isLoading: primaryLoading } = usePrimary(address || '')
-  const { name: primaryName } = primaryData || {}
-
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
 
+  const resolverStatus = useResolverStatus(name, {
+    isWrapped,
+    profile,
+    migratedRecordsMatch: address ? { key: '60', type: 'addr', addr: address } : undefined,
+    enabled: !!ownerData,
+  })
+  const primary = usePrimary(address || '')
+
   const isAvailablePrimaryName = checkAvailablePrimaryName(
-    primaryName,
-    resolverStatus,
+    primary.data?.name,
+    resolverStatus.data,
   )({
     name,
     isMigrated: !!profile?.isMigrated,
@@ -89,7 +88,7 @@ export const useProfileActions = ({
     'DeleteEmancipatedSubnameWarning',
   )
 
-  const isLoading = primaryLoading || isResolverStatusLoading
+  const isLoading = primary.isLoading || resolverStatus.isLoading
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
@@ -102,7 +101,7 @@ export const useProfileActions = ({
           address: address!,
         }),
       ]
-      if (profile?.address !== address && resolverStatus?.isAuthorized) {
+      if (profile?.address !== address && resolverStatus?.data?.isAuthorized) {
         setAsPrimaryTransactions.unshift(
           makeTransactionItem('updateEthAddress', {
             address: address!,
@@ -110,7 +109,7 @@ export const useProfileActions = ({
           }),
         )
       }
-      if (profile?.address !== address && !resolverStatus?.isAuthorized) {
+      if (profile?.address !== address && !resolverStatus?.data?.isAuthorized) {
         setAsPrimaryTransactions.unshift(
           makeTransactionItem('updateResolver', {
             name,
@@ -118,7 +117,7 @@ export const useProfileActions = ({
             resolver: latestResolverAddress,
           }),
         )
-        if (!resolverStatus?.hasMigratedRecord) {
+        if (!resolverStatus?.data?.hasMigratedRecord) {
           setAsPrimaryTransactions.unshift(
             makeTransactionItem('updateEthAddress', {
               name,
@@ -241,7 +240,6 @@ export const useProfileActions = ({
     address,
     profile?.address,
     name,
-    profile?.resolverAddress,
     selfAbilities.canEdit,
     subnameAbilities.canDelete,
     subnameAbilities.canDeleteContract,
@@ -251,8 +249,8 @@ export const useProfileActions = ({
     subnameAbilities.canReclaim,
     isWrapped,
     latestResolverAddress,
-    resolverStatus?.isAuthorized,
-    resolverStatus?.isMigratedProfileEqual,
+    resolverStatus?.data?.isAuthorized,
+    resolverStatus?.data?.hasMigratedRecord,
     t,
     showUnknownLabelsInput,
     createTransactionFlow,

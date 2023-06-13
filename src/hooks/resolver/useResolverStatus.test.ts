@@ -3,7 +3,7 @@ import { mockFunction, renderHook } from '@app/test-utils'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { RecordItem, ReturnedENS } from '@app/types/index'
-import { NAMEWRAPPER_AWARE_RESOLVERS } from '@app/utils/constants'
+import { NAMEWRAPPER_AWARE_RESOLVERS, emptyAddress } from '@app/utils/constants'
 import { makeEthRecordItem, mergeRecords } from '@app/utils/records'
 
 const makeProfile = ({
@@ -338,5 +338,53 @@ describe('useResolverStatus', () => {
     expect(mockUseResolverType).toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
     expect(mockUseLatestResolverProfile).not.toHaveBeenCalled()
+  })
+
+  it('should call mockUseLatestResolverProfile if current resolver address is empty address', () => {
+    mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
+    mockUseProfile.mockReturnValueOnce({
+      loading: false,
+      profile: makeProfile({ resolverAddress: emptyAddress }),
+    })
+    const { result } = renderHook(() => useResolverStatus('test.eth'))
+    expect(result.current).toMatchObject(
+      makeResult([
+        'hasProfile',
+        'hasResolver',
+        'hasValidResolver',
+        'isAuthorized',
+        'hasMigratedProfile',
+        'isMigratedProfileEqual',
+      ]),
+    )
+    expect(mockBasicName).toHaveBeenCalled()
+    expect(mockUseProfile).toHaveBeenCalled()
+    expect(mockUseResolverType).toHaveBeenCalled()
+    expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
+    expect(mockUseLatestResolverProfile).toHaveBeenCalled()
+  })
+
+  it('should call mockUseLatestResolverProfile if current resolver address is empty string', () => {
+    mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
+    mockUseProfile.mockReturnValueOnce({
+      loading: false,
+      profile: makeProfile({ resolverAddress: '' }),
+    })
+    const { result } = renderHook(() => useResolverStatus('test.eth'))
+    expect(result.current).toMatchObject(
+      makeResult([
+        'hasProfile',
+        'hasResolver',
+        'hasValidResolver',
+        'isAuthorized',
+        'hasMigratedProfile',
+        'isMigratedProfileEqual',
+      ]),
+    )
+    expect(mockBasicName).toHaveBeenCalled()
+    expect(mockUseProfile).toHaveBeenCalled()
+    expect(mockUseResolverType).toHaveBeenCalled()
+    expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
+    expect(mockUseLatestResolverProfile).toHaveBeenCalled()
   })
 })

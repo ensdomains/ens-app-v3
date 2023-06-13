@@ -109,8 +109,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const router = useRouterWithHistory()
   const chainId = useChainId()
   const { address } = useAccount()
-  const { data: primaryData, isLoading: primaryLoading } = usePrimary(address!, !address)
-  const { name: primaryName } = primaryData || {}
+  const primary = usePrimary(address!, !address)
   const selected = { name: nameDetails.normalisedName, address: address! }
   const { normalisedName, beautifiedName } = nameDetails
   const defaultResolverAddress = useContractAddress('PublicResolver')
@@ -248,7 +247,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         noTitle
         title={beautifiedName}
         hideHeading={step === 'complete'}
-        loading={labelTooLong ? false : isLoading || primaryLoading || resolverExistsLoading}
+        loading={labelTooLong ? false : isLoading || primary.isLoading || resolverExistsLoading}
         singleColumnContent
         inlineHeading
       >
@@ -273,7 +272,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   resolverExists={resolverExists}
                   nameDetails={nameDetails}
                   callback={pricingCallback}
-                  hasPrimaryName={!!primaryName}
+                  hasPrimaryName={!!primary.data?.name}
                   registrationData={item}
                   moonpayTransactionStatus={moonpayTransactionStatus}
                   initiateMoonpayRegistrationMutation={initiateMoonpayRegistrationMutation}

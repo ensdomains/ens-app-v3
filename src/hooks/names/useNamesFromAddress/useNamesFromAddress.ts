@@ -37,28 +37,16 @@ export const useNamesFromAddress = ({
 }) => {
   const { ready, getNames } = useEns()
 
-  const {
-    data: blockTimestamp,
-    isLoading: isBlockTimestampLoading,
-    isFetching: isBlockTimestampFetching,
-    isError: isBlockTimestampError,
-  } = useBlockTimestamp()
+  const blockTimestamp = useBlockTimestamp()
 
   const queryKey = useQueryKeys().namesFromAddress(address)
 
-  const { watchedFunc: watchedGetNames } = useGlobalErrorFunc<typeof getNames>({
+  const watchedGetNames = useGlobalErrorFunc<typeof getNames>({
     queryKey,
     func: getNames,
   })
 
-  const {
-    data: mixedNames,
-    isLoading: isGetNamesLoading,
-    isFetching: isGetNamesFetching,
-    isError: isGetNamesError,
-    status,
-    refetch,
-  } = useQuery(
+  const rawNames = useQuery(
     queryKey,
     () =>
       watchedGetNames({
@@ -68,17 +56,17 @@ export const useNamesFromAddress = ({
         orderDirection: 'desc',
       }).then((r) => r || null),
     {
-      enabled: ready && !!address && !isBlockTimestampLoading,
+      enabled: ready && !!address && !blockTimestamp.isLoading,
     },
   )
 
   // memoize the data before search to avoid reprocessing the data on every search
   const presearchNames = useMemo(() => {
-    if (!mixedNames || !blockTimestamp) return undefined
-    return mergeNames(mixedNames)
-      .filter((name) => isValidName(blockTimestamp)(name) && filterByType(filter)(name))
+    if (!rawNames.data || !blockTimestamp.data) return undefined
+    return mergeNames(rawNames.data)
+      .filter((name) => isValidName(blockTimestamp.data!)(name) && filterByType(filter)(name))
       .sort(sortByType(sort.type, sort.orderDirection))
-  }, [mixedNames, blockTimestamp, sort.type, sort.orderDirection, filter])
+  }, [rawNames.data, blockTimestamp.data, sort.type, sort.orderDirection, filter])
 
   // memoize pages data so changing page doesn't reprocess the data
   const pages = useMemo(() => {
@@ -97,16 +85,16 @@ export const useNamesFromAddress = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pages, page])
 
-  const isLoading = !ready || isGetNamesLoading || isBlockTimestampLoading
-  const isFetching = isGetNamesFetching || isBlockTimestampFetching
-  const isError = isGetNamesError || isBlockTimestampError
+  const isLoading = !ready || rawNames.isLoading || blockTimestamp.isLoading
+  const isFetching = rawNames.isFetching || blockTimestamp.isFetching
+  const isError = rawNames.isError || blockTimestamp.isError
 
   return {
     data,
     isLoading,
     isFetching,
     isError,
-    status,
-    refetch,
+    status: rawNames.status,
+    refetch: rawNames.refetch,
   }
 }

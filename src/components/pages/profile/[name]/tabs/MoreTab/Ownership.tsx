@@ -125,8 +125,7 @@ const OwnerDetailContainer = styled.div(
 
 const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
   const { t } = useTranslation('common')
-  const { data: primaryData } = usePrimary(address)
-  const { name: primary, beautifiedName } = primaryData || {}
+  const primary = usePrimary(address)
   const network = useChainId()
 
   return (
@@ -134,17 +133,17 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
       <OwnerContainer as="a">
         <OwnerDetailContainer>
           <AvatarWithZorb
-            label={primary || address}
+            label={primary.data?.name || address}
             address={address}
-            name={primary || undefined}
+            name={primary.data?.name}
             size="10"
             network={network}
           />
           <TextContainer>
             <Name ellipsis data-testid={`owner-button-name-${label}`}>
-              {beautifiedName || shortenAddress(address)}
+              {primary.data?.beautifiedName || shortenAddress(address)}
             </Name>
-            {primary && (
+            {primary.data?.name && (
               <Typography data-testid={`owner-button-address-${label}`}>
                 {shortenAddress(address)}
               </Typography>
