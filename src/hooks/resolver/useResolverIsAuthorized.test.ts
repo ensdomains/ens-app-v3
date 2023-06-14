@@ -18,7 +18,6 @@ class Contract {
 
   constructor() {
     this.supportsInterface = (...args) => {
-      console.log('mockSupportsInterface')
       return mockSupportsInterface(...args)
     }
     this.estimateGas = {

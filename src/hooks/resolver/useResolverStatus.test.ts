@@ -312,7 +312,6 @@ describe('useResolverStatus', () => {
   })
 
   it('should call mockUseLatestResolverProfile if current resolver address is empty string', () => {
-    console.log('testing --------')
     mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
     mockUseProfile.mockReturnValueOnce({
       loading: false,

@@ -72,7 +72,6 @@ const checkIsKnownAuthorizedResolver = (
   chainId: number,
 ) => {
   if (isWrapped) {
-    console.log('isWrapped', NAMEWRAPPER_AWARE_RESOLVERS[`${chainId}`], resolverAddress)
     return NAMEWRAPPER_AWARE_RESOLVERS[`${chainId}`].includes(resolverAddress)
   }
   return true
