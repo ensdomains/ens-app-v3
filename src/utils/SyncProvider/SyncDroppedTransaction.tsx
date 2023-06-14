@@ -6,8 +6,6 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainId } from '@app/hooks/useChainId'
 
-import { hexToNumber } from '../utils'
-
 function useIntervalStrict(callback: () => void, delay: number | null) {
   const savedCallback = useRef<() => void>(() => {})
 
@@ -64,14 +62,11 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
 
   for (const searchingTransaction of searchingTransactions) {
     console.log('searchingTransaction: ', searchingTransaction)
-    const getPendingTransactionEndpoint = `https://api-goerli.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${searchingTransaction.hash}&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
-    const pendingTransactionResponse = await fetch(getPendingTransactionEndpoint)
-    const pendingJson = await pendingTransactionResponse.json()
-    const { result } = pendingJson
-    console.log('searchingJson: ', pendingJson)
-    if (pendingJson.result) {
-      const nonce = hexToNumber(result?.nonce)
-      store.foundTransaction(address, chainId, searchingTransaction.hash, nonce, result.input)
+    const result = await provider.getTransaction(searchingTransaction.hash)
+    console.log('result: ', result)
+
+    if (result) {
+      store.foundTransaction(address, chainId, searchingTransaction.hash, result.nonce, result.data)
       return
     }
     store.updateRetries(address, chainId, searchingTransaction.hash)
@@ -81,7 +76,6 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
     console.log('pendingTransaction: ', pendingTransaction)
 
     const currentNonce = await provider.getTransactionCount(address)
-    console.log('currentNonce: ', currentNonce)
 
     if (currentNonce > pendingTransaction.nonce) {
       // Transaction either got replaced or has been cancelled
@@ -111,16 +105,16 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
       }
 
       // If the transaction was not replaced then it is a failed transaction
+      debugger
       store.setFailedTransaction(address, chainId, pendingTransaction.hash)
     }
 
     // If the transaction has not been cancelled or replaced, it may have been dropped
+    const result = await provider.getTransaction(pendingTransaction.hash)
+    // const result = await provider.getTransaction(pendingTransaction.hash)
+    console.log('result: ', result)
 
-    const getPendingTransactionEndpoint = `https://api-goerli.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${pendingTransaction.hash}&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
-    const pendingTransactionResponse = await fetch(getPendingTransactionEndpoint)
-    const pendingJson = await pendingTransactionResponse.json()
-
-    if (!pendingJson.result) {
+    if (!result) {
       // If a pending transaction is not found, it has been dropped
       store.setFailedTransaction(address, chainId, pendingTransaction.hash)
       return
@@ -141,10 +135,11 @@ export const SyncDroppedTransaction = ({ children }: { children: React.ReactNode
   //   JSON.stringify(transactions.map((transaction) => transaction.hash)),
   // )
 
-  useIntervalStrict(
+  useInterval(
     () => findDroppedTransactions(transactions, address, store, chainId, provider),
     10000,
-    [transactions, address, store, chainId, provider],
+    [address, chainId, store, provider, ...transactions.map((x) => x.hash)],
+    // [transactions, address, store, chainId, provider],
   )
 
   return <div>{children}</div>
