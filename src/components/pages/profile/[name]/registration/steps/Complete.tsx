@@ -113,6 +113,7 @@ const useEthInvoice = (
 
   const commitTxFlow = getLatestTransaction(commitKey)
   const registerTxFlow = getLatestTransaction(registerKey)
+  console.log('registerTxFlow: ', registerTxFlow)
 
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
 
@@ -131,6 +132,7 @@ const useEthInvoice = (
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
+    debugger
     const value = BigNumber.from(registerData?.value) || BigNumber.from(0)
 
     const commitGasUsed = BigNumber.from(commitReceipt?.gasUsed || 0)

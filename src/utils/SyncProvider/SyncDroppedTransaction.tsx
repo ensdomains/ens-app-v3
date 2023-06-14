@@ -53,7 +53,9 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
 
   // store.setFailedTransaction(address, chainId, transactions[0].hash)
 
-  const pendingTransactions = transactions.filter((transaction) => transaction.status === 'pending')
+  const pendingTransactions = transactions.filter(
+    (transaction) => transaction.status === 'pending' && transaction.searchStatus === 'found',
+  )
   const searchingTransactions = transactions.filter(
     (transaction) => transaction.searchStatus === 'searching',
   )
@@ -104,6 +106,13 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
         return
       }
 
+      // If there is a gap between account nonce and latest nonce in history
+      // it is possible that etherscan history is behind
+      if (currentNonce - parseInt(accountTransactionHistory[0].nonce, 10) > 1) {
+        // Wait for etherscan history to update
+        return
+      }
+
       // If the transaction was not replaced then it is a failed transaction
       debugger
       store.setFailedTransaction(address, chainId, pendingTransaction.hash)
@@ -111,11 +120,10 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
 
     // If the transaction has not been cancelled or replaced, it may have been dropped
     const result = await provider.getTransaction(pendingTransaction.hash)
-    // const result = await provider.getTransaction(pendingTransaction.hash)
     console.log('result: ', result)
-
     if (!result) {
       // If a pending transaction is not found, it has been dropped
+      debugger
       store.setFailedTransaction(address, chainId, pendingTransaction.hash)
       return
     }
@@ -130,10 +138,6 @@ export const SyncDroppedTransaction = ({ children }: { children: React.ReactNode
   const chainId = useChainId()
 
   console.log('transactions: ', transactions)
-  // console.log(
-  //   '**transactions: ',
-  //   JSON.stringify(transactions.map((transaction) => transaction.hash)),
-  // )
 
   useInterval(
     () => findDroppedTransactions(transactions, address, store, chainId, provider),
