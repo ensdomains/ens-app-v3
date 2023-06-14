@@ -127,7 +127,6 @@ describe('useResolverStatus', () => {
         'isNameWrapperAware',
       ]),
     )
-    expect(mockBasicName).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(mockUseResolverType).toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).not.toHaveBeenCalled()
@@ -137,7 +136,6 @@ describe('useResolverStatus', () => {
   it('should return data is undefined if name is empty', () => {
     const { result } = renderHook(() => useResolverStatus(''))
     expect(result.current).toMatchObject({ data: undefined, isLoading: false })
-    expect(mockBasicName).not.toHaveBeenCalled()
     expect(mockUseProfile).not.toHaveBeenCalled()
     expect(mockUseResolverType).not.toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).not.toHaveBeenCalled()
@@ -147,7 +145,6 @@ describe('useResolverStatus', () => {
   it('should return data is undefined if enabled is false', () => {
     const { result } = renderHook(() => useResolverStatus('test.eth', { enabled: false }))
     expect(result.current).toMatchObject({ data: undefined, isLoading: false })
-    expect(mockBasicName).not.toHaveBeenCalled()
     expect(mockUseProfile).not.toHaveBeenCalled()
     expect(mockUseResolverType).not.toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).not.toHaveBeenCalled()
@@ -168,7 +165,6 @@ describe('useResolverStatus', () => {
         'isNameWrapperAware',
       ]),
     )
-    expect(mockBasicName).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(mockUseResolverType).toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
@@ -192,7 +188,6 @@ describe('useResolverStatus', () => {
         'isNameWrapperAware',
       ]),
     )
-    expect(mockBasicName).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(mockUseResolverType).toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
@@ -221,7 +216,6 @@ describe('useResolverStatus', () => {
         'hasMigratedRecord',
       ]),
     )
-    expect(mockBasicName).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(mockUseResolverType).toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
@@ -249,7 +243,6 @@ describe('useResolverStatus', () => {
         'isNameWrapperAware',
       ]),
     )
-    expect(mockBasicName).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(mockUseResolverType).toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
@@ -272,7 +265,6 @@ describe('useResolverStatus', () => {
         'isNameWrapperAware',
       ]),
     )
-    expect(mockBasicName).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(mockUseResolverType).toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
@@ -291,7 +283,6 @@ describe('useResolverStatus', () => {
         'isNameWrapperAware',
       ]),
     )
-    expect(mockBasicName).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(mockUseResolverType).toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
@@ -314,7 +305,6 @@ describe('useResolverStatus', () => {
         'isMigratedProfileEqual',
       ]),
     )
-    expect(mockBasicName).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(mockUseResolverType).toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).toHaveBeenCalled()
@@ -336,7 +326,6 @@ describe('useResolverStatus', () => {
     expect(result.current).toMatchObject(
       makeResult(['hasProfile', 'hasMigratedProfile', 'isMigratedProfileEqual']),
     )
-    expect(mockBasicName).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(mockUseResolverType).toHaveBeenCalled()
     expect(mockUseResolverIsAuthorized).toHaveBeenCalled()

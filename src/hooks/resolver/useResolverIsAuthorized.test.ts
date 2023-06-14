@@ -54,6 +54,11 @@ jest.mock('@app/hooks/useProfile', () => ({
   },
 }))
 
+const mockUseBasicName = jest.fn().mockReturnValue({ isWrapped: false })
+jest.mock('@app/hooks/useBasicName', () => ({
+  useBasicName: () => mockUseBasicName(),
+}))
+
 afterEach(() => {
   jest.clearAllMocks()
 })
@@ -66,9 +71,7 @@ describe('useResolverIsAuthorized', () => {
       },
       loading: false,
     })
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useResolverIsAuthorized({ name: 'test.eth', isWrapped: false }),
-    )
+    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     await waitForNextUpdate()
     expect(result.current).toMatchObject({
       isLoading: false,
@@ -86,9 +89,10 @@ describe('useResolverIsAuthorized', () => {
       },
       loading: false,
     })
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useResolverIsAuthorized({ name: 'test.eth', isWrapped: true }),
-    )
+    mockUseBasicName.mockReturnValueOnce({
+      isWrapped: true,
+    })
+    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     await waitForNextUpdate()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(result.current).toMatchObject({
@@ -103,28 +107,27 @@ describe('useResolverIsAuthorized', () => {
   it('should return isValid and isAuthorized is true if resolver is namewrapper aware and name is wrapped', async () => {
     mockUseProfile.mockReturnValue({
       profile: {
-        resolverAddress: RESOLVER_ADDRESSES['1'][1],
+        resolverAddress: RESOLVER_ADDRESSES['1'][0],
       },
       loading: false,
     })
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useResolverIsAuthorized({ name: 'test.eth', isWrapped: true }),
-    )
+    mockUseBasicName.mockReturnValueOnce({
+      isWrapped: false,
+    })
+    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     await waitForNextUpdate()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(result.current).toMatchObject({
       isLoading: false,
       data: {
-        isAuthorized: false,
+        isAuthorized: true,
         isValid: true,
       },
     })
   })
 
   it('should return correct results with base mock data', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useResolverIsAuthorized({ name: 'test.eth', isWrapped: false }),
-    )
+    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     mockUseProfile.mockReturnValue({
       profile: {
         resolverAddress: '0xresolver',
@@ -147,9 +150,7 @@ describe('useResolverIsAuthorized', () => {
 
   it('should return false false if checkInterface rejects', async () => {
     mockSupportsInterface.mockReturnValueOnce(Promise.reject(new Error('error')))
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useResolverIsAuthorized({ name: 'test.eth', isWrapped: false }),
-    )
+    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     await waitForNextUpdate()
     expect(result.current).toMatchObject({
       data: {
@@ -162,9 +163,7 @@ describe('useResolverIsAuthorized', () => {
 
   it('should return false false if checkInterface rejects', async () => {
     mockEstimateGas.mockReturnValueOnce(Promise.reject(new Error('notAuthorized')))
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useResolverIsAuthorized({ name: 'test.eth', isWrapped: false }),
-    )
+    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     await waitForNextUpdate()
     expect(result.current).toMatchObject({
       data: {
@@ -176,7 +175,7 @@ describe('useResolverIsAuthorized', () => {
   })
 
   it('should return data is undefined if name is empty', () => {
-    const { result } = renderHook(() => useResolverIsAuthorized({}))
+    const { result } = renderHook(() => useResolverIsAuthorized())
     expect(result.current).toMatchObject({ isLoading: false, data: undefined })
   })
 })

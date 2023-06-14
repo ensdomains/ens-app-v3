@@ -179,6 +179,34 @@ describe('Set Primary Name from profile page', () => {
       cy.findByTestId('profile-title').should('contain.text', 'legacy.wrapped.eth')
     })
 
+    it('should skip setting primary name step if reverse registry name is already set to that name', () => {
+      // Set profile record to user address
+      cy.visit('/legacy.wrapped.eth')
+      connectFromExisting()
+      cy.findByTestId('profile-action-Edit profile').click()
+      cy.findByTestId('profile-record-input-ETH-delete-button').click()
+      cy.findByTestId('profile-submit-button').should('be.enabled').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
+      // Assert state
+      cy.findByTestId('profile-title').should('not.contain.text', 'legacy.wrapped.eth')
+
+      cy.findByText('Set as primary name').click()
+      cy.wait(10000)
+
+      // Update ETH address
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
+      // Assertion
+      cy.findByTestId('profile-title').should('contain.text', 'legacy.wrapped.eth')
+    })
+
     it('should not show set primary name button for a wrapped name that has CSR burned, is not a resolved address, and an unauthorized resolver', () => {
       cy.clearLocalStorage()
       acceptMetamaskAccess(2)
@@ -236,7 +264,7 @@ describe('Set Primary Name from profile page', () => {
       ).type('aaa123xyz000')
       cy.findByTestId('unknown-labels-confirm').should('be.enabled').click()
 
-      cy.findByText('Set your primary name').should('be.visible')
+      cy.findByText('Update ETH address').should('be.visible')
       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
 
       // update eth address

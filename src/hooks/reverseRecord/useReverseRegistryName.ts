@@ -17,12 +17,16 @@ export const useReverseRegistryName = ({ enabled }: Options = {}) => {
   return useQuery(
     useQueryKeys().reverseRegistryName(account?.address),
     async () => {
-      const reverseRegistryHash = namehash(`${account.address!.slice(2)}.addr.reverse`)
-      const registry = await contracts!.getRegistry()
-      const resolverAddress = await registry.resolver(reverseRegistryHash)
-      const resolver = await contracts!.getPublicResolver(provider, resolverAddress)
-      const name = await resolver.name(reverseRegistryHash)
-      return name
+      try {
+        const reverseRegistryHash = namehash(`${account.address!.slice(2)}.addr.reverse`)
+        const registry = await contracts!.getRegistry()
+        const resolverAddress = await registry.resolver(reverseRegistryHash)
+        const resolver = await contracts!.getPublicResolver(provider, resolverAddress)
+        const name = await resolver.name(reverseRegistryHash)
+        return name
+      } catch (e) {
+        return ''
+      }
     },
     {
       enabled: ready && _enabled && !!account?.address,

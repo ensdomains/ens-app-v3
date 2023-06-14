@@ -131,52 +131,87 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('show-add-profile-records-modal-button').click()
       cy.findByTestId('profile-record-option-ETH').click()
       cy.findByTestId('add-profile-records-button').click()
-      cy.findByTestId('profile-record-input-input-ETH').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
+      cy.findByTestId('profile-record-input-input-ETH').type(
+        '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      )
       cy.findByTestId('profile-submit-button').should('be.enabled').click()
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
       cy.wait(10000)
 
-       // Set resolver to unauthorized resolver
-       cy.visit('/legacy.wrapped.eth?tab=more')
-       cy.findByTestId('edit-resolver-button').click()
-       cy.findByTestId('custom-resolver-radio').click()
-       cy.findByTestId('dogfood').type('0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB')
-       cy.findByTestId('update-button').click()
-       cy.findByTestId('transaction-modal-confirm-button').click()
-       cy.confirmMetamaskTransaction()
-       cy.findByTestId('transaction-modal-complete-button').click()
-       cy.wait(10000)
- 
-       // Set primary name
-       cy.visit('/my/settings')
- 
-       cy.findByTestId('change-primary-name-button').click()
-       cy.findByTestId('name-item-legacy.wrapped.eth')
-         .within(() => {
-           cy.findByTestId('tag-name.manager-true').should('be.visible')
-         })
-         .click()
-       cy.findByTestId('primary-next').click()
- 
-       // Intro modal
-       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
- 
-       // Update resolver
-       cy.findByTestId('transaction-modal-confirm-button').click()
-       cy.confirmMetamaskTransaction()
-       cy.findByTestId('transaction-modal-complete-button').click()
- 
-       // Set Primary Name modal
-       cy.findByTestId('transaction-modal-confirm-button').click()
-       cy.confirmMetamaskTransaction()
-       cy.findByTestId('transaction-modal-complete-button').click()
- 
-       cy.wait(10000)
- 
-       // Assertion
-       cy.findByTestId('primary-name-label').should('contain.text', 'legacy.wrapped.eth')
+      // Set resolver to unauthorized resolver
+      cy.visit('/legacy.wrapped.eth?tab=more')
+      cy.findByTestId('edit-resolver-button').click()
+      cy.findByTestId('custom-resolver-radio').click()
+      cy.findByTestId('dogfood').type('0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB')
+      cy.findByTestId('update-button').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
+      // Set primary name
+      cy.visit('/my/settings')
+
+      cy.findByTestId('change-primary-name-button').click()
+      cy.findByTestId('name-item-legacy.wrapped.eth')
+        .within(() => {
+          cy.findByTestId('tag-name.manager-true').should('be.visible')
+        })
+        .click()
+      cy.findByTestId('primary-next').click()
+
+      // Intro modal
+      cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
+
+      // Update resolver
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+
+      // Set Primary Name modal
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+
+      cy.wait(10000)
+
+      // Assertion
+      cy.findByTestId('primary-name-label').should('contain.text', 'legacy.wrapped.eth')
+    })
+
+    it('should skip setting primary name step if reverse registry name is already set to that name', () => {
+      // Set profile record to user address
+      cy.visit('/legacy.wrapped.eth')
+      connectFromExisting()
+      cy.findByTestId('profile-action-Edit profile').click()
+      cy.findByTestId('profile-record-input-ETH-delete-button').click()
+      cy.findByTestId('profile-submit-button').should('be.enabled').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
+      cy.visit('/my/settings')
+      cy.wait(10000)
+
+      cy.findByTestId('set-primary-name-button').click()
+      cy.findByTestId('name-item-legacy.wrapped.eth')
+        .within(() => {
+          cy.findByTestId('tag-name.manager-true').should('be.visible')
+        })
+        .click()
+      cy.findByTestId('primary-next').click()
+
+      // Update ETH address
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+
+      // Assertion
+      cy.findByTestId('primary-name-label').should('contain.text', 'legacy.wrapped.eth')
     })
 
     it('should not show current primary name in list', () => {
@@ -238,11 +273,11 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-complete-button').click()
       cy.wait(10000)
 
-       // Validate that the name is NOT in the list
-       cy.visit('/my/settings')
-       cy.findByTestId('set-primary-name-button').click()
-       cy.findByTestId('name-table-header-search').type('wrapped.eth')
-       cy.findByTestId('name-item-wrapped.eth').should('not.exist')
+      // Validate that the name is NOT in the list
+      cy.visit('/my/settings')
+      cy.findByTestId('set-primary-name-button').click()
+      cy.findByTestId('name-table-header-search').type('wrapped.eth')
+      cy.findByTestId('name-item-wrapped.eth').should('not.exist')
     })
 
     it('should allow setting primary name from name with encrypted label', () => {

@@ -23,7 +23,7 @@ import {
   Name,
   useAvailablePrimaryNamesForAddress,
 } from '@app/hooks/names/useAvailablePrimaryNamesForAddress/useAvailablePrimaryNamesForAddress'
-import { useSetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useSetPrimaryNameTransactionFlowItem'
+import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
@@ -221,8 +221,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     migratedRecordsMatch: { key: '60', type: 'addr', addr: address },
   })
 
-  const setPrimarynameTransactionFlowItem = useSetPrimaryNameTransactionFlowItem({
-    name: selectedName?.name,
+  const getPrimarynameTransactionFlowItem = useGetPrimaryNameTransactionFlowItem({
     address,
     isWrapped,
     profileAddress: selectedNameProfile.profile?.address,
@@ -230,15 +229,14 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     resolverStatus: resolverStatus.data,
   })
 
-  const dispatchTransactions = () => {
-    console.log('setPrimarynameTransactionFlowItem.data', setPrimarynameTransactionFlowItem.data)
-    if (!setPrimarynameTransactionFlowItem.data) return
-    const transactionCount = setPrimarynameTransactionFlowItem.data.transactions.length
-    if (transactionCount === 0) return
+  const dispatchTransactions = (name: string) => {
+    const transactionFlowItem = getPrimarynameTransactionFlowItem.callBack?.(name)
+    if (!transactionFlowItem) return
+    const transactionCount = transactionFlowItem.transactions.length
     if (transactionCount === 1) {
       dispatch({
         name: 'setTransactions',
-        payload: setPrimarynameTransactionFlowItem.data.transactions,
+        payload: transactionFlowItem.transactions,
       })
       dispatch({
         name: 'setFlowStage',
@@ -249,7 +247,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     dispatch({
       name: 'startFlow',
       key: 'ChangePrimaryName',
-      payload: setPrimarynameTransactionFlowItem.data,
+      payload: transactionFlowItem,
     })
   }
 
@@ -281,8 +279,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       throw new Error('invalid_name')
     },
     {
-      onSuccess: () => {
-        dispatchTransactions()
+      onSuccess: (name) => {
+        dispatchTransactions(name)
       },
       onError: (error, variables) => {
         if (!(error instanceof Error)) return
@@ -300,7 +298,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
 
   const isLoading = !isEnsReady || isLoadingNames || isMutationLoading
   const isLoadingName =
-    resolverStatus.isLoading || isBasicNameLoading || setPrimarynameTransactionFlowItem.isLoading
+    resolverStatus.isLoading || isBasicNameLoading || getPrimarynameTransactionFlowItem.isLoading
 
   // Show header if more than one page has been loaded, if only one page has been loaded but there is another page, or if there is an active search query
   const showHeader =

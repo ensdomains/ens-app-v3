@@ -89,14 +89,14 @@ jest.mock('@app/hooks/useProfile', () => ({
   useProfile: () => mockUseProfile(),
 }))
 
-const mockUseSetPrimaryNameTransactionItem = jest.fn().mockReturnValue({
-  data: {
+const mockUseGetPrimaryNameTransactionItem = jest.fn().mockReturnValue({
+  callBack: () => ({
     transactions: [makeTransactionItem('setPrimaryName', { name: 'test.eth', address: '0x123' })],
-  },
+  }),
   isLoading: false,
 })
-jest.mock('@app/hooks/primary/useSetPrimaryNameTransactionFlowItem', () => ({
-  useSetPrimaryNameTransactionFlowItem: () => mockUseSetPrimaryNameTransactionItem(),
+jest.mock('@app/hooks/primary/useGetPrimaryNameTransactionFlowItem', () => ({
+  useGetPrimaryNameTransactionFlowItem: () => mockUseGetPrimaryNameTransactionItem(),
 }))
 
 const mockDispatch = jest.fn()
@@ -104,56 +104,6 @@ const mockDispatch = jest.fn()
 window.IntersectionObserver = jest.fn().mockReturnValue({
   observe: jest.fn(),
   disconnect: jest.fn(),
-})
-
-const makeResult = (
-  name: string,
-  type: 'one-step' | 'two-step' | 'three-step' | 'three-step-migration',
-) => ({
-  ...(type === 'one-step'
-    ? {
-        name: 'setTransactions',
-        payload: [
-          {
-            data: {
-              address: '0x123',
-              name,
-            },
-            name: 'setPrimaryName',
-          },
-        ],
-      }
-    : {
-        key: 'ChangePrimaryName',
-        name: 'startFlow',
-        payload: {
-          intro: {
-            content: {
-              data: {
-                description: 'intro.selectPrimaryName.updateEthAddress.description',
-              },
-              name: 'GenericWithDescription',
-            },
-            title: ['intro.selectPrimaryName.updateEthAddress.title', { ns: 'transactionFlow' }],
-          },
-          transactions: [
-            {
-              data: {
-                address: '0x123',
-                name,
-              },
-              name: 'updateEthAddress',
-            },
-            {
-              data: {
-                address: '0x123',
-                name,
-              },
-              name: 'setPrimaryName',
-            },
-          ],
-        },
-      }),
 })
 
 afterEach(() => {
@@ -358,7 +308,6 @@ describe('SelectPrimaryName', () => {
     await waitFor(() => expect(screen.getByTestId('unknown-labels-confirm')).not.toBeDisabled())
     await userEvent.click(screen.getByTestId('unknown-labels-confirm'))
     expect(mockDispatch).toHaveBeenCalled()
-    console.log(mockDispatch.mock.calls[0][0].payload.transactions)
     expect(mockDispatch.mock.calls[0][0].payload[0]).toMatchInlineSnapshot(
       {
         data: { name: 'test.eth' },
@@ -373,85 +322,5 @@ describe('SelectPrimaryName', () => {
       }
     `,
     )
-  })
-
-  describe.skip('One step transactions', () => {
-    it('should dispatch one step if unwrapped name with resolved address is selected', async () => {
-      mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
-        data: { pages: [[makeName(1, { isResolvedAddress: true })]] },
-        isLoading: false,
-      })
-      render(
-        <SelectPrimaryName
-          data={{ address: '0x123' }}
-          dispatch={mockDispatch}
-          onDismiss={() => {}}
-        />,
-      )
-      await userEvent.click(screen.getByText('test1.eth'))
-      await userEvent.click(screen.getByTestId('primary-next'))
-      expect(mockDispatch).toBeCalledWith(makeResult('test1.eth', 'one-step'))
-    })
-
-    it('should dispatch one step if wrapped name with resolved address is selected', async () => {
-      mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
-        data: { pages: [[makeName(1, { isResolvedAddress: true, fuses: {} })]] },
-        isLoading: false,
-      })
-      render(
-        <SelectPrimaryName
-          data={{ address: '0x123' }}
-          dispatch={mockDispatch}
-          onDismiss={() => {}}
-        />,
-      )
-      await userEvent.click(screen.getByText('test1.eth'))
-      await userEvent.click(screen.getByTestId('primary-next'))
-      expect(mockDispatch).toBeCalledWith(makeResult('test1.eth', 'one-step'))
-    })
-  })
-
-  describe.skip('Two step transactions', () => {
-    it('should dispatch two step transaction if unwrapped name with other eth address and valid resolver', async () => {
-      mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
-        data: { pages: [[makeName(1, { isResolvedAddress: false })]] },
-        isLoading: false,
-      })
-      render(
-        <SelectPrimaryName
-          data={{ address: '0x123' }}
-          dispatch={mockDispatch}
-          onDismiss={() => {}}
-        />,
-      )
-      await userEvent.click(screen.getByText('test1.eth'))
-      await userEvent.click(screen.getByTestId('primary-next'))
-      expect(mockDispatch).toBeCalledWith(makeResult('test1.eth', 'two-step'))
-    })
-  })
-
-  describe.skip('Three step transactions', () => {
-    it('should dispatch three step transaction if unwrapped name with other eth address and invalid resolver', async () => {
-      mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
-        data: { pages: [[makeName(1, { isResolvedAddress: false })]] },
-        isLoading: false,
-      })
-      mockUseResolverStatus.mockReturnValueOnce({
-        data: {
-          isAuthorized: false,
-        },
-        isLoading: false,
-      })
-      render(
-        <SelectPrimaryName
-          data={{ address: '0x123' }}
-          dispatch={mockDispatch}
-          onDismiss={() => {}}
-        />,
-      )
-      await userEvent.click(screen.getByText('test1.eth'))
-      await userEvent.click(screen.getByTestId('primary-next'))
-      expect(mockDispatch).toBeCalledWith(makeResult('test1.eth', 'three-step'))
-    })
   })
 })

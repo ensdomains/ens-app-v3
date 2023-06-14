@@ -11,7 +11,7 @@ import { nameParts } from '@app/utils/name'
 
 import { useHasGlobalError } from './errors/useHasGlobalError'
 import { checkAvailablePrimaryName } from './names/useAvailablePrimaryNamesForAddress/utils'
-import { useSetPrimaryNameTransactionFlowItem } from './primary/useSetPrimaryNameTransactionFlowItem'
+import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from './resolver/useResolverStatus'
 import { useNameDetails } from './useNameDetails'
 import { useSelfAbilities } from './useSelfAbilities'
@@ -75,8 +75,7 @@ export const useProfileActions = ({
     fuses: wrapperData,
   })
 
-  const setPrimaryNameTransactionFlowItem = useSetPrimaryNameTransactionFlowItem({
-    name,
+  const getPrimaryNameTransactionFlowItem = useGetPrimaryNameTransactionFlowItem({
     address,
     isWrapped,
     profileAddress: profile?.address,
@@ -93,13 +92,14 @@ export const useProfileActions = ({
   )
 
   const isLoading =
-    primary.isLoading || resolverStatus.isLoading || setPrimaryNameTransactionFlowItem.isLoading
+    primary.isLoading || resolverStatus.isLoading || getPrimaryNameTransactionFlowItem.isLoading
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
     if (!address || isLoading) return actions
 
-    if (isAvailablePrimaryName && !!setPrimaryNameTransactionFlowItem.data) {
+    const transactionFlowItem = getPrimaryNameTransactionFlowItem?.callBack?.(name)
+    if (isAvailablePrimaryName && !!transactionFlowItem) {
       const key = `setPrimaryName-${name}-${address}`
       actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),
@@ -112,9 +112,9 @@ export const useProfileActions = ({
               showUnknownLabelsInput(key, {
                 name,
                 key,
-                transactionFlowItem: setPrimaryNameTransactionFlowItem.data!,
+                transactionFlowItem,
               })
-          : () => createTransactionFlow(key, setPrimaryNameTransactionFlowItem.data!),
+          : () => createTransactionFlow(key, transactionFlowItem),
       })
     }
 
@@ -212,7 +212,7 @@ export const useProfileActions = ({
     subnameAbilities.canDeleteMethod,
     subnameAbilities.isPCCBurned,
     subnameAbilities.canReclaim,
-    setPrimaryNameTransactionFlowItem.data,
+    getPrimaryNameTransactionFlowItem,
     t,
     showUnknownLabelsInput,
     createTransactionFlow,

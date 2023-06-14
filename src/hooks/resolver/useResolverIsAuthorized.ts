@@ -9,6 +9,8 @@ import { useProfile } from '@app/hooks/useProfile'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { NAMEWRAPPER_AWARE_RESOLVERS, RESOLVER_ADDRESSES } from '@app/utils/constants'
 
+import { useBasicName } from '../useBasicName'
+
 const setAddrABI = [
   {
     inputs: [
@@ -100,17 +102,12 @@ const checkAuthorization = async (contract: Contract, name: string) => {
   }
 }
 
-type Input = {
-  name?: string
-  isWrapped?: boolean
-}
-
 type Options = {
   enabled?: boolean
 }
 
-export const useResolverIsAuthorized = ({ name, isWrapped }: Input, options: Options = {}) => {
-  const enabled = (options.enabled ?? true) && !!name && typeof isWrapped !== 'undefined'
+export const useResolverIsAuthorized = (name?: string, options: Options = {}) => {
+  const enabled = (options.enabled ?? true) && !!name
 
   const signer = useSigner()
 
@@ -120,6 +117,12 @@ export const useResolverIsAuthorized = ({ name, isWrapped }: Input, options: Opt
     skip: !enabled,
   })
   const resolverAddress = profile.profile?.resolverAddress ?? ''
+
+  const basicName = useBasicName(name, {
+    enabled,
+    skipGraph: true,
+  })
+  const { isWrapped } = basicName
 
   const isLoading = profile.loading || signer.isLoading
 

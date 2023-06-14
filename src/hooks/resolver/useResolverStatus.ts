@@ -14,8 +14,6 @@ import {
 } from '@app/utils/records'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
-import { useBasicName } from '../useBasicName'
-
 type Options = {
   enabled?: boolean
   skipCompare?: boolean
@@ -27,13 +25,6 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
 
   const enabled = (options.enabled ?? true) && !!name
 
-  const basicName = useBasicName(name, {
-    enabled,
-    normalised: true,
-    skipGraph: true,
-  })
-  const { isWrapped } = basicName
-
   const internalProfile = useProfile(name!, {
     skip: !enabled,
     skipGraph: false,
@@ -42,15 +33,12 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
   const profileResolverAddress = profile?.resolverAddress
 
   const resolverType = useResolverType(name!, {
-    enabled: enabled && !basicName.isLoading && !internalProfile.loading,
+    enabled: enabled && !internalProfile.loading,
   })
 
-  const resolverIsAuthorized = useResolverIsAuthorized(
-    { name, isWrapped },
-    {
-      enabled: enabled && !resolverType.isLoading && resolverType.data?.type !== 'latest',
-    },
-  )
+  const resolverIsAuthorized = useResolverIsAuthorized(name, {
+    enabled: enabled && !resolverType.isLoading && resolverType.data?.type !== 'latest',
+  })
 
   const latestResolverAddress = useContractAddress('PublicResolver')
 
@@ -68,10 +56,11 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
     resolverType.isLoading ||
     resolverIsAuthorized.isLoading ||
     latestResolverProfile.loading ||
-    basicName.isLoading ||
     internalProfile.loading
+
   const isFetching =
     resolverType.isFetching || resolverIsAuthorized.isFetching || latestResolverProfile.isFetching
+
   const { isError } = resolverType
 
   const data = useMemo(() => {
