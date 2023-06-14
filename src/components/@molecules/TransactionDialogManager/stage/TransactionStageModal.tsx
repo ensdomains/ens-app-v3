@@ -1,10 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-import type { JsonRpcSigner } from '@ethersproject/providers'
+import { type JsonRpcSigner } from '@ethersproject/providers'
 import { toUtf8String } from '@ethersproject/strings'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
+import { useAccount, useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
 
 import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 
@@ -25,6 +25,7 @@ import {
 } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { checkIsSafeApp } from '@app/utils/safe'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
@@ -286,6 +287,9 @@ export const TransactionStageModal = ({
     [recentTransactions, transaction.hash],
   )
 
+  const { connector } = useAccount()
+  const provider = useProvider()
+
   const uniqueTxIdentifiers = useMemo(
     () =>
       uniqueTransactionIdentifierGenerator(
@@ -359,11 +363,14 @@ export const TransactionStageModal = ({
   } = useSendTransaction({
     mode: 'prepared',
     request,
-    onSuccess: (tx) => {
+    onSuccess: async (tx) => {
+      const isSafeApp = await checkIsSafeApp(connector)
+
       addRecentTransaction({
         hash: tx.hash,
         action: actionName,
         key: txKey!,
+        isSafeTx: !!isSafeApp,
       })
       dispatch({ name: 'setTransactionHash', payload: tx.hash })
     },
@@ -480,8 +487,6 @@ export const TransactionStageModal = ({
     }
     return 'inProgress'
   }, [stage])
-
-  const provider = useProvider()
 
   const { data: upperError } = useQuery(
     useQueryKeys().transactionStageModal.transactionError(transaction.hash),
