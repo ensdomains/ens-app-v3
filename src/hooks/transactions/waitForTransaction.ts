@@ -43,7 +43,7 @@ export type WaitForTransactionArgs = {
 
 export type WaitForTransactionResult = providers.TransactionReceipt
 
-class SafeTxExecutedError extends Error {
+export class SafeTxExecutedError extends Error {
   constructor(public reason: string, public replacement?: { hash: string }) {
     super()
   }
