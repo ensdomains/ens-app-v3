@@ -334,7 +334,11 @@
       "noResolver": {
         "title": "No resolver set",
         "description": "To use this as your primary name you will need to set a resolver and update the ETH address first."
-      }      
+      },
+      "invalidResolver": {
+        "title": "Unauthorized resolver set",
+        "description": "To use this as your primary name you will need to set a valid resolver and update the ETH address first."
+      }     
     }
   },
   "errors": {

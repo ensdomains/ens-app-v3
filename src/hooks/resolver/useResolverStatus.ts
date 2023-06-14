@@ -5,7 +5,6 @@ import { useResolverType } from '@app/hooks/resolver/useResolverType'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useProfile } from '@app/hooks/useProfile'
-import { ReturnedENS } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
 import { profileHasRecords } from '@app/utils/profile'
 import {
@@ -19,45 +18,43 @@ import { useBasicName } from '../useBasicName'
 
 type Options = {
   enabled?: boolean
-  isWrapped?: boolean
-  profile?: ReturnedENS['getProfile']
   skipCompare?: boolean
   migratedRecordsMatch?: RecordMatch
 }
 
-export const useResolverStatus = (name: string, options: Options = {}) => {
+export const useResolverStatus = (name?: string, options: Options = {}) => {
   const chainId = useChainId()
 
   const enabled = (options.enabled ?? true) && !!name
 
-  const internalBasicName = useBasicName(name, {
-    enabled: enabled && typeof options.isWrapped === 'undefined',
+  const basicName = useBasicName(name, {
+    enabled,
     normalised: true,
     skipGraph: true,
   })
-  const isWrapped = options.isWrapped ?? internalBasicName.isWrapped
+  const { isWrapped } = basicName
 
-  const internalProfile = useProfile(name, {
-    skip: !enabled || !!options.profile,
+  const internalProfile = useProfile(name!, {
+    skip: !enabled,
     skipGraph: false,
   })
-  const profile = options.profile ?? internalProfile.profile
+  const { profile } = internalProfile
   const profileResolverAddress = profile?.resolverAddress
 
-  const resolverType = useResolverType(name, {
-    enabled: enabled && !internalBasicName.isLoading && !internalProfile.loading,
-    isWrapped,
-    resolverAddress: profileResolverAddress,
+  const resolverType = useResolverType(name!, {
+    enabled: enabled && !basicName.isLoading && !internalProfile.loading,
   })
 
-  const resolverIsAuthorized = useResolverIsAuthorized(name, {
-    enabled: enabled && !resolverType.isLoading && resolverType.data?.type !== 'latest',
-    resolverAddress: profile?.resolverAddress,
-  })
+  const resolverIsAuthorized = useResolverIsAuthorized(
+    { name, isWrapped },
+    {
+      enabled: enabled && !resolverType.isLoading && resolverType.data?.type !== 'latest',
+    },
+  )
 
   const latestResolverAddress = useContractAddress('PublicResolver')
 
-  const latestResolverProfile = useProfile(name, {
+  const latestResolverProfile = useProfile(name!, {
     skip:
       !enabled ||
       !!options.skipCompare ||
@@ -71,7 +68,7 @@ export const useResolverStatus = (name: string, options: Options = {}) => {
     resolverType.isLoading ||
     resolverIsAuthorized.isLoading ||
     latestResolverProfile.loading ||
-    internalBasicName.isLoading ||
+    basicName.isLoading ||
     internalProfile.loading
   const isFetching =
     resolverType.isFetching || resolverIsAuthorized.isFetching || latestResolverProfile.isFetching
@@ -92,20 +89,16 @@ export const useResolverStatus = (name: string, options: Options = {}) => {
       hasMigratedRecord: undefined,
     }
 
-    // If the profile doesn't have a resolver and we don't need to compare, we don't need to continue checks
-    if ((!profileResolverAddress || profileResolverAddress === emptyAddress) && options.skipCompare)
-      return defaultResults
-
     const baseResults = {
       ...defaultResults,
-      hasResolver: true,
+      hasResolver: !!profileResolverAddress && profileResolverAddress !== emptyAddress,
       hasLatestResolver: resolverType.data?.type === 'latest',
       isNameWrapperAware: canEditRecordsWhenWrappedCalc(true, profileResolverAddress, chainId),
       hasProfile: profileHasRecords(profile),
     }
 
     // If the profile has the latest resolver, we don't need to continue checks
-    if (baseResults.hasLatestResolver)
+    if (baseResults.hasLatestResolver) {
       return {
         ...baseResults,
         hasValidResolver: true,
@@ -113,6 +106,7 @@ export const useResolverStatus = (name: string, options: Options = {}) => {
         hasMigratedProfile: true,
         isMigratedProfileEqual: true,
       }
+    }
 
     const authorizedResults = {
       ...baseResults,

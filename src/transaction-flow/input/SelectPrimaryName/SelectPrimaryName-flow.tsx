@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { UseFormReturn, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -23,18 +23,17 @@ import {
   Name,
   useAvailablePrimaryNamesForAddress,
 } from '@app/hooks/names/useAvailablePrimaryNamesForAddress/useAvailablePrimaryNamesForAddress'
+import { useSetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useSetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
-import { useContractAddress } from '@app/hooks/useContractAddress'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
+import { useProfile } from '@app/hooks/useProfile'
 import {
   UnknownLabelsForm,
   FormData as UnknownLabelsFormData,
   nameToFormData,
 } from '@app/transaction-flow/input/UnknownLabels/views/UnknownLabelsForm'
-import { makeIntroItem } from '@app/transaction-flow/intro/index'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
@@ -176,7 +175,6 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const { handleSubmit, control, setValue } = form
 
   const chainId = useChainId()
-  const latestResolverAddress = useContractAddress('PublicResolver')
 
   const { ready: isEnsReady, getDecryptedName } = useEns()
 
@@ -205,111 +203,55 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
 
   const selectedName = useWatch({
     control,
-    name: 'name.name',
+    name: 'name',
   })
 
-  const { isWrapped, isLoading: isBasicNameLoading } = useBasicName(selectedName, {
-    enabled: !!selectedName,
+  const { isWrapped, isLoading: isBasicNameLoading } = useBasicName(selectedName?.name, {
+    enabled: !!selectedName?.name,
     skipGraph: true,
   })
 
-  const resolverStatus = useResolverStatus(selectedName, {
+  const selectedNameProfile = useProfile(selectedName?.name!, {
+    skip: !selectedName?.name,
+    skipGraph: true,
+  })
+
+  const resolverStatus = useResolverStatus(selectedName?.name!, {
     enabled: !!selectedName && !isBasicNameLoading,
-    isWrapped,
     migratedRecordsMatch: { key: '60', type: 'addr', addr: address },
   })
 
-  // Dispatches the needed transactions to set the primary name
-  const dispatchTransactions = useCallback(
-    async (name: string, isResolvedAddress: boolean) => {
-      // If resolved address is already set, then one step transaction
-      if (isResolvedAddress) {
-        dispatch({
-          name: 'setTransactions',
-          payload: [
-            makeTransactionItem('setPrimaryName', {
-              address,
-              name,
-            }),
-          ],
-        })
-        dispatch({
-          name: 'setFlowStage',
-          payload: 'transaction',
-        })
-        return
-      }
+  const setPrimarynameTransactionFlowItem = useSetPrimaryNameTransactionFlowItem({
+    name: selectedName?.name,
+    address,
+    isWrapped,
+    profileAddress: selectedNameProfile.profile?.address,
+    resolverAddress: selectedNameProfile.profile?.resolverAddress,
+    resolverStatus: resolverStatus.data,
+  })
 
-      // If name does not have resolver, then three step transaction
-      if (!resolverStatus.data?.isAuthorized) {
-        return dispatch({
-          name: 'startFlow',
-          key: 'ChangePrimaryName',
-          payload: {
-            intro: {
-              title: ['intro.selectPrimaryName.noResolver.title', { ns: 'transactionFlow' }],
-              content: makeIntroItem('GenericWithDescription', {
-                description: t('intro.selectPrimaryName.noResolver.description'),
-              }),
-            },
-            transactions: [
-              ...(!resolverStatus.data?.hasMigratedRecord
-                ? [
-                    makeTransactionItem('updateEthAddress', {
-                      name,
-                      address,
-                      latestResolver: true,
-                    }),
-                  ]
-                : []),
-              makeTransactionItem('updateResolver', {
-                name,
-                contract: isWrapped ? 'nameWrapper' : 'registry',
-                resolver: latestResolverAddress,
-              }),
-              makeTransactionItem('setPrimaryName', {
-                address,
-                name,
-              }),
-            ],
-          },
-        })
-      }
-
-      // Name has resolver but not resolved address, then two step transaction
+  const dispatchTransactions = () => {
+    console.log('setPrimarynameTransactionFlowItem.data', setPrimarynameTransactionFlowItem.data)
+    if (!setPrimarynameTransactionFlowItem.data) return
+    const transactionCount = setPrimarynameTransactionFlowItem.data.transactions.length
+    if (transactionCount === 0) return
+    if (transactionCount === 1) {
       dispatch({
-        name: 'startFlow',
-        key: 'ChangePrimaryName',
-        payload: {
-          intro: {
-            title: ['intro.selectPrimaryName.updateEthAddress.title', { ns: 'transactionFlow' }],
-            content: makeIntroItem('GenericWithDescription', {
-              description: t('intro.selectPrimaryName.updateEthAddress.description'),
-            }),
-          },
-          transactions: [
-            makeTransactionItem('updateEthAddress', {
-              address: address!,
-              name,
-            }),
-            makeTransactionItem('setPrimaryName', {
-              address,
-              name,
-            }),
-          ],
-        },
+        name: 'setTransactions',
+        payload: setPrimarynameTransactionFlowItem.data.transactions,
       })
-    },
-    [
-      address,
-      resolverStatus.data?.isAuthorized,
-      resolverStatus.data?.hasMigratedRecord,
-      dispatch,
-      t,
-      isWrapped,
-      latestResolverAddress,
-    ],
-  )
+      dispatch({
+        name: 'setFlowStage',
+        payload: 'transaction',
+      })
+      return
+    }
+    dispatch({
+      name: 'startFlow',
+      key: 'ChangePrimaryName',
+      payload: setPrimarynameTransactionFlowItem.data,
+    })
+  }
 
   // Checks if name has encrptyed labels and attempts decrypt them if they exist
   const validateKey = useQueryKeys().validate
@@ -339,8 +281,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       throw new Error('invalid_name')
     },
     {
-      onSuccess: (data, variables) => {
-        dispatchTransactions(data, !!variables.name?.isResolvedAddress)
+      onSuccess: () => {
+        dispatchTransactions()
       },
       onError: (error, variables) => {
         if (!(error instanceof Error)) return
@@ -357,7 +299,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   }
 
   const isLoading = !isEnsReady || isLoadingNames || isMutationLoading
-  const isLoadingName = resolverStatus.isLoading || isBasicNameLoading
+  const isLoadingName =
+    resolverStatus.isLoading || isBasicNameLoading || setPrimarynameTransactionFlowItem.isLoading
 
   // Show header if more than one page has been loaded, if only one page has been loaded but there is another page, or if there is an active search query
   const showHeader =
@@ -425,9 +368,9 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
                     {...name}
                     network={chainId}
                     mode="select"
-                    selected={selectedName === name.name}
+                    selected={selectedName?.name === name.name}
                     onClick={() => {
-                      setValue('name', selectedName === name.name ? undefined : name)
+                      setValue('name', selectedName?.name === name.name ? undefined : name)
                     }}
                   />
                 )),

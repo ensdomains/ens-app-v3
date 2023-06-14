@@ -5,16 +5,14 @@ import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
 
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
 import { nameParts } from '@app/utils/name'
 
 import { useHasGlobalError } from './errors/useHasGlobalError'
 import { checkAvailablePrimaryName } from './names/useAvailablePrimaryNamesForAddress/utils'
+import { useSetPrimaryNameTransactionFlowItem } from './primary/useSetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from './resolver/useResolverStatus'
-import { useContractAddress } from './useContractAddress'
 import { useNameDetails } from './useNameDetails'
 import { useSelfAbilities } from './useSelfAbilities'
 import { useSubnameAbilities } from './useSubnameAbilities'
@@ -55,17 +53,14 @@ export const useProfileActions = ({
   const { t } = useTranslation('profile')
   const { createTransactionFlow, prepareDataInput } = useTransactionFlow()
 
-  const latestResolverAddress = useContractAddress('PublicResolver')
-
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
 
   const resolverStatus = useResolverStatus(name, {
-    isWrapped,
-    profile,
     migratedRecordsMatch: address ? { key: '60', type: 'addr', addr: address } : undefined,
     enabled: !!ownerData,
   })
-  const primary = usePrimary(address || '')
+
+  const primary = usePrimary(address)
 
   const isAvailablePrimaryName = checkAvailablePrimaryName(
     primary.data?.name,
@@ -80,6 +75,15 @@ export const useProfileActions = ({
     fuses: wrapperData,
   })
 
+  const setPrimaryNameTransactionFlowItem = useSetPrimaryNameTransactionFlowItem({
+    name,
+    address,
+    isWrapped,
+    profileAddress: profile?.address,
+    resolverAddress: profile?.resolverAddress,
+    resolverStatus: resolverStatus.data,
+  })
+
   const hasGlobalError = useHasGlobalError()
 
   const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
@@ -88,57 +92,14 @@ export const useProfileActions = ({
     'DeleteEmancipatedSubnameWarning',
   )
 
-  const isLoading = primary.isLoading || resolverStatus.isLoading
+  const isLoading =
+    primary.isLoading || resolverStatus.isLoading || setPrimaryNameTransactionFlowItem.isLoading
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
     if (!address || isLoading) return actions
 
-    if (isAvailablePrimaryName) {
-      const setAsPrimaryTransactions: GenericTransaction[] = [
-        makeTransactionItem('setPrimaryName', {
-          name,
-          address: address!,
-        }),
-      ]
-      if (profile?.address !== address && resolverStatus?.data?.isAuthorized) {
-        setAsPrimaryTransactions.unshift(
-          makeTransactionItem('updateEthAddress', {
-            address: address!,
-            name,
-          }),
-        )
-      }
-      if (profile?.address !== address && !resolverStatus?.data?.isAuthorized) {
-        setAsPrimaryTransactions.unshift(
-          makeTransactionItem('updateResolver', {
-            name,
-            contract: isWrapped ? 'nameWrapper' : 'registry',
-            resolver: latestResolverAddress,
-          }),
-        )
-        if (!resolverStatus?.data?.hasMigratedRecord) {
-          setAsPrimaryTransactions.unshift(
-            makeTransactionItem('updateEthAddress', {
-              name,
-              address: address!,
-              latestResolver: true,
-            }),
-          )
-        }
-      }
-      const transactionFlowItem: TransactionFlowItem = {
-        transactions: setAsPrimaryTransactions,
-        ...(setAsPrimaryTransactions.length > 1
-          ? {
-              resumable: true,
-              intro: {
-                title: ['tabs.profile.actions.setAsPrimaryName.title', { ns: 'profile' }],
-                content: makeIntroItem('ChangePrimaryName', undefined),
-              },
-            }
-          : {}),
-      }
+    if (isAvailablePrimaryName && !!setPrimaryNameTransactionFlowItem.data) {
       const key = `setPrimaryName-${name}-${address}`
       actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),
@@ -147,8 +108,13 @@ export const useProfileActions = ({
           : undefined,
         tooltipPlacement: 'left',
         onClick: !checkIsDecrypted(name)
-          ? () => showUnknownLabelsInput(key, { name, key, transactionFlowItem })
-          : () => createTransactionFlow(key, transactionFlowItem),
+          ? () =>
+              showUnknownLabelsInput(key, {
+                name,
+                key,
+                transactionFlowItem: setPrimaryNameTransactionFlowItem.data!,
+              })
+          : () => createTransactionFlow(key, setPrimaryNameTransactionFlowItem.data!),
       })
     }
 
@@ -238,7 +204,6 @@ export const useProfileActions = ({
     return actions
   }, [
     address,
-    profile?.address,
     name,
     selfAbilities.canEdit,
     subnameAbilities.canDelete,
@@ -247,10 +212,7 @@ export const useProfileActions = ({
     subnameAbilities.canDeleteMethod,
     subnameAbilities.isPCCBurned,
     subnameAbilities.canReclaim,
-    isWrapped,
-    latestResolverAddress,
-    resolverStatus?.data?.isAuthorized,
-    resolverStatus?.data?.hasMigratedRecord,
+    setPrimaryNameTransactionFlowItem.data,
     t,
     showUnknownLabelsInput,
     createTransactionFlow,

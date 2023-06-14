@@ -4,9 +4,10 @@ import { useQuery, useSigner } from 'wagmi'
 
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
+import { useChainId } from '@app/hooks/useChainId'
+import { useProfile } from '@app/hooks/useProfile'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
-
-import { useProfile } from '../useProfile'
+import { NAMEWRAPPER_AWARE_RESOLVERS, RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 const setAddrABI = [
   {
@@ -59,7 +60,23 @@ const setAddrABI = [
   },
 ]
 
-const checkInterface = async (contract: Contract) => {
+const checkIsKnownValidResolver = (resolverAddress: string, chainId: number) => {
+  return RESOLVER_ADDRESSES[`${chainId}`].includes(resolverAddress)
+}
+
+const checkIsKnownAuthorizedResolver = (
+  resolverAddress: string,
+  isWrapped: boolean,
+  chainId: number,
+) => {
+  if (isWrapped) {
+    console.log('isWrapped', NAMEWRAPPER_AWARE_RESOLVERS[`${chainId}`], resolverAddress)
+    return NAMEWRAPPER_AWARE_RESOLVERS[`${chainId}`].includes(resolverAddress)
+  }
+  return true
+}
+
+export const checkInterface = async (contract: Contract) => {
   try {
     const supportsInterface = await contract.supportsInterface('0xf1cb7e06')
     if (!supportsInterface) throw new Error('No interface')
@@ -83,28 +100,45 @@ const checkAuthorization = async (contract: Contract, name: string) => {
   }
 }
 
-type Options = {
-  enabled?: boolean
-  resolverAddress?: string
+type Input = {
+  name?: string
+  isWrapped?: boolean
 }
 
-export const useResolverIsAuthorized = (name: string, options: Options = {}) => {
-  const enabled = (options.enabled ?? true) && !!name
+type Options = {
+  enabled?: boolean
+}
+
+export const useResolverIsAuthorized = ({ name, isWrapped }: Input, options: Options = {}) => {
+  const enabled = (options.enabled ?? true) && !!name && typeof isWrapped !== 'undefined'
 
   const signer = useSigner()
 
-  const internalProfile = useProfile(name, {
-    skip: !enabled || !!options.resolverAddress,
-  })
-  const resolver = options.resolverAddress ?? internalProfile.profile?.resolverAddress ?? ''
+  const chainId = useChainId()
 
-  const isLoading = internalProfile.loading || signer.isLoading
+  const profile = useProfile(name!, {
+    skip: !enabled,
+  })
+  const resolverAddress = profile.profile?.resolverAddress ?? ''
+
+  const isLoading = profile.loading || signer.isLoading
 
   return useQuery(
-    useQueryKeys().resolverIsAuthorized(name, resolver!),
+    useQueryKeys().resolverIsAuthorized(name!, resolverAddress!),
     async () => {
       try {
-        const contract = new Contract(resolver!, setAddrABI, signer.data!)
+        if (!name || !chainId || !resolverAddress || typeof isWrapped === 'undefined')
+          return { isValid: false, isAuthorized: false }
+
+        // If the resolver is known, skip the checks
+        if (checkIsKnownValidResolver(resolverAddress, chainId)) {
+          return {
+            isValid: true,
+            isAuthorized: checkIsKnownAuthorizedResolver(resolverAddress, isWrapped, chainId),
+          }
+        }
+
+        const contract = new Contract(resolverAddress!, setAddrABI, signer.data!)
         await checkInterface(contract)
         await checkAuthorization(contract, name)
         return { isValid: true, isAuthorized: true }
@@ -117,7 +151,7 @@ export const useResolverIsAuthorized = (name: string, options: Options = {}) => 
       }
     },
     {
-      enabled: enabled && !isLoading && !!signer.data,
+      enabled: enabled && !isLoading && !!signer.data && !!resolverAddress,
     },
   )
 }

@@ -154,48 +154,6 @@ describe('useResolverStatus', () => {
     expect(mockUseLatestResolverProfile).not.toHaveBeenCalled()
   })
 
-  it('should not call useBasicName if isWrapped is defined', () => {
-    const { result } = renderHook(() => useResolverStatus('test.eth', { isWrapped: true }))
-    expect(result.current).toMatchObject(
-      makeResult([
-        'hasLatestResolver',
-        'hasProfile',
-        'hasResolver',
-        'hasValidResolver',
-        'isAuthorized',
-        'hasMigratedProfile',
-        'isMigratedProfileEqual',
-        'isNameWrapperAware',
-      ]),
-    )
-    expect(mockBasicName).not.toHaveBeenCalled()
-    expect(mockUseProfile).toHaveBeenCalled()
-    expect(mockUseResolverType).toHaveBeenCalled()
-    expect(mockUseResolverIsAuthorized).not.toHaveBeenCalled()
-    expect(mockUseLatestResolverProfile).not.toHaveBeenCalled()
-  })
-
-  it('should not call useProfile if profile is defined in options', () => {
-    const { result } = renderHook(() => useResolverStatus('test.eth', { profile: makeProfile({}) }))
-    expect(result.current).toMatchObject(
-      makeResult([
-        'hasLatestResolver',
-        'hasProfile',
-        'hasResolver',
-        'hasValidResolver',
-        'isAuthorized',
-        'hasMigratedProfile',
-        'isMigratedProfileEqual',
-        'isNameWrapperAware',
-      ]),
-    )
-    expect(mockBasicName).toHaveBeenCalled()
-    expect(mockUseProfile).not.toHaveBeenCalled()
-    expect(mockUseResolverType).toHaveBeenCalled()
-    expect(mockUseResolverIsAuthorized).not.toHaveBeenCalled()
-    expect(mockUseLatestResolverProfile).not.toHaveBeenCalled()
-  })
-
   it('should not return hasLatestResolver is true if resolverType is not latest', () => {
     mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
     const { result } = renderHook(() => useResolverStatus('test.eth'))
@@ -350,7 +308,6 @@ describe('useResolverStatus', () => {
     expect(result.current).toMatchObject(
       makeResult([
         'hasProfile',
-        'hasResolver',
         'hasValidResolver',
         'isAuthorized',
         'hasMigratedProfile',
@@ -365,21 +322,19 @@ describe('useResolverStatus', () => {
   })
 
   it('should call mockUseLatestResolverProfile if current resolver address is empty string', () => {
+    console.log('testing --------')
     mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
     mockUseProfile.mockReturnValueOnce({
       loading: false,
       profile: makeProfile({ resolverAddress: '' }),
     })
+    mockUseResolverIsAuthorized.mockReturnValueOnce({
+      data: { isAuthorized: false, isValid: false },
+      isLoading: false,
+    })
     const { result } = renderHook(() => useResolverStatus('test.eth'))
     expect(result.current).toMatchObject(
-      makeResult([
-        'hasProfile',
-        'hasResolver',
-        'hasValidResolver',
-        'isAuthorized',
-        'hasMigratedProfile',
-        'isMigratedProfileEqual',
-      ]),
+      makeResult(['hasProfile', 'hasMigratedProfile', 'isMigratedProfileEqual']),
     )
     expect(mockBasicName).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()

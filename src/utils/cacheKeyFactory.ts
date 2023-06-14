@@ -141,6 +141,11 @@ export const useQueryKeys = () => {
       options: { skip?: boolean; skipCompare?: boolean },
       profileResolverAddress?: string,
     ) => [...globalKeys, name, { profileResolverAddress, options }, 'resolverStatus'],
+    reverseRegistryName: (accountAddress?: string) => [
+      ...globalKeys,
+      accountAddress,
+      'reverseRegistryName',
+    ],
     isSupportedTLD: (tld: string) => [...globalKeys, tld, 'isSupportedTLD'],
     validate: (input: string) => [...globalKeys, input, 'validate'],
     validateSubnameLabel: (validationName: string) => [

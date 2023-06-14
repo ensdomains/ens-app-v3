@@ -9,8 +9,6 @@ import { useProfile } from '../useProfile'
 
 type Options = {
   enabled?: boolean
-  resolverAddress?: string
-  isWrapped?: boolean
 }
 
 export const useResolverType = (name: string, options: Options = {}) => {
@@ -20,14 +18,14 @@ export const useResolverType = (name: string, options: Options = {}) => {
 
   const basicName = useBasicName(name, {
     skipGraph: false,
-    enabled: enabled && typeof options.isWrapped === 'undefined',
+    enabled,
   })
-  const isWrapped = options.isWrapped ?? basicName.isWrapped
+  const { isWrapped } = basicName
 
   const profile = useProfile(name, {
-    skip: !enabled || !!options.resolverAddress,
+    skip: !enabled,
   })
-  const resolverAddress = options.resolverAddress ?? profile.profile?.resolverAddress ?? ''
+  const resolverAddress = profile.profile?.resolverAddress ?? ''
 
   const registryResolver = useRegistryResolver(name, {
     enabled,
