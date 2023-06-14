@@ -126,13 +126,13 @@ describe('useResolverIsAuthorized', () => {
   })
 
   it('should return correct results with base mock data', async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     mockUseProfile.mockReturnValue({
       profile: {
         resolverAddress: '0xresolver',
       },
       loading: false,
     })
+    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     await waitForNextUpdate()
     expect(mockSupportsInterface).toHaveBeenCalled()
     expect(mockEstimateGas).toHaveBeenCalled()

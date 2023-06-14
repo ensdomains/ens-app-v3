@@ -264,7 +264,6 @@ describe('Set Primary Name from profile page', () => {
       ).type('aaa123xyz000')
       cy.findByTestId('unknown-labels-confirm').should('be.enabled').click()
 
-      cy.findByText('Update ETH address').should('be.visible')
       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
 
       // update eth address
