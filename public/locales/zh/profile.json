@@ -241,12 +241,36 @@
       },
       "token": {
         "label": "NFT",
+        "noToken": "非 NFT",
         "hex": "十六进制",
-        "decimal": "十进制"
+        "decimal": "十进制",
+        "wrapper": "包装状态",
+        "wrapName": "包装名称",
+        "unwrap": "解除包装",
+        "status": {
+          "unwrapped": "未包装",
+          "wrapped": "已包装",
+          "emancipated": "已包装, 已解放",
+          "locked": "已包装, 已锁定"
+        }
       },
       "misc": {
         "registered": "已注册",
-        "expires": "到期时间"
+        "expires": "到期时间",
+        "earnfi": {
+          "title": "Earni.fi 提醒",
+          "enterEmail": "通过 Email、PUSH、XMTP、Blockscan Chat 以及 Mailchain 来接收 <a>Earni.fi</a> 的提醒。",
+          "emailConfirmation": "即将完成，请检查您的电子邮件并确认此次订阅。",
+          "submitError": "提交失败，请重试。"
+        },
+        "reminderOptions": {
+          "google": "Google 日历",
+          "outlook": "Outlook 日历",
+          "office365": "Office 365 日历",
+          "yahoo": "Yahoo 日历",
+          "ical": "iCal 下载 (.ics)",
+          "earnifi": "Earni.fi 提醒"
+        }
       }
     }
   },
@@ -254,7 +278,7 @@
     "title": "名称详情",
     "notWrapped": "未包装",
     "sendName": {
-      "title": "Send Name",
+      "title": "发送名称",
       "description": "发送名称将使其受新地址的控制",
       "learnMore": "了解关于更多名称所有权的内容",
       "makeOwner": "任命所有者",

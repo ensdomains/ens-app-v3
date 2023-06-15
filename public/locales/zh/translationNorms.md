@@ -40,6 +40,8 @@
 - "wrap": "包装"
 - "unwrap": "解除包装"
 - "NameWrapper": "名称包装器". 这里特指名称包装器这一智能合约。
+- "emancipated": "已解放"
+- "locked: "已锁定"
 - "grant": "授权"
 - "fuses": "保险丝"
 - "custom": "自定义"
