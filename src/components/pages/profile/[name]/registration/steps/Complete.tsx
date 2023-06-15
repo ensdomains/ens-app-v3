@@ -123,6 +123,7 @@ const useEthInvoice = (
   const { data: registerData, isLoading: registerLoading } = useTransaction({
     hash: registerTxFlow?.hash as `0x${string}` | undefined,
   })
+  console.log('registerData: ', registerData)
   const isLoading = !commitReceipt || !registerReceipt || registerLoading
 
   useEffect(() => {
@@ -132,7 +133,6 @@ const useEthInvoice = (
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
-    debugger
     const value = BigNumber.from(registerData?.value) || BigNumber.from(0)
 
     const commitGasUsed = BigNumber.from(commitReceipt?.gasUsed || 0)

@@ -121,7 +121,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const updateCallback = useCallback<UpdateCallback>(
     (transaction) => {
-      console.log('upodateCallback: ', transaction)
+      console.log('updateCallback: ', transaction)
       if (transaction.status !== 'pending' && transaction.key) {
         dispatch({
           name: 'setTransactionStageFromUpdate',
@@ -141,6 +141,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
         items: state.items,
       })
       const item = getSelectedItem()
+      console.log('item: ', item)
       if (!item) return undefined
       return item.transactions[item.currentTransaction]
     },

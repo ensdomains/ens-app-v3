@@ -278,6 +278,7 @@ export const TransactionStageModal = ({
   const addRecentTransaction = useAddRecentTransaction()
   const { data: signer } = useSigner()
   const ens = useEns()
+  const provider = useProvider()
 
   const stage = transaction.stage || 'confirm'
   const recentTransactions = useRecentTransactions()
@@ -329,6 +330,8 @@ export const TransactionStageModal = ({
         transaction.data,
       )
 
+      console.log('populatedTransaction: ', populatedTransaction)
+
       let gasLimit = await signer!.estimateGas(populatedTransaction)
 
       if (transaction.name === 'registerName') {
@@ -359,14 +362,13 @@ export const TransactionStageModal = ({
   } = useSendTransaction({
     mode: 'prepared',
     request,
-    onSuccess: (tx) => {
-      console.log('tx: ', tx)
-      console.log('transaction: ', transaction)
-      console.log('request: ', request)
+    onSuccess: async (tx) => {
+      const transactionData = await provider.getTransaction(tx.hash)
       addRecentTransaction({
-        hash: tx.hash,
+        ...transactionData,
         action: actionName,
         key: txKey!,
+        input: transactionData.data,
       })
       dispatch({ name: 'setTransactionHash', payload: tx.hash })
     },
@@ -483,8 +485,6 @@ export const TransactionStageModal = ({
     }
     return 'inProgress'
   }, [stage])
-
-  const provider = useProvider()
 
   const { data: upperError } = useQuery(
     useQueryKeys().transactionStageModal.transactionError(transaction.hash),

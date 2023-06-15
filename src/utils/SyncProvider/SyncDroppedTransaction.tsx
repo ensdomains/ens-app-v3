@@ -60,6 +60,12 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
     (transaction) => transaction.searchStatus === 'searching',
   )
 
+  const etherscanEndpoint = `https://api-goerli.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
+  const etherscanResponse = await fetch(etherscanEndpoint)
+  const etherscanJson = await etherscanResponse.json()
+  const accountTransactionHistory = etherscanJson?.result
+  console.log('accountTransactionHistory: ', accountTransactionHistory)
+
   console.log('searchingTransactions: ', searchingTransactions)
 
   for (const searchingTransaction of searchingTransactions) {
@@ -71,6 +77,9 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
       store.foundTransaction(address, chainId, searchingTransaction.hash, result.nonce, result.data)
       return
     }
+
+    // May have missed the transaction if it has been replaced before we spotted it in the mempool
+
     store.updateRetries(address, chainId, searchingTransaction.hash)
   }
 
@@ -83,10 +92,6 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
       // Transaction either got replaced or has been cancelled
 
       // Find tranasaction in user's history based on nonce
-      const etherscanEndpoint = `https://api-goerli.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
-      const etherscanResponse = await fetch(etherscanEndpoint)
-      const etherscanJson = await etherscanResponse.json()
-      const accountTransactionHistory = etherscanJson?.result
 
       // Get matching nonce from history
       const matchingNonceTransaction = accountTransactionHistory.find((tx: any) => {
