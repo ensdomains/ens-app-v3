@@ -35,7 +35,7 @@ import { WrappedAvatarButton } from './WrappedAvatarButton'
 const Container = styled.form(({ theme }) => [
   css`
     width: 100%;
-    max-height: 600px;
+    max-height: min(80vh, 600px);
     display: flex;
     flex-direction: column;
     gap: ${theme.space['4']};
