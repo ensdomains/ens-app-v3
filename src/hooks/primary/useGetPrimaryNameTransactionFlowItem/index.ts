@@ -108,7 +108,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
             }
           : {}
 
-      if (transactions.length === 0) return undefined
+      if (transactions.length === 0) return null
       return {
         transactions,
         ...introItem,

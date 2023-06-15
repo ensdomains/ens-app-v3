@@ -7,7 +7,7 @@ import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { useChainId } from '@app/hooks/useChainId'
 import { useProfile } from '@app/hooks/useProfile'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
-import { NAMEWRAPPER_AWARE_RESOLVERS, RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { NAMEWRAPPER_AWARE_RESOLVERS, RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
 
 import { useBasicName } from '../useBasicName'
 
@@ -129,7 +129,7 @@ export const useResolverIsAuthorized = (name?: string, options: Options = {}) =>
     useQueryKeys().resolverIsAuthorized(name!, resolverAddress!),
     async () => {
       try {
-        if (!name || !chainId || !resolverAddress || typeof isWrapped === 'undefined')
+        if (!name || !chainId || !resolverAddress || resolverAddress === emptyAddress)
           return { isValid: false, isAuthorized: false }
 
         // If the resolver is known, skip the checks
