@@ -32,7 +32,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         resolverStatus: makeResovlerStatus(),
       }),
     )
-    expect(result.current.callBack?.('test.eth')).toBeUndefined()
+    expect(result.current.callBack?.('test.eth')).toBeNull()
   })
 
   it('should return transaction SetPrimaryName if the reverseRegistryName is undefined.', async () => {
