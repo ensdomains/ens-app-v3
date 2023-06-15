@@ -50,7 +50,8 @@
     "wrangle:list": "wrangler deployments list",
     "generate:sitemaps": "node ./scripts/generate-site-map.mjs",
     "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
-    "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml"
+    "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml",
+    "codegen": "ts-node ./playwright/setup/codegen.ts"
   },
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.21",
@@ -135,6 +136,7 @@
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/test-helpers": "^0.5.16",
+    "@playwright/test": "1.35.0",
     "@synthetixio/synpress": "3.5.1",
     "@testing-library/cypress": "^8.0.3",
     "@testing-library/jest-dom": "^5.16.5",
@@ -184,6 +186,7 @@
     "hardhat": "^2.10.2",
     "hardhat-dependency-compiler": "^1.1.3",
     "hardhat-deploy": "^0.11.12",
+    "headless-web3-provider": "latest",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
     "jest-canvas-mock": "^2.4.0",
