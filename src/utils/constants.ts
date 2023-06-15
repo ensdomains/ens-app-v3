@@ -79,3 +79,6 @@ export const MOONPAY_WORKER_URL: { [key: number]: string } = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   1337: 'https://moonpay-goerli.ens-cf.workers.dev',
 }
+
+// 102% of price as buffer for fluctuations
+export const CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE = 102

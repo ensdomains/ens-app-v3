@@ -34,9 +34,11 @@ const Total = styled(LineItem)(
   `,
 )
 
-type InvoiceItem = {
+export type InvoiceItem = {
   label: string
   value?: BigNumber
+  /* Percentage buffer to multiply value by when displaying in ETH, defaults to 100 */
+  bufferPercentage?: number
   color?: Colors
 }
 
@@ -47,18 +49,26 @@ type Props = {
 }
 
 export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }: Props) => {
-  const filteredItems = items.map(({ value }) => value).filter((x) => !!x)
+  const filteredItems = items
+    .map(({ value, bufferPercentage }) =>
+      value && unit === 'eth' && bufferPercentage ? value.mul(bufferPercentage).div(100) : value,
+    )
+    .filter((x) => !!x)
   const total = filteredItems.reduce((a, b) => a!.add(b!), BigNumber.from(0))
   const hasEmptyItems = filteredItems.length !== items.length
 
   return (
     <Container>
-      {items.map(({ label, value, color }, inx) => (
+      {items.map(({ label, value, bufferPercentage, color }, inx) => (
         <LineItem data-testid={`invoice-item-${inx}`} $color={color} key={label}>
           <div>{label}</div>
           <Skeleton loading={!value}>
             <div data-testid={`invoice-item-${inx}-amount`}>
-              <CurrencyText eth={value || BigNumber.from(0)} currency={unit} />
+              <CurrencyText
+                bufferPercentage={bufferPercentage}
+                eth={value || BigNumber.from(0)}
+                currency={unit}
+              />
             </div>
           </Skeleton>
         </LineItem>

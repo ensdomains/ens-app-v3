@@ -40,9 +40,9 @@ describe('Register Name', () => {
     cy.findByTestId('year-marker-2').should('include.text', '3% gas')
 
     // should show correct price for yearly registration
-    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0032')
+    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0033')
     cy.findByTestId('plus-minus-control-plus').click()
-    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0064')
+    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0065')
     cy.findByTestId('plus-minus-control-minus').click()
 
     // should go to profile editor step

@@ -14,6 +14,7 @@ import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useSubnameAbilities } from '@app/hooks/useSubnameAbilities'
+import { getSupportLink } from '@app/utils/supportLinks'
 import { validateExpiry } from '@app/utils/utils'
 
 const DetailsWrapper = styled.div(
@@ -68,6 +69,9 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     profile,
     selfAbilities,
     subnameAbilities,
+    ownerData,
+    wrapperData,
+    expiryDate,
   })
 
   const isExpired = useMemo(
@@ -96,7 +100,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
               i18nKey="tabs.profile.warnings.homoglyph"
               ns="profile"
               components={{
-                a: <Outlink href="https://support.ens.domains/faq/normalization/homoglyphs/" />,
+                a: <Outlink href={getSupportLink('homoglyphs')} />,
               }}
             />
           </Helper>

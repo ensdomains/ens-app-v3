@@ -21,7 +21,7 @@ export const useValidateSubnameLabel = (name: string, label: string, isWrapped: 
 
   const skipGetOwner = skipValidation || !validation.isValid || validation.labelCount > 1
   const queryKey = useQueryKeys().validateSubnameLabel(`${validation.name}.${name}`)
-  const { watchedFunc: watchedGetOwner } = useGlobalErrorFunc<typeof getOwner>({
+  const watchedGetOwner = useGlobalErrorFunc<typeof getOwner>({
     queryKey,
     func: getOwner,
   })

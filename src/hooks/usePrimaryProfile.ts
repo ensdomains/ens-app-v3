@@ -8,34 +8,30 @@ import { useProfile } from './useProfile'
 export const usePrimaryProfile = (address: string, skip?: any) => {
   const [profile, setProfile] = useState<Profile | undefined>(undefined)
 
-  const {
-    name: primaryName,
-    loading: primaryLoading,
-    status: primaryStatus,
-  } = usePrimary(address || '', skip)
+  const primary = usePrimary(address || '', skip)
 
   const {
     profile: primaryProfile,
     loading: profileLoading,
     status: profileStatus,
-  } = useProfile(primaryName || '', skip)
+  } = useProfile(primary.data?.name || '', skip)
 
   useEffect(() => {
     let mounted = true
-    if (primaryName && primaryProfile && mounted) {
+    if (primary.data?.name && primaryProfile && mounted) {
       setProfile({
         ...primaryProfile,
-        name: primaryName,
+        name: primary.data?.name,
       })
     } else if (mounted) setProfile(undefined)
     return () => {
       mounted = false
     }
-  }, [primaryName, primaryProfile])
+  }, [primary.data?.name, primaryProfile])
 
   return {
     profile,
-    loading: primaryLoading || profileLoading,
-    status: primaryStatus === 'error' ? primaryStatus : profileStatus,
+    loading: primary.isLoading || profileLoading,
+    status: primary.status === 'error' ? primary.status : profileStatus,
   }
 }

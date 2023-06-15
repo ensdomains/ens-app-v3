@@ -12,7 +12,7 @@ type Options = Pick<UseQueryOptions, 'enabled'>
 export const useRegistryResolver = (name: string, options: Options = {}) => {
   const { ready, contracts } = useEns()
 
-  const { enabled = true } = options
+  const enabled = options.enabled ?? true
 
   return useQuery(
     useQueryKeys().registryResolver(name),

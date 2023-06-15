@@ -3,6 +3,8 @@ import styled, { css } from 'styled-components'
 
 import { Dialog } from '@ensdomains/thorin'
 
+import { getSupportLink } from '@app/utils/supportLinks'
+
 import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
 
 const StyledAnchor = styled.a(
@@ -30,11 +32,7 @@ export const RevokeWarningView = () => {
           t={t}
           components={{
             infoLink: (
-              <StyledAnchor
-                href="https://support.ens.domains/docs/dev-basics/namewrapper/fuses"
-                target="_blank"
-                rel="noreferrer"
-              />
+              <StyledAnchor href={getSupportLink('fuses')} target="_blank" rel="noreferrer" />
             ),
           }}
         >

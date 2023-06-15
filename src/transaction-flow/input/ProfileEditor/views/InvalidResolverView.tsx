@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, Dialog } from '@ensdomains/thorin'
 
 import { Outlink } from '@app/components/Outlink'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 import { CenteredTypography } from '../components/CenteredTypography'
 import { ContentContainer } from '../components/ContentContainer'
@@ -25,7 +26,7 @@ export const InvalidResolverView = ({ onConfirm, onCancel }: Props) => {
           <CenteredTypography>
             {t('input.profileEditor.warningOverlay.invalidResolver.subtitle')}
           </CenteredTypography>
-          <Outlink href="https://support.ens.domains/faq/manager/managing-names/#what-is-a-resolver">
+          <Outlink href={getSupportLink('resolver')}>
             {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
           </Outlink>
         </ContentContainer>
