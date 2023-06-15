@@ -24,7 +24,7 @@ export const useSubnameInfiniteQuery = (
   const { getSubnames } = useEns()
 
   const queryKey = useQueryKeys().subnames(name, orderBy, orderDirection, search)
-  const { watchedFunc: watchedGetSubnames } = useGlobalErrorFunc<typeof getSubnames>({
+  const watchedGetSubnames = useGlobalErrorFunc<typeof getSubnames>({
     queryKey,
     func: getSubnames,
     ms: 15000,

@@ -8,8 +8,10 @@ import DownDirectionSVG from '@app/assets/SortAscending.svg'
 import UpDirectionSVG from '@app/assets/SortDescending.svg'
 import { CheckButton } from '@app/components/@atoms/CheckButton/CheckButton'
 
-const TableHeader = styled.div(
-  ({ theme }) => css`
+const TableHeader = styled.div<{
+  $desktopGap?: 'small' | 'medium'
+}>(
+  ({ theme, $desktopGap }) => css`
     width: 100%;
     display: flex;
     flex-direction: column-reverse;
@@ -21,6 +23,7 @@ const TableHeader = styled.div(
       flex-direction: row;
       align-items: center;
       padding: ${theme.space['3']} ${theme.space['4.5']};
+      gap: ${$desktopGap === 'medium' ? theme.space['6'] : theme.space['2']};
     `)}
   `,
 )
@@ -67,15 +70,17 @@ const TableHeaderLeftControlsContainer = styled.div<{
 
 const TableHeaderLeadingRight = styled.div(() => css``)
 
-const TableHeaderTrailing = styled.div(
-  ({ theme }) => css`
+const TableHeaderTrailing = styled.div<{
+  $isDesktopFlexibleWidth?: boolean
+}>(
+  ({ theme, $isDesktopFlexibleWidth }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     ${mq.sm.min(css`
-      flex: 0 0 ${theme.space['32']};
+      flex: ${$isDesktopFlexibleWidth ? '2' : `0 0 ${theme.space['32']}`};
       width: ${theme.space['32']};
     `)}
   `,
@@ -156,7 +161,7 @@ export const NameTableHeader = ({
   }))
 
   return (
-    <TableHeader>
+    <TableHeader $desktopGap={selectable ? 'small' : 'medium'}>
       <TableHeaderLeading>
         <TableHeaderLeadingLeft $isFullWidth={!selectable}>
           {selectable && (
@@ -198,8 +203,9 @@ export const NameTableHeader = ({
         </TableHeaderLeadingLeft>
         <TableHeaderLeadingRight>{children}</TableHeaderLeadingRight>
       </TableHeaderLeading>
-      <TableHeaderTrailing>
+      <TableHeaderTrailing $isDesktopFlexibleWidth={!selectable}>
         <Input
+          data-testid="name-table-header-search"
           size="small"
           label="search"
           value={searchQuery}

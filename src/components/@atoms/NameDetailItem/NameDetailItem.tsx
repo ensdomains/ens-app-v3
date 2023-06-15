@@ -8,6 +8,7 @@ import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
+import { safeDateObj } from '../../../utils/date'
 import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
 import { OptionalLink } from '../OptionalLink/OptionalLink'
 import { StyledName } from '../StyledName/StyledName'
@@ -144,6 +145,8 @@ export const NameDetailItem = ({
     onClick?.()
   }
 
+  const _expiryDate = safeDateObj(expiryDate)
+
   return (
     <OptionalLink active={mode !== 'select'} href={`/profile/${name}`} passHref>
       <NameItemWrapper
@@ -169,9 +172,9 @@ export const NameDetailItem = ({
           </AvatarWrapper>
           <NameItemContent>
             <TitleWrapper name={truncatedName || name} disabled={disabled} />
-            {expiryDate && (
+            {_expiryDate && (
               <SubtitleWrapper>
-                <ShortExpiry expiry={expiryDate} hasGracePeriod={checkETH2LDFromName(name)} />
+                <ShortExpiry expiry={_expiryDate} hasGracePeriod={checkETH2LDFromName(name)} />
               </SubtitleWrapper>
             )}
           </NameItemContent>

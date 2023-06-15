@@ -66,7 +66,7 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
   const { data: supportedTLD, isLoading: supportedTLDLoading } = useSupportsTLD(normalisedName)
 
   const queryKey = useQueryKeys().basicName(normalisedName, skipGraph)
-  const { watchedFunc: watchedGetBatchData } = useGlobalErrorFunc<typeof getBatchData>({
+  const watchedGetBatchData = useGlobalErrorFunc<typeof getBatchData>({
     queryKey,
     func: getBatchData,
     skip: skipGraph,

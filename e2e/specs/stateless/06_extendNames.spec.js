@@ -145,7 +145,7 @@ describe('Extend Names', () => {
     cy.findByTestId('extend-button').click()
     cy.findByTestId('extend-names-modal', { timeout: 10000 }).should('be.visible')
 
-    cy.findByTestId('extend-names-confirm').click()
+    cy.findByTestId('extend-names-confirm').should('be.enabled').click()
 
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()

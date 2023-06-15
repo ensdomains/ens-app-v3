@@ -4,6 +4,13 @@ import { useEns } from '@app/utils/EnsProvider'
 
 import { useNamesFromAddress } from './useNamesFromAddress'
 
+jest.mock('@app/hooks/useBlockTimestamp', () => ({
+  useBlockTimestamp: () => ({
+    isLoading: false,
+    data: 100,
+  }),
+}))
+
 jest.mock('@app/utils/EnsProvider')
 
 const mockUseEns = mockFunction(useEns)
@@ -58,8 +65,8 @@ describe('useNamesFromAddress', () => {
       }),
     )
     await waitForNextUpdate()
-    expect(result.current.currentPage).toHaveLength(5)
-    expect(result.current.pageLength).toBe(2)
+    expect(result.current.data!.names).toHaveLength(5)
+    expect(result.current.data!.pageCount).toBe(2)
   })
   describe('should correctly sort names', () => {
     it('should sort by creation date', async () => {
@@ -82,8 +89,8 @@ describe('useNamesFromAddress', () => {
         }),
       )
       await waitForNextUpdate()
-      const first = result.current.currentPage![0]
-      const last = result.current.currentPage![4]
+      const first = result.current.data!.names[0]
+      const last = result.current.data!.names[4]
       expect(first.registrationDate?.getDate()).toBe(
         new Date(Date.now() - 60 * 60 * 24 * 1000 * 9).getDate(),
       )
@@ -108,9 +115,9 @@ describe('useNamesFromAddress', () => {
         }),
       )
       await waitForNextUpdate()
-      const first = result.current.currentPage![0]
-      const second = result.current.currentPage![1]
-      const last = result.current.currentPage![4]
+      const first = result.current.data!.names[0]
+      const second = result.current.data!.names[1]
+      const last = result.current.data!.names[4]
       expect(first.expiryDate).toBeUndefined()
       expect(second.expiryDate?.getDate()).toBe(
         new Date(Date.now() + 60 * 60 * 24 * 1000 * 8).getDate(),
@@ -136,8 +143,8 @@ describe('useNamesFromAddress', () => {
         }),
       )
       await waitForNextUpdate()
-      const first = result.current.currentPage![0]
-      const last = result.current.currentPage![4]
+      const first = result.current.data!.names![0]
+      const last = result.current.data!.names![4]
       expect(first.expiryDate?.getDate()).toBe(
         new Date(Date.now() + 60 * 60 * 24 * 1000 * 0).getDate(),
       )
@@ -162,8 +169,8 @@ describe('useNamesFromAddress', () => {
         }),
       )
       await waitForNextUpdate()
-      const first = result.current.currentPage![0]
-      const last = result.current.currentPage![4]
+      const first = result.current.data!.names[0]
+      const last = result.current.data!.names![4]
       expect(first.labelName).toBe('9')
       expect(last.labelName).toBe('5')
     })
@@ -188,7 +195,7 @@ describe('useNamesFromAddress', () => {
         }),
       )
       await waitForNextUpdate()
-      expect(result.current.currentPage).toHaveLength(1)
+      expect(result.current.data!.names).toHaveLength(1)
     })
     it('should filter by domain', async () => {
       const names = Array.from({ length: 10 }, makeNameItem(false)).map((name) => ({
@@ -212,7 +219,7 @@ describe('useNamesFromAddress', () => {
         }),
       )
       await waitForNextUpdate()
-      expect(result.current.currentPage).toHaveLength(1)
+      expect(result.current.data!.names).toHaveLength(1)
     })
   })
   it('should return the correct page length', async () => {
@@ -232,7 +239,7 @@ describe('useNamesFromAddress', () => {
       }),
     )
     await waitForNextUpdate()
-    expect(result.current.pageLength).toBe(5)
+    expect(result.current.data!.pageCount).toBe(5)
   })
   it('should correctly merge data', async () => {
     const names = [
@@ -257,9 +264,9 @@ describe('useNamesFromAddress', () => {
       }),
     )
     await waitForNextUpdate()
-    expect(result.current.nameCount).toBe(10)
-    expect(result.current.currentPage![0].isRegistrant).toBe(true)
-    expect(result.current.currentPage![0].isController).toBe(true)
+    expect(result.current.data!.nameCount).toBe(10)
+    expect(result.current.data!.names![0].isRegistrant).toBe(true)
+    expect(result.current.data!.names![0].isController).toBe(true)
   })
   it('should use registration expiry for wrapped domains', async () => {
     const names = [
@@ -287,7 +294,7 @@ describe('useNamesFromAddress', () => {
       }),
     )
     await waitForNextUpdate()
-    expect(result.current.currentPage![0].expiryDate!.getTime()).toBe(
+    expect(result.current.data!.names[0].expiryDate!.getTime()).toBe(
       names[0].registration.expiryDate.getTime(),
     )
   })
@@ -318,6 +325,6 @@ describe('useNamesFromAddress', () => {
       }),
     )
     await waitForNextUpdate()
-    expect(result.current.currentPage![0].name).toBe('[root]')
+    expect(result.current.data!.names[0].name).toBe('[root]')
   })
 })

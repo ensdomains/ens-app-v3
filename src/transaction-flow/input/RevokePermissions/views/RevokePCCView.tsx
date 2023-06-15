@@ -23,7 +23,7 @@ const CenterAlignedTypography = styled(Typography)(
 export const RevokePCCView = ({ managerAddr, register }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
-  const { nameOrAddr } = usePrimaryNameOrAddress(managerAddr)
+  const { data: { nameOrAddr } = {} } = usePrimaryNameOrAddress(managerAddr)
 
   return (
     <>

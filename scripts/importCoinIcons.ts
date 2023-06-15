@@ -35,7 +35,6 @@ const unsupportedAddessesFile = resolve(__dirname, '../src/constants/coinsWithou
     const optimizedSvg = await optimize(svgStr, {
       multipass: true,
     })
-    console.log(optimizedSvg)
 
     if (!optimizedSvg.data) throw new Error('Optimized SVG data is empty')
     const coinFileName = `${coin.charAt(0).toUpperCase()}${coin.slice(1)}Icon.svg`
@@ -70,6 +69,4 @@ const unsupportedAddessesFile = resolve(__dirname, '../src/constants/coinsWithou
 
   writeFileSync(supportedAddessesFile, JSON.stringify(sortedSupportedAddress))
   writeFileSync(unsupportedAddessesFile, JSON.stringify(sortedUnSupportedAddress))
-
-  console.log('END')
 })()

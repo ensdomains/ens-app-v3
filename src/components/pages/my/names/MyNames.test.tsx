@@ -4,13 +4,13 @@ import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 
 import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/NameTableFooter'
-import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
+import { useNamesFromAddress } from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
 import { Content } from '@app/layouts/Content'
 
 import MyNames from './MyNames'
 
 jest.mock('next/router')
-jest.mock('@app/hooks/useNamesFromAddress')
+jest.mock('@app/hooks/names/useNamesFromAddress/useNamesFromAddress')
 jest.mock('@app/components/@molecules/NameTableFooter/NameTableFooter')
 jest.mock('@app/layouts/Content')
 
@@ -44,14 +44,14 @@ describe('MyNames', () => {
   })
   mockUseAccount.mockReturnValue({ address: '0x123' })
   mockUseNamesFromAddress.mockReturnValue({
-    currentPage: [],
+    data: { names: [], pageCount: 0 },
     isLoading: false,
-    pageLength: 0,
   })
   mockNameTableFooter.mockImplementation((({ onChange: _onChange }: { onChange: any }) => {
     onChange = _onChange
     return null
   }) as any)
+
   it('should reset page on address change', () => {
     const { rerender } = render(<MyNames />)
 

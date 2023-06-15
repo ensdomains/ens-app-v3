@@ -5,13 +5,15 @@ import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
 
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
 import { nameParts } from '@app/utils/name'
 
 import { useHasGlobalError } from './errors/useHasGlobalError'
+import { checkAvailablePrimaryName } from './names/useAvailablePrimaryNamesForAddress/utils'
+import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNameTransactionFlowItem'
+import { useResolverStatus } from './resolver/useResolverStatus'
+import { useNameDetails } from './useNameDetails'
 import { useSelfAbilities } from './useSelfAbilities'
 import { useSubnameAbilities } from './useSubnameAbilities'
 
@@ -33,6 +35,9 @@ type Props = {
   profile: ReturnedENS['getProfile']
   selfAbilities: ReturnType<typeof useSelfAbilities>
   subnameAbilities: ReturnType<typeof useSubnameAbilities>['abilities']
+  ownerData: ReturnType<typeof useNameDetails>['ownerData']
+  wrapperData: ReturnType<typeof useNameDetails>['wrapperData']
+  expiryDate: ReturnType<typeof useNameDetails>['expiryDate']
 }
 
 export const useProfileActions = ({
@@ -41,11 +46,43 @@ export const useProfileActions = ({
   profile,
   selfAbilities,
   subnameAbilities,
+  ownerData,
+  wrapperData,
+  expiryDate,
 }: Props) => {
   const { t } = useTranslation('profile')
-
-  const { name: primaryName, loading: primaryLoading } = usePrimary(address || '')
   const { createTransactionFlow, prepareDataInput } = useTransactionFlow()
+
+  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+
+  const resolverStatus = useResolverStatus(name, {
+    migratedRecordsMatch: address ? { key: '60', type: 'addr', addr: address } : undefined,
+    enabled: !!ownerData,
+  })
+
+  const primary = usePrimary(address)
+
+  const isAvailablePrimaryName = checkAvailablePrimaryName(
+    primary.data?.name,
+    resolverStatus.data,
+  )({
+    name,
+    isMigrated: !!profile?.isMigrated,
+    isResolvedAddress: profile?.address === address,
+    isController: !isWrapped && ownerData?.owner === address,
+    isWrappedOwner: isWrapped && ownerData?.owner === address,
+    expiryDate,
+    fuses: wrapperData,
+  })
+
+  const getPrimaryNameTransactionFlowItem = useGetPrimaryNameTransactionFlowItem({
+    address,
+    isWrapped,
+    profileAddress: profile?.address,
+    resolverAddress: profile?.resolverAddress,
+    resolverStatus: resolverStatus.data,
+  })
+
   const hasGlobalError = useHasGlobalError()
 
   const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
@@ -54,38 +91,15 @@ export const useProfileActions = ({
     'DeleteEmancipatedSubnameWarning',
   )
 
-  const isLoading = primaryLoading
+  const isLoading =
+    primary.isLoading || resolverStatus.isLoading || getPrimaryNameTransactionFlowItem.isLoading
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
     if (!address || isLoading) return actions
-    if ((selfAbilities.canEdit || profile?.address === address) && primaryName !== name) {
-      const setAsPrimaryTransactions: GenericTransaction[] = [
-        makeTransactionItem('setPrimaryName', {
-          name,
-          address: address!,
-        }),
-      ]
-      if (profile?.address !== address) {
-        setAsPrimaryTransactions.unshift(
-          makeTransactionItem('updateEthAddress', {
-            address: address!,
-            name,
-          }),
-        )
-      }
-      const transactionFlowItem: TransactionFlowItem = {
-        transactions: setAsPrimaryTransactions,
-        ...(setAsPrimaryTransactions.length > 1
-          ? {
-              resumable: true,
-              intro: {
-                title: ['tabs.profile.actions.setAsPrimaryName.title', { ns: 'profile' }],
-                content: makeIntroItem('ChangePrimaryName', undefined),
-              },
-            }
-          : {}),
-      }
+
+    const transactionFlowItem = getPrimaryNameTransactionFlowItem?.callBack?.(name)
+    if (isAvailablePrimaryName && !!transactionFlowItem) {
       const key = `setPrimaryName-${name}-${address}`
       actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),
@@ -94,7 +108,12 @@ export const useProfileActions = ({
           : undefined,
         tooltipPlacement: 'left',
         onClick: !checkIsDecrypted(name)
-          ? () => showUnknownLabelsInput(key, { name, key, transactionFlowItem })
+          ? () =>
+              showUnknownLabelsInput(key, {
+                name,
+                key,
+                transactionFlowItem,
+              })
           : () => createTransactionFlow(key, transactionFlowItem),
       })
     }
@@ -185,23 +204,23 @@ export const useProfileActions = ({
     return actions
   }, [
     address,
-    selfAbilities.canEdit,
-    profile?.address,
-    primaryName,
-    isLoading,
     name,
+    selfAbilities.canEdit,
     subnameAbilities.canDelete,
     subnameAbilities.canDeleteContract,
     subnameAbilities.canDeleteError,
-    subnameAbilities.canReclaim,
-    subnameAbilities.isPCCBurned,
     subnameAbilities.canDeleteMethod,
+    subnameAbilities.isPCCBurned,
+    subnameAbilities.canReclaim,
+    getPrimaryNameTransactionFlowItem,
     t,
     showUnknownLabelsInput,
     createTransactionFlow,
     showProfileEditorInput,
     showDeleteEmancipatedSubnameWarningInput,
+    isLoading,
     hasGlobalError,
+    isAvailablePrimaryName,
   ])
 
   return {
