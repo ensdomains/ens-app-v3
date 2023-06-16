@@ -81,7 +81,7 @@
     "@metamask/inpage-provider": "^8.1.0",
     "@metamask/mobile-provider": "^2.1.0",
     "@metamask/post-message-stream": "^6.1.2",
-    "@rainbow-me/rainbowkit": "0.12.7",
+    "@rainbow-me/rainbowkit": "0.12.15",
     "@sentry/nextjs": "^7.43.0",
     "@svgr/webpack": "^6.3.1",
     "@tanstack/query-persist-client-core": "4.14.5",
@@ -231,7 +231,7 @@
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "@synthetixio/synpress@3.5.1": "patches/@synthetixio__synpress@3.5.1.patch",
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
-      "@rainbow-me/rainbowkit@0.12.7": "patches/@rainbow-me__rainbowkit@0.12.7.patch"
+      "@rainbow-me/rainbowkit@0.12.15": "patches/@rainbow-me__rainbowkit@0.12.15.patch"
     }
   }
 }

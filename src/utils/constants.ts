@@ -80,5 +80,7 @@ export const MOONPAY_WORKER_URL: { [key: number]: string } = {
   1337: 'https://moonpay-goerli.ens-cf.workers.dev',
 }
 
+export const WC_PROJECT_ID = '9b14144d470af1e03ab9d88aaa127332'
+
 // 102% of price as buffer for fluctuations
 export const CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE = 102
