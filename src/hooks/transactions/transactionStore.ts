@@ -190,12 +190,31 @@ export function createTransactionStore({ provider: initialProvider }: { provider
   function setReplacedTransaction(
     account: string,
     chainId: number,
-    hash: string,
+    input: string,
     minedData: EtherscanMinedData,
   ): void {
     updateTransactions(account, chainId, (transactions) => {
       return transactions.map((transaction) =>
-        transaction.hash === hash
+        transaction.input === input
+          ? ({
+              ...transaction,
+              minedData: etherscanDataToMinedData(minedData),
+              status: 'confirmed',
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
+
+  function setReplacedTransactionByNonce(
+    account: string,
+    chainId: number,
+    input: string,
+    minedData: EtherscanMinedData,
+  ): void {
+    updateTransactions(account, chainId, (transactions) => {
+      return transactions.map((transaction) =>
+        transaction.input === input && transaction.nonce === parseInt(minedData.nonce, 10)
           ? ({
               ...transaction,
               minedData: etherscanDataToMinedData(minedData),
@@ -221,6 +240,26 @@ export function createTransactionStore({ provider: initialProvider }: { provider
               nonce,
               transactionInput,
               searchStatus: 'found',
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
+
+  function foundMinedTransaction(
+    account: string,
+    chainId: number,
+    hash: string,
+    minedData: EtherscanMinedData,
+  ): void {
+    updateTransactions(account, chainId, (transactions) => {
+      return transactions.map((transaction) =>
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              minedData: etherscanDataToMinedData(minedData),
+              searchStatus: 'found',
+              status: 'confirmed',
             } as Transaction)
           : transaction,
       )
@@ -418,9 +457,11 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     setTransactionStatus,
     updateTransactionStatus,
     foundTransaction,
+    foundMinedTransaction,
     updateRetries,
     setReplacedTransaction,
     setFailedTransaction,
+    setReplacedTransactionByNonce,
   }
 }
 

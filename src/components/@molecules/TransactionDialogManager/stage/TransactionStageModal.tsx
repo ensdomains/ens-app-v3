@@ -363,12 +363,23 @@ export const TransactionStageModal = ({
     mode: 'prepared',
     request,
     onSuccess: async (tx) => {
-      const transactionData = await provider.getTransaction(tx.hash)
+      console.log('request: ', request)
+      console.log('tx: ', tx)
+      let transactionData = {}
+      try {
+        transactionData = await provider.getTransaction(tx.hash)
+      } catch (e) {
+        console.error('Failed to get transaction info')
+      }
+
+      console.log('transactionData: ', transactionData)
       addRecentTransaction({
         ...transactionData,
+        hash: tx.hash,
         action: actionName,
         key: txKey!,
-        input: transactionData.data,
+        input: request?.data,
+        timestamp: Math.floor(Date.now() / 1000),
       })
       dispatch({ name: 'setTransactionHash', payload: tx.hash })
     },

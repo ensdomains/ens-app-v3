@@ -6,6 +6,13 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainId } from '@app/hooks/useChainId'
 
+const accountHistoryEndpoints = {
+  1: (address) =>
+    `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`,
+  5: (address) =>
+    `https://api-goerli.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`,
+}
+
 function useIntervalStrict(callback: () => void, delay: number | null) {
   const savedCallback = useRef<() => void>(() => {})
 
@@ -46,12 +53,14 @@ function useInterval(callback: () => void, delay: number | null, dependencies: a
   }, [delay, ...dependencies])
 }
 
+const handleSearchingTransactions = () => {}
+const handlePendingTransactions = () => {}
+
 const findDroppedTransactions = async (transactions, address, store, chainId, provider) => {
   // Transactions are all tied to an address and a chain
   if (!address || !store || !chainId || !provider || !transactions?.length) return
   console.log('***run***')
-
-  // store.setFailedTransaction(address, chainId, transactions[0].hash)
+  console.log('chainId: ', chainId)
 
   const pendingTransactions = transactions.filter(
     (transaction) => transaction.status === 'pending' && transaction.searchStatus === 'found',
@@ -60,7 +69,7 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
     (transaction) => transaction.searchStatus === 'searching',
   )
 
-  const etherscanEndpoint = `https://api-goerli.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
+  const etherscanEndpoint = accountHistoryEndpoints[chainId]?.(address)
   const etherscanResponse = await fetch(etherscanEndpoint)
   const etherscanJson = await etherscanResponse.json()
   const accountTransactionHistory = etherscanJson?.result
@@ -69,18 +78,56 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
   console.log('searchingTransactions: ', searchingTransactions)
 
   for (const searchingTransaction of searchingTransactions) {
-    console.log('searchingTransaction: ', searchingTransaction)
-    const result = await provider.getTransaction(searchingTransaction.hash)
-    console.log('result: ', result)
+    // A searchingTransaction likely means the transaction was submitted to a private mempool
+    // Once we see it it is likely a mined transaction already.
+    // Also we won't have the nonce, so will have to wait for it to drop into account history
+    // and will match on transaction hash instead
 
+    const minedTransaction = accountTransactionHistory.filter(
+      (historicTransaction) => historicTransaction.hash === searchingTransaction.hash,
+    )
+
+    console.log('minedTransaction: ', minedTransaction)
+
+    if (minedTransaction.length) {
+      store.foundMinedTransaction(address, chainId, searchingTransaction.hash, minedTransaction[0])
+      return
+    }
+
+    // If hash is not the same then it might be a replacement
+
+    // If timestamp on mined transaction if after the time we sent the transactions, and the input is the
+    // same, we can assume it was a replacement. Best we can do since we don't have the nonce
+    const replacementTransactions = accountTransactionHistory.filter(
+      (historicTransaction) =>
+        historicTransaction.input === searchingTransaction.input &&
+        parseInt(historicTransaction.timeStamp, 10) > searchingTransaction.timestamp,
+    )
+
+    if (replacementTransactions.length > 1) {
+      console.error('Ambiguous transaction replacement')
+      return
+    }
+
+    if (replacementTransactions.length === 1) {
+      const _replacementTransaction = replacementTransactions[0]
+      console.log('_replacementTransactions: ', _replacementTransaction)
+      store.setReplacedTransaction(
+        address,
+        chainId,
+        _replacementTransaction.input,
+        _replacementTransaction,
+      )
+      return
+    }
+
+    // If for some reason the transaction was not found, was not a replacement etc, try to find it again.
+    const result = await provider.getTransaction(searchingTransaction.hash)
     if (result) {
       store.foundTransaction(address, chainId, searchingTransaction.hash, result.nonce, result.data)
       return
     }
-
-    // May have missed the transaction if it has been replaced before we spotted it in the mempool
-
-    store.updateRetries(address, chainId, searchingTransaction.hash)
+    // store.updateRetries(address, chainId, searchingTransaction.hash)
   }
 
   for (const pendingTransaction of pendingTransactions) {
@@ -100,12 +147,12 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
       console.log('matchingNonceTransaction: ', matchingNonceTransaction)
 
       // See if matching nonce transaction is a replacement
-      if (matchingNonceTransaction?.input === pendingTransaction?.transactionInput) {
+      if (matchingNonceTransaction?.input === pendingTransaction?.input) {
         console.log('replacement!')
-        store.setReplacedTransaction(
+        store.setReplacedTransactionByNonce(
           address,
           chainId,
-          pendingTransaction.hash,
+          pendingTransaction.input,
           matchingNonceTransaction,
         )
         return
@@ -119,7 +166,6 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
       }
 
       // If the transaction was not replaced then it is a failed transaction
-      debugger
       store.setFailedTransaction(address, chainId, pendingTransaction.hash)
     }
 
@@ -128,7 +174,6 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
     console.log('result: ', result)
     if (!result) {
       // If a pending transaction is not found, it has been dropped
-      debugger
       store.setFailedTransaction(address, chainId, pendingTransaction.hash)
       return
     }
