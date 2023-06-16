@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 
 import { Tag, mq } from '@ensdomains/thorin'
 
-import { ReturnedName } from '@app/hooks/useNamesFromAddress'
+import { ReturnedName } from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
 import { validateExpiry } from '@app/utils/utils'
 
 import { NameDetailItem } from './NameDetailItem'

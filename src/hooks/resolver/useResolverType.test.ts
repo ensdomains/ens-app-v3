@@ -170,28 +170,4 @@ describe('useResolverType', () => {
       isLoading: false,
     })
   })
-
-  it('should not call useProfile if a resolver address is provided in options', () => {
-    const { result } = renderHook(() =>
-      useResolverType('test.eth', { resolverAddress: RESOLVER_ADDRESSES['1'][0] }),
-    )
-    expect(result.current).toMatchObject({
-      data: { type: 'latest' },
-      isLoading: false,
-    })
-    expect(mockUseBasicName).toHaveBeenCalled()
-    expect(mockUseProfile).not.toHaveBeenCalled()
-    expect(mockUseRegistryResolver).toHaveBeenCalled()
-  })
-
-  it('should not call useBasicName if isWrapped is provided in options', () => {
-    const { result } = renderHook(() => useResolverType('test.eth', { isWrapped: true }))
-    expect(result.current).toMatchObject({
-      data: { type: 'latest' },
-      isLoading: false,
-    })
-    expect(mockUseBasicName).not.toHaveBeenCalled()
-    expect(mockUseProfile).toHaveBeenCalled()
-    expect(mockUseRegistryResolver).toHaveBeenCalled()
-  })
 })

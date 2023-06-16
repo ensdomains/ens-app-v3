@@ -17,7 +17,7 @@ const SpinnerContainer = styled.div(
 export const LoadingContainer = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
-    height: 100vh;
+    height: ${theme.space['64']};
 
     display: flex;
     align-items: center;

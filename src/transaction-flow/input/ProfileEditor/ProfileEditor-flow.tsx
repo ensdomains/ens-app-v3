@@ -26,7 +26,6 @@ import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEd
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { Profile } from '@app/types'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
@@ -216,9 +215,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const resolverAddress = useContractAddress('PublicResolver')
 
-  const { data: status, isLoading: statusLoading } = useResolverStatus(name, {
-    profile: profile as Profile,
-    isWrapped,
+  const resolverStatus = useResolverStatus(name, {
     skipCompare: false,
   })
 
@@ -249,10 +246,14 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
 
   useEffect(() => {
-    if (!statusLoading && !status?.hasLatestResolver && transactions.length === 0) {
+    if (
+      !resolverStatus.isLoading &&
+      !resolverStatus.data?.hasLatestResolver &&
+      transactions.length === 0
+    ) {
       setView('warning')
     }
-  }, [statusLoading, status?.hasLatestResolver, transactions.length])
+  }, [resolverStatus.isLoading, resolverStatus.data?.hasLatestResolver, transactions.length])
 
   useEffect(() => {
     if (!profileLoading && !profile?.isMigrated) {
@@ -275,7 +276,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     chainId,
   )
 
-  if (profileLoading || statusLoading || !isRecordsUpdated) return <TransactionLoader />
+  if (profileLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
   return (
     <Container
       data-testid="profile-editor"
@@ -399,12 +400,12 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           warning: (
             <ResolverWarningOverlay
               name={name}
-              status={status}
+              status={resolverStatus.data}
               isWrapped={isWrapped}
               hasOldRegistry={!profile?.isMigrated}
               resumable={resumable}
-              hasNoResolver={!status?.hasResolver}
-              hasMigratedProfile={status?.hasMigratedProfile}
+              hasNoResolver={!resolverStatus.data?.hasResolver}
+              hasMigratedProfile={resolverStatus.data?.hasMigratedProfile}
               latestResolver={resolverAddress!}
               oldResolver={profile?.resolverAddress!}
               dispatch={dispatch}
