@@ -32,7 +32,7 @@ importers:
   .:
     specifiers:
       '@cloudflare/workers-types': ^3.14.1
-      '@deploysentinel/cypress-debugger': ^0.5.5
+      '@deploysentinel/cypress-debugger': ^0.8.1
       '@ensdomains/address-encoder': ^0.2.21
       '@ensdomains/buffer': ^0.1.0
       '@ensdomains/content-hash': ^2.5.7
@@ -249,7 +249,7 @@ importers:
       wagmi: 0.12.1_5oahlguaku2ksepp75x2eqguge
     devDependencies:
       '@cloudflare/workers-types': 3.16.0
-      '@deploysentinel/cypress-debugger': 0.5.5
+      '@deploysentinel/cypress-debugger': 0.8.1
       '@ensdomains/buffer': 0.1.0_hardhat@2.11.2
       '@ensdomains/ens-test-env': 0.3.7
       '@ethersproject/wallet': 5.7.0
@@ -2726,21 +2726,26 @@ packages:
       - supports-color
     dev: true
 
-  /@deploysentinel/cypress-debugger/0.5.5:
-    resolution: {integrity: sha512-oZW/mNO7oFGIPtcPtYf2WDJMUv++gUbucTJkSe/9nbAJntxFOBjF+L4IlXNpUYv1st51QIMrs7yy9qQn2lV7HQ==}
+  /@deploysentinel/cypress-debugger/0.8.1:
+    resolution: {integrity: sha512-Bl/b1yGxOIeOr+MssRTUi09Uq2axGSYJ8pj/dZretGGEUNNQgOkPHWbq7tSEVjXCvKtT1ALhkj8vE6F9YPxfAA==}
     hasBin: true
     dependencies:
       '@cypress/commit-info': 2.2.0
-      '@deploysentinel/cypress-runner': 1.0.3
+      '@deploysentinel/cypress-runner': 3.3.0
+      '@deploysentinel/debugger-core': 0.3.6
       ansi-styles: 6.1.1
       axios: 0.27.2
       axios-retry: 3.3.1
       chrome-remote-interface: 0.31.3_3cxu5zja4e2r5wmvge7mdcljwq
+      cypress: 12.7.0
       fast-safe-stringify: 2.1.1
-      fast-xml-parser: 4.0.11
+      fast-xml-parser: 4.2.4
       fflate: 0.7.4
+      human-interval: 2.0.1
       lodash: 4.17.21
-      minimatch: 5.0.1
+      minimatch: 5.1.6
+      semver: 7.3.8
+      strip-ansi: 6.0.1
     optionalDependencies:
       bufferutil: 4.0.7
       utf-8-validate: 5.0.10
@@ -2749,14 +2754,42 @@ packages:
       - supports-color
     dev: true
 
-  /@deploysentinel/cypress-runner/1.0.3:
-    resolution: {integrity: sha512-x5W5yVtlr+uUKyjSfUXK6Xi8xPXfQ3lOWAQazouNa2WhjVncwB4UlRUpvzlemZSbWOCKpAwM+sdEQAyIlyS07g==}
+  /@deploysentinel/cypress-runner/3.3.0:
+    resolution: {integrity: sha512-4H6e67sCzOx0f0JHm8nyNx8fzsWVHlmvdnC9cJxuhclHbr0AyXtbqYt6mD0hiI0w3vqYMut2Diq6UV1WISYjUQ==}
     engines: {node: '>=10.0.0'}
-    hasBin: true
     dependencies:
+      acorn: 8.8.1
       debug: 4.3.4
+      escodegen: 2.0.0
+      estraverse: 5.3.0
+      http-proxy: 1.18.1_debug@4.3.4
       js-yaml: 4.1.0
+      lodash: 4.17.21
       npm-which: 3.0.1
+      semver: 7.3.8
+      slash: 3.0.0
+      source-map-support: 0.5.21
+      tmp: 0.2.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@deploysentinel/debugger-core/0.3.6:
+    resolution: {integrity: sha512-msK0FIJk3QrL/5GdTwoxNcWcxT9QlOhmHq+PnWQvf5qpWpnkMgiUJ/71eVJwM1Y0m/fV5JIUjmGOAe+8G636Jg==}
+    dependencies:
+      axios: 0.27.2_debug@4.3.4
+      axios-retry: 3.3.1
+      bluebird: 3.7.2
+      check-more-types: 2.24.0
+      compare-versions: 5.0.3
+      date-fns: 2.29.3
+      debug: 4.3.4
+      execa: 1.0.0
+      fast-safe-stringify: 2.1.1
+      fflate: 0.7.4
+      lazy-ass: 1.6.0
+      lodash: 4.17.21
+      ramda: 0.26.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -10839,6 +10872,10 @@ packages:
   /commondir/1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
 
+  /compare-versions/5.0.3:
+    resolution: {integrity: sha512-4UZlZP8Z99MGEY+Ovg/uJxJuvoXuN4M6B3hKaiackiHrgzQFEe3diJi1mf1PNHbFujM7FvLrK2bpgIaImbtZ1A==}
+    dev: true
+
   /component-emitter/1.3.0:
     resolution: {integrity: sha512-Rd3se6QB+sO1TwqZjscQrurpEPIfO0/yYnSin6Q/rD3mOutHvUrCAhJub3r90uNb+SESBuE0QYoB90YdfatsRg==}
 
@@ -14084,18 +14121,18 @@ packages:
       punycode: 1.4.1
     dev: true
 
-  /fast-xml-parser/4.0.11:
-    resolution: {integrity: sha512-4aUg3aNRR/WjQAcpceODG1C3x3lFANXRo8+1biqfieHmg9pyMt7qB4lQV/Ta6sJCTbA5vfD8fnA8S54JATiFUA==}
-    hasBin: true
-    dependencies:
-      strnum: 1.0.5
-    dev: true
-
   /fast-xml-parser/4.1.3:
     resolution: {integrity: sha512-LsNDahCiCcJPe8NO7HijcnukHB24tKbfDDA5IILx9dmW3Frb52lhbeX6MPNUSvyGNfav2VTYpJ/OqkRoVLrh2Q==}
     hasBin: true
     dependencies:
       strnum: 1.0.5
+
+  /fast-xml-parser/4.2.4:
+    resolution: {integrity: sha512-fbfMDvgBNIdDJLdLOwacjFAPYt67tr31H9ZhWSm45CDAxvd0I6WTlSOUo7K2P/K5sA5JgMKG64PI3DMcaFdWpQ==}
+    hasBin: true
+    dependencies:
+      strnum: 1.0.5
+    dev: true
 
   /fastest-levenshtein/1.0.16:
     resolution: {integrity: sha512-eRnCtTTtGZFpQCwhJiUOuxPQWRXVKYDn0b2PeHfXL6/Zi53SLAzAHfVhVWK2AryC/WH05kGfxhFIPvTF0SXQzg==}
@@ -15681,6 +15718,12 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+
+  /human-interval/2.0.1:
+    resolution: {integrity: sha512-r4Aotzf+OtKIGQCB3odUowy4GfUDTy3aTWTfLd7ZF2gBCy3XW3v/dJLRefZnOFFnjqs5B1TypvS8WarpBkYUNQ==}
+    dependencies:
+      numbered: 1.1.0
+    dev: true
 
   /human-signals/1.1.1:
     resolution: {integrity: sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==}
@@ -18838,6 +18881,13 @@ packages:
     dependencies:
       brace-expansion: 2.0.1
 
+  /minimatch/5.1.6:
+    resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
+    engines: {node: '>=10'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: true
+
   /minimist-options/4.1.0:
     resolution: {integrity: sha512-Q4r8ghd80yhO/0j1O3B2BjweX3fiHg9cdOwjJd2J76Q135c+NDxGCqdYKQ1SKBuFfgWbAUzBfvYjPUEeNgqN1A==}
     engines: {node: '>= 6'}
@@ -19580,6 +19630,10 @@ packages:
     dependencies:
       bn.js: 5.2.1
       strip-hex-prefix: 1.0.0
+
+  /numbered/1.1.0:
+    resolution: {integrity: sha512-pv/ue2Odr7IfYOO0byC1KgBI10wo5YDauLhxY6/saNzAdAs0r1SotGCPzzCLNPL0xtrAwWRialLu23AAu9xO1g==}
+    dev: true
 
   /nwsapi/2.2.2:
     resolution: {integrity: sha512-90yv+6538zuvUMnN+zCr8LuV6bPFdq50304114vJYJ8RDyK8D5O9Phpbd6SZWgI7PwzmmfN1upeOJlvybDSgCw==}
