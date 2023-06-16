@@ -8,6 +8,8 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 import { makePersistent } from '@app/utils/persist'
 
+import { WC_PROJECT_ID } from './constants'
+
 const providerArray: ChainProviderFn<typeof mainnet | typeof goerli | typeof localhost>[] = []
 
 if (process.env.NEXT_PUBLIC_PROVIDER) {
@@ -41,6 +43,7 @@ const { provider, chains } = configureChains([mainnet, goerli, localhost], provi
 
 const { connectors } = getDefaultWallets({
   appName: 'ENS',
+  projectId: WC_PROJECT_ID,
   chains,
 })
 
@@ -89,4 +92,4 @@ const wagmiClientWithRefetch = createClient({
   persister: null,
 })
 
-export { queryClient, wagmiClient, chains, wagmiClientWithRefetch }
+export { chains, queryClient, wagmiClient, wagmiClientWithRefetch }
