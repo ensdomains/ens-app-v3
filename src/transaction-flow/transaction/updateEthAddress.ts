@@ -6,24 +6,23 @@ import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 type Data = {
   name: string
   address: string
+  latestResolver?: boolean
 }
 
 const displayItems = (
-  { name, address }: Data,
+  { name, address, latestResolver }: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
-  {
-    label: 'action',
-    value: t(`transaction.description.updateEthAddress`),
-  },
-  {
-    label: 'info',
-    value: t(`transaction.info.updateEthAddress`),
-  },
   {
     label: 'name',
     value: name,
     type: 'name',
+  },
+  {
+    label: 'info',
+    value: latestResolver
+      ? t(`transaction.info.updateEthAddressOnLatestResolver`)
+      : t(`transaction.info.updateEthAddress`),
   },
   {
     label: 'address',
@@ -32,12 +31,17 @@ const displayItems = (
   },
 ]
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
-  ens.setRecord.populateTransaction(data.name, {
+const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
+  const resolverAddress = data?.latestResolver
+    ? (await ens.contracts!.getPublicResolver()).address
+    : undefined
+  return ens.setRecord.populateTransaction(data.name, {
     signer,
     record: { key: 'ETH', value: data.address },
     type: 'addr',
+    resolverAddress,
   })
+}
 
 const exports = { displayItems, transaction } as Transaction<Data>
 

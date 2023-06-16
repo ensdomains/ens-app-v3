@@ -73,8 +73,10 @@ describe('Permissions', () => {
   })
 
   it('should show correct buttons for managing subname (Parent owner settings)', () => {
+    cy.clearLocalStorage()
     acceptMetamaskAccess(2)
     cy.visit('/sub.wrapped.eth')
+    cy.wait(10000)
     // Parent owner settings
     cy.findByTestId('profile-action-Delete subname').should('be.visible')
     cy.findByTestId('subnames-tab').click()
@@ -85,8 +87,10 @@ describe('Permissions', () => {
   })
   it('should show correct buttons for managing subname (Name owner settings)', () => {
     // Name owner settings
+    cy.clearLocalStorage()
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')
+    cy.wait(10000)
     cy.findByTestId('profile-tab').click()
     cy.findByTestId('profile-action-Delete subname').should('be.visible')
     cy.findByTestId('subnames-tab').click()
@@ -285,8 +289,10 @@ describe('Permissions', () => {
   })
 
   it('should show correct buttons for managing subname (Parent owner settings)', () => {
+    cy.clearLocalStorage()
     acceptMetamaskAccess(2)
     cy.visit('/sub.wrapped.eth')
+    cy.wait(10000)
     // Parent owner settings
     cy.findByTestId('profile-action-Delete subname').should('not.exist')
     cy.findByTestId('subnames-tab').click()
@@ -298,8 +304,10 @@ describe('Permissions', () => {
 
   it('should show correct buttons for managing subname (Name owner settings)', () => {
     // Name owner settings
+    cy.clearLocalStorage()
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')
+    cy.wait(10000)
     cy.findByTestId('profile-tab').click()
     cy.findByTestId('disabled-profile-action-Delete subname').should('be.visible')
     cy.findByTestId('subnames-tab').click()

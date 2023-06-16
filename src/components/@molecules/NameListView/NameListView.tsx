@@ -5,7 +5,7 @@ import { Heading } from '@ensdomains/thorin'
 
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-import type { ReturnedName } from '@app/hooks/useNamesFromAddress'
+import type { ReturnedName } from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
 
 const NoResultsContianer = styled.div(
   ({ theme }) => css`

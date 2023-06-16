@@ -9,7 +9,7 @@ export const useGetHistory = (name: string, skip?: any) => {
   const { ready, getHistory } = useEns()
 
   const queryKey = useQueryKeys().getHistory(name)
-  const { watchedFunc: watchedGetHistory } = useGlobalErrorFunc<typeof getHistory>({
+  const watchedGetHistory = useGlobalErrorFunc<typeof getHistory>({
     queryKey,
     func: getHistory,
   })
