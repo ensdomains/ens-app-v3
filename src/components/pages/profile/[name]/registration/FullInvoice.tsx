@@ -7,6 +7,7 @@ import { Colors, CurrencyToggle } from '@ensdomains/thorin'
 import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { useEstimateFullRegistration } from '@app/hooks/useEstimateRegistration'
+import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import useUserConfig from '@app/utils/useUserConfig'
 
 const OptionBar = styled.div(
@@ -48,6 +49,7 @@ const FullInvoice = ({
     () => [
       {
         label: t('invoice.yearRegistration', { years }),
+        bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
         value: totalYearlyFee,
       },
       {
@@ -59,6 +61,7 @@ const FullInvoice = ({
             {
               label: t('invoice.temporaryPremium'),
               value: premiumFee,
+              bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
               color: 'blue' as Colors,
             },
           ]

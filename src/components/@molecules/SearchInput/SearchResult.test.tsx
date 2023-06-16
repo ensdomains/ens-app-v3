@@ -38,8 +38,11 @@ describe('SearchResult', () => {
   })
   it('should correctly display an address without a primary name', () => {
     mockUsePrimary.mockReturnValue({
-      loading: false,
-      name: null,
+      data: {
+        name: undefined,
+        beautifiedName: undefined,
+      },
+      isLoading: false,
       status: 'success',
     })
     const mockData: ComponentProps<typeof SearchResult> = {
@@ -52,9 +55,11 @@ describe('SearchResult', () => {
   })
   it('should correctly display an address with a primary name', () => {
     mockUsePrimary.mockReturnValue({
-      loading: false,
-      name: 'test.eth',
-      beautifiedName: 'test.eth',
+      data: {
+        name: 'test.eth',
+        beautifiedName: 'test.eth',
+      },
+      isLoading: false,
       status: 'success',
     })
     const mockData: ComponentProps<typeof SearchResult> = {
@@ -80,8 +85,11 @@ describe('SearchResult', () => {
   })
   it('should show address as clickable', () => {
     mockUsePrimary.mockReturnValue({
-      loading: false,
-      name: null,
+      data: {
+        name: undefined,
+        beautifiedName: undefined,
+      },
+      isLoading: false,
       status: 'success',
     })
     const mockData: ComponentProps<typeof SearchResult> = {

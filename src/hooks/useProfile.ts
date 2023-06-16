@@ -23,7 +23,7 @@ export const useProfile = (
   const { ready, getProfile } = useEns()
 
   const queryKey = useQueryKeys().profile(name, resolverAddress, skipGraph)
-  const { watchedFunc: watchedGetProfile } = useGlobalErrorFunc<typeof getProfile>({
+  const watchedGetProfile = useGlobalErrorFunc<typeof getProfile>({
     queryKey,
     func: getProfile,
     skip: skipGraph,

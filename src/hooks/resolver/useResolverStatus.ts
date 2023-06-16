@@ -5,118 +5,63 @@ import { useResolverType } from '@app/hooks/resolver/useResolverType'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useProfile } from '@app/hooks/useProfile'
-import { Profile, ReturnedENS } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
-import { contentHashToString } from '@app/utils/contenthash'
 import { profileHasRecords } from '@app/utils/profile'
+import {
+  RecordMatch,
+  checkProfileRecordsContains,
+  checkProfileRecordsEqual,
+} from '@app/utils/records'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
-
-import { useBasicName } from '../useBasicName'
-
-const areRecordsEqual = (a: Profile['records'], b: Profile['records']): boolean => {
-  const areTextsEqual = Object.values(
-    [...(a?.texts || []), ...(b?.texts || [])].reduce<{
-      [key: string]: number
-    }>((acc, text) => {
-      const key = `${text.key}-${text.value}`
-      if (acc[key]) acc[key] += 1
-      else acc[key] = 1
-      return acc
-    }, {}),
-  ).every((count) => count === 2)
-  if (!areTextsEqual) return false
-
-  const areCoinTypesEqual = Object.values(
-    [...(a?.coinTypes || []), ...(b?.coinTypes || [])].reduce<{
-      [key: string]: number
-    }>((acc, coinType) => {
-      const key = `${coinType.coin}-${(coinType as any).addr}`
-      if (acc[key]) acc[key] += 1
-      else acc[key] = 1
-      return acc
-    }, {}),
-  ).every((count) => count === 2)
-  if (!areCoinTypesEqual) return false
-
-  const isContentHashEqual = (() => {
-    const contentHashA = contentHashToString(a?.contentHash)
-    const contentHashB = contentHashToString(b?.contentHash)
-    return contentHashA === contentHashB
-  })()
-
-  if (!isContentHashEqual) return false
-  return true
-}
 
 type Options = {
   enabled?: boolean
-  isWrapped?: boolean
-  profile?: ReturnedENS['getProfile']
   skipCompare?: boolean
+  migratedRecordsMatch?: RecordMatch
 }
 
-export const useResolverStatus = (name: string, options: Options = {}) => {
+export const useResolverStatus = (name?: string, options: Options = {}) => {
   const chainId = useChainId()
 
   const enabled = (options.enabled ?? true) && !!name
 
-  const { isWrapped: internalIsWrapped, isLoading: isBasicNameLoading } = useBasicName(name, {
-    enabled: enabled && typeof options.isWrapped === 'undefined',
-    normalised: true,
-    skipGraph: true,
-  })
-  const isWrapped = options.isWrapped ?? internalIsWrapped
-
-  const { profile: internalProfile, loading: isProfileLoading } = useProfile(name, {
-    skip: !enabled || !!options.profile,
+  const internalProfile = useProfile(name!, {
+    skip: !enabled,
     skipGraph: false,
   })
-  const profile = options.profile ?? internalProfile
+  const { profile } = internalProfile
   const profileResolverAddress = profile?.resolverAddress
 
-  const {
-    data: typeData,
-    isLoading: isTypeLoading,
-    isFetching: isTypeFetching,
-    isError: isTypeError,
-  } = useResolverType(name, {
-    enabled: enabled && !isBasicNameLoading && !isProfileLoading,
-    isWrapped,
-    resolverAddress: profileResolverAddress,
+  const resolverType = useResolverType(name!, {
+    enabled: enabled && !internalProfile.loading,
   })
 
-  const {
-    data: authData,
-    isLoading: isAuthLoading,
-    isFetching: isAuthFetching,
-  } = useResolverIsAuthorized(name, {
-    enabled: enabled && !isTypeLoading && typeData?.type !== 'latest',
-    resolverAddress: profile?.resolverAddress,
+  const resolverIsAuthorized = useResolverIsAuthorized(name, {
+    enabled: enabled && !resolverType.isLoading && resolverType.data?.type !== 'latest',
   })
 
   const latestResolverAddress = useContractAddress('PublicResolver')
-  const {
-    profile: latestResolverProfile,
-    loading: isLatestResolverProfileLoading,
-    isFetching: isLatestResolverProfileFetching,
-  } = useProfile(name, {
+
+  const latestResolverProfile = useProfile(name!, {
     skip:
       !enabled ||
       !!options.skipCompare ||
-      isTypeLoading ||
-      typeData?.type === 'latest' ||
+      resolverType.isLoading ||
+      resolverType.data?.type === 'latest' ||
       !latestResolverAddress,
     resolverAddress: latestResolverAddress,
   })
 
   const isLoading =
-    isTypeLoading ||
-    isAuthLoading ||
-    isLatestResolverProfileLoading ||
-    isBasicNameLoading ||
-    isProfileLoading
-  const isFetching = isTypeFetching || isAuthFetching || isLatestResolverProfileFetching
-  const isError = isTypeError
+    resolverType.isLoading ||
+    resolverIsAuthorized.isLoading ||
+    latestResolverProfile.loading ||
+    internalProfile.loading
+
+  const isFetching =
+    resolverType.isFetching || resolverIsAuthorized.isFetching || latestResolverProfile.isFetching
+
+  const { isError } = resolverType
 
   const data = useMemo(() => {
     if (isLoading || !enabled) return
@@ -130,21 +75,19 @@ export const useResolverStatus = (name: string, options: Options = {}) => {
       hasProfile: false,
       hasMigratedProfile: false,
       isMigratedProfileEqual: false,
+      hasMigratedRecord: undefined,
     }
-
-    // If the profile doesn't have a resolver, we don't need to continue checks
-    if (!profileResolverAddress || profileResolverAddress === emptyAddress) return defaultResults
 
     const baseResults = {
       ...defaultResults,
-      hasResolver: true,
-      hasLatestResolver: typeData?.type === 'latest',
+      hasResolver: !!profileResolverAddress && profileResolverAddress !== emptyAddress,
+      hasLatestResolver: resolverType.data?.type === 'latest',
       isNameWrapperAware: canEditRecordsWhenWrappedCalc(true, profileResolverAddress, chainId),
       hasProfile: profileHasRecords(profile),
     }
 
     // If the profile has the latest resolver, we don't need to continue checks
-    if (baseResults.hasLatestResolver)
+    if (baseResults.hasLatestResolver) {
       return {
         ...baseResults,
         hasValidResolver: true,
@@ -152,32 +95,38 @@ export const useResolverStatus = (name: string, options: Options = {}) => {
         hasMigratedProfile: true,
         isMigratedProfileEqual: true,
       }
+    }
 
     const authorizedResults = {
       ...baseResults,
-      hasValidResolver: authData?.isValid,
-      isAuthorized: authData?.isAuthorized,
+      hasValidResolver: resolverIsAuthorized.data?.isValid,
+      isAuthorized: resolverIsAuthorized.data?.isAuthorized,
     }
 
     if (options.skipCompare) return authorizedResults
 
-    const resolverRecords = latestResolverProfile?.records || {}
-    const hasMigratedProfile = profileHasRecords(latestResolverProfile)
+    const resolverRecords = latestResolverProfile.profile?.records || {}
+    const hasMigratedProfile = profileHasRecords(latestResolverProfile.profile)
+    const hasMigratedRecord = options?.migratedRecordsMatch
+      ? checkProfileRecordsContains(resolverRecords, options.migratedRecordsMatch)
+      : undefined
 
     return {
       ...authorizedResults,
       hasMigratedProfile,
-      isMigratedProfileEqual: areRecordsEqual(profile?.records, resolverRecords),
+      isMigratedProfileEqual: checkProfileRecordsEqual(profile?.records, resolverRecords),
+      hasMigratedRecord,
     }
   }, [
     chainId,
-    authData?.isAuthorized,
-    authData?.isValid,
-    latestResolverProfile,
+    resolverIsAuthorized.data?.isAuthorized,
+    resolverIsAuthorized.data?.isValid,
+    latestResolverProfile.profile,
     options?.skipCompare,
+    options?.migratedRecordsMatch,
     profile,
     profileResolverAddress,
-    typeData?.type,
+    resolverType.data?.type,
     isLoading,
     enabled,
   ])

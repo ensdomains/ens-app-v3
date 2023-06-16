@@ -1,5 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-import { type JsonRpcSigner } from '@ethersproject/providers'
+import type { JsonRpcSigner } from '@ethersproject/providers'
 import { toUtf8String } from '@ethersproject/strings'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -29,8 +28,6 @@ import { checkIsSafeApp } from '@app/utils/safe'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
-
-const COMMIT_GAS_COST = 45000
 
 const BarContainer = styled.div(
   ({ theme }) => css`
@@ -333,11 +330,14 @@ export const TransactionStageModal = ({
         transaction.data,
       )
 
-      let gasLimit = await signer!.estimateGas(populatedTransaction)
+      let gasLimit = await signer!.estimateGas({
+        ...populatedTransaction,
+        maxFeePerGas: 0,
+        maxPriorityFeePerGas: 0,
+      })
 
-      if (transaction.name === 'registerName') {
-        gasLimit = gasLimit.add(BigNumber.from(COMMIT_GAS_COST))
-      }
+      // this addition is arbitrary, something to do with a gas refund but not 100% sure
+      if (transaction.name === 'registerName') gasLimit = gasLimit.add(5000)
 
       return {
         ...populatedTransaction,

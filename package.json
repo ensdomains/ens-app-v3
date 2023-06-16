@@ -31,7 +31,7 @@
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
     "synpress:start": "synpress run -cf ./e2e/synpress.config.js",
-    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost TRANSACTION_WAIT_TIME=5000 synpress run -ne -cf ./e2e/synpress.config.js --spec ./e2e/specs/stateless/07_profileEditor.spec.js",
+    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost TRANSACTION_WAIT_TIME=5000 synpress run -ne -cf ./e2e/synpress.config.js --spec ./e2e/specs/stateless/13_setPrimary.spec.js",
     "synpress:local": "synpress run -ne -cf ./e2e/synpress.config.js",
     "synpress:stateful": "NETWORK_NAME=mainnet synpress run -cf ./e2e/synpress-stateful.config.js",
     "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ci-build-id $CI_BUILD_ID --group stateless",
@@ -81,7 +81,7 @@
     "@metamask/inpage-provider": "^8.1.0",
     "@metamask/mobile-provider": "^2.1.0",
     "@metamask/post-message-stream": "^6.1.2",
-    "@rainbow-me/rainbowkit": "0.12.15-canary.1",
+    "@rainbow-me/rainbowkit": "0.12.15",
     "@sentry/nextjs": "^7.43.0",
     "@svgr/webpack": "^6.3.1",
     "@tanstack/query-persist-client-core": "4.14.5",
@@ -231,7 +231,7 @@
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "@synthetixio/synpress@3.5.1": "patches/@synthetixio__synpress@3.5.1.patch",
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
-      "@rainbow-me/rainbowkit@0.12.15-canary.1": "patches/@rainbow-me__rainbowkit@0.12.15-canary.1.patch"
+      "@rainbow-me/rainbowkit@0.12.15": "patches/@rainbow-me__rainbowkit@0.12.15.patch"
     }
   }
 }

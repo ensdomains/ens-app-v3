@@ -16,8 +16,11 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
+import {
+  ReturnedName,
+  useNamesFromAddress,
+} from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
 import { useChainId } from '@app/hooks/useChainId'
-import { ReturnedName, useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -74,10 +77,9 @@ const MyNames = () => {
   const [pageSize, setPageSize] = useState(10)
 
   const {
-    currentPage,
+    data: namesData,
     isLoading: namesLoading,
     status: namesStatus,
-    pageLength,
   } = useNamesFromAddress({
     address,
     sort: {
@@ -122,7 +124,7 @@ const MyNames = () => {
     [mode],
   )
 
-  const loading = namesLoading || namesStatus === 'loading' || !router.isReady
+  const loading = namesLoading || namesStatus === 'loading' || !router.isReady || !namesData
 
   useProtectedRoute('/', loading ? true : address && address !== '')
 
@@ -164,10 +166,10 @@ const MyNames = () => {
                 <EmptyDetailContainer>
                   <Spinner color="accent" />
                 </EmptyDetailContainer>
-              ) : pageLength === 0 ? (
+              ) : namesData.nameCount === 0 ? (
                 <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
-              ) : currentPage ? (
-                currentPage.map((name) => (
+              ) : namesData.names ? (
+                namesData.names.map((name) => (
                   <TaggedNameItem
                     key={name.id}
                     {...name}
@@ -183,7 +185,7 @@ const MyNames = () => {
             <NameTableFooter
               current={page}
               onChange={(value) => setPage(value)}
-              total={pageLength}
+              total={namesData?.nameCount ? namesData?.pageCount : 0}
               pageSize={pageSize}
               onPageSizeChange={setPageSize}
             />
