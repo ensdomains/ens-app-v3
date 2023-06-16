@@ -24,7 +24,7 @@ describe('unwrapName', () => {
 
   describe('transaction', () => {
     const address = '0x123'
-    const signer = { getAddress: () => Promise.resolve(address) }
+    const signer: any = { getAddress: () => Promise.resolve(address) }
     const mockPopulateTransaction = jest.fn()
     const ens = { unwrapName: { populateTransaction: mockPopulateTransaction } } as any
 

@@ -11,7 +11,10 @@ import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/Name
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-import { ReturnedName, useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
+import {
+  ReturnedName,
+  useNamesFromAddress,
+} from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
 import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
@@ -92,10 +95,9 @@ const Page = () => {
   const [pageSize, setPageSize] = useState(10)
 
   const {
-    currentPage = [],
+    data: namesData,
     isLoading: isNamesLoading,
     status: namesStatus,
-    pageLength,
   } = useNamesFromAddress({
     address,
     sort: {
@@ -136,7 +138,7 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])
 
-  const loading = !isReady || isNamesLoading || primaryProfileLoading
+  const loading = !isReady || isNamesLoading || primaryProfileLoading || !namesData
 
   const hasErrors = namesStatus === 'error'
 
@@ -201,10 +203,10 @@ const Page = () => {
                 <EmptyDetailContainer>
                   <Spinner color="accent" />
                 </EmptyDetailContainer>
-              ) : pageLength === 0 ? (
+              ) : namesData.nameCount === 0 ? (
                 <EmptyDetailContainer>{t('noResults')}</EmptyDetailContainer>
-              ) : currentPage ? (
-                currentPage.map((name) => (
+              ) : namesData ? (
+                namesData.names.map((name) => (
                   <TaggedNameItem
                     key={name.id}
                     {...name}
@@ -220,7 +222,7 @@ const Page = () => {
             <NameTableFooter
               current={page}
               onChange={setPage}
-              total={pageLength}
+              total={namesData?.nameCount ? namesData.pageCount : 0}
               pageSize={pageSize}
               onPageSizeChange={setPageSize}
             />

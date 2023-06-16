@@ -18,7 +18,7 @@ export const useHasSubnames = (name: string) => {
   const enabled = !!(ready && name && isSubname)
 
   const queryKey = useQueryKeys().hasSubnames(name)
-  const { watchedFunc: watchedGetSubnames } = useGlobalErrorFunc({
+  const watchedGetSubnames = useGlobalErrorFunc({
     queryKey,
     func: getSubnames,
   })

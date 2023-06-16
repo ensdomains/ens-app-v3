@@ -39,9 +39,11 @@ describe('DisplayItems', () => {
   })
   it('should show an address item and primary name', () => {
     mockUsePrimary.mockReturnValue({
-      loading: false,
-      name: 'test.eth',
-      beautifiedName: 'test.eth',
+      data: {
+        name: 'test.eth',
+        beautifiedName: 'test.eth',
+      },
+      isLoading: false,
       status: 'success',
     })
     render(<DisplayItems displayItems={[addressItem]} />)
@@ -51,8 +53,8 @@ describe('DisplayItems', () => {
   })
   it('should show an address item and no primary name', () => {
     mockUsePrimary.mockReturnValue({
-      loading: false,
-      name: null,
+      data: { name: undefined, beautifiedName: undefined },
+      isLoading: false,
       status: 'success',
     })
     render(<DisplayItems displayItems={[addressItem]} />)
@@ -67,8 +69,8 @@ describe('DisplayItems', () => {
   })
   it('should render multiple items', () => {
     mockUsePrimary.mockReturnValue({
-      loading: false,
-      name: null,
+      data: { name: undefined, beautifiedName: undefined },
+      isLoading: false,
       status: 'success',
     })
     render(<DisplayItems displayItems={[addressItem, nameItem, genericItem]} />)

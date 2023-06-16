@@ -15,7 +15,7 @@ const mockUseZorb = mockFunction(useZorb)
 const mockUseRouter = mockFunction(useRouter)
 const mockShortExpiry = mockFunction(ShortExpiry)
 
-mockShortExpiry.mockImplementation(({ expiry }) => <div>{expiry}</div>)
+mockShortExpiry.mockImplementation(({ expiry }) => <div>{expiry.toDateString()}</div>)
 
 describe('NameDetailitem', () => {
   const mockRouterObject = {
@@ -110,7 +110,7 @@ describe('NameDetailitem', () => {
         <div>child</div>
       </NameDetailItem>,
     )
-    expect(getByText('2020-01-01')).toBeInTheDocument()
+    expect(getByText('Wed Jan 01 2020')).toBeInTheDocument()
   })
 
   it('should render no expiry date if name has no expiry date', () => {

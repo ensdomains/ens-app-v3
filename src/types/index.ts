@@ -4,6 +4,7 @@ import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 
 import type { ChildFuses, ENS } from '@ensdomains/ensjs'
+import { DecodedContentHash } from '@ensdomains/ensjs/utils/contentHash'
 import { Helper, Space } from '@ensdomains/thorin'
 
 export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
@@ -11,6 +12,8 @@ export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
 export type ProfileRecords = NonNullable<Profile['records']>
 
 export type RecordItem = NonNullable<ProfileRecords['texts']>[number]
+
+export type ContentHash = string | DecodedContentHash | undefined | null
 
 export type Name = NonNullable<Awaited<ReturnType<ENS['getNames']>>>[0]
 

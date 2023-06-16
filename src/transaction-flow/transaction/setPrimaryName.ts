@@ -13,17 +13,13 @@ const displayItems = (
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
-    label: 'action',
-    value: t(`transaction.description.setPrimaryName`),
+    label: 'name',
+    value: name,
+    type: 'name',
   },
   {
     label: 'info',
     value: t(`transaction.info.setPrimaryName`),
-  },
-  {
-    label: 'name',
-    value: name,
-    type: 'name',
   },
   {
     label: 'address',

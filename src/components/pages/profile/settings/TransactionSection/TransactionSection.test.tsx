@@ -96,12 +96,16 @@ describe('TransactionSection', () => {
     render(<TransactionSection />)
     expect(screen.getByTestId('transaction-clear-button')).toBeDisabled()
   })
-  it('should call clearRecentTransactions if clear is pressed', () => {
+  it('should call clearRecentTransactions if clear transaction flow is executed', async () => {
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 1 }, makeRecentTransaction()))
     render(<TransactionSection />)
     act(() => {
       screen.getByTestId('transaction-clear-button').click()
     })
+    await waitFor(() => {
+      expect(screen.getByText('section.transaction.clearTransactions.description')).toBeVisible()
+    })
+    screen.getByText('section.transaction.clearTransactions.actionLabel').click()
     expect(mockClearTransactions).toHaveBeenCalled()
   })
   it('should correctly display registration transactions with hyphens', () => {

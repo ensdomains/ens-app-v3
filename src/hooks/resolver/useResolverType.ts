@@ -9,8 +9,6 @@ import { useProfile } from '../useProfile'
 
 type Options = {
   enabled?: boolean
-  resolverAddress?: string
-  isWrapped?: boolean
 }
 
 export const useResolverType = (name: string, options: Options = {}) => {
@@ -18,34 +16,29 @@ export const useResolverType = (name: string, options: Options = {}) => {
 
   const chainId = useChainId()
 
-  const { isWrapped: internalIsWrapped, isLoading: isBasicNameLoading } = useBasicName(name, {
+  const basicName = useBasicName(name, {
     skipGraph: false,
-    enabled: enabled && typeof options.isWrapped === 'undefined',
+    enabled,
   })
-  const isWrapped = options.isWrapped ?? internalIsWrapped
+  const { isWrapped } = basicName
 
-  const { profile: internalProfile, loading: isProfileLoading } = useProfile(name, {
-    skip: !enabled || !!options.resolverAddress,
+  const profile = useProfile(name, {
+    skip: !enabled,
   })
-  const resolverAddress = options.resolverAddress ?? internalProfile?.resolverAddress ?? ''
+  const resolverAddress = profile.profile?.resolverAddress ?? ''
 
-  const {
-    data: registryResolverAddress,
-    isLoading: isRegistryResolverLoading,
-    isFetching: isRegistyResolverFetching,
-    isError: isRegistryResolverError,
-  } = useRegistryResolver(name, {
+  const registryResolver = useRegistryResolver(name, {
     enabled,
   })
 
-  const isLoading = isBasicNameLoading || isProfileLoading || isRegistryResolverLoading
-  const isFetching = isRegistyResolverFetching
-  const isError = isRegistryResolverError
+  const isLoading = basicName.isLoading || profile.loading || registryResolver.isLoading
+  const { isFetching } = registryResolver
+  const { isError } = registryResolver
 
   const isWildcard =
-    !isRegistryResolverError &&
-    (!registryResolverAddress || registryResolverAddress === emptyAddress) &&
-    resolverAddress !== registryResolverAddress
+    !registryResolver.isError &&
+    (!registryResolver.data || registryResolver.data === emptyAddress) &&
+    resolverAddress !== registryResolver.data
 
   const data = useMemo(() => {
     if (!enabled || isLoading) return

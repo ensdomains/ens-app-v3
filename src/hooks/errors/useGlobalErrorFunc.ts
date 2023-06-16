@@ -115,7 +115,5 @@ export const useGlobalErrorFunc = <Func extends BaseFunc>({
     [func, hash, globalStateDispatch, ms, t, skip],
   )
 
-  return {
-    watchedFunc,
-  }
+  return watchedFunc
 }

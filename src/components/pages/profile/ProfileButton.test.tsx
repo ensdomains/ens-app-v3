@@ -26,10 +26,12 @@ const mockUsePrimary = mockFunction(usePrimary)
 mockUsePrimary.mockImplementation((address, skip) => {
   const isNoPrimary = ADDRESS_TYPE.NoPrimary === address
   return {
-    // eslint-disable-next-line no-nested-ternary
-    name: skip ? undefined : isNoPrimary ? null : 'primary.eth',
-    beautifiedName: isNoPrimary ? null : 'primary.eth',
-    loading: false,
+    data: {
+      // eslint-disable-next-line no-nested-ternary
+      name: skip ? undefined : isNoPrimary ? undefined : 'primary.eth',
+      beautifiedName: isNoPrimary ? undefined : 'primary.eth',
+    },
+    isLoading: false,
   }
 })
 
