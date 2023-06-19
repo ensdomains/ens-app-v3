@@ -1,7 +1,9 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
 import { useBasicName } from '@app/hooks/useBasicName'
+import { emptyAddress } from '@app/utils/constants'
 
+import { useRegistryResolver } from './resolver/useRegistryResolver'
 import { getFunctionCallDetails, getPermittedActions, useSelfAbilities } from './useSelfAbilities'
 
 type DeepPartial<T> = {
@@ -27,7 +29,10 @@ type MockData = {
 }
 
 jest.mock('@app/hooks/useBasicName')
+jest.mock('./resolver/useRegistryResolver')
+
 const mockUseBasicName = mockFunction(useBasicName)
+const mockUseRegistryResolver = mockFunction(useRegistryResolver)
 
 const ownerAddress = '0x123'
 const account = ownerAddress
@@ -1177,7 +1182,49 @@ describe('useSelfAbilities', () => {
         },
       },
     })
-    const { result } = renderHook(() => useSelfAbilities(name, account))
+    mockUseRegistryResolver.mockReturnValue({ data: '0xresolver' })
+    const { result } = renderHook(() => useSelfAbilities(account, name))
     expect(result.current.canSend).toBe(false)
+  })
+  it('should return canEdit as true if there is a resolver', () => {
+    mockUseBasicName.mockReturnValue({
+      ownerData: {
+        owner: account,
+      },
+    })
+    mockUseRegistryResolver.mockReturnValue({ data: '0xresolver' })
+
+    const { result } = renderHook(() => useSelfAbilities(account, name))
+
+    expect(result.current.canEdit).toBe(true)
+  })
+  it('should return canEdit as true if there is no resolver but CANNOT_SET_RESOLVER has not been burned', () => {
+    mockUseBasicName.mockReturnValue({
+      ownerData: {
+        owner: account,
+      },
+    })
+    mockUseRegistryResolver.mockReturnValue({ data: emptyAddress })
+
+    const { result } = renderHook(() => useSelfAbilities(account, name))
+
+    expect(result.current.canEdit).toBe(true)
+  })
+  it('shold return canEdit as false if there is no resolver and CANNOT_SET_RESOLVER has been burned', () => {
+    mockUseBasicName.mockReturnValue({
+      ownerData: {
+        owner: account,
+      },
+      wrapperData: {
+        child: {
+          CANNOT_SET_RESOLVER: true,
+        },
+      },
+    })
+    mockUseRegistryResolver.mockReturnValue({ data: emptyAddress })
+
+    const { result } = renderHook(() => useSelfAbilities(account, name))
+
+    expect(result.current.canEdit).toBe(false)
   })
 })

@@ -1,7 +1,10 @@
 import { useMemo } from 'react'
 
 import { useBasicName } from '@app/hooks/useBasicName'
+import { emptyAddress } from '@app/utils/constants'
 import { checkSubname } from '@app/utils/utils'
+
+import { useRegistryResolver } from './resolver/useRegistryResolver'
 
 interface SendPermissions {
   canSendOwner: boolean
@@ -277,6 +280,7 @@ export const useSelfAbilities = (address: string | undefined, name?: string | nu
   const is2LDEth = name?.split('.')?.length === 2 && name?.split('.')?.[1] === 'eth'
 
   const basicNameData = useBasicName(name, { skipGraph: false })
+  const registryResolverData = useRegistryResolver(name || '', { enabled: !!name })
   const parentBasicNameData = useBasicName(parent, { skipGraph: false })
 
   return useMemo(() => {
@@ -334,7 +338,11 @@ export const useSelfAbilities = (address: string | undefined, name?: string | nu
     abilities.canSendManager = canSendManager
     abilities.canSend = canSendManager || canSendOwner
 
-    if (basicNameData?.ownerData?.owner === address) {
+    const hasResolver = !!(registryResolverData.data && registryResolverData.data !== emptyAddress)
+    const canSetResolver = !basicNameData.wrapperData?.child.CANNOT_SET_RESOLVER
+
+    // if resolver is empty and user cannot set resolver, they cannot edit
+    if (basicNameData?.ownerData?.owner === address && (hasResolver || canSetResolver)) {
       abilities.canEdit = true
     }
 
@@ -351,5 +359,5 @@ export const useSelfAbilities = (address: string | undefined, name?: string | nu
     }
 
     return abilities
-  }, [address, name, is2LDEth, basicNameData, parentBasicNameData])
+  }, [name, address, basicNameData, parentBasicNameData, is2LDEth, registryResolverData.data])
 }
