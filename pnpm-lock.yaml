@@ -130,7 +130,7 @@ importers:
       hardhat: ^2.10.2
       hardhat-dependency-compiler: ^1.1.3
       hardhat-deploy: ^0.11.12
-      headless-web3-provider: file:.yalc/headless-web3-provider
+      headless-web3-provider: latest
       husky: ^7.0.4
       i18next: ^21.9.1
       i18next-browser-languagedetector: ^6.1.5
@@ -310,7 +310,7 @@ importers:
       hardhat: 2.11.2_6qtx7vkbdhwvdm4crzlegk4mvi
       hardhat-dependency-compiler: 1.1.3_hardhat@2.11.2
       hardhat-deploy: 0.11.16
-      headless-web3-provider: file:.yalc/headless-web3-provider
+      headless-web3-provider: 0.1.13
       husky: 7.0.4
       jest: 27.5.1_mjwkemmcjegc73wou7xswbzdh4
       jest-canvas-mock: 2.4.0
@@ -15415,6 +15415,16 @@ packages:
     resolution: {integrity: sha512-tWCK4biJ6hcLqTviLXVR9DTRfYGQMXEIUj3gwJ2rZ5wO/at3XtkI4g8mCvFdUF9l1KMBNCfmNAdnahm1cgavQA==}
     dev: true
 
+  /headless-web3-provider/0.1.13:
+    resolution: {integrity: sha512-oMYOFJHWCsE74Fcdhfi4airtCkT2k+KAFf9aNCljrfhRU2iqV1BR3eVp0CcZ2MsehxudIVCsogpmNUKYZ4wivw==}
+    dependencies:
+      ethers: 5.7.2
+      rxjs: 7.8.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
   /heap/0.2.6:
     resolution: {integrity: sha512-MzzWcnfB1e4EG2vHi3dXHoBupmuXNZzx6pY6HldVS55JKKBoq3xOyzfSaZRkJp37HIhEYC78knabHff3zc4dQQ==}
     dev: false
@@ -26170,18 +26180,6 @@ packages:
       immer: 9.0.15
       react: 17.0.2
       use-sync-external-store: 1.2.0_react@17.0.2
-
-  file:.yalc/headless-web3-provider:
-    resolution: {directory: .yalc/headless-web3-provider, type: directory}
-    name: headless-web3-provider
-    version: 0.1.13
-    dependencies:
-      ethers: 5.7.2
-      rxjs: 7.8.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: true
 
   github.com/ethereumjs/ethereumjs-abi/ee3994657fa7a427238e6ba92a84d0b529bbcde0:
     resolution: {tarball: https://codeload.github.com/ethereumjs/ethereumjs-abi/tar.gz/ee3994657fa7a427238e6ba92a84d0b529bbcde0}

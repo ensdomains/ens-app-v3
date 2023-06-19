@@ -3,11 +3,9 @@ import { Web3RequestKind } from 'headless-web3-provider'
 
 import { test } from '..'
 
-test('connect the wallet', async ({ page, injectProvider, nameGenerator }) => {
-  const wallet = await injectProvider(page)
-
+test('connect the wallet', async ({ page, wallet, nameGenerator }) => {
   const name = await nameGenerator()
-  console.log('generating name')
+  console.log('generating name', name)
   await page.goto(`http://localhost:3000/${name}`)
 
   await page.pause()
