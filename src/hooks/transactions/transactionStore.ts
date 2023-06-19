@@ -415,7 +415,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     data[account] = data[account] ?? {}
 
     let completedTransactionCount = 0
-    const MAX_COMPLETED_TRANSACTIONS = 10
+    const MAX_COMPLETED_TRANSACTIONS = 8
     const transactions = updateFn(data[account][chainId] ?? [])
       // Keep the list of completed transactions from growing indefinitely
       .filter(({ status }) => {
