@@ -5,7 +5,9 @@ import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
 
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { GenericTransaction } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
 import { nameParts } from '@app/utils/name'
 
@@ -16,6 +18,7 @@ import { useResolverStatus } from './resolver/useResolverStatus'
 import { useNameDetails } from './useNameDetails'
 import { useSelfAbilities } from './useSelfAbilities'
 import { useSubnameAbilities } from './useSubnameAbilities'
+import useWrapperApprovedForAll from './useWrapperApprovedForAll'
 
 type Action = {
   onClick: () => void
@@ -62,6 +65,12 @@ export const useProfileActions = ({
 
   const primary = usePrimary(address)
 
+  const wrappedApproved = useWrapperApprovedForAll(
+    address || '',
+    subnameAbilities.canDelete,
+    !!subnameAbilities.canDeleteRequiresWrap,
+  )
+
   const isAvailablePrimaryName = checkAvailablePrimaryName(
     primary.data?.name,
     resolverStatus.data,
@@ -92,7 +101,10 @@ export const useProfileActions = ({
   )
 
   const isLoading =
-    primary.isLoading || resolverStatus.isLoading || getPrimaryNameTransactionFlowItem.isLoading
+    primary.isLoading ||
+    resolverStatus.isLoading ||
+    getPrimaryNameTransactionFlowItem.isLoading ||
+    wrappedApproved.isLoading
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
@@ -135,40 +147,65 @@ export const useProfileActions = ({
     }
 
     if (subnameAbilities.canDelete && subnameAbilities.canDeleteContract) {
-      const action = subnameAbilities.isPCCBurned
-        ? {
-            label: t('tabs.profile.actions.deleteSubname.label'),
-            onClick: () => {
-              showDeleteEmancipatedSubnameWarningInput(
-                `delete-emancipated-subname-warning-${name}`,
-                { name },
-              )
-            },
-            tooltipContent: hasGlobalError
-              ? t('errors.networkError.blurb', { ns: 'common' })
-              : undefined,
-            red: true,
-            skip2LDEth: true,
-          }
-        : {
-            label: t('tabs.profile.actions.deleteSubname.label'),
-            onClick: () =>
-              createTransactionFlow(`deleteSubname-${name}`, {
-                transactions: [
-                  makeTransactionItem('deleteSubname', {
-                    name,
-                    contract: subnameAbilities.canDeleteContract!,
-                    method: subnameAbilities.canDeleteMethod,
+      const base = {
+        label: t('tabs.profile.actions.deleteSubname.label'),
+        tooltipContent: hasGlobalError
+          ? t('errors.networkError.blurb', { ns: 'common' })
+          : undefined,
+        red: true,
+        skip2LDEth: true,
+      }
+      if (subnameAbilities.canDeleteRequiresWrap) {
+        const transactions: GenericTransaction[] = [
+          makeTransactionItem('wrapName', {
+            name,
+          }),
+          makeTransactionItem('deleteSubname', {
+            contract: 'nameWrapper',
+            name,
+            method: 'setRecord',
+          }),
+        ]
+        if (!wrappedApproved.approvedForAll)
+          transactions.unshift(makeTransactionItem('approveNameWrapper', { address }))
+        actions.push({
+          ...base,
+          onClick: () =>
+            createTransactionFlow(`deleteSubname-${name}`, {
+              transactions,
+              resumable: true,
+              intro: {
+                title: ['intro.multiStepSubnameDelete.title', { ns: 'transactionFlow' }],
+                content: makeIntroItem('GenericWithDescription', {
+                  description: t('intro.multiStepSubnameDelete.description', {
+                    ns: 'transactionFlow',
                   }),
-                ],
-              }),
-            tooltipContent: hasGlobalError
-              ? t('errors.networkError.blurb', { ns: 'common' })
-              : undefined,
-            red: true,
-            skip2LDEth: true,
-          }
-      actions.push(action)
+                }),
+              },
+            }),
+        })
+      } else {
+        actions.push({
+          ...base,
+          onClick: subnameAbilities.isPCCBurned
+            ? () => {
+                showDeleteEmancipatedSubnameWarningInput(
+                  `delete-emancipated-subname-warning-${name}`,
+                  { name },
+                )
+              }
+            : () =>
+                createTransactionFlow(`deleteSubname-${name}`, {
+                  transactions: [
+                    makeTransactionItem('deleteSubname', {
+                      name,
+                      contract: subnameAbilities.canDeleteContract!,
+                      method: subnameAbilities.canDeleteMethod,
+                    }),
+                  ],
+                }),
+        })
+      }
     } else if (subnameAbilities.canDeleteError) {
       actions.push({
         label: t('tabs.profile.actions.deleteSubname.label'),
@@ -204,23 +241,25 @@ export const useProfileActions = ({
     return actions
   }, [
     address,
+    isLoading,
+    getPrimaryNameTransactionFlowItem,
     name,
+    isAvailablePrimaryName,
     selfAbilities.canEdit,
     subnameAbilities.canDelete,
     subnameAbilities.canDeleteContract,
     subnameAbilities.canDeleteError,
-    subnameAbilities.canDeleteMethod,
-    subnameAbilities.isPCCBurned,
     subnameAbilities.canReclaim,
-    getPrimaryNameTransactionFlowItem,
+    subnameAbilities.canDeleteRequiresWrap,
+    subnameAbilities.isPCCBurned,
+    subnameAbilities.canDeleteMethod,
     t,
+    hasGlobalError,
     showUnknownLabelsInput,
     createTransactionFlow,
     showProfileEditorInput,
+    wrappedApproved.approvedForAll,
     showDeleteEmancipatedSubnameWarningInput,
-    isLoading,
-    hasGlobalError,
-    isAvailablePrimaryName,
   ])
 
   return {

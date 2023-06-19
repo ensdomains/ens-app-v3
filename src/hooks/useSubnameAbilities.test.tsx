@@ -258,6 +258,24 @@ const groups = [
         address: '0xName',
         abilities: makeResults({ canDelete: false }),
       },
+      {
+        description:
+          'should return canDelete is true and canDeleteRequiresWrap is true if parent is wrapped',
+        ...unwrappedSubname,
+        hasSubnames: false,
+        address: '0xParent',
+        isParentWrapped: true,
+        parentOwnerData: makeOwnerData({
+          owner: '0xParent',
+          ownershipLevel: 'nameWrapper',
+        }),
+        abilities: makeResults({
+          canDelete: true,
+          canDeleteContract: 'nameWrapper',
+          canDeleteRequiresWrap: true,
+          canDeleteError: undefined,
+        }),
+      },
     ],
   },
   {

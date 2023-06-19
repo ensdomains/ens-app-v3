@@ -20,6 +20,7 @@ type DeleteAbilities = {
   canDeleteContract?: 'registry' | 'nameWrapper'
   canDeleteMethod?: 'setRecord' | 'setSubnodeOwner'
   canDeleteError?: string
+  canDeleteRequiresWrap?: boolean
   isPCCBurned?: boolean
 }
 
@@ -38,6 +39,7 @@ type ReturnData = {
 const getCanDeleteAbilities = (
   {
     isWrapped,
+    isParentWrapped,
     isParentOwner,
     hasSubnames,
     pccExpired,
@@ -47,6 +49,7 @@ const getCanDeleteAbilities = (
     nameHasOwner,
   }: {
     isWrapped: boolean
+    isParentWrapped: boolean
     isParentOwner: boolean
     hasSubnames: boolean
     pccExpired: boolean
@@ -63,7 +66,15 @@ const getCanDeleteAbilities = (
       canDelete: !hasSubnames && !pccExpired,
       canDeleteContract: 'registry',
       canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
+      // if pcc expired, use reclaim process
+      ...(isParentWrapped && !pccExpired
+        ? {
+            canDeleteContract: 'nameWrapper',
+            canDeleteRequiresWrap: true,
+          }
+        : {}),
     }
+
   if (isWrapped && isPCCBurned && isOwner) {
     /* eslint-disable no-nested-ternary */
     return {
@@ -160,6 +171,7 @@ export const useSubnameAbilities = ({
       ...getCanDeleteAbilities(
         {
           isWrapped,
+          isParentWrapped,
           isParentOwner,
           hasSubnames,
           pccExpired,

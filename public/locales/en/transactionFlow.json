@@ -338,7 +338,11 @@
       "invalidResolver": {
         "title": "Unauthorized resolver set",
         "description": "To use this as your primary name you will need to set a valid resolver and update the ETH address first."
-      }     
+      }
+    },
+    "multiStepSubnameDelete": {
+      "title": "Delete Subname",
+      "description": "Deleting this subname requires multiple transactions"
     }
   },
   "errors": {
