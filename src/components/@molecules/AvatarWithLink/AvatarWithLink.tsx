@@ -65,7 +65,7 @@ export const AvatarWithLink = ({ name, label }: Props) => {
   const zorb = useZorb(name || '', 'name')
   const profileURL = getDestination(`/profile/${name}`) as string
   return (
-    <Container href={profileURL}>
+    <Container href={profileURL} data-testid="avatar-with-link">
       <Avatar src={avatar || zorb} label={label} />
       <Border />
       <IconWrapper>

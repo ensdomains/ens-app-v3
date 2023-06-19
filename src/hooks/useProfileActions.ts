@@ -98,7 +98,6 @@ export const useProfileActions = ({
     const actions: Action[] = []
     if (!address || isLoading) return actions
 
-    console.log(isAvailablePrimaryName)
     const transactionFlowItem = getPrimaryNameTransactionFlowItem?.callBack?.(name)
     if (isAvailablePrimaryName && !!transactionFlowItem) {
       const key = `setPrimaryName-${name}-${address}`
