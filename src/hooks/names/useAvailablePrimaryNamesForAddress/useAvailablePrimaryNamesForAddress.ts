@@ -11,6 +11,7 @@ import { useNamesFromResolvedAddress } from '../useNamesFromResolvedAddress/useN
 import { checkAvailablePrimaryName, mergeNames } from './utils'
 
 export type Name = BaseName & {
+  isMigrated?: boolean | null
   isController?: boolean
   isRegistrant?: boolean
   isWrappedOwner?: boolean

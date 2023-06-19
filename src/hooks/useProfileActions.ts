@@ -67,7 +67,7 @@ export const useProfileActions = ({
     resolverStatus.data,
   )({
     name,
-    isMigrated: !!profile?.isMigrated,
+    isMigrated: profile?.isMigrated as boolean,
     isResolvedAddress: profile?.address === address,
     isController: !isWrapped && ownerData?.owner === address,
     isWrappedOwner: isWrapped && ownerData?.owner === address,
@@ -98,6 +98,7 @@ export const useProfileActions = ({
     const actions: Action[] = []
     if (!address || isLoading) return actions
 
+    console.log(isAvailablePrimaryName)
     const transactionFlowItem = getPrimaryNameTransactionFlowItem?.callBack?.(name)
     if (isAvailablePrimaryName && !!transactionFlowItem) {
       const key = `setPrimaryName-${name}-${address}`
