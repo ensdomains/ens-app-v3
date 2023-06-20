@@ -339,9 +339,7 @@ export const useSelfAbilities = (address: string | undefined, name?: string | nu
     abilities.canSendManager = canSendManager
     abilities.canSend = canSendManager || canSendOwner
 
-    const hasAuthorisedResolver = !!(
-      resolverAuthorisation.data && resolverAuthorisation.data.isAuthorized
-    )
+    const hasAuthorisedResolver = resolverAuthorisation.data?.isAuthorized
     const canSetResolver = !basicNameData.wrapperData?.child.CANNOT_SET_RESOLVER
 
     // if resolver is empty and user cannot set resolver, they cannot edit
