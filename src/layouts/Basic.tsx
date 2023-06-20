@@ -23,9 +23,6 @@ const Container = styled.div(
     @supports (-webkit-touch-callout: none) {
       width: calc(100% - ${theme.space['8']});
       box-sizing: content-box;
-      ${mq.sm.min(css`
-        width: calc(100% - ${theme.space['32']});
-      `)}
     }
     ${mq.sm.min(css`
       padding: ${theme.space['8']};
