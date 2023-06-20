@@ -3,9 +3,10 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // this is taken from rainbowkit
 import type { BaseProvider, Block, TransactionReceipt } from '@ethersproject/providers'
-import { waitForTransaction } from '@wagmi/core'
 
 import { MinedData } from '@app/types'
+
+import { waitForTransaction } from './waitForTransaction'
 
 const storageKey = 'transaction-data'
 
@@ -16,6 +17,7 @@ interface BaseTransaction {
   action: string
   key?: string
   description?: string
+  isSafeTx?: boolean
   status: TransactionStatus
   minedData?: MinedData
   newHash?: string
@@ -175,15 +177,16 @@ export function createTransactionStore({ provider: initialProvider }: { provider
               setTransactionStatus(account, chainId, hash, 'repriced', speedUpTransaction.hash)
               addTransaction(account, chainId, {
                 ...transaction,
+                isSafeTx: false,
                 hash: speedUpTransaction.hash,
               })
 
               transactionRequestCache.set(speedUpTransaction.hash, requestPromise)
               transactionRequestCache.delete(hash)
             },
+            isSafeTx: transaction.isSafeTx,
           })
             .catch((err) => {
-              console.error('transaction error:', err)
               if (err.cancelled) {
                 const replacement = err.replacement as TransactionReceipt
                 return { ...replacement, status: 0 }
