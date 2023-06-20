@@ -56,7 +56,7 @@ export const nameGenerator = ({ accounts, provider }: Config) => {
       ],
       coinTypes: [
         { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
-        { key: 0, value: '1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71' },
+        { key: 'BTC', value: '1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71' },
       ],
       contentHash: 'ipfs://Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
     }
@@ -69,11 +69,15 @@ export const nameGenerator = ({ accounts, provider }: Config) => {
         },
       },
     ]
+    const fuses: any = {
+      named: ['CANNOT_UNWRAP'],
+    }
     console.time('registerLegacyWithConfig')
-    await generateLegacyNameWithConfig(
-      { label: name, owner, manager, addr, records, subnames },
+    await generateWrappedName(
+      { label: name, owner, manager, addr, records, subnames, fuses },
       { accounts, provider },
     )
+    await provider.mine()
     await waitForSubgraph(provider)()
     console.timeEnd('registerLegacyWithConfig')
     return `${name}.eth`

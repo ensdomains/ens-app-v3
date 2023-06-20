@@ -46,19 +46,27 @@ export const generateRecords = async (
 
   // Connect contract
   const signer = provider.getSigner(accounts.getIndex(owner))
-  const publicResolver = (await getContract('PublicResolver', {
+  const publicResolver = getContract('PublicResolver', {
     address: resolver,
     signer,
-  })) as PublicResolver
+  }) as PublicResolver
+
+  const nw = getContract('ENSRegistry', { signer })
+  const test = await nw.owner(namehash(name))
+  const resolverTest = await nw.resolver(namehash(name))
+  console.log('from registry', resolverTest, test)
 
   // Make records
   const node = namehash(name)
 
+  console.log('publicResolver', publicResolver.address, owner, name)
+  console.log('setting texts')
   const { texts = [], coinTypes = [], contentHash, abi } = records
-  for (const { key, value } of texts) {
-    await publicResolver.setText(node, key, value)
-  }
+  // for (const { key, value } of texts) {
+  //   await publicResolver.setText(node, key, value)
+  // }
 
+  console.log('setting coins')
   for (const { key, value } of coinTypes) {
     if (value === '' || value === '0x' || value === emptyAddress)
       throw new Error('Cannot create record with empty address')
@@ -73,6 +81,7 @@ export const generateRecords = async (
     await publicResolver['setAddr(bytes32,uint256,bytes)'](node, inputCoinType, encodedAddress)
   }
 
+  console.log('setting contenthash')
   if (contentHash) {
     const _contentHash = encodeContenthash(contentHash)
     if (_contentHash.error) throw new Error(_contentHash.error)

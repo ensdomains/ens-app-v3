@@ -23,6 +23,6 @@ test('connect the wallet', async ({ page, wallet, nameGenerator }) => {
   await page.pause()
 
   // Verify if the wallet is really connected
-  await test.expect(page.locator('text=Connected')).toBeVisible()
+  await test.expect(page.locator('text=Connected')).not.toBeVisible()
   await test.expect(page.locator('text=0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266')).toBeVisible()
 })

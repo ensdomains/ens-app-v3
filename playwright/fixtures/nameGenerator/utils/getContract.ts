@@ -6,6 +6,7 @@ import ENSRegistryJSON from '@ensdomains/ens-contracts/deployments/mainnet/ENSRe
 import ETHRegistrarControllerJSON from '@ensdomains/ens-contracts/deployments/mainnet/ETHRegistrarController.json'
 import PublicResolverJSON from '@ensdomains/ens-contracts/deployments/mainnet/PublicResolver.json'
 import { ETHRegistrarController__factory } from '@ensdomains/ensjs/generated/factories/ETHRegistrarController__factory'
+import { NameWrapper__factory } from '@ensdomains/ensjs/generated/factories/NameWrapper__factory'
 
 require('dotenv').config({ path: '.env.local' })
 
@@ -14,6 +15,7 @@ const contractAbis = {
   PublicResolver: PublicResolverJSON.abi,
   ETHRegistrarController: ETHRegistrarControllerJSON.abi,
   ENSRegistry: ENSRegistryJSON.abi,
+  NameWrapper: true,
 }
 
 type Contract = keyof typeof contractAbis
@@ -34,6 +36,7 @@ export const getContract = (contract: Contract, { signer, address }: Options = {
   }
   if (!_address) throw new Error(`No address found for ${contract}`)
 
+  if (contract === 'NameWrapper') return NameWrapper__factory.connect(_address, signer)
   if (contract === 'ETHRegistrarController')
     return ETHRegistrarController__factory.connect(_address, signer)
 

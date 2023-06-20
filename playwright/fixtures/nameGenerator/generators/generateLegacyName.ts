@@ -18,7 +18,7 @@ export type Name = {
   manager?: `0x${string}`
   duration?: number
   secret?: string
-  subnames?: Omit<LegacySubname, 'name'>[]
+  subnames?: Omit<LegacySubname, 'name' | 'nameOwner'>[]
 }
 
 type Dependencies = {

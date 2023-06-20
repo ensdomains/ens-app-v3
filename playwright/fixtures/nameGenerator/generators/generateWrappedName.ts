@@ -1,4 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
+/* eslint-disable no-await-in-loop */
 import { Accounts } from 'playwright/fixtures/accounts'
 import { Provider } from 'playwright/fixtures/provider'
 
@@ -8,19 +10,19 @@ import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { makeCommitment, makeRegistrationData } from '@ensdomains/ensjs/utils/registerHelpers'
 
 import { getContract } from '../utils/getContract'
+import { WrappedSubname, generateWrappedSubname } from './generateWrappedSubname'
 
 export type Name = {
   label: string
   owner: `0x${string}`
-  manager?: `0x${string}`
   duration?: number
   secret?: string
   resolver?: `0x${string}`
   reverseRecord?: boolean
-  fuses?: CombinedFuseInput
+  fuses?: CombinedFuseInput['child']
   addr?: `0x${string}`
   records?: RecordOptions
-  // subnames?: Omit<LegacySubname, 'name'>[]
+  subnames?: Omit<WrappedSubname, 'name' | 'nameOwner'>[]
 }
 
 type Dependencies = {
@@ -34,32 +36,36 @@ export const generateWrappedName = async (
     owner,
     duration = 31536000,
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
-    records,
+    resolver,
     reverseRecord = false,
+    fuses,
+    records,
+    subnames,
   }: Name,
   { accounts, provider }: Dependencies,
 ) => {
   const name = `${label}.eth`
-  const resolver = getContract('PublicResolver') as PublicResolver
+  const _resolver = getContract('PublicResolver', { address: resolver }) as PublicResolver
   const signer = provider.getSigner(accounts.getIndex(owner))
   const controller = getContract('ETHRegistrarController', { signer })
+
+  // Commit
   const { commitment } = makeCommitment({
     name,
     owner,
     duration,
     secret,
-    records: undefined,
+    records,
     reverseRecord,
-    fuses: {
-      named: ['CANNOT_UNWRAP'],
-    },
-    resolver,
+    fuses,
+    resolver: _resolver,
   })
   await controller.commit(commitment)
 
   await provider.increaseTime(60)
   await provider.mine()
 
+  // Register
   const price = await controller.rentPrice(label, duration)
   await controller.register(
     ...makeRegistrationData({
@@ -67,8 +73,8 @@ export const generateWrappedName = async (
       owner,
       duration,
       secret,
-      records: undefined,
-      resolver,
+      records,
+      resolver: _resolver,
       reverseRecord,
       fuses: {
         named: ['CANNOT_UNWRAP'],
@@ -78,5 +84,17 @@ export const generateWrappedName = async (
       value: price[0],
     },
   )
+
+  // Create subnames
+  const _subnames = (subnames || []).map((subname) => ({
+    ...subname,
+    name: `${label}.eth`,
+    nameOwner: owner,
+    resolver: undefined,
+  }))
+  for (const subname of _subnames) {
+    await generateWrappedSubname(subname, { accounts, provider })
+  }
+
   await provider.mine()
 }
