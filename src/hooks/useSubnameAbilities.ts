@@ -61,19 +61,16 @@ const getCanDeleteAbilities = (
   t: TFunction,
 ): DeleteAbilities => {
   if (!nameHasOwner) return { canDelete: false }
-  if (!isWrapped && isParentOwner)
+  if (!isWrapped && isParentOwner) {
+    const canDeleteRequiresWrap = isParentWrapped && !pccExpired && !isOwner
     return {
       canDelete: !hasSubnames && !pccExpired,
-      canDeleteContract: 'registry',
+      canDeleteContract: canDeleteRequiresWrap ? 'nameWrapper' : 'registry',
       canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
-      // if pcc expired, use reclaim process
-      ...(isParentWrapped && !pccExpired
-        ? {
-            canDeleteContract: 'nameWrapper',
-            canDeleteRequiresWrap: true,
-          }
-        : {}),
+      canDeleteRequiresWrap,
+      canDeleteMethod: isOwner ? 'setRecord' : 'setSubnodeOwner',
     }
+  }
 
   if (isWrapped && isPCCBurned && isOwner) {
     /* eslint-disable no-nested-ternary */

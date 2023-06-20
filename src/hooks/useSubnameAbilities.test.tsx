@@ -237,7 +237,13 @@ const groups = [
         ...unwrappedSubname,
         hasSubnames: false,
         address: '0xParent',
-        abilities: makeResults({ canDelete: true, canDeleteContract: 'registry' }),
+        abilities: makeResults({
+          canDelete: true,
+          canDeleteContract: 'registry',
+          canDeleteError: undefined,
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteRequiresWrap: false,
+        }),
       },
       {
         description:
@@ -249,6 +255,8 @@ const groups = [
           canDelete: false,
           canDeleteContract: 'registry',
           canDeleteError: 'errors.hasSubnames',
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteRequiresWrap: false,
         }),
       },
       {
@@ -257,6 +265,29 @@ const groups = [
         hasSubnames: false,
         address: '0xName',
         abilities: makeResults({ canDelete: false }),
+      },
+      {
+        description:
+          'should return canDelete is true and canDeleteRequiresWrap is false if parent is wrapped and user is name owner',
+        ...unwrappedSubname,
+        hasSubnames: false,
+        address: '0xParent',
+        isParentWrapped: true,
+        parentOwnerData: makeOwnerData({
+          owner: '0xParent',
+          ownershipLevel: 'nameWrapper',
+        }),
+        ownerData: makeOwnerData({
+          ownershipLevel: 'registry',
+          owner: '0xParent',
+        }),
+        abilities: makeResults({
+          canDelete: true,
+          canDeleteContract: 'registry',
+          canDeleteRequiresWrap: false,
+          canDeleteError: undefined,
+          canDeleteMethod: 'setRecord',
+        }),
       },
       {
         description:
@@ -272,6 +303,7 @@ const groups = [
         abilities: makeResults({
           canDelete: true,
           canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setSubnodeOwner',
           canDeleteRequiresWrap: true,
           canDeleteError: undefined,
         }),
@@ -339,6 +371,8 @@ const groups = [
           canDelete: false,
           canDeleteContract: 'registry',
           canDeleteError: undefined,
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteRequiresWrap: false,
           canReclaim: true,
         }),
       },
