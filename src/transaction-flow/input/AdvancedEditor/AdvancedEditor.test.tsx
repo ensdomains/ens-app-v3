@@ -95,6 +95,24 @@ const mockProfileData = {
           addr: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH',
         },
       ],
+      abi: {
+        data: JSON.stringify([
+          {
+            inputs: [
+              {
+                internalType: 'string',
+                type: 'string',
+                name: 'name',
+              },
+            ],
+            stateMutability: 'nonpayable',
+            outputs: [],
+            name: 'setName',
+            type: 'function',
+          },
+        ]),
+        contentType: 1,
+      },
     },
     resolverAddress: '0x0',
     isMigrated: true,
@@ -404,5 +422,29 @@ describe('AdvancedEditor', () => {
         expect(recordInput).toHaveValue(value)
       }
     }
+  })
+
+  it('should allow removing abi', async () => {
+    render(
+      <AdvancedEditor dispatch={mockDispatch} onDismiss={() => {}} data={{ name: 'test.eth' }} />,
+    )
+    const tab = await screen.findByTestId('other-tab')
+    fireEvent.click(tab)
+
+    const abiInput = await screen.findByLabelText('advancedEditor.tabs.other.abi.label')
+    await userEvent.clear(abiInput)
+
+    const submitBtn = screen.getByText('action.save')
+    await waitFor(() => {
+      expect(submitBtn).not.toHaveAttribute('disabled')
+    })
+    await userEvent.click(submitBtn)
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalled()
+    })
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.abi).toEqual({
+      data: '',
+    })
   })
 })

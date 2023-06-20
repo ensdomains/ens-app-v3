@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { Pattern, match } from 'ts-pattern'
 
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
@@ -242,12 +243,10 @@ const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) =>
 
     const contentHash = dirtyFields.other?.contentHash
 
-    const abi = dirtyFields.other?.abi?.data
-      ? {
-          data: dirtyFields.other.abi.data,
-          contentType: 1,
-        }
-      : undefined
+    const abi = match(dirtyFields.other?.abi?.data)
+      .with('', () => ({ data: '' }))
+      .with(Pattern.string, (data) => ({ data, contentType: 1 }))
+      .otherwise(() => undefined)
 
     const records = {
       texts,

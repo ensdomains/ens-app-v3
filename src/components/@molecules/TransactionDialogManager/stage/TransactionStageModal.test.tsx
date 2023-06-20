@@ -10,6 +10,7 @@ import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainName } from '@app/hooks/useChainName'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
+import { checkIsSafeApp } from '@app/utils/safe'
 
 import { TransactionStageModal, handleBackToInput } from './TransactionStageModal'
 
@@ -18,6 +19,7 @@ jest.mock('@app/hooks/useChainName')
 jest.mock('@app/hooks/transactions/useAddRecentTransaction')
 jest.mock('@app/hooks/transactions/useRecentTransactions')
 jest.mock('@app/utils/EnsProvider')
+jest.mock('@app/utils/safe')
 
 const mockPopulatedTransaction = {
   data: '0x1896f70a516f53deb2dac3f055f1db1fbd64c12640aa29059477103c3ef28806f15929250000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41',
@@ -58,6 +60,7 @@ const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseChainName = mockFunction(useChainName)
 const mockUseSigner = mockFunction(useSigner)
 const mockUseSendTransaction = mockFunction(useSendTransaction)
+const mockCheckIsSafeApp = checkIsSafeApp as jest.MockedFunctionDeep<typeof checkIsSafeApp>
 
 const mockEstimateGas = jest.fn()
 const mockOnDismiss = jest.fn()
@@ -261,12 +264,36 @@ describe('TransactionStageModal', () => {
       it('should add to recent transactions and run dispatch from success callback', async () => {
         const mockAddTransaction = jest.fn()
         mockUseAddRecentTransaction.mockReturnValue(mockAddTransaction)
+        mockCheckIsSafeApp.mockResolvedValue(false)
         await renderHelper({ transaction: mockTransaction })
         await waitFor(() => expect(mockUseSendTransaction.mock.lastCall[0].onSuccess).toBeDefined())
-        ;(mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({ hash: '0x123' })
+        await (mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({
+          hash: '0x123',
+        })
         expect(mockAddTransaction).toBeCalledWith({
           hash: '0x123',
           action: 'test',
+          isSafeTx: false,
+          key: 'test',
+        })
+        expect(mockDispatch).toBeCalledWith({
+          name: 'setTransactionHash',
+          payload: '0x123',
+        })
+      })
+      it('should add to recent transactions and run dispatch from success callback when isSafeTx', async () => {
+        const mockAddTransaction = jest.fn()
+        mockUseAddRecentTransaction.mockReturnValue(mockAddTransaction)
+        mockCheckIsSafeApp.mockResolvedValue('iframe')
+        await renderHelper({ transaction: mockTransaction })
+        await waitFor(() => expect(mockUseSendTransaction.mock.lastCall[0].onSuccess).toBeDefined())
+        await (mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({
+          hash: '0x123',
+        })
+        expect(mockAddTransaction).toBeCalledWith({
+          hash: '0x123',
+          action: 'test',
+          isSafeTx: true,
           key: 'test',
         })
         expect(mockDispatch).toBeCalledWith({
