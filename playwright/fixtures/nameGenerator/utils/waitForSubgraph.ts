@@ -19,7 +19,7 @@ const query = gql`
 
 export const waitForSubgraph = (provider: Provider) => async () => {
   const blockNumber = await provider.getBlockNumber()
-
+  console.log('blocknumber', blockNumber)
   let wait = true
   let count = 0
   while (wait && count < 4) {
@@ -27,6 +27,7 @@ export const waitForSubgraph = (provider: Provider) => async () => {
     const client = new GraphQLClient('http://localhost:8000/subgraphs/name/graphprotocol/ens')
     const res = await client.request(query)
     wait = blockNumber > res._meta.block.number
+    console.log('subgraph blocknumber', res._meta.block.number)
     count += 1
   }
 }

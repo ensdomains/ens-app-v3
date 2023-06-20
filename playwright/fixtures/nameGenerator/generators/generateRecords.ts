@@ -2,9 +2,12 @@
 
 /* eslint-disable no-await-in-loop */
 import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
+import _ from 'lodash'
 import { Accounts } from 'playwright/fixtures/accounts'
 import { Provider } from 'playwright/fixtures/provider'
 
+import { PublicResolver } from '@ensdomains/ensjs/generated/PublicResolver'
+import { encodeContenthash } from '@ensdomains/ensjs/utils/contentHash'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
@@ -40,7 +43,10 @@ export const generateRecords = async (
 
   // Connect contract
   const signer = provider.getSigner(accounts.getIndex(owner))
-  const publicResolver = await getContract('PublicResolver', { address: resolver, signer })
+  const publicResolver = (await getContract('PublicResolver', {
+    address: resolver,
+    signer,
+  })) as PublicResolver
 
   // Make records
   const node = namehash(name)
@@ -55,7 +61,11 @@ export const generateRecords = async (
   }
 
   if (contentHash) {
-    const tx = await publicResolver.setContenthash(node, contentHash)
+    const _contentHash = encodeContenthash(contentHash)
+    if (_contentHash.error) throw new Error(_contentHash.error)
+    if (typeof _contentHash.encoded !== 'string')
+      throw new Error('Error occured while encoding contenthash')
+    const tx = await publicResolver.setContenthash(node, _contentHash.encoded as string)
     await tx.wait()
   }
 

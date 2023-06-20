@@ -57,8 +57,8 @@ export const generateWrappedName = async (
   })
   await controller.commit(commitment)
 
-  provider.increaseTime(60)
-  provider.mine()
+  await provider.increaseTime(60)
+  await provider.mine()
 
   const price = await controller.rentPrice(label, duration)
   await controller.register(
@@ -78,4 +78,5 @@ export const generateWrappedName = async (
       value: price[0],
     },
   )
+  await provider.mine()
 }

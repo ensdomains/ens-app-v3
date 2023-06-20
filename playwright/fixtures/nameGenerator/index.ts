@@ -55,11 +55,11 @@ export const nameGenerator = ({ accounts, provider }: Config) => {
         { key: 'email', value: 'fakeemail@fake.com' },
       ],
       coinTypes: [
-        { key: '61', value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
-        { key: '0', value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
-        { key: '2', value: '0x0000000000000000000000000000000000000000' },
+        { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 0, value: '0x1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71' },
+        { key: 2, value: '0x0000000000000000000000000000000000000000' },
       ],
-      contentHash: '0xe301017012204edd2984eeaf3ddf50bac238ec95c5713fb40b5e428b508fdbe55d3b9f155ffe',
+      contentHash: 'ipfs://Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
     }
     const subnames = [
       {
@@ -71,7 +71,7 @@ export const nameGenerator = ({ accounts, provider }: Config) => {
       },
     ]
     console.time('registerLegacyWithConfig')
-    await generateWrappedName(
+    await generateLegacyNameWithConfig(
       { label: name, owner, manager, addr, records, subnames },
       { accounts, provider },
     )
