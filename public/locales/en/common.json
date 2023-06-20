@@ -98,6 +98,7 @@
     "notOwned": "Not Owned",
     "manager": "Manager",
     "all": "All Names",
+    "yourPrimaryName": "Your primary name",
     "expiresInYears_one": "Expires in {{count}} year",
     "expiresInYears_other": "Expires in {{count}} years",
     "expiresInMonths_one": "Expires in {{count}} month",
