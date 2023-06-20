@@ -1,9 +1,8 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
 import { useBasicName } from '@app/hooks/useBasicName'
-import { emptyAddress } from '@app/utils/constants'
 
-import { useRegistryResolver } from './resolver/useRegistryResolver'
+import { useResolverIsAuthorized } from './resolver/useResolverIsAuthorized'
 import { getFunctionCallDetails, getPermittedActions, useSelfAbilities } from './useSelfAbilities'
 
 type DeepPartial<T> = {
@@ -29,10 +28,10 @@ type MockData = {
 }
 
 jest.mock('@app/hooks/useBasicName')
-jest.mock('./resolver/useRegistryResolver')
+jest.mock('./resolver/useResolverIsAuthorized')
 
 const mockUseBasicName = mockFunction(useBasicName)
-const mockUseRegistryResolver = mockFunction(useRegistryResolver)
+const mockUseResolverIsAuthorized = mockFunction(useResolverIsAuthorized)
 
 const ownerAddress = '0x123'
 const account = ownerAddress
@@ -1182,35 +1181,35 @@ describe('useSelfAbilities', () => {
         },
       },
     })
-    mockUseRegistryResolver.mockReturnValue({ data: '0xresolver' })
+    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: true, isValid: true } })
     const { result } = renderHook(() => useSelfAbilities(account, name))
     expect(result.current.canSend).toBe(false)
   })
-  it('should return canEdit as true if there is a resolver', () => {
+  it('should return canEdit as true if resolver is authorised', () => {
     mockUseBasicName.mockReturnValue({
       ownerData: {
         owner: account,
       },
     })
-    mockUseRegistryResolver.mockReturnValue({ data: '0xresolver' })
+    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: true, isValid: true } })
 
     const { result } = renderHook(() => useSelfAbilities(account, name))
 
     expect(result.current.canEdit).toBe(true)
   })
-  it('should return canEdit as true if there is no resolver but CANNOT_SET_RESOLVER has not been burned', () => {
+  it('should return canEdit as true if resolver is not authorised but CANNOT_SET_RESOLVER has not been burned', () => {
     mockUseBasicName.mockReturnValue({
       ownerData: {
         owner: account,
       },
     })
-    mockUseRegistryResolver.mockReturnValue({ data: emptyAddress })
+    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: false, isValid: true } })
 
     const { result } = renderHook(() => useSelfAbilities(account, name))
 
     expect(result.current.canEdit).toBe(true)
   })
-  it('shold return canEdit as false if there is no resolver and CANNOT_SET_RESOLVER has been burned', () => {
+  it('shold return canEdit as false if resolver is not authorised and CANNOT_SET_RESOLVER has been burned', () => {
     mockUseBasicName.mockReturnValue({
       ownerData: {
         owner: account,
@@ -1221,7 +1220,7 @@ describe('useSelfAbilities', () => {
         },
       },
     })
-    mockUseRegistryResolver.mockReturnValue({ data: emptyAddress })
+    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: false, isValid: true } })
 
     const { result } = renderHook(() => useSelfAbilities(account, name))
 
