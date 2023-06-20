@@ -3,7 +3,7 @@ import { safeDateObj } from '@app/utils/date'
 
 import type { Name } from './useAvailablePrimaryNamesForAddress'
 
-const isMigratedName = (n: Pick<Name, 'isMigrated'>) => n.isMigrated
+const isMigratedName = (n: Pick<Name, 'isMigrated'>) => n.isMigrated === null || !!n.isMigrated
 
 const isNotTLD = (n: Pick<Name, 'name'>) => n.name.split('.').length > 1
 
