@@ -1,25 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import {
-  Avatar,
-  Button,
-  Card,
-  CrossSVG,
-  PersonPlusSVG,
-  Skeleton,
-  Typography,
-  mq,
-} from '@ensdomains/thorin'
+import { Button, Card, CrossSVG, PersonPlusSVG, Skeleton, Typography, mq } from '@ensdomains/thorin'
 
+import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/AvatarWithLink'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { useAvatar } from '@app/hooks/useAvatar'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
-import { useZorb } from '@app/hooks/useZorb'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 const SkeletonFiller = styled.div(
@@ -149,9 +138,6 @@ export const PrimarySection = () => {
   const showResetPrimaryNameInput = prepareDataInput('ResetPrimaryName')
 
   const primary = usePrimary(address!, !address)
-  const chainId = useChainId()
-  const { avatar } = useAvatar(primary.data?.name, chainId)
-  const zorb = useZorb(primary.data?.name || '', 'name')
 
   const { truncatedName, isLoading: basicLoading } = useBasicName(primary.data?.name, {
     normalised: true,
@@ -190,7 +176,7 @@ export const PrimarySection = () => {
               </Typography>
             </PrimaryNameInfo>
             <AvatarContainer>
-              <Avatar label="primary name avatar" src={avatar || zorb} />
+              <AvatarWithLink name={primary.data?.name} label="primary name avatar" />
             </AvatarContainer>
             <ActionsContainer>
               {hasGlobalError ? (
