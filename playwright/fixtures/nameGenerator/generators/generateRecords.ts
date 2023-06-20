@@ -6,10 +6,13 @@ import _ from 'lodash'
 import { Accounts } from 'playwright/fixtures/accounts'
 import { Provider } from 'playwright/fixtures/provider'
 
+import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
 import { PublicResolver } from '@ensdomains/ensjs/generated/PublicResolver'
 import { encodeContenthash } from '@ensdomains/ensjs/utils/contentHash'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+
+import { emptyAddress } from '@app/utils/constants'
 
 import { getContract } from '../utils/getContract'
 
@@ -57,7 +60,17 @@ export const generateRecords = async (
   }
 
   for (const { key, value } of coinTypes) {
-    await publicResolver['setAddr(bytes32,uint256,bytes)'](node, key, value)
+    if (value === '' || value === '0x' || value === emptyAddress)
+      throw new Error('Cannot create record with empty address')
+    let coinTypeInstance
+    if (!Number.isNaN(parseInt(key))) {
+      coinTypeInstance = formatsByCoinType[parseInt(key)]
+    } else {
+      coinTypeInstance = formatsByName[key.toUpperCase()]
+    }
+    const inputCoinType = coinTypeInstance.coinType
+    const encodedAddress = coinTypeInstance.decoder(value)
+    await publicResolver['setAddr(bytes32,uint256,bytes)'](node, inputCoinType, encodedAddress)
   }
 
   if (contentHash) {

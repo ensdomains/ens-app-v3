@@ -56,8 +56,7 @@ export const nameGenerator = ({ accounts, provider }: Config) => {
       ],
       coinTypes: [
         { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
-        { key: 0, value: '0x1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71' },
-        { key: 2, value: '0x0000000000000000000000000000000000000000' },
+        { key: 0, value: '1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71' },
       ],
       contentHash: 'ipfs://Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
     }
