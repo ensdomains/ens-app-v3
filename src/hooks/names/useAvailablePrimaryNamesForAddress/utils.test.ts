@@ -20,6 +20,14 @@ describe('isAvailablePrimaryName', () => {
     expect(checkAvailablePrimaryName('primary')({ ...baseName, isMigrated: false })).toBe(false)
   })
 
+  it('should return true if isMigrated is null', () => {
+    expect(checkAvailablePrimaryName('primary')({ ...baseName, isMigrated: null })).toBe(true)
+  })
+
+  it('should return false if isMigrated is undefined', () => {
+    expect(checkAvailablePrimaryName('primary')({ ...baseName, isMigrated: undefined })).toBe(false)
+  })
+
   it('should return false if name is TLD', () => {
     expect(checkAvailablePrimaryName('primary')({ ...baseName, name: 'eth' })).toBe(false)
   })
