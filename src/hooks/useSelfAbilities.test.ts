@@ -2,6 +2,7 @@ import { mockFunction, renderHook } from '@app/test-utils'
 
 import { useBasicName } from '@app/hooks/useBasicName'
 
+import { useResolverIsAuthorized } from './resolver/useResolverIsAuthorized'
 import { getFunctionCallDetails, getPermittedActions, useSelfAbilities } from './useSelfAbilities'
 
 type DeepPartial<T> = {
@@ -27,7 +28,10 @@ type MockData = {
 }
 
 jest.mock('@app/hooks/useBasicName')
+jest.mock('./resolver/useResolverIsAuthorized')
+
 const mockUseBasicName = mockFunction(useBasicName)
+const mockUseResolverIsAuthorized = mockFunction(useResolverIsAuthorized)
 
 const ownerAddress = '0x123'
 const account = ownerAddress
@@ -1177,7 +1181,49 @@ describe('useSelfAbilities', () => {
         },
       },
     })
-    const { result } = renderHook(() => useSelfAbilities(name, account))
+    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: true, isValid: true } })
+    const { result } = renderHook(() => useSelfAbilities(account, name))
     expect(result.current.canSend).toBe(false)
+  })
+  it('should return canEdit as true if resolver is authorised', () => {
+    mockUseBasicName.mockReturnValue({
+      ownerData: {
+        owner: account,
+      },
+    })
+    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: true, isValid: true } })
+
+    const { result } = renderHook(() => useSelfAbilities(account, name))
+
+    expect(result.current.canEdit).toBe(true)
+  })
+  it('should return canEdit as true if resolver is not authorised but CANNOT_SET_RESOLVER has not been burned', () => {
+    mockUseBasicName.mockReturnValue({
+      ownerData: {
+        owner: account,
+      },
+    })
+    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: false, isValid: true } })
+
+    const { result } = renderHook(() => useSelfAbilities(account, name))
+
+    expect(result.current.canEdit).toBe(true)
+  })
+  it('shold return canEdit as false if resolver is not authorised and CANNOT_SET_RESOLVER has been burned', () => {
+    mockUseBasicName.mockReturnValue({
+      ownerData: {
+        owner: account,
+      },
+      wrapperData: {
+        child: {
+          CANNOT_SET_RESOLVER: true,
+        },
+      },
+    })
+    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: false, isValid: true } })
+
+    const { result } = renderHook(() => useSelfAbilities(account, name))
+
+    expect(result.current.canEdit).toBe(false)
   })
 })
