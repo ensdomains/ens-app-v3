@@ -2,8 +2,7 @@
 
 /* eslint-disable no-await-in-loop */
 import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
-import _ from 'lodash'
-import { Accounts } from 'playwright/fixtures/accounts'
+import { Accounts, User } from 'playwright/fixtures/accounts'
 import { Provider } from 'playwright/fixtures/provider'
 
 import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
@@ -28,7 +27,7 @@ export type Records = {
 
 type Input = {
   name: string
-  owner: `0x${string}`
+  owner: User
   resolver?: string
   records?: RecordOptions
 }
@@ -51,22 +50,16 @@ export const generateRecords = async (
     signer,
   }) as PublicResolver
 
-  const nw = getContract('ENSRegistry', { signer })
-  const test = await nw.owner(namehash(name))
-  const resolverTest = await nw.resolver(namehash(name))
-  console.log('from registry', resolverTest, test)
-
   // Make records
   const node = namehash(name)
-
-  console.log('publicResolver', publicResolver.address, owner, name)
-  console.log('setting texts')
   const { texts = [], coinTypes = [], contentHash, abi } = records
-  // for (const { key, value } of texts) {
-  //   await publicResolver.setText(node, key, value)
-  // }
 
-  console.log('setting coins')
+  // Text records
+  for (const { key, value } of texts) {
+    await publicResolver.setText(node, key, value)
+  }
+
+  // Coin records
   for (const { key, value } of coinTypes) {
     if (value === '' || value === '0x' || value === emptyAddress)
       throw new Error('Cannot create record with empty address')
@@ -81,7 +74,7 @@ export const generateRecords = async (
     await publicResolver['setAddr(bytes32,uint256,bytes)'](node, inputCoinType, encodedAddress)
   }
 
-  console.log('setting contenthash')
+  // Contenthash record
   if (contentHash) {
     const _contentHash = encodeContenthash(contentHash)
     if (_contentHash.error) throw new Error(_contentHash.error)
@@ -91,7 +84,8 @@ export const generateRecords = async (
     await tx.wait()
   }
 
+  // ABI record
   if (abi) {
-    await publicResolver.setABI(node, abi.contentType, toUtf8Bytes(JSON.stringify(abi.data)))
+    await publicResolver.setABI(node, abi.contentType || 1, toUtf8Bytes(JSON.stringify(abi.data)))
   }
 }

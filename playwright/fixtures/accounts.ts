@@ -28,7 +28,11 @@ export type User = 'user' | 'user2' | 'user3'
 
 export const createAccounts = () => ({
   getAllPrivateKeys: () => ACCOUNTS.map(({ privateKey }) => privateKey),
-  getAddress: (user: User) => ACCOUNTS.find(({ user: _user }) => _user === user)?.address,
+  getAddress: (user: User) => {
+    const address = ACCOUNTS.find(({ user: _user }) => _user === user)?.address
+    if (!address) throw new Error(`Address not found: ${user}`)
+    return address
+  },
   getPrivateKey: (user: User) => ACCOUNTS.find(({ user: _user }) => _user === user)?.privateKey,
   getIndex: (addressOrUser: string) => {
     const index = ACCOUNTS.findIndex(

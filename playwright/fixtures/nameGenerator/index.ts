@@ -1,12 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Accounts } from '../accounts'
+import { Accounts, User } from '../accounts'
 import { Provider } from '../provider'
-import { generateLegacyName } from './generators/generateLegacyName'
+import { Name as LegacyName, generateLegacyName } from './generators/generateLegacyName'
 import {
   Name as LegacyNameWithConfig,
   generateLegacyNameWithConfig,
 } from './generators/generateLegacyNameWithConfig'
-import { generateWrappedName } from './generators/generateWrappedName'
+import { Name as WrappedName, generateWrappedName } from './generators/generateWrappedName'
 import { waitForSubgraph } from './utils/waitForSubgraph'
 
 type Config = {
@@ -14,72 +14,32 @@ type Config = {
   provider: Provider
 }
 
-export type BaseName = {
-  name: string
-  owner: `0x${string}`
-  duration?: number
-  secret?: string
+export type Name = (LegacyName | LegacyNameWithConfig | WrappedName) & {
+  type: 'wrapped' | 'legacy' | 'legacy-register'
 }
-
-export type NameWithConfig = BaseName & {
-  resolver?: `0x${string}`
-  addr?: `0x${string}`
-}
-
-export type WrappedName = BaseName & {
-  resolver?: `0x${string}`
-  records: any
-  reverseRecord?: boolean
-  fuses?: any
-  subnames?: {
-    label: string
-    owner: `0x${string}`
-    fuses: any
-    expiry: number
-  }[]
-}
-
-type Name = BaseName | NameWithConfig | WrappedName
 
 export const nameGenerator = ({ accounts, provider }: Config) => {
-  return async () => {
-    const name = `helloworld${Date.now()}`
-    const owner = accounts.getAddress('user2')!
-    const manager = accounts.getAddress('user3')
-    const addr = accounts.getAddress('user')
-    const records = {
-      texts: [
-        { key: 'description', value: 'Hello2' },
-        { key: 'url', value: 'https://twitter.com' },
-        { key: 'blankrecord', value: '' },
-        { key: 'email', value: 'fakeemail@fake.com' },
-      ],
-      coinTypes: [
-        { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
-        { key: 'BTC', value: '1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71' },
-      ],
-      contentHash: 'ipfs://Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
-    }
-    const subnames = [
-      {
-        label: 'test',
-        owner: accounts.getAddress('user3')!,
-        records: {
-          ...records,
-        },
-      },
-    ]
-    const fuses: any = {
-      named: ['CANNOT_UNWRAP'],
+  return async ({ type, ...name }: Name) => {
+    const uniqueLabel = `${name.label}-${Date.now()}`
+    const _name = {
+      ...name,
+      label: uniqueLabel,
     }
     console.time('registerLegacyWithConfig')
-    await generateWrappedName(
-      { label: name, owner, manager, addr, records, subnames, fuses },
-      { accounts, provider },
-    )
+    if (type === 'wrapped') {
+      const wrappedName = _name as WrappedName
+      await generateWrappedName(wrappedName, { accounts, provider })
+    } else if (type === 'legacy') {
+      const legacyName = _name as LegacyNameWithConfig
+      await generateLegacyNameWithConfig(legacyName, { accounts, provider })
+    } else if (type === 'legacy-register') {
+      const legacyName = _name as LegacyName
+      await generateLegacyName(legacyName, { accounts, provider })
+    }
+    console.timeLog('registerLegacyWithConfig')
     await provider.mine()
     await waitForSubgraph(provider)()
     console.timeEnd('registerLegacyWithConfig')
-    return `${name}.eth`
+    return `${uniqueLabel}.eth`
   }
 }

@@ -18,4 +18,7 @@ export default defineConfig({
       dependencies: ['setup'],
     },
   ],
+  use: {
+    baseURL: 'http://localhost:3000',
+  },
 })

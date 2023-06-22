@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Accounts } from 'playwright/fixtures/accounts'
+import { Accounts, User } from 'playwright/fixtures/accounts'
 import { Provider } from 'playwright/fixtures/provider'
 
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
@@ -10,9 +10,9 @@ import { Records, generateRecords } from './generateRecords'
 
 export type LegacySubname = {
   name: string
-  nameOwner: `0x${string}`
+  nameOwner: User
   label: string
-  owner: `0x${string}`
+  owner: User
   resolver?: `0x${string}`
   records?: Records
 }
@@ -26,6 +26,8 @@ export const generateLegacySubname = async (
   { name, nameOwner, label, owner, resolver, records }: LegacySubname,
   { provider, accounts }: Dependencies,
 ) => {
+  const _owner = accounts.getAddress(owner)
+
   // Connect contract
   const signer = provider.getSigner(accounts.getIndex(nameOwner))
   const registry = await getContract('ENSRegistry', { signer })
@@ -36,12 +38,12 @@ export const generateLegacySubname = async (
 
   // Make subname without resolver
   if (!resolver) {
-    await registry.setSubnodeOwner(node, _labelhash, owner)
+    await registry.setSubnodeOwner(node, _labelhash, _owner)
     return
   }
 
   // Make subname with resolver
-  await registry.setSubnodeRecord(node, _labelhash, owner, resolver, 0)
+  await registry.setSubnodeRecord(node, _labelhash, _owner, resolver, 0)
 
   // Make records
   if (records) {

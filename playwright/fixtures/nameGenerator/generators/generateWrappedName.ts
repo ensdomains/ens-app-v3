@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Accounts } from 'playwright/fixtures/accounts'
+import { Accounts, User } from 'playwright/fixtures/accounts'
 import { Provider } from 'playwright/fixtures/provider'
 
 import { PublicResolver } from '@ensdomains/ensjs/generated/PublicResolver'
@@ -14,7 +14,7 @@ import { WrappedSubname, generateWrappedSubname } from './generateWrappedSubname
 
 export type Name = {
   label: string
-  owner: `0x${string}`
+  owner: User
   duration?: number
   secret?: string
   resolver?: `0x${string}`
@@ -44,6 +44,7 @@ export const generateWrappedName = async (
   }: Name,
   { accounts, provider }: Dependencies,
 ) => {
+  const _owner = accounts.getAddress(owner)
   const name = `${label}.eth`
   const _resolver = getContract('PublicResolver', { address: resolver }) as PublicResolver
   const signer = provider.getSigner(accounts.getIndex(owner))
@@ -52,7 +53,7 @@ export const generateWrappedName = async (
   // Commit
   const { commitment } = makeCommitment({
     name,
-    owner,
+    owner: _owner,
     duration,
     secret,
     records,
@@ -70,15 +71,13 @@ export const generateWrappedName = async (
   await controller.register(
     ...makeRegistrationData({
       name,
-      owner,
+      owner: _owner,
       duration,
       secret,
       records,
       resolver: _resolver,
       reverseRecord,
-      fuses: {
-        named: ['CANNOT_UNWRAP'],
-      },
+      fuses,
     }),
     {
       value: price[0],

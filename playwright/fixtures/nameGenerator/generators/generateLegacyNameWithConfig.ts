@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Accounts } from 'playwright/fixtures/accounts'
+import { Accounts, User } from 'playwright/fixtures/accounts'
 
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
@@ -18,12 +18,12 @@ const DURATION_ADJUSTMENT = 2419200 + 7776000
 
 export type Name = {
   label: string
-  owner: `0x${string}`
-  manager?: `0x${string}`
+  owner: User
+  manager?: User
   duration?: number
   secret?: string
   resolver?: `0x${string}`
-  addr?: `0x${string}`
+  addr?: User
   records?: RecordOptions
   subnames?: Omit<LegacySubname, 'name'>[]
 }
@@ -47,12 +47,22 @@ export const generateLegacyNameWithConfig = async (
   }: Name,
   { provider, accounts }: Dependencies,
 ) => {
+  const _owner = accounts.getAddress(owner)
+  const _addr = accounts.getAddress(addr)
+
   // Connect contract
   const signer = provider.getSigner(accounts.getIndex(owner))
   const controller = await getContract('LegacyETHRegistrarController', { signer })
-
+  console.log(controller.address, label, _owner, secret, resolver, _addr)
+  console.log('------------------------')
   // Commit
-  const commitment = await controller.makeCommitmentWithConfig(label, owner, secret, resolver, addr)
+  const commitment = await controller.makeCommitmentWithConfig(
+    label,
+    _owner,
+    secret,
+    resolver,
+    _addr,
+  )
   await controller.commit(commitment)
 
   await provider.increaseTime(60)
@@ -61,7 +71,7 @@ export const generateLegacyNameWithConfig = async (
   // Register
   const _duration = duration + DURATION_ADJUSTMENT
   const price = await controller.rentPrice(label, _duration)
-  await controller.registerWithConfig(label, owner, _duration, secret, resolver, addr, {
+  await controller.registerWithConfig(label, _owner, _duration, secret, resolver, _addr, {
     value: price,
   })
   await provider.increaseTime(DURATION_ADJUSTMENT)
@@ -81,10 +91,10 @@ export const generateLegacyNameWithConfig = async (
   }
 
   if (!!manager && manager !== owner) {
-    console.log('Transfering name to manager')
     const registry = await getContract('ENSRegistry', { signer })
     const node = namehash(`${label}.eth`)
-    await registry.setOwner(node, manager)
+    const _manager = accounts.getAddress(manager)
+    await registry.setOwner(node, _manager)
   }
 
   await provider.mine()
