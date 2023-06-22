@@ -240,9 +240,9 @@ const groups = [
         abilities: makeResults({
           canDelete: true,
           canDeleteContract: 'registry',
-          canDeleteError: undefined,
           canDeleteMethod: 'setSubnodeOwner',
           canDeleteRequiresWrap: false,
+          isParentOwner: true,
         }),
       },
       {
@@ -257,14 +257,21 @@ const groups = [
           canDeleteError: 'errors.hasSubnames',
           canDeleteMethod: 'setSubnodeOwner',
           canDeleteRequiresWrap: false,
+          isParentOwner: true,
         }),
       },
       {
-        description: 'should return canDelete is false if user is name owner',
+        description: 'should return canDelete is true if user is name owner',
         ...unwrappedSubname,
         hasSubnames: false,
         address: '0xName',
-        abilities: makeResults({ canDelete: false }),
+        abilities: makeResults({
+          canDelete: true,
+          canDeleteContract: 'registry',
+          canDeleteMethod: 'setRecord',
+          canDeleteRequiresWrap: false,
+          isParentOwner: false,
+        }),
       },
       {
         description:
@@ -285,8 +292,8 @@ const groups = [
           canDelete: true,
           canDeleteContract: 'registry',
           canDeleteRequiresWrap: false,
-          canDeleteError: undefined,
           canDeleteMethod: 'setRecord',
+          isParentOwner: true,
         }),
       },
       {
@@ -305,7 +312,7 @@ const groups = [
           canDeleteContract: 'nameWrapper',
           canDeleteMethod: 'setSubnodeOwner',
           canDeleteRequiresWrap: true,
-          canDeleteError: undefined,
+          isParentOwner: true,
         }),
       },
     ],
@@ -322,6 +329,8 @@ const groups = [
           canDelete: true,
           canDeleteContract: 'nameWrapper',
           canDeleteMethod: 'setSubnodeOwner',
+          isPCCBurned: false,
+          isParentOwner: true,
         }),
       },
       {
@@ -335,6 +344,8 @@ const groups = [
           canDeleteContract: 'nameWrapper',
           canDeleteMethod: 'setSubnodeOwner',
           canDeleteError: 'errors.hasSubnames',
+          isPCCBurned: false,
+          isParentOwner: true,
         }),
       },
       {
@@ -346,6 +357,8 @@ const groups = [
           canDelete: true,
           canDeleteContract: 'nameWrapper',
           canDeleteMethod: 'setRecord',
+          isPCCBurned: false,
+          isParentOwner: false,
         }),
       },
       {
@@ -358,6 +371,8 @@ const groups = [
           canDeleteContract: 'nameWrapper',
           canDeleteMethod: 'setRecord',
           canDeleteError: 'errors.hasSubnames',
+          isPCCBurned: false,
+          isParentOwner: false,
         }),
       },
       {
@@ -370,10 +385,10 @@ const groups = [
         abilities: makeResults({
           canDelete: false,
           canDeleteContract: 'registry',
-          canDeleteError: undefined,
           canDeleteMethod: 'setSubnodeOwner',
           canDeleteRequiresWrap: false,
           canReclaim: true,
+          isParentOwner: true,
         }),
       },
     ],
@@ -391,6 +406,7 @@ const groups = [
           canDeleteContract: 'nameWrapper',
           canDeleteMethod: 'setRecord',
           isPCCBurned: true,
+          isParentOwner: false,
         }),
       },
       {
@@ -404,6 +420,7 @@ const groups = [
           canDeleteMethod: 'setRecord',
           canDeleteError: 'errors.hasSubnames',
           isPCCBurned: true,
+          isParentOwner: false,
         }),
       },
       {

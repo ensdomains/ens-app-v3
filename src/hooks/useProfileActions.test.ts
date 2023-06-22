@@ -52,6 +52,7 @@ describe('useProfileActions', () => {
       canDeleteError: null,
       canReclaim: true,
       isPCCBurned: false,
+      isParentOwner: true,
     },
     ownerData: {
       ownershipLevel: 'nameWrapper',
@@ -147,7 +148,7 @@ describe('useProfileActions', () => {
   })
 
   describe('delete subname', () => {
-    it('should return a single transaction with normal subname', () => {
+    it('should return a single transaction with normal subname when address is parent owner', () => {
       const { result } = renderHook(() => useProfileActions(props))
       const deleteAction = result.current.profileActions?.find(
         (a) => a.label === 'tabs.profile.actions.deleteSubname.label',
@@ -165,6 +166,22 @@ describe('useProfileActions', () => {
           },
         ],
       })
+    })
+    it('should show data input if normal subname but address is child owner', () => {
+      const { result } = renderHook(() =>
+        useProfileActions({
+          ...props,
+          subnameAbilities: { ...props.subnameAbilities, isParentOwner: false },
+        }),
+      )
+      const deleteAction = result.current.profileActions?.find(
+        (a) => a.label === 'tabs.profile.actions.deleteSubname.label',
+      )
+      deleteAction!.onClick()
+      expect(mockPrepareDataInput).toHaveBeenCalledWith(
+        `delete-subname-not-parent-warning-test.eth`,
+        { name: 'test.eth', contract: 'testcontract' },
+      )
     })
     it('should return a two step transaction flow for an unwrapped subname with wrapped parent', () => {
       const { result } = renderHook(() =>
