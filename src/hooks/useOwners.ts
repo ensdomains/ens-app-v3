@@ -5,10 +5,10 @@ import { OwnerArray, ReturnedENS } from '@app/types'
 import { useSelfAbilities } from './useSelfAbilities'
 
 type Props = {
-  ownerData: Exclude<ReturnedENS['getOwner'], undefined>
-  wrapperData: Exclude<ReturnedENS['getWrapperData'], undefined>
-  dnsOwner: Exclude<ReturnedENS['getDNSOwner'], undefined>
-  selfAbilities: ReturnType<typeof useSelfAbilities>
+  ownerData: ReturnedENS['getOwner']
+  wrapperData: ReturnedENS['getWrapperData']
+  dnsOwner?: ReturnedENS['getDNSOwner']
+  selfAbilities?: ReturnType<typeof useSelfAbilities>
 }
 
 const useOwners = ({ ownerData, wrapperData, dnsOwner, selfAbilities }: Props) => {
@@ -17,7 +17,7 @@ const useOwners = ({ ownerData, wrapperData, dnsOwner, selfAbilities }: Props) =
     if (ownerData?.ownershipLevel === 'nameWrapper') {
       _owners.push({
         address: ownerData.owner!,
-        canTransfer: selfAbilities.canSend,
+        canTransfer: selfAbilities?.canSend ?? false,
         transferType: 'owner',
         label: wrapperData?.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
         description: 'details.descriptions.owner',
@@ -27,7 +27,7 @@ const useOwners = ({ ownerData, wrapperData, dnsOwner, selfAbilities }: Props) =
       if (ownerData?.owner) {
         _owners.push({
           address: ownerData?.owner,
-          canTransfer: selfAbilities.canSend,
+          canTransfer: selfAbilities?.canSend ?? false,
           transferType: 'manager',
           label: 'name.manager',
           description: 'details.descriptions.controller',
@@ -37,7 +37,7 @@ const useOwners = ({ ownerData, wrapperData, dnsOwner, selfAbilities }: Props) =
       if (ownerData?.registrant) {
         _owners.push({
           address: ownerData.registrant,
-          canTransfer: selfAbilities.canSendOwner,
+          canTransfer: selfAbilities?.canSendOwner ?? false,
           transferType: 'owner',
           label: 'name.owner',
           description: 'details.descriptions.registrant',

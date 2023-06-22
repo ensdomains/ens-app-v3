@@ -99,6 +99,7 @@ export const useProfileActions = ({
   const showDeleteEmancipatedSubnameWarningInput = prepareDataInput(
     'DeleteEmancipatedSubnameWarning',
   )
+  const showDeleteSubnameNotParentWarningInput = prepareDataInput('DeleteSubnameNotParentWarning')
 
   const isLoading =
     primary.isLoading ||
@@ -184,26 +185,38 @@ export const useProfileActions = ({
               },
             }),
         })
+      } else if (subnameAbilities.isPCCBurned) {
+        actions.push({
+          ...base,
+          onClick: () => {
+            showDeleteEmancipatedSubnameWarningInput(`delete-emancipated-subname-warning-${name}`, {
+              name,
+            })
+          },
+        })
+      } else if (!subnameAbilities.isParentOwner) {
+        actions.push({
+          ...base,
+          onClick: () => {
+            showDeleteSubnameNotParentWarningInput(`delete-subname-not-parent-warning-${name}`, {
+              name,
+              contract: subnameAbilities.canDeleteContract!,
+            })
+          },
+        })
       } else {
         actions.push({
           ...base,
-          onClick: subnameAbilities.isPCCBurned
-            ? () => {
-                showDeleteEmancipatedSubnameWarningInput(
-                  `delete-emancipated-subname-warning-${name}`,
-                  { name },
-                )
-              }
-            : () =>
-                createTransactionFlow(`deleteSubname-${name}`, {
-                  transactions: [
-                    makeTransactionItem('deleteSubname', {
-                      name,
-                      contract: subnameAbilities.canDeleteContract!,
-                      method: subnameAbilities.canDeleteMethod,
-                    }),
-                  ],
+          onClick: () =>
+            createTransactionFlow(`deleteSubname-${name}`, {
+              transactions: [
+                makeTransactionItem('deleteSubname', {
+                  name,
+                  contract: subnameAbilities.canDeleteContract!,
+                  method: subnameAbilities.canDeleteMethod,
                 }),
+              ],
+            }),
         })
       }
     } else if (subnameAbilities.canDeleteError) {
@@ -252,6 +265,7 @@ export const useProfileActions = ({
     subnameAbilities.canReclaim,
     subnameAbilities.canDeleteRequiresWrap,
     subnameAbilities.isPCCBurned,
+    subnameAbilities.isParentOwner,
     subnameAbilities.canDeleteMethod,
     t,
     hasGlobalError,
@@ -260,6 +274,7 @@ export const useProfileActions = ({
     showProfileEditorInput,
     wrappedApproved.approvedForAll,
     showDeleteEmancipatedSubnameWarningInput,
+    showDeleteSubnameNotParentWarningInput,
   ])
 
   return {
