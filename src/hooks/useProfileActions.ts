@@ -76,7 +76,7 @@ export const useProfileActions = ({
     resolverStatus.data,
   )({
     name,
-    isMigrated: !!profile?.isMigrated,
+    isMigrated: profile?.isMigrated as boolean,
     isResolvedAddress: profile?.address === address,
     isController: !isWrapped && ownerData?.owner === address,
     isWrappedOwner: isWrapped && ownerData?.owner === address,

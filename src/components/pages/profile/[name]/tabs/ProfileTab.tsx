@@ -11,6 +11,7 @@ import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
+import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useSubnameAbilities } from '@app/hooks/useSubnameAbilities'
@@ -55,6 +56,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
 
   const selfAbilities = useSelfAbilities(address, name)
 
+  const { data: primaryData } = usePrimary(address)
+
   const owners = useOwners({
     ownerData: ownerData!,
     wrapperData: wrapperData!,
@@ -93,6 +96,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         getTextRecord={getTextRecord}
         button={snippetButton}
         canEdit={selfAbilities.canEdit}
+        isPrimary={name === primaryData?.name}
       >
         {nameDetails.isNonASCII && (
           <Helper type="warning" alignment="horizontal">
