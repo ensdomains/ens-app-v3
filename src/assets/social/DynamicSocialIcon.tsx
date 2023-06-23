@@ -10,6 +10,7 @@ export const socialIconTypes = {
   'com.medium': dynamic(() => import('./SocialMedium.svg')),
   'com.twitter': dynamic(() => import('./SocialTwitter.svg')),
   'com.youtube': dynamic(() => import('./SocialYoutube.svg')),
+  'org.telegram': dynamic(() => import('./SocialTelegram.svg')),
 }
 
 export const socialIconColors = {
@@ -19,6 +20,7 @@ export const socialIconColors = {
   'com.medium': '#000000',
   'com.twitter': '#65C5FC',
   'com.youtube': '#FF0000',
+  'org.telegram': '#2BABEE',
 }
 
 export const DynamicSocialIcon = ({
