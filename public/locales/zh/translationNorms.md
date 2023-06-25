@@ -30,6 +30,7 @@
 - "confirm": "确认". 通常译作 "确认"，而没有使用 "确定"。
 - "remove": "移除"
 - "delete": "删除"
+- "clear": "清除"
 - "selected": "选中项"
 - "gas": "网络费". Metamask 中的译文为 "燃料"。
 - "sign": "签名"
