@@ -166,7 +166,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   const [tab, setTab] = useQueryParameterState<Tab>('tab', 'profile')
   const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
 
-  const selfAbilities = useSelfAbilities(address, name)
+  const selfAbilities = useSelfAbilities(address, normalisedName)
 
   // hook for redirecting to the correct profile url
   // profile.decryptedName fetches labels from NW/subgraph
