@@ -1,12 +1,13 @@
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import dynamic from 'next/dynamic'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { ETHRegistrarController__factory } from '@ensdomains/ensjs/generated/factories/ETHRegistrarController__factory'
+import { tokenise } from '@ensdomains/ensjs/utils/normalise'
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
@@ -81,18 +82,23 @@ const Title = styled(Typography)(
 
 const SubtitleWithGradient = styled(Typography)(
   ({ theme }) => css`
+    display: inline;
+
     font-size: ${theme.fontSizes.headingThree};
     font-weight: bold;
 
+    background-image: ${theme.colors.gradients.blue};
+    /* stylelint-disable property-no-vendor-prefix */
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    /* stylelint-enable property-no-vendor-prefix */
+
     b {
-      background-image: ${theme.colors.gradients.blue};
-      /* stylelint-disable property-no-vendor-prefix */
-      -webkit-background-clip: text;
-      -moz-background-clip: text;
       -webkit-text-fill-color: transparent;
       -moz-text-fill-color: transparent;
-      /* stylelint-enable property-no-vendor-prefix */
       color: transparent;
+      line-height: 100%;
     }
   `,
 )
@@ -193,6 +199,22 @@ const Complete = ({
   const { width, height } = useWindowSize()
   const { InvoiceFilled, avatarSrc } = useEthInvoice(name, isMoonpayFlow)
 
+  const nameWithColourEmojis = useMemo(() => {
+    const data = tokenise(beautifiedName)
+    return data.map((item, i) => {
+      if (item.type === 'emoji') {
+        const string = String.fromCodePoint(...item.emoji)
+        // eslint-disable-next-line react/no-array-index-key
+        return <Fragment key={`${string}-${i}`}>{string}</Fragment>
+      }
+      let string = '.'
+      if ('cps' in item) string = String.fromCodePoint(...item.cps)
+      if ('cp' in item) string = String.fromCodePoint(item.cp)
+      // eslint-disable-next-line react/no-array-index-key
+      return <b key={`${string}-${i}`}>{string}</b>
+    })
+  }, [beautifiedName])
+
   return (
     <StyledCard>
       <Confetti
@@ -221,10 +243,10 @@ const Complete = ({
       </NFTContainer>
       <TitleContainer>
         <Title>{t('steps.complete.heading')}</Title>
-        <SubtitleWithGradient>
+        <Typography style={{ display: 'inline' }} fontVariant="headingThree" weight="bold">
           {t('steps.complete.subheading')}
-          <b>{beautifiedName}</b>
-        </SubtitleWithGradient>
+          <SubtitleWithGradient>{nameWithColourEmojis}</SubtitleWithGradient>
+        </Typography>
       </TitleContainer>
       <Typography>{t('steps.complete.description')}</Typography>
       {InvoiceFilled}
