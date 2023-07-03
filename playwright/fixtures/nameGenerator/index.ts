@@ -26,6 +26,9 @@ export const nameGenerator = ({ accounts, provider }: Config) => {
       label: uniqueLabel,
     }
     console.time('registerLegacyWithConfig')
+
+    // await provider.send('evm_setTime', [Math.floor(Date.now() / 1000 + 30000000)])
+
     if (type === 'wrapped') {
       const wrappedName = _name as WrappedName
       await generateWrappedName(wrappedName, { accounts, provider })
@@ -40,6 +43,7 @@ export const nameGenerator = ({ accounts, provider }: Config) => {
     await provider.mine()
     await waitForSubgraph(provider)()
     console.timeEnd('registerLegacyWithConfig')
+    await provider.setAutomine(true)
     return `${uniqueLabel}.eth`
   }
 }

@@ -6,6 +6,10 @@ import { Accounts, createAccounts } from './fixtures/accounts'
 import { Login } from './fixtures/login'
 import { Name, nameGenerator } from './fixtures/nameGenerator/index'
 import { Provider, createProvider } from './fixtures/provider'
+import { AddressPage } from './pageObjects/addressPage'
+import { MorePage } from './pageObjects/morePage'
+import { PermissionsPage } from './pageObjects/permissionsPage'
+import { ProfilePage } from './pageObjects/profilePage'
 import { SubnamesPage } from './pageObjects/subnamePage'
 import { TransactionModal } from './pageObjects/transactionModal'
 
@@ -19,6 +23,10 @@ type Fixtures = {
 }
 
 type PageObjects = {
+  AddressPage: typeof AddressPage
+  MorePage: typeof MorePage
+  PermissionsPage: typeof PermissionsPage
+  ProfilePage: typeof ProfilePage
   SubnamesPage: typeof SubnamesPage
   TransactionModal: typeof TransactionModal
 }
@@ -45,6 +53,10 @@ export const test = base.extend<Fixtures & PageObjects>({
     const _nameGenerator = nameGenerator({ accounts, provider })
     await use(_nameGenerator)
   },
+  AddressPage: ({}, use) => use(AddressPage),
+  MorePage: ({}, use) => use(MorePage),
+  ProfilePage: ({}, use) => use(ProfilePage),
+  PermissionsPage: ({}, use) => use(PermissionsPage),
   SubnamesPage: ({}, use) => use(SubnamesPage),
   TransactionModal: ({}, use) => use(TransactionModal),
 })

@@ -1,8 +1,20 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Page } from '@playwright/test'
+import { Locator, Page } from '@playwright/test'
 
-type Dependencies = {
-  page: Page
+export class ProfilePage {
+  readonly page: Page
+
+  readonly getRecreateButton: Locator
+
+  readonly getDeleteSubnameButton: Locator
+
+  constructor(page: Page) {
+    this.page = page
+    this.getRecreateButton = this.page.getByTestId('profile-action-Recreate name')
+    this.getDeleteSubnameButton = this.page.locator('text="Delete subname"')
+  }
+
+  async goto(name: string) {
+    await this.page.goto(`/${name}`)
+  }
 }
-
-export const ProfilePage = ({ page }: Dependencies) => ({})

@@ -193,6 +193,24 @@ test('should allow creating an expired wrapped subname', async ({
     label: 'wrapped',
     type: 'wrapped',
     owner: 'user',
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
+    subnames: [
+      {
+        label: 'test',
+        owner: 'user',
+        duration: -60 * 60 * 24 * 30,
+        fuses: {
+          parent: {
+            named: ['PARENT_CANNOT_CONTROL'],
+          },
+          child: {
+            named: [],
+          },
+        },
+      },
+    ],
   })
   const subnamesPage = new SubnamesPage(page)
   await subnamesPage.goto(name)
@@ -208,4 +226,51 @@ test('should allow creating an expired wrapped subname', async ({
   await transactionModal.autoComplete()
 
   await expect(page.locator(`text="test.${name}"`)).toBeVisible()
+})
+
+test('should allow creating an expired wrapped subname from the profile page', async ({
+  page,
+  wallet,
+  nameGenerator,
+  Login,
+  ProfilePage,
+  TransactionModal,
+}) => {
+  const name = await nameGenerator({
+    label: 'wrapped',
+    type: 'wrapped',
+    owner: 'user',
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
+    subnames: [
+      {
+        label: 'test',
+        owner: 'user',
+        duration: -60 * 60 * 24 * 30,
+        fuses: {
+          parent: {
+            named: ['PARENT_CANNOT_CONTROL'],
+          },
+          child: {
+            named: [],
+          },
+        },
+      },
+    ],
+  })
+  const profilePage = new ProfilePage(page)
+  await profilePage.goto(`test.${name}`)
+
+  const login = new Login(page, wallet)
+  await login.connect()
+
+  await page.pause()
+
+  await profilePage.getRecreateButton.click()
+
+  const transactionModal = new TransactionModal(page, wallet)
+  await transactionModal.autoComplete()
+
+  await expect(profilePage.getRecreateButton).toHaveCount(0)
 })

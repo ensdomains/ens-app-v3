@@ -18,7 +18,7 @@ export type WrappedSubname = {
   resolver?: `0x${string}`
   records?: Records
   fuses?: CombinedFuseInput
-  expiry?: number
+  duration?: number
 }
 
 type Dependencies = {
@@ -35,7 +35,7 @@ export const generateWrappedSubname = async (
     resolver = emptyAddress,
     records,
     fuses,
-    expiry = 0,
+    duration = 31536000,
   }: WrappedSubname,
   { provider, accounts }: Dependencies,
 ) => {
@@ -48,6 +48,7 @@ export const generateWrappedSubname = async (
   // Make subname
   const node = namehash(name)
   const encodedFuses = fuses ? encodeFuses(fuses) : 0
+  const expiry = duration + Math.floor(Date.now() / 1000)
 
   // Make subname with resolver
   await nameWrapper.setSubnodeRecord(node, label, _owner, resolver, 0, encodedFuses, expiry)

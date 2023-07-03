@@ -7,6 +7,7 @@ export const createProvider = () => {
   const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545')
   let snapshotId = 0
   return {
+    send: (method: string, params: any[]) => provider.send(method, params),
     getSigner: (index: number) => provider.getSigner(index),
     increaseTime: (seconds: number) => provider.send('evm_increaseTime', [seconds]),
     mine: () => provider.send('evm_mine', []),

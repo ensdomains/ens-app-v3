@@ -56,7 +56,6 @@ export const generateLegacyName = async (
   await controller.register(label, _owner, _duration, secret, {
     value: price,
   })
-  await provider.increaseTime(DURATION_ADJUSTMENT)
 
   // Create subnames
   const _subnames = (subnames || []).map((subname) => ({

@@ -69,12 +69,11 @@ export const generateLegacyNameWithConfig = async (
   await provider.mine()
 
   // Register
-  const _duration = duration + DURATION_ADJUSTMENT
+  const _duration = duration
   const price = await controller.rentPrice(label, _duration)
   await controller.registerWithConfig(label, _owner, _duration, secret, resolver, _addr, {
     value: price,
   })
-  await provider.increaseTime(DURATION_ADJUSTMENT)
 
   // Create records
   await generateRecords({ name: `${label}.eth`, owner, resolver, records }, { provider, accounts })
