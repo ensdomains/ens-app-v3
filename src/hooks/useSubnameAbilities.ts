@@ -94,7 +94,7 @@ const getCanDeleteAbilities = (
   // all wrapped names, unburned PCC
   return {
     canDelete: !hasSubnames,
-    canDeleteContract: 'nameWrapper',
+    canDeleteContract: isParentWrapped ? 'nameWrapper' : 'registry',
     canDeleteMethod: isOwner ? 'setRecord' : 'setSubnodeOwner',
     isParentOwner,
     isPCCBurned,
