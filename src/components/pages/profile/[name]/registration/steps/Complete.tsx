@@ -203,15 +203,15 @@ const Complete = ({
     const data = tokenise(beautifiedName)
     return data.map((item, i) => {
       if (item.type === 'emoji') {
-        const string = String.fromCodePoint(...item.emoji)
+        const str = String.fromCodePoint(...item.emoji)
         // eslint-disable-next-line react/no-array-index-key
-        return <Fragment key={`${string}-${i}`}>{string}</Fragment>
+        return <Fragment key={`${str}-${i}`}>{str}</Fragment>
       }
-      let string = '.'
-      if ('cps' in item) string = String.fromCodePoint(...item.cps)
-      if ('cp' in item) string = String.fromCodePoint(item.cp)
+      let str = '.'
+      if ('cps' in item) str = String.fromCodePoint(...item.cps)
+      if ('cp' in item) str = String.fromCodePoint(item.cp)
       // eslint-disable-next-line react/no-array-index-key
-      return <b key={`${string}-${i}`}>{string}</b>
+      return <b key={`${str}-${i}`}>{str}</b>
     })
   }, [beautifiedName])
 
