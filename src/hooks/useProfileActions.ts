@@ -18,7 +18,6 @@ import { useResolverStatus } from './resolver/useResolverStatus'
 import { useNameDetails } from './useNameDetails'
 import { useSelfAbilities } from './useSelfAbilities'
 import { useSubnameAbilities } from './useSubnameAbilities'
-import useWrapperApprovedForAll from './useWrapperApprovedForAll'
 
 type Action = {
   onClick: () => void
@@ -65,12 +64,6 @@ export const useProfileActions = ({
 
   const primary = usePrimary(address)
 
-  const wrappedApproved = useWrapperApprovedForAll(
-    address || '',
-    subnameAbilities.canDelete,
-    !!subnameAbilities.canDeleteRequiresWrap,
-  )
-
   const isAvailablePrimaryName = checkAvailablePrimaryName(
     primary.data?.name,
     resolverStatus.data,
@@ -102,10 +95,7 @@ export const useProfileActions = ({
   const showDeleteSubnameNotParentWarningInput = prepareDataInput('DeleteSubnameNotParentWarning')
 
   const isLoading =
-    primary.isLoading ||
-    resolverStatus.isLoading ||
-    getPrimaryNameTransactionFlowItem.isLoading ||
-    wrappedApproved.isLoading
+    primary.isLoading || resolverStatus.isLoading || getPrimaryNameTransactionFlowItem.isLoading
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
@@ -158,8 +148,10 @@ export const useProfileActions = ({
       }
       if (subnameAbilities.canDeleteRequiresWrap) {
         const transactions: GenericTransaction[] = [
-          makeTransactionItem('wrapName', {
+          makeTransactionItem('transferSubname', {
             name,
+            contract: 'nameWrapper',
+            newOwner: address,
           }),
           makeTransactionItem('deleteSubname', {
             contract: 'nameWrapper',
@@ -167,8 +159,6 @@ export const useProfileActions = ({
             method: 'setRecord',
           }),
         ]
-        if (!wrappedApproved.approvedForAll)
-          transactions.unshift(makeTransactionItem('approveNameWrapper', { address }))
         actions.push({
           ...base,
           onClick: () =>
@@ -272,7 +262,6 @@ export const useProfileActions = ({
     showUnknownLabelsInput,
     createTransactionFlow,
     showProfileEditorInput,
-    wrappedApproved.approvedForAll,
     showDeleteEmancipatedSubnameWarningInput,
     showDeleteSubnameNotParentWarningInput,
   ])

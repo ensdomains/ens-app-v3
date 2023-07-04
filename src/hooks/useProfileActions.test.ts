@@ -200,59 +200,11 @@ describe('useProfileActions', () => {
       expect(mockCreateTransactionFlow).toHaveBeenCalledWith('deleteSubname-test.eth', {
         transactions: [
           {
-            name: 'wrapName',
-            data: {
-              name: 'test.eth',
-            },
-          },
-          {
-            name: 'deleteSubname',
+            name: 'transferSubname',
             data: {
               contract: 'nameWrapper',
               name: 'test.eth',
-              method: 'setRecord',
-            },
-          },
-        ],
-        resumable: true,
-        intro: {
-          title: ['intro.multiStepSubnameDelete.title', { ns: 'transactionFlow' }],
-          content: {
-            name: 'GenericWithDescription',
-            data: {
-              description: 'intro.multiStepSubnameDelete.description',
-            },
-          },
-        },
-      })
-    })
-    it('should return a three step transaction flow for an unwrapped subname with wrapped parent with namewrapper not approved by address', () => {
-      mockUseWrapperApprovedForAll.mockReturnValue({ approvedForAll: false, isLoading: false })
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          subnameAbilities: {
-            ...props.subnameAbilities,
-            canDeleteRequiresWrap: true,
-          },
-        }),
-      )
-      const deleteAction = result.current.profileActions?.find(
-        (a) => a.label === 'tabs.profile.actions.deleteSubname.label',
-      )
-      deleteAction!.onClick()
-      expect(mockCreateTransactionFlow).toHaveBeenCalledWith('deleteSubname-test.eth', {
-        transactions: [
-          {
-            name: 'approveNameWrapper',
-            data: {
-              address: '0x1234567890',
-            },
-          },
-          {
-            name: 'wrapName',
-            data: {
-              name: 'test.eth',
+              newOwner: '0x1234567890',
             },
           },
           {
