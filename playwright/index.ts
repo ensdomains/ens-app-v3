@@ -7,6 +7,7 @@ import { Login } from './fixtures/login'
 import { Name, nameGenerator } from './fixtures/nameGenerator/index'
 import { Provider, createProvider } from './fixtures/provider'
 import { AddressPage } from './pageObjects/addressPage'
+import { ExtendNamesModal } from './pageObjects/extendNamesModal'
 import { MorePage } from './pageObjects/morePage'
 import { PermissionsPage } from './pageObjects/permissionsPage'
 import { ProfilePage } from './pageObjects/profilePage'
@@ -24,6 +25,7 @@ type Fixtures = {
 
 type PageObjects = {
   AddressPage: typeof AddressPage
+  ExtendNamesModal: typeof ExtendNamesModal
   MorePage: typeof MorePage
   PermissionsPage: typeof PermissionsPage
   ProfilePage: typeof ProfilePage
@@ -54,6 +56,7 @@ export const test = base.extend<Fixtures & PageObjects>({
     await use(_nameGenerator)
   },
   AddressPage: ({}, use) => use(AddressPage),
+  ExtendNamesModal: ({}, use) => use(ExtendNamesModal),
   MorePage: ({}, use) => use(MorePage),
   ProfilePage: ({}, use) => use(ProfilePage),
   PermissionsPage: ({}, use) => use(PermissionsPage),
