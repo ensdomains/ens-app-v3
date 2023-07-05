@@ -1,0 +1,719 @@
+diff --git a/commands/metamask.js b/commands/metamask.js
+index 66fad67c218a34a923d3674683c3a79c51c8555b..f048f6bc8bdc99af229eca208a38d6db09d8a050 100644
+--- a/commands/metamask.js
++++ b/commands/metamask.js
+@@ -1,5 +1,6 @@
+ const log = require('debug')('synpress:metamask');
+ const playwright = require('./playwright');
++const sleep = require('util').promisify(setTimeout);
+ 
+ const {
+   onboardingWelcomePageElements,
+@@ -74,6 +75,7 @@ const metamask = {
+     return walletAddress;
+   },
+   async goTo(url) {
++    log(`Running goTo(${url})`);
+     await Promise.all([
+       playwright.metamaskWindow().waitForNavigation(),
+       playwright.metamaskWindow().goto(url),
+@@ -105,6 +107,7 @@ const metamask = {
+     await module.exports.goTo(extensionImportTokenUrl);
+   },
+   async getExtensionDetails() {
++    log(`Running getExtensionDetails()`);
+     extensionInitialUrl = await playwright.metamaskWindow().url();
+     extensionId = extensionInitialUrl.match('//(.*?)/')[1];
+     extensionHomeUrl = `chrome-extension://${extensionId}/home.html`;
+@@ -129,6 +132,7 @@ const metamask = {
+     };
+   },
+   async closePopupAndTooltips() {
++    log(`Running closePopupAndTooltips()`);
+     // note: this is required for fast execution of e2e tests to avoid flakiness
+     // otherwise popup may not be detected properly and not closed
+     await playwright.metamaskWindow().waitForTimeout(1000);
+@@ -167,6 +171,7 @@ const metamask = {
+     return true;
+   },
+   async closeModal() {
++    log(`Running closeModal()`);
+     // note: this is required for fast execution of e2e tests to avoid flakiness
+     // otherwise modal may not be detected properly and not closed
+     await playwright.metamaskWindow().waitForTimeout(1000);
+@@ -183,6 +188,7 @@ const metamask = {
+     return true;
+   },
+   async unlock(password) {
++    log(`Running unlock()`);
+     await playwright.fixBlankPage();
+     await playwright.fixCriticalError();
+     await playwright.waitAndType(unlockPageElements.passwordInput, password);
+@@ -197,6 +203,7 @@ const metamask = {
+     return true;
+   },
+   async optOutAnalytics() {
++    log(`Running optOutAnalytics()`);
+     await playwright.waitAndClick(
+       metametricsPageElements.optOutAnalyticsButton,
+       await playwright.metamaskWindow(),
+@@ -207,6 +214,7 @@ const metamask = {
+     return true;
+   },
+   async importWallet(secretWords, password) {
++    log(`Running importWallet()`);
+     await playwright.waitAndClick(
+       onboardingWelcomePageElements.importWalletButton,
+       await playwright.metamaskWindow(),
+@@ -266,6 +274,7 @@ const metamask = {
+     return true;
+   },
+   async createWallet(password) {
++    log(`Running createWallet()`);
+     await playwright.waitAndClick(
+       onboardingWelcomePageElements.createWalletButton,
+       await playwright.metamaskWindow(),
+@@ -320,6 +329,7 @@ const metamask = {
+     return true;
+   },
+   async importAccount(privateKey) {
++    log(`Running importAccount()`);
+     await switchToMetamaskIfNotActive();
+     await module.exports.goToImportAccount();
+     await playwright.waitAndType(
+@@ -338,6 +348,7 @@ const metamask = {
+     return true;
+   },
+   async createAccount(accountName) {
++    log(`Running createAccount(${accountName})`);
+     await switchToMetamaskIfNotActive();
+     await module.exports.goToNewAccount();
+     if (accountName) {
+@@ -369,6 +380,7 @@ const metamask = {
+     return accountExists ? formErrorTxt : true;
+   },
+   async switchAccount(accountNameOrAccountNumber) {
++    log(`Running switchAccount(${accountNameOrAccountNumber})`);
+     if (typeof accountNameOrAccountNumber === 'string') {
+       accountNameOrAccountNumber = accountNameOrAccountNumber.toLowerCase();
+     }
+@@ -378,6 +390,18 @@ const metamask = {
+     await module.exports.closePopupAndTooltips();
+     await playwright.waitAndClick(mainPageElements.accountMenu.button);
+     if (typeof accountNameOrAccountNumber === 'number') {
++      const page = await playwright.metamaskWindow();
++      await playwright.waitFor(mainPageElements.accountMenu.accountButton(1), page);
++      for (let i = 2; i <= accountNameOrAccountNumber; i++) {
++        if (!(await page.locator(mainPageElements.accountMenu.accountButton(i)).count())) {
++          await playwright.waitAndClick(
++            mainPageElements.accountMenu.createAccountButton,
++          );
++          await playwright.waitAndClick(mainPageElements.createAccount.createButton);
++          await playwright.waitAndClick(mainPageElements.accountMenu.button);
++        }
++      }
++
+       await playwright.waitAndClick(
+         mainPageElements.accountMenu.accountButton(accountNameOrAccountNumber),
+       );
+@@ -392,6 +416,7 @@ const metamask = {
+     return true;
+   },
+   async changeNetwork(network) {
++    log(`Running changeNetwork(${network})`);
+     // check if network is available in presets
+     if (typeof network === 'string') {
+       network = await findNetwork(network);
+@@ -429,6 +454,7 @@ const metamask = {
+     return true;
+   },
+   async addNetwork(network) {
++    log(`Running addNetwork(${network})`);
+     // check if available in presets
+     if (typeof network === 'string') {
+       network = await findNetwork(network);
+@@ -516,6 +542,7 @@ const metamask = {
+     return true;
+   },
+   async disconnectWalletFromDapp() {
++    log(`Running disconnectWalletFromDapp()`);
+     await switchToMetamaskIfNotActive();
+     await playwright.waitAndClick(mainPageElements.optionsMenu.button);
+     await playwright.waitAndClick(
+@@ -546,6 +573,7 @@ const metamask = {
+     return true;
+   },
+   async disconnectWalletFromAllDapps() {
++    log(`Running disconnectWalletFromAllDapps()`);
+     await switchToMetamaskIfNotActive();
+     await playwright.waitAndClick(mainPageElements.optionsMenu.button);
+     await playwright.waitAndClick(
+@@ -577,6 +605,7 @@ const metamask = {
+     return true;
+   },
+   async activateAdvancedGasControl(skipSetup) {
++    log(`Running activateAdvancedGasControl(${skipSetup})`);
+     return await activateAdvancedSetting(
+       advancedPageElements.advancedGasControlToggleOn,
+       advancedPageElements.advancedGasControlToggleOff,
+@@ -584,6 +613,7 @@ const metamask = {
+     );
+   },
+   async activateShowHexData(skipSetup) {
++    log(`Running activateShowHexData(${skipSetup})`);
+     return await activateAdvancedSetting(
+       advancedPageElements.showHexDataToggleOn,
+       advancedPageElements.showHexDataToggleOff,
+@@ -591,6 +621,7 @@ const metamask = {
+     );
+   },
+   async activateTestnetConversion(skipSetup) {
++    log(`Running activateTestnetConversion(${skipSetup})`);
+     return await activateAdvancedSetting(
+       advancedPageElements.showTestnetConversionOn,
+       advancedPageElements.showTestnetConversionOff,
+@@ -598,6 +629,7 @@ const metamask = {
+     );
+   },
+   async activateShowTestnetNetworks(skipSetup) {
++    log(`Running activateShowTestnetNetworks(${skipSetup})`);
+     return await activateAdvancedSetting(
+       advancedPageElements.showTestnetNetworksOn,
+       advancedPageElements.showTestnetNetworksOff,
+@@ -605,6 +637,7 @@ const metamask = {
+     );
+   },
+   async activateCustomNonce(skipSetup) {
++    log(`Running activateCustomNonce(${skipSetup})`);
+     return await activateAdvancedSetting(
+       advancedPageElements.customNonceToggleOn,
+       advancedPageElements.customNonceToggleOff,
+@@ -612,6 +645,7 @@ const metamask = {
+     );
+   },
+   async activateDismissBackupReminder(skipSetup) {
++    log(`Running activateDismissBackupReminder(${skipSetup})`);
+     return await activateAdvancedSetting(
+       advancedPageElements.dismissBackupReminderOn,
+       advancedPageElements.dismissBackupReminderOff,
+@@ -619,6 +653,7 @@ const metamask = {
+     );
+   },
+   async activateEthSignRequests(skipSetup) {
++    log(`Running activateEthSignRequests(${skipSetup})`);
+     return await activateAdvancedSetting(
+       advancedPageElements.ethSignRequestsToggleOn,
+       advancedPageElements.ethSignRequestsToggleOff,
+@@ -626,6 +661,7 @@ const metamask = {
+     );
+   },
+   async activateImprovedTokenAllowance(skipSetup) {
++    log(`Running activateImprovedTokenAllowance(${skipSetup})`);
+     return await activateAdvancedSetting(
+       experimentalSettingsPageElements.improvedTokenAllowanceToggleOn,
+       experimentalSettingsPageElements.improvedTokenAllowanceToggleOff,
+@@ -634,6 +670,7 @@ const metamask = {
+     );
+   },
+   async resetAccount() {
++    log(`Running resetAccount()`);
+     await switchToMetamaskIfNotActive();
+     await module.exports.goToAdvancedSettings();
+     await playwright.waitAndClick(advancedPageElements.resetAccountButton);
+@@ -650,6 +687,7 @@ const metamask = {
+     return true;
+   },
+   async confirmSignatureRequest() {
++    log(`Running confirmSignatureRequest()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     if (
+       (await playwright
+@@ -670,6 +708,7 @@ const metamask = {
+     return true;
+   },
+   async rejectSignatureRequest() {
++    log(`Running rejectSignatureRequest()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       signaturePageElements.rejectSignatureRequestButton,
+@@ -679,6 +718,7 @@ const metamask = {
+     return true;
+   },
+   async confirmDataSignatureRequest() {
++    log(`Running confirmDataSignatureRequest()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     if (
+       (await playwright
+@@ -699,6 +739,7 @@ const metamask = {
+     return true;
+   },
+   async rejectDataSignatureRequest() {
++    log(`Running rejectDataSignatureRequest()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       dataSignaturePageElements.rejectDataSignatureRequestButton,
+@@ -708,6 +749,7 @@ const metamask = {
+     return true;
+   },
+   async importToken(tokenConfig) {
++    log(`Running importToken(${tokenConfig})`);
+     let tokenData = {};
+     await switchToMetamaskIfNotActive();
+     await module.exports.goToImportToken();
+@@ -769,6 +811,7 @@ const metamask = {
+     return tokenData;
+   },
+   async confirmAddToken() {
++    log(`Running confirmAddToken()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       addTokenPageElements.confirmAddTokenButton,
+@@ -778,6 +821,7 @@ const metamask = {
+     return true;
+   },
+   async rejectAddToken() {
++    log(`Running rejectAddToken()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       addTokenPageElements.rejectAddTokenButton,
+@@ -787,6 +831,7 @@ const metamask = {
+     return true;
+   },
+   async confirmPermissionToSpend(spendLimit) {
++    log(`Running confirmPermissionToSpend(${spendLimit})`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     // experimental mode on
+     if (
+@@ -813,6 +858,7 @@ const metamask = {
+     return true;
+   },
+   async rejectPermissionToSpend() {
++    log(`Running rejectPermissionToSpend()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       notificationPageElements.rejectToSpendButton,
+@@ -822,6 +868,7 @@ const metamask = {
+     return true;
+   },
+   async acceptAccess(options) {
++    log(`Running acceptAccess(${options})`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     if (options && options.allAccounts) {
+       await playwright.waitAndClick(
+@@ -875,6 +922,7 @@ const metamask = {
+     return true;
+   },
+   async rejectAccess() {
++    log(`Running rejectAccess()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       notificationPageElements.cancelButton,
+@@ -884,6 +932,8 @@ const metamask = {
+     return true;
+   },
+   async confirmTransaction(gasConfig) {
++    log(`Running confirmTransaction(${gasConfig})`);
++    if (process.env.TRANSACTION_WAIT_TIME) await sleep(parseInt(process.env.TRANSACTION_WAIT_TIME));
+     let txData = {};
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     if (gasConfig) {
+@@ -1015,27 +1065,6 @@ const metamask = {
+         }
+       }
+     }
+-    log('[confirmTransaction] Checking if recipient address is present..');
+-    if (
+-      (await playwright
+-        .metamaskNotificationWindow()
+-        .locator(confirmPageElements.recipientButton)
+-        .count()) > 0
+-    ) {
+-      log('[confirmTransaction] Getting recipient address..');
+-      await playwright.waitAndClick(
+-        confirmPageElements.recipientButton,
+-        notificationPage,
+-      );
+-      txData.recipientPublicAddress = await playwright.waitAndGetValue(
+-        recipientPopupElements.recipientPublicAddress,
+-        notificationPage,
+-      );
+-      await playwright.waitAndClick(
+-        recipientPopupElements.popupCloseButton,
+-        notificationPage,
+-      );
+-    }
+     log('[confirmTransaction] Checking if network name is present..');
+     if (
+       (await playwright
+@@ -1100,6 +1129,7 @@ const metamask = {
+     return txData;
+   },
+   async rejectTransaction() {
++    log(`Running rejectTransaction()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       confirmPageElements.rejectButton,
+@@ -1109,6 +1139,7 @@ const metamask = {
+     return true;
+   },
+   async confirmEncryptionPublicKeyRequest() {
++    log(`Running confirmEncryptionPublicKeyRequest()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       encryptionPublicKeyPageElements.confirmEncryptionPublicKeyButton,
+@@ -1118,6 +1149,7 @@ const metamask = {
+     return true;
+   },
+   async rejectEncryptionPublicKeyRequest() {
++    log(`Running rejectEncryptionPublicKeyRequest()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       encryptionPublicKeyPageElements.rejectEncryptionPublicKeyButton,
+@@ -1127,6 +1159,7 @@ const metamask = {
+     return true;
+   },
+   async confirmDecryptionRequest() {
++    log(`Running confirmDecryptionRequest()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       decryptPageElements.confirmDecryptionRequestButton,
+@@ -1136,6 +1169,7 @@ const metamask = {
+     return true;
+   },
+   async rejectDecryptionRequest() {
++    log(`Running rejectDecryptionRequest()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       decryptPageElements.rejectDecryptionRequestButton,
+@@ -1145,6 +1179,7 @@ const metamask = {
+     return true;
+   },
+   async confirmPermisionToApproveAll() {
++    log(`Running confirmPermisionToApproveAll()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       notificationPageElements.allowToSpendButton,
+@@ -1158,6 +1193,7 @@ const metamask = {
+     return true;
+   },
+   async rejectPermisionToApproveAll() {
++    log(`Running rejectPermisionToApproveAll()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       notificationPageElements.allowToSpendButton,
+@@ -1171,6 +1207,7 @@ const metamask = {
+     return true;
+   },
+   async allowToAddNetwork({ waitForEvent } = {}) {
++    log(`Running allowToAddNetwork()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     if (waitForEvent) {
+       await playwright.waitAndClick(
+@@ -1187,6 +1224,7 @@ const metamask = {
+     return true;
+   },
+   async rejectToAddNetwork() {
++    log(`Running rejectToAddNetwork()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       confirmationPageElements.footer.cancelButton,
+@@ -1196,6 +1234,7 @@ const metamask = {
+     return true;
+   },
+   async allowToSwitchNetwork() {
++    log(`Running allowToSwitchNetwork()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       confirmationPageElements.footer.approveButton,
+@@ -1205,6 +1244,7 @@ const metamask = {
+     return true;
+   },
+   async rejectToSwitchNetwork() {
++    log(`Running rejectToSwitchNetwork()`);
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     await playwright.waitAndClick(
+       confirmationPageElements.footer.cancelButton,
+@@ -1214,11 +1254,13 @@ const metamask = {
+     return true;
+   },
+   async allowToAddAndSwitchNetwork() {
++    log(`Running allowToAddAndSwitchNetwork()`);
+     await module.exports.allowToAddNetwork();
+     await module.exports.allowToSwitchNetwork();
+     return true;
+   },
+   async getWalletAddress() {
++    log(`Running getWalletAddress()`);
+     await switchToMetamaskIfNotActive();
+     await playwright.waitAndClick(mainPageElements.optionsMenu.button);
+     await playwright.waitAndClick(
+diff --git a/commands/playwright.js b/commands/playwright.js
+index b44acde34e3435055bbdb8b7bff5e28b4f98857f..d2538b64b6af2a10dbafa74eb4b0aef0bd6186ad 100644
+--- a/commands/playwright.js
++++ b/commands/playwright.js
+@@ -35,6 +35,7 @@ module.exports = {
+     return activeTabName;
+   },
+   async init(playwrightInstance) {
++    log("Running init()");
+     const chromium = playwrightInstance
+       ? playwrightInstance
+       : require('@playwright/test').chromium;
+@@ -57,10 +58,12 @@ module.exports = {
+     return browser.isConnected();
+   },
+   async clear() {
++    log("Running clear()");
+     browser = null;
+     return true;
+   },
+   async assignWindows() {
++    log("Running assignWindows()");
+     let pages = await browser.contexts()[0].pages();
+     for (const page of pages) {
+       if (page.url().includes('runner')) {
+@@ -74,10 +77,12 @@ module.exports = {
+     return true;
+   },
+   async assignActiveTabName(tabName) {
++    log("Running assignActiveTabName()");
+     activeTabName = tabName;
+     return true;
+   },
+   async clearWindows() {
++    log("Running clearWindows()");
+     mainWindow = null;
+     metamaskWindow = null;
+     metamaskNotificationWindow = null;
+@@ -93,6 +98,7 @@ module.exports = {
+     return activeTabName === 'metamask-notif';
+   },
+   async switchToCypressWindow() {
++    log("Running switchToCypressWindow()");
+     if (mainWindow) {
+       await mainWindow.bringToFront();
+       await module.exports.assignActiveTabName('cypress');
+@@ -100,16 +106,19 @@ module.exports = {
+     return true;
+   },
+   async switchToMetamaskWindow() {
++    log("Running switchToMetamaskWindow()");
+     await metamaskWindow.bringToFront();
+     await module.exports.assignActiveTabName('metamask');
+     return true;
+   },
+   async switchToMetamaskNotificationWindow() {
++    log("Running switchToMetamaskNotificationWindow()");
+     await metamaskNotificationWindow.bringToFront();
+     await module.exports.assignActiveTabName('metamask-notif');
+     return true;
+   },
+   async switchToMetamaskNotification() {
++    log("Running switchToMetamaskNotification()");
+     let pages = await browser.contexts()[0].pages();
+     for (const page of pages) {
+       if (page.url().includes('notification')) {
+@@ -136,6 +145,7 @@ module.exports = {
+     }
+   },
+   async waitFor(selector, page = metamaskWindow) {
++    log("Running waitFor()");
+     await module.exports.waitUntilStable(page);
+     await page.waitForSelector(selector, { strict: false });
+     const element = page.locator(selector).first();
+@@ -151,6 +161,7 @@ module.exports = {
+     return element;
+   },
+   async waitAndClick(selector, page = metamaskWindow, args = {}) {
++    log("Running waitAndClick()");
+     const element = await module.exports.waitFor(selector, page);
+     if (args.numberOfClicks && !args.waitForEvent) {
+       await element.click({
+@@ -158,21 +169,15 @@ module.exports = {
+         force: args.force,
+       });
+     } else if (args.numberOfClicks && args.waitForEvent) {
+-      await Promise.all([
+-        page.waitForEvent(args.waitForEvent),
+-        element.click({ clickCount: args.numberOfClicks, force: args.force }),
+-      ]);
++      element.click({ clickCount: args.numberOfClicks, force: args.force });
++      await page.waitForEvent(args.waitForEvent);
+     } else if (args.waitForEvent) {
+       if (args.waitForEvent.includes('navi')) {
+-        await Promise.all([
+-          page.waitForNavigation(),
+-          element.click({ force: args.force }),
+-        ]);
++        element.click({ force: args.force })
++        await page.waitForNavigation();
+       } else {
+-        await Promise.all([
+-          page.waitForEvent(args.waitForEvent),
+-          element.click({ force: args.force }),
+-        ]);
++        element.click({ force: args.force });
++        await page.waitForEvent(args.waitForEvent);
+       }
+     } else {
+       await element.click({ force: args.force });
+@@ -181,12 +186,14 @@ module.exports = {
+     return element;
+   },
+   async waitAndClickByText(selector, text, page = metamaskWindow) {
++    log("Running waitAndClickByText()");
+     await module.exports.waitFor(selector, page);
+     const element = `:is(:text-is("${text}"), :text("${text}"))`;
+     await page.click(element);
+     await module.exports.waitUntilStable();
+   },
+   async waitAndType(selector, value, page = metamaskWindow) {
++    log("Running waitAndType()");
+     if (typeof value === 'number') {
+       value = value.toString();
+     }
+@@ -195,6 +202,7 @@ module.exports = {
+     await module.exports.waitUntilStable(page);
+   },
+   async waitAndGetValue(selector, page = metamaskWindow) {
++    log("Running waitAndGetValue()");
+     const expect = global.expect
+       ? global.expect
+       : require('@playwright/test').expect;
+@@ -207,6 +215,7 @@ module.exports = {
+     return value;
+   },
+   async waitAndGetInputValue(selector, page = metamaskWindow) {
++    log("Running waitAndGetInputValue()");
+     const expect = global.expect
+       ? global.expect
+       : require('@playwright/test').expect;
+@@ -216,6 +225,7 @@ module.exports = {
+     return value;
+   },
+   async waitAndGetAttributeValue(selector, attribute, page = metamaskWindow) {
++    log("Running waitAndGetAttributeValue()");
+     const expect = global.expect
+       ? global.expect
+       : require('@playwright/test').expect;
+@@ -225,6 +235,7 @@ module.exports = {
+     return attrValue;
+   },
+   async waitAndSetValue(text, selector, page = metamaskWindow) {
++    log("Running waitAndSetValue()");
+     const element = await module.exports.waitFor(selector, page);
+     await element.fill('');
+     await module.exports.waitUntilStable(page);
+@@ -232,6 +243,7 @@ module.exports = {
+     await module.exports.waitUntilStable(page);
+   },
+   async waitAndClearWithBackspace(selector, page = metamaskWindow) {
++    log("Running waitAndClearWithBackspace()");
+     await module.exports.waitFor(selector, page);
+     const inputValue = await page.evaluate(selector, el => el.value);
+     for (let i = 0; i < inputValue.length; i++) {
+@@ -240,6 +252,7 @@ module.exports = {
+     }
+   },
+   async waitClearAndType(text, selector, page = metamaskWindow) {
++    log("Running waitClearAndType()");
+     const element = await module.exports.waitAndClick(selector, page, {
+       numberOfClicks: 3,
+     });
+@@ -248,11 +261,13 @@ module.exports = {
+     await module.exports.waitUntilStable(page);
+   },
+   async waitForText(selector, text, page = metamaskWindow) {
++    log("Running waitForText()");
+     await module.exports.waitFor(selector, page);
+     const element = page.locator(selector, { hasText: text });
+     await element.waitFor();
+   },
+   async waitToBeHidden(selector, page = metamaskWindow) {
++    log("Running waitToBeHidden()");
+     // info: waits for 60 seconds
+     const locator = page.locator(selector);
+     for (const element of await locator.all()) {
+@@ -270,24 +285,32 @@ module.exports = {
+     }
+   },
+   async waitUntilStable(page) {
++    log("Running waitUntilStable()");
+     if (page && page.url().includes('notification')) {
++      log(`[waitUntilStable]: waiting for notification state load`);
+       await page.waitForLoadState('load');
++      log(`[waitUntilStable]: waiting for notification state domcontentloaded`);
+       await page.waitForLoadState('domcontentloaded');
+-      await page.waitForLoadState('networkidle');
++      log(`[waitUntilStable]: waiting for notification window to be stable`);
+       await module.exports.waitUntilNotificationWindowIsStable();
+     }
++    log(`[waitUntilStable]: waiting for metamask state load`);
+     await metamaskWindow.waitForLoadState('load');
++    log(`[waitUntilStable]: waiting for metamask state domcontentloaded`);
+     await metamaskWindow.waitForLoadState('domcontentloaded');
+-    await metamaskWindow.waitForLoadState('networkidle');
++    log(`[waitUntilStable]: waiting for metamask window to be stable`);
+     await module.exports.waitUntilMetamaskWindowIsStable();
+     if (mainWindow) {
++      log(`[waitUntilStable]: waiting for mainWindow state load`);
+       await mainWindow.waitForLoadState('load');
++      log(`[waitUntilStable]: waiting for mainWindow state domcontentloaded`);
+       await mainWindow.waitForLoadState('domcontentloaded');
+       // todo: this may slow down tests and not be necessary but could improve stability
+       // await mainWindow.waitForLoadState('networkidle');
+     }
+   },
+   async waitUntilNotificationWindowIsStable(page = metamaskNotificationWindow) {
++    log("Running waitUntilNotificationWindowIsStable()");
+     await module.exports.waitToBeHidden(
+       notificationPageElements.loadingLogo,
+       page,
+@@ -298,6 +321,7 @@ module.exports = {
+     );
+   },
+   async waitUntilMetamaskWindowIsStable(page = metamaskWindow) {
++    log("Running waitUntilMetamaskWindowIsStable()");
+     await module.exports.waitToBeHidden(pageElements.loadingLogo, page); // shown on reload
+     await module.exports.waitToBeHidden(pageElements.loadingSpinner, page); // shown on reload
+     await module.exports.waitToBeHidden(pageElements.loadingOverlay, page); // shown on change network
+@@ -319,6 +343,7 @@ module.exports = {
+   },
+   // workaround for metamask random blank page on first run
+   async fixBlankPage(page = metamaskWindow) {
++    log("Running fixBlankPage()");
+     await page.waitForTimeout(1000);
+     for (let times = 0; times < 5; times++) {
+       if (
+@@ -332,6 +357,7 @@ module.exports = {
+     }
+   },
+   async fixCriticalError(page = metamaskWindow) {
++    log("Running fixCriticalError()");
+     for (let times = 0; times < 5; times++) {
+       if ((await page.locator(pageElements.criticalError).count()) > 0) {
+         log(
+diff --git a/synpress.js b/synpress.js
+index d7daab5bf8883389ccbecb18e53c050d1eef6d13..3ad8b6d1342f99ca4d33d4dd74433595ef94df2f 100755
+--- a/synpress.js
++++ b/synpress.js
+@@ -6,7 +6,6 @@ const { version } = require('./package.json');
+ 
+ if (process.env.DEBUG && process.env.DEBUG.includes('synpress')) {
+   log('DEBUG mode is enabled');
+-  process.env.PWDEBUG = 1;
+   if (!process.env.STABLE_MODE) {
+     log('Enabling stable mode');
+     process.env.STABLE_MODE = true;
+@@ -100,7 +99,10 @@ program
+     'specify mocha reporter options, separate multiple values with comma',
+   )
+   // dashboard
+-  .option('-cid, --ciBuildId', '[dashboard] add custom ci build id to the run')
++  .option(
++    '--ci-build-id <id>',
++    '[dashboard] the unique identifier for a run on your CI provider. typically a "BUILD_ID" env var. this value is automatically detected for most CI providers'
++  )
+   .option(
+     '-r, --record',
+     '[dashboard] record video of tests running after setting up your project to record',
