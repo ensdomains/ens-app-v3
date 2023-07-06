@@ -7,6 +7,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 
 import { useHasGlobalError } from './errors/useHasGlobalError'
 import { useProfileActions } from './useProfileActions'
+import useWrapperApprovedForAll from './useWrapperApprovedForAll'
 
 const NOW_TIMESTAMP = 1588994800000
 jest.spyOn(Date, 'now').mockImplementation(() => NOW_TIMESTAMP)
@@ -23,10 +24,12 @@ jest.mock('@app/hooks/resolver/useResolverStatus', () => ({
 jest.mock('@app/hooks/usePrimary')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('./errors/useHasGlobalError')
+jest.mock('./useWrapperApprovedForAll')
 
 const mockUsePrimary = mockFunction(usePrimary)
 const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 const mockUseHasGlobalError = mockFunction(useHasGlobalError)
+const mockUseWrapperApprovedForAll = mockFunction(useWrapperApprovedForAll)
 
 const mockCreateTransactionFlow = jest.fn()
 const mockPrepareDataInput = jest.fn()
@@ -49,6 +52,7 @@ describe('useProfileActions', () => {
       canDeleteError: null,
       canReclaim: true,
       isPCCBurned: false,
+      isParentOwner: true,
     },
     ownerData: {
       ownershipLevel: 'nameWrapper',
@@ -76,6 +80,7 @@ describe('useProfileActions', () => {
       createTransactionFlow: (...args: any[]) => mockCreateTransactionFlow(...args),
     })
     mockUseHasGlobalError.mockReturnValue(false)
+    mockUseWrapperApprovedForAll.mockReturnValue({ approvedForAll: true, isLoading: false })
   })
 
   afterEach(() => {
@@ -140,6 +145,89 @@ describe('useProfileActions', () => {
         tooltipContent: 'test error',
       }),
     )
+  })
+
+  describe('delete subname', () => {
+    it('should return a single transaction with normal subname when address is parent owner', () => {
+      const { result } = renderHook(() => useProfileActions(props))
+      const deleteAction = result.current.profileActions?.find(
+        (a) => a.label === 'tabs.profile.actions.deleteSubname.label',
+      )
+      deleteAction!.onClick()
+      expect(mockCreateTransactionFlow).toHaveBeenCalledWith('deleteSubname-test.eth', {
+        transactions: [
+          {
+            name: 'deleteSubname',
+            data: {
+              name: 'test.eth',
+              contract: 'testcontract',
+              method: 'testmethod',
+            },
+          },
+        ],
+      })
+    })
+    it('should show data input if normal subname but address is child owner', () => {
+      const { result } = renderHook(() =>
+        useProfileActions({
+          ...props,
+          subnameAbilities: { ...props.subnameAbilities, isParentOwner: false },
+        }),
+      )
+      const deleteAction = result.current.profileActions?.find(
+        (a) => a.label === 'tabs.profile.actions.deleteSubname.label',
+      )
+      deleteAction!.onClick()
+      expect(mockPrepareDataInput).toHaveBeenCalledWith(
+        `delete-subname-not-parent-warning-test.eth`,
+        { name: 'test.eth', contract: 'testcontract' },
+      )
+    })
+    it('should return a two step transaction flow for an unwrapped subname with wrapped parent', () => {
+      const { result } = renderHook(() =>
+        useProfileActions({
+          ...props,
+          subnameAbilities: {
+            ...props.subnameAbilities,
+            canDeleteRequiresWrap: true,
+          },
+        }),
+      )
+      const deleteAction = result.current.profileActions?.find(
+        (a) => a.label === 'tabs.profile.actions.deleteSubname.label',
+      )
+      deleteAction!.onClick()
+      expect(mockCreateTransactionFlow).toHaveBeenCalledWith('deleteSubname-test.eth', {
+        transactions: [
+          {
+            name: 'transferSubname',
+            data: {
+              contract: 'nameWrapper',
+              name: 'test.eth',
+              newOwner: '0x1234567890',
+            },
+          },
+          {
+            name: 'deleteSubname',
+            data: {
+              contract: 'nameWrapper',
+              name: 'test.eth',
+              method: 'setRecord',
+            },
+          },
+        ],
+        resumable: true,
+        intro: {
+          title: ['intro.multiStepSubnameDelete.title', { ns: 'transactionFlow' }],
+          content: {
+            name: 'GenericWithDescription',
+            data: {
+              description: 'intro.multiStepSubnameDelete.description',
+            },
+          },
+        },
+      })
+    })
   })
 
   describe('set primary name', () => {

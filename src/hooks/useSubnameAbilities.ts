@@ -20,7 +20,9 @@ type DeleteAbilities = {
   canDeleteContract?: 'registry' | 'nameWrapper'
   canDeleteMethod?: 'setRecord' | 'setSubnodeOwner'
   canDeleteError?: string
+  canDeleteRequiresWrap?: boolean
   isPCCBurned?: boolean
+  isParentOwner?: boolean
 }
 
 type ReclaimAbilities = {
@@ -38,6 +40,7 @@ type ReturnData = {
 const getCanDeleteAbilities = (
   {
     isWrapped,
+    isParentWrapped,
     isParentOwner,
     hasSubnames,
     pccExpired,
@@ -47,6 +50,7 @@ const getCanDeleteAbilities = (
     nameHasOwner,
   }: {
     isWrapped: boolean
+    isParentWrapped: boolean
     isParentOwner: boolean
     hasSubnames: boolean
     pccExpired: boolean
@@ -57,47 +61,44 @@ const getCanDeleteAbilities = (
   },
   t: TFunction,
 ): DeleteAbilities => {
-  if (!nameHasOwner) return { canDelete: false }
-  if (!isWrapped && isParentOwner)
+  // filter out any name with no owner, or if all owners are not the current address
+  if (!nameHasOwner || (!isParentOwner && !isOwner)) return { canDelete: false }
+
+  // all unwrapped names
+  if (!isWrapped) {
+    const canDeleteRequiresWrap = isParentWrapped && !pccExpired && !isOwner
     return {
       canDelete: !hasSubnames && !pccExpired,
-      canDeleteContract: 'registry',
-      canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
+      canDeleteContract: canDeleteRequiresWrap ? 'nameWrapper' : 'registry',
+      canDeleteRequiresWrap,
+      canDeleteMethod: isOwner ? 'setRecord' : 'setSubnodeOwner',
+      isParentOwner,
+      ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
     }
-  if (isWrapped && isPCCBurned && isOwner) {
-    /* eslint-disable no-nested-ternary */
+  }
+
+  // all pcc burned names
+  if (isPCCBurned) {
+    if (!isOwner) return { canDelete: false }
     return {
       canDelete: !hasSubnames && !isCannotTransferBurned,
       canDeleteContract: 'nameWrapper',
-      canDeleteError: isCannotTransferBurned
-        ? t('errors.permissionRevoked')
-        : hasSubnames
-        ? t('errors.hasSubnames')
-        : undefined,
       canDeleteMethod: 'setRecord',
       isPCCBurned,
+      isParentOwner,
       ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
-    }
-    /* eslint-enable no-nested-ternary */
-  }
-  if (isWrapped && !isPCCBurned && isParentOwner) {
-    return {
-      canDelete: !hasSubnames,
-      canDeleteContract: 'nameWrapper',
-      canDeleteMethod: 'setSubnodeOwner',
-      ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
+      ...(isCannotTransferBurned ? { canDeleteError: t('errors.permissionRevoked') } : {}),
     }
   }
-  if (isWrapped && !isPCCBurned && isOwner) {
-    return {
-      canDelete: !hasSubnames,
-      canDeleteContract: 'nameWrapper',
-      canDeleteMethod: 'setRecord',
-      ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
-    }
-  }
+
+  // all wrapped names, unburned PCC
   return {
-    canDelete: false,
+    canDelete: !hasSubnames,
+    canDeleteContract: isParentWrapped ? 'nameWrapper' : 'registry',
+    canDeleteMethod: isOwner ? 'setRecord' : 'setSubnodeOwner',
+    isParentOwner,
+    isPCCBurned,
+    ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
   }
 }
 
@@ -160,6 +161,7 @@ export const useSubnameAbilities = ({
       ...getCanDeleteAbilities(
         {
           isWrapped,
+          isParentWrapped,
           isParentOwner,
           hasSubnames,
           pccExpired,

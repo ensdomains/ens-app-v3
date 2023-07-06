@@ -5,7 +5,9 @@ import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
 
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { GenericTransaction } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
 import { nameParts } from '@app/utils/name'
 
@@ -90,6 +92,7 @@ export const useProfileActions = ({
   const showDeleteEmancipatedSubnameWarningInput = prepareDataInput(
     'DeleteEmancipatedSubnameWarning',
   )
+  const showDeleteSubnameNotParentWarningInput = prepareDataInput('DeleteSubnameNotParentWarning')
 
   const isLoading =
     primary.isLoading || resolverStatus.isLoading || getPrimaryNameTransactionFlowItem.isLoading
@@ -135,40 +138,77 @@ export const useProfileActions = ({
     }
 
     if (subnameAbilities.canDelete && subnameAbilities.canDeleteContract) {
-      const action = subnameAbilities.isPCCBurned
-        ? {
-            label: t('tabs.profile.actions.deleteSubname.label'),
-            onClick: () => {
-              showDeleteEmancipatedSubnameWarningInput(
-                `delete-emancipated-subname-warning-${name}`,
-                { name },
-              )
-            },
-            tooltipContent: hasGlobalError
-              ? t('errors.networkError.blurb', { ns: 'common' })
-              : undefined,
-            red: true,
-            skip2LDEth: true,
-          }
-        : {
-            label: t('tabs.profile.actions.deleteSubname.label'),
-            onClick: () =>
-              createTransactionFlow(`deleteSubname-${name}`, {
-                transactions: [
-                  makeTransactionItem('deleteSubname', {
-                    name,
-                    contract: subnameAbilities.canDeleteContract!,
-                    method: subnameAbilities.canDeleteMethod,
+      const base = {
+        label: t('tabs.profile.actions.deleteSubname.label'),
+        tooltipContent: hasGlobalError
+          ? t('errors.networkError.blurb', { ns: 'common' })
+          : undefined,
+        red: true,
+        skip2LDEth: true,
+      }
+      if (subnameAbilities.canDeleteRequiresWrap) {
+        const transactions: GenericTransaction[] = [
+          makeTransactionItem('transferSubname', {
+            name,
+            contract: 'nameWrapper',
+            newOwner: address,
+          }),
+          makeTransactionItem('deleteSubname', {
+            contract: 'nameWrapper',
+            name,
+            method: 'setRecord',
+          }),
+        ]
+        actions.push({
+          ...base,
+          onClick: () =>
+            createTransactionFlow(`deleteSubname-${name}`, {
+              transactions,
+              resumable: true,
+              intro: {
+                title: ['intro.multiStepSubnameDelete.title', { ns: 'transactionFlow' }],
+                content: makeIntroItem('GenericWithDescription', {
+                  description: t('intro.multiStepSubnameDelete.description', {
+                    ns: 'transactionFlow',
                   }),
-                ],
-              }),
-            tooltipContent: hasGlobalError
-              ? t('errors.networkError.blurb', { ns: 'common' })
-              : undefined,
-            red: true,
-            skip2LDEth: true,
-          }
-      actions.push(action)
+                }),
+              },
+            }),
+        })
+      } else if (subnameAbilities.isPCCBurned) {
+        actions.push({
+          ...base,
+          onClick: () => {
+            showDeleteEmancipatedSubnameWarningInput(`delete-emancipated-subname-warning-${name}`, {
+              name,
+            })
+          },
+        })
+      } else if (!subnameAbilities.isParentOwner) {
+        actions.push({
+          ...base,
+          onClick: () => {
+            showDeleteSubnameNotParentWarningInput(`delete-subname-not-parent-warning-${name}`, {
+              name,
+              contract: subnameAbilities.canDeleteContract!,
+            })
+          },
+        })
+      } else {
+        actions.push({
+          ...base,
+          onClick: () =>
+            createTransactionFlow(`deleteSubname-${name}`, {
+              transactions: [
+                makeTransactionItem('deleteSubname', {
+                  name,
+                  contract: subnameAbilities.canDeleteContract!,
+                  method: subnameAbilities.canDeleteMethod,
+                }),
+              ],
+            }),
+        })
+      }
     } else if (subnameAbilities.canDeleteError) {
       actions.push({
         label: t('tabs.profile.actions.deleteSubname.label'),
@@ -204,23 +244,26 @@ export const useProfileActions = ({
     return actions
   }, [
     address,
+    isLoading,
+    getPrimaryNameTransactionFlowItem,
     name,
+    isAvailablePrimaryName,
     selfAbilities.canEdit,
     subnameAbilities.canDelete,
     subnameAbilities.canDeleteContract,
     subnameAbilities.canDeleteError,
-    subnameAbilities.canDeleteMethod,
-    subnameAbilities.isPCCBurned,
     subnameAbilities.canReclaim,
-    getPrimaryNameTransactionFlowItem,
+    subnameAbilities.canDeleteRequiresWrap,
+    subnameAbilities.isPCCBurned,
+    subnameAbilities.isParentOwner,
+    subnameAbilities.canDeleteMethod,
     t,
+    hasGlobalError,
     showUnknownLabelsInput,
     createTransactionFlow,
     showProfileEditorInput,
     showDeleteEmancipatedSubnameWarningInput,
-    isLoading,
-    hasGlobalError,
-    isAvailablePrimaryName,
+    showDeleteSubnameNotParentWarningInput,
   ])
 
   return {

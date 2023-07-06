@@ -56,7 +56,7 @@ const DeleteEmancipatedSubnameWarning = ({ data, dispatch, onDismiss }: Props) =
 
   return (
     <>
-      <Dialog.Heading title={t('input.deleteEmancipatedSubnameWarning.title')} alert="warning" />
+      <Dialog.Heading title={t('input.deleteEmancipatedSubnameWarning.title')} alert="error" />
       <MessageContainer>
         {t('input.deleteEmancipatedSubnameWarning.message', { date: expiryLabel })}
       </MessageContainer>
@@ -68,6 +68,7 @@ const DeleteEmancipatedSubnameWarning = ({ data, dispatch, onDismiss }: Props) =
         }
         trailing={
           <Button
+            colorStyle="redPrimary"
             disabled={isLoading}
             onClick={handleDelete}
             data-testid="delete-emancipated-subname-button"
