@@ -14,21 +14,21 @@ import { Navigation } from './Navigation'
 
 const Container = styled.div(
   ({ theme }) => css`
-    padding: ${theme.space['4']};
+    --padding-size: ${theme.space['4']};
+    padding: var(--padding-size);
     display: flex;
     flex-gap: ${theme.space['4']};
     gap: ${theme.space['4']};
     flex-direction: column;
     align-items: stretch;
     @supports (-webkit-touch-callout: none) {
-      width: calc(100% - ${theme.space['8']});
+      // hack for iOS/iPadOS Safari
+      // width should always be 100% - total padding
+      width: calc(100% - calc(var(--padding-size) * 2));
       box-sizing: content-box;
-      ${mq.sm.min(css`
-        width: calc(100% - ${theme.space['32']});
-      `)}
     }
     ${mq.sm.min(css`
-      padding: ${theme.space['8']};
+      --padding-size: ${theme.space['8']};
       gap: ${theme.space['6']};
       flex-gap: ${theme.space['6']};
     `)}
