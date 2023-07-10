@@ -10,7 +10,7 @@ describe('GraceEndDate', () => {
   it('should render the grace end date', () => {
     const expiryDate = new Date('2021-01-01T00:00:00.000Z')
     render(<GraceEndDate expiryDate={expiryDate} />)
-    const element = screen.getByText('March 31, 2021')
+    const element = screen.getByText('April 1, 2021')
     expect(element).toBeInTheDocument()
   })
 
