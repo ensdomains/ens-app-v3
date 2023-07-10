@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { Typography } from '@ensdomains/thorin'
 
 import { Outlink } from '@app/components/Outlink'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 const DescriptionWrapper = styled(Typography)(
   ({ theme }) => css`
@@ -24,7 +25,7 @@ export const ChangePrimaryName = () => {
       <Typography>
         {t('tabs.profile.actions.setAsPrimaryName.description')}{' '}
         <span>
-          <Outlink href="https://support.ens.domains/docs/faq/manager/managing-names#what-is-a-primary-ens-name">
+          <Outlink href={getSupportLink('primaryName')}>
             {t('action.learnMore', { ns: 'common' })}
           </Outlink>
         </span>

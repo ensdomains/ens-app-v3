@@ -1,10 +1,9 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { toUtf8String } from '@ethersproject/strings'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
+import { useAccount, useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
 
 import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 
@@ -25,11 +24,10 @@ import {
 } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { checkIsSafeApp } from '@app/utils/safe'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
-
-const COMMIT_GAS_COST = 45000
 
 const BarContainer = styled.div(
   ({ theme }) => css`
@@ -287,6 +285,8 @@ export const TransactionStageModal = ({
     [recentTransactions, transaction.hash],
   )
 
+  const { connector } = useAccount()
+
   const uniqueTxIdentifiers = useMemo(
     () =>
       uniqueTransactionIdentifierGenerator(
@@ -330,13 +330,14 @@ export const TransactionStageModal = ({
         transaction.data,
       )
 
-      console.log('populatedTransaction: ', populatedTransaction)
+      let gasLimit = await signer!.estimateGas({
+        ...populatedTransaction,
+        maxFeePerGas: 0,
+        maxPriorityFeePerGas: 0,
+      })
 
-      let gasLimit = await signer!.estimateGas(populatedTransaction)
-
-      if (transaction.name === 'registerName') {
-        gasLimit = gasLimit.add(BigNumber.from(COMMIT_GAS_COST))
-      }
+      // this addition is arbitrary, something to do with a gas refund but not 100% sure
+      if (transaction.name === 'registerName') gasLimit = gasLimit.add(5000)
 
       return {
         ...populatedTransaction,
@@ -373,6 +374,8 @@ export const TransactionStageModal = ({
       }
 
       console.log('transactionData: ', transactionData)
+      const isSafeApp = await checkIsSafeApp(connector)
+
       addRecentTransaction({
         ...transactionData,
         hash: tx.hash,
@@ -380,6 +383,7 @@ export const TransactionStageModal = ({
         key: txKey!,
         input: request?.data,
         timestamp: Math.floor(Date.now() / 1000),
+        isSafeTx: !!isSafeApp,
       })
       dispatch({ name: 'setTransactionHash', payload: tx.hash })
     },

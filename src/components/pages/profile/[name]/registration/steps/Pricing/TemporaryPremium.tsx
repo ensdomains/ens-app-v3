@@ -173,7 +173,7 @@ const TooltipWrapper = styled.div(
       ${dotStyle({
         name: 'hover',
         color: `hsla(0, 0%, 15%, 0.5)`,
-        extraY: `calc(200px + ${theme.space['0.5']})`,
+        extraY: `calc(200px + ${theme.space['1.25']})`,
       })}
     }
   `,
@@ -298,6 +298,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
   const { t } = useTranslation('register')
 
   const bgRef = useRef<HTMLDivElement>(null)
+  const priceInputRef = useRef<HTMLInputElement>(null)
   const dateInputRef = useRef<HTMLInputElement>(null)
 
   const setProperty: PropertyFunc = useCallback(
@@ -365,13 +366,6 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
     },
     [startDate],
   )
-  const makePosition = useCallback(
-    (point: number) => {
-      if (point === -1) return undefined
-      return { ...getPos(point), date: getDateFromPoint(point) }
-    },
-    [getPos, getDateFromPoint],
-  )
 
   const makeEvent: () => CalendarEvent = useCallback(
     () => ({
@@ -405,8 +399,22 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
     }
   }, [])
 
-  const [selectedPrice, setSelectedPrice] = useState(nowPosition.price)
-  const [selectedDate, setSelectedDate] = useState(nowDate)
+  const { selectedDate, selectedPrice } = useMemo(() => {
+    const { price } = getPos(selectedPoint)
+    return {
+      selectedPrice: price,
+      selectedDate: getDateFromPoint(selectedPoint),
+    }
+  }, [getDateFromPoint, getPos, selectedPoint])
+
+  const setSelectedPrice = useCallback(
+    (price: number) => setSelectedPoint(getPointFromPrice(price)),
+    [setSelectedPoint, getPointFromPrice],
+  )
+  const setSelectedDate = useCallback(
+    (date: Date) => setSelectedPoint(getPointFromDate(date)),
+    [setSelectedPoint, getPointFromDate],
+  )
 
   const getPointFromX = useCallback(
     (x: number) => {
@@ -451,11 +459,8 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
       const point = getPointFromX(x)
       const toSelect = nowPoint > point ? nowPoint : point
       setSelectedPoint(toSelect)
-      const { price, date } = makePosition(toSelect)!
-      setSelectedPrice(price)
-      setSelectedDate(date)
     },
-    [getPointFromX, nowPoint, makePosition],
+    [getPointFromX, nowPoint],
   )
 
   const handleMouseEnter = useCallback(() => {
@@ -466,22 +471,17 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
     setProperty('hover')('display', 'none')
   }, [setProperty])
 
+  const [priceInput, setPriceInput] = useState(() => '0.00')
+
   const handleCurrencyInput: ChangeEventHandler<HTMLInputElement> = useCallback(
     (e) => {
-      const position = e.target.selectionStart || 0
-      let parsed = parseFloat(e.target.value.replace(/,/g, ''))
+      setPriceInput(e.target.value.replace(/[^0-9.]/g, ''))
+      let parsed = parseFloat(e.target.value)
       if (parsed > nowPosition.price) parsed = nowPosition.price
-      if (parsed < 0) parsed = 0
-      const currValue = makeDisplay(selectedPrice, 2, 'usd').split('$')[1].replace(/[0-9]/g, '')
-      const nextValue = makeDisplay(parsed, 2, 'usd').split('$')[1].replace(/[0-9]/g, '')
-      const diff = nextValue.length - currValue.length
+      if (parsed < 0 || Number.isNaN(parsed)) parsed = 0
       setSelectedPrice(parsed)
-      setSelectedPoint(getPointFromPrice(parsed))
-      window.requestAnimationFrame(() => {
-        e.target.setSelectionRange(position + diff, position + diff)
-      })
     },
-    [nowPosition.price, selectedPrice, getPointFromPrice],
+    [nowPosition.price, setSelectedPrice],
   )
 
   const handleDateInput: ChangeEventHandler<HTMLInputElement> = useCallback(
@@ -490,9 +490,8 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
       if (date.getTime() < nowDate.getTime()) date = nowDate
       else if (date.getTime() > maxDate.getTime()) date = maxDate
       setSelectedDate(date)
-      setSelectedPoint(getPointFromDate(date))
     },
-    [getPointFromDate, setSelectedDate, setSelectedPoint, nowDate, maxDate],
+    [setSelectedDate, nowDate, maxDate],
   )
 
   usePointVars(nowPoint, getPos, 'now', setProperty, bgRef)
@@ -512,8 +511,19 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
     }
   }, [bgRef, setProperty])
 
+  useEffect(() => {
+    setPriceInput(makeDisplay(getPos(nowPoint).price, 2, 'usd').split('$')[1])
+  }, [getPos, nowPoint])
+
+  useEffect(() => {
+    const priceInputEl = priceInputRef.current
+    if (priceInputEl && document.activeElement !== priceInputEl && selectedPoint !== -1) {
+      setPriceInput(makeDisplay(selectedPrice, 2, 'usd').split('$')[1])
+    }
+  }, [selectedPoint, selectedPrice])
+
   return (
-    <Helper type="info">
+    <Helper style={{ overflow: 'hidden' }} type="info">
       <Container>
         <HeadingContainer>
           <Typography weight="bold">{t('steps.pricing.premium.heading')}</Typography>
@@ -522,8 +532,21 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
         <InputContainer>
           <Input
             label={t('steps.pricing.premium.targetPrice')}
-            value={makeDisplay(selectedPrice, 2, 'usd').split('$')[1]}
+            value={priceInput}
+            onFocus={(e) => {
+              e.target.placeholder = selectedPrice.toFixed(2)
+              setPriceInput('')
+            }}
             onChange={handleCurrencyInput}
+            onBlur={() => {
+              setPriceInput(makeDisplay(selectedPrice, 2, 'usd').split('$')[1])
+            }}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                e.currentTarget.blur()
+              }
+            }}
+            ref={priceInputRef}
             type="text"
             prefix="$"
             size="medium"

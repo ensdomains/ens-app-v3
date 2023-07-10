@@ -1,11 +1,11 @@
 import type { PartialMockedFunction } from '@app/test-utils'
 
 import { waitFor } from '@testing-library/react'
-import { waitForTransaction } from '@wagmi/core'
 
 import { createTransactionStore } from './transactionStore'
+import { waitForTransaction } from './waitForTransaction'
 
-jest.mock('@wagmi/core', () => ({
+jest.mock('./waitForTransaction', () => ({
   waitForTransaction: jest.fn(),
 }))
 
@@ -62,6 +62,7 @@ describe('transactionStore', () => {
     expect(transactions[0]).toStrictEqual({
       ...transaction,
       hash: newHash,
+      isSafeTx: false,
       status: 'confirmed',
       minedData: { status: 1, blockHash: 'blockHash', timestamp: 1000 },
     })

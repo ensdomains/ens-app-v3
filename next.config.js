@@ -163,7 +163,8 @@ let nextConfig = {
       __dirname,
       'src/stub.js',
     )
-    if (!options.isServer && process.env.NODE_ENV !== 'development') {
+
+    if (!options.isServer && !options.dev) {
       const originalEntry = config.entry
       config.entry = async (...args) => {
         const entryConfig = await originalEntry(...args)

@@ -16,9 +16,8 @@ import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 const Container = styled.form(({ theme }) => [
   css`
     width: 100%;
-    max-height: 60vh;
+    max-height: min(80vh, 600px);
     background: ${theme.colors.backgroundPrimary};
-    border-radius: ${theme.space['5']};
     overflow: hidden;
     display: flex;
     flex-direction: column;

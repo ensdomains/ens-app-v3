@@ -4,8 +4,9 @@ import React, { useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useTransaction } from 'wagmi'
+import { useAccount } from 'wagmi'
 
+import { ETHRegistrarController__factory } from '@ensdomains/ensjs/generated/factories/ETHRegistrarController__factory'
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
@@ -120,11 +121,37 @@ const useEthInvoice = (
   const commitReceipt = commitTxFlow?.minedData
   const registerReceipt = registerTxFlow?.minedData
 
-  const { data: registerData, isLoading: registerLoading } = useTransaction({
-    hash: registerTxFlow?.hash as `0x${string}` | undefined,
-  })
-  console.log('registerData: ', registerData)
-  const isLoading = !commitReceipt || !registerReceipt || registerLoading
+  // const { data: registerData, isLoading: registerLoading } = useTransaction({
+  //   hash: registerTxFlow?.hash as `0x${string}` | undefined,
+  // })
+  // console.log('registerData: ', registerData)
+  // const isLoading = !commitReceipt || !registerReceipt || registerLoading
+
+  const registrationValue = useMemo(() => {
+    if (!registerReceipt) return null
+    const registrarInterface = ETHRegistrarController__factory.createInterface()
+    for (const log of registerReceipt.logs) {
+      try {
+        const [, , , baseCost, premium] = registrarInterface.decodeEventLog(
+          'NameRegistered',
+          log.data,
+          log.topics,
+        ) as [
+          name: string,
+          labelhash: string,
+          owner: string,
+          base: BigNumber,
+          premium: BigNumber,
+          expiry: BigNumber,
+        ]
+        return baseCost.add(premium)
+        // eslint-disable-next-line no-empty
+      } catch {}
+    }
+    return null
+  }, [registerReceipt])
+
+  const isLoading = !commitReceipt || !registerReceipt
 
   useEffect(() => {
     const storage = localStorage.getItem(`avatar-src-${name}`)
@@ -133,7 +160,7 @@ const useEthInvoice = (
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
-    const value = BigNumber.from(registerData?.value) || BigNumber.from(0)
+    const value = registrationValue || BigNumber.from(0)
 
     const commitGasUsed = BigNumber.from(commitReceipt?.gasUsed || 0)
     const registerGasUsed = BigNumber.from(registerReceipt?.gasUsed || 0)
@@ -151,7 +178,7 @@ const useEthInvoice = (
         totalLabel={t('invoice.totalPaid')}
       />
     )
-  }, [isLoading, registerData?.value, commitReceipt, registerReceipt, t])
+  }, [isLoading, registrationValue, commitReceipt, registerReceipt, t])
 
   if (isMoonpayFlow) return { InvoiceFilled: null, avatarSrc }
 

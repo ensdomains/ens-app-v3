@@ -12,7 +12,7 @@ export const useExists = (name: string, skip?: any) => {
   const [exists, setExists] = useState(false)
 
   const queryKey = useQueryKeys().exists(name)
-  const { watchedFunc: watchedGetOwner } = useGlobalErrorFunc<typeof getOwner>({
+  const watchedGetOwner = useGlobalErrorFunc<typeof getOwner>({
     queryKey,
     func: getOwner,
   })

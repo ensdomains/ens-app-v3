@@ -128,9 +128,9 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
 const HeaderProfile = ({ address }: { address: string }) => {
   const { t } = useTranslation('common')
 
-  const { name, beautifiedName } = usePrimary(address!, !address)
+  const primary = usePrimary(address!, !address)
   const chainId = useChainId()
-  const { avatar } = useAvatar(name || undefined, chainId)
+  const { avatar } = useAvatar(primary.data?.name, chainId)
   const zorb = useZorb(address, 'address')
   const { disconnect } = useDisconnect()
   const { copy, copied } = useCopied(300)
@@ -139,10 +139,10 @@ const HeaderProfile = ({ address }: { address: string }) => {
   return (
     <Profile
       address={address}
-      ensName={beautifiedName || undefined}
+      ensName={primary.data?.beautifiedName}
       dropdownItems={
         [
-          ...(name
+          ...(primary.data?.name
             ? [
                 {
                   label: t('wallet.myProfile'),

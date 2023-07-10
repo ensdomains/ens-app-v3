@@ -18,15 +18,14 @@ export default function Page() {
   const { address } = useAccount()
 
   const primary = usePrimary(address as string, !address)
-  const { name: ensName, loading: primaryLoading } = primary
 
-  const name = isSelf && ensName ? ensName : _name
+  const name = isSelf && primary.data?.name ? primary.data.name : _name
 
   // Skip graph for for initial load and router redirect
   const nameDetails = useNameDetails(name, true)
   const { isLoading: detailsLoading, registrationStatus, gracePeriodEndDate } = nameDetails
 
-  const isLoading = detailsLoading || primaryLoading || initial || !router.isReady
+  const isLoading = detailsLoading || primary.isLoading || initial || !router.isReady
 
   if (isViewingExpired && gracePeriodEndDate && gracePeriodEndDate > new Date()) {
     router.push(`/profile/${name}`)

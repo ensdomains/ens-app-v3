@@ -11,9 +11,11 @@ import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
+import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useSubnameAbilities } from '@app/hooks/useSubnameAbilities'
+import { getSupportLink } from '@app/utils/supportLinks'
 import { validateExpiry } from '@app/utils/utils'
 
 const DetailsWrapper = styled.div(
@@ -54,6 +56,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
 
   const selfAbilities = useSelfAbilities(address, name)
 
+  const { data: primaryData } = usePrimary(address)
+
   const owners = useOwners({
     ownerData: ownerData!,
     wrapperData: wrapperData!,
@@ -68,6 +72,9 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     profile,
     selfAbilities,
     subnameAbilities,
+    ownerData,
+    wrapperData,
+    expiryDate,
   })
 
   const isExpired = useMemo(
@@ -89,6 +96,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         getTextRecord={getTextRecord}
         button={snippetButton}
         canEdit={selfAbilities.canEdit}
+        isPrimary={name === primaryData?.name}
       >
         {nameDetails.isNonASCII && (
           <Helper type="warning" alignment="horizontal">
@@ -96,7 +104,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
               i18nKey="tabs.profile.warnings.homoglyph"
               ns="profile"
               components={{
-                a: <Outlink href="https://support.ens.domains/faq/normalization/homoglyphs/" />,
+                a: <Outlink href={getSupportLink('homoglyphs')} />,
               }}
             />
           </Helper>

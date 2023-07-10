@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { Typography } from '@ensdomains/thorin'
 
 import { Outlink } from '@app/components/Outlink'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 const DescriptionWrapper = styled(Typography)(
   ({ theme }) => css`
@@ -27,7 +28,7 @@ export const MigrateAndUpdateResolver = () => {
           {t('intro.migrateAndUpdateResolver.heading')}
           &nbsp;
           <span>
-            <Outlink href="https://support.ens.domains/docs/faq/manager/managing-names#what-is-a-resolver">
+            <Outlink href={getSupportLink('resolver')}>
               {t('intro.migrateAndUpdateResolver.link')}
             </Outlink>
           </span>

@@ -302,7 +302,7 @@ const MainMenu = ({
           }
           return (
             <BaseLink href={route.href} passHref key={route.href}>
-              <RouteItem>
+              <RouteItem {...(route.href.startsWith('http') ? { target: '_blank' } : {})}>
                 <Typography>{t(route.label)}</Typography>
               </RouteItem>
             </BaseLink>

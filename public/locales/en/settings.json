@@ -6,18 +6,17 @@
     },
     "transaction": {
       "title": "Transactions",
-      "noRecentTransactions": "No recent transactions"
+      "noRecentTransactions": "No recent transactions",
+      "clearTransactions": {
+        "title": "Clear Transaction History",
+        "description": "Clearing your transaction history will permanently remove them from the ENS app. Your transactions will still be visible on the blockchain.",
+        "actionLabel": "Clear History"
+      }
     },
     "primary": {
       "title": "Primary Name",
-      "loading": "Loading primary name...",
-      "noName": "No primary name set.",
-      "input": {
-        "title": "Select a primary name",
-        "noNames": "No eligible names found for this address",
-        "noOtherNames": "No other eligible names found for this address",
-        "loading": "Loading names"
-      }
+      "noNameDescription": "A primary name links your address to a name, allowing dApps to display a name as your profile when connected to them. Learn about primary names",
+      "choosePrimaryName": "Choose primary name"
     }
   }
 }

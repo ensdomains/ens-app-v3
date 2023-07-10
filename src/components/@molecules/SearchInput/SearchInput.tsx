@@ -298,6 +298,7 @@ export const SearchInput = ({
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
+  const validateKey = useQueryKeys().validate
   const handleSearch = useCallback(() => {
     let selectedItem = searchItems[selected] as SearchItem
     if (!selectedItem) return
@@ -324,7 +325,7 @@ export const SearchInput = ({
         : `/profile/${selectedItem.value}`
     if (selectedItem.type === 'nameWithDotEth' || selectedItem.type === 'name') {
       const currentValidation =
-        queryClient.getQueryData<ValidationResult>(['validate', selectedItem.value]) ||
+        queryClient.getQueryData<ValidationResult>(validateKey(selectedItem.value)) ||
         validate(selectedItem.value)
       if (currentValidation.is2LD && currentValidation.isETH && currentValidation.isShort) {
         return
@@ -357,7 +358,16 @@ export const SearchInput = ({
     setInputVal('')
     searchInputRef.current?.blur()
     router.pushWithHistory(path)
-  }, [normalisedOutput, queryClient, router, searchItems, selected, setHistory, queryKeys])
+  }, [
+    normalisedOutput,
+    queryClient,
+    router,
+    searchItems,
+    selected,
+    setHistory,
+    queryKeys,
+    validateKey,
+  ])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
