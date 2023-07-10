@@ -42,10 +42,8 @@ describe('useProfileActions', () => {
       address: '0x1234567890',
       isMigrated: true,
     },
-    selfAbilities: {
+    abilities: {
       canEdit: true,
-    },
-    subnameAbilities: {
       canDelete: true,
       canDeleteContract: 'testcontract',
       canDeleteMethod: 'testmethod',
@@ -132,8 +130,8 @@ describe('useProfileActions', () => {
     const { result } = renderHook(() =>
       useProfileActions({
         ...props,
-        subnameAbilities: {
-          ...props.subnameAbilities,
+        abilities: {
+          ...props.abilities,
           canDelete: false,
           canDeleteError: 'test error',
         },
@@ -171,7 +169,7 @@ describe('useProfileActions', () => {
       const { result } = renderHook(() =>
         useProfileActions({
           ...props,
-          subnameAbilities: { ...props.subnameAbilities, isParentOwner: false },
+          abilities: { ...props.abilities, isParentOwner: false },
         }),
       )
       const deleteAction = result.current.profileActions?.find(
@@ -187,8 +185,8 @@ describe('useProfileActions', () => {
       const { result } = renderHook(() =>
         useProfileActions({
           ...props,
-          subnameAbilities: {
-            ...props.subnameAbilities,
+          abilities: {
+            ...props.abilities,
             canDeleteRequiresWrap: true,
           },
         }),

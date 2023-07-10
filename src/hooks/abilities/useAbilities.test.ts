@@ -16,7 +16,7 @@ jest.mock('@app/hooks/resolver/useResolverIsAuthorized', () => ({
   useResolverIsAuthorized: () => mockUseResolverIsAuthorized(),
 }))
 
-const mockUseHasSubnames = jest.fn()
+const mockUseHasSubnames = jest.fn().mockReturnValue({ hasSubnames: false, isLoading: false })
 jest.mock('@app/hooks/useHasSubnames', () => ({
   useHasSubnames: () => mockUseHasSubnames(),
 }))

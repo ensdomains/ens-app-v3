@@ -66,7 +66,6 @@ export const useAbilities = (name: string) => {
     t,
   ])
 
-  console.log('useAbilities', data)
   return {
     data,
     isLoading,
