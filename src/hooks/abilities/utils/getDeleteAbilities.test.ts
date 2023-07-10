@@ -3,7 +3,7 @@ import { DeepPartial } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
 
 import { useAbilities } from '../useAbilities'
-import { getReclaimAbilities } from './getReclaimAbilities'
+import { getDeleteAbilities } from './getDeleteAbilities'
 
 type WrapperData = ReturnType<typeof useBasicName>['wrapperData']
 const makeWrapperData = (overrides: DeepPartial<WrapperData> = {}) => {
@@ -43,7 +43,7 @@ const makeOwnerData = (overrides: DeepPartial<OwnerData> = {}) => {
 type Abilities = ReturnType<typeof useAbilities>['data']
 const makeResults = (overrides: DeepPartial<Abilities> = {}) => {
   return {
-    canReclaim: false,
+    canDelete: false,
     ...overrides,
   } as Abilities
 }
@@ -180,14 +180,14 @@ const groups = [
         ...unwrapped2LDEth,
         hasSubnames: false,
         address: '0xParent',
-        abilities: makeResults({ canReclaim: false }),
+        abilities: makeResults({ canDelete: false }),
       },
       {
         description: 'should return false if user is owner',
         ...unwrapped2LDEth,
         hasSubnames: false,
         address: '0xName',
-        abilities: makeResults({ canReclaim: false }),
+        abilities: makeResults({ canDelete: false }),
       },
     ],
   },
@@ -199,13 +199,13 @@ const groups = [
         ...wrapped2LDEth,
         hasSubnames: false,
         address: '0xParent',
-        abilities: makeResults({ canReclaim: false }),
+        abilities: makeResults({ canDelete: false }),
       },
       {
         description: 'should return false if user is name owner',
         ...wrapped2LDEth,
         address: '0xName',
-        abilities: makeResults({ canReclaim: false }),
+        abilities: makeResults({ canDelete: false }),
       },
     ],
   },
@@ -213,36 +213,49 @@ const groups = [
     description: 'unwrapped subname',
     tests: [
       {
-        description: 'should return canReclaim is false if user is parent owner',
+        description: 'should return canDelete is true if user is parent owner',
         ...unwrappedSubname,
         hasSubnames: false,
         address: '0xParent',
         abilities: makeResults({
-          canReclaim: false,
+          canDelete: true,
+          canDeleteContract: 'registry',
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteRequiresWrap: false,
+          isParentOwner: true,
         }),
       },
       {
         description:
-          'should return canReclaim is false if user is parent owner and name has subnames',
+          'should return canDelete is false if user is parent owner and name has subnames',
         ...unwrappedSubname,
         hasSubnames: true,
         address: '0xParent',
         abilities: makeResults({
-          canReclaim: false,
+          canDelete: false,
+          canDeleteContract: 'registry',
+          canDeleteError: 'errors.hasSubnames',
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteRequiresWrap: false,
+          isParentOwner: true,
         }),
       },
       {
-        description: 'should return canReclaim is false if user is name owner',
+        description: 'should return canDelete is true if user is name owner',
         ...unwrappedSubname,
         hasSubnames: false,
         address: '0xName',
         abilities: makeResults({
-          canReclaim: false,
+          canDelete: true,
+          canDeleteContract: 'registry',
+          canDeleteMethod: 'setRecord',
+          canDeleteRequiresWrap: false,
+          isParentOwner: false,
         }),
       },
       {
         description:
-          'should return canReclaim is false if parent is wrapped and user is name owner',
+          'should return canDelete is true and canDeleteRequiresWrap is false if parent is wrapped and user is name owner',
         ...unwrappedSubname,
         hasSubnames: false,
         address: '0xParent',
@@ -256,11 +269,16 @@ const groups = [
           owner: '0xParent',
         }),
         abilities: makeResults({
-          canReclaim: false,
+          canDelete: true,
+          canDeleteContract: 'registry',
+          canDeleteRequiresWrap: false,
+          canDeleteMethod: 'setRecord',
+          isParentOwner: true,
         }),
       },
       {
-        description: 'should return canReclaim is false if parent is wrapped',
+        description:
+          'should return canDelete is true and canDeleteRequiresWrap is true if parent is wrapped',
         ...unwrappedSubname,
         hasSubnames: false,
         address: '0xParent',
@@ -270,7 +288,11 @@ const groups = [
           ownershipLevel: 'nameWrapper',
         }),
         abilities: makeResults({
-          canReclaim: false,
+          canDelete: true,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteRequiresWrap: true,
+          isParentOwner: true,
         }),
       },
     ],
@@ -279,52 +301,73 @@ const groups = [
     description: 'wrapped subname',
     tests: [
       {
-        description: 'should return canReclaim is false if user is parent owner',
+        description: 'should return canDelete is true if user is parent owner',
         ...wrappedSubname,
         hasSubnames: false,
         address: '0xParent',
         abilities: makeResults({
-          canReclaim: false,
+          canDelete: true,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setSubnodeOwner',
+          isPCCBurned: false,
+          isParentOwner: true,
         }),
       },
       {
         description:
-          'should return canReclaim is false if user is parent owner and name has subnames',
+          'should return canDelete is false if user is parent owner and name has subnames',
         ...wrappedSubname,
         hasSubnames: true,
         address: '0xParent',
         abilities: makeResults({
-          canReclaim: false,
+          canDelete: false,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteError: 'errors.hasSubnames',
+          isPCCBurned: false,
+          isParentOwner: true,
         }),
       },
       {
-        description: 'should return canReclaim is false if user is name owner',
+        description: 'should return canDelete is true if user is name owner',
         ...wrappedSubname,
         hasSubnames: false,
         address: '0xName',
         abilities: makeResults({
-          canReclaim: false,
+          canDelete: true,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setRecord',
+          isPCCBurned: false,
+          isParentOwner: false,
         }),
       },
       {
-        description:
-          'should return canReclaim is false if user is name owner and name has subnames',
+        description: 'should return canDelete is false if user is name owner and name has subnames',
         ...wrappedSubname,
         hasSubnames: true,
         address: '0xName',
         abilities: makeResults({
-          canReclaim: false,
+          canDelete: false,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setRecord',
+          canDeleteError: 'errors.hasSubnames',
+          isPCCBurned: false,
+          isParentOwner: false,
         }),
       },
       {
         description:
-          'should return canReclaim is true if the use is the name owner and the subname has expired',
+          'should return canDelete is false if the use is the name owner and the subname has expired',
         ...expiredWrappedSubname,
         hasSubnames: false,
         address: '0xParent',
         pccExpired: true,
         abilities: makeResults({
-          canReclaim: true,
+          canDelete: false,
+          canDeleteContract: 'registry',
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteRequiresWrap: false,
+          isParentOwner: true,
         }),
       },
     ],
@@ -333,36 +376,44 @@ const groups = [
     description: 'wrapped subname with PCC burned',
     tests: [
       {
-        description: 'should return canReclaim is false if user is name owner',
+        description: 'should return canDelete is true if user is name owner',
         ...wrappedSubnameWithPCCBurned,
         hasSubnames: false,
         address: '0xName',
         abilities: makeResults({
-          canReclaim: false,
+          canDelete: true,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setRecord',
+          isPCCBurned: true,
+          isParentOwner: false,
         }),
       },
       {
-        description:
-          'should return canReclaim is false if user is name owner and name has subnames',
+        description: 'should return canDelete is false if user is name owner and name has subnames',
         ...wrappedSubnameWithPCCBurned,
         hasSubnames: true,
         address: '0xName',
         abilities: makeResults({
-          canReclaim: false,
+          canDelete: false,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setRecord',
+          canDeleteError: 'errors.hasSubnames',
+          isPCCBurned: true,
+          isParentOwner: false,
         }),
       },
       {
-        description: 'should return canReclaim is false if user is parent owner',
+        description: 'should return canDelete is false if user is parent owner',
         ...wrappedSubnameWithPCCBurned,
         hasSubnames: false,
         address: '0xParent',
-        abilities: makeResults({ canReclaim: false }),
+        abilities: makeResults({ canDelete: false }),
       },
     ],
   },
 ]
 
-describe('getReclaimAbilities', () => {
+describe('getDeleteAbilities', () => {
   groups.forEach((group) => {
     describe(group.description, () => {
       group.tests.forEach(
@@ -370,6 +421,8 @@ describe('getReclaimAbilities', () => {
           description,
           parentOwnerData,
           parentWrapperData,
+          hasSubnames,
+          name,
           ownerData,
           wrapperData,
           address,
@@ -388,10 +441,13 @@ describe('getReclaimAbilities', () => {
               wrapperData: parentWrapperData,
             }
 
-            const result = getReclaimAbilities({
+            const result = getDeleteAbilities({
+              name,
               address,
               basicNameData,
               parentBasicNameData,
+              hasSubnames,
+              t: (...args) => args.join(','),
             })
 
             expect(result).toMatchObject(abilities || {})

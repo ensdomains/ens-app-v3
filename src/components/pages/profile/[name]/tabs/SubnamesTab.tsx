@@ -131,6 +131,7 @@ export const SubnamesTab = ({
     searchQuery,
   )
 
+  console.log('subnames', subnames)
   const [isIntersecting, setIsIntersecting] = useState(false)
   useEffect(() => {
     if (isIntersecting && hasNextPage && !isFetching) {

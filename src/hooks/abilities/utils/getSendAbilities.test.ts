@@ -172,7 +172,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -194,7 +196,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -214,7 +218,9 @@ const partialUserStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
         parent: {},
       },
     },
@@ -242,7 +248,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: true,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -290,7 +298,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -313,7 +323,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -337,7 +349,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -362,7 +376,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -388,7 +404,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: true,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -411,7 +429,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: true,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -437,7 +457,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: true,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -461,7 +483,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -486,7 +510,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -580,7 +606,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -604,7 +632,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -615,6 +645,35 @@ const partialUserStates = {
       wrapperData: {
         child: {},
         parent: {},
+      },
+    },
+  },
+  wrappedSubnameOwnerWrappedParentOwnerHolder: {
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        child: {
+          CANNOT_TRANSFER: false,
+        },
+        parent: {
+          PARENT_CANNOT_CONTROL: true,
+        },
+      },
+    },
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        parent: {
+          PARENT_CANNOT_CONTROL: true,
+        },
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
   },
@@ -1149,5 +1208,54 @@ describe('getSendAbilities', () => {
     it.todo('should return for unwrapped subname owner holder, wrapped parent owner holder')
     // Should not be possible
     it.todo('should return for unwrapped subname owner holder, unwrapped parent owner holder')
+
+    describe('PARENT_CANNOT_CONTROL burned', () => {
+      // wrappedSubnameOwnerWrappedParentOwnerHolder
+      it('should return for wrapped name with PCC burned and parent owner holder', () => {
+        const { basicNameData, parentBasicNameData } =
+          userStates.wrappedSubnameOwnerWrappedParentOwnerHolder
+
+        const result = getSendAbilities({
+          basicNameData,
+          parentBasicNameData,
+          address: account,
+          name: subname,
+        })
+        expect(result).toMatchObject({
+          canSend: false,
+        })
+      })
+    })
+    describe('CANNOT_TRANSFER burned', () => {
+      it('should return for wrapped name with CANNOT_TRANSFER burned', () => {
+        const { basicNameData, parentBasicNameData } = userStates.wrappedNameCTBurnedOwner
+
+        const result = getSendAbilities({
+          basicNameData,
+          parentBasicNameData,
+          address: account,
+          name,
+        })
+        expect(result).toMatchObject({
+          canSend: false,
+          canSendError: 'permissionRevoked',
+        })
+      })
+
+      it('should return for wrapped subname name with CANNOT_TRANSFER burned', () => {
+        const { basicNameData, parentBasicNameData } = userStates.wrappedNameCTBurnedOwner
+
+        const result = getSendAbilities({
+          basicNameData,
+          parentBasicNameData,
+          address: account,
+          name: subname,
+        })
+        expect(result).toMatchObject({
+          canSend: false,
+          canSendError: 'permissionRevoked',
+        })
+      })
+    })
   })
 })

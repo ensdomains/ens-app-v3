@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
+import type { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
-import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { validateExpiry } from '@app/utils/utils'
 
 import Miscellaneous from './Miscellaneous/Miscellaneous'
@@ -26,10 +26,10 @@ const MoreContainer = styled(CacheableComponent)(
 type Props = {
   name: string
   nameDetails: ReturnType<typeof useNameDetails>
-  selfAbilities: ReturnType<typeof useSelfAbilities>
+  abilities: ReturnType<typeof useAbilities>['data']
 }
 
-const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
+const MoreTab = ({ name, nameDetails, abilities }: Props) => {
   const {
     canBeWrapped,
     ownerData,
@@ -42,11 +42,12 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
     expiryDate,
     pccExpired,
   } = nameDetails
+
   const owners = useOwners({
     ownerData: ownerData!,
     wrapperData: wrapperData!,
     dnsOwner,
-    selfAbilities,
+    abilities,
   })
 
   return (
@@ -65,8 +66,8 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
         <Ownership
           name={name}
           owners={owners}
-          canSend={selfAbilities.canSend}
-          canSendError={selfAbilities.canSendError}
+          canSend={abilities?.canSend ?? false}
+          canSendError={abilities?.canSendError}
           isCachedData={basicIsCachedData}
           isWrapped={isWrapped}
         />
@@ -84,8 +85,8 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
       <Resolver
         name={name}
         isWrapped={isWrapped}
-        canEdit={selfAbilities.canEdit}
-        canEditResolver={selfAbilities.canEditResolver}
+        canEdit={abilities?.canEdit ?? false}
+        canEditResolver={abilities?.canEditResolver ?? false}
         isCachedData={profileIsCachedData}
         resolverAddress={profile?.resolverAddress}
       />

@@ -49,6 +49,7 @@ export const getEditAbilities = ({
       ],
       () => ({
         canEdit: true,
+        canEditRecords: true,
         canEditResolver: true,
         canEditPermissions: false,
         canCreateSubdomains: true,
@@ -57,6 +58,7 @@ export const getEditAbilities = ({
     )
     .otherwise(() => ({
       canEdit: false,
+      canEditRecords: false,
       canEditResolver: false,
       canEditPermissions: false,
       canCreateSubdomains: false,

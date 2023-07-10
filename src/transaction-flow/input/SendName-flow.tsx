@@ -8,8 +8,8 @@ import { Button, Dialog, Helper, Toggle, Typography, mq } from '@ensdomains/thor
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { DogFood } from '@app/components/@molecules/DogFood'
 import { Outlink } from '@app/components/Outlink'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { getSupportLink } from '@app/utils/supportLinks'
 
@@ -79,12 +79,14 @@ export const handleSubmitForm = ({
   canSendManager: boolean
   name: string
   address: string
-  sendNameFunctionCallDetails: ReturnType<typeof useSelfAbilities>['sendNameFunctionCallDetails']
+  sendNameFunctionCallDetails: NonNullable<
+    ReturnType<typeof useAbilities>['data']
+  >['sendNameFunctionCallDetails']
 }) => {
   const { ownerData } = basicNameData
   const isOwnerOrManager = ownerData?.owner === address || ownerData?.registrant === address
   const transactions = []
-  if (canSendManager && managerChoice === 'manager' && sendNameFunctionCallDetails.sendManager) {
+  if (canSendManager && managerChoice === 'manager' && sendNameFunctionCallDetails?.sendManager) {
     transactions.push(
       makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
         name,
@@ -96,7 +98,7 @@ export const handleSubmitForm = ({
     )
   }
 
-  if (canSendOwner && ownerChoice === 'owner' && sendNameFunctionCallDetails.sendOwner) {
+  if (canSendOwner && ownerChoice === 'owner' && sendNameFunctionCallDetails?.sendOwner) {
     transactions.push(
       makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
         name,
@@ -160,11 +162,9 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
 
   const managerChoiceWatch = watch('managerChoice')
   const ownerChoiceWatch = watch('ownerChoice')
-  const { canSendOwner, canSendManager, sendNameFunctionCallDetails } = useSelfAbilities(
-    address,
-    name,
-  )
-  const loadingAbilities = !canSendOwner && !canSendManager
+  const abilities = useAbilities(name)
+  const { canSendManager, canSendOwner, sendNameFunctionCallDetails } = abilities.data || {}
+  const loadingAbilities = abilities.isLoading
   const hasChoice =
     (canSendManager && managerChoiceWatch) || (canSendOwner && ownerChoiceWatch) || loadingAbilities
 
@@ -177,8 +177,8 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
       newOwner: formData.address,
       managerChoice: formData.managerChoice,
       ownerChoice: formData.ownerChoice,
-      canSendOwner,
-      canSendManager,
+      canSendOwner: !!canSendOwner,
+      canSendManager: !!canSendManager,
       name,
       address,
       sendNameFunctionCallDetails,

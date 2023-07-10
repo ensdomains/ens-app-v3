@@ -11,13 +11,12 @@ import { GenericTransaction } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
 import { nameParts } from '@app/utils/name'
 
+import { useAbilities } from './abilities/useAbilities'
 import { useHasGlobalError } from './errors/useHasGlobalError'
 import { checkAvailablePrimaryName } from './names/useAvailablePrimaryNamesForAddress/utils'
 import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from './resolver/useResolverStatus'
 import { useNameDetails } from './useNameDetails'
-import { useSelfAbilities } from './useSelfAbilities'
-import { useSubnameAbilities } from './useSubnameAbilities'
 
 type Action = {
   onClick: () => void
@@ -35,8 +34,7 @@ type Props = {
   name: string
   address: string | undefined
   profile: ReturnedENS['getProfile']
-  selfAbilities: ReturnType<typeof useSelfAbilities>
-  subnameAbilities: ReturnType<typeof useSubnameAbilities>['abilities']
+  abilities: ReturnType<typeof useAbilities>['data']
   ownerData: ReturnType<typeof useNameDetails>['ownerData']
   wrapperData: ReturnType<typeof useNameDetails>['wrapperData']
   expiryDate: ReturnType<typeof useNameDetails>['expiryDate']
@@ -46,8 +44,7 @@ export const useProfileActions = ({
   name,
   address,
   profile,
-  selfAbilities,
-  subnameAbilities,
+  abilities,
   ownerData,
   wrapperData,
   expiryDate,
@@ -121,7 +118,7 @@ export const useProfileActions = ({
       })
     }
 
-    if (selfAbilities.canEdit) {
+    if (abilities?.canEdit) {
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
         tooltipContent: hasGlobalError
@@ -137,7 +134,7 @@ export const useProfileActions = ({
       })
     }
 
-    if (subnameAbilities.canDelete && subnameAbilities.canDeleteContract) {
+    if (abilities?.canDelete && abilities?.canDeleteContract) {
       const base = {
         label: t('tabs.profile.actions.deleteSubname.label'),
         tooltipContent: hasGlobalError
@@ -146,7 +143,7 @@ export const useProfileActions = ({
         red: true,
         skip2LDEth: true,
       }
-      if (subnameAbilities.canDeleteRequiresWrap) {
+      if (abilities?.canDeleteRequiresWrap) {
         const transactions: GenericTransaction[] = [
           makeTransactionItem('transferSubname', {
             name,
@@ -175,7 +172,7 @@ export const useProfileActions = ({
               },
             }),
         })
-      } else if (subnameAbilities.isPCCBurned) {
+      } else if (abilities?.isPCCBurned) {
         actions.push({
           ...base,
           onClick: () => {
@@ -184,13 +181,13 @@ export const useProfileActions = ({
             })
           },
         })
-      } else if (!subnameAbilities.isParentOwner) {
+      } else if (!abilities?.isParentOwner) {
         actions.push({
           ...base,
           onClick: () => {
             showDeleteSubnameNotParentWarningInput(`delete-subname-not-parent-warning-${name}`, {
               name,
-              contract: subnameAbilities.canDeleteContract!,
+              contract: abilities?.canDeleteContract!,
             })
           },
         })
@@ -202,25 +199,25 @@ export const useProfileActions = ({
               transactions: [
                 makeTransactionItem('deleteSubname', {
                   name,
-                  contract: subnameAbilities.canDeleteContract!,
-                  method: subnameAbilities.canDeleteMethod,
+                  contract: abilities?.canDeleteContract!,
+                  method: abilities?.canDeleteMethod,
                 }),
               ],
             }),
         })
       }
-    } else if (subnameAbilities.canDeleteError) {
+    } else if (abilities?.canDeleteError) {
       actions.push({
         label: t('tabs.profile.actions.deleteSubname.label'),
         onClick: () => {},
         disabled: true,
         red: true,
         skip2LDEth: true,
-        tooltipContent: subnameAbilities.canDeleteError,
+        tooltipContent: abilities?.canDeleteError,
       })
     }
 
-    if (subnameAbilities.canReclaim) {
+    if (abilities?.canReclaim) {
       const { label, parent } = nameParts(name)
       actions.push({
         label: t('tabs.profile.actions.reclaim.label'),
@@ -248,15 +245,15 @@ export const useProfileActions = ({
     getPrimaryNameTransactionFlowItem,
     name,
     isAvailablePrimaryName,
-    selfAbilities.canEdit,
-    subnameAbilities.canDelete,
-    subnameAbilities.canDeleteContract,
-    subnameAbilities.canDeleteError,
-    subnameAbilities.canReclaim,
-    subnameAbilities.canDeleteRequiresWrap,
-    subnameAbilities.isPCCBurned,
-    subnameAbilities.isParentOwner,
-    subnameAbilities.canDeleteMethod,
+    abilities?.canEdit,
+    abilities?.canDelete,
+    abilities?.canDeleteContract,
+    abilities?.canDeleteError,
+    abilities?.canReclaim,
+    abilities?.canDeleteRequiresWrap,
+    abilities?.isPCCBurned,
+    abilities?.isParentOwner,
+    abilities?.canDeleteMethod,
     t,
     hasGlobalError,
     showUnknownLabelsInput,
