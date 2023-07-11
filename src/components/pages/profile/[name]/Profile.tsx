@@ -264,8 +264,8 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
                 abi={profile?.records?.abi}
                 resolverAddress={profile?.resolverAddress}
                 canEdit={abilities.data?.canEdit}
+                canEditRecords={abilities.data?.canEditRecords}
                 isCached={profileIsCachedData}
-                isWrapped={isWrapped}
               />
             ),
             subnames: (

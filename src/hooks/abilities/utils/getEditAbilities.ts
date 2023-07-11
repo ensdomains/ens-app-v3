@@ -27,10 +27,9 @@ export const getEditAbilities = ({
         },
       ],
       ({ fuses }) => {
-        const canEditOrCanSetResolver = hasAuthorisedResolver || !fuses.CANNOT_SET_RESOLVER
         return {
           canEdit: true,
-          canEditRecords: canEditOrCanSetResolver,
+          canEditRecords: hasAuthorisedResolver,
           canEditResolver: !fuses.CANNOT_SET_RESOLVER,
           canEditPermissions: !fuses.CANNOT_BURN_FUSES,
           canCreateSubdomains: !fuses.CANNOT_CREATE_SUBDOMAIN,

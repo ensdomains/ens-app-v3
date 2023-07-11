@@ -19,7 +19,7 @@ export const useAbilities = (name: string) => {
   const { address } = useAccountSafely()
   const basicNameData = useBasicName(name, { skipGraph: false })
   const resolverAuthorisation = useResolverIsAuthorized(name, {
-    enabled: !!name && basicNameData.wrapperData?.child.CANNOT_SET_RESOLVER,
+    enabled: !!name,
   })
   const parentBasicNameData = useBasicName(parent, { skipGraph: false, enabled: !!parent })
 

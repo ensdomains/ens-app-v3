@@ -118,7 +118,7 @@ export const useProfileActions = ({
       })
     }
 
-    if (abilities?.canEdit) {
+    if (abilities?.canEdit && (abilities?.canEditRecords || abilities?.canEditResolver)) {
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
         tooltipContent: hasGlobalError
@@ -246,6 +246,8 @@ export const useProfileActions = ({
     name,
     isAvailablePrimaryName,
     abilities?.canEdit,
+    abilities?.canEditRecords,
+    abilities?.canEditResolver,
     abilities?.canDelete,
     abilities?.canDeleteContract,
     abilities?.canDeleteError,
