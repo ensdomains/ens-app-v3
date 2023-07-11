@@ -67,40 +67,5 @@ describe('useAbilities', () => {
 
       expect(result.current.data?.canEditRecords).toBe(true)
     })
-    it('should return canEditRecords as true if resolver is not authorised but CANNOT_SET_RESOLVER has not been burned', () => {
-      mockUseBasicName.mockReturnValue({
-        ownerData: {
-          ownershipLevel: 'nameWrapper',
-          owner: account,
-        },
-        wrapperData: {
-          child: {
-            CANNOT_SET_RESOLVER: false,
-          },
-        },
-      })
-      mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: false, isValid: true } })
-
-      const { result } = renderHook(() => useAbilities(name))
-
-      expect(result.current.data?.canEditRecords).toBe(true)
-    })
-    it('shold return canEdit as false if resolver is not authorised and CANNOT_SET_RESOLVER has been burned', () => {
-      mockUseBasicName.mockReturnValue({
-        ownerData: {
-          owner: account,
-        },
-        wrapperData: {
-          child: {
-            CANNOT_SET_RESOLVER: true,
-          },
-        },
-      })
-      mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: false, isValid: true } })
-
-      const { result } = renderHook(() => useAbilities(name))
-
-      expect(result.current.data?.canEditRecords).toBe(false)
-    })
   })
 })

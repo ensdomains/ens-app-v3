@@ -48,7 +48,7 @@ export const getEditAbilities = ({
       ],
       () => ({
         canEdit: true,
-        canEditRecords: true,
+        canEditRecords: hasAuthorisedResolver,
         canEditResolver: true,
         canEditPermissions: false,
         canCreateSubdomains: true,

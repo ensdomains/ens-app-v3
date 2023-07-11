@@ -11,24 +11,24 @@ jest.mock('@app/hooks/abilities/useAbilities')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 
 const mockUseAccount = mockFunction(useAccount)
-const mockUseSelfAbilities = mockFunction(useAbilities)
+const mockUseAbilities = mockFunction(useAbilities)
 const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 
 const mockPrepareDataInput = jest.fn()
 
 mockUseAccount.mockReturnValue({ address: '0x123' })
-mockUseSelfAbilities.mockReturnValue({})
+mockUseAbilities.mockReturnValue({})
 mockUseTransactionFlow.mockReturnValue({ prepareDataInput: () => mockPrepareDataInput })
 
 describe('ExtendButton', () => {
   it('should not render if canExtend is false', () => {
-    mockUseSelfAbilities.mockReturnValue({ data: { canExtend: false } })
+    mockUseAbilities.mockReturnValue({ data: { canExtend: false } })
     render(<ExtendButton name="test.eth" />)
     const element = screen.queryByText('action.extend')
     expect(element).not.toBeInTheDocument()
   })
   it('should render if canExtend is true', () => {
-    mockUseSelfAbilities.mockReturnValue({ data: { canExtend: true } })
+    mockUseAbilities.mockReturnValue({ data: { canExtend: true } })
     render(<ExtendButton name="test.eth" />)
     const element = screen.queryByText('action.extend')
     expect(element).toBeInTheDocument()

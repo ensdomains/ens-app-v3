@@ -11,7 +11,7 @@ describe('getEditAbilities', () => {
     const result = getEditAbilities({
       address: '0x123',
       basicNameData,
-      hasAuthorisedResolver: false,
+      hasAuthorisedResolver: true,
     })
 
     expect(result).toMatchObject({
@@ -37,7 +37,7 @@ describe('getEditAbilities', () => {
     const result = getEditAbilities({
       address: '0x123',
       basicNameData,
-      hasAuthorisedResolver: false,
+      hasAuthorisedResolver: true,
     })
 
     expect(result).toMatchObject({
@@ -45,6 +45,58 @@ describe('getEditAbilities', () => {
       canEditRecords: true,
       canEditResolver: true,
       canEditPermissions: true,
+      canCreateSubdomains: true,
+      canEditTTL: true,
+    })
+  })
+
+  it('should return canEditRecords is false if hasAuthorisedResolver is false for wrapped name owner', () => {
+    const basicNameData: any = {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: '0x123',
+      },
+      wrapperData: {
+        child: {},
+      },
+    }
+    const result = getEditAbilities({
+      address: '0x123',
+      basicNameData,
+      hasAuthorisedResolver: false,
+    })
+
+    expect(result).toMatchObject({
+      canEdit: true,
+      canEditRecords: false,
+      canEditResolver: true,
+      canEditPermissions: true,
+      canCreateSubdomains: true,
+      canEditTTL: true,
+    })
+  })
+
+  it('should return canEditRecords is false if hasAuthorisedResolver is false for unwrapped name owner', () => {
+    const basicNameData: any = {
+      ownerData: {
+        ownershipLevel: 'registrar',
+        owner: '0x123',
+      },
+      wrapperData: {
+        child: {},
+      },
+    }
+    const result = getEditAbilities({
+      address: '0x123',
+      basicNameData,
+      hasAuthorisedResolver: false,
+    })
+
+    expect(result).toMatchObject({
+      canEdit: true,
+      canEditRecords: false,
+      canEditResolver: true,
+      canEditPermissions: false,
       canCreateSubdomains: true,
       canEditTTL: true,
     })
