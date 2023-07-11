@@ -1,6 +1,5 @@
 import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
-import React from 'react'
 import { useAccount } from 'wagmi'
 
 import { useChainName } from '@app/hooks/useChainName'
@@ -56,13 +55,19 @@ describe('Miscellaneous', () => {
     expect(screen.getByText('name.expires')).toBeVisible()
     expect(screen.queryByText('name.registered')).not.toBeInTheDocument()
   })
-  it('should show registration date and expiry date if registration data is available', () => {
+  it('should show registration date, expiry date, and grace end date if registration data is available', () => {
     mockUseRegistrationData.mockReturnValue({
       data: { registrationDate: new Date(), transactionHash: '0x123' },
     })
-    render(<Miscellaneous name="x.test.eth" expiryDate={new Date()} isCachedData={false} />)
+    render(<Miscellaneous name="test.eth" expiryDate={new Date()} isCachedData={false} />)
     expect(screen.getByText('name.expires')).toBeVisible()
     expect(screen.getByText('name.registered')).toBeVisible()
+    expect(screen.getByText('name.graceEnd')).toBeVisible()
+  })
+  it('should not show grace end date for non eth 2ld', () => {
+    render(<Miscellaneous name="x.test.eth" expiryDate={new Date()} isCachedData={false} />)
+    expect(screen.getByText('name.expires')).toBeVisible()
+    expect(screen.queryByText('name.graceEnd')).not.toBeInTheDocument()
   })
   it('should show correct etherscan link for registration transaction', () => {
     mockUseRegistrationData.mockReturnValue({
@@ -84,7 +89,7 @@ describe('Miscellaneous', () => {
     render(<Miscellaneous name="x.test.eth" expiryDate={new Date()} isCachedData={false} />)
     expect(screen.getByText('closed')).toBeVisible()
     const dismissButton = screen.getByText('Dismiss')
-    userEvent.click(dismissButton)
+    await userEvent.click(dismissButton)
     await waitFor(() => expect(mockSetStateFunction).toHaveBeenCalledWith(false))
   })
 })
