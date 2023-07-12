@@ -38,7 +38,8 @@ export const useResolverType = (name: string, options: Options = {}) => {
   const isWildcard =
     !registryResolver.isError &&
     (!registryResolver.data || registryResolver.data === emptyAddress) &&
-    resolverAddress !== registryResolver.data
+    resolverAddress !== registryResolver.data &&
+    !profile.isFetching
 
   const data = useMemo(() => {
     if (!enabled || isLoading) return
