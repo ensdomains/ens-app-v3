@@ -43,12 +43,10 @@ export const getTime = async () => {
   return currTime * 1000
 }
 
-export const syncTime = (difference) => {
-  cy.wrap(revert(1))
-    .then(() =>
-      provider.send('anvil_setNextBlockTimestamp', [Math.floor(Date.now() / 1000) - difference]),
-    )
-    .then(() => provider.send('evm_mine', []))
+export const syncTime = async (difference) => {
+  await revert(1)
+  await provider.send('anvil_setNextBlockTimestamp', [Math.floor(Date.now() / 1000) - difference])
+  await provider.send('evm_mine', [])
 }
 
 export const setAutomine = async (value) => {

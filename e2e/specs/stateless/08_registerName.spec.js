@@ -3,7 +3,8 @@ import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Register Name', () => {
   before(() => {
-    cy.wrap(acceptMetamaskAccess(3, true)).then(() => syncTime(180))
+    acceptMetamaskAccess(3, true)
+    cy.wrap(null).then(() => syncTime(180))
   })
   it('should allow normal registration', function () {
     cy.visit('/')
