@@ -841,7 +841,7 @@ describe('getSendAbilities', () => {
           method: 'safeTransferFrom',
         })
       })
-      it.skip('for name manager who wants to send manager', () => {
+      it('for name manager who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } = userStates.wrappedNameManager
 
         const result = getSendAbilities({
