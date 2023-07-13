@@ -63,12 +63,8 @@ const CONTRACT_FUNCTIONS: {
         method: 'safeTransferFrom',
       },
     },
-    manager: {
-      sendManager: {
-        contract: 'nameWrapper',
-        method: 'safeTransferFrom',
-      },
-    },
+    // A wrapped name cannot be a manager since PCC is automatically burned
+    manager: undefined,
   },
   wrappedSubname: {
     wrappedParent: {

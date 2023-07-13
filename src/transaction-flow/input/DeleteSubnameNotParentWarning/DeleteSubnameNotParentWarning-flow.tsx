@@ -39,7 +39,10 @@ const DeleteSubnameNotParentWarning = ({ data, dispatch, onDismiss }: Props) => 
     wrapperData: parentWrapperData,
     isLoading: parentBasicLoading,
   } = useParentBasicName(data.name)
-  const [ownerTarget] = useOwners({ ownerData: parentOwnerData, wrapperData: parentWrapperData })
+  const [ownerTarget] = useOwners({
+    ownerData: parentOwnerData,
+    wrapperData: parentWrapperData,
+  })
   const { data: parentPrimaryOrAddress, isLoading: parentPrimaryLoading } = usePrimaryNameOrAddress(
     ownerTarget?.address || '',
   )

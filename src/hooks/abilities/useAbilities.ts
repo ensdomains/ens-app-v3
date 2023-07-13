@@ -62,6 +62,21 @@ type Abilities = ExtendAbilities &
   ReclaimAbilities &
   SendAbilities
 
+export const DEFAULT_ABILITIES: Abilities = {
+  canExtend: false,
+  canDelete: false,
+  canEdit: false,
+  canEditRecords: false,
+  canEditResolver: false,
+  canEditPermissions: false,
+  canCreateSubdomains: false,
+  canEditTTL: false,
+  canReclaim: false,
+  canSend: false,
+  canSendOwner: false,
+  canSendManager: false,
+}
+
 export const useAbilities = (name: string) => {
   const { t } = useTranslation('profile')
   const parent = name?.split('.')?.slice(1).join('.')
@@ -88,21 +103,7 @@ export const useAbilities = (name: string) => {
   const isCachedData = basicNameData.isCachedData || hasSubnamesData.isCachedData
 
   const data: Abilities | undefined = useMemo(() => {
-    if (!name || !address || isLoading)
-      return {
-        canExtend: false,
-        canDelete: false,
-        canEdit: false,
-        canEditRecords: false,
-        canEditResolver: false,
-        canEditPermissions: false,
-        canCreateSubdomains: false,
-        canEditTTL: false,
-        canReclaim: false,
-        canSend: false,
-        canSendOwner: false,
-        canSendManager: false,
-      }
+    if (!name || !address || isLoading) return DEFAULT_ABILITIES
     return {
       canExtend: !!name && checkETH2LDFromName(name),
       ...getSendAbilities({ name, address, basicNameData, parentBasicNameData }),

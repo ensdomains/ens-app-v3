@@ -2,16 +2,16 @@ import { useMemo } from 'react'
 
 import { OwnerArray, ReturnedENS } from '@app/types'
 
-import type { useAbilities } from './abilities/useAbilities'
+import { DEFAULT_ABILITIES, type useAbilities } from './abilities/useAbilities'
 
 type Props = {
   ownerData: ReturnedENS['getOwner']
   wrapperData: ReturnedENS['getWrapperData']
   dnsOwner?: ReturnedENS['getDNSOwner']
-  abilities: ReturnType<typeof useAbilities>['data']
+  abilities?: ReturnType<typeof useAbilities>['data']
 }
 
-const useOwners = ({ ownerData, wrapperData, dnsOwner, abilities }: Props) => {
+const useOwners = ({ ownerData, wrapperData, dnsOwner, abilities = DEFAULT_ABILITIES }: Props) => {
   const owners = useMemo(() => {
     const _owners: OwnerArray = []
     if (ownerData?.ownershipLevel === 'nameWrapper') {
