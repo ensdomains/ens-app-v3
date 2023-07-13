@@ -87,6 +87,7 @@
   "name": {
     "registered": "Registered",
     "expires": "Expires",
+    "graceEnd": "Grace end",
     "noExpiry": "No expiry",
     "expiry": "Expiry",
     "parent": "Parent",

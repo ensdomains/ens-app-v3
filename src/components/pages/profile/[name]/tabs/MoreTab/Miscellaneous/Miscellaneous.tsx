@@ -6,11 +6,13 @@ import { mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import useRegistrationDate from '@app/hooks/useRegistrationData'
+import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../../TabWrapper'
 import { EarnifiDialog } from './EarnifiDialog'
 import { ExpirationDate } from './ExpirationDate'
 import { ExtendButton } from './ExtendButton'
+import { GraceEndDate } from './GraceEndDate'
 import { RegistrationDate } from './RegistrationDate'
 
 const MiscellaneousContainer = styled(TabWrapper)(
@@ -67,6 +69,7 @@ const Miscellaneous = ({
         <DatesContainer>
           <RegistrationDate {...{ registrationData, t }} />
           <ExpirationDate {...{ setShowEarnifiDialog, expiryDate, t, name }} />
+          {checkETH2LDFromName(name) && <GraceEndDate expiryDate={expiryDate} />}
           <ExtendButton {...{ name }} />
         </DatesContainer>
       </MiscellaneousContainer>
