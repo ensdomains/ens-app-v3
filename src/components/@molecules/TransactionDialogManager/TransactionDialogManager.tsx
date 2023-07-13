@@ -8,6 +8,7 @@ import { WagmiConfig, useAccount } from 'wagmi'
 
 import { Dialog } from '@ensdomains/thorin'
 
+import { useChainId } from '@app/hooks/useChainId'
 import { transactions } from '@app/transaction-flow/transaction'
 import { wagmiClientWithRefetch } from '@app/utils/query'
 
@@ -19,7 +20,18 @@ import { TransactionStageModal } from './stage/TransactionStageModal'
 
 export const useResetSelectedKey = (dispatch: any) => {
   const { address } = useAccount()
+  const chainId = useChainId()
+
   const prevAddress = usePrevious(address)
+  const prevChainId = usePrevious(chainId)
+
+  useEffect(() => {
+    if (prevChainId && prevChainId !== chainId) {
+      dispatch({
+        name: 'stopFlow',
+      })
+    }
+  }, [prevChainId, chainId, dispatch])
 
   useEffect(() => {
     if (prevAddress && prevAddress !== address) {
