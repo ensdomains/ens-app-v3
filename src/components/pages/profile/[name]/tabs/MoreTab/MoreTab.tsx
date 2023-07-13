@@ -66,8 +66,8 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
         <Ownership
           name={name}
           owners={owners}
-          canSend={abilities?.canSend ?? false}
-          canSendError={abilities?.canSendError}
+          canSend={abilities.canSend}
+          canSendError={abilities.canSendError}
           isCachedData={basicIsCachedData}
           isWrapped={isWrapped}
         />
@@ -85,8 +85,8 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
       <Resolver
         name={name}
         isWrapped={isWrapped}
-        canEdit={abilities?.canEdit ?? false}
-        canEditResolver={abilities?.canEditResolver ?? false}
+        canEdit={abilities.canEdit}
+        canEditResolver={abilities.canEditResolver}
         isCachedData={profileIsCachedData}
         resolverAddress={profile?.resolverAddress}
       />

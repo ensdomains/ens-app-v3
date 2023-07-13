@@ -118,7 +118,7 @@ export const useProfileActions = ({
       })
     }
 
-    if (abilities?.canEdit && (abilities?.canEditRecords || abilities?.canEditResolver)) {
+    if (abilities.canEdit && (abilities.canEditRecords || abilities.canEditResolver)) {
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
         tooltipContent: hasGlobalError
@@ -134,7 +134,7 @@ export const useProfileActions = ({
       })
     }
 
-    if (abilities?.canDelete && abilities?.canDeleteContract) {
+    if (abilities.canDelete && abilities.canDeleteContract) {
       const base = {
         label: t('tabs.profile.actions.deleteSubname.label'),
         tooltipContent: hasGlobalError
@@ -143,7 +143,7 @@ export const useProfileActions = ({
         red: true,
         skip2LDEth: true,
       }
-      if (abilities?.canDeleteRequiresWrap) {
+      if (abilities.canDeleteRequiresWrap) {
         const transactions: GenericTransaction[] = [
           makeTransactionItem('transferSubname', {
             name,
@@ -172,7 +172,7 @@ export const useProfileActions = ({
               },
             }),
         })
-      } else if (abilities?.isPCCBurned) {
+      } else if (abilities.isPCCBurned) {
         actions.push({
           ...base,
           onClick: () => {
@@ -181,13 +181,13 @@ export const useProfileActions = ({
             })
           },
         })
-      } else if (!abilities?.isParentOwner) {
+      } else if (!abilities.isParentOwner) {
         actions.push({
           ...base,
           onClick: () => {
             showDeleteSubnameNotParentWarningInput(`delete-subname-not-parent-warning-${name}`, {
               name,
-              contract: abilities?.canDeleteContract!,
+              contract: abilities.canDeleteContract!,
             })
           },
         })
@@ -199,25 +199,25 @@ export const useProfileActions = ({
               transactions: [
                 makeTransactionItem('deleteSubname', {
                   name,
-                  contract: abilities?.canDeleteContract!,
-                  method: abilities?.canDeleteMethod,
+                  contract: abilities.canDeleteContract!,
+                  method: abilities.canDeleteMethod,
                 }),
               ],
             }),
         })
       }
-    } else if (abilities?.canDeleteError) {
+    } else if (abilities.canDeleteError) {
       actions.push({
         label: t('tabs.profile.actions.deleteSubname.label'),
         onClick: () => {},
         disabled: true,
         red: true,
         skip2LDEth: true,
-        tooltipContent: abilities?.canDeleteError,
+        tooltipContent: abilities.canDeleteError,
       })
     }
 
-    if (abilities?.canReclaim) {
+    if (abilities.canReclaim) {
       const { label, parent } = nameParts(name)
       actions.push({
         label: t('tabs.profile.actions.reclaim.label'),
@@ -245,17 +245,17 @@ export const useProfileActions = ({
     getPrimaryNameTransactionFlowItem,
     name,
     isAvailablePrimaryName,
-    abilities?.canEdit,
-    abilities?.canEditRecords,
-    abilities?.canEditResolver,
-    abilities?.canDelete,
-    abilities?.canDeleteContract,
-    abilities?.canDeleteError,
-    abilities?.canReclaim,
-    abilities?.canDeleteRequiresWrap,
-    abilities?.isPCCBurned,
-    abilities?.isParentOwner,
-    abilities?.canDeleteMethod,
+    abilities.canEdit,
+    abilities.canEditRecords,
+    abilities.canEditResolver,
+    abilities.canDelete,
+    abilities.canDeleteContract,
+    abilities.canDeleteError,
+    abilities.canReclaim,
+    abilities.canDeleteRequiresWrap,
+    abilities.isPCCBurned,
+    abilities.isParentOwner,
+    abilities.canDeleteMethod,
     t,
     hasGlobalError,
     showUnknownLabelsInput,

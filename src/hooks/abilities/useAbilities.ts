@@ -12,17 +12,74 @@ import { getEditAbilities } from './utils/getEditAbilities'
 import { getReclaimAbilities } from './utils/getReclaimAbilities'
 import { getSendAbilities } from './utils/getSendAbilities'
 
+type ExtendAbilities = {
+  canExtend: boolean
+}
+
+export type DeleteAbilities = {
+  canDelete: boolean
+  canDeleteContract?: 'nameWrapper' | 'registry'
+  canDeleteRequiresWrap?: boolean
+  canDeleteMethod?: 'setRecord' | 'setSubnodeOwner'
+  isPCCBurned?: boolean
+  isParentOwner?: boolean
+  canDeleteError?: string
+}
+
+export type EditAbilities = {
+  canEdit: boolean
+  canEditRecords: boolean
+  canEditResolver: boolean
+  canEditPermissions: boolean
+  canCreateSubdomains: boolean
+  canEditTTL: boolean
+}
+
+export type ReclaimAbilities = {
+  canReclaim: boolean
+}
+
+export type SendAbilities = {
+  canSend: boolean
+  canSendOwner: boolean
+  canSendManager: boolean
+  sendNameFunctionCallDetails?: {
+    sendOwner?: {
+      contract: 'registry' | 'nameWrapper' | 'baseRegistrar'
+      method: 'safeTransferFrom'
+    }
+    sendManager?: {
+      contract: 'registry' | 'nameWrapper' | 'baseRegistrar'
+      method: 'safeTransferFrom' | 'reclaim' | 'setOwner' | 'setSubnodeOwner'
+    }
+  }
+  canSendError?: string
+}
+
+type Abilities = ExtendAbilities &
+  DeleteAbilities &
+  EditAbilities &
+  ReclaimAbilities &
+  SendAbilities
+
 export const useAbilities = (name: string) => {
   const { t } = useTranslation('profile')
   const parent = name?.split('.')?.slice(1).join('.')
 
   const { address } = useAccountSafely()
-  const basicNameData = useBasicName(name, { skipGraph: false })
-  const resolverAuthorisation = useResolverIsAuthorized(name, {
-    enabled: !!name,
-  })
-  const parentBasicNameData = useBasicName(parent, { skipGraph: false, enabled: !!parent })
 
+  const basicNameData = useBasicName(name, { skipGraph: false, enabled: !!name && !!address })
+
+  const resolverAuthorisation = useResolverIsAuthorized(name, {
+    enabled: !!name && !!address,
+  })
+
+  const parentBasicNameData = useBasicName(parent, {
+    skipGraph: false,
+    enabled: !!parent && !!address,
+  })
+
+  // useHasSubnames checks internally if name exists & if it is subname before it enables itself
   const hasSubnamesData = useHasSubnames(name)
 
   const isLoading =
@@ -30,9 +87,22 @@ export const useAbilities = (name: string) => {
 
   const isCachedData = basicNameData.isCachedData || hasSubnamesData.isCachedData
 
-  const data = useMemo(() => {
-    if (!name) return undefined
-    if (isLoading) return undefined
+  const data: Abilities | undefined = useMemo(() => {
+    if (!name || !address || isLoading)
+      return {
+        canExtend: false,
+        canDelete: false,
+        canEdit: false,
+        canEditRecords: false,
+        canEditResolver: false,
+        canEditPermissions: false,
+        canCreateSubdomains: false,
+        canEditTTL: false,
+        canReclaim: false,
+        canSend: false,
+        canSendOwner: false,
+        canSendManager: false,
+      }
     return {
       canExtend: !!name && checkETH2LDFromName(name),
       ...getSendAbilities({ name, address, basicNameData, parentBasicNameData }),

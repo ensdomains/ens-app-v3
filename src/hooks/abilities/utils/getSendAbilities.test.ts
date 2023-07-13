@@ -89,6 +89,7 @@ const partialUserStates = {
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
+        owner: '0x000',
       },
       wrapperData: {
         child: {},
@@ -100,6 +101,7 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
+        owner: '0x000',
       },
       wrapperData: {
         child: {},
@@ -145,6 +147,7 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
+        owner: '0x000',
       },
       wrapperData: {
         child: {},
@@ -180,6 +183,7 @@ const partialUserStates = {
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
+        owner: '0x000',
       },
       wrapperData: {
         child: {},
@@ -331,6 +335,7 @@ const partialUserStates = {
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         parent: {
@@ -344,6 +349,7 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         parent: {
@@ -371,6 +377,7 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         parent: {
@@ -412,10 +419,13 @@ const partialUserStates = {
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         child: {},
-        parent: {},
+        parent: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
   },
@@ -478,6 +488,7 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         parent: {
@@ -505,6 +516,7 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         parent: {
@@ -890,7 +902,6 @@ describe('getSendAbilities', () => {
       })
       it('for wrapped subname parent owner who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } = userStates.wrappedSubnameWrappedParentOwner
-
         const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,

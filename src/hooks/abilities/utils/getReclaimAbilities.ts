@@ -2,6 +2,8 @@ import { P, match } from 'ts-pattern'
 
 import type { useBasicName } from '@app/hooks/useBasicName'
 
+import type { ReclaimAbilities } from '../useAbilities'
+
 type BasicName = ReturnType<typeof useBasicName>
 
 export const getReclaimAbilities = ({
@@ -12,7 +14,7 @@ export const getReclaimAbilities = ({
   address?: string
   basicNameData: BasicName
   parentBasicNameData: BasicName
-}) => {
+}): ReclaimAbilities => {
   return match([basicNameData, parentBasicNameData])
     .with(
       [

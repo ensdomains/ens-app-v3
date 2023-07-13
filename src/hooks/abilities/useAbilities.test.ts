@@ -16,7 +16,7 @@ jest.mock('@app/hooks/resolver/useResolverIsAuthorized', () => ({
   useResolverIsAuthorized: () => mockUseResolverIsAuthorized(),
 }))
 
-const mockUseHasSubnames = jest.fn().mockReturnValue({ hasSubnames: false, isLoading: false })
+const mockUseHasSubnames = jest.fn()
 jest.mock('@app/hooks/useHasSubnames', () => ({
   useHasSubnames: () => mockUseHasSubnames(),
 }))
@@ -43,6 +43,7 @@ describe('useAbilities', () => {
         },
       })
       mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: true, isValid: true } })
+      mockUseHasSubnames.mockReturnValue({ hasSubnames: false, isLoading: false })
       const { result } = renderHook(() => useAbilities(name))
       expect(result.current.data?.canSend).toBe(false)
     })
@@ -62,6 +63,7 @@ describe('useAbilities', () => {
         },
       })
       mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: true, isValid: true } })
+      mockUseHasSubnames.mockReturnValue({ hasSubnames: false, isLoading: false })
 
       const { result } = renderHook(() => useAbilities(name))
 

@@ -4,19 +4,11 @@ import { P, match } from 'ts-pattern'
 import type { useBasicName } from '@app/hooks/useBasicName'
 import { checkSubname } from '@app/utils/utils'
 
+import type { DeleteAbilities } from '../useAbilities'
+
 type BasicName = ReturnType<typeof useBasicName>
 
-type Result = {
-  canDelete: boolean
-  canDeleteContract?: 'nameWrapper' | 'registry'
-  canDeleteRequiresWrap?: boolean
-  canDeleteMethod?: 'setRecord' | 'setSubnodeOwner'
-  isPCCBurned?: boolean
-  isParentOwner?: boolean
-  canDeleteError?: string
-}
-
-const BASE_ABILITIES: Result = {
+const BASE_ABILITIES: DeleteAbilities = {
   canDelete: false,
 }
 
@@ -34,14 +26,12 @@ export const getDeleteAbilities = ({
   parentBasicNameData: BasicName
   hasSubnames: boolean
   t: TFunction
-}): Result => {
+}): DeleteAbilities => {
   if (!checkSubname(name)) return BASE_ABILITIES
   return (
     match([basicNameData, parentBasicNameData])
-      /* --------------- WRAPPED WITH PCC BURNED --------------- */
-      /*
-       * WRAPPED NAME OWNER
-       * */
+      // ---------- WRAPPED WITH PCC BURNED ----------
+      // Wrapped name owner for wrapped name with PCC burned
       .with(
         [
           {
@@ -62,19 +52,19 @@ export const getDeleteAbilities = ({
             },
           },
         ],
-        ({ fuses, parentOwner }) => ({
-          ...BASE_ABILITIES,
-          canDelete: !hasSubnames && !fuses?.CANNOT_TRANSFER,
-          canDeleteContract: 'nameWrapper' as const,
-          canDeleteMethod: 'setRecord' as const,
-          isPCCBurned: true,
-          isParentOwner: parentOwner === address,
-          ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
-          ...(fuses.CANNOT_TRANSFER ? { canDeleteError: t('errors.permissionRevoked') } : {}),
-        }),
+        ({ fuses, parentOwner }) =>
+          ({
+            canDelete: !hasSubnames && !fuses.CANNOT_TRANSFER,
+            canDeleteContract: 'nameWrapper' as const,
+            canDeleteMethod: 'setRecord' as const,
+            isPCCBurned: true,
+            isParentOwner: parentOwner === address,
+            ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
+            ...(fuses.CANNOT_TRANSFER ? { canDeleteError: t('errors.permissionRevoked') } : {}),
+          } as DeleteAbilities),
       )
-      /* --------------- WRAPPED WITH PCC NOT BURNED ---------------- */
-      // WRAPPED NAME OWNER
+      // ---------- WRAPPED WITH PCC NOT BURNED ----------
+      // Wrapped name owner for wrapped name with PCC not burned
       .with(
         [
           {
@@ -84,28 +74,27 @@ export const getDeleteAbilities = ({
             },
             wrapperData: {
               parent: {
-                PARENT_CANNOT_CONTROL: P.not(true),
+                PARENT_CANNOT_CONTROL: false,
               },
             },
           },
           {
             ownerData: {
-              ownershipLevel: P.select('parentOwnershipLevel'),
               owner: P.select('parentOwner'),
             },
           },
         ],
-        ({ parentOwner }) => ({
-          ...BASE_ABILITIES,
-          canDelete: !hasSubnames,
-          canDeleteContract: 'nameWrapper' as const,
-          canDeleteMethod: 'setRecord' as const,
-          isParentOwner: parentOwner === address,
-          isPCCBurned: false,
-          ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
-        }),
+        ({ parentOwner }) =>
+          ({
+            canDelete: !hasSubnames,
+            canDeleteContract: 'nameWrapper' as const,
+            canDeleteMethod: 'setRecord' as const,
+            isParentOwner: parentOwner === address,
+            isPCCBurned: false,
+            ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
+          } as DeleteAbilities),
       )
-      // WRAPPED NAME PARENT OWNER
+      // Wrapped name parent owner for wrapped name with PCC not burned
       .with(
         [
           {
@@ -114,7 +103,7 @@ export const getDeleteAbilities = ({
             },
             wrapperData: {
               parent: {
-                PARENT_CANNOT_CONTROL: P.not(true),
+                PARENT_CANNOT_CONTROL: false,
               },
             },
           },
@@ -125,20 +114,21 @@ export const getDeleteAbilities = ({
             },
           },
         ],
-        ({ parentOwnershipLevel }) => ({
-          ...BASE_ABILITIES,
-          canDelete: !hasSubnames,
-          canDeleteContract:
-            parentOwnershipLevel === 'nameWrapper'
-              ? ('nameWrapper' as const)
-              : ('registry' as const),
-          canDeleteMethod: 'setSubnodeOwner' as const,
-          isParentOwner: true,
-          isPCCBurned: false,
-          ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
-        }),
+        ({ parentOwnershipLevel }) =>
+          ({
+            canDelete: !hasSubnames,
+            canDeleteContract:
+              parentOwnershipLevel === 'nameWrapper'
+                ? ('nameWrapper' as const)
+                : ('registry' as const),
+            canDeleteMethod: 'setSubnodeOwner' as const,
+            isParentOwner: true,
+            isPCCBurned: false,
+            ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
+          } as DeleteAbilities),
       )
-      /* --------------- UNWRAPPED ----------------- */
+      // ---------- UNWRAPPED ----------
+      // Unwrapped name owner or parent owner for unwrapped name
       .with(
         [
           {
@@ -168,7 +158,6 @@ export const getDeleteAbilities = ({
           const isParentWrapped = parentOwnershipLevel === 'nameWrapper'
           const canDeleteRequiresWrap = !pccExpired && !isOwner && isParentWrapped
           return {
-            ...BASE_ABILITIES,
             canDelete: !hasSubnames && !pccExpired,
             canDeleteContract: canDeleteRequiresWrap
               ? ('nameWrapper' as const)
@@ -177,7 +166,7 @@ export const getDeleteAbilities = ({
             canDeleteMethod: isOwner ? ('setRecord' as const) : ('setSubnodeOwner' as const),
             isParentOwner: parentOwner === address,
             canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
-          }
+          } as DeleteAbilities
         },
       )
       .otherwise(() => BASE_ABILITIES)

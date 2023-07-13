@@ -3,32 +3,157 @@ import { P, match } from 'ts-pattern'
 import { checkETH2LDFromName, checkSubname } from '@app/utils/utils'
 
 import type { useBasicName } from '../../useBasicName'
+import type { SendAbilities } from '../useAbilities'
 
 type BasicName = ReturnType<typeof useBasicName>
 
-type Results = {
-  canSend: boolean
-  canSendOwner: boolean
-  canSendManager: boolean
-  sendNameFunctionCallDetails?: {
-    sendOwner?: {
-      contract: 'registry' | 'nameWrapper' | 'baseRegistrar'
-      method: 'safeTransferFrom'
-    }
-    sendManager?: {
-      contract: 'registry' | 'nameWrapper' | 'baseRegistrar'
-      method: 'safeTransferFrom' | 'reclaim' | 'setOwner' | 'setSubnodeOwner'
-    }
-  }
-  canSendError?: string
-}
-
-const BASE_RESPONSE: Results = {
+const BASE_RESPONSE: SendAbilities = {
   canSend: false,
   canSendOwner: false,
   canSendManager: false,
   sendNameFunctionCallDetails: undefined,
   canSendError: undefined,
+}
+
+type NameContract = {
+  owner: SendAbilities['sendNameFunctionCallDetails']
+  manager: SendAbilities['sendNameFunctionCallDetails']
+}
+
+type SubnameContract = {
+  subnameOwner: SendAbilities['sendNameFunctionCallDetails']
+  subnameManager: SendAbilities['sendNameFunctionCallDetails']
+  parentOwner: SendAbilities['sendNameFunctionCallDetails']
+  parentManager: SendAbilities['sendNameFunctionCallDetails']
+}
+
+type SubnameRelationship = {
+  wrappedParent: SubnameContract
+  unwrappedParent: SubnameContract
+}
+
+const CONTRACT_FUNCTIONS: {
+  unwrappedName: NameContract
+  wrappedName: NameContract
+  unwrappedSubname: SubnameRelationship
+  wrappedSubname: SubnameRelationship
+} = {
+  unwrappedName: {
+    owner: {
+      sendManager: {
+        contract: 'baseRegistrar',
+        method: 'reclaim',
+      },
+      sendOwner: {
+        contract: 'baseRegistrar',
+        method: 'safeTransferFrom',
+      },
+    },
+    manager: {
+      sendManager: {
+        contract: 'registry',
+        method: 'setOwner',
+      },
+    },
+  },
+  wrappedName: {
+    owner: {
+      sendOwner: {
+        contract: 'nameWrapper',
+        method: 'safeTransferFrom',
+      },
+    },
+    manager: {
+      sendManager: {
+        contract: 'nameWrapper',
+        method: 'safeTransferFrom',
+      },
+    },
+  },
+  wrappedSubname: {
+    wrappedParent: {
+      subnameOwner: {
+        sendOwner: {
+          contract: 'nameWrapper',
+          method: 'safeTransferFrom',
+        },
+      },
+      subnameManager: {
+        sendManager: {
+          contract: 'nameWrapper',
+          method: 'safeTransferFrom',
+        },
+      },
+      parentManager: {
+        sendManager: {
+          contract: 'nameWrapper',
+          method: 'setSubnodeOwner',
+        },
+      },
+      parentOwner: {
+        sendManager: {
+          contract: 'nameWrapper',
+          method: 'setSubnodeOwner',
+        },
+      },
+    },
+    unwrappedParent: {
+      subnameManager: {
+        sendManager: {
+          contract: 'nameWrapper',
+          method: 'safeTransferFrom',
+        },
+      },
+      // This state should never happen as the parent is unwrapped and cannot burn PCC
+      subnameOwner: undefined,
+      // We shouldn't actually do this! Will forcibly unwrap the name
+      // sendManager: {
+      //   contract: 'registry',
+      //   method: 'setSubnodeOwner',
+      // },
+      parentManager: undefined,
+      // Will require setting yourself as manager first
+      // sendManager: [],
+      parentOwner: undefined,
+    },
+  },
+  unwrappedSubname: {
+    unwrappedParent: {
+      subnameManager: {
+        sendManager: {
+          contract: 'registry',
+          method: 'setOwner',
+        },
+      },
+      subnameOwner: undefined,
+      parentManager: {
+        sendManager: {
+          contract: 'registry',
+          method: 'setSubnodeOwner',
+        },
+      },
+      // We shouldn't actually do this!
+      // In parent change controller, then do what you would do as controller
+      // sendManager: [],
+      parentOwner: undefined,
+    },
+    wrappedParent: {
+      subnameManager: {
+        sendManager: {
+          contract: 'registry',
+          method: 'setOwner',
+        },
+      },
+      // Unwrapped subname cannot have an owner
+      subnameOwner: undefined,
+      // Must forcibly wrap subname or unwrap parent
+      // sendManager: [],
+      parentManager: undefined,
+      // Must forcibly wrap subname or unwrap parent
+      // sendManager: [],
+      parentOwner: undefined,
+    },
+  },
 }
 
 const get2LDEthAbilities = ({
@@ -37,93 +162,56 @@ const get2LDEthAbilities = ({
 }: {
   address?: string
   basicNameData: BasicName
-}): Results => {
+}): SendAbilities => {
   return (
     match(basicNameData)
-      /*
-       * WRAPPED NAME OWNER OR MANAGER
-       * */
+      // Wrapped name
       .with(
         {
           ownerData: { ownershipLevel: 'nameWrapper', owner: P.when((owner) => owner === address) },
           wrapperData: {
-            parent: { PARENT_CANNOT_CONTROL: P.select('isOwner') },
-            child: { CANNOT_TRANSFER: P.not(true) },
+            parent: { PARENT_CANNOT_CONTROL: true },
+            child: { CANNOT_TRANSFER: false },
           },
         },
-        ({ isOwner }) =>
-          isOwner
-            ? {
-                ...BASE_RESPONSE,
-                canSend: true,
-                canSendOwner: true,
-                sendNameFunctionCallDetails: {
-                  sendOwner: {
-                    contract: 'nameWrapper',
-                    method: 'safeTransferFrom',
-                  } as const,
-                },
-              }
-            : {
-                ...BASE_RESPONSE,
-                canSend: true,
-                canSendManager: true,
-                sendNameFunctionCallDetails: {
-                  sendManager: {
-                    contract: 'nameWrapper',
-                    method: 'safeTransferFrom',
-                  } as const,
-                },
-              },
+        () => {
+          const sendNameFunctionCallDetails = CONTRACT_FUNCTIONS.wrappedName.owner
+          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+          const canSend = canSendOwner || canSendManager
+          return {
+            ...BASE_RESPONSE,
+            canSend,
+            canSendOwner,
+            canSendManager,
+            sendNameFunctionCallDetails,
+          }
+        },
       )
-      /*
-       * UNWRAPPED NAME OWNER
-       * */
+      // Unwrapped name
       .with(
         {
           ownerData: {
             ownershipLevel: P.not('nameWrapper'),
-            registrant: P.when((registrant) => registrant === address),
+            registrant: P.select('registrant'),
           },
         },
-        () => ({
-          ...BASE_RESPONSE,
-          canSend: true,
-          canSendOwner: true,
-          canSendManager: true,
-          sendNameFunctionCallDetails: {
-            sendManager: {
-              contract: 'baseRegistrar',
-              method: 'reclaim',
-            } as const,
-            sendOwner: {
-              contract: 'baseRegistrar',
-              method: 'safeTransferFrom',
-            } as const,
-          },
-        }),
-      )
-      /* *
-       * UNWRAPPED NAME MANAGER
-       * */
-      .with(
-        {
-          ownerData: {
-            ownershipLevel: P.not('nameWrapper'),
-            owner: P.when((owner) => owner === address),
-          },
+        ({ ownerData: { registrant, owner } }) => registrant === address || owner === address,
+        ({ registrant }) => {
+          const isOwner = registrant === address
+          const sendNameFunctionCallDetails =
+            CONTRACT_FUNCTIONS.unwrappedName[isOwner ? 'owner' : 'manager']
+          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+          const canSend = canSendOwner || canSendManager
+          return {
+            ...BASE_RESPONSE,
+            canSend,
+            canSendOwner,
+            canSendManager,
+            sendNameFunctionCallDetails,
+          }
         },
-        () => ({
-          ...BASE_RESPONSE,
-          canSend: true,
-          canSendManager: true,
-          sendNameFunctionCallDetails: {
-            sendManager: {
-              contract: 'registry',
-              method: 'setOwner',
-            } as const,
-          },
-        }),
       )
       .otherwise(({ wrapperData }) => ({
         ...BASE_RESPONSE,
@@ -131,6 +219,14 @@ const get2LDEthAbilities = ({
       }))
   )
 }
+
+const getSubnameContractRole = (isSubname: boolean, isOwner: boolean) =>
+  match([isSubname, isOwner])
+    .with([true, true], () => 'subnameOwner' as const)
+    .with([true, false], () => 'subnameManager' as const)
+    .with([false, true], () => 'parentOwner' as const)
+    .with([false, false], () => 'parentManager' as const)
+    .exhaustive()
 
 const getSubnameAbilities = ({
   address,
@@ -140,263 +236,189 @@ const getSubnameAbilities = ({
   address?: string
   basicNameData: BasicName
   parentBasicNameData: BasicName
-}): Results => {
+}): SendAbilities => {
   return (
     match([basicNameData, parentBasicNameData])
       /* --------------- WRAPPED SUBNAME - WRAPPED PARENT --------------- */
-      /* *
-       * WRAPPED SUBNAME OWNER OR MANAGER
-       * */
       .with(
         [
           {
             ownerData: {
               ownershipLevel: 'nameWrapper',
-              owner: P.when((owner) => owner === address),
+              owner: P.select('subnameOwner'),
             },
             wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: P.select('isOwner') },
-              child: { CANNOT_TRANSFER: P.not(true) },
-            },
-          },
-          {
-            ownerData: { ownershipLevel: 'nameWrapper' },
-          },
-        ],
-        ({ isOwner }) =>
-          isOwner
-            ? {
-                ...BASE_RESPONSE,
-                canSend: true,
-                canSendOwner: true,
-                sendNameFunctionCallDetails: {
-                  sendOwner: {
-                    contract: 'nameWrapper',
-                    method: 'safeTransferFrom',
-                  } as const,
-                },
-              }
-            : {
-                ...BASE_RESPONSE,
-                canSend: true,
-                canSendManager: true,
-                sendNameFunctionCallDetails: {
-                  sendManager: {
-                    contract: 'nameWrapper',
-                    method: 'safeTransferFrom',
-                  } as const,
-                },
-              },
-      )
-      /* *
-       * WRAPPED PARENT OWNER OR MANAGER
-       * */
-      .with(
-        [
-          {
-            ownerData: {
-              ownershipLevel: 'nameWrapper',
-            },
-            wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: P.not(true) },
-              child: { CANNOT_TRANSFER: P.not(true) },
+              parent: { PARENT_CANNOT_CONTROL: P.select('isSubnameOwner') },
+              child: { CANNOT_TRANSFER: false },
             },
           },
           {
             ownerData: {
               ownershipLevel: 'nameWrapper',
-              owner: P.when((owner) => owner === address),
+              owner: P.select('parentOwner'),
             },
             wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: P.select('isOwner') },
+              parent: { PARENT_CANNOT_CONTROL: P.select('isParentOwner') },
             },
           },
         ],
-        ({ isOwner }) =>
-          isOwner
-            ? {
-                ...BASE_RESPONSE,
-                canSend: true,
-                canSendManager: true,
-                sendNameFunctionCallDetails: {
-                  sendManager: {
-                    contract: 'nameWrapper',
-                    method: 'setSubnodeOwner',
-                  } as const,
-                },
-              }
-            : {
-                ...BASE_RESPONSE,
-                canSend: true,
-                canSendManager: true,
-                sendNameFunctionCallDetails: {
-                  sendManager: {
-                    contract: 'nameWrapper',
-                    method: 'setSubnodeOwner',
-                  } as const,
-                },
-              },
+        ([
+          {
+            ownerData: { owner },
+          },
+          {
+            ownerData: { owner: parentOwner },
+          },
+        ]) => owner === address || parentOwner === address,
+        ({ subnameOwner, isSubnameOwner, isParentOwner }) => {
+          const isSubname = subnameOwner === address
+          const isOwner = isSubname ? isSubnameOwner : isParentOwner
+          const role = getSubnameContractRole(isSubname, isOwner)
+          const sendNameFunctionCallDetails = CONTRACT_FUNCTIONS.wrappedSubname.wrappedParent[role]
+          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+          const canSend = canSendOwner || canSendManager
+          return {
+            ...BASE_RESPONSE,
+            canSend,
+            canSendOwner,
+            canSendManager,
+            sendNameFunctionCallDetails,
+          }
+        },
       )
       /* --------------- UNWRAPPED SUBNAME - UNWRAPPED PARENT --------------- */
-      /* *
-       * UNWRAPPED SUBNAME OWNER
-       * Subnames cannot have a registrant.
-       * This is the equivalent of unwrapped parent manager
-       * */
-      /* *
-       * UNWRAPPED SUBNAME MANAGER
-       * */
       .with(
         [
           {
             ownerData: {
               ownershipLevel: P.not('nameWrapper'),
-              owner: P.when((owner) => owner === address),
-            },
-          },
-          {
-            ownerData: { ownershipLevel: P.not('nameWrapper') },
-          },
-        ],
-        () => ({
-          ...BASE_RESPONSE,
-          canSend: true,
-          canSendOwner: false,
-          canSendManager: true,
-          sendNameFunctionCallDetails: {
-            sendManager: {
-              contract: 'registry',
-              method: 'setOwner',
-            } as const,
-          },
-        }),
-      )
-      /* *
-       * UNWRAPPED PARENT OWNER
-       * We shouldn't actually do this!
-       * In parent change controller, then do what you would do as controller
-       * sendManager: [],
-       * */
-      /* *
-       * UNWRAPPED PARENT MANAGER
-       * */
-      .with(
-        [
-          {
-            ownerData: {
-              ownershipLevel: P.not('nameWrapper'),
+              owner: P.select('subnameOwner'),
             },
           },
           {
             ownerData: {
               ownershipLevel: P.not('nameWrapper'),
-              owner: P.when((owner) => owner === address),
+              owner: P.select('parentOwner'),
+              registrant: P.optional(P.select('parentRegistrant')),
             },
           },
         ],
-        () => ({
-          ...BASE_RESPONSE,
-          canSend: true,
-          canSendManager: true,
-          sendNameFunctionCallDetails: {
-            sendManager: {
-              contract: 'registry',
-              method: 'setSubnodeOwner',
-            } as const,
+        ([
+          {
+            ownerData: { owner },
           },
-        }),
+          {
+            ownerData: { owner: parentOwner, registrant: parentRegistrant },
+          },
+        ]) => owner === address || parentOwner === address || parentRegistrant === address,
+        ({ subnameOwner, parentRegistrant }) => {
+          const isSubname = subnameOwner === address
+          const isOwner = isSubname ? false : parentRegistrant === address
+          const role = getSubnameContractRole(isSubname, isOwner)
+          const sendNameFunctionCallDetails =
+            CONTRACT_FUNCTIONS.unwrappedSubname.unwrappedParent[role]
+          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+          const canSend = canSendOwner || canSendManager
+          return {
+            ...BASE_RESPONSE,
+            canSend,
+            canSendOwner,
+            canSendManager,
+            sendNameFunctionCallDetails,
+          }
+        },
       )
       /* --------------- WRAPPED SUBNAME - UNWRAPPED PARENT --------------- */
-      /* *
-       * WRAPPED SUBNAME MANAGER
-       * */
       .with(
         [
           {
             ownerData: {
               ownershipLevel: 'nameWrapper',
-              owner: P.when((owner) => owner === address),
+              owner: P.select('subnameOwner'),
             },
             wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: false },
-              child: { CANNOT_TRANSFER: P.not(true) },
+              parent: { PARENT_CANNOT_CONTROL: P.select('isSubnameOwner') },
+              child: { CANNOT_TRANSFER: false },
             },
           },
           {
-            ownerData: { ownershipLevel: P.not('nameWrapper') },
+            ownerData: {
+              ownershipLevel: P.not('nameWrapper'),
+              owner: P.select('parentOwner'),
+              registrant: P.optional(P.select('parentRegistrant')),
+            },
           },
         ],
-        () => ({
-          ...BASE_RESPONSE,
-          canSend: true,
-          canSendManager: true,
-          sendNameFunctionCallDetails: {
-            sendManager: {
-              contract: 'nameWrapper',
-              method: 'safeTransferFrom',
-            } as const,
+        ([
+          {
+            ownerData: { owner },
           },
-        }),
+          {
+            ownerData: { owner: parentOwner, registrant: parentRegistrant },
+          },
+        ]) => owner === address || parentOwner === address || parentRegistrant === address,
+        ({ subnameOwner, isSubnameOwner, parentRegistrant }) => {
+          const isSubname = subnameOwner === address
+          const isOwner = isSubname ? isSubnameOwner : parentRegistrant === address
+          const role = getSubnameContractRole(isSubname, isOwner)
+          const sendNameFunctionCallDetails =
+            CONTRACT_FUNCTIONS.wrappedSubname.unwrappedParent[role]
+          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+          const canSend = canSendOwner || canSendManager
+          return {
+            ...BASE_RESPONSE,
+            canSend,
+            canSendOwner,
+            canSendManager,
+            sendNameFunctionCallDetails,
+          }
+        },
       )
-      /*
-       * WRAPPED SUBNAME OWNER
-       * This state should never happen as the parent is unwrapped and cannot burn PCC
-       * */
-      /* *
-       * UNWRAPPED PARENT OWNER
-       * Will require setting yourself as manager first
-       * sendManager: [],
-       * */
-      /* *
-       * UNWRAPPED PARENT MANAGER
-       * We shouldn't actually do this! Will forcibly unwrap the name
-       * sendManager: {
-       *   contract: 'registry',
-       *   method: 'setSubnodeOwner',
-       * }
-       * */
       /* --------------- UNWRAPPED SUBNAME - WRAPPED PARENT --------------- */
-      /* *
-       * UNWRAPPED SUBNAME OWNER
-       * Unwrapped subname cannot have an owner
-       * */
-      /* *
-       * UNWRAPPED SUBNAME MANAGER
-       * */
       .with(
         [
           {
             ownerData: {
               ownershipLevel: P.not('nameWrapper'),
-              owner: P.when((owner) => owner === address),
+              owner: P.select('subnameOwner'),
             },
           },
           {
             ownerData: { ownershipLevel: 'nameWrapper' },
+            wrapperData: {
+              parent: { PARENT_CANNOT_CONTROL: P.select('isParentOwner') },
+            },
           },
         ],
-        () => ({
-          ...BASE_RESPONSE,
-          canSend: true,
-          canSendManager: true,
-          sendNameFunctionCallDetails: {
-            sendManager: {
-              contract: 'registry',
-              method: 'setOwner',
-            } as const,
+        ([
+          {
+            ownerData: { owner },
           },
-        }),
+          {
+            ownerData: { owner: parentOwner },
+          },
+        ]) => owner === address || parentOwner === address,
+        ({ subnameOwner, isParentOwner }) => {
+          const isSubname = subnameOwner === address
+          const isOwner = isSubname ? false : isParentOwner
+          const role = getSubnameContractRole(isSubname, isOwner)
+          const sendNameFunctionCallDetails =
+            CONTRACT_FUNCTIONS.unwrappedSubname.wrappedParent[role]
+          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+          const canSend = canSendOwner || canSendManager
+          return {
+            ...BASE_RESPONSE,
+            canSend,
+            canSendOwner,
+            canSendManager,
+            sendNameFunctionCallDetails,
+          }
+        },
       )
-      /* *
-       * WRAPPED PARENT OWNER
-       * Must forcibly wrap subname or unwrap parent
-       * sendManager: []
-       * */
-      /* *
-       * WRAPPED PARENT MANAGER
-       * Must forcibly wrap subname or unwrap parent
-       * sendManager: []
-       * */
       .otherwise(([{ wrapperData }]) => ({
         ...BASE_RESPONSE,
         ...(wrapperData?.child?.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
