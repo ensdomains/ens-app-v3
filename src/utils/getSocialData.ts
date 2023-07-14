@@ -29,6 +29,16 @@ export const getSocialData = (iconKey: string, value: string) => {
         value,
         type: 'copy',
       }
+    case 'telegram':
+    case 'org.telegram':
+      return {
+        icon: 'org.telegram',
+        color: '#2BABEE',
+        label: 'Telegram',
+        value,
+        type: 'link',
+        urlFormatter: `https://t.me/${value}`,
+      }
     default:
       return null
   }
