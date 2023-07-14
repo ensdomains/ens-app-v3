@@ -216,12 +216,12 @@ const get2LDEthAbilities = ({
   )
 }
 
-const getSubnameContractRole = (isSubname: boolean, isOwner: boolean) =>
-  match([isSubname, isOwner])
-    .with([true, true], () => 'subnameOwner' as const)
-    .with([true, false], () => 'subnameManager' as const)
-    .with([false, true], () => 'parentOwner' as const)
-    .with([false, false], () => 'parentManager' as const)
+const getSubnameContractRole = (isSubname: boolean, isManager: boolean) =>
+  match([isSubname, isManager])
+    .with([true, false], () => 'subnameOwner' as const)
+    .with([true, true], () => 'subnameManager' as const)
+    .with([false, false], () => 'parentOwner' as const)
+    .with([false, true], () => 'parentManager' as const)
     .exhaustive()
 
 const getSubnameAbilities = ({
@@ -268,8 +268,8 @@ const getSubnameAbilities = ({
         ]) => owner === address || parentOwner === address,
         ({ subnameOwner, isSubnameOwner, isParentOwner }) => {
           const isSubname = subnameOwner === address
-          const isOwner = isSubname ? isSubnameOwner : isParentOwner
-          const role = getSubnameContractRole(isSubname, isOwner)
+          const isManager = isSubname ? !isSubnameOwner : !isParentOwner
+          const role = getSubnameContractRole(isSubname, isManager)
           const sendNameFunctionCallDetails = CONTRACT_FUNCTIONS.wrappedSubname.wrappedParent[role]
           const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
@@ -296,7 +296,6 @@ const getSubnameAbilities = ({
             ownerData: {
               ownershipLevel: P.not('nameWrapper'),
               owner: P.select('parentOwner'),
-              registrant: P.optional(P.select('parentRegistrant')),
             },
           },
         ],
@@ -308,10 +307,10 @@ const getSubnameAbilities = ({
             ownerData: { owner: parentOwner, registrant: parentRegistrant },
           },
         ]) => owner === address || parentOwner === address || parentRegistrant === address,
-        ({ subnameOwner, parentRegistrant }) => {
+        ({ subnameOwner, parentOwner }) => {
           const isSubname = subnameOwner === address
-          const isOwner = isSubname ? false : parentRegistrant === address
-          const role = getSubnameContractRole(isSubname, isOwner)
+          const isManager = isSubname ? true : parentOwner === address
+          const role = getSubnameContractRole(isSubname, isManager)
           const sendNameFunctionCallDetails =
             CONTRACT_FUNCTIONS.unwrappedSubname.unwrappedParent[role]
           const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
@@ -355,10 +354,10 @@ const getSubnameAbilities = ({
             ownerData: { owner: parentOwner, registrant: parentRegistrant },
           },
         ]) => owner === address || parentOwner === address || parentRegistrant === address,
-        ({ subnameOwner, isSubnameOwner, parentRegistrant }) => {
+        ({ subnameOwner, isSubnameOwner, parentOwner }) => {
           const isSubname = subnameOwner === address
-          const isOwner = isSubname ? isSubnameOwner : parentRegistrant === address
-          const role = getSubnameContractRole(isSubname, isOwner)
+          const isManager = isSubname ? !isSubnameOwner : parentOwner === address
+          const role = getSubnameContractRole(isSubname, isManager)
           const sendNameFunctionCallDetails =
             CONTRACT_FUNCTIONS.wrappedSubname.unwrappedParent[role]
           const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
@@ -399,8 +398,8 @@ const getSubnameAbilities = ({
         ]) => owner === address || parentOwner === address,
         ({ subnameOwner, isParentOwner }) => {
           const isSubname = subnameOwner === address
-          const isOwner = isSubname ? false : isParentOwner
-          const role = getSubnameContractRole(isSubname, isOwner)
+          const isManager = isSubname ? true : !isParentOwner
+          const role = getSubnameContractRole(isSubname, isManager)
           const sendNameFunctionCallDetails =
             CONTRACT_FUNCTIONS.unwrappedSubname.wrappedParent[role]
           const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
