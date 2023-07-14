@@ -176,12 +176,11 @@ const get2LDEthAbilities = ({
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
           const canSend = canSendOwner || canSendManager
           return {
-            ...BASE_RESPONSE,
             canSend,
             canSendOwner,
             canSendManager,
             sendNameFunctionCallDetails,
-          }
+          } as SendAbilities
         },
       )
       // Unwrapped name
@@ -201,12 +200,11 @@ const get2LDEthAbilities = ({
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
           const canSend = canSendOwner || canSendManager
           return {
-            ...BASE_RESPONSE,
             canSend,
             canSendOwner,
             canSendManager,
             sendNameFunctionCallDetails,
-          }
+          } as SendAbilities
         },
       )
       .otherwise(({ wrapperData }) => ({
@@ -244,17 +242,16 @@ const getSubnameAbilities = ({
               owner: P.select('subnameOwner'),
             },
             wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: P.select('isSubnameOwner') },
+              parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
               child: { CANNOT_TRANSFER: false },
             },
           },
           {
             ownerData: {
               ownershipLevel: 'nameWrapper',
-              owner: P.select('parentOwner'),
             },
             wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: P.select('isParentOwner') },
+              parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
             },
           },
         ],
@@ -266,21 +263,21 @@ const getSubnameAbilities = ({
             ownerData: { owner: parentOwner },
           },
         ]) => owner === address || parentOwner === address,
-        ({ subnameOwner, isSubnameOwner, isParentOwner }) => {
+        ({ subnameOwner, pccBurned, parentPCCBurned }) => {
           const isSubname = subnameOwner === address
-          const isManager = isSubname ? !isSubnameOwner : !isParentOwner
+          const isManager = isSubname ? !pccBurned : !parentPCCBurned
           const role = getSubnameContractRole(isSubname, isManager)
           const sendNameFunctionCallDetails = CONTRACT_FUNCTIONS.wrappedSubname.wrappedParent[role]
           const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
           const canSend = canSendOwner || canSendManager
+          if (!isSubname && pccBurned) return BASE_RESPONSE
           return {
-            ...BASE_RESPONSE,
             canSend,
             canSendOwner,
             canSendManager,
             sendNameFunctionCallDetails,
-          }
+          } as SendAbilities
         },
       )
       /* --------------- UNWRAPPED SUBNAME - UNWRAPPED PARENT --------------- */
@@ -317,12 +314,11 @@ const getSubnameAbilities = ({
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
           const canSend = canSendOwner || canSendManager
           return {
-            ...BASE_RESPONSE,
             canSend,
             canSendOwner,
             canSendManager,
             sendNameFunctionCallDetails,
-          }
+          } as SendAbilities
         },
       )
       /* --------------- WRAPPED SUBNAME - UNWRAPPED PARENT --------------- */
@@ -334,7 +330,7 @@ const getSubnameAbilities = ({
               owner: P.select('subnameOwner'),
             },
             wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: P.select('isSubnameOwner') },
+              parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
               child: { CANNOT_TRANSFER: false },
             },
           },
@@ -354,22 +350,22 @@ const getSubnameAbilities = ({
             ownerData: { owner: parentOwner, registrant: parentRegistrant },
           },
         ]) => owner === address || parentOwner === address || parentRegistrant === address,
-        ({ subnameOwner, isSubnameOwner, parentOwner }) => {
+        ({ subnameOwner, pccBurned, parentOwner }) => {
           const isSubname = subnameOwner === address
-          const isManager = isSubname ? !isSubnameOwner : parentOwner === address
+          const isManager = isSubname ? !pccBurned : parentOwner === address
           const role = getSubnameContractRole(isSubname, isManager)
           const sendNameFunctionCallDetails =
             CONTRACT_FUNCTIONS.wrappedSubname.unwrappedParent[role]
           const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
           const canSend = canSendOwner || canSendManager
+          if (!isSubname && pccBurned) return BASE_RESPONSE
           return {
-            ...BASE_RESPONSE,
             canSend,
             canSendOwner,
             canSendManager,
             sendNameFunctionCallDetails,
-          }
+          } as SendAbilities
         },
       )
       /* --------------- UNWRAPPED SUBNAME - WRAPPED PARENT --------------- */
@@ -384,7 +380,7 @@ const getSubnameAbilities = ({
           {
             ownerData: { ownershipLevel: 'nameWrapper' },
             wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: P.select('isParentOwner') },
+              parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
             },
           },
         ],
@@ -396,9 +392,9 @@ const getSubnameAbilities = ({
             ownerData: { owner: parentOwner },
           },
         ]) => owner === address || parentOwner === address,
-        ({ subnameOwner, isParentOwner }) => {
+        ({ subnameOwner, parentPCCBurned }) => {
           const isSubname = subnameOwner === address
-          const isManager = isSubname ? true : !isParentOwner
+          const isManager = isSubname ? true : !parentPCCBurned
           const role = getSubnameContractRole(isSubname, isManager)
           const sendNameFunctionCallDetails =
             CONTRACT_FUNCTIONS.unwrappedSubname.wrappedParent[role]
@@ -406,12 +402,11 @@ const getSubnameAbilities = ({
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
           const canSend = canSendOwner || canSendManager
           return {
-            ...BASE_RESPONSE,
             canSend,
             canSendOwner,
             canSendManager,
             sendNameFunctionCallDetails,
-          }
+          } as SendAbilities
         },
       )
       .otherwise(([{ wrapperData }]) => ({
