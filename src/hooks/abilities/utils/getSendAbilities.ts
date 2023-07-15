@@ -7,6 +7,8 @@ import type { SendAbilities } from '../useAbilities'
 
 type BasicName = ReturnType<typeof useBasicName>
 
+type ContractDetails = SendAbilities['sendNameFunctionCallDetails']
+
 const BASE_RESPONSE: SendAbilities = {
   canSend: false,
   canSendOwner: false,
@@ -15,30 +17,19 @@ const BASE_RESPONSE: SendAbilities = {
   canSendError: undefined,
 }
 
-type NameContract = {
-  owner: SendAbilities['sendNameFunctionCallDetails']
-  manager: SendAbilities['sendNameFunctionCallDetails']
-}
-
-type SubnameContract = {
-  subnameOwner: SendAbilities['sendNameFunctionCallDetails']
-  subnameManager: SendAbilities['sendNameFunctionCallDetails']
-  parentOwner: SendAbilities['sendNameFunctionCallDetails']
-  parentManager: SendAbilities['sendNameFunctionCallDetails']
-}
-
-type SubnameRelationship = {
-  wrappedParent: SubnameContract
-  unwrappedParent: SubnameContract
-}
-
-const CONTRACT_FUNCTIONS: {
-  unwrappedName: NameContract
-  wrappedName: NameContract
-  unwrappedSubname: SubnameRelationship
-  wrappedSubname: SubnameRelationship
-} = {
+const CONTRACT_INFO = {
   unwrappedName: {
+    pattern: {
+      ownerData: {
+        ownershipLevel: P.not('nameWrapper'),
+        registrant: P.select('registrant'),
+      },
+    },
+    guard: (address?: string) => (name: BasicName) => {
+      const registrant = name.ownerData?.registrant
+      const owner = name.ownerData?.owner
+      return registrant === address || owner === address
+    },
     owner: {
       sendManager: {
         contract: 'baseRegistrar',
@@ -57,6 +48,17 @@ const CONTRACT_FUNCTIONS: {
     },
   },
   wrappedName: {
+    pattern: {
+      ownerData: { ownershipLevel: 'nameWrapper' },
+      wrapperData: {
+        parent: { PARENT_CANNOT_CONTROL: true },
+        child: { CANNOT_TRANSFER: false },
+      },
+    },
+    guard: (address?: string) => (name: BasicName) => {
+      const owner = name.ownerData?.owner
+      return owner === address
+    },
     owner: {
       sendOwner: {
         contract: 'nameWrapper',
@@ -68,6 +70,33 @@ const CONTRACT_FUNCTIONS: {
   },
   wrappedSubname: {
     wrappedParent: {
+      pattern: [
+        {
+          ownerData: {
+            ownershipLevel: 'nameWrapper',
+            owner: P.select('subnameOwner'),
+          },
+          wrapperData: {
+            parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
+            child: { CANNOT_TRANSFER: false },
+          },
+        },
+        {
+          ownerData: {
+            ownershipLevel: 'nameWrapper',
+          },
+          wrapperData: {
+            parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
+          },
+        },
+      ],
+      guard:
+        (address?: string) =>
+        ([subname, parent]: [BasicName, BasicName]) => {
+          const subnameOwner = subname.ownerData?.owner
+          const parentOwner = parent.ownerData?.owner
+          return subnameOwner === address || parentOwner === address
+        },
       subnameOwner: {
         sendOwner: {
           contract: 'nameWrapper',
@@ -94,6 +123,33 @@ const CONTRACT_FUNCTIONS: {
       },
     },
     unwrappedParent: {
+      pattern: [
+        {
+          ownerData: {
+            ownershipLevel: 'nameWrapper',
+            owner: P.select('subnameOwner'),
+          },
+          wrapperData: {
+            parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
+            child: { CANNOT_TRANSFER: false },
+          },
+        },
+        {
+          ownerData: {
+            ownershipLevel: P.not('nameWrapper'),
+            owner: P.select('parentOwner'),
+            registrant: P.optional(P.select('parentRegistrant')),
+          },
+        },
+      ],
+      guard:
+        (address?: string) =>
+        ([subname, parent]: [BasicName, BasicName]) => {
+          const subnameOwner = subname.ownerData?.owner
+          const parentOwner = parent.ownerData?.owner
+          const parentRegistrant = parent.ownerData?.registrant
+          return subnameOwner === address || parentOwner === address || parentRegistrant === address
+        },
       subnameManager: {
         sendManager: {
           contract: 'nameWrapper',
@@ -115,6 +171,28 @@ const CONTRACT_FUNCTIONS: {
   },
   unwrappedSubname: {
     unwrappedParent: {
+      pattern: [
+        {
+          ownerData: {
+            ownershipLevel: P.not('nameWrapper'),
+            owner: P.select('subnameOwner'),
+          },
+        },
+        {
+          ownerData: {
+            ownershipLevel: P.not('nameWrapper'),
+            owner: P.select('parentOwner'),
+          },
+        },
+      ],
+      guard:
+        (address?: string) =>
+        ([subname, parent]: [BasicName, BasicName]) => {
+          const subnameOwner = subname.ownerData?.owner
+          const parentOwner = parent.ownerData?.owner
+          const parentRegistrant = parent.ownerData?.registrant
+          return subnameOwner === address || parentOwner === address || parentRegistrant === address
+        },
       subnameManager: {
         sendManager: {
           contract: 'registry',
@@ -134,6 +212,27 @@ const CONTRACT_FUNCTIONS: {
       parentOwner: undefined,
     },
     wrappedParent: {
+      pattern: [
+        {
+          ownerData: {
+            ownershipLevel: P.not('nameWrapper'),
+            owner: P.select('subnameOwner'),
+          },
+        },
+        {
+          ownerData: { ownershipLevel: 'nameWrapper' },
+          wrapperData: {
+            parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
+          },
+        },
+      ],
+      guard:
+        (address?: string) =>
+        ([subname, parent]: [BasicName, BasicName]) => {
+          const subnameOwner = subname.ownerData?.owner
+          const parentOwner = parent.ownerData?.owner
+          return subnameOwner === address || parentOwner === address
+        },
       subnameManager: {
         sendManager: {
           contract: 'registry',
@@ -150,7 +249,7 @@ const CONTRACT_FUNCTIONS: {
       parentOwner: undefined,
     },
   },
-}
+} as const
 
 const get2LDEthAbilities = ({
   address,
@@ -162,40 +261,27 @@ const get2LDEthAbilities = ({
   return (
     match(basicNameData)
       // Wrapped name
-      .with(
-        {
-          ownerData: { ownershipLevel: 'nameWrapper', owner: P.when((owner) => owner === address) },
-          wrapperData: {
-            parent: { PARENT_CANNOT_CONTROL: true },
-            child: { CANNOT_TRANSFER: false },
-          },
-        },
-        () => {
-          const sendNameFunctionCallDetails = CONTRACT_FUNCTIONS.wrappedName.owner
-          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
-          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
-          const canSend = canSendOwner || canSendManager
-          return {
-            canSend,
-            canSendOwner,
-            canSendManager,
-            sendNameFunctionCallDetails,
-          } as SendAbilities
-        },
-      )
+      .with(CONTRACT_INFO.wrappedName.pattern, CONTRACT_INFO.wrappedName.guard(address), () => {
+        const sendNameFunctionCallDetails = CONTRACT_INFO.wrappedName.owner as ContractDetails
+        const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+        const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+        const canSend = canSendOwner || canSendManager
+        return {
+          canSend,
+          canSendOwner,
+          canSendManager,
+          sendNameFunctionCallDetails,
+        } as SendAbilities
+      })
       // Unwrapped name
       .with(
-        {
-          ownerData: {
-            ownershipLevel: P.not('nameWrapper'),
-            registrant: P.select('registrant'),
-          },
-        },
-        ({ ownerData: { registrant, owner } }) => registrant === address || owner === address,
+        CONTRACT_INFO.unwrappedName.pattern,
+        CONTRACT_INFO.unwrappedName.guard(address),
         ({ registrant }) => {
           const isOwner = registrant === address
-          const sendNameFunctionCallDetails =
-            CONTRACT_FUNCTIONS.unwrappedName[isOwner ? 'owner' : 'manager']
+          const sendNameFunctionCallDetails = CONTRACT_INFO.unwrappedName[
+            isOwner ? 'owner' : 'manager'
+          ] as ContractDetails
           const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
           const canSend = canSendOwner || canSendManager
@@ -235,39 +321,15 @@ const getSubnameAbilities = ({
     match([basicNameData, parentBasicNameData])
       /* --------------- WRAPPED SUBNAME - WRAPPED PARENT --------------- */
       .with(
-        [
-          {
-            ownerData: {
-              ownershipLevel: 'nameWrapper',
-              owner: P.select('subnameOwner'),
-            },
-            wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
-              child: { CANNOT_TRANSFER: false },
-            },
-          },
-          {
-            ownerData: {
-              ownershipLevel: 'nameWrapper',
-            },
-            wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
-            },
-          },
-        ],
-        ([
-          {
-            ownerData: { owner },
-          },
-          {
-            ownerData: { owner: parentOwner },
-          },
-        ]) => owner === address || parentOwner === address,
+        CONTRACT_INFO.wrappedSubname.wrappedParent.pattern,
+        CONTRACT_INFO.wrappedSubname.wrappedParent.guard(address),
         ({ subnameOwner, pccBurned, parentPCCBurned }) => {
           const isSubname = subnameOwner === address
           const isManager = isSubname ? !pccBurned : !parentPCCBurned
           const role = getSubnameContractRole(isSubname, isManager)
-          const sendNameFunctionCallDetails = CONTRACT_FUNCTIONS.wrappedSubname.wrappedParent[role]
+          const sendNameFunctionCallDetails = CONTRACT_INFO.wrappedSubname.wrappedParent[
+            role
+          ] as ContractDetails
           const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
           const canSend = canSendOwner || canSendManager
@@ -282,34 +344,15 @@ const getSubnameAbilities = ({
       )
       /* --------------- UNWRAPPED SUBNAME - UNWRAPPED PARENT --------------- */
       .with(
-        [
-          {
-            ownerData: {
-              ownershipLevel: P.not('nameWrapper'),
-              owner: P.select('subnameOwner'),
-            },
-          },
-          {
-            ownerData: {
-              ownershipLevel: P.not('nameWrapper'),
-              owner: P.select('parentOwner'),
-            },
-          },
-        ],
-        ([
-          {
-            ownerData: { owner },
-          },
-          {
-            ownerData: { owner: parentOwner, registrant: parentRegistrant },
-          },
-        ]) => owner === address || parentOwner === address || parentRegistrant === address,
+        CONTRACT_INFO.unwrappedSubname.unwrappedParent.pattern,
+        CONTRACT_INFO.unwrappedSubname.unwrappedParent.guard(address),
         ({ subnameOwner, parentOwner }) => {
           const isSubname = subnameOwner === address
           const isManager = isSubname ? true : parentOwner === address
           const role = getSubnameContractRole(isSubname, isManager)
-          const sendNameFunctionCallDetails =
-            CONTRACT_FUNCTIONS.unwrappedSubname.unwrappedParent[role]
+          const sendNameFunctionCallDetails = CONTRACT_INFO.unwrappedSubname.unwrappedParent[
+            role
+          ] as ContractDetails
           const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
           const canSend = canSendOwner || canSendManager
@@ -323,39 +366,15 @@ const getSubnameAbilities = ({
       )
       /* --------------- WRAPPED SUBNAME - UNWRAPPED PARENT --------------- */
       .with(
-        [
-          {
-            ownerData: {
-              ownershipLevel: 'nameWrapper',
-              owner: P.select('subnameOwner'),
-            },
-            wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
-              child: { CANNOT_TRANSFER: false },
-            },
-          },
-          {
-            ownerData: {
-              ownershipLevel: P.not('nameWrapper'),
-              owner: P.select('parentOwner'),
-              registrant: P.optional(P.select('parentRegistrant')),
-            },
-          },
-        ],
-        ([
-          {
-            ownerData: { owner },
-          },
-          {
-            ownerData: { owner: parentOwner, registrant: parentRegistrant },
-          },
-        ]) => owner === address || parentOwner === address || parentRegistrant === address,
+        CONTRACT_INFO.wrappedSubname.unwrappedParent.pattern,
+        CONTRACT_INFO.wrappedSubname.unwrappedParent.guard(address),
         ({ subnameOwner, pccBurned, parentOwner }) => {
           const isSubname = subnameOwner === address
           const isManager = isSubname ? !pccBurned : parentOwner === address
           const role = getSubnameContractRole(isSubname, isManager)
-          const sendNameFunctionCallDetails =
-            CONTRACT_FUNCTIONS.wrappedSubname.unwrappedParent[role]
+          const sendNameFunctionCallDetails = CONTRACT_INFO.wrappedSubname.unwrappedParent[
+            role
+          ] as ContractDetails
           const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
           const canSend = canSendOwner || canSendManager
@@ -370,34 +389,15 @@ const getSubnameAbilities = ({
       )
       /* --------------- UNWRAPPED SUBNAME - WRAPPED PARENT --------------- */
       .with(
-        [
-          {
-            ownerData: {
-              ownershipLevel: P.not('nameWrapper'),
-              owner: P.select('subnameOwner'),
-            },
-          },
-          {
-            ownerData: { ownershipLevel: 'nameWrapper' },
-            wrapperData: {
-              parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
-            },
-          },
-        ],
-        ([
-          {
-            ownerData: { owner },
-          },
-          {
-            ownerData: { owner: parentOwner },
-          },
-        ]) => owner === address || parentOwner === address,
+        CONTRACT_INFO.unwrappedSubname.wrappedParent.pattern,
+        CONTRACT_INFO.unwrappedSubname.wrappedParent.guard(address),
         ({ subnameOwner, parentPCCBurned }) => {
           const isSubname = subnameOwner === address
           const isManager = isSubname ? true : !parentPCCBurned
           const role = getSubnameContractRole(isSubname, isManager)
-          const sendNameFunctionCallDetails =
-            CONTRACT_FUNCTIONS.unwrappedSubname.wrappedParent[role]
+          const sendNameFunctionCallDetails = CONTRACT_INFO.unwrappedSubname.wrappedParent[
+            role
+          ] as ContractDetails
           const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
           const canSendManager = !!sendNameFunctionCallDetails?.sendManager
           const canSend = canSendOwner || canSendManager

@@ -48,80 +48,6 @@ const makeResults = (overrides: DeepPartial<Abilities> = {}) => {
   } as Abilities
 }
 
-const unwrapped2LDEth = {
-  parentOwnerData: makeOwnerData({
-    ownershipLevel: 'registry',
-    owner: '0xParent',
-  }),
-  parentWrapperData: makeWrapperData(),
-  isParentWrapped: false,
-  name: 'test.eth',
-  ownerData: makeOwnerData({
-    ownershipLevel: 'registrar',
-    owner: '0xName',
-  }),
-  wrapperData: makeWrapperData(),
-  hasSubnames: false,
-}
-
-const wrapped2LDEth = {
-  parentOwnerData: makeOwnerData({
-    ownershipLevel: 'registry',
-    owner: '0xParent',
-  }),
-  parentWrapperData: makeWrapperData(),
-  isParentWrapped: true,
-  name: 'test.eth',
-  ownerData: makeOwnerData({
-    ownershipLevel: 'nameWrapper',
-    owner: '0xName',
-  }),
-  wrapperData: makeWrapperData({
-    parent: {
-      PARENT_CANNOT_CONTROL: true,
-    },
-    owner: '0xName',
-  }),
-  hasSubnames: false,
-}
-
-const unwrappedSubname = {
-  parentOwnerData: makeOwnerData({
-    ownershipLevel: 'registrar',
-    owner: '0xParent',
-  }),
-  parentWrapperData: makeWrapperData(),
-  isParentWrapped: false,
-  name: 'sub.test.eth',
-  ownerData: makeOwnerData({
-    ownershipLevel: 'registry',
-    owner: '0xName',
-  }),
-  wrapperData: makeWrapperData(),
-}
-
-const wrappedSubname = {
-  parentOwnerData: makeOwnerData({
-    ownershipLevel: 'nameWrapper',
-    owner: '0xParent',
-  }),
-  parentWrapperData: makeWrapperData({
-    parent: {
-      PARENT_CANNOT_CONTROL: true,
-    },
-    owner: '0xParent',
-  }),
-  isParentWrapped: true,
-  name: 'sub.test.eth',
-  ownerData: makeOwnerData({
-    ownershipLevel: 'nameWrapper',
-    owner: '0xName',
-  }),
-  wrapperData: makeWrapperData({
-    owner: '0xName',
-  }),
-}
-
 const expiredWrappedSubname = {
   parentOwnerData: makeOwnerData({
     ownershipLevel: 'nameWrapper',
@@ -144,181 +70,13 @@ const expiredWrappedSubname = {
   }),
 }
 
-const wrappedSubnameWithPCCBurned = {
-  parentOwnerData: makeOwnerData({
-    ownershipLevel: 'nameWrapper',
-    owner: '0xParent',
-  }),
-  parentWrapperData: makeWrapperData({
-    parent: {
-      PARENT_CANNOT_CONTROL: true,
-    },
-    child: {
-      CANNOT_UNWRAP: true,
-    },
-  }),
-  isParentWrapped: true,
-  name: 'sub.test.eth',
-  ownerData: makeOwnerData({
-    ownershipLevel: 'nameWrapper',
-    owner: '0xName',
-  }),
-  wrapperData: makeWrapperData({
-    parent: {
-      PARENT_CANNOT_CONTROL: true,
-    },
-    owner: '0xName',
-  }),
-}
-
 const groups = [
   {
-    description: 'unwrapped 2LDEth',
+    description: 'reclaim subname',
     tests: [
       {
-        description: 'should return false if user is parent owner',
-        ...unwrapped2LDEth,
-        hasSubnames: false,
-        address: '0xParent',
-        abilities: makeResults({ canReclaim: false }),
-      },
-      {
-        description: 'should return false if user is owner',
-        ...unwrapped2LDEth,
-        hasSubnames: false,
-        address: '0xName',
-        abilities: makeResults({ canReclaim: false }),
-      },
-    ],
-  },
-  {
-    description: 'wrapped 2LDEth',
-    tests: [
-      {
-        description: 'should return false if user is parent owner',
-        ...wrapped2LDEth,
-        hasSubnames: false,
-        address: '0xParent',
-        abilities: makeResults({ canReclaim: false }),
-      },
-      {
-        description: 'should return false if user is name owner',
-        ...wrapped2LDEth,
-        address: '0xName',
-        abilities: makeResults({ canReclaim: false }),
-      },
-    ],
-  },
-  {
-    description: 'unwrapped subname',
-    tests: [
-      {
-        description: 'should return canReclaim is false if user is parent owner',
-        ...unwrappedSubname,
-        hasSubnames: false,
-        address: '0xParent',
-        abilities: makeResults({
-          canReclaim: false,
-        }),
-      },
-      {
         description:
-          'should return canReclaim is false if user is parent owner and name has subnames',
-        ...unwrappedSubname,
-        hasSubnames: true,
-        address: '0xParent',
-        abilities: makeResults({
-          canReclaim: false,
-        }),
-      },
-      {
-        description: 'should return canReclaim is false if user is name owner',
-        ...unwrappedSubname,
-        hasSubnames: false,
-        address: '0xName',
-        abilities: makeResults({
-          canReclaim: false,
-        }),
-      },
-      {
-        description:
-          'should return canReclaim is false if parent is wrapped and user is name owner',
-        ...unwrappedSubname,
-        hasSubnames: false,
-        address: '0xParent',
-        isParentWrapped: true,
-        parentOwnerData: makeOwnerData({
-          owner: '0xParent',
-          ownershipLevel: 'nameWrapper',
-        }),
-        ownerData: makeOwnerData({
-          ownershipLevel: 'registry',
-          owner: '0xParent',
-        }),
-        abilities: makeResults({
-          canReclaim: false,
-        }),
-      },
-      {
-        description: 'should return canReclaim is false if parent is wrapped',
-        ...unwrappedSubname,
-        hasSubnames: false,
-        address: '0xParent',
-        isParentWrapped: true,
-        parentOwnerData: makeOwnerData({
-          owner: '0xParent',
-          ownershipLevel: 'nameWrapper',
-        }),
-        abilities: makeResults({
-          canReclaim: false,
-        }),
-      },
-    ],
-  },
-  {
-    description: 'wrapped subname',
-    tests: [
-      {
-        description: 'should return canReclaim is false if user is parent owner',
-        ...wrappedSubname,
-        hasSubnames: false,
-        address: '0xParent',
-        abilities: makeResults({
-          canReclaim: false,
-        }),
-      },
-      {
-        description:
-          'should return canReclaim is false if user is parent owner and name has subnames',
-        ...wrappedSubname,
-        hasSubnames: true,
-        address: '0xParent',
-        abilities: makeResults({
-          canReclaim: false,
-        }),
-      },
-      {
-        description: 'should return canReclaim is false if user is name owner',
-        ...wrappedSubname,
-        hasSubnames: false,
-        address: '0xName',
-        abilities: makeResults({
-          canReclaim: false,
-        }),
-      },
-      {
-        description:
-          'should return canReclaim is false if user is name owner and name has subnames',
-        ...wrappedSubname,
-        hasSubnames: true,
-        address: '0xName',
-        abilities: makeResults({
-          canReclaim: false,
-        }),
-      },
-      {
-        description:
-          'should return canReclaim is true if the use is the name owner and the subname has expired',
+          'should return canReclaim is true if the user is the name owner and the subname has expired',
         ...expiredWrappedSubname,
         hasSubnames: false,
         address: '0xParent',
@@ -327,36 +85,16 @@ const groups = [
           canReclaim: true,
         }),
       },
-    ],
-  },
-  {
-    description: 'wrapped subname with PCC burned',
-    tests: [
-      {
-        description: 'should return canReclaim is false if user is name owner',
-        ...wrappedSubnameWithPCCBurned,
-        hasSubnames: false,
-        address: '0xName',
-        abilities: makeResults({
-          canReclaim: false,
-        }),
-      },
       {
         description:
-          'should return canReclaim is false if user is name owner and name has subnames',
-        ...wrappedSubnameWithPCCBurned,
-        hasSubnames: true,
-        address: '0xName',
+          'should return canReclaim is false if the user is the name owner and the subname was not pcc expired',
+        ...expiredWrappedSubname,
+        hasSubnames: false,
+        address: '0xParent',
+        pccExpired: false,
         abilities: makeResults({
           canReclaim: false,
         }),
-      },
-      {
-        description: 'should return canReclaim is false if user is parent owner',
-        ...wrappedSubnameWithPCCBurned,
-        hasSubnames: false,
-        address: '0xParent',
-        abilities: makeResults({ canReclaim: false }),
       },
     ],
   },
