@@ -259,6 +259,31 @@ export const uniqueTransactionIdentifierGenerator = (
   data: transactionData,
 })
 
+export const transactionSuccessHandler = (dependencies) => async (tx) => {
+  const { provider, connector, actionName, txKey, request, addRecentTransaction, dispatch } =
+    dependencies
+  let transactionData = null
+  try {
+    // If using private mempool, this won't error, will return null
+    transactionData = await provider.getTransaction(tx.hash)
+  } catch (e) {
+    console.error('Failed to get transaction info')
+  }
+
+  const isSafeApp = await checkIsSafeApp(connector)
+
+  addRecentTransaction({
+    ...transactionData,
+    hash: tx.hash,
+    action: actionName,
+    key: txKey!,
+    input: request?.data,
+    timestamp: Math.floor(Date.now() / 1000),
+    isSafeTx: !!isSafeApp,
+  })
+  dispatch({ name: 'setTransactionHash', payload: tx.hash })
+}
+
 export const TransactionStageModal = ({
   actionName,
   currentStep,
@@ -364,30 +389,15 @@ export const TransactionStageModal = ({
   } = useSendTransaction({
     mode: 'prepared',
     request,
-    onSuccess: async (tx) => {
-      console.log('request: ', request)
-      console.log('tx: ', tx)
-      let transactionData = {}
-      try {
-        transactionData = await provider.getTransaction(tx.hash)
-      } catch (e) {
-        console.error('Failed to get transaction info')
-      }
-
-      console.log('transactionData: ', transactionData)
-      const isSafeApp = await checkIsSafeApp(connector)
-
-      addRecentTransaction({
-        ...transactionData,
-        hash: tx.hash,
-        action: actionName,
-        key: txKey!,
-        input: request?.data,
-        timestamp: Math.floor(Date.now() / 1000),
-        isSafeTx: !!isSafeApp,
-      })
-      dispatch({ name: 'setTransactionHash', payload: tx.hash })
-    },
+    onSuccess: transactionSuccessHandler(
+      provider,
+      connector,
+      actionName,
+      txKey,
+      request,
+      addRecentTransaction,
+      dispatch,
+    ),
   })
 
   const FilledDisplayItems = useMemo(

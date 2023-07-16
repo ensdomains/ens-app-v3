@@ -12,7 +12,11 @@ import { GenericTransaction } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { checkIsSafeApp } from '@app/utils/safe'
 
-import { TransactionStageModal, handleBackToInput } from './TransactionStageModal'
+import {
+  TransactionStageModal,
+  handleBackToInput,
+  transactionSuccessHandler,
+} from './TransactionStageModal'
 
 jest.mock('@app/hooks/useAccountSafely')
 jest.mock('@app/hooks/useChainName')
@@ -375,5 +379,75 @@ describe('handleBackToInput', () => {
     expect(mockDispatch).toBeCalledWith({
       name: 'resetTransactionStep',
     })
+  })
+})
+
+describe('transactionSuccessHanlder', () => {
+  it('should add recent transaction data', async () => {
+    const dependencies = {
+      provider: { getTransaction: jest.fn().mockResolvedValue({ testKey: 'testVal' }) },
+      connector: {},
+      actionName: 'actionName',
+      txKey: 'txKey',
+      request: {},
+      addRecentTransaction: jest.fn(),
+      dispatch: jest.fn(),
+    }
+
+    const mockTx = {}
+
+    transactionSuccessHandler(dependencies)(mockTx)
+
+    await waitFor(() =>
+      expect(dependencies.addRecentTransaction).toBeCalledWith(
+        expect.objectContaining({ testKey: 'testVal' }),
+      ),
+    )
+  })
+  it('should dispatch the correct action', async () => {
+    const dependencies = {
+      provider: { getTransaction: jest.fn().mockResolvedValue({ testKey: 'testVal' }) },
+      connector: {},
+      actionName: 'actionName',
+      txKey: 'txKey',
+      request: {},
+      addRecentTransaction: jest.fn(),
+      dispatch: jest.fn(),
+    }
+
+    const mockTx = { hash: 'hash' }
+
+    transactionSuccessHandler(dependencies)(mockTx)
+
+    await waitFor(() =>
+      expect(dependencies.dispatch).toBeCalledWith(
+        expect.objectContaining({ name: 'setTransactionHash', payload: 'hash' }),
+      ),
+    )
+  })
+  it('should handle a failed call to getTransaction', async () => {
+    const dependencies = {
+      provider: {
+        getTransaction: () => {
+          throw new Error('Error')
+        },
+      },
+      connector: {},
+      actionName: 'actionName',
+      txKey: 'txKey',
+      request: {},
+      addRecentTransaction: jest.fn(),
+      dispatch: jest.fn(),
+    }
+
+    const mockTx = { hash: 'hash' }
+
+    transactionSuccessHandler(dependencies)(mockTx)
+
+    await waitFor(() =>
+      expect(dependencies.addRecentTransaction).not.toBeCalledWith(
+        expect.objectContaining({ testKey: 'testVal' }),
+      ),
+    )
   })
 })
