@@ -51,8 +51,8 @@ export const test = base.extend<Fixtures & PageObjects>({
     await use(provider)
   },
   Login: ({}, use) => use(Login),
-  nameGenerator: async ({ accounts, provider }, use) => {
-    const _nameGenerator = nameGenerator({ accounts, provider })
+  nameGenerator: async ({ accounts, provider, page }, use) => {
+    const _nameGenerator = nameGenerator({ accounts, provider, page })
     await use(_nameGenerator)
   },
   AddressPage: ({}, use) => use(AddressPage),

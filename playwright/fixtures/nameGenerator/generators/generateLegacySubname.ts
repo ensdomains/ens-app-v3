@@ -15,6 +15,7 @@ export type LegacySubname = {
   owner: User
   resolver?: `0x${string}`
   records?: Records
+  duration?: number
 }
 
 type Dependencies = {
