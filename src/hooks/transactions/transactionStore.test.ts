@@ -2,7 +2,8 @@ import type { PartialMockedFunction } from '@app/test-utils'
 
 import { waitFor } from '@testing-library/react'
 
-import { createTransactionStore } from './transactionStore'
+import { etherscanDataToMinedData } from '../src/hooks/transactions/transactionStore'
+import { createTransactionStore, foundTransaction } from './transactionStore'
 import { waitForTransaction } from './waitForTransaction'
 
 jest.mock('./waitForTransaction', () => ({
@@ -104,9 +105,112 @@ describe('transactionStore', () => {
 })
 
 describe('foundTransaction', () => {
-  it.todo('should update found transaction correctly')
+  it('should update found transaction correctly', () => {
+    const transactionHash = 'hash'
+    const account = 'account'
+    const chainId = 1
+    const nonce = 1
+    const transactionInput = 'transactionInput'
+
+    const mockTransactions = [
+      {
+        hash: transactionHash,
+        searchStatus: 'pending',
+      },
+    ]
+
+    let updateFnResult
+    const mockUpdateTransactions = (account, chainId, updateFn) => {
+      updateFnResult = updateFn(mockTransactions)
+    }
+    foundTransaction(mockUpdateTransactions)(
+      account,
+      chainId,
+      transactionHash,
+      nonce,
+      transactionInput,
+    )
+    expect(updateFnResult).toEqual([
+      {
+        hash: transactionHash,
+        searchStatus: 'found',
+        nonce,
+        transactionInput,
+      },
+    ])
+  })
 })
 
 describe('etherscanDataToMinedData', () => {
-  it.todo('should convert etherscan data to mined data correctly')
+  it('should convert etherscan data to mined data', () => {
+    const etherscanMinedData = {
+      blockHash: '0x1234567890abcdef',
+      blockNumber: '123456',
+      confirmations: '10',
+      contractAddress: '0x1234567890abcdef',
+      cumulativeGasUsed: '100000',
+      from: '0x1234567890abcdef',
+      functionName: 'transfer',
+      gas: '21000',
+      gasPrice: '1000000000',
+      gasUsed: '21000',
+      hash: '0x1234567890abcdef',
+      input: '0x',
+      isError: '0',
+      methodId: '0x',
+      nonce: '1',
+      timeStamp: '1630512000',
+      to: '0x1234567890abcdef',
+      transactionIndex: '0',
+      txreceipt_status: '1',
+      value: '1000000000000000000',
+    }
+
+    const expectedMinedData = {
+      blockHash: '0x1234567890abcdef',
+      blockNumber: 123456,
+      confirmations: 10,
+      contractAddress: '0x1234567890abcdef',
+      cumulativeGasUsed: 100000,
+      effectiveGasPrice: 1000000000,
+      from: '0x1234567890abcdef',
+      functionName: 'transfer',
+      gas: 21000,
+      gasUsed: 21000,
+      hash: '0x1234567890abcdef',
+      input: '0x',
+      isError: false,
+      methodId: '0x',
+      nonce: '1',
+      status: true,
+      timestamp: 1630512000,
+      to: '0x1234567890abcdef',
+      transactionIndex: 0,
+      value: '1000000000000000000',
+    }
+
+    expect(etherscanDataToMinedData(etherscanMinedData)).toEqual(expectedMinedData)
+  })
+})
+
+describe('setReplacedTransaction', () => {
+  it.todo('should set replaced transaction correctly')
+})
+
+describe('setReaplcedTransactionByNonce', () => {
+  it.todo('should set replaced transaction by nonce correctly')
+})
+
+describe('foundMinedtranasction', () => {
+  it.todo(
+    'should update found mined transaction correctly and update the transaction status to confirmed',
+  )
+})
+
+describe('updateRetries', () => {
+  it.todo('should update retries correctly')
+})
+
+describe('setFailedTransaction', () => {
+  it.todo('should set failed transaction correctly')
 })

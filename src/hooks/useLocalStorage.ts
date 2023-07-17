@@ -64,7 +64,6 @@ export const useLocalStorageReducer = <S = any, A = any>(
 
   useEffect(() => {
     if (state !== initialState) {
-      console.log('state: ', state)
       localStorage.setItem(key, JSON.stringify(state))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

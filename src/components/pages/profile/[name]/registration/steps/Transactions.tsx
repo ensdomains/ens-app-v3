@@ -147,8 +147,6 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
   const registerTx = getLatestTransaction(registerKey)
   const [resetOpen, setResetOpen] = useState(false)
 
-  console.log('commitTx: ', commitTx)
-
   const commitTimestamp = commitTx?.stage === 'complete' ? commitTx?.finaliseTime : undefined
   const [commitComplete, setCommitComplete] = useState(
     commitTimestamp && commitTimestamp + 60000 < Date.now(),

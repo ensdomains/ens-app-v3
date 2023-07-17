@@ -27,11 +27,6 @@ const displayItems = (
 ]
 
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const populated = await ens.commitName.populateTransaction(data.name, {
-    signer,
-    ...data,
-  })
-  console.log('populated: ', populated)
   const { customData: _, ...tx } = await ens.commitName.populateTransaction(data.name, {
     signer,
     ...data,

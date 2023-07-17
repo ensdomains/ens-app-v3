@@ -96,7 +96,7 @@ function loadData(): Data {
   )
 }
 
-function etherscanDataToMinedData(
+export function etherscanDataToMinedData(
   etherscanMinedData: EtherscanMinedData,
 ): MinedData | EtherscanMinedData {
   return {
@@ -122,6 +122,32 @@ function validateTransaction(transaction: NewTransaction): string[] {
 
   return errors
 }
+
+export const foundTransaction =
+  (updateTransactions: any) =>
+  (
+    account: string,
+    chainId: number,
+    hash: string,
+    nonce: number,
+    transactionInput: string,
+  ): void => {
+    updateTransactions(account, chainId, (transactions) => {
+      return transactions.map((transaction) =>
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              nonce,
+              transactionInput,
+              searchStatus: 'found',
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
+
+export const setReplacedTransaction =
+  (updateTransactions: any) => (account: string, chainId: number) => {}
 
 export function createTransactionStore({ provider: initialProvider }: { provider: BaseProvider }) {
   let data: Data = loadData()
@@ -171,24 +197,6 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     })
   }
 
-  function updateTransactionStatus(
-    account: string,
-    chainId: number,
-    hash: string,
-    status: 'pending' | 'unknown' | 'dropped',
-  ): void {
-    updateTransactions(account, chainId, (transactions) => {
-      return transactions.map((transaction) =>
-        transaction.hash === hash
-          ? ({
-              ...transaction,
-              status,
-            } as Transaction)
-          : transaction,
-      )
-    })
-  }
-
   function setReplacedTransaction(
     account: string,
     chainId: number,
@@ -227,26 +235,26 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     })
   }
 
-  function foundTransaction(
-    account: string,
-    chainId: number,
-    hash: string,
-    nonce: number,
-    transactionInput: string,
-  ): void {
-    updateTransactions(account, chainId, (transactions) => {
-      return transactions.map((transaction) =>
-        transaction.hash === hash
-          ? ({
-              ...transaction,
-              nonce,
-              transactionInput,
-              searchStatus: 'found',
-            } as Transaction)
-          : transaction,
-      )
-    })
-  }
+  // function foundTransaction(
+  //   account: string,
+  //   chainId: number,
+  //   hash: string,
+  //   nonce: number,
+  //   transactionInput: string,
+  // ): void {
+  //   updateTransactions(account, chainId, (transactions) => {
+  //     return transactions.map((transaction) =>
+  //       transaction.hash === hash
+  //         ? ({
+  //             ...transaction,
+  //             nonce,
+  //             transactionInput,
+  //             searchStatus: 'found',
+  //           } as Transaction)
+  //         : transaction,
+  //     )
+  //   })
+  // }
 
   function foundMinedTransaction(
     account: string,
@@ -282,7 +290,6 @@ export function createTransactionStore({ provider: initialProvider }: { provider
   }
 
   function setFailedTransaction(account: string, chainId: number, hash: string): void {
-    console.log('setFailedTransaction')
     updateTransactions(account, chainId, (transactions) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
@@ -458,8 +465,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     setProvider,
     waitForPendingTransactions,
     setTransactionStatus,
-    updateTransactionStatus,
-    foundTransaction,
+    foundTransaction: foundTransaction(updateTransactions),
     foundMinedTransaction,
     updateRetries,
     setReplacedTransaction,

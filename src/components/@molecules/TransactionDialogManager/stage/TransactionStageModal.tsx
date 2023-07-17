@@ -389,7 +389,7 @@ export const TransactionStageModal = ({
   } = useSendTransaction({
     mode: 'prepared',
     request,
-    onSuccess: transactionSuccessHandler(
+    onSuccess: transactionSuccessHandler({
       provider,
       connector,
       actionName,
@@ -397,7 +397,7 @@ export const TransactionStageModal = ({
       request,
       addRecentTransaction,
       dispatch,
-    ),
+    }),
   })
 
   const FilledDisplayItems = useMemo(

@@ -53,14 +53,9 @@ function useInterval(callback: () => void, delay: number | null, dependencies: a
   }, [delay, ...dependencies])
 }
 
-const handleSearchingTransactions = () => {}
-const handlePendingTransactions = () => {}
-
 const findDroppedTransactions = async (transactions, address, store, chainId, provider) => {
   // Transactions are all tied to an address and a chain
   if (!address || !store || !chainId || !provider || !transactions?.length) return
-  console.log('***run***')
-  console.log('chainId: ', chainId)
 
   const pendingTransactions = transactions.filter(
     (transaction) => transaction.status === 'pending' && transaction.searchStatus === 'found',
@@ -73,9 +68,6 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
   const etherscanResponse = await fetch(etherscanEndpoint)
   const etherscanJson = await etherscanResponse.json()
   const accountTransactionHistory = etherscanJson?.result
-  console.log('accountTransactionHistory: ', accountTransactionHistory)
-
-  console.log('searchingTransactions: ', searchingTransactions)
 
   for (const searchingTransaction of searchingTransactions) {
     // A searchingTransaction likely means the transaction was submitted to a private mempool
@@ -86,8 +78,6 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
     const minedTransaction = accountTransactionHistory.filter(
       (historicTransaction) => historicTransaction.hash === searchingTransaction.hash,
     )
-
-    console.log('minedTransaction: ', minedTransaction)
 
     if (minedTransaction.length) {
       store.foundMinedTransaction(address, chainId, searchingTransaction.hash, minedTransaction[0])
@@ -111,7 +101,6 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
 
     if (replacementTransactions.length === 1) {
       const _replacementTransaction = replacementTransactions[0]
-      console.log('_replacementTransactions: ', _replacementTransaction)
       store.setReplacedTransaction(
         address,
         chainId,
@@ -127,7 +116,7 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
       store.foundTransaction(address, chainId, searchingTransaction.hash, result.nonce, result.data)
       return
     }
-    // store.updateRetries(address, chainId, searchingTransaction.hash)
+    store.updateRetries(address, chainId, searchingTransaction.hash)
   }
 
   for (const pendingTransaction of pendingTransactions) {

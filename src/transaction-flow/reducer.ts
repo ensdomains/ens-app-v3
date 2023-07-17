@@ -43,8 +43,8 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
   const { getSelectedItem, getCurrentTransaction, getAllTransactionsComplete } = helpers(draft)
 
   // log state
-  console.log('action: ', action)
-  console.log('state: ', current(draft))
+  // console.log('action: ', action)
+  // console.log('state: ', current(draft))
 
   switch (action.name) {
     case 'showDataInput': {
@@ -115,15 +115,6 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         (transaction) => transaction.hash === action.payload.hash,
       )
       draft.items[action.payload.key].transactions[targetTransactionIndex].stage = 'failed'
-      console.log(
-        'setFailedTransaction: ',
-        draft.items[action.payload.key].transactions[targetTransactionIndex].stage,
-      )
-      // targetTransaction.stage = 'failed'
-      // debugger
-      // draft.items[action.payload.key].transactions.find(
-      //   (transaction) => transaction.hash === action.payload.hash,
-      // ).stage = 'failed'
       break
     }
     case 'incrementTransaction': {
@@ -151,18 +142,11 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       break
     }
     case 'setTransactionStageFromUpdate': {
-      // console.log('setTransactionStageFromUpdate')
-      // debugger
       const { hash, key, status, minedData, newHash } = action.payload
-
-      // Updating the state of a transaction that hasn't been mined yet
-      // if (!minedData) return
 
       const selectedItem = draft.items[key!]
       if (!selectedItem) break
       const transaction = selectedItem.transactions.find((x) => x.hash === hash)
-      console.log('action: ', action)
-      console.log('minedData: ', minedData)
 
       if (transaction) {
         if (status === 'repriced') {
@@ -174,7 +158,6 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         transaction.stage = stage
         transaction.minedData = minedData
         transaction.finaliseTime = minedData?.timestamp
-        console.log('current: ', current(transaction))
         if (
           key === draft.selectedKey &&
           selectedItem.autoClose &&

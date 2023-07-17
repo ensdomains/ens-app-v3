@@ -120,18 +120,11 @@ const useEthInvoice = (
 
   const commitTxFlow = getLatestTransaction(commitKey)
   const registerTxFlow = getLatestTransaction(registerKey)
-  console.log('registerTxFlow: ', registerTxFlow)
 
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
 
   const commitReceipt = commitTxFlow?.minedData
   const registerReceipt = registerTxFlow?.minedData
-
-  // const { data: registerData, isLoading: registerLoading } = useTransaction({
-  //   hash: registerTxFlow?.hash as `0x${string}` | undefined,
-  // })
-  // console.log('registerData: ', registerData)
-  // const isLoading = !commitReceipt || !registerReceipt || registerLoading
 
   const registrationValue = useMemo(() => {
     if (!registerReceipt) return null
