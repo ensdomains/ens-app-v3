@@ -90,7 +90,6 @@ test('should be able to extend a single unwrapped name from profile', async ({
 test('should be able to extend a single unwrapped name in grace period from profile', async ({
   page,
   wallet,
-  timeshift,
   Login,
   ProfilePage,
   ExtendNamesModal,
@@ -164,7 +163,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
 test('should be able to extend a single unwrapped name in grace period from profile 2', async ({
   page,
   wallet,
-  timeshift,
   Login,
   ProfilePage,
   ExtendNamesModal,
