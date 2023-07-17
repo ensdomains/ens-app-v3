@@ -51,7 +51,7 @@ export const SocialIcon = ({
   href: string
 }) => {
   return (
-    <SocialIconWrapper href={href}>
+    <SocialIconWrapper href={href} target="_blank">
       <StyledIcon key={href} $iconColor={color} as={Icon} />
       {ColoredIcon && <StyledColoredIcon as={ColoredIcon} />}
     </SocialIconWrapper>

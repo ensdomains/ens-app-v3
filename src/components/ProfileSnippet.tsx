@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Typography, mq } from '@ensdomains/thorin'
+import { Button, NametagSVG, Tag, Typography, mq } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import useBeautifiedName from '@app/hooks/useBeautifiedName'
@@ -121,6 +121,31 @@ const LocationAndUrl = styled.div(
   `,
 )
 
+const TagsContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['2']};
+  `,
+)
+
+const PrimaryNameTag = styled(Tag)(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: ${theme.space['1']};
+
+    & > svg {
+      height: ${theme.space['4']};
+      width: ${theme.space['4']};
+    }
+  `,
+)
+
 export const getUserDefinedUrl = (url?: string) => {
   if (!url) return undefined
   if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -135,12 +160,14 @@ export const ProfileSnippet = ({
   button,
   network,
   canEdit,
+  isPrimary,
   children,
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
   button?: 'viewProfile' | 'extend' | 'register'
   canEdit?: boolean
+  isPrimary?: boolean
   network: number
   children?: React.ReactNode
 }) => {
@@ -239,6 +266,14 @@ export const ProfileSnippet = ({
           </LocationAndUrl>
         )}
       </TextStack>
+      {isPrimary && (
+        <TagsContainer>
+          <PrimaryNameTag size="medium" colorStyle="greenSecondary">
+            <NametagSVG />
+            {t('name.yourPrimaryName')}
+          </PrimaryNameTag>
+        </TagsContainer>
+      )}
       {children}
     </Container>
   )

@@ -3,6 +3,8 @@ import { useMemo } from 'react'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { checkSubname } from '@app/utils/utils'
 
+import { useResolverIsAuthorized } from './resolver/useResolverIsAuthorized'
+
 interface SendPermissions {
   canSendOwner: boolean
   canSendManager: boolean
@@ -277,6 +279,9 @@ export const useSelfAbilities = (address: string | undefined, name?: string | nu
   const is2LDEth = name?.split('.')?.length === 2 && name?.split('.')?.[1] === 'eth'
 
   const basicNameData = useBasicName(name, { skipGraph: false })
+  const resolverAuthorisation = useResolverIsAuthorized(name || undefined, {
+    enabled: !!name && basicNameData.wrapperData?.child.CANNOT_SET_RESOLVER,
+  })
   const parentBasicNameData = useBasicName(parent, { skipGraph: false })
 
   return useMemo(() => {
@@ -334,7 +339,11 @@ export const useSelfAbilities = (address: string | undefined, name?: string | nu
     abilities.canSendManager = canSendManager
     abilities.canSend = canSendManager || canSendOwner
 
-    if (basicNameData?.ownerData?.owner === address) {
+    const hasAuthorisedResolver = resolverAuthorisation.data?.isAuthorized
+    const canSetResolver = !basicNameData.wrapperData?.child.CANNOT_SET_RESOLVER
+
+    // if resolver is empty and user cannot set resolver, they cannot edit
+    if (basicNameData?.ownerData?.owner === address && (canSetResolver || hasAuthorisedResolver)) {
       abilities.canEdit = true
     }
 
@@ -351,5 +360,5 @@ export const useSelfAbilities = (address: string | undefined, name?: string | nu
     }
 
     return abilities
-  }, [address, name, is2LDEth, basicNameData, parentBasicNameData])
+  }, [name, address, basicNameData, parentBasicNameData, is2LDEth, resolverAuthorisation.data])
 }
