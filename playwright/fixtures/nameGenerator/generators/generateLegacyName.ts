@@ -14,7 +14,7 @@ const DURATION_ADJUSTMENT = 2419200 + 7776000
 
 export type Name = {
   label: string
-  owner: User
+  owner?: User
   manager?: User
   duration?: number
   secret?: string
@@ -29,7 +29,7 @@ type Dependencies = {
 export const generateLegacyName = async (
   {
     label,
-    owner,
+    owner = 'user',
     manager,
     duration = DEFAULT_DURATION,
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',

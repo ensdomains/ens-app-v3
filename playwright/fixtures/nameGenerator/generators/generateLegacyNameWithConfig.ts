@@ -15,10 +15,11 @@ import { generateRecords } from './generateRecords'
 
 const DEFAULT_DURATION = 31536000
 const DURATION_ADJUSTMENT = 2419200 + 7776000
+const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
 
 export type Name = {
   label: string
-  owner: User
+  owner?: User
   manager?: User
   duration?: number
   secret?: string
@@ -36,7 +37,7 @@ type Dependencies = {
 export const generateLegacyNameWithConfig = async (
   {
     label,
-    owner,
+    owner = 'user',
     manager,
     duration = DEFAULT_DURATION,
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
@@ -50,17 +51,22 @@ export const generateLegacyNameWithConfig = async (
   const _owner = accounts.getAddress(owner)
   const _addr = accounts.getAddress(addr)
 
+  // Check if resolver is accepted resolver
+  const hasValidResolver = resolver && RESOLVER_ADDRESSES['1337'].includes(resolver)
+  const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
+
   // Connect contract
   const signer = provider.getSigner(accounts.getIndex(owner))
   const controller = await getContract('LegacyETHRegistrarController', { signer })
-  console.log(controller.address, label, _owner, secret, resolver, _addr)
+  console.log(controller.address, label, _owner, secret, _resolver, _addr)
   console.log('------------------------')
+
   // Commit
   const commitment = await controller.makeCommitmentWithConfig(
     label,
     _owner,
     secret,
-    resolver,
+    _resolver,
     _addr,
   )
   await controller.commit(commitment)
@@ -71,7 +77,7 @@ export const generateLegacyNameWithConfig = async (
   // Register
   const _duration = duration
   const price = await controller.rentPrice(label, _duration)
-  await controller.registerWithConfig(label, _owner, _duration, secret, resolver, _addr, {
+  await controller.registerWithConfig(label, _owner, _duration, secret, _resolver, _addr, {
     value: price,
   })
 
@@ -87,6 +93,12 @@ export const generateLegacyNameWithConfig = async (
   }))
   for (const subname of _subnames) {
     await generateLegacySubname(subname, { provider, accounts })
+  }
+
+  if (!hasValidResolver) {
+    const registry = await getContract('ENSRegistry', { signer })
+    const node = namehash(`${label}.eth`)
+    await registry.setResolver(node, resolver)
   }
 
   if (!!manager && manager !== owner) {

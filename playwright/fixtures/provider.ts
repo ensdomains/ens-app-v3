@@ -6,6 +6,11 @@ export type Provider = Awaited<ReturnType<typeof createProvider>>
 export const createProvider = () => {
   const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545')
   let snapshotId = 0
+
+  provider.mine = () => provider.send('evm_mine', [])
+  provider.increaseTime = (seconds: number) => provider.send('evm_increaseTime', [seconds])
+  provider.setAutomine = (active: boolean) => provider.send('evm_setAutomine', [active])
+  return provider
   return {
     send: (method: string, params: any[]) => provider.send(method, params),
     getSigner: (index: number) => provider.getSigner(index),
