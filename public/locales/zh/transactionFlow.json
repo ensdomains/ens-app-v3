@@ -126,7 +126,7 @@
           "action": "迁移"
         },
         "noResolver": {
-          "title": "未指定解析器",
+          "title": "未设置解析器",
           "subtitle": "在编辑个人资料之前，需要设置解析器。",
           "action": "更新"
         },
@@ -292,6 +292,17 @@
     "deleteEmancipatedSubnameWarning": {
       "title": "不能重新创建该子名称",
       "message": "删除该子名称意味着不能再使用或重新创建它，一直到它过期 {{date}}。由于父名称控制权限已被撤销，因此该操作也无法撤消。"
+    },
+    "selectPrimaryName": {
+      "title": "选择一个主名称",
+      "errors": {
+        "noNamesFound": "未找到名称",
+        "noEligibleNames": "没有符合条件的名称"
+      }
+    },
+    "resetPrimaryName": {
+      "title": "移除主名称",
+      "description": "移除后它不会再作为当前地址的名称来显示。但是，发送到该名称的交易仍将解析到当前地址，除非您删除该名称的 ETH 记录。"
     }
   },
   "transaction": {
@@ -314,6 +325,20 @@
     "syncManager": {
       "description": "同步管理员会让您成为该名称的新管理员。当前管理员 <b>({{manager}})</b> 将会失去管理权限。",
       "wrappedWarning": "同步管理员也将解除该名称的包装，这会烧毁 NFT 并重置所有权限。"
+    },
+    "selectPrimaryName": {
+      "updateEthAddress": {
+        "title": "更新 ETH 地址",
+        "description": "该名称的 ETH 地址和当前钱包无法匹配。要使用该名称作为您的主名称，您需要先更新该名称的 ETH 地址记录。"
+      },
+      "noResolver": {
+        "title": "未设置解析器",
+        "description": "要使用该名称作为您的主名称，您需要先设置一个解析器并更新该名称的 ETH 地址记录。"
+      },
+      "invalidResolver": {
+        "title": "未经授权的解析器",
+        "description": "要使用此名称作为您的主名称，您需要先设置一个有效的解析器并更新该名称的 ETH 地址记录。"
+      }     
     }
   },
   "errors": {

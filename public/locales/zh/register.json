@@ -18,8 +18,8 @@
     "pricing": {
       "insufficientBalance": "余额不足",
       "multipleYearsMessage": "一次续期数年可以避免每年进行交易，从而节省网络成本。",
-      "primaryName": "作为主名使用",
-      "primaryNameMessage": "把您的地址关联到该名称，这样在连接到 dApp 时，就可以将它作为您的个人资料显示出来。每个地址只能有一个主名。",
+      "primaryName": "作为主名称使用",
+      "primaryNameMessage": "把您的地址关联到该名称，这样在连接到 dApp 时，就可以将它作为您的个人资料显示出来。每个地址只能有一个主名称。",
       "premium": {
         "heading": "该名称存在一个临时溢价",
         "subheading": "为了给刚过期的名称提供公平的注册机会，溢价从 1 亿美元开始，在 21 天内逐步降至 0 美元。您可以在下面利用日期计算溢价。",
