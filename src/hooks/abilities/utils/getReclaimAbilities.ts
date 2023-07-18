@@ -6,17 +6,9 @@ import type { ReclaimAbilities } from '../useAbilities'
 
 type BasicName = ReturnType<typeof useBasicName>
 
-export const getReclaimAbilities = ({
-  address,
-  basicNameData,
-  parentBasicNameData,
-}: {
-  address?: string
-  basicNameData: BasicName
-  parentBasicNameData: BasicName
-}): ReclaimAbilities => {
-  return match([basicNameData, parentBasicNameData])
-    .with(
+const RECLAIM_INFO = {
+  expiredWrappedSubname: {
+    pattern: (address?: string) =>
       [
         {
           pccExpired: true,
@@ -27,11 +19,23 @@ export const getReclaimAbilities = ({
             owner: P.when((owner) => owner === address),
           },
         },
-      ],
-      () => ({
-        canReclaim: true,
-      }),
-    )
+      ] as const,
+  },
+} as const
+
+export const getReclaimAbilities = ({
+  address,
+  basicNameData,
+  parentBasicNameData,
+}: {
+  address?: string
+  basicNameData: BasicName
+  parentBasicNameData: BasicName
+}): ReclaimAbilities => {
+  return match([basicNameData, parentBasicNameData])
+    .with(RECLAIM_INFO.expiredWrappedSubname.pattern(address), () => ({
+      canReclaim: true,
+    }))
     .otherwise(() => ({
       canReclaim: false,
     }))

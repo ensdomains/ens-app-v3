@@ -258,11 +258,27 @@ const get2LDEthAbilities = ({
   address?: string
   basicNameData: BasicName
 }): SendAbilities => {
-  return (
-    match(basicNameData)
-      // Wrapped name
-      .with(CONTRACT_INFO.wrappedName.pattern, CONTRACT_INFO.wrappedName.guard(address), () => {
-        const sendNameFunctionCallDetails = CONTRACT_INFO.wrappedName.owner as ContractDetails
+  return match(basicNameData)
+    .with(CONTRACT_INFO.wrappedName.pattern, CONTRACT_INFO.wrappedName.guard(address), () => {
+      const sendNameFunctionCallDetails = CONTRACT_INFO.wrappedName.owner as ContractDetails
+      const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+      const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+      const canSend = canSendOwner || canSendManager
+      return {
+        canSend,
+        canSendOwner,
+        canSendManager,
+        sendNameFunctionCallDetails,
+      } as SendAbilities
+    })
+    .with(
+      CONTRACT_INFO.unwrappedName.pattern,
+      CONTRACT_INFO.unwrappedName.guard(address),
+      ({ registrant }) => {
+        const isOwner = registrant === address
+        const sendNameFunctionCallDetails = CONTRACT_INFO.unwrappedName[
+          isOwner ? 'owner' : 'manager'
+        ] as ContractDetails
         const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
         const canSendManager = !!sendNameFunctionCallDetails?.sendManager
         const canSend = canSendOwner || canSendManager
@@ -272,32 +288,12 @@ const get2LDEthAbilities = ({
           canSendManager,
           sendNameFunctionCallDetails,
         } as SendAbilities
-      })
-      // Unwrapped name
-      .with(
-        CONTRACT_INFO.unwrappedName.pattern,
-        CONTRACT_INFO.unwrappedName.guard(address),
-        ({ registrant }) => {
-          const isOwner = registrant === address
-          const sendNameFunctionCallDetails = CONTRACT_INFO.unwrappedName[
-            isOwner ? 'owner' : 'manager'
-          ] as ContractDetails
-          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
-          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
-          const canSend = canSendOwner || canSendManager
-          return {
-            canSend,
-            canSendOwner,
-            canSendManager,
-            sendNameFunctionCallDetails,
-          } as SendAbilities
-        },
-      )
-      .otherwise(({ wrapperData }) => ({
-        ...BASE_RESPONSE,
-        ...(wrapperData?.child?.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
-      }))
-  )
+      },
+    )
+    .otherwise(({ wrapperData }) => ({
+      ...BASE_RESPONSE,
+      ...(wrapperData?.child?.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
+    }))
 }
 
 const getSubnameContractRole = (isSubname: boolean, isManager: boolean) =>
@@ -317,103 +313,97 @@ const getSubnameAbilities = ({
   basicNameData: BasicName
   parentBasicNameData: BasicName
 }): SendAbilities => {
-  return (
-    match([basicNameData, parentBasicNameData])
-      /* --------------- WRAPPED SUBNAME - WRAPPED PARENT --------------- */
-      .with(
-        CONTRACT_INFO.wrappedSubname.wrappedParent.pattern,
-        CONTRACT_INFO.wrappedSubname.wrappedParent.guard(address),
-        ({ subnameOwner, pccBurned, parentPCCBurned }) => {
-          const isSubname = subnameOwner === address
-          const isManager = isSubname ? !pccBurned : !parentPCCBurned
-          const role = getSubnameContractRole(isSubname, isManager)
-          const sendNameFunctionCallDetails = CONTRACT_INFO.wrappedSubname.wrappedParent[
-            role
-          ] as ContractDetails
-          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
-          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
-          const canSend = canSendOwner || canSendManager
-          if (!isSubname && pccBurned) return BASE_RESPONSE
-          return {
-            canSend,
-            canSendOwner,
-            canSendManager,
-            sendNameFunctionCallDetails,
-          } as SendAbilities
-        },
-      )
-      /* --------------- UNWRAPPED SUBNAME - UNWRAPPED PARENT --------------- */
-      .with(
-        CONTRACT_INFO.unwrappedSubname.unwrappedParent.pattern,
-        CONTRACT_INFO.unwrappedSubname.unwrappedParent.guard(address),
-        ({ subnameOwner, parentOwner }) => {
-          const isSubname = subnameOwner === address
-          const isManager = isSubname ? true : parentOwner === address
-          const role = getSubnameContractRole(isSubname, isManager)
-          const sendNameFunctionCallDetails = CONTRACT_INFO.unwrappedSubname.unwrappedParent[
-            role
-          ] as ContractDetails
-          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
-          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
-          const canSend = canSendOwner || canSendManager
-          return {
-            canSend,
-            canSendOwner,
-            canSendManager,
-            sendNameFunctionCallDetails,
-          } as SendAbilities
-        },
-      )
-      /* --------------- WRAPPED SUBNAME - UNWRAPPED PARENT --------------- */
-      .with(
-        CONTRACT_INFO.wrappedSubname.unwrappedParent.pattern,
-        CONTRACT_INFO.wrappedSubname.unwrappedParent.guard(address),
-        ({ subnameOwner, pccBurned, parentOwner }) => {
-          const isSubname = subnameOwner === address
-          const isManager = isSubname ? !pccBurned : parentOwner === address
-          const role = getSubnameContractRole(isSubname, isManager)
-          const sendNameFunctionCallDetails = CONTRACT_INFO.wrappedSubname.unwrappedParent[
-            role
-          ] as ContractDetails
-          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
-          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
-          const canSend = canSendOwner || canSendManager
-          if (!isSubname && pccBurned) return BASE_RESPONSE
-          return {
-            canSend,
-            canSendOwner,
-            canSendManager,
-            sendNameFunctionCallDetails,
-          } as SendAbilities
-        },
-      )
-      /* --------------- UNWRAPPED SUBNAME - WRAPPED PARENT --------------- */
-      .with(
-        CONTRACT_INFO.unwrappedSubname.wrappedParent.pattern,
-        CONTRACT_INFO.unwrappedSubname.wrappedParent.guard(address),
-        ({ subnameOwner, parentPCCBurned }) => {
-          const isSubname = subnameOwner === address
-          const isManager = isSubname ? true : !parentPCCBurned
-          const role = getSubnameContractRole(isSubname, isManager)
-          const sendNameFunctionCallDetails = CONTRACT_INFO.unwrappedSubname.wrappedParent[
-            role
-          ] as ContractDetails
-          const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
-          const canSendManager = !!sendNameFunctionCallDetails?.sendManager
-          const canSend = canSendOwner || canSendManager
-          return {
-            canSend,
-            canSendOwner,
-            canSendManager,
-            sendNameFunctionCallDetails,
-          } as SendAbilities
-        },
-      )
-      .otherwise(([{ wrapperData }]) => ({
-        ...BASE_RESPONSE,
-        ...(wrapperData?.child?.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
-      }))
-  )
+  return match([basicNameData, parentBasicNameData])
+    .with(
+      CONTRACT_INFO.wrappedSubname.wrappedParent.pattern,
+      CONTRACT_INFO.wrappedSubname.wrappedParent.guard(address),
+      ({ subnameOwner, pccBurned, parentPCCBurned }) => {
+        const isSubname = subnameOwner === address
+        const isManager = isSubname ? !pccBurned : !parentPCCBurned
+        const role = getSubnameContractRole(isSubname, isManager)
+        const sendNameFunctionCallDetails = CONTRACT_INFO.wrappedSubname.wrappedParent[
+          role
+        ] as ContractDetails
+        const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+        const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+        const canSend = canSendOwner || canSendManager
+        if (!isSubname && pccBurned) return BASE_RESPONSE
+        return {
+          canSend,
+          canSendOwner,
+          canSendManager,
+          sendNameFunctionCallDetails,
+        } as SendAbilities
+      },
+    )
+    .with(
+      CONTRACT_INFO.unwrappedSubname.unwrappedParent.pattern,
+      CONTRACT_INFO.unwrappedSubname.unwrappedParent.guard(address),
+      ({ subnameOwner, parentOwner }) => {
+        const isSubname = subnameOwner === address
+        const isManager = isSubname ? true : parentOwner === address
+        const role = getSubnameContractRole(isSubname, isManager)
+        const sendNameFunctionCallDetails = CONTRACT_INFO.unwrappedSubname.unwrappedParent[
+          role
+        ] as ContractDetails
+        const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+        const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+        const canSend = canSendOwner || canSendManager
+        return {
+          canSend,
+          canSendOwner,
+          canSendManager,
+          sendNameFunctionCallDetails,
+        } as SendAbilities
+      },
+    )
+    .with(
+      CONTRACT_INFO.wrappedSubname.unwrappedParent.pattern,
+      CONTRACT_INFO.wrappedSubname.unwrappedParent.guard(address),
+      ({ subnameOwner, pccBurned, parentOwner }) => {
+        const isSubname = subnameOwner === address
+        const isManager = isSubname ? !pccBurned : parentOwner === address
+        const role = getSubnameContractRole(isSubname, isManager)
+        const sendNameFunctionCallDetails = CONTRACT_INFO.wrappedSubname.unwrappedParent[
+          role
+        ] as ContractDetails
+        const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+        const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+        const canSend = canSendOwner || canSendManager
+        if (!isSubname && pccBurned) return BASE_RESPONSE
+        return {
+          canSend,
+          canSendOwner,
+          canSendManager,
+          sendNameFunctionCallDetails,
+        } as SendAbilities
+      },
+    )
+    .with(
+      CONTRACT_INFO.unwrappedSubname.wrappedParent.pattern,
+      CONTRACT_INFO.unwrappedSubname.wrappedParent.guard(address),
+      ({ subnameOwner, parentPCCBurned }) => {
+        const isSubname = subnameOwner === address
+        const isManager = isSubname ? true : !parentPCCBurned
+        const role = getSubnameContractRole(isSubname, isManager)
+        const sendNameFunctionCallDetails = CONTRACT_INFO.unwrappedSubname.wrappedParent[
+          role
+        ] as ContractDetails
+        const canSendOwner = !!sendNameFunctionCallDetails?.sendOwner
+        const canSendManager = !!sendNameFunctionCallDetails?.sendManager
+        const canSend = canSendOwner || canSendManager
+        return {
+          canSend,
+          canSendOwner,
+          canSendManager,
+          sendNameFunctionCallDetails,
+        } as SendAbilities
+      },
+    )
+    .otherwise(([{ wrapperData }]) => ({
+      ...BASE_RESPONSE,
+      ...(wrapperData?.child?.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
+    }))
 }
 
 export const getSendAbilities = ({
