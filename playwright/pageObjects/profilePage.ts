@@ -7,6 +7,7 @@ import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedSocialRecordKeys from '@app/constants/supportedSocialRecordKeys.json'
 
+const PROFILE_SNIPPET_KEYS = ['nickname', ...supportedGeneralRecordKeys]
 export class ProfilePage {
   readonly page: Page
 
@@ -46,7 +47,7 @@ export class ProfilePage {
   }
 
   record(type: 'text' | 'address', key: string): Locator {
-    if (type === 'text' && supportedGeneralRecordKeys.includes(key))
+    if (type === 'text' && PROFILE_SNIPPET_KEYS.includes(key))
       return this.page.getByTestId(`profile-snippet-${key}`)
     if (type === 'text' && supportedSocialRecordKeys.includes(key))
       return this.page.getByTestId(`social-profile-button-${key}`)

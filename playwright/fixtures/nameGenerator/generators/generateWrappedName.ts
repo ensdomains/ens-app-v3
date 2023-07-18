@@ -63,6 +63,7 @@ export const generateWrappedName = async (
   }) as PublicResolver
 
   // Commit
+  console.log('making commitment')
   const { commitment } = makeCommitment({
     name,
     owner: _owner,
@@ -79,6 +80,7 @@ export const generateWrappedName = async (
   await provider.mine()
 
   // Register
+  console.log('registering name')
   const price = await controller.rentPrice(label, duration)
   await controller.register(
     ...makeRegistrationData({
@@ -97,6 +99,7 @@ export const generateWrappedName = async (
   )
 
   // Create subnames
+  console.log('creating subnames')
   const _subnames = (subnames || []).map((subname) => ({
     ...subname,
     name: `${label}.eth`,
@@ -108,7 +111,7 @@ export const generateWrappedName = async (
   }
 
   // Force set an invalid resolver
-  if (!hasValidResolver) {
+  if (!hasValidResolver && resolver) {
     const nameWrapper = await getContract('NameWrapper', { signer })
     const node = namehash(`${label}.eth`)
     await nameWrapper.setResolver(node, resolver)

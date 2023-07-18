@@ -7,6 +7,9 @@ import { test } from '..'
 
 const oldResolver = '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB'
 const newResolver = '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF'
+// This not an actual resovler but a dummy address that has been inserted to the second to last known resolver
+// to test the situation where unwrapped do not show a warning when editing profile.
+const dummyRersolver = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
 
 const DEFAULT_RECORDS = {
   texts: [
@@ -41,12 +44,11 @@ test.describe('unwrapped', () => {
       page,
       accounts,
       wallet,
-      Login,
+      login,
       ProfilePage,
     }) => {
       await page.goto('/legacy.test')
 
-      const login = new Login(page, wallet, accounts)
       await login.connect('user2')
       await page.pause()
 
@@ -62,7 +64,7 @@ test.describe('unwrapped', () => {
       wallet,
       accounts,
       nameGenerator,
-      Login,
+      login,
       ProfilePage,
       TransactionModal,
       MorePage,
@@ -85,7 +87,6 @@ test.describe('unwrapped', () => {
       const profilePage = new ProfilePage(page)
       await profilePage.goto(subname)
 
-      const login = new Login(page, wallet, accounts)
       await login.connect()
 
       await profilePage.editProfileButton.click()
@@ -108,7 +109,7 @@ test.describe('unwrapped', () => {
       accounts,
       nameGenerator,
       provider,
-      Login,
+      login,
       ProfilePage,
       TransactionModal,
       MorePage,
@@ -132,7 +133,6 @@ test.describe('unwrapped', () => {
       await morePage.goto(name)
       expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
-      const login = new Login(page, wallet, accounts)
       await login.connect()
 
       const profilePage = new ProfilePage(page)
@@ -159,8 +159,7 @@ test.describe('unwrapped', () => {
       wallet,
       accounts,
       nameGenerator,
-      provider,
-      Login,
+      login,
       ProfilePage,
       TransactionModal,
       MorePage,
@@ -177,7 +176,6 @@ test.describe('unwrapped', () => {
       await morePage.goto(name)
       await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
-      const login = new Login(page, wallet, accounts)
       await login.connect()
 
       const profilePage = new ProfilePage(page)
@@ -221,7 +219,7 @@ test.describe('unwrapped', () => {
       nameGenerator,
       wallet,
       accounts,
-      Login,
+      login,
       MorePage,
       ProfilePage,
       TransactionModal,
@@ -237,7 +235,6 @@ test.describe('unwrapped', () => {
       await morePage.goto(name)
       await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
-      const login = new Login(page, wallet, accounts)
       await login.connect()
 
       const profilePage = new ProfilePage(page)
@@ -293,7 +290,7 @@ test.describe('wrapped', () => {
       MorePage,
       ProfilePage,
       TransactionModal,
-      Login,
+      login,
     }) => {
       const name = await nameGenerator({
         label: 'wrapped',
@@ -304,7 +301,6 @@ test.describe('wrapped', () => {
       const morePage = new MorePage(page)
       await morePage.goto(name)
 
-      const login = new Login(page, wallet, accounts)
       await login.connect()
 
       await expect(morePage.resolver).toHaveText(oldResolver)
@@ -322,5 +318,65 @@ test.describe('wrapped', () => {
       await morePage.goto(name)
       await expect(morePage.resolver).toHaveText(newResolver)
     })
+  })
+
+  test.describe('update', () => {
+    test('should be able to update account', async ({
+      page,
+      wallet,
+      nameGenerator,
+      login,
+      ProfilePage,
+      TransactionModal,
+    }) => {
+      const name = await nameGenerator({
+        label: 'wrapped',
+        type: 'wrapped',
+        owner: 'user',
+      })
+
+      const profilePage = new ProfilePage(page)
+      await profilePage.goto(name)
+
+      await login.connect()
+
+      await profilePage.editProfileButton.click()
+
+      await profilePage.profileEditorAddInputs(['name', 'abi'])
+      await profilePage.profileEditorInput('name').fill('Test Name')
+      await profilePage.profileEditorInput('abi').fill('[{"test":"test"}]')
+      await profilePage.profileEditor.getByTestId('profile-submit-button').click()
+
+      const transactionModal = new TransactionModal(page, wallet)
+      await transactionModal.autoComplete()
+
+      await page.pause()
+
+      await expect(profilePage.record('text', 'nickname')).toHaveText('Test Name')
+      await page.getByTestId('records-tab').click()
+
+      await expect(page.getByTestId('name-details-text')).toHaveText('[{"test":"test"}]')
+    })
+  })
+})
+
+test.describe('resolver status', () => {
+  test('should not show warning when editing unwrapped name with second to last resolver', async ({
+    page,
+    login,
+    nameGenerator,
+    ProfilePage,
+    MorePage,
+  }) => {
+    const name = await nameGenerator({
+      label: 'unwrapped',
+      type: 'legacy',
+      resolver: dummyRersolver,
+    })
+
+    const morePage = new MorePage(page)
+    await morePage.goto(name)
+
+    await page.pause()
   })
 })

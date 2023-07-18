@@ -18,7 +18,7 @@ type Fixtures = {
   accounts: Accounts
   wallet: Web3ProviderBackend
   provider: Provider
-  Login: typeof Login
+  login: InstanceType<typeof Login>
   getContract: (contract: string) => any
   nameGenerator: (name: Name) => Promise<string>
 }
@@ -50,7 +50,10 @@ export const test = base.extend<Fixtures & PageObjects>({
     const provider = createProvider()
     await use(provider)
   },
-  Login: ({}, use) => use(Login),
+  login: async ({ page, wallet, accounts }, use) => {
+    const login = new Login(page, wallet, accounts)
+    await use(login)
+  },
   nameGenerator: async ({ accounts, provider, page }, use) => {
     const _nameGenerator = nameGenerator({ accounts, provider, page })
     await use(_nameGenerator)

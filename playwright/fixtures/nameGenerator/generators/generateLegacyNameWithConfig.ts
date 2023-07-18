@@ -16,6 +16,9 @@ import { generateRecords } from './generateRecords'
 const DEFAULT_DURATION = 31536000
 const DURATION_ADJUSTMENT = 2419200 + 7776000
 const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
+const VALID_RESOLVERS = RESOLVER_ADDRESSES['1337'].filter(
+  (resolver) => resolver !== '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',
+)
 
 export type Name = {
   label: string
@@ -52,7 +55,7 @@ export const generateLegacyNameWithConfig = async (
   const _addr = accounts.getAddress(addr)
 
   // Check if resolver is accepted resolver
-  const hasValidResolver = resolver && RESOLVER_ADDRESSES['1337'].includes(resolver)
+  const hasValidResolver = resolver && VALID_RESOLVERS.includes(resolver)
   const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 
   // Connect contract
@@ -95,7 +98,7 @@ export const generateLegacyNameWithConfig = async (
     await generateLegacySubname(subname, { provider, accounts })
   }
 
-  if (!hasValidResolver) {
+  if (!hasValidResolver && resolver) {
     const registry = await getContract('ENSRegistry', { signer })
     const node = namehash(`${label}.eth`)
     await registry.setResolver(node, resolver)
