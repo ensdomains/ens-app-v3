@@ -11,6 +11,20 @@ type Options = {
   enabled?: boolean
 }
 
+export const isWildcardCalc = ({
+  registryResolver,
+  resolverAddress,
+  profile,
+}: {
+  registryResolver: ReturnType<typeof useRegistryResolver>
+  resolverAddress: string
+  profile: ReturnType<typeof useProfile>
+}) =>
+  !registryResolver.isError &&
+  (!registryResolver.data || registryResolver.data === emptyAddress) &&
+  resolverAddress !== registryResolver.data &&
+  !profile.isFetching
+
 export const useResolverType = (name: string, options: Options = {}) => {
   const enabled = (options.enabled ?? true) && !!name
 
@@ -35,11 +49,7 @@ export const useResolverType = (name: string, options: Options = {}) => {
   const { isFetching } = registryResolver
   const { isError } = registryResolver
 
-  const isWildcard =
-    !registryResolver.isError &&
-    (!registryResolver.data || registryResolver.data === emptyAddress) &&
-    resolverAddress !== registryResolver.data &&
-    !profile.isFetching
+  const isWildcard = isWildcardCalc({ registryResolver, resolverAddress, profile })
 
   const data = useMemo(() => {
     if (!enabled || isLoading) return
