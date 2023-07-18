@@ -2,7 +2,7 @@ import { renderHook } from '@app/test-utils'
 
 import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
 
-import { useResolverType } from './useResolverType'
+import { isWildcardCalc, useResolverType } from './useResolverType'
 
 jest.mock('@app/hooks/useChainId', () => ({
   useChainId: () => 1,
@@ -169,5 +169,44 @@ describe('useResolverType', () => {
       data: { isWildcard: false },
       isLoading: false,
     })
+  })
+})
+
+describe('isWildcardCalc', () => {
+  const registryResolver = { isError: false, data: null }
+  const resolverAddress = '0x123'
+  const profile = { isFetching: false }
+
+  it('returns true when registryResolver is not an error and data is null or empty address and resolverAddress is not equal to data and profile is not fetching', () => {
+    registryResolver.isError = false
+    registryResolver.data = null
+    expect(isWildcardCalc({ registryResolver, resolverAddress, profile })).toBe(true)
+
+    registryResolver.data = '0x0000000000000000000000000000000000000000'
+    expect(isWildcardCalc({ registryResolver, resolverAddress, profile })).toBe(true)
+  })
+
+  it('returns false when registryResolver is an error', () => {
+    registryResolver.isError = true
+    expect(isWildcardCalc({ registryResolver, resolverAddress, profile })).toBe(false)
+  })
+
+  it('returns false when registryResolver data is not null or empty address', () => {
+    registryResolver.isError = false
+    registryResolver.data = '0x456'
+    expect(isWildcardCalc({ registryResolver, resolverAddress, profile })).toBe(false)
+  })
+
+  it('returns false when resolverAddress is equal to registryResolver data', () => {
+    registryResolver.isError = false
+    registryResolver.data = '0x123'
+    expect(isWildcardCalc({ registryResolver, resolverAddress, profile })).toBe(false)
+  })
+
+  it('returns false when profile is fetching', () => {
+    registryResolver.isError = false
+    registryResolver.data = null
+    profile.isFetching = true
+    expect(isWildcardCalc({ registryResolver, resolverAddress, profile })).toBe(false)
   })
 })
