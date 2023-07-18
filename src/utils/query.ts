@@ -1,4 +1,3 @@
-import { getDefaultWallets } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
 import { DefaultOptions, QueryClient } from '@tanstack/react-query'
 import { ChainProviderFn, configureChains, createClient } from 'wagmi'
@@ -9,6 +8,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { makePersistent } from '@app/utils/persist'
 
 import { WC_PROJECT_ID } from './constants'
+import { getDefaultWallets } from './getDefaultWallets'
 
 const providerArray: ChainProviderFn<typeof mainnet | typeof goerli | typeof localhost>[] = []
 
@@ -41,7 +41,7 @@ if (process.env.NEXT_PUBLIC_PROVIDER) {
 
 const { provider, chains } = configureChains([mainnet, goerli, localhost], providerArray)
 
-const { connectors } = getDefaultWallets({
+const connectors = getDefaultWallets({
   appName: 'ENS',
   projectId: WC_PROJECT_ID,
   chains,
