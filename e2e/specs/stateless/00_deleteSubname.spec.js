@@ -2,7 +2,7 @@ import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Delete subnames', () => {
   before(() => {
-    acceptMetamaskAccess(2, true)
+    acceptMetamaskAccess(2, false)
   })
 
   it('should be able to delete subname', () => {
