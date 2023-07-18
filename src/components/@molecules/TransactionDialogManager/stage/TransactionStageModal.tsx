@@ -113,6 +113,7 @@ const BarPrefix = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['2']} ${theme.space['4']};
     width: min-content;
+    white-space: nowrap;
     height: ${theme.space['9']};
     margin-right: -1px;
 
