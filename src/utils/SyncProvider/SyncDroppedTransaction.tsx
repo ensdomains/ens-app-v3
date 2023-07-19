@@ -6,11 +6,15 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainId } from '@app/hooks/useChainId'
 
-const accountHistoryEndpoints = {
-  1: (address) =>
-    `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`,
-  5: (address) =>
-    `https://api-goerli.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`,
+export const getAccountHistoryEndpoint = (address: string, chainId: number) => {
+  switch (chainId) {
+    case 1:
+      return `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
+    case 5:
+      return `https://api-goerli.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
+    default:
+      return ''
+  }
 }
 
 function useIntervalStrict(callback: () => void, delay: number | null) {
@@ -53,7 +57,7 @@ function useInterval(callback: () => void, delay: number | null, dependencies: a
   }, [delay, ...dependencies])
 }
 
-const findDroppedTransactions = async (transactions, address, store, chainId, provider) => {
+export const findDroppedTransactions = async (transactions, address, store, chainId, provider) => {
   // Transactions are all tied to an address and a chain
   if (!address || !store || !chainId || !provider || !transactions?.length) return
 
@@ -64,7 +68,7 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
     (transaction) => transaction.searchStatus === 'searching',
   )
 
-  const etherscanEndpoint = accountHistoryEndpoints[chainId]?.(address)
+  const etherscanEndpoint = getAccountHistoryEndpoint(address, chainId)
   const etherscanResponse = await fetch(etherscanEndpoint)
   const etherscanJson = await etherscanResponse.json()
   const accountTransactionHistory = etherscanJson?.result
@@ -86,7 +90,7 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
 
     // If hash is not the same then it might be a replacement
 
-    // If timestamp on mined transaction if after the time we sent the transactions, and the input is the
+    // If timestamp on mined transaction is after the time we sent the transactions, and the input is the
     // same, we can assume it was a replacement. Best we can do since we don't have the nonce
     const replacementTransactions = accountTransactionHistory.filter(
       (historicTransaction) =>
@@ -120,24 +124,19 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
   }
 
   for (const pendingTransaction of pendingTransactions) {
-    console.log('pendingTransaction: ', pendingTransaction)
-
     const currentNonce = await provider.getTransactionCount(address)
 
     if (currentNonce > pendingTransaction.nonce) {
       // Transaction either got replaced or has been cancelled
 
       // Find tranasaction in user's history based on nonce
-
       // Get matching nonce from history
       const matchingNonceTransaction = accountTransactionHistory.find((tx: any) => {
         return parseInt(tx.nonce, 10) === pendingTransaction.nonce
       })
-      console.log('matchingNonceTransaction: ', matchingNonceTransaction)
 
       // See if matching nonce transaction is a replacement
       if (matchingNonceTransaction?.input === pendingTransaction?.input) {
-        console.log('replacement!')
         store.setReplacedTransactionByNonce(
           address,
           chainId,
@@ -160,7 +159,6 @@ const findDroppedTransactions = async (transactions, address, store, chainId, pr
 
     // If the transaction has not been cancelled or replaced, it may have been dropped
     const result = await provider.getTransaction(pendingTransaction.hash)
-    console.log('result: ', result)
     if (!result) {
       // If a pending transaction is not found, it has been dropped
       store.setFailedTransaction(address, chainId, pendingTransaction.hash)
@@ -176,13 +174,10 @@ export const SyncDroppedTransaction = ({ children }: { children: React.ReactNode
   const store = useTransactionStore()
   const chainId = useChainId()
 
-  console.log('transactions: ', transactions)
-
   useInterval(
     () => findDroppedTransactions(transactions, address, store, chainId, provider),
     10000,
     [address, chainId, store, provider, ...transactions.map((x) => x.hash)],
-    // [transactions, address, store, chainId, provider],
   )
 
   return <div>{children}</div>

@@ -147,9 +147,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     [currentGraphBlock, isOutOfSync],
   )
 
-  // Watch for completed transactions with the same nonce
-  // useSyncDroppedTransaction()
-
   return <Context.Provider value={value}>{children}</Context.Provider>
 }
 
