@@ -125,7 +125,6 @@ describe('foundTransaction', () => {
     const account = 'account'
     const chainId = 1
     const nonce = 1
-    const transactionInput = 'transactionInput'
 
     const mockTransactions = [
       {
@@ -138,19 +137,12 @@ describe('foundTransaction', () => {
     const mockUpdateTransactions = (account, chainId, updateFn) => {
       updateFnResult = updateFn(mockTransactions)
     }
-    foundTransaction(mockUpdateTransactions)(
-      account,
-      chainId,
-      transactionHash,
-      nonce,
-      transactionInput,
-    )
+    foundTransaction(mockUpdateTransactions)(account, chainId, transactionHash, nonce)
     expect(updateFnResult).toEqual([
       {
         hash: transactionHash,
         searchStatus: 'found',
         nonce,
-        transactionInput,
       },
     ])
   })
@@ -183,8 +175,9 @@ describe('etherscanDataToMinedData', () => {
 
     const expectedMinedData = {
       blockHash: '0x1234567890abcdef',
-      blockNumber: '123456',
-      confirmations: '10',
+      blockNumber: 123456,
+      byzantium: true,
+      confirmations: 10,
       contractAddress: '0x1234567890abcdef',
       cumulativeGasUsed: BigNumber.from(etherscanMinedData.cumulativeGasUsed),
       effectiveGasPrice: BigNumber.from(etherscanMinedData.gasPrice),
@@ -192,7 +185,7 @@ describe('etherscanDataToMinedData', () => {
       functionName: 'transfer',
       gas: '21000',
       gasPrice: '1000000000',
-      gasUsed: '21000',
+      gasUsed: BigNumber.from('21000'),
       hash: '0x1234567890abcdef',
       input: '0x',
       isError: '0',
@@ -204,6 +197,10 @@ describe('etherscanDataToMinedData', () => {
       transactionIndex: '0',
       txreceipt_status: '1',
       value: '1000000000000000000',
+      logs: [],
+      logsBloom: '',
+      transactionHash: '',
+      type: 0,
     }
 
     expect(etherscanDataToMinedData(etherscanMinedData)).toEqual(expectedMinedData)
