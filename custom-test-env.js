@@ -9,6 +9,9 @@ module.exports = class CustomTestEnvironment extends Environment {
       this.global.TextEncoder = TextEncoder
       this.global.TextDecoder = TextDecoder
       this.global.Uint8Array = Uint8Array
+      this.global.fetch = fetch
+      this.global.Request = Request
+      this.global.Response = Response
     }
   }
 }

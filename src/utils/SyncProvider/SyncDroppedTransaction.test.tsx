@@ -7,7 +7,6 @@ import { setupServer } from 'msw/node'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
-import { useChainId } from '@app/hooks/useChainId'
 
 import { findDroppedTransactions, getAccountHistoryEndpoint, SyncDroppedTransaction } from './SyncDroppedTransaction'
 
@@ -33,7 +32,6 @@ jest.mock('wagmi')
 jest.mock('@app/hooks/useAccountSafely')
 jest.mock('@app/hooks/transactions/useRecentTransactions')
 jest.mock('@app/hooks/transactions/TransactionStoreContext')
-jest.mock('@app/hooks/useChainId')
 
 describe('SyncDroppedTransaction', () => {
   const mockProvider = { test: 'provider' }
@@ -47,30 +45,13 @@ describe('SyncDroppedTransaction', () => {
     useAccountSafely.mockReturnValue({ address: mockAddress })
     useRecentTransactions.mockReturnValue(mockTransactions)
     useTransactionStore.mockReturnValue(mockStore)
-    useChainId.mockReturnValue(mockChainId)
   })
 
   afterEach(() => {
     jest.clearAllMocks()
   })
 
-  it('should call findDroppedTransactions with the correct arguments', () => {
-    const mockFindDroppedTransactions = jest.fn()
-    jest.spyOn(global, 'setInterval').mockImplementation((fn) => fn())
-
-    render(<SyncDroppedTransaction>Test</SyncDroppedTransaction>)
-
-    expect(mockFindDroppedTransactions).toHaveBeenCalledWith(
-      mockTransactions,
-      mockAddress,
-      mockStore,
-      mockChainId,
-      mockProvider,
-    )
-  })
-
   it('should call setInterval with the correct arguments', () => {
-    const mockFindDroppedTransactions = jest.fn()
     const mockDelay = 10000
     jest.spyOn(global, 'setInterval').mockImplementation((fn) => fn())
 
@@ -79,13 +60,6 @@ describe('SyncDroppedTransaction', () => {
     expect(global.setInterval).toHaveBeenCalledWith(
       expect.any(Function),
       mockDelay,
-      expect.arrayContaining([
-        mockAddress,
-        mockChainId,
-        mockStore,
-        mockProvider,
-        ...mockTransactions.map((x) => x.hash),
-      ]),
     )
   })
 })

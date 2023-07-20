@@ -69,6 +69,8 @@ describe('transactionStore', () => {
       newHash,
       status: 'repriced',
       minedData: { status: 1, blockHash: 'blockHash', timestamp: 1000 },
+      searchRetries: 0,
+      searchStatus: 'searching',
     })
     expect(transactions[0]).toStrictEqual({
       ...transaction,
@@ -76,6 +78,8 @@ describe('transactionStore', () => {
       isSafeTx: false,
       status: 'confirmed',
       minedData: { status: 1, blockHash: 'blockHash', timestamp: 1000 },
+      searchRetries: 0,
+      searchStatus: 'searching',
     })
   })
   it('should allow a cancelled transaction', async () => {
@@ -109,6 +113,8 @@ describe('transactionStore', () => {
       ...transaction,
       status: 'failed',
       minedData: { status: 0, hash: cancelledHash, blockHash: 'blockHash', timestamp: 1000 },
+      searchRetries: 0,
+      searchStatus: 'searching',
     })
   })
 })

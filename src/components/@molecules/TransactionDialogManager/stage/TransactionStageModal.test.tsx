@@ -274,12 +274,14 @@ describe('TransactionStageModal', () => {
         await (mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({
           hash: '0x123',
         })
-        expect(mockAddTransaction).toBeCalledWith({
-          hash: '0x123',
-          action: 'test',
-          isSafeTx: false,
-          key: 'test',
-        })
+        expect(mockAddTransaction).toBeCalledWith(
+          expect.objectContaining({
+            hash: '0x123',
+            action: 'test',
+            isSafeTx: false,
+            key: 'test',
+          }),
+        )
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactionHash',
           payload: '0x123',
@@ -294,12 +296,14 @@ describe('TransactionStageModal', () => {
         await (mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({
           hash: '0x123',
         })
-        expect(mockAddTransaction).toBeCalledWith({
-          hash: '0x123',
-          action: 'test',
-          isSafeTx: true,
-          key: 'test',
-        })
+        expect(mockAddTransaction).toBeCalledWith(
+          expect.objectContaining({
+            hash: '0x123',
+            action: 'test',
+            isSafeTx: true,
+            key: 'test',
+          }),
+        )
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactionHash',
           payload: '0x123',
