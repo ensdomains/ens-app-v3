@@ -133,6 +133,10 @@ export type TransactionFlowAction =
   | {
       name: 'resetTransactionStep'
     }
+  | {
+      name: 'setFailedTransaction'
+      payload: Transaction
+    }
 
 export type TransactionDialogProps = ComponentProps<typeof Dialog> & {
   variant: 'actionable'

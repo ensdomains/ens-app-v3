@@ -1,8 +1,7 @@
 /* eslint-disable default-case */
 
 /* eslint-disable no-param-reassign */
-import { current } from 'immer'
-
+// import { current } from 'immer'
 import {
   InternalTransactionFlow,
   InternalTransactionFlowItem,
@@ -111,6 +110,10 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       break
     }
     case 'setFailedTransaction': {
+      if (!action.payload.key) {
+        console.error('No key provided for setFailedTransaction')
+        break
+      }
       const targetTransactionIndex = draft.items[action.payload.key].transactions.findIndex(
         (transaction) => transaction.hash === action.payload.hash,
       )

@@ -4,6 +4,7 @@
 // this is taken from rainbowkit
 import { BigNumber } from '@ethersproject/bignumber'
 import type { BaseProvider, Block, TransactionReceipt } from '@ethersproject/providers'
+import type { PopulatedTransaction } from 'ethers'
 
 import { MinedData } from '@app/types'
 
@@ -11,7 +12,7 @@ import { waitForTransaction } from './waitForTransaction'
 
 const storageKey = 'transaction-data'
 
-type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'repriced' | 'unknown'
+type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'repriced' | 'unknown' | 'searching'
 
 interface BaseTransaction {
   hash: string
@@ -22,8 +23,11 @@ interface BaseTransaction {
   status: TransactionStatus
   minedData?: MinedData
   newHash?: string
-  nonce: number
+  nonce?: number
   searchRetries: number
+  searchStatus?: 'searching' | 'found'
+  input?: string
+  timestamp?: number
 }
 
 interface SearchingTransaction extends BaseTransaction {
@@ -65,7 +69,7 @@ export interface EtherscanMinedData {
   nonce: string
   timeStamp: string
   to: string
-  transactionIndex: string
+  transactionIndex: number
   // eslint-disable-next-line @typescript-eslint/naming-convention
   txreceipt_status: string
   value: string
@@ -77,7 +81,10 @@ export type Transaction =
   | RepricedTransaction
   | SearchingTransaction
 
-export type NewTransaction = Omit<Transaction, 'status' | 'minedData'>
+export type NewTransaction = Omit<Transaction, 'status' | 'minedData'> & {
+  input?: PopulatedTransaction['data']
+  timestamp?: number
+}
 
 type Data = Record<string, Record<number, Transaction[] | undefined>>
 
@@ -96,14 +103,20 @@ function loadData(): Data {
   )
 }
 
-export function etherscanDataToMinedData(
-  etherscanMinedData: EtherscanMinedData,
-): MinedData | EtherscanMinedData {
+export function etherscanDataToMinedData(etherscanMinedData: EtherscanMinedData): MinedData {
   return {
     ...etherscanMinedData,
     effectiveGasPrice: BigNumber.from(etherscanMinedData.gasPrice),
     cumulativeGasUsed: BigNumber.from(etherscanMinedData.cumulativeGasUsed),
+    gasUsed: BigNumber.from(etherscanMinedData.gasUsed),
     timestamp: parseInt(etherscanMinedData.timeStamp, 10),
+    blockNumber: parseInt(etherscanMinedData.blockNumber, 10),
+    confirmations: parseInt(etherscanMinedData.confirmations, 10),
+    logsBloom: '',
+    transactionHash: '',
+    logs: [],
+    byzantium: true,
+    type: 0,
   }
 }
 
@@ -125,22 +138,15 @@ function validateTransaction(transaction: NewTransaction): string[] {
 
 export const foundTransaction =
   (updateTransactions: any) =>
-  (
-    account: string,
-    chainId: number,
-    hash: string,
-    nonce: number,
-    transactionInput: string,
-  ): void => {
-    updateTransactions(account, chainId, (transactions) => {
+  (account: string, chainId: number, hash: string, nonce: number): void => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
           ? ({
               ...transaction,
               nonce,
-              transactionInput,
               searchStatus: 'found',
-            } as Transaction)
+            } as Omit<Transaction, 'SearchingTransaction'>)
           : transaction,
       )
     })
@@ -149,7 +155,7 @@ export const foundTransaction =
 export const setReplacedTransaction =
   (updateTransactions: any) =>
   (account: string, chainId: number, input: string, minedData: EtherscanMinedData) => {
-    updateTransactions(account, chainId, (transactions) => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.input === input
           ? ({
@@ -165,7 +171,7 @@ export const setReplacedTransaction =
 export const setReplacedTransactionByNonce =
   (updateTransactions: any) =>
   (account: string, chainId: number, input: string, minedData: EtherscanMinedData) => {
-    updateTransactions(account, chainId, (transactions) => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.input === input && transaction.nonce === parseInt(minedData.nonce, 10)
           ? ({
@@ -181,7 +187,7 @@ export const setReplacedTransactionByNonce =
 export const foundMinedTransaction =
   (updateTransactions: any) =>
   (account: string, chainId: number, hash: string, minedData: EtherscanMinedData) => {
-    updateTransactions(account, chainId, (transactions) => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
           ? ({
@@ -197,7 +203,7 @@ export const foundMinedTransaction =
 
 export const updateRetries =
   (updateTransactions: any) => (account: string, chainId: number, hash: string) => {
-    updateTransactions(account, chainId, (transactions) => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
           ? ({
@@ -211,7 +217,7 @@ export const updateRetries =
 
 export const setFailedTransaction =
   (updateTransactions: any) => (account: string, chainId: number, hash: string) => {
-    updateTransactions(account, chainId, (transactions) => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
           ? ({

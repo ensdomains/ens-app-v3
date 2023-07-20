@@ -1,5 +1,6 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { toUtf8String } from '@ethersproject/strings'
+import type { PopulatedTransaction } from 'ethers'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -259,30 +260,41 @@ export const uniqueTransactionIdentifierGenerator = (
   data: transactionData,
 })
 
-export const transactionSuccessHandler = (dependencies) => async (tx) => {
-  const { provider, connector, actionName, txKey, request, addRecentTransaction, dispatch } =
-    dependencies
-  let transactionData = null
-  try {
-    // If using private mempool, this won't error, will return null
-    transactionData = await provider.getTransaction(tx.hash)
-  } catch (e) {
-    console.error('Failed to get transaction info')
+export const transactionSuccessHandler =
+  (dependencies: {
+    provider: ReturnType<typeof useProvider>
+    connector: ReturnType<typeof useAccount>['connector'] | undefined
+    actionName: ManagedDialogPropsTwo['actionName']
+    txKey: string | null
+    request: PopulatedTransaction | undefined
+    addRecentTransaction: ReturnType<typeof useAddRecentTransaction>
+    dispatch: Dispatch<TransactionFlowAction>
+  }) =>
+  async (tx: any) => {
+    const { provider, connector, actionName, txKey, request, addRecentTransaction, dispatch } =
+      dependencies
+    let transactionData = null
+    try {
+      // If using private mempool, this won't error, will return null
+      transactionData = await provider.getTransaction(tx.hash)
+    } catch (e) {
+      console.error('Failed to get transaction info')
+    }
+
+    const isSafeApp = await checkIsSafeApp(connector)
+
+    addRecentTransaction({
+      ...transactionData,
+      hash: tx.hash,
+      action: actionName,
+      key: txKey!,
+      input: request?.data,
+      timestamp: Math.floor(Date.now() / 1000),
+      isSafeTx: !!isSafeApp,
+      searchRetries: 0,
+    })
+    dispatch({ name: 'setTransactionHash', payload: tx.hash })
   }
-
-  const isSafeApp = await checkIsSafeApp(connector)
-
-  addRecentTransaction({
-    ...transactionData,
-    hash: tx.hash,
-    action: actionName,
-    key: txKey!,
-    input: request?.data,
-    timestamp: Math.floor(Date.now() / 1000),
-    isSafeTx: !!isSafeApp,
-  })
-  dispatch({ name: 'setTransactionHash', payload: tx.hash })
-}
 
 export const TransactionStageModal = ({
   actionName,

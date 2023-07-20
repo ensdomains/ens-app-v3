@@ -1,10 +1,18 @@
+/* eslint-disable no-await-in-loop */
 import { useEffect, useRef } from 'react'
 import { useProvider } from 'wagmi'
 
 import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
+import type { EtherscanMinedData } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainId } from '@app/hooks/useChainId'
+
+type EtherscanResponse = {
+  status: string
+  message: string
+  result: EtherscanMinedData[]
+}
 
 export const getAccountHistoryEndpoint = (address: string, chainId: number) => {
   switch (chainId) {
@@ -57,7 +65,13 @@ function useInterval(callback: () => void, delay: number | null, dependencies: a
   }, [delay, ...dependencies])
 }
 
-export const findDroppedTransactions = async (transactions, address, store, chainId, provider) => {
+export const findDroppedTransactions = async (
+  transactions: ReturnType<typeof useRecentTransactions>,
+  address: ReturnType<typeof useAccountSafely>['address'],
+  store: ReturnType<typeof useTransactionStore>,
+  chainId: ReturnType<typeof useChainId>,
+  provider: ReturnType<typeof useProvider>,
+) => {
   // Transactions are all tied to an address and a chain
   if (!address || !store || !chainId || !provider || !transactions?.length) return
 
@@ -70,7 +84,8 @@ export const findDroppedTransactions = async (transactions, address, store, chai
 
   const etherscanEndpoint = getAccountHistoryEndpoint(address, chainId)
   const etherscanResponse = await fetch(etherscanEndpoint)
-  const etherscanJson = await etherscanResponse.json()
+  const etherscanJson: EtherscanResponse = await etherscanResponse.json()
+  console.log('etherscanJson: ', etherscanJson)
   const accountTransactionHistory = etherscanJson?.result
 
   for (const searchingTransaction of searchingTransactions) {
@@ -95,7 +110,7 @@ export const findDroppedTransactions = async (transactions, address, store, chai
     const replacementTransactions = accountTransactionHistory.filter(
       (historicTransaction) =>
         historicTransaction.input === searchingTransaction.input &&
-        parseInt(historicTransaction.timeStamp, 10) > searchingTransaction.timestamp,
+        parseInt(historicTransaction.timeStamp, 10) > (searchingTransaction?.timestamp ?? 0),
     )
 
     if (replacementTransactions.length > 1) {
@@ -117,7 +132,7 @@ export const findDroppedTransactions = async (transactions, address, store, chai
     // If for some reason the transaction was not found, was not a replacement etc, try to find it again.
     const result = await provider.getTransaction(searchingTransaction.hash)
     if (result) {
-      store.foundTransaction(address, chainId, searchingTransaction.hash, result.nonce, result.data)
+      store.foundTransaction(address, chainId, searchingTransaction.hash, result.nonce)
       return
     }
     store.updateRetries(address, chainId, searchingTransaction.hash)
@@ -126,7 +141,7 @@ export const findDroppedTransactions = async (transactions, address, store, chai
   for (const pendingTransaction of pendingTransactions) {
     const currentNonce = await provider.getTransactionCount(address)
 
-    if (currentNonce > pendingTransaction.nonce) {
+    if (currentNonce > (pendingTransaction?.nonce ?? -1)) {
       // Transaction either got replaced or has been cancelled
 
       // Find tranasaction in user's history based on nonce
@@ -136,11 +151,14 @@ export const findDroppedTransactions = async (transactions, address, store, chai
       })
 
       // See if matching nonce transaction is a replacement
-      if (matchingNonceTransaction?.input === pendingTransaction?.input) {
+      if (
+        matchingNonceTransaction &&
+        matchingNonceTransaction?.input === pendingTransaction?.input
+      ) {
         store.setReplacedTransactionByNonce(
           address,
           chainId,
-          pendingTransaction.input,
+          pendingTransaction?.input ?? ``,
           matchingNonceTransaction,
         )
         return
