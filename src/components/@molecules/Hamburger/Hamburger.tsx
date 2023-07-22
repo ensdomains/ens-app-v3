@@ -1,8 +1,7 @@
-import { useRouter } from 'next/router'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
-import { CrossSVG, Dialog, DynamicPopover, MenuSVG, Modal, Spinner, mq } from '@ensdomains/thorin'
+import { CrossSVG, DynamicPopover, MenuSVG, Modal, Spinner } from '@ensdomains/thorin'
 
 import { useInitial } from '@app/hooks/useInitial'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -126,33 +125,10 @@ const SlideContainer = styled.div<{ $direction: 'backwards' | 'forwards' }>(
   `,
 )
 
-const StyledDialog = styled(Dialog)(
-  ({ theme }) => css`
-    z-index: 10001;
-    height: 70vh;
-
-    & > div {
-      padding: 0;
-      gap: 0;
-    }
-
-    & > div > div {
-      gap: 0;
-    }
-
-    ${mq.sm.min(css`
-      width: calc(80vw - 2 * ${theme.space['6']});
-      max-width: ${theme.space['128']};
-      height: 60vh;
-    `)}
-  `,
-)
-
 type View = 'main' | 'language'
 
 const Hamburger = () => {
   const breakpoints = useBreakpoint()
-  const [hasFeedbackForm, setHasFeedbackForm] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
   const btnRef = useRef<HTMLButtonElement>(null)
@@ -168,7 +144,6 @@ const Hamburger = () => {
   } | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [currentView, _setCurrentView] = useState<View>('main')
-  const router = useRouter()
 
   const setCurrentView = useCallback((view: View) => {
     _setCurrentView((prev) => {
@@ -180,7 +155,7 @@ const Hamburger = () => {
         })
       } else {
         setAnimation({
-          component: <MainMenu {...{ setCurrentView, setIsOpen, setHasFeedbackForm }} />,
+          component: <MainMenu {...{ setCurrentView }} />,
           direction: 'forwards',
         })
       }
@@ -250,7 +225,7 @@ const Hamburger = () => {
   if (isInitial) return button
 
   const currentComponent = {
-    main: <MainMenu {...{ setCurrentView, setIsOpen, hasFeedbackForm, setHasFeedbackForm }} />,
+    main: <MainMenu {...{ setCurrentView }} />,
     language: <LanguageMenu setCurrentView={setCurrentView} />,
   }[currentView]
 
@@ -267,19 +242,6 @@ const Hamburger = () => {
 
   return (
     <>
-      <StyledDialog
-        open={hasFeedbackForm}
-        variant="actionable"
-        onDismiss={() => setHasFeedbackForm(false)}
-      >
-        <iframe
-          title="Feedback"
-          width="100%"
-          height="100%"
-          style={{ borderRadius: 25 }}
-          src={`https://docs.google.com/forms/d/e/1FAIpQLSfAVFlV7LC2oCEBtZEK0uKpAU32-eYyY307Ji07wyGSFaZU8Q/viewform?usp=pp_url&entry.435573398=${router.asPath}`}
-        />
-      </StyledDialog>
       {button}
       {breakpoints.sm ? (
         <DynamicPopover
