@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { Button, FastForwardSVG, mq } from '@ensdomains/thorin'
 
-import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 const FastForwardIcon = styled.svg(
@@ -32,12 +31,11 @@ const ButtonContainer = styled.div(
 
 export const ExtendButton = ({ name }: { name: string }) => {
   const { t } = useTranslation()
-  const { address } = useAccount()
-  const { canExtend, canEdit } = useSelfAbilities(address, name)
+  const abilities = useAbilities(name)
   const { prepareDataInput } = useTransactionFlow()
   const showExtendNamesInput = prepareDataInput('ExtendNames')
 
-  if (!canExtend) return null
+  if (!abilities.data?.canExtend) return null
 
   return (
     <ButtonContainer>
@@ -45,7 +43,7 @@ export const ExtendButton = ({ name }: { name: string }) => {
         onClick={() => {
           showExtendNamesInput(`extend-names-${name}`, {
             names: [name],
-            isSelf: canEdit,
+            isSelf: abilities.data?.canEdit,
           })
         }}
         prefix={<FastForwardIcon as={FastForwardSVG} />}

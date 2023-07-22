@@ -8,13 +8,13 @@ import { getEncryptedLabelAmount } from '@ensdomains/ensjs/utils/labels'
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content, ContentWarning } from '@app/layouts/Content'
 import { formatFullExpiry } from '@app/utils/utils'
 
@@ -166,7 +166,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   const [tab, setTab] = useQueryParameterState<Tab>('tab', 'profile')
   const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
 
-  const selfAbilities = useSelfAbilities(address, normalisedName)
+  const abilities = useAbilities(normalisedName)
 
   // hook for redirecting to the correct profile url
   // profile.decryptedName fetches labels from NW/subgraph
@@ -263,17 +263,17 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
                 contentHash={profile?.records?.contentHash}
                 abi={profile?.records?.abi}
                 resolverAddress={profile?.resolverAddress}
-                canEdit={selfAbilities.canEdit}
+                canEdit={abilities.data?.canEdit}
+                canEditRecords={abilities.data?.canEditRecords}
                 isCached={profileIsCachedData}
-                isWrapped={isWrapped}
               />
             ),
             subnames: (
               <SubnamesTab
                 name={normalisedName}
                 isWrapped={isWrapped}
-                canEdit={selfAbilities.canEdit}
-                canCreateSubdomains={selfAbilities.canCreateSubdomains}
+                canEdit={!!abilities.data?.canEdit}
+                canCreateSubdomains={!!abilities.data?.canCreateSubdomains}
                 network={chainId}
               />
             ),
@@ -285,11 +285,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
               />
             ),
             more: (
-              <MoreTab
-                name={normalisedName}
-                nameDetails={nameDetails}
-                selfAbilities={selfAbilities}
-              />
+              <MoreTab name={normalisedName} nameDetails={nameDetails} abilities={abilities.data} />
             ),
           }[tab],
         }}

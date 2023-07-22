@@ -108,7 +108,7 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'feedback',
-    href: '#',
+    href: 'https://ens.canny.io/',
     label: 'navigation.feedback',
     disabled: false,
     connected: false,
