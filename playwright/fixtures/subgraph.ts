@@ -19,15 +19,24 @@ const query = gql`
 
 export const waitForSubgraph = (provider: Provider) => async () => {
   const blockNumber = await provider.getBlockNumber()
-  console.log('blocknumber', blockNumber)
   let wait = true
   let count = 0
-  while (wait && count < 4) {
+  do {
     await new Promise((resolve) => setTimeout(resolve, 500))
     const client = new GraphQLClient('http://localhost:8000/subgraphs/name/graphprotocol/ens')
     const res = await client.request(query)
+    process.stdout.write(`subgraph: ${res._meta.block.number} -> ${blockNumber}\r`)
     wait = blockNumber > res._meta.block.number
-    console.log('subgraph blocknumber', res._meta.block.number)
     count += 1
-  }
+    if (!wait)
+      process.stdout.write(`subgraph: ${res._meta.block.number} -> ${blockNumber} IN SYNC\n`)
+  } while (wait && count < 10)
 }
+
+type Dependencies = {
+  provider: Provider
+}
+
+export const createSubgraph = ({ provider }: Dependencies) => ({
+  sync: waitForSubgraph(provider),
+})

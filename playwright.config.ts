@@ -7,6 +7,7 @@ export default defineConfig({
   retries: 0,
   workers: 4,
   reporter: 'list',
+  globalTeardown: './playwright/teardown/test.ts',
   projects: [
     {
       name: 'setup',

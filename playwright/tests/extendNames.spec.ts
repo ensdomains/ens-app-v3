@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
 
 import { test } from '..'
@@ -5,49 +6,102 @@ import { test } from '..'
 test('should be able to register multiple names on the address page', async ({
   page,
   accounts,
-  wallet,
-  Login,
-  AddressPage,
+  login,
+  subgraph,
+  makePageObject,
+  makeName,
 }) => {
-  const address = accounts.getAddress('user')
-  const addresPage = new AddressPage(page)
+  const names = await makeName([
+    {
+      label: 'extend-legacy',
+      type: 'legacy',
+      owner: 'user2',
+    },
+    {
+      label: 'wrapped',
+      type: 'wrapped',
+      owner: 'user2',
+    },
+  ])
+
+  const address = accounts.getAddress('user2')
+  const addresPage = makePageObject('AddressPage')
+  const transactionModal = makePageObject('TransactionModal')
+
   await addresPage.goto(address)
 
-  await new Login(page, wallet).connect()
+  await login.connect()
 
   await page.pause()
+
+  await addresPage.selectToggle.click()
+  const timestampDict: { [key: string]: number } = {}
+  for (const name of names) {
+    await addresPage.search(name)
+    const timestamp = await addresPage.getTimestamp(name)
+    timestampDict[name] = timestamp
+    await addresPage.getNameRow(name).click()
+  }
+  console.log(timestampDict)
+  await addresPage.extendNamesButton.click()
+  await addresPage.extendNamesModalNextButton.click()
+
+  // check the invoice details
+  await expect(page.getByTestId('invoice-item-0-amount')).toHaveText(/0.0065/)
+  await expect(page.getByTestId('invoice-item-1-amount')).toHaveText(/0.0003/)
+  await expect(page.getByTestId('invoice-total')).toHaveText(/0.0068/)
+  await expect(page.getByText('1 year extension')).toBeVisible()
+
+  // check the price comparison table
+  await expect(page.getByTestId('year-marker-0')).toHaveText(/4% gas/)
+  await expect(page.getByTestId('year-marker-1')).toHaveText(/2% gas/)
+  await expect(page.getByTestId('year-marker-2')).toHaveText(/1% gas/)
+
+  // increment and save
+  await page.getByTestId('plus-minus-control-plus').click()
+  await page.getByTestId('extend-names-confirm').click()
+  await expect(
+    page.getByText('Extending this name will not give you ownership of it'),
+  ).toBeVisible()
+  await transactionModal.autoComplete()
+
+  await subgraph.sync()
+  await page.reload()
+  for (const name of names) {
+    await addresPage.search(name)
+    await expect(addresPage.nameExpiry(name)).not.toHaveText(/12/, { timeout: 15000 })
+    await expect(await addresPage.getTimestamp(name)).toEqual(timestampDict[name] + 31536000000 * 2)
+  }
 })
 
 test('should be able to extend a single unwrapped name from profile', async ({
   page,
-  wallet,
-  Login,
-  ProfilePage,
-  ExtendNamesModal,
-  TransactionModal,
-  nameGenerator,
+  login,
+  makePageObject,
+  makeName,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'legacy',
     type: 'legacy',
     owner: 'user2',
   })
 
-  const profilePage = new ProfilePage(page)
-  await profilePage.goto(name)
+  const profilePage = makePageObject('ProfilePage')
+  const transactionModal = makePageObject('TransactionModal')
 
-  await new Login(page, wallet).connect()
+  await profilePage.goto(name)
+  await login.connect()
 
   const timestamp = await profilePage.getExpiryTimestamp()
 
   await profilePage.getExtendButton.click()
 
-  const extendNamesModal = new ExtendNamesModal(page)
+  const extendNamesModal = makePageObject('ExtendNamesModal')
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
-    await expect(page.locator('text=1 year extension')).toBeVisible()
+    await expect(page.getByText('1 year extension')).toBeVisible()
   })
 
   await test.step('should show the cost comparison data', async () => {
@@ -78,9 +132,8 @@ test('should be able to extend a single unwrapped name from profile', async ({
   await test.step('should extend', async () => {
     await extendNamesModal.getExtendButton.click()
     await expect(
-      page.locator('text=Extending this name will not give you ownership of it'),
+      page.getByText('Extending this name will not give you ownership of it'),
     ).toBeVisible()
-    const transactionModal = new TransactionModal(page, wallet)
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
     await expect(newTimestamp).toEqual(timestamp + 31536000000)
@@ -89,24 +142,21 @@ test('should be able to extend a single unwrapped name from profile', async ({
 
 test('should be able to extend a single unwrapped name in grace period from profile', async ({
   page,
-  wallet,
-  Login,
-  ProfilePage,
-  ExtendNamesModal,
-  TransactionModal,
-  nameGenerator,
+  login,
+  makePageObject,
+  makeName,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'legacy',
     type: 'legacy',
     owner: 'user2',
     duration: -24 * 60 * 60,
   })
 
-  const profilePage = new ProfilePage(page)
+  const profilePage = makePageObject('ProfilePage')
   await profilePage.goto(name)
 
-  await new Login(page, wallet).connect()
+  await login.connect()
 
   await expect(page.locator(`text=${name} has expired`)).toBeVisible()
 
@@ -115,7 +165,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   await profilePage.getExtendButton.click()
 
-  const extendNamesModal = new ExtendNamesModal(page)
+  const extendNamesModal = makePageObject('ExtendNamesModal')
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
@@ -151,10 +201,11 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await test.step('should extend', async () => {
     await extendNamesModal.getExtendButton.click()
     await expect(
-      page.locator('text=Extending this name will not give you ownership of it'),
+      page.getByText('Extending this name will not give you ownership of it'),
     ).toBeVisible()
-    const transactionModal = new TransactionModal(page, wallet)
+    const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
+
     const newTimestamp = await profilePage.getExpiryTimestamp()
     await expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
@@ -162,31 +213,27 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
 test('should be able to extend a single unwrapped name in grace period from profile 2', async ({
   page,
-  wallet,
-  Login,
-  ProfilePage,
-  ExtendNamesModal,
-  TransactionModal,
-  nameGenerator,
+  login,
+  makePageObject,
+  makeName,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'legacy',
     type: 'legacy',
     owner: 'user2',
-    duration: 2419200,
+    duration: -14 * 24 * 60 * 60,
   })
 
-  const profilePage = new ProfilePage(page)
-  await profilePage.goto(name)
+  const extendNamesModal = makePageObject('ExtendNamesModal')
+  const profilePage = makePageObject('ProfilePage')
 
-  await new Login(page, wallet).connect()
+  await profilePage.goto(name)
+  await login.connect()
 
   const timestamp = await profilePage.getExpiryTimestamp()
-  await page.pause()
 
   await profilePage.getExtendButton.click()
 
-  const extendNamesModal = new ExtendNamesModal(page)
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
@@ -222,11 +269,36 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await test.step('should extend', async () => {
     await extendNamesModal.getExtendButton.click()
     await expect(
-      page.locator('text=Extending this name will not give you ownership of it'),
+      page.getByText('Extending this name will not give you ownership of it'),
     ).toBeVisible()
-    const transactionModal = new TransactionModal(page, wallet)
+    const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
     await expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
+})
+
+test('should not show extend button on unwrapped subnames', async ({
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'with-subname',
+    type: 'legacy',
+    subnames: [
+      {
+        label: 'test',
+      },
+    ],
+  })
+
+  const subname = `test.${name}`
+
+  const profilePage = makePageObject('ProfilePage')
+
+  await profilePage.goto(subname)
+  await login.connect()
+
+  await expect(profilePage.getExtendButton).toHaveCount(0)
 })

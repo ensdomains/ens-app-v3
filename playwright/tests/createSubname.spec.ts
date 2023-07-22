@@ -3,66 +3,57 @@ import { expect } from '@playwright/test'
 import { test } from '..'
 
 test('should not show add subname button when the connected wallet is the registrant but not the controller', async ({
-  page,
-  wallet,
-  nameGenerator,
-  Login,
-  SubnamesPage,
+  login,
+  makeName,
+  makePageObject,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'other-controller',
     type: 'legacy',
     owner: 'user',
     manager: 'user2',
   })
-  const subnamesPage = new SubnamesPage(page)
-  await subnamesPage.goto(name)
+  const subnamesPage = makePageObject('SubnamesPage')
 
-  const login = new Login(page, wallet)
+  await subnamesPage.goto(name)
   await login.connect()
 
   await expect(subnamesPage.getAddSubnameButton).toHaveCount(0)
 })
 
 test('should not show add subname button when the connected wallet does not own the name', async ({
-  page,
-  wallet,
-  nameGenerator,
-  Login,
-  SubnamesPage,
+  makeName,
+  login,
+  makePageObject,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'other-registrant',
     type: 'legacy',
     owner: 'user2',
-    manager: 'user2',
   })
-  const subnamesPage = new SubnamesPage(page)
-  await subnamesPage.goto(name)
+  const subnamesPage = makePageObject('SubnamesPage')
 
-  const login = new Login(page, wallet)
+  await subnamesPage.goto(name)
   await login.connect()
 
   await expect(subnamesPage.getAddSubnameButton).toHaveCount(0)
 })
 
 test('should show add subname button when the connected wallet is the manager', async ({
-  page,
-  wallet,
-  nameGenerator,
-  Login,
-  SubnamesPage,
+  login,
+  makeName,
+  makePageObject,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'manager-only',
     type: 'legacy',
     owner: 'user2',
     manager: 'user',
   })
-  const subnamesPage = new SubnamesPage(page)
+  const subnamesPage = makePageObject('SubnamesPage')
+
   await subnamesPage.goto(name)
 
-  const login = new Login(page, wallet)
   await login.connect()
 
   await expect(subnamesPage.getAddSubnameButton).toHaveCount(1)
@@ -70,54 +61,45 @@ test('should show add subname button when the connected wallet is the manager', 
 
 test('should not allow creating a subname with invalid characters', async ({
   page,
-  wallet,
-  nameGenerator,
-  Login,
-  SubnamesPage,
+  login,
+  makeName,
+  makePageObject,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'manager-only',
     type: 'legacy',
     owner: 'user2',
     manager: 'user',
   })
-  const subnamesPage = new SubnamesPage(page)
-  await subnamesPage.goto(name)
+  const subnamesPage = makePageObject('SubnamesPage')
 
-  const login = new Login(page, wallet)
+  await subnamesPage.goto(name)
   await login.connect()
 
   await subnamesPage.getAddSubnameButton.click()
   await subnamesPage.getAddSubnameInput.type('invalid name')
   await expect(subnamesPage.getSubmitSubnameButton).toBeDisabled()
-  await expect(page.locator('text=Contains invalid characters')).toBeVisible()
+  await page.pause()
+  await expect(page.getByText('Contains invalid characters')).toBeVisible()
 })
 
-test('should allow creating a subname', async ({
-  page,
-  wallet,
-  nameGenerator,
-  Login,
-  SubnamesPage,
-  TransactionModal,
-}) => {
-  const name = await nameGenerator({
+test('should allow creating a subname', async ({ page, makeName, login, makePageObject }) => {
+  const name = await makeName({
     label: 'manager-only',
     type: 'legacy',
     owner: 'user2',
     manager: 'user',
   })
-  const subnamesPage = new SubnamesPage(page)
+  const subnamesPage = makePageObject('SubnamesPage')
   await subnamesPage.goto(name)
 
-  const login = new Login(page, wallet)
   await login.connect()
 
   await subnamesPage.getAddSubnameButton.click()
   await subnamesPage.getAddSubnameInput.type('test')
   await subnamesPage.getSubmitSubnameButton.click()
 
-  const transactionModal = new TransactionModal(page, wallet)
+  const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
 
   await expect(page.locator(`text="test.${name}"`)).toBeVisible()
@@ -125,41 +107,35 @@ test('should allow creating a subname', async ({
 
 test('should allow creating a subnames if the user is the wrapped owner', async ({
   page,
-  wallet,
-  nameGenerator,
-  Login,
-  SubnamesPage,
-  TransactionModal,
+  login,
+  makeName,
+  makePageObject,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'wrapped',
     type: 'wrapped',
-    owner: 'user',
   })
-  const subnamesPage = new SubnamesPage(page)
+  const subnamesPage = makePageObject('SubnamesPage')
   await subnamesPage.goto(name)
 
-  const login = new Login(page, wallet)
   await login.connect()
 
   await subnamesPage.getAddSubnameButton.click()
-  await subnamesPage.getAddSubnameInput.type('test')
+  await subnamesPage.getAddSubnameInput.fill('test')
   await subnamesPage.getSubmitSubnameButton.click()
 
-  const transactionModal = new TransactionModal(page, wallet)
+  const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
 
-  await expect(page.locator(`text="test.${name}"`)).toBeVisible()
+  await expect(page.getByText(`test.${name}`)).toBeVisible()
 })
 
 test('should not allow adding a subname that already exists', async ({
-  page,
-  wallet,
-  nameGenerator,
-  Login,
-  SubnamesPage,
+  login,
+  makeName,
+  makePageObject,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'wrapped',
     type: 'wrapped',
     owner: 'user',
@@ -170,106 +146,87 @@ test('should not allow adding a subname that already exists', async ({
       },
     ],
   })
-  const subnamesPage = new SubnamesPage(page)
+  const subnamesPage = makePageObject('SubnamesPage')
   await subnamesPage.goto(name)
 
-  const login = new Login(page, wallet)
   await login.connect()
 
   await subnamesPage.getAddSubnameButton.click()
-  await subnamesPage.getAddSubnameInput.type('test')
+  await subnamesPage.getAddSubnameInput.fill('test')
   await expect(subnamesPage.getSubmitSubnameButton).toBeDisabled()
 })
 
 test('should allow creating an expired wrapped subname', async ({
   page,
-  wallet,
-  nameGenerator,
-  Login,
-  SubnamesPage,
-  TransactionModal,
+  login,
+  makeName,
+  makePageObject,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'wrapped',
     type: 'wrapped',
-    owner: 'user',
-    fuses: {
-      named: ['CANNOT_UNWRAP'],
-    },
+    fuses: ['CANNOT_UNWRAP'],
     subnames: [
       {
         label: 'test',
         owner: 'user',
         duration: -60 * 60 * 24 * 30,
-        fuses: {
-          parent: {
-            named: ['PARENT_CANNOT_CONTROL'],
-          },
-          child: {
-            named: [],
-          },
-        },
+        fuses: ['PARENT_CANNOT_CONTROL'],
       },
     ],
   })
-  const subnamesPage = new SubnamesPage(page)
+
+  const subnamesPage = makePageObject('SubnamesPage')
+  const transactionModal = makePageObject('TransactionModal')
+
   await subnamesPage.goto(name)
 
-  const login = new Login(page, wallet)
   await login.connect()
 
   await subnamesPage.getAddSubnameButton.click()
-  await subnamesPage.getAddSubnameInput.type('test')
+  await subnamesPage.getAddSubnameInput.fill('test')
   await subnamesPage.getSubmitSubnameButton.click()
 
-  const transactionModal = new TransactionModal(page, wallet)
   await transactionModal.autoComplete()
 
-  await expect(page.locator(`text="test.${name}"`)).toBeVisible()
+  await page.pause()
+  // TODO: PAGE IS NOT UPDATING
+  await expect(page.getByText(`test.${name}`)).toBeVisible()
 })
 
 test('should allow creating an expired wrapped subname from the profile page', async ({
   page,
-  wallet,
-  nameGenerator,
-  Login,
-  ProfilePage,
-  TransactionModal,
+  makeName,
+  login,
+  makePageObject,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'wrapped',
     type: 'wrapped',
-    owner: 'user',
-    fuses: {
-      named: ['CANNOT_UNWRAP'],
-    },
+    fuses: ['CANNOT_UNWRAP'],
     subnames: [
       {
         label: 'test',
         owner: 'user',
         duration: -60 * 60 * 24 * 30,
-        fuses: {
-          parent: {
-            named: ['PARENT_CANNOT_CONTROL'],
-          },
-          child: {
-            named: [],
-          },
-        },
+        fuses: ['PARENT_CANNOT_CONTROL'],
       },
     ],
   })
-  const profilePage = new ProfilePage(page)
-  await profilePage.goto(`test.${name}`)
 
-  const login = new Login(page, wallet)
+  const subname = `test.${name}`
+
+  const profilePage = makePageObject('ProfilePage')
+  const transactionModal = makePageObject('TransactionModal')
+
+  await profilePage.goto(subname)
+
   await login.connect()
 
   await page.pause()
 
   await profilePage.getRecreateButton.click()
 
-  const transactionModal = new TransactionModal(page, wallet)
   await transactionModal.autoComplete()
 
   await expect(profilePage.getRecreateButton).toHaveCount(0)

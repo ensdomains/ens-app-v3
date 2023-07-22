@@ -5,7 +5,7 @@ import { Accounts, User } from 'playwright/fixtures/accounts'
 import { Provider } from 'playwright/fixtures/provider'
 
 import { PublicResolver } from '@ensdomains/ensjs/generated/PublicResolver'
-import { CombinedFuseInput } from '@ensdomains/ensjs/utils/fuses'
+import { ChildFuses, CombinedFuseInput } from '@ensdomains/ensjs/utils/fuses'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { makeCommitment, makeRegistrationData } from '@ensdomains/ensjs/utils/registerHelpers'
@@ -17,6 +17,8 @@ import { WrappedSubname, generateWrappedSubname } from './generateWrappedSubname
 
 const DEFAULT_RESOLVER = NAMEWRAPPER_AWARE_RESOLVERS['1337'][0]
 
+type Fuse = ChildFuses['fuse']
+
 export type Name = {
   label: string
   owner?: User
@@ -24,10 +26,11 @@ export type Name = {
   secret?: string
   resolver?: `0x${string}`
   reverseRecord?: boolean
-  fuses?: CombinedFuseInput['child']
+  fuses?: Fuse[]
   addr?: `0x${string}`
   records?: RecordOptions
   subnames?: Omit<WrappedSubname, 'name' | 'nameOwner'>[]
+  offset?: number
 }
 
 type Dependencies = {
@@ -46,6 +49,7 @@ export const generateWrappedName = async (
     fuses,
     records,
     subnames,
+    offset,
   }: Name,
   { accounts, provider }: Dependencies,
 ) => {
@@ -62,6 +66,13 @@ export const generateWrappedName = async (
     signer,
   }) as PublicResolver
 
+  const _fuses = fuses
+    ? ({
+        named: fuses,
+      } as CombinedFuseInput['child'])
+    : undefined
+
+  await provider.getTransactionCount(_owner)
   // Commit
   console.log('making commitment')
   const { commitment } = makeCommitment({
@@ -71,32 +82,35 @@ export const generateWrappedName = async (
     secret,
     records,
     reverseRecord,
-    fuses,
+    fuses: _fuses,
     resolver: _resolver,
   })
-  await controller.commit(commitment)
+  const tx1 = await controller.commit(commitment)
+  await tx1.wait()
 
-  await provider.increaseTime(60)
+  await provider.increaseTime(120)
   await provider.mine()
 
   // Register
-  console.log('registering name')
+  await provider.getTransactionCount(_owner)
   const price = await controller.rentPrice(label, duration)
-  await controller.register(
+  console.log('registering name', price)
+  const tx = await controller.register(
     ...makeRegistrationData({
       name,
       owner: _owner,
       duration,
       secret,
       records,
-      resolver: _resolver,
       reverseRecord,
-      fuses,
+      resolver: _resolver,
+      fuses: _fuses,
     }),
     {
       value: price[0],
     },
   )
+  await tx.wait()
 
   // Create subnames
   console.log('creating subnames')
@@ -107,7 +121,7 @@ export const generateWrappedName = async (
     resolver: undefined,
   }))
   for (const subname of _subnames) {
-    await generateWrappedSubname(subname, { accounts, provider })
+    await generateWrappedSubname({ ...subname, offset }, { accounts, provider })
   }
 
   // Force set an invalid resolver

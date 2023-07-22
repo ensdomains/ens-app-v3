@@ -1,29 +1,38 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { ethers } from 'ethers'
 
-export type Provider = Awaited<ReturnType<typeof createProvider>>
+export type Provider = ReturnType<typeof createProvider>
+
+class ExtendedProvider extends ethers.providers.JsonRpcProvider {
+  async mine() {
+    return this.send('evm_mine', [])
+  }
+
+  async increaseTime(seconds: number) {
+    return this.send('evm_increaseTime', [seconds])
+  }
+
+  async setAutomine(active: boolean) {
+    if (!active)
+      console.warn(
+        'You are disabled automine in a test. Make sure this test is not running in parrallel mode or it could effect the results of other tests',
+      )
+    return this.send('evm_setAutomine', [active])
+  }
+
+  async getBlockNumber() {
+    const num = await this.send('eth_blockNumber', [])
+    return BigNumber.from(num).toNumber()
+  }
+
+  async getBlockTimestamp() {
+    const currentBlock = await this.send('eth_blockNumber', [])
+    const block = await this.send('eth_getBlockByNumber', [currentBlock, false])
+    return BigNumber.from(block.timestamp).toNumber()
+  }
+}
 
 export const createProvider = () => {
-  const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545')
-  let snapshotId = 0
-
-  provider.mine = () => provider.send('evm_mine', [])
-  provider.increaseTime = (seconds: number) => provider.send('evm_increaseTime', [seconds])
-  provider.setAutomine = (active: boolean) => provider.send('evm_setAutomine', [active])
-  return provider
-  return {
-    send: (method: string, params: any[]) => provider.send(method, params),
-    getSigner: (index: number) => provider.getSigner(index),
-    increaseTime: (seconds: number) => provider.send('evm_increaseTime', [seconds]),
-    mine: () => provider.send('evm_mine', []),
-    setAutomine: (active: boolean) => provider.send('evm_setAutomine', [active]),
-    getBlockNumber: () => provider.getBlockNumber(),
-    revert: async () => {
-      if (snapshotId) {
-        await provider.send('evm_revert', [snapshotId])
-      }
-      snapshotId = await provider.send('evm_snapshot', [])
-      console.log('snapshotId', snapshotId)
-    },
-  }
+  return new ExtendedProvider('http://localhost:8545')
 }

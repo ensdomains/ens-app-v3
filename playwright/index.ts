@@ -3,16 +3,13 @@ import { test as base } from '@playwright/test'
 import { Web3ProviderBackend, injectHeadlessWeb3Provider } from 'headless-web3-provider'
 
 import { Accounts, createAccounts } from './fixtures/accounts'
+import { createContracts } from './fixtures/contracts'
 import { Login } from './fixtures/login'
-import { Name, nameGenerator } from './fixtures/nameGenerator/index'
+import { createMakeNames } from './fixtures/makeName/index'
 import { Provider, createProvider } from './fixtures/provider'
-import { AddressPage } from './pageObjects/addressPage'
-import { ExtendNamesModal } from './pageObjects/extendNamesModal'
-import { MorePage } from './pageObjects/morePage'
-import { PermissionsPage } from './pageObjects/permissionsPage'
-import { ProfilePage } from './pageObjects/profilePage'
-import { SubnamesPage } from './pageObjects/subnamePage'
-import { TransactionModal } from './pageObjects/transactionModal'
+import { createSubgraph } from './fixtures/subgraph'
+import { createTime } from './fixtures/time'
+import { createPageObjectMaker } from './pageObjects'
 
 type Fixtures = {
   accounts: Accounts
@@ -20,22 +17,19 @@ type Fixtures = {
   provider: Provider
   login: InstanceType<typeof Login>
   getContract: (contract: string) => any
-  nameGenerator: (name: Name) => Promise<string>
+  makeName: ReturnType<typeof createMakeNames>
+  makePageObject: ReturnType<typeof createPageObjectMaker>
+  subgraph: ReturnType<typeof createSubgraph>
+  time: ReturnType<typeof createTime>
+  contracts: ReturnType<typeof createContracts>
 }
 
-type PageObjects = {
-  AddressPage: typeof AddressPage
-  ExtendNamesModal: typeof ExtendNamesModal
-  MorePage: typeof MorePage
-  PermissionsPage: typeof PermissionsPage
-  ProfilePage: typeof ProfilePage
-  SubnamesPage: typeof SubnamesPage
-  TransactionModal: typeof TransactionModal
-}
-
-export const test = base.extend<Fixtures & PageObjects>({
+export const test = base.extend<Fixtures>({
   // signers - the private keys that are to be used in the tests
   accounts: createAccounts(),
+  contracts: async ({ accounts, provider }, use) => {
+    await use(createContracts({ accounts, provider }))
+  },
   wallet: async ({ page, accounts }, use) => {
     const privateKeys = accounts.getAllPrivateKeys()
     const wallet = await injectHeadlessWeb3Provider(
@@ -46,6 +40,7 @@ export const test = base.extend<Fixtures & PageObjects>({
     )
     await use(wallet)
   },
+  // eslint-disable-next-line no-empty-pattern
   provider: async ({}, use) => {
     const provider = createProvider()
     await use(provider)
@@ -54,15 +49,18 @@ export const test = base.extend<Fixtures & PageObjects>({
     const login = new Login(page, wallet, accounts)
     await use(login)
   },
-  nameGenerator: async ({ accounts, provider, page }, use) => {
-    const _nameGenerator = nameGenerator({ accounts, provider, page })
-    await use(_nameGenerator)
+  makeName: async ({ accounts, provider, time }, use) => {
+    const makeNames = createMakeNames({ accounts, provider, time })
+    await use(makeNames)
   },
-  AddressPage: ({}, use) => use(AddressPage),
-  ExtendNamesModal: ({}, use) => use(ExtendNamesModal),
-  MorePage: ({}, use) => use(MorePage),
-  ProfilePage: ({}, use) => use(ProfilePage),
-  PermissionsPage: ({}, use) => use(PermissionsPage),
-  SubnamesPage: ({}, use) => use(SubnamesPage),
-  TransactionModal: ({}, use) => use(TransactionModal),
+  makePageObject: async ({ page, wallet }, use) => {
+    await use(createPageObjectMaker({ page, wallet }))
+  },
+  subgraph: async ({ provider }, use) => {
+    const subgraph = createSubgraph({ provider })
+    await use(subgraph)
+  },
+  time: async ({ provider, page }, use) => {
+    await use(createTime({ provider, page }))
+  },
 })

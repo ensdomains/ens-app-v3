@@ -7,6 +7,7 @@ import { ENSRegistry__factory } from '@ensdomains/ensjs/generated/factories/ENSR
 import { ETHRegistrarController__factory } from '@ensdomains/ensjs/generated/factories/ETHRegistrarController__factory'
 import { NameWrapper__factory } from '@ensdomains/ensjs/generated/factories/NameWrapper__factory'
 import { PublicResolver__factory } from '@ensdomains/ensjs/generated/factories/PublicResolver__factory'
+import { ReverseRegistrar__factory } from '@ensdomains/ensjs/generated/factories/ReverseRegistrar__factory'
 
 require('dotenv').config({ path: '.env.local' })
 
@@ -16,6 +17,7 @@ type Contract =
   | 'NameWrapper'
   | 'PublicResolver'
   | 'LegacyETHRegistrarController'
+  | 'ReverseRegistrar'
 
 type Options = {
   signer?: any
@@ -35,6 +37,9 @@ export const getContract = (contract: Contract, { signer, address }: Options = {
     .with('NameWrapper', () => NameWrapper__factory.connect(addresses.NameWrapper, signer))
     .with('PublicResolver', () =>
       PublicResolver__factory.connect(address || addresses.PublicResolver, signer),
+    )
+    .with('ReverseRegistrar', () =>
+      ReverseRegistrar__factory.connect(addresses.ReverseRegistrar, signer),
     )
     .with(
       'LegacyETHRegistrarController',

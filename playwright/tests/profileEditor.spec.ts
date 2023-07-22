@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import { generateRecords } from 'playwright/fixtures/nameGenerator/generators/generateRecords'
+import { generateRecords } from 'playwright/fixtures/makeName/generators/generateRecords'
 
 import { emptyAddress } from '@app/utils/constants'
 
@@ -42,34 +42,30 @@ test.describe('unwrapped', () => {
   test.describe('migration', () => {
     test('should force a name on the old registry to go to update registry', async ({
       page,
-      accounts,
-      wallet,
       login,
-      ProfilePage,
+      makePageObject,
     }) => {
       await page.goto('/legacy.test')
 
       await login.connect('user2')
       await page.pause()
 
-      const profilePage = new ProfilePage(page)
+      const profilePage = makePageObject('ProfilePage')
       await profilePage.editProfileButton.click()
 
-      await expect(page.locator('text=Registry out of date')).toBeVisible()
-      await expect(page.getByTestId('profile-editor')).toHaveCount(0)
+      await expect(page.getByText('Registry out of date')).toBeVisible()
+      await expect(page.getByTestId('warning-overlay-next-button')).toHaveAttribute(
+        'href',
+        `https://legacy.ens.domains/name/legacy.test`,
+      )
     })
 
     test('should force a name without a resolver to update their resolver', async ({
-      page,
-      wallet,
-      accounts,
-      nameGenerator,
       login,
-      ProfilePage,
-      TransactionModal,
-      MorePage,
+      makeName,
+      makePageObject,
     }) => {
-      const name = await nameGenerator({
+      const name = await makeName({
         label: 'unwrapped',
         type: 'legacy',
         owner: 'user',
@@ -84,37 +80,33 @@ test.describe('unwrapped', () => {
       })
       const subname = `test.${name}`
 
-      const profilePage = new ProfilePage(page)
-      await profilePage.goto(subname)
+      const profilePage = makePageObject('ProfilePage')
+      const transactionModal = makePageObject('TransactionModal')
+      const morePage = makePageObject('MorePage')
 
+      await profilePage.goto(subname)
       await login.connect()
 
       await profilePage.editProfileButton.click()
       await expect(profilePage.profileEditor.locator('text=No resolver set')).toBeVisible()
 
       await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
-      const transactionModal = new TransactionModal(page, wallet)
       await transactionModal.autoComplete()
 
-      const morePage = new MorePage(page)
       await morePage.goto(subname)
 
       await morePage.resolver.click()
-      expect(morePage.resolver.getByText(newResolver)).toBeVisible()
+      await expect(morePage.resolver.getByText(newResolver)).toBeVisible()
     })
 
     test('should check if a name has been migrated, but whose resolver has not been migrated', async ({
-      page,
-      wallet,
       accounts,
-      nameGenerator,
       provider,
       login,
-      ProfilePage,
-      TransactionModal,
-      MorePage,
+      makeName,
+      makePageObject,
     }) => {
-      const name = await nameGenerator({
+      const name = await makeName({
         label: 'unwrapped',
         type: 'legacy',
         owner: 'user',
@@ -122,65 +114,56 @@ test.describe('unwrapped', () => {
         records: DEFAULT_RECORDS,
       })
 
-      console.log('here')
-      // Migrate to
+      // Add records to latest resolver
       await generateRecords(
         { name, owner: 'user', resolver: newResolver, records: DEFAULT_RECORDS },
         { provider, accounts },
       )
 
-      const morePage = new MorePage(page)
-      await morePage.goto(name)
-      expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
+      const morePage = makePageObject('MorePage')
+      const profilePage = makePageObject('ProfilePage')
+      const transactionModal = makePageObject('TransactionModal')
 
+      await morePage.goto(name)
       await login.connect()
 
-      const profilePage = new ProfilePage(page)
-      await profilePage.goto(name)
+      await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
+      await profilePage.goto(name)
       await profilePage.editProfileButton.click()
       await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
       await expect(
         profilePage.profileEditor.getByText('Profile records on new resolver'),
       ).toBeVisible()
-
       await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
-      const transactionModal = new TransactionModal(page, wallet)
+
       await transactionModal.autoComplete()
 
       await morePage.goto(name)
-
-      await morePage.resolver.click()
-      expect(morePage.resolver.getByText(newResolver)).toBeVisible()
+      await expect(morePage.resolver.getByText(newResolver)).toBeVisible()
     })
 
     test('should be able to migrate unwrapped to new resolver', async ({
-      page,
-      wallet,
-      accounts,
-      nameGenerator,
+      makeName,
       login,
-      ProfilePage,
-      TransactionModal,
-      MorePage,
+      makePageObject,
     }) => {
-      const name = await nameGenerator({
+      const name = await makeName({
         label: 'unwrapped',
         type: 'legacy',
-        owner: 'user',
         resolver: oldResolver,
         records: DEFAULT_RECORDS,
       })
 
-      const morePage = new MorePage(page)
+      const profilePage = makePageObject('ProfilePage')
+      const morePage = makePageObject('MorePage')
+      const transactionModal = makePageObject('TransactionModal')
+
       await morePage.goto(name)
+      await login.connect()
       await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
-      await login.connect()
-
-      const profilePage = new ProfilePage(page)
       await profilePage.goto(name)
-
       await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
       await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
       await expect(profilePage.record('address', 'eth')).toHaveText('0xf39...92266')
@@ -195,8 +178,6 @@ test.describe('unwrapped', () => {
       await expect(profilePage.profileEditor.getByText('Transfer current profile')).toBeVisible()
 
       await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
-      // await page.pause()
-      const transactionModal = new TransactionModal(page, wallet)
       await transactionModal.autoComplete()
 
       await morePage.goto(name)
@@ -216,30 +197,27 @@ test.describe('unwrapped', () => {
 
   test.describe('update', () => {
     test('should be able to update profile without migration', async ({
-      nameGenerator,
-      wallet,
-      accounts,
       login,
-      MorePage,
-      ProfilePage,
-      TransactionModal,
-      page,
+      makeName,
+      makePageObject,
     }) => {
-      const name = await nameGenerator({
+      const name = await makeName({
         label: 'unwrapped',
         type: 'legacy',
         resolver: oldResolver,
         records: DEFAULT_RECORDS,
       })
-      const morePage = new MorePage(page)
-      await morePage.goto(name)
-      await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
+      const morePage = makePageObject('MorePage')
+      const profilePage = makePageObject('ProfilePage')
+      const transactionModal = makePageObject('TransactionModal')
+
+      await morePage.goto(name)
       await login.connect()
 
-      const profilePage = new ProfilePage(page)
-      await profilePage.goto(name)
+      await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
+      await profilePage.goto(name)
       await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
       await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
       await expect(profilePage.record('address', 'eth')).toHaveText('0xf39...92266')
@@ -260,7 +238,6 @@ test.describe('unwrapped', () => {
       await profilePage.profileEditorInput('com.twitter').fill('ensdomains')
       await profilePage.profileEditor.getByTestId('profile-submit-button').click()
 
-      const transactionModal = new TransactionModal(page, wallet)
       await transactionModal.autoComplete()
 
       await morePage.goto(name)
@@ -283,36 +260,31 @@ test.describe('unwrapped', () => {
 test.describe('wrapped', () => {
   test.describe('migration', () => {
     test('should be able to migrate wrapped name to new resolver', async ({
-      page,
-      nameGenerator,
-      wallet,
-      accounts,
-      MorePage,
-      ProfilePage,
-      TransactionModal,
       login,
+      makeName,
+      makePageObject,
     }) => {
-      const name = await nameGenerator({
+      const name = await makeName({
         label: 'wrapped',
         type: 'wrapped',
         resolver: oldResolver,
       })
 
-      const morePage = new MorePage(page)
-      await morePage.goto(name)
+      const morePage = makePageObject('MorePage')
+      const profilePage = makePageObject('ProfilePage')
+      const transactionModal = makePageObject('TransactionModal')
 
+      await morePage.goto(name)
       await login.connect()
 
       await expect(morePage.resolver).toHaveText(oldResolver)
 
-      const profilePage = new ProfilePage(page)
       await profilePage.goto(name)
       await profilePage.editProfileButton.click()
 
       await expect(profilePage.profileEditor.getByText('Resolver incompatible')).toBeVisible()
       await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
-      const transactionModal = new TransactionModal(page, wallet)
       await transactionModal.autoComplete()
 
       await morePage.goto(name)
@@ -321,23 +293,17 @@ test.describe('wrapped', () => {
   })
 
   test.describe('update', () => {
-    test('should be able to update account', async ({
-      page,
-      wallet,
-      nameGenerator,
-      login,
-      ProfilePage,
-      TransactionModal,
-    }) => {
-      const name = await nameGenerator({
+    test('should be able to update account', async ({ page, login, makeName, makePageObject }) => {
+      const name = await makeName({
         label: 'wrapped',
         type: 'wrapped',
         owner: 'user',
       })
 
-      const profilePage = new ProfilePage(page)
-      await profilePage.goto(name)
+      const profilePage = makePageObject('ProfilePage')
+      const transactionModal = makePageObject('TransactionModal')
 
+      await profilePage.goto(name)
       await login.connect()
 
       await profilePage.editProfileButton.click()
@@ -347,10 +313,7 @@ test.describe('wrapped', () => {
       await profilePage.profileEditorInput('abi').fill('[{"test":"test"}]')
       await profilePage.profileEditor.getByTestId('profile-submit-button').click()
 
-      const transactionModal = new TransactionModal(page, wallet)
       await transactionModal.autoComplete()
-
-      await page.pause()
 
       await expect(profilePage.record('text', 'nickname')).toHaveText('Test Name')
       await page.getByTestId('records-tab').click()
@@ -364,19 +327,54 @@ test.describe('resolver status', () => {
   test('should not show warning when editing unwrapped name with second to last resolver', async ({
     page,
     login,
-    nameGenerator,
-    ProfilePage,
-    MorePage,
+    makeName,
+    makePageObject,
   }) => {
-    const name = await nameGenerator({
+    const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
       resolver: dummyRersolver,
     })
 
-    const morePage = new MorePage(page)
-    await morePage.goto(name)
+    const morePage = makePageObject('MorePage')
+    const profilePage = makePageObject('ProfilePage')
 
-    await page.pause()
+    await morePage.goto(name)
+    await login.connect()
+
+    await expect(morePage.resolver).toHaveText(dummyRersolver)
+    await expect(page.getByText('Latest')).toBeVisible()
+
+    await profilePage.goto(name)
+
+    await profilePage.editProfileButton.click()
+    await expect(profilePage.profileEditor.getByText('Edit your profile')).toBeVisible()
+  })
+})
+
+test.describe('subgraph errors', () => {
+  test('should disable edit profile button when there is a subgraph error', async ({
+    page,
+    makeName,
+    makePageObject,
+    login,
+  }) => {
+    const name = await makeName({
+      label: 'unwrapped',
+      type: 'legacy',
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+
+    await profilePage.goto(name)
+    await login.connect()
+
+    await expect(profilePage.editProfileButton).toBeVisible()
+
+    await page.goto('/my/settings')
+    await page.getByTestId('subgraph-indexing-error').click()
+
+    await profilePage.goto(name)
+    await expect(page.getByTestId('disabled-profile-action-Edit profile')).toBeVisible()
   })
 })

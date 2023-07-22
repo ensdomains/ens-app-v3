@@ -1,19 +1,15 @@
 import { expect } from '@playwright/test'
-import { waitForSubgraph } from 'playwright/fixtures/nameGenerator/utils/waitForSubgraph'
 
 import { test } from '..'
 
 test('should be able to delete subname', async ({
   page,
-  wallet,
-  provider,
-  nameGenerator,
-  Login,
-  SubnamesPage,
-  ProfilePage,
-  TransactionModal,
+  login,
+  subgraph,
+  makeName,
+  makePageObject,
 }) => {
-  const name = await nameGenerator({
+  const name = await makeName({
     label: 'with-subnames',
     type: 'legacy',
     owner: 'user',
@@ -24,23 +20,23 @@ test('should be able to delete subname', async ({
       },
     ],
   })
-  const subnamesPage = new SubnamesPage(page)
+  const subnamesPage = makePageObject('SubnamesPage')
+  const transactionModal = makePageObject('TransactionModal')
+
   await subnamesPage.goto(name)
 
-  const login = new Login(page, wallet)
   await login.connect()
 
   await subnamesPage.getSubnameRow(`test.${name}`).click()
 
-  const profilePage = new ProfilePage(page)
+  const profilePage = makePageObject('ProfilePage')
   expect(page.getByTestId('profile-actions')).toHaveCount(1)
   await profilePage.getDeleteSubnameButton.click()
 
-  const transactionModal = new TransactionModal(page, wallet)
   await transactionModal.autoComplete()
 
   expect(page.getByTestId('profile-actions')).toHaveCount(0)
-  await waitForSubgraph(provider)()
+  await subgraph.sync()
 
   await page.goBack()
   await expect(subnamesPage.getSubnameRow(`test.${name}`)).toHaveCount(0)
@@ -49,13 +45,11 @@ test('should be able to delete subname', async ({
 test.describe('wrapped subname', () => {
   test('should be able to delete subname as parent owner', async ({
     page,
-    wallet,
-    nameGenerator,
-    Login,
-    ProfilePage,
-    TransactionModal,
+    makeName,
+    login,
+    makePageObject,
   }) => {
-    const name = await nameGenerator({
+    const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user',
@@ -69,17 +63,17 @@ test.describe('wrapped subname', () => {
 
     const subname = `test.${name}`
 
-    const profilePage = new ProfilePage(page)
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+
     await profilePage.goto(subname)
 
-    const login = new Login(page, wallet)
     await login.connect()
 
     await expect(page.getByTestId('owner-profile-button-name.manager')).toHaveCount(1)
 
     await profilePage.getDeleteSubnameButton.click()
 
-    const transactionModal = new TransactionModal(page, wallet)
     await transactionModal.autoComplete()
 
     await expect(page.getByTestId('owner-profile-button-name.manager')).toHaveCount(0)
@@ -87,13 +81,11 @@ test.describe('wrapped subname', () => {
 
   test('should be able to delete subname as name owner', async ({
     page,
-    wallet,
-    nameGenerator,
-    Login,
-    ProfilePage,
-    TransactionModal,
+    makeName,
+    login,
+    makePageObject,
   }) => {
-    const name = await nameGenerator({
+    const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
@@ -107,17 +99,17 @@ test.describe('wrapped subname', () => {
 
     const subname = `test.${name}`
 
-    const profilePage = new ProfilePage(page)
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+
     await profilePage.goto(subname)
 
-    const login = new Login(page, wallet)
     await login.connect()
 
     await expect(page.getByTestId('owner-profile-button-name.manager')).toHaveCount(1)
 
     await profilePage.getDeleteSubnameButton.click()
 
-    const transactionModal = new TransactionModal(page, wallet)
     await transactionModal.autoComplete()
 
     await expect(page.getByTestId('owner-profile-button-name.manager')).toHaveCount(0)
@@ -125,84 +117,53 @@ test.describe('wrapped subname', () => {
 })
 
 test.describe('wrapped subname with PCC burned', () => {
-  test('should NOT allow parent owner to delete', async ({
-    page,
-    wallet,
-    nameGenerator,
-    Login,
-    ProfilePage,
-  }) => {
-    const name = await nameGenerator({
+  test('should NOT allow parent owner to delete', async ({ makeName, login, makePageObject }) => {
+    const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user',
-      fuses: {
-        named: ['CANNOT_UNWRAP'],
-      },
+      fuses: ['CANNOT_UNWRAP'],
       subnames: [
         {
           label: 'test',
           owner: 'user2',
-          fuses: {
-            parent: {
-              named: ['PARENT_CANNOT_CONTROL'],
-            },
-            child: {
-              named: [],
-            },
-          },
+          fuses: ['PARENT_CANNOT_CONTROL'],
         },
       ],
     })
 
     const subname = `test.${name}`
 
-    const profilePage = new ProfilePage(page)
+    const profilePage = makePageObject('ProfilePage')
     await profilePage.goto(subname)
 
-    const login = new Login(page, wallet)
     await login.connect()
 
     await expect(profilePage.getDeleteSubnameButton).toHaveCount(0)
   })
 
-  test('should allow name owner to delete', async ({
-    page,
-    wallet,
-    nameGenerator,
-    Login,
-    ProfilePage,
-    TransactionModal,
-  }) => {
-    const name = await nameGenerator({
+  test('should allow name owner to delete', async ({ page, makeName, login, makePageObject }) => {
+    const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: {
-        named: ['CANNOT_UNWRAP'],
-      },
+      fuses: ['CANNOT_UNWRAP'],
       subnames: [
         {
           label: 'test',
           owner: 'user',
-          fuses: {
-            parent: {
-              named: ['PARENT_CANNOT_CONTROL'],
-            },
-            child: {
-              named: [],
-            },
-          },
+          fuses: ['PARENT_CANNOT_CONTROL'],
         },
       ],
     })
 
     const subname = `test.${name}`
 
-    const profilePage = new ProfilePage(page)
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+
     await profilePage.goto(subname)
 
-    const login = new Login(page, wallet)
     await login.connect()
 
     await page.pause()
@@ -212,49 +173,36 @@ test.describe('wrapped subname with PCC burned', () => {
     await expect(page.locator('text="This subname cannot be recreated"')).toHaveCount(1)
     await page.getByTestId('delete-emancipated-subname-button').click()
 
-    const transactionModal = new TransactionModal(page, wallet)
     await transactionModal.autoComplete()
 
     await expect(page.getByTestId('owner-profile-button-name.manager')).toHaveCount(0)
   })
 
   test('should not allow parent owner to delete if PCC is expired', async ({
-    page,
-    wallet,
-    nameGenerator,
-    Login,
-    ProfilePage,
+    login,
+    makeName,
+    makePageObject,
   }) => {
-    const name = await nameGenerator({
+    const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user',
-      fuses: {
-        named: ['CANNOT_UNWRAP'],
-      },
+      fuses: ['CANNOT_UNWRAP'],
       subnames: [
         {
           label: 'test',
           owner: 'user2',
           duration: -60 * 60 * 24,
-          fuses: {
-            parent: {
-              named: ['PARENT_CANNOT_CONTROL'],
-            },
-            child: {
-              named: [],
-            },
-          },
+          fuses: ['PARENT_CANNOT_CONTROL'],
         },
       ],
     })
 
     const subname = `test.${name}`
 
-    const profilePage = new ProfilePage(page)
+    const profilePage = makePageObject('ProfilePage')
     await profilePage.goto(subname)
 
-    const login = new Login(page, wallet)
     await login.connect()
 
     await expect(profilePage.getDeleteSubnameButton).toHaveCount(0)

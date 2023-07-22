@@ -14,7 +14,6 @@ import { LegacySubname, generateLegacySubname } from './generateLegacySubname'
 import { generateRecords } from './generateRecords'
 
 const DEFAULT_DURATION = 31536000
-const DURATION_ADJUSTMENT = 2419200 + 7776000
 const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
 const VALID_RESOLVERS = RESOLVER_ADDRESSES['1337'].filter(
   (resolver) => resolver !== '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',
@@ -44,7 +43,7 @@ export const generateLegacyNameWithConfig = async (
     manager,
     duration = DEFAULT_DURATION,
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
-    resolver = RESOLVER_ADDRESSES['1337'][0] as `0x${string}`,
+    resolver = DEFAULT_RESOLVER,
     addr = owner,
     records,
     subnames,
@@ -54,15 +53,14 @@ export const generateLegacyNameWithConfig = async (
   const _owner = accounts.getAddress(owner)
   const _addr = accounts.getAddress(addr)
 
-  // Check if resolver is accepted resolver
+  // Registration will fail if resoler is not valid. If an invalid resolver is entered
+  // we will set the resolver after the name has been registered.
   const hasValidResolver = resolver && VALID_RESOLVERS.includes(resolver)
   const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 
   // Connect contract
   const signer = provider.getSigner(accounts.getIndex(owner))
   const controller = await getContract('LegacyETHRegistrarController', { signer })
-  console.log(controller.address, label, _owner, secret, _resolver, _addr)
-  console.log('------------------------')
 
   // Commit
   const commitment = await controller.makeCommitmentWithConfig(
@@ -72,17 +70,27 @@ export const generateLegacyNameWithConfig = async (
     _resolver,
     _addr,
   )
-  await controller.commit(commitment)
+  const tx = await controller.commit(commitment)
+  await tx.wait()
 
-  await provider.increaseTime(60)
+  await provider.increaseTime(120)
   await provider.mine()
 
   // Register
   const _duration = duration
   const price = await controller.rentPrice(label, _duration)
-  await controller.registerWithConfig(label, _owner, _duration, secret, _resolver, _addr, {
-    value: price,
-  })
+  const tx2 = await controller.registerWithConfig(
+    label,
+    _owner,
+    _duration,
+    secret,
+    _resolver,
+    _addr,
+    {
+      value: price,
+    },
+  )
+  await tx2.wait()
 
   // Create records
   await generateRecords({ name: `${label}.eth`, owner, resolver, records }, { provider, accounts })
@@ -92,7 +100,7 @@ export const generateLegacyNameWithConfig = async (
     ...subname,
     name: `${label}.eth`,
     nameOwner: owner,
-    resolver: subname.resolver ?? resolver,
+    resolver: subname.resolver ?? _resolver,
   }))
   for (const subname of _subnames) {
     await generateLegacySubname(subname, { provider, accounts })

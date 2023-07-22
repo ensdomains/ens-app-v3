@@ -2,8 +2,11 @@
 import { Accounts, User } from 'playwright/fixtures/accounts'
 import { Provider } from 'playwright/fixtures/provider'
 
+import { hexEncodeName } from '@ensdomains/ensjs/utils/hexEncodedName'
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
+
+import { emptyAddress } from '@app/utils/constants'
 
 import { getContract } from '../utils/getContract'
 import { Records, generateRecords } from './generateRecords'
@@ -12,10 +15,11 @@ export type LegacySubname = {
   name: string
   nameOwner: User
   label: string
-  owner: User
+  owner?: User
   resolver?: `0x${string}`
   records?: Records
   duration?: number
+  type?: 'wrapped' | 'legacy'
 }
 
 type Dependencies = {
@@ -24,7 +28,7 @@ type Dependencies = {
 }
 
 export const generateLegacySubname = async (
-  { name, nameOwner, label, owner, resolver, records }: LegacySubname,
+  { name, nameOwner, label, owner = nameOwner, resolver, records, type }: LegacySubname,
   { provider, accounts }: Dependencies,
 ) => {
   const _owner = accounts.getAddress(owner)
@@ -40,14 +44,12 @@ export const generateLegacySubname = async (
   // Make subname without resolver
   if (!resolver) {
     await registry.setSubnodeOwner(node, _labelhash, _owner)
-    return
+  } else {
+    await registry.setSubnodeRecord(node, _labelhash, _owner, resolver, 0)
   }
 
-  // Make subname with resolver
-  await registry.setSubnodeRecord(node, _labelhash, _owner, resolver, 0)
-
   // Make records
-  if (records) {
+  if (records && resolver) {
     await generateRecords(
       {
         name: `${label}.${name}`,
@@ -60,5 +62,23 @@ export const generateLegacySubname = async (
         provider,
       },
     )
+  }
+
+  if (type === 'wrapped') {
+    const signer2 = provider.getSigner(accounts.getIndex(owner))
+    const nameWrapper = await getContract('NameWrapper', { signer: signer2 })
+    const registry2 = await getContract('ENSRegistry', { signer: signer2 })
+
+    const isApproved = await registry.isApprovedForAll(
+      accounts.getAddress(owner),
+      nameWrapper.address,
+    )
+
+    if (!isApproved) {
+      await registry2.setApprovalForAll(nameWrapper.address, true)
+    }
+
+    const _resolver = resolver || emptyAddress
+    await nameWrapper.wrap(hexEncodeName(`${label}.${name}`), accounts.getAddress(owner), _resolver)
   }
 }
