@@ -78,7 +78,7 @@ export const generateWrappedSubname = async (
   const node = namehash(name)
   const encodedFuses = _fuses ? encodeFuses(_fuses) : 0
   const blockTimestamp = await provider.getBlockTimestamp()
-  const expiry = duration + blockTimestamp + offset
+  const expiry = duration + blockTimestamp
 
   console.log('subname expiry', expiry, duration, offset, new Date(expiry * 1000))
   // Make subname with resolver

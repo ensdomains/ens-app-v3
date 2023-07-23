@@ -175,23 +175,27 @@ test('should allow creating an expired wrapped subname', async ({
       },
     ],
   })
+  const subname = `test.${name}`
 
+  const profilePage = makePageObject('ProfilePage')
   const subnamesPage = makePageObject('SubnamesPage')
   const transactionModal = makePageObject('TransactionModal')
 
-  await subnamesPage.goto(name)
-
+  await profilePage.goto(subname)
   await login.connect()
+  await expect(
+    page.getByText('This subname has expired and is not owned. You can recreate this subname.'),
+  ).toBeVisible()
 
+  await subnamesPage.goto(name)
   await subnamesPage.getAddSubnameButton.click()
   await subnamesPage.getAddSubnameInput.fill('test')
   await subnamesPage.getSubmitSubnameButton.click()
 
   await transactionModal.autoComplete()
 
-  await page.pause()
-  // TODO: PAGE IS NOT UPDATING
-  await expect(page.getByText(`test.${name}`)).toBeVisible()
+  await profilePage.goto(subname)
+  await expect(page.getByTestId('owner-profile-button-name.manager')).toBeVisible()
 })
 
 test('should allow creating an expired wrapped subname from the profile page', async ({

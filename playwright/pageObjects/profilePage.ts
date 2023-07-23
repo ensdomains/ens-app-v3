@@ -13,7 +13,9 @@ export class ProfilePage {
 
   readonly getRecreateButton: Locator
 
-  readonly getDeleteSubnameButton: Locator
+  readonly deleteSubnameButton: Locator
+
+  readonly disabledDeleteSubnameButton: Locator
 
   readonly getExtendButton: Locator
 
@@ -24,7 +26,10 @@ export class ProfilePage {
   constructor(page: Page) {
     this.page = page
     this.getRecreateButton = this.page.getByTestId('profile-action-Recreate name')
-    this.getDeleteSubnameButton = this.page.locator('text="Delete subname"')
+    this.deleteSubnameButton = this.page.locator('text="Delete subname"')
+    this.disabledDeleteSubnameButton = this.page.getByTestId(
+      'disabled-profile-action-Delete subname',
+    )
     this.getExtendButton = this.page.getByTestId('extend-button')
     this.editProfileButton = this.page.getByTestId('profile-action-Edit profile')
     this.profileEditor = this.page.getByTestId('profile-editor')

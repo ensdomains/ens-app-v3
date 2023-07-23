@@ -24,7 +24,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm test:coverage
-
   build-stateless:
     runs-on: ubuntu-latest
     steps:
@@ -216,3 +215,26 @@ jobs:
         with:
           name: synpress-videos
           path: e2e/videos
+
+  playwright: 
+    name: Playwright
+    runs-on: ubunto-latest
+    steps: 
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+
+      - name: Get contract addresses
+        run: 'parallel --lb --halt now,success=1,fail=1 ::: \
+          "pnpm tenv start -ng -ns -nb" \
+          "pnpm wait-on ./.env.local"'
+
+      - name: Build stateless and export
+        run: pnpm build:glocal && pnpm export
+      - name: Install playwright
+        run: npx playwright install --with-deps
+      - name: Run tests
+        run: npx playwright test

@@ -210,6 +210,7 @@ test('should allow registering a premium name', async ({
   await provider.increaseTime(60)
   await page.getByTestId('finish-button').click()
   await transactionModal.autoComplete()
+  await page.waitForTimeout(1000)
   await page.getByTestId('view-name').click()
   // TODO: Why is this one failing?
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(

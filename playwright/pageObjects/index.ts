@@ -9,6 +9,7 @@ import { MorePage } from './morePage'
 import { PermissionsPage } from './permissionsPage'
 import { ProfilePage } from './profilePage'
 import { RegistrationPage } from './registrationPage'
+import { SendNameModal } from './sendNameModal'
 import { SubnamesPage } from './subnamePage'
 import { TransactionModal } from './transactionModal'
 
@@ -22,6 +23,7 @@ const pageObjects = {
   PermissionsPage,
   ProfilePage,
   RegistrationPage,
+  SendNameModal,
   SubnamesPage,
   TransactionModal,
 }

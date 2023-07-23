@@ -118,7 +118,7 @@ test.describe('Permissions', () => {
 
     await login.connect()
 
-    await expect(profilePage.getDeleteSubnameButton).toBeVisible()
+    await expect(profilePage.deleteSubnameButton).toBeVisible()
 
     const subnamesPage = makePageObject('SubnamesPage')
     await subnamesPage.goto(subname)
@@ -154,7 +154,7 @@ test.describe('Permissions', () => {
 
     await login.connect()
 
-    await expect(profilePage.getDeleteSubnameButton).toBeVisible()
+    await expect(profilePage.deleteSubnameButton).toBeVisible()
 
     const subnamesPage = makePageObject('SubnamesPage')
     await subnamesPage.goto(subname)
@@ -340,7 +340,7 @@ test.describe('Permissions', () => {
 
     await login.connect()
 
-    await expect(profilePage.getDeleteSubnameButton).toHaveCount(0)
+    await expect(profilePage.deleteSubnameButton).toHaveCount(0)
 
     const subnamesPage = makePageObject('SubnamesPage')
     await subnamesPage.goto(subname)
@@ -381,7 +381,7 @@ test.describe('Permissions', () => {
 
     await login.connect()
 
-    await expect(profilePage.getDeleteSubnameButton).toBeVisible()
+    await expect(profilePage.deleteSubnameButton).toBeVisible()
 
     await subnamesPage.goto(subname)
     await expect(subnamesPage.getAddSubnameButton).toBeVisible()
