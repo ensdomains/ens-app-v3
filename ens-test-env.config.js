@@ -38,5 +38,6 @@ module.exports = {
   ],
   paths: {
     data: './data',
+    composeFile: "./docker-compose.yml",
   },
 }
