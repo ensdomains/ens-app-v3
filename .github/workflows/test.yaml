@@ -39,12 +39,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Download build
-        id: download
-        uses: actions/download-artifact@v3
-        with:
-          name: stateless-build
-
       - name: Untar files
         run: unzip stateless-build.zip
 
