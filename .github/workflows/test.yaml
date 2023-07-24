@@ -5,7 +5,9 @@ on: [push]
 jobs:
   stateless:
     timeout-minutes: 20
-    runs-on: ubuntu-latest
+    runs-on:
+      group: default-larger-runners
+      labels: ubuntu-32gb
     strategy:
       matrix:
         spec-name: ['02_setPrimary.spec.js']
