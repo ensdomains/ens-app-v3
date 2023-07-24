@@ -38,6 +38,7 @@ module.exports = defineConfig({
     baseUrl: 'http://localhost:8788',
     specPattern: 'e2e/specs/stateless/02_setPrimary.spec.js',
     supportFile: 'e2e/support.js',
+    experimentalMemoryManagement: true,
   },
 })
 
