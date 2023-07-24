@@ -41,8 +41,6 @@ export function createMakeNames({ accounts, provider, time }: Dependencies) {
     const _names = adjustName(names, offset)
 
     for (const { type, ...name } of _names) {
-      console.log(name)
-      console.log('start block', await provider.getBlockNumber())
       if (type === 'wrapped') {
         console.log('registering wrapped name')
         const wrappedName = { ...name, offset } as WrappedName
@@ -58,7 +56,7 @@ export function createMakeNames({ accounts, provider, time }: Dependencies) {
         // eslint-disable-next-line no-await-in-loop
         await generateLegacyName(legacyName, { accounts, provider })
       }
-      console.log('end block', await provider.getBlockNumber())
+      // eslint-disable-next-line no-await-in-loop
       await provider.mine()
     }
 

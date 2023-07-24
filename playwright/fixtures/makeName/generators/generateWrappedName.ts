@@ -50,7 +50,6 @@ export const generateWrappedName = async (
     fuses,
     records,
     subnames,
-    offset,
   }: Name,
   { accounts, provider }: Dependencies,
 ) => {
@@ -122,7 +121,7 @@ export const generateWrappedName = async (
     resolver: subname.resolver ?? resovlerAddress,
   }))
   for (const subname of _subnames) {
-    await generateWrappedSubname({ ...subname, offset }, { accounts, provider })
+    await generateWrappedSubname({ ...subname }, { accounts, provider })
   }
 
   if (records) {

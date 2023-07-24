@@ -11,7 +11,7 @@ import {
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
-import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
+import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 import { getContract } from '../utils/getContract'
 import { generateRecords } from './generateRecords'
@@ -27,7 +27,6 @@ export type WrappedSubname = {
   records?: RecordOptions
   fuses?: Fuse[]
   duration?: number
-  offset?: number
 }
 
 type Dependencies = {
@@ -63,7 +62,6 @@ export const generateWrappedSubname = async (
     records,
     fuses,
     duration = 31536000,
-    offset = 0,
   }: WrappedSubname,
   { provider, accounts }: Dependencies,
 ) => {

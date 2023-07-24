@@ -5,11 +5,12 @@ import { Provider } from 'playwright/fixtures/provider'
 import { hexEncodeName } from '@ensdomains/ensjs/utils/hexEncodedName'
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
 import { emptyAddress } from '@app/utils/constants'
 
 import { getContract } from '../utils/getContract'
-import { Records, generateRecords } from './generateRecords'
+import { generateRecords } from './generateRecords'
 
 export type LegacySubname = {
   name: string
@@ -17,7 +18,7 @@ export type LegacySubname = {
   label: string
   owner?: User
   resolver?: `0x${string}`
-  records?: Records
+  records?: RecordOptions
   duration?: number
   type?: 'wrapped' | 'legacy'
 }

@@ -50,9 +50,9 @@ export class TransactionModal {
         // eslint-disable-next-line no-await-in-loop
       } while (await this.confirmButton.count())
       // eslint-disable-next-line no-await-in-loop
-
       const text = await this.completeButton.innerText()
       hasTransactions = text !== 'Done'
+      // eslint-disable-next-line no-await-in-loop
       await this.complete()
       // eslint-disable-next-line no-await-in-loop
     } while (hasTransactions)

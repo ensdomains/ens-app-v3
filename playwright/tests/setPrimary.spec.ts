@@ -185,7 +185,7 @@ test.describe('profile', () => {
           records: {
             coinTypes: [
               {
-                key: 60,
+                key: 'ETH',
                 value: accounts.getAddress('user'),
               },
             ],
