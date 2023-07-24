@@ -48,7 +48,6 @@ test.describe('unwrapped', () => {
       await page.goto('/legacy.test')
 
       await login.connect('user2')
-      await page.pause()
 
       const profilePage = makePageObject('ProfilePage')
       await profilePage.editProfileButton.click()

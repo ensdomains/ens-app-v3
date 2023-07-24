@@ -15,16 +15,6 @@ import { emptyAddress } from '@app/utils/constants'
 
 import { getContract } from '../utils/getContract'
 
-export type Records = {
-  texts?: { key: string; value: string }[]
-  coins?: { key: number; value: string }[]
-  contenthash?: string
-  abi?: {
-    contentType: number
-    data: any
-  }
-}
-
 type Input = {
   name: string
   owner: User
@@ -41,6 +31,7 @@ export const generateRecords = async (
   { name, owner, resolver, records }: Input,
   { accounts, provider }: Dependencies,
 ) => {
+  console.log(name, owner, resolver, records)
   if (!resolver || !records || !owner) return
 
   // Connect contract
@@ -71,6 +62,7 @@ export const generateRecords = async (
     }
     const inputCoinType = coinTypeInstance.coinType
     const encodedAddress = coinTypeInstance.decoder(value)
+    console.log('cointtype', inputCoinType)
     await publicResolver['setAddr(bytes32,uint256,bytes)'](node, inputCoinType, encodedAddress)
   }
 

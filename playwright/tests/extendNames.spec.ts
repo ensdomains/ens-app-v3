@@ -32,8 +32,6 @@ test('should be able to register multiple names on the address page', async ({
 
   await login.connect()
 
-  await page.pause()
-
   await addresPage.selectToggle.click()
   const timestampDict: { [key: string]: number } = {}
   for (const name of names) {
@@ -161,7 +159,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await expect(page.locator(`text=${name} has expired`)).toBeVisible()
 
   const timestamp = await profilePage.getExpiryTimestamp()
-  await page.pause()
 
   await profilePage.getExtendButton.click()
 

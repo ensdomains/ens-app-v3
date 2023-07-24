@@ -12,7 +12,11 @@ type Dependencies = {
 
 export const createTime = ({ provider, page }: Dependencies) => {
   return {
-    sync: async (offset = 0) => {
+    sync: async (offset = 0, consoleWarning = true) => {
+      if (consoleWarning)
+        console.warn(
+          'If you are calling time.sync() at the same time as makeName your Date object will be inaccurate',
+        )
       const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
       const blockTime = await provider.getBlockTimestamp()
       const browserOffset = (blockTime - browserTime + offset) * 1000

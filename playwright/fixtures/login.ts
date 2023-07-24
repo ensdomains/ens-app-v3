@@ -33,11 +33,16 @@ export class Login {
      * A bug in rainbow kit needs time to load the provider. Could be fixed in version 1.0.4
      * Also throws eror with walletconnect if not enough time has passed.
      */
-    // await this.page.waitForLoadState('networkidle')
     await this.page.waitForTimeout(10000)
+    this.page
+      .getByRole('button', { name: 'Close' })
+      .click({ timeout: 15000 })
+      .catch(() => {})
     await this.getConnectButton.click()
     await this.page.getByText('Browser Wallet').click()
-    await expect(this.page.getByText('Confirm connection in the extension')).toBeVisible()
+    await expect(this.page.getByText('Confirm connection in the extension')).toBeVisible({
+      timeout: 15000,
+    })
     await expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
     await expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)

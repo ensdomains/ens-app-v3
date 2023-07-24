@@ -25,6 +25,8 @@ test.describe('normal registration', () => {
     await homePage.goto()
     await login.connect()
 
+    await page.pause()
+
     // should redirect to registration page
     await homePage.searchInput.fill(name)
     await homePage.searchInput.press('Enter')
@@ -105,6 +107,8 @@ test.describe('normal registration', () => {
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
       accounts.getAddress('user', 5),
     )
+
+    await page.pause()
   })
 
   test('should not direct to the registration page on search, and show all records from registration', async ({
@@ -178,24 +182,26 @@ test('should allow registering a premium name', async ({
   page,
   login,
   provider,
-  time,
   accounts,
   makeName,
   makePageObject,
 }) => {
-  const premiumName = await makeName({
-    label: 'premium',
-    owner: 'user2',
-    type: 'legacy',
-    duration: -7890000 - 4 * 345600, // 3 months 4 days
-  })
-
-  await time.sync(500)
+  const premiumName = await makeName(
+    {
+      label: 'premium',
+      owner: 'user2',
+      type: 'legacy',
+      duration: -7890000 - 4 * 345600, // 3 months 4 days
+    },
+    { timeOffset: 60 },
+  )
 
   const transactionModal = makePageObject('TransactionModal')
 
   await page.goto(`/${premiumName}/register`)
   await login.connect()
+
+  await page.pause()
 
   await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
@@ -207,10 +213,10 @@ test('should allow registering a premium name', async ({
   await transactionModal.autoComplete()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(60)
+  await provider.increaseTime(120)
   await page.getByTestId('finish-button').click()
   await transactionModal.autoComplete()
-  await page.waitForTimeout(1000)
+  await page.pause()
   await page.getByTestId('view-name').click()
   // TODO: Why is this one failing?
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(

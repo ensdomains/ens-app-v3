@@ -13,9 +13,10 @@ import { makeCommitment, makeRegistrationData } from '@ensdomains/ensjs/utils/re
 import { NAMEWRAPPER_AWARE_RESOLVERS } from '@app/utils/constants'
 
 import { getContract } from '../utils/getContract'
+import { generateRecords } from './generateRecords'
 import { WrappedSubname, generateWrappedSubname } from './generateWrappedSubname'
 
-const DEFAULT_RESOLVER = NAMEWRAPPER_AWARE_RESOLVERS['1337'][0]
+const DEFAULT_RESOLVER = NAMEWRAPPER_AWARE_RESOLVERS['1337'][0] as `0x${string}`
 
 type Fuse = ChildFuses['fuse']
 
@@ -44,7 +45,7 @@ export const generateWrappedName = async (
     owner = 'user',
     duration = 31536000,
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
-    resolver,
+    resolver = DEFAULT_RESOLVER,
     reverseRecord = false,
     fuses,
     records,
@@ -118,10 +119,22 @@ export const generateWrappedName = async (
     ...subname,
     name: `${label}.eth`,
     nameOwner: owner,
-    resolver: undefined,
+    resolver: subname.resolver ?? resovlerAddress,
   }))
   for (const subname of _subnames) {
     await generateWrappedSubname({ ...subname, offset }, { accounts, provider })
+  }
+
+  if (records) {
+    await generateRecords(
+      {
+        name: `${label}.eth`,
+        owner,
+        resolver: _resolver.address,
+        records,
+      },
+      { accounts, provider },
+    )
   }
 
   // Force set an invalid resolver

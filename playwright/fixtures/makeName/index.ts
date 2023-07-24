@@ -24,12 +24,19 @@ export type Name = BaseName & {
   type: 'wrapped' | 'legacy' | 'legacy-register'
 }
 
-export function createMakeNames({ accounts, provider, time }: Dependencies) {
-  async function makeNames(name: Name): Promise<string>
-  async function makeNames(names: Name[]): Promise<string[]>
-  async function makeNames(nameOrNames: Name | Name[]): Promise<string | string[]> {
-    const names: Name[] = Array.isArray(nameOrNames) ? nameOrNames : [nameOrNames]
+type Options = {
+  timeOffset?: number
+  syncSubgraph?: boolean
+}
 
+export function createMakeNames({ accounts, provider, time }: Dependencies) {
+  async function makeNames(name: Name, options?: Options): Promise<string>
+  async function makeNames(names: Name[], options?: Options): Promise<string[]>
+  async function makeNames(
+    nameOrNames: Name | Name[],
+    options: Options = {},
+  ): Promise<string | string[]> {
+    const names: Name[] = Array.isArray(nameOrNames) ? nameOrNames : [nameOrNames]
     const offset = await getTimeOffset({ names })
     const _names = adjustName(names, offset)
 
@@ -63,9 +70,9 @@ export function createMakeNames({ accounts, provider, time }: Dependencies) {
       await provider.mine()
     }
 
-    await waitForSubgraph(provider)()
+    if (options.syncSubgraph ?? true) await waitForSubgraph(provider)()
 
-    await time.sync()
+    await time.sync(options.timeOffset ?? 0, false)
 
     const ethNames = _names.map((name) => `${name.label}.eth`)
     if (ethNames.length === 1) return ethNames[0] as string

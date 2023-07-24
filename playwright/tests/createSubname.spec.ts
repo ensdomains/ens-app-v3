@@ -79,7 +79,6 @@ test('should not allow creating a subname with invalid characters', async ({
   await subnamesPage.getAddSubnameButton.click()
   await subnamesPage.getAddSubnameInput.type('invalid name')
   await expect(subnamesPage.getSubmitSubnameButton).toBeDisabled()
-  await page.pause()
   await expect(page.getByText('Contains invalid characters')).toBeVisible()
 })
 
@@ -199,7 +198,6 @@ test('should allow creating an expired wrapped subname', async ({
 })
 
 test('should allow creating an expired wrapped subname from the profile page', async ({
-  page,
   makeName,
   login,
   makePageObject,
@@ -226,8 +224,6 @@ test('should allow creating an expired wrapped subname from the profile page', a
   await profilePage.goto(subname)
 
   await login.connect()
-
-  await page.pause()
 
   await profilePage.getRecreateButton.click()
 

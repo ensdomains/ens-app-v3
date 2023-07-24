@@ -385,8 +385,6 @@ test.describe('subgraph errors', () => {
     await profilePage.goto(subname)
     await login.connect()
 
-    await page.pause()
-
     await expect(profilePage.deleteSubnameButton).toBeVisible()
 
     await page.goto('/my/settings')

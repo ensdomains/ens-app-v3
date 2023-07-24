@@ -9,11 +9,12 @@ import {
   encodeFuses,
 } from '@ensdomains/ensjs/utils/fuses'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
-import { emptyAddress } from '@app/utils/constants'
+import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
 
 import { getContract } from '../utils/getContract'
-import { Records, generateRecords } from './generateRecords'
+import { generateRecords } from './generateRecords'
 
 type Fuse = ParentFuses['fuse'] | ChildFuses['fuse']
 
@@ -23,7 +24,7 @@ export type WrappedSubname = {
   label: string
   owner: User
   resolver?: `0x${string}`
-  records?: Records
+  records?: RecordOptions
   fuses?: Fuse[]
   duration?: number
   offset?: number
@@ -58,7 +59,7 @@ export const generateWrappedSubname = async (
     nameOwner,
     label,
     owner,
-    resolver = emptyAddress,
+    resolver = RESOLVER_ADDRESSES['1337'][0] as `0x${string}`,
     records,
     fuses,
     duration = 31536000,
@@ -68,7 +69,6 @@ export const generateWrappedSubname = async (
 ) => {
   const _owner = accounts.getAddress(owner)
   const _fuses = makeFuseInput(fuses)
-  console.log(fuses, _fuses)
 
   // Connect contract
   const signer = provider.getSigner(accounts.getIndex(nameOwner))
@@ -80,7 +80,7 @@ export const generateWrappedSubname = async (
   const blockTimestamp = await provider.getBlockTimestamp()
   const expiry = duration + blockTimestamp
 
-  console.log('subname expiry', expiry, duration, offset, new Date(expiry * 1000))
+  console.log('resovler', resolver)
   // Make subname with resolver
   await nameWrapper.setSubnodeRecord(node, label, _owner, resolver, 0, encodedFuses, expiry)
 

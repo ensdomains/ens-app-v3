@@ -24,7 +24,6 @@ test.describe('Happy', () => {
     await login.connect()
 
     await morePage.sendButton.click()
-    await page.pause()
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
     await page.getByTestId('owner-checkbox').click()
     await sendNameModal.clickNextButton()
@@ -122,7 +121,7 @@ test.describe('Happy', () => {
 
     await morePage.goto(name)
     await login.connect()
-    // await page.pause()
+    // ()
 
     await morePage.sendButton.click()
 

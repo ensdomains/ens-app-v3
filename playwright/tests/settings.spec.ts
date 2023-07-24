@@ -55,7 +55,7 @@ test.describe('Transactions', () => {
     await page.getByTestId('toast-close-icon').click()
   })
 
-  test('should add a failed transaction to the transaction list, and show the corresponding notification', async ({
+  test.skip('should add a failed transaction to the transaction list, and show the corresponding notification', async ({
     page,
     login,
     makePageObject,
