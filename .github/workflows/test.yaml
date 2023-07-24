@@ -42,7 +42,10 @@ jobs:
       - run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Install Foundry
-        run: curl -L https://foundry.paradigm.xyz | bash
+        run: |
+          curl -L https://foundry.paradigm.xyz | bash
+          source /home/runner/.bashrc
+          foundryup
 
       - name: Untar files
         run: unzip stateless-build.zip && tar -xvf stateless-build.tar
