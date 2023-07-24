@@ -23,7 +23,6 @@ describe('Settings', () => {
       cy.contains('Waiting for Wallet').should('be.visible')
       cy.findByTestId('transaction-modal-confirm-button').should('be.disabled')
       cy.confirmMetamaskTransaction()
-      cy.wait(500)
       cy.contains('Your transaction is now complete!').should('be.visible')
       cy.findByTestId('transaction-modal-complete-button').click()
       cy.findByTestId('toast-desktop')
@@ -35,9 +34,7 @@ describe('Settings', () => {
     it('should add a successful transaction to the transaction list, and show the corresponding notification', () => {
       acceptMetamaskAccess(2)
       cy.visit('/my/settings')
-      cy.wait(5000)
       cy.contains('Add Successful Transaction').click({ force: true })
-      cy.wait(5000)
       cy.confirmMetamaskTransaction()
       cy.contains('Test transaction').should('be.visible')
 
@@ -49,10 +46,8 @@ describe('Settings', () => {
     })
     it('should add a failed transaction to the transaction list, and show the corresponding notification', () => {
       cy.visit('/my/settings')
-      cy.wait(5000)
       cy.contains('Add Failing Transaction').click()
       cy.confirmMetamaskTransaction()
-      cy.wait(500)
       cy.findByTestId('transaction-failed')
         .should('be.visible')
         .should('contain.text', 'Test transaction')
@@ -64,11 +59,9 @@ describe('Settings', () => {
     })
     it('should add a pending transaction to the transaction list, and show the corresponding notification once confirmed', () => {
       cy.visit('/my/settings')
-      cy.wait(5000)
       cy.contains('Stop Automine').click()
       cy.contains('Add Successful Transaction').click()
       cy.confirmMetamaskTransaction()
-      cy.wait(500)
       cy.findByTestId('transaction-pending')
         .should('be.visible')
         .should('contain.text', 'Test transaction')

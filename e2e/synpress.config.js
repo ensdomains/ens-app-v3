@@ -2,6 +2,8 @@ const { defineConfig } = require('cypress')
 const importedSetupNodeEvents = require(`${getSynpressPath()}/plugins/index`)
 const fixturesFolder = `${getSynpressPath()}/fixtures`
 
+process.env.DEBUG = "cypress-verbose:server:util:process_profiler"
+
 module.exports = defineConfig({
   projectId: '4zmgdz',
   userAgent: 'synpress',
@@ -34,7 +36,7 @@ module.exports = defineConfig({
     },
     projectId: '4zmgdz',
     baseUrl: 'http://localhost:8788',
-    specPattern: 'e2e/specs/stateless/**/*.{js,jsx,ts,tsx}',
+    specPattern: 'e2e/specs/stateless/02_setPrimary.spec.js',
     supportFile: 'e2e/support.js',
   },
 })

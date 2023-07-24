@@ -37,8 +37,6 @@ describe('Set Primary Name from settings', () => {
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
 
-      cy.wait(10000)
-
       // Assertions
       cy.findByTestId('primary-name-section').should('be.visible')
       cy.findByTestId('primary-name-label').should('contain.text', 'other-eth-record.eth')
@@ -69,8 +67,6 @@ describe('Set Primary Name from settings', () => {
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
 
-      cy.wait(10000)
-
       // Assertion
       cy.findByTestId('primary-name-label').should('contain.text', 'other-controller.eth')
     })
@@ -86,7 +82,6 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
-      cy.wait(10000)
 
       // Set primary name
       cy.visit('/my/settings')
@@ -117,8 +112,6 @@ describe('Set Primary Name from settings', () => {
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
 
-      cy.wait(10000)
-
       // Assertion
       cy.findByTestId('primary-name-label').should('contain.text', 'sub.wrapped.eth')
     })
@@ -138,7 +131,6 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
-      cy.wait(10000)
 
       // Set resolver to unauthorized resolver
       cy.visit('/legacy.wrapped.eth?tab=more')
@@ -149,7 +141,6 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
-      cy.wait(10000)
 
       // Set primary name
       cy.visit('/my/settings')
@@ -175,8 +166,6 @@ describe('Set Primary Name from settings', () => {
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
 
-      cy.wait(10000)
-
       // Assertion
       cy.findByTestId('primary-name-label').should('contain.text', 'legacy.wrapped.eth')
     })
@@ -191,10 +180,8 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
-      cy.wait(10000)
 
       cy.visit('/my/settings')
-      cy.wait(10000)
 
       cy.findByTestId('set-primary-name-button').click()
       cy.findByTestId('name-item-legacy.wrapped.eth')
@@ -208,7 +195,6 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
-      cy.wait(10000)
 
       // Assertion
       cy.findByTestId('primary-name-label').should('contain.text', 'legacy.wrapped.eth')
@@ -251,7 +237,6 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
-      cy.wait(10000)
 
       // Validate that the name is in the list
       cy.visit('/my/settings')
@@ -271,7 +256,6 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
-      cy.wait(10000)
 
       // Validate that the name is NOT in the list
       cy.visit('/my/settings')
@@ -298,7 +282,6 @@ describe('Set Primary Name from settings', () => {
         'unknown-label-input-0x5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04',
       ).type('aaa123xyz000')
       cy.findByTestId('unknown-labels-confirm').should('be.enabled').click()
-      cy.wait(1000)
 
       // Intro modal
       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
@@ -312,8 +295,6 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
-
-      cy.wait(10000)
 
       // Assertion
       cy.findByTestId('primary-name-label').should('have.text', 'aaa123xyz000.unknown-labels.eth')
