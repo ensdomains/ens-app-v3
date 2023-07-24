@@ -40,7 +40,7 @@ jobs:
       - run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Untar files
-        run: unzip stateless-build.zip
+        run: unzip stateless-build.zip && tar -xvf stateless-build.tar
 
       - name: Install window server
         run: sudo apt-get install -y fluxbox
