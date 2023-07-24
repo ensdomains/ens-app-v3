@@ -32,6 +32,7 @@ describe('Set Primary Name from settings', () => {
           cy.findByTestId('tag-name.owner-false').should('be.visible')
         })
         .click()
+      cy.wait(500)
       cy.findByTestId('primary-next').click()
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
@@ -52,6 +53,7 @@ describe('Set Primary Name from settings', () => {
           cy.findByTestId('tag-name.owner-false').should('be.visible')
         })
         .click()
+      cy.wait(500)
       cy.findByTestId('primary-next').click()
 
       // Intro modal
@@ -92,6 +94,7 @@ describe('Set Primary Name from settings', () => {
           cy.findByTestId('tag-name.manager-true').should('be.visible')
         })
         .click()
+      cy.wait(500)
       cy.findByTestId('primary-next').click()
 
       // Intro modal
@@ -151,6 +154,7 @@ describe('Set Primary Name from settings', () => {
           cy.findByTestId('tag-name.manager-true').should('be.visible')
         })
         .click()
+      cy.wait(500)
       cy.findByTestId('primary-next').click()
 
       // Intro modal
@@ -189,6 +193,7 @@ describe('Set Primary Name from settings', () => {
           cy.findByTestId('tag-name.manager-true').should('be.visible')
         })
         .click()
+      cy.wait(500)
       cy.findByTestId('primary-next').click()
 
       // Update ETH address
@@ -209,6 +214,7 @@ describe('Set Primary Name from settings', () => {
     it('should allow resetting primary name', () => {
       cy.visit('/my/settings')
       cy.findByTestId('reset-primary-name-button').click()
+      cy.wait(500)
       cy.findByTestId('primary-next').click()
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
@@ -275,6 +281,7 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId(
         'name-item-[5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04].unknown-labels.eth',
       ).click()
+      cy.wait(500)
       cy.findByTestId('primary-next').click()
 
       // Unknown label modal

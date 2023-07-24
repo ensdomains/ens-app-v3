@@ -57,15 +57,12 @@ jobs:
       - name: Run denv
         run: pnpm denv &
 
-      - name: Run e2e tests (cypress-action)
-        uses: cypress-io/github-action@d69252d52b9a31bad4f418f05ba2bc83687a02eb # pin@v5.8.3
-        with:
-          start: pnpm wrangle
-          command: pnpm synpress:ci
-          wait-on: "http://localhost:8788"
-          wait-on-timeout: 120
-          browser: chrome
-          spec: e2e/specs/stateless/${{ matrix.spec-name }}
+      - name: Run Wrangler
+        run: pnpm wrangle &
+
+      - name: Run e2e tests
+        run: |
+          pnpm synpress:ci -- --spec e2e/specs/stateless/${{ matrix.spec-name }} --env .env
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
