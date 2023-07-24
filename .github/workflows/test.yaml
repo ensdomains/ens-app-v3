@@ -67,7 +67,6 @@ jobs:
           browser: chrome
           spec: e2e/specs/stateless/${{ matrix.spec-name }}
         env:
-          DEBUG: cypress-verbose:server:util:process_profiler
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
           DISPLAY: :0.0
