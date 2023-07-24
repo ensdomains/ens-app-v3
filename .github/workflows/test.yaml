@@ -64,7 +64,6 @@ jobs:
         run: |
           pnpm synpress:ci -- --spec e2e/specs/stateless/${{ matrix.spec-name }} --env .env
         env:
-          DEBUG: cypress*
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
           DISPLAY: :0.0
