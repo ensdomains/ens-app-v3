@@ -1,20 +1,5 @@
 version: '3'
 services:
-  anvil:
-    image: ghcr.io/ensdomains/anvil:latest
-    ports:
-      - '8545:8545'
-    entrypoint: /bin/sh -c 'anvil --chain-id 1337 --gas-limit 50000000 --timestamp 1640995200'
-    environment:
-      ANVIL_IP_ADDR: '0.0.0.0'
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 8G
-        reservations:
-          cpus: '0.5'
-          memory: 4G
   graph-node:
     image: graphprotocol/graph-node:v0.27.0
     ports:
@@ -33,18 +18,20 @@ services:
       postgres_pass: let-me-in
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
-      ethereum: 'mainnet:http://anvil:8545'
+      ethereum: 'mainnet:http://host.docker.internal:8545'
       GRAPH_LOG: $GRAPH_LOG_LEVEL
       GRAPH_ALLOW_NON_DETERMINISTIC_IPFS: 'true'
       GRAPH_ETHEREUM_CLEANUP_BLOCKS: 'true'
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: '4'
           memory: 16G
         reservations:
-          cpus: '1'
-          memory: 4G
+          cpus: '2'
+          memory: 8G
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   ipfs:
     image: ipfs/kubo:v0.16.0
     ports:
