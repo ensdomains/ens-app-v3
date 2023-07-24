@@ -41,11 +41,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Install Foundryup
-        run: curl -L https://foundry.paradigm.xyz | bash
-        
       - name: Install Foundry
-        run: foundryup
+        uses: foundry-rs/foundry-toolchain@v1
 
       - name: Untar files
         run: unzip stateless-build.zip && tar -xvf stateless-build.tar
