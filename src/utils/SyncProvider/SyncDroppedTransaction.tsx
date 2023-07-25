@@ -85,7 +85,6 @@ export const findDroppedTransactions = async (
   const etherscanEndpoint = getAccountHistoryEndpoint(address, chainId)
   const etherscanResponse = await fetch(etherscanEndpoint)
   const etherscanJson: EtherscanResponse = await etherscanResponse.json()
-  console.log('etherscanJson: ', etherscanJson)
   const accountTransactionHistory = etherscanJson?.result
 
   for (const searchingTransaction of searchingTransactions) {
@@ -135,6 +134,18 @@ export const findDroppedTransactions = async (
       store.foundTransaction(address, chainId, searchingTransaction.hash, result.nonce)
       return
     }
+
+    // If there is a transaction in history with a timestamp ahead of the searching transaction
+    // at this point, then we can assume the searchingTransaction was cancelled
+    const cancelledTransactions = accountTransactionHistory.filter(
+      (historicTransaction) =>
+        parseInt(historicTransaction.timeStamp, 10) > (searchingTransaction?.timestamp ?? 0),
+    )
+    if (cancelledTransactions.length > 0) {
+      store.setFailedTransaction(address, chainId, searchingTransaction.hash)
+      return
+    }
+
     store.updateRetries(address, chainId, searchingTransaction.hash)
   }
 

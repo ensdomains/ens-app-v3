@@ -1,7 +1,6 @@
 /* eslint-disable default-case */
 
 /* eslint-disable no-param-reassign */
-// import { current } from 'immer'
 import {
   InternalTransactionFlow,
   InternalTransactionFlowItem,
@@ -40,10 +39,6 @@ export const helpers = (draft: InternalTransactionFlow) => {
 
 export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowAction) => {
   const { getSelectedItem, getCurrentTransaction, getAllTransactionsComplete } = helpers(draft)
-
-  // log state
-  // console.log('action: ', action)
-  // console.log('state: ', current(draft))
 
   switch (action.name) {
     case 'showDataInput': {
@@ -114,10 +109,14 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         console.error('No key provided for setFailedTransaction')
         break
       }
-      const targetTransactionIndex = draft.items[action.payload.key].transactions.findIndex(
-        (transaction) => transaction.hash === action.payload.hash,
+      const transaction = draft.items[action.payload.key].transactions.find(
+        (x) => x.hash === action.payload.hash,
       )
-      draft.items[action.payload.key].transactions[targetTransactionIndex].stage = 'failed'
+      if (!transaction) {
+        console.error('No transaction found for setFailedTransaction')
+        break
+      }
+      transaction.stage = 'failed'
       break
     }
     case 'incrementTransaction': {

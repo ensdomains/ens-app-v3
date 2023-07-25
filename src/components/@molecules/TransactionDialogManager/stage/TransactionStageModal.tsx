@@ -1,5 +1,6 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { toUtf8String } from '@ethersproject/strings'
+import { Connector, Provider } from '@wagmi/core'
 import type { PopulatedTransaction } from 'ethers'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -262,8 +263,8 @@ export const uniqueTransactionIdentifierGenerator = (
 
 export const transactionSuccessHandler =
   (dependencies: {
-    provider: ReturnType<typeof useProvider>
-    connector: ReturnType<typeof useAccount>['connector'] | undefined
+    provider: Provider
+    connector: Connector | undefined
     actionName: ManagedDialogPropsTwo['actionName']
     txKey: string | null
     request: PopulatedTransaction | undefined

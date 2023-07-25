@@ -33,7 +33,7 @@ interface BaseTransaction {
 interface SearchingTransaction extends BaseTransaction {
   status: 'searching'
   minedData?: never
-  nonce: never
+  nonce?: never
 }
 
 interface PendingTransaction extends BaseTransaction {
@@ -137,7 +137,13 @@ function validateTransaction(transaction: NewTransaction): string[] {
 }
 
 export const foundTransaction =
-  (updateTransactions: any) =>
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
   (account: string, chainId: number, hash: string, nonce: number): void => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
@@ -146,30 +152,42 @@ export const foundTransaction =
               ...transaction,
               nonce,
               searchStatus: 'found',
-            } as Omit<Transaction, 'SearchingTransaction'>)
-          : transaction,
-      )
-    })
-  }
-
-export const setReplacedTransaction =
-  (updateTransactions: any) =>
-  (account: string, chainId: number, input: string, minedData: EtherscanMinedData) => {
-    updateTransactions(account, chainId, (transactions: Transaction[]) => {
-      return transactions.map((transaction) =>
-        transaction.input === input
-          ? ({
-              ...transaction,
-              minedData: etherscanDataToMinedData(minedData),
-              status: 'confirmed',
             } as Transaction)
           : transaction,
       )
     })
   }
 
+export const setReplacedTransaction =
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
+  (account: string, chainId: number, input: string, minedData: EtherscanMinedData) => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
+      return transactions.map((transaction) => {
+        return transaction.input === input
+          ? ({
+              ...transaction,
+              minedData: etherscanDataToMinedData(minedData),
+              status: 'confirmed',
+            } as Transaction)
+          : transaction
+      })
+    })
+  }
+
 export const setReplacedTransactionByNonce =
-  (updateTransactions: any) =>
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
   (account: string, chainId: number, input: string, minedData: EtherscanMinedData) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
@@ -185,7 +203,13 @@ export const setReplacedTransactionByNonce =
   }
 
 export const foundMinedTransaction =
-  (updateTransactions: any) =>
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
   (account: string, chainId: number, hash: string, minedData: EtherscanMinedData) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
@@ -202,7 +226,14 @@ export const foundMinedTransaction =
   }
 
 export const updateRetries =
-  (updateTransactions: any) => (account: string, chainId: number, hash: string) => {
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
+  (account: string, chainId: number, hash: string) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
@@ -216,7 +247,14 @@ export const updateRetries =
   }
 
 export const setFailedTransaction =
-  (updateTransactions: any) => (account: string, chainId: number, hash: string) => {
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
+  (account: string, chainId: number, hash: string) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash

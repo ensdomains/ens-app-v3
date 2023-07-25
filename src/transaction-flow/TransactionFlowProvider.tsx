@@ -174,7 +174,6 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
           key,
           payload: flow,
         })) as CreateTransactionFlow,
-      dispatch,
       resumeTransactionFlow,
       getTransactionIndex,
       getTransaction,
