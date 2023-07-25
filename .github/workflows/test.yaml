@@ -42,7 +42,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-       - name: Install playwright
+      - name: Install playwright
         run: npx playwright install --with-deps
 
       - name: Get contract addresses
