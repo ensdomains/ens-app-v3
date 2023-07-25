@@ -27,7 +27,6 @@ services:
           cpus: '4'
           memory: 16G
         reservations:
-          cpus: '2'
           memory: 8G
     extra_hosts:
       - "host.docker.internal:host-gateway"

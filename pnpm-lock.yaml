@@ -16,21 +16,21 @@ overrides:
   wagmi: 0.12.13
 
 patchedDependencies:
-  '@rainbow-me/rainbowkit@0.12.15':
-    hash: ids4vnpwyenrujupancx6kn4ci
-    path: patches/@rainbow-me__rainbowkit@0.12.15.patch
-  '@synthetixio/synpress@3.7.1':
-    hash: 2xih2zz3ucby5mj2gstasrpwgq
-    path: patches/@synthetixio__synpress@3.7.1.patch
-  next-dev-https@0.1.2:
-    hash: q5l3x5627ujg3rak6l6v24c2cq
-    path: patches/next-dev-https@0.1.2.patch
-  '@ensdomains/ens-test-env@0.3.7':
-    hash: kxqym4c72p3ngsdm65smdor6ai
-    path: patches/@ensdomains__ens-test-env@0.3.7.patch
   react-confetti@6.1.0:
     hash: bbuxkxhxbyez4jmqgptuoucij4
     path: patches/react-confetti@6.1.0.patch
+  '@ensdomains/ens-test-env@0.3.7':
+    hash: oorzfmozhckc6gaddquqnpghfm
+    path: patches/@ensdomains__ens-test-env@0.3.7.patch
+  next-dev-https@0.1.2:
+    hash: q5l3x5627ujg3rak6l6v24c2cq
+    path: patches/next-dev-https@0.1.2.patch
+  '@synthetixio/synpress@3.7.1':
+    hash: 2xih2zz3ucby5mj2gstasrpwgq
+    path: patches/@synthetixio__synpress@3.7.1.patch
+  '@rainbow-me/rainbowkit@0.12.15':
+    hash: ids4vnpwyenrujupancx6kn4ci
+    path: patches/@rainbow-me__rainbowkit@0.12.15.patch
 
 importers:
 
@@ -256,7 +256,7 @@ importers:
       '@cloudflare/workers-types': 3.16.0
       '@deploysentinel/cypress-debugger': 0.8.6
       '@ensdomains/buffer': 0.1.0_hardhat@2.11.2
-      '@ensdomains/ens-test-env': 0.3.7_kxqym4c72p3ngsdm65smdor6ai
+      '@ensdomains/ens-test-env': 0.3.7_oorzfmozhckc6gaddquqnpghfm
       '@ethersproject/wallet': 5.7.0
       '@next/bundle-analyzer': 12.3.1
       '@next/swc-linux-x64-gnu': 12.1.4
@@ -2390,7 +2390,7 @@ packages:
       - web3-utils
     dev: false
 
-  /@ensdomains/ens-test-env/0.3.7_kxqym4c72p3ngsdm65smdor6ai:
+  /@ensdomains/ens-test-env/0.3.7_oorzfmozhckc6gaddquqnpghfm:
     resolution: {integrity: sha512-3X8cWDAMEN/s48afxsDVuOlzVIAlM5aorGx+6c4rhc8zCsp6nTMed8lGgKl/OMdCodEb7YF2WmMEVJNnGr3gHw==}
     hasBin: true
     dependencies:
