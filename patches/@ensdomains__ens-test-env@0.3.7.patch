@@ -1,5 +1,5 @@
 diff --git a/src/manager.js b/src/manager.js
-index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..43e3d834587357de6e5fcf3867495020c9841d10 100644
+index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..e56c98e709ae295101658f848cdcf8390f9ddb06 100644
 --- a/src/manager.js
 +++ b/src/manager.js
 @@ -1,75 +1,75 @@
@@ -173,7 +173,7 @@ index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..43e3d834587357de6e5fcf3867495020
      },
  
      // Called before the end of the input so we can handle any remaining
-@@ -127,214 +127,218 @@ const makePrepender = (prefix) =>
+@@ -127,214 +127,220 @@ const makePrepender = (prefix) =>
      flush(done) {
        // If we have any remaining data in the cache, send it out
        if (this._rest && this._rest.length) {
@@ -255,11 +255,13 @@ index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..43e3d834587357de6e5fcf3867495020
 -  } catch (e) {
 -    console.error('e: ', e)
 -  }
-+  const anvilCmd = spawn("anvil", [
-+    "--chain-id 1337",
-+    "--gas-limit 50000000",
-+    "--timestamp 1640995200",
-+  ]);
++  const anvilCmd = spawn(
++    "anvil",
++    ["--chain-id 1337", "--gas-limit 50000000", "--timestamp 1640995200"],
++    {
++      stdio: "pipe",
++    }
++  );
  
    compose
 -    .logs(['anvil', 'graph-node', 'postgres', 'ipfs', 'metadata'], {
@@ -486,7 +488,7 @@ index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..43e3d834587357de6e5fcf3867495020
            },
            body: JSON.stringify({
              query: `
-@@ -351,44 +355,44 @@ export const main = async (_config, _options, justKill) => {
+@@ -351,44 +357,44 @@ export const main = async (_config, _options, justKill) => {
          })
            .then((res) => res.json())
            .then((res) => {
