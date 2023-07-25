@@ -51,12 +51,13 @@ services:
   metadata:
     image: ghcr.io/ensdomains/ens-metadata-service:latest
     depends_on:
-      - anvil
       - graph-node
     ports:
       - '8080:8080'
     environment:
       - ADDRESS_ETH_REGISTRAR=$ADDRESS_ETH_REGISTRAR
       - ADDRESS_NAME_WRAPPER=$ADDRESS_NAME_WRAPPER
-      - RPC_PROVIDER=http://anvil:8545
+      - RPC_PROVIDER=http://host.docker.internal:8545
       - SUBGRAPH_URL=http://graph-node:8000/subgraphs/name/graphprotocol/ens
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
