@@ -42,9 +42,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Install playwright
-        run: npx playwright install --with-deps
-
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm tenv start -ng -ns -nb" \
@@ -125,6 +122,9 @@ jobs:
       - name: Untar files
         run: tar -xvf stateless-build.tar
 
+      - name: Install playwright
+        run: npx playwright install --with-deps
+        
       - name: Install window server
         run: sudo apt-get install -y fluxbox
 
