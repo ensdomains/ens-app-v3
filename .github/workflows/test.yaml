@@ -89,15 +89,15 @@ jobs:
           path: stateful-build.tar
 
   stateless:
+    name: Stateless (${{matrix.shard}}/${{strategy.job-total}})
     needs: build-stateless
     timeout-minutes: 20
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     steps:
       - uses: actions/checkout@v3
-      - run: ./scripts/check-chrome.sh
 
       - uses: pnpm/action-setup@v2.2.2
         with:
@@ -124,16 +124,9 @@ jobs:
 
       - name: Install playwright
         run: npx playwright install --with-deps
-        
-      - name: Install window server
-        run: sudo apt-get install -y fluxbox
 
       - name: Run tests
-        run: |
-          Xvfb :20 -screen 0 800x600x16 &
-          sleep 1 &&
-          DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
-          DISPLAY=:20 pnpm e2e:ci -nb
+        run: npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}}
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
