@@ -57,14 +57,10 @@ jobs:
         env:
           DISPLAY: :0.0
 
-      - name: Run denv
-        run: pnpm denv &
-
-      - name: Run Wrangler
-        run: pnpm wrangle &
-
       - name: Run e2e tests
         run: |
+          pnpm denv &
+          pnpm wrangle &
           pnpm synpress:ci -- --spec e2e/specs/stateless/${{ matrix.spec-name }} --env .env
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
