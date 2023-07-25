@@ -51,7 +51,7 @@ const renderHelper = ({
           ...props,
         } as any
       }
-      selfAbilities={{} as any}
+      abilities={{} as any}
     />,
   )
 }
