@@ -1,5 +1,5 @@
 diff --git a/src/manager.js b/src/manager.js
-index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..e56c98e709ae295101658f848cdcf8390f9ddb06 100644
+index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..225edf7714c25eadede2cac76cd416ede3fee749 100644
 --- a/src/manager.js
 +++ b/src/manager.js
 @@ -1,75 +1,75 @@
@@ -173,7 +173,7 @@ index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..e56c98e709ae295101658f848cdcf839
      },
  
      // Called before the end of the input so we can handle any remaining
-@@ -127,214 +127,220 @@ const makePrepender = (prefix) =>
+@@ -127,214 +127,232 @@ const makePrepender = (prefix) =>
      flush(done) {
        // If we have any remaining data in the cache, send it out
        if (this._rest && this._rest.length) {
@@ -212,6 +212,24 @@ index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..e56c98e709ae295101658f848cdcf839
 -}
 +  deploy.stderr.pipe(errPrepender).pipe(process.stderr);
 +  return new Promise((resolve) => deploy.on("exit", () => resolve()));
++};
++
++const logFilter = (chunk, source) => {
++  if (source === "stderr") {
++    process.stderr.write(chunk);
++  } else {
++    for (let i = 0; i < outputsToIgnore.length; i++) {
++      if (chunk.includes(outputsToIgnore[i])) return;
++    }
++    if (chunk.includes(exitedBuffer)) {
++      cleanup(
++        undefined,
++        parseInt(chunk.toString().split("exited with code ")[1])
++      );
++      return;
++    }
++    process.stdout.write(chunk);
++  }
 +};
  
  export const main = async (_config, _options, justKill) => {
@@ -257,11 +275,21 @@ index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..e56c98e709ae295101658f848cdcf839
 -  }
 +  const anvilCmd = spawn(
 +    "anvil",
-+    ["--chain-id 1337", "--gas-limit 50000000", "--timestamp 1640995200"],
++    [
++      "--chain-id",
++      "1337",
++      "--gas-limit",
++      "50000000",
++      "--timestamp",
++      "1640995200",
++    ],
 +    {
 +      stdio: "pipe",
 +    }
 +  );
++
++  anvilCmd.stdout.on("data", (chunk) => logFilter(chunk, "stdout"));
++  anvilCmd.stderr.on("data", (chunk) => logFilter(chunk, "stderr"));
  
    compose
 -    .logs(['anvil', 'graph-node', 'postgres', 'ipfs', 'metadata'], {
@@ -269,30 +297,24 @@ index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..e56c98e709ae295101658f848cdcf839
        ...opts,
        log: false,
        follow: verbosity > 0 ? true : false,
-       callback: (chunk, source) => {
+-      callback: (chunk, source) => {
 -        if (source === 'stderr') {
 -          process.stderr.write(chunk)
-+        if (source === "stderr") {
-+          process.stderr.write(chunk);
-         } else {
-           for (let i = 0; i < outputsToIgnore.length; i++) {
+-        } else {
+-          for (let i = 0; i < outputsToIgnore.length; i++) {
 -            if (chunk.includes(outputsToIgnore[i])) return
-+            if (chunk.includes(outputsToIgnore[i])) return;
-           }
-           if (chunk.includes(exitedBuffer)) {
-             cleanup(
-               undefined,
+-          }
+-          if (chunk.includes(exitedBuffer)) {
+-            cleanup(
+-              undefined,
 -              parseInt(chunk.toString().split('exited with code ')[1]),
 -            )
 -            return
-+              parseInt(chunk.toString().split("exited with code ")[1])
-+            );
-+            return;
-           }
+-          }
 -          process.stdout.write(chunk)
-+          process.stdout.write(chunk);
-         }
-       },
+-        }
+-      },
++      callback: logFilter,
      })
 -    .catch(() => {})
 +    .catch(() => {});
@@ -488,7 +510,7 @@ index 7fd9bb401432e1e7b0d65fd14c9ab877d12a56c7..e56c98e709ae295101658f848cdcf839
            },
            body: JSON.stringify({
              query: `
-@@ -351,44 +357,44 @@ export const main = async (_config, _options, justKill) => {
+@@ -351,44 +369,44 @@ export const main = async (_config, _options, justKill) => {
          })
            .then((res) => res.json())
            .then((res) => {
