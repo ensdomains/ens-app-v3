@@ -22,15 +22,15 @@ patchedDependencies:
   '@ensdomains/ens-test-env@0.3.7':
     hash: oorzfmozhckc6gaddquqnpghfm
     path: patches/@ensdomains__ens-test-env@0.3.7.patch
-  next-dev-https@0.1.2:
-    hash: q5l3x5627ujg3rak6l6v24c2cq
-    path: patches/next-dev-https@0.1.2.patch
-  '@synthetixio/synpress@3.7.1':
-    hash: 2xih2zz3ucby5mj2gstasrpwgq
-    path: patches/@synthetixio__synpress@3.7.1.patch
   '@rainbow-me/rainbowkit@0.12.15':
     hash: ids4vnpwyenrujupancx6kn4ci
     path: patches/@rainbow-me__rainbowkit@0.12.15.patch
+  '@synthetixio/synpress@3.7.1':
+    hash: 2xih2zz3ucby5mj2gstasrpwgq
+    path: patches/@synthetixio__synpress@3.7.1.patch
+  next-dev-https@0.1.2:
+    hash: q5l3x5627ujg3rak6l6v24c2cq
+    path: patches/next-dev-https@0.1.2.patch
 
 importers:
 
@@ -7453,7 +7453,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.4
     transitivePeerDependencies:
       - debug
 
@@ -12462,6 +12462,7 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: true
 
   /follow-redirects/1.15.2_debug@4.3.4:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
