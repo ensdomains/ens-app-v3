@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
   testDir: './playwright/tests',
   testMatch: '*.spec.ts',
-  retries: process.env.CI ? 0 : 3,
+  retries: process.env.CI ? 2 : 0,
   workers: 1,
   reporter: 'list',
   globalTeardown: './playwright/teardown/test.ts',
