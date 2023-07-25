@@ -1,9 +1,6 @@
-import { mockFunction, renderHook } from '@app/test-utils'
+import type { useBasicName } from '@app/hooks/useBasicName'
 
-import { useBasicName } from '@app/hooks/useBasicName'
-
-import { useResolverIsAuthorized } from './resolver/useResolverIsAuthorized'
-import { getFunctionCallDetails, getPermittedActions, useSelfAbilities } from './useSelfAbilities'
+import { getSendAbilities } from './getSendAbilities'
 
 type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>
@@ -27,25 +24,10 @@ type MockData = {
   }
 }
 
-jest.mock('@app/hooks/useBasicName')
-jest.mock('./resolver/useResolverIsAuthorized')
-
-const mockUseBasicName = mockFunction(useBasicName)
-const mockUseResolverIsAuthorized = mockFunction(useResolverIsAuthorized)
-
 const ownerAddress = '0x123'
 const account = ownerAddress
 const name = 'nick.eth'
 const subname = 'sub.nick.eth'
-
-/*
-  userStates
-
-  For subnames, the name is split into two parts which describe 
-  the states of the subname and the parent name. "Holder" refers 
-  to which name the user is currently holding. If the user holds 
-  both then "Hoder" will be appended to both sections of the name.
-*/
 
 const partialUserStates = {
   unwrappedNameOwner: {
@@ -107,6 +89,7 @@ const partialUserStates = {
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
+        owner: '0x000',
       },
       wrapperData: {
         child: {},
@@ -118,6 +101,7 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
+        owner: '0x000',
       },
       wrapperData: {
         child: {},
@@ -163,6 +147,7 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
+        owner: '0x000',
       },
       wrapperData: {
         child: {},
@@ -190,12 +175,15 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
+        owner: '0x000',
       },
       wrapperData: {
         child: {},
@@ -212,7 +200,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -232,7 +222,9 @@ const partialUserStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
         parent: {},
       },
     },
@@ -260,7 +252,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: true,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -308,7 +302,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -331,12 +327,15 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         parent: {
@@ -350,12 +349,15 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -375,12 +377,15 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -406,16 +411,21 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: true,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         child: {},
-        parent: {},
+        parent: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
   },
@@ -429,7 +439,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: true,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -455,7 +467,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: true,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -474,12 +488,15 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -499,12 +516,15 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
+        owner: '0x000',
       },
       wrapperData: {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -598,7 +618,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -622,7 +644,9 @@ const partialUserStates = {
         parent: {
           PARENT_CANNOT_CONTROL: false,
         },
-        child: {},
+        child: {
+          CANNOT_TRANSFER: false,
+        },
       },
     },
     parentBasicNameData: {
@@ -636,23 +660,52 @@ const partialUserStates = {
       },
     },
   },
+  wrappedSubnameOwnerWrappedParentOwnerHolder: {
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        child: {
+          CANNOT_TRANSFER: false,
+        },
+        parent: {
+          PARENT_CANNOT_CONTROL: true,
+        },
+      },
+    },
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        parent: {
+          PARENT_CANNOT_CONTROL: true,
+        },
+        child: {
+          CANNOT_TRANSFER: false,
+        },
+      },
+    },
+  },
 } as PartialMockData
 
 const userStates = { ...partialUserStates } as MockData
 
-describe('getFunctionCallDetails', () => {
+describe('getSendAbilities', () => {
   describe('Correct function call details', () => {
     describe('Unwrapped name', () => {
       it('for name owner who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } = userStates.unwrappedNameOwner
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name,
         })
-        expect(result.sendManager).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
           contract: 'baseRegistrar',
           method: 'reclaim',
         })
@@ -661,13 +714,13 @@ describe('getFunctionCallDetails', () => {
       it('for name owner who wants to send owner', () => {
         const { basicNameData, parentBasicNameData } = userStates.unwrappedNameOwner
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name,
         })
-        expect(result.sendOwner).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendOwner).toEqual({
           contract: 'baseRegistrar',
           method: 'safeTransferFrom',
         })
@@ -676,13 +729,13 @@ describe('getFunctionCallDetails', () => {
       it('for name manager who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } = userStates.unwrappedNameManager
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name,
         })
-        expect(result.sendManager).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
           contract: 'registry',
           method: 'setOwner',
         })
@@ -692,13 +745,13 @@ describe('getFunctionCallDetails', () => {
         const { basicNameData, parentBasicNameData } =
           userStates.unwrappedSubnameManagerHolderUnwrappedParentManager
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendManager).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
           contract: 'registry',
           method: 'setOwner',
         })
@@ -708,13 +761,13 @@ describe('getFunctionCallDetails', () => {
         const { basicNameData, parentBasicNameData } =
           userStates.unwrappedSubnameUnwrappedParentManager
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendManager).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
           contract: 'registry',
           method: 'setSubnodeOwner',
         })
@@ -724,26 +777,26 @@ describe('getFunctionCallDetails', () => {
         const { basicNameData, parentBasicNameData } =
           userStates.unwrappedSubnameManagerUnwrappedParentOwnerHolder
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendManager).toEqual(undefined)
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual(undefined)
       })
 
       it('for wrapped subname manager who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } =
           userStates.wrappedSubnameManagerHolderUnwrappedParentManager
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendManager).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
           contract: 'nameWrapper',
           method: 'safeTransferFrom',
         })
@@ -752,24 +805,24 @@ describe('getFunctionCallDetails', () => {
         const { basicNameData, parentBasicNameData } =
           userStates.wrappedSubnameManagerUnwrappedParentManager
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendManager).toEqual(undefined)
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual(undefined)
       })
       it('for wrapped subname parent owner who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } = userStates.wrappedSubnameUnwrappedParentOwner
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendManager).toEqual(undefined)
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual(undefined)
       })
     })
 
@@ -777,13 +830,13 @@ describe('getFunctionCallDetails', () => {
       it('for name owner who wants to send owner', () => {
         const { basicNameData, parentBasicNameData } = userStates.wrappedNameOwner
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name,
         })
-        expect(result.sendOwner).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendOwner).toEqual({
           contract: 'nameWrapper',
           method: 'safeTransferFrom',
         })
@@ -791,28 +844,26 @@ describe('getFunctionCallDetails', () => {
       it('for name manager who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } = userStates.wrappedNameManager
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name,
         })
-        expect(result.sendManager).toEqual({
-          contract: 'nameWrapper',
-          method: 'safeTransferFrom',
-        })
+
+        expect(result.sendNameFunctionCallDetails?.sendManager).toBeUndefined()
       })
       it('for wrapped subname manager who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } =
           userStates.wrappedSubnameManagerHolderUnwrappedParentManager
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendManager).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
           contract: 'nameWrapper',
           method: 'safeTransferFrom',
         })
@@ -821,13 +872,13 @@ describe('getFunctionCallDetails', () => {
         const { basicNameData, parentBasicNameData } =
           userStates.wrappedSubnameOwnerWrappedParentManager
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendOwner).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendOwner).toEqual({
           contract: 'nameWrapper',
           method: 'safeTransferFrom',
         })
@@ -835,27 +886,26 @@ describe('getFunctionCallDetails', () => {
       it('for wrapped subname parent manager who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } = userStates.wrappedSubnameWrappedParentManager
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendManager).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
           contract: 'nameWrapper',
           method: 'setSubnodeOwner',
         })
       })
       it('for wrapped subname parent owner who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } = userStates.wrappedSubnameWrappedParentOwner
-
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendManager).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
           contract: 'nameWrapper',
           method: 'setSubnodeOwner',
         })
@@ -863,45 +913,42 @@ describe('getFunctionCallDetails', () => {
       it('for wrapped subname parent owner who wants to send owner', () => {
         const { basicNameData, parentBasicNameData } = userStates.wrappedSubnameWrappedParentOwner
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendOwner).toBeUndefined()
+        expect(result.sendNameFunctionCallDetails?.sendOwner).toBeUndefined()
       })
       it('for subname manager who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } =
           userStates.unwrappedSubnameManagerWrappedParentOwner
 
-        const result = getFunctionCallDetails({
+        const result = getSendAbilities({
           basicNameData,
           parentBasicNameData,
           address: account,
           name: subname,
         })
-        expect(result.sendManager).toEqual({
+        expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
           contract: 'registry',
           method: 'setOwner',
         })
       })
     })
   })
-})
-
-describe('getPermittedActions', () => {
   describe('correct permissions', () => {
     it('should return for wrapped name owner', () => {
       const { basicNameData, parentBasicNameData } = userStates.wrappedNameOwner
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: true,
         canSendManager: false,
       })
@@ -909,13 +956,13 @@ describe('getPermittedActions', () => {
     it('should return for unwrapped name owner', () => {
       const { basicNameData, parentBasicNameData } = userStates.unwrappedNameOwner
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: true,
         canSendManager: true,
       })
@@ -923,27 +970,27 @@ describe('getPermittedActions', () => {
     it('should return for wrapped name manager', () => {
       const { basicNameData, parentBasicNameData } = userStates.wrappedNameManager
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
-        canSendManager: true,
+        canSendManager: false,
       })
     })
     it('should return for unwrapped name manager', () => {
       const { basicNameData, parentBasicNameData } = userStates.unwrappedNameManager
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: true,
       })
@@ -953,13 +1000,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameOwnerWrappedParentManager
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: true,
         canSendManager: false,
       })
@@ -969,13 +1016,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerWrappedParentOwner
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: true,
       })
@@ -984,13 +1031,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameManagerHolderWrappedParentOwner
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: true,
       })
@@ -999,13 +1046,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerWrappedParentOwner
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: true,
       })
@@ -1015,13 +1062,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameManagerWrappedParentOwnerHolder
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: true,
       })
@@ -1030,13 +1077,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameManagerUnwrappedParentOwnerHolder
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: false,
       })
@@ -1045,13 +1092,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameManagerWrappedParentManagerHolder
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: true,
       })
@@ -1060,13 +1107,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameManagerUnwrappedParentManagerHolder
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: false,
       })
@@ -1076,13 +1123,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerWrappedParentOwnerHolder
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: false,
       })
@@ -1091,13 +1138,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerUnwrappedParentOwnerHolder
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: false,
       })
@@ -1106,13 +1153,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerWrappedParentManagerHolder
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: false,
       })
@@ -1121,13 +1168,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerUnwrappedParentManagerHolder
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: true,
       })
@@ -1137,13 +1184,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameOwnerHolderWrappedParentOwnerHolder
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: true,
         canSendManager: false,
       })
@@ -1154,13 +1201,13 @@ describe('getPermittedActions', () => {
       const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameOwnerHolderUnwrappedParentOwnerHolder
 
-      const result = getPermittedActions({
+      const result = getSendAbilities({
         basicNameData,
         parentBasicNameData,
         address: account,
         name: subname,
       })
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         canSendOwner: false,
         canSendManager: false,
       })
@@ -1169,61 +1216,54 @@ describe('getPermittedActions', () => {
     it.todo('should return for unwrapped subname owner holder, wrapped parent owner holder')
     // Should not be possible
     it.todo('should return for unwrapped subname owner holder, unwrapped parent owner holder')
-  })
-})
 
-describe('useSelfAbilities', () => {
-  it('should return false for all send abilities if CANNOT_TRANSFER has been burned', () => {
-    mockUseBasicName.mockReturnValue({
-      wrapperData: {
-        child: {
-          CANNOT_TRANSFER: true,
-        },
-      },
+    describe('PARENT_CANNOT_CONTROL burned', () => {
+      // wrappedSubnameOwnerWrappedParentOwnerHolder
+      it('should return for wrapped name with PCC burned and parent owner holder', () => {
+        const { basicNameData, parentBasicNameData } =
+          userStates.wrappedSubnameOwnerWrappedParentOwnerHolder
+
+        const result = getSendAbilities({
+          basicNameData,
+          parentBasicNameData,
+          address: account,
+          name: subname,
+        })
+        expect(result).toMatchObject({
+          canSend: false,
+        })
+      })
     })
-    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: true, isValid: true } })
-    const { result } = renderHook(() => useSelfAbilities(account, name))
-    expect(result.current.canSend).toBe(false)
-  })
-  it('should return canEdit as true if resolver is authorised', () => {
-    mockUseBasicName.mockReturnValue({
-      ownerData: {
-        owner: account,
-      },
+    describe('CANNOT_TRANSFER burned', () => {
+      it('should return for wrapped name with CANNOT_TRANSFER burned', () => {
+        const { basicNameData, parentBasicNameData } = userStates.wrappedNameCTBurnedOwner
+
+        const result = getSendAbilities({
+          basicNameData,
+          parentBasicNameData,
+          address: account,
+          name,
+        })
+        expect(result).toMatchObject({
+          canSend: false,
+          canSendError: 'permissionRevoked',
+        })
+      })
+
+      it('should return for wrapped subname name with CANNOT_TRANSFER burned', () => {
+        const { basicNameData, parentBasicNameData } = userStates.wrappedNameCTBurnedOwner
+
+        const result = getSendAbilities({
+          basicNameData,
+          parentBasicNameData,
+          address: account,
+          name: subname,
+        })
+        expect(result).toMatchObject({
+          canSend: false,
+          canSendError: 'permissionRevoked',
+        })
+      })
     })
-    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: true, isValid: true } })
-
-    const { result } = renderHook(() => useSelfAbilities(account, name))
-
-    expect(result.current.canEdit).toBe(true)
-  })
-  it('should return canEdit as true if resolver is not authorised but CANNOT_SET_RESOLVER has not been burned', () => {
-    mockUseBasicName.mockReturnValue({
-      ownerData: {
-        owner: account,
-      },
-    })
-    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: false, isValid: true } })
-
-    const { result } = renderHook(() => useSelfAbilities(account, name))
-
-    expect(result.current.canEdit).toBe(true)
-  })
-  it('shold return canEdit as false if resolver is not authorised and CANNOT_SET_RESOLVER has been burned', () => {
-    mockUseBasicName.mockReturnValue({
-      ownerData: {
-        owner: account,
-      },
-      wrapperData: {
-        child: {
-          CANNOT_SET_RESOLVER: true,
-        },
-      },
-    })
-    mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: false, isValid: true } })
-
-    const { result } = renderHook(() => useSelfAbilities(account, name))
-
-    expect(result.current.canEdit).toBe(false)
   })
 })

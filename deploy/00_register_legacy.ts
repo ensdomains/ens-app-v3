@@ -265,6 +265,16 @@ const names: Name[] = [
     ],
   },
   {
+    label: 'unwrapped-to-delete',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    subnames: [
+      { label: 'parent-not-child', namedOwner: 'deployer' },
+      { label: 'parent-child', namedOwner: 'owner' },
+      { label: 'not-parent-child', namedOwner: 'deployer' },
+    ],
+  },
+  {
     label: 'name-with-premium',
     namedOwner: 'owner',
     namedAddr: 'owner',

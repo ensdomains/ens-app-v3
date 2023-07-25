@@ -9,11 +9,9 @@ import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledBu
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
-import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { emptyAddress } from '@app/utils/constants'
 import { getContentHashLink } from '@app/utils/contenthash'
-import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
@@ -138,8 +136,8 @@ export const RecordsTab = ({
   contentHash,
   abi,
   canEdit,
+  canEditRecords,
   isCached,
-  isWrapped,
   resolverAddress,
 }: {
   name: string
@@ -149,9 +147,9 @@ export const RecordsTab = ({
   contentHash?: ContentHash
   abi?: AbiRecord
   canEdit?: boolean
+  canEditRecords?: boolean
   isCached?: boolean
   resolverAddress?: string
-  isWrapped: boolean
 }) => {
   const { t } = useTranslation('profile')
   const hasGlobalError = useHasGlobalError()
@@ -181,14 +179,6 @@ export const RecordsTab = ({
   const showAdvancedEditorInput = prepareDataInput('AdvancedEditor')
   const handleShowEditor = () =>
     showAdvancedEditorInput(`advanced-editor-${name}`, { name }, { disableBackgroundClick: true })
-
-  const chainId = useChainId()
-
-  const canEditRecordsWhenWrapped = canEditRecordsWhenWrappedCalc(
-    isWrapped,
-    resolverAddress,
-    chainId,
-  )
 
   return (
     <TabWrapper $isCached={isCached} data-testid="records-tab">
@@ -277,7 +267,7 @@ export const RecordsTab = ({
       {canEdit && resolverAddress !== emptyAddress && (
         <Actions>
           <div>
-            {canEditRecordsWhenWrapped && !hasGlobalError ? (
+            {canEditRecords && !hasGlobalError ? (
               <Button onClick={handleShowEditor} size="small">
                 {t('details.tabs.records.editRecords')}
               </Button>

@@ -2,16 +2,16 @@ import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-util
 
 import { useAccount } from 'wagmi'
 
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useChainName } from '@app/hooks/useChainName'
 import useRegistrationData from '@app/hooks/useRegistrationData'
-import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import Miscellaneous from './Miscellaneous'
 
 jest.mock('@app/hooks/useChainName')
 jest.mock('@app/hooks/useRegistrationData')
-jest.mock('@app/hooks/useSelfAbilities')
+jest.mock('@app/hooks/abilities/useAbilities')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 
 jest.mock('./EarnifiDialog', () => ({
@@ -36,13 +36,13 @@ jest.mock('react', () => ({
 const mockUseAccount = mockFunction(useAccount)
 const mockUseChainName = mockFunction(useChainName)
 const mockUseRegistrationData = mockFunction(useRegistrationData)
-const mockUseSelfAbilities = mockFunction(useSelfAbilities)
+const mockUseAbilities = mockFunction(useAbilities)
 const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 
 mockUseAccount.mockReturnValue({ address: '0x123' })
 mockUseChainName.mockReturnValue('mainnet')
 mockUseRegistrationData.mockReturnValue({ data: undefined })
-mockUseSelfAbilities.mockReturnValue({})
+mockUseAbilities.mockReturnValue({ data: {} })
 mockUseTransactionFlow.mockReturnValue({ prepareDataInput: () => () => {} })
 
 describe('Miscellaneous', () => {

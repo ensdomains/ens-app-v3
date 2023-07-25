@@ -1,30 +1,11 @@
-import { mockFunction, renderHook } from '@app/test-utils'
-
+import { useBasicName } from '@app/hooks/useBasicName'
 import { DeepPartial } from '@app/types'
-import { useEns } from '@app/utils/EnsProvider'
+import { emptyAddress } from '@app/utils/constants'
 
-import { emptyAddress } from '../utils/constants'
-import { useBasicName } from './useBasicName'
-import { useContractAddress } from './useContractAddress'
-import { useHasSubnames } from './useHasSubnames'
-import { useSubnameAbilities } from './useSubnameAbilities'
+import { useAbilities } from '../useAbilities'
+import { getDeleteAbilities } from './getDeleteAbilities'
 
-jest.mock('@app/hooks/useContractAddress')
-jest.mock('@app/hooks/useHasSubnames')
-jest.mock('@app/hooks/useBasicName')
-
-const mockUseBasicName = mockFunction(useBasicName)
-const mockUseHasSubnames = mockFunction(useHasSubnames)
-const mockUseContractAddress = mockFunction(useContractAddress)
-
-mockUseContractAddress.mockReturnValue('0xNameWrapper')
-mockUseHasSubnames.mockReturnValue({
-  hasSubnames: false,
-  isLoading: false,
-  isCachedData: false,
-})
-
-type WrapperData = Awaited<ReturnType<ReturnType<typeof useEns>['getWrapperData']>>
+type WrapperData = ReturnType<typeof useBasicName>['wrapperData']
 const makeWrapperData = (overrides: DeepPartial<WrapperData> = {}) => {
   const { parent = {}, child = {}, ...data } = overrides
   return {
@@ -48,7 +29,7 @@ const makeWrapperData = (overrides: DeepPartial<WrapperData> = {}) => {
   } as WrapperData
 }
 
-type OwnerData = Awaited<ReturnType<ReturnType<typeof useEns>['getOwner']>>
+type OwnerData = ReturnType<typeof useBasicName>['ownerData']
 const makeOwnerData = (overrides: DeepPartial<OwnerData> = {}) => {
   return {
     registrant: '0xRegistrant',
@@ -59,11 +40,10 @@ const makeOwnerData = (overrides: DeepPartial<OwnerData> = {}) => {
   } as OwnerData
 }
 
-type Abilities = ReturnType<typeof useSubnameAbilities>['abilities']
+type Abilities = ReturnType<typeof useAbilities>['data']
 const makeResults = (overrides: DeepPartial<Abilities> = {}) => {
   return {
     canDelete: false,
-    canReclaim: false,
     ...overrides,
   } as Abilities
 }
@@ -237,7 +217,13 @@ const groups = [
         ...unwrappedSubname,
         hasSubnames: false,
         address: '0xParent',
-        abilities: makeResults({ canDelete: true, canDeleteContract: 'registry' }),
+        abilities: makeResults({
+          canDelete: true,
+          canDeleteContract: 'registry',
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteRequiresWrap: false,
+          isParentOwner: true,
+        }),
       },
       {
         description:
@@ -249,14 +235,65 @@ const groups = [
           canDelete: false,
           canDeleteContract: 'registry',
           canDeleteError: 'errors.hasSubnames',
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteRequiresWrap: false,
+          isParentOwner: true,
         }),
       },
       {
-        description: 'should return canDelete is false if user is name owner',
+        description: 'should return canDelete is true if user is name owner',
         ...unwrappedSubname,
         hasSubnames: false,
         address: '0xName',
-        abilities: makeResults({ canDelete: false }),
+        abilities: makeResults({
+          canDelete: true,
+          canDeleteContract: 'registry',
+          canDeleteMethod: 'setRecord',
+          canDeleteRequiresWrap: false,
+          isParentOwner: false,
+        }),
+      },
+      {
+        description:
+          'should return canDelete is true and canDeleteRequiresWrap is false if parent is wrapped and user is name owner',
+        ...unwrappedSubname,
+        hasSubnames: false,
+        address: '0xParent',
+        isParentWrapped: true,
+        parentOwnerData: makeOwnerData({
+          owner: '0xParent',
+          ownershipLevel: 'nameWrapper',
+        }),
+        ownerData: makeOwnerData({
+          ownershipLevel: 'registry',
+          owner: '0xParent',
+        }),
+        abilities: makeResults({
+          canDelete: true,
+          canDeleteContract: 'registry',
+          canDeleteRequiresWrap: false,
+          canDeleteMethod: 'setRecord',
+          isParentOwner: true,
+        }),
+      },
+      {
+        description:
+          'should return canDelete is true and canDeleteRequiresWrap is true if parent is wrapped',
+        ...unwrappedSubname,
+        hasSubnames: false,
+        address: '0xParent',
+        isParentWrapped: true,
+        parentOwnerData: makeOwnerData({
+          owner: '0xParent',
+          ownershipLevel: 'nameWrapper',
+        }),
+        abilities: makeResults({
+          canDelete: true,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteRequiresWrap: true,
+          isParentOwner: true,
+        }),
       },
     ],
   },
@@ -272,6 +309,8 @@ const groups = [
           canDelete: true,
           canDeleteContract: 'nameWrapper',
           canDeleteMethod: 'setSubnodeOwner',
+          isPCCBurned: false,
+          isParentOwner: true,
         }),
       },
       {
@@ -285,6 +324,8 @@ const groups = [
           canDeleteContract: 'nameWrapper',
           canDeleteMethod: 'setSubnodeOwner',
           canDeleteError: 'errors.hasSubnames',
+          isPCCBurned: false,
+          isParentOwner: true,
         }),
       },
       {
@@ -296,6 +337,8 @@ const groups = [
           canDelete: true,
           canDeleteContract: 'nameWrapper',
           canDeleteMethod: 'setRecord',
+          isPCCBurned: false,
+          isParentOwner: false,
         }),
       },
       {
@@ -308,11 +351,13 @@ const groups = [
           canDeleteContract: 'nameWrapper',
           canDeleteMethod: 'setRecord',
           canDeleteError: 'errors.hasSubnames',
+          isPCCBurned: false,
+          isParentOwner: false,
         }),
       },
       {
         description:
-          'should return canReclaim is true if the use is the name owner and the subname has expired',
+          'should return canDelete is false if the use is the name owner and the subname has expired',
         ...expiredWrappedSubname,
         hasSubnames: false,
         address: '0xParent',
@@ -320,8 +365,9 @@ const groups = [
         abilities: makeResults({
           canDelete: false,
           canDeleteContract: 'registry',
-          canDeleteError: undefined,
-          canReclaim: true,
+          canDeleteMethod: 'setSubnodeOwner',
+          canDeleteRequiresWrap: false,
+          isParentOwner: true,
         }),
       },
     ],
@@ -339,6 +385,7 @@ const groups = [
           canDeleteContract: 'nameWrapper',
           canDeleteMethod: 'setRecord',
           isPCCBurned: true,
+          isParentOwner: false,
         }),
       },
       {
@@ -352,6 +399,7 @@ const groups = [
           canDeleteMethod: 'setRecord',
           canDeleteError: 'errors.hasSubnames',
           isPCCBurned: true,
+          isParentOwner: false,
         }),
       },
       {
@@ -365,7 +413,7 @@ const groups = [
   },
 ]
 
-describe('useSubnameAbilities', () => {
+describe('getDeleteAbilities', () => {
   groups.forEach((group) => {
     describe(group.description, () => {
       group.tests.forEach(
@@ -373,7 +421,6 @@ describe('useSubnameAbilities', () => {
           description,
           parentOwnerData,
           parentWrapperData,
-          isParentWrapped,
           hasSubnames,
           name,
           ownerData,
@@ -383,32 +430,27 @@ describe('useSubnameAbilities', () => {
           ...rest
         }) => {
           it(description, () => {
-            mockUseBasicName.mockReturnValue({
+            const basicNameData: any = {
+              ownerData,
+              wrapperData,
+              pccExpired: !!(rest as any).pccExpired,
+            }
+
+            const parentBasicNameData: any = {
               ownerData: parentOwnerData,
               wrapperData: parentWrapperData,
-              isWrapped: isParentWrapped,
-              isLoading: false,
-              isCachedData: false,
-            })
-            mockUseHasSubnames.mockReturnValue({
+            }
+
+            const result = getDeleteAbilities({
+              name,
+              address,
+              basicNameData,
+              parentBasicNameData,
               hasSubnames,
-              isLoading: false,
-              isCachedData: false,
+              t: (...args) => args.join(','),
             })
-            const { result } = renderHook(() =>
-              useSubnameAbilities({
-                name,
-                address,
-                ownerData,
-                wrapperData,
-                pccExpired: !!(rest as any).pccExpired,
-              }),
-            )
-            expect(result.current).toEqual({
-              abilities,
-              isLoading: false,
-              isCachedData: false,
-            })
+
+            expect(result).toMatchObject(abilities || {})
           })
         },
       )
