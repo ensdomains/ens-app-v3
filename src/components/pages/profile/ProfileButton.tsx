@@ -27,7 +27,6 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
 
   return socialData ? (
     <RecordItem
-      as="a"
       icon={
         <DynamicSocialIcon
           fill={socialData.color}
@@ -38,7 +37,10 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
       inline
       data-testid={`social-profile-button-${iconKey}`}
       value={socialData.value}
-      link={socialData.type === 'link' ? socialData.urlFormatter : undefined}
+      {...(socialData.type === 'link' 
+        ? { as: 'a' as const, link: socialData.urlFormatter }
+        : { as: 'button' as const }
+      )}
     >
       {socialData.value}
     </RecordItem>
