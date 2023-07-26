@@ -71,7 +71,7 @@ importers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
       '@openzeppelin/contracts': ^4.7.3
       '@openzeppelin/test-helpers': ^0.5.16
-      '@playwright/test': ^1.36.0
+      '@playwright/test': ^1.36.2
       '@rainbow-me/rainbowkit': 0.12.15
       '@sentry/nextjs': ^7.43.0
       '@svgr/webpack': ^6.3.1
@@ -3476,7 +3476,7 @@ packages:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 18.11.11
+      '@types/node': 18.15.13
       '@types/yargs': 16.0.4
       chalk: 4.1.2
     dev: true
@@ -5833,10 +5833,6 @@ packages:
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
     dev: true
 
-  /@types/node/18.11.11:
-    resolution: {integrity: sha512-KJ021B1nlQUBLopzZmPBVuGU9un7WJd/W4ya7Ih02B4Uwky5Nja0yGYav2EfYIk0RR2Q9oVhf60S2XR1BCWJ2g==}
-    dev: true
-
   /@types/node/18.15.13:
     resolution: {integrity: sha512-N+0kuo9KgrUQ1Sn/ifDXsvg0TTleP7rIy4zOBGECxAljqvqfqpTfzx0Q1NUedOixRMBfe2Whhb056a42cWs26Q==}
 
@@ -5870,7 +5866,7 @@ packages:
   /@types/puppeteer/5.4.6:
     resolution: {integrity: sha512-98Kghehs7+/GD9b56qryhqdqVCXUTbetTv3PlvDnmFRTHQH0j9DIp1f7rkAW3BAj4U3yoeSEQnKgdW8bDq0Y0Q==}
     dependencies:
-      '@types/node': 18.11.11
+      '@types/node': 18.15.13
     dev: true
 
   /@types/qs/6.9.7:

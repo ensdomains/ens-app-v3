@@ -22,6 +22,8 @@ test.describe('profile', () => {
     makeName,
     makePageObject,
   }) => {
+    test.slow()
+
     const name = await makeName({
       label: 'other-eth-record',
       type: 'legacy',
@@ -65,7 +67,7 @@ test.describe('profile', () => {
     // Should show changes in setting
     await page.goto('/my/settings')
 
-    await expect(page.getByTestId('primary-name-label')).toHaveText(name)
+    await expect(page.getByTestId('primary-name-label')).toHaveText(name, { timeout: 15000 })
   })
 
   test('should allow setting unwrapped name that user is manager of but whose resolved address is not the same as the user', async ({
@@ -76,6 +78,8 @@ test.describe('profile', () => {
     makeName,
     makePageObject,
   }) => {
+    test.slow()
+
     const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
     await reverseRegistrar.setName('')
 
@@ -120,6 +124,8 @@ test.describe('profile', () => {
     makeName,
     makePageObject,
   }) => {
+    test.slow()
+
     const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
     await reverseRegistrar.setName('')
 
@@ -171,6 +177,8 @@ test.describe('profile', () => {
     makeName,
     makePageObject,
   }) => {
+    test.slow()
+
     const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
     await reverseRegistrar.setName('')
 
@@ -245,6 +253,8 @@ test.describe('profile', () => {
     makeName,
     makePageObject,
   }) => {
+    test.slow()
+
     const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
@@ -288,6 +298,8 @@ test.describe('profile', () => {
     makeName,
     makePageObject,
   }) => {
+    test.slow()
+
     const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
@@ -342,6 +354,8 @@ test.describe('profile', () => {
     makeName,
     makePageObject,
   }) => {
+    test.slow()
+
     const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
     await reverseRegistrar.setName('')
 

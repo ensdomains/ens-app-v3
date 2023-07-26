@@ -12,11 +12,7 @@ type Dependencies = {
 
 export const createTime = ({ provider, page }: Dependencies) => {
   return {
-    sync: async (offset = 0, consoleWarning = true) => {
-      if (consoleWarning)
-        console.warn(
-          'If you are calling time.sync() at the same time as makeName your Date object will be inaccurate',
-        )
+    sync: async (offset = 0) => {
       const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
       const blockTime = await provider.getBlockTimestamp()
       const browserOffset = (blockTime - browserTime + offset) * 1000
@@ -24,19 +20,24 @@ export const createTime = ({ provider, page }: Dependencies) => {
       console.log(`Browser time: ${new Date(Date.now() + browserOffset)}`)
 
       await page.addInitScript(`{
-        const __DateNow = Date.now;
-        // Extend Date constructor to default to fakeNow
-        Date = class extends Date {
-          constructor(...args) {
-            if (args.length === 0) {
-              super(__DateNow() + ${browserOffset});
-            } else {
-              super(...args);
+        // Prevents Date from being extended multiple times
+        if (Object.getPrototypeOf(Date).name !== 'Date') {
+          const __DateNow = Date.now
+          const browserOffset = ${browserOffset};
+          Date = class extends Date {
+            constructor(...args) {
+              if (args.length === 0) {
+                super(__DateNow() + browserOffset);
+              } else {
+                super(...args);
+              }
+            }
+
+            static now() {
+              return super.now() + browserOffset;
             }
           }
         }
-        // Override Date.now() to start from fakeNow
-        Date.now = () => __DateNow() + ${browserOffset};
       }`)
     },
   }

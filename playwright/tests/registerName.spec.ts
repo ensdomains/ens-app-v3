@@ -2,8 +2,9 @@ import { expect } from '@playwright/test'
 
 import { test } from '..'
 
-test.describe('normal registration', () => {
+test.describe.serial('normal registration', () => {
   const name = `registration-normal-${Date.now()}.eth`
+
   test('should allow normal registration', async ({
     page,
     login,
@@ -107,21 +108,16 @@ test.describe('normal registration', () => {
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
       accounts.getAddress('user', 5),
     )
-
-    await page.pause()
   })
 
   test('should not direct to the registration page on search, and show all records from registration', async ({
     page,
-    login,
     accounts,
     makePageObject,
   }) => {
     const homePage = makePageObject('HomePage')
 
     await homePage.goto()
-    await login.connect()
-
     await homePage.searchInput.fill(name)
     await homePage.searchInput.press('Enter')
 
@@ -132,50 +128,50 @@ test.describe('normal registration', () => {
       new RegExp(accounts.getAddress('user', 5)),
     )
   })
-})
 
-test('should allow registering a non-primary name', async ({
-  page,
-  provider,
-  accounts,
-  time,
-  login,
-  makePageObject,
-}) => {
-  await time.sync(500)
+  test('should allow registering a non-primary name', async ({
+    page,
+    provider,
+    accounts,
+    time,
+    login,
+    makePageObject,
+  }) => {
+    await time.sync(500)
 
-  const name = `registration-not-primary-${Date.now()}.eth`
+    const nonPrimaryNme = `registration-not-primary-${Date.now()}.eth`
 
-  const transactionModal = makePageObject('TransactionModal')
+    const transactionModal = makePageObject('TransactionModal')
 
-  // should show primary name setting as unchecked if primary already set
-  await page.goto(`/${name}/register`)
-  await login.connect()
+    // should show primary name setting as unchecked if primary already set
+    await page.goto(`/${nonPrimaryNme}/register`)
+    await login.connect()
 
-  await await page.getByTestId('payment-choice-ethereum').click()
-  await expect(page.getByTestId('primary-name-toggle')).not.toBeChecked()
+    await await page.getByTestId('payment-choice-ethereum').click()
+    await expect(page.getByTestId('primary-name-toggle')).not.toBeChecked()
 
-  // should show set profile button on info step
-  await page.getByTestId('next-button').click()
+    // should show set profile button on info step
+    await page.getByTestId('next-button').click()
 
-  // setup profile buttons should be blue
-  await expect(page.getByTestId('setup-profile-button')).toBeVisible()
-  await expect(page.getByTestId('setup-profile-button').locator('div')).toHaveCSS(
-    'color',
-    'rgb(56, 136, 255)',
-  )
+    // setup profile buttons should be blue
+    await expect(page.getByTestId('setup-profile-button')).toBeVisible()
+    await expect(page.getByTestId('setup-profile-button').locator('div')).toHaveCSS(
+      'color',
+      'rgb(56, 136, 255)',
+    )
 
-  // should allow registering a name without setting primary name
-  await page.getByTestId('next-button').click()
-  await transactionModal.autoComplete()
-  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(60)
-  await page.getByTestId('finish-button').click()
-  await transactionModal.autoComplete()
-  await page.getByTestId('view-name').click()
-  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
-    new RegExp(accounts.getAddress('user', 5)),
-  )
+    // should allow registering a name without setting primary name
+    await page.getByTestId('next-button').click()
+    await transactionModal.autoComplete()
+    await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+    await provider.increaseTime(60)
+    await page.getByTestId('finish-button').click()
+    await transactionModal.autoComplete()
+    await page.getByTestId('view-name').click()
+    await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+      new RegExp(accounts.getAddress('user', 5)),
+    )
+  })
 })
 
 test('should allow registering a premium name', async ({
@@ -218,7 +214,6 @@ test('should allow registering a premium name', async ({
   await transactionModal.autoComplete()
   await page.pause()
   await page.getByTestId('view-name').click()
-  // TODO: Why is this one failing?
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
     new RegExp(accounts.getAddress('user', 5)),
   )

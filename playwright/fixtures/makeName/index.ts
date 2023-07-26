@@ -70,7 +70,7 @@ export function createMakeNames({ accounts, provider, time }: Dependencies) {
 
     if (options.syncSubgraph ?? true) await waitForSubgraph(provider)()
 
-    await time.sync(options.timeOffset ?? 0, false)
+    await time.sync(options.timeOffset ?? 0)
 
     const ethNames = _names.map((name) => `${name.label}.eth`)
     if (ethNames.length === 1) return ethNames[0] as string
