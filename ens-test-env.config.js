@@ -26,15 +26,15 @@ module.exports = {
       name: 'wrangler',
       prefixColor: 'magenta.bold',
     },
-    // {
-    //   command: `pnpm wait-on http://localhost:8788 && ${
-    //     process.env.CI ? 'npx playwright test --shard=1/10' : 'npx playwright'
-    //   }`,
-    //   name: 'synpress',
-    //   prefixColor: 'yellow.bold',
-    //   env: process.env,
-    //   finishOnExit: true,
-    // },
+    {
+      command: `pnpm wait-on http://localhost:8788 && ${
+        process.env.CI ? `npx playwright test --shard=${process.env.PLAYWRIGHT_SHARD}/10` : 'npx playwright'
+      }`,
+      name: 'playwright',
+      prefixColor: 'yellow.bold',
+      env: process.env,
+      finishOnExit: true,
+    },
   ],
   paths: {
     data: './data',
