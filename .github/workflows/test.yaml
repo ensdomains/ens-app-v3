@@ -130,7 +130,8 @@ jobs:
           Xvfb :20 -screen 0 800x600x16 &
           sleep 1 &&
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
-          DISPLAY=:20 pnpm e2e:ci -nb 
+          DISPLAY=:20 pnpm e2e:ci -nb &&
+          pnpm wait-on http://localhost:8788 && npx playwright --shard=${{matrix.shard}}/${{strategy.job-total}}
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
