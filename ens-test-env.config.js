@@ -28,7 +28,7 @@ module.exports = {
     },
     {
       command: `pnpm wait-on http://localhost:8788 && ${
-        process.env.CI ? 'pnpm playwright' : 'pnpm playwright'
+        process.env.CI ? 'npx playwright --shard=${{matrix.shard}}/${{strategy.job-total}}' : 'npx playwright'
       }`,
       name: 'synpress',
       prefixColor: 'yellow.bold',
