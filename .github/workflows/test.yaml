@@ -126,7 +126,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run tests
-        run: run: |
+        run: |
           Xvfb :20 -screen 0 800x600x16 &
           sleep 1 &&
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
