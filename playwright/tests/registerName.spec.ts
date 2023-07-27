@@ -196,7 +196,7 @@ test('should allow registering a premium name', async ({
       type: 'legacy',
       duration: -7890000 - 4 * 345600, // 3 months 4 days
     },
-    { timeOffset: 60 },
+    { timeOffset: 500 },
   )
 
   const transactionModal = makePageObject('TransactionModal')
@@ -204,14 +204,14 @@ test('should allow registering a premium name', async ({
   await page.goto(`/${premiumName}/register`)
   await login.connect()
 
-  await page.pause()
-
   await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
-  if (await page.getByTestId('profile-submit-button').count()) {
+  await page.pause()
+  if (await page.getByTestId('profile-submit-button').isVisible()) {
     await page.getByTestId('profile-submit-button').click()
   }
+
   await page.getByTestId('next-button').click()
   await transactionModal.autoComplete()
 
@@ -219,7 +219,7 @@ test('should allow registering a premium name', async ({
   await provider.increaseTime(120)
   await page.getByTestId('finish-button').click()
   await transactionModal.autoComplete()
-  await page.pause()
+
   await page.getByTestId('view-name').click()
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
     new RegExp(accounts.getAddress('user', 5)),
