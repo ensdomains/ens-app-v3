@@ -32,9 +32,14 @@ type PageObjects = typeof pageObjects
 
 type PageObjectName = keyof PageObjects
 
+type MyInstanceType<T extends { prototype: any }> = T['prototype']
+
+type PageObjectInstance<T extends PageObjectName> = MyInstanceType<PageObjects[T]>
+
 export const createPageObjectMaker =
   ({ page, wallet }: Dependencies) =>
-  <T extends PageObjectName>(name: T) => {
-    const PageObject = pageObjects[name]
-    return new PageObject(page, wallet) as InstanceType<PageObjects[T]>
+  <T extends PageObjectName>(name: T): PageObjectInstance<T> => {
+    if (name === 'TransactionModal') return new pageObjects.TransactionModal(page, wallet)
+    const PageObject = pageObjects[name as Exclude<PageObjectName, 'TransactionModal'>]
+    return new PageObject(page) as PageObjectInstance<T>
   }

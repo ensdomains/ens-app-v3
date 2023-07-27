@@ -14,6 +14,8 @@ test.describe.serial('normal registration', () => {
     time,
     makePageObject,
   }) => {
+    console.log('beginning test')
+    console.log('clearing primary name')
     const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
     await reverseRegistrar.setName('')
 
@@ -21,14 +23,17 @@ test.describe.serial('normal registration', () => {
     const registrationPage = makePageObject('RegistrationPage')
     const transactionModal = makePageObject('TransactionModal')
 
+    console.log('syncing time')
     await time.sync(500)
 
+    console.log('going to registration page')
     await homePage.goto()
+
+    console.log('connecting wallet')
     await login.connect()
 
-    await page.pause()
-
     // should redirect to registration page
+    console.log('redirecting')
     await homePage.searchInput.fill(name)
     await homePage.searchInput.press('Enter')
     await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
