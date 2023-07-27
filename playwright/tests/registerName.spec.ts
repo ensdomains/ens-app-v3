@@ -2,10 +2,15 @@ import { expect } from '@playwright/test'
 
 import { test } from '..'
 
+/*
+ * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will
+ * get stuck looking for the complete button
+ */
+
 test.describe.serial('normal registration', () => {
   const name = `registration-normal-${Date.now()}.eth`
 
-  test.skip('should allow normal registration', async ({
+  test('should allow normal registration', async ({
     page,
     login,
     accounts,
@@ -117,7 +122,7 @@ test.describe.serial('normal registration', () => {
     )
   })
 
-  test.skip('should not direct to the registration page on search, and show all records from registration', async ({
+  test('should not direct to the registration page on search, and show all records from registration', async ({
     page,
     accounts,
     makePageObject,
@@ -136,7 +141,7 @@ test.describe.serial('normal registration', () => {
     )
   })
 
-  test.skip('should allow registering a non-primary name', async ({
+  test('should allow registering a non-primary name', async ({
     page,
     provider,
     accounts,
@@ -169,11 +174,11 @@ test.describe.serial('normal registration', () => {
 
     // should allow registering a name without setting primary name
     await page.getByTestId('next-button').click()
-    await transactionModal.autoComplete()
+    await transactionModal.confirm()
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
     await provider.increaseTime(60)
     await page.getByTestId('finish-button').click()
-    await transactionModal.autoComplete()
+    await transactionModal.confirm()
     await page.getByTestId('view-name').click()
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
       new RegExp(accounts.getAddress('user', 5)),
@@ -213,12 +218,12 @@ test('should allow registering a premium name', async ({
   }
 
   await page.getByTestId('next-button').click()
-  await transactionModal.autoComplete()
+  await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
   await provider.increaseTime(120)
   await page.getByTestId('finish-button').click()
-  await transactionModal.autoComplete()
+  await transactionModal.confirm()
 
   await page.getByTestId('view-name').click()
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(

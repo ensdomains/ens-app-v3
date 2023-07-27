@@ -15,6 +15,8 @@ export class TransactionModal {
 
   readonly closeButton: Locator
 
+  readonly transactionModal: Locator
+
   constructor(page: Page, wallet: Web3ProviderBackend) {
     this.page = page
     this.wallet = wallet
@@ -22,6 +24,7 @@ export class TransactionModal {
     this.confirmButton = this.page.getByTestId('transaction-modal-confirm-button')
     this.completeButton = this.page.getByTestId('transaction-modal-complete-button')
     this.closeButton = this.page.getByTestId('close-icon')
+    this.transactionModal = this.page.getByTestId('transaction-modal-inner')
   }
 
   async authorize() {
@@ -38,23 +41,14 @@ export class TransactionModal {
   }
 
   async autoComplete() {
-    if (await this.introButton.count()) {
-      await this.introButton.click()
-    }
-
-    let hasTransactions = true
+    let isModalVisible = true
+    /* eslint-disable no-await-in-loop */
     do {
-      do {
-        // eslint-disable-next-line no-await-in-loop
-        await this.confirm()
-        // eslint-disable-next-line no-await-in-loop
-      } while (await this.confirmButton.count())
-      // eslint-disable-next-line no-await-in-loop
-      const text = await this.completeButton.innerText()
-      hasTransactions = text !== 'Done'
-      // eslint-disable-next-line no-await-in-loop
-      await this.complete()
-      // eslint-disable-next-line no-await-in-loop
-    } while (hasTransactions)
+      if (await this.introButton.isVisible()) await this.introButton.click()
+      if (await this.confirmButton.isVisible()) await this.confirm()
+      if (await this.completeButton.isVisible()) await this.complete()
+      isModalVisible = await this.transactionModal.isVisible()
+    } while (isModalVisible)
+    /* eslint-enable no-await-in-loop */
   }
 }
