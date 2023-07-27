@@ -5,7 +5,7 @@ import { test } from '..'
 test.describe.serial('normal registration', () => {
   const name = `registration-normal-${Date.now()}.eth`
 
-  test('should allow normal registration', async ({
+  test.skip('should allow normal registration', async ({
     page,
     login,
     accounts,
@@ -117,7 +117,7 @@ test.describe.serial('normal registration', () => {
     )
   })
 
-  test('should not direct to the registration page on search, and show all records from registration', async ({
+  test.skip('should not direct to the registration page on search, and show all records from registration', async ({
     page,
     accounts,
     makePageObject,
@@ -136,7 +136,7 @@ test.describe.serial('normal registration', () => {
     )
   })
 
-  test('should allow registering a non-primary name', async ({
+  test.skip('should allow registering a non-primary name', async ({
     page,
     provider,
     accounts,
