@@ -19,8 +19,6 @@ test.describe.serial('normal registration', () => {
     time,
     makePageObject,
   }) => {
-    console.log('beginning test')
-    console.log('clearing primary name')
     const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
     await reverseRegistrar.setName('')
 
@@ -94,7 +92,7 @@ test.describe.serial('normal registration', () => {
     await page.getByTestId('next-button').click()
     await expect(page.getByText('Open Wallet')).toBeVisible()
     console.log('committing')
-    await transactionModal.autoComplete()
+    await transactionModal.confirm()
 
     // should show countdown
     await expect(page.getByTestId('countdown-circle')).toBeVisible()
@@ -111,7 +109,7 @@ test.describe.serial('normal registration', () => {
     await page.getByTestId('finish-button').click()
     await expect(page.getByText('Open Wallet')).toBeVisible()
     console.log('registering')
-    await transactionModal.autoComplete()
+    await transactionModal.confirm()
 
     // should show the correct details on completion
     await expect(page.getByTestId('invoice-item-0-amount')).toHaveText(/0.0032 ETH/)

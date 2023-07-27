@@ -47,6 +47,7 @@ export class TransactionModal {
       if (await this.introButton.isVisible()) await this.introButton.click()
       if (await this.confirmButton.isVisible()) await this.confirm()
       if (await this.completeButton.isVisible()) await this.complete()
+      await this.page.waitForTimeout(1000)
       isModalVisible = await this.transactionModal.isVisible()
     } while (isModalVisible)
     /* eslint-enable no-await-in-loop */
