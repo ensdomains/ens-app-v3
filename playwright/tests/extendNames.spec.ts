@@ -156,7 +156,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   await login.connect()
 
-  await expect(page.locator(`text=${name} has expired`)).toBeVisible()
+  await expect(page.getByText(`${name} has expired`)).toBeVisible()
 
   const timestamp = await profilePage.getExpiryTimestamp()
 

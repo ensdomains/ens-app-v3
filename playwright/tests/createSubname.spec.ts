@@ -101,7 +101,7 @@ test('should allow creating a subname', async ({ page, makeName, login, makePage
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
 
-  await expect(page.locator(`text="test.${name}"`)).toBeVisible()
+  await expect(page.getByText(`test.${name}`)).toBeVisible()
 })
 
 test('should allow creating a subnames if the user is the wrapped owner', async ({
