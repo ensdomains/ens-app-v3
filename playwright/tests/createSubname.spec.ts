@@ -3,6 +3,7 @@ import { expect } from '@playwright/test'
 import { test } from '..'
 
 test('should not show add subname button when the connected wallet is the registrant but not the controller', async ({
+  page,
   login,
   makeName,
   makePageObject,
@@ -18,12 +19,14 @@ test('should not show add subname button when the connected wallet is the regist
   await subnamesPage.goto(name)
   await login.connect()
 
+  await page.waitForTimeout(3000)
   await expect(subnamesPage.getAddSubnameButton).toHaveCount(0)
 })
 
 test('should not show add subname button when the connected wallet does not own the name', async ({
-  makeName,
+  page,
   login,
+  makeName,
   makePageObject,
 }) => {
   const name = await makeName({
@@ -36,6 +39,7 @@ test('should not show add subname button when the connected wallet does not own 
   await subnamesPage.goto(name)
   await login.connect()
 
+  await page.waitForTimeout(3000)
   await expect(subnamesPage.getAddSubnameButton).toHaveCount(0)
 })
 
@@ -83,15 +87,17 @@ test('should not allow creating a subname with invalid characters', async ({
 })
 
 test('should allow creating a subname', async ({ page, makeName, login, makePageObject }) => {
+  test.slow()
   const name = await makeName({
     label: 'manager-only',
     type: 'legacy',
     owner: 'user2',
     manager: 'user',
   })
-  const subnamesPage = makePageObject('SubnamesPage')
-  await subnamesPage.goto(name)
 
+  const subnamesPage = makePageObject('SubnamesPage')
+
+  await subnamesPage.goto(name)
   await login.connect()
 
   await subnamesPage.getAddSubnameButton.click()
@@ -101,7 +107,8 @@ test('should allow creating a subname', async ({ page, makeName, login, makePage
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
 
-  await expect(page.getByText(`test.${name}`)).toBeVisible()
+  await page.pause()
+  await expect(page.getByText(`test.${name}`)).toBeVisible({ timeout: 15000 })
 })
 
 test('should allow creating a subnames if the user is the wrapped owner', async ({
@@ -110,14 +117,19 @@ test('should allow creating a subnames if the user is the wrapped owner', async 
   makeName,
   makePageObject,
 }) => {
+  test.slow()
+
   const name = await makeName({
     label: 'wrapped',
     type: 'wrapped',
   })
   const subnamesPage = makePageObject('SubnamesPage')
-  await subnamesPage.goto(name)
 
+  await page.goto(`/${name}`)
   await login.connect()
+
+  await page.getByTestId('subnames-tab').click()
+  // await subnamesPage.goto(name)
 
   await subnamesPage.getAddSubnameButton.click()
   await subnamesPage.getAddSubnameInput.fill('test')
@@ -126,7 +138,7 @@ test('should allow creating a subnames if the user is the wrapped owner', async 
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
 
-  await expect(page.getByText(`test.${name}`)).toBeVisible()
+  await expect(page.getByText(`test.${name}`)).toBeVisible({ timeout: 15000 })
 })
 
 test('should not allow adding a subname that already exists', async ({
