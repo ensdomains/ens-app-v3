@@ -131,7 +131,7 @@ test.describe.serial('normal registration', () => {
     await homePage.searchInput.fill(name)
     await homePage.searchInput.press('Enter')
 
-    await expect(page).toHaveURL(`http://localhost:3000/${name}`)
+    await expect(page).toHaveURL(`/${name}`)
 
     await expect(page.getByTestId('profile-snippet-nickname')).toHaveText(/Test Name/)
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(

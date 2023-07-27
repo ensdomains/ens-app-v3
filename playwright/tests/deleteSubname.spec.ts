@@ -288,7 +288,7 @@ test.describe('emancipated', () => {
     await transactionModal.autoComplete()
 
     // Owner button should not exist
-    expect(await page.getByTestId('owner-profile-button-name.owner')).toHaveCount(0)
+    await expect(page.getByTestId('owner-profile-button-name.owner')).toHaveCount(0)
   })
 
   test('allows deletion when NOT parent owner, but child owner', async ({

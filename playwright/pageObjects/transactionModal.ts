@@ -41,13 +41,14 @@ export class TransactionModal {
   }
 
   async autoComplete() {
-    let isModalVisible = true
     /* eslint-disable no-await-in-loop */
+
+    let isModalVisible = true
     do {
       if (await this.introButton.isVisible()) await this.introButton.click()
       if (await this.confirmButton.isVisible()) await this.confirm()
       if (await this.completeButton.isVisible()) await this.complete()
-      await this.page.waitForTimeout(1000)
+      await this.page.waitForTimeout(500)
       isModalVisible = await this.transactionModal.isVisible()
     } while (isModalVisible)
     /* eslint-enable no-await-in-loop */
