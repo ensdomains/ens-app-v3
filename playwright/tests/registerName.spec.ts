@@ -88,6 +88,7 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('next-button')).toHaveText('Begin')
     await page.getByTestId('next-button').click()
     await expect(page.getByText('Open Wallet')).toBeVisible()
+    console.log('committing')
     await transactionModal.autoComplete()
 
     // should show countdown
@@ -104,6 +105,7 @@ test.describe.serial('normal registration', () => {
     // should allow finalising registration and automatically go to the complete step
     await page.getByTestId('finish-button').click()
     await expect(page.getByText('Open Wallet')).toBeVisible()
+    console.log('registering')
     await transactionModal.autoComplete()
 
     // should show the correct details on completion
