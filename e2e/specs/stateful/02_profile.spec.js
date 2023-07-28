@@ -41,6 +41,11 @@ const profiles = [
         fullValue: 'ensdomains',
       },
       {
+        type: 'account',
+        key: 'email',
+        value: 'email@ens.domains',
+      },
+      {
         type: 'address',
         key: 'eth',
         value: '0x325...1be8f',
@@ -52,12 +57,6 @@ const profiles = [
         value: 'https://avatar-...',
         fullValue:
           'https://avatar-upload.ens-cf.workers.dev/goerli/wrapmebaby.eth?timestamp=1666267425956',
-      },
-      {
-        type: 'other',
-        key: 'email',
-        value: 'email@ens.domai...',
-        fullValue: 'email@ens.domains',
       },
     ],
     owners: [
