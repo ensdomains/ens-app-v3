@@ -8,6 +8,8 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainId } from '@app/hooks/useChainId'
 
+const TRANSACTION_SEARCH_INTERVAL = 10000
+
 type EtherscanResponse = {
   status: string
   message: string
@@ -205,8 +207,8 @@ export const SyncDroppedTransaction = ({ children }: { children: React.ReactNode
 
   useInterval(
     () => findDroppedTransactions(transactions, address, store, chainId, provider),
-    10000,
-    [address, chainId, store, provider, ...transactions.map((x) => x.hash)],
+    TRANSACTION_SEARCH_INTERVAL,
+    [address, chainId, store, provider, transactions.length],
   )
 
   return <div>{children}</div>
