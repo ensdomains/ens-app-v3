@@ -158,7 +158,7 @@
     "@wagmi/core-cjs": "npm:@wagmi/core@0.10.11-cjs",
     "babel-jest": "^27.5.1",
     "babel-loader": "^8.2.5",
-    "canvas": "^2.9.3",
+    "canvas": "^2.11.2",
     "concurrently": "^7.3.0",
     "cypress": "12.11.0",
     "cypress-localstorage-commands": "^2.2.1",
