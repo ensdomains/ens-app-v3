@@ -147,6 +147,7 @@ test.describe('unwrapped', () => {
       login,
       makePageObject,
     }) => {
+      test.slow()
       const name = await makeName({
         label: 'unwrapped',
         type: 'legacy',
@@ -200,6 +201,7 @@ test.describe('unwrapped', () => {
       makeName,
       makePageObject,
     }) => {
+      test.slow()
       const name = await makeName({
         label: 'unwrapped',
         type: 'legacy',

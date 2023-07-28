@@ -139,19 +139,17 @@ test('should allow wrapping a subdomain', async ({
       },
     ],
   })
+  const subname = `sub.${name}`
 
   const registry = await contracts.get('ENSRegistry', { signer: 'user' })
   const nameWrapper = await contracts.get('NameWrapper')
   await registry.setApprovalForAll(nameWrapper.address, false)
   await provider.mine()
 
-  const subname = `sub.${name}`
-
   const morePage = makePageObject('MorePage')
   const transactionModal = makePageObject('TransactionModal')
 
   await morePage.goto(subname)
-
   await login.connect()
 
   // should approve name wrapper for address

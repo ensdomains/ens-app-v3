@@ -89,7 +89,7 @@ jobs:
           path: stateful-build.tar
 
   stateless:
-    name: Stateless (${{matrix.shard}}/${{strategy.job-total}})
+    name: stateless (${{matrix.shard}}/${{strategy.job-total}})
     needs: build-stateless
     timeout-minutes: 20
     runs-on: ubuntu-latest

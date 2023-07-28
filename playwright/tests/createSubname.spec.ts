@@ -104,11 +104,9 @@ test('should allow creating a subname', async ({ page, makeName, login, makePage
   await subnamesPage.getAddSubnameInput.type('test')
   await subnamesPage.getSubmitSubnameButton.click()
 
-  await page.pause()
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
 
-  await page.pause()
   await expect(page.getByText(`test.${name}`)).toBeVisible({ timeout: 15000 })
 })
 
