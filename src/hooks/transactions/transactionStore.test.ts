@@ -257,6 +257,7 @@ describe('setReplacedTransaction', () => {
         minedData: etherscanDataToMinedData(mockMinedData),
         ...mockTransactions[0],
         status: 'confirmed',
+        searchStatus: 'found',
       },
     ])
   })
@@ -313,6 +314,7 @@ describe('setReaplcedTransactionByNonce', () => {
         minedData: etherscanDataToMinedData(mockMinedData),
         ...mockTransactions[0],
         status: 'confirmed',
+        searchStatus: 'found',
       },
     ])
   })
@@ -422,7 +424,7 @@ describe('setFailedTransaction', () => {
       {
         hash: transactionHash,
         status: 'failed',
-        searchStatus: 'pending',
+        searchStatus: 'found',
         searchRetries: 0,
       },
     ])

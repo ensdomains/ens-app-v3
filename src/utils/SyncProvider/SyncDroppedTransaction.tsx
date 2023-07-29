@@ -19,9 +19,9 @@ type EtherscanResponse = {
 export const getAccountHistoryEndpoint = (address: string, chainId: number) => {
   switch (chainId) {
     case 1:
-      return `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
+      return `https://etherscan-api.ens-cf.workers.dev/accountHistory?address=${address}`
     case 5:
-      return `https://api-goerli.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M`
+      return `https://etherscan-api-goerli.ens-cf.workers.dev/accountHistory?address=${address}`
     default:
       return ''
   }
@@ -74,9 +74,6 @@ export const findDroppedTransactions = async (
   chainId: ReturnType<typeof useChainId>,
   provider: ReturnType<typeof useProvider>,
 ) => {
-  // Transactions are all tied to an address and a chain
-  if (!address || !store || !chainId || !provider || !transactions?.length) return
-
   const pendingTransactions = transactions.filter(
     (transaction) => transaction.status === 'pending' && transaction.searchStatus === 'found',
   )
@@ -84,10 +81,22 @@ export const findDroppedTransactions = async (
     (transaction) => transaction.searchStatus === 'searching',
   )
 
+  // Transactions are all tied to an address and a chain
+  if (
+    !address ||
+    !store ||
+    !chainId ||
+    !provider ||
+    !transactions?.length ||
+    (!pendingTransactions.length && !searchingTransactions.length)
+  ) {
+    return
+  }
+
   const etherscanEndpoint = getAccountHistoryEndpoint(address, chainId)
   const etherscanResponse = await fetch(etherscanEndpoint)
-  const etherscanJson: EtherscanResponse = await etherscanResponse.json()
-  const accountTransactionHistory = etherscanJson?.result
+  const etherscanJson: EtherscanMinedData[] = await etherscanResponse.json()
+  const accountTransactionHistory = etherscanJson
 
   for (const searchingTransaction of searchingTransactions) {
     // A searchingTransaction likely means the transaction was submitted to a private mempool

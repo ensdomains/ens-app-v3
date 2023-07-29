@@ -20,16 +20,14 @@ export const handlers = [
   rest.get(getAccountHistoryEndpoint(ADDRESS, 1), (req, res, ctx) => {
     return res(
       ctx.status(200),
-      ctx.json({
-        result: [
-          {
-            hash: '0xabc123',
-            input: 'input',
-            timeStamp: '1',
-            nonce: 0,
-          },
-        ],
-      }),
+      ctx.json([
+        {
+          hash: '0xabc123',
+          input: 'input',
+          timeStamp: '1',
+          nonce: 0,
+        },
+      ]),
     )
   }),
 ]
@@ -74,7 +72,7 @@ describe('getAccountHistoryEndpoint', () => {
     const address = '0x1234567890123456789012345678901234567890'
     const chainId = 1
     const expectedEndpoint =
-      'https://api.etherscan.io/api?module=account&action=txlist&address=0x1234567890123456789012345678901234567890&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M'
+      'https://etherscan-api.ens-cf.workers.dev/accountHistory?address=0x1234567890123456789012345678901234567890'
 
     expect(getAccountHistoryEndpoint(address, chainId)).toEqual(expectedEndpoint)
   })
@@ -83,7 +81,7 @@ describe('getAccountHistoryEndpoint', () => {
     const address = '0x1234567890123456789012345678901234567890'
     const chainId = 5
     const expectedEndpoint =
-      'https://api-goerli.etherscan.io/api?module=account&action=txlist&address=0x1234567890123456789012345678901234567890&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=TM9G18GZFWZH22BQF91K6B5H75HT7EVG3M'
+      'https://etherscan-api-goerli.ens-cf.workers.dev/accountHistory?address=0x1234567890123456789012345678901234567890'
 
     expect(getAccountHistoryEndpoint(address, chainId)).toEqual(expectedEndpoint)
   })
@@ -127,6 +125,33 @@ describe('findDroppedTransactions', () => {
 
       expect(result).toBeUndefined()
     })
+    it('should exit early if there are no pendingTransaction or searchingTransactions', async () => {
+      const mockTransactions = [
+        {
+          searchStatus: 'found',
+          hash: '0xabc123',
+        },
+        {
+          status: 'confirmed',
+        },
+      ]
+
+      const mockAddress = '0x1234567890abcdef'
+      const mockStore = {}
+      const mockChainId = 1
+      const mockProvider = {}
+
+      const result = await findDroppedTransactions(
+        mockTransactions,
+        mockAddress,
+        mockStore,
+        mockChainId,
+        mockProvider,
+      )
+
+      expect(result).toBeUndefined()
+    })
+
     it('should find a searching transaction once it has been mined', async () => {
       const mockTransactions = [
         {
@@ -147,25 +172,23 @@ describe('findDroppedTransactions', () => {
       )
       expect(mockStore.foundMinedTransaction).toHaveBeenCalled()
     })
-    it('should error if there are more than one transactions that could be a replacement', async () => {
+    it('should error if there is more than one transaction that could be a replacement', async () => {
       server.use(
         rest.get(getAccountHistoryEndpoint(ADDRESS, 1), (req, res, ctx) => {
           return res(
             ctx.status(200),
-            ctx.json({
-              result: [
-                {
-                  hash: '0xabc123',
-                  input: 'input',
-                  timeStamp: '1',
-                },
-                {
-                  hash: '0xabc123',
-                  input: 'input',
-                  timeStamp: '1',
-                },
-              ],
-            }),
+            ctx.json([
+              {
+                hash: '0xabc123',
+                input: 'input',
+                timeStamp: '1',
+              },
+              {
+                hash: '0xabc123',
+                input: 'input',
+                timeStamp: '1',
+              },
+            ]),
           )
         }),
       )

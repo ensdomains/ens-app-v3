@@ -174,6 +174,7 @@ export const setReplacedTransaction =
               ...transaction,
               minedData: etherscanDataToMinedData(minedData),
               status: 'confirmed',
+              searchStatus: 'found',
             } as Transaction)
           : transaction
       })
@@ -196,6 +197,7 @@ export const setReplacedTransactionByNonce =
               ...transaction,
               minedData: etherscanDataToMinedData(minedData),
               status: 'confirmed',
+              searchStatus: 'found',
             } as Transaction)
           : transaction,
       )
@@ -261,6 +263,7 @@ export const setFailedTransaction =
           ? ({
               ...transaction,
               status: 'failed',
+              searchStatus: 'found',
             } as Transaction)
           : transaction,
       )
