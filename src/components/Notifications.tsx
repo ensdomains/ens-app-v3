@@ -8,7 +8,7 @@ import { Button, Toast } from '@ensdomains/thorin'
 import { useChainName } from '@app/hooks/useChainName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider'
+import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { trackEvent } from '../utils/analytics'

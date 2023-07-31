@@ -13,7 +13,7 @@ describe('analytics', () => {
 
   describe('utm', () => {
     it('can set and get utm', () => {
-      global.window = Object.create(window)
+      global.window ??= Object.create(window)
       const source = 'twitter'
       Object.defineProperty(window, 'location', {
         value: {
@@ -27,7 +27,7 @@ describe('analytics', () => {
   })
   describe('trackEvent', () => {
     it('send event to plausible', () => {
-      global.window = Object.create(window)
+      global.window ??= Object.create(window)
       const mockPlausibleFunction = jest.fn()
       window.plausible = mockPlausibleFunction
 

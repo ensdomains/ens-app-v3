@@ -1,5 +1,7 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { toUtf8String } from '@ethersproject/strings'
+import { Connector, Provider } from '@wagmi/core'
+import type { PopulatedTransaction } from 'ethers'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -259,6 +261,42 @@ export const uniqueTransactionIdentifierGenerator = (
   data: transactionData,
 })
 
+export const transactionSuccessHandler =
+  (dependencies: {
+    provider: Provider
+    connector: Connector | undefined
+    actionName: ManagedDialogPropsTwo['actionName']
+    txKey: string | null
+    request: PopulatedTransaction | undefined
+    addRecentTransaction: ReturnType<typeof useAddRecentTransaction>
+    dispatch: Dispatch<TransactionFlowAction>
+  }) =>
+  async (tx: any) => {
+    const { provider, connector, actionName, txKey, request, addRecentTransaction, dispatch } =
+      dependencies
+    let transactionData = null
+    try {
+      // If using private mempool, this won't error, will return null
+      transactionData = await provider.getTransaction(tx.hash)
+    } catch (e) {
+      console.error('Failed to get transaction info')
+    }
+
+    const isSafeApp = await checkIsSafeApp(connector)
+
+    addRecentTransaction({
+      ...transactionData,
+      hash: tx.hash,
+      action: actionName,
+      key: txKey!,
+      input: request?.data,
+      timestamp: Math.floor(Date.now() / 1000),
+      isSafeTx: !!isSafeApp,
+      searchRetries: 0,
+    })
+    dispatch({ name: 'setTransactionHash', payload: tx.hash })
+  }
+
 export const TransactionStageModal = ({
   actionName,
   currentStep,
@@ -277,6 +315,7 @@ export const TransactionStageModal = ({
   const addRecentTransaction = useAddRecentTransaction()
   const { data: signer } = useSigner()
   const ens = useEns()
+  const provider = useProvider()
 
   const stage = transaction.stage || 'confirm'
   const recentTransactions = useRecentTransactions()
@@ -286,7 +325,6 @@ export const TransactionStageModal = ({
   )
 
   const { connector } = useAccount()
-  const provider = useProvider()
 
   const uniqueTxIdentifiers = useMemo(
     () =>
@@ -364,17 +402,15 @@ export const TransactionStageModal = ({
   } = useSendTransaction({
     mode: 'prepared',
     request,
-    onSuccess: async (tx) => {
-      const isSafeApp = await checkIsSafeApp(connector)
-
-      addRecentTransaction({
-        hash: tx.hash,
-        action: actionName,
-        key: txKey!,
-        isSafeTx: !!isSafeApp,
-      })
-      dispatch({ name: 'setTransactionHash', payload: tx.hash })
-    },
+    onSuccess: transactionSuccessHandler({
+      provider,
+      connector,
+      actionName,
+      txKey,
+      request,
+      addRecentTransaction,
+      dispatch,
+    }),
   })
 
   const FilledDisplayItems = useMemo(
