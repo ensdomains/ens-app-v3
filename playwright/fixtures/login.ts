@@ -36,7 +36,7 @@ export class Login {
     await this.page.waitForTimeout(process.env.CI ? 15000 : 5000)
     await this.page
       .getByRole('button', { name: 'Close' })
-      .click()
+      .click({ timeout: 5000 })
       .catch(() => {})
     await this.getConnectButton.click()
     await this.page.getByText('Browser Wallet').click()
