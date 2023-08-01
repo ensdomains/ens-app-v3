@@ -112,7 +112,7 @@ test.describe('Profile', () => {
     await expect(page).toHaveURL('/%E2%9D%A4%E2%9D%A4%E2%9D%A4.eth')
   })
 
-  profiles.forEach((profile) => {
+  for (const profile of profiles) {
     test(`should load profile for: ${profile.name}`, async ({ page, login }) => {
       await page.goto('/')
       await login.connect()
@@ -232,7 +232,7 @@ test.describe('Profile', () => {
         await expect(page.getByTestId('expiry-data')).toContainText(profile.expiry)
       }
     })
-  })
+  }
 
   test('should decode an unknown label', async ({ page, login }) => {
     await page.goto('/')
