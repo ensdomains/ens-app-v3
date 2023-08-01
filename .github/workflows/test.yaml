@@ -89,7 +89,7 @@ jobs:
           path: stateful-build.tar
 
   stateless:
-    name: stateless (${{matrix.shard}}/${{strategy.job-total}})
+    name: stateless (${{matrix.shard}})
     needs: build-stateless
     timeout-minutes: 20
     runs-on: ubuntu-latest
@@ -131,26 +131,16 @@ jobs:
           sleep 1 &&
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           DISPLAY=:20 PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci -nb 
-        env:
-          CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
-          CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
-          GH_USERNAME: ${{ secrets.GH_USERNAME }}
-          GH_PAT: ${{ secrets.GH_PAT }}
 
-      - uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: synpress-screenshots
-          path: e2e/screenshots
-
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: synpress-videos
-          path: e2e/videos
+          name: stateless-report
+          path: playwright-report/
+          retention-days: 30
 
   stateful:
-    name: stateful (${{matrix.shard}}/${{strategy.job-total}})
+    name: stateful (${{matrix.shard}})
     needs: build-stateful
     timeout-minutes: 10
     runs-on: ubuntu-latest
@@ -203,20 +193,12 @@ jobs:
           "pnpm wrangle" \
           "pnpm wait-on http://localhost:8788 && DISPLAY=:20 npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
-          CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
-          GH_USERNAME: ${{ secrets.GH_USERNAME }}
-          GH_PAT: ${{ secrets.GH_PAT }}
 
-      - uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: synpress-screenshots
-          path: e2e/screenshots
-
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: synpress-videos
-          path: e2e/videos
+          name: stateful-report
+          path: playwright-report/
+          retention-days: 30

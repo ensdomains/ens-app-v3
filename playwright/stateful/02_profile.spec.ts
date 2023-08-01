@@ -107,7 +107,6 @@ test.describe('Profile', () => {
 
     await page.getByPlaceholder('Search for a name').fill('❤️❤️❤️.eth')
     await page.getByPlaceholder('Search for a name').press('Enter')
-    await page.pause()
     await expect(page).toHaveURL('/%E2%9D%A4%E2%9D%A4%E2%9D%A4.eth')
   })
 
