@@ -150,6 +150,7 @@ jobs:
           path: e2e/videos
 
   stateful:
+    name: stateful (${{matrix.shard}}/${{strategy.job-total}})
     needs: build-stateful
     timeout-minutes: 10
     runs-on: ubuntu-latest
@@ -200,7 +201,7 @@ jobs:
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm wrangle" \
-          "pnpm wait-on http://localhost:8788 && DISPLAY=:20 npx playwright --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
+          "pnpm wait-on http://localhost:8788 && DISPLAY=:20 npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
