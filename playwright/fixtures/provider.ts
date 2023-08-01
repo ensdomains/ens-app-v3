@@ -35,7 +35,7 @@ class ExtendedProvider extends ethers.providers.JsonRpcProvider {
 
 export const createProvider = (stateful = false) => {
   // const apiKey = process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
-  // Using public rpc node because infura settings is blocking the request
+  // Using public rpc node because infura settings is blocking transactions from settings
   const rpcUrl = stateful ? `https://ethereum-goerli.publicnode.com	` : 'http://localhost:8545'
   const chainId = stateful ? 5 : 1337
   return new ExtendedProvider(rpcUrl, chainId)

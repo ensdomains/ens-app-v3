@@ -42,7 +42,7 @@ export const test = base.extend<Fixtures>({
   // eslint-disable-next-line no-empty-pattern
   provider: async ({}, use, testInfo) => {
     const stateful = testInfo.project?.name === 'stateful'
-    const provider = createProvider(true)
+    const provider = createProvider(stateful)
     await use(provider)
   },
   login: async ({ page, wallet, accounts }, use) => {
