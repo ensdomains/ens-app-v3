@@ -41,27 +41,36 @@ test.describe('Import DNSSEC name', () => {
     login,
     makePageObject,
   }) => {
+    console.log('test starting')
     test.setTimeout(360000)
 
+    const address = process.env.CI
+      ? '0x32518828A071a0e6E549F989D4aaB4Cd7401be8f'
+      : '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
     const transactionModal = makePageObject('TransactionModal')
 
     await page.goto('/leontalbert.xyz/import')
     await login.connect()
 
-    await expect(page.getByText('a=0x32518828A071a0e6E549F989D4aaB4Cd7401be8f')).toBeVisible({
+    console.log('address', address)
+    await page.pause()
+    await expect(page.getByText(`a=${address}`)).toBeVisible({
       timeout: 25000,
     })
+    console.log('clicking dnssec')
     await page.getByTestId('dnssec-check-button').click()
     await expect(
       page.getByText(
         "You don't appear to be the DNS Owner of this domain, but you can still add this name to ENS Registry.",
       ),
     ).toBeVisible({ timeout: 25000 })
+    console.log('clicking continue')
     await page.getByText('Continue').click()
     await expect(
       page.getByText('You are importing a DNS name that you appear to not own.'),
     ).toBeVisible({ timeout: 25000 })
     await page.getByRole('button', { name: 'Claim' }).click()
+    console.log('confirming')
     await transactionModal.confirm()
     await transactionModal.complete()
     await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 25000 })
