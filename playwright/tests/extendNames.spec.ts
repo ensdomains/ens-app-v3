@@ -40,7 +40,6 @@ test('should be able to register multiple names on the address page', async ({
     timestampDict[name] = timestamp
     await addresPage.getNameRow(name).click()
   }
-  console.log(timestampDict)
   await addresPage.extendNamesButton.click()
   await addresPage.extendNamesModalNextButton.click()
 

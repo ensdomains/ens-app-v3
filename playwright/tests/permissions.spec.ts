@@ -34,6 +34,8 @@ test.describe('Permissions', () => {
   })
 
   test('should allow owner to revoke permissions', async ({ makeName, login, makePageObject }) => {
+    test.slow()
+
     const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',

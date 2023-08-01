@@ -26,17 +26,12 @@ test.describe.serial('normal registration', () => {
     const registrationPage = makePageObject('RegistrationPage')
     const transactionModal = makePageObject('TransactionModal')
 
-    console.log('syncing time')
     await time.sync(500)
 
-    console.log('going to registration page')
     await homePage.goto()
-
-    console.log('connecting wallet')
     await login.connect()
 
     // should redirect to registration page
-    console.log('redirecting')
     await homePage.searchInput.fill(name)
     await homePage.searchInput.press('Enter')
     await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
@@ -91,12 +86,10 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('next-button')).toHaveText('Begin')
     await page.getByTestId('next-button').click()
     await expect(page.getByText('Open Wallet')).toBeVisible()
-    console.log('committing')
     await transactionModal.confirm()
 
     // should show countdown
     await expect(page.getByTestId('countdown-circle')).toBeVisible()
-    console.log(await page.getByTestId('countdown-circle').textContent())
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
     await provider.increaseTime(60)
     await expect(page.getByTestId('finish-button')).toBeEnabled()
@@ -108,7 +101,6 @@ test.describe.serial('normal registration', () => {
     // should allow finalising registration and automatically go to the complete step
     await page.getByTestId('finish-button').click()
     await expect(page.getByText('Open Wallet')).toBeVisible()
-    console.log('registering')
     await transactionModal.confirm()
 
     // should show the correct details on completion

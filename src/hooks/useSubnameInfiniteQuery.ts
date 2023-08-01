@@ -24,7 +24,6 @@ export const useSubnameInfiniteQuery = (
   const { getSubnames } = useEns()
 
   const queryKey = useQueryKeys().subnames(name, orderBy, orderDirection, search)
-  console.log('queryKey', queryKey)
   const watchedGetSubnames = useGlobalErrorFunc<typeof getSubnames>({
     queryKey,
     func: getSubnames,
@@ -57,16 +56,6 @@ export const useSubnameInfiniteQuery = (
         enabled: !!name,
       },
     )
-  console.log(
-    'isFetching',
-    isFetching,
-    'isREfetching',
-    isRefetching,
-    'isLoading',
-    isLoading,
-    'data',
-    data,
-  )
 
   const subnames: Subname[] = useMemo(() => {
     return (

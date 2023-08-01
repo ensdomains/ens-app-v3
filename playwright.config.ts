@@ -5,9 +5,10 @@ export default defineConfig({
   testDir: './playwright/tests',
   testMatch: '*.spec.ts',
   retries: process.env.CI ? 2 : 0,
+  timeout: 45000, // add extra time for loading
   fullyParallel: true, // required to evenly shard
   workers: 1, // keep tests serial for now
-  reporter: 'list',
+  reporter: [['html', { open: 'never' }]],
   projects: [
     {
       name: 'stateless',

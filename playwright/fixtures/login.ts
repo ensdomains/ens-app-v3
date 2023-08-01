@@ -33,9 +33,10 @@ export class Login {
      * A bug in rainbow kit needs time to load the provider. Could be fixed in version 1.0.4
      * Also throws eror with walletconnect if not enough time has passed.
      */
+    await this.page.waitForTimeout(process.env.CI ? 15000 : 5000)
     await this.page
       .getByRole('button', { name: 'Close' })
-      .click({ timeout: 10000 })
+      .click()
       .catch(() => {})
     await this.getConnectButton.click()
     await this.page.getByText('Browser Wallet').click()
