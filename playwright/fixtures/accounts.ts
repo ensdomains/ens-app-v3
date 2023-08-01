@@ -17,7 +17,7 @@ export const createAccounts = () => {
   const mnemonic =
     process.env.SECRET_WORDS || 'test test test test test test test test test test test junk'
   const hdNode = ethers.utils.HDNode.fromMnemonic(mnemonic)
-  const accounts = [0, 1, 2].map((index: number) => {
+  const _accounts = [0, 1, 2].map((index: number) => {
     const { address, privateKey } = hdNode.derivePath(`m/44'/60'/0'/0/${index}`)
     return {
       user: `user${index ? index + 1 : ''}` as User,
@@ -25,7 +25,14 @@ export const createAccounts = () => {
       privateKey: privateKey as `0x${string}`,
     }
   })
-  console.log('accounts', accounts)
+
+  const accounts = [
+    {
+      user: 'user',
+      address: '0x32518828A071a0e6E549F989D4aaB4Cd7401be8f',
+      privateKey: '0xf0b15dbc015868b1d8e3f2625a08deee2e7729aecf0d7699ca1220bb386478e9',
+    },
+  ]
 
   return {
     getAllPrivateKeys: () => accounts.map(({ privateKey }) => privateKey),

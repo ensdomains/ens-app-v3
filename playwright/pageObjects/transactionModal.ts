@@ -32,7 +32,7 @@ export class TransactionModal {
   }
 
   async confirm() {
-    await this.confirmButton.click()
+    await this.confirmButton.click({ timeout: 10000 })
     await this.authorize()
   }
 

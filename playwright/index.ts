@@ -33,14 +33,16 @@ export const test = base.extend<Fixtures>({
   wallet: async ({ page, accounts, provider }, use) => {
     const chainId = provider.network?.chainId || 1337
     const chainRpcUrl = provider.connection?.url || 'http://localhost:8545'
+    console.log(`chainId: ${chainId}`, `chainRpcUrl: ${chainRpcUrl}`)
     const privateKeys = accounts.getAllPrivateKeys()
+    console.log(`privateKeys:`, privateKeys)
     const wallet = await injectHeadlessWeb3Provider(page, privateKeys, chainId, chainRpcUrl)
     await use(wallet)
   },
   // eslint-disable-next-line no-empty-pattern
   provider: async ({}, use, testInfo) => {
     const stateful = testInfo.project?.name === 'stateful'
-    const provider = createProvider(stateful)
+    const provider = createProvider(true)
     await use(provider)
   },
   login: async ({ page, wallet, accounts }, use) => {
