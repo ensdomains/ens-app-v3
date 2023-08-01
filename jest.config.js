@@ -80,6 +80,9 @@ const customJestConfig = {
   collectCoverage: false,
   globals: {
     Uint8Array: Uint8Array,
+    fetch: global.fetch,
+    Request: global.Request,
+    Response: global.Response,
   },
 }
 

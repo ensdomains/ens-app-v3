@@ -17,7 +17,8 @@ import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowPr
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
 import { GlobalErrorProvider } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
-import { SyncProvider } from '@app/utils/SyncProvider'
+import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
+import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 import { setupAnalytics } from '@app/utils/analytics'
 import { chains, wagmiClient } from '@app/utils/query'
 
@@ -153,8 +154,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                     <GlobalErrorProvider>
                       <SyncProvider>
                         <TransactionFlowProvider>
-                          <Notifications />
-                          <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                          <SyncDroppedTransaction>
+                            <Notifications />
+                            <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                          </SyncDroppedTransaction>
                         </TransactionFlowProvider>
                       </SyncProvider>
                     </GlobalErrorProvider>

@@ -2,7 +2,9 @@
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // this is taken from rainbowkit
+import { BigNumber } from '@ethersproject/bignumber'
 import type { BaseProvider, Block, TransactionReceipt } from '@ethersproject/providers'
+import type { PopulatedTransaction } from 'ethers'
 
 import { MinedData } from '@app/types'
 
@@ -10,7 +12,7 @@ import { waitForTransaction } from './waitForTransaction'
 
 const storageKey = 'transaction-data'
 
-type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'repriced'
+type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'repriced' | 'unknown' | 'searching'
 
 interface BaseTransaction {
   hash: string
@@ -21,6 +23,17 @@ interface BaseTransaction {
   status: TransactionStatus
   minedData?: MinedData
   newHash?: string
+  nonce?: number
+  searchRetries: number
+  searchStatus?: 'searching' | 'found'
+  input?: string
+  timestamp?: number
+}
+
+interface SearchingTransaction extends BaseTransaction {
+  status: 'searching'
+  minedData?: never
+  nonce?: never
 }
 
 interface PendingTransaction extends BaseTransaction {
@@ -38,9 +51,40 @@ interface RepricedTransaction extends BaseTransaction {
   newHash: string
 }
 
-export type Transaction = PendingTransaction | MinedTransaction | RepricedTransaction
+export interface EtherscanMinedData {
+  blockHash: string
+  blockNumber: string
+  confirmations: string
+  contractAddress: string
+  cumulativeGasUsed: string
+  from: string
+  functionName: string
+  gas: string
+  gasPrice: string
+  gasUsed: string
+  hash: string
+  input: string
+  isError: string
+  methodId: string
+  nonce: string
+  timeStamp: string
+  to: string
+  transactionIndex: number
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  txreceipt_status: string
+  value: string
+}
 
-export type NewTransaction = Omit<Transaction, 'status' | 'minedData'>
+export type Transaction =
+  | PendingTransaction
+  | MinedTransaction
+  | RepricedTransaction
+  | SearchingTransaction
+
+export type NewTransaction = Omit<Transaction, 'status' | 'minedData'> & {
+  input?: PopulatedTransaction['data']
+  timestamp?: number
+}
 
 type Data = Record<string, Record<number, Transaction[] | undefined>>
 
@@ -59,6 +103,23 @@ function loadData(): Data {
   )
 }
 
+export function etherscanDataToMinedData(etherscanMinedData: EtherscanMinedData): MinedData {
+  return {
+    ...etherscanMinedData,
+    effectiveGasPrice: BigNumber.from(etherscanMinedData.gasPrice),
+    cumulativeGasUsed: BigNumber.from(etherscanMinedData.cumulativeGasUsed),
+    gasUsed: BigNumber.from(etherscanMinedData.gasUsed),
+    timestamp: parseInt(etherscanMinedData.timeStamp, 10),
+    blockNumber: parseInt(etherscanMinedData.blockNumber, 10),
+    confirmations: parseInt(etherscanMinedData.confirmations, 10),
+    logsBloom: '',
+    transactionHash: '',
+    logs: [],
+    byzantium: true,
+    type: 0,
+  }
+}
+
 const transactionHashRegex = /^0x([A-Fa-f0-9]{64})$/
 
 function validateTransaction(transaction: NewTransaction): string[] {
@@ -74,6 +135,140 @@ function validateTransaction(transaction: NewTransaction): string[] {
 
   return errors
 }
+
+export const foundTransaction =
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
+  (account: string, chainId: number, hash: string, nonce: number): void => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
+      return transactions.map((transaction) =>
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              nonce,
+              searchStatus: 'found',
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
+
+export const setReplacedTransaction =
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
+  (account: string, chainId: number, input: string, minedData: EtherscanMinedData) => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
+      return transactions.map((transaction) => {
+        return transaction.input === input
+          ? ({
+              ...transaction,
+              minedData: etherscanDataToMinedData(minedData),
+              status: 'confirmed',
+              searchStatus: 'found',
+            } as Transaction)
+          : transaction
+      })
+    })
+  }
+
+export const setReplacedTransactionByNonce =
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
+  (account: string, chainId: number, input: string, minedData: EtherscanMinedData) => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
+      return transactions.map((transaction) =>
+        transaction.input === input && transaction.nonce === parseInt(minedData.nonce, 10)
+          ? ({
+              ...transaction,
+              minedData: etherscanDataToMinedData(minedData),
+              status: 'confirmed',
+              searchStatus: 'found',
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
+
+export const foundMinedTransaction =
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
+  (account: string, chainId: number, hash: string, minedData: EtherscanMinedData) => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
+      return transactions.map((transaction) =>
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              minedData: etherscanDataToMinedData(minedData),
+              searchStatus: 'found',
+              status: 'confirmed',
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
+
+export const updateRetries =
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
+  (account: string, chainId: number, hash: string) => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
+      return transactions.map((transaction) =>
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              searchRetries: transaction.searchRetries + 1,
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
+
+export const setFailedTransaction =
+  (
+    updateTransactions: (
+      account: string,
+      chainId: number,
+      updateFn: (transactions: Transaction[]) => Transaction[],
+    ) => void,
+  ) =>
+  (account: string, chainId: number, hash: string) => {
+    updateTransactions(account, chainId, (transactions: Transaction[]) => {
+      return transactions.map((transaction) =>
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              status: 'failed',
+              searchStatus: 'found',
+            } as Transaction)
+          : transaction,
+      )
+    })
+  }
 
 export function createTransactionStore({ provider: initialProvider }: { provider: BaseProvider }) {
   let data: Data = loadData()
@@ -108,7 +303,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
 
     updateTransactions(account, chainId, (transactions) => {
       return [
-        { ...transaction, status: 'pending' },
+        { ...transaction, searchRetries: 0, searchStatus: 'searching', status: 'pending' },
         ...transactions.filter(({ hash }) => {
           // Omit any duplicate transactions
           return hash !== transaction.hash
@@ -246,7 +441,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     data[account] = data[account] ?? {}
 
     let completedTransactionCount = 0
-    const MAX_COMPLETED_TRANSACTIONS = 10
+    const MAX_COMPLETED_TRANSACTIONS = 8
     const transactions = updateFn(data[account][chainId] ?? [])
       // Keep the list of completed transactions from growing indefinitely
       .filter(({ status }) => {
@@ -285,6 +480,13 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     onChange,
     setProvider,
     waitForPendingTransactions,
+    setTransactionStatus,
+    foundTransaction: foundTransaction(updateTransactions),
+    foundMinedTransaction: foundMinedTransaction(updateTransactions),
+    updateRetries: updateRetries(updateTransactions),
+    setReplacedTransaction: setReplacedTransaction(updateTransactions),
+    setFailedTransaction: setFailedTransaction(updateTransactions),
+    setReplacedTransactionByNonce: setReplacedTransactionByNonce(updateTransactions),
   }
 }
 

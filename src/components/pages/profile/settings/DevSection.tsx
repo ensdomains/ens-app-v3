@@ -67,6 +67,7 @@ export const DevSection = () => {
     addTransaction({
       hash: transaction.hash,
       action: 'test',
+      searchRetries: 0,
     })
   }
 
@@ -81,6 +82,7 @@ export const DevSection = () => {
     addTransaction({
       hash: transaction.hash,
       action: 'test',
+      searchRetries: 0,
     })
   }
 
