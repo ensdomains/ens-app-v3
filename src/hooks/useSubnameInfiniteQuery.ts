@@ -29,33 +29,32 @@ export const useSubnameInfiniteQuery = (
     func: getSubnames,
     ms: 15000,
   })
-  const { data, isLoading, isFetching, fetchNextPage, hasNextPage, refetch, isRefetching } =
-    useInfiniteQuery(
-      queryKey,
-      async ({ pageParam }) => {
-        const result = await watchedGetSubnames({
-          name: name === '[root]' ? '' : name,
-          lastSubnames: pageParam,
-          orderBy: orderBy === 'creationDate' ? 'createdAt' : 'labelName',
-          orderDirection: orderDirection === 'asc' ? 'asc' : 'desc',
-          pageSize: PAGE_SIZE,
-          search,
-        }).then((res) => res || { subnames: [], subnameCount: 0 })
-        const ownedSubnames = result.subnames.filter((subname) => subname.owner !== emptyAddress)
-        const isPageSize = (result.subnames.length || 0) >= PAGE_SIZE
-        const lastSubname = isPageSize ? result.subnames[result.subnames.length - 1] : undefined
-        return {
-          subnames: ownedSubnames,
-          lastSubname,
-          subnameCount: result.subnameCount,
-        }
-      },
-      {
-        getNextPageParam: (last) => (last.lastSubname ? [last.lastSubname] : undefined),
-        refetchOnMount: 'always',
-        enabled: !!name,
-      },
-    )
+  const { data, isLoading, isFetching, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery(
+    queryKey,
+    async ({ pageParam }) => {
+      const result = await watchedGetSubnames({
+        name: name === '[root]' ? '' : name,
+        lastSubnames: pageParam,
+        orderBy: orderBy === 'creationDate' ? 'createdAt' : 'labelName',
+        orderDirection: orderDirection === 'asc' ? 'asc' : 'desc',
+        pageSize: PAGE_SIZE,
+        search,
+      }).then((res) => res || { subnames: [], subnameCount: 0 })
+      const ownedSubnames = result.subnames.filter((subname) => subname.owner !== emptyAddress)
+      const isPageSize = (result.subnames.length || 0) >= PAGE_SIZE
+      const lastSubname = isPageSize ? result.subnames[result.subnames.length - 1] : undefined
+      return {
+        subnames: ownedSubnames,
+        lastSubname,
+        subnameCount: result.subnameCount,
+      }
+    },
+    {
+      getNextPageParam: (last) => (last.lastSubname ? [last.lastSubname] : undefined),
+      refetchOnMount: 'always',
+      enabled: !!name,
+    },
+  )
 
   const subnames: Subname[] = useMemo(() => {
     return (
