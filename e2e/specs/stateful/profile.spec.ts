@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
-
-import { test } from '..'
+import { test } from '@root/playwright'
 
 const profiles = [
   {

@@ -2,7 +2,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
-  testDir: './playwright/tests',
+  testDir: './e2e/specs',
   testMatch: '*.spec.ts',
   retries: process.env.CI ? 2 : 0,
   timeout: 60000, // add extra time for loading
@@ -12,12 +12,12 @@ export default defineConfig({
   projects: [
     {
       name: 'stateless',
-      testDir: './playwright/tests',
+      testDir: './e2e/specs/stateless',
       use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'stateful',
-      testDir: './playwright/stateful',
+      testDir: './e2e/specs/stateful',
       use: {
         ...devices['Desktop Chrome'],
       },

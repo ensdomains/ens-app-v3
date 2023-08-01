@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test'
-
-import { test } from '..'
+import { test } from '@root/playwright'
 
 test.describe('Transactions', () => {
   test('should show the correct transaction details for a transaction modal', async ({

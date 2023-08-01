@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test'
-
-import { test } from '..'
+import { test } from '@root/playwright'
 
 const newResolver = '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF'
 const oldResolver = '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB'

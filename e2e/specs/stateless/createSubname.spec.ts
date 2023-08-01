@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test'
-
-import { test } from '..'
+import { test } from '@root/playwright'
 
 test('should not show add subname button when the connected wallet is the registrant but not the controller', async ({
   page,

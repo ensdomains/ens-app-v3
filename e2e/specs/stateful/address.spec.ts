@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test'
-
-import { test } from '..'
+import { test } from '@root/playwright'
 
 test('should allow user to connect', async ({ page, login }) => {
   test.slow()

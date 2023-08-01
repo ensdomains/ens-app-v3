@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test'
-
-import { test } from '..'
+import { test } from '@root/playwright'
 
 test.describe('unwrapped', () => {
   test('allows deletion when parent owner but NOT child owner', async ({

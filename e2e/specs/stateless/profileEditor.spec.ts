@@ -1,9 +1,8 @@
 import { expect } from '@playwright/test'
+import { test } from '@root/playwright'
 import { generateRecords } from 'playwright/fixtures/makeName/generators/generateRecords'
 
 import { emptyAddress } from '@app/utils/constants'
-
-import { test } from '..'
 
 const oldResolver = '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB'
 const newResolver = '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF'

@@ -1,10 +1,9 @@
 import { expect } from '@playwright/test'
+import { test } from '@root/playwright'
 
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
-
-import { test } from '..'
 
 const UNAUTHORISED_RESOLVER = RESOLVER_ADDRESSES['1337'][1] as `0x${string}`
 

@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test'
-
-import { test } from '..'
+import { test } from '@root/playwright'
 
 test.describe('Happy', () => {
   test('Should allow owner to change manager', async ({

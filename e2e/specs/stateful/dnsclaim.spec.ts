@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test'
-
-import { test } from '..'
+import { test } from '@root/playwright'
 
 test.describe('Import DNSSEC name', () => {
   test('should not proceed if DNSSEC is not enabled on that domain', async ({ page, login }) => {
@@ -92,7 +91,8 @@ test.describe('Import DNSSEC name', () => {
     await transactionModal.complete()
     await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 25000 })
 
-    // Currently not able
+    // Currently not able to test this because the SyncDroppedTransaction is blocked by CSP and triggers an error
+    // modal blocking the button.
     // await page.getByRole('button', { name: 'View Name' }).click()
   })
 
