@@ -61,7 +61,7 @@ test.describe('Import DNSSEC name', () => {
     await expect(
       page.getByText('You are importing a DNS name that you appear to not own.'),
     ).toBeVisible({ timeout: 25000 })
-    await page.getByText('Claim').click()
+    await page.getByRole('button', { name: 'Claim' }).click()
     await transactionModal.confirm()
     await transactionModal.complete()
     await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 25000 })
@@ -86,7 +86,7 @@ test.describe('Import DNSSEC name', () => {
     await expect(
       page.getByText('You have verified your ownership and can claim this domain.'),
     ).toBeVisible({ timeout: 25000 })
-    await page.getByText('Claim').click()
+    await page.getByRole('button', { name: 'Claim' }).click()
     await transactionModal.confirm()
     await transactionModal.complete()
     await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 25000 })
