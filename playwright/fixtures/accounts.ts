@@ -19,6 +19,7 @@ export const createAccounts = () => {
   const hdNode = ethers.utils.HDNode.fromMnemonic(mnemonic)
   const accounts = [0, 1, 2].map((index: number) => {
     const { address, privateKey } = hdNode.derivePath(`m/44'/60'/0'/0/${index}`)
+    console.log('accounts', accounts)
     return {
       user: `user${index ? index + 1 : ''}` as User,
       address: address as `0x${string}`,
