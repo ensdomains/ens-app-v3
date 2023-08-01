@@ -1,18 +1,20 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Accounts, User } from './accounts'
-import { getContract } from './makeName/utils/getContract'
-import { Provider } from './provider'
+import { Accounts, User } from '../accounts'
+import { Provider } from '../provider'
+import { getContract } from './utils/getContract'
 
 type Dependencies = {
   provider: Provider
   accounts: Accounts
 }
 
-type Contract = Parameters<typeof getContract>[0]
+export type Contracts = ReturnType<typeof createContracts>
+
+type ContractName = Parameters<typeof getContract>[0]
 
 export const createContracts = ({ accounts, provider }: Dependencies) => ({
-  get: async (
-    contract: Contract,
+  get: (
+    contract: ContractName,
     { signer, address }: { signer?: User; address?: `0x${string}` } = {},
   ) => {
     const options = {

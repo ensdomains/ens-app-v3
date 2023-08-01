@@ -33,6 +33,9 @@ class ExtendedProvider extends ethers.providers.JsonRpcProvider {
   }
 }
 
-export const createProvider = () => {
-  return new ExtendedProvider('http://localhost:8545')
+export const createProvider = (stateful = true) => {
+  const apiKey = process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
+  const rpcUrl = stateful ? `https://goerli.infura.io/v3/${apiKey}` : 'http://localhost:8545'
+  const chainId = stateful ? 5 : 1337
+  return new ExtendedProvider(rpcUrl, chainId)
 }

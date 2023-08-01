@@ -2,6 +2,7 @@
 
 /* eslint-disable no-await-in-loop */
 import { Accounts, User } from 'playwright/fixtures/accounts'
+import { Contracts } from 'playwright/fixtures/contracts'
 import { Provider } from 'playwright/fixtures/provider'
 
 import { PublicResolver } from '@ensdomains/ensjs/generated/PublicResolver'
@@ -12,7 +13,6 @@ import { makeCommitment, makeRegistrationData } from '@ensdomains/ensjs/utils/re
 
 import { NAMEWRAPPER_AWARE_RESOLVERS } from '@app/utils/constants'
 
-import { getContract } from '../utils/getContract'
 import { generateRecords } from './generateRecords'
 import { WrappedSubname, generateWrappedSubname } from './generateWrappedSubname'
 
@@ -37,10 +37,12 @@ export type Name = {
 type Dependencies = {
   accounts: Accounts
   provider: Provider
+  contracts: Contracts
 }
 
-export const generateWrappedName = async (
-  {
+export const generateWrappedName =
+  ({ accounts, provider, contracts }: Dependencies) =>
+  async ({
     label,
     owner = 'user',
     duration = 31536000,
@@ -50,98 +52,89 @@ export const generateWrappedName = async (
     fuses,
     records,
     subnames,
-  }: Name,
-  { accounts, provider }: Dependencies,
-) => {
-  const _owner = accounts.getAddress(owner)
-  const name = `${label}.eth`
-  const signer = provider.getSigner(accounts.getIndex(owner))
-  const controller = getContract('ETHRegistrarController', { signer })
+  }: Name) => {
+    const name = `${label}.eth`
+    console.log('generating wrapped name:', name)
 
-  // Check if resolver is valid
-  const hasValidResolver = resolver && NAMEWRAPPER_AWARE_RESOLVERS['1337'].includes(resolver)
-  const resovlerAddress = hasValidResolver ? resolver : DEFAULT_RESOLVER
-  const _resolver = getContract('PublicResolver', {
-    address: resovlerAddress,
-    signer,
-  }) as PublicResolver
+    const _owner = accounts.getAddress(owner)
+    const controller = contracts.get('ETHRegistrarController', { signer: owner })
 
-  const _fuses = fuses
-    ? ({
-        named: fuses,
-      } as CombinedFuseInput['child'])
-    : undefined
+    // Check if resolver is valid
+    const hasValidResolver = resolver && NAMEWRAPPER_AWARE_RESOLVERS['1337'].includes(resolver)
+    const resovlerAddress = hasValidResolver ? resolver : DEFAULT_RESOLVER
+    const _resolver = contracts.get('PublicResolver', {
+      address: resovlerAddress,
+      signer: owner,
+    }) as PublicResolver
 
-  await provider.getTransactionCount(_owner)
-  // Commit
-  console.log('making commitment')
-  const { commitment } = makeCommitment({
-    name,
-    owner: _owner,
-    duration,
-    secret,
-    records,
-    reverseRecord,
-    fuses: _fuses,
-    resolver: _resolver,
-  })
-  const tx1 = await controller.commit(commitment)
-  await tx1.wait()
+    const _fuses = fuses
+      ? ({
+          named: fuses,
+        } as CombinedFuseInput['child'])
+      : undefined
 
-  await provider.increaseTime(120)
-  await provider.mine()
-
-  // Register
-  await provider.getTransactionCount(_owner)
-  const price = await controller.rentPrice(label, duration)
-  console.log('registering name', price)
-  const tx = await controller.register(
-    ...makeRegistrationData({
+    console.log('making commitment:', name)
+    const { commitment } = makeCommitment({
       name,
       owner: _owner,
       duration,
       secret,
       records,
       reverseRecord,
-      resolver: _resolver,
       fuses: _fuses,
-    }),
-    {
-      value: price[0],
-    },
-  )
-  await tx.wait()
+      resolver: _resolver,
+    })
+    const commitTx = await controller.commit(commitment)
+    await commitTx.wait()
 
-  // Create subnames
-  console.log('creating subnames')
-  const _subnames = (subnames || []).map((subname) => ({
-    ...subname,
-    name: `${label}.eth`,
-    nameOwner: owner,
-    resolver: subname.resolver ?? resovlerAddress,
-  }))
-  for (const subname of _subnames) {
-    await generateWrappedSubname({ ...subname }, { accounts, provider })
-  }
+    await provider.increaseTime(120)
+    await provider.mine()
 
-  if (records) {
-    await generateRecords(
+    console.log('registering name:', name)
+    const price = await controller.rentPrice(label, duration)
+    const registrationTx = await controller.register(
+      ...makeRegistrationData({
+        name,
+        owner: _owner,
+        duration,
+        secret,
+        records,
+        reverseRecord,
+        resolver: _resolver,
+        fuses: _fuses,
+      }),
       {
+        value: price[0],
+      },
+    )
+    await registrationTx.wait()
+
+    const _subnames = (subnames || []).map((subname) => ({
+      ...subname,
+      name: `${label}.eth`,
+      nameOwner: owner,
+      resolver: subname.resolver ?? resovlerAddress,
+    }))
+    for (const subname of _subnames) {
+      await generateWrappedSubname({ accounts, provider, contracts })({ ...subname })
+    }
+
+    if (records) {
+      await generateRecords({ contracts })({
         name: `${label}.eth`,
         owner,
-        resolver: _resolver.address,
+        resolver: _resolver.address as `0x${string}`,
         records,
-      },
-      { accounts, provider },
-    )
-  }
+      })
+    }
 
-  // Force set an invalid resolver
-  if (!hasValidResolver && resolver) {
-    const nameWrapper = await getContract('NameWrapper', { signer })
-    const node = namehash(`${label}.eth`)
-    await nameWrapper.setResolver(node, resolver)
-  }
+    if (!hasValidResolver && resolver) {
+      console.log('setting resolver: ', name, resolver)
+      const nameWrapper = contracts.get('NameWrapper', { signer: owner })
+      const node = namehash(`${label}.eth`)
+      const nameWrapperTx = await nameWrapper.setResolver(node, resolver)
+      await nameWrapperTx.wait()
+    }
 
-  await provider.mine()
-}
+    await provider.mine()
+  }

@@ -6,6 +6,8 @@
 import { GraphQLClient, gql } from 'graphql-request'
 import { Provider } from 'playwright/fixtures/provider'
 
+export type Subgraph = ReturnType<typeof createSubgraph>
+
 const query = gql`
   query getMeta {
     _meta {
@@ -25,11 +27,9 @@ export const waitForSubgraph = (provider: Provider) => async () => {
     await new Promise((resolve) => setTimeout(resolve, 500))
     const client = new GraphQLClient('http://localhost:8000/subgraphs/name/graphprotocol/ens')
     const res = await client.request(query)
-    process.stdout.write(`subgraph: ${res._meta.block.number} -> ${blockNumber}\r`)
     wait = blockNumber > res._meta.block.number
     count += 1
-    if (!wait)
-      process.stdout.write(`subgraph: ${res._meta.block.number} -> ${blockNumber} IN SYNC\n`)
+    console.log(`subgraph: ${res._meta.block.number} -> ${blockNumber} ${!wait ? '[IN SYNC]' : ''}`)
   } while (wait && count < 10)
 }
 

@@ -6,13 +6,20 @@ export default defineConfig({
   testMatch: '*.spec.ts',
   retries: process.env.CI ? 2 : 0,
   fullyParallel: true, // required to evenly shard
-  workers: 1,
+  workers: 1, // keep tests serial for now
   reporter: 'list',
-  globalTeardown: './playwright/teardown/test.ts',
   projects: [
     {
-      name: 'chromium',
+      name: 'stateless',
+      testDir: './playwright/tests',
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'stateful',
+      testDir: './playwright/stateful',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
     },
   ],
   use: {

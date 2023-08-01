@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Accounts, User } from 'playwright/fixtures/accounts'
-import { Provider } from 'playwright/fixtures/provider'
+import { Contracts } from 'playwright/fixtures/contracts'
 
 import { hexEncodeName } from '@ensdomains/ensjs/utils/hexEncodedName'
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
@@ -9,7 +9,6 @@ import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
 import { emptyAddress } from '@app/utils/constants'
 
-import { getContract } from '../utils/getContract'
 import { generateRecords } from './generateRecords'
 
 export type LegacySubname = {
@@ -24,62 +23,58 @@ export type LegacySubname = {
 }
 
 type Dependencies = {
-  provider: Provider
   accounts: Accounts
+  contracts: Contracts
 }
 
-export const generateLegacySubname = async (
-  { name, nameOwner, label, owner = nameOwner, resolver, records, type }: LegacySubname,
-  { provider, accounts }: Dependencies,
-) => {
-  const _owner = accounts.getAddress(owner)
+export const generateLegacySubname =
+  ({ accounts, contracts }: Dependencies) =>
+  async ({ name, nameOwner, label, owner = nameOwner, resolver, records, type }: LegacySubname) => {
+    const subname = `${label}.${name}`
+    console.log('generating legacy subname:', subname)
 
-  // Connect contract
-  const signer = provider.getSigner(accounts.getIndex(nameOwner))
-  const registry = await getContract('ENSRegistry', { signer })
+    const _owner = accounts.getAddress(owner)
+    const registry = contracts.get('ENSRegistry', { signer: nameOwner })
+    const node = namehash(name)
+    const _labelhash = labelhash(label)
 
-  // Make subname
-  const node = namehash(name)
-  const _labelhash = labelhash(label)
+    // Make subname without resolver
+    if (!resolver) {
+      await registry.setSubnodeOwner(node, _labelhash, _owner)
+    } else {
+      await registry.setSubnodeRecord(node, _labelhash, _owner, resolver, 0)
+    }
 
-  // Make subname without resolver
-  if (!resolver) {
-    await registry.setSubnodeOwner(node, _labelhash, _owner)
-  } else {
-    await registry.setSubnodeRecord(node, _labelhash, _owner, resolver, 0)
-  }
-
-  // Make records
-  if (records && resolver) {
-    await generateRecords(
-      {
-        name: `${label}.${name}`,
+    // Make records
+    if (records && resolver) {
+      await generateRecords({ contracts })({
+        name: subname,
         owner,
         resolver,
         records,
-      },
-      {
-        accounts,
-        provider,
-      },
-    )
-  }
-
-  if (type === 'wrapped') {
-    const signer2 = provider.getSigner(accounts.getIndex(owner))
-    const nameWrapper = await getContract('NameWrapper', { signer: signer2 })
-    const registry2 = await getContract('ENSRegistry', { signer: signer2 })
-
-    const isApproved = await registry.isApprovedForAll(
-      accounts.getAddress(owner),
-      nameWrapper.address,
-    )
-
-    if (!isApproved) {
-      await registry2.setApprovalForAll(nameWrapper.address, true)
+      })
     }
 
-    const _resolver = resolver || emptyAddress
-    await nameWrapper.wrap(hexEncodeName(`${label}.${name}`), accounts.getAddress(owner), _resolver)
+    if (type === 'wrapped') {
+      const nameWrapper = contracts.get('NameWrapper', { signer: owner })
+      const registry2 = contracts.get('ENSRegistry', { signer: owner })
+
+      const isApproved = await registry.isApprovedForAll(
+        accounts.getAddress(owner),
+        nameWrapper.address,
+      )
+
+      if (!isApproved) {
+        console.log(`approving nameWrapper for user`, owner)
+        await registry2.setApprovalForAll(nameWrapper.address, true)
+      }
+
+      console.log(`wrapping legacy subname:`, subname)
+      const _resolver = resolver || emptyAddress
+      await nameWrapper.wrap(
+        hexEncodeName(`${label}.${name}`),
+        accounts.getAddress(owner),
+        _resolver,
+      )
+    }
   }
-}

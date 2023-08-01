@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Accounts, User } from 'playwright/fixtures/accounts'
+import { Contracts } from 'playwright/fixtures/contracts'
 import { Provider } from 'playwright/fixtures/provider'
 
 import {
@@ -13,7 +14,6 @@ import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
-import { getContract } from '../utils/getContract'
 import { generateRecords } from './generateRecords'
 
 type Fuse = ParentFuses['fuse'] | ChildFuses['fuse']
@@ -32,6 +32,7 @@ export type WrappedSubname = {
 type Dependencies = {
   provider: Provider
   accounts: Accounts
+  contracts: Contracts
 }
 
 const makeFuseInput = (fuses?: Fuse[]): CombinedFuseInput | undefined => {
@@ -52,8 +53,9 @@ const makeFuseInput = (fuses?: Fuse[]): CombinedFuseInput | undefined => {
   }
 }
 
-export const generateWrappedSubname = async (
-  {
+export const generateWrappedSubname =
+  ({ provider, accounts, contracts }: Dependencies) =>
+  async ({
     name,
     nameOwner,
     label,
@@ -62,39 +64,28 @@ export const generateWrappedSubname = async (
     records,
     fuses,
     duration = 31536000,
-  }: WrappedSubname,
-  { provider, accounts }: Dependencies,
-) => {
-  const _owner = accounts.getAddress(owner)
-  const _fuses = makeFuseInput(fuses)
+  }: WrappedSubname) => {
+    const subname = `${label}.${name}`
+    console.log('generating wrapped subname:', subname)
 
-  // Connect contract
-  const signer = provider.getSigner(accounts.getIndex(nameOwner))
-  const nameWrapper = getContract('NameWrapper', { signer })
+    const _owner = accounts.getAddress(owner)
+    const _fuses = makeFuseInput(fuses)
+    const nameWrapper = contracts.get('NameWrapper', { signer: nameOwner })
+    const node = namehash(name)
+    const encodedFuses = _fuses ? encodeFuses(_fuses) : 0
+    const blockTimestamp = await provider.getBlockTimestamp()
+    const expiry = duration + blockTimestamp
 
-  // Make subname
-  const node = namehash(name)
-  const encodedFuses = _fuses ? encodeFuses(_fuses) : 0
-  const blockTimestamp = await provider.getBlockTimestamp()
-  const expiry = duration + blockTimestamp
+    // Make subname with resolver
+    await nameWrapper.setSubnodeRecord(node, label, _owner, resolver, 0, encodedFuses, expiry)
 
-  console.log('resovler', resolver)
-  // Make subname with resolver
-  await nameWrapper.setSubnodeRecord(node, label, _owner, resolver, 0, encodedFuses, expiry)
-
-  // Make records
-  if (records) {
-    await generateRecords(
-      {
+    // Make records
+    if (records) {
+      await generateRecords({ contracts })({
         name: `${label}.${name}`,
         owner,
         resolver,
         records,
-      },
-      {
-        accounts,
-        provider,
-      },
-    )
+      })
+    }
   }
-}

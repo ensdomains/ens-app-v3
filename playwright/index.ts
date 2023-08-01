@@ -30,27 +30,25 @@ export const test = base.extend<Fixtures>({
   contracts: async ({ accounts, provider }, use) => {
     await use(createContracts({ accounts, provider }))
   },
-  wallet: async ({ page, accounts }, use) => {
+  wallet: async ({ page, accounts, provider }, use) => {
+    const chainId = provider.network?.chainId || 1337
+    const chainRpcUrl = provider.connection?.url || 'http://localhost:8545'
     const privateKeys = accounts.getAllPrivateKeys()
-    const wallet = await injectHeadlessWeb3Provider(
-      page,
-      privateKeys,
-      1337,
-      'http://localhost:8545',
-    )
+    const wallet = await injectHeadlessWeb3Provider(page, privateKeys, chainId, chainRpcUrl)
     await use(wallet)
   },
   // eslint-disable-next-line no-empty-pattern
-  provider: async ({}, use) => {
-    const provider = createProvider()
+  provider: async ({}, use, testInfo) => {
+    const stateful = testInfo.project?.name === 'stateful'
+    const provider = createProvider(stateful)
     await use(provider)
   },
   login: async ({ page, wallet, accounts }, use) => {
     const login = new Login(page, wallet, accounts)
     await use(login)
   },
-  makeName: async ({ accounts, provider, time }, use) => {
-    const makeNames = createMakeNames({ accounts, provider, time })
+  makeName: async ({ accounts, provider, time, contracts, subgraph }, use) => {
+    const makeNames = createMakeNames({ accounts, provider, time, contracts, subgraph })
     await use(makeNames)
   },
   makePageObject: async ({ page, wallet }, use) => {

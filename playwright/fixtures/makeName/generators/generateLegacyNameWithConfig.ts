@@ -2,6 +2,7 @@
 
 /* eslint-disable no-await-in-loop */
 import { Accounts, User } from 'playwright/fixtures/accounts'
+import { Contracts } from 'playwright/fixtures/contracts'
 
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
@@ -9,7 +10,6 @@ import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 import { Provider } from '../../provider'
-import { getContract } from '../utils/getContract'
 import { LegacySubname, generateLegacySubname } from './generateLegacySubname'
 import { generateRecords } from './generateRecords'
 
@@ -34,10 +34,12 @@ export type Name = {
 type Dependencies = {
   provider: Provider
   accounts: Accounts
+  contracts: Contracts
 }
 
-export const generateLegacyNameWithConfig = async (
-  {
+export const generateLegacyNameWithConfig =
+  ({ provider, accounts, contracts }: Dependencies) =>
+  async ({
     label,
     owner = 'user',
     manager,
@@ -47,77 +49,76 @@ export const generateLegacyNameWithConfig = async (
     addr = owner,
     records,
     subnames,
-  }: Name,
-  { provider, accounts }: Dependencies,
-) => {
-  const _owner = accounts.getAddress(owner)
-  const _addr = accounts.getAddress(addr)
+  }: Name) => {
+    const name = `${label}.eth`
+    console.log('generating legacy name:', name)
 
-  // Registration will fail if resoler is not valid. If an invalid resolver is entered
-  // we will set the resolver after the name has been registered.
-  const hasValidResolver = resolver && VALID_RESOLVERS.includes(resolver)
-  const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
+    const _owner = accounts.getAddress(owner)
+    const _addr = accounts.getAddress(addr)
 
-  // Connect contract
-  const signer = provider.getSigner(accounts.getIndex(owner))
-  const controller = await getContract('LegacyETHRegistrarController', { signer })
+    // Registration will fail if resoler is not valid. If an invalid resolver is entered
+    // we will set the resolver after the name has been registered.
+    const hasValidResolver = resolver && VALID_RESOLVERS.includes(resolver)
+    const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 
-  // Commit
-  const commitment = await controller.makeCommitmentWithConfig(
-    label,
-    _owner,
-    secret,
-    _resolver,
-    _addr,
-  )
-  const tx = await controller.commit(commitment)
-  await tx.wait()
+    console.log('making commitment:', name)
+    const controller = contracts.get('LegacyETHRegistrarController', { signer: owner })
+    const commitment = await controller.makeCommitmentWithConfig(
+      label,
+      _owner,
+      secret,
+      _resolver,
+      _addr,
+    )
+    const commitTx = await controller.commit(commitment)
+    await commitTx.wait()
 
-  await provider.increaseTime(120)
-  await provider.mine()
+    await provider.increaseTime(120)
+    await provider.mine()
 
-  // Register
-  const _duration = duration
-  const price = await controller.rentPrice(label, _duration)
-  const tx2 = await controller.registerWithConfig(
-    label,
-    _owner,
-    _duration,
-    secret,
-    _resolver,
-    _addr,
-    {
-      value: price,
-    },
-  )
-  await tx2.wait()
+    console.log('registering name:', name)
+    const price = await controller.rentPrice(label, duration)
+    const registrationTx = await controller.registerWithConfig(
+      label,
+      _owner,
+      duration,
+      secret,
+      _resolver,
+      _addr,
+      {
+        value: price,
+      },
+    )
+    await registrationTx.wait()
 
-  // Create records
-  await generateRecords({ name: `${label}.eth`, owner, resolver, records }, { provider, accounts })
+    // Create records
+    await generateRecords({ contracts })({ name: `${label}.eth`, owner, resolver, records })
 
-  // Create subnames
-  const _subnames = (subnames || []).map((subname) => ({
-    ...subname,
-    name: `${label}.eth`,
-    nameOwner: owner,
-    resolver: subname.resolver ?? _resolver,
-  }))
-  for (const subname of _subnames) {
-    await generateLegacySubname(subname, { provider, accounts })
+    // Create subnames
+    const _subnames = (subnames || []).map((subname) => ({
+      ...subname,
+      name: `${label}.eth`,
+      nameOwner: owner,
+      resolver: subname.resolver ?? _resolver,
+    }))
+    for (const subname of _subnames) {
+      await generateLegacySubname({ accounts, contracts })(subname)
+    }
+
+    if (!hasValidResolver && resolver) {
+      console.log('setting resolver:', name, resolver)
+      const registry = contracts.get('ENSRegistry', { signer: owner })
+      const node = namehash(`${label}.eth`)
+      await registry.setResolver(node, resolver)
+    }
+
+    if (!!manager && manager !== owner) {
+      console.log('setting manager:', name, manager)
+      const registry = contracts.get('ENSRegistry', { signer: owner })
+      const node = namehash(`${label}.eth`)
+      const _manager = accounts.getAddress(manager)
+      await registry.setOwner(node, _manager)
+    }
+
+    await provider.mine()
   }
-
-  if (!hasValidResolver && resolver) {
-    const registry = await getContract('ENSRegistry', { signer })
-    const node = namehash(`${label}.eth`)
-    await registry.setResolver(node, resolver)
-  }
-
-  if (!!manager && manager !== owner) {
-    const registry = await getContract('ENSRegistry', { signer })
-    const node = namehash(`${label}.eth`)
-    const _manager = accounts.getAddress(manager)
-    await registry.setOwner(node, _manager)
-  }
-
-  await provider.mine()
-}

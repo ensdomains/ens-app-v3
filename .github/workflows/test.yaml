@@ -130,7 +130,7 @@ jobs:
           Xvfb :20 -screen 0 800x600x16 &
           sleep 1 &&
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
-          DISPLAY=:20 PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=10 pnpm e2e:ci -nb 
+          DISPLAY=:20 PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci -nb 
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
@@ -155,7 +155,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [101, 102, 103, 104]
+        node-version: [1, 2]
 
     steps:
       - uses: actions/checkout@v3
@@ -187,6 +187,9 @@ jobs:
       - name: Install window server
         run: sudo apt-get install -y fluxbox
 
+      - name: Install playwright
+        run: npx playwright install chromium
+
       - name: Check chrome version
         run: google-chrome --product-version
 
@@ -197,7 +200,7 @@ jobs:
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm wrangle" \
-          "pnpm wait-on http://localhost:8788 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }} --group stateful"
+          "pnpm wait-on http://localhost:8788 && DISPLAY=:20 npx playwright --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount

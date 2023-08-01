@@ -17,7 +17,6 @@ const getAllDurations = (names: Name[]): number[] => {
 export const getTimeOffset = ({ names }: { names: Name[] }) => {
   const allDurations = getAllDurations(names)
   const minDuration = allDurations.length ? Math.min(...allDurations) : Infinity
-  console.log('minDuration', minDuration)
   if (minDuration >= MIN_REGISTRATION_DURATION) return 0
   return MIN_REGISTRATION_DURATION - minDuration
 }

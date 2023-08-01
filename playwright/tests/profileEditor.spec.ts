@@ -99,9 +99,8 @@ test.describe('unwrapped', () => {
     })
 
     test('should check if a name has been migrated, but whose resolver has not been migrated', async ({
-      accounts,
-      provider,
       login,
+      contracts,
       makeName,
       makePageObject,
     }) => {
@@ -114,10 +113,12 @@ test.describe('unwrapped', () => {
       })
 
       // Add records to latest resolver
-      await generateRecords(
-        { name, owner: 'user', resolver: newResolver, records: DEFAULT_RECORDS },
-        { provider, accounts },
-      )
+      await generateRecords({ contracts })({
+        name,
+        owner: 'user',
+        resolver: newResolver,
+        records: DEFAULT_RECORDS,
+      })
 
       const morePage = makePageObject('MorePage')
       const profilePage = makePageObject('ProfilePage')
