@@ -14,7 +14,7 @@ test.describe('Import DNSSEC name', () => {
     })
   })
 
-  test('should not allow the use to proceed if they have not set the correct subdomain', async ({
+  test('should not allow the user to proceed if they have not set the correct subdomain', async ({
     page,
     login,
   }) => {

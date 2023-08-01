@@ -103,6 +103,8 @@ test.describe('Profile', () => {
 
   test('should allow searching for emoji domain', async ({ page, login }) => {
     await page.goto('/')
+    // Additional wait for wagmi to finish loading
+    await page.waitForTimeout(10000)
     await login.connect()
 
     await page.getByPlaceholder('Search for a name').fill('❤️❤️❤️.eth')

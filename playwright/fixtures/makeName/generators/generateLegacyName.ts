@@ -1,3 +1,8 @@
+/**
+ * NOTE: This function simulates the method used by ENSVision to generate names. It is not used in a test yet so it might 
+ * have some bugs that need to be fixed.
+ */
+
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
