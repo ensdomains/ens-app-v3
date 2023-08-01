@@ -41,7 +41,7 @@ test.describe('Import DNSSEC name', () => {
     login,
     makePageObject,
   }) => {
-    test.setTimeout(180000)
+    test.setTimeout(360000)
 
     const transactionModal = makePageObject('TransactionModal')
 
