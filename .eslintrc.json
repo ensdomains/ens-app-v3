@@ -54,7 +54,11 @@
       {
         "selector": "CallExpression[callee.object.name='console'][callee.property.name!=/^(log|warn|error|info|trace)$/]",
         "message": "Unexpected property on console object was called"
-      }
+      },
+      {
+        "selector": "*[value=/\\b(0x)?[a-f0-9]{64}\\b/i]",
+        "message": "No private keys allowed"
+      } 
     ],
     "prettier/prettier": "error",
     "import/prefer-default-export": "off",
