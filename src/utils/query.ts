@@ -1,6 +1,6 @@
 import '@rainbow-me/rainbowkit/styles.css'
 import { DefaultOptions, QueryClient } from '@tanstack/react-query'
-import { ChainProviderFn, configureChains, createClient } from 'wagmi'
+import { ChainProviderFn, configureChains, createClient, Address } from 'wagmi'
 import { goerli, localhost, mainnet } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
@@ -9,8 +9,36 @@ import { makePersistent } from '@app/utils/persist'
 
 import { WC_PROJECT_ID } from './constants'
 import { getDefaultWallets } from './getDefaultWallets'
+import { JsonRpcProvider } from '@ethersproject/providers'
 
 const providerArray: ChainProviderFn<typeof mainnet | typeof goerli | typeof localhost>[] = []
+
+const ensAddress : Address = '0x0A6d64413c07E10E890220BBE1c49170080C6Ca0'
+export const ewc = {
+  id: 246,
+  name: 'Energy Web Chain',
+  network: 'ewc',
+  nativeCurrency: { name: 'EWT', symbol: 'EWT', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.energyweb.org/'],
+    },
+    public: {
+      http: ['https://rpc.energyweb.org/'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Energy Web Chain Explorer',
+      url: 'https://explorer.energyweb.org',
+    },
+  },
+  contracts: {
+    ensRegistry: {
+      address: ensAddress,
+    },
+  },
+}
 
 if (process.env.NEXT_PUBLIC_PROVIDER) {
   // for local testing
@@ -39,7 +67,7 @@ if (process.env.NEXT_PUBLIC_PROVIDER) {
   )
 }
 
-const { provider, chains } = configureChains([mainnet, goerli, localhost], providerArray)
+const { provider, chains } = configureChains([ewc], new JsonRpcProvider('https://rpc.energyweb.org/'))
 
 const connectors = getDefaultWallets({
   appName: 'ENS',
