@@ -13,6 +13,7 @@ import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 import { usePccExpired } from './fuses/usePccExpired'
 import { useContractAddress } from './useContractAddress'
+import useCurrentBlockTimestamp from './useCurrentBlockTimestamp'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
@@ -21,6 +22,8 @@ type BaseBatchReturn = [ReturnedENS['getOwner']]
 type NormalBatchReturn = [...BaseBatchReturn, ReturnedENS['getWrapperData']]
 type ETH2LDBatchReturn = [...NormalBatchReturn, ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
 type BatchReturn = [] | BaseBatchReturn | NormalBatchReturn | ETH2LDBatchReturn | undefined
+
+const EXPIRY_LIVE_WATCH_TIME = 1_000 * 60 * 5 // 5 minutes
 
 const getBatchData = (
   name: string,
@@ -100,8 +103,30 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
     }
   }, [_wrapperData])
 
+  const expiryDate = expiryData?.expiry ? new Date(expiryData.expiry) : undefined
+
+  const gracePeriodEndDate =
+    expiryDate && expiryData?.gracePeriod
+      ? new Date(expiryDate.getTime() + expiryData.gracePeriod)
+      : undefined
+
+  const isTempPremiumDesynced = !!(
+    gracePeriodEndDate &&
+    Date.now() + EXPIRY_LIVE_WATCH_TIME > gracePeriodEndDate.getTime() &&
+    gracePeriodEndDate.getTime() > Date.now() - EXPIRY_LIVE_WATCH_TIME
+  )
+
+  const blockTimestamp = useCurrentBlockTimestamp({ enabled: isTempPremiumDesynced })
+
+  const registrationStatusTimestamp = useMemo(() => {
+    if (!isTempPremiumDesynced) return Date.now()
+    if (blockTimestamp) return blockTimestamp * 1000
+    return Date.now() - EXPIRY_LIVE_WATCH_TIME
+  }, [isTempPremiumDesynced, blockTimestamp])
+
   const registrationStatus = batchData
     ? getRegistrationStatus({
+        timestamp: registrationStatusTimestamp,
         validation,
         ownerData,
         wrapperData,
@@ -110,13 +135,6 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
         supportedTLD,
       })
     : undefined
-
-  const expiryDate = expiryData?.expiry ? new Date(expiryData.expiry) : undefined
-
-  const gracePeriodEndDate =
-    expiryDate && expiryData?.gracePeriod
-      ? new Date(expiryDate.getTime() + expiryData.gracePeriod)
-      : undefined
 
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
