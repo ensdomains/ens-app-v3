@@ -45,8 +45,8 @@ const profiles = [
       {
         type: 'address',
         key: 'eth',
-        value: '0x325...1be8f',
-        fullValue: '0x32518828A071a0e6E549F989D4aaB4Cd7401be8f',
+        value: '0xFc5...7acf0',
+        fullValue: '0xFc5958B4B6F9a06D21E06429c8833f865577acf0',
       },
       {
         type: 'other',

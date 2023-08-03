@@ -63,7 +63,6 @@ test.describe('Import DNSSEC name', () => {
       page.getByText('You are importing a DNS name that you appear to not own.'),
     ).toBeVisible({ timeout: 25000 })
     await page.getByRole('button', { name: 'Claim' }).click()
-    await page.pause()
     await transactionModal.confirm()
     await transactionModal.complete()
     await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 25000 })
