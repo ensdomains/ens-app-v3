@@ -21,13 +21,6 @@
       "rules": {
         "jest/expect-expect": "off"
       }
-    },
-    // Only uses Testing Library lint rules in test files
-    {
-      "files": ["**/cypress/**/*.[jt]s?(x)"],
-      "env": { "cypress/globals": true },
-      "plugins": ["cypress"],
-      "extends": ["plugin:cypress/recommended"]
     }
   ],
   "parserOptions": {
