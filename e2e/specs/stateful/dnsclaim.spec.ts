@@ -89,9 +89,8 @@ test.describe('Import DNSSEC name', () => {
     await transactionModal.complete()
     await expect(page.getByText('Congratulations!')).toBeVisible({ timeout: 25000 })
 
-    // Currently not able to test this because the SyncDroppedTransaction is blocked by CSP and triggers an error
-    // modal blocking the button.
     await page.getByRole('button', { name: 'View Name' }).click()
+    await expect(page.getByText('manager')).toBeVisible({ timeout: 25000 })
   })
 
   test('should not show the success message again once acknowledged', async ({ page, login }) => {
