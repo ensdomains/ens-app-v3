@@ -5,6 +5,8 @@ import { shortenAddress } from '@app/utils/utils'
 
 import { Provider } from './provider'
 
+const DEFAULT_MNEMONIC = 'test test test test test test test test test test test junk'
+
 export type Dependencies = {
   provider: Provider
 }
@@ -13,9 +15,8 @@ export type Accounts = ReturnType<typeof createAccounts>
 
 export type User = 'user' | 'user2' | 'user3'
 
-export const createAccounts = () => {
-  const mnemonic =
-    process.env.SECRET_WORDS || 'test test test test test test test test test test test junk'
+export const createAccounts = (stateful = false) => {
+  const mnemonic = stateful ? process.env.SECRET_WORDS || DEFAULT_MNEMONIC : DEFAULT_MNEMONIC
   const hdNode = ethers.utils.HDNode.fromMnemonic(mnemonic)
   const accounts = [0, 1, 2].map((index: number) => {
     const { address, privateKey } = hdNode.derivePath(`m/44'/60'/0'/0/${index}`)

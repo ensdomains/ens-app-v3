@@ -25,8 +25,11 @@ type Fixtures = {
 }
 
 export const test = base.extend<Fixtures>({
-  // signers - the private keys that are to be used in the tests
-  accounts: createAccounts(),
+  // eslint-disable-next-line no-empty-pattern
+  accounts: async ({}, use, testInfo) => {
+    const stateful = testInfo.project?.name === 'stateful'
+    use(createAccounts(stateful))
+  },
   contracts: async ({ accounts, provider }, use) => {
     await use(createContracts({ accounts, provider }))
   },

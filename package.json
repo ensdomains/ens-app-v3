@@ -173,7 +173,7 @@
     "hardhat": "^2.10.2",
     "hardhat-dependency-compiler": "^1.1.3",
     "hardhat-deploy": "^0.11.12",
-    "headless-web3-provider": "latest",
+    "headless-web3-provider": "0.1.14",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
     "jest-canvas-mock": "^2.4.0",

@@ -175,9 +175,6 @@ jobs:
       - name: Install playwright
         run: npx playwright install chromium
 
-      - name: Check chrome version
-        run: google-chrome --product-version
-
       - name: Run tests
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
