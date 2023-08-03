@@ -3,7 +3,6 @@ import { test } from '@root/playwright'
 
 test.describe('Import DNSSEC name', () => {
   test('should not proceed if DNSSEC is not enabled on that domain', async ({ page, login }) => {
-    test.slow()
     await page.goto('/notdnssec.com')
     await login.connect()
 
@@ -41,8 +40,6 @@ test.describe('Import DNSSEC name', () => {
     accounts,
     makePageObject,
   }) => {
-    test.slow()
-
     const transactionModal = makePageObject('TransactionModal')
 
     await page.goto('/leontalbert.xyz/import')
@@ -74,8 +71,6 @@ test.describe('Import DNSSEC name', () => {
     accounts,
     makePageObject,
   }) => {
-    test.slow()
-
     const transactionModal = makePageObject('TransactionModal')
 
     await page.goto('/leontalbert.com/import')
@@ -96,11 +91,10 @@ test.describe('Import DNSSEC name', () => {
 
     // Currently not able to test this because the SyncDroppedTransaction is blocked by CSP and triggers an error
     // modal blocking the button.
-    // await page.getByRole('button', { name: 'View Name' }).click()
+    await page.getByRole('button', { name: 'View Name' }).click()
   })
 
   test('should not show the success message again once acknowledged', async ({ page, login }) => {
-    test.slow()
     await page.goto('/leontalbert.com')
     await login.connect()
     await page.reload()

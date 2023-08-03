@@ -16,7 +16,7 @@ class ExtendedProvider extends ethers.providers.JsonRpcProvider {
   async setAutomine(active: boolean) {
     if (!active)
       console.warn(
-        'You are disabled automine in a test. Make sure this test is not running in parrallel mode or it could effect the results of other tests',
+        'You have disabled automine in a test. Make sure this test is not running in parallel mode or it could affect the results of other tests',
       )
     return this.send('evm_setAutomine', [active])
   }
@@ -36,7 +36,7 @@ class ExtendedProvider extends ethers.providers.JsonRpcProvider {
 export const createProvider = (stateful = false) => {
   // const apiKey = process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
   // Using public rpc node because infura settings is blocking transactions from settings
-  const rpcUrl = stateful ? `https://ethereum-goerli.publicnode.com	` : 'http://localhost:8545'
+  const rpcUrl = stateful ? 'https://ethereum-goerli.publicnode.com' : 'http://localhost:8545'
   const chainId = stateful ? 5 : 1337
   return new ExtendedProvider(rpcUrl, chainId)
 }

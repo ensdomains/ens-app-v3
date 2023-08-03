@@ -10,13 +10,6 @@ import { useChainId } from '@app/hooks/useChainId'
 
 const TRANSACTION_SEARCH_INTERVAL = 10000
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type EtherscanResponse = {
-  status: string
-  message: string
-  result: EtherscanMinedData[]
-}
-
 export const getAccountHistoryEndpoint = (address: string, chainId: number) => {
   switch (chainId) {
     case 1:

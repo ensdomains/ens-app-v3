@@ -62,9 +62,7 @@ export function createMakeNames({ accounts, provider, time, contracts, subgraph 
     /* eslint-enable no-await-in-loop */
 
     if (offset > 0) {
-      console.warn(
-        'You are increasing the block timestamp. Do not run this test in parrellel mode.',
-      )
+      console.warn('You are increasing the block timestamp. Do not run this test in parallel mode.')
       await provider.increaseTime(offset)
       await provider.mine()
     }

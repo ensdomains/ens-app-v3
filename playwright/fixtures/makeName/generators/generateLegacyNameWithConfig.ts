@@ -57,7 +57,7 @@ export const generateLegacyNameWithConfig =
     const _owner = accounts.getAddress(owner)
     const _addr = accounts.getAddress(addr)
 
-    // Registration will fail if resoler is not valid. If an invalid resolver is entered
+    // Registration will fail if resolver is not valid. If an invalid resolver is entered
     // we will set the resolver after the name has been registered.
     const hasValidResolver = resolver && VALID_RESOLVERS.includes(resolver)
     const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
