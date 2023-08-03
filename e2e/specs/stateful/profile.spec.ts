@@ -236,6 +236,7 @@ test.describe('Profile', () => {
   test('should decode an unknown label', async ({ page, login }) => {
     await page.goto('/')
     await login.connect()
+    // eslint-disable-next-line no-restricted-syntax
     await page.goto('/[8df9cfc425ad5e1853259e1cef0a8d1d44591fbec8e3feb6f930d9dfacd5eff2].eth')
     await expect(page.getByTestId('profile-snippet')).toContainText('wrapmebaby.eth', {
       timeout: 25000,

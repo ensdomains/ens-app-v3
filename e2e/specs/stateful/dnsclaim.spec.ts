@@ -38,6 +38,7 @@ test.describe('Import DNSSEC name', () => {
   test('should allow user to import a domain that they are not the owner of', async ({
     page,
     login,
+    accounts,
     makePageObject,
   }) => {
     test.slow()
@@ -47,7 +48,8 @@ test.describe('Import DNSSEC name', () => {
     await page.goto('/leontalbert.xyz/import')
     await login.connect()
 
-    await expect(page.getByText(`a=0x32518828A071a0e6E549F989D4aaB4Cd7401be8f`)).toBeVisible({
+    const address = accounts.getAddress('user')
+    await expect(page.getByText(`a=${address}`)).toBeVisible({
       timeout: 25000,
     })
     await page.getByTestId('dnssec-check-button').click()
@@ -70,6 +72,7 @@ test.describe('Import DNSSEC name', () => {
   test('should allow user to import a name that they are the owner of', async ({
     page,
     login,
+    accounts,
     makePageObject,
   }) => {
     test.slow()
@@ -79,7 +82,8 @@ test.describe('Import DNSSEC name', () => {
     await page.goto('/leontalbert.com/import')
     await login.connect()
 
-    await expect(page.getByText('a=0x32518828A071a0e6E549F989D4aaB4Cd7401be8f')).toBeVisible({
+    const address = accounts.getAddress('user')
+    await expect(page.getByText(`a=${address}`)).toBeVisible({
       timeout: 25000,
     })
     await page.getByTestId('dnssec-check-button').click()

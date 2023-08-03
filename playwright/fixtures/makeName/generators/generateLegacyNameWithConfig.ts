@@ -44,6 +44,7 @@ export const generateLegacyNameWithConfig =
     owner = 'user',
     manager,
     duration = DEFAULT_DURATION,
+    // eslint-disable-next-line no-restricted-syntax
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
     resolver = DEFAULT_RESOLVER,
     addr = owner,

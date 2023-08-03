@@ -38,6 +38,7 @@ export const generateLegacyName =
     owner = 'user',
     manager,
     duration = DEFAULT_DURATION,
+    // eslint-disable-next-line no-restricted-syntax
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
     subnames,
   }: Name) => {

@@ -1,5 +1,6 @@
 import { getUtm, setUtm, setupAnalytics, trackEvent } from './analytics'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Window = {
   plausible: any
 }

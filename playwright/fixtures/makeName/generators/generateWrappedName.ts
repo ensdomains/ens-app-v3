@@ -46,6 +46,7 @@ export const generateWrappedName =
     label,
     owner = 'user',
     duration = 31536000,
+    // eslint-disable-next-line no-restricted-syntax
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
     resolver = DEFAULT_RESOLVER,
     reverseRecord = false,
