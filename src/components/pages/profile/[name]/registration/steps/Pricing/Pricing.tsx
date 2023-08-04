@@ -263,8 +263,8 @@ const PaymentChoice = ({
   setReverseRecord,
   started,
 }: {
-  paymentMethodChoice: PaymentMethod | ''
-  setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod | ''>>
+  paymentMethodChoice: PaymentMethod
+  setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod>>
   hasEnoughEth: boolean
   hasPendingMoonpayTransaction: boolean
   hasFailedMoonpayTransaction: boolean
@@ -489,15 +489,17 @@ const Pricing = ({
 
   const previousMoonpayTransactionStatus = usePrevious(moonpayTransactionStatus)
 
-  const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod | ''>(
-    hasPendingMoonpayTransaction ? PaymentMethod.moonpay : '',
+  const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod>(
+    hasPendingMoonpayTransaction ? PaymentMethod.moonpay : PaymentMethod.ethereum,
   )
 
   // Keep radio button choice up to date
   useEffect(() => {
     if (moonpayTransactionStatus) {
       setPaymentMethodChoice(
-        hasPendingMoonpayTransaction || hasFailedMoonpayTransaction ? PaymentMethod.moonpay : '',
+        hasPendingMoonpayTransaction || hasFailedMoonpayTransaction
+          ? PaymentMethod.moonpay
+          : PaymentMethod.ethereum,
       )
     }
   }, [
