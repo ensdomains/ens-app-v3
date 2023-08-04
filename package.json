@@ -30,16 +30,10 @@
     "test": "jest --env=./custom-test-env.js",
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
-    "synpress:start": "synpress run -cf ./e2e/synpress.config.js",
-    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost TRANSACTION_WAIT_TIME=5000 synpress run -ne -cf ./e2e/synpress.config.js --spec ./e2e/specs/stateless/13_setPrimary.spec.js",
-    "synpress:local": "synpress run -ne -cf ./e2e/synpress.config.js",
-    "synpress:stateful": "NETWORK_NAME=mainnet synpress run -cf ./e2e/synpress-stateful.config.js",
-    "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ci-build-id $CI_BUILD_ID --group stateless",
-    "synpress:ci:stateful": "pnpm synpress:stateful --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2",
-    "e2e": "E2E=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000",
+    "e2e:install": "npx playwright install chromium",
+    "e2e": "npx playwright test --project=stateless",
+    "e2e:stateful": "npx playwright test --project=stateful",
     "e2e:ci": "E2E=true CI=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000",
-    "e2e:stateful": "E2E=true pnpm buildandexport && conc \"pnpm wrangle\" \"pnpm synpress:stateful\"",
-    "e2e:ci:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:8788 && pnpm synpress:ci:stateful",
     "postinstall": "husky install",
     "local:add:ensjs": "yalc add @ensdomains/ensjs --workspace && pnpm install",
     "local:remove:ensjs": "node ./scripts/removeWorkspace.mjs @ensdomains/ensjs && yalc remove @ensdomains/ensjs && pnpm install",
@@ -126,7 +120,6 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.1",
-    "@deploysentinel/cypress-debugger": "^0.8.6",
     "@ensdomains/buffer": "^0.1.0",
     "@ensdomains/ens-test-env": "^0.3.7",
     "@ethersproject/wallet": "^5.7.0",
@@ -135,8 +128,7 @@
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/test-helpers": "^0.5.16",
-    "@synthetixio/synpress": "3.7.1",
-    "@testing-library/cypress": "^8.0.3",
+    "@playwright/test": "^1.36.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
@@ -160,8 +152,6 @@
     "babel-loader": "^8.2.5",
     "canvas": "^2.9.3",
     "concurrently": "^7.3.0",
-    "cypress": "12.11.0",
-    "cypress-localstorage-commands": "^2.2.1",
     "dotenv": "^16.0.1",
     "eslint": "7.32.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -170,7 +160,6 @@
     "eslint-config-next": "^12.2.5",
     "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-node": "^0.3.6",
-    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^25.7.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
@@ -184,6 +173,7 @@
     "hardhat": "^2.10.2",
     "hardhat-dependency-compiler": "^1.1.3",
     "hardhat-deploy": "^0.11.12",
+    "headless-web3-provider": "0.1.14",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
     "jest-canvas-mock": "^2.4.0",
@@ -232,8 +222,7 @@
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
-      "@rainbow-me/rainbowkit@0.12.15": "patches/@rainbow-me__rainbowkit@0.12.15.patch",
-      "@synthetixio/synpress@3.7.1": "patches/@synthetixio__synpress@3.7.1.patch"
+      "@rainbow-me/rainbowkit@0.12.15": "patches/@rainbow-me__rainbowkit@0.12.15.patch"
     }
   }
 }

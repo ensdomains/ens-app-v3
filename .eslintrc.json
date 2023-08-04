@@ -21,19 +21,12 @@
       "rules": {
         "jest/expect-expect": "off"
       }
-    },
-    // Only uses Testing Library lint rules in test files
-    {
-      "files": ["**/cypress/**/*.[jt]s?(x)"],
-      "env": { "cypress/globals": true },
-      "plugins": ["cypress"],
-      "extends": ["plugin:cypress/recommended"]
     }
   ],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "ignorePatterns": ["next.config.js", "jest.config.js", "deploy/**/*"],
+  "ignorePatterns": ["next.config.js", "jest.config.js", "deploy/**/*", "src/**/*.test.tsx", "src/**/*.test.ts"],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/jsx-props-no-spreading": "off",
@@ -54,7 +47,11 @@
       {
         "selector": "CallExpression[callee.object.name='console'][callee.property.name!=/^(log|warn|error|info|trace)$/]",
         "message": "Unexpected property on console object was called"
-      }
+      },
+      {
+        "selector": "*[value=/\\b(0x)?[a-f0-9]{64}\\b/i]",
+        "message": "No private keys allowed"
+      } 
     ],
     "prettier/prettier": "error",
     "import/prefer-default-export": "off",
