@@ -8,7 +8,6 @@ export const useIsSafeApp = () => {
   return useQuery(
     useQueryKeys().isSafeApp(connector?.id),
     async () => {
-      if (!connector) return false
       return checkIsSafeApp(connector)
     },
     {

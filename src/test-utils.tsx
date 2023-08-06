@@ -19,6 +19,8 @@ window.scroll = jest.fn()
 jest.mock('@app/hooks/useRegistrationReducer', () => jest.fn(() => ({ item: { stepIndex: 0 } })))
 jest.mock('@app/hooks/useChainId', () => ({ useChainId: () => 1 }))
 
+export const mockUseAccountReturnValue = { address: '0x123' }
+
 jest.mock('wagmi', () => {
   const {
     useQuery,
@@ -36,7 +38,7 @@ jest.mock('wagmi', () => {
     useMutation,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
-    useAccount: jest.fn(() => ({ address: '0x123' })),
+    useAccount: jest.fn(() => mockUseAccountReturnValue),
     useBalance: jest.fn(() => ({ data: { value: { lt: () => false } } })),
     useNetwork: jest.fn(() => ({ chainId: 1 })),
     useFeeData: jest.fn(),
