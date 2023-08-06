@@ -1,11 +1,13 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
+import { BigNumber } from '@ethersproject/bignumber'
+import { hexValue } from '@ethersproject/bytes'
+import type { FallbackProvider, JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
 import { toUtf8String } from '@ethersproject/strings'
-import { Connector, Provider } from '@wagmi/core'
+import { Provider } from '@wagmi/core'
 import type { PopulatedTransaction } from 'ethers'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
+import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
 
 import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 
@@ -18,6 +20,7 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainName } from '@app/hooks/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
+import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { transactions } from '@app/transaction-flow/transaction'
 import {
   ManagedDialogPropsTwo,
@@ -26,7 +29,6 @@ import {
 } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
-import { checkIsSafeApp } from '@app/utils/safe'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
@@ -168,6 +170,14 @@ type TxError = {
   error: Error
 }
 
+type AccessListResponse = {
+  accessList: {
+    address: string
+    storageKeys: string[]
+  }[]
+  gasUsed: string
+}
+
 const SUPPORTED_REQUEST_ERRORS = ['INSUFFICIENT_FUNDS', 'UNPREDICTABLE_GAS_LIMIT']
 
 export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
@@ -264,15 +274,15 @@ export const uniqueTransactionIdentifierGenerator = (
 export const transactionSuccessHandler =
   (dependencies: {
     provider: Provider
-    connector: Connector | undefined
     actionName: ManagedDialogPropsTwo['actionName']
     txKey: string | null
     request: PopulatedTransaction | undefined
     addRecentTransaction: ReturnType<typeof useAddRecentTransaction>
     dispatch: Dispatch<TransactionFlowAction>
+    isSafeApp: ReturnType<typeof useIsSafeApp>['data']
   }) =>
   async (tx: any) => {
-    const { provider, connector, actionName, txKey, request, addRecentTransaction, dispatch } =
+    const { provider, actionName, txKey, request, addRecentTransaction, dispatch, isSafeApp } =
       dependencies
     let transactionData = null
     try {
@@ -281,8 +291,6 @@ export const transactionSuccessHandler =
     } catch (e) {
       console.error('Failed to get transaction info')
     }
-
-    const isSafeApp = await checkIsSafeApp(connector)
 
     addRecentTransaction({
       ...transactionData,
@@ -315,7 +323,6 @@ export const TransactionStageModal = ({
   const addRecentTransaction = useAddRecentTransaction()
   const { data: signer } = useSigner()
   const ens = useEns()
-  const provider = useProvider()
 
   const stage = transaction.stage || 'confirm'
   const recentTransactions = useRecentTransactions()
@@ -324,7 +331,8 @@ export const TransactionStageModal = ({
     [recentTransactions, transaction.hash],
   )
 
-  const { connector } = useAccount()
+  const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
+  const provider = useProvider<FallbackProvider>()
 
   const uniqueTxIdentifiers = useMemo(
     () =>
@@ -348,10 +356,11 @@ export const TransactionStageModal = ({
     () =>
       !!transaction &&
       !!signer &&
+      !safeAppStatusLoading &&
       !!ens &&
       !(stage === 'sent' || stage === 'complete') &&
       isUniquenessDefined,
-    [transaction, signer, ens, stage, isUniquenessDefined],
+    [transaction, signer, safeAppStatusLoading, ens, stage, isUniquenessDefined],
   )
 
   const queryKeys = useQueryKeys()
@@ -369,19 +378,39 @@ export const TransactionStageModal = ({
         transaction.data,
       )
 
-      let gasLimit = await signer!.estimateGas({
+      const txWithZeroGas = {
         ...populatedTransaction,
-        maxFeePerGas: 0,
-        maxPriorityFeePerGas: 0,
-      })
+        maxFeePerGas: '0x0',
+        maxPriorityFeePerGas: '0x0',
+      }
 
-      // this addition is arbitrary, something to do with a gas refund but not 100% sure
-      if (transaction.name === 'registerName') gasLimit = gasLimit.add(5000)
+      const { gasLimit, accessList } = await (isSafeApp
+        ? (provider.providerConfigs[0].provider as JsonRpcProvider)
+            .send('eth_createAccessList', [
+              {
+                ...txWithZeroGas,
+                value: txWithZeroGas.value ? hexValue(txWithZeroGas.value.add(1000000)) : '0x0',
+              },
+              'latest',
+            ])
+            .then((res: AccessListResponse) => ({
+              gasLimit: BigNumber.from(res.gasUsed),
+              accessList: res.accessList,
+            }))
+        : signer!
+            .estimateGas(txWithZeroGas)
+            .then((value) => ({ gasLimit: value, accessList: undefined }))
+      ).then((value) => ({
+        ...value,
+        // this addition is arbitrary, something to do with a gas refund but not 100% sure
+        gasLimit: transaction.name === 'registerName' ? value.gasLimit.add(5000) : value.gasLimit,
+      }))
 
       return {
         ...populatedTransaction,
         to: populatedTransaction.to as `0x${string}`,
         gasLimit,
+        accessList,
       }
     },
     {
@@ -404,12 +433,12 @@ export const TransactionStageModal = ({
     request,
     onSuccess: transactionSuccessHandler({
       provider,
-      connector,
       actionName,
       txKey,
       request,
       addRecentTransaction,
       dispatch,
+      isSafeApp,
     }),
   })
 
