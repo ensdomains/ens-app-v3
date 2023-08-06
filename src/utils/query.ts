@@ -1,6 +1,6 @@
 import '@rainbow-me/rainbowkit/styles.css'
 import { DefaultOptions, QueryClient } from '@tanstack/react-query'
-import { ChainProviderFn, configureChains, createClient, Address } from 'wagmi'
+import { Address, Chain, ChainProviderFn, configureChains, createClient } from 'wagmi'
 import { goerli, localhost, mainnet } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
@@ -9,12 +9,11 @@ import { makePersistent } from '@app/utils/persist'
 
 import { WC_PROJECT_ID } from './constants'
 import { getDefaultWallets } from './getDefaultWallets'
-import { JsonRpcProvider } from '@ethersproject/providers'
 
 const providerArray: ChainProviderFn<typeof mainnet | typeof goerli | typeof localhost>[] = []
 
-const ensAddress : Address = '0x0A6d64413c07E10E890220BBE1c49170080C6Ca0'
-export const ewc = {
+const ensAddress: Address = '0x0A6d64413c07E10E890220BBE1c49170080C6Ca0'
+export const ewc: Chain = {
   id: 246,
   name: 'Energy Web Chain',
   network: 'ewc',
@@ -67,7 +66,12 @@ if (process.env.NEXT_PUBLIC_PROVIDER) {
   )
 }
 
-const { provider, chains } = configureChains([ewc], new JsonRpcProvider('https://rpc.energyweb.org/'))
+const ewcProvider = jsonRpcProvider({
+  rpc: () => ({
+    http: 'https://rpc.energyweb.org/',
+  }),
+})
+const { provider, chains } = configureChains([ewc], [ewcProvider])
 
 const connectors = getDefaultWallets({
   appName: 'ENS',
