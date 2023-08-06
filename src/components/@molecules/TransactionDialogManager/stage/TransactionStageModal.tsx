@@ -363,6 +363,38 @@ export const TransactionStageModal = ({
     [transaction, signer, safeAppStatusLoading, ens, stage, isUniquenessDefined],
   )
 
+  const registrationGasFeeModifier = (gasLimit: BigNumber, transactionName: string) =>
+    // this addition is arbitrary, something to do with a gas refund but not 100% sure
+    transactionName === 'registerName' ? gasLimit.add(5000) : gasLimit
+
+  const calculateGasLimit = async ({ isSafeApp, provider, txWithZeroGas, transactionName }) => {
+    if (isSafeApp) {
+      const accessListResponse: AccessListResponse = await (
+        provider.providerConfigs[0].provider as JsonRpcProvider
+      ).send('eth_createAccessList', [
+        {
+          ...txWithZeroGas,
+          value: txWithZeroGas.value ? hexValue(txWithZeroGas.value.add(1000000)) : '0x0',
+        },
+        'latest',
+      ])
+
+      return {
+        gasLimit: registrationGasFeeModifier(
+          BigNumber.from(accessListResponse.gasUsed),
+          transactionName,
+        ),
+        accessList: accessListResponse.accessList,
+      }
+    }
+
+    const gasEstimate = signer.estimateGas(txWithZeroGas)
+    return {
+      gasLimit: registrationGasFeeModifier(gasEstimate, transactionName),
+      accessList: undefined,
+    }
+  }
+
   const queryKeys = useQueryKeys()
 
   const {
@@ -384,27 +416,11 @@ export const TransactionStageModal = ({
         maxPriorityFeePerGas: '0x0',
       }
 
-      const { gasLimit, accessList } = await (isSafeApp
-        ? (provider.providerConfigs[0].provider as JsonRpcProvider)
-            .send('eth_createAccessList', [
-              {
-                ...txWithZeroGas,
-                value: txWithZeroGas.value ? hexValue(txWithZeroGas.value.add(1000000)) : '0x0',
-              },
-              'latest',
-            ])
-            .then((res: AccessListResponse) => ({
-              gasLimit: BigNumber.from(res.gasUsed),
-              accessList: res.accessList,
-            }))
-        : signer!
-            .estimateGas(txWithZeroGas)
-            .then((value) => ({ gasLimit: value, accessList: undefined }))
-      ).then((value) => ({
-        ...value,
-        // this addition is arbitrary, something to do with a gas refund but not 100% sure
-        gasLimit: transaction.name === 'registerName' ? value.gasLimit.add(5000) : value.gasLimit,
-      }))
+      const { gasLimit, accessList } = await calculateGasLimit({
+        isSafeApp,
+        provider,
+        txWithZeroGas,
+      })
 
       return {
         ...populatedTransaction,

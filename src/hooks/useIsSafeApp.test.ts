@@ -8,7 +8,6 @@ jest.mock('@app/utils/cacheKeyFactory')
 jest.mock('@app/utils/safe')
 
 describe('useIsSafeApp', () => {
-  const mockConnector = { id: 'mockConnectorId' }
   const mockUseQueryKeys = mockFunction(useQueryKeys)
   const mockCheckIsSafeApp = checkIsSafeApp as jest.MockedFunction<typeof checkIsSafeApp>
 
