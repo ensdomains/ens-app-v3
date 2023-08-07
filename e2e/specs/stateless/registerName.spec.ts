@@ -149,7 +149,6 @@ test.describe.serial('normal registration', () => {
     await login.connect()
 
     await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
-    await page.pause()
     await expect(page.getByTestId('primary-name-toggle')).not.toBeChecked({ timeout: 1000 })
 
     // should show set profile button on info step
@@ -202,7 +201,6 @@ test('should allow registering a premium name', async ({
   await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
-  await page.pause()
   if (await page.getByTestId('profile-submit-button').isVisible()) {
     await page.getByTestId('profile-submit-button').click()
   }
