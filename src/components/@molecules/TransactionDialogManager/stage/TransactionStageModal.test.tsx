@@ -11,6 +11,7 @@ import { useChainName } from '@app/hooks/useChainName'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { checkIsSafeApp } from '@app/utils/safe'
+import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 
 import {
   TransactionStageModal,
@@ -22,6 +23,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 jest.mock('@app/hooks/useAccountSafely')
 jest.mock('@app/hooks/useChainName')
+jest.mock('@app/hooks/useIsSafeApp')
 jest.mock('@app/hooks/transactions/useAddRecentTransaction')
 jest.mock('@app/hooks/transactions/useRecentTransactions')
 jest.mock('@app/utils/EnsProvider')
@@ -60,6 +62,7 @@ jest.mock('@app/transaction-flow/transaction', () => {
 })
 
 const mockUseEns = mockFunction(useEns)
+const mockUseIsSafeApp = mockFunction(useIsSafeApp)
 const mockUseAddRecentTransaction = mockFunction(useAddRecentTransaction)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseAccountSafely = mockFunction(useAccountSafely)
@@ -120,6 +123,7 @@ describe('TransactionStageModal', () => {
   mockUseEns.mockReturnValue({})
 
   beforeEach(() => {
+    mockUseIsSafeApp.mockReturnValue({ data: true })
     mockEstimateGas.mockReset()
     mockUseAccountSafely.mockReturnValue({ address: '0x1234' })
     mockUseChainName.mockReturnValue('ethereum')
@@ -167,6 +171,7 @@ describe('TransactionStageModal', () => {
         )
       })
       it('should show confirm button as disabled if a unique identifier is undefined', async () => {
+        mockUseIsSafeApp.mockReturnValue({ data: false })
         mockEstimateGas.mockResolvedValue(1)
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: () => Promise.resolve(),
@@ -179,6 +184,7 @@ describe('TransactionStageModal', () => {
       })
       it('should disable confirm button and re-estimate gas if a unique identifier is changed', async () => {
         mockEstimateGas.mockResolvedValue(1)
+        mockUseIsSafeApp.mockReturnValue({ data: false })
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: () => Promise.resolve(),
         })
@@ -253,6 +259,7 @@ describe('TransactionStageModal', () => {
         )
       })
       it('should pass the request to send transaction', async () => {
+        mockUseIsSafeApp.mockReturnValue({ data: false })
         mockEstimateGas.mockResolvedValue(1)
         const mockSendTransaction = jest.fn()
         mockUseSendTransaction.mockReturnValue({
@@ -264,6 +271,7 @@ describe('TransactionStageModal', () => {
           expect(mockUseSendTransaction.mock.lastCall[0].request).toStrictEqual({
             ...mockPopulatedTransaction,
             gasLimit: 1,
+            accessList: undefined 
           }),
         )
       })
@@ -280,7 +288,7 @@ describe('TransactionStageModal', () => {
           expect.objectContaining({
             hash: '0x123',
             action: 'test',
-            isSafeTx: false,
+            isSafeTx: true,
             key: 'test',
           }),
         )
@@ -291,6 +299,7 @@ describe('TransactionStageModal', () => {
       })
       it('should add to recent transactions and run dispatch from success callback when isSafeTx', async () => {
         const mockAddTransaction = jest.fn()
+        mockUseIsSafeApp.mockReturnValue({ data: true })
         mockUseAddRecentTransaction.mockReturnValue(mockAddTransaction)
         mockCheckIsSafeApp.mockResolvedValue('iframe')
         await renderHelper({ transaction: mockTransaction })

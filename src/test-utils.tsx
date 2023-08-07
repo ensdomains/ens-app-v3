@@ -42,7 +42,9 @@ jest.mock('wagmi', () => {
     useBalance: jest.fn(() => ({ data: { value: { lt: () => false } } })),
     useNetwork: jest.fn(() => ({ chainId: 1 })),
     useFeeData: jest.fn(),
-    useProvider: jest.fn(),
+    useProvider: jest.fn(() => ({
+      providerConfigs: [{ provider: { send: jest.fn(() => ({ gasUsed: 0, accessList: [] })) } }],
+    })),
     useSigner: jest.fn(),
     useSignTypedData: jest.fn(),
     useBlockNumber: jest.fn(),

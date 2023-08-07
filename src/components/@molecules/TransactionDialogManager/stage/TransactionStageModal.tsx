@@ -316,11 +316,15 @@ export const calculateGasLimit = async ({
   transactionName,
   signer,
 }: {
-  isSafeApp: boolean
-  provider: ReturnType<typeof useProvider>
-  txWithZeroGas: PopulatedTransaction
+  isSafeApp: string | boolean | undefined
+  provider: FallbackProvider
+  txWithZeroGas: {
+    maxFeePerGas: string
+    maxPriorityFeePerGas: string
+    value?: BigNumber
+  }
   transactionName: string
-  signer: ReturnType<typeof useSigner>
+  signer: ReturnType<typeof useSigner>['data']
 }) => {
   if (isSafeApp) {
     const accessListResponse: AccessListResponse = await (
@@ -342,7 +346,11 @@ export const calculateGasLimit = async ({
     }
   }
 
-  const gasEstimate = signer.estimateGas(txWithZeroGas)
+  if (!signer) {
+    throw new Error('Signer not found')
+  }
+
+  const gasEstimate = await signer.estimateGas(txWithZeroGas)
   return {
     gasLimit: registrationGasFeeModifier(gasEstimate, transactionName),
     accessList: undefined,
