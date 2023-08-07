@@ -454,6 +454,7 @@ type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   resolverExists: boolean | undefined
   callback: (props: RegistrationStepData['pricing']) => void
+  isPrimaryLoading: boolean
   hasPrimaryName: boolean
   registrationData: RegistrationReducerDataItem
   moonpayTransactionStatus?: MoonpayTransactionStatus
@@ -465,6 +466,7 @@ type Props = {
 const Pricing = ({
   nameDetails,
   callback,
+  isPrimaryLoading,
   hasPrimaryName,
   registrationData,
   resolverExists,
@@ -528,6 +530,7 @@ const Pricing = ({
   const yearlyRequiredBalance = totalYearlyFee?.mul(110).div(100)
   const totalRequiredBalance = yearlyRequiredBalance?.add(premiumFee || 0).add(estimatedGasFee || 0)
 
+  const showPaymentChoice = !isPrimaryLoading && address
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
@@ -554,7 +557,7 @@ const Pricing = ({
           />
         )
       )}
-      {address && (
+      {showPaymentChoice && (
         <PaymentChoice
           {...{
             paymentMethodChoice,
