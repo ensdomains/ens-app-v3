@@ -16,7 +16,9 @@ import {
   TransactionStageModal,
   handleBackToInput,
   transactionSuccessHandler,
+  calculateGasLimit
 } from './TransactionStageModal'
+import { BigNumber } from '@ethersproject/bignumber'
 
 jest.mock('@app/hooks/useAccountSafely')
 jest.mock('@app/hooks/useChainName')
@@ -455,3 +457,77 @@ describe('transactionSuccessHanlder', () => {
     )
   })
 })
+
+describe('calculateGasLimit', () => {
+  const mockProvider = {
+    providerConfigs: [
+      {
+        provider: {
+          send: jest.fn(),
+        },
+      },
+    ],
+  };
+  const mockSigner = {
+    estimateGas: jest.fn(),
+  };
+  const mockTxWithZeroGas = {
+    to: '0x1234567890123456789012345678901234567890',
+    value: BigNumber.from('0x0'),
+    data: '0x12345678',
+  };
+  const mockTransactionName = 'registerName';
+  const mockIsSafeApp = false;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should calculate gas limit for non-safe apps', async () => {
+    mockSigner.estimateGas.mockReturnValue(BigNumber.from(100000));
+    const result = await calculateGasLimit({
+      isSafeApp: mockIsSafeApp,
+      provider: mockProvider,
+      txWithZeroGas: mockTxWithZeroGas,
+      transactionName: mockTransactionName,
+      signer: mockSigner,
+    });
+    expect(result.gasLimit.toNumber()).toEqual(105000);
+    expect(result.accessList).toBeUndefined();
+    expect(mockSigner.estimateGas).toHaveBeenCalledWith(mockTxWithZeroGas);
+  });
+
+  it('should calculate gas limit for safe apps', async () => {
+    const mockAccessListResponse = {
+      gasUsed: '0x64',
+      accessList: [
+        {
+          address: '0x1234567890123456789012345678901234567890',
+          storageKeys: ['0x1234567890123456789012345678901234567890123456789012345678901234'],
+        },
+      ],
+    };
+    (mockProvider.providerConfigs[0].provider as any).send.mockResolvedValueOnce(
+      mockAccessListResponse,
+    );
+    const result = await calculateGasLimit({
+      isSafeApp: true,
+      provider: mockProvider,
+      txWithZeroGas: mockTxWithZeroGas,
+      transactionName: mockTransactionName,
+      signer: mockSigner,
+    });
+    expect(result.gasLimit.toNumber()).toEqual(5100);
+    expect(result.accessList).toEqual(mockAccessListResponse.accessList);
+    expect(mockProvider.providerConfigs[0].provider.send).toHaveBeenCalledWith(
+      'eth_createAccessList',
+      [
+        {
+          ...mockTxWithZeroGas,
+          value: '0xf4240',
+        },
+        'latest',
+      ],
+    );
+  });
+});

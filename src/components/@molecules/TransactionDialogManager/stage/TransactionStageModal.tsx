@@ -305,6 +305,50 @@ export const transactionSuccessHandler =
     dispatch({ name: 'setTransactionHash', payload: tx.hash })
   }
 
+export const registrationGasFeeModifier = (gasLimit: BigNumber, transactionName: string) =>
+  // this addition is arbitrary, something to do with a gas refund but not 100% sure
+  transactionName === 'registerName' ? gasLimit.add(5000) : gasLimit
+
+export const calculateGasLimit = async ({
+  isSafeApp,
+  provider,
+  txWithZeroGas,
+  transactionName,
+  signer,
+}: {
+  isSafeApp: boolean
+  provider: ReturnType<typeof useProvider>
+  txWithZeroGas: PopulatedTransaction
+  transactionName: string
+  signer: ReturnType<typeof useSigner>
+}) => {
+  if (isSafeApp) {
+    const accessListResponse: AccessListResponse = await (
+      provider.providerConfigs[0].provider as JsonRpcProvider
+    ).send('eth_createAccessList', [
+      {
+        ...txWithZeroGas,
+        value: txWithZeroGas.value ? hexValue(txWithZeroGas.value.add(1000000)) : '0x0',
+      },
+      'latest',
+    ])
+
+    return {
+      gasLimit: registrationGasFeeModifier(
+        BigNumber.from(accessListResponse.gasUsed),
+        transactionName,
+      ),
+      accessList: accessListResponse.accessList,
+    }
+  }
+
+  const gasEstimate = signer.estimateGas(txWithZeroGas)
+  return {
+    gasLimit: registrationGasFeeModifier(gasEstimate, transactionName),
+    accessList: undefined,
+  }
+}
+
 export const TransactionStageModal = ({
   actionName,
   currentStep,
@@ -363,38 +407,6 @@ export const TransactionStageModal = ({
     [transaction, signer, safeAppStatusLoading, ens, stage, isUniquenessDefined],
   )
 
-  const registrationGasFeeModifier = (gasLimit: BigNumber, transactionName: string) =>
-    // this addition is arbitrary, something to do with a gas refund but not 100% sure
-    transactionName === 'registerName' ? gasLimit.add(5000) : gasLimit
-
-  const calculateGasLimit = async ({ isSafeApp, provider, txWithZeroGas, transactionName }) => {
-    if (isSafeApp) {
-      const accessListResponse: AccessListResponse = await (
-        provider.providerConfigs[0].provider as JsonRpcProvider
-      ).send('eth_createAccessList', [
-        {
-          ...txWithZeroGas,
-          value: txWithZeroGas.value ? hexValue(txWithZeroGas.value.add(1000000)) : '0x0',
-        },
-        'latest',
-      ])
-
-      return {
-        gasLimit: registrationGasFeeModifier(
-          BigNumber.from(accessListResponse.gasUsed),
-          transactionName,
-        ),
-        accessList: accessListResponse.accessList,
-      }
-    }
-
-    const gasEstimate = signer.estimateGas(txWithZeroGas)
-    return {
-      gasLimit: registrationGasFeeModifier(gasEstimate, transactionName),
-      accessList: undefined,
-    }
-  }
-
   const queryKeys = useQueryKeys()
 
   const {
@@ -420,6 +432,8 @@ export const TransactionStageModal = ({
         isSafeApp,
         provider,
         txWithZeroGas,
+        signer,
+        transactionName: transaction.name,
       })
 
       return {
