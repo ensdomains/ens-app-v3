@@ -35,8 +35,8 @@ test.describe.serial('normal registration', () => {
     await homePage.searchInput.press('Enter')
     await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
 
-    // should show primary name setting as checked
-    await page.getByTestId('payment-choice-ethereum').click()
+    // should have payment choice ethereum checked and show primary name setting as checked
+    await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
     await expect(registrationPage.primaryNameToggle).toBeChecked()
 
     // should show adjusted gas estimate when primary name setting checked
@@ -148,8 +148,8 @@ test.describe.serial('normal registration', () => {
     await page.goto(`/${nonPrimaryNme}/register`)
     await login.connect()
 
-    await await page.getByTestId('payment-choice-ethereum').click()
-    await expect(page.getByTestId('primary-name-toggle')).not.toBeChecked()
+    await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
+    await expect(page.getByTestId('primary-name-toggle')).not.toBeChecked({ timeout: 1000 })
 
     // should show set profile button on info step
     await page.getByTestId('next-button').click()
@@ -201,7 +201,6 @@ test('should allow registering a premium name', async ({
   await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
-  await page.pause()
   if (await page.getByTestId('profile-submit-button').isVisible()) {
     await page.getByTestId('profile-submit-button').click()
   }

@@ -171,7 +171,7 @@ test.describe('unwrapped', () => {
       await expect(profilePage.record('address', 'ETC_LEGACY')).toHaveText(
         'ETC_LEGACY0x3C4...293BC',
       )
-      await expect(profilePage.record('text', 'email')).toHaveText('emailfakeemail@fake....')
+      await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
 
       await profilePage.editProfileButton.click()
       await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
@@ -191,7 +191,7 @@ test.describe('unwrapped', () => {
       await expect(profilePage.record('address', 'ETC_LEGACY')).toHaveText(
         'ETC_LEGACY0x3C4...293BC',
       )
-      await expect(profilePage.record('text', 'email')).toHaveText('emailfakeemail@fake....')
+      await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
     })
   })
 
@@ -226,7 +226,7 @@ test.describe('unwrapped', () => {
       await expect(profilePage.record('address', 'ETC_LEGACY')).toHaveText(
         'ETC_LEGACY0x3C4...293BC',
       )
-      await expect(profilePage.record('text', 'email')).toHaveText('emailfakeemail@fake....')
+      await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
 
       await profilePage.editProfileButton.click()
 
@@ -253,7 +253,7 @@ test.describe('unwrapped', () => {
       await expect(profilePage.record('address', 'ETC_LEGACY')).toHaveText(
         'ETC_LEGACY0x3C4...293BC',
       )
-      await expect(profilePage.record('text', 'email')).toHaveText('emailfakeemail@fake....')
+      await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
     })
   })
 })
