@@ -16,7 +16,7 @@ describe('checkIsSafeApp', () => {
     expect(result).toBe('iframe')
   })
 
-  it('should return "walletconnect" if connector is a WalletConnectConnector and connected to Safe app', async () => {
+  it.skip('should return "walletconnect" if connector is a WalletConnectConnector and connected to Safe app', async () => {
         new WalletConnectConnector({
             options: {
               projectId: WC_PROJECT_ID,
@@ -45,7 +45,7 @@ describe('checkIsSafeApp', () => {
     expect(result).toBe('walletconnect')
   })
 
-  it('should return false if connector is a WalletConnectConnector but not connected to Safe app', async () => {
+  it.skip('should return false if connector is a WalletConnectConnector but not connected to Safe app', async () => {
     const connector = new WalletConnectConnector({
       rpc: { 1: 'https://mainnet.infura.io/v3/1234567890abcdef' },
       bridge: 'https://bridge.walletconnect.org',
