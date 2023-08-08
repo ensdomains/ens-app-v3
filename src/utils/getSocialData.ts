@@ -39,6 +39,14 @@ export const getSocialData = (iconKey: string, value: string) => {
         type: 'link',
         urlFormatter: `https://t.me/${value}`,
       }
+    case 'email':
+      return {
+        icon: 'email',
+        color: '#000000',
+        label: 'Email',
+        value,
+        type: 'copy',
+      }
     default:
       return null
   }
