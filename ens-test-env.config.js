@@ -28,9 +28,9 @@ module.exports = {
     },
     {
       command: `pnpm wait-on http://localhost:8788 && ${
-        process.env.CI ? 'pnpm synpress:ci' : 'pnpm synpress:start'
+        process.env.CI ? `npx playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}` : 'npx playwright'
       }`,
-      name: 'synpress',
+      name: 'playwright',
       prefixColor: 'yellow.bold',
       env: process.env,
       finishOnExit: true,

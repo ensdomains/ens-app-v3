@@ -1,3 +1,4 @@
+/* eslint-disable import/newline-after-import */
 import { initializeProvider } from '@metamask/inpage-provider'
 import { WindowPostMessageStream } from '@metamask/post-message-stream'
 
