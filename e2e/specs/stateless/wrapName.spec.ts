@@ -23,6 +23,7 @@ test('should not show wrap button if the connected wallet is not the registrant'
 })
 
 test('should not show wrap notification if the name is already wrapped', async ({
+  page,
   login,
   makeName,
   makePageObject,
@@ -37,7 +38,8 @@ test('should not show wrap notification if the name is already wrapped', async (
 
   await login.connect()
 
-  await expect(morePage.wrapButton).toHaveCount(0)
+  await page.waitForTimeout(3000)
+  await expect(morePage.wrapButton).not.toBeVisible()
 })
 
 test('should show wrap notification on unwrapped name', async ({
@@ -207,4 +209,81 @@ test('should allow wrapping a name with an unknown label', async ({
 
   // should direct to the known label page
   await expect(page).toHaveURL(`/${unknownLabel}.${name}`)
+})
+
+test('should calculate needed steps without localstorage', async ({
+  page,
+  contracts,
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  test.slow()
+
+  // Reset name wrapper approval
+  const registry = contracts.get('ENSRegistry', { signer: 'user' })
+  const nameWrapper = contracts.get('NameWrapper')
+
+  const txn = await registry.setApprovalForAll(nameWrapper.address, false)
+  await txn.wait()
+
+  const name = await makeName({
+    label: 'unwrapped',
+    type: 'legacy',
+    subnames: [
+      {
+        label: 'sub',
+        records: {
+          texts: [{ key: 'description', value: 'test' }],
+        },
+      },
+    ],
+  })
+  const subname = `sub.${name}`
+
+  const morePage = makePageObject('MorePage')
+  const transactionModal = makePageObject('TransactionModal')
+  const profilePage = makePageObject('ProfilePage')
+
+  await morePage.goto(subname)
+  await login.connect()
+
+  await expect(page.getByTestId('name-details-text-wrapper')).toContainText('unwrapped')
+
+  await morePage.wrapButton.click()
+
+  await expect(page.getByTestId('display-item-Step 1-normal')).toContainText('Approve NameWrapper')
+  await expect(page.getByTestId('display-item-Step 2-normal')).toContainText('Migrate profile')
+  await expect(page.getByTestId('display-item-Step 3-normal')).toContainText('Wrap name')
+
+  await transactionModal.introButton.click()
+  await transactionModal.confirm()
+  await expect(transactionModal.completeButton).toBeEnabled()
+
+  await page.evaluate(() => localStorage.clear())
+  await page.reload()
+  await login.reconnect()
+
+  await morePage.wrapButton.click()
+
+  await expect(page.getByTestId('display-item-Step 1-normal')).toContainText('Migrate profile')
+  await expect(page.getByTestId('display-item-Step 2-normal')).toContainText('Wrap name')
+
+  await transactionModal.introButton.click()
+  await transactionModal.confirm()
+  await expect(transactionModal.completeButton).toBeEnabled()
+
+  await page.evaluate(() => localStorage.clear())
+  await page.reload()
+  await login.reconnect()
+
+  await morePage.wrapButton.click()
+
+  await transactionModal.introButton.click()
+  await transactionModal.confirm()
+  await transactionModal.complete()
+  await expect(page.getByTestId('name-details-text-wrapper')).not.toContainText('unwrapped')
+
+  await profilePage.goto(subname)
+  await expect(profilePage.record('text', 'description')).toHaveText('test')
 })
