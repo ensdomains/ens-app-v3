@@ -56,10 +56,9 @@ const profiles = [
           'https://avatar-upload.ens-cf.workers.dev/goerli/wrapmebaby.eth?timestamp=1666267425956',
       },
       {
-        type: 'other',
+        type: 'account',
         key: 'email',
-        value: 'email@ens.domai...',
-        fullValue: 'email@ens.domains',
+        value: 'email@ens.domains',
       },
     ],
     owners: [
