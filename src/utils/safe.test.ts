@@ -2,7 +2,6 @@ import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 import { checkIsSafeApp, SafeAppType } from './safe'
-import { WC_PROJECT_ID } from './constants'
 
 describe('checkIsSafeApp', () => {
   it('should return false if connector is undefined', async () => {
@@ -16,22 +15,8 @@ describe('checkIsSafeApp', () => {
     expect(result).toBe('iframe')
   })
 
-  it.skip('should return "walletconnect" if connector is a WalletConnectConnector and connected to Safe app', async () => {
-        new WalletConnectConnector({
-            options: {
-              projectId: WC_PROJECT_ID,
-            },
-          })
-    const connector = new WalletConnectConnector({
-      rpc: { 1: 'https://mainnet.infura.io/v3/1234567890abcdef' },
-      bridge: 'https://bridge.walletconnect.org',
-      qrcode: true,
-      pollingInterval: 12000,
-      options: {
-        projectId: WC_PROJECT_ID,
-        showQrModal: false
-      }
-    })
+  it('should return "walletconnect" if connector is a WalletConnectConnector and connected to Safe app', async () => {
+    const connector = Object.create(WalletConnectConnector.prototype)
 
     connector.getProvider = () => ({ session: {
         peer: {
@@ -45,13 +30,8 @@ describe('checkIsSafeApp', () => {
     expect(result).toBe('walletconnect')
   })
 
-  it.skip('should return false if connector is a WalletConnectConnector but not connected to Safe app', async () => {
-    const connector = new WalletConnectConnector({
-      rpc: { 1: 'https://mainnet.infura.io/v3/1234567890abcdef' },
-      bridge: 'https://bridge.walletconnect.org',
-      qrcode: true,
-      pollingInterval: 12000,
-    })
+  it('should return false if connector is a WalletConnectConnector but not connected to Safe app', async () => {
+    const connector = Object.create(WalletConnectConnector.prototype)
     connector.getProvider = () => ({ session: {
         peer: {
             metadata: {
