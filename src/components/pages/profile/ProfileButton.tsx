@@ -37,10 +37,9 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
       inline
       data-testid={`social-profile-button-${iconKey}`}
       value={socialData.value}
-      {...(socialData.type === 'link' 
+      {...(socialData.type === 'link'
         ? { as: 'a' as const, link: socialData.urlFormatter }
-        : { as: 'button' as const }
-      )}
+        : { as: 'button' as const })}
     >
       {socialData.value}
     </RecordItem>
