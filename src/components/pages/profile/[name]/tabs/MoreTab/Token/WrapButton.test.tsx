@@ -328,6 +328,7 @@ describe('WrapButton', () => {
     // name is sub2.test123.eth
     render(
       <WrapButton
+        // eslint-disable-next-line no-restricted-syntax
         name="[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
@@ -340,9 +341,11 @@ describe('WrapButton', () => {
 
     const args = mockShowDataInput.mock.lastCall
     expect(args[0]).toBe(
+      // eslint-disable-next-line no-restricted-syntax
       'wrapName-[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
     )
     expect(args[1].name).toBe(
+      // eslint-disable-next-line no-restricted-syntax
       '[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
     )
     const {
@@ -352,6 +355,7 @@ describe('WrapButton', () => {
     expect(transactions[0].data).toEqual({ address: '0x123' })
     expect(transactions[1].name).toEqual('wrapName')
     expect(transactions[1].data).toEqual({
+      // eslint-disable-next-line no-restricted-syntax
       name: '[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
     })
   })

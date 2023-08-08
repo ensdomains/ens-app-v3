@@ -8,6 +8,7 @@ import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEdit
 import type { Props as BurnFusesProps } from './BurnFuses/BurnFuses-flow'
 import type { Props as CreateSubnameProps } from './CreateSubname-flow'
 import type { Props as DeleteEmancipatedSubnameWarningProps } from './DeleteEmancipatedSubnameWarning/DeleteEmancipatedSubnameWarning-flow'
+import type { Props as DeleteSubnameNotParentWarningProps } from './DeleteSubnameNotParentWarning/DeleteSubnameNotParentWarning-flow'
 import type { Props as EditResolverProps } from './EditResolver/EditResolver-flow'
 import type { Props as ExtendNamesProps } from './ExtendNames/ExtendNames-flow'
 import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor-flow'
@@ -60,6 +61,9 @@ const UnknownLabels = dynamicHelper<UnknownLabelsProps>('UnknownLabels/UnknownLa
 const DeleteEmancipatedSubnameWarning = dynamicHelper<DeleteEmancipatedSubnameWarningProps>(
   'DeleteEmancipatedSubnameWarning/DeleteEmancipatedSubnameWarning',
 )
+const DeleteSubnameNotParentWarning = dynamicHelper<DeleteSubnameNotParentWarningProps>(
+  'DeleteSubnameNotParentWarning/DeleteSubnameNotParentWarning',
+)
 
 export const DataInputComponents = {
   EditResolver,
@@ -75,6 +79,7 @@ export const DataInputComponents = {
   RevokePermissions,
   UnknownLabels,
   DeleteEmancipatedSubnameWarning,
+  DeleteSubnameNotParentWarning,
 }
 
 export type DataInputName = keyof typeof DataInputComponents

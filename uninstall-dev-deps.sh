@@ -6,11 +6,8 @@ devDeps=(
     "@next/bundle-analyzer"
     "@nomiclabs/hardhat-ethers"
     "@openzeppelin/contracts"
-    "@synthetixio/synpress"
-    "@testing-library/cypress"
     "@testing-library/jest-dom"
     "@testing-library/react"
-    "cypress"
     "ens-contracts"
     "ganache"
     "hardhat"
@@ -23,5 +20,4 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 FORMATTED=$(join_by " " "${devDeps[@]}")
 
 rm -rf ./e2e ./deploy ./contracts ./jest.setup.ts ./hardhat.config.ts
-sed -i '/cypress/d' ./tsconfig.json
 yarn remove $FORMATTED

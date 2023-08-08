@@ -8,10 +8,9 @@ export const usePrimaryNameOrAddress = (address: string, length = 4) => {
   const { data: primaryData, ...rest } = usePrimary(address)
   const shortenedAddress = shortenAddress(address, length)
   const data = useMemo(() => {
-    if (!primaryData) return undefined
     return {
-      nameOrAddr: primaryData.name || shortenedAddress,
-      type: primaryData.name ? 'name' : 'address',
+      nameOrAddr: primaryData?.name ?? shortenedAddress,
+      type: primaryData?.name ? 'name' : 'address',
     }
   }, [primaryData, shortenedAddress])
 

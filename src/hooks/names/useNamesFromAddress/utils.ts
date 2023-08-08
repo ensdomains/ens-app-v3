@@ -13,6 +13,7 @@ type ReturnedName = Name & {
 
 export const mergeNames = (names: Name[]) => {
   const nameMap = names.reduce((map, curr) => {
+    // eslint-disable-next-line no-restricted-syntax
     if (curr.id === '0x0000000000000000000000000000000000000000000000000000000000000000') {
       // eslint-disable-next-line no-param-reassign
       curr = {

@@ -8,13 +8,12 @@ import { Helper } from '@ensdomains/thorin'
 import { Outlink } from '@app/components/Outlink'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfileActions } from '@app/hooks/useProfileActions'
-import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
-import { useSubnameAbilities } from '@app/hooks/useSubnameAbilities'
 import { getSupportLink } from '@app/utils/supportLinks'
 import { validateExpiry } from '@app/utils/utils'
 
@@ -54,7 +53,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     gracePeriodEndDate,
   } = nameDetails
 
-  const selfAbilities = useSelfAbilities(address, name)
+  const abilities = useAbilities(name)
 
   const { data: primaryData } = usePrimary(address)
 
@@ -62,16 +61,14 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     ownerData: ownerData!,
     wrapperData: wrapperData!,
     dnsOwner,
-    selfAbilities,
+    abilities: abilities.data,
   })
-  const { abilities: subnameAbilities, isCachedData: subnameAbilitiesCachedData } =
-    useSubnameAbilities({ address, name, ownerData, wrapperData, pccExpired })
+
   const profileActions = useProfileActions({
     address,
     name,
     profile,
-    selfAbilities,
-    subnameAbilities,
+    abilities: abilities.data,
     ownerData,
     wrapperData,
     expiryDate,
@@ -83,8 +80,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
   )
   const snippetButton = useMemo(() => {
     if (isExpired) return 'register'
-    if (selfAbilities.canExtend) return 'extend'
-  }, [isExpired, selfAbilities.canExtend])
+    if (abilities.data?.canExtend) return 'extend'
+  }, [isExpired, abilities.data?.canExtend])
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
@@ -95,7 +92,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         network={chainId}
         getTextRecord={getTextRecord}
         button={snippetButton}
-        canEdit={selfAbilities.canEdit}
+        canEdit={abilities.data?.canEdit}
         isPrimary={name === primaryData?.name}
       >
         {nameDetails.isNonASCII && (
@@ -123,7 +120,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           pccExpired,
         )}
         pccExpired={!!pccExpired}
-        isCached={profileIsCachedData || basicIsCachedData || subnameAbilitiesCachedData}
+        isCached={profileIsCachedData || basicIsCachedData || abilities.isCachedData}
         addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
           key: item.coin,
           value: item.addr,

@@ -104,6 +104,21 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       draft.selectedKey = null
       break
     }
+    case 'setFailedTransaction': {
+      if (!action.payload.key) {
+        console.error('No key provided for setFailedTransaction')
+        break
+      }
+      const transaction = draft.items[action.payload.key].transactions.find(
+        (x) => x.hash === action.payload.hash,
+      )
+      if (!transaction) {
+        console.error('No transaction found for setFailedTransaction')
+        break
+      }
+      transaction.stage = 'failed'
+      break
+    }
     case 'incrementTransaction': {
       getSelectedItem().currentTransaction += 1
       break
@@ -130,9 +145,11 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
     }
     case 'setTransactionStageFromUpdate': {
       const { hash, key, status, minedData, newHash } = action.payload
+
       const selectedItem = draft.items[key!]
       if (!selectedItem) break
       const transaction = selectedItem.transactions.find((x) => x.hash === hash)
+
       if (transaction) {
         if (status === 'repriced') {
           transaction.hash = newHash
@@ -142,7 +159,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         const stage = status === 'confirmed' ? 'complete' : 'failed'
         transaction.stage = stage
         transaction.minedData = minedData
-        transaction.finaliseTime = minedData!.timestamp
+        transaction.finaliseTime = minedData?.timestamp
         if (
           key === draft.selectedKey &&
           selectedItem.autoClose &&

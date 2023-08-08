@@ -113,6 +113,7 @@ describe('TransactionSection', () => {
       {
         status: 'confirmed',
         action: 'registerName',
+        // eslint-disable-next-line no-restricted-syntax
         hash: '0x4d6cf7e1c8620a59c8a0d2d2c9bf9bbca6dbf65e694f01d1e5f85c87315e20c7',
         key: 'register-test-hyphens.eth-0x99b7A9E80F46F7d0eB11b5147e6fF64E47698b6C',
       },
@@ -125,6 +126,7 @@ describe('TransactionSection', () => {
       {
         status: 'confirmed',
         action: 'registerName',
+        // eslint-disable-next-line no-restricted-syntax
         hash: '0x4d6cf7e1c8620a59c8a0d2d2c9bf9bbca6dbf65e694f01d1e5f85c87315e20c7',
         key: 'register-test.eth-0x99b7A9E80F46F7d0eB11b5147e6fF64E47698b6C',
       },
@@ -137,6 +139,7 @@ describe('TransactionSection', () => {
       {
         status: 'confirmed',
         action: 'commitName',
+        // eslint-disable-next-line no-restricted-syntax
         hash: '0x4d6cf7e1c8620a59c8a0d2d2c9bf9bbca6dbf65e694f01d1e5f85c87315e20c7',
         key: 'commit-test-hyphens.eth-0x99b7A9E80F46F7d0eB11b5147e6fF64E47698b6C',
       },
@@ -149,6 +152,7 @@ describe('TransactionSection', () => {
       {
         status: 'confirmed',
         action: 'commitName',
+        // eslint-disable-next-line no-restricted-syntax
         hash: '0x4d6cf7e1c8620a59c8a0d2d2c9bf9bbca6dbf65e694f01d1e5f85c87315e20c7',
         key: 'commit-test.eth-0x99b7A9E80F46F7d0eB11b5147e6fF64E47698b6C',
       },

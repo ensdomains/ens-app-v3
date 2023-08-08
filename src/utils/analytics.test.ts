@@ -1,5 +1,6 @@
 import { getUtm, setUtm, setupAnalytics, trackEvent } from './analytics'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Window = {
   plausible: any
 }
@@ -13,7 +14,7 @@ describe('analytics', () => {
 
   describe('utm', () => {
     it('can set and get utm', () => {
-      global.window = Object.create(window)
+      global.window ??= Object.create(window)
       const source = 'twitter'
       Object.defineProperty(window, 'location', {
         value: {
@@ -27,7 +28,7 @@ describe('analytics', () => {
   })
   describe('trackEvent', () => {
     it('send event to plausible', () => {
-      global.window = Object.create(window)
+      global.window ??= Object.create(window)
       const mockPlausibleFunction = jest.fn()
       window.plausible = mockPlausibleFunction
 

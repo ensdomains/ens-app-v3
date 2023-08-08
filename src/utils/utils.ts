@@ -138,5 +138,7 @@ export const canEditRecordsWhenWrappedCalc = (
   return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
 }
 
+export const hexToNumber = (hex: string) => parseInt(hex, 16)
+
 export const calculateValueWithBuffer = (value: BigNumber) =>
   value.mul(CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE).div(100)
