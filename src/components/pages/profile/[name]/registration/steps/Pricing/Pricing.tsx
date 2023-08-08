@@ -263,8 +263,8 @@ const PaymentChoice = ({
   setReverseRecord,
   started,
 }: {
-  paymentMethodChoice: PaymentMethod | ''
-  setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod | ''>>
+  paymentMethodChoice: PaymentMethod
+  setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod>>
   hasEnoughEth: boolean
   hasPendingMoonpayTransaction: boolean
   hasFailedMoonpayTransaction: boolean
@@ -454,6 +454,7 @@ type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   resolverExists: boolean | undefined
   callback: (props: RegistrationStepData['pricing']) => void
+  isPrimaryLoading: boolean
   hasPrimaryName: boolean
   registrationData: RegistrationReducerDataItem
   moonpayTransactionStatus?: MoonpayTransactionStatus
@@ -465,6 +466,7 @@ type Props = {
 const Pricing = ({
   nameDetails,
   callback,
+  isPrimaryLoading,
   hasPrimaryName,
   registrationData,
   resolverExists,
@@ -489,15 +491,17 @@ const Pricing = ({
 
   const previousMoonpayTransactionStatus = usePrevious(moonpayTransactionStatus)
 
-  const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod | ''>(
-    hasPendingMoonpayTransaction ? PaymentMethod.moonpay : '',
+  const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod>(
+    hasPendingMoonpayTransaction ? PaymentMethod.moonpay : PaymentMethod.ethereum,
   )
 
   // Keep radio button choice up to date
   useEffect(() => {
     if (moonpayTransactionStatus) {
       setPaymentMethodChoice(
-        hasPendingMoonpayTransaction || hasFailedMoonpayTransaction ? PaymentMethod.moonpay : '',
+        hasPendingMoonpayTransaction || hasFailedMoonpayTransaction
+          ? PaymentMethod.moonpay
+          : PaymentMethod.ethereum,
       )
     }
   }, [
@@ -526,6 +530,7 @@ const Pricing = ({
   const yearlyRequiredBalance = totalYearlyFee?.mul(110).div(100)
   const totalRequiredBalance = yearlyRequiredBalance?.add(premiumFee || 0).add(estimatedGasFee || 0)
 
+  const showPaymentChoice = !isPrimaryLoading && address
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
@@ -552,7 +557,7 @@ const Pricing = ({
           />
         )
       )}
-      {address && (
+      {showPaymentChoice && (
         <PaymentChoice
           {...{
             paymentMethodChoice,
