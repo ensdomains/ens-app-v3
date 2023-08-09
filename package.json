@@ -44,7 +44,8 @@
     "wrangle:list": "wrangler deployments list",
     "generate:sitemaps": "node ./scripts/generate-site-map.mjs",
     "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
-    "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml"
+    "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml",
+    "subgraph:update": "ens-test-env subgraph --var NEXT_PUBLIC_DEPLOYMENT_ADDRESSES"
   },
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.21",
@@ -121,7 +122,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.1",
     "@ensdomains/buffer": "^0.1.0",
-    "@ensdomains/ens-test-env": "^0.3.7",
+    "@ensdomains/ens-test-env": "^0.3.8",
     "@ethersproject/wallet": "^5.7.0",
     "@next/bundle-analyzer": "^12.2.5",
     "@next/swc-linux-x64-gnu": "12.1.4",
