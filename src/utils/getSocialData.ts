@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 export const getSocialData = (iconKey: string, value: string) => {
   switch (iconKey) {
     case 'twitter':
@@ -46,6 +48,34 @@ export const getSocialData = (iconKey: string, value: string) => {
         label: 'Email',
         value,
         type: 'copy',
+      }
+    case 'timezone':
+      return {
+        icon: 'timezone',
+        color: '#2BABEE',
+        label: 'Timezone',
+        value: (() => {
+          try {
+            const zone = DateTime.now().setZone(value)
+            const now = DateTime.now().toLocal()
+
+            // Number of minutes between now and the target zone
+            const minutes = zone.offset - now.offset
+            const absoluteMinutes = Math.abs(minutes)
+
+            // To hour offset, 120 minutes = "+2:00", 90 minutes = "+1:30" including leading zeroes
+            const offset = `${minutes < 0 ? '-' : '+'}${Math.floor(absoluteMinutes / 60)
+              .toString()
+              .padStart(2, '0')}:${Math.abs(absoluteMinutes % 60)
+              .toString()
+              .padStart(2, '0')}`
+
+            return `${value} (${offset})`
+          } catch {
+            // If unable to parse offset simply return the user-set value
+            return value
+          }
+        })(),
       }
     default:
       return null

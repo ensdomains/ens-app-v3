@@ -11,6 +11,7 @@ export const socialIconTypes = {
   'com.twitter': dynamic(() => import('./SocialTwitter.svg')),
   'com.youtube': dynamic(() => import('./SocialYoutube.svg')),
   'org.telegram': dynamic(() => import('./SocialTelegram.svg')),
+  timezone: dynamic(() => import('@ensdomains/thorin').then((m) => m.MarkerSVG)),
   email: dynamic(() => import('@ensdomains/thorin').then((m) => m.EnvelopeSVG)),
 }
 
@@ -22,6 +23,7 @@ export const socialIconColors = {
   'com.twitter': '#65C5FC',
   'com.youtube': '#FF0000',
   'org.telegram': '#2BABEE',
+  timezone: '#000000',
   email: '#000000',
 }
 
