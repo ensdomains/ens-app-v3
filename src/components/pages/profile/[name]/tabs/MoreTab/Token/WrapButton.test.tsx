@@ -10,6 +10,19 @@ import WrapButton from './WrapButton'
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useWrapperApprovedForAll')
 
+const createMockResolverStatus = (overides = {}) => ({
+  data: {
+    isMigratedProfileEqual: true,
+    isNameWrapperAware: false,
+    ...overides,
+  },
+  isLoading: false
+})
+const mockUseResolverStatus = jest.fn().mockReturnValue(createMockResolverStatus())
+jest.mock('@app/hooks/resolver/useResolverStatus', () => ({
+  useResolverStatus: () => mockUseResolverStatus()
+}))
+
 const mockUseTransaction = mockFunction(useTransactionFlow)
 const mockUseAccount = mockFunction(useAccount)
 const mockUseWrapperApprovedForAll = mockFunction(useWrapperApprovedForAll)
@@ -31,6 +44,10 @@ describe('WrapButton', () => {
   mockUseWrapperApprovedForAll.mockReturnValue({
     approvedForAll: true,
     isLoading: false,
+  })
+
+  beforeEach(() => {
+    mockUseResolverStatus.mockReturnValue(createMockResolverStatus())
   })
 
   it('should render', () => {
@@ -72,6 +89,7 @@ describe('WrapButton', () => {
     expect(mockCreateTransactionFlow).toHaveBeenCalled()
   })
   it('should create a transaction flow for migrateProfile and wrapName', async () => {
+    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({ isMigratedProfileEqual: false }))
     render(
       <WrapButton
         name="test123.eth"
@@ -156,6 +174,7 @@ describe('WrapButton', () => {
     expect(args[1].transactions[0].data).toEqual({ name: 'test123.eth' })
   })
   it('should create a transaction flow for a .eth 2LD with a profile and a different owner', () => {
+    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({ isMigratedProfileEqual: false }))
     render(
       <WrapButton
         name="test123.eth"
@@ -271,7 +290,9 @@ describe('WrapButton', () => {
     expect(args[1].transactions[0].name).toEqual('wrapName')
     expect(args[1].transactions[0].data).toEqual({ name: 'sub.test123.eth' })
   })
+
   it('should create a transaction flow for a subname with a profile', () => {
+    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({isMigratedProfileEqual: false}))
     render(
       <WrapButton
         name="sub.test123.eth"
