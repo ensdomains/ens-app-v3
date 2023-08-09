@@ -10,7 +10,9 @@ import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.jso
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
+import { ContentHash } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { contentHashToString } from '@app/utils/contenthash'
 import { checkETH2LDFromName, formatExpiry } from '@app/utils/utils'
 
 import {
@@ -282,6 +284,7 @@ export const ownershipInfoCalc = (
 export const ProfileDetails = ({
   textRecords = [],
   addresses = [],
+  contentHash,
   expiryDate,
   pccExpired,
   owners,
@@ -292,6 +295,7 @@ export const ProfileDetails = ({
 }: {
   textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
+  contentHash?: ContentHash
   expiryDate: Date | undefined
   pccExpired: boolean
   owners: ReturnType<typeof useOwners>
@@ -310,6 +314,9 @@ export const ProfileDetails = ({
           !supportedProfileItems.includes(x.key.toLowerCase()),
       )
       .map((x) => ({ ...x, type: 'text' })),
+    ...(contentHash
+      ? [{ key: 'contenthash', type: 'contenthash', value: contentHashToString(contentHash) }]
+      : []),
   ]
 
   const mappedOwners = ownershipInfoCalc(name, pccExpired, owners, gracePeriodEndDate, expiryDate)
