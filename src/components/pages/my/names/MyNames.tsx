@@ -119,7 +119,7 @@ const MyNames = () => {
   const isNameDisabled = useCallback(
     (name: ReturnedName) => {
       if (mode !== 'select') return false
-      return !name.expiryDate
+      return name.parent?.name !== 'eth'
     },
     [mode],
   )
