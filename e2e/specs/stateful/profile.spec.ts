@@ -29,7 +29,7 @@ const profiles = [
       {
         type: 'account',
         key: 'com.discord',
-        value: 'ens#0700',
+        value: 'lucemans',
       },
       {
         type: 'account',
