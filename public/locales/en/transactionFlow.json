@@ -56,7 +56,8 @@
             "com.twitter": "e.g. ensdomains",
             "com.github": "e.g. ensdomains",
             "com.discord": "e.g. alisha.eth#0001",
-            "org.telegram": "e.g. futurealisha"
+            "org.telegram": "e.g. futurealisha",
+            "email": "e.g. hello@example.com"
           }
         },
         "address": {

@@ -272,6 +272,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   resolverExists={resolverExists}
                   nameDetails={nameDetails}
                   callback={pricingCallback}
+                  isPrimaryLoading={primary.isLoading}
                   hasPrimaryName={!!primary.data?.name}
                   registrationData={item}
                   moonpayTransactionStatus={moonpayTransactionStatus}
