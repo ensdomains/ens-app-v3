@@ -16,15 +16,15 @@ overrides:
   wagmi: 0.12.13
 
 patchedDependencies:
-  react-confetti@6.1.0:
-    hash: bbuxkxhxbyez4jmqgptuoucij4
-    path: patches/react-confetti@6.1.0.patch
   next-dev-https@0.1.2:
     hash: q5l3x5627ujg3rak6l6v24c2cq
     path: patches/next-dev-https@0.1.2.patch
   '@rainbow-me/rainbowkit@0.12.15':
     hash: ids4vnpwyenrujupancx6kn4ci
     path: patches/@rainbow-me__rainbowkit@0.12.15.patch
+  react-confetti@6.1.0:
+    hash: bbuxkxhxbyez4jmqgptuoucij4
+    path: patches/react-confetti@6.1.0.patch
 
 importers:
 
@@ -39,7 +39,7 @@ importers:
       '@ensdomains/ens-contracts': 0.0.16
       '@ensdomains/ens-test-env': ^0.3.8
       '@ensdomains/ens-validation': ^0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.65
+      '@ensdomains/ensjs': 3.0.0-alpha.66
       '@ensdomains/eth-ens-namehash': ^2.0.15
       '@ensdomains/thorin': 0.6.42
       '@ethersproject/abi': ^5.6.4
@@ -184,7 +184,7 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_v6aogrdjojfeat5uhab6hyaxg4
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.65_4wk6sblqc5kfzwjkcabkhle2du
+      '@ensdomains/ensjs': 3.0.0-alpha.66_4wk6sblqc5kfzwjkcabkhle2du
       '@ensdomains/eth-ens-namehash': 2.0.15
       '@ensdomains/thorin': 0.6.42_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
@@ -2252,8 +2252,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.65_4wk6sblqc5kfzwjkcabkhle2du:
-    resolution: {integrity: sha512-49aV28uoQ4ducM0GAl2HxPHyc0lY3Gd8eAuBJrWnGVJTMBZ5q1wnT0YsSGiPB2VZ2Q07D/5vsP3NzavbpK+jIg==}
+  /@ensdomains/ensjs/3.0.0-alpha.66_4wk6sblqc5kfzwjkcabkhle2du:
+    resolution: {integrity: sha512-bXaKh++A3Ui/JP2xG7mIjrMaEAfONf4lFBz9bEdGImjU/DVd7kdP0jCXH5nMTOKGo3VuvSybWths24aGWIzFLA==}
     peerDependencies:
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
