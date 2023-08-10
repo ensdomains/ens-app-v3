@@ -123,6 +123,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     isWrapped,
     isLoading: detailsLoading,
     wrapperData,
+    registrationStatus,
   } = nameDetails
 
   const isLoading = _isLoading || detailsLoading
@@ -210,11 +211,15 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   }, [name, router, transactions])
 
   const infoBanner = useMemo(() => {
-    if (gracePeriodEndDate && gracePeriodEndDate < new Date()) {
+    if (
+      registrationStatus !== 'gracePeriod' &&
+      gracePeriodEndDate &&
+      gracePeriodEndDate < new Date()
+    ) {
       return <NameAvailableBanner {...{ normalisedName, expiryDate }} />
     }
     return undefined
-  }, [gracePeriodEndDate, normalisedName, expiryDate])
+  }, [registrationStatus, gracePeriodEndDate, normalisedName, expiryDate])
 
   const warning: ContentWarning = useMemo(() => {
     if (error)
