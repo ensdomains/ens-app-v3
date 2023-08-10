@@ -20,6 +20,7 @@ export type RegistrationStatus =
   | 'unsupportedTLD'
 
 export const getRegistrationStatus = ({
+  timestamp,
   validation: { isETH, is2LD, isShort, type },
   ownerData,
   wrapperData,
@@ -27,6 +28,7 @@ export const getRegistrationStatus = ({
   priceData,
   supportedTLD,
 }: {
+  timestamp: number
   validation: Partial<Omit<ParsedInputResult, 'normalised' | 'isValid'>>
   ownerData?: ReturnedENS['getOwner']
   wrapperData?: ReturnedENS['getWrapperData']
@@ -52,10 +54,10 @@ export const getRegistrationStatus = ({
         gracePeriod: number
       }
       const expiry = new Date(_expiry)
-      if (expiry.getTime() > Date.now()) {
+      if (expiry.getTime() > timestamp) {
         return 'registered'
       }
-      if (expiry.getTime() + gracePeriod > Date.now()) {
+      if (expiry.getTime() + gracePeriod > timestamp) {
         return 'gracePeriod'
       }
       const { premium } = priceData as {

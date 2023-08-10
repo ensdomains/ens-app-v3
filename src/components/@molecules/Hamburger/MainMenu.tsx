@@ -16,7 +16,8 @@ import SocialDiscord from '@app/assets/social/SocialDiscord.svg'
 import SocialDiscourse from '@app/assets/social/SocialDiscourse.svg'
 import SocialDiscourseColour from '@app/assets/social/SocialDiscourseColour.svg'
 import SocialGithub from '@app/assets/social/SocialGithub.svg'
-import SocialMedium from '@app/assets/social/SocialMedium.svg'
+import SocialMirror from '@app/assets/social/SocialMirror.svg'
+import SocialMirrorColour from '@app/assets/social/SocialMirrorColour.svg'
 import SocialTwitter from '@app/assets/social/SocialTwitter.svg'
 import SocialYoutube from '@app/assets/social/SocialYoutube.svg'
 import BaseLink from '@app/components/@atoms/BaseLink'
@@ -292,9 +293,9 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
         <SocialIcon Icon={SocialGithub} color="#0F0F0F" href="https://github.com/ensdomains" />
         <SocialIcon Icon={SocialDiscord} color="#7F83FF" href="https://chat.ens.domains" />
         <SocialIcon
-          Icon={SocialMedium}
-          color="#0F0F0F"
-          href="https://medium.com/the-ethereum-name-service"
+          Icon={SocialMirror}
+          ColoredIcon={SocialMirrorColour}
+          href="https://ens.mirror.xyz"
         />
         <SocialIcon
           Icon={SocialDiscourse}
