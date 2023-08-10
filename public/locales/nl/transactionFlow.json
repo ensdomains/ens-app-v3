@@ -54,7 +54,7 @@
             "default": "Voeg username hier toe",
             "com.twitter": "e.g. ensdomains",
             "com.github": "e.g. ensdomains",
-            "com.discord": "e.g. alisha.eth#0001"
+            "com.discord": "e.g. nickjohnson"
           }
         },
         "address": {
