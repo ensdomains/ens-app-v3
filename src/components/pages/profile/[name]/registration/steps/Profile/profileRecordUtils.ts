@@ -3,8 +3,8 @@ import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { ProfileRecord, ProfileRecordGroup, sortValues } from '@app/constants/profileRecordOptions'
 import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
-import { DetailedProfile } from '@app/hooks/useNameDetails'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
+import { Profile } from '@app/types'
 import {
   contentHashProtocolToContentHashProvider,
   contentHashToString,
@@ -134,7 +134,7 @@ const sortProfileRecords = (recordA: ProfileRecord, recordB: ProfileRecord): num
   return recordAValue - recordBValue
 }
 
-export const profileToProfileRecords = (profile?: DetailedProfile): ProfileRecord[] => {
+export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
   const records = profile?.records || {}
   const texts: ProfileRecord[] =
     records.texts?.map(({ key, value }) => {

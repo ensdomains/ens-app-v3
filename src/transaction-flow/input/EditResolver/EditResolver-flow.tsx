@@ -38,8 +38,8 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const { isWrapped } = useBasicName(name, { skipGraph: false })
   const formRef = useRef<HTMLFormElement>(null)
 
-  const { profile = { resolverAddress: '' } } = useProfile(name as string)
-  const { resolverAddress } = profile
+  const profile = useProfile(name as string)
+  const resolverAddress = profile.data?.resolverAddress
 
   const handleCreateTransaction = useCallback(
     (newResolver: string) => {

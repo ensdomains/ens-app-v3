@@ -1,8 +1,7 @@
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
-import { DetailedProfile } from '@app/hooks/useNameDetails'
-import { RecordItem } from '@app/types/index'
+import { Profile, RecordItem } from '@app/types/index'
 
 export const formSafeKey = (key: string) =>
   encodeURIComponent(key).replace(
@@ -34,7 +33,7 @@ export type ProfileFormObject = {
   }
 }
 
-export const convertProfileToProfileFormObject = (profile: DetailedProfile): ProfileFormObject => {
+export const convertProfileToProfileFormObject = (profile: Profile): ProfileFormObject => {
   const address =
     profile.records?.coinTypes?.reduce((map, record) => {
       const { coin } = record

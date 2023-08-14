@@ -1,6 +1,6 @@
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 
-import { DetailedProfile } from '../../../../../../../hooks/useNameDetails'
+import { Profile } from '@app/types'
 import {
   getProfileRecordsDiff,
   profileRecordsToRecordOptions,
@@ -560,7 +560,7 @@ describe('profileRecordsToRecordOptions', () => {
 describe('profileToProfileRecords', () => {
   describe('contenthash', () => {
     it('should correctly convert ipfs contenthash', () => {
-      const profile: DetailedProfile = {
+      const profile: Profile = {
         records: {
           contentHash: 'ipfs://QmRAQB6YaCyidP37UdDnjFY5vQuiBrcqdyoW1CuDgwxkD4',
         },
@@ -579,7 +579,7 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert ipns contenthash', () => {
-      const profile: DetailedProfile = {
+      const profile: Profile = {
         records: {
           contentHash: 'ipns://k2k4r8kgnix5x0snul9112xdpqgiwc5xmvi8ja0szfhntep2d7qv8zz3',
         },
@@ -598,7 +598,7 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert sia contenthash', () => {
-      const profile: DetailedProfile = {
+      const profile: Profile = {
         records: {
           contentHash: 'sia://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
@@ -617,7 +617,7 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert bzz contenthash', () => {
-      const profile: DetailedProfile = {
+      const profile: Profile = {
         records: {
           contentHash: 'bzz://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
@@ -636,7 +636,7 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert onion contenthash', () => {
-      const profile: DetailedProfile = {
+      const profile: Profile = {
         records: {
           contentHash: 'onion://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
@@ -655,7 +655,7 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert onion3 contenthash', () => {
-      const profile: DetailedProfile = {
+      const profile: Profile = {
         records: {
           contentHash: 'onion3://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
@@ -674,7 +674,7 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert arweave contenthash', () => {
-      const profile: DetailedProfile = {
+      const profile: Profile = {
         records: {
           contentHash: 'arweave://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
@@ -693,7 +693,7 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert ar contenthash', () => {
-      const profile: DetailedProfile = {
+      const profile: Profile = {
         records: {
           contentHash: 'ar://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
@@ -712,7 +712,7 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should return empty if contenthash does not match', () => {
-      const profile: DetailedProfile = {
+      const profile: Profile = {
         records: {
           contentHash: 'notvalid://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },

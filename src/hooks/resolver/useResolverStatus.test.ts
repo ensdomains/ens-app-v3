@@ -53,11 +53,11 @@ jest.mock('@app/hooks/useBasicName', () => ({
 
 const mockUseLatestResolverProfile = jest
   .fn()
-  .mockReturnValue({ loading: false, profile: makeProfile({}) })
-const mockUseProfile = jest.fn().mockReturnValue({ loading: false, profile: makeProfile({}) })
+  .mockReturnValue({ isLoading: false, data: makeProfile({}) })
+const mockUseProfile = jest.fn().mockReturnValue({ isLoading: false, data: makeProfile({}) })
 jest.mock('@app/hooks/useProfile', () => ({
   useProfile: jest.fn().mockImplementation((_, options = {}) => {
-    if (options?.skip) return { data: undefined, loading: false }
+    if (!options?.enabled) return { data: undefined, isLoading: false }
     if (options?.resolverAddress) {
       return mockUseLatestResolverProfile()
     }
@@ -174,8 +174,8 @@ describe('useResolverStatus', () => {
   it('should not return isMigratedProfileEqual is true if latest resolver profile does not match', () => {
     mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
     mockUseLatestResolverProfile.mockReturnValueOnce({
-      profile: makeProfile({ texts: [{ key: 'nickname', value: 'Rumpleskilskin' }] }),
-      loading: false,
+      data: makeProfile({ texts: [{ key: 'nickname', value: 'Rumpleskilskin' }] }),
+      isLoading: false,
     })
     const { result } = renderHook(() => useResolverStatus('test.eth'))
     expect(result.current).toMatchObject(
@@ -197,8 +197,8 @@ describe('useResolverStatus', () => {
   it('should return hasMigratedRecord is true if migratedRecordsMatch matches on latest resolver profile', () => {
     mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
     mockUseLatestResolverProfile.mockReturnValueOnce({
-      profile: makeProfile({ coinTypes: [{ key: '60', coin: 'ETH', addr: '0xotheraddress' }] }),
-      loading: false,
+      data: makeProfile({ coinTypes: [{ key: '60', coin: 'ETH', addr: '0xotheraddress' }] }),
+      isLoading: false,
     })
     const { result } = renderHook(() =>
       useResolverStatus('test.eth', {
@@ -225,8 +225,8 @@ describe('useResolverStatus', () => {
   it('should return hasMigratedRecord is false if migratedRecordsMatch does not match on latest resolver profile', () => {
     mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
     mockUseLatestResolverProfile.mockReturnValueOnce({
-      profile: makeProfile({ coinTypes: [{ key: '60', coin: 'ETH', addr: '0xothermatch' }] }),
-      loading: false,
+      data: makeProfile({ coinTypes: [{ key: '60', coin: 'ETH', addr: '0xothermatch' }] }),
+      isLoading: false,
     })
     const { result } = renderHook(() =>
       useResolverStatus('test.eth', {
@@ -292,8 +292,8 @@ describe('useResolverStatus', () => {
   it('should call mockUseLatestResolverProfile if current resolver address is empty address', () => {
     mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
     mockUseProfile.mockReturnValueOnce({
-      loading: false,
-      profile: makeProfile({ resolverAddress: emptyAddress }),
+      isLoading: false,
+      data: makeProfile({ resolverAddress: emptyAddress }),
     })
     const { result } = renderHook(() => useResolverStatus('test.eth'))
     expect(result.current).toMatchObject(
@@ -314,8 +314,8 @@ describe('useResolverStatus', () => {
   it('should call mockUseLatestResolverProfile if current resolver address is empty string', () => {
     mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
     mockUseProfile.mockReturnValueOnce({
-      loading: false,
-      profile: makeProfile({ resolverAddress: '' }),
+      isLoading: false,
+      data: makeProfile({ resolverAddress: '' }),
     })
     mockUseResolverIsAuthorized.mockReturnValueOnce({
       data: { isAuthorized: false, isValid: false },

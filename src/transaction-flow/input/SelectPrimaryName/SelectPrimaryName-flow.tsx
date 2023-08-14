@@ -212,7 +212,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   })
 
   const selectedNameProfile = useProfile(selectedName?.name!, {
-    skip: !selectedName?.name,
+    enabled: !!selectedName?.name,
     skipGraph: true,
   })
 
@@ -224,8 +224,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const getPrimarynameTransactionFlowItem = useGetPrimaryNameTransactionFlowItem({
     address,
     isWrapped,
-    profileAddress: selectedNameProfile.profile?.address,
-    resolverAddress: selectedNameProfile.profile?.resolverAddress,
+    profileAddress: selectedNameProfile.data?.address,
+    resolverAddress: selectedNameProfile.data?.resolverAddress,
     resolverStatus: resolverStatus.data,
   })
 

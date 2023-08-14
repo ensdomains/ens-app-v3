@@ -7,9 +7,13 @@ import type { ChildFuses, ENS } from '@ensdomains/ensjs'
 import { DecodedContentHash } from '@ensdomains/ensjs/utils/contentHash'
 import { Helper, Space } from '@ensdomains/thorin'
 
-export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
-
-export type ProfileRecords = NonNullable<Profile['records']>
+export type BaseProfile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
+export type ProfileRecords = BaseProfile['records'] & {
+  abi?: { data: string; contentType?: number }
+}
+export type Profile = Omit<BaseProfile, 'records'> & {
+  records: ProfileRecords
+}
 
 export type RecordItem = NonNullable<ProfileRecords['texts']>[number]
 

@@ -1,37 +1,30 @@
-import { useEffect, useState } from 'react'
-
-import { Profile } from '@app/types'
+import { useMemo } from 'react'
 
 import { usePrimary } from './usePrimary'
 import { useProfile } from './useProfile'
 
 export const usePrimaryProfile = (address: string, skip?: any) => {
-  const [profile, setProfile] = useState<Profile | undefined>(undefined)
-
   const primary = usePrimary(address || '', skip)
 
-  const {
-    profile: primaryProfile,
-    loading: profileLoading,
-    status: profileStatus,
-  } = useProfile(primary.data?.name || '', skip)
+  const primaryProfile = useProfile(primary.data?.name || '', { enabled: !skip })
 
-  useEffect(() => {
-    let mounted = true
-    if (primary.data?.name && primaryProfile && mounted) {
-      setProfile({
-        ...primaryProfile,
-        name: primary.data?.name,
-      })
-    } else if (mounted) setProfile(undefined)
-    return () => {
-      mounted = false
+  const isLoading = primary.isLoading || primaryProfile.isLoading
+  const isFetching = primary.isFetching || primaryProfile.isFetching
+  const isError = primary.isError || primaryProfile.isError
+
+  const data = useMemo(() => {
+    if (isLoading) return null
+    return {
+      name: primary.data?.name,
+      ...(primaryProfile.data || {}),
     }
-  }, [primary.data?.name, primaryProfile])
+  }, [isLoading, primary.data, primaryProfile.data])
 
   return {
-    profile,
-    loading: primary.isLoading || profileLoading,
-    status: primary.status === 'error' ? primary.status : profileStatus,
+    data,
+    isLoading,
+    isError,
+    isFetching,
+    status: primary.status === 'error' ? primary.status : primaryProfile.status,
   }
 }

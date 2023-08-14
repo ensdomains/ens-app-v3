@@ -4,7 +4,7 @@ import type { TFunction } from 'react-i18next'
 import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 import { profileRecordsToKeyValue } from '@app/utils/records'
 
-import { getABISafely, normaliseABI } from '../../hooks/useGetABI'
+import { getABISafely, normaliseABI } from '../../hooks/useABI'
 
 type Data = {
   name: string

@@ -3,6 +3,8 @@ import { renderHook } from '@app/test-utils'
 import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
 
 import { isWildcardCalc, useResolverType } from './useResolverType'
+import { useProfile } from '../useProfile'
+import { useRegistryResolver } from './useRegistryResolver'
 
 jest.mock('@app/hooks/useChainId', () => ({
   useChainId: () => 1,
@@ -22,7 +24,7 @@ jest.mock('@app/hooks/useBasicName', () => ({
 }))
 
 const makeProfile = (overwrite: object = {}) => ({
-  profile: {
+  data: {
     resolverAddress: RESOLVER_ADDRESSES['1'][0],
   },
   isLoading: false,
@@ -31,8 +33,9 @@ const makeProfile = (overwrite: object = {}) => ({
 const mockUseProfile = jest.fn().mockReturnValue(makeProfile())
 jest.mock('@app/hooks/useProfile', () => ({
   useProfile: (_: string, options: any) => {
-    if (options?.skip ?? false) return { data: undefined, loading: false }
-    return mockUseProfile()
+    console.log('options', options)
+    if (options?.enabled ?? true) return mockUseProfile()
+    return { data: undefined, isLoading: false }
   },
 }))
 
@@ -114,10 +117,10 @@ describe('useResolverType', () => {
 
   it('should return type is outdated if resolver is second latest', () => {
     mockUseProfile.mockReturnValueOnce({
-      profile: {
+      data: {
         resolverAddress: RESOLVER_ADDRESSES['1'][1],
       },
-      loading: false,
+      isLoading: false,
     })
     const { result } = renderHook(() => useResolverType('test.eth'))
     expect(result.current).toMatchObject({
@@ -144,7 +147,7 @@ describe('useResolverType', () => {
   })
 
   it('should return type is custom if resolver is not in resolver list', () => {
-    mockUseProfile.mockReturnValueOnce(makeProfile({ profile: { resolverAddress: '0xresolver' } }))
+    mockUseProfile.mockReturnValueOnce(makeProfile({ data: { resolverAddress: '0xresolver' } }))
     const { result } = renderHook(() => useResolverType('test.eth'))
     expect(result.current).toMatchObject({
       data: { type: 'custom' },
@@ -163,7 +166,7 @@ describe('useResolverType', () => {
 
   it('should return isWildcard is false if registry resolver is empty but profile resolver is also empty', () => {
     mockUseRegistryResolver.mockReturnValueOnce(makeMockRegistryResolver({ data: emptyAddress }))
-    mockUseProfile.mockReturnValueOnce(makeProfile({ profile: { resolverAddress: emptyAddress } }))
+    mockUseProfile.mockReturnValueOnce(makeProfile({ data: { resolverAddress: emptyAddress } }))
     const { result } = renderHook(() => useResolverType('test.eth'))
     expect(result.current).toMatchObject({
       data: { isWildcard: false },
@@ -173,9 +176,9 @@ describe('useResolverType', () => {
 })
 
 describe('isWildcardCalc', () => {
-  const registryResolver = { isError: false, data: null }
+  const registryResolver = { isError: false, data: null } as any
   const resolverAddress = '0x123'
-  const profile = { isFetching: false }
+  const profile = { isFetching: false } as ReturnType<typeof useProfile>
 
   it('returns true when registryResolver is not an error and data is null or empty address and resolverAddress is not equal to data and profile is not fetching', () => {
     registryResolver.isError = false

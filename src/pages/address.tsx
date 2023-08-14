@@ -87,9 +87,10 @@ const Page = () => {
   )
   const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
 
-  const { profile: primaryProfile, loading: primaryProfileLoading } = usePrimaryProfile(address)
+  const primaryProfile = usePrimaryProfile(address)
 
-  const getTextRecord = (key: string) => primaryProfile?.records?.texts?.find((x) => x.key === key)
+  const getTextRecord = (key: string) =>
+    primaryProfile.data?.records?.texts?.find((x) => x.key === key)
 
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
@@ -138,7 +139,7 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])
 
-  const loading = !isReady || isNamesLoading || primaryProfileLoading || !namesData
+  const loading = !isReady || isNamesLoading || primaryProfile.isLoading || !namesData
 
   const hasErrors = namesStatus === 'error'
 
@@ -155,9 +156,9 @@ const Page = () => {
           : undefined,
         leading: (
           <DetailsContainer>
-            {primaryProfile?.name ? (
+            {primaryProfile.data?.name ? (
               <ProfileSnippet
-                name={primaryProfile.name}
+                name={primaryProfile.data.name}
                 network={chainId}
                 button="viewProfile"
                 getTextRecord={getTextRecord}

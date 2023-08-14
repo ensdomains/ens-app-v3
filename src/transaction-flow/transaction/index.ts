@@ -7,7 +7,6 @@ import deleteSubname from './deleteSubname'
 import extendNames from './extendNames'
 import importDNSSECName from './importDNSSECName'
 import migrateProfile from './migrateProfile'
-import migrateProfileWithEthAddress from './migrateProfileWithEthAddress'
 import migrateProfileWithReset from './migrateProfileWithReset'
 import registerName from './registerName'
 import resetPrimaryName from './resetPrimaryName'
@@ -35,7 +34,6 @@ export const transactions = {
   extendNames,
   importDNSSECName,
   migrateProfile,
-  migrateProfileWithEthAddress,
   migrateProfileWithReset,
   registerName,
   resetPrimaryName,

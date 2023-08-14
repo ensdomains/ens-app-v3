@@ -39,10 +39,10 @@ const mockUseSigner = mockFunction(useSigner)
 mockUseSigner.mockReturnValue(makeUseSigner())
 
 const makeProfile = (overwrite: object = {}) => ({
-  profile: {
+  data: {
     resolverAddress: '0xresolver',
   },
-  loading: false,
+  isLoading: false,
   ...overwrite,
 })
 const mockUseProfile = jest.fn().mockReturnValue(makeProfile)
@@ -65,10 +65,10 @@ afterEach(() => {
 describe('useResolverIsAuthorized', () => {
   it('should return isValid and isAuthorized is true if resolver is known and name is not wrapped', async () => {
     mockUseProfile.mockReturnValue({
-      profile: {
+      data: {
         resolverAddress: RESOLVER_ADDRESSES['1'][0],
       },
-      loading: false,
+      isLoading: false,
     })
     const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     await waitForNextUpdate()
@@ -83,10 +83,10 @@ describe('useResolverIsAuthorized', () => {
 
   it('should return isValid and isAuthorized is false if resolver is not namewrapper aware and name is wrapped', async () => {
     mockUseProfile.mockReturnValue({
-      profile: {
+      data: {
         resolverAddress: RESOLVER_ADDRESSES['1'][1],
       },
-      loading: false,
+      isLoading: false,
     })
     mockUseBasicName.mockReturnValueOnce({
       isWrapped: true,
@@ -105,10 +105,10 @@ describe('useResolverIsAuthorized', () => {
 
   it('should return isValid and isAuthorized is true if resolver is namewrapper aware and name is wrapped', async () => {
     mockUseProfile.mockReturnValue({
-      profile: {
+      data: {
         resolverAddress: RESOLVER_ADDRESSES['1'][0],
       },
-      loading: false,
+      isLoading: false,
     })
     mockUseBasicName.mockReturnValueOnce({
       isWrapped: false,
@@ -127,10 +127,10 @@ describe('useResolverIsAuthorized', () => {
 
   it('should return correct results with base mock data', async () => {
     mockUseProfile.mockReturnValue({
-      profile: {
+      data: {
         resolverAddress: '0xresolver',
       },
-      loading: false,
+      isLoading: false,
     })
     const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     await waitForNextUpdate()
@@ -148,7 +148,7 @@ describe('useResolverIsAuthorized', () => {
   })
 
   it('should return false false if checkInterface rejects', async () => {
-    mockSupportsInterface.mockReturnValueOnce(Promise.reject(new Error('error')))
+    mockSupportsInterface.mockImplementationOnce(() => Promise.reject(new Error('error')))
     const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     await waitForNextUpdate()
     expect(result.current).toMatchObject({
@@ -161,7 +161,7 @@ describe('useResolverIsAuthorized', () => {
   })
 
   it('should return false false if checkInterface rejects', async () => {
-    mockEstimateGas.mockReturnValueOnce(Promise.reject(new Error('notAuthorized')))
+    mockEstimateGas.mockImplementationOnce(() => Promise.reject(new Error('notAuthorized')))
     const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
     await waitForNextUpdate()
     expect(result.current).toMatchObject({

@@ -39,23 +39,30 @@ export const normaliseABI = (data?: AbiData | { abi: string }) => {
   }
 }
 
-export const useGetABI = (name: string, skip?: boolean) => {
+type Options = {
+  enabled?: boolean
+}
+
+export const useABI = (name: string, options: Options = {}) => {
+  const enabled = options.enabled ?? true
+
   const { ready, getABI } = useEns()
-  const {
-    data,
-    isLoading: loading,
-    ...rest
-  } = useQuery(useQueryKeys().getABI(name), async () => getABISafely(getABI)(name), {
-    enabled: ready && !skip && name !== '',
-  })
+  const { data, isLoading, ...rest } = useQuery(
+    useQueryKeys().getABI(name),
+    async () => getABISafely(getABI)(name),
+    {
+      enabled: ready && enabled && name !== '' && name !== '[root]',
+    },
+  )
 
   const abi = useMemo(() => {
+    if (isLoading) return undefined
     return normaliseABI(data)
-  }, [data])
+  }, [data, isLoading])
 
   return {
-    abi,
-    loading: !ready || loading,
+    data: abi,
+    isLoading: !ready || isLoading,
     ...rest,
   }
 }

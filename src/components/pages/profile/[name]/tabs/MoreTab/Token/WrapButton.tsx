@@ -5,13 +5,12 @@ import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { DetailedProfile } from '@app/hooks/useNameDetails'
 import useWrapperApprovedForAll from '@app/hooks/useWrapperApprovedForAll'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
-import { ReturnedENS } from '@app/types'
+import { Profile, ReturnedENS } from '@app/types'
 
 import BaseWrapButton from './BaseWrapButton'
 
@@ -19,7 +18,7 @@ type Props = {
   name: string
   canBeWrapped: boolean
   ownerData: ReturnedENS['getOwner']
-  profile: DetailedProfile | undefined
+  profile: Profile | undefined
 }
 
 const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {

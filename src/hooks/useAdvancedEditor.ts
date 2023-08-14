@@ -8,7 +8,6 @@ import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { textOptions } from '@app/components/@molecules/AdvancedEditor/textOptions'
 import addressOptions from '@app/components/@molecules/ProfileEditor/options/addressOptions'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
-import { DetailedProfile } from '@app/hooks/useNameDetails'
 import { useProfile } from '@app/hooks/useProfile'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { emptyAddress } from '@app/utils/constants'
@@ -59,8 +58,8 @@ type ExpandableRecordsState = {
 }
 
 type Props = {
-  profile?: DetailedProfile
-  loading: ReturnType<typeof useProfile>['loading']
+  profile?: ReturnType<typeof useProfile>['data']
+  loading: ReturnType<typeof useProfile>['isLoading']
   overwrites?: RecordOptions
   callback: (data: RecordOptions) => void
 }

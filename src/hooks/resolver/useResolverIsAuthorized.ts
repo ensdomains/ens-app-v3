@@ -113,9 +113,9 @@ export const useResolverIsAuthorized = (name?: string, options: Options = {}) =>
   const chainId = useChainId()
 
   const profile = useProfile(name!, {
-    skip: !enabled,
+    enabled,
   })
-  const resolverAddress = profile.profile?.resolverAddress ?? ''
+  const resolverAddress = profile.data?.resolverAddress ?? ''
 
   const basicName = useBasicName(name, {
     enabled,
@@ -123,7 +123,7 @@ export const useResolverIsAuthorized = (name?: string, options: Options = {}) =>
   })
   const { isWrapped } = basicName
 
-  const isLoading = profile.loading || signer.isLoading
+  const isLoading = profile.isLoading || signer.isLoading
 
   return useQuery(
     useQueryKeys().resolverIsAuthorized(name!, resolverAddress!),

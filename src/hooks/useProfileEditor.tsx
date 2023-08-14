@@ -12,7 +12,7 @@ import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
-import { ProfileEditorType } from '@app/types'
+import { Profile, ProfileEditorType } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
 import {
   convertFormSafeKey,
@@ -28,7 +28,6 @@ import {
   getProtocolTypeAndContentId,
 } from '../utils/contenthash'
 import { validateContentHash } from '../validators/validateContentHash'
-import { DetailedProfile } from './useNameDetails'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
@@ -69,7 +68,7 @@ type ExpandableRecordsState = {
 
 export type Props = {
   callback: (data: RecordOptions, event?: React.BaseSyntheticEvent) => void
-  profile: DetailedProfile
+  profile: Profile
   overwrites?: RecordOptions
   returnAllFields?: boolean
 }

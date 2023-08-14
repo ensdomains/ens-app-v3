@@ -26,14 +26,14 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
   const enabled = (options.enabled ?? true) && !!name
 
   const internalProfile = useProfile(name!, {
-    skip: !enabled,
+    enabled,
     skipGraph: false,
   })
-  const { profile } = internalProfile
+  const profile = internalProfile.data
   const profileResolverAddress = profile?.resolverAddress
 
   const resolverType = useResolverType(name!, {
-    enabled: enabled && !internalProfile.loading,
+    enabled: enabled && !internalProfile.isLoading,
   })
 
   const resolverIsAuthorized = useResolverIsAuthorized(name, {
@@ -43,20 +43,20 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
   const latestResolverAddress = useContractAddress('PublicResolver')
 
   const latestResolverProfile = useProfile(name!, {
-    skip:
-      !enabled ||
-      !!options.skipCompare ||
-      resolverType.isLoading ||
-      resolverType.data?.type === 'latest' ||
-      !latestResolverAddress,
+    enabled:
+      enabled &&
+      !options.skipCompare &&
+      !resolverType.isLoading &&
+      resolverType.data?.type !== 'latest' &&
+      !!latestResolverAddress,
     resolverAddress: latestResolverAddress,
   })
 
   const isLoading =
     resolverType.isLoading ||
     resolverIsAuthorized.isLoading ||
-    latestResolverProfile.loading ||
-    internalProfile.loading
+    latestResolverProfile.isLoading ||
+    internalProfile.isLoading
 
   const isFetching =
     resolverType.isFetching || resolverIsAuthorized.isFetching || latestResolverProfile.isFetching
@@ -105,8 +105,8 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
 
     if (options.skipCompare) return authorizedResults
 
-    const resolverRecords = latestResolverProfile.profile?.records || {}
-    const hasMigratedProfile = profileHasRecords(latestResolverProfile.profile)
+    const resolverRecords = latestResolverProfile.data?.records || {}
+    const hasMigratedProfile = profileHasRecords(latestResolverProfile.data)
     const hasMigratedRecord = options?.migratedRecordsMatch
       ? checkProfileRecordsContains(resolverRecords, options.migratedRecordsMatch)
       : undefined
@@ -121,7 +121,7 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
     chainId,
     resolverIsAuthorized.data?.isAuthorized,
     resolverIsAuthorized.data?.isValid,
-    latestResolverProfile.profile,
+    latestResolverProfile.data,
     options?.skipCompare,
     options?.migratedRecordsMatch,
     profile,

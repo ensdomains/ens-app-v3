@@ -21,8 +21,8 @@ const TransferProfile = ({ data, dispatch }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const resolverAddress = useContractAddress('PublicResolver')
 
-  const { profile, loading } = useProfile(data.name)
-  const oldResolverAddress = profile?.resolverAddress
+  const profile = useProfile(data.name)
+  const oldResolverAddress = profile?.data?.resolverAddress
 
   const updateResolverTransaction = makeTransactionItem('updateResolver', {
     name: data.name,
@@ -75,7 +75,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
     </Button>
   )
 
-  if (loading) return <TransactionLoader />
+  if (profile.isLoading) return <TransactionLoader />
   return (
     <>
       <Dialog.Heading title={t('input.transferProfile.title')} />

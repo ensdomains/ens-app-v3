@@ -37,15 +37,15 @@ export const useResolverType = (name: string, options: Options = {}) => {
   const { isWrapped } = basicName
 
   const profile = useProfile(name, {
-    skip: !enabled,
+    enabled,
   })
-  const resolverAddress = profile.profile?.resolverAddress ?? ''
+  const resolverAddress = profile.data?.resolverAddress ?? ''
 
   const registryResolver = useRegistryResolver(name, {
     enabled,
   })
 
-  const isLoading = basicName.isLoading || profile.loading || registryResolver.isLoading
+  const isLoading = basicName.isLoading || profile.isLoading || registryResolver.isLoading
   const { isFetching } = registryResolver
   const { isError } = registryResolver
 

@@ -49,14 +49,14 @@ const getTextRecordByKey = (profile: ReturnedENS['getProfile'], key: string) => 
 }
 
 export const ProfileBlurb = ({ name, resolver }: Props) => {
-  const { profile } = useProfile(name, { skip: !name, resolverAddress: resolver })
-  const avatarRecord = getTextRecordByKey(profile, 'avatar')
+  const profile = useProfile(name, { enabled: !!name, resolverAddress: resolver })
+  const avatarRecord = getTextRecordByKey(profile.data, 'avatar')
   const { avatar } = useAvatarFromRecord(avatarRecord)
   const zorb = useZorb(name, 'name')
 
-  const nickname = getTextRecordByKey(profile, 'name')
-  const description = getTextRecordByKey(profile, 'description')
-  const url = getTextRecordByKey(profile, 'url')
+  const nickname = getTextRecordByKey(profile.data, 'name')
+  const description = getTextRecordByKey(profile.data, 'description')
+  const url = getTextRecordByKey(profile.data, 'url')
 
   return (
     <Container>

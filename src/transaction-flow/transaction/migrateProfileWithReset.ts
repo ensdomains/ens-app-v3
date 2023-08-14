@@ -5,10 +5,8 @@ import {
   profileRecordsToRecordOptions,
   profileToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
-import { getABISafely, normaliseABI } from '@app/hooks/useGetABI'
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
-
-import { DetailedProfile } from '../../hooks/useNameDetails'
+import { getABISafely, normaliseABI } from '@app/hooks/useABI'
+import { Profile, PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
 type Data = {
   name: string
@@ -36,7 +34,7 @@ const displayItems = ({ name }: Data, t: TFunction): TransactionDisplayItem[] =>
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   const latestResolver = (await ens.contracts!.getPublicResolver()!).address
   const currentProfile = await ens.getProfile(data.name)
-  const profileRecords = profileToProfileRecords(currentProfile as DetailedProfile)
+  const profileRecords = profileToProfileRecords(currentProfile as Profile)
   const recordOptions = profileRecordsToRecordOptions(profileRecords)
   const abiData = await getABISafely(ens.getABI)(data.name)
   const abi = normaliseABI(abiData)

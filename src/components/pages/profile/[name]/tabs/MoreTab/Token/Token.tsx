@@ -14,9 +14,8 @@ import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
 import { useChainId } from '@app/hooks/useChainId'
 import { useChainName } from '@app/hooks/useChainName'
 import { useContractAddress } from '@app/hooks/useContractAddress'
-import { DetailedProfile } from '@app/hooks/useNameDetails'
 import useParentBasicName from '@app/hooks/useParentBasicName'
-import { ReturnedENS } from '@app/types'
+import { Profile, ReturnedENS } from '@app/types'
 import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../../TabWrapper'
@@ -29,7 +28,7 @@ type Props = {
   canBeWrapped: boolean
   wrapperData: ReturnedENS['getWrapperData']
   ownerData: ReturnedENS['getOwner']
-  profile: DetailedProfile | undefined
+  profile: Profile | undefined
 }
 
 const Container = styled(TabWrapper)(

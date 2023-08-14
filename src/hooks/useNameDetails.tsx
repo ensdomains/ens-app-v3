@@ -6,16 +6,7 @@ import { formatFullExpiry } from '@app/utils/utils'
 
 import { useBasicName } from './useBasicName'
 import useDNSOwner from './useDNSOwner'
-import { useGetABI } from './useGetABI'
 import { useProfile } from './useProfile'
-
-export type Profile = NonNullable<ReturnType<typeof useProfile>['profile']>
-export type DetailedProfileRecords = Profile['records'] & {
-  abi?: { data: string; contentType?: number }
-}
-export type DetailedProfile = Omit<Profile, 'records'> & {
-  records: DetailedProfileRecords
-}
 
 export const useNameDetails = (name: string, skipGraph = false) => {
   const { t } = useTranslation('profile')
@@ -33,30 +24,15 @@ export const useNameDetails = (name: string, skipGraph = false) => {
   } = useBasicName(name, { normalised: false, skipGraph })
 
   const {
-    profile: baseProfile,
-    loading: profileLoading,
+    data: profile,
+    isLoading: profileLoading,
     status,
     isCachedData: profileIsCachedData,
   } = useProfile(normalisedName, {
-    skip: !normalisedName || normalisedName === '[root]',
+    enabled: !!normalisedName && normalisedName !== '[root]',
     skipGraph,
+    includeAbi: true,
   })
-
-  const { abi, loading: abiLoading } = useGetABI(
-    normalisedName,
-    !normalisedName || normalisedName === '[root]',
-  )
-
-  const profile: DetailedProfile | undefined = useMemo(() => {
-    if (!baseProfile) return undefined
-    return {
-      ...baseProfile,
-      records: {
-        ...baseProfile.records,
-        ...(abi ? { abi } : {}),
-      },
-    }
-  }, [abi, baseProfile])
 
   const {
     dnsOwner,
@@ -95,7 +71,6 @@ export const useNameDetails = (name: string, skipGraph = false) => {
       normalisedName !== '[root]' &&
       !profile &&
       !profileLoading &&
-      !abiLoading &&
       ready &&
       status !== 'idle' &&
       status !== 'loading'
@@ -108,7 +83,6 @@ export const useNameDetails = (name: string, skipGraph = false) => {
     normalisedName,
     profile,
     profileLoading,
-    abiLoading,
     ready,
     registrationStatus,
     status,
@@ -124,26 +98,15 @@ export const useNameDetails = (name: string, skipGraph = false) => {
       normalisedName !== '[root]' &&
       !profile &&
       !profileLoading &&
-      !abiLoading &&
       ready &&
       status !== 'idle' &&
       status !== 'loading'
     ) {
       return t('errors.networkError.title', { ns: 'common' })
     }
-  }, [
-    registrationStatus,
-    name,
-    t,
-    profile,
-    profileLoading,
-    abiLoading,
-    ready,
-    status,
-    normalisedName,
-  ])
+  }, [registrationStatus, name, t, profile, profileLoading, ready, status, normalisedName])
 
-  const isLoading = !ready || profileLoading || abiLoading || basicLoading || dnsOwnerLoading
+  const isLoading = !ready || profileLoading || basicLoading || dnsOwnerLoading
 
   return {
     error,
