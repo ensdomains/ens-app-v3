@@ -33,7 +33,6 @@ const makeProfile = (overwrite: object = {}) => ({
 const mockUseProfile = jest.fn().mockReturnValue(makeProfile())
 jest.mock('@app/hooks/useProfile', () => ({
   useProfile: (_: string, options: any) => {
-    console.log('options', options)
     if (options?.enabled ?? true) return mockUseProfile()
     return { data: undefined, isLoading: false }
   },

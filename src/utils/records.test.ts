@@ -1,6 +1,7 @@
 import { RecordItem } from '@app/types'
 
 import {
+  checkAbiEqual,
   checkContentHashEqual,
   checkProfileRecordsContains,
   checkProfileRecordsEqual,
@@ -90,6 +91,51 @@ describe('checkContentHashEqual', () => {
   })
 })
 
+describe('checkAbiEqual', () => {
+  it('should return true if abis are equal', () => {
+    const abi = {
+      contentType: 1,
+      data: '{"test":"test"}'
+    }
+    expect(checkAbiEqual(abi, abi)).toBe(true)
+  })
+
+  it('should return true if data is equal and contentType is undefined', () => {
+    const abi = {
+      contentType: undefined,
+      data: '{"test":"test"}'
+    }
+    expect(checkAbiEqual(abi, abi)).toBe(true)
+  })
+
+  it('should return true if both abi is undefined', () => {
+    expect(checkAbiEqual(undefined, undefined)).toBe(true)
+  })
+
+  it('should return false if data is different', () => {
+    const abi1 = {
+      contentType: undefined,
+      data: '{"test":"test2"}'
+    }
+    const abi2 = {
+      contentType: undefined,
+      data: '{"test":"test"}'
+    }
+    expect(checkAbiEqual(abi1, abi2)).toBe(false)
+  })
+
+  it('should return false if contentType is different', () => {
+    const abi1 = {
+      contentType: 1,
+      data: '{"test":"test"}'
+    }
+    const abi2 = {
+      contentType: 2,
+      data: '{"test":"test"}'
+    }
+    expect(checkAbiEqual(abi1, abi2)).toBe(false)
+  })
+})
 describe('checkProfileRecordsEqual', () => {
   it('should return true if records are equal', () => {
     const records: any = {

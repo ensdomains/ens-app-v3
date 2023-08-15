@@ -42,8 +42,8 @@ describe('useNameDetails', () => {
     batch: mockBatch,
   })
   mockUseProfile.mockReturnValue({
-    loading: false,
-    profile: undefined,
+    isLoading: false,
+    data: undefined,
     status: 'success',
   })
   mockUseContractAddress.mockReturnValue('0x123')

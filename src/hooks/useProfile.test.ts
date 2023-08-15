@@ -12,6 +12,13 @@ jest.mock('@app/utils/EnsProvider')
 const mockUseEns = mockFunction(useEns)
 const mockGetProfile = jest.fn()
 
+const mockUseAbi = jest.fn().mockReturnValue({ isLoading: false })
+jest.mock('@app/hooks/useABI', () => ({
+  useABI: (_: string, options: any = {}) => {
+    return options.enabled ?? true ? mockUseAbi() : { isLoading: false}}
+}))
+
+
 describe('useProfile', () => {
   mockUseEns.mockReturnValue({
     getProfile: mockGetProfile,
@@ -28,5 +35,13 @@ describe('useProfile', () => {
       },
       skipGraph: false,
     })
+    expect(mockUseAbi).not.toHaveBeenCalled()
+  })
+
+  it('should call mockUseAbi if includeAbi option is true', async () => {
+    const { waitForNextUpdate } = renderHook(() => useProfile('0x123', { includeAbi: true }))
+    await waitForNextUpdate()
+    expect(mockGetProfile).toHaveBeenCalled()
+    expect(mockUseAbi).toHaveBeenCalled()
   })
 })
