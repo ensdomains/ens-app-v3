@@ -3,6 +3,7 @@ import {
   argentWallet,
   braveWallet,
   coinbaseWallet,
+  dawnWallet,
   injectedWallet,
   ledgerWallet,
   metaMaskWallet,
@@ -28,6 +29,7 @@ export const getDefaultWallets = ({
         injectedWallet({ chains }),
         safeWallet({ chains }),
         braveWallet({ chains }),
+        dawnWallet({ chains }),
         // always shown
         walletConnectWallet({ chains, projectId }),
         rainbowWallet({ chains, projectId }),
