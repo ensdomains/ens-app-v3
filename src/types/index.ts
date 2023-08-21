@@ -1,17 +1,27 @@
-import type { PopulatedTransaction } from '@ethersproject/contracts'
-import type { JsonRpcSigner, TransactionReceipt } from '@ethersproject/providers'
+import type { TransactionReceipt } from '@ethersproject/providers'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
+import {
+  Account,
+  Address,
+  Hex,
+  PublicClient,
+  Transport,
+  WalletClient
+} from 'viem'
 
-import type { ChildFuses, ENS } from '@ensdomains/ensjs'
+import { ChainWithEns } from '@ensdomains/ensjs/dist/types/contracts/consts'
+import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
 import { DecodedContentHash } from '@ensdomains/ensjs/utils/contentHash'
 import { Helper, Space } from '@ensdomains/thorin'
 
-export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
+export type Profile = GetRecordsReturnType<{ name: string; records: { abi: true; contentHash: true; coins: string[]; texts: string[]; } }>
 
-export type ProfileRecords = NonNullable<Profile['records']>
+export type ProfileRecords = GetRecordsReturnType<{ name: string; records: { abi: true; contentHash: true; coins: string[]; texts: string[]; } }>
 
-export type RecordItem = NonNullable<ProfileRecords['texts']>[number]
+export type TextRecord = NonNullable<ProfileRecords['texts']>[number]
+
+export type AddressRecord = NonNullable<ProfileRecords['coins']>[number]
 
 export type ContentHash = string | DecodedContentHash | undefined | null
 
@@ -76,10 +86,24 @@ export type PublicENS = PublicInterface<ENS>
 export type HelperProps = ComponentProps<typeof Helper>
 export type ReturnedENS = { [key in keyof PublicENS]: Awaited<ReturnType<PublicENS[key]>> }
 
-export interface Transaction<Data> {
-  displayItems: (data: any, t: TFunction<'translation', undefined>) => TransactionDisplayItem[]
-  transaction: (signer: JsonRpcSigner, ens: PublicENS, data: Data) => Promise<PopulatedTransaction>
-  helper?: (data: any, t: TFunction<'translation', undefined>) => undefined | HelperProps
+export type BasicTransactionRequest = {
+  to: Address
+  data: Hex
+  value?: bigint
+}
+
+export type TransactionFunctionParameters<TData> = {
+  publicClient: PublicClientWithChain
+  walletClient: WalletClientWithAccount
+  data: TData
+}
+
+export interface Transaction<TData> {
+  displayItems: (data: TData, t: TFunction<'translation', undefined>) => TransactionDisplayItem[]
+  transaction: (
+    params: TransactionFunctionParameters<TData>,
+  ) => Promise<BasicTransactionRequest> | BasicTransactionRequest
+  helper?: (data: TData, t: TFunction<'translation', undefined>) => undefined | HelperProps
   backToInput?: boolean
 }
 
@@ -131,3 +155,6 @@ export type MinedData = TransactionReceipt & {
 export type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {}
+
+export type PublicClientWithChain = PublicClient<Transport, ChainWithEns>
+export type WalletClientWithAccount = WalletClient<Transport, ChainWithEns, Account>

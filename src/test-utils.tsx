@@ -1,6 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { StaticJsonRpcProvider } from '@ethersproject/providers/lib/url-json-rpc-provider'
-import { Wallet } from '@ethersproject/wallet'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RenderOptions, render } from '@testing-library/react'
 import { RenderHookOptions, renderHook } from '@testing-library/react-hooks'
@@ -8,7 +6,10 @@ import userEvent from '@testing-library/user-event'
 import { MockConnector } from '@wagmi/core/connectors/mock'
 import React, { FC, ReactElement } from 'react'
 import { ThemeProvider } from 'styled-components'
-import { WagmiConfig, createClient } from 'wagmi'
+import { createPublicClient, createWalletClient, http } from 'viem'
+import { privateKeyToAccount } from 'viem/accounts'
+import { mainnet } from 'viem/chains'
+import { WagmiConfig, createConfig } from 'wagmi'
 
 import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 
@@ -27,7 +28,7 @@ jest.mock('wagmi', () => {
     useQueryClient,
     useInfiniteQuery,
     useMutation,
-    createClient: _createClient,
+    createConfig: _createConfig,
     WagmiConfig: _WagmiConfig,
   } = jest.requireActual('wagmi')
 
@@ -36,7 +37,7 @@ jest.mock('wagmi', () => {
     useQueryClient,
     useInfiniteQuery,
     useMutation,
-    createClient: _createClient,
+    createConfig: _createConfig,
     WagmiConfig: _WagmiConfig,
     useAccount: jest.fn(() => mockUseAccountReturnValue),
     useBalance: jest.fn(() => ({ data: { value: { lt: () => false } } })),
@@ -83,34 +84,34 @@ const queryClient = new QueryClient({
 
 beforeEach(() => queryClient.clear())
 
-// eslint-disable-next-line no-restricted-syntax
-const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+const privateKeyAccount = privateKeyToAccount(
+  // eslint-disable-next-line no-restricted-syntax
+  '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
+)
+const publicClient = createPublicClient({ transport: http('http://mock.local'), chain: mainnet })
 
-class EthersProviderWrapper extends StaticJsonRpcProvider {
-  toJSON() {
-    return `<Provider network={${this.network.chainId}} />`
-  }
-}
-
-const wagmiClient = createClient({
+const wagmiConfig = createConfig({
   connectors: [
     new MockConnector({
       options: {
-        signer: new Wallet(privateKey, new EthersProviderWrapper()),
+        walletClient: createWalletClient({
+          account: privateKeyAccount,
+          transport: http('http://mock.local'),
+        }),
       },
     }) as any,
   ],
-  provider: () => new EthersProviderWrapper(),
+  publicClient: () => publicClient,
 })
 
 jest.mock('@app/utils/query', () => ({
-  wagmiClientWithRefetch: wagmiClient,
+  wagmiConfigWithRefetch: wagmiConfig,
 }))
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <WagmiConfig client={wagmiClient}>
+      <WagmiConfig config={wagmiConfig}>
         <ThemeProvider theme={lightTheme}>
           <ThorinGlobalStyles />
           {children}
@@ -136,6 +137,4 @@ export const mockFunction = <T extends (...args: any) => any>(func: T) =>
   func as unknown as jest.MockedFunction<PartialMockedFunction<T>>
 
 export * from '@testing-library/react'
-export { customRender as render }
-export { customRenderHook as renderHook }
-export { userEvent }
+export { customRender as render, customRenderHook as renderHook, userEvent }

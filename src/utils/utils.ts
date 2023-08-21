@@ -1,8 +1,5 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
-
-import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
-
+import { DecodedFuses } from '@ensdomains/ensjs/utils'
+import { toBytes } from 'viem'
 import {
   CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
   NAMEWRAPPER_AWARE_RESOLVERS,
@@ -91,7 +88,7 @@ export const checkETH2LDFromName = (name: string) => {
 export const checkSubname = (name: string) => name.split('.').length > 2
 
 export const isLabelTooLong = (label: string) => {
-  const bytes = toUtf8Bytes(label)
+  const bytes = toBytes(label)
   return bytes.byteLength > 255
 }
 
@@ -119,7 +116,7 @@ export const getLabelFromName = (name: string = '') => name.split('.')[0]
 
 export const validateExpiry = (
   name: string,
-  fuses: AllCurrentFuses | undefined,
+  fuses: DecodedFuses | undefined,
   expiry: Date | undefined,
   pccExpired?: boolean,
 ) => {
@@ -140,5 +137,5 @@ export const canEditRecordsWhenWrappedCalc = (
 
 export const hexToNumber = (hex: string) => parseInt(hex, 16)
 
-export const calculateValueWithBuffer = (value: BigNumber) =>
-  value.mul(CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE).div(100)
+export const calculateValueWithBuffer = (value: bigint) =>
+  (value * BigInt(CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE)) / 100n

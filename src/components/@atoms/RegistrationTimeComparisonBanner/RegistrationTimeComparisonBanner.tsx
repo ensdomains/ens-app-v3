@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -100,35 +99,36 @@ const Marker = styled.div<{ $percent: number }>(
 )
 
 type Props = {
-  rentFee: BigNumber
-  transactionFee: BigNumber
+  rentFee: bigint
+  transactionFee: bigint
   message?: string
 }
 
 const unit = 1e12
+const unitBigInt = BigInt(unit)
 
-const yearsToGasPercent = (targetYears: number, f: BigNumber, y: BigNumber) => {
-  const gasPercent = f.mul(unit).div(y.mul(targetYears).add(f))
-  return Math.round((gasPercent.toNumber() / unit) * 100)
+const yearsToGasPercent = (targetYears: bigint, f: bigint, y: bigint) => {
+  const gasPercent = Number(f * unitBigInt) / Number(y * targetYears + f)
+  const rounded = Math.round((gasPercent / unit) * 100)
+  return rounded
 }
 
-const gasPercentToYears = (targetPercent: number, f: BigNumber, y: BigNumber, min: number) => {
-  const fp = f.div(100)
-  const yp = y.div(100)
-  const p = BigNumber.from(targetPercent)
-  const top = f.sub(fp.mul(p)).mul(unit)
-  const bottom = yp.mul(p)
-  const years = top.div(bottom).div(unit).toNumber()
+const gasPercentToYears = (targetPercent: bigint, f: bigint, y: bigint, min: number) => {
+  const fp = f / 100n
+  const yp = y / 100n
+  const top = (f - fp * targetPercent) * unitBigInt
+  const bottom = yp * targetPercent
+  const years = Number(top / bottom / unitBigInt)
   const rounded = Math.max(Math.round(years), min)
-  const gasPercent = yearsToGasPercent(rounded, f, y)
+  const gasPercent = yearsToGasPercent(BigInt(rounded), f, y)
   return { gas: gasPercent, years: rounded }
 }
 
 export const RegistrationTimeComparisonBanner = ({ message, rentFee, transactionFee }: Props) => {
   const { t } = useTranslation('common')
-  const oneYearGasPercent = yearsToGasPercent(1, transactionFee, rentFee)
-  const forty = gasPercentToYears(40, transactionFee, rentFee, 2)
-  const twenty = gasPercentToYears(20, transactionFee, rentFee, 5)
+  const oneYearGasPercent = yearsToGasPercent(1n, transactionFee, rentFee)
+  const forty = gasPercentToYears(40n, transactionFee, rentFee, 2)
+  const twenty = gasPercentToYears(20n, transactionFee, rentFee, 5)
 
   const twentyRounded = calcPercent(twenty.gas, 3)
 

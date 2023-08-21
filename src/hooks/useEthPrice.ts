@@ -1,43 +1,47 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-import { Contract } from '@ethersproject/contracts'
-import { useProvider, useQuery } from 'wagmi'
+import { Address } from 'viem'
+import { useQuery } from 'wagmi'
 
-import AggregatorInterface from '@ensdomains/ens-contracts/build/contracts/AggregatorInterface.json'
+import { getAddressRecord } from '@ensdomains/ensjs/public'
 
-import { useChainId } from '@app/hooks/useChainId'
-import { useEns } from '@app/utils/EnsProvider'
+import { PublicClientWithChain } from '@app/types'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
+import { usePublicClient } from './usePublicClient'
+
 const ORACLE_ENS = 'eth-usd.data.eth'
-const ORACLE_GOERLI = '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e'
+const ORACLE_GOERLI = '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e' as const
+
+const getEthPrice = async (client: PublicClientWithChain) => {
+  const chainId = client.chain?.id ?? 1
+
+  const address =
+    chainId === 5
+      ? ORACLE_GOERLI
+      : await getAddressRecord(client, { name: ORACLE_ENS }).then(
+          (v) => (v?.value as Address) ?? null,
+        )
+
+  if (!address) throw new Error('Contract address not found')
+
+  return client.readContract({
+    abi: [
+      {
+        inputs: [],
+        name: 'latestAnswer',
+        outputs: [{ name: '', type: 'int256' }],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ] as const,
+    address,
+    functionName: 'latestAnswer',
+  })
+}
 
 export const useEthPrice = () => {
-  const provider = useProvider()
-  const { getAddr, ready } = useEns()
-  const chainId = useChainId()
+  const publicClient = usePublicClient()
 
-  const { data, isLoading: loading } = useQuery(
-    useQueryKeys().ethPrice,
-    async () => {
-      let address
-      // Goerli
-      if (chainId === 5) {
-        address = ORACLE_GOERLI
-      } else {
-        address = await getAddr(ORACLE_ENS)
-      }
-      if (!address) throw new Error('Contract address not found')
-      if (typeof address !== 'string') throw new Error('Contract address is wrong type')
-      const oracle = new Contract(address, AggregatorInterface, provider)
-      const latest = (await oracle.latestAnswer()) as BigNumber
-      return latest
-    },
-    {
-      enabled: !!provider && ready,
-    },
-  )
-  return {
-    data,
-    loading,
-  }
+  return useQuery(useQueryKeys().ethPrice, () => getEthPrice(publicClient), {
+    enabled: !!publicClient,
+  })
 }

@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import styled, { css } from 'styled-components'
 
 import { Colors, Skeleton } from '@ensdomains/thorin'
@@ -36,9 +35,9 @@ const Total = styled(LineItem)(
 
 export type InvoiceItem = {
   label: string
-  value?: BigNumber
+  value?: bigint
   /* Percentage buffer to multiply value by when displaying in ETH, defaults to 100 */
-  bufferPercentage?: number
+  bufferPercentage?: bigint
   color?: Colors
 }
 
@@ -51,10 +50,10 @@ type Props = {
 export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }: Props) => {
   const filteredItems = items
     .map(({ value, bufferPercentage }) =>
-      value && unit === 'eth' && bufferPercentage ? value.mul(bufferPercentage).div(100) : value,
+      value && unit === 'eth' && bufferPercentage ? (value * bufferPercentage) / 100n : value,
     )
-    .filter((x) => !!x)
-  const total = filteredItems.reduce((a, b) => a!.add(b!), BigNumber.from(0))
+    .filter((x): x is bigint => !!x)
+  const total = filteredItems.reduce((a, b) => a + b, 0n)
   const hasEmptyItems = filteredItems.length !== items.length
 
   return (
@@ -64,11 +63,7 @@ export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }:
           <div>{label}</div>
           <Skeleton loading={!value}>
             <div data-testid={`invoice-item-${inx}-amount`}>
-              <CurrencyText
-                bufferPercentage={bufferPercentage}
-                eth={value || BigNumber.from(0)}
-                currency={unit}
-              />
+              <CurrencyText bufferPercentage={bufferPercentage} eth={value || 0n} currency={unit} />
             </div>
           </Skeleton>
         </LineItem>
@@ -77,7 +72,7 @@ export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }:
         <div>{totalLabel}</div>
         <Skeleton loading={hasEmptyItems}>
           <div data-testid="invoice-total">
-            <CurrencyText eth={hasEmptyItems ? BigNumber.from(0) : total} currency={unit} />
+            <CurrencyText eth={hasEmptyItems ? 0n : total} currency={unit} />
           </div>
         </Skeleton>
       </Total>

@@ -1,14 +1,17 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { profileRecordsToKeyValue } from '@app/utils/records'
 
-import { getABISafely, normaliseABI } from '../../hooks/useGetABI'
+import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
+import { getRecords } from '@ensdomains/ensjs/public'
+import { getSubgraphRecords } from '@ensdomains/ensjs/subgraph'
+import { setRecords } from '@ensdomains/ensjs/wallet'
+import type { Address } from 'viem'
 
 type Data = {
   name: string
-  resolverAddress?: string
+  resolverAddress?: Address
 }
 
 const displayItems = (
@@ -30,20 +33,29 @@ const displayItems = (
   },
 ]
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const options = data.resolverAddress ? { resolverAddress: data.resolverAddress } : undefined
-  const profile = await ens.getProfile(data.name, options)
-  const abiData = await getABISafely(ens.getABI)(data.name)
-  const abi = normaliseABI(abiData)
-  const resolverAddress = (await ens.contracts!.getPublicResolver()!).address
+const transaction = async ({ publicClient, walletClient, data }: TransactionFunctionParameters<Data>) => {
+  const subgraphRecords = await getSubgraphRecords(publicClient, data)
+  if (!subgraphRecords) throw new Error('No subgraph records found')
+  const profile = await getRecords(publicClient, { 
+    name: data.name,
+    records: {
+      ...subgraphRecords,
+      abi: true,
+      contentHash: true,
+    },
+    resolver: data.resolverAddress ? {
+      address: data.resolverAddress,
+      fallbackOnly: false,
+    } : undefined
+   })
+  const resolverAddress = getChainContractAddress({ client: publicClient, contract: 'ensPublicResolver' })
   if (!profile) throw new Error('No profile found')
-  if (!profile.records) throw new Error('No records found')
-  const records = profileRecordsToKeyValue(profile.records, abi)
-  return ens.setRecords.populateTransaction(data.name, {
-    records,
+  const records = await profileRecordsToKeyValue(profile)
+  return setRecords.makeFunctionData(walletClient, {
+    name: data.name,
     resolverAddress,
-    signer,
+    ...records,
   })
 }
 
-export default { displayItems, transaction } as Transaction<Data>
+export default { displayItems, transaction } satisfies Transaction<Data>

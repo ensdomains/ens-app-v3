@@ -2,13 +2,17 @@ import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
 import { getABISafely, normaliseABI } from '@app/hooks/useGetABI'
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import { PublicENS, Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { makeProfileRecordsWithEthRecordItem, profileRecordsToKeyValue } from '@app/utils/records'
+import { Address } from 'viem'
+import { getSubgraphRecords } from '@ensdomains/ensjs/subgraph'
+import { getRecords } from '@ensdomains/ensjs/public'
+import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
 
 type Data = {
   name: string
-  ethAddress: string
-  resolverAddress?: string
+  ethAddress: Address
+  resolverAddress?: Address
 }
 
 const displayItems = (
@@ -31,14 +35,25 @@ const displayItems = (
 ]
 
 const transaction = async (
-  signer: JsonRpcSigner,
-  ens: PublicENS,
-  { name, ethAddress, resolverAddress }: Data,
+  {
+    publicClient,
+    data,
+  }: TransactionFunctionParameters<Data>,
 ) => {
-  const profile = await ens.getProfile(name, resolverAddress ? { resolverAddress } : undefined)
-  const abiData = await getABISafely(ens.getABI)(name)
-  const abi = normaliseABI(abiData)
-  const latestResolverAddress = (await ens.contracts!.getPublicResolver()!).address
+  const subgraphRecords = await getSubgraphRecords(publicClient, { name: data.name, resolverAddress: data.resolverAddress })
+  const profile = await getRecords(publicClient, {
+    name: data.name,
+    records: {
+      ...subgraphRecords,
+      abi: true,
+      contentHash: true,
+    },
+    resolver: data.resolverAddress ? {
+      address: data.resolverAddress,
+      fallbackOnly: false,
+    } : undefined
+  })
+  const latestResolverAddress = getChainContractAddress({ client: publicClient, contract: 'ensPublicResolver' })
 
   const profileRecords = makeProfileRecordsWithEthRecordItem(profile?.records, ethAddress)
   const records = profileRecordsToKeyValue(profileRecords, abi)

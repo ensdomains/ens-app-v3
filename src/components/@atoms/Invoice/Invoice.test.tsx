@@ -1,6 +1,5 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 
 import { useEthPrice } from '@app/hooks/useEthPrice'
 
@@ -9,16 +8,16 @@ import { Invoice } from './Invoice'
 jest.mock('@app/hooks/useEthPrice')
 
 const mockUseEthPrice = mockFunction(useEthPrice)
-mockUseEthPrice.mockReturnValue({ data: 1e8, loading: false })
+mockUseEthPrice.mockReturnValue({ data: BigInt(1e8), isLoading: false })
 
 const items = [
   {
     label: 'line 1',
-    value: BigNumber.from('1000000000000000000'),
+    value: 1000000000000000000n,
   },
   {
     label: 'line 2',
-    value: BigNumber.from('2000000000000000000'),
+    value: 2000000000000000000n,
   },
 ]
 

@@ -1,8 +1,10 @@
-const nextJest = require('next/jest')
+/* eslint-disable @typescript-eslint/naming-convention */
+import type { Config } from 'jest'
+import nextJest from 'next/jest'
 
 const createJestConfig = nextJest({ dir: '.' })
 
-const customJestConfig = {
+const customJestConfig: Config = {
   testEnvironment: 'jest-environment-jsdom',
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
@@ -22,18 +24,16 @@ const customJestConfig = {
     '^__tests__/(.*)$': '<rootDir>/__tests__/$1',
     '^@app/(.*)$': '<rootDir>/src/$1',
     '^@rainbow-me/rainbowkit$': '<rootDir>/__mocks__/rainbowkitMock.js',
-    '@ensdomains/ensjs/(.*)$': '@ensdomains/ensjs/dist/cjs/$1',
-    '@adraffy/ens-normalize': '@adraffy/ens-normalize/dist/index.cjs',
+    '@ensdomains/ensjs/(.*)$': '<rootDir>/node_modules/@ensdomains/ensjs/dist/cjs/$1',
+    '@adraffy/ens-normalize': '<rootDir>/node_modules/@adraffy/ens-normalize/dist/index.cjs',
     '^wagmi(.*)$': 'wagmi-cjs$1',
     '@wagmi/core(.*)$': '@wagmi/core-cjs$1',
+    '^multiformats$': '<rootDir>/node_modules/multiformats/dist/index.min.js',
+    '^multiformats/(.*)$': '<rootDir>/node_modules/multiformats/dist/index.min.js',
   },
   setupFilesAfterEnv: ['<rootDir>/jest/jest.setup.ts'],
   setupFiles: ['<rootDir>/jest/setEnvVars.js', 'jest-canvas-mock'],
-  testPathIgnorePatterns: [
-    '<rootDir>/node_modules/',
-    '<rootDir>/.yarn/',
-    '<rootDir>/.next/',
-  ],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.yarn/', '<rootDir>/.next/'],
   transformIgnorePatterns: [
     '/node_modules/',
     '/.yarn/',
@@ -72,12 +72,6 @@ const customJestConfig = {
     },
   },
   collectCoverage: false,
-  globals: {
-    Uint8Array: Uint8Array,
-    fetch: global.fetch,
-    Request: global.Request,
-    Response: global.Response,
-  },
 }
 
-module.exports = createJestConfig(customJestConfig)
+export default createJestConfig(customJestConfig)

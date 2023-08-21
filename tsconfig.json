@@ -7,7 +7,7 @@
       "strict": true,
       "esModuleInterop": true,
       "allowJs": true,
-      "checkJs": true,
+      "checkJs": false,
       "plugins": [
         {
           "name": "typescript-styled-plugin",
@@ -51,6 +51,6 @@
       }
     ]
   },
-  "include": ["next-env.d.ts", "mdx.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "mdx.d.ts", "**/*.ts", "**/*.tsx", "next.config.js"],
   "exclude": ["custom-test-env.js", "**/*.ignore.ts", "**/*.ignore.tsx"]
 }

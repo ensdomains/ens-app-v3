@@ -1,5 +1,3 @@
-// @ts-check
-const { i18n } = require('./next-i18next.config')
 const { withPlugins } = require('next-compose-plugins')
 const path = require('path')
 const StylelintPlugin = require('stylelint-webpack-plugin')

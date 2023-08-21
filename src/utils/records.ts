@@ -1,7 +1,8 @@
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import { RecordOptions, contentTypeToEncodeAs, encodeAbi } from '@ensdomains/ensjs/utils'
 
 import { ContentHash, Profile, RecordItem } from '@app/types'
 
+import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
 import { contentHashToString } from './contenthash'
 import { shortenAddress } from './utils'
 
@@ -17,8 +18,8 @@ export const recordOptionsToToupleList = (
 ): [string, string][] => {
   return [
     ...contentHashTouple(records?.contentHash, deleteLabel),
-    ...(records?.texts?.map(({ key, value }) => [key, value]) || []),
-    ...(records?.coinTypes?.map(({ key, value }) => [key, shortenAddress(value)]) || []),
+    ...(records?.texts?.map(({ key, value }) => [key, value!]) || []),
+    ...(records?.coins?.map(({ coin, value }) => [String(coin), shortenAddress(value!)]) || []),
   ].map(([key, value]) => (value ? [key, value] : [deleteLabel, key]))
 }
 
@@ -98,19 +99,18 @@ export const makeProfileRecordsWithEthRecordItem = (
   }
 }
 
-export const profileRecordsToKeyValue = (
-  records: Profile['records'],
-  abi?: { data: string; contentType: number },
-) => {
+export const  profileRecordsToKeyValue = async (
+  records: GetRecordsReturnType<{ name: string; records: { abi: true; contentHash: true; coins: string[]; texts: string[]; } }>
+): Promise<RecordOptions> => {
   const contentHash = contentHashToString(records?.contentHash)
   return {
     texts: records?.texts?.map(({ key, value }) => ({ key: key as string, value })),
-    coinTypes: records?.coinTypes?.map((coinType) => ({
-      key: coinType.key as string,
-      value: (coinType as any).addr,
+    coins: records?.coins?.map((coinType) => ({
+      coin: coinType.id,
+      value: coinType.value,
     })),
     ...(contentHash ? { contentHash } : {}),
-    ...(abi ? { abi } : {}),
+    ...(records.abi ? { abi: await encodeAbi({ data: records.abi.abi as any, encodeAs: contentTypeToEncodeAs(records.abi.contentType as 1 | 2 | 4 | 8) }) } : {}),
   }
 }
 

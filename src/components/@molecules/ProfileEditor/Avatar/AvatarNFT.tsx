@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -218,7 +217,7 @@ export const AvatarNFT = ({
     const handleConfirm = () => {
       const string = `eip155:1/${nftReference.id.tokenMetadata.tokenType.toLowerCase()}:${
         nftReference.contract.address
-      }/${BigNumber.from(nftReference.id.tokenId).toString()}`
+      }/${BigInt(nftReference.id.tokenId).toString()}`
       handleSubmit('nft', string, nftReference.media[0].gateway)
     }
 

@@ -1,15 +1,13 @@
 import { render, screen, waitFor } from '@app/test-utils'
 
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-
 import { RegistrationTimeComparisonBanner } from './RegistrationTimeComparisonBanner'
 
 describe('RegistrationUpsellBanner', () => {
   it('should render correctly', async () => {
     render(
       <RegistrationTimeComparisonBanner
-        transactionFee={BigNumber.from('1000000000000000000')}
-        rentFee={BigNumber.from('1000000000000000000')}
+        transactionFee={1000000000000000000n}
+        rentFee={1000000000000000000n}
       />,
     )
 

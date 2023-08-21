@@ -1,6 +1,6 @@
 name: Test
 
-on: [push]
+on: []
 
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}

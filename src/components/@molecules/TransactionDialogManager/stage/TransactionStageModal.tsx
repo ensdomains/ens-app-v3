@@ -1,13 +1,7 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { hexValue } from '@ethersproject/bytes'
-import type { FallbackProvider, JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
-import { toUtf8String } from '@ethersproject/strings'
-import { Provider } from '@wagmi/core'
-import type { PopulatedTransaction } from 'ethers'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
+import { usePublicClient, useWalletClient, useQuery, useSendTransaction } from 'wagmi'
 
 import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 
@@ -27,11 +21,11 @@ import {
   TransactionFlowAction,
   TransactionStage,
 } from '@app/transaction-flow/types'
-import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
+import { Address, BlockTag, Hash, Hex, PublicClient, PublicRpcSchema, Transaction, TransactionRequest, WalletClient } from 'viem'
 
 const BarContainer = styled.div(
   ({ theme }) => css`
@@ -172,10 +166,10 @@ type TxError = {
 
 type AccessListResponse = {
   accessList: {
-    address: string
-    storageKeys: string[]
+    address: Address
+    storageKeys: Hex[]
   }[]
-  gasUsed: string
+  gasUsed: Hex
 }
 
 const SUPPORTED_REQUEST_ERRORS = ['INSUFFICIENT_FUNDS', 'UNPREDICTABLE_GAS_LIMIT']
@@ -272,24 +266,43 @@ export const uniqueTransactionIdentifierGenerator = (
 })
 
 export const transactionSuccessHandler =
-  (dependencies: {
-    provider: Provider
+  (publicClient: PublicClient,    
+  {
+    walletClient,
+    actionName,
+    txKey,
+    request,
+    addRecentTransaction,
+    dispatch,
+    isSafeApp,
+  }: {
+    walletClient: WalletClient
     actionName: ManagedDialogPropsTwo['actionName']
     txKey: string | null
-    request: PopulatedTransaction | undefined
+    request: TransactionRequest | undefined
     addRecentTransaction: ReturnType<typeof useAddRecentTransaction>
     dispatch: Dispatch<TransactionFlowAction>
     isSafeApp: ReturnType<typeof useIsSafeApp>['data']
   }) =>
   async (tx: any) => {
-    const { provider, actionName, txKey, request, addRecentTransaction, dispatch, isSafeApp } =
-      dependencies
-    let transactionData = null
+    let transactionData: Transaction | null = null
     try {
       // If using private mempool, this won't error, will return null
-      transactionData = await provider.getTransaction(tx.hash)
+      transactionData = await walletClient.request<{
+        Method: 'eth_getTransactionByHash'
+        Parameters: [hash: Hash]
+        ReturnType: Transaction | null
+      }>({ method: 'eth_getTransactionByHash', params: [tx.hash] })
     } catch (e) {
-      console.error('Failed to get transaction info')
+      // this is expected to fail in most cases
+    }
+
+    if (!transactionData) {
+      try {
+        transactionData = await publicClient.request({ method: 'eth_getTransactionByHash', params: [tx.hash] })
+      } catch (e) {
+        console.error('Failed to get transaction info')
+      }
     }
 
     addRecentTransaction({
@@ -305,54 +318,46 @@ export const transactionSuccessHandler =
     dispatch({ name: 'setTransactionHash', payload: tx.hash })
   }
 
-export const registrationGasFeeModifier = (gasLimit: BigNumber, transactionName: string) =>
+export const registrationGasFeeModifier = (gasLimit: bigint, transactionName: string) =>
   // this addition is arbitrary, something to do with a gas refund but not 100% sure
-  transactionName === 'registerName' ? gasLimit.add(5000) : gasLimit
+  transactionName === 'registerName' ? gasLimit + 5000n : gasLimit
 
-export const calculateGasLimit = async ({
+export const calculateGasLimit = async (publicClient: PublicClient, {
+  walletClient,
   isSafeApp,
-  provider,
   txWithZeroGas,
   transactionName,
-  signer,
 }: {
+  walletClient: WalletClient
   isSafeApp: string | boolean | undefined
-  provider: FallbackProvider
-  txWithZeroGas: {
-    maxFeePerGas: string
-    maxPriorityFeePerGas: string
-    value?: BigNumber
-  }
+  txWithZeroGas: TransactionRequest
   transactionName: string
-  signer: ReturnType<typeof useSigner>['data']
 }) => {
   if (isSafeApp) {
-    const accessListResponse: AccessListResponse = await (
-      provider.providerConfigs[0].provider as JsonRpcProvider
-    ).send('eth_createAccessList', [
+    const accessListResponse = await publicClient.request<{
+      Method: 'eth_createAccessList'
+      Parameters: [tx: TransactionRequest, blockTag: BlockTag]
+      ReturnType: AccessListResponse
+    }>({ method: 'eth_createAccessList', params: [
       {
         ...txWithZeroGas,
-        value: txWithZeroGas.value ? hexValue(txWithZeroGas.value.add(1000000)) : '0x0',
+        value: txWithZeroGas.value ? txWithZeroGas.value + 1000000n : 0n,
       },
       'latest',
-    ])
+    ] })
 
     return {
       gasLimit: registrationGasFeeModifier(
-        BigNumber.from(accessListResponse.gasUsed),
+        BigInt(accessListResponse.gasUsed),
         transactionName,
       ),
       accessList: accessListResponse.accessList,
     }
   }
 
-  if (!signer) {
-    throw new Error('Signer not found')
-  }
-
-  const gasEstimate = await signer.estimateGas(txWithZeroGas)
+  const gasEstimate = await publicClient.estimateGas({ ...txWithZeroGas, account: walletClient.account! })
   return {
-    gasLimit: registrationGasFeeModifier(gasEstimate, transactionName),
+    gasLimit: registrationGasFeeModifier(BigInt(gasEstimate), transactionName),
     accessList: undefined,
   }
 }
@@ -372,9 +377,11 @@ export const TransactionStageModal = ({
   const { t } = useTranslation()
   const chainName = useChainName()
 
+  const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
+  const { data: walletClient } = useWalletClient()
+  const publicClient = usePublicClient()
+
   const addRecentTransaction = useAddRecentTransaction()
-  const { data: signer } = useSigner()
-  const ens = useEns()
 
   const stage = transaction.stage || 'confirm'
   const recentTransactions = useRecentTransactions()
@@ -382,9 +389,6 @@ export const TransactionStageModal = ({
     () => recentTransactions.find((tx) => tx.hash === transaction.hash)?.status,
     [recentTransactions, transaction.hash],
   )
-
-  const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
-  const provider = useProvider<FallbackProvider>()
 
   const uniqueTxIdentifiers = useMemo(
     () =>
@@ -407,12 +411,11 @@ export const TransactionStageModal = ({
   const canEnableTransactionRequest = useMemo(
     () =>
       !!transaction &&
-      !!signer &&
+      !!walletClient?.account &&
       !safeAppStatusLoading &&
-      !!ens &&
       !(stage === 'sent' || stage === 'complete') &&
       isUniquenessDefined,
-    [transaction, signer, safeAppStatusLoading, ens, stage, isUniquenessDefined],
+    [transaction, walletClient?.account, safeAppStatusLoading, stage, isUniquenessDefined],
   )
 
   const queryKeys = useQueryKeys()
