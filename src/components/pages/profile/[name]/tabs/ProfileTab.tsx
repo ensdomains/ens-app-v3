@@ -92,7 +92,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         network={chainId}
         getTextRecord={getTextRecord}
         button={snippetButton}
-        canEdit={abilities.data?.canEdit}
         isPrimary={name === primaryData?.name}
       >
         {nameDetails.isNonASCII && (
