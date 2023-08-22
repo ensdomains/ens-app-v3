@@ -41,7 +41,7 @@ export const getSocialData = (iconKey: string, value: string) => {
         label: 'Telegram',
         value: formatted,
         type: 'link',
-        urlFormatter: `https://t.me/${formatted}`,
+        urlFormatter: `https://t.me/${formatted.replace(/^@/, '')}`,
       }
     case 'email':
       return {
