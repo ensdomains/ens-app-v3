@@ -3,7 +3,6 @@ import { isHexString } from '@ethersproject/bytes/lib/index'
 import contentHash from '@ensdomains/content-hash'
 import { DecodedContentHash } from '@ensdomains/ensjs/utils/contentHash'
 
-import { ContentHash } from '@app/types'
 
 type EncodedContentHash = {
   encoded?: string
@@ -57,9 +56,9 @@ export const getContentHashLink = (
   return null
 }
 
-export const contentHashToString = (hash: ContentHash): string => {
+export const contentHashToString = (hash: DecodedContentHash | null): string => {
   if (typeof hash === 'string') return hash
-  if (typeof hash === 'object' && hash?.decoded && hash?.protocolType)
+  if (hash && typeof hash === 'object' && hash?.decoded && hash?.protocolType)
     return `${hash.protocolType}://${hash.decoded}`
   return ''
 }

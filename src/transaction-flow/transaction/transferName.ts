@@ -1,18 +1,29 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { EthAddress, PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { transferName } from '@ensdomains/ensjs/wallet'
+import type { Address } from 'viem'
 
-type Data = {
-  name: string
-  newOwner: EthAddress
-  contract: 'registry' | 'baseRegistrar' | 'nameWrapper'
-  sendType: 'sendManager' | 'sendOwner'
+type RegistrarData = {
+  contract: 'registrar'
   reclaim?: boolean
 }
 
+type OtherData = {
+  contract: 'registry' | 'nameWrapper'
+  reclaim?: never
+}
+
+type Data = {
+  name: string
+  newOwnerAddress: Address
+  contract: 'registry' | 'baseRegistrar' | 'nameWrapper'
+  sendType: 'sendManager' | 'sendOwner'
+  reclaim?: boolean
+} & (RegistrarData | OtherData)
+
 const displayItems = (
-  { name, sendType, newOwner }: Data,
+  { name, sendType, newOwnerAddress }: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
@@ -27,22 +38,22 @@ const displayItems = (
   {
     label: 'to',
     type: 'address',
-    value: newOwner,
+    value: newOwnerAddress,
   },
 ]
 
-const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const tx = ens.transferName.populateTransaction(data.name, {
-    newOwner: data.newOwner,
+const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
+  return transferName.makeFunctionData(walletClient, {
+    name: data.name,
     contract: data.contract,
+    asParent: false,
+    newOwnerAddress: data.newOwnerAddress,
     reclaim: data.reclaim,
-    signer,
   })
-  return tx
 }
 
 export default {
   displayItems,
   transaction,
   backToInput: true,
-} as Transaction<Data>
+} satisfies Transaction<Data>

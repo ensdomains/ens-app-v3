@@ -9,14 +9,6 @@ import useDNSOwner from './useDNSOwner'
 import { useGetABI } from './useGetABI'
 import { useProfile } from './useProfile'
 
-export type Profile = NonNullable<ReturnType<typeof useProfile>['profile']>
-export type DetailedProfileRecords = Profile['records'] & {
-  abi?: { data: string; contentType?: number }
-}
-export type DetailedProfile = Omit<Profile, 'records'> & {
-  records: DetailedProfileRecords
-}
-
 export const useNameDetails = (name: string, skipGraph = false) => {
   const { t } = useTranslation('profile')
   const { ready } = useEns()

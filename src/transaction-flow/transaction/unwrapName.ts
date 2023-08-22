@@ -1,8 +1,8 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { checkETH2LDFromName } from '@app/utils/utils'
+import { unwrapName } from '@ensdomains/ensjs/wallet'
 
 type Data = {
   name: string
@@ -23,15 +23,14 @@ const displayItems = (
   },
 ]
 
-// Returns a populated transaction
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const address = await signer.getAddress()
+const transaction = async ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
+  const address = walletClient.account.address
 
-  return ens.unwrapName.populateTransaction(data.name, {
-    newController: address,
-    newRegistrant: checkETH2LDFromName(data.name) ? address : undefined,
-    signer,
+  if (checkETH2LDFromName(data.name)) return unwrapName.makeFunctionData(walletClient, { name: data.name, newOwnerAddress: address, newRegistrantAddress: address })
+  return unwrapName.makeFunctionData(walletClient, {
+    name: data.name,
+    newOwnerAddress: address,
   })
 }
 
-export default { displayItems, transaction } as Transaction<Data>
+export default { displayItems, transaction } satisfies Transaction<Data>

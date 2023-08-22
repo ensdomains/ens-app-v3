@@ -1,18 +1,17 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import {
-  profileRecordsToRecordOptions,
-  profileToProfileRecords,
-} from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
-import { getABISafely, normaliseABI } from '@app/hooks/useGetABI'
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
-import { DetailedProfile } from '../../hooks/useNameDetails'
+import { profileRecordsToKeyValue } from '@app/utils/records'
+import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
+import { getRecords } from '@ensdomains/ensjs/public'
+import { getSubgraphRecords } from '@ensdomains/ensjs/subgraph'
+import { setRecords } from '@ensdomains/ensjs/wallet'
+import { Address } from 'viem'
 
 type Data = {
   name: string
-  resolver: string
+  resolverAddress: Address
 }
 
 const displayItems = ({ name }: Data, t: TFunction): TransactionDisplayItem[] => {
@@ -33,25 +32,30 @@ const displayItems = ({ name }: Data, t: TFunction): TransactionDisplayItem[] =>
   ]
 }
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const latestResolver = (await ens.contracts!.getPublicResolver()!).address
-  const currentProfile = await ens.getProfile(data.name)
-  const profileRecords = profileToProfileRecords(currentProfile as DetailedProfile)
-  const recordOptions = profileRecordsToRecordOptions(profileRecords)
-  const abiData = await getABISafely(ens.getABI)(data.name)
-  const abi = normaliseABI(abiData)
+const transaction = async ({ publicClient, walletClient, data }: TransactionFunctionParameters<Data>) => {
+  const subgraphRecords = await getSubgraphRecords(publicClient, { name: data.name })
+  const profile = await getRecords(publicClient, {
+    name: data.name,
+    records: {
+      ...subgraphRecords,
+      abi: true,
+      contentHash: true,
+    },
+    resolver: data.resolverAddress ? {
+      address: data.resolverAddress,
+      fallbackOnly: false,
+    } : undefined
+  })
 
-  const records = {
-    ...recordOptions,
-    ...(abi ? { abi } : {}),
+  const profileRecords = profileRecordsToKeyValue(profile)
+  const latestResolverAddress = getChainContractAddress({ client: publicClient, contract: 'ensPublicResolver' })
+
+  return setRecords.makeFunctionData(walletClient, {
+    name: data.name,
+    ...profileRecords,
     clearRecords: true,
-  }
-
-  return ens.setRecords.populateTransaction(data.name, {
-    records,
-    resolverAddress: latestResolver,
-    signer,
+    resolverAddress: latestResolverAddress,
   })
 }
 
-export default { displayItems, transaction } as Transaction<Data>
+export default { displayItems, transaction } satisfies Transaction<Data>

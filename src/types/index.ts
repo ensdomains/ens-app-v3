@@ -1,31 +1,26 @@
-import type { TransactionReceipt } from '@ethersproject/providers'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
-import {
+import type {
   Account,
   Address,
   Hex,
   PublicClient,
+  TransactionReceipt,
   Transport,
   WalletClient
 } from 'viem'
 
 import { ChainWithEns } from '@ensdomains/ensjs/dist/types/contracts/consts'
 import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
-import { DecodedContentHash } from '@ensdomains/ensjs/utils/contentHash'
 import { Helper, Space } from '@ensdomains/thorin'
 
-export type Profile = GetRecordsReturnType<{ name: string; records: { abi: true; contentHash: true; coins: string[]; texts: string[]; } }>
+export type Profile = Partial<GetRecordsReturnType<{ name: string; records: { abi: true; contentHash: true; coins: string[]; texts: string[]; } }>>
 
-export type ProfileRecords = GetRecordsReturnType<{ name: string; records: { abi: true; contentHash: true; coins: string[]; texts: string[]; } }>
+export type TextRecord = NonNullable<Profile['texts']>[number]
 
-export type TextRecord = NonNullable<ProfileRecords['texts']>[number]
+export type AddressRecord = NonNullable<Profile['coins']>[number]
 
-export type AddressRecord = NonNullable<ProfileRecords['coins']>[number]
-
-export type ContentHash = string | DecodedContentHash | undefined | null
-
-export type Name = NonNullable<Awaited<ReturnType<ENS['getNames']>>>[0]
+export type RecordItem = TextRecord | AddressRecord
 
 interface TransactionDisplayItemBase {
   label: string
@@ -56,8 +51,6 @@ export type TransactionDisplayItem =
 
 export type TransactionDisplayItemTypes = 'name' | 'address' | 'list' | 'records'
 
-type PublicInterface<Type> = { [Key in keyof Type]: Type[Key] }
-
 export type AvatarEditorType = {
   avatar?: string
 }
@@ -81,10 +74,7 @@ export type ProfileEditorType = {
   }
 } & AvatarEditorType
 
-export type PublicENS = PublicInterface<ENS>
-
 export type HelperProps = ComponentProps<typeof Helper>
-export type ReturnedENS = { [key in keyof PublicENS]: Awaited<ReturnType<PublicENS[key]>> }
 
 export type BasicTransactionRequest = {
   to: Address
@@ -106,10 +96,6 @@ export interface Transaction<TData> {
   helper?: (data: TData, t: TFunction<'translation', undefined>) => undefined | HelperProps
   backToInput?: boolean
 }
-
-export type AllChildFuses = Required<ChildFuses['options']>
-
-export type EthAddress = string
 
 export type UserTheme = 'light' | 'dark'
 // fiat is placeholder for now, not actually implemented

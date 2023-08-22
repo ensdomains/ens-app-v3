@@ -1,12 +1,13 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { transferName } from '@ensdomains/ensjs/wallet'
+import type { Address } from 'viem'
 
 type Data = {
   name: string
   contract: 'registry' | 'nameWrapper'
-  newOwner: string
+  newOwnerAddress: Address
 }
 
 const displayItems = (
@@ -24,17 +25,15 @@ const displayItems = (
   },
 ]
 
-const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const tx = ens.transferSubname.populateTransaction(data.name, {
-    contract: data.contract,
-    owner: data.newOwner,
-    signer,
+const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
+  return transferName.makeFunctionData(walletClient, {
+    ...data,
+    asParent: true,
   })
-  return tx
 }
 
 export default {
   displayItems,
   transaction,
   backToInput: true,
-} as Transaction<Data>
+} satisfies Transaction<Data>

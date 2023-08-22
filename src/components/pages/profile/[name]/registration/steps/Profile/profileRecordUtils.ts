@@ -1,15 +1,16 @@
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import { RecordOptions } from '@ensdomains/ensjs/utils'
 
 import { ProfileRecord, ProfileRecordGroup, sortValues } from '@app/constants/profileRecordOptions'
 import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
-import { DetailedProfile } from '@app/hooks/useNameDetails'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
+import { Profile } from '@app/types'
 import {
   contentHashProtocolToContentHashProvider,
   contentHashToString,
   getProtocolTypeAndContentId,
 } from '@app/utils/contenthash'
+import { stringToHex } from 'viem'
 
 export const profileRecordsToRecordOptions = (
   profileRecords: ProfileRecord[] = [],
@@ -53,7 +54,7 @@ export const profileRecordsToRecordOptions = (
         return {
           ...options,
           coinTypes: [
-            ...(options.coinTypes?.filter((r) => r.key !== recordItem.key) || []),
+            ...(options.coins?.filter((r) => r.coin !== recordItem.key) || []),
             recordItem,
           ],
         }
@@ -70,7 +71,8 @@ export const profileRecordsToRecordOptions = (
         return {
           ...options,
           abi: {
-            data: recordItem.value,
+            contentType: 1,
+            encodedData: stringToHex(recordItem.value),
           },
         }
       }
@@ -79,7 +81,7 @@ export const profileRecordsToRecordOptions = (
     },
     {
       clearRecords: !!clearRecords,
-    },
+    } as RecordOptions,
   )
 }
 
@@ -134,8 +136,8 @@ const sortProfileRecords = (recordA: ProfileRecord, recordB: ProfileRecord): num
   return recordAValue - recordBValue
 }
 
-export const profileToProfileRecords = (profile?: DetailedProfile): ProfileRecord[] => {
-  const records = profile?.records || {}
+export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
+  const records = profile || {}
   const texts: ProfileRecord[] =
     records.texts?.map(({ key, value }) => {
       if (key === 'avatar') {
@@ -161,12 +163,12 @@ export const profileToProfileRecords = (profile?: DetailedProfile): ProfileRecor
       }
     }) || []
   const addresses: ProfileRecord[] =
-    records.coinTypes?.map(({ addr, coin }: any) => {
+    records.coins?.map(({ id, value }) => {
       return {
-        key: coin,
+        key: String(id),
         type: 'addr',
         group: 'address',
-        value: addr,
+        value,
       }
     }) || []
 
@@ -178,8 +180,8 @@ export const profileToProfileRecords = (profile?: DetailedProfile): ProfileRecor
       ? [{ key: protocolKey, type: 'contenthash', group: 'website', value: contentHashStr }]
       : []
 
-  const abi: ProfileRecord[] = records.abi?.data
-    ? [{ key: 'abi', type: 'abi', group: 'other', value: records.abi.data }]
+  const abi: ProfileRecord[] = records.abi?.abi
+    ? [{ key: 'abi', type: 'abi', group: 'other', value: JSON.stringify(records.abi.abi) }]
     : []
   const profileRecords = [...texts, ...addresses, ...website, ...abi]
   const sortedProfileRecords = profileRecords.sort(sortProfileRecords)

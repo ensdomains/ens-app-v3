@@ -1,13 +1,12 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { getABISafely, normaliseABI } from '@app/hooks/useGetABI'
-import { PublicENS, Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { makeProfileRecordsWithEthRecordItem, profileRecordsToKeyValue } from '@app/utils/records'
-import { Address } from 'viem'
-import { getSubgraphRecords } from '@ensdomains/ensjs/subgraph'
-import { getRecords } from '@ensdomains/ensjs/public'
 import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
+import { getRecords } from '@ensdomains/ensjs/public'
+import { getSubgraphRecords } from '@ensdomains/ensjs/subgraph'
+import { setRecords } from '@ensdomains/ensjs/wallet'
+import { Address } from 'viem'
 
 type Data = {
   name: string
@@ -37,6 +36,7 @@ const displayItems = (
 const transaction = async (
   {
     publicClient,
+    walletClient,
     data,
   }: TransactionFunctionParameters<Data>,
 ) => {
@@ -55,14 +55,14 @@ const transaction = async (
   })
   const latestResolverAddress = getChainContractAddress({ client: publicClient, contract: 'ensPublicResolver' })
 
-  const profileRecords = makeProfileRecordsWithEthRecordItem(profile?.records, ethAddress)
-  const records = profileRecordsToKeyValue(profileRecords, abi)
+  const profileRecords = makeProfileRecordsWithEthRecordItem(profile, data.ethAddress)
+  const records = await profileRecordsToKeyValue(profileRecords)
 
-  return ens.setRecords.populateTransaction(name, {
-    records,
+  return setRecords.makeFunctionData(walletClient, {
+    name: data.name,
     resolverAddress: latestResolverAddress,
-    signer,
+    ...records,
   })
 }
 
-export default { displayItems, transaction } as Transaction<Data>
+export default { displayItems, transaction } satisfies Transaction<Data>

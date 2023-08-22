@@ -1,8 +1,8 @@
-import { RecordOptions, contentTypeToEncodeAs, encodeAbi } from '@ensdomains/ensjs/utils'
+import { DecodedContentHash, RecordOptions, contentTypeToEncodeAs, encodeAbi } from '@ensdomains/ensjs/utils'
 
-import { ContentHash, Profile, RecordItem } from '@app/types'
+import { AddressRecord, Profile, TextRecord } from '@app/types'
 
-import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
+import { Address } from 'viem'
 import { contentHashToString } from './contenthash'
 import { shortenAddress } from './utils'
 
@@ -23,55 +23,46 @@ export const recordOptionsToToupleList = (
   ].map(([key, value]) => (value ? [key, value] : [deleteLabel, key]))
 }
 
-export const mergeRecords = (a: RecordItem[] = [], b: RecordItem[] = []): RecordItem[] => {
-  return [...a, ...b].reduce<RecordItem[]>((acc, record) => {
-    const index = acc.findIndex((r) => r.key === record.key)
+const mergeRecords = <TMatchObject extends Record<string, any>, TMatchKey extends keyof TMatchObject = keyof TMatchObject>(matchKey: TMatchKey) => <TRecordItem extends TMatchObject>(a: TRecordItem[] = [], b: TRecordItem[] = []): TRecordItem[] => {
+  return [...a, ...b].reduce<TRecordItem[]>((acc, record) => {
+    const index = acc.findIndex((r) => r[matchKey] === record[matchKey])
     if (index === -1) return [...acc, record]
     acc[index] = { ...acc[index], ...record }
     return acc
   }, [])
 }
 
-export const checkRecordsEqual =
-  (type: 'texts' | 'coinTypes') =>
-  (a: RecordItem[] = [], b: RecordItem[] = []): boolean => {
-    if (type === 'coinTypes')
-      return Object.values(
-        [...a, ...b].reduce<{
-          [key: string]: number
-        }>((acc, coinType) => {
-          const key = `${coinType.coin}-${(coinType as any).addr}`
-          if (acc[key]) acc[key] += 1
-          else acc[key] = 1
-          return acc
-        }, {}),
-      ).every((count) => count === 2)
-    return Object.values(
-      [...a, ...b].reduce<{
-        [key: string]: number
-      }>((acc, text) => {
-        const key = `${text.key}-${text.value}`
-        if (acc[key]) acc[key] += 1
-        else acc[key] = 1
-        return acc
-      }, {}),
-    ).every((count) => count === 2)
-  }
+export const mergeTextRecords = mergeRecords<TextRecord>('key')
 
-export const checkContentHashEqual = (a?: ContentHash, b?: ContentHash): boolean => {
+export const mergeAddressRecords = mergeRecords<AddressRecord>('id')
+
+const checkRecordsEqual = <TMatchObject extends Record<string, any>>(keyFn: (item: TMatchObject) => string) => (a: TMatchObject[] = [], b: TMatchObject[] = []): boolean => {
+  return Object.values(
+    [...a, ...b].reduce((acc, item) => {
+      const key = keyFn(item)
+      if (acc[key]) acc[key] += 1
+      else acc[key] = 1
+      return acc
+    }, {} as Record<string, number>),
+  ).every((count) => count === 2)}
+
+const checkAddressRecordsEqual = checkRecordsEqual<AddressRecord>((item) => `${item.id}-${item.value}`)
+const checkTextRecordsEqual = checkRecordsEqual<TextRecord>((item) => `${item.key}-${item.value}`)
+
+export const checkContentHashEqual = (a?: DecodedContentHash | null, b?: DecodedContentHash | null): boolean => {
   return contentHashToString(a) === contentHashToString(b)
 }
 
-export const checkProfileRecordsEqual = (a: Profile['records'], b: Profile['records']): boolean => {
-  if (!checkRecordsEqual('texts')(a?.texts, b?.texts)) return false
-  if (!checkRecordsEqual('coinTypes')(a?.coinTypes, b?.coinTypes)) return false
+export const checkProfileRecordsEqual = (a: Profile, b: Profile): boolean => {
+  if (!checkTextRecordsEqual(a?.texts, b?.texts)) return false
+  if (!checkAddressRecordsEqual(a?.coins, b?.coins)) return false
   if (!checkContentHashEqual(a?.contentHash, b?.contentHash)) return false
   return true
 }
 
-export const mergeProfileRecords = (a?: Profile['records'], b?: Profile['records']) => {
-  const texts = mergeRecords(a?.texts, b?.texts)
-  const coinTypes = mergeRecords(a?.coinTypes, b?.coinTypes)
+export const mergeProfileRecords = (a?: Profile, b?: Profile) => {
+  const texts = mergeTextRecords(a?.texts, b?.texts)
+  const coinTypes = mergeAddressRecords(a?.coins, b?.coins)
   const contentHash = contentHashToString(b?.contentHash) || contentHashToString(a?.contentHash)
   return {
     texts,
@@ -80,27 +71,26 @@ export const mergeProfileRecords = (a?: Profile['records'], b?: Profile['records
   }
 }
 
-export const makeEthRecordItem = (addr: string): RecordItem => {
+export const makeEthRecordItem = (address: Address): AddressRecord => {
   return {
-    coin: 'ETH',
-    key: '60',
-    type: 'addr',
-    addr,
-  } as unknown as RecordItem
+    id: 60,
+    name: 'ETH',
+    value: address,
+  }
 }
 
 export const makeProfileRecordsWithEthRecordItem = (
-  records: Profile['records'] = {},
-  addr?: string,
-): Profile['records'] => {
+  records: Profile = {},
+  address?: Address,
+): Profile => {
   return {
     ...records,
-    coinTypes: mergeRecords(records?.coinTypes, [...(addr ? [makeEthRecordItem(addr)] : [])]),
+    coins: mergeAddressRecords(records?.coins, [...(address ? [makeEthRecordItem(address)] : [])]),
   }
 }
 
 export const  profileRecordsToKeyValue = async (
-  records: GetRecordsReturnType<{ name: string; records: { abi: true; contentHash: true; coins: string[]; texts: string[]; } }>
+  records: Profile
 ): Promise<RecordOptions> => {
   const contentHash = contentHashToString(records?.contentHash)
   return {
@@ -114,24 +104,28 @@ export const  profileRecordsToKeyValue = async (
   }
 }
 
-export type RecordMatch =
-  | {
-      key: string
-      type: 'text'
-      value: string
-    }
-  | {
-      key: string
-      type: 'addr'
-      addr: string
-    }
+type ProfileMatchText = {
+  type: 'text'
+  match: TextRecord
+}
 
-export const checkProfileRecordsContains = (records: Profile['records'], match: RecordMatch) => {
-  if (match.type === 'text')
-    return !!records?.texts?.some(({ key, value }) => key === match.key && value === match.value)
-  if (match.type === 'addr')
-    return !!records?.coinTypes?.some(
-      (coinType) => coinType.key === match.key && (coinType as any).addr === match.addr,
+type ProfileMatchAddress = {
+  type: 'address'
+  match: AddressRecord
+}
+
+export const checkProfileRecordsContains = ({
+  profile,
+  type,
+  match,
+}: {
+  profile: Profile
+} & (ProfileMatchText | ProfileMatchAddress)) => {
+  if (type === 'text')
+    return !!profile?.texts?.some(({ key, value }) => key === match.key && value === match.value)
+  if (type === 'address')
+    return !!profile?.coins?.some(
+      (coin) => coin.id === match.id && coin.value === match.value,
     )
   return false
 }

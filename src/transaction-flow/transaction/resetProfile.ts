@@ -1,14 +1,15 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
-import { TFunction } from 'i18next'
+import type { TFunction } from 'i18next'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { clearRecords } from '@ensdomains/ensjs/wallet'
+import type { Address } from 'viem'
 
 type Data = {
   name: string
-  resolver: string
+  resolverAddress: Address
 }
 
-const displayItems = ({ name, resolver }: Data, t: TFunction): TransactionDisplayItem[] => {
+const displayItems = ({ name, resolverAddress }: Data, t: TFunction): TransactionDisplayItem[] => {
   return [
     {
       label: 'name',
@@ -22,22 +23,16 @@ const displayItems = ({ name, resolver }: Data, t: TFunction): TransactionDispla
     {
       label: 'resolver',
       type: 'address',
-      value: resolver,
+      value: resolverAddress,
     },
   ]
 }
 
-const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  return ens.setRecords.populateTransaction(data.name, {
-    records: {
-      clearRecords: true,
-    },
-    resolverAddress: data.resolver,
-    signer,
-  })
+const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
+  return clearRecords.makeFunctionData(walletClient, data)
 }
 
 export default {
   displayItems,
   transaction,
-} as Transaction<Data>
+} satisfies Transaction<Data>

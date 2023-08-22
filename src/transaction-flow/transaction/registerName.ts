@@ -1,12 +1,13 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { BaseRegistrationParams } from '@ensdomains/ensjs/utils/registerHelpers'
+import { RegistrationParameters } from '@ensdomains/ensjs/utils'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { calculateValueWithBuffer, secondsToYears } from '@app/utils/utils'
+import { getPrice } from '@ensdomains/ensjs/public'
+import { registerName } from '@ensdomains/ensjs/wallet'
 
-type Data = BaseRegistrationParams & { name: string }
+type Data = RegistrationParameters
 
 const displayItems = (
   { name, duration }: Data,
@@ -29,16 +30,15 @@ const displayItems = (
   },
 ]
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const price = await ens.getPrice(data.name.split('.')[0], data.duration)
-  const value = price!.base.add(price!.premium)
+const transaction = async ({ publicClient, walletClient, data }: TransactionFunctionParameters<Data>) => {
+  const price = await getPrice(publicClient, { nameOrNames: data.name, duration: data.duration })
+  const value = price.base + price.premium
   const valueWithBuffer = calculateValueWithBuffer(value)
 
-  return ens.registerName.populateTransaction(data.name, {
-    signer,
+  return registerName.makeFunctionData(walletClient, {
     ...data,
     value: valueWithBuffer,
   })
 }
 
-export default { displayItems, transaction } as Transaction<Data>
+export default { displayItems, transaction } satisfies Transaction<Data>

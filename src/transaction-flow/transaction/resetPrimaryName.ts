@@ -1,10 +1,11 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { setPrimaryName } from '@ensdomains/ensjs/wallet'
+import { Address } from 'viem'
 
 type Data = {
-  address: string
+  address: Address
 }
 
 const displayItems = (
@@ -22,7 +23,7 @@ const displayItems = (
   },
 ]
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS) =>
-  ens.setName.populateTransaction('', { signer })
+const transaction = async ({ walletClient }: TransactionFunctionParameters<Data>) =>
+  setPrimaryName.makeFunctionData(walletClient, { name: '' })
 
-export default { displayItems, transaction } as Transaction<Data>
+export default { displayItems, transaction } satisfies Transaction<Data>

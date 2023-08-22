@@ -1,3 +1,4 @@
+import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
 import { DecodedFuses } from '@ensdomains/ensjs/utils'
 import { toBytes } from 'viem'
 import {
@@ -78,7 +79,7 @@ export const checkDNSName = (name: string): boolean => {
   return !!labels && labels[labels.length - 1] !== 'eth'
 }
 
-export const checkETH2LDFromName = (name: string) => {
+export const checkETH2LDFromName = (name: string): name is Eth2ldName => {
   const labels = name.split('.')
   if (labels.length !== 2) return false
   if (labels[1] !== 'eth') return false
