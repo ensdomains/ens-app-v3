@@ -5,6 +5,7 @@ import { Button, FastForwardSVG, mq } from '@ensdomains/thorin'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { shouldShowExtendWarning } from '@app/utils/abilities/shouldShowExtendWarning'
 
 const FastForwardIcon = styled.svg(
   ({ theme }) => css`
@@ -43,7 +44,7 @@ export const ExtendButton = ({ name }: { name: string }) => {
         onClick={() => {
           showExtendNamesInput(`extend-names-${name}`, {
             names: [name],
-            isSelf: abilities.data?.canEdit,
+            isSelf: shouldShowExtendWarning(abilities.data),
           })
         }}
         prefix={<FastForwardIcon as={FastForwardSVG} />}
