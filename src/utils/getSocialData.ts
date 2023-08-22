@@ -1,4 +1,8 @@
+import { formatRecord } from 'ens-tools/dist/format'
+
 export const getSocialData = (iconKey: string, value: string) => {
+  const formatted = formatRecord(iconKey as any, value) || value
+
   switch (iconKey) {
     case 'twitter':
     case 'com.twitter':
@@ -6,9 +10,9 @@ export const getSocialData = (iconKey: string, value: string) => {
         icon: 'com.twitter',
         color: '#65C5FC',
         label: 'Twitter',
-        value: `@${value.replace(/^@/, '')}`,
+        value: formatted,
         type: 'link',
-        urlFormatter: `https://twitter.com/${value.replace(/^@/, '')}`,
+        urlFormatter: `https://twitter.com/${formatted}`,
       }
     case 'github':
     case 'com.github':
@@ -16,9 +20,9 @@ export const getSocialData = (iconKey: string, value: string) => {
         icon: 'com.github',
         color: '#000000',
         label: 'GitHub',
-        value,
+        value: formatted,
         type: 'link',
-        urlFormatter: `https://github.com/${value}`,
+        urlFormatter: `https://github.com/${formatted}`,
       }
     case 'discord':
     case 'com.discord':
@@ -35,17 +39,18 @@ export const getSocialData = (iconKey: string, value: string) => {
         icon: 'org.telegram',
         color: '#2BABEE',
         label: 'Telegram',
-        value,
+        value: formatted,
         type: 'link',
-        urlFormatter: `https://t.me/${value}`,
+        urlFormatter: `https://t.me/${formatted}`,
       }
     case 'email':
       return {
         icon: 'email',
         color: '#000000',
         label: 'Email',
-        value,
-        type: 'copy',
+        value: formatted,
+        type: 'link',
+        urlFormatter: `mailto:${formatted}`,
       }
     default:
       return null
