@@ -29,12 +29,27 @@ export const getDefaultWallets = ({
         safeWallet({ chains }),
         braveWallet({ chains }),
         // always shown
-        walletConnectWallet({ chains, projectId }),
-        rainbowWallet({ chains, projectId }),
+        walletConnectWallet({ chains: [chains[0]], projectId }),
+        rainbowWallet({ chains: [chains[0]], projectId }),
         coinbaseWallet({ appName, chains }),
         metaMaskWallet({ chains, projectId }),
-        ledgerWallet({ chains, projectId }),
-        argentWallet({ chains, projectId }),
+        ledgerWallet({ chains: [chains[0]], projectId }),
+        argentWallet({ chains: [chains[0]], projectId }),
+      ],
+    },
+    {
+      groupName: 'Testnet',
+      wallets: [
+        {
+          ...walletConnectWallet({ chains: [chains[1]], projectId }),
+          id: 'goerli-wallet-connect',
+          name: 'Goerli',
+        },
+        {
+          ...walletConnectWallet({ chains: [chains[2]], projectId }),
+          id: 'sepolia-wallet-connect',
+          name: 'Sepolia',
+        },
       ],
     },
   ]
