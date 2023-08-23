@@ -3,8 +3,8 @@ import { useQuery } from 'wagmi'
 
 import type { Name } from '@ensdomains/ensjs/functions/getNames'
 
+import { useBlockTimestamp } from '@app/hooks/chain/useBlockTimestamp'
 import { useGlobalErrorFunc } from '@app/hooks/errors/useGlobalErrorFunc'
-import { useBlockTimestamp } from '@app/hooks/useBlockTimestamp'
 import { useEns } from '@app/utils/EnsProvider'
 import { chunkArr } from '@app/utils/array'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'

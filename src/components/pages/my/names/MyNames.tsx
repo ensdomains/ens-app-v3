@@ -16,11 +16,11 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import {
   ReturnedName,
   useNamesFromAddress,
 } from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
-import { useChainId } from '@app/hooks/useChainId'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'

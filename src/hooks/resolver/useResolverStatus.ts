@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
+import { useChainId } from '@app/hooks/chain/useChainId'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverIsAuthorized } from '@app/hooks/resolver/useResolverIsAuthorized'
 import { useResolverType } from '@app/hooks/resolver/useResolverType'
-import { useChainId } from '@app/hooks/useChainId'
-import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useProfile } from '@app/hooks/useProfile'
 import { emptyAddress } from '@app/utils/constants'
 import { profileHasRecords } from '@app/utils/profile'

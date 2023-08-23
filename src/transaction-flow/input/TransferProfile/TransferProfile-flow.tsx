@@ -6,7 +6,7 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useProfile } from '@app/hooks/useProfile'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 
-import { useContractAddress } from '../../../hooks/useContractAddress'
+import { useContractAddress } from '../../../hooks/chain/useContractAddress'
 import { makeTransactionItem } from '../../transaction/index'
 import { TransactionDialogPassthrough } from '../../types'
 

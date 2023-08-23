@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 
 import { Avatar, Space, mq } from '@ensdomains/thorin'
 
-import { useAvatar } from '@app/hooks/useAvatar'
+import { useAvatar } from '@app/hooks/useNftImage'
 import { useZorb } from '@app/hooks/useZorb'
 import { QuerySpace } from '@app/types'
 

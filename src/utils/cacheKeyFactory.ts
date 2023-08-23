@@ -1,15 +1,19 @@
 import { useAccount } from 'wagmi'
 
 import type { uniqueTransactionIdentifierGenerator } from '@app/components/@molecules/TransactionDialogManager/stage/TransactionStageModal'
-import { useChainId } from '@app/hooks/useChainId'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import type { RegistrationProps } from '@app/hooks/useEstimateRegistration'
 import type { TransactionItem } from '@app/transaction-flow/transaction'
+import { GetDnsImportDataParameters, GetDnsOwnerParameters } from '@ensdomains/ensjs/dns'
+import { GetExpiryParameters, GetOwnerParameters, GetPriceParameters, GetRecordsParameters, GetWrapperDataParameters } from '@ensdomains/ensjs/public'
+import { GetDecodedNameParameters, GetNameHistoryParameters, GetSubgraphRecordsParameters } from '@ensdomains/ensjs/subgraph'
+import type { Address } from 'viem'
 
 export const useQueryKeys = () => {
   const { address } = useAccount()
   const chainId = useChainId()
 
-  const globalKeys = [chainId, address]
+  const globalKeys = [chainId, address] as const
 
   return {
     graphBase: [...globalKeys, 'graph'],
@@ -33,15 +37,14 @@ export const useQueryKeys = () => {
     ],
     avatar: {
       avatar: (name: string | null | undefined) => [...globalKeys, 'getAvatar', name, 'avatar'],
-      getNFTImage: (name: string | null | undefined) => [...globalKeys, name, 'getNFTImage'],
     },
-    basicName: (normalisedName: string, skipGraph: boolean) => [
+    getNftImage: (params: { name: string | null | undefined; registrarAddress: Address }) => [{ ...params, chainId }, ...globalKeys, 'getNftImage'] as const,
+    basicName: (normalisedName: string) => [
       ...globalKeys,
       'batch',
       'getOwner',
       'getExpiry',
       normalisedName,
-      skipGraph,
       'basicName',
     ],
     basicNameRoot: (normalisedName: string) => [
@@ -54,7 +57,6 @@ export const useQueryKeys = () => {
     beautifiedName: (name: string) => [...globalKeys, name, 'beautifiedName'],
     blockTimestamp: [...globalKeys, 'blockTimestamp'],
     currentBlockTimestamp: [...globalKeys, 'currentBlockTimestamp'],
-    decryptName: (name: string) => [...globalKeys, 'graph', name, 'decryptName'],
     getDNSOwner: (name: string) => [...globalKeys, name, 'getDNSOwner'],
     getDNSProof: (name: string) => [...globalKeys, name, 'getDNSProof'],
     estimateGasLimitForTransactions: (transactions: TransactionItem[], extraKeys: string[]) => [
@@ -74,7 +76,6 @@ export const useQueryKeys = () => {
     faucet: (localAddress?: string) => [...globalKeys, localAddress, 'faucet'],
     getABI: (name: string) => [...globalKeys, name, 'getABI'],
     getHistory: (name: string) => [...globalKeys, 'graph', name, 'getHistory'],
-    getWrapperData: (name: string) => [...globalKeys, name, 'getWrapperData'],
     hasSubnames: (name: string) => [...globalKeys, 'graph', name, 'hasSubnames'],
     subnames: (name: string, orderBy = '', orderDirection = '', search = '') => [
       ...globalKeys,
@@ -99,21 +100,35 @@ export const useQueryKeys = () => {
       resolvedAddress,
       'namesFromResolvedAddress',
     ],
-    getPrice: (type: 'legacy' | 'new', names: string[]) => [
-      ...globalKeys,
-      type,
-      ...names,
-      'getPrice',
-    ],
     primary: (localAddress: string) => [...globalKeys, 'getName', localAddress, 'primary'],
-    profile: (name: string, resolverAddress?: string, skipGraph?: boolean) => [
+    getDecodedName: <TParams extends GetDecodedNameParameters>(params: TParams) => [params, ...globalKeys, 'graph', 'getDecodedName'] as const,
+    getSubgraphRecords: <TParams extends GetSubgraphRecordsParameters>(params: TParams) => [
+      params,
       ...globalKeys,
       'graph',
-      name,
-      'profile',
-      resolverAddress,
-      skipGraph,
-    ],
+      'getSubgraphRecords',
+    ] as const,
+    getNameHistory: <TParams extends GetNameHistoryParameters>(params: TParams) => [
+      params,
+      ...globalKeys,
+      'graph',
+      'getNameHistory',
+    ] as const,
+    getExpiry: <TParams extends GetExpiryParameters>(params: TParams) => [
+      params,
+      ...globalKeys,
+      'getExpiry',
+    ] as const,
+    getOwner: <TParams extends GetOwnerParameters>(params: TParams) => [params, ...globalKeys, 'getOwner'] as const,
+    getPrice: <TParams extends GetPriceParameters>(params: TParams) => [params, ...globalKeys, 'getPrice'] as const,
+    getRecords: <TParams extends GetRecordsParameters>(params: TParams) => [
+      params,
+      ...globalKeys,
+      'getRecords',
+    ] as const,
+    getWrapperData: <TParams extends GetWrapperDataParameters>(params: TParams) => [params, ...globalKeys, 'getWrapperData'] as const,
+    getDnsImportData: <TParams extends GetDnsImportDataParameters>(params: TParams) => [params, ...globalKeys, 'getDnsImportData'] as const,
+    getDnsOwner: <TParams extends GetDnsOwnerParameters>(params: TParams) => [params, ...globalKeys, 'getDnsOwner'] as const,
     registrationDate: (name: string) => [...globalKeys, 'graph', name, 'registrationDate'],
     getResolver: (name: string) => [...globalKeys, name, 'getResolver'],
     resolverExists: (name: string) => [

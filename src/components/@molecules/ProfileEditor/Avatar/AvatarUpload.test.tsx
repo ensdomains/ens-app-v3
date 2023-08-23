@@ -2,7 +2,7 @@ import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-util
 
 import { useSignTypedData } from 'wagmi'
 
-import { useChainName } from '@app/hooks/useChainName'
+import { useChainName } from '@app/hooks/chain/useChainName'
 
 import { AvatarUpload } from './AvatarUpload'
 

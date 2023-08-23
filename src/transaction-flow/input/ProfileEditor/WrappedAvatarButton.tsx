@@ -2,8 +2,8 @@ import { ComponentProps } from 'react'
 import { Control, useFormState } from 'react-hook-form'
 
 import AvatarButton from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useChainId } from '@app/hooks/useChainId'
+import { useChainId } from '@app/hooks/chain/useChainId'
+import { useAvatar } from '@app/hooks/useNftImage'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
 type Props = {

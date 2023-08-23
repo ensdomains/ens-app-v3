@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { ReturnedENS } from '@app/types'
 import { safeDateObj } from '@app/utils/date'
 
-import { useContractAddress } from '../useContractAddress'
+import { useContractAddress } from '../chain/useContractAddress'
 
 export const usePccExpired = ({
   ownerData,

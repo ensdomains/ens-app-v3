@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from 'wagmi'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
-import { useAccountSafely } from './useAccountSafely'
-import { useChainId } from './useChainId'
+import { useAccountSafely } from './account/useAccountSafely'
+import { useChainId } from './chain/useChainId'
 
 type BaseJsonRPC<Result> = {
   jsonrpc: string

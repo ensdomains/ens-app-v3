@@ -2,7 +2,7 @@ import type { BaseProvider } from '@ethersproject/providers'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useAccount, useProvider } from 'wagmi'
 
-import { useChainId } from '../useChainId'
+import { useChainId } from '../chain/useChainId'
 import { TransactionStore, createTransactionStore } from './transactionStore'
 
 // Only allow a single instance of the store to exist at once

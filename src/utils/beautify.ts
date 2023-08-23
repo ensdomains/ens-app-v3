@@ -1,4 +1,4 @@
-import { beautify } from '@ensdomains/ensjs/utils/normalise'
+import { beautify } from '@ensdomains/ensjs/utils'
 
 export const tryBeautify = (name: string): string => {
   try {

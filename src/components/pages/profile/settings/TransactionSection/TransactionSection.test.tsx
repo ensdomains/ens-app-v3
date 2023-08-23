@@ -2,10 +2,10 @@ import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 
 import { act } from '@testing-library/react'
 
+import { useChainName } from '@app/hooks/chain/useChainName'
 import type { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useChainName } from '@app/hooks/useChainName'
 
 import { TransactionSection } from './TransactionSection'
 

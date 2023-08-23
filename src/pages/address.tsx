@@ -27,8 +27,8 @@ import {
   SortDirection,
   SortType,
 } from '../components/@molecules/NameTableHeader/NameTableHeader'
-import { useAccountSafely } from '../hooks/useAccountSafely'
-import { useChainId } from '../hooks/useChainId'
+import { useAccountSafely } from '../hooks/account/useAccountSafely'
+import { useChainId } from '../hooks/chain/useChainId'
 import { useQueryParameterState } from '../hooks/useQueryParameterState'
 
 const DetailsContainer = styled.div(

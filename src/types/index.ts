@@ -13,6 +13,7 @@ import type {
 import { ChainWithEns } from '@ensdomains/ensjs/dist/types/contracts/consts'
 import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
 import { Helper, Space } from '@ensdomains/thorin'
+import { UseQueryOptions } from '@tanstack/react-query'
 
 export type Profile = Partial<GetRecordsReturnType<{ name: string; records: { abi: true; contentHash: true; coins: string[]; texts: string[]; } }>>
 
@@ -144,3 +145,19 @@ export type Prettify<T> = {
 
 export type PublicClientWithChain = PublicClient<Transport, ChainWithEns>
 export type WalletClientWithAccount = WalletClient<Transport, ChainWithEns, Account>
+
+export type QueryConfig<TData, TError, TSelectData = TData> = Pick<
+  UseQueryOptions<TData, TError, TSelectData>,
+  | 'cacheTime'
+  | 'enabled'
+  | 'isDataEqual'
+  | 'staleTime'
+  | 'structuralSharing'
+  | 'suspense'
+  | 'onError'
+  | 'onSettled'
+  | 'onSuccess'
+> & {
+  /** Scope the cache to a given context. */
+  scopeKey?: string
+}

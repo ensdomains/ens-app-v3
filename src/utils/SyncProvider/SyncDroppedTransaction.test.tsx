@@ -4,9 +4,9 @@ import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { useProvider } from 'wagmi'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
 
 import {
   SyncDroppedTransaction,

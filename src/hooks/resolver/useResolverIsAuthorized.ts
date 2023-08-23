@@ -4,7 +4,7 @@ import { useQuery, useSigner } from 'wagmi'
 
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
-import { useChainId } from '@app/hooks/useChainId'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useProfile } from '@app/hooks/useProfile'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { NAMEWRAPPER_AWARE_RESOLVERS, RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'

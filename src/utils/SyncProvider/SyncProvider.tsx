@@ -1,12 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import { useQuery, useQueryClient } from 'wagmi'
 
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useGlobalError } from '@app/hooks/errors/useGlobalError'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useRegisterNameCallback } from '@app/hooks/transactions/useRegisterNameCallback'
-import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
 
 import { debugSubgraphIndexingErrors } from '../GlobalErrorProvider/useSubgraphMetaSync'

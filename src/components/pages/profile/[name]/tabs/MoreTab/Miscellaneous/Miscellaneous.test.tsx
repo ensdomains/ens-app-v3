@@ -3,7 +3,7 @@ import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-util
 import { useAccount } from 'wagmi'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useChainName } from '@app/hooks/useChainName'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import useRegistrationData from '@app/hooks/useRegistrationData'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 

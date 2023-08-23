@@ -3,11 +3,11 @@ import { cleanup, mockFunction, render, screen, userEvent, waitFor, within } fro
 
 import { useNetwork } from 'wagmi'
 
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useAvatar } from '@app/hooks/useAvatar'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useAvatar } from '@app/hooks/useNftImage'
 import { useProfile } from '@app/hooks/useProfile'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'

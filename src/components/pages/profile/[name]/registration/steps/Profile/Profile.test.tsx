@@ -3,7 +3,7 @@ import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-util
 import { PointerEventsCheckLevel } from '@testing-library/user-event'
 import { useAccount, useNetwork } from 'wagmi'
 
-import { useContractAddress } from '@app/hooks/useContractAddress'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 
 import Profile from './Profile'

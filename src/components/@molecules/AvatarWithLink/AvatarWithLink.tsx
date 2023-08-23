@@ -2,8 +2,8 @@ import styled, { css } from 'styled-components'
 
 import { Avatar, UpRightArrowSVG } from '@ensdomains/thorin'
 
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useChainId } from '@app/hooks/useChainId'
+import { useChainId } from '@app/hooks/chain/useChainId'
+import { useAvatar } from '@app/hooks/useNftImage'
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination } from '@app/routes'
 

@@ -2,11 +2,11 @@
 import { useEffect, useRef } from 'react'
 import { useProvider } from 'wagmi'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
 import type { EtherscanMinedData } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { useChainId } from '@app/hooks/useChainId'
 
 const TRANSACTION_SEARCH_INTERVAL = 10000
 

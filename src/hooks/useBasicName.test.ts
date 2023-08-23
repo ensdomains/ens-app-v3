@@ -5,9 +5,9 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { useEns } from '@app/utils/EnsProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 
+import { useContractAddress } from './chain/useContractAddress'
+import useCurrentBlockTimestamp from './chain/useCurrentBlockTimestamp'
 import { useBasicName } from './useBasicName'
-import { useContractAddress } from './useContractAddress'
-import useCurrentBlockTimestamp from './useCurrentBlockTimestamp'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 

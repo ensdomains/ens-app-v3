@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi'
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
-import { useAvatar } from '@app/hooks/useAvatar'
+import { useAvatar } from '@app/hooks/useNftImage'
 import { useSubnameInfiniteQuery } from '@app/hooks/useSubnameInfiniteQuery'
 import { useZorb } from '@app/hooks/useZorb'
 

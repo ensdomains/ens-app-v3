@@ -5,8 +5,8 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
-import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import Token from './Token'

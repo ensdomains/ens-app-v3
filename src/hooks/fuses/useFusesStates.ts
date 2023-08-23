@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import type { useEns } from '@app/utils/EnsProvider'
 
 type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']

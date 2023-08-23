@@ -15,7 +15,7 @@ import { Button, Dropdown, Helper, Input, Typography, mq } from '@ensdomains/tho
 
 import CalendarSVG from '@app/assets/Calendar.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import useCurrentBlockTimestamp from '@app/hooks/useCurrentBlockTimestamp'
+import useCurrentBlockTimestamp from '@app/hooks/chain/useCurrentBlockTimestamp'
 import { makeDisplay } from '@app/utils/currency'
 
 const VAR_PREFIX = '--premium-chart-'

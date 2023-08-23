@@ -4,22 +4,22 @@ import { act, fireEvent, mockFunction, render, screen, waitFor } from '@app/test
 import { ComponentProps } from 'react'
 import { useSendTransaction, useSigner } from 'wagmi'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { useChainName } from '@app/hooks/useChainName'
+import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { checkIsSafeApp } from '@app/utils/safe'
-import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import {
   TransactionStageModal,
+  calculateGasLimit,
   handleBackToInput,
-  transactionSuccessHandler,
-  calculateGasLimit
+  transactionSuccessHandler
 } from './TransactionStageModal'
-import { BigNumber } from '@ethersproject/bignumber'
 
 jest.mock('@app/hooks/useAccountSafely')
 jest.mock('@app/hooks/useChainName')

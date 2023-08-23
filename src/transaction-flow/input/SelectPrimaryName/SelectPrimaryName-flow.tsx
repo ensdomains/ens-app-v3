@@ -19,6 +19,7 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import {
   Name,
   useAvailablePrimaryNamesForAddress,
@@ -26,7 +27,6 @@ import {
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useChainId } from '@app/hooks/useChainId'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useProfile } from '@app/hooks/useProfile'
 import {

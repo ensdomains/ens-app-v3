@@ -1,7 +1,7 @@
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { usePublicClient, useWalletClient, useQuery, useSendTransaction } from 'wagmi'
+import { usePublicClient, useQuery, useSendTransaction, useWalletClient } from 'wagmi'
 
 import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 
@@ -10,10 +10,10 @@ import CircleTickSVG from '@app/assets/CircleTick.svg'
 import WalletSVG from '@app/assets/Wallet.svg'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
+import { useChainName } from '@app/hooks/chain/useChainName'
+import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useChainName } from '@app/hooks/useChainName'
-import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { transactions } from '@app/transaction-flow/transaction'
 import {
@@ -24,8 +24,8 @@ import {
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { makeEtherscanLink } from '@app/utils/utils'
 
+import { Address, BlockTag, Hash, Hex, PublicClient, Transaction, TransactionRequest, WalletClient } from 'viem'
 import { DisplayItems } from '../DisplayItems'
-import { Address, BlockTag, Hash, Hex, PublicClient, PublicRpcSchema, Transaction, TransactionRequest, WalletClient } from 'viem'
 
 const BarContainer = styled.div(
   ({ theme }) => css`

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useChainId } from '../useChainId'
+import { useChainId } from '../chain/useChainId'
 import { useTransactionStore } from './TransactionStoreContext'
 import type { Transaction } from './transactionStore'
 

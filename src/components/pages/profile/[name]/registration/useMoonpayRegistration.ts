@@ -3,8 +3,8 @@ import { useMutation, useQuery } from 'wagmi'
 
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { useChainId } from '@app/hooks/useChainId'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'

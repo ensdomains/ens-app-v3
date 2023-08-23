@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { ReturnedENS } from '@app/types'

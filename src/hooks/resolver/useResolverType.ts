@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useRegistryResolver } from '@app/hooks/resolver/useRegistryResolver'
-import { useChainId } from '@app/hooks/useChainId'
 import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
 
 import { useBasicName } from '../useBasicName'

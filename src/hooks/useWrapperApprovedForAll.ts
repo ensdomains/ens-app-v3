@@ -3,7 +3,7 @@ import { useQuery } from 'wagmi'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
-import { useContractAddress } from './useContractAddress'
+import { useContractAddress } from './chain/useContractAddress'
 
 const useWrapperApprovedForAll = (address: string, isSubdomain: boolean, canBeWrapped: boolean) => {
   const { contracts } = useEns()

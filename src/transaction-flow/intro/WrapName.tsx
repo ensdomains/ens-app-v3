@@ -5,8 +5,7 @@ import { Typography } from '@ensdomains/thorin'
 
 import { WrapNameGift } from '@app/assets/WrapNameGift'
 import { Outlink } from '@app/components/Outlink'
-import { useNFTImage } from '@app/hooks/useAvatar'
-import { useChainId } from '@app/hooks/useChainId'
+import { useNftImage } from '@app/hooks/useNftImage'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 const GiftWrapper = styled.div(
@@ -29,13 +28,12 @@ const DescriptionWrapper = styled(Typography)(
 
 export const WrapName = ({ name }: { name: string }) => {
   const { t } = useTranslation('profile')
-  const chainId = useChainId()
-  const nftUrl = useNFTImage(name, chainId)
+  const { data: nftUrl } = useNftImage({ name })
 
   return (
     <>
       <GiftWrapper>
-        <WrapNameGift imageSrc={nftUrl.image || '/other/TemplateNFTImage.svg'} />
+        <WrapNameGift imageSrc={nftUrl || '/other/TemplateNFTImage.svg'} />
       </GiftWrapper>
       <DescriptionWrapper>
         <Typography>

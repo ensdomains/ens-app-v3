@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next'
 
 import { checkETH2LDFromName } from '@app/utils/utils'
 
+import { useAccountSafely } from '../account/useAccountSafely'
 import { useResolverIsAuthorized } from '../resolver/useResolverIsAuthorized'
-import { useAccountSafely } from '../useAccountSafely'
 import { useBasicName } from '../useBasicName'
 import { useHasSubnames } from '../useHasSubnames'
 import { getDeleteAbilities } from './utils/getDeleteAbilities'

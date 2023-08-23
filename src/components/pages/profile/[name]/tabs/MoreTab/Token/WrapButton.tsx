@@ -2,9 +2,9 @@ import { useTranslation } from 'react-i18next'
 
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { DetailedProfile } from '@app/hooks/useNameDetails'
 import useWrapperApprovedForAll from '@app/hooks/useWrapperApprovedForAll'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'

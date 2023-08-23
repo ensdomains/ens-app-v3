@@ -11,7 +11,7 @@ import { ConfirmationDialogView } from '@app/components/@molecules/ConfirmationD
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
-import { useContractAddress } from '@app/hooks/useContractAddress'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'

@@ -6,7 +6,7 @@ import { RadioButton, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
-import { useChainName } from '@app/hooks/useChainName'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import useResolverEditor from '@app/hooks/useResolverEditor'
 import { makeEtherscanLink } from '@app/utils/utils'
 

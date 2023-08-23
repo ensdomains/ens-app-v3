@@ -1,7 +1,7 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useContractAddress } from '@app/hooks/useContractAddress'
 import { RecordItem, ReturnedENS } from '@app/types/index'
 import { NAMEWRAPPER_AWARE_RESOLVERS, emptyAddress } from '@app/utils/constants'
 import { makeEthRecordItem, mergeRecords } from '@app/utils/records'

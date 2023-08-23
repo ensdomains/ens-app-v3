@@ -1,8 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import React from 'react'
 
-import { useChainName } from '@app/hooks/useChainName'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { formatDateTime } from '@app/utils/utils'
 
 import { RegistrationDate } from './RegistrationDate'

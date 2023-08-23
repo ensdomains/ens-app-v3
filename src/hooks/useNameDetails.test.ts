@@ -2,7 +2,7 @@ import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
 import { useEns } from '@app/utils/EnsProvider'
 
-import { useContractAddress } from './useContractAddress'
+import { useContractAddress } from './chain/useContractAddress'
 import { useNameDetails } from './useNameDetails'
 import { useProfile } from './useProfile'
 import { useValidate } from './useValidate'

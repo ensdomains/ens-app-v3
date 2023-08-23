@@ -8,7 +8,7 @@ import { WagmiConfig, useAccount } from 'wagmi'
 
 import { Dialog } from '@ensdomains/thorin'
 
-import { useChainId } from '@app/hooks/useChainId'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { transactions } from '@app/transaction-flow/transaction'
 import { wagmiClientWithRefetch } from '@app/utils/query'
 

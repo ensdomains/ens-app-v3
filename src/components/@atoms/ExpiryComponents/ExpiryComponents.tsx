@@ -6,7 +6,7 @@ import { Typography } from '@ensdomains/thorin'
 import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays, secondsToHours } from '@app/utils/utils'
 
-import { useBlockTimestamp } from '../../../hooks/useBlockTimestamp'
+import { useBlockTimestamp } from '../../../hooks/chain/useBlockTimestamp'
 
 const GRACE_PERIOD_S = 90 * 24 * 60 * 60
 

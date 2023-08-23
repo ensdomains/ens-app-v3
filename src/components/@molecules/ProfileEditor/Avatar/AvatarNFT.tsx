@@ -9,7 +9,7 @@ import { Button, Dialog, Heading, Input, Typography, mq } from '@ensdomains/thor
 import MagnifyingGlassSVG from '@app/assets/MagnifyingGlass.svg'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
-import { useChainName } from '@app/hooks/useChainName'
+import { useChainName } from '@app/hooks/chain/useChainName'
 
 type OwnedNFT = {
   contract: {

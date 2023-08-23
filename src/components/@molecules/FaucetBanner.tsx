@@ -14,8 +14,8 @@ import {
   Typography,
 } from '@ensdomains/thorin'
 
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { useChainId } from '@app/hooks/useChainId'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import useFaucet from '@app/hooks/useFaucet'
 
 import { InnerDialog } from '../@atoms/InnerDialog'

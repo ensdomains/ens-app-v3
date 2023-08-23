@@ -1,7 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { DeepPartial } from '@app/types/index'
 import type { useEns } from '@app/utils/EnsProvider'

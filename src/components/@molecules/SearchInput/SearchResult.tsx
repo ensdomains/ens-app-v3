@@ -9,10 +9,10 @@ import styled, { css } from 'styled-components'
 
 import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 
-import { useAvatar } from '@app/hooks/useAvatar'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useBasicName } from '@app/hooks/useBasicName'
 import useBeautifiedName from '@app/hooks/useBeautifiedName'
-import { useChainId } from '@app/hooks/useChainId'
+import { useAvatar } from '@app/hooks/useNftImage'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'

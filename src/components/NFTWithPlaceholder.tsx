@@ -1,7 +1,7 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
-import { useAvatar } from '@app/hooks/useAvatar'
+import { useAvatar } from '@app/hooks/useNftImage'
 
 import NFTTemplate from './@molecules/NFTTemplate/NFTTemplate'
 

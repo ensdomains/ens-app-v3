@@ -1,72 +1,60 @@
 import { useMemo } from 'react'
-import { useQuery } from 'wagmi'
 
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
-import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
-import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
-import useDecryptName from './useDecryptName'
+import type { Address } from 'viem'
+import { useRecords } from './ensjs/public/useRecords'
+import { useDecodedName } from './ensjs/subgraph/useDecodedName'
+import { useSubgraphRecords } from './ensjs/subgraph/useSubgraphRecords'
 
-type UseProfileOptions = {
-  skip?: boolean
-  resolverAddress?: string
-  skipGraph?: boolean
+type UseProfileParameters = {
+  name: string
+  enabled?: boolean
+  resolverAddress?: Address
+  subgraphEnabled?: boolean
 }
 
 export const useProfile = (
-  name: string,
-  { skip, resolverAddress, skipGraph = false }: UseProfileOptions = {},
+  { name, resolverAddress, subgraphEnabled = true, enabled = true }: UseProfileParameters,
 ) => {
-  const { ready, getProfile } = useEns()
+  const { data: subgraphRecords, isLoading: isSubgraphRecordsLoading, isCachedData: isSubgraphRecordsCachedData } = useSubgraphRecords({ name, resolverAddress, enabled: enabled && subgraphEnabled })
 
-  const queryKey = useQueryKeys().profile(name, resolverAddress, skipGraph)
-  const watchedGetProfile = useGlobalErrorFunc<typeof getProfile>({
-    queryKey,
-    func: getProfile,
-    skip: skipGraph,
-    ms: 10000,
-  })
-  const {
-    data: profile,
-    isLoading: loading,
-    status,
-    isFetchedAfterMount,
-    isFetched,
-    // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isFetching,
-  } = useQuery(
-    queryKey,
-    () =>
-      watchedGetProfile(name, {
-        fallback: {
-          coinTypes: supportedAddresses,
-          texts: [...supportedTexts, ...supportedProfileItems],
-        },
-        resolverAddress,
-        skipGraph,
-      }).then((r) => r || null),
+  const { data: profile, isLoading: isProfileLoading, isCachedData: isProfileCachedData } = useRecords(
     {
-      enabled: ready && !skip && name !== '',
+      name,
+      resolver: resolverAddress ? {
+        address: resolverAddress,
+        fallbackOnly: false,
+      } : undefined,
+      records: {
+        texts: [...supportedTexts, ...supportedProfileItems, ...(subgraphRecords?.texts || [])],
+        coins: [...supportedAddresses, ...(subgraphRecords?.coins || [])],
+        abi: true,
+        contentHash: true,
+      },
+      enabled: enabled && !!name,
     },
   )
 
-  const { decryptedName } = useDecryptName(name, !profile)
+  const { data: decodedName } = useDecodedName({ name, enabled: enabled && !!name && !!profile })
 
   const returnProfile = useMemo(() => {
     if (!profile) return undefined
-    if (!decryptedName) return profile
-    return { ...profile, decryptedName }
-  }, [profile, decryptedName])
+    return {
+      ...profile,
+      ...(decodedName ? {
+        decodedName,
+      } : {}),
+      isMigrated: subgraphRecords?.isMigrated,
+      createdAt: subgraphRecords?.createdAt,
+    }
+  }, [profile, subgraphRecords, decodedName])
 
   return {
-    profile: returnProfile,
-    loading: !ready || loading,
-    status,
-    isFetching,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    data: returnProfile,
+    isLoading: isSubgraphRecordsLoading || isProfileLoading,
+    isCachedData: isSubgraphRecordsCachedData && isProfileCachedData,
   }
 }

@@ -5,10 +5,10 @@ import styled, { css } from 'styled-components'
 
 import { CrossSVG, LeftChevronSVG, PersonSVG, mq } from '@ensdomains/thorin'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useChainId } from '@app/hooks/useChainId'
+import { useAvatar } from '@app/hooks/useNftImage'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination, getRoute, legacyFavouritesRoute } from '@app/routes'

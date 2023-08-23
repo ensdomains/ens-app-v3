@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
-import { useChainId } from '@app/hooks/useChainId'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 

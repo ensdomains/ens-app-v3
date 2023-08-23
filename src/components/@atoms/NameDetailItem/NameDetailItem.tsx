@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { Avatar, mq } from '@ensdomains/thorin'
 
 import CircleTick from '@app/assets/CircleTick.svg'
-import { useAvatar } from '@app/hooks/useAvatar'
+import { useAvatar } from '@app/hooks/useNftImage'
 import { useZorb } from '@app/hooks/useZorb'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
