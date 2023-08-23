@@ -309,6 +309,11 @@
     "resetPrimaryName": {
       "title": "Remove Primary Name",
       "description": "This name will no longer appear as the name for this address. However, transactions to this name will still resolve to this address unless you remove the ETH record."
+    },
+    "syncManager": {
+      "title": "Sync manager",
+      "description": "Syncing the manager will make you the new manager of this name. The current manager <strong>({{manager}})</strong> will no longer be able to make changes.",
+      "warning": "Syncing the manager will also unwrap this name. This will burn the NFT and reset any permissions."
     }
   },
   "transaction": {

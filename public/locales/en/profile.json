@@ -49,6 +49,9 @@
     "records": {
       "name": "Records"
     },
+    "ownership": {
+      "name": "Ownership"
+    },
     "subnames": {
       "name": "Subnames"
     },
