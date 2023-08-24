@@ -5,8 +5,10 @@ import styled, { css } from 'styled-components'
 import { Button, NametagSVG, Tag, Typography, mq } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import useBeautifiedName from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { shouldShowExtendWarning } from '@app/utils/abilities/shouldShowExtendWarning'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -159,20 +161,20 @@ export const ProfileSnippet = ({
   getTextRecord,
   button,
   network,
-  canEdit,
   isPrimary,
   children,
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
   button?: 'viewProfile' | 'extend' | 'register'
-  canEdit?: boolean
   isPrimary?: boolean
   network: number
   children?: React.ReactNode
 }) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
+
+  const abilities = useAbilities(name)
 
   const { prepareDataInput } = useTransactionFlow()
   const showExtendNamesInput = prepareDataInput('ExtendNames')
@@ -194,7 +196,10 @@ export const ProfileSnippet = ({
           prefix={<FastForwardSVG />}
           data-testid="extend-button"
           onClick={() => {
-            showExtendNamesInput(`extend-names-${name}`, { names: [name], isSelf: canEdit })
+            showExtendNamesInput(`extend-names-${name}`, {
+              names: [name],
+              isSelf: shouldShowExtendWarning(abilities.data),
+            })
           }}
         >
           {t('action.extend', { ns: 'common' })}
@@ -221,7 +226,7 @@ export const ProfileSnippet = ({
         </Button>
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [button, name, canEdit])
+  }, [button, name, abilities.data])
 
   return (
     <Container $banner={banner} data-testid="profile-snippet">
@@ -231,7 +236,7 @@ export const ProfileSnippet = ({
           label={name}
           name={name}
           network={network}
-          noCache={canEdit}
+          noCache={abilities.data?.canEdit}
         />
         <ButtonStack>
           {ActionButton && <DetailButtonWrapper>{ActionButton}</DetailButtonWrapper>}
