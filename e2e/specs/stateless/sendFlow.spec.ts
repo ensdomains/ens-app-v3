@@ -24,7 +24,7 @@ test.describe('Happy', () => {
 
     await morePage.sendButton.click()
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
-    await page.getByTestId('owner-checkbox').click()
+    await page.getByTestId('manager-checkbox').click()
     await sendNameModal.clickNextButton()
     await transactionModal.autoComplete()
 
@@ -55,6 +55,7 @@ test.describe('Happy', () => {
     await login.connect()
 
     await morePage.sendButton.click()
+    await page.getByTestId('manager-checkbox').click()
 
     // Should not allow the manager to change the owner
     await expect(page.getByTestId('Make Owner')).toHaveCount(0)
@@ -89,7 +90,7 @@ test.describe('Happy', () => {
     await login.connect()
 
     await morePage.sendButton.click()
-    await page.getByTestId('manager-checkbox').click()
+    await page.getByTestId('owner-checkbox').click()
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
     await sendNameModal.clickNextButton()
 
@@ -124,7 +125,7 @@ test.describe('Happy', () => {
 
     await morePage.sendButton.click()
 
-    await page.getByTestId('owner-checkbox').click()
+    await page.getByTestId('manager-checkbox').click()
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
     await sendNameModal.clickNextButton()
 
@@ -157,6 +158,8 @@ test.describe('Happy', () => {
 
     await morePage.sendButton.click()
 
+    await page.getByTestId('manager-checkbox').click()
+    await page.getByTestId('owner-checkbox').click()
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
     await sendNameModal.clickNextButton()
     await transactionModal.confirm()
@@ -165,6 +168,8 @@ test.describe('Happy', () => {
 
     // Should work after going back after first transaction
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
+    await page.getByTestId('manager-checkbox').click()
+    await page.getByTestId('owner-checkbox').click()
     await sendNameModal.clickNextButton()
 
     await transactionModal.autoComplete()
@@ -209,6 +214,7 @@ test.describe('Unwrapped subnames', () => {
     await login.connect()
 
     await morePage.sendButton.click()
+    await page.getByTestId('manager-checkbox').click()
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
     await sendNameModal.clickNextButton()
 
@@ -246,6 +252,7 @@ test.describe('Unwrapped subnames', () => {
     await login.connect()
 
     await morePage.sendButton.click()
+    await page.getByTestId('manager-checkbox').click()
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
     await sendNameModal.clickNextButton()
     await transactionModal.autoComplete()
@@ -343,6 +350,7 @@ test.describe('Wrapped subnames', () => {
 
     await morePage.sendButton.click()
 
+    await page.getByTestId('manager-checkbox').click()
     await expect(page.getByText('Make manager')).toBeVisible()
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
     await sendNameModal.clickNextButton()
@@ -382,6 +390,7 @@ test.describe('Wrapped subnames', () => {
     await login.connect()
 
     await morePage.sendButton.click()
+    await page.getByTestId('manager-checkbox').click()
     await expect(page.getByText('Make manager')).toBeVisible()
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
     await sendNameModal.clickNextButton()
@@ -450,6 +459,7 @@ test.describe('Wrapped subname with PCC burned', () => {
     await login.connect()
 
     await morePage.sendButton.click()
+    await page.getByTestId('owner-checkbox').click()
     await expect(page.getByText('Make owner')).toBeVisible()
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
     await sendNameModal.clickNextButton()
@@ -483,6 +493,7 @@ test.describe('Wrapped name', () => {
     await login.connect()
 
     await morePage.sendButton.click()
+    await page.getByTestId('owner-checkbox').click()
     await expect(page.getByText('Make owner')).toBeVisible()
     await page.getByTestId('dogfood').type(accounts.getAddress('user3'))
     await sendNameModal.clickNextButton()
