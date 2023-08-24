@@ -23,7 +23,7 @@ import SocialYoutube from '@app/assets/social/SocialYoutube.svg'
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { SocialIcon } from '@app/components/SocialIcon'
 import { useChainName } from '@app/hooks/chain/useChainName'
-import useGasPrice from '@app/hooks/useGasPrice'
+import { useGasPrice } from '@app/hooks/chain/useGasPrice'
 import { routes } from '@app/routes'
 import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 import { makeDisplay } from '@app/utils/currency'
@@ -228,7 +228,11 @@ const NetworkSection = () => {
           {chainName}
         </Typography>
         {gasPrice && (
-          <Typography color="grey">{makeDisplay(gasPrice, undefined, 'Gwei', 9)}</Typography>
+          <Typography color="grey">{makeDisplay({
+            value: gasPrice,
+            symbol: 'Gwei',
+            fromDecimals: 9,
+          })}</Typography>
         )}
       </NetworkSectionRow>
       {graphOutOfSync && (

@@ -15,8 +15,8 @@ import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { fetchTenderlyEstimate } from '@app/utils/tenderly'
 
-import { useChainId } from './chain/useChainId'
-import useGasPrice from './useGasPrice'
+import { useChainId } from '../chain/useChainId'
+import useGasPrice from '../chain/useGasPrice'
 
 type ENS = ReturnType<typeof useEns>
 type TransactionItem = ReturnType<typeof makeTransactionItem>

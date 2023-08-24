@@ -3,9 +3,9 @@ import styled, { css } from 'styled-components'
 
 import { Avatar, Space, mq } from '@ensdomains/thorin'
 
-import { useAvatar } from '@app/hooks/useNftImage'
 import { useZorb } from '@app/hooks/useZorb'
 import { QuerySpace } from '@app/types'
+import { useEnsAvatar } from 'wagmi'
 
 const Wrapper = styled.div<{ $size?: QuerySpace }>(
   ({ theme, $size }) => css`
@@ -56,7 +56,7 @@ export const NameAvatar = ({
   noCache = false,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
-  const { avatar } = useAvatar(name, network, noCache)
+  const { data: avatar } = useEnsAvatar({ name, cacheTime: noCache ? 0 : undefined })
   const zorb = useZorb(name, 'name')
 
   const [src, setSrc] = useState<string | undefined>(undefined)
@@ -80,7 +80,7 @@ export const AvatarWithZorb = ({
   noCache = false,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Address & Name) => {
-  const { avatar } = useAvatar(name, network, noCache)
+  const { data: avatar } = useEnsAvatar({ name, cacheTime: noCache ? 0 : undefined })
   const zorb = useZorb(address || name || '', address ? 'address' : 'name')
   return (
     <Wrapper $size={size}>

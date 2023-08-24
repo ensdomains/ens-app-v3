@@ -6,7 +6,7 @@ import { Colors, CurrencyToggle } from '@ensdomains/thorin'
 
 import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
-import { useEstimateFullRegistration } from '@app/hooks/useEstimateRegistration'
+import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import useUserConfig from '@app/utils/useUserConfig'
 

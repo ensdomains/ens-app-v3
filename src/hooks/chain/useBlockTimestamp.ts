@@ -7,7 +7,7 @@ type UseBlockTimestampParameters = {
   enabled?: boolean
 }
 
-export const useBlockTimestamp = ({ enabled = true }: UseBlockTimestampParameters) => {
+export const useBlockTimestamp = ({ enabled = true }: UseBlockTimestampParameters = {}) => {
   const publicClient = usePublicClient()
 
   return useQuery(

@@ -4,10 +4,10 @@ import styled, { css } from 'styled-components'
 import { Avatar, mq } from '@ensdomains/thorin'
 
 import CircleTick from '@app/assets/CircleTick.svg'
-import { useAvatar } from '@app/hooks/useNftImage'
 import { useZorb } from '@app/hooks/useZorb'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
+import { useEnsAvatar } from 'wagmi'
 import { safeDateObj } from '../../../utils/date'
 import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
 import { OptionalLink } from '../OptionalLink/OptionalLink'
@@ -137,7 +137,7 @@ export const NameDetailItem = ({
   onClick?: () => void
   children: ReactNode
 }) => {
-  const { avatar } = useAvatar(name, network)
+  const { data: avatar } = useEnsAvatar()
   const zorb = useZorb(name, 'name')
 
   const handleClick = () => {

@@ -57,16 +57,30 @@ export const transactions = {
 export type Transaction = typeof transactions
 export type TransactionName = keyof Transaction
 
-export type TransactionData<T extends TransactionName> = Parameters<
+export type TransactionParameters<T extends TransactionName> = Parameters<
   Transaction[T]['transaction']
->[2]
+>[0]
+
+export type TransactionData<T extends TransactionName> = TransactionParameters<T>['data']
+
+export type TransactionReturnType<T extends TransactionName> = ReturnType<
+  Transaction[T]['transaction']
+>
 
 export const makeTransactionItem = <T extends TransactionName>(
   name: T,
-  data: TransactionData<T>,
+  data: TransactionParameters<T>,
 ) => ({
   name,
   data,
 })
+
+export const createTransactionRequest = <TName extends TransactionName>({
+  name,
+  ...rest
+}: { name: TName } & TransactionParameters<TName>): TransactionReturnType<TName> => {
+  // i think this has to be any :(
+  return transactions[name].transaction({ ...rest } as any) as TransactionReturnType<TName>
+}
 
 export type TransactionItem = ReturnType<typeof makeTransactionItem>

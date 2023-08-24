@@ -1,9 +1,9 @@
 import { useAccount } from 'wagmi'
 
 import ProfileContent from '@app/components/pages/profile/[name]/Profile'
+import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { usePrimary } from '@app/hooks/usePrimary'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { checkDNSName } from '@app/utils/utils'
 

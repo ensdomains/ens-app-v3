@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { usePrimary } from '@app/hooks/usePrimary'
+import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
 
 import { shortenAddress } from '../../utils/utils'
 

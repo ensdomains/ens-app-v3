@@ -5,7 +5,7 @@ import { Button, Heading, Typography, mq } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
-import { useEstimateFullRegistration } from '@app/hooks/useEstimateRegistration'
+import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
 import FullInvoice from '../FullInvoice'

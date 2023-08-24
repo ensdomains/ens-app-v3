@@ -70,7 +70,7 @@ export const ShortExpiry = ({
 }) => {
   const { t } = useTranslation()
   const blockTimestamp = useBlockTimestamp()
-  const currentDate = new Date(blockTimestamp.data!)
+  const currentDate = new Date(Number(blockTimestamp.data))
   let secondsDiff = (expiry.getTime() - currentDate.getTime()) / 1000
   const inverse = secondsDiff < 0
   if (inverse) {

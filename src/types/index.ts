@@ -1,3 +1,4 @@
+import { UseQueryOptions } from '@tanstack/react-query'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 import type {
@@ -7,15 +8,19 @@ import type {
   PublicClient,
   TransactionReceipt,
   Transport,
-  WalletClient
+  WalletClient,
 } from 'viem'
 
 import { ChainWithEns } from '@ensdomains/ensjs/dist/types/contracts/consts'
 import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
 import { Helper, Space } from '@ensdomains/thorin'
-import { UseQueryOptions } from '@tanstack/react-query'
 
-export type Profile = Partial<GetRecordsReturnType<{ name: string; records: { abi: true; contentHash: true; coins: string[]; texts: string[]; } }>>
+export type Profile = Partial<
+  GetRecordsReturnType<{
+    name: string
+    records: { abi: true; contentHash: true; coins: string[]; texts: string[] }
+  }>
+>
 
 export type TextRecord = NonNullable<Profile['texts']>[number]
 

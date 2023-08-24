@@ -2,7 +2,7 @@ import { mockFunction, renderHook } from '@app/test-utils'
 
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 
-import { usePrimary } from '@app/hooks/usePrimary'
+import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { useHasGlobalError } from './errors/useHasGlobalError'

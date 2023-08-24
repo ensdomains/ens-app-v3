@@ -9,8 +9,8 @@ import { Helper, Typography } from '@ensdomains/thorin'
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
+import { useEstimateGasLimitForTransactions } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useEstimateGasLimitForTransactions } from '@app/hooks/useEstimateGasLimitForTransactions'
 import {
   CreateTransactionFlow,
   useTransactionFlow,

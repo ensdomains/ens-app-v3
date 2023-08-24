@@ -1,5 +1,4 @@
 /* eslint-disable no-multi-assign */
-import { sha256 } from '@ethersproject/sha2'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -9,6 +8,7 @@ import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 
+import { keccak256 } from 'viem'
 import { useQueryKeys } from '../../../../utils/cacheKeyFactory'
 import { AvCancelButton, CropComponent } from './AvatarCrop'
 
@@ -52,11 +52,12 @@ const UploadComponent = ({
   const { t } = useTranslation('transactionFlow')
   const queryClient = useQueryClient()
   const queryKeys = useQueryKeys().avatar.avatar(name)
-  const urlHash = useMemo(() => sha256(dataURLToBytes(dataURL)), [dataURL])
+  const urlHash = useMemo(() => keccak256(dataURLToBytes(dataURL)), [dataURL])
   const expiry = useMemo(() => `${Date.now() + 1000 * 60 * 60 * 24 * 7}`, [])
   const network = useChainName()
 
   const { signTypedDataAsync } = useSignTypedData({
+    primaryType: 'Upload',
     domain: {
       name: 'Ethereum Name Service',
       version: '1',
@@ -69,7 +70,7 @@ const UploadComponent = ({
         { name: 'hash', type: 'string' },
       ],
     },
-    value: {
+    message: {
       upload: 'avatar',
       expiry,
       name,

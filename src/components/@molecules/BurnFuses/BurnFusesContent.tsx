@@ -3,16 +3,15 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import type { ChildFuses } from '@ensdomains/ensjs'
-import { childFuseKeys } from '@ensdomains/ensjs/utils/fuses'
+import { ChildFuseKeys } from '@ensdomains/ensjs/utils'
 import { Button, FlameSVG, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { AllChildFuses } from '@app/types'
+import { ChildFuseKeyType, CurrentChildFuses } from '@app/components/pages/profile/[name]/registration/types'
 
 export const childFuseObj = Object.fromEntries(
-  childFuseKeys.map((key) => [key, false]),
-) as ChildFuses['current']
+  ChildFuseKeys.map((key) => [key, false]),
+) as CurrentChildFuses
 
 const FusesContainer = styled.div(({ theme }) => [
   css`
@@ -88,9 +87,9 @@ const BurnButton = ({
   handleBurnClick,
   isSelected,
 }: {
-  permission: ChildFuses['fuse']
+  permission: ChildFuseKeyType
   isBurned: boolean
-  handleBurnClick: (permission: ChildFuses['fuse']) => void
+  handleBurnClick: (permission: ChildFuseKeyType) => void
   isSelected: boolean
 }) => {
   const { t } = useTranslation('profile', { keyPrefix: 'tabs.more.fuses' })
@@ -130,14 +129,14 @@ const ButtonsContainer = styled.div(
 )
 
 const canContinue = (
-  fuseData: ChildFuses['options'],
-  fuseSelected: ChildFuses['options'],
+  fuseData: CurrentChildFuses,
+  fuseSelected: CurrentChildFuses,
   canUnsetFuse: boolean,
 ) => {
-  const filteredInitialFuseData: ChildFuses['options'] = { ...fuseData }
+  const filteredInitialFuseData: CurrentChildFuses = { ...fuseData }
   Object.keys(filteredInitialFuseData).forEach((key: string) => {
-    if (filteredInitialFuseData[key as ChildFuses['fuse']]) {
-      delete filteredInitialFuseData[key as ChildFuses['fuse']]
+    if (filteredInitialFuseData[key as ChildFuseKeyType]) {
+      delete filteredInitialFuseData[key as ChildFuseKeyType]
     }
   })
   const cannotUnwrap = !fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP
@@ -149,7 +148,7 @@ const canContinue = (
 }
 
 type BaseProps = {
-  fuseData: AllChildFuses | undefined
+  fuseData: CurrentChildFuses | undefined
   onDismiss: () => void
   canUnsetFuse?: boolean
   returnObject?: boolean
@@ -157,12 +156,12 @@ type BaseProps = {
 
 type PropsWithReturnObject = BaseProps & {
   returnObject: true
-  onSubmit: (fuses: ChildFuses['current']) => void
+  onSubmit: (fuses: CurrentChildFuses) => void
 }
 
 type PropsWithReturnArray = BaseProps & {
   returnObject?: never
-  onSubmit: (fuses: ChildFuses['fuse'][], fuseNames: string[]) => void
+  onSubmit: (fuses: ChildFuseKeyType[], fuseNames: string[]) => void
 }
 
 const BurnFusesContent = ({
@@ -174,23 +173,23 @@ const BurnFusesContent = ({
 }: PropsWithReturnArray | PropsWithReturnObject) => {
   const { t } = useTranslation('profile', { keyPrefix: 'tabs.more' })
   const { t: tc } = useTranslation()
-  const [_fuseData, setFuseData] = useState<AllChildFuses>(childFuseObj)
-  const [fuseSelected, setFuseSelected] = useState<ChildFuses['options']>(childFuseObj)
+  const [_fuseData, setFuseData] = useState<CurrentChildFuses>(childFuseObj)
+  const [fuseSelected, setFuseSelected] = useState<CurrentChildFuses>(childFuseObj)
 
-  const handleBurnClick = (permission: ChildFuses['fuse']) => {
-    const nextFuseSelected = { ...fuseSelected } as ChildFuses['options']
+  const handleBurnClick = (permission: ChildFuseKeyType) => {
+    const nextFuseSelected = { ...fuseSelected } as CurrentChildFuses
     nextFuseSelected[permission] = !nextFuseSelected[permission]
     setFuseSelected(nextFuseSelected)
   }
 
   const _onSubmit = () => {
     if (returnObject) {
-      return onSubmit({ ...fuseData, ...fuseSelected } as ChildFuses['current'])
+      return onSubmit({ ...fuseData, ...fuseSelected } as CurrentChildFuses)
     }
 
     const selectedFuses = Object.keys(fuseSelected).filter(
-      (key) => fuseSelected[key as ChildFuses['fuse']],
-    ) as ChildFuses['fuse'][]
+      (key) => fuseSelected[key as ChildFuseKeyType],
+    ) as ChildFuseKeyType[]
 
     const permissions = selectedFuses.map((key) => t(`fuses.permissions.${key}`))
 
@@ -205,7 +204,7 @@ const BurnFusesContent = ({
         Object.entries({
           ...fuseData,
         }).filter(([, val]) => !val),
-      )
+      ) as CurrentChildFuses
       if (!canUnsetFuse) setFuseSelected(initialFusesSelected)
       else setFuseSelected(fuseData)
     }
@@ -231,10 +230,10 @@ const BurnFusesContent = ({
         {Object.entries(_fuseData).map(([key, value]) => (
           <BurnButton
             {...{
-              permission: key as ChildFuses['fuse'],
+              permission: key as ChildFuseKeyType,
               isBurned: !!value && !canUnsetFuse,
               handleBurnClick,
-              isSelected: !!fuseSelected[key as ChildFuses['fuse']],
+              isSelected: !!fuseSelected[key as ChildFuseKeyType],
             }}
           />
         ))}

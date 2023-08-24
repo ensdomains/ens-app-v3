@@ -117,13 +117,14 @@ const { publicClient, chains } = configureChains(
   providerArray,
 )
 
+
 const connectors = getDefaultWallets({
   appName: 'ENS',
   projectId: WC_PROJECT_ID,
   chains,
 })
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
@@ -132,7 +133,7 @@ const queryClient = new QueryClient({
   },
 })
 
-const wagmiClient = createConfig({
+export const wagmiClient = createConfig({
   autoConnect: true,
   connectors,
   publicClient,
@@ -160,7 +161,7 @@ const queryClientWithRefetch = new QueryClient({
   mutationCache: queryClient.getMutationCache(),
 })
 
-const wagmiClientWithRefetch = createConfig({
+export const wagmiConfigWithRefetch = createConfig({
   autoConnect: true,
   connectors,
   publicClient,
@@ -168,4 +169,4 @@ const wagmiClientWithRefetch = createConfig({
   persister: null,
 })
 
-export { chains, queryClient, wagmiClient, wagmiClientWithRefetch }
+export { chains }

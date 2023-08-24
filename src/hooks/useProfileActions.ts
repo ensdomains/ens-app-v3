@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
 
-import { usePrimary } from '@app/hooks/usePrimary'
+import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'

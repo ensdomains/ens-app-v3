@@ -5,7 +5,7 @@ import { Name as BaseName } from '@ensdomains/ensjs/functions/getNames'
 import { useNamesFromAddress } from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
 import { chunkArr } from '@app/utils/array'
 
-import { usePrimary } from '../../usePrimary'
+import { usePrimary } from '../../ensjs/public/usePrimaryName'
 import { filterBySearch, sortByType } from '../useNamesFromAddress/utils'
 import { useNamesFromResolvedAddress } from '../useNamesFromResolvedAddress/useNamesFromResolvedAddress'
 import { checkAvailablePrimaryName, mergeNames } from './utils'

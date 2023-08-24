@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { Profile } from '@app/types'
 
-import { usePrimary } from './usePrimary'
+import { usePrimary } from './ensjs/public/usePrimaryName'
 import { useProfile } from './useProfile'
 
 export const usePrimaryProfile = (address: string, skip?: any) => {

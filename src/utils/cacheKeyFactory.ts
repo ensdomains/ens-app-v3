@@ -1,12 +1,12 @@
 import { useAccount } from 'wagmi'
 
-import type { uniqueTransactionIdentifierGenerator } from '@app/components/@molecules/TransactionDialogManager/stage/TransactionStageModal'
 import { useChainId } from '@app/hooks/chain/useChainId'
-import type { RegistrationProps } from '@app/hooks/useEstimateRegistration'
-import type { TransactionItem } from '@app/transaction-flow/transaction'
+import type { TransactionData, TransactionItem, TransactionName } from '@app/transaction-flow/transaction'
+import { UniqueTransaction } from '@app/transaction-flow/types'
 import { GetDnsImportDataParameters, GetDnsOwnerParameters } from '@ensdomains/ensjs/dns'
-import { GetExpiryParameters, GetOwnerParameters, GetPriceParameters, GetRecordsParameters, GetWrapperDataParameters } from '@ensdomains/ensjs/public'
+import { GetAddressRecordParameters, GetExpiryParameters, GetNameParameters, GetOwnerParameters, GetPriceParameters, GetRecordsParameters, GetWrapperDataParameters } from '@ensdomains/ensjs/public'
 import { GetDecodedNameParameters, GetNameHistoryParameters, GetSubgraphRecordsParameters } from '@ensdomains/ensjs/subgraph'
+import { RegistrationParameters } from '@ensdomains/ensjs/utils'
 import type { Address } from 'viem'
 
 export const useQueryKeys = () => {
@@ -19,9 +19,9 @@ export const useQueryKeys = () => {
     graphBase: [...globalKeys, 'graph'],
     dogfood: (inputString?: string) => [...globalKeys, 'getAddr', inputString, 'dogfood'],
     transactionStageModal: {
-      prepareTransaction: (
-        uniqueTransactionIdentifiers: ReturnType<typeof uniqueTransactionIdentifierGenerator>,
-      ) => [...globalKeys, uniqueTransactionIdentifiers, 'prepareTransaction'],
+      prepareTransaction: <TName extends TransactionName, TData extends TransactionData<TName>, TParams extends UniqueTransaction<TName, TData>>(
+        params: TParams,
+      ) => [params, ...globalKeys, 'prepareTransaction'] as const,
       transactionError: (transactionHash?: string) => [
         ...globalKeys,
         transactionHash,
@@ -65,11 +65,11 @@ export const useQueryKeys = () => {
       ...extraKeys,
       'estimateGasLimitForTransactions',
     ],
-    estimateRegistration: (data?: RegistrationProps) => [
+    getRegistrationEstimate: <TParams extends { data: Omit<RegistrationParameters, 'duration' | 'secret'> }>(params: TParams) => [
+      { ...params, chainId },
       ...globalKeys,
-      data,
-      'estimateRegistration',
-    ],
+      'getRegistrationEstimate',
+    ] as const,
     ethPrice: [...globalKeys, 'ethPrice'],
     exists: (name: string) => [...globalKeys, 'getOwner', name, 'exists'],
     expiry: (name: string) => [...globalKeys, 'useExpiry', name, 'expiry'],
@@ -114,10 +114,20 @@ export const useQueryKeys = () => {
       'graph',
       'getNameHistory',
     ] as const,
+    getAddressRecord: <TParams extends GetAddressRecordParameters>(params: TParams) => [
+      params,
+      ...globalKeys,
+      'getAddressRecord'
+    ] as const,
     getExpiry: <TParams extends GetExpiryParameters>(params: TParams) => [
       params,
       ...globalKeys,
       'getExpiry',
+    ] as const,
+    getName: <TParams extends GetNameParameters>(params: TParams) => [
+      params,
+      ...globalKeys,
+      'getName',
     ] as const,
     getOwner: <TParams extends GetOwnerParameters>(params: TParams) => [params, ...globalKeys, 'getOwner'] as const,
     getPrice: <TParams extends GetPriceParameters>(params: TParams) => [params, ...globalKeys, 'getPrice'] as const,

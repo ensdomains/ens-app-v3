@@ -1,16 +1,16 @@
-import { isAddress } from '@ethersproject/address'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useQuery, useQueryClient } from 'wagmi'
+import { useQueryClient } from 'wagmi'
 
 import { Input } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { useEns } from '@app/utils/EnsProvider'
-import useDebouncedCallback from '@app/hooks/useDebouncedCallback';
+import { useAddressRecord } from '@app/hooks/ensjs/public/useAddressRecord'
+import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { isAddress } from 'viem'
 import { DisplayItems } from './TransactionDialogManager/DisplayItems'
 
 
@@ -36,7 +36,6 @@ export const DogFood = (
     & { label?: string, validations?: any, disabled?: boolean, hideLabel?: boolean },
 ) => {
   const { t } = useTranslation('profile')
-  const { getAddr, ready } = useEns()
   const queryClient = useQueryClient()
 
   const inputWatch: string | undefined = watch('dogfoodRaw')
@@ -50,19 +49,14 @@ export const DogFood = (
 
   const queryKeyGenerator = useQueryKeys().dogfood 
 
-  // Attempt to get address of ENS name
-  const { data: ethNameAddress } = useQuery(
-     queryKeyGenerator(ethNameInput),
-    async () => {
-      try {
-      const result = await getAddr(ethNameInput, '60')
-      return (result as any)?.addr || ''
-      } catch (e) {
-        return ''
-      }
-    },
-    { enabled: !!ethNameInput?.includes('.') && ready },
-  )
+  const { data: addressRecordData } = useAddressRecord({
+    enabled: !!ethNameInput?.includes('.'),
+    name: ethNameInput,
+  })
+
+  const ethNameAddress = useMemo(() => {
+    return addressRecordData?.value || ''
+  }, [addressRecordData?.value])
 
   // Update react value of address
   const finalValue = inputWatch?.includes('.') ? ethNameAddress : inputWatch

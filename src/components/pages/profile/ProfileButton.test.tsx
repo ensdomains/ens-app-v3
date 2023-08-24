@@ -1,6 +1,6 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { usePrimary } from '@app/hooks/usePrimary'
+import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry, shortenAddress } from '@app/utils/utils'
 

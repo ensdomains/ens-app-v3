@@ -6,9 +6,9 @@ import { Button, Card, CrossSVG, PersonPlusSVG, Skeleton, Typography, mq } from 
 import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/AvatarWithLink'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { usePrimary } from '@app/hooks/usePrimary'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 const SkeletonFiller = styled.div(

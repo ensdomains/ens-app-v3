@@ -6,8 +6,8 @@ import { Typography } from '@ensdomains/thorin'
 
 import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { useChainId } from '@app/hooks/chain/useChainId'
+import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
 import useBeautifiedName from '@app/hooks/useBeautifiedName'
-import { usePrimary } from '@app/hooks/usePrimary'
 import { TransactionDisplayItem } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
 

@@ -6,9 +6,10 @@ import { Button, Dialog, Helper } from '@ensdomains/thorin'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { MinedData, TransactionDisplayItem } from '@app/types'
 
+import { Hash } from 'viem'
 import type { DataInputComponent } from './input'
 import type { IntroComponentName } from './intro'
-import type { TransactionItem, TransactionName, makeTransactionItem } from './transaction'
+import type { TransactionData, TransactionItem, TransactionName, makeTransactionItem } from './transaction'
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'
 
@@ -19,10 +20,10 @@ type GenericDataInput = {
   data: any
 }
 
-export type GenericTransaction = {
-  name: TransactionName
-  data: any
-  hash?: string
+export type GenericTransaction<TName extends TransactionName = TransactionName, TData extends TransactionData<TName> = TransactionData<TName>> = {
+  name: TName
+  data: TData
+  hash?: Hash
   sendTime?: number
   finaliseTime?: number
   stage?: TransactionStage
@@ -152,17 +153,6 @@ export type TransactionDialogPassthrough = {
 }
 
 export type ManagedDialogProps = {
-  transaction: GenericTransaction
-  onDismiss?: (success?: boolean) => void
-  onSuccess?: () => void
-  dismissBtnLabel?: string
-  completeBtnLabel?: string
-  completeTitle?: string
-  actionName: string
-  displayItems: TransactionDisplayItem[]
-}
-
-export type ManagedDialogPropsTwo = {
   dispatch: Dispatch<TransactionFlowAction>
   onDismiss: () => void
   transaction: GenericTransaction
@@ -174,3 +164,16 @@ export type ManagedDialogPropsTwo = {
   helper?: ComponentProps<typeof Helper>
   backToInput: boolean
 }
+
+export type GetUniqueTransactionParameters = Pick<ManagedDialogProps, 'txKey' | 'currentStep'> & {
+  transaction: Pick<GenericTransaction, 'name' | 'data'>
+}
+
+export type UniqueTransaction<TName extends TransactionName = TransactionName, TData extends TransactionData<TName> = TransactionData<TName>> = {
+  key: string
+  step: number
+  name: TName
+  data: TransactionData<TName>
+}
+
+type d334 = TransactionData<'approveNameWrapper'>

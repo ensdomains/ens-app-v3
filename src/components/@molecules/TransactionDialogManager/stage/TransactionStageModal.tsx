@@ -1,7 +1,7 @@
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { usePublicClient, useQuery, useSendTransaction, useWalletClient } from 'wagmi'
+import { useQuery, useSendTransaction } from 'wagmi'
 
 import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 
@@ -15,16 +15,22 @@ import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
-import { transactions } from '@app/transaction-flow/transaction'
+import { TransactionName, createTransactionRequest } from '@app/transaction-flow/transaction'
 import {
-  ManagedDialogPropsTwo,
+  GetUniqueTransactionParameters,
+  ManagedDialogProps,
   TransactionFlowAction,
   TransactionStage,
+  UniqueTransaction
 } from '@app/transaction-flow/types'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { makeEtherscanLink } from '@app/utils/utils'
 
-import { Address, BlockTag, Hash, Hex, PublicClient, Transaction, TransactionRequest, WalletClient } from 'viem'
+import { useWalletClientWithAccount } from '@app/hooks/account/useWalletClient'
+import { usePublicClient } from '@app/hooks/usePublicClient'
+import { BasicTransactionRequest, PublicClientWithChain } from '@app/types'
+import { SendTransactionResult } from '@wagmi/core'
+import { Address, BlockTag, Hash, Hex, Transaction, TransactionRequest, WalletClient } from 'viem'
 import { DisplayItems } from '../DisplayItems'
 
 const BarContainer = styled.div(
@@ -253,21 +259,20 @@ export const handleBackToInput = (dispatch: Dispatch<TransactionFlowAction>) => 
   dispatch({ name: 'resetTransactionStep' })
 }
 
-export const uniqueTransactionIdentifierGenerator = (
-  txKey: ManagedDialogPropsTwo['txKey'],
-  currentStep: number,
-  transactionName: ManagedDialogPropsTwo['transaction']['name'],
-  transactionData: ManagedDialogPropsTwo['transaction']['data'],
-) => ({
-  key: txKey,
+export const getUniqueTransaction = ({
+  txKey,
+  currentStep,
+  transaction,
+}: GetUniqueTransactionParameters): UniqueTransaction => ({
+  key: txKey!,
   step: currentStep,
-  name: transactionName,
-  data: transactionData,
+  name: transaction.name,
+  data: transaction.data,
 })
 
 export const transactionSuccessHandler =
-  (publicClient: PublicClient,    
-  {
+  ({
+    publicClient,
     walletClient,
     actionName,
     txKey,
@@ -276,15 +281,16 @@ export const transactionSuccessHandler =
     dispatch,
     isSafeApp,
   }: {
+    publicClient: PublicClientWithChain
     walletClient: WalletClient
-    actionName: ManagedDialogPropsTwo['actionName']
+    actionName: ManagedDialogProps['actionName']
     txKey: string | null
-    request: TransactionRequest | undefined
+    request: BasicTransactionRequest | undefined
     addRecentTransaction: ReturnType<typeof useAddRecentTransaction>
     dispatch: Dispatch<TransactionFlowAction>
     isSafeApp: ReturnType<typeof useIsSafeApp>['data']
   }) =>
-  async (tx: any) => {
+  async (tx: SendTransactionResult) => {
     let transactionData: Transaction | null = null
     try {
       // If using private mempool, this won't error, will return null
@@ -318,20 +324,22 @@ export const transactionSuccessHandler =
     dispatch({ name: 'setTransactionHash', payload: tx.hash })
   }
 
-export const registrationGasFeeModifier = (gasLimit: bigint, transactionName: string) =>
+export const registrationGasFeeModifier = (gasLimit: bigint, transactionName: TransactionName) =>
   // this addition is arbitrary, something to do with a gas refund but not 100% sure
   transactionName === 'registerName' ? gasLimit + 5000n : gasLimit
 
-export const calculateGasLimit = async (publicClient: PublicClient, {
+export const calculateGasLimit = async ({
+  publicClient,
   walletClient,
   isSafeApp,
   txWithZeroGas,
   transactionName,
 }: {
+  publicClient: PublicClientWithChain
   walletClient: WalletClient
   isSafeApp: string | boolean | undefined
-  txWithZeroGas: TransactionRequest
-  transactionName: string
+  txWithZeroGas: BasicTransactionRequest
+  transactionName: TransactionName
 }) => {
   if (isSafeApp) {
     const accessListResponse = await publicClient.request<{
@@ -342,7 +350,7 @@ export const calculateGasLimit = async (publicClient: PublicClient, {
       {
         ...txWithZeroGas,
         value: txWithZeroGas.value ? txWithZeroGas.value + 1000000n : 0n,
-      },
+      } as TransactionRequest,
       'latest',
     ] })
 
@@ -373,12 +381,12 @@ export const TransactionStageModal = ({
   txKey,
   onDismiss,
   backToInput,
-}: ManagedDialogPropsTwo) => {
+}: ManagedDialogProps) => {
   const { t } = useTranslation()
   const chainName = useChainName()
 
   const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
-  const { data: walletClient } = useWalletClient()
+  const { data: walletClient } = useWalletClientWithAccount()
   const publicClient = usePublicClient()
 
   const addRecentTransaction = useAddRecentTransaction()
@@ -392,12 +400,11 @@ export const TransactionStageModal = ({
 
   const uniqueTxIdentifiers = useMemo(
     () =>
-      uniqueTransactionIdentifierGenerator(
+      getUniqueTransaction({
         txKey,
         currentStep,
-        transaction?.name,
-        transaction?.data,
-      ),
+        transaction,
+      }),
     [txKey, currentStep, transaction?.name, transaction?.data],
   )
 
@@ -426,30 +433,25 @@ export const TransactionStageModal = ({
     error: _requestError,
   } = useQuery(
     queryKeys.transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
-    async () => {
-      const populatedTransaction = await transactions[transaction.name].transaction(
-        signer as JsonRpcSigner,
-        ens,
-        transaction.data,
-      )
+    async ({ queryKey: [params] }) => {
+      const transactionRequest = await createTransactionRequest({ name: params.name, data: params.data, walletClient: walletClient!, publicClient })
 
       const txWithZeroGas = {
-        ...populatedTransaction,
+        ...transactionRequest,
         maxFeePerGas: '0x0',
         maxPriorityFeePerGas: '0x0',
       }
 
       const { gasLimit, accessList } = await calculateGasLimit({
+        publicClient,
+        walletClient: walletClient!,
         isSafeApp,
-        provider,
         txWithZeroGas,
-        signer,
         transactionName: transaction.name,
       })
 
       return {
-        ...populatedTransaction,
-        to: populatedTransaction.to as `0x${string}`,
+        ...transactionRequest,
         gasLimit,
         accessList,
       }
@@ -471,16 +473,8 @@ export const TransactionStageModal = ({
     sendTransaction,
   } = useSendTransaction({
     mode: 'prepared',
-    request,
-    onSuccess: transactionSuccessHandler({
-      provider,
-      actionName,
-      txKey,
-      request,
-      addRecentTransaction,
-      dispatch,
-      isSafeApp,
-    }),
+    ...request,
+    onSuccess: transactionSuccessHandler({ publicClient, walletClient: walletClient!, actionName, txKey, request, addRecentTransaction, dispatch, isSafeApp })
   })
 
   const FilledDisplayItems = useMemo(
@@ -599,14 +593,15 @@ export const TransactionStageModal = ({
     useQueryKeys().transactionStageModal.transactionError(transaction.hash),
     async () => {
       if (!transaction || !transaction.hash || transactionStatus !== 'failed') return null
-      const a = await provider.getTransaction(transaction.hash!)
+      const a = await publicClient.getTransaction({ hash: transaction.hash! })
       try {
-        await provider.call(a as any, a.blockNumber)
+        await publicClient.call({ ...a, to: a.to! })
         return 'transaction.dialog.error.gasLimit'
-      } catch (err: any) {
-        const code = err.data.replace('Reverted ', '')
-        const reason = toUtf8String(`0x${code.substr(138)}`)
-        return reason
+      } catch (err: unknown) {
+        // TODO: get revert reason through viem
+        // const code = err.data.replace('Reverted ', '')
+        // const reason = toUtf8String(`0x${code.substr(138)}`)
+        // return reason
       }
     },
     {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
 export const useAccountSafely = () => {
@@ -8,7 +9,7 @@ export const useAccountSafely = () => {
     isReconnecting: _isReconnecting,
   } = useAccount()
 
-  const [address, setAddress] = useState<string | undefined>()
+  const [address, setAddress] = useState<Address | undefined>()
   useEffect(() => {
     setAddress(_address)
   }, [_address])

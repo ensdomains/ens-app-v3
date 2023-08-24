@@ -2,8 +2,8 @@ import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 
 import { ComponentProps } from 'react'
 
+import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { usePrimary } from '@app/hooks/usePrimary'
 
 import { SearchResult } from './SearchResult'
 

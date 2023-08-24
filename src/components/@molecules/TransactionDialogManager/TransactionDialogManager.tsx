@@ -10,7 +10,7 @@ import { Dialog } from '@ensdomains/thorin'
 
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { transactions } from '@app/transaction-flow/transaction'
-import { wagmiClientWithRefetch } from '@app/utils/query'
+import { wagmiConfigWithRefetch } from '@app/utils/query'
 
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
@@ -68,7 +68,7 @@ export const TransactionDialogManager = ({
       if (selectedItem.input && selectedItem.currentFlowStage === 'input') {
         const Component = DataInputComponents[selectedItem.input.name]
         return (
-          <WagmiConfig client={wagmiClientWithRefetch}>
+          <WagmiConfig config={wagmiConfigWithRefetch}>
             <Component
               {...{
                 data: selectedItem.input.data,
@@ -112,13 +112,13 @@ export const TransactionDialogManager = ({
       return (
         <TransactionStageModal
           actionName={transactionItem.name}
-          displayItems={transaction.displayItems(transactionItem.data, t)}
-          helper={transaction.helper?.(transactionItem.data, t)}
+          displayItems={transaction.displayItems(transactionItem.data as any, t)}
+          helper={'helper' in transaction ? transaction.helper(transactionItem.data as any, t) : undefined}
           currentStep={selectedItem.currentTransaction}
           stepCount={selectedItem.transactions.length}
           transaction={transactionItem}
           txKey={selectedKey}
-          backToInput={transaction.backToInput ?? false}
+          backToInput={'backToInput' in transaction ? transaction.backToInput : false}
           {...{ dispatch, onDismiss }}
         />
       )

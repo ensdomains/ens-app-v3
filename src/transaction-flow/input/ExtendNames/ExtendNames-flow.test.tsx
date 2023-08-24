@@ -1,6 +1,6 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { useEstimateGasLimitForTransactions } from '@app/hooks/useEstimateGasLimitForTransactions'
+import { useEstimateGasLimitForTransactions } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
 
 import { usePrice } from '../../../hooks/usePrice'
 import ExtendNames from './ExtendNames-flow'

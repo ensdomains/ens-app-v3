@@ -2,10 +2,9 @@ import styled, { css } from 'styled-components'
 
 import { Avatar, UpRightArrowSVG } from '@ensdomains/thorin'
 
-import { useChainId } from '@app/hooks/chain/useChainId'
-import { useAvatar } from '@app/hooks/useNftImage'
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination } from '@app/routes'
+import { useEnsAvatar } from 'wagmi'
 
 const Container = styled.a(
   ({ theme }) => css`
@@ -60,8 +59,7 @@ type Props = {
 }
 
 export const AvatarWithLink = ({ name, label }: Props) => {
-  const chainId = useChainId()
-  const { avatar } = useAvatar(name, chainId)
+  const { data: avatar } = useEnsAvatar()
   const zorb = useZorb(name || '', 'name')
   const profileURL = getDestination(`/profile/${name}`) as string
   return (

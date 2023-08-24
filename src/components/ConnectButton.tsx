@@ -18,10 +18,10 @@ import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useChainId } from '@app/hooks/chain/useChainId'
+import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useCopied } from '@app/hooks/useCopied'
 import { useAvatar } from '@app/hooks/useNftImage'
-import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { shortenAddress } from '@app/utils/utils'
