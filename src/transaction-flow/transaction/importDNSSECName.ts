@@ -7,7 +7,7 @@ import { Address } from 'viem'
 
 type Data = {
   name: string
-  address: Address
+  address: Address | undefined
   dnsImportData: GetDnsImportDataReturnType
 }
 

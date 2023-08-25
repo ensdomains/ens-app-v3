@@ -14,7 +14,7 @@
   "stylelint.configFile": ".stylelintrc.json",
   "stylelint.validate": ["css", "typescriptreact"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
+  "prettier.prettierPath": "node_modules/prettier/index.js",
   "[svg]": {
     "editor.defaultFormatter": "jock.svg"
   },

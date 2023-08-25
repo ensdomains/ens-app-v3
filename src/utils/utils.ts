@@ -1,11 +1,11 @@
+import { type Address, toBytes } from 'viem'
+
 import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
 import { DecodedFuses } from '@ensdomains/ensjs/utils'
-import { toBytes } from 'viem'
-import {
-  CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
-  NAMEWRAPPER_AWARE_RESOLVERS,
-  networkName,
-} from './constants'
+
+import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
+
+import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE, networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
   networkName[`${networkId}` as keyof typeof networkName] || 'unknown'
@@ -127,14 +127,15 @@ export const validateExpiry = (
   return pccExpired || fuses.parent.PARENT_CANNOT_CONTROL ? expiry : undefined
 }
 
-export const canEditRecordsWhenWrappedCalc = (
-  isWrapped: boolean,
-  resolverAddress: string = '',
-  chainId: number = 1,
-) => {
-  if (!isWrapped) return true
-  return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
-}
+export const getResolverWrapperAwareness = ({
+  chainId,
+  resolverAddress,
+}: {
+  chainId: number
+  resolverAddress: Address
+}) =>
+  KNOWN_RESOLVER_DATA[chainId]?.find((x) => x.address === resolverAddress)?.isNameWrapperAware ||
+  false
 
 export const hexToNumber = (hex: string) => parseInt(hex, 16)
 

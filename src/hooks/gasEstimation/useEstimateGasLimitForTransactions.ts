@@ -1,96 +1,70 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import type { JsonRpcSigner } from '@ethersproject/providers'
-import { formatEther } from '@ethersproject/units'
 import { useMemo } from 'react'
-import { useQuery, useSigner } from 'wagmi'
+import { useQuery } from 'wagmi'
 
 import {
-  Transaction,
   TransactionData,
+  TransactionItem,
   TransactionName,
-  transactions as _transactions,
-  makeTransactionItem,
+  TransactionParameters,
+  createTransactionRequest
 } from '@app/transaction-flow/transaction'
-import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { fetchTenderlyEstimate } from '@app/utils/tenderly'
 
-import { useChainId } from '../chain/useChainId'
-import useGasPrice from '../chain/useGasPrice'
+import { formatEther, parseAccount } from 'viem/utils'
+import { useWalletClientWithAccount } from '../account/useWalletClient'
+import { useGasPrice } from '../chain/useGasPrice'
+import { usePublicClient } from '../usePublicClient'
 
-type ENS = ReturnType<typeof useEns>
-type TransactionItem = ReturnType<typeof makeTransactionItem>
+type GetEstimateWithConfigParameters<TName extends TransactionName> = TransactionParameters<TName> & {
+  name: TName
+}
 
 export const fetchEstimateWithConfig =
-  (chainId: number, transactionsObj: Transaction, signer: JsonRpcSigner, ens: ENS) =>
-  async (transaction: TransactionItem) => {
-    const transactionName = transaction.name as TransactionName
-    const populatedTransaction = await transactionsObj[transactionName].transaction(
-      signer as JsonRpcSigner,
-      ens,
-      transaction.data,
-    )
+  async <TName extends TransactionName>({ publicClient, walletClient, data, name }: GetEstimateWithConfigParameters<TName>) => {
+    const transactionRequest = await createTransactionRequest({ publicClient, walletClient, data, name })
 
-    let gasLimit: BigNumber
+    let gasLimit: bigint
 
     try {
-      gasLimit = await signer!.estimateGas(populatedTransaction)
-      return {
-        name: transactionName,
-        gasLimit,
-      }
-    } catch (e) {
-      if (transactionName !== 'extendNames') {
-        throw e
-      }
-      const { names, duration } = transaction.data as TransactionData<'extendNames'>
+      gasLimit = await publicClient.estimateGas({ ...transactionRequest, account: walletClient.account })
+    } catch (e: unknown) {
+      if (name !== 'extendNames') throw e
+      const { names, duration } = data as TransactionData<'extendNames'>
       const fetchedEstimate = await fetchTenderlyEstimate({
         type: 'extension',
-        networkId: chainId,
+        networkId: publicClient.chain.id,
         labels: names.map((name) => name.split('.')[0]),
         duration,
-        from: await signer.getAddress(),
+        from: parseAccount(walletClient.account).address,
       })
 
-      gasLimit = BigNumber.from(fetchedEstimate)
+      gasLimit = BigInt(fetchedEstimate)
     }
 
     return {
-      name: transactionName,
+      name,
       gasLimit,
     }
   }
 
-export const useEstimateGasLimitForTransactions = (
-  transactions: TransactionItem[],
-  isEnabled: boolean = true,
-  extraKeys: string[] = [],
-) => {
-  const ens = useEns()
-  const { ready: ensReady } = ens
-  const { gasPrice, isLoading: gasPriceLoading, isFetching: gasPriceFetching } = useGasPrice()
-  const { data: signer, isLoading: isSignerLoading } = useSigner()
-  const chainId = useChainId()
+export const useEstimateGasLimitForTransaction = <TName extends TransactionName>({
+  transaction,
+  enabled = true
+}: {
+  transaction: TransactionItem<TName>
+  enabled?: boolean
+}) => {
+  const publicClient = usePublicClient()
+  const { data: walletClient, isLoading: isWalletClientLoading } = useWalletClientWithAccount()
 
-  const { data, isLoading, isFetching, ...results } = useQuery(
-    useQueryKeys().estimateGasLimitForTransactions(transactions, extraKeys),
-    async () => {
-      const fetchEstimate = fetchEstimateWithConfig(
-        chainId,
-        _transactions,
-        signer as JsonRpcSigner,
-        ens as ENS,
-      )
-      const estimates = await Promise.all(transactions.map(fetchEstimate))
-      const total = estimates.map((r) => r.gasLimit).reduce((a, b) => a.add(b))
+  const { gasPrice, isLoading: isGasPriceLoading, isFetching: isGasPriceFetching } = useGasPrice()
 
-      return {
-        estimates,
-        gasLimit: total,
-      }
-    },
+  const { data, isLoading, isFetching, ...rest } = useQuery(
+    useQueryKeys().estimateGasLimitForTransaction(transaction),
+    ({ queryKey: [params] }) => fetchEstimateWithConfig({ ...params, publicClient, walletClient: walletClient! }),
     {
-      enabled: ensReady && !isSignerLoading && !!signer && isEnabled,
+      enabled: enabled && !!walletClient && !isWalletClientLoading,
       onError: console.error,
     },
   )
@@ -103,11 +77,11 @@ export const useEstimateGasLimitForTransactions = (
       }
     }
 
-    const _gasCost = gasPrice.mul(data.gasLimit)
+    const gasCost_ = gasPrice * data.gasLimit
 
     return {
-      gasCost: _gasCost,
-      gasCostEth: formatEther(_gasCost),
+      gasCost: gasCost_,
+      gasCostEth: formatEther(gasCost_),
     }
   }, [gasPrice, data])
 
@@ -116,9 +90,8 @@ export const useEstimateGasLimitForTransactions = (
     gasCost,
     gasCostEth,
     gasPrice,
-    estimates: data?.estimates,
-    isLoading: isLoading || gasPriceLoading || isSignerLoading,
-    isFetching: isFetching || gasPriceFetching,
-    ...results,
+    isLoading: isLoading || isGasPriceLoading || isWalletClientLoading,
+    isFetching: isFetching || isGasPriceFetching,
+    ...rest,
   }
 }

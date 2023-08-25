@@ -1,4 +1,3 @@
-import { isAddress } from '@ethersproject/address'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -14,6 +13,7 @@ import { useCopied } from '@app/hooks/useCopied'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { shortenAddress } from '@app/utils/utils'
 
+import { isAddress } from 'viem'
 import { Steps } from './Steps'
 import { AlignedDropdown, ButtonContainer, CheckButton } from './shared'
 import { DNS_OVER_HTTP_ENDPOINT, getDnsOwner } from './utils'

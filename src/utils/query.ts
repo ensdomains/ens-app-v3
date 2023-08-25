@@ -58,8 +58,9 @@ type ContractName =
   | 'DNSSECImpl'
   | 'LegacyDNSRegistrar'
   | 'LegacyDNSSECImpl'
+  | 'LegacyPublicResolver'
 
-const deploymentAddresses = JSON.parse(process.env.DEPLOYMENT_ADDRESSES! || '{}') as Record<
+export const deploymentAddresses = JSON.parse(process.env.DEPLOYMENT_ADDRESSES! || '{}') as Record<
   ContractName | 'ENSRegistry',
   Address
 >
@@ -116,7 +117,6 @@ const { publicClient, chains } = configureChains(
   [mainnetWithEns, goerliWithEns, localhostWithEns, sepoliaWithEns],
   providerArray,
 )
-
 
 const connectors = getDefaultWallets({
   appName: 'ENS',

@@ -8,8 +8,8 @@ import { Card, Spinner, Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
+import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import useDNSOwner from '@app/hooks/useDNSOwner'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate } from '@app/hooks/useValidate'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -144,7 +144,7 @@ export default () => {
   const [syncWarning, setSyncWarning] = useState(false)
 
   const { name, isValid } = useValidate(router.query.name as string)
-  const { dnsOwner } = useDNSOwner(name, isValid)
+  const { data: dnsOwner } = useDnsOwner({ name, enabled: isValid })
 
   const transactions = useRecentTransactions()
   const { isConnected } = useAccount()

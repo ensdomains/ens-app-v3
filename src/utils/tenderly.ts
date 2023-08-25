@@ -1,3 +1,5 @@
+import { Address, Hex } from "viem"
+
 const TENDERLY_WORKER_URL = 'https://gas-estimate-worker.ens-cf.workers.dev'
 
 type BaseRequest = {
@@ -7,9 +9,9 @@ type BaseRequest = {
 type RegistrationRequest = {
   type: 'registration'
   label: string
-  owner: string
-  resolver: string
-  data: string[]
+  owner: Address
+  resolver: Address
+  data: Hex[]
   reverseRecord: boolean
   ownerControlledFuses: number
 }
@@ -18,7 +20,7 @@ type ExtensionRequest = {
   type: 'extension'
   labels: string[]
   duration: number
-  from: string
+  from: Address
 }
 
 export const fetchTenderlyEstimate = async (

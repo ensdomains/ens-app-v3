@@ -2,7 +2,8 @@ import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Key, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useDisconnect } from 'wagmi'
+import type { Address } from 'viem'
+import { useDisconnect, useEnsAvatar } from 'wagmi'
 
 import {
   Button,
@@ -17,11 +18,9 @@ import {
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
-import { useChainId } from '@app/hooks/chain/useChainId'
-import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useCopied } from '@app/hooks/useCopied'
-import { useAvatar } from '@app/hooks/useNftImage'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { shortenAddress } from '@app/utils/utils'
@@ -125,12 +124,11 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   )
 }
 
-const HeaderProfile = ({ address }: { address: string }) => {
+const HeaderProfile = ({ address }: { address: Address }) => {
   const { t } = useTranslation('common')
 
-  const primary = usePrimary(address!, !address)
-  const chainId = useChainId()
-  const { avatar } = useAvatar(primary.data?.name, chainId)
+  const { data: primary } = usePrimaryName({ address })
+  const { data: avatar } = useEnsAvatar({ name: primary?.name })
   const zorb = useZorb(address, 'address')
   const { disconnect } = useDisconnect()
   const { copy, copied } = useCopied(300)
@@ -139,10 +137,10 @@ const HeaderProfile = ({ address }: { address: string }) => {
   return (
     <Profile
       address={address}
-      ensName={primary.data?.beautifiedName}
+      ensName={primary?.beautifiedName}
       dropdownItems={
         [
-          ...(primary.data?.name
+          ...(primary?.name
             ? [
                 {
                   label: t('wallet.myProfile'),

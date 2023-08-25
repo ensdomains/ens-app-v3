@@ -1,25 +1,27 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useQuery } from 'wagmi'
+import type { Address } from 'viem'
+import { useAccount } from 'wagmi'
 
-import { DNSProver } from '@ensdomains/dnsprovejs'
 import { Helper, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
-import { useEstimateGasLimitForTransactions } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
+import { useEstimateGasLimitForTransaction } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import {
   CreateTransactionFlow,
   useTransactionFlow,
 } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
-import { emptyAddress } from '@app/utils/constants'
 import { shortenAddress } from '@app/utils/utils'
 
+import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
+import { usePublicClient } from '@app/hooks/usePublicClient'
+import { PublicClientWithChain } from '@app/types'
+import { getDnsImportData } from '@ensdomains/ensjs/dns'
 import { Steps } from './Steps'
 import {
   ButtonContainer,
@@ -27,7 +29,6 @@ import {
   hasPendingTransaction,
   shouldShowSuccessPage,
 } from './shared'
-import { DNS_OVER_HTTP_ENDPOINT } from './utils'
 
 const Container = styled.div`
   text-align: center;
@@ -101,16 +102,25 @@ export const NamePillWithAddress = ({
 }
 
 const handleClaim =
-  (name: string, createTransactionFlow: CreateTransactionFlow, address: string) => async () => {
-    const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
-    const result = await prover.queryWithProof('TXT', `_ens.${name}`)
+  ({
+    publicClient,
+    name,
+    createTransactionFlow,
+    address,
+  }: {
+    publicClient: PublicClientWithChain
+    name: string
+    createTransactionFlow: CreateTransactionFlow
+    address: Address
+  }) => async () => {
+    const dnsImportData = await getDnsImportData(publicClient, { name })
     const timestamp = new Date().getTime()
     const transactionKey = `importName-${name}-${timestamp}`
     createTransactionFlow(transactionKey, {
       transactions: [
         makeTransactionItem('importDNSSECName', {
           name,
-          proverResult: result,
+          dnsImportData,
           address,
         }),
       ],
@@ -127,34 +137,26 @@ export const ClaimDomain = ({
   setCurrentStep: Dispatch<SetStateAction<number>>
   name: string
 }) => {
-  const { address } = useAccount()
-  const { createTransactionFlow } = useTransactionFlow()
-  const transactions = useRecentTransactions()
-  const [pendingTransaction, setPendingTransaction] = useState(false)
   const { t } = useTranslation('dnssec')
 
-  const { data: proverResult } = useQuery(
-    useQueryKeys().globalIndependent.claimDomain(name, syncWarning),
-    async () => {
-      if (name) {
-        const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
-        const result = await prover.queryWithProof('TXT', `_ens.${name}`)
-        return result
-      }
-    },
-  )
+  const publicClient = usePublicClient()
+  const { address } = useAccount()
 
-  const gasEstimate = useEstimateGasLimitForTransactions(
-    [
-      makeTransactionItem(`importDNSSECName`, {
-        name,
-        proverResult,
-        address: syncWarning ? emptyAddress : address!,
-      }),
-    ],
-    !!proverResult,
-    [syncWarning?.toString()],
-  )
+  const { createTransactionFlow } = useTransactionFlow()
+  const transactions = useRecentTransactions()
+
+  const [pendingTransaction, setPendingTransaction] = useState(false)
+
+  const { data: dnsImportData } = useDnsImportData({ name })
+
+  const gasEstimate = useEstimateGasLimitForTransaction({
+    transaction: makeTransactionItem('importDNSSECName', {
+      name,
+      dnsImportData: dnsImportData!,
+      address: syncWarning ? undefined : address!,
+    }),
+    enabled: !!dnsImportData,
+  })
 
   useEffect(() => {
     if (hasPendingTransaction(transactions)) {
@@ -212,7 +214,7 @@ export const ClaimDomain = ({
       <ButtonContainer>
         <CheckButton
           size="small"
-          onClick={handleClaim(name, createTransactionFlow, syncWarning ? emptyAddress : address!)}
+          onClick={handleClaim({ publicClient, address: address!, createTransactionFlow, name })}
         >
           {t('action.claim', { ns: 'common' })}
         </CheckButton>
