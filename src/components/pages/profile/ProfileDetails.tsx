@@ -306,6 +306,7 @@ export const ProfileDetails = ({
 }) => {
   const breakpoint = useBreakpoint()
 
+  const _contentHash = contentHashToString(contentHash)
   const otherRecords = [
     ...textRecords
       .filter(
@@ -314,9 +315,7 @@ export const ProfileDetails = ({
           !supportedProfileItems.includes(x.key.toLowerCase()),
       )
       .map((x) => ({ ...x, type: 'text' })),
-    ...(contentHash
-      ? [{ key: 'contenthash', type: 'contenthash', value: contentHashToString(contentHash) }]
-      : []),
+    ...(_contentHash ? [{ key: 'contenthash', type: 'contenthash', value: _contentHash }] : []),
   ]
 
   const mappedOwners = ownershipInfoCalc(name, pccExpired, owners, gracePeriodEndDate, expiryDate)
