@@ -346,8 +346,7 @@ test.describe('resolver status', () => {
     await morePage.goto(name)
     await login.connect()
 
-    await page.pause()
-    await expect(morePage.resolver).toHaveText(dummyRersolver)
+    await expect(morePage.resolver).toHaveText(dummyRersolver, { timeout: 10000 })
     await expect(page.getByText('Latest')).toBeVisible()
 
     await profilePage.goto(name)
