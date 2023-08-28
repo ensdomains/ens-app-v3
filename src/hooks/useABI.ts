@@ -30,6 +30,12 @@ export const getABISafely = (getABI: GetABIFunc) => async (name: string) => {
   }
 }
 
+type GetABIFromResolverFunc = ReturnType<typeof useEns>['_getABI']
+export const getABIFromResolver =
+  (getABI: GetABIFromResolverFunc) => async (name: string, resolverAddress: string) => {
+    return getABI(name, resolverAddress)
+  }
+
 export const normaliseABI = (data?: AbiData | { abi: string }) => {
   if (!data?.abi) return undefined
   const abiData = data as AbiData
@@ -41,15 +47,20 @@ export const normaliseABI = (data?: AbiData | { abi: string }) => {
 
 type Options = {
   enabled?: boolean
+  resolverAddress?: string
 }
 
 export const useABI = (name: string, options: Options = {}) => {
   const enabled = options.enabled ?? true
+  const { resolverAddress } = options
 
-  const { ready, getABI } = useEns()
+  const { ready, getABI, _getABI } = useEns()
   const { data, isLoading, ...rest } = useQuery(
-    useQueryKeys().getABI(name),
-    async () => getABISafely(getABI)(name),
+    useQueryKeys().getABI(name, resolverAddress),
+    async () =>
+      resolverAddress
+        ? getABIFromResolver(_getABI)(name, resolverAddress)
+        : getABISafely(getABI)(name),
     {
       enabled: ready && enabled && name !== '' && name !== '[root]',
     },

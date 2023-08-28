@@ -72,7 +72,12 @@ export const useQueryKeys = () => {
     exists: (name: string) => [...globalKeys, 'getOwner', name, 'exists'],
     expiry: (name: string) => [...globalKeys, 'useExpiry', name, 'expiry'],
     faucet: (localAddress?: string) => [...globalKeys, localAddress, 'faucet'],
-    getABI: (name: string) => [...globalKeys, name, 'getABI'],
+    getABI: (name: string, resolverAddress?: string) => [
+      ...globalKeys,
+      'getABI',
+      name,
+      resolverAddress,
+    ],
     getHistory: (name: string) => [...globalKeys, 'graph', name, 'getHistory'],
     getWrapperData: (name: string) => [...globalKeys, name, 'getWrapperData'],
     hasSubnames: (name: string) => [...globalKeys, 'graph', name, 'hasSubnames'],

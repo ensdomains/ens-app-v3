@@ -35,6 +35,7 @@ const DEFAULT_RECORDS = {
       value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
     },
   ],
+  abi: { contentType: 1, data: '{"test":"test"}' },
 }
 
 test.describe('unwrapped', () => {
@@ -86,7 +87,9 @@ test.describe('unwrapped', () => {
       await login.connect()
 
       await profilePage.editProfileButton.click()
-      await expect(profilePage.profileEditor.locator('text=No resolver set')).toBeVisible()
+      await expect(profilePage.profileEditor.locator('text=No resolver set')).toBeVisible({
+        timeout: 10000,
+      })
 
       await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
       await transactionModal.autoComplete()
@@ -343,6 +346,7 @@ test.describe('resolver status', () => {
     await morePage.goto(name)
     await login.connect()
 
+    await page.pause()
     await expect(morePage.resolver).toHaveText(dummyRersolver)
     await expect(page.getByText('Latest')).toBeVisible()
 

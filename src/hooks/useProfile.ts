@@ -64,7 +64,7 @@ export const useProfile = (
 
   const { decryptedName } = useDecryptName(name, !profile)
 
-  const abi = useABI(name, { enabled: includeAbi })
+  const abi = useABI(name, { enabled: includeAbi, resolverAddress: profile?.resolverAddress })
 
   const isLoading = !ready || isProfileLoading || abi.isLoading
   const _isFetching = isFetching || abi.isFetching

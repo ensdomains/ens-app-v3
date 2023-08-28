@@ -27,6 +27,7 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
 
   const internalProfile = useProfile(name!, {
     enabled,
+    includeAbi: true,
     skipGraph: false,
   })
   const profile = internalProfile.data
@@ -50,6 +51,7 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
       resolverType.data?.type !== 'latest' &&
       !!latestResolverAddress,
     resolverAddress: latestResolverAddress,
+    includeAbi: true,
   })
 
   const isLoading =
