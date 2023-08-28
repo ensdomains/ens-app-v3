@@ -4,16 +4,22 @@ import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { useInvalidateOnBlock } from './useInvalidateOnBlock'
 
-const useCurrentBlockTimestamp = () => {
+const useCurrentBlockTimestamp = ({ enabled = true }: { enabled?: boolean } = {}) => {
   const provider = useProvider()
   const queryKeys = useQueryKeys().currentBlockTimestamp
-  const { data } = useQuery(queryKeys, async () => {
-    const { timestamp } = await provider.getBlock('latest')
-    return timestamp
-  })
+  const { data } = useQuery(
+    queryKeys,
+    async () => {
+      const { timestamp } = await provider.getBlock('latest')
+      return timestamp
+    },
+    {
+      enabled,
+    },
+  )
 
   useInvalidateOnBlock({
-    enabled: true,
+    enabled,
     queryKey: queryKeys,
   })
 

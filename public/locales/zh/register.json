@@ -63,9 +63,10 @@
               "com.discord": "Discord"
             },
             "placeholder": {
-              "com.twitter": "例如 ensdomains",
-              "com.github": "例如 ensdomains",
-              "com.discord": "例如 alisha.eth#0001"
+              "com.twitter": "例如 nicksdjohnson",
+              "com.github": "例如 arachnid",
+              "com.discord": "例如 nickjohnson",
+              "org.telegram": "e.g. nicksdjohnson"
             }
           },
           "address": {

@@ -23,11 +23,7 @@ export class Login {
     this.getProfileButton = this.page.getByTestId('header-profile')
   }
 
-  async connect(user: User = 'user') {
-    if (user !== 'user') {
-      const pk = this.accounts.getPrivateKey(user)
-      await this.wallet.changeAccounts([pk!])
-    }
+  async waitForLoad() {
     /**
      * TEMP FIX
      * A bug in rainbow kit needs time to load the provider. Could be fixed in version 1.0.4
@@ -38,6 +34,14 @@ export class Login {
       .getByRole('button', { name: 'Close' })
       .click({ timeout: 5000 })
       .catch(() => {})
+  }
+
+  async connect(user: User = 'user') {
+    if (user !== 'user') {
+      const pk = this.accounts.getPrivateKey(user)
+      await this.wallet.changeAccounts([pk!])
+    }
+    await this.waitForLoad()
     await this.getConnectButton.click()
     await this.page.getByText('Browser Wallet').click()
     await expect(this.page.getByText('Confirm connection in the extension')).toBeVisible({
@@ -47,5 +51,11 @@ export class Login {
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
     await expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
     await expect(this.getProfileButton).toBeVisible()
+  }
+
+  async reconnect() {
+    await this.waitForLoad()
+    await this.getConnectButton.click()
+    await this.page.getByText('Browser Wallet').click()
   }
 }

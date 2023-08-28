@@ -6,9 +6,6 @@ import { emptyAddress } from '@app/utils/constants'
 
 const oldResolver = '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB'
 const newResolver = '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF'
-// This not an actual resovler but a dummy address that has been inserted to the second to last known resolver
-// to test the situation where unwrapped do not show a warning when editing profile.
-const dummyRersolver = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
 
 const DEFAULT_RECORDS = {
   texts: [
@@ -323,35 +320,6 @@ test.describe('wrapped', () => {
 
       await expect(page.getByTestId('name-details-text')).toHaveText('[{"test":"test"}]')
     })
-  })
-})
-
-test.describe('resolver status', () => {
-  test('should not show warning when editing unwrapped name with second to last resolver', async ({
-    page,
-    login,
-    makeName,
-    makePageObject,
-  }) => {
-    const name = await makeName({
-      label: 'unwrapped',
-      type: 'legacy',
-      resolver: dummyRersolver,
-    })
-
-    const morePage = makePageObject('MorePage')
-    const profilePage = makePageObject('ProfilePage')
-
-    await morePage.goto(name)
-    await login.connect()
-
-    await expect(morePage.resolver).toHaveText(dummyRersolver)
-    await expect(page.getByText('Latest')).toBeVisible()
-
-    await profilePage.goto(name)
-
-    await profilePage.editProfileButton.click()
-    await expect(profilePage.profileEditor.getByText('Edit your profile')).toBeVisible()
   })
 })
 

@@ -153,8 +153,8 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   } = useForm<FormData>({
     mode: 'onChange',
     defaultValues: {
-      managerChoice: 'manager',
-      ownerChoice: 'owner',
+      managerChoice: '',
+      ownerChoice: '',
       dogfoodRaw: '',
       address: '',
     },
@@ -162,11 +162,14 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
 
   const managerChoiceWatch = watch('managerChoice')
   const ownerChoiceWatch = watch('ownerChoice')
+  const addressWatch = watch('address')
   const abilities = useAbilities(name)
   const { canSendManager, canSendOwner, sendNameFunctionCallDetails } = abilities.data || {}
   const loadingAbilities = abilities.isLoading
   const hasChoice =
-    (canSendManager && managerChoiceWatch) || (canSendOwner && ownerChoiceWatch) || loadingAbilities
+    !loadingAbilities &&
+    addressWatch &&
+    ((canSendManager && managerChoiceWatch) || (canSendOwner && ownerChoiceWatch))
 
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
@@ -203,7 +206,6 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
           <Toggle
             size="large"
             value="owner"
-            defaultChecked
             data-testid="owner-checkbox"
             {...register('ownerChoice', { shouldUnregister: true })}
           />
@@ -220,7 +222,6 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
           <Toggle
             size="large"
             value="manager"
-            defaultChecked
             data-testid="manager-checkbox"
             {...register('managerChoice', { shouldUnregister: true })}
           />
@@ -257,7 +258,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
               </Button>
             }
             trailing={
-              <Button type="submit" disabled={!hasChoice || !formState.isDirty || hasErrors}>
+              <Button type="submit" disabled={!hasChoice || hasErrors}>
                 {t('action.next', { ns: 'common' })}
               </Button>
             }

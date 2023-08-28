@@ -41,7 +41,7 @@ const mockProfileData = {
         {
           key: 'com.discord',
           type: 'text',
-          value: 'test#1234',
+          value: 'test',
         },
         {
           key: 'com.reddit',

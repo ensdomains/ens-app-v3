@@ -53,9 +53,9 @@
           "noOptions": "没有可用的账户",
           "placeholder": {
             "default": "在此添加用户名",
-            "com.twitter": "例如 ensdomains",
-            "com.github": "例如 ensdomains",
-            "com.discord": "例如 alisha.eth#0001"
+            "com.twitter": "例如 nicksdjohnson",
+            "com.github": "例如 arachnid",
+            "com.discord": "例如 nickjohnson"
           }
         },
         "address": {

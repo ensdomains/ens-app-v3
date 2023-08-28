@@ -344,7 +344,7 @@
     "empty": "No options found"
   },
   "testnetFaucet": {
-    "explanation": "Each address on goerli can claim {{ amount }}ETH to test out the ENS manager app, as well as all the new contracts.",
+    "explanation": "Each address on {{ testnet }} can claim {{ amount }} {{ ticker }} to test out the ENS manager app, as well as any other testnet usage.",
     "note": "It may take a few minutes to show up in your wallet."
   }
 }
