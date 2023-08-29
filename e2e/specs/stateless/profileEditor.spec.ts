@@ -33,6 +33,7 @@ const DEFAULT_RECORDS = {
     },
   ],
   abi: { contentType: 1, data: '{"test":"test"}' },
+  contentHash: 'ipfs://bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
 }
 
 test.describe('unwrapped', () => {
@@ -172,6 +173,7 @@ test.describe('unwrapped', () => {
         'ETC_LEGACY0x3C4...293BC',
       )
       await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
+      await expect(profilePage.contentHash()).toContainText('ipfs://bafybeic...')
 
       await profilePage.editProfileButton.click()
       await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()

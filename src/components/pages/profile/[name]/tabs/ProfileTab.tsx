@@ -127,6 +127,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         textRecords={(profile?.records?.texts || [])
           .map((item: any) => ({ key: item.key, value: item.value }))
           .filter((item: any) => item.value !== null)}
+        contentHash={profile?.records?.contentHash}
         owners={owners}
         name={normalisedName}
         actions={profileActions.profileActions}
