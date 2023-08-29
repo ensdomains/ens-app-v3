@@ -6,6 +6,7 @@ import {
   injectedWallet,
   ledgerWallet,
   metaMaskWallet,
+  phantomWallet,
   rainbowWallet,
   safeWallet,
   walletConnectWallet,
@@ -35,6 +36,7 @@ export const getDefaultWallets = ({
         metaMaskWallet({ chains, projectId }),
         ledgerWallet({ chains, projectId }),
         argentWallet({ chains, projectId }),
+        phantomWallet({ chains }),
       ],
     },
   ]
