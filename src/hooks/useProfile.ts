@@ -64,7 +64,10 @@ export const useProfile = (
 
   const { decryptedName } = useDecryptName(name, !profile)
 
-  const abi = useABI(name, { enabled: includeAbi, resolverAddress: profile?.resolverAddress })
+  const abi = useABI(name, {
+    enabled: includeAbi && !!profile?.resolverAddress,
+    resolverAddress: profile?.resolverAddress,
+  })
 
   const isLoading = !ready || isProfileLoading || abi.isLoading
   const _isFetching = isFetching || abi.isFetching
@@ -80,7 +83,7 @@ export const useProfile = (
         abi: abi.data,
       },
     } as Profile
-  }, [isLoading, profile, decryptedName, abi])
+  }, [isLoading, profile, decryptedName, abi.data])
 
   return {
     data,

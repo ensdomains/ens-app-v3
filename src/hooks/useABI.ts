@@ -33,7 +33,13 @@ export const getABISafely = (getABI: GetABIFunc) => async (name: string) => {
 type GetABIFromResolverFunc = ReturnType<typeof useEns>['_getABI']
 export const getABIFromResolver =
   (getABI: GetABIFromResolverFunc) => async (name: string, resolverAddress: string) => {
-    return getABI(name, resolverAddress)
+    try {
+      const data = await getABI(name, resolverAddress)
+      if (!data) throw new Error('No data')
+      return data
+    } catch {
+      return { abi: '' }
+    }
   }
 
 export const normaliseABI = (data?: AbiData | { abi: string }) => {
