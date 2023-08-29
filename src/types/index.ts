@@ -13,6 +13,7 @@ import type {
 
 import { ChainWithEns } from '@ensdomains/ensjs/dist/types/contracts/consts'
 import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
+import { ChildFuseReferenceType, ParentFuseReferenceType } from '@ensdomains/ensjs/utils'
 import { Helper, Space } from '@ensdomains/thorin'
 
 export type Profile = Partial<
@@ -103,6 +104,10 @@ export interface Transaction<TData> {
   backToInput?: boolean
 }
 
+export type ExtractTransactionData<TTransaction> = TTransaction extends Transaction<infer TData>
+  ? TData
+  : never
+
 export type UserTheme = 'light' | 'dark'
 // fiat is placeholder for now, not actually implemented
 export type UserFiat = 'usd' | 'eur' | 'gbp' | 'aud'
@@ -166,3 +171,5 @@ export type QueryConfig<TData, TError, TSelectData = TData> = Pick<
   /** Scope the cache to a given context. */
   scopeKey?: string
 }
+
+export type AnyFuseKey = ParentFuseReferenceType['Key'] | ChildFuseReferenceType['Key']

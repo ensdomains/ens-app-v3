@@ -9,6 +9,7 @@ import {
   GetOwnerParameters,
   GetPriceParameters,
   GetRecordsParameters,
+  GetResolverParameters,
   GetSupportedInterfacesParameters,
   GetWrapperDataParameters,
 } from '@ensdomains/ensjs/public'
@@ -143,6 +144,8 @@ export const useQueryKeys = () => {
       [params, ...globalKeys, 'getPrice'] as const,
     getRecords: <TParams extends GetRecordsParameters>(params: TParams) =>
       [params, ...globalKeys, 'getRecords'] as const,
+    getResolver: <TParams extends GetResolverParameters>(params: TParams) =>
+      [params, ...globalKeys, 'getResolver'] as const,
     getSupportedInterfaces: <
       TInterfaces extends readonly Hex[],
       TParams extends GetSupportedInterfacesParameters<TInterfaces>,
@@ -156,7 +159,6 @@ export const useQueryKeys = () => {
     getDnsOwner: <TParams extends GetDnsOwnerParameters>(params: TParams) =>
       [params, ...globalKeys, 'getDnsOwner'] as const,
     registrationDate: (name: string) => [...globalKeys, 'graph', name, 'registrationDate'],
-    getResolver: (name: string) => [...globalKeys, name, 'getResolver'],
     resolverExists: (name: string) => [
       ...globalKeys,
       'graph',

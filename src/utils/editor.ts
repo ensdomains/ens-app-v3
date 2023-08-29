@@ -1,8 +1,7 @@
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
-import { DetailedProfile } from '@app/hooks/useNameDetails'
-import { RecordItem } from '@app/types/index'
+import { Profile } from '@app/types/index'
 
 export const formSafeKey = (key: string) =>
   encodeURIComponent(key).replace(
@@ -34,25 +33,22 @@ export type ProfileFormObject = {
   }
 }
 
-export const convertProfileToProfileFormObject = (profile: DetailedProfile): ProfileFormObject => {
+export const convertProfileToProfileFormObject = (profile: Profile): ProfileFormObject => {
   const address =
-    profile.records?.coinTypes?.reduce((map, record) => {
-      const { coin } = record
-      const { addr } = record as any
-      if (coin && supportedAddresses.includes(coin.toLowerCase())) {
-        const newMap = { [coin]: addr, ...map }
+    profile.coins?.reduce((map, record) => {
+      const { id, name, value } = record
+      if (name && supportedAddresses.includes(name.toLowerCase())) {
+        const newMap = { [id]: value, ...map }
         return newMap
       }
-      if (coin) {
-        const newMap = { ...map, [coin]: addr }
+      if (id) {
+        const newMap = { ...map, [id]: value }
         return newMap
       }
       return map
     }, {}) || {}
 
-  const textRecords = profile.records?.texts?.reduce<
-    Omit<ProfileFormObject, 'address' | 'website'>
-  >(
+  const textRecords = profile.texts?.reduce<Omit<ProfileFormObject, 'address' | 'website'>>(
     (map, record) => {
       if (record.key === 'avatar')
         return {
@@ -95,7 +91,7 @@ export const convertProfileToProfileFormObject = (profile: DetailedProfile): Pro
   ) || { general: {}, accounts: {}, other: {} }
 
   let website = ''
-  const contentHash = profile.records?.contentHash
+  const contentHash = profile.contentHash
   if (contentHash) {
     if (typeof contentHash === 'string') {
       website = contentHash
@@ -108,7 +104,9 @@ export const convertProfileToProfileFormObject = (profile: DetailedProfile): Pro
     ...textRecords,
     address,
     website,
-    abi: profile.records?.abi,
+    abi: profile.abi
+      ? { data: profile.abi.abi as any, contentType: profile.abi.contentType }
+      : undefined,
   }
 }
 
@@ -137,15 +135,4 @@ export const getDirtyFields = (
   }
 
   return {}
-}
-
-export const recordItemToKeyValue = (recordItem: RecordItem): { key: string; value: string } => {
-  switch (recordItem.type) {
-    case 'text':
-      return { key: recordItem.key.toString(), value: recordItem.value }
-    case 'addr':
-      return { key: recordItem.coin!.toString(), value: (recordItem as any).addr }
-    default:
-      throw new Error(`Unsupported record type: ${recordItem.type}`)
-  }
 }

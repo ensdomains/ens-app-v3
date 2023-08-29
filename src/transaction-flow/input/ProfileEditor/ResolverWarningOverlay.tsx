@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Address } from 'viem'
 
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { makeIntroItem } from '@app/transaction-flow/intro'
@@ -27,8 +28,8 @@ type Props = {
   hasOldRegistry?: boolean
   hasMigratedProfile?: boolean
   hasNoResolver?: boolean
-  latestResolver: string
-  oldResolver: string
+  latestResolverAddress: Address
+  oldResolverAddress: Address
   status: ReturnType<typeof useResolverStatus>['data']
   onDismissOverlay: () => void
 } & TransactionDialogPassthrough
@@ -51,8 +52,8 @@ const ResolverWarningOverlay = ({
   status,
   isWrapped,
   hasOldRegistry = false,
-  latestResolver,
-  oldResolver,
+  latestResolverAddress,
+  oldResolverAddress,
   dispatch,
   onDismiss,
   onDismissOverlay,
@@ -107,7 +108,7 @@ const ResolverWarningOverlay = ({
         makeTransactionItem('updateResolver', {
           name,
           contract: isWrapped ? 'nameWrapper' : 'registry',
-          resolver: latestResolver,
+          resolverAddress: latestResolverAddress,
         }),
       ],
     })
@@ -135,7 +136,7 @@ const ResolverWarningOverlay = ({
           makeTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
-            resolver: latestResolver,
+            resolverAddress: latestResolverAddress,
           }),
         ],
       },
@@ -156,12 +157,12 @@ const ResolverWarningOverlay = ({
         transactions: [
           makeTransactionItem('resetProfile', {
             name,
-            resolver: latestResolver,
+            resolverAddress: latestResolverAddress,
           }),
           makeTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
-            resolver: latestResolver,
+            resolverAddress: latestResolverAddress,
           }),
         ],
       },
@@ -185,12 +186,12 @@ const ResolverWarningOverlay = ({
         transactions: [
           makeTransactionItem('migrateProfileWithReset', {
             name,
-            resolver: latestResolver,
+            resolverAddress: latestResolverAddress,
           }),
           makeTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
-            resolver: latestResolver,
+            resolverAddress: latestResolverAddress,
           }),
         ],
       },
@@ -203,8 +204,8 @@ const ResolverWarningOverlay = ({
     migrateProfileSelector: (
       <MigrateProfileSelectorView
         name={name}
-        currentResolver={oldResolver}
-        latestResolver={latestResolver}
+        currentResolver={oldResolverAddress}
+        latestResolver={latestResolverAddress}
         hasCurrentProfile={!!status?.hasProfile}
         selected={selectedProfile}
         onChangeSelected={setSelectedProfile}

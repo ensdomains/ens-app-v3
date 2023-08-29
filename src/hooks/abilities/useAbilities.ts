@@ -45,11 +45,11 @@ export type SendAbilities = {
   canSendManager: boolean
   sendNameFunctionCallDetails?: {
     sendOwner?: {
-      contract: 'registry' | 'nameWrapper' | 'baseRegistrar'
+      contract: 'registry' | 'nameWrapper' | 'registrar'
       method: 'safeTransferFrom'
     }
     sendManager?: {
-      contract: 'registry' | 'nameWrapper' | 'baseRegistrar'
+      contract: 'registry' | 'nameWrapper' | 'registrar'
       method: 'safeTransferFrom' | 'reclaim' | 'setOwner' | 'setSubnodeOwner'
     }
   }
@@ -83,14 +83,14 @@ export const useAbilities = (name: string) => {
 
   const { address } = useAccountSafely()
 
-  const basicNameData = useBasicName(name, { skipGraph: false, enabled: !!name && !!address })
+  const basicNameData = useBasicName({ name, enabled: !!name && !!address })
 
   const resolverAuthorisation = useResolverIsAuthorized(name, {
     enabled: !!name && !!address,
   })
 
-  const parentBasicNameData = useBasicName(parent, {
-    skipGraph: false,
+  const parentBasicNameData = useBasicName({
+    name: parent,
     enabled: !!parent && !!address,
   })
 

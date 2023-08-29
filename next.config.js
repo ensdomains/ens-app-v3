@@ -97,7 +97,7 @@ let nextConfig = {
               if (/\.yalc\/@ensdomains\/thorin/.test(excludePath)) {
                 return true
               }
-              if (/\.yalc\/@ensdomains\/ensjs/.test(excludePath)) { 
+              if (/\.yalc\/@ensdomains\/ensjs/.test(excludePath)) {
                 return true
               }
               return /node_modules/.test(excludePath)

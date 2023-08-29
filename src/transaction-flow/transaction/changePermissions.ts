@@ -2,24 +2,21 @@
 import type { TFunction } from 'react-i18next'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { ChildFuseKeys, ParentFuseKeys } from '@ensdomains/ensjs/utils'
+import { ChildFuseReferenceType, ParentFuseReferenceType } from '@ensdomains/ensjs/utils'
 import { setChildFuses, setFuses } from '@ensdomains/ensjs/wallet'
-
-type ChildFuseKeys = typeof ChildFuseKeys[number]
-type ParentFuseKeys = typeof ParentFuseKeys[number]
 
 type WithSetChildFuses = {
   contract: 'setChildFuses'
   fuses: {
-    parent: ParentFuseKeys[]
-    child: ChildFuseKeys[]
+    parent: ParentFuseReferenceType['Key'][]
+    child: ChildFuseReferenceType['Key'][]
   }
   expiry?: number
 }
 
 type WithSetFuses = {
   contract: 'setFuses'
-  fuses: ChildFuseKeys[]
+  fuses: ChildFuseReferenceType['Key'][]
 }
 
 type Data = {

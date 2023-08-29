@@ -1,8 +1,14 @@
-import { DecodedContentHash, RecordOptions, contentTypeToEncodeAs, encodeAbi } from '@ensdomains/ensjs/utils'
+import { Address } from 'viem'
+
+import {
+  DecodedContentHash,
+  RecordOptions,
+  contentTypeToEncodeAs,
+  encodeAbi,
+} from '@ensdomains/ensjs/utils'
 
 import { AddressRecord, Profile, TextRecord } from '@app/types'
 
-import { Address } from 'viem'
 import { contentHashToString } from './contenthash'
 import { shortenAddress } from './utils'
 
@@ -23,33 +29,51 @@ export const recordOptionsToToupleList = (
   ].map(([key, value]) => (value ? [key, value] : [deleteLabel, key]))
 }
 
-const mergeRecords = <TMatchObject extends Record<string, any>, TMatchKey extends keyof TMatchObject = keyof TMatchObject>(matchKey: TMatchKey) => <TRecordItem extends TMatchObject>(a: TRecordItem[] = [], b: TRecordItem[] = []): TRecordItem[] => {
-  return [...a, ...b].reduce<TRecordItem[]>((acc, record) => {
-    const index = acc.findIndex((r) => r[matchKey] === record[matchKey])
-    if (index === -1) return [...acc, record]
-    acc[index] = { ...acc[index], ...record }
-    return acc
-  }, [])
-}
+const mergeRecords =
+  <
+    TMatchObject extends Record<string, any>,
+    TMatchKey extends keyof TMatchObject = keyof TMatchObject,
+  >(
+    matchKey: TMatchKey,
+  ) =>
+  <TRecordItem extends TMatchObject>(
+    a: TRecordItem[] = [],
+    b: TRecordItem[] = [],
+  ): TRecordItem[] => {
+    return [...a, ...b].reduce<TRecordItem[]>((acc, record) => {
+      const index = acc.findIndex((r) => r[matchKey] === record[matchKey])
+      if (index === -1) return [...acc, record]
+      acc[index] = { ...acc[index], ...record }
+      return acc
+    }, [])
+  }
 
 export const mergeTextRecords = mergeRecords<TextRecord>('key')
 
 export const mergeAddressRecords = mergeRecords<AddressRecord>('id')
 
-const checkRecordsEqual = <TMatchObject extends Record<string, any>>(keyFn: (item: TMatchObject) => string) => (a: TMatchObject[] = [], b: TMatchObject[] = []): boolean => {
-  return Object.values(
-    [...a, ...b].reduce((acc, item) => {
-      const key = keyFn(item)
-      if (acc[key]) acc[key] += 1
-      else acc[key] = 1
-      return acc
-    }, {} as Record<string, number>),
-  ).every((count) => count === 2)}
+const checkRecordsEqual =
+  <TMatchObject extends Record<string, any>>(keyFn: (item: TMatchObject) => string) =>
+  (a: TMatchObject[] = [], b: TMatchObject[] = []): boolean => {
+    return Object.values(
+      [...a, ...b].reduce((acc, item) => {
+        const key = keyFn(item)
+        if (acc[key]) acc[key] += 1
+        else acc[key] = 1
+        return acc
+      }, {} as Record<string, number>),
+    ).every((count) => count === 2)
+  }
 
-const checkAddressRecordsEqual = checkRecordsEqual<AddressRecord>((item) => `${item.id}-${item.value}`)
+const checkAddressRecordsEqual = checkRecordsEqual<AddressRecord>(
+  (item) => `${item.id}-${item.value}`,
+)
 const checkTextRecordsEqual = checkRecordsEqual<TextRecord>((item) => `${item.key}-${item.value}`)
 
-export const checkContentHashEqual = (a?: DecodedContentHash | null, b?: DecodedContentHash | null): boolean => {
+export const checkContentHashEqual = (
+  a?: DecodedContentHash | null,
+  b?: DecodedContentHash | null,
+): boolean => {
   return contentHashToString(a) === contentHashToString(b)
 }
 
@@ -89,9 +113,7 @@ export const makeProfileRecordsWithEthRecordItem = (
   }
 }
 
-export const  profileRecordsToKeyValue = async (
-  records: Profile
-): Promise<RecordOptions> => {
+export const profileRecordsToKeyValue = async (records: Profile): Promise<RecordOptions> => {
   const contentHash = contentHashToString(records?.contentHash)
   return {
     texts: records?.texts?.map(({ key, value }) => ({ key: key as string, value })),
@@ -100,7 +122,14 @@ export const  profileRecordsToKeyValue = async (
       value: coinType.value,
     })),
     ...(contentHash ? { contentHash } : {}),
-    ...(records.abi ? { abi: await encodeAbi({ data: records.abi.abi as any, encodeAs: contentTypeToEncodeAs(records.abi.contentType as 1 | 2 | 4 | 8) }) } : {}),
+    ...(records.abi
+      ? {
+          abi: await encodeAbi({
+            data: records.abi.abi as any,
+            encodeAs: contentTypeToEncodeAs(records.abi.contentType as 1 | 2 | 4 | 8),
+          }),
+        }
+      : {}),
   }
 }
 
@@ -114,18 +143,18 @@ type ProfileMatchAddress = {
   match: AddressRecord
 }
 
+export type RecordMatch = ProfileMatchText | ProfileMatchAddress
+
 export const checkProfileRecordsContains = ({
   profile,
   type,
   match,
 }: {
   profile: Profile
-} & (ProfileMatchText | ProfileMatchAddress)) => {
+} & RecordMatch) => {
   if (type === 'text')
     return !!profile?.texts?.some(({ key, value }) => key === match.key && value === match.value)
   if (type === 'address')
-    return !!profile?.coins?.some(
-      (coin) => coin.id === match.id && coin.value === match.value,
-    )
+    return !!profile?.coins?.some((coin) => coin.id === match.id && coin.value === match.value)
   return false
 }

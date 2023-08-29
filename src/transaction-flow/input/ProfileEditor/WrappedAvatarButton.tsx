@@ -1,9 +1,8 @@
 import { ComponentProps } from 'react'
 import { Control, useFormState } from 'react-hook-form'
+import { useEnsAvatar } from 'wagmi'
 
 import AvatarButton from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
-import { useChainId } from '@app/hooks/chain/useChainId'
-import { useAvatar } from '@app/hooks/useNftImage'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
 type Props = {
@@ -12,8 +11,7 @@ type Props = {
 } & Omit<ComponentProps<typeof AvatarButton>, 'validated'>
 
 export const WrappedAvatarButton = ({ control, name, src, ...props }: Props) => {
-  const chainId = useChainId()
-  const { avatar } = useAvatar(name, chainId)
+  const { data: avatar } = useEnsAvatar({ name })
   const formState = useFormState<ProfileEditorForm>({
     control,
     name: 'avatar',

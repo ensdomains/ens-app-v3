@@ -1,15 +1,20 @@
 import { TOptions } from 'i18next'
 import { ComponentProps, Dispatch, ReactNode } from 'react'
+import { Hash } from 'viem'
 
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { MinedData, TransactionDisplayItem } from '@app/types'
 
-import { Hash } from 'viem'
 import type { DataInputComponent } from './input'
 import type { IntroComponentName } from './intro'
-import type { TransactionData, TransactionItem, TransactionName, makeTransactionItem } from './transaction'
+import type {
+  TransactionData,
+  TransactionItem,
+  TransactionName,
+  makeTransactionItem,
+} from './transaction'
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'
 
@@ -20,7 +25,10 @@ type GenericDataInput = {
   data: any
 }
 
-export type GenericTransaction<TName extends TransactionName = TransactionName, TData extends TransactionData<TName> = TransactionData<TName>> = {
+export type GenericTransaction<
+  TName extends TransactionName = TransactionName,
+  TData extends TransactionData<TName> = TransactionData<TName>,
+> = {
   name: TName
   data: TData
   hash?: Hash
@@ -114,7 +122,7 @@ export type TransactionFlowAction =
     }
   | {
       name: 'setTransactionHash'
-      payload: string
+      payload: Hash
     }
   | {
       name: 'incrementTransaction'
@@ -169,7 +177,10 @@ export type GetUniqueTransactionParameters = Pick<ManagedDialogProps, 'txKey' | 
   transaction: Pick<GenericTransaction, 'name' | 'data'>
 }
 
-export type UniqueTransaction<TName extends TransactionName = TransactionName, TData extends TransactionData<TName> = TransactionData<TName>> = {
+export type UniqueTransaction<
+  TName extends TransactionName = TransactionName,
+  TData extends TransactionData<TName> = TransactionData<TName>,
+> = {
   key: string
   step: number
   name: TName

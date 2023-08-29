@@ -2,19 +2,24 @@ import { Control, UseFormRegister, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import {
+  ChildFuseKeys,
+  ChildFuseReferenceType,
+  ParentFuseReferenceType,
+} from '@ensdomains/ensjs/utils'
 import { CheckboxRow, Dialog } from '@ensdomains/thorin'
-
-import { CHILD_FUSES, ChildFuse, Fuse } from '@app/transaction-flow/transaction/changePermissions'
 
 import type { FormData } from '../RevokePermissions-flow'
 
 type Props = {
   register: UseFormRegister<FormData>
   control: Control<FormData>
-  unburnedFuses: Fuse[]
+  unburnedFuses: (ChildFuseReferenceType['Key'] | ParentFuseReferenceType['Key'])[]
 }
 
-const CHILD_FUSES_WITHOUT_CU: ChildFuse[] = CHILD_FUSES.filter((fuse) => fuse !== 'CANNOT_UNWRAP')
+const CHILD_FUSES_WITHOUT_CU: ChildFuseReferenceType['Key'][] = ChildFuseKeys.filter(
+  (fuse) => fuse !== 'CANNOT_UNWRAP',
+)
 
 const PermissionsList = styled.div(
   ({ theme }) => css`

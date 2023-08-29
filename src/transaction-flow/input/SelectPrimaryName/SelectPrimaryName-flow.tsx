@@ -2,14 +2,11 @@ import { useRef, useState } from 'react'
 import { UseFormReturn, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { labelhash } from 'viem'
 import { useMutation, useQueryClient } from 'wagmi'
 
-import {
-  decodeLabelhash,
-  isEncodedLabelhash,
-  labelhash,
-  saveName,
-} from '@ensdomains/ensjs/utils/labels'
+import { getDecodedName } from '@ensdomains/ensjs/subgraph'
+import { decodeLabelhash, isEncodedLabelhash, saveName } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, Heading, Typography, mq } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
@@ -29,13 +26,13 @@ import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useBasicName } from '@app/hooks/useBasicName'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useProfile } from '@app/hooks/useProfile'
+import { usePublicClient } from '@app/hooks/usePublicClient'
 import {
   UnknownLabelsForm,
   FormData as UnknownLabelsFormData,
   nameToFormData,
 } from '@app/transaction-flow/input/UnknownLabels/views/UnknownLabelsForm'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { TaggedNameItemWithFuseCheck } from './components/TaggedNameItemWithFuseCheck'
@@ -174,9 +171,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   })
   const { handleSubmit, control, setValue } = form
 
+  const publicClient = usePublicClient()
   const chainId = useChainId()
-
-  const { ready: isEnsReady, getDecryptedName } = useEns()
 
   const [view, setView] = useState<'main' | 'decrypt'>('main')
 
@@ -206,26 +202,27 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     name: 'name',
   })
 
-  const { isWrapped, isLoading: isBasicNameLoading } = useBasicName(selectedName?.name, {
+  const { isWrapped, isLoading: isBasicNameLoading } = useBasicName({
+    name: selectedName?.name,
     enabled: !!selectedName?.name,
-    skipGraph: true,
+  })
+  const { data: selectedNameProfile } = useProfile({
+    name: selectedName?.name,
+    enabled: !!selectedName?.name,
+    subgraphEnabled: false,
   })
 
-  const selectedNameProfile = useProfile(selectedName?.name!, {
-    skip: !selectedName?.name,
-    skipGraph: true,
-  })
-
-  const resolverStatus = useResolverStatus(selectedName?.name!, {
+  const resolverStatus = useResolverStatus({
+    name: selectedName?.name!,
     enabled: !!selectedName && !isBasicNameLoading,
-    migratedRecordsMatch: { key: '60', type: 'addr', addr: address },
+    migratedRecordsMatch: { type: 'address', match: { id: 60, name: 'ETH', value: address } },
   })
 
   const getPrimarynameTransactionFlowItem = useGetPrimaryNameTransactionFlowItem({
     address,
     isWrapped,
-    profileAddress: selectedNameProfile.profile?.address,
-    resolverAddress: selectedNameProfile.profile?.resolverAddress,
+    profileAddress: selectedNameProfile?.coins.find((c) => c.id === 60)?.value,
+    resolverAddress: selectedNameProfile?.resolverAddress,
     resolverStatus: resolverStatus.data,
   })
 
@@ -269,7 +266,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       }
 
       // Attempt to decrypt name
-      validName = await getDecryptedName(validName, true)
+      validName = await getDecodedName(publicClient, { name: validName, allowIncomplete: true })
       if (!hasEncodedLabel(validName)) {
         saveName(validName)
         queryClient.resetQueries(validateKey(data.name?.name))
@@ -296,7 +293,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
   }
 
-  const isLoading = !isEnsReady || isLoadingNames || isMutationLoading
+  const isLoading = isLoadingNames || isMutationLoading
   const isLoadingName =
     resolverStatus.isLoading || isBasicNameLoading || getPrimarynameTransactionFlowItem.isLoading
 

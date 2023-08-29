@@ -5,6 +5,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import type { BaseProvider, Block, TransactionReceipt } from '@ethersproject/providers'
 import type { PopulatedTransaction } from 'ethers'
+import { Hash } from 'viem'
 
 import { MinedData } from '@app/types'
 
@@ -15,14 +16,14 @@ const storageKey = 'transaction-data'
 type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'repriced' | 'unknown' | 'searching'
 
 interface BaseTransaction {
-  hash: string
+  hash: Hash
   action: string
   key?: string
   description?: string
   isSafeTx?: boolean
   status: TransactionStatus
   minedData?: MinedData
-  newHash?: string
+  newHash?: Hash
   nonce?: number
   searchRetries: number
   searchStatus?: 'searching' | 'found'
@@ -48,7 +49,7 @@ interface MinedTransaction extends BaseTransaction {
 
 interface RepricedTransaction extends BaseTransaction {
   status: 'repriced'
-  newHash: string
+  newHash: Hash
 }
 
 export interface EtherscanMinedData {

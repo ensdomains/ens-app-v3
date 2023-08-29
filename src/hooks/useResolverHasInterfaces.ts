@@ -44,7 +44,7 @@ export const useResolverHasInterfaces = <const TInterfaceNames extends readonly 
 
   const enabled = enabled_ && !!resolverAddress && interfaceNames.length > 0 && !knownResolverData
 
-  const { data: data_, isLoading, status } = useSupportedInterfaces<GetInterfaceIds<TInterfaceNames>>({ address: resolverAddress, interfaces: interfaceIds, enabled })
+  const { data: data_, isLoading, isFetching, status } = useSupportedInterfaces<GetInterfaceIds<TInterfaceNames>>({ address: resolverAddress, interfaces: interfaceIds, enabled })
 
   const data = useMemo(() => {
     if (!knownResolverData) return data_
@@ -55,7 +55,9 @@ export const useResolverHasInterfaces = <const TInterfaceNames extends readonly 
 
   return {
     data,
+    knownResolverData,
     isLoading,
+    isFetching,
     status,
     errors: errors.length > 0 ? errors : undefined,
   }

@@ -16,7 +16,7 @@ export default function Page() {
 
   const { address } = useAccount()
 
-  const nameDetails = useNameDetails(name, true)
+  const nameDetails = useNameDetails({ name })
   const { isLoading: detailsLoading, registrationStatus } = nameDetails
 
   const isLoading = detailsLoading || initial

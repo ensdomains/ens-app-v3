@@ -1,34 +1,43 @@
+import type { Address } from 'viem'
 import { useQuery } from 'wagmi'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { GetNameParameters, getName } from '@ensdomains/ensjs/public'
 
 import { tryBeautify } from '@app/utils/beautify'
-import { GetNameParameters, getName } from '@ensdomains/ensjs/public'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+
 import { usePublicClient } from '../../usePublicClient'
 
-type UsePrimaryNameParameters = GetNameParameters & {
+type UsePrimaryNameParameters = Omit<GetNameParameters, 'address'> & {
+  address?: Address
+
   enabled?: boolean
 }
 
-export const usePrimaryName = <TParams extends UsePrimaryNameParameters>(
-  { enabled = true, ...params }: TParams,
-) => {
+export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
+  enabled = true,
+  ...params
+}: TParams) => {
   const publicClient = usePublicClient()
 
   const queryKeys = useQueryKeys()
 
-  const { data, status, isFetchedAfterMount, isFetched, ...rest } = useQuery(queryKeys.getName(params), async ({ queryKey: [params] }) => {
-    const res = await getName(publicClient, params)
-    if (!res || !res.name || !res.match) return null
-    return {
-      ...res,
-      name: res.name as string | undefined,
-      beautifiedName: tryBeautify(res.name),
-    }
-  }, {
-    enabled: enabled && !!params.address,
-    cacheTime: 60,
-  })
+  const { data, status, isFetchedAfterMount, isFetched, ...rest } = useQuery(
+    queryKeys.getName({ ...params, address: params.address! }),
+    async ({ queryKey: [params] }) => {
+      const res = await getName(publicClient, params as GetNameParameters)
+      if (!res || !res.name || !res.match) return null
+      return {
+        ...res,
+        name: res.name as string | undefined,
+        beautifiedName: tryBeautify(res.name),
+      }
+    },
+    {
+      enabled: enabled && !!params.address,
+      cacheTime: 60,
+    },
+  )
 
   return {
     data,
@@ -39,22 +48,3 @@ export const usePrimaryName = <TParams extends UsePrimaryNameParameters>(
     ...rest,
   }
 }
-
-// export const usePrimary = (address?: string, skip?: any) => {
-//   return useQuery(
-//     useQueryKeys().primary(address!),
-//     async () => {
-//       const res = await getName(address!)
-//       if (!res || !res.name || !res.match) return null
-//       return {
-//         ...res,
-//         name: res.name as string | undefined,
-//         beautifiedName: tryBeautify(res.name),
-//       }
-//     },
-//     {
-//       enabled: ready && !skip && !!address,
-//       cacheTime: 60,
-//     },
-//   )
-// }

@@ -17,7 +17,7 @@ type OtherData = {
 type Data = {
   name: string
   newOwnerAddress: Address
-  contract: 'registry' | 'baseRegistrar' | 'nameWrapper'
+  contract: 'registry' | 'registrar' | 'nameWrapper'
   sendType: 'sendManager' | 'sendOwner'
   reclaim?: boolean
 } & (RegistrarData | OtherData)
@@ -43,12 +43,9 @@ const displayItems = (
 ]
 
 const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
-  return transferName.makeFunctionData(walletClient, {
-    name: data.name,
-    contract: data.contract,
+  return transferName.makeFunctionData(walletClient, data.contract === 'registrar' ? data : {
+    ...data,
     asParent: false,
-    newOwnerAddress: data.newOwnerAddress,
-    reclaim: data.reclaim,
   })
 }
 

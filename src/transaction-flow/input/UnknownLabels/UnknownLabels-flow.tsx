@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useQueryClient } from 'wagmi'
 
-import { saveName } from '@ensdomains/ensjs/utils/labels'
+import { saveName } from '@ensdomains/ensjs/utils'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
@@ -51,7 +51,7 @@ const UnknownLabels = ({
     const newKey = key.replace(name, newName)
 
     const newTransactions = transactions.map((tx) =>
-      typeof tx.data === 'object' && tx.data.name
+      typeof tx.data === 'object' && 'name' in tx.data && tx.data.name
         ? { ...tx, data: { ...tx.data, name: newName } }
         : tx,
     )

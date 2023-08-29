@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import { ReactElement, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { Button, Spinner } from '@ensdomains/thorin'
 
@@ -66,7 +67,7 @@ const Page = () => {
   const { isReady, query } = router
   const { address: _address } = useAccountSafely()
 
-  const address = query.address as string
+  const address = query.address as Address
   const chainId = useChainId()
   const isSelf = _address === address
 
@@ -87,9 +88,11 @@ const Page = () => {
   )
   const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
 
-  const { profile: primaryProfile, loading: primaryProfileLoading } = usePrimaryProfile(address)
+  const { data: primaryProfile, isLoading: isPrimaryProfileLoading } = usePrimaryProfile({
+    address,
+  })
 
-  const getTextRecord = (key: string) => primaryProfile?.records?.texts?.find((x) => x.key === key)
+  const getTextRecord = (key: string) => primaryProfile?.texts?.find((x) => x.key === key)
 
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
@@ -138,7 +141,7 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])
 
-  const loading = !isReady || isNamesLoading || primaryProfileLoading || !namesData
+  const loading = !isReady || isNamesLoading || isPrimaryProfileLoading || !namesData
 
   const hasErrors = namesStatus === 'error'
 

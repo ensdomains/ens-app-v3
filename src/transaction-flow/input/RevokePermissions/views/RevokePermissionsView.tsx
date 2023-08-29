@@ -2,18 +2,17 @@ import { UseFormRegister } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { ChildFuseKeys, ChildFuseReferenceType } from '@ensdomains/ensjs/utils'
 import { CheckboxRow, Dialog } from '@ensdomains/thorin'
-
-import { CHILD_FUSES, ChildFuse, Fuse } from '@app/transaction-flow/transaction/changePermissions'
 
 import type { FormData } from '../RevokePermissions-flow'
 
 type Props = {
   register: UseFormRegister<FormData>
-  unburnedFuses: Fuse[]
+  unburnedFuses: ChildFuseReferenceType['Key'][]
 }
 
-const CHILD_FUSES_WITHOUT_CU_AND_CBF = CHILD_FUSES.filter(
+const CHILD_FUSES_WITHOUT_CU_AND_CBF = ChildFuseKeys.filter(
   (fuse) => !['CANNOT_UNWRAP', 'CANNOT_BURN_FUSES'].includes(fuse),
 )
 
@@ -29,8 +28,8 @@ export const RevokePermissionsView = ({ register, unburnedFuses }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const { burned, unburned } = CHILD_FUSES_WITHOUT_CU_AND_CBF.reduce<{
-    burned: ChildFuse[]
-    unburned: ChildFuse[]
+    burned: ChildFuseReferenceType['Key'][]
+    unburned: ChildFuseReferenceType['Key'][]
   }>(
     (filteredFuses, fuse) => {
       const isUnburned = unburnedFuses.includes(fuse)

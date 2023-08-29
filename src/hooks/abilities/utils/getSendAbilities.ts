@@ -32,11 +32,11 @@ const CONTRACT_INFO = {
     },
     owner: {
       sendManager: {
-        contract: 'baseRegistrar',
+        contract: 'registrar',
         method: 'reclaim',
       },
       sendOwner: {
-        contract: 'baseRegistrar',
+        contract: 'registrar',
         method: 'safeTransferFrom',
       },
     },

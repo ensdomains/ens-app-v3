@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import type { Address } from 'viem'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
@@ -9,7 +10,7 @@ import { makeTransactionItem } from '../../transaction'
 import { TransactionDialogPassthrough } from '../../types'
 
 type Data = {
-  address: string
+  address: Address
   name: string
 }
 

@@ -2,12 +2,12 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef } fr
 import { useQuery, useQueryClient } from 'wagmi'
 
 import { useChainId } from '@app/hooks/chain/useChainId'
+import { useSubgraphClient } from '@app/hooks/ensjs/subgraph/useSubgraphClient'
 import { useGlobalError } from '@app/hooks/errors/useGlobalError'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useRegisterNameCallback } from '@app/hooks/transactions/useRegisterNameCallback'
-import { useEns } from '@app/utils/EnsProvider'
 
 import { debugSubgraphIndexingErrors } from '../GlobalErrorProvider/useSubgraphMetaSync'
 import { useQueryKeys } from '../cacheKeyFactory'
@@ -50,8 +50,8 @@ const Context = createContext<SyncContext>({
 
 export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient()
-  const { gqlInstance } = useEns()
   const chainId = useChainId()
+  const subgraphClient = useSubgraphClient()
 
   const registerNameCallback = useRegisterNameCallback()
   const callbacks = useRef<Record<string, UpdateCallback>>({})
@@ -70,7 +70,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: currentGraphBlock } = useQuery<number>(
     ['graphBlock', chainId, transactions],
     () =>
-      gqlInstance.client.request(query).then((res: GraphResponse | null) => {
+      subgraphClient.request(query).then((res: GraphResponse | null) => {
         if (res!._meta.hasIndexingErrors || debugSubgraphIndexingErrors())
           throw new Error('indexing_errors')
         return res!._meta.block.number
@@ -87,7 +87,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         return false
       },
       enabled:
-        !!gqlInstance && !!transactions.find((x) => x.minedData?.blockNumber) && !hasGlobalError,
+        !!subgraphClient && !!transactions.find((x) => x.minedData?.blockNumber) && !hasGlobalError,
       onSuccess: (data) => {
         resetMeta()
         if (!data) return
