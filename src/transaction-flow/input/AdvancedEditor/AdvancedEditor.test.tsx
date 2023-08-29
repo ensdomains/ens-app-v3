@@ -10,7 +10,7 @@ import {
   within,
 } from '@app/test-utils'
 
-import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useProfile } from '@app/hooks/useProfile'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { Profile } from '@app/types'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
@@ -18,7 +18,7 @@ import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
 import AdvancedEditor from './AdvancedEditor-flow'
 
 const mockProfileData = {
-  profile: {
+  data: {
     address: '0x70643CB203137b9b9eE19deA56080CD2BA01dBFd',
     records: {
       contentHash: {},
@@ -123,11 +123,11 @@ const mockProfileData = {
 }
 
 jest.mock('@app/utils/EnsProvider')
-jest.mock('@app/hooks/useNameDetails')
+jest.mock('@app/hooks/useProfile')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useResolverHasInterfaces')
 
-const mockUseProfile = mockFunction(useNameDetails)
+const mockUseProfile = mockFunction(useProfile)
 const mockUseResolverHasInterfaces = mockFunction(useResolverHasInterfaces)
 
 const mockIntersectionObserver = jest.fn()
@@ -137,7 +137,7 @@ const mockDispatch = jest.fn()
 describe('AdvancedEditor', () => {
   beforeEach(() => {
     mockUseProfile.mockReturnValue(
-      mockProfileData as unknown as { profile: Profile; loading: boolean },
+      mockProfileData as unknown as { data: Profile; isLoading: boolean },
     )
 
     mockUseResolverHasInterfaces.mockReturnValue({

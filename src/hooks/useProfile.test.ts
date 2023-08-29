@@ -10,7 +10,9 @@ import { useProfile } from './useProfile'
 jest.mock('@app/utils/EnsProvider')
 
 const mockUseEns = mockFunction(useEns)
-const mockGetProfile = jest.fn()
+const mockGetProfile = jest.fn().mockImplementation(() => ({
+    resolverAddress: '0x123',
+}))
 
 const mockUseAbi = jest.fn().mockReturnValue({ isLoading: false })
 jest.mock('@app/hooks/useABI', () => ({
