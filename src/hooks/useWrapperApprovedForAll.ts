@@ -1,25 +1,53 @@
-import { useQuery } from 'wagmi'
-
-import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import type { Address } from 'viem'
+import { useContractRead } from 'wagmi'
 
 import { useContractAddress } from './chain/useContractAddress'
 
-const useWrapperApprovedForAll = (address: string, isSubdomain: boolean, canBeWrapped: boolean) => {
-  const { contracts } = useEns()
-  const nameWrapperAddress = useContractAddress('NameWrapper')
-  const { data: approvedForAll, isLoading } = useQuery(
-    useQueryKeys().wrapperApprovedForAll(address),
-    async () => {
-      const registry = await contracts!.getRegistry()
-      return registry.isApprovedForAll(address, nameWrapperAddress)
-    },
-    {
-      enabled: !!address && !!nameWrapperAddress && isSubdomain && canBeWrapped,
-    },
-  )
-
-  return { approvedForAll, isLoading }
+type UseWrapperApprovedForAllParameters = {
+  address: Address
+  isSubname?: boolean
+  canBeWrapped?: boolean
+  enabled?: boolean
 }
 
-export default useWrapperApprovedForAll
+const registryIsApprovedForAllSnippet = [
+  {
+    inputs: [
+      {
+        name: 'owner',
+        type: 'address',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+      },
+    ],
+    name: 'isApprovedForAll',
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+      },
+    ],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const
+
+export const useWrapperApprovedForAll = ({
+  address,
+  isSubname,
+  canBeWrapped,
+  enabled = true,
+}: UseWrapperApprovedForAllParameters) => {
+  const registryAddress = useContractAddress({ contract: 'ensRegistry' })
+  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
+  return useContractRead({
+    abi: registryIsApprovedForAllSnippet,
+    address: registryAddress,
+    functionName: 'isApprovedForAll',
+    args: [address, nameWrapperAddress],
+    enabled: enabled && !!address && !!nameWrapperAddress && isSubname && canBeWrapped,
+  })
+}

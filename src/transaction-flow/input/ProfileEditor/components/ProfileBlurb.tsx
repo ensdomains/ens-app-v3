@@ -1,11 +1,12 @@
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { Avatar, Typography } from '@ensdomains/thorin'
 
 import { useAvatarFromRecord } from '@app/hooks/useAvatarFromRecord'
 import { useProfile } from '@app/hooks/useProfile'
 import { useZorb } from '@app/hooks/useZorb'
-import { ReturnedENS } from '@app/types'
+import { Profile } from '@app/types'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -39,17 +40,16 @@ const InfoContainer = styled.div(
 
 type Props = {
   name: string
-  resolver: string
+  resolverAddress: Address
 }
 
-const getTextRecordByKey = (profile: ReturnedENS['getProfile'], key: string) => {
-  return profile?.records?.texts?.find(
-    ({ key: recordKey }: { key: string | number }) => recordKey === key,
-  )?.value
+const getTextRecordByKey = (profile: Profile | undefined, key: string) => {
+  return profile?.texts?.find(({ key: recordKey }: { key: string | number }) => recordKey === key)
+    ?.value
 }
 
-export const ProfileBlurb = ({ name, resolver }: Props) => {
-  const { profile } = useProfile(name, { skip: !name, resolverAddress: resolver })
+export const ProfileBlurb = ({ name, resolverAddress }: Props) => {
+  const { data: profile } = useProfile({ name, resolverAddress })
   const avatarRecord = getTextRecordByKey(profile, 'avatar')
   const { avatar } = useAvatarFromRecord(avatarRecord)
   const zorb = useZorb(name, 'name')

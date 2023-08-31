@@ -1,8 +1,7 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useBalance } from 'wagmi'
+import { useAccount, useBalance, useEnsAvatar } from 'wagmi'
 
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
 
@@ -12,8 +11,8 @@ import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMi
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import gasLimitDictionary from '@app/constants/gasLimits'
-import { useEstimateGasLimitForTransactions } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
-import { useAvatar } from '@app/hooks/useNftImage'
+import { usePrice } from '@app/hooks/ensjs/public/usePrice'
+import { useEstimateGasLimitForTransaction } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
 import { useZorb } from '@app/hooks/useZorb'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -22,9 +21,7 @@ import { yearsToSeconds } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
-import { useChainId } from '../../../hooks/chain/useChainId'
 import { useExpiry } from '../../../hooks/useExpiry'
-import { usePrice } from '../../../hooks/usePrice'
 
 const Container = styled.form(
   ({ theme }) => css`
@@ -136,8 +133,7 @@ const GasEstimationCacheableComponent = styled(CacheableComponent)(
 )
 
 const NamesListItem = ({ name }: { name: string }) => {
-  const chainId = useChainId()
-  const { avatar } = useAvatar(name, chainId)
+  const { data: avatar } = useEnsAvatar({ name })
   const zorb = useZorb(name, 'name')
   const { expiry, loading: expiryLoading } = useExpiry(name)
 
@@ -211,9 +207,13 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
-  const { total: rentFee, loading: priceLoading } = usePrice(names, false)
+  const { data: priceData, isLoading: isPriceLoading } = usePrice({
+    nameOrNames: names,
+    duration: yearsToSeconds(1),
+  })
+  const rentFee = priceData ? priceData.base + priceData.premium : undefined
 
-  const totalRentFee = rentFee ? rentFee.mul(years) : undefined
+  const totalRentFee = rentFee ? rentFee * BigInt(years) : undefined
   const transactions = [
     makeTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee!, isSelf }),
   ]
@@ -223,18 +223,26 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     error: estimateGasLimitError,
     isLoading: isEstimateGasLoading,
     gasPrice,
-  } = useEstimateGasLimitForTransactions(transactions, !!rentFee)
+  } = useEstimateGasLimitForTransaction({
+    transaction: makeTransactionItem('extendNames', {
+      names,
+      duration,
+      rentPrice: totalRentFee!,
+      isSelf,
+    }),
+    enabled: !!rentFee,
+  })
 
   const hardcodedGasLimit = gasLimitDictionary.RENEW(names.length)
   const gasLimit = estimatedGasLimit || hardcodedGasLimit
 
-  const transactionFee = gasPrice ? gasLimit.mul(gasPrice) : BigNumber.from('0')
+  const transactionFee = gasPrice ? gasLimit * gasPrice : 0n
 
   const items: InvoiceItem[] = [
     {
       label: t('input.extendNames.invoice.extension', { count: years }),
       value: totalRentFee,
-      bufferPercentage: 102,
+      bufferPercentage: 102n,
     },
     {
       label: t('input.extendNames.invoice.transaction'),
@@ -279,7 +287,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   }}
                 />
               </PlusMinusWrapper>
-              <OptionBar $isCached={priceLoading}>
+              <OptionBar $isCached={isPriceLoading}>
                 <GasDisplay gasPrice={gasPrice} />
                 <CurrencyToggle
                   size="small"
@@ -291,7 +299,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
               <GasEstimationCacheableComponent $isCached={isEstimateGasLoading}>
                 <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
                 {(!!estimateGasLimitError ||
-                  (estimatedGasLimit && balance?.value.lt(estimatedGasLimit))) && (
+                  (estimatedGasLimit && balance?.value && balance.value < estimatedGasLimit)) && (
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}
                 {rentFee && transactionFee && (

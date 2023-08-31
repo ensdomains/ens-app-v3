@@ -3,14 +3,12 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Pattern, match } from 'ts-pattern'
 
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import { RecordOptions, encodeAbi } from '@ensdomains/ensjs/utils'
 
 import { textOptions } from '@app/components/@molecules/AdvancedEditor/textOptions'
 import addressOptions from '@app/components/@molecules/ProfileEditor/options/addressOptions'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
-import { DetailedProfile } from '@app/hooks/useNameDetails'
-import { useProfile } from '@app/hooks/useProfile'
-import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
+import { Profile } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
 import {
   convertFormSafeKey,
@@ -18,6 +16,8 @@ import {
   formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
+
+import { useResolverHasInterfaces } from './useResolverHasInterfaces'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEditorType) => {
   const entries = []
@@ -59,13 +59,13 @@ type ExpandableRecordsState = {
 }
 
 type Props = {
-  profile?: DetailedProfile
-  loading: ReturnType<typeof useProfile>['loading']
+  profile?: Profile
+  isLoading: boolean
   overwrites?: RecordOptions
   callback: (data: RecordOptions) => void
 }
 
-const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) => {
+const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) => {
   const { t } = useTranslation('profile')
 
   const {
@@ -193,18 +193,17 @@ const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) =>
       overwrites?.texts?.forEach((text) => {
         const { key, value } = text
         const formKey = formSafeKey(key)
-        setValue(`text.${formKey}`, value, { shouldDirty: true })
+        setValue(`text.${formKey}`, value!, { shouldDirty: true })
         if (!newExistingRecords.text.includes(formKey)) {
           newExistingRecords.text.push(formKey)
         }
       })
 
-      overwrites?.coinTypes?.forEach((coinType) => {
-        const { key, value } = coinType
-        const formKey = formSafeKey(key)
-        setValue(`address.${formKey}`, value, { shouldDirty: true })
+      overwrites?.coins?.forEach((coinItem) => {
+        const { coin, value } = coinItem
+        const formKey = formSafeKey(String(coin))
+        setValue(`address.${formKey}`, value!, { shouldDirty: true })
         if (!newExistingRecords.address.includes(formKey)) {
-          newExistingRecords.address.push(formKey)
         }
       })
 
@@ -216,12 +215,6 @@ const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) =>
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile])
-
-  const { hasInterface: hasABIInterface, isLoading: isLoadingABIInterface } =
-    useResolverHasInterfaces(['IABIResolver'], profile?.resolverAddress, loading)
-
-  const { hasInterface: hasPublicKeyInterface, isLoading: isLoadingPublicKeyInterface } =
-    useResolverHasInterfaces(['IPubkeyResolver'], profile?.resolverAddress, loading)
 
   const handleRecordSubmit = async (editorData: AdvancedEditorType) => {
     const dirtyFields = getDirtyFields(formState.dirtyFields, editorData) as AdvancedEditorType
@@ -243,9 +236,12 @@ const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) =>
 
     const contentHash = dirtyFields.other?.contentHash
 
-    const abi = match(dirtyFields.other?.abi?.data)
-      .with('', () => ({ data: '' }))
-      .with(Pattern.string, (data) => ({ data, contentType: 1 }))
+    const abi = await match(dirtyFields.other?.abi?.data)
+      .with('', () => ({ encodedData: null, contentType: 0 } as const))
+      .with(
+        Pattern.string,
+        async (data) => await encodeAbi({ encodeAs: 'json', data: JSON.parse(data) }),
+      )
       .otherwise(() => undefined)
 
     const records = {
@@ -257,6 +253,13 @@ const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) =>
 
     callback(records)
   }
+
+  const { data: [hasAbiInterface] = [undefined], isLoading: isLoadingAbiInterface } =
+    useResolverHasInterfaces({
+      interfaceNames: ['AbiResolver'],
+      resolverAddress: profile?.resolverAddress!,
+      enabled: !isLoading,
+    })
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
@@ -289,10 +292,8 @@ const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) =>
     availableAddressOptions,
     getSelectedAddressOption,
     AddButtonProps,
-    hasABIInterface,
-    isLoadingABIInterface,
-    hasPublicKeyInterface,
-    isLoadingPublicKeyInterface,
+    hasAbiInterface,
+    isLoadingAbiInterface,
     hasChanges,
     control,
   }

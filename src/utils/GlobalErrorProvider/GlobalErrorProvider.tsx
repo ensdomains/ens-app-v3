@@ -3,8 +3,7 @@ import { Dispatch, Reducer, createContext, useContext, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'wagmi'
 
-import { ENSJSErrorName } from '@ensdomains/ensjs/utils/errors'
-
+import { useHasSlowQueries } from './useHasSlowQueries'
 import { useSubgraphMetaSync } from './useSubgraphMetaSync'
 
 export type GlobalErrorState = {
@@ -13,7 +12,7 @@ export type GlobalErrorState = {
       title?: string
       message?: string
       key: QueryKey
-      type: ENSJSErrorName | 'NetworkLatencyError' | string
+      type: 'NetworkLatencyError' | string
       priority?: number
     }
   }
@@ -39,15 +38,6 @@ const GlobalErrorStateContext = createContext<GlobalErrorState>({
 
 export const useGlobalErrorState = () => {
   const context = useContext(GlobalErrorStateContext)
-  return context
-}
-
-export type GlobalErrorDispatch = Dispatch<any>
-
-const GlobalErrorDispatchContext = createContext<GlobalErrorDispatch>(() => {})
-
-export const useGlobalErrorDispatch = () => {
-  const context = useContext(GlobalErrorDispatchContext)
   return context
 }
 
@@ -96,6 +86,15 @@ type Action =
       type: 'SET_META'
       payload: Partial<GlobalErrorState['meta']>
     }
+
+export type GlobalErrorDispatch = Dispatch<Action>
+
+const GlobalErrorDispatchContext = createContext<GlobalErrorDispatch>(() => {})
+
+export const useGlobalErrorDispatch = () => {
+  const context = useContext(GlobalErrorDispatchContext)
+  return context
+}
 
 export const GlobalErrorProvider = ({ children }: { children: React.ReactNode }) => {
   const { t } = useTranslation('common')
@@ -231,6 +230,7 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
   })
 
   useSubgraphMetaSync(state, dispatch)
+  useHasSlowQueries(state, dispatch)
 
   return (
     <GlobalErrorStateContext.Provider value={state}>

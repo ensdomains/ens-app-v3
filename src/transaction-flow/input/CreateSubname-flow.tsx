@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { validateName } from '@ensdomains/ensjs/utils/validation'
+import { validateName } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, Input } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'

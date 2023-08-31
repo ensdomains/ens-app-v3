@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { Button, mq } from '@ensdomains/thorin'
 
 import AddRecord from '@app/components/@molecules/AdvancedEditor/AddRecord'
@@ -83,9 +83,11 @@ export type Props = {
 const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
   const name = data?.name || ''
-  const transaction = transactions.find((item: TransactionItem) => item.name === 'updateProfile')
+  const transaction = transactions.find(
+    (item: TransactionItem) => item.name === 'updateProfile',
+  ) as TransactionItem<'updateProfile'>
 
-  const { profile, isLoading: loading } = useNameDetails(name)
+  const { profile, isLoading: isProfileLoading } = useNameDetails({ name })
 
   const handleCreateTransaction = useCallback(
     (records: RecordOptions) => {
@@ -94,7 +96,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
         payload: [
           makeTransactionItem('updateProfile', {
             name,
-            resolver: profile!.resolverAddress!,
+            resolverAddress: profile!.resolverAddress!,
             records,
           }),
         ],
@@ -106,25 +108,18 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
 
   const advancedEditorForm = useAdvancedEditor({
     profile,
-    loading,
+    isLoading: isProfileLoading,
     callback: handleCreateTransaction,
     overwrites: transaction?.data.records,
   })
-  const {
-    AddButtonProps,
-    hasErrors,
-    hasChanges,
-    control,
-    handleSubmit,
-    isLoadingABIInterface,
-    isLoadingPublicKeyInterface,
-  } = advancedEditorForm
+  const { AddButtonProps, hasErrors, hasChanges, control, handleSubmit } = advancedEditorForm
 
   const handleCancel = () => {
     onDismiss?.()
   }
 
-  if (loading || isLoadingABIInterface || isLoadingPublicKeyInterface) return null
+  if (isProfileLoading) return null
+
   return (
     <Container onSubmit={handleSubmit} data-testid="advanced-editor">
       <NameContainer>{t('advancedEditor.title', { name })}</NameContainer>

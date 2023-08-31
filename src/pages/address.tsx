@@ -12,10 +12,8 @@ import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/Name
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-import {
-  ReturnedName,
-  useNamesFromAddress,
-} from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
+import { useNamesForAddressPaginated } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
+import { ReturnedName } from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
 import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
@@ -99,17 +97,18 @@ const Page = () => {
 
   const {
     data: namesData,
+    page: namesPage,
+    pageCount,
+    nameCount,
     isLoading: isNamesLoading,
     status: namesStatus,
-  } = useNamesFromAddress({
+  } = useNamesForAddressPaginated({
     address,
-    sort: {
-      type: sortType || 'expiryDate',
-      orderDirection: sortDirection,
-    },
-    page,
-    resultsPerPage: pageSize,
-    search: searchQuery,
+    orderBy: sortType || 'expiryDate',
+    orderDirection: sortDirection,
+    pageSize,
+    // TODO (tate): add search query to getNamesForAddress in ensjs
+    // search: searchQuery,
   })
 
   const isNameDisabled = useCallback(
@@ -176,7 +175,7 @@ const Page = () => {
               selectable={!!_address}
               mode={mode}
               sortType={sortType}
-              sortTypeOptionValues={['expiryDate', 'labelName', 'creationDate']}
+              sortTypeOptionValues={['expiryDate', 'labelName', 'createdAt']}
               sortDirection={sortDirection}
               searchQuery={searchQuery}
               selectedCount={selectedNames.length}
@@ -206,18 +205,18 @@ const Page = () => {
                 <EmptyDetailContainer>
                   <Spinner color="accent" />
                 </EmptyDetailContainer>
-              ) : namesData.nameCount === 0 ? (
+              ) : pageCount === 0 ? (
                 <EmptyDetailContainer>{t('noResults')}</EmptyDetailContainer>
               ) : namesData ? (
-                namesData.names.map((name) => (
+                namesPage.map((name) => (
                   <TaggedNameItem
                     key={name.id}
                     {...name}
                     network={chainId}
                     mode={mode}
-                    selected={selectedNames?.includes(name.name)}
+                    selected={selectedNames?.includes(name.name ?? '')}
                     disabled={isNameDisabled(name)}
-                    onClick={handleClickName(name.name)}
+                    onClick={name.name ? handleClickName(name.name) : undefined}
                   />
                 ))
               ) : null}
@@ -225,7 +224,7 @@ const Page = () => {
             <NameTableFooter
               current={page}
               onChange={setPage}
-              total={namesData?.nameCount ? namesData.pageCount : 0}
+              total={nameCount}
               pageSize={pageSize}
               onPageSizeChange={setPageSize}
             />

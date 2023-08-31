@@ -15,12 +15,11 @@ import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionSto
 import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
-import { EnsProvider } from '@app/utils/EnsProvider'
 import { GlobalErrorProvider } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 import { setupAnalytics } from '@app/utils/analytics'
-import { chains, wagmiClient } from '@app/utils/query'
+import { chains, wagmiConfig } from '@app/utils/query'
 
 import i18n from '../i18n'
 import '../styles.css'
@@ -142,29 +141,27 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <WagmiConfig client={wagmiClient}>
+      <WagmiConfig config={wagmiConfig}>
         <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
           <TransactionStoreProvider>
-            <EnsProvider>
-              <ThemeProvider theme={thorinLightTheme}>
-                <BreakpointProvider queries={breakpoints}>
-                  <IntercomProvider appId={INTERCOM_ID}>
-                    <GlobalStyle />
-                    <ThorinGlobalStyles />
-                    <GlobalErrorProvider>
-                      <SyncProvider>
-                        <TransactionFlowProvider>
-                          <SyncDroppedTransaction>
-                            <Notifications />
-                            <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                          </SyncDroppedTransaction>
-                        </TransactionFlowProvider>
-                      </SyncProvider>
-                    </GlobalErrorProvider>
-                  </IntercomProvider>
-                </BreakpointProvider>
-              </ThemeProvider>
-            </EnsProvider>
+            <ThemeProvider theme={thorinLightTheme}>
+              <BreakpointProvider queries={breakpoints}>
+                <IntercomProvider appId={INTERCOM_ID}>
+                  <GlobalStyle />
+                  <ThorinGlobalStyles />
+                  <GlobalErrorProvider>
+                    <SyncProvider>
+                      <TransactionFlowProvider>
+                        <SyncDroppedTransaction>
+                          <Notifications />
+                          <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                        </SyncDroppedTransaction>
+                      </TransactionFlowProvider>
+                    </SyncProvider>
+                  </GlobalErrorProvider>
+                </IntercomProvider>
+              </BreakpointProvider>
+            </ThemeProvider>
           </TransactionStoreProvider>
         </RainbowKitProvider>
       </WagmiConfig>

@@ -133,7 +133,7 @@ export const queryClient = new QueryClient({
   },
 })
 
-export const wagmiClient = createConfig({
+export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors,
   publicClient,

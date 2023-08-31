@@ -7,7 +7,7 @@ type Props = { isResolvedAddress?: boolean } & ComponentProps<typeof TaggedNameI
 export const TaggedNameItemWithFuseCheck = ({ isResolvedAddress, ...props }: Props) => {
   const skip = isResolvedAddress || !props.isWrappedOwner || !props.fuses?.child.CANNOT_SET_RESOLVER
 
-  const resolverStatus = useResolverStatus(props.name, { enabled: !skip })
+  const resolverStatus = useResolverStatus({ name: props.name, enabled: !skip })
 
   const isFuseCheckSuccess = useMemo(() => {
     if (skip) return true

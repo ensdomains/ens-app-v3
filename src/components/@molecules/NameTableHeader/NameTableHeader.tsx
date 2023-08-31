@@ -1,3 +1,4 @@
+import { GetNamesForAddressParameters } from '@root/.yalc/@ensdomains/ensjs/dist/types/subgraph'
 import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -112,7 +113,7 @@ const DirectionButton = styled.button<{ $active: boolean }>(
   `,
 )
 
-export type SortType = 'expiryDate' | 'labelName' | 'creationDate'
+export type SortType = NonNullable<GetNamesForAddressParameters['orderBy']>
 
 export type SortDirection = 'asc' | 'desc'
 

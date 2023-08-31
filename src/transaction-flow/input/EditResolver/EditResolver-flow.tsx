@@ -1,6 +1,7 @@
 import { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
@@ -35,21 +36,21 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const { name } = data
-  const { isWrapped } = useBasicName(name, { skipGraph: false })
+  const { isWrapped } = useBasicName({ name })
   const formRef = useRef<HTMLFormElement>(null)
 
-  const { profile = { resolverAddress: '' } } = useProfile(name as string)
+  const { data: profile = { resolverAddress: '' } } = useProfile({ name: name as string })
   const { resolverAddress } = profile
 
   const handleCreateTransaction = useCallback(
-    (newResolver: string) => {
+    (newResolver: Address) => {
       dispatch({
         name: 'setTransactions',
         payload: [
           makeTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
-            resolver: newResolver,
+            resolverAddress: newResolver,
           }),
         ],
       })

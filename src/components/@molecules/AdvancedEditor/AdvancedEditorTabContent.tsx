@@ -52,7 +52,7 @@ const AdvancedEditorContent = ({
   register,
   getSelectedAddressOption,
   tab,
-  hasABIInterface,
+  hasAbiInterface,
   setValue,
 }: Props) => {
   const { t } = useTranslation('profile')
@@ -128,7 +128,7 @@ const AdvancedEditorContent = ({
                       }}
                       {...register(`address.${key}`, {
                         validate: (value: string) => {
-                          const result = validateCryptoAddress(key)(value)
+                          const result = validateCryptoAddress({ coin: key, address: value })
                           if (typeof result === 'string')
                             return t('errors.invalidAddress', { ns: 'common' })
                           return result
@@ -160,7 +160,7 @@ const AdvancedEditorContent = ({
                       }}
                       {...register(`address.${key}`, {
                         validate: (value: string) => {
-                          const result = validateCryptoAddress(key)(value)
+                          const result = validateCryptoAddress({ coin: key, address: value })
                           if (typeof result === 'string')
                             return t('errors.invalidAddress', { ns: 'common' })
                           return result
@@ -190,7 +190,7 @@ const AdvancedEditorContent = ({
                   />
                   <RecordInput
                     deletable={false}
-                    disabled={!hasABIInterface}
+                    disabled={!hasAbiInterface}
                     labelDisabled={t('advancedEditor.tabs.other.labelDisabled')}
                     label={t('advancedEditor.tabs.other.abi.label')}
                     placeholder={t('advancedEditor.tabs.other.abi.placeholder')}

@@ -1,9 +1,10 @@
-import { Provider } from '@wagmi/core'
 import { useEffect } from 'react'
-import { useMutation, useProvider } from 'wagmi'
+import { useMutation } from 'wagmi'
 
-import { ReturnedENS } from '@app/types'
-import { useEns } from '@app/utils/EnsProvider'
+import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
+
+import { usePublicClient } from '@app/hooks/usePublicClient'
+import { PublicClientWithChain } from '@app/types'
 import type {
   GlobalErrorDispatch,
   GlobalErrorState,
@@ -29,32 +30,36 @@ export const debugSubgraphIndexingErrors = () => {
   )
 }
 
-const fetchMeta = async (gqlInstance: ReturnedENS['gqlInstance']) => {
-  const data = await gqlInstance.client.request(query)
+type SubgraphResult = {
+  _meta: {
+    hasIndexingErrors: boolean
+    block?: {
+      number: number
+    }
+  }
+}
+
+const getSubgraphMetadata = async (publicClient: PublicClientWithChain) => {
+  const subgraphClient = createSubgraphClient({ client: publicClient })
+  const data = await subgraphClient.request<SubgraphResult>(query)
   return {
     hasIndexingErrors: data?._meta.hasIndexingErrors || debugSubgraphIndexingErrors(),
     blockNumber: data?._meta.block?.number,
   }
 }
 
-const fetchTimestamp = async ({
-  provider,
-  blockNumber,
-}: {
-  provider: Provider
-  blockNumber: number
-}) => {
-  const block = await provider.getBlock(blockNumber)
-  return block?.timestamp
+const fetchTimestamp = async (publicClient: PublicClientWithChain, blockNumber: number) => {
+  const block = await publicClient.getBlock({ blockNumber: BigInt(blockNumber) })
+  return block?.timestamp ? Number(block.timestamp) : undefined
 }
 
 export const useSubgraphMetaSync = (state: GlobalErrorState, dispatch: GlobalErrorDispatch) => {
-  const { ready, gqlInstance } = useEns()
-  const provider = useProvider()
+  const publicClient = usePublicClient()
 
   const { meta } = state
 
-  const { mutate: updateTimestamp } = useMutation(fetchTimestamp, {
+  const { mutate: updateTimestamp } = useMutation({
+    mutationFn: (blockNumber: number) => fetchTimestamp(publicClient, blockNumber),
     onSuccess: (timestamp = 0) => {
       dispatch({
         type: 'SET_META',
@@ -65,7 +70,8 @@ export const useSubgraphMetaSync = (state: GlobalErrorState, dispatch: GlobalErr
     },
   })
 
-  const { mutate: updateMeta } = useMutation(fetchMeta, {
+  const { mutate: updateSubgraphMetadata } = useMutation({
+    mutationFn: () => getSubgraphMetadata(publicClient),
     onSuccess: ({ hasIndexingErrors, blockNumber }) => {
       dispatch({
         type: 'SET_META',
@@ -74,7 +80,7 @@ export const useSubgraphMetaSync = (state: GlobalErrorState, dispatch: GlobalErr
           hasIndexingErrors,
         },
       })
-      if (hasIndexingErrors && blockNumber && provider) updateTimestamp({ provider, blockNumber })
+      if (hasIndexingErrors && blockNumber) updateTimestamp(blockNumber)
     },
     onError: () => {
       dispatch({
@@ -86,11 +92,11 @@ export const useSubgraphMetaSync = (state: GlobalErrorState, dispatch: GlobalErr
     },
   })
 
-  const shouldFetchMeta = ready && (meta.forceUpdate || meta.hasSubgraphError)
+  const shouldFetchMeta = meta.forceUpdate || meta.hasSubgraphError
   //
   useEffect(() => {
     if (shouldFetchMeta) {
-      updateMeta(gqlInstance)
+      updateSubgraphMetadata()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldFetchMeta])

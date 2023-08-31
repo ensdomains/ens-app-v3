@@ -26,7 +26,7 @@ import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEd
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
+import { getResolverWrapperAwareness } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
@@ -158,7 +158,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const { name = '', resumable = false } = data
 
-  const { profile, isWrapped, isLoading: profileLoading } = useNameDetails(name)
+  const { profile, isWrapped, isLoading: profileLoading } = useNameDetails({ name })
   const existingRecords = profileToProfileRecords(profile)
 
   const {
@@ -187,7 +187,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     const updateProfileRecordsWithTransactionData = () => {
       const transaction = transactions.find(
         (item: TransactionItem) => item.name === 'updateProfileRecords',
-      )
+      ) as TransactionItem<'updateProfileRecords'>
       if (!transaction) return
       const updatedRecords: ProfileRecord[] = transaction?.data?.records || []
       updatedRecords.forEach((record) => {
@@ -213,10 +213,10 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileLoading, transactions, setIsRecordsUpdated, isRecordsUpdated])
 
-  const resolverAddress = useContractAddress('PublicResolver')
+  const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
-  const resolverStatus = useResolverStatus(name, {
-    skipCompare: false,
+  const resolverStatus = useResolverStatus({
+    name,
   })
 
   const chainId = useChainId()
@@ -230,7 +230,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         payload: [
           makeTransactionItem('updateProfileRecords', {
             name,
-            resolver: profile.resolverAddress,
+            resolverAddress: profile.resolverAddress,
             records,
             previousRecords: existingRecords,
             clearRecords: false,
@@ -270,11 +270,10 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     setView('addRecord')
   }
 
-  const canEditRecordsWhenWrapped = canEditRecordsWhenWrappedCalc(
-    isWrapped,
-    profile?.resolverAddress,
-    chainId,
-  )
+  const canEditRecordsWhenWrapped =
+    isWrapped && profile?.resolverAddress
+      ? getResolverWrapperAwareness({ chainId, resolverAddress: profile?.resolverAddress })
+      : false
 
   if (profileLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
   return (
@@ -406,8 +405,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               resumable={resumable}
               hasNoResolver={!resolverStatus.data?.hasResolver}
               hasMigratedProfile={resolverStatus.data?.hasMigratedProfile}
-              latestResolver={resolverAddress!}
-              oldResolver={profile?.resolverAddress!}
+              latestResolverAddress={resolverAddress!}
+              oldResolverAddress={profile?.resolverAddress!}
               dispatch={dispatch}
               onDismiss={() => dispatch({ name: 'stopFlow' })}
               onDismissOverlay={() => setView('editor')}

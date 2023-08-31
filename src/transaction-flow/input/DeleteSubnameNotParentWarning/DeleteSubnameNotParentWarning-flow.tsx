@@ -1,5 +1,6 @@
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
@@ -44,7 +45,10 @@ const DeleteSubnameNotParentWarning = ({ data, dispatch, onDismiss }: Props) => 
     wrapperData: parentWrapperData,
   })
   const { data: parentPrimaryOrAddress, isLoading: parentPrimaryLoading } = usePrimaryNameOrAddress(
-    ownerTarget?.address || '',
+    {
+      address: ownerTarget?.address as Address,
+      enabled: !!ownerTarget,
+    },
   )
   const isLoading = parentBasicLoading || parentPrimaryLoading
 

@@ -204,8 +204,8 @@ const ResolverWarningOverlay = ({
     migrateProfileSelector: (
       <MigrateProfileSelectorView
         name={name}
-        currentResolver={oldResolverAddress}
-        latestResolver={latestResolverAddress}
+        currentResolverAddress={oldResolverAddress}
+        latestResolverAddress={latestResolverAddress}
         hasCurrentProfile={!!status?.hasProfile}
         selected={selectedProfile}
         onChangeSelected={setSelectedProfile}

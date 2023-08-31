@@ -199,11 +199,8 @@ export const useQueryKeys = () => {
       validationName,
       'validateSubnameLabel',
     ],
-    wrapperApprovedForAll: (localAddress: string) => [
-      ...globalKeys,
-      localAddress,
-      'wrapperApprovedForAll',
-    ],
+    wrapperApprovedForAll: (localAddress: Address) =>
+      [localAddress, ...globalKeys, 'getWrapperApprovedForAll'] as const,
     isSafeApp: (connectorId: string | undefined) => [...globalKeys, connectorId, 'isSafeApp'],
     globalIndependent: {
       isSupportedTLD: (tld: string) => [tld, 'isSupportedTLD'],
