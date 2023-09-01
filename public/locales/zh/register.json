@@ -61,13 +61,15 @@
               "com.twitter": "Twitter",
               "com.github": "GitHub",
               "com.discord": "Discord",
-              "org.telegram": "Telegram"
+              "org.telegram": "Telegram",
+              "email": "Email"
             },
             "placeholder": {
               "com.twitter": "例如 ensdomains",
               "com.github": "例如 ensdomains",
-              "com.discord": "例如 alisha.eth#0001",
-              "org.telegram": "例如 futurealisha"
+              "com.discord": "例如 nickjohnson",
+              "org.telegram": "例如 nicksdjohnson",
+              "email": "例如 hello@example.com"
             }
           },
           "address": {

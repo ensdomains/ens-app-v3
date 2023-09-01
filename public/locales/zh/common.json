@@ -344,7 +344,7 @@
     "empty": "未找到选项"
   },
   "testnetFaucet": {
-    "explanation": "Goerli 上的每个地址都可以申请 {{amount}} ETH 来测试 ENS 管理器 app 以及所有新合约。",
+    "explanation": "{{ testnet }} 上的每个地址都可以申请 {{amount}} {{ ticker }} 来进行 ENS 管理器 app 或其他网络测试。",
     "note": "它可能在几分钟后才能出现在你的钱包里。"
   }
 }
