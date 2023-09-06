@@ -7,7 +7,7 @@ import { OwnerArray } from '@app/types'
 
 import { DEFAULT_ABILITIES, type useAbilities } from './abilities/useAbilities'
 
-type Props = {
+type UseOwnersParameters = {
   ownerData: GetOwnerReturnType
   wrapperData: GetWrapperDataReturnType
   dnsOwner?: GetDnsOwnerReturnType
@@ -19,7 +19,7 @@ export const useOwners = ({
   wrapperData,
   dnsOwner,
   abilities = DEFAULT_ABILITIES,
-}: Props) => {
+}: UseOwnersParameters) => {
   const owners = useMemo(() => {
     const _owners: OwnerArray = []
     if (ownerData?.ownershipLevel === 'nameWrapper') {

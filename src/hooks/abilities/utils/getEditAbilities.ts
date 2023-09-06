@@ -14,7 +14,9 @@ const PATTERNS = {
         owner: P.when((owner) => owner === address),
       },
       wrapperData: {
-        child: P.select('fuses'),
+        fuses: {
+          child: P.select('fuses'),
+        },
       },
     } as const),
   unwrappedNameOwner: (address?: string) =>

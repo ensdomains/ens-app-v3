@@ -1,18 +1,24 @@
 import { useMemo } from 'react'
+import { Address } from 'viem'
 
-import { RegistrationParameters } from '@ensdomains/ensjs/utils'
+import { ChildFuseReferenceType, RegistrationParameters } from '@ensdomains/ensjs/utils'
 
 import { profileRecordsToRecordOptions } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
-import { ChildFuseKeyType, RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
+import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
 import { yearsToSeconds } from '@app/utils/utils'
-import { Address } from 'viem'
 
 type Props = {
   name: string
   owner: Address
   registrationData: Pick<
     RegistrationReducerDataItem,
-    'years' | 'resolverAddress' | 'secret' | 'records' | 'clearRecords' | 'permissions' | 'reverseRecord'
+    | 'years'
+    | 'resolverAddress'
+    | 'secret'
+    | 'records'
+    | 'clearRecords'
+    | 'permissions'
+    | 'reverseRecord'
   >
 }
 
@@ -31,8 +37,8 @@ const useRegistrationParams = ({ name, owner, registrationData }: Props) => {
       fuses: {
         named: registrationData.permissions
           ? (Object.keys(registrationData.permissions).filter(
-              (key) => !!registrationData.permissions?.[key as ChildFuseKeyType],
-            ) as ChildFuseKeyType[])
+              (key) => !!registrationData.permissions?.[key as ChildFuseReferenceType['Key']],
+            ) as ChildFuseReferenceType['Key'][])
           : [],
         unnamed: [],
       },

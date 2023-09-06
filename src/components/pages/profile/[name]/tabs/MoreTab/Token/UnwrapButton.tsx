@@ -1,16 +1,17 @@
 import { useTranslation } from 'react-i18next'
 
+import { GetOwnerReturnType } from '@ensdomains/ensjs/public'
+
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { ReturnedENS } from '@app/types'
 
 import BaseWrapButton from './BaseWrapButton'
 
 type Props = {
   name: string
-  ownerData: ReturnedENS['getOwner']
+  ownerData: GetOwnerReturnType | undefined
   status: NameWrapperState
 }
 

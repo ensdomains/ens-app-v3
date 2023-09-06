@@ -146,7 +146,7 @@ const CONTRACT_INFO = {
           ownerData: {
             ownershipLevel: P.not('nameWrapper'),
             owner: P.select('parentOwner'),
-            registrant: P.optional(P.select('parentRegistrant')),
+            registrant: P.select('parentRegistrant', P.not(P.nullish)),
           },
         },
       ],
@@ -412,7 +412,7 @@ const getSubnameAbilities = ({
     )
     .otherwise(([{ wrapperData }]) => ({
       ...BASE_RESPONSE,
-      ...(wrapperData?.child?.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
+      ...(wrapperData?.fuses.child.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
     }))
 }
 

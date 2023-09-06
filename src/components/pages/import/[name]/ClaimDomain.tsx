@@ -4,24 +4,24 @@ import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { getDnsImportData } from '@ensdomains/ensjs/dns'
 import { Helper, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
+import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { useEstimateGasLimitForTransaction } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { usePublicClient } from '@app/hooks/usePublicClient'
 import {
   CreateTransactionFlow,
   useTransactionFlow,
 } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { PublicClientWithChain } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
 
-import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
-import { usePublicClient } from '@app/hooks/usePublicClient'
-import { PublicClientWithChain } from '@app/types'
-import { getDnsImportData } from '@ensdomains/ensjs/dns'
 import { Steps } from './Steps'
 import {
   ButtonContainer,
@@ -77,15 +77,7 @@ const StyledTypography = styled(Typography)(
   `,
 )
 
-export const NamePillWithAddress = ({
-  name,
-  network,
-  address,
-}: {
-  name: string
-  network: number
-  address: string
-}) => {
+export const NamePillWithAddress = ({ name, address }: { name: string; address: string }) => {
   return (
     <NamePillContainer>
       <TextContainer>
@@ -95,7 +87,7 @@ export const NamePillWithAddress = ({
         </Typography>
       </TextContainer>
       <AvatarWrapper>
-        <NameAvatar label={name} name={name} network={network} />
+        <NameAvatar label={name} name={name} />
       </AvatarWrapper>
     </NamePillContainer>
   )
@@ -112,7 +104,8 @@ const handleClaim =
     name: string
     createTransactionFlow: CreateTransactionFlow
     address: Address
-  }) => async () => {
+  }) =>
+  async () => {
     const dnsImportData = await getDnsImportData(publicClient, { name })
     const timestamp = new Date().getTime()
     const transactionKey = `importName-${name}-${timestamp}`
@@ -177,7 +170,7 @@ export const ClaimDomain = ({
       <Spacer $height="4" />
       <GreyBox>
         <Typography>{t('claimDomain.dnsOwner')}</Typography>
-        <NamePillWithAddress name={name} network={1} address={address || ''} />
+        <NamePillWithAddress name={name} address={address || ''} />
       </GreyBox>
       <Spacer $height="4" />
       <GreyBox>

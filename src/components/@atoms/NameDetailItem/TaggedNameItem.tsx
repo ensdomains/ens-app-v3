@@ -38,16 +38,17 @@ export const TaggedNameItem = ({
   notOwned,
   pccExpired,
   hasOtherItems = true,
-}: Pick<NameWithRelation, 'name' | 'relation' | 'fuses' | 'expiryDate' | 'truncatedName'> & {
-  notOwned?: boolean
-  network: number
-  selected?: boolean
-  mode?: 'select' | 'view'
-  disabled?: boolean
-  onClick?: () => void
-  pccExpired?: boolean
-  hasOtherItems?: boolean
-}) => {
+}: Pick<NameWithRelation, 'name' | 'expiryDate' | 'truncatedName'> &
+  Pick<Partial<NameWithRelation>, 'relation' | 'fuses'> & {
+    notOwned?: boolean
+    network: number
+    selected?: boolean
+    mode?: 'select' | 'view'
+    disabled?: boolean
+    onClick?: () => void
+    pccExpired?: boolean
+    hasOtherItems?: boolean
+  }) => {
   const { t } = useTranslation('common')
 
   const isNativeEthName = /\.eth$/.test(name!) && name!.split('.').length === 2
@@ -57,13 +58,13 @@ export const TaggedNameItem = ({
   if (notOwned) {
     tags.push([false, 'name.notOwned'])
   } else if (!fuses) {
-    tags.push([!!relation.owner, 'name.manager'])
+    tags.push([!!relation?.owner, 'name.manager'])
     if (isNativeEthName) {
-      tags.push([!!relation.registrant, 'name.owner'])
+      tags.push([!!relation?.registrant, 'name.owner'])
     }
   } else {
     tags.push([
-      !!relation.owner,
+      !!relation?.owner,
       fuses.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
     ])
   }

@@ -1,7 +1,6 @@
 import { useState } from 'react'
+import { type Address, labelhash } from 'viem'
 import { useMutation, useQuery } from 'wagmi'
-
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useChainId } from '@app/hooks/chain/useChainId'
@@ -15,7 +14,7 @@ import { MoonpayTransactionStatus } from './types'
 export const useMoonpayRegistration = (
   dispatch: ReturnType<typeof useRegistrationReducer>['dispatch'],
   normalisedName: string,
-  selected: { name: string; address: string },
+  selected: { name: string; address: Address },
   item: ReturnType<typeof useRegistrationReducer>['item'],
 ) => {
   const chainId = useChainId()

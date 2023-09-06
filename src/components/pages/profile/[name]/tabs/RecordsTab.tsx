@@ -8,37 +8,14 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { AddressRecord, Profile, TextRecord } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
 import { getContentHashLink } from '@app/utils/contenthash'
 
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
-
-type TextRecord = {
-  key: string
-  value: string
-}
-
-type AddressRecord = {
-  key: string
-  coin: string
-  addr: string
-}
-
-type ContentHash =
-  | {
-      protocolType?: any
-      decoded?: any
-      error?: any
-    }
-  | null
-  | string
-
-type AbiRecord = {
-  data: string
-  contentType?: number
-}
 
 const TabWrapper = styled(OriginalTabWrapper)(
   () => css`
@@ -130,7 +107,6 @@ const Actions = styled.div(
 
 export const RecordsTab = ({
   name,
-  network,
   texts,
   addresses,
   contentHash,
@@ -141,11 +117,10 @@ export const RecordsTab = ({
   resolverAddress,
 }: {
   name: string
-  network: number
   texts?: TextRecord[]
   addresses?: AddressRecord[]
-  contentHash?: ContentHash
-  abi?: AbiRecord
+  contentHash?: Profile['contentHash']
+  abi?: Profile['abi']
   canEdit?: boolean
   canEditRecords?: boolean
   isCached?: boolean
@@ -154,8 +129,10 @@ export const RecordsTab = ({
   const { t } = useTranslation('profile')
   const hasGlobalError = useHasGlobalError()
 
+  const chainId = useChainId()
+
   const filteredTexts = useMemo(() => texts?.filter(({ value }) => value), [texts])
-  const filteredAddresses = useMemo(() => addresses?.filter(({ addr }) => addr), [addresses])
+  const filteredAddresses = useMemo(() => addresses?.filter(({ value }) => value), [addresses])
 
   const formattedContentHash = useMemo(() => {
     if (contentHash) {
@@ -171,9 +148,9 @@ export const RecordsTab = ({
 
   const formattedContentHashLink = useMemo(() => {
     if (contentHash) {
-      return getContentHashLink(name, network, contentHash as any)
+      return getContentHashLink({ name, chainId, decodedContentHash: contentHash })
     }
-  }, [name, network, contentHash])
+  }, [name, chainId, contentHash])
 
   const { prepareDataInput } = useTransactionFlow()
   const showAdvancedEditorInput = prepareDataInput('AdvancedEditor')
@@ -215,10 +192,10 @@ export const RecordsTab = ({
             filteredAddresses.map((address) => (
               <RecordItem
                 type="address"
-                key={address.key}
-                itemKey={address.coin}
-                value={address.addr}
-                showLegacy={address.coin.endsWith('_LEGACY')}
+                key={address.id}
+                itemKey={address.name}
+                value={address.value}
+                showLegacy={address.name.endsWith('_LEGACY')}
               />
             ))}
         </RecordSection>
@@ -261,7 +238,12 @@ export const RecordsTab = ({
               )}
             </SectionTitleContainer>
           </SectionHeader>
-          {abi && <RecordItem type="text" value={abi.data} />}
+          {abi && (
+            <RecordItem
+              type="text"
+              value={typeof abi.abi === 'string' ? abi.abi : JSON.stringify(abi.abi)}
+            />
+          )}
         </RecordSection>
       </AllRecords>
       {canEdit && resolverAddress !== emptyAddress && (

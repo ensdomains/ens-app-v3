@@ -2,6 +2,7 @@ import { ReactElement, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { P, match } from 'ts-pattern'
 
+import { truncateFormat } from '@ensdomains/ensjs/utils'
 import { Helper, Typography } from '@ensdomains/thorin'
 
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
@@ -63,7 +64,13 @@ export default function Page() {
                     {_favourites.map(({ name, expiry }: Favourite) => (
                       <TaggedNameItem
                         key={name}
-                        {...{ name, network: chainId, hasOtherItems: false, expiryDate: expiry }}
+                        truncatedName={truncateFormat(name)}
+                        {...{
+                          name,
+                          network: chainId,
+                          hasOtherItems: false,
+                          expiryDate: { date: expiry, value: expiry.getTime() },
+                        }}
                       />
                     ))}
                   </Container>

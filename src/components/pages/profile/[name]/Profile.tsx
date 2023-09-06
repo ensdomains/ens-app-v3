@@ -4,7 +4,6 @@ import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { getEncryptedLabelAmount } from '@ensdomains/ensjs/utils/labels'
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
@@ -16,7 +15,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content, ContentWarning } from '@app/layouts/Content'
-import { formatFullExpiry } from '@app/utils/utils'
+import { formatFullExpiry, getEncodedLabelAmount } from '@app/utils/utils'
 
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
 import MoreTab from './tabs/MoreTab/MoreTab'
@@ -64,7 +63,7 @@ const TabButton = styled.button<{ $selected: boolean }>(
 )
 
 const tabs = ['profile', 'records', 'subnames', 'permissions', 'more'] as const
-type Tab = typeof tabs[number]
+type Tab = (typeof tabs)[number]
 
 type Props = {
   isSelf: boolean
@@ -108,7 +107,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   const { address } = useAccount()
   const transactions = useRecentTransactions()
 
-  const nameDetails = useNameDetails(name)
+  const nameDetails = useNameDetails({ name })
   const {
     error,
     errorTitle,
@@ -118,8 +117,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     normalisedName,
     beautifiedName,
     isValid,
-    profileIsCachedData,
-    basicIsCachedData,
+    isCachedData,
     isWrapped,
     isLoading: detailsLoading,
     wrapperData,
@@ -174,21 +172,21 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   // normalisedName fetches labels from localStorage
   useEffect(() => {
     if (
-      name !== profile?.decryptedName &&
-      profile?.decryptedName &&
+      name !== profile?.decodedName &&
+      profile?.decodedName &&
       !isSelf &&
-      getEncryptedLabelAmount(normalisedName) > getEncryptedLabelAmount(profile.decryptedName)
+      getEncodedLabelAmount(normalisedName) > getEncodedLabelAmount(profile.decodedName)
     ) {
       // if the fetched decrypted name is different to the current name
       // and the decrypted name has less encrypted labels than the normalised name
       // direct to the fetched decrypted name
-      router.replace(`/profile/${profile.decryptedName}`, { shallow: true, maintainHistory: true })
+      router.replace(`/profile/${profile.decodedName}`, { shallow: true, maintainHistory: true })
     } else if (
       name !== normalisedName &&
       normalisedName &&
       !isSelf &&
-      (!profile?.decryptedName ||
-        getEncryptedLabelAmount(profile.decryptedName) > getEncryptedLabelAmount(normalisedName)) &&
+      (!profile?.decodedName ||
+        getEncodedLabelAmount(profile.decodedName) > getEncodedLabelAmount(normalisedName)) &&
       decodeURIComponent(name) !== normalisedName
     ) {
       // if the normalised name is different to the current name
@@ -196,7 +194,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
       // direct to normalised name
       router.replace(`/profile/${normalisedName}`, { shallow: true, maintainHistory: true })
     }
-  }, [profile?.decryptedName, normalisedName, name, isSelf, router])
+  }, [profile?.decodedName, normalisedName, name, isSelf, router])
 
   useEffect(() => {
     if (isSelf && name) {
@@ -261,16 +259,15 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
             profile: <ProfileTab name={normalisedName} nameDetails={nameDetails} />,
             records: (
               <RecordsTab
-                network={chainId}
                 name={normalisedName}
-                texts={(profile?.records?.texts as any) || []}
-                addresses={(profile?.records?.coinTypes as any) || []}
-                contentHash={profile?.records?.contentHash}
-                abi={profile?.records?.abi}
+                texts={profile?.texts || []}
+                addresses={profile?.coins || []}
+                contentHash={profile?.contentHash}
+                abi={profile?.abi}
                 resolverAddress={profile?.resolverAddress}
                 canEdit={abilities.data?.canEdit}
                 canEditRecords={abilities.data?.canEditRecords}
-                isCached={profileIsCachedData}
+                isCached={isCachedData}
               />
             ),
             subnames: (
@@ -286,7 +283,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
               <PermissionsTab
                 name={normalisedName}
                 wrapperData={wrapperData}
-                isCached={basicIsCachedData}
+                isCached={isCachedData}
               />
             ),
             more: (

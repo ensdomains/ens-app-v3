@@ -325,7 +325,9 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
   const currentBlockTimestamp = useCurrentBlockTimestamp()
 
   const { nowPoint, maxDate, nowDate } = useMemo(() => {
-    const _nowDate = new Date(currentBlockTimestamp ? currentBlockTimestamp * 1000 : Date.now())
+    const _nowDate = new Date(
+      currentBlockTimestamp ? Number(currentBlockTimestamp) * 1000 : Date.now(),
+    )
     const now = _nowDate.getTime()
     const relativeDate = now - startDate.getTime()
     const _nowPoint = (((relativeDate * 1e18) / duration) * chartResolution) / 1e18
@@ -448,7 +450,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
         }),
         true,
       )
-      setHoverProperty('price', makeDisplay(price, 2, 'usd'), true)
+      setHoverProperty('price', makeDisplay({ value: price, symbol: 'usd' }), true)
     },
     [getPointFromX, getPos, setProperty, getDateFromPoint],
   )
@@ -512,13 +514,13 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
   }, [bgRef, setProperty])
 
   useEffect(() => {
-    setPriceInput(makeDisplay(getPos(nowPoint).price, 2, 'usd').split('$')[1])
+    setPriceInput(makeDisplay({ value: getPos(nowPoint).price, symbol: 'usd' }).split('$')[1])
   }, [getPos, nowPoint])
 
   useEffect(() => {
     const priceInputEl = priceInputRef.current
     if (priceInputEl && document.activeElement !== priceInputEl && selectedPoint !== -1) {
-      setPriceInput(makeDisplay(selectedPrice, 2, 'usd').split('$')[1])
+      setPriceInput(makeDisplay({ value: selectedPrice, symbol: 'usd' }).split('$')[1])
     }
   }, [selectedPoint, selectedPrice])
 
@@ -539,7 +541,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
             }}
             onChange={handleCurrencyInput}
             onBlur={() => {
-              setPriceInput(makeDisplay(selectedPrice, 2, 'usd').split('$')[1])
+              setPriceInput(makeDisplay({ value: selectedPrice, symbol: 'usd' }).split('$')[1])
             }}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {

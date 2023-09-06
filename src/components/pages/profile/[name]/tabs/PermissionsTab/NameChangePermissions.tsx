@@ -18,7 +18,7 @@ type FusesStates = ReturnType<typeof useFusesStates>
 
 type Props = {
   name: string
-  wrapperData: GetWrapperDataReturnType
+  wrapperData: GetWrapperDataReturnType | undefined
   fusesSetDates: FusesSetDates
 } & FusesStates
 

@@ -1,7 +1,7 @@
-import { ChildFuses } from '@ensdomains/ensjs/utils'
+import { Address, Hex } from 'viem'
 
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
-import { Address, Hex } from 'viem'
+import { CurrentChildFuses } from '@app/types'
 
 export type RegistrationStep = 'pricing' | 'profile' | 'info' | 'transactions' | 'complete'
 
@@ -17,9 +17,6 @@ export enum PaymentMethod {
   ethereum = 'ethereum',
   moonpay = 'moonpay',
 }
-
-export type CurrentChildFuses = { -readonly [k in keyof ChildFuses]: boolean }
-export type ChildFuseKeyType = keyof ChildFuses
 
 export type RegistrationStepData = {
   pricing: {

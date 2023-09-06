@@ -1,9 +1,8 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { labelhash, namehash } from 'viem'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { Tag, Typography, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
@@ -14,9 +13,8 @@ import { useChainId } from '@app/hooks/chain/useChainId'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
-import { DetailedProfile } from '@app/hooks/useNameDetails'
-import useParentBasicName from '@app/hooks/useParentBasicName'
-import { ReturnedENS } from '@app/types'
+import { useParentBasicName } from '@app/hooks/useParentBasicName'
+import { Profile } from '@app/types'
 import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../../TabWrapper'
@@ -27,9 +25,9 @@ type Props = {
   name: string
   isWrapped: boolean
   canBeWrapped: boolean
-  wrapperData: ReturnedENS['getWrapperData']
-  ownerData: ReturnedENS['getOwner']
-  profile: DetailedProfile | undefined
+  wrapperData: GetWrapperDataReturnType | undefined
+  ownerData: GetOwnerReturnType | undefined
+  profile: Profile | undefined
 }
 
 const Container = styled(TabWrapper)(
@@ -133,10 +131,10 @@ const Token = ({ name, isWrapped, canBeWrapped, wrapperData, ownerData, profile 
   const is2ldEth = checkETH2LDFromName(name)
 
   const hex = isWrapped ? namehash(name) : labelhash(name.split('.')[0])
-  const tokenId = BigNumber.from(hex).toString()
+  const tokenId = BigInt(hex).toString(10)
 
-  const wrapperAddress = useContractAddress('NameWrapper')
-  const registrarAddress = useContractAddress('BaseRegistrarImplementation')
+  const wrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
+  const registrarAddress = useContractAddress({ contract: 'ensBaseRegistrarImplementation' })
 
   const contractAddress = isWrapped ? wrapperAddress : registrarAddress
 
@@ -163,7 +161,7 @@ const Token = ({ name, isWrapped, canBeWrapped, wrapperData, ownerData, profile 
             <RecordItem itemKey={t('tabs.more.token.hex')} value={hex} type="text" />
             <RecordItem itemKey={t('tabs.more.token.decimal')} value={tokenId} type="text" />
           </IdsContainer>
-          <NftBox id="nft" name={name} network={network} />
+          <NftBox id="nft" name={name} />
         </ItemsContainer>
       )}
       <ItemsContainer $isCached={isParentBasicCachedData}>

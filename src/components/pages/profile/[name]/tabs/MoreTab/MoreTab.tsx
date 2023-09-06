@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import useOwners from '@app/hooks/useOwners'
+import { useOwners } from '@app/hooks/useOwners'
 import { validateExpiry } from '@app/utils/utils'
 
 import Miscellaneous from './Miscellaneous/Miscellaneous'
@@ -36,8 +36,7 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
     wrapperData,
     dnsOwner,
     isWrapped,
-    basicIsCachedData,
-    profileIsCachedData,
+    isCachedData,
     profile,
     expiryDate,
     pccExpired,
@@ -53,14 +52,14 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
   return (
     <MoreContainer>
       <Miscellaneous
-        expiryDate={validateExpiry(
+        expiryDate={validateExpiry({
           name,
-          wrapperData,
-          expiryDate || wrapperData?.expiryDate,
+          fuses: wrapperData?.fuses,
+          expiry: expiryDate || wrapperData?.expiry?.date,
           pccExpired,
-        )}
+        })}
         name={name}
-        isCachedData={basicIsCachedData}
+        isCachedData={isCachedData}
       />
       {owners && owners.length > 0 && (
         <Ownership
@@ -68,7 +67,7 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
           owners={owners}
           canSend={abilities.canSend}
           canSendError={abilities.canSendError}
-          isCachedData={basicIsCachedData}
+          isCachedData={isCachedData}
           isWrapped={isWrapped}
         />
       )}
@@ -87,7 +86,7 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
         isWrapped={isWrapped}
         canEdit={abilities.canEdit}
         canEditResolver={abilities.canEditResolver}
-        isCachedData={profileIsCachedData}
+        isCachedData={isCachedData}
         resolverAddress={profile?.resolverAddress}
       />
     </MoreContainer>

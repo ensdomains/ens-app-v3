@@ -16,7 +16,7 @@ type UseResolverIsAuthorisedParameters = {
   enabled?: boolean
 }
 
-export const useResolverIsAuthorized = ({
+export const useResolverIsAuthorised = ({
   name,
   enabled: enabled_ = true,
 }: UseResolverIsAuthorisedParameters) => {

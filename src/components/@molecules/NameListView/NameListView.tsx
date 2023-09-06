@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
 import { Heading } from '@ensdomains/thorin'
 
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-import type { ReturnedName } from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
 
 const NoResultsContianer = styled.div(
   ({ theme }) => css`
@@ -23,7 +23,7 @@ export const NameListView = ({
   selectedNames = [],
   onSelectedNamesChange,
 }: {
-  currentPage: ReturnedName[]
+  currentPage: NameWithRelation[]
   network: number
   mode?: 'select' | 'view'
   rowsOnly?: boolean
@@ -51,8 +51,8 @@ export const NameListView = ({
           key={name.id}
           {...{ ...name, network }}
           mode={mode}
-          selected={selectedNames?.includes(name.name)}
-          onClick={handleClickForName(name.name)}
+          selected={selectedNames?.includes(name.name!)}
+          onClick={handleClickForName(name.name!)}
         />
       ))
     )

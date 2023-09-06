@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { useResolverIsAuthorized } from '@app/hooks/resolver/useResolverIsAuthorized'
+import { useResolverIsAuthorised } from '@app/hooks/resolver/useResolverIsAuthorised'
 import { useResolverType } from '@app/hooks/resolver/useResolverType'
 import { useProfile } from '@app/hooks/useProfile'
 import { emptyAddress } from '@app/utils/constants'
@@ -45,7 +45,7 @@ export const useResolverStatus = ({
     enabled: enabled && !internalProfile.isLoading,
   })
 
-  const resolverIsAuthorized = useResolverIsAuthorized({
+  const resolverIsAuthorised = useResolverIsAuthorised({
     name,
     enabled: enabled && !resolverType.isLoading && resolverType.data?.type !== 'latest',
   })
@@ -65,12 +65,12 @@ export const useResolverStatus = ({
 
   const isLoading =
     resolverType.isLoading ||
-    resolverIsAuthorized.isLoading ||
+    resolverIsAuthorised.isLoading ||
     latestResolverProfile.isLoading ||
     internalProfile.isLoading
 
   const isFetching =
-    resolverType.isFetching || resolverIsAuthorized.isFetching || latestResolverProfile.isFetching
+    resolverType.isFetching || resolverIsAuthorised.isFetching || latestResolverProfile.isFetching
 
   const { isError } = resolverType
 
@@ -112,8 +112,8 @@ export const useResolverStatus = ({
 
     const authorizedResults = {
       ...baseResults,
-      hasValidResolver: resolverIsAuthorized.data?.isValid,
-      isAuthorized: resolverIsAuthorized.data?.isAuthorised,
+      hasValidResolver: resolverIsAuthorised.data?.isValid,
+      isAuthorized: resolverIsAuthorised.data?.isAuthorised,
     }
 
     if (!compare) return authorizedResults
@@ -132,8 +132,8 @@ export const useResolverStatus = ({
     }
   }, [
     chainId,
-    resolverIsAuthorized.data?.isAuthorised,
-    resolverIsAuthorized.data?.isValid,
+    resolverIsAuthorised.data?.isAuthorised,
+    resolverIsAuthorised.data?.isValid,
     latestResolverProfile.data,
     compare,
     migratedRecordsMatch,

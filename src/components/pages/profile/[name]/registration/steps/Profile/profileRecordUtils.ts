@@ -1,16 +1,13 @@
-import { RecordOptions } from '@ensdomains/ensjs/utils'
+import { stringToHex } from 'viem'
+
+import { RecordOptions, getInternalCodec, getProtocolType } from '@ensdomains/ensjs/utils'
 
 import { ProfileRecord, ProfileRecordGroup, sortValues } from '@app/constants/profileRecordOptions'
 import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import { Profile } from '@app/types'
-import {
-  contentHashProtocolToContentHashProvider,
-  contentHashToString,
-  getProtocolTypeAndContentId,
-} from '@app/utils/contenthash'
-import { stringToHex } from 'viem'
+import { contentHashToString } from '@app/utils/contenthash'
 
 export const profileRecordsToRecordOptions = (
   profileRecords: ProfileRecord[] = [],
@@ -173,12 +170,11 @@ export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
     }) || []
 
   const contentHashStr = contentHashToString(records.contentHash)
-  const { protocolType, contentId } = getProtocolTypeAndContentId(contentHashStr)
-  const protocolKey = contentHashProtocolToContentHashProvider(protocolType || undefined)
-  const website: ProfileRecord[] =
-    protocolKey && contentId
-      ? [{ key: protocolKey, type: 'contenthash', group: 'website', value: contentHashStr }]
-      : []
+  const protocolTypeData = getProtocolType(contentHashStr)!
+  const protocolKey = protocolTypeData && getInternalCodec(protocolTypeData.protocolType)
+  const website: ProfileRecord[] = protocolKey
+    ? [{ key: protocolKey, type: 'contenthash', group: 'website', value: contentHashStr }]
+    : []
 
   const abi: ProfileRecord[] = records.abi?.abi
     ? [{ key: 'abi', type: 'abi', group: 'other', value: JSON.stringify(records.abi.abi) }]

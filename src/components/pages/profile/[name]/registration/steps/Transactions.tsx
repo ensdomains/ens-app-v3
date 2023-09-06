@@ -17,7 +17,6 @@ import {
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
-import { useNameDetails } from '@app/hooks/useNameDetails'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
@@ -128,17 +127,17 @@ const ProgressButton = ({ onClick, label }: { onClick: () => void; label: string
 )
 
 type Props = {
+  name: string
   registrationData: RegistrationReducerDataItem
-  nameDetails: ReturnType<typeof useNameDetails>
   callback: (data: { back: boolean; resetSecret?: boolean }) => void
   onStart: () => void
 }
 
-const Transactions = ({ registrationData, nameDetails, callback, onStart }: Props) => {
+const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const { t } = useTranslation('register')
 
   const { address } = useAccount()
-  const keySuffix = `${nameDetails.normalisedName}-${address}`
+  const keySuffix = `${name}-${address}`
   const commitKey = `commit-${keySuffix}`
   const registerKey = `register-${keySuffix}`
   const { getLatestTransaction, createTransactionFlow, resumeTransactionFlow, cleanupFlow } =
@@ -153,7 +152,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
   )
 
   const registrationParams = useRegistrationParams({
-    name: nameDetails.normalisedName,
+    name,
     owner: address!,
     registrationData,
   })
@@ -164,16 +163,16 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
       transactions: [makeTransactionItem('commitName', registrationParams)],
       requiresManualCleanup: true,
       autoClose: true,
-      resumeLink: `/register/${nameDetails.normalisedName}`,
+      resumeLink: `/register/${name}`,
     })
-  }, [commitKey, createTransactionFlow, nameDetails.normalisedName, onStart, registrationParams])
+  }, [commitKey, createTransactionFlow, name, onStart, registrationParams])
 
   const makeRegisterNameFlow = () => {
     createTransactionFlow(registerKey, {
       transactions: [makeTransactionItem('registerName', registrationParams)],
       requiresManualCleanup: true,
       autoClose: true,
-      resumeLink: `/register/${nameDetails.normalisedName}`,
+      resumeLink: `/register/${name}`,
     })
   }
 

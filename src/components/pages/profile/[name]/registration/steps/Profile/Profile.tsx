@@ -13,7 +13,6 @@ import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avat
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { useNameDetails } from '@app/hooks/useNameDetails'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
 import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
@@ -109,20 +108,19 @@ const SubmitButton = ({
 type ModalOption = AvatarClickType | 'add-record' | 'clear-eth' | 'public-notice'
 
 type Props = {
-  nameDetails: ReturnType<typeof useNameDetails>
+  name: string
   registrationData: RegistrationReducerDataItem
   resolverExists: boolean | undefined
   callback: (data: RegistrationStepData['profile'] & BackObj) => void
 }
 
-const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Props) => {
+const Profile = ({ name, callback, registrationData, resolverExists }: Props) => {
   const { t } = useTranslation('register')
 
-  const defaultResolverAddress = useContractAddress('PublicResolver')
-  const clearRecords = registrationData.resolver === defaultResolverAddress ? resolverExists : false
+  const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
+  const clearRecords =
+    registrationData.resolverAddress === defaultResolverAddress ? resolverExists : false
   const backRef = useRef<HTMLButtonElement>(null)
-
-  const { normalisedName: name } = nameDetails
 
   const {
     records,
@@ -189,7 +187,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
     callback({
       records: newRecords,
       clearRecords,
-      resolver: registrationData.resolver,
+      resolverAddress: registrationData.resolverAddress,
       back: nativeEvent?.submitter === backRef.current,
     })
   }

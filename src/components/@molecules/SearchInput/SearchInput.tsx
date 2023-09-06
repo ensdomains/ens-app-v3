@@ -3,11 +3,18 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
+import {
+  GetExpiryReturnType,
+  GetOwnerReturnType,
+  GetPriceReturnType,
+  GetWrapperDataReturnType,
+} from '@root/.yalc/@ensdomains/ensjs/dist/types/public'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
+import { isAddress } from 'viem'
 import { useQueryClient } from 'wagmi'
 
 import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
@@ -19,10 +26,8 @@ import { useElementSize } from '@app/hooks/useWindowSize'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
-
 import { yearsToSeconds } from '@app/utils/utils'
-import { GetExpiryReturnType, GetOwnerReturnType, GetPriceReturnType, GetWrapperDataReturnType } from '@root/.yalc/@ensdomains/ensjs/dist/types/public'
-import { isAddress } from 'viem'
+
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
 import { AnyItem, HistoryItem, SearchItem } from './types'
@@ -215,10 +220,10 @@ export const SearchInput = ({
 
   const isEmpty = inputVal === ''
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
-  const { isValid, isETH, is2LD, isShort, type, name } = useValidate(
-    inputVal,
-    inputIsAddress || isEmpty,
-  )
+  const { isValid, isETH, is2LD, isShort, type, name } = useValidate({
+    input: inputVal,
+    enabled: !inputIsAddress && !isEmpty,
+  })
   const normalisedOutput = useMemo(
     () => (inputIsAddress ? inputVal : name),
     [inputIsAddress, inputVal, name],
@@ -332,10 +337,18 @@ export const SearchInput = ({
       if (currentValidation.is2LD && currentValidation.isETH && currentValidation.isShort) {
         return
       }
-      const ownerData = queryClient.getQueryData<GetOwnerReturnType>(queryKeys.getOwner({ name: selectedItem.value }))
-      const wrapperData = queryClient.getQueryData<GetWrapperDataReturnType>(queryKeys.getWrapperData({ name: selectedItem.value }))
-      const expiryData = queryClient.getQueryData<GetExpiryReturnType>(queryKeys.getExpiry({ name: selectedItem.value }))
-      const priceData = queryClient.getQueryData<GetPriceReturnType>(queryKeys.getPrice({ nameOrNames: selectedItem.value, duration: yearsToSeconds(1) }))
+      const ownerData = queryClient.getQueryData<GetOwnerReturnType>(
+        queryKeys.getOwner({ name: selectedItem.value }),
+      )
+      const wrapperData = queryClient.getQueryData<GetWrapperDataReturnType>(
+        queryKeys.getWrapperData({ name: selectedItem.value }),
+      )
+      const expiryData = queryClient.getQueryData<GetExpiryReturnType>(
+        queryKeys.getExpiry({ name: selectedItem.value }),
+      )
+      const priceData = queryClient.getQueryData<GetPriceReturnType>(
+        queryKeys.getPrice({ nameOrNames: selectedItem.value, duration: yearsToSeconds(1) }),
+      )
       if (ownerData) {
         const registrationStatus = getRegistrationStatus({
           timestamp: Date.now(),

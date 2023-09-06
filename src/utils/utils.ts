@@ -145,4 +145,7 @@ export const getResolverWrapperAwareness = ({
 export const hexToNumber = (hex: string) => parseInt(hex, 16)
 
 export const calculateValueWithBuffer = (value: bigint) =>
-  (value * BigInt(CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE)) / 100n
+  (value * CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE) / 100n
+
+const encodedLabelRegex = /\[[a-fA-F0-9]{64}\]/g
+export const getEncodedLabelAmount = (name: string) => name.match(encodedLabelRegex)?.length || 0

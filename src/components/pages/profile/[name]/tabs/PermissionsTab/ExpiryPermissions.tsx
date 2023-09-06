@@ -1,23 +1,21 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { Button, Typography } from '@ensdomains/thorin'
 
+import type { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'
-import type { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import type { useEns } from '@app/utils/EnsProvider'
 
 import { Section, SectionFooter, SectionItem } from './Section'
 
-type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
-type WrapperData = Awaited<ReturnType<GetWrapperDataFunc>>
 type FusesStates = ReturnType<typeof useFusesStates>
-type FusesSetDates = ReturnType<typeof useGetFusesSetDates>['fusesSetDates']
+type FusesSetDates = ReturnType<typeof useFusesSetDates>['data']
 
 type Props = {
   name: string
-  wrapperData: WrapperData
+  wrapperData: GetWrapperDataReturnType | undefined
   fusesSetDates: FusesSetDates
 } & FusesStates
 
@@ -54,18 +52,18 @@ export const ExpiryPermissions = ({
     showRevokePermissionsInput(`revoke-permissions-${name}`, {
       name,
       owner: wrapperData.owner,
-      parentFuses: wrapperData.parent,
-      childFuses: wrapperData.child,
+      parentFuses: wrapperData.fuses.parent,
+      childFuses: wrapperData.fuses.child,
       flowType: 'grant-extend-expiry',
       minExpiry: expiry,
       maxExpiry: parentExpiry,
     })
   }
 
-  const canExtendExpiry = wrapperData?.parent?.CAN_EXTEND_EXPIRY
+  const canExtendExpiry = wrapperData?.fuses.parent.CAN_EXTEND_EXPIRY
 
   const canCanExtendExpiryBeBurned =
-    !canExtendExpiry && !wrapperData?.parent.PARENT_CANNOT_CONTROL && parentState === 'locked'
+    !canExtendExpiry && !wrapperData?.fuses.parent.PARENT_CANNOT_CONTROL && parentState === 'locked'
 
   const showChangePermissionsButton = canCanExtendExpiryBeBurned && isUserParentOwner
 
@@ -76,7 +74,7 @@ export const ExpiryPermissions = ({
           <Typography fontVariant="bodyBold">
             {t(`tabs.permissions.expiry.permissions.canExtendExpiry.label`)}
           </Typography>
-          {fusesSetDates.CAN_EXTEND_EXPIRY && (
+          {fusesSetDates?.CAN_EXTEND_EXPIRY && (
             <TypographyGreyDim fontVariant="extraSmall">
               {t('tabs.permissions.grantedLabel', { date: fusesSetDates.CAN_EXTEND_EXPIRY })}
             </TypographyGreyDim>

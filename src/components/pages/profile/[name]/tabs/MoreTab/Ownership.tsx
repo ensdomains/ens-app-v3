@@ -10,13 +10,13 @@ import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
-import { useChainId } from '@app/hooks/chain/useChainId'
-import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
-import useDNSProof from '@app/hooks/useDNSProof'
-import useOwners from '@app/hooks/useOwners'
+import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useOwners } from '@app/hooks/useOwners'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { OwnerItem } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../TabWrapper'
@@ -123,10 +123,9 @@ const OwnerDetailContainer = styled.div(
   `,
 )
 
-const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
+const Owner = ({ address, label }: OwnerItem) => {
   const { t } = useTranslation('common')
-  const primary = usePrimary(address)
-  const network = useChainId()
+  const primary = usePrimaryName({ address })
 
   return (
     <BaseLinkWithHistory passHref href={`/address/${address}`}>
@@ -137,7 +136,6 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
             address={address}
             name={primary.data?.name}
             size="10"
-            network={network}
           />
           <TextContainer>
             <Name ellipsis data-testid={`owner-button-name-${label}`}>
@@ -214,7 +212,10 @@ const DNSOwnerSection = ({
     return hasMatchingAddress && hasMismatchingAddress && hasDNSOwner
   }, [owners, address])
 
-  const { data, isLoading } = useDNSProof(name, !canShow || canSend)
+  const { data: dnsImportData, isLoading } = useDnsImportData({
+    name,
+    enabled: canShow && !canSend,
+  })
 
   const handleSyncManager = () => {
     const currentManager = owners.find((owner) => owner.label === 'name.manager')
@@ -225,7 +226,11 @@ const DNSOwnerSection = ({
         content: makeIntroItem('SyncManager', { isWrapped, manager: currentManager!.address }),
       },
       transactions: [
-        makeTransactionItem('syncManager', { address: address!, name, proverResult: data! }),
+        makeTransactionItem('syncManager', {
+          address: address!,
+          name,
+          dnsImportData: dnsImportData!,
+        }),
       ],
     })
   }
@@ -246,7 +251,12 @@ const DNSOwnerSection = ({
           {t('tabs.more.ownership.refreshDNS')}
         </Button>
         {!canSend && (
-          <Button width="auto" onClick={handleSyncManager} loading={isLoading} disabled={!data}>
+          <Button
+            width="auto"
+            onClick={handleSyncManager}
+            loading={isLoading}
+            disabled={!dnsImportData}
+          >
             {t('tabs.more.ownership.dnsOwnerWarning.syncManager')}
           </Button>
         )}

@@ -1,8 +1,8 @@
-import type { BigNumber } from 'ethers'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
+import type { Address } from 'viem'
 import { useBalance } from 'wagmi'
 
 import {
@@ -27,7 +27,6 @@ import { ConnectButton } from '@app/components/ConnectButton'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
-import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import FullInvoice from '../../FullInvoice'
@@ -364,8 +363,8 @@ const PaymentChoice = ({
   )
 }
 
-interface ActionButtonProps {
-  address?: string
+type ActionButtonProps = {
+  address?: Address
   hasPendingMoonpayTransaction: boolean
   hasFailedMoonpayTransaction: boolean
   paymentMethodChoice: PaymentMethod | ''
@@ -376,7 +375,7 @@ interface ActionButtonProps {
   >['initiateMoonpayRegistrationMutation']
   years: number
   balance: ReturnType<typeof useBalance>['data']
-  totalRequiredBalance?: BigNumber
+  totalRequiredBalance?: bigint
 }
 
 export const ActionButton = ({
@@ -432,7 +431,11 @@ export const ActionButton = ({
       </Button>
     )
   }
-  if (balance?.value.lt(totalRequiredBalance) && paymentMethodChoice === PaymentMethod.ethereum) {
+  if (
+    balance?.value &&
+    balance.value < totalRequiredBalance &&
+    paymentMethodChoice === PaymentMethod.ethereum
+  ) {
     return (
       <Button data-testid="next-button" disabled>
         {t('steps.pricing.insufficientBalance')}
@@ -451,7 +454,10 @@ export const ActionButton = ({
 }
 
 type Props = {
-  nameDetails: ReturnType<typeof useNameDetails>
+  name: string
+  gracePeriodEndDate: Date | undefined
+  beautifiedName: string
+
   resolverExists: boolean | undefined
   callback: (props: RegistrationStepData['pricing']) => void
   isPrimaryLoading: boolean
@@ -464,7 +470,9 @@ type Props = {
 }
 
 const Pricing = ({
-  nameDetails,
+  name,
+  gracePeriodEndDate,
+  beautifiedName,
   callback,
   isPrimaryLoading,
   hasPrimaryName,
@@ -475,11 +483,9 @@ const Pricing = ({
 }: Props) => {
   const { t } = useTranslation('register')
 
-  const { normalisedName, gracePeriodEndDate, beautifiedName } = nameDetails
-
   const { address } = useAccountSafely()
-  const { data: balance } = useBalance({ address: address as `0x${string}` | undefined })
-  const resolverAddress = useContractAddress('PublicResolver')
+  const { data: balance } = useBalance({ address })
+  const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
   const [years, setYears] = useState(registrationData.years)
   const [reverseRecord, setReverseRecord] = useState(() =>
@@ -513,22 +519,23 @@ const Pricing = ({
   ])
 
   const fullEstimate = useEstimateFullRegistration({
-    name: normalisedName,
+    name,
     registrationData: {
       ...registrationData,
       reverseRecord,
       years,
       records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
       clearRecords: resolverExists,
-      resolver: resolverAddress,
+      resolverAddress,
     },
-    price: nameDetails.priceData,
   })
   const { hasPremium, premiumFee, gasPrice, yearlyFee, totalYearlyFee, estimatedGasFee } =
     fullEstimate
 
-  const yearlyRequiredBalance = totalYearlyFee?.mul(110).div(100)
-  const totalRequiredBalance = yearlyRequiredBalance?.add(premiumFee || 0).add(estimatedGasFee || 0)
+  const yearlyRequiredBalance = totalYearlyFee ? (totalYearlyFee * 110n) / 100n : undefined
+  const totalRequiredBalance = yearlyRequiredBalance
+    ? yearlyRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)
+    : undefined
 
   const showPaymentChoice = !isPrimaryLoading && address
   return (
@@ -545,7 +552,7 @@ const Pricing = ({
       />
       <FullInvoice {...fullEstimate} />
       {hasPremium && gracePeriodEndDate ? (
-        <TemporaryPremium startDate={gracePeriodEndDate} name={normalisedName} />
+        <TemporaryPremium startDate={gracePeriodEndDate} name={name} />
       ) : (
         yearlyFee &&
         estimatedGasFee &&

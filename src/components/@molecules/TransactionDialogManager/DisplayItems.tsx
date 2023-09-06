@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 import { TFunction, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { Typography } from '@ensdomains/thorin'
 
 import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
-import { useChainId } from '@app/hooks/chain/useChainId'
-import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useBeautifiedName from '@app/hooks/useBeautifiedName'
 import { TransactionDisplayItem } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
@@ -101,8 +101,7 @@ const AddressSubtitle = styled(Typography)(
 )
 
 const AddressValue = ({ value }: { value: string }) => {
-  const primary = usePrimary(value)
-  const network = useChainId()
+  const primary = usePrimaryName({ address: value as Address })
 
   const AddressTypography = useMemo(
     () =>
@@ -125,35 +124,29 @@ const AddressValue = ({ value }: { value: string }) => {
         {AddressTypography}
       </InnerValueWrapper>
       <AvatarWrapper>
-        <AvatarWithZorb
-          address={value}
-          name={primary.data?.name}
-          label={`${value}-avatar`}
-          network={network}
-        />
+        <AvatarWithZorb address={value} name={primary.data?.name} label={`${value}-avatar`} />
       </AvatarWrapper>
     </ValueWithAvatarContainer>
   )
 }
 
 const NameValue = ({ value }: { value: string }) => {
-  const network = useChainId()
   const beautifiedName = useBeautifiedName(value)
 
   return (
     <ValueWithAvatarContainer>
       <ValueTypography fontVariant="bodyBold">{beautifiedName}</ValueTypography>
       <AvatarWrapper>
-        <NameAvatar name={value} label={`${value}-avatar`} network={network} />
+        <NameAvatar name={value} label={`${value}-avatar`} />
       </AvatarWrapper>
     </ValueWithAvatarContainer>
   )
 }
 
 const SubnameValue = ({ value }: { value: string }) => {
-  const network = useChainId()
   const [label, ...parentParts] = value.split('.')
   const parent = parentParts.join('.')
+
   return (
     <ValueWithAvatarContainer>
       <div>
@@ -161,7 +154,7 @@ const SubnameValue = ({ value }: { value: string }) => {
         <ValueTypography fontVariant="bodyBold">{parent}</ValueTypography>
       </div>
       <AvatarWrapper>
-        <NameAvatar name={value} label={`${value}-avatar`} network={network} />
+        <NameAvatar name={value} label={`${value}-avatar`} />
       </AvatarWrapper>
     </ValueWithAvatarContainer>
   )

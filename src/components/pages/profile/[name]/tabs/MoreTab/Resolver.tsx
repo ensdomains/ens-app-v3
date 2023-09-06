@@ -97,7 +97,7 @@ const Resolver = ({
   }
 
   const { data: { type: resolverType, tone, isWildcard } = {}, isLoading: isResolverTypeLoading } =
-    useResolverType(name)
+    useResolverType({ name })
 
   return (
     <Skeleton loading={isResolverTypeLoading} style={{ width: '100%', borderRadius: '16px' }}>

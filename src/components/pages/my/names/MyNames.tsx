@@ -2,8 +2,10 @@ import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { Name } from '@ensdomains/ensjs/subgraph'
 import { Button, Spinner } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
@@ -17,10 +19,7 @@ import {
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useChainId } from '@app/hooks/chain/useChainId'
-import {
-  ReturnedName,
-  useNamesFromAddress,
-} from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
+import { useNamesForAddressPaginated } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -52,7 +51,7 @@ const MyNames = () => {
   const { t } = useTranslation('names')
   const router = useRouter()
   const { address: _address } = useAccount()
-  const address = (router.query.address as string) || (_address as string)
+  const address = (router.query.address as Address) || (_address as Address)
   const isSelf = true
   const chainId = useChainId()
 
@@ -77,18 +76,19 @@ const MyNames = () => {
   const [pageSize, setPageSize] = useState(10)
 
   const {
-    data: namesData,
+    page: namesPageData,
+    nameCount,
+    pageCount,
     isLoading: namesLoading,
     status: namesStatus,
-  } = useNamesFromAddress({
+  } = useNamesForAddressPaginated({
     address,
-    sort: {
-      type: sortType || 'expiryDate',
-      orderDirection: sortDirection,
+    orderBy: sortType,
+    orderDirection: sortDirection,
+    pageSize,
+    filter: {
+      searchString: searchQuery,
     },
-    page,
-    resultsPerPage: pageSize,
-    search: searchQuery,
   })
 
   useEffect(() => {
@@ -117,16 +117,16 @@ const MyNames = () => {
   }, [stage])
 
   const isNameDisabled = useCallback(
-    (name: ReturnedName) => {
+    (name: Name) => {
       if (mode !== 'select') return false
-      return name.parent?.name !== 'eth'
+      return name.parentName !== 'eth'
     },
     [mode],
   )
 
-  const loading = namesLoading || namesStatus === 'loading' || !router.isReady || !namesData
+  const loading = namesLoading || namesStatus === 'loading' || !router.isReady || !namesPageData
 
-  useProtectedRoute('/', loading ? true : address && address !== '')
+  useProtectedRoute('/', loading ? true : address && (address as any) !== '')
 
   return (
     <Content title={t('title')} singleColumnContent loading={loading}>
@@ -136,7 +136,7 @@ const MyNames = () => {
             <NameTableHeader
               mode={mode}
               sortType={sortType}
-              sortTypeOptionValues={['expiryDate', 'labelName', 'creationDate']}
+              sortTypeOptionValues={['expiryDate', 'labelName', 'createdAt']}
               sortDirection={sortDirection}
               searchQuery={searchQuery}
               selectedCount={selectedNames.length}
@@ -166,18 +166,18 @@ const MyNames = () => {
                 <EmptyDetailContainer>
                   <Spinner color="accent" />
                 </EmptyDetailContainer>
-              ) : namesData.nameCount === 0 ? (
+              ) : nameCount === 0 ? (
                 <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
-              ) : namesData.names ? (
-                namesData.names.map((name) => (
+              ) : namesPageData ? (
+                namesPageData.map((name) => (
                   <TaggedNameItem
                     key={name.id}
                     {...name}
                     network={chainId}
                     mode={mode}
-                    selected={selectedNames?.includes(name.name)}
+                    selected={selectedNames?.includes(name.name!)}
                     disabled={isNameDisabled(name)}
-                    onClick={handleClickName(name.name)}
+                    onClick={handleClickName(name.name!)}
                   />
                 ))
               ) : null}
@@ -185,7 +185,7 @@ const MyNames = () => {
             <NameTableFooter
               current={page}
               onChange={(value) => setPage(value)}
-              total={namesData?.nameCount ? namesData?.pageCount : 0}
+              total={nameCount ? pageCount : 0}
               pageSize={pageSize}
               onPageSizeChange={setPageSize}
             />

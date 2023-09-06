@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { useAccountSafely } from '../account/useAccountSafely'
-import { useResolverIsAuthorized } from '../resolver/useResolverIsAuthorized'
+import { useResolverIsAuthorised } from '../resolver/useResolverIsAuthorised'
 import { useBasicName } from '../useBasicName'
 import { useHasSubnames } from '../useHasSubnames'
 import { getDeleteAbilities } from './utils/getDeleteAbilities'
@@ -85,7 +85,8 @@ export const useAbilities = (name: string) => {
 
   const basicNameData = useBasicName({ name, enabled: !!name && !!address })
 
-  const resolverAuthorisation = useResolverIsAuthorized(name, {
+  const resolverAuthorisation = useResolverIsAuthorised({
+    name,
     enabled: !!name && !!address,
   })
 
@@ -110,7 +111,7 @@ export const useAbilities = (name: string) => {
       ...getEditAbilities({
         address,
         basicNameData,
-        hasAuthorisedResolver: resolverAuthorisation.data?.isAuthorized,
+        hasAuthorisedResolver: resolverAuthorisation.data?.isAuthorised,
       }),
       ...getDeleteAbilities({
         name,
@@ -132,7 +133,7 @@ export const useAbilities = (name: string) => {
     basicNameData,
     parentBasicNameData,
     isLoading,
-    resolverAuthorisation.data?.isAuthorized,
+    resolverAuthorisation.data?.isAuthorised,
     hasSubnamesData.hasSubnames,
     t,
   ])

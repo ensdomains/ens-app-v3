@@ -19,10 +19,12 @@ const DELETE_INFO = {
               owner: P.when((owner) => owner === address),
             },
             wrapperData: {
-              parent: {
-                PARENT_CANNOT_CONTROL: true,
+              fuses: {
+                parent: {
+                  PARENT_CANNOT_CONTROL: true,
+                },
+                child: P.select('fuses'),
               },
-              child: P.select('fuses'),
             },
           },
           {
@@ -46,8 +48,10 @@ const DELETE_INFO = {
               owner: P.when((owner) => owner === address),
             },
             wrapperData: {
-              parent: {
-                PARENT_CANNOT_CONTROL: false,
+              fuses: {
+                parent: {
+                  PARENT_CANNOT_CONTROL: false,
+                },
               },
             },
           },
@@ -66,8 +70,10 @@ const DELETE_INFO = {
               ownershipLevel: 'nameWrapper',
             },
             wrapperData: {
-              parent: {
-                PARENT_CANNOT_CONTROL: false,
+              fuses: {
+                parent: {
+                  PARENT_CANNOT_CONTROL: false,
+                },
               },
             },
           },

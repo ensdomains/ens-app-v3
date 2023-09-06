@@ -16,7 +16,7 @@ import { OwnershipPermissions } from './OwnershipPermissions'
 
 type Props = {
   name: string
-  wrapperData: GetWrapperDataReturnType
+  wrapperData: GetWrapperDataReturnType | undefined
   isCached: boolean
 }
 

@@ -14,7 +14,12 @@ import type {
 import { ChainWithEns } from '@ensdomains/ensjs/dist/types/contracts/consts'
 import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
 import { GetSubgraphRecordsReturnType } from '@ensdomains/ensjs/subgraph'
-import { ChildFuseReferenceType, ParentFuseReferenceType } from '@ensdomains/ensjs/utils'
+import {
+  ChildFuseReferenceType,
+  ChildFuses,
+  ParentFuseReferenceType,
+  ParentFuses,
+} from '@ensdomains/ensjs/utils'
 import { Helper, Space } from '@ensdomains/thorin'
 
 export type Profile = Partial<
@@ -140,14 +145,16 @@ export type DeepPartial<T> = T extends object
     }
   : T
 
-export type OwnerArray = {
-  address: string
+export type OwnerItem = {
+  address: Address
   label: string
   description: string
   canTransfer: boolean
   transferType?: 'manager' | 'owner'
   testId: string
-}[]
+}
+
+export type OwnerArray = OwnerItem[]
 
 export type MinedData = TransactionReceipt & {
   timestamp: number
@@ -177,3 +184,6 @@ export type QueryConfig<TData, TError, TSelectData = TData> = Pick<
 }
 
 export type AnyFuseKey = ParentFuseReferenceType['Key'] | ChildFuseReferenceType['Key']
+export type CurrentChildFuses = { -readonly [k in keyof ChildFuses]: boolean }
+export type CurrentParentFuses = { -readonly [k in keyof ParentFuses]: boolean }
+export type CurrentAnyFuses = CurrentChildFuses & CurrentParentFuses

@@ -11,10 +11,10 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
-import useResolverExists from '@app/hooks/useResolverExists'
+import { useResolverExists } from '@app/hooks/useResolverExists'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -109,14 +109,14 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const router = useRouterWithHistory()
   const chainId = useChainId()
   const { address } = useAccount()
-  const primary = usePrimary(address!, !address)
+  const primary = usePrimaryName({ address })
   const selected = { name: nameDetails.normalisedName, address: address! }
   const { normalisedName, beautifiedName } = nameDetails
-  const defaultResolverAddress = useContractAddress('PublicResolver')
-  const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists(
-    normalisedName,
-    defaultResolverAddress,
-  )
+  const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
+  const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists({
+    address: defaultResolverAddress,
+    name: normalisedName,
+  })
 
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
@@ -153,7 +153,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         payload: {
           records: [{ key: 'ETH', group: 'address', type: 'addr', value: address! }],
           clearRecords: resolverExists,
-          resolver: defaultResolverAddress,
+          resolverAddress: defaultResolverAddress,
         },
         selected,
       })
@@ -182,10 +182,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const profileCallback = ({
     records,
-    resolver,
+    resolverAddress,
     back,
   }: RegistrationStepData['profile'] & BackObj) => {
-    dispatch({ name: 'setProfileData', payload: { records, resolver }, selected })
+    dispatch({ name: 'setProfileData', payload: { records, resolverAddress }, selected })
     dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
   }
 
@@ -269,8 +269,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
             {
               pricing: (
                 <Pricing
+                  name={normalisedName}
+                  beautifiedName={beautifiedName}
+                  gracePeriodEndDate={nameDetails.gracePeriodEndDate}
                   resolverExists={resolverExists}
-                  nameDetails={nameDetails}
                   callback={pricingCallback}
                   isPrimaryLoading={primary.isLoading}
                   hasPrimaryName={!!primary.data?.name}
@@ -281,15 +283,15 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               ),
               profile: (
                 <Profile
+                  name={normalisedName}
                   resolverExists={resolverExists}
-                  nameDetails={nameDetails}
                   registrationData={item}
                   callback={profileCallback}
                 />
               ),
               info: (
                 <Info
-                  nameDetails={nameDetails}
+                  name={normalisedName}
                   registrationData={item}
                   callback={genericCallback}
                   onProfileClick={infoProfileCallback}
@@ -297,7 +299,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               ),
               transactions: (
                 <Transactions
-                  nameDetails={nameDetails}
+                  name={normalisedName}
                   registrationData={item}
                   onStart={onStart}
                   callback={transactionsCallback}
@@ -305,7 +307,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               ),
               complete: (
                 <Complete
-                  nameDetails={nameDetails}
+                  name={normalisedName}
+                  beautifiedName={beautifiedName}
                   callback={onComplete}
                   isMoonpayFlow={item.isMoonpayFlow}
                 />
