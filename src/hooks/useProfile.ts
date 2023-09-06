@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import type { Address } from 'viem'
 
+import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
+
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
@@ -43,8 +45,21 @@ export const useProfile = ({
         }
       : undefined,
     records: {
-      texts: [...supportedTexts, ...supportedProfileItems, ...(subgraphRecords?.texts || [])],
-      coins: [...supportedAddresses, ...(subgraphRecords?.coins || [])],
+      texts: [
+        ...new Set([
+          ...supportedTexts,
+          ...supportedProfileItems,
+          ...(subgraphRecords?.texts || []),
+        ]),
+      ],
+      coins: [
+        ...new Set([
+          ...supportedAddresses.map((coinName) => formatsByName[coinName.toUpperCase()].coinType),
+          ...(subgraphRecords?.coins
+            .map((coinId) => parseInt(coinId))
+            .filter((coinId) => !!formatsByCoinType[coinId]) || []),
+        ]),
+      ],
       abi: true,
       contentHash: true,
     },

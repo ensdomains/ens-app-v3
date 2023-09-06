@@ -19,10 +19,6 @@ let nextConfig = {
   compiler: {
     styledComponents: true,
   },
-  experimental: {
-    // remove this once this PR is merged to main: https://github.com/vercel/next.js/pull/33236
-    swcFileReading: false,
-  },
   // change to true once infinite loop is fixed
   swcMinify: false,
   // @ts-ignore
@@ -106,43 +102,30 @@ let nextConfig = {
         }
       }
     }
-    config.module.rules.push({
-      // test for .js or .mjs
-      test: /(?<!@ethersproject\/.*)\.m?js$/,
-      use: {
-        loader: path.resolve(__dirname, './loaders/ethers-loader.js'),
-        options: {},
+
+    // Grab the existing rule that handles SVG imports
+    // @ts-ignore - rules is a private property that is not typed
+    const fileLoaderRule = config.module.rules.find((rule) => rule.test?.test?.('.svg'))
+
+    config.module.rules.push(
+      // Reapply the existing rule, but only for svg imports ending in ?url
+      {
+        ...fileLoaderRule,
+        test: /\.svg$/i,
+        resourceQuery: /url/, // *.svg?url
       },
-    })
-    config.module.rules.push({
-      test: /ens.+\.json$/,
-      use: {
-        loader: path.resolve(__dirname, './loaders/abi-loader.js'),
-        options: {},
+      // Convert all other *.svg imports to React components
+      {
+        test: /\.svg$/i,
+        issuer: fileLoaderRule.issuer,
+        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+        use: ['@svgr/webpack'],
       },
-    })
-    config.module.rules.push({
-      test: /\.svg$/,
-      issuer: /\.tsx?$/,
-      include: [options.dir],
-      use: [
-        'next-swc-loader',
-        {
-          loader: '@svgr/webpack',
-          options: {
-            svgoConfig: {
-              plugins: [
-                {
-                  name: 'removeViewBox',
-                  active: false,
-                },
-              ],
-            },
-            babel: false,
-          },
-        },
-      ],
-    })
+    )
+
+    // Modify the file loader rule to ignore *.svg, since we have it handled now.
+    fileLoaderRule.exclude = /\.svg$/i
+
     config.plugins.push(
       new StylelintPlugin({
         files: './src/**/*.tsx',

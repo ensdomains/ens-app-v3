@@ -40,7 +40,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     data: dnsOwner,
     isLoading: isDnsOwnerLoading,
     isCachedData: isDnsOwnerCachedData,
-  } =  useDnsOwner({ name: normalisedName, enabled: isValid })
+  } = useDnsOwner({ name: normalisedName, enabled: isValid })
 
   const error: string | ReactNode | null = useMemo(() => {
     if (isValid === false) {
@@ -88,23 +88,12 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     if (registrationStatus === 'gracePeriod') {
       return t('errors.hasExpired', { name })
     }
-    if (
-      normalisedName !== '[root]' &&
-      !profile &&
-      !isProfileLoading
-    ) {
+    if (normalisedName !== '[root]' && !profile && !isProfileLoading) {
       return t('errors.networkError.title', { ns: 'common' })
     }
-  }, [
-    registrationStatus,
-    name,
-    t,
-    profile,
-    isProfileLoading,
-    normalisedName,
-  ])
+  }, [registrationStatus, name, t, profile, isProfileLoading, normalisedName])
 
-  const isLoading = !isProfileLoading || isBasicLoading || isDnsOwnerLoading
+  const isLoading = isProfileLoading || isBasicLoading || isDnsOwnerLoading
   const isCachedData = isBasicCachedData && isProfileCachedData && isDnsOwnerCachedData
 
   return {
