@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import type { JsonRpcProvider } from '@ethersproject/providers'
-import { useEffect, useState } from 'react'
-import { usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
+import { useEffect, useMemo, useState } from 'react'
+import { revert as evmRevert, snapshot as evmSnapshot, mine, setAutomine } from 'viem/test'
+import { usePrepareSendTransaction, useSendTransaction } from 'wagmi'
 
 import { Button } from '@ensdomains/thorin'
 
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
+import { usePublicClient } from '@app/hooks/usePublicClient'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { DetailedSwitch } from '@app/transaction-flow/input/ProfileEditor/components/DetailedSwitch'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
@@ -43,22 +44,20 @@ const useLocalStorageString = (key: string, defaultValue = '') => {
 }
 
 export const DevSection = () => {
-  const provider: JsonRpcProvider = useProvider()
+  const publicClient = usePublicClient()
+  const testClient = useMemo(() => ({ ...publicClient, mode: 'anvil' } as const), [publicClient])
+
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()
   const { config: successConfig } = usePrepareSendTransaction({
-    request: {
-      to: '0x0000000000000000000000000000000000000000',
-      value: '0',
-    },
+    to: '0x0000000000000000000000000000000000000000',
+    value: 0n,
   })
   const { sendTransactionAsync: sendFailure } = useSendTransaction({
     mode: 'prepared',
-    request: {
-      to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
-      data: '0x1231237123423423',
-      gasLimit: '1000000',
-    },
+    to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+    data: '0x1231237123423423',
+    gas: 1000000n,
   })
   const { sendTransactionAsync: sendSuccess } = useSendTransaction(successConfig)
 
@@ -87,18 +86,18 @@ export const DevSection = () => {
   }
 
   const startAutoMine = async () =>
-    provider.send('evm_setAutomine', [true]).then(() => provider.send('evm_mine', []))
+    setAutomine(testClient, true).then(() => mine(testClient, { blocks: 1 }))
 
-  const stopAutoMine = async () => provider.send('evm_setAutomine', [false])
+  const stopAutoMine = async () => setAutomine(testClient, false)
 
   const revert = async () => {
-    const currBlock = await provider.getBlockNumber()
-    await provider.send('evm_revert', [1])
-    await provider.send('evm_snapshot', [])
-    const revertBlock = await provider.getBlockNumber()
+    const currBlock = await publicClient.getBlockNumber()
+    await evmRevert(testClient, { id: '0x1' })
+    await evmSnapshot(testClient)
+    const revertBlock = await publicClient.getBlockNumber()
     const blocksToMine = currBlock - revertBlock
     await rpcSendBatch(
-      Array.from({ length: blocksToMine + 1 }, () => ({ method: 'evm_mine', params: [] })),
+      Array.from({ length: Number(blocksToMine) + 1 }, () => ({ method: 'evm_mine', params: [] })),
     )
   }
 

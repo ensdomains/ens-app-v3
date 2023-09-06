@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { Address } from 'viem'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 import { makeIntroItem } from '@app/transaction-flow/intro/index'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
@@ -18,7 +19,7 @@ import {
 } from './utils'
 
 type Inputs = {
-  address?: string
+  address?: Address
   isWrapped?: boolean
   reverseRegistryName?: string
   profileAddress?: string
@@ -38,8 +39,8 @@ export const useGetPrimaryNameTransactionFlowItem = (
 
   const _enabled = (options.enabled ?? true) && !!address
 
-  const reverseRegistryName = useReverseRegistryName({ enabled: _enabled })
-  const latestResolverAddress = useContractAddress('PublicResolver')
+  const reverseRegistryName = usePrimaryName({ enabled: _enabled, address, allowMismatch: true })
+  const latestResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
   const { isLoading, isFetching } = reverseRegistryName
 
@@ -53,7 +54,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
 
       if (
         checkRequiresSetPrimaryNameTransaction({
-          reverseRegistryName: reverseRegistryName.data,
+          reverseRegistryName: reverseRegistryName.data?.name || '',
           name,
         })
       ) {
@@ -73,7 +74,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
           makeTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
-            resolver: latestResolverAddress,
+            resolverAddress: latestResolverAddress,
           }),
         )
       }

@@ -2,7 +2,13 @@ import { getAddress } from 'viem'
 
 import { formatsByName } from '@ensdomains/address-encoder'
 
-export const validateCryptoAddress = ({ coin, address }: { coin: string; address: string }) => {
+export const validateCryptoAddress = ({
+  coin,
+  address,
+}: {
+  coin: string
+  address: string | undefined
+}) => {
   try {
     if (!address) return 'addressRequired'
     const _coin = coin.toUpperCase()

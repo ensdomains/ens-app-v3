@@ -1,6 +1,5 @@
-import type { BaseProvider } from '@ethersproject/providers'
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useAccount, useProvider } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { useChainId } from '../chain/useChainId'
 import { TransactionStore, createTransactionStore } from './transactionStore'
@@ -14,19 +13,11 @@ let storeSingleton: ReturnType<typeof createTransactionStore> | undefined
 const TransactionStoreContext = createContext<TransactionStore | null>(null)
 
 export function TransactionStoreProvider({ children }: { children: React.ReactNode }) {
-  const provider = useProvider<BaseProvider>()
   const { address } = useAccount()
   const chainId = useChainId()
 
   // Use existing store if it exists, or lazily create one
-  const [store] = useState(
-    () => storeSingleton ?? (storeSingleton = createTransactionStore({ provider })),
-  )
-
-  // Keep store provider up to date with any wagmi changes
-  useEffect(() => {
-    store.setProvider(provider)
-  }, [store, provider])
+  const [store] = useState(() => storeSingleton ?? (storeSingleton = createTransactionStore()))
 
   // Wait for pending transactions whenever address or chainId changes
   useEffect(() => {

@@ -2,10 +2,8 @@
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // this is taken from rainbowkit
-import { BigNumber } from '@ethersproject/bignumber'
-import type { BaseProvider, Block, TransactionReceipt } from '@ethersproject/providers'
-import type { PopulatedTransaction } from 'ethers'
-import { Hash } from 'viem'
+import { getPublicClient } from '@wagmi/core'
+import { Address, Block, Hash, Hex } from 'viem'
 
 import { MinedData } from '@app/types'
 
@@ -27,7 +25,7 @@ interface BaseTransaction {
   nonce?: number
   searchRetries: number
   searchStatus?: 'searching' | 'found'
-  input?: string
+  input?: Hex
   timestamp?: number
 }
 
@@ -83,7 +81,7 @@ export type Transaction =
   | SearchingTransaction
 
 export type NewTransaction = Omit<Transaction, 'status' | 'minedData'> & {
-  input?: PopulatedTransaction['data']
+  input?: Hex
   timestamp?: number
 }
 
@@ -106,19 +104,26 @@ function loadData(): Data {
 
 export function etherscanDataToMinedData(etherscanMinedData: EtherscanMinedData): MinedData {
   return {
-    ...etherscanMinedData,
-    effectiveGasPrice: BigNumber.from(etherscanMinedData.gasPrice),
-    cumulativeGasUsed: BigNumber.from(etherscanMinedData.cumulativeGasUsed),
-    gasUsed: BigNumber.from(etherscanMinedData.gasUsed),
+    effectiveGasPrice: BigInt(etherscanMinedData.gasPrice),
+    cumulativeGasUsed: BigInt(etherscanMinedData.cumulativeGasUsed),
+    gasUsed: BigInt(etherscanMinedData.gasUsed),
     timestamp: parseInt(etherscanMinedData.timeStamp, 10),
-    blockNumber: parseInt(etherscanMinedData.blockNumber, 10),
-    confirmations: parseInt(etherscanMinedData.confirmations, 10),
-    logsBloom: '',
-    transactionHash: '',
+    blockNumber: BigInt(etherscanMinedData.blockNumber),
+    logsBloom: '0x',
+    transactionHash: '0x',
     logs: [],
-    byzantium: true,
-    type: 0,
+    type: 'legacy',
+    status: etherscanMinedData.txreceipt_status === '1' ? 'success' : 'reverted',
+    blockHash: etherscanMinedData.blockHash as Hash,
+    contractAddress: etherscanMinedData.contractAddress as Address | null,
+    from: etherscanMinedData.from as Address,
+    to: etherscanMinedData.to as Address,
+    transactionIndex: etherscanMinedData.transactionIndex,
   }
+}
+
+class ReplacedOrCancelledError extends Error {
+  public name = 'ReplacedOrCancelledError'
 }
 
 const transactionHashRegex = /^0x([A-Fa-f0-9]{64})$/
@@ -271,17 +276,12 @@ export const setFailedTransaction =
     })
   }
 
-export function createTransactionStore({ provider: initialProvider }: { provider: BaseProvider }) {
+export function createTransactionStore() {
   let data: Data = loadData()
 
-  let provider = initialProvider
   const listeners: Set<() => void> = new Set()
   const transactionRequestCache: Map<string, Promise<void>> = new Map()
   const blockRequestCache: Map<string, Promise<Block>> = new Map()
-
-  function setProvider(newProvider: BaseProvider): void {
-    provider = newProvider
-  }
 
   function getTransactions(account: string, chainId: number): Transaction[] {
     return data[account]?.[chainId] ?? []
@@ -369,59 +369,59 @@ export function createTransactionStore({ provider: initialProvider }: { provider
           const requestPromise = waitForTransaction({
             confirmations: 1,
             hash: hash as `0x${string}`,
-            onSpeedUp: (speedUpTransaction) => {
-              setTransactionStatus(account, chainId, hash, 'repriced', speedUpTransaction.hash)
-              addTransaction(account, chainId, {
-                ...transaction,
-                isSafeTx: false,
-                hash: speedUpTransaction.hash,
-              })
-
-              transactionRequestCache.set(speedUpTransaction.hash, requestPromise)
-              transactionRequestCache.delete(hash)
+            onReplaced: (replacedTransaction) => {
+              if (replacedTransaction.reason === 'repriced') {
+                setTransactionStatus(
+                  account,
+                  chainId,
+                  hash,
+                  'repriced',
+                  replacedTransaction.transaction.hash,
+                )
+                addTransaction(account, chainId, {
+                  ...transaction,
+                  isSafeTx: false,
+                  hash: replacedTransaction.transaction.hash,
+                })
+                transactionRequestCache.set(replacedTransaction.transaction.hash, requestPromise)
+                transactionRequestCache.delete(hash)
+              }
             },
             isSafeTx: transaction.isSafeTx,
+          }).then(async (receipt) => {
+            const { status, blockHash } = receipt
+            let blockRequest = blockRequestCache.get(blockHash)
+            if (!blockRequest) {
+              const publicClient = getPublicClient()
+              blockRequest = publicClient.getBlock({ blockHash })
+              blockRequestCache.set(blockHash, blockRequest)
+            }
+            const { timestamp } = await blockRequest
+
+            const hashOfRequest = getCurrentTransactionHash(account, chainId, hash)
+
+            transactionRequestCache.delete(hashOfRequest)
+
+            if (status === undefined) {
+              if (receipt instanceof Error) {
+                setTransactionStatus(account, chainId, hashOfRequest, 'failed', {
+                  timestamp: Date.now(),
+                } as MinedData)
+              }
+              return
+            }
+
+            setTransactionStatus(
+              account,
+              chainId,
+              hashOfRequest,
+              status === 'reverted' ? 'failed' : 'confirmed',
+              {
+                ...receipt,
+                timestamp: Number(timestamp) * 1000,
+              },
+            )
           })
-            .catch((err) => {
-              if (err.cancelled) {
-                const replacement = err.replacement as TransactionReceipt
-                return { ...replacement, status: 0 }
-              }
-              return err
-            })
-            .then(async (receipt) => {
-              const { status, blockHash } = receipt
-              let blockRequest = blockRequestCache.get(blockHash)
-              if (!blockRequest) {
-                blockRequest = provider.getBlock(blockHash)
-                blockRequestCache.set(blockHash, blockRequest)
-              }
-              const { timestamp } = await blockRequest
-
-              const hashOfRequest = getCurrentTransactionHash(account, chainId, hash)
-
-              transactionRequestCache.delete(hashOfRequest)
-
-              if (status === undefined) {
-                if (receipt instanceof Error) {
-                  setTransactionStatus(account, chainId, hashOfRequest, 'failed', {
-                    timestamp: Date.now(),
-                  } as MinedData)
-                }
-                return
-              }
-
-              setTransactionStatus(
-                account,
-                chainId,
-                hashOfRequest,
-                status === 0 ? 'failed' : 'confirmed',
-                {
-                  ...receipt,
-                  timestamp: timestamp * 1000,
-                },
-              )
-            })
 
           transactionRequestCache.set(hash, requestPromise)
           return requestPromise
@@ -479,7 +479,6 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     clearTransactions,
     getTransactions,
     onChange,
-    setProvider,
     waitForPendingTransactions,
     setTransactionStatus,
     foundTransaction: foundTransaction(updateTransactions),

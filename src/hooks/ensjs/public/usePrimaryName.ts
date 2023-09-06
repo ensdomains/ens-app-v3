@@ -11,11 +11,14 @@ import { usePublicClient } from '../../usePublicClient'
 type UsePrimaryNameParameters = Omit<GetNameParameters, 'address'> & {
   address?: Address
 
+  allowMismatch?: boolean
+
   enabled?: boolean
 }
 
 export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
   enabled = true,
+  allowMismatch = false,
   ...params
 }: TParams) => {
   const publicClient = usePublicClient()
@@ -23,10 +26,10 @@ export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
   const queryKeys = useQueryKeys()
 
   const { data, status, isFetchedAfterMount, isFetched, ...rest } = useQuery(
-    queryKeys.getName({ ...params, address: params.address! }),
+    queryKeys.getName({ ...params, address: params.address!, allowMismatch }),
     async ({ queryKey: [params] }) => {
       const res = await getName(publicClient, params as GetNameParameters)
-      if (!res || !res.name || !res.match) return null
+      if (!res || !res.name || (!res.match && !allowMismatch)) return null
       return {
         ...res,
         name: res.name as string | undefined,

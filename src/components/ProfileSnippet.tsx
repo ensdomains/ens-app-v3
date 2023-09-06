@@ -226,13 +226,7 @@ export const ProfileSnippet = ({
   return (
     <Container $banner={banner} data-testid="profile-snippet">
       <FirstItems>
-        <NameAvatar
-          size={{ min: '24', sm: '32' }}
-          label={name}
-          name={name}
-          network={network}
-          noCache={canEdit}
-        />
+        <NameAvatar size={{ min: '24', sm: '32' }} label={name} name={name} noCache={canEdit} />
         <ButtonStack>
           {ActionButton && <DetailButtonWrapper>{ActionButton}</DetailButtonWrapper>}
         </ButtonStack>

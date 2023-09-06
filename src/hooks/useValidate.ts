@@ -52,10 +52,15 @@ const defaultData = Object.freeze({
   labelDataArray: [],
 })
 
-export const useValidate = (input: string, skip?: any): ValidationResult => {
+type UseValidateParameters = {
+  input: string
+  enabled?: boolean
+}
+
+export const useValidate = ({ input, enabled = true }: UseValidateParameters): ValidationResult => {
   const { data } = useQuery(useQueryKeys().validate(input), () => validate(input), {
-    enabled: !skip,
-    initialData: () => (skip ? defaultData : validate(input)),
+    enabled,
+    initialData: () => (enabled ? validate(input) : defaultData),
   })
 
   return data

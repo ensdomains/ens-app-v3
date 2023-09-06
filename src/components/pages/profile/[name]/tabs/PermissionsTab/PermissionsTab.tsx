@@ -1,25 +1,22 @@
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { Banner } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
+import { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
-import { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
-import useParentBasicName from '@app/hooks/useParentBasicName'
-import { useEns } from '@app/utils/EnsProvider'
+import { useParentBasicName } from '@app/hooks/useParentBasicName'
 
 import { ExpiryPermissions } from './ExpiryPermissions'
 import { NameChangePermissions } from './NameChangePermissions'
 import { OwnershipPermissions } from './OwnershipPermissions'
 
-type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
-type WrapperData = Awaited<ReturnType<GetWrapperDataFunc>>
-
 type Props = {
   name: string
-  wrapperData: WrapperData
+  wrapperData: GetWrapperDataReturnType
   isCached: boolean
 }
 
@@ -46,7 +43,7 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
   const { wrapperData: parentWrapperData, isCachedData: isParentBasicCachedData } =
     useParentBasicName(name)
 
-  const { fusesSetDates } = useGetFusesSetDates(name)
+  const { data: fusesSetDates } = useFusesSetDates({ name })
   const fusesStatus = useFusesStates({
     wrapperData,
     parentWrapperData,

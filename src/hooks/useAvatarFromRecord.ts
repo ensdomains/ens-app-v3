@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { getProtocolTypeAndContentId } from '@app/utils/contenthash'
+import { getProtocolType } from '@ensdomains/ensjs/utils'
 
 const SUPPORTED_PROTOCOL_REGEX = /^(http|https|ar|ipfs|eip155):/
 
@@ -30,13 +30,13 @@ const getAvatarSrc = async (record: string) => {
     if (!protocol) return
 
     if (protocol === 'ipfs') {
-      const { contentId } = getProtocolTypeAndContentId(record)
-      return `https://cloudflare-ipfs.com/ipfs/${contentId}`
+      const { decoded } = getProtocolType(record)!
+      return `https://cloudflare-ipfs.com/ipfs/${decoded}`
     }
 
     if (protocol === 'ar') {
-      const { contentId } = getProtocolTypeAndContentId(record)
-      return `https://arweave.net/${contentId}`
+      const { decoded } = getProtocolType(record)!
+      return `https://arweave.net/${decoded}`
     }
 
     if (protocol === 'eip155') {

@@ -1,3 +1,4 @@
+import { Hash } from 'viem'
 import { Connector } from 'wagmi'
 import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -67,7 +68,7 @@ type SafeTx = {
     confirmations: object[]
     trusted: boolean
   }
-  txHash: string | null
+  txHash: Hash | null
 }
 
 type SafeError = {
@@ -83,8 +84,8 @@ export const fetchTxFromSafeTxHash = async ({
   safeTxHash,
 }: {
   chainId: number
-  safeTxHash: string
-}): Promise<{ transactionHash: string } | null> => {
+  safeTxHash: Hash
+}): Promise<{ transactionHash: Hash } | null> => {
   const data = await fetch(`${SAFE_ENDPOINT}/v1/chains/${chainId}/transactions/${safeTxHash}`, {
     method: 'GET',
     headers: {

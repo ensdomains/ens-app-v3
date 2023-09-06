@@ -1,22 +1,23 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Address } from 'viem'
 
-import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
+import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
+import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
-import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction } from '@app/transaction-flow/types'
-import { ReturnedENS } from '@app/types'
+import { Profile } from '@app/types'
+import { checkAvailablePrimaryName } from '@app/utils/checkAvailablePrimaryName'
 import { nameParts } from '@app/utils/name'
 
 import { useAbilities } from './abilities/useAbilities'
+import { usePrimaryName } from './ensjs/public/usePrimaryName'
 import { useHasGlobalError } from './errors/useHasGlobalError'
-import { checkAvailablePrimaryName } from './names/useAvailablePrimaryNamesForAddress/utils'
 import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from './resolver/useResolverStatus'
-import { useNameDetails } from './useNameDetails'
 
 type Action = {
   onClick: () => void
@@ -32,12 +33,12 @@ type Action = {
 
 type Props = {
   name: string
-  address: string | undefined
-  profile: ReturnedENS['getProfile']
+  address: Address | undefined
+  profile: Profile | undefined
   abilities: ReturnType<typeof useAbilities>['data']
-  ownerData: ReturnType<typeof useNameDetails>['ownerData']
-  wrapperData: ReturnType<typeof useNameDetails>['wrapperData']
-  expiryDate: ReturnType<typeof useNameDetails>['expiryDate']
+  ownerData: GetOwnerReturnType | undefined
+  wrapperData: GetWrapperDataReturnType | undefined
+  expiryDate: Date | undefined
 }
 
 export const useProfileActions = ({
@@ -54,24 +55,30 @@ export const useProfileActions = ({
 
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
 
-  const resolverStatus = useResolverStatus(name, {
-    migratedRecordsMatch: address ? { key: '60', type: 'addr', addr: address } : undefined,
+  const resolverStatus = useResolverStatus({
+    name,
+    migratedRecordsMatch: address
+      ? { type: 'address', match: { id: 60, value: address } }
+      : undefined,
     enabled: !!ownerData,
   })
 
-  const primary = usePrimary(address)
+  const primary = usePrimaryName({ address })
 
   const isAvailablePrimaryName = checkAvailablePrimaryName(
     primary.data?.name,
     resolverStatus.data,
   )({
     name,
-    isMigrated: profile?.isMigrated as boolean,
-    isResolvedAddress: profile?.address === address,
-    isController: !isWrapped && ownerData?.owner === address,
-    isWrappedOwner: isWrapped && ownerData?.owner === address,
+    relation: {
+      owner: ownerData?.owner === address,
+      registrant: ownerData?.registrant === address,
+      resolvedAddress: profile?.address === address,
+      wrappedOwner: ownerData?.ownershipLevel === 'nameWrapper' && ownerData?.owner === address,
+    },
     expiryDate,
-    fuses: wrapperData,
+    fuses: wrapperData?.fuses || null,
+    isMigrated: !!profile?.isMigrated,
   })
 
   const getPrimaryNameTransactionFlowItem = useGetPrimaryNameTransactionFlowItem({
@@ -148,7 +155,7 @@ export const useProfileActions = ({
           makeTransactionItem('transferSubname', {
             name,
             contract: 'nameWrapper',
-            newOwner: address,
+            newOwnerAddress: address,
           }),
           makeTransactionItem('deleteSubname', {
             contract: 'nameWrapper',

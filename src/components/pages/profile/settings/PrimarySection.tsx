@@ -6,7 +6,7 @@ import { Button, Card, CrossSVG, PersonPlusSVG, Skeleton, Typography, mq } from 
 import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/AvatarWithLink'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
-import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -137,11 +137,11 @@ export const PrimarySection = () => {
   const showSelectPrimaryNameInput = prepareDataInput('SelectPrimaryName')
   const showResetPrimaryNameInput = prepareDataInput('ResetPrimaryName')
 
-  const primary = usePrimary(address!, !address)
+  const primary = usePrimaryName({ address })
 
-  const { truncatedName, isLoading: basicLoading } = useBasicName(primary.data?.name, {
+  const { truncatedName, isLoading: basicLoading } = useBasicName({
+    name: primary.data?.name,
     normalised: true,
-    skipGraph: false,
   })
 
   const hasGlobalError = useHasGlobalError()

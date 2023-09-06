@@ -43,7 +43,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
     error,
     expiryLabel,
     isLoading: isUseValidateSubnameLabelLoading,
-  } = useValidateSubnameLabel(parent, label, isWrapped)
+  } = useValidateSubnameLabel({ name: parent, label, isWrapped })
 
   const isLabelsInsync = label === _label
   const isLoading = isUseValidateSubnameLabelLoading || !isLabelsInsync

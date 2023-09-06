@@ -2,38 +2,36 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
+import { ChildFuseKeys, ChildFuseReferenceType } from '@ensdomains/ensjs/utils'
 import { Button, Typography } from '@ensdomains/thorin'
 
+import type { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'
-import type { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { CHILD_FUSES, ChildFuse } from '@app/transaction-flow/transaction/changePermissions'
-import type { useEns } from '@app/utils/EnsProvider'
 
 import { DisabledButtonWithTooltip } from '../../../../../@molecules/DisabledButtonWithTooltip'
 import { Section, SectionFooter, SectionItem } from './Section'
 
-type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
-type WrapperData = Awaited<ReturnType<GetWrapperDataFunc>>
-type FusesSetDates = ReturnType<typeof useGetFusesSetDates>['fusesSetDates']
+type FusesSetDates = ReturnType<typeof useFusesSetDates>['data']
 type FusesStates = ReturnType<typeof useFusesStates>
 
 type Props = {
   name: string
-  wrapperData: WrapperData
+  wrapperData: GetWrapperDataReturnType
   fusesSetDates: FusesSetDates
 } & FusesStates
 
 type FuseItem = {
-  fuse: ChildFuse
+  fuse: ChildFuseReferenceType['Key']
   translationKey: string
   revoked?: string
 }
 
-const CHILD_FUSES_WITHOUT_CBF = CHILD_FUSES.filter((fuse) => fuse !== 'CANNOT_BURN_FUSES')
+const CHILD_FUSES_WITHOUT_CBF = ChildFuseKeys.filter((fuse) => fuse !== 'CANNOT_BURN_FUSES')
 
 const PERMISSION_TRANSLATION_KEY: {
-  [key in ChildFuse]?: {
+  [key in ChildFuseReferenceType['Key']]?: {
     burned: string
     unburned: string
   }
@@ -93,7 +91,7 @@ export const NameChangePermissions = ({
 
   const permissions = CHILD_FUSES_WITHOUT_CBF.reduce<{ burned: FuseItem[]; unburned: FuseItem[] }>(
     (acc, permission) => {
-      const isBurned = !!wrapperData?.child[permission]
+      const isBurned = !!wrapperData?.fuses.child[permission]
       const burnedTranslationKey = PERMISSION_TRANSLATION_KEY[permission]?.burned
       const unburnedTranslationKey = PERMISSION_TRANSLATION_KEY[permission]?.unburned
 
@@ -118,8 +116,8 @@ export const NameChangePermissions = ({
     showRevokePermissionsInput(`revoke-permissions-${name}`, {
       name,
       owner: wrapperData.owner,
-      parentFuses: wrapperData.parent,
-      childFuses: wrapperData.child,
+      parentFuses: wrapperData.fuses.parent,
+      childFuses: wrapperData.fuses.child,
       flowType: 'revoke-permissions',
     })
   }
@@ -128,7 +126,7 @@ export const NameChangePermissions = ({
     const showButton =
       isUserOwner && ['emancipated', 'locked'].includes(state) && permissions.unburned.length > 0
     if (!showButton) return null
-    if (wrapperData?.child.CANNOT_BURN_FUSES)
+    if (wrapperData?.fuses.child.CANNOT_BURN_FUSES)
       return (
         <DisabledButtonWithTooltip
           buttonId="button-revoke-permissions-disabled"
@@ -170,7 +168,7 @@ export const NameChangePermissions = ({
           <Typography fontVariant="bodyBold">
             {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.label`)}
           </Typography>
-          {fusesSetDates[fuse] && (
+          {fusesSetDates?.[fuse] && (
             <TypographyGreyDim fontVariant="extraSmall">
               {t('tabs.permissions.revokedLabel', { date: fusesSetDates[fuse] })}
             </TypographyGreyDim>

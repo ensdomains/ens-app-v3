@@ -1,4 +1,4 @@
-import type { Address, Hex } from 'viem'
+import type { Address, GetBlockParameters, Hex } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { GetDnsImportDataParameters, GetDnsOwnerParameters } from '@ensdomains/ensjs/dns'
@@ -18,6 +18,7 @@ import {
   GetNameHistoryParameters,
   GetNamesForAddressParameters,
   GetSubgraphRecordsParameters,
+  GetSubnamesParameters,
 } from '@ensdomains/ensjs/subgraph'
 import { RegistrationParameters } from '@ensdomains/ensjs/utils'
 
@@ -132,11 +133,13 @@ export const useQueryKeys = () => {
     getNamesForAddress: <TParams extends Omit<GetNamesForAddressParameters, 'previousPage'>>(
       params: TParams,
     ) => [params, ...globalKeys, 'graph', 'getNamesForAddress'] as const,
+    getSubnames: <TParams extends Omit<GetSubnamesParameters, 'previousPage'>>(params: TParams) =>
+      [params, ...globalKeys, 'graph', 'getSubnames'] as const,
     getAddressRecord: <TParams extends GetAddressRecordParameters>(params: TParams) =>
       [params, ...globalKeys, 'getAddressRecord'] as const,
     getExpiry: <TParams extends GetExpiryParameters>(params: TParams) =>
       [params, ...globalKeys, 'getExpiry'] as const,
-    getName: <TParams extends GetNameParameters>(params: TParams) =>
+    getName: <TParams extends GetNameParameters & { allowMismatch: boolean }>(params: TParams) =>
       [params, ...globalKeys, 'getName'] as const,
     getOwner: <TParams extends GetOwnerParameters>(params: TParams) =>
       [params, ...globalKeys, 'getOwner'] as const,
@@ -159,13 +162,10 @@ export const useQueryKeys = () => {
     getDnsOwner: <TParams extends GetDnsOwnerParameters>(params: TParams) =>
       [params, ...globalKeys, 'getDnsOwner'] as const,
     registrationDate: (name: string) => [...globalKeys, 'graph', name, 'registrationDate'],
-    resolverExists: (name: string) => [
-      ...globalKeys,
-      'graph',
-      'getResolver',
-      name,
-      'resolverExists',
-    ],
+    getResolverExists: <TParams extends { name: string; address: Address }>(params: TParams) =>
+      [params, ...globalKeys, 'graph', 'getResolverExists'] as const,
+    getBlock: <TParams extends GetBlockParameters>(params: TParams) =>
+      [params, ...globalKeys, 'getBlock'] as const,
     resolverHasInterfaces: (interfaceNames: string, resolverAddress?: string) => [
       ...globalKeys,
       'validateResolver',

@@ -1,49 +1,42 @@
 import { useMemo } from 'react'
-import { useQuery } from 'wagmi'
 
-import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { emptyAddress } from '@app/utils/constants'
 import { isLabelTooLong } from '@app/utils/utils'
 
-import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
+import { useOwner } from './ensjs/public/useOwner'
+import { useWrapperData } from './ensjs/public/useWrapperData'
 import { usePccExpired } from './fuses/usePccExpired'
-import { useGetWrapperData } from './useGetWrapperData'
 import { useValidate } from './useValidate'
 
-export const useValidateSubnameLabel = (name: string, label: string, isWrapped: boolean) => {
-  const { getOwner, ready } = useEns()
+type UseValidateSubnameLabelParameters = {
+  name: string
+  label: string
+  isWrapped: boolean
+}
 
+export const useValidateSubnameLabel = ({
+  name,
+  label,
+  isWrapped,
+}: UseValidateSubnameLabelParameters) => {
   const isParentTLD = name.split('.').length === 1
 
-  const skipValidation = !label || !name || !ready || isParentTLD
-  const validation = useValidate(label, skipValidation)
+  const validationEnabled = !!label && !!name && !isParentTLD
+  const validation = useValidate({ input: label, enabled: validationEnabled })
 
-  const skipGetOwner = skipValidation || !validation.isValid || validation.labelCount > 1
-  const queryKey = useQueryKeys().validateSubnameLabel(`${validation.name}.${name}`)
-  const watchedGetOwner = useGlobalErrorFunc<typeof getOwner>({
-    queryKey,
-    func: getOwner,
+  const ownerEnabled = validationEnabled && validation.isValid && validation.labelCount > 1
+  const { data: ownership, isLoading: isOwnerLoading } = useOwner({ name, enabled: ownerEnabled })
+
+  const wrapperDataEnabled = ownerEnabled && isWrapped
+  const { data: wrapperData, isLoading: isWrapperDataLoading } = useWrapperData({
+    name: `${validation.name}.${name}`,
+    enabled: wrapperDataEnabled,
   })
-  const { data: ownership, isLoading: isGetOwnerLoading } = useQuery(
-    queryKey,
-    () => watchedGetOwner(`${validation.name}.${name}`).then((r) => r || null),
-    {
-      refetchOnMount: true,
-      enabled: !skipGetOwner,
-    },
-  )
-
-  const skipGetWrapperData = skipGetOwner || !isWrapped
-  const { wrapperData, isLoading: isGetWrapperDataLoading } = useGetWrapperData(
-    `${validation.name}.${name}`,
-    skipGetWrapperData,
-  )
-  const isPCCBurned = !!wrapperData?.parent?.PARENT_CANNOT_CONTROL
+  const isPCCBurned = !!wrapperData?.fuses.parent?.PARENT_CANNOT_CONTROL
 
   const pccExpired = usePccExpired({ ownerData: ownership, wrapperData })
 
-  const isLoading = isGetOwnerLoading || isGetWrapperDataLoading || !ready
+  const isLoading = isOwnerLoading || isWrapperDataLoading
 
   const { valid, error, expiryLabel } = useMemo(() => {
     if (label === '') return { valid: false, error: undefined }
@@ -54,8 +47,8 @@ export const useValidateSubnameLabel = (name: string, label: string, isWrapped: 
       return {
         valid: false,
         error: 'pccBurned',
-        expiryLabel: wrapperData.expiryDate
-          ? new Date(wrapperData.expiryDate).toLocaleDateString(undefined, {
+        expiryLabel: wrapperData.expiry?.date
+          ? wrapperData.expiry.date.toLocaleDateString(undefined, {
               year: 'numeric',
               month: 'short',
               day: 'numeric',
@@ -73,15 +66,15 @@ export const useValidateSubnameLabel = (name: string, label: string, isWrapped: 
       return { valid: true, error: undefined }
     return { valid: false, error: 'alreadyExists' }
   }, [
-    ownership?.owner,
     label,
-    validation.isValid,
+    isParentTLD,
     isWrapped,
     isPCCBurned,
-    isParentTLD,
-    pccExpired,
     validation.labelCount,
-    wrapperData?.expiryDate,
+    validation.isValid,
+    ownership?.owner,
+    pccExpired,
+    wrapperData?.expiry?.date,
   ])
 
   return {

@@ -1,11 +1,11 @@
 import { ComponentProps, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { useEnsAvatar } from 'wagmi'
 
 import { Avatar, Space, mq } from '@ensdomains/thorin'
 
 import { useZorb } from '@app/hooks/useZorb'
 import { QuerySpace } from '@app/types'
-import { useEnsAvatar } from 'wagmi'
 
 const Wrapper = styled.div<{ $size?: QuerySpace }>(
   ({ theme, $size }) => css`
@@ -35,7 +35,6 @@ const Wrapper = styled.div<{ $size?: QuerySpace }>(
 )
 
 type BaseProps = {
-  network: number
   size?: QuerySpace
   noCache?: boolean
 }
@@ -51,7 +50,6 @@ type Address = {
 export const NameAvatar = ({
   src: _,
   name,
-  network,
   size,
   noCache = false,
   ...props
@@ -75,7 +73,6 @@ export const AvatarWithZorb = ({
   src,
   name,
   address,
-  network,
   size,
   noCache = false,
   ...props

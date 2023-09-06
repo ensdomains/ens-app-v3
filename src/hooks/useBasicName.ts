@@ -25,7 +25,14 @@ type UseBasicNameOptions = {
 }
 
 export const useBasicName = ({ name, normalised = false, enabled = true }: UseBasicNameOptions) => {
-  const { name: _normalisedName, isValid, isShort, isETH, is2LD, ...validation } = useValidate(name!, !name)
+  const {
+    name: _normalisedName,
+    isValid,
+    isShort,
+    isETH,
+    is2LD,
+    ...validation
+  } = useValidate({ input: name!, enabled: enabled && !!name })
 
   const normalisedName = normalised ? name! : _normalisedName
 
@@ -34,13 +41,35 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
   const commonEnabled = enabled && !!name && isValid && !isShort
   const isRoot = name === '[root]'
 
-  const { data: ownerData, isLoading: isOwnerLoading, isCachedData: isOwnerCachedData } = useOwner({ name: normalisedName, enabled: commonEnabled })
-  const { data: wrapperData, isLoading: isWrapperDataLoading, isCachedData: isWrapperDataCachedData } = useWrapperData({ name: normalisedName, enabled: commonEnabled && !isRoot })
-  const { data: expiryData, isLoading: isExpiryLoading, isCachedData: isExpiryCachedData } = useExpiry({ name: normalisedName, enabled: commonEnabled && !isRoot && isETH && is2LD })
-  const { data: priceData, isLoading: isPriceLoading, isCachedData: isPriceCachedData } = usePrice({ nameOrNames: normalisedName, duration: yearsToSeconds(1), enabled: commonEnabled && !isRoot && isETH && is2LD })
+  const {
+    data: ownerData,
+    isLoading: isOwnerLoading,
+    isCachedData: isOwnerCachedData,
+  } = useOwner({ name: normalisedName, enabled: commonEnabled })
+  const {
+    data: wrapperData,
+    isLoading: isWrapperDataLoading,
+    isCachedData: isWrapperDataCachedData,
+  } = useWrapperData({ name: normalisedName, enabled: commonEnabled && !isRoot })
+  const {
+    data: expiryData,
+    isLoading: isExpiryLoading,
+    isCachedData: isExpiryCachedData,
+  } = useExpiry({ name: normalisedName, enabled: commonEnabled && !isRoot && isETH && is2LD })
+  const {
+    data: priceData,
+    isLoading: isPriceLoading,
+    isCachedData: isPriceCachedData,
+  } = usePrice({
+    nameOrNames: normalisedName,
+    duration: yearsToSeconds(1),
+    enabled: commonEnabled && !isRoot && isETH && is2LD,
+  })
 
-  const publicCallsLoading = isOwnerLoading || isWrapperDataLoading || isExpiryLoading || isPriceLoading
-  const publicCallsCachedData = isOwnerCachedData && isWrapperDataCachedData && isExpiryCachedData && isPriceCachedData
+  const publicCallsLoading =
+    isOwnerLoading || isWrapperDataLoading || isExpiryLoading || isPriceLoading
+  const publicCallsCachedData =
+    isOwnerCachedData && isWrapperDataCachedData && isExpiryCachedData && isPriceCachedData
 
   const expiryDate = expiryData?.expiry?.date
 

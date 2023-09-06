@@ -1,16 +1,15 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useQuery } from 'wagmi'
+import type { Address } from 'viem'
 
+import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { Button, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { ReturnedENS } from '@app/types'
-import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { shortenAddress } from '@app/utils/utils'
 
 const Container = styled(CacheableComponent)(
@@ -57,24 +56,22 @@ const OwnerWithEns = styled.div(
   `,
 )
 
-const NameOwnerItem = ({ address = '', network }: { address?: string; network: number }) => {
-  const { getName } = useEns()
-  const { data } = useQuery(useQueryKeys().nameSnippet(address), () => getName(address), {
-    enabled: !!address,
-  })
-  const hasEns = data?.match && data?.name
+const NameOwnerItem = ({ address }: { address?: Address }) => {
+  const { data: nameData } = usePrimaryName({ address })
 
-  if (hasEns) {
+  if (nameData?.name) {
     return (
       <OwnerContainer>
         <OwnerWithEns>
           <Typography weight="bold">
-            {data.name.length > 12 ? `${data.name.slice(0, 12)}...` : data.name}
+            {nameData.beautifiedName.length > 12
+              ? `${nameData.beautifiedName.slice(0, 12)}...`
+              : nameData.beautifiedName}
           </Typography>
           <Typography weight="bold">{shortenAddress(address)}</Typography>
         </OwnerWithEns>
         <AvatarWrapper>
-          <AvatarWithZorb label={data.name} address={address} name={data.name} network={network} />
+          <AvatarWithZorb label={nameData.name} address={address} name={nameData.name} />
         </AvatarWrapper>
       </OwnerContainer>
     )
@@ -84,7 +81,7 @@ const NameOwnerItem = ({ address = '', network }: { address?: string; network: n
     <OwnerContainer>
       <Typography weight="bold">{shortenAddress(address)}</Typography>
       <AvatarWrapper>
-        <AddressAvatar address={address} label={address} />
+        <AddressAvatar address={address || ''} label={address || ''} />
       </AvatarWrapper>
     </OwnerContainer>
   )
@@ -142,21 +139,21 @@ export const NameDetailSnippet = ({
 }: {
   name: string
   expiryDate?: Date | null
-  ownerData: Exclude<ReturnedENS['getOwner'], undefined | null>
-  wrapperData: Exclude<ReturnedENS['getWrapperData'], undefined | null>
+  ownerData: NonNullable<GetOwnerReturnType>
+  wrapperData: GetWrapperDataReturnType
   network: number
   showButton?: boolean
-  dnsOwner?: string
+  dnsOwner?: Address
   isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
   const router = useRouterWithHistory()
 
-  const owners: [translation: string, address: string][] = []
+  const owners: [translation: string, address: Address][] = []
 
   if (ownerData?.ownershipLevel === 'nameWrapper') {
     owners.push([
-      wrapperData?.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
+      wrapperData?.fuses.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
       ownerData.owner!,
     ])
   } else {
@@ -184,7 +181,7 @@ export const NameDetailSnippet = ({
       {owners.map(([translation, address]) => (
         <ItemContainer key={translation}>
           <LeftText weight="bold">{t(translation)}</LeftText>
-          <NameOwnerItem address={address} network={network} />
+          <NameOwnerItem address={address} />
         </ItemContainer>
       ))}
       {showButton && (
@@ -215,19 +212,15 @@ export const NameSnippet = ({
   name: string
   network: number
   expiryDate?: Date | null
-  ownerData: Exclude<ReturnedENS['getOwner'], undefined | null>
-  wrapperData: Exclude<ReturnedENS['getWrapperData'], undefined | null>
+  ownerData: NonNullable<GetOwnerReturnType>
+  wrapperData: GetWrapperDataReturnType
   showButton?: boolean
-  dnsOwner?: string
+  dnsOwner?: Address
   isCached: boolean
 }) => {
   return (
     <Container>
-      <NFTWithPlaceholder
-        name={name}
-        network={network}
-        style={{ width: '270px', height: '270px' }}
-      />
+      <NFTWithPlaceholder name={name} style={{ width: '270px', height: '270px' }} />
       <NameDetailSnippet
         isCached={isCached}
         name={name}

@@ -1,3 +1,5 @@
+import { randomSecret } from '@ensdomains/ensjs/utils'
+
 import { childFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import {
   RegistrationReducerAction,
@@ -7,15 +9,6 @@ import {
 } from '@app/components/pages/profile/[name]/registration/types'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 
-export const randomSecret = () => {
-  // the first 4 bytes of the namehash of enslabs.eth
-  const platformSource = '9923eb94'
-  // v3
-  const version = '00000003'
-  const bytes = Buffer.allocUnsafe(24)
-  return `0x${platformSource}${version}${window.crypto.getRandomValues(bytes).toString('hex')}`
-}
-
 const defaultData: RegistrationReducerDataItem = {
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
@@ -23,11 +16,11 @@ const defaultData: RegistrationReducerDataItem = {
   reverseRecord: false,
   records: [],
   clearRecords: false,
-  resolver: '',
+  resolverAddress: '0x',
   permissions: childFuseObj,
-  secret: '',
+  secret: '0x',
   started: false,
-  address: '',
+  address: '0x',
   name: '',
   isMoonpayFlow: false,
   externalTransactionId: '',
@@ -45,9 +38,9 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   years: 1,
   reverseRecord: false,
   records: [],
-  resolver: '',
+  resolverAddress: '0x',
   permissions: childFuseObj,
-  secret: randomSecret(),
+  secret: randomSecret({ platformDomain: 'enslabs.eth', campaign: 3 }),
   started: false,
   isMoonpayFlow: false,
   externalTransactionId: '',
@@ -113,7 +106,7 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     case 'setProfileData': {
       if (action.payload.records) item.records = action.payload.records
       if (action.payload.permissions) item.permissions = action.payload.permissions
-      if (action.payload.resolver) item.resolver = action.payload.resolver
+      if (action.payload.resolverAddress) item.resolverAddress = action.payload.resolverAddress
       break
     }
     case 'setExternalTransactionId': {

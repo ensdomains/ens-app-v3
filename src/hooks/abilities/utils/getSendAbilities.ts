@@ -51,8 +51,10 @@ const CONTRACT_INFO = {
     pattern: {
       ownerData: { ownershipLevel: 'nameWrapper' },
       wrapperData: {
-        parent: { PARENT_CANNOT_CONTROL: true },
-        child: { CANNOT_TRANSFER: false },
+        fuses: {
+          parent: { PARENT_CANNOT_CONTROL: true },
+          child: { CANNOT_TRANSFER: false },
+        },
       },
     },
     guard: (address?: string) => (name: BasicName) => {
@@ -77,8 +79,10 @@ const CONTRACT_INFO = {
             owner: P.select('subnameOwner'),
           },
           wrapperData: {
-            parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
-            child: { CANNOT_TRANSFER: false },
+            fuses: {
+              parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
+              child: { CANNOT_TRANSFER: false },
+            },
           },
         },
         {
@@ -86,7 +90,9 @@ const CONTRACT_INFO = {
             ownershipLevel: 'nameWrapper',
           },
           wrapperData: {
-            parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
+            fuses: {
+              parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
+            },
           },
         },
       ],
@@ -130,8 +136,10 @@ const CONTRACT_INFO = {
             owner: P.select('subnameOwner'),
           },
           wrapperData: {
-            parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
-            child: { CANNOT_TRANSFER: false },
+            fuses: {
+              parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
+              child: { CANNOT_TRANSFER: false },
+            },
           },
         },
         {
@@ -222,7 +230,9 @@ const CONTRACT_INFO = {
         {
           ownerData: { ownershipLevel: 'nameWrapper' },
           wrapperData: {
-            parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
+            fuses: {
+              parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
+            },
           },
         },
       ],
@@ -292,7 +302,7 @@ const get2LDEthAbilities = ({
     )
     .otherwise(({ wrapperData }) => ({
       ...BASE_RESPONSE,
-      ...(wrapperData?.child?.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
+      ...(wrapperData?.fuses.child?.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
     }))
 }
 

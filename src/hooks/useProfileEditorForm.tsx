@@ -83,7 +83,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     if (record.key === 'url') return validateUrl
     if (record.group === 'address')
       return (value?: string) => {
-        const result = validateCryptoAddress(record.key)(value)
+        const result = validateCryptoAddress({ coin: record.key, address: value })
         if (typeof result === 'string') {
           if (result === 'addressRequired') return t('errors.addressRequired', { ns: 'common' })
           return t('errors.invalidAddress', { ns: 'common' })

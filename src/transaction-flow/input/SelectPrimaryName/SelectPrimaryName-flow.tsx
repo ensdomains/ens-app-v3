@@ -2,10 +2,10 @@ import { useRef, useState } from 'react'
 import { UseFormReturn, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { labelhash } from 'viem'
+import { Address, labelhash } from 'viem'
 import { useMutation, useQueryClient } from 'wagmi'
 
-import { getDecodedName } from '@ensdomains/ensjs/subgraph'
+import { Name, getDecodedName } from '@ensdomains/ensjs/subgraph'
 import { decodeLabelhash, isEncodedLabelhash, saveName } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, Heading, Typography, mq } from '@ensdomains/thorin'
 
@@ -17,10 +17,7 @@ import {
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainId } from '@app/hooks/chain/useChainId'
-import {
-  Name,
-  useAvailablePrimaryNamesForAddress,
-} from '@app/hooks/names/useAvailablePrimaryNamesForAddress/useAvailablePrimaryNamesForAddress'
+import { useNamesForAddressPaginated } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useBasicName } from '@app/hooks/useBasicName'
@@ -63,7 +60,7 @@ export const getNameFromUnknownLabels = (
 }
 
 type Data = {
-  address: string
+  address: Address
 }
 
 export type Props = {
@@ -187,14 +184,14 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     hasNextPage,
     fetchNextPage: loadMoreNames,
     isLoading: isLoadingNames,
-  } = useAvailablePrimaryNamesForAddress({
+  } = useNamesForAddressPaginated({
     address,
-    sort: {
-      type: sortType,
-      orderDirection: sortDirection,
+    orderBy: sortType,
+    orderDirection: sortDirection,
+    filter: {
+      searchString: searchQuery,
     },
-    search: searchQuery,
-    resultsPerPage: DEFAULT_PAGE_SIZE,
+    pageSize: DEFAULT_PAGE_SIZE,
   })
 
   const selectedName = useWatch({
@@ -207,7 +204,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     enabled: !!selectedName?.name,
   })
   const { data: selectedNameProfile } = useProfile({
-    name: selectedName?.name,
+    name: selectedName?.name!,
     enabled: !!selectedName?.name,
     subgraphEnabled: false,
   })
@@ -215,7 +212,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const resolverStatus = useResolverStatus({
     name: selectedName?.name!,
     enabled: !!selectedName && !isBasicNameLoading,
-    migratedRecordsMatch: { type: 'address', match: { id: 60, name: 'ETH', value: address } },
+    migratedRecordsMatch: { type: 'address', match: { id: 60, value: address } },
   })
 
   const getPrimarynameTransactionFlowItem = useGetPrimaryNameTransactionFlowItem({
@@ -252,7 +249,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const validateKey = useQueryKeys().validate
   const { mutate: mutateName, isLoading: isMutationLoading } = useMutation(
     async (data: FormData) => {
-      if (!data.name) throw new Error('no_name')
+      if (!data.name?.name) throw new Error('no_name')
 
       let validName = data.name.name
       if (!hasEncodedLabel(validName)) return validName
@@ -266,7 +263,10 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       }
 
       // Attempt to decrypt name
-      validName = await getDecodedName(publicClient, { name: validName, allowIncomplete: true })
+      validName = (await getDecodedName(publicClient, {
+        name: validName,
+        allowIncomplete: true,
+      })) as string
       if (!hasEncodedLabel(validName)) {
         saveName(validName)
         queryClient.resetQueries(validateKey(data.name?.name))
@@ -338,7 +338,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
                 mode="view"
                 selectable={false}
                 sortType={sortType}
-                sortTypeOptionValues={['labelName', 'creationDate', 'expiryDate']}
+                sortTypeOptionValues={['labelName', 'createdAt', 'expiryDate']}
                 sortDirection={sortDirection}
                 searchQuery={searchInput}
                 selectedCount={0}

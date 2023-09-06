@@ -5,8 +5,8 @@ import { Address } from 'viem'
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
-import useOwners from '@app/hooks/useOwners'
-import useParentBasicName from '@app/hooks/useParentBasicName'
+import { useOwners } from '@app/hooks/useOwners'
+import { useParentBasicName } from '@app/hooks/useParentBasicName'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -41,8 +41,8 @@ const DeleteSubnameNotParentWarning = ({ data, dispatch, onDismiss }: Props) => 
     isLoading: parentBasicLoading,
   } = useParentBasicName(data.name)
   const [ownerTarget] = useOwners({
-    ownerData: parentOwnerData,
-    wrapperData: parentWrapperData,
+    ownerData: parentOwnerData!,
+    wrapperData: parentWrapperData!,
   })
   const { data: parentPrimaryOrAddress, isLoading: parentPrimaryLoading } = usePrimaryNameOrAddress(
     {

@@ -1,17 +1,25 @@
 import { useMemo } from 'react'
 
-import { OwnerArray, ReturnedENS } from '@app/types'
+import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
+import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
+
+import { OwnerArray } from '@app/types'
 
 import { DEFAULT_ABILITIES, type useAbilities } from './abilities/useAbilities'
 
 type Props = {
-  ownerData: ReturnedENS['getOwner']
-  wrapperData: ReturnedENS['getWrapperData']
-  dnsOwner?: ReturnedENS['getDNSOwner']
+  ownerData: GetOwnerReturnType
+  wrapperData: GetWrapperDataReturnType
+  dnsOwner?: GetDnsOwnerReturnType
   abilities?: ReturnType<typeof useAbilities>['data']
 }
 
-const useOwners = ({ ownerData, wrapperData, dnsOwner, abilities = DEFAULT_ABILITIES }: Props) => {
+export const useOwners = ({
+  ownerData,
+  wrapperData,
+  dnsOwner,
+  abilities = DEFAULT_ABILITIES,
+}: Props) => {
   const owners = useMemo(() => {
     const _owners: OwnerArray = []
     if (ownerData?.ownershipLevel === 'nameWrapper') {
@@ -19,7 +27,7 @@ const useOwners = ({ ownerData, wrapperData, dnsOwner, abilities = DEFAULT_ABILI
         address: ownerData.owner!,
         canTransfer: abilities.canSend,
         transferType: 'owner',
-        label: wrapperData?.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
+        label: wrapperData?.fuses.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
         description: 'details.descriptions.owner',
         testId: 'owner-button-owner',
       })
@@ -60,5 +68,3 @@ const useOwners = ({ ownerData, wrapperData, dnsOwner, abilities = DEFAULT_ABILI
 
   return owners
 }
-
-export default useOwners

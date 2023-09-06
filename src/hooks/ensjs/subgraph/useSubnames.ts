@@ -1,30 +1,27 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useInfiniteQuery } from 'wagmi'
 
-import { GetNamesForAddressParameters, getNamesForAddress } from '@ensdomains/ensjs/subgraph'
+import { GetSubnamesParameters, getSubnames } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { usePublicClient } from '../../usePublicClient'
 
-type UseNamesForAddressParameters = Omit<GetNamesForAddressParameters, 'previousPage'> & {
+type UseSubnamesParameters = Omit<GetSubnamesParameters, 'previousPage'> & {
   enabled?: boolean
 }
 
-export const useNamesForAddressPaginated = ({
-  enabled = true,
-  ...params
-}: UseNamesForAddressParameters) => {
+export const useSubnames = ({ enabled = true, ...params }: UseSubnamesParameters) => {
   const publicClient = usePublicClient()
 
   const queryKeys = useQueryKeys()
 
   const { data, status, isFetched, isFetchedAfterMount, ...rest } = useInfiniteQuery(
-    queryKeys.getNamesForAddress(params),
+    queryKeys.getSubnames(params),
     ({ queryKey: [queryParams], pageParam }) =>
-      getNamesForAddress(publicClient, { ...queryParams, previousPage: pageParam }),
+      getSubnames(publicClient, { ...queryParams, previousPage: pageParam }),
     {
-      enabled: enabled && !!params.address,
+      enabled: enabled && !!params.name,
       getNextPageParam: (lastPage) => {
         if (lastPage?.length < (params.pageSize || 100)) return false
         return lastPage
@@ -42,8 +39,14 @@ export const useNamesForAddressPaginated = ({
   const pageCount = data?.pages.length || 0
   const nameCount = data?.pages.reduce((acc, page) => acc + page.length, 0) || 0
 
+  const infiniteData = useMemo(
+    () => (data?.pages ? data?.pages.reduce((acc, page) => [...acc, ...page], []) : []),
+    [data?.pages],
+  )
+
   return {
     data,
+    infiniteData,
     page: data?.pages[0] || [],
     pageCount,
     nameCount,

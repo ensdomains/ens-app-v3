@@ -140,7 +140,7 @@ type ProfileMatchText = {
 
 type ProfileMatchAddress = {
   type: 'address'
-  match: AddressRecord
+  match: Omit<AddressRecord, 'name'>
 }
 
 export type RecordMatch = ProfileMatchText | ProfileMatchAddress

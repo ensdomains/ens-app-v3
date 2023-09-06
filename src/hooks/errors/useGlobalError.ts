@@ -24,7 +24,7 @@ export const useGlobalError = () => {
   const setMetaError = useCallback(() => {
     if (!state.meta.hasSubgraphError)
       dispatch({
-        type: 'SET_META_ERROR',
+        type: 'SET_META',
         payload: {
           hasSubgraphError: true,
         },

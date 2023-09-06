@@ -1,27 +1,17 @@
-import {
-  BaseProvider,
-  FallbackProvider,
-  JsonRpcFetchFunc,
-  type TransactionResponse,
-  Web3Provider,
-} from '@ethersproject/providers'
-import { toUtf8String } from '@ethersproject/strings'
-import { Hash, fetchBlockNumber, fetchTransaction, getProvider } from '@wagmi/core'
-import type { BigNumber, providers } from 'ethers'
+import { getPublicClient } from '@wagmi/core'
+import type {
+  CallParameters,
+  GetTransactionReceiptParameters,
+  Hash,
+  WaitForTransactionReceiptParameters,
+  WaitForTransactionReceiptReturnType,
+} from 'viem'
+import { hexToString } from 'viem'
 
 import { fetchTxFromSafeTxHash } from '@app/utils/safe'
 
-type EthersReplaceable = {
-  data: string
-  from: string
-  nonce: number
-  to: string
-  value: BigNumber
-  startBlock: number
-}
-
 export type WaitForTransactionArgs = {
-  /** Chain id to use for provider */
+  /** Chain id to use for Public Client. */
   chainId?: number
   /**
    * Number of blocks to wait for after transaction is mined
@@ -30,89 +20,60 @@ export type WaitForTransactionArgs = {
   confirmations?: number
   /** Transaction hash to monitor */
   hash: Hash
-  /** Callback to invoke when the transaction has been sped up. */
-  onSpeedUp?: (transaction: TransactionResponse) => void
+  /** Callback to invoke when the transaction has been replaced (sped up). */
+  onReplaced?: WaitForTransactionReceiptParameters['onReplaced']
   /*
    * Maximum amount of time to wait before timing out in milliseconds
    * @default 0
    */
   timeout?: number
-
   isSafeTx?: boolean
 }
 
-export type WaitForTransactionResult = providers.TransactionReceipt
-
-export class SafeTxExecutedError extends Error {
-  constructor(public reason: string, public replacement?: { hash: string }) {
-    super()
-  }
-}
+export type WaitForTransactionResult = WaitForTransactionReceiptReturnType
 
 export async function waitForTransaction({
   chainId,
   confirmations = 1,
   hash,
-  onSpeedUp,
+  onReplaced,
   timeout = 0,
   isSafeTx,
 }: WaitForTransactionArgs): Promise<WaitForTransactionResult> {
-  const fallbackProvider = getProvider<FallbackProvider>({ chainId })
-  let provider: BaseProvider = fallbackProvider
-  const providerChainId = provider.network.chainId
+  let publicClient = getPublicClient({ chainId })
+  const clientChainId = publicClient.chain.id
 
   if (isSafeTx) {
-    const jsonRpcFetchFunc: JsonRpcFetchFunc = async (method, params = []) => {
-      if (method === 'eth_getTransactionReceipt' && params[0] === hash) {
+    publicClient = publicClient.extend((client) => ({
+      getTransactionReceipt: async (args: GetTransactionReceiptParameters) => {
         const realTxData = await fetchTxFromSafeTxHash({
-          chainId: providerChainId,
-          safeTxHash: hash,
+          chainId: clientChainId,
+          safeTxHash: args.hash,
         })
         if (!realTxData) return null
-        return fallbackProvider.getTransactionReceipt(realTxData.transactionHash)
-      }
-      if (method === 'eth_chainId' || method === 'net_version') return providerChainId.toString()
-      if (method === 'eth_blockNumber') return fallbackProvider.getBlockNumber()
-      return null
-    }
-    provider = new Web3Provider(jsonRpcFetchFunc, providerChainId)
+        return client.getTransactionReceipt({ hash: realTxData.transactionHash })
+      },
+    }))
   }
 
-  const [blockNumber, transaction] = await Promise.all([
-    fetchBlockNumber(),
-    fetchTransaction({ hash }),
-  ])
-
-  let replaceable: EthersReplaceable | null = null
-  if (confirmations !== 0 && transaction?.to) {
-    replaceable = {
-      data: transaction.data,
-      from: transaction.from,
-      nonce: transaction.nonce,
-      startBlock: blockNumber,
-      to: transaction.to,
-      value: transaction.value,
-    }
+  const receipt = await publicClient.waitForTransactionReceipt({
+    hash,
+    confirmations,
+    onReplaced,
+    timeout,
+  })
+  if (receipt.status === 'reverted') {
+    const txn = await publicClient.getTransaction({
+      hash: receipt.transactionHash,
+    })
+    const code = (await publicClient.call({
+      ...txn,
+      gasPrice: txn.type !== 'eip1559' ? txn.gasPrice : undefined,
+      maxFeePerGas: txn.type === 'eip1559' ? txn.maxFeePerGas : undefined,
+      maxPriorityFeePerGas: txn.type === 'eip1559' ? txn.maxPriorityFeePerGas : undefined,
+    } as CallParameters)) as unknown as string
+    const reason = hexToString(`0x${code.substring(138)}`)
+    throw new Error(reason)
   }
-
-  try {
-    const receipt = await provider._waitForTransaction(hash, confirmations, timeout, replaceable!)
-    if (receipt.status === 0) {
-      const code = await provider.call(receipt, receipt.blockNumber)
-      const reason = toUtf8String(`0x${code.substring(138)}`)
-      throw new Error(reason)
-    }
-    if (isSafeTx) throw new SafeTxExecutedError('repriced', { hash: receipt.transactionHash })
-    return receipt
-  } catch (err: any) {
-    if (err?.reason === 'repriced') {
-      onSpeedUp?.(err.replacement as TransactionResponse)
-      return waitForTransaction({
-        hash: err.replacement?.hash,
-        confirmations,
-        timeout,
-      })
-    }
-    throw err
-  }
+  return receipt
 }

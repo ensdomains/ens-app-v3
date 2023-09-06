@@ -115,16 +115,21 @@ export const deleteProperties = <T extends Record<string, any>, K extends keyof 
 
 export const getLabelFromName = (name: string = '') => name.split('.')[0]
 
-export const validateExpiry = (
-  name: string,
-  fuses: DecodedFuses | undefined,
-  expiry: Date | undefined,
-  pccExpired?: boolean,
-) => {
+export const validateExpiry = ({
+  name,
+  fuses,
+  expiry,
+  pccExpired = false,
+}: {
+  name: string
+  fuses: DecodedFuses | undefined | null
+  expiry: Date | undefined
+  pccExpired?: boolean
+}) => {
   const isDotETH = checkETH2LDFromName(name)
   if (isDotETH) return expiry
   if (!fuses) return undefined
-  return pccExpired || fuses.parent.PARENT_CANNOT_CONTROL ? expiry : undefined
+  return pccExpired || !fuses.parent.PARENT_CANNOT_CONTROL ? undefined : expiry
 }
 
 export const getResolverWrapperAwareness = ({

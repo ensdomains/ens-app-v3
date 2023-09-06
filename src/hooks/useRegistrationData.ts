@@ -1,10 +1,10 @@
+import { labelhash } from 'viem'
 import { useQuery } from 'wagmi'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
-
-import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { checkETH2LDFromName } from '@app/utils/utils'
+
+import { useSubgraphClient } from './ensjs/subgraph/useSubgraphClient'
 
 const query = `
   query getNameDates($id: String!) {
@@ -18,7 +18,7 @@ const query = `
 `
 
 const useRegistrationData = (name: string) => {
-  const { ready, gqlInstance } = useEns()
+  const subgraphClient = useSubgraphClient()
   const is2LDEth = checkETH2LDFromName(name)
   const {
     data,
@@ -32,7 +32,7 @@ const useRegistrationData = (name: string) => {
   } = useQuery(
     useQueryKeys().registrationDate(name),
     async () =>
-      gqlInstance.client.request<{
+      subgraphClient.request<{
         registration?: {
           registrationDate: string
         }
@@ -43,7 +43,7 @@ const useRegistrationData = (name: string) => {
         id: labelhash(name.split('.')[0]),
       }),
     {
-      enabled: ready && is2LDEth,
+      enabled: is2LDEth,
       select: (queryResult) => {
         if (!queryResult?.registration) return null
         return {

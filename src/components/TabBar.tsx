@@ -2,14 +2,13 @@
 import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { useEnsAvatar } from 'wagmi'
 
 import { CrossSVG, LeftChevronSVG, PersonSVG, mq } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
-import { useChainId } from '@app/hooks/chain/useChainId'
-import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
-import { useAvatar } from '@app/hooks/useNftImage'
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination, getRoute, legacyFavouritesRoute } from '@app/routes'
 
@@ -185,8 +184,7 @@ const TabBarProfile = ({
   name?: string
 }) => {
   const router = useRouter()
-  const chainId = useChainId()
-  const { avatar } = useAvatar(name, chainId)
+  const { data: avatar } = useEnsAvatar({ name })
   const zorb = useZorb(address, 'address')
   const hasPendingTransactions = useHasPendingTransactions()
 
@@ -219,7 +217,7 @@ export const TabBar = () => {
   const router = useRouter()
 
   const { address } = useAccountSafely()
-  const primary = usePrimary(address!, !!address)
+  const primary = usePrimaryName({ address })
 
   const hasPrimary = !!primary.data?.name
   const hasBack = !!router.query.from

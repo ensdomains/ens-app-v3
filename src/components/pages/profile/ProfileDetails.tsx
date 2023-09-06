@@ -8,7 +8,7 @@ import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledBu
 import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
-import useOwners from '@app/hooks/useOwners'
+import { useOwners } from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { checkETH2LDFromName, formatExpiry } from '@app/utils/utils'

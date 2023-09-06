@@ -11,6 +11,7 @@ import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMi
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import gasLimitDictionary from '@app/constants/gasLimits'
+import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
 import { useEstimateGasLimitForTransaction } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
 import { useZorb } from '@app/hooks/useZorb'
@@ -21,7 +22,6 @@ import { yearsToSeconds } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
-import { useExpiry } from '../../../hooks/useExpiry'
 
 const Container = styled.form(
   ({ theme }) => css`
@@ -135,9 +135,9 @@ const GasEstimationCacheableComponent = styled(CacheableComponent)(
 const NamesListItem = ({ name }: { name: string }) => {
   const { data: avatar } = useEnsAvatar({ name })
   const zorb = useZorb(name, 'name')
-  const { expiry, loading: expiryLoading } = useExpiry(name)
+  const { data: expiry, isLoading: isExpiryLoading } = useExpiry({ name })
 
-  if (expiryLoading) return null
+  if (isExpiryLoading) return null
   return (
     <NamesListItemContainer>
       <NamesListItemAvatarWrapper>
@@ -149,7 +149,7 @@ const NamesListItem = ({ name }: { name: string }) => {
         </NamesListItemTitle>
         {expiry?.expiry && (
           <NamesListItemSubtitle>
-            <ShortExpiry expiry={expiry.expiry} textOnly />
+            <ShortExpiry expiry={expiry.expiry.date} textOnly />
           </NamesListItemSubtitle>
         )}
       </NamesListItemContent>

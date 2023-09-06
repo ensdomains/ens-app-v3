@@ -13,6 +13,7 @@ import type {
 
 import { ChainWithEns } from '@ensdomains/ensjs/dist/types/contracts/consts'
 import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
+import { GetSubgraphRecordsReturnType } from '@ensdomains/ensjs/subgraph'
 import { ChildFuseReferenceType, ParentFuseReferenceType } from '@ensdomains/ensjs/utils'
 import { Helper, Space } from '@ensdomains/thorin'
 
@@ -20,7 +21,10 @@ export type Profile = Partial<
   GetRecordsReturnType<{
     name: string
     records: { abi: true; contentHash: true; coins: string[]; texts: string[] }
-  }>
+  }> &
+    Pick<NonNullable<GetSubgraphRecordsReturnType>, 'isMigrated' | 'createdAt'> & {
+      address: Address | undefined
+    }
 >
 
 export type TextRecord = NonNullable<Profile['texts']>[number]

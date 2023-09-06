@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
+import { Name } from '@ensdomains/ensjs/subgraph'
 import { Button, Spinner } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
@@ -13,7 +14,6 @@ import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useNamesForAddressPaginated } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
-import { ReturnedName } from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
 import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
@@ -112,7 +112,7 @@ const Page = () => {
   })
 
   const isNameDisabled = useCallback(
-    (name: ReturnedName) => {
+    (name: Name) => {
       if (mode !== 'select') return false
       return !name.expiryDate
     },

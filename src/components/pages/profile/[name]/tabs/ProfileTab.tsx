@@ -10,9 +10,9 @@ import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useChainId } from '@app/hooks/chain/useChainId'
-import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import useOwners from '@app/hooks/useOwners'
+import { useOwners } from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { getSupportLink } from '@app/utils/supportLinks'
 import { validateExpiry } from '@app/utils/utils'
@@ -42,8 +42,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
   const {
     profile,
     normalisedName,
-    profileIsCachedData,
-    basicIsCachedData,
+    isCachedData,
     ownerData,
     wrapperData,
     expiryDate,
@@ -55,7 +54,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
 
   const abilities = useAbilities(name)
 
-  const { data: primaryData } = usePrimary(address)
+  const { data: primaryData } = usePrimaryName({ address })
 
   const owners = useOwners({
     ownerData: ownerData!,
@@ -83,7 +82,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     if (abilities.data?.canExtend) return 'extend'
   }, [isExpired, abilities.data?.canExtend])
 
-  const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
+  const getTextRecord = (key: string) => profile?.texts?.find((x) => x.key === key)
 
   return (
     <DetailsWrapper>
@@ -113,21 +112,21 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         )}
       </ProfileSnippet>
       <ProfileDetails
-        expiryDate={validateExpiry(
-          normalisedName,
-          wrapperData,
-          expiryDate || wrapperData?.expiryDate,
+        expiryDate={validateExpiry({
+          name: normalisedName,
+          expiry: expiryDate || wrapperData?.expiry?.date,
           pccExpired,
-        )}
+          fuses: wrapperData?.fuses,
+        })}
         pccExpired={!!pccExpired}
-        isCached={profileIsCachedData || basicIsCachedData || abilities.isCachedData}
-        addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
-          key: item.coin,
-          value: item.addr,
+        isCached={isCachedData || abilities.isCachedData}
+        addresses={(profile?.coins || []).map((item) => ({
+          key: item.name,
+          value: item.value,
         }))}
-        textRecords={(profile?.records?.texts || [])
-          .map((item: any) => ({ key: item.key, value: item.value }))
-          .filter((item: any) => item.value !== null)}
+        textRecords={(profile?.texts || [])
+          .map((item) => ({ key: item.key, value: item.value }))
+          .filter((item) => item.value !== null)}
         owners={owners}
         name={normalisedName}
         actions={profileActions.profileActions}
