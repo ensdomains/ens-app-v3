@@ -1,7 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useInfiniteQuery } from 'wagmi'
 
-import { GetNamesForAddressParameters, getNamesForAddress } from '@ensdomains/ensjs/subgraph'
+import {
+  GetNamesForAddressParameters,
+  GetNamesForAddressReturnType,
+  getNamesForAddress,
+} from '@ensdomains/ensjs/subgraph'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
@@ -11,45 +15,60 @@ type UseNamesForAddressParameters = Omit<GetNamesForAddressParameters, 'previous
   enabled?: boolean
 }
 
-export const useNamesForAddressPaginated = ({
-  enabled = true,
-  ...params
-}: UseNamesForAddressParameters) => {
+export const useNamesForAddress = ({ enabled = true, ...params }: UseNamesForAddressParameters) => {
   const publicClient = usePublicClient()
 
   const queryKeys = useQueryKeys()
 
-  const { data, status, isFetched, isFetchedAfterMount, ...rest } = useInfiniteQuery(
-    queryKeys.getNamesForAddress(params),
-    ({ queryKey: [queryParams], pageParam }) =>
-      getNamesForAddress(publicClient, { ...queryParams, previousPage: pageParam }),
-    {
-      enabled: enabled && !!params.address,
-      getNextPageParam: (lastPage) => {
-        if (lastPage?.length < (params.pageSize || 100)) return false
-        return lastPage
+  const [unfilteredPages, setUnfilteredPages] = useState<GetNamesForAddressReturnType>([])
+
+  const { data, status, isFetched, isFetching, isLoading, isFetchedAfterMount, ...rest } =
+    useInfiniteQuery(
+      queryKeys.getNamesForAddress(params),
+      ({ queryKey: [queryParams], pageParam }) =>
+        getNamesForAddress(publicClient, { ...queryParams, previousPage: pageParam }),
+      {
+        enabled: enabled && !!params.address,
+        getNextPageParam: (lastPage) => {
+          if (lastPage?.length < (params.pageSize || 100)) return false
+          return lastPage
+        },
       },
-    },
+    )
+
+  const infiniteData = useMemo(
+    () => (data?.pages ? data?.pages.reduce((acc, page) => [...acc, ...page], []) : []),
+    [data?.pages],
   )
 
   useEffect(() => {
-    if (enabled) {
-      rest.fetchNextPage()
+    if (!params.filter?.searchString) {
+      setUnfilteredPages(infiniteData)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, params, rest.fetchNextPage])
+  }, [params.filter?.searchString, infiniteData])
 
-  const pageCount = data?.pages.length || 0
-  const nameCount = data?.pages.reduce((acc, page) => acc + page.length, 0) || 0
+  const infiniteDataWithFetchingFill = useMemo(
+    () =>
+      params.filter?.searchString && isFetching
+        ? unfilteredPages.filter((x) => x.labelName?.includes(params.filter!.searchString!))
+        : infiniteData,
+    [unfilteredPages, params.filter?.searchString, infiniteData],
+  )
+
+  const nameCount = infiniteDataWithFetchingFill.length || 0
 
   return {
     data,
+    infiniteData: infiniteDataWithFetchingFill,
     page: data?.pages[0] || [],
-    pageCount,
     nameCount,
     status,
     isFetched,
+    isFetching,
     isFetchedAfterMount,
+    isLoading: !params.filter?.searchString
+      ? isLoading
+      : !infiniteDataWithFetchingFill.length && isLoading,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
     ...rest,
   }

@@ -25,14 +25,9 @@ type UseBasicNameOptions = {
 }
 
 export const useBasicName = ({ name, normalised = false, enabled = true }: UseBasicNameOptions) => {
-  const {
-    name: _normalisedName,
-    isValid,
-    isShort,
-    isETH,
-    is2LD,
-    ...validation
-  } = useValidate({ input: name!, enabled: enabled && !!name })
+  const validation = useValidate({ input: name!, enabled: enabled && !!name })
+
+  const { name: _normalisedName, isValid, isShort, isETH, is2LD } = validation
 
   const normalisedName = normalised ? name! : _normalisedName
 
@@ -125,10 +120,6 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
 
   return {
     ...validation,
-    isValid,
-    isShort,
-    is2LD,
-    isETH,
     normalisedName,
     ownerData,
     wrapperData,

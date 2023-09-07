@@ -49,7 +49,7 @@ const fetchRegistrationEstimate = async (
     duration: 31557600,
     secret: '0xplaceholder',
   })
-  return fetchTenderlyEstimate({
+  const res = await fetchTenderlyEstimate({
     type: 'registration',
     networkId: chainId,
     label: registrationTuple[0],
@@ -58,7 +58,9 @@ const fetchRegistrationEstimate = async (
     data: registrationTuple[5],
     reverseRecord: registrationTuple[6],
     ownerControlledFuses: registrationTuple[7],
-  }).then((v) => BigInt(v))
+  })
+
+  return BigInt(res)
 }
 
 const getFallbackEstimate = ({
@@ -143,7 +145,7 @@ export const useEstimateFullRegistration = ({
     queryKeys.getRegistrationEstimate({ data: requiredRegistrationParameters }),
     ({ queryKey: [params] }) => fetchRegistrationEstimate(publicClient, params),
     {
-      enabled: !!name && !!owner && !!fuses && !!records && !!reverseRecord,
+      enabled: !!name && !!owner && !!fuses && !!records && reverseRecord !== undefined,
     },
   )
 

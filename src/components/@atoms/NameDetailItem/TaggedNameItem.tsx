@@ -64,7 +64,7 @@ export const TaggedNameItem = ({
     }
   } else {
     tags.push([
-      !!relation?.owner,
+      !!relation?.wrappedOwner,
       fuses.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
     ])
   }

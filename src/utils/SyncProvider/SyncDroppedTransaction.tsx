@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { useEffect, useRef } from 'react'
-import type { Address } from 'viem'
+import { type Address, TransactionNotFoundError } from 'viem'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
@@ -129,7 +129,12 @@ export const findDroppedTransactions = async (
     }
 
     // If for some reason the transaction was not found, was not a replacement etc, try to find it again.
-    const result = await publicClient.getTransaction({ hash: searchingTransaction.hash })
+    const result = await publicClient
+      .getTransaction({ hash: searchingTransaction.hash })
+      .catch((e: unknown) => {
+        if (e instanceof TransactionNotFoundError) return null
+        throw e
+      })
     if (result) {
       store.foundTransaction(address, chainId, searchingTransaction.hash, result.nonce)
       return

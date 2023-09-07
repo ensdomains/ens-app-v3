@@ -1,6 +1,11 @@
+import {
+  GetExpiryReturnType,
+  GetOwnerReturnType,
+  GetPriceReturnType,
+  GetWrapperDataReturnType,
+} from '@ensdomains/ensjs/public'
 import { ParsedInputResult } from '@ensdomains/ensjs/utils'
 
-import { GetExpiryReturnType, GetOwnerReturnType, GetPriceReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { emptyAddress } from './constants'
 
 export type RegistrationStatus =
@@ -37,7 +42,7 @@ export const getRegistrationStatus = ({
     return 'short'
   }
 
-  if (!ownerData && !wrapperData) return 'invalid'
+  if (!ownerData && ownerData !== null && !wrapperData) return 'invalid'
 
   if (!isETH && !supportedTLD) {
     return 'unsupportedTLD'
