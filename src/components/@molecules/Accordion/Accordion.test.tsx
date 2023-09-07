@@ -27,7 +27,7 @@ describe('Accordion', () => {
 
   it('should render', () => {
     mockUseTransactionFlow.mockReturnValue({
-      prepareDataInput: () => () => {},
+      usePreparedDataInput: () => () => {},
     })
     render(<Accordion data={data} name="test" />)
   })
@@ -112,7 +112,7 @@ describe('Accordion', () => {
     const mockShowDataInput = jest.fn()
 
     mockUseTransactionFlow.mockReturnValue({
-      prepareDataInput: () => mockShowDataInput,
+      usePreparedDataInput: () => mockShowDataInput,
     })
     render(
       <Accordion

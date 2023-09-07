@@ -50,8 +50,8 @@ export const OwnershipPermissions = ({
 }: Props) => {
   const { t } = useTranslation('profile')
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showRevokePermissionsInput = prepareDataInput('RevokePermissions')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showRevokePermissionsInput = usePreparedDataInput('RevokePermissions')
 
   const nameParts = name.split('.')
   const parentName = nameParts.slice(1).join('.')

@@ -14,11 +14,11 @@ const mockUseAccount = mockFunction(useAccount)
 const mockUseAbilities = mockFunction(useAbilities)
 const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 
-const mockPrepareDataInput = jest.fn()
+const mockusePreparedDataInput = jest.fn()
 
 mockUseAccount.mockReturnValue({ address: '0x123' })
 mockUseAbilities.mockReturnValue({})
-mockUseTransactionFlow.mockReturnValue({ prepareDataInput: () => mockPrepareDataInput })
+mockUseTransactionFlow.mockReturnValue({ usePreparedDataInput: () => mockusePreparedDataInput })
 
 describe('ExtendButton', () => {
   it('should not render if canExtend is false', () => {
@@ -36,7 +36,7 @@ describe('ExtendButton', () => {
   it('should call showExtendNamesInput with correct arguments', () => {
     render(<ExtendButton name="test.eth" />)
     screen.queryByText('action.extend')?.click()
-    expect(mockPrepareDataInput).toHaveBeenCalledWith('extend-names-test.eth', {
+    expect(mockusePreparedDataInput).toHaveBeenCalledWith('extend-names-test.eth', {
       isSelf: undefined,
       names: ['test.eth'],
     })

@@ -32,7 +32,7 @@ const mockUseHasGlobalError = mockFunction(useHasGlobalError)
 const mockUseWrapperApprovedForAll = mockFunction(useWrapperApprovedForAll)
 
 const mockCreateTransactionFlow = jest.fn()
-const mockPrepareDataInput = jest.fn()
+const mockusePreparedDataInput = jest.fn()
 
 describe('useProfileActions', () => {
   const props: any = {
@@ -71,10 +71,10 @@ describe('useProfileActions', () => {
       status: 'success',
     })
     mockUseTransactionFlow.mockReturnValue({
-      prepareDataInput:
+      usePreparedDataInput:
         () =>
         (...args: any[]) =>
-          mockPrepareDataInput(...args),
+          mockusePreparedDataInput(...args),
       createTransactionFlow: (...args: any[]) => mockCreateTransactionFlow(...args),
     })
     mockUseHasGlobalError.mockReturnValue(false)
@@ -176,7 +176,7 @@ describe('useProfileActions', () => {
         (a) => a.label === 'tabs.profile.actions.deleteSubname.label',
       )
       deleteAction!.onClick()
-      expect(mockPrepareDataInput).toHaveBeenCalledWith(
+      expect(mockusePreparedDataInput).toHaveBeenCalledWith(
         `delete-subname-not-parent-warning-test.eth`,
         { name: 'test.eth', contract: 'testcontract' },
       )
@@ -568,13 +568,13 @@ describe('useProfileActions', () => {
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
       setPrimaryAction?.onClick()
-      expect(mockPrepareDataInput).toHaveBeenCalled()
-      expect(mockPrepareDataInput.mock.calls[0][0]).toBe(
+      expect(mockusePreparedDataInput).toHaveBeenCalled()
+      expect(mockusePreparedDataInput.mock.calls[0][0]).toBe(
         `setPrimaryName-[${labelhash('test').slice(2)}].eth-0x1234567890`,
       )
-      expect(mockPrepareDataInput.mock.calls[0][1].transactionFlowItem.transactions.length).toEqual(
-        1,
-      )
+      expect(
+        mockusePreparedDataInput.mock.calls[0][1].transactionFlowItem.transactions.length,
+      ).toEqual(1)
     })
   })
 })

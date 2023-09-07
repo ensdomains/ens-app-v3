@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useInfiniteQuery } from 'wagmi'
 
 import { GetSubnamesParameters, getSubnames } from '@ensdomains/ensjs/subgraph'
@@ -28,13 +28,6 @@ export const useSubnames = ({ enabled = true, ...params }: UseSubnamesParameters
       },
     },
   )
-
-  useEffect(() => {
-    if (enabled) {
-      rest.fetchNextPage()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, params, rest.fetchNextPage])
 
   const pageCount = data?.pages.length || 0
   const nameCount = data?.pages.reduce((acc, page) => acc + page.length, 0) || 0

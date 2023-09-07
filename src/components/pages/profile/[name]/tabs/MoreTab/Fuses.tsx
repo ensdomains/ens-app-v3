@@ -83,8 +83,8 @@ const Fuses = ({
 }) => {
   const { t } = useTranslation('profile')
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showBurnFusesInput = prepareDataInput('BurnFuses')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showBurnFusesInput = usePreparedDataInput('BurnFuses')
   const handleEditClick = () => {
     showBurnFusesInput(`burn-fuses-${name}`, {
       name,

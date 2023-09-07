@@ -113,8 +113,8 @@ export const SubnamesTab = ({
 }) => {
   const { t } = useTranslation('profile')
   const { address } = useAccount()
-  const { prepareDataInput } = useTransactionFlow()
-  const showCreateSubnameInput = prepareDataInput('CreateSubname')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showCreateSubnameInput = usePreparedDataInput('CreateSubname')
 
   const [sortType, setSortType] = useQueryParameterState<
     NonNullable<GetSubnamesParameters['orderBy']>

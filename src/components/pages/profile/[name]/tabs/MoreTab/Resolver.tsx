@@ -88,8 +88,8 @@ const Resolver = ({
 
   const hasGlobalError = useHasGlobalError()
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showEditResolverInput = prepareDataInput('EditResolver')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showEditResolverInput = usePreparedDataInput('EditResolver')
   const handleEditClick = () => {
     showEditResolverInput(`resolver-upgrade-${name}`, {
       name,

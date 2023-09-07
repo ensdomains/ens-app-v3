@@ -24,7 +24,6 @@ const dynamicHelper = <P,>(name: string) =>
     () =>
       import(
         /* webpackMode: "lazy" */
-        /* webpackPrefetch: true */
         /* webpackExclude: /\.test.tsx$/ */
         `./${name}-flow`
       ),

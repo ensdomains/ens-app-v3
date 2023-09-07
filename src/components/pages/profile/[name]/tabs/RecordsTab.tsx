@@ -152,8 +152,8 @@ export const RecordsTab = ({
     }
   }, [name, chainId, contentHash])
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showAdvancedEditorInput = prepareDataInput('AdvancedEditor')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showAdvancedEditorInput = usePreparedDataInput('AdvancedEditor')
   const handleShowEditor = () =>
     showAdvancedEditorInput(`advanced-editor-${name}`, { name }, { disableBackgroundClick: true })
 

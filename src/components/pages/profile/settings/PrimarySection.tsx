@@ -133,9 +133,9 @@ export const PrimarySection = () => {
   const { t } = useTranslation('settings')
 
   const { address } = useAccountSafely()
-  const { prepareDataInput } = useTransactionFlow()
-  const showSelectPrimaryNameInput = prepareDataInput('SelectPrimaryName')
-  const showResetPrimaryNameInput = prepareDataInput('ResetPrimaryName')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showSelectPrimaryNameInput = usePreparedDataInput('SelectPrimaryName')
+  const showResetPrimaryNameInput = usePreparedDataInput('ResetPrimaryName')
 
   const primary = usePrimaryName({ address })
 

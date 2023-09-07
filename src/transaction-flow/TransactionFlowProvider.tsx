@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
@@ -25,12 +26,12 @@ type ShowDataInput<C extends keyof DataInputComponent> = (
   },
 ) => void
 
-type PrepareDataInput = <C extends keyof DataInputComponent>(name: C) => ShowDataInput<C>
+type UsePreparedDataInput = <C extends keyof DataInputComponent>(name: C) => ShowDataInput<C>
 
 export type CreateTransactionFlow = (key: string, flow: TransactionFlowItem) => void
 
 type ProviderValue = {
-  prepareDataInput: PrepareDataInput
+  usePreparedDataInput: UsePreparedDataInput
   createTransactionFlow: CreateTransactionFlow
   resumeTransactionFlow: (key: string) => void
   getTransactionIndex: (key: string) => number
@@ -44,7 +45,7 @@ type ProviderValue = {
 }
 
 const TransactionContext = React.createContext<ProviderValue>({
-  prepareDataInput: () => () => {},
+  usePreparedDataInput: () => () => {},
   createTransactionFlow: () => {},
   resumeTransactionFlow: () => {},
   getTransactionIndex: () => 0,
@@ -155,8 +156,9 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const providerValue: ProviderValue = useMemo(() => {
     return {
-      prepareDataInput: <C extends keyof DataInputComponent>(name: C) => {
-        ;(DataInputComponents[name] as any).render.preload()
+      usePreparedDataInput: <C extends keyof DataInputComponent>(name: C) => {
+        const { address } = useAccountSafely()
+        if (address) (DataInputComponents[name] as any).render.preload()
         const func: ShowDataInput<C> = (key, data, options = {}) =>
           dispatch({
             name: 'showDataInput',

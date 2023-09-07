@@ -51,7 +51,7 @@ export const useProfileActions = ({
   expiryDate,
 }: Props) => {
   const { t } = useTranslation('profile')
-  const { createTransactionFlow, prepareDataInput } = useTransactionFlow()
+  const { createTransactionFlow, usePreparedDataInput } = useTransactionFlow()
 
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
 
@@ -91,12 +91,14 @@ export const useProfileActions = ({
 
   const hasGlobalError = useHasGlobalError()
 
-  const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
-  const showProfileEditorInput = prepareDataInput('ProfileEditor')
-  const showDeleteEmancipatedSubnameWarningInput = prepareDataInput(
+  const showUnknownLabelsInput = usePreparedDataInput('UnknownLabels')
+  const showProfileEditorInput = usePreparedDataInput('ProfileEditor')
+  const showDeleteEmancipatedSubnameWarningInput = usePreparedDataInput(
     'DeleteEmancipatedSubnameWarning',
   )
-  const showDeleteSubnameNotParentWarningInput = prepareDataInput('DeleteSubnameNotParentWarning')
+  const showDeleteSubnameNotParentWarningInput = usePreparedDataInput(
+    'DeleteSubnameNotParentWarning',
+  )
 
   const isLoading =
     primary.isLoading || resolverStatus.isLoading || getPrimaryNameTransactionFlowItem.isLoading

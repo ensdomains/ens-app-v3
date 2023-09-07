@@ -11,6 +11,7 @@ export function useInvalidateOnBlock({
   const queryClient = useQueryClient()
   useBlockNumber({
     watch: true,
+    enabled,
     onBlock: enabled ? () => queryClient.invalidateQueries(queryKey) : undefined,
   })
 }

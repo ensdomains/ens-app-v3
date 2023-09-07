@@ -16,11 +16,11 @@ const createMockResolverStatus = (overides = {}) => ({
     isNameWrapperAware: false,
     ...overides,
   },
-  isLoading: false
+  isLoading: false,
 })
 const mockUseResolverStatus = jest.fn().mockReturnValue(createMockResolverStatus())
 jest.mock('@app/hooks/resolver/useResolverStatus', () => ({
-  useResolverStatus: () => mockUseResolverStatus()
+  useResolverStatus: () => mockUseResolverStatus(),
 }))
 
 const mockUseTransaction = mockFunction(useTransactionFlow)
@@ -31,14 +31,14 @@ const mockCreateTransactionFlow = jest.fn()
 const mockResumeTransactionFlow = jest.fn()
 const mockGetResumable = jest.fn()
 const mockShowDataInput = jest.fn()
-const mockPrepareDataInput = () => mockShowDataInput
+const mockusePreparedDataInput = () => mockShowDataInput
 
 describe('WrapButton', () => {
   mockUseTransaction.mockReturnValue({
     resumeTransactionFlow: mockResumeTransactionFlow,
     createTransactionFlow: mockCreateTransactionFlow,
     getResumable: mockGetResumable,
-    prepareDataInput: mockPrepareDataInput,
+    usePreparedDataInput: mockusePreparedDataInput,
   })
   mockUseAccount.mockReturnValue({ address: '0x123' })
   mockUseWrapperApprovedForAll.mockReturnValue({
@@ -89,7 +89,9 @@ describe('WrapButton', () => {
     expect(mockCreateTransactionFlow).toHaveBeenCalled()
   })
   it('should create a transaction flow for migrateProfile and wrapName', async () => {
-    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({ isMigratedProfileEqual: false }))
+    mockUseResolverStatus.mockReturnValue(
+      createMockResolverStatus({ isMigratedProfileEqual: false }),
+    )
     render(
       <WrapButton
         name="test123.eth"
@@ -174,7 +176,9 @@ describe('WrapButton', () => {
     expect(args[1].transactions[0].data).toEqual({ name: 'test123.eth' })
   })
   it('should create a transaction flow for a .eth 2LD with a profile and a different owner', () => {
-    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({ isMigratedProfileEqual: false }))
+    mockUseResolverStatus.mockReturnValue(
+      createMockResolverStatus({ isMigratedProfileEqual: false }),
+    )
     render(
       <WrapButton
         name="test123.eth"
@@ -292,7 +296,9 @@ describe('WrapButton', () => {
   })
 
   it('should create a transaction flow for a subname with a profile', () => {
-    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({isMigratedProfileEqual: false}))
+    mockUseResolverStatus.mockReturnValue(
+      createMockResolverStatus({ isMigratedProfileEqual: false }),
+    )
     render(
       <WrapButton
         name="sub.test123.eth"

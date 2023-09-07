@@ -156,9 +156,9 @@ interface AccordionProps {
 const Accordion = ({ data, name }: AccordionProps) => {
   const { t } = useTranslation('profile')
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showEditResolverInput = prepareDataInput('EditResolver')
-  const showBurnFusesInput = prepareDataInput('BurnFuses')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showEditResolverInput = usePreparedDataInput('EditResolver')
+  const showBurnFusesInput = usePreparedDataInput('BurnFuses')
 
   const [activeItem, setActiveItem] = useState(0)
 

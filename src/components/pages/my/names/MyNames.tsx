@@ -95,8 +95,8 @@ const MyNames = () => {
     setPage(1)
   }, [address])
 
-  const { prepareDataInput, getTransactionFlowStage } = useTransactionFlow()
-  const showExtendNamesInput = prepareDataInput('ExtendNames')
+  const { usePreparedDataInput, getTransactionFlowStage } = useTransactionFlow()
+  const showExtendNamesInput = usePreparedDataInput('ExtendNames')
 
   const handleExtend = () => {
     if (selectedNames.length === 0) return

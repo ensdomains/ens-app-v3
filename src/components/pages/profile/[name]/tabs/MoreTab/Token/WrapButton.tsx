@@ -49,9 +49,9 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
     canBeWrapped: _canBeWrapped,
   })
 
-  const { createTransactionFlow, resumeTransactionFlow, getResumable, prepareDataInput } =
+  const { createTransactionFlow, resumeTransactionFlow, getResumable, usePreparedDataInput } =
     useTransactionFlow()
-  const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
+  const showUnknownLabelsInput = usePreparedDataInput('UnknownLabels')
   const resumable = getResumable(`wrapName-${name}`)
 
   const handleWrapClick = () => {

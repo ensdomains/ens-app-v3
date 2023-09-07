@@ -32,8 +32,8 @@ const ButtonContainer = styled.div(
 export const ExtendButton = ({ name }: { name: string }) => {
   const { t } = useTranslation()
   const abilities = useAbilities(name)
-  const { prepareDataInput } = useTransactionFlow()
-  const showExtendNamesInput = prepareDataInput('ExtendNames')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showExtendNamesInput = usePreparedDataInput('ExtendNames')
 
   if (!abilities.data?.canExtend) return null
 

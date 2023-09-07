@@ -84,8 +84,8 @@ export const NameChangePermissions = ({
   isUserOwner,
 }: Props) => {
   const { t } = useTranslation('profile')
-  const { prepareDataInput } = useTransactionFlow()
-  const showRevokePermissionsInput = prepareDataInput('RevokePermissions')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showRevokePermissionsInput = usePreparedDataInput('RevokePermissions')
 
   const isParentLocked = parentState === 'locked'
 

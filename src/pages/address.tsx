@@ -119,8 +119,8 @@ const Page = () => {
     [mode],
   )
 
-  const { prepareDataInput, getTransactionFlowStage } = useTransactionFlow()
-  const showExtendNamesInput = prepareDataInput('ExtendNames')
+  const { usePreparedDataInput, getTransactionFlowStage } = useTransactionFlow()
+  const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const transactionKey = `extend-names-${selectedNames.join('-')}`
   const handleExtend = () => {
     if (selectedNames.length === 0) return

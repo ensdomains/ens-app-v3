@@ -174,8 +174,8 @@ export const ProfileSnippet = ({
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showExtendNamesInput = prepareDataInput('ExtendNames')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showExtendNamesInput = usePreparedDataInput('ExtendNames')
 
   const beautifiedName = useBeautifiedName(name)
 
