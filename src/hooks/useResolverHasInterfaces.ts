@@ -1,9 +1,8 @@
 import { useMemo } from 'react'
 
-
 import { getKnownResolverData } from '@app/constants/resolverAddressData'
 import { RESOLVER_INTERFACE_IDS, ResolverInterfaceName } from '@app/constants/resolverInterfaceIds'
-import { GetSupportedInterfacesReturnType } from '@root/.yalc/@ensdomains/ensjs/dist/types/public'
+import { GetSupportedInterfacesReturnType } from '@ensdomains/ensjs/public'
 import type { Address } from 'viem'
 import { useChainId } from './chain/useChainId'
 import { useSupportedInterfaces } from './ensjs/public/useSupportedInterfaces'

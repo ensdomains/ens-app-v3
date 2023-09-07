@@ -52,7 +52,7 @@
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/dnsprovejs": "0.4.1",
     "@ensdomains/ens-contracts": "0.0.22",
-    "@ensdomains/ensjs": "workspace:*",
+    "@ensdomains/ensjs": "3.0.0-beta.6",
     "@ensdomains/thorin": "0.6.42",
     "@metamask/inpage-provider": "^8.1.0",
     "@metamask/mobile-provider": "^2.1.0",

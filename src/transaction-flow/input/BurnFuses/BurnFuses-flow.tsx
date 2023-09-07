@@ -1,5 +1,6 @@
-import { ChildFuseReferenceType } from '@root/.yalc/@ensdomains/ensjs/dist/types/utils'
 import { Dispatch } from 'react'
+
+import { ChildFuseReferenceType } from '@ensdomains/ensjs/utils'
 
 import BurnFusesContent from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'

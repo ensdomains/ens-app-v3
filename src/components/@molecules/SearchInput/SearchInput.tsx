@@ -3,12 +3,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import {
-  GetExpiryReturnType,
-  GetOwnerReturnType,
-  GetPriceReturnType,
-  GetWrapperDataReturnType,
-} from '@root/.yalc/@ensdomains/ensjs/dist/types/public'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -17,6 +11,12 @@ import styled, { css } from 'styled-components'
 import { isAddress } from 'viem'
 import { useQueryClient } from 'wagmi'
 
+import {
+  GetExpiryReturnType,
+  GetOwnerReturnType,
+  GetPriceReturnType,
+  GetWrapperDataReturnType,
+} from '@ensdomains/ensjs/public'
 import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'

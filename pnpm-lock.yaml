@@ -33,7 +33,7 @@ importers:
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/ens-contracts': 0.0.22
       '@ensdomains/ens-test-env': ^0.3.8
-      '@ensdomains/ensjs': workspace:*
+      '@ensdomains/ensjs': 3.0.0-beta.6
       '@ensdomains/thorin': 0.6.42
       '@metamask/inpage-provider': ^8.1.0
       '@metamask/mobile-provider': ^2.1.0
@@ -163,7 +163,7 @@ importers:
       '@ensdomains/content-hash': 3.0.0
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/ens-contracts': 0.0.22
-      '@ensdomains/ensjs': link:.yalc/@ensdomains/ensjs
+      '@ensdomains/ensjs': 3.0.0-beta.6_pbzxanhqfmwkxondoslqchwzum
       '@ensdomains/thorin': 0.6.42_bvlqn2qn62h5jwuf4rcyosdfji
       '@metamask/inpage-provider': 8.1.0
       '@metamask/mobile-provider': 2.1.0
@@ -293,32 +293,6 @@ importers:
       wait-on: 6.0.1
       wrangler: 2.16.0
       yalc: 1.0.0-pre.53
-
-  .yalc/@ensdomains/ensjs:
-    specifiers:
-      '@adraffy/ens-normalize': 1.9.0
-      '@ensdomains/address-encoder': ^0.2.18
-      '@ensdomains/content-hash': ^3.0.0-beta.5
-      '@ensdomains/dnsprovejs': ^0.4.1
-      abitype: ^0.8.0
-      cbor: ^8.1.0
-      dns-packet: ^5.3.1
-      graphql: ^16.3.0
-      graphql-request: 5.1.0
-      pako: ^2.1.0
-      traverse: ^0.6.6
-    dependencies:
-      '@adraffy/ens-normalize': 1.9.0
-      '@ensdomains/address-encoder': 0.2.21
-      '@ensdomains/content-hash': 3.0.0
-      '@ensdomains/dnsprovejs': 0.4.1
-      abitype: 0.8.7
-      cbor: 8.1.0
-      dns-packet: 5.4.0
-      graphql: 16.6.0
-      graphql-request: 5.1.0_graphql@16.6.0
-      pako: 2.1.0
-      traverse: 0.6.7
 
 packages:
 
@@ -2221,6 +2195,29 @@ packages:
       - bufferutil
       - utf-8-validate
     dev: true
+
+  /@ensdomains/ensjs/3.0.0-beta.6_pbzxanhqfmwkxondoslqchwzum:
+    resolution: {integrity: sha512-+5OuGjJJTxmqkedJEohDP+QTVGazcArZ+F5A7GmMFUM68J7u+1hSSLskrcIbQ+VVOVdrWZ1Gh0wTv/m1IJM0Fg==}
+    peerDependencies:
+      viem: ^1.6.0
+    dependencies:
+      '@adraffy/ens-normalize': 1.9.0
+      '@ensdomains/address-encoder': 0.2.21
+      '@ensdomains/content-hash': 3.0.0
+      '@ensdomains/dnsprovejs': 0.4.1
+      abitype: 0.8.7_typescript@5.1.6
+      cbor: 8.1.0
+      dns-packet: 5.4.0
+      graphql: 16.6.0
+      graphql-request: 5.1.0_graphql@16.6.0
+      pako: 2.1.0
+      traverse: 0.6.7
+      viem: 1.6.0_typescript@5.1.6
+    transitivePeerDependencies:
+      - encoding
+      - typescript
+      - zod
+    dev: false
 
   /@ensdomains/resolver/0.2.4:
     resolution: {integrity: sha512-bvaTH34PMCbv6anRa9I/0zjLJgY4EuznbEMgbV77JBCQ9KNC46rzi0avuxpOfu+xDjPEtSFGqVEOr5GlUSGudA==}
@@ -6413,16 +6410,6 @@ packages:
   /abbrev/1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
     dev: true
-
-  /abitype/0.8.7:
-    resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}
-    peerDependencies:
-      typescript: '>=5.0.4'
-      zod: ^3 >=3.19.1
-    peerDependenciesMeta:
-      zod:
-        optional: true
-    dev: false
 
   /abitype/0.8.7_typescript@5.1.6:
     resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}

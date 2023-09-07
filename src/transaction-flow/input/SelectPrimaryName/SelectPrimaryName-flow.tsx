@@ -17,7 +17,7 @@ import {
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainId } from '@app/hooks/chain/useChainId'
-import { useNamesForAddressPaginated } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
+import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useBasicName } from '@app/hooks/useBasicName'
@@ -184,7 +184,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     hasNextPage,
     fetchNextPage: loadMoreNames,
     isLoading: isLoadingNames,
-  } = useNamesForAddressPaginated({
+  } = useNamesForAddress({
     address,
     orderBy: sortType,
     orderDirection: sortDirection,

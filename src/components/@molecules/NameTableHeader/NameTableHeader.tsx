@@ -1,8 +1,8 @@
-import { GetNamesForAddressParameters } from '@root/.yalc/@ensdomains/ensjs/dist/types/subgraph'
 import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { GetNamesForAddressParameters } from '@ensdomains/ensjs/subgraph'
 import { Input, MagnifyingGlassSimpleSVG, Select, mq } from '@ensdomains/thorin'
 
 import DownDirectionSVG from '@app/assets/SortAscending.svg'
