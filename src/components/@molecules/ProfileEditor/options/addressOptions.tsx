@@ -48,7 +48,7 @@ const coinsWithIconsOptions = coinsWithIcons.map((coin) => ({
 const coinsWithoutIconsOptions = coinsWithoutIcons.map((coin) => ({
   value: formSafeKey(coin.toUpperCase()),
   label: coin.toUpperCase(),
-  node: <UnsupportedAddressWrapper>{coin.toUpperCase}</UnsupportedAddressWrapper>,
+  node: <UnsupportedAddressWrapper>{coin.toUpperCase()}</UnsupportedAddressWrapper>,
 }))
 
 const addressOptions = [...coinsWithIconsOptions, ...coinsWithoutIconsOptions] as ComponentProps<

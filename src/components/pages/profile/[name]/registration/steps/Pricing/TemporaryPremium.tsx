@@ -1,6 +1,7 @@
 import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-link'
 import {
   ChangeEventHandler,
+  MouseEventHandler,
   RefObject,
   useCallback,
   useEffect,
@@ -455,7 +456,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
     [getPointFromX, getPos, setProperty, getDateFromPoint],
   )
 
-  const handleClick = useCallback(
+  const handleClick: MouseEventHandler<HTMLDivElement> = useCallback(
     (e) => {
       const x = e.nativeEvent.offsetX
       const point = getPointFromX(x)

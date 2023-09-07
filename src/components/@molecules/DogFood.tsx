@@ -47,7 +47,7 @@ export const DogFood = (
       throttledSetEthNameInput((inputWatch || '').toLocaleLowerCase())
   }, [inputWatch, throttledSetEthNameInput])
 
-  const queryKeyGenerator = useQueryKeys().dogfood 
+  const queryKeyGenerator = useQueryKeys().getAddressRecord 
 
   const { data: addressRecordData } = useAddressRecord({
     enabled: !!ethNameInput?.includes('.'),
@@ -88,7 +88,7 @@ export const DogFood = (
             hasAddressRecord: async (value) => {
               if(value?.includes('.')) {
                 try {
-                  const result = await queryClient.getQueryData(queryKeyGenerator(value.toLowerCase()))
+                  const result = await queryClient.getQueryData(queryKeyGenerator({ name: value.toLowerCase() }))
                   if (result) { return undefined }
                 // eslint-disable-next-line no-empty
                 } catch (e){
@@ -100,7 +100,8 @@ export const DogFood = (
             ...validations
           },
         })}
-        error={errorMessage}
+        // TODO(tate): remove as any when thorin is updated
+        error={errorMessage as any}
         onClickAction={() => setValue('dogfoodRaw', '')}
       />
       {!errorMessage && finalValue && !disabled && (

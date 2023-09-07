@@ -299,10 +299,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
               <GasEstimationCacheableComponent $isCached={isEstimateGasLoading}>
                 <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
                 {(!!estimateGasLimitError ||
-                  (estimatedGasLimit && balance?.value && balance.value < estimatedGasLimit)) && (
+                  (!!estimatedGasLimit &&
+                    !!balance?.value &&
+                    balance.value < estimatedGasLimit)) && (
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}
-                {rentFee && transactionFee && (
+                {!!rentFee && !!transactionFee && (
                   <RegistrationTimeComparisonBanner
                     rentFee={rentFee}
                     transactionFee={transactionFee}

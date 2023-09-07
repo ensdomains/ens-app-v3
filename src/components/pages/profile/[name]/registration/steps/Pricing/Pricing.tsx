@@ -554,9 +554,9 @@ const Pricing = ({
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={name} />
       ) : (
-        yearlyFee &&
-        estimatedGasFee &&
-        gasPrice && (
+        !!yearlyFee &&
+        !!estimatedGasFee &&
+        !!gasPrice && (
           <RegistrationTimeComparisonBanner
             rentFee={yearlyFee}
             transactionFee={estimatedGasFee}

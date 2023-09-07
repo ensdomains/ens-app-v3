@@ -227,12 +227,14 @@ const NetworkSection = () => {
         <Typography id="chain-name" weight="bold" color="text">
           {chainName}
         </Typography>
-        {gasPrice && (
-          <Typography color="grey">{makeDisplay({
-            value: gasPrice,
-            symbol: 'Gwei',
-            fromDecimals: 9,
-          })}</Typography>
+        {!!gasPrice && (
+          <Typography color="grey">
+            {makeDisplay({
+              value: gasPrice,
+              symbol: 'Gwei',
+              fromDecimals: 9,
+            })}
+          </Typography>
         )}
       </NetworkSectionRow>
       {graphOutOfSync && (
