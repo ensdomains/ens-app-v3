@@ -333,6 +333,7 @@
       "notImported": "Not Imported",
       "short": "Too Short",
       "default": "Invalid",
+      "invalid": "Invalid",
       "unsupportedTLD": "Not Supported",
       "imported": "Imported",
       "owned": "Owned"
