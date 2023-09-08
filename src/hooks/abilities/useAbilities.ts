@@ -98,7 +98,11 @@ export const useAbilities = (name: string) => {
   const hasSubnamesData = useHasSubnames(name)
 
   const isLoading =
-    basicNameData.isLoading || parentBasicNameData.isLoading || hasSubnamesData.isLoading
+    !address ||
+    basicNameData.isLoading ||
+    parentBasicNameData.isLoading ||
+    hasSubnamesData.isLoading ||
+    resolverAuthorisation.isLoading
 
   const isCachedData = basicNameData.isCachedData || hasSubnamesData.isCachedData
 
@@ -106,7 +110,12 @@ export const useAbilities = (name: string) => {
     if (!name || !address || isLoading) return DEFAULT_ABILITIES
     return {
       canExtend: !!name && checkETH2LDFromName(name),
-      ...getSendAbilities({ name, address, basicNameData, parentBasicNameData }),
+      ...getSendAbilities({
+        name,
+        address,
+        basicNameData,
+        parentBasicNameData,
+      }),
       ...getEditAbilities({
         address,
         basicNameData,
@@ -129,8 +138,10 @@ export const useAbilities = (name: string) => {
   }, [
     name,
     address,
-    basicNameData,
-    parentBasicNameData,
+    basicNameData.ownerData,
+    basicNameData.wrapperData,
+    parentBasicNameData.ownerData,
+    parentBasicNameData.wrapperData,
     isLoading,
     resolverAuthorisation.data?.isAuthorized,
     hasSubnamesData.hasSubnames,

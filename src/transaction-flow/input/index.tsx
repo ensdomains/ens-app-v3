@@ -16,7 +16,8 @@ import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor-
 import type { Props as ResetPrimaryNameProps } from './ResetPrimaryName/ResetPrimaryName-flow'
 import type { Props as RevokePermissionsProps } from './RevokePermissions/RevokePermissions-flow'
 import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName/SelectPrimaryName-flow'
-import type { Props as SendNameProps } from './SendName/SendName-flow'
+import type { Props as SendNameProps } from './SendName-flow'
+import type { Props as SendName2Props } from './SendName/SendName-flow'
 import type { Props as SyncManagerProps } from './SyncManager/SyncManager-flow'
 import type { Props as TransferProfileProps } from './TransferProfile/TransferProfile-flow'
 import type { Props as UnknownLabelsProps } from './UnknownLabels/UnknownLabels-flow'
@@ -64,7 +65,8 @@ const RevokePermissions = dynamicHelper<RevokePermissionsProps>(
 const SelectPrimaryName = dynamicHelper<SelectPrimaryNameProps>(
   'SelectPrimaryName/SelectPrimaryName',
 )
-const SendName = dynamicHelper<SendNameProps>('SendName/SendName')
+const SendName = dynamicHelper<SendNameProps>('SendName')
+const SendName2 = dynamicHelper<SendName2Props>('SendName/SendName')
 const SyncManager = dynamicHelper<SyncManagerProps>('SyncManager/SyncManager')
 const TransferProfile = dynamicHelper<TransferProfileProps>('TransferProfile/TransferProfile')
 const UnknownLabels = dynamicHelper<UnknownLabelsProps>('UnknownLabels/UnknownLabels')
@@ -83,6 +85,7 @@ export const DataInputComponents = {
   RevokePermissions,
   SelectPrimaryName,
   SendName,
+  SendName2,
   SyncManager,
   TransferProfile,
   UnknownLabels,

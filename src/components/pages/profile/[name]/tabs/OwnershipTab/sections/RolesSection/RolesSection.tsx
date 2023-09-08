@@ -1,76 +1,71 @@
-import { useQueryClient } from 'wagmi'
+import styled, { css } from 'styled-components'
 
-import {
-  AeroplaneSVG,
-  Card,
-  CounterClockwiseArrowSVG,
-  HorizontalOutwardArrowsSVG,
-  PersonSVG,
-} from '@ensdomains/thorin'
+import { Button, Card } from '@ensdomains/thorin'
 
-import useRoles from '@app/components/pages/profile/[name]/tabs/OwnershipTab/sections/RolesSection/hooks/useRoles'
+import { PseudoActionButton } from '@app/components/@atoms/PseudoActionButton/PseudoActionButton'
+import type { GroupedRoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-import { Footer } from './components/Footer'
 import { Header } from './components/Header'
 import { RoleRow } from './components/RoleRow'
+import { useRoleActions } from './hooks/useRoleActions'
+
+const Footer = styled.div(
+  ({ theme }) =>
+    css`
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: flex-end;
+      gap: ${theme.space[2]};
+      min-height: ${theme.space[12]};
+    `,
+)
 
 type Props = {
   name: string
+  roles: GroupedRoleRecord[]
   details: ReturnType<typeof useNameDetails>
 }
 
-export const RolesSection = ({ name, details }: Props) => {
-  const { prepareDataInput } = useTransactionFlow()
-  const queryClient = useQueryClient()
-  const showSendNameInput = prepareDataInput('SendName')
-  const showEditRolesInput = prepareDataInput('EditRoles')
-  const showSyncManagerInput = prepareDataInput('SyncManager')
-
-  const roles = useRoles({ name, details }, { grouped: true })
-
-  const buttons = [
-    {
-      prefix: <AeroplaneSVG />,
-      label: 'Send',
-      onClick: () => showSendNameInput(`send-name`, { name }),
-    },
-    {
-      prefix: <CounterClockwiseArrowSVG />,
-      label: 'Refresh DNS',
-      onClick: () => queryClient.resetQueries({ exact: true, queryKey: ['getDNSOwner', name] }),
-    },
-    {
-      prefix: <HorizontalOutwardArrowsSVG />,
-      label: 'Sync manager',
-      onClick: () =>
-        showSyncManagerInput(`sync-manager`, {
-          name,
-          manager: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
-        }),
-    },
-    {
-      prefix: <AeroplaneSVG />,
-      label: 'Send',
-      onClick: () => showSendNameInput(`send-name`, { name }),
-    },
-    {
-      prefix: <PersonSVG />,
-      label: 'Edit roles',
-      primary: true,
-      onClick: () => showEditRolesInput(`edit-roles`, { name }),
-    },
-  ]
+export const RolesSection = ({ name, roles, details }: Props) => {
+  const actions = useRoleActions({ name, details, roles })
 
   return (
     <Card>
-      <Header count={roles.data?.filter(({ address }) => !!address).length || 0} />
+      <Header count={roles?.filter(({ address }) => !!address).length || 0} />
       <Card.Divider />
-      {roles.data?.map((role) => (
-        <RoleRow key={role.address} {...role} showEditRolesInput={showEditRolesInput} />
+      {roles?.map((role) => (
+        <RoleRow key={role.address} {...role} actions={actions.data} details={details} />
       ))}
-      <Footer buttons={buttons} />
+      <Footer>
+        {actions.data?.map(({ label, type, primary, icon, disabled = false, onClick }) => {
+          if (type === 'refresh-dns')
+            return (
+              <div key={type}>
+                <PseudoActionButton
+                  colorStyle={primary ? 'accentPrimary' : 'accentSecondary'}
+                  prefix={icon}
+                  disabled={disabled}
+                  onClick={onClick}
+                >
+                  {label}
+                </PseudoActionButton>
+              </div>
+            )
+          return (
+            <div key={type}>
+              <Button
+                colorStyle={primary ? 'accentPrimary' : 'accentSecondary'}
+                prefix={icon}
+                disabled={disabled}
+                onClick={onClick}
+              >
+                {label}
+              </Button>
+            </div>
+          )
+        })}
+      </Footer>
     </Card>
   )
 }

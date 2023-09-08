@@ -1,32 +1,12 @@
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { OutlinkSVG, QuestionCircleSVG, Tooltip, Typography } from '@ensdomains/thorin'
 
-const ROLES_DICT = {
-  owner: {
-    label: 'Owner',
-    description: 'Description',
-  },
-  manager: {
-    label: 'Manager',
-    description: 'Description',
-  },
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  'eth-record': {
-    label: 'ETH record',
-    description: 'Description',
-  },
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  'dns-owner': {
-    label: 'DNS owner',
-    description: 'Description',
-  },
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  'parent-owner': {
-    label: 'Parent owner',
-    description: 'Description',
-  },
-}
+import { getSupportLink } from '@app/utils/supportLinks'
+
+import { Role } from '../../../../../../../../../hooks/ownership/useRoles/useRoles'
 
 const TooltipContent = styled.div(
   ({ theme }) => css`
@@ -36,6 +16,24 @@ const TooltipContent = styled.div(
     gap: ${theme.space[2]};
     text-align: center;
     color: ${theme.colors.indigo};
+    pointer-events: all;
+  `,
+)
+
+const Link = styled.a(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    gap: ${theme.space[1]};
+    color: ${theme.colors.indigo};
+  `,
+)
+
+const RoleLabel = styled(Typography)(
+  () => css`
+    ::first-letter {
+      text-transform: uppercase;
+    }
   `,
 )
 
@@ -51,26 +49,35 @@ const Container = styled.button(
   `,
 )
 
-export const RoleTag = ({ name }: { name: string }) => {
-  const content = ROLES_DICT[name.toLowerCase() as keyof typeof ROLES_DICT]
+export const RoleTag = ({ role }: { role: Role }) => {
+  const { t } = useTranslation('common')
+  const link = getSupportLink(role)
+  const [open, setOpen] = useState<true | undefined>()
   return (
     <Tooltip
+      isOpen={open}
       content={
-        <TooltipContent>
+        <TooltipContent onMouseLeave={() => setOpen(undefined)}>
           <QuestionCircleSVG />
           <Typography color="text" fontVariant="small">
-            {content.description}
+            {t(`roles.${role}.description`)}
           </Typography>
-          <Typography color="indigo" fontVariant="small">
-            Learn more <OutlinkSVG />
-          </Typography>
+          {link && (
+            <Link href={link}>
+              <Typography color="indigo" fontVariant="small">
+                {t('action.learnMore')}
+              </Typography>
+              <OutlinkSVG />
+            </Link>
+          )}
         </TooltipContent>
       }
+      background="indigoSurface"
     >
-      <Container type="button">
-        <Typography fontVariant="smallBold" color="indigo">
-          {content.label}
-        </Typography>
+      <Container type="button" onClick={() => setOpen((_open) => (_open ? undefined : true))}>
+        <RoleLabel fontVariant="smallBold" color="indigo">
+          {t(`roles.${role}.title`)}
+        </RoleLabel>
       </Container>
     </Tooltip>
   )

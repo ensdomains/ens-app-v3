@@ -6,6 +6,7 @@ import { Typography } from '@ensdomains/thorin'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { QuerySpace } from '@app/types'
+import { emptyAddress } from '@app/utils/constants'
 import { shortenAddress } from '@app/utils/utils'
 
 const Container = styled.div(
@@ -28,32 +29,49 @@ const TextContainer = styled.div(
   `,
 )
 
+const AddressTitleContainer = styled.div(
+  () => css`
+    word-break: break-all;
+    text-align: left;
+  `,
+)
+
 type Props = {
   address: string
   name?: string
   subtitle?: string
   size?: QuerySpace
+  shorten?: boolean
 }
 
-export const AvatarWithIdentifier = ({ name, address, subtitle, size = '10' }: Props) => {
-  const primary = usePrimary(address, !address || !!name)
+export const AvatarWithIdentifier = ({
+  name,
+  address,
+  subtitle,
+  size = '10',
+  shorten = true,
+}: Props) => {
+  const primary = usePrimary(address, !address || !!name || address === emptyAddress)
   const network = useChainId()
 
-  const _subtitle = subtitle || (primary.data?.name ? shortenAddress(address) : undefined)
+  const _name = name || primary.data?.beautifiedName
+  const _title = _name || (shorten ? shortenAddress(address) : address)
+  const _subtitle =
+    subtitle || (primary.data?.beautifiedName || name ? shortenAddress(address) : undefined)
+
+  const isTitleFullAddress = !shorten && !_name
 
   return (
     <Container>
-      <AvatarWithZorb
-        label={name || primary.data?.name || address}
-        address={address}
-        name={name || primary.data?.name}
-        size={size}
-        network={network}
-      />
+      <AvatarWithZorb label={_title} address={address} name={_name} size={size} network={network} />
       <TextContainer>
-        <Typography fontVariant="bodyBold" ellipsis data-testid="avatar-label-name">
-          {name || primary.data?.beautifiedName || shortenAddress(address)}
-        </Typography>
+        {isTitleFullAddress ? (
+          <AddressTitleContainer>{_title}</AddressTitleContainer>
+        ) : (
+          <Typography fontVariant="bodyBold" ellipsis data-testid="avatar-label-name">
+            {_title}
+          </Typography>
+        )}
         {_subtitle && (
           <Typography fontVariant="extraSmall" color="grey" data-testid="avatar-label-address">
             {_subtitle}

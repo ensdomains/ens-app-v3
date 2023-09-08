@@ -8,6 +8,7 @@ const Container = styled.div(
     flex-flow: row wrap;
     justify-content: flex-end;
     gap: ${theme.space[2]};
+    min-height: ${theme.space[12]};
   `,
 )
 

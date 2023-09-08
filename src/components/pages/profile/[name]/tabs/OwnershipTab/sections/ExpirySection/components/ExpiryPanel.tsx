@@ -1,10 +1,12 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { match } from 'ts-pattern'
 
-import { OutlinkSVG, QuestionCircleSVG, Tooltip, Typography } from '@ensdomains/thorin'
+import { OutlinkSVG, Typography, mq } from '@ensdomains/thorin'
+
+import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
 
 type Props = {
-  type: 'expiry' | 'grace-period' | 'registration'
+  type: 'expiry' | 'grace-period' | 'registration' | 'parent-expiry' | 'parent-grace-period'
   date: Date
   link?: string
   tooltip?: string
@@ -12,10 +14,18 @@ type Props = {
 
 const Container = styled.div(({ theme }) => [
   css`
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: ${theme.space[2]};
+    border-bottom: 1px solid ${theme.colors.border};
+    padding: ${theme.space['4']} 0;
   `,
+  mq.lg.min(css`
+    border-bottom: none;
+    border-right: 1px solid ${theme.colors.border};
+    padding: 0 ${theme.space['1']} 0 ${theme.space['4']};
+  `),
 ])
 
 const Header = styled.div(
@@ -26,17 +36,6 @@ const Header = styled.div(
   `,
 )
 
-const IconWrapper = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space[4]};
-    height: ${theme.space[4]};
-    color: ${theme.colors.indigo};
-
-    svg {
-      display: block;
-    }
-  `,
-)
 const Link = styled.a(
   ({ theme }) => css`
     display: flex;
@@ -59,17 +58,12 @@ const Body = styled.div(
 )
 
 export const ExpiryPanel = ({ type, date, link, tooltip }: Props) => {
-  console.log(type)
-  const { title } = match(type)
-    .with('expiry', () => ({ title: 'Name expires' }))
-    .with('grace-period', () => ({ title: 'Grace period ends' }))
-    .with('registration', () => ({ title: 'Registered' }))
-    .exhaustive()
+  const { t } = useTranslation('profile')
   return (
     <Container>
       <Header>
         <Typography fontVariant="bodyBold" color="text">
-          {title}
+          {t(`tabs.ownership.sections.expiry.panel.${type}.title`)}
         </Typography>
         {link && (
           <Link
@@ -79,24 +73,18 @@ export const ExpiryPanel = ({ type, date, link, tooltip }: Props) => {
             data-testid="etherscan-registration-link"
           >
             <Typography fontVariant="smallBold" color="accent">
-              View
+              {t('action.view', { ns: 'common' })}
             </Typography>
             <OutlinkSVG />
           </Link>
         )}
-        {tooltip && (
-          <Tooltip content="tooltip" placement="top">
-            <IconWrapper>
-              <QuestionCircleSVG />
-            </IconWrapper>
-          </Tooltip>
-        )}
+        {tooltip && <QuestionTooltip content={tooltip} />}
       </Header>
       <Body>
         <Typography fontVariant="body" color="text">
           {date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
         </Typography>
-        <Typography fontVariant="body" color="grey">
+        <Typography fontVariant="small" color="grey">
           {date.toLocaleTimeString(undefined, {
             hour: 'numeric',
             minute: 'numeric',

@@ -1,14 +1,32 @@
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { match } from 'ts-pattern'
-
-import { Dialog } from '@ensdomains/thorin'
+import { useRef, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { P, match } from 'ts-pattern'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import useRoles from '@app/hooks/ownership/useRoles/useRoles'
+import { useAccountSafely } from '@app/hooks/useAccountSafely'
+import { useBasicName } from '@app/hooks/useBasicName'
+import { useNameType } from '@app/hooks/useNameType'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
-import { SearchView } from './views/SearchView'
-import { SummaryView } from './views/SummaryView'
+import { checkCanSend } from './utils/checkCanSend'
+import { CannotSendView } from './views/CannotSendView'
+import { ConfirmationView } from './views/ConfirmationView'
+import { SearchView } from './views/SearchView/SearchView'
+import { SummaryView } from './views/SummaryView/SummaryView'
+
+export type SendNameForm = {
+  query: ''
+  recipient: string
+  transactions: {
+    sendOwner: boolean
+    sendManager: boolean
+    setEthRecord: boolean
+    resetProfile: boolean
+  }
+}
 
 type Data = {
   name: string
@@ -18,26 +36,111 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const SendName = ({ data: { name } }: Props) => {
-  const [view] = useState<{ name: 'summary' } | { name: 'search' }>({ name: 'search' })
+const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
+  const ref = useRef<HTMLFormElement>(null)
 
-  const { control } = useForm({
+  const account = useAccountSafely()
+  const abilities = useAbilities(name)
+  const nameType = useNameType(name)
+  const basic = useBasicName(name)
+  const roles = useRoles(name)
+
+  const flow = ['search', 'summary', 'confirmation'] as const
+  const [viewIndex, setViewIndex] = useState(0)
+  const view = flow[viewIndex]
+  const onNext = () => setViewIndex((i) => Math.min(i + 1, flow.length - 1))
+  const onBack = () => setViewIndex((i) => Math.max(i - 1, 0))
+  const onConfirm = () =>
+    ref.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
+
+  const form = useForm<SendNameForm>({
     defaultValues: {
-      name,
+      query: '',
+      recipient: undefined,
+      transactions: {
+        sendOwner: false,
+        sendManager: false,
+        setEthRecord: false,
+        resetProfile: false,
+      },
     },
   })
+  const { setValue } = form
+
+  const onSelect = (recipient: string) => {
+    if (!recipient) return
+    const currentOwner = roles.data?.find((role) => role.role === 'owner')?.address
+    const currentManager = roles.data?.find((role) => role.role === 'manager')?.address
+    const currentEthRecord = roles.data?.find((role) => role.role === 'eth-record')?.address
+    setValue('recipient', recipient)
+    setValue('transactions', {
+      sendOwner: abilities.data.canSendOwner && recipient !== currentOwner,
+      sendManager: abilities.data.canSendManager && recipient !== currentManager,
+      setEthRecord: abilities.data.canEditRecords && recipient !== currentEthRecord,
+      resetProfile: false,
+    })
+    onNext()
+  }
+
+  const onSubmit = ({ recipient, transactions }: SendNameForm) => {
+    const isOwnerOrManager =
+      account.address === basic.ownerData?.owner || basic.ownerData?.registrant === account.address
+
+    const _transactions = [
+      transactions.setEthRecord
+        ? makeTransactionItem('updateEthAddress', { name, address: recipient })
+        : null,
+      transactions.sendManager && !!abilities.data?.sendNameFunctionCallDetails?.sendManager
+        ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+            name,
+            newOwner: recipient,
+            sendType: 'sendManager',
+            contract: abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract,
+            reclaim: abilities.data?.sendNameFunctionCallDetails?.sendManager?.method === 'reclaim',
+          })
+        : null,
+      transactions.sendOwner && !!abilities.data?.sendNameFunctionCallDetails?.sendOwner
+        ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+            name,
+            newOwner: recipient,
+            sendType: 'sendOwner',
+            contract: abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract,
+          })
+        : null,
+    ].filter((transaction) => !!transaction)
+
+    if (_transactions.length === 0) return
+
+    dispatch({
+      name: 'setTransactions',
+      payload: _transactions,
+    })
+
+    dispatch({
+      name: 'setFlowStage',
+      payload: 'transaction',
+    })
+  }
+
+  const canSend = checkCanSend({ abilities: abilities.data, nameType: nameType.data })
 
   return (
-    <>
-      <Dialog.Heading title="Send name" />
-      <InnerDialog>
-        {match(view)
-          .with({ name: 'summary' }, () => <SummaryView control={control} />)
-          .otherwise(() => (
-            <SearchView control={control} />
-          ))}
+    <FormProvider {...form}>
+      <InnerDialog as="form" ref={ref} onSubmit={form.handleSubmit(onSubmit)}>
+        {match([canSend, view])
+          .with([false, P._], () => <CannotSendView onDismiss={onDismiss} />)
+          .with([true, 'confirmation'], () => (
+            <ConfirmationView onBack={onBack} onConfirm={onConfirm} />
+          ))
+          .with([true, 'summary'], () => (
+            <SummaryView name={name} onBack={onBack} onNext={onNext} />
+          ))
+          .with([true, 'search'], () => (
+            <SearchView name={name} onCancel={onDismiss} onSelect={onSelect} />
+          ))
+          .exhaustive()}
       </InnerDialog>
-    </>
+    </FormProvider>
   )
 }
 

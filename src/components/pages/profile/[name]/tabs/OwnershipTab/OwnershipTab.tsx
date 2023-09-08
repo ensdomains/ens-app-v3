@@ -1,7 +1,19 @@
+import styled, { css } from 'styled-components'
+
+import useRoles from '@app/hooks/ownership/useRoles/useRoles'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
 
+import { ContractSection } from './sections/ContractSection/ContractSection'
 import { ExpirySection } from './sections/ExpirySection/ExpirySection'
 import { RolesSection } from './sections/RolesSection/RolesSection'
+
+const Container = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+  `,
+)
 
 type Props = {
   name: string
@@ -9,11 +21,15 @@ type Props = {
 }
 
 export const OwnershipTab = ({ name, details }: Props) => {
-  console.log(details)
+  const roles = useRoles(name, { grouped: true })
+
+  const isLoading = roles.isLoading || details.isLoading
+  if (isLoading) return null
   return (
-    <>
-      <RolesSection name={name} details={details} />
+    <Container>
+      <RolesSection name={name} roles={roles.data!} details={details} />
       <ExpirySection name={name} details={details} />
-    </>
+      <ContractSection details={details} />
+    </Container>
   )
 }

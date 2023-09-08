@@ -50,7 +50,39 @@
       "name": "Records"
     },
     "ownership": {
-      "name": "Ownership"
+      "name": "Ownership",
+      "sections": {
+        "roles": {
+          "title": "Roles",
+          "addresses_one": "{{count}} address",
+          "addresses_other": "{{count}} addresses"
+        },
+        "expiry": {
+          "panel": {
+            "expiry": {
+              "title": "Name expires"
+            },
+            "grace-period": {
+              "title": "Grace period ends",
+              "tooltip": {
+                "content": "A 90 day grace window after expiration, when the name can still be extended but not re-registered."
+              }
+            },
+            "registration": {
+              "title": "Registered"
+            },
+            "parent-expiry": {
+              "title": "Parent name expires"
+            },
+            "parent-grace-period": {
+              "title": "Parent grace period ends"
+            }
+          }
+        },
+        "contract": {
+          "warning": "Some apps may show the contract address as the owner. This doesn't affect your ownership."
+        }
+      }
     },
     "subnames": {
       "name": "Subnames"
