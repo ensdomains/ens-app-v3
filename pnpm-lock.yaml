@@ -39,6 +39,7 @@ importers:
       '@metamask/mobile-provider': ^2.1.0
       '@metamask/post-message-stream': ^6.1.2
       '@next/bundle-analyzer': ^13.4.19
+      '@noble/hashes': ^1.3.2
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
       '@openzeppelin/contracts': ^4.7.3
       '@openzeppelin/test-helpers': ^0.5.16
@@ -168,6 +169,7 @@ importers:
       '@metamask/inpage-provider': 8.1.0
       '@metamask/mobile-provider': 2.1.0
       '@metamask/post-message-stream': 6.1.2
+      '@noble/hashes': 1.3.2
       '@rainbow-me/rainbowkit': 1.0.8_6ohvwx4vltwvdm27d4nutgyik4
       '@sentry/nextjs': 7.43.0_next@13.4.19+react@18.2.0
       '@svgr/webpack': 8.1.0_typescript@5.1.6
@@ -1970,7 +1972,7 @@ packages:
     resolution: {integrity: sha512-gcENLemRR13+1MED2NeZBMA7FRS0xQPM7L2vhMqvKkjqtFT4YfjSVADq5U0iLuQLhFUJEMVuA8fbv5v+TN6O9A==}
     dependencies:
       '@chainsafe/as-sha256': 0.4.1
-      '@noble/hashes': 1.3.1
+      '@noble/hashes': 1.3.2
 
   /@chainsafe/ssz/0.11.1:
     resolution: {integrity: sha512-cB8dBkgGN6ZoeOKuk+rIRHKN0L5i9JLGeC0Lui71QX0TuLcQKwgbfkUexpyJxnGFatWf8yeJxlOjozMn/OTP0g==}
@@ -3767,6 +3769,10 @@ packages:
     resolution: {integrity: sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA==}
     engines: {node: '>= 16'}
 
+  /@noble/hashes/1.3.2:
+    resolution: {integrity: sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ==}
+    engines: {node: '>= 16'}
+
   /@noble/secp256k1/1.6.3:
     resolution: {integrity: sha512-T04e4iTurVy7I8Sw4+c5OSN9/RkPlo1uKxAomtxQNLq8j1uPAqnsqG1bqvY3Jv7c13gyr6dui0zmh/I3+f/JaQ==}
     dev: true
@@ -4261,7 +4267,7 @@ packages:
     resolution: {integrity: sha512-bcKpo1oj54hGholplGLpqPHRbIsnbixFtc06nwuNM5/dwSXOq/AAYoIBRsBmnZJSdfeNW5rnff7NTAz3ZCqR9Q==}
     dependencies:
       '@noble/curves': 1.0.0
-      '@noble/hashes': 1.3.1
+      '@noble/hashes': 1.3.2
       '@scure/base': 1.1.1
 
   /@scure/bip39/1.1.0:
@@ -4274,7 +4280,7 @@ packages:
   /@scure/bip39/1.2.0:
     resolution: {integrity: sha512-SX/uKq52cuxm4YFXWFaVByaSHJh2w3BnokVSeUJVCv6K7WulT9u2BuNRBhuFl8vAuYnzx9bEu9WgpcNYTrYieg==}
     dependencies:
-      '@noble/hashes': 1.3.1
+      '@noble/hashes': 1.3.2
       '@scure/base': 1.1.1
 
   /@sentry/browser/7.43.0:
@@ -4557,7 +4563,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.19.0
       '@noble/ed25519': 1.7.3
-      '@noble/hashes': 1.3.1
+      '@noble/hashes': 1.3.2
       '@noble/secp256k1': 1.7.1
       '@solana/buffer-layout': 4.0.0
       agentkeepalive: 4.3.0

@@ -1,14 +1,15 @@
 /* eslint-disable no-multi-assign */
+import { sha256 } from '@noble/hashes/sha256'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { bytesToHex } from 'viem'
 import { useMutation, useQueryClient, useSignTypedData } from 'wagmi'
 
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 
-import { keccak256 } from 'viem'
 import { useQueryKeys } from '../../../../utils/cacheKeyFactory'
 import { AvCancelButton, CropComponent } from './AvatarCrop'
 
@@ -52,7 +53,7 @@ const UploadComponent = ({
   const { t } = useTranslation('transactionFlow')
   const queryClient = useQueryClient()
   const queryKeys = useQueryKeys().avatar.avatar(name)
-  const urlHash = useMemo(() => keccak256(dataURLToBytes(dataURL)), [dataURL])
+  const urlHash = useMemo(() => bytesToHex(sha256(dataURLToBytes(dataURL))), [dataURL])
   const expiry = useMemo(() => `${Date.now() + 1000 * 60 * 60 * 24 * 7}`, [])
   const network = useChainName()
 
