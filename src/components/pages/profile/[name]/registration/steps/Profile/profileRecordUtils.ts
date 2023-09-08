@@ -160,9 +160,9 @@ export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
       }
     }) || []
   const addresses: ProfileRecord[] =
-    records.coins?.map(({ id, value }) => {
+    records.coins?.map(({ name, value }) => {
       return {
-        key: String(id),
+        key: name,
         type: 'addr',
         group: 'address',
         value,

@@ -1,6 +1,17 @@
+import { SendTransactionResult } from '@wagmi/core'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import {
+  Address,
+  BaseError,
+  BlockTag,
+  Hash,
+  Hex,
+  Transaction,
+  TransactionRequest,
+  WalletClient,
+} from 'viem'
 import { useQuery, useSendTransaction } from 'wagmi'
 
 import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
@@ -10,27 +21,25 @@ import CircleTickSVG from '@app/assets/CircleTick.svg'
 import WalletSVG from '@app/assets/Wallet.svg'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
+import { useWalletClientWithAccount } from '@app/hooks/account/useWalletClient'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
+import { usePublicClient } from '@app/hooks/usePublicClient'
 import { TransactionName, createTransactionRequest } from '@app/transaction-flow/transaction'
 import {
   GetUniqueTransactionParameters,
   ManagedDialogProps,
   TransactionFlowAction,
   TransactionStage,
-  UniqueTransaction
+  UniqueTransaction,
 } from '@app/transaction-flow/types'
+import { BasicTransactionRequest, PublicClientWithChain } from '@app/types'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { makeEtherscanLink } from '@app/utils/utils'
 
-import { useWalletClientWithAccount } from '@app/hooks/account/useWalletClient'
-import { usePublicClient } from '@app/hooks/usePublicClient'
-import { BasicTransactionRequest, PublicClientWithChain } from '@app/types'
-import { SendTransactionResult } from '@wagmi/core'
-import { Address, BlockTag, Hash, Hex, Transaction, TransactionRequest, WalletClient } from 'viem'
 import { DisplayItems } from '../DisplayItems'
 
 const BarContainer = styled.div(
@@ -162,14 +171,6 @@ const InnerBar = styled.div(
   `,
 )
 
-type TxError = {
-  reason: string
-  code: string
-  method: string
-  transaction: object
-  error: Error
-}
-
 type AccessListResponse = {
   accessList: {
     address: Address
@@ -177,8 +178,6 @@ type AccessListResponse = {
   }[]
   gasUsed: Hex
 }
-
-const SUPPORTED_REQUEST_ERRORS = ['INSUFFICIENT_FUNDS', 'UNPREDICTABLE_GAS_LIMIT']
 
 export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
   const { t } = useTranslation()
@@ -305,7 +304,10 @@ export const transactionSuccessHandler =
 
     if (!transactionData) {
       try {
-        transactionData = await publicClient.request({ method: 'eth_getTransactionByHash', params: [tx.hash] })
+        transactionData = await publicClient.request({
+          method: 'eth_getTransactionByHash',
+          params: [tx.hash],
+        })
       } catch (e) {
         console.error('Failed to get transaction info')
       }
@@ -346,24 +348,27 @@ export const calculateGasLimit = async ({
       Method: 'eth_createAccessList'
       Parameters: [tx: TransactionRequest, blockTag: BlockTag]
       ReturnType: AccessListResponse
-    }>({ method: 'eth_createAccessList', params: [
-      {
-        ...txWithZeroGas,
-        value: txWithZeroGas.value ? txWithZeroGas.value + 1000000n : 0n,
-      } as TransactionRequest,
-      'latest',
-    ] })
+    }>({
+      method: 'eth_createAccessList',
+      params: [
+        {
+          ...txWithZeroGas,
+          value: txWithZeroGas.value ? txWithZeroGas.value + 1000000n : 0n,
+        } as TransactionRequest,
+        'latest',
+      ],
+    })
 
     return {
-      gasLimit: registrationGasFeeModifier(
-        BigInt(accessListResponse.gasUsed),
-        transactionName,
-      ),
+      gasLimit: registrationGasFeeModifier(BigInt(accessListResponse.gasUsed), transactionName),
       accessList: accessListResponse.accessList,
     }
   }
 
-  const gasEstimate = await publicClient.estimateGas({ ...txWithZeroGas, account: walletClient.account! })
+  const gasEstimate = await publicClient.estimateGas({
+    ...txWithZeroGas,
+    account: walletClient.account!,
+  })
   return {
     gasLimit: registrationGasFeeModifier(BigInt(gasEstimate), transactionName),
     accessList: undefined,
@@ -430,11 +435,16 @@ export const TransactionStageModal = ({
   const {
     data: request,
     isLoading: requestLoading,
-    error: _requestError,
+    error: requestError,
   } = useQuery(
     queryKeys.transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
     async ({ queryKey: [params] }) => {
-      const transactionRequest = await createTransactionRequest({ name: params.name, data: params.data, walletClient: walletClient!, publicClient })
+      const transactionRequest = await createTransactionRequest({
+        name: params.name,
+        data: params.data,
+        walletClient: walletClient!,
+        publicClient,
+      })
 
       const txWithZeroGas = {
         ...transactionRequest,
@@ -461,7 +471,6 @@ export const TransactionStageModal = ({
       onError: console.error,
     },
   )
-  const requestError = _requestError as TxError | null
   useInvalidateOnBlock({
     enabled: canEnableTransactionRequest,
     queryKey: queryKeys.transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
@@ -474,7 +483,16 @@ export const TransactionStageModal = ({
   } = useSendTransaction({
     mode: 'prepared',
     ...request,
-    onSuccess: transactionSuccessHandler({ publicClient, walletClient: walletClient!, actionName, txKey, request, addRecentTransaction, dispatch, isSafeApp })
+    onSuccess: transactionSuccessHandler({
+      publicClient,
+      walletClient: walletClient!,
+      actionName,
+      txKey,
+      request,
+      addRecentTransaction,
+      dispatch,
+      isSafeApp,
+    }),
   })
 
   const FilledDisplayItems = useMemo(
@@ -612,15 +630,13 @@ export const TransactionStageModal = ({
   const lowerError = useMemo(() => {
     if (stage === 'complete' || stage === 'sent') return null
     if (transactionError) {
-      return transactionError.message.split('(')[0].trim()
+      if (!(transactionError instanceof BaseError)) return t('transaction.error.unknown')
+      return transactionError.shortMessage
     }
     if (requestError) {
-      if (SUPPORTED_REQUEST_ERRORS.includes(requestError.code)) {
-        return t(`transaction.error.request.${requestError.code}`)
-      }
-      return requestError.reason
+      if (!(requestError instanceof BaseError)) return t('transaction.error.unknown')
+      return requestError.shortMessage
     }
-    return null
   }, [t, stage, transactionError, requestError])
 
   return (
