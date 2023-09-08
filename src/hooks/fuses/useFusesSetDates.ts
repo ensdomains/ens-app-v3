@@ -1,6 +1,12 @@
-import { QueryFunctionContext, UseQueryResult, useQueries } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import {
+  QueryClient,
+  QueryFunctionContext,
+  UseQueryResult,
+  useQueries,
+} from '@tanstack/react-query'
+import { Context, createContext, useMemo } from 'react'
 import { Address, BlockTag, GetBlockParameters, GetBlockReturnType } from 'viem'
+import { useQueryClient } from 'wagmi'
 
 import { ChainWithEns } from '@ensdomains/ensjs/contracts'
 import { GetNameHistoryReturnType } from '@ensdomains/ensjs/subgraph'
@@ -99,14 +105,14 @@ const generateMatchedFuseBlockData = ({
   if (fuseSetBlocks.length === 0)
     return { data: undefined, hasLoadingBlocks: false, hasFetchingBlocks: false }
   const data: FuseSetEntries = {}
-  const blockMap = new Map(blockDatas.map((query) => [query.data?.number, query]))
+  const blockMap = new Map(blockDatas.map((query) => [query.data?.number?.toString(), query]))
 
   let hasLoadingBlocks = false
   let hasFetchingBlocks = false
   let hasIncompleteData = false
 
   for (const [fuseKey, blockNumber] of fuseSetBlocks) {
-    const blockData = blockMap.get(BigInt(blockNumber))
+    const blockData = blockMap.get(blockNumber.toString())
     // don't allow incomplete data to be returned
     if (!blockData) {
       hasIncompleteData = true
@@ -131,6 +137,10 @@ const generateMatchedFuseBlockData = ({
 }
 
 export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParameters) => {
+  const queryClient = useQueryClient()
+  // wrap queryClient in context because useQueries needs it
+  const context = useMemo(() => createContext(queryClient), [queryClient])
+
   const publicClient = usePublicClient()
   const queryKeyFn = useQueryKeys()
 
@@ -146,6 +156,7 @@ export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParam
 
   const blockDatas = useQueries({
     queries: generateQueryArray(publicClient, { queryKeyFn, blocksNeeded }),
+    context: context as Context<QueryClient | undefined>,
   })
 
   const { data, hasLoadingBlocks, hasFetchingBlocks } = useMemo(
