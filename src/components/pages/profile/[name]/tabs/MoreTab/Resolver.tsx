@@ -108,7 +108,9 @@ const Resolver = ({
               {t('tabs.more.resolver.label')}
             </Typography>
             <TagsContainer>
-              <Tag colorStyle={tone!}>{t(`tabs.more.resolver.${resolverType}`)}</Tag>
+              {resolverType && (
+                <Tag colorStyle={tone!}>{t(`tabs.more.resolver.${resolverType}`)}</Tag>
+              )}
               {isWildcard && (
                 <Tag colorStyle="greySecondary">{t('tabs.more.resolver.wildcard')}</Tag>
               )}

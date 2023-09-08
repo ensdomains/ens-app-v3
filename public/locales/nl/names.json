@@ -10,6 +10,6 @@
   "sortTypes": {
     "expiryDate": "Verloop Datum",
     "labelName": "Naam",
-    "creationDate": "Creeer Datum"
+    "createdAt": "Creeer Datum"
   }
 }

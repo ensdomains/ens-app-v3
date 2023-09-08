@@ -147,7 +147,7 @@
   "sortTypes": {
     "expiryDate": "Expiry date",
     "labelName": "Name",
-    "creationDate": "Creation date"
+    "createdAt": "Creation date"
   },
   "errors": {
     "noResults": "No results found",

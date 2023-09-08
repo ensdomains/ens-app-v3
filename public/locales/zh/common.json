@@ -146,7 +146,7 @@
   "sortTypes": {
     "expiryDate": "到期时间",
     "labelName": "名称",
-    "creationDate": "创建时间"
+    "createdAt": "创建时间"
   },
   "errors": {
     "noResults": "未找到结果",
