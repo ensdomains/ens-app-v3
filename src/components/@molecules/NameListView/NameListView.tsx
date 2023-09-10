@@ -43,6 +43,16 @@ const TabWrapperWithButtons = styled(TabWrapper)(
   `,
 )
 
+const Footer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: ${theme.space['8']};
+    border-top: 1px solid ${theme.colors.border};
+  `,
+)
+
 type NameListViewProps = {
   address: Address | undefined
   isSelf: boolean
@@ -209,6 +219,7 @@ export const NameListView = ({ address, isSelf, setError, setLoading }: NameList
         )}
       </NameTableHeader>
       <div data-testid="names-list">{InnerContent}</div>
+      <Footer />
     </TabWrapperWithButtons>
   )
 }
