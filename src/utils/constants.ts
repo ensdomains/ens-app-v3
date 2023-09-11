@@ -1,18 +1,5 @@
 export const emptyAddress = '0x0000000000000000000000000000000000000000'
 
-export const networkName = {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  '1': 'mainnet',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  '5': 'goerli',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  '4': 'rinkeby',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  '3': 'ropsten',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  '1337': 'local',
-}
-
 export const GRACE_PERIOD = 90 * 24 * 60 * 60 * 1000
 
 export const MOONPAY_WORKER_URL: { [key: number]: string } = {

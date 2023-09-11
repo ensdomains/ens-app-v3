@@ -63,8 +63,11 @@ export const useQueryKeys = () => {
     avatar: {
       avatar: (name: string | null | undefined) => [...globalKeys, 'getAvatar', name, 'avatar'],
     },
-    getNftImage: (params: { name: string | null | undefined; registrarAddress: Address }) =>
-      [{ ...params, chainId }, ...globalKeys, 'getNftImage'] as const,
+    getNftImage: (params: {
+      name: string | null | undefined
+      registrarAddress: Address
+      chainName: string
+    }) => [{ ...params, chainId }, ...globalKeys, 'getNftImage'] as const,
     basicName: (normalisedName: string) => [
       ...globalKeys,
       'batch',

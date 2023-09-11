@@ -5,26 +5,22 @@ import { DecodedFuses } from '@ensdomains/ensjs/utils'
 
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
-import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE, networkName } from './constants'
-
-export const getSupportedNetworkName = (networkId: number) =>
-  networkName[`${networkId}` as keyof typeof networkName] || 'unknown'
+import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
 
 const baseMetadataURL = process.env.NEXT_PUBLIC_PROVIDER
   ? 'http://localhost:8080'
   : 'https://metadata.ens.domains'
 
-// eslint-disable-next-line consistent-return
-export function imageUrlUnknownRecord(name: string, network: number) {
-  const supported = getSupportedNetworkName(network)
-
-  return `${baseMetadataURL}/${supported}/avatar/${name}?timestamp=${Date.now()}`
-}
-
-export function ensNftImageUrl(name: string, network: number, regAddr: string) {
-  const supported = getSupportedNetworkName(network)
-
-  return `${baseMetadataURL}/${supported}/${regAddr}/${name}/image`
+export function ensNftImageUrl({
+  name,
+  registrarAddress,
+  chainName,
+}: {
+  name: string
+  registrarAddress: Address
+  chainName: string
+}) {
+  return `${baseMetadataURL}/${chainName}/${registrarAddress}/${name}/image`
 }
 
 export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice = 5) => {
@@ -141,8 +137,6 @@ export const getResolverWrapperAwareness = ({
 }) =>
   KNOWN_RESOLVER_DATA[chainId]?.find((x) => x.address === resolverAddress)?.isNameWrapperAware ||
   false
-
-export const hexToNumber = (hex: string) => parseInt(hex, 16)
 
 export const calculateValueWithBuffer = (value: bigint) =>
   (value * CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE) / 100n

@@ -29,6 +29,6 @@ export const validateContentHash =
       return true
     } catch (e: unknown) {
       if (e instanceof BaseError) return e.message
-      return false
+      return 'Invalid content hash'
     }
   }

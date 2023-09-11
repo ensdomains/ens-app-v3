@@ -33,7 +33,7 @@ importers:
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/ens-contracts': 0.0.22
       '@ensdomains/ens-test-env': ^0.3.8
-      '@ensdomains/ensjs': 3.0.0-beta.6
+      '@ensdomains/ensjs': 3.0.0-beta.7
       '@ensdomains/thorin': 0.6.42
       '@metamask/inpage-provider': ^8.1.0
       '@metamask/mobile-provider': ^2.1.0
@@ -164,7 +164,7 @@ importers:
       '@ensdomains/content-hash': 3.0.0
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/ens-contracts': 0.0.22
-      '@ensdomains/ensjs': 3.0.0-beta.6_pbzxanhqfmwkxondoslqchwzum
+      '@ensdomains/ensjs': 3.0.0-beta.7_pbzxanhqfmwkxondoslqchwzum
       '@ensdomains/thorin': 0.6.42_bvlqn2qn62h5jwuf4rcyosdfji
       '@metamask/inpage-provider': 8.1.0
       '@metamask/mobile-provider': 2.1.0
@@ -2198,8 +2198,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@ensdomains/ensjs/3.0.0-beta.6_pbzxanhqfmwkxondoslqchwzum:
-    resolution: {integrity: sha512-+5OuGjJJTxmqkedJEohDP+QTVGazcArZ+F5A7GmMFUM68J7u+1hSSLskrcIbQ+VVOVdrWZ1Gh0wTv/m1IJM0Fg==}
+  /@ensdomains/ensjs/3.0.0-beta.7_pbzxanhqfmwkxondoslqchwzum:
+    resolution: {integrity: sha512-zeeWkA9V0+TjbXSPF/nD2NXOdOIc9IZoIiS5Gthte1pLj6FY5KyhIC9zd5n5uTHFQKcuctbiMW8//ByweKb+AQ==}
     peerDependencies:
       viem: ^1.6.0
     dependencies:

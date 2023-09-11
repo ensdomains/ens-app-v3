@@ -2,6 +2,8 @@
 import type { Config } from 'jest'
 import nextJest from 'next/jest'
 
+process.env.TZ = 'UTC'
+
 const createJestConfig = nextJest({ dir: '.' })
 
 const customJestConfig: Config = {
@@ -25,17 +27,18 @@ const customJestConfig: Config = {
     '^@app/(.*)$': '<rootDir>/src/$1',
     '^@rainbow-me/rainbowkit$': '<rootDir>/__mocks__/rainbowkitMock.js',
     '@ensdomains/ensjs/(.*)$': '<rootDir>/node_modules/@ensdomains/ensjs/dist/cjs/$1',
+    getDefaultWallets: '<rootDir>/__mocks__/getDefaultWalletsMock.js',
     '@adraffy/ens-normalize': '<rootDir>/node_modules/@adraffy/ens-normalize/dist/index.cjs',
     '^wagmi(.*)$': 'wagmi-cjs$1',
-    '@wagmi/core(.*)$': '@wagmi/core-cjs$1',
+    '^@wagmi/core(.*)$': '@wagmi/core-cjs$1',
     '^multiformats$': '<rootDir>/node_modules/multiformats/dist/index.min.js',
-    '^multiformats/(.*)$': '<rootDir>/node_modules/multiformats/dist/index.min.js',
+    '^multiformats/(.*)$': '<rootDir>/node_modules/multiformats/src/$1',
   },
   setupFilesAfterEnv: ['<rootDir>/jest/jest.setup.ts'],
   setupFiles: ['<rootDir>/jest/setEnvVars.js', 'jest-canvas-mock'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.yarn/', '<rootDir>/.next/'],
   transformIgnorePatterns: [
-    '/node_modules/',
+    '/node_modules/!(multiformats)',
     '/.yarn/',
     '/.next/',
     '^.+\\.module\\.(css|sass|scss)$',

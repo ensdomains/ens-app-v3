@@ -25,6 +25,7 @@ let nextConfig = {
   images: {
     domains: ['metadata.ens.domains'],
   },
+  transpilePackages: ['multiformats'],
   async rewrites() {
     return [
       {
