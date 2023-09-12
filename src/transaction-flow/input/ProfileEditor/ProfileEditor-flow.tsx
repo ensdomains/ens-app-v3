@@ -21,7 +21,8 @@ import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useIsWrapped } from '@app/hooks/useIsWrapped'
+import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
@@ -158,7 +159,11 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const { name = '', resumable = false } = data
 
-  const { profile, isWrapped, isLoading: profileLoading } = useNameDetails({ name })
+  const { data: profile, isLoading: isProfileLoading } = useProfile({ name })
+  const { data: isWrapped = false, isLoading: isWrappedLoading } = useIsWrapped({ name })
+
+  const isLoading = isProfileLoading || isWrappedLoading
+
   const existingRecords = profileToProfileRecords(profile)
 
   const {
@@ -206,12 +211,12 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         }
       })
     }
-    if (!profileLoading) {
+    if (!isLoading) {
       updateProfileRecordsWithTransactionData()
       setIsRecordsUpdated(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profileLoading, transactions, setIsRecordsUpdated, isRecordsUpdated])
+  }, [isLoading, transactions, setIsRecordsUpdated, isRecordsUpdated])
 
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
@@ -256,10 +261,10 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   }, [resolverStatus.isLoading, resolverStatus.data?.hasLatestResolver, transactions.length])
 
   useEffect(() => {
-    if (!profileLoading && !profile?.isMigrated) {
+    if (!isProfileLoading && !profile?.isMigrated) {
       setView('warning')
     }
-  }, [profileLoading, profile?.isMigrated])
+  }, [isProfileLoading, profile?.isMigrated])
 
   const handleDeleteRecord = (record: ProfileRecord, index: number) => {
     removeRecordAtIndex(index)
@@ -275,7 +280,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
       ? getResolverWrapperAwareness({ chainId, resolverAddress: profile?.resolverAddress })
       : false
 
-  if (profileLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
+  if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
+
   return (
     <Container
       data-testid="profile-editor"

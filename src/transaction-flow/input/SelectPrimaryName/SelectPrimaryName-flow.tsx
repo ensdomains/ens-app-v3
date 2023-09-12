@@ -20,8 +20,8 @@ import { useChainId } from '@app/hooks/chain/useChainId'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useBasicName } from '@app/hooks/useBasicName'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
+import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { usePublicClient } from '@app/hooks/usePublicClient'
 import {
@@ -199,8 +199,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     name: 'name',
   })
 
-  const { isWrapped, isLoading: isBasicNameLoading } = useBasicName({
-    name: selectedName?.name,
+  const { data: isWrapped, isLoading: isWrappedLoading } = useIsWrapped({
+    name: selectedName?.name!,
     enabled: !!selectedName?.name,
   })
   const { data: selectedNameProfile } = useProfile({
@@ -211,7 +211,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
 
   const resolverStatus = useResolverStatus({
     name: selectedName?.name!,
-    enabled: !!selectedName && !isBasicNameLoading,
+    enabled: !!selectedName && !isWrappedLoading,
     migratedRecordsMatch: { type: 'address', match: { id: 60, value: address } },
   })
 
@@ -295,7 +295,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
 
   const isLoading = isLoadingNames || isMutationLoading
   const isLoadingName =
-    resolverStatus.isLoading || isBasicNameLoading || getPrimarynameTransactionFlowItem.isLoading
+    resolverStatus.isLoading || isWrappedLoading || getPrimarynameTransactionFlowItem.isLoading
 
   // Show header if more than one page has been loaded, if only one page has been loaded but there is another page, or if there is an active search query
   const showHeader =

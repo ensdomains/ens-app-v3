@@ -1,11 +1,16 @@
-import { render, screen, userEvent, waitFor } from '@app/test-utils'
+import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { DeepPartial } from '@app/types'
 
 import RevokePermissions, { Props } from './RevokePermissions-flow'
 
+jest.mock('@app/hooks/ensjs/public/usePrimaryName')
+
 jest.spyOn(Date, 'now').mockImplementation(() => new Date('2023-01-01').getTime())
+
+const mockUsePrimaryName = mockFunction(usePrimaryName)
 
 const mockDispatch = jest.fn()
 const mockOnDismiss = jest.fn()
@@ -45,6 +50,10 @@ const makeData = (overrides: DeepPartial<Data> = {}) => {
     },
   } as Data
 }
+
+beforeEach(() => {
+  mockUsePrimaryName.mockReturnValue({ data: null, isLoading: false })
+})
 
 afterEach(() => {
   jest.clearAllMocks()
@@ -138,11 +147,11 @@ describe('RevokePermissions', () => {
                 parent: ['PARENT_CANNOT_CONTROL', 'CAN_EXTEND_EXPIRY'],
                 child: [
                   'CANNOT_UNWRAP',
-                  'CANNOT_CREATE_SUBDOMAIN',
+                  'CANNOT_BURN_FUSES',
                   'CANNOT_TRANSFER',
                   'CANNOT_SET_RESOLVER',
                   'CANNOT_SET_TTL',
-                  'CANNOT_BURN_FUSES',
+                  'CANNOT_CREATE_SUBDOMAIN',
                 ],
               },
               expiry: 1675238574,
@@ -453,10 +462,10 @@ describe('RevokePermissions', () => {
               contract: 'setFuses',
               fuses: [
                 'CANNOT_UNWRAP',
-                'CANNOT_CREATE_SUBDOMAIN',
                 'CANNOT_TRANSFER',
                 'CANNOT_SET_RESOLVER',
                 'CANNOT_SET_TTL',
+                'CANNOT_CREATE_SUBDOMAIN',
               ],
             }),
           ],
@@ -517,10 +526,10 @@ describe('RevokePermissions', () => {
               name: 'sub.test.eth',
               contract: 'setFuses',
               fuses: [
-                'CANNOT_CREATE_SUBDOMAIN',
                 'CANNOT_TRANSFER',
                 'CANNOT_SET_RESOLVER',
                 'CANNOT_SET_TTL',
+                'CANNOT_CREATE_SUBDOMAIN',
               ],
             }),
           ],

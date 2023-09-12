@@ -2,7 +2,7 @@ import { render, screen, userEvent } from '@app/test-utils'
 
 import { ComponentProps } from 'react'
 
-import { encodeLabel } from '@ensdomains/ensjs/utils/labels'
+import { encodeLabelhash } from '@ensdomains/ensjs/utils'
 
 import UnknownLabels from './UnknownLabels-flow'
 
@@ -12,6 +12,14 @@ const mockOnDismiss = jest.fn()
 const labels = {
   test: '0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658',
   sub: '0xfa1ea47215815692a5f1391cff19abbaf694c82fb2151a4c351b6c0eeaaf317b',
+}
+
+const encodeLabel = (str: string) => {
+  try {
+    return encodeLabelhash(str)
+  } catch {
+    return str
+  }
 }
 
 const renderHelper = (data: Omit<ComponentProps<typeof UnknownLabels>['data'], 'key'>) => {

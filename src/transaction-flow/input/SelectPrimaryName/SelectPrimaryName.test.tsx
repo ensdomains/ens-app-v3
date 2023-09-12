@@ -1,7 +1,15 @@
-import { render, screen, userEvent, waitFor } from '@app/test-utils'
+import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
-import { decodeLabelhash, labelhash } from '@ensdomains/ensjs/utils/labels'
+import { labelhash } from 'viem'
 
+import { getDecodedName } from '@ensdomains/ensjs/subgraph'
+import { decodeLabelhash } from '@ensdomains/ensjs/utils'
+
+import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
+import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
+import { useIsWrapped } from '@app/hooks/useIsWrapped'
+import { useProfile } from '@app/hooks/useProfile'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 
 import SelectPrimaryName, {
@@ -24,21 +32,24 @@ jest.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem', () => ({
   TaggedNameItem: ({ name, ...props }: any) => <div {...props}>{name}</div>,
 }))
 
-const mockGetDecryptedName = jest.fn().mockImplementation((name: string) => Promise.resolve(name))
-const mockUseEns = jest.fn().mockReturnValue({
-  ready: true,
-  getDecryptedName: () => mockGetDecryptedName(),
-})
-jest.mock('@app/utils/EnsProvider', () => ({
-  useEns: () => mockUseEns(),
-}))
+jest.mock('@ensdomains/ensjs/subgraph')
+
+jest.mock('@app/hooks/ensjs/subgraph/useNamesForAddress')
+jest.mock('@app/hooks/resolver/useResolverStatus')
+jest.mock('@app/hooks/useIsWrapped')
+jest.mock('@app/hooks/useProfile')
+jest.mock('@app/hooks/primary/useGetPrimaryNameTransactionFlowItem')
+
+const mockGetDecodedName = mockFunction(getDecodedName)
+mockGetDecodedName.mockImplementation((_: any, { name }) => Promise.resolve(name))
 
 const makeName = (index: number, overwrites?: any) => ({
   name: `test${index}.eth`,
   id: `0x${index}`,
   ...overwrites,
 })
-const mockUseAvailablePrimaryNamesForAddress = jest.fn().mockReturnValue({
+const mockUseNamesForAddress = mockFunction(useNamesForAddress)
+mockUseNamesForAddress.mockReturnValue({
   data: {
     pages: [
       new Array(5)
@@ -49,55 +60,38 @@ const mockUseAvailablePrimaryNamesForAddress = jest.fn().mockReturnValue({
   },
   isLoading: false,
 })
-jest.mock(
-  '@app/hooks/names/useAvailablePrimaryNamesForAddress/useAvailablePrimaryNamesForAddress',
-  () => ({
-    useAvailablePrimaryNamesForAddress: () => mockUseAvailablePrimaryNamesForAddress(),
-  }),
-)
 
-jest.mock('@app/hooks/useContractAddress', () => ({
-  useContractAddress: () => '0xPublicResolver',
-}))
-
-const mockUseResolverStatus = jest.fn().mockReturnValue({
+const mockUseResolverStatus = mockFunction(useResolverStatus)
+mockUseResolverStatus.mockReturnValue({
   data: {
     isAuthorized: true,
   },
   isLoading: false,
 })
-jest.mock('@app/hooks/resolver/useResolverStatus', () => ({
-  useResolverStatus: () => mockUseResolverStatus(),
-}))
 
-const mockUseBasicName = jest.fn().mockReturnValue({
-  isWrapped: true,
+const mockUseIsWrapped = mockFunction(useIsWrapped)
+mockUseIsWrapped.mockReturnValue({
+  data: false,
   isLoading: false,
 })
-jest.mock('@app/hooks/useBasicName', () => ({
-  useBasicName: () => mockUseBasicName(),
-}))
 
-const mockUseProfile = jest.fn().mockReturnValue({
-  profile: {
-    records: {},
+const mockUseProfile = mockFunction(useProfile)
+mockUseProfile.mockReturnValue({
+  data: {
+    coins: [],
+    texts: [],
     resolverAddress: '0xresolver',
   },
   isLoading: false,
 })
-jest.mock('@app/hooks/useProfile', () => ({
-  useProfile: () => mockUseProfile(),
-}))
 
-const mockUseGetPrimaryNameTransactionItem = jest.fn().mockReturnValue({
+const mockUseGetPrimaryNameTransactionItem = mockFunction(useGetPrimaryNameTransactionFlowItem)
+mockUseGetPrimaryNameTransactionItem.mockReturnValue({
   callBack: () => ({
     transactions: [makeTransactionItem('setPrimaryName', { name: 'test.eth', address: '0x123' })],
   }),
   isLoading: false,
 })
-jest.mock('@app/hooks/primary/useGetPrimaryNameTransactionFlowItem', () => ({
-  useGetPrimaryNameTransactionFlowItem: () => mockUseGetPrimaryNameTransactionItem(),
-}))
 
 const mockDispatch = jest.fn()
 
@@ -173,7 +167,7 @@ describe('getNameFromUnknownLabels', () => {
 
 describe('SelectPrimaryName', () => {
   it('should show loading if data hook is loading', async () => {
-    mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
+    mockUseNamesForAddress.mockReturnValueOnce({
       data: undefined,
       isLoading: true,
     })
@@ -187,19 +181,8 @@ describe('SelectPrimaryName', () => {
     await waitFor(() => expect(screen.getByText('loading')).toBeInTheDocument())
   })
 
-  it('should show loading message if ens hook is loading', async () => {
-    mockUseEns.mockReturnValueOnce({
-      ready: false,
-      getResolver: jest.fn(),
-    })
-    render(
-      <SelectPrimaryName data={{ address: '0x123' }} dispatch={() => {}} onDismiss={() => {}} />,
-    )
-    await waitFor(() => expect(screen.getByText('loading')).toBeInTheDocument())
-  })
-
   it('should show no name message if data returns an empty array', async () => {
-    mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
+    mockUseNamesForAddress.mockReturnValueOnce({
       data: {
         pages: [[]],
       },
@@ -249,7 +232,7 @@ describe('SelectPrimaryName', () => {
   })
 
   it('should call dispatch if encrpyted name can be decrypted', async () => {
-    mockUseAvailablePrimaryNamesForAddress.mockReturnValueOnce({
+    mockUseNamesForAddress.mockReturnValueOnce({
       data: {
         pages: [
           [
@@ -263,7 +246,7 @@ describe('SelectPrimaryName', () => {
       },
       isLoading: false,
     })
-    mockGetDecryptedName.mockReturnValueOnce('test.eth')
+    mockGetDecodedName.mockReturnValueOnce(Promise.resolve('test.eth'))
     render(
       <SelectPrimaryName
         data={{ address: '0x123' }}
@@ -277,7 +260,7 @@ describe('SelectPrimaryName', () => {
   })
 
   it('should be able to decrpyt name and dispatch', async () => {
-    mockUseAvailablePrimaryNamesForAddress.mockReturnValue({
+    mockUseNamesForAddress.mockReturnValue({
       data: {
         pages: [
           [
@@ -291,7 +274,7 @@ describe('SelectPrimaryName', () => {
       },
       isLoading: false,
     })
-    mockGetDecryptedName.mockReturnValueOnce(`${encodeLabel('test')}.eth`)
+    mockGetDecodedName.mockReturnValueOnce(Promise.resolve(`${encodeLabel('test')}.eth`))
     render(
       <SelectPrimaryName
         data={{ address: '0x123' }}
@@ -313,8 +296,8 @@ describe('SelectPrimaryName', () => {
         data: { name: 'test.eth' },
       },
       `
-      Object {
-        "data": Object {
+      {
+        "data": {
           "address": "0x123",
           "name": "test.eth",
         },
