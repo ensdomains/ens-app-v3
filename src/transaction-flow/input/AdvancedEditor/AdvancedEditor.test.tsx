@@ -10,124 +10,109 @@ import {
   within,
 } from '@app/test-utils'
 
-import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useProfile } from '@app/hooks/useProfile'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import { Profile } from '@app/types'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
 
 import AdvancedEditor from './AdvancedEditor-flow'
 
 const mockProfileData = {
-  profile: {
-    address: '0x70643CB203137b9b9eE19deA56080CD2BA01dBFd',
-    records: {
-      contentHash: {},
-      texts: [
-        {
-          key: 'email',
-          type: 'text',
-          value: 'test@ens.domains',
-        },
-        {
-          key: 'url',
-          type: 'text',
-          value: 'https://ens.domains',
-        },
-        {
-          key: 'avatar',
-          type: 'text',
-          value: 'https://example.xyz/avatar/test.jpg',
-        },
-        {
-          key: 'com.discord',
-          type: 'text',
-          value: 'test',
-        },
-        {
-          key: 'com.reddit',
-          type: 'text',
-          value: 'https://www.reddit.com/user/test/',
-        },
-        {
-          key: 'com.twitter',
-          type: 'text',
-          value: 'https://twitter.com/test',
-        },
-        {
-          key: 'org.telegram',
-          type: 'text',
-          value: '@test',
-        },
-        {
-          key: 'com.linkedin.com',
-          type: 'text',
-          value: 'https://www.linkedin.com/in/test/',
-        },
-        {
-          key: 'xyz.lensfrens',
-          type: 'text',
-          value: 'https://www.lensfrens.xyz/test.lens',
-        },
-      ],
-      coinTypes: [
-        {
-          key: '60',
-          type: 'addr',
-          coin: 'ETH',
-          addr: '0xb794f5ea0ba39494ce839613fffba74279579268',
-        },
-        {
-          key: '0',
-          type: 'addr',
-          coin: 'BTC',
-          addr: '1JnJvEBykLcGHYxCZVWgDGDm7pkK3EBHwB',
-        },
-        {
-          key: '3030',
-          type: 'addr',
-          coin: 'HBAR',
-          addr: '0.0.123123',
-        },
-        {
-          key: '501',
-          type: 'addr',
-          coin: 'SOL',
-          addr: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH',
-        },
-      ],
-      abi: {
-        data: JSON.stringify([
-          {
-            inputs: [
-              {
-                internalType: 'string',
-                type: 'string',
-                name: 'name',
-              },
-            ],
-            stateMutability: 'nonpayable',
-            outputs: [],
-            name: 'setName',
-            type: 'function',
-          },
-        ]),
-        contentType: 1,
+  data: {
+    address: '0x70643CB203137b9b9eE19deA56080CD2BA01dBFd' as const,
+    contentHash: null,
+    texts: [
+      {
+        key: 'email',
+        value: 'test@ens.domains',
       },
+      {
+        key: 'url',
+        value: 'https://ens.domains',
+      },
+      {
+        key: 'avatar',
+        value: 'https://example.xyz/avatar/test.jpg',
+      },
+      {
+        key: 'com.discord',
+        value: 'test',
+      },
+      {
+        key: 'com.reddit',
+        value: 'https://www.reddit.com/user/test/',
+      },
+      {
+        key: 'com.twitter',
+        value: 'https://twitter.com/test',
+      },
+      {
+        key: 'org.telegram',
+        value: '@test',
+      },
+      {
+        key: 'com.linkedin.com',
+        value: 'https://www.linkedin.com/in/test/',
+      },
+      {
+        key: 'xyz.lensfrens',
+        value: 'https://www.lensfrens.xyz/test.lens',
+      },
+    ],
+    coins: [
+      {
+        id: 60,
+        name: 'ETH',
+        value: '0xb794f5ea0ba39494ce839613fffba74279579268',
+      },
+      {
+        id: 0,
+        name: 'BTC',
+        value: '1JnJvEBykLcGHYxCZVWgDGDm7pkK3EBHwB',
+      },
+      {
+        id: 3030,
+        name: 'HBAR',
+        value: '0.0.123123',
+      },
+      {
+        id: 501,
+        name: 'SOL',
+        value: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH',
+      },
+    ],
+    abi: {
+      abi: JSON.stringify([
+        {
+          inputs: [
+            {
+              internalType: 'string',
+              type: 'string',
+              name: 'name',
+            },
+          ],
+          stateMutability: 'nonpayable',
+          outputs: [],
+          name: 'setName',
+          type: 'function',
+        },
+      ]),
+      contentType: 1,
     },
-    resolverAddress: '0x0',
+    resolverAddress: '0x0' as const,
     isMigrated: true,
-    createdAt: '1630553876',
+    createdAt: {
+      date: new Date(1630553876),
+      value: 1630553876,
+    },
   },
   isLoading: false,
-  isWrapped: false,
 }
 
-jest.mock('@app/utils/EnsProvider')
-jest.mock('@app/hooks/useNameDetails')
+jest.mock('@app/hooks/useProfile')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useResolverHasInterfaces')
 
-const mockUseProfile = mockFunction(useNameDetails)
+const mockUseProfile = mockFunction(useProfile)
 const mockUseResolverHasInterfaces = mockFunction(useResolverHasInterfaces)
 
 const mockIntersectionObserver = jest.fn()
@@ -136,12 +121,10 @@ const mockDispatch = jest.fn()
 
 describe('AdvancedEditor', () => {
   beforeEach(() => {
-    mockUseProfile.mockReturnValue(
-      mockProfileData as unknown as { profile: Profile; loading: boolean },
-    )
+    mockUseProfile.mockReturnValue(mockProfileData)
 
     mockUseResolverHasInterfaces.mockReturnValue({
-      hasInterface: true,
+      data: [true],
       isLoading: false,
       status: 'success',
     })
@@ -182,8 +165,7 @@ describe('AdvancedEditor', () => {
     await waitFor(() => {
       expect(submitBtn).not.toHaveAttribute('disabled')
     })
-    fireEvent.click(submitBtn)
-    fireEvent.submit(screen.getByTestId('advanced-editor'))
+    userEvent.click(submitBtn)
 
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
@@ -212,8 +194,7 @@ describe('AdvancedEditor', () => {
     await waitFor(() => {
       expect(submitBtn).not.toHaveAttribute('disabled')
     })
-    fireEvent.click(submitBtn)
-    fireEvent.submit(screen.getByTestId('advanced-editor'))
+    userEvent.click(submitBtn)
 
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
@@ -242,8 +223,7 @@ describe('AdvancedEditor', () => {
     await waitFor(() => {
       expect(submitBtn).not.toHaveAttribute('disabled')
     })
-    fireEvent.click(submitBtn)
-    fireEvent.submit(screen.getByTestId('advanced-editor'))
+    userEvent.click(submitBtn)
 
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
@@ -270,17 +250,16 @@ describe('AdvancedEditor', () => {
     await waitFor(() => {
       expect(submitBtn).not.toHaveAttribute('disabled')
     })
-    fireEvent.click(submitBtn)
-    fireEvent.submit(screen.getByTestId('advanced-editor'))
+    userEvent.click(submitBtn)
 
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
     })
-    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes[0]).toEqual({
-      key: 'ETH',
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coins[0]).toEqual({
+      coin: 'ETH',
       value: '0x0000000000000000000000000000000000000000',
     })
-    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes.length).toBe(1)
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coins.length).toBe(1)
   })
 
   it('should submit key/value when new address is added', async () => {
@@ -307,16 +286,15 @@ describe('AdvancedEditor', () => {
       expect(submitBtn).not.toHaveAttribute('disabled')
     })
     await userEvent.click(submitBtn)
-    fireEvent.submit(screen.getByTestId('advanced-editor'))
 
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
     })
-    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes[0]).toEqual({
-      key: 'DOT',
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coins[0]).toEqual({
+      coin: 'DOT',
       value: '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
     })
-    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes.length).toBe(1)
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coins.length).toBe(1)
   })
 
   it('should overwrite existing records and add new records for records passed in transactions', async () => {
@@ -346,13 +324,13 @@ describe('AdvancedEditor', () => {
                     value: 'test@ens.domains',
                   },
                 ],
-                coinTypes: [
+                coins: [
                   {
-                    key: 'BNB',
+                    coin: 'BNB',
                     value: 'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
                   },
                   {
-                    key: 'ETH',
+                    coin: 'ETH',
                     value: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
                   },
                 ],
@@ -444,7 +422,8 @@ describe('AdvancedEditor', () => {
       expect(mockDispatch).toHaveBeenCalled()
     })
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.abi).toEqual({
-      data: '',
+      contentType: 0,
+      encodedData: null,
     })
   })
 })

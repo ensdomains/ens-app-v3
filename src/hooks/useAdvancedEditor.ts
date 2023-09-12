@@ -184,6 +184,7 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
           abi: formObject.abi,
         },
       }
+
       reset(newDefaultValues)
       const newExistingRecords: ExpandableRecordsState = {
         address: Object.keys(newDefaultValues.address) || [],
@@ -204,6 +205,7 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
         const formKey = formSafeKey(String(coin))
         setValue(`address.${formKey}`, value!, { shouldDirty: true })
         if (!newExistingRecords.address.includes(formKey)) {
+          newExistingRecords.address.push(formKey)
         }
       })
 
@@ -224,14 +226,14 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
       value,
     })) as { key: string; value: string }[]
 
-    const coinTypes = Object.entries(getFieldsByType('addr', dirtyFields)).map(([key, value]) => ({
-      key,
+    const coins = Object.entries(getFieldsByType('addr', dirtyFields)).map(([coin, value]) => ({
+      coin,
       value,
-    })) as { key: string; value: string }[]
+    })) as { coin: string; value: string }[]
 
-    const coinTypesWithZeroAddressses = coinTypes.map((coinType) => {
+    const coinTypesWithZeroAddressses = coins.map((coinType) => {
       if (coinType.value) return coinType
-      return { key: coinType.key, value: emptyAddress }
+      return { coin: coinType.coin, value: emptyAddress }
     })
 
     const contentHash = dirtyFields.other?.contentHash
@@ -244,9 +246,9 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
       )
       .otherwise(() => undefined)
 
-    const records = {
+    const records: RecordOptions = {
       texts,
-      coinTypes: coinTypesWithZeroAddressses,
+      coins: coinTypesWithZeroAddressses,
       contentHash,
       abi,
     }

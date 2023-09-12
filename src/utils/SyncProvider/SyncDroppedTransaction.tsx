@@ -59,7 +59,7 @@ export const findDroppedTransactions = async (
   }: {
     transactions: Transaction[]
     address: Address | undefined
-    store: TransactionStore
+    store: TransactionStore | undefined
   },
 ) => {
   const chainId = publicClient.chain.id

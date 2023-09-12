@@ -1,12 +1,13 @@
-import { render } from '@app/test-utils'
+import { mockFunction, render } from '@app/test-utils'
 
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
-import { useProvider } from 'wagmi'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { usePublicClient } from '@app/hooks/usePublicClient'
+import { PublicClientWithChain } from '@app/types'
 
 import {
   SyncDroppedTransaction,
@@ -34,23 +35,29 @@ export const handlers = [
 
 export const server = setupServer(...handlers)
 
-jest.mock('wagmi')
-jest.mock('@app/hooks/useAccountSafely')
+jest.mock('@app/hooks/account/useAccountSafely')
 jest.mock('@app/hooks/transactions/useRecentTransactions')
 jest.mock('@app/hooks/transactions/TransactionStoreContext')
+jest.mock('@app/hooks/usePublicClient')
+
+const mockUsePublicClient = mockFunction(usePublicClient)
+const mockUseAccountSafely = mockFunction(useAccountSafely)
+const mockUseRecentTransactions = mockFunction(useRecentTransactions)
+const mockUseTransactionStore = mockFunction(useTransactionStore)
+
+console.log('mockUsePublicClient', mockUseAccountSafely)
 
 describe('SyncDroppedTransaction', () => {
-  const mockProvider = { test: 'provider' }
+  const mockPublicClient = { chain: { id: 1 } }
   const mockAddress = '0x1234567890abcdef'
-  const mockTransactions = [{ hash: '0xabc123' }, { hash: '0xdef456' }]
+  const mockTransactions = [{ hash: '0xabc123' as const }, { hash: '0xdef456' as const }]
   const mockStore = { test: 'store' }
-  const mockChainId = 1
 
   beforeEach(() => {
-    useProvider.mockReturnValue(mockProvider)
-    useAccountSafely.mockReturnValue({ address: mockAddress })
-    useRecentTransactions.mockReturnValue(mockTransactions)
-    useTransactionStore.mockReturnValue(mockStore)
+    mockUsePublicClient.mockReturnValue(mockPublicClient)
+    mockUseAccountSafely.mockReturnValue({ address: mockAddress })
+    mockUseRecentTransactions.mockReturnValue(mockTransactions)
+    mockUseTransactionStore.mockReturnValue(mockStore as any)
   })
 
   afterEach(() => {
@@ -59,7 +66,7 @@ describe('SyncDroppedTransaction', () => {
 
   it('should call setInterval with the correct arguments', () => {
     const mockDelay = 10000
-    jest.spyOn(global, 'setInterval').mockImplementation((fn) => fn())
+    jest.spyOn(global, 'setInterval').mockImplementation((fn: any) => fn())
 
     render(<SyncDroppedTransaction>Test</SyncDroppedTransaction>)
 
@@ -109,19 +116,16 @@ describe('findDroppedTransactions', () => {
 
   describe('searchingTransactions', () => {
     it('should exit early if there is no connected account', async () => {
-      const mockTransactions = []
+      const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
+      const mockTransactions: any[] = []
       const mockAddress = undefined
       const mockStore = undefined
-      const mockChainId = undefined
-      const mockProvider = undefined
 
-      const result = await findDroppedTransactions(
-        mockTransactions,
-        mockAddress,
-        mockStore,
-        mockChainId,
-        mockProvider,
-      )
+      const result = await findDroppedTransactions(mockPublicClient, {
+        address: mockAddress,
+        store: mockStore,
+        transactions: mockTransactions,
+      })
 
       expect(result).toBeUndefined()
     })
@@ -134,20 +138,17 @@ describe('findDroppedTransactions', () => {
         {
           status: 'confirmed',
         },
-      ]
+      ] as any
 
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = {}
-      const mockChainId = 1
-      const mockProvider = {}
+      const mockStore = {} as any
+      const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
 
-      const result = await findDroppedTransactions(
-        mockTransactions,
-        mockAddress,
-        mockStore,
-        mockChainId,
-        mockProvider,
-      )
+      const result = await findDroppedTransactions(mockPublicClient, {
+        address: mockAddress,
+        store: mockStore,
+        transactions: mockTransactions,
+      })
 
       expect(result).toBeUndefined()
     })
@@ -158,18 +159,16 @@ describe('findDroppedTransactions', () => {
           searchStatus: 'searching',
           hash: '0xabc123',
         },
-      ]
+      ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { foundMinedTransaction: jest.fn() }
-      const mockChainId = 1
-      const mockProvider = { test: 'provider' }
-      await findDroppedTransactions(
-        mockTransactions,
-        mockAddress,
-        mockStore,
-        mockChainId,
-        mockProvider,
-      )
+      const mockStore = { foundMinedTransaction: jest.fn() } as any
+      const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
+
+      await findDroppedTransactions(mockPublicClient, {
+        address: mockAddress,
+        store: mockStore,
+        transactions: mockTransactions,
+      })
       expect(mockStore.foundMinedTransaction).toHaveBeenCalled()
     })
     it('should error if there is more than one transaction that could be a replacement', async () => {
@@ -198,18 +197,16 @@ describe('findDroppedTransactions', () => {
           input: 'input',
           timestamp: 0,
         },
-      ]
+      ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { setReplacedTransaction: jest.fn() }
-      const mockChainId = 1
-      const mockProvider = { test: 'provider' }
-      await findDroppedTransactions(
-        mockTransactions,
-        mockAddress,
-        mockStore,
-        mockChainId,
-        mockProvider,
-      )
+      const mockStore = { setReplacedTransaction: jest.fn() } as any
+      const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
+
+      await findDroppedTransactions(mockPublicClient, {
+        address: mockAddress,
+        store: mockStore,
+        transactions: mockTransactions,
+      })
       expect(mockStore.setReplacedTransaction).not.toHaveBeenCalled()
     })
     it('should set replaced transaction if there is a unique candidate', async () => {
@@ -219,18 +216,16 @@ describe('findDroppedTransactions', () => {
           input: 'input',
           timestamp: 0,
         },
-      ]
+      ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { setReplacedTransaction: jest.fn() }
-      const mockChainId = 1
-      const mockProvider = { test: 'provider' }
-      await findDroppedTransactions(
-        mockTransactions,
-        mockAddress,
-        mockStore,
-        mockChainId,
-        mockProvider,
-      )
+      const mockStore = { setReplacedTransaction: jest.fn() } as any
+      const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
+
+      await findDroppedTransactions(mockPublicClient, {
+        address: mockAddress,
+        store: mockStore,
+        transactions: mockTransactions,
+      })
       expect(mockStore.setReplacedTransaction).toHaveBeenCalled()
     })
     it('should try to find the searching transaction again as a failsafe if it was not found, was not a replacement etc', async () => {
@@ -240,18 +235,19 @@ describe('findDroppedTransactions', () => {
           input: 'notReplacement',
           timestamp: 0,
         },
-      ]
+      ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { foundTransaction: jest.fn() }
-      const mockChainId = 1
-      const mockProvider = { getTransaction: () => ({}) }
-      await findDroppedTransactions(
-        mockTransactions,
-        mockAddress,
-        mockStore,
-        mockChainId,
-        mockProvider,
-      )
+      const mockStore = { foundTransaction: jest.fn() } as any
+      const mockPublicClient = {
+        chain: { id: 1 },
+        getTransaction: () => Promise.resolve({}),
+      } as unknown as PublicClientWithChain
+
+      await findDroppedTransactions(mockPublicClient, {
+        address: mockAddress,
+        store: mockStore,
+        transactions: mockTransactions,
+      })
       expect(mockStore.foundTransaction).toHaveBeenCalled()
     })
     it('should handle cancelled transactions', async () => {
@@ -261,18 +257,19 @@ describe('findDroppedTransactions', () => {
           input: 'notReplacement',
           timestamp: 0,
         },
-      ]
+      ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { setFailedTransaction: jest.fn() }
-      const mockChainId = 1
-      const mockProvider = { getTransaction: () => null }
-      await findDroppedTransactions(
-        mockTransactions,
-        mockAddress,
-        mockStore,
-        mockChainId,
-        mockProvider,
-      )
+      const mockStore = { setFailedTransaction: jest.fn() } as any
+      const mockPublicClient = {
+        chain: { id: 1 },
+        getTransaction: () => Promise.resolve(null),
+      } as unknown as PublicClientWithChain
+
+      await findDroppedTransactions(mockPublicClient, {
+        address: mockAddress,
+        store: mockStore,
+        transactions: mockTransactions,
+      })
       expect(mockStore.setFailedTransaction).toHaveBeenCalled()
     })
     it('should update the retries count if all else fails', async () => {
@@ -282,18 +279,19 @@ describe('findDroppedTransactions', () => {
           input: 'notReplacement',
           timestamp: 2,
         },
-      ]
+      ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { updateRetries: jest.fn() }
-      const mockChainId = 1
-      const mockProvider = { getTransaction: () => null }
-      await findDroppedTransactions(
-        mockTransactions,
-        mockAddress,
-        mockStore,
-        mockChainId,
-        mockProvider,
-      )
+      const mockStore = { updateRetries: jest.fn() } as any
+      const mockPublicClient = {
+        chain: { id: 1 },
+        getTransaction: () => Promise.resolve(null),
+      } as unknown as PublicClientWithChain
+
+      await findDroppedTransactions(mockPublicClient, {
+        address: mockAddress,
+        store: mockStore,
+        transactions: mockTransactions,
+      })
       expect(mockStore.updateRetries).toHaveBeenCalled()
     })
   })
@@ -308,18 +306,20 @@ describe('findDroppedTransactions', () => {
           timestamp: 0,
           nonce: 0,
         },
-      ]
+      ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { setReplacedTransactionByNonce: jest.fn() }
-      const mockChainId = 1
-      const mockProvider = { getTransaction: () => null, getTransactionCount: () => 1 }
-      await findDroppedTransactions(
-        mockTransactions,
-        mockAddress,
-        mockStore,
-        mockChainId,
-        mockProvider,
-      )
+      const mockStore = { setReplacedTransactionByNonce: jest.fn() } as any
+      const mockPublicClient = {
+        chain: { id: 1 },
+        getTransaction: () => Promise.resolve(null),
+        getTransactionCount: () => Promise.resolve(1),
+      } as unknown as PublicClientWithChain
+
+      await findDroppedTransactions(mockPublicClient, {
+        address: mockAddress,
+        store: mockStore,
+        transactions: mockTransactions,
+      })
       expect(mockStore.setReplacedTransactionByNonce).toHaveBeenCalled()
     })
 
@@ -332,21 +332,23 @@ describe('findDroppedTransactions', () => {
           timestamp: 0,
           nonce: 0,
         },
-      ]
+      ] as any
       const mockAddress = '0x1234567890abcdef'
       const mockStore = {
         setReplacedTransactionByNonce: jest.fn(),
         setFailedTransaction: jest.fn(),
-      }
-      const mockChainId = 1
-      const mockProvider = { getTransaction: () => null, getTransactionCount: () => 3 }
-      await findDroppedTransactions(
-        mockTransactions,
-        mockAddress,
-        mockStore,
-        mockChainId,
-        mockProvider,
-      )
+      } as any
+      const mockPublicClient = {
+        chain: { id: 1 },
+        getTransaction: () => Promise.resolve(null),
+        getTransactionCount: () => Promise.resolve(3),
+      } as unknown as PublicClientWithChain
+
+      await findDroppedTransactions(mockPublicClient, {
+        address: mockAddress,
+        store: mockStore,
+        transactions: mockTransactions,
+      })
       expect(mockStore.setReplacedTransactionByNonce).not.toHaveBeenCalled()
       expect(mockStore.setFailedTransaction).not.toHaveBeenCalled()
     })
@@ -360,18 +362,20 @@ describe('findDroppedTransactions', () => {
           timestamp: 0,
           nonce: 0,
         },
-      ]
+      ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { setFailedTransaction: jest.fn() }
-      const mockChainId = 1
-      const mockProvider = { getTransaction: () => null, getTransactionCount: () => 1 }
-      await findDroppedTransactions(
-        mockTransactions,
-        mockAddress,
-        mockStore,
-        mockChainId,
-        mockProvider,
-      )
+      const mockStore = { setFailedTransaction: jest.fn() } as any
+      const mockPublicClient = {
+        chain: { id: 1 },
+        getTransaction: () => Promise.resolve(null),
+        getTransactionCount: () => Promise.resolve(1),
+      } as unknown as PublicClientWithChain
+
+      await findDroppedTransactions(mockPublicClient, {
+        address: mockAddress,
+        store: mockStore,
+        transactions: mockTransactions,
+      })
       expect(mockStore.setFailedTransaction).toHaveBeenCalled()
     })
   })
@@ -385,18 +389,20 @@ describe('findDroppedTransactions', () => {
         timestamp: 0,
         nonce: 1,
       },
-    ]
+    ] as any
     const mockAddress = '0x1234567890abcdef'
-    const mockStore = { setFailedTransaction: jest.fn() }
-    const mockChainId = 1
-    const mockProvider = { getTransaction: () => null, getTransactionCount: () => 1 }
-    await findDroppedTransactions(
-      mockTransactions,
-      mockAddress,
-      mockStore,
-      mockChainId,
-      mockProvider,
-    )
+    const mockStore = { setFailedTransaction: jest.fn() } as any
+    const mockPublicClient = {
+      chain: { id: 1 },
+      getTransaction: () => Promise.resolve(null),
+      getTransactionCount: () => Promise.resolve(1),
+    } as unknown as PublicClientWithChain
+
+    await findDroppedTransactions(mockPublicClient, {
+      address: mockAddress,
+      store: mockStore,
+      transactions: mockTransactions,
+    })
     expect(mockStore.setFailedTransaction).toHaveBeenCalled()
   })
 })

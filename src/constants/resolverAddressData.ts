@@ -1,7 +1,6 @@
 import { Address } from 'viem'
 
-import { deploymentAddresses } from '@app/utils/query'
-
+import { deploymentAddresses } from './chains'
 import { RESOLVER_INTERFACE_IDS, ResolverInterfaceId } from './resolverInterfaceIds'
 
 type KnownResolverItem = {

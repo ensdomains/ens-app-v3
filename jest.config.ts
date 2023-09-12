@@ -22,7 +22,7 @@ const customJestConfig: Config = {
   moduleNameMapper: {
     // Handle image imports
     // https://jestjs.io/docs/webpack#handling-static-assets
-    '\\.svg$': '<rootDir>/__mocks__/svgMock.tsx',
+    '^.+\\.(svg)$': '<rootDir>/__mocks__/svgMock.tsx',
     '^__tests__/(.*)$': '<rootDir>/__tests__/$1',
     '^@app/(.*)$': '<rootDir>/src/$1',
     '^@rainbow-me/rainbowkit$': '<rootDir>/__mocks__/rainbowkitMock.js',
@@ -33,6 +33,8 @@ const customJestConfig: Config = {
     '^@wagmi/core(.*)$': '@wagmi/core-cjs$1',
     '^multiformats$': '<rootDir>/node_modules/multiformats/dist/index.min.js',
     '^multiformats/(.*)$': '<rootDir>/node_modules/multiformats/src/$1',
+    '^uint8arrays$':
+      '<rootDir>/node_modules/.pnpm/uint8arrays@3.1.1/node_modules/uint8arrays/cjs/src/index.js',
   },
   setupFilesAfterEnv: ['<rootDir>/jest/jest.setup.ts'],
   setupFiles: ['<rootDir>/jest/setEnvVars.js', 'jest-canvas-mock'],

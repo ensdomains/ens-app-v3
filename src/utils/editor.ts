@@ -36,13 +36,13 @@ export type ProfileFormObject = {
 export const convertProfileToProfileFormObject = (profile: Profile): ProfileFormObject => {
   const address =
     profile.coins?.reduce((map, record) => {
-      const { id, name, value } = record
+      const { name, value } = record
       if (name && supportedAddresses.includes(name.toLowerCase())) {
-        const newMap = { [id]: value, ...map }
+        const newMap = { [name]: value, ...map }
         return newMap
       }
-      if (id) {
-        const newMap = { ...map, [id]: value }
+      if (name) {
+        const newMap = { ...map, [name]: value }
         return newMap
       }
       return map
@@ -106,7 +106,7 @@ export const convertProfileToProfileFormObject = (profile: Profile): ProfileForm
     website,
     abi: profile.abi
       ? { data: profile.abi.abi as any, contentType: profile.abi.contentType }
-      : undefined,
+      : { data: '', contentType: 0 },
   }
 }
 

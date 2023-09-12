@@ -1,25 +1,25 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { mockFunction } from '@app/test-utils'
 
-import registerName from './registerName'
+import { getPrice } from '@ensdomains/ensjs/public'
+import { registerName } from '@ensdomains/ensjs/wallet'
 
-const mockEns = {
-  getPrice: async () => ({
-    base: BigNumber.from(100),
-    premium: BigNumber.from(0),
-  }),
-  registerName: {
-    populateTransaction: (...args: any[]) => args,
-  },
-}
+import registerNameFlowTransaction from './registerName'
+
+jest.mock('@ensdomains/ensjs/public')
+jest.mock('@ensdomains/ensjs/wallet')
+
+const mockGetPrice = mockFunction(getPrice)
+const mockRegisterName = mockFunction(registerName.makeFunctionData)
+
+mockGetPrice.mockImplementation(async () => ({ base: 100n, premium: 0n }))
+mockRegisterName.mockImplementation((...args: any[]) => args as any)
 
 it('adds a 2% value buffer to the transaction from the real price', async () => {
-  const result = (await registerName.transaction(
-    {} as any,
-    mockEns as any,
-    {
-      name: 'test.eth',
-    } as any,
-  )) as [string, { value: BigNumber }]
+  const result = (await registerNameFlowTransaction.transaction({
+    publicClient: {} as any,
+    walletClient: { walletClient: true } as any,
+    data: { name: 'test.eth' } as any,
+  })) as unknown as [{ walletClient: true }, { name: string; value: bigint }]
   const data = result[1]
-  expect(data.value).toEqual(BigNumber.from(102))
+  expect(data.value).toEqual(102n)
 })

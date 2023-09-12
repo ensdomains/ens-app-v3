@@ -71,8 +71,8 @@ const checkAddressRecordsEqual = checkRecordsEqual<AddressRecord>(
 const checkTextRecordsEqual = checkRecordsEqual<TextRecord>((item) => `${item.key}-${item.value}`)
 
 export const checkContentHashEqual = (
-  a?: DecodedContentHash | null,
-  b?: DecodedContentHash | null,
+  a?: DecodedContentHash | string | null,
+  b?: DecodedContentHash | string | null,
 ): boolean => {
   return contentHashToString(a) === contentHashToString(b)
 }
@@ -82,17 +82,6 @@ export const checkProfileRecordsEqual = (a: Profile, b: Profile): boolean => {
   if (!checkAddressRecordsEqual(a?.coins, b?.coins)) return false
   if (!checkContentHashEqual(a?.contentHash, b?.contentHash)) return false
   return true
-}
-
-export const mergeProfileRecords = (a?: Profile, b?: Profile) => {
-  const texts = mergeTextRecords(a?.texts, b?.texts)
-  const coinTypes = mergeAddressRecords(a?.coins, b?.coins)
-  const contentHash = contentHashToString(b?.contentHash) || contentHashToString(a?.contentHash)
-  return {
-    texts,
-    coinTypes,
-    contentHash,
-  }
 }
 
 export const makeEthRecordItem = (address: Address): AddressRecord => {

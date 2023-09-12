@@ -1,13 +1,16 @@
 import '@rainbow-me/rainbowkit/styles.css'
 import { DefaultOptions, QueryClient } from '@tanstack/react-query'
-import type { Address } from 'viem'
 import { ChainProviderFn, configureChains, createConfig } from 'wagmi'
 import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
-import { addEnsContracts } from '@ensdomains/ensjs'
-
+import {
+  goerliWithEns,
+  localhostWithEns,
+  mainnetWithEns,
+  sepoliaWithEns,
+} from '@app/constants/chains'
 import { makePersistent } from '@app/utils/persist'
 
 import { WC_PROJECT_ID } from './constants'
@@ -43,75 +46,6 @@ if (process.env.NEXT_PUBLIC_PROVIDER) {
     }),
   )
 }
-
-type ContractName =
-  | 'BaseRegistrarImplementation'
-  | 'ETHRegistrarController'
-  | 'Multicall'
-  | 'NameWrapper'
-  | 'DNSRegistrar'
-  | 'PublicResolver'
-  | 'ENSRegistry'
-  | 'ReverseRegistrar'
-  | 'UniversalResolver'
-  | 'StaticBulkRenewal'
-  | 'DNSSECImpl'
-  | 'LegacyDNSRegistrar'
-  | 'LegacyDNSSECImpl'
-  | 'LegacyPublicResolver'
-
-export const deploymentAddresses = JSON.parse(process.env.DEPLOYMENT_ADDRESSES! || '{}') as Record<
-  ContractName | 'ENSRegistry',
-  Address
->
-
-const localhostWithEns = {
-  ...localhost,
-  contracts: {
-    ensRegistry: {
-      address: deploymentAddresses.ENSRegistry,
-    },
-    ensUniversalResolver: {
-      address: deploymentAddresses.UniversalResolver,
-    },
-    multicall3: {
-      address: deploymentAddresses.Multicall,
-    },
-    ensBaseRegistrarImplementation: {
-      address: deploymentAddresses.BaseRegistrarImplementation,
-    },
-    ensDnsRegistrar: {
-      address: deploymentAddresses.LegacyDNSRegistrar,
-    },
-    ensEthRegistrarController: {
-      address: deploymentAddresses.ETHRegistrarController,
-    },
-    ensNameWrapper: {
-      address: deploymentAddresses.NameWrapper,
-    },
-    ensPublicResolver: {
-      address: deploymentAddresses.PublicResolver,
-    },
-    ensReverseRegistrar: {
-      address: deploymentAddresses.ReverseRegistrar,
-    },
-    ensBulkRenewal: {
-      address: deploymentAddresses.StaticBulkRenewal,
-    },
-    ensDnssecImpl: {
-      address: deploymentAddresses.LegacyDNSSECImpl,
-    },
-  },
-  subgraphs: {
-    ens: {
-      url: 'http://localhost:8000/subgraphs/name/graphprotocol/ens',
-    },
-  },
-} as const
-
-const mainnetWithEns = addEnsContracts(mainnet)
-const goerliWithEns = addEnsContracts(goerli)
-const sepoliaWithEns = addEnsContracts(sepolia)
 
 const { publicClient, chains } = configureChains(
   [mainnetWithEns, goerliWithEns, localhostWithEns, sepoliaWithEns],
