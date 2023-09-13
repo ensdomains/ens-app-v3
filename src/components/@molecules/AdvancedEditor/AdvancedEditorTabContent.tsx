@@ -6,8 +6,8 @@ import { ScrollBox } from '@ensdomains/thorin'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
-import { validateCryptoAddress } from '@app/utils/validate'
 import { validateAbi } from '@app/validators/validateAbi'
+import { validateCryptoAddress } from '@app/validators/validateAddress'
 import { validateContentHash } from '@app/validators/validateContentHash'
 
 const TabContentsContainer = styled.div(

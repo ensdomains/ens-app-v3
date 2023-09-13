@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks'
+import { act, renderHook } from '@app/test-utils'
 
 import registerI18n from '@app/../public/locales/en/register.json'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
@@ -23,7 +23,7 @@ const avatarRecrod: ProfileRecord = {
 const records: ProfileRecord[] = [baseRecord, avatarRecrod]
 
 const validEth = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
-const invalidEth = '0x70997970C51812dc3A010C7d01b50e0d17dc79C4'
+const invalidEth = '0x70997970C51812dc3A010C7d01b50e0d17dc79X4'
 const validOnion = 'onion3://p53lf57qovyuvwsc6xnrppyply3vtqm7l6pcobkmyqsiofyeznfu5uqd'
 const invalidOnion = 'onion3://p53lf57qovyuvwsc6xnrppyply3vtqm7l6pcobkmyqsiofyeznfu5uq'
 
@@ -223,7 +223,9 @@ describe('useProfileEditorForm', () => {
   describe('removeRecordByTypeAndKey', () => {
     it('should be able to remove a address record by type and key', async () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
-      result.current.removeRecordByGroupAndKey('address', 'ETH')
+      act(() => {
+        result.current.removeRecordByGroupAndKey('address', 'ETH')
+      })
       expect(result.current.getRecords().length).toBe(1)
     })
   })
@@ -231,10 +233,12 @@ describe('useProfileEditorForm', () => {
   describe('addRecords', () => {
     it('should add value property if it does not exist', async () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
-      result.current.addRecords({
-        key: 'description',
-        group: 'general',
-        type: 'text',
+      act(() => {
+        result.current.addRecords({
+          key: 'description',
+          group: 'general',
+          type: 'text',
+        })
       })
       expect(result.current.getRecords()).toEqual([
         baseRecord,
@@ -250,11 +254,13 @@ describe('useProfileEditorForm', () => {
 
     it('should transfer value property for an added record', async () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
-      result.current.addRecords({
-        key: 'description',
-        group: 'general',
-        type: 'text',
-        value: 'testing',
+      act(() => {
+        result.current.addRecords({
+          key: 'description',
+          group: 'general',
+          type: 'text',
+          value: 'testing',
+        })
       })
       expect(result.current.getRecords()).toEqual([
         baseRecord,
@@ -270,10 +276,12 @@ describe('useProfileEditorForm', () => {
 
     it('should be able to add text record individually', async () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
-      result.current.addRecords({
-        key: 'description',
-        group: 'general',
-        type: 'text',
+      act(() => {
+        result.current.addRecords({
+          key: 'description',
+          group: 'general',
+          type: 'text',
+        })
       })
       expect(result.current.getRecords()).toEqual([
         baseRecord,
@@ -298,11 +306,13 @@ describe('useProfileEditorForm', () => {
         ...records,
       ]
       const { result } = renderHook(() => useProfileEditorForm(currentRecords))
-      result.current.addRecords({
-        key: 'description',
-        group: 'general',
-        type: 'text',
-        value: 'test',
+      act(() => {
+        result.current.addRecords({
+          key: 'description',
+          group: 'general',
+          type: 'text',
+          value: 'test',
+        })
       })
       expect(result.current.getRecords()).toEqual(currentRecords)
     })
@@ -326,7 +336,9 @@ describe('useProfileEditorForm', () => {
       const { result } = renderHook(() => useProfileEditorForm(currentRecords))
       const contenthashOptions = profileRecordOptions.filter((o) => o.type === 'contenthash')
       expect(contenthashOptions.length).toBe(5)
-      result.current.addRecords(contenthashOptions)
+      act(() => {
+        result.current.addRecords(contenthashOptions)
+      })
       expect(result.current.getRecords()).toEqual(currentRecords)
     })
 
@@ -338,7 +350,9 @@ describe('useProfileEditorForm', () => {
       const { result } = renderHook(() => useProfileEditorForm(currentRecords))
       const contenthashOptions = profileRecordOptions.filter((o) => o.type === 'contenthash')
       expect(contenthashOptions.length).toBe(5)
-      result.current.addRecords(contenthashOptions)
+      act(() => {
+        result.current.addRecords(contenthashOptions)
+      })
       expect(result.current.getRecords()).toEqual(currentRecords)
     })
   })

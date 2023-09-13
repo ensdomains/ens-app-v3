@@ -1,39 +1,27 @@
-import { mockFunction, renderHook } from '@app/test-utils'
+import { renderHook, waitFor } from '@app/test-utils'
 
-import { useNetwork, useProvider } from 'wagmi'
-
+import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
+import { RESOLVER_INTERFACE_IDS, ResolverInterfaceName } from '@app/constants/resolverInterfaceIds'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import { KnownResolveAddresses } from '@app/validators/validateResolver'
 
-jest.mock('wagmi', () => ({
-  ...jest.requireActual('@tanstack/react-query'),
-  useNetwork: jest.fn(),
-  useProvider: jest.fn(),
-}))
+const ResolverAddresses = KNOWN_RESOLVER_DATA[1]!
 
-const mockUseProvider = mockFunction(useProvider)
-const mockUseNetwork = mockFunction(useNetwork)
-
-const ResolverAddresses = Object.keys(KnownResolveAddresses) as string[]
+const interfaceIdToName = (interfaceId: string) =>
+  Object.entries(RESOLVER_INTERFACE_IDS).find(
+    ([, value]) => value === interfaceId,
+  )![0] as ResolverInterfaceName
 
 describe('useResolverHasInterfaces', () => {
-  beforeEach(() => {
-    mockUseProvider.mockReturnValue({})
-    mockUseNetwork.mockReturnValue({
-      chain: {
-        id: 1,
-      },
-    })
-  })
-
-  ResolverAddresses.forEach((address) => {
-    it(`should return true for known resolver address: ${address}`, async () => {
-      const interfaces = KnownResolveAddresses[address].supportedInterfaces
-      const { result, waitForValueToChange } = renderHook(() =>
-        useResolverHasInterfaces(interfaces, address, false),
+  ResolverAddresses.forEach((item) => {
+    it(`should return true for known resolver address: ${item.address}`, async () => {
+      const { result } = renderHook(() =>
+        useResolverHasInterfaces({
+          interfaceNames: item.supportedInterfaces.map(interfaceIdToName),
+          resolverAddress: item.address,
+        }),
       )
-      await waitForValueToChange(() => result.current.isLoading)
-      expect(result.current.hasInterface).toBe(true)
+      await waitFor(() => !result.current.isLoading)
+      expect(result.current.data).toEqual(item.supportedInterfaces.map(() => true))
     })
   })
 })

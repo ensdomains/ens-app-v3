@@ -50,9 +50,9 @@ export const profileRecordsToRecordOptions = (
       if (record.type === 'addr') {
         return {
           ...options,
-          coinTypes: [
+          coins: [
             ...(options.coins?.filter((r) => r.coin !== recordItem.key) || []),
-            recordItem,
+            { coin: key, value },
           ],
         }
       }

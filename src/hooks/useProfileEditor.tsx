@@ -21,7 +21,7 @@ import {
   formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
-import { validateCryptoAddress } from '@app/utils/validate'
+import { validateCryptoAddress } from '@app/validators/validateAddress'
 
 import { ContentHashProvider } from '../utils/contenthash'
 import { validateContentHash } from '../validators/validateContentHash'

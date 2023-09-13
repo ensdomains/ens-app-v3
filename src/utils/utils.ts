@@ -143,3 +143,8 @@ export const calculateValueWithBuffer = (value: bigint) =>
 
 const encodedLabelRegex = /\[[a-fA-F0-9]{64}\]/g
 export const getEncodedLabelAmount = (name: string) => name.match(encodedLabelRegex)?.length || 0
+
+export const createDateAndValue = <TValue extends bigint | number>(value: TValue) => ({
+  date: new Date(Number(value)),
+  value,
+})

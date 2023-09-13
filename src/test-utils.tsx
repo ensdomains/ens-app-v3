@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { RenderOptions, render } from '@testing-library/react'
-import { RenderHookOptions, renderHook } from '@testing-library/react-hooks'
+import { RenderHookOptions, RenderOptions, render, renderHook } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MockConnector } from '@wagmi/core/connectors/mock'
 import React, { FC, ReactElement } from 'react'

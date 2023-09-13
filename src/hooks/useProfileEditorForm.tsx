@@ -8,7 +8,7 @@ import {
 import { ProfileRecord, ProfileRecordGroup } from '@app/constants/profileRecordOptions'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import { AvatarEditorType } from '@app/types'
-import { validateCryptoAddress } from '@app/utils/validate'
+import { validateCryptoAddress } from '@app/validators/validateAddress'
 import { validateContentHash } from '@app/validators/validateContentHash'
 import { validateUrl } from '@app/validators/validateUrl'
 

@@ -77,22 +77,27 @@ export const DEFAULT_ABILITIES: Abilities = {
   canSendManager: false,
 }
 
-export const useAbilities = (name: string) => {
+type UseAbilitiesParameters = {
+  name: string
+  enabled?: boolean
+}
+
+export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) => {
   const { t } = useTranslation('profile')
   const parent = name?.split('.')?.slice(1).join('.')
 
   const { address } = useAccountSafely()
 
-  const basicNameData = useBasicName({ name, enabled: !!name && !!address })
+  const basicNameData = useBasicName({ name, enabled: enabled && !!name && !!address })
 
   const resolverAuthorisation = useResolverIsAuthorised({
     name,
-    enabled: !!name && !!address,
+    enabled: enabled && !!name && !!address,
   })
 
   const parentBasicNameData = useBasicName({
     name: parent,
-    enabled: !!parent && !!address,
+    enabled: enabled && !!parent && !!address,
   })
 
   // useHasSubnames checks internally if name exists & if it is subname before it enables itself

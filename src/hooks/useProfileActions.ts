@@ -1,23 +1,25 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Address } from 'viem'
 
-import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction } from '@app/transaction-flow/types'
-import { Profile } from '@app/types'
 import { checkAvailablePrimaryName } from '@app/utils/checkAvailablePrimaryName'
 import { nameParts } from '@app/utils/name'
 
 import { useAbilities } from './abilities/useAbilities'
+import { useAccountSafely } from './account/useAccountSafely'
+import { useExpiry } from './ensjs/public/useExpiry'
+import { useOwner } from './ensjs/public/useOwner'
 import { usePrimaryName } from './ensjs/public/usePrimaryName'
+import { useWrapperData } from './ensjs/public/useWrapperData'
 import { useHasGlobalError } from './errors/useHasGlobalError'
 import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from './resolver/useResolverStatus'
+import { useProfile } from './useProfile'
 
 type Action = {
   onClick: () => void
@@ -33,29 +35,23 @@ type Action = {
 
 type Props = {
   name: string
-  address: Address | undefined
-  profile: Profile | undefined
-  abilities: ReturnType<typeof useAbilities>['data']
-  ownerData: GetOwnerReturnType | undefined
-  wrapperData: GetWrapperDataReturnType | undefined
-  expiryDate: Date | undefined
+  enabled?: boolean
 }
 
-export const useProfileActions = ({
-  name,
-  address,
-  profile,
-  abilities,
-  ownerData,
-  wrapperData,
-  expiryDate,
-}: Props) => {
+export const useProfileActions = ({ name, enabled = true }: Props) => {
   const { t } = useTranslation('profile')
   const { createTransactionFlow, usePreparedDataInput } = useTransactionFlow()
 
-  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+  const { address } = useAccountSafely()
+  const { data: abilities, isLoading: isAbilitiesLoading } = useAbilities({ name, enabled })
 
-  const resolverStatus = useResolverStatus({
+  const { data: profile, isLoading: isProfileLoading } = useProfile({ name })
+  const { data: ownerData, isLoading: isOwnerLoading } = useOwner({ name })
+  const { data: wrapperData, isLoading: isWrapperDataLoading } = useWrapperData({ name })
+  const { data: expiryData, isLoading: isExpiryLoading } = useExpiry({ name })
+  const expiryDate = expiryData?.expiry?.date
+
+  const { data: resolverStatus, isLoading: isResolverStatusLoading } = useResolverStatus({
     name,
     migratedRecordsMatch: address
       ? { type: 'address', match: { id: 60, value: address } }
@@ -63,11 +59,11 @@ export const useProfileActions = ({
     enabled: !!ownerData,
   })
 
-  const primary = usePrimaryName({ address })
+  const { data: primaryData, isLoading: isPrimaryNameLoading } = usePrimaryName({ address })
 
   const isAvailablePrimaryName = checkAvailablePrimaryName(
-    primary.data?.name,
-    resolverStatus.data,
+    primaryData?.name,
+    resolverStatus,
   )({
     name,
     relation: {
@@ -81,12 +77,14 @@ export const useProfileActions = ({
     isMigrated: !!profile?.isMigrated,
   })
 
+  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+
   const getPrimaryNameTransactionFlowItem = useGetPrimaryNameTransactionFlowItem({
     address,
     isWrapped,
     profileAddress: profile?.address,
     resolverAddress: profile?.resolverAddress,
-    resolverStatus: resolverStatus.data,
+    resolverStatus,
   })
 
   const hasGlobalError = useHasGlobalError()
@@ -101,7 +99,14 @@ export const useProfileActions = ({
   )
 
   const isLoading =
-    primary.isLoading || resolverStatus.isLoading || getPrimaryNameTransactionFlowItem.isLoading
+    isAbilitiesLoading ||
+    isProfileLoading ||
+    isOwnerLoading ||
+    isWrapperDataLoading ||
+    isExpiryLoading ||
+    isPrimaryNameLoading ||
+    isResolverStatusLoading ||
+    getPrimaryNameTransactionFlowItem.isLoading
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
@@ -276,6 +281,6 @@ export const useProfileActions = ({
 
   return {
     profileActions,
-    loading: isLoading,
+    isLoading: isLoading,
   }
 }

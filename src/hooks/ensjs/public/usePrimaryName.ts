@@ -32,7 +32,7 @@ export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
       if (!res || !res.name || (!res.match && !allowMismatch)) return null
       return {
         ...res,
-        name: res.name as string | undefined,
+        name: res.name as string,
         beautifiedName: tryBeautify(res.name),
       }
     },
