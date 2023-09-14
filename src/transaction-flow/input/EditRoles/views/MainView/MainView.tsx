@@ -88,7 +88,7 @@ export const MainView = ({ onSelectIndex, onCancel, onSave }: Props) => {
           </Button>
         }
         trailing={
-          <Button disabled={!isDirty} onClick={() => onSave()}>
+          <Button data-testid="edit-roles-save-button" disabled={!isDirty} onClick={() => onSave()}>
             {t('action.save')}
           </Button>
         }

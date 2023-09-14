@@ -39,13 +39,12 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
   const account = useAccountSafely()
   const nameType = useNameType(name)
   const abilities = useAbilities(name)
-  const { prepareDataInput } = useTransactionFlow()
+  const queryClient = useQueryClient()
 
+  const { prepareDataInput } = useTransactionFlow()
   const showSendNameInput = prepareDataInput('SendName')
-  const showSendName2Input = prepareDataInput('SendName2')
   const showEditRolesInput = prepareDataInput('EditRoles')
   const showSyncManagerInput = prepareDataInput('SyncManager')
-  const queryClient = useQueryClient()
 
   const isLoading =
     !account.address || nameType.isLoading || abilities.isLoading || details.isLoading
@@ -54,16 +53,18 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
     if (isLoading) return undefined
     const canSend = checkCanSend({ abilities: abilities.data, nameType: nameType.data })
     const canSendDNS = canSend && nameType.data?.startsWith('dns')
-    // const canSendEth = canSend && nameType.data?.startsWith('eth')
+    const canSendEth = canSend && nameType.data?.startsWith('eth')
     const showSyncManager = checkCanSyncManager({
       address: account.address,
-      details,
       nameType: nameType.data,
+      registrant: details.ownerData?.registrant,
+      owner: details.ownerData?.owner,
+      dnsOwner: details.dnsOwner,
     })
     const availableRoles = getAvailableRoles({ roles, abilities: abilities.data })
     const canEditRoles = availableRoles.length > 0
     return [
-      true
+      canSendDNS
         ? {
             type: 'send-dns',
             icon: <AeroplaneSVG />,
@@ -91,12 +92,12 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
               }),
           }
         : null,
-      canSend
+      canSendEth
         ? {
             type: 'send-name',
             icon: <AeroplaneSVG />,
             label: t('action.send'),
-            onClick: () => showSendName2Input(`send-name`, { name }),
+            onClick: () => showSendNameInput(`send-name`, { name }),
           }
         : null,
       canEditRoles
@@ -113,10 +114,13 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
   }, [
     isLoading,
     name,
+    nameType.data,
     account.address,
     details.ownerData,
     details.dnsOwner,
     abilities.data,
+    roles,
+    t,
     queryClient,
     showSendNameInput,
     showEditRolesInput,

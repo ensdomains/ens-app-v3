@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 
 import { Button, Card, Dropdown, mq } from '@ensdomains/thorin'
 
+import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
 import { EarnifiDialog } from '../../../MoreTab/Miscellaneous/EarnifiDialog'
@@ -106,6 +107,8 @@ const Container = styled.div(({ theme }) => [
   `),
 ])
 
+const StyledCard = styled(Card)(cacheableComponentStyles)
+
 type Props = {
   name: string
   details: ReturnType<typeof useNameDetails>
@@ -127,7 +130,7 @@ export const ExpirySection = ({ name, details }: Props) => {
         open={showEarnifiDialog}
         onDismiss={() => setShowEarnifiDialog(false)}
       />
-      <Card>
+      <StyledCard $isCached={expiry.isCachedData}>
         <Container>
           <Header>
             <PanelsContainer>
@@ -165,6 +168,7 @@ export const ExpirySection = ({ name, details }: Props) => {
                         ]}
                       >
                         <Button
+                          data-testid={`expiry-action-${action.type}`}
                           id="remind-me-button"
                           style={{ display: 'inline-flex' }}
                           prefix={action.icon}
@@ -178,6 +182,7 @@ export const ExpirySection = ({ name, details }: Props) => {
                 return (
                   <div key={action.type}>
                     <Button
+                      data-testid={`expiry-action-${action.type}`}
                       key={action.label}
                       prefix={action.icon}
                       onClick={action.onClick}
@@ -191,7 +196,7 @@ export const ExpirySection = ({ name, details }: Props) => {
             </Footer>
           </FooterWrapper>
         </Container>
-      </Card>
+      </StyledCard>
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { P, match } from 'ts-pattern'
 
-import { checkETH2LDFromName, checkSubname } from '@app/utils/utils'
+import { checkDNS2LDFromName, checkETH2LDFromName, checkSubname } from '@app/utils/utils'
 
 import type { useBasicName } from '../../useBasicName'
 import type { SendAbilities } from '../useAbilities'
@@ -47,22 +47,6 @@ const CONTRACT_INFO = {
       },
     },
   },
-  unwrappedDNSName: {
-    pattern: {
-      ownerData: {
-        ownershipLevel: P.not('nameWrapper'),
-      },
-    },
-    guard: (address?: string) => (name: BasicName) => {
-      return name.ownerData?.owner === address
-    },
-    manager: {
-      sendManager: {
-        contract: 'registry',
-        method: 'setOwner',
-      },
-    },
-  },
   wrappedName: {
     pattern: {
       ownerData: { ownershipLevel: 'nameWrapper' },
@@ -83,24 +67,6 @@ const CONTRACT_INFO = {
     },
     // A wrapped name cannot be a manager since PCC is automatically burned
     manager: undefined,
-  },
-  wrappedDnsName: {
-    pattern: [
-      {
-        ownerData: { ownershipLevel: 'nameWrapper' },
-      },
-      P.any,
-    ],
-    guard: (address?: string) => (name: BasicName) => {
-      const owner = name.ownerData?.owner
-      return owner === address
-    },
-    manager: {
-      sendManager: {
-        contract: 'nameWrapper',
-        method: 'safeTransferFrom',
-      },
-    },
   },
   wrappedSubname: {
     wrappedParent: {
@@ -452,7 +418,7 @@ export const getSendAbilities = ({
   parentBasicNameData: BasicName
 }) => {
   if (checkETH2LDFromName(name)) return get2LDEthAbilities({ address, basicNameData })
-  if (checkSubname(name))
+  if (checkSubname(name) || checkDNS2LDFromName(name))
     return getSubnameAbilities({ address, basicNameData, parentBasicNameData })
   return BASE_RESPONSE
 }

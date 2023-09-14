@@ -15,7 +15,7 @@ export const SummarySection = () => {
   return (
     <ExpandableSection title={t('input.sendName.views.summary.fields.summary.title')}>
       {transactions.sendOwner && (
-        <div>
+        <div data-testid="send-name-summary-owner">
           {t('input.sendName.views.summary.fields.summary.updates.role', {
             role: 'Owner',
             address: shortenedAddress,
@@ -23,7 +23,7 @@ export const SummarySection = () => {
         </div>
       )}
       {transactions.sendManager && (
-        <div>
+        <div data-testid="send-name-summary-manager">
           {t('input.sendName.views.summary.fields.summary.updates.role', {
             role: 'Manager',
             address: shortenedAddress,
@@ -31,14 +31,16 @@ export const SummarySection = () => {
         </div>
       )}
       {transactions.setEthRecord && (
-        <div>
+        <div data-testid="send-name-summary-eth-record">
           {t('input.sendName.views.summary.fields.summary.updates.eth-record', {
             address: shortenedAddress,
           })}
         </div>
       )}
       {transactions.resetProfile && (
-        <div>{t('input.sendName.views.summary.fields.summary.remove.profile')}</div>
+        <div data-testid="send-name-summary-reset-profile">
+          {t('input.sendName.views.summary.fields.summary.remove.profile')}
+        </div>
       )}
     </ExpandableSection>
   )

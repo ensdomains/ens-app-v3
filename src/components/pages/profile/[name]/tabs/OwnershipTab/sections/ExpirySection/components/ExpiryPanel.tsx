@@ -59,8 +59,9 @@ const Body = styled.div(
 
 export const ExpiryPanel = ({ type, date, link, tooltip }: Props) => {
   const { t } = useTranslation('profile')
+  const timestamp = type === 'expiry' ? date.getTime() : undefined
   return (
-    <Container>
+    <Container data-testid={`expiry-panel-${type}`} data-timestamp={timestamp}>
       <Header>
         <Typography fontVariant="bodyBold" color="text">
           {t(`tabs.ownership.sections.expiry.panel.${type}.title`)}

@@ -31,7 +31,7 @@ export const EditRoleResultsView = ({ role, roles, onSelect, results = [] }: Pro
             name={name}
             address={address}
             roles={roles}
-            role={role}
+            excludeRole={role}
             onClick={() => {
               onSelect({ role, address })
             }}

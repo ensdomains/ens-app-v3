@@ -52,7 +52,12 @@ export const SearchViewResultsRow = ({ address, name, role, roles, ...props }: P
   }, [roles, role, address])
 
   return (
-    <Container type="button" disabled={markers.hasRole} {...props}>
+    <Container
+      data-testid={`search-result-${address}`}
+      type="button"
+      disabled={markers.hasRole}
+      {...props}
+    >
       <LeftContainer>
         <AvatarWithIdentifier address={address} name={name} />
       </LeftContainer>

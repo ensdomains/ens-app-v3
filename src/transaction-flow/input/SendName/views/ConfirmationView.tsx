@@ -75,7 +75,11 @@ export const ConfirmationView = ({ onConfirm, onBack }: Props) => {
             {t('action.back', { ns: 'common' })}
           </Button>
         }
-        trailing={<Button onClick={onConfirm}>{t('action.understand', { ns: 'common' })}</Button>}
+        trailing={
+          <Button data-testid="send-name-confirm-button" onClick={onConfirm}>
+            {t('action.understand', { ns: 'common' })}
+          </Button>
+        }
       />
     </>
   )

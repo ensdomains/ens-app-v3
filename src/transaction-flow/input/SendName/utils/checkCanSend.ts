@@ -3,13 +3,7 @@ import { P, match } from 'ts-pattern'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useNameType } from '@app/hooks/useNameType'
 
-export const checkCanSend = ({
-  abilities,
-  nameType,
-}: {
-  abilities: ReturnType<typeof useAbilities>['data']
-  nameType: ReturnType<typeof useNameType>['data']
-}) => {
+export const senderRole = (nameType: ReturnType<typeof useNameType>['data']) => {
   return match(nameType)
     .with(
       P.union(
@@ -23,21 +17,33 @@ export const checkCanSend = ({
         'dns-emancipated-subname',
         'dns-locked-subname',
       ),
-      () => abilities.canSendOwner,
+      () => 'owner' as const,
     )
     .with(
       P.union(
         'eth-unwrapped-subname',
         'eth-wrapped-subname',
         'eth-pcc-expired-subname',
-        'dns-unwrapped-2ld',
-        'dns-wrapped-2ld',
         'dns-unwrapped-subname',
         'dns-wrapped-subname',
         'dns-pcc-expired-subname',
       ),
-      () => abilities.canSendManager,
+      () => 'manager' as const,
     )
-    .with(P.union(P.nullish, 'root', 'tld'), () => false)
+    .with(P.union('dns-unwrapped-2ld', 'dns-wrapped-2ld'), () => null)
+    .with(P.union(P.nullish, 'root', 'tld'), () => null)
     .exhaustive()
+}
+
+export const checkCanSend = ({
+  abilities,
+  nameType,
+}: {
+  abilities: ReturnType<typeof useAbilities>['data']
+  nameType: ReturnType<typeof useNameType>['data']
+}) => {
+  const role = senderRole(nameType)
+  if (role === 'manager' && !!abilities?.canSendManager) return true
+  if (role === 'owner' && !!abilities?.canSendOwner) return true
+  return false
 }

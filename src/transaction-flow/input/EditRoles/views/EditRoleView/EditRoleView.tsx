@@ -65,6 +65,7 @@ export const EditRoleView = ({ index, onBack }: Props) => {
       />
       <Content>
         <Input
+          data-testid="edit-roles-search-input"
           name="role"
           label="Role"
           size="medium"

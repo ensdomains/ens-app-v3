@@ -15,10 +15,11 @@ const Container = styled.div(
 type Props = {
   name: string
   results: any[]
+  senderRole?: 'owner' | 'manager' | null
   onSelect: (address: string) => void
 }
 
-export const SearchViewResultsView = ({ name, results, onSelect }: Props) => {
+export const SearchViewResultsView = ({ name, results, senderRole, onSelect }: Props) => {
   const roles = useRoles(name)
   return (
     <Container>
@@ -28,7 +29,7 @@ export const SearchViewResultsView = ({ name, results, onSelect }: Props) => {
           name={result.name}
           address={result.address}
           roles={roles.data || []}
-          role={'owner' as const}
+          excludeRole={senderRole}
           onClick={() => onSelect(result.address)}
         />
       ))}

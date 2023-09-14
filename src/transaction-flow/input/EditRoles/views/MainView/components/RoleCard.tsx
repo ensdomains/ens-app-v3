@@ -97,7 +97,7 @@ export const RoleCard = ({ address, role, dirty, onClick }: Props) => {
 
   const isAddressEmpty = !address || address === emptyAddress
   return (
-    <Container $dirty={dirty}>
+    <Container $dirty={dirty} data-testid={`role-card-${role}`}>
       <InfoContainer>
         <Title fontVariant="bodyBold">{t(`roles.${role}.title`, { ns: 'common' })}</Title>
         <Typography fontVariant="small" color="grey">
@@ -105,7 +105,7 @@ export const RoleCard = ({ address, role, dirty, onClick }: Props) => {
         </Typography>
       </InfoContainer>
       <Divider />
-      <Footer type="button" onClick={onClick}>
+      <Footer data-testid="role-card-change-button" type="button" onClick={onClick}>
         {isAddressEmpty ? (
           <>
             <NoneSetAvatarWithIdentifier size="8" dirty={dirty} />

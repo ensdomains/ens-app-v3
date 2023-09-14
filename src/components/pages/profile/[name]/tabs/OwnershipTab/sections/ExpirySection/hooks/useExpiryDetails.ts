@@ -31,6 +31,8 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
 
   const isLoading =
     nameType.isLoading || details.isLoading || parentData.isLoading || registrationData.isLoading
+  const isCachedData =
+    nameType.isCachedData || registrationData.isCachedData || parentData.isCachedData
 
   const data = useMemo(
     () => {
@@ -47,7 +49,7 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
           {
             type: 'grace-period',
             date: expiry ? new Date(expiry.getTime() + GRACE_PERIOD) : undefined,
-            tooltip: t('tabs.ownership.sections.expiry.labels.tooltip'),
+            tooltip: t('tabs.ownership.sections.expiry.panel.grace-period.tooltip'),
           },
           {
             type: 'registration',
@@ -112,5 +114,6 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
   return {
     data,
     isLoading,
+    isCachedData,
   }
 }

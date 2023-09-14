@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { Tag, mq } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
+import type { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 
 const LeftContainer = styled.div(() => css``)
 
@@ -55,11 +56,11 @@ const Container = styled.button(({ theme }) => [
 type Props = {
   name?: string
   address: string
-  role?: string
-  roles: any[]
+  excludeRole?: Role | null
+  roles: RoleRecord[]
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>
 
-export const SearchViewResult = ({ address, name, role, roles, ...props }: Props) => {
+export const SearchViewResult = ({ address, name, excludeRole: role, roles, ...props }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const markers = useMemo(() => {
     console.log('markers', roles, address)
@@ -71,7 +72,12 @@ export const SearchViewResult = ({ address, name, role, roles, ...props }: Props
   }, [roles, role, address])
 
   return (
-    <Container type="button" disabled={markers.hasRole} {...props}>
+    <Container
+      data-testid={`search-result-${address}`}
+      type="button"
+      disabled={markers.hasRole}
+      {...props}
+    >
       <LeftContainer>
         <AvatarWithIdentifier address={address} name={name} shorten={false} size="8" />
       </LeftContainer>

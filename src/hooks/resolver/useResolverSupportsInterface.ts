@@ -1,9 +1,36 @@
 import { Contract } from '@ethersproject/contracts'
-import { useQuery } from 'wagmi'
+import { useProvider, useQuery } from 'wagmi'
+
+import { RESOLVER_INTERFACE_IDS, ResolverInterfaceName } from '@app/constants/resolverInterfaceIds'
+import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+
+const SUPPORTS_INTERFACE_ABI = [
+  {
+    constant: true,
+    inputs: [
+      {
+        internalType: 'bytes4',
+        name: 'interfaceID',
+        type: 'bytes4',
+      },
+    ],
+    name: 'supportsInterface',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    payable: false,
+    stateMutability: 'pure',
+    type: 'function',
+  },
+]
 
 type Input = {
   resolverAddress?: string
-  interfaces: string[]
+  interfaces: ResolverInterfaceName[]
 }
 
 type Options = {
@@ -15,15 +42,29 @@ export const useResolverSupportsInterfaces = (
   options: Options = {},
 ) => {
   const enabled = (options.enabled ?? true) && !!resolverAddress
+  const provider = useProvider()
   return useQuery(
-    [`supports-interfaces-`],
+    useQueryKeys().resolverSupportsInterfaces(resolverAddress!, interfaces),
     async () => {
-      const contract = new Contract(resolverAddress!, [], undefined)
-      const results = await Promise.allSettled(interfaces.map((i) => contract.supportsInterface(i)))
-      return results.map((r) => r.status === 'fulfilled' && !!r.value)
+      const _interfaces = interfaces.map((i) => [i, RESOLVER_INTERFACE_IDS[i]])
+      const contract = new Contract(resolverAddress!, SUPPORTS_INTERFACE_ABI, provider)
+      const results = await Promise.allSettled(
+        _interfaces.map(async ([i, id]) => {
+          try {
+            const suppored = await contract.supportsInterface(id)
+            return [i, suppored]
+          } catch {
+            return [i, false]
+          }
+        }),
+      )
+      const entries = results
+        .map((r) => (r.status === 'fulfilled' ? r.value : null))
+        .filter((r) => !!r) as [ResolverInterfaceName, boolean][]
+      return Object.fromEntries(entries)
     },
     {
-      enabled,
+      enabled: enabled && !!provider,
     },
   )
 }

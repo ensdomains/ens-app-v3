@@ -43,37 +43,58 @@ const getWrapLevel = (
   return 'unwrapped' as const
 }
 
+export const getNameType = ({
+  name,
+  ownerData,
+  wrapperData,
+  pccExpired,
+}: {
+  name: string
+  ownerData: ReturnType<typeof useBasicName>['ownerData']
+  wrapperData: ReturnType<typeof useBasicName>['wrapperData']
+  pccExpired: boolean
+}) => {
+  const tldType = name.endsWith('.eth') ? ('eth' as const) : ('dns' as const)
+  const level = nameLevel(name)
+  const wrapLevel = getWrapLevel(wrapperData, ownerData)
+
+  return match([tldType, wrapLevel, level])
+    .with([P._, P._, P.union('root', 'tld')], ([, , _level]) => _level)
+    .with(
+      ['eth', P._, '2ld'],
+      ([_tldType, _wrapLevel]: ['eth', 'unwrapped' | 'emancipated' | 'locked', '2ld']) => {
+        return `${_tldType}-${_wrapLevel}-2ld` as const
+      },
+    )
+    .with(['dns', P._, '2ld'], ([, _wrapLevel]) => `dns-${_wrapLevel}-2ld` as const)
+    .with([P._, P._, 'subname'], ([_tldType, _wrapLevel]) =>
+      pccExpired
+        ? (`${_tldType}-pcc-expired-subname` as const)
+        : (`${_tldType}-${_wrapLevel}-subname` as const),
+    )
+    .exhaustive()
+}
+
 export const useNameType = (name: string, options: Options = {}) => {
   const enabled = options.enabled ?? true
 
   const basicName = useBasicName(name, { skipGraph: true, enabled })
 
-  const { isLoading } = basicName
+  const { isLoading, isCachedData } = basicName
+
   const data: NameType | undefined = useMemo(() => {
     if (isLoading) return undefined
-    const tldType = name.endsWith('.eth') ? ('eth' as const) : ('dns' as const)
-    const level = nameLevel(name)
-    const wrapLevel = getWrapLevel(basicName.wrapperData, basicName.ownerData)
-
-    return match([tldType, wrapLevel, level])
-      .with([P._, P._, P.union('root', 'tld')], ([, , _level]) => _level)
-      .with(
-        ['eth', P._, '2ld'],
-        ([_tldType, _wrapLevel]: ['eth', 'unwrapped' | 'emancipated' | 'locked', '2ld']) => {
-          return `${_tldType}-${_wrapLevel}-2ld` as const
-        },
-      )
-      .with(['dns', P._, '2ld'], ([, _wrapLevel]) => `dns-${_wrapLevel}-2ld` as const)
-      .with([P._, P._, 'subname'], ([_tldType, _wrapLevel]) =>
-        basicName.pccExpired
-          ? (`${_tldType}-pcc-expired-subname` as const)
-          : (`${_tldType}-${_wrapLevel}-subname` as const),
-      )
-      .exhaustive()
+    return getNameType({
+      name,
+      ownerData: basicName.ownerData!,
+      wrapperData: basicName.wrapperData!,
+      pccExpired: basicName.pccExpired,
+    })
   }, [isLoading, name, basicName.ownerData, basicName.wrapperData, basicName.pccExpired])
 
   return {
     data,
     isLoading,
+    isCachedData,
   }
 }

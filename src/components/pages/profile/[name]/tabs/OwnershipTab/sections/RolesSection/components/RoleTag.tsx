@@ -74,7 +74,11 @@ export const RoleTag = ({ role }: { role: Role }) => {
       }
       background="indigoSurface"
     >
-      <Container type="button" onClick={() => setOpen((_open) => (_open ? undefined : true))}>
+      <Container
+        data-testid={`role-tag-${role}`}
+        type="button"
+        onClick={() => setOpen((_open) => (_open ? undefined : true))}
+      >
         <RoleLabel fontVariant="smallBold" color="indigo">
           {t(`roles.${role}.title`)}
         </RoleLabel>

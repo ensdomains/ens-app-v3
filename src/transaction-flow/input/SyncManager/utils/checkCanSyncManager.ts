@@ -1,25 +1,25 @@
 import { P, match } from 'ts-pattern'
 
-import type { useNameDetails } from '@app/hooks/useNameDetails'
-import type { useNameType } from '@app/hooks/useNameType'
+import type { NameType } from '@app/hooks/useNameType'
 
 export const checkCanSyncManager = ({
   address,
   nameType,
-  details,
+  registrant,
+  owner,
+  dnsOwner,
 }: {
   address?: string | null
-  nameType: ReturnType<typeof useNameType>['data']
-  details: ReturnType<typeof useNameDetails>
+  nameType?: NameType | null
+  registrant?: string | null
+  owner?: string | null
+  dnsOwner?: string | null
 }) => {
   return match(nameType)
-    .with(
-      'eth-unwrapped-2ld',
-      () => details.ownerData?.registrant === address && details.ownerData?.owner !== address,
-    )
+    .with('eth-unwrapped-2ld', () => registrant === address && owner !== address)
     .with(
       P.union('dns-unwrapped-2ld', 'dns-wrapped-2ld'),
-      () => details.dnsOwner === address && details.ownerData?.owner !== address,
+      () => dnsOwner === address && owner !== address,
     )
     .with(
       P.union(

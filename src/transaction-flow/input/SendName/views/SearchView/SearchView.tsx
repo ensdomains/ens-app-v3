@@ -55,11 +55,12 @@ const FooterWrapper = styled.div(({ theme }) => [
 
 type Props = {
   name: string
+  senderRole?: 'owner' | 'manager' | null
   onSelect: (address: string) => void
   onCancel: () => void
 }
 
-export const SearchView = ({ name, onCancel, onSelect }: Props) => {
+export const SearchView = ({ name, senderRole, onCancel, onSelect }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const { register, watch, setValue } = useFormContext<SendNameForm>()
   const query = watch('query')
@@ -76,6 +77,7 @@ export const SearchView = ({ name, onCancel, onSelect }: Props) => {
       <Dialog.Heading title="Send Name" />
       <Content>
         <Input
+          data-testid="send-name-search-input"
           label="Name"
           size="medium"
           hideLabel
@@ -101,7 +103,12 @@ export const SearchView = ({ name, onCancel, onSelect }: Props) => {
             .with(
               [P._, { isSuccess: true, data: P.when((d) => !!d && d.length > 0) }],
               ([, { data }]) => (
-                <SearchViewResultsView name={name} results={data} onSelect={onSelect} />
+                <SearchViewResultsView
+                  name={name}
+                  results={data}
+                  senderRole={senderRole}
+                  onSelect={onSelect}
+                />
               ),
             )
             .with([P._, { isSuccess: true, data: P.when((d) => !d || d.length === 0) }], () => (

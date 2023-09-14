@@ -5,13 +5,15 @@ import { P, match } from 'ts-pattern'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import useRoles from '@app/hooks/ownership/useRoles/useRoles'
+import { useResolverSupportsInterfaces } from '@app/hooks/resolver/useResolverSupportsInterface'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useNameType } from '@app/hooks/useNameType'
+import { useResolver } from '@app/hooks/useResolver'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
-import { checkCanSend } from './utils/checkCanSend'
+import { checkCanSend, senderRole } from './utils/checkCanSend'
 import { CannotSendView } from './views/CannotSendView'
 import { ConfirmationView } from './views/ConfirmationView'
 import { SearchView } from './views/SearchView/SearchView'
@@ -44,6 +46,12 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const nameType = useNameType(name)
   const basic = useBasicName(name)
   const roles = useRoles(name)
+  const resolver = useResolver(name)
+  const resolverSupport = useResolverSupportsInterfaces({
+    resolverAddress: resolver.data,
+    interfaces: ['VersionableResolver'],
+  })
+  const _senderRole = senderRole(nameType.data)
 
   const flow = ['search', 'summary', 'confirmation'] as const
   const [viewIndex, setViewIndex] = useState(0)
@@ -72,11 +80,16 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
     const currentOwner = roles.data?.find((role) => role.role === 'owner')?.address
     const currentManager = roles.data?.find((role) => role.role === 'manager')?.address
     const currentEthRecord = roles.data?.find((role) => role.role === 'eth-record')?.address
+
     setValue('recipient', recipient)
     setValue('transactions', {
-      sendOwner: abilities.data.canSendOwner && recipient !== currentOwner,
-      sendManager: abilities.data.canSendManager && recipient !== currentManager,
-      setEthRecord: abilities.data.canEditRecords && recipient !== currentEthRecord,
+      sendOwner:
+        abilities.data.canSendOwner && recipient.toLowerCase() !== currentOwner?.toLowerCase(),
+      sendManager:
+        abilities.data.canSendManager && recipient.toLowerCase() !== currentManager?.toLowerCase(),
+      setEthRecord:
+        abilities.data.canEditRecords &&
+        recipient.toLowerCase() !== currentEthRecord?.toLowerCase(),
       resetProfile: false,
     })
     onNext()
@@ -86,10 +99,27 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
     const isOwnerOrManager =
       account.address === basic.ownerData?.owner || basic.ownerData?.registrant === account.address
 
+    const setEthRecordOnly = transactions.setEthRecord && !transactions.resetProfile
+    const resetProfileOnly = transactions.resetProfile && !transactions.setEthRecord
+    const setEthRecordAndResetProfile = transactions.setEthRecord && transactions.resetProfile
+
     const _transactions = [
-      transactions.setEthRecord
+      setEthRecordOnly
         ? makeTransactionItem('updateEthAddress', { name, address: recipient })
         : null,
+      resetProfileOnly
+        ? makeTransactionItem('resetProfile', { name, resolver: resolver.data })
+        : null,
+      setEthRecordAndResetProfile
+        ? makeTransactionItem('resetProfileWithRecords', {
+            name,
+            records: {
+              coinTypes: [{ key: 'ETH', value: recipient }],
+            },
+            resolver: resolver.data,
+          })
+        : null,
+
       transactions.sendManager && !!abilities.data?.sendNameFunctionCallDetails?.sendManager
         ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
             name,
@@ -109,6 +139,7 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
         : null,
     ].filter((transaction) => !!transaction)
 
+    console.log('_transactions', _transactions)
     if (_transactions.length === 0) return
 
     dispatch({
@@ -133,10 +164,22 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
             <ConfirmationView onBack={onBack} onConfirm={onConfirm} />
           ))
           .with([true, 'summary'], () => (
-            <SummaryView name={name} onBack={onBack} onNext={onNext} />
+            <SummaryView
+              name={name}
+              canResetProfile={
+                abilities.data.canEditRecords && !!resolverSupport.data?.VersionableResolver
+              }
+              onBack={onBack}
+              onNext={onNext}
+            />
           ))
           .with([true, 'search'], () => (
-            <SearchView name={name} onCancel={onDismiss} onSelect={onSelect} />
+            <SearchView
+              name={name}
+              senderRole={_senderRole}
+              onCancel={onDismiss}
+              onSelect={onSelect}
+            />
           ))
           .exhaustive()}
       </InnerDialog>

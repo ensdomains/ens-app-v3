@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { Button, Dialog, Field, ScrollBox } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
+import { useExpiry } from '@app/hooks/useExpiry'
 
 import { DetailedSwitch } from '../../../ProfileEditor/components/DetailedSwitch'
 import type { SendNameForm } from '../../SendName-flow'
@@ -37,15 +38,21 @@ const Content = styled.div(
 
 type Props = {
   name: string
+  canResetProfile?: boolean
   onNext: () => void
   onBack: () => void
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const SummaryView = ({ name, onNext, onBack }: Props) => {
+export const SummaryView = ({ name, canResetProfile, onNext, onBack }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const { control, register } = useFormContext<SendNameForm>()
   const recipient = useWatch({ control, name: 'recipient' })
+  const expiry = useExpiry(name)
+  console.log('expiry', expiry)
+
+  const isLoading = expiry.loading
+  if (isLoading) return null
   return (
     <>
       <Dialog.Heading title={t('input.sendName.views.summary.title')} />
@@ -58,7 +65,11 @@ export const SummaryView = ({ name, onNext, onBack }: Props) => {
                 name={name}
                 address="0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
                 subtitle={t('input.sendName.views.summary.fields.name.expires', {
-                  date: 'Nov 13, 2021',
+                  date: expiry.expiry?.expiry?.toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  }),
                 })}
               />
             </NameContainer>
@@ -68,14 +79,17 @@ export const SummaryView = ({ name, onNext, onBack }: Props) => {
               <AvatarWithIdentifier address={recipient} size="8" />
             </NameContainer>
           </Field>
-          <Field label={t('input.sendName.views.summary.fields.options.label')}>
-            <DetailedSwitch
-              title={t('input.sendName.views.summary.fields.options.title')}
-              description={t('input.sendName.views.summary.fields.options.description')}
-              size="medium"
-              {...register('transactions.resetProfile')}
-            />
-          </Field>
+          {canResetProfile && (
+            <Field label={t('input.sendName.views.summary.fields.options.label')}>
+              <DetailedSwitch
+                data-testid="send-name-reset-profile-switch"
+                title={t('input.sendName.views.summary.fields.options.title')}
+                description={t('input.sendName.views.summary.fields.options.description')}
+                size="medium"
+                {...register('transactions.resetProfile')}
+              />
+            </Field>
+          )}
           <SummarySection />
         </Content>
       </StyledScrollBox>
@@ -85,7 +99,11 @@ export const SummaryView = ({ name, onNext, onBack }: Props) => {
             {t('action.back', { ns: 'common' })}
           </Button>
         }
-        trailing={<Button onClick={onNext}>{t('action.send', { ns: 'common' })}</Button>}
+        trailing={
+          <Button data-testid="send-name-send-button" onClick={onNext}>
+            {t('action.send', { ns: 'common' })}
+          </Button>
+        }
       />
     </>
   )

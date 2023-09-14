@@ -84,6 +84,7 @@ export const EditRoleIntroView = ({ role, address, onSelect }: Props) => {
             <Row>
               <AvatarWithIdentifier address={account.address!} />
               <Button
+                data-testid="edit-roles-set-to-self-button"
                 colorStyle="accentSecondary"
                 size="small"
                 onClick={() => {

@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components'
 
 import { Button, Card } from '@ensdomains/thorin'
 
+import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { PseudoActionButton } from '@app/components/@atoms/PseudoActionButton/PseudoActionButton'
 import type { GroupedRoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
@@ -21,6 +22,8 @@ const Footer = styled.div(
     `,
 )
 
+const StyledCard = styled(Card)(cacheableComponentStyles, () => css``)
+
 type Props = {
   name: string
   roles: GroupedRoleRecord[]
@@ -30,8 +33,9 @@ type Props = {
 export const RolesSection = ({ name, roles, details }: Props) => {
   const actions = useRoleActions({ name, details, roles })
 
+  const isCached = details.basicIsCachedData
   return (
-    <Card>
+    <StyledCard $isCached={isCached}>
       <Header count={roles?.filter(({ address }) => !!address).length || 0} />
       <Card.Divider />
       {roles?.map((role) => (
@@ -43,6 +47,7 @@ export const RolesSection = ({ name, roles, details }: Props) => {
             return (
               <div key={type}>
                 <PseudoActionButton
+                  data-testid={`role-action-${type}`}
                   colorStyle={primary ? 'accentPrimary' : 'accentSecondary'}
                   prefix={icon}
                   disabled={disabled}
@@ -55,6 +60,7 @@ export const RolesSection = ({ name, roles, details }: Props) => {
           return (
             <div key={type}>
               <Button
+                data-testid={`role-action-${type}`}
                 colorStyle={primary ? 'accentPrimary' : 'accentSecondary'}
                 prefix={icon}
                 disabled={disabled}
@@ -66,6 +72,6 @@ export const RolesSection = ({ name, roles, details }: Props) => {
           )
         })}
       </Footer>
-    </Card>
+    </StyledCard>
   )
 }

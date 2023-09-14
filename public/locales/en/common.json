@@ -202,6 +202,7 @@
       "approveNameWrapper": "Approve NameWrapper",
       "clearRecords": "Clear records",
       "updateRecords": "Update records",
+      "resetProfileWithRecords": "Reset profile with records",
       "transferName": "Transfer name",
       "transferSubname": "Transfer subname",
       "changePermissions": "Change permissions",
@@ -252,7 +253,8 @@
       "duration": "Duration",
       "cost": "Cost",
       "update": "Update",
-      "resolver": "Resolver"
+      "resolver": "Resolver",
+      "records": "Records"
     },
     "itemValue": {
       "records_one": "{{count}} record",

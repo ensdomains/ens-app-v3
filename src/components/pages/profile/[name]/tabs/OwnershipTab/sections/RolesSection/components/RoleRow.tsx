@@ -143,10 +143,10 @@ export const RoleRow = ({ address, roles, actions, details }: Props) => {
   if (!address || address === emptyAddress || isLoading) return null
   return (
     <>
-      <Container>
+      <Container data-testid={`role-row-${address}`}>
         <InnerContainer>
           <AvatarWithIdentifier name={primary.data?.name} address={address} size="10" />
-          <RoleTagContainer>
+          <RoleTagContainer data-testid="role-tag-container">
             {roles?.map((role) => (
               <RoleTag key={role} role={role} />
             ))}
