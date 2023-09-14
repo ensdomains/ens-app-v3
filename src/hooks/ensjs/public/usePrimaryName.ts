@@ -1,53 +1,87 @@
+import { QueryFunctionContext } from '@tanstack/react-query'
+import { getPublicClient } from '@wagmi/core'
 import type { Address } from 'viem'
-import { useQuery } from 'wagmi'
+import { useAccount, useQuery } from 'wagmi'
 
-import { GetNameParameters, getName } from '@ensdomains/ensjs/public'
+import { GetNameParameters, GetNameReturnType, getName } from '@ensdomains/ensjs/public'
 
+import { useChainId } from '@app/hooks/chain/useChainId'
+import {
+  BaseQueryKeyParameters,
+  CreateQueryKey,
+  PublicClientWithChain,
+  QueryConfig,
+} from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
-
-import { usePublicClient } from '../../usePublicClient'
 
 type UsePrimaryNameParameters = Omit<GetNameParameters, 'address'> & {
-  address?: Address
-
+  address?: Address | null
   allowMismatch?: boolean
+}
 
-  enabled?: boolean
+type UsePrimaryNameConfig = QueryConfig<GetNameReturnType, Error>
+
+type QueryKeyParameters<TParams extends UsePrimaryNameParameters> = BaseQueryKeyParameters &
+  Pick<UsePrimaryNameConfig, 'scopeKey'> & { params: TParams }
+type QueryKey<TParams extends UsePrimaryNameParameters> = CreateQueryKey<TParams, 'getName'>
+
+const queryKey = <TParams extends UsePrimaryNameParameters>({
+  chainId,
+  address,
+  scopeKey,
+  params,
+}: QueryKeyParameters<TParams>): QueryKey<TParams> => {
+  return [params, chainId, address, scopeKey, 'getName']
+}
+
+export const getPrimaryNameQueryFn = async <TParams extends UsePrimaryNameParameters>({
+  queryKey: [{ address, ...params }, chainId],
+}: QueryFunctionContext<QueryKey<TParams>>) => {
+  if (!address) throw new Error('address is required')
+
+  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+
+  const res = await getName(publicClient, { address, ...params })
+
+  if (!res || !res.name || (!res.match && !params.allowMismatch)) return null
+
+  return {
+    ...res,
+    beautifiedName: tryBeautify(res.name),
+  }
 }
 
 export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
+  // config
+  cacheTime = 60,
   enabled = true,
+  staleTime,
+  scopeKey,
+  onError,
+  onSettled,
+  onSuccess,
+  // params
   allowMismatch = false,
   ...params
-}: TParams) => {
-  const publicClient = usePublicClient()
+}: TParams & UsePrimaryNameConfig) => {
+  const chainId = useChainId()
+  const { address } = useAccount()
 
-  const queryKeys = useQueryKeys()
-
-  const { data, status, isFetchedAfterMount, isFetched, ...rest } = useQuery(
-    queryKeys.getName({ ...params, address: params.address!, allowMismatch }),
-    async ({ queryKey: [params] }) => {
-      const res = await getName(publicClient, params as GetNameParameters)
-      if (!res || !res.name || (!res.match && !allowMismatch)) return null
-      return {
-        ...res,
-        name: res.name as string,
-        beautifiedName: tryBeautify(res.name),
-      }
-    },
+  const query = useQuery(
+    queryKey({ chainId, address, scopeKey, params: { ...params, allowMismatch } }),
+    getPrimaryNameQueryFn,
     {
+      cacheTime,
       enabled: enabled && !!params.address,
-      cacheTime: 60,
+      staleTime,
+      onError,
+      onSettled,
+      onSuccess,
     },
   )
 
   return {
-    data,
-    status,
-    isFetched,
-    isFetchedAfterMount,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
-    ...rest,
+    ...query,
+    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
   }
 }

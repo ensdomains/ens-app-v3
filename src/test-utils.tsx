@@ -131,6 +131,10 @@ export type PartialMockedFunction<T extends (...args: any) => any> = (
   ...args: Parameters<T>
 ) => DeepPartial<ReturnType<T>>
 
+export type MockHookData<THookFn extends (...args: any[]) => { data: any }> = DeepPartial<
+  ReturnType<THookFn>['data']
+>
+
 export const mockFunction = <T extends (...args: any) => any>(func: T) =>
   func as unknown as jest.MockedFunction<PartialMockedFunction<T>>
 

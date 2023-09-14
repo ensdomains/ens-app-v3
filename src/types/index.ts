@@ -169,19 +169,39 @@ export type WalletClientWithAccount = WalletClient<Transport, ChainWithEns, Acco
 
 export type QueryConfig<TData, TError, TSelectData = TData> = Pick<
   UseQueryOptions<TData, TError, TSelectData>,
-  | 'cacheTime'
-  | 'enabled'
-  | 'isDataEqual'
-  | 'staleTime'
-  | 'structuralSharing'
-  | 'suspense'
-  | 'onError'
-  | 'onSettled'
-  | 'onSuccess'
+  'cacheTime' | 'enabled' | 'staleTime' | 'onError' | 'onSettled' | 'onSuccess'
 > & {
   /** Scope the cache to a given context. */
   scopeKey?: string
 }
+export type BaseQueryKeyParameters = { chainId: number; address: Address | undefined }
+export type CreateQueryKey<
+  TParams extends {},
+  TFunctionName extends string,
+  TGraphQuery extends boolean = false,
+> = TGraphQuery extends true
+  ? readonly [
+      params: TParams,
+      chainId: number,
+      address: Address | undefined,
+      graphKey: 'graph',
+      scopeKey: string | undefined,
+      functionName: TFunctionName,
+    ]
+  : readonly [
+      params: TParams,
+      chainId: number,
+      address: Address | undefined,
+      scopeKey: string | undefined,
+      functionName: TFunctionName,
+    ]
+
+/**
+ * Makes {@link TKeys} optional in {@link TType} while preserving type inference.
+ */
+// s/o trpc (https://github.com/trpc/trpc/blob/main/packages/server/src/types.ts#L6)
+export type PartialBy<TType, TKeys extends keyof TType> = Partial<Pick<TType, TKeys>> &
+  Omit<TType, TKeys>
 
 export type AnyFuseKey = ParentFuseReferenceType['Key'] | ChildFuseReferenceType['Key']
 export type CurrentChildFuses = { -readonly [k in keyof ChildFuses]: boolean }
