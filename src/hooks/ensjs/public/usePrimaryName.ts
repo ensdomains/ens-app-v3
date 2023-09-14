@@ -1,17 +1,12 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import type { Address } from 'viem'
-import { useAccount, useQuery } from 'wagmi'
+import { useQuery } from 'wagmi'
 
 import { GetNameParameters, GetNameReturnType, getName } from '@ensdomains/ensjs/public'
 
-import { useChainId } from '@app/hooks/chain/useChainId'
-import {
-  BaseQueryKeyParameters,
-  CreateQueryKey,
-  PublicClientWithChain,
-  QueryConfig,
-} from '@app/types'
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { CreateQueryKey, PublicClientWithChain, QueryConfig } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
 
 type UsePrimaryNameParameters = Omit<GetNameParameters, 'address'> & {
@@ -21,18 +16,7 @@ type UsePrimaryNameParameters = Omit<GetNameParameters, 'address'> & {
 
 type UsePrimaryNameConfig = QueryConfig<GetNameReturnType, Error>
 
-type QueryKeyParameters<TParams extends UsePrimaryNameParameters> = BaseQueryKeyParameters &
-  Pick<UsePrimaryNameConfig, 'scopeKey'> & { params: TParams }
-type QueryKey<TParams extends UsePrimaryNameParameters> = CreateQueryKey<TParams, 'getName'>
-
-const queryKey = <TParams extends UsePrimaryNameParameters>({
-  chainId,
-  address,
-  scopeKey,
-  params,
-}: QueryKeyParameters<TParams>): QueryKey<TParams> => {
-  return [params, chainId, address, scopeKey, 'getName']
-}
+type QueryKey<TParams extends UsePrimaryNameParameters> = CreateQueryKey<TParams, 'getName', false>
 
 export const getPrimaryNameQueryFn = async <TParams extends UsePrimaryNameParameters>({
   queryKey: [{ address, ...params }, chainId],
@@ -64,21 +48,21 @@ export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
   allowMismatch = false,
   ...params
 }: TParams & UsePrimaryNameConfig) => {
-  const chainId = useChainId()
-  const { address } = useAccount()
+  const queryKey = useQueryKeyFactory({
+    params: { ...params, allowMismatch },
+    scopeKey,
+    functionName: 'getName',
+    isGraphQuery: false,
+  })
 
-  const query = useQuery(
-    queryKey({ chainId, address, scopeKey, params: { ...params, allowMismatch } }),
-    getPrimaryNameQueryFn,
-    {
-      cacheTime,
-      enabled: enabled && !!params.address,
-      staleTime,
-      onError,
-      onSettled,
-      onSuccess,
-    },
-  )
+  const query = useQuery(queryKey, getPrimaryNameQueryFn, {
+    cacheTime,
+    enabled: enabled && !!params.address,
+    staleTime,
+    onError,
+    onSettled,
+    onSuccess,
+  })
 
   return {
     ...query,

@@ -1,17 +1,11 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { useAccount, useQuery } from 'wagmi'
+import { useQuery } from 'wagmi'
 
 import { GetRecordsParameters, GetRecordsReturnType, getRecords } from '@ensdomains/ensjs/public'
 
-import { useChainId } from '@app/hooks/chain/useChainId'
-import {
-  BaseQueryKeyParameters,
-  CreateQueryKey,
-  PartialBy,
-  PublicClientWithChain,
-  QueryConfig,
-} from '@app/types'
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseRecordsParameters = PartialBy<GetRecordsParameters, 'name'>
 
@@ -24,18 +18,7 @@ type UseRecordsConfig<TParams extends UseRecordsParameters> = QueryConfig<
   Error
 >
 
-type QueryKeyParameters<TParams extends UseRecordsParameters> = BaseQueryKeyParameters &
-  Pick<UseRecordsConfig<TParams>, 'scopeKey'> & { params: TParams }
-type QueryKey<TParams extends UseRecordsParameters> = CreateQueryKey<TParams, 'getRecords'>
-
-const queryKey = <TParams extends UseRecordsParameters>({
-  chainId,
-  address,
-  scopeKey,
-  params,
-}: QueryKeyParameters<TParams>): QueryKey<TParams> => {
-  return [params, chainId, address, scopeKey, 'getRecords']
-}
+type QueryKey<TParams extends UseRecordsParameters> = CreateQueryKey<TParams, 'getRecords', false>
 
 export const getRecordsQueryFn = async <TParams extends UseRecordsParameters>({
   queryKey: [{ name, ...params }, chainId],
@@ -63,10 +46,14 @@ export const useRecords = <TParams extends UseRecordsParameters>({
   // params
   ...params
 }: TParams & UseRecordsConfig<TParams>) => {
-  const chainId = useChainId()
-  const { address } = useAccount()
+  const queryKey = useQueryKeyFactory({
+    params,
+    scopeKey,
+    functionName: 'getRecords',
+    isGraphQuery: false,
+  })
 
-  const query = useQuery(queryKey({ chainId, address, scopeKey, params }), getRecordsQueryFn, {
+  const query = useQuery(queryKey, getRecordsQueryFn, {
     cacheTime,
     staleTime,
     enabled: enabled && !!params.name,

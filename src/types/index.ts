@@ -178,15 +178,15 @@ export type BaseQueryKeyParameters = { chainId: number; address: Address | undef
 export type CreateQueryKey<
   TParams extends {},
   TFunctionName extends string,
-  TGraphQuery extends boolean = false,
+  TGraphQuery extends boolean,
 > = TGraphQuery extends true
   ? readonly [
       params: TParams,
       chainId: number,
       address: Address | undefined,
-      graphKey: 'graph',
       scopeKey: string | undefined,
       functionName: TFunctionName,
+      graphKey: 'graph',
     ]
   : readonly [
       params: TParams,
