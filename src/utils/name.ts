@@ -18,3 +18,8 @@ export const nameLevel = (name: string) => {
     )
     .otherwise(() => (name === '[root]' ? ('root' as const) : ('tld' as const)))
 }
+
+export const parentName = (name: string) => {
+  const parts = name.split('.').slice(1)
+  return parts.length ? parts.join('.') : '[root]'
+}

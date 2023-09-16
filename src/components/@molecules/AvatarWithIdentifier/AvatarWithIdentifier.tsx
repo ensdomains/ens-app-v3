@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components'
-import { useChainId } from 'wagmi'
 
 import { Typography } from '@ensdomains/thorin'
 
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
+import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { QuerySpace } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
@@ -41,7 +41,7 @@ type Props = {
   name?: string
   subtitle?: string
   size?: QuerySpace
-  shorten?: boolean
+  shortenAddressAsTitle?: boolean
 }
 
 export const AvatarWithIdentifier = ({
@@ -49,31 +49,31 @@ export const AvatarWithIdentifier = ({
   address,
   subtitle,
   size = '10',
-  shorten = true,
+  shortenAddressAsTitle = true,
 }: Props) => {
   const primary = usePrimary(address, !address || !!name || address === emptyAddress)
   const network = useChainId()
 
   const _name = name || primary.data?.beautifiedName
-  const _title = _name || (shorten ? shortenAddress(address) : address)
+  const _title = _name || (shortenAddressAsTitle ? shortenAddress(address) : address)
   const _subtitle =
     subtitle || (primary.data?.beautifiedName || name ? shortenAddress(address) : undefined)
 
-  const isTitleFullAddress = !shorten && !_name
+  const isTitleFullAddress = !shortenAddressAsTitle && !_name
 
   return (
     <Container>
       <AvatarWithZorb label={_title} address={address} name={_name} size={size} network={network} />
       <TextContainer>
         {isTitleFullAddress ? (
-          <AddressTitleContainer>{_title}</AddressTitleContainer>
+          <AddressTitleContainer data-testid="avatar-label-title">{_title}</AddressTitleContainer>
         ) : (
-          <Typography fontVariant="bodyBold" ellipsis data-testid="avatar-label-name">
+          <Typography fontVariant="bodyBold" ellipsis data-testid="avatar-label-title">
             {_title}
           </Typography>
         )}
         {_subtitle && (
-          <Typography fontVariant="extraSmall" color="grey" data-testid="avatar-label-address">
+          <Typography fontVariant="extraSmall" color="grey" data-testid="avatar-label-subtitle">
             {_subtitle}
           </Typography>
         )}

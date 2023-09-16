@@ -54,6 +54,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
     const canSend = checkCanSend({ abilities: abilities.data, nameType: nameType.data })
     const canSendDNS = canSend && nameType.data?.startsWith('dns')
     const canSendEth = canSend && nameType.data?.startsWith('eth')
+    const canRefreshDNS = !!account.address && nameType.data?.startsWith('dns')
     const showSyncManager = checkCanSyncManager({
       address: account.address,
       nameType: nameType.data,
@@ -72,7 +73,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
             onClick: () => showSendNameInput(`send-name`, { name }),
           }
         : null,
-      canSendDNS
+      canRefreshDNS
         ? {
             type: 'refresh-dns',
             icon: <CounterClockwiseArrowSVG />,
@@ -106,7 +107,6 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
             icon: <PersonSVG />,
             label: t('action.editRoles'),
             primary: true,
-            disabled: availableRoles.length === 0,
             onClick: () => showEditRolesInput(`edit-roles`, { name }),
           }
         : null,

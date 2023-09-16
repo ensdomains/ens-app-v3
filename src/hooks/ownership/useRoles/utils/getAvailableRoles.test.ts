@@ -27,6 +27,6 @@ describe('getAvailableRoles', () => {
     expect(getAvailableRoles({
       roles: [{address: '0x123', role: 'owner'}, {address: '0x456', role: 'manager'}, {address: '0x123', role: 'eth-record'}],
       abilities: {} as any
-    })).toEqual([{address: '0x123', role: 'owner'}, {address: '0x456', role: 'manager'}, {address: '0x123', role: 'eth-record'}])
+    })).toEqual([])
   })
 })

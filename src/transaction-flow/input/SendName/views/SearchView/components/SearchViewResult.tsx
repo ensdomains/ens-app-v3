@@ -79,7 +79,12 @@ export const SearchViewResult = ({ address, name, excludeRole: role, roles, ...p
       {...props}
     >
       <LeftContainer>
-        <AvatarWithIdentifier address={address} name={name} shorten={false} size="8" />
+        <AvatarWithIdentifier
+          address={address}
+          name={name}
+          shortenAddressAsTitle={false}
+          size="8"
+        />
       </LeftContainer>
       {markers.primaryRole && (
         <RightContainer>

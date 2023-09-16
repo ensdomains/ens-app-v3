@@ -8,6 +8,7 @@ import { useNameType } from '@app/hooks/useNameType'
 import useParentBasicName from '@app/hooks/useParentBasicName'
 import useRegistrationData from '@app/hooks/useRegistrationData'
 import { GRACE_PERIOD } from '@app/utils/constants'
+import { safeDateObj } from '@app/utils/date'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 type Input = {
@@ -37,8 +38,10 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
   const data = useMemo(
     () => {
       if (isLoading) return undefined
-      const expiry = details.expiryDate || details.wrapperData?.expiryDate
-      const parentExpiry = parentData?.expiryDate || parentData?.wrapperData?.expiryDate
+      const expiry = safeDateObj(details.expiryDate || details.wrapperData?.expiryDate)
+      const parentExpiry = safeDateObj(
+        parentData?.expiryDate || parentData?.wrapperData?.expiryDate,
+      )
 
       return match(nameType.data!)
         .with(P.union('eth-unwrapped-2ld', 'eth-emancipated-2ld', 'eth-locked-2ld'), () => [

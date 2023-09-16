@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { OutlinkSVG, Typography, mq } from '@ensdomains/thorin'
 
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
+import { safeDateObj } from '@app/utils/date'
 
 type Props = {
   type: 'expiry' | 'grace-period' | 'registration' | 'parent-expiry' | 'parent-grace-period'
@@ -59,7 +60,8 @@ const Body = styled.div(
 
 export const ExpiryPanel = ({ type, date, link, tooltip }: Props) => {
   const { t } = useTranslation('profile')
-  const timestamp = type === 'expiry' ? date.getTime() : undefined
+  const _date = safeDateObj(date)
+  const timestamp = type === 'expiry' ? _date?.getTime() : undefined
   return (
     <Container data-testid={`expiry-panel-${type}`} data-timestamp={timestamp}>
       <Header>
@@ -83,10 +85,14 @@ export const ExpiryPanel = ({ type, date, link, tooltip }: Props) => {
       </Header>
       <Body>
         <Typography fontVariant="body" color="text">
-          {date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+          {_date?.toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })}
         </Typography>
         <Typography fontVariant="small" color="grey">
-          {date.toLocaleTimeString(undefined, {
+          {_date?.toLocaleTimeString(undefined, {
             hour: 'numeric',
             minute: 'numeric',
             second: 'numeric',

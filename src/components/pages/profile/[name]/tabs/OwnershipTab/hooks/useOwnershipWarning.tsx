@@ -6,8 +6,7 @@ import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
 import type { useNameType } from '@app/hooks/useNameType'
 import useParentBasicName from '@app/hooks/useParentBasicName'
-
-const getParentNameFromName = (name: string) => name.split('.').slice(1).join('.')
+import { parentName } from '@app/utils/name'
 
 type Input = {
   name: string
@@ -48,7 +47,7 @@ export const useOwnershipWarning = ({ name, nameType, details }: Input) => {
         [
           P.union('dns-unwrapped-2ld', 'dns-wrapped-2ld'),
           {
-            isRegistrant: P._,
+            isRegistrant: false,
             isManager: true,
             isParentOwner: P._,
             isDNSOwner: false,
@@ -60,7 +59,7 @@ export const useOwnershipWarning = ({ name, nameType, details }: Input) => {
         [
           P.union('dns-unwrapped-2ld', 'dns-wrapped-2ld'),
           {
-            isRegistrant: P._,
+            isRegistrant: false,
             isManager: false,
             isParentOwner: P._,
             isDNSOwner: true,
@@ -77,7 +76,7 @@ export const useOwnershipWarning = ({ name, nameType, details }: Input) => {
             'dns-wrapped-subname',
           ),
           {
-            isRegistrant: P._,
+            isRegistrant: false,
             isManager: true,
             isParentOwner: false,
             isDNSOwner: P._,
@@ -87,7 +86,7 @@ export const useOwnershipWarning = ({ name, nameType, details }: Input) => {
           <Trans
             t={t}
             i18nKey="tabs.ownership.warning.managerNotParentOwner"
-            values={{ parent: getParentNameFromName(name) }}
+            values={{ parent: parentName(name) }}
           />
         ),
       )

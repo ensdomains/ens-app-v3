@@ -65,7 +65,7 @@ export const QuestionTooltip = ({ content, link, ...props }: Props) => {
   )
   return (
     <Tooltip {...props} content={_content} background="indigoSurface">
-      <IconWrapper>
+      <IconWrapper data-testid="question-icon">
         <QuestionCircleSVG />
       </IconWrapper>
     </Tooltip>

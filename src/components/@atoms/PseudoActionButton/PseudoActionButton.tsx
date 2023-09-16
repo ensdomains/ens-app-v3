@@ -1,20 +1,27 @@
-import { ComponentProps, useEffect, useState } from 'react'
+import { ComponentProps, useEffect, useRef, useState } from 'react'
 
 import { Button } from '@ensdomains/thorin'
 
-type Props = ComponentProps<typeof Button>
+type Props = { timeout?: number } & ComponentProps<typeof Button>
 
-export const PseudoActionButton = ({ loading, onClick, ...props }: Props) => {
+export const PseudoActionButton = ({ loading, onClick, timeout = 3000, ...props }: Props) => {
   const [pseudoLoading, setPseudoLoading] = useState(false)
+
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
-    if (pseudoLoading) setTimeout(() => setPseudoLoading(false), 5000)
-  }, [pseudoLoading, setPseudoLoading])
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [])
+
   return (
     <Button
       {...props}
       loading={loading || pseudoLoading}
       onClick={(e) => {
         setPseudoLoading(true)
+        if (timerRef.current) clearTimeout(timerRef.current)
+        timerRef.current = setTimeout(() => setPseudoLoading(false), timeout)
         onClick?.(e)
       }}
     />
