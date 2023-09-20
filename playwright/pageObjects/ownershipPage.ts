@@ -10,6 +10,8 @@ export class OwnershipPage {
 
   readonly sendNameButton: Locator
 
+  readonly disabledSendNameButton: Locator
+
   readonly sendDNSButton: Locator
 
   readonly refreshDNSButton: Locator
@@ -22,6 +24,7 @@ export class OwnershipPage {
     this.page = page
     this.editRolesButton = this.page.getByTestId('role-action-edit-roles')
     this.sendNameButton = this.page.getByTestId('role-action-send-name')
+    this.disabledSendNameButton = this.page.getByTestId('send-name-disabled-button')
     this.sendDNSButton = this.page.getByTestId('role-action-send-dns')
     this.syncManagerButton = this.page.getByTestId('role-action-sync-manager')
     this.refreshDNSButton = this.page.getByTestId('role-action-refresh-dns')

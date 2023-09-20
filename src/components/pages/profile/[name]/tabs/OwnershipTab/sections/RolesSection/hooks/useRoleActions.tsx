@@ -25,6 +25,7 @@ type Action = Omit<DropdownItemObject, 'onClick' | 'icon'> & {
   primary?: boolean
   icon: ReactNodeNoStrings
   type: string
+  error?: string
   onClick?: () => void
 }
 
@@ -52,8 +53,10 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
   const data = useMemo(() => {
     if (isLoading) return undefined
     const canSend = checkCanSend({ abilities: abilities.data, nameType: nameType.data })
-    const canSendDNS = canSend && name && !name.endsWith('.eth')
-    const canSendEth = canSend && name && name.endsWith('.eth')
+    const { canSendError } = abilities.data
+    const showSend = canSend || !!canSendError
+    const showSendDNS = showSend && name && !name.endsWith('.eth')
+    const showSendEth = showSend && name && name.endsWith('.eth')
     const canRefreshDNS = !!account.address && name && !name.endsWith('.eth')
     const showSyncManager = checkCanSyncManager({
       address: account.address,
@@ -65,11 +68,12 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
     const availableRoles = getAvailableRoles({ roles, abilities: abilities.data })
     const canEditRoles = availableRoles.length > 0
     return [
-      canSendDNS
+      showSendDNS
         ? {
             type: 'send-dns',
             icon: <AeroplaneSVG />,
             label: t('action.send'),
+            error: canSendError,
             onClick: () => showSendNameInput(`send-name-${name}`, { name }),
           }
         : null,
@@ -93,11 +97,12 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
               }),
           }
         : null,
-      canSendEth
+      showSendEth
         ? {
             type: 'send-name',
             icon: <AeroplaneSVG />,
             label: t('action.send'),
+            error: canSendError,
             onClick: () => showSendNameInput(`send-name-${name}`, { name }),
           }
         : null,

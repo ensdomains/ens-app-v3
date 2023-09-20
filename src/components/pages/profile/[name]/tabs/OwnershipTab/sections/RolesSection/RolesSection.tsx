@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, Card } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { PseudoActionButton } from '@app/components/@atoms/PseudoActionButton/PseudoActionButton'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import type { GroupedRoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
 
@@ -31,6 +33,7 @@ type Props = {
 }
 
 export const RolesSection = ({ name, roles, details }: Props) => {
+  const { t } = useTranslation('profile')
   const actions = useRoleActions({ name, details, roles })
 
   const isCached = details.basicIsCachedData
@@ -48,7 +51,7 @@ export const RolesSection = ({ name, roles, details }: Props) => {
         />
       ))}
       <Footer>
-        {actions.data?.map(({ label, type, primary, icon, disabled = false, onClick }) => {
+        {actions.data?.map(({ label, type, primary, icon, error, disabled = false, onClick }) => {
           if (type === 'refresh-dns')
             return (
               <div key={type}>
@@ -61,6 +64,20 @@ export const RolesSection = ({ name, roles, details }: Props) => {
                 >
                   {label}
                 </PseudoActionButton>
+              </div>
+            )
+          if (error)
+            return (
+              <div>
+                <DisabledButtonWithTooltip
+                  content={t(`errors.${error}`)}
+                  buttonId="send-name-disabled-button"
+                  buttonText={label}
+                  mobileWidth={150}
+                  mobileButtonWidth="initial"
+                  prefix={icon}
+                  size="medium"
+                />
               </div>
             )
           return (
