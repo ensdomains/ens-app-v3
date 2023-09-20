@@ -11,7 +11,7 @@ import { GRACE_PERIOD } from '@app/utils/constants'
 import { safeDateObj } from '@app/utils/date'
 import { parentName } from '@app/utils/name'
 import { getSupportLink } from '@app/utils/supportLinks'
-import { makeEtherscanLink } from '@app/utils/utils'
+import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
 
 type Input = {
   name: string
@@ -27,6 +27,7 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
 
   const { t } = useTranslation('profile')
 
+  const isETH2LD = checkETH2LDFromName(name)
   const nameType = useNameType(name, { enabled })
   const parentData = useBasicName(parentName(name), {
     skipGraph: false,
@@ -34,13 +35,13 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
   })
   const chainName = useChainName()
   const registrationData = useRegistrationData(name, {
-    enabled,
+    enabled: enabled && isETH2LD,
   })
 
   const isLoading =
     nameType.isLoading || details.isLoading || parentData.isLoading || registrationData.isLoading
   const isCachedData =
-    nameType.isCachedData || registrationData.isCachedData || parentData.isCachedData
+    nameType.isCachedData || (isETH2LD && registrationData.isCachedData) || parentData.isCachedData
 
   const data = useMemo(
     () => {

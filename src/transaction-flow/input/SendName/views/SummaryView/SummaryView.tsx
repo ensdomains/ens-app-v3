@@ -6,6 +6,7 @@ import { Button, Dialog, Field, ScrollBox } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import { useExpiry } from '@app/hooks/useExpiry'
+import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 
 import { DetailedSwitch } from '../../../ProfileEditor/components/DetailedSwitch'
 import type { SendNameForm } from '../../SendName-flow'
@@ -51,7 +52,7 @@ export const SummaryView = ({ name, canResetProfile, onNext, onBack }: Props) =>
   const expiry = useExpiry(name)
 
   const isLoading = expiry.loading
-  if (isLoading) return null
+  if (isLoading) return <TransactionLoader />
   return (
     <>
       <Dialog.Heading title={t('input.sendName.views.summary.title')} />

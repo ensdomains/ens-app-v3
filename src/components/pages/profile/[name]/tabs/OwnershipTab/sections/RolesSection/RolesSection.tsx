@@ -44,6 +44,7 @@ export const RolesSection = ({ name, roles, details }: Props) => {
       {roles?.map((role) => (
         <RoleRow
           key={role.address || 'noaddress'}
+          name={name}
           {...role}
           actions={actions.data}
           isWrapped={details.isWrapped}

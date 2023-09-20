@@ -59,6 +59,7 @@ const RoleTagContainer = styled.div(
 )
 
 type Props = {
+  name: string
   address?: string | null
   roles: Role[]
   actions: ReturnType<typeof useRoleActions>['data']
@@ -66,7 +67,7 @@ type Props = {
   isEmancipated: boolean
 }
 
-export const RoleRow = ({ address, roles, actions, isWrapped, isEmancipated }: Props) => {
+export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipated }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
@@ -77,12 +78,12 @@ export const RoleRow = ({ address, roles, actions, isWrapped, isEmancipated }: P
   const [, copy] = useCopyToClipboard()
 
   const etherscanAction = useMemo(() => {
-    const name = primary.data?.name
-    if (!name) return null
-    const is2ldEth = checkETH2LDFromName(name)
+    const primaryName = primary.data?.name
+    if (!primaryName) return null
+    const is2ldEth = checkETH2LDFromName(primaryName)
     const hasToken = is2ldEth || isWrapped
     if (!hasToken) return null
-    const hex = isWrapped ? namehash(name) : labelhash(name.split('.')[0])
+    const hex = isWrapped ? namehash(primaryName) : labelhash(primaryName.split('.')[0])
     const tokenId = BigNumber.from(hex).toString()
     const contractAddress = isWrapped ? wrapperAddress : registrarAddress
     return {
@@ -146,7 +147,7 @@ export const RoleRow = ({ address, roles, actions, isWrapped, isEmancipated }: P
           <AvatarWithIdentifier name={primary.data?.name} address={address} size="10" />
           <RoleTagContainer data-testid="role-tag-container">
             {roles?.map((role) => (
-              <RoleTag key={role} role={role} isEmancipated={isEmancipated} />
+              <RoleTag key={role} name={name} role={role} isEmancipated={isEmancipated} />
             ))}
           </RoleTagContainer>
         </InnerContainer>

@@ -18,6 +18,7 @@ const SUPPORT_LINKS = {
   'eth-record': undefined,
   'grace-period': undefined,
   'contract-address': undefined,
+  sendingNames: undefined,
 }
 
 type SupportTopic = keyof typeof SUPPORT_LINKS

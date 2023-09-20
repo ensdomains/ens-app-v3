@@ -100,15 +100,12 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
       account.address === basic.ownerData?.owner || basic.ownerData?.registrant === account.address
 
     const setEthRecordOnly = transactions.setEthRecord && !transactions.resetProfile
-    const resetProfileOnly = transactions.resetProfile && !transactions.setEthRecord
-    const setEthRecordAndResetProfile = transactions.setEthRecord && transactions.resetProfile
+    // Anytime you reset the profile you will need to set the eth record as well
+    const setEthRecordAndResetProfile = transactions.resetProfile
 
     const _transactions = [
       setEthRecordOnly
         ? makeTransactionItem('updateEthAddress', { name, address: recipient })
-        : null,
-      resetProfileOnly
-        ? makeTransactionItem('resetProfile', { name, resolver: resolver.data })
         : null,
       setEthRecordAndResetProfile
         ? makeTransactionItem('resetProfileWithRecords', {

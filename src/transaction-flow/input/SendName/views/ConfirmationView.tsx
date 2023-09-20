@@ -3,6 +3,8 @@ import styled, { css } from 'styled-components'
 
 import { Button, Dialog, OutlinkSVG, QuestionSVG, Typography } from '@ensdomains/thorin'
 
+import { getSupportLink } from '@app/utils/supportLinks'
+
 const CenteredTypography = styled(Typography)(
   () => css`
     text-align: center;
@@ -51,6 +53,7 @@ type Props = {
 
 export const ConfirmationView = ({ onConfirm, onBack }: Props) => {
   const { t } = useTranslation('transactionFlow')
+  const link = getSupportLink('sendingNames')
   return (
     <>
       <Dialog.Heading alert="warning" title={t('input.sendName.views.confirmation.title')} />
@@ -60,15 +63,17 @@ export const ConfirmationView = ({ onConfirm, onBack }: Props) => {
       <CenteredTypography fontVariant="body">
         {t('input.sendName.views.confirmation.warning')}
       </CenteredTypography>
-      <Link>
-        <IconWrapper>
-          <QuestionSVG />
-        </IconWrapper>
-        <Typography fontVariant="body" color="indigo">
-          {t('input.sendName.views.confirmation.learnMore')}
-        </Typography>
-        <OutlinkWrapper as={OutlinkSVG} />
-      </Link>
+      {link && (
+        <Link href={link} target="_blank" rel="noreferrer noopener">
+          <IconWrapper>
+            <QuestionSVG />
+          </IconWrapper>
+          <Typography fontVariant="body" color="indigo">
+            {t('input.sendName.views.confirmation.learnMore')}
+          </Typography>
+          <OutlinkWrapper as={OutlinkSVG} />
+        </Link>
+      )}
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={onBack}>

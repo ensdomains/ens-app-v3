@@ -1,3 +1,4 @@
+import { TOptions } from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -5,6 +6,7 @@ import styled, { css } from 'styled-components'
 import { OutlinkSVG, QuestionCircleSVG, Tooltip, Typography } from '@ensdomains/thorin'
 
 import { Role } from '@app/hooks/ownership/useRoles/useRoles'
+import { parentName } from '@app/utils/name'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 const TooltipContent = styled.div(
@@ -48,9 +50,18 @@ const Container = styled.button(
   `,
 )
 
-export const RoleTag = ({ role, isEmancipated }: { role: Role; isEmancipated: boolean }) => {
+export const RoleTag = ({
+  name,
+  role,
+  isEmancipated,
+}: {
+  name: string
+  role: Role
+  isEmancipated: boolean
+}) => {
   const { t } = useTranslation('profile')
   const _role = isEmancipated && role === 'owner' ? 'owner-emancipated' : role
+  const tOptions: TOptions = role === 'parent-owner' ? { parent: parentName(name) } : {}
   const link = getSupportLink(_role)
   const [open, setOpen] = useState<true | undefined>()
   return (
@@ -60,7 +71,7 @@ export const RoleTag = ({ role, isEmancipated }: { role: Role; isEmancipated: bo
         <TooltipContent onMouseLeave={() => setOpen(undefined)}>
           <QuestionCircleSVG />
           <Typography color="text" fontVariant="small">
-            {t(`tabs.ownership.tooltips.${_role}`)}
+            {t(`tabs.ownership.tooltips.${_role}`, tOptions)}
           </Typography>
           {link && (
             <Link href={link} target="_blank" rel="noreferrer noopener">
