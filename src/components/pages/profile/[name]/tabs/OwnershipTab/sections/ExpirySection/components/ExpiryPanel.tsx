@@ -11,6 +11,7 @@ type Props = {
   date: Date
   link?: string
   tooltip?: string
+  supportLink?: string
 }
 
 const Container = styled.div(({ theme }) => [
@@ -58,7 +59,7 @@ const Body = styled.div(
   `,
 )
 
-export const ExpiryPanel = ({ type, date, link, tooltip }: Props) => {
+export const ExpiryPanel = ({ type, date, link, tooltip, supportLink }: Props) => {
   const { t } = useTranslation('profile')
   const _date = safeDateObj(date)
   const timestamp = type === 'expiry' ? _date?.getTime() : undefined
@@ -81,7 +82,7 @@ export const ExpiryPanel = ({ type, date, link, tooltip }: Props) => {
             <OutlinkSVG />
           </Link>
         )}
-        {tooltip && <QuestionTooltip content={tooltip} />}
+        {tooltip && <QuestionTooltip content={tooltip} link={supportLink} />}
       </Header>
       <Body>
         <Typography fontVariant="body" color="text">

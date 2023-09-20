@@ -44,6 +44,7 @@ export const RolesSection = ({ name, roles, details }: Props) => {
           {...role}
           actions={actions.data}
           isWrapped={details.isWrapped}
+          isEmancipated={!!details.wrapperData?.parent.PARENT_CANNOT_CONTROL}
         />
       ))}
       <Footer>

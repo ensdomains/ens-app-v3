@@ -4,9 +4,8 @@ import styled, { css } from 'styled-components'
 
 import { OutlinkSVG, QuestionCircleSVG, Tooltip, Typography } from '@ensdomains/thorin'
 
+import { Role } from '@app/hooks/ownership/useRoles/useRoles'
 import { getSupportLink } from '@app/utils/supportLinks'
-
-import { Role } from '../../../../../../../../../hooks/ownership/useRoles/useRoles'
 
 const TooltipContent = styled.div(
   ({ theme }) => css`
@@ -49,9 +48,10 @@ const Container = styled.button(
   `,
 )
 
-export const RoleTag = ({ role }: { role: Role }) => {
-  const { t } = useTranslation('common')
-  const link = getSupportLink(role)
+export const RoleTag = ({ role, isEmancipated }: { role: Role; isEmancipated: boolean }) => {
+  const { t } = useTranslation('profile')
+  const _role = isEmancipated && role === 'owner' ? 'owner-emancipated' : role
+  const link = getSupportLink(_role)
   const [open, setOpen] = useState<true | undefined>()
   return (
     <Tooltip
@@ -60,12 +60,12 @@ export const RoleTag = ({ role }: { role: Role }) => {
         <TooltipContent onMouseLeave={() => setOpen(undefined)}>
           <QuestionCircleSVG />
           <Typography color="text" fontVariant="small">
-            {t(`roles.${role}.description`)}
+            {t(`tabs.ownership.tooltips.${_role}`)}
           </Typography>
           {link && (
-            <Link href={link}>
+            <Link href={link} target="_blank" rel="noreferrer noopener">
               <Typography color="indigo" fontVariant="small">
-                {t('action.learnMore')}
+                {t('action.learnMore', { ns: 'common' })}
               </Typography>
               <OutlinkSVG />
             </Link>
@@ -80,7 +80,7 @@ export const RoleTag = ({ role }: { role: Role }) => {
         onClick={() => setOpen((_open) => (_open ? undefined : true))}
       >
         <RoleLabel fontVariant="smallBold" color="indigo">
-          {t(`roles.${role}.title`)}
+          {t(`roles.${role}.title`, { ns: 'common' })}
         </RoleLabel>
       </Container>
     </Tooltip>

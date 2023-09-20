@@ -63,9 +63,10 @@ type Props = {
   roles: Role[]
   actions: ReturnType<typeof useRoleActions>['data']
   isWrapped: boolean
+  isEmancipated: boolean
 }
 
-export const RoleRow = ({ address, roles, actions, isWrapped }: Props) => {
+export const RoleRow = ({ address, roles, actions, isWrapped, isEmancipated }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
@@ -145,7 +146,7 @@ export const RoleRow = ({ address, roles, actions, isWrapped }: Props) => {
           <AvatarWithIdentifier name={primary.data?.name} address={address} size="10" />
           <RoleTagContainer data-testid="role-tag-container">
             {roles?.map((role) => (
-              <RoleTag key={role} role={role} />
+              <RoleTag key={role} role={role} isEmancipated={isEmancipated} />
             ))}
           </RoleTagContainer>
         </InnerContainer>

@@ -54,7 +54,7 @@ export const QuestionTooltip = ({ content, link, ...props }: Props) => {
       <QuestionCircleSVG />
       <CenteredTypography fontVariant="small"> {content}</CenteredTypography>
       {link && (
-        <Link>
+        <Link href={link} target="_blank" rel="noreferrer noopener">
           <Typography fontVariant="smallBold" color="indigo">
             {t('action.learnMore')}
           </Typography>

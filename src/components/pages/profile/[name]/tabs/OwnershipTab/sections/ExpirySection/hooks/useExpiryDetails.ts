@@ -10,6 +10,7 @@ import useRegistrationData from '@app/hooks/useRegistrationData'
 import { GRACE_PERIOD } from '@app/utils/constants'
 import { safeDateObj } from '@app/utils/date'
 import { parentName } from '@app/utils/name'
+import { getSupportLink } from '@app/utils/supportLinks'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 type Input = {
@@ -51,43 +52,67 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
 
       return match(nameType.data!)
         .with(P.union('eth-unwrapped-2ld', 'eth-emancipated-2ld', 'eth-locked-2ld'), () => [
-          {
-            type: 'expiry',
-            date: expiry,
-          },
-          {
-            type: 'grace-period',
-            date: expiry ? new Date(expiry.getTime() + GRACE_PERIOD) : undefined,
-            tooltip: t('tabs.ownership.sections.expiry.panel.grace-period.tooltip'),
-          },
-          {
-            type: 'registration',
-            date: registrationData?.data?.registrationDate,
-            link: makeEtherscanLink(registrationData?.data?.transactionHash!, chainName),
-          },
+          ...(expiry
+            ? [
+                {
+                  type: 'expiry',
+                  date: expiry,
+                },
+                {
+                  type: 'grace-period',
+                  date: expiry ? new Date(expiry.getTime() + GRACE_PERIOD) : undefined,
+                  tooltip: t('tabs.ownership.sections.expiry.panel.grace-period.tooltip'),
+                  supportLink: getSupportLink('grace-period'),
+                },
+              ]
+            : []),
+          ...(registrationData?.data
+            ? [
+                {
+                  type: 'registration',
+                  date: registrationData?.data?.registrationDate,
+                  link: makeEtherscanLink(registrationData?.data?.transactionHash!, chainName),
+                },
+              ]
+            : []),
         ])
         .with(P.union('eth-emancipated-subname', 'eth-locked-subname'), () => [
-          {
-            type: 'expiry',
-            date: expiry,
-          },
-          {
-            type: 'parent-expiry',
-            date: parentExpiry,
-          },
+          ...(expiry
+            ? [
+                {
+                  type: 'expiry',
+                  date: expiry,
+                },
+              ]
+            : []),
+          ...(parentExpiry
+            ? [
+                {
+                  type: 'parent-expiry',
+                  date: parentExpiry,
+                },
+              ]
+            : []),
         ])
         .with(
           P.union('eth-unwrapped-subname', 'eth-wrapped-subname', 'eth-pcc-expired-subname'),
-          () => [
-            {
-              type: 'parent-expiry',
-              date: parentExpiry,
-            },
-            {
-              type: 'parent-grace-period',
-              date: parentExpiry ? new Date(parentExpiry.getTime() + GRACE_PERIOD) : undefined,
-            },
-          ],
+          () =>
+            parentExpiry
+              ? [
+                  {
+                    type: 'parent-expiry',
+                    date: parentExpiry,
+                  },
+                  {
+                    type: 'parent-grace-period',
+                    date: parentExpiry
+                      ? new Date(parentExpiry.getTime() + GRACE_PERIOD)
+                      : undefined,
+                    tooltip: t('tabs.ownership.sections.expiry.panel.grace-period.tooltip'),
+                    supportLink: getSupportLink('grace-period'),
+                  },
+                ]
+              : [],
         )
         .with(
           P.union(

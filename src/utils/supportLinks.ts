@@ -8,11 +8,16 @@ const SUPPORT_LINKS = {
   fuses: 'https://support.ens.domains/en/articles/7902567-fuses',
   primaryName: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_b2baf0c02b',
   nameWrapper: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_cae4f1dea6',
-  owner: 'https://support.ens.domains',
-  manager: 'https://support.ens.domains',
-  'parent-owner': 'https://support.ens.domains',
-  'dns-owner': 'https://support.ens.domains',
-  'eth-record': 'https://support.ens.domains',
+  owner: undefined,
+  'owner-emancipated': undefined,
+  'parent-owner': undefined,
+  'dns-owner': undefined,
+  manager: undefined,
+  'profile-editor': undefined,
+  'subname-manager': undefined,
+  'eth-record': undefined,
+  'grace-period': undefined,
+  'contract-address': undefined,
 }
 
 type SupportTopic = keyof typeof SUPPORT_LINKS

@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Typography } from '@ensdomains/thorin'
 
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 export const Container = styled.div(
   ({ theme }) => css`
@@ -13,10 +15,16 @@ export const Container = styled.div(
 )
 
 export const Header = () => {
+  const { t } = useTranslation('profile')
   return (
     <Container>
-      <Typography fontVariant="headingFour">Contract address</Typography>
-      <QuestionTooltip content="The address of the contract that enables Wrapped ENS names." />
+      <Typography fontVariant="headingFour">
+        {t('tabs.ownership.sections.contract.title')}
+      </Typography>
+      <QuestionTooltip
+        content={t('tabs.ownership.sections.contract.tooltip')}
+        link={getSupportLink('contract-address')}
+      />
     </Container>
   )
 }
