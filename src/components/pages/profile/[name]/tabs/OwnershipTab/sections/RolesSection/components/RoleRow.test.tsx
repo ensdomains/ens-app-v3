@@ -87,7 +87,7 @@ describe('RoleRow', () => {
     await waitFor(() => {
       expect(screen.getByText('address.viewAddress')).toBeVisible()
     })
-    expect(screen.queryByText('transaction.viewOnEtherscan')).toBeVisible()
+    expect(screen.queryByText('transaction.viewEtherscan')).toBeVisible()
   })
 
   it('should display view on etherscan if usePrimary returns subaname and name is wrapped', async () => {
@@ -97,7 +97,7 @@ describe('RoleRow', () => {
     await waitFor(() => {
       expect(screen.getByText('address.viewAddress')).toBeVisible()
     })
-    expect(screen.queryByText('transaction.viewOnEtherscan')).toBeVisible()
+    expect(screen.queryByText('transaction.viewEtherscan')).toBeVisible()
   })
 
   it('should display edit roles option if action type `edit-roles`', async () => {

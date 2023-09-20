@@ -91,11 +91,10 @@ afterEach(() => {
 })
 
 describe('SendName', () => {
-  it('should', async () => {
+  it('should render', async () => {
     render(<SendName data={{name: 'test.eth'}} dispatch={mockDispatch} onDismiss={() => {}}/>)
-    await userEvent.type(screen.getByTestId('send-name-search-input'), 'owner')
+    await userEvent.type(screen.getByTestId('send-name-search-input'), 'nick')
     await userEvent.click(screen.getByTestId('search-result-0xnick'))
-    
   })
 
   it('should disable the row if it is the current send role ', async () => {
