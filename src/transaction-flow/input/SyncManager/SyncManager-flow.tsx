@@ -38,7 +38,9 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const baseCanSynManager = checkCanSyncManager({
     address: account.address,
     nameType: nameType.data,
-    details,
+    registrant: details.ownerData?.registrant,
+    owner: details.ownerData?.owner,
+    dnsOwner: details.dnsOwner,
   })
 
   const syncType = nameType.data?.startsWith('dns') ? 'dns' : 'eth'

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Space, Typography, mq } from '@ensdomains/thorin'
@@ -44,10 +45,11 @@ type Props = {
 }
 
 export const NoneSetAvatarWithIdentifier = ({ dirty = false, size = '10' }: Props) => {
+  const { t } = useTranslation('transactionFlow')
   return (
     <Container>
       <Wrapper $size={size} $dirty={dirty} />
-      <Typography fontVariant="bodyBold">None set</Typography>
+      <Typography fontVariant="bodyBold">{t('input.editRoles.views.main.noneSet')}</Typography>
     </Container>
   )
 }

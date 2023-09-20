@@ -198,7 +198,8 @@
     "editRoles": {
       "views": {
         "main": {
-          "title": "Edit roles"
+          "title": "Edit roles",
+          "noneSet": "None set"
         },
         "editRole": {
           "title": "Change {{role}}",

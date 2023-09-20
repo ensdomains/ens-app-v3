@@ -169,6 +169,6 @@ describe('EditRoles', () => {
     // Eth-record remove
     await userEvent.click(within(screen.getByTestId('role-card-eth-record')).getByTestId('role-card-change-button'))
     await userEvent.click(screen.getByRole('button', {name: 'action.remove'}))
-    expect(within(screen.getByTestId('role-card-eth-record')).getByText('None set')).toBeVisible()
+    expect(within(screen.getByTestId('role-card-eth-record')).getByText('input.editRoles.views.main.noneSet')).toBeVisible()
   })
 })
