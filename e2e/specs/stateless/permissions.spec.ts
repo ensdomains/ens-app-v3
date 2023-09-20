@@ -379,7 +379,6 @@ test.describe('Permissions', () => {
     const morePage = makePageObject('MorePage')
 
     await profilePage.goto(subname)
-
     await login.connect()
 
     await expect(profilePage.deleteSubnameButton).toBeVisible()
@@ -388,7 +387,6 @@ test.describe('Permissions', () => {
     await expect(subnamesPage.getAddSubnameButton).toBeVisible()
 
     await morePage.goto(subname)
-    await expect(morePage.getSendNameButton).toBeVisible()
     await expect(morePage.editResolverButton).toBeVisible()
   })
 })

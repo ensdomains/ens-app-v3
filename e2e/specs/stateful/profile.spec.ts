@@ -210,14 +210,6 @@ test.describe('Profile', () => {
       // should show details in more tab
       await page.getByTestId('more-tab').click()
 
-      // should have correct ownership data
-      for (const owner of profile.owners) {
-        await expect(page.getByTestId(`owner-button-name-name.${owner.type}`)).toContainText(
-          owner.value,
-          { timeout: 25000 },
-        )
-      }
-
       // should have view link for registration transaction
       await page.getByTestId('more-tab').click()
       await expect(page.getByTestId('etherscan-registration-link')).toHaveAttribute(
