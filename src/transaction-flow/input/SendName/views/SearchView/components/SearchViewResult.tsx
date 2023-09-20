@@ -63,8 +63,6 @@ type Props = {
 export const SearchViewResult = ({ address, name, excludeRole: role, roles, ...props }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const markers = useMemo(() => {
-    console.log('markers', roles, address)
-    console.log('address', address)
     const userRoles = roles.filter((r) => r.address?.toLowerCase() === address.toLowerCase())
     const hasRole = userRoles.some((r) => r.role === role)
     const primaryRole = userRoles[0]

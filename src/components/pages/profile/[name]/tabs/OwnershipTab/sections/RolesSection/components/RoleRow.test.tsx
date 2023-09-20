@@ -1,0 +1,121 @@
+import { render, userEvent, screen, waitFor } from "@app/test-utils";
+import { RoleRow } from "./RoleRow";
+
+const mockUsePrimary = jest.fn().mockReturnValue({})
+jest.mock('@app/hooks/usePrimary', () => ({
+  usePrimary: () => ({
+    ...mockUsePrimary(),
+    isLoading: false
+  })
+}))
+
+describe('RoleRow', () => {
+  it('should render', () => {
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={[]} actions={[]} isWrapped/>)
+  })
+
+  it('should display role tags', () => {
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={['manager', 'owner']} actions={[]} isWrapped/>)
+    expect(screen.getByText('roles.owner.title')).toBeVisible()
+    expect(screen.getByText('roles.manager.title')).toBeVisible()
+  })
+
+  it('should display tooltip when hovering role tags', async () => {
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={['manager', 'owner']} actions={[]} isWrapped/>)
+    expect(screen.queryByText('roles.owner.description')).toEqual(null)
+    await userEvent.hover(screen.getByText('roles.owner.title'))
+    await waitFor(() => {
+      expect(screen.getByText('roles.owner.description')).toBeVisible()
+    })
+  })
+
+  it('should display dropdown with option to view and copy address', async () => {
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={[]} actions={[]} isWrapped/>)
+    await userEvent.click(screen.getByTestId('role-row-button-0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'))
+    await waitFor(() => {
+      expect(screen.getByText('address.viewAddress')).toBeVisible()
+    })
+    expect(screen.getByText('address.copyAddress')).toBeVisible()
+  })
+
+  it('should display view name and copy name if usePrimary returns a name', async () => {
+    mockUsePrimary.mockReturnValueOnce({data: {name: 'test.eth'}})
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={[]} actions={[]} isWrapped/>)
+    await userEvent.click(screen.getByTestId('role-row-button-0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'))
+    await waitFor(() => {
+      expect(screen.getByText('wallet.viewProfile')).toBeVisible()
+    })
+    expect(screen.getByText('name.copy')).toBeVisible()
+  })
+
+  it('should not display view name and copy name if usePrimary returns no name', async () => {
+    mockUsePrimary.mockReturnValueOnce({data: undefined})
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={[]} actions={[]} isWrapped/>)
+    await userEvent.click(screen.getByTestId('role-row-button-0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'))
+    await waitFor(() => {
+      expect(screen.getByText('address.viewAddress')).toBeVisible()
+    })
+    expect(screen.queryByText('wallet.viewProfile')).toEqual(null)
+    expect(screen.queryByText('name.copy')).toEqual(null)
+  })
+
+  it('should display etherscn  name and copy name if usePrimary returns a name', async () => {
+    mockUsePrimary.mockReturnValueOnce({data: {name: 'test.eth'}})
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={[]} actions={[]} isWrapped/>)
+    await userEvent.click(screen.getByTestId('role-row-button-0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'))
+    await waitFor(() => {
+      expect(screen.getByText('wallet.viewProfile')).toBeVisible()
+    })
+    expect(screen.getByText('name.copy')).toBeVisible()
+  })
+
+  it('should not display view name and copy name if usePrimary returns no name', async () => {
+    mockUsePrimary.mockReturnValueOnce({data: undefined})
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={[]} actions={[]} isWrapped/>)
+    await userEvent.click(screen.getByTestId('role-row-button-0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'))
+    await waitFor(() => {
+      expect(screen.getByText('address.viewAddress')).toBeVisible()
+    })
+    expect(screen.queryByText('wallet.viewProfile')).toEqual(null)
+    expect(screen.queryByText('name.copy')).toEqual(null)
+  })
+
+  it('should display view on etherscan if usePrimary returns name and name is 2LDEth', async () => {
+    mockUsePrimary.mockReturnValueOnce({data: {name: 'test.eth'}})
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={[]} actions={[]} isWrapped={false}/>)
+    await userEvent.click(screen.getByTestId('role-row-button-0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'))
+    await waitFor(() => {
+      expect(screen.getByText('address.viewAddress')).toBeVisible()
+    })
+    expect(screen.queryByText('transaction.viewOnEtherscan')).toBeVisible()
+  })
+
+  it('should display view on etherscan if usePrimary returns subaname and name is wrapped', async () => {
+    mockUsePrimary.mockReturnValueOnce({data: {name: 'sub.test.eth'}})
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={[]} actions={[]} isWrapped/>)
+    await userEvent.click(screen.getByTestId('role-row-button-0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'))
+    await waitFor(() => {
+      expect(screen.getByText('address.viewAddress')).toBeVisible()
+    })
+    expect(screen.queryByText('transaction.viewOnEtherscan')).toBeVisible()
+  })
+
+  it('should display edit roles option if action type `edit-roles`', async () => {
+    mockUsePrimary.mockReturnValueOnce({data: {name: 'sub.test.eth'}})
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={[]} actions={[{ label: 'action.editRoles', type: 'edit-roles'} as any]} isWrapped/>)
+    await userEvent.click(screen.getByTestId('role-row-button-0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'))
+    await waitFor(() => {
+      expect(screen.getByText('address.viewAddress')).toBeVisible()
+    })
+    expect(screen.getByText('action.editRoles')).toBeVisible()
+  })
+
+  it('should display sync manager option if roles includes `manager` and action includes type `sync-manager`', async () => {
+    render(<RoleRow address="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" roles={['manager']} actions={[{ label: 'action.syncManager', type: 'sync-manager'} as any]} isWrapped/>)
+    await userEvent.click(screen.getByTestId('role-row-button-0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'))
+    await waitFor(() => {
+      expect(screen.getByText('address.viewAddress')).toBeVisible()
+    })
+    expect(screen.getByText('action.syncManager')).toBeVisible()
+  })
+})

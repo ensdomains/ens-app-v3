@@ -52,9 +52,9 @@ export const EditRoleIntroView = ({ role, address, onSelect }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const account = useAccountSafely()
 
-  const showIntro = !!account.address && account.address !== address
   const showRemove = SHOW_REMOVE_ROLES.includes(role) && !!address && address !== emptyAddress
-  const showSetToSelf = SHOW_SET_TO_SELF_ROLES.includes(role)
+  const showSetToSelf = SHOW_SET_TO_SELF_ROLES.includes(role) && account.address !== address
+  const showIntro = showRemove || showSetToSelf
 
   if (!account.address) return null
   return (

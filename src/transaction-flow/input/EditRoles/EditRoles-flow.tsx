@@ -6,12 +6,12 @@ import { P, match } from 'ts-pattern'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import useRoles, { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
+import { getAvailableRoles } from '@app/hooks/ownership/useRoles/utils/getAvailableRoles'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
-import { getAvailableRoles } from '../../../hooks/ownership/useRoles/utils/getAvailableRoles'
 import { EditRoleView } from './views/EditRoleView/EditRoleView'
 import { MainView } from './views/MainView/MainView'
 

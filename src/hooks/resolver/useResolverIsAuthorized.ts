@@ -77,8 +77,6 @@ const checkIsKnownAuthorizedResolver = (
   return true
 }
 
-// 0xa4b91a01
-
 export const checkInterface = async (contract: Contract) => {
   try {
     const supportsInterface = await contract.supportsInterface('0xf1cb7e06')

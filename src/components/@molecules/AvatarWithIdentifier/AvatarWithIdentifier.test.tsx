@@ -3,7 +3,6 @@ import { render, screen} from '@app/test-utils'
 import { AvatarWithIdentifier } from './AvatarWithIdentifier'
 
 const mockUsePrimary = jest.fn().mockImplementation((address) => {
-  console.log('mockUsePrimary', address)
   return ({
   data: address === '0xaddressWithoutAPrimaryName' ? undefined : { beautifiedName: 'test.eth', name: 'test.eth' },
   isLoading: false

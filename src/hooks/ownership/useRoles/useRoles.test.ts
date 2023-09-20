@@ -1,4 +1,4 @@
-import { mockFunction, renderHook } from '@app/test-utils';
+import { renderHook } from '@app/test-utils';
 import useRoles from './useRoles';
 
 const mockGetRoles = jest.fn().mockReturnValue([

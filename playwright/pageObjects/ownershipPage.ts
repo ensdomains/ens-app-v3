@@ -44,7 +44,6 @@ export class OwnershipPage {
     const timestamp = await this.page
       .getByTestId('expiry-panel-expiry')
       .getAttribute('data-timestamp')
-    console.log('>>>>', timestamp)
     const parsed = parseInt(timestamp || '')
     return parsed
   }

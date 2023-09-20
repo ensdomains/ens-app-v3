@@ -353,6 +353,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     subnames,
     ...rest
   }: Name) => {
+    // eslint-disable-next-line no-restricted-syntax
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
     const registrant = allNamedAccts[namedOwner]
     const owner = namedController ? allNamedAccts[namedController] : undefined

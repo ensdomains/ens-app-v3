@@ -2,13 +2,14 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { P, match } from 'ts-pattern'
 
+import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainName } from '@app/hooks/useChainName'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
 import { useNameType } from '@app/hooks/useNameType'
-import useParentBasicName from '@app/hooks/useParentBasicName'
 import useRegistrationData from '@app/hooks/useRegistrationData'
 import { GRACE_PERIOD } from '@app/utils/constants'
 import { safeDateObj } from '@app/utils/date'
+import { parentName } from '@app/utils/name'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 type Input = {
@@ -26,9 +27,14 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
   const { t } = useTranslation('profile')
 
   const nameType = useNameType(name, { enabled })
-  const parentData = useParentBasicName(name)
+  const parentData = useBasicName(parentName(name), {
+    skipGraph: false,
+    enabled: enabled && !!nameType.data && nameType.data!.includes('subname'),
+  })
   const chainName = useChainName()
-  const registrationData = useRegistrationData(name)
+  const registrationData = useRegistrationData(name, {
+    enabled,
+  })
 
   const isLoading =
     nameType.isLoading || details.isLoading || parentData.isLoading || registrationData.isLoading

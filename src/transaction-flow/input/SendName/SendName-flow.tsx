@@ -5,7 +5,7 @@ import { P, match } from 'ts-pattern'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import useRoles from '@app/hooks/ownership/useRoles/useRoles'
-import { useResolverSupportsInterfaces } from '@app/hooks/resolver/useResolverSupportsInterface'
+import { useResolverSupportsInterfaces } from '@app/hooks/resolver/useResolverSupportsInterfaces'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useNameType } from '@app/hooks/useNameType'
@@ -139,7 +139,6 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
         : null,
     ].filter((transaction) => !!transaction)
 
-    console.log('_transactions', _transactions)
     if (_transactions.length === 0) return
 
     dispatch({

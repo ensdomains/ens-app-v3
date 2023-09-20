@@ -39,7 +39,12 @@ export const RolesSection = ({ name, roles, details }: Props) => {
       <Header count={roles?.filter(({ address }) => !!address).length || 0} />
       <Card.Divider />
       {roles?.map((role) => (
-        <RoleRow key={role.address} {...role} actions={actions.data} details={details} />
+        <RoleRow
+          key={role.address || 'noaddress'}
+          {...role}
+          actions={actions.data}
+          isWrapped={details.isWrapped}
+        />
       ))}
       <Footer>
         {actions.data?.map(({ label, type, primary, icon, disabled = false, onClick }) => {

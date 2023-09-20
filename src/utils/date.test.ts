@@ -11,7 +11,6 @@ describe('safeDateObj', () => {
 
   it('should return a date object for a string timestamp', () => {
     const test = new Date('3255803954000')
-    console.log(!Number.isNaN(test))
     expect(safeDateObj('3255803954000')?.getTime()).toEqual(new Date(3255803954000).getTime())
   })
 

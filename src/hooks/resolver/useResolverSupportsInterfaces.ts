@@ -51,8 +51,8 @@ export const useResolverSupportsInterfaces = (
       const results = await Promise.allSettled(
         _interfaces.map(async ([i, id]) => {
           try {
-            const suppored = await contract.supportsInterface(id)
-            return [i, suppored]
+            const supported = await contract.supportsInterface(id)
+            return [i, supported]
           } catch {
             return [i, false]
           }

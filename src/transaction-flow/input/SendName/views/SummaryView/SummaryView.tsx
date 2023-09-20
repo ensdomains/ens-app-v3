@@ -49,7 +49,6 @@ export const SummaryView = ({ name, canResetProfile, onNext, onBack }: Props) =>
   const { control, register } = useFormContext<SendNameForm>()
   const recipient = useWatch({ control, name: 'recipient' })
   const expiry = useExpiry(name)
-  console.log('expiry', expiry)
 
   const isLoading = expiry.loading
   if (isLoading) return null

@@ -52,9 +52,9 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
   const data = useMemo(() => {
     if (isLoading) return undefined
     const canSend = checkCanSend({ abilities: abilities.data, nameType: nameType.data })
-    const canSendDNS = canSend && nameType.data?.startsWith('dns')
-    const canSendEth = canSend && nameType.data?.startsWith('eth')
-    const canRefreshDNS = !!account.address && nameType.data?.startsWith('dns')
+    const canSendDNS = canSend && name && !name.endsWith('.eth')
+    const canSendEth = canSend && name && name.endsWith('.eth')
+    const canRefreshDNS = !!account.address && name && !name.endsWith('.eth')
     const showSyncManager = checkCanSyncManager({
       address: account.address,
       nameType: nameType.data,
@@ -70,7 +70,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
             type: 'send-dns',
             icon: <AeroplaneSVG />,
             label: t('action.send'),
-            onClick: () => showSendNameInput(`send-name`, { name }),
+            onClick: () => showSendNameInput(`send-name-${name}`, { name }),
           }
         : null,
       canRefreshDNS
@@ -88,7 +88,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
             icon: <HorizontalOutwardArrowsSVG />,
             label: t('transaction.description.syncManager'),
             onClick: () =>
-              showSyncManagerInput(`sync-manager`, {
+              showSyncManagerInput(`sync-manager-${name}`, {
                 name,
               }),
           }
@@ -98,7 +98,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
             type: 'send-name',
             icon: <AeroplaneSVG />,
             label: t('action.send'),
-            onClick: () => showSendNameInput(`send-name`, { name }),
+            onClick: () => showSendNameInput(`send-name-${name}`, { name }),
           }
         : null,
       canEditRoles
@@ -107,7 +107,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
             icon: <PersonSVG />,
             label: t('action.editRoles'),
             primary: true,
-            onClick: () => showEditRolesInput(`edit-roles`, { name }),
+            onClick: () => showEditRolesInput(`edit-roles-${name}`, { name }),
           }
         : null,
     ].filter((action) => !!action) as Action[]

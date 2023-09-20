@@ -17,16 +17,15 @@ import {
 } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
+import type { Role } from '@app/hooks/ownership/useRoles/useRoles'
 import { useChainName } from '@app/hooks/useChainName'
 import { useContractAddress } from '@app/hooks/useContractAddress'
-import type { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getDestination } from '@app/routes'
 import { emptyAddress } from '@app/utils/constants'
 import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
 
-import type { Role } from '../../../../../../../../../hooks/ownership/useRoles/useRoles'
 import { useRoleActions } from '../hooks/useRoleActions'
 import { RoleTag } from './RoleTag'
 
@@ -63,21 +62,19 @@ type Props = {
   address?: string | null
   roles: Role[]
   actions: ReturnType<typeof useRoleActions>['data']
-  details: ReturnType<typeof useNameDetails>
+  isWrapped: boolean
 }
 
-export const RoleRow = ({ address, roles, actions, details }: Props) => {
+export const RoleRow = ({ address, roles, actions, isWrapped }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
   const primary = usePrimary(address!, !address)
-
-  const [, copy] = useCopyToClipboard()
-
   const networkName = useChainName()
   const wrapperAddress = useContractAddress('NameWrapper')
   const registrarAddress = useContractAddress('BaseRegistrarImplementation')
-  const { isWrapped } = details
+  const [, copy] = useCopyToClipboard()
+
   const etherscanAction = useMemo(() => {
     const name = primary.data?.name
     if (!name) return null
@@ -88,7 +85,7 @@ export const RoleRow = ({ address, roles, actions, details }: Props) => {
     const tokenId = BigNumber.from(hex).toString()
     const contractAddress = isWrapped ? wrapperAddress : registrarAddress
     return {
-      label: t('transaction.viewOnEtherscan'),
+      label: t('transaction.viewEtherscan', { ns: 'common' }),
       onClick: () =>
         window.open(
           makeEtherscanLink(`${contractAddress}/${tokenId}`, networkName, 'nft'),
@@ -154,7 +151,11 @@ export const RoleRow = ({ address, roles, actions, details }: Props) => {
         </InnerContainer>
         <div>
           <Dropdown items={items} align="right" keepMenuOnTop width={200}>
-            <Button colorStyle="accentSecondary" size="small">
+            <Button
+              data-testid={`role-row-button-${address}`}
+              colorStyle="accentSecondary"
+              size="small"
+            >
               <VerticalDotsSVG />
             </Button>
           </Dropdown>
