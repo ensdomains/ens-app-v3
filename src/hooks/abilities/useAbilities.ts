@@ -56,7 +56,7 @@ export type SendAbilities = {
   canSendError?: string
 }
 
-type Abilities = ExtendAbilities &
+export type Abilities = ExtendAbilities &
   DeleteAbilities &
   EditAbilities &
   ReclaimAbilities &
