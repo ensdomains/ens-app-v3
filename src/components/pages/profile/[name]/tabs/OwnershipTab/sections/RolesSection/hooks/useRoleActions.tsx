@@ -53,7 +53,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
   const data = useMemo(() => {
     if (isLoading) return undefined
     const canSend = checkCanSend({ abilities: abilities.data, nameType: nameType.data })
-    const { canSendError } = abilities.data
+    const canSendError = abilities.data?.canSendError
     const showSend = canSend || !!canSendError
     const showSendDNS = showSend && name && !name.endsWith('.eth')
     const showSendEth = showSend && name && name.endsWith('.eth')
