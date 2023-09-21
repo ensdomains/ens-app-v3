@@ -110,7 +110,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const chainId = useChainId()
   const { address } = useAccount()
   const primary = usePrimary(address!, !address)
-  const selected = { name: nameDetails.normalisedName, address: address! }
+  const selected = { name: nameDetails.normalisedName, address: address!, chainId }
   const { normalisedName, beautifiedName } = nameDetails
   const defaultResolverAddress = useContractAddress('PublicResolver')
   const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists(
@@ -272,6 +272,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   resolverExists={resolverExists}
                   nameDetails={nameDetails}
                   callback={pricingCallback}
+                  isPrimaryLoading={primary.isLoading}
                   hasPrimaryName={!!primary.data?.name}
                   registrationData={item}
                   moonpayTransactionStatus={moonpayTransactionStatus}

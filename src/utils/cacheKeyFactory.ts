@@ -12,6 +12,7 @@ export const useQueryKeys = () => {
   const globalKeys = [chainId, address]
 
   return {
+    graphBase: [...globalKeys, 'graph'],
     dogfood: (inputString?: string) => [...globalKeys, 'getAddr', inputString, 'dogfood'],
     transactionStageModal: {
       prepareTransaction: (
@@ -78,11 +79,11 @@ export const useQueryKeys = () => {
     subnames: (name: string, orderBy = '', orderDirection = '', search = '') => [
       ...globalKeys,
       'graph',
+      'getSubnames',
       name,
       orderBy,
       orderDirection,
       search,
-      'getSubnames',
     ],
     namesFromAddress: (localAddress?: string) => [
       ...globalKeys,
@@ -160,6 +161,7 @@ export const useQueryKeys = () => {
       localAddress,
       'wrapperApprovedForAll',
     ],
+    isSafeApp: (connectorId: string | undefined) => [...globalKeys, connectorId, 'isSafeApp'],
     globalIndependent: {
       isSupportedTLD: (tld: string) => [tld, 'isSupportedTLD'],
       zorb: (input: string, type: string, bg: string, fg: string, accent: string) => [

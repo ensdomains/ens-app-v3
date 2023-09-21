@@ -10,23 +10,20 @@ import { useChainId } from '@app/hooks/useChainId'
 
 const TRANSACTION_SEARCH_INTERVAL = 10000
 
-type EtherscanResponse = {
-  status: string
-  message: string
-  result: EtherscanMinedData[]
-}
-
 export const getAccountHistoryEndpoint = (address: string, chainId: number) => {
   switch (chainId) {
     case 1:
       return `https://etherscan-api.ens-cf.workers.dev/accountHistory?address=${address}`
     case 5:
       return `https://etherscan-api-goerli.ens-cf.workers.dev/accountHistory?address=${address}`
+    case 11155111:
+      return `https://etherscan-api-sepolia.ens-cf.workers.dev/accountHistory?address=${address}`
     default:
       return ''
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function useIntervalStrict(callback: () => void, delay: number | null) {
   const savedCallback = useRef<() => void>(() => {})
 
@@ -64,6 +61,7 @@ function useInterval(callback: () => void, delay: number | null, dependencies: a
       const id = setInterval(tick, delay)
       return () => clearInterval(id)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delay, ...dependencies])
 }
 

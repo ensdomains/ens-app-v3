@@ -10,7 +10,6 @@ const customJestConfig = {
     '!**/node_modules/**',
     '!**/.yarn/**',
     '!**/.next/**',
-    '!**/cypress',
   ],
   testMatch: [
     '<rootDir>/__tests__/**/?(*.)+(spec|test).[jt]s?(x)',
@@ -34,14 +33,12 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
     '<rootDir>/.yarn/',
     '<rootDir>/.next/',
-    '<rootDir>/cypress/',
   ],
   transformIgnorePatterns: [
     '/node_modules/',
     '/.yarn/',
     '/.next/',
     '^.+\\.module\\.(css|sass|scss)$',
-    'cypress',
     '.storybook',
 
     'config.js',
@@ -58,11 +55,8 @@ const customJestConfig = {
     '/.yarn/',
     '/.next/',
     '^.+\\.module\\.(css|sass|scss)$',
-    'cypress',
-
     '.config.',
     'coverage',
-
     '_document.tsx',
     '_app.tsx',
     '_error.tsx',

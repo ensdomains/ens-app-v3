@@ -335,6 +335,7 @@ export const SearchInput = ({
       if (currentQuery) {
         const [ownerData, wrapperData, expiryData, priceData] = currentQuery
         const registrationStatus = getRegistrationStatus({
+          timestamp: Date.now(),
           validation: currentValidation,
           ownerData,
           wrapperData,

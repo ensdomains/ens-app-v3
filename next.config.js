@@ -99,6 +99,9 @@ let nextConfig = {
               if (/\.yalc\/@ensdomains\/thorin/.test(excludePath)) {
                 return true
               }
+              if (/\.yalc\/@ensdomains\/ensjs/.test(excludePath)) { 
+                return true
+              }
               return /node_modules/.test(excludePath)
             }
           }
@@ -190,6 +193,10 @@ let nextConfig = {
     }
 
     return config
+  },
+  eslint: {
+    // next lint will ignore presets if not stated
+    dirs: ['src', 'src/components', 'src/pages', 'src/layouts', 'playwright', 'e2e'],
   },
   ...(process.env.NEXT_PUBLIC_IPFS
     ? {

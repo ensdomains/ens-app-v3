@@ -61,13 +61,15 @@
               "com.twitter": "Twitter",
               "com.github": "GitHub",
               "com.discord": "Discord",
-              "org.telegram": "Telegram"
+              "org.telegram": "Telegram",
+              "email": "Email"
             },
             "placeholder": {
               "com.twitter": "e.g. ensdomains",
               "com.github": "e.g. ensdomains",
-              "com.discord": "e.g. alisha.eth#0001",
-              "org.telegram": "e.g. futurealisha"
+              "com.discord": "e.g. nickjohnson",
+              "org.telegram": "e.g. nicksdjohnson",
+              "email": "e.g. hello@example.com"
             }
           },
           "address": {

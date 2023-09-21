@@ -11,6 +11,7 @@ import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSo
 import { usePrimary } from '@app/hooks/usePrimary'
 import { getDestination } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { getContentHashLink, getProtocolTypeAndContentId } from '@app/utils/contenthash'
 import { getSocialData } from '@app/utils/getSocialData'
 import { shortenAddress } from '@app/utils/utils'
 
@@ -27,7 +28,6 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
 
   return socialData ? (
     <RecordItem
-      as="a"
       icon={
         <DynamicSocialIcon
           fill={socialData.color}
@@ -38,7 +38,9 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
       inline
       data-testid={`social-profile-button-${iconKey}`}
       value={socialData.value}
-      link={socialData.type === 'link' ? socialData.urlFormatter : undefined}
+      {...(socialData.type === 'link'
+        ? { as: 'a' as const, link: socialData.urlFormatter }
+        : { as: 'button' as const })}
     >
       {socialData.value}
     </RecordItem>
@@ -104,10 +106,11 @@ export const OtherProfileButton = ({
 }: {
   iconKey: string
   value: string
-  type?: 'text' | 'address'
+  type?: 'text' | 'address' | 'contenthash'
 }) => {
   const breakpoints = useBreakpoint()
-  const isLink = value?.startsWith('http://') || value?.startsWith('https://')
+  const isLink =
+    value?.startsWith('http://') || value?.startsWith('https://') || type === 'contenthash'
 
   const formattedValue = useMemo(() => {
     if (breakpoints.sm) {
@@ -121,11 +124,20 @@ export const OtherProfileButton = ({
 
   const linkProps = useMemo(() => {
     if (!isLink) return {}
+    if (type === 'contenthash') {
+      const { protocolType, contentId } = getProtocolTypeAndContentId(value)
+      const _link = getContentHashLink('', 0, { protocolType, decoded: contentId })
+      if (!_link) return {}
+      return {
+        as: 'a',
+        link: _link,
+      } as const
+    }
     return {
       as: 'a',
       link: value,
     } as const
-  }, [value, isLink])
+  }, [value, type, isLink])
 
   return (
     <RecordItem

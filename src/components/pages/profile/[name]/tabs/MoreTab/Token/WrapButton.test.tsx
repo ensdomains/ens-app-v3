@@ -10,6 +10,19 @@ import WrapButton from './WrapButton'
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useWrapperApprovedForAll')
 
+const createMockResolverStatus = (overides = {}) => ({
+  data: {
+    isMigratedProfileEqual: true,
+    isNameWrapperAware: false,
+    ...overides,
+  },
+  isLoading: false
+})
+const mockUseResolverStatus = jest.fn().mockReturnValue(createMockResolverStatus())
+jest.mock('@app/hooks/resolver/useResolverStatus', () => ({
+  useResolverStatus: () => mockUseResolverStatus()
+}))
+
 const mockUseTransaction = mockFunction(useTransactionFlow)
 const mockUseAccount = mockFunction(useAccount)
 const mockUseWrapperApprovedForAll = mockFunction(useWrapperApprovedForAll)
@@ -31,6 +44,10 @@ describe('WrapButton', () => {
   mockUseWrapperApprovedForAll.mockReturnValue({
     approvedForAll: true,
     isLoading: false,
+  })
+
+  beforeEach(() => {
+    mockUseResolverStatus.mockReturnValue(createMockResolverStatus())
   })
 
   it('should render', () => {
@@ -72,6 +89,7 @@ describe('WrapButton', () => {
     expect(mockCreateTransactionFlow).toHaveBeenCalled()
   })
   it('should create a transaction flow for migrateProfile and wrapName', async () => {
+    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({ isMigratedProfileEqual: false }))
     render(
       <WrapButton
         name="test123.eth"
@@ -156,6 +174,7 @@ describe('WrapButton', () => {
     expect(args[1].transactions[0].data).toEqual({ name: 'test123.eth' })
   })
   it('should create a transaction flow for a .eth 2LD with a profile and a different owner', () => {
+    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({ isMigratedProfileEqual: false }))
     render(
       <WrapButton
         name="test123.eth"
@@ -271,7 +290,9 @@ describe('WrapButton', () => {
     expect(args[1].transactions[0].name).toEqual('wrapName')
     expect(args[1].transactions[0].data).toEqual({ name: 'sub.test123.eth' })
   })
+
   it('should create a transaction flow for a subname with a profile', () => {
+    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({isMigratedProfileEqual: false}))
     render(
       <WrapButton
         name="sub.test123.eth"
@@ -328,6 +349,7 @@ describe('WrapButton', () => {
     // name is sub2.test123.eth
     render(
       <WrapButton
+        // eslint-disable-next-line no-restricted-syntax
         name="[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
@@ -340,9 +362,11 @@ describe('WrapButton', () => {
 
     const args = mockShowDataInput.mock.lastCall
     expect(args[0]).toBe(
+      // eslint-disable-next-line no-restricted-syntax
       'wrapName-[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
     )
     expect(args[1].name).toBe(
+      // eslint-disable-next-line no-restricted-syntax
       '[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
     )
     const {
@@ -352,6 +376,7 @@ describe('WrapButton', () => {
     expect(transactions[0].data).toEqual({ address: '0x123' })
     expect(transactions[1].name).toEqual('wrapName')
     expect(transactions[1].data).toEqual({
+      // eslint-disable-next-line no-restricted-syntax
       name: '[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
     })
   })
