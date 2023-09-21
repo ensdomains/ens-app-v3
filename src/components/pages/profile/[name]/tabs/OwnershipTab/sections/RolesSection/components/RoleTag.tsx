@@ -1,5 +1,4 @@
 import { TOptions } from 'i18next'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -63,12 +62,10 @@ export const RoleTag = ({
   const _role = isEmancipated && role === 'owner' ? 'owner-emancipated' : role
   const tOptions: TOptions = role === 'parent-owner' ? { parent: parentName(name) } : {}
   const link = getSupportLink(_role)
-  const [open, setOpen] = useState<true | undefined>()
   return (
     <Tooltip
-      isOpen={open}
       content={
-        <TooltipContent onMouseLeave={() => setOpen(undefined)}>
+        <TooltipContent>
           <QuestionCircleSVG />
           <Typography color="text" fontVariant="small">
             {t(`tabs.ownership.tooltips.${_role}`, tOptions)}
@@ -85,11 +82,7 @@ export const RoleTag = ({
       }
       background="indigoSurface"
     >
-      <Container
-        data-testid={`role-tag-${role}`}
-        type="button"
-        onClick={() => setOpen((_open) => (_open ? undefined : true))}
-      >
+      <Container data-testid={`role-tag-${role}`} type="button">
         <RoleLabel fontVariant="smallBold" color="indigo">
           {t(`roles.${role}.title`, { ns: 'common' })}
         </RoleLabel>

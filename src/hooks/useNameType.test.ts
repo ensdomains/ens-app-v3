@@ -6,6 +6,10 @@ jest.mock('@app/hooks/useBasicName', () => ({
   useBasicName: () => mockBasicData()
 }))
 
+jest.mock('@app/hooks/useContractAddress', () => ({
+  useContractAddress: () => '0xnamewrapper'
+}))
+
 describe('useNameType', () => {
   describe('name level', () => {
     it('should return root', async () => {
@@ -49,7 +53,7 @@ describe('useNameType', () => {
     it('should return 2ld', async () => {
       mockBasicData.mockReturnValue({
         ownerData: {
-          ownershipLevel: 'namewrapper'
+          ownershipLevel: 'nameWrapper'
         },
         wrapperData: {
           child: {
@@ -68,7 +72,7 @@ describe('useNameType', () => {
     it('should return dns type', async () => {
       mockBasicData.mockReturnValue({
         ownerData: {
-          ownershipLevel: 'namewrapper'
+          ownershipLevel: 'nameWrapper'
         },
         wrapperData: {
           child: {

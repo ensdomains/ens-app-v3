@@ -37,6 +37,7 @@ const getWrapLevel = (
   wrapperData: ReturnType<typeof useBasicName>['wrapperData'],
   ownerData: ReturnType<typeof useBasicName>['ownerData'],
 ) => {
+  if (ownerData?.ownershipLevel !== 'nameWrapper') return 'unwrapped'
   if (wrapperData?.child.CANNOT_UNWRAP) return 'locked' as const
   if (wrapperData?.parent.PARENT_CANNOT_CONTROL) return 'emancipated' as const
   if (ownerData?.ownershipLevel === 'nameWrapper') return 'wrapped' as const
