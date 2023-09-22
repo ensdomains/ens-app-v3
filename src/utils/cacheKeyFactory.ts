@@ -171,6 +171,8 @@ export const useQueryKeys = () => {
       'wrapperApprovedForAll',
     ],
     isSafeApp: (connectorId: string | undefined) => [...globalKeys, connectorId, 'isSafeApp'],
+    simpleSearch: (query: string) => [...globalKeys, 'simpleSearch', query],
+    simpleSearchBase: () => [...globalKeys, 'simpleSearch'],
     globalIndependent: {
       isSupportedTLD: (tld: string) => [tld, 'isSupportedTLD'],
       zorb: (input: string, type: string, bg: string, fg: string, accent: string) => [

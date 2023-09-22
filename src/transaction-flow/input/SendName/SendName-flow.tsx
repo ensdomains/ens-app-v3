@@ -10,10 +10,10 @@ import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useNameType } from '@app/hooks/useNameType'
 import { useResolver } from '@app/hooks/useResolver'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { checkCanSend, senderRole } from './utils/checkCanSend'
+import { getSendNameTransactions } from './utils/getSendNameTransactions'
 import { CannotSendView } from './views/CannotSendView'
 import { ConfirmationView } from './views/ConfirmationView'
 import { SearchView } from './views/SearchView/SearchView'
@@ -99,42 +99,14 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
     const isOwnerOrManager =
       account.address === basic.ownerData?.owner || basic.ownerData?.registrant === account.address
 
-    const setEthRecordOnly = transactions.setEthRecord && !transactions.resetProfile
-    // Anytime you reset the profile you will need to set the eth record as well
-    const setEthRecordAndResetProfile = transactions.resetProfile
-
-    const _transactions = [
-      setEthRecordOnly
-        ? makeTransactionItem('updateEthAddress', { name, address: recipient })
-        : null,
-      setEthRecordAndResetProfile
-        ? makeTransactionItem('resetProfileWithRecords', {
-            name,
-            records: {
-              coinTypes: [{ key: 'ETH', value: recipient }],
-            },
-            resolver: resolver.data,
-          })
-        : null,
-
-      transactions.sendManager && !!abilities.data?.sendNameFunctionCallDetails?.sendManager
-        ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
-            name,
-            newOwner: recipient,
-            sendType: 'sendManager',
-            contract: abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract,
-            reclaim: abilities.data?.sendNameFunctionCallDetails?.sendManager?.method === 'reclaim',
-          })
-        : null,
-      transactions.sendOwner && !!abilities.data?.sendNameFunctionCallDetails?.sendOwner
-        ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
-            name,
-            newOwner: recipient,
-            sendType: 'sendOwner',
-            contract: abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract,
-          })
-        : null,
-    ].filter((transaction) => !!transaction)
+    const _transactions = getSendNameTransactions({
+      name,
+      recipient,
+      transactions,
+      isOwnerOrManager,
+      abilities: abilities.data,
+      resolverAddress: resolver.data,
+    })
 
     if (_transactions.length === 0) return
 

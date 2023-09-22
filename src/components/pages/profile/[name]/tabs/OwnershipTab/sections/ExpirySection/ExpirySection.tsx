@@ -115,7 +115,6 @@ type Props = {
 }
 
 export const ExpirySection = ({ name, details }: Props) => {
-  console.log(details)
   const { t } = useTranslation('profile')
   const expiry = useExpiryDetails({ name, details })
   const actions = useExpiryActions({ name, expiryDetails: expiry.data })
