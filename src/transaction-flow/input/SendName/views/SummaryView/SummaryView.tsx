@@ -50,6 +50,15 @@ export const SummaryView = ({ name, canResetProfile, onNext, onBack }: Props) =>
   const { control, register } = useFormContext<SendNameForm>()
   const recipient = useWatch({ control, name: 'recipient' })
   const expiry = useExpiry(name)
+  const expiryLabel = expiry.expiry?.expiry
+    ? t('input.sendName.views.summary.fields.name.expires', {
+        date: expiry.expiry?.expiry?.toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        }),
+      })
+    : undefined
 
   const isLoading = expiry.loading
   if (isLoading) return <TransactionLoader />
@@ -64,13 +73,7 @@ export const SummaryView = ({ name, canResetProfile, onNext, onBack }: Props) =>
                 size="8"
                 name={name}
                 address="0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
-                subtitle={t('input.sendName.views.summary.fields.name.expires', {
-                  date: expiry.expiry?.expiry?.toLocaleDateString(undefined, {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  }),
-                })}
+                subtitle={expiryLabel}
               />
             </NameContainer>
           </Field>
