@@ -1,8 +1,8 @@
 import {
   QueryClient,
   QueryFunctionContext,
-  UseQueryResult,
   useQueries,
+  UseQueryResult,
 } from '@tanstack/react-query'
 import { Context, createContext, useMemo } from 'react'
 import { Address, BlockTag, GetBlockParameters, GetBlockReturnType } from 'viem'
@@ -10,7 +10,7 @@ import { useQueryClient } from 'wagmi'
 
 import { ChainWithEns } from '@ensdomains/ensjs/contracts'
 import { GetNameHistoryReturnType } from '@ensdomains/ensjs/subgraph'
-import { ChildFuseKeys, ParentFuseKeys, decodeFuses } from '@ensdomains/ensjs/utils'
+import { ChildFuseKeys, decodeFuses, ParentFuseKeys } from '@ensdomains/ensjs/utils'
 
 import { AnyFuseKey, PublicClientWithChain } from '@app/types'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
@@ -60,7 +60,7 @@ const generateQueryArray = (
         queryKey: queryKeyFn.getBlock({ blockNumber }),
         queryFn: getBlockQueryFn(publicClient),
         staleTime: Infinity,
-      } as const),
+      }) as const,
   )
 }
 
@@ -77,7 +77,8 @@ const generateFuseSetBlocks = (nameHistory: GetNameHistoryReturnType | undefined
     switch (reference.type) {
       case 'NameWrapped':
         hasWrappedEvent = true
-      case 'FusesSet':
+      // eslint-disable-next-line no-fallthrough
+      case 'FusesSet': {
         const decodedFuses = decodeFuses(reference.fuses)
         const burnedParentFuses = ParentFuseKeys.filter((key) => decodedFuses.parent[key])
         const burnedChildFuses = ChildFuseKeys.filter((key) => decodedFuses.child[key])
@@ -87,6 +88,7 @@ const generateFuseSetBlocks = (nameHistory: GetNameHistoryReturnType | undefined
         )
         blocksNeeded.add(BigInt(reference.blockNumber))
         break
+      }
       default:
         break
     }
@@ -116,6 +118,7 @@ const generateMatchedFuseBlockData = ({
     // don't allow incomplete data to be returned
     if (!blockData) {
       hasIncompleteData = true
+      // eslint-disable-next-line no-continue
       continue
     }
     if (blockData.isLoading) hasLoadingBlocks = true

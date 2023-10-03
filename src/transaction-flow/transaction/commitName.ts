@@ -26,10 +26,7 @@ const displayItems = (
   },
 ]
 
-const transaction = async ({
-  walletClient,
-  data,
-}: TransactionFunctionParameters<Data>) => {
+const transaction = async ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
   return commitName.makeFunctionData(walletClient, data)
 }
 

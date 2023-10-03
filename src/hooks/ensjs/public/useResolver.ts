@@ -1,6 +1,6 @@
 import { useQuery } from 'wagmi'
 
-import { GetResolverParameters, getResolver } from '@ensdomains/ensjs/public'
+import { getResolver, GetResolverParameters } from '@ensdomains/ensjs/public'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
@@ -20,7 +20,7 @@ export const useResolver = <TParams extends UseResolverParameters>({
 
   const { data, status, isFetchedAfterMount, isFetched, ...rest } = useQuery(
     queryKeys.getResolver(params),
-    ({ queryKey: [params] }) => getResolver(publicClient, params),
+    ({ queryKey: [queryParams] }) => getResolver(publicClient, queryParams),
     {
       enabled: enabled && !!params.name,
     },

@@ -2,7 +2,7 @@ import { QueryFunctionContext } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { useQuery } from 'wagmi'
 
-import { GetRecordsParameters, GetRecordsReturnType, getRecords } from '@ensdomains/ensjs/public'
+import { getRecords, GetRecordsParameters, GetRecordsReturnType } from '@ensdomains/ensjs/public'
 
 import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'

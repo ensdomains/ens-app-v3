@@ -5,11 +5,11 @@ import styled, { css } from 'styled-components'
 import {
   CurrencyToggle,
   LanguageSVG,
+  mq,
   RightChevronSVG,
   Spinner,
   Typography,
   WalletSVG,
-  mq,
 } from '@ensdomains/thorin'
 
 import SocialDiscord from '@app/assets/social/SocialDiscord.svg'
@@ -25,8 +25,8 @@ import { SocialIcon } from '@app/components/SocialIcon'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useGasPrice } from '@app/hooks/chain/useGasPrice'
 import { routes } from '@app/routes'
-import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 import { makeDisplay } from '@app/utils/currency'
+import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 import useUserConfig from '@app/utils/useUserConfig'
 
 const Container = styled.div(

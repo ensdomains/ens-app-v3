@@ -16,24 +16,27 @@ const IconWrapper = styled.div(
   `,
 )
 
-const accountsOptions = supportedTexts.reduce((list, account) => {
-  const socialData = getSocialData(account, '')
-  if (!socialData) return list
-  return [
-    ...list,
-    {
-      value: formSafeKey(account),
-      label: socialData.label,
-      prefix: (
-        <IconWrapper>
-          <DynamicSocialIcon
-            name={socialData?.icon as keyof typeof socialIconTypes}
-            fill={socialData?.color}
-          />
-        </IconWrapper>
-      ),
-    },
-  ]
-}, [] as ComponentProps<typeof Select>['options'])
+const accountsOptions = supportedTexts.reduce(
+  (list, account) => {
+    const socialData = getSocialData(account, '')
+    if (!socialData) return list
+    return [
+      ...list,
+      {
+        value: formSafeKey(account),
+        label: socialData.label,
+        prefix: (
+          <IconWrapper>
+            <DynamicSocialIcon
+              name={socialData?.icon as keyof typeof socialIconTypes}
+              fill={socialData?.color}
+            />
+          </IconWrapper>
+        ),
+      },
+    ]
+  },
+  [] as ComponentProps<typeof Select>['options'],
+)
 
 export default accountsOptions

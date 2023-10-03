@@ -28,7 +28,7 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { usePublicClient } from '@app/hooks/usePublicClient'
-import { TransactionName, createTransactionRequest } from '@app/transaction-flow/transaction'
+import { createTransactionRequest, TransactionName } from '@app/transaction-flow/transaction'
 import {
   GetUniqueTransactionParameters,
   ManagedDialogProps,
@@ -410,6 +410,7 @@ export const TransactionStageModal = ({
         currentStep,
         transaction,
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [txKey, currentStep, transaction?.name, transaction?.data],
   )
 

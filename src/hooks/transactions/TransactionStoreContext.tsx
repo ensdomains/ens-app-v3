@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useChainId } from '../chain/useChainId'
-import { TransactionStore, createTransactionStore } from './transactionStore'
+import { createTransactionStore, TransactionStore } from './transactionStore'
 
 // Only allow a single instance of the store to exist at once
 // so that multiple RainbowKitProvider instances can share the same store.

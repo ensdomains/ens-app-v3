@@ -5,11 +5,11 @@ import { Button, Dialog } from '@ensdomains/thorin'
 import { Outlink } from '@app/components/Outlink'
 import { getSupportLink } from '@app/utils/supportLinks'
 
-import type { SelectedProfile } from '../ResolverWarningOverlay'
 import { CenteredTypography } from '../components/CenteredTypography'
 import { ContentContainer } from '../components/ContentContainer'
 import { DetailedSwitch } from '../components/DetailedSwitch'
 import { StyledInnerDialog } from '../components/StyledInnerDialog'
+import type { SelectedProfile } from '../ResolverWarningOverlay'
 
 type Props = {
   selected: SelectedProfile

@@ -1,7 +1,8 @@
+import { UrlObject } from 'url'
+
 import Link, { LinkProps } from 'next/link'
 import { useRouter } from 'next/router'
 import { PropsWithChildren, useMemo } from 'react'
-import { UrlObject } from 'url'
 
 import { getDestination } from '@app/routes'
 

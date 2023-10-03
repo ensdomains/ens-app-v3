@@ -17,6 +17,7 @@ type KnownResolverData = {
 
 // ordered by recency
 export const KNOWN_RESOLVER_DATA: KnownResolverData = {
+  /* eslint-disable @typescript-eslint/naming-convention */
   '1': [
     {
       address: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
@@ -334,6 +335,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
         ],
       }
     : {}),
+  /* eslint-enable @typescript-eslint/naming-convention */
 }
 
 export const getKnownResolverData = ({

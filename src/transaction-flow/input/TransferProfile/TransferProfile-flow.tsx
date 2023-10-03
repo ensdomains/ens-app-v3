@@ -26,8 +26,8 @@ const TransferProfile = ({ data, dispatch }: Props) => {
 
   const updateResolverTransaction = makeTransactionItem('updateResolver', {
     name: data.name,
-    resolverAddress: resolverAddress,
-    oldResolverAddress: oldResolverAddress,
+    resolverAddress,
+    oldResolverAddress,
     contract: data.isWrapped ? 'nameWrapper' : 'registry',
   })
 

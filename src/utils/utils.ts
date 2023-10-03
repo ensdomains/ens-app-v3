@@ -1,4 +1,4 @@
-import { type Address, toBytes } from 'viem'
+import { toBytes, type Address } from 'viem'
 
 import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
 import { DecodedFuses } from '@ensdomains/ensjs/utils'

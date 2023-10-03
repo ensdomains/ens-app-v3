@@ -3,14 +3,14 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, ScrollBox, mq } from '@ensdomains/thorin'
+import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, mq, ScrollBox } from '@ensdomains/thorin'
 
 import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import {
+  grouped as options,
   ProfileRecord,
   ProfileRecordGroup,
-  grouped as options,
 } from '@app/constants/profileRecordOptions'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 

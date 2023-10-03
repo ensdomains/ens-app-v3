@@ -1,4 +1,4 @@
-import { type Address, namehash } from 'viem'
+import { namehash, type Address } from 'viem'
 import { useQuery } from 'wagmi'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'

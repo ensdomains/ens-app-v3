@@ -1,5 +1,5 @@
 import { TFunction } from 'i18next'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 import type { useBasicName } from '@app/hooks/useBasicName'
 import { checkSubname } from '@app/utils/utils'
@@ -146,7 +146,7 @@ export const getDeleteAbilities = ({
           isParentOwner: parentOwner === address,
           ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
           ...(fuses.CANNOT_TRANSFER ? { canDeleteError: t('errors.permissionRevoked') } : {}),
-        } as DeleteAbilities),
+        }) as DeleteAbilities,
     )
     .with(
       DELETE_INFO.wrappedSubname.owner.pattern(address),
@@ -158,7 +158,7 @@ export const getDeleteAbilities = ({
           isParentOwner: parentOwner === address,
           isPCCBurned: false,
           ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
-        } as DeleteAbilities),
+        }) as DeleteAbilities,
     )
     .with(
       DELETE_INFO.wrappedSubname.parent.pattern(address),
@@ -173,7 +173,7 @@ export const getDeleteAbilities = ({
           isParentOwner: true,
           isPCCBurned: false,
           ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
-        } as DeleteAbilities),
+        }) as DeleteAbilities,
     )
     .with(
       DELETE_INFO.unwrappedSubname.ownerOrParent.pattern,

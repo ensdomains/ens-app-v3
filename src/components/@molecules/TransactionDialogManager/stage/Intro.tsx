@@ -70,7 +70,7 @@ export const IntroStageModal = ({
                     label: t('transaction.dialog.intro.step', { step: index + 1 }),
                     value: t(`transaction.description.${name}`),
                     useRawLabel: true,
-                  } as TransactionDisplayItemSingle),
+                  }) as TransactionDisplayItemSingle,
               ) || []
             }
           />

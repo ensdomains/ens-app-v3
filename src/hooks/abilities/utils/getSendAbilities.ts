@@ -1,4 +1,4 @@
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 import { checkETH2LDFromName, checkSubname } from '@app/utils/utils'
 

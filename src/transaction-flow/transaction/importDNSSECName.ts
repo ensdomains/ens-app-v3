@@ -1,9 +1,9 @@
 import type { TFunction } from 'react-i18next'
+import { Address } from 'viem'
 
 import { GetDnsImportDataReturnType, importDnsName } from '@ensdomains/ensjs/dns'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { Address } from 'viem'
 
 type Data = {
   name: string
@@ -26,7 +26,7 @@ const displayItems = (
   },
 ]
 
-const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => 
+const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) =>
   importDnsName.makeFunctionData(walletClient, data)
 
 export default {

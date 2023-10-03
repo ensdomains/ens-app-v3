@@ -11,11 +11,11 @@ import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/t
 import { emptyAddress } from '@app/utils/constants'
 
 import {
-  IntroType,
   checkRequiresSetPrimaryNameTransaction,
   checkRequiresUpdateEthAddressTransaction,
   checkRequiresUpdateResolverTransaction,
   getIntroTranslation,
+  IntroType,
 } from './utils'
 
 type Inputs = {

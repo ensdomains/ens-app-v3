@@ -105,10 +105,12 @@ export const NameListView = ({ address, isSelf, setError, setLoading }: NameList
 
   useEffect(() => {
     setError?.(isError)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isError])
 
   useEffect(() => {
     setLoading?.(isNamesLoading)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNamesLoading])
 
   const { usePreparedDataInput, getTransactionFlowStage } = useTransactionFlow()

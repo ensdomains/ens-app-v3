@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next'
 
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { checkAvailablePrimaryName } from '@app/utils/checkAvailablePrimaryName'
 import { nameParts } from '@app/utils/name'
@@ -281,6 +281,6 @@ export const useProfileActions = ({ name, enabled = true }: Props) => {
 
   return {
     profileActions,
-    isLoading: isLoading,
+    isLoading,
   }
 }

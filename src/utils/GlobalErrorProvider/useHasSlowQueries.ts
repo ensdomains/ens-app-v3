@@ -1,30 +1,29 @@
-import { QueryCache } from '@tanstack/react-query'
+import type { GlobalErrorDispatch, GlobalErrorState } from './GlobalErrorProvider'
 
-import { GlobalErrorDispatch, GlobalErrorState } from './GlobalErrorProvider'
+// const SLOW_THRESHOLD = 5000
 
-const SLOW_THRESHOLD = 5000
+// const getSlowQueries = (queryCache: QueryCache) => {
+//   const queries = queryCache.getAll()
+//   const slowQueries: any[] = []
 
-const getSlowQueries = (queryCache: QueryCache) => {
-  const queries = queryCache.getAll()
-  const slowQueries: any[] = []
+//   queries.forEach((query) => {
+//     const elapsedTime = Date.now() - query.state.dataUpdatedAt
 
-  queries.forEach((query) => {
-    const elapsedTime = Date.now() - query.state.dataUpdatedAt
+//     if (
+//       elapsedTime > SLOW_THRESHOLD &&
+//       query.state.status === 'loading' &&
+//       query.getObserversCount() > 0
+//     ) {
+//       console.log(query)
+//       slowQueries.push(query)
+//     }
+//   })
 
-    if (
-      elapsedTime > SLOW_THRESHOLD &&
-      query.state.status === 'loading' &&
-      query.getObserversCount() > 0
-    ) {
-      console.log(query)
-      slowQueries.push(query)
-    }
-  })
+//   return slowQueries
+// }
 
-  return slowQueries
-}
-
-export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalErrorDispatch) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const useHasSlowQueries = (_state: GlobalErrorState, _dispatch: GlobalErrorDispatch) => {
   return null
   // const { t } = useTranslation('common')
 

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Dialog, PlusSVG, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dialog, mq, PlusSVG, Typography } from '@ensdomains/thorin'
 
 import { ConfirmationDialogView } from '@app/components/@molecules/ConfirmationDialogView/ConfirmationDialogView'
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
@@ -20,8 +20,8 @@ import { AddProfileRecordView } from './AddProfileRecordView'
 import { CustomProfileRecordInput } from './CustomProfileRecordInput'
 import { ProfileRecordInput } from './ProfileRecordInput'
 import { ProfileRecordTextarea } from './ProfileRecordTextarea'
-import { WrappedAvatarButton } from './WrappedAvatarButton'
 import { profileEditorFormToProfileRecords } from './profileRecordUtils'
+import { WrappedAvatarButton } from './WrappedAvatarButton'
 
 const StyledCard = styled.form(({ theme }) => [
   css`

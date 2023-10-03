@@ -10,11 +10,11 @@ import {
   Field,
   Heading,
   Helper,
+  mq,
   RadioButton,
   RadioButtonGroup,
   Toggle,
   Typography,
-  mq,
 } from '@ensdomains/thorin'
 
 import MoonpayLogo from '@app/assets/MoonpayLogo.svg'

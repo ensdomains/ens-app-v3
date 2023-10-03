@@ -1,6 +1,7 @@
 import { useQuery } from 'wagmi'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+
 import { usePublicClient } from '../usePublicClient'
 
 type UseBlockTimestampParameters = {

@@ -1,13 +1,13 @@
 import type { TFunction } from 'react-i18next'
-
-import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { profileRecordsToKeyValue } from '@app/utils/records'
+import type { Address } from 'viem'
 
 import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
 import { getRecords } from '@ensdomains/ensjs/public'
 import { getSubgraphRecords } from '@ensdomains/ensjs/subgraph'
 import { setRecords } from '@ensdomains/ensjs/wallet'
-import type { Address } from 'viem'
+
+import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { profileRecordsToKeyValue } from '@app/utils/records'
 
 type Data = {
   name: string
@@ -33,22 +33,31 @@ const displayItems = (
   },
 ]
 
-const transaction = async ({ publicClient, walletClient, data }: TransactionFunctionParameters<Data>) => {
+const transaction = async ({
+  publicClient,
+  walletClient,
+  data,
+}: TransactionFunctionParameters<Data>) => {
   const subgraphRecords = await getSubgraphRecords(publicClient, data)
   if (!subgraphRecords) throw new Error('No subgraph records found')
-  const profile = await getRecords(publicClient, { 
+  const profile = await getRecords(publicClient, {
     name: data.name,
     records: {
       ...subgraphRecords,
       abi: true,
       contentHash: true,
     },
-    resolver: data.resolverAddress ? {
-      address: data.resolverAddress,
-      fallbackOnly: false,
-    } : undefined
-   })
-  const resolverAddress = getChainContractAddress({ client: publicClient, contract: 'ensPublicResolver' })
+    resolver: data.resolverAddress
+      ? {
+          address: data.resolverAddress,
+          fallbackOnly: false,
+        }
+      : undefined,
+  })
+  const resolverAddress = getChainContractAddress({
+    client: publicClient,
+    contract: 'ensPublicResolver',
+  })
   if (!profile) throw new Error('No profile found')
   const records = await profileRecordsToKeyValue(profile)
   return setRecords.makeFunctionData(walletClient, {

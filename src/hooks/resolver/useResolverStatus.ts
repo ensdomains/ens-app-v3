@@ -8,9 +8,9 @@ import { useProfile } from '@app/hooks/useProfile'
 import { emptyAddress } from '@app/utils/constants'
 import { profileHasRecords } from '@app/utils/profile'
 import {
-  RecordMatch,
   checkProfileRecordsContains,
   checkProfileRecordsEqual,
+  RecordMatch,
 } from '@app/utils/records'
 import { getResolverWrapperAwareness } from '@app/utils/utils'
 

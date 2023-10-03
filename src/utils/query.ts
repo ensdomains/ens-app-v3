@@ -1,4 +1,5 @@
 import '@rainbow-me/rainbowkit/styles.css'
+
 import { DefaultOptions, QueryClient } from '@tanstack/react-query'
 import { ChainProviderFn, configureChains, createConfig } from 'wagmi'
 import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'

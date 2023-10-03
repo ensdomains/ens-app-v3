@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useBalance, useEnsAvatar } from 'wagmi'
 
-import { Avatar, Button, CurrencyToggle, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
+import { Avatar, Button, CurrencyToggle, Dialog, Helper, mq, ScrollBox } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
@@ -32,12 +32,10 @@ const Container = styled.form(
     align-items: center;
     gap: ${theme.space['4']};
 
-    ${mq.sm.min(
-      css`
-        width: calc(80vw - 2 * ${theme.space['6']});
-        max-width: ${theme.space['128']};
-      `,
-    )}
+    ${mq.sm.min(css`
+      width: calc(80vw - 2 * ${theme.space['6']});
+      max-width: ${theme.space['128']};
+    `)}
   `,
 )
 

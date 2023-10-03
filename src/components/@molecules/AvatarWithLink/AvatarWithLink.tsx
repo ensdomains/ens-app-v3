@@ -1,10 +1,10 @@
 import styled, { css } from 'styled-components'
+import { useEnsAvatar } from 'wagmi'
 
 import { Avatar, UpRightArrowSVG } from '@ensdomains/thorin'
 
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination } from '@app/routes'
-import { useEnsAvatar } from 'wagmi'
 
 const Container = styled.a(
   ({ theme }) => css`

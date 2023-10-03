@@ -7,7 +7,7 @@ import { saveName } from '@ensdomains/ensjs/utils'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { TransactionDialogPassthrough, TransactionFlowItem } from '../../types'
-import { FormData, UnknownLabelsForm, nameToFormData } from './views/UnknownLabelsForm'
+import { FormData, nameToFormData, UnknownLabelsForm } from './views/UnknownLabelsForm'
 
 type Data = {
   name: string

@@ -1,8 +1,7 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
-
-
 import { useEnsAvatar } from 'wagmi'
+
 import NFTTemplate from './@molecules/NFTTemplate/NFTTemplate'
 
 const StyledNftBox = styled.div(

@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react'
-import { UseFormReturn, useForm, useWatch } from 'react-hook-form'
+import { useForm, UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address, labelhash } from 'viem'
 import { useMutation, useQueryClient } from 'wagmi'
 
-import { Name, getDecodedName } from '@ensdomains/ensjs/subgraph'
+import { getDecodedName, Name } from '@ensdomains/ensjs/subgraph'
 import { decodeLabelhash, isEncodedLabelhash, saveName } from '@ensdomains/ensjs/utils'
-import { Button, Dialog, Heading, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dialog, Heading, mq, Typography } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import {
@@ -25,9 +25,9 @@ import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { usePublicClient } from '@app/hooks/usePublicClient'
 import {
+  nameToFormData,
   UnknownLabelsForm,
   FormData as UnknownLabelsFormData,
-  nameToFormData,
 } from '@app/transaction-flow/input/UnknownLabels/views/UnknownLabelsForm'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
@@ -81,10 +81,9 @@ const LoadingContainer = styled(InnerDialog)(
 )
 
 const HeaderWrapper = styled.div(
-  ({ theme }) =>
-    css`
-      margin: 0 -${theme.space['4']};
-    `,
+  ({ theme }) => css`
+    margin: 0 -${theme.space['4']};
+  `,
 )
 
 const ContentContainer = styled.form(({ theme }) => [

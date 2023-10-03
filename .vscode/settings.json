@@ -3,7 +3,6 @@
     "**/.yarn": true,
     "**/.pnp.*": true
   },
-  "eslint.nodePath": ".yarn/sdks",
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "eslint.format.enable": true,
@@ -14,7 +13,8 @@
   "stylelint.configFile": ".stylelintrc.json",
   "stylelint.validate": ["css", "typescriptreact"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.prettierPath": "node_modules/prettier/index.js",
+  "prettier.prettierPath": "./node_modules/prettier/index.cjs",
+  "prettier.configPath": "./.prettierrc.json",
   "[svg]": {
     "editor.defaultFormatter": "jock.svg"
   },

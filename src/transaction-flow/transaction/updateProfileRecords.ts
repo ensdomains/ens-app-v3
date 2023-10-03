@@ -1,4 +1,7 @@
 import type { TFunction } from 'i18next'
+import { Address } from 'viem'
+
+import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import {
   getProfileRecordsDiff,
@@ -7,8 +10,6 @@ import {
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { recordOptionsToToupleList } from '@app/utils/records'
-import { setRecords } from '@ensdomains/ensjs/wallet'
-import { Address } from 'viem'
 
 type Data = {
   name: string

@@ -122,10 +122,6 @@ export function etherscanDataToMinedData(etherscanMinedData: EtherscanMinedData)
   }
 }
 
-class ReplacedOrCancelledError extends Error {
-  public name = 'ReplacedOrCancelledError'
-}
-
 const transactionHashRegex = /^0x([A-Fa-f0-9]{64})$/
 
 function validateTransaction(transaction: NewTransaction): string[] {

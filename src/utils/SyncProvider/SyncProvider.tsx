@@ -9,8 +9,8 @@ import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useRegisterNameCallback } from '@app/hooks/transactions/useRegisterNameCallback'
 
-import { debugSubgraphIndexingErrors } from '../GlobalErrorProvider/useSubgraphMetaSync'
 import { useQueryKeys } from '../cacheKeyFactory'
+import { debugSubgraphIndexingErrors } from '../GlobalErrorProvider/useSubgraphMetaSync'
 
 export type UpdateCallback = (transaction: Transaction) => void
 type AddCallback = (key: string, callback: UpdateCallback) => void

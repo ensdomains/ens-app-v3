@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { ComponentProps, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Banner, Button, Skeleton, Typography, mq } from '@ensdomains/thorin'
+import { Banner, Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
 
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'

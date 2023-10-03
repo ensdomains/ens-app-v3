@@ -1,4 +1,4 @@
-import { PropsWithChildren, forwardRef } from 'react'
+import { forwardRef, PropsWithChildren } from 'react'
 
 type Props = PropsWithChildren<{}>
 export const OptionGroup = forwardRef<HTMLDivElement, Props>(

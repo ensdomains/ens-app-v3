@@ -9,17 +9,17 @@ import {
   CountdownCircle,
   Dialog,
   Heading,
+  mq,
   Spinner,
   Typography,
-  mq,
 } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { RegistrationReducerDataItem } from '../types'
 

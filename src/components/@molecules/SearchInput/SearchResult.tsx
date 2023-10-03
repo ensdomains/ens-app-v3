@@ -6,6 +6,8 @@
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
+import { useEnsAvatar } from 'wagmi'
 
 import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 
@@ -15,8 +17,6 @@ import useBeautifiedName from '@app/hooks/useBeautifiedName'
 import { useZorb } from '@app/hooks/useZorb'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
-import { Address } from 'viem'
-import { useEnsAvatar } from 'wagmi'
 
 const SearchItem = styled.div<{
   $selected?: boolean

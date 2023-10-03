@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Skeleton, Tag, Typography, mq } from '@ensdomains/thorin'
+import { mq, Skeleton, Tag, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -78,7 +78,6 @@ const Resolver = ({
   isCachedData,
 }: {
   name: string
-  isWrapped: boolean
   canEditResolver: boolean
   canEdit: boolean
   resolverAddress: string | undefined

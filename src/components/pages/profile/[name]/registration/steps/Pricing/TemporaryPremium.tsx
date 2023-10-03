@@ -10,9 +10,9 @@ import {
   useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { DefaultTheme, css } from 'styled-components'
+import styled, { css, DefaultTheme } from 'styled-components'
 
-import { Button, Dropdown, Helper, Input, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dropdown, Helper, Input, mq, Typography } from '@ensdomains/thorin'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
@@ -68,18 +68,17 @@ const Container = styled.div(
 
 const dotStyle =
   ({ name, extraY = '0px', color }: { name: string; extraY?: string; color: string }) =>
-  ({ theme }: { theme: DefaultTheme }) =>
-    css`
-      content: '';
-      width: ${theme.space['3']};
-      height: ${theme.space['3']};
-      background: ${color};
-      border-radius: ${theme.radii.full};
+  ({ theme }: { theme: DefaultTheme }) => css`
+    content: '';
+    width: ${theme.space['3']};
+    height: ${theme.space['3']};
+    background: ${color};
+    border-radius: ${theme.radii.full};
 
-      position: absolute;
-      left: calc(var(--premium-chart-${name}-x) - ${theme.space['1.5']});
-      top: calc(var(--premium-chart-${name}-y) - ${extraY} - ${theme.space['1.5']});
-    `
+    position: absolute;
+    left: calc(var(--premium-chart-${name}-x) - ${theme.space['1.5']});
+    top: calc(var(--premium-chart-${name}-y) - ${extraY} - ${theme.space['1.5']});
+  `
 
 const ChartContainer = styled.div(
   ({ theme }) => css`

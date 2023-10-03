@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
-import { GetDecodedNameParameters, getDecodedName } from '@ensdomains/ensjs/subgraph'
+import { getDecodedName, GetDecodedNameParameters } from '@ensdomains/ensjs/subgraph'
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
@@ -22,7 +22,7 @@ export const useDecodedName = ({ enabled = true, ...params }: UseDecodedNamePara
 
   const { data, status, isFetched, isFetchedAfterMount, ...rest } = useQuery(
     useQueryKeys().getDecodedName(params as GetDecodedNameParameters),
-    ({ queryKey: [params] }) => getDecodedName(publicClient, params),
+    ({ queryKey: [queryParams] }) => getDecodedName(publicClient, queryParams),
     {
       enabled: enabled && nameIsEncrypted && !!params.name,
     },

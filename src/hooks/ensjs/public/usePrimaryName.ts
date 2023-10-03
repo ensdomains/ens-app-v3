@@ -3,7 +3,7 @@ import { getPublicClient } from '@wagmi/core'
 import type { Address } from 'viem'
 import { useQuery } from 'wagmi'
 
-import { GetNameParameters, GetNameReturnType, getName } from '@ensdomains/ensjs/public'
+import { getName, GetNameParameters, GetNameReturnType } from '@ensdomains/ensjs/public'
 
 import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PublicClientWithChain, QueryConfig } from '@app/types'
@@ -14,7 +14,9 @@ type UsePrimaryNameParameters = Omit<GetNameParameters, 'address'> & {
   allowMismatch?: boolean
 }
 
-type UsePrimaryNameConfig = QueryConfig<GetNameReturnType, Error>
+type UsePrimaryNameReturnType = (NonNullable<GetNameReturnType> & { beautifiedName: string }) | null
+
+type UsePrimaryNameConfig = QueryConfig<UsePrimaryNameReturnType, Error>
 
 type QueryKey<TParams extends UsePrimaryNameParameters> = CreateQueryKey<TParams, 'getName', false>
 

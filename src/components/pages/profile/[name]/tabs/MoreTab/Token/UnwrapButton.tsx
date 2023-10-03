@@ -4,8 +4,8 @@ import { GetOwnerReturnType } from '@ensdomains/ensjs/public'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import BaseWrapButton from './BaseWrapButton'
 

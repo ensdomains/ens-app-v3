@@ -1,6 +1,6 @@
 import { useQuery } from 'wagmi'
 
-import { Name, getSubnames } from '@ensdomains/ensjs/subgraph'
+import { getSubnames, Name } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 

@@ -2,7 +2,7 @@ import { ComponentProps, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useEnsAvatar } from 'wagmi'
 
-import { Avatar, Space, mq } from '@ensdomains/thorin'
+import { Avatar, mq, Space } from '@ensdomains/thorin'
 
 import { useZorb } from '@app/hooks/useZorb'
 import { QuerySpace } from '@app/types'

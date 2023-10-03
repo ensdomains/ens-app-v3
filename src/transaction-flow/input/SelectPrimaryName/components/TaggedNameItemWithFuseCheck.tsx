@@ -5,12 +5,11 @@ import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 
 type Props = ComponentProps<typeof TaggedNameItem>
 export const TaggedNameItemWithFuseCheck = (props: Props) => {
+  const { relation, fuses, name } = props
   const skip =
-    props.relation?.resolvedAddress ||
-    !props.relation?.wrappedOwner ||
-    !props.fuses?.child.CANNOT_SET_RESOLVER
+    relation?.resolvedAddress || !relation?.wrappedOwner || !fuses?.child.CANNOT_SET_RESOLVER
 
-  const resolverStatus = useResolverStatus({ name: props.name!, enabled: !skip })
+  const resolverStatus = useResolverStatus({ name: name!, enabled: !skip })
 
   const isFuseCheckSuccess = useMemo(() => {
     if (skip) return true

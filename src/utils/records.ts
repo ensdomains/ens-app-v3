@@ -1,10 +1,10 @@
 import { Address } from 'viem'
 
 import {
-  DecodedContentHash,
-  RecordOptions,
   contentTypeToEncodeAs,
+  DecodedContentHash,
   encodeAbi,
+  RecordOptions,
 } from '@ensdomains/ensjs/utils'
 
 import { AddressRecord, Profile, TextRecord } from '@app/types'
@@ -56,12 +56,15 @@ const checkRecordsEqual =
   <TMatchObject extends Record<string, any>>(keyFn: (item: TMatchObject) => string) =>
   (a: TMatchObject[] = [], b: TMatchObject[] = []): boolean => {
     return Object.values(
-      [...a, ...b].reduce((acc, item) => {
-        const key = keyFn(item)
-        if (acc[key]) acc[key] += 1
-        else acc[key] = 1
-        return acc
-      }, {} as Record<string, number>),
+      [...a, ...b].reduce(
+        (acc, item) => {
+          const key = keyFn(item)
+          if (acc[key]) acc[key] += 1
+          else acc[key] = 1
+          return acc
+        },
+        {} as Record<string, number>,
+      ),
     ).every((count) => count === 2)
   }
 

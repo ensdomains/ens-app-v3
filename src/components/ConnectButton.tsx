@@ -11,9 +11,9 @@ import {
   CogSVG,
   CopySVG,
   ExitSVG,
+  mq,
   PersonSVG,
   Profile,
-  mq,
 } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 

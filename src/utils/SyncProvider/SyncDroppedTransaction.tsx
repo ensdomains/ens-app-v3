@@ -1,14 +1,14 @@
 /* eslint-disable no-await-in-loop */
 import { useEffect, useRef } from 'react'
-import { type Address, TransactionNotFoundError } from 'viem'
+import { TransactionNotFoundError, type Address } from 'viem'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
-import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
 import type {
   EtherscanMinedData,
   Transaction,
   TransactionStore,
 } from '@app/hooks/transactions/transactionStore'
+import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { usePublicClient } from '@app/hooks/usePublicClient'
 import { PublicClientWithChain } from '@app/types'

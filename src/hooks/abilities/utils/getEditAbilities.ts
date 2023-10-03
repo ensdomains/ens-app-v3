@@ -1,4 +1,4 @@
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 import type { useBasicName } from '@app/hooks/useBasicName'
 
@@ -18,14 +18,14 @@ const PATTERNS = {
           child: P.select('fuses'),
         },
       },
-    } as const),
+    }) as const,
   unwrappedNameOwner: (address?: string) =>
     ({
       ownerData: {
         ownershipLevel: P.not('nameWrapper'),
         owner: P.when((owner) => owner === address),
       },
-    } as const),
+    }) as const,
 } as const
 
 export const getEditAbilities = ({

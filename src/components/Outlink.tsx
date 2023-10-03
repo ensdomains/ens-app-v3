@@ -1,7 +1,8 @@
+import type { UrlObject } from 'url'
+
 import Link from 'next/link'
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
-import type { UrlObject } from 'url'
 
 import { Typography } from '@ensdomains/thorin'
 

@@ -10,7 +10,7 @@ import AdvancedEditorContent from '@app/components/@molecules/AdvancedEditor/Adv
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
-import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
+import { makeTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 const Container = styled.form(({ theme }) => [
@@ -38,7 +38,10 @@ const NameContainer = styled.div(({ theme }) => [
     line-height: 45px;
     vertical-align: middle;
     text-align: center;
-    font-feature-settings: 'ss01' on, 'ss03' on, 'ss04' on;
+    font-feature-settings:
+      'ss01' on,
+      'ss03' on,
+      'ss04' on;
     font-weight: ${theme.fontWeights.bold};
     font-size: ${theme.space['6']};
     white-space: nowrap;

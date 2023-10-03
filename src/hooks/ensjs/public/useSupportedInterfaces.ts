@@ -1,7 +1,7 @@
 import { Hex } from 'viem'
 import { useQuery } from 'wagmi'
 
-import { GetSupportedInterfacesParameters, getSupportedInterfaces } from '@ensdomains/ensjs/public'
+import { getSupportedInterfaces, GetSupportedInterfacesParameters } from '@ensdomains/ensjs/public'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
@@ -14,7 +14,8 @@ type UseSupportedInterfacesParameters<TInterfaces extends readonly Hex[]> =
 
 export const useSupportedInterfaces = <
   TInterfaces extends readonly Hex[],
-  TParams extends UseSupportedInterfacesParameters<TInterfaces> = UseSupportedInterfacesParameters<TInterfaces>,
+  TParams extends
+    UseSupportedInterfacesParameters<TInterfaces> = UseSupportedInterfacesParameters<TInterfaces>,
 >({
   enabled = true,
   ...params
@@ -25,7 +26,7 @@ export const useSupportedInterfaces = <
 
   const { data, status, isFetchedAfterMount, isFetched, ...rest } = useQuery(
     queryKeys.getSupportedInterfaces(params),
-    ({ queryKey: [params] }) => getSupportedInterfaces(publicClient, params),
+    ({ queryKey: [queryParams] }) => getSupportedInterfaces(publicClient, queryParams),
     {
       enabled: enabled && !!params.address && params.interfaces.length > 0,
     },

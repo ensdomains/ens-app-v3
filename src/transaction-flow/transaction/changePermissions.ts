@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import type { TFunction } from 'react-i18next'
 
-import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { ChildFuseReferenceType, ParentFuseReferenceType } from '@ensdomains/ensjs/utils'
 import { setChildFuses, setFuses } from '@ensdomains/ensjs/wallet'
+
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type WithSetChildFuses = {
   contract: 'setChildFuses'
@@ -82,10 +83,7 @@ const displayItems = (
   ]
 }
 
-const transaction = ({
-  walletClient,
-  data,
-}: TransactionFunctionParameters<Data>) => {
+const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
   const { contract } = data
   if (contract === 'setChildFuses') {
     return setChildFuses.makeFunctionData(walletClient, {
@@ -105,7 +103,7 @@ const transaction = ({
     name: data.name,
     fuses: {
       named: data.fuses,
-    }
+    },
   })
 }
 

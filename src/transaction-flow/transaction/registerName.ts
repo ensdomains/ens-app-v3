@@ -1,11 +1,11 @@
 import type { TFunction } from 'react-i18next'
 
+import { getPrice } from '@ensdomains/ensjs/public'
 import { RegistrationParameters } from '@ensdomains/ensjs/utils'
+import { registerName } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { calculateValueWithBuffer, secondsToYears } from '@app/utils/utils'
-import { getPrice } from '@ensdomains/ensjs/public'
-import { registerName } from '@ensdomains/ensjs/wallet'
 
 type Data = RegistrationParameters
 
@@ -30,7 +30,11 @@ const displayItems = (
   },
 ]
 
-const transaction = async ({ publicClient, walletClient, data }: TransactionFunctionParameters<Data>) => {
+const transaction = async ({
+  publicClient,
+  walletClient,
+  data,
+}: TransactionFunctionParameters<Data>) => {
   const price = await getPrice(publicClient, { nameOrNames: data.name, duration: data.duration })
   const value = price.base + price.premium
   const valueWithBuffer = calculateValueWithBuffer(value)

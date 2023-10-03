@@ -3,11 +3,7 @@ import { Address, encodeFunctionData } from 'viem'
 
 import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
 
-import {
-  Transaction,
-  TransactionDisplayItem,
-  TransactionFunctionParameters
-} from '@app/types'
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = { address: Address }
 
@@ -51,10 +47,7 @@ const registrySetApprovalForAllSnippet = [
   },
 ] as const
 
-const transaction = async ({
-  publicClient,
-  data,
-}: TransactionFunctionParameters<Data>) => {
+const transaction = async ({ publicClient, data }: TransactionFunctionParameters<Data>) => {
   return {
     to: getChainContractAddress({
       client: publicClient,

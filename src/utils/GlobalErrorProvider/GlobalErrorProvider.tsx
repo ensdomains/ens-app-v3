@@ -1,5 +1,5 @@
-import { QueryKey, hashQueryKey } from '@tanstack/react-query'
-import { Dispatch, Reducer, createContext, useContext, useReducer } from 'react'
+import { hashQueryKey, QueryKey } from '@tanstack/react-query'
+import { createContext, Dispatch, Reducer, useContext, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'wagmi'
 

@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { useInfiniteQuery } from 'wagmi'
 
 import {
+  getNamesForAddress,
   GetNamesForAddressParameters,
   GetNamesForAddressReturnType,
-  getNamesForAddress,
 } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
@@ -52,7 +52,8 @@ export const useNamesForAddress = ({ enabled = true, ...params }: UseNamesForAdd
       params.filter?.searchString && isFetching
         ? unfilteredPages.filter((x) => x.labelName?.includes(params.filter!.searchString!))
         : infiniteData,
-    [unfilteredPages, params.filter?.searchString, infiniteData],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isFetching, unfilteredPages, params.filter?.searchString, infiniteData],
   )
 
   const nameCount = infiniteDataWithFetchingFill.length || 0

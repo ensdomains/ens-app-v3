@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { UserSettableFuses } from '@ensdomains/ensjs/utils'
-import { Helper, Typography, mq } from '@ensdomains/thorin'
+import { Helper, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { Spacer } from '@app/components/@atoms/Spacer'

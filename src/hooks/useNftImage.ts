@@ -46,8 +46,7 @@ export const useNftImage = ({ name, enabled = true }: UseNftImageParameters) => 
 
   return useQuery(
     queryKeys.getNftImage({ name, registrarAddress, chainName }),
-    ({ queryKey: [{ name, chainName, registrarAddress }] }) =>
-      fetchImg(ensNftImageUrl({ name: name!, chainName, registrarAddress })),
+    ({ queryKey: [params] }) => fetchImg(ensNftImageUrl({ ...params, name: params.name! })),
     {
       enabled: enabled && !!name,
     },

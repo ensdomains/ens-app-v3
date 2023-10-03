@@ -29,11 +29,9 @@ const LogoAndLanguage = styled.div(
 
 const StyledLeadingHeading = styled(LeadingHeading)(
   () => css`
-    ${mq.sm.min(
-      css`
-        display: none;
-      `,
-    )}
+    ${mq.sm.min(css`
+      display: none;
+    `)}
   `,
 )
 

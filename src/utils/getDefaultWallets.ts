@@ -1,4 +1,4 @@
-import { Chain, WalletList, connectorsForWallets } from '@rainbow-me/rainbowkit'
+import { Chain, connectorsForWallets, WalletList } from '@rainbow-me/rainbowkit'
 import {
   argentWallet,
   braveWallet,

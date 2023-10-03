@@ -1,11 +1,13 @@
-import { RainbowKitProvider, Theme, lightTheme } from '@rainbow-me/rainbowkit'
+import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
+
 import '@rainbow-me/rainbowkit/styles.css'
+
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { IntercomProvider } from 'react-use-intercom'
-import { ThemeProvider, createGlobalStyle, keyframes } from 'styled-components'
+import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
 import { WagmiConfig } from 'wagmi'
 
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
@@ -14,17 +16,19 @@ import { Notifications } from '@app/components/Notifications'
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
+import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { GlobalErrorProvider } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
+import { chains, wagmiConfig } from '@app/utils/query'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
-import { setupAnalytics } from '@app/utils/analytics'
-import { chains, wagmiConfig } from '@app/utils/query'
 
 import i18n from '../i18n'
+
 import '../styles.css'
 
 // @ts-ignore: Unreachable code error
+// eslint-disable-next-line no-extend-native, func-names
 BigInt.prototype.toJSON = function () {
   return this.toString()
 }

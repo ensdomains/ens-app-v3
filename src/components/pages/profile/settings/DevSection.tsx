@@ -8,9 +8,9 @@ import { Button } from '@ensdomains/thorin'
 
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { usePublicClient } from '@app/hooks/usePublicClient'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { DetailedSwitch } from '@app/transaction-flow/input/ProfileEditor/components/DetailedSwitch'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { SectionContainer } from './Section'
 
@@ -45,7 +45,7 @@ const useLocalStorageString = (key: string, defaultValue = '') => {
 
 export const DevSection = () => {
   const publicClient = usePublicClient()
-  const testClient = useMemo(() => ({ ...publicClient, mode: 'anvil' } as const), [publicClient])
+  const testClient = useMemo(() => ({ ...publicClient, mode: 'anvil' }) as const, [publicClient])
 
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()

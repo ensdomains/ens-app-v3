@@ -2,8 +2,8 @@ import {
   Control,
   UseFormGetValues,
   UseFormRegister,
-  UseFormTrigger,
   useFormState,
+  UseFormTrigger,
   useWatch,
 } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -13,8 +13,8 @@ import { Dialog, Input, RadioButton, Typography } from '@ensdomains/thorin'
 
 import { dateTimeLocalToDate, dateToDateTimeLocal, stripDateMs } from '@app/utils/datetime-local'
 
-import type { FormData } from '../RevokePermissions-flow'
 import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
+import type { FormData } from '../RevokePermissions-flow'
 
 type Props = {
   name: string

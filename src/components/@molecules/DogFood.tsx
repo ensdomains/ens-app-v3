@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { isAddress } from 'viem'
 import { useQueryClient } from 'wagmi'
 
 import { Input } from '@ensdomains/thorin'
@@ -10,9 +11,8 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { useAddressRecord } from '@app/hooks/ensjs/public/useAddressRecord'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
-import { isAddress } from 'viem'
-import { DisplayItems } from './TransactionDialogManager/DisplayItems'
 
+import { DisplayItems } from './TransactionDialogManager/DisplayItems'
 
 const InnerContainer = styled.div(() => [
   css`
@@ -20,21 +20,22 @@ const InnerContainer = styled.div(() => [
   `,
 ])
 
-export const DogFood = (
-    { 
-      register, 
-      watch, 
-      formState,
-      setValue,
-      disabled,
-      validations,
-      label, 
-      hideLabel,
-      trigger
-    // eslint-disable-next-line prettier/prettier
-    }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'watch' | 'formState' | 'setValue' | 'trigger'> 
-    & { label?: string, validations?: any, disabled?: boolean, hideLabel?: boolean },
-) => {
+type DogFoodProps = Pick<
+  ReturnType<typeof useForm<any>>,
+  'register' | 'watch' | 'formState' | 'setValue' | 'trigger'
+> & { label?: string; validations?: any; disabled?: boolean; hideLabel?: boolean }
+
+export const DogFood = ({
+  register,
+  watch,
+  formState,
+  setValue,
+  disabled,
+  validations,
+  label,
+  hideLabel,
+  trigger,
+}: DogFoodProps) => {
   const { t } = useTranslation('profile')
   const queryClient = useQueryClient()
 
@@ -44,10 +45,10 @@ export const DogFood = (
   const [ethNameInput, setEthNameInput] = useState('')
   const throttledSetEthNameInput = useDebouncedCallback(setEthNameInput, 500)
   useEffect(() => {
-      throttledSetEthNameInput((inputWatch || '').toLocaleLowerCase())
+    throttledSetEthNameInput((inputWatch || '').toLocaleLowerCase())
   }, [inputWatch, throttledSetEthNameInput])
 
-  const queryKeyGenerator = useQueryKeys().getAddressRecord 
+  const queryKeyGenerator = useQueryKeys().getAddressRecord
 
   const { data: addressRecordData } = useAddressRecord({
     enabled: !!ethNameInput?.includes('.'),
@@ -60,7 +61,7 @@ export const DogFood = (
 
   // Update react value of address
   const finalValue = inputWatch?.includes('.') ? ethNameAddress : inputWatch
-  useEffect(() => { 
+  useEffect(() => {
     setValue('address', finalValue)
     if (finalValue) trigger('dogfoodRaw')
   }, [finalValue, setValue, trigger])
@@ -86,18 +87,22 @@ export const DogFood = (
                 ? t('errors.invalidAddress')
                 : undefined,
             hasAddressRecord: async (value) => {
-              if(value?.includes('.')) {
+              if (value?.includes('.')) {
                 try {
-                  const result = await queryClient.getQueryData(queryKeyGenerator({ name: value.toLowerCase() }))
-                  if (result) { return undefined }
-                // eslint-disable-next-line no-empty
-                } catch (e){
+                  const result = await queryClient.getQueryData(
+                    queryKeyGenerator({ name: value.toLowerCase() }),
+                  )
+                  if (result) {
+                    return undefined
+                  }
+                  // eslint-disable-next-line no-empty
+                } catch (e) {
                   console.error('validation error: ', e)
                 }
                 return 'ENS Name has no address record'
-                }
-              },
-            ...validations
+              }
+            },
+            ...validations,
           },
         })}
         // TODO(tate): remove as any when thorin is updated
@@ -106,10 +111,8 @@ export const DogFood = (
       />
       {!errorMessage && finalValue && !disabled && (
         <>
-         <Spacer $height='2' />
-          <DisplayItems displayItems={[
-            { label: 'address', value: finalValue, type: 'address' },
-          ]} />
+          <Spacer $height="2" />
+          <DisplayItems displayItems={[{ label: 'address', value: finalValue, type: 'address' }]} />
         </>
       )}
     </InnerContainer>

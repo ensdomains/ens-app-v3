@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { type Address, labelhash } from 'viem'
+import { labelhash, type Address } from 'viem'
 import { useMutation, useQuery } from 'wagmi'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'

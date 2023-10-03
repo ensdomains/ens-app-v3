@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import styled, { css } from 'styled-components'
 
-import { Typography, mq } from '@ensdomains/thorin'
+import { mq, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'

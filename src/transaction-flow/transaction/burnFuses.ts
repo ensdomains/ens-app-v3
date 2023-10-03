@@ -31,10 +31,7 @@ const displayItems = (
   },
 ]
 
-const transaction = ({
-  walletClient,
-  data,
-}: TransactionFunctionParameters<Data>) => {
+const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
   return setFuses.makeFunctionData(walletClient, {
     name: data.name,
     fuses: {

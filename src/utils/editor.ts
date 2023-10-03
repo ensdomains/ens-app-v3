@@ -91,7 +91,7 @@ export const convertProfileToProfileFormObject = (profile: Profile): ProfileForm
   ) || { general: {}, accounts: {}, other: {} }
 
   let website = ''
-  const contentHash = profile.contentHash
+  const { contentHash } = profile
   if (contentHash) {
     if (typeof contentHash === 'string') {
       website = contentHash

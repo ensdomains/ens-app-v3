@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Spinner, Typography, mq } from '@ensdomains/thorin'
+import { Button, mq, Spinner, Typography } from '@ensdomains/thorin'
 
 import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'

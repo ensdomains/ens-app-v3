@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { Pattern, match } from 'ts-pattern'
+import { match, Pattern } from 'ts-pattern'
 
-import { RecordOptions, encodeAbi } from '@ensdomains/ensjs/utils'
+import { encodeAbi, RecordOptions } from '@ensdomains/ensjs/utils'
 
 import { textOptions } from '@app/components/@molecules/AdvancedEditor/textOptions'
 import addressOptions from '@app/components/@molecules/ProfileEditor/options/addressOptions'
@@ -239,11 +239,8 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
     const contentHash = dirtyFields.other?.contentHash
 
     const abi = await match(dirtyFields.other?.abi?.data)
-      .with('', () => ({ encodedData: null, contentType: 0 } as const))
-      .with(
-        Pattern.string,
-        async (data) => await encodeAbi({ encodeAs: 'json', data: JSON.parse(data) }),
-      )
+      .with('', () => ({ encodedData: null, contentType: 0 }) as const)
+      .with(Pattern.string, async (data) => encodeAbi({ encodeAs: 'json', data: JSON.parse(data) }))
       .otherwise(() => undefined)
 
     const records: RecordOptions = {

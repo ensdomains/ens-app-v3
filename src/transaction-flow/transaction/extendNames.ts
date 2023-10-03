@@ -1,10 +1,16 @@
 import type { TFunction } from 'react-i18next'
 
-import { HelperProps, Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { makeDisplay } from '@app/utils/currency'
-
 import { getPrice } from '@ensdomains/ensjs/public'
 import { renewNames } from '@ensdomains/ensjs/wallet'
+
+import {
+  HelperProps,
+  Transaction,
+  TransactionDisplayItem,
+  TransactionFunctionParameters,
+} from '@app/types'
+import { makeDisplay } from '@app/utils/currency'
+
 import { calculateValueWithBuffer, secondsToYears } from '../../utils/utils'
 
 type Data = {
@@ -53,7 +59,11 @@ const helper = (data: Data, t: TFunction<'translation', undefined>): HelperProps
   }
 }
 
-const transaction = async ({ publicClient, walletClient, data }: TransactionFunctionParameters<Data>) => {
+const transaction = async ({
+  publicClient,
+  walletClient,
+  data,
+}: TransactionFunctionParameters<Data>) => {
   const { names, duration } = data
   const price = await getPrice(publicClient, {
     nameOrNames: names,

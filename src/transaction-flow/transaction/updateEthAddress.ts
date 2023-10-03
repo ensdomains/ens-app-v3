@@ -1,10 +1,11 @@
 import type { TFunction } from 'react-i18next'
+import { Address } from 'viem'
 
-import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
 import { getResolver } from '@ensdomains/ensjs/public'
 import { setAddressRecord } from '@ensdomains/ensjs/wallet'
-import { Address } from 'viem'
+
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = {
   name: string
@@ -34,7 +35,11 @@ const displayItems = (
   },
 ]
 
-const transaction = async ({ publicClient, walletClient, data }: TransactionFunctionParameters<Data>) => {
+const transaction = async ({
+  publicClient,
+  walletClient,
+  data,
+}: TransactionFunctionParameters<Data>) => {
   const resolverAddress = data?.latestResolver
     ? getChainContractAddress({ client: publicClient, contract: 'ensPublicResolver' })
     : await getResolver(publicClient, { name: data.name })

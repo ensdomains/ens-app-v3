@@ -32,7 +32,6 @@ export const DisabledButtonWithTooltip = ({
   mobileWidth?: number
   buttonWidth?: ButtonProps['width']
   colorStyle?: ButtonProps['colorStyle']
-  mobileButtonWidth?: string
   prefix?: ReactNodeNoStrings
 }) => {
   const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager(buttonId)

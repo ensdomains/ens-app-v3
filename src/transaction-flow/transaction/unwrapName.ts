@@ -1,8 +1,9 @@
 import type { TFunction } from 'react-i18next'
 
+import { unwrapName } from '@ensdomains/ensjs/wallet'
+
 import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { checkETH2LDFromName } from '@app/utils/utils'
-import { unwrapName } from '@ensdomains/ensjs/wallet'
 
 type Data = {
   name: string
@@ -24,9 +25,14 @@ const displayItems = (
 ]
 
 const transaction = async ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
-  const address = walletClient.account.address
+  const { address } = walletClient.account
 
-  if (checkETH2LDFromName(data.name)) return unwrapName.makeFunctionData(walletClient, { name: data.name, newOwnerAddress: address, newRegistrantAddress: address })
+  if (checkETH2LDFromName(data.name))
+    return unwrapName.makeFunctionData(walletClient, {
+      name: data.name,
+      newOwnerAddress: address,
+      newRegistrantAddress: address,
+    })
   return unwrapName.makeFunctionData(walletClient, {
     name: data.name,
     newOwnerAddress: address,

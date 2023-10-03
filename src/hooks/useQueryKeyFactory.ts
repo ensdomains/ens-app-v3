@@ -42,7 +42,6 @@ export function useQueryKeyFactory<TParams extends {}, TFunctionName extends str
 
   if (isGraphQuery) {
     return [params, chainId, address ?? undefined, scopeKey, functionName, 'graph'] as const
-  } else {
-    return [params, chainId, address ?? undefined, scopeKey, functionName] as const
   }
+  return [params, chainId, address ?? undefined, scopeKey, functionName] as const
 }

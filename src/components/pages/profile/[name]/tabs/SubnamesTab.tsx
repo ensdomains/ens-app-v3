@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { GetSubnamesParameters } from '@ensdomains/ensjs/subgraph'
-import { Button, PlusSVG, Spinner, Typography, mq } from '@ensdomains/thorin'
+import { Button, mq, PlusSVG, Spinner, Typography } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import {

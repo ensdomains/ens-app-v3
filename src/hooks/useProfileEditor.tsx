@@ -2,7 +2,7 @@ import React, { ComponentProps, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-import { RecordOptions, getInternalCodec, getProtocolType } from '@ensdomains/ensjs/utils'
+import { getInternalCodec, getProtocolType, RecordOptions } from '@ensdomains/ensjs/utils'
 
 import accountsOptions from '@app/components/@molecules/ProfileEditor/options/accountsOptions'
 import addressOptions from '@app/components/@molecules/ProfileEditor/options/addressOptions'

@@ -1,8 +1,9 @@
 import type { TFunction } from 'react-i18next'
+import type { Address } from 'viem'
+
+import { transferName } from '@ensdomains/ensjs/wallet'
 
 import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { transferName } from '@ensdomains/ensjs/wallet'
-import type { Address } from 'viem'
 
 type RegistrarData = {
   contract: 'registrar'
@@ -43,10 +44,15 @@ const displayItems = (
 ]
 
 const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
-  return transferName.makeFunctionData(walletClient, data.contract === 'registrar' ? data : {
-    ...data,
-    asParent: false,
-  })
+  return transferName.makeFunctionData(
+    walletClient,
+    data.contract === 'registrar'
+      ? data
+      : {
+          ...data,
+          asParent: false,
+        },
+  )
 }
 
 export default {

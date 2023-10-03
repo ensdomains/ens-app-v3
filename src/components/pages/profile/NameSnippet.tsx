@@ -131,7 +131,6 @@ export const NameDetailSnippet = ({
   name,
   expiryDate,
   ownerData,
-  network,
   showButton,
   dnsOwner,
   isCached,
@@ -141,7 +140,6 @@ export const NameDetailSnippet = ({
   expiryDate?: Date | null
   ownerData: NonNullable<GetOwnerReturnType>
   wrapperData: GetWrapperDataReturnType
-  network: number
   showButton?: boolean
   dnsOwner?: Address
   isCached?: boolean
@@ -201,7 +199,6 @@ export const NameDetailSnippet = ({
 
 export const NameSnippet = ({
   name,
-  network,
   expiryDate,
   ownerData,
   showButton,
@@ -210,7 +207,6 @@ export const NameSnippet = ({
   wrapperData,
 }: {
   name: string
-  network: number
   expiryDate?: Date | null
   ownerData: NonNullable<GetOwnerReturnType>
   wrapperData: GetWrapperDataReturnType
@@ -227,7 +223,6 @@ export const NameSnippet = ({
         wrapperData={wrapperData}
         expiryDate={expiryDate}
         ownerData={ownerData}
-        network={network}
         showButton={showButton}
         dnsOwner={dnsOwner}
       />

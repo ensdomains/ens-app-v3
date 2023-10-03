@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useInfiniteQuery } from 'wagmi'
 
-import { GetSubnamesParameters, getSubnames } from '@ensdomains/ensjs/subgraph'
+import { getSubnames, GetSubnamesParameters } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 

@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
+import { useEnsAvatar } from 'wagmi'
 
 import { Avatar, mq } from '@ensdomains/thorin'
 
@@ -7,7 +8,6 @@ import CircleTick from '@app/assets/CircleTick.svg'
 import { useZorb } from '@app/hooks/useZorb'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
-import { useEnsAvatar } from 'wagmi'
 import { safeDateObj } from '../../../utils/date'
 import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
 import { OptionalLink } from '../OptionalLink/OptionalLink'
@@ -24,7 +24,9 @@ const NameItemWrapper = styled.div<{ $highlight: boolean; $disabled: boolean }>(
     padding: ${theme.space['3']} ${theme.space['4']};
     gap: ${theme.space['2']};
     border-bottom: 1px solid ${theme.colors.border};
-    transition: all 0.15s ease-in-out, border 0s;
+    transition:
+      all 0.15s ease-in-out,
+      border 0s;
     background: ${$highlight ? theme.colors.blueSurface : theme.colors.backgroundPrimary};
     cursor: ${$disabled ? 'not-allowed' : 'pointer'};
     &:hover {
@@ -122,7 +124,6 @@ export const NameDetailItem = ({
   name,
   truncatedName,
   expiryDate,
-  network,
   mode,
   selected = false,
   disabled = false,
@@ -130,7 +131,6 @@ export const NameDetailItem = ({
   children,
 }: Name & {
   expiryDate?: Date
-  network: number
   mode?: 'view' | 'select'
   selected?: boolean
   disabled?: boolean

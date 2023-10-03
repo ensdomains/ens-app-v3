@@ -1,11 +1,11 @@
 import { forwardRef } from 'react'
-import { UseFormReturn, useFieldArray } from 'react-hook-form'
+import { useFieldArray, UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { labelhash } from 'viem'
 
 import { decodeLabelhash, isEncodedLabelhash, validateName } from '@ensdomains/ensjs/utils'
-import { Button, Dialog, Input, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dialog, Input, mq, Typography } from '@ensdomains/thorin'
 
 import { isLabelTooLong } from '@app/utils/utils'
 

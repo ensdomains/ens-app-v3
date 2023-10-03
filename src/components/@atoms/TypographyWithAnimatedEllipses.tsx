@@ -1,4 +1,4 @@
-import styled, { DefaultTheme, css, keyframes } from 'styled-components'
+import styled, { css, DefaultTheme, keyframes } from 'styled-components'
 
 import { Typography } from '@ensdomains/thorin'
 

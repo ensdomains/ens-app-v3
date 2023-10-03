@@ -14,21 +14,21 @@ import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { useEstimateGasLimitForTransaction } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { usePublicClient } from '@app/hooks/usePublicClient'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import {
   CreateTransactionFlow,
   useTransactionFlow,
 } from '@app/transaction-flow/TransactionFlowProvider'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { PublicClientWithChain } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
 
-import { Steps } from './Steps'
 import {
   ButtonContainer,
   CheckButton,
   hasPendingTransaction,
   shouldShowSuccessPage,
 } from './shared'
+import { Steps } from './Steps'
 
 const Container = styled.div`
   text-align: center;

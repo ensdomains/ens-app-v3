@@ -3,13 +3,12 @@ import styled, { css } from 'styled-components'
 import { labelhash, namehash } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { Tag, Typography, mq } from '@ensdomains/thorin'
+import { mq, Tag, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
@@ -118,7 +117,6 @@ const NftBox = styled(NFTWithPlaceholder)(
 const Token = ({ name, isWrapped, canBeWrapped, wrapperData, ownerData, profile }: Props) => {
   const { t } = useTranslation('profile')
 
-  const network = useChainId()
   const networkName = useChainName()
 
   const { wrapperData: parentWrapperData, isCachedData: isParentBasicCachedData } =

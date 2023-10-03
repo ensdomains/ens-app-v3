@@ -1,8 +1,9 @@
 import type { TFunction } from 'i18next'
+import type { Address } from 'viem'
+
+import { clearRecords } from '@ensdomains/ensjs/wallet'
 
 import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { clearRecords } from '@ensdomains/ensjs/wallet'
-import type { Address } from 'viem'
 
 type Data = {
   name: string

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Helper, Typography, mq } from '@ensdomains/thorin'
+import { Button, Helper, mq, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -21,12 +21,11 @@ import {
 } from './ProfileButton'
 
 const ProfileInfoBox = styled(CacheableComponent)(
-  ({ theme }) =>
-    css`
-      background-color: ${theme.colors.background};
-      border-radius: ${theme.radii['2xLarge']};
-      border: ${theme.space.px} solid ${theme.colors.border};
-    `,
+  ({ theme }) => css`
+    background-color: ${theme.colors.background};
+    border-radius: ${theme.radii['2xLarge']};
+    border: ${theme.space.px} solid ${theme.colors.border};
+  `,
 )
 
 const Stack = styled.div(

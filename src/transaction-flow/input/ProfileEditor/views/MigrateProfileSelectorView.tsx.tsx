@@ -4,10 +4,10 @@ import { Address } from 'viem'
 
 import { Button, Dialog, RadioButton, ScrollBox, Typography } from '@ensdomains/thorin'
 
-import type { SelectedProfile } from '../ResolverWarningOverlay'
 import { CenteredTypography } from '../components/CenteredTypography'
 import { ProfileBlurb } from '../components/ProfileBlurb'
 import { StyledInnerDialog } from '../components/StyledInnerDialog'
+import type { SelectedProfile } from '../ResolverWarningOverlay'
 
 const ContentContainer = styled.div(
   ({ theme }) => css`

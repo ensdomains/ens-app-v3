@@ -1,6 +1,6 @@
 import { useQuery } from 'wagmi'
 
-import { GetSubgraphRecordsParameters, getSubgraphRecords } from '@ensdomains/ensjs/subgraph'
+import { getSubgraphRecords, GetSubgraphRecordsParameters } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
@@ -19,7 +19,7 @@ export const useSubgraphRecords = ({ enabled = true, ...params }: UseSubgraphRec
 
   const { data, status, isFetched, isFetchedAfterMount, ...rest } = useQuery(
     queryKeys.getSubgraphRecords({ ...params, name: params.name! }),
-    ({ queryKey: [params] }) => getSubgraphRecords(publicClient, params),
+    ({ queryKey: [queryParams] }) => getSubgraphRecords(publicClient, queryParams),
     {
       enabled: enabled && !!params.name,
     },

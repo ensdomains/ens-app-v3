@@ -4,7 +4,7 @@
 import { Dispatch, useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import usePrevious from 'react-use/lib/usePrevious'
-import { WagmiConfig, useAccount } from 'wagmi'
+import { useAccount, WagmiConfig } from 'wagmi'
 
 import { Dialog } from '@ensdomains/thorin'
 
@@ -113,7 +113,9 @@ export const TransactionDialogManager = ({
         <TransactionStageModal
           actionName={transactionItem.name}
           displayItems={transaction.displayItems(transactionItem.data as any, t)}
-          helper={'helper' in transaction ? transaction.helper(transactionItem.data as any, t) : undefined}
+          helper={
+            'helper' in transaction ? transaction.helper(transactionItem.data as any, t) : undefined
+          }
           currentStep={selectedItem.currentTransaction}
           stepCount={selectedItem.transactions.length}
           transaction={transactionItem}

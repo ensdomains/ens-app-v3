@@ -2,10 +2,10 @@ import { useTranslation } from 'react-i18next'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
-import type { SelectedProfile } from '../ResolverWarningOverlay'
 import { CenteredTypography } from '../components/CenteredTypography'
 import { DetailedSwitch } from '../components/DetailedSwitch'
 import { StyledInnerDialog } from '../components/StyledInnerDialog'
+import type { SelectedProfile } from '../ResolverWarningOverlay'
 
 type Props = {
   selected: SelectedProfile

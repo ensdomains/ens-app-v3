@@ -17,11 +17,11 @@ import {
   GetPriceReturnType,
   GetWrapperDataReturnType,
 } from '@ensdomains/ensjs/public'
-import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
+import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { ValidationResult, useValidate, validate } from '@app/hooks/useValidate'
+import { useValidate, validate, ValidationResult } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
@@ -66,7 +66,9 @@ const SearchResultsContainer = styled.div<{
     opacity: 0;
     z-index: 1000;
     transform: translateY(-${theme.space['2']});
-    transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0s border-color linear 0s,
+    transition:
+      0.35s all cubic-bezier(1, 0, 0.22, 1.6),
+      0s border-color linear 0s,
       0s width linear 0s;
 
     ${$state === 'entered'

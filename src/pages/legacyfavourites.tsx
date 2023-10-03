@@ -1,6 +1,6 @@
 import { ReactElement, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils'
 import { Helper, Typography } from '@ensdomains/thorin'
@@ -20,6 +20,7 @@ const Container = styled.div(
   `,
 )
 
+// eslint-disable-next-line react/no-unused-prop-types
 type Favourite = { name: string; expiry: Date }
 type Favourites = Favourite[]
 

@@ -7,7 +7,7 @@ import { decodeEventLog } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { tokenise } from '@ensdomains/ensjs/utils'
-import { Button, Typography, mq } from '@ensdomains/thorin'
+import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'

@@ -10,10 +10,10 @@ import { MinedData, TransactionDisplayItem } from '@app/types'
 import type { DataInputComponent } from './input'
 import type { IntroComponentName } from './intro'
 import type {
+  makeTransactionItem,
   TransactionData,
   TransactionItem,
   TransactionName,
-  makeTransactionItem,
 } from './transaction'
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'
@@ -177,14 +177,9 @@ export type GetUniqueTransactionParameters = Pick<ManagedDialogProps, 'txKey' | 
   transaction: Pick<GenericTransaction, 'name' | 'data'>
 }
 
-export type UniqueTransaction<
-  TName extends TransactionName = TransactionName,
-  TData extends TransactionData<TName> = TransactionData<TName>,
-> = {
+export type UniqueTransaction<TName extends TransactionName = TransactionName> = {
   key: string
   step: number
   name: TName
   data: TransactionData<TName>
 }
-
-type d334 = TransactionData<'approveNameWrapper'>

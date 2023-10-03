@@ -4,7 +4,7 @@ import { useQuery } from 'wagmi'
 
 import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
 import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
-import { RegistrationParameters, makeRegistrationTuple } from '@ensdomains/ensjs/utils'
+import { makeRegistrationTuple, RegistrationParameters } from '@ensdomains/ensjs/utils'
 
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
 import { PublicClientWithChain } from '@app/types'
@@ -129,13 +129,16 @@ export const useEstimateFullRegistration = ({
     registrationData,
   })
 
-  const requiredRegistrationParameters = {
-    name,
-    owner,
-    fuses,
-    records,
-    reverseRecord,
-  }
+  const requiredRegistrationParameters = useMemo(
+    () => ({
+      name,
+      owner,
+      fuses,
+      records,
+      reverseRecord,
+    }),
+    [name, owner, fuses, records, reverseRecord],
+  )
 
   const {
     data: gasUsed,

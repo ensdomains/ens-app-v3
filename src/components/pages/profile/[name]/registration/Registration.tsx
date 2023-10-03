@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
+import { Dialog, Helper, mq, Typography } from '@ensdomains/thorin'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
@@ -82,13 +82,12 @@ const StyledInnerDialog = styled(InnerDialog)(({ theme }) => [
 ])
 
 const MoonPayHeader = styled.div(
-  ({ theme }) =>
-    css`
-      width: 100%;
-      background-color: ${theme.colors.greySurface};
-      color: ${theme.colors.greyPrimary};
-      padding: ${theme.space['4']};
-    `,
+  ({ theme }) => css`
+    width: 100%;
+    background-color: ${theme.colors.greySurface};
+    color: ${theme.colors.greyPrimary};
+    padding: ${theme.space['4']};
+  `,
 )
 
 const MoonPayIFrame = styled.iframe(

@@ -7,8 +7,8 @@ import { Helper, Typography } from '@ensdomains/thorin'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
 
-import { Steps } from './Steps'
 import { AlignedDropdown, ButtonContainer, CheckButton } from './shared'
+import { Steps } from './Steps'
 import { isDnsSecEnabled } from './utils'
 
 const HelperLinks = [

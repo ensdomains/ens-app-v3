@@ -1,6 +1,6 @@
 import { stringToHex } from 'viem'
 
-import { RecordOptions, getInternalCodec, getProtocolType } from '@ensdomains/ensjs/utils'
+import { getInternalCodec, getProtocolType, RecordOptions } from '@ensdomains/ensjs/utils'
 
 import { ProfileRecord, ProfileRecordGroup, sortValues } from '@app/constants/profileRecordOptions'
 import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'

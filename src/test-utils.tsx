@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { RenderHookOptions, RenderOptions, render, renderHook } from '@testing-library/react'
+import { render, renderHook, RenderHookOptions, RenderOptions } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MockConnector } from '@wagmi/core/connectors/mock'
 import React, { FC, ReactElement } from 'react'
@@ -8,9 +8,9 @@ import { ThemeProvider } from 'styled-components'
 import { createPublicClient, createWalletClient, http } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { mainnet } from 'viem/chains'
-import { WagmiConfig, createConfig } from 'wagmi'
+import { createConfig, WagmiConfig } from 'wagmi'
 
-import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
+import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
 
 import { DeepPartial } from './types'
 
