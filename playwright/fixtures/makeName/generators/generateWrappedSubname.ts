@@ -1,4 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
+/* eslint-disable no-await-in-loop */
 import { Accounts, User } from 'playwright/fixtures/accounts'
 import { Contracts } from 'playwright/fixtures/contracts'
 import { Provider } from 'playwright/fixtures/provider'
@@ -9,10 +11,11 @@ import {
   ParentFuses,
   encodeFuses,
 } from '@ensdomains/ensjs/utils/fuses'
+import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { NAMEWRAPPER_AWARE_RESOLVERS, RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 import { generateRecords } from './generateRecords'
 
@@ -27,6 +30,8 @@ export type WrappedSubname = {
   records?: RecordOptions
   fuses?: Fuse[]
   duration?: number
+  type?: 'wrapped' | 'legacy'
+  subnames?: Omit<WrappedSubname, 'name' | 'nameOwner '>[]
 }
 
 type Dependencies = {
@@ -34,7 +39,7 @@ type Dependencies = {
   accounts: Accounts
   contracts: Contracts
 }
-
+const DEFAULT_RESOLVER = NAMEWRAPPER_AWARE_RESOLVERS['1337'][0] as `0x${string}`
 const makeFuseInput = (fuses?: Fuse[]): CombinedFuseInput | undefined => {
   if (!fuses) return undefined
   const parentFuses = fuses.filter((f) =>
@@ -64,6 +69,8 @@ export const generateWrappedSubname =
     records,
     fuses,
     duration = 31536000,
+    subnames,
+    type,
   }: WrappedSubname) => {
     const subname = `${label}.${name}`
     console.log('generating wrapped subname:', subname)
@@ -87,5 +94,20 @@ export const generateWrappedSubname =
         resolver,
         records,
       })
+    }
+
+    if (type === 'legacy') {
+      const _nameWrapper = contracts.get('NameWrapper', { signer: owner })
+      await _nameWrapper.unwrap(namehash(`${name}`), labelhash(`${label}`), _owner)
+    }
+
+    const _subNames = (subnames || []).map((subName) => ({
+      ...subName,
+      name: `${label}.${name}`,
+      nameOwner: owner,
+      resolver: subName.resolver ?? DEFAULT_RESOLVER,
+    }))
+    for (const eachSubname of _subNames) {
+      await generateWrappedSubname({ accounts, provider, contracts })({ ...eachSubname })
     }
   }
