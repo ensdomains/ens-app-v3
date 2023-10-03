@@ -100,13 +100,11 @@ const SpinnerContainer = styled.div<{ $showBorder?: boolean }>(
 
 export const SubnamesTab = ({
   name,
-  network,
   canEdit,
   canCreateSubdomains,
   isWrapped,
 }: {
   name: string
-  network: number
   canEdit: boolean
   canCreateSubdomains: boolean
   isWrapped: boolean
@@ -178,7 +176,6 @@ export const SubnamesTab = ({
               key={subname.name}
               name={subname.name}
               truncatedName={subname.truncatedName}
-              network={network}
               mode="view"
               relation={{
                 owner: !!subname.owner && subname.owner === address,

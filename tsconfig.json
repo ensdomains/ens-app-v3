@@ -58,5 +58,11 @@
     /* TODO (tate): revert to initial val after refactor */ "src/**/*.tsx",
     "next.config.js"
   ],
-  "exclude": ["custom-test-env.js", "**/*.ignore.ts", "**/*.ignore.tsx"]
+  "exclude": [
+    "custom-test-env.js",
+    "**/*.ignore.ts",
+    "**/*.ignore.tsx",
+    "**/*.test.ts" /* TODO(tate): remove */,
+    "**/*.test.tsx" /* TODO(tate): remove */
+  ]
 }

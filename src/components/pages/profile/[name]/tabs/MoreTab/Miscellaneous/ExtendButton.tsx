@@ -31,7 +31,7 @@ const ButtonContainer = styled.div(
 
 export const ExtendButton = ({ name }: { name: string }) => {
   const { t } = useTranslation()
-  const abilities = useAbilities(name)
+  const abilities = useAbilities({ name })
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
 

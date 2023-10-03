@@ -9,7 +9,6 @@ import { Outlink } from '@app/components/Outlink'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useOwners } from '@app/hooks/useOwners'
@@ -36,7 +35,6 @@ type Props = {
 const ProfileTab = ({ nameDetails, name }: Props) => {
   const { t } = useTranslation('profile')
 
-  const chainId = useChainId()
   const { address } = useAccount()
 
   const {
@@ -52,7 +50,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     gracePeriodEndDate,
   } = nameDetails
 
-  const abilities = useAbilities(name)
+  const abilities = useAbilities({ name })
 
   const { data: primaryData } = usePrimaryName({ address })
 
@@ -64,13 +62,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
   })
 
   const profileActions = useProfileActions({
-    address,
     name,
-    profile,
-    abilities: abilities.data,
-    ownerData,
-    wrapperData,
-    expiryDate,
   })
 
   const isExpired = useMemo(
@@ -88,7 +80,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     <DetailsWrapper>
       <ProfileSnippet
         name={normalisedName}
-        network={chainId}
         getTextRecord={getTextRecord}
         button={snippetButton}
         canEdit={abilities.data?.canEdit}

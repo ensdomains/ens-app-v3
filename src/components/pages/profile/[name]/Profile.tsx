@@ -8,7 +8,6 @@ import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
@@ -103,7 +102,6 @@ export const NameAvailableBanner = ({
 const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
-  const chainId = useChainId()
   const { address } = useAccount()
   const transactions = useRecentTransactions()
 
@@ -165,7 +163,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   const [tab, setTab] = useQueryParameterState<Tab>('tab', 'profile')
   const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
 
-  const abilities = useAbilities(normalisedName)
+  const abilities = useAbilities({ name: normalisedName })
 
   // hook for redirecting to the correct profile url
   // profile.decryptedName fetches labels from NW/subgraph
@@ -276,7 +274,6 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
                 isWrapped={isWrapped}
                 canEdit={!!abilities.data?.canEdit}
                 canCreateSubdomains={!!abilities.data?.canCreateSubdomains}
-                network={chainId}
               />
             ),
             permissions: (

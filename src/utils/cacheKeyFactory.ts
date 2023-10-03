@@ -23,11 +23,7 @@ import {
 import { RegistrationParameters } from '@ensdomains/ensjs/utils'
 
 import { useChainId } from '@app/hooks/chain/useChainId'
-import type {
-  TransactionData,
-  TransactionItem,
-  TransactionName,
-} from '@app/transaction-flow/transaction'
+import type { TransactionItem, TransactionName } from '@app/transaction-flow/transaction'
 import { UniqueTransaction } from '@app/transaction-flow/types'
 
 export const useQueryKeys = () => {
@@ -40,11 +36,7 @@ export const useQueryKeys = () => {
     graphBase: [...globalKeys, 'graph'],
     dogfood: (inputString?: string) => [...globalKeys, 'getAddr', inputString, 'dogfood'],
     transactionStageModal: {
-      prepareTransaction: <
-        TName extends TransactionName,
-        TData extends TransactionData<TName>,
-        TParams extends UniqueTransaction<TName, TData>,
-      >(
+      prepareTransaction: <TName extends TransactionName, TParams extends UniqueTransaction<TName>>(
         params: TParams,
       ) => [params, ...globalKeys, 'prepareTransaction'] as const,
       transactionError: (transactionHash?: string) => [

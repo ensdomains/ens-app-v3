@@ -16,7 +16,6 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
@@ -168,7 +167,6 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const { handleSubmit, control, setValue } = form
 
   const publicClient = usePublicClient()
-  const chainId = useChainId()
 
   const [view, setView] = useState<'main' | 'decrypt'>('main')
 
@@ -360,7 +358,6 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
                   <TaggedNameItemWithFuseCheck
                     key={name.id}
                     {...name}
-                    network={chainId}
                     mode="select"
                     selected={selectedName?.name === name.name}
                     onClick={() => {

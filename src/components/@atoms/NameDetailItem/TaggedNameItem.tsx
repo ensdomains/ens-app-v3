@@ -29,7 +29,6 @@ export const TaggedNameItem = ({
   relation,
   fuses,
   expiryDate,
-  network,
   truncatedName,
   mode,
   selected,
@@ -41,7 +40,6 @@ export const TaggedNameItem = ({
 }: Pick<NameWithRelation, 'name' | 'expiryDate' | 'truncatedName'> &
   Pick<Partial<NameWithRelation>, 'relation' | 'fuses'> & {
     notOwned?: boolean
-    network: number
     selected?: boolean
     mode?: 'select' | 'view'
     disabled?: boolean
@@ -72,7 +70,6 @@ export const TaggedNameItem = ({
   return (
     <NameDetailItem
       key={name}
-      network={network}
       truncatedName={truncatedName!}
       expiryDate={validateExpiry({ name: name!, fuses, expiry: expiryDate?.date, pccExpired })}
       name={name!}

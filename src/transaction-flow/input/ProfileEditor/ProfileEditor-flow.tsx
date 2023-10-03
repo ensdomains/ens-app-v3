@@ -144,7 +144,6 @@ const SubmitButton = ({
       buttonText={t('action.save', { ns: 'common' })}
       mobileWidth={150}
       width={150}
-      mobileButtonWidth="initial"
       mobilePlacement="top"
       placement="top"
       size="medium"

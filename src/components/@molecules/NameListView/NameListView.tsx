@@ -16,7 +16,6 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
@@ -62,7 +61,6 @@ type NameListViewProps = {
 
 export const NameListView = ({ address, isSelf, setError, setLoading }: NameListViewProps) => {
   const { t } = useTranslation('names')
-  const chainId = useChainId()
 
   const [mode, setMode] = useState<NameTableMode>('view')
   const [selectedNames, setSelectedNames] = useState<string[]>([])
@@ -169,7 +167,6 @@ export const NameListView = ({ address, isSelf, setError, setLoading }: NameList
             <TaggedNameItem
               key={name.id}
               {...name}
-              network={chainId}
               mode={mode}
               selected={selectedNames?.includes(name.name!)}
               disabled={isNameDisabled(name)}

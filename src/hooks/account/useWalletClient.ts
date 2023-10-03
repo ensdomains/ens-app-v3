@@ -45,7 +45,6 @@ export const useWalletClientWithAccount = useWalletClient_ as <
   TWalletClient extends WalletClientWithAccount,
 >({
   chainId,
-  suspense,
   onError,
   onSettled,
   onSuccess,
