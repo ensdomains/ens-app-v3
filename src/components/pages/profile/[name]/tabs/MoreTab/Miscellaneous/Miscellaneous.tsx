@@ -53,7 +53,9 @@ const Miscellaneous = ({
 }) => {
   const { t } = useTranslation('common')
 
-  const { data: registrationData, isCachedData: registrationCachedData } = useRegistrationDate(name)
+  const { data: registrationData, isCachedData: registrationCachedData } = useRegistrationDate({
+    name,
+  })
   const [showEarnifiDialog, setShowEarnifiDialog] = useState(false)
 
   if (!expiryDate) return null

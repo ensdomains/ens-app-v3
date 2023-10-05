@@ -1,34 +1,68 @@
+import { QueryFunctionContext } from '@tanstack/react-query'
+import { getPublicClient } from '@wagmi/core'
 import { useQuery } from 'wagmi'
 
-import { getNameHistory, GetNameHistoryParameters } from '@ensdomains/ensjs/subgraph'
+import {
+  getNameHistory,
+  GetNameHistoryParameters,
+  GetNameHistoryReturnType,
+} from '@ensdomains/ensjs/subgraph'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
-import { usePublicClient } from '../../usePublicClient'
+type UseNameHistoryParameters = PartialBy<GetNameHistoryParameters, 'name'>
 
-type UseNameHistoryParameters = GetNameHistoryParameters & {
-  enabled?: boolean
+type UseNameHistoryReturnType = GetNameHistoryReturnType
+
+type UseNameHistoryConfig = QueryConfig<UseNameHistoryReturnType, Error>
+
+type QueryKey<TParams extends UseNameHistoryParameters> = CreateQueryKey<
+  TParams,
+  'getNameHistory',
+  'graph'
+>
+
+export const getNameHistoryQueryFn = async <TParams extends UseNameHistoryParameters>({
+  queryKey: [{ name }, chainId],
+}: QueryFunctionContext<QueryKey<TParams>>) => {
+  if (!name) throw new Error('name is required')
+
+  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+
+  return getNameHistory(publicClient, { name })
 }
 
-export const useNameHistory = ({ enabled = true, ...params }: UseNameHistoryParameters) => {
-  const publicClient = usePublicClient()
+export const useNameHistory = <TParams extends UseNameHistoryParameters>({
+  // config
+  cacheTime = 60,
+  enabled = true,
+  staleTime,
+  scopeKey,
+  onError,
+  onSettled,
+  onSuccess,
+  // params
+  ...params
+}: TParams & UseNameHistoryConfig) => {
+  const queryKey = useQueryKeyFactory({
+    params,
+    scopeKey,
+    functionName: 'getNameHistory',
+    queryDependencyType: 'graph',
+  })
 
-  const queryKeys = useQueryKeys()
-
-  const { data, status, isFetched, isFetchedAfterMount, ...rest } = useQuery(
-    queryKeys.getNameHistory(params),
-    ({ queryKey: [queryParams] }) => getNameHistory(publicClient, queryParams),
-    {
-      enabled: enabled && !!params.name,
-    },
-  )
+  const query = useQuery(queryKey, getNameHistoryQueryFn, {
+    cacheTime,
+    enabled: enabled && !!params.name,
+    staleTime,
+    onError,
+    onSettled,
+    onSuccess,
+  })
 
   return {
-    data,
-    status,
-    isFetched,
-    isFetchedAfterMount,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
-    ...rest,
+    ...query,
+    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
   }
 }

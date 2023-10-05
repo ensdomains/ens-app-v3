@@ -1,10 +1,10 @@
 import { useQuery } from 'wagmi'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { ensNftImageUrl } from '@app/utils/utils'
 
 import { useChainName } from './chain/useChainName'
 import { useContractAddress } from './chain/useContractAddress'
+import { useQueryKeyFactory } from './useQueryKeyFactory'
 
 type UseNftImageParameters = {
   name: string | undefined
@@ -42,10 +42,14 @@ export const useNftImage = ({ name, enabled = true }: UseNftImageParameters) => 
   const chainName = useChainName()
   const registrarAddress = useContractAddress({ contract: 'ensBaseRegistrarImplementation' })
 
-  const queryKeys = useQueryKeys()
+  const queryKey = useQueryKeyFactory({
+    params: { name, registrarAddress, chainName },
+    functionName: 'getNftImage',
+    queryDependencyType: 'independent',
+  })
 
   return useQuery(
-    queryKeys.getNftImage({ name, registrarAddress, chainName }),
+    queryKey,
     ({ queryKey: [params] }) => fetchImg(ensNftImageUrl({ ...params, name: params.name! })),
     {
       enabled: enabled && !!name,

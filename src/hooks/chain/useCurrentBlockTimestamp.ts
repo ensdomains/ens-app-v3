@@ -1,16 +1,22 @@
+import { getPublicClient } from '@wagmi/core'
 import { useQuery } from 'wagmi'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { PublicClientWithChain } from '@app/types'
 
-import { usePublicClient } from '../usePublicClient'
+import { useQueryKeyFactory } from '../useQueryKeyFactory'
 import { useInvalidateOnBlock } from './useInvalidateOnBlock'
 
 const useCurrentBlockTimestamp = ({ enabled = true }: { enabled?: boolean } = {}) => {
-  const publicClient = usePublicClient()
-  const queryKey = useQueryKeys().currentBlockTimestamp
+  const queryKey = useQueryKeyFactory({
+    params: {},
+    functionName: 'getCurrentBlockTimestamp',
+    queryDependencyType: 'standard',
+  })
+
   const { data } = useQuery(
     queryKey,
-    async () => {
+    async ({ queryKey: [, chainId] }) => {
+      const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
       const { timestamp } = await publicClient.getBlock({ blockTag: 'latest' })
       return timestamp
     },

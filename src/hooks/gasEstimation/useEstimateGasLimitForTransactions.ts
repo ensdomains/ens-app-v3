@@ -9,12 +9,12 @@ import {
   TransactionName,
   TransactionParameters,
 } from '@app/transaction-flow/transaction'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { fetchTenderlyEstimate } from '@app/utils/tenderly'
 
 import { useWalletClientWithAccount } from '../account/useWalletClient'
 import { useGasPrice } from '../chain/useGasPrice'
 import { usePublicClient } from '../usePublicClient'
+import { useQueryKeyFactory } from '../useQueryKeyFactory'
 
 type GetEstimateWithConfigParameters<TName extends TransactionName> =
   TransactionParameters<TName> & {
@@ -71,10 +71,16 @@ export const useEstimateGasLimitForTransaction = <TName extends TransactionName>
   const publicClient = usePublicClient()
   const { data: walletClient, isLoading: isWalletClientLoading } = useWalletClientWithAccount()
 
+  const queryKey = useQueryKeyFactory({
+    params: transaction,
+    functionName: 'estimateGasLimitForTransaction',
+    queryDependencyType: 'standard',
+  })
+
   const { gasPrice, isLoading: isGasPriceLoading, isFetching: isGasPriceFetching } = useGasPrice()
 
   const { data, isLoading, isFetching, ...rest } = useQuery(
-    useQueryKeys().estimateGasLimitForTransaction(transaction),
+    queryKey,
     ({ queryKey: [params] }) =>
       fetchEstimateWithConfig({ ...params, publicClient, walletClient: walletClient! }),
     {

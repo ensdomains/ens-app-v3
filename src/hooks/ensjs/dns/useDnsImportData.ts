@@ -1,41 +1,73 @@
+import { QueryFunctionContext } from '@tanstack/react-query'
+import { getPublicClient } from '@wagmi/core'
 import { useQuery } from 'wagmi'
 
-import { getDnsImportData, GetDnsImportDataParameters } from '@ensdomains/ensjs/dns'
+import {
+  getDnsImportData,
+  GetDnsImportDataParameters,
+  GetDnsImportDataReturnType,
+} from '@ensdomains/ensjs/dns'
 
-import { usePublicClient } from '@app/hooks/usePublicClient'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
-type UseDnsImportDataParameters = GetDnsImportDataParameters & {
-  enabled?: boolean
+type UseDnsImportDataParameters = PartialBy<GetDnsImportDataParameters, 'name'>
+
+type UseDnsImportDataReturnType = GetDnsImportDataReturnType
+
+type UseDnsImportDataConfig = QueryConfig<UseDnsImportDataReturnType, Error>
+
+type QueryKey<TParams extends UseDnsImportDataParameters> = CreateQueryKey<
+  TParams,
+  'getDnsImportData',
+  'standard'
+>
+
+export const getDnsImportDataQueryFn = async <TParams extends UseDnsImportDataParameters>({
+  queryKey: [{ name, ...params }, chainId],
+}: QueryFunctionContext<QueryKey<TParams>>) => {
+  if (!name) throw new Error('name is required')
+
+  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+
+  return getDnsImportData(publicClient, { name, ...params })
 }
 
 export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
+  // config
+  cacheTime = 60,
   enabled = true,
+  staleTime,
+  scopeKey,
+  onError,
+  onSettled,
+  onSuccess,
+  // params
   ...params
-}: TParams) => {
-  const publicClient = usePublicClient()
+}: TParams & UseDnsImportDataConfig) => {
+  const queryKey = useQueryKeyFactory({
+    params,
+    scopeKey,
+    functionName: 'getDnsImportData',
+    queryDependencyType: 'standard',
+  })
 
-  const queryKeys = useQueryKeys()
-
-  const { data, status, isFetchedAfterMount, isFetched, ...rest } = useQuery(
-    queryKeys.getDnsImportData(params),
-    ({ queryKey: [queryParams] }) => getDnsImportData(publicClient, queryParams),
-    {
-      enabled:
-        enabled &&
-        !!params.name &&
-        !params.name?.endsWith('.eth') &&
-        params.name !== 'eth' &&
-        params.name !== '[root]',
-    },
-  )
+  const query = useQuery(queryKey, getDnsImportDataQueryFn, {
+    cacheTime,
+    enabled:
+      enabled &&
+      !!params.name &&
+      !params.name?.endsWith('.eth') &&
+      params.name !== 'eth' &&
+      params.name !== '[root]',
+    staleTime,
+    onError,
+    onSettled,
+    onSuccess,
+  })
 
   return {
-    data,
-    status,
-    isFetched,
-    isFetchedAfterMount,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
-    ...rest,
+    ...query,
+    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
   }
 }

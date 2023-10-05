@@ -18,7 +18,11 @@ type UseRecordsConfig<TParams extends UseRecordsParameters> = QueryConfig<
   Error
 >
 
-type QueryKey<TParams extends UseRecordsParameters> = CreateQueryKey<TParams, 'getRecords', false>
+type QueryKey<TParams extends UseRecordsParameters> = CreateQueryKey<
+  TParams,
+  'getRecords',
+  'standard'
+>
 
 export const getRecordsQueryFn = async <TParams extends UseRecordsParameters>({
   queryKey: [{ name, ...params }, chainId],
@@ -50,7 +54,7 @@ export const useRecords = <TParams extends UseRecordsParameters>({
     params,
     scopeKey,
     functionName: 'getRecords',
-    isGraphQuery: false,
+    queryDependencyType: 'standard',
   })
 
   const query = useQuery(queryKey, getRecordsQueryFn, {

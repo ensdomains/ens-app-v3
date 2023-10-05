@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { Button, mq, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
-import useBeautifiedName from '@app/hooks/useBeautifiedName'
+import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'

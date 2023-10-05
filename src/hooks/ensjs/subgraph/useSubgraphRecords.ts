@@ -1,36 +1,68 @@
+import { QueryFunctionContext } from '@tanstack/react-query'
+import { getPublicClient } from '@wagmi/core'
 import { useQuery } from 'wagmi'
 
-import { getSubgraphRecords, GetSubgraphRecordsParameters } from '@ensdomains/ensjs/subgraph'
+import {
+  getSubgraphRecords,
+  GetSubgraphRecordsParameters,
+  GetSubgraphRecordsReturnType,
+} from '@ensdomains/ensjs/subgraph'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
-import { usePublicClient } from '../../usePublicClient'
+type UseSubgraphRecordsParameters = PartialBy<GetSubgraphRecordsParameters, 'name'>
 
-type UseSubgraphRecordsParameters = Omit<GetSubgraphRecordsParameters, 'name'> & {
-  name?: string
+type UseSubgraphRecordsReturnType = GetSubgraphRecordsReturnType
 
-  enabled?: boolean
+type UseSubgraphRecordsConfig = QueryConfig<UseSubgraphRecordsReturnType, Error>
+
+type QueryKey<TParams extends UseSubgraphRecordsParameters> = CreateQueryKey<
+  TParams,
+  'getSubgraphRecords',
+  'graph'
+>
+
+export const getSubgraphRecordsQueryFn = async <TParams extends UseSubgraphRecordsParameters>({
+  queryKey: [{ name, ...params }, chainId],
+}: QueryFunctionContext<QueryKey<TParams>>) => {
+  if (!name) throw new Error('name is required')
+
+  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+
+  return getSubgraphRecords(publicClient, { name, ...params })
 }
 
-export const useSubgraphRecords = ({ enabled = true, ...params }: UseSubgraphRecordsParameters) => {
-  const publicClient = usePublicClient()
+export const useSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>({
+  // config
+  cacheTime = 60,
+  enabled = true,
+  staleTime,
+  scopeKey,
+  onError,
+  onSettled,
+  onSuccess,
+  // params
+  ...params
+}: TParams & UseSubgraphRecordsConfig) => {
+  const queryKey = useQueryKeyFactory({
+    params,
+    scopeKey,
+    functionName: 'getSubgraphRecords',
+    queryDependencyType: 'graph',
+  })
 
-  const queryKeys = useQueryKeys()
-
-  const { data, status, isFetched, isFetchedAfterMount, ...rest } = useQuery(
-    queryKeys.getSubgraphRecords({ ...params, name: params.name! }),
-    ({ queryKey: [queryParams] }) => getSubgraphRecords(publicClient, queryParams),
-    {
-      enabled: enabled && !!params.name,
-    },
-  )
+  const query = useQuery(queryKey, getSubgraphRecordsQueryFn, {
+    cacheTime,
+    enabled: enabled && !!params.name,
+    staleTime,
+    onError,
+    onSettled,
+    onSuccess,
+  })
 
   return {
-    data,
-    status,
-    isFetched,
-    isFetchedAfterMount,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
-    ...rest,
+    ...query,
+    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
   }
 }

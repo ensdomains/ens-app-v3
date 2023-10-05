@@ -1,43 +1,80 @@
+import { QueryFunctionContext } from '@tanstack/react-query'
+import { getPublicClient } from '@wagmi/core'
 import { Hex } from 'viem'
 import { useQuery } from 'wagmi'
 
-import { getSupportedInterfaces, GetSupportedInterfacesParameters } from '@ensdomains/ensjs/public'
+import {
+  getSupportedInterfaces,
+  GetSupportedInterfacesParameters,
+  GetSupportedInterfacesReturnType,
+} from '@ensdomains/ensjs/public'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
-import { usePublicClient } from '../../usePublicClient'
+type UseSupportedInterfacesParameters<TInterfaces extends readonly Hex[] = readonly Hex[]> =
+  PartialBy<GetSupportedInterfacesParameters<TInterfaces>, 'address'>
 
-type UseSupportedInterfacesParameters<TInterfaces extends readonly Hex[]> =
-  GetSupportedInterfacesParameters<TInterfaces> & {
-    enabled?: boolean
-  }
+type UseSupportedInterfacesReturnType<TInterfaces extends readonly Hex[]> =
+  GetSupportedInterfacesReturnType<TInterfaces>
+
+type UseSupportedInterfacesConfig<TParams extends UseSupportedInterfacesParameters> = QueryConfig<
+  UseSupportedInterfacesReturnType<TParams['interfaces']>,
+  Error
+>
+
+type QueryKey<TParams extends UseSupportedInterfacesParameters> = CreateQueryKey<
+  TParams,
+  'getSupportedInterfaces',
+  'standard'
+>
+
+export const getSupportedInterfacesQueryFn = async <
+  TParams extends UseSupportedInterfacesParameters,
+>({
+  queryKey: [{ address, ...params }, chainId],
+}: QueryFunctionContext<QueryKey<TParams>>) => {
+  if (!address) throw new Error('address is required')
+
+  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+
+  return getSupportedInterfaces(publicClient, { address, ...params })
+}
 
 export const useSupportedInterfaces = <
-  TInterfaces extends readonly Hex[],
+  const TInterfaces extends readonly Hex[],
   TParams extends
     UseSupportedInterfacesParameters<TInterfaces> = UseSupportedInterfacesParameters<TInterfaces>,
 >({
+  // config
+  cacheTime,
   enabled = true,
+  staleTime,
+  scopeKey,
+  onError,
+  onSettled,
+  onSuccess,
+  // params
   ...params
-}: TParams) => {
-  const publicClient = usePublicClient()
+}: TParams & UseSupportedInterfacesConfig<TParams>) => {
+  const queryKey = useQueryKeyFactory({
+    params,
+    scopeKey,
+    functionName: 'getSupportedInterfaces',
+    queryDependencyType: 'standard',
+  })
 
-  const queryKeys = useQueryKeys()
-
-  const { data, status, isFetchedAfterMount, isFetched, ...rest } = useQuery(
-    queryKeys.getSupportedInterfaces(params),
-    ({ queryKey: [queryParams] }) => getSupportedInterfaces(publicClient, queryParams),
-    {
-      enabled: enabled && !!params.address && params.interfaces.length > 0,
-    },
-  )
+  const query = useQuery(queryKey, getSupportedInterfacesQueryFn, {
+    cacheTime,
+    staleTime,
+    enabled: enabled && !!params.address && params.interfaces.length > 0,
+    onError,
+    onSettled,
+    onSuccess,
+  })
 
   return {
-    data,
-    status,
-    isFetched,
-    isFetchedAfterMount,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
-    ...rest,
+    ...query,
+    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
   }
 }

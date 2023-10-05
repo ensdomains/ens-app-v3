@@ -1,4 +1,4 @@
-import { UseQueryOptions } from '@tanstack/react-query'
+import { UseInfiniteQueryOptions, UseQueryOptions } from '@tanstack/react-query'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 import type {
@@ -174,12 +174,20 @@ export type QueryConfig<TData, TError, TSelectData = TData> = Pick<
   /** Scope the cache to a given context. */
   scopeKey?: string
 }
+export type InfiniteQueryConfig<TData, TError, TSelectData = TData> = Pick<
+  UseInfiniteQueryOptions<TData, TError, TSelectData>,
+  'cacheTime' | 'enabled' | 'staleTime' | 'onError' | 'onSettled' | 'onSuccess'
+> & {
+  /** Scope the cache to a given context. */
+  scopeKey?: string
+}
 export type BaseQueryKeyParameters = { chainId: number; address: Address | undefined }
+export type QueryDependencyType = 'standard' | 'graph' | 'independent'
 export type CreateQueryKey<
   TParams extends {},
   TFunctionName extends string,
-  TGraphQuery extends boolean,
-> = TGraphQuery extends true
+  TQueryDependencyType extends QueryDependencyType,
+> = TQueryDependencyType extends 'graph'
   ? readonly [
       params: TParams,
       chainId: number,
@@ -190,8 +198,8 @@ export type CreateQueryKey<
     ]
   : readonly [
       params: TParams,
-      chainId: number,
-      address: Address | undefined,
+      chainId: TQueryDependencyType extends 'independent' ? undefined : number,
+      address: TQueryDependencyType extends 'independent' ? undefined : Address | undefined,
       scopeKey: string | undefined,
       functionName: TFunctionName,
     ]

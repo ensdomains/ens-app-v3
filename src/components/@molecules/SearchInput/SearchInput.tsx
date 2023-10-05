@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 import { isAddress } from 'viem'
-import { useQueryClient } from 'wagmi'
+import { useAccount, useQueryClient } from 'wagmi'
 
 import {
   GetExpiryReturnType,
@@ -19,12 +19,13 @@ import {
 } from '@ensdomains/ensjs/public'
 import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
+import { createQueryKey } from '@app/hooks/useQueryKeyFactory'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate, validate, ValidationResult } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { yearsToSeconds } from '@app/utils/utils'
 
@@ -194,7 +195,8 @@ export const SearchInput = ({
   const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
   const queryClient = useQueryClient()
-  const queryKeys = useQueryKeys()
+  const chainId = useChainId()
+  const { address } = useAccount()
 
   const [inputVal, setInputVal] = useState('')
 
@@ -307,7 +309,6 @@ export const SearchInput = ({
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
-  const validateKey = useQueryKeys().validate
   const handleSearch = useCallback(() => {
     let selectedItem = searchItems[selected] as SearchItem
     if (!selectedItem) return
@@ -334,22 +335,51 @@ export const SearchInput = ({
         : `/profile/${selectedItem.value}`
     if (selectedItem.type === 'nameWithDotEth' || selectedItem.type === 'name') {
       const currentValidation =
-        queryClient.getQueryData<ValidationResult>(validateKey(selectedItem.value)) ||
-        validate(selectedItem.value)
+        queryClient.getQueryData<ValidationResult>(
+          createQueryKey({
+            queryDependencyType: 'independent',
+            functionName: 'validate',
+            params: { input: selectedItem.value },
+          }),
+        ) || validate(selectedItem.value)
       if (currentValidation.is2LD && currentValidation.isETH && currentValidation.isShort) {
         return
       }
       const ownerData = queryClient.getQueryData<GetOwnerReturnType>(
-        queryKeys.getOwner({ name: selectedItem.value }),
+        createQueryKey({
+          address,
+          chainId,
+          functionName: 'getOwner',
+          queryDependencyType: 'standard',
+          params: { name: selectedItem.value },
+        }),
       )
       const wrapperData = queryClient.getQueryData<GetWrapperDataReturnType>(
-        queryKeys.getWrapperData({ name: selectedItem.value }),
+        createQueryKey({
+          address,
+          chainId,
+          functionName: 'getWrapperData',
+          queryDependencyType: 'standard',
+          params: { name: selectedItem.value },
+        }),
       )
       const expiryData = queryClient.getQueryData<GetExpiryReturnType>(
-        queryKeys.getExpiry({ name: selectedItem.value }),
+        createQueryKey({
+          address,
+          chainId,
+          functionName: 'getExpiry',
+          queryDependencyType: 'standard',
+          params: { name: selectedItem.value },
+        }),
       )
       const priceData = queryClient.getQueryData<GetPriceReturnType>(
-        queryKeys.getPrice({ nameOrNames: selectedItem.value, duration: yearsToSeconds(1) }),
+        createQueryKey({
+          address,
+          chainId,
+          functionName: 'getPrice',
+          queryDependencyType: 'standard',
+          params: { name: selectedItem.value, duration: yearsToSeconds(1) },
+        }),
       )
       if (ownerData) {
         const registrationStatus = getRegistrationStatus({
@@ -377,16 +407,7 @@ export const SearchInput = ({
     setInputVal('')
     searchInputRef.current?.blur()
     router.pushWithHistory(path)
-  }, [
-    normalisedOutput,
-    queryClient,
-    router,
-    searchItems,
-    selected,
-    setHistory,
-    queryKeys,
-    validateKey,
-  ])
+  }, [normalisedOutput, queryClient, router, searchItems, selected, setHistory, chainId, address])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

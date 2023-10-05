@@ -3,14 +3,15 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { isAddress } from 'viem'
-import { useQueryClient } from 'wagmi'
+import { useAccount, useQueryClient } from 'wagmi'
 
 import { Input } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useAddressRecord } from '@app/hooks/ensjs/public/useAddressRecord'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { createQueryKey } from '@app/hooks/useQueryKeyFactory'
 
 import { DisplayItems } from './TransactionDialogManager/DisplayItems'
 
@@ -48,7 +49,8 @@ export const DogFood = ({
     throttledSetEthNameInput((inputWatch || '').toLocaleLowerCase())
   }, [inputWatch, throttledSetEthNameInput])
 
-  const queryKeyGenerator = useQueryKeys().getAddressRecord
+  const chainId = useChainId()
+  const { address } = useAccount()
 
   const { data: addressRecordData } = useAddressRecord({
     enabled: !!ethNameInput?.includes('.'),
@@ -86,11 +88,17 @@ export const DogFood = ({
               !disabled && !value?.includes('.') && !isAddress(value)
                 ? t('errors.invalidAddress')
                 : undefined,
-            hasAddressRecord: async (value) => {
+            hasAddressRecord: async (value: string) => {
               if (value?.includes('.')) {
                 try {
                   const result = await queryClient.getQueryData(
-                    queryKeyGenerator({ name: value.toLowerCase() }),
+                    createQueryKey({
+                      chainId,
+                      address,
+                      queryDependencyType: 'standard',
+                      functionName: 'getAddressRecord',
+                      params: { name: value.toLowerCase() },
+                    }),
                   )
                   if (result) {
                     return undefined

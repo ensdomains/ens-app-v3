@@ -4,7 +4,8 @@ import { ParsedInputResult, parseInput } from '@ensdomains/ensjs/utils'
 
 import { Prettify } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+
+import { useQueryKeyFactory } from './useQueryKeyFactory'
 
 export type ValidationResult = Prettify<
   Partial<Omit<ParsedInputResult, 'normalised' | 'labelDataArray'>> & {
@@ -58,7 +59,13 @@ type UseValidateParameters = {
 }
 
 export const useValidate = ({ input, enabled = true }: UseValidateParameters): ValidationResult => {
-  const { data } = useQuery(useQueryKeys().validate(input), () => validate(input), {
+  const queryKey = useQueryKeyFactory({
+    params: { input },
+    functionName: 'validate',
+    queryDependencyType: 'independent',
+  })
+
+  const { data } = useQuery(queryKey, ({ queryKey: [params] }) => validate(params.input), {
     enabled,
     initialData: () => (enabled ? validate(input) : defaultData),
   })

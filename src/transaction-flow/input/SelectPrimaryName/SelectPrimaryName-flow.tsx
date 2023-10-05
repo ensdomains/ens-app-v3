@@ -23,13 +23,13 @@ import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { usePublicClient } from '@app/hooks/usePublicClient'
+import { createQueryKey } from '@app/hooks/useQueryKeyFactory'
 import {
   nameToFormData,
   UnknownLabelsForm,
   FormData as UnknownLabelsFormData,
 } from '@app/transaction-flow/input/UnknownLabels/views/UnknownLabelsForm'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { TaggedNameItemWithFuseCheck } from './components/TaggedNameItemWithFuseCheck'
 
@@ -242,8 +242,13 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     })
   }
 
-  // Checks if name has encrptyed labels and attempts decrypt them if they exist
-  const validateKey = useQueryKeys().validate
+  // Checks if name has encoded labels and attempts decrypt them if they exist
+  const validateKey = (input: string) =>
+    createQueryKey({
+      queryDependencyType: 'independent',
+      params: { input },
+      functionName: 'validate',
+    })
   const { mutate: mutateName, isLoading: isMutationLoading } = useMutation(
     async (data: FormData) => {
       if (!data.name?.name) throw new Error('no_name')

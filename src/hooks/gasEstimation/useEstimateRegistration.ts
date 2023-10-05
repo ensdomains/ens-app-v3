@@ -8,7 +8,6 @@ import { makeRegistrationTuple, RegistrationParameters } from '@ensdomains/ensjs
 
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
 import { PublicClientWithChain } from '@app/types'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { fetchTenderlyEstimate } from '@app/utils/tenderly'
 import { yearsToSeconds } from '@app/utils/utils'
 
@@ -16,6 +15,7 @@ import { useAccountSafely } from '../account/useAccountSafely'
 import { useGasPrice } from '../chain/useGasPrice'
 import { usePrice } from '../ensjs/public/usePrice'
 import { usePublicClient } from '../usePublicClient'
+import { useQueryKeyFactory } from '../useQueryKeyFactory'
 import useRegistrationParams from '../useRegistrationParams'
 
 const gasLimitDictionary = {
@@ -32,14 +32,10 @@ const byteLengthToDataInx = (byteLength: number) =>
 
 const fetchRegistrationEstimate = async (
   publicClient: PublicClientWithChain,
-  {
-    data,
-    chainId,
-  }: {
-    data: RequiredRegistrationParameters
-    chainId: number
-  },
+  data: RequiredRegistrationParameters,
 ) => {
+  const chainId = publicClient.chain.id
+
   const registrationTuple = makeRegistrationTuple({
     ...data,
     resolverAddress: getChainContractAddress({
@@ -119,8 +115,6 @@ export const useEstimateFullRegistration = ({
   const { address } = useAccountSafely()
   const { gasPrice, isLoading: gasPriceLoading } = useGasPrice()
 
-  const queryKeys = useQueryKeys()
-
   const { data: price } = usePrice({ nameOrNames: name, duration: yearsToSeconds(1) })
 
   const { owner, fuses, records, reverseRecord } = useRegistrationParams({
@@ -140,29 +134,38 @@ export const useEstimateFullRegistration = ({
     [name, owner, fuses, records, reverseRecord],
   )
 
+  const registrationEstimateQueryKey = useQueryKeyFactory({
+    params: requiredRegistrationParameters,
+    functionName: 'getRegistrationEstimate',
+    queryDependencyType: 'standard',
+  })
+
   const {
     data: gasUsed,
     isLoading: gasUsedLoading,
     isError,
   } = useQuery(
-    queryKeys.getRegistrationEstimate({ data: requiredRegistrationParameters }),
+    registrationEstimateQueryKey,
     ({ queryKey: [params] }) => fetchRegistrationEstimate(publicClient, params),
     {
       enabled: !!name && !!owner && !!fuses && !!records && reverseRecord !== undefined,
     },
   )
 
-  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(
-    queryKeys.globalIndependent.gasCostJson,
-    async () => {
-      const addr = (await import('@app/assets/gas-costs/addr.json'))
-        .default as unknown as GasCostData[]
-      const text = (await import('@app/assets/gas-costs/text.json'))
-        .default as unknown as GasCostData[]
+  const gasCostsQueryKey = useQueryKeyFactory({
+    params: {},
+    functionName: 'getGasCosts',
+    queryDependencyType: 'independent',
+  })
 
-      return { addr, text }
-    },
-  )
+  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(gasCostsQueryKey, async () => {
+    const addr = (await import('@app/assets/gas-costs/addr.json'))
+      .default as unknown as GasCostData[]
+    const text = (await import('@app/assets/gas-costs/text.json'))
+      .default as unknown as GasCostData[]
+
+    return { addr, text }
+  })
 
   const estimate = useMemo(() => {
     if (!gasUsed || !gasPrice) return undefined

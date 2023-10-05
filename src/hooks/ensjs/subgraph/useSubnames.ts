@@ -1,27 +1,69 @@
+import { QueryFunctionContext } from '@tanstack/react-query'
+import { getPublicClient } from '@wagmi/core'
 import { useMemo } from 'react'
 import { useInfiniteQuery } from 'wagmi'
 
-import { getSubnames, GetSubnamesParameters } from '@ensdomains/ensjs/subgraph'
+import {
+  getSubnames,
+  GetSubnamesParameters,
+  GetSubnamesReturnType,
+} from '@ensdomains/ensjs/subgraph'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { CreateQueryKey, InfiniteQueryConfig, PartialBy, PublicClientWithChain } from '@app/types'
 
-import { usePublicClient } from '../../usePublicClient'
+type UseSubnamesParameters = Omit<PartialBy<GetSubnamesParameters, 'name'>, 'previousPage'>
 
-type UseSubnamesParameters = Omit<GetSubnamesParameters, 'previousPage'> & {
-  enabled?: boolean
+type UseSubnamesReturnType = GetSubnamesReturnType
+
+type UseSubnamesConfig = InfiniteQueryConfig<UseSubnamesReturnType, Error>
+
+type QueryKey<TParams extends UseSubnamesParameters> = CreateQueryKey<
+  TParams,
+  'getSubnames',
+  'graph'
+>
+
+export const getSubnamesQueryFn = async <TParams extends UseSubnamesParameters>({
+  queryKey: [{ name, ...params }, chainId],
+  pageParam,
+}: QueryFunctionContext<QueryKey<TParams>, GetSubnamesReturnType>) => {
+  if (!name) throw new Error('name is required')
+
+  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+
+  return getSubnames(publicClient, { name, ...params, previousPage: pageParam })
 }
 
-export const useSubnames = ({ enabled = true, ...params }: UseSubnamesParameters) => {
-  const publicClient = usePublicClient()
-
-  const queryKeys = useQueryKeys()
+export const useSubnames = <TParams extends UseSubnamesParameters>({
+  // config
+  cacheTime = 60,
+  enabled = true,
+  staleTime,
+  scopeKey,
+  onError,
+  onSettled,
+  onSuccess,
+  // params
+  ...params
+}: TParams & UseSubnamesConfig) => {
+  const queryKey = useQueryKeyFactory({
+    params,
+    scopeKey,
+    functionName: 'getSubnames',
+    queryDependencyType: 'graph',
+  })
 
   const { data, status, isFetched, isFetchedAfterMount, ...rest } = useInfiniteQuery(
-    queryKeys.getSubnames(params),
-    ({ queryKey: [queryParams], pageParam }) =>
-      getSubnames(publicClient, { ...queryParams, previousPage: pageParam }),
+    queryKey,
+    getSubnamesQueryFn,
     {
+      cacheTime,
       enabled: enabled && !!params.name,
+      staleTime,
+      onError,
+      onSettled,
+      onSuccess,
       getNextPageParam: (lastPage) => {
         if (lastPage?.length < (params.pageSize || 100)) return false
         return lastPage

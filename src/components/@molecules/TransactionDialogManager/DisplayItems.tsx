@@ -7,7 +7,7 @@ import { Typography } from '@ensdomains/thorin'
 
 import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
-import useBeautifiedName from '@app/hooks/useBeautifiedName'
+import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { TransactionDisplayItem } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
 

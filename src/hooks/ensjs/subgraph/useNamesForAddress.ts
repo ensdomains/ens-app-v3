@@ -1,3 +1,5 @@
+import { QueryFunctionContext } from '@tanstack/react-query'
+import { getPublicClient } from '@wagmi/core'
 import { useEffect, useMemo, useState } from 'react'
 import { useInfiniteQuery } from 'wagmi'
 
@@ -7,34 +9,69 @@ import {
   GetNamesForAddressReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { CreateQueryKey, InfiniteQueryConfig, PartialBy, PublicClientWithChain } from '@app/types'
 
-import { usePublicClient } from '../../usePublicClient'
+type UseNamesForAddressParameters = Omit<
+  PartialBy<GetNamesForAddressParameters, 'address'>,
+  'previousPage'
+>
 
-type UseNamesForAddressParameters = Omit<GetNamesForAddressParameters, 'previousPage'> & {
-  enabled?: boolean
+type UseNamesForAddressReturnType = GetNamesForAddressReturnType
+
+type UseNamesForAddressConfig = InfiniteQueryConfig<UseNamesForAddressReturnType, Error>
+
+type QueryKey<TParams extends UseNamesForAddressParameters> = CreateQueryKey<
+  TParams,
+  'getNamesForAddress',
+  'graph'
+>
+
+export const getNamesForAddressQueryFn = async <TParams extends UseNamesForAddressParameters>({
+  queryKey: [{ address, ...params }, chainId],
+  pageParam,
+}: QueryFunctionContext<QueryKey<TParams>, GetNamesForAddressReturnType>) => {
+  if (!address) throw new Error('address is required')
+
+  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+
+  return getNamesForAddress(publicClient, { address, ...params, previousPage: pageParam })
 }
 
-export const useNamesForAddress = ({ enabled = true, ...params }: UseNamesForAddressParameters) => {
-  const publicClient = usePublicClient()
-
-  const queryKeys = useQueryKeys()
+export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>({
+  // config
+  cacheTime = 60,
+  enabled = true,
+  staleTime,
+  scopeKey,
+  onError,
+  onSettled,
+  onSuccess,
+  // params
+  ...params
+}: TParams & UseNamesForAddressConfig) => {
+  const queryKey = useQueryKeyFactory({
+    params,
+    scopeKey,
+    functionName: 'getNamesForAddress',
+    queryDependencyType: 'graph',
+  })
 
   const [unfilteredPages, setUnfilteredPages] = useState<GetNamesForAddressReturnType>([])
 
   const { data, status, isFetched, isFetching, isLoading, isFetchedAfterMount, ...rest } =
-    useInfiniteQuery(
-      queryKeys.getNamesForAddress(params),
-      ({ queryKey: [queryParams], pageParam }) =>
-        getNamesForAddress(publicClient, { ...queryParams, previousPage: pageParam }),
-      {
-        enabled: enabled && !!params.address,
-        getNextPageParam: (lastPage) => {
-          if (lastPage?.length < (params.pageSize || 100)) return false
-          return lastPage
-        },
+    useInfiniteQuery(queryKey, getNamesForAddressQueryFn, {
+      cacheTime,
+      enabled: enabled && !!params.address,
+      staleTime,
+      onError,
+      onSettled,
+      onSuccess,
+      getNextPageParam: (lastPage) => {
+        if (lastPage?.length < (params.pageSize || 100)) return false
+        return lastPage
       },
-    )
+    })
 
   const infiniteData = useMemo(
     () => (data?.pages ? data?.pages.reduce((acc, page) => [...acc, ...page], []) : []),

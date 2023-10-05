@@ -10,7 +10,6 @@ import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 
-import { useQueryKeys } from '../../../../utils/cacheKeyFactory'
 import { AvCancelButton, CropComponent } from './AvatarCrop'
 
 const Container = styled.div(({ theme }) => [
@@ -52,7 +51,6 @@ const UploadComponent = ({
 }) => {
   const { t } = useTranslation('transactionFlow')
   const queryClient = useQueryClient()
-  const queryKeys = useQueryKeys().avatar.avatar(name)
   const urlHash = useMemo(() => bytesToHex(sha256(dataURLToBytes(dataURL))), [dataURL])
   const expiry = useMemo(() => `${Date.now() + 1000 * 60 * 60 * 24 * 7}`, [])
   const network = useChainName()
@@ -101,7 +99,17 @@ const UploadComponent = ({
     }).then((res) => res.json())) as any
 
     if (fetched.message === 'uploaded') {
-      queryClient.invalidateQueries(queryKeys)
+      queryClient.invalidateQueries({
+        predicate: (query) => {
+          const {
+            queryKey: [params],
+          } = query
+          if (typeof params !== 'object' || params === null) return false
+          if (!('entity' in params)) return false
+          if (params.entity !== 'ensAvatar') return false
+          return true
+        },
+      })
       return handleSubmit('upload', endpoint, dataURL)
     }
     throw new Error(fetched.message)

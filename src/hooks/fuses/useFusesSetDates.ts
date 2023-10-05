@@ -6,17 +6,17 @@ import {
 } from '@tanstack/react-query'
 import { Context, createContext, useMemo } from 'react'
 import { Address, BlockTag, GetBlockParameters, GetBlockReturnType } from 'viem'
-import { useQueryClient } from 'wagmi'
+import { useAccount, useQueryClient } from 'wagmi'
 
 import { ChainWithEns } from '@ensdomains/ensjs/contracts'
 import { GetNameHistoryReturnType } from '@ensdomains/ensjs/subgraph'
 import { ChildFuseKeys, decodeFuses, ParentFuseKeys } from '@ensdomains/ensjs/utils'
 
-import { AnyFuseKey, PublicClientWithChain } from '@app/types'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { AnyFuseKey, CreateQueryKey, PublicClientWithChain } from '@app/types'
 
 import { useNameHistory } from '../ensjs/subgraph/useNameHistory'
 import { usePublicClient } from '../usePublicClient'
+import { createQueryKey } from '../useQueryKeyFactory'
 
 type UseFusesSetDatesParameters = {
   name: string
@@ -32,12 +32,7 @@ type FuseSetEntries = {
 type GetBlockQueryKey<
   TIncludeTransactions extends boolean = false,
   TBlockTag extends BlockTag = 'latest',
-> = readonly [
-  GetBlockParameters<TIncludeTransactions, TBlockTag>,
-  number,
-  Address | undefined,
-  'getBlock',
-]
+> = CreateQueryKey<GetBlockParameters<TIncludeTransactions, TBlockTag>, 'getBlock', 'standard'>
 
 const getBlockQueryFn =
   (publicClient: PublicClientWithChain) =>
@@ -49,15 +44,18 @@ const getBlockQueryFn =
 
 const generateQueryArray = (
   publicClient: PublicClientWithChain,
-  {
-    queryKeyFn,
-    blocksNeeded,
-  }: { queryKeyFn: ReturnType<typeof useQueryKeys>; blocksNeeded: Set<bigint> },
+  { address, blocksNeeded }: { address: Address | undefined; blocksNeeded: Set<bigint> },
 ) => {
   return [...blocksNeeded].map(
     (blockNumber) =>
       ({
-        queryKey: queryKeyFn.getBlock({ blockNumber }),
+        queryKey: createQueryKey({
+          chainId: publicClient.chain.id,
+          address,
+          functionName: 'getBlock',
+          params: { blockNumber },
+          queryDependencyType: 'standard',
+        }),
         queryFn: getBlockQueryFn(publicClient),
         staleTime: Infinity,
       }) as const,
@@ -145,7 +143,7 @@ export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParam
   const context = useMemo(() => createContext(queryClient), [queryClient])
 
   const publicClient = usePublicClient()
-  const queryKeyFn = useQueryKeys()
+  const { address } = useAccount()
 
   const {
     data: nameHistory,
@@ -158,7 +156,7 @@ export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParam
   )
 
   const blockDatas = useQueries({
-    queries: generateQueryArray(publicClient, { queryKeyFn, blocksNeeded }),
+    queries: generateQueryArray(publicClient, { address, blocksNeeded }),
     context: context as Context<QueryClient | undefined>,
   })
 

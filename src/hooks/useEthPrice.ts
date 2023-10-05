@@ -1,29 +1,24 @@
 import { Address } from 'viem'
-import { useQuery } from 'wagmi'
+import { useContractRead } from 'wagmi'
 
-import { getAddressRecord } from '@ensdomains/ensjs/public'
-
-import { PublicClientWithChain } from '@app/types'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
-
+import { useAddressRecord } from './ensjs/public/useAddressRecord'
 import { usePublicClient } from './usePublicClient'
 
 const ORACLE_ENS = 'eth-usd.data.eth'
 const ORACLE_GOERLI = '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e' as const
 
-const getEthPrice = async (client: PublicClientWithChain) => {
-  const chainId = client.chain?.id ?? 1
+export const useEthPrice = () => {
+  const publicClient = usePublicClient()
+
+  const { data: address_ } = useAddressRecord({
+    name: ORACLE_ENS,
+    enabled: publicClient.chain.id !== 5,
+  })
 
   const address =
-    chainId === 5
-      ? ORACLE_GOERLI
-      : await getAddressRecord(client, { name: ORACLE_ENS }).then(
-          (v) => (v?.value as Address) ?? null,
-        )
+    publicClient.chain.id === 5 ? ORACLE_GOERLI : (address_?.value as Address) || undefined
 
-  if (!address) throw new Error('Contract address not found')
-
-  return client.readContract({
+  return useContractRead({
     abi: [
       {
         inputs: [],
@@ -35,13 +30,5 @@ const getEthPrice = async (client: PublicClientWithChain) => {
     ] as const,
     address,
     functionName: 'latestAnswer',
-  })
-}
-
-export const useEthPrice = () => {
-  const publicClient = usePublicClient()
-
-  return useQuery(useQueryKeys().ethPrice, () => getEthPrice(publicClient), {
-    enabled: !!publicClient,
   })
 }

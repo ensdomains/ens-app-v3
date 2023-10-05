@@ -13,7 +13,7 @@ import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
-import useBeautifiedName from '@app/hooks/useBeautifiedName'
+import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useZorb } from '@app/hooks/useZorb'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'

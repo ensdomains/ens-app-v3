@@ -28,6 +28,7 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { usePublicClient } from '@app/hooks/usePublicClient'
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import { createTransactionRequest, TransactionName } from '@app/transaction-flow/transaction'
 import {
   GetUniqueTransactionParameters,
@@ -37,7 +38,6 @@ import {
   UniqueTransaction,
 } from '@app/transaction-flow/types'
 import { BasicTransactionRequest, PublicClientWithChain } from '@app/types'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
@@ -431,14 +431,18 @@ export const TransactionStageModal = ({
     [transaction, walletClient?.account, safeAppStatusLoading, stage, isUniquenessDefined],
   )
 
-  const queryKeys = useQueryKeys()
+  const queryKey = useQueryKeyFactory({
+    params: uniqueTxIdentifiers,
+    functionName: 'prepareTransaction',
+    queryDependencyType: 'standard',
+  })
 
   const {
     data: request,
     isLoading: requestLoading,
     error: requestError,
   } = useQuery(
-    queryKeys.transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
+    queryKey,
     async ({ queryKey: [params] }) => {
       const transactionRequest = await createTransactionRequest({
         name: params.name,
@@ -474,7 +478,7 @@ export const TransactionStageModal = ({
   )
   useInvalidateOnBlock({
     enabled: canEnableTransactionRequest,
-    queryKey: queryKeys.transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
+    queryKey,
   })
 
   const {
@@ -608,10 +612,16 @@ export const TransactionStageModal = ({
     return 'inProgress'
   }, [stage])
 
+  const errorQueryKey = useQueryKeyFactory({
+    params: { hash: transaction.hash, status: transactionStatus },
+    functionName: 'getTransactionError',
+    queryDependencyType: 'standard',
+  })
+
   const { data: upperError } = useQuery(
-    useQueryKeys().transactionStageModal.transactionError(transaction.hash),
-    async () => {
-      if (!transaction || !transaction.hash || transactionStatus !== 'failed') return null
+    errorQueryKey,
+    async ({ queryKey: [{ hash, status }] }) => {
+      if (!hash || status !== 'failed') return null
       const a = await publicClient.getTransaction({ hash: transaction.hash! })
       try {
         await publicClient.call({ ...a, to: a.to! })

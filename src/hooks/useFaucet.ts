@@ -1,9 +1,13 @@
+import { QueryFunctionContext } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'wagmi'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { CreateQueryKey } from '@app/types'
+import { FAUCET_WORKER_URL } from '@app/utils/constants'
 
 import { useAccountSafely } from './account/useAccountSafely'
-import { useChainId } from './chain/useChainId'
+import { useChainName } from './chain/useChainName'
+import { useQueryKeyFactory } from './useQueryKeyFactory'
 
 type BaseJsonRPC<Result> = {
   jsonrpc: string
@@ -29,45 +33,62 @@ type FaucetStatus = 'ok' | 'paused' | 'out of funds'
 
 type JsonRpc<Result = any> = BaseJsonRPC<Result> & (ErrorJsonRPC | SuccessJsonRPC<Result>)
 
-const ENDPOINT =
+const createEndpoint = (chainName: string) =>
   process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8787/'
-    : 'https://ens-faucet.ens-cf.workers.dev/'
+    ? `http://localhost:8787/${chainName}`
+    : `${FAUCET_WORKER_URL}/${chainName}`
+
+type QueryKey = CreateQueryKey<{ chainName: string }, 'getFaucetAddress', 'standard'>
+
+const getFaucetQueryFn = async ({
+  queryKey: [{ chainName }, , address],
+}: QueryFunctionContext<QueryKey>) => {
+  if (!address) throw new Error('address is required')
+
+  const result: JsonRpc<{
+    eligible: boolean
+    amount: `0x${string}`
+    interval: number
+    next: number
+    status: FaucetStatus
+  }> = await fetch(createEndpoint(chainName), {
+    method: 'POST',
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      method: 'faucet_getAddress',
+      params: [address],
+      id: 1,
+    }),
+    headers: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      'Content-Type': 'application/json',
+    },
+  }).then((res) => res.json())
+
+  if (result.error) throw new Error(result.error.message)
+
+  return result.result
+}
 
 const useFaucet = () => {
   const queryClient = useQueryClient()
+
+  const chainName = useChainName()
+
   const { address } = useAccountSafely()
-  const chainId = useChainId()
-  const { data, error, isLoading } = useQuery(
-    useQueryKeys().faucet(address),
-    async () => {
-      const result: JsonRpc<{ eligible: boolean; next: number; status: FaucetStatus }> =
-        await fetch(ENDPOINT, {
-          method: 'POST',
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            method: 'faucet_getAddress',
-            params: [address],
-            id: 1,
-          }),
-          headers: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            'Content-Type': 'application/json',
-          },
-        }).then((res) => res.json())
+  const queryKey = useQueryKeyFactory({
+    params: { chainName },
+    functionName: 'getFaucetAddress',
+    queryDependencyType: 'standard',
+  })
 
-      if (result.error) throw new Error(result.error.message)
-
-      return result.result
-    },
-    {
-      enabled: !!address && chainId === 5,
-    },
-  )
+  const { data, error, isLoading } = useQuery(queryKey, getFaucetQueryFn, {
+    enabled: !!address && (chainName === 'goerli' || chainName === 'sepolia'),
+  })
 
   const mutation = useMutation(
     async () => {
-      const result: JsonRpc<{ id: string }> = await fetch(ENDPOINT, {
+      const result: JsonRpc<{ id: string }> = await fetch(createEndpoint(chainName), {
         method: 'POST',
         body: JSON.stringify({
           jsonrpc: '2.0',
@@ -87,10 +108,15 @@ const useFaucet = () => {
     },
     {
       onSuccess: () => {
-        queryClient.resetQueries(['getFaucetEligibility', address])
+        queryClient.resetQueries(queryKey)
       },
     },
   )
+
+  useEffect(() => {
+    mutation.reset()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainName, address])
 
   return {
     data,

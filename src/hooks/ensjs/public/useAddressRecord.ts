@@ -1,37 +1,68 @@
+import { QueryFunctionContext } from '@tanstack/react-query'
+import { getPublicClient } from '@wagmi/core'
 import { useQuery } from 'wagmi'
 
-import { getAddressRecord, GetAddressRecordParameters } from '@ensdomains/ensjs/public'
+import {
+  getAddressRecord,
+  GetAddressRecordParameters,
+  GetAddressRecordReturnType,
+} from '@ensdomains/ensjs/public'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
-import { usePublicClient } from '../../usePublicClient'
+type UseAddressRecordParameters = PartialBy<GetAddressRecordParameters, 'name'>
 
-type UseAddressRecordParameters = GetAddressRecordParameters & {
-  enabled?: boolean
+type UseAddressRecordReturnType = GetAddressRecordReturnType
+
+type UseAddressRecordConfig = QueryConfig<UseAddressRecordReturnType, Error>
+
+type QueryKey<TParams extends UseAddressRecordParameters> = CreateQueryKey<
+  TParams,
+  'getAddressRecord',
+  'standard'
+>
+
+export const getAddressRecordQueryFn = async <TParams extends UseAddressRecordParameters>({
+  queryKey: [{ name, ...params }, chainId],
+}: QueryFunctionContext<QueryKey<TParams>>) => {
+  if (!name) throw new Error('name is required')
+
+  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+
+  return getAddressRecord(publicClient, { name, ...params })
 }
 
 export const useAddressRecord = <TParams extends UseAddressRecordParameters>({
+  // config
+  cacheTime = 60,
   enabled = true,
+  staleTime,
+  scopeKey,
+  onError,
+  onSettled,
+  onSuccess,
+  // params
   ...params
-}: TParams) => {
-  const publicClient = usePublicClient()
+}: TParams & UseAddressRecordConfig) => {
+  const queryKey = useQueryKeyFactory({
+    params,
+    scopeKey,
+    functionName: 'getAddressRecord',
+    queryDependencyType: 'standard',
+  })
 
-  const queryKeys = useQueryKeys()
-
-  const { data, status, isFetchedAfterMount, isFetched, ...rest } = useQuery(
-    queryKeys.getAddressRecord(params),
-    ({ queryKey: [queryParams] }) => getAddressRecord(publicClient, queryParams),
-    {
-      enabled: enabled && !!params.name,
-    },
-  )
+  const query = useQuery(queryKey, getAddressRecordQueryFn, {
+    cacheTime,
+    enabled: enabled && !!params.name,
+    staleTime,
+    onError,
+    onSettled,
+    onSuccess,
+  })
 
   return {
-    data,
-    status,
-    isFetched,
-    isFetchedAfterMount,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
-    ...rest,
+    ...query,
+    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
   }
 }

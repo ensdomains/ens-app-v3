@@ -4,8 +4,8 @@ import { useMutation, useQuery } from 'wagmi'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useChainId } from '@app/hooks/chain/useChainId'
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'
 import { getLabelFromName } from '@app/utils/utils'
 
@@ -44,12 +44,18 @@ export const useMoonpayRegistration = (
     setHasMoonpayModal(true)
   })
 
+  const queryKey = useQueryKeyFactory({
+    params: { externalTransactionId: currentExternalTransactionId },
+    functionName: 'getMoonpayStatus',
+    queryDependencyType: 'standard',
+  })
+
   // Monitor current transaction
   const { data: transactionData } = useQuery(
-    useQueryKeys().moonpayRegistration(currentExternalTransactionId),
-    async () => {
+    queryKey,
+    async ({ queryKey: [{ externalTransactionId }] }) => {
       const response = await fetch(
-        `${MOONPAY_WORKER_URL[chainId]}/transactionInfo?externalTransactionId=${currentExternalTransactionId}`,
+        `${MOONPAY_WORKER_URL[chainId]}/transactionInfo?externalTransactionId=${externalTransactionId}`,
       )
       const jsonResult = (await response.json()) as Array<{ status: MoonpayTransactionStatus }>
       const result = jsonResult?.[0]

@@ -9,7 +9,6 @@ import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useRegisterNameCallback } from '@app/hooks/transactions/useRegisterNameCallback'
 
-import { useQueryKeys } from '../cacheKeyFactory'
 import { debugSubgraphIndexingErrors } from '../GlobalErrorProvider/useSubgraphMetaSync'
 
 export type UpdateCallback = (transaction: Transaction) => void
@@ -64,7 +63,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     [transactions],
   )
 
-  const graphBaseKeys = useQueryKeys().graphBase
   const { resetMeta, setMetaError } = useGlobalError()
   const hasGlobalError = useHasGlobalError()
   const { data: currentGraphBlock } = useQuery<number>(
@@ -94,12 +92,17 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         const waitingForBlock = findTransactionHigherThanBlock(data)
         if (waitingForBlock) return
         queryClient
-          .resetQueries({ exact: false, queryKey: [...graphBaseKeys, 'getSubnames'] })
+          .resetQueries({
+            predicate: (q) => {
+              const { queryKey } = q
+              const functionName = queryKey[4]
+              if (typeof functionName !== 'string') return false
+              return functionName === 'getSubnames'
+            },
+          })
           .then(() =>
             queryClient.invalidateQueries({
-              exact: false,
-              queryKey: graphBaseKeys,
-              refetchType: 'all',
+              predicate: (q) => q.queryKey[q.queryKey.length - 1] === 'graph',
             }),
           )
       },
