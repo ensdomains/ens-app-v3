@@ -38,17 +38,20 @@ type Props = {
   enabled?: boolean
 }
 
-export const useProfileActions = ({ name, enabled = true }: Props) => {
+export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => {
   const { t } = useTranslation('profile')
   const { createTransactionFlow, usePreparedDataInput } = useTransactionFlow()
 
   const { address } = useAccountSafely()
+
+  const enabled = enabled_ && !!address
+
   const { data: abilities, isLoading: isAbilitiesLoading } = useAbilities({ name, enabled })
 
-  const { data: profile, isLoading: isProfileLoading } = useProfile({ name })
-  const { data: ownerData, isLoading: isOwnerLoading } = useOwner({ name })
-  const { data: wrapperData, isLoading: isWrapperDataLoading } = useWrapperData({ name })
-  const { data: expiryData, isLoading: isExpiryLoading } = useExpiry({ name })
+  const { data: profile, isLoading: isProfileLoading } = useProfile({ name, enabled })
+  const { data: ownerData, isLoading: isOwnerLoading } = useOwner({ name, enabled })
+  const { data: wrapperData, isLoading: isWrapperDataLoading } = useWrapperData({ name, enabled })
+  const { data: expiryData, isLoading: isExpiryLoading } = useExpiry({ name, enabled })
   const expiryDate = expiryData?.expiry?.date
 
   const { data: resolverStatus, isLoading: isResolverStatusLoading } = useResolverStatus({
@@ -56,10 +59,13 @@ export const useProfileActions = ({ name, enabled = true }: Props) => {
     migratedRecordsMatch: address
       ? { type: 'address', match: { id: 60, value: address } }
       : undefined,
-    enabled: !!ownerData,
+    enabled: enabled && !!ownerData,
   })
 
-  const { data: primaryData, isLoading: isPrimaryNameLoading } = usePrimaryName({ address })
+  const { data: primaryData, isLoading: isPrimaryNameLoading } = usePrimaryName({
+    address,
+    enabled,
+  })
 
   const isAvailablePrimaryName = checkAvailablePrimaryName(
     primaryData?.name,

@@ -38,6 +38,7 @@ import {
   UniqueTransaction,
 } from '@app/transaction-flow/types'
 import { BasicTransactionRequest, PublicClientWithChain } from '@app/types'
+import { getReadableError } from '@app/utils/errors'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
@@ -627,6 +628,7 @@ export const TransactionStageModal = ({
         await publicClient.call({ ...a, to: a.to! })
         return 'transaction.dialog.error.gasLimit'
       } catch (err: unknown) {
+        return getReadableError(err)
         // TODO: get revert reason through viem
         // const code = err.data.replace('Reverted ', '')
         // const reason = toUtf8String(`0x${code.substr(138)}`)
@@ -640,14 +642,10 @@ export const TransactionStageModal = ({
 
   const lowerError = useMemo(() => {
     if (stage === 'complete' || stage === 'sent') return null
-    if (transactionError) {
-      if (!(transactionError instanceof BaseError)) return t('transaction.error.unknown')
-      return transactionError.shortMessage
-    }
-    if (requestError) {
-      if (!(requestError instanceof BaseError)) return t('transaction.error.unknown')
-      return requestError.shortMessage
-    }
+    const err = transactionError || requestError
+    if (!(err instanceof BaseError)) return t('transaction.error.unknown')
+    const readableError = getReadableError(err)
+    return readableError || err.shortMessage
   }, [t, stage, transactionError, requestError])
 
   return (

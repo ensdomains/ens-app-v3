@@ -99,8 +99,6 @@ export const NameListView = ({ address, isSelf, setError, setLoading }: NameList
     },
   })
 
-  console.log(names)
-
   useEffect(() => {
     setError?.(isError)
     // eslint-disable-next-line react-hooks/exhaustive-deps
