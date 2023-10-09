@@ -1,7 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
 import type { useNameDetails } from '@app/hooks/useNameDetails'
-import useOwners from '@app/hooks/useOwners'
+import { useOwners } from '@app/hooks/useOwners'
 
 import Miscellaneous from './Miscellaneous/Miscellaneous'
 import MoreTab from './MoreTab'
@@ -23,13 +23,12 @@ const mockToken = mockFunction(Token)
 
 const mockComponent =
   (name: string) =>
-  ({ expiryDate }: { expiryDate?: Date } & any) =>
-    (
-      <div>
-        {name}
-        {expiryDate ? `-expiry:${expiryDate}` : ''}
-      </div>
-    )
+  ({ expiryDate }: { expiryDate?: Date } & any) => (
+    <div>
+      {name}
+      {expiryDate ? `-expiry:${expiryDate}` : ''}
+    </div>
+  )
 
 mockUseOwners.mockImplementation(() => [])
 mockMiscellaneous.mockImplementation(mockComponent('Miscellaneous'))

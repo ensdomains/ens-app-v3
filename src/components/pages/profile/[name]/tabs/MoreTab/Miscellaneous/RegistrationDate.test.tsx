@@ -1,12 +1,11 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { formatDateTime } from '@app/utils/utils'
 
 import { RegistrationDate } from './RegistrationDate'
 
-jest.mock('@app/hooks/useChainName')
+jest.mock('@app/hooks/chain/useChainName')
 
 const mockUseChainName = mockFunction(useChainName)
 

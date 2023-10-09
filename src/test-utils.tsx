@@ -47,7 +47,7 @@ jest.mock('wagmi', () => {
     useSignTypedData: jest.fn(),
     useBlockNumber: jest.fn(),
     useSendTransaction: jest.fn(),
-    useEnsAvatar: jest.fn(),
+    useEnsAvatar: jest.fn(() => ({ data: undefined })),
     configureChains: jest.fn(() => ({})),
   }
 })

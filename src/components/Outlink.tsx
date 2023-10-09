@@ -55,14 +55,14 @@ export const Outlink = ({
 
   if (typeof href === 'string' && href.startsWith('http')) {
     return (
-      <Link href={href} passHref>
+      <Link href={href} passHref legacyBehavior>
         {InnerContent}
       </Link>
     )
   }
 
   return (
-    <BaseLink href={href} passHref>
+    <BaseLink href={href} passHref legacyBehavior>
       {InnerContent}
     </BaseLink>
   )

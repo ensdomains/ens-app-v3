@@ -398,15 +398,6 @@ export function createTransactionStore() {
 
             transactionRequestCache.delete(hashOfRequest)
 
-            if (status === undefined) {
-              if (receipt instanceof Error) {
-                setTransactionStatus(account, chainId, hashOfRequest, 'failed', {
-                  timestamp: Date.now(),
-                } as MinedData)
-              }
-              return
-            }
-
             setTransactionStatus(
               account,
               chainId,

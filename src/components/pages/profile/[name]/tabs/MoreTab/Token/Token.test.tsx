@@ -1,17 +1,18 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
+import { labelhash, namehash } from 'viem'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
-
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
+import { useParentBasicName } from '@app/hooks/useParentBasicName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import Token from './Token'
 
-jest.mock('@app/hooks/useContractAddress')
+jest.mock('@app/hooks/useParentBasicName')
+jest.mock('@app/hooks/chain/useChainName')
+jest.mock('@app/hooks/chain/useContractAddress')
 jest.mock('@app/hooks/fuses/useFusesStates')
 jest.mock('@app/utils/BreakpointProvider')
 
@@ -19,14 +20,20 @@ jest.mock('./WrapButton', () => () => <div data-testid="wrap-button" />)
 jest.mock('./UnwrapButton', () => () => <div data-testid="unwrap-button" />)
 
 const mockUseFusesStates = mockFunction(useFusesStates)
+const mockUseChainName = mockFunction(useChainName)
 const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseBreakpoint = mockFunction(useBreakpoint)
+const mockUseParentBasicName = mockFunction(useParentBasicName)
 
-mockUseContractAddress.mockImplementation((contractName) => {
-  if (contractName === 'NameWrapper') return 'wrapped'
-  return 'unwrapped'
+mockUseChainName.mockReturnValue('mainnet')
+mockUseContractAddress.mockImplementation(({ contract }) => {
+  if (contract === 'ensNameWrapper') return 'wrapped' as unknown as `0x${string}`
+  return 'unwrapped' as unknown as `0x${string}`
 })
 mockUseBreakpoint.mockReturnValue({ sm: true, md: true, lg: true })
+mockUseParentBasicName.mockImplementation(() => {
+  return {}
+})
 
 describe('Token', () => {
   it('should show wrapped status for unwrapped name', () => {
@@ -101,7 +108,7 @@ describe('Token', () => {
       const name = 'nick.eth'
       const label = 'nick'
       const labelHash = labelhash(label)
-      const tokenId = BigNumber.from(labelHash).toString()
+      const tokenId = BigInt(labelHash).toString(10)
 
       render(<Token {...({ name, isWrapped: false } as any)} />)
       expect(screen.getByText(labelHash)).toBeVisible()
@@ -113,7 +120,7 @@ describe('Token', () => {
       })
       const name = 'nick.eth'
       const hexId = namehash(name)
-      const decId = BigNumber.from(hexId).toString()
+      const decId = BigInt(hexId).toString(10)
 
       render(<Token {...({ name, isWrapped: true } as any)} />)
       expect(screen.getByText(hexId)).toBeVisible()
@@ -125,7 +132,7 @@ describe('Token', () => {
       })
       const name = 'sub.nick.eth'
       const hexId = namehash(name)
-      const decId = BigNumber.from(hexId).toString()
+      const decId = BigInt(hexId).toString(10)
 
       render(<Token {...({ name, isWrapped: true } as any)} />)
       expect(screen.getByText(hexId)).toBeVisible()
@@ -148,7 +155,7 @@ describe('Token', () => {
       const name = 'nick.eth'
       const label = 'nick'
       const labelHash = labelhash(label)
-      const tokenId = BigNumber.from(labelHash).toString()
+      const tokenId = BigInt(labelHash).toString(10)
 
       render(<Token {...({ name, isWrapped: false } as any)} />)
       expect(screen.getByTestId('etherscan-nft-link')).toHaveAttribute(
@@ -162,7 +169,7 @@ describe('Token', () => {
       })
       const name = 'nick.eth'
       const hexId = namehash(name)
-      const decId = BigNumber.from(hexId).toString()
+      const decId = BigInt(hexId).toString(10)
 
       render(<Token {...({ name, isWrapped: true } as any)} />)
       expect(screen.getByTestId('etherscan-nft-link')).toHaveAttribute(
@@ -176,7 +183,7 @@ describe('Token', () => {
       })
       const name = 'sub.nick.eth'
       const hexId = namehash(name)
-      const decId = BigNumber.from(hexId).toString()
+      const decId = BigInt(hexId).toString(10)
 
       render(<Token {...({ name, isWrapped: true } as any)} />)
       expect(screen.getByTestId('etherscan-nft-link')).toHaveAttribute(

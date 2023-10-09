@@ -1,12 +1,12 @@
 import type { PartialMockedFunction } from '@app/test-utils'
 
-import { BigNumber } from '@ethersproject/bignumber'
 import { waitFor } from '@testing-library/react'
+import { getPublicClient } from '@wagmi/core'
 
 import {
-  EtherscanMinedData,
   createTransactionStore,
   etherscanDataToMinedData,
+  EtherscanMinedData,
   foundMinedTransaction,
   foundTransaction,
   setFailedTransaction,
@@ -16,20 +16,34 @@ import {
 } from './transactionStore'
 import { waitForTransaction } from './waitForTransaction'
 
+// @ts-ignore: Unreachable code error
+// eslint-disable-next-line no-extend-native, func-names
+BigInt.prototype.toJSON = function () {
+  return this.toString()
+}
+
 jest.mock('./waitForTransaction', () => ({
   waitForTransaction: jest.fn(),
 }))
+
+jest.mock('@wagmi/core')
+
+const mockPublicClient = {
+  getBlock: jest.fn(async () => ({ timestamp: 1 })),
+}
+
+const mockGetPublicClient = getPublicClient as unknown as jest.MockedFunction<
+  PartialMockedFunction<typeof getPublicClient>
+>
+
+mockGetPublicClient.mockReturnValue(mockPublicClient)
 
 const mockWaitForTransaction = waitForTransaction as unknown as jest.MockedFunction<
   PartialMockedFunction<typeof waitForTransaction>
 >
 
-const mockProvider = {
-  getBlock: jest.fn(() => ({ timestamp: 1 })),
-}
-
 const setup = () => {
-  const store = createTransactionStore({ provider: mockProvider as any })
+  const store = createTransactionStore()
   return store
 }
 
@@ -40,18 +54,22 @@ describe('transactionStore', () => {
       hash: '0x9b0f96d2f4132c90b6900476d869e6f68ec6f58af89cfc96bb9f86a9a45a74b5',
       action: 'test',
       key: 'test',
-    }
+      searchRetries: 0,
+    } as const
     const newHash = '0x1f53b764ec83d9e77f6c62e6ab8fb9327daa6d78b6de61a69a8a80d77c9e4db4'
 
-    mockWaitForTransaction.mockImplementation(async ({ onSpeedUp }) => {
+    mockWaitForTransaction.mockImplementation(async ({ onReplaced }) => {
       setTimeout(() => {
-        onSpeedUp!({
-          hash: newHash,
+        onReplaced!({
+          reason: 'repriced',
+          transaction: {
+            hash: newHash,
+          },
         } as any)
       }, 0)
 
       return {
-        status: 1,
+        status: 'confirmed',
         blockHash: 'blockHash',
       }
     })
@@ -62,13 +80,13 @@ describe('transactionStore', () => {
 
     const transactions = store.getTransactions('account', 1)
 
-    expect(mockProvider.getBlock).toHaveBeenCalledWith('blockHash')
+    expect(mockPublicClient.getBlock).toHaveBeenCalledWith({ blockHash: 'blockHash' })
 
     expect(transactions[1]).toStrictEqual({
       ...transaction,
       newHash,
       status: 'repriced',
-      minedData: { status: 1, blockHash: 'blockHash', timestamp: 1000 },
+      minedData: { status: 'confirmed', blockHash: 'blockHash', timestamp: 1000 },
       searchRetries: 0,
       searchStatus: 'searching',
     })
@@ -77,7 +95,7 @@ describe('transactionStore', () => {
       hash: newHash,
       isSafeTx: false,
       status: 'confirmed',
-      minedData: { status: 1, blockHash: 'blockHash', timestamp: 1000 },
+      minedData: { status: 'confirmed', blockHash: 'blockHash', timestamp: 1000 },
       searchRetries: 0,
       searchStatus: 'searching',
     })
@@ -88,31 +106,35 @@ describe('transactionStore', () => {
       hash: '0x9b0f96d2f4132c90b6900476d869e6f68ec6f58af89cfc96bb9f86a9a45a74b5',
       action: 'test',
       key: 'test',
-    }
+      searchRetries: 0,
+    } as const
     const cancelledHash = '0x3d4d4de4ca4dc223319b82551f78a37e26d5e5d5a8a5d5c9c5a5f166a5c5b5b6'
 
     mockWaitForTransaction.mockImplementation(async () => {
-      // eslint-disable-next-line @typescript-eslint/no-throw-literal
-      throw {
-        cancelled: true,
-        replacement: {
-          status: 1,
-          blockHash: 'blockHash',
-          hash: cancelledHash,
-        },
+      return {
+        status: 'reverted',
+        blockHash: 'blockHash',
+        hash: cancelledHash,
       }
     })
 
     store.addTransaction('account', 1, transaction)
 
-    await waitFor(() => expect(mockProvider.getBlock).toHaveBeenCalledWith('blockHash'))
+    await waitFor(() =>
+      expect(mockPublicClient.getBlock).toHaveBeenCalledWith({ blockHash: 'blockHash' }),
+    )
 
     const transactions = store.getTransactions('account', 1)
 
     expect(transactions[0]).toStrictEqual({
       ...transaction,
       status: 'failed',
-      minedData: { status: 0, hash: cancelledHash, blockHash: 'blockHash', timestamp: 1000 },
+      minedData: {
+        status: 'reverted',
+        hash: cancelledHash,
+        blockHash: 'blockHash',
+        timestamp: 1000,
+      },
       searchRetries: 0,
       searchStatus: 'searching',
     })
@@ -134,7 +156,7 @@ describe('foundTransaction', () => {
     ]
 
     let updateFnResult
-    const mockUpdateTransactions = (account, chainId, updateFn) => {
+    const mockUpdateTransactions = (_account, _chainId, updateFn) => {
       updateFnResult = updateFn(mockTransactions)
     }
     foundTransaction(mockUpdateTransactions)(account, chainId, transactionHash, nonce)
@@ -168,39 +190,27 @@ describe('etherscanDataToMinedData', () => {
       nonce: '1',
       timeStamp: '1630512000',
       to: '0x1234567890abcdef',
-      transactionIndex: '0',
+      transactionIndex: 0,
       txreceipt_status: '1',
       value: '1000000000000000000',
     }
 
     const expectedMinedData = {
-      blockHash: '0x1234567890abcdef',
-      blockNumber: 123456,
-      byzantium: true,
-      confirmations: 10,
-      contractAddress: '0x1234567890abcdef',
-      cumulativeGasUsed: BigNumber.from(etherscanMinedData.cumulativeGasUsed),
-      effectiveGasPrice: BigNumber.from(etherscanMinedData.gasPrice),
-      from: '0x1234567890abcdef',
-      functionName: 'transfer',
-      gas: '21000',
-      gasPrice: '1000000000',
-      gasUsed: BigNumber.from('21000'),
-      hash: '0x1234567890abcdef',
-      input: '0x',
-      isError: '0',
-      methodId: '0x',
-      nonce: '1',
-      timeStamp: '1630512000',
+      cumulativeGasUsed: BigInt(etherscanMinedData.cumulativeGasUsed),
+      effectiveGasPrice: BigInt(etherscanMinedData.gasPrice),
+      gasUsed: BigInt('21000'),
       timestamp: parseInt(etherscanMinedData.timeStamp, 10),
-      to: '0x1234567890abcdef',
-      transactionIndex: '0',
-      txreceipt_status: '1',
-      value: '1000000000000000000',
+      blockNumber: 123456n,
+      logsBloom: '0x',
+      transactionHash: '0x',
       logs: [],
-      logsBloom: '',
-      transactionHash: '',
-      type: 0,
+      type: 'legacy',
+      status: 'success',
+      blockHash: '0x1234567890abcdef',
+      contractAddress: '0x1234567890abcdef',
+      from: '0x1234567890abcdef',
+      to: '0x1234567890abcdef',
+      transactionIndex: 0,
     }
 
     expect(etherscanDataToMinedData(etherscanMinedData)).toEqual(expectedMinedData)
@@ -215,23 +225,25 @@ describe('setReplacedTransaction', () => {
     const transactionInput = 'transactionInput'
     const mockMinedData: EtherscanMinedData = {
       blockHash: '0x1234567890abcdef',
-      blockNumber: 1234567,
-      confirmations: 10,
+      blockNumber: '1234567',
+      confirmations: '10',
       contractAddress: '0x1234567890abcdef',
-      cumulativeGasUsed: 100000,
+      cumulativeGasUsed: '100000',
       from: '0x1234567890abcdef',
-      gas: 100000,
+      gas: '100000',
       gasPrice: '1000000000',
-      gasUsed: 50000,
+      gasUsed: '50000',
       hash: '0x1234567890abcdef',
       input: '0x1234567890abcdef',
       isError: '0',
-      nonce: 1,
       timeStamp: '1234567890',
       to: '0x1234567890abcdef',
       transactionIndex: 0,
       txreceipt_status: '1',
       value: '1000000000000000000',
+      functionName: 'transfer',
+      methodId: '0x',
+      nonce: '1',
     }
 
     const mockTransactions = [
@@ -271,23 +283,25 @@ describe('setReaplcedTransactionByNonce', () => {
     const transactionInput = 'transactionInput'
     const mockMinedData: EtherscanMinedData = {
       blockHash: '0x1234567890abcdef',
-      blockNumber: 1234567,
-      confirmations: 10,
+      blockNumber: '1234567',
+      confirmations: '10',
       contractAddress: '0x1234567890abcdef',
-      cumulativeGasUsed: 100000,
+      cumulativeGasUsed: '100000',
       from: '0x1234567890abcdef',
-      gas: 100000,
+      gas: '100000',
       gasPrice: '1000000000',
-      gasUsed: 50000,
+      gasUsed: '50000',
       hash: '0x1234567890abcdef',
       input: '0x1234567890abcdef',
       isError: '0',
-      nonce: 1,
+      nonce: '1',
       timeStamp: '1234567890',
       to: '0x1234567890abcdef',
       transactionIndex: 0,
       txreceipt_status: '1',
       value: '1000000000000000000',
+      functionName: 'transfer',
+      methodId: '0x',
     }
 
     const mockTransactions = [
@@ -328,23 +342,25 @@ describe('foundMinedTranasction', () => {
     const transactionInput = 'transactionInput'
     const mockMinedData: EtherscanMinedData = {
       blockHash: '0x1234567890abcdef',
-      blockNumber: 1234567,
-      confirmations: 10,
+      blockNumber: '1234567',
+      confirmations: '10',
       contractAddress: '0x1234567890abcdef',
-      cumulativeGasUsed: 100000,
+      cumulativeGasUsed: '100000',
       from: '0x1234567890abcdef',
-      gas: 100000,
+      gas: '100000',
       gasPrice: '1000000000',
-      gasUsed: 50000,
+      gasUsed: '50000',
       hash: '0x1234567890abcdef',
       input: '0x1234567890abcdef',
       isError: '0',
-      nonce: 1,
+      nonce: '1',
       timeStamp: '1234567890',
       to: '0x1234567890abcdef',
       transactionIndex: 0,
       txreceipt_status: '1',
       value: '1000000000000000000',
+      functionName: 'transfer',
+      methodId: '0x',
     }
 
     const mockTransactions = [
