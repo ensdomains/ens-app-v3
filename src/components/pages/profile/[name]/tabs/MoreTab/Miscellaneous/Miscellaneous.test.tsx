@@ -9,7 +9,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 
 import Miscellaneous from './Miscellaneous'
 
-jest.mock('@app/hooks/useChainName')
+jest.mock('@app/hooks/chain/useChainName')
 jest.mock('@app/hooks/useRegistrationData')
 jest.mock('@app/hooks/abilities/useAbilities')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')

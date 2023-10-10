@@ -78,7 +78,10 @@ describe('MoreTab', () => {
         name: 'sub.test.eth',
         isWrapped: true,
         pccExpired: false,
-        wrapperData: { parent: { PARENT_CANNOT_CONTROL: true }, expiryDate: date } as any,
+        wrapperData: {
+          fuses: { parent: { PARENT_CANNOT_CONTROL: true } },
+          expiry: { date },
+        } as any,
       })
       expect(screen.getByText(`Miscellaneous-expiry:${date.toString()}`)).toBeVisible()
     })
@@ -88,7 +91,10 @@ describe('MoreTab', () => {
         name: 'sub.test.eth',
         isWrapped: false,
         pccExpired: true,
-        wrapperData: { expiryDate: date, parent: { PARENT_CANNOT_CONTROL: false } } as any,
+        wrapperData: {
+          expiry: { date },
+          fuses: { parent: { PARENT_CANNOT_CONTROL: false } },
+        } as any,
       })
       expect(screen.getByText(`Miscellaneous-expiry:${date.toString()}`)).toBeVisible()
     })

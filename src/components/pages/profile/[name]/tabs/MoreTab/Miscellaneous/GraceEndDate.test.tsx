@@ -4,8 +4,6 @@ import { formatDateTime } from '@app/utils/utils'
 
 import { GraceEndDate } from './GraceEndDate'
 
-jest.mock('@app/hooks/useChainName')
-
 describe('GraceEndDate', () => {
   it('should render the grace end date', () => {
     const expiryDate = new Date('2021-01-01T00:00:00.000Z')

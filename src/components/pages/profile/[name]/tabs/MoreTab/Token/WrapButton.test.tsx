@@ -2,7 +2,7 @@ import { mockFunction, render, screen } from '@app/test-utils'
 
 import { useAccount } from 'wagmi'
 
-import useWrapperApprovedForAll from '@app/hooks/useWrapperApprovedForAll'
+import { useWrapperApprovedForAll } from '@app/hooks/useWrapperApprovedForAll'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import WrapButton from './WrapButton'
@@ -42,7 +42,7 @@ describe('WrapButton', () => {
   })
   mockUseAccount.mockReturnValue({ address: '0x123' })
   mockUseWrapperApprovedForAll.mockReturnValue({
-    approvedForAll: true,
+    data: true,
     isLoading: false,
   })
 
@@ -244,7 +244,7 @@ describe('WrapButton', () => {
 
   it('should create a transaction flow for a subname with no registry approval', () => {
     mockUseWrapperApprovedForAll.mockReturnValue({
-      approvedForAll: false,
+      data: false,
       isLoading: false,
     })
     render(
@@ -271,7 +271,7 @@ describe('WrapButton', () => {
   })
   it('should create a transaction flow for a subname with existing registry approval', () => {
     mockUseWrapperApprovedForAll.mockReturnValue({
-      approvedForAll: true,
+      data: true,
       isLoading: false,
     })
     render(
@@ -349,7 +349,7 @@ describe('WrapButton', () => {
     mockGetResumable.mockReturnValue(false)
     mockCreateTransactionFlow.mockClear()
     mockUseWrapperApprovedForAll.mockReturnValue({
-      approvedForAll: false,
+      data: false,
       isLoading: false,
     })
     // name is sub2.test123.eth
@@ -398,6 +398,6 @@ describe('WrapButton', () => {
     )
     expect(
       mockUseWrapperApprovedForAll.mock.calls[mockUseWrapperApprovedForAll.mock.calls.length - 1],
-    ).toEqual(['0x123', true, true])
+    ).toEqual([{ address: '0x123', canBeWrapped: true, isSubname: true }])
   })
 })

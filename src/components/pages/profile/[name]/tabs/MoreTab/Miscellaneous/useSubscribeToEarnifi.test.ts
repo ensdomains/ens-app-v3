@@ -1,4 +1,4 @@
-import { act, renderHook } from '@app/test-utils'
+import { act, renderHook, waitFor } from '@app/test-utils'
 
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
@@ -58,7 +58,7 @@ describe('useSubscribeToEarnifi', () => {
   afterEach(() => server.resetHandlers())
 
   it('should return a successful response when subscribing with valid data', async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useSubscribeToEarnifi({}))
+    const { result } = renderHook(() => useSubscribeToEarnifi({}))
 
     act(() => {
       result.current.subscribe({
@@ -68,13 +68,12 @@ describe('useSubscribeToEarnifi', () => {
       })
     })
 
-    await waitForNextUpdate()
-    expect(result.current.isSuccess).toBe(true)
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
   })
 
   it('should call onError function when there is a server error', async () => {
     const onError = jest.fn()
-    const { result, waitForNextUpdate } = renderHook(() => useSubscribeToEarnifi({ onError }))
+    const { result } = renderHook(() => useSubscribeToEarnifi({ onError }))
 
     // Simulate a server error
     result.current.subscribe({
@@ -82,9 +81,8 @@ describe('useSubscribeToEarnifi', () => {
       chainId: 1,
       address: '',
     })
-    await waitForNextUpdate()
 
     // Check if the onError function was called
-    expect(onError).toHaveBeenCalled()
+    await waitFor(() => expect(onError).toHaveBeenCalled())
   })
 })

@@ -125,7 +125,7 @@ export const validateExpiry = ({
   const isDotETH = checkETH2LDFromName(name)
   if (isDotETH) return expiry
   if (!fuses) return undefined
-  return pccExpired || !fuses.parent.PARENT_CANNOT_CONTROL ? undefined : expiry
+  return pccExpired || fuses.parent.PARENT_CANNOT_CONTROL ? expiry : undefined
 }
 
 export const getResolverWrapperAwareness = ({
