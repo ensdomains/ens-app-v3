@@ -1074,7 +1074,7 @@ test.describe('Extend name', () => {
       ).toBeVisible()
       await transactionModal.autoComplete()
       const newTimestamp = await ownershipPage.getExpiryTimestamp()
-      await expect(newTimestamp).toEqual(timestamp + 31536000000)
+      expect(newTimestamp).toEqual(timestamp + 31536000000)
     })
   })
 })
@@ -1103,7 +1103,7 @@ test.describe('Sync manager', () => {
     await ownershipPage.syncManagerButton.click()
     await page.getByRole('button', { name: 'Next' }).click()
 
-    await await transactionModal.autoComplete()
+    await transactionModal.autoComplete()
     await expect(ownershipPage.roleRow(accounts.getAddress('user'))).toContainText('manager')
     await expect(ownershipPage.roleRow(accounts.getAddress('user'))).toContainText('owner')
   })
