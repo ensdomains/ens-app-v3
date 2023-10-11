@@ -1,180 +1,158 @@
-import { mockFunction, renderHook } from '@app/test-utils'
+import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
-import { useSigner } from 'wagmi'
+import { usePrepareContractWrite, useWalletClient } from 'wagmi'
 
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { useIsWrapped } from '../useIsWrapped'
+import { useProfile } from '../useProfile'
+import { useResolverHasInterfaces } from '../useResolverHasInterfaces'
+import { useResolverIsAuthorised } from './useResolverIsAuthorised'
 
-import { useResolverIsAuthorized } from './useResolverIsAuthorized'
+jest.mock('@app/hooks/useProfile')
+jest.mock('@app/hooks/useIsWrapped')
+jest.mock('@app/hooks/useResolverHasInterfaces')
 
-const mockSupportsInterface = jest.fn().mockReturnValue(Promise.resolve(true))
-const mockEstimateGas = jest.fn().mockReturnValue(Promise.resolve(100000))
+const mockUseProfile = mockFunction(useProfile)
+const mockUseIsWrapped = mockFunction(useIsWrapped)
+const mockUseWalletClient = mockFunction(useWalletClient)
+const mockUsePrepareContractWrite = mockFunction(usePrepareContractWrite)
+const mockUseResolverHasInterfaces = mockFunction(useResolverHasInterfaces)
 
-class Contract {
-  supportsInterface: (...args: any[]) => Promise<boolean>
-
-  estimateGas: {
-    setAddr: () => Promise<number>
-  }
-
-  constructor() {
-    this.supportsInterface = (...args) => {
-      return mockSupportsInterface(...args)
-    }
-    this.estimateGas = {
-      setAddr: () => mockEstimateGas(),
-    }
-  }
-}
-
-jest.mock('@ethersproject/contracts', () => ({
-  Contract: jest.fn().mockImplementation(() => new Contract()),
-}))
-
-const makeUseSigner = (overwrite: object = {}) => ({
-  data: {},
-  isLoading: false,
-  ...overwrite,
-})
-const mockUseSigner = mockFunction(useSigner)
-mockUseSigner.mockReturnValue(makeUseSigner())
-
-const makeProfile = (overwrite: object = {}) => ({
-  profile: {
-    resolverAddress: '0xresolver',
-  },
-  loading: false,
-  ...overwrite,
-})
-const mockUseProfile = jest.fn().mockReturnValue(makeProfile)
-jest.mock('@app/hooks/useProfile', () => ({
-  useProfile: (_: string, options: any = {}) => {
-    if (options.skip) return { data: undefined, loading: false }
-    return mockUseProfile()
-  },
-}))
-
-const mockUseBasicName = jest.fn().mockReturnValue({ isWrapped: false })
-jest.mock('@app/hooks/useBasicName', () => ({
-  useBasicName: () => mockUseBasicName(),
-}))
-
-afterEach(() => {
-  jest.clearAllMocks()
-})
-
-describe('useResolverIsAuthorized', () => {
-  it('should return isValid and isAuthorized is true if resolver is known and name is not wrapped', async () => {
-    mockUseProfile.mockReturnValue({
-      profile: {
-        resolverAddress: RESOLVER_ADDRESSES['1'][0],
-      },
-      loading: false,
+describe('useResolverIsAuthorised', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockUseIsWrapped.mockReturnValue({
+      data: false,
     })
-    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
-    await waitForNextUpdate()
-    expect(result.current).toMatchObject({
-      isLoading: false,
+    mockUseWalletClient.mockReturnValue({
       data: {
-        isAuthorized: true,
-        isValid: true,
+        account: {
+          type: 'json-rpc',
+          address: '0x1234',
+        },
+      },
+    })
+    mockUsePrepareContractWrite.mockReturnValue({
+      data: {
+        request: {
+          gas: 0x1234n,
+        },
       },
     })
   })
-
-  it('should return isValid and isAuthorized is false if resolver is not namewrapper aware and name is wrapped', async () => {
+  it('should return isValid and isAuthorised is true if resolver is known and name is not wrapped', async () => {
     mockUseProfile.mockReturnValue({
-      profile: {
-        resolverAddress: RESOLVER_ADDRESSES['1'][1],
-      },
-      loading: false,
-    })
-    mockUseBasicName.mockReturnValueOnce({
-      isWrapped: true,
-    })
-    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
-    await waitForNextUpdate()
-    expect(mockUseProfile).toHaveBeenCalled()
-    expect(result.current).toMatchObject({
-      isLoading: false,
       data: {
-        isAuthorized: false,
-        isValid: true,
+        resolverAddress: '0xlatestresolver',
       },
+    })
+    mockUseIsWrapped.mockReturnValue({
+      data: false,
+    })
+    mockUseResolverHasInterfaces.mockReturnValue({
+      data: [true],
+      knownResolverData: {
+        isNameWrapperAware: true,
+      },
+    })
+    const { result } = renderHook(() => useResolverIsAuthorised({ name: 'test.eth' }))
+    await waitFor(() => result.current.data !== undefined)
+    expect(result.current.data).toMatchObject({
+      isAuthorised: true,
+      isValid: true,
+    })
+  })
+
+  it('should return isValid and isAuthorised is false if resolver is not namewrapper aware and name is wrapped', async () => {
+    mockUseProfile.mockReturnValue({
+      data: {
+        resolverAddress: '0xnamewrapperunaware',
+      },
+      isLoading: false,
+    })
+    mockUseIsWrapped.mockReturnValue({
+      data: true,
+    })
+    mockUseResolverHasInterfaces.mockReturnValue({
+      data: [true],
+      knownResolverData: {
+        isNameWrapperAware: false,
+      },
+    })
+    const { result } = renderHook(() => useResolverIsAuthorised({ name: 'test.eth' }))
+    await waitFor(() => result.current.data !== undefined)
+    expect(mockUseProfile).toHaveBeenCalled()
+    expect(result.current.data).toMatchObject({
+      isAuthorised: false,
+      isValid: true,
     })
   })
 
   it('should return isValid and isAuthorized is true if resolver is namewrapper aware and name is wrapped', async () => {
     mockUseProfile.mockReturnValue({
-      profile: {
-        resolverAddress: RESOLVER_ADDRESSES['1'][0],
-      },
-      loading: false,
-    })
-    mockUseBasicName.mockReturnValueOnce({
-      isWrapped: false,
-    })
-    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
-    await waitForNextUpdate()
-    expect(mockUseProfile).toHaveBeenCalled()
-    expect(result.current).toMatchObject({
-      isLoading: false,
       data: {
-        isAuthorized: true,
-        isValid: true,
+        resolverAddress: '0xlatestresolver',
       },
+      isLoading: false,
+    })
+    mockUseIsWrapped.mockReturnValue({
+      data: true,
+    })
+    mockUseResolverHasInterfaces.mockReturnValue({
+      data: [true],
+      knownResolverData: {
+        isNameWrapperAware: true,
+      },
+    })
+    const { result } = renderHook(() => useResolverIsAuthorised({ name: 'test.eth' }))
+    await waitFor(() => result.current.data !== undefined)
+    expect(mockUseProfile).toHaveBeenCalled()
+    expect(result.current.data).toMatchObject({
+      isAuthorised: true,
+      isValid: true,
     })
   })
 
-  it('should return correct results with base mock data', async () => {
+  it('should return isValid=false/isAuthorised=false if resolver does not support multicoin', async () => {
     mockUseProfile.mockReturnValue({
-      profile: {
-        resolverAddress: '0xresolver',
-      },
-      loading: false,
-    })
-    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
-    await waitForNextUpdate()
-    expect(mockSupportsInterface).toHaveBeenCalled()
-    expect(mockEstimateGas).toHaveBeenCalled()
-    expect(mockUseSigner).toHaveBeenCalled()
-    expect(mockUseProfile).toHaveBeenCalled()
-    expect(result.current).toMatchObject({
-      isLoading: false,
       data: {
-        isAuthorized: true,
-        isValid: true,
+        resolverAddress: '0xoldresolver',
       },
+      isLoading: false,
+    })
+    mockUseResolverHasInterfaces.mockReturnValue({
+      data: [false],
+    })
+    const { result } = renderHook(() => useResolverIsAuthorised({ name: 'test.eth' }))
+    await waitFor(() => result.current.data !== undefined)
+    expect(result.current.data).toMatchObject({
+      isAuthorised: false,
+      isValid: false,
     })
   })
 
-  it('should return false false if checkInterface rejects', async () => {
-    mockSupportsInterface.mockReturnValueOnce(Promise.reject(new Error('error')))
-    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
-    await waitForNextUpdate()
-    expect(result.current).toMatchObject({
+  it('should return isValid=true/isAuthorised=false if resolver auth check fails', async () => {
+    mockUseProfile.mockReturnValue({
       data: {
-        isAuthorized: false,
-        isValid: false,
+        resolverAddress: '0xunauthorisedresolver',
       },
       isLoading: false,
     })
-  })
-
-  it('should return false false if checkInterface rejects', async () => {
-    mockEstimateGas.mockReturnValueOnce(Promise.reject(new Error('notAuthorized')))
-    const { result, waitForNextUpdate } = renderHook(() => useResolverIsAuthorized('test.eth'))
-    await waitForNextUpdate()
-    expect(result.current).toMatchObject({
-      data: {
-        isAuthorized: false,
-        isValid: true,
-      },
-      isLoading: false,
+    mockUseResolverHasInterfaces.mockReturnValue({
+      data: [true],
+    })
+    mockUsePrepareContractWrite.mockReturnValue({
+      isError: true,
+    })
+    const { result } = renderHook(() => useResolverIsAuthorised({ name: 'test.eth' }))
+    await waitFor(() => result.current.data !== undefined)
+    expect(result.current.data).toMatchObject({
+      isAuthorised: false,
+      isValid: true,
     })
   })
 
   it('should return data is undefined if name is empty', () => {
-    const { result } = renderHook(() => useResolverIsAuthorized())
-    expect(result.current).toMatchObject({ isLoading: false, data: undefined })
+    const { result } = renderHook(() => useResolverIsAuthorised({ name: undefined as any }))
+    expect(result.current.data).toBe(undefined)
   })
 })

@@ -1,6 +1,6 @@
 import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 
-import { useRouter } from 'next/router'
+import mockRouter from 'next-router-mock'
 import { useAccount } from 'wagmi'
 
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
@@ -11,14 +11,13 @@ import Hamburger from './@molecules/Hamburger/Hamburger'
 import { HeaderConnect } from './ConnectButton'
 import { Header } from './Header'
 
-jest.mock('next/router')
+jest.mock('next/router', () => jest.requireActual('next-router-mock'))
 jest.mock('@app/hooks/transactions/useRecentTransactions')
 jest.mock('@app/hooks/useInitial')
 jest.mock('@app/utils/BreakpointProvider')
 jest.mock('./@molecules/Hamburger/Hamburger')
 jest.mock('./ConnectButton')
 
-const mockRouter = mockFunction(useRouter)
 const mockUseAccount = mockFunction(useAccount)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseInitial = mockFunction(useInitial)
@@ -47,10 +46,7 @@ describe('Header', () => {
     observe: jest.fn(),
     disconnect: jest.fn(),
   }))
-  mockRouter.mockReturnValue({
-    asPath: '/test',
-    query: {},
-  })
+  mockRouter.setCurrentUrl('/test')
   mockUseAccount.mockReturnValue({
     isConnected: true,
   })

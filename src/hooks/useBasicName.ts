@@ -73,11 +73,14 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
       ? new Date(expiryDate.getTime() + expiryData.gracePeriod)
       : undefined
 
+  // gracePeriodEndDate is +/- 5 minutes from Date.now()
   const isTempPremiumDesynced = !!(
     gracePeriodEndDate &&
     Date.now() + EXPIRY_LIVE_WATCH_TIME > gracePeriodEndDate.getTime() &&
     gracePeriodEndDate.getTime() > Date.now() - EXPIRY_LIVE_WATCH_TIME
   )
+
+  console.log(isTempPremiumDesynced)
 
   const blockTimestamp = useCurrentBlockTimestamp({ enabled: isTempPremiumDesynced })
 
@@ -86,6 +89,8 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
     if (blockTimestamp) return Number(blockTimestamp) * 1000
     return Date.now() - EXPIRY_LIVE_WATCH_TIME
   }, [isTempPremiumDesynced, blockTimestamp])
+
+  console.log('registrationStatusTimestamp', registrationStatusTimestamp)
 
   const registrationStatus = !publicCallsLoading
     ? getRegistrationStatus({

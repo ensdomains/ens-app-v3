@@ -14,6 +14,12 @@ import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
 
 import { DeepPartial } from './types'
 
+// @ts-ignore: Unreachable code error
+// eslint-disable-next-line no-extend-native, func-names
+BigInt.prototype.toJSON = function () {
+  return this.toString()
+}
+
 window.scroll = jest.fn()
 
 jest.mock('@app/hooks/useRegistrationReducer', () => jest.fn(() => ({ item: { stepIndex: 0 } })))
@@ -42,7 +48,8 @@ jest.mock('wagmi', () => {
     useBalance: jest.fn(() => ({ data: { value: { lt: () => false } } })),
     useNetwork: jest.fn(() => ({ chainId: 1 })),
     useFeeData: jest.fn(),
-    useSigner: jest.fn(),
+    useWalletClient: jest.fn(),
+    usePrepareContractWrite: jest.fn(),
     usePublicClient: jest.fn(),
     useSignTypedData: jest.fn(),
     useBlockNumber: jest.fn(),
@@ -134,6 +141,9 @@ export type PartialMockedFunction<T extends (...args: any) => any> = (
 export type MockHookData<THookFn extends (...args: any[]) => { data: any }> = DeepPartial<
   ReturnType<THookFn>['data']
 >
+
+export const expectEnabledHook = (fn: PartialMockedFunction<any>, enabled: boolean) =>
+  expect(fn).toHaveBeenCalledWith(expect.objectContaining({ enabled }))
 
 export const mockFunction = <T extends (...args: any) => any>(func: T) =>
   func as unknown as jest.MockedFunction<PartialMockedFunction<T>>

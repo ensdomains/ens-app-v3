@@ -1,33 +1,22 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { useRouter } from 'next/router'
-
 import { ShortExpiry } from '@app/components/@atoms/ExpiryComponents/ExpiryComponents'
 import { useZorb } from '@app/hooks/useZorb'
 
 import { NameDetailItem } from './NameDetailItem'
 
+jest.mock('next/router', () => jest.requireActual('next-router-mock'))
 jest.mock('@app/hooks/useZorb')
-jest.mock('next/router')
 jest.mock('@app/components/@atoms/ExpiryComponents/ExpiryComponents')
 
 const mockUseZorb = mockFunction(useZorb)
-const mockUseRouter = mockFunction(useRouter)
 const mockShortExpiry = mockFunction(ShortExpiry)
 
 mockShortExpiry.mockImplementation(({ expiry }) => <div>{expiry.toDateString()}</div>)
 
 describe('NameDetailitem', () => {
-  const mockRouterObject = {
-    asPath: 'currentpath',
-    query: {
-      name: 'nick.eth',
-    },
-  }
-
   it('should link to correct path', () => {
     mockUseZorb.mockReturnValue('')
-    mockUseRouter.mockReturnValue(mockRouterObject)
 
     render(
       <NameDetailItem
@@ -35,7 +24,6 @@ describe('NameDetailitem', () => {
           name: 'name',
           id: 'test',
           truncatedName: 'truncatedname',
-          network: 1,
         }}
       >
         <div>child</div>
@@ -45,14 +33,12 @@ describe('NameDetailitem', () => {
   })
   it('should show zorb when there is no avatar', () => {
     mockUseZorb.mockReturnValue('zorb')
-    mockUseRouter.mockReturnValue(mockRouterObject)
     render(
       <NameDetailItem
         {...{
           name: 'name',
           id: 'test',
           truncatedName: 'truncatedName',
-          network: 1,
         }}
       >
         <div>child</div>
@@ -62,14 +48,12 @@ describe('NameDetailitem', () => {
   })
   it('should render truncated name', () => {
     mockUseZorb.mockReturnValue('zorb')
-    mockUseRouter.mockReturnValue(mockRouterObject)
     render(
       <NameDetailItem
         {...{
           name: 'name',
           id: 'test',
           truncatedName: 'truncatedname',
-          network: 1,
         }}
       >
         <div>child</div>
@@ -79,14 +63,12 @@ describe('NameDetailitem', () => {
   })
   it('should render children', () => {
     mockUseZorb.mockReturnValue('zorb')
-    mockUseRouter.mockReturnValue(mockRouterObject)
     render(
       <NameDetailItem
         {...{
           name: 'name',
           id: 'test',
           truncatedName: 'truncatedname',
-          network: 1,
         }}
       >
         <div>child</div>
@@ -102,10 +84,8 @@ describe('NameDetailitem', () => {
           name: 'name',
           id: 'test',
           truncatedName: 'truncatedname',
-          network: 1,
         }}
-        expiryDate={'2020-01-01' as any}
-        network={1}
+        expiryDate={new Date('2020-01-01')}
       >
         <div>child</div>
       </NameDetailItem>,
@@ -120,10 +100,8 @@ describe('NameDetailitem', () => {
           name: 'name',
           id: 'test',
           truncatedName: 'truncatedname',
-          network: 1,
         }}
         expiryDate={null as any}
-        network={1}
       >
         <div>child</div>
       </NameDetailItem>,

@@ -34,7 +34,7 @@ type GetBlockQueryKey<
   TBlockTag extends BlockTag = 'latest',
 > = CreateQueryKey<GetBlockParameters<TIncludeTransactions, TBlockTag>, 'getBlock', 'standard'>
 
-const getBlockQueryFn =
+export const getBlockQueryFn =
   (publicClient: PublicClientWithChain) =>
   async <TIncludeTransactions extends boolean = false, TBlockTag extends BlockTag = 'latest'>({
     queryKey: [params],
@@ -42,7 +42,46 @@ const getBlockQueryFn =
     return publicClient.getBlock(params)
   }
 
-const generateQueryArray = (
+export const generateFuseSetBlocks = (
+  nameHistory: GetNameHistoryReturnType | undefined,
+): {
+  blocksNeeded: Set<bigint>
+  fuseSetBlocks: FuseSetBlocks
+} => {
+  if (!nameHistory) return { blocksNeeded: new Set<bigint>(), fuseSetBlocks: [] }
+  const { domainEvents } = nameHistory
+
+  let hasWrappedEvent = false
+  const fusesSetMap: Map<AnyFuseKey, bigint> = new Map()
+
+  for (let i = domainEvents.length - 1; i >= 0 && !hasWrappedEvent; i -= 1) {
+    const reference = domainEvents[i]
+    switch (reference.type) {
+      case 'NameWrapped':
+        hasWrappedEvent = true
+      // eslint-disable-next-line no-fallthrough
+      case 'FusesSet': {
+        const decodedFuses = decodeFuses(reference.fuses)
+        const burnedParentFuses = ParentFuseKeys.filter((key) => decodedFuses.parent[key])
+        const burnedChildFuses = ChildFuseKeys.filter((key) => decodedFuses.child[key])
+        const burnedFuses = [...burnedParentFuses, ...burnedChildFuses]
+        for (const fuse of burnedFuses) {
+          fusesSetMap.set(fuse, BigInt(reference.blockNumber))
+        }
+        break
+      }
+      default:
+        break
+    }
+  }
+  if (!hasWrappedEvent) return { blocksNeeded: new Set<bigint>(), fuseSetBlocks: [] }
+  return {
+    blocksNeeded: new Set(fusesSetMap.values()),
+    fuseSetBlocks: [...fusesSetMap.entries()].map(([f, b]) => [f, Number(b)]),
+  }
+}
+
+export const generateGetBlockQueryArray = (
   publicClient: PublicClientWithChain,
   { address, blocksNeeded }: { address: Address | undefined; blocksNeeded: Set<bigint> },
 ) => {
@@ -62,40 +101,7 @@ const generateQueryArray = (
   )
 }
 
-const generateFuseSetBlocks = (nameHistory: GetNameHistoryReturnType | undefined) => {
-  if (!nameHistory) return { blocksNeeded: new Set<bigint>(), fuseSetBlocks: [] }
-  const { domainEvents } = nameHistory
-
-  let hasWrappedEvent = false
-  const fuseSetBlocks: FuseSetBlocks = []
-  const blocksNeeded: Set<bigint> = new Set()
-
-  for (let i = domainEvents.length - 1; i >= 0 && !hasWrappedEvent; i -= 1) {
-    const reference = domainEvents[i]
-    switch (reference.type) {
-      case 'NameWrapped':
-        hasWrappedEvent = true
-      // eslint-disable-next-line no-fallthrough
-      case 'FusesSet': {
-        const decodedFuses = decodeFuses(reference.fuses)
-        const burnedParentFuses = ParentFuseKeys.filter((key) => decodedFuses.parent[key])
-        const burnedChildFuses = ChildFuseKeys.filter((key) => decodedFuses.child[key])
-        const burnedFuses = [...burnedParentFuses, ...burnedChildFuses]
-        fuseSetBlocks.push(
-          ...(burnedFuses.map((key) => [key, reference.blockNumber]) as FuseSetBlocks),
-        )
-        blocksNeeded.add(BigInt(reference.blockNumber))
-        break
-      }
-      default:
-        break
-    }
-  }
-  if (!hasWrappedEvent) return { blocksNeeded: new Set<bigint>(), fuseSetBlocks: [] }
-  return { blocksNeeded, fuseSetBlocks }
-}
-
-const generateMatchedFuseBlockData = ({
+export const generateMatchedFuseBlockData = ({
   fuseSetBlocks,
   blockDatas,
 }: {
@@ -110,6 +116,7 @@ const generateMatchedFuseBlockData = ({
   let hasLoadingBlocks = false
   let hasFetchingBlocks = false
   let hasIncompleteData = false
+  let hasAllSuccessData = true
 
   for (const [fuseKey, blockNumber] of fuseSetBlocks) {
     const blockData = blockMap.get(blockNumber.toString())
@@ -121,6 +128,7 @@ const generateMatchedFuseBlockData = ({
     }
     if (blockData.isLoading) hasLoadingBlocks = true
     if (blockData.isFetching) hasFetchingBlocks = true
+    if (!blockData.isSuccess) hasAllSuccessData = false
     const { data: block } = blockData
     const dateString = new Date(Number(block!.timestamp) * 1000).toLocaleDateString(undefined, {
       month: 'short',
@@ -131,9 +139,10 @@ const generateMatchedFuseBlockData = ({
   }
 
   return {
-    data: hasIncompleteData ? {} : data,
+    data: hasIncompleteData ? undefined : data,
     hasLoadingBlocks,
     hasFetchingBlocks,
+    hasAllSuccessData,
   }
 }
 
@@ -149,6 +158,7 @@ export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParam
     data: nameHistory,
     isLoading: isNameHistoryLoading,
     isFetching: isNameHistoryFetching,
+    isSuccess: isNameHistorySuccess,
   } = useNameHistory({ name, enabled })
   const { blocksNeeded, fuseSetBlocks } = useMemo(
     () => generateFuseSetBlocks(nameHistory),
@@ -156,11 +166,11 @@ export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParam
   )
 
   const blockDatas = useQueries({
-    queries: generateQueryArray(publicClient, { address, blocksNeeded }),
+    queries: generateGetBlockQueryArray(publicClient, { address, blocksNeeded }),
     context: context as Context<QueryClient | undefined>,
   })
 
-  const { data, hasLoadingBlocks, hasFetchingBlocks } = useMemo(
+  const { data, hasLoadingBlocks, hasFetchingBlocks, hasAllSuccessData } = useMemo(
     () => generateMatchedFuseBlockData({ fuseSetBlocks, blockDatas }),
     [fuseSetBlocks, blockDatas],
   )
@@ -169,5 +179,6 @@ export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParam
     data,
     isLoading: isNameHistoryLoading || hasLoadingBlocks,
     isFetching: isNameHistoryFetching || hasFetchingBlocks,
+    isSuccess: isNameHistorySuccess && hasAllSuccessData,
   }
 }

@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from '@app/test-utils'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
+import { labelhash } from 'viem'
 
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'
 

@@ -120,6 +120,7 @@ importers:
       next: 13.4.19
       next-compose-plugins: ^2.2.1
       next-dev-https: ^0.1.2
+      next-router-mock: ^0.9.10
       next-transpile-modules: ^9.1.0
       node-fetch: 2.6.1
       node-fetch-commonjs: ^3.1.1
@@ -274,6 +275,7 @@ importers:
       multiformats: 12.0.1
       next-compose-plugins: 2.2.1
       next-dev-https: 0.1.2_q5l3x5627ujg3rak6l6v24c2cq_next@13.4.19+react@18.2.0
+      next-router-mock: 0.9.10_next@13.4.19+react@18.2.0
       next-transpile-modules: 9.1.0
       node-fetch: 2.6.1
       node-fetch-commonjs: 3.2.4
@@ -13351,6 +13353,16 @@ packages:
       selfsigned: 2.1.1
     dev: true
     patched: true
+
+  /next-router-mock/0.9.10_next@13.4.19+react@18.2.0:
+    resolution: {integrity: sha512-bK6sRb/xGNFgHVUZuvuApn6KJBAKTPiP36A7a9mO77U4xQO5ukJx9WHlU67Tv8AuySd09pk0+Hu8qMVIAmLO6A==}
+    peerDependencies:
+      next: '>=10.0.0'
+      react: '>=17.0.0'
+    dependencies:
+      next: 13.4.19_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+    dev: true
 
   /next-tick/1.1.0:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}

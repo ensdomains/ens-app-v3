@@ -1,14 +1,14 @@
 import { act, render, screen, waitFor } from '@app/test-utils'
 
 import { ReactNode, useContext, useEffect } from 'react'
-import { WagmiConfig, useQuery } from 'wagmi'
+import { useQuery, WagmiConfig } from 'wagmi'
 
-import { wagmiClientWithRefetch } from '@app/utils/query'
+import { wagmiConfigWithRefetch } from '@app/utils/query'
 
 import DynamicLoadingContext from './DynamicLoadingContext'
 import InputComponentWrapper from './InputComponentWrapper'
 
-const { queryClient } = wagmiClientWithRefetch
+const { queryClient } = wagmiConfigWithRefetch
 const cache = queryClient.getQueryCache()
 queryClient.setDefaultOptions({
   queries: {
@@ -26,7 +26,7 @@ const ComponentHelper = ({ children }: { children: ReactNode }) => {
   return (
     <div className="modal" data-testid="modal-card">
       <div>
-        <WagmiConfig client={wagmiClientWithRefetch}>
+        <WagmiConfig config={wagmiConfigWithRefetch}>
           <InputComponentWrapper>{children}</InputComponentWrapper>
         </WagmiConfig>
       </div>
@@ -179,7 +179,7 @@ describe('<InputComponentWrapper />', () => {
   it('should remove cacheable-component class from modal card on unmount', async () => {
     render(<div className="modal" data-testid="modal-card" />)
     const { unmount } = render(
-      <WagmiConfig client={wagmiClientWithRefetch}>
+      <WagmiConfig config={wagmiConfigWithRefetch}>
         <InputComponentWrapper>
           <div data-testid="test" />
         </InputComponentWrapper>

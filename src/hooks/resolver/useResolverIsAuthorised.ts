@@ -7,7 +7,7 @@ import { publicResolverSetAddrSnippet } from '@ensdomains/ensjs/contracts'
 import { useProfile } from '@app/hooks/useProfile'
 import { emptyAddress } from '@app/utils/constants'
 
-import { useBasicName } from '../useBasicName'
+import { useIsWrapped } from '../useIsWrapped'
 import { useResolverHasInterfaces } from '../useResolverHasInterfaces'
 
 type UseResolverIsAuthorisedParameters = {
@@ -30,11 +30,11 @@ export const useResolverIsAuthorised = ({
   })
   const resolverAddress = profile.data?.resolverAddress
 
-  const basicName = useBasicName({
-    name,
-    enabled,
-  })
-  const { isWrapped } = basicName
+  const {
+    data: isWrapped,
+    isLoading: isWrappedLoading,
+    isFetching: isWrappedFetching,
+  } = useIsWrapped({ name, enabled })
 
   const isDependentDataLoading = profile.isLoading || walletClient.isLoading
 
@@ -70,10 +70,13 @@ export const useResolverIsAuthorised = ({
   })
 
   const isLoading =
-    isDependentDataLoading || isResolverHasInterfacesLoading || isContractEstimateLoading
+    isDependentDataLoading ||
+    isResolverHasInterfacesLoading ||
+    isContractEstimateLoading ||
+    isWrappedLoading
 
   const data = useMemo(() => {
-    if (isLoading) return undefined
+    if (!enabled || isLoading) return undefined
     if (!resolverSupportsMultiAddress) return { isValid: false, isAuthorised: false }
     if (knownResolverData)
       return {
@@ -85,6 +88,7 @@ export const useResolverIsAuthorised = ({
       isAuthorised: !isContractEstimateError && contractEstimate?.request?.gas !== undefined,
     }
   }, [
+    enabled,
     isLoading,
     resolverSupportsMultiAddress,
     knownResolverData,
@@ -96,6 +100,10 @@ export const useResolverIsAuthorised = ({
   return {
     data,
     isLoading,
-    isFetching: profile.isFetching || isResolverHasInterfacesFetching || isContractEstimateFetching,
+    isFetching:
+      profile.isFetching ||
+      isResolverHasInterfacesFetching ||
+      isContractEstimateFetching ||
+      isWrappedFetching,
   }
 }

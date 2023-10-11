@@ -9,8 +9,7 @@ import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvide
 
 import { Notifications } from './Notifications'
 
-jest.mock('@app/hooks/useChainName')
-jest.mock('@app/hooks/useChainId')
+jest.mock('@app/hooks/chain/useChainName')
 jest.mock('@app/utils/SyncProvider/SyncProvider')
 jest.mock('@app/utils/BreakpointProvider')
 
@@ -28,7 +27,7 @@ const makeRecentTransaction =
       action: `test-action-${i}`,
       key: 'any',
       hash: `0x${i.toString(16).padStart(32, '0')}`,
-    } as Transaction)
+    }) as Transaction
 
 window.scroll = jest.fn()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

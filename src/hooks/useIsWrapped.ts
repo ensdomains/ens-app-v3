@@ -6,11 +6,10 @@ type UseIsWrappedParameters = {
 }
 
 export const useIsWrapped = ({ name, enabled = true }: UseIsWrappedParameters) => {
-  const { data: ownerData, isLoading, isCachedData } = useOwner({ name, enabled })
+  const { data: ownerData, ...query } = useOwner({ name, enabled })
 
   return {
     data: ownerData ? ownerData.ownershipLevel === 'nameWrapper' : undefined,
-    isLoading,
-    isCachedData,
+    ...query,
   }
 }
