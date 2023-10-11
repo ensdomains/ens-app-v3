@@ -98,44 +98,60 @@ export const useAbilities = (name: string) => {
   const hasSubnamesData = useHasSubnames(name)
 
   const isLoading =
-    basicNameData.isLoading || parentBasicNameData.isLoading || hasSubnamesData.isLoading
+    !address ||
+    basicNameData.isLoading ||
+    parentBasicNameData.isLoading ||
+    hasSubnamesData.isLoading ||
+    resolverAuthorisation.isLoading
 
   const isCachedData = basicNameData.isCachedData || hasSubnamesData.isCachedData
 
-  const data: Abilities | undefined = useMemo(() => {
-    if (!name || !address || isLoading) return DEFAULT_ABILITIES
-    return {
-      canExtend: !!name && checkETH2LDFromName(name),
-      ...getSendAbilities({ name, address, basicNameData, parentBasicNameData }),
-      ...getEditAbilities({
-        address,
-        basicNameData,
-        hasAuthorisedResolver: resolverAuthorisation.data?.isAuthorized,
-      }),
-      ...getDeleteAbilities({
-        name,
-        address,
-        basicNameData,
-        parentBasicNameData,
-        hasSubnames: hasSubnamesData.hasSubnames!,
-        t,
-      }),
-      ...getReclaimAbilities({
-        address,
-        basicNameData,
-        parentBasicNameData,
-      }),
-    }
-  }, [
-    name,
-    address,
-    basicNameData,
-    parentBasicNameData,
-    isLoading,
-    resolverAuthorisation.data?.isAuthorized,
-    hasSubnamesData.hasSubnames,
-    t,
-  ])
+  const data: Abilities | undefined = useMemo(
+    () => {
+      if (!name || !address || isLoading) return DEFAULT_ABILITIES
+      return {
+        canExtend: !!name && checkETH2LDFromName(name),
+        ...getSendAbilities({
+          name,
+          address,
+          basicNameData,
+          parentBasicNameData,
+        }),
+        ...getEditAbilities({
+          address,
+          basicNameData,
+          hasAuthorisedResolver: resolverAuthorisation.data?.isAuthorized,
+        }),
+        ...getDeleteAbilities({
+          name,
+          address,
+          basicNameData,
+          parentBasicNameData,
+          hasSubnames: hasSubnamesData.hasSubnames!,
+          t,
+        }),
+        ...getReclaimAbilities({
+          address,
+          basicNameData,
+          parentBasicNameData,
+        }),
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      name,
+      address,
+      basicNameData.ownerData,
+      basicNameData.wrapperData,
+      basicNameData.pccExpired,
+      parentBasicNameData.ownerData,
+      parentBasicNameData.wrapperData,
+      isLoading,
+      resolverAuthorisation.data?.isAuthorized,
+      hasSubnamesData.hasSubnames,
+      t,
+    ],
+  )
 
   return {
     data,

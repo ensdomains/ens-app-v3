@@ -1,6 +1,7 @@
 import { useAccount } from 'wagmi'
 
 import type { uniqueTransactionIdentifierGenerator } from '@app/components/@molecules/TransactionDialogManager/stage/TransactionStageModal'
+import { ResolverInterfaceName } from '@app/constants/resolverInterfaceIds'
 import { useChainId } from '@app/hooks/useChainId'
 import type { RegistrationProps } from '@app/hooks/useEstimateRegistration'
 import type { TransactionItem } from '@app/transaction-flow/transaction'
@@ -130,6 +131,14 @@ export const useQueryKeys = () => {
       interfaceNames,
       'resolverHasInterfaces',
     ],
+    resolverSupportsInterfaces: (resolverAddress: string, interfaces: ResolverInterfaceName[]) => [
+      ...globalKeys,
+      'resolverSupportsInterfaces',
+      'resolverAddress',
+      resolverAddress,
+      'interfaces',
+      interfaces.join('-'),
+    ],
     resolverIsAuthorized: (name: string, resolver: string) => [
       ...globalKeys,
       'resolverIsAuthorised',
@@ -162,6 +171,8 @@ export const useQueryKeys = () => {
       'wrapperApprovedForAll',
     ],
     isSafeApp: (connectorId: string | undefined) => [...globalKeys, connectorId, 'isSafeApp'],
+    simpleSearch: (query: string) => [...globalKeys, 'simpleSearch', query],
+    simpleSearchBase: () => [...globalKeys, 'simpleSearch'],
     globalIndependent: {
       isSupportedTLD: (tld: string) => [tld, 'isSupportedTLD'],
       zorb: (input: string, type: string, bg: string, fg: string, accent: string) => [

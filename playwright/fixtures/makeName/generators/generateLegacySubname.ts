@@ -1,4 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
+/* eslint-disable no-await-in-loop */
 import { Accounts, User } from 'playwright/fixtures/accounts'
 import { Contracts } from 'playwright/fixtures/contracts'
 
@@ -7,7 +9,7 @@ import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
-import { emptyAddress } from '@app/utils/constants'
+import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
 
 import { generateRecords } from './generateRecords'
 
@@ -20,16 +22,26 @@ export type LegacySubname = {
   records?: RecordOptions
   duration?: number
   type?: 'wrapped' | 'legacy'
+  subnames?: Omit<LegacySubname, 'name' | 'nameOwner'>[]
 }
 
 type Dependencies = {
   accounts: Accounts
   contracts: Contracts
 }
-
+const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
 export const generateLegacySubname =
   ({ accounts, contracts }: Dependencies) =>
-  async ({ name, nameOwner, label, owner = nameOwner, resolver, records, type }: LegacySubname) => {
+  async ({
+    name,
+    nameOwner,
+    label,
+    owner = nameOwner,
+    resolver,
+    records,
+    type,
+    subnames,
+  }: LegacySubname) => {
     const subname = `${label}.${name}`
     console.log('generating legacy subname:', subname)
 
@@ -76,5 +88,16 @@ export const generateLegacySubname =
         accounts.getAddress(owner),
         _resolver,
       )
+    }
+
+    // Create subnames
+    const _subnames = (subnames || []).map((_subname) => ({
+      ..._subname,
+      name: `${label}.${name}`,
+      nameOwner: owner,
+      resolver: _subname.resolver ?? DEFAULT_RESOLVER,
+    }))
+    for (const eachSubname of _subnames) {
+      await generateLegacySubname({ accounts, contracts })(eachSubname)
     }
   }

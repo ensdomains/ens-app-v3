@@ -1,4 +1,4 @@
-import { ComponentProps } from 'react'
+import { ComponentProps, forwardRef } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Toggle, Typography } from '@ensdomains/thorin'
@@ -30,14 +30,16 @@ type Props = {
   description?: string
 } & ToggleProps
 
-export const DetailedSwitch = ({ title, description, ...toggleProps }: Props) => {
-  return (
-    <Container data-testid="detailed-switch">
-      <ContentContainer>
-        {title && <Typography fontVariant="bodyBold">{title}</Typography>}{' '}
-        {description && <Typography fontVariant="small">{description}</Typography>}
-      </ContentContainer>
-      <Toggle {...toggleProps} size="large" />
-    </Container>
-  )
-}
+export const DetailedSwitch = forwardRef<HTMLInputElement, Props>(
+  ({ title, description, ...toggleProps }, ref) => {
+    return (
+      <Container data-testid="detailed-switch">
+        <ContentContainer>
+          {title && <Typography fontVariant="bodyBold">{title}</Typography>}{' '}
+          {description && <Typography fontVariant="small">{description}</Typography>}
+        </ContentContainer>
+        <Toggle ref={ref} {...toggleProps} size="large" />
+      </Container>
+    )
+  },
+)
