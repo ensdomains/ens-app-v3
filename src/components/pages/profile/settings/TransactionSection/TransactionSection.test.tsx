@@ -9,7 +9,7 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 
 import { TransactionSection } from './TransactionSection'
 
-jest.mock('@app/hooks/useChainName')
+jest.mock('@app/hooks/chain/useChainName')
 jest.mock('@app/hooks/transactions/useClearRecentTransactions')
 jest.mock('@app/hooks/transactions/useRecentTransactions')
 
@@ -26,7 +26,7 @@ const makeRecentTransaction =
       status,
       action: `test-action-${i}`,
       hash: `0x${i.toString(16).padStart(32, '0')}`,
-    } as Transaction)
+    }) as Transaction
 
 describe('TransactionSection', () => {
   mockUseChainName.mockReturnValue('mainnet')
@@ -37,7 +37,7 @@ describe('TransactionSection', () => {
       ({
         width: 300,
         height: 300,
-      } as any)
+      }) as any
   })
 
   it('should render', () => {

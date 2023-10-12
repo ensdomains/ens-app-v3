@@ -2,7 +2,7 @@ import { render, screen } from '@app/test-utils'
 
 import { ExpiryClock, ShortExpiry } from './ExpiryComponents'
 
-jest.mock('@app/hooks/useBlockTimestamp', () => ({
+jest.mock('@app/hooks/chain/useBlockTimestamp', () => ({
   useBlockTimestamp: () => ({ data: new Date().getTime() }),
 }))
 

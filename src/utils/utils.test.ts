@@ -130,7 +130,7 @@ describe('checkETH2LDFromName', () => {
   it('should return true when name is a .eth name', () => {
     const name = 'test.eth'
     const result = checkETH2LDFromName(name)
-    expect(result).toEqual(false)
+    expect(result).toEqual(true)
   })
   it('should return false when name is DNS name', () => {
     const name = 'test.com'

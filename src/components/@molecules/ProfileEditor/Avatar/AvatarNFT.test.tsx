@@ -7,7 +7,7 @@ import * as ThorinComponents from '@ensdomains/thorin'
 
 import { AvatarNFT } from './AvatarNFT'
 
-jest.mock('@app/hooks/useChainName', () => ({
+jest.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: () => 'mainnet',
 }))
 

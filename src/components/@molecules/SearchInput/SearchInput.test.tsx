@@ -7,6 +7,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { SearchInput } from './SearchInput'
 
+jest.mock('next/router', () => jest.requireActual('next-router-mock'))
 jest.mock('@app/utils/BreakpointProvider')
 jest.mock('@app/hooks/useLocalStorage')
 

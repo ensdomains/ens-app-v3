@@ -8,7 +8,6 @@ import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import ProfileEditor from './ProfileEditor-flow'
 
@@ -96,7 +95,6 @@ jest.mock('@app/hooks/useProfile')
 jest.mock('@app/hooks/useIsWrapped')
 
 jest.mock('@app/utils/BreakpointProvider')
-jest.mock('@app/utils/cacheKeyFactory')
 
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 
@@ -109,7 +107,6 @@ const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseResolverStatus = mockFunction(useResolverStatus)
 const mockUseProfile = mockFunction(useProfile)
 const mockUseIsWrapped = mockFunction(useIsWrapped)
-const mockUseQueryKeys = mockFunction(useQueryKeys)
 const mockUseEnsAvatar = mockFunction(useEnsAvatar)
 
 const mockDispatch = jest.fn()

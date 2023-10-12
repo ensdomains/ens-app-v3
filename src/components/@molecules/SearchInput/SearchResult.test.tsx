@@ -2,16 +2,16 @@ import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 
 import { ComponentProps } from 'react'
 
-import { usePrimary } from '@app/hooks/ensjs/public/usePrimaryName'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
 
 import { SearchResult } from './SearchResult'
 
 jest.mock('@app/hooks/useBasicName')
-jest.mock('@app/hooks/usePrimary')
+jest.mock('@app/hooks/ensjs/public/usePrimaryName')
 
 const mockUseBasicName = mockFunction(useBasicName)
-const mockUsePrimary = mockFunction(usePrimary)
+const mockUsePrimaryName = mockFunction(usePrimaryName)
 
 describe('SearchResult', () => {
   mockUseBasicName.mockReturnValue({ registrationStatus: 'available', beautifiedName: 'nick.eth' })
@@ -37,7 +37,7 @@ describe('SearchResult', () => {
     expect(screen.queryByText('search.status.available')).not.toBeInTheDocument()
   })
   it('should correctly display an address without a primary name', () => {
-    mockUsePrimary.mockReturnValue({
+    mockUsePrimaryName.mockReturnValue({
       data: {
         name: undefined,
         beautifiedName: undefined,
@@ -54,7 +54,7 @@ describe('SearchResult', () => {
     expect(screen.getByText('0xb6E040...d28cd9')).toBeVisible()
   })
   it('should correctly display an address with a primary name', () => {
-    mockUsePrimary.mockReturnValue({
+    mockUsePrimaryName.mockReturnValue({
       data: {
         name: 'test.eth',
         beautifiedName: 'test.eth',
@@ -84,7 +84,7 @@ describe('SearchResult', () => {
     expect(baseMockData.clickCallback).toHaveBeenCalledWith(0)
   })
   it('should show address as clickable', () => {
-    mockUsePrimary.mockReturnValue({
+    mockUsePrimaryName.mockReturnValue({
       data: {
         name: undefined,
         beautifiedName: undefined,

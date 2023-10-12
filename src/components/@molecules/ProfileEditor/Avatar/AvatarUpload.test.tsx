@@ -6,7 +6,7 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 
 import { AvatarUpload } from './AvatarUpload'
 
-jest.mock('@app/hooks/useChainName')
+jest.mock('@app/hooks/chain/useChainName')
 
 const mockUseChainName = mockFunction(useChainName)
 
