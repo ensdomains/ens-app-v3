@@ -69,7 +69,6 @@ export const useResolverType = ({ name, enabled: enabled_ = true }: UseResolverT
       return { type: 'outdated', isWildcard, tone: 'redSecondary' } as const
     if (knownResolverData.tag === 'latest')
       return { type: 'latest', isWildcard, tone: 'greenSecondary' } as const
-    return null
   }, [resolverAddress, isWrapped, enabled, chainId, isLoading, isWildcard])
 
   return { data, isLoading, isFetching, isError }

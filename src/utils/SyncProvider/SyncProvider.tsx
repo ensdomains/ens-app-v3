@@ -68,7 +68,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: currentGraphBlock } = useQuery<number>(
     ['graphBlock', chainId, transactions],
     () =>
-      subgraphClient.request(query).then((res: GraphResponse | null) => {
+      subgraphClient.request<GraphResponse>(query).then((res) => {
         if (res!._meta.hasIndexingErrors || debugSubgraphIndexingErrors())
           throw new Error('indexing_errors')
         return res!._meta.block.number

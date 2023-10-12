@@ -198,7 +198,7 @@ describe('useResolverType', () => {
     const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
     expect(result.current).toMatchObject(
       expect.objectContaining({
-        data: null,
+        data: undefined,
         isLoading: false,
       }),
     )

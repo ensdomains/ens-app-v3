@@ -32,6 +32,12 @@ const gqlQuery = `
   }
 `
 
+type GraphResponse = {
+  resolver?: {
+    id: string
+  }
+}
+
 export const getResolverExistsQueryFn = async <TParams extends UseResolverExistsParameters>({
   queryKey: [{ name, address }, chainId],
 }: QueryFunctionContext<QueryKey<TParams>>) => {
@@ -42,7 +48,7 @@ export const getResolverExistsQueryFn = async <TParams extends UseResolverExists
   const subgraphClient = createSubgraphClient({ client: publicClient })
 
   try {
-    const { resolver } = await subgraphClient.request(gqlQuery, {
+    const { resolver } = await subgraphClient.request<GraphResponse>(gqlQuery, {
       id: `${address}-${namehash(name)}`,
     })
     return !!resolver

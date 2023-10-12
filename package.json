@@ -52,7 +52,7 @@
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/dnsprovejs": "0.4.1",
     "@ensdomains/ens-contracts": "0.0.22",
-    "@ensdomains/ensjs": "3.0.0-beta.8",
+    "@ensdomains/ensjs": "3.0.0-beta.9",
     "@ensdomains/thorin": "0.6.42",
     "@metamask/inpage-provider": "^8.1.0",
     "@metamask/mobile-provider": "^2.1.0",
@@ -95,8 +95,8 @@
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
     "use-sync-external-store": "^1.2.0",
-    "viem": "^1.6.0",
-    "wagmi": "1.3.10"
+    "viem": "^1.16.4",
+    "wagmi": "1.4.3"
   },
   "peerDependencies": {
     "react": "*",
