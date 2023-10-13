@@ -109,6 +109,7 @@ importers:
       immer: ^9.0.15
       intl-segmenter-polyfill: ^0.4.4
       iso-639-1: ^2.1.15
+      isows: ^1.0.3
       jest: ^29.5.0
       jest-canvas-mock: ^2.4.0
       jest-environment-jsdom: ^29.5.0
@@ -267,6 +268,7 @@ importers:
       hardhat-deploy: 0.11.16
       headless-web3-provider: 0.1.14
       husky: 7.0.4
+      isows: 1.0.3
       jest: 29.6.2_texb6yekbdrurkf2spvwkwkdam
       jest-canvas-mock: 2.4.0
       jest-environment-jsdom: 29.6.2_canvas@2.10.1
@@ -11533,6 +11535,12 @@ packages:
       ws: '*'
     dependencies:
       ws: 7.5.9
+
+  /isows/1.0.3:
+    resolution: {integrity: sha512-2cKei4vlmg2cxEjm3wVSqn8pcoRF/LX/wpifuuNquFO4SQmPwarClT+SUCA2lt+l581tTeZIPIZuIDo2jWN1fg==}
+    peerDependencies:
+      ws: '*'
+    dev: true
 
   /isows/1.0.3_ws@8.13.0:
     resolution: {integrity: sha512-2cKei4vlmg2cxEjm3wVSqn8pcoRF/LX/wpifuuNquFO4SQmPwarClT+SUCA2lt+l581tTeZIPIZuIDo2jWN1fg==}

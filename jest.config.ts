@@ -33,6 +33,7 @@ const customJestConfig: Config = {
     '^@wagmi/core(.*)$': '@wagmi/core-cjs$1',
     '^multiformats$': '<rootDir>/node_modules/multiformats/dist/index.min.js',
     '^multiformats/(.*)$': '<rootDir>/node_modules/multiformats/src/$1',
+    '^isows$': '<rootDir>/node_modules/isows/_cjs/index.js',
     '^uint8arrays$':
       '<rootDir>/node_modules/.pnpm/uint8arrays@3.1.1/node_modules/uint8arrays/cjs/src/index.js',
   },

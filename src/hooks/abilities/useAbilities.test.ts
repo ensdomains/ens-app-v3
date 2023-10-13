@@ -1,25 +1,20 @@
-import { renderHook } from '@app/test-utils'
+import { mockFunction, renderHook } from '@app/test-utils'
 
+import { useAccountSafely } from '../account/useAccountSafely'
+import { useResolverIsAuthorised } from '../resolver/useResolverIsAuthorised'
+import { useBasicName } from '../useBasicName'
+import { useHasSubnames } from '../useHasSubnames'
 import { useAbilities } from './useAbilities'
 
-jest.mock('@app/hooks/useAccountSafely', () => ({
-  useAccountSafely: () => ({ address: '0x123' }),
-}))
+jest.mock('@app/hooks/account/useAccountSafely')
+jest.mock('@app/hooks/useBasicName')
+jest.mock('@app/hooks/resolver/useResolverIsAuthorised')
+jest.mock('@app/hooks/useHasSubnames')
 
-const mockUseBasicName = jest.fn()
-jest.mock('@app/hooks/useBasicName', () => ({
-  useBasicName: () => mockUseBasicName(),
-}))
-
-const mockUseResolverIsAuthorized = jest.fn()
-jest.mock('@app/hooks/resolver/useResolverIsAuthorized', () => ({
-  useResolverIsAuthorized: () => mockUseResolverIsAuthorized(),
-}))
-
-const mockUseHasSubnames = jest.fn()
-jest.mock('@app/hooks/useHasSubnames', () => ({
-  useHasSubnames: () => mockUseHasSubnames(),
-}))
+const mockUseAccountSafely = mockFunction(useAccountSafely)
+const mockUseBasicName = mockFunction(useBasicName)
+const mockUseResolverIsAuthorised = mockFunction(useResolverIsAuthorised)
+const mockUseHasSubnames = mockFunction(useHasSubnames)
 
 describe('useAbilities', () => {
   describe('basic abilities', () => {
@@ -28,44 +23,50 @@ describe('useAbilities', () => {
     const account = ownerAddress
 
     it('should return false for all send abilities if CANNOT_TRANSFER has been burned', () => {
+      mockUseAccountSafely.mockReturnValue({ address: account })
       mockUseBasicName.mockReturnValue({
         ownerData: {
           ownershipLevel: 'nameWrapper',
           owner: account,
         },
         wrapperData: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {
-            CANNOT_TRANSFER: true,
+          fuses: {
+            parent: {
+              PARENT_CANNOT_CONTROL: true,
+            },
+            child: {
+              CANNOT_TRANSFER: true,
+            },
           },
         },
       })
-      mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: true, isValid: true } })
+      mockUseResolverIsAuthorised.mockReturnValue({ data: { isAuthorised: true, isValid: true } })
       mockUseHasSubnames.mockReturnValue({ hasSubnames: false, isLoading: false })
-      const { result } = renderHook(() => useAbilities(name))
+      const { result } = renderHook(() => useAbilities({ name }))
       expect(result.current.data?.canSend).toBe(false)
     })
     it('should return canEditRecords as true if resolver is authorised', () => {
+      mockUseAccountSafely.mockReturnValue({ address: account })
       mockUseBasicName.mockReturnValue({
         ownerData: {
           ownershipLevel: 'nameWrapper',
           owner: account,
         },
         wrapperData: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {
-            CANNOT_SET_RESOLVER: true,
+          fuses: {
+            parent: {
+              PARENT_CANNOT_CONTROL: true,
+            },
+            child: {
+              CANNOT_SET_RESOLVER: true,
+            },
           },
         },
       })
-      mockUseResolverIsAuthorized.mockReturnValue({ data: { isAuthorized: true, isValid: true } })
+      mockUseResolverIsAuthorised.mockReturnValue({ data: { isAuthorised: true, isValid: true } })
       mockUseHasSubnames.mockReturnValue({ hasSubnames: false, isLoading: false })
 
-      const { result } = renderHook(() => useAbilities(name))
+      const { result } = renderHook(() => useAbilities({ name }))
 
       expect(result.current.data?.canEditRecords).toBe(true)
     })

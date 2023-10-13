@@ -159,6 +159,7 @@
     "hardhat-deploy": "^0.11.12",
     "headless-web3-provider": "0.1.14",
     "husky": "^7.0.4",
+    "isows": "^1.0.3",
     "jest": "^29.5.0",
     "jest-canvas-mock": "^2.4.0",
     "jest-environment-jsdom": "^29.5.0",

@@ -1,8 +1,10 @@
-import { getPublicClient } from '@wagmi/core'
+import { getPublicClient, type PublicClient } from '@wagmi/core'
 import type {
   CallParameters,
-  GetTransactionReceiptParameters,
+  EIP1193Parameters,
+  EIP1193RequestFn,
   Hash,
+  PublicRpcSchema,
   WaitForTransactionReceiptParameters,
   WaitForTransactionReceiptReturnType,
 } from 'viem'
@@ -32,6 +34,33 @@ export type WaitForTransactionArgs = {
 
 export type WaitForTransactionResult = WaitForTransactionReceiptReturnType
 
+type RequestParameters = EIP1193Parameters<PublicRpcSchema>
+type RequestReturnType = Extract<
+  PublicRpcSchema[number],
+  { Method: RequestParameters['method'] }
+>['ReturnType']
+export async function requestWithSafeOverride(
+  client: PublicClient,
+  args: RequestParameters,
+): Promise<RequestReturnType> {
+  if (args.method === 'eth_getTransactionReceipt') {
+    const {
+      params: [hash],
+    } = args
+    const realTxData = await fetchTxFromSafeTxHash({
+      chainId: client.chain!.id,
+      safeTxHash: hash,
+    })
+    if (!realTxData) return null
+    return client.request({
+      method: 'eth_getTransactionReceipt',
+      params: [realTxData.transactionHash],
+    })
+  }
+
+  return client.request(args)
+}
+
 export async function waitForTransaction({
   chainId,
   confirmations = 1,
@@ -41,19 +70,13 @@ export async function waitForTransaction({
   isSafeTx,
 }: WaitForTransactionArgs): Promise<WaitForTransactionResult> {
   let publicClient = getPublicClient({ chainId })
-  const clientChainId = publicClient.chain.id
 
   if (isSafeTx) {
-    publicClient = publicClient.extend((client) => ({
-      getTransactionReceipt: async (args: GetTransactionReceiptParameters) => {
-        const realTxData = await fetchTxFromSafeTxHash({
-          chainId: clientChainId,
-          safeTxHash: args.hash,
-        })
-        if (!realTxData) return null
-        return client.getTransactionReceipt({ hash: realTxData.transactionHash })
-      },
-    }))
+    publicClient = {
+      ...publicClient,
+      request: ((args: RequestParameters) =>
+        requestWithSafeOverride(publicClient, args)) as EIP1193RequestFn<PublicRpcSchema>,
+    }
   }
 
   const receipt = await publicClient.waitForTransactionReceipt({

@@ -1,4 +1,4 @@
-import { SendTransactionResult } from '@wagmi/core'
+import { PrepareSendTransactionResult, SendTransactionResult } from '@wagmi/core'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -8,6 +8,7 @@ import {
   BlockTag,
   Hash,
   Hex,
+  toHex,
   Transaction,
   TransactionRequest,
   WalletClient,
@@ -347,15 +348,17 @@ export const calculateGasLimit = async ({
   if (isSafeApp) {
     const accessListResponse = await publicClient.request<{
       Method: 'eth_createAccessList'
-      Parameters: [tx: TransactionRequest, blockTag: BlockTag]
+      Parameters: [tx: TransactionRequest<Hex>, blockTag: BlockTag]
       ReturnType: AccessListResponse
     }>({
       method: 'eth_createAccessList',
       params: [
         {
-          ...txWithZeroGas,
-          value: txWithZeroGas.value ? txWithZeroGas.value + 1000000n : 0n,
-        } as TransactionRequest,
+          to: txWithZeroGas.to,
+          data: txWithZeroGas.data,
+          from: walletClient.account!.address,
+          value: toHex(txWithZeroGas.value ? txWithZeroGas.value + 1000000n : 0n),
+        },
         'latest',
       ],
     })
@@ -371,7 +374,7 @@ export const calculateGasLimit = async ({
     account: walletClient.account!,
   })
   return {
-    gasLimit: registrationGasFeeModifier(BigInt(gasEstimate), transactionName),
+    gasLimit: registrationGasFeeModifier(gasEstimate, transactionName),
     accessList: undefined,
   }
 }
@@ -444,7 +447,13 @@ export const TransactionStageModal = ({
     error: requestError,
   } = useQuery(
     queryKey,
-    async ({ queryKey: [params] }) => {
+    async ({
+      queryKey: [params],
+    }): Promise<
+      Omit<PrepareSendTransactionResult, 'data'> & {
+        data: NonNullable<PrepareSendTransactionResult['data']>
+      }
+    > => {
       const transactionRequest = await createTransactionRequest({
         name: params.name,
         data: params.data,
@@ -454,8 +463,8 @@ export const TransactionStageModal = ({
 
       const txWithZeroGas = {
         ...transactionRequest,
-        maxFeePerGas: '0x0',
-        maxPriorityFeePerGas: '0x0',
+        maxFeePerGas: 0n,
+        maxPriorityFeePerGas: 0n,
       }
 
       const { gasLimit, accessList } = await calculateGasLimit({
@@ -468,8 +477,9 @@ export const TransactionStageModal = ({
 
       return {
         ...transactionRequest,
-        gasLimit,
+        gas: gasLimit,
         accessList,
+        mode: 'prepared',
       }
     },
     {
@@ -487,7 +497,6 @@ export const TransactionStageModal = ({
     error: transactionError,
     sendTransaction,
   } = useSendTransaction({
-    mode: 'prepared',
     ...request,
     onSuccess: transactionSuccessHandler({
       publicClient,
@@ -643,7 +652,11 @@ export const TransactionStageModal = ({
   const lowerError = useMemo(() => {
     if (stage === 'complete' || stage === 'sent') return null
     const err = transactionError || requestError
-    if (!(err instanceof BaseError)) return t('transaction.error.unknown')
+    if (!err) return null
+    if (!(err instanceof BaseError)) {
+      if ('message' in err) return err.message
+      return t('transaction.error.unknown')
+    }
     const readableError = getReadableError(err)
     return readableError || err.shortMessage
   }, [t, stage, transactionError, requestError])
