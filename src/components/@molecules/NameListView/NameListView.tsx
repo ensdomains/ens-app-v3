@@ -180,6 +180,7 @@ export const NameListView = ({ address, isSelf, setError, setLoading }: NameList
       </InfiniteScrollContainer>
     )
   } else {
+    console.log('')
     InnerContent = `${names.length}`
   }
 

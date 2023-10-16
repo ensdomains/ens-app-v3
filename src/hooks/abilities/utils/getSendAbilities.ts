@@ -1,4 +1,5 @@
 import { match, P } from 'ts-pattern'
+import type { Address } from 'viem'
 
 import { checkETH2LDFromName, checkSubname } from '@app/utils/utils'
 
@@ -146,13 +147,23 @@ const CONTRACT_INFO = {
           ownerData: {
             ownershipLevel: P.not('nameWrapper'),
             owner: P.select('parentOwner'),
-            registrant: P.select('parentRegistrant', P.not(P.nullish)),
+            registrant: P.optional(P.select('parentRegistrant')),
           },
         },
       ],
       guard:
         (address?: string) =>
-        ([subname, parent]: [BasicName, BasicName]) => {
+        <
+          TParent extends {
+            ownerData:
+              | {
+                  ownershipLevel: string
+                  owner: Address | null
+                  registrant?: Address | null | undefined
+                }
+              | undefined
+          },
+        >([subname, parent]: [BasicName, TParent]) => {
           const subnameOwner = subname.ownerData?.owner
           const parentOwner = parent.ownerData?.owner
           const parentRegistrant = parent.ownerData?.registrant

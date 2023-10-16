@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook } from '@app/test-utils'
 
 import { useLocalStorage } from './useLocalStorage'
 

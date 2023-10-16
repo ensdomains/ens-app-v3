@@ -88,21 +88,22 @@ describe('reducer', () => {
     const action: TransactionFlowAction = {
       name: 'setTransactionStageFromUpdate',
       payload: {
-        hash: 'hash',
+        hash: 'hash' as any,
         key: 'key',
         action: 'action',
         status: 'repriced',
         minedData: {
           timestamp: 1000,
         } as any,
-        newHash: 'newHash',
+        newHash: 'newHash' as any,
+        searchRetries: 0,
       },
     }
     const draft: InternalTransactionFlow = {
       selectedKey: '',
       items: {
         key: {
-          transactions: [{ name: 'testSendName', hash: 'hash', stage: 'sent', data: {} }],
+          transactions: [{ name: 'testSendName', hash: 'hash' as any, stage: 'sent', data: {} }],
           currentTransaction: 0,
           currentFlowStage: 'transaction',
         },

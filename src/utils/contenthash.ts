@@ -66,3 +66,17 @@ export const contentHashToString = (
     return `${decodedContentHash.protocolType}://${decodedContentHash.decoded}`
   return ''
 }
+
+const contentHashProtocolToProviderMap = {
+  ipfs: 'ipfs',
+  ipns: 'ipfs',
+  bzz: 'swarm',
+  onion: 'onion',
+  onion3: 'onion',
+  sia: 'skynet',
+  arweave: 'arweave',
+  ar: 'arweave',
+} as const
+
+export const getContentHashProvider = (protocol: ContentHashProtocol): ContentHashProvider =>
+  contentHashProtocolToProviderMap[protocol]

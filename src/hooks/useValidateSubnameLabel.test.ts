@@ -315,7 +315,7 @@ const groups = [
       },
     ],
   },
-]
+] as const
 
 afterEach(() => {
   jest.clearAllMocks()
@@ -333,7 +333,7 @@ describe('useValidateSubnameLabel', () => {
       group.tests.forEach((test) => {
         it(test.description, async () => {
           mockUseOwner.mockReturnValue({
-            data: test.ownerData,
+            data: test.ownerData as any,
             isLoading: false,
           })
           mockUseWrapperData.mockReturnValue({

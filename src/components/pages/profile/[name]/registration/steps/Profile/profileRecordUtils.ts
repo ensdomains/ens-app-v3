@@ -1,13 +1,13 @@
 import { stringToHex } from 'viem'
 
-import { getInternalCodec, getProtocolType, RecordOptions } from '@ensdomains/ensjs/utils'
+import { getProtocolType, RecordOptions } from '@ensdomains/ensjs/utils'
 
 import { ProfileRecord, ProfileRecordGroup, sortValues } from '@app/constants/profileRecordOptions'
 import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import { Profile } from '@app/types'
-import { contentHashToString } from '@app/utils/contenthash'
+import { contentHashToString, getContentHashProvider } from '@app/utils/contenthash'
 
 export const profileRecordsToRecordOptions = (
   profileRecords: ProfileRecord[] = [],
@@ -52,7 +52,7 @@ export const profileRecordsToRecordOptions = (
           ...options,
           coins: [
             ...(options.coins?.filter((r) => r.coin !== recordItem.key) || []),
-            { coin: key, value },
+            { coin: recordItem.key, value: recordItem.value },
           ],
         }
       }
@@ -171,7 +171,7 @@ export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
 
   const contentHashStr = contentHashToString(records.contentHash)
   const protocolTypeData = getProtocolType(contentHashStr)!
-  const protocolKey = protocolTypeData && getInternalCodec(protocolTypeData.protocolType)
+  const protocolKey = protocolTypeData && getContentHashProvider(protocolTypeData.protocolType)
   const website: ProfileRecord[] = protocolKey
     ? [{ key: protocolKey, type: 'contenthash', group: 'website', value: contentHashStr }]
     : []

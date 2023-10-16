@@ -6,13 +6,18 @@ import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { SearchInput } from './SearchInput'
+import { SearchResult } from './SearchResult'
 
 jest.mock('next/router', () => jest.requireActual('next-router-mock'))
 jest.mock('@app/utils/BreakpointProvider')
 jest.mock('@app/hooks/useLocalStorage')
+jest.mock('./SearchResult')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseLocalStorage = mockFunction(useLocalStorage)
+const mockSearchResult = mockFunction(SearchResult)
+
+mockSearchResult.mockImplementation(({ value }) => <div>{value}</div>)
 
 window.scroll = jest.fn()
 
@@ -114,7 +119,7 @@ describe('SearchInput', () => {
     })
 
     expect(screen.getByText('nick.eth')).toBeInTheDocument()
-    expect(screen.getByText('0xb6E040...d28cd9')).toBeInTheDocument()
+    expect(screen.getByText('0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9')).toBeInTheDocument()
     expect(screen.getByText('test.eth')).toBeInTheDocument()
   })
   it('should show history items in correct order', async () => {
@@ -152,7 +157,7 @@ describe('SearchInput', () => {
       timeout: 500,
     })
 
-    expect(container.children[0]).toHaveTextContent('0xb6E040...d28cd9')
+    expect(container.children[0]).toHaveTextContent('0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9')
     expect(container.children[1]).toHaveTextContent('test.eth')
     expect(container.children[2]).toHaveTextContent('nick.eth')
   })

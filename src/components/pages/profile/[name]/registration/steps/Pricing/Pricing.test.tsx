@@ -1,10 +1,10 @@
 import { render, screen } from '@app/test-utils'
 
 import { PaymentMethod } from '../../types'
-import { ActionButton } from './Pricing'
+import { ActionButton, ActionButtonProps } from './Pricing'
 
 describe('ActionButton', () => {
-  const baseMockData = {
+  const baseMockData: ActionButtonProps = {
     address: '0x123',
     hasPendingMoonpayTransaction: false,
     hasFailedMoonpayTransaction: false,
@@ -13,15 +13,11 @@ describe('ActionButton', () => {
     callback: () => null,
     initiateMoonpayRegistrationMutation: {
       mutate: () => null,
-    },
+    } as any,
     years: 1,
-    balance: {
-      value: {
-        lt: () => false,
-      },
-    },
-    totalRequiredBalance: 1,
-  } as any
+    balance: { value: 100n } as any,
+    totalRequiredBalance: 1n,
+  }
 
   it('should have disabled "Next" button if no choice has been made', () => {
     render(<ActionButton {...baseMockData} />)
@@ -33,7 +29,7 @@ describe('ActionButton', () => {
         {...{
           ...baseMockData,
           paymentMethodChoice: PaymentMethod.ethereum,
-          balance: { value: { lt: () => true } },
+          balance: { value: 0n } as any,
         }}
       />,
     )
@@ -45,7 +41,7 @@ describe('ActionButton', () => {
         {...{
           ...baseMockData,
           paymentMethodChoice: PaymentMethod.moonpay,
-          balance: { value: { lt: () => true } },
+          balance: { value: 0n } as any,
         }}
       />,
     )

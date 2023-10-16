@@ -363,7 +363,7 @@ const PaymentChoice = ({
   )
 }
 
-type ActionButtonProps = {
+export type ActionButtonProps = {
   address?: Address
   hasPendingMoonpayTransaction: boolean
   hasFailedMoonpayTransaction: boolean
@@ -424,7 +424,7 @@ export const ActionButton = ({
       </Button>
     )
   }
-  if (!balance?.value || !totalRequiredBalance) {
+  if (typeof balance?.value !== 'bigint' || !totalRequiredBalance) {
     return (
       <Button data-testid="next-button" disabled>
         {t('loading', { ns: 'common' })}
@@ -432,7 +432,7 @@ export const ActionButton = ({
     )
   }
   if (
-    balance?.value &&
+    typeof balance?.value === 'bigint' &&
     balance.value < totalRequiredBalance &&
     paymentMethodChoice === PaymentMethod.ethereum
   ) {
@@ -453,7 +453,7 @@ export const ActionButton = ({
   )
 }
 
-type Props = {
+export type PricingProps = {
   name: string
   gracePeriodEndDate: Date | undefined
   beautifiedName: string
@@ -480,7 +480,7 @@ const Pricing = ({
   resolverExists,
   moonpayTransactionStatus,
   initiateMoonpayRegistrationMutation,
-}: Props) => {
+}: PricingProps) => {
   const { t } = useTranslation('register')
 
   const { address } = useAccountSafely()

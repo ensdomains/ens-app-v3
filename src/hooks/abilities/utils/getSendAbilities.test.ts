@@ -33,14 +33,16 @@ const partialUserStates = {
   unwrappedNameOwner: {
     basicNameData: {
       ownerData: {
-        ownershipLevel: 'registry',
+        ownershipLevel: 'registrar',
         owner: '0xnotOwner',
         registrant: ownerAddress,
       },
       wrapperData: {
         ownershipLevel: 'registry',
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
     parentBasicNameData: {
@@ -48,21 +50,25 @@ const partialUserStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
   unwrappedNameManager: {
     basicNameData: {
       ownerData: {
-        ownershipLevel: 'registry',
+        ownershipLevel: 'registrar',
         owner: ownerAddress,
-        registrant: '0xnotOwner',
+        registrant: '0xother',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
     parentBasicNameData: {
@@ -70,8 +76,10 @@ const partialUserStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -82,8 +90,10 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
     parentBasicNameData: {
@@ -92,8 +102,10 @@ const partialUserStates = {
         owner: '0x000',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -104,8 +116,10 @@ const partialUserStates = {
         owner: '0x000',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
     parentBasicNameData: {
@@ -114,10 +128,12 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {},
         },
-        child: {},
       },
     },
   },
@@ -127,19 +143,22 @@ const partialUserStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
         owner: '0xother',
-        registrant: ownerAddress,
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -150,8 +169,10 @@ const partialUserStates = {
         owner: '0x000',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
     parentBasicNameData: {
@@ -160,8 +181,10 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -172,11 +195,13 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -186,8 +211,10 @@ const partialUserStates = {
         owner: '0x000',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -197,11 +224,13 @@ const partialUserStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -211,8 +240,10 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -222,23 +253,26 @@ const partialUserStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          child: {
+            CANNOT_TRANSFER: false,
+          },
+          parent: {},
         },
-        parent: {},
       },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
         owner: ownerAddress,
-        registrant: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {},
         },
-        child: {},
       },
     },
   },
@@ -249,11 +283,13 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -262,8 +298,10 @@ const partialUserStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -274,11 +312,13 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        child: {
-          CANNOT_TRANSFER: true,
-        },
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
+        fuses: {
+          child: {
+            CANNOT_TRANSFER: true,
+          },
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
         },
       },
     },
@@ -287,8 +327,10 @@ const partialUserStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -299,11 +341,13 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -312,8 +356,10 @@ const partialUserStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -324,11 +370,13 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -338,10 +386,12 @@ const partialUserStates = {
         owner: '0x000',
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {},
         },
-        child: {},
       },
     },
   },
@@ -352,11 +402,13 @@ const partialUserStates = {
         owner: '0x000',
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -366,10 +418,12 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {},
         },
-        child: {},
       },
     },
   },
@@ -380,11 +434,13 @@ const partialUserStates = {
         owner: '0x000',
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -394,10 +450,12 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {},
         },
-        child: {},
       },
     },
   },
@@ -408,11 +466,13 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -422,9 +482,11 @@ const partialUserStates = {
         owner: '0x000',
       },
       wrapperData: {
-        child: {},
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
+        fuses: {
+          child: {},
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
         },
       },
     },
@@ -436,11 +498,13 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -450,10 +514,12 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {},
         },
-        child: {},
       },
     },
   },
@@ -464,11 +530,13 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -479,8 +547,10 @@ const partialUserStates = {
         registrant: ownerAddress,
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -491,11 +561,13 @@ const partialUserStates = {
         owner: '0x000',
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -505,10 +577,12 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {},
         },
-        child: {},
       },
     },
   },
@@ -519,11 +593,13 @@ const partialUserStates = {
         owner: '0x000',
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -533,10 +609,12 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {},
         },
-        child: {},
       },
     },
   },
@@ -547,8 +625,10 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
     parentBasicNameData: {
@@ -556,10 +636,12 @@ const partialUserStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {},
         },
-        child: {},
       },
     },
   },
@@ -569,8 +651,10 @@ const partialUserStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
     parentBasicNameData: {
@@ -579,10 +663,12 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {},
         },
-        child: {},
       },
     },
   },
@@ -592,8 +678,10 @@ const partialUserStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
     parentBasicNameData: {
@@ -602,10 +690,12 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {},
         },
-        child: {},
       },
     },
   },
@@ -615,11 +705,13 @@ const partialUserStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -630,8 +722,10 @@ const partialUserStates = {
         registrant: ownerAddress,
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -641,11 +735,13 @@ const partialUserStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: false,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: false,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -655,8 +751,10 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        child: {},
-        parent: {},
+        fuses: {
+          child: {},
+          parent: {},
+        },
       },
     },
   },
@@ -666,11 +764,13 @@ const partialUserStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        child: {
-          CANNOT_TRANSFER: false,
-        },
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
+        fuses: {
+          child: {
+            CANNOT_TRANSFER: false,
+          },
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
         },
       },
     },
@@ -680,11 +780,13 @@ const partialUserStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        parent: {
-          PARENT_CANNOT_CONTROL: true,
-        },
-        child: {
-          CANNOT_TRANSFER: false,
+        fuses: {
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {
+            CANNOT_TRANSFER: false,
+          },
         },
       },
     },
@@ -706,7 +808,7 @@ describe('getSendAbilities', () => {
           name,
         })
         expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
-          contract: 'baseRegistrar',
+          contract: 'registrar',
           method: 'reclaim',
         })
       })
@@ -721,7 +823,7 @@ describe('getSendAbilities', () => {
           name,
         })
         expect(result.sendNameFunctionCallDetails?.sendOwner).toEqual({
-          contract: 'baseRegistrar',
+          contract: 'registrar',
           method: 'safeTransferFrom',
         })
       })

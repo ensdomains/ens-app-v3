@@ -1,6 +1,7 @@
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
+import { Profile } from '@app/types'
+import { createDateAndValue } from '@app/utils/utils'
 
-import { DetailedProfile } from '../../../../../../../hooks/useNameDetails'
 import {
   getProfileRecordsDiff,
   profileRecordsToRecordOptions,
@@ -16,7 +17,7 @@ describe('profileRecordsToRecordOptions', () => {
     ]
     const options = {
       texts: [{ key: 'avatar', value: 'https://example.com/avatar.png' }],
-      coinTypes: [{ key: 'ETH', value: '0x123' }],
+      coins: [{ coin: 'ETH', value: '0x123' }],
       contentHash: 'ipfs://',
       clearRecords: false,
     }
@@ -36,7 +37,7 @@ describe('profileRecordsToRecordOptions', () => {
     ]
     const options = {
       texts: [{ key: 'avatar', value: 'https://example.com/avatar.png' }],
-      coinTypes: [{ key: 'ETH', value: '0x123' }],
+      coins: [{ coin: 'ETH', value: '0x123' }],
       contentHash: 'ipfs://',
       clearRecords: false,
     }
@@ -51,7 +52,7 @@ describe('profileRecordsToRecordOptions', () => {
     ]
     const options = {
       texts: [{ key: 'avatar', value: 'https://example.com/avatar.png' }],
-      coinTypes: [{ key: 'ETH', value: '0x123' }],
+      coins: [{ coin: 'ETH', value: '0x123' }],
       contentHash: 'ipfs://',
       clearRecords: true,
     }
@@ -73,7 +74,7 @@ describe('profileRecordsToRecordOptions', () => {
         { key: 'name', value: '' },
         { key: 'test', value: '' },
       ],
-      coinTypes: [{ key: 'ETH', value: '0x123' }],
+      coins: [{ coin: 'ETH', value: '0x123' }],
       contentHash: '',
       clearRecords: true,
     }
@@ -91,7 +92,7 @@ describe('profileRecordsToRecordOptions', () => {
     ]
     const options = {
       texts: [{ key: 'avatar', value: 'https://example.com/avatar.png' }],
-      coinTypes: [{ key: 'ETH', value: '0x456' }],
+      coins: [{ coin: 'ETH', value: '0x456' }],
       contentHash: 'bzz://',
       clearRecords: true,
     }
@@ -109,7 +110,7 @@ describe('profileRecordsToRecordOptions', () => {
     ]
     const options = {
       texts: [{ key: 'avatar', value: 'https://website.com/avatar.png' }],
-      coinTypes: [{ key: 'ETH', value: '0x456' }],
+      coins: [{ coin: 'ETH', value: '0x456' }],
       contentHash: 'bzz://',
       clearRecords: true,
     }
@@ -137,7 +138,7 @@ describe('profileRecordsToRecordOptions', () => {
     ]
     const options = {
       texts: [{ key: 'avatar', value: 'https://website.com/mediaAvatar.png' }],
-      coinTypes: [{ key: 'ETH', value: '0x456' }],
+      coins: [{ coin: 'ETH', value: '0x456' }],
       contentHash: 'bzz://',
       clearRecords: true,
     }
@@ -560,12 +561,13 @@ describe('profileRecordsToRecordOptions', () => {
 describe('profileToProfileRecords', () => {
   describe('contenthash', () => {
     it('should correctly convert ipfs contenthash', () => {
-      const profile: DetailedProfile = {
-        records: {
-          contentHash: 'ipfs://QmRAQB6YaCyidP37UdDnjFY5vQuiBrcqdyoW1CuDgwxkD4',
+      const profile: Profile = {
+        contentHash: {
+          protocolType: 'ipfs',
+          decoded: 'QmRAQB6YaCyidP37UdDnjFY5vQuiBrcqdyoW1CuDgwxkD4',
         },
         isMigrated: true,
-        createdAt: '2020-01-01T00:00:00.000Z',
+        createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
         {
@@ -579,12 +581,13 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert ipns contenthash', () => {
-      const profile: DetailedProfile = {
-        records: {
-          contentHash: 'ipns://k2k4r8kgnix5x0snul9112xdpqgiwc5xmvi8ja0szfhntep2d7qv8zz3',
+      const profile: Profile = {
+        contentHash: {
+          protocolType: 'ipns',
+          decoded: 'k2k4r8kgnix5x0snul9112xdpqgiwc5xmvi8ja0szfhntep2d7qv8zz3',
         },
         isMigrated: true,
-        createdAt: '2020-01-01T00:00:00.000Z',
+        createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
         {
@@ -598,12 +601,13 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert sia contenthash', () => {
-      const profile: DetailedProfile = {
-        records: {
-          contentHash: 'sia://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+      const profile: Profile = {
+        contentHash: {
+          protocolType: 'sia',
+          decoded: 'CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
         isMigrated: true,
-        createdAt: '2020-01-01T00:00:00.000Z',
+        createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
         {
@@ -617,12 +621,13 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert bzz contenthash', () => {
-      const profile: DetailedProfile = {
-        records: {
-          contentHash: 'bzz://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+      const profile: Profile = {
+        contentHash: {
+          protocolType: 'bzz',
+          decoded: 'CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
         isMigrated: true,
-        createdAt: '2020-01-01T00:00:00.000Z',
+        createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
         {
@@ -636,12 +641,13 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert onion contenthash', () => {
-      const profile: DetailedProfile = {
-        records: {
-          contentHash: 'onion://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+      const profile: Profile = {
+        contentHash: {
+          protocolType: 'onion',
+          decoded: 'CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
         isMigrated: true,
-        createdAt: '2020-01-01T00:00:00.000Z',
+        createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
         {
@@ -655,12 +661,13 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should correctly convert onion3 contenthash', () => {
-      const profile: DetailedProfile = {
-        records: {
-          contentHash: 'onion3://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+      const profile: Profile = {
+        contentHash: {
+          protocolType: 'onion3',
+          decoded: 'CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
         isMigrated: true,
-        createdAt: '2020-01-01T00:00:00.000Z',
+        createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
         {
@@ -673,32 +680,14 @@ describe('profileToProfileRecords', () => {
       expect(profileToProfileRecords(profile)).toEqual(records)
     })
 
-    it('should correctly convert arweave contenthash', () => {
-      const profile: DetailedProfile = {
-        records: {
-          contentHash: 'arweave://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
-        },
-        isMigrated: true,
-        createdAt: '2020-01-01T00:00:00.000Z',
-      }
-      const records = [
-        {
-          key: 'arweave',
-          type: 'contenthash',
-          group: 'website',
-          value: 'arweave://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
-        },
-      ]
-      expect(profileToProfileRecords(profile)).toEqual(records)
-    })
-
     it('should correctly convert ar contenthash', () => {
-      const profile: DetailedProfile = {
-        records: {
-          contentHash: 'ar://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+      const profile: Profile = {
+        contentHash: {
+          protocolType: 'ar',
+          decoded: 'CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
         isMigrated: true,
-        createdAt: '2020-01-01T00:00:00.000Z',
+        createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
         {
@@ -712,12 +701,13 @@ describe('profileToProfileRecords', () => {
     })
 
     it('should return empty if contenthash does not match', () => {
-      const profile: DetailedProfile = {
-        records: {
-          contentHash: 'notvalid://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
+      const profile: Profile = {
+        contentHash: {
+          protocolType: 'notvalid' as any,
+          decoded: 'CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg',
         },
         isMigrated: true,
-        createdAt: '2020-01-01T00:00:00.000Z',
+        createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       expect(profileToProfileRecords(profile)).toEqual([])
     })

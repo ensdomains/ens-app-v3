@@ -6,11 +6,10 @@ import { useAccount, useNetwork } from 'wagmi'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 
+import { RegistrationReducerDataItem } from '../../types'
 import Profile from './Profile'
 
-const nameDetails: any = {
-  normalisedName: 'test.eth',
-}
+const name = 'test.eth'
 
 const defaultRegistrationData = {
   records: [
@@ -21,9 +20,9 @@ const defaultRegistrationData = {
       type: 'addr',
     },
   ],
-  resolver: '0x123',
+  resolverAddress: '0x123',
   clearRecords: true,
-}
+} as unknown as RegistrationReducerDataItem
 
 const makeRegistrationData = (overwrites: any = {}): any => {
   return { ...defaultRegistrationData, ...overwrites }
@@ -37,7 +36,7 @@ const makeExpectedCallbackData = (overwrites: any = {}): any => {
   }
 }
 
-jest.mock('@app/hooks/useContractAddress')
+jest.mock('@app/hooks/chain/useContractAddress')
 jest.mock('@app/hooks/useLocalStorage')
 
 const mockUseNetwork = mockFunction(useNetwork)
@@ -70,7 +69,7 @@ describe('Profile', () => {
   it('should render', () => {
     render(
       <Profile
-        nameDetails={nameDetails}
+        name={name}
         registrationData={makeRegistrationData()}
         callback={mockCallback}
         resolverExists
@@ -81,7 +80,7 @@ describe('Profile', () => {
   it('should call callback when submitted', async () => {
     render(
       <Profile
-        nameDetails={nameDetails}
+        name={name}
         registrationData={makeRegistrationData()}
         callback={mockCallback}
         resolverExists
@@ -94,7 +93,7 @@ describe('Profile', () => {
   it('should call callback when back is clicked', async () => {
     render(
       <Profile
-        nameDetails={nameDetails}
+        name={name}
         registrationData={makeRegistrationData()}
         callback={mockCallback}
         resolverExists
@@ -108,8 +107,8 @@ describe('Profile', () => {
   it('should return callback with clearRecords as false if resolver value is different from public resolver', async () => {
     render(
       <Profile
-        nameDetails={nameDetails}
-        registrationData={makeRegistrationData({ resolver: '0x456' })}
+        name={name}
+        registrationData={makeRegistrationData({ resolverAddress: '0x456' })}
         callback={mockCallback}
         resolverExists
       />,
@@ -117,7 +116,7 @@ describe('Profile', () => {
     await userEvent.click(screen.getByTestId('profile-submit-button'))
     await waitFor(() =>
       expect(mockCallback).toHaveBeenCalledWith(
-        makeExpectedCallbackData({ resolver: '0x456', clearRecords: false }),
+        makeExpectedCallbackData({ resolverAddress: '0x456', clearRecords: false }),
       ),
     )
   })
@@ -125,7 +124,7 @@ describe('Profile', () => {
   it('should return callback with clearRecords set as false if resolverExists is false', async () => {
     render(
       <Profile
-        nameDetails={nameDetails}
+        name={name}
         registrationData={makeRegistrationData()}
         callback={mockCallback}
         resolverExists={false}
@@ -140,7 +139,7 @@ describe('Profile', () => {
   it('should disable eth record if registrationData.reverseRecord is true', async () => {
     render(
       <Profile
-        nameDetails={nameDetails}
+        name={name}
         registrationData={makeRegistrationData({ reverseRecord: true })}
         callback={mockCallback}
         resolverExists
@@ -155,7 +154,7 @@ describe('Profile', () => {
   it('should prompt user before deleting eth record', async () => {
     render(
       <Profile
-        nameDetails={nameDetails}
+        name={name}
         registrationData={makeRegistrationData()}
         callback={mockCallback}
         resolverExists
@@ -183,7 +182,7 @@ describe('Profile', () => {
   it('should prompt user before showing add profile modal', async () => {
     render(
       <Profile
-        nameDetails={nameDetails}
+        name={name}
         registrationData={makeRegistrationData()}
         callback={mockCallback}
         resolverExists
@@ -240,7 +239,7 @@ describe('Profile', () => {
 
     render(
       <Profile
-        nameDetails={nameDetails}
+        name={name}
         registrationData={makeRegistrationData(overrides)}
         callback={mockCallback}
         resolverExists

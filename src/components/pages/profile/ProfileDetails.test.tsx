@@ -25,7 +25,7 @@ describe('onwershipInfoCalc', () => {
     const gracePeriodEndDate = new Date(2)
     const owners = [
       { transferType: 'manager', address: '0x123', label: 'name.manager' },
-    ] as OwnerArray
+    ] as unknown as OwnerArray
 
     const result = ownershipInfoCalc('eth', false, owners, gracePeriodEndDate, expiryDate)
 
@@ -51,7 +51,7 @@ describe('onwershipInfoCalc', () => {
     const owners = [
       { transferType: 'manager', address: '0x123', label: 'name.manager' },
       { transferType: 'owner', address: '0x123', label: 'name.owner' },
-    ] as OwnerArray
+    ] as unknown as OwnerArray
 
     // Date string is locale based. Ignore this test if it fails as March 4, 2073
     const result = ownershipInfoCalc('test.eth', false, owners, gracePeriodEndDate, expiryDate)

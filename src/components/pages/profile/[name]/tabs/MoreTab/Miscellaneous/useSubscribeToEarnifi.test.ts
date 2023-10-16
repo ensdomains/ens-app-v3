@@ -2,13 +2,16 @@ import { act, renderHook, waitFor } from '@app/test-utils'
 
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
-import fetch, { Request, Response } from 'node-fetch'
 
 import { EARNIFI_ENDPOINT, getErrorMessage, useSubscribeToEarnifi } from './useSubscribeToEarnifi'
 
 export const handlers = [
   rest.post(EARNIFI_ENDPOINT, (req, res, ctx) => {
-    const { email, address, chainId } = req.body
+    const { email, address, chainId } = req.body as {
+      email: string
+      address: string
+      chainId: number
+    }
     if (email && address && chainId) {
       return res(ctx.status(200))
     }
@@ -40,19 +43,13 @@ describe('getErrorMessage', () => {
 
 describe('useSubscribeToEarnifi', () => {
   beforeAll(() => {
-    global.fetch = fetch
-    global.Request = Request
-    global.Response = Response
     server.listen()
   })
 
   afterAll(async () => {
-    delete global.fetch
-    delete global.Request
-    delete global.Response
     if (server && typeof server.close === 'function') {
       // Add a check to make sure server is defined and has a close method
-      // server.close()
+      server.close()
     }
   })
   afterEach(() => server.resetHandlers())

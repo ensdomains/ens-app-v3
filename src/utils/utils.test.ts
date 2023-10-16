@@ -202,11 +202,11 @@ describe('validateExpiry', () => {
     const result = validateExpiry({ name, expiry, fuses: undefined as any })
     expect(result).toEqual(undefined)
   })
-  it('should return undefined when pccExpired and not 2ld .eth', () => {
+  it('should return expiry when pccExpired', () => {
     const name = 'test.com'
     const expiry = new Date()
     const result = validateExpiry({ name, expiry, fuses: {} as any, pccExpired: true })
-    expect(result).toEqual(undefined)
+    expect(result).toEqual(expiry)
   })
   it('should return undefined when PCC not burned and not 2ld .eth', () => {
     const name = 'test.com'

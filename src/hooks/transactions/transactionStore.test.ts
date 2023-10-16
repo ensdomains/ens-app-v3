@@ -47,6 +47,8 @@ const setup = () => {
   return store
 }
 
+type MockUpdateFn = (_account: any, _chainId: any, updateFn: (...args: any[]) => any) => void
+
 describe('transactionStore', () => {
   it('should allow a repriced transaction', async () => {
     const store = setup()
@@ -156,7 +158,7 @@ describe('foundTransaction', () => {
     ]
 
     let updateFnResult
-    const mockUpdateTransactions = (_account, _chainId, updateFn) => {
+    const mockUpdateTransactions: MockUpdateFn = (_account, _chainId, updateFn) => {
       updateFnResult = updateFn(mockTransactions)
     }
     foundTransaction(mockUpdateTransactions)(account, chainId, transactionHash, nonce)
@@ -255,7 +257,7 @@ describe('setReplacedTransaction', () => {
     ]
 
     let updateFnResult
-    const mockUpdateTransactions = (account, chainId, updateFn) => {
+    const mockUpdateTransactions: MockUpdateFn = (_account, _chainId, updateFn) => {
       updateFnResult = updateFn(mockTransactions)
     }
     setReplacedTransaction(mockUpdateTransactions)(
@@ -314,7 +316,7 @@ describe('setReaplcedTransactionByNonce', () => {
     ]
 
     let updateFnResult
-    const mockUpdateTransactions = (account, chainId, updateFn) => {
+    const mockUpdateTransactions: MockUpdateFn = (_account, _chainId, updateFn) => {
       updateFnResult = updateFn(mockTransactions)
     }
     setReplacedTransactionByNonce(mockUpdateTransactions)(
@@ -373,7 +375,7 @@ describe('foundMinedTranasction', () => {
     ]
 
     let updateFnResult
-    const mockUpdateTransactions = (account, chainId, updateFn) => {
+    const mockUpdateTransactions: MockUpdateFn = (_account, _chainId, updateFn) => {
       updateFnResult = updateFn(mockTransactions)
     }
     foundMinedTransaction(mockUpdateTransactions)(account, chainId, transactionHash, mockMinedData)
@@ -403,7 +405,7 @@ describe('updateRetries', () => {
     ]
 
     let updateFnResult
-    const mockUpdateTransactions = (account, chainId, updateFn) => {
+    const mockUpdateTransactions: MockUpdateFn = (_account, _chainId, updateFn) => {
       updateFnResult = updateFn(mockTransactions)
     }
     updateRetries(mockUpdateTransactions)(account, chainId, transactionHash)
@@ -432,7 +434,7 @@ describe('setFailedTransaction', () => {
     ]
 
     let updateFnResult
-    const mockUpdateTransactions = (account, chainId, updateFn) => {
+    const mockUpdateTransactions: MockUpdateFn = (_account, _chainId, updateFn) => {
       updateFnResult = updateFn(mockTransactions)
     }
     setFailedTransaction(mockUpdateTransactions)(account, chainId, transactionHash)
