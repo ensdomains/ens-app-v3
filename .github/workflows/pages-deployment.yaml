@@ -73,6 +73,7 @@ jobs:
           projectName: ens-app-v3
           directory: out
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: '3'
 
       - name: Submit sitemap
         if: ${{ github.ref == 'refs/heads/main' }}
