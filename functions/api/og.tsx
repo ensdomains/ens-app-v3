@@ -1,8 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ImageResponse } from '@vercel/og'
-import { ReactNode } from 'react'
-
-import { zorbImageDataURI } from '@app/utils/gradient'
+import type { ReactNode } from 'react'
 
 const corsHeaders = {
   /* eslint-disable @typescript-eslint/naming-convention */
@@ -79,7 +77,12 @@ const ogRewriter: PagesFunction = async ({ request, next, env }) => {
       getEnsAddress(client, { name: normalisedName }),
     ])
 
-    const src = avatar || zorbImageDataURI(normalisedName, 'name', {} as any)
+    let src = avatar
+
+    if (!src) {
+      const { zorbImageDataURI } = await import('@app/utils/gradient')
+      src = zorbImageDataURI(normalisedName, 'name', {} as any)
+    }
 
     avatarElement = (
       // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
