@@ -1,9 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ImageResponse } from '@vercel/og'
 import { ReactNode } from 'react'
-import { createClient, http } from 'viem'
-import { getEnsAddress, getEnsAvatar } from 'viem/actions'
-import { mainnet } from 'viem/chains'
 
 import { zorbImageDataURI } from '@app/utils/gradient'
 
@@ -67,6 +64,10 @@ const ogRewriter: PagesFunction = async ({ request, next, env }) => {
       // eslint-disable-next-line no-empty
     } catch {}
     if (!normalisedName) return makeResponse('Invalid name', 400)
+
+    const { createClient, http } = await import('viem')
+    const { getEnsAddress, getEnsAvatar } = await import('viem/actions')
+    const { mainnet } = await import('viem/chains')
 
     const client = createClient({
       chain: mainnet,
