@@ -1,7 +1,5 @@
 /* eslint max-classes-per-file: "off" */
 
-import ogRewriter from './api/og'
-
 class ContentModifier {
   private newContent: string
 
@@ -133,9 +131,11 @@ const pathRewriter: PagesFunction = async ({ request, next }) => {
         console.error('Name could not be normalised')
       }
 
+      const baseOgImageUrl = 'https://ens-og-image.ens-cf.workers.dev'
+
       const ogImageUrl = normalisedName
-        ? `${url.origin}/api/og?name=${normalisedName}`
-        : `${url.origin}/api/og?invalid=true`
+        ? `${baseOgImageUrl}/?name=${normalisedName}`
+        : `${baseOgImageUrl}/?invalid=true`
 
       return new HTMLRewriter()
         .on('title', new ContentModifier(newTitle))
@@ -158,4 +158,4 @@ const pathRewriter: PagesFunction = async ({ request, next }) => {
   return next()
 }
 
-export const onRequest = [ogRewriter, staticHandler, firefoxRewrite, pathRewriter]
+export const onRequest = [staticHandler, firefoxRewrite, pathRewriter]

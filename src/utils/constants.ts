@@ -18,4 +18,4 @@ export const CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE = 102n
 
 export const FAUCET_WORKER_URL = 'https://ens-faucet.ens-cf.workers.dev'
 
-export const APP_URL = 'https://app.ens.domains'
+export const OG_IMAGE_URL = 'https://ens-og-image.ens-cf.workers.dev'

@@ -14,7 +14,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content, ContentWarning } from '@app/layouts/Content'
-import { APP_URL } from '@app/utils/constants'
+import { OG_IMAGE_URL } from '@app/utils/constants'
 import { formatFullExpiry, getEncodedLabelAmount } from '@app/utils/utils'
 
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
@@ -228,7 +228,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     return undefined
   }, [error, errorTitle])
 
-  const ogImageUrl = `${APP_URL}/api/og?name=${normalisedName || name}`
+  const ogImageUrl = `${OG_IMAGE_URL}/?name=${normalisedName || name}`
 
   return (
     <>
