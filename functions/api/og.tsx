@@ -7,11 +7,6 @@ import { mainnet } from 'viem/chains'
 
 import { zorbImageDataURI } from '@app/utils/gradient'
 
-const client = createClient({
-  chain: mainnet,
-  transport: http('https://web3.ens.domains/v1/mainnet'),
-})
-
 const corsHeaders = {
   /* eslint-disable @typescript-eslint/naming-convention */
   'Access-Control-Allow-Origin': '*',
@@ -72,6 +67,11 @@ const ogRewriter: PagesFunction = async ({ request, next, env }) => {
       // eslint-disable-next-line no-empty
     } catch {}
     if (!normalisedName) return makeResponse('Invalid name', 400)
+
+    const client = createClient({
+      chain: mainnet,
+      transport: http('https://web3.ens.domains/v1/mainnet'),
+    })
 
     const [avatar, ethAddress] = await Promise.all([
       getEnsAvatar(client, { name: normalisedName }),
