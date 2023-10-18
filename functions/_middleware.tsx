@@ -1,5 +1,7 @@
 /* eslint max-classes-per-file: "off" */
 
+import ogRewriter from './api/og'
+
 class ContentModifier {
   private newContent: string
 
@@ -121,18 +123,32 @@ const pathRewriter: PagesFunction = async ({ request, next }) => {
       const decodedName = decodeURIComponent(isTLD ? paths[2] : paths[1])
       let newTitle = 'Invalid Name - ENS'
       let newDescription = 'An error occurred'
+      let normalisedName: string | null = null
       try {
-        const { normalise } = await import('@ensdomains/ensjs/utils/normalise')
-        const normalisedName = normalise(decodedName)
+        const { normalize } = await import('viem/ens')
+        normalisedName = normalize(decodedName)
         newTitle = `${normalisedName} on ENS`
         newDescription = `${normalisedName}'s profile on the Ethereum Name Service`
       } catch {
         console.error('Name could not be normalised')
       }
 
+      const ogImageUrl = normalisedName
+        ? `${url.origin}/api/og?name=${normalisedName}`
+        : `${url.origin}/api/og?invalid=true`
+
       return new HTMLRewriter()
         .on('title', new ContentModifier(newTitle))
         .on('meta[name="description"]', new AttributeModifier('content', newDescription))
+        .on('meta[property="og:image"]', new AttributeModifier('content', ogImageUrl))
+        .on('meta[property="og:title"]', new AttributeModifier('content', newTitle))
+        .on('meta[property="og:description"]', new AttributeModifier('content', newDescription))
+        .on('meta[property="twitter:image"]', new AttributeModifier('content', ogImageUrl))
+        .on('meta[property="twitter:title"]', new AttributeModifier('content', newTitle))
+        .on(
+          'meta[property="twitter:description"]',
+          new AttributeModifier('content', newDescription),
+        )
         .transform(await nextWithUpdate())
     }
 
@@ -142,4 +158,4 @@ const pathRewriter: PagesFunction = async ({ request, next }) => {
   return next()
 }
 
-export const onRequest = [staticHandler, firefoxRewrite, pathRewriter]
+export const onRequest = [ogRewriter, staticHandler, firefoxRewrite, pathRewriter]

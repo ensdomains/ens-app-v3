@@ -86,12 +86,15 @@ export const fetchTxFromSafeTxHash = async ({
   chainId: number
   safeTxHash: Hash
 }): Promise<{ transactionHash: Hash } | null> => {
-  const data = await fetch(`${SAFE_ENDPOINT}/v1/chains/${chainId}/transactions/${safeTxHash}`, {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
+  const data: SafeResponse = await fetch(
+    `${SAFE_ENDPOINT}/v1/chains/${chainId}/transactions/${safeTxHash}`,
+    {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+      },
     },
-  }).then((res) => res.json<SafeResponse>())
+  ).then((res) => res.json())
 
   // error
   if ('code' in data) {

@@ -17,3 +17,5 @@ export const WC_PROJECT_ID = '9b14144d470af1e03ab9d88aaa127332'
 export const CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE = 102n
 
 export const FAUCET_WORKER_URL = 'https://ens-faucet.ens-cf.workers.dev'
+
+export const APP_URL = 'https://app.ens.domains'

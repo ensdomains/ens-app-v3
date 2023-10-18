@@ -23,21 +23,19 @@ type ExtensionRequest = {
   from: Address
 }
 
+type TenderlyRepsonse = {
+  gasUsed: number
+  status: boolean
+}
+
 export const fetchTenderlyEstimate = async (
   req: BaseRequest & (RegistrationRequest | ExtensionRequest),
 ) => {
   const { type, ...bodyData } = req
-  const result = await fetch(`${TENDERLY_WORKER_URL}/${type}`, {
+  const result: TenderlyRepsonse = await fetch(`${TENDERLY_WORKER_URL}/${type}`, {
     method: 'POST',
     body: JSON.stringify(bodyData),
-  }).then((res) => {
-    return res.json<{
-      /* eslint-disable @typescript-eslint/naming-convention */
-      gasUsed: number
-      status: boolean
-      /* eslint-enable @typescript-eslint/naming-convention */
-    }>()
-  })
+  }).then((res) => res.json())
 
   if (typeof result.status === 'boolean' && result.status === false) {
     throw new Error(`Tenderly estimate failed: ${JSON.stringify(result)}`)
