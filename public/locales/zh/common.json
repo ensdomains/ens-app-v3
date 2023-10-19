@@ -44,7 +44,10 @@
     "understand": "我了解",
     "feedback": "反馈",
     "enterEmail": "输入您的 Email",
-    "migrate": "迁移"
+    "migrate": "迁移",
+    "setToSelf": "设置为自己",
+    "editRoles": "编辑角色",
+    "setReminder": "设置提醒"
   },
   "unit": {
     "years_one": "{{count}} 年",
@@ -99,6 +102,7 @@
     "notOwned": "未被持有",
     "manager": "管理员",
     "all": "所有名称",
+    "copy": "复制名称",
     "yourPrimaryName": "您的主名称",
     "expiresInYears_one": "{{count}} 年后到期",
     "expiresInYears_other": "{{count}} 年后到期",
@@ -198,6 +202,7 @@
       "approveNameWrapper": "批准名称包装器",
       "clearRecords": "清除记录",
       "updateRecords": "更新记录",
+      "resetProfileWithRecords": "重置个人资料中的记录内容",
       "transferName": "转移名称",
       "transferSubname": "转移子名称",
       "changePermissions": "更改权限",
@@ -248,7 +253,8 @@
       "duration": "时长",
       "cost": "费用",
       "update": "更新",
-      "resolver": "解析器"
+      "resolver": "解析器",
+      "records": "记录"
     },
     "itemValue": {
       "records_one": "{{count}} 条记录",
@@ -346,5 +352,34 @@
   "testnetFaucet": {
     "explanation": "{{ testnet }} 上的每个地址都可以申请 {{amount}} {{ ticker }} 来进行 ENS 管理器 app 或其他网络测试。",
     "note": "它可能在几分钟后才能出现在你的钱包里。"
+  },
+  "roles": {
+    "owner": {
+      "title": "所有者",
+      "description": "持有该名称的地址。"
+    },
+    "dns-owner": {
+      "title": "DNS 所有者",
+      "description": "持有该域名的地址。"
+    },
+    "parent-owner": {
+      "title": "父名称所有者",
+      "description": "持有其父名称的地址。"
+    },
+    "manager": {
+      "title": "管理员",
+      "description": "可以更改个人资料、设置以及个人资料管理员的地址或合约。"
+    },
+    "profile-editor": {
+      "title": "个人资料编辑员",
+      "description": "可以编辑个人资料的地址。"
+    },
+    "eth-record": {
+      "title": "ETH 记录",
+      "description": "该名称指向的地址。"
+    }
+  },
+  "dns": {
+    "refresh": "刷新 DNS"
   }
 }

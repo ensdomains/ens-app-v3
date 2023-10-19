@@ -195,6 +195,22 @@
       "customLabel": "自定义解析器",
       "customPlaceholder": "输入自定义解析器地址"
     },
+    "editRoles": {
+      "views": {
+        "main": {
+          "title": "编辑角色",
+          "noneSet": "未设置"
+        },
+        "editRole": {
+          "title": "更改 {{role}}",
+          "views": {
+            "intro": {
+              "current": "当前 {{role}}"
+            }
+          }
+        }
+      }
+    },
     "extendNames": {
       "title_one": "名称续期",
       "title_other": "续期 {{count}} 个名称",
@@ -220,7 +236,7 @@
         },
         "revokePCC": {
           "title": "放弃所有权",
-          "subtitle": "此操作会把名称的所有权转让给管理员 ({{account}})。除非您同时也是管理员，否则您将无法再管理该名称。"
+          "subtitle": "此操作会把名称的所有权发送给管理员 ({{account}})。除非您同时也是管理员，否则您将无法再管理该名称。"
         },
         "grantExtendExpiry": {
           "title": "更改权限",
@@ -309,6 +325,64 @@
     "resetPrimaryName": {
       "title": "移除主名称",
       "description": "移除后它不会再作为当前地址的名称来显示。但是，发送到该名称的交易仍将解析到当前地址，除非您删除该名称的 ETH 记录。"
+    },
+    "sendName": {
+      "views": {
+        "error": {
+          "title": "无法发送名称",
+          "description": "您没有发送该名称的权限"
+        },
+        "search": {
+          "placeholder": "ENS 名称或以太坊地址",
+          "views": {
+            "error": {
+              "message": "出了点问题。请再试一次。"
+            },
+            "intro": {
+              "message": "搜索 ENS 名称或以太坊地址"
+            },
+            "noResults": {
+              "message": "未找到结果"
+            }
+          }
+        },
+        "summary": {
+          "title": "发送名称",
+          "fields": {
+            "name": {
+              "label": "名称",
+              "expires": "到期时间 {{date}}"
+            },
+            "recipient": "接收者",
+            "options": {
+              "label": "选项",
+              "title": "重置个人资料",
+              "description": "移除所有个人资料。这需要额外的网络费。"
+            },
+            "summary": {
+              "title": "更改内容摘要",
+              "updates": {
+                "role": "将 {{role}} 角色更新至 {{address}}",
+                "eth-record": "将 ETH 记录更新至 {{address}}"
+              },
+              "remove": {
+                "profile": "移除个人资料记录"
+              }
+            }
+          }
+        },
+        "confirmation": {
+          "title": "发送名称",
+          "description": "发送名称会将所有权转移给接收者，使其获得名称的控制权。",
+          "warning": "您将无法再修改它、用其收款或将其用作主名称。",
+          "learnMore": "了解发送名称的相关内容"
+        }
+      }
+    },
+    "syncManager": {
+      "title": "同步管理员",
+      "description": "同步管理员将使您成为该名称的新管理员。当前管理员 <strong>({{manager}})</strong> 将无法再进行更改操作。",
+      "warning": "同步管理器也会将名称解除包装。这将销毁当前的 NFT 并重置所有权限。"
     }
   },
   "transaction": {

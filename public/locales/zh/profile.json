@@ -49,6 +49,61 @@
     "records": {
       "name": "记录"
     },
+    "ownership": {
+      "name": "所有权",
+      "warning": {
+        "ownerNotManager": "您现在是该名称的所有者，但不是它的管理员。如果该名称是从其他地址发送过来的，那这属于正常情况。",
+        "managerNotParentOwner": "<strong>{{parent}}</strong> 的所有者可以更改所有权、角色和设置，但他们不能更改个人资料。",
+        "managerNotDNSOwner": "您是该名称的管理员，但不是它的 DNS 所有者。DNS 域名的所有者可以随时回收 DNS 域名。您可以将此名称发送给所有者，或通过更新 DNS 记录来匹配所有者。",
+        "dnsOwnerNotManager": "您不能更改此名称的个人资料，因为您虽然是 DNS 所有者，但不是管理员。您可以同步管理员来处理当前的情况。"
+      },
+      "sections": {
+        "roles": {
+          "title": "角色",
+          "addresses_one": "{{count}} 地址",
+          "addresses_other": "{{count}} 地址"
+        },
+        "expiry": {
+          "panel": {
+            "expiry": {
+              "title": "名称到期时间"
+            },
+            "grace-period": {
+              "title": "宽限期结束时间",
+              "tooltip": "名称过期后会有 90 天的宽限期，在此期间名称仍然可以续期，但不能重新注册。"
+              
+            },
+            "registration": {
+              "title": "注册时间"
+            },
+            "parent-expiry": {
+              "title": "父名称到期时间"
+            },
+            "parent-grace-period": {
+              "title": "父名称宽限期结束时间"
+            }
+          }
+        },
+        "contract": {
+          "title": "合约地址",
+          "tooltip": "对 ENS 名称进行包装的合约地址。",
+          "warning": "部分 App 可能将该地址显示为名称的所有者，这并不影响您的所有权。"
+        }
+      },
+      "tooltips": {
+        "owner": "该名称的所有者，所有者角色不能更改个人资料。",
+        "owner-emancipated": "该名称的所有者。",
+        "parent-owner": "该名称的父名称的所有者 ({{parent}})。",
+        "dns-owner": "该名称的所有者，通过 DNS 记录来设置。所有者角色不能更改个人资料。",
+        "manager": "可以更改个人资料、设置以及个人资料编辑员的地址。",
+        "profile-editor": "一个只能更改个人资料的地址。",
+        "subname-manager": "负责子名称续期的地址或合约。",
+        "eth-record": "该地址用于接收在主网上发送到该名称的资金。",
+        "grace-period": "名称过期后会有 90 天的宽限期，在此期间名称仍然可以续期，但不能重新注册。",
+        "contract-address": "对 ENS 名称进行包装的合约地址。",
+        "namewrapper": "对 ENS 名称进行包装的合约。"
+      }
+    },
     "subnames": {
       "name": "子名称"
     },
