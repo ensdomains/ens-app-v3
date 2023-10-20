@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,6 +11,7 @@ import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
+import { OG_IMAGE_URL } from '@app/utils/constants'
 import { shortenAddress } from '@app/utils/utils'
 
 import { useAccountSafely } from '../hooks/account/useAccountSafely'
@@ -43,31 +45,48 @@ const Page = () => {
 
   const error = isError ? t('errors.names') : ''
 
+  const shortenedAddress = shortenAddress(address)
+  const titleContent = t('meta.title', { address: shortenedAddress })
+  const descriptionContent = t('meta.description', { address })
+  const ogImageUrl = `${OG_IMAGE_URL}/address/${address}`
+
   return (
-    <Content title={shortenAddress(address)} copyValue={address} loading={loading}>
-      {{
-        warning: error
-          ? {
-              type: 'warning',
-              message: error,
-            }
-          : undefined,
-        leading: (
-          <DetailsContainer>
-            {primaryProfile?.name ? (
-              <ProfileSnippet
-                name={primaryProfile.name}
-                button="viewProfile"
-                getTextRecord={getTextRecord}
-              />
-            ) : (
-              <NoProfileSnippet />
-            )}
-          </DetailsContainer>
-        ),
-        trailing: <NameListView address={address} isSelf={isSelf} setError={setIsError} />,
-      }}
-    </Content>
+    <>
+      <Head>
+        <title>{titleContent}</title>
+        <meta name="description" content={descriptionContent} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:title" content={titleContent} />
+        <meta property="og:description" content={descriptionContent} />
+        <meta property="twitter:image" content={ogImageUrl} />
+        <meta property="twitter:title" content={titleContent} />
+        <meta property="twitter:description" content={descriptionContent} />
+      </Head>
+      <Content noTitle title={shortenedAddress} copyValue={address} loading={loading}>
+        {{
+          warning: error
+            ? {
+                type: 'warning',
+                message: error,
+              }
+            : undefined,
+          leading: (
+            <DetailsContainer>
+              {primaryProfile?.name ? (
+                <ProfileSnippet
+                  name={primaryProfile.name}
+                  button="viewProfile"
+                  getTextRecord={getTextRecord}
+                />
+              ) : (
+                <NoProfileSnippet />
+              )}
+            </DetailsContainer>
+          ),
+          trailing: <NameListView address={address} isSelf={isSelf} setError={setIsError} />,
+        }}
+      </Content>
+    </>
   )
 }
 

@@ -228,7 +228,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     return undefined
   }, [error, errorTitle])
 
-  const ogImageUrl = `${OG_IMAGE_URL}/?name=${normalisedName || name}`
+  const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
 
   return (
     <>
