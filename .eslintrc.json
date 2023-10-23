@@ -21,6 +21,12 @@
       "rules": {
         "jest/expect-expect": "off"
       }
+    },
+    {
+      "files": ["functions/**/*"],
+      "parserOptions": {
+        "project": "./functions/tsconfig.json"
+      }
     }
   ],
   "parserOptions": {

@@ -33,7 +33,7 @@
     "jsx": "preserve",
     "rootDir": ".",
     "baseUrl": "./",
-    "types": ["jest", "@cloudflare/workers-types", "@testing-library/jest-dom"],
+    "types": ["jest", "@testing-library/jest-dom"],
     "incremental": true,
     "paths": {
       "@app/*": ["./src/*"],
@@ -58,5 +58,5 @@
     /* TODO (tate): revert to initial val after refactor */ "src/**/*.tsx",
     "next.config.js"
   ],
-  "exclude": ["custom-test-env.js", "**/*.ignore.ts", "**/*.ignore.tsx"]
+  "exclude": ["custom-test-env.js", "**/*.ignore.ts", "**/*.ignore.tsx", "functions/**/*"]
 }

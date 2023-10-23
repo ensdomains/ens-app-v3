@@ -1,6 +1,5 @@
 import { Hex, hexToBytes } from 'viem'
-
-import { namehash } from '@ensdomains/ensjs/utils'
+import { namehash } from 'viem/ens'
 
 import { emptyAddress } from './constants'
 
@@ -193,8 +192,8 @@ const makeEnsOutlineIcon = ({ bg, fg, accent }: EnsOutlineColours) => `
 </svg>
 `
 
-const makeBase64Svg = (svg: string) => {
-  return `data:image/svg+xml;base64,${Buffer.from(svg, 'utf-8').toString('base64')}`
+export const makeBase64Svg = (svg: string) => {
+  return `data:image/svg+xml;base64,${btoa(svg)}`
 }
 
 export const zorbImageDataURI = (
