@@ -35,6 +35,7 @@
     "baseUrl": "./",
     "types": ["jest", "@testing-library/jest-dom"],
     "incremental": true,
+    "noErrorTruncation": true,
     "paths": {
       "@app/*": ["./src/*"],
       "@public/*": ["./public/*"],

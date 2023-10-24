@@ -87,7 +87,7 @@ export const NameChangePermissions = ({
   const { usePreparedDataInput } = useTransactionFlow()
   const showRevokePermissionsInput = usePreparedDataInput('RevokePermissions')
 
-  const isParentLocked = parentState === 'locked'
+  const isParentLocked = parentState === 'locked' || wrapperData?.parent.IS_DOT_ETH
 
   const permissions = CHILD_FUSES_WITHOUT_CBF.reduce<{ burned: FuseItem[]; unburned: FuseItem[] }>(
     (acc, permission) => {

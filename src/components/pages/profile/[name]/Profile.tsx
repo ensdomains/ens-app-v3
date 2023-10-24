@@ -19,6 +19,7 @@ import { formatFullExpiry, getEncodedLabelAmount } from '@app/utils/utils'
 
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
 import MoreTab from './tabs/MoreTab/MoreTab'
+import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
 import { PermissionsTab } from './tabs/PermissionsTab/PermissionsTab'
 import ProfileTab from './tabs/ProfileTab'
 import { RecordsTab } from './tabs/RecordsTab'
@@ -62,8 +63,8 @@ const TabButton = styled.button<{ $selected: boolean }>(
   `,
 )
 
-const tabs = ['profile', 'records', 'subnames', 'permissions', 'more'] as const
-type Tab = (typeof tabs)[number]
+const tabs = ['profile', 'records', 'ownership', 'subnames', 'permissions', 'more'] as const
+type Tab = typeof tabs[number]
 
 type Props = {
   isSelf: boolean
@@ -277,6 +278,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
                 isCached={isCachedData}
               />
             ),
+            ownership: <OwnershipTab name={normalisedName} details={nameDetails} />,
             subnames: (
               <SubnamesTab
                 name={normalisedName}

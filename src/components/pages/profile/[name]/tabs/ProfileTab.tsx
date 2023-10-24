@@ -6,8 +6,8 @@ import { useAccount } from 'wagmi'
 import { Helper } from '@ensdomains/thorin'
 
 import { Outlink } from '@app/components/Outlink'
-import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
+import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -82,7 +82,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         name={normalisedName}
         getTextRecord={getTextRecord}
         button={snippetButton}
-        canEdit={abilities.data?.canEdit}
         isPrimary={name === primaryData?.name}
       >
         {nameDetails.isNonASCII && (
@@ -115,9 +114,10 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           key: item.name,
           value: item.value,
         }))}
-        textRecords={(profile?.texts || [])
-          .map((item) => ({ key: item.key, value: item.value }))
-          .filter((item) => item.value !== null)}
+        textRecords={(profile?.records?.texts || [])
+          .map((item: any) => ({ key: item.key, value: item.value }))
+          .filter((item: any) => item.value !== null)}
+        contentHash={profile?.records?.contentHash}
         owners={owners}
         name={normalisedName}
         actions={profileActions.profileActions}

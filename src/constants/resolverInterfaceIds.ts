@@ -11,4 +11,6 @@ export const RESOLVER_INTERFACE_IDS = {
   VersionableResolver: '0xd700ff33',
 } as const
 export type ResolverInterfaceName = keyof typeof RESOLVER_INTERFACE_IDS
-export type ResolverInterfaceId = (typeof RESOLVER_INTERFACE_IDS)[ResolverInterfaceName]
+// TODO: Prettier is autocorrcting from this to the line below
+// export type ResolverInterfaceId = (typeof RESOLVER_INTERFACE_IDS)[ResolverInterfaceName]
+export type ResolverInterfaceId = typeof RESOLVER_INTERFACE_IDS[ResolverInterfaceName]

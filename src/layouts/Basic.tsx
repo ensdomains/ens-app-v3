@@ -67,6 +67,7 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   const { boot } = useIntercom()
 
   useEffect(() => {
+    // Do not initialise with uid and email without implementing identity verification first
     boot()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

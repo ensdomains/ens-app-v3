@@ -44,7 +44,10 @@
     "understand": "I understand",
     "feedback": "Feedback",
     "enterEmail": "Enter your email",
-    "migrate": "Migrate"
+    "migrate": "Migrate",
+    "setToSelf": "Set to self",
+    "editRoles": "Edit roles",
+    "setReminder": "Set reminder"
   },
   "unit": {
     "years_one": "{{count}} year",
@@ -99,6 +102,7 @@
     "notOwned": "Not Owned",
     "manager": "Manager",
     "all": "All Names",
+    "copy": "Copy name",
     "yourPrimaryName": "Your primary name",
     "expiresInYears_one": "Expires in {{count}} year",
     "expiresInYears_other": "Expires in {{count}} years",
@@ -198,6 +202,7 @@
       "approveNameWrapper": "Approve NameWrapper",
       "clearRecords": "Clear records",
       "updateRecords": "Update records",
+      "resetProfileWithRecords": "Reset profile with records",
       "transferName": "Transfer name",
       "transferSubname": "Transfer subname",
       "changePermissions": "Change permissions",
@@ -248,7 +253,8 @@
       "duration": "Duration",
       "cost": "Cost",
       "update": "Update",
-      "resolver": "Resolver"
+      "resolver": "Resolver",
+      "records": "Records"
     },
     "itemValue": {
       "records_one": "{{count}} record",
@@ -342,7 +348,36 @@
     "empty": "No options found"
   },
   "testnetFaucet": {
-    "explanation": "Each address on goerli can claim {{ amount }}ETH to test out the ENS manager app, as well as all the new contracts.",
+    "explanation": "Each address on {{ testnet }} can claim {{ amount }} {{ ticker }} to test out the ENS manager app, as well as any other testnet usage.",
     "note": "It may take a few minutes to show up in your wallet."
+  },
+  "roles": {
+    "owner": {
+      "title": "owner",
+      "description": "The address that owns this name."
+    },
+    "dns-owner": {
+      "title": "DNS owner",
+      "description": "The address that owns this name."
+    },
+    "parent-owner": {
+      "title": "Parent owner",
+      "description": "The address that owns the parent of this name."
+    },
+    "manager": {
+      "title": "manager",
+      "description": "An address or contract that can change the profile, settings, and profile managers."
+    },
+    "profile-editor": {
+      "title": "Profile editor",
+      "description": "An address that can change the profile."
+    },
+    "eth-record": {
+      "title": "ETH record",
+      "description": "The address that this name points to."
+    }
+  },
+  "dns": {
+    "refresh": "Refresh DNS"
   }
 }
