@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
+import { Address } from 'viem'
 
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useNameType } from '@app/hooks/useNameType'
-import useParentBasicName from '@app/hooks/useParentBasicName'
+import { useParentBasicName } from '@app/hooks/useParentBasicName'
 
 import { getRoles } from './utils/getRoles'
 
@@ -19,7 +20,7 @@ type UngroupedOptions = BaseOptions & { grouped?: false }
 type Options = UngroupedOptions | GroupedOptions
 
 type BaseData = {
-  address?: string | null
+  address?: Address
   role?: Role
   roles?: Role[]
 }
@@ -52,11 +53,11 @@ function useRoles(name: string, options?: Options): Result {
   const grouped = options?.grouped ?? false
 
   const nameType = useNameType(name)
-  const details = useNameDetails(name, true)
+  const details = useNameDetails({ name })
   const parentData = useParentBasicName(name)
 
   const isLoading = nameType.isLoading || details.isLoading || parentData.isLoading
-  const isCachedData = nameType.isCachedData || details.basicIsCachedData || parentData.isCachedData
+  const isCachedData = nameType.isCachedData || details.isCachedData || parentData.isCachedData
 
   const listData = useMemo<RoleRecord[] | undefined>(() => {
     if (isLoading) return undefined

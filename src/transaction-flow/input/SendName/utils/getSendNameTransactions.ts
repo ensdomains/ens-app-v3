@@ -1,3 +1,5 @@
+import { Address } from 'viem'
+
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 
@@ -16,8 +18,10 @@ export const getSendNameTransactions = ({
   transactions: SendNameForm['transactions']
   abilities: ReturnType<typeof useAbilities>['data']
   isOwnerOrManager: boolean
-  resolverAddress: string
+  resolverAddress: Address
 }) => {
+  if (!recipient) return []
+
   const setEthRecordOnly = transactions.setEthRecord && !transactions.resetProfile
   // Anytime you reset the profile you will need to set the eth record as well
   const setEthRecordAndResetProfile = transactions.resetProfile
@@ -37,16 +41,16 @@ export const getSendNameTransactions = ({
     transactions.sendManager && !!abilities?.sendNameFunctionCallDetails?.sendManager
       ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
           name,
-          newOwner: recipient,
+          newOwnerAddress: recipient,
           sendType: 'sendManager',
           contract: abilities?.sendNameFunctionCallDetails?.sendManager?.contract,
           reclaim: abilities?.sendNameFunctionCallDetails?.sendManager?.method === 'reclaim',
-        })
+        } as any) // TODO: need to get the Data and transaction values in sync
       : null,
     transactions.sendOwner && !!abilities?.sendNameFunctionCallDetails?.sendOwner
       ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
           name,
-          newOwner: recipient,
+          newOwnerAddress: recipient,
           sendType: 'sendOwner',
           contract: abilities?.sendNameFunctionCallDetails?.sendOwner?.contract,
         })

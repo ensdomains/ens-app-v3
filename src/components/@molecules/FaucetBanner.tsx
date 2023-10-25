@@ -1,9 +1,10 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { formatEther } from '@ethersproject/units'
+// TODO: Double check conversino to big int
+
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { formatEther } from 'viem'
 
 import {
   Banner,
@@ -17,7 +18,7 @@ import {
 } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
-import { useChainName } from '@app/hooks/useChainName'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import useFaucet from '@app/hooks/useFaucet'
 
 import { InnerDialog } from '../@atoms/InnerDialog'
@@ -46,7 +47,7 @@ const LargeCheckIcon = styled.svg(
   `,
 )
 
-const getAmountFromHex = (hex: `0x${string}`) => formatEther(BigNumber.from(hex))
+const getAmountFromHex = (hex: `0x${string}`) => formatEther(BigInt(hex))
 const msToDays = (ms: number) => Math.floor(ms / 1000 / 60 / 60 / 24)
 const chainEthTicker = (chainName: string) => `${chainName.slice(0, 2)}ETH`
 

@@ -126,7 +126,7 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
         ...getEditAbilities({
           address,
           basicNameData,
-          hasAuthorisedResolver: resolverAuthorisation.data?.isAuthorized,
+          hasAuthorisedResolver: resolverAuthorisation.data?.isAuthorised,
         }),
         ...getDeleteAbilities({
           name,
@@ -154,7 +154,7 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
       parentBasicNameData.ownerData,
       parentBasicNameData.wrapperData,
       isLoading,
-      resolverAuthorisation.data?.isAuthorized,
+      resolverAuthorisation.data?.isAuthorised,
       hasSubnamesData.hasSubnames,
       t,
     ],

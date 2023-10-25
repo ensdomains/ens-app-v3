@@ -4,8 +4,8 @@ import styled, { css } from 'styled-components'
 import { Button, mq } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import type { Role } from '@app/hooks/ownership/useRoles/useRoles'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { SearchViewIntroView } from '@app/transaction-flow/input/SendName/views/SearchView/views/SearchViewIntroView'
 import { emptyAddress } from '@app/utils/constants'
 

@@ -16,9 +16,9 @@ export const useExpiryActions = ({
   expiryDetails: ReturnType<typeof useExpiryDetails>['data']
 }) => {
   const { t } = useTranslation('common')
-  const abilities = useAbilities(name)
-  const { prepareDataInput } = useTransactionFlow()
-  const showExtendNamesInput = prepareDataInput('ExtendNames')
+  const abilities = useAbilities({ name })
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showExtendNamesInput = usePreparedDataInput('ExtendNames')
 
   // TODO: remove this when we add support for extending wrapped subnames
   const is2ld = nameLevel(name) === '2ld'

@@ -1,69 +1,92 @@
-import { isAddress } from '@ethersproject/address'
+import { getPublicClient } from '@wagmi/core'
 import { useEffect } from 'react'
+import { Address, isAddress } from 'viem'
 import { useMutation, useQueryClient } from 'wagmi'
 
-import { normalise } from '@ensdomains/ensjs/utils/normalise'
+import { getAddressRecord, getName } from '@ensdomains/ensjs/public'
+import { normalise } from '@ensdomains/ensjs/utils'
 
+import { useChainId } from '@app/hooks/chain/useChainId'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
-import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { PublicClientWithChain } from '@app/types'
 
 type Result = { name?: string; address: string }
 type Options = { cache?: boolean }
 
+type QueryBaseParams = {
+  chainId: number
+}
+
+type QueryByNameParams = {
+  name: string
+} & QueryBaseParams
+
+const queryByName = async ({ name, chainId }: QueryByNameParams): Promise<Result | null> => {
+  try {
+    const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const normalisedName = normalise(name)
+    const record = await getAddressRecord(publicClient, { name: normalisedName })
+    const address = typeof record === 'string' ? record : record?.value
+    if (!address) throw new Error('No address found')
+    return {
+      name: normalisedName,
+      address,
+    }
+  } catch {
+    return null
+  }
+}
+
+type QueryByAddressParams = { address: Address } & QueryBaseParams
+
+const queryByAddress = async ({
+  address,
+  chainId,
+}: QueryByAddressParams): Promise<Result | null> => {
+  try {
+    const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const name = await getName(publicClient, { address })
+    return {
+      name: name?.name,
+      address,
+    }
+  } catch {
+    return null
+  }
+}
+
+const createQueryKeyWithChain = (chainId: number) => (query: string) => [
+  'simpleSearch',
+  chainId,
+  query,
+]
+
 export const useSimpleSearch = (options: Options = {}) => {
   const cache = options.cache ?? true
 
-  const { ready, getAddr, getName } = useEns()
   const queryClient = useQueryClient()
-  const queryKey = useQueryKeys()
+  const chainId = useChainId()
+  const createQueryKey = createQueryKeyWithChain(chainId)
 
   useEffect(() => {
     return () => {
-      queryClient.removeQueries(queryKey.simpleSearchBase(), { exact: false })
+      queryClient.removeQueries(['simpleSearch'], { exact: false })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const queryByName = async (name: string): Promise<Result | null> => {
-    try {
-      const normalisedName = normalise(name)
-      const record = await getAddr(normalisedName, '60')
-      const address = typeof record === 'string' ? record : record?.addr
-      if (!address) throw new Error('No address found')
-      return {
-        name: normalisedName,
-        address,
-      }
-    } catch {
-      return null
-    }
-  }
-
-  const queryByAddress = async (address: string): Promise<Result | null> => {
-    try {
-      const name = await getName(address)
-      return {
-        name: name?.name,
-        address,
-      }
-    } catch {
-      return null
-    }
-  }
-
   const { mutate, isLoading, ...rest } = useMutation(
     async (query: string) => {
-      if (!ready) throw new Error('ENSJS not ready')
       if (query.length < 3) throw new Error('Query too short')
       if (cache) {
-        const cachedData = queryClient.getQueryData<Result[]>(queryKey.simpleSearch(query))
+        console.log('CaChe', cache)
+        const cachedData = queryClient.getQueryData<Result[]>(createQueryKey(query))
         if (cachedData) return cachedData
       }
       const results = await Promise.allSettled([
-        queryByName(query),
-        queryByName(`${query}.eth`),
-        ...(isAddress(query) ? [queryByAddress(query)] : []),
+        queryByName({ name: query, chainId }),
+        queryByName({ name: `${query}.eth`, chainId }),
+        ...(isAddress(query) ? [queryByAddress({ address: query, chainId })] : []),
       ])
       const filteredData = results
         .filter<PromiseFulfilledResult<Result>>(
@@ -81,7 +104,7 @@ export const useSimpleSearch = (options: Options = {}) => {
     },
     {
       onSuccess: (data, variables) => {
-        queryClient.setQueryData(queryKey.simpleSearch(variables), data)
+        queryClient.setQueryData(createQueryKey(variables), data)
       },
     },
   )
@@ -90,6 +113,6 @@ export const useSimpleSearch = (options: Options = {}) => {
   return {
     ...rest,
     mutate: debouncedMutate,
-    isLoading: isLoading || !ready,
+    isLoading: isLoading || !chainId,
   }
 }

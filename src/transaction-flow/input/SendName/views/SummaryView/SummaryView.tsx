@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { Button, Dialog, Field, ScrollBox } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
-import { useExpiry } from '@app/hooks/useExpiry'
+import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 
 import { DetailedSwitch } from '../../../ProfileEditor/components/DetailedSwitch'
@@ -13,11 +13,10 @@ import type { SendNameForm } from '../../SendName-flow'
 import { SummarySection } from './components/SummarySection'
 
 const StyledScrollBox = styled(ScrollBox)(
-  ({ theme }) =>
-    css`
-      width: 100%;
-      margin-right: -${theme.space[2]};
-    `,
+  ({ theme }) => css`
+    width: 100%;
+    margin-right: -${theme.space[2]};
+  `,
 )
 
 const NameContainer = styled.div(

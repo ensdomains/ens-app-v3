@@ -1,11 +1,10 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCopyToClipboard } from 'react-use'
 import styled, { css } from 'styled-components'
+import { Address, labelhash } from 'viem'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { namehash } from '@ensdomains/ensjs/utils'
 import {
   Button,
   Card,
@@ -17,10 +16,10 @@ import {
 } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
+import { useChainName } from '@app/hooks/chain/useChainName'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import type { Role } from '@app/hooks/ownership/useRoles/useRoles'
-import { useChainName } from '@app/hooks/useChainName'
-import { useContractAddress } from '@app/hooks/useContractAddress'
-import { usePrimary } from '@app/hooks/usePrimary'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getDestination } from '@app/routes'
 import { emptyAddress } from '@app/utils/constants'
@@ -60,7 +59,7 @@ const RoleTagContainer = styled.div(
 
 type Props = {
   name: string
-  address?: string | null
+  address?: Address
   roles: Role[]
   actions: ReturnType<typeof useRoleActions>['data']
   isWrapped: boolean
@@ -71,10 +70,10 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
-  const primary = usePrimary(address!, !address)
+  const primary = usePrimaryName({ address })
   const networkName = useChainName()
-  const wrapperAddress = useContractAddress('NameWrapper')
-  const registrarAddress = useContractAddress('BaseRegistrarImplementation')
+  const wrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
+  const registrarAddress = useContractAddress({ contract: 'ensBaseRegistrarImplementation' })
   const [, copy] = useCopyToClipboard()
 
   const etherscanAction = useMemo(() => {
@@ -84,7 +83,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
     const hasToken = is2ldEth || isWrapped
     if (!hasToken) return null
     const hex = isWrapped ? namehash(primaryName) : labelhash(primaryName.split('.')[0])
-    const tokenId = BigNumber.from(hex).toString()
+    const tokenId = BigInt(hex).toString(10)
     const contractAddress = isWrapped ? wrapperAddress : registrarAddress
     return {
       label: t('transaction.viewEtherscan', { ns: 'common' }),

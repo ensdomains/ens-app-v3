@@ -2,7 +2,7 @@ import { ReactElement } from 'react'
 import { useAccount } from 'wagmi'
 
 import Registration from '@app/components/pages/profile/[name]/registration/Registration'
-import { useChainId } from '@app/hooks/useChainId'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { getSelectedIndex } from '@app/hooks/useRegistrationReducer'

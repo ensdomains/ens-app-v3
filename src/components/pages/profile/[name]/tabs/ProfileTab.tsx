@@ -6,8 +6,8 @@ import { useAccount } from 'wagmi'
 import { Helper } from '@ensdomains/thorin'
 
 import { Outlink } from '@app/components/Outlink'
-import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
+import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -114,10 +114,10 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           key: item.name,
           value: item.value,
         }))}
-        textRecords={(profile?.records?.texts || [])
+        textRecords={(profile?.texts || [])
           .map((item: any) => ({ key: item.key, value: item.value }))
           .filter((item: any) => item.value !== null)}
-        contentHash={profile?.records?.contentHash}
+        contentHash={profile?.contentHash}
         owners={owners}
         name={normalisedName}
         actions={profileActions.profileActions}

@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useChainName } from '@app/hooks/useChainName'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
 import { useNameType } from '@app/hooks/useNameType'
 import useRegistrationData from '@app/hooks/useRegistrationData'
@@ -29,14 +29,12 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
 
   const isETH2LD = checkETH2LDFromName(name)
   const nameType = useNameType(name, { enabled })
-  const parentData = useBasicName(parentName(name), {
-    skipGraph: false,
+  const parentData = useBasicName({
+    name: parentName(name),
     enabled: enabled && !!nameType.data && nameType.data!.includes('subname'),
   })
   const chainName = useChainName()
-  const registrationData = useRegistrationData(name, {
-    enabled: enabled && isETH2LD,
-  })
+  const registrationData = useRegistrationData({ name, enabled: enabled && isETH2LD })
 
   const isLoading =
     nameType.isLoading || details.isLoading || parentData.isLoading || registrationData.isLoading
@@ -46,9 +44,9 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
   const data = useMemo(
     () => {
       if (isLoading) return undefined
-      const expiry = safeDateObj(details.expiryDate || details.wrapperData?.expiryDate)
+      const expiry = safeDateObj(details.expiryDate || details.wrapperData?.expiry?.date)
       const parentExpiry = safeDateObj(
-        parentData?.expiryDate || parentData?.wrapperData?.expiryDate,
+        parentData?.expiryDate || parentData?.wrapperData?.expiry?.date,
       )
 
       return match(nameType.data!)

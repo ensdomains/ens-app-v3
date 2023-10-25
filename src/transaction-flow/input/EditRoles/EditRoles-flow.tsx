@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import styled, { css } from 'styled-components'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
+import { Address } from 'viem'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import useRoles, { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import { getAvailableRoles } from '@app/hooks/ownership/useRoles/utils/getAvailableRoles'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -39,8 +40,8 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const [selectedRoleIndex, setSelectedRoleIndex] = useState<number | null>(null)
 
   const roles = useRoles(name)
-  const abilities = useAbilities(name)
-  const basic = useBasicName(name)
+  const abilities = useAbilities({ name })
+  const basic = useBasicName({ name })
   const account = useAccountSafely()
   const isLoading = roles.isLoading || abilities.isLoading || basic.isLoading
 
@@ -69,7 +70,7 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
       .filter((_, i) => {
         return form.getFieldState(`roles.${i}.address`)?.isDirty
       })
-      .reduce<{ [key in Role]?: string }>((acc, { role, address }) => {
+      .reduce<{ [key in Role]?: Address }>((acc, { role, address }) => {
         return {
           ...acc,
           [role]: address,
@@ -86,16 +87,16 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
       dirtyValues.manager && !!abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract
         ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
             name,
-            newOwner: dirtyValues.manager,
+            newOwnerAddress: dirtyValues.manager,
             contract: abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract,
             sendType: 'sendManager',
             reclaim: abilities.data?.sendNameFunctionCallDetails?.sendManager?.method === 'reclaim',
-          })
+          } as any) // TODO: need to synchronize transaction types and abilities object
         : null,
       dirtyValues.owner && !!abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract
         ? makeTransactionItem('transferName', {
             name,
-            newOwner: dirtyValues.owner,
+            newOwnerAddress: dirtyValues.owner,
             contract: abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract,
             sendType: 'sendOwner',
           })
@@ -104,7 +105,7 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
       abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract
         ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
             name,
-            newOwner: dirtyValues['parent-owner'],
+            newOwnerAddress: dirtyValues['parent-owner'],
             contract: abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract,
             sendType: 'sendOwner',
           })

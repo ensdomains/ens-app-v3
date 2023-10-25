@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 import { nameLevel } from '@app/utils/name'
 
@@ -38,8 +38,8 @@ const getWrapLevel = (
   ownerData: ReturnType<typeof useBasicName>['ownerData'],
 ) => {
   if (ownerData?.ownershipLevel !== 'nameWrapper') return 'unwrapped'
-  if (wrapperData?.child.CANNOT_UNWRAP) return 'locked' as const
-  if (wrapperData?.parent.PARENT_CANNOT_CONTROL) return 'emancipated' as const
+  if (wrapperData?.fuses.child.CANNOT_UNWRAP) return 'locked' as const
+  if (wrapperData?.fuses.parent.PARENT_CANNOT_CONTROL) return 'emancipated' as const
   if (ownerData?.ownershipLevel === 'nameWrapper') return 'wrapped' as const
   return 'unwrapped' as const
 }
@@ -79,7 +79,7 @@ export const getNameType = ({
 export const useNameType = (name: string, options: Options = {}) => {
   const enabled = options.enabled ?? true
 
-  const basicName = useBasicName(name, { skipGraph: true, enabled })
+  const basicName = useBasicName({ name, enabled })
 
   const { isLoading, isCachedData } = basicName
 

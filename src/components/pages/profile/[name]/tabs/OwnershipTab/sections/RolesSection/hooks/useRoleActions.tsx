@@ -12,14 +12,14 @@ import { DropdownItemObject } from '@ensdomains/thorin/dist/types/components/mol
 import { ReactNodeNoStrings } from '@ensdomains/thorin/dist/types/types'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import type { GroupedRoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import { getAvailableRoles } from '@app/hooks/ownership/useRoles/utils/getAvailableRoles'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
 import { useNameType } from '@app/hooks/useNameType'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { checkCanSend } from '@app/transaction-flow/input/SendName/utils/checkCanSend'
 import { checkCanSyncManager } from '@app/transaction-flow/input/SyncManager/utils/checkCanSyncManager'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 type Action = Omit<DropdownItemObject, 'onClick' | 'icon'> & {
   primary?: boolean
@@ -39,13 +39,13 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
   const { t } = useTranslation('common')
   const account = useAccountSafely()
   const nameType = useNameType(name)
-  const abilities = useAbilities(name)
+  const abilities = useAbilities({ name })
   const queryClient = useQueryClient()
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showSendNameInput = prepareDataInput('SendName')
-  const showEditRolesInput = prepareDataInput('EditRoles')
-  const showSyncManagerInput = prepareDataInput('SyncManager')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showSendNameInput = usePreparedDataInput('SendName')
+  const showEditRolesInput = usePreparedDataInput('EditRoles')
+  const showSyncManagerInput = usePreparedDataInput('SyncManager')
 
   const isLoading =
     !account.address || nameType.isLoading || abilities.isLoading || details.isLoading

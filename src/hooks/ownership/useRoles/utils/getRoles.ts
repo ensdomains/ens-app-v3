@@ -1,4 +1,5 @@
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
+import { Address } from 'viem'
 
 import type { NameType } from '@app/hooks/useNameType'
 
@@ -10,16 +11,16 @@ export const getRoles = ({
   parentOwner,
   dnsOwner,
 }: {
-  nameType?: NameType | null
-  registrant?: string | null
-  owner?: string | null
-  dnsOwner?: string | null
-  ethAddress?: string | null
-  parentOwner?: string | null
+  nameType?: NameType
+  registrant?: Address | null
+  owner?: Address
+  dnsOwner?: Address
+  ethAddress?: Address
+  parentOwner?: Address
 }) => {
   return match(nameType)
     .with(P.union('eth-unwrapped-2ld'), () => [
-      { address: registrant, role: 'owner' as const },
+      { address: registrant || undefined, role: 'owner' as const },
       { address: owner, role: 'manager' as const },
       { address: ethAddress, role: 'eth-record' as const },
     ])

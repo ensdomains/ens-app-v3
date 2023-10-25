@@ -14,14 +14,13 @@ import { RoleRow } from './components/RoleRow'
 import { useRoleActions } from './hooks/useRoleActions'
 
 const Footer = styled.div(
-  ({ theme }) =>
-    css`
-      display: flex;
-      flex-flow: row wrap;
-      justify-content: flex-end;
-      gap: ${theme.space[2]};
-      min-height: ${theme.space[12]};
-    `,
+  ({ theme }) => css`
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-end;
+    gap: ${theme.space[2]};
+    min-height: ${theme.space[12]};
+  `,
 )
 
 const StyledCard = styled(Card)(cacheableComponentStyles, () => css``)
@@ -36,7 +35,7 @@ export const RolesSection = ({ name, roles, details }: Props) => {
   const { t } = useTranslation('profile')
   const actions = useRoleActions({ name, details, roles })
 
-  const isCached = details.basicIsCachedData
+  const isCached = details.isCachedData
   return (
     <StyledCard $isCached={isCached}>
       <Header count={roles?.filter(({ address }) => !!address).length || 0} />
@@ -48,7 +47,7 @@ export const RolesSection = ({ name, roles, details }: Props) => {
           {...role}
           actions={actions.data}
           isWrapped={details.isWrapped}
-          isEmancipated={!!details.wrapperData?.parent.PARENT_CANNOT_CONTROL}
+          isEmancipated={!!details.wrapperData?.fuses.parent.PARENT_CANNOT_CONTROL}
         />
       ))}
       <Footer>
@@ -75,7 +74,7 @@ export const RolesSection = ({ name, roles, details }: Props) => {
                   buttonId="send-name-disabled-button"
                   buttonText={label}
                   mobileWidth={150}
-                  mobileButtonWidth="initial"
+                  // mobileButtonWidth="initial" // TODO: Check if this is needed
                   prefix={icon}
                   size="medium"
                 />

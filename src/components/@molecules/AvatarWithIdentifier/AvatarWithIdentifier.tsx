@@ -3,11 +3,12 @@ import styled, { css } from 'styled-components'
 import { Typography } from '@ensdomains/thorin'
 
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
-import { useChainId } from '@app/hooks/useChainId'
-import { usePrimary } from '@app/hooks/usePrimary'
+import { useChainId } from '@app/hooks/chain/useChainId'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { QuerySpace } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
 import { shortenAddress } from '@app/utils/utils'
+import { Address } from 'viem'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -37,7 +38,7 @@ const AddressTitleContainer = styled.div(
 )
 
 type Props = {
-  address: string
+  address: Address
   name?: string
   subtitle?: string
   size?: QuerySpace
@@ -51,7 +52,7 @@ export const AvatarWithIdentifier = ({
   size = '10',
   shortenAddressAsTitle = true,
 }: Props) => {
-  const primary = usePrimary(address, !address || !!name || address === emptyAddress)
+  const primary = usePrimaryName({address})
   const network = useChainId()
 
   const _name = name || primary.data?.beautifiedName

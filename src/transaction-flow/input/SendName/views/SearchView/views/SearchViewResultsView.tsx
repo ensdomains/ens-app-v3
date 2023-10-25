@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import useRoles from '@app/hooks/ownership/useRoles/useRoles'
 
@@ -16,7 +17,7 @@ type Props = {
   name: string
   results: any[]
   senderRole?: 'owner' | 'manager' | null
-  onSelect: (address: string) => void
+  onSelect: (address: Address) => void
 }
 
 export const SearchViewResultsView = ({ name, results, senderRole, onSelect }: Props) => {

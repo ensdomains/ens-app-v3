@@ -1,16 +1,16 @@
 import { useTranslation } from 'react-i18next'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 import { Dialog } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import useDNSProof from '@app/hooks/useDNSProof'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useNameType } from '@app/hooks/useNameType'
-import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { usePrimaryNameOrAddress } from '../../../hooks/reverseRecord/usePrimaryNameOrAddress'
@@ -30,10 +30,14 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const account = useAccountSafely()
-  const details = useNameDetails(name)
+  const details = useNameDetails({ name })
   const nameType = useNameType(name)
-  const abilities = useAbilities(name)
-  const primaryNameOrAddress = usePrimaryNameOrAddress(details?.ownerData?.owner, 5)
+  const abilities = useAbilities({ name })
+  const primaryNameOrAddress = usePrimaryNameOrAddress({
+    address: details?.ownerData?.owner!,
+    shortenedAddressLength: 5,
+    enabled: !!details?.ownerData?.owner,
+  })
 
   const baseCanSynManager = checkCanSyncManager({
     address: account.address,
@@ -70,7 +74,7 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
         ? makeTransactionItem('syncManager', {
             name,
             address: account.address!,
-            proverResult: proof.data,
+            dnsImportData: { rrsets: [], proof: proof.data as any }, // TODO: need to update with updated dns import flow
           })
         : null,
       canSyncEth &&
@@ -78,11 +82,11 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
       abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract
         ? makeTransactionItem('transferName', {
             name,
-            newOwner: account.address,
+            newOwnerAddress: account.address,
             sendType: 'sendManager',
             contract: abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract,
             reclaim: abilities.data?.sendNameFunctionCallDetails?.sendManager?.method === 'reclaim',
-          })
+          } as any) // TODO: need to synchronize transaction types and abilities object
         : null,
     ].filter((transaction) => !!transaction)
 

@@ -7,9 +7,8 @@ import {
   RegistrationReducerDataItem,
   SelectedItemProperties,
 } from '@app/components/pages/profile/[name]/registration/types'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
-
-import { useChainId } from './useChainId'
 
 const defaultData: RegistrationReducerDataItem = {
   stepIndex: 0,
