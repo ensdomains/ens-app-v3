@@ -10,7 +10,7 @@ import { useChainId } from '@app/hooks/chain/useChainId'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { PublicClientWithChain } from '@app/types'
 
-type Result = { name?: string; address: string }
+type Result = { name?: string; address: Address }
 type Options = { cache?: boolean }
 
 type QueryBaseParams = {
@@ -26,7 +26,7 @@ const queryByName = async ({ name, chainId }: QueryByNameParams): Promise<Result
     const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
     const normalisedName = normalise(name)
     const record = await getAddressRecord(publicClient, { name: normalisedName })
-    const address = typeof record === 'string' ? record : record?.value
+    const address = record?.value as Address
     if (!address) throw new Error('No address found')
     return {
       name: normalisedName,

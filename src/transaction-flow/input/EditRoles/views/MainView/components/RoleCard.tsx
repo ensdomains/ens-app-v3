@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { RightArrowSVG, Typography } from '@ensdomains/thorin'
 
@@ -86,7 +87,7 @@ const Container = styled.div<{ $dirty?: boolean }>(
 )
 
 type Props = {
-  address?: string | null
+  address?: Address
   role: Role
   dirty?: boolean
   onClick?: () => void

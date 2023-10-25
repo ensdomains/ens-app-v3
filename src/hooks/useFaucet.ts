@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'wagmi'
 
 import { CreateQueryKey } from '@app/types'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { FAUCET_WORKER_URL } from '@app/utils/constants'
 
 import { useAccountSafely } from './account/useAccountSafely'

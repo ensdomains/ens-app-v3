@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { DecodedContentHash } from '@ensdomains/ensjs/utils'
 import { Button, Helper, mq, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
@@ -10,7 +11,6 @@ import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.jso
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import { useOwners } from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
-import { ContentHash } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { contentHashToString } from '@app/utils/contenthash'
 import { checkETH2LDFromName, formatExpiry } from '@app/utils/utils'
@@ -293,7 +293,7 @@ export const ProfileDetails = ({
 }: {
   textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
-  contentHash?: ContentHash
+  contentHash?: DecodedContentHash | string | null
   expiryDate: Date | undefined
   pccExpired: boolean
   owners: ReturnType<typeof useOwners>

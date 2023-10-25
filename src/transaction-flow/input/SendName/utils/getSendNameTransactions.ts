@@ -32,9 +32,9 @@ export const getSendNameTransactions = ({
       ? makeTransactionItem('resetProfileWithRecords', {
           name,
           records: {
-            coinTypes: [{ key: 'ETH', value: recipient }],
+            coins: [{ coin: 'ETH', value: recipient }],
           },
-          resolver: resolverAddress,
+          resolverAddress,
         })
       : null,
 

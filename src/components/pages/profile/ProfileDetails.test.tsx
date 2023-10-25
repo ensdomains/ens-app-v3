@@ -117,7 +117,7 @@ describe('ProfileDetails', () => {
   })
 
   it('should not show content hash if contenthash is empty', () => {
-    render(<ProfileDetails name="test.eth" expiryDate={undefined} textRecords={[]} addresses={[]} pccExpired={false} owners={[]} actions={[]} contentHash={{}} />)
+    render(<ProfileDetails name="test.eth" expiryDate={undefined} textRecords={[]} addresses={[]} pccExpired={false} owners={[]} actions={[]} contentHash={{} as any} />)
     expect(screen.queryByTestId('other-profile-button-contenthash')).toBeNull()
   })
 })

@@ -13,12 +13,12 @@ describe('useExpiryActions', () => {
   })
 
   it('should return null if expiryDetails contains a expiry type data but an invalid expiry date', () => {
-    const { result} = renderHook(() => useExpiryActions({ name: 'test.eth', expiryDetails: [{ type: 'expiry', date: undefined }]}))
+    const { result} = renderHook(() => useExpiryActions({ name: 'test.eth', expiryDetails: [{ type: 'expiry', date: undefined as unknown as Date }]}))
     expect(result.current).toEqual(null)
   })
 
   it('should return null if expiryDetails does not contain a expiry type data', () => {
-    const { result} = renderHook(() => useExpiryActions({ name: 'test.eth', expiryDetails: [{ type: 'expiry', date: undefined }]}))
+    const { result} = renderHook(() => useExpiryActions({ name: 'test.eth', expiryDetails: [{ type: 'expiry', date: undefined as unknown as Date }]}))
     expect(result.current).toEqual(null)
   })
 })

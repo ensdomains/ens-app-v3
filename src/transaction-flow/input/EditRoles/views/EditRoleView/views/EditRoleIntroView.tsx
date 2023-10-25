@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { Button, mq } from '@ensdomains/thorin'
 
@@ -44,8 +45,8 @@ const Container = styled.div(
 
 type Props = {
   role: Role
-  address?: string | null
-  onSelect: (role: { role: Role; address: string }) => void
+  address?: Address
+  onSelect: (role: { role: Role; address: Address }) => void
 }
 
 export const EditRoleIntroView = ({ role, address, onSelect }: Props) => {

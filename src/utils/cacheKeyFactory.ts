@@ -1,3 +1,5 @@
+// TODO: Delete after checking that useFaucet refactor works
+// @ts-nocheck
 import { useAccount } from 'wagmi'
 
 import type { uniqueTransactionIdentifierGenerator } from '@app/components/@molecules/TransactionDialogManager/stage/TransactionStageModal'

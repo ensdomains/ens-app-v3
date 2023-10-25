@@ -1,7 +1,9 @@
+// TODO: Has been replaced by useDnsOwner in ensjs. Keeping for reference for new import flow
+// @ts-nocheck
 import { useQuery } from 'wagmi'
 
-import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { useEns } from '@app/utils/EnsProvider'
 
 const useDNSOwner = (name: string, valid: boolean | undefined) => {
   const { ready, getDNSOwner } = useEns()

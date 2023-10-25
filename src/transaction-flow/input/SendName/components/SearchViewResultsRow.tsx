@@ -1,7 +1,8 @@
 import { ButtonHTMLAttributes, useMemo } from 'react'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
-import { Tag, mq } from '@ensdomains/thorin'
+import { mq, Tag } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 
@@ -39,7 +40,7 @@ const Container = styled.button(({ theme }) => [
 
 type Props = {
   name?: string
-  address: string
+  address: Address
   role?: string
   roles: any[]
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'name'>

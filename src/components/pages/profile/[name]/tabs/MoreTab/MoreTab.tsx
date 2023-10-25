@@ -27,15 +27,7 @@ type Props = {
 
 const MoreTab = ({ name, nameDetails, abilities }: Props) => {
   // TODO: Check history for why profileIsCachedData is used
-  const {
-    canBeWrapped,
-    ownerData,
-    wrapperData,
-    isWrapped,
-    profileIsCachedData,
-    isCachedData,
-    profile,
-  } = nameDetails
+  const { canBeWrapped, ownerData, wrapperData, isWrapped, isCachedData, profile } = nameDetails
 
   return (
     <MoreContainer>

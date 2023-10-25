@@ -3,15 +3,17 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address, isAddress } from 'viem'
 
+import { getProtocolType } from '@ensdomains/ensjs/utils'
 import { RecordItem, Typography } from '@ensdomains/thorin'
 
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import { dynamicAddressIcons } from '@app/assets/address/dynamicAddressIcons'
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { getDestination } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { getContentHashLink, getProtocolTypeAndContentId } from '@app/utils/contenthash'
+import { getContentHashLink } from '@app/utils/contenthash'
 import { getSocialData } from '@app/utils/getSocialData'
 import { shortenAddress } from '@app/utils/utils'
 
@@ -108,6 +110,7 @@ export const OtherProfileButton = ({
   value: string
   type?: 'text' | 'address' | 'contenthash'
 }) => {
+  const chainId = useChainId()
   const breakpoints = useBreakpoint()
   const isLink =
     value?.startsWith('http://') || value?.startsWith('https://') || type === 'contenthash'
@@ -125,8 +128,9 @@ export const OtherProfileButton = ({
   const linkProps = useMemo(() => {
     if (!isLink) return {}
     if (type === 'contenthash') {
-      const { protocolType, contentId } = getProtocolTypeAndContentId(value)
-      const _link = getContentHashLink('', 0, { protocolType, decoded: contentId })
+      const decodedContentHash = getProtocolType(value)
+      if (!decodedContentHash) return {}
+      const _link = getContentHashLink({ name: '', chainId, decodedContentHash })
       if (!_link) return {}
       return {
         as: 'a',
@@ -137,7 +141,7 @@ export const OtherProfileButton = ({
       as: 'a',
       link: value,
     } as const
-  }, [value, type, isLink])
+  }, [value, type, isLink, chainId])
 
   return (
     <RecordItem

@@ -1,3 +1,6 @@
+// TODO: Delete test. This hook is no longer in use. Keep test for now to compare with updated hook
+// @ts-nocheck
+
 import { renderHook } from "@app/test-utils"
 import { useResolverSupportsInterfaces } from "./useResolverSupportsInterfaces"
 import { ResolverInterfaceName } from "@app/constants/resolverInterfaceIds"

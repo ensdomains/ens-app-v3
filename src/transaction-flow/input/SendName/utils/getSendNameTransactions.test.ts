@@ -27,11 +27,11 @@ describe('getSendNameTransactions', () => {
       isOwnerOrManager: true,
       resolverAddress: '0xresolver'
     })).toEqual([
-      makeTransactionItem('resetProfileWithRecords', { name: 'test.eth', records: {coinTypes: [{key: 'ETH', value: '0xrecipient'}]}, resolver: '0xresolver' }),
-      makeTransactionItem('transferName', {name: 'test.eth', newOwner: '0xrecipient', sendType: 'sendManager', contract: 'registry', reclaim: true}),
+      makeTransactionItem('resetProfileWithRecords', { name: 'test.eth', records: {coins: [{coin: 'ETH', value: '0xrecipient'}]}, resolverAddress: '0xresolver' }),
+      makeTransactionItem('transferName', {name: 'test.eth', newOwnerAddress: '0xrecipient', sendType: 'sendManager', contract: 'registry', reclaim: true}),
       makeTransactionItem('transferName', {
         name: 'test.eth',
-        newOwner: '0xrecipient',
+        newOwnerAddress: '0xrecipient',
         sendType: 'sendOwner',
         contract: 'registry',
       })
@@ -63,11 +63,11 @@ describe('getSendNameTransactions', () => {
       isOwnerOrManager: true,
       resolverAddress: '0xresolver'
     })).toEqual([
-      makeTransactionItem('resetProfileWithRecords', { name: 'test.eth', records: {coinTypes: [{key: 'ETH', value: '0xrecipient'}]}, resolver: '0xresolver' }),
-      makeTransactionItem('transferName', {name: 'test.eth', newOwner: '0xrecipient', sendType: 'sendManager', contract: 'registry', reclaim: true}),
+      makeTransactionItem('resetProfileWithRecords', { name: 'test.eth', records: {coinTypes: [{key: 'ETH', value: '0xrecipient'}]}, resolverAddress: '0xresolver' }),
+      makeTransactionItem('transferName', {name: 'test.eth', newOwnerAddress: '0xrecipient', sendType: 'sendManager', contract: 'registry', reclaim: true}),
       makeTransactionItem('transferName', {
         name: 'test.eth',
-        newOwner: '0xrecipient',
+        newOwnerAddress: '0xrecipient',
         sendType: 'sendOwner',
         contract: 'registry',
       })
@@ -100,10 +100,10 @@ describe('getSendNameTransactions', () => {
       resolverAddress: '0xresolver'
     })).toEqual([
       makeTransactionItem('updateEthAddress', { name: 'test.eth', address: '0xrecipient' }),
-      makeTransactionItem('transferName', {name: 'test.eth', newOwner: '0xrecipient', sendType: 'sendManager', contract: 'registry', reclaim: true}),
+      makeTransactionItem('transferName', {name: 'test.eth', newOwnerAddress: '0xrecipient', sendType: 'sendManager', contract: 'registry', reclaim: true}),
       makeTransactionItem('transferName', {
         name: 'test.eth',
-        newOwner: '0xrecipient',
+        newOwnerAddress: '0xrecipient',
         sendType: 'sendOwner',
         contract: 'registry',
       })
@@ -135,10 +135,10 @@ describe('getSendNameTransactions', () => {
       isOwnerOrManager: true,
       resolverAddress: '0xresolver'
     })).toEqual([
-      makeTransactionItem('transferName', {name: 'test.eth', newOwner: '0xrecipient', sendType: 'sendManager', contract: 'registry', reclaim: true}),
+      makeTransactionItem('transferName', {name: 'test.eth', newOwnerAddress: '0xrecipient', sendType: 'sendManager', contract: 'registry', reclaim: true}),
       makeTransactionItem('transferName', {
         name: 'test.eth',
-        newOwner: '0xrecipient',
+        newOwnerAddress: '0xrecipient',
         sendType: 'sendOwner',
         contract: 'registry',
       })
@@ -170,10 +170,10 @@ describe('getSendNameTransactions', () => {
       isOwnerOrManager: true,
       resolverAddress: '0xresolver'
     })).toEqual([
-      makeTransactionItem('transferName', {name: 'test.eth', newOwner: '0xrecipient', sendType: 'sendManager', contract: 'registry', reclaim: true}),
+      makeTransactionItem('transferName', {name: 'test.eth', newOwnerAddress: '0xrecipient', sendType: 'sendManager', contract: 'registry', reclaim: true}),
       makeTransactionItem('transferName', {
         name: 'test.eth',
-        newOwner: '0xrecipient',
+        newOwnerAddress: '0xrecipient',
         sendType: 'sendOwner',
         contract: 'registry',
       })

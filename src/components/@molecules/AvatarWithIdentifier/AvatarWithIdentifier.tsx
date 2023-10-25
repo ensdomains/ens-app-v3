@@ -1,14 +1,14 @@
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { Typography } from '@ensdomains/thorin'
 
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
-import { useChainId } from '@app/hooks/chain/useChainId'
+// import { useChainId } from '@app/hooks/chain/useChainId'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { QuerySpace } from '@app/types'
-import { emptyAddress } from '@app/utils/constants'
+// import { emptyAddress } from '@app/utils/constants'
 import { shortenAddress } from '@app/utils/utils'
-import { Address } from 'viem'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -52,8 +52,8 @@ export const AvatarWithIdentifier = ({
   size = '10',
   shortenAddressAsTitle = true,
 }: Props) => {
-  const primary = usePrimaryName({address})
-  const network = useChainId()
+  const primary = usePrimaryName({ address })
+  // const network = useChainId()
 
   const _name = name || primary.data?.beautifiedName
   const _title = _name || (shortenAddressAsTitle ? shortenAddress(address) : address)
@@ -64,7 +64,13 @@ export const AvatarWithIdentifier = ({
 
   return (
     <Container>
-      <AvatarWithZorb label={_title} address={address} name={_name} size={size} network={network} />
+      <AvatarWithZorb
+        label={_title}
+        address={address}
+        name={_name}
+        size={size}
+        // network={network} // TODO: Check if network is needed
+      />
       <TextContainer>
         {isTitleFullAddress ? (
           <AddressTitleContainer data-testid="avatar-label-title">{_title}</AddressTitleContainer>
