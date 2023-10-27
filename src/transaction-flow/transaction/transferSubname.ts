@@ -5,7 +5,7 @@ import { transferName } from '@ensdomains/ensjs/wallet'
 
 import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
-type Data = {
+export type Data = {
   name: string
   contract: 'registry' | 'nameWrapper'
   newOwnerAddress: Address

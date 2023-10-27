@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Banner } from '@ensdomains/thorin'
@@ -26,17 +27,18 @@ type Props = {
 
 export const OwnershipTab = ({ name, details }: Props) => {
   const roles = useRoles(name, { grouped: true })
-  console.log('roles', roles)
   const nameType = useNameType(name)
   const warning = useOwnershipWarning({ name, details, nameType })
   const isLoading = roles.isLoading || details.isLoading
   if (isLoading) return null
   return (
-    <Container>
-      {warning.data && <Banner alert="warning">{warning.data}</Banner>}
-      <RolesSection name={name} roles={roles.data!} details={details} />
-      <ExpirySection name={name} details={details} />
-      <ContractSection details={details} />
-    </Container>
+    <Suspense>
+      <Container>
+        {warning.data && <Banner alert="warning">{warning.data}</Banner>}
+        <RolesSection name={name} roles={roles.data!} details={details} />
+        <ExpirySection name={name} details={details} />
+        <ContractSection details={details} />
+      </Container>
+    </Suspense>
   )
 }

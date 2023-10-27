@@ -2,6 +2,7 @@ import { Address } from 'viem'
 
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
 
 import type { SendNameForm } from '../SendName-flow'
 
@@ -18,7 +19,7 @@ export const getSendNameTransactions = ({
   transactions: SendNameForm['transactions']
   abilities: ReturnType<typeof useAbilities>['data']
   isOwnerOrManager: boolean
-  resolverAddress: Address
+  resolverAddress?: Address | null
 }) => {
   if (!recipient) return []
 
@@ -28,7 +29,7 @@ export const getSendNameTransactions = ({
 
   const _transactions = [
     setEthRecordOnly ? makeTransactionItem('updateEthAddress', { name, address: recipient }) : null,
-    setEthRecordAndResetProfile
+    setEthRecordAndResetProfile && resolverAddress
       ? makeTransactionItem('resetProfileWithRecords', {
           name,
           records: {
@@ -37,22 +38,22 @@ export const getSendNameTransactions = ({
           resolverAddress,
         })
       : null,
-
-    transactions.sendManager && !!abilities?.sendNameFunctionCallDetails?.sendManager
-      ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+    transactions.sendManager
+      ? makeTransferNameOrSubnameTransactionItem({
           name,
           newOwnerAddress: recipient,
           sendType: 'sendManager',
-          contract: abilities?.sendNameFunctionCallDetails?.sendManager?.contract,
-          reclaim: abilities?.sendNameFunctionCallDetails?.sendManager?.method === 'reclaim',
-        } as any) // TODO: need to get the Data and transaction values in sync
+          isOwnerOrManager,
+          abilities,
+        })
       : null,
-    transactions.sendOwner && !!abilities?.sendNameFunctionCallDetails?.sendOwner
-      ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+    transactions.sendOwner
+      ? makeTransferNameOrSubnameTransactionItem({
           name,
           newOwnerAddress: recipient,
           sendType: 'sendOwner',
-          contract: abilities?.sendNameFunctionCallDetails?.sendOwner?.contract,
+          isOwnerOrManager,
+          abilities,
         })
       : null,
   ].filter((transaction) => !!transaction)

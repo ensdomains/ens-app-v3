@@ -11,6 +11,7 @@ import useRoles, { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRol
 import { getAvailableRoles } from '@app/hooks/ownership/useRoles/utils/getAvailableRoles'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { EditRoleView } from './views/EditRoleView/EditRoleView'
@@ -84,30 +85,22 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
       dirtyValues['eth-record']
         ? makeTransactionItem('updateEthAddress', { name, address: dirtyValues['eth-record'] })
         : null,
-      dirtyValues.manager && !!abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract
-        ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+      dirtyValues.manager
+        ? makeTransferNameOrSubnameTransactionItem({
             name,
             newOwnerAddress: dirtyValues.manager,
-            contract: abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract,
             sendType: 'sendManager',
-            reclaim: abilities.data?.sendNameFunctionCallDetails?.sendManager?.method === 'reclaim',
-          } as any) // TODO: need to synchronize transaction types and abilities object
-        : null,
-      dirtyValues.owner && !!abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract
-        ? makeTransactionItem('transferName', {
-            name,
-            newOwnerAddress: dirtyValues.owner,
-            contract: abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract,
-            sendType: 'sendOwner',
+            isOwnerOrManager,
+            abilities: abilities.data,
           })
         : null,
-      dirtyValues['parent-owner'] &&
-      abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract
-        ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+      dirtyValues.owner
+        ? makeTransferNameOrSubnameTransactionItem({
             name,
-            newOwnerAddress: dirtyValues['parent-owner'],
-            contract: abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract,
+            newOwnerAddress: dirtyValues.owner,
             sendType: 'sendOwner',
+            isOwnerOrManager,
+            abilities: abilities.data,
           })
         : null,
     ].filter((t) => !!t)

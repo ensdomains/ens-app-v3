@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
+import { Dialog, Helper, mq, Typography } from '@ensdomains/thorin'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
@@ -109,8 +109,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const chainId = useChainId()
   const { address } = useAccount()
   const primary = usePrimaryName({ address })
-  // TODO: Double check this line
-  // const selected = { name: nameDetails.normalisedName, address: address! }
   const selected = { name: nameDetails.normalisedName, address: address!, chainId }
   const { normalisedName, beautifiedName } = nameDetails
   const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })

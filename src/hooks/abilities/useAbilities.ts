@@ -143,7 +143,6 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
         }),
       }
     },
-    // TODO: Check if we can remove the listing of basicNameData parts without causing inifinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       name,

@@ -8,7 +8,6 @@ import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 import useRoles from '@app/hooks/ownership/useRoles/useRoles'
-// import { useResolverSupportsInterfaces } from '@app/hooks/resolver/useResolverSupportsInterfaces'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useNameType } from '@app/hooks/useNameType'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
@@ -48,7 +47,7 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const nameType = useNameType(name)
   const basic = useBasicName({ name })
   const roles = useRoles(name)
-  const resolver = useResolver(name)
+  const resolver = useResolver({ name })
   const resolverSupport = useResolverHasInterfaces({
     interfaceNames: ['VersionableResolver'],
     resolverAddress: resolver.data as Address,
@@ -108,7 +107,7 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
       transactions,
       isOwnerOrManager,
       abilities: abilities.data,
-      resolverAddress: resolver.data!, // TODO: Add check for if resolver is not defined
+      resolverAddress: resolver.data,
     })
 
     if (_transactions.length === 0) return
@@ -125,6 +124,8 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   }
 
   const canSend = checkCanSend({ abilities: abilities.data, nameType: nameType.data })
+  const canResetProfile =
+    abilities.data.canEditRecords && !!resolverSupport.data?.every((i) => !!i) && !!resolver.data
 
   return (
     <FormProvider {...form}>
@@ -137,9 +138,7 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
           .with([true, 'summary'], () => (
             <SummaryView
               name={name}
-              canResetProfile={
-                abilities.data.canEditRecords && !!resolverSupport.data?.every((i) => !!i)
-              }
+              canResetProfile={canResetProfile}
               onBack={onBack}
               onNext={onNext}
             />

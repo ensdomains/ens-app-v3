@@ -113,7 +113,7 @@ export const TransactionDialogManager = ({
         <TransactionStageModal
           actionName={transactionItem.name}
           displayItems={transaction.displayItems(transactionItem.data as any, t)}
-          // TODO: check helper and backToInput types in transaction-flow/types.ts
+          // TODO: Look into why helper type is not being inferred
           helper={
             'helper' in transaction && typeof transaction.helper === 'function'
               ? transaction.helper(transactionItem.data as any, t)

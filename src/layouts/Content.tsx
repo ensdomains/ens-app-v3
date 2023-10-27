@@ -279,11 +279,12 @@ export const Content = ({
 
   if (!children.leading && singleColumnContent) LeadingComponent = null
 
+  const fullTitle = `${title} - ENS`
   return (
     <>
       {!noTitle && (
         <Head>
-          <title>{title} - ENS</title>
+          <title>{fullTitle}</title>
         </Head>
       )}
 

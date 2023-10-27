@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import { Button, Dialog, mq, PlusSVG, ScrollBox } from '@ensdomains/thorin'
 
@@ -274,10 +275,11 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     setView('addRecord')
   }
 
-  const canEditRecordsWhenWrapped =
-    isWrapped && profile?.resolverAddress
-      ? getResolverWrapperAwareness({ chainId, resolverAddress: profile?.resolverAddress })
-      : false
+  const canEditRecordsWhenWrapped = match(isWrapped)
+    .with(false, () =>
+      getResolverWrapperAwareness({ chainId, resolverAddress: profile?.resolverAddress }),
+    )
+    .otherwise(() => true)
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
 

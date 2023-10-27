@@ -326,8 +326,6 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
         '1337': [
           {
             address: deploymentAddresses.PublicResolver,
-            // TODO: double check this address matches up
-            // address: '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF',
             deployer: 'ENS Labs',
             tag: 'latest',
             isNameWrapperAware: true,
@@ -352,8 +350,6 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
           },
           {
             address: deploymentAddresses.LegacyPublicResolver,
-            // TODO: check this matches up
-            // address: '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB',
             deployer: 'ENS Labs',
             tag: null,
             isNameWrapperAware: false,

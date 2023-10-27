@@ -1,4 +1,5 @@
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
+import { Address } from 'viem'
 
 import type { NameType } from '@app/hooks/useNameType'
 
@@ -9,11 +10,11 @@ export const checkCanSyncManager = ({
   owner,
   dnsOwner,
 }: {
-  address?: string | null
+  address?: Address | null
   nameType?: NameType | null
-  registrant?: string | null
-  owner?: string | null
-  dnsOwner?: string | null
+  registrant?: Address | null
+  owner?: Address | null
+  dnsOwner?: Address | null
 }) => {
   return match(nameType)
     .with('eth-unwrapped-2ld', () => registrant === address && owner !== address)

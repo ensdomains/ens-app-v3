@@ -62,6 +62,15 @@ type NameListViewProps = {
 export const NameListView = ({ address, isSelf, setError, setLoading }: NameListViewProps) => {
   const { t } = useTranslation('names')
 
+  /**
+   * Normal useQueries are in idle state until it reaches the client side, but useInfiniteQuery does not and
+   * starts in success state when it has persistent data. This causes a hydration error
+   */
+  const [isMounted, setIsMounted] = useState(false)
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   const [mode, setMode] = useState<NameTableMode>('view')
   const [selectedNames, setSelectedNames] = useState<string[]>([])
   const handleClickName = (name: string) => () => {
@@ -147,7 +156,9 @@ export const NameListView = ({ address, isSelf, setError, setLoading }: NameList
   const isLoading = isNamesLoading || !address
 
   let InnerContent: ReactNode
-  if (isLoading) {
+  if (!isMounted) {
+    InnerContent = null
+  } else if (isLoading) {
     InnerContent = (
       <EmptyDetailContainer>
         <Spinner color="accent" />
@@ -180,7 +191,6 @@ export const NameListView = ({ address, isSelf, setError, setLoading }: NameList
       </InfiniteScrollContainer>
     )
   } else {
-    console.log('')
     InnerContent = `${names.length}`
   }
 

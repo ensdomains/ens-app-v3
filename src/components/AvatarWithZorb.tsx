@@ -57,7 +57,6 @@ export const NameAvatar = ({
   noCache = false,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
-  
   const { data: avatar } = useEnsAvatar({ name, cacheTime: noCache ? 0 : undefined })
   const zorb = useZorb(name, 'name')
 

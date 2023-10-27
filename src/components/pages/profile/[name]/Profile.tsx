@@ -64,7 +64,7 @@ const TabButton = styled.button<{ $selected: boolean }>(
 )
 
 const tabs = ['profile', 'records', 'ownership', 'subnames', 'permissions', 'more'] as const
-type Tab = typeof tabs[number]
+type Tab = (typeof tabs)[number]
 
 type Props = {
   isSelf: boolean

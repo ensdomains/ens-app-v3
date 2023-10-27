@@ -42,8 +42,6 @@ export type BackObj = { back: boolean }
 
 export type RegistrationData = Prettify<UnionToIntersection<RegistrationStepData[RegistrationStep]>>
 
-// TODO: Check if we need chainId
-// export type SelectedItemProperties = { address: Address; name: string }
 export type SelectedItemProperties = { address: string; name: string; chainId: number }
 
 export type RegistrationReducerDataItem = Prettify<

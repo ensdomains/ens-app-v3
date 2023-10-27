@@ -140,10 +140,10 @@ export const getResolverWrapperAwareness = ({
   resolverAddress,
 }: {
   chainId: number
-  resolverAddress: Address
+  resolverAddress?: Address
 }) =>
-  KNOWN_RESOLVER_DATA[chainId]?.find((x) => x.address === resolverAddress)?.isNameWrapperAware ||
-  false
+  !!resolverAddress &&
+  !!KNOWN_RESOLVER_DATA[chainId]?.find((x) => x.address === resolverAddress)?.isNameWrapperAware
 
 export const calculateValueWithBuffer = (value: bigint) =>
   (value * CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE) / 100n

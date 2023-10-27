@@ -228,7 +228,6 @@ export const ProfileSnippet = ({
   return (
     <Container $banner={banner} data-testid="profile-snippet">
       <FirstItems>
-        {/** TODO: Double check that network is no longer needed */}
         <NameAvatar
           size={{ min: '24', sm: '32' }}
           label={name}
