@@ -1,4 +1,4 @@
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 export const nameParts = (name: string) => {
   const parts = name.split('.')

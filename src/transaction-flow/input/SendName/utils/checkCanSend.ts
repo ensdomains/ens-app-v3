@@ -1,4 +1,4 @@
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useNameType } from '@app/hooks/useNameType'

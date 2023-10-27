@@ -26,7 +26,9 @@ const IconWrapper = styled.div<{ $open: boolean }>(
   ({ theme, $open }) => css`
     display: flex;
     color: ${theme.colors.grey};
-    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition:
+      transform 0.3s ease-in-out,
+      color 0.3s ease-in-out;
 
     ${$open &&
     css`
@@ -41,7 +43,9 @@ const Body = styled.div<{ $state: TransitionState; $height: number }>(
     overflow: hidden;
     width: 100%;
     padding: 0 ${theme.space['4']};
-    transition: opacity 0.5s ease-in-out, height 0.5s ease-in-out;
+    transition:
+      opacity 0.5s ease-in-out,
+      height 0.5s ease-in-out;
     box-sizing: border-box;
 
     ${$state === 'exited' &&

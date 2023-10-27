@@ -23,5 +23,5 @@ const SUPPORT_LINKS = {
 
 type SupportTopic = keyof typeof SUPPORT_LINKS
 
-export const getSupportLink = <T extends SupportTopic>(topic: T): typeof SUPPORT_LINKS[T] =>
+export const getSupportLink = <T extends SupportTopic>(topic: T): (typeof SUPPORT_LINKS)[T] =>
   SUPPORT_LINKS[topic]
