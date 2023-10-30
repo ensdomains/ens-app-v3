@@ -78,11 +78,3 @@ jobs:
       - name: Submit sitemap
         if: ${{ github.ref == 'refs/heads/main' }}
         run: curl https://www.google.com/ping\?sitemap=https://app.ens.domains/sitemap.xml
-
-      - name: Upload problematic file
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: problematic-file
-          path: .next/server/chunks/7091.js
-          retention-days: 5
