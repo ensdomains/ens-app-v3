@@ -3,9 +3,11 @@ import { Page } from '@playwright/test'
 import { Web3ProviderBackend } from 'headless-web3-provider'
 
 import { AddressPage } from './addressPage'
+import { EditRolesModal } from './editRolesModal'
 import { ExtendNamesModal } from './extendNamesModal'
 import { HomePage } from './homePage'
 import { MorePage } from './morePage'
+import { OwnershipPage } from './ownershipPage'
 import { PermissionsPage } from './permissionsPage'
 import { ProfilePage } from './profilePage'
 import { RegistrationPage } from './registrationPage'
@@ -17,9 +19,11 @@ type Dependencies = { page: Page; wallet: Web3ProviderBackend }
 
 const pageObjects = {
   AddressPage,
+  EditRolesModal,
   ExtendNamesModal,
   HomePage,
   MorePage,
+  OwnershipPage,
   PermissionsPage,
   ProfilePage,
   RegistrationPage,

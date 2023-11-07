@@ -55,7 +55,9 @@
             "default": "在此添加用户名",
             "com.twitter": "例如 nicksdjohnson",
             "com.github": "例如 arachnid",
-            "com.discord": "例如 nickjohnson"
+            "com.discord": "例如 nickjohnson",
+            "org.telegram": "例如 nicksdjohnson",
+            "email": "例如 hello@example.com"
           }
         },
         "address": {
@@ -293,6 +295,10 @@
       "title": "不能重新创建该子名称",
       "message": "删除该子名称意味着不能再使用或重新创建它，一直到它过期 {{date}}。由于父名称控制权限已被撤销，因此该操作也无法撤消。"
     },
+    "deleteSubnameNotParentWarning": {
+      "title": "不能重新创建该子名称",
+      "message": "只有父名称(<b>{{parentOwner}}</b>) 的 {{ownershipTerm}} 可以重新创建该子名称。如果该子名称被删除，您将无法自己重新创建它。"
+    },
     "selectPrimaryName": {
       "title": "选择一个主名称",
       "errors": {
@@ -339,6 +345,10 @@
         "title": "未经授权的解析器",
         "description": "要使用此名称作为您的主名称，您需要先设置一个有效的解析器并更新该名称的 ETH 地址记录。"
       }     
+    },
+    "multiStepSubnameDelete": {
+      "title": "删除子名称",
+      "description": "删除该子名称需要执行多次交易"
     }
   },
   "errors": {

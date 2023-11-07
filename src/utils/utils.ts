@@ -88,6 +88,13 @@ export const checkETH2LDFromName = (name: string) => {
   return true
 }
 
+export const checkDNS2LDFromName = (name: string) => {
+  const labels = name.split('.')
+  if (labels.length !== 2) return false
+  if (labels[1] === 'eth') return false
+  return true
+}
+
 export const checkSubname = (name: string) => name.split('.').length > 2
 
 export const isLabelTooLong = (label: string) => {

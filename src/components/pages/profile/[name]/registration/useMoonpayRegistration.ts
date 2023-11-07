@@ -10,12 +10,12 @@ import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'
 import { getLabelFromName } from '@app/utils/utils'
 
-import { MoonpayTransactionStatus } from './types'
+import { MoonpayTransactionStatus, SelectedItemProperties } from './types'
 
 export const useMoonpayRegistration = (
   dispatch: ReturnType<typeof useRegistrationReducer>['dispatch'],
   normalisedName: string,
-  selected: { name: string; address: string },
+  selected: SelectedItemProperties,
   item: ReturnType<typeof useRegistrationReducer>['item'],
 ) => {
   const chainId = useChainId()

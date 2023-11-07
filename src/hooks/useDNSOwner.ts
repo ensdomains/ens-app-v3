@@ -19,7 +19,7 @@ const useDNSOwner = (name: string, valid: boolean | undefined) => {
     useQueryKeys().getDNSOwner(name),
     () =>
       getDNSOwner(name)
-        .then((d) => d || null)
+        .then((d) => (d as string) || null)
         .catch((e: any) => {
           if (e && e.message === 'DNS query failed: NXDOMAIN') {
             // domain doesn't exist

@@ -195,6 +195,22 @@
       "customLabel": "Custom resolver",
       "customPlaceholder": "Enter custom resolver address"
     },
+    "editRoles": {
+      "views": {
+        "main": {
+          "title": "Edit roles",
+          "noneSet": "None set"
+        },
+        "editRole": {
+          "title": "Change {{role}}",
+          "views": {
+            "intro": {
+              "current": "Current {{role}}"
+            }
+          }
+        }
+      }
+    },
     "extendNames": {
       "title_one": "Extend Name",
       "title_other": "Extend {{count}} Names",
@@ -309,6 +325,64 @@
     "resetPrimaryName": {
       "title": "Remove Primary Name",
       "description": "This name will no longer appear as the name for this address. However, transactions to this name will still resolve to this address unless you remove the ETH record."
+    },
+    "sendName": {
+      "views": {
+        "error": {
+          "title": "Cannot send name",
+          "description": "You do not have permission to send this name."
+        },
+        "search": {
+          "placeholder": "ENS name or Ethereum address",
+          "views": {
+            "error": {
+              "message": "Something went wrong. Please try again."
+            },
+            "intro": {
+              "message": "Search for an ENS name or ETH address"
+            },
+            "noResults": {
+              "message": "No results found"
+            }
+          }
+        },
+        "summary": {
+          "title": "Send name",
+          "fields": {
+            "name": {
+              "label": "Name",
+              "expires": "Expires {{date}}"
+            },
+            "recipient": "Recipient",
+            "options": {
+              "label": "Options",
+              "title": "Reset profile",
+              "description": "Remove all profile records. This costs additional gas."
+            },
+            "summary": {
+              "title": "Summary of changes",
+              "updates": {
+                "role": "Update {{role}} role to {{address}}",
+                "eth-record": "Update ETH record to {{address}}"
+              },
+              "remove": {
+                "profile": "Remove profile records"
+              }
+            }
+          }
+        },
+        "confirmation": {
+          "title": "Sending name",
+          "description": "Sending this name transfers ownership to the recipient, giving them your control.",
+          "warning": "You will lose the ability to modify, receive payments, or use it as your primary name.",
+          "learnMore": "Learn about sending names"
+        }
+      }
+    }, 
+    "syncManager": {
+      "title": "Sync manager",
+      "description": "Syncing the manager will make you the new manager of this name. The current manager <strong>({{manager}})</strong> will no longer be able to make changes.",
+      "warning": "Syncing the manager will also unwrap this name. This will burn the NFT and reset any permissions."
     }
   },
   "transaction": {

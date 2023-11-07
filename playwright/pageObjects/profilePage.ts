@@ -63,6 +63,10 @@ export class ProfilePage {
     return this.page.getByTestId(`other-profile-button-${key}`)
   }
 
+  contentHash(): Locator {
+    return this.page.getByTestId('other-profile-button-contenthash')
+  }
+
   async profileEditorAddInputs(keys: string[]) {
     await this.page.getByTestId('show-add-profile-records-modal-button').click()
     for (const key of keys) {

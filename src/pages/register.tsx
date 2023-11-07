@@ -2,6 +2,7 @@ import { ReactElement } from 'react'
 import { useAccount } from 'wagmi'
 
 import Registration from '@app/components/pages/profile/[name]/registration/Registration'
+import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { getSelectedIndex } from '@app/hooks/useRegistrationReducer'
@@ -15,6 +16,7 @@ export default function Page() {
   const initial = useInitial()
 
   const { address } = useAccount()
+  const chainId = useChainId()
 
   const nameDetails = useNameDetails(name, true)
   const { isLoading: detailsLoading, registrationStatus } = nameDetails
@@ -31,6 +33,7 @@ export default function Page() {
       const index = getSelectedIndex(registrationData, {
         address: address!,
         name: nameDetails.normalisedName,
+        chainId,
       })
       if (index !== -1) {
         const { stepIndex, queue } = registrationData.items[index]
