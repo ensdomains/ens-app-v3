@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { Button, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin2'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'

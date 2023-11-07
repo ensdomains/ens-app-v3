@@ -1,7 +1,7 @@
 import { ComponentProps, forwardRef } from 'react'
 import styled, { css } from 'styled-components'
 
-import { CrossSVG, Textarea } from '@ensdomains/thorin'
+import { CrossSVG, Textarea } from '@ensdomains/thorin2'
 
 const Container = styled.div(
   () => css`

@@ -1,0 +1,51 @@
+{
+  "name": "@ensdomains/thorin",
+  "version": "0.6.45",
+  "description": "A web3 native design system",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
+    },
+    "./styles.css": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
+    },
+    "./dist/": "./dist/"
+  },
+  "sideEffects": [
+    "src/atoms/**/*",
+    "src/theme/**/*",
+    "*.css.ts"
+  ],
+  "files": [
+    "dist/**"
+  ],
+  "repository": "ensdomains/thorin",
+  "license": "MIT",
+  "scripts": {
+    "build": "vite build",
+    "lint": "eslint .",
+    "lint:fix": "eslint .  --fix",
+    "clean": "rimraf dist src/components/icons/generated/",
+    "lint:types": "tsc --noEmit",
+    "prepack": "pnpm build",
+    "test": "jest",
+    "ver": "pnpm npm version"
+  },
+  "dependencies": {
+    "clsx": "^1.1.1",
+    "focus-visible": "^5.2.0",
+    "lodash": "^4.17.21",
+    "react-transition-state": "^2.1.1",
+    "ts-pattern": "^4.3.0"
+  },
+  "peerDependencies": {
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "yalcSig": "618135530556dc4c96140ba13ddce052"
+}

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog } from '@ensdomains/thorin'
+import { Button, Dialog } from '@ensdomains/thorin2'
 
 import { SearchViewErrorView } from '../../SendName/views/SearchView/views/SearchViewErrorView'
 

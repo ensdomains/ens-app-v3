@@ -2,7 +2,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { Banner } from '@ensdomains/thorin'
+import { Banner } from '@ensdomains/thorin2'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'

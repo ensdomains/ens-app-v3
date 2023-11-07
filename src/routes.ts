@@ -11,7 +11,7 @@ import {
   MagnifyingGlassSVG,
   PersonActiveSVG,
   PersonSVG,
-} from '@ensdomains/thorin'
+} from '@ensdomains/thorin2'
 
 export type PublicRoute =
   | 'search'

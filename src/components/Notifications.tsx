@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useQueryClient } from 'wagmi'
 
-import { Button, Toast } from '@ensdomains/thorin'
+import { Button, Toast } from '@ensdomains/thorin2'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'

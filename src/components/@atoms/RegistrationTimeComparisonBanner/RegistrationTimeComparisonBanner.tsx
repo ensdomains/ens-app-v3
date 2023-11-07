@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Helper, mq } from '@ensdomains/thorin'
+import { Helper, mq } from '@ensdomains/thorin2'
 
 const InnerContainer = styled.div(
   ({ theme }) => css`

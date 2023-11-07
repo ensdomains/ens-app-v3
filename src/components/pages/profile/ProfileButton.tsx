@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { Address, isAddress } from 'viem'
 
 import { getProtocolType } from '@ensdomains/ensjs/utils'
-import { RecordItem, Typography } from '@ensdomains/thorin'
+import { RecordItem, Typography } from '@ensdomains/thorin2'
 
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import { dynamicAddressIcons } from '@app/assets/address/dynamicAddressIcons'

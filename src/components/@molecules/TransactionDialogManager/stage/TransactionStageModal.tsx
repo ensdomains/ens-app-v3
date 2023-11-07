@@ -15,7 +15,7 @@ import {
 } from 'viem'
 import { useQuery, useSendTransaction } from 'wagmi'
 
-import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
+import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin2'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import CircleTickSVG from '@app/assets/CircleTick.svg'

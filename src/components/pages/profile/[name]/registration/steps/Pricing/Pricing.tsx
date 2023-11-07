@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 import { useBalance } from 'wagmi'
 
+import { Card } from '@ensdomains/thorin'
 import {
   Button,
   Field,
@@ -15,14 +16,13 @@ import {
   RadioButtonGroup,
   Toggle,
   Typography,
-} from '@ensdomains/thorin'
+} from '@ensdomains/thorin2'
 
 import MoonpayLogo from '@app/assets/MoonpayLogo.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { Card } from '@app/components/Card'
 import { ConnectButton } from '@app/components/ConnectButton'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
@@ -38,21 +38,6 @@ import {
 } from '../../types'
 import { useMoonpayRegistration } from '../../useMoonpayRegistration'
 import TemporaryPremium from './TemporaryPremium'
-
-const StyledCard = styled(Card)(
-  ({ theme }) => css`
-    max-width: 780px;
-    margin: 0 auto;
-    flex-direction: column;
-    gap: ${theme.space['4']};
-    padding: ${theme.space['4']};
-
-    ${mq.sm.min(css`
-      padding: ${theme.space['6']} ${theme.space['18']};
-      gap: ${theme.space['6']};
-    `)}
-  `,
-)
 
 const OutlinedContainer = styled.div(
   ({ theme }) => css`
@@ -539,7 +524,7 @@ const Pricing = ({
 
   const showPaymentChoice = !isPrimaryLoading && address
   return (
-    <StyledCard>
+    <Card maxWidth="780px" px={{ base: '$4', sm: '$18' }} margin="0 auto" alignItems="center">
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
       <PlusMinusControl
         minValue={1}
@@ -596,7 +581,7 @@ const Pricing = ({
           }}
         />
       </MobileFullWidth>
-    </StyledCard>
+    </Card>
   )
 }
 

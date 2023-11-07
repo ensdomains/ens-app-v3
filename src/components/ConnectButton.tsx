@@ -1,21 +1,22 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { Key, ReactNode } from 'react'
+import { forwardRef, Key, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 import { useDisconnect, useEnsAvatar } from 'wagmi'
 
 import {
+  Box,
+  BoxProps,
   Button,
   CheckSVG,
   CogSVG,
   CopySVG,
+  cssVars,
   ExitSVG,
-  mq,
   PersonSVG,
   Profile,
 } from '@ensdomains/thorin'
-import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
+import { DropdownItem } from '@ensdomains/thorin2/dist/types/components/molecules/Dropdown/Dropdown'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
@@ -27,66 +28,15 @@ import { shortenAddress } from '@app/utils/utils'
 
 import BaseLink from './@atoms/BaseLink'
 
-const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }>(
-  ({ theme, $isTabBar, $large }) => [
-    $isTabBar
-      ? css`
-          position: absolute;
-          align-self: center;
-          justify-self: center;
-
-          right: ${theme.space['2']};
-
-          & button {
-            padding: 0 ${theme.space['4']};
-            width: ${theme.space.full};
-            height: ${theme.space['10']};
-            border-radius: ${theme.radii.full};
-            font-size: ${theme.fontSizes.body};
-            ${mq.xs.min(css`
-              padding: 0 ${theme.space['8']};
-            `)}
-          }
-        `
-      : css`
-          position: relative;
-          & button {
-            /* border-radius: ${theme.radii['2xLarge']}; */
-          }
-          ${$large &&
-          css`
-            width: 100%;
-            & button {
-              border-radius: ${theme.radii.large};
-            }
-          `}
-        `,
-  ],
-)
-
-const SectionDivider = styled.div(
-  ({ theme }) => css`
-    width: calc(100% + ${theme.space['4']});
-    height: 1px;
-    background-color: ${theme.colors.border};
-  `,
-)
-
-const PersonOverlay = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    z-index: 1;
-
-    background: rgba(0, 0, 0, 0.25);
-
-    svg {
-      color: ${theme.colors.background};
-    }
-  `,
-)
+const SectionDivider = forwardRef<HTMLElement, BoxProps>((props, ref) => (
+  <Box
+    {...props}
+    ref={ref}
+    width={`calc(100% + ${cssVars.space['4']})`}
+    height="$px"
+    bg="$border"
+  />
+))
 
 type Props = {
   isTabBar?: boolean
@@ -110,17 +60,25 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   const { openConnectModal } = useConnectModal()
 
   return (
-    <StyledButtonWrapper $large={large} $isTabBar={isTabBar}>
+    <Box
+      position={isTabBar ? 'absolute' : 'relative'}
+      alignSelf={isTabBar ? 'center' : 'unset'}
+      justifySelf={isTabBar ? 'center' : 'unset'}
+      right={isTabBar ? '$2' : 'unset'}
+    >
       <Button
         data-testid={calculateTestId(isTabBar, inHeader)}
         onClick={() => openConnectModal?.()}
         size={breakpoints.sm || large ? 'medium' : 'small'}
-        width={inHeader ? '45' : undefined}
+        width={inHeader ? '$45' : undefined}
         shape="rounded"
+        px={isTabBar ? { base: '$4', xs: '$8' } : undefined}
+        fontSize="$body"
+        borderRadius={large ? '$large' : undefined}
       >
         {t('wallet.connect')}
       </Button>
-    </StyledButtonWrapper>
+    </Box>
   )
 }
 
@@ -186,12 +144,7 @@ const HeaderProfile = ({ address }: { address: Address }) => {
         src: avatar || zorb,
         decoding: 'sync',
         loading: 'eager',
-        noBorder: true,
-        overlay: avatar ? undefined : (
-          <PersonOverlay>
-            <PersonSVG />
-          </PersonOverlay>
-        ),
+        icon: avatar ? undefined : <PersonSVG />,
       }}
       size="medium"
       alignDropdown="left"

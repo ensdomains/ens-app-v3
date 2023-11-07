@@ -1,27 +1,10 @@
 import { ComponentProps, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin'
+import { Card } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin2'
 
-import { Card } from '@app/components/Card'
 import { useInitial } from '@app/hooks/useInitial'
-
-const StyledCard = styled(Card)(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-
-    border: 1px solid ${theme.colors.border};
-    border-radius: ${theme.radii['2xLarge']};
-    overflow: hidden;
-
-    padding: 0;
-
-    background-color: ${theme.colors.backgroundSecondary};
-  `,
-)
 
 const SectionHeader = styled.div<{ $hideBorder?: boolean }>(
   ({ theme, $hideBorder }) => css`
@@ -83,12 +66,18 @@ export const SectionContainer = ({
   const hideBorder = !children
 
   return (
-    <StyledCard {...props}>
+    <Card
+      padding="0"
+      overflow="hidden"
+      alignItems="stretch"
+      backgroundColor="$backgroundSecondary"
+      {...props}
+    >
       <SectionHeader $hideBorder={hideBorder}>
         <Typography fontVariant="largeBold">{title}</Typography>
         <div>{action}</div>
       </SectionHeader>
       {InnerContent}
-    </StyledCard>
+    </Card>
   )
 }

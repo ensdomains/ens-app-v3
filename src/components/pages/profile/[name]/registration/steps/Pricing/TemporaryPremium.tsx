@@ -12,7 +12,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
 
-import { Button, Dropdown, Helper, Input, mq, Typography } from '@ensdomains/thorin'
+import { Button, Dropdown, Helper, Input, mq, Typography } from '@ensdomains/thorin2'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'

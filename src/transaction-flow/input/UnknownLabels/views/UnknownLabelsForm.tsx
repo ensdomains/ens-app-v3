@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { labelhash } from 'viem'
 
 import { decodeLabelhash, isEncodedLabelhash, validateName } from '@ensdomains/ensjs/utils'
-import { Button, Dialog, Input, mq, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Input, mq, Typography } from '@ensdomains/thorin2'
 
 import { isLabelTooLong } from '@app/utils/utils'
 

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { GetNamesForAddressParameters } from '@ensdomains/ensjs/subgraph'
-import { Input, MagnifyingGlassSimpleSVG, mq, Select } from '@ensdomains/thorin'
+import { Input, MagnifyingGlassSimpleSVG, mq, Select } from '@ensdomains/thorin2'
 
 import DownDirectionSVG from '@app/assets/SortAscending.svg'
 import UpDirectionSVG from '@app/assets/SortDescending.svg'

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin2'
 
 import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays, secondsToHours } from '@app/utils/utils'

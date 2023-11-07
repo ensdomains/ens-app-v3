@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { mq, OutlinkSVG, Typography } from '@ensdomains/thorin'
+import { mq, OutlinkSVG, Typography } from '@ensdomains/thorin2'
 
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
 import { safeDateObj } from '@app/utils/date'

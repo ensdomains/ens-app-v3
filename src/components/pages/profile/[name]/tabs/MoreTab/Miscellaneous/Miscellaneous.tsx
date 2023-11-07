@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { mq } from '@ensdomains/thorin'
+import { mq } from '@ensdomains/thorin2'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import useRegistrationDate from '@app/hooks/useRegistrationData'

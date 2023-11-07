@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin2'
 
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
 import { getSupportLink } from '@app/utils/supportLinks'

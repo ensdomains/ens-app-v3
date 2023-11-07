@@ -1,4 +1,4 @@
-import { QuestionCircleSVG } from '@ensdomains/thorin'
+import { QuestionCircleSVG } from '@ensdomains/thorin2'
 
 import { DynamicAddressIconName, dynamicAddressIcons } from './dynamicAddressIcons'
 

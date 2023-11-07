@@ -2,7 +2,8 @@ import Head from 'next/head'
 import { ComponentProps, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Banner, Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
+import { Button } from '@ensdomains/thorin'
+import { Banner, mq, Skeleton, Typography } from '@ensdomains/thorin2'
 
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
@@ -38,14 +39,6 @@ const HeadingItems = styled.div(
       min-height: ${theme.space['10']};
       grid-column: span 2;
     `)}
-  `,
-)
-
-const CustomLeadingHeading = styled(LeadingHeading)(
-  ({ theme }) => css`
-    gap: ${theme.space['2']};
-    width: 100%;
-    margin-left: 0;
   `,
 )
 
@@ -141,22 +134,6 @@ const Subtitle = styled(Typography)(
   `,
 )
 
-const CopyButton = styled(Button)(
-  ({ theme }) => css`
-    padding: 0;
-    width: ${theme.space['8.5']};
-    height: ${theme.space['8.5']};
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    position: relative;
-
-    margin-left: ${theme.space['2']};
-  `,
-)
-
 const CompactTitle = ({
   title,
   titleButton,
@@ -213,9 +190,19 @@ const CompactTitle = ({
           {subtitle && <Subtitle weight="bold">{subtitle}</Subtitle>}
         </TitleContainer>
         {hasCopyButton && (
-          <CopyButton colorStyle="transparent" shape="square" onClick={() => copy(copyValue)}>
-            <IconCopyAnimated copied={copied} color="grey" size="4.5" />
-          </CopyButton>
+          <Button
+            colorStyle="transparent"
+            shape="square"
+            onClick={() => copy(copyValue)}
+            px="$0"
+            wh="$8.5"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            marginLeft="$2"
+          >
+            <IconCopyAnimated copied={copied} color="$grey" size="$4.5" />
+          </Button>
         )}
       </TitleWrapper>
     </ContentContainer>
@@ -295,7 +282,7 @@ export const Content = ({
       {!hideHeading && (
         <HeadingItems>
           <Skeleton loading={loading} as={FullWidthSkeleton as any}>
-            <CustomLeadingHeading>
+            <LeadingHeading width="$full" marginLeft="$0" gap="$2">
               <CompactTitle
                 copyValue={copyValue}
                 title={title}
@@ -308,7 +295,7 @@ export const Content = ({
                 </ContentContainer>
               )}
               {!isDesktopMode && <Hamburger />}
-            </CustomLeadingHeading>
+            </LeadingHeading>
           </Skeleton>
         </HeadingItems>
       )}

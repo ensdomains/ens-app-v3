@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { RecordOptions } from '@ensdomains/ensjs/utils'
-import { Button, mq } from '@ensdomains/thorin'
+import { Button, mq } from '@ensdomains/thorin2'
 
 import AddRecord from '@app/components/@molecules/AdvancedEditor/AddRecord'
 import AdvancedEditorContent from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabContent'

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Dialog, Helper, mq, Typography } from '@ensdomains/thorin'
+import { Dialog, Helper, mq, Typography } from '@ensdomains/thorin2'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'

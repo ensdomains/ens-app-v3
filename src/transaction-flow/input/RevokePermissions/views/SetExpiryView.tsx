@@ -9,7 +9,7 @@ import {
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Dialog, Input, RadioButton, Typography } from '@ensdomains/thorin'
+import { Dialog, Input, RadioButton, Typography } from '@ensdomains/thorin2'
 
 import { dateTimeLocalToDate, dateToDateTimeLocal, stripDateMs } from '@app/utils/datetime-local'
 

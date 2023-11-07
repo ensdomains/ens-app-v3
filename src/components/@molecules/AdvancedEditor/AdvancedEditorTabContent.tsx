@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { ScrollBox } from '@ensdomains/thorin'
+import { ScrollBox } from '@ensdomains/thorin2'
 
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'

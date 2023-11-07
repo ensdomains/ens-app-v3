@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Card } from '@ensdomains/thorin'
+import { Button, Card } from '@ensdomains/thorin2'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { PseudoActionButton } from '@app/components/@atoms/PseudoActionButton/PseudoActionButton'

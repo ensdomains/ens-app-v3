@@ -2,7 +2,7 @@ import { TOptions } from 'i18next'
 import { ComponentProps, Dispatch, ReactNode } from 'react'
 import { Hash } from 'viem'
 
-import { Button, Dialog, Helper } from '@ensdomains/thorin'
+import { Button, Dialog, Helper } from '@ensdomains/thorin2'
 
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { MinedData, TransactionDisplayItem } from '@app/types'

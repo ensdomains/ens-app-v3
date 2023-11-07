@@ -3,40 +3,24 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { Card } from '@ensdomains/thorin'
 import {
   AlertSVG,
   Button,
   CountdownCircle,
   Dialog,
   Heading,
-  mq,
   Spinner,
   Typography,
-} from '@ensdomains/thorin'
+} from '@ensdomains/thorin2'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import { Card } from '@app/components/Card'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { RegistrationReducerDataItem } from '../types'
-
-const StyledCard = styled(Card)(
-  ({ theme }) => css`
-    max-width: 780px;
-    margin: 0 auto;
-    flex-direction: column;
-    gap: ${theme.space['4']};
-    padding: ${theme.space['4']};
-
-    ${mq.sm.min(css`
-      padding: ${theme.space['6']} ${theme.space['18']};
-      gap: ${theme.space['6']};
-    `)}
-  `,
-)
 
 const ButtonContainer = styled.div(
   ({ theme }) => css`
@@ -301,7 +285,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   }
 
   return (
-    <StyledCard>
+    <Card maxWidth="780px" alignItems="center" margin="0 auto" px={{ base: '$4', sm: '$18' }}>
       <Dialog variant="blank" open={resetOpen} onDismiss={() => setResetOpen(false)}>
         <Dialog.CloseButton onClick={() => setResetOpen(false)} />
         <InnerDialog>
@@ -335,7 +319,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
         {BackButton}
         {ActionButton}
       </ButtonContainer>
-    </StyledCard>
+    </Card>
   )
 }
 

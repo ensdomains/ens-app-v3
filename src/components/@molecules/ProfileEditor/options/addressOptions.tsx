@@ -1,7 +1,7 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Select } from '@ensdomains/thorin'
+import { Select } from '@ensdomains/thorin2'
 
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import coinsWithIcons from '@app/constants/coinsWithIcons.json'

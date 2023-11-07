@@ -3,6 +3,10 @@ const path = require('path')
 const StylelintPlugin = require('stylelint-webpack-plugin')
 const { withSentryConfig } = require('@sentry/nextjs')
 const { execSync } = require('child_process')
+const {
+  createVanillaExtractPlugin
+} = require('@vanilla-extract/next-plugin');
+const withVanillaExtract = createVanillaExtractPlugin();
 
 const babelIncludeRegexes = [
   /next[\\/]dist[\\/]shared[\\/]lib/,
@@ -92,7 +96,7 @@ let nextConfig = {
                 return false
               }
               if (/\.yalc\/@ensdomains\/thorin/.test(excludePath)) {
-                return true
+                return true // TODO: Ask what this is about
               }
               if (/\.yalc\/@ensdomains\/ensjs/.test(excludePath)) {
                 return true
@@ -213,4 +217,4 @@ const withSentry = (config) => {
   return config
 }
 
-module.exports = withSentry(withPlugins(plugins, nextConfig))
+module.exports = withSentry(withPlugins(plugins, withVanillaExtract(nextConfig)))

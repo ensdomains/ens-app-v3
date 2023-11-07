@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import { labelhash, namehash } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { mq, Tag, Typography } from '@ensdomains/thorin'
+import { mq, Tag, Typography } from '@ensdomains/thorin2'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'

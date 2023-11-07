@@ -10,7 +10,7 @@ import {
   ParentFuseKeys,
   ParentFuseReferenceType,
 } from '@ensdomains/ensjs/utils'
-import { Button, Dialog, mq } from '@ensdomains/thorin'
+import { Button, Dialog, mq } from '@ensdomains/thorin2'
 
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import type changePermissions from '@app/transaction-flow/transaction/changePermissions'

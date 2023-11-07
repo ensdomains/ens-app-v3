@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { Skeleton } from '@ensdomains/thorin'
+import { Skeleton } from '@ensdomains/thorin2'
 
 import GasSVG from '@app/assets/Gas.svg'
 import { makeDisplay } from '@app/utils/currency'

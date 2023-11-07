@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { mq, Spinner } from '@ensdomains/thorin'
+import { mq, Spinner } from '@ensdomains/thorin2'
 
 const Container = styled.div(
   ({ theme }) => css`

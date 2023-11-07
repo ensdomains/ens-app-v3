@@ -3,7 +3,7 @@ import { TFunction, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin2'
 
 import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'

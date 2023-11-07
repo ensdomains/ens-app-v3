@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 
-import { Button, Dialog, mq, PlusSVG, ScrollBox } from '@ensdomains/thorin'
+import { Button, Dialog, mq, PlusSVG, ScrollBox } from '@ensdomains/thorin2'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'

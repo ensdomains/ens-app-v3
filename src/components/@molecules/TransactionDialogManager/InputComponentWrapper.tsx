@@ -5,7 +5,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useQueryClient } from 'wagmi'
 
-import { Spinner } from '@ensdomains/thorin'
+import { Spinner } from '@ensdomains/thorin2'
 
 import DynamicLoadingContext from './DynamicLoadingContext'
 

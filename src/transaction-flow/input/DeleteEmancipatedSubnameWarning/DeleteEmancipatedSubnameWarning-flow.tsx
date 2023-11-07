@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, mq } from '@ensdomains/thorin'
+import { Button, Dialog, mq } from '@ensdomains/thorin2'
 
 import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'

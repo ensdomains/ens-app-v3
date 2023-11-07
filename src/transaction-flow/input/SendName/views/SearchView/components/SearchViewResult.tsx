@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { mq, Tag } from '@ensdomains/thorin'
+import { mq, Tag } from '@ensdomains/thorin2'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import type { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'

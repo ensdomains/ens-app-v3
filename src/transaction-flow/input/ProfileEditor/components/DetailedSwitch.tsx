@@ -1,7 +1,7 @@
 import { ComponentProps, forwardRef } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Toggle, Typography } from '@ensdomains/thorin'
+import { Toggle, Typography } from '@ensdomains/thorin2'
 
 const Container = styled.div(
   ({ theme }) => css`

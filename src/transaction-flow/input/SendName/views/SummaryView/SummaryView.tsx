@@ -2,7 +2,7 @@ import { useFormContext, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Field, ScrollBox } from '@ensdomains/thorin'
+import { Button, Dialog, Field, ScrollBox } from '@ensdomains/thorin2'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'

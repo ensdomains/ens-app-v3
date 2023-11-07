@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { RightArrowSVG, Typography } from '@ensdomains/thorin'
+import { RightArrowSVG, Typography } from '@ensdomains/thorin2'
 
 const Container = styled.button(
   ({ theme }) => css`

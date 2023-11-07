@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { Button, mq } from '@ensdomains/thorin'
+import { Button, mq } from '@ensdomains/thorin2'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'

@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { Colors, Space } from '@ensdomains/thorin'
+import { Colors, Space } from '@ensdomains/thorin2'
 
 export const TrafficLight = styled.div<{
   $go: boolean

@@ -1,7 +1,7 @@
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Helper, Typography } from '@ensdomains/thorin'
+import { Helper, Typography } from '@ensdomains/thorin2'
 
 import { shortenAddress } from '@app/utils/utils'
 

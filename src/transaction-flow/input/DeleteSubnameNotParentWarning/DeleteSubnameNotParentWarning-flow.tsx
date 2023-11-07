@@ -2,7 +2,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { Button, Dialog, mq } from '@ensdomains/thorin'
+import { Button, Dialog, mq } from '@ensdomains/thorin2'
 
 import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
 import { useOwners } from '@app/hooks/useOwners'

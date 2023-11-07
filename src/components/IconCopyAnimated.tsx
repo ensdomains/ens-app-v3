@@ -1,89 +1,44 @@
 import { memo } from 'react'
-import styled, { css } from 'styled-components'
 
-import { CheckSVG, CopySVG, tokens } from '@ensdomains/thorin'
+import { Box, BoxProps, CheckSVG, CopySVG } from '@ensdomains/thorin'
 
-const IconWrapper = styled.div<{
-  $copied: boolean
-  $checkStrokeWidth: SVGProps['checkStrokeWidth']
-  $size: SVGProps['size']
-  $color: SVGProps['color']
-}>(
-  ({ theme, $copied, $checkStrokeWidth, $color, $size }) => css`
-    position: relative;
-
-    & > svg {
-      display: block;
-      transition: all 0.15s ease-in-out;
-      ${$checkStrokeWidth &&
-      css`
-        stroke-width: ${theme.borderWidths[$checkStrokeWidth]};
-      `}
-      ${$size &&
-      css`
-        width: ${theme.space[$size]};
-        height: ${theme.space[$size]};
-      `}
-    ${$color &&
-      css`
-        color: ${theme.colors[$color]};
-      `}
-    }
-
-    & > svg:first-child {
-      position: absolute;
-    }
-    ${$copied
-      ? css`
-          & > svg:first-child {
-            opacity: 1;
-            visibility: visible;
-          }
-          & > svg:last-child {
-            opacity: 0;
-            visibility: hidden;
-          }
-        `
-      : css`
-          & > svg:first-child {
-            opacity: 0;
-            visibility: hidden;
-          }
-          & > svg:last-child {
-            opacity: 1;
-            visibility: visible;
-          }
-        `}
-  `,
+const IconBox = ({ size, color, ...props }: Omit<BoxProps, 'size'> & SVGProps) => (
+  <Box {...props} display="block" transition="all 0.15s ease-in-out" wh={size} color={color} />
 )
 
 type SVGProps = {
-  checkStrokeWidth?: keyof typeof tokens.borderWidths
-  size?: keyof typeof tokens.space
-  color?: keyof typeof tokens.colors.light | keyof typeof tokens.colors.dark
+  size?: BoxProps['wh']
+  color?: BoxProps['color']
 }
 
 export const IconCopyAnimated = memo(
   ({
     copied = false,
-    checkStrokeWidth = '1',
-    size = '6',
+    size = '$6',
     color,
   }: {
     copied?: boolean
-  } & SVGProps) => {
+  } & SVGProps &
+    Omit<BoxProps, 'size'>) => {
     return (
-      <IconWrapper
-        {...{
-          $copied: copied,
-          $checkStrokeWidth: checkStrokeWidth,
-          $size: size,
-          $color: color,
-        }}
-      >
-        <CheckSVG />
-        <CopySVG />
-      </IconWrapper>
+      <Box position="relative" color={color}>
+        <IconBox
+          as={<CheckSVG />}
+          color={color}
+          position="absolute"
+          size={size}
+          opacity={copied ? 1 : 0}
+          visibility={copied ? 'visible' : 'hidden'}
+        />
+        <IconBox
+          as={<CopySVG />}
+          color={color}
+          position="relative"
+          size={size}
+          opacity={copied ? 0 : 1}
+          visibility={copied ? 'hidden' : 'visible'}
+        />
+      </Box>
     )
   },
 )

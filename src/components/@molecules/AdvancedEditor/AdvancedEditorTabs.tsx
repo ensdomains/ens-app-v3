@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
 
-import { mq } from '@ensdomains/thorin'
+import { mq } from '@ensdomains/thorin2'
 
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 

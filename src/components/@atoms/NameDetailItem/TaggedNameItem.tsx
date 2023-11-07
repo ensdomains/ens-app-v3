@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
-import { mq, Tag } from '@ensdomains/thorin'
+import { mq, Tag } from '@ensdomains/thorin2'
 
 import { validateExpiry } from '@app/utils/utils'
 

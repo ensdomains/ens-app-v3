@@ -1,63 +1,44 @@
+import clsx from 'clsx'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { PropsWithChildren, useEffect } from 'react'
 import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
 import { useIntercom } from 'react-use-intercom'
-import styled, { css } from 'styled-components'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
-import { mq } from '@ensdomains/thorin'
+import { Box } from '@ensdomains/thorin'
 
-import FeedbackSVG from '@app/assets/Feedback.svg'
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 
+import { container } from './basicStyles.css'
 import { Navigation } from './Navigation'
 
-const Container = styled.div(
-  ({ theme }) => css`
-    --padding-size: ${theme.space['4']};
-    padding: var(--padding-size);
-    display: flex;
-    flex-gap: ${theme.space['4']};
-    gap: ${theme.space['4']};
-    flex-direction: column;
-    align-items: stretch;
-    @supports (-webkit-touch-callout: none) {
-      // hack for iOS/iPadOS Safari
-      // width should always be 100% - total padding
-      width: calc(100% - calc(var(--padding-size) * 2));
-      box-sizing: content-box;
-    }
-    ${mq.sm.min(css`
-      --padding-size: ${theme.space['8']};
-      gap: ${theme.space['6']};
-      flex-gap: ${theme.space['6']};
-    `)}
-  `,
+const Container = (props: PropsWithChildren<{}>) => (
+  <Box
+    {...props}
+    className={clsx(container, 'min-safe')}
+    display="flex"
+    gap={{ base: '$4', sm: '$6' }}
+    flexDirection="column"
+    alignItems="stretch"
+  />
 )
 
-const ContentWrapper = styled.div(
-  ({ theme }) => css`
-    max-width: ${theme.space['192']};
-    width: 100%;
-    align-self: center;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space['4']};
-    flex-gap: ${theme.space['4']};
-  `,
+const ContentWrapper = (props: PropsWithChildren<{}>) => (
+  <Box
+    {...props}
+    maxWidth="$192"
+    width="$full"
+    alignSelf="center"
+    flexGrow="1"
+    display="flex"
+    flexDirection="column"
+    gap="$4"
+  />
 )
 
-const BottomPlaceholder = styled.div(
-  ({ theme }) => css`
-    height: ${theme.space['14']};
-    ${mq.sm.min(css`
-      height: ${theme.space['12']};
-    `)}
-  `,
+const BottomPlaceholder = (props: PropsWithChildren<{}>) => (
+  <Box {...props} height={{ base: '$14', sm: '$12' }} />
 )
-
-export const StyledFeedbackSVG = styled(FeedbackSVG)(() => css``)
 
 export const Basic = withErrorBoundary(({ children }: { children: React.ReactNode }) => {
   const { chain: currentChain } = useNetwork()
@@ -89,7 +70,7 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   }, [currentChain?.id, router.pathname])
 
   return (
-    <Container className="min-safe">
+    <Container>
       <Navigation />
       <ContentWrapper>
         {error ? <ErrorScreen errorType="application-error" /> : children}

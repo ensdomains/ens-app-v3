@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { CheckCircleSVG, LanguageSVG, LeftArrowSVG, mq, Typography } from '@ensdomains/thorin'
+import { CheckCircleSVG, LanguageSVG, LeftArrowSVG, mq, Typography } from '@ensdomains/thorin2'
 
 const Container = styled.div(
   ({ theme }) => css`

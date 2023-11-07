@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 
-import { Button, Dialog } from '@ensdomains/thorin'
+import { Button, Dialog } from '@ensdomains/thorin2'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin2'
 
 import OutlinkSVG from '@app/assets/Outlink.svg'
 

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { AlertSVG, Typography } from '@ensdomains/thorin'
+import { AlertSVG, Typography } from '@ensdomains/thorin2'
 
 const Container = styled.div(
   () => css`

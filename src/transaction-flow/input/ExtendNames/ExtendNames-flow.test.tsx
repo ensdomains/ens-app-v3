@@ -11,8 +11,8 @@ jest.mock('@app/hooks/ensjs/public/usePrice')
 const mockUseEstimateGasLimitForTransaction = mockFunction(useEstimateGasLimitForTransaction)
 const mockUsePrice = mockFunction(usePrice)
 
-jest.mock('@ensdomains/thorin', () => {
-  const originalModule = jest.requireActual('@ensdomains/thorin')
+jest.mock('@ensdomains/thorin2', () => {
+  const originalModule = jest.requireActual('@ensdomains/thorin2')
   return {
     ...originalModule,
     ScrollBox: jest.fn(({ children }) => children),

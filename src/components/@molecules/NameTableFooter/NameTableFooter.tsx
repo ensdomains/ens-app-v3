@@ -2,7 +2,7 @@ import { ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { PageButtons, Select } from '@ensdomains/thorin'
+import { PageButtons, Select } from '@ensdomains/thorin2'
 
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 

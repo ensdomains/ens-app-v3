@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 
 import { Name } from '@ensdomains/ensjs/subgraph'
-import { Button, Spinner } from '@ensdomains/thorin'
+import { Button, Spinner } from '@ensdomains/thorin2'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import { InfiniteScrollContainer } from '@app/components/@atoms/InfiniteScrollContainer/InfiniteScrollContainer'

@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 import { useEnsAvatar } from 'wagmi'
 
-import { Avatar, UpRightArrowSVG } from '@ensdomains/thorin'
+import { Avatar, UpRightArrowSVG } from '@ensdomains/thorin2'
 
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination } from '@app/routes'

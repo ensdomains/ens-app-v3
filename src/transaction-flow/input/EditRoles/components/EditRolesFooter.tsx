@@ -1,7 +1,7 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Dialog, mq } from '@ensdomains/thorin'
+import { Dialog, mq } from '@ensdomains/thorin2'
 
 const Container = styled.div(({ theme }) => [
   css`

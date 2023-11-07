@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { isAddress } from 'viem'
 import { useAccount, useQueryClient } from 'wagmi'
 
-import { Input } from '@ensdomains/thorin'
+import { Input } from '@ensdomains/thorin2'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { useChainId } from '@app/hooks/chain/useChainId'

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-import { CalendarSVG, FastForwardSVG } from '@ensdomains/thorin'
+import { CalendarSVG, FastForwardSVG } from '@ensdomains/thorin2'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'

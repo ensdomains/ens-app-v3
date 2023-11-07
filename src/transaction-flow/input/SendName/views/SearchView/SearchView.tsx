@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
-import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, mq } from '@ensdomains/thorin'
+import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, mq } from '@ensdomains/thorin2'
 
 import { useSimpleSearch } from '@app/transaction-flow/input/EditRoles/hooks/useSimpleSearch'
 

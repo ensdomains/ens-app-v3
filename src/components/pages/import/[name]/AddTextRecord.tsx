@@ -5,7 +5,7 @@ import { isAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { DNSProver } from '@ensdomains/dnsprovejs'
-import { Button, Helper, Typography } from '@ensdomains/thorin'
+import { Button, Helper, Typography } from '@ensdomains/thorin2'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
@@ -109,7 +109,7 @@ const Copyable = ({
         <Typography>{label}</Typography>
         <CopyableRightContainer>
           <Typography fontVariant="small">{displayValue}</Typography>
-          <IconCopyAnimated color="grey" copied={copied} size="3.5" />
+          <IconCopyAnimated color="$grey" copied={copied} size="$3.5" />
         </CopyableRightContainer>
       </ButtonInner>
     </Button>

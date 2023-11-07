@@ -4,7 +4,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
+import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin2'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'

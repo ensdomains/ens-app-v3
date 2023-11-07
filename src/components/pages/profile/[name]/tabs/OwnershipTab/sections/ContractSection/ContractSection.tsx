@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-import { Card, Helper, RecordItem } from '@ensdomains/thorin'
+import { Card, Helper, RecordItem } from '@ensdomains/thorin2'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'

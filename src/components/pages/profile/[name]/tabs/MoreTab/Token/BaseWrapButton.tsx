@@ -1,7 +1,7 @@
 import { ComponentProps, forwardRef } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, mq } from '@ensdomains/thorin'
+import { Button, mq } from '@ensdomains/thorin2'
 
 const StyledWrapButton = styled(Button)(
   ({ theme }) => css`

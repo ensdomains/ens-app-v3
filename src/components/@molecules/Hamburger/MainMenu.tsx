@@ -10,7 +10,7 @@ import {
   Spinner,
   Typography,
   WalletSVG,
-} from '@ensdomains/thorin'
+} from '@ensdomains/thorin2'
 
 import SocialDiscord from '@app/assets/social/SocialDiscord.svg'
 import SocialDiscourse from '@app/assets/social/SocialDiscourse.svg'

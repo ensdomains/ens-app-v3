@@ -1,7 +1,15 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import styled, { css, keyframes } from 'styled-components'
+import { forwardRef, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 
-import { CrossSVG, DynamicPopover, MenuSVG, Modal, Spinner } from '@ensdomains/thorin'
+import {
+  Box,
+  BoxProps,
+  CrossSVG,
+  DynamicPopover,
+  MenuSVG,
+  Modal,
+  Spinner,
+} from '@ensdomains/thorin'
+import { PopoverProps } from '@ensdomains/thorin/dist/types/components/atoms/DynamicPopover'
 
 import { useInitial } from '@app/hooks/useInitial'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -9,120 +17,99 @@ import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 
 import LanguageMenu from './LanguageMenu'
 import MainMenu from './MainMenu'
+import { slideContainer } from './styles.css'
 
-const Button = styled.button<{ $active: boolean }>(
-  ({ theme, $active }) => css`
-    position: relative;
-    padding: ${theme.space['2']};
-    border-radius: ${theme.radii.full};
-
-    transition: all 0.15s ease-in-out;
-
-    cursor: pointer;
-    color: ${theme.colors.grey};
-
-    & > svg {
-      display: block;
-      width: ${theme.space['4']};
-      height: ${theme.space['4']};
-    }
-
-    &:hover {
-      background-color: ${theme.colors.greyLight};
-    }
-
-    ${$active &&
-    css`
-      background-color: ${theme.colors.greyLight};
-      color: ${theme.colors.textPrimary};
-    `}
-  `,
+const Button = forwardRef<HTMLElement, BoxProps & { $active: boolean }>(
+  ({ $active, ...props }, ref) => {
+    return (
+      <Box
+        {...props}
+        as="button"
+        ref={ref}
+        position="relative"
+        padding="$2"
+        flex="0 0 auto"
+        wh="$8"
+        borderRadius="$full"
+        transition="all 0.15s ease-in-out"
+        cursor="pointer"
+        color={$active ? '$textPrimary' : '$grey'}
+        backgroundColor={{ base: $active ? '$greyLight' : 'transparent', hover: '$greyLight' }}
+      />
+    )
+  },
 )
 
-const StyledSpinner = styled(Spinner)(
-  ({ theme }) => css`
-    position: absolute;
-    height: ${theme.space['9']};
-    width: ${theme.space['9']};
-    top: -${theme.space['0.5']};
-    left: -${theme.space['0.5']};
-    stroke-width: ${theme.space['0.5']};
-  `,
+const StyledSpinner = () => (
+  <Box position="absolute" wh="$9" color="$accent" top="-0.125rem" left="-0.125rem">
+    <Box as={<Spinner />} wh="$9" strokeWidth="$0.5" />
+  </Box>
 )
 
-const MobileCard = styled.div(
-  ({ theme }) => css`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
+const MobileCard = forwardRef<HTMLElement, BoxProps>((props, ref) => (
+  <Box
+    {...props}
+    width="$full"
+    ref={ref}
+    display="flex"
+    flexDirection="column"
+    overflow="hidden"
+    position="relative"
+    borderRadius="$2xLarge"
+    backgroundColor="$background"
+    transition="all 0.2s ease-out"
+    borderTopLeftRadius="$0"
+    borderTopRightRadius="$0"
+  />
+))
 
-    border-radius: ${theme.radii['2xLarge']};
-    background-color: ${theme.colors.background};
-
-    transition: all 0.2s ease-out;
-
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  `,
+const CloseButton = (props: BoxProps) => (
+  <Box
+    {...props}
+    borderRadius="$full"
+    backgroundColor="$background"
+    position="absolute"
+    bottom="$-4"
+    left="50%"
+    transform="translate(-50%, 100%)"
+    display="flex"
+    alignItems="center"
+    justifyContent="center"
+    padding="$2"
+  >
+    <Box as={<CrossSVG />} display="block" wh="$4" />
+  </Box>
 )
 
-const CloseButton = styled.button(
-  ({ theme }) => css`
-    border-radius: ${theme.radii.full};
-    background-color: ${theme.colors.background};
-
-    position: absolute;
-    bottom: -${theme.space['4']};
-    left: 50%;
-    transform: translate(-50%, 100%);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: ${theme.space['2']};
-
-    svg {
-      display: block;
-      width: ${theme.space['4']};
-      height: ${theme.space['4']};
-    }
-  `,
+const DesktopDropdownCard = forwardRef<HTMLElement, BoxProps & PopoverProps>(
+  ({ mobilePlacement: _mp, placement: _p, ...props }, ref) => (
+    <Box
+      {...props}
+      ref={ref}
+      overflow="hidden"
+      position="relative"
+      borderRadius="$2xLarge"
+      backgroundColor="$background"
+      transition="all 0.2s ease-out"
+      borderWidth="$1x"
+      borderStyle="solid"
+      borderColor="$border"
+    />
+  ),
 )
 
-const DesktopDropdownCard = styled.div(
-  ({ theme }) => css`
-    overflow: hidden;
-    position: relative;
-    background-color: ${theme.colors.background};
-    border-radius: ${theme.radii['2xLarge']};
-    border: 1px solid ${theme.colors.border};
-    transition: all 0.2s ease-out;
-  `,
-)
-
-const backwardsSlide = keyframes`
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(100%);
-  }
-`
-
-const SlideContainer = styled.div<{ $direction: 'backwards' | 'forwards' }>(
-  ({ theme, $direction }) => css`
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    background-color: ${theme.colors.background};
-    position: absolute;
-    animation: ${backwardsSlide} 0.2s ease-in-out
-      ${$direction === 'backwards' ? 'forwards' : 'reverse'};
-  `,
+const SlideContainer = forwardRef<HTMLElement, BoxProps & { $direction: 'backwards' | 'forwards' }>(
+  ({ $direction, ...props }, ref) => (
+    <Box
+      {...props}
+      ref={ref}
+      className={slideContainer[$direction]}
+      position="absolute"
+      wh="$full"
+      zIndex="1"
+      backgroundColor="$background"
+    />
+  ),
 )
 
 type View = 'main' | 'language'
@@ -217,12 +204,12 @@ const Hamburger = () => {
 
   const button = (
     <Button ref={btnRef} $active={isOpen} onClick={() => setIsOpen((prev) => !prev)}>
-      {graphOutOfSync && <StyledSpinner color="accent" />}
       <MenuSVG />
+      {graphOutOfSync ? <StyledSpinner /> : null}
     </Button>
   )
 
-  if (isInitial) return button
+  if (isInitial) return null
 
   const currentComponent = {
     main: <MainMenu {...{ setCurrentView }} />,
@@ -254,7 +241,8 @@ const Hamburger = () => {
           }
           onShowCallback={renderCallback}
           placement="bottom"
-          width={320}
+          mobilePlacement="bottom"
+          width="320px"
           transitionDuration={150}
           align="end"
         />
@@ -268,9 +256,7 @@ const Hamburger = () => {
           <MobileCard ref={containerRef} style={{ height: height || undefined }}>
             {componentWithAnimation}
           </MobileCard>
-          <CloseButton onClick={() => setIsOpen(false)}>
-            <CrossSVG />
-          </CloseButton>
+          <CloseButton onClick={() => setIsOpen(false)} />
         </Modal>
       )}
     </>

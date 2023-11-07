@@ -1,7 +1,7 @@
 /** This is when the current resolver and latest resolver have matching records */
 import { useTranslation } from 'react-i18next'
 
-import { Button, Dialog } from '@ensdomains/thorin'
+import { Button, Dialog } from '@ensdomains/thorin2'
 
 import { CenteredTypography } from '../components/CenteredTypography'
 import { DetailedSwitch } from '../components/DetailedSwitch'

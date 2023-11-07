@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, mq, Slider } from '@ensdomains/thorin'
+import { Button, Dialog, mq, Slider } from '@ensdomains/thorin2'
 
 import CropBorderSVG from '@app/assets/CropBorder.svg'
 import CropFrameSVG from '@app/assets/CropFrame.svg'

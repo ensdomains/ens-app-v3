@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react'
 
-import { Select } from '@ensdomains/thorin'
+import { Select } from '@ensdomains/thorin2'
 
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'

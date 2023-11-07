@@ -1,10 +1,9 @@
 import { ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { GetSubnamesParameters } from '@ensdomains/ensjs/subgraph'
-import { Button, mq, PlusSVG, Spinner, Typography } from '@ensdomains/thorin'
+import { Box, BoxProps, Button, Card, PlusSVG, Spinner, Typography } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import {
@@ -12,7 +11,6 @@ import {
   SortDirection,
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
-import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useSubnames } from '@app/hooks/ensjs/subgraph/useSubnames'
@@ -25,77 +23,15 @@ import { useQueryParameterState } from '../../../../../hooks/useQueryParameterSt
 import { InfiniteScrollContainer } from '../../../../@atoms/InfiniteScrollContainer/InfiniteScrollContainer'
 import { TaggedNameItem } from '../../../../@atoms/NameDetailItem/TaggedNameItem'
 
-const TabWrapperWithButtons = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    width: 100%;
-    gap: ${theme.space['4']};
-  `,
-)
-
-const StyledTabWrapper = styled(TabWrapper)(() => css``)
-
-const Footer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: ${theme.space['8']};
-    border-top: 1px solid ${theme.colors.border};
-  `,
-)
-
-const NoMoreResultsContainer = styled.div(
-  ({ theme }) => css`
-    padding: ${theme.space['2']};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: ${theme.space['15']};
-  `,
-)
-
-const AddSubnamesCard = styled(Card)(
-  ({ theme }) => css`
-    padding: ${theme.space['6']};
-    flex-direction: column;
-    text-align: center;
-    gap: ${theme.space['4']};
-
-    & > button {
-      width: 100%;
-    }
-
-    ${mq.sm.min(css`
-      flex-direction: row;
-      text-align: left;
-      & > button {
-        width: min-content;
-      }
-    `)}
-  `,
-)
-
-const PlusPrefix = styled.svg(
-  ({ theme }) => css`
-    display: block;
-    stroke-width: ${theme.space['0.75']};
-    height: ${theme.space['5']};
-    width: ${theme.space['5']};
-  `,
-)
-
-const SpinnerContainer = styled.div<{ $showBorder?: boolean }>(
-  ({ theme, $showBorder }) => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: ${theme.space['15']};
-    ${$showBorder && `border-top: 1px solid ${theme.colors.border};`}
-  `,
+const NoMoreResultsContainer = (props: BoxProps) => (
+  <Box
+    {...props}
+    padding="$2"
+    display="flex"
+    alignItems="center"
+    justifyContent="center"
+    height="$15"
+  />
 )
 
 export const SubnamesTab = ({
@@ -155,9 +91,9 @@ export const SubnamesTab = ({
   let InnerContent: ReactNode
   if (isLoading) {
     InnerContent = (
-      <SpinnerContainer>
+      <Box display="flex" justifyContent="center" alignItems="center" height="$15">
         <Spinner size="small" color="accent" />
-      </SpinnerContainer>
+      </Box>
     )
   } else if (nameCount === 0 && searchQuery === '') {
     InnerContent = (
@@ -191,9 +127,16 @@ export const SubnamesTab = ({
           ))}
         </div>
         {isFetching && (
-          <SpinnerContainer $showBorder>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            height="$15"
+            borderTop="1px solid"
+            borderTopColor="$border"
+          >
             <Spinner size="small" color="accent" />
-          </SpinnerContainer>
+          </Box>
         )}
       </InfiniteScrollContainer>
     )
@@ -202,9 +145,19 @@ export const SubnamesTab = ({
   }
 
   return (
-    <TabWrapperWithButtons>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="stretch"
+      justifyContent="flex-start"
+      width="$full"
+      gap="$4"
+    >
       {canEdit && (
-        <AddSubnamesCard>
+        <Card
+          flexDirection={{ base: 'column', sm: 'row' }}
+          textAlign={{ base: 'center', sm: 'left' }}
+        >
           <Typography>
             {t('details.tabs.subnames.addSubname.title')}{' '}
             <Outlink href={getSupportLink('namesAndSubnames')}>
@@ -215,7 +168,8 @@ export const SubnamesTab = ({
             <Button
               data-testid="add-subname-action"
               onClick={createSubname}
-              prefix={<PlusPrefix as={PlusSVG} />}
+              prefix={<PlusSVG />}
+              width={{ base: '$full', sm: '$min' }}
             >
               {t('details.tabs.subnames.addSubname.action')}
             </Button>
@@ -228,13 +182,13 @@ export const SubnamesTab = ({
                 buttonText: t('details.tabs.subnames.addSubname.action'),
                 mobileWidth: 200,
                 mobilePlacement: 'top',
-                prefix: <PlusPrefix as={PlusSVG} />,
+                prefix: <PlusSVG />,
               }}
             />
           )}
-        </AddSubnamesCard>
+        </Card>
       )}
-      <StyledTabWrapper>
+      <TabWrapper>
         <NameTableHeader
           selectable={false}
           sortType={sortType}
@@ -253,8 +207,8 @@ export const SubnamesTab = ({
           }}
         />
         <div>{InnerContent}</div>
-        <Footer />
-      </StyledTabWrapper>
-    </TabWrapperWithButtons>
+        <Box display="flex" height="$8" borderTop="1px solid" borderTopColor="$border" />
+      </TabWrapper>
+    </Box>
   )
 }

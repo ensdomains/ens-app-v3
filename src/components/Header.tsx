@@ -1,10 +1,9 @@
 import { useRouter } from 'next/router'
-import { ReactNode, useCallback, useEffect, useRef } from 'react'
+import { forwardRef, ReactNode, useCallback, useEffect, useRef } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
-import styled, { css, useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { mq } from '@ensdomains/thorin'
+import { Box, BoxProps, brightness, translateX, translateY } from '@ensdomains/thorin'
 
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useInitial } from '@app/hooks/useInitial'
@@ -20,116 +19,97 @@ import { SearchInput } from './@molecules/SearchInput/SearchInput'
 import { ConditionalWrapper } from './ConditionalWrapper'
 import { HeaderConnect } from './ConnectButton'
 
-const HeaderWrapper = styled.header(
-  ({ theme }) => css`
-    height: ${theme.space['12']};
-
-    ${mq.sm.max(css`
-      display: none;
-    `)}
-  `,
+const HeaderWrapper = (props: BoxProps) => (
+  <Box {...props} as="header" height="$12" display={{ base: 'none', sm: 'initial' }} />
 )
 
-const LogoAnchor = styled.a(
-  () => css`
-    cursor: pointer;
-    transition: all 0.15s ease-in-out;
+const LogoAnchor = forwardRef<HTMLElement, BoxProps>((props, ref) => (
+  <Box
+    {...props}
+    as="a"
+    ref={ref}
+    cursor="pointer"
+    transition="all 0.15s ease-in-out"
+    filter={{ base: brightness(1), hover: brightness(1.05) }}
+    transform={{ base: translateY(0), hover: translateY(-1) }}
+  />
+))
 
-    & > svg {
-      vertical-align: bottom;
-    }
-
-    &:hover {
-      filter: brightness(1.05);
-      transform: translateY(-1px);
-    }
-  `,
+const NavContainer = (props: BoxProps) => (
+  <Box
+    {...props}
+    display="flex"
+    flexDirection="row"
+    alignItems="center"
+    gap={{ base: '$3', lg: '$6' }}
+    height="$12"
+  />
 )
 
-const NavContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    flex-gap: ${theme.space['3']};
-    gap: ${theme.space['3']};
-    height: ${theme.space['12']};
-
-    ${mq.lg.min(css`
-      flex-gap: ${theme.space['6']};
-      gap: ${theme.space['6']};
-    `)}
-  `,
+const RouteContainer = forwardRef<HTMLElement, BoxProps & { $state: TransitionState }>(
+  ({ $state, ...props }, ref) => (
+    <Box
+      {...props}
+      ref={ref}
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="flex-end"
+      gap={{ base: '$1', lg: '$6' }}
+      position={{ base: 'absolute', lg: 'relative' }}
+      transition="transform 0.15s ease-in-out, opacity 0.15s ease-in-out"
+      right="0"
+      top="0"
+      bottom="0"
+      transform={translateX($state === 'entered' ? '0%' : '125%')}
+      opacity={$state === 'entered' ? 1 : 0}
+    />
+  ),
 )
 
-const RouteContainer = styled.div<{ $state: TransitionState }>(
-  ({ theme, $state }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    flex-gap: ${theme.space['1']};
-    gap: ${theme.space['1']};
-    transition:
-      transform 0.15s ease-in-out,
-      opacity 0.15s ease-in-out;
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    transform: translateX(125%);
-    opacity: 0;
-
-    ${mq.lg.min(css`
-      flex-gap: ${theme.space['6']};
-      gap: ${theme.space['6']};
-      position: relative;
-    `)}
-
-    ${$state === 'entered' &&
-    css`
-      transform: translateX(0%);
-      opacity: 1;
-    `}
-  `,
+const SearchWrapper = forwardRef<HTMLElement, BoxProps & { $state: TransitionState }>(
+  ({ $state, ...props }, ref) => (
+    <Box
+      {...props}
+      ref={ref}
+      width="$full"
+      backgroundColor="$red"
+      maxWidth="$80"
+      transition="margin 0.15s ease-in-out"
+      marginRight={{ base: $state !== 'entered' ? '$0' : '$24', lg: '$0' }}
+    />
+  ),
 )
 
-const RouteWrapper = styled.div(
-  () => css`
-    position: relative;
-  `,
-)
+// TODO: CHeck the div > div stuff
+// const SearchWrapper2 = styled.div<{ $state: TransitionState }>(
+//   ({ theme, $state }) => css`
+//     width: ${theme.space.full};
+//     max-width: ${theme.space['80']};
+//     & > div > div {
+//       max-width: ${theme.space.full};
+//       ${mq.lg.min(css`
+//         max-width: ${theme.space['80']};
+//       `)}
+//     }
 
-const SearchWrapper = styled.div<{ $state: TransitionState }>(
-  ({ theme, $state }) => css`
-    width: ${theme.space.full};
-    max-width: ${theme.space['80']};
-    & > div > div {
-      max-width: ${theme.space.full};
-      ${mq.lg.min(css`
-        max-width: ${theme.space['80']};
-      `)}
-    }
-
-    transition: margin 0.15s ease-in-out;
-    margin-right: ${theme.space['24']};
-    ${$state !== 'entered' &&
-    css`
-      margin-right: 0;
-    `}
-    ${mq.lg.min(css`
-      margin-right: 0;
-    `)}
-  `,
-)
+//     transition: margin 0.15s ease-in-out;
+//     margin-right: ${theme.space['24']};
+//     ${$state !== 'entered' &&
+//     css`
+//       margin-right: 0;
+//     `}
+//     ${mq.lg.min(css`
+//       margin-right: 0;
+//     `)}
+//   `,
+// )
 
 const routesNoSearch = routes.filter(
   (route) => route.name !== 'search' && route.icon && !route.onlyDropdown && !route.disabled,
 )
 
 export const Header = () => {
-  const { space } = useTheme()
   const router = useRouter()
   const isInitial = useInitial()
   const { isConnected } = useAccount()
@@ -203,9 +183,9 @@ export const Header = () => {
           )}
         >
           {router.asPath === '/' ? (
-            <ENSFull height={space['12']} />
+            <Box as={<ENSFull />} height="$12" verticalAlign="bottom" flex="0 0 auto" />
           ) : (
-            <ENSWithGradient height={space['12']} />
+            <Box as={<ENSWithGradient />} height="$12" verticalAlign="bottom" />
           )}
         </ConditionalWrapper>
         {router.asPath !== '/' && breakpoints.sm && (
@@ -220,7 +200,7 @@ export const Header = () => {
           </>
         )}
         <div style={{ flexGrow: 1 }} />
-        <RouteWrapper>
+        <Box position="relative">
           <RouteContainer
             data-testid="route-container"
             ref={routeContainerRef}
@@ -228,7 +208,7 @@ export const Header = () => {
           >
             {RouteItems}
           </RouteContainer>
-        </RouteWrapper>
+        </Box>
         <Hamburger />
         <HeaderConnect />
       </NavContainer>

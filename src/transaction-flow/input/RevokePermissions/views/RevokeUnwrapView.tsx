@@ -2,7 +2,7 @@ import { UseFormRegister } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { CheckboxRow, Dialog, Typography } from '@ensdomains/thorin'
+import { CheckboxRow, Dialog, Typography } from '@ensdomains/thorin2'
 
 import type { FormData } from '../RevokePermissions-flow'
 

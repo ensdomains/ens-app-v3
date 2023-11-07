@@ -1,4 +1,4 @@
-import { Banner } from '@ensdomains/thorin'
+import { Banner } from '@ensdomains/thorin2'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import useResolverEditor from '@app/hooks/useResolverEditor'

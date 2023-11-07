@@ -1,7 +1,7 @@
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Dialog } from '@ensdomains/thorin'
+import { Dialog } from '@ensdomains/thorin2'
 
 import { getSupportLink } from '@app/utils/supportLinks'
 

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { Button, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin2'
 
 import type { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'

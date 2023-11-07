@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { Button } from '@ensdomains/thorin'
+import { Button } from '@ensdomains/thorin2'
 
 const Container = styled.div(
   ({ theme }) => css`

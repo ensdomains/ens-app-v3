@@ -1,7 +1,7 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
-import { ScrollBox, Spinner } from '@ensdomains/thorin'
+import { ScrollBox, Spinner } from '@ensdomains/thorin2'
 
 const SpinnerContainer = styled.div(
   ({ theme }) => css`

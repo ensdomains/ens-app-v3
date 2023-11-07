@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components'
 import { bytesToHex } from 'viem'
 import { useMutation, useQueryClient, useSignTypedData } from 'wagmi'
 
-import { Button, Dialog, mq } from '@ensdomains/thorin'
+import { Button, Dialog, mq } from '@ensdomains/thorin2'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 

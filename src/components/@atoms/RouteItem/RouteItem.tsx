@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useDisconnect } from 'wagmi'
 
-import { ExitSVG } from '@ensdomains/thorin'
+import { ExitSVG } from '@ensdomains/thorin2'
 
 import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
 import { useActiveRoute } from '@app/hooks/useActiveRoute'

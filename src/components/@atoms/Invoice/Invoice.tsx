@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { Colors, Skeleton } from '@ensdomains/thorin'
+import { Colors, Skeleton } from '@ensdomains/thorin2'
 
 import { CurrencyDisplay } from '@app/types'
 

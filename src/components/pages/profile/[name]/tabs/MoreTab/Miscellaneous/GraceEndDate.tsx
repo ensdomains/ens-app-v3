@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-import { Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin2'
 
 import { GRACE_PERIOD } from '@app/utils/constants'
 import { formatDateTime, formatExpiry } from '@app/utils/utils'

@@ -1,89 +1,35 @@
 import Head from 'next/head'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
-import { mq, Typography } from '@ensdomains/thorin'
+import { Box, BoxProps, cssVars, Typography } from '@ensdomains/thorin'
 
+import { GradientText } from '@app/components/@atoms/GradientText/GradientText'
 import FaucetBanner from '@app/components/@molecules/FaucetBanner'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
-import { LeadingHeading } from '@app/components/LeadingHeading'
 
 import ENSFull from '../assets/ENSFull.svg'
 
-const GradientTitle = styled.h1(
-  ({ theme }) => css`
-    font-size: ${theme.fontSizes.headingTwo};
-    text-align: center;
-    font-weight: 800;
-    background-image: ${theme.colors.gradients.accent};
-    background-repeat: no-repeat;
-    background-size: 110%;
-    /* stylelint-disable-next-line property-no-vendor-prefix */
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    margin: 0;
-
-    ${mq.sm.min(css`
-      font-size: ${theme.fontSizes.headingOne};
-    `)}
-  `,
+const Container = (props: BoxProps) => (
+  <Box
+    {...props}
+    flexGrow={1}
+    display="flex"
+    alignItems="center"
+    justifyContent="center"
+    width="$full"
+  />
 )
 
-const SubtitleWrapper = styled.div(
-  ({ theme }) => css`
-    max-width: calc(${theme.space['72']} * 2 - ${theme.space['4']});
-    line-height: 150%;
-    text-align: center;
-    margin-bottom: ${theme.space['3']};
-  `,
-)
-
-const Container = styled.div(
-  () => css`
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  `,
-)
-
-const Stack = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-gap: ${theme.space['3']};
-    gap: ${theme.space['3']};
-  `,
-)
-
-const StyledENS = styled.div(
-  ({ theme }) => css`
-    height: ${theme.space['8.5']};
-  `,
-)
-
-const LogoAndLanguage = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: ${theme.space['4']};
-    flex-gap: ${theme.space['4']};
-  `,
-)
-
-const StyledLeadingHeading = styled(LeadingHeading)(
-  () => css`
-    ${mq.sm.min(css`
-      display: none;
-    `)}
-  `,
+const Stack = (props: BoxProps) => (
+  <Box
+    {...props}
+    display="flex"
+    flexDirection="column"
+    gap="$3"
+    alignItems="center"
+    justifyContent="center"
+  />
 )
 
 export default function Page() {
@@ -94,21 +40,35 @@ export default function Page() {
       <Head>
         <title>ENS</title>
       </Head>
-      <StyledLeadingHeading>
-        <LogoAndLanguage>
-          <StyledENS as={ENSFull} />
-        </LogoAndLanguage>
+      <Box
+        display={{ base: 'flex', sm: 'none' }}
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Box as={ENSFull} height="$8.5" />
         <Hamburger />
-      </StyledLeadingHeading>
+      </Box>
       <FaucetBanner />
       <Container>
         <Stack>
-          <GradientTitle>{t('title')}</GradientTitle>
-          <SubtitleWrapper>
-            <Typography fontVariant="large" color="grey">
-              {t('description')}
-            </Typography>
-          </SubtitleWrapper>
+          <GradientText
+            as="h1"
+            fontSize={{ base: '$headingTwo', sm: '$headingOne' }}
+            textAlign="center"
+            fontWeight="800"
+          >
+            {t('title')}
+          </GradientText>
+          <Typography
+            fontVariant="large"
+            color="grey"
+            maxWidth={`calc(${cssVars.space['72']} * 2 - ${cssVars.space['4']} )`}
+            lineHeight="150%"
+            textAlign="center"
+            marginBottom="$3"
+          >
+            {t('description')}
+          </Typography>
           <SearchInput />
         </Stack>
       </Container>

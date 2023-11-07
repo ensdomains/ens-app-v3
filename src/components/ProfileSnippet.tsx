@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, mq, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
+import { Button, mq, NametagSVG, Tag, Typography } from '@ensdomains/thorin2'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
@@ -229,7 +229,7 @@ export const ProfileSnippet = ({
     <Container $banner={banner} data-testid="profile-snippet">
       <FirstItems>
         <NameAvatar
-          size={{ min: '24', sm: '32' }}
+          size={{ base: '$24', sm: '$32' }}
           label={name}
           name={name}
           noCache={abilities.data.canEdit}

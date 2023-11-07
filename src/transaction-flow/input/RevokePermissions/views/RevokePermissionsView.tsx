@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { ChildFuseKeys, ChildFuseReferenceType } from '@ensdomains/ensjs/utils'
-import { CheckboxRow, Dialog } from '@ensdomains/thorin'
+import { CheckboxRow, Dialog } from '@ensdomains/thorin2'
 
 import type { FormData } from '../RevokePermissions-flow'
 

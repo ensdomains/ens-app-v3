@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, FastForwardSVG, mq } from '@ensdomains/thorin'
+import { Button, FastForwardSVG, mq } from '@ensdomains/thorin2'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'

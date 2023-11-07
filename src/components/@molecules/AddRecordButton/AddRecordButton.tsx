@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 
-import { Button, Input, MagnifyingGlassSimpleSVG, PlusSVG, Typography } from '@ensdomains/thorin'
+import { Button, Input, MagnifyingGlassSimpleSVG, PlusSVG, Typography } from '@ensdomains/thorin2'
 
 import UnsupportedSVG from '@app/assets/Unsupported.svg'
 import { formSafeKey } from '@app/utils/editor'

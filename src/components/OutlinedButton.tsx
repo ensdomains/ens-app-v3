@@ -1,7 +1,7 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button } from '@ensdomains/thorin'
+import { Button } from '@ensdomains/thorin2'
 
 import { DisabledButton } from './@atoms/DisabledButton'
 

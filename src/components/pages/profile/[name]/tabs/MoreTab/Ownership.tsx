@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useQueryClient } from 'wagmi'
 
-import { Button, Helper, mq, Tag, Typography } from '@ensdomains/thorin'
+import { Button, Helper, mq, Tag, Typography } from '@ensdomains/thorin2'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'

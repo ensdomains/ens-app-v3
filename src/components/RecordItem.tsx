@@ -1,4 +1,4 @@
-import { RecordItem as ThorinRecordItem } from '@ensdomains/thorin'
+import { RecordItem as ThorinRecordItem } from '@ensdomains/thorin2'
 
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 

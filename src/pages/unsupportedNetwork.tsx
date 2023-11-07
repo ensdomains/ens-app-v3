@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
-import { Button, Helper, mq } from '@ensdomains/thorin'
+import { Button, Helper, mq } from '@ensdomains/thorin2'
 
 const Card = styled.div(
   ({ theme }) => css`

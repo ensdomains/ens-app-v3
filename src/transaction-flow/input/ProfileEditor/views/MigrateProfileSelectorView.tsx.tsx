@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { Button, Dialog, RadioButton, ScrollBox, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, RadioButton, ScrollBox, Typography } from '@ensdomains/thorin2'
 
 import { CenteredTypography } from '../components/CenteredTypography'
 import { ProfileBlurb } from '../components/ProfileBlurb'

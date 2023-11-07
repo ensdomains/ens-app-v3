@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { Button, Dialog, mq } from '@ensdomains/thorin'
+import { Button, Dialog, mq } from '@ensdomains/thorin2'
 
 import EditResolverForm from '@app/components/@molecules/EditResolver/EditResolverForm'
 import EditResolverWarnings from '@app/components/@molecules/EditResolver/EditResolverWarnings'

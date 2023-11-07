@@ -1,7 +1,15 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Card, CrossSVG, mq, PersonPlusSVG, Skeleton, Typography } from '@ensdomains/thorin'
+import {
+  Button,
+  Card,
+  CrossSVG,
+  mq,
+  PersonPlusSVG,
+  Skeleton,
+  Typography,
+} from '@ensdomains/thorin2'
 
 import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/AvatarWithLink'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'

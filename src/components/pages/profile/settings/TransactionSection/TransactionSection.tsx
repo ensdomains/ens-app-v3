@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, mq, Spinner, Typography } from '@ensdomains/thorin'
+import { Box, BoxProps, cssVars } from '@ensdomains/thorin'
+import { Button, mq, Spinner, Typography } from '@ensdomains/thorin2'
 
-import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
@@ -49,28 +49,19 @@ const RecentTransactionsMessage = styled(Typography)(
   `,
 )
 
-const TransactionContainer = styled(Card)(
-  ({ theme, onClick }) => css`
-    width: 100%;
-    min-height: ${theme.space['18']};
-    padding: ${theme.space['3']};
-    flex-direction: row;
-    justify-content: space-between;
-    gap: ${theme.space['3']};
-    flex-gap: ${theme.space['3']};
-    border: none;
-    border-bottom: 1px solid ${theme.colors.border};
-    border-radius: ${theme.radii.none};
-
-    ${onClick &&
-    css`
-      cursor: pointer;
-    `}
-
-    &:last-of-type {
-      border: none;
-    }
-  `,
+const TransactionContainer = ({ onClick, ...props }: BoxProps) => (
+  <Box
+    {...props}
+    width="$full"
+    minHeight="$18"
+    padding="$3"
+    display="flex"
+    flexDirection="row"
+    justifyContent="space-between"
+    alignItems="center"
+    borderBottom={`1px solid ${cssVars.color.border}`}
+    cursor={onClick ? 'pointer' : undefined}
+  />
 )
 
 const TransactionInfoContainer = styled.div(

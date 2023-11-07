@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { match, P } from 'ts-pattern'
 
-import { Dialog } from '@ensdomains/thorin'
+import { Dialog } from '@ensdomains/thorin2'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'

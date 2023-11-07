@@ -3,7 +3,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Helper } from '@ensdomains/thorin'
+import { Helper } from '@ensdomains/thorin2'
 
 import { Outlink } from '@app/components/Outlink'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'

@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react'
 import styled, { css } from 'styled-components'
 
-import { DisabledSVG, InfoCircleSVG, Typography } from '@ensdomains/thorin'
+import { DisabledSVG, InfoCircleSVG, Typography } from '@ensdomains/thorin2'
 
 type Screen = 'desktop' | 'mobile'
 

@@ -15,7 +15,7 @@ import {
   Helper,
   RightArrowSVG,
   Typography,
-} from '@ensdomains/thorin'
+} from '@ensdomains/thorin2'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useChainName } from '@app/hooks/chain/useChainName'

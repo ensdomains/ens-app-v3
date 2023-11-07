@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Typography } from '@ensdomains/thorin2'
 
 const CenteredTypography = styled(Typography)(
   () => css`

@@ -9,7 +9,7 @@ import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 import { useEnsAvatar } from 'wagmi'
 
-import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
+import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin2'
 
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'

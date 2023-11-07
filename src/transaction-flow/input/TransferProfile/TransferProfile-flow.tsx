@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-import { Button, Dialog } from '@ensdomains/thorin'
+import { Button, Dialog } from '@ensdomains/thorin2'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useProfile } from '@app/hooks/useProfile'

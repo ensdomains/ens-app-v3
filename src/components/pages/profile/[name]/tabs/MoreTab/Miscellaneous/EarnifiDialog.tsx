@@ -4,7 +4,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 
-import { Button, Dialog, Input, mq, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Input, mq, Typography } from '@ensdomains/thorin2'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Spacer } from '@app/components/@atoms/Spacer'

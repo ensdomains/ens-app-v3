@@ -5,7 +5,7 @@ import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { getDnsImportData } from '@ensdomains/ensjs/dns'
-import { Helper, Typography } from '@ensdomains/thorin'
+import { Helper, Typography } from '@ensdomains/thorin2'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { Spacer } from '@app/components/@atoms/Spacer'

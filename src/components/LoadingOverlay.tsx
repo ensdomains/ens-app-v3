@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Heading, Spinner } from '@ensdomains/thorin'
+import { Heading, Spinner } from '@ensdomains/thorin2'
 
 const Container = styled.div(
   ({ theme }) => css`

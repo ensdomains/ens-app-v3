@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 import { useEnsAvatar } from 'wagmi'
 
-import { Avatar, mq } from '@ensdomains/thorin'
+import { Avatar, mq } from '@ensdomains/thorin2'
 
 import CircleTick from '@app/assets/CircleTick.svg'
 import { useZorb } from '@app/hooks/useZorb'

@@ -1,18 +1,16 @@
-import styled, { css } from 'styled-components'
+import { Box, BoxProps, cssVars } from '@ensdomains/thorin'
 
-import { mq } from '@ensdomains/thorin'
-
-export const LeadingHeading = styled.div(
-  ({ theme }) => css`
-    width: calc(100% - calc(${theme.radii.large} * 2));
-    margin-left: ${theme.radii.large};
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    ${mq.sm.min(css`
-      width: calc(100% - calc(${theme.radii['2xLarge']} * 2));
-      margin-left: ${theme.radii['2xLarge']};
-    `)}
-  `,
+export const LeadingHeading = (props: BoxProps) => (
+  <Box
+    width={{
+      base: `calc(100% - calc(${cssVars.radii.large} * 2))`,
+      sm: `calc(100% - calc(${cssVars.radii['2.5xLarge']} * 2))`,
+    }}
+    marginLeft={{ base: cssVars.radii.large, sm: cssVars.radii['2.5xLarge'] }}
+    display="flex"
+    flexDirection="row"
+    alignItems="center"
+    justifyContent="space-between"
+    {...props}
+  />
 )

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Card, Dropdown, mq } from '@ensdomains/thorin'
+import { Button, Card, Dropdown, mq } from '@ensdomains/thorin2'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { useNameDetails } from '@app/hooks/useNameDetails'

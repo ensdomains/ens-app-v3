@@ -20,7 +20,7 @@ import {
   ParentFuseReferenceType,
   ParentFuses,
 } from '@ensdomains/ensjs/utils'
-import { Helper, Space } from '@ensdomains/thorin'
+import { Helper, Space } from '@ensdomains/thorin2'
 
 export type Profile = Partial<
   GetRecordsReturnType<{

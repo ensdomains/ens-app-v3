@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 
-import { QuestionCircleSVG } from '@ensdomains/thorin'
+import { QuestionCircleSVG } from '@ensdomains/thorin2'
 
 export type ContentHashIconType = keyof typeof contentHashIconTypes
 

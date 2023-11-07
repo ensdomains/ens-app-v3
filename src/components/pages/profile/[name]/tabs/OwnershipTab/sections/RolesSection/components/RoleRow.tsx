@@ -13,7 +13,7 @@ import {
   OutlinkSVG,
   UpRightArrowSVG,
   VerticalDotsSVG,
-} from '@ensdomains/thorin'
+} from '@ensdomains/thorin2'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import { useChainName } from '@app/hooks/chain/useChainName'

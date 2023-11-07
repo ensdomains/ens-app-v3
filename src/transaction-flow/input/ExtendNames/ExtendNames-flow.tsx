@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useBalance, useEnsAvatar } from 'wagmi'
 
-import { Avatar, Button, CurrencyToggle, Dialog, Helper, mq, ScrollBox } from '@ensdomains/thorin'
+import { Avatar, Button, CurrencyToggle, Dialog, Helper, mq, ScrollBox } from '@ensdomains/thorin2'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'

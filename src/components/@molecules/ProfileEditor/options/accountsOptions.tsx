@@ -1,7 +1,7 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Select } from '@ensdomains/thorin'
+import { Select } from '@ensdomains/thorin2'
 
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Card, mq, Spinner, Typography } from '@ensdomains/thorin'
+import { Card, mq, Spinner, Typography } from '@ensdomains/thorin2'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'

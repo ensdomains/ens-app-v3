@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Banner } from '@ensdomains/thorin'
+import { Banner } from '@ensdomains/thorin2'
 
 import useRoles from '@app/hooks/ownership/useRoles/useRoles'
 import type { useNameDetails } from '@app/hooks/useNameDetails'

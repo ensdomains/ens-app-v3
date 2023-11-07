@@ -17,7 +17,7 @@ import {
   GetPriceReturnType,
   GetWrapperDataReturnType,
 } from '@ensdomains/ensjs/public'
-import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
+import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin2'
 
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'

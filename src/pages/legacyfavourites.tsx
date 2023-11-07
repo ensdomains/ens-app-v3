@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils'
-import { Helper, Typography } from '@ensdomains/thorin'
+import { Helper, Typography } from '@ensdomains/thorin2'
 
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { Spacer } from '@app/components/@atoms/Spacer'

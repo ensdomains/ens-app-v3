@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
-import { CrossSVG } from '@ensdomains/thorin'
+import { CrossSVG } from '@ensdomains/thorin2'
 
 type Props = {
   size?: 'medium' | 'large'

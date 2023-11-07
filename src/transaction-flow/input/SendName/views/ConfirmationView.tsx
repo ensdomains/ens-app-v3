@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, OutlinkSVG, QuestionSVG, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, OutlinkSVG, QuestionSVG, Typography } from '@ensdomains/thorin2'
 
 import { getSupportLink } from '@app/utils/supportLinks'
 

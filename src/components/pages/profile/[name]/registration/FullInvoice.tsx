@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Colors, CurrencyToggle } from '@ensdomains/thorin'
+import { Colors, CurrencyToggle } from '@ensdomains/thorin2'
 
 import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'

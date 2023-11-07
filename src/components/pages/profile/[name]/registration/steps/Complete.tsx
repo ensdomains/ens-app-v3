@@ -7,12 +7,12 @@ import { decodeEventLog } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { tokenise } from '@ensdomains/ensjs/utils'
-import { Button, mq, Typography } from '@ensdomains/thorin'
+import { Card } from '@ensdomains/thorin'
+import { Button, mq, Typography } from '@ensdomains/thorin2'
 
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
-import { Card } from '@app/components/Card'
 import useWindowSize from '@app/hooks/useWindowSize'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
@@ -247,7 +247,7 @@ const Complete = ({ name, beautifiedName, callback, isMoonpayFlow }: Props) => {
   }, [beautifiedName])
 
   return (
-    <StyledCard>
+    <Card maxWidth="780px" margin="0 auto" px={{ base: '$4', sm: '$18' }} alignItems="center">
       <Confetti
         width={width}
         height={height}
@@ -293,7 +293,7 @@ const Complete = ({ name, beautifiedName, callback, isMoonpayFlow }: Props) => {
           </Button>
         </MobileFullWidth>
       </ButtonContainer>
-    </StyledCard>
+    </Card>
   )
 }
 

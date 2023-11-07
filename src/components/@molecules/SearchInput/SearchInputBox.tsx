@@ -7,7 +7,7 @@ import { Dispatch, ForwardedRef, forwardRef, MouseEvent, SetStateAction } from '
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Input, MagnifyingGlassSVG } from '@ensdomains/thorin'
+import { Input, MagnifyingGlassSVG } from '@ensdomains/thorin2'
 
 const SearchInputWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ theme, $size }) => css`

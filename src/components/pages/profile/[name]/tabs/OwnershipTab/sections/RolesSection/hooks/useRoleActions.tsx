@@ -7,9 +7,9 @@ import {
   CounterClockwiseArrowSVG,
   HorizontalOutwardArrowsSVG,
   PersonSVG,
-} from '@ensdomains/thorin'
-import { DropdownItemObject } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
-import { ReactNodeNoStrings } from '@ensdomains/thorin/dist/types/types'
+} from '@ensdomains/thorin2'
+import { DropdownItemObject } from '@ensdomains/thorin2/dist/types/components/molecules/Dropdown/Dropdown'
+import { ReactNodeNoStrings } from '@ensdomains/thorin2/dist/types/types'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'

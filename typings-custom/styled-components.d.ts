@@ -1,4 +1,5 @@
-import { lightTheme } from '@ensdomains/thorin'
+import { lightTheme } from '@ensdomains/thorin2'
+
 import 'styled-components'
 
 type Theme = typeof lightTheme

@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { Button, Dropdown, mq } from '@ensdomains/thorin'
+import { Button, Dropdown, mq } from '@ensdomains/thorin2'
 
 import type { Transaction } from '@app/hooks/transactions/transactionStore'
 

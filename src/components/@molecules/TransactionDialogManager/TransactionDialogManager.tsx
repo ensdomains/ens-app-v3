@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import usePrevious from 'react-use/lib/usePrevious'
 import { useAccount, WagmiConfig } from 'wagmi'
 
-import { Dialog } from '@ensdomains/thorin'
+import { Dialog } from '@ensdomains/thorin2'
 
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { transactions } from '@app/transaction-flow/transaction'

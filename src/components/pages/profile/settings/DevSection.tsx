@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { revert as evmRevert, snapshot as evmSnapshot, mine, setAutomine } from 'viem/test'
 import { usePrepareSendTransaction, useSendTransaction } from 'wagmi'
 
-import { Button } from '@ensdomains/thorin'
+import { Button } from '@ensdomains/thorin2'
 
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { usePublicClient } from '@app/hooks/usePublicClient'

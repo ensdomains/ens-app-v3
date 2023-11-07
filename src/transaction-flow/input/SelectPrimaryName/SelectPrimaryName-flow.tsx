@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from 'wagmi'
 
 import { getDecodedName, Name } from '@ensdomains/ensjs/subgraph'
 import { decodeLabelhash, isEncodedLabelhash, saveName } from '@ensdomains/ensjs/utils'
-import { Button, Dialog, Heading, mq, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Heading, mq, Typography } from '@ensdomains/thorin2'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import {

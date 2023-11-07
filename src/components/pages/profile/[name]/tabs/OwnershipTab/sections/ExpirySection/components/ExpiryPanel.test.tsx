@@ -1,8 +1,8 @@
 import { render, screen, userEvent } from "@app/test-utils"
 import { ExpiryPanel } from "./ExpiryPanel"
 
-jest.mock('@ensdomains/thorin', () => {
-  const _thorin = jest.requireActual('@ensdomains/thorin')
+jest.mock('@ensdomains/thorin2', () => {
+  const _thorin = jest.requireActual('@ensdomains/thorin2')
   return {
   _esModule: true,
   ..._thorin,

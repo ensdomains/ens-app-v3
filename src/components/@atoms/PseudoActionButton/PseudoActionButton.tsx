@@ -1,6 +1,6 @@
 import { ComponentProps, useEffect, useRef, useState } from 'react'
 
-import { Button } from '@ensdomains/thorin'
+import { Button } from '@ensdomains/thorin2'
 
 type Props = { timeout?: number } & ComponentProps<typeof Button>
 

@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin2'
 
 const DescriptionWrapper = styled(Typography)(
   ({ theme }) => css`

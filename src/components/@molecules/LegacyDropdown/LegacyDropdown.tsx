@@ -11,7 +11,7 @@ import {
 } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, Colors, DownChevronSVG } from '@ensdomains/thorin'
+import { Button, Colors, DownChevronSVG } from '@ensdomains/thorin2'
 
 import { getTestId } from '@app/utils/utils'
 

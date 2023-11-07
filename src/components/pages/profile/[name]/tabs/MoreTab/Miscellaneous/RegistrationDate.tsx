@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-import { OutlinkSVG, Typography } from '@ensdomains/thorin'
+import { OutlinkSVG, Typography } from '@ensdomains/thorin2'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 import type useRegistrationDate from '@app/hooks/useRegistrationData'

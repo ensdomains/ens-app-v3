@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { Spinner, Typography } from '@ensdomains/thorin'
+import { Spinner, Typography } from '@ensdomains/thorin2'
 
 const WaitingContainer = styled.div(
   () => css`

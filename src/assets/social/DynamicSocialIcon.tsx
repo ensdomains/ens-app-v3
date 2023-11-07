@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import dynamic from 'next/dynamic'
 
-import { QuestionCircleSVG } from '@ensdomains/thorin'
+import { QuestionCircleSVG } from '@ensdomains/thorin2'
 
 export const socialIconTypes = {
   'com.discord': dynamic(() => import('./SocialDiscord.svg')),
@@ -12,7 +12,7 @@ export const socialIconTypes = {
   'com.youtube': dynamic(() => import('./SocialYoutube.svg')),
   'org.telegram': dynamic(() => import('./SocialTelegram.svg')),
   'xyz.mirror': dynamic(() => import('./SocialMirrorColour.svg')),
-  email: dynamic(() => import('@ensdomains/thorin').then((m) => m.EnvelopeSVG)),
+  email: dynamic(() => import('@ensdomains/thorin2').then((m) => m.EnvelopeSVG)),
 }
 
 export const socialIconColors = {

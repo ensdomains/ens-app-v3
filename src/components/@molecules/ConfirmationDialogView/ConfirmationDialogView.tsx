@@ -1,7 +1,7 @@
 import { HTMLAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, mq, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, mq, Typography } from '@ensdomains/thorin2'
 
 const Container = styled.div(({ theme }) => [
   css`

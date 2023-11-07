@@ -3,7 +3,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 
-import { CheckboxRow, Dialog, Typography } from '@ensdomains/thorin'
+import { CheckboxRow, Dialog, Typography } from '@ensdomains/thorin2'
 
 import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
 

@@ -2,7 +2,7 @@ import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-
 import type { Dispatch, SetStateAction } from 'react'
 import type { TFunction } from 'react-i18next'
 
-import { CalendarSVG, Dropdown, Typography } from '@ensdomains/thorin'
+import { CalendarSVG, Dropdown, Typography } from '@ensdomains/thorin2'
 
 import { formatDateTime, formatExpiry } from '@app/utils/utils'
 

@@ -1,29 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Heading, mq, Typography } from '@ensdomains/thorin'
+import { Card } from '@ensdomains/thorin'
+import { Button, Heading, mq, Typography } from '@ensdomains/thorin2'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import { Card } from '@app/components/Card'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 
 import FullInvoice from '../FullInvoice'
 import { RegistrationReducerDataItem } from '../types'
-
-const StyledCard = styled(Card)(
-  ({ theme }) => css`
-    max-width: 780px;
-    margin: 0 auto;
-    flex-direction: column;
-    gap: ${theme.space['4']};
-    padding: ${theme.space['4']};
-
-    ${mq.sm.min(css`
-      padding: ${theme.space['6']} ${theme.space['18']};
-      gap: ${theme.space['6']};
-    `)}
-  `,
-)
 
 const InfoItems = styled.div(
   ({ theme }) => css`
@@ -112,7 +97,7 @@ const Info = ({ registrationData, name, callback, onProfileClick }: Props) => {
   })
 
   return (
-    <StyledCard>
+    <Card maxWidth="780px" margin="0 auto" px={{ base: '$4', sm: '$18' }} alignItems="center">
       <Heading>{t('steps.info.heading')}</Heading>
       <Typography>{t('steps.info.subheading')}</Typography>
       <InfoItems>
@@ -143,7 +128,7 @@ const Info = ({ registrationData, name, callback, onProfileClick }: Props) => {
           </Button>
         </MobileFullWidth>
       </ButtonContainer>
-    </StyledCard>
+    </Card>
   )
 }
 

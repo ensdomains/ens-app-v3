@@ -10,7 +10,7 @@ import { privateKeyToAccount } from 'viem/accounts'
 import { mainnet } from 'viem/chains'
 import { createConfig, WagmiConfig } from 'wagmi'
 
-import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
+import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin2'
 
 import { DeepPartial } from './types'
 

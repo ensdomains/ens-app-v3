@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { Avatar, Typography } from '@ensdomains/thorin'
+import { Avatar, Typography } from '@ensdomains/thorin2'
 
 import { useAvatarFromRecord } from '@app/hooks/useAvatarFromRecord'
 import { useProfile } from '@app/hooks/useProfile'
