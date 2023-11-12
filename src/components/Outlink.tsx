@@ -2,38 +2,15 @@ import type { UrlObject } from 'url'
 
 import Link from 'next/link'
 import { ComponentProps } from 'react'
-import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin2'
+import { Box, BoxProps, Typography } from '@ensdomains/thorin'
 
 import OutlinkSVG from '@app/assets/Outlink.svg'
 
 import BaseLink from './@atoms/BaseLink'
 
-export const StyledAnchor = styled.a(
-  ({ theme }) => css`
-    padding-right: ${theme.space['4']};
-    position: relative;
-    color: ${theme.colors.accent};
-    cursor: pointer;
-  `,
-)
-
-const OutlinkIcon = styled.div(
-  ({ theme }) => css`
-    position: absolute;
-    top: ${theme.space['0']};
-    right: ${theme.space['0']};
-    width: ${theme.space['3.5']};
-    height: ${theme.space['3.5']};
-    opacity: 0.5;
-  `,
-)
-
-export const OutlinkTypography = styled(Typography)(
-  () => css`
-    display: inline-block;
-  `,
+export const StyledAnchor = (props: BoxProps) => (
+  <Box {...props} as="a" paddingRight="$4" position="relative" color="$accent" cursor="pointer" />
 )
 
 export const Outlink = ({
@@ -46,10 +23,10 @@ export const Outlink = ({
   }) => {
   const InnerContent = (
     <StyledAnchor {...props} rel="noreferrer noopener" target="_blank" role="link">
-      <OutlinkTypography fontVariant="smallBold" color="blue">
+      <Typography fontVariant="smallBold" color="blue" display="inline-block">
         {children}
-      </OutlinkTypography>
-      <OutlinkIcon as={OutlinkSVG} />
+      </Typography>
+      <Box as={OutlinkSVG} position="absolute" top="$0" right="$0" wh="$3.5" opacity="0.5" />
     </StyledAnchor>
   )
 

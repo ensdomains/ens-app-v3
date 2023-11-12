@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WithColorStyle } from './utils/withColorStyle';
-type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+import { BoxProps } from '../Box/Box';
 export type Props = {
     /** Element type of container */
     as?: 'div' | 'span';
@@ -8,9 +8,8 @@ export type Props = {
     hover?: boolean;
     /** Size of element */
     size?: 'small' | 'medium';
-} & NativeDivProps & WithColorStyle;
+} & Omit<BoxProps, 'size'> & WithColorStyle;
 export declare const Tag: {
     ({ as, children, hover, size, colorStyle, ...props }: Props): React.JSX.Element;
     displayName: string;
 };
-export {};

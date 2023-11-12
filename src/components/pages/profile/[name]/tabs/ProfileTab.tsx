@@ -7,7 +7,7 @@ import { Helper } from '@ensdomains/thorin2'
 
 import { Outlink } from '@app/components/Outlink'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
-import { ProfileSnippet } from '@app/components/ProfileSnippet'
+import { ProfileSnippet } from '@app/components/ProfileSnippet/ProfileSnippet'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'

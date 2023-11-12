@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WithColor } from '../../../interfaces/withColor';
-import { BoxProps } from '../Box/Box';
+import { type BoxProps } from '../Box/Box';
 import { FontVariant } from './utils/getValueForVariant';
 type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
 export declare const Typography: React.ForwardRefExoticComponent<{

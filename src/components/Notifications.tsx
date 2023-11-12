@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 import { useQueryClient } from 'wagmi'
 
+import { Box, BoxProps } from '@ensdomains/thorin'
 import { Button, Toast } from '@ensdomains/thorin2'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
@@ -19,14 +19,15 @@ type Notification = {
   children?: React.ReactNode
 }
 
-const ButtonContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: stretch;
-    gap: ${theme.space['2']};
-  `,
+const ButtonContainer = (props: BoxProps) => (
+  <Box
+    {...props}
+    display="flex"
+    flexDirection="row"
+    alignItems="center"
+    justifyContent="stretch"
+    gap="$2"
+  />
 )
 
 export const Notifications = () => {

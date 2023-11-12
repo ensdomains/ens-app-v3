@@ -1893,6 +1893,18 @@ export declare const Box: React.ForwardRefExoticComponent<ChildSprinkles<{
             conditions: Record<"base" | "xs" | "sm" | "md" | "lg" | "xl" | "hover" | "active" | "readonly" | "checked" | "disabled", string>;
         };
     };
+    overflowWrap: {
+        dynamic: {
+            default: string;
+            conditions: Record<"base" | "xs" | "sm" | "md" | "lg" | "xl" | "hover" | "active" | "readonly" | "checked" | "disabled", string>;
+        };
+        dynamicScale: true;
+        name: "overflowWrap";
+        vars: {
+            default: string;
+            conditions: Record<"base" | "xs" | "sm" | "md" | "lg" | "xl" | "hover" | "active" | "readonly" | "checked" | "disabled", string>;
+        };
+    };
     width: {
         dynamic: {
             default: string;

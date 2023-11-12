@@ -7,7 +7,7 @@ import { Address } from 'viem'
 
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
-import { ProfileSnippet } from '@app/components/ProfileSnippet'
+import { ProfileSnippet } from '@app/components/ProfileSnippet/ProfileSnippet'
 import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
