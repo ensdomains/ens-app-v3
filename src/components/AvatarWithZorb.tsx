@@ -13,11 +13,13 @@ const Wrapper = styled.div<{ $size?: QuerySpace }>(
     css`
       width: ${theme.space[$size.min]};
       height: ${theme.space[$size.min]};
+      flex: 0 0 ${theme.space[$size.min]};
     `}
     ${typeof $size !== 'object'
       ? css`
           width: ${$size ? theme.space[$size] : theme.space.full};
           height: ${$size ? theme.space[$size] : theme.space.full};
+          flex: 0 0 ${$size ? theme.space[$size] : theme.space.full};
         `
       : Object.entries($size)
           .filter(([key]) => key !== 'min')
@@ -25,6 +27,7 @@ const Wrapper = styled.div<{ $size?: QuerySpace }>(
             mq[key as keyof typeof mq].min(css`
               width: ${theme.space[value as Space]};
               height: ${theme.space[value as Space]};
+              flex: 0 0 ${theme.space[value as Space]};
             `),
           )}
 

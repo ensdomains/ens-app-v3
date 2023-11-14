@@ -1,6 +1,6 @@
 import { P, match } from 'ts-pattern'
 
-import { checkETH2LDFromName, checkSubname } from '@app/utils/utils'
+import { checkDNS2LDFromName, checkETH2LDFromName, checkSubname } from '@app/utils/utils'
 
 import type { useBasicName } from '../../useBasicName'
 import type { SendAbilities } from '../useAbilities'
@@ -418,7 +418,7 @@ export const getSendAbilities = ({
   parentBasicNameData: BasicName
 }) => {
   if (checkETH2LDFromName(name)) return get2LDEthAbilities({ address, basicNameData })
-  if (checkSubname(name))
+  if (checkSubname(name) || checkDNS2LDFromName(name))
     return getSubnameAbilities({ address, basicNameData, parentBasicNameData })
   return BASE_RESPONSE
 }

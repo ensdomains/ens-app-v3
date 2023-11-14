@@ -17,7 +17,13 @@ const query = `
   }
 `
 
-const useRegistrationData = (name: string) => {
+type Options = {
+  enabled?: boolean
+}
+
+const useRegistrationData = (name: string, options: Options = {}) => {
+  const enabled = options.enabled ?? true
+
   const { ready, gqlInstance } = useEns()
   const is2LDEth = checkETH2LDFromName(name)
   const {
@@ -43,7 +49,7 @@ const useRegistrationData = (name: string) => {
         id: labelhash(name.split('.')[0]),
       }),
     {
-      enabled: ready && is2LDEth,
+      enabled: ready && enabled && is2LDEth,
       select: (queryResult) => {
         if (!queryResult?.registration) return null
         return {

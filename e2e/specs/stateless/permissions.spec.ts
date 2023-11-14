@@ -41,15 +41,18 @@ test.describe('Permissions', () => {
       owner: 'user',
     })
 
+    const ownershipPage = makePageObject('OwnershipPage')
     const subnamesPage = makePageObject('SubnamesPage')
     await subnamesPage.goto(name)
 
     await login.connect()
     await expect(subnamesPage.getAddSubnameButton).toBeVisible()
 
+    await ownershipPage.goto(name)
+    await expect(ownershipPage.sendNameButton).toBeVisible()
+
     const morePage = makePageObject('MorePage')
     await morePage.goto(name)
-    await expect(morePage.getSendNameButton).toBeVisible()
     await expect(morePage.editResolverButton).toBeVisible()
 
     const permissionsPage = makePageObject('PermissionsPage')
@@ -90,8 +93,10 @@ test.describe('Permissions', () => {
     await subnamesPage.goto(name)
     await expect(subnamesPage.getDisabledAddSubnameButton).toBeVisible()
 
+    await ownershipPage.goto(name)
+    await expect(ownershipPage.disabledSendNameButton).toBeVisible()
+
     await morePage.goto(name)
-    await expect(morePage.getDisabledSendNameButton).toBeVisible()
     await expect(morePage.disabledEditResolverButton).toBeVisible()
   })
 
@@ -113,7 +118,7 @@ test.describe('Permissions', () => {
     })
 
     const subname = `test.${name}`
-
+    const ownershipPage = makePageObject('OwnershipPage')
     const profilePage = makePageObject('ProfilePage')
     await profilePage.goto(subname)
 
@@ -127,8 +132,10 @@ test.describe('Permissions', () => {
 
     const morePage = makePageObject('MorePage')
     await morePage.goto(subname)
-    await expect(morePage.getSendNameButton).toBeVisible()
     await expect(morePage.editResolverButton).toHaveCount(0)
+
+    ownershipPage.goto(subname)
+    await expect(ownershipPage.sendNameButton).toBeVisible()
   })
 
   test('should show correct buttons for managing subname (Name owner settings)', async ({
@@ -150,6 +157,7 @@ test.describe('Permissions', () => {
 
     const subname = `test.${name}`
 
+    const ownershipPage = makePageObject('OwnershipPage')
     const profilePage = makePageObject('ProfilePage')
     await profilePage.goto(subname)
 
@@ -163,8 +171,10 @@ test.describe('Permissions', () => {
 
     const morePage = makePageObject('MorePage')
     await morePage.goto(subname)
-    await expect(morePage.getSendNameButton).toBeVisible()
     await expect(morePage.editResolverButton).toBeVisible()
+
+    await ownershipPage.goto(subname)
+    await expect(ownershipPage.sendNameButton).toBeVisible()
   })
 
   test('should allow parent owner to extend expiry', async ({
@@ -379,7 +389,6 @@ test.describe('Permissions', () => {
     const morePage = makePageObject('MorePage')
 
     await profilePage.goto(subname)
-
     await login.connect()
 
     await expect(profilePage.deleteSubnameButton).toBeVisible()
@@ -388,7 +397,6 @@ test.describe('Permissions', () => {
     await expect(subnamesPage.getAddSubnameButton).toBeVisible()
 
     await morePage.goto(subname)
-    await expect(morePage.getSendNameButton).toBeVisible()
     await expect(morePage.editResolverButton).toBeVisible()
   })
 })

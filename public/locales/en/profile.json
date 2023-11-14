@@ -49,6 +49,61 @@
     "records": {
       "name": "Records"
     },
+    "ownership": {
+      "name": "Ownership",
+      "warning": {
+        "ownerNotManager": "You are the owner but not the manager. This may be unintended if you’ve recently recieved this name from another address.",
+        "managerNotParentOwner": "The owner of <strong>{{parent}}</strong> can change ownership, roles, and settings. They cannot change the profile.",
+        "managerNotDNSOwner": "You are the Manager but not DNS Owner of this name. DNS names can be reclaimed by the DNS Owner at any time. You can send this name to the Owner, or update the DNS record to match.",
+        "dnsOwnerNotManager": "You cannot make changes to this name because you are the DNS Owner, but not the Manager. You can sync the manager to fix this."
+      },
+      "sections": {
+        "roles": {
+          "title": "Roles",
+          "addresses_one": "{{count}} address",
+          "addresses_other": "{{count}} addresses"
+        },
+        "expiry": {
+          "panel": {
+            "expiry": {
+              "title": "Name expires"
+            },
+            "grace-period": {
+              "title": "Grace period ends",
+              "tooltip": "A 90 day grace window after expiration, when the name can still be extended but not re-registered."
+              
+            },
+            "registration": {
+              "title": "Registered"
+            },
+            "parent-expiry": {
+              "title": "Parent name expires"
+            },
+            "parent-grace-period": {
+              "title": "Parent grace period ends"
+            }
+          }
+        },
+        "contract": {
+          "title": "Contract address",
+          "tooltip": "The address of the contract that enables Wrapped ENS names.",
+          "warning": "Some apps may show the contract address as the owner. This doesn't affect your ownership."
+        }
+      },
+      "tooltips": {
+        "owner": "The owner of this name. The owner cannot change the profile.",
+        "owner-emancipated": "The owner of this name.",
+        "parent-owner": "The owner of this name's parent ({{parent}}).",
+        "dns-owner": "The owner of this name, as set by DNS records. The owner cannot change the profile.",
+        "manager": "The address that can change the profile, settings and profile editors.",
+        "profile-editor": "An addres that can only change the profile",
+        "subname-manager": "An address or contract responsible for subname renewals.",
+        "eth-record": "The address that will receive funds sent to this name on mainnet.",
+        "grace-period": "A 90 day grace window after expiration, when the name can still be extended but not re-registered.",
+        "contract-address": "The address of the contract that enables Wrapped ENS names.",
+        "namewrapper": "The contract that enables Wrapped ENS names."
+      }
+    },
     "subnames": {
       "name": "Subnames"
     },

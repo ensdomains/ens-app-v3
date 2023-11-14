@@ -11,7 +11,7 @@ const RecordItem = ({
   itemKey?: string
   value: string
   showLegacy?: boolean
-  type: 'text' | 'address' | 'contentHash'
+  type: 'text' | 'address' | 'contentHash' | 'abi'
 }) => {
   const breakpoint = useBreakpoint()
   const keyLabel = showLegacy && itemKey ? itemKey?.replace('_LEGACY', '') : itemKey

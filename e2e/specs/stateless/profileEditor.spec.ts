@@ -318,7 +318,7 @@ test.describe('wrapped', () => {
       await expect(profilePage.record('text', 'nickname')).toHaveText('Test Name')
       await page.getByTestId('records-tab').click()
 
-      await expect(page.getByTestId('name-details-text')).toHaveText('[{"test":"test"}]')
+      await expect(page.getByTestId('name-details-abi')).toHaveText('[{"test":"test"}]')
     })
   })
 })
