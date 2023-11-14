@@ -25,6 +25,7 @@ const TabContentContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space['3']};
+    padding-right: ${theme.space['1']};
     overflow: hidden;
     flex: 1;
   `,

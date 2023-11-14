@@ -238,12 +238,7 @@ export const RecordsTab = ({
               )}
             </SectionTitleContainer>
           </SectionHeader>
-          {abi && (
-            <RecordItem
-              type="text"
-              value={typeof abi.abi === 'string' ? abi.abi : JSON.stringify(abi.abi)}
-            />
-          )}
+          {abi && <RecordItem type="abi" value={abi.data} />}
         </RecordSection>
       </AllRecords>
       {canEdit && resolverAddress !== emptyAddress && (

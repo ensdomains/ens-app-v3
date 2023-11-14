@@ -1,23 +1,21 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { match, Pattern } from 'ts-pattern'
+import { match, P, Pattern } from 'ts-pattern'
 
 import { encodeAbi, RecordOptions } from '@ensdomains/ensjs/utils'
 
 import { textOptions } from '@app/components/@molecules/AdvancedEditor/textOptions'
 import addressOptions from '@app/components/@molecules/ProfileEditor/options/addressOptions'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { Profile } from '@app/types'
-import { emptyAddress } from '@app/utils/constants'
 import {
   convertFormSafeKey,
   convertProfileToProfileFormObject,
   formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
-
-import { useResolverHasInterfaces } from './useResolverHasInterfaces'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEditorType) => {
   const entries = []
@@ -33,6 +31,15 @@ const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEd
     entries.push(['website', data.other.contentHash])
   }
   return Object.fromEntries(entries)
+}
+
+type NormalizedAbi = { contentType: number | undefined; data: string }
+export const normalizeAbi = (abi: RecordOptions['abi'] | string): NormalizedAbi | undefined => {
+  return match(abi)
+    .with(P.string, (data) => ({ contentType: 1, data }))
+    .with({ data: P.string }, ({ data }) => ({ contentType: 1, data }))
+    .with({ data: {} }, ({ data }) => ({ contentType: 1, data: JSON.stringify(data) }))
+    .otherwise(() => undefined)
 }
 
 export type AdvancedEditorType = {
@@ -166,6 +173,7 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
     }
   })()
 
+  const [shouldRunOverwritesScript, setShouldRunOverwritesScript] = useState(false)
   useEffect(() => {
     if (profile) {
       const formObject = convertProfileToProfileFormObject(profile)
@@ -190,33 +198,60 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
         address: Object.keys(newDefaultValues.address) || [],
         text: Object.keys(newDefaultValues.text) || [],
       }
-
-      overwrites?.texts?.forEach((text) => {
-        const { key, value } = text
-        const formKey = formSafeKey(key)
-        setValue(`text.${formKey}`, value!, { shouldDirty: true })
-        if (!newExistingRecords.text.includes(formKey)) {
-          newExistingRecords.text.push(formKey)
-        }
-      })
-
-      overwrites?.coins?.forEach((coinItem) => {
-        const { coin, value } = coinItem
-        const formKey = formSafeKey(String(coin))
-        setValue(`address.${formKey}`, value!, { shouldDirty: true })
-        if (!newExistingRecords.address.includes(formKey)) {
-          newExistingRecords.address.push(formKey)
-        }
-      })
-
-      if (overwrites?.contentHash) {
-        setValue('other.contentHash', overwrites.contentHash, { shouldDirty: true })
-      }
-
       setExistingRecords(newExistingRecords)
+      setShouldRunOverwritesScript(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile])
+
+  useEffect(() => {
+    if (shouldRunOverwritesScript) {
+      overwrites?.texts?.forEach((text) => {
+        const { key, value } = text
+        const formKey = formSafeKey(key)
+        const isExisting = existingRecords.text.includes(formKey)
+        if (value && isExisting) {
+          setValue(`text.${formKey}`, value, { shouldDirty: true })
+        } else if (value && !isExisting) {
+          addTextKey(formKey)
+          setValue(`text.${formKey}`, value, { shouldDirty: true })
+        } else if (!value && isExisting) {
+          removeTextKey(formKey, false)
+        } else if (!value && !isExisting) {
+          removeTextKey(formKey, true)
+        }
+      })
+
+      overwrites?.coins?.forEach((coinType) => {
+        const { key, value } = coinType
+        const formKey = formSafeKey(key)
+        const isExisting = existingRecords.address.includes(formKey)
+        if (value && isExisting) {
+          setValue(`address.${formKey}`, value, { shouldDirty: true })
+        } else if (value && !isExisting) {
+          addAddressKey(formKey)
+          setValue(`address.${formKey}`, value, { shouldDirty: true })
+        } else if (!value && isExisting) {
+          removeAddressKey(formKey, false)
+        } else if (!value && !isExisting) {
+          removeAddressKey(formKey, true)
+        }
+      })
+
+      if (typeof overwrites?.contentHash === 'string') {
+        setValue('other.contentHash', overwrites.contentHash, { shouldDirty: true })
+      }
+
+      const abi = normalizeAbi(overwrites?.abi)
+      if (abi) {
+        setValue('other.abi', abi, { shouldDirty: true })
+      }
+
+      setShouldRunOverwritesScript(false)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existingRecords, shouldRunOverwritesScript])
 
   const handleRecordSubmit = async (editorData: AdvancedEditorType) => {
     const dirtyFields = getDirtyFields(formState.dirtyFields, editorData) as AdvancedEditorType
@@ -231,11 +266,6 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
       value,
     })) as { coin: string; value: string }[]
 
-    const coinTypesWithZeroAddressses = coins.map((coinType) => {
-      if (coinType.value) return coinType
-      return { coin: coinType.coin, value: emptyAddress }
-    })
-
     const contentHash = dirtyFields.other?.contentHash
 
     const abi = await match(dirtyFields.other?.abi?.data)
@@ -245,7 +275,7 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
 
     const records: RecordOptions = {
       texts,
-      coins: coinTypesWithZeroAddressses,
+      coins,
       contentHash,
       abi,
     }
@@ -278,7 +308,6 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
     handleTabClick,
     hasErrors,
     existingRecords,
-    setExistingRecords,
     existingTextKeys,
     newTextKeys,
     addTextKey,
