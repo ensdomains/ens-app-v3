@@ -119,7 +119,7 @@ export const DogFood = ({
       />
       {!errorMessage && finalValue && !disabled && (
         <>
-          <Spacer $height="2" />
+          <Spacer height="$2" />
           <DisplayItems displayItems={[{ label: 'address', value: finalValue, type: 'address' }]} />
         </>
       )}

@@ -13,7 +13,7 @@ const EditResolverWarnings = ({ hasWarnings, resolverWarnings }: Props) => {
       <Banner alert="warning">
         <ul>{resolverWarnings?.map((message) => <li key={message}>- {message}</li>)}</ul>
       </Banner>
-      <Spacer $height="4" />
+      <Spacer height="$4" />
     </>
   )
 }

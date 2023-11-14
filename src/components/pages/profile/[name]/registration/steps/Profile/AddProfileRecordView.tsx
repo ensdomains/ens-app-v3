@@ -292,7 +292,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: P
   return (
     <Container>
       <Dialog.Heading title={t('steps.profile.addProfile')} />
-      <Spacer $height="6" />
+      <Spacer height="$6" />
       <Input
         label=""
         hideLabel

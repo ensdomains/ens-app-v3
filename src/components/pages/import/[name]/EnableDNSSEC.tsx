@@ -87,11 +87,11 @@ export const EnableDNSSEC = ({
   return (
     <Container>
       <Typography fontVariant="extraLargeBold">{t('enableDNSSEC.title')}</Typography>
-      <Spacer $height="4" />
+      <Spacer height="$4" />
       <Typography>{t('enableDNSSEC.instruction')}</Typography>
-      <Spacer $height="3" />
+      <Spacer height="$3" />
       <Typography>{t('enableDNSSEC.registrarHelp')}</Typography>
-      <Spacer $height="5" />
+      <Spacer height="$5" />
       <AlignedDropdown
         width={200}
         height={200}
@@ -114,15 +114,15 @@ export const EnableDNSSEC = ({
         }))}
         label={t('general.domainRegistrar')}
       />
-      <Spacer $height="3" />
+      <Spacer height="$3" />
       <Outlink target="_blank" href={`https://who.is/whois/${name}`}>
         {t('enableDNSSEC.findRegistrar')}
       </Outlink>
-      <Spacer $height="5" />
+      <Spacer height="$5" />
       {errorState === Errors.DNSSEC_NOT_ENABLED && (
         <>
           <Helper type="info">{t('enableDNSSEC.DNSSECNotEnabled')}</Helper>
-          <Spacer $height="6" />
+          <Spacer height="$6" />
         </>
       )}
       <Steps
@@ -131,7 +131,7 @@ export const EnableDNSSEC = ({
           stepStatus: ['inProgress', 'notStarted', 'notStarted', 'notStarted'],
         }}
       />
-      <Spacer $height="5" />
+      <Spacer height="$5" />
       <ButtonContainer>
         <CheckButton
           onClick={handleCheck}

@@ -217,7 +217,7 @@ const BurnFusesContent = ({
       <Typography fontVariant="headingFour">{t('fuses.burnFormTitle')}</Typography>
       {!_fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP ? (
         <>
-          <Spacer $height="1" />
+          <Spacer height="$1" />
           <Helper type="info" style={{ textAlign: 'center' }}>
             <Typography>{t('fuses.info')}</Typography>
           </Helper>
@@ -225,7 +225,7 @@ const BurnFusesContent = ({
       ) : (
         ''
       )}
-      <Spacer $height="4" />
+      <Spacer height="$4" />
       <BurnButtonsContainer>
         {Object.entries(_fuseData).map(([key, value]) => (
           <BurnButton
@@ -238,7 +238,7 @@ const BurnFusesContent = ({
           />
         ))}
       </BurnButtonsContainer>
-      <Spacer $height="6" />
+      <Spacer height="$6" />
       <ButtonsContainer>
         <Button colorStyle="accentSecondary" onClick={onDismiss}>
           {tc('action.cancel')}

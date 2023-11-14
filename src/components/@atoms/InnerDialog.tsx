@@ -1,20 +1,15 @@
-import styled, { css } from 'styled-components'
+import { Box, BoxProps, cssVars } from '@ensdomains/thorin'
 
-import { mq } from '@ensdomains/thorin2'
-
-export const InnerDialog = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: ${theme.space.full};
-    gap: ${theme.space['4']};
-    max-height: 60vh;
-    max-width: 100vw;
-    ${mq.sm.min(css`
-      width: calc(80vw - 2 * ${theme.space['6']});
-      max-width: ${theme.space['128']};
-    `)}
-  `,
+export const InnerDialog = (props: BoxProps) => (
+  <Box
+    {...props}
+    display="flex"
+    flexDirection="column"
+    alignItems="center"
+    justifyContent="flex-start"
+    width={{ base: '$full', sm: `calc(80vw - 2 * ${cssVars.space['6']})` }}
+    gap="$4"
+    maxHeight="60vh"
+    maxWidth={{ base: '100vw', sm: cssVars.space['128'] }}
+  />
 )

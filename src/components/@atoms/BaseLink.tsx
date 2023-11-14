@@ -10,7 +10,6 @@ import { getDestination } from '@app/routes'
 
 const BaseLink = ({ href, ...rest }: PropsWithChildren<LinkProps>) => {
   const newHref = useMemo(() => getDestination(href), [href])
-
   return <Link {...rest} legacyBehavior href={newHref} />
 }
 

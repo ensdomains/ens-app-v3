@@ -181,9 +181,9 @@ export const AddTextRecord = ({
   return (
     <Container>
       <Typography fontVariant="headingFour">{t('addTextRecord.title')}</Typography>
-      <Spacer $height="3" />
+      <Spacer height="$3" />
       <Typography>{t('addTextRecord.explanation')}</Typography>
-      <Spacer $height="3" />
+      <Spacer height="$3" />
       <AlignedDropdown
         // needed for no line breaks in buttons
         width={200}
@@ -207,11 +207,11 @@ export const AddTextRecord = ({
         }))}
         label="Domain Registrar"
       />
-      <Spacer $height="3" />
+      <Spacer height="$3" />
       <Outlink target="_blank" href={`https://who.is/whois/${name}`}>
         {t('registrars.findYourRegistrar')}
       </Outlink>
-      <Spacer $height="5" />
+      <Spacer height="$5" />
       <ButtonRow>
         <Button colorStyle="background" size="flexible" fullWidthContent>
           <ButtonInner>
@@ -221,7 +221,7 @@ export const AddTextRecord = ({
         </Button>
         <Copyable {...{ label: 'Name', value: '_ens', displayValue: '_ens' }} />
       </ButtonRow>
-      <Spacer $height="2" />
+      <Spacer height="$2" />
       {address && (
         <Copyable
           {...{
@@ -233,7 +233,7 @@ export const AddTextRecord = ({
           }}
         />
       )}
-      <Spacer $height="6" />
+      <Spacer height="$6" />
       {syncWarning && (
         <>
           <Helper type="warning" style={{ textAlign: 'center' }}>
@@ -242,7 +242,7 @@ export const AddTextRecord = ({
               {t('addTextRecord.syncWarningTwo')}
             </Typography>
           </Helper>
-          <Spacer $height="6" />
+          <Spacer height="$6" />
         </>
       )}
       {errorState !== Errors.NOT_CHECKED && (
@@ -253,11 +253,11 @@ export const AddTextRecord = ({
               {t(`addTextRecord.errors.${errorState}.content`)}
             </Typography>
           </Helper>
-          <Spacer $height="6" />
+          <Spacer height="$6" />
         </>
       )}
       <Steps {...{ stepStatus: ['completed', 'inProgress', 'notStarted', 'notStarted'] }} />
-      <Spacer $height="6" />
+      <Spacer height="$6" />
       <ButtonContainer>
         {syncWarning && (
           <CheckButton

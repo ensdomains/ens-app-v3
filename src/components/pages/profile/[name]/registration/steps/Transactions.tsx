@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Card } from '@ensdomains/thorin'
+import { Button, Card } from '@ensdomains/thorin'
 import {
   AlertSVG,
-  Button,
   CountdownCircle,
   Dialog,
   Heading,
@@ -15,7 +14,6 @@ import {
 } from '@ensdomains/thorin2'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
-import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -95,19 +93,27 @@ const DialogContent = styled(Typography)(
 )
 
 const FailedButton = ({ onClick, label }: { onClick: () => void; label: string }) => (
-  <MobileFullWidth>
-    <Button color="red" onClick={onClick}>
-      {label}
-    </Button>
-  </MobileFullWidth>
+  <Button
+    color="red"
+    onClick={onClick}
+    width={{ base: '$full', sm: '$fit' }}
+    minWidth={{ sm: '$40' }}
+    maxWidth={{ base: '$full', sm: '$fit' }}
+  >
+    {label}
+  </Button>
 )
 
 const ProgressButton = ({ onClick, label }: { onClick: () => void; label: string }) => (
-  <MobileFullWidth>
-    <Button colorStyle="accentSecondary" onClick={onClick}>
-      {label}
-    </Button>
-  </MobileFullWidth>
+  <Button
+    colorStyle="accentSecondary"
+    onClick={onClick}
+    width={{ base: '$full', sm: '$fit' }}
+    minWidth={{ sm: '$40' }}
+    maxWidth={{ base: '$full', sm: '$fit' }}
+  >
+    {label}
+  </Button>
 )
 
 type Props = {
@@ -189,11 +195,15 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
 
   const NormalBackButton = useMemo(
     () => (
-      <MobileFullWidth>
-        <Button onClick={() => callback({ back: true })} colorStyle="accentSecondary">
-          {t('action.back', { ns: 'common' })}
-        </Button>
-      </MobileFullWidth>
+      <Button
+        onClick={() => callback({ back: true })}
+        colorStyle="accentSecondary"
+        width={{ base: '$full', sm: '$fit' }}
+        minWidth={{ sm: '$40' }}
+        maxWidth={{ base: '$full', sm: '$fit' }}
+      >
+        {t('action.back', { ns: 'common' })}
+      </Button>
     ),
     [t, callback],
   )
@@ -210,19 +220,27 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   )
 
   let BackButton: ReactNode = (
-    <MobileFullWidth>
-      <Button onClick={() => callback({ back: true })} colorStyle="accentSecondary">
-        {t('action.back', { ns: 'common' })}
-      </Button>
-    </MobileFullWidth>
+    <Button
+      onClick={() => callback({ back: true })}
+      colorStyle="accentSecondary"
+      width={{ base: '$full', sm: '$fit' }}
+      minWidth={{ sm: '$40' }}
+      maxWidth={{ base: '$full', sm: '$fit' }}
+    >
+      {t('action.back', { ns: 'common' })}
+    </Button>
   )
 
   let ActionButton: ReactNode = (
-    <MobileFullWidth>
-      <Button data-testid="start-timer-button" onClick={makeCommitNameFlow}>
-        {t('steps.transactions.startTimer')}
-      </Button>
-    </MobileFullWidth>
+    <Button
+      data-testid="start-timer-button"
+      onClick={makeCommitNameFlow}
+      width={{ base: '$full', sm: '$fit' }}
+      minWidth={{ sm: '$40' }}
+      maxWidth={{ base: '$full', sm: '$fit' }}
+    >
+      {t('steps.transactions.startTimer')}
+    </Button>
   )
 
   if (commitComplete) {
@@ -245,14 +263,15 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     } else {
       BackButton = ResetBackButton
       ActionButton = (
-        <MobileFullWidth>
-          <Button
-            data-testid="finish-button"
-            onClick={!registerTx ? makeRegisterNameFlow : showRegisterTransaction}
-          >
-            {t('action.finish', { ns: 'common' })}
-          </Button>
-        </MobileFullWidth>
+        <Button
+          data-testid="finish-button"
+          onClick={!registerTx ? makeRegisterNameFlow : showRegisterTransaction}
+          width={{ base: '$full', sm: '$fit' }}
+          minWidth={{ sm: '$40' }}
+          maxWidth={{ base: '$full', sm: '$fit' }}
+        >
+          {t('action.finish', { ns: 'common' })}
+        </Button>
       )
     }
   } else if (commitTx?.stage) {
@@ -275,11 +294,16 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     } else if (commitTx?.stage === 'complete') {
       BackButton = ResetBackButton
       ActionButton = (
-        <MobileFullWidth>
-          <Button data-testid="wait-button" disabled suffix={<Spinner color="greyPrimary" />}>
-            {t('steps.transactions.wait')}
-          </Button>
-        </MobileFullWidth>
+        <Button
+          data-testid="wait-button"
+          disabled
+          suffix={<Spinner color="greyPrimary" />}
+          width={{ base: '$full', sm: '$fit' }}
+          minWidth={{ sm: '$40' }}
+          maxWidth={{ base: '$full', sm: '$fit' }}
+        >
+          {t('steps.transactions.wait')}
+        </Button>
       )
     }
   }

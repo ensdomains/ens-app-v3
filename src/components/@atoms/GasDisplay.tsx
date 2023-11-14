@@ -1,24 +1,22 @@
-import styled, { css } from 'styled-components'
-
+import { Box, BoxProps } from '@ensdomains/thorin'
 import { Skeleton } from '@ensdomains/thorin2'
 
 import GasSVG from '@app/assets/Gas.svg'
 import { makeDisplay } from '@app/utils/currency'
 
-const Container = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: ${theme.space['1']};
-
-    font-size: ${theme.fontSizes.small};
-    color: ${theme.colors.textTertiary};
-    font-weight: bold;
-
-    padding: 0 ${theme.space['4']};
-  `,
+const Container = (props: BoxProps) => (
+  <Box
+    {...props}
+    display="flex"
+    flexDirection="row"
+    alignItems="center"
+    justifyContent="flex-start"
+    gap="$1"
+    fontSize="$small"
+    color="$grey"
+    fontWeight="bold"
+    px="$4"
+  />
 )
 
 type Props = {

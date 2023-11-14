@@ -1,30 +1,25 @@
-import { PropsWithChildren } from 'react'
-import styled, { css } from 'styled-components'
+import { forwardRef, PropsWithChildren } from 'react'
+
+import { Box, BoxProps } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 
-const StyledAnchor = styled.a<{
-  $color: 'accent' | 'grey'
-}>(
-  ({ theme, $color }) => css`
-    color: ${theme.colors.accent};
-    transition: color 150ms ease-in-out;
-    font-weight: ${theme.fontWeights.bold};
-
-    &:hover {
-      color: ${theme.colors.accentBright};
-    }
-
-    ${$color === 'grey' &&
-    css`
-      color: ${theme.colors.greyDim};
-
-      &:hover {
-        color: ${theme.colors.grey};
-      }
-    `}
-  `,
+const StyledAnchor = forwardRef<HTMLElement, BoxProps & { $color: 'grey' | 'accent' }>(
+  ({ $color, ...props }, ref) => (
+    <Box
+      {...props}
+      as="a"
+      ref={ref}
+      color={{
+        base: $color === 'grey' ? '$greyDim' : '$accent',
+        hover: $color === 'grey' ? '$grey' : '$accentBright',
+      }}
+      fontWeight="$bold"
+      transition="color 150ms ease-in-out"
+    />
+  ),
 )
+
 export const StyledLink = ({
   href,
   color = 'accent',

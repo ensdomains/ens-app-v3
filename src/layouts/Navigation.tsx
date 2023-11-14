@@ -1,5 +1,5 @@
 import { Header } from '@app/components/Header'
-import { TabBar } from '@app/components/TabBar'
+import { TabBar } from '@app/components/TabBar/TabBar'
 import { useInitial } from '@app/hooks/useInitial'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 

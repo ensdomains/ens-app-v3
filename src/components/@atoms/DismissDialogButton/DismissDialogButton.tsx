@@ -1,30 +1,18 @@
 import { ButtonHTMLAttributes } from 'react'
-import styled, { css } from 'styled-components'
 
-import { CrossSVG } from '@ensdomains/thorin2'
+import { Box, BoxProps, CrossSVG } from '@ensdomains/thorin'
 
-const IconWrapper = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['9']};
-    height: ${theme.space['9']};
-    border-radius: 50%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-    transition: background-color 300ms ease-in-out;
-
-    svg {
-      width: ${theme.space['6']};
-      height: ${theme.space['6']};
-      color: ${theme.colors.greyPrimary};
-    }
-
-    :hover {
-      background-color: ${theme.colors.greySurface};
-    }
-  `,
+const IconWrapper = (props: BoxProps) => (
+  <Box
+    {...props}
+    wh="$9"
+    borderRadius="$full"
+    display="flex"
+    alignItems="center"
+    justifyContent="center"
+    backgroundColor={{ base: 'transparent', hover: '$greySurface' }}
+    transition="background-color 300ms ease-in-out"
+  />
 )
 
 type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>
@@ -32,7 +20,7 @@ const DismissDialogButton = (props: Props) => {
   return (
     <button type="button" {...props}>
       <IconWrapper>
-        <CrossSVG />
+        <Box as={<CrossSVG />} wh="$6" color="$grey" />
       </IconWrapper>
     </button>
   )

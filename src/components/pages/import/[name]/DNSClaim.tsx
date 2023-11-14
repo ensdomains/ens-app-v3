@@ -194,7 +194,7 @@ export default () => {
         </BackContainer>
         {!breakpoints.sm && <Hamburger />}
       </HeadingContainer>
-      <Spacer $height="4" />
+      <Spacer height="$4" />
       {router.isReady ? (
         <MainContentContainer>
           {isConnected ? (

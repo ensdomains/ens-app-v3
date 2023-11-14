@@ -1,10 +1,3 @@
-import styled, { css } from 'styled-components'
+import { Box, BoxProps } from '@ensdomains/thorin'
 
-import { Space } from '@ensdomains/thorin2'
-
-export const Spacer = styled.div<{ $height: Space }>(
-  ({ theme, $height }) => css`
-    width: 100%;
-    height: ${theme.space[$height]};
-  `,
-)
+export const Spacer = (props: BoxProps) => <Box width="$full" {...props} />

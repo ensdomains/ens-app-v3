@@ -135,9 +135,9 @@ const Subtitle = styled(Typography)(
 )
 
 const CompactTitle = ({
-  title,
+  title = '',
   titleButton,
-  subtitle,
+  subtitle = '',
   copyValue,
 }: {
   title: string

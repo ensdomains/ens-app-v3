@@ -7,15 +7,15 @@ import { decodeEventLog } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { tokenise } from '@ensdomains/ensjs/utils'
-import { Card } from '@ensdomains/thorin'
-import { Button, mq, Typography } from '@ensdomains/thorin2'
+import { Button, Card } from '@ensdomains/thorin'
+import { mq, Typography } from '@ensdomains/thorin2'
 
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
-import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
 import useWindowSize from '@app/hooks/useWindowSize'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
+// TODO: Check this after complete is fixed
 const StyledCard = styled(Card)(
   ({ theme }) => css`
     max-width: 780px;
@@ -282,16 +282,24 @@ const Complete = ({ name, beautifiedName, callback, isMoonpayFlow }: Props) => {
       <Typography>{t('steps.complete.description')}</Typography>
       {InvoiceFilled}
       <ButtonContainer>
-        <MobileFullWidth>
-          <Button colorStyle="accentSecondary" onClick={() => callback(false)}>
-            {t('steps.complete.registerAnother')}
-          </Button>
-        </MobileFullWidth>
-        <MobileFullWidth>
-          <Button data-testid="view-name" onClick={() => callback(true)}>
-            {t('steps.complete.viewName')}
-          </Button>
-        </MobileFullWidth>
+        <Button
+          colorStyle="accentSecondary"
+          onClick={() => callback(false)}
+          width={{ base: '$full', sm: '$fit' }}
+          minWidth={{ sm: '$40' }}
+          maxWidth={{ base: '$full', sm: '$fit' }}
+        >
+          {t('steps.complete.registerAnother')}
+        </Button>
+        <Button
+          data-testid="view-name"
+          onClick={() => callback(true)}
+          width={{ base: '$full', sm: '$fit' }}
+          minWidth={{ sm: '$40' }}
+          maxWidth={{ base: '$full', sm: '$fit' }}
+        >
+          {t('steps.complete.viewName')}
+        </Button>
       </ButtonContainer>
     </Card>
   )

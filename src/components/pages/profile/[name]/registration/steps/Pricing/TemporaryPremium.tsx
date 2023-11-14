@@ -12,10 +12,10 @@ import {
 import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
 
-import { Button, Dropdown, Helper, Input, mq, Typography } from '@ensdomains/thorin2'
+import { Button } from '@ensdomains/thorin'
+import { Dropdown, Helper, Input, mq, Typography } from '@ensdomains/thorin2'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
-import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import useCurrentBlockTimestamp from '@app/hooks/chain/useCurrentBlockTimestamp'
 import { makeDisplay } from '@app/utils/currency'
 
@@ -588,21 +588,24 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
               .replace(/.* /g, ''),
           })}
         </TimezoneText>
-        <MobileFullWidth>
-          <Dropdown
-            shortThrow
-            keepMenuOnTop
-            items={calendarOptions.map((opt) => ({
-              label: opt.label,
-              onClick: () => window.open(opt.function(makeEvent()), '_blank'),
-              color: 'text',
-            }))}
+        <Dropdown
+          shortThrow
+          keepMenuOnTop
+          items={calendarOptions.map((opt) => ({
+            label: opt.label,
+            onClick: () => window.open(opt.function(makeEvent()), '_blank'),
+            color: 'text',
+          }))}
+        >
+          <Button
+            prefix={<CalendarIcon as={CalendarSVG} />}
+            width={{ base: '$full', sm: '$fit' }}
+            minWidth={{ sm: '$40' }}
+            maxWidth={{ base: '$full', sm: '$fit' }}
           >
-            <Button prefix={<CalendarIcon as={CalendarSVG} />}>
-              {t('action.remindMe', { ns: 'common' })}
-            </Button>
-          </Dropdown>
-        </MobileFullWidth>
+            {t('action.remindMe', { ns: 'common' })}
+          </Button>
+        </Dropdown>
       </Container>
     </Helper>
   )

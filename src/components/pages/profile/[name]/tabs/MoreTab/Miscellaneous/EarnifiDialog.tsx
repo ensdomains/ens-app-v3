@@ -89,7 +89,7 @@ export const EarnifiDialog = ({ name, open, onDismiss }: Props) => {
                 }}
               />
             </Typography>
-            <Spacer $height="3" />
+            <Spacer height="$3" />
             <Input
               type="email"
               id="email"
@@ -103,7 +103,7 @@ export const EarnifiDialog = ({ name, open, onDismiss }: Props) => {
               })}
               error={errors.email?.message}
             />
-            <Spacer $height="3" />
+            <Spacer height="$3" />
             <Dialog.Footer
               leading={
                 <Button onClick={_onDismiss} colorStyle="accentSecondary">

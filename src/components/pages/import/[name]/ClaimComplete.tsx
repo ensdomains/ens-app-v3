@@ -79,15 +79,15 @@ export const ClaimComplete = ({ name }: { name: string }) => {
       <NFTTemplateContainer>
         {name && <NFTTemplate backgroundImage={undefined} name={name} isNormalised />}
       </NFTTemplateContainer>
-      <Spacer $height="5" />
+      <Spacer height="$5" />
       <Typography fontVariant="headingFour">{t('claimComplete.title')}</Typography>{' '}
       <DomainTextContainer>
         <Typography fontVariant="extraLargeBold">{t('claimComplete.ownerOf')}</Typography>
         <FunkyTypography fontVariant="extraLargeBold">{name}</FunkyTypography>
       </DomainTextContainer>
-      <Spacer $height="4" />
+      <Spacer height="$4" />
       <Typography>{t('claimComplete.successMessage')}</Typography>
-      <Spacer $height="5" />
+      <Spacer height="$5" />
       <ButtonContainer>
         <CheckButton
           size="small"

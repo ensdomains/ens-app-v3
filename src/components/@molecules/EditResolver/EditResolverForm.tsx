@@ -98,7 +98,7 @@ const EditResolverForm = ({
           },
         })}
       />
-      <Spacer $height="4" />
+      <Spacer height="$4" />
       <RadioButton
         label={t('input.editResolver.customLabel')}
         description={

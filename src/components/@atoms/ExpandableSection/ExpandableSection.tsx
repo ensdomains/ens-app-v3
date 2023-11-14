@@ -1,85 +1,23 @@
 import { PropsWithChildren, useRef, useState } from 'react'
-import { TransitionState, useTransition } from 'react-transition-state'
-import styled, { css } from 'styled-components'
+import { useTransition } from 'react-transition-state'
 
+import { Box, BoxProps, cssVars } from '@ensdomains/thorin'
 import { DownChevronSVG, Typography } from '@ensdomains/thorin2'
 
-const Container = styled.div(
-  ({ theme }) => css`
-    width: 100%;
-    border: 1px solid ${theme.colors.border};
-    border-radius: ${theme.radii.large};
-  `,
-)
+import { getValueForTransitionState, State } from './getValueForTransitionState'
 
-const Header = styled.button(
-  ({ theme }) => css`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: ${theme.space['4']};
-    width: 100%;
-  `,
-)
-
-const IconWrapper = styled.div<{ $open: boolean }>(
-  ({ theme, $open }) => css`
-    display: flex;
-    color: ${theme.colors.grey};
-    transition:
-      transform 0.3s ease-in-out,
-      color 0.3s ease-in-out;
-
-    ${$open &&
-    css`
-      transform: rotate(180deg);
-      color: ${theme.colors.text};
-    `}
-  `,
-)
-
-const Body = styled.div<{ $state: TransitionState; $height: number }>(
-  ({ theme, $state, $height }) => css`
-    overflow: hidden;
-    width: 100%;
-    padding: 0 ${theme.space['4']};
-    transition:
-      opacity 0.5s ease-in-out,
-      height 0.5s ease-in-out;
-    box-sizing: border-box;
-
-    ${$state === 'exited' &&
-    css`
-      visibility: hidden;
-      height: 0;
-      opacity: 0;
-    `}
-    ${($state === 'preEnter' || $state === 'exiting') &&
-    css`
-      visibility: visible;
-      opacity: 0;
-      height: 0;
-    `}
-    ${($state === 'entering' || $state === 'preExit') &&
-    css`
-      visibility: visible;
-      opacity: 1;
-      height: ${$height}px;
-    `}
-    ${$state === 'entered' &&
-    css`
-      visibility: visible;
-      opacity: 1;
-      height: initial;
-    `}
-  `,
-)
-
-const Content = styled.div(
-  ({ theme }) => css`
-    padding: ${theme.space['4']} 0;
-    border-top: 1px solid ${theme.colors.border};
-  `,
+const Body = ({ $state, $height, ...props }: { $state: State; $height: number } & BoxProps) => (
+  <Box
+    {...props}
+    overflow="hidden"
+    width="$full"
+    px="$4"
+    transition="all 0.5s ease-in-out"
+    boxSizing="border-box"
+    visibility={getValueForTransitionState($state, 'visibility')}
+    opacity={getValueForTransitionState($state, 'opacity')}
+    height={getValueForTransitionState($state, 'heightFunc')($height)}
+  />
 )
 
 type Props = {
@@ -105,16 +43,31 @@ export const ExpandableSection = ({ title, children }: PropsWithChildren<Props>)
   const open = ['entered', 'entering', 'preEnter'].includes(state)
 
   return (
-    <Container>
-      <Header type="button" onClick={() => toggle()}>
+    <Box width="$full" border={`1px solid ${cssVars.color.border}`} borderRadius="$large">
+      <Box
+        as="button"
+        type="button"
+        onClick={() => toggle()}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        padding="$4"
+        width="$full"
+      >
         <Typography>{title}</Typography>
-        <IconWrapper $open={open}>
-          <DownChevronSVG />
-        </IconWrapper>
-      </Header>
-      <Body $state={state} $height={height}>
-        <Content ref={ref}>{children}</Content>
+        <Box
+          as={<DownChevronSVG />}
+          display="flex"
+          color={open ? '$text' : '$grey'}
+          transition="all 0.3s ease-in-out"
+          transform={open ? 'rotate(180deg)' : 'rotate(0deg)'}
+        />
+      </Box>
+      <Body $state={state as State} $height={height}>
+        <Box ref={ref} py="$4" borderTop={`1px solid ${cssVars.color.border}`}>
+          {children}
+        </Box>
       </Body>
-    </Container>
+    </Box>
   )
 }

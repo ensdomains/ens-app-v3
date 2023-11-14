@@ -57,7 +57,7 @@ export default function Page() {
                 . These will be uneditable until favourites are fully implemented.
               </Typography>
             </Helper>
-            <Spacer $height="3" />
+            <Spacer height="$3" />
             {match(favourites)
               .with(P.array({ name: P.string, expiry: P._ }), (_favourites) => {
                 return (

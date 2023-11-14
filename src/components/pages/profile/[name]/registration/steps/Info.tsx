@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Card } from '@ensdomains/thorin'
-import { Button, Heading, mq, Typography } from '@ensdomains/thorin2'
+import { Button, Card } from '@ensdomains/thorin'
+import { Heading, mq, Typography } from '@ensdomains/thorin2'
 
-import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 
 import FullInvoice from '../FullInvoice'
@@ -117,16 +116,24 @@ const Info = ({ registrationData, name, callback, onProfileClick }: Props) => {
         </ProfileButton>
       )}
       <ButtonContainer>
-        <MobileFullWidth>
-          <Button colorStyle="accentSecondary" onClick={() => callback({ back: true })}>
-            {t('action.back', { ns: 'common' })}
-          </Button>
-        </MobileFullWidth>
-        <MobileFullWidth>
-          <Button data-testid="next-button" onClick={() => callback({ back: false })}>
-            {t('action.begin', { ns: 'common' })}
-          </Button>
-        </MobileFullWidth>
+        <Button
+          colorStyle="accentSecondary"
+          onClick={() => callback({ back: true })}
+          width={{ base: '$full', sm: '$fit' }}
+          minWidth={{ sm: '$40' }}
+          maxWidth={{ base: '$full', sm: '$fit' }}
+        >
+          {t('action.back', { ns: 'common' })}
+        </Button>
+        <Button
+          data-testid="next-button"
+          onClick={() => callback({ back: false })}
+          width={{ base: '$full', sm: '$fit' }}
+          minWidth={{ sm: '$40' }}
+          maxWidth={{ base: '$full', sm: '$fit' }}
+        >
+          {t('action.begin', { ns: 'common' })}
+        </Button>
       </ButtonContainer>
     </Card>
   )

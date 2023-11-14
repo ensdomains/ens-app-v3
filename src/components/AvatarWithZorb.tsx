@@ -23,6 +23,7 @@ export const NameAvatar = ({
   name,
   size,
   noCache = false,
+  label,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
   const { data: avatar } = useEnsAvatar({ name, cacheTime: noCache ? 0 : undefined })
@@ -33,7 +34,7 @@ export const NameAvatar = ({
     setSrc(avatar || zorb)
   }, [avatar, zorb])
 
-  return <Avatar {...props} src={src} size={size} />
+  return <Avatar {...props} src={src} size={size} label={label} />
 }
 
 export const AvatarWithZorb = ({

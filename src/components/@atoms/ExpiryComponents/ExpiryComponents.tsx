@@ -1,7 +1,8 @@
+import { ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin2'
+import { BoxProps, cssVars, Typography } from '@ensdomains/thorin'
 
 import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays, secondsToHours } from '@app/utils/utils'
@@ -30,7 +31,14 @@ const ClockIcon = styled.div<{ $color: Color }>(
   `,
 )
 
-const ExpiryText = styled(Typography)<{
+const ExpiryText = ({
+  $color,
+  ...props
+}: ComponentProps<typeof Typography> & { $color: Color }) => (
+  <Typography {...props} color={`${$color}`} />
+)
+
+const ExpiryText2 = styled(Typography)<{
   $color: Color
 }>(
   ({ theme, $color }) => css`
@@ -117,7 +125,7 @@ export const ShortExpiry = ({
       data-testid="short-expiry"
       data-color={color}
       data-timestamp={expiry.getTime()}
-      $color={color}
+      color={color}
       fontVariant="small"
     >
       {text}

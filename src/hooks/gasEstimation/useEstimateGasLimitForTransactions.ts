@@ -79,8 +79,6 @@ export const useEstimateGasLimitForTransaction = <TName extends TransactionName>
 
   const { gasPrice, isLoading: isGasPriceLoading, isFetching: isGasPriceFetching } = useGasPrice()
 
-  console.log('gasPrice', gasPrice, typeof gasPrice)
-
   const { data, isLoading, isFetching, ...rest } = useQuery(
     queryKey,
     ({ queryKey: [params] }) =>
