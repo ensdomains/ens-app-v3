@@ -53,8 +53,7 @@ const useExpandableRecordsGroup = <T extends FieldValues>({
         shouldDirty: returnAllFields ? Object.keys(otherValues).length > 0 : true,
       })
     } else {
-      const newValues = { ...otherValues, [key]: '' }
-      setValue(group, newValues as PathValue<T, Path<T>>, { shouldDirty: true })
+      setValue(`${group}.${key}` as Path<T>, '' as PathValue<T, Path<T>>, { shouldDirty: true })
     }
   }
 

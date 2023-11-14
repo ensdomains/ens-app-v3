@@ -261,7 +261,7 @@ export const RecordsTab = ({
               )}
             </SectionTitleContainer>
           </SectionHeader>
-          {abi && <RecordItem type="text" value={abi.data} />}
+          {abi && <RecordItem type="abi" value={abi.data} />}
         </RecordSection>
       </AllRecords>
       {canEdit && resolverAddress !== emptyAddress && (
