@@ -1,5 +1,5 @@
 import { match as _match, P } from 'ts-pattern'
-import { Address } from 'viem'
+import { Address, hexToString } from 'viem'
 
 import {
   contentTypeToEncodeAs,
@@ -19,16 +19,14 @@ const contentHashTouple = (contentHash?: string, deleteLabel = 'delete'): [strin
   return [['contenthash', contentHash]]
 }
 
-const abiTouple = (
-  abi?: { contentType?: BigInt; data: string | object } | string,
-  deleteLabel = 'delete',
-): [string, string][] => {
+const abiTouple = (abi?: RecordOptions['abi'], deleteLabel = 'delete'): [string, string][] => {
   const abiStr = _match(abi)
-    .with(P.string, (_abi) => _abi)
-    .with({ data: P.string }, ({ data }) => data)
-    .with({ data: {} }, ({ data }) => JSON.stringify(data))
+    .with({ encodedData: P.not(P.nullish), contentType: 1 }, ({ encodedData }) =>
+      hexToString(encodedData),
+    )
+    .with({ contentType: 0 }, () => null)
     .otherwise(() => undefined)
-  if (abiStr === '') return [[deleteLabel, 'abi']]
+  if (abiStr === null) return [[deleteLabel, 'abi']]
   if (!abiStr) return []
   return [['abi', abiStr]]
 }

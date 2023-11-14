@@ -1,54 +1,54 @@
-import { normalizeAbi } from './useAdvancedEditor'
+import { decodeAbi } from './useAdvancedEditor'
 
 describe('normalizeAbi', () => {
   it('should normalize abi that is a string', () => {
-    expect(normalizeAbi("test")).toEqual({ contentType: 1, data: 'test' })
+    expect(decodeAbi("test")).toEqual({ contentType: 1, data: 'test' })
   })
 
   it('should normalize abi that is an empty string', () => {
-    expect(normalizeAbi("")).toEqual({ contentType: 1, data: '' })
+    expect(decodeAbi("")).toEqual({ contentType: 1, data: '' })
   })
 
   it('should normalize abi with a string for data', () => {
-    expect(normalizeAbi({ data: 'test' })).toEqual({ contentType: 1, data: 'test' })
+    expect(decodeAbi({ data: 'test' })).toEqual({ contentType: 1, data: 'test' })
   })
 
   it('should normalize abi with an empty string for data', () => {
-    expect(normalizeAbi({ data: '' })).toEqual({ contentType: 1, data: '' })
+    expect(decodeAbi({ data: '' })).toEqual({ contentType: 1, data: '' })
   })
 
   it('should normalize abi with an object for data', () => {
-    expect(normalizeAbi({ data: {test: 'test'} })).toEqual({ contentType: 1, data: '{"test":"test"}' })
+    expect(decodeAbi({ data: {test: 'test'} })).toEqual({ contentType: 1, data: '{"test":"test"}' })
   })
   it('should normalize abi with an array for data', () => {
-    expect(normalizeAbi({ data: ['test'] })).toEqual({ contentType: 1, data: '["test"]' })
+    expect(decodeAbi({ data: ['test'] })).toEqual({ contentType: 1, data: '["test"]' })
   })
 
   it('should normalize abi with an object for data', () => {
-    expect(normalizeAbi({ data: {test: 'test'} })).toEqual({ contentType: 1, data: '{"test":"test"}' })
+    expect(decodeAbi({ data: {test: 'test'} })).toEqual({ contentType: 1, data: '{"test":"test"}' })
   })
 
   it('should NOT normalize abi that is a number', () => {
-    expect(normalizeAbi(5 as any)).toBeUndefined()
+    expect(decodeAbi(5 as any)).toBeUndefined()
   })
 
   it('should NOT normalize abi that is null', () => {
-    expect(normalizeAbi(null as any)).toBeUndefined()
+    expect(decodeAbi(null as any)).toBeUndefined()
   })
 
   it('should NOT normalize abi that is undefined', () => {
-    expect(normalizeAbi(undefined as any)).toBeUndefined()
+    expect(decodeAbi(undefined as any)).toBeUndefined()
   })
 
   it('should NOT normalize abi with null for data', () => {
-    expect(normalizeAbi({ data: null as any})).toBeUndefined()
+    expect(decodeAbi({ data: null as any})).toBeUndefined()
   })
 
   it('should NOT normalize abi with undefined for data', () => {
-    expect(normalizeAbi({ data: undefined as any})).toBeUndefined()
+    expect(decodeAbi({ data: undefined as any})).toBeUndefined()
   })
 
   it('should NOT normalize abi with a number for data', () => {
-    expect(normalizeAbi({ data: 5 as any})).toBeUndefined()
+    expect(decodeAbi({ data: 5 as any})).toBeUndefined()
   })
 })

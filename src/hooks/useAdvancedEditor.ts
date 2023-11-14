@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { match, P, Pattern } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
+import { hexToString } from 'viem'
 
 import { encodeAbi, RecordOptions } from '@ensdomains/ensjs/utils'
 
@@ -33,13 +34,29 @@ const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEd
   return Object.fromEntries(entries)
 }
 
+// TODO: This should probably be moved into ensjs
 type NormalizedAbi = { contentType: number | undefined; data: string }
-export const normalizeAbi = (abi: RecordOptions['abi'] | string): NormalizedAbi | undefined => {
-  return match(abi)
-    .with(P.string, (data) => ({ contentType: 1, data }))
-    .with({ data: P.string }, ({ data }) => ({ contentType: 1, data }))
-    .with({ data: {} }, ({ data }) => ({ contentType: 1, data: JSON.stringify(data) }))
-    .otherwise(() => undefined)
+export const decodeAbi = (abi: RecordOptions['abi'] | string): NormalizedAbi | undefined => {
+  if (!abi) return undefined
+  if (typeof abi === 'string') return { contentType: 8, data: abi }
+  const { contentType, encodedData: encodedAbiData } = abi
+  if (!contentType || !encodedAbiData) return { contentType: 8, data: '' }
+  let abiData: string | object
+  switch (contentType) {
+    // JSON
+    case 1: {
+      abiData = hexToString(encodedAbiData)
+      return { contentType: 8, data: abiData }
+    }
+    default: {
+      try {
+        abiData = hexToString(encodedAbiData)
+        return { contentType: 8, data: abiData }
+      } catch {
+        return undefined
+      }
+    }
+  }
 }
 
 export type AdvancedEditorType = {
@@ -223,18 +240,17 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
       })
 
       overwrites?.coins?.forEach((coinType) => {
-        const { key, value } = coinType
-        const formKey = formSafeKey(key)
-        const isExisting = existingRecords.address.includes(formKey)
+        const { coin, value } = coinType
+        const isExisting = existingRecords.address.includes(coin as string)
         if (value && isExisting) {
-          setValue(`address.${formKey}`, value, { shouldDirty: true })
+          setValue(`address.${coin}`, value, { shouldDirty: true })
         } else if (value && !isExisting) {
-          addAddressKey(formKey)
-          setValue(`address.${formKey}`, value, { shouldDirty: true })
+          addAddressKey(coin as string)
+          setValue(`address.${coin}`, value, { shouldDirty: true })
         } else if (!value && isExisting) {
-          removeAddressKey(formKey, false)
+          removeAddressKey(coin, false)
         } else if (!value && !isExisting) {
-          removeAddressKey(formKey, true)
+          removeAddressKey(coin, true)
         }
       })
 
@@ -242,7 +258,7 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
         setValue('other.contentHash', overwrites.contentHash, { shouldDirty: true })
       }
 
-      const abi = normalizeAbi(overwrites?.abi)
+      const abi = decodeAbi(overwrites?.abi)
       if (abi) {
         setValue('other.abi', abi, { shouldDirty: true })
       }
@@ -270,7 +286,7 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
 
     const abi = await match(dirtyFields.other?.abi?.data)
       .with('', () => ({ encodedData: null, contentType: 0 }) as const)
-      .with(Pattern.string, async (data) => encodeAbi({ encodeAs: 'json', data: JSON.parse(data) }))
+      .with(P.string, async (data) => encodeAbi({ encodeAs: 'json', data: JSON.parse(data) }))
       .otherwise(() => undefined)
 
     const records: RecordOptions = {
