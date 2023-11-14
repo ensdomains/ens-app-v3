@@ -40,7 +40,7 @@ const Container = styled.div(
 )
 
 const LinkWrapper = ({ children }: { children?: React.ReactNode }) => (
-  <Link href="/" passHref>
+  <Link href="/" passHref legacyBehavior>
     <a>{children}</a>
   </Link>
 )
