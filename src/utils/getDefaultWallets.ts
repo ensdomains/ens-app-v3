@@ -32,6 +32,8 @@ export const getDefaultWallets = ({
         braveWallet({ chains }),
         {
           ...phantomWallet({ chains }),
+          iconUrl: async () => (await import('../assets/PhantomWallet')).default,
+          iconBackground: '#9A8AEE',
           downloadUrls: {},
         },
         // always shown
