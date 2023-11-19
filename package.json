@@ -103,6 +103,7 @@
     "react-dom": "*"
   },
   "devDependencies": {
+    "@ethersproject/contracts": "^5.4.0",
     "@adraffy/ens-normalize": "^1.9.4",
     "@cloudflare/workers-types": "^3.14.1",
     "@ensdomains/buffer": "^0.1.0",

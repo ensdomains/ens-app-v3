@@ -2,7 +2,7 @@
 import { Locator, Page, expect } from '@playwright/test'
 import { Web3ProviderBackend, Web3RequestKind } from 'headless-web3-provider'
 
-import { Accounts, User } from './accounts'
+import { Accounts, User } from './accounts.js'
 
 export class Login {
   readonly page: Page

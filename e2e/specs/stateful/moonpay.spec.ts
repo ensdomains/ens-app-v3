@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+import { test } from '../playwright/index.js'
 
 const makeid = (length: number) => {
   let result = ''

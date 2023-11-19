@@ -1,4 +1,4 @@
-import type { Name } from '..'
+import type { Name } from '../index.js'
 
 const adjustDurations = (name: Name, offset: number) => {
   const addOffset = (duration?: number) =>

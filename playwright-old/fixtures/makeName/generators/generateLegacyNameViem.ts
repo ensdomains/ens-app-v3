@@ -6,10 +6,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Accounts, User } from 'playwright/fixtures/accounts'
-import { Contracts } from 'playwright/fixtures/contracts'
+import type { Address, Hex } from 'viem'
+import {
+  publicClient,
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../contracts/addTestContracts.js'
+import { Accounts, User } from '../../accounts'
+import { Contracts } from '../../contracts'
 
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { namehash } from '@ensdomains/ensjs/dist/cjs/utils/normalise.js'
 
 import { Provider } from '../../provider'
 import { LegacySubname, generateLegacySubname } from './generateLegacySubname'

@@ -1,17 +1,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Accounts } from '../accounts'
-import { Contracts } from '../contracts'
-import { Provider } from '../provider'
-import { Subgraph } from '../subgraph'
-import { Time } from '../time'
-import { Name as LegacyName, generateLegacyName } from './generators/generateLegacyName'
+import { Accounts } from '../accounts.js'
+import { Contracts } from '../contracts/index.js'
+import { Provider } from '../provider.js'
+import { Subgraph } from '../subgraph.js'
+import { Time } from '../time.js'
+import { Name as LegacyName, generateLegacyName } from './generators/generateLegacyName.js'
 import {
   Name as LegacyNameWithConfig,
   generateLegacyNameWithConfig,
-} from './generators/generateLegacyNameWithConfig'
-import { Name as WrappedName, generateWrappedName } from './generators/generateWrappedName'
-import { adjustName } from './utils/adjustName'
-import { getTimeOffset } from './utils/getTimeOffset'
+} from './generators/generateLegacyNameWithConfig.js'
+import { Name as WrappedName, generateWrappedName } from './generators/generateWrappedName.js'
+import { adjustName } from './utils/adjustName.js'
+import { getTimeOffset } from './utils/getTimeOffset.js'
 
 type Dependencies = {
   accounts: Accounts

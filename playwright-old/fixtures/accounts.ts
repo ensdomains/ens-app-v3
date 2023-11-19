@@ -1,9 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { ethers } from 'ethers'
 
-import { shortenAddress } from '@app/utils/utils'
+import { shortenAddress } from '../../src/utils/utils.js'
 
-import { Provider } from './provider'
+import { Provider } from './provider.js'
 
 const DEFAULT_MNEMONIC = 'test test test test test test test test test test test junk'
 

@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+import { test } from '../playwright/index.js'
 
 const profiles = [
   {
