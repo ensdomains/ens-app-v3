@@ -278,7 +278,7 @@ describe('AdvancedEditor', () => {
     })
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes[0]).toEqual({
       key: 'ETH',
-      value: '0x0000000000000000000000000000000000000000',
+      value: '',
     })
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes.length).toBe(1)
   })
