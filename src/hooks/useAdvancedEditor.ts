@@ -1,23 +1,22 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { match, Pattern } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
+import { hexToString } from 'viem'
 
 import { encodeAbi, RecordOptions } from '@ensdomains/ensjs/utils'
 
 import { textOptions } from '@app/components/@molecules/AdvancedEditor/textOptions'
 import addressOptions from '@app/components/@molecules/ProfileEditor/options/addressOptions'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { Profile } from '@app/types'
-import { emptyAddress } from '@app/utils/constants'
 import {
   convertFormSafeKey,
   convertProfileToProfileFormObject,
   formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
-
-import { useResolverHasInterfaces } from './useResolverHasInterfaces'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEditorType) => {
   const entries = []
@@ -33,6 +32,31 @@ const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEd
     entries.push(['website', data.other.contentHash])
   }
   return Object.fromEntries(entries)
+}
+
+// TODO: This should probably be moved into ensjs
+type NormalizedAbi = { contentType: number | undefined; data: string }
+export const decodeAbi = (abi: RecordOptions['abi'] | string): NormalizedAbi | undefined => {
+  if (!abi) return undefined
+  if (typeof abi === 'string') return { contentType: 8, data: abi }
+  const { contentType, encodedData: encodedAbiData } = abi
+  if (!contentType || !encodedAbiData) return { contentType: 8, data: '' }
+  let abiData: string | object
+  switch (contentType) {
+    // JSON
+    case 1: {
+      abiData = hexToString(encodedAbiData)
+      return { contentType: 8, data: abiData }
+    }
+    default: {
+      try {
+        abiData = hexToString(encodedAbiData)
+        return { contentType: 8, data: abiData }
+      } catch {
+        return undefined
+      }
+    }
+  }
 }
 
 export type AdvancedEditorType = {
@@ -166,6 +190,7 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
     }
   })()
 
+  const [shouldRunOverwritesScript, setShouldRunOverwritesScript] = useState(false)
   useEffect(() => {
     if (profile) {
       const formObject = convertProfileToProfileFormObject(profile)
@@ -190,33 +215,59 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
         address: Object.keys(newDefaultValues.address) || [],
         text: Object.keys(newDefaultValues.text) || [],
       }
-
-      overwrites?.texts?.forEach((text) => {
-        const { key, value } = text
-        const formKey = formSafeKey(key)
-        setValue(`text.${formKey}`, value!, { shouldDirty: true })
-        if (!newExistingRecords.text.includes(formKey)) {
-          newExistingRecords.text.push(formKey)
-        }
-      })
-
-      overwrites?.coins?.forEach((coinItem) => {
-        const { coin, value } = coinItem
-        const formKey = formSafeKey(String(coin))
-        setValue(`address.${formKey}`, value!, { shouldDirty: true })
-        if (!newExistingRecords.address.includes(formKey)) {
-          newExistingRecords.address.push(formKey)
-        }
-      })
-
-      if (overwrites?.contentHash) {
-        setValue('other.contentHash', overwrites.contentHash, { shouldDirty: true })
-      }
-
       setExistingRecords(newExistingRecords)
+      setShouldRunOverwritesScript(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile])
+
+  useEffect(() => {
+    if (shouldRunOverwritesScript) {
+      overwrites?.texts?.forEach((text) => {
+        const { key, value } = text
+        const formKey = formSafeKey(key)
+        const isExisting = existingRecords.text.includes(formKey)
+        if (value && isExisting) {
+          setValue(`text.${formKey}`, value, { shouldDirty: true })
+        } else if (value && !isExisting) {
+          addTextKey(formKey)
+          setValue(`text.${formKey}`, value, { shouldDirty: true })
+        } else if (!value && isExisting) {
+          removeTextKey(formKey, false)
+        } else if (!value && !isExisting) {
+          removeTextKey(formKey, true)
+        }
+      })
+
+      overwrites?.coins?.forEach((coinType) => {
+        const { coin, value } = coinType
+        const isExisting = existingRecords.address.includes(coin as string)
+        if (value && isExisting) {
+          setValue(`address.${coin}`, value, { shouldDirty: true })
+        } else if (value && !isExisting) {
+          addAddressKey(coin as string)
+          setValue(`address.${coin}`, value, { shouldDirty: true })
+        } else if (!value && isExisting) {
+          removeAddressKey(coin, false)
+        } else if (!value && !isExisting) {
+          removeAddressKey(coin, true)
+        }
+      })
+
+      if (typeof overwrites?.contentHash === 'string') {
+        setValue('other.contentHash', overwrites.contentHash, { shouldDirty: true })
+      }
+
+      const abi = decodeAbi(overwrites?.abi)
+      if (abi) {
+        setValue('other.abi', abi, { shouldDirty: true })
+      }
+
+      setShouldRunOverwritesScript(false)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existingRecords, shouldRunOverwritesScript])
 
   const handleRecordSubmit = async (editorData: AdvancedEditorType) => {
     const dirtyFields = getDirtyFields(formState.dirtyFields, editorData) as AdvancedEditorType
@@ -231,21 +282,16 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
       value,
     })) as { coin: string; value: string }[]
 
-    const coinTypesWithZeroAddressses = coins.map((coinType) => {
-      if (coinType.value) return coinType
-      return { coin: coinType.coin, value: emptyAddress }
-    })
-
     const contentHash = dirtyFields.other?.contentHash
 
     const abi = await match(dirtyFields.other?.abi?.data)
       .with('', () => ({ encodedData: null, contentType: 0 }) as const)
-      .with(Pattern.string, async (data) => encodeAbi({ encodeAs: 'json', data: JSON.parse(data) }))
+      .with(P.string, async (data) => encodeAbi({ encodeAs: 'json', data: JSON.parse(data) }))
       .otherwise(() => undefined)
 
     const records: RecordOptions = {
       texts,
-      coins: coinTypesWithZeroAddressses,
+      coins,
       contentHash,
       abi,
     }
@@ -278,7 +324,6 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
     handleTabClick,
     hasErrors,
     existingRecords,
-    setExistingRecords,
     existingTextKeys,
     newTextKeys,
     addTextKey,

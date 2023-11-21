@@ -15,7 +15,7 @@ type OtherData = {
   reclaim?: never
 }
 
-type Data = {
+export type Data = {
   name: string
   newOwnerAddress: Address
   contract: 'registry' | 'registrar' | 'nameWrapper'

@@ -1,7 +1,10 @@
+// TODO: Double check conversino to big int
+
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { formatEther } from 'viem'
 
 import {
   Banner,
@@ -15,7 +18,7 @@ import {
 } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
-import { useChainId } from '@app/hooks/chain/useChainId'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import useFaucet from '@app/hooks/useFaucet'
 
 import { InnerDialog } from '../@atoms/InnerDialog'
@@ -44,8 +47,12 @@ const LargeCheckIcon = styled.svg(
   `,
 )
 
+const getAmountFromHex = (hex: `0x${string}`) => formatEther(BigInt(hex))
+const msToDays = (ms: number) => Math.floor(ms / 1000 / 60 / 60 / 24)
+const chainEthTicker = (chainName: string) => `${chainName.slice(0, 2)}ETH`
+
 const FaucetBanner = () => {
-  const chainId = useChainId()
+  const chainName = useChainName()
   const { isReady } = useRouter()
   const { address } = useAccountSafely()
   const {
@@ -60,7 +67,14 @@ const FaucetBanner = () => {
   const closeDialog = () => setDialogOpen(false)
   const openDialog = () => setDialogOpen(true)
 
-  if (chainId !== 5 || !isReady) return null
+  const amount = useMemo(() => getAmountFromHex(data?.amount || '0x0'), [data?.amount])
+
+  useEffect(() => {
+    closeDialog()
+  }, [chainName, address])
+
+  if ((chainName !== 'goerli' && chainName !== 'sepolia') || !isReady || isLoading || !data)
+    return null
 
   const BannerComponent = (
     <BannerWrapper>
@@ -69,9 +83,13 @@ const FaucetBanner = () => {
         icon={<EthSVG />}
         onClick={openDialog}
         alert="info"
-        title="You have unclaimed goETH!"
+        title={`You have unclaimed ${chainName} ETH!`}
       >
-        {t('testnetFaucet.explanation', { amount: '0.25' })}
+        {t('testnetFaucet.explanation', {
+          amount,
+          testnet: chainName,
+          ticker: chainEthTicker(chainName),
+        })}
       </StyledBanner>
     </BannerWrapper>
   )
@@ -80,11 +98,18 @@ const FaucetBanner = () => {
     <Dialog open={dialogOpen} onClose={closeDialog} onDismiss={closeDialog} variant="blank">
       {dialogStage === 'default' ? (
         <>
-          <Dialog.Heading title="Faucet Claim" subtitle="Claim once every 90 days" />
+          <Dialog.Heading
+            title="Faucet Claim"
+            subtitle={`Claim once every ${msToDays(data.interval)} days`}
+          />
           <InnerDialog>
             <DisplayItems
               displayItems={[
-                { label: 'Value', value: '0.25 goETH', useRawLabel: true },
+                {
+                  label: 'Value',
+                  value: `${amount} ${chainEthTicker(chainName)}`,
+                  useRawLabel: true,
+                },
                 { label: 'Address', value: address || '', type: 'address', useRawLabel: true },
               ]}
             />

@@ -82,7 +82,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         name={normalisedName}
         getTextRecord={getTextRecord}
         button={snippetButton}
-        canEdit={abilities.data?.canEdit}
         isPrimary={name === primaryData?.name}
       >
         {nameDetails.isNonASCII && (
@@ -116,8 +115,9 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           value: item.value,
         }))}
         textRecords={(profile?.texts || [])
-          .map((item) => ({ key: item.key, value: item.value }))
-          .filter((item) => item.value !== null)}
+          .map((item: any) => ({ key: item.key, value: item.value }))
+          .filter((item: any) => item.value !== null)}
+        contentHash={profile?.contentHash}
         owners={owners}
         name={normalisedName}
         actions={profileActions.profileActions}

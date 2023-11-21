@@ -3,11 +3,7 @@ import styled, { css } from 'styled-components'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { useOwners } from '@app/hooks/useOwners'
-import { validateExpiry } from '@app/utils/utils'
 
-import Miscellaneous from './Miscellaneous/Miscellaneous'
-import Ownership from './Ownership'
 import Resolver from './Resolver'
 import Token from './Token/Token'
 
@@ -30,47 +26,10 @@ type Props = {
 }
 
 const MoreTab = ({ name, nameDetails, abilities }: Props) => {
-  const {
-    canBeWrapped,
-    ownerData,
-    wrapperData,
-    dnsOwner,
-    isWrapped,
-    isCachedData,
-    profile,
-    expiryDate,
-    pccExpired,
-  } = nameDetails
-
-  const owners = useOwners({
-    ownerData: ownerData!,
-    wrapperData: wrapperData!,
-    dnsOwner,
-    abilities,
-  })
+  const { canBeWrapped, ownerData, wrapperData, isWrapped, isCachedData, profile } = nameDetails
 
   return (
     <MoreContainer>
-      <Miscellaneous
-        expiryDate={validateExpiry({
-          name,
-          fuses: wrapperData?.fuses,
-          expiry: expiryDate || wrapperData?.expiry?.date,
-          pccExpired,
-        })}
-        name={name}
-        isCachedData={isCachedData}
-      />
-      {owners && owners.length > 0 && (
-        <Ownership
-          name={name}
-          owners={owners}
-          canSend={abilities.canSend}
-          canSendError={abilities.canSendError}
-          isCachedData={isCachedData}
-          isWrapped={isWrapped}
-        />
-      )}
       {ownerData && (
         <Token
           isWrapped={isWrapped}

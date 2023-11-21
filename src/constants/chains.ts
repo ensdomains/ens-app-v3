@@ -19,10 +19,9 @@ type ContractName =
   | 'LegacyDNSSECImpl'
   | 'LegacyPublicResolver'
 
-export const deploymentAddresses = JSON.parse(process.env.DEPLOYMENT_ADDRESSES! || '{}') as Record<
-  ContractName | 'ENSRegistry',
-  Address
->
+export const deploymentAddresses = JSON.parse(
+  process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
+) as Record<ContractName | 'ENSRegistry', Address>
 
 export const localhostWithEns = {
   ...localhost,

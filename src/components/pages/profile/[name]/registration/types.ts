@@ -42,7 +42,7 @@ export type BackObj = { back: boolean }
 
 export type RegistrationData = Prettify<UnionToIntersection<RegistrationStepData[RegistrationStep]>>
 
-export type SelectedItemProperties = { address: Address; name: string }
+export type SelectedItemProperties = { address: string; name: string; chainId: number }
 
 export type RegistrationReducerDataItem = Prettify<
   Omit<RegistrationData, 'paymentMethodChoice'> & {

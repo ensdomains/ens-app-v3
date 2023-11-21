@@ -74,8 +74,8 @@ const useFaucet = () => {
   const queryClient = useQueryClient()
 
   const chainName = useChainName()
-
   const { address } = useAccountSafely()
+
   const queryKey = useQueryKeyFactory({
     params: { chainName },
     functionName: 'getFaucetAddress',
@@ -85,6 +85,40 @@ const useFaucet = () => {
   const { data, error, isLoading } = useQuery(queryKey, getFaucetQueryFn, {
     enabled: !!address && (chainName === 'goerli' || chainName === 'sepolia'),
   })
+  //   const queryKey = useQueryKeys().faucet(address)
+
+  //   const { data, error, isLoading } = useQuery(
+  //     queryKey,
+  //     async () => {
+  //       const result: JsonRpc<{
+  //         eligible: boolean
+  //         amount: `0x${string}`
+  //         interval: number
+  //         next: number
+  //         status: FaucetStatus
+  //       }> = await fetch(createEndpoint(chainName), {
+  //         method: 'POST',
+  //         body: JSON.stringify({
+  //           jsonrpc: '2.0',
+  //           method: 'faucet_getAddress',
+  //           params: [address],
+  //           id: 1,
+  //         }),
+  //         headers: {
+  //           // eslint-disable-next-line @typescript-eslint/naming-convention
+  //           'Content-Type': 'application/json',
+  //         },
+  //       }).then((res) => res.json())
+
+  //       if (result.error) throw new Error(result.error.message)
+
+  //       return result.result
+  //     },
+  //     {
+  //       enabled: !!address && (chainName === 'goerli' || chainName === 'sepolia'),
+  //     },
+  //   )
+  // >>>>>>> main
 
   const mutation = useMutation(
     async () => {

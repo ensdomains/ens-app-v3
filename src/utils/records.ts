@@ -1,4 +1,5 @@
-import { Address } from 'viem'
+import { match as _match, P } from 'ts-pattern'
+import { Address, hexToString } from 'viem'
 
 import {
   contentTypeToEncodeAs,
@@ -18,12 +19,25 @@ const contentHashTouple = (contentHash?: string, deleteLabel = 'delete'): [strin
   return [['contenthash', contentHash]]
 }
 
+const abiTouple = (abi?: RecordOptions['abi'], deleteLabel = 'delete'): [string, string][] => {
+  const abiStr = _match(abi)
+    .with({ encodedData: P.not(P.nullish), contentType: 1 }, ({ encodedData }) =>
+      hexToString(encodedData),
+    )
+    .with({ contentType: 0 }, () => null)
+    .otherwise(() => undefined)
+  if (abiStr === null) return [[deleteLabel, 'abi']]
+  if (!abiStr) return []
+  return [['abi', abiStr]]
+}
+
 export const recordOptionsToToupleList = (
   records?: RecordOptions,
   deleteLabel = 'delete',
 ): [string, string][] => {
   return [
     ...contentHashTouple(records?.contentHash, deleteLabel),
+    ...abiTouple(records?.abi, deleteLabel),
     ...(records?.texts?.map(({ key, value }) => [key, value!]) || []),
     ...(records?.coins?.map(({ coin, value }) => [String(coin), shortenAddress(value!)]) || []),
   ].map(([key, value]) => (value ? [key, value] : [deleteLabel, key]))

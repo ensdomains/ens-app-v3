@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import { test } from '../playwright/index.js'
+import { test } from '../../../playwright/index'
 
 test('should not show add subname button when the connected wallet is the registrant but not the controller', async ({
   page,
@@ -9,9 +9,9 @@ test('should not show add subname button when the connected wallet is the regist
 }) => {
   const name = await makeName({
     label: 'other-controller',
-    type: 'legacy-register',
+    type: 'legacy',
     owner: 'user',
-    manager: 'user2',
+    manager: 'user',
   })
   const subnamesPage = makePageObject('SubnamesPage')
 

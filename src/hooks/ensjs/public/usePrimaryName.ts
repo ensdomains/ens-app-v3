@@ -7,6 +7,7 @@ import { getName, GetNameParameters, GetNameReturnType } from '@ensdomains/ensjs
 import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
+import { emptyAddress } from '@app/utils/constants'
 
 type UsePrimaryNameParameters = PartialBy<GetNameParameters, 'address'> & {
   allowMismatch?: boolean
@@ -61,7 +62,7 @@ export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
 
   const query = useQuery(queryKey, getPrimaryNameQueryFn, {
     cacheTime,
-    enabled: enabled && !!params.address,
+    enabled: enabled && !!params.address && params.address !== emptyAddress,
     staleTime,
     onError,
     onSettled,

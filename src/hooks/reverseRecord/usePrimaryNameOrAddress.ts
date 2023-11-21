@@ -8,7 +8,6 @@ import { shortenAddress } from '../../utils/utils'
 type UsePrimaryNameOrAddressParameters = {
   address: Address
   shortenedAddressLength?: number
-
   enabled?: boolean
 }
 

@@ -188,7 +188,7 @@ export const useEstimateFullRegistration = ({
   const yearlyFee = price?.base
   const premiumFee = price?.premium
   const hasPremium = !!premiumFee && premiumFee > 0n
-  const totalYearlyFee = yearlyFee && yearlyFee * BigInt(registrationData.years)
+  const totalYearlyFee = yearlyFee ? yearlyFee * BigInt(registrationData.years) : 0n
 
   return {
     estimatedGasFee,

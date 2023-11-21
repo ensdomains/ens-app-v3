@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Address } from 'viem'
 
 import { deploymentAddresses } from './chains'
@@ -17,7 +18,6 @@ type KnownResolverData = {
 
 // ordered by recency
 export const KNOWN_RESOLVER_DATA: KnownResolverData = {
-  /* eslint-disable @typescript-eslint/naming-convention */
   '1': [
     {
       address: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
@@ -53,7 +53,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
     {
-      address: '0xdaaf96c344f63131acadd0ea35170e7892d3dfba',
+      address: '0xDaaF96c344f63131acadD0Ea35170E7892d3dfBA',
       deployer: 'ENS Labs',
       tag: null,
       isNameWrapperAware: false,
@@ -69,7 +69,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
     {
-      address: '0x226159d592e2b063810a10ebf6dcbada94ed68b8',
+      address: '0x226159d592E2b063810a10Ebf6dcbADA94Ed68b8',
       deployer: 'ENS Labs',
       tag: 'outdated',
       isNameWrapperAware: false,
@@ -97,7 +97,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
     {
-      address: '0x1da022710df5002339274aadee8d58218e9d6ab5',
+      address: '0x1da022710dF5002339274AaDEe8D58218e9D6AB5',
       deployer: 'ENS Labs',
       tag: 'outdated',
       isNameWrapperAware: false,
@@ -179,7 +179,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
     {
-      address: '0x121304143ea8101e69335f309e2062d299a234b5',
+      address: '0x121304143ea8101E69335F309e2062d299A234B5',
       deployer: 'ENS Labs',
       tag: null,
       isNameWrapperAware: false,
@@ -211,7 +211,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
     {
-      address: '0xff77b96d6bafcec0d684bb528b22e0ab09c70663',
+      address: '0xfF77b96d6bafCec0D684bB528b22e0Ab09C70663',
       deployer: 'ENS Labs',
       tag: null,
       isNameWrapperAware: false,
@@ -227,7 +227,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
     {
-      address: '0x6e1b40ed2d626b97a43d2c12e48a6de49a03c7a4',
+      address: '0x6e1b40ed2d626b97A43d2c12e48a6De49A03c7A4',
       deployer: 'ENS Labs',
       tag: null,
       isNameWrapperAware: false,
@@ -242,7 +242,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
     {
-      address: '0xc1ea41786094d1fbe5aded033b5370d51f7a3f96',
+      address: '0xc1EA41786094D1fBE5aded033B5370d51F7a3F96',
       deployer: 'ENS Labs',
       tag: 'outdated',
       isNameWrapperAware: false,
@@ -256,7 +256,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
     {
-      address: '0xbbe3fd189d18c8b73ba54e9dd01f89e6b3ee71f0',
+      address: '0xBbe3fD189D18C8b73BA54e9dD01F89E6b3Ee71f0',
       deployer: 'ENS Labs',
       tag: 'outdated',
       isNameWrapperAware: false,
@@ -267,6 +267,22 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
         RESOLVER_INTERFACE_IDS.TextResolver,
         RESOLVER_INTERFACE_IDS.ContentHashResolver,
         RESOLVER_INTERFACE_IDS.InterfaceResolver,
+      ],
+    },
+    {
+      address: '0x4B1488B7a6B320d2D721406204aBc3eeAa9AD329',
+      deployer: 'ENS Labs',
+      tag: 'outdated',
+      isNameWrapperAware: false,
+      supportedInterfaces: [
+        RESOLVER_INTERFACE_IDS.AddressResolver,
+        RESOLVER_INTERFACE_IDS.NameResolver,
+        RESOLVER_INTERFACE_IDS.AbiResolver,
+        RESOLVER_INTERFACE_IDS.TextResolver,
+        RESOLVER_INTERFACE_IDS.ContentHashResolver,
+        RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+        RESOLVER_INTERFACE_IDS.InterfaceResolver,
+        RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
       ],
     },
   ],
@@ -286,6 +302,22 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
         RESOLVER_INTERFACE_IDS.DnsRecordResolver,
         RESOLVER_INTERFACE_IDS.InterfaceResolver,
         RESOLVER_INTERFACE_IDS.VersionableResolver,
+      ],
+    },
+    {
+      address: '0x0CeEC524b2807841739D3B5E161F5bf1430FFA48',
+      deployer: 'ENS Labs',
+      tag: null,
+      isNameWrapperAware: false,
+      supportedInterfaces: [
+        RESOLVER_INTERFACE_IDS.AddressResolver,
+        RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
+        RESOLVER_INTERFACE_IDS.NameResolver,
+        RESOLVER_INTERFACE_IDS.AbiResolver,
+        RESOLVER_INTERFACE_IDS.TextResolver,
+        RESOLVER_INTERFACE_IDS.ContentHashResolver,
+        RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+        RESOLVER_INTERFACE_IDS.InterfaceResolver,
       ],
     },
   ],
@@ -335,7 +367,6 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
         ],
       }
     : {}),
-  /* eslint-enable @typescript-eslint/naming-convention */
 }
 
 export const getKnownResolverData = ({

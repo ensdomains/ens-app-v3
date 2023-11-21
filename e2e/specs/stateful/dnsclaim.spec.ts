@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import { test } from '../playwright/index.js'
+import { test } from '../../../playwright/index.js'
 
 test.describe('Import DNSSEC name', () => {
   test('should not proceed if DNSSEC is not enabled on that domain', async ({ page, login }) => {

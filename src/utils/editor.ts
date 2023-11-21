@@ -105,7 +105,11 @@ export const convertProfileToProfileFormObject = (profile: Profile): ProfileForm
     address,
     website,
     abi: profile.abi
-      ? { data: profile.abi.abi as any, contentType: profile.abi.contentType }
+      ? {
+          data:
+            typeof profile.abi.abi === 'string' ? profile.abi.abi : JSON.stringify(profile.abi.abi),
+          contentType: profile.abi.contentType,
+        }
       : { data: '', contentType: 0 },
   }
 }

@@ -113,14 +113,17 @@ export const TransactionDialogManager = ({
         <TransactionStageModal
           actionName={transactionItem.name}
           displayItems={transaction.displayItems(transactionItem.data as any, t)}
+          // TODO: Look into why helper type is not being inferred
           helper={
-            'helper' in transaction ? transaction.helper(transactionItem.data as any, t) : undefined
+            'helper' in transaction && typeof transaction.helper === 'function'
+              ? transaction.helper(transactionItem.data as any, t)
+              : undefined
           }
           currentStep={selectedItem.currentTransaction}
           stepCount={selectedItem.transactions.length}
           transaction={transactionItem}
           txKey={selectedKey}
-          backToInput={'backToInput' in transaction ? transaction.backToInput : false}
+          backToInput={'backToInput' in transaction ? !!transaction.backToInput : false}
           {...{ dispatch, onDismiss }}
         />
       )

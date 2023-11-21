@@ -7,6 +7,9 @@ import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
 
+import { setRecords } from '@ensdomains/ensjs/wallet'
+import { set } from 'lodash'
+
 const baseMetadataURL = process.env.NEXT_PUBLIC_PROVIDER
   ? 'http://localhost:8080'
   : 'https://metadata.ens.domains'
@@ -82,6 +85,13 @@ export const checkETH2LDFromName = (name: string): name is Eth2ldName => {
   return true
 }
 
+export const checkDNS2LDFromName = (name: string) => {
+  const labels = name.split('.')
+  if (labels.length !== 2) return false
+  if (labels[1] === 'eth') return false
+  return true
+}
+
 export const checkSubname = (name: string) => name.split('.').length > 2
 
 export const isLabelTooLong = (label: string) => {
@@ -133,10 +143,10 @@ export const getResolverWrapperAwareness = ({
   resolverAddress,
 }: {
   chainId: number
-  resolverAddress: Address
+  resolverAddress?: Address
 }) =>
-  KNOWN_RESOLVER_DATA[chainId]?.find((x) => x.address === resolverAddress)?.isNameWrapperAware ||
-  false
+  !!resolverAddress &&
+  !!KNOWN_RESOLVER_DATA[chainId]?.find((x) => x.address === resolverAddress)?.isNameWrapperAware
 
 export const calculateValueWithBuffer = (value: bigint) =>
   (value * CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE) / 100n

@@ -255,9 +255,9 @@ describe('AdvancedEditor', () => {
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
     })
-    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coins[0]).toEqual({
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes[0]).toEqual({
       coin: 'ETH',
-      value: '0x0000000000000000000000000000000000000000',
+      value: '',
     })
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coins.length).toBe(1)
   })

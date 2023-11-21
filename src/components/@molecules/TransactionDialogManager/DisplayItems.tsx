@@ -22,7 +22,6 @@ const Container = styled.div(
   `,
 )
 
-// TODO: Check border color and background
 const DisplayItemContainer = styled.div<{ $shrink?: boolean; $fade?: boolean }>(
   ({ theme, $shrink, $fade }) => css`
     display: grid;

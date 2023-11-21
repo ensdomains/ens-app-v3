@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { DecodedContentHash } from '@ensdomains/ensjs/utils'
 import { Button, Helper, mq, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
@@ -11,6 +12,7 @@ import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import { useOwners } from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { contentHashToString } from '@app/utils/contenthash'
 import { checkETH2LDFromName, formatExpiry } from '@app/utils/utils'
 
 import {
@@ -280,6 +282,7 @@ export const ownershipInfoCalc = (
 export const ProfileDetails = ({
   textRecords = [],
   addresses = [],
+  contentHash,
   expiryDate,
   pccExpired,
   owners,
@@ -290,6 +293,7 @@ export const ProfileDetails = ({
 }: {
   textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
+  contentHash?: DecodedContentHash | string | null
   expiryDate: Date | undefined
   pccExpired: boolean
   owners: ReturnType<typeof useOwners>
@@ -300,6 +304,7 @@ export const ProfileDetails = ({
 }) => {
   const breakpoint = useBreakpoint()
 
+  const _contentHash = contentHashToString(contentHash)
   const otherRecords = [
     ...textRecords
       .filter(
@@ -308,6 +313,7 @@ export const ProfileDetails = ({
           !supportedProfileItems.includes(x.key.toLowerCase()),
       )
       .map((x) => ({ ...x, type: 'text' })),
+    ...(_contentHash ? [{ key: 'contenthash', type: 'contenthash', value: _contentHash }] : []),
   ]
 
   const mappedOwners = ownershipInfoCalc(name, pccExpired, owners, gracePeriodEndDate, expiryDate)

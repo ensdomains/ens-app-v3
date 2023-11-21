@@ -240,7 +240,7 @@ export const RecordsTab = ({
           </SectionHeader>
           {abi && (
             <RecordItem
-              type="text"
+              type="abi"
               value={typeof abi.abi === 'string' ? abi.abi : JSON.stringify(abi.abi)}
             />
           )}

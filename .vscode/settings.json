@@ -18,5 +18,8 @@
   "[svg]": {
     "editor.defaultFormatter": "jock.svg"
   },
-  "jest.jestCommandLine": "pnpm run test"
+  "jest.jestCommandLine": "pnpm run test",
+  "cSpell.words": [
+    "ensjs"
+  ]
 }

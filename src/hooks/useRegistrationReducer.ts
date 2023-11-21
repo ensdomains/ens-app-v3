@@ -7,6 +7,7 @@ import {
   RegistrationReducerDataItem,
   SelectedItemProperties,
 } from '@app/components/pages/profile/[name]/registration/types'
+import { useChainId } from '@app/hooks/chain/useChainId'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 
 const defaultData: RegistrationReducerDataItem = {
@@ -24,6 +25,7 @@ const defaultData: RegistrationReducerDataItem = {
   name: '',
   isMoonpayFlow: false,
   externalTransactionId: '',
+  chainId: 1,
 }
 
 const isBrowser = !!(
@@ -50,7 +52,11 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
 export const getSelectedIndex = (
   state: RegistrationReducerData,
   selected: SelectedItemProperties,
-) => state.items.findIndex((x) => x.address === selected.address && x.name === selected.name)
+) =>
+  state.items.findIndex(
+    (x) =>
+      x.address === selected.address && x.name === selected.name && x.chainId === selected.chainId,
+  )
 
 /* eslint-disable no-param-reassign */
 const reducer = (state: RegistrationReducerData, action: RegistrationReducerAction) => {
@@ -131,7 +137,8 @@ const useRegistrationReducer = ({
   address: string | undefined
   name: string
 }) => {
-  const selected = { address, name } as SelectedItemProperties
+  const chainId = useChainId()
+  const selected = { address: address!, name, chainId } as const
   const [state, dispatch] = useLocalStorageReducer<
     RegistrationReducerData,
     RegistrationReducerAction

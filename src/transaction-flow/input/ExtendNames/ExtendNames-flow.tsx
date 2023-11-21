@@ -210,8 +210,9 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     duration: yearsToSeconds(1),
   })
   const rentFee = priceData ? priceData.base + priceData.premium : undefined
-
-  const totalRentFee = rentFee ? rentFee * BigInt(years) : undefined
+  const test = 10n + 10n
+  console.log('rentFee', rentFee, typeof rentFee, test, typeof test)
+  const totalRentFee = rentFee ? BigInt(rentFee) * BigInt(years) : undefined
   const transactions = [
     makeTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee!, isSelf }),
   ]

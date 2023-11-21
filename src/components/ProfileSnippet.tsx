@@ -5,8 +5,10 @@ import styled, { css } from 'styled-components'
 import { Button, mq, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { shouldShowExtendWarning } from '@app/utils/abilities/shouldShowExtendWarning'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -157,14 +159,13 @@ export const ProfileSnippet = ({
   name,
   getTextRecord,
   button,
-  canEdit,
+  // network,
   isPrimary,
   children,
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
   button?: 'viewProfile' | 'extend' | 'register'
-  canEdit?: boolean
   isPrimary?: boolean
   children?: React.ReactNode
 }) => {
@@ -173,6 +174,7 @@ export const ProfileSnippet = ({
 
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
+  const abilities = useAbilities({ name })
 
   const beautifiedName = useBeautifiedName(name)
 
@@ -191,7 +193,10 @@ export const ProfileSnippet = ({
           prefix={<FastForwardSVG />}
           data-testid="extend-button"
           onClick={() => {
-            showExtendNamesInput(`extend-names-${name}`, { names: [name], isSelf: canEdit })
+            showExtendNamesInput(`extend-names-${name}`, {
+              names: [name],
+              isSelf: shouldShowExtendWarning(abilities.data),
+            })
           }}
         >
           {t('action.extend', { ns: 'common' })}
@@ -218,12 +223,17 @@ export const ProfileSnippet = ({
         </Button>
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [button, name, canEdit])
+  }, [button, name, abilities.data])
 
   return (
     <Container $banner={banner} data-testid="profile-snippet">
       <FirstItems>
-        <NameAvatar size={{ min: '24', sm: '32' }} label={name} name={name} noCache={canEdit} />
+        <NameAvatar
+          size={{ min: '24', sm: '32' }}
+          label={name}
+          name={name}
+          noCache={abilities.data.canEdit}
+        />
         <ButtonStack>
           {ActionButton && <DetailButtonWrapper>{ActionButton}</DetailButtonWrapper>}
         </ButtonStack>

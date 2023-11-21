@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
-import { test } from '../playwright/index.js'
+import { test } from '../../../playwright/index.js'
 
 const profiles = [
   {
@@ -65,10 +65,12 @@ const profiles = [
       {
         type: 'manager',
         value: 'wrapmebaby.eth',
+        address: '0xFc5958B4B6F9a06D21E06429c8833f865577acf0',
       },
       {
         type: 'owner',
         value: 'wrapmebaby.eth',
+        address: '0xFc5958B4B6F9a06D21E06429c8833f865577acf0',
       },
     ],
     expiry: 'May 30, 2037',
@@ -208,18 +210,16 @@ test.describe('Profile', () => {
       }
 
       // should show details in more tab
-      await page.getByTestId('more-tab').click()
-
-      // should have correct ownership data
+      await page.getByTestId('ownership-tab').click()
       for (const owner of profile.owners) {
-        await expect(page.getByTestId(`owner-button-name-name.${owner.type}`)).toContainText(
-          owner.value,
-          { timeout: 25000 },
-        )
+        await expect(
+          page.getByTestId(`role-row-${owner.address}`).getByTestId(`role-tag-${owner.type}`),
+        ).toBeVisible()
+        await expect(page.getByTestId(`role-row-${owner.address}`)).toContainText(owner.value)
       }
 
       // should have view link for registration transaction
-      await page.getByTestId('more-tab').click()
+      await page.getByTestId('ownership-tab').click()
       await expect(page.getByTestId('etherscan-registration-link')).toHaveAttribute(
         'href',
         /https:\/\/goerli\.etherscan\.io\/tx\/0x[a-fA-F0-9]{64}/,
@@ -227,7 +227,7 @@ test.describe('Profile', () => {
 
       // should show the expiry of the name if available
       if (profile.expiry) {
-        await expect(page.getByTestId('expiry-data')).toContainText(profile.expiry)
+        await expect(page.getByTestId('expiry-panel-expiry')).toContainText(profile.expiry)
       }
     })
   }
