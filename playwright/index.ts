@@ -5,7 +5,7 @@ import { Web3ProviderBackend, injectHeadlessWeb3Provider } from 'headless-web3-p
 import { Accounts, createAccounts } from './fixtures/accounts'
 import { createContracts } from './fixtures/contracts'
 import { Login } from './fixtures/login'
-import { createMakeNames } from './fixtures/makeName'
+import { createMakeNames } from './fixtures/makeName/index.js'
 import { Provider, createProvider } from './fixtures/provider'
 import { createSubgraph } from './fixtures/subgraph.js'
 import { createTime } from './fixtures/time.js'

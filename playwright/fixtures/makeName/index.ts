@@ -9,7 +9,7 @@ import {
   Name as LegacyNameWithConfig,
   generateLegacyNameWithConfig,
 } from './generators/generateLegacyNameWithConfig.js'
-// import { Name as WrappedName, generateWrappedName } from './generators/generateWrappedName.js'
+import { Name as WrappedName, generateWrappedName } from './generators/generateWrappedName.js'
 import { adjustName } from './utils/adjustName.js'
 import { getTimeOffset } from './utils/getTimeOffset.js'
 
@@ -21,8 +21,7 @@ type Dependencies = {
   subgraph: Subgraph
 }
 
-export type BaseName = LegacyName 
-// | LegacyNameWithConfig | WrappedName
+export type BaseName = LegacyName | LegacyNameWithConfig | WrappedName
 
 export type Name = BaseName & {
   type: 'wrapped' | 'legacy' | 'legacy-register'
@@ -50,8 +49,8 @@ export function createMakeNames({ accounts, provider, time, contracts, subgraph 
     /* eslint-disable no-await-in-loop */
     for (const { type, ...name } of _names) {
       if (type === 'wrapped') {
-        // const wrappedName = { ...name, offset } as WrappedName
-        // await generateWrappedName({ accounts, provider, contracts })(wrappedName)
+        const wrappedName = { ...name, offset } as WrappedName
+        await generateWrappedName({ accounts, provider, contracts })(wrappedName)
       } else if (type === 'legacy') {
         const legacyName = name as LegacyNameWithConfig
         await generateLegacyNameWithConfig({ accounts, provider, contracts })(legacyName)

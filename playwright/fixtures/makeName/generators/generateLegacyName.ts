@@ -6,14 +6,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Accounts, User } from '../../accounts'
+import { Accounts, User, createAccounts } from '../../accounts'
 import { Contracts } from '../../contracts'
 
-import { namehash } from '@ensdomains/ensjs/dist/cjs/utils/normalise'
-
 import { Provider } from '../../provider'
-// import { LegacySubname, generateLegacySubname } from './generateLegacySubname'
-import { registrySetOwnerSnippet} from "@ensdomains/ensjs/dist/cjs/contracts/registry.js"
+import { LegacySubname, generateLegacySubname } from './generateLegacySubname'
 
 import {
   publicClient,
@@ -21,6 +18,7 @@ import {
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
+import { transferName } from '@ensdomains/ensjs/wallet'
 
 const DEFAULT_DURATION = 31536000
 
@@ -30,7 +28,7 @@ export type Name = {
   manager?: User
   duration?: number
   secret?: string
-  // subnames?: Omit<LegacySubname, 'name' | 'nameOwner'>[]
+  subnames?: Omit<LegacySubname, 'name' | 'nameOwner'>[]
 }
 
 type Dependencies = {
@@ -48,7 +46,7 @@ export const generateLegacyName =
     duration = DEFAULT_DURATION,
     // eslint-disable-next-line no-restricted-syntax
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
-    // subnames,
+    subnames,
   }: Name) => {
     const name = `${label}.eth`
     console.log('generating legacy name:', name)
@@ -71,21 +69,26 @@ export const generateLegacyName =
     await registrationTx.wait()
 
     // Create subnames
-    // const _subnames = (subnames || []).map((subname) => ({
-    //   ...subname,
-    //   name: `${label}.eth`,
-    //   nameOwner: owner,
-    // }))
-    // for (const subname of _subnames) {
-    //   await generateLegacySubname({ accounts, contracts })(subname)
-    // }
+    const _subnames = (subnames || []).map((subname) => ({
+      ...subname,
+      name: `${label}.eth`,
+      nameOwner: owner,
+    }))
+    for (const subname of _subnames) {
+      await generateLegacySubname({ accounts, contracts })(subname)
+    }
 
-    // if (!!manager && manager !== owner) {
-    //   const registry = contracts.get('ENSRegistry', { signer: owner })
-    //   const node = namehash(`${label}.eth`)
-    //   const _manager = accounts.getAddress(manager)
-    //   await registry.setOwner(node, _manager)
-    // }
+    if (!!manager && manager !== owner) {
+      console.log('setting manager:', name, manager)
+      const _manager = accounts.getAddress(manager)
+      const tx = await transferName(walletClient, {
+        name: name,
+        newOwnerAddress: createAccounts().getAddress(manager) as `0x${string}`,
+        contract: 'registry',
+        account: createAccounts().getAddress(owner) as `0x${string}`,
+      })
+      const receipt = await waitForTransaction(tx)
+    }
 
     await testClient.increaseTime({ seconds: 61 })
     await testClient.mine({ blocks: 1 })

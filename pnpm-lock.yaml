@@ -42,8 +42,8 @@ importers:
         specifier: 0.0.22
         version: 0.0.22
       '@ensdomains/ensjs':
-        specifier: 3.0.0-beta.9
-        version: 3.0.0-beta.9(typescript@5.1.6)(viem@1.16.4)
+        specifier: 3.0.0-beta.10
+        version: 3.0.0-beta.10(typescript@5.1.6)(viem@1.16.4)
       '@ensdomains/thorin':
         specifier: 0.6.44
         version: 0.6.44(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.6)
@@ -2201,11 +2201,28 @@ packages:
       multiformats: 12.0.1
     dev: false
 
+  /@ensdomains/content-hash@3.1.0-rc.0:
+    resolution: {integrity: sha512-TK+ug8axECoT6sEMhgD9EhpLAFEqGM1UpvGLVapXYqt+VhBSDpUrg5udP9G0irRFBGsHZItYSJTnBHuy4EpmQg==}
+    dependencies:
+      '@ensdomains/address-encoder': 1.0.0-rc.2
+      '@noble/curves': 1.2.0
+      '@scure/base': 1.1.3
+    dev: false
+
   /@ensdomains/dnsprovejs@0.4.1:
     resolution: {integrity: sha512-q1SiQeuV3dzYt4yS5/Ig1AIKEXqzLpI6RV/tvSdirKg0Y8VdsEag9gpKXu+SoTzmaXT8J+mB0ZPwrV5gb/SbaA==}
     dependencies:
       dns-packet: 5.4.0
       ethereumjs-util: 7.1.5
+      typescript-logging: 1.0.1
+    dev: false
+
+  /@ensdomains/dnsprovejs@0.5.0:
+    resolution: {integrity: sha512-JbiS0w7CsYENsVLfnKliI/ppDAodWXk95RCjSCfc2LP7hNesQc/QYnHdBnlh19RXyiDmvenItdy4yj+UHYBqwg==}
+    engines: {node: '>=16.8'}
+    dependencies:
+      '@noble/hashes': 1.3.2
+      dns-packet: 5.6.1
       typescript-logging: 1.0.1
     dev: false
 
@@ -2269,17 +2286,16 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@ensdomains/ensjs@3.0.0-beta.9(typescript@5.1.6)(viem@1.16.4):
-    resolution: {integrity: sha512-8FekYSMN2u9wi9rffz1nBZ0BtoKblixmU5hKPesJ3CjIGfjKX29vxZH1MqNn0fYWFGlc2DHSAXwT2Qr9H/y+Tg==}
+  /@ensdomains/ensjs@3.0.0-beta.10(typescript@5.1.6)(viem@1.16.4):
+    resolution: {integrity: sha512-l9cawshYkx9okRhG173pdQGhMgMzLU2m2GLV5Udt3q6Bp6VgIEQH5zKLPv4xikmz2pNhnGmfvzxqJ62lHlZz3g==}
     peerDependencies:
       viem: ^1.16.4
     dependencies:
       '@adraffy/ens-normalize': 1.9.0
       '@ensdomains/address-encoder': 1.0.0-rc.2
-      '@ensdomains/content-hash': 3.0.0
-      '@ensdomains/dnsprovejs': 0.4.1
+      '@ensdomains/content-hash': 3.1.0-rc.0
+      '@ensdomains/dnsprovejs': 0.5.0
       abitype: 0.8.7(typescript@5.1.6)
-      cbor: 8.1.0
       dns-packet: 5.4.0
       graphql: 16.6.0
       graphql-request: 6.1.0(graphql@16.6.0)
@@ -7557,13 +7573,6 @@ packages:
       nofilter: 1.0.4
     dev: true
 
-  /cbor@8.1.0:
-    resolution: {integrity: sha512-DwGjNW9omn6EwP70aXsn7FQJx5kO12tX0bZkaTjzdVFM6/7nhA4t0EENocKGx6D2Bch9PE2KzCUf5SceBdeijg==}
-    engines: {node: '>=12.19'}
-    dependencies:
-      nofilter: 3.1.0
-    dev: false
-
   /chai-bn@0.2.2(chai@4.3.6):
     resolution: {integrity: sha512-MzjelH0p8vWn65QKmEq/DLBG1Hle4WeyqT79ANhXZhn/UxRWO0OogkAxi5oGGtfzwU9bZR8mvbvYdoqNVWQwFg==}
     peerDependencies:
@@ -8587,6 +8596,13 @@ packages:
 
   /dns-packet@5.4.0:
     resolution: {integrity: sha512-EgqGeaBB8hLiHLZtp/IbaDQTL8pZ0+IvwzSHA6d7VyMDM+B9hgddEMa9xjK5oYnw0ci0JQ6g2XCD7/f6cafU6g==}
+    engines: {node: '>=6'}
+    dependencies:
+      '@leichtgewicht/ip-codec': 2.0.4
+    dev: false
+
+  /dns-packet@5.6.1:
+    resolution: {integrity: sha512-l4gcSouhcgIKRvyy99RNVOgxXiicE+2jZoNmaNmZ6JXiGajBOJAesk1OBlJuM5k2c+eudGdLxDqXuPCKIj6kpw==}
     engines: {node: '>=6'}
     dependencies:
       '@leichtgewicht/ip-codec': 2.0.4
@@ -13401,11 +13417,6 @@ packages:
     resolution: {integrity: sha512-N8lidFp+fCz+TD51+haYdbDGrcBWwuHX40F5+z0qkUjMJ5Tp+rdSuAkMJ9N9eoolDlEVTf6u5icM+cNKkKW2mA==}
     engines: {node: '>=8'}
     dev: true
-
-  /nofilter@3.1.0:
-    resolution: {integrity: sha512-l2NNj07e9afPnhAhvgVrCD/oy2Ai1yfLpuo3EpiO1jFTsB4sFz6oIfAfSZyQzVpkZQ9xS8ZS5g1jCBgq4Hwo0g==}
-    engines: {node: '>=12.19'}
-    dev: false
 
   /nopt@5.0.0:
     resolution: {integrity: sha512-Tbj67rffqceeLpcRXrT7vKAN8CwfPeIBgM7E6iBkmKLV7bEMwpGgYLGv0jACUsECaa/vuxP0IjEont6umdMgtQ==}

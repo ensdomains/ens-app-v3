@@ -4,12 +4,11 @@
 import { Accounts, User, createAccounts } from '../../accounts'
 import { Contracts } from '../../contracts'
 
-import { RecordOptions } from '@ensdomains/ensjs/dist/cjs/utils/registerHelpers'
+import { RecordOptions } from '@ensdomains/ensjs/utils'
 
-// import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+// import { RESOLVER_ADDRESSES } from '@app/utils/constants' //Ask about this
 
 import { Provider } from '../../provider'
-// import { LegacySubname, generateLegacySubname } from './generateLegacySubname'
 import { generateRecords } from './generateRecords'
 
 import {
@@ -19,13 +18,15 @@ import {
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
 import { setResolver } from '@ensdomains/ensjs/wallet'
+import { transferName } from '@ensdomains/ensjs/wallet'
+import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
 
 const DEFAULT_DURATION = 31536000
 // const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
-const DEFAULT_RESOLVER = "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB" //Not sure what resolver to use here
+const DEFAULT_RESOLVER = testClient.chain.contracts.ensPublicResolver.address //Not sure what resolver to use here
 // const VALID_RESOLVERS = RESOLVER_ADDRESSES['1337'].filter(
 //   (resolver) => resolver !== '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',
-// )
+// ) //TODO SG - Remove this part after confirming 
 
 export type Name = {
   label: string
@@ -36,7 +37,7 @@ export type Name = {
   resolver?: `0x${string}`
   addr?: User
   records?: RecordOptions
-  // subnames?: Omit<LegacySubname, 'name'>[]
+  subnames?: Omit<LegacySubname, 'name'>[]
 }
 
 type Dependencies = {
@@ -57,7 +58,7 @@ export const generateLegacyNameWithConfig =
     resolver = DEFAULT_RESOLVER,
     addr = owner,
     records,
-    // subnames,
+    subnames,
   }: Name) => {
     const name = `${label}.eth`
     console.log('generating legacy name:', name)
@@ -105,39 +106,38 @@ export const generateLegacyNameWithConfig =
     await generateRecords({ contracts })({ name: `${label}.eth`, owner, resolver, records })
 
     // Create subnames
-    // const _subnames = (subnames || []).map((subname) => ({
-    //   ...subname,
-    //   name: `${label}.eth`,
-    //   nameOwner: owner,
-    //   resolver: subname.resolver ?? _resolver,
-    // }))
-    // for (const subname of _subnames) {
-    //   await generateLegacySubname({ accounts, contracts })(subname)
-    // }
+    const _subnames = (subnames || []).map((subname) => ({
+      ...subname,
+      name: `${label}.eth`,
+      nameOwner: owner,
+      resolver: subname.resolver ?? _resolver,
+    }))
+    for (const subname of _subnames) {
+      await generateLegacySubname({ accounts, contracts })(subname)
+    }
 
     if (!hasValidResolver && resolver) {
       console.log('setting resolver:', name, resolver)
-      // const registry = contracts.get('ENSRegistry', { signer: owner })
-      // const node = namehash(`${label}.eth`)
-      // await registry.setResolver(node, resolver)
       const tx = await setResolver(walletClient, {
         name: name,
         contract: 'registry',
         resolverAddress: resolver,
-        account: createAccounts().getAddress(owner),
+        account: createAccounts().getAddress(owner) as `0x${string}`,
       })
-      expect(tx).toBeTruthy()
       const receipt = await waitForTransaction(tx)
-      expect(receipt.status).toBe('success')
     }
 
-    // if (!!manager && manager !== owner) {
-    //   console.log('setting manager:', name, manager)
-    //   const registry = contracts.get('ENSRegistry', { signer: owner })
-    //   const node = namehash(`${label}.eth`)
-    //   const _manager = accounts.getAddress(manager)
-    //   await registry.setOwner(node, _manager)
-    // }
+    if (!!manager && manager !== owner) {
+      console.log('setting manager:', name, manager)
+      const _manager = accounts.getAddress(manager)
+      const tx = await transferName(walletClient, {
+        name: name,
+        newOwnerAddress: createAccounts().getAddress(manager) as `0x${string}`,
+        contract: 'registry',
+        account: createAccounts().getAddress(owner) as `0x${string}`,
+      })
+      const receipt = await waitForTransaction(tx)
+    }
 
     await provider.mine()
   }
