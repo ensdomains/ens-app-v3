@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+import { test } from '../../../playwright'
 
 /*
  * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will

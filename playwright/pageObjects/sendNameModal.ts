@@ -4,18 +4,30 @@ import { Locator, Page } from '@playwright/test'
 export class SendNameModal {
   readonly page: Page
 
-  readonly nextButton: Locator
+  readonly searchInput: Locator
+
+  readonly resetProfileSwitch: Locator
+
+  readonly sendButton: Locator
+
+  readonly confirmButton: Locator
+
+  readonly summaryHeader: Locator
 
   constructor(page: Page) {
     this.page = page
-    this.nextButton = this.page.getByRole('button', { name: 'Next' })
+    this.searchInput = this.page.getByTestId('send-name-search-input')
+    this.resetProfileSwitch = this.page.getByTestId('send-name-reset-profile-switch')
+    this.sendButton = this.page.getByTestId('send-name-send-button')
+    this.confirmButton = this.page.getByTestId('send-name-confirm-button')
+    this.summaryHeader = this.page.getByRole('button', { name: 'Summary of changes' })
   }
 
-  async clickNextButton() {
-    try {
-      return await this.nextButton.click()
-    } catch {
-      await this.page.pause()
-    }
+  searchResult(address: string) {
+    return this.page.getByTestId(`search-result-${address}`)
+  }
+
+  summaryItem(type: 'owner' | 'manager' | 'eth-record' | 'reset-profile') {
+    return this.page.getByTestId(`send-name-summary-${type}`)
   }
 }

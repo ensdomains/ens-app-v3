@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+import { test } from "../../../playwright"
 
 test.describe('Send name', () => {
   test('should be able to send owner, manager and eth-record of unwrapped 2ld name if you are the owner and manager on old resolver', async ({
@@ -12,7 +12,10 @@ test.describe('Send name', () => {
       label: 'other-manager',
       type: 'legacy',
       records: {
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+        coins: [{
+          coin: 'eth',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        }],
       },
     })
 
@@ -56,7 +59,10 @@ test.describe('Send name', () => {
       type: 'legacy',
       manager: 'user2',
       records: {
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+        coins: [{
+          coin: 'eth',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        }],
       },
     })
 
@@ -103,7 +109,10 @@ test.describe('Send name', () => {
       owner: 'user2',
       manager: 'user',
       records: {
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+        coins: [{
+          coin: 'eth',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        }],
       },
     })
 
@@ -126,9 +135,15 @@ test.describe('Send name', () => {
       label: 'wrapped',
       type: 'wrapped',
       records: {
-        texts: [{ key: 'name', value: 'test' }],
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
-      },
+        coins: [{
+          coin: 'eth',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        }],
+        texts: [{
+          key: 'name',
+          value: 'test',
+        }],
+      }
     })
 
     const ownershipPage = makePageObject('OwnershipPage')
@@ -183,8 +198,14 @@ test.describe('Send name', () => {
           label: 'test',
           owner: 'user',
           records: {
-            texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'eth',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
+            texts: [{
+              key: 'name',
+              value: 'test',
+            }],
           },
         },
       ],
@@ -236,8 +257,14 @@ test.describe('Send name', () => {
           label: 'test',
           owner: 'user2',
           records: {
-            texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+            coins: [{
+              coin: 'eth',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
+            texts: [{
+              key: 'name',
+              value: 'test',
+            }],
           },
         },
       ],
@@ -294,8 +321,14 @@ test.describe('Send name', () => {
           label: 'test',
           owner: 'user',
           records: {
-            texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'eth',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
+            texts: [{
+              key: 'name',
+              value: 'test',
+            }],
           },
         },
       ],
@@ -351,8 +384,14 @@ test.describe('Send name', () => {
           label: 'test',
           owner: 'user2',
           records: {
-            texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+            coins: [{
+              coin: 'eth',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
+            texts: [{
+              key: 'name',
+              value: 'test',
+            }],
           },
         },
       ],
@@ -415,8 +454,14 @@ test.describe('Send name', () => {
           label: 'test',
           owner: 'user',
           records: {
-            texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'eth',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
+            texts: [{
+              key: 'name',
+              value: 'test',
+            }],
           },
         },
       ],
@@ -473,16 +518,32 @@ test.describe('Send name', () => {
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: [
+          'CANNOT_UNWRAP',
+        ],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user',
           records: {
-            texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
-          },
-          fuses: ['PARENT_CANNOT_CONTROL'],
+            coins: [{
+              coin: 'eth',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
+            texts: [{
+              key: 'name',
+              value: 'test',
+            }],
+          },  
+          fuses: {
+            parent: {
+              named: [
+                'PARENT_CANNOT_CONTROL',
+              ],
+            },
+          }
         },
       ],
     })
@@ -919,12 +980,22 @@ test.describe('Edit roles: Wrapped subname with PCC burned', () => {
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: [
+          'CANNOT_UNWRAP',
+        ],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user2',
-          fuses: ['PARENT_CANNOT_CONTROL'],
+          fuses: {
+            parent: { 
+              named: [
+                'PARENT_CANNOT_CONTROL',
+              ],
+            },
+          }
         },
       ],
     })
@@ -951,12 +1022,22 @@ test.describe('Edit roles: Wrapped subname with PCC burned', () => {
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: [
+          'CANNOT_UNWRAP',
+        ],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user',
-          fuses: ['PARENT_CANNOT_CONTROL'],
+          fuses: {
+            parent: { 
+              named: [
+                'PARENT_CANNOT_CONTROL',
+              ],
+            },
+          }
         },
       ],
     })

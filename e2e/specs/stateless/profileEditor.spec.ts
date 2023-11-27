@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
-import { generateRecords } from 'playwright/fixtures/makeName/generators/generateRecords'
+import { test } from '../../../playwright'
+import { generateRecords } from '../../../playwright/fixtures/makeName/generators/generateRecords'
 
-import { emptyAddress } from '@app/utils/constants'
+import { emptyAddress } from '../../../src/utils/constants'
 
 const oldResolver = '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB'
 const newResolver = '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF'
@@ -22,13 +22,13 @@ const DEFAULT_RECORDS = {
       value: 'fakeemail@fake.com',
     },
   ],
-  coinTypes: [
+  coins: [
     {
-      key: 'BTC',
+      coin: 'BTC',
       value: 'bc1qjqg9slurvjukfl92wp58y94480fvh4uc2pwa6n',
     },
     {
-      key: '61',
+      coin: '61',
       value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
     },
   ],
@@ -65,7 +65,7 @@ test.describe('unwrapped', () => {
         label: 'unwrapped',
         type: 'legacy',
         owner: 'user',
-        resolver: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+        // resolver: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
         subnames: [
           {
             label: 'test',
