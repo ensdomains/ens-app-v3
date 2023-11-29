@@ -63,6 +63,7 @@ export const generateWrappedSubname =
         fuses: fuses,
         owner: createAccounts().getAddress(owner) as `0x${string}`,
         account: createAccounts().getAddress(nameOwner) as `0x${string}`,
+        resolverAddress: resolver,
       })
       const receipt = await waitForTransaction(tx)
 

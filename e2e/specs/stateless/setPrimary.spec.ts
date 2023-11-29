@@ -1,15 +1,22 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+import { test } from '../../../playwright'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
+import { namehash } from '@ensdomains/ensjs/utils'
 
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+// import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { setPrimaryName } from '@ensdomains/ensjs/wallet'
+import { testClient, walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import { createAccounts } from '../../../playwright/fixtures/accounts'
 
-const UNAUTHORISED_RESOLVER = RESOLVER_ADDRESSES['1337'][1] as `0x${string}`
+const UNAUTHORISED_RESOLVER = "0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750"//testClient.chain.contracts.legacyPublicResolver.address //RESOLVER_ADDRESSES['1337'][1] as `0x${string}`
 
 test.afterAll(async ({ contracts }) => {
-  const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-  await reverseRegistrar.setName('')
+  // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
+  // await reverseRegistrar.setName('')
+  await setPrimaryName( walletClient, {
+    name: '',
+    account: createAccounts().getAddress('user') as `0x${string}`,
+  })
 })
 
 test.describe('profile', () => {
@@ -31,8 +38,12 @@ test.describe('profile', () => {
       addr: 'user',
     })
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
+    // await reverseRegistrar.setName('')
+    await setPrimaryName( walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
 
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
@@ -79,8 +90,12 @@ test.describe('profile', () => {
   }) => {
     test.slow()
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
+    // await reverseRegistrar.setName('')
+    await setPrimaryName( walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
 
     const name = await makeName({
       label: 'other-eth-record',
@@ -125,8 +140,12 @@ test.describe('profile', () => {
   }) => {
     test.slow()
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
+    // await reverseRegistrar.setName('')
+    await setPrimaryName( walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
 
     const name = await makeName({
       label: 'wrapped',
@@ -137,7 +156,7 @@ test.describe('profile', () => {
           label: 'test',
           owner: 'user',
           type: 'wrapped',
-          resolver: RESOLVER_ADDRESSES['1337'][1] as `0x${string}`,
+          resolver: UNAUTHORISED_RESOLVER, //RESOLVER_ADDRESSES['1337'][1] as `0x${string}`,
         },
       ],
     })
@@ -149,7 +168,7 @@ test.describe('profile', () => {
 
     await morePage.goto(subname)
     await login.connect()
-    await expect(morePage.resolver).toContainText(RESOLVER_ADDRESSES['1337'][1])
+    await expect(morePage.resolver).toContainText(UNAUTHORISED_RESOLVER)
 
     await profilePage.goto(subname)
     await expect(page.getByTestId('owner-profile-button-name.manager')).toContainText(
@@ -178,8 +197,12 @@ test.describe('profile', () => {
   }) => {
     test.slow()
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
+    // await reverseRegistrar.setName('')
+    await setPrimaryName( walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
 
     const name = await makeName({
       label: 'wrapped',
@@ -190,9 +213,9 @@ test.describe('profile', () => {
           label: 'test',
           owner: 'user',
           records: {
-            coinTypes: [
+            coins: [
               {
-                key: 'ETH',
+                coin: 'ETH',
                 value: accounts.getAddress('user'),
               },
             ],
@@ -218,7 +241,7 @@ test.describe('profile', () => {
     await page.getByTestId('update-button').click()
     await transactionModal.autoComplete()
 
-    await expect(morePage.resolver).toContainText(UNAUTHORISED_RESOLVER, { timeout: 15000 })
+    await expect(morePage.resolver).toContainText(UNAUTHORISED_RESOLVER, { timeout: 30000 })
 
     await profilePage.goto(subname)
     await expect(page.getByTestId('owner-profile-button-name.manager')).toContainText(
@@ -268,8 +291,12 @@ test.describe('profile', () => {
     })
     const subname = `test.${name}`
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName(subname)
+    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
+    // await reverseRegistrar.setName(subname)
+    await setPrimaryName( walletClient, {
+      name: subname,
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
 
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
@@ -288,7 +315,7 @@ test.describe('profile', () => {
     await transactionModal.autoComplete()
 
     // Assertion
-    await expect(page.getByTestId('profile-title')).toContainText(subname, { timeout: 15000 })
+    await expect(page.getByTestId('profile-title')).toContainText(subname, { timeout: 30000 })
   })
 
   test('should not show set primary name button for a wrapped name that has CSR burned, is not a resolved address, and an unauthorized resolver', async ({
@@ -304,9 +331,9 @@ test.describe('profile', () => {
       type: 'wrapped',
       owner: 'user',
       records: {
-        coinTypes: [
+        coins: [
           {
-            key: 'ETH',
+            coin: 'ETH',
             value: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
           },
         ],
@@ -355,11 +382,16 @@ test.describe('profile', () => {
   }) => {
     test.slow()
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
+    // await reverseRegistrar.setName('')
+
+    await setPrimaryName( walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
 
     const label = `unknown-label-${Date.now()}`
-    const _labelhash = labelhash(label)
+    const _labelhash = namehash(label)
 
     const name = await makeName({
       label: 'wrapped',

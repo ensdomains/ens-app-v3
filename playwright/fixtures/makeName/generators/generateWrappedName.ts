@@ -76,7 +76,7 @@ export const generateWrappedName =
         owner: _owner as `0x${string}`,
         secret: secret as `0x${string}`,
         fuses: fuses,
-        resolver: _resolver as `0x${string}`,
+        resolverAddress: _resolver as `0x${string}`,
       }
       const commitTx = await commitName(walletClient, {
         ...params,
