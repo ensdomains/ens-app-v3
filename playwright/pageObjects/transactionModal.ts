@@ -17,6 +17,8 @@ export class TransactionModal {
 
   readonly transactionModal: Locator
 
+  readonly backButton: Locator
+
   constructor(page: Page, wallet: Web3ProviderBackend) {
     this.page = page
     this.wallet = wallet
@@ -25,6 +27,7 @@ export class TransactionModal {
     this.completeButton = this.page.getByTestId('transaction-modal-complete-button')
     this.closeButton = this.page.getByTestId('close-icon')
     this.transactionModal = this.page.getByTestId('transaction-modal-inner')
+    this.backButton = this.page.locator('body .modal').getByRole('button', { name: 'Back' })
   }
 
   async authorize() {
@@ -52,5 +55,9 @@ export class TransactionModal {
       isModalVisible = await this.transactionModal.isVisible()
     } while (isModalVisible)
     /* eslint-enable no-await-in-loop */
+  }
+
+  displayItem(key: string, option = 'normal') {
+    return this.page.getByTestId(`display-item-${key}-${option}`).locator('> div').last()
   }
 }

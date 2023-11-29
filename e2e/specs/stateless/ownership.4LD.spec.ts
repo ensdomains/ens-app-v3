@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
-import { Name } from '@root/playwright/fixtures/makeName'
+import { test } from '../../../playwright'
+import { Name } from '../../../playwright/fixtures/makeName'
 
 test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () => {
   test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
@@ -14,7 +14,10 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -83,7 +86,10 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -115,7 +121,10 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -175,7 +184,10 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -216,7 +228,10 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -285,7 +300,10 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -317,7 +335,10 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -377,7 +398,10 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -418,7 +442,10 @@ test.describe('Unwrapped 4LD - Unwrapped 3LD,2LD - Parent only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -490,7 +517,10 @@ test.describe('Unwrapped 4LD - Unwrapped 3LD,2LD - Parent only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -522,7 +552,10 @@ test.describe('Unwrapped 4LD - Unwrapped 3LD,2LD - Parent only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -583,7 +616,10 @@ test.describe('Unwrapped 4LD - Unwrapped 3LD,2LD - Parent only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -662,7 +698,10 @@ test.describe('Unwrapped 4LD - Wrapped 3LD,2LD - Parent Owner only', () => {
           type: 'legacy',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -705,7 +744,10 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
           type: 'wrapped',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -773,7 +815,10 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -805,7 +850,10 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -865,7 +913,10 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
           subnames: [
             {
@@ -900,22 +951,37 @@ test.describe('Wrapped & Emancipated 4LD, Wrapped 3LD,2LD - Parent Owner and Man
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: [
+          'CANNOT_UNWRAP',
+        ],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user2',
-          fuses: ['PARENT_CANNOT_CONTROL', 'CANNOT_UNWRAP'],
+          fuses: {
+            parent: {
+              named: [ 'PARENT_CANNOT_CONTROL' ],
+            },
+            child: {
+              named: [ 'CANNOT_UNWRAP' ],
+            },
+          },
           subnames: [
             {
               label: '4ld',
               owner: 'user',
-              fuses: ['PARENT_CANNOT_CONTROL'],
+              fuses: {
+                parent: {
+                  named: [ 'PARENT_CANNOT_CONTROL' ],
+                }
+              },
             },
           ],
         },
       ],
-    } as Name)
+    } as unknown as Name)
     const subname = `4ld.test.${name}`
 
     const ownershipPage = makePageObject('OwnershipPage')
@@ -969,22 +1035,37 @@ test.describe('Wrapped & Emancipated 4LD, Wrapped 3LD,2LD - Parent Owner and Man
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: [
+          'CANNOT_UNWRAP',
+        ],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user2',
-          fuses: ['PARENT_CANNOT_CONTROL', 'CANNOT_UNWRAP'],
+          fuses: {
+            parent: {
+              named: [ 'PARENT_CANNOT_CONTROL' ],
+            },
+            child: {
+              named: [ 'CANNOT_UNWRAP' ],
+            },
+          },
           subnames: [
             {
               label: '4ld',
               owner: 'user',
-              fuses: ['PARENT_CANNOT_CONTROL'],
+              fuses: {
+                parent: {
+                  named: [ 'PARENT_CANNOT_CONTROL' ],
+                }
+              },
             },
           ],
         },
       ],
-    } as Name)
+    } as unknown as Name)
 
     const subname = `4ld.test.${name}`
     const ownershipPage = makePageObject('OwnershipPage')
@@ -1000,22 +1081,37 @@ test.describe('Wrapped & Emancipated 4LD, Wrapped 3LD,2LD - Parent Owner and Man
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: [
+          'CANNOT_UNWRAP',
+        ],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user2',
-          fuses: ['PARENT_CANNOT_CONTROL', 'CANNOT_UNWRAP'],
+          fuses: {
+            parent: {
+              named: [ 'PARENT_CANNOT_CONTROL' ],
+            },
+            child: {
+              named: [ 'CANNOT_UNWRAP' ],
+            },
+          },
           subnames: [
             {
               label: '4ld',
               owner: 'user',
-              fuses: ['PARENT_CANNOT_CONTROL'],
+              fuses: {
+                parent: {
+                  named: [ 'PARENT_CANNOT_CONTROL' ],
+                }
+              },
             },
           ],
         },
       ],
-    } as Name)
+    } as unknown as Name)
 
     const subname = `4ld.test.${name}`
     const ownershipPage = makePageObject('OwnershipPage')
@@ -1054,22 +1150,37 @@ test.describe('Wrapped & Emancipated 4LD, Wrapped 3LD,2LD - Parent Owner and Man
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: [
+          'CANNOT_UNWRAP',
+        ],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user2',
-          fuses: ['PARENT_CANNOT_CONTROL', 'CANNOT_UNWRAP'],
+          fuses: {
+            parent: {
+              named: [ 'PARENT_CANNOT_CONTROL' ],
+            },
+            child: {
+              named: [ 'CANNOT_UNWRAP' ],
+            },
+          },
           subnames: [
             {
               label: '4ld',
               owner: 'user',
-              fuses: ['PARENT_CANNOT_CONTROL'],
+              fuses: {
+                parent: {
+                  named: [ 'PARENT_CANNOT_CONTROL' ],
+                }
+              },
             },
           ],
         },
       ],
-    } as Name)
+    } as unknown as Name)
 
     const subname = `4ld.test.${name}`
     const ownershipPage = makePageObject('OwnershipPage')

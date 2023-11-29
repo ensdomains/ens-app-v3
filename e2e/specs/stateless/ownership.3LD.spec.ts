@@ -1,8 +1,10 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+import { test } from '../../../playwright'
 
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
-
+import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+//import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+const RESOLVER_ADDRESSES = testClient.chain.contracts.legacyPublicResolver.address
 test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
   test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
@@ -15,7 +17,10 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -78,7 +83,10 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -104,7 +112,10 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -158,7 +169,10 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -193,7 +207,10 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Manager only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -256,7 +273,10 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Manager only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -282,7 +302,10 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Manager only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -336,7 +359,10 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Manager only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -371,7 +397,10 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -437,7 +466,10 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -463,7 +495,10 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -518,7 +553,10 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -553,7 +591,10 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -617,7 +658,10 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -643,7 +687,10 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -697,7 +744,10 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -732,7 +782,10 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -796,7 +849,10 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -822,7 +878,10 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -876,7 +935,10 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -911,7 +973,10 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -974,7 +1039,10 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -1000,7 +1068,10 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -1055,7 +1126,10 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -1092,7 +1166,10 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           resolver: RESOLVER_ADDRESSES['1337'][0] as `0x${string}`,
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -1154,7 +1231,10 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -1182,7 +1262,10 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           resolver: RESOLVER_ADDRESSES['1337'][0] as `0x${string}`,
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -1237,7 +1320,10 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           type: 'wrapped',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -1279,7 +1365,10 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Parent only', () => {
           type: 'wrapped',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -1314,7 +1403,10 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Parent only', () => {
           type: 'wrapped',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [{
+              coin: 'etcLegacy',
+              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+            }],
           },
         },
       ],
@@ -1343,12 +1435,22 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: [
+          'CANNOT_UNWRAP',
+        ],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user',
-          fuses: ['PARENT_CANNOT_CONTROL'],
+          fuses: {
+            parent: { 
+              named: [
+                'PARENT_CANNOT_CONTROL',
+              ],
+            },
+          },
         },
       ],
     })
@@ -1405,12 +1507,22 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: [
+          'CANNOT_UNWRAP',
+        ],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user',
-          fuses: ['PARENT_CANNOT_CONTROL'],
+          fuses: {
+            parent: { 
+              named: [
+                'PARENT_CANNOT_CONTROL',
+              ],
+            },
+          },
         },
       ],
     })
@@ -1429,12 +1541,22 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: [
+          'CANNOT_UNWRAP',
+        ],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user',
-          fuses: ['PARENT_CANNOT_CONTROL'],
+          fuses: {
+            parent: { 
+              named: [
+                'PARENT_CANNOT_CONTROL',
+              ],
+            },
+          },
         },
       ],
     })
@@ -1476,12 +1598,22 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: [
+          'CANNOT_UNWRAP',
+        ],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user',
-          fuses: ['PARENT_CANNOT_CONTROL'],
+          fuses: {
+            parent: { 
+              named: [
+                'PARENT_CANNOT_CONTROL',
+              ],
+            },
+          },
         },
       ],
     })

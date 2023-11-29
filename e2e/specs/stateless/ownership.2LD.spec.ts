@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+import { test } from '../../../playwright'
 
 test.describe('Unwrapped 2LD - Owner and Manager', () => {
   test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
@@ -7,7 +7,10 @@ test.describe('Unwrapped 2LD - Owner and Manager', () => {
       label: 'owner-manager',
       type: 'legacy',
       records: {
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }]
+        coins: [{
+          coin: 'etcLegacy',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        }]
       },
     })
 
@@ -57,7 +60,10 @@ test.describe('Unwrapped 2LD - Owner and Manager', () => {
       label: 'owner-manager',
       type: 'legacy',
       records: {
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+        coins: [{
+          coin: 'etcLegacy',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        }],
       },
     })
 
@@ -141,7 +147,10 @@ test.describe('Unwrapped 2LD - Owner Only', () => {
       owner: 'user',
       manager: 'user2',
       records: {
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+        coins: [{
+          coin: 'etcLegacy',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        }],
       },
     })
 
@@ -279,7 +288,10 @@ test.describe('Unwrapped 2LD - Manager Only', () => {
       owner: 'user2',
       manager: 'user',
       records: {
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+        coins: [{
+          coin: 'etcLegacy',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        }],
       },
     })
 
@@ -369,7 +381,10 @@ test.describe('Wrapped and Emancipated 2LD - Owner', () => {
       type: 'wrapped',
       records: {
         texts: [{ key: 'name', value: 'test' }],
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+        coins: [{
+          coin: 'etcLegacy',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        }],
       },
     })
 
@@ -416,7 +431,10 @@ test.describe('Wrapped and Emancipated 2LD - Owner', () => {
       type: 'wrapped',
       records: {
         texts: [{ key: 'name', value: 'test' }],
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+        coins: [{
+          coin: 'etcLegacy',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        }],
       },
     })
 
@@ -460,7 +478,10 @@ test.describe('Wrapped and Emancipated 2LD - Owner', () => {
       type: 'wrapped',
       records: {
         texts: [{ key: 'name', value: 'test' }],
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+        coins: [{
+          coin: 'etcLegacy',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        }],
       },
     })
 

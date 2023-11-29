@@ -41,7 +41,7 @@ export const generateRecords =
       texts: texts,
       contentHash: contentHash,
       account: createAccounts().getAddress(owner) as `0x${string}`,
-
+      abi: abi,
     })
     const receipt = await waitForTransaction(tx)
   }

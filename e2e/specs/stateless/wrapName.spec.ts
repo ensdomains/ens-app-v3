@@ -1,7 +1,9 @@
 import { expect } from '@playwright/test'
 import { test } from '../../../playwright'
-
-// import { labelhash } from '@ensdomains/ensjs/utils/labels'
+import { testClient, waitForTransaction, walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import { registrySetApprovalForAllSnippet } from '@ensdomains/ensjs/contracts'
+import { createAccounts } from '../../../playwright/fixtures/accounts'
+import { namehash } from '@ensdomains/ensjs/utils'
 
 test('should not show wrap button if the connected wallet is not the registrant', async ({
   login,
@@ -142,10 +144,21 @@ test('should allow wrapping a subdomain', async ({
   })
   const subname = `sub.${name}`
 
-  const registry = await contracts.get('ENSRegistry', { signer: 'user' })
-  const nameWrapper = await contracts.get('NameWrapper')
-  await registry.setApprovalForAll(nameWrapper.address, false)
-  await provider.mine()
+  // const registry = await contracts.get('ENSRegistry', { signer: 'user' })
+  // const nameWrapper = await contracts.get('NameWrapper')
+  // await registry.setApprovalForAll(nameWrapper.address, false)
+
+  walletClient.writeContract({
+    abi: registrySetApprovalForAllSnippet,
+    address: testClient.chain.contracts.ensRegistry.address,
+    functionName: 'setApprovalForAll',
+    args: [
+      testClient.chain.contracts.ensNameWrapper.address,
+      true,
+    ],
+    account: createAccounts().getAddress('user') as `0x${string}`,
+  })
+  await testClient.mine({ blocks: 1 })
 
   const morePage = makePageObject('MorePage')
   const transactionModal = makePageObject('TransactionModal')
@@ -181,7 +194,7 @@ test('should allow wrapping a name with an unknown label', async ({
     ],
   })
 
-  const unknownLabelhash = labelhash(unknownLabel)
+  const unknownLabelhash = namehash(unknownLabel)
   const unknownEncodedLabel = `[${unknownLabelhash.slice(2)}]`
   const subname = `${unknownEncodedLabel}.${name}`
 
@@ -221,11 +234,23 @@ test('should calculate needed steps without localstorage', async ({
   test.slow()
 
   // Reset name wrapper approval
-  const registry = contracts.get('ENSRegistry', { signer: 'user' })
-  const nameWrapper = contracts.get('NameWrapper')
+  // const registry = contracts.get('ENSRegistry', { signer: 'user' })
+  // const nameWrapper = contracts.get('NameWrapper')
 
-  const txn = await registry.setApprovalForAll(nameWrapper.address, false)
-  await txn.wait()
+  // const txn = await registry.setApprovalForAll(nameWrapper.address, false)
+  // await txn.wait()
+
+  walletClient.writeContract({
+    abi: registrySetApprovalForAllSnippet,
+    address: testClient.chain.contracts.ensRegistry.address,
+    functionName: 'setApprovalForAll',
+    args: [
+      testClient.chain.contracts.ensNameWrapper.address,
+      true,
+    ],
+    account: createAccounts().getAddress('user') as `0x${string}`,
+  })
+  await testClient.mine({ blocks: 1 })
 
   const name = await makeName({
     label: 'unwrapped',

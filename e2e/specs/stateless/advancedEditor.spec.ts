@@ -1,11 +1,16 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+import { test } from '../../../playwright'
+import { encodeAbi } from '@ensdomains/ensjs/utils'
 
 test('should be able to maintain state when returning from transaction modal to advanced editor', async ({
   login,
   makeName,
   makePageObject,
 }) => {
+  const dummyABI = 
+    {
+      "test":"test"
+    }
   const name = await makeName({
     label: 'profile',
     type: 'legacy',
@@ -15,16 +20,13 @@ test('should be able to maintain state when returning from transaction modal to 
         { key: 'text', value: 'text' },
         { key: 'com.twitter', value: '@test' },
       ],
-      coinTypes: [
-        { key: 'SOL', value: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH' },
-        { key: 'ETH', value: '0xbec1C7C11F2Fa9AB24b9E49122D26e721766DAF6' },
-        { key: 'BTC', value: '1PzAJcFtEiXo9UGtRU6iqXQKj8NXtcC7DE' },
+      coins: [
+        { coin: 'SOL', value: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH' },
+        { coin: 'ETH', value: '0xbec1C7C11F2Fa9AB24b9E49122D26e721766DAF6' },
+        { coin: 'BTC', value: '1PzAJcFtEiXo9UGtRU6iqXQKj8NXtcC7DE' },
       ],
       contentHash: 'ipfs://bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
-      abi: {
-        contentType: 1,
-        data: '{"test":"test"}',
-      },
+      abi: await encodeAbi({ encodeAs: 'json', data: dummyABI }),
     },
   })
 
@@ -51,7 +53,7 @@ test('should be able to maintain state when returning from transaction modal to 
   await expect(recordsPage.getRecordValue('contentHash')).toHaveText(
     'ipfs://bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
   )
-  await expect(recordsPage.getRecordValue('abi')).toHaveText('"{\\"test\\":\\"test\\"}"')
+  await expect(recordsPage.getRecordValue('abi')).toHaveText('{"test":"test"}')
 
   await recordsPage.editRecordsButton.click()
 
