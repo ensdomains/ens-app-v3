@@ -4,126 +4,117 @@ import {
   ForwardedRef,
   forwardRef,
   InputHTMLAttributes,
+  ReactElement,
   useCallback,
   useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+
+import { Box, BoxProps, cssVars } from '@ensdomains/thorin'
 
 import MinusIcon from '@app/assets/Minus.svg'
 import PlusIcon from '@app/assets/Plus.svg'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
 import { createChangeEvent } from '@app/utils/syntheticEvent'
 
-const Container = styled.div<{ $highlighted?: boolean }>(
-  ({ theme, $highlighted }) => css`
-    width: 100%;
-    padding: ${$highlighted ? theme.space['4'] : theme.space['1']};
-    border: 1px solid ${theme.colors.border};
-    border-radius: ${theme.radii.full};
-    display: flex;
-    align-items: center;
-    gap: ${theme.space['4']};
-  `,
+import { labelContainer, labelInput, labelLabel } from './style.css'
+
+const Container = ({ $highlighted, ...props }: BoxProps & { $highlighted?: boolean }) => (
+  <Box
+    {...props}
+    width="$full"
+    padding={$highlighted ? '$4' : '$1'}
+    border={`1px solid ${cssVars.color.border}`}
+    borderRadius="$full"
+    display="flex"
+    alignItems="center"
+    gap="$4"
+  />
 )
 
-const Button = styled.button(
-  ({ theme }) => css`
-    height: ${theme.space['11']};
-    width: ${theme.space['11']};
-    border-radius: 50%;
-    cursor: pointer;
-    background: ${theme.colors.accent};
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: background-color 150ms ease-in-out;
-
-    svg {
-      display: block;
-      transform: scale(0.67);
-      pointer-events: none;
-      path {
-        fill: ${theme.colors.backgroundPrimary};
-      }
-    }
-
-    &:disabled {
-      background-color: ${theme.colors.greyBright};
-      cursor: not-allowed;
-    }
-  `,
+const Button = ({ disabled, children, ...props }: BoxProps) => (
+  <Box
+    {...props}
+    as="button"
+    type="button"
+    wh="$11"
+    borderRadius="$full"
+    cursor={disabled ? 'not-allowed' : 'pointer'}
+    backgroundColor={disabled ? '$greyBright' : '$accent'}
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    transition="background-color 150ms ease-in-out"
+  >
+    <Box
+      as={children as ReactElement}
+      color="$background"
+      display="block"
+      pointerEvents="none"
+      transform="scale(0.67)"
+    />
+  </Box>
 )
 
-const LabelContainer = styled.div(
-  ({ theme }) => css`
-    position: relative;
-    flex: 1;
-    height: ${theme.space['11']};
-    border-radius: ${theme.radii.full};
-    background-color: transparent;
-    transition: background-color 150ms ease-in-out;
-    overflow: hidden;
-
-    :hover {
-      background-color: ${theme.colors.accentSurface};
-    }
-
-    :focus-within label {
-      opacity: 0;
-    }
-    :focus-within input {
-      opacity: 1;
-    }
-  `,
+const LabelContainer = (props: BoxProps) => (
+  <Box
+    {...props}
+    className={labelContainer}
+    position="relative"
+    flex={1}
+    height="$11"
+    borderRadius="$full"
+    backgroundColor={{ base: 'transparent', hover: '$accentSurface' }}
+    transition="background-color 150ms ease-in-out"
+    overflow="hidden"
+  />
 )
 
-const Label = styled.label<{ $highlighted?: boolean }>(
-  ({ theme, $highlighted }) => css`
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: ${theme.space['11']};
-    display: block;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    font-style: normal;
-    font-weight: ${theme.fontWeights.bold};
-    font-size: ${$highlighted ? theme.fontSizes.headingTwo : theme.fontSizes.large};
-    line-height: ${theme.space['11']};
-    text-align: center;
-    color: ${$highlighted ? theme.colors.accent : theme.colors.text};
-    pointer-events: none;
-    opacity: 1;
-    transition: opacity 150ms ease-in-out;
-  `,
+const Label = ({ $highlighted, ...props }: BoxProps & { $highlighted?: boolean }) => (
+  <Box
+    {...props}
+    as="label"
+    className={labelLabel}
+    position="absolute"
+    top="$0"
+    left="$0"
+    width="$full"
+    height="$11"
+    display="block"
+    whiteSpace="nowrap"
+    textOverflow="ellipsis"
+    overflow="hidden"
+    fontStyle="normal"
+    fontWeight="$bold"
+    fontSize={$highlighted ? '$headingTwo' : '$large'}
+    lineHeight="$headingTwo"
+    textAlign="center"
+    color={$highlighted ? '$accent' : '$text'}
+    pointerEvents="none"
+    transition="opacity 150ms ease-in-out"
+  />
 )
 
-const LabelInput = styled.input<{ $highlighted?: boolean }>(
-  ({ theme, $highlighted }) => css`
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    font-style: normal;
-    font-weight: ${theme.fontWeights.bold};
-    font-size: ${$highlighted ? theme.fontSizes.headingTwo : theme.fontSizes.large};
-    line-height: ${$highlighted ? theme.lineHeights.headingTwo : theme.lineHeights.large};
-    color: ${$highlighted ? theme.colors.accent : theme.colors.text};
-    opacity: 0;
-    transition: opacity 150ms ease-in-out;
-    background-color: ${theme.colors.accentSurface};
-
-    /* stylelint-disable property-no-vendor-prefix */
-    ::-webkit-outer-spin-button,
-    ::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    -moz-appearance: textfield;
-    /* stylelint-enable property-no-vendor-prefix */
-  `,
+const LabelInput = forwardRef<HTMLElement, InputProps & { $highlighted?: boolean }>(
+  ({ $highlighted, ...props }, ref) => (
+    <Box
+      {...props}
+      as="input"
+      ref={ref}
+      type="number"
+      className={labelInput}
+      width="$full"
+      height="$full"
+      textAlign="center"
+      fontStyle="normal"
+      fontWeight="$bold"
+      fontSize={$highlighted ? '$headingTwo' : '$large'}
+      lineHeight={$highlighted ? '$headingTwo' : '$large'}
+      color={$highlighted ? '$accent' : '$text'}
+      transition="opacity 150ms ease-in-out"
+      backgroundColor="$accentSurface"
+    />
+  ),
 )
 
 type InputProps = InputHTMLAttributes<HTMLInputElement>

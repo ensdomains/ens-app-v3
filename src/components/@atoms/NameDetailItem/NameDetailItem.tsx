@@ -1,10 +1,9 @@
 import { ReactNode } from 'react'
-import styled, { css } from 'styled-components'
 import { useEnsAvatar } from 'wagmi'
 
-import { Avatar, mq } from '@ensdomains/thorin2'
+import { Avatar, Box, BoxProps, cssVars } from '@ensdomains/thorin'
 
-import CircleTick from '@app/assets/CircleTick.svg'
+import NoCircleTick from '@app/assets/NoCircleTick.svg'
 import { useZorb } from '@app/hooks/useZorb'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
@@ -12,107 +11,73 @@ import { safeDateObj } from '../../../utils/date'
 import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
 import { OptionalLink } from '../OptionalLink/OptionalLink'
 import { StyledName } from '../StyledName/StyledName'
+import { nameDetailItem } from './style.css'
 
-const NameItemWrapper = styled.div<{ $highlight: boolean; $disabled: boolean }>(
-  ({ theme, $highlight, $disabled }) => css`
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    overflow: hidden;
-    padding: ${theme.space['3']} ${theme.space['4']};
-    gap: ${theme.space['2']};
-    border-bottom: 1px solid ${theme.colors.border};
-    transition:
-      all 0.15s ease-in-out,
-      border 0s;
-    background: ${$highlight ? theme.colors.blueSurface : theme.colors.backgroundPrimary};
-    cursor: ${$disabled ? 'not-allowed' : 'pointer'};
-    &:hover {
-      background: ${$highlight
-        ? theme.colors.backgroundSecondary
-        : theme.colors.backgroundSecondary};
-    }
-    &:last-of-type {
-      border: none;
-    }
-    ${mq.sm.min(css`
-      padding: ${theme.space['3']} ${theme.space['4.5']};
-      gap: ${theme.space['4']};
-    `)}
-  `,
+type NameItemWrapperProps = { $highlight: boolean; $disabled: boolean }
+const NameItemWrapper = ({ $highlight, $disabled, ...props }: BoxProps & NameItemWrapperProps) => (
+  <Box
+    {...props}
+    display="flex"
+    className={nameDetailItem}
+    flexDirection="row"
+    flexWrap="wrap"
+    justifyContent="space-between"
+    alignItems="center"
+    width="$full"
+    overflow="hidden"
+    px={{ base: '$4', sm: '$4.5' }}
+    py="$3"
+    gap={{ base: '$2', sm: '$4' }}
+    borderBottom={`1px solid ${cssVars.color.border}`}
+    transition="all 0.15s ease-in-out, border 0s;"
+    backgroundColor={{
+      base: $highlight ? cssVars.color.blueSurface : cssVars.color.background,
+      hover: cssVars.color.backgroundSecondary,
+    }}
+    cursor={$disabled ? 'not-allowed' : 'pointer'}
+  />
 )
 
-const NameItemContainer = styled.div(
-  ({ theme }) => css`
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    min-width: 0;
-    gap: ${theme.space['2']};
-    flex-gap: 16px;
-  `,
+const NameItemContainer = (props: BoxProps) => (
+  <Box
+    {...props}
+    flex="1"
+    display="flex"
+    alignItems="center"
+    justifyContent="center"
+    overflow="hidden"
+    minWidth="0"
+    gap="$2"
+  />
 )
 
-const AvatarWrapper = styled.div(
-  ({ theme }) => css`
-    position: relative;
-    width: ${theme.space['9']};
-  `,
+const AvatarWrapper = (props: BoxProps) => (
+  <Box {...props} position="relative" width="$9" flex={`0 0 ${cssVars.space['9']}`} />
 )
 
-const NameItemContent = styled.div(
-  () => css`
-    flex: 1;
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    overflow: hidden;
-    min-width: 0;
-    width: 0;
-  `,
+const NameItemContent = (props: BoxProps) => (
+  <Box
+    {...props}
+    flex="1"
+    display="flex"
+    position="relative"
+    flexDirection="column"
+    overflow="hidden"
+    minWidth="$0"
+  />
 )
 
-const TitleWrapper = styled(StyledName)(
-  () => css`
-    font-size: 1rem;
-  `,
-)
-
-const SubtitleWrapper = styled.div(
-  ({ theme }) => css`
-    font-size: ${theme.space['3.5']};
-    line-height: 1.43;
-    color: ${theme.colors.greyPrimary};
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  `,
-)
-
-const AvatarOverlay = styled.div(
-  ({ theme }) => css`
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(82, 152, 255, 0.5);
-    border-radius: ${theme.radii.full};
-    svg {
-      path {
-        stroke: ${theme.colors.backgroundPrimary};
-        stroke-width: 1px;
-      }
-      rect {
-        stroke: transparent;
-      }
-    }
-  `,
+const AvatarOverlay = (props: BoxProps) => (
+  <Box
+    {...props}
+    position="absolute"
+    top="$0"
+    left="$0"
+    width="$full"
+    height="$full"
+    background="rgba(82, 152, 255, 0.5)"
+    borderRadius="$full"
+  />
 )
 
 type Name = {
@@ -166,16 +131,23 @@ export const NameDetailItem = ({
             />
             {mode === 'select' && selected && (
               <AvatarOverlay>
-                <CircleTick />
+                <Box as={<NoCircleTick />} fill="none" strokeWidth="1px" color="$background" />
               </AvatarOverlay>
             )}
           </AvatarWrapper>
           <NameItemContent>
-            <TitleWrapper name={truncatedName || name} disabled={disabled} />
+            <StyledName name={truncatedName || name} disabled={disabled} fontSize="$body" />
             {_expiryDate && (
-              <SubtitleWrapper>
+              <Box
+                fontSize="$small"
+                lineHeight="1.43"
+                color="$textSecondary"
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+              >
                 <ShortExpiry expiry={_expiryDate} hasGracePeriod={checkETH2LDFromName(name)} />
-              </SubtitleWrapper>
+              </Box>
             )}
           </NameItemContent>
         </NameItemContainer>

@@ -1,27 +1,22 @@
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
-import { mq, Tag } from '@ensdomains/thorin2'
+import { Box, BoxProps, Tag } from '@ensdomains/thorin'
 
 import { validateExpiry } from '@app/utils/utils'
 
 import { NameDetailItem } from './NameDetailItem'
 
-const OtherItemsContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-flow: column wrap;
-    align-items: flex-end;
-    justify-content: center;
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
-    ${mq.md.min(css`
-      flex-direction: row;
-      gap: ${theme.space['4']};
-      flex-gap: ${theme.space['4']};
-    `)}
-  `,
+const OtherItemsContainer = (props: BoxProps) => (
+  <Box
+    {...props}
+    display="flex"
+    flexDirection={{ base: 'column', md: 'row' }}
+    flexWrap="wrap"
+    alignItems="flex-end"
+    justifyContent="center"
+    gap={{ base: '$2', md: '$4' }}
+  />
 )
 
 export const TaggedNameItem = ({

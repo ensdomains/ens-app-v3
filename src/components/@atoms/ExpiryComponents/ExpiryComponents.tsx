@@ -1,10 +1,8 @@
 import { ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
-import { BoxProps, cssVars, Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin'
 
-import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays, secondsToHours } from '@app/utils/utils'
 
 import { useBlockTimestamp } from '../../../hooks/chain/useBlockTimestamp'
@@ -13,52 +11,12 @@ const GRACE_PERIOD_S = 90 * 24 * 60 * 60
 
 type Color = 'red' | 'orange' | 'grey'
 
-const ExpiryWrapper = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: ${theme.space['1']};
-    flex-gap: ${theme.space['1']};
-  `,
-)
-
-const ClockIcon = styled.div<{ $color: Color }>(
-  ({ theme, $color }) => css`
-    width: ${theme.space['5']};
-    height: ${theme.space['5']};
-    color: ${theme.colors[$color]};
-  `,
-)
-
 const ExpiryText = ({
   $color,
   ...props
 }: ComponentProps<typeof Typography> & { $color: Color }) => (
   <Typography {...props} color={`${$color}`} />
 )
-
-const ExpiryText2 = styled(Typography)<{
-  $color: Color
-}>(
-  ({ theme, $color }) => css`
-    color: ${theme.colors[$color]};
-  `,
-)
-
-export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
-  const currentDate = new Date()
-  const difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
-
-  if (difference < 0) {
-    return <ClockIcon data-testid="expiry-clock-red" $color="red" as={ClockSVG} />
-  }
-  if (difference < 90) {
-    return <ClockIcon data-testid="expiry-clock-orange" $color="orange" as={ClockSVG} />
-  }
-
-  return <ClockIcon data-testid="expiry-clock-grey" $color="grey" as={ClockSVG} />
-}
 
 const makeTransPrefix = (inverse: boolean, hasGracePeriod: boolean) => {
   if (inverse) {
@@ -125,31 +83,10 @@ export const ShortExpiry = ({
       data-testid="short-expiry"
       data-color={color}
       data-timestamp={expiry.getTime()}
-      color={color}
+      $color={color}
       fontVariant="small"
     >
       {text}
     </ExpiryText>
-  )
-}
-
-export const ReadableExpiry = ({ expiry }: { expiry: Date }) => {
-  return (
-    <ExpiryWrapper>
-      <ExpiryClock expiry={expiry} />
-      <Typography weight="bold" color="textSecondary">
-        {`${expiry.toLocaleDateString(undefined, {
-          month: 'short',
-          day: 'numeric',
-        })}, ${expiry.getFullYear()}`}
-      </Typography>
-      <Typography weight="bold" color="textTertiary">
-        {`at ${expiry.toLocaleTimeString(undefined, {
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZoneName: 'short',
-        })}`}
-      </Typography>
-    </ExpiryWrapper>
   )
 }
