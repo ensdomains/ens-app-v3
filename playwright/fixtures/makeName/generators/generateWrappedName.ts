@@ -61,7 +61,7 @@ export const generateWrappedName =
     // Check if resolver is valid
     const hasValidResolver = resolver 
     // && NAMEWRAPPER_AWARE_RESOLVERS['1337'].includes(resolver) //TODO (SG) - Ask about this
-    const resolverAddress = hasValidResolver ? resolver : DEFAULT_RESOLVER
+    // const resolverAddress = hasValidResolver ? resolver : DEFAULT_RESOLVER
     // const _resolver = contracts.get('PublicResolver', {
     //   address: resolverAddress,
     //   signer: owner, 
@@ -76,6 +76,7 @@ export const generateWrappedName =
         owner: _owner as `0x${string}`,
         secret: secret as `0x${string}`,
         fuses: fuses,
+        resolver: _resolver as `0x${string}`,
       }
       const commitTx = await commitName(walletClient, {
         ...params,
@@ -104,7 +105,7 @@ export const generateWrappedName =
       ...subname,
       name: `${label}.eth`,
       nameOwner: owner,
-      resolver: subname.resolver ?? resolverAddress,
+      resolver: subname.resolver ?? _resolver,
     }))
     for (const subname of _subnames) {
       await generateWrappedSubname({ accounts, provider, contracts })({ ...subname })

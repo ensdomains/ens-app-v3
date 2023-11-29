@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+import { test } from '../../../playwright'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
+// import { labelhash } from '@ensdomains/ensjs/utils/labels'
 
 test('should not show wrap button if the connected wallet is not the registrant', async ({
   login,

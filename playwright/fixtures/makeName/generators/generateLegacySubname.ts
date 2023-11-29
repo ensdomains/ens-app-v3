@@ -30,7 +30,7 @@ type Dependencies = {
   contracts: Contracts
 }
 // const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
-const DEFAULT_RESOLVER = "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB" //testClient.chain.contracts.ensPublicResolver.address //Not sure what resolver to use here
+const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address 
 export const generateLegacySubname =
   ({ accounts, contracts }: Dependencies) =>
   async ({

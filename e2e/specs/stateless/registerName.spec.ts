@@ -1,5 +1,9 @@
 import { expect } from '@playwright/test'
 import { test } from '../../../playwright'
+import { publicClient, testClient, waitForTransaction, walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import { setPrimaryName } from '@ensdomains/ensjs/wallet'
+import { create, set } from 'lodash'
+import { createAccounts } from '../../../playwright/fixtures/accounts'
 
 /*
  * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will
@@ -18,8 +22,13 @@ test.describe.serial('normal registration', () => {
     time,
     makePageObject,
   }) => {
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
+    // await reverseRegistrar.setName('')
+    await setPrimaryName( walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
+
 
     const homePage = makePageObject('HomePage')
     const registrationPage = makePageObject('RegistrationPage')

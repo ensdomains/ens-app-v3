@@ -1,11 +1,13 @@
 import { expect } from '@playwright/test'
 import { test } from '../../../playwright'
+import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { generateRecords } from '../../../playwright/fixtures/makeName/generators/generateRecords'
+import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 import { emptyAddress } from '../../../src/utils/constants'
 
-const oldResolver = '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB'
-const newResolver = '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF'
+const oldResolver = testClient.chain.contracts.legacyPublicResolver.address
+const newResolver = testClient.chain.contracts.publicResolver.address
 
 const DEFAULT_RECORDS = {
   texts: [
