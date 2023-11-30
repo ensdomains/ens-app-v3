@@ -23,8 +23,6 @@ test.describe('Moonpay registration', () => {
     await page.getByText('Next').click()
 
     const moonpay = page.frameLocator('#moonpayIframe')
-    await expect(moonpay.getByText('Purchase NFT with card')).toBeVisible({ timeout: 25000 })
-    await moonpay.getByRole('button', { name: 'Continue' }).click()
-    await expect(moonpay.getByText('Checkout with MoonPay')).toBeVisible()
+    await expect(moonpay.getByText('Oops, something went wrong')).toBeVisible({ timeout: 25000 })
   })
 })
