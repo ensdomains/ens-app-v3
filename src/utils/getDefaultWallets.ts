@@ -6,6 +6,7 @@ import {
   injectedWallet,
   ledgerWallet,
   metaMaskWallet,
+  phantomWallet,
   rainbowWallet,
   safeWallet,
   walletConnectWallet,
@@ -25,9 +26,16 @@ export const getDefaultWallets = ({
       groupName: 'Popular',
       wallets: [
         // injected / not always shown
+        // This is to ensure wallet can be seen on mobile when the user is using that wallet's app
         injectedWallet({ chains }),
         safeWallet({ chains }),
         braveWallet({ chains }),
+        {
+          ...phantomWallet({ chains }),
+          iconUrl: async () => (await import('../assets/PhantomWallet')).default,
+          iconBackground: '#9A8AEE',
+          downloadUrls: {},
+        },
         // always shown
         walletConnectWallet({ chains, projectId }),
         rainbowWallet({ chains, projectId }),
