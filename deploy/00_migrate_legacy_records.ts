@@ -5,7 +5,7 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { namehash } from 'viem'
 
 const names = [
   {

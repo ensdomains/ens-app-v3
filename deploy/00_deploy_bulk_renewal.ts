@@ -4,11 +4,12 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { namehash } from 'viem'
 
 const { makeInterfaceId } = require('@openzeppelin/test-helpers')
 
-function computeInterfaceId(iface: Interface) {
+// TODO: Fix interface
+function computeInterfaceId(iface: any) {
   return makeInterfaceId.ERC165(
     Object.values(iface.functions).map((frag) => frag.format('sighash')),
   )

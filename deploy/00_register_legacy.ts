@@ -1,13 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { namehash, labelhash, stringToBytes } from 'viem'
 
 const dummyABI = [
   {
@@ -471,7 +469,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         const setAbiTx = await _publicResolver.setABI(
           hash,
           contentType,
-          toUtf8Bytes(JSON.stringify(data)),
+          stringToBytes(JSON.stringify(data)),
           {
             nonce: nonceRef,
           },

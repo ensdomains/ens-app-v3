@@ -20,7 +20,6 @@ import { getDefaultWallets } from './getDefaultWallets'
 const providerArray: ChainProviderFn<
   typeof mainnet | typeof goerli | typeof localhost | typeof sepolia
 >[] = []
-
 if (process.env.NEXT_PUBLIC_PROVIDER) {
   // for local testing
   providerArray.push(
@@ -48,10 +47,11 @@ if (process.env.NEXT_PUBLIC_PROVIDER) {
   )
 }
 
-const { publicClient, chains } = configureChains(
-  [mainnetWithEns, goerliWithEns, localhostWithEns, sepoliaWithEns],
-  providerArray,
-)
+const chainsWithEns = process.env.NEXT_PUBLIC_PROVIDER
+  ? [localhostWithEns]
+  : [mainnetWithEns, goerliWithEns, sepoliaWithEns]
+
+const { publicClient, chains } = configureChains(chainsWithEns, providerArray)
 
 const connectors = getDefaultWallets({
   appName: 'ENS',

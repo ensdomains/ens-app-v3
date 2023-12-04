@@ -276,7 +276,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   }
 
   const canEditRecordsWhenWrapped = match(isWrapped)
-    .with(false, () =>
+    .with(true, () =>
       getResolverWrapperAwareness({ chainId, resolverAddress: profile?.resolverAddress }),
     )
     .otherwise(() => true)
