@@ -1,3 +1,6 @@
+import { BigNumberish } from '@ethersproject/bignumber'
+import { P, match as _match } from 'ts-pattern'
+
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
 import { ContentHash, Profile, RecordItem } from '@app/types'
@@ -11,12 +14,27 @@ const contentHashTouple = (contentHash?: string, deleteLabel = 'delete'): [strin
   return [['contenthash', contentHash]]
 }
 
+const abiTouple = (
+  abi?: { contentType?: BigNumberish; data: string | object } | string,
+  deleteLabel = 'delete',
+): [string, string][] => {
+  const abiStr = _match(abi)
+    .with(P.string, (_abi) => _abi)
+    .with({ data: P.string }, ({ data }) => data)
+    .with({ data: {} }, ({ data }) => JSON.stringify(data))
+    .otherwise(() => undefined)
+  if (abiStr === '') return [[deleteLabel, 'abi']]
+  if (!abiStr) return []
+  return [['abi', abiStr]]
+}
+
 export const recordOptionsToToupleList = (
   records?: RecordOptions,
   deleteLabel = 'delete',
 ): [string, string][] => {
   return [
     ...contentHashTouple(records?.contentHash, deleteLabel),
+    ...abiTouple(records?.abi, deleteLabel),
     ...(records?.texts?.map(({ key, value }) => [key, value]) || []),
     ...(records?.coinTypes?.map(({ key, value }) => [key, shortenAddress(value)]) || []),
   ].map(([key, value]) => (value ? [key, value] : [deleteLabel, key]))
