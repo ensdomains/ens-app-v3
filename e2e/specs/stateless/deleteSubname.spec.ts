@@ -400,7 +400,8 @@ test('should not allow parent owner to delete if PCC is expired', async ({
   await expect(page.getByTestId('profile-action-Delete subname')).toHaveCount(0)
 })
 
-test.describe('subgraph errors', () => {
+// TODO: Reimplement graph error test environment
+test.skip('subgraph errors', () => {
   test('should disable delete button for unwrapped subname', async ({
     page,
     login,

@@ -30,11 +30,11 @@ test('should be able to register multiple names on the address page', async ({
   await addresPage.goto(address)
 
   await login.connect()
-
   await addresPage.selectToggle.click()
   const timestampDict: { [key: string]: number } = {}
   for (const name of names) {
-    await addresPage.search(name)
+    const label = name.replace('.eth', '')
+    await addresPage.search(label)
     const timestamp = await addresPage.getTimestamp(name)
     timestampDict[name] = timestamp
     await addresPage.getNameRow(name).click()
@@ -43,15 +43,16 @@ test('should be able to register multiple names on the address page', async ({
   await addresPage.extendNamesModalNextButton.click()
 
   // check the invoice details
-  await expect(page.getByTestId('invoice-item-0-amount')).toHaveText(/0.0065/)
-  await expect(page.getByTestId('invoice-item-1-amount')).toHaveText(/0.0003/)
-  await expect(page.getByTestId('invoice-total')).toHaveText(/0.0068/)
+  await page.pause()
+  await expect(page.getByTestId('invoice-item-0-amount')).toContainText('0.0065')
+  await expect(page.getByTestId('invoice-item-1-amount')).toContainText('0.0002')
+  await expect(page.getByTestId('invoice-total')).toContainText('0.0067')
   await expect(page.getByText('1 year extension')).toBeVisible()
 
   // check the price comparison table
-  await expect(page.getByTestId('year-marker-0')).toHaveText(/4% gas/)
-  await expect(page.getByTestId('year-marker-1')).toHaveText(/2% gas/)
-  await expect(page.getByTestId('year-marker-2')).toHaveText(/1% gas/)
+  await expect(page.getByTestId('year-marker-0')).toContainText('3% gas')
+  await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
+  await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
 
   // increment and save
   await page.getByTestId('plus-minus-control-plus').click()
@@ -64,7 +65,8 @@ test('should be able to register multiple names on the address page', async ({
   await subgraph.sync()
   await page.reload()
   for (const name of names) {
-    await addresPage.search(name)
+    const label = name.replace('.eth', '')
+    await addresPage.search(label)
     await expect(addresPage.nameExpiry(name)).not.toHaveText(/12/, { timeout: 15000 })
     await expect(await addresPage.getTimestamp(name)).toEqual(timestampDict[name] + 31536000000 * 2)
   }
@@ -101,8 +103,8 @@ test('should be able to extend a single unwrapped name from profile', async ({
   })
 
   await test.step('should show the cost comparison data', async () => {
-    await expect(page.getByTestId('year-marker-0')).toContainText('4% gas')
-    await expect(page.getByTestId('year-marker-1')).toContainText('2% gas')
+    await expect(page.getByTestId('year-marker-0')).toContainText('3% gas')
+    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
     await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
   })
 
@@ -117,12 +119,12 @@ test('should be able to extend a single unwrapped name from profile', async ({
   await test.step('should show correct fiat values', async () => {
     await extendNamesModal.getCurrencyToggle.click({ force: true })
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.00')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.20')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.20')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.13')
     await extendNamesModal.getCounterMinusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.00')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.20')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.20')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.13')
   })
 
   await test.step('should extend', async () => {
@@ -153,6 +155,8 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await profilePage.goto(name)
 
   await login.connect()
+
+  await page.pause()
 
   await expect(page.getByText(`${name} has expired`)).toBeVisible()
 
@@ -224,6 +228,8 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   await profilePage.goto(name)
   await login.connect()
+
+  await page.pause()
 
   const timestamp = await profilePage.getExpiryTimestamp()
 

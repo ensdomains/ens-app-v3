@@ -17,10 +17,14 @@ export const usePccExpired = ({
   return useMemo(() => {
     const wrappedExpiry = safeDateObj(wrapperData?.expiry?.date)
     return !!(
-      ownerData?.ownershipLevel === 'registry' &&
-      ownerData?.owner === nameWrapperAddress &&
-      wrappedExpiry &&
-      wrappedExpiry < new Date()
+      (
+        ownerData?.ownershipLevel === 'registry' &&
+        ownerData?.owner === nameWrapperAddress &&
+        !wrapperData
+      )
+      // TODO: Double check that expried names return null for wrapper data
+      // wrappedExpiry &&
+      // wrappedExpiry < new Date()
     )
   }, [ownerData, wrapperData, nameWrapperAddress])
 }

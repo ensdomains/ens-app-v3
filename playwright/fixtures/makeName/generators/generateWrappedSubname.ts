@@ -64,6 +64,7 @@ export const generateWrappedSubname =
         owner: createAccounts().getAddress(owner) as `0x${string}`,
         account: createAccounts().getAddress(nameOwner) as `0x${string}`,
         resolverAddress: resolver,
+        expiry
       })
       const receipt = await waitForTransaction(tx)
 

@@ -284,8 +284,9 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
 
     const contentHash = dirtyFields.other?.contentHash
 
-    const abi = await match(dirtyFields.other?.abi?.data)
-      .with('', () => ({ encodedData: null, contentType: 0 }) as const)
+    // TODO: Add type for abi
+    const abi: any = await match(dirtyFields.other?.abi?.data)
+      .with('', () => null)
       .with(P.string, async (data) => encodeAbi({ encodeAs: 'json', data: JSON.parse(data) }))
       .otherwise(() => undefined)
 

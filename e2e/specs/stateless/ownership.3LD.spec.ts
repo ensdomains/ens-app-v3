@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
 import { test } from '../../../playwright'
 
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+// import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 //import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 const RESOLVER_ADDRESSES = testClient.chain.contracts.legacyPublicResolver.address

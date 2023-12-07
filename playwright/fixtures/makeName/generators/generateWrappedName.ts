@@ -53,10 +53,9 @@ export const generateWrappedName =
     records,
     subnames,
   }: Name) => {
-    const name = `${label}.eth`
-    console.log('generating wrapped name:', name)
-
+    const name = `${label}.eth`    
     const _owner = createAccounts().getAddress(owner) as `0x${string}`
+    console.log('generating wrapped name:', name, 'with owner:', _owner)
 
     // Check if resolver is valid
     const hasValidResolver = resolver 
@@ -84,11 +83,12 @@ export const generateWrappedName =
       })
       const commitReceipt = await waitForTransaction(commitTx)
     
-      await testClient.increaseTime({ seconds: 61 })
+      // TODO: Explain why 120 is needed to SG.
+      await testClient.increaseTime({ seconds: 120 }) // I use 120 because sometimes with anvil you need to wait a bit longer when registering multiple names at once
       await testClient.mine({ blocks: 1 })
     
-      const price = await getPrice(publicClient, {
-        nameOrNames: params.name,
+      const price = await getPrice(walletClient, {
+        nameOrNames:params.name,
         duration: params.duration,
       })
       const total = price!.base + price!.premium
