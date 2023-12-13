@@ -59,5 +59,6 @@ export const makeTransferNameOrSubnameTransactionItem = ({
           contract,
         }),
       )
+      .otherwise(() => null)
   )
 }

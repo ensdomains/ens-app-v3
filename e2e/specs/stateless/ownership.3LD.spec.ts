@@ -1153,7 +1153,7 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
 })
 
 test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
-  test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Send feature', async ({ page, login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -1163,7 +1163,7 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           label: 'test',
           owner: 'user',
           type: 'wrapped',
-          resolver: RESOLVER_ADDRESSES['1337'][0] as `0x${string}`,
+          resolver: testClient.chain.contracts.publicResolver.address as `0x${string}`,
           records: {
             texts: [{ key: 'name', value: 'test' }],
             coins: [{
@@ -1183,6 +1183,7 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
+    await page.pause()
     await ownershipPage.sendNameButton.click()
     await sendNameModal.searchInput.fill(accounts.getAddress('user3'))
     await sendNameModal.searchResult(accounts.getAddress('user3')).click()
@@ -1259,7 +1260,7 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           label: 'test',
           owner: 'user',
           type: 'wrapped',
-          resolver: RESOLVER_ADDRESSES['1337'][0] as `0x${string}`,
+          resolver: testClient.chain.contracts.publicResolver.address as `0x${string}`,
           records: {
             texts: [{ key: 'name', value: 'test' }],
             coins: [{
@@ -1380,6 +1381,7 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Parent only', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
+    await page.pause()
     await page.waitForTimeout(2000)
     await expect(ownershipPage.sendNameButton).toHaveCount(0)
     await expect(ownershipPage.editRolesButton).toHaveCount(0)

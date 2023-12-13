@@ -2,7 +2,7 @@ import { expect } from '@playwright/test'
 import { test } from '../../../playwright'
 
 test.describe('Unwrapped 2LD - Owner and Manager', () => {
-  test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Send feature', async ({ page, login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'owner-manager',
       type: 'legacy',
@@ -48,6 +48,7 @@ test.describe('Unwrapped 2LD - Owner and Manager', () => {
 
     await transactionModal.autoComplete()
 
+    await page.pause()
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('owner', {
       timeout: 15000,
     })

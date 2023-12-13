@@ -28,7 +28,9 @@ const DescriptionWrapper = styled(Typography)(
 
 export const WrapName = ({ name }: { name: string }) => {
   const { t } = useTranslation('profile')
-  const { data: nftUrl } = useNftImage({ name })
+  // TODO: FIX - causing ens-meta-env to crash.
+  // const { data: nftUrl } = useNftImage({ name })
+  const nftUrl = undefined
 
   return (
     <>

@@ -70,7 +70,7 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
 
   const gracePeriodEndDate =
     expiryDate && expiryData?.gracePeriod
-      ? new Date(expiryDate.getTime() + expiryData.gracePeriod)
+      ? new Date(expiryDate.getTime() + expiryData.gracePeriod * 1000)
       : undefined
 
   // gracePeriodEndDate is +/- 5 minutes from Date.now()

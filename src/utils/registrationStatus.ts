@@ -56,7 +56,7 @@ export const getRegistrationStatus = ({
       if (expiry.getTime() > timestamp) {
         return 'registered'
       }
-      if (expiry.getTime() + gracePeriod > timestamp) {
+      if (expiry.getTime() + gracePeriod * 1000 > timestamp) {
         return 'gracePeriod'
       }
       const { premium } = priceData!

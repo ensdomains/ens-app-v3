@@ -84,17 +84,19 @@ export const generateLegacySubname =
           account: createAccounts().getAddress(nameOwner) as `0x${string}`,
         })
     }
-    await approve()
+    const aprrove_tx = await approve()
+    await waitForTransaction(aprrove_tx)
 
     console.log(`wrapping legacy subname:`, subname)
-    }
+    
     const wrap_tx = await wrapName(walletClient, {
-        name: 'test.with-subnames.eth',
+        name: subname,
         newOwnerAddress: accounts.getAddress(owner) as `0x${string}`,
         account: accounts.getAddress(nameOwner) as `0x${string}`,
       })
-      await waitForTransaction(tx)
-
+      await waitForTransaction(wrap_tx)
+      console.log('wrapped legacy subname:', subname)
+    }
     // Create subnames
     const _subnames = (subnames || []).map((_subname) => ({
       ..._subname,

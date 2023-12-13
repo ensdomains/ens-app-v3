@@ -42,8 +42,8 @@ importers:
         specifier: 0.0.22
         version: 0.0.22
       '@ensdomains/ensjs':
-        specifier: 3.0.0-beta.10
-        version: 3.0.0-beta.10(typescript@5.3.2)(viem@1.19.10)
+        specifier: 3.0.0
+        version: 3.0.0(typescript@5.3.2)(viem@1.19.10)
       '@ensdomains/thorin':
         specifier: 0.6.44
         version: 0.6.44(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.11)
@@ -187,8 +187,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.1
       '@ensdomains/ens-test-env':
-        specifier: ^0.3.8
-        version: 0.3.8
+        specifier: ^0.3.9
+        version: 0.3.9
       '@ethersproject/abi':
         specifier: ^5.4.0
         version: 5.7.0
@@ -1977,8 +1977,8 @@ packages:
       dns-packet: 5.6.1
     dev: false
 
-  /@ensdomains/ens-test-env@0.3.8:
-    resolution: {integrity: sha512-nSYS1IZ282U7TxnJtix+uTbHBFbk4JdUA3XQ2g3mQmXjf4OuWfNF5TawPz5HmqhZpyaue6CRDy6vnl8ea9BkhQ==}
+  /@ensdomains/ens-test-env@0.3.9:
+    resolution: {integrity: sha512-WnD2pd28oKmfdZonWvzd9IlfGyghMxpOPlPZDaqCMHN5chcUv6YFJZfzqPg2yg8lV3Nfd2J9UXocj3gyOcTYrw==}
     hasBin: true
     dependencies:
       '@ethersproject/wallet': 5.7.0
@@ -2028,8 +2028,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@ensdomains/ensjs@3.0.0-beta.10(typescript@5.3.2)(viem@1.19.10):
-    resolution: {integrity: sha512-l9cawshYkx9okRhG173pdQGhMgMzLU2m2GLV5Udt3q6Bp6VgIEQH5zKLPv4xikmz2pNhnGmfvzxqJ62lHlZz3g==}
+  /@ensdomains/ensjs@3.0.0(typescript@5.3.2)(viem@1.19.10):
+    resolution: {integrity: sha512-8SLafvo2jjKKpPJGTamHbP7AvxZ5oXDnj1oHefMbZklmBwFU5BWBFh5hISYiVGwIOpwRwdhxG3PNraYbLiCHTA==}
     peerDependencies:
       viem: ^1.16.4
     dependencies:

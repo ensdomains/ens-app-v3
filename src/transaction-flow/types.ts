@@ -9,12 +9,7 @@ import { MinedData, TransactionDisplayItem } from '@app/types'
 
 import type { DataInputComponent } from './input'
 import type { IntroComponentName } from './intro'
-import type {
-  makeTransactionItem,
-  TransactionData,
-  TransactionItem,
-  TransactionName,
-} from './transaction'
+import type { TransactionData, TransactionItem, TransactionName } from './transaction'
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'
 
@@ -107,7 +102,12 @@ export type TransactionFlowAction =
     }
   | {
       name: 'setTransactions'
-      payload: ReturnType<typeof makeTransactionItem>[]
+      payload: {
+        [key in TransactionName]: {
+          name: key
+          data: TransactionData<key>
+        }
+      }[TransactionName][]
     }
   | {
       name: 'setFlowStage'

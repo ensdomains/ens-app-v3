@@ -58,5 +58,5 @@ export const getSendNameTransactions = ({
       : null,
   ].filter((transaction) => !!transaction)
 
-  return _transactions
+  return _transactions as NonNullable<(typeof _transactions)[number]>[]
 }

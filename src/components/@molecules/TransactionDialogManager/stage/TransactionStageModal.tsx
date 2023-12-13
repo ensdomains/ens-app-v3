@@ -487,10 +487,12 @@ export const TransactionStageModal = ({
       onError: console.error,
     },
   )
-  useInvalidateOnBlock({
-    enabled: canEnableTransactionRequest,
-    queryKey,
-  })
+
+  // TODO: In localhost this causes a constant loop of invalidation since anvil does not have a set blocktime. Check that this doesn't happen on regular chains.
+  // useInvalidateOnBlock({
+  //   enabled: canEnableTransactionRequest,
+  //   queryKey,
+  // })
 
   const {
     isLoading: transactionLoading,

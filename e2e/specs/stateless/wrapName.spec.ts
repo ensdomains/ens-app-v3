@@ -127,6 +127,7 @@ test('should wrap name', async ({ makeName, login, makePageObject }) => {
 })
 
 test('should allow wrapping a subdomain', async ({
+  page,
   provider,
   contracts,
   makeName,
@@ -148,7 +149,7 @@ test('should allow wrapping a subdomain', async ({
   // const nameWrapper = await contracts.get('NameWrapper')
   // await registry.setApprovalForAll(nameWrapper.address, false)
 
-  walletClient.writeContract({
+  const approve_tx = await walletClient.writeContract({
     abi: registrySetApprovalForAllSnippet,
     address: testClient.chain.contracts.ensRegistry.address,
     functionName: 'setApprovalForAll',
@@ -158,13 +159,15 @@ test('should allow wrapping a subdomain', async ({
     ],
     account: createAccounts().getAddress('user') as `0x${string}`,
   })
-  await testClient.mine({ blocks: 1 })
+  await waitForTransaction(approve_tx)
 
   const morePage = makePageObject('MorePage')
   const transactionModal = makePageObject('TransactionModal')
 
   await morePage.goto(subname)
   await login.connect()
+
+  await page.pause()
 
   // should approve name wrapper for address
   await morePage.wrapButton.click()

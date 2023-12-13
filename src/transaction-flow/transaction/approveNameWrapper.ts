@@ -56,7 +56,13 @@ const transaction = async ({ publicClient, data }: TransactionFunctionParameters
     data: encodeFunctionData({
       abi: registrySetApprovalForAllSnippet,
       functionName: 'setApprovalForAll',
-      args: [data.address, true],
+      args: [
+        getChainContractAddress({
+          client: publicClient,
+          contract: 'ensNameWrapper',
+        }),
+        true,
+      ],
     }),
   }
 }
