@@ -24,6 +24,7 @@ export class RegistrationPage {
   }
 
   async getGas() {
+    await expect(this.gas).not.toBeEmpty()
     await expect(this.gas).not.toHaveText('0.0000 ETH')
     const text = (await this.gas.textContent()) as string
     return parseFloat(text)

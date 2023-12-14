@@ -143,6 +143,7 @@ test.describe('unwrapped', () => {
     })
 
     test('should be able to migrate unwrapped to new resolver', async ({
+      page,
       makeName,
       login,
       makePageObject,
@@ -161,6 +162,7 @@ test.describe('unwrapped', () => {
 
       await morePage.goto(name)
       await login.connect()
+      await page.pause()
       await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
       await profilePage.goto(name)

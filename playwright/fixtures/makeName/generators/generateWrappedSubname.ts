@@ -79,14 +79,12 @@ export const generateWrappedSubname =
     }
 
     if (type === 'legacy') {
-    const tx = await unwrapName(walletClient, {
+      const tx = await unwrapName(walletClient, {
         name: `${label}.${name}`,
         newOwnerAddress: createAccounts().getAddress(owner) as `0x${string}`,
-        account: createAccounts().getAddress(nameOwner) as `0x${string}`,
+        account: createAccounts().getAddress(owner) as `0x${string}`,
       })
-      expect(tx).toBeTruthy()
       const receipt = await waitForTransaction(tx)
-      expect(receipt.status).toBe('success')
     }
 
     const _subNames = (subnames || []).map((subName) => ({

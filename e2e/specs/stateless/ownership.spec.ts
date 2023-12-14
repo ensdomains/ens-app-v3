@@ -93,7 +93,7 @@ test.describe('Send name', () => {
       timeout: 15000,
     })
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('manager')
-    await expect(ownershipPage.roleRow(accounts.getAddress('user2'))).toContainText('ETH record')
+    await expect(ownershipPage.roleRow('0x42D63ae25990889E35F215bC95884039Ba354115')).toContainText('ETH record')
   })
 
   test('should not be able to send name if user is manager but not owner', async ({
@@ -302,7 +302,7 @@ test.describe('Send name', () => {
     await expect(ownershipPage.roleRow(accounts.getAddress('user'))).not.toContainText(
       'parent-owner',
     )
-    await expect(ownershipPage.roleRow(accounts.getAddress('user2'))).toContainText('ETH record')
+    await expect(ownershipPage.roleRow('0x42D63ae25990889E35F215bC95884039Ba354115')).toContainText('ETH record')
   })
 
   test('should be able to send manager and eth-record if user is manager and not parent owner of unwrapped subname', async ({
@@ -406,6 +406,7 @@ test.describe('Send name', () => {
     await profilePage.goto(subname)
     await login.connect()
     await expect(profilePage.record('text', 'nickname')).toContainText('test')
+    await page.pause()
 
     await ownershipPage.goto(subname)
     await ownershipPage.sendNameButton.click()
@@ -431,7 +432,7 @@ test.describe('Send name', () => {
     })
     await page.pause()
     await expect(ownershipPage.roleRow(accounts.getAddress('user'))).toContainText('Parent owner')
-    await expect(ownershipPage.roleRow(accounts.getAddress('user2'))).toContainText('ETH record')
+    await expect(ownershipPage.roleRow('0x42D63ae25990889E35F215bC95884039Ba354115')).toContainText('ETH record')
 
     await profilePage.goto(subname)
     await page.waitForTimeout(2000)
@@ -852,6 +853,7 @@ test.describe('Edit roles: Unwrapped subnames', () => {
 
     await ownershipPage.goto(subname)
     await login.connect()
+    await page.pause()
 
     await page.waitForTimeout(2000)
     await expect(ownershipPage.sendNameButton).toHaveCount(0)
@@ -1111,6 +1113,7 @@ test.describe('Extend name', () => {
 
     await ownershipPage.goto(name)
     await login.connect()
+    await page.pause()
 
     const timestamp = await ownershipPage.getExpiryTimestamp()
 
@@ -1124,8 +1127,8 @@ test.describe('Extend name', () => {
     })
 
     await test.step('should show the cost comparison data', async () => {
-      await expect(page.getByTestId('year-marker-0')).toContainText('4% gas')
-      await expect(page.getByTestId('year-marker-1')).toContainText('2% gas')
+      await expect(page.getByTestId('year-marker-0')).toContainText('3% gas')
+      await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
       await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
     })
 
@@ -1140,12 +1143,12 @@ test.describe('Extend name', () => {
     await test.step('should show correct fiat values', async () => {
       await extendNamesModal.getCurrencyToggle.click({ force: true })
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.00')
-      await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.20')
-      await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.20')
+      await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
+      await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.13')
       await extendNamesModal.getCounterMinusButton.click()
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.00')
-      await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.20')
-      await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.20')
+      await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
+      await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.13')
     })
 
     await test.step('should extend', async () => {

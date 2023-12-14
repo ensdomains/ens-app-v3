@@ -39,8 +39,8 @@ importers:
         specifier: 0.4.1
         version: 0.4.1
       '@ensdomains/ens-contracts':
-        specifier: 0.0.22
-        version: 0.0.22
+        specifier: 1.0.0
+        version: 1.0.0
       '@ensdomains/ensjs':
         specifier: 3.0.0
         version: 3.0.0(typescript@5.3.2)(viem@1.19.10)
@@ -1968,8 +1968,8 @@ packages:
       typescript-logging: 1.0.1
     dev: false
 
-  /@ensdomains/ens-contracts@0.0.22:
-    resolution: {integrity: sha512-kNu7pp68/5KfJ5wkswnUS4NfI9Ek4zGi0nnNSmGf1WXs6BHU9NYRVR6NnoVzb1B+cZ658e1v2srTtvmBYYIYzg==}
+  /@ensdomains/ens-contracts@1.0.0:
+    resolution: {integrity: sha512-NB5fig+TuaAkdW3uVshO/vuI/BNWus8MkpdDCzx6S797j7gRrDbKfcVHHDH5rBmj8Yp0/jCR1LU4DHaU5oxO0Q==}
     dependencies:
       '@ensdomains/buffer': 0.1.1
       '@ensdomains/solsha1': 0.0.3

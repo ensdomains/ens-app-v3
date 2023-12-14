@@ -207,6 +207,7 @@ test('should allow wrapping a name with an unknown label', async ({
   await morePage.goto(subname)
   await login.connect()
 
+  await page.pause()
   await morePage.wrapButton.click()
 
   const input = page.getByTestId(`unknown-label-input-${unknownLabelhash}`)
@@ -243,13 +244,13 @@ test('should calculate needed steps without localstorage', async ({
   // const txn = await registry.setApprovalForAll(nameWrapper.address, false)
   // await txn.wait()
 
-  walletClient.writeContract({
+  await walletClient.writeContract({
     abi: registrySetApprovalForAllSnippet,
     address: testClient.chain.contracts.ensRegistry.address,
     functionName: 'setApprovalForAll',
     args: [
       testClient.chain.contracts.ensNameWrapper.address,
-      true,
+      false,
     ],
     account: createAccounts().getAddress('user') as `0x${string}`,
   })
@@ -279,7 +280,7 @@ test('should calculate needed steps without localstorage', async ({
   await expect(page.getByTestId('name-details-text-wrapper')).toContainText('unwrapped')
 
   await morePage.wrapButton.click()
-
+  await page.pause()
   await expect(page.getByTestId('display-item-Step 1-normal')).toContainText('Approve NameWrapper')
   await expect(page.getByTestId('display-item-Step 2-normal')).toContainText('Migrate profile')
   await expect(page.getByTestId('display-item-Step 3-normal')).toContainText('Wrap name')

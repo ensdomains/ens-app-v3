@@ -8,7 +8,7 @@ import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 import { testClient, walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 
-const UNAUTHORISED_RESOLVER = "0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750"//testClient.chain.contracts.legacyPublicResolver.address //RESOLVER_ADDRESSES['1337'][1] as `0x${string}`
+const UNAUTHORISED_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address //RESOLVER_ADDRESSES['1337'][1] as `0x${string}`
 
 test.afterAll(async ({ contracts }) => {
   // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
@@ -168,6 +168,7 @@ test.describe('profile', () => {
 
     await morePage.goto(subname)
     await login.connect()
+    await page.pause()
     await expect(morePage.resolver).toContainText(UNAUTHORISED_RESOLVER)
 
     await profilePage.goto(subname)
@@ -412,6 +413,8 @@ test.describe('profile', () => {
 
     await profilePage.goto(subname)
     await login.connect()
+
+    await page.pause()
 
     // Assert state
     await expect(page.getByTestId('owner-profile-button-name.manager')).toContainText(

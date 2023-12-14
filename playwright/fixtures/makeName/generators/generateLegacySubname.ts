@@ -66,36 +66,36 @@ export const generateLegacySubname =
     }
 
     if (type === 'wrapped') {
-    const approve = async () => {
-        return walletClient.writeContract({
-          abi: registrySetApprovalForAllSnippet,
-          address: getChainContractAddress({
+   
+      const approve_tx = await walletClient.writeContract({
+        abi: registrySetApprovalForAllSnippet,
+        address: getChainContractAddress({
+          client: walletClient,
+          contract: 'ensRegistry',
+        }),
+        functionName: 'setApprovalForAll',
+        args: [
+          getChainContractAddress({
             client: walletClient,
-            contract: 'ensRegistry',
+            contract: 'ensNameWrapper',
           }),
-          functionName: 'setApprovalForAll',
-          args: [
-            getChainContractAddress({
-              client: walletClient,
-              contract: 'ensNameWrapper',
-            }),
-            true,
-          ],
-          account: createAccounts().getAddress(nameOwner) as `0x${string}`,
-        })
-    }
-    const aprrove_tx = await approve()
-    await waitForTransaction(aprrove_tx)
+          true,
+        ],
+        account: createAccounts().getAddress(owner) as `0x${string}`,
+      })
+      const approve = await waitForTransaction(approve_tx)
+      if (approve.status === 'success') console.log('approved name wrapper')
+      else throw new Error(`failed to approve name wrapper`)
 
-    console.log(`wrapping legacy subname:`, subname)
-    
-    const wrap_tx = await wrapName(walletClient, {
+      const wrap_tx = await wrapName(walletClient, {
         name: subname,
         newOwnerAddress: accounts.getAddress(owner) as `0x${string}`,
-        account: accounts.getAddress(nameOwner) as `0x${string}`,
+        resolverAddress: getChainContractAddress({ client: walletClient, contract: 'ensPublicResolver' }),
+        account: accounts.getAddress(owner) as `0x${string}`,
       })
-      await waitForTransaction(wrap_tx)
-      console.log('wrapped legacy subname:', subname)
+      const wrap = await waitForTransaction(wrap_tx)
+      if (wrap.status === 'success') console.log('wrapped subname:', subname)
+      else throw new Error(`failed to wrap subname: ${subname}`)
     }
     // Create subnames
     const _subnames = (subnames || []).map((_subname) => ({
