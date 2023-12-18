@@ -70,7 +70,8 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const showWarning = nameType.data === 'dns-wrapped-2ld'
 
   const onClickNext = () => {
-    const transactions = [
+    // TODO: Fix typescript transactions error
+    const transactions: any[] = [
       canSyncDNS
         ? makeTransactionItem('syncManager', {
             name,

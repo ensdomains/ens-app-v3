@@ -225,9 +225,10 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     if (!transactionFlowItem) return
     const transactionCount = transactionFlowItem.transactions.length
     if (transactionCount === 1) {
+      // TODO: Fix typescript transactions error
       dispatch({
         name: 'setTransactions',
-        payload: transactionFlowItem.transactions,
+        payload: transactionFlowItem.transactions as any[],
       })
       dispatch({
         name: 'setFlowStage',

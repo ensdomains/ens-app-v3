@@ -81,7 +81,8 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
     const isOwnerOrManager = [basic.ownerData?.owner, basic.ownerData?.registrant].includes(
       account.address,
     )
-    const transactions = [
+    // TODO: fix typescript transactions error
+    const transactions: any[] = [
       dirtyValues['eth-record']
         ? makeTransactionItem('updateEthAddress', { name, address: dirtyValues['eth-record'] })
         : null,

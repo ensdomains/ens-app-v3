@@ -13,7 +13,10 @@ import { AddressRecord, Profile, TextRecord } from '@app/types'
 import { contentHashToString } from './contenthash'
 import { shortenAddress } from './utils'
 
-const contentHashTouple = (contentHash?: string, deleteLabel = 'delete'): [string, string][] => {
+const contentHashTouple = (
+  contentHash?: string | null,
+  deleteLabel = 'delete',
+): [string, string][] => {
   if (typeof contentHash !== 'string') return []
   if (contentHash.length === 0) return [[deleteLabel, 'contenthash']]
   return [['contenthash', contentHash]]
@@ -24,7 +27,7 @@ const abiTouple = (abi?: RecordOptions['abi'], deleteLabel = 'delete'): [string,
     .with({ encodedData: P.not(P.nullish), contentType: 1 }, ({ encodedData }) =>
       hexToString(encodedData),
     )
-    .with({ contentType: 0 }, () => null)
+    .with(null, () => null)
     .otherwise(() => undefined)
   if (abiStr === null) return [[deleteLabel, 'abi']]
   if (!abiStr) return []
