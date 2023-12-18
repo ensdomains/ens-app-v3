@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
-import { safeDateObj } from '@app/utils/date'
+// import { safeDateObj } from '@app/utils/date'
 
 import { useContractAddress } from '../chain/useContractAddress'
 
@@ -15,7 +15,7 @@ export const usePccExpired = ({
 }) => {
   const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
   return useMemo(() => {
-    const wrappedExpiry = safeDateObj(wrapperData?.expiry?.date)
+    // const wrappedExpiry = safeDateObj(wrapperData?.expiry?.date)
     return !!(
       (
         ownerData?.ownershipLevel === 'registry' &&

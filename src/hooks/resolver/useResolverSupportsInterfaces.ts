@@ -1,6 +1,6 @@
 // TODO: Delete this hook in future in favor of useResolverHasInterfaces
 // @ts-nocheck
-import { Contract } from '@ethersproject/contracts'
+// import { Contract } from '@ethersproject/contracts'
 import { useProvider, useQuery } from 'wagmi'
 
 import { RESOLVER_INTERFACE_IDS, ResolverInterfaceName } from '@app/constants/resolverInterfaceIds'

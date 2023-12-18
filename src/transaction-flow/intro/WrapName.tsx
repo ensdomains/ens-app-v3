@@ -5,7 +5,7 @@ import { Typography } from '@ensdomains/thorin'
 
 import { WrapNameGift } from '@app/assets/WrapNameGift'
 import { Outlink } from '@app/components/Outlink'
-import { useNftImage } from '@app/hooks/useNftImage'
+// import { useNftImage } from '@app/hooks/useNftImage'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 const GiftWrapper = styled.div(
@@ -28,6 +28,7 @@ const DescriptionWrapper = styled(Typography)(
 
 export const WrapName = ({ name }: { name: string }) => {
   const { t } = useTranslation('profile')
+  console.log('WrapName', name)
   // TODO: FIX - causing ens-meta-env to crash.
   // const { data: nftUrl } = useNftImage({ name })
   const nftUrl = undefined

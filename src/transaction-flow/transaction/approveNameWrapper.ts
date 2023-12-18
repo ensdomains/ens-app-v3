@@ -47,7 +47,7 @@ const registrySetApprovalForAllSnippet = [
   },
 ] as const
 
-const transaction = async ({ publicClient, data }: TransactionFunctionParameters<Data>) => {
+const transaction = async ({ publicClient }: TransactionFunctionParameters<Data>) => {
   return {
     to: getChainContractAddress({
       client: publicClient,

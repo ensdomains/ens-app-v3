@@ -7,9 +7,6 @@ import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
 
-import { setRecords } from '@ensdomains/ensjs/wallet'
-import { set } from 'lodash'
-
 const baseMetadataURL = process.env.NEXT_PUBLIC_PROVIDER
   ? 'http://localhost:8080'
   : 'https://metadata.ens.domains'
