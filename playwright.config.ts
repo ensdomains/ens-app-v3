@@ -24,6 +24,6 @@ export default defineConfig({
     },
   ],
   use: {
-    baseURL: process.env.CI ? 'http://localhost:8788' : 'http://localhost:3000',
+    baseURL: process.env.CI ? 'http://127.0.0.1:8788' : 'http://localhost:3000',
   },
 })
