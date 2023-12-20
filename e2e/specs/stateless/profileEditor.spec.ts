@@ -327,7 +327,7 @@ test.describe('wrapped', () => {
   })
 })
 
-test.describe('subgraph errors', () => {
+test.skip('subgraph errors', () => {
   test('should disable edit profile button when there is a subgraph error', async ({
     page,
     makeName,

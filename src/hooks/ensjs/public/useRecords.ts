@@ -6,6 +6,7 @@ import { getRecords, GetRecordsParameters, GetRecordsReturnType } from '@ensdoma
 
 import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { camelToConstant } from '@app/utils/name'
 
 type UseRecordsParameters = PartialBy<GetRecordsParameters, 'name'>
 
@@ -64,6 +65,21 @@ export const useRecords = <TParams extends UseRecordsParameters>({
     onError,
     onSettled,
     onSuccess,
+    // TODO: Temp fix to make convert ensjs coin names to previous format
+    select: (data) => {
+      return {
+        ...data,
+        // @ts-ignore
+        coins: data.coins?.map((coin) => ({
+          ...coin,
+          name: camelToConstant(coin.name),
+        })),
+      } as GetRecordsReturnType<{
+        name: string
+        records: TParams['records']
+        resolver: TParams['resolver']
+      }>
+    },
   })
 
   return {

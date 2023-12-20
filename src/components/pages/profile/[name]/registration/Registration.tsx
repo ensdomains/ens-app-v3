@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -110,7 +110,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const { address } = useAccount()
   const primary = usePrimaryName({ address })
   const selected = { name: nameDetails.normalisedName, address: address!, chainId }
-  const { normalisedName, beautifiedName } = nameDetails
+  const { normalisedName, beautifiedName = '' } = nameDetails
   const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
   const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists({
     address: defaultResolverAddress,
@@ -192,12 +192,16 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
   }
 
-  const transactionsCallback = ({ back, resetSecret }: BackObj & { resetSecret?: boolean }) => {
-    if (resetSecret) {
-      dispatch({ name: 'resetSecret', selected })
-    }
-    genericCallback({ back })
-  }
+  const transactionsCallback = useCallback(
+    ({ back, resetSecret }: BackObj & { resetSecret?: boolean }) => {
+      if (resetSecret) {
+        dispatch({ name: 'resetSecret', selected })
+      }
+      genericCallback({ back })
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  )
 
   const infoProfileCallback = () => {
     dispatch({

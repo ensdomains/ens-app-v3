@@ -148,6 +148,7 @@ export const useEstimateFullRegistration = ({
     registrationEstimateQueryKey,
     ({ queryKey: [params] }) => fetchRegistrationEstimate(publicClient, params),
     {
+      select: (data) => BigInt(data),
       enabled: !!name && !!owner && !!fuses && !!records && reverseRecord !== undefined,
     },
   )

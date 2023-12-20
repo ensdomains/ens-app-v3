@@ -51,6 +51,13 @@ export const usePrice = <TParams extends UsePriceParameters>({
     onError,
     onSettled,
     onSuccess,
+    select: (data) => {
+      if (!data) return data
+      return {
+        base: BigInt(data.base),
+        premium: BigInt(data.premium),
+      }
+    },
   })
 
   return {

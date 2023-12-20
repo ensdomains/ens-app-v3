@@ -195,10 +195,13 @@ const useEthInvoice = (
     if (isLoading) return null
     const value = registrationValue || 0n
 
-    const commitGasUsed = commitReceipt?.gasUsed || 0n
+    const commitGasUsed = commitReceipt?.gasUsed ? BigInt(commitReceipt.gasUsed) : 0n
+    const effectiveGasPrice = commitReceipt?.effectiveGasPrice
+      ? BigInt(commitReceipt.effectiveGasPrice)
+      : 0n
     const registerGasUsed = registerReceipt?.gasUsed || 0n
 
-    const commitNetFee = commitGasUsed * commitReceipt!.effectiveGasPrice
+    const commitNetFee = commitGasUsed * effectiveGasPrice
     const registerNetFee = registerGasUsed * registerReceipt!.effectiveGasPrice
     const totalNetFee = commitNetFee && registerNetFee ? commitNetFee + registerNetFee : 0n
 

@@ -178,7 +178,8 @@ test('should allow wrapping a subdomain', async ({
   await expect(morePage.unwrapButton).toBeVisible({ timeout: 15000 })
 })
 
-test('should allow wrapping a name with an unknown label', async ({
+// TODO: Waiting for encrypted label fix for ensjs
+test.skip('should allow wrapping a name with an unknown label', async ({
   page,
   login,
   makeName,

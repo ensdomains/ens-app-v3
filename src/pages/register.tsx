@@ -11,7 +11,9 @@ import { ContentGrid } from '@app/layouts/ContentGrid'
 
 export default function Page() {
   const router = useRouterWithHistory()
-  const name = router.query.name as string
+  // TODO: Do a better job of getting the name from the different possible entry points.
+  const name =
+    (router.query.name as string) || router.asPath.replace('/register', '').replace('/', '')
 
   const initial = useInitial()
 
@@ -49,6 +51,8 @@ export default function Page() {
     }
   }
 
+  // TODO: Temp fix for hydration issues.
+  if (isLoading) return null
   return <Registration {...{ nameDetails, isLoading }} />
 }
 

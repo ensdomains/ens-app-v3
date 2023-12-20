@@ -373,7 +373,8 @@ test.describe('profile', () => {
     await expect(page.getByTestId('profile-action-Set as primary name')).toHaveCount(0)
   })
 
-  test('should allow setting primary name from name with encrypted label', async ({
+  // TODO: Waiting on ensjs to support this
+  test.skip('should allow setting primary name from name with encrypted label', async ({
     page,
     login,
     contracts,
