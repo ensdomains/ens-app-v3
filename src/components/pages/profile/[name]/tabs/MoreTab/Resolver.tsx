@@ -10,7 +10,7 @@ import RecordItem from '@app/components/RecordItem'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { NAMESYS_RESOLVERS, RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { NAMESYS_RESOLVERS } from '@app/utils/constants'
 
 import { TabWrapper } from '../../../TabWrapper'
 
@@ -88,20 +88,13 @@ const Resolver = ({
     })
   }
 
-  const resolverAddressIndex = RESOLVER_ADDRESSES[`${chainId}`]?.indexOf(resolverAddress ?? '')
   const isNameSysResolver = resolverAddress === NAMESYS_RESOLVERS[`${chainId}`][0]
   const [resolverAddressType, tone] = useMemo(() => {
-    if (resolverAddressIndex === -1) {
-      if (isNameSysResolver) {
-        return ['namesys', 'greySecondary'] as const
-      }
-      return ['custom', 'greySecondary'] as const
+    if (isNameSysResolver) {
+      return ['namesys', 'greySecondary'] as const
     }
-    if (resolverAddressIndex === 0) {
-      return ['latest', 'greenSecondary'] as const
-    }
-    return ['outdated', 'redSecondary'] as const
-  }, [resolverAddressIndex, isNameSysResolver])
+    return ['', 'greySecondary'] as const
+  }, [isNameSysResolver])
 
   return (
     <Container $isCached={isCachedData}>
@@ -110,7 +103,9 @@ const Resolver = ({
           <Typography color="text" fontVariant="headingFour" weight="bold">
             {t('tabs.more.resolver.label')}
           </Typography>
-          <Tag colorStyle={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
+          {isNameSysResolver && (
+            <Tag colorStyle={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
+          )}
         </InnerHeading>
         {canEdit && !hasGlobalError && (
           <>
