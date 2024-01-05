@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useNetwork, useProvider, useQuery } from 'wagmi'
 
+import { useChainId } from '@app/hooks/useChainId'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { NAMESYS_RESOLVERS } from '@app/utils/constants'
 import { ContractInterface } from '@app/validators/validateContract'
 
 import { errorToString } from '../utils/errorToString'
@@ -20,12 +22,14 @@ export const useResolverHasInterfaces = (
   const fallbackMsg =
     options?.fallbackMsg || 'Cannot determine if address supports resolver methods'
 
+  const chainId = useChainId()
   const provider = useProvider()
   const { chain } = useNetwork()
   const [errors, setErrors] = useState<string[]>([])
 
   const isEnabled = !!chain && !skip && !!resolverAddress
-
+  const isNameSys = resolverAddress === NAMESYS_RESOLVERS[`${chainId}`][0]
+  console.log(isNameSys)
   const {
     data: hasInterface,
     isLoading,
@@ -55,6 +59,7 @@ export const useResolverHasInterfaces = (
     hasInterface,
     isLoading,
     status,
-    errors: combinedErrors.length > 0 ? combinedErrors : undefined,
+    // eslint-disable-next-line no-nested-ternary
+    errors: isNameSys ? [fallbackMsg] : combinedErrors.length > 0 ? combinedErrors : undefined,
   }
 }

@@ -62,6 +62,13 @@ export const NAMEWRAPPER_AWARE_RESOLVERS: ResolverAddresses = {
   '1337': ['0x0E801D84Fa97b50751Dbf25036d067dCf18858bF'],
 }
 
+export const NAMESYS_RESOLVERS: ResolverAddresses = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '1': ['0x839B3B540A9572448FD1B2335e0EB09Ac1A02885'],
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '5': ['0x3F2521AC2D9ea1bFd6110CA563FcD067E6E47deb'],
+}
+
 export const RESOLVER_INTERFACE_IDS = {
   addrInterfaceId: '0x3b3b57de',
   txtInterfaceId: '0x59d1d43c',

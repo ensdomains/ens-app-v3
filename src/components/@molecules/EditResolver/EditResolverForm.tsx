@@ -8,7 +8,7 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/useChainName'
 import useResolverEditor from '@app/hooks/useResolverEditor'
-import { makeEtherscanLink } from '@app/utils/utils'
+import { makeEtherscanLink, makeNameSysLink } from '@app/utils/utils'
 
 import { DogFood } from '../DogFood'
 
@@ -49,6 +49,7 @@ type Props = ReturnType<typeof useResolverEditor> & {
 const EditResolverForm = ({
   isResolverAddressLatest,
   lastestResolverAddress,
+  isResolverAddressNameSys,
   resolverChoice,
   handleSubmit,
   register,
@@ -82,6 +83,22 @@ const EditResolverForm = ({
     </LatestResolverLabel>
   )
 
+  const namesysResolverLabel = (
+    <LatestResolverLabel $offset={isResolverAddressNameSys}>
+      <LatestResolverTitleContainer>
+        <LatestResolverTitle>{t('input.editResolver.namesysLabel')}</LatestResolverTitle>
+        <Outlink data-testid="namesys-resolver-etherscan" href={makeNameSysLink()}>
+          {t('input.editResolver.namesys')}
+        </Outlink>
+      </LatestResolverTitleContainer>
+      {isResolverAddressNameSys && (
+        <LatestResolverSubtitle fontVariant="small">
+          {t('input.editResolver.latestMessage')}
+        </LatestResolverSubtitle>
+      )}
+    </LatestResolverLabel>
+  )
+
   return (
     <form data-testid="edit-resolver-form" onSubmit={handleSubmit} ref={formRef}>
       <RadioButton
@@ -97,6 +114,14 @@ const EditResolverForm = ({
             trigger()
           },
         })}
+      />
+      <Spacer $height="4" />
+      <RadioButton
+        label={namesysResolverLabel}
+        value="namesys"
+        data-testid="namesys-resolver-radio"
+        disabled={isResolverAddressNameSys}
+        {...register('resolverChoice')}
       />
       <Spacer $height="4" />
       <RadioButton

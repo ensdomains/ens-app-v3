@@ -9,7 +9,7 @@ import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledBu
 import RecordItem from '@app/components/RecordItem'
 import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { NAMESYS_RESOLVERS, RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 import { TabWrapper } from '../../../TabWrapper'
 
@@ -87,15 +87,19 @@ const Resolver = ({
   }
 
   const resolverAddressIndex = RESOLVER_ADDRESSES[`${chainId}`]?.indexOf(resolverAddress ?? '')
+  const isNameSysResolver = resolverAddress === NAMESYS_RESOLVERS[`${chainId}`][0]
   const [resolverAddressType, tone] = useMemo(() => {
     if (resolverAddressIndex === -1) {
+      if (isNameSysResolver) {
+        return ['namesys', 'greySecondary'] as const
+      }
       return ['custom', 'greySecondary'] as const
     }
     if (resolverAddressIndex === 0) {
       return ['latest', 'greenSecondary'] as const
     }
     return ['outdated', 'redSecondary'] as const
-  }, [resolverAddressIndex])
+  }, [resolverAddressIndex, isNameSysResolver])
 
   return (
     <Container $isCached={isCachedData}>

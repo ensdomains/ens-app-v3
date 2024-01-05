@@ -64,6 +64,8 @@ export const formatFullExpiry = (expiryDate?: Date) =>
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
   `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`
 
+export const makeNameSysLink = () => `https://namesys.xyz`
+
 export const isBrowser = !!(
   typeof window !== 'undefined' &&
   window.document &&

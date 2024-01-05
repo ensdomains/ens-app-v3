@@ -10,6 +10,7 @@ import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
 import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { NAMESYS_RESOLVERS } from '@app/utils/constants'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
@@ -187,6 +188,8 @@ export const RecordsTab = ({
     chainId,
   )
 
+  const isResolverAddressNameSys = resolverAddress === NAMESYS_RESOLVERS[`${chainId}`]?.[0]
+
   return (
     <TabWrapper $isCached={isCached} data-testid="records-tab">
       <AllRecords>
@@ -281,7 +284,11 @@ export const RecordsTab = ({
             ) : (
               <DisabledButtonWithTooltip
                 buttonId="records-tab-edit-records-disabled"
-                content={t('details.tabs.records.editRecordsDisabled')}
+                content={t(
+                  isResolverAddressNameSys
+                    ? 'details.tabs.records.editRecordsNameSys'
+                    : 'details.tabs.records.editRecordsDisabled',
+                )}
                 buttonText={t('details.tabs.records.editRecords')}
                 mobileWidth={150}
                 mobileButtonWidth="initial"

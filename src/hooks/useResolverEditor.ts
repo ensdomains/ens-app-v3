@@ -3,10 +3,10 @@ import { useForm } from 'react-hook-form'
 
 import { useChainId } from '@app/hooks/useChainId'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { NAMESYS_RESOLVERS, RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 type FormData = {
-  resolverChoice: 'latest' | 'custom'
+  resolverChoice: 'latest' | 'custom' | 'namesys'
   address: string
 }
 
@@ -19,6 +19,8 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
   const chainId = useChainId()
   const lastestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
   const isResolverAddressLatest = resolverAddress === lastestResolverAddress
+  const namesysResolverAddress = NAMESYS_RESOLVERS[`${chainId}`]?.[0]
+  const isResolverAddressNameSys = resolverAddress === namesysResolverAddress
 
   const { register, formState, handleSubmit, reset, trigger, watch, getFieldState, setValue } =
     useForm<FormData>({
@@ -30,15 +32,18 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
     if (isResolverAddressLatest) reset({ resolverChoice: 'custom', address: '' })
   }, [isResolverAddressLatest, reset])
 
-  const resolverChoice: 'latest' | 'custom' = watch('resolverChoice')
-  const customResolver = watch('address')
+  const resolverChoice: 'latest' | 'custom' | 'namesys' = watch('resolverChoice')
+  const customResolver = resolverChoice === 'namesys' ? namesysResolverAddress : watch('address')
 
   const { errors: resolverWarnings } = useResolverHasInterfaces(
     ['IAddrResolver', 'ITextResolver', 'IContentHashResolver'],
     customResolver,
-    resolverChoice !== 'custom',
+    resolverChoice === 'latest',
     {
-      fallbackMsg: 'Cannot determine if address supports resolver methods',
+      fallbackMsg:
+        resolverChoice === 'namesys'
+          ? 'NameSys records can only be updated on NameSys client'
+          : 'Cannot determine if address supports resolver methods',
     },
   )
 
@@ -51,12 +56,15 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
     if (choice === 'custom') {
       newResolver = address
     }
+    if (choice === 'namesys') {
+      newResolver = namesysResolverAddress
+    }
     if (!newResolver) return
     callback(newResolver)
   }
 
   const hasWarnings =
-    resolverChoice === 'custom' &&
+    ['custom', 'namesys'].includes(resolverChoice) &&
     customResolver?.length === 42 &&
     resolverWarnings &&
     resolverWarnings.length > 0
@@ -66,6 +74,7 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
   return {
     lastestResolverAddress,
     isResolverAddressLatest,
+    isResolverAddressNameSys,
     register,
     handleSubmit: handleSubmit(handleResolverSubmit),
     reset,

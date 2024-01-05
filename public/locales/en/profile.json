@@ -205,6 +205,7 @@
         "custom": "Custom",
         "latest": "Latest",
         "outdated": "Outdated",
+        "namesys": "NameSys",
         "version": "Version",
         "etherscan": "Etherscan"
       },
@@ -290,7 +291,8 @@
         "editRecords": "Edit Records",
         "noAbi": "No ABI",
         "abi": "ABI",
-        "editRecordsDisabled": "Current resolver is not compatible with wrapped names"
+        "editRecordsDisabled": "Current resolver is not compatible with wrapped names",
+        "editRecordsNameSys": "Records can be only be updated on NameSys client"
       },
       "subnames": {
         "label": "Subnames",

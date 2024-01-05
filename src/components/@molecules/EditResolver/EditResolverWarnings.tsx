@@ -13,7 +13,9 @@ const EditResolverWarnings = ({ hasWarnings, resolverWarnings }: Props) => {
       <Banner alert="warning">
         <ul>
           {resolverWarnings?.map((message) => (
-            <li key={message}>- {message}</li>
+            <li key={message}>
+              {resolverWarnings.length < 2 ? '' : '-'} {message}
+            </li>
           ))}
         </ul>
       </Banner>
