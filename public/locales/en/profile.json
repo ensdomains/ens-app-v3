@@ -372,7 +372,7 @@
         "noAbi": "No ABI",
         "abi": "ABI",
         "editRecordsDisabled": "Current resolver is not compatible with wrapped names",
-        "editRecordsNameSys": "Records can be only be updated on NameSys client"
+        "editRecordsNameSys": "Records can only be updated on NameSys client"
       },
       "subnames": {
         "label": "Subnames",
