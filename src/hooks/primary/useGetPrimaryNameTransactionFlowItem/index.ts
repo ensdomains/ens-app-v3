@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import type { Address } from 'viem'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import type { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 import { makeIntroItem } from '@app/transaction-flow/intro/index'
@@ -40,7 +39,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
 
   const _enabled = (options.enabled ?? true) && !!address
 
-  const reverseRegistryName = useReverseRegistryName({ enabled: _enabled })
+  const reverseRegistryName = useReverseRegistryName({ address: address!, enabled: _enabled })
   const latestResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
   const { isLoading, isFetching } = reverseRegistryName
@@ -55,7 +54,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
 
       if (
         checkRequiresSetPrimaryNameTransaction({
-          reverseRegistryName: reverseRegistryName.data?.name || '',
+          reverseRegistryName: reverseRegistryName.data || '',
           name,
         })
       ) {

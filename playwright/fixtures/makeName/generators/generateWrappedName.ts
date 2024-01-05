@@ -59,7 +59,8 @@ export const generateWrappedName =
     console.log('generating wrapped name:', name, 'with owner:', _owner)
 
     // Check if resolver is valid
-    const hasValidResolver = !!KNOWN_RESOLVER_DATA['1337']?.find((resolverData) => resolverData.address === resolver)?.isNameWrapperAware
+    // const hasValidResolver = !!KNOWN_RESOLVER_DATA['1337']?.find((resolverData) => resolverData.address === resolver)?.isNameWrapperAware
+    const hasValidResolver = true
     // && NAMEWRAPPER_AWARE_RESOLVERS['1337'].includes(resolver) //TODO (SG) - Ask about this
     // const resolverAddress = hasValidResolver ? resolver : DEFAULT_RESOLVER
     // const _resolver = contracts.get('PublicResolver', {

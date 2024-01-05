@@ -5,7 +5,7 @@ import { namehash } from '@ensdomains/ensjs/utils'
 
 // import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
-import { testClient, walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import { testClient, waitForTransaction, walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { labelhash } from 'viem'
 
@@ -296,10 +296,11 @@ test.describe('profile', () => {
 
     // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
     // await reverseRegistrar.setName(subname)
-    await setPrimaryName( walletClient, {
+    const tx = await setPrimaryName( walletClient, {
       name: subname,
       account: createAccounts().getAddress('user') as `0x${string}`,
     })
+    await waitForTransaction(tx)
 
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')

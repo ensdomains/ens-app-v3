@@ -1,18 +1,14 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import Client, { Address, labelhash, namehash } from 'viem'
-import { useAccount, useContractRead, useQuery } from 'wagmi'
+import { Address, namehash } from 'viem'
+import { useQuery } from 'wagmi'
 
-import {
-  getChainContractAddress,
-  publicResolverAbiSnippet,
-  registryResolverSnippet,
-} from '@ensdomains/ensjs/contracts'
+import { getChainContractAddress, registryResolverSnippet } from '@ensdomains/ensjs/contracts'
 
 import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PublicClientWithChain, QueryConfig } from '@app/types'
 
-const pubblicResolverNameSnippet = [
+const publicResolverNameSnippet = [
   {
     constant: true,
     inputs: [
@@ -38,6 +34,10 @@ type UseReverseRegistryNameParameters = {
   address: Address
 }
 
+type UseReverseRegistryNameReturnType = string
+
+type UseReverseRegistryNameConfig = QueryConfig<UseReverseRegistryNameReturnType, Error>
+
 type QueryKey<TParams extends UseReverseRegistryNameParameters> = CreateQueryKey<
   TParams,
   'getReverseRegistryName',
@@ -47,47 +47,52 @@ type QueryKey<TParams extends UseReverseRegistryNameParameters> = CreateQueryKey
 export const getReverseRegistryNameQueryFn = async <
   TParams extends UseReverseRegistryNameParameters,
 >({
-  queryKey: [{ address }, chainId],
+  queryKey: [{ address }, chainId, _address],
 }: QueryFunctionContext<QueryKey<TParams>>) => {
   if (!address) throw new Error('address is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+  console.log(address, _address)
+  try {
+    const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
 
-  const reverseRegistryHash = namehash(`${address.slice(2)}.addr.reverse`)
+    const reverseRegistryHash = namehash(`${address.toLowerCase().slice(2)}.addr.reverse`)
 
-  const resolverAddress = await publicClient.readContract({
-    address: getChainContractAddress({ client: publicClient, contract: 'ensRegistry' }),
-    functionName: 'resolver',
-    abi: registryResolverSnippet,
-    args: [namehash('test123.eth')],
-  })
-  const name = await publicClient.readContract({
-    address: resolverAddress,
-    abi: pubblicResolverNameSnippet,
-    functionName: 'name',
-    args: [],
-  })
+    const resolverAddress = await publicClient.readContract({
+      address: getChainContractAddress({ client: publicClient, contract: 'ensRegistry' }),
+      functionName: 'resolver',
+      abi: registryResolverSnippet,
+      args: [reverseRegistryHash],
+    })
+    console.log(resolverAddress)
 
-  return name
+    const name = await publicClient.readContract({
+      address: resolverAddress,
+      abi: publicResolverNameSnippet,
+      functionName: 'name',
+      args: [reverseRegistryHash],
+    })
+    console.log(name)
+
+    return name as string
+  } catch (e) {
+    return ''
+  }
 }
 
-type Options = {
-  enabled?: boolean
-}
-
-export const useReverseRegistryName = ({ enabled }: Options = {}) => {
+export const useReverseRegistryName = <TParams extends UseReverseRegistryNameParameters>({
+  address,
+  enabled,
+}: TParams & UseReverseRegistryNameConfig) => {
   const _enabled = enabled ?? true
 
-  const account = useAccount()
-
   const queryKey = useQueryKeyFactory({
-    params: { address: account?.address },
+    params: { address },
     functionName: 'getReverseRegistryName',
     queryDependencyType: 'standard',
   })
 
   return useQuery(queryKey, getReverseRegistryNameQueryFn, {
-    enabled: _enabled && !!account?.address,
+    enabled: _enabled && !!address,
     retryOnMount: true,
   })
 }
