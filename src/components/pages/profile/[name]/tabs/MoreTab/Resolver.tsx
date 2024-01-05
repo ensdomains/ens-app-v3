@@ -7,6 +7,7 @@ import { Tag, Typography, mq } from '@ensdomains/thorin'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { NAMESYS_RESOLVERS, RESOLVER_ADDRESSES } from '@app/utils/constants'
@@ -55,7 +56,7 @@ const InnerHeading = styled.div(
     gap: ${theme.space['4']};
 
     & > div:first-of-type {
-      font-size: ${theme.fontSizes.headingThree};
+      font-size: ${theme.fontSizes.headingFour};
       font-weight: ${theme.fontWeights.bold};
     }
   `,
@@ -69,14 +70,15 @@ const Resolver = ({
   isCachedData,
 }: {
   name: string
+  isWrapped: boolean
   canEditResolver: boolean
   canEdit: boolean
   resolverAddress: string | undefined
   isCachedData: boolean
 }) => {
   const { t } = useTranslation('profile')
-
   const chainId = useChainId()
+  const hasGlobalError = useHasGlobalError()
 
   const { prepareDataInput } = useTransactionFlow()
   const showEditResolverInput = prepareDataInput('EditResolver')
@@ -105,12 +107,12 @@ const Resolver = ({
     <Container $isCached={isCachedData}>
       <HeadingContainer>
         <InnerHeading>
-          <Typography color="text" weight="bold">
+          <Typography color="text" fontVariant="headingFour" weight="bold">
             {t('tabs.more.resolver.label')}
           </Typography>
           <Tag colorStyle={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
         </InnerHeading>
-        {canEdit && (
+        {canEdit && !hasGlobalError && (
           <>
             {canEditResolver ? (
               <button

@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
+import { useIntercom } from 'react-use-intercom'
 import styled, { css } from 'styled-components'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
@@ -13,21 +14,21 @@ import { Navigation } from './Navigation'
 
 const Container = styled.div(
   ({ theme }) => css`
-    padding: ${theme.space['4']};
+    --padding-size: ${theme.space['4']};
+    padding: var(--padding-size);
     display: flex;
     flex-gap: ${theme.space['4']};
     gap: ${theme.space['4']};
     flex-direction: column;
     align-items: stretch;
     @supports (-webkit-touch-callout: none) {
-      width: calc(100% - ${theme.space['8']});
+      // hack for iOS/iPadOS Safari
+      // width should always be 100% - total padding
+      width: calc(100% - calc(var(--padding-size) * 2));
       box-sizing: content-box;
-      ${mq.sm.min(css`
-        width: calc(100% - ${theme.space['32']});
-      `)}
     }
     ${mq.sm.min(css`
-      padding: ${theme.space['8']};
+      --padding-size: ${theme.space['8']};
       gap: ${theme.space['6']};
       flex-gap: ${theme.space['6']};
     `)}
@@ -65,11 +66,23 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   const { switchNetwork } = useSwitchNetwork()
   const router = useRouter()
   const [error] = useErrorBoundary()
+  const { boot } = useIntercom()
+
+  useEffect(() => {
+    // Do not initialise with uid and email without implementing identity verification first
+    boot()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (
       currentChain &&
-      !(currentChain?.id === 1 || currentChain?.id === 5 || currentChain?.id === 1337)
+      !(
+        currentChain?.id === 1 ||
+        currentChain?.id === 5 ||
+        currentChain?.id === 11155111 ||
+        currentChain?.id === 1337
+      )
     ) {
       switchNetwork?.(1)
       router.push('/unsupportedNetwork')

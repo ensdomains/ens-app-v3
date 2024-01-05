@@ -4,6 +4,7 @@ import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
+import { IntercomProvider } from 'react-use-intercom'
 import { ThemeProvider, createGlobalStyle, keyframes } from 'styled-components'
 import { WagmiConfig } from 'wagmi'
 
@@ -15,12 +16,16 @@ import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
-import { SyncProvider } from '@app/utils/SyncProvider'
+import { GlobalErrorProvider } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
+import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
+import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 import { setupAnalytics } from '@app/utils/analytics'
 import { chains, wagmiClient } from '@app/utils/query'
 
 import i18n from '../i18n'
 import '../styles.css'
+
+const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 'eotmigir'
 
 const rainbowKitTheme: Theme = {
   ...lightTheme({
@@ -143,14 +148,20 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             <EnsProvider>
               <ThemeProvider theme={thorinLightTheme}>
                 <BreakpointProvider queries={breakpoints}>
-                  <GlobalStyle />
-                  <ThorinGlobalStyles />
-                  <SyncProvider>
-                    <TransactionFlowProvider>
-                      <Notifications />
-                      <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                    </TransactionFlowProvider>
-                  </SyncProvider>
+                  <IntercomProvider appId={INTERCOM_ID}>
+                    <GlobalStyle />
+                    <ThorinGlobalStyles />
+                    <GlobalErrorProvider>
+                      <SyncProvider>
+                        <TransactionFlowProvider>
+                          <SyncDroppedTransaction>
+                            <Notifications />
+                            <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                          </SyncDroppedTransaction>
+                        </TransactionFlowProvider>
+                      </SyncProvider>
+                    </GlobalErrorProvider>
+                  </IntercomProvider>
                 </BreakpointProvider>
               </ThemeProvider>
             </EnsProvider>

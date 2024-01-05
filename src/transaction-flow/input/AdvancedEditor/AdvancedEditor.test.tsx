@@ -13,7 +13,7 @@ import {
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { Profile } from '@app/types'
-import { formSafeKey } from '@app/utils/editor'
+import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
 
 import AdvancedEditor from './AdvancedEditor-flow'
 
@@ -41,7 +41,7 @@ const mockProfileData = {
         {
           key: 'com.discord',
           type: 'text',
-          value: 'test#1234',
+          value: 'test',
         },
         {
           key: 'com.reddit',
@@ -95,6 +95,24 @@ const mockProfileData = {
           addr: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH',
         },
       ],
+      abi: {
+        data: JSON.stringify([
+          {
+            inputs: [
+              {
+                internalType: 'string',
+                type: 'string',
+                name: 'name',
+              },
+            ],
+            stateMutability: 'nonpayable',
+            outputs: [],
+            name: 'setName',
+            type: 'function',
+          },
+        ]),
+        contentType: 1,
+      },
     },
     resolverAddress: '0x0',
     isMigrated: true,
@@ -207,6 +225,36 @@ describe('AdvancedEditor', () => {
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.texts.length).toBe(1)
   })
 
+  it('should submit key/value when new text with special characters is added', async () => {
+    render(
+      <AdvancedEditor dispatch={mockDispatch} onDismiss={() => {}} data={{ name: 'test.eth' }} />,
+    )
+    const addButton = await screen.findByTestId('add-record-button')
+    const addInput = within(addButton).getByTestId('add-record-button-input')
+    await userEvent.type(addInput, "'")
+    const addRecordBtn = await within(addButton).findByText('action.add')
+    await userEvent.click(addRecordBtn)
+
+    const newInput = await screen.findByTestId("record-input-'")
+    await userEvent.type(within(newInput).getByTestId('record-input-input'), 'testValue')
+
+    const submitBtn = screen.getByText('action.save')
+    await waitFor(() => {
+      expect(submitBtn).not.toHaveAttribute('disabled')
+    })
+    fireEvent.click(submitBtn)
+    fireEvent.submit(screen.getByTestId('advanced-editor'))
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalled()
+    })
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.texts[0]).toEqual({
+      key: "'",
+      value: 'testValue',
+    })
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.texts.length).toBe(1)
+  })
+
   it('should submit key with empty string in an existing address record is deleted', async () => {
     render(
       <AdvancedEditor dispatch={mockDispatch} onDismiss={() => {}} data={{ name: 'test.eth' }} />,
@@ -230,7 +278,7 @@ describe('AdvancedEditor', () => {
     })
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes[0]).toEqual({
       key: 'ETH',
-      value: '0x0000000000000000000000000000000000000000',
+      value: '',
     })
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes.length).toBe(1)
   })
@@ -369,10 +417,34 @@ describe('AdvancedEditor', () => {
       await userEvent.click(tabEl)
 
       for (const { label, value } of records) {
-        const record = await screen.findByTestId(`record-input-${label}`)
+        const record = await screen.findByTestId(`record-input-${convertFormSafeKey(label)}`)
         const recordInput = await within(record).getByTestId('record-input-input')
         expect(recordInput).toHaveValue(value)
       }
     }
+  })
+
+  it('should allow removing abi', async () => {
+    render(
+      <AdvancedEditor dispatch={mockDispatch} onDismiss={() => {}} data={{ name: 'test.eth' }} />,
+    )
+    const tab = await screen.findByTestId('other-tab')
+    fireEvent.click(tab)
+
+    const abiInput = await screen.findByLabelText('advancedEditor.tabs.other.abi.label')
+    await userEvent.clear(abiInput)
+
+    const submitBtn = screen.getByText('action.save')
+    await waitFor(() => {
+      expect(submitBtn).not.toHaveAttribute('disabled')
+    })
+    await userEvent.click(submitBtn)
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalled()
+    })
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.abi).toEqual({
+      data: '',
+    })
   })
 })

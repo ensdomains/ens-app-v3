@@ -1,6 +1,9 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-import type { JsonRpcSigner } from '@ethersproject/providers'
+import { BigNumber } from '@ethersproject/bignumber'
+import { hexValue } from '@ethersproject/bytes'
+import type { FallbackProvider, JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
 import { toUtf8String } from '@ethersproject/strings'
+import { Provider } from '@wagmi/core'
+import type { PopulatedTransaction } from 'ethers'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -17,6 +20,7 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainName } from '@app/hooks/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
+import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { transactions } from '@app/transaction-flow/transaction'
 import {
   ManagedDialogPropsTwo,
@@ -28,8 +32,6 @@ import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
-
-const COMMIT_GAS_COST = 45000
 
 const BarContainer = styled.div(
   ({ theme }) => css`
@@ -115,6 +117,7 @@ const BarPrefix = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['2']} ${theme.space['4']};
     width: min-content;
+    white-space: nowrap;
     height: ${theme.space['9']};
     margin-right: -1px;
 
@@ -165,6 +168,14 @@ type TxError = {
   method: string
   transaction: object
   error: Error
+}
+
+type AccessListResponse = {
+  accessList: {
+    address: string
+    storageKeys: string[]
+  }[]
+  gasUsed: string
 }
 
 const SUPPORTED_REQUEST_ERRORS = ['INSUFFICIENT_FUNDS', 'UNPREDICTABLE_GAS_LIMIT']
@@ -260,6 +271,92 @@ export const uniqueTransactionIdentifierGenerator = (
   data: transactionData,
 })
 
+export const transactionSuccessHandler =
+  (dependencies: {
+    provider: Provider
+    actionName: ManagedDialogPropsTwo['actionName']
+    txKey: string | null
+    request: PopulatedTransaction | undefined
+    addRecentTransaction: ReturnType<typeof useAddRecentTransaction>
+    dispatch: Dispatch<TransactionFlowAction>
+    isSafeApp: ReturnType<typeof useIsSafeApp>['data']
+  }) =>
+  async (tx: any) => {
+    const { provider, actionName, txKey, request, addRecentTransaction, dispatch, isSafeApp } =
+      dependencies
+    let transactionData = null
+    try {
+      // If using private mempool, this won't error, will return null
+      transactionData = await provider.getTransaction(tx.hash)
+    } catch (e) {
+      console.error('Failed to get transaction info')
+    }
+
+    addRecentTransaction({
+      ...transactionData,
+      hash: tx.hash,
+      action: actionName,
+      key: txKey!,
+      input: request?.data,
+      timestamp: Math.floor(Date.now() / 1000),
+      isSafeTx: !!isSafeApp,
+      searchRetries: 0,
+    })
+    dispatch({ name: 'setTransactionHash', payload: tx.hash })
+  }
+
+export const registrationGasFeeModifier = (gasLimit: BigNumber, transactionName: string) =>
+  // this addition is arbitrary, something to do with a gas refund but not 100% sure
+  transactionName === 'registerName' ? gasLimit.add(5000) : gasLimit
+
+export const calculateGasLimit = async ({
+  isSafeApp,
+  provider,
+  txWithZeroGas,
+  transactionName,
+  signer,
+}: {
+  isSafeApp: string | boolean | undefined
+  provider: FallbackProvider
+  txWithZeroGas: {
+    maxFeePerGas: string
+    maxPriorityFeePerGas: string
+    value?: BigNumber
+  }
+  transactionName: string
+  signer: ReturnType<typeof useSigner>['data']
+}) => {
+  if (isSafeApp) {
+    const accessListResponse: AccessListResponse = await (
+      provider.providerConfigs[0].provider as JsonRpcProvider
+    ).send('eth_createAccessList', [
+      {
+        ...txWithZeroGas,
+        value: txWithZeroGas.value ? hexValue(txWithZeroGas.value.add(1000000)) : '0x0',
+      },
+      'latest',
+    ])
+
+    return {
+      gasLimit: registrationGasFeeModifier(
+        BigNumber.from(accessListResponse.gasUsed),
+        transactionName,
+      ),
+      accessList: accessListResponse.accessList,
+    }
+  }
+
+  if (!signer) {
+    throw new Error('Signer not found')
+  }
+
+  const gasEstimate = await signer.estimateGas(txWithZeroGas)
+  return {
+    gasLimit: registrationGasFeeModifier(gasEstimate, transactionName),
+    accessList: undefined,
+  }
+}
+
 export const TransactionStageModal = ({
   actionName,
   currentStep,
@@ -286,6 +383,9 @@ export const TransactionStageModal = ({
     [recentTransactions, transaction.hash],
   )
 
+  const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
+  const provider = useProvider<FallbackProvider>()
+
   const uniqueTxIdentifiers = useMemo(
     () =>
       uniqueTransactionIdentifierGenerator(
@@ -308,10 +408,11 @@ export const TransactionStageModal = ({
     () =>
       !!transaction &&
       !!signer &&
+      !safeAppStatusLoading &&
       !!ens &&
       !(stage === 'sent' || stage === 'complete') &&
       isUniquenessDefined,
-    [transaction, signer, ens, stage, isUniquenessDefined],
+    [transaction, signer, safeAppStatusLoading, ens, stage, isUniquenessDefined],
   )
 
   const queryKeys = useQueryKeys()
@@ -329,16 +430,25 @@ export const TransactionStageModal = ({
         transaction.data,
       )
 
-      let gasLimit = await signer!.estimateGas(populatedTransaction)
-
-      if (transaction.name === 'registerName') {
-        gasLimit = gasLimit.add(BigNumber.from(COMMIT_GAS_COST))
+      const txWithZeroGas = {
+        ...populatedTransaction,
+        maxFeePerGas: '0x0',
+        maxPriorityFeePerGas: '0x0',
       }
+
+      const { gasLimit, accessList } = await calculateGasLimit({
+        isSafeApp,
+        provider,
+        txWithZeroGas,
+        signer,
+        transactionName: transaction.name,
+      })
 
       return {
         ...populatedTransaction,
         to: populatedTransaction.to as `0x${string}`,
         gasLimit,
+        accessList,
       }
     },
     {
@@ -359,14 +469,15 @@ export const TransactionStageModal = ({
   } = useSendTransaction({
     mode: 'prepared',
     request,
-    onSuccess: (tx) => {
-      addRecentTransaction({
-        hash: tx.hash,
-        action: actionName,
-        key: txKey!,
-      })
-      dispatch({ name: 'setTransactionHash', payload: tx.hash })
-    },
+    onSuccess: transactionSuccessHandler({
+      provider,
+      actionName,
+      txKey,
+      request,
+      addRecentTransaction,
+      dispatch,
+      isSafeApp,
+    }),
   })
 
   const FilledDisplayItems = useMemo(
@@ -480,8 +591,6 @@ export const TransactionStageModal = ({
     }
     return 'inProgress'
   }, [stage])
-
-  const provider = useProvider()
 
   const { data: upperError } = useQuery(
     useQueryKeys().transactionStageModal.transactionError(transaction.hash),

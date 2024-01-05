@@ -7,8 +7,8 @@
 - "name": "名称". 一般统一译为 "名称" 而非 "名字"、"域名"。
 - "subname": "子名称". 不同于 "subdomain"，这里的 "subname" 译为 "子名称" 更合适。
 - "parent", "parent name": "父名称"
-- "primary name": "主名"
-- "primary ENS name": "ENS 主名"
+- "primary name": "主名称"
+- "primary ENS name": "ENS 主名称"
 - "profile": "个人资料"
 - "you": "您"
 - "your": "您的"
@@ -30,6 +30,7 @@
 - "confirm": "确认". 通常译作 "确认"，而没有使用 "确定"。
 - "remove": "移除"
 - "delete": "删除"
+- "clear": "清除"
 - "selected": "选中项"
 - "gas": "网络费". Metamask 中的译文为 "燃料"。
 - "sign": "签名"
@@ -40,6 +41,8 @@
 - "wrap": "包装"
 - "unwrap": "解除包装"
 - "NameWrapper": "名称包装器". 这里特指名称包装器这一智能合约。
+- "emancipated": "已解放"
+- "locked: "已锁定"
 - "grant": "授权"
 - "fuses": "保险丝"
 - "custom": "自定义"

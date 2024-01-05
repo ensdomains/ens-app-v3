@@ -106,20 +106,20 @@ const AddressValue = ({ value }: { value: string }) => {
 
   const AddressTypography = useMemo(
     () =>
-      primary.name ? (
+      primary.data?.name ? (
         <AddressSubtitle color="grey">{shortenAddress(value)}</AddressSubtitle>
       ) : (
         <ValueTypography fontVariant="bodyBold">{shortenAddress(value)}</ValueTypography>
       ),
-    [primary.name, value],
+    [primary.data?.name, value],
   )
 
   return (
     <ValueWithAvatarContainer>
       <InnerValueWrapper>
-        {primary.name && (
+        {primary.data?.name && (
           <ValueTypography fontVariant="bodyBold" color="text">
-            {primary.beautifiedName}
+            {primary.data?.beautifiedName}
           </ValueTypography>
         )}
         {AddressTypography}
@@ -127,7 +127,7 @@ const AddressValue = ({ value }: { value: string }) => {
       <AvatarWrapper>
         <AvatarWithZorb
           address={value}
-          name={primary.name || undefined}
+          name={primary.data?.name}
           label={`${value}-avatar`}
           network={network}
         />

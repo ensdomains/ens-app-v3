@@ -18,8 +18,8 @@
     "pricing": {
       "insufficientBalance": "余额不足",
       "multipleYearsMessage": "一次续期数年可以避免每年进行交易，从而节省网络成本。",
-      "primaryName": "作为主名使用",
-      "primaryNameMessage": "把您的地址关联到该名称，这样在连接到 dApp 时，就可以将它作为您的个人资料显示出来。每个地址只能有一个主名。",
+      "primaryName": "作为主名称使用",
+      "primaryNameMessage": "把您的地址关联到该名称，这样在连接到 dApp 时，就可以将它作为您的个人资料显示出来。每个地址只能有一个主名称。",
       "premium": {
         "heading": "该名称存在一个临时溢价",
         "subheading": "为了给刚过期的名称提供公平的注册机会，溢价从 1 亿美元开始，在 21 天内逐步降至 0 美元。您可以在下面利用日期计算溢价。",
@@ -60,12 +60,16 @@
             "items": {
               "com.twitter": "Twitter",
               "com.github": "GitHub",
-              "com.discord": "Discord"
+              "com.discord": "Discord",
+              "org.telegram": "Telegram",
+              "email": "Email"
             },
             "placeholder": {
               "com.twitter": "例如 ensdomains",
               "com.github": "例如 ensdomains",
-              "com.discord": "例如 alisha.eth#0001"
+              "com.discord": "例如 nickjohnson",
+              "org.telegram": "例如 nicksdjohnson",
+              "email": "例如 hello@example.com"
             }
           },
           "address": {
@@ -86,6 +90,7 @@
             "label": "网站",
             "items": {
               "ipfs": "IPFS",
+              "ipns": "IPNS",
               "swarm": "Swarm",
               "onion": "Onion",
               "skynet": "Skynet",
@@ -169,7 +174,9 @@
       "failedMoonpayTransaction": "您的 Moonpay 交易失败。请重试或选择 “以太坊” 支付方式。",
       "ethereum": "以太坊",
       "processing": "处理中",
-      "poweredBy": "技术支持来自"
+      "poweredBy": "技术支持来自",
+      "moonpayModalHeader": "MoonPay 结账",
+      "moonpayTestCard": "测试卡详细信息"
     },
     "transactions": {
       "heading": "接近完成",
@@ -178,6 +185,12 @@
       "wait": "等待",
       "transactionFailed": "交易失败",
       "transactionProgress": "交易正在处理"
+    },
+    "cancelRegistration": {
+      "heading": "您的交易将会丢失",
+      "contentOne": "返回将重置您的第一次交易。如果您返回，则需要再次完成交易并支付相关费用。",
+      "contentTwo": "确定继续吗？",
+      "footer": "重置交易并返回"
     }
   }
 }

@@ -34,6 +34,10 @@ let nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/legacyFavourites',
+        destination: '/legacyfavourites',
+      },
+      {
         source: '/my/profile',
         destination: '/profile?connected=true',
       },
@@ -93,6 +97,9 @@ let nextConfig = {
                 return false
               }
               if (/\.yalc\/@ensdomains\/thorin/.test(excludePath)) {
+                return true
+              }
+              if (/\.yalc\/@ensdomains\/ensjs/.test(excludePath)) { 
                 return true
               }
               return /node_modules/.test(excludePath)
@@ -160,7 +167,36 @@ let nextConfig = {
       'src/stub.js',
     )
 
+    if (!options.isServer && !options.dev) {
+      const originalEntry = config.entry
+      config.entry = async (...args) => {
+        const entryConfig = await originalEntry(...args)
+        return {
+          ...entryConfig,
+          firefoxMetamask: {
+            import: [
+              './src/utils/metamask/firefox.ts',
+              '@metamask/inpage-provider',
+              '@metamask/post-message-stream',
+            ],
+            filename: 'static/chunks/initialise-metamask.js',
+            chunkLoading: false,
+          },
+        }
+      }
+
+      const originalSplitChunks = config.optimization.splitChunks
+      config.optimization.splitChunks = {
+        ...originalSplitChunks,
+        chunks: (chunk) => !/^(firefoxMetamask|polyfills|main|pages\/_app)$/.test(chunk.name),
+      }
+    }
+
     return config
+  },
+  eslint: {
+    // next lint will ignore presets if not stated
+    dirs: ['src', 'src/components', 'src/pages', 'src/layouts', 'playwright', 'e2e'],
   },
   ...(process.env.NEXT_PUBLIC_IPFS
     ? {

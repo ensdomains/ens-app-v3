@@ -3,6 +3,8 @@
   "description": "您在 web3 上的身份，一个名称就能解析到您所有的加密地址和您的去中心化网站。",
   "loading": "加载中",
   "unsupportedNetwork": "不支持的网络",
+  "notFound": "404 未找到",
+  "etherscan": "Etherscan",
   "action": {
     "cancel": "取消",
     "change": "更改",
@@ -39,7 +41,10 @@
     "finish": "完成",
     "skip": "跳过",
     "changeNetwork": "更改网络",
-    "understand": "我了解"
+    "understand": "我了解",
+    "feedback": "反馈",
+    "enterEmail": "输入您的 Email",
+    "migrate": "迁移"
   },
   "unit": {
     "years_one": "{{count}} 年",
@@ -64,13 +69,17 @@
     "privacy": "隐私策略",
     "back": "返回",
     "oldApp": "旧版 ENS App",
+    "language": "语言",
+    "currency": "货币",
+    "ipfsApp": "IPFS ENS App",
+    "feedback": "反馈",
     "syncMessage": "正在进行网络同步，您在交易中更改的内容可能还看不到。"
   },
   "wallet": {
     "myProfile": "个人资料",
     "disconnect": "断开连接",
     "connect": "连接",
-    "noPrimaryName": "未设置主名",
+    "noPrimaryName": "未设置主名称",
     "viewProfile": "查看个人资料",
     "viewDetails": "查看详情",
     "register": "注册"
@@ -78,6 +87,7 @@
   "name": {
     "registered": "已注册",
     "expires": "到期时间",
+    "graceEnd": "宽限期结束",
     "noExpiry": "无限期",
     "expiry": "到期",
     "parent": "父名称",
@@ -89,6 +99,7 @@
     "notOwned": "未被持有",
     "manager": "管理员",
     "all": "所有名称",
+    "yourPrimaryName": "您的主名称",
     "expiresInYears_one": "{{count}} 年后到期",
     "expiresInYears_other": "{{count}} 年后到期",
     "expiresInMonths_one": "{{count}} 个月后到期",
@@ -122,7 +133,8 @@
     "send": "发送",
     "transfer": "转移",
     "sendManager": "发送管理权",
-    "sendOwner": "发送所有权"
+    "sendOwner": "发送所有权",
+    "renew": "为 {{name}} 续期"
   },
   "address": {
     "label": "地址",
@@ -139,8 +151,24 @@
   },
   "errors": {
     "noResults": "未找到结果",
-    "invalidAddress": "无效地址",
-    "addressRequired": "请填写地址"
+    "emailRequired": "请填写 Email",
+    "emailInvalid": "Email 地址无效",
+    "invalidAddress": "地址无效",
+    "addressRequired": "请填写地址",
+    "indexingErrors": {
+      "title": "数据同步错误",
+      "message": "此数据可能已经过时了，请谨慎使用。",
+      "message_datetime": "此数据最后更新时间为 {{datetime}}，可能已过期，请谨慎使用。"
+    },
+    "networkError": {
+      "title": "数据同步错误",
+      "message": "此数据可能已经过时了，请谨慎使用。",
+      "blurb": "由于数据同步问题，此按钮暂时被禁用。"
+    },
+    "networkLatency": {
+      "title": "数据同步缓慢",
+      "message": "由于网络延迟问题，ENS app 的运行速度正在受到影响。"
+    }
   },
   "transaction": {
     "description": {
@@ -150,11 +178,14 @@
       "addSuccess": "添加成功",
       "sendName": "发送名称",
       "migrateProfile": "迁移个人资料",
+      "migrateProfileWithReset": "迁移个人资料",
       "migrateProfileWithSync": "迁移并更新个人资料",
+      "migrateProfileWithEthAddress": "迁移并更新 ETH 地址",
       "wrapName": "包装名称",
       "updateResolver": "更新解析器",
       "updateProfile": "更新个人资料",
-      "setPrimaryName": "设置主名",
+      "setPrimaryName": "设置主名称",
+      "resetPrimaryName": "移除主名称",
       "updateEthAddress": "更新 ETH 地址",
       "testSendName": "发送名称",
       "burnFuses": "烧毁权限",
@@ -168,19 +199,25 @@
       "clearRecords": "清除记录",
       "updateRecords": "更新记录",
       "transferName": "转移名称",
+      "transferSubname": "转移子名称",
       "changePermissions": "更改权限",
       "syncManager": "同步管理员",
-      "updateProfileRecords": "更新个人资料"
+      "updateProfileRecords": "更新个人资料",
+      "resetProfile": "重置个人资料",
+      "unwrapName": "将名称解除包装"
     },
     "info": {
       "sendName": "设置名称的管理员和注册人",
       "migrateProfile": "将现有记录设置到新的解析器上",
+      "migrateProfileWithReset": "将现有记录设置到新的解析器上",
       "migrateProfileWithSync": "将现有记录设置到新的解析器上",
-      "wrapName": "包装名称并设置新的解析器",
+      "migrateProfileWithEthAddress": "在新解析器上设置现有记录和 ETH 地址",
+      "wrapName": "包装该名称",
       "updateResolver": "将解析器更改为",
       "updateProfile": "更新现有解析器上的记录",
-      "setPrimaryName": "为您的地址设置主名",
+      "setPrimaryName": "为您的地址设置主名称",
       "updateEthAddress": "将该地址更新到 ETH 地址记录",
+      "updateEthAddressOnLatestResolver": "在最新的解析器上更新 ETH 地址",
       "testSendName": "设置该名称的管理员和注册人",
       "createSubname": "在该名称上创建子名称",
       "burnFuses": "烧毁选中的权限，直到名称过期",
@@ -210,7 +247,8 @@
       "subname": "子名称",
       "duration": "时长",
       "cost": "费用",
-      "update": "更新"
+      "update": "更新",
+      "resolver": "解析器"
     },
     "itemValue": {
       "records_one": "{{count}} 条记录",
@@ -268,6 +306,12 @@
         "gasLimit": "这笔交易的网络费限额不够高，请再试一次。"
       }
     },
+    "error": {
+      "request": {
+        "INSUFFICIENT_FUNDS": "钱包余额不足",
+        "UNPREDICTABLE_GAS_LIMIT": "发生未知错误"
+      }
+    },
     "viewEtherscan": "在 Etherscan 上查看",
     "viewMore": "查看详情"
   },
@@ -298,5 +342,9 @@
     "add": "添加",
     "placeholder": "选择一项",
     "empty": "未找到选项"
+  },
+  "testnetFaucet": {
+    "explanation": "{{ testnet }} 上的每个地址都可以申请 {{amount}} {{ ticker }} 来进行 ENS 管理器 app 或其他网络测试。",
+    "note": "它可能在几分钟后才能出现在你的钱包里。"
   }
 }

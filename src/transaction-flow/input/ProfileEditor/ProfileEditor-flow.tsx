@@ -18,11 +18,11 @@ import {
   profileToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -34,7 +34,7 @@ import { WrappedAvatarButton } from './WrappedAvatarButton'
 const Container = styled.form(({ theme }) => [
   css`
     width: 100%;
-    max-height: 600px;
+    max-height: min(80vh, 600px);
     display: flex;
     flex-direction: column;
     gap: ${theme.space['4']};
@@ -215,7 +215,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const resolverAddress = useContractAddress('PublicResolver')
 
-  const { status, isLoading: statusLoading } = useResolverStatus(name, profile, {
+  const resolverStatus = useResolverStatus(name, {
     skipCompare: false,
   })
 
@@ -246,10 +246,14 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
 
   useEffect(() => {
-    if (!statusLoading && !status?.hasLatestResolver && transactions.length === 0) {
+    if (
+      !resolverStatus.isLoading &&
+      !resolverStatus.data?.hasLatestResolver &&
+      transactions.length === 0
+    ) {
       setView('warning')
     }
-  }, [statusLoading, status?.hasLatestResolver, transactions.length])
+  }, [resolverStatus.isLoading, resolverStatus.data?.hasLatestResolver, transactions.length])
 
   useEffect(() => {
     if (!profileLoading && !profile?.isMigrated) {
@@ -272,7 +276,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     chainId,
   )
 
-  if (profileLoading || statusLoading || !isRecordsUpdated) return <TransactionLoader />
+  if (profileLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
   return (
     <Container
       data-testid="profile-editor"
@@ -396,12 +400,12 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           warning: (
             <ResolverWarningOverlay
               name={name}
-              status={status}
+              status={resolverStatus.data}
               isWrapped={isWrapped}
               hasOldRegistry={!profile?.isMigrated}
               resumable={resumable}
-              hasNoResolver={!status?.hasResolver}
-              hasMigratedProfile={status?.hasMigratedProfile}
+              hasNoResolver={!resolverStatus.data?.hasResolver}
+              hasMigratedProfile={resolverStatus.data?.hasMigratedProfile}
               latestResolver={resolverAddress!}
               oldResolver={profile?.resolverAddress!}
               dispatch={dispatch}

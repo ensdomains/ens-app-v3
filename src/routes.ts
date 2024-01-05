@@ -108,7 +108,7 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'feedback',
-    href: '#',
+    href: 'https://ens.canny.io/',
     label: 'navigation.feedback',
     disabled: false,
     connected: false,
@@ -173,6 +173,18 @@ export const routes: RouteItemObj[] = [
     onlyDropdown: true,
   },
 ]
+
+export const legacyFavouritesRoute: RouteItemObj = {
+  name: 'favourites',
+  href: '/legacyfavourites',
+  label: 'navigation.favourites',
+  disabled: false,
+  connected: false,
+  icon: {
+    inactive: HeartSVG,
+    active: HeartActiveSVG,
+  },
+}
 
 export const getRoute = (name: PublicRoute | ConnectedRoute): RouteItemObj =>
   routes.find((route) => route.name === name) as RouteItemObj

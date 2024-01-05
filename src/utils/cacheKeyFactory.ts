@@ -1,6 +1,7 @@
 import { useAccount } from 'wagmi'
 
 import type { uniqueTransactionIdentifierGenerator } from '@app/components/@molecules/TransactionDialogManager/stage/TransactionStageModal'
+import { ResolverInterfaceName } from '@app/constants/resolverInterfaceIds'
 import { useChainId } from '@app/hooks/useChainId'
 import type { RegistrationProps } from '@app/hooks/useEstimateRegistration'
 import type { TransactionItem } from '@app/transaction-flow/transaction'
@@ -12,6 +13,7 @@ export const useQueryKeys = () => {
   const globalKeys = [chainId, address]
 
   return {
+    graphBase: [...globalKeys, 'graph'],
     dogfood: (inputString?: string) => [...globalKeys, 'getAddr', inputString, 'dogfood'],
     transactionStageModal: {
       prepareTransaction: (
@@ -34,14 +36,21 @@ export const useQueryKeys = () => {
       avatar: (name: string | null | undefined) => [...globalKeys, 'getAvatar', name, 'avatar'],
       getNFTImage: (name: string | null | undefined) => [...globalKeys, name, 'getNFTImage'],
     },
-    basicName: (normalisedName: string, registrationStepIndex: number) => [
+    basicName: (normalisedName: string, skipGraph: boolean) => [
       ...globalKeys,
       'batch',
       'getOwner',
       'getExpiry',
       normalisedName,
-      registrationStepIndex,
+      skipGraph,
       'basicName',
+    ],
+    basicNameRoot: (normalisedName: string) => [
+      ...globalKeys,
+      'batch',
+      'getOwner',
+      'getExpiry',
+      normalisedName,
     ],
     beautifiedName: (name: string) => [...globalKeys, name, 'beautifiedName'],
     blockTimestamp: [...globalKeys, 'blockTimestamp'],
@@ -68,12 +77,28 @@ export const useQueryKeys = () => {
     getHistory: (name: string) => [...globalKeys, 'graph', name, 'getHistory'],
     getWrapperData: (name: string) => [...globalKeys, name, 'getWrapperData'],
     hasSubnames: (name: string) => [...globalKeys, 'graph', name, 'hasSubnames'],
+    subnames: (name: string, orderBy = '', orderDirection = '', search = '') => [
+      ...globalKeys,
+      'graph',
+      'getSubnames',
+      name,
+      orderBy,
+      orderDirection,
+      search,
+    ],
     namesFromAddress: (localAddress?: string) => [
       ...globalKeys,
       'graph',
       'getNames',
       localAddress,
       'namesFromAddress',
+    ],
+    namesFromResolvedAddress: (resolvedAddress?: string) => [
+      ...globalKeys,
+      'graph',
+      'getNames',
+      resolvedAddress,
+      'namesFromResolvedAddress',
     ],
     getPrice: (type: 'legacy' | 'new', names: string[]) => [
       ...globalKeys,
@@ -82,12 +107,13 @@ export const useQueryKeys = () => {
       'getPrice',
     ],
     primary: (localAddress: string) => [...globalKeys, 'getName', localAddress, 'primary'],
-    profile: (name: string, resolverAddress?: string) => [
+    profile: (name: string, resolverAddress?: string, skipGraph?: boolean) => [
       ...globalKeys,
       'graph',
       name,
       'profile',
       resolverAddress,
+      skipGraph,
     ],
     registrationDate: (name: string) => [...globalKeys, 'graph', name, 'registrationDate'],
     getResolver: (name: string) => [...globalKeys, name, 'getResolver'],
@@ -105,17 +131,31 @@ export const useQueryKeys = () => {
       interfaceNames,
       'resolverHasInterfaces',
     ],
+    resolverSupportsInterfaces: (resolverAddress: string, interfaces: ResolverInterfaceName[]) => [
+      ...globalKeys,
+      'resolverSupportsInterfaces',
+      'resolverAddress',
+      resolverAddress,
+      'interfaces',
+      interfaces.join('-'),
+    ],
     resolverIsAuthorized: (name: string, resolver: string) => [
       ...globalKeys,
       'resolverIsAuthorised',
       name,
       resolver,
     ],
+    registryResolver: (name: string) => [...globalKeys, name, 'registryResolver'],
     resolverStatus: (
       name: string,
       options: { skip?: boolean; skipCompare?: boolean },
       profileResolverAddress?: string,
     ) => [...globalKeys, name, { profileResolverAddress, options }, 'resolverStatus'],
+    reverseRegistryName: (accountAddress?: string) => [
+      ...globalKeys,
+      accountAddress,
+      'reverseRegistryName',
+    ],
     isSupportedTLD: (tld: string) => [...globalKeys, tld, 'isSupportedTLD'],
     validate: (input: string) => [...globalKeys, input, 'validate'],
     validateSubnameLabel: (validationName: string) => [
@@ -130,7 +170,11 @@ export const useQueryKeys = () => {
       localAddress,
       'wrapperApprovedForAll',
     ],
+    isSafeApp: (connectorId: string | undefined) => [...globalKeys, connectorId, 'isSafeApp'],
+    simpleSearch: (query: string) => [...globalKeys, 'simpleSearch', query],
+    simpleSearchBase: () => [...globalKeys, 'simpleSearch'],
     globalIndependent: {
+      isSupportedTLD: (tld: string) => [tld, 'isSupportedTLD'],
       zorb: (input: string, type: string, bg: string, fg: string, accent: string) => [
         input,
         type,

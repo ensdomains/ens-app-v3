@@ -53,9 +53,11 @@
           "noOptions": "No account options available",
           "placeholder": {
             "default": "Add username here",
-            "com.twitter": "e.g. ensdomains",
-            "com.github": "e.g. ensdomains",
-            "com.discord": "e.g. alisha.eth#0001"
+            "com.twitter": "e.g. nicksdjohnson",
+            "com.github": "e.g. arachnid",
+            "com.discord": "e.g. nickjohnson",
+            "org.telegram": "e.g. nicksdjohnson",
+            "email": "e.g. hello@example.com"
           }
         },
         "address": {
@@ -195,6 +197,22 @@
       "customLabel": "Custom resolver",
       "customPlaceholder": "Enter custom resolver address"
     },
+    "editRoles": {
+      "views": {
+        "main": {
+          "title": "Edit roles",
+          "noneSet": "None set"
+        },
+        "editRole": {
+          "title": "Change {{role}}",
+          "views": {
+            "intro": {
+              "current": "Current {{role}}"
+            }
+          }
+        }
+      }
+    },
     "extendNames": {
       "title_one": "Extend Name",
       "title_other": "Extend {{count}} Names",
@@ -294,6 +312,79 @@
     "deleteEmancipatedSubnameWarning": {
       "title": "This subname cannot be recreated",
       "message": "Deleting this subname will prevent it from being used or recreated until it has expired{{date}}. This cannot be undone because the parent control permissions have been revoked."
+    },
+    "deleteSubnameNotParentWarning": {
+      "title": "You cannot recreate this subname",
+      "message": "Only the {{ownershipTerm}} of the parent name (<b>{{parentOwner}}</b>) can recreate this subname. You will not be able to recreate this name yourself once it has been deleted."
+    },
+    "selectPrimaryName": {
+      "title": "Select a primary name",
+      "errors": {
+        "noNamesFound": "No names found",
+        "noEligibleNames": "No eligible names"
+      }
+    },
+    "resetPrimaryName": {
+      "title": "Remove Primary Name",
+      "description": "This name will no longer appear as the name for this address. However, transactions to this name will still resolve to this address unless you remove the ETH record."
+    },
+    "sendName": {
+      "views": {
+        "error": {
+          "title": "Cannot send name",
+          "description": "You do not have permission to send this name."
+        },
+        "search": {
+          "placeholder": "ENS name or Ethereum address",
+          "views": {
+            "error": {
+              "message": "Something went wrong. Please try again."
+            },
+            "intro": {
+              "message": "Search for an ENS name or ETH address"
+            },
+            "noResults": {
+              "message": "No results found"
+            }
+          }
+        },
+        "summary": {
+          "title": "Send name",
+          "fields": {
+            "name": {
+              "label": "Name",
+              "expires": "Expires {{date}}"
+            },
+            "recipient": "Recipient",
+            "options": {
+              "label": "Options",
+              "title": "Reset profile",
+              "description": "Remove all profile records. This costs additional gas."
+            },
+            "summary": {
+              "title": "Summary of changes",
+              "updates": {
+                "role": "Update {{role}} role to {{address}}",
+                "eth-record": "Update ETH record to {{address}}"
+              },
+              "remove": {
+                "profile": "Remove profile records"
+              }
+            }
+          }
+        },
+        "confirmation": {
+          "title": "Sending name",
+          "description": "Sending this name transfers ownership to the recipient, giving them your control.",
+          "warning": "You will lose the ability to modify, receive payments, or use it as your primary name.",
+          "learnMore": "Learn about sending names"
+        }
+      }
+    }, 
+    "syncManager": {
+      "title": "Sync manager",
+      "description": "Syncing the manager will make you the new manager of this name. The current manager <strong>({{manager}})</strong> will no longer be able to make changes.",
+      "warning": "Syncing the manager will also unwrap this name. This will burn the NFT and reset any permissions."
     }
   },
   "transaction": {
@@ -316,6 +407,24 @@
     "syncManager": {
       "description": "Syncing the manager will make you the new manager of this name. The current manager <b>({{manager}})</b> will no longer be able to make changes.",
       "wrappedWarning": "Syncing the manager will also unwrap this name. This will burn the NFT and reset any permissions."
+    },
+    "selectPrimaryName": {
+      "updateEthAddress": {
+        "title": "Update ETH address",
+        "description": "The ETH address for this name doesn't match this wallet. To use this as your primary name you will need to update the ETH address first."
+      },
+      "noResolver": {
+        "title": "No resolver set",
+        "description": "To use this as your primary name you will need to set a resolver and update the ETH address first."
+      },
+      "invalidResolver": {
+        "title": "Unauthorized resolver set",
+        "description": "To use this as your primary name you will need to set a valid resolver and update the ETH address first."
+      }
+    },
+    "multiStepSubnameDelete": {
+      "title": "Delete Subname",
+      "description": "Deleting this subname requires multiple transactions"
     }
   },
   "errors": {

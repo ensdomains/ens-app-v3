@@ -1,1 +1,6 @@
 @import url('/fonts/fonts.css');
+
+.intercom-lightweight-app,  #intercom-container {
+  position: relative;
+  z-index: 998 !important;
+}

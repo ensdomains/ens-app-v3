@@ -3,13 +3,12 @@ import { cleanup, mockFunction, render, screen, userEvent, waitFor, within } fro
 
 import { useNetwork } from 'wagmi'
 
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProfile } from '@app/hooks/useProfile'
-import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
@@ -43,7 +42,7 @@ const mockProfileData = {
         {
           key: 'com.discord',
           type: 'text',
-          value: 'test#1234',
+          value: 'test',
         },
         {
           key: 'com.reddit',
@@ -111,9 +110,7 @@ jest.mock('@app/hooks/useNameDetails')
 jest.mock('@app/utils/EnsProvider')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useContractAddress')
-jest.mock('@app/hooks/useResolverStatus')
-jest.mock('wagmi')
-jest.mock('@app/hooks/useChainId')
+jest.mock('@app/hooks/resolver/useResolverStatus')
 jest.mock('@app/hooks/useBasicName')
 jest.mock('@app/hooks/useProfile')
 jest.mock('@app/utils/cacheKeyFactory')
@@ -127,7 +124,6 @@ const mockUseNameDetails = mockFunction(useNameDetails)
 const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseResolverStatus = mockFunction(useResolverStatus)
 const mockUseNetwork = mockFunction(useNetwork)
-const mockUseChainId = mockFunction(useChainId)
 const mockUseBasicName = mockFunction(useBasicName)
 const mockUseProfile = mockFunction(useProfile)
 const mockUseQueryKeys = mockFunction(useQueryKeys)
@@ -174,7 +170,7 @@ export function setupIntersectionObserverMock({
 }
 
 const makeResolverStatus = (keys?: string[], isLoading = false) => ({
-  status: {
+  data: {
     hasResolver: false,
     hasLatestResolver: false,
     isAuthorized: false,
@@ -217,7 +213,6 @@ describe('ProfileEditor', () => {
     mockUseResolverStatus.mockReturnValue(
       makeResolverStatus(['hasResolver', 'hasLatestResolver', 'hasValidResolver']),
     )
-    mockUseChainId.mockReturnValue(1)
     mockUseBasicName.mockReturnValue({ isWrapped: false })
 
     mockUseQueryKeys.mockReturnValue({
@@ -385,7 +380,6 @@ describe('ResolverWarningOverlay', () => {
     )
     mockUseContractAddress.mockReturnValue('0x123')
     mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
-    mockUseChainId.mockReturnValue(1)
     mockUseBasicName.mockReturnValue({ isWrapped: false })
     mockUseProfile.mockReturnValue({
       profile: mockProfileData.profile as any,

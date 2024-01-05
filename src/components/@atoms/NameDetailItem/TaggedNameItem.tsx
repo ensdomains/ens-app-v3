@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 
 import { Tag, mq } from '@ensdomains/thorin'
 
-import { ReturnedName } from '@app/hooks/useNamesFromAddress'
+import { ReturnedName } from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
 import { validateExpiry } from '@app/utils/utils'
 
 import { NameDetailItem } from './NameDetailItem'
@@ -39,6 +39,7 @@ export const TaggedNameItem = ({
   onClick,
   notOwned,
   pccExpired,
+  hasOtherItems = true,
 }: Omit<ReturnedName, 'labelName' | 'labelhash' | 'isMigrated' | 'parent' | 'type' | 'id'> & {
   notOwned?: boolean
   network: number
@@ -47,6 +48,7 @@ export const TaggedNameItem = ({
   disabled?: boolean
   onClick?: () => void
   pccExpired?: boolean
+  hasOtherItems?: boolean
 }) => {
   const { t } = useTranslation('common')
 
@@ -81,15 +83,16 @@ export const TaggedNameItem = ({
       onClick={onClick}
     >
       <OtherItemsContainer>
-        {tags.map(([tagEnabled, translation]) => (
-          <Tag
-            key={translation}
-            colorStyle={!disabled && tagEnabled ? 'accentSecondary' : 'greySecondary'}
-            data-testid={`tag-${translation}-${tagEnabled}`}
-          >
-            {t(translation)}
-          </Tag>
-        ))}
+        {hasOtherItems &&
+          tags.map(([tagEnabled, translation]) => (
+            <Tag
+              key={translation}
+              colorStyle={!disabled && tagEnabled ? 'accentSecondary' : 'greySecondary'}
+              data-testid={`tag-${translation}-${tagEnabled}`}
+            >
+              {t(translation)}
+            </Tag>
+          ))}
       </OtherItemsContainer>
     </NameDetailItem>
   )

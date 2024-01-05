@@ -1,16 +1,13 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { TransactionDisplayItem } from '@app/types'
 
 import { DisplayItems } from './DisplayItems'
 
 jest.mock('@app/hooks/usePrimary')
-jest.mock('@app/hooks/useChainId')
 
 const mockUsePrimary = mockFunction(usePrimary)
-const mockUseChainId = mockFunction(useChainId)
 
 const genericItem: TransactionDisplayItem = {
   label: 'GenericItem',
@@ -30,7 +27,6 @@ const nameItem: TransactionDisplayItem = {
 }
 
 describe('DisplayItems', () => {
-  mockUseChainId.mockReturnValue(1)
   it('should show a generic item', () => {
     render(<DisplayItems displayItems={[genericItem]} />)
     expect(screen.getByText('transaction.itemLabel.GenericItem')).toBeVisible()
@@ -43,9 +39,11 @@ describe('DisplayItems', () => {
   })
   it('should show an address item and primary name', () => {
     mockUsePrimary.mockReturnValue({
-      loading: false,
-      name: 'test.eth',
-      beautifiedName: 'test.eth',
+      data: {
+        name: 'test.eth',
+        beautifiedName: 'test.eth',
+      },
+      isLoading: false,
       status: 'success',
     })
     render(<DisplayItems displayItems={[addressItem]} />)
@@ -55,8 +53,8 @@ describe('DisplayItems', () => {
   })
   it('should show an address item and no primary name', () => {
     mockUsePrimary.mockReturnValue({
-      loading: false,
-      name: null,
+      data: { name: undefined, beautifiedName: undefined },
+      isLoading: false,
       status: 'success',
     })
     render(<DisplayItems displayItems={[addressItem]} />)
@@ -71,8 +69,8 @@ describe('DisplayItems', () => {
   })
   it('should render multiple items', () => {
     mockUsePrimary.mockReturnValue({
-      loading: false,
-      name: null,
+      data: { name: undefined, beautifiedName: undefined },
+      isLoading: false,
       status: 'success',
     })
     render(<DisplayItems displayItems={[addressItem, nameItem, genericItem]} />)

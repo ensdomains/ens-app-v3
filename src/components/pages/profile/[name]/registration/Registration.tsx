@@ -8,6 +8,7 @@ import { Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
+import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -19,7 +20,6 @@ import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { isLabelTooLong } from '@app/utils/utils'
 
-import { ProfileRecord } from '../../../../../constants/profileRecordOptions'
 import Complete from './steps/Complete'
 import Info from './steps/Info'
 import Pricing from './steps/Pricing/Pricing'
@@ -109,8 +109,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const router = useRouterWithHistory()
   const chainId = useChainId()
   const { address } = useAccount()
-  const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
-  const selected = { name: nameDetails.normalisedName, address: address! }
+  const primary = usePrimary(address!, !address)
+  const selected = { name: nameDetails.normalisedName, address: address!, chainId }
   const { normalisedName, beautifiedName } = nameDetails
   const defaultResolverAddress = useContractAddress('PublicResolver')
   const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists(
@@ -247,7 +247,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         noTitle
         title={beautifiedName}
         hideHeading={step === 'complete'}
-        loading={labelTooLong ? false : isLoading || primaryLoading || resolverExistsLoading}
+        loading={labelTooLong ? false : isLoading || primary.isLoading || resolverExistsLoading}
         singleColumnContent
         inlineHeading
       >
@@ -272,7 +272,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   resolverExists={resolverExists}
                   nameDetails={nameDetails}
                   callback={pricingCallback}
-                  hasPrimaryName={!!primaryName}
+                  isPrimaryLoading={primary.isLoading}
+                  hasPrimaryName={!!primary.data?.name}
                   registrationData={item}
                   moonpayTransactionStatus={moonpayTransactionStatus}
                   initiateMoonpayRegistrationMutation={initiateMoonpayRegistrationMutation}

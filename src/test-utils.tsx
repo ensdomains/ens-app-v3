@@ -14,7 +14,12 @@ import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 
 import { DeepPartial } from './types'
 
+window.scroll = jest.fn()
+
 jest.mock('@app/hooks/useRegistrationReducer', () => jest.fn(() => ({ item: { stepIndex: 0 } })))
+jest.mock('@app/hooks/useChainId', () => ({ useChainId: () => 1 }))
+
+export const mockUseAccountReturnValue = { address: '0x123' }
 
 jest.mock('wagmi', () => {
   const {
@@ -33,11 +38,13 @@ jest.mock('wagmi', () => {
     useMutation,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
-    useAccount: jest.fn(() => ({ address: '0x123' })),
+    useAccount: jest.fn(() => mockUseAccountReturnValue),
     useBalance: jest.fn(() => ({ data: { value: { lt: () => false } } })),
     useNetwork: jest.fn(() => ({ chainId: 1 })),
     useFeeData: jest.fn(),
-    useProvider: jest.fn(),
+    useProvider: jest.fn(() => ({
+      providerConfigs: [{ provider: { send: jest.fn(() => ({ gasUsed: 0, accessList: [] })) } }],
+    })),
     useSigner: jest.fn(),
     useSignTypedData: jest.fn(),
     useBlockNumber: jest.fn(),
@@ -76,6 +83,7 @@ const queryClient = new QueryClient({
 
 beforeEach(() => queryClient.clear())
 
+// eslint-disable-next-line no-restricted-syntax
 const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 
 class EthersProviderWrapper extends StaticJsonRpcProvider {

@@ -7,15 +7,19 @@ import deleteSubname from './deleteSubname'
 import extendNames from './extendNames'
 import importDNSSECName from './importDNSSECName'
 import migrateProfile from './migrateProfile'
+import migrateProfileWithEthAddress from './migrateProfileWithEthAddress'
 import migrateProfileWithReset from './migrateProfileWithReset'
 import registerName from './registerName'
+import resetPrimaryName from './resetPrimaryName'
 import resetProfile from './resetProfile'
+import resetProfileWithRecords from './resetProfileWithRecords'
 import setPrimaryName from './setPrimaryName'
 import syncManager from './syncManager'
 import testSendName from './testSendName'
 import transferController from './transferController'
 import transferName from './transferName'
 import transferSubname from './transferSubname'
+import unwrapName from './unwrapName'
 import updateEthAddress from './updateEthAddress'
 import updateProfile from './updateProfile'
 import updateProfileRecords from './updateProfileRecords'
@@ -23,29 +27,33 @@ import updateResolver from './updateResolver'
 import wrapName from './wrapName'
 
 export const transactions = {
-  updateResolver,
-  migrateProfile,
-  wrapName,
-  testSendName,
-  updateProfile,
-  setPrimaryName,
-  updateEthAddress,
-  migrateProfileWithReset,
+  approveNameWrapper,
   burnFuses,
-  createSubname,
-  extendNames,
-  deleteSubname,
+  changePermissions,
   commitName,
+  createSubname,
+  deleteSubname,
+  extendNames,
+  importDNSSECName,
+  migrateProfile,
+  migrateProfileWithEthAddress,
+  migrateProfileWithReset,
   registerName,
+  resetPrimaryName,
   resetProfile,
+  resetProfileWithRecords,
+  setPrimaryName,
+  syncManager,
+  testSendName,
+  transferController,
   transferName,
   transferSubname,
-  transferController,
-  importDNSSECName,
-  approveNameWrapper,
-  changePermissions,
-  syncManager,
+  unwrapName,
+  updateEthAddress,
+  updateProfile,
   updateProfileRecords,
+  updateResolver,
+  wrapName,
 }
 
 export type Transaction = typeof transactions

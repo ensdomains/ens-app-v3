@@ -1,8 +1,13 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
-import { NAMEWRAPPER_AWARE_RESOLVERS, networkName } from './constants'
+import {
+  CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
+  NAMEWRAPPER_AWARE_RESOLVERS,
+  networkName,
+} from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
   networkName[`${networkId}` as keyof typeof networkName] || 'unknown'
@@ -85,6 +90,13 @@ export const checkETH2LDFromName = (name: string) => {
   return true
 }
 
+export const checkDNS2LDFromName = (name: string) => {
+  const labels = name.split('.')
+  if (labels.length !== 2) return false
+  if (labels[1] === 'eth') return false
+  return true
+}
+
 export const checkSubname = (name: string) => name.split('.').length > 2
 
 export const isLabelTooLong = (label: string) => {
@@ -134,3 +146,8 @@ export const canEditRecordsWhenWrappedCalc = (
   if (!isWrapped) return true
   return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
 }
+
+export const hexToNumber = (hex: string) => parseInt(hex, 16)
+
+export const calculateValueWithBuffer = (value: BigNumber) =>
+  value.mul(CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE).div(100)

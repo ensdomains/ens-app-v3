@@ -7,11 +7,28 @@ import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 import useDecryptName from './useDecryptName'
 
-export const useProfile = (name: string, skip?: any, resolverAddress?: string) => {
+type UseProfileOptions = {
+  skip?: boolean
+  resolverAddress?: string
+  skipGraph?: boolean
+}
+
+export const useProfile = (
+  name: string,
+  { skip, resolverAddress, skipGraph = false }: UseProfileOptions = {},
+) => {
   const { ready, getProfile } = useEns()
 
+  const queryKey = useQueryKeys().profile(name, resolverAddress, skipGraph)
+  const watchedGetProfile = useGlobalErrorFunc<typeof getProfile>({
+    queryKey,
+    func: getProfile,
+    skip: skipGraph,
+    ms: 10000,
+  })
   const {
     data: profile,
     isLoading: loading,
@@ -22,15 +39,16 @@ export const useProfile = (name: string, skip?: any, resolverAddress?: string) =
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,
   } = useQuery(
-    useQueryKeys().profile(name, resolverAddress),
+    queryKey,
     () =>
-      getProfile(name, {
+      watchedGetProfile(name, {
         fallback: {
           coinTypes: supportedAddresses,
           texts: [...supportedTexts, ...supportedProfileItems],
         },
         resolverAddress,
-      }).then((d) => d || null),
+        skipGraph,
+      }).then((r) => r || null),
     {
       enabled: ready && !skip && name !== '',
     },

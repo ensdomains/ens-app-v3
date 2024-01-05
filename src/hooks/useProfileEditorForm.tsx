@@ -17,6 +17,12 @@ import { validateAbi } from '../validators/validateAbi'
 
 const SINGLE_VALUE_RECORD_TYPES = ['contenthash']
 
+const SUPPORTED_AVUP_ENDPOINTS = [
+  'https://euc.li',
+  'https://ens.xyz',
+  'https://avatar-upload.ens-cf.workers.dev',
+]
+
 export type ProfileEditorForm = {
   records: ProfileRecord[]
 } & AvatarEditorType
@@ -125,8 +131,17 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     name: 'records',
   })
 
-  const setAvatar = (avatar?: string) =>
-    setValue('avatar', avatar, { shouldDirty: true, shouldTouch: true })
+  const setAvatar = (avatar?: string) => {
+    const existingRecord = existingRecords.find((r) => r.group === 'media' && r.key === 'avatar')
+    const avatarIsChanged = !(
+      existingRecord &&
+      SUPPORTED_AVUP_ENDPOINTS.some((endpoint) => existingRecord.value?.startsWith(endpoint)) &&
+      SUPPORTED_AVUP_ENDPOINTS.some((endpoint) => avatar?.startsWith(endpoint))
+    )
+    if (avatarIsChanged) {
+      setValue('avatar', avatar, { shouldDirty: true, shouldTouch: true })
+    }
+  }
 
   const removeRecordByGroupAndKey = (group: ProfileRecordGroup, key: string) => {
     if (group === 'media' && key === 'avatar') return setAvatar('')

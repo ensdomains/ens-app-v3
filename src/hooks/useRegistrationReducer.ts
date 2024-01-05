@@ -7,13 +7,15 @@ import {
 } from '@app/components/pages/profile/[name]/registration/types'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 
+import { useChainId } from './useChainId'
+
 export const randomSecret = () => {
   // the first 4 bytes of the namehash of enslabs.eth
   const platformSource = '9923eb94'
   // v3
   const version = '00000003'
   const bytes = Buffer.allocUnsafe(24)
-  return '0x' + platformSource + version + window.crypto.getRandomValues(bytes).toString('hex')
+  return `0x${platformSource}${version}${window.crypto.getRandomValues(bytes).toString('hex')}`
 }
 
 const defaultData: RegistrationReducerDataItem = {
@@ -31,6 +33,7 @@ const defaultData: RegistrationReducerDataItem = {
   name: '',
   isMoonpayFlow: false,
   externalTransactionId: '',
+  chainId: 1,
 }
 
 const isBrowser = !!(
@@ -57,7 +60,11 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
 export const getSelectedIndex = (
   state: RegistrationReducerData,
   selected: SelectedItemProperties,
-) => state.items.findIndex((x) => x.address === selected.address && x.name === selected.name)
+) =>
+  state.items.findIndex(
+    (x) =>
+      x.address === selected.address && x.name === selected.name && x.chainId === selected.chainId,
+  )
 
 /* eslint-disable no-param-reassign */
 const reducer = (state: RegistrationReducerData, action: RegistrationReducerAction) => {
@@ -138,7 +145,8 @@ const useRegistrationReducer = ({
   address: string | undefined
   name: string
 }) => {
-  const selected = { address, name } as SelectedItemProperties
+  const chainId = useChainId()
+  const selected = { address: address!, name, chainId } as const
   const [state, dispatch] = useLocalStorageReducer<
     RegistrationReducerData,
     RegistrationReducerAction

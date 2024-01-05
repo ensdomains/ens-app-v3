@@ -1,19 +1,13 @@
-import { mockFunction, renderHook, waitFor } from '@app/test-utils'
+import { renderHook, waitFor } from '@app/test-utils'
 
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 
-import { useChainId } from '@app/hooks/useChainId'
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'
 
 import { useMoonpayRegistration } from './useMoonpayRegistration'
 
-jest.mock('@app/hooks/useChainId')
-
-const mockUseChaindId = mockFunction(useChainId)
-
 describe('useMoonpayRegistration', () => {
   it('should check up on transaction status every second if a there is a currentExternalTransactionId', async () => {
-    mockUseChaindId.mockReturnValue(1)
     const mockDispatch = jest.fn()
     const normalisedName = 'test.eth'
     const selected = {} as any
@@ -30,7 +24,6 @@ describe('useMoonpayRegistration', () => {
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2), { timeout: 2000 })
   })
   it('should stop refetching once transaction is complete', async () => {
-    mockUseChaindId.mockReturnValue(1)
     const mockDispatch = jest.fn()
     const normalisedName = 'test.eth'
     const selected = {} as any
@@ -69,7 +62,6 @@ describe('useMoonpayRegistration', () => {
     expect(result.current.moonpayTransactionStatus).toBe(undefined)
   })
   it('should stop refetching if name changes and new name does not have a currentExternalTransactionId', async () => {
-    mockUseChaindId.mockReturnValue(1)
     const mockDispatch = jest.fn()
     let normalisedName = 'test.eth'
     const selected = {} as any
@@ -97,7 +89,6 @@ describe('useMoonpayRegistration', () => {
   it('should have the correct regsitration duration when initiating a registration', async () => {
     const registrationDuration = 5
     const chainId = 1
-    mockUseChaindId.mockReturnValue(chainId)
     const mockDispatch = jest.fn()
     const normalisedName = 'test.eth'
     const tokenId = labelhash('test')

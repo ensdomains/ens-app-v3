@@ -53,9 +53,11 @@
           "noOptions": "没有可用的账户",
           "placeholder": {
             "default": "在此添加用户名",
-            "com.twitter": "例如 ensdomains",
-            "com.github": "例如 ensdomains",
-            "com.discord": "例如 alisha.eth#0001"
+            "com.twitter": "例如 nicksdjohnson",
+            "com.github": "例如 arachnid",
+            "com.discord": "例如 nickjohnson",
+            "org.telegram": "例如 nicksdjohnson",
+            "email": "例如 hello@example.com"
           }
         },
         "address": {
@@ -95,33 +97,93 @@
         }
       },
       "warningOverlay": {
-        "resumable": {
-          "title": "可继续执行的交易",
-          "subtitle": "您以前已经启动了一个交易，请单击 “继续” 来恢复执行。",
-          "action": "继续"
+        "action": {
+          "learnMoreResolvers": "了解更多关于解析器的信息",
+          "updateResolver": "更新解析器",
+          "setResolver": "设置解析器",
+          "ignoreUpdate": "忽略该提示并继续使用当前的解析器。下次会重新提示您。"
         },
-        "migrate": {
-          "title": "迁移解析器",
-          "subtitle": "您已经迁移了您的个人资料，但还没有更新您的解析器。单击 “升级” 可更新到最新的解析器。",
-          "action": "更新"
+        "invalidResolver": {
+          "title": "未经授权的解析器",
+          "subtitle": "您没有权限设置此解析器的记录。需要更新到最新的解析器来编辑您的个人资料。",
+          "action": "更新解析器"
         },
-        "noResolver": {
-          "title": "未指定解析器",
-          "subtitle": "您需要设置一个解析器来编辑您的个人资料。",
-          "action": "更新"
+        "migrateProfileSelector": {
+          "title": "个人资料",
+          "subtitle": "不同解析器上的个人资料记录不匹配。您需要使用哪组记录？",
+          "option": {
+            "latest": "新解析器上的个人资料记录",
+            "current": "当前的个人资料记录",
+            "reset": "重置您的个人资料",
+            "resetSubtitle": "删除所有个人资料记录"
+          }
         },
-        "oldRegistry": {
-          "title": "您的注册已经过时了",
-          "subtitle": "现在不能迁移到新的注册表，但是您仍然可以在旧的 app 中迁移该名称。",
+        "migrateProfileWarning": {
+          "title": "迁移个人资料",
+          "subtitle": "正在将个人资料记录迁移到最新的解析器。这将彻底清除最新解析器上原有的记录，并用当前记录替换它们。"
+        },
+        "migrateRegistry": {
+          "title": "注册表过期",
+          "subtitle": "在对该名称进行操作之前，您需要迁移注册表。",
           "action": "迁移"
         },
-        "default": {
-          "title": "您的解析器已经过时了",
-          "subtitle": "在更新解析器之前，个人资料编辑将被禁用。",
+        "noResolver": {
+          "title": "未设置解析器",
+          "subtitle": "在编辑个人资料之前，需要设置解析器。",
           "action": "更新"
+        },
+        "resetProfile": {
+          "title": "重置个人资料",
+          "subtitle": "正在重置您的个人资料记录。当前所有的个人资料信息将会丢失，如 ETH 地址，头像和社交平台等记录。通过编辑您的个人资料可以重新添加这些记录。"
+        },
+        "resolverNotNameWrapperAware": {
+          "title": "解析器不兼容",
+          "subtitle": "您当前的解析器与包装名称不兼容。在编辑个人资料之前，需要先更新解析器。",
+          "toggle": {
+            "title": "转移个人资料",
+            "subtitle": "取消选择将只更新您的解析器。"
+          }
+        },
+        "resolverOutOfDate": {
+          "title": "解析器已过时",
+          "subtitle": "解析器已经过时了。建议您在编辑个人资料之前更新解析器。"
+        },
+        "resolverOutOfSync": {
+          "title": "解析器未同步",
+          "subtitle": "您使用的不是最新的公共解析器，但您在那里存储了个人资料记录。建议您在编辑个人资料之前切换到最新的公共解析器。"
+        },
+        "transferOrResetProfile": {
+          "title": "个人资料",
+          "subtitle": "您可以在更新解析器之前将当前个人资料转移到新的解析器。",
+          "toggle": {
+            "title": "转移个人资料",
+            "subtitle": "取消选择将只更新您的解析器。"
+          }
+        },
+        "updateResolverOrResetProfile": {
+          "title": "个人资料",
+          "subtitle": "您可以将当前个人资料保留到新解析器上，或者重置解析器并删除所有个人资料记录。",
+          "toggle": {
+            "title": "保留当前的个人资料",
+            "subtitle": "取消选择将重置您的个人资料。"
+          }
         },
         "links": {
           "learnMoreResolvers": "了解更多关于解析器的信息"
+        }
+      },
+      "intro": {
+        "resetProfile": {
+          "title": "重置个人资料",
+          "description": "从最新的解析器中删除所有个人资料记录，然后更新解析器。"
+        },
+        "migrateProfile": {
+          "title": "迁移个人资料",
+          "description": "将您当前的个人资料记录迁移到最新的解析器。"
+        },
+        "migrateCurrentProfile": {
+          "title": "迁移个人资料",
+          "description": "将您当前的个人资料记录迁移到最新的解析器。"
         }
       }
     },
@@ -232,6 +294,21 @@
     "deleteEmancipatedSubnameWarning": {
       "title": "不能重新创建该子名称",
       "message": "删除该子名称意味着不能再使用或重新创建它，一直到它过期 {{date}}。由于父名称控制权限已被撤销，因此该操作也无法撤消。"
+    },
+    "deleteSubnameNotParentWarning": {
+      "title": "不能重新创建该子名称",
+      "message": "只有父名称(<b>{{parentOwner}}</b>) 的 {{ownershipTerm}} 可以重新创建该子名称。如果该子名称被删除，您将无法自己重新创建它。"
+    },
+    "selectPrimaryName": {
+      "title": "选择一个主名称",
+      "errors": {
+        "noNamesFound": "未找到名称",
+        "noEligibleNames": "没有符合条件的名称"
+      }
+    },
+    "resetPrimaryName": {
+      "title": "移除主名称",
+      "description": "移除后它不会再作为当前地址的名称来显示。但是，发送到该名称的交易仍将解析到当前地址，除非您删除该名称的 ETH 记录。"
     }
   },
   "transaction": {
@@ -254,6 +331,24 @@
     "syncManager": {
       "description": "同步管理员会让您成为该名称的新管理员。当前管理员 <b>({{manager}})</b> 将会失去管理权限。",
       "wrappedWarning": "同步管理员也将解除该名称的包装，这会烧毁 NFT 并重置所有权限。"
+    },
+    "selectPrimaryName": {
+      "updateEthAddress": {
+        "title": "更新 ETH 地址",
+        "description": "该名称的 ETH 地址和当前钱包无法匹配。要使用该名称作为您的主名称，您需要先更新该名称的 ETH 地址记录。"
+      },
+      "noResolver": {
+        "title": "未设置解析器",
+        "description": "要使用该名称作为您的主名称，您需要先设置一个解析器并更新该名称的 ETH 地址记录。"
+      },
+      "invalidResolver": {
+        "title": "未经授权的解析器",
+        "description": "要使用此名称作为您的主名称，您需要先设置一个有效的解析器并更新该名称的 ETH 地址记录。"
+      }     
+    },
+    "multiStepSubnameDelete": {
+      "title": "删除子名称",
+      "description": "删除该子名称需要执行多次交易"
     }
   },
   "errors": {

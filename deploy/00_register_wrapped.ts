@@ -102,6 +102,42 @@ const names: Name[] = [
       },
     ],
   },
+  {
+    name: 'wrapped-to-delete.eth',
+    namedOwner: 'owner',
+    subnames: [
+      { label: 'parent-not-child', namedOwner: 'deployer' },
+      { label: 'parent-child', namedOwner: 'owner' },
+      { label: 'not-parent-child', namedOwner: 'deployer' },
+    ],
+  },
+  {
+    name: 'emancipated-to-delete.eth',
+    namedOwner: 'owner',
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
+    subnames: [
+      {
+        label: 'parent-not-child',
+        namedOwner: 'deployer',
+        expiry: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365,
+        fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+      },
+      {
+        label: 'parent-child',
+        namedOwner: 'owner',
+        expiry: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365,
+        fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+      },
+      {
+        label: 'not-parent-child',
+        namedOwner: 'deployer',
+        expiry: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365,
+        fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+      },
+    ],
+  },
 ]
 
 type ProcessedNameData = RegistrationParams & {

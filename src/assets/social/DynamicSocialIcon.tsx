@@ -10,6 +10,9 @@ export const socialIconTypes = {
   'com.medium': dynamic(() => import('./SocialMedium.svg')),
   'com.twitter': dynamic(() => import('./SocialTwitter.svg')),
   'com.youtube': dynamic(() => import('./SocialYoutube.svg')),
+  'org.telegram': dynamic(() => import('./SocialTelegram.svg')),
+  'xyz.mirror': dynamic(() => import('./SocialMirrorColour.svg')),
+  email: dynamic(() => import('@ensdomains/thorin').then((m) => m.EnvelopeSVG)),
 }
 
 export const socialIconColors = {
@@ -19,6 +22,9 @@ export const socialIconColors = {
   'com.medium': '#000000',
   'com.twitter': '#65C5FC',
   'com.youtube': '#FF0000',
+  'org.telegram': '#2BABEE',
+  'xyz.mirror': undefined,
+  email: '#000000',
 }
 
 export const DynamicSocialIcon = ({

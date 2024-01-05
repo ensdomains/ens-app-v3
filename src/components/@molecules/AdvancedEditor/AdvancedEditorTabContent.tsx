@@ -25,6 +25,7 @@ const TabContentContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space['3']};
+    padding-right: ${theme.space['1']};
     overflow: hidden;
     flex: 1;
   `,
@@ -68,7 +69,7 @@ const AdvancedEditorContent = ({
                   {existingTextKeys.map((key) => (
                     <RecordInput
                       key={key}
-                      label={key}
+                      label={convertFormSafeKey(key)}
                       placeholder={t([
                         `advancedEditor.tabs.text.placeholder.${convertFormSafeKey(key)}`,
                         `advancedEditor.tabs.text.placeholder.default`,
@@ -86,7 +87,7 @@ const AdvancedEditorContent = ({
                   {newTextKeys.map((key) => (
                     <RecordInput
                       key={key}
-                      label={key}
+                      label={convertFormSafeKey(key)}
                       placeholder={t([
                         `advancedEditor.tabs.text.placeholder.${convertFormSafeKey(key)}`,
                         `advancedEditor.tabs.text.placeholder.default`,

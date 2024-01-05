@@ -3,20 +3,18 @@ import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { act } from '@testing-library/react'
 
 import type { Transaction } from '@app/hooks/transactions/transactionStore'
-import { useChainId } from '@app/hooks/useChainId'
 import { useChainName } from '@app/hooks/useChainName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider'
+import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 
 import { Notifications } from './Notifications'
 
 jest.mock('@app/hooks/useChainName')
 jest.mock('@app/hooks/useChainId')
-jest.mock('@app/utils/SyncProvider')
+jest.mock('@app/utils/SyncProvider/SyncProvider')
 jest.mock('@app/utils/BreakpointProvider')
 
 const mockUseChainName = mockFunction(useChainName)
-const mockUseChainId = mockFunction(useChainId)
 const mockUseCallbackOnTransaction = mockFunction(useCallbackOnTransaction)
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 
@@ -46,7 +44,6 @@ describe('Notifications', () => {
     xl: false,
   })
   mockUseChainName.mockReturnValue('mainnet')
-  mockUseChainId.mockReturnValue(1)
   it('should not render a toast if there is no transactions', () => {
     render(<Notifications />)
     expect(screen.queryByTestId('toast-desktop')).not.toBeInTheDocument()

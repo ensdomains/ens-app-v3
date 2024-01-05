@@ -28,7 +28,7 @@ const StyledIcon = styled.div<{ $iconColor?: string }>(
 
 const StyledColoredIcon = styled.div(
   () => css`
-    height: 80%;
+    height: 100%;
     position: absolute;
     transition: 0.15s all ease-in-out;
     opacity: 0;
@@ -51,7 +51,7 @@ export const SocialIcon = ({
   href: string
 }) => {
   return (
-    <SocialIconWrapper href={href}>
+    <SocialIconWrapper href={href} target="_blank">
       <StyledIcon key={href} $iconColor={color} as={Icon} />
       {ColoredIcon && <StyledColoredIcon as={ColoredIcon} />}
     </SocialIconWrapper>

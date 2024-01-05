@@ -8,12 +8,13 @@ import { Helper } from '@ensdomains/thorin'
 import { Outlink } from '@app/components/Outlink'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
+import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfileActions } from '@app/hooks/useProfileActions'
-import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
-import { useSubnameAbilities } from '@app/hooks/useSubnameAbilities'
+import { getSupportLink } from '@app/utils/supportLinks'
 import { validateExpiry } from '@app/utils/utils'
 
 const DetailsWrapper = styled.div(
@@ -52,22 +53,25 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     gracePeriodEndDate,
   } = nameDetails
 
-  const selfAbilities = useSelfAbilities(address, name)
+  const abilities = useAbilities(name)
+
+  const { data: primaryData } = usePrimary(address)
 
   const owners = useOwners({
     ownerData: ownerData!,
     wrapperData: wrapperData!,
     dnsOwner,
-    selfAbilities,
+    abilities: abilities.data,
   })
-  const { abilities: subnameAbilities, isCachedData: subnameAbilitiesCachedData } =
-    useSubnameAbilities({ address, name, ownerData, wrapperData, pccExpired })
+
   const profileActions = useProfileActions({
     address,
     name,
     profile,
-    selfAbilities,
-    subnameAbilities,
+    abilities: abilities.data,
+    ownerData,
+    wrapperData,
+    expiryDate,
   })
 
   const isExpired = useMemo(
@@ -76,8 +80,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
   )
   const snippetButton = useMemo(() => {
     if (isExpired) return 'register'
-    if (selfAbilities.canExtend) return 'extend'
-  }, [isExpired, selfAbilities.canExtend])
+    if (abilities.data?.canExtend) return 'extend'
+  }, [isExpired, abilities.data?.canExtend])
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
@@ -88,7 +92,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         network={chainId}
         getTextRecord={getTextRecord}
         button={snippetButton}
-        canEdit={selfAbilities.canEdit}
+        isPrimary={name === primaryData?.name}
       >
         {nameDetails.isNonASCII && (
           <Helper type="warning" alignment="horizontal">
@@ -96,7 +100,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
               i18nKey="tabs.profile.warnings.homoglyph"
               ns="profile"
               components={{
-                a: <Outlink href="https://support.ens.domains/faq/normalization/homoglyphs/" />,
+                a: <Outlink href={getSupportLink('homoglyphs')} />,
               }}
             />
           </Helper>
@@ -115,7 +119,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           pccExpired,
         )}
         pccExpired={!!pccExpired}
-        isCached={profileIsCachedData || basicIsCachedData || subnameAbilitiesCachedData}
+        isCached={profileIsCachedData || basicIsCachedData || abilities.isCachedData}
         addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
           key: item.coin,
           value: item.addr,
@@ -123,6 +127,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         textRecords={(profile?.records?.texts || [])
           .map((item: any) => ({ key: item.key, value: item.value }))
           .filter((item: any) => item.value !== null)}
+        contentHash={profile?.records?.contentHash}
         owners={owners}
         name={normalisedName}
         actions={profileActions.profileActions}

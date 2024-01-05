@@ -4,7 +4,7 @@ import type { TFunction } from 'react-i18next'
 import { BaseRegistrationParams } from '@ensdomains/ensjs/utils/registerHelpers'
 
 import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
-import { secondsToYears } from '@app/utils/utils'
+import { calculateValueWithBuffer, secondsToYears } from '@app/utils/utils'
 
 type Data = BaseRegistrationParams & { name: string }
 
@@ -32,11 +32,12 @@ const displayItems = (
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   const price = await ens.getPrice(data.name.split('.')[0], data.duration)
   const value = price!.base.add(price!.premium)
+  const valueWithBuffer = calculateValueWithBuffer(value)
 
   return ens.registerName.populateTransaction(data.name, {
     signer,
     ...data,
-    value,
+    value: valueWithBuffer,
   })
 }
 

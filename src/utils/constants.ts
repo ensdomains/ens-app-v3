@@ -43,8 +43,14 @@ export const RESOLVER_ADDRESSES: ResolverAddresses = {
     '0x4B1488B7a6B320d2D721406204aBc3eeAa9AD329',
   ],
   // eslint-disable-next-line @typescript-eslint/naming-convention
+  '11155111': [
+    '0x8FADE66B79cC9f707aB26799354482EB93a5B7dD',
+    '0x0CeEC524b2807841739D3B5E161F5bf1430FFA48',
+  ],
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   '1337': [
     '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF',
+    '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750', // This is fill in resolver. Not actual contract address
     '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB',
   ],
 }
@@ -58,6 +64,8 @@ export const NAMEWRAPPER_AWARE_RESOLVERS: ResolverAddresses = {
     '0x342cf18D3e41DE491aa1a3067574C849AdA6a2Ad',
     '0x19c2d5D0f035563344dBB7bE5fD09c8dad62b001',
   ],
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '11155111': ['0x8FADE66B79cC9f707aB26799354482EB93a5B7dD'],
   // eslint-disable-next-line @typescript-eslint/naming-convention
   '1337': ['0x0E801D84Fa97b50751Dbf25036d067dCf18858bF'],
 }
@@ -85,3 +93,10 @@ export const MOONPAY_WORKER_URL: { [key: number]: string } = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   1337: 'https://moonpay-goerli.ens-cf.workers.dev',
 }
+
+export const FAUCET_WORKER_URL = 'https://ens-faucet.ens-cf.workers.dev'
+
+export const WC_PROJECT_ID = '9b14144d470af1e03ab9d88aaa127332'
+
+// 102% of price as buffer for fluctuations
+export const CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE = 102

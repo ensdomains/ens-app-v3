@@ -23,9 +23,9 @@
       "name": "个人资料",
       "actions": {
         "setAsPrimaryName": {
-          "label": "设置为主名",
-          "title": "设置您的主名",
-          "description": "如果将该名称设置为主名，ETH 地址记录必须与此地址相匹配。"
+          "label": "设置为主名称",
+          "title": "设置您的主名称",
+          "description": "如果将该名称设置为主名称，ETH 地址记录必须与此地址相匹配。"
         },
         "deleteSubname": {
           "label": "删除子名称"
@@ -35,6 +35,10 @@
         },
         "editProfile": {
           "label": "编辑个人资料"
+        },
+        "reclaim": {
+          "label": "重新创建名称",
+          "warning": "该子名称已过期，并且无人持有。您可以重新创建此子名称。"
         }
       },
       "warnings": {
@@ -201,6 +205,7 @@
         "custom": "自定义",
         "latest": "最新版",
         "outdated": "已过时",
+        "wildcard": "通配符",
         "version": "版本",
         "etherscan": "Etherscan"
       },
@@ -227,6 +232,7 @@
       },
       "ownership": {
         "label": "所有权",
+        "refreshDNS": "刷新 DNS",
         "dnsOwnerWarning": {
           "isDnsOwner": "您不能更改该名称，因为您是 DNS 所有者，而不是管理员。您可以通过同步管理员来修复此问题。",
           "isManager": "您是该名称的管理员，但不是 DNS 所有者。DNS 所有者可以随时收回他的 DNS 域名。您可以将该名称发送给所有者，或是通过更新 DNS 记录来匹配所有者。",
@@ -236,12 +242,36 @@
       },
       "token": {
         "label": "NFT",
+        "noToken": "非 NFT",
         "hex": "十六进制",
-        "decimal": "十进制"
+        "decimal": "十进制",
+        "wrapper": "包装状态",
+        "wrapName": "包装名称",
+        "unwrap": "解除包装",
+        "status": {
+          "unwrapped": "未包装",
+          "wrapped": "已包装",
+          "emancipated": "已包装, 已解放",
+          "locked": "已包装, 已锁定"
+        }
       },
       "misc": {
         "registered": "已注册",
-        "expires": "到期时间"
+        "expires": "到期时间",
+        "earnfi": {
+          "title": "Earni.fi 提醒",
+          "enterEmail": "通过 Email、PUSH、XMTP、Blockscan Chat 以及 Mailchain 来接收 <a>Earni.fi</a> 的提醒。",
+          "emailConfirmation": "即将完成，请检查您的电子邮件并确认此次订阅。",
+          "submitError": "提交失败，请重试。"
+        },
+        "reminderOptions": {
+          "google": "Google 日历",
+          "outlook": "Outlook 日历",
+          "office365": "Office 365 日历",
+          "yahoo": "Yahoo 日历",
+          "ical": "iCal 下载 (.ics)",
+          "earnifi": "Earni.fi 提醒"
+        }
       }
     }
   },
@@ -249,7 +279,7 @@
     "title": "名称详情",
     "notWrapped": "未包装",
     "sendName": {
-      "title": "Send Name",
+      "title": "发送名称",
       "description": "发送名称将使其受新地址的控制",
       "learnMore": "了解关于更多名称所有权的内容",
       "makeOwner": "任命所有者",

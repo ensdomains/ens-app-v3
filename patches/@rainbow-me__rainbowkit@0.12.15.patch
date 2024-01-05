@@ -1,0 +1,32 @@
+diff --git a/dist/chunk-HOY3SQCF.js b/dist/chunk-HOY3SQCF.js
+index 8024ec03f4499eea4a03953f3d047e21ee0673a9..5c75a65146fc93a1299240b7c925327f8afbfd37 100644
+--- a/dist/chunk-HOY3SQCF.js
++++ b/dist/chunk-HOY3SQCF.js
+@@ -4502,19 +4502,19 @@ function ModalProvider({ children }) {
+   const connectionStatus = useConnectionStatus();
+   const { chain } = useNetwork6();
+   const chainSupported = !(chain == null ? void 0 : chain.unsupported);
+-  function closeModals({
+-    keepConnectModalOpen = false
+-  } = {}) {
+-    if (!keepConnectModalOpen) {
++
++  const isUnauthenticated = useAuthenticationStatus() === "unauthenticated";
++
++  const closeModals = useCallback(() => {
++  if (!isUnauthenticated) {
+       closeConnectModal();
+     }
+     closeAccountModal();
+     closeChainModal();
+-  }
+-  const isUnauthenticated = useAuthenticationStatus() === "unauthenticated";
++  }, [isUnauthenticated, closeConnectModal, closeAccountModal, closeChainModal]);
+   useAccount11({
+-    onConnect: () => closeModals({ keepConnectModalOpen: isUnauthenticated }),
+-    onDisconnect: () => closeModals()
++    onConnect: closeModals,
++    onDisconnect: closeModals
+   });
+   return /* @__PURE__ */ React53.createElement(ModalContext.Provider, {
+     value: useMemo6(() => ({

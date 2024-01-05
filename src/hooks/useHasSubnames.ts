@@ -5,6 +5,7 @@ import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { emptyAddress } from '../utils/constants'
+import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 
 const FETCH_PAGE_SIZE = 50
 
@@ -16,6 +17,12 @@ export const useHasSubnames = (name: string) => {
   const isSubname = name && name.split('.').length > 2
   const enabled = !!(ready && name && isSubname)
 
+  const queryKey = useQueryKeys().hasSubnames(name)
+  const watchedGetSubnames = useGlobalErrorFunc({
+    queryKey,
+    func: getSubnames,
+  })
+
   const {
     data: hasSubnames,
     isLoading,
@@ -26,26 +33,31 @@ export const useHasSubnames = (name: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching: _isFetching,
   } = useQuery(
-    useQueryKeys().hasSubnames(name),
+    queryKey,
     async () => {
       let cursor: Subnames = []
       let done = false
 
       while (!done) {
-        // eslint-disable-next-line no-await-in-loop
-        const { subnames } = await getSubnames({
-          name,
-          lastSubnames: cursor,
-          orderBy: 'labelName',
-          orderDirection: 'desc',
-          pageSize: FETCH_PAGE_SIZE,
-        })
-        const anyHasOwner = subnames.some((subname) => subname.owner !== emptyAddress)
-        if (anyHasOwner) {
-          return true
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          const result = await watchedGetSubnames({
+            name,
+            lastSubnames: cursor,
+            orderBy: 'labelName',
+            orderDirection: 'desc',
+            pageSize: FETCH_PAGE_SIZE,
+          })
+          const { subnames } = result || { subnames: [] }
+          const anyHasOwner = subnames.some((subname) => subname.owner !== emptyAddress)
+          if (anyHasOwner) {
+            return true
+          }
+          done = subnames.length !== FETCH_PAGE_SIZE
+          cursor = subnames
+        } catch {
+          return false
         }
-        done = subnames.length !== FETCH_PAGE_SIZE
-        cursor = subnames
       }
 
       return false

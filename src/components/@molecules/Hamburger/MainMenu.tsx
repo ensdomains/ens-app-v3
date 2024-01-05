@@ -1,7 +1,6 @@
 import ISO6391 from 'iso-639-1'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useFeeData } from 'wagmi'
 
 import {
   CurrencyToggle,
@@ -17,14 +16,16 @@ import SocialDiscord from '@app/assets/social/SocialDiscord.svg'
 import SocialDiscourse from '@app/assets/social/SocialDiscourse.svg'
 import SocialDiscourseColour from '@app/assets/social/SocialDiscourseColour.svg'
 import SocialGithub from '@app/assets/social/SocialGithub.svg'
-import SocialMedium from '@app/assets/social/SocialMedium.svg'
+import SocialMirror from '@app/assets/social/SocialMirror.svg'
+import SocialMirrorColour from '@app/assets/social/SocialMirrorColour.svg'
 import SocialTwitter from '@app/assets/social/SocialTwitter.svg'
 import SocialYoutube from '@app/assets/social/SocialYoutube.svg'
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { SocialIcon } from '@app/components/SocialIcon'
 import { useChainName } from '@app/hooks/useChainName'
+import useGasPrice from '@app/hooks/useGasPrice'
 import { routes } from '@app/routes'
-import { useGraphOutOfSync } from '@app/utils/SyncProvider'
+import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 import { makeDisplay } from '@app/utils/currency'
 import useUserConfig from '@app/utils/useUserConfig'
 
@@ -217,7 +218,7 @@ const NetworkSection = () => {
   const { t } = useTranslation('common')
   const graphOutOfSync = useGraphOutOfSync()
   const chainName = useChainName()
-  const feeData = useFeeData()
+  const { gasPrice } = useGasPrice()
 
   return (
     <NetworkSectionContainer>
@@ -226,10 +227,8 @@ const NetworkSection = () => {
         <Typography id="chain-name" weight="bold" color="text">
           {chainName}
         </Typography>
-        {feeData?.data?.maxFeePerGas && (
-          <Typography color="grey">
-            {makeDisplay(feeData?.data?.maxFeePerGas, undefined, 'Gwei', 9)}
-          </Typography>
+        {gasPrice && (
+          <Typography color="grey">{makeDisplay(gasPrice, undefined, 'Gwei', 9)}</Typography>
         )}
       </NetworkSectionRow>
       {graphOutOfSync && (
@@ -245,23 +244,10 @@ const disconnectedRoutes = routes.filter(
   (route) => route.name !== 'search' && route.connected === false,
 )
 
-const MainMenu = ({
-  setCurrentView,
-  setIsOpen,
-  setHasFeedbackForm,
-}: {
-  setCurrentView: (view: 'main' | 'language') => void
-  setIsOpen: (isOpen: boolean) => void
-  setHasFeedbackForm: (isOpen: boolean) => void
-}) => {
+const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'language') => void }) => {
   const { t, i18n } = useTranslation('common')
   const language = i18n.resolvedLanguage || 'en'
   const { userConfig, setCurrency } = useUserConfig()
-
-  const handleOpenFeedbackForm = () => {
-    setHasFeedbackForm(true)
-    setIsOpen(false)
-  }
 
   return (
     <Container>
@@ -294,31 +280,22 @@ const MainMenu = ({
         </SettingsItem>
       </SettingsSection>
       <RoutesSection>
-        {disconnectedRoutes.map((route) => {
-          if (route.name === 'feedback') {
-            return (
-              <RouteItem onClick={handleOpenFeedbackForm} href={route.href} key={route.name}>
-                <Typography>{t(route.label)}</Typography>
-              </RouteItem>
-            )
-          }
-          return (
-            <BaseLink href={route.href} passHref key={route.href}>
-              <RouteItem>
-                <Typography>{t(route.label)}</Typography>
-              </RouteItem>
-            </BaseLink>
-          )
-        })}
+        {disconnectedRoutes.map((route) => (
+          <BaseLink href={route.href} passHref key={route.href}>
+            <RouteItem {...(route.href.startsWith('http') ? { target: '_blank' } : {})}>
+              <Typography>{t(route.label)}</Typography>
+            </RouteItem>
+          </BaseLink>
+        ))}
       </RoutesSection>
       <SocialSection>
         <SocialIcon Icon={SocialTwitter} color="#5298FF" href="https://twitter.com/ensdomains" />
         <SocialIcon Icon={SocialGithub} color="#0F0F0F" href="https://github.com/ensdomains" />
         <SocialIcon Icon={SocialDiscord} color="#7F83FF" href="https://chat.ens.domains" />
         <SocialIcon
-          Icon={SocialMedium}
-          color="#0F0F0F"
-          href="https://medium.com/the-ethereum-name-service"
+          Icon={SocialMirror}
+          ColoredIcon={SocialMirrorColour}
+          href="https://ens.mirror.xyz"
         />
         <SocialIcon
           Icon={SocialDiscourse}

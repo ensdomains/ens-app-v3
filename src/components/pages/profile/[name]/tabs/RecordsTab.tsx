@@ -8,11 +8,11 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { NAMESYS_RESOLVERS } from '@app/utils/constants'
+import { NAMESYS_RESOLVERS, emptyAddress } from '@app/utils/constants'
 import { getContentHashLink } from '@app/utils/contenthash'
-import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
@@ -137,8 +137,8 @@ export const RecordsTab = ({
   contentHash,
   abi,
   canEdit,
+  canEditRecords,
   isCached,
-  isWrapped,
   resolverAddress,
 }: {
   name: string
@@ -148,11 +148,12 @@ export const RecordsTab = ({
   contentHash?: ContentHash
   abi?: AbiRecord
   canEdit?: boolean
+  canEditRecords?: boolean
   isCached?: boolean
   resolverAddress?: string
-  isWrapped: boolean
 }) => {
   const { t } = useTranslation('profile')
+  const hasGlobalError = useHasGlobalError()
 
   const filteredTexts = useMemo(() => texts?.filter(({ value }) => value), [texts])
   const filteredAddresses = useMemo(() => addresses?.filter(({ addr }) => addr), [addresses])
@@ -181,13 +182,6 @@ export const RecordsTab = ({
     showAdvancedEditorInput(`advanced-editor-${name}`, { name }, { disableBackgroundClick: true })
 
   const chainId = useChainId()
-
-  const canEditRecordsWhenWrapped = canEditRecordsWhenWrappedCalc(
-    isWrapped,
-    resolverAddress,
-    chainId,
-  )
-
   const isResolverAddressNameSys = resolverAddress === NAMESYS_RESOLVERS[`${chainId}`]?.[0]
 
   return (
@@ -271,24 +265,27 @@ export const RecordsTab = ({
               )}
             </SectionTitleContainer>
           </SectionHeader>
-          {abi && <RecordItem type="text" value={abi.data} />}
+          {abi && <RecordItem type="abi" value={abi.data} />}
         </RecordSection>
       </AllRecords>
-      {canEdit && (
+      {canEdit && resolverAddress !== emptyAddress && (
         <Actions>
           <div>
-            {canEditRecordsWhenWrapped ? (
+            {canEditRecords && !hasGlobalError ? (
               <Button onClick={handleShowEditor} size="small">
                 {t('details.tabs.records.editRecords')}
               </Button>
             ) : (
               <DisabledButtonWithTooltip
                 buttonId="records-tab-edit-records-disabled"
-                content={t(
-                  isResolverAddressNameSys
-                    ? 'details.tabs.records.editRecordsNameSys'
-                    : 'details.tabs.records.editRecordsDisabled',
-                )}
+                content={
+                  // eslint-disable-next-line no-nested-ternary
+                  hasGlobalError
+                    ? t('errors.networkError.blurb', { ns: 'common' })
+                    : isResolverAddressNameSys
+                    ? t('details.tabs.records.editRecordsNameSys')
+                    : t('details.tabs.records.editRecordsDisabled')
+                }
                 buttonText={t('details.tabs.records.editRecords')}
                 mobileWidth={150}
                 mobileButtonWidth="initial"

@@ -2,11 +2,13 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Typography, mq } from '@ensdomains/thorin'
+import { Button, NametagSVG, Tag, Typography, mq } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import useBeautifiedName from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { shouldShowExtendWarning } from '@app/utils/abilities/shouldShowExtendWarning'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -121,6 +123,31 @@ const LocationAndUrl = styled.div(
   `,
 )
 
+const TagsContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['2']};
+  `,
+)
+
+const PrimaryNameTag = styled(Tag)(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: ${theme.space['1']};
+
+    & > svg {
+      height: ${theme.space['4']};
+      width: ${theme.space['4']};
+    }
+  `,
+)
+
 export const getUserDefinedUrl = (url?: string) => {
   if (!url) return undefined
   if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -134,18 +161,20 @@ export const ProfileSnippet = ({
   getTextRecord,
   button,
   network,
-  canEdit,
+  isPrimary,
   children,
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
   button?: 'viewProfile' | 'extend' | 'register'
-  canEdit?: boolean
+  isPrimary?: boolean
   network: number
   children?: React.ReactNode
 }) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
+
+  const abilities = useAbilities(name)
 
   const { prepareDataInput } = useTransactionFlow()
   const showExtendNamesInput = prepareDataInput('ExtendNames')
@@ -167,7 +196,10 @@ export const ProfileSnippet = ({
           prefix={<FastForwardSVG />}
           data-testid="extend-button"
           onClick={() => {
-            showExtendNamesInput(`extend-names-${name}`, { names: [name], isSelf: canEdit })
+            showExtendNamesInput(`extend-names-${name}`, {
+              names: [name],
+              isSelf: shouldShowExtendWarning(abilities.data),
+            })
           }}
         >
           {t('action.extend', { ns: 'common' })}
@@ -194,7 +226,7 @@ export const ProfileSnippet = ({
         </Button>
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [button, name, canEdit])
+  }, [button, name, abilities.data])
 
   return (
     <Container $banner={banner} data-testid="profile-snippet">
@@ -204,7 +236,7 @@ export const ProfileSnippet = ({
           label={name}
           name={name}
           network={network}
-          noCache={canEdit}
+          noCache={abilities.data?.canEdit}
         />
         <ButtonStack>
           {ActionButton && <DetailButtonWrapper>{ActionButton}</DetailButtonWrapper>}
@@ -239,6 +271,14 @@ export const ProfileSnippet = ({
           </LocationAndUrl>
         )}
       </TextStack>
+      {isPrimary && (
+        <TagsContainer>
+          <PrimaryNameTag size="medium" colorStyle="greenSecondary">
+            <NametagSVG />
+            {t('name.yourPrimaryName')}
+          </PrimaryNameTag>
+        </TagsContainer>
+      )}
       {children}
     </Container>
   )

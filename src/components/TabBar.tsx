@@ -11,7 +11,7 @@ import { useAvatar } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
-import { getDestination, getRoute } from '@app/routes'
+import { getDestination, getRoute, legacyFavouritesRoute } from '@app/routes'
 
 import { DisconnectButton, RouteItem } from './@atoms/RouteItem/RouteItem'
 import { ConnectButton } from './ConnectButton'
@@ -182,7 +182,7 @@ const TabBarProfile = ({
   address: string
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  name: string | null
+  name?: string
 }) => {
   const router = useRouter()
   const chainId = useChainId()
@@ -219,9 +219,9 @@ export const TabBar = () => {
   const router = useRouter()
 
   const { address } = useAccountSafely()
-  const { name } = usePrimary(address!, !!address)
+  const primary = usePrimary(address!, !!address)
 
-  const hasPrimary = !!name
+  const hasPrimary = !!primary.data?.name
   const hasBack = !!router.query.from
 
   const [isOpen, setIsOpen] = useState(false)
@@ -256,12 +256,14 @@ export const TabBar = () => {
             {address && (
               <>
                 <RouteItem route={getRoute('names')} />
-                {/* <RouteItem route={getRoute('favourites')} /> */}
+                {globalThis?.localStorage?.getItem('ensFavourites') && (
+                  <RouteItem route={legacyFavouritesRoute} />
+                )}
                 <TabBarProfile
                   address={address}
                   isOpen={isOpen}
                   setIsOpen={setIsOpen}
-                  name={name}
+                  name={primary.data?.name}
                 />
               </>
             )}
