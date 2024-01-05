@@ -54,12 +54,12 @@ export const useResolverHasInterfaces = (
   )
 
   const combinedErrors = [...errors, ...(error ? [errorToString(error, fallbackMsg)] : [])]
+  const returnedErrors = isNameSys ? [fallbackMsg] : combinedErrors
 
   return {
     hasInterface,
     isLoading,
     status,
-    // eslint-disable-next-line no-nested-ternary
-    errors: isNameSys ? [fallbackMsg] : combinedErrors.length > 0 ? combinedErrors : undefined,
+    errors: returnedErrors.length > 0 ? returnedErrors : undefined,
   }
 }

@@ -183,6 +183,9 @@ export const RecordsTab = ({
 
   const chainId = useChainId()
   const isResolverAddressNameSys = resolverAddress === NAMESYS_RESOLVERS[`${chainId}`]?.[0]
+  const disabledTooltip = isResolverAddressNameSys
+    ? 'details.tabs.records.editRecordsNameSys'
+    : 'details.tabs.records.editRecordsDisabled'
 
   return (
     <TabWrapper $isCached={isCached} data-testid="records-tab">
@@ -279,12 +282,9 @@ export const RecordsTab = ({
               <DisabledButtonWithTooltip
                 buttonId="records-tab-edit-records-disabled"
                 content={
-                  // eslint-disable-next-line no-nested-ternary
                   hasGlobalError
                     ? t('errors.networkError.blurb', { ns: 'common' })
-                    : isResolverAddressNameSys
-                    ? t('details.tabs.records.editRecordsNameSys')
-                    : t('details.tabs.records.editRecordsDisabled')
+                    : t(disabledTooltip)
                 }
                 buttonText={t('details.tabs.records.editRecords')}
                 mobileWidth={150}

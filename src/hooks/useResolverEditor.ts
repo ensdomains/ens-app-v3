@@ -42,7 +42,7 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
     {
       fallbackMsg:
         resolverChoice === 'namesys'
-          ? 'NameSys records can only be updated on NameSys client'
+          ? 'Records for this resolver can only be updated on NameSys client'
           : 'Cannot determine if address supports resolver methods',
     },
   )
