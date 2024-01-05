@@ -66,7 +66,11 @@ export const useProfile = ({
     enabled: enabled && !!name,
   })
 
-  const { data: decodedName } = useDecodedName({ name, enabled: enabled && !!name && !!profile })
+  const { data: decodedName } = useDecodedName({
+    name,
+    allowIncomplete: true,
+    enabled: enabled && !!name && !!profile,
+  })
 
   const returnProfile = useMemo(() => {
     if (!profile) return undefined

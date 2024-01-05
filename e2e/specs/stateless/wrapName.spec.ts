@@ -4,6 +4,7 @@ import { testClient, waitForTransaction, walletClient } from '../../../playwrigh
 import { registrySetApprovalForAllSnippet } from '@ensdomains/ensjs/contracts'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { namehash } from '@ensdomains/ensjs/utils'
+import { labelhash } from 'viem'
 
 test('should not show wrap button if the connected wallet is not the registrant', async ({
   login,
@@ -178,8 +179,7 @@ test('should allow wrapping a subdomain', async ({
   await expect(morePage.unwrapButton).toBeVisible({ timeout: 15000 })
 })
 
-// TODO: Waiting for encrypted label fix for ensjs
-test.skip('should allow wrapping a name with an unknown label', async ({
+test('should allow wrapping a name with an unknown label', async ({
   page,
   login,
   makeName,
@@ -198,7 +198,7 @@ test.skip('should allow wrapping a name with an unknown label', async ({
     ],
   })
 
-  const unknownLabelhash = namehash(unknownLabel)
+  const unknownLabelhash = labelhash(unknownLabel)
   const unknownEncodedLabel = `[${unknownLabelhash.slice(2)}]`
   const subname = `${unknownEncodedLabel}.${name}`
 

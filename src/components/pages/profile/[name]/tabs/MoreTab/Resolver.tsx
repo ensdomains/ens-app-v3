@@ -6,6 +6,7 @@ import { mq, Typography } from '@ensdomains/thorin'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
+import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
@@ -84,6 +85,9 @@ const Resolver = ({
     })
   }
 
+  const resolverQuery = useResolver({ name, enabled: !resolverAddress })
+  const registryOrSubgraphResolverAddress = resolverAddress || resolverQuery.data
+
   return (
     <Container $isCached={isCachedData}>
       <HeadingContainer>
@@ -119,7 +123,11 @@ const Resolver = ({
           </>
         )}
       </HeadingContainer>
-      <RecordItem type="text" data-testid="resolver-address" value={resolverAddress || ''} />
+      <RecordItem
+        type="text"
+        data-testid="resolver-address"
+        value={registryOrSubgraphResolverAddress || ''}
+      />
     </Container>
   )
 }

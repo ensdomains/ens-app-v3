@@ -7,8 +7,10 @@ import { namehash } from '@ensdomains/ensjs/utils'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 import { testClient, walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
+import { labelhash } from 'viem'
 
-const UNAUTHORISED_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address //RESOLVER_ADDRESSES['1337'][1] as `0x${string}`
+// TODO: Update for when invalid resolver is supported
+const UNAUTHORISED_RESOLVER = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
 
 test.afterAll(async ({ contracts }) => {
   // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
@@ -304,6 +306,7 @@ test.describe('profile', () => {
 
     await profilePage.goto(subname)
     await login.connect()
+    await page.pause()
     // Assert state
     await expect(page.getByTestId('profile-title')).not.toContainText(subname)
 
@@ -373,8 +376,8 @@ test.describe('profile', () => {
     await expect(page.getByTestId('profile-action-Set as primary name')).toHaveCount(0)
   })
 
-  // TODO: Waiting on ensjs to support this
-  test.skip('should allow setting primary name from name with encrypted label', async ({
+  // TODO: Waiting on ensjs to support encrypted labels
+  test('should allow setting primary name from name with encrypted label', async ({
     page,
     login,
     contracts,
@@ -393,7 +396,7 @@ test.describe('profile', () => {
     })
 
     const label = `unknown-label-${Date.now()}`
-    const _labelhash = namehash(label)
+    const _labelhash = labelhash(label)
 
     const name = await makeName({
       label: 'wrapped',

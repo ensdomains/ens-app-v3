@@ -1,5 +1,6 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
+import { ReadContractErrorType } from 'viem'
 import { useQuery } from 'wagmi'
 
 import { getRecords, GetRecordsParameters, GetRecordsReturnType } from '@ensdomains/ensjs/public'
@@ -7,6 +8,12 @@ import { getRecords, GetRecordsParameters, GetRecordsReturnType } from '@ensdoma
 import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 import { camelToConstant } from '@app/utils/name'
+
+// TODO: Check if this is proper way to handle ResolverNotContract errors
+const RETURN_DEFAULT_ERRORS: Partial<ReadContractErrorType | Error>[] = [
+  { name: 'ContractFunctionExecutionError', functionName: 'resolve' },
+  { name: 'ResolverNotContract' },
+]
 
 type UseRecordsParameters = PartialBy<GetRecordsParameters, 'name'>
 
@@ -32,11 +39,29 @@ export const getRecordsQueryFn = async <TParams extends UseRecordsParameters>({
 
   const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
 
-  const res = await getRecords(publicClient, { name, ...params })
+  try {
+    const res = await getRecords(publicClient, { name, ...params })
+    console.log('res', name, res)
+    if (!res) return null
+    return res
+  } catch (e) {
+    // TODO: Check resolver migration flow to understand if this should be limited to universal resolver or not. I don't think it does, but should double check.
+    const error = e as ReadContractErrorType | Error
+    const isReturnDefaultError = RETURN_DEFAULT_ERRORS.some((err) =>
+      Object.keys(err).every((key) => {
+        const propery = key as keyof (ReadContractErrorType | Error)
+        return error[propery] === err[propery]
+      }),
+    )
 
-  if (!res) return null
-
-  return res
+    if (isReturnDefaultError)
+      return {
+        coins: [],
+        texts: [],
+        resolverAddress: null,
+      }
+    throw e
+  }
 }
 
 export const useRecords = <TParams extends UseRecordsParameters>({
