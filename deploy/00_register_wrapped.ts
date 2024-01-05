@@ -5,14 +5,14 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
-import { namehash } from 'viem'
 import {
-  encodeFuses,
+  RecordOptions,
   RegistrationParameters,
+  encodeFuses,
   makeCommitment as generateCommitment,
   makeRegistrationTuple,
-  RecordOptions,
 } from '@ensdomains/ensjs/utils'
+import { namehash } from 'viem'
 
 import { nonceManager } from './.utils/nonceManager'
 
@@ -153,7 +153,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const nameWrapper = await ethers.getContract('NameWrapper')
 
   const makeData = ({ namedOwner, customDuration, fuses, name, subnames, ...rest }: Name) => {
-    const resolver = publicResolver.address
+    const resolverAddress = publicResolver.address
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000' as `0x${string}`
     const duration = customDuration || 31536000
     // 1659467455 is the approximate time of the transaction, this is for keeping block hashes the same
@@ -171,7 +171,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       ) || []
 
     return {
-      resolver,
+      resolverAddress,
       secret,
       duration,
       owner,
