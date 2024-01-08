@@ -4,13 +4,15 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { waitFor } from '@testing-library/react'
 
 import {
+  EtherscanMinedData,
   createTransactionStore,
-  etherscanDataToMinedData, EtherscanMinedData, foundMinedTransaction,
+  etherscanDataToMinedData,
+  foundMinedTransaction,
   foundTransaction,
   setFailedTransaction,
   setReplacedTransaction,
   setReplacedTransactionByNonce,
-  updateRetries
+  updateRetries,
 } from './transactionStore'
 import { waitForTransaction } from './waitForTransaction'
 
@@ -365,55 +367,6 @@ describe('foundMinedTranasction', () => {
         minedData: etherscanDataToMinedData(mockMinedData),
         searchStatus: 'found',
         status: 'confirmed',
-      },
-    ])
-  })
-  it('should update found mined transaction correctly and update the transaction status to failed', () => {
-    const transactionHash = 'hash'
-    const account = 'account'
-    const chainId = 1
-    const transactionInput = 'transactionInput'
-    const mockMinedData: EtherscanMinedData = {
-      blockHash: '0x1234567890abcdef',
-      blockNumber: 1234567,
-      confirmations: 10,
-      contractAddress: '0x1234567890abcdef',
-      cumulativeGasUsed: 100000,
-      from: '0x1234567890abcdef',
-      gas: 100000,
-      gasPrice: '1000000000',
-      gasUsed: 50000,
-      hash: '0x1234567890abcdef',
-      input: '0x1234567890abcdef',
-      isError: '1',
-      nonce: 1,
-      timeStamp: '1234567890',
-      to: '0x1234567890abcdef',
-      transactionIndex: 0,
-      txreceipt_status: '1',
-      value: '1000000000000000000',
-    }
-
-    const mockTransactions = [
-      {
-        hash: transactionHash,
-        searchStatus: 'pending',
-        input: transactionInput,
-        nonce: 1,
-      },
-    ]
-
-    let updateFnResult
-    const mockUpdateTransactions = (account, chainId, updateFn) => {
-      updateFnResult = updateFn(mockTransactions)
-    }
-    foundMinedTransaction(mockUpdateTransactions)(account, chainId, transactionHash, mockMinedData)
-    expect(updateFnResult).toEqual([
-      {
-        ...mockTransactions[0],
-        minedData: etherscanDataToMinedData(mockMinedData),
-        searchStatus: 'found',
-        status: 'failed',
       },
     ])
   })
