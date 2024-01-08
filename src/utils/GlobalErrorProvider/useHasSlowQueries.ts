@@ -1,74 +1,68 @@
+import { hashQueryKey, notifyManager, Query, QueryCache } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useQueryClient } from 'wagmi'
+
 import type { GlobalErrorDispatch, GlobalErrorState } from './GlobalErrorProvider'
 
-// const SLOW_THRESHOLD = 5000
+const SLOW_THRESHOLD = 5000
 
-// const getSlowQueries = (queryCache: QueryCache) => {
-//   const queries = queryCache.getAll()
-//   const slowQueries: any[] = []
+const getSlowQueries = (queryCache: QueryCache) => {
+  const graphQueries = queryCache.getAll().filter((query) => query.queryKey.includes('graph'))
+  const slowQueries: any[] = []
 
-//   queries.forEach((query) => {
-//     const elapsedTime = Date.now() - query.state.dataUpdatedAt
+  graphQueries.forEach((query) => {
+    const elapsedTime = Date.now() - query.state.dataUpdatedAt
 
-//     if (
-//       elapsedTime > SLOW_THRESHOLD &&
-//       query.state.status === 'loading' &&
-//       query.getObserversCount() > 0
-//     ) {
-//       console.log(query)
-//       slowQueries.push(query)
-//     }
-//   })
+    if (
+      elapsedTime > SLOW_THRESHOLD &&
+      query.state.status === 'loading' &&
+      query.getObserversCount() > 0
+    ) {
+      slowQueries.push(query)
+    }
+  })
 
-//   return slowQueries
-// }
+  return slowQueries
+}
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const useHasSlowQueries = (_state: GlobalErrorState, _dispatch: GlobalErrorDispatch) => {
-  return null
-  // const { t } = useTranslation('common')
+export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalErrorDispatch) => {
+  const { t } = useTranslation('common')
 
-  // const queryClient = useQueryClient()
-  // const queryCache = queryClient.getQueryCache()
+  const queryClient = useQueryClient()
+  const queryCache = queryClient.getQueryCache()
 
-  // const slowQueries = useSyncExternalStore(
-  //   useCallback(
-  //     (onStoreChange) => {
-  //       return queryCache.subscribe(() => {
-  //         notifyManager.batchCalls(onStoreChange)
-  //         setTimeout(() => {
-  //           notifyManager.batchCalls(onStoreChange)
-  //         }, SLOW_THRESHOLD)
-  //       })
-  //     },
-  //     [queryCache],
-  //   ),
-  //   () => getSlowQueries(queryCache),
-  //   () => [],
-  // )
+  const slowQueryError = state.errors[hashQueryKey(['slowQueriesKeyPlaceholder'])]
 
-  // useEffect(() => {
-  //   const stateError = state.errors[hashQueryKey(['slowQueriesKeyPlaceholder'])]
-  //   if (slowQueries.length > 0 && !stateError) {
-  //     console.log('setting error')
-  //     console.log(slowQueries)
-  //     dispatch({
-  //       type: 'SET_ERROR',
-  //       payload: {
-  //         key: ['slowQueriesKeyPlaceholder'],
-  //         title: t('errors.networkLatency.title'),
-  //         message: t('errors.networkLatency.message'),
-  //         type: 'ENSJSNetworkLatencyError',
-  //         priority: 1,
-  //       },
-  //     })
-  //   } else if (stateError) {
-  //     console.log('clearing error')
-  //     dispatch({
-  //       type: 'CLEAR_ERROR',
-  //       payload: {
-  //         key: ['slowQueriesKeyPlaceholder'],
-  //       },
-  //     })
-  //   }
-  // }, [slowQueries])
+  useEffect(() => {
+    const unsubscribe = queryCache.subscribe(() => {
+      const queries = getSlowQueries(queryCache)
+
+      if (queries.length > 0 && !slowQueryError) {
+        console.log(queries)
+        // dispatch({
+        //   type: 'SET_ERROR',
+        //   payload: {
+        //     key: ['slowQueriesKeyPlaceholder'],
+        //     title: t('errors.networkLatency.title'),
+        //     message: t('errors.networkLatency.message'),
+        //     type: 'ENSJSNetworkLatencyError',
+        //     priority: 1,
+        //   },
+        // })
+      }
+    })
+    return () => unsubscribe()
+  }, [queryCache])
+
+  useEffect(() => {
+     if (slowQueryError) {
+      dispatch({
+        type: 'CLEAR_ERROR',
+        payload: {
+          key: ['slowQueriesKeyPlaceholder'],
+        },
+      })
+    }
+  }, [state.errors])
 }

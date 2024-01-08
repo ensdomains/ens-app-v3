@@ -84,7 +84,9 @@ export const findDroppedTransactions = async (
 
   const etherscanEndpoint = getAccountHistoryEndpoint(address, chainId)
   const etherscanResponse = await fetch(etherscanEndpoint)
-  const etherscanJson: EtherscanMinedData[] = etherscanResponse.ok ? await etherscanResponse.json() : []
+  const etherscanJson: EtherscanMinedData[] = etherscanResponse.ok
+    ? await etherscanResponse.json()
+    : []
   const accountTransactionHistory = etherscanJson
 
   for (const searchingTransaction of searchingTransactions) {
