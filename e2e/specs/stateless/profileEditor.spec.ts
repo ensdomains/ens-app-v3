@@ -5,9 +5,15 @@ import { generateRecords } from '../../../playwright/fixtures/makeName/generator
 import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 import { emptyAddress } from '../../../src/utils/constants'
+import { encodeAbi } from '@ensdomains/ensjs/utils'
 
 const oldResolver = testClient.chain.contracts.legacyPublicResolver.address
 const newResolver = testClient.chain.contracts.publicResolver.address
+
+const dummyABI = 
+  {
+    "test":"test"
+  }
 
 const DEFAULT_RECORDS = {
   texts: [
@@ -36,6 +42,38 @@ const DEFAULT_RECORDS = {
   ],
   contentHash: 'ipfs://bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
 }
+
+const makeRecords = async () => {
+  return {
+    ...DEFAULT_RECORDS,
+    abi: await encodeAbi({ encodeAs: 'json', data: dummyABI }),
+  }
+}
+
+test.describe('profile', () => {
+  test('should display profile records', async ({ page, login, makeName, makePageObject }) => {
+    const name = await makeName({
+      label: 'profile',
+      type: 'legacy',
+      records: await makeRecords(),
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+
+    await profilePage.goto(name)
+    await login.connect()
+    
+    await page.pause()
+    await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
+    await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
+    await expect(profilePage.record('address', 'btc')).toHaveText('bc1qj...pwa6n')
+    await expect(profilePage.record('address', 'ETC_LEGACY')).toHaveText(
+      'ETC_LEGACY0x3C4...293BC',
+    )
+    await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
+    await expect(profilePage.contentHash()).toContainText('ipfs://bafybeic...')
+  })
+})
 
 test.describe('unwrapped', () => {
   test.describe('migration', () => {
@@ -108,7 +146,7 @@ test.describe('unwrapped', () => {
         type: 'legacy',
         owner: 'user',
         resolver: oldResolver,
-        records: DEFAULT_RECORDS,
+        records: await makeRecords(),
       })
 
       // Add records to latest resolver
@@ -116,7 +154,7 @@ test.describe('unwrapped', () => {
         name,
         owner: 'user',
         resolver: newResolver,
-        records: DEFAULT_RECORDS,
+        records: await makeRecords(),
       })
 
       const morePage = makePageObject('MorePage')
@@ -153,7 +191,7 @@ test.describe('unwrapped', () => {
         label: 'unwrapped',
         type: 'legacy',
         resolver: oldResolver,
-        records: DEFAULT_RECORDS,
+        records: await makeRecords(),
       })
 
       const profilePage = makePageObject('ProfilePage')
@@ -209,7 +247,7 @@ test.describe('unwrapped', () => {
         label: 'unwrapped',
         type: 'legacy',
         resolver: oldResolver,
-        records: DEFAULT_RECORDS,
+        records: await makeRecords(),
       })
 
       const morePage = makePageObject('MorePage')

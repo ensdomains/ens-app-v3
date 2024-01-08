@@ -97,10 +97,18 @@ export const checkContentHashEqual = (
   return contentHashToString(a) === contentHashToString(b)
 }
 
+export const checkAbiEqual = (abi?: Profile['abi'], abi2?: Profile['abi']): boolean => {
+  if (!abi && !abi2) return true
+  const abiStr = typeof abi === 'object' ? JSON.stringify(abi?.abi || {}) : abi
+  const abiStr2 = typeof abi2 === 'object' ? JSON.stringify(abi2?.abi || {}) : abi2
+  return abi?.contentType === abi2?.contentType && abiStr === abiStr2
+}
+
 export const checkProfileRecordsEqual = (a: Profile, b: Profile): boolean => {
   if (!checkTextRecordsEqual(a?.texts, b?.texts)) return false
   if (!checkAddressRecordsEqual(a?.coins, b?.coins)) return false
   if (!checkContentHashEqual(a?.contentHash, b?.contentHash)) return false
+  if (!checkAbiEqual(a?.abi, b?.abi)) return false
   return true
 }
 

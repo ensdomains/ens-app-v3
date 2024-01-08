@@ -12,10 +12,9 @@ import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { generateRecords } from './generateRecords'
 import { WrappedSubname, generateWrappedSubname } from './generateWrappedSubname'
 import { RegistrationParameters } from '@ensdomains/ensjs/utils'
-import { publicClient, testClient, waitForTransaction, walletClient } from '../../contracts/utils/addTestContracts'
+import { testClient, waitForTransaction, walletClient } from '../../contracts/utils/addTestContracts'
 import { commitName, registerName, setResolver } from '@ensdomains/ensjs/wallet'
 import { getPrice } from '@ensdomains/ensjs/public'
-import { KNOWN_RESOLVER_DATA } from '../../../../src/constants/resolverAddressData';
 
 // const DEFAULT_RESOLVER = NAMEWRAPPER_AWARE_RESOLVERS['1337'][0] as `0x${string}` //TODO (SG) - Ask about this
 const DEFAULT_RESOLVER = testClient.chain.contracts.ensPublicResolver.address //TODO (SG) Not sure what resolver to use here
@@ -60,7 +59,7 @@ export const generateWrappedName =
 
     // Check if resolver is valid
     // const hasValidResolver = !!KNOWN_RESOLVER_DATA['1337']?.find((resolverData) => resolverData.address === resolver)?.isNameWrapperAware
-    const hasValidResolver = true
+    const hasValidResolver = resolver.toLocaleLowerCase() === testClient.chain.contracts.ensPublicResolver.address.toLocaleLowerCase()
     // && NAMEWRAPPER_AWARE_RESOLVERS['1337'].includes(resolver) //TODO (SG) - Ask about this
     // const resolverAddress = hasValidResolver ? resolver : DEFAULT_RESOLVER
     // const _resolver = contracts.get('PublicResolver', {
