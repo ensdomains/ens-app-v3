@@ -98,6 +98,8 @@
       },
       "warningOverlay": {
         "action": {
+          "visitNameSysClient": "Visit NameSys App",
+          "goBack": "Ok",
           "learnMoreResolvers": "Learn more about resolvers",
           "updateResolver": "Update resolver",
           "setResolver": "Set resolver",
@@ -107,6 +109,10 @@
           "title": "Unauthorised resolver",
           "subtitle": "You do not have permission to set records for this resolver. You will need to update to the latest resolver to edit your profile.",
           "action": "Update resolver"
+        },
+        "namesysResolver": {
+          "title": "Custom NameSys resolver",
+          "subtitle": "Records for your resolver can only be updated on NameSys client. You will need to visit NameSys app to edit your profile."
         },
         "migrateProfileSelector": {
           "title": "Profile",
@@ -380,7 +386,7 @@
           "learnMore": "Learn about sending names"
         }
       }
-    }, 
+    },
     "syncManager": {
       "title": "Sync manager",
       "description": "Syncing the manager will make you the new manager of this name. The current manager <strong>({{manager}})</strong> will no longer be able to make changes.",
@@ -420,6 +426,10 @@
       "invalidResolver": {
         "title": "Unauthorized resolver set",
         "description": "To use this as your primary name you will need to set a valid resolver and update the ETH address first."
+      },
+      "namesysResolver": {
+        "title": "NameSys resolver set",
+        "description": "To use this as your primary name, update the ETH address on NameSys app first. Alternatively, you can reset the resolver below but this will disable NameSys features for this name."
       }
     },
     "multiStepSubnameDelete": {
