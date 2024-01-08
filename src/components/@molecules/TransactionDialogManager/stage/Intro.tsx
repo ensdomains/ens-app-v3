@@ -56,7 +56,9 @@ export const IntroStageModal = ({
 
   return (
     <>
-      <Dialog.Heading title={t(...title)} />
+      {(txCount === 3 && <Dialog.Heading title={t(...title)} alert="warning" />) || (
+        <Dialog.Heading title={t(...title)} />
+      )}
       <InnerDialog data-testid="transaction-modal-inner">
         <Content {...content.data} />
         {txCount > 1 && (

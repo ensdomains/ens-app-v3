@@ -1,4 +1,4 @@
-export type IntroType = 'noResolver' | 'invalidResolver' | 'updateEthAddress'
+export type IntroType = 'noResolver' | 'invalidResolver' | 'updateEthAddress' | 'namesysResolver'
 
 export const getIntroTranslation = (type: IntroType, part: 'title' | 'description') =>
   `intro.selectPrimaryName.${type}.${part}`

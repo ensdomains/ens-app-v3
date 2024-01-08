@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { useRegistryResolver } from '@app/hooks/resolver/useRegistryResolver'
 import { useChainId } from '@app/hooks/useChainId'
-import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
+import { NAMESYS_RESOLVERS, RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
 
 import { useBasicName } from '../useBasicName'
 import { useProfile } from '../useProfile'
@@ -54,7 +54,12 @@ export const useResolverType = (name: string, options: Options = {}) => {
   const data = useMemo(() => {
     if (!enabled || isLoading) return
     const resolverAddressIndex = RESOLVER_ADDRESSES[`${chainId}`]?.indexOf(resolverAddress)
+    const isNameSysResolver = resolverAddress === NAMESYS_RESOLVERS[`${chainId}`][0]
+    const isNameSysWildcard = true
     if (resolverAddressIndex === -1) {
+      if (isNameSysResolver) {
+        return { type: 'namesys', isNameSysWildcard, tone: 'greySecondary' } as const
+      }
       return { type: 'custom', isWildcard, tone: 'greySecondary' } as const
     }
     if (resolverAddressIndex === 0 || (!isWrapped && resolverAddressIndex === 1)) {

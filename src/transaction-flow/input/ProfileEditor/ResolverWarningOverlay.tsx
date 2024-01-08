@@ -10,6 +10,7 @@ import { InvalidResolverView } from './views/InvalidResolverView'
 import { MigrateProfileSelectorView } from './views/MigrateProfileSelectorView.tsx'
 import { MigrateProfileWarningView } from './views/MigrateProfileWarningView'
 import { MigrateRegistryView } from './views/MigrateRegistryView'
+import { NameSysResolverView } from './views/NameSysResolverView'
 import { NoResolverView } from './views/NoResolverView'
 import { ResetProfileView } from './views/ResetProfileView'
 import { ResolverNotNameWrapperAwareView } from './views/ResolverNotNameWrapperAwareView'
@@ -34,6 +35,7 @@ type Props = {
 } & TransactionDialogPassthrough
 
 type View =
+  | 'namesysResolver'
   | 'invalidResolver'
   | 'migrateProfileSelector'
   | 'migrateProfileWarning'
@@ -63,6 +65,7 @@ const ResolverWarningOverlay = ({
   const flow: View[] = useMemo(() => {
     if (hasOldRegistry) return ['migrateRegistry']
     if (!status?.hasResolver) return ['noResolver']
+    if (status?.hasNameSysResolver) return ['namesysResolver']
     if (!status?.hasValidResolver) return ['invalidResolver']
     if (!status?.isNameWrapperAware && isWrapped) return ['resolverNotNameWrapperAware']
     if (!status?.isAuthorized) return ['invalidResolver']
@@ -81,6 +84,7 @@ const ResolverWarningOverlay = ({
     hasOldRegistry,
     isWrapped,
     status?.hasResolver,
+    status?.hasNameSysResolver,
     status?.isNameWrapperAware,
     status?.hasValidResolver,
     status?.isAuthorized,
@@ -199,6 +203,7 @@ const ResolverWarningOverlay = ({
 
   const viewsMap: { [key in View]: any } = {
     migrateRegistry: <MigrateRegistryView name={name} onCancel={onDismiss} />,
+    namesysResolver: <NameSysResolverView onCancel={onDismiss} />,
     invalidResolver: <InvalidResolverView onConfirm={handleUpdateResolver} onCancel={onDismiss} />,
     migrateProfileSelector: (
       <MigrateProfileSelectorView

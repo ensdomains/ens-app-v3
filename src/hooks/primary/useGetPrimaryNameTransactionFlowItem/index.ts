@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next'
 
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
+import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { makeIntroItem } from '@app/transaction-flow/intro/index'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
-import { emptyAddress } from '@app/utils/constants'
+import { NAMESYS_RESOLVERS, emptyAddress } from '@app/utils/constants'
 
 import {
   IntroType,
@@ -36,6 +37,8 @@ export const useGetPrimaryNameTransactionFlowItem = (
 ) => {
   const { t } = useTranslation('transactionFlow')
 
+  const chainId = useChainId()
+
   const _enabled = (options.enabled ?? true) && !!address
 
   const reverseRegistryName = useReverseRegistryName({ enabled: _enabled })
@@ -50,6 +53,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
     return (name: string) => {
       let introType: IntroType = 'updateEthAddress'
       const transactions: GenericTransaction[] = []
+      const isNameSysResolver = resolverAddress === NAMESYS_RESOLVERS[`${chainId}`][0]
 
       if (
         checkRequiresSetPrimaryNameTransaction({
@@ -67,8 +71,14 @@ export const useGetPrimaryNameTransactionFlowItem = (
           isResolverAuthorized: resolverStatus?.isAuthorized,
         })
       ) {
-        introType =
-          !resolverAddress || resolverAddress === emptyAddress ? 'noResolver' : 'invalidResolver'
+        if (!resolverAddress || resolverAddress === emptyAddress) {
+          introType = 'noResolver'
+        }
+
+        if (isNameSysResolver) {
+          introType = 'namesysResolver'
+        }
+
         transactions.unshift(
           makeTransactionItem('updateResolver', {
             name,
@@ -115,6 +125,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
       } as TransactionFlowItem
     }
   }, [
+    chainId,
     isActive,
     isWrapped,
     latestResolverAddress,

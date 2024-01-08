@@ -70,6 +70,7 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
       hasResolver: false,
       hasLatestResolver: false,
       hasValidResolver: false,
+      hasNameSysResolver: false,
       isAuthorized: false,
       isNameWrapperAware: false,
       hasProfile: false,
@@ -82,6 +83,7 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
       ...defaultResults,
       hasResolver: !!profileResolverAddress && profileResolverAddress !== emptyAddress,
       hasLatestResolver: resolverType.data?.type === 'latest',
+      hasNameSysResolver: resolverType.data?.type === 'namesys',
       isNameWrapperAware: canEditRecordsWhenWrappedCalc(true, profileResolverAddress, chainId),
       hasProfile: profileHasRecords(profile),
     }
@@ -94,6 +96,13 @@ export const useResolverStatus = (name?: string, options: Options = {}) => {
         isAuthorized: true,
         hasMigratedProfile: true,
         isMigratedProfileEqual: true,
+      }
+    }
+
+    // If the profile has NameSys resolver, defer to NameSys client
+    if (baseResults.hasNameSysResolver) {
+      return {
+        ...baseResults,
       }
     }
 
