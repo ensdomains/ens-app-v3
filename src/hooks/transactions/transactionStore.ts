@@ -220,7 +220,7 @@ export const foundMinedTransaction =
               ...transaction,
               minedData: etherscanDataToMinedData(minedData),
               searchStatus: 'found',
-              status: 'confirmed',
+              status: parseInt(minedData.isError) === 1 ? 'failed' : 'confirmed',
             } as Transaction)
           : transaction,
       )
