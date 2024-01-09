@@ -21,5 +21,8 @@
   "jest.jestCommandLine": "pnpm run test",
   "cSpell.words": [
     "ensjs"
-  ]
+  ],
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
