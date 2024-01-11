@@ -6,12 +6,8 @@ import { setupServer } from 'msw/node'
 import { EARNIFI_ENDPOINT, getErrorMessage, useSubscribeToEarnifi } from './useSubscribeToEarnifi'
 
 export const handlers = [
-  rest.post(EARNIFI_ENDPOINT, (req, res, ctx) => {
-    const { email, address, chainId } = req.body as {
-      email: string
-      address: string
-      chainId: number
-    }
+  rest.post(EARNIFI_ENDPOINT, async (req, res, ctx) => {
+    const { email, address, chainId } = await req.json() 
     if (email && address && chainId) {
       return res(ctx.status(200))
     }

@@ -2,7 +2,7 @@ import { render, screen} from '@app/test-utils'
 import { ContractSection } from './ContractSection'
 import { BreakpointProvider, useBreakpoint } from '@app/utils/BreakpointProvider';
 
-jest.mock('@app/hooks/useContractAddress', () => ({
+jest.mock('@app/hooks/chain/useContractAddress', () => ({
   useContractAddress: () => '0xnamewrapper'
 }))
 

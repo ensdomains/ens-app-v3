@@ -175,7 +175,7 @@ describe('useBasicName', () => {
     })
   })
   describe('expiry poll', () => {
-    const gracePeriodMs = 1_000 * 60 * 60 * 24 * 90 // 90 days
+    const gracePeriodSeconds = 60 * 60 * 24 * 90 // 90 days
     const ms5Minutes = 1_000 * 60 * 5
     it('should enable useCurrentBlockTimestamp when a grace period ends in less than 5 minutes', () => {
       mockUseValidate.mockReturnValue({
@@ -200,8 +200,8 @@ describe('useBasicName', () => {
       })
       mockUseExpiry.mockReturnValue({
         data: {
-          expiry: createDateAndValue(BigInt(Date.now() - gracePeriodMs + ms5Minutes - 1000)),
-          gracePeriod: gracePeriodMs,
+          expiry: createDateAndValue(BigInt(Date.now() - (gracePeriodSeconds * 1000) + ms5Minutes - 1000)),
+          gracePeriod: gracePeriodSeconds,
         },
         isLoading: false,
       })
@@ -238,8 +238,8 @@ describe('useBasicName', () => {
       })
       mockUseExpiry.mockReturnValue({
         data: {
-          expiry: createDateAndValue(BigInt(Date.now() - gracePeriodMs - ms5Minutes + 1000)),
-          gracePeriod: gracePeriodMs,
+          expiry: createDateAndValue(BigInt(Date.now() - (gracePeriodSeconds * 1000) - ms5Minutes + 1000)),
+          gracePeriod: gracePeriodSeconds,
         },
         isLoading: false,
       })
@@ -276,8 +276,8 @@ describe('useBasicName', () => {
       })
       mockUseExpiry.mockReturnValue({
         data: {
-          expiry: createDateAndValue(BigInt(Date.now() - gracePeriodMs + ms5Minutes + 1000)),
-          gracePeriod: gracePeriodMs,
+          expiry: createDateAndValue(BigInt(Date.now() - gracePeriodSeconds + ms5Minutes + 1000)),
+          gracePeriod: gracePeriodSeconds,
         },
         isLoading: false,
       })
@@ -314,8 +314,8 @@ describe('useBasicName', () => {
       })
       mockUseExpiry.mockReturnValue({
         data: {
-          expiry: createDateAndValue(BigInt(Date.now() - gracePeriodMs - ms5Minutes - 1000)),
-          gracePeriod: gracePeriodMs,
+          expiry: createDateAndValue(BigInt(Date.now() - gracePeriodSeconds - ms5Minutes - 1000)),
+          gracePeriod: gracePeriodSeconds,
         },
         isLoading: false,
       })
@@ -423,8 +423,8 @@ describe('useBasicName', () => {
       })
       mockUseExpiry.mockReturnValue({
         data: {
-          expiry: createDateAndValue(BigInt(Date.now() - gracePeriodMs + ms5Minutes - 1000)),
-          gracePeriod: gracePeriodMs,
+          expiry: createDateAndValue(BigInt(Date.now() - (gracePeriodSeconds * 1000) + ms5Minutes - 1000)),
+          gracePeriod: gracePeriodSeconds,
         },
         isLoading: false,
       })
@@ -464,8 +464,8 @@ describe('useBasicName', () => {
       })
       mockUseExpiry.mockReturnValue({
         data: {
-          expiry: createDateAndValue(BigInt(1234567890 - gracePeriodMs + ms5Minutes - 1000)),
-          gracePeriod: gracePeriodMs,
+          expiry: createDateAndValue(BigInt(1234567890 - (gracePeriodSeconds * 1000) + ms5Minutes - 1000)),
+          gracePeriod: gracePeriodSeconds,
         },
         isLoading: false,
       })

@@ -51,7 +51,6 @@ export const getReverseRegistryNameQueryFn = async <
 }: QueryFunctionContext<QueryKey<TParams>>) => {
   if (!address) throw new Error('address is required')
 
-  console.log(address, _address)
   try {
     const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
 
@@ -63,7 +62,6 @@ export const getReverseRegistryNameQueryFn = async <
       abi: registryResolverSnippet,
       args: [reverseRegistryHash],
     })
-    console.log(resolverAddress)
 
     const name = await publicClient.readContract({
       address: resolverAddress,
@@ -71,7 +69,6 @@ export const getReverseRegistryNameQueryFn = async <
       functionName: 'name',
       args: [reverseRegistryHash],
     })
-    console.log(name)
 
     return name as string
   } catch (e) {

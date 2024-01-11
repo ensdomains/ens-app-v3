@@ -14,7 +14,7 @@ jest.mock('@app/hooks/abilities/useAbilities', () => ({
   })
 }))
 
-jest.mock('@app/hooks/useAccountSafely', () => ({
+jest.mock('@app/hooks/account/useAccountSafely', () => ({
   useAccountSafely: () => ({address: '0xaccount'})
 }))
 

@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-hooks"
+import { renderHook } from "@app/test-utils"
 import { useExpiryDetails } from "./useExpiryDetails"
 import { checkETH2LDFromName } from "@app/utils/utils"
 
@@ -9,7 +9,7 @@ jest.mock('@app/hooks/useNameType', () => ({
 
 const mockUseBasicName = jest.fn() 
 jest.mock('@app/hooks/useBasicName', () => ({
-  useBasicName: (_: string, {enabled}: any) => { 
+  useBasicName: ({enabled}: any) => { 
     return enabled ?  mockUseBasicName() : {isLoading: false} }
 }))
 
@@ -20,9 +20,9 @@ const mockUseRegistrationData = jest.fn().mockReturnValue({
   } ,
   isLoading: false
 })
-jest.mock('@app/hooks/useRegistrationData', () =>  (name: string, {enabled}: any) => enabled && checkETH2LDFromName(name) ? mockUseRegistrationData() : { isLoading: false})
+jest.mock('@app/hooks/useRegistrationData', () =>  ({name, enabled}: any) => enabled && checkETH2LDFromName(name) ? mockUseRegistrationData() : { isLoading: false})
 
-jest.mock('@app/hooks/useChainName', () => ({
+jest.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: () => 'goerli'
 }))
 
@@ -62,14 +62,14 @@ describe('useExpiryDetails', () => {
         })
         mockUseBasicName.mockReturnValue({
           wrapperData: {
-            expiryDate: new Date(3255803954000)
+            expiry: { date: new Date(3255803954000) }
           },
           isLoading: false
         })
 
         const { result } = renderHook(() => useExpiryDetails({name: 'sub.test.eth', details: {
           wrapperData: {
-            expiryDate: new Date(3255803954000)
+            expiry: {date:  new Date(3255803954000)}
           },
           isLoading: false
         } as any}))

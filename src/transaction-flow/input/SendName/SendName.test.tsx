@@ -1,7 +1,7 @@
 import { render, userEvent, screen } from '@app/test-utils'
 import SendName from './SendName-flow' 
 
-jest.mock('@app/hooks/useAccountSafely', () => ({
+jest.mock('@app/hooks/account/useAccountSafely', () => ({
   useAccountSafely: () => ({ address: '0xowner'})
 }))
 

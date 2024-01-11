@@ -2,13 +2,13 @@ import { render, screen} from '@app/test-utils'
 
 import { AvatarWithIdentifier } from './AvatarWithIdentifier'
 
-const mockUsePrimary = jest.fn().mockImplementation((address) => {
+const mockUsePrimary = jest.fn().mockImplementation(({address}) => {
   return ({
   data: address === '0xaddressWithoutAPrimaryName' ? undefined : { beautifiedName: 'test.eth', name: 'test.eth' },
   isLoading: false
 })})
-jest.mock('@app/hooks/usePrimary', () => ({
-  usePrimary: (address: unknown, skip: boolean) => skip ? {isLoading: false} : mockUsePrimary(address)
+jest.mock('@app/hooks/ensjs/public/usePrimaryName', () => ({
+  usePrimaryName: ({address, enabled}: {address: unknown, enabled?: boolean}) => !enabled ? {isLoading: false} : mockUsePrimary({address})
 }))
 
 jest.mock('@app/components/AvatarWithZorb', () => ({
