@@ -34,7 +34,9 @@ jest.mock('@app/hooks/useNameDetails', () => ({
 const mockUseParentBasicName = jest.fn().mockReturnValue({
   isLoading: false,
 })
-jest.mock('@app/hooks/useParentBasicName', () => () => mockUseParentBasicName())
+jest.mock('@app/hooks/useParentBasicName', () => ({
+  useParentBasicName: () => mockUseParentBasicName()
+}))
 
 
 

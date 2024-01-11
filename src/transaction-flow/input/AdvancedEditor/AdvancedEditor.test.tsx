@@ -255,7 +255,7 @@ describe('AdvancedEditor', () => {
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
     })
-    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes[0]).toEqual({
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coins[0]).toEqual({
       coin: 'ETH',
       value: '',
     })
@@ -402,6 +402,7 @@ describe('AdvancedEditor', () => {
     }
   })
 
+  // TODO: Need to adjust according to how we will delete abi
   it('should allow removing abi', async () => {
     render(
       <AdvancedEditor dispatch={mockDispatch} onDismiss={() => {}} data={{ name: 'test.eth' }} />,

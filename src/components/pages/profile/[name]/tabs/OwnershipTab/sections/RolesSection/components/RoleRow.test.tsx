@@ -1,11 +1,20 @@
 import { render, userEvent, screen, waitFor } from "@app/test-utils";
 import { RoleRow } from "./RoleRow";
+import { mainnetWithEns } from "@app/constants/chains";
+
+jest.mock('next/router', () => jest.requireActual('next-router-mock'))
 
 const mockUsePrimary = jest.fn().mockReturnValue({})
-jest.mock('@app/hooks/usePrimary', () => ({
-  usePrimary: () => ({
+jest.mock('@app/hooks/ensjs/public/usePrimaryName', () => ({
+  usePrimaryName: () => ({
     ...mockUsePrimary(),
     isLoading: false
+  })
+}))
+
+jest.mock('@app/hooks/usePublicClient', () => ({
+  usePublicClient: () => ({
+    chain: mainnetWithEns
   })
 }))
 

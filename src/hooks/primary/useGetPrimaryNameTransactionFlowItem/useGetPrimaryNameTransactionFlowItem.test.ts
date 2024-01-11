@@ -1,15 +1,15 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 
 import { useGetPrimaryNameTransactionFlowItem } from '.'
 
-jest.mock('@app/hooks/ensjs/public/usePrimaryName')
+jest.mock('@app/hooks/reverseRecord/useReverseRegistryName')
 jest.mock('@app/hooks/chain/useContractAddress')
 
-const mockUsePrimaryName = mockFunction(usePrimaryName)
+const mockUseReverseRegistryName = mockFunction(useReverseRegistryName)
 const mockUseContractAddress = mockFunction(useContractAddress)
 
 const createResolverStatusData = (
@@ -24,12 +24,8 @@ const createResolverStatusData = (
 describe('useGetPrimaryNameTransactionFlowItem', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUsePrimaryName.mockReturnValue({
-      data: {
-        name: 'test.eth',
-        beautifiedName: 'test.eth',
-        match: true,
-      },
+    mockUseReverseRegistryName.mockReturnValue({
+      data: 'test.eth',
       isLoading: false,
       isFetching: false,
     })
@@ -49,7 +45,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
   })
 
   it('should return transaction SetPrimaryName if the reverseRegistryName is undefined.', async () => {
-    mockUsePrimaryName.mockReturnValue({
+    mockUseReverseRegistryName.mockReturnValue({
       data: undefined,
       isLoading: false,
       isFetching: false,
@@ -256,5 +252,18 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
     )
     expect(result.current.callBack?.('primary.eth')?.transactions.length).toBe(1)
     expect(result.current.callBack?.('primary.eth')?.intro).toBeUndefined()
+  })
+
+  it('should return 3 transaction steps if profile address does not match user address and resolver is not authorized', () => {
+    const { result } = renderHook(() =>
+      useGetPrimaryNameTransactionFlowItem({
+        address: '0x123',
+        isWrapped: false,
+        profileAddress: '0x1234',
+        resolverAddress: '0xresolver',
+        resolverStatus: createResolverStatusData({ isAuthorized: false, hasMigratedRecord: false }),
+      }),
+    )
+    expect(result.current.callBack?.('primary.eth')?.transactions.length).toBe(3)
   })
 })

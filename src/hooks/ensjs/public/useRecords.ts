@@ -41,7 +41,6 @@ export const getRecordsQueryFn = async <TParams extends UseRecordsParameters>({
 
   try {
     const res = await getRecords(publicClient, { name, ...params })
-    console.log('res', name, res)
     if (!res) return null
     return res
   } catch (e) {

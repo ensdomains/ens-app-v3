@@ -1,7 +1,7 @@
 import { render, userEvent, screen, within, waitFor } from "@app/test-utils"
 import EditRoles from './EditRoles-flow'
 
-jest.mock('@app/hooks/useAccountSafely', () => ({
+jest.mock('@app/hooks/account/useAccountSafely', () => ({
   useAccountSafely: () => ({ address: '0xowner'})
 }))
 
@@ -113,7 +113,7 @@ describe('EditRoles', () => {
       expect(screen.getByTestId('edit-roles-save-button')).toBeVisible()
     })
     await userEvent.click(screen.getByTestId('edit-roles-save-button'))
-    expect(mockDispatch).toHaveBeenCalledWith({"name": "setTransactions", "payload": [{"data": {"address": "0xnick", "name": "test.eth"}, "name": "updateEthAddress"}, {"data": {"contract": "contract", "name": "test.eth", "newOwner": "0xnick", "reclaim": false, "sendType": "sendManager"}, "name": "transferName"}, {"data": {"contract": "contract", "name": "test.eth", "newOwner": "0xnick", "sendType": "sendOwner"}, "name": "transferName"}]})
+    expect(mockDispatch).toHaveBeenCalledWith({"name": "setTransactions", "payload": [{"data": {"address": "0xnick", "name": "test.eth"}, "name": "updateEthAddress"}, {"data": {"contract": "contract", "name": "test.eth", "newOwnerAddress": "0xnick", "reclaim": false, "sendType": "sendManager"}, "name": "transferName"}, {"data": {"contract": "contract", "name": "test.eth", "newOwner": "0xnick", "sendType": "sendOwner"}, "name": "transferName"}]})
   })
 
   it('should not be able to set a role to the existing address', async () => {

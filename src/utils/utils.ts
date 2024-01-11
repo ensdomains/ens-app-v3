@@ -7,22 +7,6 @@ import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
 
-const baseMetadataURL = process.env.NEXT_PUBLIC_PROVIDER
-  ? 'http://localhost:8080'
-  : 'https://metadata.ens.domains'
-
-export function ensNftImageUrl({
-  name,
-  registrarAddress,
-  chainName,
-}: {
-  name: string
-  registrarAddress: Address
-  chainName: string
-}) {
-  return `${baseMetadataURL}/${chainName}/${registrarAddress}/${name}/image`
-}
-
 export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice = 5) => {
   if (address.length < maxLength) {
     return address

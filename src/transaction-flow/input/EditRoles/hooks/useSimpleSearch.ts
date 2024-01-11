@@ -79,7 +79,6 @@ export const useSimpleSearch = (options: Options = {}) => {
     async (query: string) => {
       if (query.length < 3) throw new Error('Query too short')
       if (cache) {
-        console.log('CaChe', cache)
         const cachedData = queryClient.getQueryData<Result[]>(createQueryKey(query))
         if (cachedData) return cachedData
       }

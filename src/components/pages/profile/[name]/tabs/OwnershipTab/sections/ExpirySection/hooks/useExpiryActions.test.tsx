@@ -1,6 +1,15 @@
 import { renderHook } from "@app/test-utils"
 import { useExpiryActions } from "./useExpiryActions"
 
+jest.mock('@app/hooks/abilities/useAbilities', () => ({
+  useAbilities: ( ) => ({
+    data: {
+      canEdit: true
+    },
+    isLoading: false
+  })
+}))
+
 describe('useExpiryActions', () => {
   it('should render if expiryDetails contains a expiry type data with a valid expiry date', () => {
     const { result} = renderHook(() => useExpiryActions({ name: 'test.eth', expiryDetails: [{ type: 'expiry', date: new Date('3255803954000') }]}))

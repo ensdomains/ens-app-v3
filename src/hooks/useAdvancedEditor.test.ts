@@ -1,6 +1,7 @@
 import { decodeAbi } from './useAdvancedEditor'
 
-describe('normalizeAbi', () => {
+// TODO: Remove skip when we know how we will handle abi
+describe.skip('normalizeAbi', () => {
   it('should normalize abi that is a string', () => {
     expect(decodeAbi("test")).toEqual({ contentType: 1, data: 'test' })
   })

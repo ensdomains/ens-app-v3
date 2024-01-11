@@ -20,9 +20,18 @@ export const validateContentHash =
 
     const output = getProtocolType(value)
     if (!output) return 'Invalid protocol type'
-    const { protocolType } = output
+    const { protocolType, decoded } = output
     if (provider !== 'all' && !contentHashToProtocols[provider]?.includes(protocolType))
       return 'Invalid protocol type'
+
+    if (
+      (['ipfs', 'bzz'].includes(protocolType) && decoded.length < 4) ||
+      (protocolType === 'onion' && decoded.length !== 16) ||
+      (protocolType === 'onion3' && decoded.length !== 56) ||
+      (protocolType === 'sia' && decoded.length !== 46) ||
+      (['arweave', 'ar'].includes(protocolType) && decoded.length !== 43)
+    )
+      return 'Invalid content id'
 
     try {
       encodeContentHash(value)

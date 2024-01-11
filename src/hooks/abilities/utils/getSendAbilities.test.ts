@@ -87,45 +87,53 @@ const partialUserStates = {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
-        owner: '0xnotOwner'
+        owner: '0xnotOwner',
       },
       wrapperData: {
-        parent: {},
-        child: {}
-      }
+        fuses: {
+          parent: {},
+          child: {},
+        },
+      },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
-        owner: '0xdnsowner'
+        owner: '0xdnsowner',
       },
       wrapperData: {
-        parent: {},
-        child: {}
-      }
-    }
+        fuses: {
+          parent: {},
+          child: {},
+        },
+      },
+    },
   },
   unwrappedDNSManager: {
     basicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
-        owner: ownerAddress
+        owner: ownerAddress,
       },
       wrapperData: {
-        parent: {},
-        child: {}
-      }
+        fuses: {
+          parent: {},
+          child: {},
+        },
+      },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
-        owner: '0xdnsowner'
+        owner: '0xdnsowner',
       },
       wrapperData: {
-        parent: {},
-        child: {}
-      }
-    }
+        fuses: {
+          parent: {},
+          child: {},
+        },
+      },
+    },
   },
   unwrappedSubnameManagerHolderUnwrappedParentManager: {
     basicNameData: {
@@ -398,7 +406,7 @@ const partialUserStates = {
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
-        owner: '0xnotowner'
+        owner: '0xnotowner',
       },
       wrapperData: {
         fuses: {
@@ -1087,8 +1095,7 @@ describe('getSendAbilities', () => {
 
     describe('DNS name', () => {
       it('for 2ld owner who wants to send owner', () => {
-        const { basicNameData, parentBasicNameData } =
-        userStates.unwrappedDNSOwner
+        const { basicNameData, parentBasicNameData } = userStates.unwrappedDNSOwner
 
         const result = getSendAbilities({
           basicNameData,
@@ -1100,8 +1107,7 @@ describe('getSendAbilities', () => {
       })
 
       it('for 2ld owner who wants to send manager', () => {
-        const { basicNameData, parentBasicNameData } =
-        userStates.unwrappedDNSOwner
+        const { basicNameData, parentBasicNameData } = userStates.unwrappedDNSOwner
 
         const result = getSendAbilities({
           basicNameData,
@@ -1113,8 +1119,7 @@ describe('getSendAbilities', () => {
       })
 
       it('for 2ld manager who wants to send owner', () => {
-        const { basicNameData, parentBasicNameData } =
-        userStates.unwrappedDNSManager
+        const { basicNameData, parentBasicNameData } = userStates.unwrappedDNSManager
 
         const result = getSendAbilities({
           basicNameData,
@@ -1126,8 +1131,7 @@ describe('getSendAbilities', () => {
       })
 
       it('for 2ld manager who wants to send manager', () => {
-        const { basicNameData, parentBasicNameData } =
-        userStates.unwrappedDNSManager
+        const { basicNameData, parentBasicNameData } = userStates.unwrappedDNSManager
 
         const result = getSendAbilities({
           basicNameData,
@@ -1137,13 +1141,12 @@ describe('getSendAbilities', () => {
         })
         expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
           contract: 'registry',
-          method: 'setOwner'
+          method: 'setOwner',
         })
       })
 
       it('for 2ld wrapped name manager who wants to send manager', () => {
-        const { basicNameData, parentBasicNameData } =
-        userStates.wrappedNameManager
+        const { basicNameData, parentBasicNameData } = userStates.wrappedNameManager
 
         const result = getSendAbilities({
           basicNameData,
@@ -1153,7 +1156,7 @@ describe('getSendAbilities', () => {
         })
         expect(result.sendNameFunctionCallDetails?.sendManager).toEqual({
           contract: 'nameWrapper',
-          method: 'safeTransferFrom'
+          method: 'safeTransferFrom',
         })
       })
     })
@@ -1488,8 +1491,7 @@ describe('getSendAbilities', () => {
 
     describe('DNS names', () => {
       it('should return for unwrapped DNS name owner', () => {
-        const { basicNameData, parentBasicNameData } =
-        userStates.unwrappedDNSOwner
+        const { basicNameData, parentBasicNameData } = userStates.unwrappedDNSOwner
 
         const result = getSendAbilities({
           basicNameData,
@@ -1503,8 +1505,7 @@ describe('getSendAbilities', () => {
       })
 
       it('should return for unwrapped DNS name manager', () => {
-        const { basicNameData, parentBasicNameData } =
-        userStates.unwrappedDNSManager
+        const { basicNameData, parentBasicNameData } = userStates.unwrappedDNSManager
 
         const result = getSendAbilities({
           basicNameData,
@@ -1515,13 +1516,12 @@ describe('getSendAbilities', () => {
         expect(result).toMatchObject({
           canSend: true,
           canSendManager: true,
-          canSendOwner: false
+          canSendOwner: false,
         })
       })
 
       it('should return for wrapped DNS name manager', () => {
-        const { basicNameData, parentBasicNameData } =
-        userStates.wrappedNameManager
+        const { basicNameData, parentBasicNameData } = userStates.wrappedNameManager
 
         const result = getSendAbilities({
           basicNameData,
@@ -1532,7 +1532,7 @@ describe('getSendAbilities', () => {
         expect(result).toMatchObject({
           canSend: true,
           canSendManager: true,
-          canSendOwner: false
+          canSendOwner: false,
         })
       })
     })

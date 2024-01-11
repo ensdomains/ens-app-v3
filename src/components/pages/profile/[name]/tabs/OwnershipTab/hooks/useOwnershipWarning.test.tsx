@@ -2,18 +2,19 @@ import { renderHook } from '@app/test-utils'
 
 import { useOwnershipWarning } from './useOwnershipWarning'
 
-jest.mock('@app/hooks/useAccountSafely', () => ({
+jest.mock('@app/hooks/account/useAccountSafely', () => ({
   useAccountSafely: () => ({
     address: '0x1234'
   })
 }))
 
-jest.mock('@app/hooks/useParentBasicName', () => () => ({
+jest.mock('@app/hooks/useParentBasicName', () => ({
+  useParentBasicName: () => ({
     isLoading: false,
     ownerData: {
       owner: '0x456'
     }
-}))
+})}))
 
 describe('useOwnershipWarning', () => {
   it('should return a warning if user is owner not manager of 2ld eth name ', async () => {

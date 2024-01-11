@@ -5,6 +5,7 @@
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
 import 'jest-localstorage-mock'
+import { mainnetWithEns } from '../src/constants/chains';
 
 // https://github.com/vercel/next.js/issues/26749
 jest.mock('next/image', () => ({
