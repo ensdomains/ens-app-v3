@@ -1,5 +1,5 @@
 import { hashQueryKey, notifyManager, Query, QueryCache } from '@tanstack/react-query'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'wagmi'
 
@@ -10,7 +10,7 @@ const SLOW_THRESHOLD = 5000
 
 const getSlowQueries = (queryCache: QueryCache, renderedAt: number) => {
   const queries = queryCache.getAll()
-  const slowQueries: any[] = []
+  const slowQueries: Query[] = []
 
   queries.forEach((query) => {
     const { dataUpdatedAt } = query.state
@@ -58,8 +58,6 @@ export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalError
     useEffect(() => {
     const stateError = state.errors[slowQueriesHashKey]
     if (slowQueries > 0 && !stateError) {
-      console.log('setting error')
-      console.log(slowQueries)
       dispatch({
         type: 'SET_ERROR',
         payload: {
@@ -71,7 +69,6 @@ export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalError
         },
       })
     } else if (stateError) {
-      console.log('clearing error')
       dispatch({
         type: 'CLEAR_ERROR',
         payload: {
