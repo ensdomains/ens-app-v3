@@ -1,4 +1,4 @@
-import { hashQueryKey, notifyManager, Query, QueryCache } from '@tanstack/react-query'
+import { hashQueryKey, notifyManager, Query, QueryCache, QueryState } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'wagmi'
@@ -28,6 +28,7 @@ const getSlowQueries = (queryCache: QueryCache, renderedAt: number) => {
   return slowQueries.length
 }
 
+const isSubgraphError = ({state,queryKey}: Query) => state.status === 'error' && queryKey.at(-1) === 'graph'
 
 const slowQueriesHashKey = hashQueryKey(['slowQueriesKeyPlaceholder'])
 
@@ -42,7 +43,15 @@ export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalError
   const slowQueries = useSyncExternalStore(
     useCallback(
       (onStoreChange) => {
-        return queryCache.subscribe(() => {
+        return queryCache.subscribe(({query}) => {
+          if (isSubgraphError(query)) {
+            dispatch({
+              type:'SET_SUBGRAPH_ERROR',
+              payload: {
+                key: ['subgraphErrorKeyPlaceholder'],
+              }
+            })
+          }
           notifyManager.batchCalls(onStoreChange)
           setTimeout(() => {
             notifyManager.batchCalls(onStoreChange)
