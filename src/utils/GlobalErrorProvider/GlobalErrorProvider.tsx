@@ -3,8 +3,8 @@ import { createContext, Dispatch, Reducer, useContext, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'wagmi'
 
-import { useSubgraphMetaSync } from './useSubgraphMetaSync'
 import { useHasSubgraphSyncErrors } from './useHasSubgraphSyncErrors'
+import { useSubgraphMetaSync } from './useSubgraphMetaSync'
 
 export type GlobalErrorState = {
   errors: {
