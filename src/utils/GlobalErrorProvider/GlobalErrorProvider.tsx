@@ -3,8 +3,8 @@ import { createContext, Dispatch, Reducer, useContext, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'wagmi'
 
-import { useHasSlowQueries } from './useHasSlowQueries'
 import { useSubgraphMetaSync } from './useSubgraphMetaSync'
+import { useSubgraphSyncError } from './useSubgraphSyncError'
 
 export type GlobalErrorState = {
   errors: {
@@ -230,7 +230,7 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
   })
 
   useSubgraphMetaSync(state, dispatch)
-  useHasSlowQueries(state, dispatch)
+  useSubgraphSyncError(state, dispatch)
 
   return (
     <GlobalErrorStateContext.Provider value={state}>

@@ -8,32 +8,30 @@ import { useSyncExternalStore } from './useSyncExternalStore'
 
 const SLOW_THRESHOLD = 5000
 
-const getSlowQueries = (queryCache: QueryCache, renderedAt: number) => {
-  const queries = queryCache.getAll()
-  const slowQueries: Query[] = []
+const getBadQueries = (queryCache: QueryCache, renderedAt: number) => {
+  const queries = queryCache.findAll([], { queryKey: ['graph'] }) // limit to subgraph queries
+  const badQueries: Query[] = []
 
   queries.forEach((query) => {
     const { dataUpdatedAt } = query.state
     const elapsedTime = Date.now() - Math.max(dataUpdatedAt, renderedAt)
 
     if (
-      elapsedTime > SLOW_THRESHOLD &&
-      query.state.status === 'loading' &&
-      query.getObserversCount() > 0
+      (elapsedTime > SLOW_THRESHOLD &&
+        query.state.status === 'loading' &&
+        query.getObserversCount() > 0) ||
+      query.state.status === 'error'
     ) {
-      slowQueries.push(query)
+      badQueries.push(query)
     }
   })
 
-  return slowQueries.length
+  return badQueries.length
 }
 
-const isSubgraphError = ({ state, queryKey }: Query) =>
-  state.status === 'error' && queryKey.at(-1) === 'graph'
+const badQueriesHashKey = hashQueryKey(['badQueriesKeyPlaceholder'])
 
-const slowQueriesHashKey = hashQueryKey(['slowQueriesKeyPlaceholder'])
-
-export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalErrorDispatch) => {
+export const useSubgraphSyncError = (state: GlobalErrorState, dispatch: GlobalErrorDispatch) => {
   const { t } = useTranslation('common')
 
   const queryClient = useQueryClient()
@@ -41,18 +39,10 @@ export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalError
 
   const renderedAt = useMemo(() => Date.now(), [])
 
-  const slowQueries = useSyncExternalStore(
+  const badQueries = useSyncExternalStore(
     useCallback(
       (onStoreChange) => {
         return queryCache.subscribe(({ query }) => {
-          if (isSubgraphError(query)) {
-            dispatch({
-              type: 'SET_SUBGRAPH_ERROR',
-              payload: {
-                key: ['subgraphErrorKeyPlaceholder'],
-              },
-            })
-          }
           notifyManager.batchCalls(onStoreChange)
           setTimeout(() => {
             notifyManager.batchCalls(onStoreChange)
@@ -61,20 +51,20 @@ export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalError
       },
       [queryCache],
     ),
-    () => getSlowQueries(queryCache, renderedAt),
-    () => getSlowQueries(queryCache, renderedAt),
+    () => getBadQueries(queryCache, renderedAt),
+    () => getBadQueries(queryCache, renderedAt),
   )
 
   useEffect(() => {
-    const stateError = state.errors[slowQueriesHashKey]
-    if (slowQueries > 0 && !stateError) {
+    const stateError = state.errors[badQueriesHashKey]
+    if (badQueries > 0 && !stateError) {
       dispatch({
         type: 'SET_ERROR',
         payload: {
-          key: ['slowQueriesKeyPlaceholder'],
+          key: ['badQueriesKeyPlaceholder'],
           title: t('errors.networkLatency.title'),
           message: t('errors.networkLatency.message'),
-          type: 'ENSJSNetworkLatencyError',
+          type: 'ENSJSSubgraphError',
           priority: 1,
         },
       })
@@ -82,9 +72,9 @@ export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalError
       dispatch({
         type: 'CLEAR_ERROR',
         payload: {
-          key: ['slowQueriesKeyPlaceholder'],
+          key: ['badQueriesKeyPlaceholder'],
         },
       })
     }
-  }, [slowQueries])
+  }, [badQueries])
 }
