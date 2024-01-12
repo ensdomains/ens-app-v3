@@ -1,6 +1,6 @@
-import { hashQueryKey, notifyManager, Query, QueryCache } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { hashQueryKey, QueryCache } from '@tanstack/react-query'
+import { useEffect } from 'react'
+// import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'wagmi'
 
 import type { GlobalErrorDispatch, GlobalErrorState } from './GlobalErrorProvider'
@@ -27,7 +27,7 @@ const getSlowQueries = (queryCache: QueryCache) => {
 }
 
 export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalErrorDispatch) => {
-  const { t } = useTranslation('common')
+  // const { t } = useTranslation('common')
 
   const queryClient = useQueryClient()
   const queryCache = queryClient.getQueryCache()
@@ -56,7 +56,7 @@ export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalError
   }, [queryCache])
 
   useEffect(() => {
-     if (slowQueryError) {
+    if (slowQueryError) {
       dispatch({
         type: 'CLEAR_ERROR',
         payload: {
