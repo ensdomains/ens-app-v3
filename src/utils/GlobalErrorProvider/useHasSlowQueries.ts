@@ -1,4 +1,4 @@
-import { hashQueryKey, notifyManager, Query, QueryCache, QueryState } from '@tanstack/react-query'
+import { hashQueryKey, notifyManager, Query, QueryCache } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'wagmi'
