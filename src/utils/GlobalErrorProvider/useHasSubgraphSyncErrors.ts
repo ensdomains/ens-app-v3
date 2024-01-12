@@ -31,7 +31,7 @@ const getBadQueries = (queryCache: QueryCache, renderedAt: number) => {
 
 const badQueriesHashKey = hashQueryKey(['badQueriesKeyPlaceholder'])
 
-export const useSubgraphSyncError = (state: GlobalErrorState, dispatch: GlobalErrorDispatch) => {
+export const useHasSubgraphSyncErrors = (state: GlobalErrorState, dispatch: GlobalErrorDispatch) => {
   const { t } = useTranslation('common')
 
   const queryClient = useQueryClient()

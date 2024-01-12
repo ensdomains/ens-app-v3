@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'wagmi'
 
 import { useSubgraphMetaSync } from './useSubgraphMetaSync'
-import { useSubgraphSyncError } from './useSubgraphSyncError'
+import { useHasSubgraphSyncErrors } from './useHasSubgraphSyncErrors'
 
 export type GlobalErrorState = {
   errors: {
@@ -230,7 +230,7 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
   })
 
   useSubgraphMetaSync(state, dispatch)
-  useSubgraphSyncError(state, dispatch)
+  useHasSubgraphSyncErrors(state, dispatch)
 
   return (
     <GlobalErrorStateContext.Provider value={state}>
