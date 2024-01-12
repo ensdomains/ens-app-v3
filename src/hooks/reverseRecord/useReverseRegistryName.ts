@@ -47,7 +47,7 @@ type QueryKey<TParams extends UseReverseRegistryNameParameters> = CreateQueryKey
 export const getReverseRegistryNameQueryFn = async <
   TParams extends UseReverseRegistryNameParameters,
 >({
-  queryKey: [{ address }, chainId, _address],
+  queryKey: [{ address }, chainId],
 }: QueryFunctionContext<QueryKey<TParams>>) => {
   if (!address) throw new Error('address is required')
 

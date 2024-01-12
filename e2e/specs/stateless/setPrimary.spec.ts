@@ -377,7 +377,6 @@ test.describe('profile', () => {
     await expect(page.getByTestId('profile-action-Set as primary name')).toHaveCount(0)
   })
 
-  // TODO: Waiting on ensjs to support encrypted labels
   test('should allow setting primary name from name with encrypted label', async ({
     page,
     login,
@@ -391,10 +390,12 @@ test.describe('profile', () => {
     // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
     // await reverseRegistrar.setName('')
 
-    await setPrimaryName( walletClient, {
+    const tx = await setPrimaryName( walletClient, {
       name: '',
       account: createAccounts().getAddress('user') as `0x${string}`,
     })
+    await waitForTransaction(tx)
+    console.log('tx', tx)
 
     const label = `unknown-label-${Date.now()}`
     const _labelhash = labelhash(label)
