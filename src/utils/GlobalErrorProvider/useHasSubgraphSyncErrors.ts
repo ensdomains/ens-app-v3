@@ -45,7 +45,7 @@ export const useHasSubgraphSyncErrors = (
   const badQueries = useSyncExternalStore(
     useCallback(
       (onStoreChange) => {
-        return queryCache.subscribe(({ query }) => {
+        return queryCache.subscribe(() => {
           notifyManager.batchCalls(onStoreChange)
           setTimeout(() => {
             notifyManager.batchCalls(onStoreChange)
@@ -79,5 +79,6 @@ export const useHasSubgraphSyncErrors = (
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [badQueries])
 }
