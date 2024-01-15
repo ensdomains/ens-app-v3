@@ -401,7 +401,7 @@ test.describe('profile', () => {
     const _labelhash = labelhash(label)
 
     const name = await makeName({
-      label: 'wrapped',
+      label: 'legacy',
       type: 'legacy',
       owner: 'user',
       subnames: [

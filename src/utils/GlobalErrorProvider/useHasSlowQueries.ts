@@ -39,7 +39,7 @@ export const useHasSlowQueries = (state: GlobalErrorState, dispatch: GlobalError
       const queries = getSlowQueries(queryCache)
 
       if (queries.length > 0 && !slowQueryError) {
-        console.log(queries)
+        // console.log(queries)
         // dispatch({
         //   type: 'SET_ERROR',
         //   payload: {

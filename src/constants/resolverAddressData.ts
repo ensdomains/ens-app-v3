@@ -321,52 +321,49 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
   ],
-  ...(process.env.NODE_ENV === 'development'
-    ? {
-        '1337': [
-          {
-            address: deploymentAddresses.PublicResolver,
-            deployer: 'ENS Labs',
-            tag: 'latest',
-            isNameWrapperAware: true,
-            supportedInterfaces: [
-              RESOLVER_INTERFACE_IDS.AddressResolver,
-              RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
-              RESOLVER_INTERFACE_IDS.NameResolver,
-              RESOLVER_INTERFACE_IDS.AbiResolver,
-              RESOLVER_INTERFACE_IDS.TextResolver,
-              RESOLVER_INTERFACE_IDS.ContentHashResolver,
-              RESOLVER_INTERFACE_IDS.DnsRecordResolver,
-              RESOLVER_INTERFACE_IDS.InterfaceResolver,
-              RESOLVER_INTERFACE_IDS.VersionableResolver,
-            ],
-          },
-          {
-            address: '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',
-            deployer: 'dummy',
-            tag: null,
-            isNameWrapperAware: false,
-            supportedInterfaces: [],
-          },
-          {
-            address: deploymentAddresses.LegacyPublicResolver,
-            deployer: 'ENS Labs',
-            tag: null,
-            isNameWrapperAware: false,
-            supportedInterfaces: [
-              RESOLVER_INTERFACE_IDS.AddressResolver,
-              RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
-              RESOLVER_INTERFACE_IDS.NameResolver,
-              RESOLVER_INTERFACE_IDS.AbiResolver,
-              RESOLVER_INTERFACE_IDS.TextResolver,
-              RESOLVER_INTERFACE_IDS.ContentHashResolver,
-              RESOLVER_INTERFACE_IDS.DnsRecordResolver,
-              RESOLVER_INTERFACE_IDS.InterfaceResolver,
-            ],
-          },
-        ],
-      }
-    : {}),
+  // TODO: Removed the dependency on env === 'development' here. Breaking e2e tests.
+  '1337': [
+    {
+      address: deploymentAddresses.PublicResolver,
+      deployer: 'ENS Labs',
+      tag: 'latest',
+      isNameWrapperAware: true,
+      supportedInterfaces: [
+        RESOLVER_INTERFACE_IDS.AddressResolver,
+        RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
+        RESOLVER_INTERFACE_IDS.NameResolver,
+        RESOLVER_INTERFACE_IDS.AbiResolver,
+        RESOLVER_INTERFACE_IDS.TextResolver,
+        RESOLVER_INTERFACE_IDS.ContentHashResolver,
+        RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+        RESOLVER_INTERFACE_IDS.InterfaceResolver,
+        RESOLVER_INTERFACE_IDS.VersionableResolver,
+      ],
+    },
+    {
+      address: '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',
+      deployer: 'dummy',
+      tag: null,
+      isNameWrapperAware: false,
+      supportedInterfaces: [],
+    },
+    {
+      address: deploymentAddresses.LegacyPublicResolver,
+      deployer: 'ENS Labs',
+      tag: null,
+      isNameWrapperAware: false,
+      supportedInterfaces: [
+        RESOLVER_INTERFACE_IDS.AddressResolver,
+        RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
+        RESOLVER_INTERFACE_IDS.NameResolver,
+        RESOLVER_INTERFACE_IDS.AbiResolver,
+        RESOLVER_INTERFACE_IDS.TextResolver,
+        RESOLVER_INTERFACE_IDS.ContentHashResolver,
+        RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+        RESOLVER_INTERFACE_IDS.InterfaceResolver,
+      ],
+    },
+  ],
 }
 
 export const getKnownResolverData = ({
