@@ -1,6 +1,14 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { useQuery } from 'wagmi'
 
+import {
+  DnsDnssecVerificationFailedError,
+  DnsInvalidAddressChecksumError,
+  DnsInvalidTxtRecordError,
+  DnsNoTxtRecordError,
+  DnsResponseStatusError,
+  UnsupportedNameTypeError,
+} from '@ensdomains/ensjs'
 import { getDnsOwner, GetDnsOwnerParameters, GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
 
 import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
@@ -10,7 +18,16 @@ type UseDnsOwnerParameters = PartialBy<GetDnsOwnerParameters, 'name'>
 
 type UseDnsOwnerReturnType = GetDnsOwnerReturnType
 
-type UseDnsOwnerConfig = QueryConfig<UseDnsOwnerReturnType, Error>
+type UseDnsOwnerConfig = QueryConfig<
+  UseDnsOwnerReturnType,
+  | UnsupportedNameTypeError
+  | DnsResponseStatusError
+  | DnsDnssecVerificationFailedError
+  | DnsNoTxtRecordError
+  | DnsInvalidTxtRecordError
+  | DnsInvalidAddressChecksumError
+  | Error
+>
 
 type QueryKey<TParams extends UseDnsOwnerParameters> = CreateQueryKey<
   TParams,
