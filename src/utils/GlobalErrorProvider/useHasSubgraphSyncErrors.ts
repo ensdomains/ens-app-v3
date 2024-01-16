@@ -9,7 +9,7 @@ import { useSyncExternalStore } from './useSyncExternalStore'
 const SLOW_THRESHOLD = 5000
 
 const getBadQueries = (queryCache: QueryCache, renderedAt: number) => {
-  const queries = queryCache.getAll().filter((x) => x.queryKey.includes('graph')) // limit to subgraph queries
+  const queries = queryCache.findAll([], { predicate: (query) => query.queryKey.includes('graph') }) // limit to subgraph queries
   const slowQueries: Query[] = []
   const errorQueries: Query[] = []
 
