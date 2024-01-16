@@ -15,31 +15,9 @@ export const useContentWarning = (
     if (otherError) return otherError
 
     const { errors, activeHashes } = globalState
-    const activeErrors = activeHashes
-      .map((key) => errors[key])
-      .filter((error) => error)
-      .sort(({ priority: left = 0 }, { priority: right = 0 }) => right - left)
-
-    if (activeErrors[0]?.type === 'ENSJSSubgraphError') {
-      const datetime = globalState?.meta?.timestamp
-        ? new Date(globalState.meta.timestamp * 1000).toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-          })
-        : undefined
-      return {
-        type: 'warning',
-        title: t('errors.indexingErrors.title'),
-        message: t('errors.indexingErrors.message', {
-          datetime,
-          context: datetime ? 'datetime' : undefined,
-        }),
-      } as ContentWarning
-    }
+    const activeErrors = (
+      activeHashes.length === 0 ? Object.values(errors) : activeHashes.map((key) => errors[key])
+    ).sort(({ priority: left = 0 }, { priority: right = 0 }) => right - left)
 
     if (activeErrors[0]?.type === 'ENSJSUnknownError') {
       return {

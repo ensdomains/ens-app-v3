@@ -10,26 +10,29 @@ const SLOW_THRESHOLD = 5000
 
 const getBadQueries = (queryCache: QueryCache, renderedAt: number) => {
   const queries = queryCache.findAll([], { queryKey: ['graph'] }) // limit to subgraph queries
-  const badQueries: Query[] = []
+  const slowQueries: Query[] = []
+  const errorQueries: Query[] = []
 
   queries.forEach((query) => {
     const { dataUpdatedAt } = query.state
     const elapsedTime = Date.now() - Math.max(dataUpdatedAt, renderedAt)
 
     if (
-      (elapsedTime > SLOW_THRESHOLD &&
-        query.state.status === 'loading' &&
-        query.getObserversCount() > 0) ||
-      query.state.status === 'error'
+      elapsedTime > SLOW_THRESHOLD &&
+      query.state.status === 'loading' &&
+      query.getObserversCount() > 0
     ) {
-      badQueries.push(query)
+      slowQueries.push(query)
+    } else if (query.state.status === 'error') {
+      errorQueries.push(query)
     }
   })
 
-  return badQueries.length
+  return `${slowQueries.length}:${errorQueries.length}`
 }
 
-const badQueriesHashKey = hashQueryKey(['badQueriesKeyPlaceholder'])
+const slowQueriesHashKey = hashQueryKey(['slowQueriesKeyPlaceholder'])
+const errorQueriesHashKey = hashQueryKey(['errorQueriesKeyPlaceholder'])
 
 export const useHasSubgraphSyncErrors = (
   state: GlobalErrorState,
@@ -58,24 +61,48 @@ export const useHasSubgraphSyncErrors = (
     () => getBadQueries(queryCache, renderedAt),
   )
 
+  const [slow, errors] = badQueries.split(':').map((x) => parseInt(x))
+
   useEffect(() => {
-    const stateError = state.errors[badQueriesHashKey]
-    if (badQueries > 0 && !stateError) {
+    const queryError = state.errors[errorQueriesHashKey]
+    const slowError = state.errors[slowQueriesHashKey]
+
+    if (!queryError && errors > 0) {
       dispatch({
         type: 'SET_ERROR',
         payload: {
-          key: ['badQueriesKeyPlaceholder'],
+          key: ['errorQueriesKeyPlaceholder'],
+          title: t('errors.networkError.title'),
+          message: t('errors.networkError.message'),
+          type: 'ENSJSUnknownError',
+          priority: 1,
+        },
+      })
+    } else if (queryError) {
+      dispatch({
+        type: 'CLEAR_ERROR',
+        payload: {
+          key: ['errorQueriesKeyPlaceholder'],
+        },
+      })
+    }
+
+    if (!slowError && slow > 0) {
+      dispatch({
+        type: 'SET_ERROR',
+        payload: {
+          key: ['slowQueriesKeyPlaceholder'],
           title: t('errors.networkLatency.title'),
           message: t('errors.networkLatency.message'),
           type: 'ENSJSSubgraphError',
           priority: 1,
         },
       })
-    } else if (stateError) {
+    } else if (slowError) {
       dispatch({
         type: 'CLEAR_ERROR',
         payload: {
-          key: ['badQueriesKeyPlaceholder'],
+          key: ['slowQueriesKeyPlaceholder'],
         },
       })
     }
