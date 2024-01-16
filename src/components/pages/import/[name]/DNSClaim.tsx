@@ -10,6 +10,7 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { useInitial } from '@app/hooks/useInitial'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate } from '@app/hooks/useValidate'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -150,6 +151,8 @@ export default () => {
   const { isConnected } = useAccount()
   const { t } = useTranslation('dnssec')
 
+  const initial = useInitial()
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -175,10 +178,11 @@ export default () => {
     }
   }, [dnsOwner, name, transactions])
 
+  if (initial) return null
   return (
     <Container>
       <Head>
-        <title>{t('title', { name })}</title>
+        <title>{t('title', { name: name || '' })}</title>
       </Head>
       <HeadingContainer>
         <BackContainer>
