@@ -46,6 +46,7 @@ test.describe('Import DNSSEC name', () => {
     await page.goto('/leontalbert.xyz/import')
     await login.connect()
 
+    await page.pause()
     const address = accounts.getAddress('user')
     await expect(page.getByText(`a=${address}`)).toBeVisible({
       timeout: 25000,
@@ -81,6 +82,7 @@ test.describe('Import DNSSEC name', () => {
     await expect(page.getByText(`a=${address}`)).toBeVisible({
       timeout: 25000,
     })
+    await page.pause()
     await page.getByTestId('dnssec-check-button').click()
     await expect(
       page.getByText('You have verified your ownership and can claim this domain.'),
