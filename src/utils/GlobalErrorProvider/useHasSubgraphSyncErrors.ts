@@ -64,29 +64,7 @@ export const useHasSubgraphSyncErrors = (
   const [slow, errors] = badQueries.split(':').map((x) => parseInt(x))
 
   useEffect(() => {
-    const queryError = state.errors[errorQueriesHashKey]
     const slowError = state.errors[slowQueriesHashKey]
-
-    if (!queryError && errors > 0) {
-      dispatch({
-        type: 'SET_ERROR',
-        payload: {
-          key: ['errorQueriesKeyPlaceholder'],
-          title: t('errors.networkError.title'),
-          message: t('errors.networkError.message'),
-          type: 'ENSJSUnknownError',
-          priority: 1,
-        },
-      })
-    } else if (queryError) {
-      dispatch({
-        type: 'CLEAR_ERROR',
-        payload: {
-          key: ['errorQueriesKeyPlaceholder'],
-        },
-      })
-    }
-
     if (!slowError && slow > 0) {
       dispatch({
         type: 'SET_ERROR',
@@ -106,6 +84,31 @@ export const useHasSubgraphSyncErrors = (
         },
       })
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [badQueries])
+  }, [slow])
+
+  useEffect(() => {
+    const queryError = state.errors[errorQueriesHashKey]
+    if (!queryError && errors > 0) {
+      dispatch({
+        type: 'SET_ERROR',
+        payload: {
+          key: ['errorQueriesKeyPlaceholder'],
+          title: t('errors.networkError.title'),
+          message: t('errors.networkError.message'),
+          type: 'ENSJSUnknownError',
+          priority: 1,
+        },
+      })
+    } else if (queryError) {
+      dispatch({
+        type: 'CLEAR_ERROR',
+        payload: {
+          key: ['errorQueriesKeyPlaceholder'],
+        },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errors])
 }
