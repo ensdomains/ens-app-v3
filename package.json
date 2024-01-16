@@ -39,7 +39,7 @@
     "local:remove:ensjs": "node ./scripts/removeWorkspace.mjs @ensdomains/ensjs && yalc remove @ensdomains/ensjs && pnpm install",
     "local:add:thorin": "yalc add @ensdomains/thorin --workspace && pnpm install",
     "local:remove:thorin": "node ./scripts/removeWorkspace.mjs @ensdomains/thorin && yalc remove @ensdomains/thorin && pnpm install",
-    "wrangle": "wrangler pages dev ./out --log-level none",
+    "wrangle": "wrangler pages dev ./out --local --log-level none",
     "wrangle:dev": "wrangler pages dev ./next",
     "wrangle:list": "wrangler deployments list",
     "generate:sitemaps": "node ./scripts/generate-site-map.mjs",
