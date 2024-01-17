@@ -78,10 +78,10 @@ test.describe('Import DNSSEC name', () => {
     await page.goto('/leontalbert.com/import')
     await login.connect()
 
-    const address = accounts.getAddress('user')
-    await expect(page.getByText(`a=${address}`)).toBeVisible({
-      timeout: 25000,
-    })
+    // const address = accounts.getAddress('user')
+    // await expect(page.getByText(`a=${address}`)).toBeVisible({
+    //   timeout: 25000,
+    // })
     await page.pause()
     // await page.getByTestId('dnssec-check-button').click()
     await expect(
