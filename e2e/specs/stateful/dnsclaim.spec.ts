@@ -83,7 +83,7 @@ test.describe('Import DNSSEC name', () => {
       timeout: 25000,
     })
     await page.pause()
-    await page.getByTestId('dnssec-check-button').click()
+    // await page.getByTestId('dnssec-check-button').click()
     await expect(
       page.getByText('You have verified your ownership and can claim this domain.'),
     ).toBeVisible({ timeout: 25000 })

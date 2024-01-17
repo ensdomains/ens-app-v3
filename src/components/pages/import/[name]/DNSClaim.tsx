@@ -145,16 +145,17 @@ export default () => {
   const [syncWarning, setSyncWarning] = useState(false)
 
   const { name = '', isValid } = useValidate({ input: router.query.name as string })
-  const { data: dnsOwner } = useDnsOwner({ name, enabled: isValid })
+  const { data: dnsOwner, isLoading: isDnsOwnerLoading } = useDnsOwner({ name, enabled: isValid })
 
   const transactions = useRecentTransactions()
   const { isConnected } = useAccount()
   const { t } = useTranslation('dnssec')
 
-  const initial = useInitial()
+  const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
     const init = async () => {
+      console.log('INITIALIZE')
       try {
         const hasDnsSecEnabled = await isDnsSecEnabled(name as string)
         if (!hasDnsSecEnabled) {
@@ -168,17 +169,19 @@ export default () => {
         setCurrentStep(1)
       } catch (e) {
         console.error('caught error: ', e)
+      } finally {
+        setIsInitialized(true)
       }
     }
 
     if (shouldShowSuccessPage(transactions)) {
       setCurrentStep(3)
-    } else {
+    } else if (!isDnsOwnerLoading && !!name && !isInitialized) {
       init()
     }
-  }, [dnsOwner, name, transactions])
+  }, [dnsOwner, isDnsOwnerLoading, name, transactions, setIsInitialized, isInitialized])
 
-  if (initial) return null
+  if (!isInitialized) return null
   return (
     <Container>
       <Head>
