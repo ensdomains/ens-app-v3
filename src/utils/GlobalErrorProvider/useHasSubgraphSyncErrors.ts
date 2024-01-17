@@ -97,7 +97,7 @@ export const useHasSubgraphSyncErrors = (
           key: ['errorQueriesKeyPlaceholder'],
           title: t('errors.networkError.title'),
           message: t('errors.networkError.message'),
-          type: 'ENSJSUnknownError',
+          type: 'ENSJSSubgraphError',
           priority: 1,
         },
       })
