@@ -46,6 +46,8 @@ type Action =
       type: 'SET_SUBGRAPH_ERROR'
       payload: {
         key: QueryKey
+        title: string
+        message: string
       }
     }
   | {
@@ -103,7 +105,7 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
   const reducer = (state: GlobalErrorState, action: Action) => {
     switch (action.type) {
       case 'SET_SUBGRAPH_ERROR': {
-        const { key } = action.payload
+        const { key, title, message } = action.payload
         const hash = hashQueryKey(key)
         return {
           ...state,
@@ -113,6 +115,8 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
               key,
               type: 'ENSJSSubgraphError',
               priority: 5,
+              title,
+              message,
             },
           },
           meta: {

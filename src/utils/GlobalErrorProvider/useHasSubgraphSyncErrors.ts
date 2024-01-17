@@ -92,13 +92,11 @@ export const useHasSubgraphSyncErrors = (
     const queryError = state.errors[errorQueriesHashKey]
     if (!queryError && errors > 0) {
       dispatch({
-        type: 'SET_ERROR',
+        type: 'SET_SUBGRAPH_ERROR',
         payload: {
           key: ['errorQueriesKeyPlaceholder'],
           title: t('errors.networkError.title'),
           message: t('errors.networkError.message'),
-          type: 'ENSJSSubgraphError',
-          priority: 1,
         },
       })
     } else if (queryError) {
