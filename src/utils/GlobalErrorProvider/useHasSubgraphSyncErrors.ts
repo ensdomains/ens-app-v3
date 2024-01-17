@@ -72,7 +72,7 @@ export const useHasSubgraphSyncErrors = (
           key: ['slowQueriesKeyPlaceholder'],
           title: t('errors.networkLatency.title'),
           message: t('errors.networkLatency.message'),
-          type: 'ENSJSSubgraphError',
+          type: 'ENSJSSubgraphLatency',
           priority: 1,
         },
       })
