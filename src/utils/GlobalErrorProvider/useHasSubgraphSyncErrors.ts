@@ -23,7 +23,7 @@ const getBadQueries = (queryCache: QueryCache, renderedAt: number) => {
       query.getObserversCount() > 0
     ) {
       slowQueries.push(query)
-    } else if (query.state.status === 'error') {
+    } else if (query.state.status === 'error' && query.getObserversCount() > 0) {
       errorQueries.push(query)
     }
   })
