@@ -180,19 +180,9 @@ export default () => {
   useEffect(() => {
     const init = async () => {
       try {
-        if (!isDnsSecEnabled) {
-          return
-        }
-
-        if (hasPendingTransaction(transactions)) {
-          setCurrentStep(2)
-          return
-        }
-
-        if (dnsOwner !== address) {
-          setCurrentStep(1)
-        }
-
+        if (!isDnsSecEnabled) return
+        if (hasPendingTransaction(transactions)) return setCurrentStep(2)
+        if (dnsOwner !== address) return setCurrentStep(1)
         setCurrentStep(2)
       } catch (e) {
         console.error('caught error: ', e)

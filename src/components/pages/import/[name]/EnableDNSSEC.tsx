@@ -74,7 +74,6 @@ export const EnableDNSSEC = ({
   name: string
 }) => {
   const [errorState, setErrorState] = useState(Errors.NOT_CHECKED)
-  // const [isLoading, setIsLoading] = useState(false)
   const { t } = useTranslation('dnssec')
 
   const handleCheck = async () => {
