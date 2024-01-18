@@ -140,11 +140,10 @@ const StyledTitle = styled(Title)(
 export default () => {
   const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
 
   const { name = '', isValid } = useValidate({ input: router.query.name as string })
   const transactions = useRecentTransactions()
-  const { isConnected } = useAccount()
   const { t } = useTranslation('dnssec')
 
   const {
@@ -193,7 +192,14 @@ export default () => {
 
     if (shouldShowSuccessPage(transactions)) {
       setCurrentStep(3)
-    } else if (!!name && !isDnsSecEnabledLoading && !isDnsOwnerLoading && !isInitialized) {
+    } else if (
+      !!name &&
+      isConnected &&
+      !!address &&
+      !isDnsSecEnabledLoading &&
+      !isDnsOwnerLoading &&
+      !isInitialized
+    ) {
       init()
     }
   }, [
@@ -203,12 +209,13 @@ export default () => {
     isDnsOwnerLoading,
     name,
     address,
+    isConnected,
     transactions,
     setIsInitialized,
     isInitialized,
   ])
 
-  if (!isInitialized) return null
+  if (!router.isReady) return null
   return (
     <Container>
       <Head>
