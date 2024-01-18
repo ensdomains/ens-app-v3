@@ -202,7 +202,6 @@ export default () => {
     }
 
     if (shouldShowSuccessPage(transactions)) {
-      alert('Switching here')
       setCurrentStep(3)
     } else if (!!name && !isDnsSecEnabledLoading && !isDnsOwnerLoading && !isInitialized) {
       init()
