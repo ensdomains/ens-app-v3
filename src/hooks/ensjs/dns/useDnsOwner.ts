@@ -18,8 +18,7 @@ type UseDnsOwnerParameters = PartialBy<GetDnsOwnerParameters, 'name'>
 
 type UseDnsOwnerReturnType = GetDnsOwnerReturnType
 
-type UseDnsOwnerConfig = QueryConfig<
-  UseDnsOwnerReturnType,
+export type UseDnsOwnerError =
   | UnsupportedNameTypeError
   | DnsResponseStatusError
   | DnsDnssecVerificationFailedError
@@ -27,7 +26,8 @@ type UseDnsOwnerConfig = QueryConfig<
   | DnsInvalidTxtRecordError
   | DnsInvalidAddressChecksumError
   | Error
->
+
+type UseDnsOwnerConfig = QueryConfig<UseDnsOwnerReturnType, UseDnsOwnerError>
 
 type QueryKey<TParams extends UseDnsOwnerParameters> = CreateQueryKey<
   TParams,

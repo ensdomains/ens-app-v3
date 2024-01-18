@@ -1,7 +1,8 @@
-import { Dispatch, SetStateAction, useMemo } from 'react'
+import { QueryObserverResult } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
+import { Address, useAccount } from 'wagmi'
 
 import {
   BaseError,
@@ -16,7 +17,7 @@ import { Button, Helper, Typography } from '@ensdomains/thorin'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { Outlink } from '@app/components/Outlink'
-import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
+import { UseDnsOwnerError } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useCopied } from '@app/hooks/useCopied'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { shortenAddress } from '@app/utils/utils'
@@ -130,42 +131,37 @@ enum Errors {
 }
 
 export const AddTextRecord = ({
+  dnsOwner,
+  refetch,
+  isLoading,
+  error,
+  incrementStep,
+  decrementStep,
   currentStep,
-  setCurrentStep,
   syncWarning,
-  setSyncWarning,
   name,
 }: {
+  dnsOwner?: Address
+  refetch: () => Promise<QueryObserverResult<Address, UseDnsOwnerError>>
+  isLoading: boolean
+  error: UseDnsOwnerError | null
+  incrementStep: () => void
+  decrementStep: () => void
   currentStep: number
-  setCurrentStep: Dispatch<SetStateAction<number>>
   syncWarning: boolean
-  setSyncWarning: Dispatch<SetStateAction<boolean>>
   name: string
 }) => {
   const { address } = useAccount()
   const breakpoints = useBreakpoint()
   const { t } = useTranslation('dnssec')
 
-  const {
-    data: dnsOwner,
-    error,
-    isLoading: isCheckLoading,
-    refetch: handleCheck,
-  } = useDnsOwner({
-    name,
-    onSuccess: (data) => {
-      if (data === address) {
-        setSyncWarning(false)
-        setCurrentStep(currentStep + 1)
-        return
-      }
-      setSyncWarning(true)
-    },
-    onError: () => setSyncWarning(false),
-  })
+  const handleCheck = async () => {
+    const result = await refetch()
+    if (result.data === address) incrementStep()
+  }
 
   const errorState = useMemo(() => {
-    if (!error || isCheckLoading) return null
+    if (!error || isLoading) return null
     if (!(error instanceof BaseError)) return Errors.UNKNOWN_ERROR
     if (error instanceof DnsResponseStatusError) {
       if (error.responseStatus !== 'NXDOMAIN') return Errors.UNKNOWN_ERROR
@@ -181,7 +177,7 @@ export const AddTextRecord = ({
 
     if (dnsOwner !== address) return Errors.DNS_RECORD_INVALID
     return null
-  }, [address, dnsOwner, error, isCheckLoading])
+  }, [address, dnsOwner, error, isLoading])
 
   return (
     <Container>
@@ -265,31 +261,20 @@ export const AddTextRecord = ({
       <Spacer $height="6" />
       <ButtonContainer>
         {syncWarning && (
-          <CheckButton
-            onClick={() => {
-              setCurrentStep(currentStep + 1)
-            }}
-            size="small"
-          >
+          <CheckButton onClick={incrementStep} size="small">
             {t('action.continue', { ns: 'common' })}
           </CheckButton>
         )}
         <CheckButton
-          onClick={() => handleCheck()}
+          onClick={handleCheck}
           size="small"
           disabled={currentStep === 2}
-          loading={isCheckLoading}
+          loading={isLoading}
           data-testid="dnssec-check-button"
         >
           {t('action.check', { ns: 'common' })}
         </CheckButton>
-        <CheckButton
-          onClick={() => {
-            setCurrentStep(currentStep - 1)
-          }}
-          colorStyle="accentSecondary"
-          size="small"
-        >
+        <CheckButton onClick={decrementStep} colorStyle="accentSecondary" size="small">
           {t('navigation.back', { ns: 'common' })}
         </CheckButton>
       </ButtonContainer>

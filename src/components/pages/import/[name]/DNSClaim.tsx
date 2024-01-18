@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -8,6 +8,7 @@ import { Card, mq, Spinner, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
+import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -19,7 +20,6 @@ import { ClaimComplete } from './ClaimComplete'
 import { ClaimDomain } from './ClaimDomain'
 import { EnableDNSSEC } from './EnableDNSSEC'
 import { hasPendingTransaction, shouldShowSuccessPage } from './shared'
-import { isDnsSecEnabled } from './utils'
 
 const ContentContainer = styled.div`
   margin: 0;
@@ -140,32 +140,60 @@ const StyledTitle = styled(Title)(
 export default () => {
   const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
-  const [currentStep, setCurrentStep] = useState(0)
-  const [syncWarning, setSyncWarning] = useState(false)
+  const { address } = useAccount()
 
   const { name = '', isValid } = useValidate({ input: router.query.name as string })
-  const { data: dnsOwner, isLoading: isDnsOwnerLoading } = useDnsOwner({ name, enabled: isValid })
-
   const transactions = useRecentTransactions()
   const { isConnected } = useAccount()
   const { t } = useTranslation('dnssec')
 
-  const [isInitialized, setIsInitialized] = useState(false)
+  const {
+    data: isDnsSecEnabled,
+    isLoading: isDnsSecEnabledLoading,
+    refetch: refetchDnsSecEnabled,
+    isRefetching: isDnsSecEnabledRefetching,
+  } = useDnsSecEnabled({
+    name,
+  })
 
+  const {
+    data: dnsOwner,
+    isLoading: isDnsOwnerLoading,
+    error: dnsOwnerError,
+    refetch: refetchDnsOwner,
+    isRefetching: isDnsOwnerRefetching,
+  } = useDnsOwner({ name, enabled: isValid })
+  const syncWarning = dnsOwner !== address
+
+  const [currentStep, setCurrentStep] = useState(0)
+  const incrementStep = useCallback(
+    () =>
+      setCurrentStep((x) => {
+        if (x === 0 && isDnsSecEnabled) return 1
+        return Math.min(x + 1, 3)
+      }),
+    [isDnsSecEnabled],
+  )
+  const decrementStep = () => setCurrentStep((x) => Math.max(x - 1, 0))
+
+  const [isInitialized, setIsInitialized] = useState(false)
   useEffect(() => {
     const init = async () => {
-      console.log('INITIALIZE')
       try {
-        const hasDnsSecEnabled = await isDnsSecEnabled(name as string)
-        if (!hasDnsSecEnabled) {
-          setCurrentStep(0)
+        if (!isDnsSecEnabled) {
           return
         }
+
         if (hasPendingTransaction(transactions)) {
           setCurrentStep(2)
           return
         }
-        setCurrentStep(1)
+
+        if (dnsOwner !== address) {
+          setCurrentStep(1)
+        }
+
+        setCurrentStep(2)
       } catch (e) {
         console.error('caught error: ', e)
       } finally {
@@ -174,11 +202,22 @@ export default () => {
     }
 
     if (shouldShowSuccessPage(transactions)) {
+      alert('Switching here')
       setCurrentStep(3)
-    } else if (!isDnsOwnerLoading && !!name && !isInitialized) {
+    } else if (!!name && !isDnsSecEnabledLoading && !isDnsOwnerLoading && !isInitialized) {
       init()
     }
-  }, [dnsOwner, isDnsOwnerLoading, name, transactions, setIsInitialized, isInitialized])
+  }, [
+    isDnsSecEnabled,
+    isDnsSecEnabledLoading,
+    dnsOwner,
+    isDnsOwnerLoading,
+    name,
+    address,
+    transactions,
+    setIsInitialized,
+    isInitialized,
+  ])
 
   if (!isInitialized) return null
   return (
@@ -205,10 +244,31 @@ export default () => {
         <MainContentContainer>
           {isConnected ? (
             <>
-              {currentStep === 0 && <EnableDNSSEC {...{ currentStep, setCurrentStep, name }} />}
+              {currentStep === 0 && (
+                <EnableDNSSEC
+                  {...{
+                    refetch: refetchDnsSecEnabled,
+                    isLoading: isDnsSecEnabledLoading || isDnsSecEnabledRefetching,
+                    incrementStep,
+                    currentStep,
+                    setCurrentStep,
+                    name,
+                  }}
+                />
+              )}
               {currentStep === 1 && (
                 <AddTextRecord
-                  {...{ currentStep, setCurrentStep, syncWarning, setSyncWarning, name }}
+                  {...{
+                    dnsOwner,
+                    refetch: refetchDnsOwner,
+                    isLoading: isDnsOwnerLoading || isDnsOwnerRefetching,
+                    error: dnsOwnerError,
+                    incrementStep,
+                    decrementStep,
+                    currentStep,
+                    syncWarning,
+                    name,
+                  }}
                 />
               )}
               {currentStep === 2 && (
