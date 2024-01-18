@@ -44,6 +44,9 @@ tsconfig.tsbuildinfo
 !.yarn/sdks
 !.yarn/versions
 
+# wrangler
+.wrangler/
+
 # jest coverage
 /coverage
 
