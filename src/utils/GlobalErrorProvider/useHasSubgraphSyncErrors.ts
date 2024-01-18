@@ -1,4 +1,4 @@
-import { hashQueryKey, notifyManager, Query, QueryCache } from '@tanstack/react-query'
+import { hashQueryKey, notifyManager, QueryCache } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'wagmi'
@@ -10,8 +10,8 @@ const SLOW_THRESHOLD = 5000
 
 const getBadQueries = (queryCache: QueryCache, renderedAt: number) => {
   const queries = queryCache.findAll([], { predicate: (query) => query.queryKey.includes('graph') }) // limit to subgraph queries
-  const slowQueries: Query[] = []
-  const errorQueries: Query[] = []
+  let slowQueries = 0
+  let errorQueries = 0
 
   queries.forEach((query) => {
     const { dataUpdatedAt, status } = query.state
@@ -19,14 +19,14 @@ const getBadQueries = (queryCache: QueryCache, renderedAt: number) => {
 
     if (query.getObserversCount() > 0) {
       if (elapsedTime > SLOW_THRESHOLD && status === 'loading') {
-        slowQueries.push(query)
+        slowQueries += 1
       } else if (status === 'error') {
-        errorQueries.push(query)
+        errorQueries += 1
       }
     }
   })
 
-  return `${slowQueries.length}:${errorQueries.length}`
+  return `${slowQueries}:${errorQueries}`
 }
 
 const slowQueriesHashKey = hashQueryKey(['slowQueriesKeyPlaceholder'])
