@@ -1,5 +1,5 @@
 import { hashQueryKey, notifyManager, Query, QueryCache } from '@tanstack/react-query'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'wagmi'
 
@@ -14,17 +14,15 @@ const getBadQueries = (queryCache: QueryCache, renderedAt: number) => {
   const errorQueries: Query[] = []
 
   queries.forEach((query) => {
-    const { dataUpdatedAt } = query.state
+    const { dataUpdatedAt, status } = query.state
     const elapsedTime = Date.now() - Math.max(dataUpdatedAt, renderedAt)
 
-    if (
-      elapsedTime > SLOW_THRESHOLD &&
-      query.state.status === 'loading' &&
-      query.getObserversCount() > 0
-    ) {
-      slowQueries.push(query)
-    } else if (query.state.status === 'error' && query.getObserversCount() > 0) {
-      errorQueries.push(query)
+    if (query.getObserversCount() > 0) {
+      if (elapsedTime > SLOW_THRESHOLD && status === 'loading') {
+        slowQueries.push(query)
+      } else if (status === 'error') {
+        errorQueries.push(query)
+      }
     }
   })
 
@@ -43,7 +41,7 @@ export const useHasSubgraphSyncErrors = (
   const queryClient = useQueryClient()
   const queryCache = queryClient.getQueryCache()
 
-  const renderedAt = useMemo(() => Date.now(), [])
+  const [renderedAt] = useState(() => Date.now())
 
   const badQueries = useSyncExternalStore(
     useCallback(
@@ -67,13 +65,9 @@ export const useHasSubgraphSyncErrors = (
     const slowError = state.errors[slowQueriesHashKey]
     if (!slowError && slow > 0) {
       dispatch({
-        type: 'SET_ERROR',
+        type: 'SET_SUBGRAPH_LATENCY_ERROR',
         payload: {
           key: ['slowQueriesKeyPlaceholder'],
-          title: t('errors.networkLatency.title'),
-          message: t('errors.networkLatency.message'),
-          type: 'ENSJSSubgraphLatency',
-          priority: 1,
         },
       })
     } else if (slowError) {

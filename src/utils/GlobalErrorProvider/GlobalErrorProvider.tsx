@@ -51,7 +51,7 @@ type Action =
       }
     }
   | {
-      type: 'SET_NETWORK_ERROR'
+      type: 'SET_SUBGRAPH_LATENCY_ERROR'
       payload: {
         key: QueryKey
       }
@@ -125,7 +125,7 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
           },
         }
       }
-      case 'SET_NETWORK_ERROR': {
+      case 'SET_SUBGRAPH_LATENCY_ERROR': {
         const { key } = action.payload
         const hash = hashQueryKey(key)
         return {
@@ -133,12 +133,16 @@ export const GlobalErrorProvider = ({ children }: { children: React.ReactNode })
           errors: {
             ...state.errors,
             [hash]: {
-              title: t('errors.networkError.title'),
-              message: t('errors.networkError.message'),
               key,
-              type: 'ENSJSUnknownError',
+              type: 'ENSJSSubgraphLatency',
               priority: 5,
+              title: t('errors.networkLatency.title'),
+              message: t('errors.networkLatency.message'),
             },
+          },
+          meta: {
+            ...state.meta,
+            hasSubgraphError: true,
           },
         }
       }

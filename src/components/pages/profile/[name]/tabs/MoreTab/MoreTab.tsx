@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
 import Resolver from './Resolver'
@@ -28,6 +29,8 @@ type Props = {
 const MoreTab = ({ name, nameDetails, abilities }: Props) => {
   const { canBeWrapped, ownerData, wrapperData, isWrapped, isCachedData, profile } = nameDetails
 
+  const hasGlobalError = useHasGlobalError()
+
   return (
     <MoreContainer>
       {ownerData && (
@@ -42,8 +45,8 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
       )}
       <Resolver
         name={name}
-        canEdit={abilities.canEdit}
-        canEditResolver={abilities.canEditResolver}
+        canEdit={!hasGlobalError && abilities.canEdit}
+        canEditResolver={!hasGlobalError && abilities.canEditResolver}
         isCachedData={isCachedData}
         resolverAddress={profile?.resolverAddress}
       />
