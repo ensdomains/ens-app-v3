@@ -7,9 +7,9 @@ export const useHasGlobalError = (includeLatency = false) => {
 
   return useMemo(() => {
     if (includeLatency) {
-      return error || slow
+      return !!error || !!slow
     }
 
-    return error
+    return !!error
   }, [error, slow, includeLatency])
 }
