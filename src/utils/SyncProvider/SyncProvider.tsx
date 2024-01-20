@@ -3,13 +3,10 @@ import { useQuery, useQueryClient } from 'wagmi'
 
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { useSubgraphClient } from '@app/hooks/ensjs/subgraph/useSubgraphClient'
-import { useGlobalError } from '@app/hooks/errors/useGlobalError'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useRegisterNameCallback } from '@app/hooks/transactions/useRegisterNameCallback'
-
-import { debugSubgraphIndexingErrors } from '../GlobalErrorProvider/useSubgraphMetaSync'
 
 export type UpdateCallback = (transaction: Transaction) => void
 type AddCallback = (key: string, callback: UpdateCallback) => void
@@ -24,7 +21,6 @@ type SyncContext = {
 const query = `
   {
     _meta {
-      hasIndexingErrors
       block {
         number
       }
@@ -63,14 +59,11 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     [transactions],
   )
 
-  const { resetMeta, setMetaError } = useGlobalError()
   const hasGlobalError = useHasGlobalError()
   const { data: currentGraphBlock } = useQuery<number>(
     ['graphBlock', chainId, transactions],
     () =>
       subgraphClient.request<GraphResponse>(query).then((res) => {
-        if (res!._meta.hasIndexingErrors || debugSubgraphIndexingErrors())
-          throw new Error('indexing_errors')
         return res!._meta.block.number
       }),
     {
@@ -87,7 +80,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       enabled:
         !!subgraphClient && !!transactions.find((x) => x.minedData?.blockNumber) && !hasGlobalError,
       onSuccess: (data) => {
-        resetMeta()
         if (!data) return
         const waitingForBlock = findTransactionHigherThanBlock(data)
         if (waitingForBlock) return
@@ -105,9 +97,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
               predicate: (q) => q.queryKey[q.queryKey.length - 1] === 'graph',
             }),
           )
-      },
-      onError: () => {
-        setMetaError()
       },
     },
   )
