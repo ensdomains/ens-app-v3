@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { useHasSubgraphSyncErrors } from '@app/utils/GlobalErrorProvider/useHasSubgraphSyncErrors'
+import { useHasSubgraphSyncErrors } from '@app/utils/useHasSubgraphSyncErrors'
 
 export const useHasGlobalError = (includeLatency = false) => {
   const { error, slow } = useHasSubgraphSyncErrors()

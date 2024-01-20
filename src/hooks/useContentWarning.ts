@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { ContentWarning } from '@app/layouts/Content'
-import { useHasSubgraphSyncErrors } from '@app/utils/GlobalErrorProvider/useHasSubgraphSyncErrors'
+import { useHasSubgraphSyncErrors } from '@app/utils/useHasSubgraphSyncErrors'
 
 export const useContentWarning = (
   otherErrors: ContentWarning[] = [],
