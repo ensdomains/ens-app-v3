@@ -1,10 +1,8 @@
 'use client'
 
 import { QueryCache } from '@tanstack/react-query'
-import { RefObject, useRef } from 'react'
+import { useRef, useSyncExternalStore, type RefObject } from 'react'
 import { useQueryClient } from 'wagmi'
-
-import { useSyncExternalStore } from './useSyncExternalStore'
 
 type EventData = {
   [key: string]: {
