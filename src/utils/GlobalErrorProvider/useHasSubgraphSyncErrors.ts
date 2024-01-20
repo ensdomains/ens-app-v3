@@ -1,106 +1,90 @@
-import { hashQueryKey, notifyManager, QueryCache } from '@tanstack/react-query'
-import { useCallback, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+'use client'
+
+import { QueryCache } from '@tanstack/react-query'
+import { RefObject, useRef } from 'react'
 import { useQueryClient } from 'wagmi'
 
-import type { GlobalErrorDispatch, GlobalErrorState } from './GlobalErrorProvider'
 import { useSyncExternalStore } from './useSyncExternalStore'
+
+type EventData = {
+  [key: string]: {
+    dataUpdateCount: number
+    startTime: number
+  }
+}
 
 const SLOW_THRESHOLD = 5000
 
-const getBadQueries = (queryCache: QueryCache, renderedAt: number) => {
-  const queries = queryCache.findAll([], { predicate: (query) => query.queryKey.includes('graph') }) // limit to subgraph queries
+const getBadQueries = (queryCache: QueryCache, eventData: RefObject<EventData>) => {
+  const queries = queryCache.findAll([], {
+    // only get subgraph queries that are pending or errored
+    predicate: (query) => query.queryKey.at(-1) === 'graph' && query.state.status !== 'success',
+  })
   let slowQueries = 0
   let errorQueries = 0
 
   queries.forEach((query) => {
-    const { dataUpdatedAt, status } = query.state
-    const elapsedTime = Date.now() - Math.max(dataUpdatedAt, renderedAt)
+    const { queryHash } = query
+    const isSlow =
+      !!eventData.current?.[queryHash]?.startTime &&
+      (query.state.status === 'loading' || query.state.fetchStatus === 'fetching') &&
+      eventData.current[queryHash].startTime + SLOW_THRESHOLD < Date.now()
+    const isError = query.state.status === 'error'
 
-    if (query.getObserversCount() > 0) {
-      if (elapsedTime > SLOW_THRESHOLD && status === 'loading') {
-        slowQueries += 1
-      } else if (status === 'error') {
-        errorQueries += 1
-      }
-    }
+    if (isError) {
+      // invalidate query with error which has data, when subgraph goes back online data shows up
+      if (!query.state.isInvalidated && query.state.dataUpdateCount > 1) query.invalidate()
+      else errorQueries += 1
+    } else if (isSlow) slowQueries += 1
   })
 
-  return `${slowQueries}:${errorQueries}`
+  return { slow: slowQueries, error: errorQueries }
 }
 
-const slowQueriesHashKey = hashQueryKey(['slowQueriesKeyPlaceholder'])
-const errorQueriesHashKey = hashQueryKey(['errorQueriesKeyPlaceholder'])
-
-export const useHasSubgraphSyncErrors = (
-  state: GlobalErrorState,
-  dispatch: GlobalErrorDispatch,
-) => {
-  const { t } = useTranslation('common')
-
+export const useHasSubgraphSyncErrors = () => {
   const queryClient = useQueryClient()
-  const queryCache = queryClient.getQueryCache()
+  const queryData = useRef({ slow: 0, error: 0 })
+  const eventData = useRef<EventData>({})
 
-  const [renderedAt] = useState(() => Date.now())
-
-  const badQueries = useSyncExternalStore(
-    useCallback(
-      (onStoreChange) => {
-        return queryCache.subscribe(() => {
-          notifyManager.batchCalls(onStoreChange)
-          setTimeout(() => {
-            notifyManager.batchCalls(onStoreChange)
-          }, SLOW_THRESHOLD)
-        })
-      },
-      [queryCache],
-    ),
-    () => getBadQueries(queryCache, renderedAt),
-    () => getBadQueries(queryCache, renderedAt),
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      const queryCache = queryClient.getQueryCache()
+      const unsubscribe = queryCache.subscribe((event) => {
+        const lastKey = event.query.queryKey.at(-1)
+        if (lastKey !== 'graph') return
+        if (
+          event.query.state.fetchStatus === 'fetching' ||
+          event.query.state.status === 'loading'
+        ) {
+          if (
+            eventData.current[event.query.queryHash]?.dataUpdateCount ===
+            event.query.state.dataUpdateCount
+          )
+            return
+          eventData.current[event.query.queryHash] = {
+            dataUpdateCount: event.query.state.dataUpdateCount,
+            startTime: Date.now(),
+          }
+          onStoreChange()
+          setTimeout(() => onStoreChange(), SLOW_THRESHOLD)
+        }
+      })
+      return () => {
+        unsubscribe()
+      }
+    },
+    () => {
+      const newResult = getBadQueries(queryClient.getQueryCache(), eventData)
+      if (
+        newResult.slow !== queryData.current.slow ||
+        newResult.error !== queryData.current.error
+      ) {
+        queryData.current = newResult
+      }
+      return queryData.current
+    },
+    () => {
+      return queryData.current
+    },
   )
-
-  const [slow, errors] = badQueries.split(':').map((x) => parseInt(x))
-
-  useEffect(() => {
-    const slowError = state.errors[slowQueriesHashKey]
-    if (!slowError && slow > 0) {
-      dispatch({
-        type: 'SET_SUBGRAPH_LATENCY_ERROR',
-        payload: {
-          key: ['slowQueriesKeyPlaceholder'],
-        },
-      })
-    } else if (slowError) {
-      dispatch({
-        type: 'CLEAR_ERROR',
-        payload: {
-          key: ['slowQueriesKeyPlaceholder'],
-        },
-      })
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slow])
-
-  useEffect(() => {
-    const queryError = state.errors[errorQueriesHashKey]
-    if (!queryError && errors > 0) {
-      dispatch({
-        type: 'SET_SUBGRAPH_ERROR',
-        payload: {
-          key: ['errorQueriesKeyPlaceholder'],
-          title: t('errors.networkError.title'),
-          message: t('errors.networkError.message'),
-        },
-      })
-    } else if (queryError) {
-      dispatch({
-        type: 'CLEAR_ERROR',
-        payload: {
-          key: ['errorQueriesKeyPlaceholder'],
-        },
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errors])
 }
