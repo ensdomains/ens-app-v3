@@ -11,8 +11,6 @@ export const useContentWarning = (
 
   const { slow, error } = useHasSubgraphSyncErrors()
 
-  console.log('SLOW', slow, 'ERROR', error)
-
   const [ensjsDebug] = useState(() =>
     typeof localStorage === 'undefined' ? '' : localStorage.getItem('ensjs-debug') || '',
   )

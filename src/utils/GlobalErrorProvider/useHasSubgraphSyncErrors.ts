@@ -1,7 +1,7 @@
 'use client'
 
 import { QueryCache } from '@tanstack/react-query'
-import { useRef, useSyncExternalStore, type RefObject } from 'react'
+import { useRef, useState, useSyncExternalStore, type RefObject } from 'react'
 import { useQueryClient } from 'wagmi'
 
 type EventData = {
@@ -13,7 +13,11 @@ type EventData = {
 
 const SLOW_THRESHOLD = 5000
 
-const getBadQueries = (queryCache: QueryCache, eventData: RefObject<EventData>) => {
+const getBadQueries = (
+  queryCache: QueryCache,
+  eventData: RefObject<EventData>,
+  renderedAt: number,
+) => {
   const queries = queryCache.findAll([], {
     // only get subgraph queries that are pending or errored
     predicate: (query) => query.queryKey.at(-1) === 'graph' && query.state.status !== 'success',
@@ -26,7 +30,7 @@ const getBadQueries = (queryCache: QueryCache, eventData: RefObject<EventData>) 
     const isSlow =
       !!eventData.current?.[queryHash]?.startTime &&
       (query.state.status === 'loading' || query.state.fetchStatus === 'fetching') &&
-      eventData.current[queryHash].startTime + SLOW_THRESHOLD < Date.now()
+      eventData.current[queryHash].startTime - renderedAt > SLOW_THRESHOLD
     const isError = query.state.status === 'error'
 
     if (isError) {
@@ -43,6 +47,8 @@ export const useHasSubgraphSyncErrors = () => {
   const queryClient = useQueryClient()
   const queryData = useRef({ slow: 0, error: 0 })
   const eventData = useRef<EventData>({})
+
+  const [renderedAt] = useState(() => Date.now())
 
   return useSyncExternalStore(
     (onStoreChange) => {
@@ -72,7 +78,7 @@ export const useHasSubgraphSyncErrors = () => {
       }
     },
     () => {
-      const newResult = getBadQueries(queryClient.getQueryCache(), eventData)
+      const newResult = getBadQueries(queryClient.getQueryCache(), eventData, renderedAt)
       if (
         newResult.slow !== queryData.current.slow ||
         newResult.error !== queryData.current.error
