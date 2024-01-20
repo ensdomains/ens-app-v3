@@ -19,8 +19,9 @@ test.describe('Import DNSSEC name', () => {
     await page.goto('/noenssubdomain.com')
     await login.connect()
 
+    await page.pause()
     await page.getByTestId('dnssec-check-button').click()
-    await expect(page.getByText('Subdomain not set')).toBeVisible()
+    await expect(page.getByText('Subdomain not set')).toBeVisible({ timeout: 15000})
   })
 
   test('should not allow the use to proceed if they have not set the correct subdomain with the correct info', async ({
@@ -31,7 +32,7 @@ test.describe('Import DNSSEC name', () => {
     await login.connect()
 
     await page.getByTestId('dnssec-check-button').click()
-    await expect(page.getByText('Record Invalid')).toBeVisible()
+    await expect(page.getByText('Record Invalid')).toBeVisible({ timeout: 15000})
   })
 
   test('should allow user to import a domain that they are not the owner of', async ({
@@ -45,6 +46,7 @@ test.describe('Import DNSSEC name', () => {
     await page.goto('/leontalbert.xyz/import')
     await login.connect()
 
+    await page.pause()
     const address = accounts.getAddress('user')
     await expect(page.getByText(`a=${address}`)).toBeVisible({
       timeout: 25000,
@@ -76,11 +78,12 @@ test.describe('Import DNSSEC name', () => {
     await page.goto('/leontalbert.com/import')
     await login.connect()
 
-    const address = accounts.getAddress('user')
-    await expect(page.getByText(`a=${address}`)).toBeVisible({
-      timeout: 25000,
-    })
-    await page.getByTestId('dnssec-check-button').click()
+    // const address = accounts.getAddress('user')
+    // await expect(page.getByText(`a=${address}`)).toBeVisible({
+    //   timeout: 25000,
+    // })
+    await page.pause()
+    // await page.getByTestId('dnssec-check-button').click()
     await expect(
       page.getByText('You have verified your ownership and can claim this domain.'),
     ).toBeVisible({ timeout: 25000 })

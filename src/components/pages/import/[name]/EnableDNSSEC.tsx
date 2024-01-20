@@ -1,3 +1,4 @@
+import { QueryObserverResult } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -9,7 +10,6 @@ import { Outlink } from '@app/components/Outlink'
 
 import { AlignedDropdown, ButtonContainer, CheckButton } from './shared'
 import { Steps } from './Steps'
-import { isDnsSecEnabled } from './utils'
 
 const HelperLinks = [
   {
@@ -63,25 +63,26 @@ const Container = styled.div`
 `
 
 export const EnableDNSSEC = ({
-  setCurrentStep,
+  refetch,
+  isLoading,
+  incrementStep,
   name,
 }: {
-  setCurrentStep: (arg: number) => void
+  refetch: () => Promise<QueryObserverResult<boolean, Error>>
+  isLoading: boolean
+  incrementStep: () => void
   name: string
 }) => {
   const [errorState, setErrorState] = useState(Errors.NOT_CHECKED)
-  const [isLoading, setIsLoading] = useState(false)
   const { t } = useTranslation('dnssec')
 
   const handleCheck = async () => {
-    setIsLoading(true)
-    const hasDnsSecEnabled = await isDnsSecEnabled(name as string)
-    if (hasDnsSecEnabled) {
-      setCurrentStep(1)
+    const test = await refetch()
+    if (test.data) {
+      incrementStep()
       return
     }
     setErrorState(Errors.DNSSEC_NOT_ENABLED)
-    setIsLoading(false)
   }
 
   return (

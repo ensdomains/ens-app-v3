@@ -37,11 +37,6 @@ export const test = base.extend<Fixtures>({
     const chainId = provider.network?.chainId || 1337
     const chainRpcUrl = provider.connection?.url || 'http://localhost:8545'
     const privateKeys = accounts.getAllPrivateKeys()
-    console.log('chainid', chainId)
-    console.log('chainRpcUrl', chainRpcUrl)
-    console.log('USER', accounts.getAddress('user'))
-    console.log('USER2', accounts.getAddress('user2'))
-    console.log('USER3', accounts.getAddress('user3'))
     const wallet = await injectHeadlessWeb3Provider(page, privateKeys, chainId, chainRpcUrl)
     await use(wallet)
   },

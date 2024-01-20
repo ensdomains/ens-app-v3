@@ -36,6 +36,10 @@
       "DNS_RECORD_INVALID": {
         "title": "Record Invalid",
         "content": "Please set the record with the value above."
+      },
+      "UNKNOWN_ERROR": {
+        "title": "Unknown Error",
+        "content": "Please try again later."
       }
     }
   },
