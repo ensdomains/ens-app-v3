@@ -12,7 +12,7 @@ export const useContentWarning = (
   const { slow, error } = useHasSubgraphSyncErrors()
 
   const [ensjsDebug] = useState(() =>
-    typeof localStorage === 'undefined' ? '' : localStorage.getItem('ensjs-debug') || '',
+    typeof localStorage === 'undefined' ? '' : localStorage.getItem('subgraph-debug') || '',
   )
 
   const warning = useMemo(() => {

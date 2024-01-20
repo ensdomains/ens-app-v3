@@ -101,7 +101,6 @@ export const DevSection = () => {
     )
   }
 
-  const [ensjsError, setEnsjsError] = useLocalStorageString('ensjs-debug')
   const [subgraphError, setSubgraphError] = useLocalStorageString('subgraph-debug')
 
   return (
@@ -117,35 +116,19 @@ export const DevSection = () => {
         </>
       )}
       <DetailedSwitch
-        title="ENSJS Subgraph Indexing Error"
-        description="An error caused by the subgraph not indexing. In theory, should still be able to get meta data from graph."
-        checked={
-          ensjsError === 'ENSJSSubgraphError' && subgraphError === 'ENSJSSubgraphIndexingError'
-        }
-        onChange={(e) => {
-          setSubgraphError(e.currentTarget.checked ? 'ENSJSSubgraphIndexingError' : '')
-          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
-        }}
-        data-testid="subgraph-indexing-error"
-      />
-      <DetailedSwitch
         title="ENSJS Network Error"
         description="An error caused by the subgraph network failing"
-        checked={
-          ensjsError === 'ENSJSSubgraphError' && subgraphError !== 'ENSJSSubgraphIndexingError'
-        }
+        checked={subgraphError === 'ENSJSSubgraphError'}
         onChange={(e) => {
-          setSubgraphError('')
-          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
+          setSubgraphError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
         }}
         data-testid="subgraph-network-error"
       />
       <DetailedSwitch
         title="Network Latency Error"
-        checked={ensjsError === 'ENSJSSubgraphLatency'}
+        checked={subgraphError === 'ENSJSSubgraphLatency'}
         onChange={(e) => {
-          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphLatency' : '')
-          setSubgraphError('')
+          setSubgraphError(e.currentTarget.checked ? 'ENSJSSubgraphLatency' : '')
         }}
         data-testid="network-latency-error"
       />

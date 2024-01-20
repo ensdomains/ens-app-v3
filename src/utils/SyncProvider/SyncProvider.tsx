@@ -29,7 +29,6 @@ const query = `
 `
 type GraphResponse = {
   _meta: {
-    hasIndexingErrors: boolean
     block: {
       number: number
     }
