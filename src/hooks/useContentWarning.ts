@@ -1,8 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { ContentWarning } from '@app/layouts/Content'
 import { useHasSubgraphSyncErrors } from '@app/utils/useHasSubgraphSyncErrors'
+
+import { useReadLocalStorage } from './useLocalStorage'
 
 export const useContentWarning = (
   otherErrors: ContentWarning[] = [],
@@ -11,9 +13,7 @@ export const useContentWarning = (
 
   const { slow, error } = useHasSubgraphSyncErrors()
 
-  const [ensjsDebug] = useState(() =>
-    typeof localStorage === 'undefined' ? '' : localStorage.getItem('subgraph-debug') || '',
-  )
+  const subgraphDebug = useReadLocalStorage<string>('subgraph-debug')
 
   const warning = useMemo(() => {
     const otherError = otherErrors.at(-1)
@@ -21,7 +21,7 @@ export const useContentWarning = (
 
     const networkErrors = ['ENSJSUnknownError', 'ENSJSSubgraphError']
 
-    if (networkErrors.includes(ensjsDebug) || error > 0) {
+    if (networkErrors.includes(subgraphDebug!) || error > 0) {
       return {
         type: 'warning',
         title: t('errors.networkError.title'),
@@ -29,7 +29,7 @@ export const useContentWarning = (
       } as ContentWarning
     }
 
-    if (ensjsDebug === 'ENSJSSubgraphLatency' || slow > 0) {
+    if (subgraphDebug === 'ENSJSSubgraphLatency' || slow > 0) {
       return {
         type: 'warning',
         title: t('errors.networkLatency.title'),
@@ -38,7 +38,7 @@ export const useContentWarning = (
     }
 
     return undefined
-  }, [otherErrors, ensjsDebug, error, slow, t])
+  }, [otherErrors, subgraphDebug, error, slow, t])
 
   return warning
 }

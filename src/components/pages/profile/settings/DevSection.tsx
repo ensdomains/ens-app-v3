@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { revert as evmRevert, snapshot as evmSnapshot, mine, setAutomine } from 'viem/test'
 import { usePrepareSendTransaction, useSendTransaction } from 'wagmi'
 
 import { Button } from '@ensdomains/thorin'
 
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
+import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { usePublicClient } from '@app/hooks/usePublicClient'
 import { DetailedSwitch } from '@app/transaction-flow/input/ProfileEditor/components/DetailedSwitch'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
@@ -18,6 +17,7 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
   fetch('http://localhost:8545', {
     method: 'POST',
     headers: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(
@@ -29,19 +29,6 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
       })),
     ),
   })
-
-const useLocalStorageString = (key: string, defaultValue = '') => {
-  const [value, _setValue] = useState(defaultValue)
-  useEffect(() => {
-    _setValue(localStorage.getItem(key) || defaultValue)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  const setValue = (newValue: string) => {
-    localStorage.setItem(key, newValue)
-    _setValue(newValue)
-  }
-  return [value, setValue] as const
-}
 
 export const DevSection = () => {
   const publicClient = usePublicClient()
@@ -101,7 +88,7 @@ export const DevSection = () => {
     )
   }
 
-  const [subgraphError, setSubgraphError] = useLocalStorageString('subgraph-debug')
+  const [subgraphError, setSubgraphError] = useLocalStorage<string | null>('subgraph-debug', null)
 
   return (
     <SectionContainer title="Developer">

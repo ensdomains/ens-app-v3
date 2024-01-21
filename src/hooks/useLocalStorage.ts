@@ -1,4 +1,5 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
+import { useEvent } from 'react-use'
 import { Reducer, useImmerReducer } from 'use-immer'
 
 const isBrowser = !!(
@@ -7,9 +8,10 @@ const isBrowser = !!(
   window.document.createElement
 )
 
-const getStorageValue = <D>(key: string, defaultValue: D) => {
+const getStorageValue = <D>(key: string, defaultValue: D): D => {
   // getting stored value
   const saved = isBrowser && localStorage.getItem(key)
+
   try {
     return saved && saved !== 'undefined' ? JSON.parse(saved) : defaultValue
   } catch (e) {
@@ -48,6 +50,37 @@ export const useLocalStorage = <D>(
   }, [key, value])
 
   return [value, setValue]
+}
+
+type Value<T> = T | null
+
+export function useReadLocalStorage<T>(key: string): Value<T> {
+  // Get from local storage then
+  // parse stored json or return initialValue
+  const readValue = useCallback((): Value<T> => {
+    return getStorageValue(key, null)
+  }, [key])
+
+  const [storedValue, setStoredValue] = useState<Value<T>>(readValue)
+
+  // Listen if localStorage changes
+  useEffect(() => {
+    setStoredValue(readValue())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleStorageChange = useCallback(
+    (event: StorageEvent | CustomEvent) => {
+      if ((event as StorageEvent)?.key && (event as StorageEvent).key !== key) {
+        return
+      }
+      setStoredValue(readValue())
+    },
+    [key, readValue],
+  )
+
+  useEvent('storage', handleStorageChange)
+  return storedValue
 }
 
 export const useLocalStorageReducer = <S = any, A = any>(

@@ -1,7 +1,7 @@
 'use client'
 
 import { QueryCache } from '@tanstack/react-query'
-import { useRef, useState, useSyncExternalStore, type RefObject } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } from 'react'
 import { useQueryClient } from 'wagmi'
 
 type EventData = {
@@ -48,7 +48,11 @@ export const useHasSubgraphSyncErrors = () => {
   const queryData = useRef({ slow: 0, error: 0 })
   const eventData = useRef<EventData>({})
 
-  const [renderedAt] = useState(() => Date.now())
+  const [renderedAt, setRenderedAt] = useState(0)
+
+  useEffect(() => {
+    setRenderedAt(Date.now())
+  }, [])
 
   return useSyncExternalStore(
     (onStoreChange) => {
