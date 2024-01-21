@@ -3,8 +3,8 @@ import { stringToHex } from 'viem'
 import { getProtocolType, RecordOptions } from '@ensdomains/ensjs/utils'
 
 import { ProfileRecord, ProfileRecordGroup, sortValues } from '@app/constants/profileRecordOptions'
-import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'
-import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
+import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import { Profile } from '@app/types'
 import { contentHashToString, getContentHashProvider } from '@app/utils/contenthash'
@@ -146,9 +146,11 @@ export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
         }
       }
       /* eslint-disable no-nested-ternary */
-      const group: ProfileRecordGroup = supportedGeneralRecordKeys.includes(key as string)
+      const group: ProfileRecordGroup = supportedGeneralRecordKeys.includes(
+        key as (typeof supportedGeneralRecordKeys)[number],
+      )
         ? 'general'
-        : supportedAccounts.includes(key as string)
+        : supportedSocialRecordKeys.includes(key as (typeof supportedSocialRecordKeys)[number])
         ? 'social'
         : 'custom'
       /* eslint-enable no-nested-ternary */

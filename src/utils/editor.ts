@@ -1,6 +1,6 @@
-import supportedAddresses from '@app/constants/supportedAddresses.json'
-import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
-import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
+import { supportedAddresses } from '@app/constants/supportedAddresses'
+import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import { Profile } from '@app/types/index'
 
 export const formSafeKey = (key: string) =>
@@ -37,7 +37,10 @@ export const convertProfileToProfileFormObject = (profile: Profile): ProfileForm
   const address =
     profile.coins?.reduce((map, record) => {
       const { name, value } = record
-      if (name && supportedAddresses.includes(name.toLowerCase())) {
+      if (
+        name &&
+        supportedAddresses.includes(name.toLowerCase() as (typeof supportedAddresses)[number])
+      ) {
         const newMap = { [name]: value, ...map }
         return newMap
       }
@@ -62,14 +65,14 @@ export const convertProfileToProfileFormObject = (profile: Profile): ProfileForm
         }
       const key = record.key.toString()
       const safeKey = formSafeKey(key)
-      if (supportedProfileItems.includes(key)) {
+      if (supportedGeneralRecordKeys.includes(key as (typeof supportedGeneralRecordKeys)[number])) {
         const newMap = {
           ...map,
           general: { ...map.general, [safeKey]: record.value },
         }
         return newMap
       }
-      if (supportedAccounts.includes(key)) {
+      if (supportedSocialRecordKeys.includes(key as (typeof supportedSocialRecordKeys)[number])) {
         return {
           ...map,
           accounts: { ...map.accounts, [safeKey]: record.value },

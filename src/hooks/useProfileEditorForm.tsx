@@ -6,7 +6,7 @@ import {
   profileRecordsToProfileEditorForm,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord, ProfileRecordGroup } from '@app/constants/profileRecordOptions'
-import supportedAddresses from '@app/constants/supportedAddresses.json'
+import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { AvatarEditorType } from '@app/types'
 import { validateCryptoAddress } from '@app/validators/validateAddress'
 import { validateContentHash } from '@app/validators/validateContentHash'
@@ -70,7 +70,9 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     if (record.group === 'social')
       return t(`steps.profile.options.groups.social.placeholder.${record.key}`)
     if (record.group === 'address')
-      return supportedAddresses.includes(record.key.toLowerCase())
+      return supportedAddresses.includes(
+        record.key.toLowerCase() as (typeof supportedAddresses)[number],
+      )
         ? t(`steps.profile.options.groups.address.placeholder.${record.key}`)
         : t(`steps.profile.options.groups.address.placeholder.default`)
     if (record.group === 'website')

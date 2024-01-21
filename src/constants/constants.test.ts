@@ -1,14 +1,13 @@
+import * as coins from '@ensdomains/address-encoder/coins'
+
 import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import coinsWithoutIcons from '@app/constants/coinsWithoutIcons.json'
 
-import COIN_LIST from './coinList'
+const COIN_LIST = Object.keys(coins).filter((x) => !x.endsWith('Legacy'))
 
-describe('coins', () => {
-  it('coins with and without icons should cover all the coins in coinlist', () => {
-    const isIncluded = COIN_LIST.every((coin) => {
-      const coinName = coin.toLowerCase()
-      return coinsWithIcons.includes(coinName) || coinsWithoutIcons.includes(coinName)
-    })
+describe('coins with and without icons should cover all coins in coinlist', () => {
+  it.each(COIN_LIST)('coin %s should be in coinlist', (coinName) => {
+    const isIncluded = coinsWithIcons.includes(coinName) || coinsWithoutIcons.includes(coinName)
     expect(isIncluded).toBe(true)
   })
 })

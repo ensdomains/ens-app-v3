@@ -1,9 +1,9 @@
 import { act, renderHook } from '@app/test-utils'
 
 import registerI18n from '@app/../public/locales/en/register.json'
-import supportedAddresses from '@app/constants/supportedAddresses.json'
+import { supportedAddresses } from '@app/constants/supportedAddresses'
 
-import profileRecordOptions, { ProfileRecord, grouped } from '../constants/profileRecordOptions'
+import profileRecordOptions, { grouped, ProfileRecord } from '../constants/profileRecordOptions'
 import { useProfileEditorForm } from './useProfileEditorForm'
 
 const baseRecord: ProfileRecord = {

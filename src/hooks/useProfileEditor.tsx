@@ -9,8 +9,8 @@ import addressOptions from '@app/components/@molecules/ProfileEditor/options/add
 import otherOptions from '@app/components/@molecules/ProfileEditor/options/otherOptions'
 import websiteOptions from '@app/components/@molecules/ProfileEditor/options/websiteOptions'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
-import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
-import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
+import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import type { Profile } from '@app/types'
 import { ProfileEditorType } from '@app/types'
@@ -253,9 +253,13 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
         const formKey = formSafeKey(key.toString())
         if (['avatar', 'banner'].includes(key)) {
           setValue(formKey as any, value, { shouldDirty: true })
-        } else if (supportedProfileItems.includes(key)) {
+        } else if (
+          supportedGeneralRecordKeys.includes(key as (typeof supportedGeneralRecordKeys)[number])
+        ) {
           setValue(`general.${formKey}`, value!, { shouldDirty: true })
-        } else if (supportedAccounts.includes(key)) {
+        } else if (
+          supportedSocialRecordKeys.includes(key as (typeof supportedSocialRecordKeys)[number])
+        ) {
           setValue(`accounts.${formKey}`, value!, { shouldDirty: true })
           if (!newExistingRecords.accounts.includes(formKey))
             newExistingRecords.accounts.push(formKey)

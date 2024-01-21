@@ -23,10 +23,7 @@ import {
 import { Helper, Space } from '@ensdomains/thorin'
 
 export type Profile = Partial<
-  GetRecordsReturnType<{
-    name: string
-    records: { abi: true; contentHash: true; coins: string[]; texts: string[] }
-  }> &
+  GetRecordsReturnType &
     Pick<NonNullable<GetSubgraphRecordsReturnType>, 'isMigrated' | 'createdAt'> & {
       address: Address | undefined
     }
