@@ -31,13 +31,16 @@ const getBadQueries = (
       !!eventData.current?.[queryHash]?.startTime &&
       (query.state.status === 'loading' || query.state.fetchStatus === 'fetching') &&
       eventData.current[queryHash].startTime - renderedAt > SLOW_THRESHOLD
+
     const isError = query.state.status === 'error'
+    const isFailedToFetch = query.state.fetchFailureReason instanceof DOMException
 
     if (isError) {
-      // invalidate query with error which has data, when subgraph goes back online data shows up
-      if (!query.state.isInvalidated && query.state.dataUpdateCount > 1) query.invalidate()
-      else errorQueries += 1
-    } else if (isSlow) slowQueries += 1
+      if (isFailedToFetch) errorQueries += 1
+      else query.invalidate()
+    } else if (isSlow) {
+      slowQueries += 1
+    }
   })
 
   return { slow: slowQueries, error: errorQueries }
