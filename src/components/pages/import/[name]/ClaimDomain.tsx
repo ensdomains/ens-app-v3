@@ -99,11 +99,13 @@ const handleClaim =
     name,
     createTransactionFlow,
     address,
+    syncWarning,
   }: {
     publicClient: PublicClientWithChain
     name: string
     createTransactionFlow: CreateTransactionFlow
     address: Address
+    syncWarning: boolean
   }) =>
   async () => {
     const dnsImportData = await getDnsImportData(publicClient, { name })
@@ -114,7 +116,7 @@ const handleClaim =
         makeTransactionItem('importDNSSECName', {
           name,
           dnsImportData,
-          address,
+          address: syncWarning ? undefined : address,
         }),
       ],
     })
@@ -207,7 +209,13 @@ export const ClaimDomain = ({
       <ButtonContainer>
         <CheckButton
           size="small"
-          onClick={handleClaim({ publicClient, address: address!, createTransactionFlow, name })}
+          onClick={handleClaim({
+            publicClient,
+            address: address!,
+            createTransactionFlow,
+            name,
+            syncWarning,
+          })}
         >
           {t('action.claim', { ns: 'common' })}
         </CheckButton>

@@ -86,13 +86,17 @@ export const useEstimateGasLimitForTransaction = <TName extends TransactionName>
     {
       enabled: enabled && !!walletClient && !isWalletClientLoading,
       onError: console.error,
+      select: (result) => ({
+        ...result,
+        gasLimit: BigInt(result.gasLimit),
+      }),
     },
   )
 
   const { gasCost, gasCostEth } = useMemo(() => {
     if (!gasPrice || !data) {
       return {
-        gasCost: 0,
+        gasCost: 0n,
         gasCostEth: '0',
       }
     }
