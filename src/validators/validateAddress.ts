@@ -14,7 +14,7 @@ export const validateCryptoAddress = ({
     const _coin = coin.toLowerCase()
 
     let _address
-    if (_coin === 'ETH') _address = getAddress(address)
+    if (_coin === 'eth') _address = getAddress(address)
     else _address = address
 
     const coinTypeInstance = getCoderByCoinName(_coin)
