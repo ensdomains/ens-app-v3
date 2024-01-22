@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components'
 import { bytesToHex } from 'viem'
 import { useMutation, useQueryClient, useSignTypedData } from 'wagmi'
 
-import { Button, Dialog, mq } from '@ensdomains/thorin'
+import { Button, Dialog, Helper, mq } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 
@@ -37,6 +37,15 @@ const dataURLToBytes = (dataURL: string) => {
   const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
   return bytes
 }
+
+type AvatarUploadResult =
+  | {
+      message: string
+    }
+  | {
+      error: string
+      status: number
+    }
 
 const UploadComponent = ({
   dataURL,
@@ -77,7 +86,11 @@ const UploadComponent = ({
     },
   })
 
-  const { mutate: signAndUpload, isLoading } = useMutation(async () => {
+  const {
+    mutate: signAndUpload,
+    isLoading,
+    error,
+  } = useMutation<void, Error>(async () => {
     let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
     if (network !== 'mainnet') {
       baseURL = `${baseURL}/${network}`
@@ -96,9 +109,9 @@ const UploadComponent = ({
         dataURL,
         sig,
       }),
-    }).then((res) => res.json())) as any
+    }).then((res) => res.json())) as AvatarUploadResult
 
-    if (fetched.message === 'uploaded') {
+    if ('message' in fetched && fetched.message === 'uploaded') {
       queryClient.invalidateQueries({
         predicate: (query) => {
           const {
@@ -112,7 +125,12 @@ const UploadComponent = ({
       })
       return handleSubmit('upload', endpoint, dataURL)
     }
-    throw new Error(fetched.message)
+
+    if ('error' in fetched) {
+      throw new Error(fetched.error)
+    }
+
+    throw new Error('Unknown error')
   })
 
   return (
@@ -124,11 +142,23 @@ const UploadComponent = ({
       <Container>
         <CroppedImagePreview data-testid="cropped-image-preview" src={dataURL} />
       </Container>
+      {error && (
+        <Helper data-testid="avatar-upload-error" type="error">
+          {error.message}
+        </Helper>
+      )}
       <Dialog.Footer
         leading={<AvCancelButton handleCancel={handleCancel} />}
         trailing={
-          <Button disabled={isLoading} onClick={() => signAndUpload()} data-testid="upload-button">
-            {t('input.profileEditor.tabs.avatar.image.upload.action')}
+          <Button
+            disabled={isLoading}
+            colorStyle={error ? 'redSecondary' : undefined}
+            onClick={() => signAndUpload()}
+            data-testid="upload-button"
+          >
+            {error
+              ? t('action.tryAgain', { ns: 'common' })
+              : t('input.profileEditor.tabs.avatar.image.upload.action')}
           </Button>
         }
       />
