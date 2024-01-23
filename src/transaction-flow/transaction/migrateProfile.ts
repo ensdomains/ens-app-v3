@@ -42,11 +42,10 @@ const transaction = async ({
   if (!subgraphRecords) throw new Error('No subgraph records found')
   const profile = await getRecords(publicClient, {
     name: data.name,
-    records: {
-      ...subgraphRecords,
-      abi: true,
-      contentHash: true,
-    },
+    texts: subgraphRecords.texts,
+    coins: subgraphRecords.coins,
+    abi: true,
+    contentHash: true,
     resolver: data.resolverAddress
       ? {
           address: data.resolverAddress,

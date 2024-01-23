@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { stringToBytes } from 'viem'
 import { useQuery } from 'wagmi'
 
-import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
+import { getCoderByCoinName, getCoderByCoinType } from '@ensdomains/address-encoder'
 import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
 import { makeRegistrationTuple, RegistrationParameters } from '@ensdomains/ensjs/utils'
 
@@ -90,11 +90,11 @@ const getFallbackEstimate = ({
   for (const { coin, value } of addressRecords) {
     let coinTypeInstance
     if (!Number.isNaN(parseInt(coin as string))) {
-      coinTypeInstance = formatsByCoinType[parseInt(coin as string)]
+      coinTypeInstance = getCoderByCoinType(parseInt(coin as string))
     } else {
-      coinTypeInstance = formatsByName[(coin as string).toUpperCase()]
+      coinTypeInstance = getCoderByCoinName((coin as string).toLowerCase())
     }
-    const encodedAddress = coinTypeInstance.decoder(value)
+    const encodedAddress = coinTypeInstance.decode(value!)
     const bytesAsDataInx = byteLengthToDataInx(encodedAddress.byteLength)
     limit += BigInt(addr.find(([dataInx]) => bytesAsDataInx >= dataInx)![1])
   }

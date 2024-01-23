@@ -7,8 +7,8 @@ import { Button, Helper, mq, Typography } from '@ensdomains/thorin'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import coinsWithIcons from '@app/constants/coinsWithIcons.json'
-import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
-import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
+import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import { useOwners } from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -309,8 +309,12 @@ export const ProfileDetails = ({
     ...textRecords
       .filter(
         (x) =>
-          !supportedTexts.includes(x.key.toLowerCase()) &&
-          !supportedProfileItems.includes(x.key.toLowerCase()),
+          !supportedSocialRecordKeys.includes(
+            x.key.toLowerCase() as (typeof supportedSocialRecordKeys)[number],
+          ) &&
+          !supportedGeneralRecordKeys.includes(
+            x.key.toLowerCase() as (typeof supportedGeneralRecordKeys)[number],
+          ),
       )
       .map((x) => ({ ...x, type: 'text' })),
     ...(_contentHash ? [{ key: 'contenthash', type: 'contenthash', value: _contentHash }] : []),
@@ -331,7 +335,11 @@ export const ProfileDetails = ({
           label="accounts"
           condition={
             textRecords &&
-            textRecords.filter((x) => supportedTexts.includes(x.key.toLowerCase())).length > 0
+            textRecords.filter((x) =>
+              supportedSocialRecordKeys.includes(
+                x.key.toLowerCase() as (typeof supportedSocialRecordKeys)[number],
+              ),
+            ).length > 0
           }
           array={textRecords}
           button={SocialProfileButton}

@@ -117,7 +117,7 @@ describe('<AvatarUpload />', () => {
     mockHandleSubmit.mockClear()
     global.fetch = jest.fn().mockImplementation(() =>
       Promise.resolve({
-        json: () => ({ message: 'failed' }),
+        json: () => ({ error: 'failed', status: 500 }),
       }),
     )
 
@@ -127,5 +127,23 @@ describe('<AvatarUpload />', () => {
 
     await waitFor(() => expect(global.fetch).toBeCalled())
     await waitFor(() => expect(mockHandleSubmit).not.toHaveBeenCalled())
+  })
+  it('shows error when upload fails', async () => {
+    mockHandleSubmit.mockClear()
+    global.fetch = jest.fn().mockImplementation(() =>
+      Promise.resolve({
+        json: () => ({ error: 'failed', status: 500 }),
+      }),
+    )
+
+    render(<AvatarUpload {...props} />)
+    fireEvent.click(screen.getByTestId('continue-button'))
+    fireEvent.click(screen.getByTestId('upload-button'))
+
+    await waitFor(() => expect(global.fetch).toBeCalled())
+    await waitFor(() => expect(mockHandleSubmit).not.toHaveBeenCalled())
+
+    expect(screen.getByTestId('avatar-upload-error')).toBeVisible()
+    expect(screen.getByTestId('avatar-upload-error')).toHaveTextContent('failed')
   })
 })

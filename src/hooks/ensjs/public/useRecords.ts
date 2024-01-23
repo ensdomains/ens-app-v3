@@ -1,69 +1,65 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { ReadContractErrorType } from 'viem'
 import { useQuery } from 'wagmi'
 
 import { getRecords, GetRecordsParameters, GetRecordsReturnType } from '@ensdomains/ensjs/public'
 
 import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
-import { camelToConstant } from '@app/utils/name'
 
-// TODO: Check if this is proper way to handle ResolverNotContract errors
-const RETURN_DEFAULT_ERRORS: Partial<ReadContractErrorType | Error>[] = [
-  { name: 'ContractFunctionExecutionError', functionName: 'resolve' },
-  { name: 'ResolverNotContract' },
-]
+type UseRecordsParameters<
+  TTexts extends readonly string[] = readonly [string, ...string[]],
+  TCoins extends readonly (string | number)[] = readonly [string | number, ...(string | number)[]],
+  TContentHash extends boolean = true,
+  TAbi extends boolean = true,
+> = PartialBy<GetRecordsParameters<TTexts, TCoins, TContentHash, TAbi>, 'name'>
 
-type UseRecordsParameters = PartialBy<GetRecordsParameters, 'name'>
+type UseRecordsConfig<
+  TTexts extends readonly string[] = readonly [string, ...string[]],
+  TCoins extends readonly (string | number)[] = readonly [string | number, ...(string | number)[]],
+  TContentHash extends boolean = true,
+  TAbi extends boolean = true,
+> = QueryConfig<GetRecordsReturnType<TTexts, TCoins, TContentHash, TAbi>, Error>
 
-type UseRecordsConfig<TParams extends UseRecordsParameters> = QueryConfig<
-  GetRecordsReturnType<{
-    name: string
-    records: TParams['records']
-    resolver: TParams['resolver']
-  }>,
-  Error
->
-
-type QueryKey<TParams extends UseRecordsParameters> = CreateQueryKey<
-  TParams,
+type QueryKey<
+  TTexts extends readonly string[] = readonly [string, ...string[]],
+  TCoins extends readonly (string | number)[] = readonly [string | number, ...(string | number)[]],
+  TContentHash extends boolean = true,
+  TAbi extends boolean = true,
+> = CreateQueryKey<
+  UseRecordsParameters<TTexts, TCoins, TContentHash, TAbi>,
   'getRecords',
   'standard'
 >
 
-export const getRecordsQueryFn = async <TParams extends UseRecordsParameters>({
+export const getRecordsQueryFn = async <
+  TTexts extends readonly string[] = readonly [string, ...string[]],
+  TCoins extends readonly (string | number)[] = readonly [string | number, ...(string | number)[]],
+  TContentHash extends boolean = true,
+  TAbi extends boolean = true,
+>({
   queryKey: [{ name, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
+}: QueryFunctionContext<QueryKey<TTexts, TCoins, TContentHash, TAbi>>) => {
   if (!name) throw new Error('name is required')
 
   const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
-
-  try {
-    const res = await getRecords(publicClient, { name, ...params })
-    if (!res) return null
-    return res
-  } catch (e) {
-    // TODO: Check resolver migration flow to understand if this should be limited to universal resolver or not. I don't think it does, but should double check.
-    const error = e as ReadContractErrorType | Error
-    const isReturnDefaultError = RETURN_DEFAULT_ERRORS.some((err) =>
-      Object.keys(err).every((key) => {
-        const propery = key as keyof (ReadContractErrorType | Error)
-        return error[propery] === err[propery]
-      }),
-    )
-
-    if (isReturnDefaultError)
-      return {
-        coins: [],
-        texts: [],
-        resolverAddress: null,
-      }
-    throw e
-  }
+  const res = await getRecords(publicClient, {
+    name,
+    ...params,
+  })
+  if (!res) return null
+  return res
 }
 
-export const useRecords = <TParams extends UseRecordsParameters>({
+export const useRecords = <
+  const TTexts extends readonly string[] = readonly [string, ...string[]],
+  const TCoins extends readonly (string | number)[] = readonly [
+    string | number,
+    ...(string | number)[],
+  ],
+  const TContentHash extends boolean = true,
+  const TAbi extends boolean = true,
+>({
   // config
   cacheTime,
   enabled = true,
@@ -74,7 +70,8 @@ export const useRecords = <TParams extends UseRecordsParameters>({
   onSuccess,
   // params
   ...params
-}: TParams & UseRecordsConfig<TParams>) => {
+}: UseRecordsParameters<TTexts, TCoins, TContentHash, TAbi> &
+  UseRecordsConfig<TTexts, TCoins, TContentHash, TAbi>) => {
   const queryKey = useQueryKeyFactory({
     params,
     scopeKey,
@@ -89,21 +86,6 @@ export const useRecords = <TParams extends UseRecordsParameters>({
     onError,
     onSettled,
     onSuccess,
-    // TODO: Temp fix to make convert ensjs coin names to previous format
-    select: (data) => {
-      return {
-        ...data,
-        // @ts-ignore
-        coins: data.coins?.map((coin) => ({
-          ...coin,
-          name: camelToConstant(coin.name),
-        })),
-      } as GetRecordsReturnType<{
-        name: string
-        records: TParams['records']
-        resolver: TParams['resolver']
-      }>
-    },
   })
 
   return {

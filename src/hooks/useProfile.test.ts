@@ -25,10 +25,7 @@ const mockUseSubgraphRecordsData: GetSubgraphRecordsReturnType = {
   isMigrated: true,
 }
 
-const mockUseRecordsData: GetRecordsReturnType<{
-  name: 'test.eth'
-  records: { abi: true; contentHash: true; coins: []; texts: [] }
-}> = {
+const mockUseRecordsData: GetRecordsReturnType = {
   abi: null,
   contentHash: null,
   texts: [
@@ -155,10 +152,7 @@ it('should set address value to undefined if no ETH record value', () => {
     data: {
       ...mockUseRecordsData,
       coins: mockUseRecordsData.coins.filter((x) => x.id !== 60),
-    } as GetRecordsReturnType<{
-      name: 'test.eth'
-      records: { abi: true; contentHash: true; coins: []; texts: [] }
-    }>,
+    } as GetRecordsReturnType,
     isLoading: false,
     isFetching: false,
     isCachedData: false,
@@ -187,10 +181,7 @@ it('should fetch default records when no subgraph records, then fetch with subgr
       ...mockUseRecordsData,
       // avatar and com.example are not default records
       texts: mockUseRecordsData.texts.filter((x) => x.key !== 'com.example' && x.key !== 'avatar'),
-    } as GetRecordsReturnType<{
-      name: 'test.eth'
-      records: { abi: true; contentHash: true; coins: []; texts: [] }
-    }>,
+    } as GetRecordsReturnType,
     isLoading: false,
     isFetching: false,
     isCachedData: false,

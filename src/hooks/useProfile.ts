@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import type { Address } from 'viem'
 
-import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
+import { getCoderByCoinName, getCoderByCoinType } from '@ensdomains/address-encoder'
 
-import supportedAddresses from '@app/constants/supportedAddresses.json'
-import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
-import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
+import { supportedAddresses } from '@app/constants/supportedAddresses'
+import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 
 import { useRecords } from './ensjs/public/useRecords'
 import { useDecodedName } from './ensjs/subgraph/useDecodedName'
@@ -44,25 +44,23 @@ export const useProfile = ({
           fallbackOnly: false,
         }
       : undefined,
-    records: {
-      texts: [
-        ...new Set([
-          ...supportedTexts,
-          ...supportedProfileItems,
-          ...(subgraphRecords?.texts || []),
-        ]),
-      ],
-      coins: [
-        ...new Set([
-          ...supportedAddresses.map((coinName) => formatsByName[coinName.toUpperCase()].coinType),
-          ...(subgraphRecords?.coins
-            .map((coinId) => parseInt(coinId))
-            .filter((coinId) => !!formatsByCoinType[coinId]) || []),
-        ]),
-      ],
-      abi: true,
-      contentHash: true,
-    },
+    texts: [
+      ...new Set([
+        ...supportedSocialRecordKeys,
+        ...supportedGeneralRecordKeys,
+        ...(subgraphRecords?.texts || []),
+      ]),
+    ] as [string, ...string[]],
+    coins: [
+      ...new Set([
+        ...supportedAddresses.map((coinName) => getCoderByCoinName(coinName).coinType),
+        ...(subgraphRecords?.coins
+          .map((coinId) => parseInt(coinId))
+          .filter((coinId) => !!getCoderByCoinType(coinId)) || []),
+      ]),
+    ] as [number, ...number[]],
+    abi: true,
+    contentHash: true,
     enabled: enabled && !!name,
   })
 
