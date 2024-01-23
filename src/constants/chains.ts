@@ -70,3 +70,5 @@ export const localhostWithEns = {
 export const mainnetWithEns = addEnsContracts(mainnet)
 export const goerliWithEns = addEnsContracts(goerli)
 export const sepoliaWithEns = addEnsContracts(sepolia)
+
+export type SupportedChain = typeof mainnetWithEns | typeof goerliWithEns | typeof sepoliaWithEns

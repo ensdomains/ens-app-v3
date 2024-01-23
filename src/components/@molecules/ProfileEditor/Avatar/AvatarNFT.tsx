@@ -10,6 +10,8 @@ import MagnifyingGlassSVG from '@app/assets/MagnifyingGlass.svg'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainName } from '@app/hooks/chain/useChainName'
+import { usePublicClient } from '@app/hooks/usePublicClient'
+import { getSupportedChainContractAddress } from '@app/utils/getSupportedChainContractAddress'
 
 type OwnedNFT = {
   contract: {
@@ -168,6 +170,8 @@ export const AvatarNFT = ({
   const { address: _address } = useAccount()
   const address = _address!
 
+  const publicClient = usePublicClient()
+
   const {
     data: NFTPages,
     fetchNextPage,
@@ -191,7 +195,16 @@ export const AvatarNFT = ({
         ownedNfts: response.ownedNfts.filter(
           (nft) =>
             (nft.media[0].thumbnail || nft.media[0].gateway) &&
-            nft.contract.address !== '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
+            nft.contract.address !==
+              getSupportedChainContractAddress({
+                client: publicClient,
+                contract: 'ensBaseRegistrarImplementation',
+              }) &&
+            nft.contract.address !==
+              getSupportedChainContractAddress({
+                client: publicClient,
+                contract: 'ensNameWrapper',
+              }),
         ),
       } as NFTResponse
     },
