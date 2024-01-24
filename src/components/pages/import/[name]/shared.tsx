@@ -1,63 +1,89 @@
 import styled, { css } from 'styled-components'
 
-import { Button, Dropdown, mq } from '@ensdomains/thorin'
+import { Button, Helper, Typography } from '@ensdomains/thorin'
 
-import type { Transaction } from '@app/hooks/transactions/transactionStore'
+import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
+import { useCopied } from '@app/hooks/useCopied'
 
-export const ButtonContainer = styled.div(
+export const SuccessHelper = styled(Helper)(
+  ({ theme }) => css`
+    background-color: ${theme.colors.greenSurface};
+    border-color: ${theme.colors.green};
+
+    & > svg {
+      width: ${theme.space['6']};
+      height: ${theme.space['6']};
+
+      color: ${theme.colors.green};
+    }
+
+    & > svg:first-of-type {
+      display: none;
+    }
+  `,
+)
+
+const ButtonInner = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: row-reverse;
-    justify-content: center;
-    gap: ${theme.space['2.5']};
+    justify-content: space-between;
     width: 100%;
-
-    & > button {
-      margin: 0;
-    }
-
-    ${mq.sm.min(css`
-      flex-direction: row-reverse;
-      flex-wrap: wrap;
-    `)}
+    align-items: center;
+    height: 46px;
+    padding: 0 ${theme.space['4']};
   `,
 )
 
-export const CheckButton = styled(Button)(
-  () => css`
-    margin: 0 auto;
-    ${mq.sm.min(css`
-      width: 150px;
-    `)}
+const CopyableRightContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: ${theme.space['2']};
   `,
 )
 
-const latestTransaction = (transactions: Transaction[]) => {
-  const transactionKey = localStorage.getItem('latestImportTransactionKey')
-  const transaction = transactions.find((transactionInner) => {
-    return transactionInner.key === transactionKey
-  })
-  return transaction
-}
-
-export const shouldShowSuccessPage = (transactions: Transaction[]) => {
-  const transaction = latestTransaction(transactions)
-  return transaction && transaction.status === 'confirmed'
-}
-
-export const hasPendingTransaction = (transactions: Transaction[]) => {
-  const transaction = latestTransaction(transactions)
-  return transaction && transaction.status === 'pending'
-}
-
-export const AlignedDropdown = styled(Dropdown)(
-  () => css`
-    & > div {
-      justify-content: flex-start;
-      & > div:first-child,
-      & > div:last-child {
-        margin-top: -0.5rem;
-      }
-    }
+const NotCopyableContainer = styled.div(
+  ({ theme }) => css`
+    border-radius: ${theme.radii.large};
+    border: 1px solid ${theme.colors.border};
+    width: 100%;
   `,
 )
+
+export const DnsDisplayValue = ({
+  copyable,
+  label,
+  value,
+}: {
+  copyable?: boolean
+  label: string
+  value: string
+}) => {
+  const { copy, copied } = useCopied()
+
+  const InnerContent = (
+    <ButtonInner>
+      <Typography fontVariant="bodyBold" color="grey">
+        {label}
+      </Typography>
+      <CopyableRightContainer>
+        <Typography fontVariant="body">{value}</Typography>
+        {copyable && <IconCopyAnimated color="grey" copied={copied} size="3.5" />}
+      </CopyableRightContainer>
+    </ButtonInner>
+  )
+
+  if (!copyable) return <NotCopyableContainer>{InnerContent}</NotCopyableContainer>
+
+  return (
+    <Button
+      colorStyle="background"
+      onClick={copyable ? () => copy(value) : undefined}
+      size="flexible"
+      fullWidthContent
+    >
+      {InnerContent}
+    </Button>
+  )
+}

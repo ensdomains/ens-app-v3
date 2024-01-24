@@ -1,7 +1,7 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { useQuery } from 'wagmi'
 
-import { isDnsSecEnabled } from '@app/components/pages/import/[name]/utils'
+import { isDnsSecEnabled } from '@app/components/pages/import/old/utils'
 import { CreateQueryKey, QueryConfig } from '@app/types'
 
 import { useQueryKeyFactory } from '../useQueryKeyFactory'

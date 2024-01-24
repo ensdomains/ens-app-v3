@@ -17,7 +17,7 @@ import { Content, ContentWarning } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
 import { formatFullExpiry, getEncodedLabelAmount } from '@app/utils/utils'
 
-import { shouldShowSuccessPage } from '../../import/[name]/shared'
+import { shouldShowSuccessPage } from '../../import/old/shared'
 import MoreTab from './tabs/MoreTab/MoreTab'
 import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
 import { PermissionsTab } from './tabs/PermissionsTab/PermissionsTab'

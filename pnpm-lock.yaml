@@ -39,8 +39,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@ensdomains/ensjs':
-        specifier: 3.1.0
-        version: 3.1.0(typescript@5.3.2)(viem@1.19.10)
+        specifier: 0.0.0-feat-new-dnssec-oracle-updated.20240123T214835358
+        version: 0.0.0-feat-new-dnssec-oracle-updated.20240123T214835358(typescript@5.3.2)(viem@1.19.10)
       '@ensdomains/thorin':
         specifier: 0.6.44
         version: 0.6.44(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.11)
@@ -1984,24 +1984,8 @@ packages:
       web3-utils: 1.10.3
     dev: true
 
-  /@ensdomains/ensjs@2.1.0:
-    resolution: {integrity: sha512-GRbGPT8Z/OJMDuxs75U/jUNEC0tbL0aj7/L/QQznGYKm/tiasp+ndLOaoULy9kKJFC0TBByqfFliEHDgoLhyog==}
-    dependencies:
-      '@babel/runtime': 7.23.5
-      '@ensdomains/address-encoder': 0.1.9
-      '@ensdomains/ens': 0.4.5
-      '@ensdomains/resolver': 0.2.4
-      content-hash: 2.5.2
-      eth-ens-namehash: 2.0.8
-      ethers: 5.7.2
-      js-sha3: 0.8.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: true
-
-  /@ensdomains/ensjs@3.1.0(typescript@5.3.2)(viem@1.19.10):
-    resolution: {integrity: sha512-2y8C/P7ZZw40gSJgUoqBJDIQWxhp/LUvQz6XfNkKGMGVVQfe6anSCG+yk3qdEQn1Ylhb6SAxZtNGvoQxs4ANLw==}
+  /@ensdomains/ensjs@0.0.0-feat-new-dnssec-oracle-updated.20240123T214835358(typescript@5.3.2)(viem@1.19.10):
+    resolution: {integrity: sha512-nC78eEUtMMtq9x+rlLtd7SLxJTK5GlGa4T+bUlzqNo86Xek3G9a1CgcPxtCS2+meuOwl5viEYWw7zOAOFrFOhQ==}
     peerDependencies:
       viem: ^1.16.4
     dependencies:
@@ -2021,6 +2005,22 @@ packages:
       - typescript
       - zod
     dev: false
+
+  /@ensdomains/ensjs@2.1.0:
+    resolution: {integrity: sha512-GRbGPT8Z/OJMDuxs75U/jUNEC0tbL0aj7/L/QQznGYKm/tiasp+ndLOaoULy9kKJFC0TBByqfFliEHDgoLhyog==}
+    dependencies:
+      '@babel/runtime': 7.23.5
+      '@ensdomains/address-encoder': 0.1.9
+      '@ensdomains/ens': 0.4.5
+      '@ensdomains/resolver': 0.2.4
+      content-hash: 2.5.2
+      eth-ens-namehash: 2.0.8
+      ethers: 5.7.2
+      js-sha3: 0.8.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
 
   /@ensdomains/resolver@0.2.4:
     resolution: {integrity: sha512-bvaTH34PMCbv6anRa9I/0zjLJgY4EuznbEMgbV77JBCQ9KNC46rzi0avuxpOfu+xDjPEtSFGqVEOr5GlUSGudA==}
