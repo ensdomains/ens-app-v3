@@ -6,7 +6,8 @@ export const useHasGlobalError = (includeLatency = false) => {
   const { error, slow } = useHasSubgraphSyncErrors()
   const subgraphDebug = useReadLocalStorage<string>('subgraph-debug')
 
-  if (includeLatency || subgraphDebug === 'ENSJSSubgraphLatency') {
+  if (includeLatency) {
+    if (subgraphDebug === 'ENSJSSubgraphLatency') return true
     return Boolean(error || slow)
   }
 
