@@ -1,6 +1,6 @@
-import { getAddress } from 'viem'
-
 import { getCoderByCoinName } from '@ensdomains/address-encoder'
+
+import { normalizeCoinAddress } from '@app/utils/coin'
 
 export const validateCryptoAddress = ({
   coin,
@@ -11,13 +11,10 @@ export const validateCryptoAddress = ({
 }) => {
   try {
     if (!address) return 'addressRequired'
-    const _coin = coin.toUpperCase()
 
-    let _address
-    if (_coin === 'ETH') _address = getAddress(address)
-    else _address = address
+    const _address = normalizeCoinAddress({ coin, address })
 
-    const coinTypeInstance = getCoderByCoinName(_coin)
+    const coinTypeInstance = getCoderByCoinName(coin)
     coinTypeInstance.decode(_address)
     return true
   } catch (e: any) {

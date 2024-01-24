@@ -36,7 +36,7 @@ const UnsupportedAddressWrapper = styled.div(
 
 const coinsWithIconsOptions = coinsWithIcons.map((coin) => ({
   value: formSafeKey(coin.toUpperCase()),
-  label: coin.toUpperCase(),
+  label: coin,
   node: <AddressWrapper>{coin}</AddressWrapper>,
   prefix: (
     <IconWrapper>
@@ -46,7 +46,7 @@ const coinsWithIconsOptions = coinsWithIcons.map((coin) => ({
 }))
 
 const coinsWithoutIconsOptions = coinsWithoutIcons.map((coin) => ({
-  value: formSafeKey(coin.toUpperCase()),
+  value: formSafeKey(coin),
   label: coin.toUpperCase(),
   node: <UnsupportedAddressWrapper>{coin.toUpperCase()}</UnsupportedAddressWrapper>,
 }))

@@ -19,7 +19,7 @@ type UseRecordsConfig<
   TCoins extends readonly (string | number)[] = readonly [string | number, ...(string | number)[]],
   TContentHash extends boolean = true,
   TAbi extends boolean = true,
-> = QueryConfig<GetRecordsReturnType<TTexts, TCoins, TContentHash, TAbi>, Error>
+> = QueryConfig<GetRecordsReturnType<TTexts, TCoins, TContentHash, TAbi> | null, Error>
 
 type QueryKey<
   TTexts extends readonly string[] = readonly [string, ...string[]],
