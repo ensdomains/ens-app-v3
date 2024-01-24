@@ -22,6 +22,8 @@ import {
 } from '@ensdomains/ensjs/utils'
 import { Helper, Space } from '@ensdomains/thorin'
 
+import { SupportedChain } from '@app/constants/chains'
+
 export type Profile = Partial<
   GetRecordsReturnType &
     Pick<NonNullable<GetSubgraphRecordsReturnType>, 'isMigrated' | 'createdAt'> & {
@@ -161,7 +163,7 @@ export type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {}
 
-export type PublicClientWithChain = PublicClient<Transport, ChainWithEns>
+export type PublicClientWithChain = PublicClient<Transport, SupportedChain>
 export type WalletClientWithAccount = WalletClient<Transport, ChainWithEns, Account>
 
 export type QueryConfig<TData, TError, TSelectData = TData> = Pick<

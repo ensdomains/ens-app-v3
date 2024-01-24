@@ -11,9 +11,7 @@ export const validateCryptoAddress = ({
 }) => {
   try {
     if (!address) return 'addressRequired'
-
     const _address = normalizeCoinAddress({ coin, address })
-
     const coinTypeInstance = getCoderByCoinName(coin)
     coinTypeInstance.decode(_address)
     return true
