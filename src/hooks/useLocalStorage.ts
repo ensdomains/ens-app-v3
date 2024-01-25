@@ -35,28 +35,23 @@ export const useLocalStorage = <D>(
     window.dispatchEvent(new StorageEvent('storage', { key, newValue: JSON.stringify(value) }))
   }, [key, value, defaultValue])
 
-  useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
+  const handleStorageChange = useCallback(
+    (event: StorageEvent) => {
       if (event.key === key && event.newValue && JSON.stringify(value) !== event.newValue) {
         setValue(JSON.parse(event.newValue!))
       }
-    }
+    },
+    [key, value],
+  )
 
-    window.addEventListener('storage', handleStorageChange)
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-    }
-  }, [key, value])
+  useEvent('storage', handleStorageChange)
 
   return [value, setValue]
 }
 
-type Value<T> = T | null
+type LocalStorageValue<T> = T | null
 
-export function useReadLocalStorage<T>(key: string): Value<T> {
-  // Get from local storage then
-  // parse stored json or return initialValue
+export function useReadLocalStorage<T>(key: string): LocalStorageValue<T> {
   const readValue = useCallback((): Value<T> => {
     return getStorageValue(key, null)
   }, [key])

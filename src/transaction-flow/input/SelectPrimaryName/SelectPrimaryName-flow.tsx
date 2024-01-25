@@ -17,7 +17,6 @@ import {
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
-import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
@@ -308,8 +307,6 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const hasNoEligibleNames =
     !searchQuery && namesData?.pages.length === 1 && namesData.pages[0].length === 0
 
-  const hasGlobalError = useHasGlobalError()
-
   if (isLoading)
     return (
       <LoadingContainer>
@@ -398,7 +395,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
           <Button
             data-testid="primary-next"
             onClick={onConfirm}
-            disabled={!selectedName || isLoadingName || hasGlobalError}
+            disabled={!selectedName || isLoadingName}
             loading={isLoadingName}
           >
             {t('action.next', { ns: 'common' })}
