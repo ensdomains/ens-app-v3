@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 
 import { ParsedInputResult } from '@ensdomains/ensjs/utils/validation'
 
-import type { ReturnedENS } from '@app/types/index'
+import type { Profile, ReturnedENS } from '@app/types/index'
 
 import { emptyAddress } from './constants'
 
@@ -19,6 +19,13 @@ export type RegistrationStatus =
   | 'notOwned'
   | 'unsupportedTLD'
 
+const offchainDnsAddress = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '1': '0xF142B308cF687d4358410a4cB885513b30A42025',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '11155111': '0x179Be112b24Ad4cFC392eF8924DfA08C20Ad8583',
+}
+
 export const getRegistrationStatus = ({
   timestamp,
   validation: { isETH, is2LD, isShort, type },
@@ -27,6 +34,8 @@ export const getRegistrationStatus = ({
   expiryData,
   priceData,
   supportedTLD,
+  profileData,
+  chainId,
 }: {
   timestamp: number
   validation: Partial<Omit<ParsedInputResult, 'normalised' | 'isValid'>>
@@ -35,6 +44,8 @@ export const getRegistrationStatus = ({
   expiryData?: ReturnedENS['getExpiry']
   priceData?: ReturnedENS['getPrice']
   supportedTLD?: boolean | null
+  profileData?: Profile
+  chainId: number
 }): RegistrationStatus => {
   if (isETH && is2LD && isShort) {
     return 'short'
@@ -79,6 +90,26 @@ export const getRegistrationStatus = ({
   if (type === 'name' && !is2LD) {
     // more than 2 labels
     return 'notOwned'
+  }
+
+  console.log(profileData)
+  console.log(!!profileData?.address)
+  console.log(profileData?.address !== '0x0000000000000000000000000000000000000020')
+  console.log(profileData?.address !== emptyAddress)
+  console.log(
+    profileData?.resolverAddress ===
+      offchainDnsAddress[String(chainId) as keyof typeof offchainDnsAddress],
+  )
+
+  if (
+    profileData &&
+    profileData.address &&
+    profileData.address !== '0x0000000000000000000000000000000000000020' &&
+    profileData.address !== emptyAddress &&
+    profileData.resolverAddress ===
+      offchainDnsAddress[String(chainId) as keyof typeof offchainDnsAddress]
+  ) {
+    return 'imported'
   }
   return 'notImported'
 }

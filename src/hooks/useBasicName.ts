@@ -12,8 +12,10 @@ import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
 import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 import { usePccExpired } from './fuses/usePccExpired'
+import { useChainId } from './useChainId'
 import { useContractAddress } from './useContractAddress'
 import useCurrentBlockTimestamp from './useCurrentBlockTimestamp'
+import { useProfile } from './useProfile'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
@@ -62,6 +64,8 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
   const { normalised = false, skipGraph = true, enabled = true } = options
   const ens = useEns()
 
+  const chainId = useChainId()
+
   const { name: _normalisedName, isValid, ...validation } = useValidate(name!, !name)
 
   const normalisedName = normalised ? name! : _normalisedName
@@ -94,6 +98,12 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
   )
   const [ownerData, _wrapperData, expiryData, priceData] = batchData || []
 
+  const { profile: profileData, loading: profileLoading } = useProfile(normalisedName, {
+    skip: !normalisedName || normalisedName === '[root]' || validation.isETH || !supportedTLD,
+    skipGraph: true,
+    onlyEth: true,
+  })
+
   const wrapperData = useMemo(() => {
     if (!_wrapperData) return undefined
     const { expiryDate, ...rest } = _wrapperData
@@ -124,17 +134,24 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
     return Date.now() - EXPIRY_LIVE_WATCH_TIME
   }, [isTempPremiumDesynced, blockTimestamp])
 
-  const registrationStatus = batchData
-    ? getRegistrationStatus({
-        timestamp: registrationStatusTimestamp,
-        validation,
-        ownerData,
-        wrapperData,
-        expiryData,
-        priceData,
-        supportedTLD,
-      })
-    : undefined
+  const registrationStatus =
+    batchData &&
+    (validation.isETH ||
+      !supportedTLD ||
+      normalisedName === '[root]' ||
+      (profileData && !profileLoading))
+      ? getRegistrationStatus({
+          timestamp: registrationStatusTimestamp,
+          validation,
+          ownerData,
+          wrapperData,
+          expiryData,
+          priceData,
+          supportedTLD,
+          profileData,
+          chainId,
+        })
+      : undefined
 
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
@@ -154,7 +171,7 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
   )
   const pccExpired = usePccExpired({ ownerData, wrapperData })
 
-  const isLoading = !ens.ready || batchLoading || supportedTLDLoading
+  const isLoading = !ens.ready || batchLoading || supportedTLDLoading || profileLoading
 
   return {
     ...validation,
