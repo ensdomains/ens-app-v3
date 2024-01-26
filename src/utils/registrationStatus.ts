@@ -45,7 +45,7 @@ export const getRegistrationStatus = ({
   priceData?: ReturnedENS['getPrice']
   supportedTLD?: boolean | null
   profileData?: Profile
-  chainId: number
+  chainId?: number
 }): RegistrationStatus => {
   if (isETH && is2LD && isShort) {
     return 'short'
