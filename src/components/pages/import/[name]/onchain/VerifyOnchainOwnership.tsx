@@ -2,18 +2,12 @@ import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Dispatch, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 
-import {
-  BaseError,
-  DnsDnssecVerificationFailedError,
-  DnsInvalidAddressChecksumError,
-  DnsInvalidTxtRecordError,
-  DnsNoTxtRecordError,
-  DnsResponseStatusError,
-} from '@ensdomains/ensjs'
 import { Button, CheckCircleSVG, Heading, Helper, mq, Typography } from '@ensdomains/thorin'
 
 import { Card } from '@app/components/Card'
+import RecordItem from '@app/components/RecordItem'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
+import { shortenAddress } from '@app/utils/utils'
 
 import { DnsDisplayValue, SuccessHelper } from '../shared'
 import { StatusChecker } from '../StatusChecker'
@@ -23,6 +17,7 @@ import {
   DnsImportReducerDataItem,
   SelectedItemProperties,
 } from '../useDnsImportReducer'
+import { checkDnsOwnerError, checkDnsOwnerMatch } from '../utils'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -90,6 +85,24 @@ const ButtonRow = styled.div(
   `,
 )
 
+const RecordItemWrapper = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+
+    & > button {
+      height: 48px;
+      align-items: center;
+      gap: ${theme.space['4']};
+
+      & > div:first-of-type {
+        width: min-content;
+        display: block;
+        flex-basis: unset;
+      }
+    }
+  `,
+)
+
 export const VerifyOnchainOwnership = ({
   dispatch,
   item,
@@ -113,25 +126,12 @@ export const VerifyOnchainOwnership = ({
   const { address } = selected
   const isConnected = !!address
 
-  const dnsOwnerStatus = useMemo(() => {
-    if (!address || !dnsOwner) return null
-    if (dnsOwner !== address) return 'mismatching'
-    return 'matching'
-  }, [address, dnsOwner])
+  const dnsOwnerStatus = useMemo(
+    () => checkDnsOwnerMatch({ address, dnsOwner }),
+    [address, dnsOwner],
+  )
 
-  const errorMessage = useMemo(() => {
-    if (!error || isLoading) return null
-    if (!(error instanceof BaseError)) return 'unknown'
-    if (error instanceof DnsResponseStatusError) {
-      if (error.responseStatus !== 'NXDOMAIN') return 'unknown'
-      return 'noTxtRecord'
-    }
-    if (error instanceof DnsDnssecVerificationFailedError) return 'dnssecFailure'
-    if (error instanceof DnsNoTxtRecordError) return 'noTxtRecord'
-    if (error instanceof DnsInvalidTxtRecordError) return 'invalidTxtRecord'
-    if (error instanceof DnsInvalidAddressChecksumError) return 'invalidAddressChecksum'
-    return 'unknown'
-  }, [error, isLoading])
+  const errorMessage = useMemo(() => checkDnsOwnerError({ error, isLoading }), [error, isLoading])
 
   return (
     <StyledCard>
@@ -187,9 +187,14 @@ export const VerifyOnchainOwnership = ({
               message={errorMessage || 'No record found'}
               statusElement={
                 dnsOwnerStatus === 'mismatching' && (
-                  <div style={{ width: '100%' }}>
-                    <DnsDisplayValue label="Value" value={`a=${dnsOwner}`} />
-                  </div>
+                  <RecordItemWrapper>
+                    <RecordItem
+                      itemKey="owner"
+                      type="address"
+                      value={dnsOwner!}
+                      displayValue={shortenAddress(dnsOwner!)}
+                    />
+                  </RecordItemWrapper>
                 )
               }
               statusHelperElement={

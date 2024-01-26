@@ -69,6 +69,11 @@ export const localhostWithEns = {
 
 export const mainnetWithEns = addEnsContracts(mainnet)
 export const goerliWithEns = addEnsContracts(goerli)
-export const sepoliaWithEns = addEnsContracts(sepolia)
+export const sepoliaWithEns = addEnsContracts(
+  // TODO: once viem v2 implemented remove this type hack
+  sepolia as typeof sepolia & {
+    contracts: { ensRegistry: { address: Address }; ensUniversalResolver: { address: Address } }
+  },
+)
 
 export type SupportedChain = typeof mainnetWithEns | typeof goerliWithEns | typeof sepoliaWithEns

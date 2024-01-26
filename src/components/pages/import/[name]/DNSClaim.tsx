@@ -8,6 +8,7 @@ import { useValidate } from '@app/hooks/useValidate'
 import { Content } from '@app/layouts/Content'
 
 import { EnableDnssec } from './EnableDnssec'
+import { ImportTransaction } from './onchain/ImportTransaction'
 import { VerifyOnchainOwnership } from './onchain/VerifyOnchainOwnership'
 import { SelectImportType } from './SelectImportType'
 import { useDnsImportReducer } from './useDnsImportReducer'
@@ -73,7 +74,9 @@ export const DnsClaim = () => {
             verifyOnchainOwnership: () => (
               <VerifyOnchainOwnership dispatch={dispatch} item={item} selected={selected} />
             ),
-            transaction: () => null,
+            transaction: () => (
+              <ImportTransaction dispatch={dispatch} item={item} selected={selected} />
+            ),
             completeOnchain: () => null,
             verifyOffchainOwnership: () => null,
             completeOffchain: () => null,
