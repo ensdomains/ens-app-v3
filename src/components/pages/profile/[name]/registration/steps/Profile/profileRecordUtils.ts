@@ -7,6 +7,7 @@ import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecor
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import { Profile } from '@app/types'
+import { normalizeCoinAddress } from '@app/utils/coin'
 import { contentHashToString, getContentHashProvider } from '@app/utils/contenthash'
 
 export const profileRecordsToRecordOptions = (
@@ -52,7 +53,10 @@ export const profileRecordsToRecordOptions = (
           ...options,
           coins: [
             ...(options.coins?.filter((r) => r.coin !== recordItem.key) || []),
-            { coin: recordItem.key, value: recordItem.value },
+            {
+              coin: recordItem.key,
+              value: normalizeCoinAddress({ coin: recordItem.key, address: recordItem.value }),
+            },
           ],
         }
       }
