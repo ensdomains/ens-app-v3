@@ -333,14 +333,14 @@ export const SearchInput = ({
       const queryKey = queryKeys.basicName(selectedItem.value, false)
       const currentQuery = queryClient.getQueryData<any[]>(queryKey)
       if (currentQuery) {
-        const [ownerData, wrapperData, expiryData, priceData] = currentQuery
+        const [ownerData, wrapperData, expiryOrResolverData, priceOrAddrData] = currentQuery
         const registrationStatus = getRegistrationStatus({
           timestamp: Date.now(),
           validation: currentValidation,
           ownerData,
           wrapperData,
-          expiryData,
-          priceData,
+          expiryOrResolverData,
+          priceOrAddrData,
         })
         if (registrationStatus === 'available') {
           path = `/register/${selectedItem.value}`
