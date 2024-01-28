@@ -110,6 +110,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
   )
 
   const advancedEditorForm = useAdvancedEditor({
+    name,
     profile,
     isLoading: isProfileLoading,
     callback: handleCreateTransaction,

@@ -39,8 +39,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@ensdomains/ensjs':
-        specifier: 3.1.0
-        version: 3.1.0(typescript@5.3.2)(viem@1.19.10)
+        specifier: workspace:*
+        version: link:.yalc/@ensdomains/ensjs
       '@ensdomains/thorin':
         specifier: 0.6.44
         version: 0.6.44(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.11)
@@ -276,6 +276,9 @@ importers:
       canvas:
         specifier: ^2.9.3
         version: 2.11.2
+      cbor:
+        specifier: ^8.1.0
+        version: 8.1.0
       concurrently:
         specifier: ^7.3.0
         version: 7.6.0
@@ -387,6 +390,9 @@ importers:
       node-fetch-commonjs:
         specifier: ^3.1.1
         version: 3.3.2
+      pako:
+        specifier: ^2.1.0
+        version: 2.1.0
       polyfill-crypto.getrandomvalues:
         specifier: ^1.0.0
         version: 1.0.0
@@ -441,6 +447,42 @@ importers:
       yalc:
         specifier: ^1.0.0-pre.53
         version: 1.0.0-pre.53
+
+  .yalc/@ensdomains/ensjs:
+    dependencies:
+      '@adraffy/ens-normalize':
+        specifier: 1.9.0
+        version: 1.9.0
+      '@ensdomains/address-encoder':
+        specifier: 1.0.0-rc.3
+        version: 1.0.0-rc.3
+      '@ensdomains/content-hash':
+        specifier: 3.1.0-rc.1
+        version: 3.1.0-rc.1
+      '@ensdomains/dnsprovejs':
+        specifier: ^0.5.1
+        version: 0.5.1
+      abitype:
+        specifier: ^0.8.0
+        version: 0.8.11(typescript@5.3.2)
+      dns-packet:
+        specifier: ^5.3.1
+        version: 5.6.1
+      graphql:
+        specifier: ^16.3.0
+        version: 16.8.1
+      graphql-request:
+        specifier: 6.1.0
+        version: 6.1.0(graphql@16.8.1)
+      pako:
+        specifier: ^2.1.0
+        version: 2.1.0
+      traverse:
+        specifier: ^0.6.6
+        version: 0.6.7
+      viem:
+        specifier: ^1.16.4
+        version: 1.19.10(typescript@5.3.2)
 
 packages:
 
@@ -1999,28 +2041,6 @@ packages:
       - bufferutil
       - utf-8-validate
     dev: true
-
-  /@ensdomains/ensjs@3.1.0(typescript@5.3.2)(viem@1.19.10):
-    resolution: {integrity: sha512-2y8C/P7ZZw40gSJgUoqBJDIQWxhp/LUvQz6XfNkKGMGVVQfe6anSCG+yk3qdEQn1Ylhb6SAxZtNGvoQxs4ANLw==}
-    peerDependencies:
-      viem: ^1.16.4
-    dependencies:
-      '@adraffy/ens-normalize': 1.9.0
-      '@ensdomains/address-encoder': 1.0.0-rc.3
-      '@ensdomains/content-hash': 3.1.0-rc.1
-      '@ensdomains/dnsprovejs': 0.5.1
-      abitype: 0.8.11(typescript@5.3.2)
-      dns-packet: 5.6.1
-      graphql: 16.8.1
-      graphql-request: 6.1.0(graphql@16.8.1)
-      pako: 2.1.0
-      traverse: 0.6.7
-      viem: 1.19.10(typescript@5.3.2)
-    transitivePeerDependencies:
-      - encoding
-      - typescript
-      - zod
-    dev: false
 
   /@ensdomains/resolver@0.2.4:
     resolution: {integrity: sha512-bvaTH34PMCbv6anRa9I/0zjLJgY4EuznbEMgbV77JBCQ9KNC46rzi0avuxpOfu+xDjPEtSFGqVEOr5GlUSGudA==}
@@ -7468,6 +7488,13 @@ packages:
     dependencies:
       bignumber.js: 9.1.2
       nofilter: 1.0.4
+    dev: true
+
+  /cbor@8.1.0:
+    resolution: {integrity: sha512-DwGjNW9omn6EwP70aXsn7FQJx5kO12tX0bZkaTjzdVFM6/7nhA4t0EENocKGx6D2Bch9PE2KzCUf5SceBdeijg==}
+    engines: {node: '>=12.19'}
+    dependencies:
+      nofilter: 3.1.0
     dev: true
 
   /chai-bn@0.2.2(chai@4.3.10):
@@ -13431,6 +13458,11 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /nofilter@3.1.0:
+    resolution: {integrity: sha512-l2NNj07e9afPnhAhvgVrCD/oy2Ai1yfLpuo3EpiO1jFTsB4sFz6oIfAfSZyQzVpkZQ9xS8ZS5g1jCBgq4Hwo0g==}
+    engines: {node: '>=12.19'}
+    dev: true
+
   /nopt@5.0.0:
     resolution: {integrity: sha512-Tbj67rffqceeLpcRXrT7vKAN8CwfPeIBgM7E6iBkmKLV7bEMwpGgYLGv0jACUsECaa/vuxP0IjEont6umdMgtQ==}
     engines: {node: '>=6'}
@@ -13822,7 +13854,6 @@ packages:
 
   /pako@2.1.0:
     resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
-    dev: false
 
   /param-case@2.1.1:
     resolution: {integrity: sha512-eQE845L6ot89sk2N8liD8HAuH4ca6Vvr7VWAWwt7+kvvG5aBcPmmphQ68JsEG2qa9n1TykS2DLeMt363AAH8/w==}

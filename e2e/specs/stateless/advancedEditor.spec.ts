@@ -62,13 +62,13 @@ test('should be able to maintain state when returning from transaction modal to 
   await expect(await advancedEditor.recordInput('text', 'text')).toHaveValue('text')
   await expect(await advancedEditor.recordInput('text', 'name')).toHaveValue('Bob')
   await expect(await advancedEditor.recordInput('text', 'com.twitter')).toHaveValue('@test')
-  await expect(await advancedEditor.recordInput('address', 'SOL')).toHaveValue(
+  await expect(await advancedEditor.recordInput('address', 'sol')).toHaveValue(
     'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH',
   )
-  await expect(await advancedEditor.recordInput('address', 'ETH')).toHaveValue(
+  await expect(await advancedEditor.recordInput('address', 'eth')).toHaveValue(
     '0xbec1C7C11F2Fa9AB24b9E49122D26e721766DAF6',
   )
-  await expect(await advancedEditor.recordInput('address', 'BTC')).toHaveValue(
+  await expect(await advancedEditor.recordInput('address', 'btc')).toHaveValue(
     '1PzAJcFtEiXo9UGtRU6iqXQKj8NXtcC7DE',
   )
   await expect(await advancedEditor.recordInput('contentHash')).toHaveValue(
@@ -78,8 +78,8 @@ test('should be able to maintain state when returning from transaction modal to 
 
   await page.pause()
   await advancedEditor.recordClearButton('text', 'text').then((button) => button.click())
-  await advancedEditor.recordClearButton('address', 'SOL').then((button) => button.click())
-  await advancedEditor.recordClearButton('address', 'ETH').then((button) => button.click())
+  await advancedEditor.recordClearButton('address', 'sol').then((button) => button.click())
+  await advancedEditor.recordClearButton('address', 'eth').then((button) => button.click())
   await advancedEditor.recordInput('contentHash').then((input) => input.fill(''))
   await advancedEditor.recordInput('abi').then((input) => input.fill(''))
 

@@ -4,6 +4,8 @@
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import cbor from 'cbor'
+import pako from 'pako'
 
 import { namehash, labelhash, stringToBytes } from 'viem'
 
@@ -146,7 +148,10 @@ type Name = {
     abi?: {
       contentType: number
       data: any
-    }
+    } | {
+      contentType: number
+      data: any
+    }[]
   }
   subnames?: {
     label: string
@@ -333,6 +338,26 @@ const names: Name[] = [
       },
     },
   },
+  {
+    label: 'with-all-abis',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    records: {
+      abi: [{
+        contentType: 1,
+        data: dummyABI,
+      }, {
+        contentType: 2,
+        data: dummyABI,
+      }, {
+        contentType: 4,
+        data: dummyABI,
+      }, {
+        contentType: 8,
+        data: 'https://example.com',
+      }]
+    }
+  }
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -463,19 +488,26 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         nonceRef += 1
       }
       if (records.abi) {
-        console.log('ABI')
-        const { contentType, data } = records.abi
-        console.log(data)
-        const setAbiTx = await _publicResolver.setABI(
-          hash,
-          contentType,
-          stringToBytes(JSON.stringify(data)),
-          {
-            nonce: nonceRef,
-          },
-        )
-        console.log(` - ${records.abi} (tx: ${setAbiTx.hash})...`)
-        nonceRef += 1
+        const abis = Array.isArray(records.abi) ? records.abi : [records.abi]
+        for (const abi of abis) {
+          console.log('ABI')
+          const { contentType, data } = abi
+          let data_
+          if (contentType === 1) data_ = stringToBytes(JSON.stringify(data))
+          else if (contentType === 2) data_ = pako.deflate(JSON.stringify(abi.data))
+          else if (contentType === 4) data_ = cbor.encode(abi.data)
+          else data_ = stringToBytes(data)
+          const setAbiTx = await _publicResolver.setABI(
+            hash,
+            contentType,
+            data_,
+            {
+              nonce: nonceRef,
+            },
+          )
+          console.log(` - ${records.abi} (tx: ${setAbiTx.hash})...`)
+          nonceRef += 1
+        }
       }
       return nonceRef - nonce - index
     }

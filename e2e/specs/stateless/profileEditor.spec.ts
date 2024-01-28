@@ -67,8 +67,8 @@ test.describe('profile', () => {
     await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
     await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
     await expect(profilePage.record('address', 'btc')).toHaveText('bc1qj...pwa6n')
-    await expect(profilePage.record('address', 'ETC_LEGACY')).toHaveText(
-      'ETC_LEGACY0x3C4...293BC',
+    await expect(profilePage.record('address', 'etcLegacy')).toHaveText(
+      'etcLegacy0x3C4...293BC',
     )
     await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
     await expect(profilePage.contentHash()).toContainText('ipfs://bafybeic...')
@@ -208,8 +208,8 @@ test.describe('unwrapped', () => {
       await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
       await expect(profilePage.record('address', 'eth')).toHaveText('0xf39...92266')
       await expect(profilePage.record('address', 'btc')).toHaveText('bc1qj...pwa6n')
-      await expect(profilePage.record('address', 'ETC_LEGACY')).toHaveText(
-        'ETC_LEGACY0x3C4...293BC',
+      await expect(profilePage.record('address', 'etcLegacy')).toHaveText(
+        'etcLegacy0x3C4...293BC',
       )
       await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
       await expect(profilePage.contentHash()).toContainText('ipfs://bafybeic...')
@@ -229,8 +229,8 @@ test.describe('unwrapped', () => {
       await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
       await expect(profilePage.record('address', 'eth')).toHaveText('0xf39...92266')
       await expect(profilePage.record('address', 'btc')).toHaveText('bc1qj...pwa6n')
-      await expect(profilePage.record('address', 'ETC_LEGACY')).toHaveText(
-        'ETC_LEGACY0x3C4...293BC',
+      await expect(profilePage.record('address', 'etcLegacy')).toHaveText(
+        'etcLegacy0x3C4...293BC',
       )
       await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
     })
@@ -264,8 +264,8 @@ test.describe('unwrapped', () => {
       await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
       await expect(profilePage.record('address', 'eth')).toHaveText('0xf39...92266')
       await expect(profilePage.record('address', 'btc')).toHaveText('bc1qj...pwa6n')
-      await expect(profilePage.record('address', 'ETC_LEGACY')).toHaveText(
-        'ETC_LEGACY0x3C4...293BC',
+      await expect(profilePage.record('address', 'etcLegacy')).toHaveText(
+        'etcLegacy0x3C4...293BC',
       )
       await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
 
@@ -275,7 +275,7 @@ test.describe('unwrapped', () => {
 
       await profilePage.profileEditorAddInputs(['com.twitter'])
 
-      await profilePage.profileEditorInput('ETH').fill('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')
+      await profilePage.profileEditorInput('eth').fill('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')
       await profilePage.profileEditorInput('description').fill('new name')
       await profilePage.profileEditorInput('com.twitter').fill('ensdomains')
       await profilePage.profileEditor.getByTestId('profile-submit-button').click()
@@ -291,8 +291,8 @@ test.describe('unwrapped', () => {
       await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
       await expect(profilePage.record('address', 'eth')).toHaveText('0x709...c79C8')
       await expect(profilePage.record('address', 'btc')).toHaveText('bc1qj...pwa6n')
-      await expect(profilePage.record('address', 'ETC_LEGACY')).toHaveText(
-        'ETC_LEGACY0x3C4...293BC',
+      await expect(profilePage.record('address', 'etcLegacy')).toHaveText(
+        'etcLegacy0x3C4...293BC',
       )
       await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
     })

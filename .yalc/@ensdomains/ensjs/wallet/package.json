@@ -1,0 +1,5 @@
+{
+  "types": "../dist/types/wallet.d.ts",
+  "module": "../dist/esm/wallet.js",
+  "main": "../dist/cjs/wallet.js"
+}

@@ -1,0 +1,5 @@
+{
+  "types": "../dist/types/dns.d.ts",
+  "module": "../dist/esm/dns.js",
+  "main": "../dist/cjs/dns.js"
+}

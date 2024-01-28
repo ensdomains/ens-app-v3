@@ -387,6 +387,7 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
     makeName,
     makePageObject,
     accounts,
+    page
   }) => {
     const name = await makeName({
       label: 'unwrapped',
@@ -413,11 +414,12 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
       ],
     })
 
-    const subname = `test.${name}`
+    const subname = `4ld.test.${name}`
     const ownershipPage = makePageObject('OwnershipPage')
 
     await ownershipPage.goto(subname)
     await login.connect()
+    await page.pause()
 
     await expect(ownershipPage.expiryPanelExpiry).toHaveCount(0)
     await expect(ownershipPage.expiryPanelGracePeriod).toHaveCount(0)

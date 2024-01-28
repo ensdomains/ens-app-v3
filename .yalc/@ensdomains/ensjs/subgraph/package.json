@@ -1,0 +1,5 @@
+{
+  "types": "../dist/types/subgraph.d.ts",
+  "module": "../dist/esm/subgraph.js",
+  "main": "../dist/cjs/subgraph.js"
+}

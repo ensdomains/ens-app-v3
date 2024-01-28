@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
 
 import { mq, Typography } from '@ensdomains/thorin'
 
@@ -9,6 +10,7 @@ import RecordItem from '@app/components/RecordItem'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { emptyAddress } from '@app/utils/constants'
 
 import { TabWrapper } from '../../../TabWrapper'
 
@@ -85,8 +87,17 @@ const Resolver = ({
     })
   }
 
-  const resolverQuery = useResolver({ name, enabled: !resolverAddress })
-  const registryOrSubgraphResolverAddress = resolverAddress || resolverQuery.data
+  const resolverQuery = useResolver({
+    name,
+    enabled: !resolverAddress || resolverAddress === emptyAddress,
+  })
+
+  const registryOrSubgraphResolverAddress = match([resolverAddress, resolverQuery.data])
+    .with(
+      [P.union(emptyAddress, P.nullish), P._],
+      ([, registryAddress]) => registryAddress || emptyAddress,
+    )
+    .otherwise(([subgraphResolver]) => subgraphResolver || emptyAddress)
 
   return (
     <Container $isCached={isCachedData}>
