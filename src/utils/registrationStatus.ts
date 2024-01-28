@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 
 import { ParsedInputResult } from '@ensdomains/ensjs/utils/validation'
 
-import type { Profile, ReturnedENS } from '@app/types/index'
+import type { ReturnedENS } from '@app/types/index'
 
 import { emptyAddress } from './constants'
 
@@ -31,20 +31,18 @@ export const getRegistrationStatus = ({
   validation: { isETH, is2LD, isShort, type },
   ownerData,
   wrapperData,
-  expiryData,
-  priceData,
+  expiryOrResolverData,
+  priceOrAddrData,
   supportedTLD,
-  profileData,
   chainId,
 }: {
   timestamp: number
   validation: Partial<Omit<ParsedInputResult, 'normalised' | 'isValid'>>
   ownerData?: ReturnedENS['getOwner']
   wrapperData?: ReturnedENS['getWrapperData']
-  expiryData?: ReturnedENS['getExpiry']
-  priceData?: ReturnedENS['getPrice']
+  expiryOrResolverData?: ReturnedENS['getExpiry'] | ReturnedENS['getResolver']
+  priceOrAddrData?: ReturnedENS['getPrice'] | ReturnedENS['getAddr']
   supportedTLD?: boolean | null
-  profileData?: Profile
   chainId?: number
 }): RegistrationStatus => {
   if (isETH && is2LD && isShort) {
@@ -58,6 +56,8 @@ export const getRegistrationStatus = ({
   }
 
   if (isETH && is2LD) {
+    const expiryData = expiryOrResolverData as ReturnedENS['getExpiry']
+    const priceData = priceOrAddrData as ReturnedENS['getPrice']
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     if (expiryData && expiryData.expiry) {
       const { expiry: _expiry, gracePeriod } = expiryData as {
@@ -92,24 +92,17 @@ export const getRegistrationStatus = ({
     return 'notOwned'
   }
 
-  console.log(profileData)
-  console.log(!!profileData?.address)
-  console.log(profileData?.address !== '0x0000000000000000000000000000000000000020')
-  console.log(profileData?.address !== emptyAddress)
-  console.log(
-    profileData?.resolverAddress ===
-      offchainDnsAddress[String(chainId) as keyof typeof offchainDnsAddress],
-  )
+  const addrData = priceOrAddrData as ReturnedENS['getAddr']
+  const resolverData = expiryOrResolverData as ReturnedENS['getResolver']
 
   if (
-    profileData &&
-    profileData.address &&
-    profileData.address !== '0x0000000000000000000000000000000000000020' &&
-    profileData.address !== emptyAddress &&
-    profileData.resolverAddress ===
-      offchainDnsAddress[String(chainId) as keyof typeof offchainDnsAddress]
+    addrData &&
+    addrData !== '0x0000000000000000000000000000000000000020' &&
+    addrData !== emptyAddress &&
+    resolverData === offchainDnsAddress[String(chainId) as keyof typeof offchainDnsAddress]
   ) {
     return 'imported'
   }
+  console.log('will return not imported')
   return 'notImported'
 }

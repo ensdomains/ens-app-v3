@@ -14,16 +14,15 @@ type UseProfileOptions = {
   skip?: boolean
   resolverAddress?: string
   skipGraph?: boolean
-  onlyEth?: boolean
 }
 
 export const useProfile = (
   name: string,
-  { skip, resolverAddress, skipGraph = false, onlyEth = false }: UseProfileOptions = {},
+  { skip, resolverAddress, skipGraph = false }: UseProfileOptions = {},
 ) => {
   const { ready, getProfile } = useEns()
 
-  const queryKey = useQueryKeys().profile(name, resolverAddress, skipGraph, onlyEth)
+  const queryKey = useQueryKeys().profile(name, resolverAddress, skipGraph)
   const watchedGetProfile = useGlobalErrorFunc<typeof getProfile>({
     queryKey,
     func: getProfile,
@@ -44,8 +43,8 @@ export const useProfile = (
     () =>
       watchedGetProfile(name, {
         fallback: {
-          coinTypes: onlyEth ? ['eth'] : supportedAddresses,
-          texts: onlyEth ? [] : [...supportedTexts, ...supportedProfileItems],
+          coinTypes: supportedAddresses,
+          texts: [...supportedTexts, ...supportedProfileItems],
         },
         resolverAddress,
         skipGraph,

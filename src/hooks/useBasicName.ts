@@ -15,15 +15,21 @@ import { usePccExpired } from './fuses/usePccExpired'
 import { useChainId } from './useChainId'
 import { useContractAddress } from './useContractAddress'
 import useCurrentBlockTimestamp from './useCurrentBlockTimestamp'
-import { useProfile } from './useProfile'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
 type ENS = ReturnType<typeof useEns>
 type BaseBatchReturn = [ReturnedENS['getOwner']]
 type NormalBatchReturn = [...BaseBatchReturn, ReturnedENS['getWrapperData']]
+type DnsBatchReturn = [...NormalBatchReturn, ReturnedENS['getResolver'], ReturnedENS['getAddr']]
 type ETH2LDBatchReturn = [...NormalBatchReturn, ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
-type BatchReturn = [] | BaseBatchReturn | NormalBatchReturn | ETH2LDBatchReturn | undefined
+type BatchReturn =
+  | []
+  | BaseBatchReturn
+  | NormalBatchReturn
+  | DnsBatchReturn
+  | ETH2LDBatchReturn
+  | undefined
 
 const EXPIRY_LIVE_WATCH_TIME = 1_000 * 60 * 5 // 5 minutes
 
@@ -48,6 +54,15 @@ const getBatchData = (
       ens.getWrapperData.batch(name),
       ens.getExpiry.batch(name),
       ens.getPrice.batch(labels[0], yearsToSeconds(1), false),
+    )
+  }
+
+  if (!validation.isETH && validation.is2LD) {
+    return ens.batch(
+      ens.getOwner.batch(name),
+      ens.getWrapperData.batch(name),
+      ens.getResolver.batch(name),
+      ens.getAddr.batch(name),
     )
   }
 
@@ -96,13 +111,15 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
       enabled: !!(enabled && ens.ready && name && isValid),
     },
   )
-  const [ownerData, _wrapperData, expiryData, priceData] = batchData || []
-
-  const { profile: profileData, loading: profileLoading } = useProfile(normalisedName, {
-    skip: !normalisedName || normalisedName === '[root]' || validation.isETH || !supportedTLD,
-    skipGraph: true,
-    onlyEth: true,
-  })
+  const [ownerData, _wrapperData, expiryOrResolverData, priceOrAddrData] = batchData || []
+  const expiryData =
+    validation.isETH && validation.is2LD
+      ? (expiryOrResolverData as ReturnedENS['getExpiry'])
+      : undefined
+  const priceData =
+    validation.isETH && validation.is2LD ? (priceOrAddrData as ReturnedENS['getPrice']) : undefined
+  const addrData =
+    !validation.isETH && validation.is2LD ? (priceOrAddrData as ReturnedENS['getAddr']) : undefined
 
   const wrapperData = useMemo(() => {
     if (!_wrapperData) return undefined
@@ -134,24 +151,18 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
     return Date.now() - EXPIRY_LIVE_WATCH_TIME
   }, [isTempPremiumDesynced, blockTimestamp])
 
-  const registrationStatus =
-    batchData &&
-    (validation.isETH ||
-      !supportedTLD ||
-      normalisedName === '[root]' ||
-      (profileData && !profileLoading))
-      ? getRegistrationStatus({
-          timestamp: registrationStatusTimestamp,
-          validation,
-          ownerData,
-          wrapperData,
-          expiryData,
-          priceData,
-          supportedTLD,
-          profileData,
-          chainId,
-        })
-      : undefined
+  const registrationStatus = batchData
+    ? getRegistrationStatus({
+        timestamp: registrationStatusTimestamp,
+        validation,
+        ownerData,
+        wrapperData,
+        expiryOrResolverData,
+        priceOrAddrData,
+        supportedTLD,
+        chainId,
+      })
+    : undefined
 
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
@@ -171,7 +182,7 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
   )
   const pccExpired = usePccExpired({ ownerData, wrapperData })
 
-  const isLoading = !ens.ready || batchLoading || supportedTLDLoading || profileLoading
+  const isLoading = !ens.ready || batchLoading || supportedTLDLoading
 
   return {
     ...validation,
@@ -188,6 +199,7 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
     isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
     pccExpired,
     canBeWrapped,
+    addrData: addrData as string | undefined,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }

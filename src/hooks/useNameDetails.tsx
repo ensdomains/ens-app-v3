@@ -1,6 +1,7 @@
 import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { formatFullExpiry } from '@app/utils/utils'
 
@@ -17,6 +18,13 @@ export type DetailedProfile = Omit<Profile, 'records'> & {
   records: DetailedProfileRecords
 }
 
+const addFallbackAddr = (profile: ReturnedENS['getProfile'], addrData: string | undefined) => {
+  const addrItem = { key: '60', type: 'addr', coin: 'ETH', addr: addrData } as any
+  const ethIndex = profile?.records?.coinTypes?.findIndex((item) => item.key === '60')
+  if (typeof ethIndex === 'number' && ethIndex !== -1) return profile!.records!.coinTypes
+  return [...(profile?.records?.coinTypes || []), addrItem]
+}
+
 export const useNameDetails = (name: string, skipGraph = false) => {
   const { t } = useTranslation('profile')
   const { ready } = useEns()
@@ -29,6 +37,7 @@ export const useNameDetails = (name: string, skipGraph = false) => {
     registrationStatus,
     expiryDate,
     gracePeriodEndDate,
+    addrData,
     ...basicName
   } = useBasicName(name, { normalised: false, skipGraph })
 
@@ -53,10 +62,11 @@ export const useNameDetails = (name: string, skipGraph = false) => {
       ...baseProfile,
       records: {
         ...baseProfile.records,
+        coinTypes: addFallbackAddr(baseProfile, addrData),
         ...(abi ? { abi } : {}),
       },
     }
-  }, [abi, baseProfile])
+  }, [abi, addrData, baseProfile])
 
   const {
     dnsOwner,
@@ -158,6 +168,7 @@ export const useNameDetails = (name: string, skipGraph = false) => {
     registrationStatus,
     gracePeriodEndDate,
     expiryDate,
+    addrData,
     ...basicName,
   }
 }

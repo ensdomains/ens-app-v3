@@ -16,15 +16,18 @@ overrides:
   wagmi: 0.12.13
 
 patchedDependencies:
+  react-confetti@6.1.0:
+    hash: bbuxkxhxbyez4jmqgptuoucij4
+    path: patches/react-confetti@6.1.0.patch
   next-dev-https@0.1.2:
     hash: q5l3x5627ujg3rak6l6v24c2cq
     path: patches/next-dev-https@0.1.2.patch
   '@rainbow-me/rainbowkit@0.12.15':
     hash: ids4vnpwyenrujupancx6kn4ci
     path: patches/@rainbow-me__rainbowkit@0.12.15.patch
-  react-confetti@6.1.0:
-    hash: bbuxkxhxbyez4jmqgptuoucij4
-    path: patches/react-confetti@6.1.0.patch
+  '@ensdomains/ensjs@3.0.0-alpha.66':
+    hash: nldxnxpx6nom25x5s4puzjymwq
+    path: patches/@ensdomains__ensjs@3.0.0-alpha.66.patch
 
 importers:
 
@@ -184,7 +187,7 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_v6aogrdjojfeat5uhab6hyaxg4
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.66_4wk6sblqc5kfzwjkcabkhle2du
+      '@ensdomains/ensjs': 3.0.0-alpha.66_nldxnxpx6nom25x5s4puzjymwq_4wk6sblqc5kfzwjkcabkhle2du
       '@ensdomains/eth-ens-namehash': 2.0.15
       '@ensdomains/thorin': 0.6.44_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
@@ -318,7 +321,7 @@ importers:
       stylelint-config-styled-components: 0.1.1
       stylelint-processor-styled-components: 1.10.0
       stylelint-webpack-plugin: 3.3.0_stylelint@14.11.0
-      svgo: 3.0.2
+      svgo: 3.2.0
       ts-node: 10.9.1_rpba4laouik7wemyxyhgjhnkhu
       typescript: 4.9.5
       typescript-styled-plugin: 0.18.2
@@ -2252,7 +2255,7 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.66_4wk6sblqc5kfzwjkcabkhle2du:
+  /@ensdomains/ensjs/3.0.0-alpha.66_nldxnxpx6nom25x5s4puzjymwq_4wk6sblqc5kfzwjkcabkhle2du:
     resolution: {integrity: sha512-bXaKh++A3Ui/JP2xG7mIjrMaEAfONf4lFBz9bEdGImjU/DVd7kdP0jCXH5nMTOKGo3VuvSybWths24aGWIzFLA==}
     peerDependencies:
       '@ethersproject/abi': ^5.6.4
@@ -2297,6 +2300,7 @@ packages:
       - encoding
       - utf-8-validate
     dev: false
+    patched: true
 
   /@ensdomains/eth-ens-namehash/2.0.15:
     resolution: {integrity: sha512-JRDFP6+Hczb1E0/HhIg0PONgBYasfGfDheujmfxaZaAv/NAH4jE6Kf48WbqfRZdxt4IZI3jl3Ri7sZ1nP09lgw==}
@@ -18050,8 +18054,8 @@ packages:
       stable: 0.1.8
     dev: false
 
-  /svgo/3.0.2:
-    resolution: {integrity: sha512-Z706C1U2pb1+JGP48fbazf3KxHrWOsLme6Rv7imFBn5EnuanDW1GPaA/P1/dvObE670JDePC3mnj0k0B7P0jjQ==}
+  /svgo/3.2.0:
+    resolution: {integrity: sha512-4PP6CMW/V7l/GmKRKzsLR8xxjdHTV4IMvhTnpuHwwBazSIlw5W/5SmPjN8Dwyt7lKbSJrRDgp4t9ph0HgChFBQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
@@ -18059,6 +18063,7 @@ packages:
       commander: 7.2.0
       css-select: 5.1.0
       css-tree: 2.3.1
+      css-what: 6.1.0
       csso: 5.0.5
       picocolors: 1.0.0
     dev: true
