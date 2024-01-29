@@ -58,11 +58,22 @@ const getBatchData = (
   }
 
   if (!validation.isETH && validation.is2LD) {
+    const getAddrBatch = ens.getAddr.batch(name)
+
     return ens.batch(
       ens.getOwner.batch(name),
       ens.getWrapperData.batch(name),
       ens.getResolver.batch(name),
-      ens.getAddr.batch(name),
+      {
+        args: getAddrBatch.args,
+        raw: getAddrBatch.raw,
+        decode: async (data: string, _name: string, coinType?: string | number | undefined) => {
+          const { contracts, universalWrapper } = ens
+          const urData = await universalWrapper.decode(data).catch(() => undefined)
+          if (!urData) return
+          return getAddrBatch.decode({ contracts, universalWrapper }, data, '', coinType)
+        },
+      },
     )
   }
 
