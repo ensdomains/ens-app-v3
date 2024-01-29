@@ -19,10 +19,12 @@ export type DetailedProfile = Omit<Profile, 'records'> & {
 }
 
 const addFallbackAddr = (profile: ReturnedENS['getProfile'], addrData: string | undefined) => {
+  const baseArray = profile?.records?.coinTypes || []
+  if (!addrData) return baseArray
+  const ethIndex = baseArray.findIndex((item) => item.key === '60')
+  if (typeof ethIndex === 'number' && ethIndex !== -1) return baseArray
   const addrItem = { key: '60', type: 'addr', coin: 'ETH', addr: addrData } as any
-  const ethIndex = profile?.records?.coinTypes?.findIndex((item) => item.key === '60')
-  if (typeof ethIndex === 'number' && ethIndex !== -1) return profile!.records!.coinTypes
-  return [...(profile?.records?.coinTypes || []), addrItem]
+  return [...baseArray, addrItem]
 }
 
 export const useNameDetails = (name: string, skipGraph = false) => {
@@ -57,7 +59,17 @@ export const useNameDetails = (name: string, skipGraph = false) => {
   )
 
   const profile: DetailedProfile | undefined = useMemo(() => {
-    if (!baseProfile) return undefined
+    if (!baseProfile) {
+      if (!addrData) return undefined
+      return {
+        address: addrData,
+        isMigrated: null,
+        createdAt: null,
+        records: {
+          coinTypes: addFallbackAddr(baseProfile, addrData),
+        },
+      }
+    }
     return {
       ...baseProfile,
       records: {

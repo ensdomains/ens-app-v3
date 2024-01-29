@@ -103,6 +103,6 @@ export const getRegistrationStatus = ({
   ) {
     return 'imported'
   }
-  console.log('will return not imported')
+
   return 'notImported'
 }

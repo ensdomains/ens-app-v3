@@ -26,7 +26,7 @@ patchedDependencies:
     hash: ids4vnpwyenrujupancx6kn4ci
     path: patches/@rainbow-me__rainbowkit@0.12.15.patch
   '@ensdomains/ensjs@3.0.0-alpha.66':
-    hash: nldxnxpx6nom25x5s4puzjymwq
+    hash: ad7eqi57npyzpaneljtse2f4jm
     path: patches/@ensdomains__ensjs@3.0.0-alpha.66.patch
 
 importers:
@@ -187,7 +187,7 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_v6aogrdjojfeat5uhab6hyaxg4
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.66_nldxnxpx6nom25x5s4puzjymwq_4wk6sblqc5kfzwjkcabkhle2du
+      '@ensdomains/ensjs': 3.0.0-alpha.66_ad7eqi57npyzpaneljtse2f4jm_4wk6sblqc5kfzwjkcabkhle2du
       '@ensdomains/eth-ens-namehash': 2.0.15
       '@ensdomains/thorin': 0.6.44_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
@@ -2255,7 +2255,7 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.66_nldxnxpx6nom25x5s4puzjymwq_4wk6sblqc5kfzwjkcabkhle2du:
+  /@ensdomains/ensjs/3.0.0-alpha.66_ad7eqi57npyzpaneljtse2f4jm_4wk6sblqc5kfzwjkcabkhle2du:
     resolution: {integrity: sha512-bXaKh++A3Ui/JP2xG7mIjrMaEAfONf4lFBz9bEdGImjU/DVd7kdP0jCXH5nMTOKGo3VuvSybWths24aGWIzFLA==}
     peerDependencies:
       '@ethersproject/abi': ^5.6.4
@@ -3678,6 +3678,7 @@ packages:
 
   /@motionone/vue/10.16.2:
     resolution: {integrity: sha512-7/dEK/nWQXOkJ70bqb2KyNfSWbNvWqKKq1C8juj+0Mg/AorgD8O5wE3naddK0G+aXuNMqRuc4jlsYHHWHtIzVw==}
+    deprecated: Motion One for Vue is deprecated. Use Oku Motion instead https://oku-ui.com/motion
     dependencies:
       '@motionone/dom': 10.16.2
       tslib: 2.4.1
