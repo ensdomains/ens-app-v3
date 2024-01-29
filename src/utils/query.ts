@@ -34,9 +34,14 @@ if (process.env.NEXT_PUBLIC_PROVIDER) {
   // fallback cloudflare gateway if infura is down or for IPFS
   providerArray.push(
     jsonRpcProvider({
-      rpc: (c) => ({
-        http: `https://web3.ens.domains/v1/${c.network === 'homestead' ? 'mainnet' : c.network}`,
-      }),
+      rpc: (c) =>
+        c.network === 'sepolia'
+          ? null
+          : {
+              http: `https://web3.ens.domains/v1/${
+                c.network === 'homestead' ? 'mainnet' : c.network
+              }`,
+            },
     }),
   )
 }

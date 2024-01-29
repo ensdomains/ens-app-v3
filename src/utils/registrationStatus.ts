@@ -19,22 +19,31 @@ export type RegistrationStatus =
   | 'notOwned'
   | 'unsupportedTLD'
 
+const offchainDnsAddress = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '1': '0xF142B308cF687d4358410a4cB885513b30A42025',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '11155111': '0x179Be112b24Ad4cFC392eF8924DfA08C20Ad8583',
+}
+
 export const getRegistrationStatus = ({
   timestamp,
   validation: { isETH, is2LD, isShort, type },
   ownerData,
   wrapperData,
-  expiryData,
-  priceData,
+  expiryOrResolverData,
+  priceOrAddrData,
   supportedTLD,
+  chainId,
 }: {
   timestamp: number
   validation: Partial<Omit<ParsedInputResult, 'normalised' | 'isValid'>>
   ownerData?: ReturnedENS['getOwner']
   wrapperData?: ReturnedENS['getWrapperData']
-  expiryData?: ReturnedENS['getExpiry']
-  priceData?: ReturnedENS['getPrice']
+  expiryOrResolverData?: ReturnedENS['getExpiry'] | ReturnedENS['getResolver']
+  priceOrAddrData?: ReturnedENS['getPrice'] | ReturnedENS['getAddr']
   supportedTLD?: boolean | null
+  chainId?: number
 }): RegistrationStatus => {
   if (isETH && is2LD && isShort) {
     return 'short'
@@ -47,6 +56,8 @@ export const getRegistrationStatus = ({
   }
 
   if (isETH && is2LD) {
+    const expiryData = expiryOrResolverData as ReturnedENS['getExpiry']
+    const priceData = priceOrAddrData as ReturnedENS['getPrice']
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     if (expiryData && expiryData.expiry) {
       const { expiry: _expiry, gracePeriod } = expiryData as {
@@ -80,5 +91,18 @@ export const getRegistrationStatus = ({
     // more than 2 labels
     return 'notOwned'
   }
+
+  const addrData = priceOrAddrData as ReturnedENS['getAddr']
+  const resolverData = expiryOrResolverData as ReturnedENS['getResolver']
+
+  if (
+    addrData &&
+    addrData !== '0x0000000000000000000000000000000000000020' &&
+    addrData !== emptyAddress &&
+    resolverData === offchainDnsAddress[String(chainId) as keyof typeof offchainDnsAddress]
+  ) {
+    return 'imported'
+  }
+
   return 'notImported'
 }
