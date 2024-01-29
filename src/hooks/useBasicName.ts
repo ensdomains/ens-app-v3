@@ -67,12 +67,10 @@ const getBatchData = (
       {
         args: getAddrBatch.args,
         raw: getAddrBatch.raw,
-        decode: async (data: string, _name: string, coinType?: string | number | undefined) => {
-          const { contracts, universalWrapper } = ens
-          const urData = await universalWrapper.decode(data).catch(() => undefined)
-          if (!urData) return
-          return getAddrBatch.decode({ contracts, universalWrapper }, data, '', coinType)
-        },
+        decode: async (...args) =>
+          getAddrBatch
+            .decode(...(args as Parameters<typeof getAddrBatch['decode']>))
+            .catch(() => undefined),
       },
     )
   }
