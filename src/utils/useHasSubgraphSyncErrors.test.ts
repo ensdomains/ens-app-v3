@@ -1,6 +1,6 @@
-import { renderHook, waitFor } from '@app/test-utils'
+import { renderHook } from '@app/test-utils'
 
-import { hashQueryKey, Query } from '@tanstack/react-query'
+import { hashQueryKey } from '@tanstack/react-query'
 
 import { useHasSubgraphSyncErrors } from './useHasSubgraphSyncErrors'
 
