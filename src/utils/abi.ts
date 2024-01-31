@@ -1,7 +1,11 @@
+import { match, P } from 'ts-pattern'
+
 import { ClientWithEns } from '@ensdomains/ensjs/contracts'
 import { GetAbiRecordReturnType } from '@ensdomains/ensjs/dist/types/functions/public/getAbiRecord'
 import { getAbiRecord } from '@ensdomains/ensjs/public'
 import { contentTypeToEncodeAs, generateSupportedContentTypes } from '@ensdomains/ensjs/utils'
+
+import { Profile } from '@app/types'
 
 const SupportedAbiEncodeAs = ['json', 'zlib', 'cbor', 'uri'] as const
 const SupportedAbiContentTypes = [1, 2, 4, 8] as const
@@ -43,3 +47,9 @@ export const getUsedAbiEncodeAs = async (
     })
     .catch(() => [])
 }
+
+export const abiDisplayValue = (abi: Profile['abi']) =>
+  match(abi)
+    .with({ contentType: P.union(1, 2, 4), abi: {} }, ({ abi: abi_ }) => JSON.stringify(abi_))
+    .with({ contentType: 8, abi: P.string }, ({ abi: abi_ }) => abi_)
+    .otherwise(() => '')
