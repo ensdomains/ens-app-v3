@@ -7,8 +7,8 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "eslint.format.enable": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.fixAll.stylelint": false
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "never"
   },
   "stylelint.configFile": ".stylelintrc.json",
   "stylelint.validate": ["css", "typescriptreact"],
