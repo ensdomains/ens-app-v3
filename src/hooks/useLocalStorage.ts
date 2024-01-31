@@ -52,11 +52,11 @@ export const useLocalStorage = <D>(
 type LocalStorageValue<T> = T | null
 
 export function useReadLocalStorage<T>(key: string): LocalStorageValue<T> {
-  const readValue = useCallback((): Value<T> => {
+  const readValue = useCallback((): LocalStorageValue<T> => {
     return getStorageValue(key, null)
   }, [key])
 
-  const [storedValue, setStoredValue] = useState<Value<T>>(readValue)
+  const [storedValue, setStoredValue] = useState<LocalStorageValue<T>>(readValue)
 
   // Listen if localStorage changes
   useEffect(() => {
