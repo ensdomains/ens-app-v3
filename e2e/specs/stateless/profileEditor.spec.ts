@@ -365,7 +365,7 @@ test.describe('wrapped', () => {
   })
 })
 
-test.skip('subgraph errors', () => {
+test.describe('subgraph errors', () => {
   test('should disable edit profile button when there is a subgraph error', async ({
     page,
     makeName,
@@ -385,7 +385,7 @@ test.skip('subgraph errors', () => {
     await expect(profilePage.editProfileButton).toBeVisible()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').click()
+    await page.getByTestId('subgraph-network-error').click()
 
     await profilePage.goto(name)
     await expect(page.getByTestId('disabled-profile-action-Edit profile')).toBeVisible()
