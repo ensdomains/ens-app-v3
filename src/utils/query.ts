@@ -35,7 +35,8 @@ if (process.env.NEXT_PUBLIC_PROVIDER) {
   providerArray.push(
     jsonRpcProvider({
       rpc: (c) =>
-        c.network === 'sepolia'
+        // cf sepolia endpoint is flaky, but it's the only one available for ipfs
+        c.network === 'sepolia' && !process.env.NEXT_PUBLIC_IPFS
           ? null
           : {
               http: `https://web3.ens.domains/v1/${
