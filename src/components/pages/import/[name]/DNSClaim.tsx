@@ -11,6 +11,7 @@ import { useBasicName } from '@app/hooks/useBasicName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate } from '@app/hooks/useValidate'
 import { Content } from '@app/layouts/Content'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 const MainContentContainer = styled(Card)(
   ({ theme }) => css`
@@ -54,11 +55,7 @@ export default () => {
               <Typography fontVariant="headingTwo">{t('gasless.title')}</Typography>
               <Typography>{t('gasless.description')}</Typography>
               <MobileFullWidth>
-                <Button
-                  as="a"
-                  href="https://blog.ens.domains/post/gasless-dnssec"
-                  suffix={<OutlinkSVG />}
-                >
+                <Button as="a" href={getSupportLink('gaslessDnssec')} suffix={<OutlinkSVG />}>
                   {t('action.learnMore', { ns: 'common' })}
                 </Button>
               </MobileFullWidth>
