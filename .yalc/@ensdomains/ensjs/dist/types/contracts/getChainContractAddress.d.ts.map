@@ -1,1 +1,0 @@
-{"version":3,"file":"getChainContractAddress.d.ts","sourceRoot":"","sources":["../../../src/contracts/getChainContractAddress.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,aAAa,CAAA;AAE/C,KAAK,WAAW,CAAC,MAAM,SAAS,YAAY,IAAI;IAC9C,KAAK,EAAE,MAAM,CAAA;CACd,CAAA;AAED,eAAO,MAAM,uBAAuB;;;;mBAW0C,CAAA"}

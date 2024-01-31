@@ -400,8 +400,7 @@ test('should not allow parent owner to delete if PCC is expired', async ({
   await expect(page.getByTestId('profile-action-Delete subname')).toHaveCount(0)
 })
 
-// TODO: Reimplement graph error test environment
-test.skip('subgraph errors', () => {
+test.describe('subgraph errors', () => {
   test('should disable delete button for unwrapped subname', async ({
     page,
     login,
@@ -428,13 +427,13 @@ test.skip('subgraph errors', () => {
     await expect(profilePage.deleteSubnameButton).toBeVisible()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').check()
+    await page.getByTestId('subgraph-network-error').check()
 
     await profilePage.goto(subname)
     await expect(profilePage.disabledDeleteSubnameButton).toBeVisible()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').uncheck()
+    await page.getByTestId('subgraph-network-error').uncheck()
   })
 
   test('should disable delete button for wrapped subname', async ({
@@ -464,12 +463,12 @@ test.skip('subgraph errors', () => {
     await expect(profilePage.deleteSubnameButton).toBeVisible()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').check()
+    await page.getByTestId('subgraph-network-error').check()
 
     await profilePage.goto(subname)
     await expect(profilePage.disabledDeleteSubnameButton).toBeVisible()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').uncheck()
+    await page.getByTestId('subgraph-network-error').uncheck()
   })
 })

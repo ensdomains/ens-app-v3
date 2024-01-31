@@ -39,8 +39,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@ensdomains/ensjs':
-        specifier: workspace:*
-        version: link:.yalc/@ensdomains/ensjs
+        specifier: 3.2.1
+        version: 3.2.1(typescript@5.3.3)(viem@1.21.4)
       '@ensdomains/thorin':
         specifier: 0.6.44
         version: 0.6.44(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.6)
@@ -164,9 +164,6 @@ importers:
       use-immer:
         specifier: ^0.7.0
         version: 0.7.0(immer@9.0.15)(react@18.2.0)
-      use-sync-external-store:
-        specifier: ^1.2.0
-        version: 1.2.0(react@18.2.0)
       viem:
         specifier: ^1.16.4
         version: 1.21.4(typescript@5.3.3)
@@ -255,9 +252,6 @@ importers:
       '@types/testing-library__jest-dom':
         specifier: ^5.14.5
         version: 5.14.5
-      '@types/use-sync-external-store':
-        specifier: ^0.0.3
-        version: 0.0.3
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.7.4
         version: 6.20.0(@typescript-eslint/parser@6.20.0)(eslint@8.50.0)(typescript@5.3.3)
@@ -274,7 +268,7 @@ importers:
         specifier: ^8.2.5
         version: 8.2.5(@babel/core@7.23.9)(webpack@5.90.0)
       canvas:
-        specifier: 2.11.2
+        specifier: ^2.9.3
         version: 2.11.2
       cbor:
         specifier: ^8.1.0
@@ -447,42 +441,6 @@ importers:
       yalc:
         specifier: ^1.0.0-pre.53
         version: 1.0.0-pre.53
-
-  .yalc/@ensdomains/ensjs:
-    dependencies:
-      '@adraffy/ens-normalize':
-        specifier: 1.9.0
-        version: 1.9.0
-      '@ensdomains/address-encoder':
-        specifier: 1.0.0-rc.3
-        version: 1.0.0-rc.3
-      '@ensdomains/content-hash':
-        specifier: 3.1.0-rc.1
-        version: 3.1.0-rc.1
-      '@ensdomains/dnsprovejs':
-        specifier: ^0.5.1
-        version: 0.5.1
-      abitype:
-        specifier: ^0.8.0
-        version: 0.8.11(typescript@5.3.3)
-      dns-packet:
-        specifier: ^5.3.1
-        version: 5.4.0
-      graphql:
-        specifier: ^16.3.0
-        version: 16.6.0
-      graphql-request:
-        specifier: 6.1.0
-        version: 6.1.0(graphql@16.6.0)
-      pako:
-        specifier: ^2.1.0
-        version: 2.1.0
-      traverse:
-        specifier: ^0.6.6
-        version: 0.6.7
-      viem:
-        specifier: ^1.16.4
-        version: 1.21.4(typescript@5.3.3)
 
 packages:
 
@@ -2288,6 +2246,28 @@ packages:
       - utf-8-validate
     dev: true
 
+  /@ensdomains/ensjs@3.2.1(typescript@5.3.3)(viem@1.21.4):
+    resolution: {integrity: sha512-9MKVQaMfANUKPeV7GgalmX9paOZXDqlKYkKMmXmCHr1tLrp3fAQvCBkK8moDYw3zL8CLUYPFwCWoEw5p5hESfw==}
+    peerDependencies:
+      viem: ^1.16.4
+    dependencies:
+      '@adraffy/ens-normalize': 1.9.0
+      '@ensdomains/address-encoder': 1.0.0-rc.3
+      '@ensdomains/content-hash': 3.1.0-rc.1
+      '@ensdomains/dnsprovejs': 0.5.1
+      abitype: 0.8.11(typescript@5.3.3)
+      dns-packet: 5.6.1
+      graphql: 16.8.1
+      graphql-request: 6.1.0(graphql@16.8.1)
+      pako: 2.1.0
+      traverse: 0.6.7
+      viem: 1.21.4(typescript@5.3.3)
+    transitivePeerDependencies:
+      - encoding
+      - typescript
+      - zod
+    dev: false
+
   /@ensdomains/resolver@0.2.4:
     resolution: {integrity: sha512-bvaTH34PMCbv6anRa9I/0zjLJgY4EuznbEMgbV77JBCQ9KNC46rzi0avuxpOfu+xDjPEtSFGqVEOr5GlUSGudA==}
     deprecated: Please use @ensdomains/ens-contracts
@@ -2927,12 +2907,12 @@ packages:
       graphql: 16.8.1
     dev: true
 
-  /@graphql-typed-document-node/core@3.2.0(graphql@16.6.0):
+  /@graphql-typed-document-node/core@3.2.0(graphql@16.8.1):
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
-      graphql: 16.6.0
+      graphql: 16.8.1
     dev: false
 
   /@hapi/hoek@9.3.0:
@@ -5424,10 +5404,6 @@ packages:
 
   /@types/trusted-types@2.0.3:
     resolution: {integrity: sha512-NfQ4gyz38SL8sDNrSixxU2Os1a5xcdFxipAFxYEuLUlvU2uDwS4NUpsImcf1//SlWItCVMMLiylsxbmNMToV/g==}
-
-  /@types/use-sync-external-store@0.0.3:
-    resolution: {integrity: sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==}
-    dev: true
 
   /@types/ws@7.4.7:
     resolution: {integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==}
@@ -10616,27 +10592,21 @@ packages:
       - encoding
     dev: true
 
-  /graphql-request@6.1.0(graphql@16.6.0):
+  /graphql-request@6.1.0(graphql@16.8.1):
     resolution: {integrity: sha512-p+XPfS4q7aIpKVcgmnZKhMNqhltk20hfXtkaIkTfjjmiKMJ5xrt5c743cL03y/K7y1rg3WrIC49xGiEQ4mxdNw==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.8.1)
       cross-fetch: 3.1.5
-      graphql: 16.6.0
+      graphql: 16.8.1
     transitivePeerDependencies:
       - encoding
-    dev: false
-
-  /graphql@16.6.0:
-    resolution: {integrity: sha512-KPIBPDlW7NxrbT/eh4qPXz5FiFdL5UbaA0XUNz2Rp3Z3hqBSkbj0GVjwFDztsWVauZUWsbKHgMg++sk8UX0bkw==}
-    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
     dev: false
 
   /graphql@16.8.1:
     resolution: {integrity: sha512-59LZHPdGZVh695Ud9lRzPBVTtlX9ZCV150Er2W43ro37wVof0ctenSaskPPjN7lVTIN8mSZt8PHUNKZuNQUuxw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
-    dev: true
 
   /gzip-size@6.0.0:
     resolution: {integrity: sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q==}
