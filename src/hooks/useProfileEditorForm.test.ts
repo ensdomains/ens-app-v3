@@ -7,7 +7,7 @@ import profileRecordOptions, { grouped, ProfileRecord } from '../constants/profi
 import { useProfileEditorForm } from './useProfileEditorForm'
 
 const baseRecord: ProfileRecord = {
-  key: 'ETH',
+  key: 'eth',
   group: 'address',
   type: 'addr',
   value: '0xb794f5ea0ba39494ce839613fffba74279579268',
@@ -82,7 +82,7 @@ describe('useProfileEditorForm', () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
       expect(
         await result.current.validatorForRecord({
-          key: 'ETH',
+          key: 'eth',
           group: 'address',
           type: 'addr',
         })(validEth),
@@ -93,7 +93,7 @@ describe('useProfileEditorForm', () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
       expect(
         typeof (await result.current.validatorForRecord({
-          key: 'ETH',
+          key: 'eth',
           group: 'address',
           type: 'addr',
         })(invalidEth)),
@@ -244,7 +244,6 @@ describe('useProfileEditorForm', () => {
     testCases.forEach(({ platform, key, username, isValid }) => {
       it(`should ${isValid == true ? 'validate' : 'invalidate'} ${isValid == true ? 'a' : 'an'} ${isValid == true ? 'correct' : 'incorrect'} ${platform} account`, async () => {
         const { result } = renderHook(() => useProfileEditorForm(moreRecords));
-        console.log(result.current.getRecords)
         await act(async () => {
           const validationOutcome = await result.current.validatorForRecord({
             key: key,
@@ -262,7 +261,7 @@ describe('useProfileEditorForm', () => {
     it('should be able to remove a address record by type and key', async () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
       act(() => {
-        result.current.removeRecordByGroupAndKey('address', 'ETH')
+        result.current.removeRecordByGroupAndKey('address', 'eth')
       })
       expect(result.current.getRecords().length).toBe(1)
     })
@@ -358,7 +357,7 @@ describe('useProfileEditorForm', () => {
     it('should not be able to add a address record if the record already exists', () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
       result.current.addRecords({
-        key: 'ETH',
+        key: 'eth',
         group: 'address',
         type: 'addr',
         value: 'test',

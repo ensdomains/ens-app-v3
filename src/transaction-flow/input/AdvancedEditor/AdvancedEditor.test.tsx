@@ -61,27 +61,27 @@ const mockProfileData = {
     coins: [
       {
         id: 60,
-        name: 'ETH',
+        name: 'eth',
         value: '0xb794f5ea0ba39494ce839613fffba74279579268',
       },
       {
         id: 0,
-        name: 'BTC',
+        name: 'btc',
         value: '1JnJvEBykLcGHYxCZVWgDGDm7pkK3EBHwB',
       },
       {
         id: 3030,
-        name: 'HBAR',
+        name: 'hbar',
         value: '0.0.123123',
       },
       {
         id: 501,
-        name: 'SOL',
+        name: 'sol',
         value: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH',
       },
     ],
     abi: {
-      abi: JSON.stringify([
+      abi: [
         {
           inputs: [
             {
@@ -95,7 +95,7 @@ const mockProfileData = {
           name: 'setName',
           type: 'function',
         },
-      ]),
+      ],
       contentType: 1,
     },
     resolverAddress: '0x0' as const,
@@ -111,6 +111,10 @@ const mockProfileData = {
 jest.mock('@app/hooks/useProfile')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useResolverHasInterfaces')
+
+jest.mock('@app/utils/abi', () => ({
+  getUsedAbiEncodeAs: () => ['json', 'cbor']
+}))
 
 const mockUseProfile = mockFunction(useProfile)
 const mockUseResolverHasInterfaces = mockFunction(useResolverHasInterfaces)
@@ -256,7 +260,7 @@ describe('AdvancedEditor', () => {
       expect(mockDispatch).toHaveBeenCalled()
     })
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coins[0]).toEqual({
-      coin: 'ETH',
+      coin: 'eth',
       value: '',
     })
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coins.length).toBe(1)
@@ -272,13 +276,13 @@ describe('AdvancedEditor', () => {
 
     const addButton = await screen.findByTestId('add-record-button')
     await userEvent.click(addButton)
-    const addOption = await screen.findByTestId('add-record-button-option-DOT')
+    const addOption = await screen.findByTestId('add-record-button-option-dot')
     await userEvent.click(addOption)
 
     const newInput = await screen.findByTestId('record-input-DOT')
     await userEvent.type(
       within(newInput).getByTestId('record-input-input'),
-      '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
+      '1FRMM8PEiWXYax7rpS6X4XZX1aAAxSWx1CrKTyrVYhV24fg',
     )
 
     const submitBtn = screen.getByText('action.save')
@@ -291,8 +295,8 @@ describe('AdvancedEditor', () => {
       expect(mockDispatch).toHaveBeenCalled()
     })
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coins[0]).toEqual({
-      coin: 'DOT',
-      value: '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
+      coin: 'dot',
+      value: '1FRMM8PEiWXYax7rpS6X4XZX1aAAxSWx1CrKTyrVYhV24fg',
     })
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coins.length).toBe(1)
   })
@@ -326,11 +330,11 @@ describe('AdvancedEditor', () => {
                 ],
                 coins: [
                   {
-                    coin: 'BNB',
+                    coin: 'bnb',
                     value: 'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
                   },
                   {
-                    coin: 'ETH',
+                    coin: 'eth',
                     value: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
                   },
                 ],
@@ -370,11 +374,11 @@ describe('AdvancedEditor', () => {
         tab: 'address-tab',
         records: [
           {
-            label: 'BNB',
+            label: 'bnb',
             value: 'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
           },
           {
-            label: 'ETH',
+            label: 'eth',
             value: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
           },
         ],
@@ -395,14 +399,14 @@ describe('AdvancedEditor', () => {
       await userEvent.click(tabEl)
 
       for (const { label, value } of records) {
-        const record = await screen.findByTestId(`record-input-${convertFormSafeKey(label)}`)
+        const formattedLabel = tab === 'address-tab' ? label.toUpperCase() : label
+        const record = await screen.findByTestId(`record-input-${convertFormSafeKey(formattedLabel)}`)
         const recordInput = await within(record).getByTestId('record-input-input')
         expect(recordInput).toHaveValue(value)
       }
     }
   })
 
-  // TODO: Need to adjust according to how we will delete abi
   it('should allow removing abi', async () => {
     render(
       <AdvancedEditor dispatch={mockDispatch} onDismiss={() => {}} data={{ name: 'test.eth' }} />,
@@ -422,9 +426,12 @@ describe('AdvancedEditor', () => {
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
     })
-    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.abi).toEqual({
-      contentType: 0,
-      encodedData: null,
-    })
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.abi).toEqual([{
+      contentType: 1,
+      encodedData: '0x',
+    }, {
+      contentType: 4, 
+      encodedData: '0x'
+    }])
   })
 })

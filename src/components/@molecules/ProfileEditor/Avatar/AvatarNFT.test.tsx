@@ -11,6 +11,18 @@ jest.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: () => 'mainnet',
 }))
 
+jest.mock('@app/hooks/usePublicClient', () => ({
+  usePublicClient: () => ({
+    chain: {
+      id: 1,
+      contracts: {
+        ensBaseRegistrarImplementation: '0xensBaseRegistrarImplementation',
+        ensNameWrapper: '0xensNameWrapper',
+      }
+    },
+  }),
+}))
+
 const mockUseAccount = mockFunction(useAccount)
 const mockHandleSubmit = jest.fn()
 const mockHandleCancel = jest.fn()
