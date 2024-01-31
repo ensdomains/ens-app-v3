@@ -9,6 +9,7 @@ import { ProfileRecord, ProfileRecordGroup } from '@app/constants/profileRecordO
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { AvatarEditorType } from '@app/types'
 import { normalizeCoinAddress } from '@app/utils/coin'
+import { validateAccount } from '@app/validators/validateAccount'
 import { validateCryptoAddress } from '@app/validators/validateAddress'
 import { validateContentHash } from '@app/validators/validateContentHash'
 import { validateUrl } from '@app/validators/validateUrl'
@@ -110,6 +111,13 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
             .length > 1
         )
           return t('steps.profile.errors.duplicateRecord') as string
+        return true
+      }
+    if (record.group === 'social')
+      return (value?: string) => {
+        if (!value) return true
+        const isValid = validateAccount({ key: record.key, value })
+        if (!isValid) return t('steps.profile.errors.invalidValue') as string
         return true
       }
     return () => true

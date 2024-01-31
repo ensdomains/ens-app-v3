@@ -21,10 +21,6 @@ import {
   formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
-import { validateCryptoAddress } from '@app/validators/validateAddress'
-
-import { ContentHashProvider } from '../utils/contenthash'
-import { validateContentHash } from '../validators/validateContentHash'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
@@ -336,28 +332,6 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
-  const validateCustomInputKey = (key?: string) => () => {
-    if (!key) return true
-    const editor = getValues()
-    const allTextKeys = [
-      ...(editor.avatar ? ['avatar'] : []),
-      ...Object.keys(editor.general || {}),
-      ...Object.keys(editor.accounts || {}),
-      ...Object.keys(editor.other || {}),
-    ]
-    return allTextKeys.filter((existingKey) => existingKey === key.trim()).length > 1
-      ? t('errors.duplicateKey', { value: key })
-      : true
-  }
-
-  const validateForGroupAndKey = (group: string, key: string) => {
-    if (group === 'address')
-      return (value: string | undefined) => validateCryptoAddress({ coin: key, address: value })
-    if (group === 'website') return validateContentHash(key as ContentHashProvider)
-    if (group === 'other') return validateCustomInputKey(key)
-    return () => true
-  }
-
   return {
     register,
     unregister,
@@ -403,7 +377,6 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
     AddButtonProps,
     setAvatar,
     hasChanges,
-    validateForGroupAndKey,
   }
 }
 

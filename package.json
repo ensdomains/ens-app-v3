@@ -93,7 +93,6 @@
     "styled-components": "^5.3.5",
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
-    "use-sync-external-store": "^1.2.0",
     "viem": "^1.16.4",
     "wagmi": "1.4.3"
   },

@@ -1,4 +1,5 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
+import { useEvent } from 'react-use'
 import { Reducer, useImmerReducer } from 'use-immer'
 
 const isBrowser = !!(
@@ -7,9 +8,10 @@ const isBrowser = !!(
   window.document.createElement
 )
 
-const getStorageValue = <D>(key: string, defaultValue: D) => {
+const getStorageValue = <D>(key: string, defaultValue: D): D => {
   // getting stored value
   const saved = isBrowser && localStorage.getItem(key)
+
   try {
     return saved && saved !== 'undefined' ? JSON.parse(saved) : defaultValue
   } catch (e) {
@@ -33,21 +35,47 @@ export const useLocalStorage = <D>(
     window.dispatchEvent(new StorageEvent('storage', { key, newValue: JSON.stringify(value) }))
   }, [key, value, defaultValue])
 
-  useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
+  const handleStorageChange = useCallback(
+    (event: StorageEvent) => {
       if (event.key === key && event.newValue && JSON.stringify(value) !== event.newValue) {
         setValue(JSON.parse(event.newValue!))
       }
-    }
+    },
+    [key, value],
+  )
 
-    window.addEventListener('storage', handleStorageChange)
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-    }
-  }, [key, value])
+  useEvent('storage', handleStorageChange)
 
   return [value, setValue]
+}
+
+type LocalStorageValue<T> = T | null
+
+export function useReadLocalStorage<T>(key: string): LocalStorageValue<T> {
+  const readValue = useCallback((): Value<T> => {
+    return getStorageValue(key, null)
+  }, [key])
+
+  const [storedValue, setStoredValue] = useState<Value<T>>(readValue)
+
+  // Listen if localStorage changes
+  useEffect(() => {
+    setStoredValue(readValue())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleStorageChange = useCallback(
+    (event: StorageEvent | CustomEvent) => {
+      if ((event as StorageEvent)?.key && (event as StorageEvent).key !== key) {
+        return
+      }
+      setStoredValue(readValue())
+    },
+    [key, readValue],
+  )
+
+  useEvent('storage', handleStorageChange)
+  return storedValue
 }
 
 export const useLocalStorageReducer = <S = any, A = any>(

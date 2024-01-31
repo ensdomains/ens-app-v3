@@ -126,7 +126,8 @@
       "errors": {
         "labelRequired": "A record key is required",
         "duplicateRecord": "Duplicate record key",
-        "avatarReserved": "Key is being used by avatar manager"
+        "avatarReserved": "Key is being used by avatar manager",
+        "invalidValue": "Invalid value"
       },
       "confirmations": {
         "publicNotice": {

@@ -18,7 +18,6 @@ import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
-import { GlobalErrorProvider } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
 import { chains, wagmiConfig } from '@app/utils/query'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
@@ -158,16 +157,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 <IntercomProvider appId={INTERCOM_ID}>
                   <GlobalStyle />
                   <ThorinGlobalStyles />
-                  <GlobalErrorProvider>
-                    <SyncProvider>
-                      <TransactionFlowProvider>
-                        <SyncDroppedTransaction>
-                          <Notifications />
-                          <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                        </SyncDroppedTransaction>
-                      </TransactionFlowProvider>
-                    </SyncProvider>
-                  </GlobalErrorProvider>
+                  <SyncProvider>
+                    <TransactionFlowProvider>
+                      <SyncDroppedTransaction>
+                        <Notifications />
+                        <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                      </SyncDroppedTransaction>
+                    </TransactionFlowProvider>
+                  </SyncProvider>
                 </IntercomProvider>
               </BreakpointProvider>
             </ThemeProvider>
