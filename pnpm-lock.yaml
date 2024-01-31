@@ -39,8 +39,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@ensdomains/ensjs':
-        specifier: 3.2.1
-        version: 3.2.1(typescript@5.3.3)(viem@1.21.4)
+        specifier: 3.3.0
+        version: 3.3.0(typescript@5.3.3)(viem@1.21.4)
       '@ensdomains/thorin':
         specifier: 0.6.44
         version: 0.6.44(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.6)
@@ -2246,8 +2246,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@ensdomains/ensjs@3.2.1(typescript@5.3.3)(viem@1.21.4):
-    resolution: {integrity: sha512-9MKVQaMfANUKPeV7GgalmX9paOZXDqlKYkKMmXmCHr1tLrp3fAQvCBkK8moDYw3zL8CLUYPFwCWoEw5p5hESfw==}
+  /@ensdomains/ensjs@3.3.0(typescript@5.3.3)(viem@1.21.4):
+    resolution: {integrity: sha512-pxCvIPsFMfnMBqhTrKQeQhvXV7vJtcD9QZbVHft56TE7gG70G6KpBHEJWdKnBVjr+ScCBO3iGjxfewQrglYmAA==}
     peerDependencies:
       viem: ^1.16.4
     dependencies:
