@@ -37,7 +37,7 @@ type ETH2LDBatchReturn = PickToNotNever<
   BaseBatchReturn,
   'ownerData' | 'wrapperData' | 'expiryData' | 'priceData'
 >
-type BatchReturn = Prettify<
+export type BatchReturn = Prettify<
   | RootBatchReturn
   | ShortBatchReturn
   | NormalBatchReturn
