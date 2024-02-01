@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import styled, { css } from 'styled-components'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'

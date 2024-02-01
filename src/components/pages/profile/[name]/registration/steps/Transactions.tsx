@@ -4,14 +4,14 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import {
-    AlertSVG,
-    Button,
-    CountdownCircle,
-    Dialog,
-    Heading,
-    mq,
-    Spinner,
-    Typography,
+  AlertSVG,
+  Button,
+  CountdownCircle,
+  Dialog,
+  Heading,
+  mq,
+  Spinner,
+  Typography,
 } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'

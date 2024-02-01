@@ -8,7 +8,6 @@ import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
@@ -104,7 +103,6 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const { address } = useAccount()
-  const transactions = useRecentTransactions()
 
   const nameDetails = useNameDetails({ name })
   const {

@@ -5,10 +5,10 @@ import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
 import {
-    ChildFuseKeys,
-    ChildFuseReferenceType,
-    ParentFuseKeys,
-    ParentFuseReferenceType,
+  ChildFuseKeys,
+  ChildFuseReferenceType,
+  ParentFuseKeys,
+  ParentFuseReferenceType,
 } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 

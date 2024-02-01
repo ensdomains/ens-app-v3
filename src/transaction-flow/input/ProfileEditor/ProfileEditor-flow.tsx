@@ -14,9 +14,9 @@ import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/r
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
 import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
 import {
-    getProfileRecordsDiff,
-    profileEditorFormToProfileRecords,
-    profileToProfileRecords,
+  getProfileRecordsDiff,
+  profileEditorFormToProfileRecords,
+  profileToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useChainId } from '@app/hooks/chain/useChainId'
