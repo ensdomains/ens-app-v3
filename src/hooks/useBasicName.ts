@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
+import { Address } from 'viem'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils'
 
+import { emptyAddress } from '@app/utils/constants'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
@@ -107,9 +109,7 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
     () =>
       !!(
         nameWrapperAddress &&
-        // TODO: type error
-        // @ts-ignore
-        nameWrapperAddress !== emptyAddress &&
+        (nameWrapperAddress as Address) !== emptyAddress &&
         !isWrapped &&
         normalisedName?.endsWith('.eth') &&
         !isLabelTooLong(normalisedName)

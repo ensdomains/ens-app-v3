@@ -1,6 +1,6 @@
 import { Dispatch, forwardRef, ReactNode, useMemo } from 'react'
 import styled, { css } from 'styled-components'
-import { Address } from 'viem'
+import { Address, getAddress } from 'viem'
 
 import {
   Button,
@@ -165,8 +165,11 @@ export const SelectImportType = ({
 }) => {
   const chainId = useChainId()
   const { data: tldResolver } = useResolver({ name: selected.name.split('.')[1] })
+
   const tldResolverIsOffchainResolver = useMemo(
-    () => tldResolver != null && tldResolver === offchainResolverMap[chainId],
+    // make addresses checksum-verified
+    () =>
+      tldResolver != null && getAddress(tldResolver) === getAddress(offchainResolverMap[chainId]!),
     [tldResolver, chainId],
   )
 
