@@ -1,5 +1,9 @@
 {
-  "title": "Import {{name}} into ENS",
+  "title": "Import {{name}} - ENS",
+  "gasless": {
+    "title": "Gasless importing is here!",
+    "description": "Importing DNS names onchain is currently disabled for maintenance. However, you can now import your DNS names for free, without a transaction."
+  },
   "general": {
     "connectWallet": "Please connect your wallet to continue",
     "importDNSSECName": "Import DNSSEC Name",

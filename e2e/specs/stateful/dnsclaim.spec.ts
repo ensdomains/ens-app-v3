@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
 import { test } from '@root/playwright'
 
-test.describe('Import DNSSEC name', () => {
+test.describe.skip('Import DNSSEC name', () => {
   test('should not proceed if DNSSEC is not enabled on that domain', async ({ page, login }) => {
     await page.goto('/notdnssec.com')
     await login.connect()

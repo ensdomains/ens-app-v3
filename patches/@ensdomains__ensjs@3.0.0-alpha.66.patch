@@ -1,0 +1,80 @@
+diff --git a/dist/cjs/functions/batchWrappers.js b/dist/cjs/functions/batchWrappers.js
+index 618e34c898c24485c5dfc979d0f0567d787640c5..bc15322597b492627b55e5a2f650bdf71bf4a7f8 100644
+--- a/dist/cjs/functions/batchWrappers.js
++++ b/dist/cjs/functions/batchWrappers.js
+@@ -37,8 +37,8 @@ const universalWrapper = {
+     return {
+       to: universalResolver.address,
+       data: universalResolver.interface.encodeFunctionData(
+-        "resolve(bytes,bytes)",
+-        [(0, import_hexEncodedName.hexEncodeName)(name), data]
++        "resolve(bytes,bytes,string[])",
++        [(0, import_hexEncodedName.hexEncodeName)(name), data, ["https://ccip-v2.ens.xyz"]]
+       )
+     };
+   },
+diff --git a/dist/cjs/functions/getProfile.js b/dist/cjs/functions/getProfile.js
+index 7e03c411f4020925f20d0de45b22b62d1085d54c..44ee5cdd819dfa76581410f0c9125434c4e17d9e 100644
+--- a/dist/cjs/functions/getProfile.js
++++ b/dist/cjs/functions/getProfile.js
+@@ -201,9 +201,10 @@ const getDataForName = async ({
+     }
+   } else {
+     try {
+-      const resolvedData = await universalResolver["resolve(bytes,bytes[])"](
++      const resolvedData = await universalResolver["resolve(bytes,bytes[],string[])"](
+         (0, import_hexEncodedName.hexEncodeName)(name),
+         data,
++        ["https://ccip-v2.ens.xyz"],
+         {
+           ccipReadEnabled: true
+         }
+@@ -211,7 +212,7 @@ const getDataForName = async ({
+       recordData = [...resolvedData["0"]];
+       resolverAddress = resolvedData["1"];
+       for (let i = 0; i < recordData.length; i += 1) {
+-        if (recordData[i].startsWith("0x0d1947a9") || recordData[i] === "0x") {
++        if (recordData[i].startsWith("0xca7a4e75") || recordData[i] === "0x") {
+           calls[i] = null;
+           recordData[i] = null;
+         }
+diff --git a/dist/esm/functions/batchWrappers.mjs b/dist/esm/functions/batchWrappers.mjs
+index ef55984bef916dc5fe69c898e71661b1b287dd61..e8ceb2581f32963bb8ce95dae03fe0c7cd3eb451 100644
+--- a/dist/esm/functions/batchWrappers.mjs
++++ b/dist/esm/functions/batchWrappers.mjs
+@@ -7,8 +7,8 @@ var universalWrapper = {
+     return {
+       to: universalResolver.address,
+       data: universalResolver.interface.encodeFunctionData(
+-        "resolve(bytes,bytes)",
+-        [hexEncodeName(name), data]
++        "resolve(bytes,bytes,string[])",
++        [hexEncodeName(name), data, ["https://ccip-v2.ens.xyz"]]
+       )
+     };
+   },
+diff --git a/dist/esm/functions/getProfile.mjs b/dist/esm/functions/getProfile.mjs
+index 61ed8d4d29bf70df517e85b5932e0df7f3814c23..db9a7ac8c438fea34ac29bcb77856d9095a2c9dc 100644
+--- a/dist/esm/functions/getProfile.mjs
++++ b/dist/esm/functions/getProfile.mjs
+@@ -183,9 +183,10 @@ var getDataForName = async ({
+     }
+   } else {
+     try {
+-      const resolvedData = await universalResolver["resolve(bytes,bytes[])"](
++      const resolvedData = await universalResolver["resolve(bytes,bytes[],string[])"](
+         hexEncodeName(name),
+         data,
++        ["https://ccip-v2.ens.xyz"],
+         {
+           ccipReadEnabled: true
+         }
+@@ -193,7 +194,7 @@ var getDataForName = async ({
+       recordData = [...resolvedData["0"]];
+       resolverAddress = resolvedData["1"];
+       for (let i = 0; i < recordData.length; i += 1) {
+-        if (recordData[i].startsWith("0x0d1947a9") || recordData[i] === "0x") {
++        if (recordData[i].startsWith("0xca7a4e75") || recordData[i] === "0x") {
+           calls[i] = null;
+           recordData[i] = null;
+         }

@@ -223,7 +223,8 @@
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
-      "@rainbow-me/rainbowkit@0.12.15": "patches/@rainbow-me__rainbowkit@0.12.15.patch"
+      "@rainbow-me/rainbowkit@0.12.15": "patches/@rainbow-me__rainbowkit@0.12.15.patch",
+      "@ensdomains/ensjs@3.0.0-alpha.66": "patches/@ensdomains__ensjs@3.0.0-alpha.66.patch"
     }
   }
 }
