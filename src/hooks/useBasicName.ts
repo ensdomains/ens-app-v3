@@ -131,6 +131,8 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
     isFetching,
     isFetchedAfterMount,
     status,
+    refetch,
+    isRefetching,
   } = useQuery(
     queryKey,
     async () =>
@@ -226,6 +228,7 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
     pccExpired,
     canBeWrapped,
     addrData: addrData as string | undefined,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    refetch,
+    isCachedData: isRefetching || (status === 'success' && isFetched && !isFetchedAfterMount),
   }
 }
