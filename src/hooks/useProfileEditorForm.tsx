@@ -8,6 +8,7 @@ import {
 import { ProfileRecord, ProfileRecordGroup } from '@app/constants/profileRecordOptions'
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { AvatarEditorType } from '@app/types'
+import { normalizeCoinAddress } from '@app/utils/coin'
 import { validateAccount } from '@app/validators/validateAccount'
 import { validateCryptoAddress } from '@app/validators/validateAddress'
 import { validateContentHash } from '@app/validators/validateContentHash'
@@ -86,7 +87,8 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     if (record.key === 'url') return validateUrl
     if (record.group === 'address')
       return (value?: string) => {
-        const result = validateCryptoAddress({ coin: record.key, address: value })
+        const address_ = normalizeCoinAddress({ coin: record.key, address: value })
+        const result = validateCryptoAddress({ coin: record.key, address: address_ })
         if (typeof result === 'string') {
           if (result === 'addressRequired') return t('errors.addressRequired', { ns: 'common' })
           return t('errors.invalidAddress', { ns: 'common' })

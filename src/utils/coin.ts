@@ -5,9 +5,15 @@ export const normalizeCoinAddress = ({
   address,
 }: {
   coin: string | number
-  address: string | null
+  address?: string | null
 }): string => {
   if (!address) return ''
-  if (coin === 'eth' || coin === 60) return getAddress(address)
+  if (coin === 'eth' || coin === 'ETH' || coin === 60) {
+    try {
+      return getAddress(address)
+    } catch {
+      return address
+    }
+  }
   return address
 }

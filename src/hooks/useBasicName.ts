@@ -108,6 +108,8 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
     () =>
       !!(
         nameWrapperAddress &&
+        // TODO: type error
+        // @ts-ignore
         nameWrapperAddress !== emptyAddress &&
         !isWrapped &&
         normalisedName?.endsWith('.eth') &&

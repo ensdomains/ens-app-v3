@@ -227,8 +227,8 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
   })()
 
   useEffect(() => {
-    if (profile) {
-      const newDefaultValues = convertProfileToProfileFormObject(profile)
+    const loadProfile = async (profile_: Profile) => {
+      const newDefaultValues = await convertProfileToProfileFormObject(profile_)
       const newExistingRecords: ExpandableRecordsState = {
         address: Object.keys(newDefaultValues.address) || [],
         other: Object.keys(newDefaultValues.other) || [],
@@ -284,6 +284,7 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
         }
       }
     }
+    if (profile) loadProfile(profile)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile, reset, overwrites])
 

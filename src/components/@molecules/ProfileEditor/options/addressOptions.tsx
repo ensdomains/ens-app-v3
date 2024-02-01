@@ -7,6 +7,7 @@ import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import coinsWithoutIcons from '@app/constants/coinsWithoutIcons.json'
 import { formSafeKey } from '@app/utils/editor'
+import { camelToConstant } from '@app/utils/name'
 
 const IconWrapper = styled.div(
   () => css`
@@ -35,8 +36,8 @@ const UnsupportedAddressWrapper = styled.div(
 )
 
 const coinsWithIconsOptions = coinsWithIcons.map((coin) => ({
-  value: formSafeKey(coin.toUpperCase()),
-  label: coin,
+  value: formSafeKey(coin),
+  label: camelToConstant(coin),
   node: <AddressWrapper>{coin}</AddressWrapper>,
   prefix: (
     <IconWrapper>
@@ -47,7 +48,7 @@ const coinsWithIconsOptions = coinsWithIcons.map((coin) => ({
 
 const coinsWithoutIconsOptions = coinsWithoutIcons.map((coin) => ({
   value: formSafeKey(coin),
-  label: coin.toUpperCase(),
+  label: camelToConstant(coin),
   node: <UnsupportedAddressWrapper>{coin.toUpperCase()}</UnsupportedAddressWrapper>,
 }))
 

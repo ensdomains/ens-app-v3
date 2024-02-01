@@ -82,7 +82,7 @@ test.describe.serial('normal registration', () => {
     await page.getByTestId('profile-record-input-input-name').fill('Test Name')
 
     // should show ETH record by default
-    await expect(page.getByTestId('profile-record-input-input-ETH')).toHaveValue(
+    await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
       accounts.getAddress('user'),
     )
 

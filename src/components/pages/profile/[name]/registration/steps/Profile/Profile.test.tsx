@@ -14,7 +14,7 @@ const name = 'test.eth'
 const defaultRegistrationData = {
   records: [
     {
-      key: 'ETH',
+      key: 'eth',
       value: '0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7',
       group: 'address',
       type: 'addr',
@@ -146,9 +146,9 @@ describe('Profile', () => {
       />,
     )
 
-    const ethRecord = screen.getByTestId('profile-record-input-ETH')
+    const ethRecord = screen.getByTestId('profile-record-input-eth')
     expect(ethRecord.querySelector('input')).toBeDisabled()
-    expect(screen.getByTestId('profile-record-input-ETH-delete-button')).toBeDisabled()
+    expect(screen.getByTestId('profile-record-input-eth-delete-button')).toBeDisabled()
   })
 
   it('should prompt user before deleting eth record', async () => {
@@ -161,7 +161,7 @@ describe('Profile', () => {
       />,
     )
 
-    await userEvent.click(screen.getByTestId('profile-record-input-ETH-delete-button'), {
+    await userEvent.click(screen.getByTestId('profile-record-input-eth-delete-button'), {
       pointerEventsCheck: PointerEventsCheckLevel.Never,
     })
     await waitFor(() =>

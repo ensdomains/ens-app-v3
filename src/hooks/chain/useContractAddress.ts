@@ -6,6 +6,7 @@ type UseContractAddressParameters = Omit<Parameters<typeof getChainContractAddre
 
 export const useContractAddress = (params: UseContractAddressParameters) => {
   const publicClient = usePublicClient()
-
+  // TODO: type error
+  // @ts-ignore
   return getChainContractAddress({ client: publicClient, ...params })
 }

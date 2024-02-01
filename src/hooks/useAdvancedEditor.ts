@@ -11,6 +11,7 @@ import addressOptions from '@app/components/@molecules/ProfileEditor/options/add
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { Profile } from '@app/types'
+import { getUsedAbiEncodeAs } from '@app/utils/abi'
 import { normalizeCoinAddress } from '@app/utils/coin'
 import {
   convertFormSafeKey,
@@ -18,6 +19,8 @@ import {
   formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
+
+import { usePublicClient } from './usePublicClient'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEditorType) => {
   const entries = []
@@ -68,14 +71,16 @@ type ExpandableRecordsState = {
 }
 
 type Props = {
+  name: string
   profile?: Profile
   isLoading: boolean
   overwrites?: RecordOptions
   callback: (data: RecordOptions) => void
 }
 
-const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) => {
+const useAdvancedEditor = ({ name, profile, isLoading, overwrites, callback }: Props) => {
   const { t } = useTranslation('profile')
+  const publicClient = usePublicClient()
 
   const {
     register,
@@ -247,13 +252,21 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
         setValue('other.contentHash', overwrites.contentHash, { shouldDirty: true })
       }
 
-      console.log('overwrites?.abi', overwrites?.abi)
       if (overwrites?.abi) {
-        const abi_ = {
-          contentType: getValues('other.abi.contentType'),
-          data: overwrites.abi.encodedData ? hexToString(overwrites.abi.encodedData) : '',
+        // If is array then we know we are deleting the abi
+        if (Array.isArray(overwrites.abi)) {
+          const abi_ = {
+            contentType: getValues('other.abi.contentType'),
+            data: '',
+          }
+          setValue('other.abi', abi_, { shouldDirty: true })
+        } else {
+          const abi_ = {
+            contentType: getValues('other.abi.contentType'),
+            data: overwrites.abi.encodedData ? hexToString(overwrites.abi.encodedData) : '',
+          }
+          setValue('other.abi', abi_, { shouldDirty: true })
         }
-        setValue('other.abi', abi_, { shouldDirty: true })
       }
 
       setShouldRunOverwritesScript(false)
@@ -279,19 +292,16 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
 
     const contentHash = dirtyFields.other?.contentHash
 
-    const abi: any = await match<[EncodedAbi['contentType'] | 0 | undefined, string | undefined]>([
-      dirtyFields.other?.abi?.contentType,
-      dirtyFields.other?.abi?.data,
-    ])
-      .with([P.union(0, 1, 2, 4, 8), P.not(P.nullish)], async ([, data]: [number, string]) =>
-        encodeAbi({ encodeAs: 'json', data: JSON.parse(data) }),
-      )
-      .with([P.union(1, 2, 4, 8), P.nullish], async () =>
-        encodeAbi({
-          encodeAs: 'json',
-          data: null,
-        }),
-      )
+    const abi: EncodedAbi | EncodedAbi[] | undefined = await match<
+      [EncodedAbi['contentType'] | 0 | undefined, string | undefined]
+    >([getValues('other.abi.contentType'), dirtyFields.other?.abi?.data])
+      .with([P.union(0, 1, 2, 4, 8), P.not(P.union('', undefined))], async ([, data]) => {
+        return encodeAbi({ encodeAs: 'json', data: JSON.parse(data!) })
+      })
+      .with([P.union(1, 2, 4, 8), P.union(P.nullish, '')], async () => {
+        const encodedAs = await getUsedAbiEncodeAs(publicClient, { name })
+        return Promise.all(encodedAs.map((encodeAs) => encodeAbi({ encodeAs, data: null })))
+      })
       .otherwise(() => undefined)
 
     const records: RecordOptions = {
@@ -300,7 +310,6 @@ const useAdvancedEditor = ({ profile, isLoading, overwrites, callback }: Props) 
       contentHash,
       abi,
     }
-
     callback(records)
   }
 

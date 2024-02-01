@@ -1,5 +1,5 @@
 import type { TFunction } from 'react-i18next'
-import { Address } from 'viem'
+import { Address, getAddress } from 'viem'
 
 import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
 import { getResolver } from '@ensdomains/ensjs/public'
@@ -44,11 +44,17 @@ const transaction = async ({
     ? getChainContractAddress({ client: publicClient, contract: 'ensPublicResolver' })
     : await getResolver(publicClient, { name: data.name })
   if (!resolverAddress) throw new Error('No resolver found')
+  let address
+  try {
+    address = getAddress(data.address)
+  } catch (e) {
+    throw new Error('Invalid address')
+  }
   return setAddressRecord.makeFunctionData(walletClient, {
     name: data.name,
     resolverAddress,
-    coin: 'ETH',
-    value: data.address,
+    coin: 'eth',
+    value: address,
   })
 }
 

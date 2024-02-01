@@ -50,15 +50,21 @@ export const useProfile = ({
         ...supportedGeneralRecordKeys,
         ...(subgraphRecords?.texts || []),
       ]),
-    ],
+    ] as [string, ...string[]],
     coins: [
       ...new Set([
         ...supportedAddresses.map((coinName) => getCoderByCoinName(coinName).coinType),
         ...(subgraphRecords?.coins
           .map((coinId) => parseInt(coinId))
-          .filter((coinId) => !!getCoderByCoinType(coinId)) || []),
+          .filter((coinId) => {
+            try {
+              return !!getCoderByCoinType(coinId)
+            } catch {
+              return false
+            }
+          }) || []),
       ]),
-    ],
+    ] as [number, ...number[]],
     abi: true,
     contentHash: true,
     enabled: enabled && !!name,

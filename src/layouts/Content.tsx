@@ -9,6 +9,7 @@ import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useContentWarning } from '@app/hooks/useContentWarning'
 import { useCopied } from '@app/hooks/useCopied'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 type BannerProps = ComponentProps<typeof Banner>
@@ -253,6 +254,7 @@ export const Content = ({
     trailing: React.ReactNode
   }
 }) => {
+  const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
   const isDesktopMode = breakpoints.sm
 
@@ -280,6 +282,8 @@ export const Content = ({
   if (!children.leading && singleColumnContent) LeadingComponent = null
 
   const fullTitle = `${title} - ENS`
+
+  if (!router.isReady) return null
   return (
     <>
       {!noTitle && (
