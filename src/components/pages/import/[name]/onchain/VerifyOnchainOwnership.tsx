@@ -12,11 +12,7 @@ import { shortenAddress } from '@app/utils/utils'
 import { DnsDisplayValue, SuccessHelper } from '../shared'
 import { StatusChecker } from '../StatusChecker'
 import { SupportLinkList } from '../SupportLinkList'
-import {
-  DnsImportReducerAction,
-  DnsImportReducerDataItem,
-  SelectedItemProperties,
-} from '../useDnsImportReducer'
+import { DnsImportReducerAction, SelectedItemProperties } from '../useDnsImportReducer'
 import { checkDnsOwnerError, checkDnsOwnerMatch } from '../utils'
 
 const StyledCard = styled(Card)(
@@ -105,11 +101,9 @@ const RecordItemWrapper = styled.div(
 
 export const VerifyOnchainOwnership = ({
   dispatch,
-  item,
   selected,
 }: {
   dispatch: Dispatch<DnsImportReducerAction>
-  item: DnsImportReducerDataItem
   selected: SelectedItemProperties
 }) => {
   const {

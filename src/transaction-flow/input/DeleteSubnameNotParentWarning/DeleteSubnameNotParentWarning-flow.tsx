@@ -7,7 +7,7 @@ import { Button, Dialog, mq } from '@ensdomains/thorin'
 import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
 import { useOwners } from '@app/hooks/useOwners'
 import { useParentBasicName } from '@app/hooks/useParentBasicName'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
@@ -56,7 +56,7 @@ const DeleteSubnameNotParentWarning = ({ data, dispatch, onDismiss }: Props) => 
     dispatch({
       name: 'setTransactions',
       payload: [
-        makeTransactionItem('deleteSubname', {
+        createTransactionItem('deleteSubname', {
           name: data.name,
           contract: data.contract,
           method: 'setRecord',

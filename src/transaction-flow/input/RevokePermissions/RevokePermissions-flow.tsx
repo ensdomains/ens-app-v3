@@ -5,14 +5,14 @@ import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
 import {
-  ChildFuseKeys,
-  ChildFuseReferenceType,
-  ParentFuseKeys,
-  ParentFuseReferenceType,
+    ChildFuseKeys,
+    ChildFuseReferenceType,
+    ParentFuseKeys,
+    ParentFuseReferenceType,
 } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import type changePermissions from '@app/transaction-flow/transaction/changePermissions'
 import { TransactionDialogPassthrough, TransactionFlowAction } from '@app/transaction-flow/types'
 import { ExtractTransactionData } from '@app/types'
@@ -272,7 +272,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
       dispatch({
         name: 'setTransactions',
         payload: [
-          makeTransactionItem('changePermissions', {
+          createTransactionItem('changePermissions', {
             name,
             contract: 'setChildFuses',
             fuses: {
@@ -287,7 +287,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
       dispatch({
         name: 'setTransactions',
         payload: [
-          makeTransactionItem('changePermissions', {
+          createTransactionItem('changePermissions', {
             name,
             contract: 'setFuses',
             fuses: childNamedFuses,

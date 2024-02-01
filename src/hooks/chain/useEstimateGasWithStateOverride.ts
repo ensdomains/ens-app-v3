@@ -12,6 +12,7 @@ import {
   hexToBigInt,
   keccak256,
   padHex,
+  parseEther,
   RpcTransactionRequest,
   toHex,
   TransactionRequest,
@@ -27,6 +28,7 @@ import {
 } from '@app/transaction-flow/transaction'
 import {
   CreateQueryKey,
+  Prettify,
   PublicClientWithChain,
   QueryConfig,
   WalletClientWithAccount,
@@ -74,15 +76,30 @@ type StateOverride<Quantity256 = bigint, Quantity = number> = {
   }
 }
 
-type UseEstimateGasWithStateOverrideParameters<TName extends TransactionName> = Omit<
-  TransactionParameters<TName>,
-  'publicClient' | 'walletClient'
-> & {
-  name: TName
-  stateOverride?: UserStateOverrides
+type TransactionItem = {
+  [TName in TransactionName]: Omit<
+    TransactionParameters<TName>,
+    'publicClient' | 'walletClient'
+  > & { name: TName; stateOverride?: UserStateOverrides }
+}[TransactionName]
+
+type UseEstimateGasWithStateOverrideParameters<
+  TransactionItems extends TransactionItem[] | readonly TransactionItem[],
+> = {
+  transactions: TransactionItems
 }
 
-type UseEstimateGasWithStateOverrideReturnType = bigint
+type GasEstimateArray<TransactionItems extends TransactionItem[] | readonly TransactionItem[]> =
+  Prettify<{
+    [n in keyof TransactionItems]: bigint
+  }>
+
+type UseEstimateGasWithStateOverrideReturnType<
+  TransactionItems extends TransactionItem[] | readonly TransactionItem[] = TransactionItem[],
+> = {
+  reduced: bigint
+  gasEstimates: GasEstimateArray<TransactionItems>
+}
 
 type UseEstimateGasWithStateOverrideConfig = QueryConfig<
   UseEstimateGasWithStateOverrideReturnType,
@@ -90,8 +107,8 @@ type UseEstimateGasWithStateOverrideConfig = QueryConfig<
 >
 
 type QueryKey<
-  TName extends TransactionName,
-  TParams extends UseEstimateGasWithStateOverrideParameters<TName>,
+  TransactionItems extends TransactionItem[] | readonly TransactionItem[],
+  TParams extends UseEstimateGasWithStateOverrideParameters<TransactionItems>,
 > = CreateQueryKey<TParams, 'estimateGasWithStateOverride', 'standard'>
 
 const leftPadBytes32 = (hex: Hex) => padHex(hex, { dir: 'left', size: 32 })
@@ -118,15 +135,94 @@ const mapUserState = (state: UserStateValue[]) =>
     }),
   )
 
+export const addStateOverride = <
+  const TTransactionItem extends TransactionItem | Readonly<TransactionItem>,
+  const TStateOverride extends UserStateOverrides,
+>({
+  item,
+  stateOverride,
+}: {
+  item: TTransactionItem
+  stateOverride: TStateOverride
+}) =>
+  ({
+    ...item,
+    stateOverride,
+  }) as Prettify<TTransactionItem & { stateOverride: TStateOverride }>
+
+const estimateIndividualGas = async <TName extends TransactionName>({
+  data,
+  name,
+  stateOverride,
+  walletClient,
+  publicClient,
+}: { name: TName; stateOverride?: UserStateOverrides } & TransactionParameters<TName>) => {
+  const generatedRequest = await createTransactionRequest({
+    publicClient,
+    walletClient,
+    data,
+    name,
+  })
+
+  const formattedRequest = formatTransactionRequest({
+    ...generatedRequest,
+    from: walletClient.account.address,
+  } as TransactionRequest)
+
+  const stateOverrideWithBalance = stateOverride?.find(
+    (s) => s.address === walletClient.account.address,
+  )
+    ? stateOverride
+    : [
+        ...(stateOverride || []),
+        {
+          address: walletClient.account.address,
+          balance:
+            ('value' in generatedRequest && generatedRequest.value ? generatedRequest.value : 0n) +
+            parseEther('10'),
+        },
+      ]
+
+  const formattedOverrides = Object.fromEntries(
+    (stateOverrideWithBalance || []).map(({ address, balance, nonce, code, state, stateDiff }) => [
+      address,
+      {
+        ...(state ? { state: mapUserState(state) } : {}),
+        ...(stateDiff ? { stateDiff: mapUserState(stateDiff) } : {}),
+        ...(code ? { code } : {}),
+        ...(balance ? { balance: toHex(balance) } : {}),
+        ...(nonce ? { nonce: toHex(nonce) } : {}),
+      },
+    ]),
+  )
+
+  return publicClient
+    .request<{
+      Method: 'eth_estimateGas'
+      Parameters:
+        | [transaction: RpcTransactionRequest]
+        | [transaction: RpcTransactionRequest, block: BlockNumber | BlockTag]
+        | [
+            transaction: RpcTransactionRequest,
+            block: BlockNumber | BlockTag,
+            overrides: StateOverride<Hex, Hex>,
+          ]
+      ReturnType: Hex
+    }>({
+      method: 'eth_estimateGas',
+      params: [formattedRequest, 'latest', formattedOverrides],
+    })
+    .then((g) => hexToBigInt(g))
+}
+
 export const estimateGasWithStateOverrideQueryFn =
   (walletClient: WalletClient | undefined) =>
   async <
-    TName extends TransactionName,
-    TParams extends UseEstimateGasWithStateOverrideParameters<TName>,
+    TransactionItems extends TransactionItem[] | readonly TransactionItem[],
+    TParams extends UseEstimateGasWithStateOverrideParameters<TransactionItems>,
   >({
-    queryKey: [{ stateOverride, data, name }, chainId],
-  }: QueryFunctionContext<QueryKey<TName, TParams>>) => {
-    console.log('running state override query')
+    queryKey: [{ transactions }, chainId],
+  }: QueryFunctionContext<QueryKey<TransactionItems, TParams>>) => {
     const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
 
     const walletClientWithAccount = {
@@ -141,50 +237,25 @@ export const estimateGasWithStateOverrideQueryFn =
           }),
     } as WalletClientWithAccount
 
-    const generatedRequest = await createTransactionRequest({
-      publicClient,
-      walletClient: walletClientWithAccount,
-      data,
-      name,
-    })
-
-    const formattedRequest = formatTransactionRequest({
-      ...generatedRequest,
-      from: walletClientWithAccount.account.address,
-    } as TransactionRequest)
-
-    console.log('formattedRequest', formattedRequest)
-
-    const formattedOverrides = Object.fromEntries(
-      (stateOverride || []).map(({ address, balance, nonce, code, state, stateDiff }) => [
-        address,
-        {
-          ...(state ? { state: mapUserState(state) } : {}),
-          ...(stateDiff ? { stateDiff: mapUserState(stateDiff) } : {}),
-          ...(code ? { code } : {}),
-          ...(balance ? { balance: toHex(balance) } : {}),
-          ...(nonce ? { nonce: toHex(nonce) } : {}),
-        },
-      ]),
+    const gasEstimates = await Promise.all(
+      transactions.map((t) =>
+        estimateIndividualGas({
+          ...t,
+          publicClient,
+          walletClient: walletClientWithAccount,
+        }),
+      ),
     )
 
-    return publicClient
-      .request<{
-        Method: 'eth_estimateGas'
-        Parameters:
-          | [transaction: RpcTransactionRequest]
-          | [transaction: RpcTransactionRequest, block: BlockNumber | BlockTag]
-          | [
-              transaction: RpcTransactionRequest,
-              block: BlockNumber | BlockTag,
-              overrides: StateOverride<Hex, Hex>,
-            ]
-        ReturnType: Hex
-      }>({ method: 'eth_estimateGas', params: [formattedRequest, 'latest', formattedOverrides] })
-      .then((g) => hexToBigInt(g))
+    return {
+      reduced: gasEstimates.reduce((acc, curr) => acc + curr, 0n),
+      gasEstimates,
+    }
   }
 
-export const useEstimateGasWithStateOverride = <TName extends TransactionName>({
+export const useEstimateGasWithStateOverride = <
+  const TransactionItems extends TransactionItem[] | readonly TransactionItem[],
+>({
   // config
   cacheTime = 60,
   enabled = true,
@@ -195,7 +266,8 @@ export const useEstimateGasWithStateOverride = <TName extends TransactionName>({
   onSuccess,
   // params
   ...params
-}: UseEstimateGasWithStateOverrideParameters<TName> & UseEstimateGasWithStateOverrideConfig) => {
+}: UseEstimateGasWithStateOverrideParameters<TransactionItems> &
+  UseEstimateGasWithStateOverrideConfig) => {
   const { data: walletClient, isLoading: isWalletClientLoading } = useWalletClientWithAccount()
 
   const queryKey = useQueryKeyFactory({
@@ -214,28 +286,38 @@ export const useEstimateGasWithStateOverride = <TName extends TransactionName>({
     onError,
     onSettled,
     onSuccess,
-    select: (r) => BigInt(r),
+    select: (r) => ({
+      reduced: BigInt(r.reduced),
+      gasEstimates: r.gasEstimates.map((g) => BigInt(g)),
+    }),
   })
 
   const data = useMemo(() => {
     if (!gasPrice || !query.data) {
       return {
+        gasEstimate: 0n,
+        gasEstimateArray: params.transactions.map(() => 0n) as GasEstimateArray<TransactionItems>,
         gasCost: 0n,
         gasCostEth: '0',
       }
     }
 
-    const gasCost_ = gasPrice * query.data
+    const gasEstimate = query.data.reduced
+    const gasEstimateArray = query.data.gasEstimates as GasEstimateArray<TransactionItems>
+    const gasCost_ = gasPrice * gasEstimate
 
     return {
+      gasEstimate,
+      gasEstimateArray,
       gasCost: gasCost_,
       gasCostEth: formatEther(gasCost_),
     }
-  }, [gasPrice, query.data])
+  }, [gasPrice, params.transactions, query.data])
 
   return {
     ...query,
     data,
+    gasPrice,
     isLoading: query.isLoading || isGasPriceLoading || isWalletClientLoading,
     isFetching: query.isFetching || isGasPriceFetching,
     isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,

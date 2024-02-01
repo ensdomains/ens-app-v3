@@ -71,7 +71,7 @@ export type TransactionReturnType<T extends TransactionName> = ReturnType<
   Transaction[T]['transaction']
 >
 
-export const makeTransactionItem = <T extends TransactionName>(
+export const createTransactionItem = <T extends TransactionName>(
   name: T,
   data: TransactionData<T>,
 ) => ({
@@ -91,3 +91,7 @@ export type TransactionItem<TName extends TransactionName = TransactionName> = {
   name: TName
   data: TransactionData<TName>
 }
+
+export type TransactionItemUnion = {
+  [TName in TransactionName]: TransactionItem<TName>
+}[TransactionName]

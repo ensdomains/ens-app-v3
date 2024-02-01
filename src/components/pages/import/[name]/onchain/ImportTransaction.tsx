@@ -1,6 +1,6 @@
-import { Dispatch, useMemo } from 'react'
+import { Dispatch, useEffect, useMemo } from 'react'
 import styled, { css } from 'styled-components'
-import { Address, Hex, padHex } from 'viem'
+import { Address } from 'viem'
 
 import { Button, CurrencyToggle, Heading, Helper, mq, Typography } from '@ensdomains/thorin'
 
@@ -9,22 +9,21 @@ import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { Card } from '@app/components/Card'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
+import {
+  addStateOverride,
+  useEstimateGasWithStateOverride,
+} from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useGasPrice } from '@app/hooks/chain/useGasPrice'
 import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
-import { useEstimateGasLimitForTransaction } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
 import { useApprovedForAll } from '@app/hooks/useApprovedForAll'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import useUserConfig from '@app/utils/useUserConfig'
 import { shortenAddress } from '@app/utils/utils'
 
-import {
-  DnsImportReducerAction,
-  DnsImportReducerDataItem,
-  SelectedItemProperties,
-} from '../useDnsImportReducer'
+import { DnsImportReducerAction, SelectedItemProperties } from '../useDnsImportReducer'
 import { checkDnsOwnerMatch } from '../utils'
 
 const StyledCard = styled(Card)(
@@ -113,6 +112,7 @@ const InvoiceDnsOwnerContainer = styled.div(
     align-items: center;
     justify-content: flex-start;
     gap: ${theme.space['2']};
+    text-align: right;
   `,
 )
 
@@ -134,30 +134,18 @@ const InvoiceDnsOwner = ({ dnsOwner }: { dnsOwner: Address }) => {
   )
 }
 
-const leftPadBytes32 = (hex: Hex) => padHex(hex, { dir: 'left', size: 32 })
-
 export const ImportTransaction = ({
   dispatch,
-  item,
   selected,
 }: {
   dispatch: Dispatch<DnsImportReducerAction>
-  item: DnsImportReducerDataItem
   selected: SelectedItemProperties
 }) => {
   const { gasPrice } = useGasPrice()
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
-  const {
-    data: dnsOwner,
-    isLoading,
-    isError,
-    isRefetching,
-    error,
-    refetch,
-    internal: { dataUpdatedAt },
-  } = useDnsOwner({ name: selected.name })
+  const { data: dnsOwner, isLoading, isError, isRefetching } = useDnsOwner({ name: selected.name })
 
   const { address } = selected
 
@@ -179,72 +167,100 @@ export const ImportTransaction = ({
 
   const publicResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
   const dnsRegistrarAddress = useContractAddress({
-    contract: 'ensDnsRegistrar' as 'ensRegistry' /* TODO: fix this */,
+    contract: 'ensDnsRegistrar',
   })
-
-  // const {} = useEstimateGasWithStateOverride({
-  //   ...makeTransactionItem('claimDnsName', {
-  //     name: selected.name,
-  //     dnsImportData: dnsImportData!,
-  //     address: selected.address!,
-  //   }),
-  //   ...createTransactionRequest({
-  //     name: 'claimDnsName',
-  //     data: {
-  //       name: selected.name,
-  //       dnsImportData: dnsImportData!,
-  //       address: selected.address!,
-  //     }
-  //   })
-  //   enabled: dnsOwnerStatus === 'matching',
-  // })
 
   const requiresApproval =
     dnsOwnerStatus === 'matching' && isApprovedForAll === false && isApprovalFetched
 
+  const { transactions, estimators } = useMemo(() => {
+    const createApproveTx = () =>
+      createTransactionItem('approveDnsRegistrar', {
+        address: selected.address!,
+      })
+    const createClaimTx = () =>
+      createTransactionItem('claimDnsName', {
+        name: selected.name,
+        dnsImportData: dnsImportData!,
+        address: selected.address!,
+      })
+    const createImportTx = () =>
+      createTransactionItem('importDnsName', {
+        name: selected.name,
+        dnsImportData: dnsImportData!,
+      })
+
+    if (dnsOwnerStatus === 'matching') {
+      const claimTx = createClaimTx()
+      if (requiresApproval) {
+        const claimTxWithOverride = addStateOverride({
+          item: claimTx,
+          stateOverride: [
+            {
+              address: publicResolverAddress,
+              stateDiff: [
+                // `_operatorApprovals[owner][dnsRegistrarAddress] = true`
+                {
+                  slot: 11,
+                  keys: [selected.address!, dnsRegistrarAddress],
+                  value: true,
+                },
+              ],
+            },
+          ],
+        })
+        const approvalTx = createApproveTx()
+        return {
+          transactions: [approvalTx, claimTx],
+          estimators: [approvalTx, claimTxWithOverride],
+        } as const
+      }
+      return { transactions: [claimTx] } as const
+    }
+    return { transactions: [createImportTx()] } as const
+  }, [
+    dnsOwnerStatus,
+    selected.address,
+    selected.name,
+    dnsImportData,
+    requiresApproval,
+    publicResolverAddress,
+    dnsRegistrarAddress,
+  ])
+
   const {
     data: { gasCost },
+    isLoading: isEstimateLoading,
   } = useEstimateGasWithStateOverride({
-    name: 'claimDnsName',
-    data: {
-      address: selected.address!,
-      dnsImportData: dnsImportData!,
-      name: selected.name,
-    },
-    enabled: !!dnsImportData && dnsOwnerStatus === 'matching',
-    stateOverride: [
-      {
-        address: publicResolverAddress,
-        stateDiff: [
-          // `_operatorApprovals[owner][dnsRegistrarAddress] = true`
-          {
-            slot: 11,
-            keys: [selected.address!, dnsRegistrarAddress],
-            value: true,
-          },
-        ],
-      },
-    ],
-    // stateOverride: {
-    //   [publicResolverAddress]: {
-    //     stateDiff: {
-    //       [keccak256(
-    //         concatHex([
-    //           leftPadBytes32(dnsRegistrarAddress),
-    //           keccak256(concatHex([leftPadBytes32(selected.address!), leftPadBytes32(toHex(11))])),
-    //         ]),
-    //       )]: leftPadBytes32('0x01'),
-    //     },
-    //   },
-    // },
+    transactions: estimators || transactions,
+    enabled: !!dnsImportData && (!requiresApproval || isApprovalFetched),
   })
 
-  const { gasCost: approvalGasCost } = useEstimateGasLimitForTransaction({
-    transaction: makeTransactionItem('approveDnsRegistrar', {
-      address: selected.address!,
-    }),
-    enabled: requiresApproval,
-  })
+  const { createTransactionFlow, resumeTransactionFlow, getResumable, getLatestTransaction } =
+    useTransactionFlow()
+
+  const key = `importDnsName-${selected.name}`
+
+  const resumable = getResumable(key)
+
+  const tx = getLatestTransaction(key)
+
+  const isComplete =
+    tx?.stage === 'complete' && (tx.name === 'claimDnsName' || tx.name === 'importDnsName')
+
+  const startOrResumeFlow = () => {
+    if (resumable) return resumeTransactionFlow(key)
+    return createTransactionFlow(key, {
+      transactions,
+      resumable: true,
+    })
+  }
+
+  useEffect(() => {
+    if (isComplete) {
+      dispatch({ name: 'increaseStep', selected })
+    }
+  }, [dispatch, isComplete, selected])
 
   return (
     <StyledCard>
@@ -272,11 +288,11 @@ export const ImportTransaction = ({
         </OptionBar>
         <InvoiceItemBox>
           <Typography>Estimated network cost</Typography>
-          <CurrencyText eth={gasCost + approvalGasCost} currency={currencyDisplay} />
+          <CurrencyText eth={gasCost} currency={currencyDisplay} />
         </InvoiceItemBox>
         <InvoiceItemBox>
           <Typography>Owner</Typography>
-          <InvoiceDnsOwner dnsOwner={dnsOwner!} />
+          {dnsOwner && <InvoiceDnsOwner dnsOwner={dnsOwner} />}
         </InvoiceItemBox>
       </InvoiceContainer>
       {dnsOwnerStatus === 'mismatching' && (
@@ -293,8 +309,9 @@ export const ImportTransaction = ({
           Back
         </ResponsiveButton>
         <ResponsiveButton
-          disabled={!dnsOwner || isLoading || isRefetching || isError}
-          onClick={() => dispatch({ name: 'increaseStep', selected })}
+          disabled={!dnsOwner || isLoading || isRefetching || isError || gasCost === 0n}
+          loading={isLoading || isEstimateLoading}
+          onClick={() => startOrResumeFlow()}
         >
           {dnsOwnerStatus === 'mismatching' ? 'Import' : 'Claim'}
         </ResponsiveButton>

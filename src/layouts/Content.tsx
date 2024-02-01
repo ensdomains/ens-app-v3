@@ -208,7 +208,7 @@ const CompactTitle = ({
             weight="bold"
             style={{ maxWidth: titleWidth, overflow: 'hidden' }}
           >
-            {title}
+            {title || ''}
           </Title>
           {subtitle && <Subtitle weight="bold">{subtitle}</Subtitle>}
         </TitleContainer>

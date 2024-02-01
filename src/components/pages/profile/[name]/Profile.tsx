@@ -17,7 +17,6 @@ import { Content, ContentWarning } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
 import { formatFullExpiry, getEncodedLabelAmount } from '@app/utils/utils'
 
-import { shouldShowSuccessPage } from '../../import/old/shared'
 import MoreTab from './tabs/MoreTab/MoreTab'
 import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
 import { PermissionsTab } from './tabs/PermissionsTab/PermissionsTab'
@@ -202,11 +201,11 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     }
   }, [isSelf, name, router])
 
-  useEffect(() => {
-    if (shouldShowSuccessPage(transactions)) {
-      router.push(`/import/${name}`)
-    }
-  }, [name, router, transactions])
+  // useEffect(() => {
+  //   if (shouldShowSuccessPage(transactions)) {
+  //     router.push(`/import/${name}`)
+  //   }
+  // }, [name, router, transactions])
 
   const infoBanner = useMemo(() => {
     if (

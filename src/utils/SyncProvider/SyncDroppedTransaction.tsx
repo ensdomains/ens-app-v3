@@ -83,7 +83,10 @@ export const findDroppedTransactions = async (
   }
 
   const etherscanEndpoint = getAccountHistoryEndpoint(address, chainId)
-  const etherscanResponse = await fetch(etherscanEndpoint)
+  const etherscanResponse = await fetch(etherscanEndpoint).catch((e) => {
+    console.error(e)
+    return { ok: false } as const
+  })
   const etherscanJson: EtherscanMinedData[] = etherscanResponse.ok
     ? await etherscanResponse.json()
     : []

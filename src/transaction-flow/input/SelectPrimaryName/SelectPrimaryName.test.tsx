@@ -10,11 +10,11 @@ import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetP
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 
 import SelectPrimaryName, {
-  getNameFromUnknownLabels,
-  hasEncodedLabel,
+    getNameFromUnknownLabels,
+    hasEncodedLabel,
 } from './SelectPrimaryName-flow'
 
 const encodeLabel = (label: string) => `[${labelhash(label).slice(2)}]`
@@ -88,7 +88,7 @@ mockUseProfile.mockReturnValue({
 const mockUseGetPrimaryNameTransactionItem = mockFunction(useGetPrimaryNameTransactionFlowItem)
 mockUseGetPrimaryNameTransactionItem.mockReturnValue({
   callBack: () => ({
-    transactions: [makeTransactionItem('setPrimaryName', { name: 'test.eth', address: '0x123' })],
+    transactions: [createTransactionItem('setPrimaryName', { name: 'test.eth', address: '0x123' })],
   }),
   isLoading: false,
 })

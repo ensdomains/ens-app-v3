@@ -27,6 +27,8 @@ const abiTouple = (abi?: RecordOptions['abi'], deleteLabel = 'delete'): [string,
     .with({ encodedData: P.not(P.nullish), contentType: 1 }, ({ encodedData }) =>
       hexToString(encodedData),
     )
+    // TODO: FIX!!!!!!!!!!!!!!!!!!!!!!!
+    // @ts-expect-error
     .with(null, () => null)
     .otherwise(() => undefined)
   if (abiStr === null) return [[deleteLabel, 'abi']]

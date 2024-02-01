@@ -39,6 +39,8 @@ type NormalizedAbi = { contentType: number | undefined; data: string }
 export const decodeAbi = (abi: RecordOptions['abi'] | string): NormalizedAbi | undefined => {
   if (!abi) return undefined
   if (typeof abi === 'string') return { contentType: 8, data: abi }
+  // TODO: FIX!!!!!!!!!!!!!!!!!!!!!!
+  // @ts-expect-error
   const { contentType, encodedData: encodedAbiData } = abi
   if (!contentType || !encodedAbiData) return { contentType: 8, data: '' }
   let abiData: string | object

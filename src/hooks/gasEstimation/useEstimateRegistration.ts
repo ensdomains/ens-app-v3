@@ -12,11 +12,11 @@ import { useGasPrice } from '../chain/useGasPrice'
 import { usePrice } from '../ensjs/public/usePrice'
 import useRegistrationParams from '../useRegistrationParams'
 
-const gasLimitDictionary = {
-  COMMIT: 42000n,
-  RENEW: 61818n,
-  REGISTER: 265428n,
-}
+// const gasLimitDictionary = {
+//   COMMIT: 42000n,
+//   RENEW: 61818n,
+//   REGISTER: 265428n,
+// }
 
 type UseEstimateFullRegistrationParameters = {
   registrationData: RegistrationReducerDataItem
@@ -47,42 +47,42 @@ export const useEstimateFullRegistration = ({
   const fiveMinutesAgoInSeconds = useMemo(() => Math.floor((Date.now() - 1000 * 60 * 5) / 1000), [])
 
   const { data, isLoading } = useEstimateGasWithStateOverride({
-    name: 'registerName',
-    data: registrationParams,
-    stateOverride: [
+    transactions: [
       {
-        address: ethRegistrarControllerAddress,
-        stateDiff: [
-          {
-            slot: 1,
-            keys: [commitment],
-            value: BigInt(fiveMinutesAgoInSeconds),
-          },
-        ],
+        name: 'commitName',
+        data: registrationParams,
       },
       {
-        address: registrationParams.owner,
-        balance: price ? price.base + price.premium + parseEther('10') : undefined,
+        name: 'registerName',
+        data: registrationParams,
+        stateOverride: [
+          {
+            address: ethRegistrarControllerAddress,
+            stateDiff: [
+              {
+                slot: 1,
+                keys: [commitment],
+                value: BigInt(fiveMinutesAgoInSeconds),
+              },
+            ],
+          },
+          {
+            address: registrationParams.owner,
+            balance: price ? price.base + price.premium + parseEther('10') : undefined,
+          },
+        ],
       },
     ],
     enabled: !!ethRegistrarControllerAddress && !!price,
   })
-
-  const estimatedGasFee = useMemo(() => {
-    return data.gasCost && gasPrice
-      ? data.gasCost + gasLimitDictionary.COMMIT * gasPrice
-      : undefined
-  }, [data.gasCost, gasPrice])
 
   const yearlyFee = price?.base
   const premiumFee = price?.premium
   const hasPremium = !!premiumFee && premiumFee > 0n
   const totalYearlyFee = yearlyFee ? yearlyFee * BigInt(registrationData.years) : 0n
 
-  console.log('estimatedGasFee', estimatedGasFee)
-
   return {
-    estimatedGasFee,
+    estimatedGasFee: data.gasCost,
     estimatedGasLoading: isLoading || gasPriceLoading,
     yearlyFee,
     totalYearlyFee,

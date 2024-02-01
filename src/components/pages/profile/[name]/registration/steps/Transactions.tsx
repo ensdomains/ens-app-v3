@@ -4,21 +4,21 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import {
-  AlertSVG,
-  Button,
-  CountdownCircle,
-  Dialog,
-  Heading,
-  mq,
-  Spinner,
-  Typography,
+    AlertSVG,
+    Button,
+    CountdownCircle,
+    Dialog,
+    Heading,
+    mq,
+    Spinner,
+    Typography,
 } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { RegistrationReducerDataItem } from '../types'
@@ -160,7 +160,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const makeCommitNameFlow = useCallback(() => {
     onStart()
     createTransactionFlow(commitKey, {
-      transactions: [makeTransactionItem('commitName', registrationParams)],
+      transactions: [createTransactionItem('commitName', registrationParams)],
       requiresManualCleanup: true,
       autoClose: true,
       resumeLink: `/register/${name}`,
@@ -169,7 +169,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
 
   const makeRegisterNameFlow = () => {
     createTransactionFlow(registerKey, {
-      transactions: [makeTransactionItem('registerName', registrationParams)],
+      transactions: [createTransactionItem('registerName', registrationParams)],
       requiresManualCleanup: true,
       autoClose: true,
       resumeLink: `/register/${name}`,

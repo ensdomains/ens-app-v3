@@ -14,7 +14,7 @@ import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useOwners } from '@app/hooks/useOwners'
 import { makeIntroItem } from '@app/transaction-flow/intro'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { OwnerItem } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
@@ -226,7 +226,7 @@ const DNSOwnerSection = ({
         content: makeIntroItem('SyncManager', { isWrapped, manager: currentManager!.address }),
       },
       transactions: [
-        makeTransactionItem('syncManager', {
+        createTransactionItem('syncManager', {
           address: address!,
           name,
           dnsImportData: dnsImportData!,

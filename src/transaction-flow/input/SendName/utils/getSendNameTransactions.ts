@@ -1,7 +1,7 @@
 import { Address } from 'viem'
 
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
 
 import type { SendNameForm } from '../SendName-flow'
@@ -28,9 +28,9 @@ export const getSendNameTransactions = ({
   const setEthRecordAndResetProfile = transactions.resetProfile
 
   const _transactions = [
-    setEthRecordOnly ? makeTransactionItem('updateEthAddress', { name, address: recipient }) : null,
+    setEthRecordOnly ? createTransactionItem('updateEthAddress', { name, address: recipient }) : null,
     setEthRecordAndResetProfile && resolverAddress
-      ? makeTransactionItem('resetProfileWithRecords', {
+      ? createTransactionItem('resetProfileWithRecords', {
           name,
           records: {
             coins: [{ coin: 'ETH', value: recipient }],

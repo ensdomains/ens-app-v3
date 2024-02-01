@@ -8,6 +8,7 @@ import { useValidate } from '@app/hooks/useValidate'
 import { Content } from '@app/layouts/Content'
 
 import { EnableDnssec } from './EnableDnssec'
+import { CompleteOnchain } from './onchain/CompleteOnchain'
 import { ImportTransaction } from './onchain/ImportTransaction'
 import { VerifyOnchainOwnership } from './onchain/VerifyOnchainOwnership'
 import { SelectImportType } from './SelectImportType'
@@ -24,7 +25,7 @@ export const DnsClaim = () => {
   const router = useRouterWithHistory()
   const { address } = useAccount()
 
-  const { name = '', isValid } = useValidate({ input: router.query.name as string })
+  const { name = '' } = useValidate({ input: router.query.name as string })
   const { t } = useTranslation('dnssec')
 
   const { dispatch, item, selected } = useDnsImportReducer({
@@ -59,7 +60,7 @@ export const DnsClaim = () => {
       <Content
         noTitle
         title={name}
-        hideHeading={false} // {step === 'complete'}
+        hideHeading={step === 'completeOnchain' || step === 'completeOffchain'}
         singleColumnContent
         inlineHeading
       >
@@ -68,16 +69,12 @@ export const DnsClaim = () => {
             selectType: () => (
               <SelectImportType dispatch={dispatch} item={item} selected={selected} />
             ),
-            enableDnssec: () => (
-              <EnableDnssec dispatch={dispatch} item={item} selected={selected} />
-            ),
+            enableDnssec: () => <EnableDnssec dispatch={dispatch} selected={selected} />,
             verifyOnchainOwnership: () => (
-              <VerifyOnchainOwnership dispatch={dispatch} item={item} selected={selected} />
+              <VerifyOnchainOwnership dispatch={dispatch} selected={selected} />
             ),
-            transaction: () => (
-              <ImportTransaction dispatch={dispatch} item={item} selected={selected} />
-            ),
-            completeOnchain: () => null,
+            transaction: () => <ImportTransaction dispatch={dispatch} selected={selected} />,
+            completeOnchain: () => <CompleteOnchain dispatch={dispatch} selected={selected} />,
             verifyOffchainOwnership: () => null,
             completeOffchain: () => null,
           }[step](),

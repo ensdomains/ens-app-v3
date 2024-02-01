@@ -9,11 +9,7 @@ import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 import { SuccessHelper } from './shared'
 import { StatusChecker } from './StatusChecker'
 import { SupportLinkList } from './SupportLinkList'
-import {
-  DnsImportReducerAction,
-  DnsImportReducerDataItem,
-  SelectedItemProperties,
-} from './useDnsImportReducer'
+import { DnsImportReducerAction, SelectedItemProperties } from './useDnsImportReducer'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -65,11 +61,9 @@ const ResponsiveButton = styled(Button)(
 
 export const EnableDnssec = ({
   dispatch,
-  item,
   selected,
 }: {
   dispatch: Dispatch<DnsImportReducerAction>
-  item: DnsImportReducerDataItem
   selected: SelectedItemProperties
 }) => {
   const {
