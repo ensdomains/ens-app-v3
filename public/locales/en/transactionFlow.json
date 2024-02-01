@@ -66,13 +66,13 @@
           "noOptions": "No address options available",
           "placeholder": {
             "default": "Add address here",
-            "ETH": "0xD9hbQK...",
-            "BNB": "0xD9hbQK...",
-            "BTC": "3FZbgi29...",
-            "LTC": "3FZbgi29...",
-            "SOL": "D4kA7VzHnmV...",
-            "DOT": "1D4kA7VxH...",
-            "DOGE": "DFabcd12..."
+            "eth": "0xD9hbQK...",
+            "bnb": "0xD9hbQK...",
+            "btc": "3FZbgi29...",
+            "ltc": "3FZbgi29...",
+            "sol": "D4kA7VzHnmV...",
+            "dot": "1D4kA7VxH...",
+            "doge": "DFabcd12..."
           }
         },
         "contentHash": {

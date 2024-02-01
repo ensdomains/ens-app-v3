@@ -1,4 +1,3 @@
-import { match as _match, P } from 'ts-pattern'
 import { Address, hexToString } from 'viem'
 
 import {
@@ -23,17 +22,11 @@ const contentHashTouple = (
 }
 
 const abiTouple = (abi?: RecordOptions['abi'], deleteLabel = 'delete'): [string, string][] => {
-  const abiStr = _match(abi)
-    .with({ encodedData: P.not(P.nullish), contentType: 1 }, ({ encodedData }) =>
-      hexToString(encodedData),
-    )
-    // TODO: FIX!!!!!!!!!!!!!!!!!!!!!!!
-    // @ts-expect-error
-    .with(null, () => null)
-    .otherwise(() => undefined)
-  if (abiStr === null) return [[deleteLabel, 'abi']]
-  if (!abiStr) return []
-  return [['abi', abiStr]]
+  const firstAbiData = Array.isArray(abi) ? abi?.[0]?.encodedData : abi?.encodedData
+  if (!firstAbiData) return []
+  const decodedAbiData = hexToString(firstAbiData)
+  if (decodedAbiData) return [['abi', decodedAbiData]]
+  return [[deleteLabel, 'abi']]
 }
 
 export const recordOptionsToToupleList = (

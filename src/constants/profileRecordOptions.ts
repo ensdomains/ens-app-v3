@@ -36,7 +36,7 @@ const social: ProfileRecord[] = supportedSocialRecordKeys.map((key) => ({
 }))
 
 const address = [...coinsWithIcons, ...coinsWithoutIcons].map((coin) => ({
-  key: coin.toUpperCase(),
+  key: coin,
   group: 'address',
   type: 'addr',
 })) as ProfileRecord[]

@@ -1,3 +1,7 @@
+import { match, P } from 'ts-pattern'
+
+import { EncodedAbi } from '@ensdomains/ensjs/dist/types/utils/encoders/encodeAbi'
+
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
@@ -29,11 +33,13 @@ export type ProfileFormObject = {
   }
   abi?: {
     data: string
-    contentType?: number
+    contentType?: EncodedAbi['contentType'] | 0
   }
 }
 
-export const convertProfileToProfileFormObject = (profile: Profile): ProfileFormObject => {
+export const convertProfileToProfileFormObject = async (
+  profile: Profile,
+): Promise<ProfileFormObject> => {
   const address =
     profile.coins?.reduce((map, record) => {
       const { name, value } = record
@@ -103,17 +109,36 @@ export const convertProfileToProfileFormObject = (profile: Profile): ProfileForm
     }
   }
 
+  const abi = await match({
+    contentType: profile?.abi?.contentType,
+    data: profile.abi?.abi,
+  })
+    .with({ contentType: P.union(1, 3, 4) }, ({ contentType, data }) => {
+      try {
+        return {
+          contentType,
+          data: JSON.stringify(data),
+        } as ProfileFormObject['abi']
+      } catch {
+        return { contentType, data: '' } as ProfileFormObject['abi']
+      }
+    })
+    .with({ contentType: 8 }, async ({ contentType, data }) => {
+      try {
+        const test = await fetch(data as string)
+        const json = await test.json()
+        return { contentType, data: JSON.stringify(json) } as ProfileFormObject['abi']
+      } catch {
+        return { contentType, data: '' } as ProfileFormObject['abi']
+      }
+    })
+    .otherwise(() => ({ contentType: 0, data: '' }) as ProfileFormObject['abi'])
+
   return {
     ...textRecords,
     address,
     website,
-    abi: profile.abi
-      ? {
-          data:
-            typeof profile.abi.abi === 'string' ? profile.abi.abi : JSON.stringify(profile.abi.abi),
-          contentType: profile.abi.contentType,
-        }
-      : { data: '', contentType: 0 },
+    abi,
   }
 }
 

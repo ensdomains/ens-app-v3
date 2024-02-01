@@ -56,7 +56,13 @@ export const useProfile = ({
         ...supportedAddresses.map((coinName) => getCoderByCoinName(coinName).coinType),
         ...(subgraphRecords?.coins
           .map((coinId) => parseInt(coinId))
-          .filter((coinId) => !!getCoderByCoinType(coinId)) || []),
+          .filter((coinId) => {
+            try {
+              return !!getCoderByCoinType(coinId)
+            } catch {
+              return false
+            }
+          }) || []),
       ]),
     ] as [number, ...number[]],
     abi: true,
