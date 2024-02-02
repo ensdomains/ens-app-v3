@@ -1,10 +1,10 @@
-import { Dispatch, useMemo } from 'react'
+import { Dispatch } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Button, Card, CheckCircleSVG, Heading, Helper, mq } from '@ensdomains/thorin'
 
 import RecordItem from '@app/components/RecordItem'
-import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
+import { offchainDnsAddress, useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { useDnsOffchainData } from '@app/hooks/ensjs/dns/useDnsOffchainData'
 import { shortenAddress } from '@app/utils/utils'
 
@@ -104,7 +104,7 @@ export const VerifyOffchainOwnership = ({
   dispatch: Dispatch<DnsImportReducerAction>
   selected: SelectedItemProperties
 }) => {
-  const { address } = selected
+  const { address, chainId } = selected
   const isConnected = !!address
 
   const {
@@ -116,7 +116,9 @@ export const VerifyOffchainOwnership = ({
     internal: { dataUpdatedAt },
   } = useDnsOffchainData({ name: selected.name })
 
-  const { data: dnsOffchainStatus } = useDnsOffchainStatus({ name: selected.name })
+  const { data: dnsOffchainStatus, isError: isStatusError } = useDnsOffchainStatus({
+    name: selected.name,
+  })
 
   return (
     <StyledCard>
@@ -135,12 +137,12 @@ export const VerifyOffchainOwnership = ({
             <ValueButtonsContainer>
               <ButtonRow>
                 <DnsDisplayValue label="Type" value="TXT" />
-                <DnsDisplayValue label="Name" value="_ens" copyable />
+                <DnsDisplayValue label="Name" value="@" copyable />
               </ButtonRow>
               <DnsDisplayValue
                 lines={2}
                 label="Value"
-                value={`ENS1 ${address} ${dnsOffchainData?.resolverAddress || ''}`}
+                value={`ENS1 ${offchainDnsAddress[chainId.toString()]} ${address}`}
                 copyable
               />
             </ValueButtonsContainer>

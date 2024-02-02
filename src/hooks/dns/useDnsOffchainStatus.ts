@@ -15,7 +15,7 @@ type UseDnsOffchainStatusParameters = {
   enabled?: boolean
 }
 
-const offchainDnsAddress = {
+export const offchainDnsAddress = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   '1': '0xF142B308cF687d4358410a4cB885513b30A42025',
   // eslint-disable-next-line @typescript-eslint/naming-convention
