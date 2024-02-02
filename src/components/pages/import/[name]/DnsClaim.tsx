@@ -27,7 +27,7 @@ export const DnsClaim = () => {
     address,
     name,
   })
-  const step = item.steps[item.stepIndex]
+  const step = item.steps ? item.steps[item.stepIndex] : 'selectType'
 
   // reset item on initial mount if not started
   useEffect(() => {
