@@ -83,12 +83,14 @@ export const DnsClaim = () => {
             verifyOnchainOwnership: () => (
               <VerifyOnchainOwnership dispatch={dispatch} selected={selected} />
             ),
-            transaction: () => <ImportTransaction dispatch={dispatch} selected={selected} />,
-            completeOnchain: () => <CompleteOnchain dispatch={dispatch} selected={selected} />,
+            transaction: () => (
+              <ImportTransaction dispatch={dispatch} selected={selected} item={item} />
+            ),
+            completeOnchain: () => <CompleteOnchain selected={selected} />,
             verifyOffchainOwnership: () => (
               <VerifyOffchainOwnership dispatch={dispatch} selected={selected} />
             ),
-            completeOffchain: () => null,
+            completeOffchain: () => <CompleteOnchain selected={selected} />,
           }[step](),
         }}
       </Content>

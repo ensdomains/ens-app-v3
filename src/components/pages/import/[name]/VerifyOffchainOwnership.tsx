@@ -1,3 +1,4 @@
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Dispatch } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -120,6 +121,8 @@ export const VerifyOffchainOwnership = ({
     name: selected.name,
   })
 
+  const { openConnectModal } = useConnectModal()
+
   return (
     <StyledCard>
       <StyledHeading>Verify Ownership</StyledHeading>
@@ -208,6 +211,24 @@ export const VerifyOffchainOwnership = ({
         >
           Back
         </ResponsiveButton>
+        {isConnected ? (
+          <ResponsiveButton
+            disabled={!dnsOffchainData || isLoading || isRefetching || isError}
+            onClick={() => dispatch({ name: 'increaseStep', selected })}
+            {...(dnsOffchainStatus?.address === 'mismatching'
+              ? {
+                  colorStyle: 'redPrimary',
+                  style: { width: 'min-content' },
+                }
+              : {})}
+          >
+            {dnsOffchainStatus?.address === 'mismatching' ? 'Import without ownership' : 'Finish'}
+          </ResponsiveButton>
+        ) : (
+          <ResponsiveButton disabled={!openConnectModal} onClick={() => openConnectModal?.()}>
+            Connect
+          </ResponsiveButton>
+        )}
       </Buttons>
     </StyledCard>
   )
