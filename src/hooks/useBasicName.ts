@@ -9,6 +9,7 @@ import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
 import { useContractAddress } from './chain/useContractAddress'
 import useCurrentBlockTimestamp from './chain/useCurrentBlockTimestamp'
+import { useAddressRecord } from './ensjs/public/useAddressRecord'
 import { useExpiry } from './ensjs/public/useExpiry'
 import { useOwner } from './ensjs/public/useOwner'
 import { usePrice } from './ensjs/public/usePrice'
@@ -61,11 +62,23 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
     duration: yearsToSeconds(1),
     enabled: commonEnabled && !isRoot && isETH && is2LD,
   })
+  const {
+    data: addrData,
+    isLoading: isAddrLoading,
+    isCachedData: isAddrCachedData,
+  } = useAddressRecord({
+    name: normalisedName,
+    enabled: commonEnabled && !isRoot && !isETH,
+  })
 
   const publicCallsLoading =
-    isOwnerLoading || isWrapperDataLoading || isExpiryLoading || isPriceLoading
+    isOwnerLoading || isWrapperDataLoading || isExpiryLoading || isPriceLoading || isAddrLoading
   const publicCallsCachedData =
-    isOwnerCachedData && isWrapperDataCachedData && isExpiryCachedData && isPriceCachedData
+    isOwnerCachedData &&
+    isWrapperDataCachedData &&
+    isExpiryCachedData &&
+    isPriceCachedData &&
+    isAddrCachedData
 
   const expiryDate = expiryData?.expiry?.date
 
@@ -97,6 +110,7 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
         wrapperData,
         expiryData,
         priceData,
+        addrData,
         supportedTLD,
       })
     : undefined

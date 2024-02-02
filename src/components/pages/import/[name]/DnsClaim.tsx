@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate } from '@app/hooks/useValidate'
 import { Content } from '@app/layouts/Content'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { EnableDnssec } from './EnableDnssec'
 import { CompleteOnchain } from './onchain/CompleteOnchain'
@@ -14,13 +15,6 @@ import { VerifyOnchainOwnership } from './onchain/VerifyOnchainOwnership'
 import { SelectImportType } from './SelectImportType'
 import { useDnsImportReducer } from './useDnsImportReducer'
 import { VerifyOffchainOwnership } from './VerifyOffchainOwnership'
-
-const configurationSteps = Object.freeze(['selectType', 'enableDnssec'] as const)
-
-const typeStepMap = Object.freeze({
-  onchain: ['verifyOnchainOwnership', 'transaction', 'completeOnchain'],
-  offchain: ['verifyOffchainOwnership', 'completeOffchain'],
-} as const)
 
 export const DnsClaim = () => {
   const router = useRouterWithHistory()
@@ -33,10 +27,7 @@ export const DnsClaim = () => {
     address,
     name,
   })
-  const isConfigurationStep = item.stepIndex < 2
-  const step = isConfigurationStep
-    ? configurationSteps[item.stepIndex]
-    : typeStepMap[item.type!][item.stepIndex - 2]
+  const step = item.steps[item.stepIndex]
 
   // reset item on initial mount if not started
   useEffect(() => {
@@ -52,6 +43,24 @@ export const DnsClaim = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address])
+
+  const key = `importDnsName-${selected.name}`
+
+  const { cleanupFlow } = useTransactionFlow()
+
+  useEffect(() => {
+    const handleRouteChange = (e: string) => {
+      if (e !== router.asPath && step === 'completeOnchain') {
+        dispatch({ name: 'clearItem', selected })
+        cleanupFlow(key)
+      }
+    }
+    router.events.on('routeChangeComplete', handleRouteChange)
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, step, selected, router.asPath])
 
   return (
     <>

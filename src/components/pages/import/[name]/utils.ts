@@ -11,19 +11,21 @@ import {
 
 import { UseDnsOwnerError } from '@app/hooks/ensjs/dns/useDnsOwner'
 
-export const checkDnsOwnerMatch = ({
+export type DnsNavigationFunction = (direction: 'prev' | 'next') => void
+
+export const checkDnsAddressMatch = ({
   address,
-  dnsOwner,
+  dnsAddress,
 }: {
   address: Address | undefined | null
-  dnsOwner: Address | undefined | null
+  dnsAddress: Address | undefined | null
 }) => {
-  if (!address || !dnsOwner) return null
-  if (dnsOwner !== address) return 'mismatching'
-  return 'matching'
+  if (!address || !dnsAddress) return null
+  if (dnsAddress !== address) return 'mismatching' as const
+  return 'matching' as const
 }
 
-export const checkDnsOwnerError = ({
+export const checkDnsError = ({
   error,
   isLoading,
 }: {

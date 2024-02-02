@@ -9,6 +9,7 @@ import { mq } from '@ensdomains/thorin'
 
 import FeedbackSVG from '@app/assets/Feedback.svg'
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
+import { getSupportedChainById } from '@app/constants/chains'
 
 import { Navigation } from './Navigation'
 
@@ -73,15 +74,7 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   }, [])
 
   useEffect(() => {
-    if (
-      currentChain &&
-      !(
-        currentChain?.id === 1 ||
-        currentChain?.id === 5 ||
-        currentChain?.id === 11155111 ||
-        currentChain?.id === 1337
-      )
-    ) {
+    if (currentChain && !getSupportedChainById(currentChain.id)) {
       switchNetwork?.(1)
       router.push('/unsupportedNetwork')
     }

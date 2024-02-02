@@ -1,4 +1,5 @@
 import type { Address } from 'viem'
+import { holesky } from 'viem/chains'
 import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { addEnsContracts } from '@ensdomains/ensjs'
@@ -75,5 +76,25 @@ export const sepoliaWithEns = addEnsContracts(
     contracts: { ensRegistry: { address: Address }; ensUniversalResolver: { address: Address } }
   },
 )
+export const holeskyWithEns = addEnsContracts(
+  holesky as typeof holesky & {
+    contracts: { ensRegistry: { address: Address }; ensUniversalResolver: { address: Address } }
+  },
+)
 
-export type SupportedChain = typeof mainnetWithEns | typeof goerliWithEns | typeof sepoliaWithEns
+export const chainsWithEns = [
+  mainnetWithEns,
+  goerliWithEns,
+  sepoliaWithEns,
+  holeskyWithEns,
+  localhostWithEns,
+]
+
+export const getSupportedChainById = (chainId: number | undefined) =>
+  chainId ? chainsWithEns.find((c) => c.id === chainId) : undefined
+
+export type SupportedChain =
+  | typeof mainnetWithEns
+  | typeof goerliWithEns
+  | typeof sepoliaWithEns
+  | typeof holeskyWithEns
