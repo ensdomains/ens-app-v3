@@ -51,6 +51,14 @@ const NotCopyableContainer = styled.div(
   `,
 )
 
+const ButtonWithContent = styled(Button)(
+  ({ theme }) => css`
+    & > div {
+      white-space: unset;
+    }
+  `,
+)
+
 export const DnsDisplayValue = ({
   copyable,
   label,
@@ -77,13 +85,13 @@ export const DnsDisplayValue = ({
   if (!copyable) return <NotCopyableContainer>{InnerContent}</NotCopyableContainer>
 
   return (
-    <Button
+    <ButtonWithContent
       colorStyle="background"
       onClick={copyable ? () => copy(value) : undefined}
       size="flexible"
       fullWidthContent
     >
       {InnerContent}
-    </Button>
+    </ButtonWithContent>
   )
 }

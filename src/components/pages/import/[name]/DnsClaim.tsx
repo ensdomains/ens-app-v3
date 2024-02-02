@@ -13,6 +13,7 @@ import { ImportTransaction } from './onchain/ImportTransaction'
 import { VerifyOnchainOwnership } from './onchain/VerifyOnchainOwnership'
 import { SelectImportType } from './SelectImportType'
 import { useDnsImportReducer } from './useDnsImportReducer'
+import { VerifyOffchainOwnership } from './VerifyOffchainOwnership'
 
 const configurationSteps = Object.freeze(['selectType', 'enableDnssec'] as const)
 
@@ -75,7 +76,9 @@ export const DnsClaim = () => {
             ),
             transaction: () => <ImportTransaction dispatch={dispatch} selected={selected} />,
             completeOnchain: () => <CompleteOnchain dispatch={dispatch} selected={selected} />,
-            verifyOffchainOwnership: () => null,
+            verifyOffchainOwnership: () => (
+              <VerifyOffchainOwnership dispatch={dispatch} selected={selected} />
+            ),
             completeOffchain: () => null,
           }[step](),
         }}
