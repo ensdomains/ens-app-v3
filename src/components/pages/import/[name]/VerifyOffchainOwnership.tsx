@@ -116,7 +116,7 @@ export const VerifyOffchainOwnership = ({
     internal: { dataUpdatedAt },
   } = useDnsOffchainData({ name: selected.name })
 
-  const { data: dnsOffchainStatus, isError: isStatusError } = useDnsOffchainStatus({
+  const { data: dnsOffchainStatus } = useDnsOffchainStatus({
     name: selected.name,
   })
 
@@ -142,7 +142,9 @@ export const VerifyOffchainOwnership = ({
               <DnsDisplayValue
                 lines={2}
                 label="Value"
-                value={`ENS1 ${offchainDnsAddress[chainId.toString()]} ${address}`}
+                value={`ENS1 ${
+                  offchainDnsAddress[String(chainId) as keyof typeof offchainDnsAddress]
+                } ${address}`}
                 copyable
               />
             </ValueButtonsContainer>

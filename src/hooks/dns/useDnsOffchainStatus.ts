@@ -8,7 +8,6 @@ import { checkDnsAddressMatch } from '@app/components/pages/import/[name]/utils'
 
 import { useChainId } from '../chain/useChainId'
 import { useDnsOffchainData } from '../ensjs/dns/useDnsOffchainData'
-import { useAddressRecord } from '../ensjs/public/useAddressRecord'
 
 type UseDnsOffchainStatusParameters = {
   name?: string
@@ -54,17 +53,8 @@ export const useDnsOffchainStatus = ({ name, enabled = true }: UseDnsOffchainSta
     enabled,
   })
 
-  const {
-    data: addressRecord,
-    isLoading: isAddressRecordLoading,
-    isCachedData: isAddressRecordCachedData,
-  } = useAddressRecord({
-    name,
-    enabled: enabled && !!dnsOffchainData,
-  })
-
-  const isLoading = isDnsOffchainDataLoading || isAddressRecordLoading
-  const isCachedData = isDnsOffchainDataCachedData || isAddressRecordCachedData
+  const isLoading = isDnsOffchainDataLoading
+  const isCachedData = isDnsOffchainDataCachedData
 
   const data = useMemo(() => {
     if (isLoading || isError) return undefined
@@ -72,10 +62,10 @@ export const useDnsOffchainStatus = ({ name, enabled = true }: UseDnsOffchainSta
       resolver: getOffchainDnsResolverStatus({ chainId, dnsOffchainData }),
       address: checkDnsAddressMatch({
         address,
-        dnsAddress: addressRecord?.value as Address | undefined | null,
+        dnsAddress: dnsOffchainData?.extraData as Address | undefined | null,
       }),
     }
-  }, [isLoading, isError, chainId, dnsOffchainData, address, addressRecord])
+  }, [isLoading, isError, chainId, dnsOffchainData, address])
 
   return {
     data,
