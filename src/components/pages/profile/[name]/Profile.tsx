@@ -125,6 +125,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     isLoading: detailsLoading,
     wrapperData,
     registrationStatus,
+    refetch,
   } = nameDetails
 
   const isLoading = _isLoading || detailsLoading
@@ -165,7 +166,11 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     ]
   }, [isSelf, beautifiedName, isValid, name, t])
 
-  const [tab, setTab] = useQueryParameterState<Tab>('tab', 'profile')
+  const [tab, setTab_] = useQueryParameterState<Tab>('tab', 'profile')
+  const setTab: typeof setTab_ = (value) => {
+    refetch()
+    setTab_(value)
+  }
   const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
 
   const abilities = useAbilities(normalisedName)

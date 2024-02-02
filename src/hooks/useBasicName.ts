@@ -3,7 +3,7 @@ import { useQuery } from 'wagmi'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 
-import { ReturnedENS } from '@app/types'
+import { Prettify, ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { emptyAddress } from '@app/utils/constants'
@@ -12,25 +12,39 @@ import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
 import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
 import { usePccExpired } from './fuses/usePccExpired'
-import { useChainId } from './useChainId'
 import { useContractAddress } from './useContractAddress'
 import useCurrentBlockTimestamp from './useCurrentBlockTimestamp'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
+type PickToNotNever<T, U> = {
+  [K in keyof T]: K extends U ? T[K] : never
+}
+
 type ENS = ReturnType<typeof useEns>
-type BaseBatchReturn = [ReturnedENS['getOwner']]
-type NormalBatchReturn = [...BaseBatchReturn, ReturnedENS['getWrapperData']]
-type DnsBatchReturn = [...NormalBatchReturn, ReturnedENS['getResolver'], ReturnedENS['getAddr']]
-type ETH2LDBatchReturn = [...NormalBatchReturn, ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
-type BatchReturn =
-  | []
-  | BaseBatchReturn
+type BaseBatchReturn = {
+  ownerData?: ReturnedENS['getOwner']
+  wrapperData?: ReturnedENS['getWrapperData']
+  expiryData?: ReturnedENS['getExpiry']
+  priceData?: ReturnedENS['getPrice']
+  addrData?: ReturnedENS['getAddr']
+}
+type RootBatchReturn = PickToNotNever<BaseBatchReturn, 'ownerData'>
+type ShortBatchReturn = PickToNotNever<BaseBatchReturn, undefined>
+type NormalBatchReturn = PickToNotNever<BaseBatchReturn, 'ownerData' | 'wrapperData'>
+type DnsBatchReturn = PickToNotNever<BaseBatchReturn, 'ownerData' | 'wrapperData' | 'addrData'>
+type ETH2LDBatchReturn = PickToNotNever<
+  BaseBatchReturn,
+  'ownerData' | 'wrapperData' | 'expiryData' | 'priceData'
+>
+export type BatchReturn = Prettify<
+  | RootBatchReturn
+  | ShortBatchReturn
   | NormalBatchReturn
   | DnsBatchReturn
   | ETH2LDBatchReturn
   | undefined
-
+>
 const EXPIRY_LIVE_WATCH_TIME = 1_000 * 60 * 5 // 5 minutes
 
 const getBatchData = (
@@ -41,41 +55,48 @@ const getBatchData = (
 ): Promise<BatchReturn> => {
   // exception for "[root]", get owner of blank name
   if (name === '[root]') {
-    return Promise.all([ens.getOwner('', { contract: 'registry' })])
+    return ens.getOwner('', { contract: 'registry' }).then((ownerData) => ({ ownerData }))
   }
 
   const labels = name.split('.')
   if (validation.isETH && validation.is2LD) {
     if (validation.isShort) {
-      return Promise.resolve([])
+      return Promise.resolve({})
     }
-    return ens.batch(
-      ens.getOwner.batch(name, { skipGraph }),
-      ens.getWrapperData.batch(name),
-      ens.getExpiry.batch(name),
-      ens.getPrice.batch(labels[0], yearsToSeconds(1), false),
-    )
+    return ens
+      .batch(
+        ens.getOwner.batch(name, { skipGraph }),
+        ens.getWrapperData.batch(name),
+        ens.getExpiry.batch(name),
+        ens.getPrice.batch(labels[0], yearsToSeconds(1), false),
+      )
+      .then((res) => ({
+        ownerData: res?.[0],
+        wrapperData: res?.[1],
+        expiryData: res?.[2],
+        priceData: res?.[3],
+      }))
   }
 
-  if (!validation.isETH && validation.is2LD) {
+  if (!validation.isETH) {
     const getAddrBatch = ens.getAddr.batch(name)
 
-    return ens.batch(
-      ens.getOwner.batch(name),
-      ens.getWrapperData.batch(name),
-      ens.getResolver.batch(name),
-      {
+    return ens
+      .batch(ens.getOwner.batch(name), ens.getWrapperData.batch(name), {
         args: getAddrBatch.args,
         raw: getAddrBatch.raw,
         decode: async (...args) =>
           getAddrBatch
             .decode(...(args as Parameters<typeof getAddrBatch['decode']>))
             .catch(() => undefined),
-      },
-    )
+      })
+      .then((res) => ({ ownerData: res?.[0], wrapperData: res?.[1], addrData: res?.[2] }))
   }
 
-  return ens.batch(ens.getOwner.batch(name), ens.getWrapperData.batch(name))
+  return ens.batch(ens.getOwner.batch(name), ens.getWrapperData.batch(name)).then((res) => ({
+    ownerData: res?.[0],
+    wrapperData: res?.[1],
+  }))
 }
 
 type UseBasicNameOptions = {
@@ -87,8 +108,6 @@ type UseBasicNameOptions = {
 export const useBasicName = (name?: string | null, options: UseBasicNameOptions = {}) => {
   const { normalised = false, skipGraph = true, enabled = true } = options
   const ens = useEns()
-
-  const chainId = useChainId()
 
   const { name: _normalisedName, isValid, ...validation } = useValidate(name!, !name)
 
@@ -112,6 +131,8 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
     isFetching,
     isFetchedAfterMount,
     status,
+    refetch,
+    isRefetching,
   } = useQuery(
     queryKey,
     async () =>
@@ -120,15 +141,13 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
       enabled: !!(enabled && ens.ready && name && isValid),
     },
   )
-  const [ownerData, _wrapperData, expiryOrResolverData, priceOrAddrData] = batchData || []
-  const expiryData =
-    validation.isETH && validation.is2LD
-      ? (expiryOrResolverData as ReturnedENS['getExpiry'])
-      : undefined
-  const priceData =
-    validation.isETH && validation.is2LD ? (priceOrAddrData as ReturnedENS['getPrice']) : undefined
-  const addrData =
-    !validation.isETH && validation.is2LD ? (priceOrAddrData as ReturnedENS['getAddr']) : undefined
+  const {
+    ownerData,
+    wrapperData: _wrapperData,
+    expiryData,
+    priceData,
+    addrData,
+  } = batchData || ({} as NonNullable<BatchReturn>)
 
   const wrapperData = useMemo(() => {
     if (!_wrapperData) return undefined
@@ -166,10 +185,10 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
         validation,
         ownerData,
         wrapperData,
-        expiryOrResolverData,
-        priceOrAddrData,
+        expiryData,
+        priceData,
+        addrData,
         supportedTLD,
-        chainId,
       })
     : undefined
 
@@ -209,6 +228,7 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
     pccExpired,
     canBeWrapped,
     addrData: addrData as string | undefined,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    refetch,
+    isCachedData: isRefetching || (status === 'success' && isFetched && !isFetchedAfterMount),
   }
 }

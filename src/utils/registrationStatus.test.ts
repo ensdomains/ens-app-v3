@@ -52,7 +52,7 @@ describe('getRegistrationStatus', () => {
         validation: { is2LD: true, isETH: true },
         ownerData,
         wrapperData,
-        expiryOrResolverData: expiryData,
+        expiryData,
       })
       expect(result).toBe('registered')
     })
@@ -67,7 +67,7 @@ describe('getRegistrationStatus', () => {
         validation: { is2LD: true, isETH: true },
         ownerData,
         wrapperData,
-        expiryOrResolverData: expiryData,
+        expiryData,
       })
       expect(result).toBe('gracePeriod')
     })
@@ -88,8 +88,8 @@ describe('getRegistrationStatus', () => {
         validation: { is2LD: true, isETH: true },
         ownerData,
         wrapperData,
-        expiryOrResolverData: expiryData,
-        priceOrAddrData: priceData,
+        expiryData,
+        priceData,
       })
       expect(result).toBe('premium')
     })
@@ -109,8 +109,8 @@ describe('getRegistrationStatus', () => {
         validation: { is2LD: true, isETH: true },
         ownerData,
         wrapperData,
-        expiryOrResolverData: expiryData,
-        priceOrAddrData: priceData,
+        expiryData,
+        priceData,
       })
 
       expect(result).toBe('available')
@@ -122,7 +122,7 @@ describe('getRegistrationStatus', () => {
         validation: { is2LD: true, isETH: true },
         ownerData,
         wrapperData,
-        expiryOrResolverData: {
+        expiryData: {
           expiry: new Date(Date.now() - 1_000 * 10),
           gracePeriod: 0,
         },
@@ -166,9 +166,7 @@ describe('getRegistrationStatus', () => {
       validation: { is2LD: true },
       ownerData,
       wrapperData,
-      chainId: 1,
-      expiryOrResolverData: "0xF142B308cF687d4358410a4cB885513b30A42025",
-      priceOrAddrData: "0xF142B308cF687d4358410a4cB885513b30A42025",
+      addrData: "0xF142B308cF687d4358410a4cB885513b30A42025",
       supportedTLD: true,
     })
     expect(result).toBe('imported')
