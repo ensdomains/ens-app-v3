@@ -1,5 +1,4 @@
 import dynamic from 'next/dynamic'
-import { Dispatch } from 'react'
 import type ConfettiT from 'react-confetti'
 import styled, { css } from 'styled-components'
 
@@ -9,9 +8,8 @@ import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import useWindowSize from '@app/hooks/useWindowSize'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-import { DnsImportReducerAction, SelectedItemProperties } from '../useDnsImportReducer'
+import { SelectedItemProperties } from '../useDnsImportReducer'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -88,34 +86,13 @@ const Confetti = dynamic(() =>
   import('react-confetti').then((mod) => mod.default as typeof ConfettiT),
 )
 
-export const CompleteOnchain = ({
-  dispatch,
-  selected,
-}: {
-  dispatch: Dispatch<DnsImportReducerAction>
-  selected: SelectedItemProperties
-}) => {
+export const CompleteOnchain = ({ selected }: { selected: SelectedItemProperties }) => {
   const router = useRouterWithHistory()
   const { width, height } = useWindowSize()
 
-  const key = `importDnsName-${selected.name}`
+  const goHome = () => router.push('/')
 
-  const { cleanupFlow } = useTransactionFlow()
-
-  const cleanup = () => {
-    cleanupFlow(key)
-    dispatch({ name: 'clearItem', selected })
-  }
-
-  const goHome = () => {
-    cleanup()
-    router.push('/')
-  }
-
-  const goToProfile = () => {
-    cleanup()
-    router.push(`/profile/${selected.name}`)
-  }
+  const goToProfile = () => router.push(`/profile/${selected.name}`)
 
   return (
     <StyledCard>

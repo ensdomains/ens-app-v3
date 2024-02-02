@@ -13,7 +13,7 @@ import { DnsDisplayValue, SuccessHelper } from '../shared'
 import { StatusChecker } from '../StatusChecker'
 import { SupportLinkList } from '../SupportLinkList'
 import { DnsImportReducerAction, SelectedItemProperties } from '../useDnsImportReducer'
-import { checkDnsOwnerError, checkDnsOwnerMatch } from '../utils'
+import { checkDnsAddressMatch, checkDnsError } from '../utils'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -121,11 +121,11 @@ export const VerifyOnchainOwnership = ({
   const isConnected = !!address
 
   const dnsOwnerStatus = useMemo(
-    () => checkDnsOwnerMatch({ address, dnsOwner }),
+    () => checkDnsAddressMatch({ address, dnsAddress: dnsOwner }),
     [address, dnsOwner],
   )
 
-  const errorMessage = useMemo(() => checkDnsOwnerError({ error, isLoading }), [error, isLoading])
+  const errorMessage = useMemo(() => checkDnsError({ error, isLoading }), [error, isLoading])
 
   return (
     <StyledCard>

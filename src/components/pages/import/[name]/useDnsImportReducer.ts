@@ -4,6 +4,18 @@ import { useChainId } from '@app/hooks/chain/useChainId'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { isBrowser } from '@app/utils/utils'
 
+export const dnsConfigurationSteps = Object.freeze(['selectType', 'enableDnssec'] as const)
+
+export const dnsTypeStepMap = Object.freeze({
+  onchain: ['verifyOnchainOwnership', 'transaction', 'completeOnchain'],
+  offchain: ['verifyOffchainOwnership', 'completeOffchain'],
+} as const)
+
+export type DnsStep =
+  | (typeof dnsConfigurationSteps)[number]
+  | (typeof dnsTypeStepMap)['onchain'][number]
+  | (typeof dnsTypeStepMap)['offchain'][number]
+
 export type DnsImportType = 'onchain' | 'offchain' | null
 
 export type SelectedItemProperties =
@@ -12,6 +24,7 @@ export type SelectedItemProperties =
 
 export type DnsImportReducerDataItem = {
   stepIndex: number
+  steps: readonly DnsStep[] | DnsStep[]
   name: string
   type: DnsImportType
   address: Address | null
@@ -31,6 +44,11 @@ export type DnsImportReducerAction =
   | {
       name: 'decreaseStep'
       selected: SelectedItemProperties
+    }
+  | {
+      name: 'setSteps'
+      selected: SelectedItemProperties
+      payload: readonly DnsStep[] | DnsStep[]
     }
   | {
       name: 'setType'
@@ -57,6 +75,7 @@ export type DnsImportReducerAction =
 
 const defaultData = Object.freeze({
   stepIndex: 0,
+  steps: dnsConfigurationSteps,
   name: '',
   type: null,
   address: '0x',
@@ -95,6 +114,9 @@ const reducer = (state: DnsImportReducerData, action: DnsImportReducerAction) =>
       break
     case 'decreaseStep':
       selectedItem.stepIndex -= 1
+      break
+    case 'setSteps':
+      selectedItem.steps = action.payload
       break
     case 'setType':
       selectedItem.type = action.payload
@@ -136,7 +158,6 @@ export const useDnsImportReducer = ({
 
   let item = defaultData
   if (isBrowser) {
-    console.log('running')
     const itemIndex = getSelectedIndex(state, selected)
     item = itemIndex === -1 ? createDefaultData(selected) : state.items[itemIndex]
   }

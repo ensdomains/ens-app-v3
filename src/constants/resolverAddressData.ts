@@ -321,6 +321,41 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
   ],
+  '17000': [
+    {
+      address: '0x9010A27463717360cAD99CEA8bD39b8705CCA238',
+      deployer: 'ENS Labs',
+      tag: 'latest',
+      isNameWrapperAware: true,
+      supportedInterfaces: [
+        RESOLVER_INTERFACE_IDS.AddressResolver,
+        RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
+        RESOLVER_INTERFACE_IDS.NameResolver,
+        RESOLVER_INTERFACE_IDS.AbiResolver,
+        RESOLVER_INTERFACE_IDS.TextResolver,
+        RESOLVER_INTERFACE_IDS.ContentHashResolver,
+        RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+        RESOLVER_INTERFACE_IDS.InterfaceResolver,
+        RESOLVER_INTERFACE_IDS.VersionableResolver,
+      ],
+    },
+    {
+      address: '0xc5e43b622b5e6C379a984E9BdB34E9A545564fA5',
+      deployer: 'ENS Labs',
+      tag: null,
+      isNameWrapperAware: false,
+      supportedInterfaces: [
+        RESOLVER_INTERFACE_IDS.AddressResolver,
+        RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
+        RESOLVER_INTERFACE_IDS.NameResolver,
+        RESOLVER_INTERFACE_IDS.AbiResolver,
+        RESOLVER_INTERFACE_IDS.TextResolver,
+        RESOLVER_INTERFACE_IDS.ContentHashResolver,
+        RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+        RESOLVER_INTERFACE_IDS.InterfaceResolver,
+      ],
+    },
+  ],
   // TODO: Removed the dependency on env === 'development' here. Breaking e2e tests.
   '1337': [
     {

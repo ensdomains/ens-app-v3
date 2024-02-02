@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useMemo } from 'react'
+import { Dispatch, useCallback, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
@@ -20,11 +20,16 @@ import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useApprovedForAll } from '@app/hooks/useApprovedForAll'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 import useUserConfig from '@app/utils/useUserConfig'
 import { shortenAddress } from '@app/utils/utils'
 
-import { DnsImportReducerAction, SelectedItemProperties } from '../useDnsImportReducer'
-import { checkDnsOwnerMatch } from '../utils'
+import {
+  DnsImportReducerAction,
+  DnsImportReducerDataItem,
+  SelectedItemProperties,
+} from '../useDnsImportReducer'
+import { checkDnsAddressMatch } from '../utils'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -136,9 +141,11 @@ const InvoiceDnsOwner = ({ dnsOwner }: { dnsOwner: Address }) => {
 
 export const ImportTransaction = ({
   dispatch,
+  item,
   selected,
 }: {
   dispatch: Dispatch<DnsImportReducerAction>
+  item: DnsImportReducerDataItem
   selected: SelectedItemProperties
 }) => {
   const { gasPrice } = useGasPrice()
@@ -150,7 +157,7 @@ export const ImportTransaction = ({
   const { address } = selected
 
   const dnsOwnerStatus = useMemo(
-    () => checkDnsOwnerMatch({ address, dnsOwner }),
+    () => checkDnsAddressMatch({ address, dnsAddress: dnsOwner }),
     [address, dnsOwner],
   )
 
@@ -236,19 +243,14 @@ export const ImportTransaction = ({
     enabled: !!dnsImportData && (!requiresApproval || isApprovalFetched),
   })
 
-  const { createTransactionFlow, resumeTransactionFlow, getResumable, getLatestTransaction } =
-    useTransactionFlow()
+  const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
 
   const key = `importDnsName-${selected.name}`
 
   const resumable = getResumable(key)
 
-  const tx = getLatestTransaction(key)
-
-  const isComplete =
-    tx?.stage === 'complete' && (tx.name === 'claimDnsName' || tx.name === 'importDnsName')
-
   const startOrResumeFlow = () => {
+    if (!item.started) dispatch({ name: 'setStarted', selected })
     if (resumable) return resumeTransactionFlow(key)
     return createTransactionFlow(key, {
       transactions,
@@ -256,11 +258,17 @@ export const ImportTransaction = ({
     })
   }
 
-  useEffect(() => {
-    if (isComplete) {
+  const txCallback: UpdateCallback = useCallback(
+    ({ action, status, key: cbKey }) => {
+      if (action !== 'claimDnsName' && action !== 'importDnsName') return
+      if (status !== 'confirmed') return
+      if (cbKey !== key) return
       dispatch({ name: 'increaseStep', selected })
-    }
-  }, [dispatch, isComplete, selected])
+    },
+    [dispatch, key, selected],
+  )
+
+  useCallbackOnTransaction(txCallback)
 
   return (
     <StyledCard>

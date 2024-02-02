@@ -4,7 +4,7 @@ import { createConfig, WagmiConfig } from 'wagmi'
 
 import { createQueryKey } from '../useQueryKeyFactory'
 import { Transaction } from './transactionStore'
-import { useRegisterNameCallback } from './useRegisterNameCallback'
+import { useRegisterNameCallback } from './useRegisterOrImportNameCallback'
 
 const createTransactionData = ({
   name,

@@ -1,6 +1,7 @@
 import { Dispatch, forwardRef, ReactNode, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
+import { useAccount } from 'wagmi'
 
 import {
   Button,
@@ -15,14 +16,19 @@ import {
 import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { useChainId } from '@app/hooks/chain/useChainId'
+import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
+import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
+import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 
 import {
   DnsImportReducerAction,
   DnsImportReducerDataItem,
   DnsImportType,
+  DnsStep,
   SelectedItemProperties,
 } from './useDnsImportReducer'
+import { checkDnsAddressMatch } from './utils'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -163,12 +169,48 @@ export const SelectImportType = ({
   item: DnsImportReducerDataItem
   selected: SelectedItemProperties
 }) => {
+  const { address } = useAccount()
   const chainId = useChainId()
   const { data: tldResolver } = useResolver({ name: selected.name.split('.')[1] })
   const tldResolverIsOffchainResolver = useMemo(
     () => tldResolver != null && tldResolver === offchainResolverMap[chainId],
     [tldResolver, chainId],
   )
+
+  const { data: isDnsSecEnabled, isLoading: isDnsSecEnabledLoading } = useDnsSecEnabled({
+    name: selected.name,
+  })
+
+  const { data: dnsOwner, isLoading: isDnsOwnerLoading } = useDnsOwner({ name: selected.name })
+  const { data: offchainDnsStatus, isLoading: isOffchainDnsStatusLoading } = useDnsOffchainStatus({
+    name: selected.name,
+    enabled: item.type === 'offchain',
+  })
+
+  const dnsOwnerStatus = useMemo(
+    () => checkDnsAddressMatch({ address, dnsAddress: dnsOwner }),
+    [address, dnsOwner],
+  )
+
+  const setStepsAndNavigate = () => {
+    const steps = ['selectType'] as DnsStep[]
+    if (!isDnsSecEnabled) steps.push('enableDnssec')
+    if (item.type === 'offchain') {
+      if (
+        !offchainDnsStatus ||
+        offchainDnsStatus.resolver !== 'matching' ||
+        offchainDnsStatus.address !== 'matching'
+      )
+        steps.push('verifyOffchainOwnership')
+      steps.push('completeOffchain')
+    } else {
+      if (!dnsOwner || dnsOwnerStatus !== 'matching') steps.push('verifyOnchainOwnership')
+      steps.push('transaction')
+      steps.push('completeOnchain')
+    }
+    dispatch({ name: 'setSteps', selected, payload: steps })
+    dispatch({ name: 'increaseStep', selected })
+  }
 
   return (
     <StyledCard>
@@ -226,8 +268,10 @@ export const SelectImportType = ({
         </StyledRadioButtonGroup>
       </TypesSelectionContainer>
       <ResponsiveButton
-        disabled={!item.type}
-        onClick={() => dispatch({ name: 'increaseStep', selected })}
+        disabled={
+          !item.type || isDnsSecEnabledLoading || isDnsOwnerLoading || isOffchainDnsStatusLoading
+        }
+        onClick={() => setStepsAndNavigate()}
       >
         Next
       </ResponsiveButton>
