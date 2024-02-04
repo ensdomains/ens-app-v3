@@ -10,11 +10,11 @@ import WrapButton from './WrapButton'
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useWrapperApprovedForAll')
 
-const createMockResolverStatus = (overides = {}) => ({
+const createMockResolverStatus = (overrides = {}) => ({
   data: {
     isMigratedProfileEqual: true,
     isNameWrapperAware: false,
-    ...overides,
+    ...overrides,
   },
   isLoading: false
 })

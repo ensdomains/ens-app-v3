@@ -22,7 +22,7 @@ describe('reducer', () => {
     reducer(draft, action)
     expect(mockPush).toHaveBeenCalled()
   })
-  it('should break if resumeFlowWithCheck is called wihout item', () => {
+  it('should break if resumeFlowWithCheck is called without item', () => {
     const mockPush = jest.fn()
     const action = {
       name: 'resumeFlowWithCheck',
@@ -63,7 +63,7 @@ describe('reducer', () => {
     reducer(draft, action)
     expect(draft.selectedKey).toEqual('key')
   })
-  it('should break if resumeFlow is called wihout item', () => {
+  it('should break if resumeFlow is called without item', () => {
     const mockPush = jest.fn()
     const action = {
       name: 'resumeFlow',

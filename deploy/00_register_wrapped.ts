@@ -191,7 +191,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
       const _controller = controller.connect(await ethers.getSigner(owner))
       const commitTx = await _controller.commit(commitment, { nonce: nonce + index })
-      console.log(`Commiting commitment for ${name} (tx: ${commitTx.hash})...`)
+      console.log(`Committing commitment for ${name} (tx: ${commitTx.hash})...`)
       return 1
     }
 

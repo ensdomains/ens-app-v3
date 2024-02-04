@@ -70,7 +70,7 @@ export const generateRecords =
       const _contentHash = encodeContenthash(contentHash)
       if (_contentHash.error) throw new Error(_contentHash.error)
       if (typeof _contentHash.encoded !== 'string')
-        throw new Error('Error occured while encoding contenthash')
+        throw new Error('Error occurred while encoding contenthash')
       console.log('- contenthash:', _contentHash.encoded)
       const tx = await publicResolver.setContenthash(node, _contentHash.encoded as string)
       await tx.wait()

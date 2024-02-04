@@ -86,7 +86,7 @@ describe('useMoonpayRegistration', () => {
     rerender()
     expect(result.current.moonpayTransactionStatus).toBe(undefined)
   })
-  it('should have the correct regsitration duration when initiating a registration', async () => {
+  it('should have the correct registration duration when initiating a registration', async () => {
     const registrationDuration = 5
     const chainId = 1
     const mockDispatch = jest.fn()

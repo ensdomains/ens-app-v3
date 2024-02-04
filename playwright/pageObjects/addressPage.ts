@@ -23,8 +23,8 @@ export class AddressPage {
     this.extendNamesModalNextButton = this.extendNamesModal.getByRole('button', { name: 'Next' })
   }
 
-  async goto(addresss: string) {
-    await this.page.goto(`/${addresss}`)
+  async goto(address: string) {
+    await this.page.goto(`/${address}`)
   }
 
   getNameRow(name: string) {

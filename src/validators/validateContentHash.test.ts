@@ -87,7 +87,7 @@ describe('validateContentHash', () => {
     expect(typeof validateContentHash('arweave')(invalidate(arweave))).toBe('string')
   })
 
-  it('should faile for invalid ar url', () => {
+  it('should fail for invalid ar url', () => {
     expect(typeof validateContentHash('arweave')(invalidate(ar))).toBe('string')
   })
 

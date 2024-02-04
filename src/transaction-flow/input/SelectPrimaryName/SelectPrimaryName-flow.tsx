@@ -251,7 +251,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     })
   }
 
-  // Checks if name has encrptyed labels and attempts decrypt them if they exist
+  // Checks if name has encrypted labels and attempts decrypt them if they exist
   const validateKey = useQueryKeys().validate
   const { mutate: mutateName, isLoading: isMutationLoading } = useMutation(
     async (data: FormData) => {
@@ -260,7 +260,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       let validName = data.name.name
       if (!hasEncodedLabel(validName)) return validName
 
-      // build name from unkown labels
+      // build name from unknown labels
       validName = getNameFromUnknownLabels(validName, data.unknownLabels)
       if (!hasEncodedLabel(validName)) {
         saveName(validName)

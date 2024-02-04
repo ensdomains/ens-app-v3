@@ -36,7 +36,7 @@ export default () => {
   const { t } = useTranslation('dnssec')
 
   // redirect to profile page if imported
-  // not doing this for other registration statuses just incase we get an infinite loop!
+  // not doing this for other registration statuses just in case we get an infinite loop!
   useEffect(() => {
     if (registrationStatus === 'imported' && isValid && !isLoading) {
       router.push(`/profile/${name}`)

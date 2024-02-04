@@ -50,7 +50,7 @@ const EnsProvider = ({ children }: { children: React.ReactNode }) => {
         { ...defaultValue, ready },
         {
           // chain id safety check
-          get(target, prop, reciever) {
+          get(target, prop, receiver) {
             const targetFn = target[prop as keyof typeof target]
             // if on client + target is async function
             if (
@@ -79,7 +79,7 @@ const EnsProvider = ({ children }: { children: React.ReactNode }) => {
               }
             }
             // pass through all other getters
-            return Reflect.get(target, prop, reciever)
+            return Reflect.get(target, prop, receiver)
           },
         },
       ),

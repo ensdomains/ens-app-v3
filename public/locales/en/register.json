@@ -170,7 +170,7 @@
       "notEnoughEth": "Not enough ETH in wallet",
       "creditOrDebit": "Credit or debit card",
       "additionalFee": "Additional processing fee",
-      "pendingMoonpayTransaction": "Your MoonPay transaction is processing. This may take up to two minutes. You can check your progress from the confirmation email you recieved.",
+      "pendingMoonpayTransaction": "Your MoonPay transaction is processing. This may take up to two minutes. You can check your progress from the confirmation email you received.",
       "failedMoonpayTransaction": "Your MoonPay transaction has failed. Please try again or choose the 'Ethereum' payment method.",
       "ethereum": "Ethereum",
       "processing": "Processing",

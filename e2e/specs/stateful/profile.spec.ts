@@ -164,7 +164,7 @@ test.describe('Profile', () => {
         }
       }
 
-      // should show other recrods
+      // should show other records
       if (otherRecords.length > 0) {
         await expect(page.getByText('Other Records')).toBeVisible()
         for (const other of otherRecords) {

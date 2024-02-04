@@ -210,7 +210,7 @@ test.describe('profile', () => {
     await morePage.goto(subname)
     await login.connect()
 
-    // Setting unauthorised resovler must be done after name creation so that eth records
+    // Setting unauthorised resolver must be done after name creation so that eth records
     // for the name can be set.
     await morePage.editResolverButton.click()
     await page.getByTestId('custom-resolver-radio').check()
