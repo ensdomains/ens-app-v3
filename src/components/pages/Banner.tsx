@@ -1,47 +1,63 @@
 import styled, { css } from 'styled-components'
 
-import { Button, DefaultTheme, Typography } from '@ensdomains/thorin'
+import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import GoDaddySVG from '@app/assets/GoDaddy.svg'
 
 import { Card } from '../Card'
 
-const Row = styled.div<{$gap: '4'|'5'}>(
-  ({ theme, $gap }) => css`
+const Container = styled(Card)(
+  ({ theme }) => css`
+    flex-direction: row;
+    justify-content: space-between;
+    gap: ${theme.space['4']};
+    padding: ${theme.space['4']};
+    ${mq.sm.max(css`
+      width: 100%;
+      flex-drection: column;
+      a {
+        width: 100%;
+      }
+    `)}
+  `,
+)
+
+const Row = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: ${theme.space[$gap]};
+    gap: ${theme.space['5']};
     width: 100%;
-  `,
-)
-
-const Container = styled(Card)(
-  ({ theme }) => css`
-    padding: ${theme.space['4']};
+    ${mq.sm.max(css`
+      justify-content: center;
+    `)}
   `,
 )
 
 export const Banner = () => {
   return (
     <Container>
-      <Row $gap='4'>
-        <Row $gap='5'>
-          <GoDaddySVG />
-          <div>
-            <Typography color="textPrimary" fontVariant="largeBold" weight="bold">
-              GoDaddy x ENS
-            </Typography>
-            <Typography fontVariant="small" color="textSecondary">
-              Import DNS domains with <strong>zero gas</strong>!
-            </Typography>
-          </div>
-        </Row>
-        <Button as="a" width="max" colorStyle="greyPrimary" href="https://blog.ens.domains/post/beginners-guide-to-ethereum-and-ens" target="_blank" rel="noreferrer">
-          Learn More
-        </Button>
+      <Row>
+        <GoDaddySVG />
+        <div>
+          <Typography color="textPrimary" fontVariant="largeBold" weight="bold">
+            GoDaddy x ENS
+          </Typography>
+          <Typography fontVariant="small" color="textSecondary">
+            Import DNS domains with <strong>zero gas</strong>!
+          </Typography>
+        </div>
       </Row>
+      <Button
+        as="a"
+        colorStyle="blueSecondary"
+        href="https://blog.ens.domains/post/beginners-guide-to-ethereum-and-ens"
+        target="_blank"
+      >
+        Learn More
+      </Button>
     </Container>
   )
 }
