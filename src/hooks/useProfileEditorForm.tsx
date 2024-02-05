@@ -52,7 +52,9 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     if (record.group === 'social')
       return t(`steps.profile.options.groups.social.items.${record.key}`)
     if (record.group === 'address')
-      return t('steps.profile.options.groups.address.itemLabel', { coin: record.key })
+      return t('steps.profile.options.groups.address.itemLabel', {
+        coin: record.key,
+      })
     if (record.group === 'other') return t(`steps.profile.options.groups.other.items.${record.key}`)
     if (record.group === 'website')
       return t(`steps.profile.options.groups.website.items.${record.key}`)
@@ -72,9 +74,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     if (record.group === 'social')
       return t(`steps.profile.options.groups.social.placeholder.${record.key}`)
     if (record.group === 'address')
-      return supportedAddresses.includes(
-        record.key.toLowerCase() as (typeof supportedAddresses)[number],
-      )
+      return supportedAddresses.includes(record.key as (typeof supportedAddresses)[number])
         ? t(`steps.profile.options.groups.address.placeholder.${record.key}`)
         : t(`steps.profile.options.groups.address.placeholder.default`)
     if (record.group === 'website')

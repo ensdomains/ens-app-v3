@@ -21,6 +21,8 @@ import { setResolver } from '@ensdomains/ensjs/wallet'
 import { transferName } from '@ensdomains/ensjs/wallet'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
 
+const LEGACY_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address
+const PUBLIC_RESOLVER = testClient.chain.contracts.publicResolver.address
 const DEFAULT_DURATION = 31536000
 // const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
 const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address 
@@ -68,7 +70,7 @@ export const generateLegacyNameWithConfig =
 
     // Registration will fail if resolver is not valid. If an invalid resolver is entered
     // we will set the resolver after the name has been registered.
-    const hasValidResolver = resolver 
+    const hasValidResolver = [LEGACY_RESOLVER, PUBLIC_RESOLVER].includes(resolver)
     // && VALID_RESOLVERS.includes(resolver)
     const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 

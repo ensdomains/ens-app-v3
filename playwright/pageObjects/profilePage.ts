@@ -83,4 +83,9 @@ export class ProfilePage {
       return this.page.getByTestId('profile-record-input-description').locator('textarea')
     return this.page.getByTestId(`profile-record-input-input-${key}`)
   }
+
+  profileEditorClearButton(key: string) {
+    if (key === 'description') return this.page.getByTestId(`profile-record-input-${key}`).getByRole('button')
+    return this.page.getByTestId(`profile-record-input-${key}-delete-button`)
+  }
 }
