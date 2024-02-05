@@ -54,7 +54,7 @@ export const Banner = () => {
         as="a"
         width="max"
         colorStyle="blueSecondary"
-        href="https://blog.ens.domains/post/godaddy-partners-with-ens"
+        href="https://aboutus.godaddy.net/newsroom/company-news/news-details/2024/GoDaddy-and-Ethereum-Name-Service-Bridge-the-Gap-Between-Domain-Names-and-Crypto-Wallets/default.aspx?utm_source=Social&utm_medium=Twitter&utm_campaign=GoDaddy-and-Ethereum-Name-Service-Bridge-the-Gap-Between-Domain-Names-and-Crypto-Wallets/default.aspx"
         target="_blank"
       >
         Learn More
