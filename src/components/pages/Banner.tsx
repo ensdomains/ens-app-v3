@@ -54,7 +54,7 @@ export const Banner = () => {
         as="a"
         width="max"
         colorStyle="blueSecondary"
-        href="https://blog.ens.domains/post/beginners-guide-to-ethereum-and-ens"
+        href="https://blog.ens.domains/post/godaddy-partners-with-ens"
         target="_blank"
       >
         Learn More
