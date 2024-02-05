@@ -14,7 +14,7 @@ const Container = styled(Card)(
     padding: ${theme.space['4']};
     ${mq.sm.max(css`
       width: 100%;
-      flex-drection: column;
+      flex-direction: column;
       a {
         width: 100%;
       }
@@ -52,6 +52,7 @@ export const Banner = () => {
       </Row>
       <Button
         as="a"
+        width="max"
         colorStyle="blueSecondary"
         href="https://blog.ens.domains/post/beginners-guide-to-ethereum-and-ens"
         target="_blank"
