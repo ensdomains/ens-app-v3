@@ -1,12 +1,15 @@
-import { stringToHex } from 'viem'
+import { hexToString, stringToHex } from 'viem'
 
-import { getProtocolType, RecordOptions } from '@ensdomains/ensjs/utils'
+import { ClientWithEns } from '@ensdomains/ensjs/dist/types/contracts/consts'
+import { encodeAbi, EncodedAbi, getProtocolType, RecordOptions } from '@ensdomains/ensjs/utils'
 
 import { ProfileRecord, ProfileRecordGroup, sortValues } from '@app/constants/profileRecordOptions'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import { Profile } from '@app/types'
+import { getUsedAbiEncodeAs } from '@app/utils/abi'
+import { normalizeCoinAddress } from '@app/utils/coin'
 import { contentHashToString, getContentHashProvider } from '@app/utils/contenthash'
 
 export const profileRecordsToRecordOptions = (
@@ -52,7 +55,10 @@ export const profileRecordsToRecordOptions = (
           ...options,
           coins: [
             ...(options.coins?.filter((r) => r.coin !== recordItem.key) || []),
-            { coin: recordItem.key, value: recordItem.value },
+            {
+              coin: recordItem.key,
+              value: normalizeCoinAddress({ coin: recordItem.key, address: recordItem.value }),
+            },
           ],
         }
       }
@@ -80,6 +86,32 @@ export const profileRecordsToRecordOptions = (
       clearRecords: !!clearRecords,
     } as RecordOptions,
   )
+}
+
+export const profileRecordsToRecordOptionsWithDeleteAbiArray = async (
+  client: ClientWithEns,
+  {
+    name = '',
+    profileRecords = [],
+    clearRecords = false,
+  }: {
+    name: string
+    profileRecords: ProfileRecord[]
+    clearRecords?: boolean
+  },
+) => {
+  const recordOptions = profileRecordsToRecordOptions(profileRecords, clearRecords)
+  if (!recordOptions.abi) return recordOptions
+  const abi = recordOptions.abi as EncodedAbi
+  if (hexToString(abi.encodedData)) return recordOptions
+  const allAbiEncodedAs = await getUsedAbiEncodeAs(client, { name })
+  const abis = await Promise.all(
+    allAbiEncodedAs.map((encodeAs) => encodeAbi({ encodeAs, data: null })),
+  )
+  return {
+    ...recordOptions,
+    abi: abis,
+  }
 }
 
 export const profileEditorFormToProfileRecords = (data: ProfileEditorForm): ProfileRecord[] => {

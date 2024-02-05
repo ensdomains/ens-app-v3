@@ -8,6 +8,8 @@ import {
 import { ProfileRecord, ProfileRecordGroup } from '@app/constants/profileRecordOptions'
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { AvatarEditorType } from '@app/types'
+import { normalizeCoinAddress } from '@app/utils/coin'
+import { validateAccount } from '@app/validators/validateAccount'
 import { validateCryptoAddress } from '@app/validators/validateAddress'
 import { validateContentHash } from '@app/validators/validateContentHash'
 import { validateUrl } from '@app/validators/validateUrl'
@@ -50,7 +52,9 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     if (record.group === 'social')
       return t(`steps.profile.options.groups.social.items.${record.key}`)
     if (record.group === 'address')
-      return t('steps.profile.options.groups.address.itemLabel', { coin: record.key })
+      return t('steps.profile.options.groups.address.itemLabel', {
+        coin: record.key,
+      })
     if (record.group === 'other') return t(`steps.profile.options.groups.other.items.${record.key}`)
     if (record.group === 'website')
       return t(`steps.profile.options.groups.website.items.${record.key}`)
@@ -70,9 +74,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     if (record.group === 'social')
       return t(`steps.profile.options.groups.social.placeholder.${record.key}`)
     if (record.group === 'address')
-      return supportedAddresses.includes(
-        record.key.toLowerCase() as (typeof supportedAddresses)[number],
-      )
+      return supportedAddresses.includes(record.key as (typeof supportedAddresses)[number])
         ? t(`steps.profile.options.groups.address.placeholder.${record.key}`)
         : t(`steps.profile.options.groups.address.placeholder.default`)
     if (record.group === 'website')
@@ -85,7 +87,8 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     if (record.key === 'url') return validateUrl
     if (record.group === 'address')
       return (value?: string) => {
-        const result = validateCryptoAddress({ coin: record.key, address: value })
+        const address_ = normalizeCoinAddress({ coin: record.key, address: value })
+        const result = validateCryptoAddress({ coin: record.key, address: address_ })
         if (typeof result === 'string') {
           if (result === 'addressRequired') return t('errors.addressRequired', { ns: 'common' })
           return t('errors.invalidAddress', { ns: 'common' })
@@ -108,6 +111,13 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
             .length > 1
         )
           return t('steps.profile.errors.duplicateRecord') as string
+        return true
+      }
+    if (record.group === 'social')
+      return (value?: string) => {
+        if (!value) return true
+        const isValid = validateAccount({ key: record.key, value })
+        if (!isValid) return t('steps.profile.errors.invalidValue') as string
         return true
       }
     return () => true

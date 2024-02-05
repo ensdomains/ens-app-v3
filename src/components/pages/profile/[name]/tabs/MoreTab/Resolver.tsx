@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
 
-import { mq, Typography } from '@ensdomains/thorin'
+import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -9,6 +10,8 @@ import RecordItem from '@app/components/RecordItem'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { emptyAddress } from '@app/utils/constants'
 
 import { TabWrapper } from '../../../TabWrapper'
 
@@ -60,6 +63,19 @@ const InnerHeading = styled.div(
   `,
 )
 
+const ButtonStack = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: ${theme.space['4']};
+
+    ${mq.md.max(css`
+      flex-direction: column;
+    `)}
+  `,
+)
+
 const Resolver = ({
   name,
   canEditResolver,
@@ -75,6 +91,8 @@ const Resolver = ({
 }) => {
   const { t } = useTranslation('profile')
 
+  const { md } = useBreakpoint()
+
   const hasGlobalError = useHasGlobalError()
 
   const { usePreparedDataInput } = useTransactionFlow()
@@ -85,8 +103,17 @@ const Resolver = ({
     })
   }
 
-  const resolverQuery = useResolver({ name, enabled: !resolverAddress })
-  const registryOrSubgraphResolverAddress = resolverAddress || resolverQuery.data
+  const resolverQuery = useResolver({
+    name,
+    enabled: !resolverAddress || resolverAddress === emptyAddress,
+  })
+
+  const registryOrSubgraphResolverAddress = match([resolverAddress, resolverQuery.data])
+    .with(
+      [P.union(emptyAddress, P.nullish), P._],
+      ([, registryAddress]) => registryAddress || emptyAddress,
+    )
+    .otherwise(([subgraphResolver]) => subgraphResolver || emptyAddress)
 
   return (
     <Container $isCached={isCachedData}>
@@ -96,17 +123,26 @@ const Resolver = ({
             {t('tabs.more.resolver.label')}
           </Typography>
         </InnerHeading>
+      </HeadingContainer>
+      <ButtonStack>
+        <RecordItem
+          type="text"
+          data-testid="resolver-address"
+          value={registryOrSubgraphResolverAddress || ''}
+        />
         {canEdit && !hasGlobalError && (
           <>
             {canEditResolver ? (
-              <button
-                style={{ cursor: 'pointer' }}
+              <Button
+                colorStyle="accentSecondary"
+                size="small"
                 type="button"
+                width={md ? 'max' : 'full'}
                 onClick={handleEditClick}
                 data-testid="edit-resolver-button"
               >
                 {t('action.edit', { ns: 'common' })}
-              </button>
+              </Button>
             ) : (
               <DisabledButtonWithTooltip
                 {...{
@@ -116,18 +152,13 @@ const Resolver = ({
                   mobileWidth: 150,
                   buttonWidth: '15',
                   mobileButtonWidth: 'initial',
-                  colorStyle: 'transparent',
+                  colorStyle: 'disabled',
                 }}
               />
             )}
           </>
         )}
-      </HeadingContainer>
-      <RecordItem
-        type="text"
-        data-testid="resolver-address"
-        value={registryOrSubgraphResolverAddress || ''}
-      />
+      </ButtonStack>
     </Container>
   )
 }

@@ -37,22 +37,26 @@ const transaction = async ({
   walletClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
-  const subgraphRecords = await getSubgraphRecords(publicClient, { name: data.name })
+  const { name, resolverAddress } = data
+  const subgraphRecords = await getSubgraphRecords(publicClient, {
+    name,
+    resolverAddress,
+  })
   const profile = await getRecords(publicClient, {
-    name: data.name,
+    name,
     texts: subgraphRecords?.texts || [],
     coins: subgraphRecords?.coins || [],
     abi: true,
     contentHash: true,
-    resolver: data.resolverAddress
+    resolver: resolverAddress
       ? {
-          address: data.resolverAddress,
+          address: resolverAddress,
           fallbackOnly: false,
         }
       : undefined,
   })
 
-  const profileRecords = profileRecordsToKeyValue(profile)
+  const profileRecords = await profileRecordsToKeyValue(profile)
   const latestResolverAddress = getChainContractAddress({
     client: publicClient,
     contract: 'ensPublicResolver',

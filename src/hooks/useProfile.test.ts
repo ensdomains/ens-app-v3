@@ -49,17 +49,17 @@ const mockUseRecordsData: GetRecordsReturnType = {
   coins: [
     {
       id: 0,
-      name: 'BTC',
+      name: 'btc',
       value: 'BTC-value',
     },
     {
       id: 60,
-      name: 'ETH',
+      name: 'eth',
       value: 'ETH-value',
     },
     {
       id: 61,
-      name: 'ETC',
+      name: 'etc',
       value: 'ETC-value',
     },
   ],
@@ -95,17 +95,17 @@ it('should return the correct data', () => {
         "coins": [
           {
             "id": 0,
-            "name": "BTC",
+            "name": "btc",
             "value": "BTC-value",
           },
           {
             "id": 60,
-            "name": "ETH",
+            "name": "eth",
             "value": "ETH-value",
           },
           {
             "id": 61,
-            "name": "ETC",
+            "name": "etc",
             "value": "ETC-value",
           },
         ],
@@ -189,9 +189,7 @@ it('should fetch default records when no subgraph records, then fetch with subgr
   const { result, rerender } = renderHook(() => useProfile({ name: 'test.eth' }))
   expect(useRecords).toHaveBeenCalledWith(
     expect.objectContaining({
-      records: expect.objectContaining({
         texts: expect.not.arrayContaining(['avatar', 'com.example']),
-      }),
     }),
   )
   expect(result.current.data!.texts).toHaveLength(2)
@@ -213,9 +211,7 @@ it('should fetch default records when no subgraph records, then fetch with subgr
   await waitFor(() => !result.current.isLoading)
   expect(useRecords).toHaveBeenCalledWith(
     expect.objectContaining({
-      records: expect.objectContaining({
         texts: expect.arrayContaining(['avatar', 'com.example']),
-      }),
     }),
   )
   expect(result.current.data!.texts).toHaveLength(4)
@@ -234,11 +230,9 @@ it('should fetch union of supported coin records and subgraph coin records', () 
   renderHook(() => useProfile({ name: 'test.eth' }))
   expect(useRecords).toHaveBeenCalledWith(
     expect.objectContaining({
-      records: expect.objectContaining({
         coins: expect.arrayContaining([
           /* some default coins */ 0, 3, 60, 714, /* subgraph coins */ 118, 128,
         ]),
-      }),
     }),
   )
 })
@@ -256,9 +250,7 @@ it('should filter out unsupported coin records', () => {
   renderHook(() => useProfile({ name: 'test.eth' }))
   expect(useRecords).toHaveBeenCalledWith(
     expect.objectContaining({
-      records: expect.objectContaining({
         coins: expect.not.arrayContaining([3010]),
-      }),
     }),
   )
 })

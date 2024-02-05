@@ -6,6 +6,7 @@ import { setRecords } from '@ensdomains/ensjs/wallet'
 import {
   getProfileRecordsDiff,
   profileRecordsToRecordOptions,
+  profileRecordsToRecordOptionsWithDeleteAbiArray,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
@@ -72,11 +73,18 @@ const displayItems = (
   ]
 }
 
-const transaction = async ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
+const transaction = async ({
+  walletClient,
+  publicClient,
+  data,
+}: TransactionFunctionParameters<Data>) => {
   const { name, resolverAddress, records, previousRecords = [], clearRecords } = data
   const submitRecords = getProfileRecordsDiff(records, previousRecords)
-  const recordOptions = profileRecordsToRecordOptions(submitRecords, clearRecords)
-
+  const recordOptions = await profileRecordsToRecordOptionsWithDeleteAbiArray(publicClient, {
+    name,
+    profileRecords: submitRecords,
+    clearRecords,
+  })
   return setRecords.makeFunctionData(walletClient, {
     name,
     resolverAddress,

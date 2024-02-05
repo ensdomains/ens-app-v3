@@ -157,6 +157,7 @@ const LoadingContainer = styled.div(({ theme }) => [
   `),
 ])
 
+// TODO: Scrolling is broken
 export const AvatarNFT = ({
   handleCancel,
   handleSubmit,
@@ -194,7 +195,7 @@ export const AvatarNFT = ({
         ...response,
         ownedNfts: response.ownedNfts.filter(
           (nft) =>
-            (nft.media[0].thumbnail || nft.media[0].gateway) &&
+            (nft.media?.[0]?.thumbnail || nft.media?.[0]?.gateway) &&
             nft.contract.address !==
               getSupportedChainContractAddress({
                 client: publicClient,

@@ -164,9 +164,6 @@ importers:
       use-immer:
         specifier: ^0.7.0
         version: 0.7.0(immer@9.0.21)(react@18.2.0)
-      use-sync-external-store:
-        specifier: ^1.2.0
-        version: 1.2.0(react@18.2.0)
       viem:
         specifier: ^1.16.4
         version: 1.19.10(typescript@5.3.2)
@@ -255,9 +252,6 @@ importers:
       '@types/testing-library__jest-dom':
         specifier: ^5.14.5
         version: 5.14.9
-      '@types/use-sync-external-store':
-        specifier: ^0.0.3
-        version: 0.0.3
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.7.4
         version: 6.13.1(@typescript-eslint/parser@6.13.1)(eslint@8.50.0)(typescript@5.3.2)
@@ -276,6 +270,9 @@ importers:
       canvas:
         specifier: ^2.9.3
         version: 2.11.2
+      cbor:
+        specifier: ^8.1.0
+        version: 8.1.0
       concurrently:
         specifier: ^7.3.0
         version: 7.6.0
@@ -387,6 +384,9 @@ importers:
       node-fetch-commonjs:
         specifier: ^3.1.1
         version: 3.3.2
+      pako:
+        specifier: ^2.1.0
+        version: 2.1.0
       polyfill-crypto.getrandomvalues:
         specifier: ^1.0.0
         version: 1.0.0
@@ -5253,10 +5253,6 @@ packages:
   /@types/trusted-types@2.0.7:
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
 
-  /@types/use-sync-external-store@0.0.3:
-    resolution: {integrity: sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==}
-    dev: true
-
   /@types/ws@7.4.7:
     resolution: {integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==}
     dependencies:
@@ -7467,6 +7463,13 @@ packages:
     dependencies:
       bignumber.js: 9.1.2
       nofilter: 1.0.4
+    dev: true
+
+  /cbor@8.1.0:
+    resolution: {integrity: sha512-DwGjNW9omn6EwP70aXsn7FQJx5kO12tX0bZkaTjzdVFM6/7nhA4t0EENocKGx6D2Bch9PE2KzCUf5SceBdeijg==}
+    engines: {node: '>=12.19'}
+    dependencies:
+      nofilter: 3.1.0
     dev: true
 
   /chai-bn@0.2.2(chai@4.3.10):
@@ -13430,6 +13433,11 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /nofilter@3.1.0:
+    resolution: {integrity: sha512-l2NNj07e9afPnhAhvgVrCD/oy2Ai1yfLpuo3EpiO1jFTsB4sFz6oIfAfSZyQzVpkZQ9xS8ZS5g1jCBgq4Hwo0g==}
+    engines: {node: '>=12.19'}
+    dev: true
+
   /nopt@5.0.0:
     resolution: {integrity: sha512-Tbj67rffqceeLpcRXrT7vKAN8CwfPeIBgM7E6iBkmKLV7bEMwpGgYLGv0jACUsECaa/vuxP0IjEont6umdMgtQ==}
     engines: {node: '>=6'}
@@ -13821,7 +13829,6 @@ packages:
 
   /pako@2.1.0:
     resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
-    dev: false
 
   /param-case@2.1.1:
     resolution: {integrity: sha512-eQE845L6ot89sk2N8liD8HAuH4ca6Vvr7VWAWwt7+kvvG5aBcPmmphQ68JsEG2qa9n1TykS2DLeMt363AAH8/w==}

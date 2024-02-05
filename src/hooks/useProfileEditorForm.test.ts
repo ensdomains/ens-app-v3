@@ -7,20 +7,19 @@ import profileRecordOptions, { grouped, ProfileRecord } from '../constants/profi
 import { useProfileEditorForm } from './useProfileEditorForm'
 
 const baseRecord: ProfileRecord = {
-  key: 'ETH',
+  key: 'eth',
   group: 'address',
   type: 'addr',
   value: '0xb794f5ea0ba39494ce839613fffba74279579268',
 }
 
-const avatarRecrod: ProfileRecord = {
+const avatarRecord: ProfileRecord = {
   key: 'avatar',
   group: 'media',
   type: 'text',
   value: 'https://image.com/avatar.png',
 }
-
-const records: ProfileRecord[] = [baseRecord, avatarRecrod]
+const records: ProfileRecord[] = [baseRecord, avatarRecord]
 
 const validEth = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
 const invalidEth = '0x70997970C51812dc3A010C7d01b50e0d17dc79X4'
@@ -44,7 +43,7 @@ describe('useProfileEditorForm', () => {
       const expectedRecords: ProfileRecord[] = [
         { key: 'test', group: 'custom', type: 'text', value: '' },
         baseRecord,
-        avatarRecrod,
+        avatarRecord,
       ]
       const { result } = renderHook(() => useProfileEditorForm(existingRecords))
       expect(result.current.getAvatar()).toBe('https://image.com/avatar.png')
@@ -83,7 +82,7 @@ describe('useProfileEditorForm', () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
       expect(
         await result.current.validatorForRecord({
-          key: 'ETH',
+          key: 'eth',
           group: 'address',
           type: 'addr',
         })(validEth),
@@ -94,7 +93,7 @@ describe('useProfileEditorForm', () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
       expect(
         typeof (await result.current.validatorForRecord({
-          key: 'ETH',
+          key: 'eth',
           group: 'address',
           type: 'addr',
         })(invalidEth)),
@@ -220,11 +219,49 @@ describe('useProfileEditorForm', () => {
     })
   })
 
+  describe('Social Media Validation', () => {
+    const invalidGithubRecord: ProfileRecord = {
+      key: 'com.github',
+      group: 'social',
+      type: 'text',
+      value: 'invalid_username-',
+    }
+
+    const moreRecords: ProfileRecord[] = [baseRecord, avatarRecord, invalidGithubRecord]
+    const testCases = [
+      { platform: 'Twitter', key: 'com.twitter', username: 'valid_twitter', isValid: true },
+      { platform: 'Twitter', key: 'com.twitter', username: 'invalid_twitter!', isValid: "steps.profile.errors.invalidValue" },
+      { platform: 'GitHub', key: 'com.github', username: 'valid-github', isValid: true },
+      { platform: 'GitHub', key: 'com.github', username: 'invalid_username', isValid: "steps.profile.errors.invalidValue" },
+      { platform: 'Discord', key: 'com.discord', username: 'valid_username', isValid: true },
+      { platform: 'Discord', key: 'com.discord', username: 'bad..discord', isValid: "steps.profile.errors.invalidValue" },
+      { platform: 'Telegram', key: 'org.telegram', username: 'valid_username', isValid: true },
+      { platform: 'Telegram', key: 'org.telegram', username: 'invalid_username!', isValid: "steps.profile.errors.invalidValue" },
+      { platform: 'Email', key: 'email', username: 'test@example.com', isValid: true },
+      { platform: 'Email', key: 'email', username: 'test@example', isValid: "steps.profile.errors.invalidValue" },
+    ];
+  
+    testCases.forEach(({ platform, key, username, isValid }) => {
+      it(`should ${isValid == true ? 'validate' : 'invalidate'} ${isValid == true ? 'a' : 'an'} ${isValid == true ? 'correct' : 'incorrect'} ${platform} account`, async () => {
+        const { result } = renderHook(() => useProfileEditorForm(moreRecords));
+        await act(async () => {
+          const validationOutcome = await result.current.validatorForRecord({
+            key: key,
+            group: 'social',
+            type: 'text',
+          })(username);
+  
+          expect(validationOutcome).toBe(isValid);
+        });
+      });
+    });
+  });
+  
   describe('removeRecordByTypeAndKey', () => {
     it('should be able to remove a address record by type and key', async () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
       act(() => {
-        result.current.removeRecordByGroupAndKey('address', 'ETH')
+        result.current.removeRecordByGroupAndKey('address', 'eth')
       })
       expect(result.current.getRecords().length).toBe(1)
     })
@@ -248,7 +285,7 @@ describe('useProfileEditorForm', () => {
           type: 'text',
           value: '',
         },
-        avatarRecrod,
+        avatarRecord,
       ])
     })
 
@@ -270,7 +307,7 @@ describe('useProfileEditorForm', () => {
           type: 'text',
           value: 'testing',
         },
-        avatarRecrod,
+        avatarRecord,
       ])
     })
 
@@ -291,7 +328,7 @@ describe('useProfileEditorForm', () => {
           type: 'text',
           value: '',
         },
-        avatarRecrod,
+        avatarRecord,
       ])
     })
 
@@ -320,7 +357,7 @@ describe('useProfileEditorForm', () => {
     it('should not be able to add a address record if the record already exists', () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
       result.current.addRecords({
-        key: 'ETH',
+        key: 'eth',
         group: 'address',
         type: 'addr',
         value: 'test',

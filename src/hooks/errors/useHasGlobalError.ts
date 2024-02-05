@@ -1,18 +1,19 @@
-import { useMemo } from 'react'
+import { useHasSubgraphSyncErrors } from '@app/utils/useHasSubgraphSyncErrors'
 
-import { useGlobalErrorState } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
+import { useReadLocalStorage } from '../useLocalStorage'
 
 export const useHasGlobalError = (includeLatency = false) => {
-  const globalState = useGlobalErrorState()
+  const { error, slow } = useHasSubgraphSyncErrors()
+  const subgraphDebug = useReadLocalStorage<string>('subgraph-debug')
 
-  return useMemo(() => {
-    const { errors, activeHashes, meta } = globalState
-    if (meta.hasSubgraphError) return true
-    return (
-      activeHashes.filter((hash) => {
-        if (includeLatency) return !!errors[hash]
-        return !!errors[hash] && errors[hash].type !== 'ENSJSNetworkLatencyError'
-      }).length > 0
-    )
-  }, [globalState, includeLatency])
+  if (includeLatency) {
+    if (subgraphDebug === 'ENSJSSubgraphLatency') return true
+    return Boolean(error || slow)
+  }
+
+  return (
+    Boolean(error) ||
+    subgraphDebug === 'ENSJSUnknownError' ||
+    subgraphDebug === 'ENSJSSubgraphError'
+  )
 }

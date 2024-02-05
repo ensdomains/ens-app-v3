@@ -12,6 +12,7 @@ import { useChainId } from '@app/hooks/chain/useChainId'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { AddressRecord, Profile, TextRecord } from '@app/types'
+import { abiDisplayValue } from '@app/utils/abi'
 import { emptyAddress } from '@app/utils/constants'
 import { getContentHashLink } from '@app/utils/contenthash'
 
@@ -238,12 +239,7 @@ export const RecordsTab = ({
               )}
             </SectionTitleContainer>
           </SectionHeader>
-          {abi && (
-            <RecordItem
-              type="abi"
-              value={typeof abi.abi === 'string' ? abi.abi : JSON.stringify(abi.abi)}
-            />
-          )}
+          {abi && <RecordItem type="abi" value={abiDisplayValue(abi)} />}
         </RecordSection>
       </AllRecords>
       {canEdit && resolverAddress !== emptyAddress && (

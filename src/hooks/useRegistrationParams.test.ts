@@ -14,7 +14,7 @@ describe('useRegistrationParams()', () => {
           secret: '0xsecret',
           records: [
             {
-              key: 'ETH',
+              key: 'eth',
               value: '0x4b2d639aC1B0497e932F8cE234eFd3B3Df9a9B74',
               group: 'address',
               type: 'addr',
@@ -38,8 +38,8 @@ describe('useRegistrationParams()', () => {
           "clearRecords": false,
           "coins": [
             {
-              "coin": "ETH",
-              "value": "0x4b2d639aC1B0497e932F8cE234eFd3B3Df9a9B74",
+              "coin": "eth",
+              "value": "0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74",
             },
           ],
         },
@@ -60,13 +60,13 @@ describe('useRegistrationParams()', () => {
           secret: '0xsecret',
           records: [
             {
-              key: 'ETH',
+              key: 'eth',
               value: '0x4b2d639aC1B0497e932F8cE234eFd3B3Df9a9B74',
               group: 'address',
               type: 'addr',
             },
             {
-              key: 'BTC',
+              key: 'btc',
               value: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
               group: 'address',
               type: 'addr',
@@ -96,11 +96,11 @@ describe('useRegistrationParams()', () => {
           "clearRecords": false,
           "coins": [
             {
-              "coin": "ETH",
-              "value": "0x4b2d639aC1B0497e932F8cE234eFd3B3Df9a9B74",
+              "coin": "eth",
+              "value": "0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74",
             },
             {
-              "coin": "BTC",
+              "coin": "btc",
               "value": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
             },
           ],

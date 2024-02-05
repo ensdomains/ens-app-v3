@@ -50,6 +50,7 @@ export function createMakeNames({ accounts, provider, time, contracts, subgraph 
     for (const { type, ...name } of _names) {
       if (type === 'wrapped') {
         const wrappedName = { ...name, offset } as WrappedName
+        console.log('wrappedName:', wrappedName)
         await generateWrappedName({ accounts, provider, contracts })(wrappedName)
       } else if (type === 'legacy') {
         const legacyName = name as LegacyNameWithConfig

@@ -89,7 +89,7 @@ const SubmitButton = ({
     name: 'avatar',
   })
 
-  const hasEthRecord = records.some((record) => record.key === 'ETH' && record.value === address)
+  const hasEthRecord = records.some((record) => record.key === 'eth' && record.value === address)
   const hasAvatar = !!avatar
   const hasOneRecord = records.length === 1
   const isClean = hasEthRecord && !hasAvatar && hasOneRecord
@@ -173,7 +173,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
   }
 
   const handleDeleteRecord = (record: ProfileRecord, index: number) => {
-    if (record.key === 'ETH') return setModalOption('clear-eth')
+    if (record.key === 'eth') return setModalOption('clear-eth')
     removeRecordAtIndex(index)
     process.nextTick(() => trigger())
   }
@@ -245,7 +245,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
             confirmLabel={t('steps.profile.confirmations.clearEth.confirm')}
             declineLabel={t('steps.profile.confirmations.clearEth.decline')}
             onConfirm={() => {
-              removeRecordByTypeAndKey('address', 'ETH')
+              removeRecordByTypeAndKey('address', 'eth')
               setModalOpen(false)
             }}
             onDecline={() => setModalOpen(false)}
@@ -313,7 +313,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
               key={field.id}
               recordKey={field.key}
               group={field.group}
-              disabled={field.key === 'ETH' && registrationData.reverseRecord}
+              disabled={field.key === 'eth' && registrationData.reverseRecord}
               label={labelForRecord(field)}
               secondaryLabel={secondaryLabelForRecord(field)}
               placeholder={placeholderForRecord(field)}

@@ -96,8 +96,7 @@ test.describe('Unhappy', () => {
   })
 })
 
-// TODO: Fix subgraph errors module
-test.skip('subgraph errors', () => {
+test.describe('subgraph errors', () => {
   test('should disable edit resolver button for wrapped name if there is a subgraph indexing error', async ({
     page,
     makeName,
@@ -115,7 +114,7 @@ test.skip('subgraph errors', () => {
     await login.connect()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').check()
+    await page.getByTestId('subgraph-network-error').check()
 
     await morePage.goto(name)
     await expect(morePage.editResolverButton).toHaveCount(0)
@@ -138,7 +137,7 @@ test.skip('subgraph errors', () => {
     await login.connect()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').check()
+    await page.getByTestId('subgraph-network-error').check()
 
     await morePage.goto(name)
     await expect(morePage.editResolverButton).toHaveCount(0)

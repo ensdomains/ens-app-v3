@@ -3,18 +3,15 @@ import { test } from '../../../playwright'
 
 import { namehash } from '@ensdomains/ensjs/utils'
 
-// import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
-import { testClient, waitForTransaction, walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import { testClient, waitForTransaction, walletClient, publicClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts';
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { labelhash } from 'viem'
+import { getResolver } from '@ensdomains/ensjs/public'
 
-// TODO: Update for when invalid resolver is supported
 const UNAUTHORISED_RESOLVER = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
 
 test.afterAll(async ({ contracts }) => {
-  // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-  // await reverseRegistrar.setName('')
   await setPrimaryName( walletClient, {
     name: '',
     account: createAccounts().getAddress('user') as `0x${string}`,
@@ -164,6 +161,9 @@ test.describe('profile', () => {
     })
     const subname = `test.${name}`
 
+    const test2 = await getResolver(walletClient, { name: subname })
+    console.log('test', test2)
+
     const profilePage = makePageObject('ProfilePage')
     const morePage = makePageObject('MorePage')
     const transactionModal = makePageObject('TransactionModal')
@@ -218,7 +218,7 @@ test.describe('profile', () => {
           records: {
             coins: [
               {
-                coin: 'ETH',
+                coin: 'eth',
                 value: accounts.getAddress('user'),
               },
             ],
@@ -338,7 +338,7 @@ test.describe('profile', () => {
       records: {
         coins: [
           {
-            coin: 'ETH',
+            coin: 'eth',
             value: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
           },
         ],
