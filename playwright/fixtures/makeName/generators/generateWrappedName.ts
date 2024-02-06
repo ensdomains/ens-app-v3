@@ -1,23 +1,26 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Accounts, User, createAccounts } from '../../accounts'
-import { Contracts } from '../../contracts'
-import { Provider } from '../../provider'
-import { EncodeChildFusesInputObject } from '@ensdomains/ensjs/utils'
-import { RecordOptions } from '@ensdomains/ensjs/utils'
-
-// import { NAMEWRAPPER_AWARE_RESOLVERS } from '@app/utils/constants' //TODO (SG) - Ask about this
-
-import { generateRecords } from './generateRecords'
-import { WrappedSubname, generateWrappedSubname } from './generateWrappedSubname'
-import { RegistrationParameters } from '@ensdomains/ensjs/utils'
-import { testClient, waitForTransaction, walletClient } from '../../contracts/utils/addTestContracts'
-import { commitName, registerName, setResolver } from '@ensdomains/ensjs/wallet'
 import { getPrice } from '@ensdomains/ensjs/public'
+import {
+  EncodeChildFusesInputObject,
+  RecordOptions,
+  RegistrationParameters,
+} from '@ensdomains/ensjs/utils'
+import { commitName, registerName, setResolver } from '@ensdomains/ensjs/wallet'
 
-// const DEFAULT_RESOLVER = NAMEWRAPPER_AWARE_RESOLVERS['1337'][0] as `0x${string}` //TODO (SG) - Ask about this
-const DEFAULT_RESOLVER = testClient.chain.contracts.ensPublicResolver.address //TODO (SG) Not sure what resolver to use here
+import { Accounts, createAccounts, User } from '../../accounts'
+import { Contracts } from '../../contracts'
+import {
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../contracts/utils/addTestContracts'
+import { Provider } from '../../provider'
+import { generateRecords } from './generateRecords'
+import { generateWrappedSubname, WrappedSubname } from './generateWrappedSubname'
+
+const DEFAULT_RESOLVER = testClient.chain.contracts.ensPublicResolver.address
 
 export type Name = {
   label: string
@@ -53,54 +56,46 @@ export const generateWrappedName =
     records,
     subnames,
   }: Name) => {
-    const name = `${label}.eth`    
+    const name = `${label}.eth`
     const _owner = createAccounts().getAddress(owner) as `0x${string}`
     console.log('generating wrapped name:', name, 'with owner:', _owner)
 
-    // Check if resolver is valid
-    // const hasValidResolver = !!KNOWN_RESOLVER_DATA['1337']?.find((resolverData) => resolverData.address === resolver)?.isNameWrapperAware
-    const hasValidResolver = resolver.toLocaleLowerCase() === testClient.chain.contracts.ensPublicResolver.address.toLocaleLowerCase()
-    // && NAMEWRAPPER_AWARE_RESOLVERS['1337'].includes(resolver) //TODO (SG) - Ask about this
-    // const resolverAddress = hasValidResolver ? resolver : DEFAULT_RESOLVER
-    // const _resolver = contracts.get('PublicResolver', {
-    //   address: resolverAddress,
-    //   signer: owner, 
-    // }) as PublicResolver //TODO (SG) - Ask about this
+    const hasValidResolver =
+      resolver.toLocaleLowerCase() ===
+      testClient.chain.contracts.ensPublicResolver.address.toLowerCase()
     const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 
     console.log('making commitment:', name)
 
     const params: RegistrationParameters = {
-        name: name,
-        duration: duration,
-        owner: _owner as `0x${string}`,
-        secret: secret as `0x${string}`,
-        fuses: fuses,
-        resolverAddress: _resolver as `0x${string}`,
-      }
-      const commitTx = await commitName(walletClient, {
-        ...params,
-        account: _owner as `0x${string}`  ,
-      })
-      const commitReceipt = await waitForTransaction(commitTx)
-    
-      // TODO: Explain why 120 is needed to SG.
-      await testClient.increaseTime({ seconds: 120 }) // I use 120 because sometimes with anvil you need to wait a bit longer when registering multiple names at once
-      await testClient.mine({ blocks: 1 })
-    
-      const price = await getPrice(walletClient, {
-        nameOrNames:params.name,
-        duration: params.duration,
-      })
-      const total = price!.base + price!.premium
-    
-      const tx = await registerName(walletClient, {
-        ...params,
-        account: _owner as `0x${string}`,
-        value: total,
-      })
-      const receipt = await waitForTransaction(tx)
-      
+      name,
+      duration,
+      owner: _owner as `0x${string}`,
+      secret: secret as `0x${string}`,
+      fuses,
+      resolverAddress: _resolver as `0x${string}`,
+    }
+    const commitTx = await commitName(walletClient, {
+      ...params,
+      account: _owner as `0x${string}`,
+    })
+    const commitReceipt = await waitForTransaction(commitTx)
+
+    await testClient.increaseTime({ seconds: 120 }) // I use 120 because sometimes with anvil you need to wait a bit longer when registering multiple names at once
+    await testClient.mine({ blocks: 1 })
+
+    const price = await getPrice(walletClient, {
+      nameOrNames: params.name,
+      duration: params.duration,
+    })
+    const total = price!.base + price!.premium
+
+    const tx = await registerName(walletClient, {
+      ...params,
+      account: _owner as `0x${string}`,
+      value: total,
+    })
+    const receipt = await waitForTransaction(tx)
 
     const _subnames = (subnames || []).map((subname) => ({
       ...subname,
@@ -114,7 +109,7 @@ export const generateWrappedName =
 
     if (records) {
       await generateRecords({ contracts })({
-        name: name,
+        name,
         owner,
         resolver: _resolver as `0x${string}`,
         records,
@@ -124,7 +119,7 @@ export const generateWrappedName =
     if (!hasValidResolver && resolver) {
       console.log('setting resolver: ', name, resolver)
       const tx = await setResolver(walletClient, {
-        name: name,
+        name,
         contract: 'nameWrapper',
         resolverAddress: resolver,
         account: _owner as `0x${string}`,

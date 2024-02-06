@@ -10,7 +10,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import useRoles, { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import { getAvailableRoles } from '@app/hooks/ownership/useRoles/utils/getAvailableRoles'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { makeTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
@@ -81,8 +81,7 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
     const isOwnerOrManager = [basic.ownerData?.owner, basic.ownerData?.registrant].includes(
       account.address,
     )
-    // TODO: fix typescript transactions error
-    const transactions: any[] = [
+    const transactions = [
       dirtyValues['eth-record']
         ? makeTransactionItem('updateEthAddress', { name, address: dirtyValues['eth-record'] })
         : null,
@@ -104,7 +103,14 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
             abilities: abilities.data,
           })
         : null,
-    ].filter((t) => !!t)
+    ].filter(
+      (
+        t,
+      ): t is
+        | TransactionItem<'transferName'>
+        | TransactionItem<'transferSubname'>
+        | TransactionItem<'updateEthAddress'> => !!t,
+    )
 
     dispatch({
       name: 'setTransactions',

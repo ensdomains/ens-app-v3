@@ -96,6 +96,7 @@ export const SetExpiryView = ({
     year: 'numeric',
   })
 
+  console.log('formErrors', formState.errors.expiryCustom)
   return (
     <>
       <Dialog.Heading title={t('input.revokePermissions.views.setExpiry.title')} />
@@ -154,8 +155,7 @@ export const SetExpiryView = ({
                 label="custom-expiry"
                 type="datetime-local"
                 hideLabel
-                // TODO(tate): remove as any when thorin is updated
-                error={formState.errors.expiryCustom as any}
+                error={!!customErrorLabel}
                 clearable={false}
                 min={stripDateMs(minDateTime)}
                 max={stripDateMs(maxDateTime)}

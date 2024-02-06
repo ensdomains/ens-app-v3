@@ -1,34 +1,29 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Accounts, User, createAccounts } from '../../accounts'
-import { Contracts } from '../../contracts'
+import { imageOptimizer } from 'next/dist/server/image-optimizer'
 
 import { RecordOptions } from '@ensdomains/ensjs/utils'
+import { setResolver, transferName } from '@ensdomains/ensjs/wallet'
 
-// import { RESOLVER_ADDRESSES } from '@app/utils/constants' //Ask about this
-
-import { Provider } from '../../provider'
-import { generateRecords } from './generateRecords'
-
+import { Accounts, createAccounts, User } from '../../accounts'
+import { Contracts } from '../../contracts'
 import {
   publicClient,
   testClient,
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
-import { setResolver } from '@ensdomains/ensjs/wallet'
-import { transferName } from '@ensdomains/ensjs/wallet'
+// import { RESOLVER_ADDRESSES } from '@app/utils/constants' //Ask about this
+
+import { Provider } from '../../provider'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
+import { generateRecords } from './generateRecords'
 
 const LEGACY_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address
 const PUBLIC_RESOLVER = testClient.chain.contracts.publicResolver.address
 const DEFAULT_DURATION = 31536000
-// const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
-const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address 
-// const VALID_RESOLVERS = RESOLVER_ADDRESSES['1337'].filter(
-//   (resolver) => resolver !== '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',
-// ) //TODO SG - Remove this part after confirming 
+const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address
 
 export type Name = {
   label: string
@@ -121,7 +116,7 @@ export const generateLegacyNameWithConfig =
     if (!hasValidResolver && resolver) {
       console.log('setting resolver:', name, resolver)
       const tx = await setResolver(walletClient, {
-        name: name,
+        name,
         contract: 'registry',
         resolverAddress: resolver,
         account: createAccounts().getAddress(owner) as `0x${string}`,
@@ -133,7 +128,7 @@ export const generateLegacyNameWithConfig =
       console.log('setting manager:', name, manager)
       const _manager = accounts.getAddress(manager)
       const tx = await transferName(walletClient, {
-        name: name,
+        name,
         newOwnerAddress: createAccounts().getAddress(manager) as `0x${string}`,
         contract: 'registry',
         account: createAccounts().getAddress(owner) as `0x${string}`,

@@ -24,7 +24,7 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
 import { useWalletClientWithAccount } from '@app/hooks/account/useWalletClient'
 import { useChainName } from '@app/hooks/chain/useChainName'
-// import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
+import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
@@ -488,11 +488,10 @@ export const TransactionStageModal = ({
     },
   )
 
-  // TODO: In localhost this causes a constant loop of invalidation since anvil does not have a set blocktime. Check that this doesn't happen on regular chains.
-  // useInvalidateOnBlock({
-  //   enabled: canEnableTransactionRequest,
-  //   queryKey,
-  // })
+  useInvalidateOnBlock({
+    enabled: canEnableTransactionRequest && process.env.NEXT_PUBLIC_ETH_NODE !== 'anvil',
+    queryKey,
+  })
 
   const {
     isLoading: transactionLoading,
@@ -640,10 +639,6 @@ export const TransactionStageModal = ({
         return 'transaction.dialog.error.gasLimit'
       } catch (err: unknown) {
         return getReadableError(err)
-        // TODO: get revert reason through viem
-        // const code = err.data.replace('Reverted ', '')
-        // const reason = toUtf8String(`0x${code.substr(138)}`)
-        // return reason
       }
     },
     {

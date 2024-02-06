@@ -6,8 +6,8 @@ import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import type { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 import { makeIntroItem } from '@app/transaction-flow/intro/index'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
+import { makeTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
+import { TransactionIntro } from '@app/transaction-flow/types'
 import { emptyAddress } from '@app/utils/constants'
 
 import {
@@ -50,7 +50,11 @@ export const useGetPrimaryNameTransactionFlowItem = (
     if (!isActive) return undefined
     return (name: string) => {
       let introType: IntroType = 'updateEthAddress'
-      const transactions: GenericTransaction[] = []
+      const transactions: (
+        | TransactionItem<'setPrimaryName'>
+        | TransactionItem<'updateResolver'>
+        | TransactionItem<'updateEthAddress'>
+      )[] = []
 
       if (
         checkRequiresSetPrimaryNameTransaction({
@@ -58,7 +62,12 @@ export const useGetPrimaryNameTransactionFlowItem = (
           name,
         })
       ) {
-        transactions.push(makeTransactionItem('setPrimaryName', { name, address }))
+        transactions.push(
+          makeTransactionItem('setPrimaryName', {
+            name,
+            address,
+          }),
+        )
       }
 
       if (
@@ -101,11 +110,11 @@ export const useGetPrimaryNameTransactionFlowItem = (
           ? {
               resumeable: true,
               intro: {
-                title: [getIntroTranslation(introType, 'title'), { ns: 'transactionFlow' }],
+                title: [getIntroTranslation(introType, 'title'), { ns: 'transactionFlow' }] as any,
                 content: makeIntroItem('GenericWithDescription', {
                   description: t(getIntroTranslation(introType, 'description')),
                 }),
-              },
+              } as TransactionIntro,
             }
           : {}
 
@@ -113,7 +122,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
       return {
         transactions,
         ...introItem,
-      } as TransactionFlowItem
+      }
     }
   }, [
     isActive,

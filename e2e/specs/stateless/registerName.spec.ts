@@ -1,9 +1,15 @@
 import { expect } from '@playwright/test'
-import { test } from '../../../playwright'
-import { publicClient, testClient, waitForTransaction, walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
-import { create, set } from 'lodash'
+
+import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
+import {
+  publicClient,
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 /*
  * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will
@@ -22,13 +28,10 @@ test.describe.serial('normal registration', () => {
     time,
     makePageObject,
   }) => {
-    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    // await reverseRegistrar.setName('')
-    await setPrimaryName( walletClient, {
+    await setPrimaryName(walletClient, {
       name: '',
       account: createAccounts().getAddress('user') as `0x${string}`,
     })
-
 
     const homePage = makePageObject('HomePage')
     const registrationPage = makePageObject('RegistrationPage')
@@ -89,8 +92,7 @@ test.describe.serial('normal registration', () => {
     // should show go to info step and show updated estimate
     await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
     await page.getByTestId('profile-submit-button').click()
-    //TODO: Figure out another way to test that the gas estimate has changed
-    // await expect(registrationPage.gas).not.toHaveText(new RegExp(`${estimate} ETH`))
+    await expect(registrationPage.gas).not.toHaveText(new RegExp(`${estimate} ETH`))
 
     // should go to transactions step and open commit transaction immediately
     await expect(page.getByTestId('next-button')).toHaveText('Begin')

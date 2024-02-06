@@ -3,7 +3,7 @@ import { Address } from 'viem'
 
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
 
-import { makeTransactionItem } from '..'
+import { makeTransactionItem, TransactionItem } from '..'
 
 type MakeTransferNameOrSubnameTransactionItemParams = {
   name: string
@@ -19,7 +19,7 @@ export const makeTransferNameOrSubnameTransactionItem = ({
   sendType,
   isOwnerOrManager,
   abilities,
-}: MakeTransferNameOrSubnameTransactionItemParams) => {
+}: MakeTransferNameOrSubnameTransactionItemParams): TransactionItem | null => {
   return (
     match([
       isOwnerOrManager,

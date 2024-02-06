@@ -321,7 +321,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
   ],
-  // TODO: Removed the dependency on env === 'development' here. Breaking e2e tests.
+  ...(process.env.NEXT_PUBLIC_ETH_NODE === 'anvil' ? {
   '1337': [
     {
       address: deploymentAddresses.PublicResolver,
@@ -363,7 +363,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
         RESOLVER_INTERFACE_IDS.InterfaceResolver,
       ],
     },
-  ],
+  ]} : {}),
 }
 
 export const getKnownResolverData = ({
