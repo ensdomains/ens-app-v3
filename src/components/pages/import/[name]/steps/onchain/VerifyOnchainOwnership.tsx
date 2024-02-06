@@ -9,11 +9,11 @@ import RecordItem from '@app/components/RecordItem'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { shortenAddress } from '@app/utils/utils'
 
-import { DnsDisplayValue, SuccessHelper } from '../shared'
-import { StatusChecker } from '../StatusChecker'
-import { SupportLinkList } from '../SupportLinkList'
-import { DnsImportReducerAction, SelectedItemProperties } from '../useDnsImportReducer'
-import { checkDnsAddressMatch, checkDnsError } from '../utils'
+import { DnsDisplayValue, SuccessHelper } from '../../shared'
+import { StatusChecker } from '../../StatusChecker'
+import { SupportLinkList } from '../../SupportLinkList'
+import { DnsImportReducerAction, SelectedItemProperties } from '../../useDnsImportReducer'
+import { checkDnsAddressMatch, checkDnsError } from '../../utils'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`

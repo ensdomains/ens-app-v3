@@ -1,5 +1,5 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { Dispatch, useMemo } from 'react'
+import { Dispatch } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Button, Card, CheckCircleSVG, Heading, Helper, mq } from '@ensdomains/thorin'
@@ -11,11 +11,10 @@ import {
 } from '@app/hooks/dns/useDnsOffchainStatus'
 import { shortenAddress } from '@app/utils/utils'
 
-import { DnsDisplayValue, SuccessHelper } from './shared'
-import { StatusChecker } from './StatusChecker'
-import { SupportLinkList } from './SupportLinkList'
-import { DnsImportReducerAction, SelectedItemProperties } from './useDnsImportReducer'
-import { checkDnsError } from './utils'
+import { DnsDisplayValue, SuccessHelper } from '../shared'
+import { StatusChecker } from '../StatusChecker'
+import { SupportLinkList } from '../SupportLinkList'
+import { DnsImportReducerAction, SelectedItemProperties } from '../useDnsImportReducer'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -130,8 +129,6 @@ export const VerifyOffchainOwnership = ({
 
   const { openConnectModal } = useConnectModal()
 
-  const errorMessage = useMemo(() => checkDnsError({ error, isLoading }), [error, isLoading])
-
   return (
     <StyledCard>
       <StyledHeading>Verify Ownership</StyledHeading>
@@ -184,7 +181,7 @@ export const VerifyOffchainOwnership = ({
               isLoading={isLoading}
               isRefetching={isRefetching}
               refetch={refetch}
-              message={errorMessage || 'No record found'}
+              message={error || 'No record found'}
               statusElement={
                 dnsOffchainStatus?.address?.status === 'mismatching' &&
                 dnsOffchainStatus?.resolver && (

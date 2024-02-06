@@ -8,13 +8,13 @@ import { useValidate } from '@app/hooks/useValidate'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-import { EnableDnssec } from './EnableDnssec'
-import { CompleteOnchain } from './onchain/CompleteOnchain'
-import { ImportTransaction } from './onchain/ImportTransaction'
-import { VerifyOnchainOwnership } from './onchain/VerifyOnchainOwnership'
-import { SelectImportType } from './SelectImportType'
+import { CompleteOnchain } from './steps/CompleteOnchain'
+import { EnableDnssec } from './steps/EnableDnssec'
+import { ImportTransaction } from './steps/onchain/ImportTransaction'
+import { VerifyOnchainOwnership } from './steps/onchain/VerifyOnchainOwnership'
+import { SelectImportType } from './steps/SelectImportType'
+import { VerifyOffchainOwnership } from './steps/VerifyOffchainOwnership'
 import { useDnsImportReducer } from './useDnsImportReducer'
-import { VerifyOffchainOwnership } from './VerifyOffchainOwnership'
 
 export const DnsClaim = () => {
   const router = useRouterWithHistory()

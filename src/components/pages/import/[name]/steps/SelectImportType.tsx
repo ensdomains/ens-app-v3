@@ -27,8 +27,8 @@ import {
   DnsImportType,
   DnsStep,
   SelectedItemProperties,
-} from './useDnsImportReducer'
-import { checkDnsAddressMatch } from './utils'
+} from '../useDnsImportReducer'
+import { checkDnsAddressMatch } from '../utils'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`

@@ -6,10 +6,10 @@ import { Button, CheckCircleSVG, Heading, mq, Typography } from '@ensdomains/tho
 import { Card } from '@app/components/Card'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 
-import { SuccessHelper } from './shared'
-import { StatusChecker } from './StatusChecker'
-import { SupportLinkList } from './SupportLinkList'
-import { DnsImportReducerAction, SelectedItemProperties } from './useDnsImportReducer'
+import { SuccessHelper } from '../shared'
+import { StatusChecker } from '../StatusChecker'
+import { SupportLinkList } from '../SupportLinkList'
+import { DnsImportReducerAction, SelectedItemProperties } from '../useDnsImportReducer'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`

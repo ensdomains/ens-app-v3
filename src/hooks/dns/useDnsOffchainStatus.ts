@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 
 import { GetDnsOffchainDataReturnType } from '@ensdomains/ensjs/dns'
 
-import { checkDnsAddressMatch } from '@app/components/pages/import/[name]/utils'
+import { checkDnsAddressMatch, checkDnsError } from '@app/components/pages/import/[name]/utils'
 
 import { useChainId } from '../chain/useChainId'
 import { useDnsOffchainData } from '../ensjs/dns/useDnsOffchainData'
@@ -46,7 +46,7 @@ export const useDnsOffchainStatus = ({ name, enabled = true }: UseDnsOffchainSta
 
   const {
     data: dnsOffchainData,
-    error,
+    error: dnsOffchainError,
     isLoading: isDnsOffchainDataLoading,
     isCachedData: isDnsOffchainDataCachedData,
     isError,
@@ -92,6 +92,13 @@ export const useDnsOffchainStatus = ({ name, enabled = true }: UseDnsOffchainSta
         : null,
     }
   }, [isLoading, isError, chainId, dnsOffchainData, address, addressRecord])
+
+  const error = useMemo(() => {
+    if (isLoading) return null
+    if (isError) return checkDnsError({ error: dnsOffchainError, isLoading })
+    if (!addressRecord?.value) return 'resolutionFailure'
+    return null
+  }, [isError, dnsOffchainError, isLoading, addressRecord])
 
   return {
     data,
