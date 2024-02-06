@@ -77,7 +77,7 @@ const defaultData = Object.freeze({
   stepIndex: 0,
   steps: dnsConfigurationSteps,
   name: '',
-  type: 'offchain',
+  type: null,
   address: '0x',
   started: false,
   chainId: 1,

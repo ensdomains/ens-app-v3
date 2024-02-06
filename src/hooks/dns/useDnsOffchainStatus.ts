@@ -8,18 +8,20 @@ import { checkDnsAddressMatch } from '@app/components/pages/import/[name]/utils'
 
 import { useChainId } from '../chain/useChainId'
 import { useDnsOffchainData } from '../ensjs/dns/useDnsOffchainData'
+import { useAddressRecord } from '../ensjs/public/useAddressRecord'
 
 type UseDnsOffchainStatusParameters = {
   name?: string
   enabled?: boolean
 }
 
-export const offchainDnsAddress = {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  '1': '0xF142B308cF687d4358410a4cB885513b30A42025',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  '11155111': '0x179Be112b24Ad4cFC392eF8924DfA08C20Ad8583',
+/* eslint-disable @typescript-eslint/naming-convention */
+export const extendedDnsResolverAddress = {
+  '1': '0x238A8F792dFA6033814B18618aD4100654aeef01',
+  '17000': '0xB0c003d54e7c5a30C0dF72c0D43Df5876d457618',
+  '11155111': '0x0EF1aF80c24B681991d675176D9c07d8C9236B9a',
 } as const
+/* eslint-enable @typescript-eslint/naming-convention */
 
 const getOffchainDnsResolverStatus = ({
   chainId,
@@ -31,7 +33,7 @@ const getOffchainDnsResolverStatus = ({
   if (!dnsOffchainData) return null
   if (
     dnsOffchainData.resolverAddress ===
-    offchainDnsAddress[String(chainId) as keyof typeof offchainDnsAddress]
+    extendedDnsResolverAddress[String(chainId) as keyof typeof extendedDnsResolverAddress]
   ) {
     return 'matching' as const
   }
@@ -44,34 +46,61 @@ export const useDnsOffchainStatus = ({ name, enabled = true }: UseDnsOffchainSta
 
   const {
     data: dnsOffchainData,
+    error,
     isLoading: isDnsOffchainDataLoading,
     isCachedData: isDnsOffchainDataCachedData,
     isError,
-    error,
+    isRefetching,
+    internal: { dataUpdatedAt },
+    refetch,
   } = useDnsOffchainData({
     name,
     enabled,
   })
 
-  const isLoading = isDnsOffchainDataLoading
-  const isCachedData = isDnsOffchainDataCachedData
+  const {
+    data: addressRecord,
+    isLoading: isAddressRecordLoading,
+    isCachedData: isAddressRecordCachedData,
+  } = useAddressRecord({
+    name,
+    enabled: enabled && !!dnsOffchainData,
+  })
+
+  const isLoading = isDnsOffchainDataLoading || isAddressRecordLoading
+  const isCachedData = isDnsOffchainDataCachedData || isAddressRecordCachedData
 
   const data = useMemo(() => {
     if (isLoading || isError) return undefined
+    const resolverStatus = getOffchainDnsResolverStatus({ chainId, dnsOffchainData })
+    const addressStatus = checkDnsAddressMatch({
+      address,
+      dnsAddress: addressRecord?.value as Address | undefined | null,
+    })
     return {
-      resolver: getOffchainDnsResolverStatus({ chainId, dnsOffchainData }),
-      address: checkDnsAddressMatch({
-        address,
-        dnsAddress: dnsOffchainData?.extraData as Address | undefined | null,
-      }),
+      resolver: resolverStatus
+        ? {
+            status: resolverStatus,
+            value: dnsOffchainData?.resolverAddress,
+          }
+        : null,
+      address: addressStatus
+        ? {
+            status: addressStatus,
+            value: addressRecord?.value as Address | undefined | null,
+          }
+        : null,
     }
-  }, [isLoading, isError, chainId, dnsOffchainData, address])
+  }, [isLoading, isError, chainId, dnsOffchainData, address, addressRecord])
 
   return {
     data,
+    error,
     isLoading,
     isCachedData,
     isError,
-    error,
+    isRefetching,
+    dataUpdatedAt,
+    refetch,
   }
 }

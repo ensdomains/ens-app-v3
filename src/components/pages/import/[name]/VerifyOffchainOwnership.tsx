@@ -1,18 +1,21 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { Dispatch } from 'react'
+import { Dispatch, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Button, Card, CheckCircleSVG, Heading, Helper, mq } from '@ensdomains/thorin'
 
 import RecordItem from '@app/components/RecordItem'
-import { offchainDnsAddress, useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
-import { useDnsOffchainData } from '@app/hooks/ensjs/dns/useDnsOffchainData'
+import {
+  extendedDnsResolverAddress,
+  useDnsOffchainStatus,
+} from '@app/hooks/dns/useDnsOffchainStatus'
 import { shortenAddress } from '@app/utils/utils'
 
 import { DnsDisplayValue, SuccessHelper } from './shared'
 import { StatusChecker } from './StatusChecker'
 import { SupportLinkList } from './SupportLinkList'
 import { DnsImportReducerAction, SelectedItemProperties } from './useDnsImportReducer'
+import { checkDnsError } from './utils'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -98,6 +101,11 @@ const ResponsiveButton = styled(Button)(
   `,
 )
 
+const getDnsResolverValue = (chainId: number) => {
+  if (chainId === 1) return 'dnsname.ens.eth'
+  return extendedDnsResolverAddress[String(chainId) as keyof typeof extendedDnsResolverAddress]
+}
+
 export const VerifyOffchainOwnership = ({
   dispatch,
   selected,
@@ -109,19 +117,20 @@ export const VerifyOffchainOwnership = ({
   const isConnected = !!address
 
   const {
-    data: dnsOffchainData,
+    data: dnsOffchainStatus,
     isLoading,
     isError,
     isRefetching,
     refetch,
-    internal: { dataUpdatedAt },
-  } = useDnsOffchainData({ name: selected.name })
-
-  const { data: dnsOffchainStatus } = useDnsOffchainStatus({
+    error,
+    dataUpdatedAt,
+  } = useDnsOffchainStatus({
     name: selected.name,
   })
 
   const { openConnectModal } = useConnectModal()
+
+  const errorMessage = useMemo(() => checkDnsError({ error, isLoading }), [error, isLoading])
 
   return (
     <StyledCard>
@@ -129,7 +138,7 @@ export const VerifyOffchainOwnership = ({
       {(() => {
         if (!isConnected)
           return <Helper type="info">Connect your wallet to verify ownership.</Helper>
-        if (dnsOffchainStatus?.address === 'matching')
+        if (dnsOffchainStatus?.address?.status === 'matching')
           return (
             <SuccessHelper>
               <CheckCircleSVG />A record matching your connected address was found.
@@ -143,11 +152,8 @@ export const VerifyOffchainOwnership = ({
                 <DnsDisplayValue label="Name" value="@" copyable />
               </ButtonRow>
               <DnsDisplayValue
-                lines={2}
                 label="Value"
-                value={`ENS1 ${
-                  offchainDnsAddress[String(chainId) as keyof typeof offchainDnsAddress]
-                } ${address}`}
+                value={`ENS1 ${getDnsResolverValue(chainId)} ${address}`}
                 copyable
               />
             </ValueButtonsContainer>
@@ -178,22 +184,22 @@ export const VerifyOffchainOwnership = ({
               isLoading={isLoading}
               isRefetching={isRefetching}
               refetch={refetch}
-              message="No record found"
+              message={errorMessage || 'No record found'}
               statusElement={
-                dnsOffchainStatus?.address === 'mismatching' &&
-                dnsOffchainData?.resolverAddress && (
+                dnsOffchainStatus?.address?.status === 'mismatching' &&
+                dnsOffchainStatus?.resolver && (
                   <RecordItemWrapper>
                     <RecordItem
                       itemKey="owner"
                       type="address"
-                      value={dnsOffchainData.resolverAddress}
-                      displayValue={shortenAddress(dnsOffchainData?.resolverAddress!)}
+                      value={dnsOffchainStatus.address.value!}
+                      displayValue={shortenAddress(dnsOffchainStatus.address.value!)}
                     />
                   </RecordItemWrapper>
                 )
               }
               statusHelperElement={
-                dnsOffchainStatus?.address === 'mismatching' && (
+                dnsOffchainStatus?.address?.status === 'mismatching' && (
                   <Helper type="error">
                     The record found does not match your connected address. You can still import
                     this name, but you will not have ownership of it.
@@ -213,16 +219,16 @@ export const VerifyOffchainOwnership = ({
         </ResponsiveButton>
         {isConnected ? (
           <ResponsiveButton
-            disabled={!dnsOffchainData || isLoading || isRefetching || isError}
+            disabled={!dnsOffchainStatus || isLoading || isRefetching || isError}
             onClick={() => dispatch({ name: 'increaseStep', selected })}
-            {...(dnsOffchainStatus?.address === 'mismatching'
+            {...(dnsOffchainStatus?.address?.status === 'mismatching'
               ? {
                   colorStyle: 'redPrimary',
                   style: { width: 'min-content' },
                 }
               : {})}
           >
-            {dnsOffchainStatus?.address === 'mismatching' ? 'Import without ownership' : 'Finish'}
+            {dnsOffchainStatus?.address?.status === 'mismatching' ? 'Finish' : 'Claim'}
           </ResponsiveButton>
         ) : (
           <ResponsiveButton disabled={!openConnectModal} onClick={() => openConnectModal?.()}>

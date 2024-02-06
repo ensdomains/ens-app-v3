@@ -156,7 +156,8 @@ TypeRadioButton.displayName = 'TypeRadioButton'
 /* eslint-disable @typescript-eslint/naming-convention */
 const offchainResolverMap = {
   '1': '0xF142B308cF687d4358410a4cB885513b30A42025',
-  '11155111': '0x179be112b24ad4cfc392ef8924dfa08c20ad8583',
+  '17000': '0x7CF33078a37Cee425F1ad149875eE1e4Bdf0aD9B',
+  '11155111': '0x179Be112b24Ad4cFC392eF8924DfA08C20Ad8583',
 } as Record<string, Address | undefined>
 /* eslint-enable @typescript-eslint/naming-convention */
 
@@ -201,8 +202,8 @@ export const SelectImportType = ({
     if (item.type === 'offchain') {
       if (
         !offchainDnsStatus ||
-        offchainDnsStatus.resolver !== 'matching' ||
-        offchainDnsStatus.address !== 'matching'
+        offchainDnsStatus.resolver?.status !== 'matching' ||
+        offchainDnsStatus.address?.status !== 'matching'
       )
         steps.push('verifyOffchainOwnership')
       steps.push('completeOffchain')

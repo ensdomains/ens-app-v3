@@ -23,14 +23,14 @@ export const SuccessHelper = styled(Helper)(
   `,
 )
 
-const ButtonInner = styled.div<{ lines: number }>(
-  ({ theme, lines }) => css`
+const ButtonInner = styled.div(
+  ({ theme }) => css`
     display: flex;
     justify-content: space-between;
     width: 100%;
     align-items: center;
-    height: ${`${lines * 46}px`};
-    padding: 0 ${theme.space['4']};
+    height: auto;
+    padding: ${theme.space['4']};
   `,
 )
 
@@ -69,17 +69,15 @@ export const DnsDisplayValue = ({
   copyable,
   label,
   value,
-  lines = 1,
 }: {
   copyable?: boolean
   label: string
   value: string
-  lines?: number
 }) => {
   const { copy, copied } = useCopied()
 
   const InnerContent = (
-    <ButtonInner lines={lines}>
+    <ButtonInner>
       <Typography fontVariant="bodyBold" color="grey">
         {label}
       </Typography>
