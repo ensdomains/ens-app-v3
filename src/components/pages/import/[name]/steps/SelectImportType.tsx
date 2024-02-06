@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { Address, getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
 import { RadioButton, RadioButtonGroup, Tag, Typography } from '@ensdomains/thorin'
 
 import { Outlink } from '@app/components/Outlink'
@@ -21,7 +22,7 @@ import {
   DnsStep,
   SelectedItemProperties,
 } from '../useDnsImportReducer'
-import { checkDnsAddressMatch } from '../utils'
+import { checkDnsAddressMatch, DnsAddressStatus } from '../utils'
 
 const TypesSelectionContainer = styled.div(
   ({ theme }) => css`
@@ -116,6 +117,34 @@ const offchainResolverMap = {
 } as Record<string, Address | undefined>
 /* eslint-enable @typescript-eslint/naming-convention */
 
+export const calculateDnsSteps = ({
+  importType,
+  isDnsSecEnabled,
+  offchainDnsStatus,
+  dnsOwner,
+  dnsOwnerStatus,
+}: {
+  importType: DnsImportType
+  isDnsSecEnabled: boolean | undefined
+  offchainDnsStatus: ReturnType<typeof useDnsOffchainStatus>['data']
+  dnsOwner: GetDnsOwnerReturnType | undefined
+  dnsOwnerStatus: DnsAddressStatus
+}) => {
+  const steps = ['selectType'] as DnsStep[]
+  if (!isDnsSecEnabled) steps.push('enableDnssec')
+  if (importType === 'offchain') {
+    if (!offchainDnsStatus || offchainDnsStatus.address?.status !== 'matching')
+      steps.push('verifyOffchainOwnership')
+    steps.push('completeOffchain')
+  } else {
+    if (!dnsOwner || dnsOwnerStatus !== 'matching') steps.push('verifyOnchainOwnership')
+    steps.push('transaction')
+    steps.push('completeOnchain')
+  }
+
+  return steps
+}
+
 export const SelectImportType = ({
   dispatch,
   item,
@@ -155,21 +184,13 @@ export const SelectImportType = ({
   )
 
   const setStepsAndNavigate = () => {
-    const steps = ['selectType'] as DnsStep[]
-    if (!isDnsSecEnabled) steps.push('enableDnssec')
-    if (item.type === 'offchain') {
-      if (
-        !offchainDnsStatus ||
-        offchainDnsStatus.resolver?.status !== 'matching' ||
-        offchainDnsStatus.address?.status !== 'matching'
-      )
-        steps.push('verifyOffchainOwnership')
-      steps.push('completeOffchain')
-    } else {
-      if (!dnsOwner || dnsOwnerStatus !== 'matching') steps.push('verifyOnchainOwnership')
-      steps.push('transaction')
-      steps.push('completeOnchain')
-    }
+    const steps = calculateDnsSteps({
+      dnsOwner,
+      dnsOwnerStatus,
+      importType: item.type,
+      isDnsSecEnabled,
+      offchainDnsStatus,
+    })
     dispatch({ name: 'setSteps', selected, payload: steps })
     dispatch({ name: 'increaseStep', selected })
   }

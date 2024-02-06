@@ -13,13 +13,15 @@ import { UseDnsOwnerError } from '@app/hooks/ensjs/dns/useDnsOwner'
 
 export type DnsNavigationFunction = (direction: 'prev' | 'next') => void
 
+export type DnsAddressStatus = 'matching' | 'mismatching' | null
+
 export const checkDnsAddressMatch = ({
   address,
   dnsAddress,
 }: {
   address: Address | undefined | null
   dnsAddress: Address | undefined | null
-}) => {
+}): DnsAddressStatus => {
   if (!address || !dnsAddress) return null
   if (dnsAddress !== address) return 'mismatching' as const
   return 'matching' as const

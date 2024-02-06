@@ -96,12 +96,16 @@ export const StatusChecker = ({
             {message}
           </Helper>
         )}
-        <Button disabled={isLoading || isRefetching} onClick={() => refetch()}>
+        <Button
+          data-testid="status-refetch"
+          disabled={isLoading || isRefetching}
+          onClick={() => refetch()}
+        >
           <CounterClockwiseArrowSVG />
         </Button>
       </DnssecCheckTopItemsContainer>
       {statusHelperElement}
-      <Typography fontVariant="small" color="grey">
+      <Typography fontVariant="small" color="grey" data-testid="status-message">
         {(() => {
           if (isLoading || isRefetching) return t('status.checking')
           if (isError) return t('status.error')
