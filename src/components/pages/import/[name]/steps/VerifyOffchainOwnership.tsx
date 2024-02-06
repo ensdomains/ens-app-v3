@@ -1,5 +1,6 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { Dispatch } from 'react'
+import { Dispatch, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, Card, CheckCircleSVG, Heading, Helper, mq } from '@ensdomains/thorin'
@@ -112,6 +113,9 @@ export const VerifyOffchainOwnership = ({
   dispatch: Dispatch<DnsImportReducerAction>
   selected: SelectedItemProperties
 }) => {
+  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.verifyOwnership' })
+  const { t: tc } = useTranslation('common')
+
   const { address, chainId } = selected
   const isConnected = !!address
 
@@ -129,16 +133,21 @@ export const VerifyOffchainOwnership = ({
 
   const { openConnectModal } = useConnectModal()
 
+  const errorMessage = useMemo(() => {
+    if (error) return tc(`error.${error}`, { ns: 'dnssec' })
+    return null
+  }, [tc, error])
+
   return (
     <StyledCard>
-      <StyledHeading>Verify Ownership</StyledHeading>
+      <StyledHeading>{t('title')}</StyledHeading>
       {(() => {
-        if (!isConnected)
-          return <Helper type="info">Connect your wallet to verify ownership.</Helper>
+        if (!isConnected) return <Helper type="info">{t('status.disconnected')}</Helper>
         if (dnsOffchainStatus?.address?.status === 'matching')
           return (
             <SuccessHelper>
-              <CheckCircleSVG />A record matching your connected address was found.
+              <CheckCircleSVG />
+              {t('status.matching')}
             </SuccessHelper>
           )
         return (
@@ -155,7 +164,7 @@ export const VerifyOffchainOwnership = ({
               />
             </ValueButtonsContainer>
             <SupportLinkList
-              title="Help adding TXT records"
+              title={t('status.mismatching.help')}
               items={[
                 {
                   href: 'https://example.com',
@@ -181,7 +190,7 @@ export const VerifyOffchainOwnership = ({
               isLoading={isLoading}
               isRefetching={isRefetching}
               refetch={refetch}
-              message={error || 'No record found'}
+              message={errorMessage || t('status.mismatching.message')}
               statusElement={
                 dnsOffchainStatus?.address?.status === 'mismatching' &&
                 dnsOffchainStatus?.resolver && (
@@ -197,10 +206,7 @@ export const VerifyOffchainOwnership = ({
               }
               statusHelperElement={
                 dnsOffchainStatus?.address?.status === 'mismatching' && (
-                  <Helper type="error">
-                    The record found does not match your connected address. You can still import
-                    this name, but you will not have ownership of it.
-                  </Helper>
+                  <Helper type="error">{t('status.mismatching.error.offchain')}</Helper>
                 )
               }
             />
@@ -212,11 +218,11 @@ export const VerifyOffchainOwnership = ({
           colorStyle="accentSecondary"
           onClick={() => dispatch({ name: 'decreaseStep', selected })}
         >
-          Back
+          {tc('action.back')}
         </ResponsiveButton>
         {isConnected ? (
           <ResponsiveButton
-            disabled={!dnsOffchainStatus || isLoading || isRefetching || isError}
+            disabled={!dnsOffchainStatus || isLoading || isRefetching || isError || !!error}
             onClick={() => dispatch({ name: 'increaseStep', selected })}
             {...(dnsOffchainStatus?.address?.status === 'mismatching'
               ? {
@@ -225,11 +231,13 @@ export const VerifyOffchainOwnership = ({
                 }
               : {})}
           >
-            {dnsOffchainStatus?.address?.status === 'mismatching' ? 'Finish' : 'Claim'}
+            {dnsOffchainStatus?.address?.status === 'mismatching'
+              ? tc('action.finish')
+              : tc('action.claim')}
           </ResponsiveButton>
         ) : (
           <ResponsiveButton disabled={!openConnectModal} onClick={() => openConnectModal?.()}>
-            Connect
+            {tc('action.connect')}
           </ResponsiveButton>
         )}
       </Buttons>

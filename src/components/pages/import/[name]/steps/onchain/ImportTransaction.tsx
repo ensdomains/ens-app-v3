@@ -1,4 +1,5 @@
 import { Dispatch, useCallback, useMemo } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
@@ -148,6 +149,9 @@ export const ImportTransaction = ({
   item: DnsImportReducerDataItem
   selected: SelectedItemProperties
 }) => {
+  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.transaction' })
+  const { t: tc } = useTranslation('common')
+
   const { gasPrice } = useGasPrice()
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
@@ -274,15 +278,15 @@ export const ImportTransaction = ({
     <StyledCard>
       {dnsOwnerStatus === 'mismatching' ? (
         <>
-          <StyledHeading>Import this domain</StyledHeading>
+          <StyledHeading>{t('mismatching.title')}</StyledHeading>
           <Typography>
-            Your ownership has <b>not</b> been verified. You can still import this domain.
+            <Trans t={t} i18nKey="mismatching.subtitle" components={{ b: <b /> }} />
           </Typography>
         </>
       ) : (
         <>
-          <StyledHeading>Claim your domain</StyledHeading>
-          <Typography>Your ownership has been verified.</Typography>
+          <StyledHeading>{t('matching.title')}</StyledHeading>
+          <Typography>{t('matching.subtitle')}</Typography>
         </>
       )}
       <InvoiceContainer>
@@ -295,18 +299,17 @@ export const ImportTransaction = ({
           />
         </OptionBar>
         <InvoiceItemBox>
-          <Typography>Estimated network cost</Typography>
+          <Typography>{t('estimatedNetworkCost')}</Typography>
           <CurrencyText eth={gasCost} currency={currencyDisplay} />
         </InvoiceItemBox>
         <InvoiceItemBox>
-          <Typography>Owner</Typography>
+          <Typography>{tc('name.owner')}</Typography>
           {dnsOwner && <InvoiceDnsOwner dnsOwner={dnsOwner} />}
         </InvoiceItemBox>
       </InvoiceContainer>
       {dnsOwnerStatus === 'mismatching' && (
         <Helper type="warning">
-          The owner does not match your address. You can still import this DNS name, but you will
-          not have ownership of it.
+          {tc('steps.verifyOwnership.status.mismatching.error.onchain', { ns: 'dnssec' })}
         </Helper>
       )}
       <Buttons>
@@ -314,14 +317,14 @@ export const ImportTransaction = ({
           colorStyle="accentSecondary"
           onClick={() => dispatch({ name: 'decreaseStep', selected })}
         >
-          Back
+          {tc('action.back')}
         </ResponsiveButton>
         <ResponsiveButton
           disabled={!dnsOwner || isLoading || isRefetching || isError || gasCost === 0n}
           loading={isLoading || isEstimateLoading}
           onClick={() => startOrResumeFlow()}
         >
-          {dnsOwnerStatus === 'mismatching' ? 'Import' : 'Claim'}
+          {dnsOwnerStatus === 'mismatching' ? tc('action.import') : tc('action.claim')}
         </ResponsiveButton>
       </Buttons>
     </StyledCard>

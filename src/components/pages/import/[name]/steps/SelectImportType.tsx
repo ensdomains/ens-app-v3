@@ -1,4 +1,5 @@
 import { Dispatch, forwardRef, ReactNode, useMemo } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address, getAddress } from 'viem'
 import { useAccount } from 'wagmi'
@@ -170,6 +171,9 @@ export const SelectImportType = ({
   item: DnsImportReducerDataItem
   selected: SelectedItemProperties
 }) => {
+  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.selectType' })
+  const { t: tc } = useTranslation('common')
+
   const { address } = useAccount()
   const chainId = useChainId()
   const { data: tldResolver } = useResolver({ name: selected.name.split('.')[1] })
@@ -218,11 +222,11 @@ export const SelectImportType = ({
 
   return (
     <StyledCard>
-      <StyledHeading>Claim {selected.name}</StyledHeading>
-      <Typography>Importing domain names allows them to be used as ENS names.</Typography>
-      <Outlink href="https://example.com">Learn more about importing names</Outlink>
+      <StyledHeading>{t('title', { name: selected.name })}</StyledHeading>
+      <Typography>{t('subtitle')}</Typography>
+      <Outlink href="https://example.com">{t('learnMore')}</Outlink>
       <TypesSelectionContainer>
-        <Typography weight="bold">How would you like to import your domain?</Typography>
+        <Typography weight="bold">{t('select.heading')}</Typography>
         <StyledRadioButtonGroup
           value={item.type || undefined}
           onChange={(e) => {
@@ -237,16 +241,18 @@ export const SelectImportType = ({
               label={
                 <TypeLabelContainer aria-disabled={!tldResolverIsOffchainResolver}>
                   <TypeLabelHeading>
-                    <Typography fontVariant="bodyBold">Offchain</Typography>
-                    <Tag colorStyle="accentSecondary">Free</Tag>
+                    <Typography fontVariant="bodyBold">{t('select.offchain.name')}</Typography>
+                    <Tag colorStyle="accentSecondary">{t('select.offchain.tag')}</Tag>
                   </TypeLabelHeading>
                   <Typography fontVariant="small">
-                    Your name will not have an onchain token.
-                    <br />
-                    This does not affect it&apos;s ability to receive transactions or to be used as
-                    a primary name.
-                    <br />
-                    <b>You will not be able to edit your profile from within the ENS app.</b>
+                    <Trans
+                      t={t}
+                      i18nKey="select.offchain.description"
+                      components={{
+                        br: <br />,
+                        b: <b />,
+                      }}
+                    />
                   </Typography>
                 </TypeLabelContainer>
               }
@@ -260,10 +266,9 @@ export const SelectImportType = ({
               label={
                 <TypeLabelContainer>
                   <TypeLabelHeading>
-                    <Typography fontVariant="bodyBold">Onchain</Typography>
-                    <Tag colorStyle="accentSecondary">Est 1.234 ETH</Tag>
+                    <Typography fontVariant="bodyBold">{t('select.onchain.name')}</Typography>
                   </TypeLabelHeading>
-                  <Typography fontVariant="small">Your name will have an onchain token.</Typography>
+                  <Typography fontVariant="small">{t('select.onchain.description')}</Typography>
                 </TypeLabelContainer>
               }
               defaultChecked={item.type === 'onchain'}
@@ -277,7 +282,7 @@ export const SelectImportType = ({
         }
         onClick={() => setStepsAndNavigate()}
       >
-        Next
+        {tc('action.next')}
       </ResponsiveButton>
     </StyledCard>
   )

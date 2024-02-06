@@ -1,4 +1,5 @@
 import { Dispatch } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, CheckCircleSVG, Heading, mq, Typography } from '@ensdomains/thorin'
@@ -66,6 +67,9 @@ export const EnableDnssec = ({
   dispatch: Dispatch<DnsImportReducerAction>
   selected: SelectedItemProperties
 }) => {
+  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.enableDnssec' })
+  const { t: tc } = useTranslation('common')
+
   const {
     data: isDnsSecEnabled,
     isLoading,
@@ -79,17 +83,17 @@ export const EnableDnssec = ({
 
   return (
     <StyledCard>
-      <StyledHeading>Enable DNSSEC</StyledHeading>
+      <StyledHeading>{t('title')}</StyledHeading>
       {isDnsSecEnabled ? (
         <SuccessHelper>
           <CheckCircleSVG />
-          DNSSEC is enabled on this domain.
+          {t('status.enabled')}
         </SuccessHelper>
       ) : (
         <>
-          <Typography>You&apos;ll need to visit your domain registrar to enable DNSSEC.</Typography>
+          <Typography>{t('status.disabled.heading')}</Typography>
           <SupportLinkList
-            title="Help enabling DNSSEC"
+            title={t('status.disabled.help')}
             items={[
               {
                 href: 'https://example.com',
@@ -114,7 +118,7 @@ export const EnableDnssec = ({
             isLoading={isLoading}
             isRefetching={isRefetching}
             isError={isError}
-            message="DNSSEC not enabled"
+            message={t('status.disabled.message')}
             refetch={refetch}
           />
         </>
@@ -124,13 +128,13 @@ export const EnableDnssec = ({
           colorStyle="accentSecondary"
           onClick={() => dispatch({ name: 'decreaseStep', selected })}
         >
-          Back
+          {tc('action.back')}
         </ResponsiveButton>
         <ResponsiveButton
           disabled={!isDnsSecEnabled || isLoading || isRefetching}
           onClick={() => dispatch({ name: 'increaseStep', selected })}
         >
-          Next
+          {tc('action.next')}
         </ResponsiveButton>
       </Buttons>
     </StyledCard>

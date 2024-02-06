@@ -1,15 +1,17 @@
 import dynamic from 'next/dynamic'
 import type ConfettiT from 'react-confetti'
+import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
+import { useAddressRecord } from '@app/hooks/ensjs/public/useAddressRecord'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import useWindowSize from '@app/hooks/useWindowSize'
 
-import { SelectedItemProperties } from '../useDnsImportReducer'
+import { DnsImportReducerDataItem, SelectedItemProperties } from '../useDnsImportReducer'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -66,12 +68,13 @@ const SubtitleWithGradient = styled(Typography)(
     font-size: ${theme.fontSizes.headingThree};
     font-weight: bold;
 
-    background-image: ${theme.colors.gradients.blue};
+    background: ${theme.colors.gradients.blue};
     /* stylelint-disable property-no-vendor-prefix */
     -webkit-background-clip: text;
     -moz-background-clip: text;
     background-clip: text;
     /* stylelint-enable property-no-vendor-prefix */
+    color: transparent;
 
     b {
       -webkit-text-fill-color: transparent;
@@ -86,9 +89,25 @@ const Confetti = dynamic(() =>
   import('react-confetti').then((mod) => mod.default as typeof ConfettiT),
 )
 
-export const CompleteOnchain = ({ selected }: { selected: SelectedItemProperties }) => {
+export const CompleteOnchain = ({
+  selected,
+  item,
+}: {
+  selected: SelectedItemProperties
+  item: DnsImportReducerDataItem
+}) => {
+  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.complete' })
+
   const router = useRouterWithHistory()
   const { width, height } = useWindowSize()
+
+  const { data: addressRecord } = useAddressRecord({
+    name: selected.name,
+    enabled: item.type === 'onchain',
+  })
+
+  const isImport = item.type === 'offchain' || addressRecord?.value !== selected.address
+  const addKeyPrefix = (key: string) => (isImport ? `import.${key}` : `claim.${key}`)
 
   const goHome = () => router.push('/')
 
@@ -118,23 +137,30 @@ export const CompleteOnchain = ({ selected }: { selected: SelectedItemProperties
         initialVelocityY={20}
       />
       <TitleContainer>
-        <Title>Congratulations!</Title>
+        <Title>{t('title')}</Title>
         <Typography style={{ display: 'inline' }} fontVariant="headingThree" weight="bold">
-          You are now the owner of <SubtitleWithGradient>{selected.name}</SubtitleWithGradient>
+          <Trans
+            t={t}
+            i18nKey={addKeyPrefix('subtitle')}
+            components={{
+              gradient: <SubtitleWithGradient />,
+            }}
+            values={{
+              name: selected.name,
+            }}
+          />
         </Typography>
       </TitleContainer>
-      <Typography>
-        Your domain has been successfully claimed. You can now view and manage your name.
-      </Typography>
+      <Typography>{t(addKeyPrefix('description'))}</Typography>
       <ButtonContainer>
         <MobileFullWidth>
           <Button colorStyle="accentSecondary" onClick={goHome}>
-            Claim another
+            {t('action.claimAnother')}
           </Button>
         </MobileFullWidth>
         <MobileFullWidth>
           <Button data-testid="view-name" onClick={goToProfile}>
-            View name
+            {t('action.viewName')}
           </Button>
         </MobileFullWidth>
       </ButtonContainer>

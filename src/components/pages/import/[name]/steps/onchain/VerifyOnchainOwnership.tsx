@@ -1,5 +1,6 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Dispatch, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, CheckCircleSVG, Heading, Helper, mq, Typography } from '@ensdomains/thorin'
@@ -106,6 +107,9 @@ export const VerifyOnchainOwnership = ({
   dispatch: Dispatch<DnsImportReducerAction>
   selected: SelectedItemProperties
 }) => {
+  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.verifyOwnership' })
+  const { t: tc } = useTranslation('common')
+
   const {
     data: dnsOwner,
     isLoading,
@@ -125,21 +129,22 @@ export const VerifyOnchainOwnership = ({
     [address, dnsOwner],
   )
 
-  const errorMessage = useMemo(() => checkDnsError({ error, isLoading }), [error, isLoading])
+  const errorMessage = useMemo(() => {
+    const errorKey = checkDnsError({ error, isLoading })
+    return tc(`errors.${errorKey}`, { ns: 'dnssec' })
+  }, [tc, error, isLoading])
 
   return (
     <StyledCard>
-      <StyledHeading>Verify Ownership</StyledHeading>
-      {dnsOwnerStatus !== 'matching' && (
-        <Typography>Add the DNS record below to verify your ownership of this domain.</Typography>
-      )}
+      <StyledHeading>{t('title')}</StyledHeading>
+      {dnsOwnerStatus !== 'matching' && <Typography>{t('status.mismatching.heading')}</Typography>}
       {(() => {
-        if (!isConnected)
-          return <Helper type="info">Connect your wallet to verify ownership.</Helper>
+        if (!isConnected) return <Helper type="info">{t('status.disconnected')}</Helper>
         if (dnsOwnerStatus === 'matching')
           return (
             <SuccessHelper>
-              <CheckCircleSVG />A record matching your connected address was found.
+              <CheckCircleSVG />
+              {t('status.matching')}
             </SuccessHelper>
           )
         return (
@@ -152,7 +157,7 @@ export const VerifyOnchainOwnership = ({
               <DnsDisplayValue label="Value" value={`a=${address}`} copyable />
             </ValueButtonsContainer>
             <SupportLinkList
-              title="Help adding TXT records"
+              title={t('status.mismatching.help')}
               items={[
                 {
                   href: 'https://example.com',
@@ -178,7 +183,7 @@ export const VerifyOnchainOwnership = ({
               isLoading={isLoading}
               isRefetching={isRefetching}
               refetch={refetch}
-              message={errorMessage || 'No record found'}
+              message={errorMessage || t('status.mismatching.message')}
               statusElement={
                 dnsOwnerStatus === 'mismatching' && (
                   <RecordItemWrapper>
@@ -193,10 +198,7 @@ export const VerifyOnchainOwnership = ({
               }
               statusHelperElement={
                 dnsOwnerStatus === 'mismatching' && (
-                  <Helper type="error">
-                    The record found does not match your connected address. You can still import
-                    this name, but you will not have ownership of it.
-                  </Helper>
+                  <Helper type="error">{t('status.mismatching.error.onchain')}</Helper>
                 )
               }
             />
@@ -208,7 +210,7 @@ export const VerifyOnchainOwnership = ({
           colorStyle="accentSecondary"
           onClick={() => dispatch({ name: 'decreaseStep', selected })}
         >
-          Back
+          {tc('action.back')}
         </ResponsiveButton>
         {isConnected ? (
           <ResponsiveButton
@@ -221,11 +223,13 @@ export const VerifyOnchainOwnership = ({
                 }
               : {})}
           >
-            {dnsOwnerStatus === 'mismatching' ? 'Import without ownership' : 'Next'}
+            {dnsOwnerStatus === 'mismatching'
+              ? t('action.importWithoutOwnership')
+              : tc('action.next')}
           </ResponsiveButton>
         ) : (
           <ResponsiveButton disabled={!openConnectModal} onClick={() => openConnectModal?.()}>
-            Connect
+            {tc('action.connect')}
           </ResponsiveButton>
         )}
       </Buttons>

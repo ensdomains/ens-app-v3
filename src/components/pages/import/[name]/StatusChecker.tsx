@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, CounterClockwiseArrowSVG, Helper, Typography } from '@ensdomains/thorin'
@@ -54,7 +55,11 @@ export const StatusChecker = ({
   statusHelperElement?: ReactNode
   message: string
 }) => {
-  const [lastCheckedTime, setLastCheckedTime] = useState<null | string>(null)
+  const { t } = useTranslation('dnssec')
+
+  const [lastCheckedTime, setLastCheckedTime] = useState<
+    null | [key: string, params?: { count: number }]
+  >(null)
 
   useEffect(() => {
     if (dataUpdatedAt) {
@@ -64,15 +69,15 @@ export const StatusChecker = ({
         const then = new Date(dataUpdatedAt)
         const diffSeconds = Math.round((now.getTime() - then.getTime()) / 1000)
         if (diffSeconds < 60) {
-          setLastCheckedTime('seconds')
+          setLastCheckedTime(['status.secondsAgo'])
           return true
         }
         const diffMinutes = Math.round(diffSeconds / 60)
         if (diffMinutes < 60) {
-          setLastCheckedTime(`${diffMinutes} minute${diffMinutes === 1 ? '' : 's'}`)
+          setLastCheckedTime(['status.minutesAgo', { count: diffMinutes }])
           return true
         }
-        setLastCheckedTime('a while')
+        setLastCheckedTime(['status.aWhileAgo'])
         clearInterval(interval)
         return false
       }
@@ -98,9 +103,9 @@ export const StatusChecker = ({
       {statusHelperElement}
       <Typography fontVariant="small" color="grey">
         {(() => {
-          if (isLoading || isRefetching) return 'Checking...'
-          if (isError) return 'An error occurred while checking'
-          if (lastCheckedTime) return `Last checked ${lastCheckedTime} ago`
+          if (isLoading || isRefetching) return t('status.checking')
+          if (isError) return t('status.error')
+          if (lastCheckedTime) return t(...lastCheckedTime)
         })()}
       </Typography>
     </DnssecCheckContainer>
