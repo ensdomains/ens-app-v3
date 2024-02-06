@@ -4,17 +4,8 @@ import styled, { css } from 'styled-components'
 import { Address, getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
-import {
-  Button,
-  Heading,
-  mq,
-  RadioButton,
-  RadioButtonGroup,
-  Tag,
-  Typography,
-} from '@ensdomains/thorin'
+import { RadioButton, RadioButtonGroup, Tag, Typography } from '@ensdomains/thorin'
 
-import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
@@ -22,6 +13,7 @@ import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 
+import { DnsImportActionButton, DnsImportCard, DnsImportHeading } from '../shared'
 import {
   DnsImportReducerAction,
   DnsImportReducerDataItem,
@@ -30,34 +22,6 @@ import {
   SelectedItemProperties,
 } from '../useDnsImportReducer'
 import { checkDnsAddressMatch } from '../utils'
-
-const StyledCard = styled(Card)(
-  ({ theme }) => css`
-    max-width: 780px;
-    margin: 0 auto;
-    flex-direction: column;
-    gap: ${theme.space['4']};
-    padding: ${theme.space['4']};
-
-    ${mq.sm.min(css`
-      padding: ${theme.space['6']} ${theme.space['18']};
-      gap: ${theme.space['6']};
-    `)}
-  `,
-)
-
-const StyledHeading = styled(Heading)(
-  () => css`
-    width: 100%;
-    text-align: center;
-    word-break: break-all;
-
-    @supports (overflow-wrap: anywhere) {
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
-  `,
-)
 
 const TypesSelectionContainer = styled.div(
   ({ theme }) => css`
@@ -117,16 +81,6 @@ const RadioButtonContainer = styled.div(
     & > div {
       padding: ${theme.space['4']};
     }
-  `,
-)
-
-const ResponsiveButton = styled(Button)(
-  ({ theme }) => css`
-    width: 100%;
-
-    ${mq.sm.min(css`
-      width: ${theme.space['40']};
-    `)}
   `,
 )
 
@@ -221,8 +175,8 @@ export const SelectImportType = ({
   }
 
   return (
-    <StyledCard>
-      <StyledHeading>{t('title', { name: selected.name })}</StyledHeading>
+    <DnsImportCard>
+      <DnsImportHeading>{t('title', { name: selected.name })}</DnsImportHeading>
       <Typography>{t('subtitle')}</Typography>
       <Outlink href="https://example.com">{t('learnMore')}</Outlink>
       <TypesSelectionContainer>
@@ -276,14 +230,14 @@ export const SelectImportType = ({
           </RadioButtonContainer>
         </StyledRadioButtonGroup>
       </TypesSelectionContainer>
-      <ResponsiveButton
+      <DnsImportActionButton
         disabled={
           !item.type || isDnsSecEnabledLoading || isDnsOwnerLoading || isOffchainDnsStatusLoading
         }
         onClick={() => setStepsAndNavigate()}
       >
         {tc('action.next')}
-      </ResponsiveButton>
-    </StyledCard>
+      </DnsImportActionButton>
+    </DnsImportCard>
   )
 }

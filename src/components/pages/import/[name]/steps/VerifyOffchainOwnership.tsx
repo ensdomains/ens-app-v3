@@ -3,7 +3,7 @@ import { Dispatch, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Card, CheckCircleSVG, Heading, Helper, mq } from '@ensdomains/thorin'
+import { CheckCircleSVG, Helper } from '@ensdomains/thorin'
 
 import RecordItem from '@app/components/RecordItem'
 import {
@@ -12,38 +12,17 @@ import {
 } from '@app/hooks/dns/useDnsOffchainStatus'
 import { shortenAddress } from '@app/utils/utils'
 
-import { DnsDisplayValue, SuccessHelper } from '../shared'
+import {
+  DnsDisplayValue,
+  DnsImportActionButton,
+  DnsImportActionsContainer,
+  DnsImportCard,
+  DnsImportHeading,
+  SuccessHelper,
+} from '../shared'
 import { StatusChecker } from '../StatusChecker'
 import { SupportLinkList } from '../SupportLinkList'
 import { DnsImportReducerAction, SelectedItemProperties } from '../useDnsImportReducer'
-
-const StyledCard = styled(Card)(
-  ({ theme }) => css`
-    max-width: 780px;
-    margin: 0 auto;
-    flex-direction: column;
-    gap: ${theme.space['4']};
-    padding: ${theme.space['4']};
-
-    ${mq.sm.min(css`
-      padding: ${theme.space['6']} ${theme.space['18']};
-      gap: ${theme.space['6']};
-    `)}
-  `,
-)
-
-const StyledHeading = styled(Heading)(
-  () => css`
-    width: 100%;
-    text-align: center;
-    word-break: break-all;
-
-    @supports (overflow-wrap: anywhere) {
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
-  `,
-)
 
 const ValueButtonsContainer = styled.div(
   ({ theme }) => css`
@@ -78,26 +57,6 @@ const RecordItemWrapper = styled.div(
         flex-basis: unset;
       }
     }
-  `,
-)
-
-const Buttons = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: ${theme.space['2']};
-  `,
-)
-
-const ResponsiveButton = styled(Button)(
-  ({ theme }) => css`
-    width: 100%;
-
-    ${mq.sm.min(css`
-      width: ${theme.space['40']};
-    `)}
   `,
 )
 
@@ -139,8 +98,8 @@ export const VerifyOffchainOwnership = ({
   }, [tc, error])
 
   return (
-    <StyledCard>
-      <StyledHeading>{t('title')}</StyledHeading>
+    <DnsImportCard>
+      <DnsImportHeading>{t('title')}</DnsImportHeading>
       {(() => {
         if (!isConnected) return <Helper type="info">{t('status.disconnected')}</Helper>
         if (dnsOffchainStatus?.address?.status === 'matching')
@@ -213,15 +172,15 @@ export const VerifyOffchainOwnership = ({
           </>
         )
       })()}
-      <Buttons>
-        <ResponsiveButton
+      <DnsImportActionsContainer>
+        <DnsImportActionButton
           colorStyle="accentSecondary"
           onClick={() => dispatch({ name: 'decreaseStep', selected })}
         >
           {tc('action.back')}
-        </ResponsiveButton>
+        </DnsImportActionButton>
         {isConnected ? (
-          <ResponsiveButton
+          <DnsImportActionButton
             disabled={!dnsOffchainStatus || isLoading || isRefetching || isError || !!error}
             onClick={() => dispatch({ name: 'increaseStep', selected })}
             {...(dnsOffchainStatus?.address?.status === 'mismatching'
@@ -234,13 +193,13 @@ export const VerifyOffchainOwnership = ({
             {dnsOffchainStatus?.address?.status === 'mismatching'
               ? tc('action.finish')
               : tc('action.claim')}
-          </ResponsiveButton>
+          </DnsImportActionButton>
         ) : (
-          <ResponsiveButton disabled={!openConnectModal} onClick={() => openConnectModal?.()}>
+          <DnsImportActionButton disabled={!openConnectModal} onClick={() => openConnectModal?.()}>
             {tc('action.connect')}
-          </ResponsiveButton>
+          </DnsImportActionButton>
         )}
-      </Buttons>
-    </StyledCard>
+      </DnsImportActionsContainer>
+    </DnsImportCard>
   )
 }

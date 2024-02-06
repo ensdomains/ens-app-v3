@@ -3,12 +3,11 @@ import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { Button, CurrencyToggle, Heading, Helper, mq, Typography } from '@ensdomains/thorin'
+import { CurrencyToggle, Helper, Typography } from '@ensdomains/thorin'
 
 import { CurrencyText } from '@app/components/@atoms/CurrencyText/CurrencyText'
 import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
-import { Card } from '@app/components/Card'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import {
   addStateOverride,
@@ -26,59 +25,17 @@ import useUserConfig from '@app/utils/useUserConfig'
 import { shortenAddress } from '@app/utils/utils'
 
 import {
+  DnsImportActionButton,
+  DnsImportActionsContainer,
+  DnsImportCard,
+  DnsImportHeading,
+} from '../../shared'
+import {
   DnsImportReducerAction,
   DnsImportReducerDataItem,
   SelectedItemProperties,
 } from '../../useDnsImportReducer'
 import { checkDnsAddressMatch } from '../../utils'
-
-const StyledCard = styled(Card)(
-  ({ theme }) => css`
-    max-width: 780px;
-    margin: 0 auto;
-    flex-direction: column;
-    gap: ${theme.space['4']};
-    padding: ${theme.space['4']};
-
-    ${mq.sm.min(css`
-      padding: ${theme.space['6']} ${theme.space['18']};
-      gap: ${theme.space['6']};
-    `)}
-  `,
-)
-
-const StyledHeading = styled(Heading)(
-  () => css`
-    width: 100%;
-    text-align: center;
-    word-break: break-all;
-
-    @supports (overflow-wrap: anywhere) {
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
-  `,
-)
-
-const Buttons = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: ${theme.space['2']};
-  `,
-)
-
-const ResponsiveButton = styled(Button)(
-  ({ theme }) => css`
-    width: 100%;
-
-    ${mq.sm.min(css`
-      width: ${theme.space['40']};
-    `)}
-  `,
-)
 
 const OptionBar = styled.div(
   () => css`
@@ -275,17 +232,17 @@ export const ImportTransaction = ({
   useCallbackOnTransaction(txCallback)
 
   return (
-    <StyledCard>
+    <DnsImportCard>
       {dnsOwnerStatus === 'mismatching' ? (
         <>
-          <StyledHeading>{t('mismatching.title')}</StyledHeading>
+          <DnsImportHeading>{t('mismatching.title')}</DnsImportHeading>
           <Typography>
             <Trans t={t} i18nKey="mismatching.subtitle" components={{ b: <b /> }} />
           </Typography>
         </>
       ) : (
         <>
-          <StyledHeading>{t('matching.title')}</StyledHeading>
+          <DnsImportHeading>{t('matching.title')}</DnsImportHeading>
           <Typography>{t('matching.subtitle')}</Typography>
         </>
       )}
@@ -312,21 +269,21 @@ export const ImportTransaction = ({
           {tc('steps.verifyOwnership.status.mismatching.error.onchain', { ns: 'dnssec' })}
         </Helper>
       )}
-      <Buttons>
-        <ResponsiveButton
+      <DnsImportActionsContainer>
+        <DnsImportActionButton
           colorStyle="accentSecondary"
           onClick={() => dispatch({ name: 'decreaseStep', selected })}
         >
           {tc('action.back')}
-        </ResponsiveButton>
-        <ResponsiveButton
+        </DnsImportActionButton>
+        <DnsImportActionButton
           disabled={!dnsOwner || isLoading || isRefetching || isError || gasCost === 0n}
           loading={isLoading || isEstimateLoading}
           onClick={() => startOrResumeFlow()}
         >
           {dnsOwnerStatus === 'mismatching' ? tc('action.import') : tc('action.claim')}
-        </ResponsiveButton>
-      </Buttons>
-    </StyledCard>
+        </DnsImportActionButton>
+      </DnsImportActionsContainer>
+    </DnsImportCard>
   )
 }

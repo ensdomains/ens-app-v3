@@ -1,9 +1,57 @@
 import styled, { css } from 'styled-components'
 
-import { Button, Helper, Typography } from '@ensdomains/thorin'
+import { Button, Card, Heading, Helper, mq, Typography } from '@ensdomains/thorin'
 
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
+
+export const DnsImportCard = styled(Card)(
+  ({ theme }) => css`
+    max-width: 780px;
+    margin: 0 auto;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+    padding: ${theme.space['4']};
+
+    ${mq.sm.min(css`
+      padding: ${theme.space['6']} ${theme.space['18']};
+      gap: ${theme.space['6']};
+    `)}
+  `,
+)
+
+export const DnsImportHeading = styled(Heading)(
+  () => css`
+    width: 100%;
+    text-align: center;
+    word-break: break-all;
+
+    @supports (overflow-wrap: anywhere) {
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+  `,
+)
+
+export const DnsImportActionsContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: ${theme.space['2']};
+  `,
+)
+
+export const DnsImportActionButton = styled(Button)(
+  ({ theme }) => css`
+    width: 100%;
+
+    ${mq.sm.min(css`
+      width: ${theme.space['40']};
+    `)}
+  `,
+)
 
 export const SuccessHelper = styled(Helper)(
   ({ theme }) => css`
