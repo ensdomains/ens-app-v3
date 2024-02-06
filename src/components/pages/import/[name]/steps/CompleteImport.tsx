@@ -89,7 +89,7 @@ const Confetti = dynamic(() =>
   import('react-confetti').then((mod) => mod.default as typeof ConfettiT),
 )
 
-export const CompleteOnchain = ({
+export const CompleteImport = ({
   selected,
   item,
 }: {

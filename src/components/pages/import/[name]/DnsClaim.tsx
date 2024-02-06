@@ -8,7 +8,7 @@ import { useValidate } from '@app/hooks/useValidate'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-import { CompleteOnchain } from './steps/CompleteOnchain'
+import { CompleteImport } from './steps/CompleteImport'
 import { EnableDnssec } from './steps/EnableDnssec'
 import { ImportTransaction } from './steps/onchain/ImportTransaction'
 import { VerifyOnchainOwnership } from './steps/onchain/VerifyOnchainOwnership'
@@ -86,11 +86,11 @@ export const DnsClaim = () => {
             transaction: () => (
               <ImportTransaction dispatch={dispatch} selected={selected} item={item} />
             ),
-            completeOnchain: () => <CompleteOnchain selected={selected} item={item} />,
+            completeOnchain: () => <CompleteImport selected={selected} item={item} />,
             verifyOffchainOwnership: () => (
               <VerifyOffchainOwnership dispatch={dispatch} selected={selected} />
             ),
-            completeOffchain: () => <CompleteOnchain selected={selected} item={item} />,
+            completeOffchain: () => <CompleteImport selected={selected} item={item} />,
           }[step](),
         }}
       </Content>
