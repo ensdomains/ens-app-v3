@@ -23,13 +23,13 @@ export const SuccessHelper = styled(Helper)(
   `,
 )
 
-const ButtonInner = styled.div(
-  ({ theme }) => css`
+const ButtonInner = styled.div<{ lines: number }>(
+  ({ theme, lines }) => css`
     display: flex;
     justify-content: space-between;
     width: 100%;
     align-items: center;
-    height: 46px;
+    height: ${`${lines * 46}px`};
     padding: 0 ${theme.space['4']};
   `,
 )
@@ -51,24 +51,40 @@ const NotCopyableContainer = styled.div(
   `,
 )
 
+const ButtonWithContent = styled(Button)(
+  () => css`
+    & > div {
+      white-space: unset;
+    }
+  `,
+)
+
+export const ValueText = styled(Typography)(
+  () => css`
+    text-align: right;
+  `,
+)
+
 export const DnsDisplayValue = ({
   copyable,
   label,
   value,
+  lines = 1,
 }: {
   copyable?: boolean
   label: string
   value: string
+  lines?: number
 }) => {
   const { copy, copied } = useCopied()
 
   const InnerContent = (
-    <ButtonInner>
+    <ButtonInner lines={lines}>
       <Typography fontVariant="bodyBold" color="grey">
         {label}
       </Typography>
       <CopyableRightContainer>
-        <Typography fontVariant="body">{value}</Typography>
+        <ValueText fontVariant="body">{value}</ValueText>
         {copyable && <IconCopyAnimated color="grey" copied={copied} size="3.5" />}
       </CopyableRightContainer>
     </ButtonInner>
@@ -77,13 +93,13 @@ export const DnsDisplayValue = ({
   if (!copyable) return <NotCopyableContainer>{InnerContent}</NotCopyableContainer>
 
   return (
-    <Button
+    <ButtonWithContent
       colorStyle="background"
       onClick={copyable ? () => copy(value) : undefined}
       size="flexible"
       fullWidthContent
     >
       {InnerContent}
-    </Button>
+    </ButtonWithContent>
   )
 }

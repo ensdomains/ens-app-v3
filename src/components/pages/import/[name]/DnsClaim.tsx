@@ -14,6 +14,7 @@ import { ImportTransaction } from './onchain/ImportTransaction'
 import { VerifyOnchainOwnership } from './onchain/VerifyOnchainOwnership'
 import { SelectImportType } from './SelectImportType'
 import { useDnsImportReducer } from './useDnsImportReducer'
+import { VerifyOffchainOwnership } from './VerifyOffchainOwnership'
 
 export const DnsClaim = () => {
   const router = useRouterWithHistory()
@@ -26,7 +27,7 @@ export const DnsClaim = () => {
     address,
     name,
   })
-  const step = item.steps[item.stepIndex]
+  const step = item.steps ? item.steps[item.stepIndex] : 'selectType'
 
   // reset item on initial mount if not started
   useEffect(() => {
@@ -83,11 +84,13 @@ export const DnsClaim = () => {
               <VerifyOnchainOwnership dispatch={dispatch} selected={selected} />
             ),
             transaction: () => (
-              <ImportTransaction dispatch={dispatch} item={item} selected={selected} />
+              <ImportTransaction dispatch={dispatch} selected={selected} item={item} />
             ),
             completeOnchain: () => <CompleteOnchain selected={selected} />,
-            verifyOffchainOwnership: () => null,
-            completeOffchain: () => null,
+            verifyOffchainOwnership: () => (
+              <VerifyOffchainOwnership dispatch={dispatch} selected={selected} />
+            ),
+            completeOffchain: () => <CompleteOnchain selected={selected} />,
           }[step](),
         }}
       </Content>
