@@ -1,7 +1,1 @@
-export const supportedGeneralRecordKeys = [
-  'name',
-  'description',
-  'url',
-  'location',
-  'avatar',
-] as const
+export const supportedGeneralRecordKeys = ['name', 'description', 'url', 'location'] as const

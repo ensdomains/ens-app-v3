@@ -89,7 +89,6 @@ const ResolverWarningOverlay = ({
     status?.isMigratedProfileEqual,
     selectedProfile,
   ])
-
   const [index, setIndex] = useState(0)
   const view = flow[index]
 
@@ -186,7 +185,7 @@ const ResolverWarningOverlay = ({
         transactions: [
           createTransactionItem('migrateProfileWithReset', {
             name,
-            resolverAddress: latestResolverAddress,
+            resolverAddress: oldResolverAddress,
           }),
           createTransactionItem('updateResolver', {
             name,

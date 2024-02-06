@@ -38,33 +38,6 @@ const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEd
   return Object.fromEntries(entries)
 }
 
-// TODO: This should probably be moved into ensjs
-type NormalizedAbi = { contentType: number | undefined; data: string }
-export const decodeAbi = (abi: RecordOptions['abi'] | string): NormalizedAbi | undefined => {
-  if (!abi) return undefined
-  if (typeof abi === 'string') return { contentType: 8, data: abi }
-  // TODO: FIX!!!!!!!!!!!!!!!!!!!!!!
-  // @ts-expect-error
-  const { contentType, encodedData: encodedAbiData } = abi
-  if (!contentType || !encodedAbiData) return { contentType: 8, data: '' }
-  let abiData: string | object
-  switch (contentType) {
-    // JSON
-    case 1: {
-      abiData = hexToString(encodedAbiData)
-      return { contentType: 8, data: abiData }
-    }
-    default: {
-      try {
-        abiData = hexToString(encodedAbiData)
-        return { contentType: 8, data: abiData }
-      } catch {
-        return undefined
-      }
-    }
-  }
-}
-
 export type AdvancedEditorType = {
   text: {
     [key: string]: string

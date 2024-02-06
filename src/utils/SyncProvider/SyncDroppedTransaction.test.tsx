@@ -45,8 +45,6 @@ const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseTransactionStore = mockFunction(useTransactionStore)
 
-console.log('mockUsePublicClient', mockUseAccountSafely)
-
 describe('SyncDroppedTransaction', () => {
   const mockPublicClient = { chain: { id: 1 } }
   const mockAddress = '0x1234567890abcdef'
