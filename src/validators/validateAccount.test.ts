@@ -46,6 +46,7 @@ describe('validateAccount', () => {
     { description: 'Invalid email', key: 'email', value: 'invalid_email', expected: false },
     { description: 'Email without @', key: 'email', value: 'bademail.com', expected: false },
     { description: 'Email without domain', key: 'email', value: 'bad@email', expected: false },
+    { description: 'Email with tld and country tld', key: 'email', value: 'test@example.com.tw', expected: true},
 
     // Test for unknown key
     { description: 'True for unknown key', key: 'unknown', value: 'value', expected: true },

@@ -333,7 +333,7 @@ describe('ResolverWarningOverlay', () => {
         {
           data: {
             name: 'test.eth',
-            resolverAddress: '0x123',
+            resolverAddress: '0x0',
           },
           name: 'migrateProfileWithReset',
         },

@@ -398,7 +398,7 @@ describe('useProfileEditorForm', () => {
     it('should have a custom placeholder for supported address record', () => {
       const hasTranslation = supportedAddresses.every((coin) => {
         const key =
-          coin.toUpperCase() as keyof typeof registerI18n.steps.profile.options.groups.address.placeholder
+          coin as keyof typeof registerI18n.steps.profile.options.groups.address.placeholder
         return !!registerI18n.steps.profile.options.groups.address.placeholder[key]
       })
       expect(hasTranslation).toBe(true)
