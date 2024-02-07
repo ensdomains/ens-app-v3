@@ -1,7 +1,8 @@
 import styled, { css } from 'styled-components'
 
-import { Button, Card, Heading, Helper, mq, Typography } from '@ensdomains/thorin'
+import { Button, Heading, Helper, mq, Typography } from '@ensdomains/thorin'
 
+import { Card } from '@app/components/Card'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
 
