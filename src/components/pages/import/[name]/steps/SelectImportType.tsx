@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi'
 import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
 import { RadioButton, RadioButtonGroup, Tag, Typography } from '@ensdomains/thorin'
 
-import { Outlink } from '@app/components/Outlink'
+import { SupportOutlink } from '@app/components/@atoms/SupportOutlink'
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
@@ -199,7 +199,7 @@ export const SelectImportType = ({
     <DnsImportCard>
       <DnsImportHeading>{t('title', { name: selected.name })}</DnsImportHeading>
       <Typography>{t('subtitle')}</Typography>
-      <Outlink href="https://example.com">{t('learnMore')}</Outlink>
+      <SupportOutlink href="https://example.com">{t('learnMore')}</SupportOutlink>
       <TypesSelectionContainer>
         <Typography weight="bold">{t('select.heading')}</Typography>
         <StyledRadioButtonGroup

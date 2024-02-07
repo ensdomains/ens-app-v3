@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { DownChevronSVG, OutlinkSVG, QuestionSVG, Typography } from '@ensdomains/thorin'
+import { DownChevronSVG, OutlinkSVG, Typography } from '@ensdomains/thorin'
+
+import { SupportQuestionIcon } from '@app/components/@atoms/SupportQuestionIcon'
 
 const SupportLinksContainer = styled.div(
   ({ theme }) => css`
@@ -27,17 +29,6 @@ const SupportLinksFirstItems = styled.div(
     align-items: center;
     justify-content: flex-start;
     gap: ${theme.space['2']};
-  `,
-)
-
-const StyledQuestion = styled.svg(
-  ({ theme }) => css`
-    width: ${theme.space['6']};
-    height: ${theme.space['6']};
-    padding: ${theme.space['1.25']};
-    background-color: ${theme.colors.indigo};
-    border-radius: ${theme.radii.full};
-    color: ${theme.colors.background};
   `,
 )
 
@@ -177,7 +168,7 @@ export const SupportLinkList = ({
     <SupportLinksContainer>
       <SupportLinksHeader onClick={() => setContentVisible(!contentVisible)}>
         <SupportLinksFirstItems>
-          <StyledQuestion as={QuestionSVG} />
+          <SupportQuestionIcon />
           <Typography fontVariant="bodyBold">{title}</Typography>
         </SupportLinksFirstItems>
         <StyledChevron data-contentvisible={contentVisible} as={DownChevronSVG} />
