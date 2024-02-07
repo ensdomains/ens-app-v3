@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Locator, Page, expect } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 
 export class RegistrationPage {
   readonly page: Page

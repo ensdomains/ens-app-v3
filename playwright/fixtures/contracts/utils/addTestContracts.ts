@@ -1,11 +1,14 @@
-import { config } from 'dotenv'
+/* eslint-disable import/no-extraneous-dependencies */
+
 import { resolve } from 'path'
+
+import { config } from 'dotenv'
 import {
-  TransactionReceiptNotFoundError,
   createPublicClient,
   createTestClient,
   createWalletClient,
   http,
+  TransactionReceiptNotFoundError,
   type Account,
   type Address,
   type Hash,
@@ -37,10 +40,12 @@ type ContractName =
   | 'LegacyDNSSECImpl'
 
 const deploymentAddressesStr = process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}'
-export const deploymentAddresses = JSON.parse(
-  deploymentAddressesStr,
-) as Record<
-  ContractName | 'ENSRegistry' | 'LegacyPublicResolver' | 'NoMulticallResolver' | 'LegacyETHRegistrarController',
+export const deploymentAddresses = JSON.parse(deploymentAddressesStr) as Record<
+  | ContractName
+  | 'ENSRegistry'
+  | 'LegacyPublicResolver'
+  | 'NoMulticallResolver'
+  | 'LegacyETHRegistrarController',
   Address
 >
 
@@ -99,30 +104,24 @@ export const localhost = {
 
 const transport = http('http://localhost:8545')
 
-export const publicClient: PublicClient<typeof transport, typeof localhost> =
-  createPublicClient({
+export const publicClient: PublicClient<typeof transport, typeof localhost> = createPublicClient({
+  chain: localhost,
+  transport,
+})
+
+export const testClient: TestClient<'anvil', typeof transport, typeof localhost> = createTestClient(
+  {
+    chain: localhost,
+    transport,
+    mode: 'anvil',
+  },
+)
+
+export const walletClient: WalletClient<typeof transport, typeof localhost, Account> =
+  createWalletClient({
     chain: localhost,
     transport,
   })
-
-export const testClient: TestClient<
-  'anvil',
-  typeof transport,
-  typeof localhost
-> = createTestClient({
-  chain: localhost,
-  transport,
-  mode: 'anvil',
-})
-
-export const walletClient: WalletClient<
-  typeof transport,
-  typeof localhost,
-  Account
-> = createWalletClient({
-  chain: localhost,
-  transport,
-})
 
 export const waitForTransaction = async (hash: Hash) =>
   new Promise<TransactionReceipt>((resolveFn, reject) => {

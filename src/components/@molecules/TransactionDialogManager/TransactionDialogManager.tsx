@@ -11,9 +11,9 @@ import { wagmiConfigWithRefetch } from '@app/utils/query'
 
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
+import InputComponentWrapper from './InputComponentWrapper'
 import { IntroStageModal } from './stage/Intro'
 import { TransactionStageModal } from './stage/TransactionStageModal'
-import InputComponentWrapper from './InputComponentWrapper'
 
 export const useResetSelectedKey = (dispatch: any) => {
   const { address } = useAccount()
@@ -67,14 +67,14 @@ export const TransactionDialogManager = ({
         return (
           <WagmiConfig config={wagmiConfigWithRefetch}>
             <InputComponentWrapper>
-            <Component
-              {...{
-                data: selectedItem.input.data,
-                transactions: selectedItem.transactions,
-                dispatch,
-                onDismiss,
-              }}
-            />
+              <Component
+                {...{
+                  data: selectedItem.input.data,
+                  transactions: selectedItem.transactions,
+                  dispatch,
+                  onDismiss,
+                }}
+              />
             </InputComponentWrapper>
           </WagmiConfig>
         )

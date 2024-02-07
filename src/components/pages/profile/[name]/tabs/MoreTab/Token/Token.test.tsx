@@ -26,6 +26,7 @@ const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseParentBasicName = mockFunction(useParentBasicName)
 
 mockUseChainName.mockReturnValue('mainnet')
+// @ts-ignore
 mockUseContractAddress.mockImplementation(({ contract }) => {
   if (contract === 'ensNameWrapper') return 'wrapped' as unknown as `0x${string}`
   return 'unwrapped' as unknown as `0x${string}`

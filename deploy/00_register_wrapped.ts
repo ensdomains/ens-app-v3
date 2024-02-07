@@ -4,15 +4,15 @@
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { Address, namehash } from 'viem'
 
 import {
-  RecordOptions,
-  RegistrationParameters,
   encodeFuses,
   makeCommitment as generateCommitment,
   makeRegistrationTuple,
+  RecordOptions,
+  RegistrationParameters,
 } from '@ensdomains/ensjs/utils'
-import { namehash } from 'viem'
 
 import { nonceManager } from './.utils/nonceManager'
 
@@ -33,7 +33,7 @@ type Name = {
 
 type ProcessedSubname = {
   label: string
-  owner: string
+  owner: Address
   expiry: number
   fuses: number
 }
@@ -61,33 +61,33 @@ const names: Name[] = [
         namedOwner: 'owner',
         // set expiry to 24 hours ago
         expiry: Math.floor(Date.now() / 1000) - 86400,
-        fuses: encodeFuses({ input: {parent: { named: ['PARENT_CANNOT_CONTROL'] }}}),
+        fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
       },
       {
         label: 'hour-expired',
         namedOwner: 'owner',
         // set expiry to 24 hours ago
         expiry: Math.floor(Date.now() / 1000) - 3600,
-        fuses: encodeFuses({ input: {parent: { named: ['PARENT_CANNOT_CONTROL'] }}}),
+        fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
       },
       {
         label: 'two-minute-expired',
         namedOwner: 'owner',
         expiry: Math.floor(Date.now() / 1000) - 120,
-        fuses: encodeFuses({ input: {parent: { named: ['PARENT_CANNOT_CONTROL'] }}}),
+        fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
       },
       {
         label: 'two-minute-expiring',
         namedOwner: 'owner',
         expiry: Math.floor(Date.now() / 1000) + 120,
-        fuses: encodeFuses({ input: {parent: { named: ['PARENT_CANNOT_CONTROL'] }}}),
+        fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
       },
       {
         label: 'hour-expiring',
         namedOwner: 'owner',
         // set expiry to 24 hours ago
         expiry: Math.floor(Date.now() / 1000) + 3600,
-        fuses: encodeFuses({ input: {parent: { named: ['PARENT_CANNOT_CONTROL'] }}}),
+        fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
       },
       {
         label: 'no-pcc',
@@ -97,7 +97,7 @@ const names: Name[] = [
       {
         label: 'not-expired',
         namedOwner: 'owner',
-        fuses: encodeFuses({ input: {parent: { named: ['PARENT_CANNOT_CONTROL'] }}}),
+        fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
       },
     ],
   },
@@ -121,19 +121,19 @@ const names: Name[] = [
         label: 'parent-not-child',
         namedOwner: 'deployer',
         expiry: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365,
-        fuses: encodeFuses({ input: {parent: { named: ['PARENT_CANNOT_CONTROL'] }}}),
+        fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
       },
       {
         label: 'parent-child',
         namedOwner: 'owner',
         expiry: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365,
-        fuses: encodeFuses({ input: {parent: { named: ['PARENT_CANNOT_CONTROL'] }}}),
+        fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
       },
       {
         label: 'not-parent-child',
         namedOwner: 'deployer',
         expiry: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365,
-        fuses: encodeFuses({ input: {parent: { named: ['PARENT_CANNOT_CONTROL'] }}}),
+        fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
       },
     ],
   },
@@ -146,15 +146,18 @@ type ProcessedNameData = RegistrationParameters & {
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, network } = hre
-  const allNamedAccts = await getNamedAccounts()
+  const allNamedAccts = (await getNamedAccounts()) as Record<string, Address>
 
   const controller = await ethers.getContract('ETHRegistrarController')
   const publicResolver = await ethers.getContract('PublicResolver')
   const nameWrapper = await ethers.getContract('NameWrapper')
 
   const makeData = ({ namedOwner, customDuration, fuses, name, subnames, ...rest }: Name) => {
-    const resolverAddress = publicResolver.address
-    const secret = '0x0000000000000000000000000000000000000000000000000000000000000000' as `0x${string}`
+    const resolverAddress = publicResolver.address as Address
+
+    const secret =
+      // eslint-disable-next-line no-restricted-syntax
+      '0x0000000000000000000000000000000000000000000000000000000000000000' as Address
     const duration = customDuration || 31536000
     // 1659467455 is the approximate time of the transaction, this is for keeping block hashes the same
     const wrapperExpiry = 1659467455 + duration

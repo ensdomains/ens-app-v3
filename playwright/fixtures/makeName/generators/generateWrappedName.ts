@@ -51,7 +51,7 @@ export const generateWrappedName =
     // eslint-disable-next-line no-restricted-syntax
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
     resolver = DEFAULT_RESOLVER,
-    reverseRecord = false,
+    // reverseRecord = false,
     fuses,
     records,
     subnames,
@@ -79,7 +79,7 @@ export const generateWrappedName =
       ...params,
       account: _owner as `0x${string}`,
     })
-    const commitReceipt = await waitForTransaction(commitTx)
+    await waitForTransaction(commitTx)
 
     await testClient.increaseTime({ seconds: 120 }) // I use 120 because sometimes with anvil you need to wait a bit longer when registering multiple names at once
     await testClient.mine({ blocks: 1 })
@@ -95,7 +95,7 @@ export const generateWrappedName =
       account: _owner as `0x${string}`,
       value: total,
     })
-    const receipt = await waitForTransaction(tx)
+    await waitForTransaction(tx)
 
     const _subnames = (subnames || []).map((subname) => ({
       ...subname,
@@ -108,7 +108,7 @@ export const generateWrappedName =
     }
 
     if (records) {
-      await generateRecords({ contracts })({
+      await generateRecords()({
         name,
         owner,
         resolver: _resolver as `0x${string}`,
@@ -118,13 +118,13 @@ export const generateWrappedName =
 
     if (!hasValidResolver && resolver) {
       console.log('setting resolver: ', name, resolver)
-      const tx = await setResolver(walletClient, {
+      const resolverTx = await setResolver(walletClient, {
         name,
         contract: 'nameWrapper',
         resolverAddress: resolver,
         account: _owner as `0x${string}`,
       })
-      const receipt = await waitForTransaction(tx)
+      await waitForTransaction(resolverTx)
     }
 
     await provider.mine()

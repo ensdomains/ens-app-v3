@@ -141,8 +141,8 @@ export const AddTextRecord = ({
   syncWarning,
   name,
 }: {
-  dnsOwner?: Address
-  refetch: () => Promise<QueryObserverResult<Address, UseDnsOwnerError>>
+  dnsOwner?: Address | null
+  refetch: () => Promise<QueryObserverResult<Address | null, UseDnsOwnerError>>
   isLoading: boolean
   error: UseDnsOwnerError | null
   incrementStep: () => void

@@ -57,11 +57,11 @@ export const generateLegacySubname =
       account: createAccounts().getAddress(nameOwner) as `0x${string}`,
       resolverAddress: resolver ?? DEFAULT_RESOLVER,
     })
-    const receipt = await waitForTransaction(tx)
+    await waitForTransaction(tx)
 
     // Make records
     if (records && resolver) {
-      await generateRecords({ contracts })({
+      await generateRecords()({
         name: subname,
         owner,
         resolver,
@@ -70,7 +70,7 @@ export const generateLegacySubname =
     }
 
     if (type === 'wrapped') {
-      const approve_tx = await walletClient.writeContract({
+      const approveTx = await walletClient.writeContract({
         abi: registrySetApprovalForAllSnippet,
         address: getChainContractAddress({
           client: walletClient,
@@ -86,7 +86,7 @@ export const generateLegacySubname =
         ],
         account: createAccounts().getAddress(owner) as `0x${string}`,
       })
-      const approve = await waitForTransaction(approve_tx)
+      const approve = await waitForTransaction(approveTx)
       if (approve.status === 'success') console.log('approved name wrapper')
       else throw new Error(`failed to approve name wrapper`)
 

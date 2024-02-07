@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
+
 import { test } from '../../../playwright'
 
 test('should be able to register multiple names on the address page', async ({

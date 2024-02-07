@@ -6,19 +6,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Accounts, User, createAccounts } from '../../accounts'
+import { transferName } from '@ensdomains/ensjs/wallet'
+
+import { Accounts, createAccounts, User } from '../../accounts'
 import { Contracts } from '../../contracts'
-
-import { Provider } from '../../provider'
-import { LegacySubname, generateLegacySubname } from './generateLegacySubname'
-
 import {
-  publicClient,
   testClient,
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
-import { transferName } from '@ensdomains/ensjs/wallet'
+import { Provider } from '../../provider'
+import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
 
 const DEFAULT_DURATION = 31536000
 
@@ -80,14 +78,13 @@ export const generateLegacyName =
 
     if (!!manager && manager !== owner) {
       console.log('setting manager:', name, manager)
-      const _manager = accounts.getAddress(manager)
       const tx = await transferName(walletClient, {
-        name: name,
+        name,
         newOwnerAddress: createAccounts().getAddress(manager) as `0x${string}`,
         contract: 'registry',
         account: createAccounts().getAddress(owner) as `0x${string}`,
       })
-      const receipt = await waitForTransaction(tx)
+      await waitForTransaction(tx)
     }
 
     await testClient.increaseTime({ seconds: 61 })

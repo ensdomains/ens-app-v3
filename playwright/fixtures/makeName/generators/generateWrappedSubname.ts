@@ -7,7 +7,6 @@ import { createSubname, unwrapName } from '@ensdomains/ensjs/wallet'
 import { Accounts, createAccounts, User } from '../../accounts'
 import { Contracts } from '../../contracts'
 import {
-  publicClient,
   testClient,
   waitForTransaction,
   walletClient,
@@ -69,11 +68,11 @@ export const generateWrappedSubname =
       resolverAddress: resolver,
       expiry,
     })
-    const receipt = await waitForTransaction(tx)
+    await waitForTransaction(tx)
 
     // Make records
     if (records) {
-      await generateRecords({ contracts })({
+      await generateRecords()({
         name: `${label}.${name}`,
         owner,
         resolver,
@@ -82,12 +81,12 @@ export const generateWrappedSubname =
     }
 
     if (type === 'legacy') {
-      const tx = await unwrapName(walletClient, {
+      const wrapTx = await unwrapName(walletClient, {
         name: `${label}.${name}`,
         newOwnerAddress: createAccounts().getAddress(owner) as `0x${string}`,
         account: createAccounts().getAddress(owner) as `0x${string}`,
       })
-      const receipt = await waitForTransaction(tx)
+      await waitForTransaction(wrapTx)
     }
 
     const _subNames = (subnames || []).map((subName) => ({

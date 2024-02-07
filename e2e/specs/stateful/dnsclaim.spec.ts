@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test'
+
 import { test } from '../../../playwright/index.js'
 
 test.describe('Import DNSSEC name', () => {
@@ -21,7 +22,7 @@ test.describe('Import DNSSEC name', () => {
 
     await page.pause()
     await page.getByTestId('dnssec-check-button').click()
-    await expect(page.getByText('Subdomain not set')).toBeVisible({ timeout: 15000})
+    await expect(page.getByText('Subdomain not set')).toBeVisible({ timeout: 15000 })
   })
 
   test('should not allow the use to proceed if they have not set the correct subdomain with the correct info', async ({
@@ -32,7 +33,7 @@ test.describe('Import DNSSEC name', () => {
     await login.connect()
 
     await page.getByTestId('dnssec-check-button').click()
-    await expect(page.getByText('Record Invalid')).toBeVisible({ timeout: 15000})
+    await expect(page.getByText('Record Invalid')).toBeVisible({ timeout: 15000 })
   })
 
   test('should allow user to import a domain that they are not the owner of', async ({
@@ -70,7 +71,6 @@ test.describe('Import DNSSEC name', () => {
   test('should allow user to import a name that they are the owner of', async ({
     page,
     login,
-    accounts,
     makePageObject,
   }) => {
     const transactionModal = makePageObject('TransactionModal')

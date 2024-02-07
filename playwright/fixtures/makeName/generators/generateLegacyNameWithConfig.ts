@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { imageOptimizer } from 'next/dist/server/image-optimizer'
 
 import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { setResolver, transferName } from '@ensdomains/ensjs/wallet'
@@ -9,13 +8,10 @@ import { setResolver, transferName } from '@ensdomains/ensjs/wallet'
 import { Accounts, createAccounts, User } from '../../accounts'
 import { Contracts } from '../../contracts'
 import {
-  publicClient,
   testClient,
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
-// import { RESOLVER_ADDRESSES } from '@app/utils/constants' //Ask about this
-
 import { Provider } from '../../provider'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
 import { generateRecords } from './generateRecords'
@@ -100,7 +96,7 @@ export const generateLegacyNameWithConfig =
     await registrationTx.wait()
 
     // Create records
-    await generateRecords({ contracts })({ name: `${label}.eth`, owner, resolver, records })
+    await generateRecords()({ name: `${label}.eth`, owner, resolver, records })
 
     // Create subnames
     const _subnames = (subnames || []).map((subname) => ({
@@ -121,19 +117,18 @@ export const generateLegacyNameWithConfig =
         resolverAddress: resolver,
         account: createAccounts().getAddress(owner) as `0x${string}`,
       })
-      const receipt = await waitForTransaction(tx)
+      await waitForTransaction(tx)
     }
 
     if (!!manager && manager !== owner) {
       console.log('setting manager:', name, manager)
-      const _manager = accounts.getAddress(manager)
       const tx = await transferName(walletClient, {
         name,
         newOwnerAddress: createAccounts().getAddress(manager) as `0x${string}`,
         contract: 'registry',
         account: createAccounts().getAddress(owner) as `0x${string}`,
       })
-      const receipt = await waitForTransaction(tx)
+      await waitForTransaction(tx)
     }
 
     await provider.mine()

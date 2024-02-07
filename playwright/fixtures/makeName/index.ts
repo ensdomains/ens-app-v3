@@ -4,12 +4,12 @@ import { Contracts } from '../contracts/index.js'
 import { Provider } from '../provider.js'
 import { Subgraph } from '../subgraph.js'
 import { Time } from '../time.js'
-import { Name as LegacyName, generateLegacyName } from './generators/generateLegacyName.js'
+import { generateLegacyName, Name as LegacyName } from './generators/generateLegacyName.js'
 import {
-  Name as LegacyNameWithConfig,
   generateLegacyNameWithConfig,
+  Name as LegacyNameWithConfig,
 } from './generators/generateLegacyNameWithConfig.js'
-import { Name as WrappedName, generateWrappedName } from './generators/generateWrappedName.js'
+import { generateWrappedName, Name as WrappedName } from './generators/generateWrappedName.js'
 import { adjustName } from './utils/adjustName.js'
 import { getTimeOffset } from './utils/getTimeOffset.js'
 

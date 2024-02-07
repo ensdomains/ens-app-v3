@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax */
+
 import { expect } from '@playwright/test'
 import dotenv from 'dotenv'
 import { Address } from 'viem'
@@ -166,7 +168,6 @@ test.describe('migrations', () => {
   test('should force a name with an unauthorised resolver to update their resolver', async ({
     page,
     login,
-    contracts,
     makeName,
     makePageObject,
   }) => {
@@ -202,7 +203,6 @@ test.describe('migrations', () => {
   test('should force a name with an invalid resolver to update their resolver', async ({
     page,
     login,
-    contracts,
     makeName,
     makePageObject,
   }) => {
@@ -659,7 +659,7 @@ test.describe('unwrapped', () => {
     // Update records
     await profilePage.profileEditorInput('eth').fill(createAccounts().getAddress('user2'))
     await profilePage.profileEditorInput('description').fill('new name')
-    
+
     // Add records
     await profilePage.profileEditorAddInputs(['location', 'bnb'])
     await profilePage.profileEditorInput('location').fill('L1 chain')
@@ -677,8 +677,12 @@ test.describe('unwrapped', () => {
     await expect(recordsPage.getRecordValue('text', 'location')).toHaveText('L1 chain')
     await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('new name')
     await expect(recordsPage.getRecordValue('text', 'url')).toHaveText('https://twitter.com')
-    await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(createAccounts().getAddress('user2'))
-    await expect(recordsPage.getRecordValue('address', 'bnb')).toHaveText('bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl')
+    await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(
+      createAccounts().getAddress('user2'),
+    )
+    await expect(recordsPage.getRecordValue('address', 'bnb')).toHaveText(
+      'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
+    )
     await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
   })
 
@@ -724,13 +728,22 @@ test.describe('unwrapped', () => {
     await profilePage.profileEditorClearButton('url').click()
     await profilePage.profileEditorClearButton('email').click()
     await profilePage.profileEditorInput('eth').fill('')
-    await expect(await profilePage.profileEditorInput('eth')).toHaveAttribute('placeholder', '0xD9hbQK...')
+    await expect(await profilePage.profileEditorInput('eth')).toHaveAttribute(
+      'placeholder',
+      '0xD9hbQK...',
+    )
     await profilePage.profileEditorClearButton('eth').click()
     await profilePage.profileEditorInput('btc').fill('')
-    await expect(await profilePage.profileEditorInput('btc')).toHaveAttribute('placeholder', '3FZbgi29...')
+    await expect(await profilePage.profileEditorInput('btc')).toHaveAttribute(
+      'placeholder',
+      '3FZbgi29...',
+    )
     await profilePage.profileEditorClearButton('btc').click()
     await profilePage.profileEditorInput('etcLegacy').fill('')
-    await expect(await profilePage.profileEditorInput('etcLegacy')).toHaveAttribute('placeholder', 'Add address here')
+    await expect(await profilePage.profileEditorInput('etcLegacy')).toHaveAttribute(
+      'placeholder',
+      'Add address here',
+    )
     await profilePage.profileEditorClearButton('etcLegacy').click()
     await profilePage.profileEditorClearButton('ipfs').click()
     await profilePage.profileEditorClearButton('abi').click()
@@ -785,7 +798,7 @@ test.describe('wrapped', () => {
     // Update records
     await profilePage.profileEditorInput('eth').fill(createAccounts().getAddress('user2'))
     await profilePage.profileEditorInput('description').fill('new name')
-    
+
     // Add records
     await profilePage.profileEditorAddInputs(['location', 'bnb'])
     await profilePage.profileEditorInput('location').fill('L1 chain')
@@ -800,8 +813,12 @@ test.describe('wrapped', () => {
     await expect(recordsPage.getRecordValue('text', 'location')).toHaveText('L1 chain')
     await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('new name')
     await expect(recordsPage.getRecordValue('text', 'url')).toHaveText('https://twitter.com')
-    await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(createAccounts().getAddress('user2'))
-    await expect(recordsPage.getRecordValue('address', 'bnb')).toHaveText('bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl')
+    await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(
+      createAccounts().getAddress('user2'),
+    )
+    await expect(recordsPage.getRecordValue('address', 'bnb')).toHaveText(
+      'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
+    )
     await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
   })
 
@@ -840,13 +857,22 @@ test.describe('wrapped', () => {
     await profilePage.profileEditorClearButton('url').click()
     await profilePage.profileEditorClearButton('email').click()
     await profilePage.profileEditorInput('eth').fill('')
-    await expect(await profilePage.profileEditorInput('eth')).toHaveAttribute('placeholder', '0xD9hbQK...')
+    await expect(await profilePage.profileEditorInput('eth')).toHaveAttribute(
+      'placeholder',
+      '0xD9hbQK...',
+    )
     await profilePage.profileEditorClearButton('eth').click()
     await profilePage.profileEditorInput('btc').fill('')
-    await expect(await profilePage.profileEditorInput('btc')).toHaveAttribute('placeholder', '3FZbgi29...')
+    await expect(await profilePage.profileEditorInput('btc')).toHaveAttribute(
+      'placeholder',
+      '3FZbgi29...',
+    )
     await profilePage.profileEditorClearButton('btc').click()
     await profilePage.profileEditorInput('etcLegacy').fill('')
-    await expect(await profilePage.profileEditorInput('etcLegacy')).toHaveAttribute('placeholder', 'Add address here')
+    await expect(await profilePage.profileEditorInput('etcLegacy')).toHaveAttribute(
+      'placeholder',
+      'Add address here',
+    )
     await profilePage.profileEditorClearButton('etcLegacy').click()
     await profilePage.profileEditorClearButton('ipfs').click()
     await profilePage.profileEditorClearButton('abi').click()

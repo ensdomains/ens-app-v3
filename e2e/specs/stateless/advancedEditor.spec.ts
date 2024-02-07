@@ -5,7 +5,6 @@ import { encodeAbi } from '@ensdomains/ensjs/utils'
 import { test } from '../../../playwright'
 
 test('should be able to maintain state when returning from transaction modal when deleting records', async ({
-  page,
   login,
   makeName,
   makePageObject,

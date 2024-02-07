@@ -4,12 +4,7 @@ import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
-import {
-  publicClient,
-  testClient,
-  waitForTransaction,
-  walletClient,
-} from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 /*
  * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will
@@ -24,7 +19,6 @@ test.describe.serial('normal registration', () => {
     login,
     accounts,
     provider,
-    contracts,
     time,
     makePageObject,
   }) => {

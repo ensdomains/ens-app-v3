@@ -20,7 +20,7 @@ type UngroupedOptions = BaseOptions & { grouped?: false }
 type Options = UngroupedOptions | GroupedOptions
 
 type BaseData = {
-  address?: Address
+  address?: Address | null
   role?: Role
   roles?: Role[]
 }
@@ -81,9 +81,9 @@ function useRoles(name: string, options?: Options): Result {
   const groupedData = useMemo(() => {
     if (!listData || !grouped) return undefined
     return listData.reduce<GroupedRoleRecord[]>((acc, cur) => {
-      const index = acc.findIndex((item) => item.address === cur.address)
-      if (index === -1)
-        return [...acc, { address: cur.address, roles: [cur.role] } as GroupedRoleRecord]
+      const address = cur.address || null
+      const index = acc.findIndex((item) => item.address === address)
+      if (index === -1) return [...acc, { address, roles: [cur.role] } as GroupedRoleRecord]
       return acc.map((item, i) =>
         i === index ? { ...item, roles: [...(item.roles || []), cur.role] } : item,
       )
