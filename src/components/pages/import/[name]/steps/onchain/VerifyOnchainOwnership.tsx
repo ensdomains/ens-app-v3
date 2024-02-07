@@ -75,8 +75,9 @@ export const VerifyOnchainOwnership = ({
     isRefetching,
     error,
     refetch,
-    internal: { dataUpdatedAt },
-  } = useDnsOwner({ name: selected.name })
+    internal: { dataUpdatedAt, errorUpdatedAt },
+  } = useDnsOwner({ name: selected.name, strict: true })
+
   const { openConnectModal } = useConnectModal()
 
   const { address } = selected
@@ -89,7 +90,8 @@ export const VerifyOnchainOwnership = ({
 
   const errorMessage = useMemo(() => {
     const errorKey = checkDnsError({ error, isLoading })
-    return tc(`errors.${errorKey}`, { ns: 'dnssec' })
+    if (!errorKey) return null
+    return tc(`error.${errorKey}`, { ns: 'dnssec' })
   }, [tc, error, isLoading])
 
   return (
@@ -137,7 +139,7 @@ export const VerifyOnchainOwnership = ({
             />
             <StatusChecker
               dataUpdatedAt={dataUpdatedAt}
-              isError={isError}
+              errorUpdatedAt={errorUpdatedAt}
               isLoading={isLoading}
               isRefetching={isRefetching}
               refetch={refetch}
@@ -174,6 +176,7 @@ export const VerifyOnchainOwnership = ({
           <DnsImportActionButton
             disabled={!dnsOwner || isLoading || isRefetching || isError}
             onClick={() => dispatch({ name: 'increaseStep', selected })}
+            data-testid="import-next-button"
             {...(dnsOwnerStatus === 'mismatching'
               ? {
                   colorStyle: 'redPrimary',

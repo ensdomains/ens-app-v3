@@ -92,6 +92,7 @@ export const useDnsSecEnabled = <TParams extends UseDnsSecEnabledParameters>({
     onError,
     onSettled,
     onSuccess,
+    retry: 2,
   })
 
   return {

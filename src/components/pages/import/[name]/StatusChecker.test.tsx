@@ -10,8 +10,8 @@ describe('StatusChecker', () => {
         refetch={refetchMock}
         isLoading={false}
         isRefetching={false}
-        isError={false}
         dataUpdatedAt={1234567890}
+        errorUpdatedAt={undefined}
         message="Test message"
       />,
     )
@@ -27,28 +27,13 @@ describe('StatusChecker', () => {
         refetch={() => {}}
         isLoading={false}
         isRefetching={true}
-        isError={false}
         dataUpdatedAt={1234567890}
+        errorUpdatedAt={undefined}
         message="Test message"
       />,
     )
 
     expect(screen.getByText('status.checking')).toBeInTheDocument()
-  })
-
-  it('shows error message when error', () => {
-    render(
-      <StatusChecker
-        refetch={() => {}}
-        isLoading={false}
-        isRefetching={false}
-        isError={true}
-        dataUpdatedAt={1234567890}
-        message="Test message"
-      />,
-    )
-
-    expect(screen.getByText('status.error')).toBeInTheDocument()
   })
 
   it('shows seconds ago when updated less than 60 seconds ago', () => {
@@ -57,8 +42,8 @@ describe('StatusChecker', () => {
         refetch={() => {}}
         isLoading={false}
         isRefetching={false}
-        isError={false}
         dataUpdatedAt={Date.now() - 30000} // 30 seconds ago
+        errorUpdatedAt={undefined}
         message="Test message"
       />,
     )
@@ -72,8 +57,8 @@ describe('StatusChecker', () => {
         refetch={() => {}}
         isLoading={false}
         isRefetching={false}
-        isError={false}
         dataUpdatedAt={Date.now() - 1800000} // 30 minutes ago
+        errorUpdatedAt={undefined}
         message="Test message"
       />,
     )
@@ -87,8 +72,23 @@ describe('StatusChecker', () => {
         refetch={() => {}}
         isLoading={false}
         isRefetching={false}
-        isError={false}
         dataUpdatedAt={Date.now() - 7200000} // 2 hours ago
+        errorUpdatedAt={undefined}
+        message="Test message"
+      />,
+    )
+
+    expect(screen.getByText('status.aWhileAgo')).toBeInTheDocument()
+  })
+
+  it('should use the errorUpdatedAt if dataUpdatedAt is not available', () => {
+    render(
+      <StatusChecker
+        refetch={() => {}}
+        isLoading={false}
+        isRefetching={false}
+        dataUpdatedAt={undefined}
+        errorUpdatedAt={1234567890}
         message="Test message"
       />,
     )

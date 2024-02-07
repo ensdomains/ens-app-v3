@@ -31,8 +31,7 @@ export const EnableDnssec = ({
     isLoading,
     refetch,
     isRefetching,
-    isError,
-    internal: { dataUpdatedAt },
+    internal: { dataUpdatedAt, errorUpdatedAt },
   } = useDnsSecEnabled({
     name: selected.name,
   })
@@ -71,9 +70,9 @@ export const EnableDnssec = ({
           />
           <StatusChecker
             dataUpdatedAt={dataUpdatedAt}
+            errorUpdatedAt={errorUpdatedAt}
             isLoading={isLoading}
             isRefetching={isRefetching}
-            isError={isError}
             message={t('status.disabled.message')}
             refetch={refetch}
           />
@@ -89,6 +88,7 @@ export const EnableDnssec = ({
         <DnsImportActionButton
           disabled={!isDnsSecEnabled || isLoading || isRefetching}
           onClick={() => dispatch({ name: 'increaseStep', selected })}
+          data-testid="import-next-button"
         >
           {tc('action.next')}
         </DnsImportActionButton>

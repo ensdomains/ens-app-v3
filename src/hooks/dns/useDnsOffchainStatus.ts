@@ -51,11 +51,12 @@ export const useDnsOffchainStatus = ({ name, enabled = true }: UseDnsOffchainSta
     isCachedData: isDnsOffchainDataCachedData,
     isError,
     isRefetching,
-    internal: { dataUpdatedAt },
+    internal: { dataUpdatedAt, errorUpdatedAt },
     refetch,
   } = useDnsOffchainData({
     name,
     enabled,
+    strict: true,
   })
 
   const {
@@ -108,6 +109,7 @@ export const useDnsOffchainStatus = ({ name, enabled = true }: UseDnsOffchainSta
     isError,
     isRefetching,
     dataUpdatedAt,
+    errorUpdatedAt,
     refetch,
   }
 }

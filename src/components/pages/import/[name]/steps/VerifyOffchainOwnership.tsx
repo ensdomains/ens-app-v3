@@ -86,6 +86,7 @@ export const VerifyOffchainOwnership = ({
     refetch,
     error,
     dataUpdatedAt,
+    errorUpdatedAt,
   } = useDnsOffchainStatus({
     name: selected.name,
   })
@@ -145,7 +146,7 @@ export const VerifyOffchainOwnership = ({
             />
             <StatusChecker
               dataUpdatedAt={dataUpdatedAt}
-              isError={isError}
+              errorUpdatedAt={errorUpdatedAt}
               isLoading={isLoading}
               isRefetching={isRefetching}
               refetch={refetch}

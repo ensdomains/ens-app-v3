@@ -232,6 +232,7 @@ export const SelectImportType = ({
                 </TypeLabelContainer>
               }
               defaultChecked={item.type === 'offchain'}
+              data-testid="offchain-radio"
             />
           </RadioButtonContainer>
           <RadioButtonContainer>
@@ -247,6 +248,7 @@ export const SelectImportType = ({
                 </TypeLabelContainer>
               }
               defaultChecked={item.type === 'onchain'}
+              data-testid="onchain-radio"
             />
           </RadioButtonContainer>
         </StyledRadioButtonGroup>
@@ -255,7 +257,9 @@ export const SelectImportType = ({
         disabled={
           !item.type || isDnsSecEnabledLoading || isDnsOwnerLoading || isOffchainDnsStatusLoading
         }
+        loading={isDnsSecEnabledLoading || isDnsOwnerLoading || isOffchainDnsStatusLoading}
         onClick={() => setStepsAndNavigate()}
+        data-testid="import-next-button"
       >
         {tc('action.next')}
       </DnsImportActionButton>

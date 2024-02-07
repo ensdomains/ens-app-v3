@@ -40,8 +40,8 @@ export const StatusChecker = ({
   refetch,
   isLoading,
   isRefetching,
-  isError,
   dataUpdatedAt,
+  errorUpdatedAt,
   statusElement,
   statusHelperElement,
   message,
@@ -49,8 +49,8 @@ export const StatusChecker = ({
   refetch: () => any
   isLoading: boolean
   isRefetching: boolean
-  isError: boolean
   dataUpdatedAt: number | undefined
+  errorUpdatedAt: number | undefined
   statusElement?: ReactNode
   statusHelperElement?: ReactNode
   message: string
@@ -61,12 +61,14 @@ export const StatusChecker = ({
     null | [key: string, params?: { count: number }]
   >(null)
 
+  const updatedAt = dataUpdatedAt || errorUpdatedAt
+
   useEffect(() => {
-    if (dataUpdatedAt) {
+    if (updatedAt) {
       let interval: NodeJS.Timeout
       const intervalFunc = () => {
         const now = new Date()
-        const then = new Date(dataUpdatedAt)
+        const then = new Date(updatedAt)
         const diffSeconds = Math.round((now.getTime() - then.getTime()) / 1000)
         if (diffSeconds < 60) {
           setLastCheckedTime(['status.secondsAgo'])
@@ -86,13 +88,13 @@ export const StatusChecker = ({
         clearInterval(interval)
       }
     }
-  }, [dataUpdatedAt])
+  }, [updatedAt])
 
   return (
     <DnssecCheckContainer>
       <DnssecCheckTopItemsContainer>
         {statusElement || (
-          <Helper type="warning" alignment="horizontal">
+          <Helper data-testid="status-checker-message" type="warning" alignment="horizontal">
             {message}
           </Helper>
         )}
@@ -108,7 +110,6 @@ export const StatusChecker = ({
       <Typography fontVariant="small" color="grey" data-testid="status-message">
         {(() => {
           if (isLoading || isRefetching) return t('status.checking')
-          if (isError) return t('status.error')
           if (lastCheckedTime) return t(...lastCheckedTime)
         })()}
       </Typography>

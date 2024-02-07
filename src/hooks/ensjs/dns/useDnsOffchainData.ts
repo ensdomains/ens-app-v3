@@ -79,6 +79,7 @@ export const useDnsOffchainData = <TParams extends UseDnsOffchainDataParameters>
     onError,
     onSettled,
     onSuccess,
+    retry: 2,
   })
 
   return {
