@@ -12,12 +12,12 @@ test.describe('Import DNSSEC name', () => {
 
     await page.getByTestId('onchain-radio').click()
     await page.getByTestId('import-next-button').click()
-    await expect(page.getByText('Enable DNSSEC')).toBeVisible()
+    await expect(page.getByTestId('import-heading')).toContainText('Enable DNSSEC')
     await expect(page.getByTestId('status-checker-message')).toContainText('DNSSEC is not enabled')
     await expect(page.getByTestId('import-next-button')).toBeDisabled()
   })
 
-  test('should not allow the user to proceed if they have not set the correct subdomain', async ({
+  test('should not allow the user to proceed if they have not set the correct TXT record - onchain', async ({
     page,
     login,
   }) => {
@@ -26,7 +26,22 @@ test.describe('Import DNSSEC name', () => {
 
     await page.getByTestId('onchain-radio').click()
     await page.getByTestId('import-next-button').click()
-    await expect(page.getByText('Verify Ownership')).toBeVisible()
+    await expect(page.getByTestId('import-heading')).toContainText('Verify Ownership')
+    await expect(page.getByTestId('status-checker-message')).toContainText('No record found')
+    await expect(page.getByTestId('import-next-button')).toBeDisabled()
+  })
+
+  // TODO: this is failing because stateful tests are still on goerli, we should switch to sepolia/holesky
+  test.skip('should not allow the user to proceed if they have not set the correct TXT record - offchain', async ({
+    page,
+    login,
+  }) => {
+    await page.goto('/noenssubdomain.com')
+    await login.connect()
+
+    await page.getByTestId('offchain-radio').click()
+    await page.getByTestId('import-next-button').click()
+    await expect(page.getByTestId('import-heading')).toContainText('Verify Ownership')
     await expect(page.getByTestId('status-checker-message')).toContainText('No record found')
     await expect(page.getByTestId('import-next-button')).toBeDisabled()
   })
@@ -40,7 +55,7 @@ test.describe('Import DNSSEC name', () => {
 
     await page.getByTestId('onchain-radio').click()
     await page.getByTestId('import-next-button').click()
-    await expect(page.getByText('Verify Ownership')).toBeVisible()
+    await expect(page.getByTestId('import-heading')).toContainText('Verify Ownership')
     await expect(page.getByTestId('status-checker-message')).toContainText('Invalid record found')
     await expect(page.getByTestId('import-next-button')).toBeDisabled()
   })

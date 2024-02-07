@@ -1,3 +1,4 @@
+import { ComponentProps, forwardRef } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Button, Heading, Helper, mq, Typography } from '@ensdomains/thorin'
@@ -21,7 +22,7 @@ export const DnsImportCard = styled(Card)(
   `,
 )
 
-export const DnsImportHeading = styled(Heading)(
+const StyledHeading = styled(Heading)(
   () => css`
     width: 100%;
     text-align: center;
@@ -32,6 +33,10 @@ export const DnsImportHeading = styled(Heading)(
       word-break: normal;
     }
   `,
+)
+
+export const DnsImportHeading = forwardRef<HTMLDivElement, ComponentProps<typeof Heading>>(
+  (props, ref) => <StyledHeading ref={ref} {...props} data-testid="import-heading" />,
 )
 
 export const DnsImportActionsContainer = styled.div(
