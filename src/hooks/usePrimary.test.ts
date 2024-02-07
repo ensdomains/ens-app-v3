@@ -35,4 +35,15 @@ describe('usePrimary', () => {
     await waitForNextUpdate()
     expect(result.current.data).toBe(null)
   })
+  it('should return null and error if name is not normalised', async () => {
+    mockGetName.mockResolvedValue({
+      name: 'te,st.eth',
+      match: true,
+    })
+
+    const { result, waitForNextUpdate } = renderHook(() => usePrimary('0x123'))
+    await waitForNextUpdate()
+    expect(result.current.data).toBe(null)
+    expect(result.current.isError).toBe(true)
+  })
 })
