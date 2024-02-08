@@ -1,7 +1,8 @@
 'use client'
 
 import { QueryCache } from '@tanstack/react-query'
-import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } from 'react'
+import { useRouter } from 'next/router'
+import { useRef, useSyncExternalStore, type RefObject } from 'react'
 import { useQueryClient } from 'wagmi'
 
 type EventData = {
@@ -13,49 +14,42 @@ type EventData = {
 
 const SLOW_THRESHOLD = 5000
 
-const getBadQueries = (
-  queryCache: QueryCache,
-  eventData: RefObject<EventData>,
-  renderedAt: number,
-) => {
+const getBadQueries = (queryCache: QueryCache, eventData: RefObject<EventData>) => {
   const queries = queryCache.findAll([], {
     // only get subgraph queries that are pending or errored
     predicate: (query) => query.queryKey.at(-1) === 'graph' && query.state.status !== 'success',
   })
-  let slowQueries = 0
-  let errorQueries = 0
+  const now = Date.now()
 
-  queries.forEach((query) => {
-    const { queryHash } = query
-    const isSlow =
-      !!eventData.current?.[queryHash]?.startTime &&
-      (query.state.status === 'loading' || query.state.fetchStatus === 'fetching') &&
-      eventData.current[queryHash].startTime - renderedAt > SLOW_THRESHOLD
+  return queries.reduce(
+    (sum, query) => {
+      // skip if query is not currently active
+      if (query.getObserversCount() === 0) return sum
 
-    const isError = query.state.status === 'error'
-    const isFailedToFetch = query.state.fetchFailureReason instanceof DOMException
+      const { queryHash } = query
+      const isSlow =
+        !!eventData.current?.[queryHash]?.startTime &&
+        query.state.fetchStatus === 'fetching' &&
+        now - eventData.current[queryHash].startTime > SLOW_THRESHOLD
 
-    if (isError) {
-      if (isFailedToFetch) errorQueries += 1
-      else query.invalidate()
-    } else if (isSlow) {
-      slowQueries += 1
-    }
-  })
+      const isError = query.state.status === 'error'
+      // TODO: Ask pavel why this is neccessary
+      // const isFailedToFetch = query.state.fetchFailureReason instanceof DOMException
 
-  return { slow: slowQueries, error: errorQueries }
+      return {
+        slow: sum.slow + (isSlow ? 1 : 0),
+        error: sum.error + (isError ? 1 : 0),
+      }
+    },
+    { slow: 0, error: 0 },
+  )
 }
 
 export const useHasSubgraphSyncErrors = () => {
   const queryClient = useQueryClient()
+  const { events } = useRouter()
   const queryData = useRef({ slow: 0, error: 0 })
   const eventData = useRef<EventData>({})
-
-  const [renderedAt, setRenderedAt] = useState(0)
-
-  useEffect(() => {
-    setRenderedAt(Date.now())
-  }, [])
 
   return useSyncExternalStore(
     (onStoreChange) => {
@@ -64,14 +58,10 @@ export const useHasSubgraphSyncErrors = () => {
         const lastKey = event.query.queryKey.at(-1)
         if (lastKey !== 'graph') return
         if (
-          event.query.state.fetchStatus === 'fetching' ||
-          event.query.state.status === 'loading'
-        ) {
-          if (
-            eventData.current[event.query.queryHash]?.dataUpdateCount ===
+          event.query.state.fetchStatus === 'fetching' &&
+          eventData.current[event.query.queryHash]?.dataUpdateCount !==
             event.query.state.dataUpdateCount
-          )
-            return
+        ) {
           eventData.current[event.query.queryHash] = {
             dataUpdateCount: event.query.state.dataUpdateCount,
             startTime: Date.now(),
@@ -80,12 +70,19 @@ export const useHasSubgraphSyncErrors = () => {
           setTimeout(() => onStoreChange(), SLOW_THRESHOLD)
         }
       })
+      const resetData = () => {
+        queryData.current = { slow: 0, error: 0 }
+        eventData.current = {}
+        onStoreChange()
+      }
+      events.on('routeChangeStart', resetData)
       return () => {
         unsubscribe()
+        events.off('routeChangeStart', resetData)
       }
     },
     () => {
-      const newResult = getBadQueries(queryClient.getQueryCache(), eventData, renderedAt)
+      const newResult = getBadQueries(queryClient.getQueryCache(), eventData)
       if (
         newResult.slow !== queryData.current.slow ||
         newResult.error !== queryData.current.error
