@@ -51,7 +51,6 @@ export default function Page() {
     }
   }
 
-  if (isLoading) return null
   return <Registration {...{ nameDetails, isLoading }} />
 }
 

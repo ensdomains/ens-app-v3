@@ -110,7 +110,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
           ? {
               resumeable: true,
               intro: {
-                title: [getIntroTranslation(introType, 'title'), { ns: 'transactionFlow' }] as any,
+                title: [getIntroTranslation(introType, 'title'), { ns: 'transactionFlow' }],
                 content: makeIntroItem('GenericWithDescription', {
                   description: t(getIntroTranslation(introType, 'description')),
                 }),

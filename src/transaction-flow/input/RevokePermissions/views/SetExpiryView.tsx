@@ -96,7 +96,6 @@ export const SetExpiryView = ({
     year: 'numeric',
   })
 
-  console.log('formErrors', formState.errors.expiryCustom)
   return (
     <>
       <Dialog.Heading title={t('input.revokePermissions.views.setExpiry.title')} />
