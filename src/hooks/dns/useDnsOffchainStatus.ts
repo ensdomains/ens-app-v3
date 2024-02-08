@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi'
 import { GetDnsOffchainDataReturnType } from '@ensdomains/ensjs/dns'
 
 import { checkDnsAddressMatch, checkDnsError } from '@app/components/pages/import/[name]/utils'
+import { EXTENDED_DNS_RESOLVER_MAP } from '@app/constants/resolverAddressData'
 
 import { useChainId } from '../chain/useChainId'
 import { useDnsOffchainData } from '../ensjs/dns/useDnsOffchainData'
@@ -15,14 +16,6 @@ type UseDnsOffchainStatusParameters = {
   enabled?: boolean
 }
 
-/* eslint-disable @typescript-eslint/naming-convention */
-export const extendedDnsResolverAddress = {
-  '1': '0x238A8F792dFA6033814B18618aD4100654aeef01',
-  '17000': '0xB0c003d54e7c5a30C0dF72c0D43Df5876d457618',
-  '11155111': '0x0EF1aF80c24B681991d675176D9c07d8C9236B9a',
-} as const
-/* eslint-enable @typescript-eslint/naming-convention */
-
 const getOffchainDnsResolverStatus = ({
   chainId,
   dnsOffchainData,
@@ -31,10 +24,7 @@ const getOffchainDnsResolverStatus = ({
   dnsOffchainData: GetDnsOffchainDataReturnType | undefined
 }) => {
   if (!dnsOffchainData) return null
-  if (
-    dnsOffchainData.resolverAddress ===
-    extendedDnsResolverAddress[String(chainId) as keyof typeof extendedDnsResolverAddress]
-  ) {
+  if (dnsOffchainData.resolverAddress === EXTENDED_DNS_RESOLVER_MAP[String(chainId)]) {
     return 'matching' as const
   }
   return 'mismatching' as const

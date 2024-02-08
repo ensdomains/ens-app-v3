@@ -16,6 +16,20 @@ type KnownResolverData = {
   [chainId: string]: KnownResolverItem[] | undefined
 }
 
+export const OFFCHAIN_DNS_RESOLVER_MAP = {
+  '1': '0xF142B308cF687d4358410a4cB885513b30A42025',
+  '17000': '0x7CF33078a37Cee425F1ad149875eE1e4Bdf0aD9B',
+  '11155111': '0x179Be112b24Ad4cFC392eF8924DfA08C20Ad8583',
+  '1337': deploymentAddresses.OffchainDNSResolver,
+} as Record<string, Address | undefined>
+
+export const EXTENDED_DNS_RESOLVER_MAP = {
+  '1': '0x238A8F792dFA6033814B18618aD4100654aeef01',
+  '17000': '0xB0c003d54e7c5a30C0dF72c0D43Df5876d457618',
+  '11155111': '0x0EF1aF80c24B681991d675176D9c07d8C9236B9a',
+  '1337': deploymentAddresses.ExtendedDNSResolver,
+} as Record<string, Address | undefined>
+
 // ordered by recency
 export const KNOWN_RESOLVER_DATA: KnownResolverData = {
   '1': [

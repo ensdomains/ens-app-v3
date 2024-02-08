@@ -6,10 +6,8 @@ import styled, { css } from 'styled-components'
 import { CheckCircleSVG, Helper } from '@ensdomains/thorin'
 
 import RecordItem from '@app/components/RecordItem'
-import {
-  extendedDnsResolverAddress,
-  useDnsOffchainStatus,
-} from '@app/hooks/dns/useDnsOffchainStatus'
+import { EXTENDED_DNS_RESOLVER_MAP } from '@app/constants/resolverAddressData'
+import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { shortenAddress } from '@app/utils/utils'
 
 import {
@@ -62,7 +60,7 @@ const RecordItemWrapper = styled.div(
 
 const getDnsResolverValue = (chainId: number) => {
   if (chainId === 1) return 'dnsname.ens.eth'
-  return extendedDnsResolverAddress[String(chainId) as keyof typeof extendedDnsResolverAddress]
+  return EXTENDED_DNS_RESOLVER_MAP[String(chainId)]
 }
 
 export const VerifyOffchainOwnership = ({

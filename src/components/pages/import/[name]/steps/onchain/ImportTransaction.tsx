@@ -247,6 +247,9 @@ export const ImportTransaction = ({
     return createTransactionFlow(key, {
       transactions,
       resumable: true,
+      requiresManualCleanup: true,
+      autoClose: true,
+      resumeLink: `/import/${selected.name}`,
     })
   }
 
@@ -288,7 +291,9 @@ export const ImportTransaction = ({
         </OptionBar>
         <InvoiceItemBox>
           <Typography>{t('estimatedNetworkCost')}</Typography>
-          <CurrencyText eth={gasCost} currency={currencyDisplay} />
+          <Typography data-testid="import-cost">
+            <CurrencyText eth={gasCost} currency={currencyDisplay} />
+          </Typography>
         </InvoiceItemBox>
         <InvoiceItemBox>
           <Typography>{tc('name.owner')}</Typography>
@@ -311,6 +316,7 @@ export const ImportTransaction = ({
           disabled={!dnsOwner || isLoading || isRefetching || isError || gasCost === 0n}
           loading={isLoading || isEstimateLoading}
           onClick={() => startOrResumeFlow()}
+          data-testid="import-next-button"
         >
           {dnsOwnerStatus === 'mismatching' ? tc('action.import') : tc('action.claim')}
         </DnsImportActionButton>

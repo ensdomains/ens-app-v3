@@ -16,9 +16,9 @@ type ContractName =
   | 'UniversalResolver'
   | 'StaticBulkRenewal'
   | 'DNSSECImpl'
-  | 'LegacyDNSRegistrar'
-  | 'LegacyDNSSECImpl'
   | 'LegacyPublicResolver'
+  | 'OffchainDNSResolver'
+  | 'ExtendedDNSResolver'
 
 export const deploymentAddresses = JSON.parse(
   process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
@@ -40,7 +40,7 @@ export const localhostWithEns = {
       address: deploymentAddresses.BaseRegistrarImplementation,
     },
     ensDnsRegistrar: {
-      address: deploymentAddresses.LegacyDNSRegistrar,
+      address: deploymentAddresses.DNSRegistrar,
     },
     ensEthRegistrarController: {
       address: deploymentAddresses.ETHRegistrarController,
@@ -58,7 +58,7 @@ export const localhostWithEns = {
       address: deploymentAddresses.StaticBulkRenewal,
     },
     ensDnssecImpl: {
-      address: deploymentAddresses.LegacyDNSSECImpl,
+      address: deploymentAddresses.DNSSECImpl,
     },
   },
   subgraphs: {

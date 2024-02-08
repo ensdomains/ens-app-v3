@@ -19,6 +19,8 @@ export class TransactionModal {
 
   readonly backButton: Locator
 
+  readonly stepContainer: Locator
+
   constructor(page: Page, wallet: Web3ProviderBackend) {
     this.page = page
     this.wallet = wallet
@@ -28,6 +30,7 @@ export class TransactionModal {
     this.closeButton = this.page.getByTestId('close-icon')
     this.transactionModal = this.page.getByTestId('transaction-modal-inner')
     this.backButton = this.page.locator('body .modal').getByRole('button', { name: 'Back' })
+    this.stepContainer = this.page.getByTestId('step-container')
   }
 
   async authorize() {
@@ -43,15 +46,28 @@ export class TransactionModal {
     await this.completeButton.click()
   }
 
+  async getStepCount() {
+    const steps = await this.stepContainer
+      .locator('div')
+      .count()
+      // no step container means only 1 step is present, assuming the transaction modal is open and visible
+      .catch(() => 1)
+    return steps
+  }
+
+  async attemptStep() {
+    if (await this.introButton.isVisible()) await this.introButton.click()
+    if (await this.confirmButton.isVisible()) await this.confirm()
+    if (await this.completeButton.isVisible()) await this.complete()
+    await this.page.waitForTimeout(500)
+  }
+
   async autoComplete() {
     /* eslint-disable no-await-in-loop */
 
     let isModalVisible = true
     do {
-      if (await this.introButton.isVisible()) await this.introButton.click()
-      if (await this.confirmButton.isVisible()) await this.confirm()
-      if (await this.completeButton.isVisible()) await this.complete()
-      await this.page.waitForTimeout(500)
+      await this.attemptStep()
       isModalVisible = await this.transactionModal.isVisible()
     } while (isModalVisible)
     /* eslint-enable no-await-in-loop */

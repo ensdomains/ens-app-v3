@@ -50,7 +50,7 @@
   "dependencies": {
     "@ensdomains/address-encoder": "^1.0.0-rc.3",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
-    "@ensdomains/ens-contracts": "1.0.0",
+    "@ensdomains/ens-contracts": "1.2.0-beta.0",
     "@ensdomains/ensjs": "3.4.2",
     "@ensdomains/thorin": "0.6.44",
     "@metamask/inpage-provider": "^8.1.0",
@@ -104,7 +104,7 @@
     "@adraffy/ens-normalize": "^1.9.4",
     "@cloudflare/workers-types": "^3.14.1",
     "@ensdomains/buffer": "^0.1.0",
-    "@ensdomains/ens-test-env": "^0.3.9",
+    "@ensdomains/ens-test-env": "^0.4.0-beta.0",
     "@ethersproject/abi": "^5.4.0",
     "@ethersproject/contracts": "^5.4.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.1.0",

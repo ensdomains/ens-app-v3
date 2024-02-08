@@ -1,13 +1,13 @@
 import { Dispatch, forwardRef, ReactNode, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { Address, getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
 import { RadioButton, RadioButtonGroup, Tag, Typography } from '@ensdomains/thorin'
 
 import { SupportOutlink } from '@app/components/@atoms/SupportOutlink'
+import { OFFCHAIN_DNS_RESOLVER_MAP } from '@app/constants/resolverAddressData'
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
@@ -109,14 +109,6 @@ const TypeRadioButton = forwardRef<
 })
 TypeRadioButton.displayName = 'TypeRadioButton'
 
-/* eslint-disable @typescript-eslint/naming-convention */
-const offchainResolverMap = {
-  '1': '0xF142B308cF687d4358410a4cB885513b30A42025',
-  '17000': '0x7CF33078a37Cee425F1ad149875eE1e4Bdf0aD9B',
-  '11155111': '0x179Be112b24Ad4cFC392eF8924DfA08C20Ad8583',
-} as Record<string, Address | undefined>
-/* eslint-enable @typescript-eslint/naming-convention */
-
 export const calculateDnsSteps = ({
   importType,
   isDnsSecEnabled,
@@ -163,8 +155,7 @@ export const SelectImportType = ({
 
   const tldResolverIsOffchainResolver = useMemo(
     // make addresses checksum-verified
-    () =>
-      tldResolver != null && getAddress(tldResolver) === getAddress(offchainResolverMap[chainId]!),
+    () => tldResolver != null && tldResolver === OFFCHAIN_DNS_RESOLVER_MAP[chainId]!,
     [tldResolver, chainId],
   )
 
