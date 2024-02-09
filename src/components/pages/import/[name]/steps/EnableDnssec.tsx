@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import { CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
+import { DNSSEC_HELP_LINKS } from '@app/constants/dnsLinks'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 
 import {
@@ -51,21 +52,10 @@ export const EnableDnssec = ({
             title={t('status.disabled.help')}
             items={[
               {
-                href: 'https://example.com',
-                label: 'Example 1',
+                label: t('help.findOutRegistrar'),
+                href: `https://who.is/whois/${selected.name}`,
               },
-              {
-                href: 'https://example.com',
-                label: 'Example 2',
-              },
-              {
-                href: 'https://example.com',
-                label: 'Example 3',
-              },
-              {
-                href: 'https://example.com',
-                label: 'Example 4',
-              },
+              ...DNSSEC_HELP_LINKS,
             ]}
           />
           <StatusChecker

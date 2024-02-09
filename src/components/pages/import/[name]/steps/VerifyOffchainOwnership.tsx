@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components'
 import { CheckCircleSVG, Helper } from '@ensdomains/thorin'
 
 import RecordItem from '@app/components/RecordItem'
+import { DNS_TXT_RECORD_HELPER_LINKS } from '@app/constants/dnsLinks'
 import { EXTENDED_DNS_RESOLVER_MAP } from '@app/constants/resolverAddressData'
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { shortenAddress } from '@app/utils/utils'
@@ -123,24 +124,7 @@ export const VerifyOffchainOwnership = ({
             </ValueButtonsContainer>
             <SupportLinkList
               title={t('status.mismatching.help')}
-              items={[
-                {
-                  href: 'https://example.com',
-                  label: 'Example 1',
-                },
-                {
-                  href: 'https://example.com',
-                  label: 'Example 2',
-                },
-                {
-                  href: 'https://example.com',
-                  label: 'Example 3',
-                },
-                {
-                  href: 'https://example.com',
-                  label: 'Example 4',
-                },
-              ]}
+              items={DNS_TXT_RECORD_HELPER_LINKS}
             />
             <StatusChecker
               dataUpdatedAt={dataUpdatedAt}

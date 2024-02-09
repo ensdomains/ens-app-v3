@@ -36,6 +36,9 @@
     },
     "enableDnssec": {
       "title": "Enable DNSSEC",
+      "help": {
+        "findOutRegistrar": "Find out your registrar"
+      },
       "status": {
         "enabled": "DNSSEC is enabled on this domain.",
         "disabled": {

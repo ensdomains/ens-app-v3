@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components'
 import { CheckCircleSVG, Helper, Typography } from '@ensdomains/thorin'
 
 import RecordItem from '@app/components/RecordItem'
+import { DNS_TXT_RECORD_HELPER_LINKS } from '@app/constants/dnsLinks'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { shortenAddress } from '@app/utils/utils'
 
@@ -118,24 +119,7 @@ export const VerifyOnchainOwnership = ({
             </ValueButtonsContainer>
             <SupportLinkList
               title={t('status.mismatching.help')}
-              items={[
-                {
-                  href: 'https://example.com',
-                  label: 'Example 1',
-                },
-                {
-                  href: 'https://example.com',
-                  label: 'Example 2',
-                },
-                {
-                  href: 'https://example.com',
-                  label: 'Example 3',
-                },
-                {
-                  href: 'https://example.com',
-                  label: 'Example 4',
-                },
-              ]}
+              items={DNS_TXT_RECORD_HELPER_LINKS}
             />
             <StatusChecker
               dataUpdatedAt={dataUpdatedAt}

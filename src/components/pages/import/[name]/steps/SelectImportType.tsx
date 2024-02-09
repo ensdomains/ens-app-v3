@@ -13,6 +13,7 @@ import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 import { DnsImportActionButton, DnsImportCard, DnsImportHeading } from '../shared'
 import {
@@ -190,7 +191,7 @@ export const SelectImportType = ({
     <DnsImportCard>
       <DnsImportHeading>{t('title', { name: selected.name })}</DnsImportHeading>
       <Typography>{t('subtitle')}</Typography>
-      <SupportOutlink href="https://example.com">{t('learnMore')}</SupportOutlink>
+      <SupportOutlink href={getSupportLink('dnsNames')}>{t('learnMore')}</SupportOutlink>
       <TypesSelectionContainer>
         <Typography weight="bold">{t('select.heading')}</Typography>
         <StyledRadioButtonGroup
