@@ -48,7 +48,8 @@
     "setToSelf": "Set to self",
     "editRoles": "Edit roles",
     "setReminder": "Set reminder",
-    "import": "Import"
+    "import": "Import",
+    "connect": "Connect"
   },
   "unit": {
     "years_one": "{{count}} year",
