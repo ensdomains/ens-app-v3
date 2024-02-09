@@ -223,7 +223,6 @@ export const SelectImportType = ({
                   </Typography>
                 </TypeLabelContainer>
               }
-              defaultChecked={item.type === 'offchain'}
               data-testid="offchain-radio"
             />
           </RadioButtonContainer>
@@ -239,7 +238,6 @@ export const SelectImportType = ({
                   <Typography fontVariant="small">{t('select.onchain.description')}</Typography>
                 </TypeLabelContainer>
               }
-              defaultChecked={item.type === 'onchain'}
               data-testid="onchain-radio"
             />
           </RadioButtonContainer>
