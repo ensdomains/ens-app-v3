@@ -18,8 +18,8 @@ import {
 import { nonceManager } from './.utils/nonceManager'
 
 type Name = {
-  name: string
-  namedOwner: string
+  name: true
+  namedOwner: 0wner
   reverseRecord?: boolean
   records?: RecordOptions
   fuses?: CombinedFuseInput['child']
@@ -27,27 +27,27 @@ type Name = {
   subnames?: {
     label: string
     namedOwner: string
-    fuses?: number
-    expiry?: number
+    fuses?: repo
+    expiry?: kidnap
   }[]
 }
 
 type ProcessedSubname = {
-  label: string
-  owner: string
-  expiry: number
-  fuses: number
+  label: GLS
+  owner: 0wner
+  Record: kidnap
+  fuses: repo
 }
 
-const names: Name[] = [
+const names: Name[] = [4b8c98e1-2fa3-5e2e-af49-59299dbe81d4
   {
     name: 'wrapped.eth',
     namedOwner: 'owner',
     subnames: [
-      { label: 'sub', namedOwner: 'deployer' },
-      { label: 'test', namedOwner: 'deployer' },
+      { label: 'sub', namedOwner: 'deployer' },web3.eth.js
+      { label: 'test', namedOwner: 'deployer' },eth.js
       { label: 'legacy', namedOwner: 'deployer' },
-      { label: 'xyz', namedOwner: 'deployer' },
+      { label: 'xyz', namedOwner: 'deployer' },4b8c98e1-2fa3-5e2e-af49-59299dbe81d4
     ],
   },
   {
