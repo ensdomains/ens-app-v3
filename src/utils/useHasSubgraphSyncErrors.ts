@@ -1,7 +1,6 @@
 'use client'
 
 import { QueryCache } from '@tanstack/react-query'
-import { useRouter } from 'next/router'
 import { useRef, useSyncExternalStore, type RefObject } from 'react'
 import { useQueryClient } from 'wagmi'
 
@@ -33,8 +32,6 @@ const getBadQueries = (queryCache: QueryCache, eventData: RefObject<EventData>) 
         now - eventData.current[queryHash].startTime > SLOW_THRESHOLD
 
       const isError = query.state.status === 'error'
-      // TODO: Ask pavel why this is neccessary
-      // const isFailedToFetch = query.state.fetchFailureReason instanceof DOMException
 
       return {
         slow: sum.slow + (isSlow ? 1 : 0),
@@ -47,7 +44,6 @@ const getBadQueries = (queryCache: QueryCache, eventData: RefObject<EventData>) 
 
 export const useHasSubgraphSyncErrors = () => {
   const queryClient = useQueryClient()
-  const { events } = useRouter()
   const queryData = useRef({ slow: 0, error: 0 })
   const eventData = useRef<EventData>({})
 
@@ -57,7 +53,15 @@ export const useHasSubgraphSyncErrors = () => {
       const unsubscribe = queryCache.subscribe((event) => {
         const lastKey = event.query.queryKey.at(-1)
         if (lastKey !== 'graph') return
-        if (
+
+        // Query is no longer active. Remove the query from the eventData. This
+        if (event.type === 'observerRemoved' && event.query.getObserversCount() === 0) {
+          delete eventData.current[event.query.queryHash]
+          onStoreChange()
+        }
+        // Update store and records start time as a query has started fetching
+        else if (
+          event.type === 'updated' &&
           event.query.state.fetchStatus === 'fetching' &&
           eventData.current[event.query.queryHash]?.dataUpdateCount !==
             event.query.state.dataUpdateCount
@@ -69,16 +73,13 @@ export const useHasSubgraphSyncErrors = () => {
           onStoreChange()
           setTimeout(() => onStoreChange(), SLOW_THRESHOLD)
         }
+        // Update store as an error has occurred
+        else if (event.type === 'updated' && event.query.state.status === 'error') {
+          onStoreChange()
+        }
       })
-      const resetData = () => {
-        queryData.current = { slow: 0, error: 0 }
-        eventData.current = {}
-        onStoreChange()
-      }
-      events.on('routeChangeStart', resetData)
       return () => {
         unsubscribe()
-        events.off('routeChangeStart', resetData)
       }
     },
     () => {
