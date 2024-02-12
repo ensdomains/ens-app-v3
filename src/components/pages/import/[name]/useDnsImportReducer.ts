@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Address } from 'viem'
 
 import { useChainId } from '@app/hooks/chain/useChainId'
@@ -72,6 +73,10 @@ export type DnsImportReducerAction =
       name: 'resetItem'
       selected: SelectedItemProperties
     }
+  | {
+      name: 'cleanupNonMatching'
+      selected: SelectedItemProperties
+    }
 
 const defaultData = Object.freeze({
   stepIndex: 0,
@@ -88,13 +93,16 @@ const createDefaultData = (selected: SelectedItemProperties): DnsImportReducerDa
   ...selected,
 })
 
-export const getSelectedIndex = (state: DnsImportReducerData, selected: SelectedItemProperties) =>
-  state.items.findIndex(
-    (x) =>
-      (x.address === selected.address || x.address === null) &&
-      x.name === selected.name &&
-      x.chainId === selected.chainId,
+export const getSelectedIndex = (state: DnsImportReducerData, selected: SelectedItemProperties) => {
+  const noAddressIndex = state.items.findIndex(
+    (x) => x.address === null && x.name === selected.name && x.chainId === selected.chainId,
   )
+  if (noAddressIndex !== -1) return noAddressIndex
+  return state.items.findIndex(
+    (x) =>
+      x.address === selected.address && x.name === selected.name && x.chainId === selected.chainId,
+  )
+}
 
 /* eslint-disable no-param-reassign */
 const reducer = (state: DnsImportReducerData, action: DnsImportReducerAction) => {
@@ -133,6 +141,14 @@ const reducer = (state: DnsImportReducerData, action: DnsImportReducerAction) =>
     case 'clearItem':
       state.items.splice(selectedItemInx, 1)
       break
+    case 'cleanupNonMatching':
+      for (let i = 0; i < state.items.length; i += 1) {
+        if (i !== selectedItemInx && state.items[i].started === false) {
+          state.items.splice(i, 1)
+          i -= 1
+        }
+      }
+      break
     default:
       break
   }
@@ -161,6 +177,11 @@ export const useDnsImportReducer = ({
     const itemIndex = getSelectedIndex(state, selected)
     item = itemIndex === -1 ? createDefaultData(selected) : state.items[itemIndex]
   }
+
+  useEffect(() => {
+    dispatch({ name: 'cleanupNonMatching', selected })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, name, chainId])
 
   return { state, dispatch, item, selected }
 }
