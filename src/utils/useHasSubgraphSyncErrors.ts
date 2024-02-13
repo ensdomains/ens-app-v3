@@ -30,7 +30,6 @@ const getBadQueries = (queryCache: QueryCache, eventData: RefObject<EventData>) 
         !!eventData.current?.[queryHash]?.startTime &&
         query.state.fetchStatus === 'fetching' &&
         now - eventData.current[queryHash].startTime > SLOW_THRESHOLD
-
       const isError = query.state.status === 'error'
 
       return {
