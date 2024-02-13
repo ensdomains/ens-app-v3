@@ -142,5 +142,8 @@ test.describe('subgraph errors', () => {
 
     await morePage.goto(name)
     await expect(morePage.editResolverButton).toHaveCount(0)
+
+    await page.goto('/my/settings')
+    await page.getByTestId('subgraph-network-error').uncheck()
   })
 })
