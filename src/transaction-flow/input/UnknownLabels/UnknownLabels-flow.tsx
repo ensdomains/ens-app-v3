@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQueryClient } from 'wagmi'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { saveName } from '@ensdomains/ensjs/utils'
 

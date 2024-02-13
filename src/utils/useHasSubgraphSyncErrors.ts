@@ -1,8 +1,7 @@
 'use client'
 
-import { QueryCache } from '@tanstack/react-query'
+import { QueryCache, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } from 'react'
-import { useQueryClient } from 'wagmi'
 
 type EventData = {
   [key: string]: {
@@ -31,7 +30,7 @@ const getBadQueries = (
     const { queryHash } = query
     const isSlow =
       !!eventData.current?.[queryHash]?.startTime &&
-      (query.state.status === 'loading' || query.state.fetchStatus === 'fetching') &&
+      (query.state.status === 'pending' || query.state.fetchStatus === 'fetching') &&
       eventData.current[queryHash].startTime - renderedAt > SLOW_THRESHOLD
 
     const isError = query.state.status === 'error'
@@ -67,7 +66,7 @@ export const useHasSubgraphSyncErrors = () => {
         if (lastKey !== 'graph') return
         if (
           event.query.state.fetchStatus === 'fetching' ||
-          event.query.state.status === 'loading'
+          event.query.state.status === 'pending'
         ) {
           if (
             eventData.current[event.query.queryHash]?.dataUpdateCount ===

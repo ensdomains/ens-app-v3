@@ -2,7 +2,6 @@ import type { Address } from 'viem'
 import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { addEnsContracts } from '@ensdomains/ensjs'
-import { ChainWithEns } from '@ensdomains/ensjs/contracts'
 
 type ContractName =
   | 'BaseRegistrarImplementation'
@@ -68,8 +67,8 @@ export const localhostWithEns = {
   },
 } as const
 
-export const mainnetWithEns = addEnsContracts(mainnet) as ChainWithEns
-export const goerliWithEns = addEnsContracts(goerli) as ChainWithEns
-export const sepoliaWithEns = addEnsContracts(sepolia) as ChainWithEns
+export const mainnetWithEns = addEnsContracts(mainnet)
+export const goerliWithEns = addEnsContracts(goerli)
+export const sepoliaWithEns = addEnsContracts(sepolia)
 
 export type SupportedChain = typeof mainnetWithEns | typeof goerliWithEns | typeof sepoliaWithEns

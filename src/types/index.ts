@@ -1,4 +1,5 @@
 import { UseInfiniteQueryOptions, UseQueryOptions } from '@tanstack/react-query'
+import { EthereumProvider } from '@walletconnect/ethereum-provider'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 import type {
@@ -21,8 +22,6 @@ import {
   ParentFuses,
 } from '@ensdomains/ensjs/utils'
 import { Helper, Space } from '@ensdomains/thorin'
-
-import { SupportedChain } from '@app/constants/chains'
 
 export type Profile = Partial<
   GetRecordsReturnType &
@@ -163,7 +162,7 @@ export type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {}
 
-export type PublicClientWithChain = PublicClient<Transport, SupportedChain>
+export type PublicClientWithChain = PublicClient<Transport, ChainWithEns>
 export type WalletClientWithAccount = WalletClient<Transport, ChainWithEns, Account>
 
 export type QueryConfig<TData, TError, TSelectData = TData> = Pick<
@@ -214,3 +213,5 @@ export type AnyFuseKey = ParentFuseReferenceType['Key'] | ChildFuseReferenceType
 export type CurrentChildFuses = { -readonly [k in keyof ChildFuses]: boolean }
 export type CurrentParentFuses = { -readonly [k in keyof ParentFuses]: boolean }
 export type CurrentAnyFuses = CurrentChildFuses & CurrentParentFuses
+
+export type WalletConnectProvider = Awaited<ReturnType<(typeof EthereumProvider)['init']>>

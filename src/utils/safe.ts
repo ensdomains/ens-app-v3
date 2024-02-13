@@ -1,14 +1,12 @@
 import { Hash } from 'viem'
 import { Connector } from 'wagmi'
-import { SafeConnector } from 'wagmi/connectors/safe'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+
+import { WalletConnectProvider } from '@app/types'
 
 export const SAFE_ENDPOINT = 'https://safe-client.safe.global'
 
-const checkIsWcConnector = (c: Connector | undefined): c is WalletConnectConnector =>
-  c instanceof WalletConnectConnector
-const checkIsSafeConnector = (c: Connector | undefined): c is SafeConnector =>
-  c instanceof SafeConnector
+const checkIsWcConnector = (c: Connector | undefined) => c?.id === 'walletConnect'
+const checkIsSafeConnector = (c: Connector | undefined) => c?.id === 'safe'
 
 export type SafeAppType = 'iframe' | 'walletconnect'
 
@@ -22,7 +20,8 @@ export const checkIsSafeApp = async (
 
   if (isSafeConnector) return 'iframe'
 
-  const connectorProvider = await connector.getProvider()
+  const connectorProvider = (await connector!.getProvider()) as WalletConnectProvider
+
   const { session } = connectorProvider
   if (!session) return false
 

@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { useQueryClient } from 'wagmi'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 

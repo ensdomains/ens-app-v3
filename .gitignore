@@ -72,3 +72,5 @@ tsconfig.tsbuildinfo
 .sentryclirc
 
 .dev.vars
+
+*yalc*
