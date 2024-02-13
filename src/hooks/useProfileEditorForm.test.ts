@@ -230,33 +230,60 @@ describe('useProfileEditorForm', () => {
     const moreRecords: ProfileRecord[] = [baseRecord, avatarRecord, invalidGithubRecord]
     const testCases = [
       { platform: 'Twitter', key: 'com.twitter', username: 'valid_twitter', isValid: true },
-      { platform: 'Twitter', key: 'com.twitter', username: 'invalid_twitter!', isValid: "steps.profile.errors.invalidValue" },
+      {
+        platform: 'Twitter',
+        key: 'com.twitter',
+        username: 'invalid_twitter!',
+        isValid: 'steps.profile.errors.invalidValue',
+      },
       { platform: 'GitHub', key: 'com.github', username: 'valid-github', isValid: true },
-      { platform: 'GitHub', key: 'com.github', username: 'invalid_username', isValid: "steps.profile.errors.invalidValue" },
+      {
+        platform: 'GitHub',
+        key: 'com.github',
+        username: 'invalid_username',
+        isValid: 'steps.profile.errors.invalidValue',
+      },
       { platform: 'Discord', key: 'com.discord', username: 'valid_username', isValid: true },
-      { platform: 'Discord', key: 'com.discord', username: 'bad..discord', isValid: "steps.profile.errors.invalidValue" },
+      {
+        platform: 'Discord',
+        key: 'com.discord',
+        username: 'bad..discord',
+        isValid: 'steps.profile.errors.invalidValue',
+      },
       { platform: 'Telegram', key: 'org.telegram', username: 'valid_username', isValid: true },
-      { platform: 'Telegram', key: 'org.telegram', username: 'invalid_username!', isValid: "steps.profile.errors.invalidValue" },
+      {
+        platform: 'Telegram',
+        key: 'org.telegram',
+        username: 'invalid_username!',
+        isValid: 'steps.profile.errors.invalidValue',
+      },
       { platform: 'Email', key: 'email', username: 'test@example.com', isValid: true },
-      { platform: 'Email', key: 'email', username: 'test@example', isValid: "steps.profile.errors.invalidValue" },
-    ];
-  
+      {
+        platform: 'Email',
+        key: 'email',
+        username: 'test@example',
+        isValid: 'steps.profile.errors.invalidValue',
+      },
+    ]
+
     testCases.forEach(({ platform, key, username, isValid }) => {
-      it(`should ${isValid == true ? 'validate' : 'invalidate'} ${isValid == true ? 'a' : 'an'} ${isValid == true ? 'correct' : 'incorrect'} ${platform} account`, async () => {
-        const { result } = renderHook(() => useProfileEditorForm(moreRecords));
+      it(`should ${isValid == true ? 'validate' : 'invalidate'} ${isValid == true ? 'a' : 'an'} ${
+        isValid == true ? 'correct' : 'incorrect'
+      } ${platform} account`, async () => {
+        const { result } = renderHook(() => useProfileEditorForm(moreRecords))
         await act(async () => {
           const validationOutcome = await result.current.validatorForRecord({
             key: key,
             group: 'social',
             type: 'text',
-          })(username);
-  
-          expect(validationOutcome).toBe(isValid);
-        });
-      });
-    });
-  });
-  
+          })(username)
+
+          expect(validationOutcome).toBe(isValid)
+        })
+      })
+    })
+  })
+
   describe('removeRecordByTypeAndKey', () => {
     it('should be able to remove a address record by type and key', async () => {
       const { result } = renderHook(() => useProfileEditorForm(records))

@@ -32,7 +32,14 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
 
 export const DevSection = () => {
   const publicClient = usePublicClient()
-  const testClient = useMemo(() => ({ ...publicClient, mode: 'anvil' }) as const, [publicClient])
+  const testClient = useMemo(
+    () =>
+      (({
+        ...publicClient,
+        mode: 'anvil'
+      }) as const),
+    [publicClient],
+  )
 
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()

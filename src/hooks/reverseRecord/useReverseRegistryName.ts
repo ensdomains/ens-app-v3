@@ -1,7 +1,7 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { Address, namehash } from 'viem'
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { getChainContractAddress, registryResolverSnippet } from '@ensdomains/ensjs/contracts'
 

@@ -18,7 +18,9 @@ const getBadQueries = (
   eventData: RefObject<EventData>,
   renderedAt: number,
 ) => {
-  const queries = queryCache.findAll([], {
+  const queries = queryCache.findAll({
+    queryKey: [],
+
     // only get subgraph queries that are pending or errored
     predicate: (query) => query.queryKey.at(-1) === 'graph' && query.state.status !== 'success',
   })

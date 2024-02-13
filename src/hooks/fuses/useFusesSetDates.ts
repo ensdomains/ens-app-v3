@@ -87,7 +87,7 @@ export const generateGetBlockQueryArray = (
 ) => {
   return [...blocksNeeded].map(
     (blockNumber) =>
-      ({
+      (({
         queryKey: createQueryKey({
           chainId: publicClient.chain.id,
           address,
@@ -95,10 +95,11 @@ export const generateGetBlockQueryArray = (
           params: { blockNumber },
           queryDependencyType: 'standard',
         }),
+
         queryFn: getBlockQueryFn(publicClient),
-        staleTime: Infinity,
-      }) as const,
-  )
+        staleTime: Infinity
+      }) as const),
+  );
 }
 
 export const generateMatchedFuseBlockData = ({

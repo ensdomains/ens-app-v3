@@ -1,8 +1,8 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
+import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 
 import { useGetPrimaryNameTransactionFlowItem } from '.'
 

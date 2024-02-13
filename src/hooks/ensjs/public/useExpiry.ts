@@ -1,6 +1,5 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { useQuery } from 'wagmi'
 
 import { getExpiry, GetExpiryParameters, GetExpiryReturnType } from '@ensdomains/ensjs/public'
 
@@ -31,13 +30,11 @@ export const getExpiryQueryFn = async <TParams extends UseExpiryParameters>({
 
 export const useExpiry = <TParams extends UseExpiryParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+ 
   // params
   ...params
 }: TParams & UseExpiryConfig) => {
@@ -49,12 +46,10 @@ export const useExpiry = <TParams extends UseExpiryParameters>({
   })
 
   const query = useQuery(queryKey, getExpiryQueryFn, {
-    cacheTime,
+    gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
+
     select: (data) => {
       if (!data) return null
       return {

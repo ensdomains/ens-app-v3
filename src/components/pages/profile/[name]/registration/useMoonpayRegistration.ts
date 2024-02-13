@@ -1,6 +1,6 @@
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { labelhash } from 'viem'
-import { useMutation, useQuery } from 'wagmi'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useChainId } from '@app/hooks/chain/useChainId'
@@ -24,24 +24,26 @@ export const useMoonpayRegistration = (
   const [isCompleted, setIsCompleted] = useState(false)
   const currentExternalTransactionId = item.externalTransactionId
 
-  const initiateMoonpayRegistrationMutation = useMutation(async (duration: number = 1) => {
-    const label = getLabelFromName(normalisedName)
-    const tokenId = labelhash(label)
+  const initiateMoonpayRegistrationMutation = useMutation({
+    mutationFn: async (duration: number = 1) => {
+      const label = getLabelFromName(normalisedName)
+      const tokenId = labelhash(label)
 
-    const requestUrl = `${MOONPAY_WORKER_URL[chainId]}/signedurl?tokenId=${tokenId}&name=${normalisedName}&duration=${duration}&walletAddress=${address}`
-    const response = await fetch(requestUrl)
-    const textResponse = await response.text()
-    setMoonpayUrl(textResponse)
+      const requestUrl = `${MOONPAY_WORKER_URL[chainId]}/signedurl?tokenId=${tokenId}&name=${normalisedName}&duration=${duration}&walletAddress=${address}`
+      const response = await fetch(requestUrl)
+      const textResponse = await response.text()
+      setMoonpayUrl(textResponse)
 
-    const params = new URLSearchParams(textResponse)
-    const externalTransactionId = params.get('externalTransactionId') || ''
+      const params = new URLSearchParams(textResponse)
+      const externalTransactionId = params.get('externalTransactionId') || ''
 
-    dispatch({
-      name: 'setExternalTransactionId',
-      externalTransactionId,
-      selected,
-    })
-    setHasMoonpayModal(true)
+      dispatch({
+        name: 'setExternalTransactionId',
+        externalTransactionId,
+        selected,
+      })
+      setHasMoonpayModal(true)
+    },
   })
 
   const queryKey = useQueryKeyFactory({
@@ -51,9 +53,9 @@ export const useMoonpayRegistration = (
   })
 
   // Monitor current transaction
-  const { data: transactionData } = useQuery(
+  const { data: transactionData } = useQuery({
     queryKey,
-    async ({ queryKey: [{ externalTransactionId }] }) => {
+    queryFn: async ({ queryKey: [{ externalTransactionId }] }) => {
       const response = await fetch(
         `${MOONPAY_WORKER_URL[chainId]}/transactionInfo?externalTransactionId=${externalTransactionId}`,
       )
@@ -71,14 +73,12 @@ export const useMoonpayRegistration = (
 
       return result || {}
     },
-    {
-      refetchOnWindowFocus: true,
-      refetchOnMount: true,
-      refetchInterval: 1000,
-      refetchIntervalInBackground: true,
-      enabled: !!currentExternalTransactionId && !isCompleted,
-    },
-  )
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchInterval: 1000,
+    refetchIntervalInBackground: true,
+    enabled: !!currentExternalTransactionId && !isCompleted,
+  })
 
   return {
     moonpayUrl,

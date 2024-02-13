@@ -139,12 +139,15 @@ describe('AddProfileRecordView', () => {
     result.current.reset({ records: [] })
     render(<AddProfileRecordView control={result.current.control} />)
     // array for only first 10 address items, to reduce test time
-    const itemsArray = options.reduce((prev, curr) => {
-      if (curr.group === 'address') {
-        return [...prev, ...curr.items.slice(0, 10)]
-      }
-      return [...prev, ...curr.items]
-    }, [] as typeof allOptionsArray)
+    const itemsArray = options.reduce(
+      (prev, curr) => {
+        if (curr.group === 'address') {
+          return [...prev, ...curr.items.slice(0, 10)]
+        }
+        return [...prev, ...curr.items]
+      },
+      [] as typeof allOptionsArray,
+    )
     for (const { key } of itemsArray) {
       await userEvent.clear(screen.getByTestId('profile-record-search-input'))
       await userEvent.type(screen.getByTestId('profile-record-search-input'), key)

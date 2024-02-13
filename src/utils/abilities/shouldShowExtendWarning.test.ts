@@ -1,4 +1,4 @@
-import { shouldShowExtendWarning } from "./shouldShowExtendWarning"
+import { shouldShowExtendWarning } from './shouldShowExtendWarning'
 
 it('should return true when can edit', () => {
   expect(shouldShowExtendWarning({ canEdit: true } as any)).toBe(true)

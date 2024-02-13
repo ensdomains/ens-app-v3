@@ -1,6 +1,5 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { useQuery } from 'wagmi'
 
 import { getOwner, GetOwnerParameters, GetOwnerReturnType } from '@ensdomains/ensjs/public'
 
@@ -30,15 +29,10 @@ export const getOwnerQueryFn = async <TParams extends UseOwnerParameters>({
 }
 
 export const useOwner = <TParams extends UseOwnerParameters>({
-  // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
-  // params
   ...params
 }: TParams & UseOwnerConfig) => {
   const queryKey = useQueryKeyFactory({
@@ -48,13 +42,12 @@ export const useOwner = <TParams extends UseOwnerParameters>({
     queryDependencyType: 'standard',
   })
 
-  const query = useQuery(queryKey, getOwnerQueryFn, {
-    cacheTime,
+  const query = useQuery({
+    queryKey,
+    queryFn: getOwnerQueryFn,
+    gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
   })
 
   return {

@@ -8,24 +8,25 @@ type BasicName = ReturnType<typeof useBasicName>
 
 const PATTERNS = {
   wrappedNameOwner: (address?: string) =>
-    ({
+    (({
       ownerData: {
         ownershipLevel: 'nameWrapper',
         owner: P.when((owner) => owner === address),
       },
+
       wrapperData: {
         fuses: {
           child: P.select('fuses'),
         },
-      },
-    }) as const,
+      }
+    }) as const),
   unwrappedNameOwner: (address?: string) =>
-    ({
+    (({
       ownerData: {
         ownershipLevel: P.not('nameWrapper'),
         owner: P.when((owner) => owner === address),
-      },
-    }) as const,
+      }
+    }) as const),
 } as const
 
 export const getEditAbilities = ({

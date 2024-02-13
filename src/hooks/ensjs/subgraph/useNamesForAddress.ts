@@ -1,7 +1,6 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { useEffect, useMemo, useState } from 'react'
-import { useInfiniteQuery } from 'wagmi'
 
 import {
   getNamesForAddress,
@@ -40,13 +39,11 @@ export const getNamesForAddressQueryFn = async <TParams extends UseNamesForAddre
 
 export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseNamesForAddressConfig) => {
@@ -60,8 +57,10 @@ export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>
   const [unfilteredPages, setUnfilteredPages] = useState<GetNamesForAddressReturnType>([])
 
   const { data, status, isFetched, isFetching, isLoading, isFetchedAfterMount, ...rest } =
-    useInfiniteQuery(queryKey, getNamesForAddressQueryFn, {
-      cacheTime,
+    useInfiniteQuery({
+      queryKey,
+      queryFn: getNamesForAddressQueryFn,
+      gcTime,
       enabled: enabled && !!params.address,
       staleTime,
       onError,

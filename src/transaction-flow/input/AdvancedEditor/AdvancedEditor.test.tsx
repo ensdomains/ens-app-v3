@@ -113,7 +113,7 @@ jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useResolverHasInterfaces')
 
 jest.mock('@app/utils/abi', () => ({
-  getUsedAbiEncodeAs: () => ['json', 'cbor']
+  getUsedAbiEncodeAs: () => ['json', 'cbor'],
 }))
 
 const mockUseProfile = mockFunction(useProfile)
@@ -400,7 +400,9 @@ describe('AdvancedEditor', () => {
 
       for (const { label, value } of records) {
         const formattedLabel = tab === 'address-tab' ? label.toUpperCase() : label
-        const record = await screen.findByTestId(`record-input-${convertFormSafeKey(formattedLabel)}`)
+        const record = await screen.findByTestId(
+          `record-input-${convertFormSafeKey(formattedLabel)}`,
+        )
         const recordInput = await within(record).getByTestId('record-input-input')
         expect(recordInput).toHaveValue(value)
       }
@@ -426,12 +428,15 @@ describe('AdvancedEditor', () => {
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
     })
-    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.abi).toEqual([{
-      contentType: 1,
-      encodedData: '0x',
-    }, {
-      contentType: 4, 
-      encodedData: '0x'
-    }])
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.abi).toEqual([
+      {
+        contentType: 1,
+        encodedData: '0x',
+      },
+      {
+        contentType: 4,
+        encodedData: '0x',
+      },
+    ])
   })
 })

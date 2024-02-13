@@ -10,9 +10,9 @@ import { usePublicClient } from '@app/hooks/usePublicClient'
 import { PublicClientWithChain } from '@app/types'
 
 import {
-  SyncDroppedTransaction,
   findDroppedTransactions,
   getAccountHistoryEndpoint,
+  SyncDroppedTransaction,
 } from './SyncDroppedTransaction'
 
 const ADDRESS = '0x1234567890abcdef'

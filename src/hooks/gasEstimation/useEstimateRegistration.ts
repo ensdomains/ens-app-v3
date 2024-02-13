@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { stringToBytes } from 'viem'
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { getCoderByCoinName, getCoderByCoinType } from '@ensdomains/address-encoder'
 import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
@@ -145,8 +145,10 @@ export const useEstimateFullRegistration = ({
     isLoading: gasUsedLoading,
     isError,
   } = useQuery(
-    registrationEstimateQueryKey,
-    ({ queryKey: [params] }) => fetchRegistrationEstimate(publicClient, params),
+    {
+      queryKey: registrationEstimateQueryKey,
+      queryFn: ({ queryKey: [params] }) => fetchRegistrationEstimate(publicClient, params),
+    },
     {
       select: (data) => BigInt(data),
       enabled: !!name && !!owner && !!fuses && !!records && reverseRecord !== undefined,
@@ -159,13 +161,17 @@ export const useEstimateFullRegistration = ({
     queryDependencyType: 'independent',
   })
 
-  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery(gasCostsQueryKey, async () => {
-    const addr = (await import('@app/assets/gas-costs/addr.json'))
-      .default as unknown as GasCostData[]
-    const text = (await import('@app/assets/gas-costs/text.json'))
-      .default as unknown as GasCostData[]
+  const { data: gasCosts, isLoading: gasCostsLoading } = useQuery({
+    queryKey: gasCostsQueryKey,
 
-    return { addr, text }
+    queryFn: async () => {
+      const addr = (await import('@app/assets/gas-costs/addr.json'))
+        .default as unknown as GasCostData[]
+      const text = (await import('@app/assets/gas-costs/text.json'))
+        .default as unknown as GasCostData[]
+
+      return { addr, text }
+    },
   })
 
   const estimate = useMemo(() => {

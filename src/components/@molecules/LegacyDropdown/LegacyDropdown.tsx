@@ -508,7 +508,7 @@ export const LegacyDropdown = ({
 
   return (
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    <Container ref={dropdownRef} {...{ ...props, 'data-testid': getTestId(props, 'dropdown') }}>
+    (<Container ref={dropdownRef} {...{ ...props, 'data-testid': getTestId(props, 'dropdown') }}>
       {!children && inner && (
         <InnerMenuButton
           $direction={direction}
@@ -521,7 +521,6 @@ export const LegacyDropdown = ({
           {chevron && <Chevron $direction={direction} $open={isOpen} />}
         </InnerMenuButton>
       )}
-
       {!children && !inner && (
         <ButtonWrapper>
           <Button
@@ -534,7 +533,6 @@ export const LegacyDropdown = ({
           </Button>
         </ButtonWrapper>
       )}
-
       {Children.map(children, (child) => {
         if (!isValidElement(child)) return null
         return cloneElement(child as any, {
@@ -544,7 +542,6 @@ export const LegacyDropdown = ({
           onClick: () => setIsOpen(!isOpen),
         })
       })}
-
       <DropdownMenu
         align={align}
         direction={direction}
@@ -561,6 +558,6 @@ export const LegacyDropdown = ({
           dropdownRef.current.getBoundingClientRect().width.toFixed(2)
         }
       />
-    </Container>
-  )
+    </Container>)
+  );
 }

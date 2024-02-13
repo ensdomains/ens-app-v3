@@ -22,12 +22,12 @@ jest.useFakeTimers()
 const makeRecentTransaction =
   (status = 'confirmed') =>
   (_: any, i: number) =>
-    ({
+    (({
       status,
       action: `test-action-${i}`,
       key: 'any',
-      hash: `0x${i.toString(16).padStart(32, '0')}`,
-    }) as Transaction
+      hash: `0x${i.toString(16).padStart(32, '0')}`
+    }) as Transaction)
 
 window.scroll = jest.fn()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

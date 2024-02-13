@@ -226,7 +226,7 @@ export const ProfileSnippet = ({
   }, [button, name, abilities.data])
 
   return (
-    <Container $banner={banner} data-testid="profile-snippet">
+    (<Container $banner={banner} data-testid="profile-snippet">
       <FirstItems>
         <NameAvatar
           size={{ min: '24', sm: '32' }}
@@ -276,6 +276,6 @@ export const ProfileSnippet = ({
         </TagsContainer>
       )}
       {children}
-    </Container>
-  )
+    </Container>)
+  );
 }

@@ -1,5 +1,4 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { useQuery } from 'wagmi'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 
 import { isDnsSecEnabled } from '@app/components/pages/import/[name]/utils'
 import { CreateQueryKey, QueryConfig } from '@app/types'
@@ -30,13 +29,10 @@ export const getDnsSecEnabledQueryFn = async <TParams extends UseDnsSecEnabledPa
 
 export const useDnsSecEnabled = <TParams extends UseDnsSecEnabledParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
   // params
   ...params
 }: TParams & UseDnsSecEnabledConfig) => {
@@ -47,13 +43,12 @@ export const useDnsSecEnabled = <TParams extends UseDnsSecEnabledParameters>({
     queryDependencyType: 'independent',
   })
 
-  const query = useQuery(queryKey, getDnsSecEnabledQueryFn, {
-    cacheTime,
+  const query = useQuery({
+    queryKey,
+    queryFn: getDnsSecEnabledQueryFn,
+    gcTime,
     enabled: enabled && !!params.name && params.name !== 'eth' && params.name !== '[root]',
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
   })
 
   return {

@@ -1,16 +1,17 @@
 import { act, render, screen, waitFor } from '@app/test-utils'
 
 import { ReactNode, useContext, useEffect } from 'react'
-import { useQuery, WagmiConfig } from 'wagmi'
+import { WagmiProvider } from 'wagmi'
 
-import { wagmiConfigWithRefetch } from '@app/utils/query'
+import { queryClientWithRefetch,wagmiConfigWithRefetch } from '@app/utils/query'
 
 import DynamicLoadingContext from './DynamicLoadingContext'
 import InputComponentWrapper from './InputComponentWrapper'
+import { useQuery } from '@tanstack/react-query'
 
-const { queryClient } = wagmiConfigWithRefetch
-const cache = queryClient.getQueryCache()
-queryClient.setDefaultOptions({
+
+const cache = queryClientWithRefetch.getQueryCache()
+queryClientWithRefetch.setDefaultOptions({
   queries: {
     refetchOnWindowFocus: true,
     refetchInterval: 1000 * 60,
@@ -26,9 +27,9 @@ const ComponentHelper = ({ children }: { children: ReactNode }) => {
   return (
     <div className="modal" data-testid="modal-card">
       <div>
-        <WagmiConfig config={wagmiConfigWithRefetch}>
+        <WagmiProvider config={wagmiConfigWithRefetch}>
           <InputComponentWrapper>{children}</InputComponentWrapper>
-        </WagmiConfig>
+        </WagmiProvider>
       </div>
     </div>
   )
@@ -38,13 +39,14 @@ const mockObserve = jest.fn()
 const mockDisconnect = jest.fn()
 
 const ComponentWithHook = ({ timeout }: { timeout: number }) => {
-  useQuery(
-    ['test', '123'],
-    () =>
+  useQuery({
+    queryKey: ['test', '123'],
+
+    queryFn: () =>
       new Promise((resolve) => {
         setTimeout(() => resolve('value-updated'), timeout)
       }),
-  )
+  })
   return <div data-testid="test" />
 }
 

@@ -1,6 +1,5 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { useQuery } from 'wagmi'
 
 import {
   getWrapperData,
@@ -35,13 +34,11 @@ export const getWrapperDataQueryFn = async <TParams extends UseWrapperDataParame
 
 export const useWrapperData = <TParams extends UseWrapperDataParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+ 
   // params
   ...params
 }: TParams & UseWrapperDataConfig) => {
@@ -53,12 +50,10 @@ export const useWrapperData = <TParams extends UseWrapperDataParameters>({
   })
 
   const query = useQuery(queryKey, getWrapperDataQueryFn, {
-    cacheTime,
+    gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
+
     select: (data) => {
       if (!data) return null
       return {

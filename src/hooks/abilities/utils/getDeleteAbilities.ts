@@ -138,42 +138,44 @@ export const getDeleteAbilities = ({
     .with(
       DELETE_INFO.emancipatedSubname.owner.pattern(address),
       ({ fuses, parentOwner }) =>
-        ({
+        (({
           canDelete: !hasSubnames && !fuses.CANNOT_TRANSFER,
           canDeleteContract: 'nameWrapper' as const,
           canDeleteMethod: 'setRecord' as const,
           isPCCBurned: true,
           isParentOwner: parentOwner === address,
           ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
-          ...(fuses.CANNOT_TRANSFER ? { canDeleteError: t('errors.permissionRevoked') } : {}),
-        }) as DeleteAbilities,
+          ...(fuses.CANNOT_TRANSFER ? { canDeleteError: t('errors.permissionRevoked') } : {})
+        }) as DeleteAbilities),
     )
     .with(
       DELETE_INFO.wrappedSubname.owner.pattern(address),
       ({ parentOwner }) =>
-        ({
+        (({
           canDelete: !hasSubnames,
           canDeleteContract: 'nameWrapper' as const,
           canDeleteMethod: 'setRecord' as const,
           isParentOwner: parentOwner === address,
           isPCCBurned: false,
-          ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
-        }) as DeleteAbilities,
+          ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {})
+        }) as DeleteAbilities),
     )
     .with(
       DELETE_INFO.wrappedSubname.parent.pattern(address),
       ({ parentOwnershipLevel }) =>
-        ({
+        (({
           canDelete: !hasSubnames,
+
           canDeleteContract:
             parentOwnershipLevel === 'nameWrapper'
               ? ('nameWrapper' as const)
               : ('registry' as const),
+
           canDeleteMethod: 'setSubnodeOwner' as const,
           isParentOwner: true,
           isPCCBurned: false,
-          ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
-        }) as DeleteAbilities,
+          ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {})
+        }) as DeleteAbilities),
     )
     .with(
       DELETE_INFO.unwrappedSubname.ownerOrParent.pattern,
@@ -194,5 +196,5 @@ export const getDeleteAbilities = ({
         } as DeleteAbilities
       },
     )
-    .otherwise(() => BASE_ABILITIES)
+    .otherwise(() => BASE_ABILITIES);
 }

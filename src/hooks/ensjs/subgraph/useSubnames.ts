@@ -37,13 +37,11 @@ export const getSubnamesQueryFn = async <TParams extends UseSubnamesParameters>(
 
 export const useSubnames = <TParams extends UseSubnamesParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseSubnamesConfig) => {
@@ -58,7 +56,7 @@ export const useSubnames = <TParams extends UseSubnamesParameters>({
     queryKey,
     getSubnamesQueryFn,
     {
-      cacheTime,
+      gcTime,
       enabled: enabled && !!params.name,
       staleTime,
       onError,

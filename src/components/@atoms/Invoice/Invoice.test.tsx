@@ -1,6 +1,5 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-
 import { useEthPrice } from '@app/hooks/useEthPrice'
 
 import { Invoice } from './Invoice'

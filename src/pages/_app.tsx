@@ -8,7 +8,7 @@ import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { IntercomProvider } from 'react-use-intercom'
 import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
-import { WagmiConfig } from 'wagmi'
+import { WagmiProvider } from 'wagmi'
 
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
@@ -18,7 +18,7 @@ import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
-import { chains, wagmiConfig } from '@app/utils/query'
+import { wagmiConfig } from '@app/utils/query'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 
@@ -149,8 +149,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <WagmiConfig config={wagmiConfig}>
-        <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
+      <WagmiProvider config={wagmiConfig}>
+        <RainbowKitProvider theme={rainbowKitTheme}>
           <TransactionStoreProvider>
             <ThemeProvider theme={thorinLightTheme}>
               <BreakpointProvider queries={breakpoints}>
@@ -170,7 +170,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             </ThemeProvider>
           </TransactionStoreProvider>
         </RainbowKitProvider>
-      </WagmiConfig>
+      </WagmiProvider>
     </I18nextProvider>
   )
 }

@@ -446,41 +446,43 @@ export const TransactionStageModal = ({
     isLoading: requestLoading,
     error: requestError,
   } = useQuery(
-    queryKey,
-    async ({
-      queryKey: [params],
-    }): Promise<
-      Omit<PrepareSendTransactionResult, 'data'> & {
-        data: NonNullable<PrepareSendTransactionResult['data']>
-      }
-    > => {
-      const transactionRequest = await createTransactionRequest({
-        name: params.name,
-        data: params.data,
-        walletClient: walletClient!,
-        publicClient,
-      })
+    {
+      queryKey,
+      queryFn: async ({
+        queryKey: [params],
+      }): Promise<
+        Omit<PrepareSendTransactionResult, 'data'> & {
+          data: NonNullable<PrepareSendTransactionResult['data']>
+        }
+      > => {
+        const transactionRequest = await createTransactionRequest({
+          name: params.name,
+          data: params.data,
+          walletClient: walletClient!,
+          publicClient,
+        })
 
-      const txWithZeroGas = {
-        ...transactionRequest,
-        maxFeePerGas: 0n,
-        maxPriorityFeePerGas: 0n,
-      }
+        const txWithZeroGas = {
+          ...transactionRequest,
+          maxFeePerGas: 0n,
+          maxPriorityFeePerGas: 0n,
+        }
 
-      const { gasLimit, accessList } = await calculateGasLimit({
-        publicClient,
-        walletClient: walletClient!,
-        isSafeApp,
-        txWithZeroGas,
-        transactionName: transaction.name,
-      })
+        const { gasLimit, accessList } = await calculateGasLimit({
+          publicClient,
+          walletClient: walletClient!,
+          isSafeApp,
+          txWithZeroGas,
+          transactionName: transaction.name,
+        })
 
-      return {
-        ...transactionRequest,
-        gas: gasLimit,
-        accessList,
-        mode: 'prepared',
-      }
+        return {
+          ...transactionRequest,
+          gas: gasLimit,
+          accessList,
+          mode: 'prepared',
+        }
+      },
     },
     {
       enabled: canEnableTransactionRequest,
@@ -631,20 +633,23 @@ export const TransactionStageModal = ({
   })
 
   const { data: upperError } = useQuery(
-    errorQueryKey,
-    async ({ queryKey: [{ hash, status }] }) => {
-      if (!hash || status !== 'failed') return null
-      const a = await publicClient.getTransaction({ hash: transaction.hash! })
-      try {
-        await publicClient.call({ ...a, to: a.to! })
-        return 'transaction.dialog.error.gasLimit'
-      } catch (err: unknown) {
-        return getReadableError(err)
-        // TODO: get revert reason through viem
-        // const code = err.data.replace('Reverted ', '')
-        // const reason = toUtf8String(`0x${code.substr(138)}`)
-        // return reason
-      }
+    {
+      queryKey: errorQueryKey,
+
+      queryFn: async ({ queryKey: [{ hash, status }] }) => {
+        if (!hash || status !== 'failed') return null
+        const a = await publicClient.getTransaction({ hash: transaction.hash! })
+        try {
+          await publicClient.call({ ...a, to: a.to! })
+          return 'transaction.dialog.error.gasLimit'
+        } catch (err: unknown) {
+          return getReadableError(err)
+          // TODO: get revert reason through viem
+          // const code = err.data.replace('Reverted ', '')
+          // const reason = toUtf8String(`0x${code.substr(138)}`)
+          // return reason
+        }
+      },
     },
     {
       enabled: !!transaction && !!transaction.hash && transactionStatus === 'failed',

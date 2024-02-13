@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { formatEther, parseAccount } from 'viem/utils'
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import {
   createTransactionRequest,
@@ -80,9 +80,12 @@ export const useEstimateGasLimitForTransaction = <TName extends TransactionName>
   const { gasPrice, isLoading: isGasPriceLoading, isFetching: isGasPriceFetching } = useGasPrice()
 
   const { data, isLoading, isFetching, ...rest } = useQuery(
-    queryKey,
-    ({ queryKey: [params] }) =>
-      fetchEstimateWithConfig({ ...params, publicClient, walletClient: walletClient! }),
+    {
+      queryKey: queryKey,
+
+      queryFn: ({ queryKey: [params] }) =>
+        fetchEstimateWithConfig({ ...params, publicClient, walletClient: walletClient! }),
+    },
     {
       enabled: enabled && !!walletClient && !isWalletClientLoading,
       onError: console.error,

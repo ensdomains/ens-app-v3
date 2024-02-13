@@ -1,6 +1,5 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { useQuery } from 'wagmi'
 
 import { getRecords, GetRecordsParameters, GetRecordsReturnType } from '@ensdomains/ensjs/public'
 
@@ -61,13 +60,11 @@ export const useRecords = <
   const TAbi extends boolean = true,
 >({
   // config
-  cacheTime,
+  gcTime,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+ 
   // params
   ...params
 }: UseRecordsParameters<TTexts, TCoins, TContentHash, TAbi> &
@@ -80,12 +77,10 @@ export const useRecords = <
   })
 
   const query = useQuery(queryKey, getRecordsQueryFn, {
-    cacheTime,
+    gcTime,
     staleTime,
     enabled: enabled && !!params.name,
-    onError,
-    onSettled,
-    onSuccess,
+
   })
 
   return {

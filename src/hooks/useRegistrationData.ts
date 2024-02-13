@@ -1,7 +1,6 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { labelhash } from 'viem'
-import { useQuery } from 'wagmi'
 
 import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
@@ -60,13 +59,10 @@ export const getRegistrationDataQueryFn = async <TParams extends UseRegistration
 
 const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
   // params
   ...params
 }: TParams & UseRegistrationDataConfig) => {
@@ -76,13 +72,12 @@ const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
     queryDependencyType: 'graph',
   })
 
-  const query = useQuery(queryKey, getRegistrationDataQueryFn, {
-    cacheTime,
+  const query = useQuery({
+    queryKey,
+    queryFn: getRegistrationDataQueryFn,
+    gcTime,
     enabled: enabled && !!params.name && checkETH2LDFromName(params.name),
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
     select: (data) => {
       if (!data?.registration) return null
       return {

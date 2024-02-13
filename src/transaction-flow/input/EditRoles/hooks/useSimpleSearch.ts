@@ -1,7 +1,7 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { useEffect } from 'react'
 import { Address, isAddress } from 'viem'
-import { useMutation, useQueryClient } from 'wagmi'
 
 import { getAddressRecord, getName } from '@ensdomains/ensjs/public'
 import { normalise } from '@ensdomains/ensjs/utils'
@@ -70,7 +70,10 @@ export const useSimpleSearch = (options: Options = {}) => {
 
   useEffect(() => {
     return () => {
-      queryClient.removeQueries(['simpleSearch'], { exact: false })
+      queryClient.removeQueries({
+        queryKey: ['simpleSearch'],
+        exact: false,
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

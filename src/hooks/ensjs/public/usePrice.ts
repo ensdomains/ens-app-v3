@@ -1,6 +1,5 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { useQuery } from 'wagmi'
 
 import { getPrice, GetPriceParameters, GetPriceReturnType } from '@ensdomains/ensjs/public'
 
@@ -27,13 +26,11 @@ export const getPriceQueryFn = async <TParams extends UsePriceParameters>({
 
 export const usePrice = <TParams extends UsePriceParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+ 
   // params
   ...params
 }: TParams & UsePriceConfig) => {
@@ -45,12 +42,10 @@ export const usePrice = <TParams extends UsePriceParameters>({
   })
 
   const query = useQuery(queryKey, getPriceQueryFn, {
-    cacheTime,
+    gcTime,
     enabled: enabled && !!params.nameOrNames,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
+
     select: (data) => {
       if (!data) return data
       return {

@@ -1,10 +1,11 @@
 /* eslint-disable no-multi-assign */
 import { sha256 } from '@noble/hashes/sha256'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { bytesToHex } from 'viem'
-import { useMutation, useQueryClient, useSignTypedData } from 'wagmi'
+import { useSignTypedData } from 'wagmi'
 
 import { Button, Dialog, Helper, mq } from '@ensdomains/thorin'
 

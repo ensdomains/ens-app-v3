@@ -22,11 +22,11 @@ const mockClearTransactions = jest.fn()
 const makeRecentTransaction =
   (status = 'confirmed') =>
   (_: any, i: number) =>
-    ({
+    (({
       status,
       action: `test-action-${i}`,
-      hash: `0x${i.toString(16).padStart(32, '0')}`,
-    }) as Transaction
+      hash: `0x${i.toString(16).padStart(32, '0')}`
+    }) as Transaction)
 
 describe('TransactionSection', () => {
   mockUseChainName.mockReturnValue('mainnet')
@@ -34,10 +34,10 @@ describe('TransactionSection', () => {
 
   beforeAll(() => {
     Element.prototype.getBoundingClientRect = () =>
-      ({
+      (({
         width: 300,
-        height: 300,
-      }) as any
+        height: 300
+      }) as any)
   })
 
   it('should render', () => {

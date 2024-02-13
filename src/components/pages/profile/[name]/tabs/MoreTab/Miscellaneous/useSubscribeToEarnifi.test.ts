@@ -7,7 +7,7 @@ import { EARNIFI_ENDPOINT, getErrorMessage, useSubscribeToEarnifi } from './useS
 
 export const handlers = [
   rest.post(EARNIFI_ENDPOINT, async (req, res, ctx) => {
-    const { email, address, chainId } = await req.json() 
+    const { email, address, chainId } = await req.json()
     if (email && address && chainId) {
       return res(ctx.status(200))
     }

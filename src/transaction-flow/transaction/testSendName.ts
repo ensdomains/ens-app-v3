@@ -31,9 +31,9 @@ const displayItems = (
 
 // eslint-disable-next-line no-empty-pattern
 const transaction = async ({}: TransactionFunctionParameters<Data>) =>
-  ({
+  (({
     to: '0x0000000000000000000000000000000000000000',
-    data: '0x',
-  }) as const
+    data: '0x'
+  }) as const)
 
 export default { displayItems, transaction } satisfies Transaction<Data>

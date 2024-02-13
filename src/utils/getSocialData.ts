@@ -9,7 +9,7 @@ export const getSocialData = (iconKey: string, value: string) => {
         value: `@${value.replace(/^@/, '')}`,
         type: 'link',
         urlFormatter: `https://twitter.com/${value.replace(/^@/, '')}`,
-      }
+      };
     case 'github':
     case 'com.github':
       return {

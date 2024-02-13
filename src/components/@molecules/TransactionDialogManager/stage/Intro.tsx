@@ -54,35 +54,33 @@ export const IntroStageModal = ({
 
   const Content = intros[content.name]
 
-  return (
-    <>
-      <Dialog.Heading title={t(...title)} />
-      <InnerDialog data-testid="transaction-modal-inner">
-        <Content {...content.data} />
-        {txCount > 1 && (
-          <DisplayItems
-            displayItems={
-              transactions.map(
-                ({ name }, index) =>
-                  ({
-                    fade: currentStep > index,
-                    shrink: true,
-                    label: t('transaction.dialog.intro.step', { step: index + 1 }),
-                    value: t(`transaction.description.${name}`),
-                    useRawLabel: true,
-                  }) as TransactionDisplayItemSingle,
-              ) || []
-            }
-          />
-        )}
-      </InnerDialog>
-      <Dialog.Footer
-        currentStep={currentStep}
-        stepCount={txCount > 1 ? txCount : undefined}
-        stepStatus={stepStatus}
-        trailing={TrailingButton}
-        leading={LeadingButton}
-      />
-    </>
-  )
+  return (<>
+    <Dialog.Heading title={t(...title)} />
+    <InnerDialog data-testid="transaction-modal-inner">
+      <Content {...content.data} />
+      {txCount > 1 && (
+        <DisplayItems
+          displayItems={
+            transactions.map(
+              ({ name }, index) =>
+                (({
+                  fade: currentStep > index,
+                  shrink: true,
+                  label: t('transaction.dialog.intro.step', { step: index + 1 }),
+                  value: t(`transaction.description.${name}`),
+                  useRawLabel: true
+                }) as TransactionDisplayItemSingle),
+            ) || []
+          }
+        />
+      )}
+    </InnerDialog>
+    <Dialog.Footer
+      currentStep={currentStep}
+      stepCount={txCount > 1 ? txCount : undefined}
+      stepStatus={stepStatus}
+      trailing={TrailingButton}
+      leading={LeadingButton}
+    />
+  </>);
 }

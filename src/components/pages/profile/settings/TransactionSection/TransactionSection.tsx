@@ -131,7 +131,7 @@ const InfoContainer = styled.div(
 const getTransactionExtraInfo = (action: string, key?: string) => {
   if (!key) return ''
   if (action === 'registerName' || action === 'commitName') {
-    return `: ${key.replace(/^(?:register|commit)-(.*)-0x[a-fA-F0-9]{40}$/g, '$1')}`
+    return `: ${key.replace(/^(?:register|commit)-(.*)-0x[a-fA-F0-9]{40}$/g, '$1')}`;
   }
   return ''
 }

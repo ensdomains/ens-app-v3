@@ -1,5 +1,4 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { useQuery } from 'wagmi'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 
 import {
   DnsDnssecVerificationFailedError,
@@ -45,13 +44,11 @@ export const getDnsOwnerQueryFn = async <TParams extends UseDnsOwnerParameters>(
 
 export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseDnsOwnerConfig) => {
@@ -62,8 +59,10 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
     queryDependencyType: 'independent',
   })
 
-  const query = useQuery(queryKey, getDnsOwnerQueryFn, {
-    cacheTime,
+  const query = useQuery({
+    queryKey,
+    queryFn: getDnsOwnerQueryFn,
+    gcTime,
     enabled:
       enabled &&
       !!params.name &&
@@ -71,9 +70,7 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
       params.name !== 'eth' &&
       params.name !== '[root]',
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
+
   })
 
   return {

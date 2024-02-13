@@ -1,10 +1,8 @@
 import '@rainbow-me/rainbowkit/styles.css'
 
 import { DefaultOptions, QueryClient } from '@tanstack/react-query'
-import { ChainProviderFn, configureChains, createConfig } from 'wagmi'
-import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
-import { infuraProvider } from 'wagmi/providers/infura'
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+import { createConfig, fallback, http } from 'wagmi'
+import { Chain, goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import {
   goerliWithEns,
@@ -17,47 +15,35 @@ import { makePersistent } from '@app/utils/persist'
 import { WC_PROJECT_ID } from './constants'
 import { getDefaultWallets } from './getDefaultWallets'
 
-const providerArray: ChainProviderFn<
-  typeof mainnet | typeof goerli | typeof localhost | typeof sepolia
->[] = []
-if (process.env.NEXT_PUBLIC_PROVIDER) {
-  // for local testing
-  providerArray.push(
-    jsonRpcProvider({
-      rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
-    }),
-  )
-} else {
-  if (!process.env.NEXT_PUBLIC_IPFS) {
-    // only use infura if we are not using IPFS
-    // since we don't want to allow all domains to access infura
-    providerArray.push(
-      infuraProvider({
-        apiKey: process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c',
-      }),
-    )
-  }
-  // fallback cloudflare gateway if infura is down or for IPFS
-  providerArray.push(
-    jsonRpcProvider({
-      rpc: (c) => ({
-        http: `https://web3.ens.domains/v1/${c.network === 'homestead' ? 'mainnet' : c.network}`,
-      }),
-    }),
-  )
-}
+// // fallback cloudflare gateway if infura is down or for IPFS
+// providerArray.push(
+//   jsonRpcProvider({
+//     rpc: (c) => ({
+//       http: `https://web3.ens.domains/v1/${c.network === 'homestead' ? 'mainnet' : c.network}`,
+//     }),
+//   }),
+// )
 
 const chainsWithEns = process.env.NEXT_PUBLIC_PROVIDER
   ? [localhostWithEns]
   : [mainnetWithEns, goerliWithEns, sepoliaWithEns]
 
-const { publicClient, chains } = configureChains(chainsWithEns, providerArray)
-
 const connectors = getDefaultWallets({
   appName: 'ENS',
   projectId: WC_PROJECT_ID,
-  chains,
+  chains: chainsWithEns as Chain[],
 })
+
+const transports = {
+  [mainnet.id]: fallback([
+    http(process.env.NEXT_PUBLIC_PROVIDER!),
+    http(
+      `https://mainnet.infura.io/v3/${
+        process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
+      }`,
+    ),
+  ]),
+}
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -69,16 +55,14 @@ export const queryClient = new QueryClient({
 })
 
 export const wagmiConfig = createConfig({
-  autoConnect: true,
   connectors,
-  publicClient,
-  queryClient,
-  persister: null,
+  chains: chainsWithEns as unknown as [Chain, ...Chain[]],
+  transports,
 })
 
 makePersistent(queryClient)
 
-export const refetchOptions: DefaultOptions<unknown> = {
+export const refetchOptions: DefaultOptions<Error> = {
   queries: {
     refetchOnWindowFocus: true,
     refetchInterval: 1000 * 60,
@@ -90,18 +74,16 @@ export const refetchOptions: DefaultOptions<unknown> = {
   },
 }
 
-const queryClientWithRefetch = new QueryClient({
+export const queryClientWithRefetch = new QueryClient({
   queryCache: queryClient.getQueryCache(),
   defaultOptions: refetchOptions,
   mutationCache: queryClient.getMutationCache(),
 })
 
 export const wagmiConfigWithRefetch = createConfig({
-  autoConnect: true,
   connectors,
-  publicClient,
-  queryClient: queryClientWithRefetch,
-  persister: null,
+  chains: chainsWithEns as unknown as [Chain, ...Chain[]],
+  transports,
 })
 
-export { chains }
+export { chainsWithEns as chains }

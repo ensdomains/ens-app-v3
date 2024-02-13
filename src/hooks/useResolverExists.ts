@@ -1,7 +1,6 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { namehash, type Address } from 'viem'
-import { useQuery } from 'wagmi'
 
 import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
@@ -64,13 +63,11 @@ export const getResolverExistsQueryFn = async <TParams extends UseResolverExists
  */
 export const useResolverExists = <TParams extends UseResolverExistsParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseResolverExistsConfig) => {
@@ -82,11 +79,8 @@ export const useResolverExists = <TParams extends UseResolverExistsParameters>({
   })
 
   return useQuery(queryKey, getResolverExistsQueryFn, {
-    cacheTime,
+    gcTime,
     enabled: enabled && !!params.name && !!params.address,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
   })
 }

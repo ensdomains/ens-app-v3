@@ -128,7 +128,7 @@ export function getStaticProps(context: GetStaticPropsContext) {
       source: source.replace(/Last modified: (.*)/, ''),
       lastModified,
     },
-  }
+  };
 }
 
 export default Page

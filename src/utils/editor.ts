@@ -132,7 +132,13 @@ export const convertProfileToProfileFormObject = async (
         return { contentType, data: '' } as ProfileFormObject['abi']
       }
     })
-    .otherwise(() => ({ contentType: 0, data: '' }) as ProfileFormObject['abi'])
+    .otherwise(
+      () =>
+        (({
+          contentType: 0,
+          data: ''
+        }) as ProfileFormObject['abi']),
+    )
 
   return {
     ...textRecords,

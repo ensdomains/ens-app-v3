@@ -62,5 +62,4 @@ describe('MoreTab', () => {
       expect(screen.queryByText('Token')).not.toBeInTheDocument()
     })
   })
-
 })

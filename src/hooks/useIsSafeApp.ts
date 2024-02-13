@@ -12,9 +12,12 @@ export const useIsSafeApp = () => {
     queryDependencyType: 'independent',
   })
   return useQuery(
-    queryKey,
-    async () => {
-      return checkIsSafeApp(connector)
+    {
+      queryKey: queryKey,
+
+      queryFn: async () => {
+        return checkIsSafeApp(connector)
+      },
     },
     {
       enabled: !!connector,

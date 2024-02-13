@@ -1,5 +1,5 @@
 import { getPublicClient } from '@wagmi/core'
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { PublicClientWithChain } from '@app/types'
 
@@ -14,11 +14,14 @@ const useCurrentBlockTimestamp = ({ enabled = true }: { enabled?: boolean } = {}
   })
 
   const { data } = useQuery(
-    queryKey,
-    async ({ queryKey: [, chainId] }) => {
-      const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
-      const { timestamp } = await publicClient.getBlock({ blockTag: 'latest' })
-      return timestamp
+    {
+      queryKey: queryKey,
+
+      queryFn: async ({ queryKey: [, chainId] }) => {
+        const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+        const { timestamp } = await publicClient.getBlock({ blockTag: 'latest' })
+        return timestamp
+      },
     },
     {
       enabled,

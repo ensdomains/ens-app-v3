@@ -1,4 +1,4 @@
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { ParsedInputResult, parseInput } from '@ensdomains/ensjs/utils'
 
@@ -65,10 +65,16 @@ export const useValidate = ({ input, enabled = true }: UseValidateParameters): V
     queryDependencyType: 'independent',
   })
 
-  const { data } = useQuery(queryKey, ({ queryKey: [params] }) => validate(params.input), {
-    enabled,
-    initialData: () => (enabled ? validate(input) : defaultData),
-  })
+  const { data } = useQuery(
+    {
+      queryKey,
+      queryFn: ({ queryKey: [params] }) => validate(params.input),
+    },
+    {
+      enabled,
+      initialData: () => (enabled ? validate(input) : defaultData),
+    },
+  )
 
   return data
 }
