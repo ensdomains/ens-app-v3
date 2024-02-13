@@ -1,8 +1,11 @@
 import '@rainbow-me/rainbowkit/styles.css'
 
 import { DefaultOptions, QueryClient } from '@tanstack/react-query'
+import { HttpTransport, Transport } from 'viem'
 import { createConfig, fallback, http } from 'wagmi'
 import { Chain, goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
+
+import { ChainWithEns } from '@ensdomains/ensjs/contracts'
 
 import {
   goerliWithEns,
@@ -15,16 +18,7 @@ import { makePersistent } from '@app/utils/persist'
 import { WC_PROJECT_ID } from './constants'
 import { getDefaultWallets } from './getDefaultWallets'
 
-// // fallback cloudflare gateway if infura is down or for IPFS
-// providerArray.push(
-//   jsonRpcProvider({
-//     rpc: (c) => ({
-//       http: `https://web3.ens.domains/v1/${c.network === 'homestead' ? 'mainnet' : c.network}`,
-//     }),
-//   }),
-// )
-
-const chainsWithEns = process.env.NEXT_PUBLIC_PROVIDER
+const chainsWithEns: ChainWithEns[] = process.env.NEXT_PUBLIC_PROVIDER
   ? [localhostWithEns]
   : [mainnetWithEns, goerliWithEns, sepoliaWithEns]
 
@@ -34,16 +28,38 @@ const connectors = getDefaultWallets({
   chains: chainsWithEns as Chain[],
 })
 
-const transports = {
-  [mainnet.id]: fallback([
-    http(process.env.NEXT_PUBLIC_PROVIDER!),
+const initializeTransports = (c: Chain) => {
+  const transportArray: HttpTransport[] = []
+  if (!process.env.NEXT_PUBLIC_IPFS) {
+    // only use infura if we are not using IPFS
+    // since we don't want to allow all domains to access infura
+    transportArray.push(
+      http(
+        `https://mainnet.infura.io/v3/${
+          process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
+        }`,
+      ),
+    )
+  }
+  // fallback cloudflare gateway if infura is down or for IPFS
+  transportArray.push(
     http(
-      `https://mainnet.infura.io/v3/${
-        process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
-      }`,
+      `https://web3.ens.domains/v1/${c.name === 'homestead' ? 'mainnet' : c.name.toLowerCase()}`,
     ),
-  ]),
+  )
+
+  return fallback(transportArray)
 }
+
+const transports: Record<number, Transport> = process.env.NEXT_PUBLIC_PROVIDER
+  ? {
+      [localhost.id]: http(process.env.NEXT_PUBLIC_PROVIDER!),
+    }
+  : {
+      [mainnet.id]: initializeTransports(mainnet),
+      [sepolia.id]: initializeTransports(sepolia),
+      [goerli.id]: initializeTransports(goerli),
+    }
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -82,7 +98,7 @@ export const queryClientWithRefetch = new QueryClient({
 
 export const wagmiConfigWithRefetch = createConfig({
   connectors,
-  chains: chainsWithEns as unknown as [Chain, ...Chain[]],
+  chains: chainsWithEns as [ChainWithEns, ...ChainWithEns[]],
   transports,
 })
 
