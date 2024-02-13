@@ -38,6 +38,8 @@ export const useProfile = (
     // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,
+    refetch,
+    isRefetching,
   } = useQuery(
     queryKey,
     () =>
@@ -67,6 +69,7 @@ export const useProfile = (
     loading: !ready || loading,
     status,
     isFetching,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    refetch,
+    isCachedData: isRefetching || (status === 'success' && isFetched && !isFetchedAfterMount),
   }
 }

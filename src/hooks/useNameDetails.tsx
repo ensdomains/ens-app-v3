@@ -40,6 +40,7 @@ export const useNameDetails = (name: string, skipGraph = false) => {
     expiryDate,
     gracePeriodEndDate,
     addrData,
+    refetch: refetchBasicName,
     ...basicName
   } = useBasicName(name, { normalised: false, skipGraph })
 
@@ -48,6 +49,7 @@ export const useNameDetails = (name: string, skipGraph = false) => {
     loading: profileLoading,
     status,
     isCachedData: profileIsCachedData,
+    refetch: refetchProfile,
   } = useProfile(normalisedName, {
     skip: !normalisedName || normalisedName === '[root]',
     skipGraph,
@@ -181,6 +183,10 @@ export const useNameDetails = (name: string, skipGraph = false) => {
     gracePeriodEndDate,
     expiryDate,
     addrData,
+    refetch: () => {
+      refetchBasicName()
+      refetchProfile()
+    },
     ...basicName,
   }
 }

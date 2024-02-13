@@ -13,6 +13,7 @@ import { useQueryClient } from 'wagmi'
 
 import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
 
+import { BatchReturn } from '@app/hooks/useBasicName'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { ValidationResult, useValidate, validate } from '@app/hooks/useValidate'
@@ -333,14 +334,16 @@ export const SearchInput = ({
       const queryKey = queryKeys.basicName(selectedItem.value, false)
       const currentQuery = queryClient.getQueryData<any[]>(queryKey)
       if (currentQuery) {
-        const [ownerData, wrapperData, expiryOrResolverData, priceOrAddrData] = currentQuery
+        const { ownerData, wrapperData, expiryData, priceData, addrData } =
+          currentQuery as NonNullable<BatchReturn>
         const registrationStatus = getRegistrationStatus({
           timestamp: Date.now(),
           validation: currentValidation,
           ownerData,
           wrapperData,
-          expiryOrResolverData,
-          priceOrAddrData,
+          expiryData,
+          priceData,
+          addrData,
         })
         if (registrationStatus === 'available') {
           path = `/register/${selectedItem.value}`
