@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 
 import { getResolver, GetResolverParameters, GetResolverReturnType } from '@ensdomains/ensjs/public'
@@ -34,7 +34,7 @@ export const useResolver = <TParams extends UseResolverParameters>({
   enabled = true,
   staleTime,
   scopeKey,
- 
+
   // params
   ...params
 }: TParams & UseResolverConfig) => {
@@ -45,11 +45,12 @@ export const useResolver = <TParams extends UseResolverParameters>({
     queryDependencyType: 'standard',
   })
 
-  const query = useQuery(queryKey, getResolverQueryFn, {
+  const query = useQuery({
+    queryKey,
+    queryFn: getResolverQueryFn,
     gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-
   })
 
   return {

@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 
 import {
@@ -38,7 +38,7 @@ export const useSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>
   enabled = true,
   staleTime,
   scopeKey,
- 
+
   // params
   ...params
 }: TParams & UseSubgraphRecordsConfig) => {
@@ -49,11 +49,12 @@ export const useSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>
     queryDependencyType: 'graph',
   })
 
-  const query = useQuery(queryKey, getSubgraphRecordsQueryFn, {
+  const query = useQuery({
+    queryKey,
+    queryFn: getSubgraphRecordsQueryFn,
     gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-
   })
 
   return {

@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 
 import { getName, GetNameParameters, GetNameReturnType } from '@ensdomains/ensjs/public'
@@ -45,7 +45,7 @@ export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
   enabled = true,
   staleTime,
   scopeKey,
- 
+
   // params
   allowMismatch = false,
   ...params
@@ -57,11 +57,12 @@ export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
     queryDependencyType: 'standard',
   })
 
-  const query = useQuery(queryKey, getPrimaryNameQueryFn, {
+  const query = useQuery({
+    queryKey,
+    queryFn: getPrimaryNameQueryFn,
     gcTime,
     enabled: enabled && !!params.address && params.address !== emptyAddress,
     staleTime,
-
   })
 
   return {

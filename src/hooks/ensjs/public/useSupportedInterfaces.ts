@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { Hex } from 'viem'
 
@@ -50,7 +50,7 @@ export const useSupportedInterfaces = <
   enabled = true,
   staleTime,
   scopeKey,
- 
+
   // params
   ...params
 }: TParams & UseSupportedInterfacesConfig<TParams>) => {
@@ -61,11 +61,12 @@ export const useSupportedInterfaces = <
     queryDependencyType: 'standard',
   })
 
-  const query = useQuery(queryKey, getSupportedInterfacesQueryFn, {
+  const query = useQuery({
+    queryKey,
+    queryFn: getSupportedInterfacesQueryFn,
     gcTime,
     staleTime,
     enabled: enabled && !!params.address && params.interfaces.length > 0,
-
   })
 
   return {

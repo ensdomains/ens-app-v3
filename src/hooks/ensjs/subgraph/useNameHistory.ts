@@ -49,11 +49,12 @@ export const useNameHistory = <TParams extends UseNameHistoryParameters>({
     queryDependencyType: 'graph',
   })
 
-  const query = useQuery(queryKey, getNameHistoryQueryFn, {
+  const query = useQuery({
+    queryKey,
+    queryFn: getNameHistoryQueryFn,
     gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-
   })
 
   return {

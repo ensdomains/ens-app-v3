@@ -78,7 +78,9 @@ export const useResolverExists = <TParams extends UseResolverExistsParameters>({
     queryDependencyType: 'graph',
   })
 
-  return useQuery(queryKey, getResolverExistsQueryFn, {
+  return useQuery({
+    queryKey,
+    queryFn: getResolverExistsQueryFn,
     gcTime,
     enabled: enabled && !!params.name && !!params.address,
     staleTime,

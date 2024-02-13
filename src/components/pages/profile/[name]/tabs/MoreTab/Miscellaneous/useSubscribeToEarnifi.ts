@@ -36,7 +36,7 @@ const subscribeToEarnifi = async (params: Variables): Promise<void> => {
 type Props = UseMutationOptions<void, unknown, Variables, unknown>
 
 export const useSubscribeToEarnifi = (options: Props) => {
-  const { mutate: subscribe, ...rest } = useMutation(subscribeToEarnifi, options)
+  const { mutate: subscribe, ...rest } = useMutation({ mutationFn: subscribeToEarnifi, ...options })
   return {
     subscribe,
     ...rest,

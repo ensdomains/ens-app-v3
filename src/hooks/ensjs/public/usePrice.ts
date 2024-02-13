@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 
 import { getPrice, GetPriceParameters, GetPriceReturnType } from '@ensdomains/ensjs/public'
@@ -30,7 +30,7 @@ export const usePrice = <TParams extends UsePriceParameters>({
   enabled = true,
   staleTime,
   scopeKey,
- 
+
   // params
   ...params
 }: TParams & UsePriceConfig) => {
@@ -41,7 +41,9 @@ export const usePrice = <TParams extends UsePriceParameters>({
     queryDependencyType: 'standard',
   })
 
-  const query = useQuery(queryKey, getPriceQueryFn, {
+  const query = useQuery({
+    queryKey,
+    queryFn: getPriceQueryFn,
     gcTime,
     enabled: enabled && !!params.nameOrNames,
     staleTime,

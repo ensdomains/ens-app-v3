@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 
 import {
@@ -38,7 +38,7 @@ export const useWrapperData = <TParams extends UseWrapperDataParameters>({
   enabled = true,
   staleTime,
   scopeKey,
- 
+
   // params
   ...params
 }: TParams & UseWrapperDataConfig) => {
@@ -49,7 +49,9 @@ export const useWrapperData = <TParams extends UseWrapperDataParameters>({
     queryDependencyType: 'standard',
   })
 
-  const query = useQuery(queryKey, getWrapperDataQueryFn, {
+  const query = useQuery({
+    queryKey,
+    queryFn: getWrapperDataQueryFn,
     gcTime,
     enabled: enabled && !!params.name,
     staleTime,

@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 
 import {
@@ -38,7 +38,6 @@ export const useAddressRecord = <TParams extends UseAddressRecordParameters>({
   enabled = true,
   staleTime,
   scopeKey,
- 
   // params
   ...params
 }: TParams & UseAddressRecordConfig) => {
@@ -49,11 +48,12 @@ export const useAddressRecord = <TParams extends UseAddressRecordParameters>({
     queryDependencyType: 'standard',
   })
 
-  const query = useQuery(queryKey, getAddressRecordQueryFn, {
+  const query = useQuery({
+    queryKey,
+    queryFn: getAddressRecordQueryFn,
     gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-
   })
 
   return {

@@ -250,7 +250,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       params: { input },
       functionName: 'validate',
     })
-  const { mutate: mutateName, isLoading: isMutationLoading } = useMutation({
+  const { mutate: mutateName, isPending: isMutationLoading } = useMutation({
     mutationFn: async (data: FormData) => {
       if (!data.name?.name) throw new Error('no_name')
 
