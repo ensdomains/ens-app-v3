@@ -62,7 +62,6 @@ export const useSimpleSearch = (options: Options = {}) => {
       }
       const results = await Promise.allSettled([
         queryByName(query),
-        queryByName(`${query}.eth`),
         ...(isAddress(query) ? [queryByAddress(query)] : []),
       ])
       const filteredData = results
