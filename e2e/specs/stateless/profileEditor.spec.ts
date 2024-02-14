@@ -910,9 +910,12 @@ test.describe('subgraph errors', () => {
     await expect(profilePage.editProfileButton).toBeVisible()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-network-error').click()
+    await page.getByTestId('subgraph-network-error').check()
 
     await profilePage.goto(name)
     await expect(page.getByTestId('disabled-profile-action-Edit profile')).toBeVisible()
+
+    await page.goto('/my/settings')
+    await page.getByTestId('subgraph-network-error').uncheck()
   })
 })

@@ -1,7 +1,7 @@
 'use client'
 
 import { QueryCache } from '@tanstack/react-query'
-import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } from 'react'
+import { useRef, useSyncExternalStore, type RefObject } from 'react'
 import { useQueryClient } from 'wagmi'
 
 type EventData = {
@@ -13,37 +13,32 @@ type EventData = {
 
 const SLOW_THRESHOLD = 5000
 
-const getBadQueries = (
-  queryCache: QueryCache,
-  eventData: RefObject<EventData>,
-  renderedAt: number,
-) => {
+const getBadQueries = (queryCache: QueryCache, eventData: RefObject<EventData>) => {
   const queries = queryCache.findAll([], {
     // only get subgraph queries that are pending or errored
     predicate: (query) => query.queryKey.at(-1) === 'graph' && query.state.status !== 'success',
   })
-  let slowQueries = 0
-  let errorQueries = 0
+  const now = Date.now()
 
-  queries.forEach((query) => {
-    const { queryHash } = query
-    const isSlow =
-      !!eventData.current?.[queryHash]?.startTime &&
-      (query.state.status === 'loading' || query.state.fetchStatus === 'fetching') &&
-      eventData.current[queryHash].startTime - renderedAt > SLOW_THRESHOLD
+  return queries.reduce(
+    (sum, query) => {
+      // skip if query is not currently active
+      if (query.getObserversCount() === 0) return sum
 
-    const isError = query.state.status === 'error'
-    const isFailedToFetch = query.state.fetchFailureReason instanceof DOMException
+      const { queryHash } = query
+      const isSlow =
+        !!eventData.current?.[queryHash]?.startTime &&
+        query.state.fetchStatus === 'fetching' &&
+        now - eventData.current[queryHash].startTime > SLOW_THRESHOLD
+      const isError = query.state.status === 'error'
 
-    if (isError) {
-      if (isFailedToFetch) errorQueries += 1
-      else query.invalidate()
-    } else if (isSlow) {
-      slowQueries += 1
-    }
-  })
-
-  return { slow: slowQueries, error: errorQueries }
+      return {
+        slow: sum.slow + (isSlow ? 1 : 0),
+        error: sum.error + (isError ? 1 : 0),
+      }
+    },
+    { slow: 0, error: 0 },
+  )
 }
 
 export const useHasSubgraphSyncErrors = () => {
@@ -51,27 +46,25 @@ export const useHasSubgraphSyncErrors = () => {
   const queryData = useRef({ slow: 0, error: 0 })
   const eventData = useRef<EventData>({})
 
-  const [renderedAt, setRenderedAt] = useState(0)
-
-  useEffect(() => {
-    setRenderedAt(Date.now())
-  }, [])
-
   return useSyncExternalStore(
     (onStoreChange) => {
       const queryCache = queryClient.getQueryCache()
       const unsubscribe = queryCache.subscribe((event) => {
         const lastKey = event.query.queryKey.at(-1)
         if (lastKey !== 'graph') return
-        if (
-          event.query.state.fetchStatus === 'fetching' ||
-          event.query.state.status === 'loading'
-        ) {
-          if (
-            eventData.current[event.query.queryHash]?.dataUpdateCount ===
+
+        // Query is no longer active. Remove the query from the eventData. This
+        if (event.type === 'observerRemoved' && event.query.getObserversCount() === 0) {
+          delete eventData.current[event.query.queryHash]
+          onStoreChange()
+        }
+        // Update store and records start time as a query has started fetching
+        else if (
+          event.type === 'updated' &&
+          event.query.state.fetchStatus === 'fetching' &&
+          eventData.current[event.query.queryHash]?.dataUpdateCount !==
             event.query.state.dataUpdateCount
-          )
-            return
+        ) {
           eventData.current[event.query.queryHash] = {
             dataUpdateCount: event.query.state.dataUpdateCount,
             startTime: Date.now(),
@@ -79,13 +72,17 @@ export const useHasSubgraphSyncErrors = () => {
           onStoreChange()
           setTimeout(() => onStoreChange(), SLOW_THRESHOLD)
         }
+        // Update store as an error has occurred
+        else if (event.type === 'updated' && event.query.state.status === 'error') {
+          onStoreChange()
+        }
       })
       return () => {
         unsubscribe()
       }
     },
     () => {
-      const newResult = getBadQueries(queryClient.getQueryCache(), eventData, renderedAt)
+      const newResult = getBadQueries(queryClient.getQueryCache(), eventData)
       if (
         newResult.slow !== queryData.current.slow ||
         newResult.error !== queryData.current.error
