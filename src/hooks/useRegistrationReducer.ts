@@ -62,7 +62,7 @@ export const getSelectedIndex = (
 const reducer = (state: RegistrationReducerData, action: RegistrationReducerAction) => {
   let selectedItemInx = getSelectedIndex(state, action.selected)
 
-  if (!isBrowser) return
+  if (!isBrowser) return state
 
   if (selectedItemInx === -1) {
     selectedItemInx = state.items.push(makeDefaultData(action.selected)) - 1
@@ -127,6 +127,7 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     }
     // no default
   }
+  return state
 }
 /* eslint-enable no-param-reassign */
 
