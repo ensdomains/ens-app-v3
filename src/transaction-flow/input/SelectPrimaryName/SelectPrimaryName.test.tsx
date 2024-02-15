@@ -13,8 +13,8 @@ import { useProfile } from '@app/hooks/useProfile'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 
 import SelectPrimaryName, {
-    getNameFromUnknownLabels,
-    hasEncodedLabel,
+  getNameFromUnknownLabels,
+  hasEncodedLabel,
 } from './SelectPrimaryName-flow'
 
 const encodeLabel = (label: string) => `[${labelhash(label).slice(2)}]`

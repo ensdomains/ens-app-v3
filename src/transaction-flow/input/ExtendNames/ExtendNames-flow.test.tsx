@@ -1,5 +1,6 @@
 import { mockFunction, render, screen } from '@app/test-utils'
-import { vi,describe,it,expect } from 'vitest'
+
+import { describe, expect, it, vi } from 'vitest'
 
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
@@ -28,7 +29,7 @@ vi.mock('@app/components/@atoms/Invoice/Invoice', async () => {
 })
 vi.mock(
   '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner',
-   async () => {
+  async () => {
     const originalModule = await vi.importActual(
       '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner',
     )

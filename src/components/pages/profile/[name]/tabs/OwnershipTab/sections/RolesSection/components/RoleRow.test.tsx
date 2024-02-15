@@ -1,5 +1,7 @@
 import { render, screen, userEvent, waitFor } from '@app/test-utils'
-import {vi,describe,it,expect} from 'vitest'
+
+import { describe, expect, it, vi } from 'vitest'
+
 import { mainnetWithEns } from '@app/constants/chains'
 
 import { RoleRow } from './RoleRow'

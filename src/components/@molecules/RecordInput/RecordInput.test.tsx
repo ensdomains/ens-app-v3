@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@app/test-utils'
-import {vi,describe,afterEach,it,expect} from 'vitest'
+
 import { cleanup } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import AddressEthereumSVG from '@app/assets/address/EthIcon.svg'
 

@@ -1,5 +1,7 @@
 import { render, screen, userEvent } from '@app/test-utils'
+
 import { describe, expect, it, vi } from 'vitest'
+
 import { ExpiryPanel } from './ExpiryPanel'
 
 vi.mock('@ensdomains/thorin', async () => {

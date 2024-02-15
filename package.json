@@ -50,8 +50,8 @@
   "dependencies": {
     "@ensdomains/address-encoder": "^1.0.0-rc.3",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
-    "@ensdomains/ensjs": "^3.4.3",
     "@ensdomains/ens-contracts": "1.2.0-beta.0",
+    "@ensdomains/ensjs": "^3.4.3",
     "@ensdomains/thorin": "0.6.44",
     "@metamask/inpage-provider": "^8.1.0",
     "@metamask/mobile-provider": "^2.1.0",
@@ -158,6 +158,7 @@
     "husky": "^7.0.4",
     "isows": "^1.0.3",
     "jsdom": "^24.0.0",
+    "lokijs": "^1.5.12",
     "msw": "^1.2.3",
     "multiformats": "^12.0.1",
     "next-compose-plugins": "^2.2.1",
