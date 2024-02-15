@@ -10,9 +10,7 @@ require('dotenv').config({
 
 process.env.ADDRESS_ETH_REGISTRAR = '0xc5a5C42992dECbae36851359345FE25997F5C42d'
 process.env.ADDRESS_NAME_WRAPPER = '0x9E545E3C0baAB3E08CdfD552C960A1050f373042'
-process.env.BATCH_GATEWAY_URLS = JSON.stringify([
-  'https://universal-offchain-unwrapper.ens-cf.workers.dev/',
-])
+process.env.BATCH_GATEWAY_URLS = JSON.stringify(['https://ccip-v2.ens.xyz/'])
 
 /**
  * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}
@@ -28,7 +26,9 @@ module.exports = {
     },
     {
       command: `pnpm wait-on http://127.0.0.1:8788 && ${
-        process.env.CI ? `npx playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}` : 'npx playwright'
+        process.env.CI
+          ? `npx playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}`
+          : 'npx playwright'
       }`,
       name: 'playwright',
       prefixColor: 'yellow.bold',

@@ -3,7 +3,8 @@ import { Address } from 'viem'
 
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
 
-import { makeTransactionItem, TransactionItem } from '..'
+import { TransactionItem } from '..'
+import { createTransactionItem } from '..'
 
 type MakeTransferNameOrSubnameTransactionItemParams = {
   name: string
@@ -27,7 +28,7 @@ export const makeTransferNameOrSubnameTransactionItem = ({
       abilities?.sendNameFunctionCallDetails?.[sendType]?.contract,
     ])
       .with([true, 'sendOwner', P.not(P.nullish)], ([, , contract]) =>
-        makeTransactionItem('transferName', {
+        createTransactionItem('transferName', {
           name,
           newOwnerAddress,
           sendType: 'sendOwner',
@@ -35,7 +36,7 @@ export const makeTransferNameOrSubnameTransactionItem = ({
         }),
       )
       .with([true, 'sendManager', 'registrar'], () =>
-        makeTransactionItem('transferName', {
+        createTransactionItem('transferName', {
           name,
           newOwnerAddress,
           sendType: 'sendManager',
@@ -44,7 +45,7 @@ export const makeTransferNameOrSubnameTransactionItem = ({
         }),
       )
       .with([true, 'sendManager', P.union('registry', 'nameWrapper')], ([, , contract]) =>
-        makeTransactionItem('transferName', {
+        createTransactionItem('transferName', {
           name,
           newOwnerAddress,
           sendType: 'sendManager',
@@ -53,7 +54,7 @@ export const makeTransferNameOrSubnameTransactionItem = ({
       )
       // A parent name can only transfer the manager
       .with([false, 'sendManager', P.union('registry', 'nameWrapper')], ([, , contract]) =>
-        makeTransactionItem('transferSubname', {
+        createTransactionItem('transferSubname', {
           name,
           newOwnerAddress,
           contract,

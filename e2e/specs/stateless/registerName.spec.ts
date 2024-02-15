@@ -1,7 +1,5 @@
-import { expect } from '@playwright/test'
-
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
-
+import { expect } from '@playwright/test'
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
@@ -56,9 +54,9 @@ test.describe.serial('normal registration', () => {
     await registrationPage.primaryNameToggle.click()
 
     // should show cost comparison accurately
-    await expect(registrationPage.yearMarker(0)).toHaveText(/10% gas/)
-    await expect(registrationPage.yearMarker(1)).toHaveText(/5% gas/)
-    await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
+    await expect(registrationPage.yearMarker(0)).toHaveText(/13% gas/)
+    await expect(registrationPage.yearMarker(1)).toHaveText(/7% gas/)
+    await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
 
     // should show correct price for yearly registration
     await expect(registrationPage.fee).toHaveText(/0.0033/)

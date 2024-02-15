@@ -8,6 +8,7 @@ const SUPPORT_LINKS = {
   fuses: 'https://support.ens.domains/en/articles/7902567-fuses',
   primaryName: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_b2baf0c02b',
   nameWrapper: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_cae4f1dea6',
+  dnsNames: 'https://support.ens.domains/en/collections/4027734-dns-names',
   owner: undefined,
   'owner-emancipated': undefined,
   'parent-owner': undefined,

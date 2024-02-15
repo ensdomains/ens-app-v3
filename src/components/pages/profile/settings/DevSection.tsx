@@ -8,7 +8,7 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { usePublicClient } from '@app/hooks/usePublicClient'
 import { DetailedSwitch } from '@app/transaction-flow/input/ProfileEditor/components/DetailedSwitch'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { SectionContainer } from './Section'
@@ -59,7 +59,7 @@ export const DevSection = () => {
 
   const sendName = async () => {
     createTransactionFlow('dev-sendName', {
-      transactions: [makeTransactionItem('testSendName', {})],
+      transactions: [createTransactionItem('testSendName', {})],
     })
   }
 

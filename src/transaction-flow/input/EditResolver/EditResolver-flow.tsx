@@ -12,7 +12,7 @@ import { useProfile } from '@app/hooks/useProfile'
 import useResolverEditor from '@app/hooks/useResolverEditor'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
-import { makeTransactionItem } from '../../transaction'
+import { createTransactionItem } from '../../transaction'
 
 const EditResolverFormContainer = styled.div(({ theme }) => [
   css`
@@ -47,7 +47,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
       dispatch({
         name: 'setTransactions',
         payload: [
-          makeTransactionItem('updateResolver', {
+          createTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolverAddress: newResolver,

@@ -47,7 +47,9 @@
     "migrate": "Migrate",
     "setToSelf": "Set to self",
     "editRoles": "Edit roles",
-    "setReminder": "Set reminder"
+    "setReminder": "Set reminder",
+    "import": "Import",
+    "connect": "Connect"
   },
   "unit": {
     "years_one": "{{count}} year",
@@ -196,7 +198,9 @@
       "createSubname": "Create subname",
       "deleteSubname": "Delete subname",
       "extendNames": "Extend names",
-      "importDNSSECName": "import DNSSEC name",
+      "approveDnsRegistrar": "Approve DNS registrar",
+      "claimDnsName": "Claim DNS name",
+      "importDnsName": "Import DNS name",
       "commitName": "Start timer",
       "registerName": "Register name",
       "approveNameWrapper": "Approve NameWrapper",

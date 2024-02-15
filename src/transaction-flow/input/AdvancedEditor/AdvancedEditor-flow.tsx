@@ -10,7 +10,7 @@ import AdvancedEditorContent from '@app/components/@molecules/AdvancedEditor/Adv
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
-import { makeTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 const Container = styled.form(({ theme }) => [
@@ -97,7 +97,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
       dispatch({
         name: 'setTransactions',
         payload: [
-          makeTransactionItem('updateProfile', {
+          createTransactionItem('updateProfile', {
             name,
             resolverAddress: profile!.resolverAddress!,
             records,

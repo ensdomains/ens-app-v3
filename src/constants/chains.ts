@@ -1,4 +1,5 @@
 import type { Address } from 'viem'
+import { holesky } from 'viem/chains'
 import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { addEnsContracts } from '@ensdomains/ensjs'
@@ -15,9 +16,9 @@ type ContractName =
   | 'UniversalResolver'
   | 'StaticBulkRenewal'
   | 'DNSSECImpl'
-  | 'LegacyDNSRegistrar'
-  | 'LegacyDNSSECImpl'
   | 'LegacyPublicResolver'
+  | 'OffchainDNSResolver'
+  | 'ExtendedDNSResolver'
 
 export const deploymentAddresses = JSON.parse(
   process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
@@ -39,7 +40,7 @@ export const localhostWithEns = {
       address: deploymentAddresses.BaseRegistrarImplementation,
     },
     ensDnsRegistrar: {
-      address: deploymentAddresses.LegacyDNSRegistrar,
+      address: deploymentAddresses.DNSRegistrar,
     },
     ensEthRegistrarController: {
       address: deploymentAddresses.ETHRegistrarController,
@@ -57,7 +58,7 @@ export const localhostWithEns = {
       address: deploymentAddresses.StaticBulkRenewal,
     },
     ensDnssecImpl: {
-      address: deploymentAddresses.LegacyDNSSECImpl,
+      address: deploymentAddresses.DNSSECImpl,
     },
   },
   subgraphs: {
@@ -69,6 +70,31 @@ export const localhostWithEns = {
 
 export const mainnetWithEns = addEnsContracts(mainnet)
 export const goerliWithEns = addEnsContracts(goerli)
-export const sepoliaWithEns = addEnsContracts(sepolia)
+export const sepoliaWithEns = addEnsContracts(
+  // TODO: once viem v2 implemented remove this type hack
+  sepolia as typeof sepolia & {
+    contracts: { ensRegistry: { address: Address }; ensUniversalResolver: { address: Address } }
+  },
+)
+export const holeskyWithEns = addEnsContracts(
+  holesky as typeof holesky & {
+    contracts: { ensRegistry: { address: Address }; ensUniversalResolver: { address: Address } }
+  },
+)
 
-export type SupportedChain = typeof mainnetWithEns | typeof goerliWithEns | typeof sepoliaWithEns
+export const chainsWithEns = [
+  mainnetWithEns,
+  goerliWithEns,
+  sepoliaWithEns,
+  holeskyWithEns,
+  localhostWithEns,
+]
+
+export const getSupportedChainById = (chainId: number | undefined) =>
+  chainId ? chainsWithEns.find((c) => c.id === chainId) : undefined
+
+export type SupportedChain =
+  | typeof mainnetWithEns
+  | typeof goerliWithEns
+  | typeof sepoliaWithEns
+  | typeof holeskyWithEns

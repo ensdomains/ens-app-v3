@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
 import { makeIntroItem } from '@app/transaction-flow/intro'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { checkAvailablePrimaryName } from '@app/utils/checkAvailablePrimaryName'
@@ -165,12 +165,12 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
       }
       if (abilities.canDeleteRequiresWrap) {
         const transactions: GenericTransaction[] = [
-          makeTransactionItem('transferSubname', {
+          createTransactionItem('transferSubname', {
             name,
             contract: 'nameWrapper',
             newOwnerAddress: address,
           }),
-          makeTransactionItem('deleteSubname', {
+          createTransactionItem('deleteSubname', {
             contract: 'nameWrapper',
             name,
             method: 'setRecord',
@@ -217,7 +217,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
           onClick: () =>
             createTransactionFlow(`deleteSubname-${name}`, {
               transactions: [
-                makeTransactionItem('deleteSubname', {
+                createTransactionItem('deleteSubname', {
                   name,
                   contract: abilities.canDeleteContract!,
                   method: abilities.canDeleteMethod,
@@ -246,7 +246,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         onClick: () => {
           createTransactionFlow(`reclaim-${name}`, {
             transactions: [
-              makeTransactionItem('createSubname', {
+              createTransactionItem('createSubname', {
                 contract: 'nameWrapper',
                 label,
                 parent,

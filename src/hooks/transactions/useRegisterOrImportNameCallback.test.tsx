@@ -4,7 +4,7 @@ import { createConfig, WagmiConfig } from 'wagmi'
 
 import { createQueryKey } from '../useQueryKeyFactory'
 import { Transaction } from './transactionStore'
-import { useRegisterNameCallback } from './useRegisterNameCallback'
+import { useRegisterOrImportNameCallback } from './useRegisterOrImportNameCallback'
 
 const createTransactionData = ({
   name,
@@ -44,14 +44,14 @@ const createWrapper = () => {
   return ({ children }: any) => <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>
 }
 
-describe('useRegisterNameCallback', () => {
+describe('useRegisterOrImportNameCallback', () => {
   beforeEach(() => {
     queryClient = new QueryClient()
   })
   it('should remove queries with name if registerName transaction is complete', () => {
     const queryKey = createTestQueryKey('test.eth')
     queryClient.setQueryData(queryKey, 'initial')
-    const { result } = renderHook(() => useRegisterNameCallback(), {
+    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
       wrapper: createWrapper(),
     })
 
@@ -62,10 +62,38 @@ describe('useRegisterNameCallback', () => {
     expect(queryClient.getQueryData(queryKey)).toBeUndefined()
   })
 
+  it('should remove queries with name if importDnsName transaction is complete', () => {
+    const queryKey = createTestQueryKey('test.eth')
+    queryClient.setQueryData(queryKey, 'initial')
+    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
+      wrapper: createWrapper(),
+    })
+
+    result.current(
+      createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'importDnsName' }),
+    )
+
+    expect(queryClient.getQueryData(queryKey)).toBeUndefined()
+  })
+
+  it('should remove queries with name if claimDnsName transaction is complete', () => {
+    const queryKey = createTestQueryKey('test.eth')
+    queryClient.setQueryData(queryKey, 'initial')
+    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
+      wrapper: createWrapper(),
+    })
+
+    result.current(
+      createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'claimDnsName' }),
+    )
+
+    expect(queryClient.getQueryData(queryKey)).toBeUndefined()
+  })
+
   it('should call queryKey with correct name even if it has a lot of dashes ', () => {
     const queryKey = createTestQueryKey('-test-test-test-test-.eth')
     queryClient.setQueryData(queryKey, 'initial')
-    const { result } = renderHook(() => useRegisterNameCallback(), {
+    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
       wrapper: createWrapper(),
     })
 
@@ -83,7 +111,7 @@ describe('useRegisterNameCallback', () => {
   it('should call not call queryKey if status or action are incorrect ', () => {
     const queryKey = createTestQueryKey('test.eth')
     queryClient.setQueryData(queryKey, 'initial')
-    const { result } = renderHook(() => useRegisterNameCallback(), {
+    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
       wrapper: createWrapper(),
     })
 
@@ -107,7 +135,7 @@ describe('useRegisterNameCallback', () => {
     const queryKey2 = createTestQueryKey('test.eth', { functionName: 'getSomethingElse' })
     queryClient.setQueryData(queryKey, 'initial')
     queryClient.setQueryData(queryKey2, 'initial')
-    const { result } = renderHook(() => useRegisterNameCallback(), {
+    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
       wrapper: createWrapper(),
     })
 

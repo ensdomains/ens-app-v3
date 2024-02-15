@@ -1,6 +1,7 @@
 import '@rainbow-me/rainbowkit/styles.css'
 
 import { DefaultOptions, QueryClient } from '@tanstack/react-query'
+import { holesky } from 'viem/chains'
 import { ChainProviderFn, configureChains, createConfig } from 'wagmi'
 import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
@@ -8,6 +9,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 import {
   goerliWithEns,
+  holeskyWithEns,
   localhostWithEns,
   mainnetWithEns,
   sepoliaWithEns,
@@ -18,7 +20,7 @@ import { WC_PROJECT_ID } from './constants'
 import { getDefaultWallets } from './getDefaultWallets'
 
 const providerArray: ChainProviderFn<
-  typeof mainnet | typeof goerli | typeof localhost | typeof sepolia
+  typeof mainnet | typeof goerli | typeof localhost | typeof sepolia | typeof holesky
 >[] = []
 if (process.env.NEXT_PUBLIC_PROVIDER) {
   // for local testing
@@ -40,16 +42,30 @@ if (process.env.NEXT_PUBLIC_PROVIDER) {
   // fallback cloudflare gateway if infura is down or for IPFS
   providerArray.push(
     jsonRpcProvider({
-      rpc: (c) => ({
-        http: `https://web3.ens.domains/v1/${c.network === 'homestead' ? 'mainnet' : c.network}`,
-      }),
+      rpc: (c) =>
+        c.id === holeskyWithEns.id
+          ? null
+          : {
+              http: `https://web3.ens.domains/v1/${
+                c.network === 'homestead' ? 'mainnet' : c.network
+              }`,
+            },
+    }),
+  )
+
+  providerArray.push(
+    jsonRpcProvider({
+      rpc: (c) =>
+        c.id === holeskyWithEns.id
+          ? { http: 'https://holesky.gateway.tenderly.co/4imxc4hQfRjxrVB2kWKvTo' }
+          : null,
     }),
   )
 }
 
 const chainsWithEns = process.env.NEXT_PUBLIC_PROVIDER
   ? [localhostWithEns]
-  : [mainnetWithEns, goerliWithEns, sepoliaWithEns]
+  : [mainnetWithEns, goerliWithEns, sepoliaWithEns, holeskyWithEns]
 
 const { publicClient, chains } = configureChains(chainsWithEns, providerArray)
 

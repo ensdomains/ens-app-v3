@@ -8,7 +8,7 @@ export default defineConfig({
   timeout: 120000, // add extra time for loading
   fullyParallel: true, // required to evenly shard
   workers: 1, // keep tests serial for now
-  reporter: [['html', { open: 'never' }]],
+  reporter: [['html', { open: 'always' }]],
   projects: [
     {
       name: 'stateless',

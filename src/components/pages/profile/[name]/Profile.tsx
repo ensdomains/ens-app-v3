@@ -8,7 +8,6 @@ import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
@@ -17,7 +16,6 @@ import { Content, ContentWarning } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
 import { formatFullExpiry, getEncodedLabelAmount } from '@app/utils/utils'
 
-import { shouldShowSuccessPage } from '../../import/[name]/shared'
 import MoreTab from './tabs/MoreTab/MoreTab'
 import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
 import { PermissionsTab } from './tabs/PermissionsTab/PermissionsTab'
@@ -105,7 +103,6 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const { address } = useAccount()
-  const transactions = useRecentTransactions()
 
   const nameDetails = useNameDetails({ name })
   const {
@@ -202,11 +199,11 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     }
   }, [isSelf, name, router])
 
-  useEffect(() => {
-    if (shouldShowSuccessPage(transactions)) {
-      router.push(`/import/${name}`)
-    }
-  }, [name, router, transactions])
+  // useEffect(() => {
+  //   if (shouldShowSuccessPage(transactions)) {
+  //     router.push(`/import/${name}`)
+  //   }
+  // }, [name, router, transactions])
 
   const infoBanner = useMemo(() => {
     if (

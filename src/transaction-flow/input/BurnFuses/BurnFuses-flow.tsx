@@ -6,7 +6,7 @@ import BurnFusesContent from '@app/components/@molecules/BurnFuses/BurnFusesCont
 import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
 import { deleteProperties } from '@app/utils/utils'
 
-import { makeTransactionItem } from '../../transaction'
+import { createTransactionItem } from '../../transaction'
 import { TransactionDialogPassthrough, TransactionFlowAction } from '../../types'
 
 type Data = {
@@ -27,7 +27,7 @@ export const BurnFuses = ({ data, onDismiss, dispatch }: Props) => {
     dispatch({
       name: 'setTransactions',
       payload: [
-        makeTransactionItem('burnFuses', {
+        createTransactionItem('burnFuses', {
           name: name as string,
           selectedFuses,
           permissions,

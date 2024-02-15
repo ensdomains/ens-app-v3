@@ -1,7 +1,7 @@
 import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { DeepPartial } from '@app/types'
 
 import RevokePermissions, { Props } from './RevokePermissions-flow'
@@ -140,7 +140,7 @@ describe('RevokePermissions', () => {
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactions',
           payload: [
-            makeTransactionItem('changePermissions', {
+            createTransactionItem('changePermissions', {
               name: 'sub.test.eth',
               contract: 'setChildFuses',
               fuses: {
@@ -248,7 +248,7 @@ describe('RevokePermissions', () => {
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactions',
           payload: [
-            makeTransactionItem('changePermissions', {
+            createTransactionItem('changePermissions', {
               name: 'sub.test.eth',
               contract: 'setChildFuses',
               fuses: {
@@ -325,7 +325,7 @@ describe('RevokePermissions', () => {
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactions',
           payload: [
-            makeTransactionItem('changePermissions', {
+            createTransactionItem('changePermissions', {
               name: 'sub.test.eth',
               contract: 'setChildFuses',
               fuses: {
@@ -381,7 +381,7 @@ describe('RevokePermissions', () => {
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactions',
           payload: [
-            makeTransactionItem('changePermissions', {
+            createTransactionItem('changePermissions', {
               name: 'sub.test.eth',
               contract: 'setChildFuses',
               fuses: {
@@ -457,7 +457,7 @@ describe('RevokePermissions', () => {
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactions',
           payload: [
-            makeTransactionItem('changePermissions', {
+            createTransactionItem('changePermissions', {
               name: 'sub.test.eth',
               contract: 'setFuses',
               fuses: [
@@ -522,7 +522,7 @@ describe('RevokePermissions', () => {
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactions',
           payload: [
-            makeTransactionItem('changePermissions', {
+            createTransactionItem('changePermissions', {
               name: 'sub.test.eth',
               contract: 'setFuses',
               fuses: [
@@ -590,7 +590,7 @@ describe('RevokePermissions', () => {
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactions',
           payload: [
-            makeTransactionItem('changePermissions', {
+            createTransactionItem('changePermissions', {
               name: 'sub.test.eth',
               contract: 'setFuses',
               fuses: ['CANNOT_SET_RESOLVER', 'CANNOT_SET_TTL'],
@@ -657,7 +657,7 @@ describe('RevokePermissions', () => {
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactions',
           payload: [
-            makeTransactionItem('changePermissions', {
+            createTransactionItem('changePermissions', {
               name: 'sub.test.eth',
               contract: 'setFuses',
               fuses: ['CANNOT_BURN_FUSES'],

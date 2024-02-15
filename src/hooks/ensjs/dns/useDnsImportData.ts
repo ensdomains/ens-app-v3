@@ -64,6 +64,7 @@ export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
     onError,
     onSettled,
     onSuccess,
+    retry: 2,
   })
 
   return {
