@@ -11,7 +11,6 @@ import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
-import gasLimitDictionary from '@app/constants/gasLimits'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
@@ -217,7 +216,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   ]
 
   const {
-    data: { gasEstimate: estimatedGasLimit },
+    data: { gasEstimate: estimatedGasLimit, gasCost: transactionFee },
     error: estimateGasLimitError,
     isLoading: isEstimateGasLoading,
     gasPrice,
@@ -234,18 +233,14 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
         stateOverride: [
           {
             address: address!,
-            balance: totalRentFee! + parseEther('10'),
+            // the value will only be used if totalRentFee is defined, dw
+            balance: totalRentFee ? totalRentFee + parseEther('10') : 0n,
           },
         ],
       },
     ],
     enabled: !!rentFee,
   })
-
-  const hardcodedGasLimit = gasLimitDictionary.RENEW(names.length)
-  const gasLimit = estimatedGasLimit || hardcodedGasLimit
-
-  const transactionFee = gasPrice ? gasLimit * gasPrice : 0n
 
   const items: InvoiceItem[] = [
     {
