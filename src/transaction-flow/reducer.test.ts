@@ -3,7 +3,7 @@ import { InternalTransactionFlow, TransactionFlowAction } from './types'
 
 describe('reducer', () => {
   it('should not break if resumeFlowWithCheck is called with item', () => {
-    const mockPush = jest.fn()
+    const mockPush = vi.fn()
     const action = {
       name: 'resumeFlowWithCheck',
       key: 'key',
@@ -23,7 +23,7 @@ describe('reducer', () => {
     expect(mockPush).toHaveBeenCalled()
   })
   it('should break if resumeFlowWithCheck is called wihout item', () => {
-    const mockPush = jest.fn()
+    const mockPush = vi.fn()
     const action = {
       name: 'resumeFlowWithCheck',
       key: 'key',
@@ -43,7 +43,7 @@ describe('reducer', () => {
     expect(mockPush).not.toHaveBeenCalled()
   })
   it('should not break if resumeFlow is called with item', () => {
-    const mockPush = jest.fn()
+    const mockPush = vi.fn()
     const action = {
       name: 'resumeFlow',
       key: 'key',
@@ -64,7 +64,7 @@ describe('reducer', () => {
     expect(draft.selectedKey).toEqual('key')
   })
   it('should break if resumeFlow is called wihout item', () => {
-    const mockPush = jest.fn()
+    const mockPush = vi.fn()
     const action = {
       name: 'resumeFlow',
       key: 'key',

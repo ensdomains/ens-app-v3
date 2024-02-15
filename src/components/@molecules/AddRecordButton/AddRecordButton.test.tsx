@@ -4,7 +4,7 @@ import { waitFor } from '@testing-library/react'
 
 import { AddRecordButton } from './AddRecordButton'
 
-const mockHandleAddRecord = jest.fn()
+const mockHandleAddRecord = vi.fn()
 
 window.HTMLElement.prototype.scrollIntoView = () => {}
 

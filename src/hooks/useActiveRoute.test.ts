@@ -1,10 +1,11 @@
 import { renderHook } from '@app/test-utils'
 
 import mockRouter from 'next-router-mock'
+import { describe, expect, it, vi } from 'vitest'
 
 import { useActiveRoute } from './useActiveRoute'
 
-jest.mock('next/router', () => jest.requireActual('next-router-mock'))
+vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
 
 describe('useActiveRoute', () => {
   it('should return the active route name from the path', () => {

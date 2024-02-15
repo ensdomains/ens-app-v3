@@ -5,9 +5,9 @@ import { useZorb } from '@app/hooks/useZorb'
 
 import { NameDetailItem } from './NameDetailItem'
 
-jest.mock('next/router', () => jest.requireActual('next-router-mock'))
-jest.mock('@app/hooks/useZorb')
-jest.mock('@app/components/@atoms/ExpiryComponents/ExpiryComponents')
+vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
+vi.mock('@app/hooks/useZorb')
+vi.mock('@app/components/@atoms/ExpiryComponents/ExpiryComponents')
 
 const mockUseZorb = mockFunction(useZorb)
 const mockShortExpiry = mockFunction(ShortExpiry)

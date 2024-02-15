@@ -7,14 +7,14 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 
 import { ExtendButton } from './ExtendButton'
 
-jest.mock('@app/hooks/abilities/useAbilities')
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
+vi.mock('@app/hooks/abilities/useAbilities')
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
 
 const mockUseAccount = mockFunction(useAccount)
 const mockUseAbilities = mockFunction(useAbilities)
 const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 
-const mockusePreparedDataInput = jest.fn()
+const mockusePreparedDataInput = vi.fn()
 
 mockUseAccount.mockReturnValue({ address: '0x123' })
 mockUseAbilities.mockReturnValue({})

@@ -2,8 +2,8 @@ import { render, screen, userEvent } from '@app/test-utils'
 
 import { ConfirmationDialogView } from './ConfirmationDialogView'
 
-const mockOnConfirm = jest.fn()
-const mockOnDecline = jest.fn()
+const mockOnConfirm = vi.fn()
+const mockOnDecline = vi.fn()
 
 describe('ConfirmationDialogView', () => {
   it('should render', () => {

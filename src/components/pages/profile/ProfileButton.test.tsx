@@ -6,8 +6,8 @@ import { formatExpiry, shortenAddress } from '@app/utils/utils'
 
 import { OwnerProfileButton } from './ProfileButton'
 
-jest.mock('@app/utils/BreakpointProvider')
-jest.mock('@app/hooks/ensjs/public/usePrimaryName')
+vi.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 mockUseBreakpoint.mockReturnValue({

@@ -7,10 +7,10 @@ import { fetchTxFromSafeTxHash } from '@app/utils/safe'
 
 import { requestWithSafeOverride, waitForTransaction } from './waitForTransaction'
 
-jest.mock('@app/utils/safe')
+vi.mock('@app/utils/safe')
 
-jest.mock('@wagmi/core', () => ({
-  getPublicClient: jest.fn(),
+vi.mock('@wagmi/core', () => ({
+  getPublicClient: vi.fn(),
 }))
 
 const mockGetPublicClient = getPublicClient as unknown as jest.MockedFunction<
@@ -21,8 +21,8 @@ const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as unknown as jest.Mocke
   typeof fetchTxFromSafeTxHash
 >
 
-const mockRequest = jest.fn()
-const mockWaitForTransactionReceipt = jest.fn<
+const mockRequest = vi.fn()
+const mockWaitForTransactionReceipt = vi.fn<
   Promise<WaitForTransactionReceiptReturnType>,
   [WaitForTransactionReceiptParameters]
 >()
@@ -65,7 +65,7 @@ describe('waitForTransaction', () => {
   it('should pass onReplaced tx to waitForTransactionReceipt', async () => {
     mockWaitForTransactionReceipt.mockResolvedValueOnce(mockTransactionReceiptData)
 
-    const onReplaced = jest.fn()
+    const onReplaced = vi.fn()
 
     await waitForTransaction({
       hash: '0xtest',

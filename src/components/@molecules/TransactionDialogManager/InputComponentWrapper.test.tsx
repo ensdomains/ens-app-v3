@@ -34,8 +34,8 @@ const ComponentHelper = ({ children }: { children: ReactNode }) => {
   )
 }
 
-const mockObserve = jest.fn()
-const mockDisconnect = jest.fn()
+const mockObserve = vi.fn()
+const mockDisconnect = vi.fn()
 
 const ComponentWithHook = ({ timeout }: { timeout: number }) => {
   useQuery(
@@ -118,7 +118,7 @@ describe('<InputComponentWrapper />', () => {
     })
   })
   it('should show spinner after data is cached for 3 seconds', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     queryClient.setQueryData(['test', '123'], 'value')
     render(
       <ComponentHelper>
@@ -135,7 +135,7 @@ describe('<InputComponentWrapper />', () => {
     })
   })
   it('should not show spinner if componentLoading is true', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     render(
       <ComponentHelper>
         <ComponentLoading />
@@ -151,7 +151,7 @@ describe('<InputComponentWrapper />', () => {
     })
   })
   it('should remove cacheable-component-cached class from modal once data is refetched', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     queryClient.setQueryData(['test', '123'], 'value')
     render(
       <ComponentHelper>
@@ -207,7 +207,7 @@ describe('<InputComponentWrapper />', () => {
     })
   })
   it('should add cacheable-component-cached class if there are stale queries', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     render(
       <ComponentHelper>
         <ComponentWithHook timeout={100} />
@@ -231,7 +231,7 @@ describe('<InputComponentWrapper />', () => {
     })
   })
   it('should remove cacheable-component-cached class once stale queries are refetched', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     render(
       <ComponentHelper>
         <ComponentWithHook timeout={100} />

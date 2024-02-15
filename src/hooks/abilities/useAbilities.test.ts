@@ -1,15 +1,17 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
+import { describe, expect, it } from 'vitest'
+
 import { useAccountSafely } from '../account/useAccountSafely'
 import { useResolverIsAuthorised } from '../resolver/useResolverIsAuthorised'
 import { useBasicName } from '../useBasicName'
 import { useHasSubnames } from '../useHasSubnames'
 import { useAbilities } from './useAbilities'
 
-jest.mock('@app/hooks/account/useAccountSafely')
-jest.mock('@app/hooks/useBasicName')
-jest.mock('@app/hooks/resolver/useResolverIsAuthorised')
-jest.mock('@app/hooks/useHasSubnames')
+vi.mock('@app/hooks/account/useAccountSafely')
+vi.mock('@app/hooks/useBasicName')
+vi.mock('@app/hooks/resolver/useResolverIsAuthorised')
+vi.mock('@app/hooks/useHasSubnames')
 
 const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseBasicName = mockFunction(useBasicName)

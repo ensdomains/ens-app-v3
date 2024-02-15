@@ -8,13 +8,13 @@ import { useMoonpayRegistration } from './useMoonpayRegistration'
 
 describe('useMoonpayRegistration', () => {
   it('should check up on transaction status every second if a there is a currentExternalTransactionId', async () => {
-    const mockDispatch = jest.fn()
+    const mockDispatch = vi.fn()
     const normalisedName = 'test.eth'
     const selected = {} as any
     const item = {
       externalTransactionId: '0x123',
     } as any
-    global.fetch = jest.fn().mockImplementation(() => {
+    global.fetch = vi.fn().mockImplementation(() => {
       return Promise.resolve({
         json: () => [{ message: 'uploaded' }],
       })
@@ -24,13 +24,13 @@ describe('useMoonpayRegistration', () => {
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2), { timeout: 2000 })
   })
   it('should stop refetching once transaction is complete', async () => {
-    const mockDispatch = jest.fn()
+    const mockDispatch = vi.fn()
     const normalisedName = 'test.eth'
     const selected = {} as any
     let item = {
       externalTransactionId: '0x123',
     } as any
-    global.fetch = jest.fn().mockImplementation(() => {
+    global.fetch = vi.fn().mockImplementation(() => {
       return Promise.resolve({
         json: () => [{ status: 'pending' }],
       })
@@ -41,7 +41,7 @@ describe('useMoonpayRegistration', () => {
     )
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2), { timeout: 2000 })
 
-    global.fetch = jest.fn().mockImplementation(() => {
+    global.fetch = vi.fn().mockImplementation(() => {
       return Promise.resolve({
         json: () => [{ status: 'completed' }],
       })
@@ -62,13 +62,13 @@ describe('useMoonpayRegistration', () => {
     expect(result.current.moonpayTransactionStatus).toBe(undefined)
   })
   it('should stop refetching if name changes and new name does not have a currentExternalTransactionId', async () => {
-    const mockDispatch = jest.fn()
+    const mockDispatch = vi.fn()
     let normalisedName = 'test.eth'
     const selected = {} as any
     let item = {
       externalTransactionId: '0x123',
     } as any
-    global.fetch = jest.fn().mockImplementation(() => {
+    global.fetch = vi.fn().mockImplementation(() => {
       return Promise.resolve({
         json: () => [{ status: 'pending' }],
       })
@@ -89,14 +89,14 @@ describe('useMoonpayRegistration', () => {
   it('should have the correct regsitration duration when initiating a registration', async () => {
     const registrationDuration = 5
     const chainId = 1
-    const mockDispatch = jest.fn()
+    const mockDispatch = vi.fn()
     const normalisedName = 'test.eth'
     const tokenId = labelhash('test')
     const selected = {} as any
     const item = {
       externalTransactionId: null,
     } as any
-    global.fetch = jest.fn().mockImplementation(() => {
+    global.fetch = vi.fn().mockImplementation(() => {
       return Promise.resolve({
         json: () => [{ status: 'pending' }],
       })

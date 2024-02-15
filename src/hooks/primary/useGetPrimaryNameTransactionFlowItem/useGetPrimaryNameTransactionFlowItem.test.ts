@@ -1,13 +1,13 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
+import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 
 import { useGetPrimaryNameTransactionFlowItem } from '.'
 
-jest.mock('@app/hooks/reverseRecord/useReverseRegistryName')
-jest.mock('@app/hooks/chain/useContractAddress')
+vi.mock('@app/hooks/reverseRecord/useReverseRegistryName')
+vi.mock('@app/hooks/chain/useContractAddress')
 
 const mockUseReverseRegistryName = mockFunction(useReverseRegistryName)
 const mockUseContractAddress = mockFunction(useContractAddress)

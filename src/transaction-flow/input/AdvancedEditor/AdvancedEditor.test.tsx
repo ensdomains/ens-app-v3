@@ -108,20 +108,20 @@ const mockProfileData = {
   isLoading: false,
 }
 
-jest.mock('@app/hooks/useProfile')
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
-jest.mock('@app/hooks/useResolverHasInterfaces')
+vi.mock('@app/hooks/useProfile')
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
+vi.mock('@app/hooks/useResolverHasInterfaces')
 
-jest.mock('@app/utils/abi', () => ({
-  getUsedAbiEncodeAs: () => ['json', 'cbor']
+vi.mock('@app/utils/abi', () => ({
+  getUsedAbiEncodeAs: () => ['json', 'cbor'],
 }))
 
 const mockUseProfile = mockFunction(useProfile)
 const mockUseResolverHasInterfaces = mockFunction(useResolverHasInterfaces)
 
-const mockIntersectionObserver = jest.fn()
+const mockIntersectionObserver = vi.fn()
 
-const mockDispatch = jest.fn()
+const mockDispatch = vi.fn()
 
 describe('AdvancedEditor', () => {
   beforeEach(() => {
@@ -139,7 +139,7 @@ describe('AdvancedEditor', () => {
       disconnect: () => null,
     })
     window.IntersectionObserver = mockIntersectionObserver
-    window.scroll = jest.fn()
+    window.scroll = vi.fn()
   })
 
   afterEach(() => {
@@ -400,7 +400,9 @@ describe('AdvancedEditor', () => {
 
       for (const { label, value } of records) {
         const formattedLabel = tab === 'address-tab' ? label.toUpperCase() : label
-        const record = await screen.findByTestId(`record-input-${convertFormSafeKey(formattedLabel)}`)
+        const record = await screen.findByTestId(
+          `record-input-${convertFormSafeKey(formattedLabel)}`,
+        )
         const recordInput = await within(record).getByTestId('record-input-input')
         expect(recordInput).toHaveValue(value)
       }
@@ -426,12 +428,15 @@ describe('AdvancedEditor', () => {
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
     })
-    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.abi).toEqual([{
-      contentType: 1,
-      encodedData: '0x',
-    }, {
-      contentType: 4, 
-      encodedData: '0x'
-    }])
+    expect(mockDispatch.mock.calls[0][0].payload[0].data.records.abi).toEqual([
+      {
+        contentType: 1,
+        encodedData: '0x',
+      },
+      {
+        contentType: 4,
+        encodedData: '0x',
+      },
+    ])
   })
 })

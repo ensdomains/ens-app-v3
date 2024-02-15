@@ -6,7 +6,7 @@ import AddressEthereumSVG from '@app/assets/address/AddressEth.svg'
 
 import { RecordInput } from './RecordInput'
 
-const mockCallback = jest.fn()
+const mockCallback = vi.fn()
 
 describe('RecordInput', () => {
   afterEach(() => {

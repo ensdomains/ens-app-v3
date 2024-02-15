@@ -1,13 +1,15 @@
 import { renderHook } from '@app/test-utils'
 
+import { describe, expect, it } from 'vitest'
+
 import { useNameType } from './useNameType'
 
-const mockBasicData = jest.fn()
-jest.mock('@app/hooks/useBasicName', () => ({
+const mockBasicData = vi.fn()
+vi.mock('@app/hooks/useBasicName', () => ({
   useBasicName: () => mockBasicData(),
 }))
 
-jest.mock('@app/hooks/chain/useContractAddress', () => ({
+vi.mock('@app/hooks/chain/useContractAddress', () => ({
   useContractAddress: () => '0xnamewrapper',
 }))
 

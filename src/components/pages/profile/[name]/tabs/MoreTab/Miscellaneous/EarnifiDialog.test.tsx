@@ -3,8 +3,8 @@ import { render, screen, userEvent, waitFor } from '@app/test-utils'
 import { EarnifiDialog } from './EarnifiDialog'
 import { useSubscribeToEarnifi } from './useSubscribeToEarnifi'
 
-jest.mock('./useSubscribeToEarnifi', () => ({
-  useSubscribeToEarnifi: jest.fn(),
+vi.mock('./useSubscribeToEarnifi', () => ({
+  useSubscribeToEarnifi: vi.fn(),
 }))
 
 const pageObject = {
@@ -16,13 +16,13 @@ const pageObject = {
 const defaultProps = {
   name: 'name',
   open: true,
-  onDismiss: jest.fn(),
+  onDismiss: vi.fn(),
 }
 
 describe('EarnifiDialog', () => {
   beforeEach(() => {
     ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
-      subscribe: jest.fn(),
+      subscribe: vi.fn(),
       status: 'idle',
     })
   })
@@ -47,7 +47,7 @@ describe('EarnifiDialog', () => {
 
   it('should disable button when loading', async () => {
     ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
-      subscribe: jest.fn(),
+      subscribe: vi.fn(),
       status: 'loading',
     })
 
@@ -60,7 +60,7 @@ describe('EarnifiDialog', () => {
   })
 
   it('should call subscribe with the correct information', async () => {
-    const subscribeMock = jest.fn()
+    const subscribeMock = vi.fn()
     ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
       subscribe: subscribeMock,
       status: 'idle',
@@ -126,11 +126,11 @@ describe('EarnifiDialog', () => {
   })
 
   it('should call _onDismiss when modal is cancelled on email input', async () => {
-    const onDismissMock = jest.fn()
+    const onDismissMock = vi.fn()
     ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
-      subscribe: jest.fn(),
+      subscribe: vi.fn(),
       status: 'idle',
-      reset: jest.fn(),
+      reset: vi.fn(),
     })
 
     render(<EarnifiDialog {...{ ...defaultProps, onDismiss: onDismissMock }} />)
@@ -141,7 +141,7 @@ describe('EarnifiDialog', () => {
   })
 
   it('should show success dialog when subscribe is successful', async () => {
-    const subscribeMock = jest.fn()
+    const subscribeMock = vi.fn()
     ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
       subscribe: subscribeMock,
       status: 'success',
@@ -155,11 +155,11 @@ describe('EarnifiDialog', () => {
   })
 
   it('should call _onDismiss when modal is closed on success dialog', async () => {
-    const onDismissMock = jest.fn()
+    const onDismissMock = vi.fn()
     ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
-      subscribe: jest.fn(),
+      subscribe: vi.fn(),
       status: 'success',
-      reset: jest.fn(),
+      reset: vi.fn(),
     })
 
     render(<EarnifiDialog {...{ ...defaultProps, onDismiss: onDismissMock }} />)
@@ -174,9 +174,9 @@ describe('EarnifiDialog', () => {
   })
 
   it('_onDismiss should call reset', async () => {
-    const resetMock = jest.fn()
+    const resetMock = vi.fn()
     ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
-      subscribe: jest.fn(),
+      subscribe: vi.fn(),
       status: 'idle',
       reset: resetMock,
     })

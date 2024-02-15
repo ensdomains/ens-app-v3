@@ -9,15 +9,15 @@ import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvide
 
 import { Notifications } from './Notifications'
 
-jest.mock('@app/hooks/chain/useChainName')
-jest.mock('@app/utils/SyncProvider/SyncProvider')
-jest.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/hooks/chain/useChainName')
+vi.mock('@app/utils/SyncProvider/SyncProvider')
+vi.mock('@app/utils/BreakpointProvider')
 
 const mockUseChainName = mockFunction(useChainName)
 const mockUseCallbackOnTransaction = mockFunction(useCallbackOnTransaction)
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 
-jest.useFakeTimers()
+vi.useFakeTimers()
 
 const makeRecentTransaction =
   (status = 'confirmed') =>
@@ -29,7 +29,7 @@ const makeRecentTransaction =
       hash: `0x${i.toString(16).padStart(32, '0')}`,
     }) as Transaction
 
-window.scroll = jest.fn()
+window.scroll = vi.fn()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 let cb: UpdateCallback = (_) => {}
 mockUseCallbackOnTransaction.mockImplementation((_cb: UpdateCallback) => (cb = _cb))

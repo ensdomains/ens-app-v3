@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { decodeAbi } from './useAdvancedEditor'
 
 // TODO: Remove skip when we know how we will handle abi

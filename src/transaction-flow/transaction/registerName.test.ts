@@ -5,8 +5,8 @@ import { registerName } from '@ensdomains/ensjs/wallet'
 
 import registerNameFlowTransaction from './registerName'
 
-jest.mock('@ensdomains/ensjs/public')
-jest.mock('@ensdomains/ensjs/wallet')
+vi.mock('@ensdomains/ensjs/public')
+vi.mock('@ensdomains/ensjs/wallet')
 
 const mockGetPrice = mockFunction(getPrice)
 const mockRegisterName = mockFunction(registerName.makeFunctionData)

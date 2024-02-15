@@ -8,10 +8,10 @@ import Ownership from './Ownership'
 import Resolver from './Resolver'
 import Token from './Token/Token'
 
-jest.mock('@app/hooks/useOwners')
-jest.mock('./Ownership')
-jest.mock('./Resolver')
-jest.mock('./Token/Token')
+vi.mock('@app/hooks/useOwners')
+vi.mock('./Ownership')
+vi.mock('./Resolver')
+vi.mock('./Token/Token')
 
 const mockUseOwners = mockFunction(useOwners)
 const mockOwnership = mockFunction(Ownership)
@@ -62,5 +62,4 @@ describe('MoreTab', () => {
       expect(screen.queryByText('Token')).not.toBeInTheDocument()
     })
   })
-
 })

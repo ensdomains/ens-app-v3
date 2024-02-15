@@ -11,14 +11,14 @@ import { useProfile } from '../useProfile'
 import { useResolverIsAuthorised } from './useResolverIsAuthorised'
 import { useResolverType } from './useResolverType'
 
-jest.mock('@app/hooks/useProfile')
-jest.mock('@app/hooks/resolver/useResolverType')
-jest.mock('@app/hooks/resolver/useResolverIsAuthorised')
-jest.mock('@app/hooks/chain/useContractAddress')
+vi.mock('@app/hooks/useProfile')
+vi.mock('@app/hooks/resolver/useResolverType')
+vi.mock('@app/hooks/resolver/useResolverIsAuthorised')
+vi.mock('@app/hooks/chain/useContractAddress')
 
 const mockUseProfileBase = mockFunction(useProfile)
-const mockUseProfile = mockFunction<typeof useProfile>(jest.fn())
-const mockUseLatestResolverProfile = mockFunction<typeof useProfile>(jest.fn())
+const mockUseProfile = mockFunction<typeof useProfile>(vi.fn())
+const mockUseLatestResolverProfile = mockFunction<typeof useProfile>(vi.fn())
 
 const mockUseResolverType = mockFunction(useResolverType)
 const mockUseResolverIsAuthorised = mockFunction(useResolverIsAuthorised)

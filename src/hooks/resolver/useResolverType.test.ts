@@ -8,9 +8,9 @@ import { useProfile } from '../useProfile'
 import { useRegistryResolver } from './useRegistryResolver'
 import { isWildcardCalc, useResolverType } from './useResolverType'
 
-jest.mock('@app/hooks/useBasicName')
-jest.mock('@app/hooks/useProfile')
-jest.mock('@app/hooks/resolver/useRegistryResolver')
+vi.mock('@app/hooks/useBasicName')
+vi.mock('@app/hooks/useProfile')
+vi.mock('@app/hooks/resolver/useRegistryResolver')
 
 const mockUseBasicName = mockFunction(useBasicName)
 const mockUseProfile = mockFunction(useProfile)

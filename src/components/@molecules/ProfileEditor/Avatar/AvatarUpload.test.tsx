@@ -6,17 +6,17 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 
 import { AvatarUpload } from './AvatarUpload'
 
-jest.mock('@app/hooks/chain/useChainName')
+vi.mock('@app/hooks/chain/useChainName')
 
 const mockUseChainName = mockFunction(useChainName)
 
-const mockHandleCancel = jest.fn()
-const mockHandleSubmit = jest.fn()
+const mockHandleCancel = vi.fn()
+const mockHandleSubmit = vi.fn()
 const mockFile = new File([], 'avatar.png')
 const mockUseSignTypedData = mockFunction(useSignTypedData)
 const mockFileDataURL = 'data:image/jpeg;base64,00'
 
-const mockSignTypedDataAsync = jest.fn()
+const mockSignTypedDataAsync = vi.fn()
 
 const props = {
   handleCancel: mockHandleCancel,
@@ -32,7 +32,7 @@ describe('<AvatarUpload />', () => {
   mockUseChainName.mockImplementation(() => 'mainnet')
 
   beforeAll(() => {
-    URL.createObjectURL = jest.fn(() => 'https://localhost/test.png')
+    URL.createObjectURL = vi.fn(() => 'https://localhost/test.png')
   })
   it('initially shows crop component', () => {
     render(<AvatarUpload {...props} />)
@@ -49,13 +49,13 @@ describe('<AvatarUpload />', () => {
     expect(mockHandleCancel).toHaveBeenCalled()
   })
   it('calls handleSubmit with correct data if upload is successful', async () => {
-    global.fetch = jest.fn().mockImplementation(() =>
+    global.fetch = vi.fn().mockImplementation(() =>
       Promise.resolve({
         json: () => ({ message: 'uploaded' }),
       }),
     )
-    jest.spyOn(Date, 'now').mockImplementation(() => 1588994800000)
-    jest.spyOn(Uint8Array, 'from').mockImplementation(() => new Uint8Array())
+    vi.spyOn(Date, 'now').mockImplementation(() => 1588994800000)
+    vi.spyOn(Uint8Array, 'from').mockImplementation(() => new Uint8Array())
     mockSignTypedDataAsync.mockResolvedValue('sig')
 
     render(<AvatarUpload {...props} />)
@@ -86,13 +86,13 @@ describe('<AvatarUpload />', () => {
   })
   it('calls handleSubmit with network path if network is not mainnet', async () => {
     mockUseChainName.mockImplementation(() => 'goerli')
-    global.fetch = jest.fn().mockImplementation(() =>
+    global.fetch = vi.fn().mockImplementation(() =>
       Promise.resolve({
         json: () => ({ message: 'uploaded' }),
       }),
     )
-    jest.spyOn(Date, 'now').mockImplementation(() => 1588994800000)
-    jest.spyOn(Uint8Array, 'from').mockImplementation(() => new Uint8Array())
+    vi.spyOn(Date, 'now').mockImplementation(() => 1588994800000)
+    vi.spyOn(Uint8Array, 'from').mockImplementation(() => new Uint8Array())
     mockSignTypedDataAsync.mockResolvedValue('sig')
 
     render(<AvatarUpload {...props} />)
@@ -115,7 +115,7 @@ describe('<AvatarUpload />', () => {
   })
   it('does not call handleSubmit if upload is unsuccessful', async () => {
     mockHandleSubmit.mockClear()
-    global.fetch = jest.fn().mockImplementation(() =>
+    global.fetch = vi.fn().mockImplementation(() =>
       Promise.resolve({
         json: () => ({ error: 'failed', status: 500 }),
       }),
@@ -130,7 +130,7 @@ describe('<AvatarUpload />', () => {
   })
   it('shows error when upload fails', async () => {
     mockHandleSubmit.mockClear()
-    global.fetch = jest.fn().mockImplementation(() =>
+    global.fetch = vi.fn().mockImplementation(() =>
       Promise.resolve({
         json: () => ({ error: 'failed', status: 500 }),
       }),

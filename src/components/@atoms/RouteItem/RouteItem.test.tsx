@@ -5,7 +5,7 @@ import { RouteItemObj } from '@app/routes'
 
 import { RouteItem } from './RouteItem'
 
-jest.mock('@app/hooks/useActiveRoute')
+vi.mock('@app/hooks/useActiveRoute')
 const mockUseActiveRoute = mockFunction(useActiveRoute)
 
 describe('RouteItem', () => {

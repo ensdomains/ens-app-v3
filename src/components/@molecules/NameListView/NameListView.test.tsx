@@ -6,23 +6,23 @@ import { createDateAndValue } from '@app/utils/utils'
 
 import { NameListView } from './NameListView'
 
-jest.mock('next/router', () => jest.requireActual('next-router-mock'))
-jest.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem')
-jest.mock('@app/hooks/ensjs/subgraph/useNamesForAddress')
+vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
+vi.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem')
+vi.mock('@app/hooks/ensjs/subgraph/useNamesForAddress')
 
 const mockTaggedNameItem = mockFunction(TaggedNameItem)
 const mockUseNamesForAddress = mockFunction(useNamesForAddress)
 
 const mockComponent = ({ name }: { name: string }) => <div key={name}>{name}</div>
 
-const mockIntersectionObserver = jest.fn()
+const mockIntersectionObserver = vi.fn()
 mockIntersectionObserver.mockReturnValue({
   observe: () => null,
   unobserve: () => null,
   disconnect: () => null,
 })
 window.IntersectionObserver = mockIntersectionObserver
-window.scroll = jest.fn()
+window.scroll = vi.fn()
 
 describe('NameListView', () => {
   it('should render if there are results', () => {

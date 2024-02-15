@@ -22,14 +22,14 @@ BigInt.prototype.toJSON = function () {
   return this.toString()
 }
 
-jest.mock('./waitForTransaction', () => ({
-  waitForTransaction: jest.fn(),
+vi.mock('./waitForTransaction', () => ({
+  waitForTransaction: vi.fn(),
 }))
 
-jest.mock('@wagmi/core')
+vi.mock('@wagmi/core')
 
 const mockPublicClient = {
-  getBlock: jest.fn(async () => ({ timestamp: 1 })),
+  getBlock: vi.fn(async () => ({ timestamp: 1 })),
 }
 
 const mockGetPublicClient = getPublicClient as unknown as jest.MockedFunction<

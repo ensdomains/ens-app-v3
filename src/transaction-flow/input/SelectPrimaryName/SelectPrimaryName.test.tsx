@@ -19,26 +19,26 @@ import SelectPrimaryName, {
 
 const encodeLabel = (label: string) => `[${labelhash(label).slice(2)}]`
 
-const mockInvalidateQueries = jest.fn()
-jest.mock('wagmi', () =>
-  jest.fn().mockReturnValue({
-    useQueryClient: jest.fn().mockReturnValue({
+const mockInvalidateQueries = vi.fn()
+vi.mock('wagmi', () =>
+  vi.fn().mockReturnValue({
+    useQueryClient: vi.fn().mockReturnValue({
       invalidateQueries: mockInvalidateQueries,
     }),
   }),
 )
 
-jest.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem', () => ({
+vi.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem', () => ({
   TaggedNameItem: ({ name, ...props }: any) => <div {...props}>{name}</div>,
 }))
 
-jest.mock('@ensdomains/ensjs/subgraph')
+vi.mock('@ensdomains/ensjs/subgraph')
 
-jest.mock('@app/hooks/ensjs/subgraph/useNamesForAddress')
-jest.mock('@app/hooks/resolver/useResolverStatus')
-jest.mock('@app/hooks/useIsWrapped')
-jest.mock('@app/hooks/useProfile')
-jest.mock('@app/hooks/primary/useGetPrimaryNameTransactionFlowItem')
+vi.mock('@app/hooks/ensjs/subgraph/useNamesForAddress')
+vi.mock('@app/hooks/resolver/useResolverStatus')
+vi.mock('@app/hooks/useIsWrapped')
+vi.mock('@app/hooks/useProfile')
+vi.mock('@app/hooks/primary/useGetPrimaryNameTransactionFlowItem')
 
 const mockGetDecodedName = mockFunction(getDecodedName)
 mockGetDecodedName.mockImplementation((_: any, { name }) => Promise.resolve(name))
@@ -93,11 +93,11 @@ mockUseGetPrimaryNameTransactionItem.mockReturnValue({
   isLoading: false,
 })
 
-const mockDispatch = jest.fn()
+const mockDispatch = vi.fn()
 
-window.IntersectionObserver = jest.fn().mockReturnValue({
-  observe: jest.fn(),
-  disconnect: jest.fn(),
+window.IntersectionObserver = vi.fn().mockReturnValue({
+  observe: vi.fn(),
+  disconnect: vi.fn(),
 })
 
 afterEach(() => {

@@ -5,7 +5,7 @@ import { formatDateTime } from '@app/utils/utils'
 
 import { RegistrationDate } from './RegistrationDate'
 
-jest.mock('@app/hooks/chain/useChainName')
+vi.mock('@app/hooks/chain/useChainName')
 
 const mockUseChainName = mockFunction(useChainName)
 

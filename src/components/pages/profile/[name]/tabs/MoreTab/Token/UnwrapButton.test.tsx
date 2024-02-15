@@ -6,12 +6,12 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 
 import UnwrapButton from './UnwrapButton'
 
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
 
 const mockUseTransaction = mockFunction(useTransactionFlow)
 const mockUseAccount = mockFunction(useAccount)
 
-const mockCreateTransactionFlow = jest.fn()
+const mockCreateTransactionFlow = vi.fn()
 
 describe('UnwrapButton', () => {
   mockUseTransaction.mockReturnValue({

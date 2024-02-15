@@ -36,8 +36,8 @@ const makeExpectedCallbackData = (overwrites: any = {}): any => {
   }
 }
 
-jest.mock('@app/hooks/chain/useContractAddress')
-jest.mock('@app/hooks/useLocalStorage')
+vi.mock('@app/hooks/chain/useContractAddress')
+vi.mock('@app/hooks/useLocalStorage')
 
 const mockUseNetwork = mockFunction(useNetwork)
 mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
@@ -51,7 +51,7 @@ mockUseContractAddress.mockReturnValue('0x123')
 const mockUseLocalStorage = mockFunction(useLocalStorage)
 mockUseLocalStorage.mockReturnValue([false, () => {}])
 
-const mockIntersectionObserver = jest.fn()
+const mockIntersectionObserver = vi.fn()
 mockIntersectionObserver.mockReturnValue({
   observe: () => null,
   unobserve: () => null,
@@ -59,7 +59,7 @@ mockIntersectionObserver.mockReturnValue({
 })
 window.IntersectionObserver = mockIntersectionObserver
 
-const mockCallback = jest.fn()
+const mockCallback = vi.fn()
 
 describe('Profile', () => {
   beforeEach(() => {

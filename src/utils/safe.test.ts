@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 

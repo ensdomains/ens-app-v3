@@ -88,17 +88,17 @@ const mockProfileData = {
   isLoading: false,
 }
 
-jest.mock('@app/hooks/chain/useContractAddress')
+vi.mock('@app/hooks/chain/useContractAddress')
 
-jest.mock('@app/hooks/resolver/useResolverStatus')
-jest.mock('@app/hooks/useProfile')
-jest.mock('@app/hooks/useIsWrapped')
+vi.mock('@app/hooks/resolver/useResolverStatus')
+vi.mock('@app/hooks/useProfile')
+vi.mock('@app/hooks/useIsWrapped')
 
-jest.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/utils/BreakpointProvider')
 
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
 
-jest.mock('@app/transaction-flow/input/ProfileEditor/components/ProfileBlurb', () => ({
+vi.mock('@app/transaction-flow/input/ProfileEditor/components/ProfileBlurb', () => ({
   ProfileBlurb: () => <div>Profile Blurb</div>,
 }))
 
@@ -109,7 +109,7 @@ const mockUseProfile = mockFunction(useProfile)
 const mockUseIsWrapped = mockFunction(useIsWrapped)
 const mockUseEnsAvatar = mockFunction(useEnsAvatar)
 
-const mockDispatch = jest.fn()
+const mockDispatch = vi.fn()
 
 export function setupIntersectionObserverMock({
   root = null,
@@ -186,7 +186,7 @@ describe('ProfileEditor', () => {
       xl: false,
     })
 
-    window.scroll = jest.fn()
+    window.scroll = vi.fn()
 
     mockUseContractAddress.mockReturnValue('0x0')
 

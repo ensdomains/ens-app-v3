@@ -6,7 +6,7 @@ import { PublicClientWithChain, WalletClientWithAccount } from '@app/types'
 
 import unwrapNameFlowTransaction from './unwrapName'
 
-jest.mock('@ensdomains/ensjs/wallet')
+vi.mock('@ensdomains/ensjs/wallet')
 
 const mockUnwrapName = mockFunction(unwrapName.makeFunctionData)
 

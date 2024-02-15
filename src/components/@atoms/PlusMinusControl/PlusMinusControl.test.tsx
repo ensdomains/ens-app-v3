@@ -2,7 +2,7 @@ import { fireEvent, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { PlusMinusControl } from './PlusMinusControl'
 
-const mockChangeHandler = jest.fn()
+const mockChangeHandler = vi.fn()
 
 describe('PlusMinusControl', () => {
   afterEach(() => {

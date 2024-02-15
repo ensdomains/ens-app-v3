@@ -23,7 +23,7 @@ describe('BreakpointProvider', () => {
     const mockMatchMedia = () => {
       return {
         addListener: (listener: any) => listeners.push(listener),
-        removeListener: jest.fn(),
+        removeListener: vi.fn(),
         matches: false,
       }
     }
@@ -48,7 +48,7 @@ describe('BreakpointProvider', () => {
     const listeners: any[] = []
     const returnObject = {
       addListener: (listener: any) => listeners.push(listener),
-      removeListener: jest.fn(),
+      removeListener: vi.fn(),
       matches: false,
     }
 

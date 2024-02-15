@@ -11,12 +11,12 @@ import Hamburger from './@molecules/Hamburger/Hamburger'
 import { HeaderConnect } from './ConnectButton'
 import { Header } from './Header'
 
-jest.mock('next/router', () => jest.requireActual('next-router-mock'))
-jest.mock('@app/hooks/transactions/useRecentTransactions')
-jest.mock('@app/hooks/useInitial')
-jest.mock('@app/utils/BreakpointProvider')
-jest.mock('./@molecules/Hamburger/Hamburger')
-jest.mock('./ConnectButton')
+vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
+vi.mock('@app/hooks/transactions/useRecentTransactions')
+vi.mock('@app/hooks/useInitial')
+vi.mock('@app/utils/BreakpointProvider')
+vi.mock('./@molecules/Hamburger/Hamburger')
+vi.mock('./ConnectButton')
 
 const mockUseAccount = mockFunction(useAccount)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
@@ -41,10 +41,10 @@ const checkRoutesPlacement = (visible: boolean) => {
 }
 
 describe('Header', () => {
-  window.ResizeObserver = jest.fn()
+  window.ResizeObserver = vi.fn()
   ;(window.ResizeObserver as jest.Mock).mockImplementation(() => ({
-    observe: jest.fn(),
-    disconnect: jest.fn(),
+    observe: vi.fn(),
+    disconnect: vi.fn(),
   }))
   mockRouter.setCurrentUrl('/test')
   mockUseAccount.mockReturnValue({

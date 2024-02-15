@@ -22,26 +22,26 @@ import { useProfile } from './useProfile'
 import { useProfileActions } from './useProfileActions'
 
 const NOW_TIMESTAMP = 1588994800000
-jest.spyOn(Date, 'now').mockImplementation(() => NOW_TIMESTAMP)
+vi.spyOn(Date, 'now').mockImplementation(() => NOW_TIMESTAMP)
 
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
 
-jest.mock('@app/hooks/account/useAccountSafely')
-jest.mock('@app/hooks/abilities/useAbilities')
+vi.mock('@app/hooks/account/useAccountSafely')
+vi.mock('@app/hooks/abilities/useAbilities')
 
-jest.mock('./useProfile')
-jest.mock('./ensjs/public/useOwner')
-jest.mock('./ensjs/public/useWrapperData')
-jest.mock('./ensjs/public/useExpiry')
+vi.mock('./useProfile')
+vi.mock('./ensjs/public/useOwner')
+vi.mock('./ensjs/public/useWrapperData')
+vi.mock('./ensjs/public/useExpiry')
 
-jest.mock('./resolver/useResolverStatus')
-jest.mock('@app/hooks/ensjs/public/usePrimaryName')
+vi.mock('./resolver/useResolverStatus')
+vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
-jest.mock('./errors/useHasGlobalError')
+vi.mock('./errors/useHasGlobalError')
 
-jest.mock('./chain/useContractAddress')
+vi.mock('./chain/useContractAddress')
 
-jest.mock('@app/hooks/primary/useGetPrimaryNameTransactionFlowItem')
+vi.mock('@app/hooks/primary/useGetPrimaryNameTransactionFlowItem')
 
 const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 
@@ -64,8 +64,8 @@ const mockGetUseGetPrimaryNameTransactionFlowItem = mockFunction(
   useGetPrimaryNameTransactionFlowItem,
 )
 
-const mockCreateTransactionFlow = jest.fn()
-const mockUsePreparedDataInput = jest.fn()
+const mockCreateTransactionFlow = vi.fn()
+const mockUsePreparedDataInput = vi.fn()
 
 type MockHookData<THookFn extends (...args: any[]) => { data: any }> = DeepPartial<
   ReturnType<THookFn>['data']

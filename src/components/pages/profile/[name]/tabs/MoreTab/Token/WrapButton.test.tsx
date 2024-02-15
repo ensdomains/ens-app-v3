@@ -7,8 +7,8 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 
 import WrapButton from './WrapButton'
 
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
-jest.mock('@app/hooks/useWrapperApprovedForAll')
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
+vi.mock('@app/hooks/useWrapperApprovedForAll')
 
 const createMockResolverStatus = (overides = {}) => ({
   data: {
@@ -18,8 +18,8 @@ const createMockResolverStatus = (overides = {}) => ({
   },
   isLoading: false,
 })
-const mockUseResolverStatus = jest.fn().mockReturnValue(createMockResolverStatus())
-jest.mock('@app/hooks/resolver/useResolverStatus', () => ({
+const mockUseResolverStatus = vi.fn().mockReturnValue(createMockResolverStatus())
+vi.mock('@app/hooks/resolver/useResolverStatus', () => ({
   useResolverStatus: () => mockUseResolverStatus(),
 }))
 
@@ -27,10 +27,10 @@ const mockUseTransaction = mockFunction(useTransactionFlow)
 const mockUseAccount = mockFunction(useAccount)
 const mockUseWrapperApprovedForAll = mockFunction(useWrapperApprovedForAll)
 
-const mockCreateTransactionFlow = jest.fn()
-const mockResumeTransactionFlow = jest.fn()
-const mockGetResumable = jest.fn()
-const mockShowDataInput = jest.fn()
+const mockCreateTransactionFlow = vi.fn()
+const mockResumeTransactionFlow = vi.fn()
+const mockGetResumable = vi.fn()
+const mockShowDataInput = vi.fn()
 const mockusePreparedDataInput = () => mockShowDataInput
 
 describe('WrapButton', () => {

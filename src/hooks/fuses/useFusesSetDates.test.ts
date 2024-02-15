@@ -17,7 +17,7 @@ import {
   useFusesSetDates,
 } from './useFusesSetDates'
 
-jest.mock('../ensjs/subgraph/useNameHistory')
+vi.mock('../ensjs/subgraph/useNameHistory')
 
 const mockUseNameHistory = mockFunction(useNameHistory)
 const mockUsePublicClient = mockFunction(usePublicClient)
@@ -25,7 +25,7 @@ const mockUsePublicClient = mockFunction(usePublicClient)
 describe('getBlockQueryFn', () => {
   it('calls getBlock with the correct parameters', async () => {
     const publicClient = {
-      getBlock: jest.fn(),
+      getBlock: vi.fn(),
     } as unknown as PublicClientWithChain
     await getBlockQueryFn(publicClient)({ queryKey: [{ blockNumber: 1123n }] as any, meta: {} })
     expect(publicClient.getBlock).toHaveBeenCalledWith({ blockNumber: 1123n })
@@ -380,7 +380,7 @@ describe('useFusesSetDates', () => {
     chain: {
       id: 1,
     },
-    getBlock: jest.fn(({ blockNumber }: GetBlockParameters) => {
+    getBlock: vi.fn(({ blockNumber }: GetBlockParameters) => {
       return {
         number: blockNumber!,
         timestamp: timestamps[blockNumber!.toString(10) as keyof typeof timestamps],

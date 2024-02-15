@@ -1,6 +1,7 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
 import { stringToBytes } from 'viem'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
@@ -15,9 +16,9 @@ import { useValidateSubnameLabel } from './useValidateSubnameLabel'
 const BYTE256 =
   '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
 
-jest.mock('@app/hooks/ensjs/public/useWrapperData')
-jest.mock('@app/hooks/ensjs/public/useOwner')
-jest.mock('@app/hooks/fuses/usePccExpired')
+vi.mock('@app/hooks/ensjs/public/useWrapperData')
+vi.mock('@app/hooks/ensjs/public/useOwner')
+vi.mock('@app/hooks/fuses/usePccExpired')
 
 const mockUseWrapperData = mockFunction(useWrapperData)
 const mockUseOwner = mockFunction(useOwner)
@@ -318,7 +319,7 @@ const groups = [
 ] as const
 
 afterEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('BYTE256', () => {

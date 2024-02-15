@@ -1,4 +1,7 @@
+import { describe, expect, it } from "vitest";
 import { nameLevel, parentName } from './name'
+import { describe, it,  expect} from 'vitest'
+
 
 describe('nameLevel', () => {
   it('should return correct value for a subname ', () => {

@@ -4,7 +4,7 @@ import { useEthPrice } from '@app/hooks/useEthPrice'
 
 import { CurrencyText } from './CurrencyText'
 
-jest.mock('@app/hooks/useEthPrice')
+vi.mock('@app/hooks/useEthPrice')
 
 const mockUseEthPrice = mockFunction(useEthPrice)
 mockUseEthPrice.mockReturnValue({ data: BigInt(1e8), isLoading: false })

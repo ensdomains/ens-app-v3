@@ -5,7 +5,7 @@ import { TransactionDisplayItem } from '@app/types'
 
 import { DisplayItems } from './DisplayItems'
 
-jest.mock('@app/hooks/ensjs/public/usePrimaryName')
+vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
 const mockUsePrimaryName = mockFunction(usePrimaryName)
 

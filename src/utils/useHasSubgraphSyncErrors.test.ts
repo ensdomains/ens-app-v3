@@ -1,19 +1,20 @@
 import { renderHook } from '@app/test-utils'
 
 import { hashQueryKey } from '@tanstack/react-query'
+import { describe, expect, it } from 'vitest'
 
 import { useHasSubgraphSyncErrors } from './useHasSubgraphSyncErrors'
 
-const useQueryClient = jest.fn()
+const useQueryClient = vi.fn()
 
-jest.mock('@tanstack/react-query', () => ({
-  ...jest.requireActual('@tanstack/react-query'),
+vi.mock('@tanstack/react-query', async () => ({
+  ...(await vi.importActual('@tanstack/react-query')),
   useQueryClient: () => useQueryClient(),
 }))
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useSyncExternalStore: jest.fn().mockImplementation((subscribe, getSnapshot) => {
+vi.mock('react', async () => ({
+  ...(await vi.importActual('react')),
+  useSyncExternalStore: vi.fn().mockImplementation((subscribe, getSnapshot) => {
     subscribe(() => {})
 
     const initialState = getSnapshot()
@@ -55,7 +56,7 @@ describe('useHasSubgraphSyncErrors', () => {
     expect(result.current).toEqual({ error: 1, slow: 0 })
   })
   it('it reports a latency issue if a query took too long since render', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
 
     useQueryClient.mockImplementation(() => {
       let called = 0
@@ -84,12 +85,12 @@ describe('useHasSubgraphSyncErrors', () => {
       }
     })
     // advance startTime of a query by 5 seconds
-    jest.spyOn(global.Date, 'now').mockImplementationOnce(() => Date.now() + 5001)
+    vi.spyOn(global.Date, 'now').mockImplementationOnce(() => Date.now() + 5001)
 
     const { result } = renderHook(() => useHasSubgraphSyncErrors())
 
     expect(result.current).toEqual({ error: 0, slow: 1 })
 
-    jest.clearAllTimers()
+    vi.clearAllTimers()
   })
 })

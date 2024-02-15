@@ -7,9 +7,9 @@ import { useProfile } from '../useProfile'
 import { useResolverHasInterfaces } from '../useResolverHasInterfaces'
 import { useResolverIsAuthorised } from './useResolverIsAuthorised'
 
-jest.mock('@app/hooks/useProfile')
-jest.mock('@app/hooks/useIsWrapped')
-jest.mock('@app/hooks/useResolverHasInterfaces')
+vi.mock('@app/hooks/useProfile')
+vi.mock('@app/hooks/useIsWrapped')
+vi.mock('@app/hooks/useResolverHasInterfaces')
 
 const mockUseProfile = mockFunction(useProfile)
 const mockUseIsWrapped = mockFunction(useIsWrapped)

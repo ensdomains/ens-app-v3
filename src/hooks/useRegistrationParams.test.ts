@@ -1,5 +1,7 @@
 import { renderHook } from '@app/test-utils'
 
+import { describe, expect, it } from 'vitest'
+
 import useRegistrationParams from './useRegistrationParams'
 
 describe('useRegistrationParams()', () => {

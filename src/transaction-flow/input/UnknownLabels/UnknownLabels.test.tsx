@@ -6,8 +6,8 @@ import { encodeLabelhash } from '@ensdomains/ensjs/utils'
 
 import UnknownLabels from './UnknownLabels-flow'
 
-const mockDispatch = jest.fn()
-const mockOnDismiss = jest.fn()
+const mockDispatch = vi.fn()
+const mockOnDismiss = vi.fn()
 
 const labels = {
   test: '0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658',

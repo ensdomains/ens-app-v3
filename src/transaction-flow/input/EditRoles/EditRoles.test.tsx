@@ -2,11 +2,11 @@ import { render, screen, userEvent, waitFor, within } from '@app/test-utils'
 
 import EditRoles from './EditRoles-flow'
 
-jest.mock('@app/hooks/account/useAccountSafely', () => ({
+vi.mock('@app/hooks/account/useAccountSafely', () => ({
   useAccountSafely: () => ({ address: '0xowner' }),
 }))
 
-jest.mock('@app/hooks/useBasicName', () => ({
+vi.mock('@app/hooks/useBasicName', () => ({
   useBasicName: () => ({
     ownerData: {
       owner: '0xmanager',
@@ -16,7 +16,7 @@ jest.mock('@app/hooks/useBasicName', () => ({
   }),
 }))
 
-jest.mock('@app/hooks/ownership/useRoles/useRoles', () => () => ({
+vi.mock('@app/hooks/ownership/useRoles/useRoles', () => () => ({
   data: [
     {
       role: 'owner',
@@ -42,7 +42,7 @@ jest.mock('@app/hooks/ownership/useRoles/useRoles', () => () => ({
   isLoading: false,
 }))
 
-jest.mock('@app/hooks/abilities/useAbilities', () => ({
+vi.mock('@app/hooks/abilities/useAbilities', () => ({
   useAbilities: () => ({
     data: {
       canSendOwner: true,
@@ -63,7 +63,7 @@ jest.mock('@app/hooks/abilities/useAbilities', () => ({
 }))
 
 let searchData: any[] = []
-jest.mock('@app/transaction-flow/input/EditRoles/hooks/useSimpleSearch.ts', () => ({
+vi.mock('@app/transaction-flow/input/EditRoles/hooks/useSimpleSearch.ts', () => ({
   useSimpleSearch: () => ({
     mutate: (query: string) => {
       searchData = [{ name: `${query}.eth`, address: `0x${query}` }]
@@ -74,7 +74,7 @@ jest.mock('@app/transaction-flow/input/EditRoles/hooks/useSimpleSearch.ts', () =
   }),
 }))
 
-jest.mock('@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier', () => ({
+vi.mock('@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier', () => ({
   AvatarWithIdentifier: ({ name, address }: any) => (
     <div>
       <span>{name}</span>
@@ -83,15 +83,15 @@ jest.mock('@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
   ),
 }))
 
-const mockIntersectionObserver = jest.fn().mockReturnValue({
+const mockIntersectionObserver = vi.fn().mockReturnValue({
   observe: () => null,
   unobserve: () => null,
   disconnect: () => null,
 })
 window.IntersectionObserver = mockIntersectionObserver
-window.scroll = jest.fn()
+window.scroll = vi.fn()
 
-const mockDispatch = jest.fn()
+const mockDispatch = vi.fn()
 
 describe('EditRoles', () => {
   it('should dispatch a transaction for each role changed', async () => {

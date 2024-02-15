@@ -1,33 +1,56 @@
-import { renderHook } from "@app/test-utils"
-import { useExpiryActions } from "./useExpiryActions"
+import { renderHook } from '@app/test-utils'
 
-jest.mock('@app/hooks/abilities/useAbilities', () => ({
-  useAbilities: ( ) => ({
+import { useExpiryActions } from './useExpiryActions'
+
+vi.mock('@app/hooks/abilities/useAbilities', () => ({
+  useAbilities: () => ({
     data: {
-      canEdit: true
+      canEdit: true,
     },
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }))
 
 describe('useExpiryActions', () => {
   it('should render if expiryDetails contains a expiry type data with a valid expiry date', () => {
-    const { result} = renderHook(() => useExpiryActions({ name: 'test.eth', expiryDetails: [{ type: 'expiry', date: new Date('3255803954000') }]}))
-    expect(result.current).toEqual(expect.arrayContaining([expect.objectContaining({type: 'extend'})]))
+    const { result } = renderHook(() =>
+      useExpiryActions({
+        name: 'test.eth',
+        expiryDetails: [{ type: 'expiry', date: new Date('3255803954000') }],
+      }),
+    )
+    expect(result.current).toEqual(
+      expect.arrayContaining([expect.objectContaining({ type: 'extend' })]),
+    )
   })
 
   it('should render null if name is subname and if expiryDetails contains a expiry type data with a valid expiry date', () => {
-    const { result} = renderHook(() => useExpiryActions({ name: 'sub.test.eth', expiryDetails: [{ type: 'expiry', date: new Date('3255803954000') }]}))
+    const { result } = renderHook(() =>
+      useExpiryActions({
+        name: 'sub.test.eth',
+        expiryDetails: [{ type: 'expiry', date: new Date('3255803954000') }],
+      }),
+    )
     expect(result.current).toEqual(null)
   })
 
   it('should return null if expiryDetails contains a expiry type data but an invalid expiry date', () => {
-    const { result} = renderHook(() => useExpiryActions({ name: 'test.eth', expiryDetails: [{ type: 'expiry', date: undefined as unknown as Date }]}))
+    const { result } = renderHook(() =>
+      useExpiryActions({
+        name: 'test.eth',
+        expiryDetails: [{ type: 'expiry', date: undefined as unknown as Date }],
+      }),
+    )
     expect(result.current).toEqual(null)
   })
 
   it('should return null if expiryDetails does not contain a expiry type data', () => {
-    const { result} = renderHook(() => useExpiryActions({ name: 'test.eth', expiryDetails: [{ type: 'expiry', date: undefined as unknown as Date }]}))
+    const { result } = renderHook(() =>
+      useExpiryActions({
+        name: 'test.eth',
+        expiryDetails: [{ type: 'expiry', date: undefined as unknown as Date }],
+      }),
+    )
     expect(result.current).toEqual(null)
   })
 })

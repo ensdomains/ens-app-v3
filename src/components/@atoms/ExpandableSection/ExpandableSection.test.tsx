@@ -1,4 +1,5 @@
-import { render, screen, userEvent} from '@app/test-utils'
+import { render, screen, userEvent } from '@app/test-utils'
+
 import { ExpandableSection } from './ExpandableSection'
 
 describe('ExpandableSection', () => {
