@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import react from '@vitejs/plugin-react'
-// import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
@@ -14,5 +13,8 @@ export default defineConfig({
     },
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     setupFiles: ['./vitest-setup.mts'],
+    coverage: {
+      provider: 'v8',
+    },
   },
 })
