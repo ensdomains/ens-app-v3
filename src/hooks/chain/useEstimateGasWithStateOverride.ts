@@ -314,12 +314,18 @@ export const useEstimateGasWithStateOverride = <
     }
   }, [gasPrice, params.transactions, query.data])
 
-  return {
-    ...query,
-    data,
-    gasPrice,
-    isLoading: query.isLoading || isGasPriceLoading || isWalletClientLoading,
-    isFetching: query.isFetching || isGasPriceFetching,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
-  }
+  const isLoading = query.isLoading || isGasPriceLoading || isWalletClientLoading
+  const isFetching = query.isFetching || isGasPriceFetching
+
+  return useMemo(
+    () => ({
+      ...query,
+      data,
+      gasPrice,
+      isLoading,
+      isFetching,
+      isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    }),
+    [data, gasPrice, isFetching, isLoading, query],
+  )
 }
