@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { parseEther } from 'viem'
 import { useAccount, useBalance, useEnsAvatar } from 'wagmi'
 
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, mq, ScrollBox } from '@ensdomains/thorin'
@@ -10,12 +11,11 @@ import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
-import gasLimitDictionary from '@app/constants/gasLimits'
+import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
-import { useEstimateGasLimitForTransaction } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
 import { useZorb } from '@app/hooks/useZorb'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import useUserConfig from '@app/utils/useUserConfig'
 import { yearsToSeconds } from '@app/utils/utils'
@@ -212,28 +212,35 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const rentFee = priceData ? priceData.base + priceData.premium : undefined
   const totalRentFee = rentFee ? BigInt(rentFee) * BigInt(years) : undefined
   const transactions = [
-    makeTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee!, isSelf }),
+    createTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee!, isSelf }),
   ]
 
   const {
-    gasLimit: estimatedGasLimit,
+    data: { gasEstimate: estimatedGasLimit, gasCost: transactionFee },
     error: estimateGasLimitError,
     isLoading: isEstimateGasLoading,
     gasPrice,
-  } = useEstimateGasLimitForTransaction({
-    transaction: makeTransactionItem('extendNames', {
-      names,
-      duration,
-      rentPrice: totalRentFee!,
-      isSelf,
-    }),
+  } = useEstimateGasWithStateOverride({
+    transactions: [
+      {
+        name: 'extendNames',
+        data: {
+          names,
+          duration,
+          rentPrice: totalRentFee!,
+          isSelf,
+        },
+        stateOverride: [
+          {
+            address: address!,
+            // the value will only be used if totalRentFee is defined, dw
+            balance: totalRentFee ? totalRentFee + parseEther('10') : 0n,
+          },
+        ],
+      },
+    ],
     enabled: !!rentFee,
   })
-
-  const hardcodedGasLimit = gasLimitDictionary.RENEW(names.length)
-  const gasLimit = estimatedGasLimit || hardcodedGasLimit
-
-  const transactionFee = gasPrice ? gasLimit * gasPrice : 0n
 
   const items: InvoiceItem[] = [
     {

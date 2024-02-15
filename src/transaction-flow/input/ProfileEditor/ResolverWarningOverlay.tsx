@@ -4,7 +4,7 @@ import { Address } from 'viem'
 
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { makeIntroItem } from '@app/transaction-flow/intro'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { InvalidResolverView } from './views/InvalidResolverView'
@@ -104,7 +104,7 @@ const ResolverWarningOverlay = ({
     dispatch({
       name: 'setTransactions',
       payload: [
-        makeTransactionItem('updateResolver', {
+        createTransactionItem('updateResolver', {
           name,
           contract: isWrapped ? 'nameWrapper' : 'registry',
           resolverAddress: latestResolverAddress,
@@ -129,10 +129,10 @@ const ResolverWarningOverlay = ({
           }),
         },
         transactions: [
-          makeTransactionItem('migrateProfile', {
+          createTransactionItem('migrateProfile', {
             name,
           }),
-          makeTransactionItem('updateResolver', {
+          createTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolverAddress: latestResolverAddress,
@@ -154,11 +154,11 @@ const ResolverWarningOverlay = ({
           }),
         },
         transactions: [
-          makeTransactionItem('resetProfile', {
+          createTransactionItem('resetProfile', {
             name,
             resolverAddress: latestResolverAddress,
           }),
-          makeTransactionItem('updateResolver', {
+          createTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolverAddress: latestResolverAddress,
@@ -183,11 +183,11 @@ const ResolverWarningOverlay = ({
           }),
         },
         transactions: [
-          makeTransactionItem('migrateProfileWithReset', {
+          createTransactionItem('migrateProfileWithReset', {
             name,
             resolverAddress: oldResolverAddress,
           }),
-          makeTransactionItem('updateResolver', {
+          createTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolverAddress: latestResolverAddress,

@@ -1,14 +1,15 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 import { vi,describe,it,expect } from 'vitest'
+
+import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
-import { useEstimateGasLimitForTransaction } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
 
 import ExtendNames from './ExtendNames-flow'
 
 vi.mock('@app/hooks/gasEstimation/useEstimateGasLimitForTransactions')
 vi.mock('@app/hooks/ensjs/public/usePrice')
 
-const mockUseEstimateGasLimitForTransaction = mockFunction(useEstimateGasLimitForTransaction)
+const mockUseEstimateGasWithStateOverride = mockFunction(useEstimateGasWithStateOverride)
 const mockUsePrice = mockFunction(usePrice)
 
 vi.mock('@ensdomains/thorin', async () => {
@@ -39,8 +40,8 @@ vi.mock(
 )
 
 describe('Extendnames', () => {
-  mockUseEstimateGasLimitForTransaction.mockReturnValue({
-    gasLimit: 21000n,
+  mockUseEstimateGasWithStateOverride.mockReturnValue({
+    data: { gasEstimate: 21000n },
     gasPrice: 100n,
     error: null,
     isLoading: true,

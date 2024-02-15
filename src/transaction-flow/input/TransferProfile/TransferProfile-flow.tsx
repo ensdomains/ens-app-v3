@@ -7,7 +7,7 @@ import { useProfile } from '@app/hooks/useProfile'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 
 import { useContractAddress } from '../../../hooks/chain/useContractAddress'
-import { makeTransactionItem } from '../../transaction/index'
+import { createTransactionItem } from '../../transaction/index'
 import { TransactionDialogPassthrough } from '../../types'
 
 type Data = {
@@ -24,7 +24,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
   const { data: profile, isLoading } = useProfile({ name: data.name })
   const oldResolverAddress = profile?.resolverAddress
 
-  const updateResolverTransaction = makeTransactionItem('updateResolver', {
+  const updateResolverTransaction = createTransactionItem('updateResolver', {
     name: data.name,
     resolverAddress,
     oldResolverAddress,
@@ -51,7 +51,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
       key: `edit-profile-flow-${data.name}`,
       payload: {
         transactions: [
-          makeTransactionItem('migrateProfile', { name: data.name }),
+          createTransactionItem('migrateProfile', { name: data.name }),
           updateResolverTransaction,
         ],
         resumable: true,

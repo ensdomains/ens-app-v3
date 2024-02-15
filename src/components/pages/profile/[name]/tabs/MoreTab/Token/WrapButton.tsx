@@ -8,7 +8,7 @@ import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useWrapperApprovedForAll } from '@app/hooks/useWrapperApprovedForAll'
 import { makeIntroItem } from '@app/transaction-flow/intro'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { Profile } from '@app/types'
@@ -65,23 +65,23 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
     const transactions: GenericTransaction[] = [
       ...(needsApproval
         ? [
-            makeTransactionItem('approveNameWrapper', {
+            createTransactionItem('approveNameWrapper', {
               address: address!,
             }),
           ]
         : []),
       ...(isManagerAndShouldMigrate
         ? [
-            makeTransactionItem('migrateProfile', {
+            createTransactionItem('migrateProfile', {
               name,
             }),
           ]
         : []),
-      makeTransactionItem('wrapName', {
+      createTransactionItem('wrapName', {
         name,
       }),
       ...(isRegistrantAndShouldMigrate
-        ? [makeTransactionItem('migrateProfile', { name, resolverAddress })]
+        ? [createTransactionItem('migrateProfile', { name, resolverAddress })]
         : []),
     ]
 

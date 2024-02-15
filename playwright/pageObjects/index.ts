@@ -7,6 +7,7 @@ import { AdvancedEditorModal } from './advancedEditorModal'
 import { EditRolesModal } from './editRolesModal'
 import { ExtendNamesModal } from './extendNamesModal'
 import { HomePage } from './homePage'
+import { ImportPage } from './importPage'
 import { MorePage } from './morePage'
 import { OwnershipPage } from './ownershipPage'
 import { PermissionsPage } from './permissionsPage'
@@ -24,6 +25,7 @@ const pageObjects = {
   EditRolesModal,
   ExtendNamesModal,
   HomePage,
+  ImportPage,
   MorePage,
   OwnershipPage,
   PermissionsPage,

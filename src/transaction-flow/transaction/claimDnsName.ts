@@ -1,15 +1,10 @@
 import type { TFunction } from 'react-i18next'
-import { Address } from 'viem'
 
-import { GetDnsImportDataReturnType, importDnsName } from '@ensdomains/ensjs/dns'
+import { importDnsName, ImportDnsNameDataParameters } from '@ensdomains/ensjs/dns'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
-type Data = {
-  name: string
-  address: Address | undefined
-  dnsImportData: GetDnsImportDataReturnType
-}
+type Data = Omit<Required<ImportDnsNameDataParameters>, 'resolverAddress'>
 
 const displayItems = (
   { name }: Data,
@@ -22,7 +17,7 @@ const displayItems = (
   },
   {
     label: 'action',
-    value: t('general.importDNSSECName', { ns: 'dnssec' }),
+    value: t('transaction.description.claimDnsName'),
   },
 ]
 

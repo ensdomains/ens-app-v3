@@ -1,4 +1,4 @@
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 
 import { getSendNameTransactions } from './getSendNameTransactions'
 
@@ -30,19 +30,19 @@ describe('getSendNameTransactions', () => {
         resolverAddress: '0xresolver',
       }),
     ).toEqual([
-      makeTransactionItem('resetProfileWithRecords', {
+      createTransactionItem('resetProfileWithRecords', {
         name: 'test.eth',
         records: { coins: [{ coin: 'ETH', value: '0xrecipient' }] },
         resolverAddress: '0xresolver',
       }),
-      makeTransactionItem('transferName', {
+      createTransactionItem('transferName', {
         name: 'test.eth',
         newOwnerAddress: '0xrecipient',
         sendType: 'sendManager',
         contract: 'registrar',
         reclaim: true,
       }),
-      makeTransactionItem('transferName', {
+      createTransactionItem('transferName', {
         name: 'test.eth',
         newOwnerAddress: '0xrecipient',
         sendType: 'sendOwner',
@@ -78,19 +78,19 @@ describe('getSendNameTransactions', () => {
         resolverAddress: '0xresolver',
       }),
     ).toEqual([
-      makeTransactionItem('resetProfileWithRecords', {
+      createTransactionItem('resetProfileWithRecords', {
         name: 'test.eth',
         records: { coins: [{ coin: 'ETH', value: '0xrecipient' }] },
         resolverAddress: '0xresolver',
       }),
-      makeTransactionItem('transferName', {
+      createTransactionItem('transferName', {
         name: 'test.eth',
         newOwnerAddress: '0xrecipient',
         sendType: 'sendManager',
         contract: 'registrar',
         reclaim: false,
       }),
-      makeTransactionItem('transferName', {
+      createTransactionItem('transferName', {
         name: 'test.eth',
         newOwnerAddress: '0xrecipient',
         sendType: 'sendOwner',
@@ -126,15 +126,15 @@ describe('getSendNameTransactions', () => {
         resolverAddress: '0xresolver',
       }),
     ).toEqual([
-      makeTransactionItem('updateEthAddress', { name: 'test.eth', address: '0xrecipient' }),
-      makeTransactionItem('transferName', {
+      createTransactionItem('updateEthAddress', { name: 'test.eth', address: '0xrecipient' }),
+      createTransactionItem('transferName', {
         name: 'test.eth',
         newOwnerAddress: '0xrecipient',
         sendType: 'sendManager',
         contract: 'registrar',
         reclaim: true,
       }),
-      makeTransactionItem('transferName', {
+      createTransactionItem('transferName', {
         name: 'test.eth',
         newOwnerAddress: '0xrecipient',
         sendType: 'sendOwner',
@@ -170,14 +170,14 @@ describe('getSendNameTransactions', () => {
         resolverAddress: '0xresolver',
       }),
     ).toEqual([
-      makeTransactionItem('transferName', {
+      createTransactionItem('transferName', {
         name: 'test.eth',
         newOwnerAddress: '0xrecipient',
         sendType: 'sendManager',
         contract: 'registrar',
         reclaim: true,
       }),
-      makeTransactionItem('transferName', {
+      createTransactionItem('transferName', {
         name: 'test.eth',
         newOwnerAddress: '0xrecipient',
         sendType: 'sendOwner',
@@ -213,14 +213,14 @@ describe('getSendNameTransactions', () => {
         resolverAddress: '0xresolver',
       }),
     ).toEqual([
-      makeTransactionItem('transferName', {
+      createTransactionItem('transferName', {
         name: 'test.eth',
         newOwnerAddress: '0xrecipient',
         sendType: 'sendManager',
         contract: 'registrar',
         reclaim: true,
       }),
-      makeTransactionItem('transferName', {
+      createTransactionItem('transferName', {
         name: 'test.eth',
         newOwnerAddress: '0xrecipient',
         sendType: 'sendOwner',

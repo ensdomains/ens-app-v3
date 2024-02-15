@@ -5,16 +5,30 @@ import { useQuery } from 'wagmi'
 import {
   createTransactionRequest,
   TransactionData,
-  TransactionItem,
   TransactionName,
   TransactionParameters,
 } from '@app/transaction-flow/transaction'
+import { QueryConfig } from '@app/types'
 import { fetchTenderlyEstimate } from '@app/utils/tenderly'
 
 import { useWalletClientWithAccount } from '../account/useWalletClient'
 import { useGasPrice } from '../chain/useGasPrice'
 import { usePublicClient } from '../usePublicClient'
 import { useQueryKeyFactory } from '../useQueryKeyFactory'
+
+type UseEstimateGasLimitForTransactionParameters<TName extends TransactionName> = Omit<
+  TransactionParameters<TName>,
+  'publicClient' | 'walletClient'
+> & {
+  name: TName
+}
+
+type UseEstimateGasLimitForTransactionReturnType = { name: TransactionName; gasLimit: bigint }
+
+type UseEstimateGasLimitForTransactionConfig = QueryConfig<
+  UseEstimateGasLimitForTransactionReturnType,
+  Error
+>
 
 type GetEstimateWithConfigParameters<TName extends TransactionName> =
   TransactionParameters<TName> & {
@@ -62,17 +76,24 @@ export const fetchEstimateWithConfig = async <TName extends TransactionName>({
 }
 
 export const useEstimateGasLimitForTransaction = <TName extends TransactionName>({
-  transaction,
+  // config
+  cacheTime = 60,
   enabled = true,
-}: {
-  transaction: TransactionItem<TName>
-  enabled?: boolean
-}) => {
+  staleTime,
+  scopeKey,
+  onError,
+  onSettled,
+  onSuccess,
+  // params
+  ...params
+}: UseEstimateGasLimitForTransactionParameters<TName> &
+  UseEstimateGasLimitForTransactionConfig) => {
   const publicClient = usePublicClient()
   const { data: walletClient, isLoading: isWalletClientLoading } = useWalletClientWithAccount()
 
   const queryKey = useQueryKeyFactory({
-    params: transaction,
+    params,
+    scopeKey,
     functionName: 'estimateGasLimitForTransaction',
     queryDependencyType: 'standard',
   })
@@ -81,11 +102,15 @@ export const useEstimateGasLimitForTransaction = <TName extends TransactionName>
 
   const { data, isLoading, isFetching, ...rest } = useQuery(
     queryKey,
-    ({ queryKey: [params] }) =>
-      fetchEstimateWithConfig({ ...params, publicClient, walletClient: walletClient! }),
+    ({ queryKey: [innerParams] }) =>
+      fetchEstimateWithConfig({ ...innerParams, publicClient, walletClient: walletClient! }),
     {
+      cacheTime,
+      staleTime,
+      onError,
+      onSettled,
+      onSuccess,
       enabled: enabled && !!walletClient && !isWalletClientLoading,
-      onError: console.error,
       select: (result) => ({
         ...result,
         gasLimit: BigInt(result.gasLimit),

@@ -68,6 +68,10 @@ export const useValidate = ({ input, enabled = true }: UseValidateParameters): V
   const { data } = useQuery(queryKey, ({ queryKey: [params] }) => validate(params.input), {
     enabled,
     initialData: () => (enabled ? validate(input) : defaultData),
+    select: (d) =>
+      Object.fromEntries(
+        Object.entries(d).map(([k, v]) => [k, v === 'undefined' ? '' : v]),
+      ) as ValidationResult,
   })
 
   return data

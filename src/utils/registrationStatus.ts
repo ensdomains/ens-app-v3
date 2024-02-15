@@ -1,4 +1,5 @@
 import {
+  GetAddressRecordReturnType,
   GetExpiryReturnType,
   GetOwnerReturnType,
   GetPriceReturnType,
@@ -28,6 +29,7 @@ export const getRegistrationStatus = ({
   wrapperData,
   expiryData,
   priceData,
+  addrData,
   supportedTLD,
 }: {
   timestamp: number
@@ -36,6 +38,7 @@ export const getRegistrationStatus = ({
   wrapperData?: GetWrapperDataReturnType
   expiryData?: GetExpiryReturnType
   priceData?: GetPriceReturnType
+  addrData?: GetAddressRecordReturnType
   supportedTLD?: boolean | null
 }): RegistrationStatus => {
   if (isETH && is2LD && isShort) {
@@ -76,5 +79,14 @@ export const getRegistrationStatus = ({
     // more than 2 labels
     return 'notOwned'
   }
+
+  if (
+    addrData?.value &&
+    addrData.value !== '0x0000000000000000000000000000000000000020' &&
+    addrData.value !== emptyAddress
+  ) {
+    return 'imported'
+  }
+
   return 'notImported'
 }

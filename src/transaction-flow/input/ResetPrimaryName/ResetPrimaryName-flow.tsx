@@ -6,7 +6,7 @@ import { Button, Dialog } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 
-import { makeTransactionItem } from '../../transaction'
+import { createTransactionItem } from '../../transaction'
 import { TransactionDialogPassthrough } from '../../types'
 
 type Data = {
@@ -31,7 +31,7 @@ const ResetPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) => 
     dispatch({
       name: 'setTransactions',
       payload: [
-        makeTransactionItem('resetPrimaryName', {
+        createTransactionItem('resetPrimaryName', {
           address,
         }),
       ],
