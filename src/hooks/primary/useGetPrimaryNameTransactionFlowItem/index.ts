@@ -6,10 +6,8 @@ import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import type { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 import { makeIntroItem } from '@app/transaction-flow/intro/index'
-import {  TransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionIntro } from '@app/transaction-flow/types'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { emptyAddress } from '@app/utils/constants'
 
 import {

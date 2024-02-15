@@ -1,8 +1,7 @@
 import { Address } from 'viem'
 
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { TransactionItem } from '@app/transaction-flow/transaction'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
 
 import type { SendNameForm } from '../SendName-flow'

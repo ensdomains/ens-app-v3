@@ -3,8 +3,7 @@ import { Address } from 'viem'
 
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
 
-import { TransactionItem } from '..'
-import { createTransactionItem } from '..'
+import { createTransactionItem, TransactionItem } from '..'
 
 type MakeTransferNameOrSubnameTransactionItemParams = {
   name: string

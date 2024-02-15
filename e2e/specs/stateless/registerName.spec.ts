@@ -1,5 +1,7 @@
-import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 import { expect } from '@playwright/test'
+
+import { setPrimaryName } from '@ensdomains/ensjs/wallet'
+
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
