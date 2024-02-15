@@ -54,10 +54,9 @@ export const AvatarWithIdentifier = ({
   const primary = usePrimary(address, !address || !!name || address === emptyAddress)
   const network = useChainId()
 
-  const _name = name || primary.data?.beautifiedName
+  const _name = primary.data?.beautifiedName || name
   const _title = _name || (shortenAddressAsTitle ? shortenAddress(address) : address)
-  const _subtitle =
-    subtitle || (primary.data?.beautifiedName || name ? shortenAddress(address) : undefined)
+  const _subtitle = subtitle || (_name ? shortenAddress(address) : undefined)
 
   const isTitleFullAddress = !shortenAddressAsTitle && !_name
 

@@ -82,7 +82,7 @@ const UploadComponent = ({
     if (network !== 'mainnet') {
       baseURL = `${baseURL}/${network}`
     }
-    const endpoint = `${baseURL}/${name}`
+    const endpoint = `${baseURL}/${encodeURIComponent(name)}`
 
     const sig = await signTypedDataAsync()
     const fetched = (await fetch(endpoint, {

@@ -29,7 +29,11 @@ export const useMoonpayRegistration = (
     const label = getLabelFromName(normalisedName)
     const tokenId = labelhash(label)
 
-    const requestUrl = `${MOONPAY_WORKER_URL[chainId]}/signedurl?tokenId=${tokenId}&name=${normalisedName}&duration=${duration}&walletAddress=${address}`
+    const requestUrl = `${
+      MOONPAY_WORKER_URL[chainId]
+    }/signedurl?tokenId=${tokenId}&name=${encodeURIComponent(
+      normalisedName,
+    )}&duration=${duration}&walletAddress=${address}`
     const response = await fetch(requestUrl)
     const textResponse = await response.text()
     setMoonpayUrl(textResponse)
