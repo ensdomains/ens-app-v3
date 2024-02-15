@@ -20,13 +20,15 @@ const baseMetadataURL = process.env.NEXT_PUBLIC_PROVIDER
 export function imageUrlUnknownRecord(name: string, network: number) {
   const supported = getSupportedNetworkName(network)
 
-  return `${baseMetadataURL}/${supported}/avatar/${name}?timestamp=${Date.now()}`
+  return `${baseMetadataURL}/${supported}/avatar/${encodeURIComponent(
+    name,
+  )}?timestamp=${Date.now()}`
 }
 
 export function ensNftImageUrl(name: string, network: number, regAddr: string) {
   const supported = getSupportedNetworkName(network)
 
-  return `${baseMetadataURL}/${supported}/${regAddr}/${name}/image`
+  return `${baseMetadataURL}/${supported}/${regAddr}/${encodeURIComponent(name)}/image`
 }
 
 export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice = 5) => {
