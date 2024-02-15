@@ -4,7 +4,7 @@ import { GetOwnerReturnType } from '@ensdomains/ensjs/public'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import BaseWrapButton from './BaseWrapButton'
@@ -22,7 +22,7 @@ const UnwrapButton = ({ name, ownerData, status }: Props) => {
   const { createTransactionFlow } = useTransactionFlow()
   const handleUnwrapClick = () => {
     createTransactionFlow(`unwrapName-${name}`, {
-      transactions: [makeTransactionItem('unwrapName', { name })],
+      transactions: [createTransactionItem('unwrapName', { name })],
     })
   }
 

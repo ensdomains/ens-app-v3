@@ -25,7 +25,7 @@ import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import { makeTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { getResolverWrapperAwareness } from '@app/utils/utils'
@@ -233,7 +233,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
       dispatch({
         name: 'setTransactions',
         payload: [
-          makeTransactionItem('updateProfileRecords', {
+          createTransactionItem('updateProfileRecords', {
             name,
             resolverAddress: profile.resolverAddress,
             records,

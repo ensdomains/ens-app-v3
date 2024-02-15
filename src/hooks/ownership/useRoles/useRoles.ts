@@ -67,7 +67,7 @@ function useRoles(name: string, options?: Options): Result {
       registrant: details.ownerData?.registrant,
       parentOwner: parentData.ownerData?.owner,
       ethAddress: details.profile?.address,
-      dnsOwner: details.dnsOwner,
+      dnsOwner: details.dnsOwner ?? undefined,
     })
   }, [
     isLoading,

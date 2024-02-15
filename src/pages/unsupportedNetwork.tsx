@@ -6,6 +6,8 @@ import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 import { Button, Helper, mq } from '@ensdomains/thorin'
 
+import { getSupportedChainById } from '@app/constants/chains'
+
 const Card = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['3.5']};
@@ -41,14 +43,14 @@ export default function Page() {
   const router = useRouter()
 
   useEffect(() => {
-    if (currentChain?.id === 5 || currentChain?.id === 1337) {
+    if (currentChain?.id && getSupportedChainById(currentChain.id)) {
       router.push('/')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChain?.id])
 
   const handleChangeNetwork = () => {
-    switchNetwork?.(5)
+    switchNetwork?.(1)
   }
 
   return (

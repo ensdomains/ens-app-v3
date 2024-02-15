@@ -50,7 +50,7 @@ export type TransactionIntro = {
 export type TransactionFlowItem = {
   input?: GenericDataInput
   intro?: TransactionIntro
-  transactions: GenericTransaction[]
+  transactions: readonly GenericTransaction[] | GenericTransaction[]
   resumable?: boolean
   requiresManualCleanup?: boolean
   autoClose?: boolean
@@ -157,7 +157,7 @@ export type TransactionDialogProps = ComponentProps<typeof Dialog> & {
 export type TransactionDialogPassthrough = {
   dispatch: Dispatch<TransactionFlowAction>
   onDismiss: () => void
-  transactions?: TransactionItem[]
+  transactions?: readonly TransactionItem[] | TransactionItem[]
 }
 
 export type ManagedDialogProps = {

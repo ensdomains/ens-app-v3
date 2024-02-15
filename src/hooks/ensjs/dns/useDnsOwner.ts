@@ -74,6 +74,7 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
     onError,
     onSettled,
     onSuccess,
+    retry: 2,
   })
 
   return {

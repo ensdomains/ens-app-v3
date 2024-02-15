@@ -1,3 +1,5 @@
+import { Skeleton } from '@ensdomains/thorin'
+
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { CurrencyDisplay } from '@app/types'
 import { makeDisplay } from '@app/utils/currency'
@@ -10,12 +12,18 @@ type Props = {
 }
 
 export const CurrencyText = ({ eth, bufferPercentage = 100n, currency = 'eth' }: Props) => {
-  const { data: ethPrice, isLoading } = useEthPrice()
+  const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
 
-  if (isLoading || !eth || !ethPrice) return null
+  const isLoading = isEthPriceLoading || !eth || !ethPrice
 
-  if (currency === 'eth') {
-    return <>{makeDisplay({ value: (eth * bufferPercentage) / 100n, symbol: 'eth' })}</>
-  }
-  return <>{makeDisplay({ value: (eth * ethPrice) / BigInt(1e8), symbol: currency })}</>
+  return (
+    <Skeleton loading={isLoading}>
+      {(() => {
+        if (isLoading) return '0.00 ETH'
+        if (currency === 'eth')
+          return makeDisplay({ value: (eth * bufferPercentage) / 100n, symbol: 'eth' })
+        return makeDisplay({ value: (eth * ethPrice) / BigInt(1e8), symbol: currency })
+      })()}
+    </Skeleton>
+  )
 }

@@ -1,42 +1,48 @@
-export const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query'
+import { Address } from 'viem'
 
-interface DNSRecord {
-  name: string
-  type: number
-  TTL: number
-  data: string
+import {
+  BaseError,
+  DnsDnssecVerificationFailedError,
+  DnsInvalidAddressChecksumError,
+  DnsInvalidTxtRecordError,
+  DnsNoTxtRecordError,
+  DnsResponseStatusError,
+} from '@ensdomains/ensjs'
+
+import { UseDnsOwnerError } from '@app/hooks/ensjs/dns/useDnsOwner'
+
+export type DnsNavigationFunction = (direction: 'prev' | 'next') => void
+
+export type DnsAddressStatus = 'matching' | 'mismatching' | null
+
+export const checkDnsAddressMatch = ({
+  address,
+  dnsAddress,
+}: {
+  address: Address | undefined | null
+  dnsAddress: Address | undefined | null
+}): DnsAddressStatus => {
+  if (!address || !dnsAddress) return null
+  if (dnsAddress !== address) return 'mismatching' as const
+  return 'matching' as const
 }
 
-interface DNSQuestion {
-  name: string
-  type: number
-}
-
-interface DohResponse {
-  AD: boolean
-  Answer: DNSRecord[]
-  CD: false
-  Question: DNSQuestion[]
-  RA: boolean
-  RD: boolean
-  Status: number
-  TC: boolean
-}
-
-export const isDnsSecEnabled = async (name: string = '') => {
-  const response = await fetch(
-    `${DNS_OVER_HTTP_ENDPOINT}?${new URLSearchParams({
-      name,
-      do: 'true',
-    })}`,
-    {
-      headers: {
-        accept: 'application/dns-json',
-      },
-    },
-  )
-  const result: DohResponse = await response.json()
-  // NXDOMAIN
-  if (result?.Status === 3) return false
-  return result?.AD
+export const checkDnsError = ({
+  error,
+  isLoading,
+}: {
+  error: UseDnsOwnerError | null | undefined
+  isLoading: boolean
+}) => {
+  if (!error || isLoading) return null
+  if (!(error instanceof BaseError)) return 'unknown'
+  if (error instanceof DnsResponseStatusError) {
+    if (error.responseStatus !== 'NXDOMAIN') return 'unknown'
+    return 'noTxtRecord'
+  }
+  if (error instanceof DnsDnssecVerificationFailedError) return 'dnssecFailure'
+  if (error instanceof DnsNoTxtRecordError) return 'noTxtRecord'
+  if (error instanceof DnsInvalidTxtRecordError) return 'invalidTxtRecord'
+  if (error instanceof DnsInvalidAddressChecksumError) return 'invalidAddressChecksum'
+  return 'unknown'
 }

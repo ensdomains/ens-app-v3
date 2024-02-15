@@ -19,9 +19,11 @@ export const IntroStageModal = ({
   trailingLabel,
   stepStatus,
 }: TransactionIntro & {
-  transactions: {
-    name: string
-  }[]
+  transactions:
+    | {
+        name: string
+      }[]
+    | readonly { name: string }[]
   stepStatus: 'inProgress' | 'notStarted' | 'completed'
   currentStep: number
   onDismiss: () => void

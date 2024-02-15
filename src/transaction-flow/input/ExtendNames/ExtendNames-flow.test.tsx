@@ -1,14 +1,14 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
-import { useEstimateGasLimitForTransaction } from '@app/hooks/gasEstimation/useEstimateGasLimitForTransactions'
 
 import ExtendNames from './ExtendNames-flow'
 
-jest.mock('@app/hooks/gasEstimation/useEstimateGasLimitForTransactions')
+jest.mock('@app/hooks/chain/useEstimateGasWithStateOverride')
 jest.mock('@app/hooks/ensjs/public/usePrice')
 
-const mockUseEstimateGasLimitForTransaction = mockFunction(useEstimateGasLimitForTransaction)
+const mockUseEstimateGasWithStateOverride = mockFunction(useEstimateGasWithStateOverride)
 const mockUsePrice = mockFunction(usePrice)
 
 jest.mock('@ensdomains/thorin', () => {
@@ -39,8 +39,8 @@ jest.mock(
 )
 
 describe('Extendnames', () => {
-  mockUseEstimateGasLimitForTransaction.mockReturnValue({
-    gasLimit: 21000n,
+  mockUseEstimateGasWithStateOverride.mockReturnValue({
+    data: { gasEstimate: 21000n },
     gasPrice: 100n,
     error: null,
     isLoading: true,

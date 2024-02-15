@@ -5,11 +5,13 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 const RecordItem = ({
   itemKey,
   value,
+  displayValue = value,
   showLegacy,
   type,
 }: {
   itemKey?: string
   value: string
+  displayValue?: string
   showLegacy?: boolean
   type: 'text' | 'address' | 'contentHash' | 'abi'
 }) => {
@@ -27,7 +29,7 @@ const RecordItem = ({
         itemKey ? `name-details-${type}-${itemKey.toLowerCase()}` : `name-details-${type}`
       }
     >
-      {value}
+      {displayValue}
     </ThorinRecordItem>
   )
 }

@@ -1,11 +1,13 @@
+import approveDnsRegistrar from './approveDnsRegistrar'
 import approveNameWrapper from './approveNameWrapper'
 import burnFuses from './burnFuses'
 import changePermissions from './changePermissions'
+import claimDnsName from './claimDnsName'
 import commitName from './commitName'
 import createSubname from './createSubname'
 import deleteSubname from './deleteSubname'
 import extendNames from './extendNames'
-import importDNSSECName from './importDNSSECName'
+import importDnsName from './importDnsName'
 import migrateProfile from './migrateProfile'
 import migrateProfileWithReset from './migrateProfileWithReset'
 import registerName from './registerName'
@@ -26,14 +28,16 @@ import updateResolver from './updateResolver'
 import wrapName from './wrapName'
 
 export const transactions = {
+  approveDnsRegistrar,
   approveNameWrapper,
   burnFuses,
   changePermissions,
+  claimDnsName,
   commitName,
   createSubname,
   deleteSubname,
   extendNames,
-  importDNSSECName,
+  importDnsName,
   migrateProfile,
   migrateProfileWithReset,
   registerName,
@@ -67,7 +71,7 @@ export type TransactionReturnType<T extends TransactionName> = ReturnType<
   Transaction[T]['transaction']
 >
 
-export const makeTransactionItem = <T extends TransactionName>(
+export const createTransactionItem = <T extends TransactionName>(
   name: T,
   data: TransactionData<T>,
 ) => ({
@@ -87,3 +91,7 @@ export type TransactionItem<TName extends TransactionName = TransactionName> = {
   name: TName
   data: TransactionData<TName>
 }
+
+export type TransactionItemUnion = {
+  [TName in TransactionName]: TransactionItem<TName>
+}[TransactionName]

@@ -6,7 +6,7 @@ import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import type { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 import { makeIntroItem } from '@app/transaction-flow/intro/index'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { emptyAddress } from '@app/utils/constants'
 
@@ -58,7 +58,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
           name,
         })
       ) {
-        transactions.push(makeTransactionItem('setPrimaryName', { name, address }))
+        transactions.push(createTransactionItem('setPrimaryName', { name, address }))
       }
 
       if (
@@ -71,7 +71,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
         introType =
           !resolverAddress || resolverAddress === emptyAddress ? 'noResolver' : 'invalidResolver'
         transactions.unshift(
-          makeTransactionItem('updateResolver', {
+          createTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolverAddress: latestResolverAddress,
@@ -88,7 +88,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
         })
       ) {
         transactions.unshift(
-          makeTransactionItem('updateEthAddress', {
+          createTransactionItem('updateEthAddress', {
             name,
             address,
             latestResolver: !resolverStatus?.isAuthorized,

@@ -2,8 +2,10 @@
 import '@nomiclabs/hardhat-ethers'
 import 'dotenv/config'
 import 'hardhat-deploy'
-import { HardhatUserConfig } from 'hardhat/config'
+
 import { resolve } from 'path'
+
+import { HardhatUserConfig } from 'hardhat/config'
 
 const ensContractsPath = './node_modules/@ensdomains/ens-contracts'
 

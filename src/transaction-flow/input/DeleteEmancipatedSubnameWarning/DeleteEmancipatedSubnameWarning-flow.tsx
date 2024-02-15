@@ -6,7 +6,7 @@ import { Button, Dialog, mq } from '@ensdomains/thorin'
 import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
-import { makeTransactionItem } from '../../transaction/index'
+import { createTransactionItem } from '../../transaction/index'
 import { CenterAlignedTypography } from '../RevokePermissions/components/CenterAlignedTypography'
 
 const MessageContainer = styled(CenterAlignedTypography)(({ theme }) => [
@@ -44,7 +44,7 @@ const DeleteEmancipatedSubnameWarning = ({ data, dispatch, onDismiss }: Props) =
     dispatch({
       name: 'setTransactions',
       payload: [
-        makeTransactionItem('deleteSubname', {
+        createTransactionItem('deleteSubname', {
           name: data.name,
           contract: 'nameWrapper',
           method: 'setRecord',

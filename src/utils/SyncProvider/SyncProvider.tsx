@@ -6,7 +6,7 @@ import { useSubgraphClient } from '@app/hooks/ensjs/subgraph/useSubgraphClient'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useRegisterNameCallback } from '@app/hooks/transactions/useRegisterNameCallback'
+import { useRegisterOrImportNameCallback } from '@app/hooks/transactions/useRegisterOrImportNameCallback'
 
 export type UpdateCallback = (transaction: Transaction) => void
 type AddCallback = (key: string, callback: UpdateCallback) => void
@@ -47,7 +47,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const chainId = useChainId()
   const subgraphClient = useSubgraphClient()
 
-  const registerNameCallback = useRegisterNameCallback()
+  const registerOrImportNameCallback = useRegisterOrImportNameCallback()
   const callbacks = useRef<Record<string, UpdateCallback>>({})
 
   const transactions = useRecentTransactions()
@@ -116,10 +116,10 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     previousTransactions.current = JSON.parse(JSON.stringify(transactions))
     const callbacksRef = Object.values(callbacks.current)
     updatedTransactions.forEach((transaction) => {
-      registerNameCallback(transaction)
+      registerOrImportNameCallback(transaction)
       callbacksRef.forEach((callback) => callback(transaction))
     })
-  }, [transactions, registerNameCallback])
+  }, [transactions, registerOrImportNameCallback])
 
   const isOutOfSync = useMemo(() => {
     if (typeof currentGraphBlock !== 'number') return false
