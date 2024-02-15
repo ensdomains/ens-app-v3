@@ -127,7 +127,7 @@ describe('<InputComponentWrapper />', () => {
     )
     mutationObserverCb()
     act(() => {
-      jest.advanceTimersByTime(3000)
+      vi.advanceTimersByTime(3000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component-cached')
@@ -143,7 +143,7 @@ describe('<InputComponentWrapper />', () => {
     )
     mutationObserverCb()
     act(() => {
-      jest.advanceTimersByTime(3000)
+      vi.advanceTimersByTime(3000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component')
@@ -163,13 +163,13 @@ describe('<InputComponentWrapper />', () => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component-cached')
     })
     act(() => {
-      jest.advanceTimersByTime(3000)
+      vi.advanceTimersByTime(3000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('spinner-overlay')).toBeVisible()
     })
     act(() => {
-      jest.advanceTimersByTime(2000)
+      vi.advanceTimersByTime(2000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).not.toHaveClass('cacheable-component-cached')
@@ -215,7 +215,7 @@ describe('<InputComponentWrapper />', () => {
     )
     mutationObserverCb()
     act(() => {
-      jest.advanceTimersByTime(100)
+      vi.advanceTimersByTime(100)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component')
@@ -224,7 +224,7 @@ describe('<InputComponentWrapper />', () => {
     const item1 = cache.get('["test","123"]')!
     act(() => {
       item1.setState({ ...item1.state, dataUpdatedAt: Date.now() - 1000 * 240 })
-      jest.advanceTimersByTime(5000)
+      vi.advanceTimersByTime(5000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component-cached')
@@ -239,7 +239,7 @@ describe('<InputComponentWrapper />', () => {
     )
     mutationObserverCb()
     act(() => {
-      jest.advanceTimersByTime(100)
+      vi.advanceTimersByTime(100)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component')
@@ -248,14 +248,14 @@ describe('<InputComponentWrapper />', () => {
     const item1 = cache.get('["test","123"]')!
     act(() => {
       item1.setState({ ...item1.state, dataUpdatedAt: Date.now() - 1000 * 240 })
-      jest.advanceTimersByTime(5000)
+      vi.advanceTimersByTime(5000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component-cached')
     })
     act(() => {
       // remaining time for refetch interval
-      jest.advanceTimersByTime(1000 * 55)
+      vi.advanceTimersByTime(1000 * 55)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).not.toHaveClass('cacheable-component-cached')

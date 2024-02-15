@@ -19,7 +19,7 @@ const mockUseResolverHasInterfaces = mockFunction(useResolverHasInterfaces)
 
 describe('useResolverIsAuthorised', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUseIsWrapped.mockReturnValue({
       data: false,
     })

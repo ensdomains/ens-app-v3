@@ -4,7 +4,7 @@ import { StatusChecker } from './StatusChecker'
 
 describe('StatusChecker', () => {
   it('calls refetch on refetch button press', () => {
-    const refetchMock = jest.fn()
+    const refetchMock = vi.fn()
     render(
       <StatusChecker
         refetch={refetchMock}

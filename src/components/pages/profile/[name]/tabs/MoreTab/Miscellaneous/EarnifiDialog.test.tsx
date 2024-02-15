@@ -21,7 +21,7 @@ const defaultProps = {
 
 describe('EarnifiDialog', () => {
   beforeEach(() => {
-    ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
+    ;(useSubscribeToEarnifi as vi.Mock).mockReturnValue({
       subscribe: vi.fn(),
       status: 'idle',
     })
@@ -46,7 +46,7 @@ describe('EarnifiDialog', () => {
   })
 
   it('should disable button when loading', async () => {
-    ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
+    ;(useSubscribeToEarnifi as vi.Mock).mockReturnValue({
       subscribe: vi.fn(),
       status: 'loading',
     })
@@ -61,7 +61,7 @@ describe('EarnifiDialog', () => {
 
   it('should call subscribe with the correct information', async () => {
     const subscribeMock = vi.fn()
-    ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
+    ;(useSubscribeToEarnifi as vi.Mock).mockReturnValue({
       subscribe: subscribeMock,
       status: 'idle',
     })
@@ -79,7 +79,7 @@ describe('EarnifiDialog', () => {
   })
 
   it('should show error message when one is passed', async () => {
-    ;(useSubscribeToEarnifi as jest.Mock).mockImplementation(({ onError }) => ({
+    ;(useSubscribeToEarnifi as vi.Mock).mockImplementation(({ onError }) => ({
       subscribe: () => onError(new Error('Bad Request')),
       status: 'idle',
     }))
@@ -93,7 +93,7 @@ describe('EarnifiDialog', () => {
   })
 
   it('should show default error when no error message is passed', async () => {
-    ;(useSubscribeToEarnifi as jest.Mock).mockImplementation(({ onError }) => ({
+    ;(useSubscribeToEarnifi as vi.Mock).mockImplementation(({ onError }) => ({
       subscribe: () => onError(new Error()),
       status: 'idle',
     }))
@@ -107,7 +107,7 @@ describe('EarnifiDialog', () => {
   })
 
   it('should clear error after error timeout', async () => {
-    ;(useSubscribeToEarnifi as jest.Mock).mockImplementation(({ onError }) => ({
+    ;(useSubscribeToEarnifi as vi.Mock).mockImplementation(({ onError }) => ({
       subscribe: () => onError(new Error()),
       status: 'idle',
     }))
@@ -127,7 +127,7 @@ describe('EarnifiDialog', () => {
 
   it('should call _onDismiss when modal is cancelled on email input', async () => {
     const onDismissMock = vi.fn()
-    ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
+    ;(useSubscribeToEarnifi as vi.Mock).mockReturnValue({
       subscribe: vi.fn(),
       status: 'idle',
       reset: vi.fn(),
@@ -142,7 +142,7 @@ describe('EarnifiDialog', () => {
 
   it('should show success dialog when subscribe is successful', async () => {
     const subscribeMock = vi.fn()
-    ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
+    ;(useSubscribeToEarnifi as vi.Mock).mockReturnValue({
       subscribe: subscribeMock,
       status: 'success',
     })
@@ -156,7 +156,7 @@ describe('EarnifiDialog', () => {
 
   it('should call _onDismiss when modal is closed on success dialog', async () => {
     const onDismissMock = vi.fn()
-    ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
+    ;(useSubscribeToEarnifi as vi.Mock).mockReturnValue({
       subscribe: vi.fn(),
       status: 'success',
       reset: vi.fn(),
@@ -175,7 +175,7 @@ describe('EarnifiDialog', () => {
 
   it('_onDismiss should call reset', async () => {
     const resetMock = vi.fn()
-    ;(useSubscribeToEarnifi as jest.Mock).mockReturnValue({
+    ;(useSubscribeToEarnifi as vi.Mock).mockReturnValue({
       subscribe: vi.fn(),
       status: 'idle',
       reset: resetMock,

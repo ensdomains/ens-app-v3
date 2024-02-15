@@ -77,7 +77,7 @@ const createResult = (keys?: string[], isLoading = false) => ({
 })
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
   mockUseProfileBase.mockImplementation((args) => {
     if (args.resolverAddress) return mockUseLatestResolverProfile(args)
     return mockUseProfile(args)

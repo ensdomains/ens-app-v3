@@ -93,7 +93,7 @@ window.scroll = vi.fn()
 const mockDispatch = vi.fn()
 
 afterEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('SendName', () => {

@@ -144,7 +144,7 @@ describe('AdvancedEditor', () => {
 
   afterEach(() => {
     cleanup()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render', async () => {

@@ -32,13 +32,13 @@ const mockPublicClient = {
   getBlock: vi.fn(async () => ({ timestamp: 1 })),
 }
 
-const mockGetPublicClient = getPublicClient as unknown as jest.MockedFunction<
+const mockGetPublicClient = getPublicClient as unknown as vi.MockedFunction<
   PartialMockedFunction<typeof getPublicClient>
 >
 
 mockGetPublicClient.mockReturnValue(mockPublicClient)
 
-const mockWaitForTransaction = waitForTransaction as unknown as jest.MockedFunction<
+const mockWaitForTransaction = waitForTransaction as unknown as vi.MockedFunction<
   PartialMockedFunction<typeof waitForTransaction>
 >
 

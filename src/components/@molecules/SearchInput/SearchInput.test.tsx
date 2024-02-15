@@ -24,7 +24,7 @@ window.scroll = vi.fn()
 describe('SearchInput', () => {
   mockUseLocalStorage.mockReturnValue([[]])
   window.ResizeObserver = vi.fn()
-  ;(window.ResizeObserver as jest.Mock).mockImplementation(() => ({
+  ;(window.ResizeObserver as vi.Mock).mockImplementation(() => ({
     observe: vi.fn(),
     disconnect: vi.fn(),
   }))

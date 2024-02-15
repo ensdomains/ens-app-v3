@@ -35,7 +35,7 @@ vi.mock('@app/hooks/chain/useChainName', () => ({
 }))
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('useExpiryDetails', () => {

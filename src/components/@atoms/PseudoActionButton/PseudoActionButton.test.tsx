@@ -7,7 +7,7 @@ beforeAll(() => {
 })
 
 afterAll(() => {
-  jest.useRealTimers()
+  vi.useRealTimers()
 })
 
 describe('PseudoActionButton', () => {
@@ -18,14 +18,14 @@ describe('PseudoActionButton', () => {
         Test
       </PseudoActionButton>,
     )
-    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     const button = screen.getByRole('button', { name: /Test/i })
     const icon = screen.getByTestId('icon')
     expect(icon).toBeVisible()
     await user.click(button)
     expect(icon).not.toBeVisible()
     act(() => {
-      jest.runAllTimers()
+      vi.runAllTimers()
     })
     await waitFor(() => {
       expect(screen.getByTestId('icon')).toBeVisible()
@@ -39,13 +39,13 @@ describe('PseudoActionButton', () => {
         Test
       </PseudoActionButton>,
     )
-    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     const button = screen.getByRole('button', { name: /Test/i })
     expect(screen.queryByTestId('icon')).toEqual(null)
     await user.click(button)
     expect(screen.queryByTestId('icon')).toEqual(null)
     act(() => {
-      jest.runAllTimers()
+      vi.runAllTimers()
     })
     expect(screen.queryByTestId('icon')).toEqual(null)
   })

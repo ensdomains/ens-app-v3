@@ -169,7 +169,7 @@ describe('useProfileActions', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('returns an object with profileActions and isLoading properties', () => {

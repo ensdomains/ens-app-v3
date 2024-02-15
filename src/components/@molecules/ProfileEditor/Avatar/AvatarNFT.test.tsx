@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
 import * as ThorinComponents from '@ensdomains/thorin'
@@ -84,7 +85,7 @@ beforeEach(() => {
 
 describe('<AvatarNFT />', () => {
   window.IntersectionObserver = vi.fn()
-  ;(window.IntersectionObserver as jest.Mock).mockImplementation(() => ({
+  ;(window.IntersectionObserver as Mock).mockImplementation(() => ({
     observe: vi.fn(),
     disconnect: vi.fn(),
   }))
@@ -167,12 +168,12 @@ describe('<AvatarNFT />', () => {
       }),
     )
 
-    jest
-      .spyOn(ThorinComponents, 'ScrollBox')
-      .mockImplementationOnce(({ children, onReachedBottom }) => {
+    vi.spyOn(ThorinComponents, 'ScrollBox').mockImplementationOnce(
+      ({ children, onReachedBottom }) => {
         onReachedBottom!()
         return <div>{children}</div>
-      })
+      },
+    )
 
     render(<AvatarNFT {...props} />)
 
@@ -196,12 +197,12 @@ describe('<AvatarNFT />', () => {
       }),
     )
 
-    jest
-      .spyOn(ThorinComponents, 'ScrollBox')
-      .mockImplementationOnce(({ children, onReachedBottom }) => {
+    vi.spyOn(ThorinComponents, 'ScrollBox').mockImplementationOnce(
+      ({ children, onReachedBottom }) => {
         onReachedBottom!()
         return <div>{children}</div>
-      })
+      },
+    )
 
     render(<AvatarNFT {...props} />)
 

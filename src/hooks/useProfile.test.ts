@@ -67,7 +67,7 @@ const mockUseRecordsData: GetRecordsReturnType = {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks()
+  vi.resetAllMocks()
   mockUseSubgraphRecords.mockReturnValue({
     data: mockUseSubgraphRecordsData,
     isLoading: false,

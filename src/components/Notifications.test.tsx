@@ -74,7 +74,7 @@ describe('Notifications', () => {
     }).then((el) => expect(el).toBeInTheDocument())
 
     act(() => {
-      jest.advanceTimersByTime(8350)
+      vi.advanceTimersByTime(8350)
     })
 
     await waitFor(() => screen.queryByText('transaction.status.confirmed2.notifyTitle'), {

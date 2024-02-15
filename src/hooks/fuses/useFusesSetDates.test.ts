@@ -388,7 +388,7 @@ describe('useFusesSetDates', () => {
     }),
   }
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUsePublicClient.mockReturnValue(publicClient)
   })
   it('returns correct data when empty', async () => {

@@ -44,7 +44,7 @@ const createRegistryResolverData = (
 })
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
   mockUseBasicName.mockReturnValue(createBasicNameData())
   mockUseProfile.mockReturnValue(createProfileData())
   mockUseRegistryResolver.mockReturnValue(createRegistryResolverData())

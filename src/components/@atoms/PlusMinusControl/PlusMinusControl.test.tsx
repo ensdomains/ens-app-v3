@@ -6,7 +6,7 @@ const mockChangeHandler = vi.fn()
 
 describe('PlusMinusControl', () => {
   afterEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   it('should render correctly', async () => {

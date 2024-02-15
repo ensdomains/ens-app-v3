@@ -56,7 +56,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('RevokePermissions', () => {

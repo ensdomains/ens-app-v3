@@ -1,6 +1,7 @@
 import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 
 import mockRouter from 'next-router-mock'
+import { describe, expect, it, Mock, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
@@ -42,7 +43,7 @@ const checkRoutesPlacement = (visible: boolean) => {
 
 describe('Header', () => {
   window.ResizeObserver = vi.fn()
-  ;(window.ResizeObserver as jest.Mock).mockImplementation(() => ({
+  ;(window.ResizeObserver as Mock).mockImplementation(() => ({
     observe: vi.fn(),
     disconnect: vi.fn(),
   }))

@@ -22,7 +22,7 @@ const data: AccordionData[] = [
 
 describe('Accordion', () => {
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render', () => {

@@ -59,7 +59,7 @@ describe('SyncDroppedTransaction', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should call setInterval with the correct arguments', () => {

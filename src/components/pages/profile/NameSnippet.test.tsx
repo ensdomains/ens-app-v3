@@ -9,7 +9,7 @@ type NameDetailSnippetProps = ComponentProps<typeof NameDetailSnippet>
 vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
 vi.mock('@app/utils/BreakpointProvider')
 
-jest.setTimeout(5000)
+vi.setTimeout(5000)
 describe('NameSnippetMobile', () => {
   const baseMockData = {
     name: 'nick.eth',

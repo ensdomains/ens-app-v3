@@ -21,7 +21,7 @@ vi.mock('@app/components/AvatarWithZorb', () => ({
 }))
 
 afterEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('AvatarWithIdentifier', () => {

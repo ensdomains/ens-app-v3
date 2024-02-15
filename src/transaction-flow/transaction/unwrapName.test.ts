@@ -38,7 +38,7 @@ describe('unwrapName', () => {
     const publicClient = {} as PublicClientWithChain
 
     afterEach(() => {
-      jest.clearAllMocks()
+      vi.clearAllMocks()
     })
 
     it('should provide controller and registrant when name is an eth 2ld', async () => {

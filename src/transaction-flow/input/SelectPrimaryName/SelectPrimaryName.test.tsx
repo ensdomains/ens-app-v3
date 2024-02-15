@@ -101,7 +101,7 @@ window.IntersectionObserver = vi.fn().mockReturnValue({
 })
 
 afterEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('hasEncodedLabel', () => {

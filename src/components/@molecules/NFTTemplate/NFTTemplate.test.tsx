@@ -5,7 +5,7 @@ import NFTTemplate from './NFTTemplate'
 describe('NFTTemplate', () => {
   afterEach(() => {
     cleanup()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render', async () => {

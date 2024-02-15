@@ -13,11 +13,11 @@ vi.mock('@wagmi/core', () => ({
   getPublicClient: vi.fn(),
 }))
 
-const mockGetPublicClient = getPublicClient as unknown as jest.MockedFunction<
+const mockGetPublicClient = getPublicClient as unknown as vi.MockedFunction<
   PartialMockedFunction<typeof getPublicClient>
 >
 
-const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as unknown as jest.MockedFunctionDeep<
+const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as unknown as vi.MockedFunctionDeep<
   typeof fetchTxFromSafeTxHash
 >
 

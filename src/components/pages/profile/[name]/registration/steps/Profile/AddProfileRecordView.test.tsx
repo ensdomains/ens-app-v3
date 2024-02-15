@@ -26,7 +26,7 @@ mockIntersectionObserver.mockReturnValue({
 window.IntersectionObserver = mockIntersectionObserver
 window.scroll = vi.fn()
 
-jest.setTimeout(30000)
+vi.setTimeout(30000)
 
 describe('AddProfileRecordView', () => {
   it('should render', () => {

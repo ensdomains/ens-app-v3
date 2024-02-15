@@ -23,7 +23,7 @@ const createResolverStatusData = (
 
 describe('useGetPrimaryNameTransactionFlowItem', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUseReverseRegistryName.mockReturnValue({
       data: 'test.eth',
       isLoading: false,

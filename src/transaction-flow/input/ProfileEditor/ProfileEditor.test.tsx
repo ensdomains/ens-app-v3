@@ -202,7 +202,7 @@ describe('ProfileEditor', () => {
 
   afterEach(() => {
     cleanup()
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   it('should have use the same version of address-encoder as ensjs', () => {

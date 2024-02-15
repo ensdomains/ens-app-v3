@@ -63,7 +63,7 @@ const mockCallback = vi.fn()
 
 describe('Profile', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render', () => {

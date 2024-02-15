@@ -44,7 +44,7 @@ const mockTransaction: GenericTransaction = {
 }
 
 vi.mock('@app/transaction-flow/transaction', () => {
-  const originalModule = jest.requireActual('@app/transaction-flow/transaction')
+  const originalModule = vi.requireActual('@app/transaction-flow/transaction')
   return {
     __esModule: true,
     ...originalModule,
@@ -61,7 +61,7 @@ const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseChainName = mockFunction(useChainName)
 const mockUseSendTransaction = mockFunction(useSendTransaction)
-const mockCheckIsSafeApp = checkIsSafeApp as jest.MockedFunctionDeep<typeof checkIsSafeApp>
+const mockCheckIsSafeApp = checkIsSafeApp as vi.MockedFunctionDeep<typeof checkIsSafeApp>
 
 const mockEstimateGas = vi.fn()
 const mockOnDismiss = vi.fn()
@@ -465,7 +465,7 @@ describe('calculateGasLimit', () => {
   const mockIsSafeApp = false
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should calculate gas limit for non-safe apps', async () => {
