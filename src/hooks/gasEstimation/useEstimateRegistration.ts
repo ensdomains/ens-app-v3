@@ -6,17 +6,12 @@ import { makeCommitment } from '@ensdomains/ensjs/utils'
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
 
 import { useAccountSafely } from '../account/useAccountSafely'
+import { useBlockTimestamp } from '../chain/useBlockTimestamp'
 import { useContractAddress } from '../chain/useContractAddress'
 import { useEstimateGasWithStateOverride } from '../chain/useEstimateGasWithStateOverride'
 import { useGasPrice } from '../chain/useGasPrice'
 import { usePrice } from '../ensjs/public/usePrice'
 import useRegistrationParams from '../useRegistrationParams'
-
-// const gasLimitDictionary = {
-//   COMMIT: 42000n,
-//   RENEW: 61818n,
-//   REGISTER: 265428n,
-// }
 
 type UseEstimateFullRegistrationParameters = {
   registrationData: RegistrationReducerDataItem
@@ -44,7 +39,15 @@ export const useEstimateFullRegistration = ({
 
   const commitment = useMemo(() => makeCommitment(registrationParams), [registrationParams])
 
-  const fiveMinutesAgoInSeconds = useMemo(() => Math.floor((Date.now() - 1000 * 60 * 5) / 1000), [])
+  const { data: blockTimestamp } = useBlockTimestamp()
+  // default to use block timestamp as reference
+  // if no block timestamp, use local time as fallback
+
+  const fiveMinutesAgoInSeconds = useMemo(
+    () =>
+      blockTimestamp ? Number(blockTimestamp) - 60 * 5 : Math.floor((Date.now() - 60 * 5) / 1000),
+    [blockTimestamp],
+  )
 
   const { data, isLoading } = useEstimateGasWithStateOverride({
     transactions: [
@@ -79,7 +82,7 @@ export const useEstimateFullRegistration = ({
   const yearlyFee = price?.base
   const premiumFee = price?.premium
   const hasPremium = !!premiumFee && premiumFee > 0n
-  const totalYearlyFee = yearlyFee ? yearlyFee * BigInt(registrationData.years) : 0n
+  const totalYearlyFee = yearlyFee || 0n
 
   return {
     estimatedGasFee: data.gasCost,
