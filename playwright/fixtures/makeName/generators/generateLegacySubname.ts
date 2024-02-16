@@ -1,17 +1,21 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
+import {
+  getChainContractAddress,
+  registrySetApprovalForAllSnippet,
+} from '@ensdomains/ensjs/contracts'
+import { RecordOptions } from '@ensdomains/ensjs/utils'
+import { createSubname, wrapName } from '@ensdomains/ensjs/wallet'
+
 import { Accounts, createAccounts, User } from '../../accounts'
 import { Contracts } from '../../contracts'
-import { RecordOptions } from '@ensdomains/ensjs/utils'
-
-// import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants' //TODO (SG) - Ask about this
-
+import {
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../contracts/utils/addTestContracts'
 import { generateRecords } from './generateRecords'
-import { testClient, waitForTransaction, walletClient } from '../../contracts/utils/addTestContracts'
-import { createSubname, wrapName } from '@ensdomains/ensjs/wallet'
-import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
-import { registrySetApprovalForAllSnippet } from '@ensdomains/ensjs/contracts'
 
 export type LegacySubname = {
   name: string
@@ -30,7 +34,7 @@ type Dependencies = {
   contracts: Contracts
 }
 // const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
-const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address 
+const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address
 export const generateLegacySubname =
   ({ accounts, contracts }: Dependencies) =>
   async ({
@@ -47,17 +51,17 @@ export const generateLegacySubname =
     console.log('generating legacy subname:', subname)
 
     const tx = await createSubname(walletClient, {
-        name: `${label}.${name}`,
-        contract: 'registry',
-        owner: createAccounts().getAddress(owner) as `0x${string}`,
-        account: createAccounts().getAddress(nameOwner) as `0x${string}`,
-        resolverAddress: resolver ?? DEFAULT_RESOLVER,
-      })
-      const receipt = await waitForTransaction(tx)
+      name: `${label}.${name}`,
+      contract: 'registry',
+      owner: createAccounts().getAddress(owner) as `0x${string}`,
+      account: createAccounts().getAddress(nameOwner) as `0x${string}`,
+      resolverAddress: resolver ?? DEFAULT_RESOLVER,
+    })
+    await waitForTransaction(tx)
 
     // Make records
     if (records && resolver) {
-      await generateRecords({ contracts })({
+      await generateRecords()({
         name: subname,
         owner,
         resolver,
@@ -66,8 +70,7 @@ export const generateLegacySubname =
     }
 
     if (type === 'wrapped') {
-   
-      const approve_tx = await walletClient.writeContract({
+      const approveTx = await walletClient.writeContract({
         abi: registrySetApprovalForAllSnippet,
         address: getChainContractAddress({
           client: walletClient,
@@ -83,17 +86,20 @@ export const generateLegacySubname =
         ],
         account: createAccounts().getAddress(owner) as `0x${string}`,
       })
-      const approve = await waitForTransaction(approve_tx)
+      const approve = await waitForTransaction(approveTx)
       if (approve.status === 'success') console.log('approved name wrapper')
       else throw new Error(`failed to approve name wrapper`)
 
-      const wrap_tx = await wrapName(walletClient, {
+      const wrapTx = await wrapName(walletClient, {
         name: subname,
         newOwnerAddress: accounts.getAddress(owner) as `0x${string}`,
-        resolverAddress: getChainContractAddress({ client: walletClient, contract: 'ensPublicResolver' }),
+        resolverAddress: getChainContractAddress({
+          client: walletClient,
+          contract: 'ensPublicResolver',
+        }),
         account: accounts.getAddress(owner) as `0x${string}`,
       })
-      const wrap = await waitForTransaction(wrap_tx)
+      const wrap = await waitForTransaction(wrapTx)
       if (wrap.status === 'success') console.log('wrapped subname:', subname)
       else throw new Error(`failed to wrap subname: ${subname}`)
     }

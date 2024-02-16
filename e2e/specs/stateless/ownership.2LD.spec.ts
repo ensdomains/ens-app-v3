@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test'
+
 import { test } from '../../../playwright'
 
 test.describe('Unwrapped 2LD - Owner and Manager', () => {
@@ -7,10 +8,12 @@ test.describe('Unwrapped 2LD - Owner and Manager', () => {
       label: 'owner-manager',
       type: 'legacy',
       records: {
-        coins: [{
-          coin: 'etcLegacy',
-          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-        }]
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -27,12 +30,9 @@ test.describe('Unwrapped 2LD - Owner and Manager', () => {
     await expect(sendNameModal.resetProfileSwitch).toHaveCount(0)
 
     await sendNameModal.summaryHeader.click()
-    test.step(
-      'Should not be able to reset profile since old resolver does not support VersionableResolver',
-      async () => {
-        await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
-      },
-    )
+    test.step('Should not be able to reset profile since old resolver does not support VersionableResolver', async () => {
+      await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
+    })
     test.step('Should be able to send Owner', async () => {
       await expect(sendNameModal.summaryItem('owner')).toBeVisible()
     })
@@ -56,15 +56,17 @@ test.describe('Unwrapped 2LD - Owner and Manager', () => {
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('ETH record')
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'owner-manager',
       type: 'legacy',
       records: {
-        coins: [{
-          coin: 'etcLegacy',
-          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-        }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -148,10 +150,12 @@ test.describe('Unwrapped 2LD - Owner Only', () => {
       owner: 'user',
       manager: 'user2',
       records: {
-        coins: [{
-          coin: 'etcLegacy',
-          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-        }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -282,17 +286,19 @@ test.describe('Unwrapped 2LD - Owner Only', () => {
 })
 
 test.describe('Unwrapped 2LD - Manager Only', () => {
-  test('Send Feature', async ({ page, login, accounts, makeName, makePageObject }) => {
+  test('Send Feature', async ({ page, login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'other-manager',
       type: 'legacy',
       owner: 'user2',
       manager: 'user',
       records: {
-        coins: [{
-          coin: 'etcLegacy',
-          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-        }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -382,10 +388,12 @@ test.describe('Wrapped and Emancipated 2LD - Owner', () => {
       type: 'wrapped',
       records: {
         texts: [{ key: 'name', value: 'test' }],
-        coins: [{
-          coin: 'etcLegacy',
-          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-        }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -432,10 +440,12 @@ test.describe('Wrapped and Emancipated 2LD - Owner', () => {
       type: 'wrapped',
       records: {
         texts: [{ key: 'name', value: 'test' }],
-        coins: [{
-          coin: 'etcLegacy',
-          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-        }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -472,17 +482,18 @@ test.describe('Wrapped and Emancipated 2LD - Owner', () => {
     login,
     makeName,
     makePageObject,
-    accounts,
   }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
       records: {
         texts: [{ key: 'name', value: 'test' }],
-        coins: [{
-          coin: 'etcLegacy',
-          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-        }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 

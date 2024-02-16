@@ -1,7 +1,7 @@
 import { Address } from 'viem'
 
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
 
 import type { SendNameForm } from '../SendName-flow'
@@ -58,7 +58,15 @@ export const getSendNameTransactions = ({
           abilities,
         })
       : null,
-  ].filter((transaction) => !!transaction)
+  ].filter(
+    (
+      transaction,
+    ): transaction is
+      | TransactionItem<'transferName'>
+      | TransactionItem<'transferSubname'>
+      | TransactionItem<'updateEthAddress'>
+      | TransactionItem<'resetProfileWithRecords'> => !!transaction,
+  )
 
   return _transactions as NonNullable<(typeof _transactions)[number]>[]
 }

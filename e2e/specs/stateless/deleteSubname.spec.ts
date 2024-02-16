@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test'
+
 import { test } from '../../../playwright/index'
 
 test.describe('unwrapped', () => {
@@ -229,21 +230,17 @@ test.describe('emancipated', () => {
       type: 'wrapped',
       owner: 'user',
       fuses: {
-        named: [
-          'CANNOT_UNWRAP',
-        ],
+        named: ['CANNOT_UNWRAP'],
       },
       subnames: [
         {
           label: 'parent-not-child',
           owner: 'user2',
-          fuses: {          
+          fuses: {
             parent: {
-              named: [
-                'PARENT_CANNOT_CONTROL',
-              ],
+              named: ['PARENT_CANNOT_CONTROL'],
             },
-          }
+          },
         },
       ],
     })
@@ -272,21 +269,17 @@ test.describe('emancipated', () => {
       type: 'wrapped',
       owner: 'user',
       fuses: {
-        named: [
-          'CANNOT_UNWRAP',
-        ],
+        named: ['CANNOT_UNWRAP'],
       },
       subnames: [
         {
           label: 'parent-child',
           owner: 'user',
-          fuses: {          
+          fuses: {
             parent: {
-              named: [
-                'PARENT_CANNOT_CONTROL',
-              ],
+              named: ['PARENT_CANNOT_CONTROL'],
             },
-          }
+          },
         },
       ],
     })
@@ -321,21 +314,17 @@ test.describe('emancipated', () => {
       type: 'wrapped',
       owner: 'user2',
       fuses: {
-        named: [
-          'CANNOT_UNWRAP',
-        ],
+        named: ['CANNOT_UNWRAP'],
       },
       subnames: [
         {
           label: 'not-parent-child',
           owner: 'user',
-          fuses: {          
+          fuses: {
             parent: {
-              named: [
-                'PARENT_CANNOT_CONTROL',
-              ],
+              named: ['PARENT_CANNOT_CONTROL'],
             },
-          }
+          },
         },
       ],
     })
@@ -371,22 +360,18 @@ test('should not allow parent owner to delete if PCC is expired', async ({
     type: 'wrapped',
     owner: 'user',
     fuses: {
-      named: [
-        'CANNOT_UNWRAP',
-      ],
+      named: ['CANNOT_UNWRAP'],
     },
     subnames: [
       {
         label: 'day-expired',
         owner: 'user',
         duration: -24 * 60 * 60,
-        fuses: {          
+        fuses: {
           parent: {
-            named: [
-              'PARENT_CANNOT_CONTROL',
-            ],
+            named: ['PARENT_CANNOT_CONTROL'],
           },
-        }
+        },
       },
     ],
   })

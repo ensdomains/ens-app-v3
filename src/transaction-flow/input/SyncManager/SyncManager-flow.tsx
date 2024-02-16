@@ -9,7 +9,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useNameType } from '@app/hooks/useNameType'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -70,8 +70,7 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const showWarning = nameType.data === 'dns-wrapped-2ld'
 
   const onClickNext = () => {
-    // TODO: Fix typescript transactions error
-    const transactions: any[] = [
+    const transactions = [
       canSyncDNS
         ? createTransactionItem('syncManager', {
             name,
@@ -88,7 +87,14 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
             abilities: abilities.data!,
           })
         : null,
-    ].filter((transaction) => !!transaction)
+    ].filter(
+      (
+        transaction,
+      ): transaction is
+        | TransactionItem<'syncManager'>
+        | TransactionItem<'transferName'>
+        | TransactionItem<'transferSubname'> => !!transaction,
+    )
 
     if (transactions.length !== 1) return
 

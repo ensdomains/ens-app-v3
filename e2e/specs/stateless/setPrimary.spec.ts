@@ -1,18 +1,20 @@
 import { expect } from '@playwright/test'
-import { test } from '../../../playwright'
-
-import { namehash } from '@ensdomains/ensjs/utils'
-
-import { setPrimaryName } from '@ensdomains/ensjs/wallet'
-import { testClient, waitForTransaction, walletClient, publicClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts';
-import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { labelhash } from 'viem'
+
 import { getResolver } from '@ensdomains/ensjs/public'
+import { setPrimaryName } from '@ensdomains/ensjs/wallet'
+
+import { test } from '../../../playwright'
+import { createAccounts } from '../../../playwright/fixtures/accounts'
+import {
+  waitForTransaction,
+  walletClient,
+} from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 const UNAUTHORISED_RESOLVER = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
 
-test.afterAll(async ({ contracts }) => {
-  await setPrimaryName( walletClient, {
+test.afterAll(async () => {
+  await setPrimaryName(walletClient, {
     name: '',
     account: createAccounts().getAddress('user') as `0x${string}`,
   })
@@ -22,7 +24,6 @@ test.describe('profile', () => {
   test('should allow setting unmanaged name that has eth record set to address', async ({
     page,
     login,
-    contracts,
     accounts,
     makeName,
     makePageObject,
@@ -37,9 +38,7 @@ test.describe('profile', () => {
       addr: 'user',
     })
 
-    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    // await reverseRegistrar.setName('')
-    await setPrimaryName( walletClient, {
+    await setPrimaryName(walletClient, {
       name: '',
       account: createAccounts().getAddress('user') as `0x${string}`,
     })
@@ -82,16 +81,13 @@ test.describe('profile', () => {
   test('should allow setting unwrapped name that user is manager of but whose resolved address is not the same as the user', async ({
     page,
     login,
-    contracts,
     accounts,
     makeName,
     makePageObject,
   }) => {
     test.slow()
 
-    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    // await reverseRegistrar.setName('')
-    await setPrimaryName( walletClient, {
+    await setPrimaryName(walletClient, {
       name: '',
       account: createAccounts().getAddress('user') as `0x${string}`,
     })
@@ -132,7 +128,6 @@ test.describe('profile', () => {
   test('should allow setting wrapped name that user is manager of but whose resolved address is not the same as the user with an owned resolver', async ({
     page,
     login,
-    contracts,
     accounts,
     makeName,
     makePageObject,
@@ -141,7 +136,7 @@ test.describe('profile', () => {
 
     // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
     // await reverseRegistrar.setName('')
-    await setPrimaryName( walletClient, {
+    await setPrimaryName(walletClient, {
       name: '',
       account: createAccounts().getAddress('user') as `0x${string}`,
     })
@@ -155,7 +150,7 @@ test.describe('profile', () => {
           label: 'test',
           owner: 'user',
           type: 'wrapped',
-          resolver: UNAUTHORISED_RESOLVER, //RESOLVER_ADDRESSES['1337'][1] as `0x${string}`,
+          resolver: UNAUTHORISED_RESOLVER, // RESOLVER_ADDRESSES['1337'][1] as `0x${string}`,
         },
       ],
     })
@@ -193,16 +188,13 @@ test.describe('profile', () => {
   test('should skip setting eth record if user is manager of name and resolver is not authorized if eth record is set on latest resolver', async ({
     page,
     login,
-    contracts,
     accounts,
     makeName,
     makePageObject,
   }) => {
     test.slow()
 
-    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    // await reverseRegistrar.setName('')
-    await setPrimaryName( walletClient, {
+    await setPrimaryName(walletClient, {
       name: '',
       account: createAccounts().getAddress('user') as `0x${string}`,
     })
@@ -274,7 +266,6 @@ test.describe('profile', () => {
   test('should skip setting primary name step if reverse registry name is already set to that name', async ({
     page,
     login,
-    contracts,
     makeName,
     makePageObject,
   }) => {
@@ -294,9 +285,7 @@ test.describe('profile', () => {
     })
     const subname = `test.${name}`
 
-    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    // await reverseRegistrar.setName(subname)
-    const tx = await setPrimaryName( walletClient, {
+    const tx = await setPrimaryName(walletClient, {
       name: subname,
       account: createAccounts().getAddress('user') as `0x${string}`,
     })
@@ -380,17 +369,13 @@ test.describe('profile', () => {
   test('should allow setting primary name from name with encrypted label', async ({
     page,
     login,
-    contracts,
     accounts,
     makeName,
     makePageObject,
   }) => {
     test.slow()
 
-    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    // await reverseRegistrar.setName('')
-
-    const tx = await setPrimaryName( walletClient, {
+    const tx = await setPrimaryName(walletClient, {
       name: '',
       account: createAccounts().getAddress('user') as `0x${string}`,
     })

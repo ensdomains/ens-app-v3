@@ -1,10 +1,15 @@
 import { expect } from '@playwright/test'
-import { test } from '../../../playwright'
-import { testClient, waitForTransaction, walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
-import { registrySetApprovalForAllSnippet } from '@ensdomains/ensjs/contracts'
-import { createAccounts } from '../../../playwright/fixtures/accounts'
-import { namehash } from '@ensdomains/ensjs/utils'
 import { labelhash } from 'viem'
+
+import { registrySetApprovalForAllSnippet } from '@ensdomains/ensjs/contracts'
+
+import { test } from '../../../playwright'
+import { createAccounts } from '../../../playwright/fixtures/accounts'
+import {
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 test('should not show wrap button if the connected wallet is not the registrant', async ({
   login,
@@ -127,14 +132,7 @@ test('should wrap name', async ({ makeName, login, makePageObject }) => {
   await expect(morePage.wrapButton).toHaveCount(0)
 })
 
-test('should allow wrapping a subdomain', async ({
-  page,
-  provider,
-  contracts,
-  makeName,
-  login,
-  makePageObject,
-}) => {
+test('should allow wrapping a subdomain', async ({ page, makeName, login, makePageObject }) => {
   const name = await makeName({
     label: 'unwrapped-with-wrapped-subnames',
     type: 'legacy',
@@ -146,21 +144,14 @@ test('should allow wrapping a subdomain', async ({
   })
   const subname = `sub.${name}`
 
-  // const registry = await contracts.get('ENSRegistry', { signer: 'user' })
-  // const nameWrapper = await contracts.get('NameWrapper')
-  // await registry.setApprovalForAll(nameWrapper.address, false)
-
-  const approve_tx = await walletClient.writeContract({
+  const approveTx = await walletClient.writeContract({
     abi: registrySetApprovalForAllSnippet,
     address: testClient.chain.contracts.ensRegistry.address,
     functionName: 'setApprovalForAll',
-    args: [
-      testClient.chain.contracts.ensNameWrapper.address,
-      true,
-    ],
+    args: [testClient.chain.contracts.ensNameWrapper.address, true],
     account: createAccounts().getAddress('user') as `0x${string}`,
   })
-  await waitForTransaction(approve_tx)
+  await waitForTransaction(approveTx)
 
   const morePage = makePageObject('MorePage')
   const transactionModal = makePageObject('TransactionModal')
@@ -231,7 +222,6 @@ test('should allow wrapping a name with an unknown label', async ({
 
 test('should calculate needed steps without localstorage', async ({
   page,
-  contracts,
   login,
   makeName,
   makePageObject,
@@ -249,10 +239,7 @@ test('should calculate needed steps without localstorage', async ({
     abi: registrySetApprovalForAllSnippet,
     address: testClient.chain.contracts.ensRegistry.address,
     functionName: 'setApprovalForAll',
-    args: [
-      testClient.chain.contracts.ensNameWrapper.address,
-      false,
-    ],
+    args: [testClient.chain.contracts.ensNameWrapper.address, false],
     account: createAccounts().getAddress('user') as `0x${string}`,
   })
   await testClient.mine({ blocks: 1 })

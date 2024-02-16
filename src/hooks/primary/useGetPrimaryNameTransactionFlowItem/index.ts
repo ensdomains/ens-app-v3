@@ -6,8 +6,8 @@ import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import type { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 import { makeIntroItem } from '@app/transaction-flow/intro/index'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
+import { TransactionIntro } from '@app/transaction-flow/types'
 import { emptyAddress } from '@app/utils/constants'
 
 import {
@@ -50,7 +50,11 @@ export const useGetPrimaryNameTransactionFlowItem = (
     if (!isActive) return undefined
     return (name: string) => {
       let introType: IntroType = 'updateEthAddress'
-      const transactions: GenericTransaction[] = []
+      const transactions: (
+        | TransactionItem<'setPrimaryName'>
+        | TransactionItem<'updateResolver'>
+        | TransactionItem<'updateEthAddress'>
+      )[] = []
 
       if (
         checkRequiresSetPrimaryNameTransaction({
@@ -105,7 +109,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
                 content: makeIntroItem('GenericWithDescription', {
                   description: t(getIntroTranslation(introType, 'description')),
                 }),
-              },
+              } as TransactionIntro,
             }
           : {}
 
@@ -113,7 +117,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
       return {
         transactions,
         ...introItem,
-      } as TransactionFlowItem
+      }
     }
   }, [
     isActive,

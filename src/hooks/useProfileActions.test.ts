@@ -1,6 +1,5 @@
 import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
-import { mock } from 'node:test'
 import { labelhash } from 'viem'
 
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
@@ -150,6 +149,7 @@ describe('useProfileActions', () => {
     })
     mockUseHasGlobalError.mockReturnValue(false)
 
+    // @ts-ignore
     mockUseContractAddress.mockReturnValue('0xresolver')
 
     mockGetUseGetPrimaryNameTransactionFlowItem.mockReturnValue({

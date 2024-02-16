@@ -46,6 +46,7 @@ const mockUseAccount = mockFunction(useAccount)
 mockUseAccount.mockReturnValue({ address: '0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7' })
 
 const mockUseContractAddress = mockFunction(useContractAddress)
+// @ts-ignore
 mockUseContractAddress.mockReturnValue('0x123')
 
 const mockUseLocalStorage = mockFunction(useLocalStorage)

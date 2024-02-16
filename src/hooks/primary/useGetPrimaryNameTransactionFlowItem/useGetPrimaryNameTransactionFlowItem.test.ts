@@ -29,6 +29,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
       isLoading: false,
       isFetching: false,
     })
+    // @ts-ignore
     mockUseContractAddress.mockReturnValue('0xresolver')
   })
   it('should return undefined if there are no transactions to be made', async () => {

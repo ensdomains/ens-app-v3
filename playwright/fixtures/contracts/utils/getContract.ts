@@ -6,15 +6,14 @@ import LegacyETHRegistrarControllerJSON from '@ensdomains/ens-contracts/deployme
 
 require('dotenv').config({ path: '.env.local' })
 
-type Contract =
-  | 'LegacyETHRegistrarController'
+type Contract = 'LegacyETHRegistrarController'
 
 type Options = {
   signer?: any
   address?: string
 }
 
-export const getContract = (contract: Contract, { signer, address }: Options = {}) => {
+export const getContract = (contract: Contract, { signer }: Options = {}) => {
   const json = process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES
   if (!json) throw new Error('No deployment addresses found')
   const addresses = JSON.parse(json)
@@ -28,5 +27,6 @@ export const getContract = (contract: Contract, { signer, address }: Options = {
           LegacyETHRegistrarControllerJSON.abi,
           signer,
         ),
-    ).exhaustive()
+    )
+    .exhaustive()
 }

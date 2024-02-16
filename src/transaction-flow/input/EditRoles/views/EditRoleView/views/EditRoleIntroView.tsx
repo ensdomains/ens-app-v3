@@ -45,7 +45,7 @@ const Container = styled.div(
 
 type Props = {
   role: Role
-  address?: Address
+  address?: Address | null
   onSelect: (role: { role: Role; address: Address }) => void
 }
 

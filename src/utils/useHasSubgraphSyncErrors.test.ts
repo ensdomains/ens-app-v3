@@ -34,6 +34,7 @@ describe('useHasSubgraphSyncErrors', () => {
             status: 'error',
             fetchFailureReason: new DOMException(),
           },
+          getObserversCount: () => 1,
         },
       }
 
@@ -60,6 +61,7 @@ describe('useHasSubgraphSyncErrors', () => {
     useQueryClient.mockImplementation(() => {
       let called = 0
       const event = {
+        type: 'updated',
         query: {
           queryKey: ['someKey', 'graph'],
           queryHash: hashQueryKey(['someKey', 'graph']),
@@ -68,6 +70,7 @@ describe('useHasSubgraphSyncErrors', () => {
             status: 'loading',
             dataUpdateCount: called,
           },
+          getObserversCount: () => 1,
         },
       }
 
@@ -84,7 +87,7 @@ describe('useHasSubgraphSyncErrors', () => {
       }
     })
     // advance startTime of a query by 5 seconds
-    jest.spyOn(global.Date, 'now').mockImplementationOnce(() => Date.now() + 5001)
+    jest.spyOn(global.Date, 'now').mockImplementationOnce(() => Date.now() - 5001)
 
     const { result } = renderHook(() => useHasSubgraphSyncErrors())
 

@@ -55,8 +55,8 @@
   "include": [
     "next-env.d.ts",
     "mdx.d.ts",
-    /* TODO (tate): revert to initial val after refactor */ "src/**/*.ts",
-    /* TODO (tate): revert to initial val after refactor */ "src/**/*.tsx",
+    "**/*.ts",
+    "**/*.tsx",
     "next.config.js"
   ],
   "exclude": ["custom-test-env.js", "**/*.ignore.ts", "**/*.ignore.tsx", "functions/**/*"]
