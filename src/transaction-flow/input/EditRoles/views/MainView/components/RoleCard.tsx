@@ -87,7 +87,7 @@ const Container = styled.div<{ $dirty?: boolean }>(
 )
 
 type Props = {
-  address?: Address
+  address?: Address | null
   role: Role
   dirty?: boolean
   onClick?: () => void

@@ -59,7 +59,7 @@ const RoleTagContainer = styled.div(
 
 type Props = {
   name: string
-  address?: Address
+  address?: Address | null
   roles: Role[]
   actions: ReturnType<typeof useRoleActions>['data']
   isWrapped: boolean
@@ -70,7 +70,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
-  const primary = usePrimaryName({ address })
+  const primary = usePrimaryName({ address: address!, enabled: !!address })
   const networkName = useChainName()
   const wrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
   const registrarAddress = useContractAddress({ contract: 'ensBaseRegistrarImplementation' })

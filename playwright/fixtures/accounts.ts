@@ -1,12 +1,7 @@
-
 /* eslint-disable import/no-extraneous-dependencies */
 import { ethers } from 'ethers'
 
 import { Provider } from './provider.js'
-
-import {
-  walletClient,
-} from './contracts/utils/addTestContracts.js'
 
 const DEFAULT_MNEMONIC = 'test test test test test test test test test test test junk'
 

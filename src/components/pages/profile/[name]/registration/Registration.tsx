@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -109,7 +109,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const chainId = useChainId()
   const { address } = useAccount()
   const primary = usePrimaryName({ address })
-  const selected = { name: nameDetails.normalisedName, address: address!, chainId }
+  const selected = useMemo(
+    () => ({ name: nameDetails.normalisedName, address: address!, chainId }),
+    [address, chainId, nameDetails.normalisedName],
+  )
   const { normalisedName, beautifiedName = '' } = nameDetails
   const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
   const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists({
@@ -200,7 +203,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       genericCallback({ back })
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [selected],
   )
 
   const infoProfileCallback = () => {

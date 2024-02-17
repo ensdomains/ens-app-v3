@@ -3,9 +3,11 @@
 /* eslint-disable no-await-in-loop */
 import { Locator, Page } from '@playwright/test'
 
-import { ChildFuses, ParentFuses } from '@ensdomains/ensjs'
+import { ChildFuses as ChildFuses_, ParentFuses as ParentFuses_ } from '@ensdomains/ensjs/utils'
 
-type Permission = ChildFuses['fuse'] | ParentFuses['fuse']
+type ChildFuses = keyof ChildFuses_
+type ParentFuses = keyof ParentFuses_
+type Permission = ChildFuses | ParentFuses
 
 export class PermissionsPage {
   readonly page: Page
@@ -60,7 +62,7 @@ export class PermissionsPage {
     return results.every((result) => !!result)
   }
 
-  async burnChildPermissions(childPermissions: ChildFuses['fuse'][]) {
+  async burnChildPermissions(childPermissions: ChildFuses[]) {
     await this.getBurnChildPermissionsButton.click()
 
     const nextButton = this.page.getByTestId('permissions-next-button')

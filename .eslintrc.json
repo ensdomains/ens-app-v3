@@ -29,9 +29,7 @@
     "next.config.js",
     "deploy/**/*",
     "src/**/*.test.tsx",
-    "src/**/*.test.ts",
-    "e2e/**/*" /* TODO(tate): remove */,
-    "playwright/**/*" /* TODO(tate): remove */
+    "src/**/*.test.ts"
   ],
   "rules": {
     "react/react-in-jsx-scope": "off",

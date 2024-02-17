@@ -1,6 +1,6 @@
 import { renderHook } from '@app/test-utils'
 
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import useRoles from './useRoles'
 
@@ -66,4 +66,29 @@ describe('useRoles', () => {
       },
     ])
   })
+})
+
+it('should grouped falsy address together', () => {
+  mockGetRoles.mockReturnValueOnce([
+    {
+      address: '',
+      role: 'owner'
+    },
+    {
+      address: undefined,
+      role: 'manager'
+    },
+    {
+      address: false,
+      role: 'eth-record'
+    }
+  ])
+  const { result } = renderHook(() => useRoles('test.eth', { grouped: true }));
+  expect(mockGetRoles).toHaveBeenCalled()
+  expect(result.current.data).toEqual([
+    {
+      address: null,
+      roles: ['owner', 'manager', 'eth-record']
+    }
+  ]);
 })

@@ -1,5 +1,7 @@
-import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 import { expect } from '@playwright/test'
+
+import { setPrimaryName } from '@ensdomains/ensjs/wallet'
+
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
@@ -17,17 +19,13 @@ test.describe.serial('normal registration', () => {
     login,
     accounts,
     provider,
-    contracts,
     time,
     makePageObject,
   }) => {
-    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    // await reverseRegistrar.setName('')
-    await setPrimaryName( walletClient, {
+    await setPrimaryName(walletClient, {
       name: '',
       account: createAccounts().getAddress('user') as `0x${string}`,
     })
-
 
     const homePage = makePageObject('HomePage')
     const registrationPage = makePageObject('RegistrationPage')
@@ -88,8 +86,7 @@ test.describe.serial('normal registration', () => {
     // should show go to info step and show updated estimate
     await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
     await page.getByTestId('profile-submit-button').click()
-    //TODO: Figure out another way to test that the gas estimate has changed
-    // await expect(registrationPage.gas).not.toHaveText(new RegExp(`${estimate} ETH`))
+    await expect(registrationPage.gas).not.toHaveText(new RegExp(`${estimate} ETH`))
 
     // should go to transactions step and open commit transaction immediately
     await expect(page.getByTestId('next-button')).toHaveText('Begin')

@@ -68,7 +68,7 @@ export const DogFood = ({
     if (finalValue) trigger('dogfoodRaw')
   }, [finalValue, setValue, trigger])
 
-  const errorMessage = formState.errors.dogfoodRaw?.message
+  const errorMessage = formState.errors.dogfoodRaw?.message as string
 
   return (
     <InnerContainer>
@@ -113,8 +113,7 @@ export const DogFood = ({
             ...validations,
           },
         })}
-        // TODO(tate): remove as any when thorin is updated
-        error={errorMessage as any}
+        error={errorMessage}
         onClickAction={() => setValue('dogfoodRaw', '')}
       />
       {!errorMessage && finalValue && !disabled && (

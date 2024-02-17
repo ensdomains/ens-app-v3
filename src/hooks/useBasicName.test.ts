@@ -45,6 +45,7 @@ describe('useBasicName', () => {
     mockUseExpiry.mockReturnValue({ data: undefined, isLoading: false })
     mockUseWrapperData.mockReturnValue({ data: undefined, isLoading: false })
     mockUsePrice.mockReturnValue({ data: undefined, isLoading: false })
+    // @ts-ignore
     mockUseContractAddress.mockReturnValue('0x123')
   })
   describe('2LD .eth', () => {

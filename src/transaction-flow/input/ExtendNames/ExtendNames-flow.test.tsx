@@ -42,7 +42,7 @@ vi.mock(
 
 describe('Extendnames', () => {
   mockUseEstimateGasWithStateOverride.mockReturnValue({
-    data: { gasEstimate: 21000n },
+    data: { gasEstimate: 21000n, gasCost: 100n },
     gasPrice: 100n,
     error: null,
     isLoading: true,

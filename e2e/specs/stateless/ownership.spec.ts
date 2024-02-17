@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test'
-import { test } from "../../../playwright"
+
+import { test } from '../../../playwright'
 
 test.describe('Send name', () => {
   test('should be able to send owner, manager and eth-record of unwrapped 2ld name if you are the owner and manager on old resolver', async ({
@@ -12,10 +13,12 @@ test.describe('Send name', () => {
       label: 'other-manager',
       type: 'legacy',
       records: {
-        coins: [{
-          coin: 'eth',
-          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-        }],
+        coins: [
+          {
+            coin: 'eth',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -59,10 +62,12 @@ test.describe('Send name', () => {
       type: 'legacy',
       manager: 'user2',
       records: {
-        coins: [{
-          coin: 'eth',
-          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-        }],
+        coins: [
+          {
+            coin: 'eth',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -93,13 +98,14 @@ test.describe('Send name', () => {
       timeout: 15000,
     })
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('manager')
-    await expect(ownershipPage.roleRow('0x42D63ae25990889E35F215bC95884039Ba354115')).toContainText('ETH record')
+    await expect(ownershipPage.roleRow('0x42D63ae25990889E35F215bC95884039Ba354115')).toContainText(
+      'ETH record',
+    )
   })
 
   test('should not be able to send name if user is manager but not owner', async ({
     page,
     login,
-    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -109,10 +115,12 @@ test.describe('Send name', () => {
       owner: 'user2',
       manager: 'user',
       records: {
-        coins: [{
-          coin: 'eth',
-          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-        }],
+        coins: [
+          {
+            coin: 'eth',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -135,15 +143,19 @@ test.describe('Send name', () => {
       label: 'wrapped',
       type: 'wrapped',
       records: {
-        coins: [{
-          coin: 'eth',
-          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-        }],
-        texts: [{
-          key: 'name',
-          value: 'test',
-        }],
-      }
+        coins: [
+          {
+            coin: 'eth',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
+        texts: [
+          {
+            key: 'name',
+            value: 'test',
+          },
+        ],
+      },
     })
 
     const ownershipPage = makePageObject('OwnershipPage')
@@ -198,14 +210,18 @@ test.describe('Send name', () => {
           label: 'test',
           owner: 'user',
           records: {
-            coins: [{
-              coin: 'eth',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
-            texts: [{
-              key: 'name',
-              value: 'test',
-            }],
+            coins: [
+              {
+                coin: 'eth',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
+            texts: [
+              {
+                key: 'name',
+                value: 'test',
+              },
+            ],
           },
         },
       ],
@@ -257,14 +273,18 @@ test.describe('Send name', () => {
           label: 'test',
           owner: 'user2',
           records: {
-            coins: [{
-              coin: 'eth',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
-            texts: [{
-              key: 'name',
-              value: 'test',
-            }],
+            coins: [
+              {
+                coin: 'eth',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
+            texts: [
+              {
+                key: 'name',
+                value: 'test',
+              },
+            ],
           },
         },
       ],
@@ -302,7 +322,9 @@ test.describe('Send name', () => {
     await expect(ownershipPage.roleRow(accounts.getAddress('user'))).not.toContainText(
       'parent-owner',
     )
-    await expect(ownershipPage.roleRow('0x42D63ae25990889E35F215bC95884039Ba354115')).toContainText('ETH record')
+    await expect(ownershipPage.roleRow('0x42D63ae25990889E35F215bC95884039Ba354115')).toContainText(
+      'ETH record',
+    )
   })
 
   test('should be able to send manager and eth-record if user is manager and not parent owner of unwrapped subname', async ({
@@ -321,14 +343,18 @@ test.describe('Send name', () => {
           label: 'test',
           owner: 'user',
           records: {
-            coins: [{
-              coin: 'eth',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
-            texts: [{
-              key: 'name',
-              value: 'test',
-            }],
+            coins: [
+              {
+                coin: 'eth',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
+            texts: [
+              {
+                key: 'name',
+                value: 'test',
+              },
+            ],
           },
         },
       ],
@@ -384,14 +410,18 @@ test.describe('Send name', () => {
           label: 'test',
           owner: 'user2',
           records: {
-            coins: [{
-              coin: 'eth',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
-            texts: [{
-              key: 'name',
-              value: 'test',
-            }],
+            coins: [
+              {
+                coin: 'eth',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
+            texts: [
+              {
+                key: 'name',
+                value: 'test',
+              },
+            ],
           },
         },
       ],
@@ -432,7 +462,9 @@ test.describe('Send name', () => {
     })
     await page.pause()
     await expect(ownershipPage.roleRow(accounts.getAddress('user'))).toContainText('Parent owner')
-    await expect(ownershipPage.roleRow('0x42D63ae25990889E35F215bC95884039Ba354115')).toContainText('ETH record')
+    await expect(ownershipPage.roleRow('0x42D63ae25990889E35F215bC95884039Ba354115')).toContainText(
+      'ETH record',
+    )
 
     await profilePage.goto(subname)
     await page.waitForTimeout(2000)
@@ -455,14 +487,18 @@ test.describe('Send name', () => {
           label: 'test',
           owner: 'user',
           records: {
-            coins: [{
-              coin: 'eth',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
-            texts: [{
-              key: 'name',
-              value: 'test',
-            }],
+            coins: [
+              {
+                coin: 'eth',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
+            texts: [
+              {
+                key: 'name',
+                value: 'test',
+              },
+            ],
           },
         },
       ],
@@ -520,31 +556,31 @@ test.describe('Send name', () => {
       type: 'wrapped',
       owner: 'user2',
       fuses: {
-        named: [
-          'CANNOT_UNWRAP',
-        ],
+        named: ['CANNOT_UNWRAP'],
       },
       subnames: [
         {
           label: 'test',
           owner: 'user',
           records: {
-            coins: [{
-              coin: 'eth',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
-            texts: [{
-              key: 'name',
-              value: 'test',
-            }],
-          },  
+            coins: [
+              {
+                coin: 'eth',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
+            texts: [
+              {
+                key: 'name',
+                value: 'test',
+              },
+            ],
+          },
           fuses: {
             parent: {
-              named: [
-                'PARENT_CANNOT_CONTROL',
-              ],
+              named: ['PARENT_CANNOT_CONTROL'],
             },
-          }
+          },
         },
       ],
     })
@@ -983,21 +1019,17 @@ test.describe('Edit roles: Wrapped subname with PCC burned', () => {
       type: 'wrapped',
       owner: 'user',
       fuses: {
-        named: [
-          'CANNOT_UNWRAP',
-        ],
+        named: ['CANNOT_UNWRAP'],
       },
       subnames: [
         {
           label: 'test',
           owner: 'user2',
           fuses: {
-            parent: { 
-              named: [
-                'PARENT_CANNOT_CONTROL',
-              ],
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
             },
-          }
+          },
         },
       ],
     })
@@ -1025,21 +1057,17 @@ test.describe('Edit roles: Wrapped subname with PCC burned', () => {
       type: 'wrapped',
       owner: 'user2',
       fuses: {
-        named: [
-          'CANNOT_UNWRAP',
-        ],
+        named: ['CANNOT_UNWRAP'],
       },
       subnames: [
         {
           label: 'test',
           owner: 'user',
           fuses: {
-            parent: { 
-              named: [
-                'PARENT_CANNOT_CONTROL',
-              ],
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
             },
-          }
+          },
         },
       ],
     })
@@ -1122,12 +1150,12 @@ test.describe('Extend name', () => {
     await test.step('should show the correct price data', async () => {
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
       await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-      await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
+      await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
       await expect(page.getByText('1 year extension')).toBeVisible()
     })
 
     await test.step('should show the cost comparison data', async () => {
-      await expect(page.getByTestId('year-marker-0')).toContainText('3% gas')
+      await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
       await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
       await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
     })

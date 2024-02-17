@@ -4,11 +4,10 @@
 import { Locator, Page } from '@playwright/test'
 
 import coinsWithIcons from '../../src/constants/coinsWithIcons.json'
-import {supportedGeneralRecordKeys} from '../../src/constants/supportedGeneralRecordKeys'
-import {supportedSocialRecordKeys} from '../../src/constants/supportedSocialRecordKeys'
+import { supportedGeneralRecordKeys } from '../../src/constants/supportedGeneralRecordKeys'
+import { supportedSocialRecordKeys } from '../../src/constants/supportedSocialRecordKeys'
 
-type SupportedGeneralRecordsKeys = typeof supportedGeneralRecordKeys[number]
-type SupportedSocialRecordsKeys = typeof supportedSocialRecordKeys[number]
+type SupportedSocialRecordsKeys = (typeof supportedSocialRecordKeys)[number]
 
 const PROFILE_SNIPPET_KEYS = ['nickname', ...supportedGeneralRecordKeys]
 export class ProfilePage {
@@ -85,7 +84,8 @@ export class ProfilePage {
   }
 
   profileEditorClearButton(key: string) {
-    if (key === 'description') return this.page.getByTestId(`profile-record-input-${key}`).getByRole('button')
+    if (key === 'description')
+      return this.page.getByTestId(`profile-record-input-${key}`).getByRole('button')
     return this.page.getByTestId(`profile-record-input-${key}-delete-button`)
   }
 }

@@ -154,8 +154,7 @@ export const SetExpiryView = ({
                 label="custom-expiry"
                 type="datetime-local"
                 hideLabel
-                // TODO(tate): remove as any when thorin is updated
-                error={formState.errors.expiryCustom as any}
+                error={!!customErrorLabel}
                 clearable={false}
                 min={stripDateMs(minDateTime)}
                 max={stripDateMs(maxDateTime)}

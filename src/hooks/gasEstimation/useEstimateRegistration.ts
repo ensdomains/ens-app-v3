@@ -43,10 +43,14 @@ export const useEstimateFullRegistration = ({
   // default to use block timestamp as reference
   // if no block timestamp, use local time as fallback
 
-  const fiveMinutesAgoInSeconds = useMemo(
-    () =>
-      blockTimestamp ? Number(blockTimestamp) - 60 * 5 : Math.floor((Date.now() - 60 * 5) / 1000),
+  const timestampReference = useMemo(
+    () => (blockTimestamp ? Number(blockTimestamp) : Date.now()),
     [blockTimestamp],
+  )
+
+  const fiveMinutesAgoInSeconds = useMemo(
+    () => Math.floor(timestampReference / 1000) - 60 * 5,
+    [timestampReference],
   )
 
   const { data, isLoading } = useEstimateGasWithStateOverride({

@@ -188,6 +188,7 @@ describe('ProfileEditor', () => {
 
     window.scroll = vi.fn() as () => void
 
+    // @ts-ignore
     mockUseContractAddress.mockReturnValue('0x0')
 
     mockUseResolverStatus.mockReturnValue(
@@ -351,6 +352,7 @@ describe('ResolverWarningOverlay', () => {
 
   beforeEach(() => {
     mockUseProfile.mockReturnValue(mockProfileData)
+    // @ts-ignore
     mockUseContractAddress.mockReturnValue('0x123')
     mockUseIsWrapped.mockReturnValue({ data: false, isLoading: false })
     mockUseEnsAvatar.mockReturnValue({

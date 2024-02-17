@@ -84,6 +84,7 @@ beforeEach(() => {
   })
   mockUseProfile.mockReturnValue({ data: createProfileData(), isLoading: false })
   mockUseLatestResolverProfile.mockReturnValue({ data: createProfileData(), isLoading: false })
+  // @ts-ignore
   mockUseContractAddress.mockReturnValue('0xlatest')
   mockUseResolverIsAuthorised.mockReturnValue({
     data: { isAuthorised: true, isValid: true },

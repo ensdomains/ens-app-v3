@@ -52,6 +52,7 @@ describe('SyncDroppedTransaction', () => {
   const mockStore = { test: 'store' }
 
   beforeEach(() => {
+    // @ts-ignore
     mockUsePublicClient.mockReturnValue(mockPublicClient)
     mockUseAccountSafely.mockReturnValue({ address: mockAddress })
     mockUseRecentTransactions.mockReturnValue(mockTransactions)

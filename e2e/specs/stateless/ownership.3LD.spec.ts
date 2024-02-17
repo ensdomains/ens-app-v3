@@ -1,10 +1,8 @@
 import { expect } from '@playwright/test'
-import { test } from '../../../playwright'
 
-// import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { test } from '../../../playwright'
 import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
-//import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
-const RESOLVER_ADDRESSES = testClient.chain.contracts.legacyPublicResolver.address
+
 test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
   test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
@@ -17,10 +15,12 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -40,12 +40,9 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
     await expect(sendNameModal.resetProfileSwitch).not.toBeVisible()
 
     await sendNameModal.summaryHeader.click()
-    test.step(
-      'Should not be able to reset profile since old resolver does not support VersionableResolver',
-      async () => {
-        await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
-      },
-    )
+    test.step('Should not be able to reset profile since old resolver does not support VersionableResolver', async () => {
+      await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
+    })
     test.step('Should not be able to send Owner', async () => {
       await expect(sendNameModal.summaryItem('owner')).toHaveCount(0)
     })
@@ -72,7 +69,7 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
     })
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -83,10 +80,12 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -112,10 +111,12 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -153,12 +154,7 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
     })
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'legacy',
@@ -169,10 +165,12 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -207,10 +205,12 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Manager only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -230,12 +230,9 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Manager only', () => {
     await expect(sendNameModal.resetProfileSwitch).not.toBeVisible()
 
     await sendNameModal.summaryHeader.click()
-    test.step(
-      'Should not be able to reset profile since old resolver does not support VersionableResolver',
-      async () => {
-        await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
-      },
-    )
+    test.step('Should not be able to reset profile since old resolver does not support VersionableResolver', async () => {
+      await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
+    })
     test.step('Should not be able to send Owner', async () => {
       await expect(sendNameModal.summaryItem('owner')).toHaveCount(0)
     })
@@ -262,7 +259,7 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Manager only', () => {
     })
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -273,10 +270,12 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Manager only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -302,10 +301,12 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Manager only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -343,12 +344,7 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Manager only', () => {
     })
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'legacy',
@@ -359,10 +355,12 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Manager only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -397,10 +395,12 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -420,12 +420,9 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Parent Owner only', () => {
     await expect(sendNameModal.resetProfileSwitch).not.toBeVisible()
 
     await sendNameModal.summaryHeader.click()
-    test.step(
-      'Should not be able to reset profile since old resolver does not support VersionableResolver',
-      async () => {
-        await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
-      },
-    )
+    test.step('Should not be able to reset profile since old resolver does not support VersionableResolver', async () => {
+      await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
+    })
     test.step('Should not be able to send Owner', async () => {
       await expect(sendNameModal.summaryItem('owner')).toHaveCount(0)
     })
@@ -455,7 +452,7 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Parent Owner only', () => {
     )
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -466,10 +463,12 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -495,10 +494,12 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -537,12 +538,7 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Parent Owner only', () => {
     )
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'legacy',
@@ -553,10 +549,12 @@ test.describe('Unwrapped 3LD - Unwrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -591,10 +589,12 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -647,7 +647,7 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Parent Owner and Manager', () => {
     })
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
@@ -658,10 +658,12 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -687,10 +689,12 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -728,12 +732,7 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Parent Owner and Manager', () => {
     })
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
@@ -744,10 +743,12 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Parent Owner and Manager', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -782,10 +783,12 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -838,7 +841,7 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Manager Only', () => {
     })
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
@@ -849,10 +852,12 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -878,10 +883,12 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -919,12 +926,7 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Manager Only', () => {
     })
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
@@ -935,10 +937,12 @@ test.describe('Wrapped 3LD, Wrapped 2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -973,10 +977,12 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -1028,7 +1034,7 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
     )
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -1039,10 +1045,12 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -1068,10 +1076,12 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -1110,12 +1120,7 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
     )
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'legacy',
@@ -1126,10 +1131,12 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -1166,10 +1173,12 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           resolver: testClient.chain.contracts.publicResolver.address as `0x${string}`,
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -1189,12 +1198,9 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
     await sendNameModal.searchResult(accounts.getAddress('user3')).click()
 
     await sendNameModal.summaryHeader.click()
-    test.step(
-      'Should not be able to reset profile since old resolver does not support VersionableResolver',
-      async () => {
-        await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
-      },
-    )
+    test.step('Should not be able to reset profile since old resolver does not support VersionableResolver', async () => {
+      await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
+    })
     test.step('Should not be able to send Owner', async () => {
       await expect(sendNameModal.summaryItem('owner')).toHaveCount(0)
     })
@@ -1221,7 +1227,7 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
     })
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -1232,10 +1238,12 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -1263,10 +1271,12 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           resolver: testClient.chain.contracts.publicResolver.address as `0x${string}`,
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -1304,12 +1314,7 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
     })
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'legacy',
@@ -1321,10 +1326,12 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           type: 'wrapped',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -1350,7 +1357,6 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
 test.describe('Wrapped 3LD, Unwrapped 2LD - Parent only', () => {
   test('Send, Edit Roles & Sync Manager feature', async ({
     login,
-    accounts,
     makeName,
     makePageObject,
     page,
@@ -1366,10 +1372,12 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Parent only', () => {
           type: 'wrapped',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -1388,12 +1396,7 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Parent only', () => {
     await expect(ownershipPage.syncManagerButton).toHaveCount(0)
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'legacy',
@@ -1405,10 +1408,12 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Parent only', () => {
           type: 'wrapped',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coins: [{
-              coin: 'etcLegacy',
-              value: '0x42D63ae25990889E35F215bC95884039Ba354115',
-            }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
         },
       ],
@@ -1438,19 +1443,15 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
       type: 'wrapped',
       owner: 'user2',
       fuses: {
-        named: [
-          'CANNOT_UNWRAP',
-        ],
+        named: ['CANNOT_UNWRAP'],
       },
       subnames: [
         {
           label: 'test',
           owner: 'user',
           fuses: {
-            parent: { 
-              named: [
-                'PARENT_CANNOT_CONTROL',
-              ],
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
             },
           },
         },
@@ -1510,19 +1511,15 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
       type: 'wrapped',
       owner: 'user2',
       fuses: {
-        named: [
-          'CANNOT_UNWRAP',
-        ],
+        named: ['CANNOT_UNWRAP'],
       },
       subnames: [
         {
           label: 'test',
           owner: 'user',
           fuses: {
-            parent: { 
-              named: [
-                'PARENT_CANNOT_CONTROL',
-              ],
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
             },
           },
         },
@@ -1544,19 +1541,15 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
       type: 'wrapped',
       owner: 'user2',
       fuses: {
-        named: [
-          'CANNOT_UNWRAP',
-        ],
+        named: ['CANNOT_UNWRAP'],
       },
       subnames: [
         {
           label: 'test',
           owner: 'user',
           fuses: {
-            parent: { 
-              named: [
-                'PARENT_CANNOT_CONTROL',
-              ],
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
             },
           },
         },
@@ -1601,19 +1594,15 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
       type: 'wrapped',
       owner: 'user2',
       fuses: {
-        named: [
-          'CANNOT_UNWRAP',
-        ],
+        named: ['CANNOT_UNWRAP'],
       },
       subnames: [
         {
           label: 'test',
           owner: 'user',
           fuses: {
-            parent: { 
-              named: [
-                'PARENT_CANNOT_CONTROL',
-              ],
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
             },
           },
         },

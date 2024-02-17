@@ -14,7 +14,7 @@ export const getRoles = ({
   nameType?: NameType
   registrant?: Address | null
   owner?: Address
-  dnsOwner?: Address
+  dnsOwner?: Address | null
   ethAddress?: Address
   parentOwner?: Address
 }) => {
