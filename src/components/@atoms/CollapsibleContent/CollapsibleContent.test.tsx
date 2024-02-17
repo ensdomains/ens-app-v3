@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 
 import CollapsibleContent from './CollapsibleContent'
+import { expect,describe,it } from 'vitest'
 
 describe('CollapsibleContent', () => {
   it('should render', () => {

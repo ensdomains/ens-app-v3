@@ -8,6 +8,7 @@ import { useLocalStorage } from '@app/hooks/useLocalStorage'
 
 import { RegistrationReducerDataItem } from '../../types'
 import Profile from './Profile'
+import { vi, beforeEach, expect,describe,it } from 'vitest'
 
 const name = 'test.eth'
 
