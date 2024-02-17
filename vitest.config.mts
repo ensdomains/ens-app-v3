@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     alias: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       '@app/': new URL('./src/', import.meta.url).pathname,
