@@ -3,6 +3,7 @@ import { render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { renderHook } from '@testing-library/react-hooks'
 import { useForm } from 'react-hook-form'
+import { describe, expect, it, vi } from 'vitest'
 
 import allOptionsArray, { grouped as options } from '@app/constants/profileRecordOptions'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
@@ -24,9 +25,9 @@ mockIntersectionObserver.mockReturnValue({
   disconnect: () => null,
 })
 window.IntersectionObserver = mockIntersectionObserver
-window.scroll = vi.fn()
+window.scroll = vi.fn() as () => void
 
-vi.setTimeout(30000)
+vi.setConfig({ testTimeout: 30000 })
 
 describe('AddProfileRecordView', () => {
   it('should render', () => {

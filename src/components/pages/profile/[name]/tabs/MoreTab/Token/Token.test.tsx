@@ -1,6 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
 import { labelhash, namehash } from 'viem'
+import { describe, expect, it, vi } from 'vitest'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'

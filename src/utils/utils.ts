@@ -28,6 +28,7 @@ export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365
 export const formatExpiry = (expiry: Date) =>
   `${expiry.toLocaleDateString(undefined, {
     month: 'long',
+    timeZone: 'UTC',
   })} ${expiry.getDate()}, ${expiry.getFullYear()}`
 
 export const formatDateTime = (date: Date) => {
@@ -37,6 +38,7 @@ export const formatDateTime = (date: Date) => {
     second: 'numeric',
     hour12: false,
     timeZoneName: 'short',
+    timeZone: 'UTC',
   })
   return `${baseFormatted}`
 }
