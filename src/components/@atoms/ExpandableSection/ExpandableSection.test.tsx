@@ -1,6 +1,7 @@
 import { render, screen, userEvent } from '@app/test-utils'
-
+import { describe, expect, it } from 'vitest'
 import { ExpandableSection } from './ExpandableSection'
+
 
 describe('ExpandableSection', () => {
   it('should expand and close when header is clicked', async () => {

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, renderHook, RenderHookOptions, RenderOptions } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import user from '@testing-library/user-event'
 import { MockConnector } from '@wagmi/core/connectors/mock'
 import React, { FC, ReactElement } from 'react'
 import { ThemeProvider } from 'styled-components'
@@ -150,4 +150,7 @@ export const mockFunction = <T extends (...args: any) => any>(func: T) =>
   func as unknown as MockedFunction<PartialMockedFunction<T>>
 
 export * from '@testing-library/react'
+
+const userEvent = user.setup()
+
 export { customRender as render, customRenderHook as renderHook, userEvent }

@@ -1,6 +1,7 @@
 import { render, screen, userEvent } from '@app/test-utils'
 
 import { ComponentProps } from 'react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { encodeLabelhash } from '@ensdomains/ensjs/utils'
 
