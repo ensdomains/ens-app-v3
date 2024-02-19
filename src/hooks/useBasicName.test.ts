@@ -1,5 +1,7 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { createDateAndValue } from '@app/utils/utils'
 
@@ -13,16 +15,16 @@ import { useBasicName } from './useBasicName'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
-jest.mock('./chain/useCurrentBlockTimestamp')
-jest.mock('./chain/useContractAddress')
-jest.mock('./useValidate')
-jest.mock('./useSupportsTLD')
-jest.mock('@app/utils/registrationStatus')
+vi.mock('./chain/useCurrentBlockTimestamp')
+vi.mock('./chain/useContractAddress')
+vi.mock('./useValidate')
+vi.mock('./useSupportsTLD')
+vi.mock('@app/utils/registrationStatus')
 
-jest.mock('./ensjs/public/useOwner')
-jest.mock('./ensjs/public/useExpiry')
-jest.mock('./ensjs/public/useWrapperData')
-jest.mock('./ensjs/public/usePrice')
+vi.mock('./ensjs/public/useOwner')
+vi.mock('./ensjs/public/useExpiry')
+vi.mock('./ensjs/public/useWrapperData')
+vi.mock('./ensjs/public/usePrice')
 
 const mockUseValidate = mockFunction(useValidate)
 const mockUseContractAddress = mockFunction(useContractAddress)
@@ -37,7 +39,7 @@ const mockUsePrice = mockFunction(usePrice)
 
 describe('useBasicName', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUseSupportsTLD.mockReturnValue({ data: true, isLoading: false })
     mockUseOwner.mockReturnValue({ data: undefined, isLoading: false })
     mockUseExpiry.mockReturnValue({ data: undefined, isLoading: false })
@@ -201,7 +203,9 @@ describe('useBasicName', () => {
       })
       mockUseExpiry.mockReturnValue({
         data: {
-          expiry: createDateAndValue(BigInt(Date.now() - (gracePeriodSeconds * 1000) + ms5Minutes - 1000)),
+          expiry: createDateAndValue(
+            BigInt(Date.now() - gracePeriodSeconds * 1000 + ms5Minutes - 1000),
+          ),
           gracePeriod: gracePeriodSeconds,
         },
         isLoading: false,
@@ -239,7 +243,9 @@ describe('useBasicName', () => {
       })
       mockUseExpiry.mockReturnValue({
         data: {
-          expiry: createDateAndValue(BigInt(Date.now() - (gracePeriodSeconds * 1000) - ms5Minutes + 1000)),
+          expiry: createDateAndValue(
+            BigInt(Date.now() - gracePeriodSeconds * 1000 - ms5Minutes + 1000),
+          ),
           gracePeriod: gracePeriodSeconds,
         },
         isLoading: false,
@@ -395,7 +401,7 @@ describe('useBasicName', () => {
         data: undefined,
         isLoading: false,
       })
-      jest.spyOn(Date, 'now').mockReturnValue(1234567890)
+      vi.spyOn(Date, 'now').mockReturnValue(1234567890)
       renderHook(() => useBasicName({ name: 'abc123.test.eth' }))
       expect(mockGetRegistrationStatus).toHaveBeenCalledWith(
         expect.objectContaining({ timestamp: 1234567890 }),
@@ -424,7 +430,9 @@ describe('useBasicName', () => {
       })
       mockUseExpiry.mockReturnValue({
         data: {
-          expiry: createDateAndValue(BigInt(Date.now() - (gracePeriodSeconds * 1000) + ms5Minutes - 1000)),
+          expiry: createDateAndValue(
+            BigInt(Date.now() - gracePeriodSeconds * 1000 + ms5Minutes - 1000),
+          ),
           gracePeriod: gracePeriodSeconds,
         },
         isLoading: false,
@@ -465,7 +473,9 @@ describe('useBasicName', () => {
       })
       mockUseExpiry.mockReturnValue({
         data: {
-          expiry: createDateAndValue(BigInt(1234567890 - (gracePeriodSeconds * 1000) + ms5Minutes - 1000)),
+          expiry: createDateAndValue(
+            BigInt(1234567890 - gracePeriodSeconds * 1000 + ms5Minutes - 1000),
+          ),
           gracePeriod: gracePeriodSeconds,
         },
         isLoading: false,
@@ -477,7 +487,7 @@ describe('useBasicName', () => {
         },
         isLoading: false,
       })
-      jest.spyOn(Date, 'now').mockReturnValue(1234567890)
+      vi.spyOn(Date, 'now').mockReturnValue(1234567890)
       mockUseCurrentBlockTimestamp.mockReturnValue(undefined)
       renderHook(() => useBasicName({ name: 'test.eth' }))
       expect(mockGetRegistrationStatus).toHaveBeenCalledWith(

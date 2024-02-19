@@ -1,13 +1,15 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { useDnsOwner } from './ensjs/dns/useDnsOwner'
 import { useBasicName } from './useBasicName'
 import { useNameDetails } from './useNameDetails'
 import { useProfile } from './useProfile'
 
-jest.mock('./useBasicName')
-jest.mock('./useProfile')
-jest.mock('./ensjs/dns/useDnsOwner')
+vi.mock('./useBasicName')
+vi.mock('./useProfile')
+vi.mock('./ensjs/dns/useDnsOwner')
 
 const mockUseBasicName = mockFunction(useBasicName)
 const mockUseProfile = mockFunction(useProfile)
@@ -15,7 +17,7 @@ const mockUseDnsOwner = mockFunction(useDnsOwner)
 
 describe('useNameDetails', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUseProfile.mockReturnValue({
       data: undefined,
       isLoading: false,

@@ -1,11 +1,13 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { formatDateTime } from '@app/utils/utils'
 
 import { RegistrationDate } from './RegistrationDate'
 
-jest.mock('@app/hooks/chain/useChainName')
+vi.mock('@app/hooks/chain/useChainName')
 
 const mockUseChainName = mockFunction(useChainName)
 

@@ -1,6 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
 import { labelhash, namehash } from 'viem'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
 import { Name } from '@ensdomains/ensjs/subgraph'
@@ -11,14 +12,14 @@ import { createDateAndValue } from '@app/utils/utils'
 
 import { SubnamesTab } from './SubnamesTab'
 
-jest.mock('next/router', () => jest.requireActual('next-router-mock'))
-jest.mock('@app/hooks/ensjs/subgraph/useSubnames')
-jest.mock('@app/hooks/useZorb')
+vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
+vi.mock('@app/hooks/ensjs/subgraph/useSubnames')
+vi.mock('@app/hooks/useZorb')
 
 const mockUseSubnames = mockFunction(useSubnames)
 const mockUseZorb = mockFunction(useZorb)
 const mockUseAccount = mockFunction(useAccount)
-const mockIntersectionObserver = jest.fn()
+const mockIntersectionObserver = vi.fn()
 
 const makeSubname = (_: any, i: number): Name => {
   const label = `test-${i}`
@@ -59,7 +60,7 @@ describe('SubnamesTab', () => {
       disconnect: () => null,
     })
     window.IntersectionObserver = mockIntersectionObserver
-    window.scroll = jest.fn()
+    window.scroll = vi.fn() as () => void
   })
 
   const baseMockData = {
@@ -89,7 +90,7 @@ describe('SubnamesTab', () => {
       isLoading: false,
       isFetching: false,
       hasNextPage: false,
-      fetchNextPage: jest.fn(),
+      fetchNextPage: vi.fn(),
     }
     mockUseSubnames.mockReturnValue(subnamesMockData)
     render(<SubnamesTab {...baseMockData} />)

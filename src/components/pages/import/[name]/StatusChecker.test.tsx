@@ -1,10 +1,12 @@
 import { fireEvent, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { StatusChecker } from './StatusChecker'
 
 describe('StatusChecker', () => {
   it('calls refetch on refetch button press', () => {
-    const refetchMock = jest.fn()
+    const refetchMock = vi.fn()
     render(
       <StatusChecker
         refetch={refetchMock}

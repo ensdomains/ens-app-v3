@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { nameLevel, parentName } from './name'
 
 describe('nameLevel', () => {
@@ -22,7 +24,7 @@ describe('parentName', () => {
   it('should return a 2ld name for a subname', () => {
     expect(parentName('subname.test.eth')).toEqual('test.eth')
   })
-  
+
   it('should return a tld for a 2ld name', () => {
     expect(parentName('test.eth')).toEqual('eth')
   })

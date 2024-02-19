@@ -1,5 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
@@ -50,9 +52,9 @@ const makeWrapperData = (override: DeepPartial<WrapperData> = {}) => {
   } as WrapperData
 }
 
-jest.mock('@app/hooks/fuses/useFusesSetDates')
-jest.mock('@app/hooks/account/useAccountSafely')
-jest.mock('@app/hooks/useBasicName')
+vi.mock('@app/hooks/fuses/useFusesSetDates')
+vi.mock('@app/hooks/account/useAccountSafely')
+vi.mock('@app/hooks/useBasicName')
 
 const mockUseGetFusesSetDates = mockFunction(useFusesSetDates)
 mockUseGetFusesSetDates.mockReturnValue({ data: {} })

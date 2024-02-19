@@ -1,10 +1,12 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { RecordsTab } from './RecordsTab'
 
-jest.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/utils/BreakpointProvider')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 mockUseBreakpoint.mockReturnValue({ sm: true, md: true, lg: true })

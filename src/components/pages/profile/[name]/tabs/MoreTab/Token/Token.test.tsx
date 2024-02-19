@@ -1,6 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
 import { labelhash, namehash } from 'viem'
+import { describe, expect, it, vi } from 'vitest'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
@@ -10,14 +11,14 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import Token from './Token'
 
-jest.mock('@app/hooks/useParentBasicName')
-jest.mock('@app/hooks/chain/useChainName')
-jest.mock('@app/hooks/chain/useContractAddress')
-jest.mock('@app/hooks/fuses/useFusesStates')
-jest.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/hooks/useParentBasicName')
+vi.mock('@app/hooks/chain/useChainName')
+vi.mock('@app/hooks/chain/useContractAddress')
+vi.mock('@app/hooks/fuses/useFusesStates')
+vi.mock('@app/utils/BreakpointProvider')
 
-jest.mock('./WrapButton', () => () => <div data-testid="wrap-button" />)
-jest.mock('./UnwrapButton', () => () => <div data-testid="unwrap-button" />)
+vi.mock('./WrapButton', () => ({ default: () => <div data-testid="wrap-button" /> }))
+vi.mock('./UnwrapButton', () => ({ default: () => <div data-testid="unwrap-button" /> }))
 
 const mockUseFusesStates = mockFunction(useFusesStates)
 const mockUseChainName = mockFunction(useChainName)

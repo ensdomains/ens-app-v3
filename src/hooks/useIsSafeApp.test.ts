@@ -1,5 +1,6 @@
 import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
 import { checkIsSafeApp } from '@app/utils/safe'
@@ -7,8 +8,8 @@ import { checkIsSafeApp } from '@app/utils/safe'
 import { useIsSafeApp } from './useIsSafeApp'
 import { useQueryKeyFactory } from './useQueryKeyFactory'
 
-jest.mock('./useQueryKeyFactory')
-jest.mock('@app/utils/safe')
+vi.mock('./useQueryKeyFactory')
+vi.mock('@app/utils/safe')
 
 const mockUseQueryKeyFactory = mockFunction(useQueryKeyFactory)
 const mockCheckIsSafeApp = mockFunction(checkIsSafeApp)
@@ -16,7 +17,7 @@ const mockUseAccount = mockFunction(useAccount)
 
 describe('useIsSafeApp', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should not run if connector is not defined', async () => {

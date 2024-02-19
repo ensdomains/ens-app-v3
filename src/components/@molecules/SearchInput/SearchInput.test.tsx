@@ -1,6 +1,7 @@
 import { mockFunction, render, screen, userEvent } from '@app/test-utils'
 
 import { act, waitFor } from '@testing-library/react'
+import { describe, expect, it, Mock, vi } from 'vitest'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -8,10 +9,10 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { SearchInput } from './SearchInput'
 import { SearchResult } from './SearchResult'
 
-jest.mock('next/router', () => jest.requireActual('next-router-mock'))
-jest.mock('@app/utils/BreakpointProvider')
-jest.mock('@app/hooks/useLocalStorage')
-jest.mock('./SearchResult')
+vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
+vi.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/hooks/useLocalStorage')
+vi.mock('./SearchResult')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseLocalStorage = mockFunction(useLocalStorage)
@@ -19,14 +20,14 @@ const mockSearchResult = mockFunction(SearchResult)
 
 mockSearchResult.mockImplementation(({ value }) => <div>{value}</div>)
 
-window.scroll = jest.fn()
+window.scroll = vi.fn() as () => void
 
 describe('SearchInput', () => {
   mockUseLocalStorage.mockReturnValue([[]])
-  window.ResizeObserver = jest.fn()
-  ;(window.ResizeObserver as jest.Mock).mockImplementation(() => ({
-    observe: jest.fn(),
-    disconnect: jest.fn(),
+  window.ResizeObserver = vi.fn()
+  ;(window.ResizeObserver as Mock).mockImplementation(() => ({
+    observe: vi.fn(),
+    disconnect: vi.fn(),
   }))
 
   it('should render on desktop layouts', () => {

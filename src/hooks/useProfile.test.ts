@@ -1,5 +1,7 @@
 import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
 import { GetSubgraphRecordsReturnType } from '@ensdomains/ensjs/subgraph'
 
@@ -10,9 +12,9 @@ import { useDecodedName } from './ensjs/subgraph/useDecodedName'
 import { useSubgraphRecords } from './ensjs/subgraph/useSubgraphRecords'
 import { useProfile } from './useProfile'
 
-jest.mock('./ensjs/subgraph/useSubgraphRecords')
-jest.mock('./ensjs/public/useRecords')
-jest.mock('./ensjs/subgraph/useDecodedName')
+vi.mock('./ensjs/subgraph/useSubgraphRecords')
+vi.mock('./ensjs/public/useRecords')
+vi.mock('./ensjs/subgraph/useDecodedName')
 
 const mockUseSubgraphRecords = mockFunction(useSubgraphRecords)
 const mockUseRecords = mockFunction(useRecords)
@@ -67,7 +69,7 @@ const mockUseRecordsData: GetRecordsReturnType = {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks()
+  vi.resetAllMocks()
   mockUseSubgraphRecords.mockReturnValue({
     data: mockUseSubgraphRecordsData,
     isLoading: false,
@@ -189,7 +191,7 @@ it('should fetch default records when no subgraph records, then fetch with subgr
   const { result, rerender } = renderHook(() => useProfile({ name: 'test.eth' }))
   expect(useRecords).toHaveBeenCalledWith(
     expect.objectContaining({
-        texts: expect.not.arrayContaining(['avatar', 'com.example']),
+      texts: expect.not.arrayContaining(['avatar', 'com.example']),
     }),
   )
   expect(result.current.data!.texts).toHaveLength(2)
@@ -211,7 +213,7 @@ it('should fetch default records when no subgraph records, then fetch with subgr
   await waitFor(() => !result.current.isLoading)
   expect(useRecords).toHaveBeenCalledWith(
     expect.objectContaining({
-        texts: expect.arrayContaining(['avatar', 'com.example']),
+      texts: expect.arrayContaining(['avatar', 'com.example']),
     }),
   )
   expect(result.current.data!.texts).toHaveLength(4)
@@ -230,9 +232,9 @@ it('should fetch union of supported coin records and subgraph coin records', () 
   renderHook(() => useProfile({ name: 'test.eth' }))
   expect(useRecords).toHaveBeenCalledWith(
     expect.objectContaining({
-        coins: expect.arrayContaining([
-          /* some default coins */ 0, 3, 60, 714, /* subgraph coins */ 118, 128,
-        ]),
+      coins: expect.arrayContaining([
+        /* some default coins */ 0, 3, 60, 714, /* subgraph coins */ 118, 128,
+      ]),
     }),
   )
 })
@@ -250,7 +252,7 @@ it('should filter out unsupported coin records', () => {
   renderHook(() => useProfile({ name: 'test.eth' }))
   expect(useRecords).toHaveBeenCalledWith(
     expect.objectContaining({
-        coins: expect.not.arrayContaining([3010]),
+      coins: expect.not.arrayContaining([3010]),
     }),
   )
 })

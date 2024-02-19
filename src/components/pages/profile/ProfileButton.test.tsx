@@ -1,13 +1,15 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry, shortenAddress } from '@app/utils/utils'
 
 import { OwnerProfileButton } from './ProfileButton'
 
-jest.mock('@app/utils/BreakpointProvider')
-jest.mock('@app/hooks/ensjs/public/usePrimaryName')
+vi.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 mockUseBreakpoint.mockReturnValue({

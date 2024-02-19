@@ -1,31 +1,32 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
 import * as ThorinComponents from '@ensdomains/thorin'
 
 import { AvatarNFT } from './AvatarNFT'
 
-jest.mock('@app/hooks/chain/useChainName', () => ({
+vi.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: () => 'mainnet',
 }))
 
-jest.mock('@app/hooks/usePublicClient', () => ({
+vi.mock('@app/hooks/usePublicClient', () => ({
   usePublicClient: () => ({
     chain: {
       id: 1,
       contracts: {
-        ensBaseRegistrarImplementation: { address: '0xensBaseRegistrarImplementation'},
-        ensNameWrapper: { address: '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'},
-      }
+        ensBaseRegistrarImplementation: { address: '0xensBaseRegistrarImplementation' },
+        ensNameWrapper: { address: '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85' },
+      },
     },
   }),
 }))
 
 const mockUseAccount = mockFunction(useAccount)
-const mockHandleSubmit = jest.fn()
-const mockHandleCancel = jest.fn()
+const mockHandleSubmit = vi.fn()
+const mockHandleCancel = vi.fn()
 
 const props = {
   handleSubmit: mockHandleSubmit,
@@ -68,29 +69,30 @@ const generateNFT = (withMedia: boolean, contractAddress?: string) => (_: any, i
   },
 })
 
-const mockFetch = jest.fn().mockImplementation(() => Promise.resolve({
-  ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
-  totalCount: 5,
-}))
+const mockFetch = vi.fn().mockImplementation(() =>
+  Promise.resolve({
+    ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+    totalCount: 5,
+  }),
+)
 // @ts-ignore
-global.fetch = jest.fn(() => Promise.resolve({ json: mockFetch}))
+global.fetch = vi.fn(() => Promise.resolve({ json: mockFetch }))
 
 beforeEach(() => {
   mockFetch.mockClear()
-  mockUseAccount.mockReturnValue({address: `0x${Date.now()}`})
+  mockUseAccount.mockReturnValue({ address: `0x${Date.now()}` })
 })
 
 describe('<AvatarNFT />', () => {
-  window.IntersectionObserver = jest.fn()
-  ;(window.IntersectionObserver as jest.Mock).mockImplementation(() => ({
-    observe: jest.fn(),
-    disconnect: jest.fn(),
+  window.IntersectionObserver = vi.fn()
+  ;(window.IntersectionObserver as Mock).mockImplementation(() => ({
+    observe: vi.fn(),
+    disconnect: vi.fn(),
   }))
   mockUseAccount.mockReturnValue({
     address: '0x0000000000000000000000000000000000000001',
   })
   it('should show detail on click', async () => {
-
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
@@ -100,7 +102,6 @@ describe('<AvatarNFT />', () => {
     })
   })
   it('should correctly call submit callback', async () => {
-
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
@@ -127,10 +128,15 @@ describe('<AvatarNFT />', () => {
     expect(screen.getByTestId('nft-4-0x4')).toBeVisible()
   })
   it('should not display ENS NFTs', async () => {
-    mockFetch.mockImplementationOnce(() => Promise.resolve({
-      ownedNfts: Array.from({ length: 5 }, generateNFT(true, '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85')),
-      totalCount: 5,
-    }))
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ownedNfts: Array.from(
+          { length: 5 },
+          generateNFT(true, '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'),
+        ),
+        totalCount: 5,
+      }),
+    )
 
     render(<AvatarNFT {...props} />)
 
@@ -142,57 +148,61 @@ describe('<AvatarNFT />', () => {
     )
   })
   it('should not display NFTs with no media', async () => {
-    mockFetch.mockImplementationOnce(() => Promise.resolve({
-      ownedNfts: Array.from({ length: 5 }, generateNFT(false)),
-      totalCount: 5,
-    }))
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ownedNfts: Array.from({ length: 5 }, generateNFT(false)),
+        totalCount: 5,
+      }),
+    )
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
     await waitFor(() => expect(screen.queryByTestId('nft-0-0x0')).not.toBeInTheDocument())
   })
   it('show load more data on page load trigger', async () => {
-    mockFetch.mockImplementationOnce(() => Promise.resolve({
-      ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
-      totalCount: 10,
-      pageKey: 'test123',
-    }))
-  
-    jest
-      .spyOn(ThorinComponents, 'ScrollBox')
-      .mockImplementationOnce(({ children, onReachedBottom }) => {
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+        totalCount: 10,
+        pageKey: 'test123',
+      }),
+    )
+
+    vi.spyOn(ThorinComponents, 'ScrollBox').mockImplementationOnce(
+      ({ children, onReachedBottom }) => {
         onReachedBottom!()
         return <div>{children}</div>
-      })
+      },
+    )
 
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
     await waitFor(() =>
       // @ts-ignore
-      expect(fetch.mock.lastCall[1]).toEqual(
-        {
-          method: 'GET',
-          redirect: 'follow',
-        },
-      ),
+      expect(fetch.mock.lastCall[1]).toEqual({
+        method: 'GET',
+        redirect: 'follow',
+      }),
     )
     // @ts-ignore
     expect(fetch.mock.lastCall[0]).toMatch(/pageKey=test123/)
   })
   it('show not load more data on page load trigger if no more pages', async () => {
-    mockUseAccount.mockReturnValue({address: '0x123'})
-    mockFetch.mockImplementation(() => Promise.resolve({
-      ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
-      totalCount: 5,
-    }))
+    mockUseAccount.mockReturnValue({ address: '0x123' })
+    mockFetch.mockImplementation(() =>
+      Promise.resolve({
+        ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+        totalCount: 5,
+      }),
+    )
 
-    jest
-      .spyOn(ThorinComponents, 'ScrollBox')
-      .mockImplementationOnce(({ children, onReachedBottom }) => {
+    vi.spyOn(ThorinComponents, 'ScrollBox').mockImplementationOnce(
+      ({ children, onReachedBottom }) => {
         onReachedBottom!()
         return <div>{children}</div>
-      })
+      },
+    )
 
     render(<AvatarNFT {...props} />)
 
@@ -200,19 +210,26 @@ describe('<AvatarNFT />', () => {
   })
 
   it('should show message if search returns no results', async () => {
-    mockFetch.mockImplementationOnce(() => Promise.resolve({
-      ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
-      totalCount: 5,
-    })).mockImplementation(() => Promise.resolve({
-      ownedNfts: [],
-      totalCount: 0,
-    }))
+    mockFetch
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+          totalCount: 5,
+        }),
+      )
+      .mockImplementation(() =>
+        Promise.resolve({
+          ownedNfts: [],
+          totalCount: 0,
+        }),
+      )
 
     render(<AvatarNFT {...props} />)
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
     const searchInput = screen.getByTestId('avatar-search-input')
     await userEvent.type(searchInput, 'blahblahblah')
-    await waitFor(() => 
-    expect(screen.getByText('input.profileEditor.tabs.avatar.nft.noResults')).toBeVisible())
+    await waitFor(() =>
+      expect(screen.getByText('input.profileEditor.tabs.avatar.nft.noResults')).toBeVisible(),
+    )
   })
 })

@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import * as coins from '@ensdomains/address-encoder/coins'
 
 import coinsWithIcons from '@app/constants/coinsWithIcons.json'

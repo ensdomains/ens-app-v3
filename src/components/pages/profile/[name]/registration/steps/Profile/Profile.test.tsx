@@ -1,6 +1,7 @@
 import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { PointerEventsCheckLevel } from '@testing-library/user-event'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount, useNetwork } from 'wagmi'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
@@ -36,8 +37,8 @@ const makeExpectedCallbackData = (overwrites: any = {}): any => {
   }
 }
 
-jest.mock('@app/hooks/chain/useContractAddress')
-jest.mock('@app/hooks/useLocalStorage')
+vi.mock('@app/hooks/chain/useContractAddress')
+vi.mock('@app/hooks/useLocalStorage')
 
 const mockUseNetwork = mockFunction(useNetwork)
 mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
@@ -52,7 +53,7 @@ mockUseContractAddress.mockReturnValue('0x123')
 const mockUseLocalStorage = mockFunction(useLocalStorage)
 mockUseLocalStorage.mockReturnValue([false, () => {}])
 
-const mockIntersectionObserver = jest.fn()
+const mockIntersectionObserver = vi.fn()
 mockIntersectionObserver.mockReturnValue({
   observe: () => null,
   unobserve: () => null,
@@ -60,11 +61,11 @@ mockIntersectionObserver.mockReturnValue({
 })
 window.IntersectionObserver = mockIntersectionObserver
 
-const mockCallback = jest.fn()
+const mockCallback = vi.fn()
 
 describe('Profile', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render', () => {
@@ -101,8 +102,9 @@ describe('Profile', () => {
       />,
     )
     await userEvent.click(screen.getByTestId('profile-back-button'))
-    // Jest does not include submitter in event callback so we can not test that back is true
-    await waitFor(() => expect(mockCallback).toHaveBeenCalledWith(makeExpectedCallbackData()))
+    await waitFor(() =>
+      expect(mockCallback).toHaveBeenCalledWith(makeExpectedCallbackData({ back: true })),
+    )
   })
 
   it('should return callback with clearRecords as false if resolver value is different from public resolver', async () => {

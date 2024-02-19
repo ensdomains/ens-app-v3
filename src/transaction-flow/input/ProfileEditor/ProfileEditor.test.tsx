@@ -1,8 +1,11 @@
 /* eslint-disable no-await-in-loop */
 import { cleanup, mockFunction, render, screen, userEvent, waitFor, within } from '@app/test-utils'
 
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useEnsAvatar } from 'wagmi'
 
+import ensjsPackage from '@app/../node_modules/@ensdomains/ensjs/package.json'
+import appPackage from '@app/../package.json'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
@@ -10,9 +13,6 @@ import { useProfile } from '@app/hooks/useProfile'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import ProfileEditor from './ProfileEditor-flow'
-
-const appPackage = require('@app/../package.json')
-const ensjsPackage = require('@app/../node_modules/@ensdomains/ensjs/package.json')
 
 const mockProfileData = {
   data: {
@@ -88,17 +88,17 @@ const mockProfileData = {
   isLoading: false,
 }
 
-jest.mock('@app/hooks/chain/useContractAddress')
+vi.mock('@app/hooks/chain/useContractAddress')
 
-jest.mock('@app/hooks/resolver/useResolverStatus')
-jest.mock('@app/hooks/useProfile')
-jest.mock('@app/hooks/useIsWrapped')
+vi.mock('@app/hooks/resolver/useResolverStatus')
+vi.mock('@app/hooks/useProfile')
+vi.mock('@app/hooks/useIsWrapped')
 
-jest.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/utils/BreakpointProvider')
 
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
 
-jest.mock('@app/transaction-flow/input/ProfileEditor/components/ProfileBlurb', () => ({
+vi.mock('@app/transaction-flow/input/ProfileEditor/components/ProfileBlurb', () => ({
   ProfileBlurb: () => <div>Profile Blurb</div>,
 }))
 
@@ -109,7 +109,7 @@ const mockUseProfile = mockFunction(useProfile)
 const mockUseIsWrapped = mockFunction(useIsWrapped)
 const mockUseEnsAvatar = mockFunction(useEnsAvatar)
 
-const mockDispatch = jest.fn()
+const mockDispatch = vi.fn()
 
 export function setupIntersectionObserverMock({
   root = null,
@@ -186,7 +186,7 @@ describe('ProfileEditor', () => {
       xl: false,
     })
 
-    window.scroll = jest.fn()
+    window.scroll = vi.fn() as () => void
 
     // @ts-ignore
     mockUseContractAddress.mockReturnValue('0x0')
@@ -203,12 +203,12 @@ describe('ProfileEditor', () => {
 
   afterEach(() => {
     cleanup()
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   it('should have use the same version of address-encoder as ensjs', () => {
-    expect(appPackage.dependencies['address-encoder']).toEqual(
-      ensjsPackage.dependencies['address-encoder'],
+    expect(appPackage.dependencies['@ensdomains/address-encoder']).toEqual(
+      ensjsPackage.dependencies['@ensdomains/address-encoder'],
     )
   })
 

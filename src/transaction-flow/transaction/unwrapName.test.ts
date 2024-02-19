@@ -1,12 +1,14 @@
 import { mockFunction } from '@app/test-utils'
 
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import { unwrapName } from '@ensdomains/ensjs/wallet'
 
 import { PublicClientWithChain, WalletClientWithAccount } from '@app/types'
 
 import unwrapNameFlowTransaction from './unwrapName'
 
-jest.mock('@ensdomains/ensjs/wallet')
+vi.mock('@ensdomains/ensjs/wallet')
 
 const mockUnwrapName = mockFunction(unwrapName.makeFunctionData)
 
@@ -38,7 +40,7 @@ describe('unwrapName', () => {
     const publicClient = {} as PublicClientWithChain
 
     afterEach(() => {
-      jest.clearAllMocks()
+      vi.clearAllMocks()
     })
 
     it('should provide controller and registrant when name is an eth 2ld', async () => {

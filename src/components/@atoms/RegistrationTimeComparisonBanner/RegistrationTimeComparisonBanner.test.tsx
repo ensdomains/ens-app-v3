@@ -1,5 +1,7 @@
 import { render, screen, waitFor } from '@app/test-utils'
 
+import { describe, expect, it } from 'vitest'
+
 import { RegistrationTimeComparisonBanner } from './RegistrationTimeComparisonBanner'
 
 describe('RegistrationUpsellBanner', () => {

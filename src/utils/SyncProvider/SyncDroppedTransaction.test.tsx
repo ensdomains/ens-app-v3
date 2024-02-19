@@ -2,6 +2,7 @@ import { mockFunction, render } from '@app/test-utils'
 
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
@@ -10,9 +11,9 @@ import { usePublicClient } from '@app/hooks/usePublicClient'
 import { PublicClientWithChain } from '@app/types'
 
 import {
-  SyncDroppedTransaction,
   findDroppedTransactions,
   getAccountHistoryEndpoint,
+  SyncDroppedTransaction,
 } from './SyncDroppedTransaction'
 
 const ADDRESS = '0x1234567890abcdef'
@@ -35,10 +36,12 @@ export const handlers = [
 
 export const server = setupServer(...handlers)
 
-jest.mock('@app/hooks/account/useAccountSafely')
-jest.mock('@app/hooks/transactions/useRecentTransactions')
-jest.mock('@app/hooks/transactions/TransactionStoreContext')
-jest.mock('@app/hooks/usePublicClient')
+vi.mock('@app/hooks/account/useAccountSafely')
+vi.mock('@app/hooks/transactions/useRecentTransactions')
+vi.mock('@app/hooks/transactions/TransactionStoreContext')
+vi.mock('@app/hooks/usePublicClient', () => ({
+  usePublicClient: vi.fn(),
+}))
 
 const mockUsePublicClient = mockFunction(usePublicClient)
 const mockUseAccountSafely = mockFunction(useAccountSafely)
@@ -60,12 +63,12 @@ describe('SyncDroppedTransaction', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should call setInterval with the correct arguments', () => {
     const mockDelay = 10000
-    jest.spyOn(global, 'setInterval').mockImplementation((fn: any) => fn())
+    vi.spyOn(global, 'setInterval').mockImplementation((fn: any) => fn())
 
     render(<SyncDroppedTransaction>Test</SyncDroppedTransaction>)
 
@@ -160,7 +163,7 @@ describe('findDroppedTransactions', () => {
         },
       ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { foundMinedTransaction: jest.fn() } as any
+      const mockStore = { foundMinedTransaction: vi.fn() } as any
       const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
 
       await findDroppedTransactions(mockPublicClient, {
@@ -198,7 +201,7 @@ describe('findDroppedTransactions', () => {
         },
       ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { setReplacedTransaction: jest.fn() } as any
+      const mockStore = { setReplacedTransaction: vi.fn() } as any
       const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
 
       await findDroppedTransactions(mockPublicClient, {
@@ -217,7 +220,7 @@ describe('findDroppedTransactions', () => {
         },
       ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { setReplacedTransaction: jest.fn() } as any
+      const mockStore = { setReplacedTransaction: vi.fn() } as any
       const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
 
       await findDroppedTransactions(mockPublicClient, {
@@ -236,7 +239,7 @@ describe('findDroppedTransactions', () => {
         },
       ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { foundTransaction: jest.fn() } as any
+      const mockStore = { foundTransaction: vi.fn() } as any
       const mockPublicClient = {
         chain: { id: 1 },
         getTransaction: () => Promise.resolve({}),
@@ -258,7 +261,7 @@ describe('findDroppedTransactions', () => {
         },
       ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { setFailedTransaction: jest.fn() } as any
+      const mockStore = { setFailedTransaction: vi.fn() } as any
       const mockPublicClient = {
         chain: { id: 1 },
         getTransaction: () => Promise.resolve(null),
@@ -280,7 +283,7 @@ describe('findDroppedTransactions', () => {
         },
       ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { updateRetries: jest.fn() } as any
+      const mockStore = { updateRetries: vi.fn() } as any
       const mockPublicClient = {
         chain: { id: 1 },
         getTransaction: () => Promise.resolve(null),
@@ -307,7 +310,7 @@ describe('findDroppedTransactions', () => {
         },
       ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { setReplacedTransactionByNonce: jest.fn() } as any
+      const mockStore = { setReplacedTransactionByNonce: vi.fn() } as any
       const mockPublicClient = {
         chain: { id: 1 },
         getTransaction: () => Promise.resolve(null),
@@ -334,8 +337,8 @@ describe('findDroppedTransactions', () => {
       ] as any
       const mockAddress = '0x1234567890abcdef'
       const mockStore = {
-        setReplacedTransactionByNonce: jest.fn(),
-        setFailedTransaction: jest.fn(),
+        setReplacedTransactionByNonce: vi.fn(),
+        setFailedTransaction: vi.fn(),
       } as any
       const mockPublicClient = {
         chain: { id: 1 },
@@ -363,7 +366,7 @@ describe('findDroppedTransactions', () => {
         },
       ] as any
       const mockAddress = '0x1234567890abcdef'
-      const mockStore = { setFailedTransaction: jest.fn() } as any
+      const mockStore = { setFailedTransaction: vi.fn() } as any
       const mockPublicClient = {
         chain: { id: 1 },
         getTransaction: () => Promise.resolve(null),
@@ -390,7 +393,7 @@ describe('findDroppedTransactions', () => {
       },
     ] as any
     const mockAddress = '0x1234567890abcdef'
-    const mockStore = { setFailedTransaction: jest.fn() } as any
+    const mockStore = { setFailedTransaction: vi.fn() } as any
     const mockPublicClient = {
       chain: { id: 1 },
       getTransaction: () => Promise.resolve(null),

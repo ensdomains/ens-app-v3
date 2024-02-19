@@ -1,39 +1,41 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
 
 import ExtendNames from './ExtendNames-flow'
 
-jest.mock('@app/hooks/chain/useEstimateGasWithStateOverride')
-jest.mock('@app/hooks/ensjs/public/usePrice')
+vi.mock('@app/hooks/chain/useEstimateGasWithStateOverride')
+vi.mock('@app/hooks/ensjs/public/usePrice')
 
 const mockUseEstimateGasWithStateOverride = mockFunction(useEstimateGasWithStateOverride)
 const mockUsePrice = mockFunction(usePrice)
 
-jest.mock('@ensdomains/thorin', () => {
-  const originalModule = jest.requireActual('@ensdomains/thorin')
+vi.mock('@ensdomains/thorin', async () => {
+  const originalModule = await vi.importActual('@ensdomains/thorin')
   return {
     ...originalModule,
-    ScrollBox: jest.fn(({ children }) => children),
+    ScrollBox: vi.fn(({ children }) => children),
   }
 })
-jest.mock('@app/components/@atoms/Invoice/Invoice', () => {
-  const originalModule = jest.requireActual('@app/components/@atoms/Invoice/Invoice')
+vi.mock('@app/components/@atoms/Invoice/Invoice', async () => {
+  const originalModule = await vi.importActual('@app/components/@atoms/Invoice/Invoice')
   return {
     ...originalModule,
-    Invoice: jest.fn(() => <div>Invoice</div>),
+    Invoice: vi.fn(() => <div>Invoice</div>),
   }
 })
-jest.mock(
+vi.mock(
   '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner',
-  () => {
-    const originalModule = jest.requireActual(
+  async () => {
+    const originalModule = await vi.importActual(
       '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner',
     )
     return {
       ...originalModule,
-      RegistrationTimeComparisonBanner: jest.fn(() => <div>RegistrationTimeComparisonBanner</div>),
+      RegistrationTimeComparisonBanner: vi.fn(() => <div>RegistrationTimeComparisonBanner</div>),
     }
   },
 )

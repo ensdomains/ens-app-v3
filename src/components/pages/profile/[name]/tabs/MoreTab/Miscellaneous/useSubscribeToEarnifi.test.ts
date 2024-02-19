@@ -2,12 +2,13 @@ import { act, renderHook, waitFor } from '@app/test-utils'
 
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
+import { afterAll, afterEach, beforeAll, describe, expect, it, test, vi } from 'vitest'
 
 import { EARNIFI_ENDPOINT, getErrorMessage, useSubscribeToEarnifi } from './useSubscribeToEarnifi'
 
 export const handlers = [
   rest.post(EARNIFI_ENDPOINT, async (req, res, ctx) => {
-    const { email, address, chainId } = await req.json() 
+    const { email, address, chainId } = await req.json()
     if (email && address && chainId) {
       return res(ctx.status(200))
     }
@@ -65,7 +66,7 @@ describe('useSubscribeToEarnifi', () => {
   })
 
   it('should call onError function when there is a server error', async () => {
-    const onError = jest.fn()
+    const onError = vi.fn() as () => void
     const { result } = renderHook(() => useSubscribeToEarnifi({ onError }))
 
     // Simulate a server error

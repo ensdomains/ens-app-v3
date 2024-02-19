@@ -1,19 +1,21 @@
 import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { DeepPartial } from '@app/types'
 
 import RevokePermissions, { Props } from './RevokePermissions-flow'
 
-jest.mock('@app/hooks/ensjs/public/usePrimaryName')
+vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
-jest.spyOn(Date, 'now').mockImplementation(() => new Date('2023-01-01').getTime())
+vi.spyOn(Date, 'now').mockImplementation(() => new Date('2023-01-01').getTime())
 
 const mockUsePrimaryName = mockFunction(usePrimaryName)
 
-const mockDispatch = jest.fn()
-const mockOnDismiss = jest.fn()
+const mockDispatch = vi.fn()
+const mockOnDismiss = vi.fn()
 
 type Data = Props['data']
 const makeData = (overrides: DeepPartial<Data> = {}) => {
@@ -56,7 +58,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('RevokePermissions', () => {

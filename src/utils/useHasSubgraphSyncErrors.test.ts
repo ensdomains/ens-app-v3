@@ -1,19 +1,16 @@
 import { renderHook } from '@app/test-utils'
 
 import { hashQueryKey } from '@tanstack/react-query'
+import { describe, expect, it, vi } from 'vitest'
+import * as wagmi from 'wagmi'
 
 import { useHasSubgraphSyncErrors } from './useHasSubgraphSyncErrors'
 
-const useQueryClient = jest.fn()
+const mockUseQueryClient = vi.spyOn(wagmi, 'useQueryClient')
 
-jest.mock('@tanstack/react-query', () => ({
-  ...jest.requireActual('@tanstack/react-query'),
-  useQueryClient: () => useQueryClient(),
-}))
-
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useSyncExternalStore: jest.fn().mockImplementation((subscribe, getSnapshot) => {
+vi.mock('react', async () => ({
+  ...(await vi.importActual('react')),
+  useSyncExternalStore: vi.fn().mockImplementation((subscribe, getSnapshot) => {
     subscribe(() => {})
 
     const initialState = getSnapshot()
@@ -24,7 +21,7 @@ jest.mock('react', () => ({
 
 describe('useHasSubgraphSyncErrors', () => {
   it('it reports a subgraph error if it was found in query cache', async () => {
-    useQueryClient.mockImplementation(() => {
+    mockUseQueryClient.mockImplementation((): any => {
       const event = {
         query: {
           queryKey: ['someKey', 'graph'],
@@ -56,9 +53,9 @@ describe('useHasSubgraphSyncErrors', () => {
     expect(result.current).toEqual({ error: 1, slow: 0 })
   })
   it('it reports a latency issue if a query took too long since render', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
 
-    useQueryClient.mockImplementation(() => {
+    mockUseQueryClient.mockImplementation((): any => {
       let called = 0
       const event = {
         type: 'updated',
@@ -87,12 +84,12 @@ describe('useHasSubgraphSyncErrors', () => {
       }
     })
     // advance startTime of a query by 5 seconds
-    jest.spyOn(global.Date, 'now').mockImplementationOnce(() => Date.now() - 5001)
+    vi.spyOn(global.Date, 'now').mockImplementationOnce(() => Date.now() - 5001)
 
     const { result } = renderHook(() => useHasSubgraphSyncErrors())
 
     expect(result.current).toEqual({ error: 0, slow: 1 })
 
-    jest.clearAllTimers()
+    vi.clearAllTimers()
   })
 })

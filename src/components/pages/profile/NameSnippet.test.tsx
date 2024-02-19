@@ -1,15 +1,17 @@
 import { render, screen } from '@app/test-utils'
 
 import { ComponentProps } from 'react'
+import { describe, expect, it, vi } from 'vitest'
 
 import { NameDetailSnippet } from './NameSnippet'
 
 type NameDetailSnippetProps = ComponentProps<typeof NameDetailSnippet>
 
-jest.mock('next/router', () => jest.requireActual('next-router-mock'))
-jest.mock('@app/utils/BreakpointProvider')
+vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
+vi.mock('@app/utils/BreakpointProvider')
 
-jest.setTimeout(5000)
+vi.setConfig({ testTimeout: 5000 })
+
 describe('NameSnippetMobile', () => {
   const baseMockData = {
     name: 'nick.eth',

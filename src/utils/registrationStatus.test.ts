@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
 import { getRegistrationStatus } from './registrationStatus'

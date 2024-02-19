@@ -1,8 +1,10 @@
 /* eslint-disable no-promise-executor-return */
 import { act, fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
+import type { MockedFunctionDeep } from '@vitest/spy'
 import { ComponentProps } from 'react'
 import { TransactionRequest } from 'viem'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { usePublicClient, useSendTransaction, useWalletClient } from 'wagmi'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
@@ -20,12 +22,12 @@ import {
   transactionSuccessHandler,
 } from './TransactionStageModal'
 
-jest.mock('@app/hooks/account/useAccountSafely')
-jest.mock('@app/hooks/chain/useChainName')
-jest.mock('@app/hooks/useIsSafeApp')
-jest.mock('@app/hooks/transactions/useAddRecentTransaction')
-jest.mock('@app/hooks/transactions/useRecentTransactions')
-jest.mock('@app/utils/safe')
+vi.mock('@app/hooks/account/useAccountSafely')
+vi.mock('@app/hooks/chain/useChainName')
+vi.mock('@app/hooks/useIsSafeApp')
+vi.mock('@app/hooks/transactions/useAddRecentTransaction')
+vi.mock('@app/hooks/transactions/useRecentTransactions')
+vi.mock('@app/utils/safe')
 
 const mockTransactionRequest: TransactionRequest = {
   data: '0x1896f70a516f53deb2dac3f055f1db1fbd64c12640aa29059477103c3ef28806f15929250000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41',
@@ -43,8 +45,8 @@ const mockTransaction: GenericTransaction = {
   },
 }
 
-jest.mock('@app/transaction-flow/transaction', () => {
-  const originalModule = jest.requireActual('@app/transaction-flow/transaction')
+vi.mock('@app/transaction-flow/transaction', () => {
+  const originalModule = vi.importActual('@app/transaction-flow/transaction')
   return {
     __esModule: true,
     ...originalModule,
@@ -61,11 +63,11 @@ const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseChainName = mockFunction(useChainName)
 const mockUseSendTransaction = mockFunction(useSendTransaction)
-const mockCheckIsSafeApp = checkIsSafeApp as jest.MockedFunctionDeep<typeof checkIsSafeApp>
+const mockCheckIsSafeApp = checkIsSafeApp as MockedFunctionDeep<typeof checkIsSafeApp>
 
-const mockEstimateGas = jest.fn()
-const mockOnDismiss = jest.fn()
-const mockDispatch = jest.fn()
+const mockEstimateGas = vi.fn()
+const mockOnDismiss = vi.fn()
+const mockDispatch = vi.fn()
 
 const ComponentWithDefaultProps = ({
   currentStep = 0,
@@ -205,7 +207,7 @@ describe('TransactionStageModal', () => {
       })
       it('should run set sendTransaction on action click', async () => {
         mockEstimateGas.mockResolvedValue(1n)
-        const mockSendTransaction = jest.fn()
+        const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
         })
@@ -218,7 +220,7 @@ describe('TransactionStageModal', () => {
       })
       it('should show the waiting for wallet button if the transaction is loading', async () => {
         mockEstimateGas.mockResolvedValue(1n)
-        const mockSendTransaction = jest.fn()
+        const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
           isLoading: true,
@@ -230,7 +232,7 @@ describe('TransactionStageModal', () => {
         )
       })
       it('should show the error message and reenable button if there is an error', async () => {
-        const mockSendTransaction = jest.fn()
+        const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
           error: new Error('error123'),
@@ -245,14 +247,14 @@ describe('TransactionStageModal', () => {
       it('should pass the request to send transaction', async () => {
         mockUseIsSafeApp.mockReturnValue({ data: false })
         mockEstimateGas.mockResolvedValue(1n)
-        const mockSendTransaction = jest.fn()
+        const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
         })
         await renderHelper({ transaction: mockTransaction })
         await clickRequest()
         await waitFor(() =>
-          expect(mockUseSendTransaction.mock.lastCall[0]!).toStrictEqual(
+          expect(mockUseSendTransaction.mock.lastCall![0]!).toStrictEqual(
             expect.objectContaining({
               ...mockTransactionRequest,
               gas: 1n,
@@ -262,14 +264,14 @@ describe('TransactionStageModal', () => {
         )
       })
       it('should add to recent transactions and run dispatch from success callback', async () => {
-        const mockAddTransaction = jest.fn()
+        const mockAddTransaction = vi.fn()
         mockUseAddRecentTransaction.mockReturnValue(mockAddTransaction)
         mockCheckIsSafeApp.mockResolvedValue(false)
         await renderHelper({ transaction: mockTransaction })
         await waitFor(() =>
-          expect(mockUseSendTransaction.mock.lastCall[0]!.onSuccess).toBeDefined(),
+          expect(mockUseSendTransaction.mock.lastCall![0]!.onSuccess).toBeDefined(),
         )
-        await (mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({
+        await (mockUseSendTransaction.mock.lastCall![0] as any).onSuccess({
           hash: '0x123',
         })
         expect(mockAddTransaction).toBeCalledWith(
@@ -286,15 +288,15 @@ describe('TransactionStageModal', () => {
         })
       })
       it('should add to recent transactions and run dispatch from success callback when isSafeTx', async () => {
-        const mockAddTransaction = jest.fn()
+        const mockAddTransaction = vi.fn()
         mockUseIsSafeApp.mockReturnValue({ data: 'iframe' })
         mockUseAddRecentTransaction.mockReturnValue(mockAddTransaction)
         mockCheckIsSafeApp.mockResolvedValue('iframe')
         await renderHelper({ transaction: mockTransaction })
         await waitFor(() =>
-          expect(mockUseSendTransaction.mock.lastCall[0]!.onSuccess).toBeDefined(),
+          expect(mockUseSendTransaction.mock.lastCall![0]!.onSuccess).toBeDefined(),
         )
-        await (mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({
+        await (mockUseSendTransaction.mock.lastCall![0] as any).onSuccess({
           hash: '0x123',
         })
         expect(mockAddTransaction).toBeCalledWith(
@@ -358,7 +360,7 @@ describe('TransactionStageModal', () => {
       })
       it('should run sendTransaction on action click', async () => {
         mockEstimateGas.mockResolvedValue(1n)
-        const mockSendTransaction = jest.fn()
+        const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
         })
@@ -389,17 +391,17 @@ describe('handleBackToInput', () => {
 
 describe('transactionSuccessHandler', () => {
   it('should add recent transaction data', async () => {
-    const mockAddRecentTransaction = jest.fn()
+    const mockAddRecentTransaction = vi.fn()
 
     transactionSuccessHandler({
       actionName: 'actionName',
       txKey: 'txKey',
       request: {} as any,
       addRecentTransaction: mockAddRecentTransaction,
-      dispatch: jest.fn(),
+      dispatch: vi.fn(),
       isSafeApp: false,
-      publicClient: { request: jest.fn(async () => ({ testKey: 'testVal' })) } as any,
-      walletClient: { data: { account: { address: '0x1234' } }, request: jest.fn() } as any,
+      publicClient: { request: vi.fn(async () => ({ testKey: 'testVal' })) } as any,
+      walletClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
     })({ hash: '0xhash' })
 
     await waitFor(() =>
@@ -409,17 +411,17 @@ describe('transactionSuccessHandler', () => {
     )
   })
   it('should dispatch the correct action', async () => {
-    const mockDispatch = jest.fn()
+    const mockDispatch = vi.fn()
 
     transactionSuccessHandler({
       actionName: 'actionName',
       txKey: 'txKey',
       request: {} as any,
-      addRecentTransaction: jest.fn(),
+      addRecentTransaction: vi.fn(),
       dispatch: mockDispatch,
       isSafeApp: false,
-      publicClient: { request: jest.fn(async () => ({ testKey: 'testVal' })) } as any,
-      walletClient: { data: { account: { address: '0x1234' } }, request: jest.fn() } as any,
+      publicClient: { request: vi.fn(async () => ({ testKey: 'testVal' })) } as any,
+      walletClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
     })({ hash: '0xhash' })
 
     await waitFor(() =>
@@ -429,17 +431,17 @@ describe('transactionSuccessHandler', () => {
     )
   })
   it('should handle a failed call to getTransaction', async () => {
-    const mockAddRecentTransaction = jest.fn()
+    const mockAddRecentTransaction = vi.fn()
 
     transactionSuccessHandler({
       actionName: 'actionName',
       txKey: 'txKey',
       request: {} as any,
       addRecentTransaction: mockAddRecentTransaction,
-      dispatch: jest.fn(),
+      dispatch: vi.fn(),
       isSafeApp: false,
-      publicClient: { request: jest.fn(async () => Promise.reject(new Error('Error'))) } as any,
-      walletClient: { data: { account: { address: '0x1234' } }, request: jest.fn() } as any,
+      publicClient: { request: vi.fn(async () => Promise.reject(new Error('Error'))) } as any,
+      walletClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
     })({ hash: '0xhash' })
 
     await waitFor(() => expect(mockAddRecentTransaction).toBeCalled())
@@ -448,8 +450,8 @@ describe('transactionSuccessHandler', () => {
 
 describe('calculateGasLimit', () => {
   const mockPublicClient = {
-    request: jest.fn(),
-    estimateGas: jest.fn(),
+    request: vi.fn(),
+    estimateGas: vi.fn(),
   }
   const mockWalletClient = {
     account: {
@@ -465,7 +467,7 @@ describe('calculateGasLimit', () => {
   const mockIsSafeApp = false
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should calculate gas limit for non-safe apps', async () => {

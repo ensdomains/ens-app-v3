@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
 import { useBasicName } from '@app/hooks/useBasicName'

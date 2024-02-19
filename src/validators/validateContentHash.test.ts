@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { validateContentHash } from './validateContentHash'
 
 const ipfsHttp = 'https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu'

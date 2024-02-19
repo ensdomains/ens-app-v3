@@ -1,13 +1,15 @@
 import { act, renderHook } from '@app/test-utils'
 
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import useExpandableRecordsGroup from './useExpandableRecordsGroup'
 
-const mockGetValues = jest.fn()
-const mockSetValue = jest.fn()
+const mockGetValues = vi.fn()
+const mockSetValue = vi.fn()
 
 describe('useExpandableRecordsGroup', () => {
   afterEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   it('should add unused option to newKeys when addKey is called', async () => {

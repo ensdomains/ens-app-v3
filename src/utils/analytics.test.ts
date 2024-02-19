@@ -1,4 +1,6 @@
-import { getUtm, setUtm, setupAnalytics, trackEvent } from './analytics'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { getUtm, setupAnalytics, setUtm, trackEvent } from './analytics'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Window = {
@@ -29,7 +31,7 @@ describe('analytics', () => {
   describe('trackEvent', () => {
     it('send event to plausible', () => {
       global.window ??= Object.create(window)
-      const mockPlausibleFunction = jest.fn()
+      const mockPlausibleFunction = vi.fn()
       window.plausible = mockPlausibleFunction
 
       Object.defineProperty(window, 'location', {

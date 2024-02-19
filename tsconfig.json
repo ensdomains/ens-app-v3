@@ -33,7 +33,6 @@
     "jsx": "preserve",
     "rootDir": ".",
     "baseUrl": "./",
-    "types": ["jest", "@testing-library/jest-dom"],
     "incremental": true,
     "noErrorTruncation": true,
     "paths": {
@@ -57,7 +56,9 @@
     "mdx.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "next.config.js"
+    "next.config.js",
+    "vitest.config.mts",
+    "test/*.mts"
   ],
-  "exclude": ["custom-test-env.js", "**/*.ignore.ts", "**/*.ignore.tsx", "functions/**/*"]
+  "exclude": ["**/*.ignore.ts", "**/*.ignore.tsx", "functions/**/*"]
 }

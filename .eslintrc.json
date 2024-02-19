@@ -7,20 +7,13 @@
     "prettier",
     "plugin:prettier/recommended"
   ],
-  "plugins": ["testing-library", "@typescript-eslint", "prettier", "jest"],
+  "plugins": ["testing-library", "@typescript-eslint", "prettier", "vitest"],
   "parser": "@typescript-eslint/parser",
   "overrides": [
     {
       "files": ["src/**/*.test.[jt]sx?"],
-      "env": { "jest/globals": true },
-      "globals": {
-        "context": "readonly"
-      },
-      "plugins": ["jest"],
-      "extends": ["plugin:jest/recommended"],
-      "rules": {
-        "jest/expect-expect": "off"
-      }
+      "plugins": ["vitest"],
+      "extends": ["plugin:vitest/recommended"]
     },
     {
       "files": ["functions/**/*"],
@@ -34,7 +27,6 @@
   },
   "ignorePatterns": [
     "next.config.js",
-    "jest.config.js",
     "deploy/**/*",
     "src/**/*.test.tsx",
     "src/**/*.test.ts"

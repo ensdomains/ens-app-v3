@@ -1,13 +1,14 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, renderHook, RenderHookOptions, RenderOptions } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import user from '@testing-library/user-event'
 import { MockConnector } from '@wagmi/core/connectors/mock'
 import React, { FC, ReactElement } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { createPublicClient, createWalletClient, http } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { mainnet } from 'viem/chains'
+import { beforeEach, expect, MockedFunction, vi } from 'vitest'
 import { createConfig, WagmiConfig } from 'wagmi'
 
 import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
@@ -20,14 +21,14 @@ BigInt.prototype.toJSON = function () {
   return this.toString()
 }
 
-window.scroll = jest.fn()
+window.scroll = vi.fn() as (opts?: ScrollOptions) => void
 
-jest.mock('@app/hooks/useRegistrationReducer', () => jest.fn(() => ({ item: { stepIndex: 0 } })))
-jest.mock('@app/hooks/chain/useChainId', () => ({ useChainId: () => 1 }))
+vi.mock('@app/hooks/useRegistrationReducer', () => vi.fn(() => ({ item: { stepIndex: 0 } })))
+vi.mock('@app/hooks/chain/useChainId', () => ({ useChainId: () => 1 }))
 
 export const mockUseAccountReturnValue = { address: '0x123' }
 
-jest.mock('wagmi', () => {
+vi.mock('wagmi', async () => {
   const {
     useQuery,
     useQueryClient,
@@ -35,7 +36,7 @@ jest.mock('wagmi', () => {
     useMutation,
     createConfig: _createConfig,
     WagmiConfig: _WagmiConfig,
-  } = jest.requireActual('wagmi')
+  } = await vi.importActual('wagmi')
 
   return {
     useQuery,
@@ -44,22 +45,22 @@ jest.mock('wagmi', () => {
     useMutation,
     createConfig: _createConfig,
     WagmiConfig: _WagmiConfig,
-    useAccount: jest.fn(() => mockUseAccountReturnValue),
-    useBalance: jest.fn(() => ({ data: { value: { lt: () => false } } })),
-    useNetwork: jest.fn(() => ({ chainId: 1 })),
-    useFeeData: jest.fn(),
-    useWalletClient: jest.fn(),
-    usePrepareContractWrite: jest.fn(),
-    usePublicClient: jest.fn(),
-    useSignTypedData: jest.fn(),
-    useBlockNumber: jest.fn(),
-    useSendTransaction: jest.fn(),
-    useEnsAvatar: jest.fn(() => ({ data: undefined })),
-    configureChains: jest.fn(() => ({})),
+    useAccount: vi.fn(() => mockUseAccountReturnValue),
+    useBalance: vi.fn(() => ({ data: { value: { lt: () => false } } })),
+    useNetwork: vi.fn(() => ({ chainId: 1 })),
+    useFeeData: vi.fn(),
+    useWalletClient: vi.fn(),
+    usePrepareContractWrite: vi.fn(),
+    usePublicClient: vi.fn(),
+    useSignTypedData: vi.fn(),
+    useBlockNumber: vi.fn(),
+    useSendTransaction: vi.fn(),
+    useEnsAvatar: vi.fn(() => ({ data: undefined })),
+    configureChains: vi.fn(() => ({})),
   }
 })
 
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (value: string, opts: any) => {
       const optsTxt = opts?.value || opts?.count || ''
@@ -109,7 +110,7 @@ const wagmiConfig = createConfig({
   publicClient: () => publicClient,
 })
 
-jest.mock('@app/utils/query', () => ({
+vi.mock('@app/utils/query', () => ({
   wagmiConfigWithRefetch: wagmiConfig,
 }))
 
@@ -146,7 +147,10 @@ export const expectEnabledHook = (fn: PartialMockedFunction<any>, enabled: boole
   expect(fn).toHaveBeenCalledWith(expect.objectContaining({ enabled }))
 
 export const mockFunction = <T extends (...args: any) => any>(func: T) =>
-  func as unknown as jest.MockedFunction<PartialMockedFunction<T>>
+  func as unknown as MockedFunction<PartialMockedFunction<T>>
 
 export * from '@testing-library/react'
+
+const userEvent = user.setup()
+
 export { customRender as render, customRenderHook as renderHook, userEvent }

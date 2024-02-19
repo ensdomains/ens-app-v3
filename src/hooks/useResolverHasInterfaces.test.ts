@@ -1,5 +1,7 @@
 import { renderHook, waitFor } from '@app/test-utils'
 
+import { describe, expect, it } from 'vitest'
+
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 import { RESOLVER_INTERFACE_IDS, ResolverInterfaceName } from '@app/constants/resolverInterfaceIds'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'

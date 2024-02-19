@@ -1,10 +1,12 @@
 import { mockFunction } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { getName } from '@ensdomains/ensjs/public'
 
 import { getPrimaryNameQueryFn } from './usePrimaryName'
 
-jest.mock('@ensdomains/ensjs/public')
+vi.mock('@ensdomains/ensjs/public')
 
 const mockGetName = mockFunction(getName)
 

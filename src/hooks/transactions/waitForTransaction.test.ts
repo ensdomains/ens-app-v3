@@ -2,28 +2,29 @@ import type { PartialMockedFunction } from '@app/test-utils'
 
 import { getPublicClient, PublicClient } from '@wagmi/core'
 import { WaitForTransactionReceiptParameters, WaitForTransactionReceiptReturnType } from 'viem'
+import { describe, expect, it, MockedFunction, vi } from 'vitest'
 
 import { fetchTxFromSafeTxHash } from '@app/utils/safe'
 
 import { requestWithSafeOverride, waitForTransaction } from './waitForTransaction'
 
-jest.mock('@app/utils/safe')
+vi.mock('@app/utils/safe')
 
-jest.mock('@wagmi/core', () => ({
-  getPublicClient: jest.fn(),
+vi.mock('@wagmi/core', () => ({
+  getPublicClient: vi.fn(),
 }))
 
-const mockGetPublicClient = getPublicClient as unknown as jest.MockedFunction<
+const mockGetPublicClient = getPublicClient as unknown as MockedFunction<
   PartialMockedFunction<typeof getPublicClient>
 >
 
-const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as unknown as jest.MockedFunctionDeep<
+const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as unknown as MockedFunction<
   typeof fetchTxFromSafeTxHash
 >
 
-const mockRequest = jest.fn()
-const mockWaitForTransactionReceipt = jest.fn<
-  Promise<WaitForTransactionReceiptReturnType>,
+const mockRequest = vi.fn()
+const mockWaitForTransactionReceipt = vi.fn<
+  [Promise<WaitForTransactionReceiptReturnType>],
   [WaitForTransactionReceiptParameters]
 >()
 
@@ -54,6 +55,7 @@ const mockTransactionReceiptData: WaitForTransactionReceiptReturnType = {
 
 describe('waitForTransaction', () => {
   it('should wait for standard transaction', async () => {
+    // @ts-ignore vi.fn is messing with types
     mockWaitForTransactionReceipt.mockResolvedValueOnce(mockTransactionReceiptData)
 
     const result = await waitForTransaction({
@@ -63,9 +65,10 @@ describe('waitForTransaction', () => {
     expect(result).toStrictEqual(mockTransactionReceiptData)
   })
   it('should pass onReplaced tx to waitForTransactionReceipt', async () => {
+    // @ts-ignore vi.fn is messing with types
     mockWaitForTransactionReceipt.mockResolvedValueOnce(mockTransactionReceiptData)
 
-    const onReplaced = jest.fn()
+    const onReplaced = vi.fn()
 
     await waitForTransaction({
       hash: '0xtest',

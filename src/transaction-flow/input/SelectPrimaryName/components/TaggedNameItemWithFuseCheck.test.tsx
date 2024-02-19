@@ -1,12 +1,14 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 
 import { TaggedNameItemWithFuseCheck } from './TaggedNameItemWithFuseCheck'
 
-jest.mock('@app/hooks/resolver/useResolverStatus')
+vi.mock('@app/hooks/resolver/useResolverStatus')
 
-jest.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem', () => ({
+vi.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem', () => ({
   TaggedNameItem: ({ name }: any) => <div data-testid="item">{name}</div>,
 }))
 

@@ -1,5 +1,7 @@
 import { expectEnabledHook, mockFunction, renderHook } from '@app/test-utils'
 
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
@@ -11,14 +13,14 @@ import { useProfile } from '../useProfile'
 import { useResolverIsAuthorised } from './useResolverIsAuthorised'
 import { useResolverType } from './useResolverType'
 
-jest.mock('@app/hooks/useProfile')
-jest.mock('@app/hooks/resolver/useResolverType')
-jest.mock('@app/hooks/resolver/useResolverIsAuthorised')
-jest.mock('@app/hooks/chain/useContractAddress')
+vi.mock('@app/hooks/useProfile')
+vi.mock('@app/hooks/resolver/useResolverType')
+vi.mock('@app/hooks/resolver/useResolverIsAuthorised')
+vi.mock('@app/hooks/chain/useContractAddress')
 
 const mockUseProfileBase = mockFunction(useProfile)
-const mockUseProfile = mockFunction<typeof useProfile>(jest.fn())
-const mockUseLatestResolverProfile = mockFunction<typeof useProfile>(jest.fn())
+const mockUseProfile = mockFunction<typeof useProfile>(vi.fn())
+const mockUseLatestResolverProfile = mockFunction<typeof useProfile>(vi.fn())
 
 const mockUseResolverType = mockFunction(useResolverType)
 const mockUseResolverIsAuthorised = mockFunction(useResolverIsAuthorised)
@@ -77,7 +79,7 @@ const createResult = (keys?: string[], isLoading = false) => ({
 })
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
   mockUseProfileBase.mockImplementation((args) => {
     if (args.resolverAddress) return mockUseLatestResolverProfile(args)
     return mockUseProfile(args)

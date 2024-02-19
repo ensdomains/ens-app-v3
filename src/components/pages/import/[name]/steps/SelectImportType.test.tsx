@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 
 import { calculateDnsSteps } from './SelectImportType'

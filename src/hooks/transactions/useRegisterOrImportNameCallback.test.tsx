@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query'
 import { renderHook } from '@testing-library/react'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { createConfig, WagmiConfig } from 'wagmi'
 
 import { createQueryKey } from '../useQueryKeyFactory'

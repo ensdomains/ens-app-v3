@@ -2,6 +2,7 @@ import type { PartialMockedFunction } from '@app/test-utils'
 
 import { waitFor } from '@testing-library/react'
 import { getPublicClient } from '@wagmi/core'
+import { describe, expect, it, MockedFunction, vi } from 'vitest'
 
 import {
   createTransactionStore,
@@ -22,23 +23,23 @@ BigInt.prototype.toJSON = function () {
   return this.toString()
 }
 
-jest.mock('./waitForTransaction', () => ({
-  waitForTransaction: jest.fn(),
+vi.mock('./waitForTransaction', () => ({
+  waitForTransaction: vi.fn(),
 }))
 
-jest.mock('@wagmi/core')
+vi.mock('@wagmi/core')
 
 const mockPublicClient = {
-  getBlock: jest.fn(async () => ({ timestamp: 1 })),
+  getBlock: vi.fn(async () => ({ timestamp: 1 })),
 }
 
-const mockGetPublicClient = getPublicClient as unknown as jest.MockedFunction<
+const mockGetPublicClient = getPublicClient as unknown as MockedFunction<
   PartialMockedFunction<typeof getPublicClient>
 >
 
 mockGetPublicClient.mockReturnValue(mockPublicClient)
 
-const mockWaitForTransaction = waitForTransaction as unknown as jest.MockedFunction<
+const mockWaitForTransaction = waitForTransaction as unknown as MockedFunction<
   PartialMockedFunction<typeof waitForTransaction>
 >
 

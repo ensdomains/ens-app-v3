@@ -1,14 +1,15 @@
 import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 
 import { ComponentProps } from 'react'
+import { describe, expect, it, vi } from 'vitest'
 
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
 
 import { SearchResult } from './SearchResult'
 
-jest.mock('@app/hooks/useBasicName')
-jest.mock('@app/hooks/ensjs/public/usePrimaryName')
+vi.mock('@app/hooks/useBasicName')
+vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
 const mockUseBasicName = mockFunction(useBasicName)
 const mockUsePrimaryName = mockFunction(usePrimaryName)
@@ -19,8 +20,8 @@ describe('SearchResult', () => {
   const baseMockData: ComponentProps<typeof SearchResult> = {
     type: 'name',
     value: 'nick.eth',
-    hoverCallback: jest.fn(),
-    clickCallback: jest.fn(),
+    hoverCallback: vi.fn(),
+    clickCallback: vi.fn(),
     index: 0,
     selected: 0,
     usingPlaceholder: false,

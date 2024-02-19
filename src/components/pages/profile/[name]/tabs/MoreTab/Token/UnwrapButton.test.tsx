@@ -1,17 +1,18 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import UnwrapButton from './UnwrapButton'
 
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
 
 const mockUseTransaction = mockFunction(useTransactionFlow)
 const mockUseAccount = mockFunction(useAccount)
 
-const mockCreateTransactionFlow = jest.fn()
+const mockCreateTransactionFlow = vi.fn()
 
 describe('UnwrapButton', () => {
   mockUseTransaction.mockReturnValue({

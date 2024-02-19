@@ -1,5 +1,7 @@
 import '@app/test-utils'
 
+import { describe, expect, it } from 'vitest'
+
 import { getUserDefinedUrl } from './ProfileSnippet'
 
 describe('getUserDefinedUrl', () => {

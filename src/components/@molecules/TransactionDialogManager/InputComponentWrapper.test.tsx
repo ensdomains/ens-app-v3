@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor } from '@app/test-utils'
 
 import { ReactNode, useContext, useEffect } from 'react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useQuery, WagmiConfig } from 'wagmi'
 
 import { wagmiConfigWithRefetch } from '@app/utils/query'
@@ -34,8 +35,8 @@ const ComponentHelper = ({ children }: { children: ReactNode }) => {
   )
 }
 
-const mockObserve = jest.fn()
-const mockDisconnect = jest.fn()
+const mockObserve = vi.fn()
+const mockDisconnect = vi.fn()
 
 const ComponentWithHook = ({ timeout }: { timeout: number }) => {
   useQuery(
@@ -118,7 +119,7 @@ describe('<InputComponentWrapper />', () => {
     })
   })
   it('should show spinner after data is cached for 3 seconds', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     queryClient.setQueryData(['test', '123'], 'value')
     render(
       <ComponentHelper>
@@ -127,7 +128,7 @@ describe('<InputComponentWrapper />', () => {
     )
     mutationObserverCb()
     act(() => {
-      jest.advanceTimersByTime(3000)
+      vi.advanceTimersByTime(3000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component-cached')
@@ -135,7 +136,7 @@ describe('<InputComponentWrapper />', () => {
     })
   })
   it('should not show spinner if componentLoading is true', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     render(
       <ComponentHelper>
         <ComponentLoading />
@@ -143,7 +144,7 @@ describe('<InputComponentWrapper />', () => {
     )
     mutationObserverCb()
     act(() => {
-      jest.advanceTimersByTime(3000)
+      vi.advanceTimersByTime(3000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component')
@@ -151,7 +152,7 @@ describe('<InputComponentWrapper />', () => {
     })
   })
   it('should remove cacheable-component-cached class from modal once data is refetched', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     queryClient.setQueryData(['test', '123'], 'value')
     render(
       <ComponentHelper>
@@ -163,13 +164,13 @@ describe('<InputComponentWrapper />', () => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component-cached')
     })
     act(() => {
-      jest.advanceTimersByTime(3000)
+      vi.advanceTimersByTime(3000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('spinner-overlay')).toBeVisible()
     })
     act(() => {
-      jest.advanceTimersByTime(2000)
+      vi.advanceTimersByTime(2000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).not.toHaveClass('cacheable-component-cached')
@@ -207,7 +208,7 @@ describe('<InputComponentWrapper />', () => {
     })
   })
   it('should add cacheable-component-cached class if there are stale queries', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     render(
       <ComponentHelper>
         <ComponentWithHook timeout={100} />
@@ -215,7 +216,7 @@ describe('<InputComponentWrapper />', () => {
     )
     mutationObserverCb()
     act(() => {
-      jest.advanceTimersByTime(100)
+      vi.advanceTimersByTime(100)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component')
@@ -224,14 +225,14 @@ describe('<InputComponentWrapper />', () => {
     const item1 = cache.get('["test","123"]')!
     act(() => {
       item1.setState({ ...item1.state, dataUpdatedAt: Date.now() - 1000 * 240 })
-      jest.advanceTimersByTime(5000)
+      vi.advanceTimersByTime(5000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component-cached')
     })
   })
   it('should remove cacheable-component-cached class once stale queries are refetched', async () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     render(
       <ComponentHelper>
         <ComponentWithHook timeout={100} />
@@ -239,7 +240,7 @@ describe('<InputComponentWrapper />', () => {
     )
     mutationObserverCb()
     act(() => {
-      jest.advanceTimersByTime(100)
+      vi.advanceTimersByTime(100)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component')
@@ -248,14 +249,14 @@ describe('<InputComponentWrapper />', () => {
     const item1 = cache.get('["test","123"]')!
     act(() => {
       item1.setState({ ...item1.state, dataUpdatedAt: Date.now() - 1000 * 240 })
-      jest.advanceTimersByTime(5000)
+      vi.advanceTimersByTime(5000)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).toHaveClass('cacheable-component-cached')
     })
     act(() => {
       // remaining time for refetch interval
-      jest.advanceTimersByTime(1000 * 55)
+      vi.advanceTimersByTime(1000 * 55)
     })
     await waitFor(() => {
       expect(screen.getByTestId('modal-card')).not.toHaveClass('cacheable-component-cached')
