@@ -1,5 +1,5 @@
-import { useTheme } from 'styled-components'
 import { useQuery } from '@tanstack/react-query'
+import { useTheme } from 'styled-components'
 
 import { zorbImageDataURI } from '@app/utils/gradient'
 
@@ -14,8 +14,9 @@ export const useZorb = (input: string, type: 'address' | 'name' | 'hash') => {
     functionName: 'zorb',
     queryDependencyType: 'independent',
   })
-  const { data: zorb } = useQuery(queryKey, ({ queryKey: [params] }) =>
-    zorbImageDataURI(params.input, params.type, params.colors),
-  )
+  const { data: zorb } = useQuery({
+    queryKey,
+    queryFn: ({ queryKey: [params] }) => zorbImageDataURI(params.input, params.type, params.colors),
+  })
   return zorb
 }

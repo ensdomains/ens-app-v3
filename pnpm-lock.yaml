@@ -33,8 +33,8 @@ importers:
         specifier: 1.2.0-beta.0
         version: 1.2.0-beta.0
       '@ensdomains/ensjs':
-        specifier: 3.4.3
-        version: 3.4.3(typescript@5.3.3)(viem@2.7.10)
+        specifier: workspace:*
+        version: link:.yalc/@ensdomains/ensjs
       '@ensdomains/thorin':
         specifier: 0.6.44
         version: 0.6.44(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.6)
@@ -438,6 +438,42 @@ importers:
       yalc:
         specifier: ^1.0.0-pre.53
         version: 1.0.0-pre.53
+
+  .yalc/@ensdomains/ensjs:
+    dependencies:
+      '@adraffy/ens-normalize':
+        specifier: 1.9.0
+        version: 1.9.0
+      '@ensdomains/address-encoder':
+        specifier: 1.0.0
+        version: 1.0.0
+      '@ensdomains/content-hash':
+        specifier: 3.1.0-rc.1
+        version: 3.1.0-rc.1
+      '@ensdomains/dnsprovejs':
+        specifier: ^0.5.1
+        version: 0.5.1
+      abitype:
+        specifier: ^1.0.0
+        version: 1.0.0(typescript@5.3.3)
+      dns-packet:
+        specifier: ^5.3.1
+        version: 5.6.1
+      graphql:
+        specifier: ^16.3.0
+        version: 16.8.1
+      graphql-request:
+        specifier: 6.1.0
+        version: 6.1.0(graphql@16.8.1)
+      pako:
+        specifier: ^2.1.0
+        version: 2.1.0
+      traverse:
+        specifier: ^0.6.8
+        version: 0.6.8
+      viem:
+        specifier: ^2.5.0
+        version: 2.7.10(typescript@5.3.3)
 
 packages:
 
@@ -2389,7 +2425,7 @@ packages:
   /@ensdomains/address-encoder@1.0.0:
     resolution: {integrity: sha512-Y1yJMq0tquAPklrzFH3vKM1HaNS6RKAOzJpNA3QU8F8oTF4iJlkFEmjCTkPjfplTi7u16z2OXvdNLItR5ZpHug==}
     dependencies:
-      '@noble/curves': 1.2.0
+      '@noble/curves': 1.3.0
       '@noble/hashes': 1.3.3
       '@scure/base': 1.1.5
     dev: false
@@ -2507,28 +2543,6 @@ packages:
       - bufferutil
       - utf-8-validate
     dev: true
-
-  /@ensdomains/ensjs@3.4.3(typescript@5.3.3)(viem@2.7.10):
-    resolution: {integrity: sha512-Q8xPwXSqz/N9pkw7pP64S/omow1jqgZJnOKVhbN48biZn/d3w/hFZw2u6EBFPnyU6pY6F5xi+uDnUYiPPONj9w==}
-    peerDependencies:
-      viem: ^1.16.4
-    dependencies:
-      '@adraffy/ens-normalize': 1.9.0
-      '@ensdomains/address-encoder': 1.0.0
-      '@ensdomains/content-hash': 3.1.0-rc.1
-      '@ensdomains/dnsprovejs': 0.5.1
-      abitype: 0.8.7(typescript@5.3.3)
-      dns-packet: 5.6.1
-      graphql: 16.8.1
-      graphql-request: 6.1.0(graphql@16.8.1)
-      pako: 2.1.0
-      traverse: 0.6.8
-      viem: 2.7.10(typescript@5.3.3)
-    transitivePeerDependencies:
-      - encoding
-      - typescript
-      - zod
-    dev: false
 
   /@ensdomains/resolver@0.2.4:
     resolution: {integrity: sha512-bvaTH34PMCbv6anRa9I/0zjLJgY4EuznbEMgbV77JBCQ9KNC46rzi0avuxpOfu+xDjPEtSFGqVEOr5GlUSGudA==}
@@ -6966,7 +6980,7 @@ packages:
     dependencies:
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/safe-json': 1.0.2
-      cross-fetch: 3.1.5
+      cross-fetch: 3.1.8
       tslib: 1.14.1
     transitivePeerDependencies:
       - encoding
@@ -7380,18 +7394,6 @@ packages:
   /abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
     dev: true
-
-  /abitype@0.8.7(typescript@5.3.3):
-    resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}
-    peerDependencies:
-      typescript: '>=5.0.4'
-      zod: ^3 >=3.19.1
-    peerDependenciesMeta:
-      zod:
-        optional: true
-    dependencies:
-      typescript: 5.3.3
-    dev: false
 
   /abitype@0.9.8(typescript@5.3.3):
     resolution: {integrity: sha512-puLifILdm+8sjyss4S+fsUN09obiT1g2YW6CtcQF+QDzxR0euzgEB29MZujC6zMk2a6SVmtttq1fc6+YFA7WYQ==}
@@ -9159,7 +9161,6 @@ packages:
       node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
-    dev: false
 
   /cross-fetch@4.0.0:
     resolution: {integrity: sha512-e4a5N8lVvuLgAWgnCrLr2PP0YyDOTHa9H/Rj54dirp61qXnNq46m82bRhNqIA5VccJtWBvPTFRV3TtvHUKPB1g==}
@@ -11806,7 +11807,7 @@ packages:
       graphql: 14 - 16
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.8.1)
-      cross-fetch: 3.1.5
+      cross-fetch: 3.1.8
       graphql: 16.8.1
     transitivePeerDependencies:
       - encoding
@@ -13264,20 +13265,20 @@ packages:
   /jsonfile@2.4.0:
     resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}
     optionalDependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
     dev: true
 
   /jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
     optionalDependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
 
   /jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
     dependencies:
       universalify: 2.0.0
     optionalDependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
     dev: true
 
   /jsprim@1.4.2:
@@ -13343,7 +13344,7 @@ packages:
   /klaw@1.3.1:
     resolution: {integrity: sha512-TED5xi9gGQjGpNnvRWknrwAB1eL5GciPfVFOt3Vk1OJCVDQbzuSfrF3hkUQKlsgKrG1F+0t5W0m+Fje1jIt8rw==}
     optionalDependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
     dev: true
 
   /kleur@3.0.3:
@@ -19777,7 +19778,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       abortcontroller-polyfill: 1.7.3
-      cross-fetch: 3.1.5
+      cross-fetch: 3.1.8
       es6-promise: 4.2.8
       web3-core-helpers: 1.8.0
     transitivePeerDependencies:

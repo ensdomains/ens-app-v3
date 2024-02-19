@@ -168,14 +168,14 @@ export type WalletClientWithAccount = WalletClient<Transport, ChainWithEns, Acco
 
 export type QueryConfig<TData, TError, TSelectData = TData> = Pick<
   UseQueryOptions<TData, TError, TSelectData>,
-  'cacheTime' | 'enabled' | 'staleTime' | 'onError' | 'onSettled' | 'onSuccess'
+  'gcTime' | 'enabled' | 'staleTime'
 > & {
   /** Scope the cache to a given context. */
   scopeKey?: string
 }
 export type InfiniteQueryConfig<TData, TError, TSelectData = TData> = Pick<
   UseInfiniteQueryOptions<TData, TError, TSelectData>,
-  'cacheTime' | 'enabled' | 'staleTime' | 'onError' | 'onSettled' | 'onSuccess'
+  'gcTime' | 'enabled' | 'staleTime'
 > & {
   /** Scope the cache to a given context. */
   scopeKey?: string

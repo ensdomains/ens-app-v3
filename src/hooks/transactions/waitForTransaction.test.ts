@@ -1,7 +1,7 @@
 import type { PartialMockedFunction } from '@app/test-utils'
 
-import { getPublicClient, PublicClient } from '@wagmi/core'
-import { WaitForTransactionReceiptParameters, WaitForTransactionReceiptReturnType } from 'viem'
+import { getPublicClient } from '@wagmi/core'
+import { PublicClient, WaitForTransactionReceiptParameters, WaitForTransactionReceiptReturnType } from 'viem'
 import { describe, expect, it, MockedFunction, vi } from 'vitest'
 
 import { fetchTxFromSafeTxHash } from '@app/utils/safe'
@@ -101,7 +101,7 @@ describe('requestWithSafeOverride', () => {
 
     mockRequest.mockResolvedValue(expectedResult)
 
-    const result = await requestWithSafeOverride(mockGetPublicClient() as PublicClient, {
+    const result = await requestWithSafeOverride(mockGetPublicClient({}, {}) as PublicClient, {
       method: 'eth_getTransactionReceipt',
       params: [SAFE_TX_HASH],
     })
