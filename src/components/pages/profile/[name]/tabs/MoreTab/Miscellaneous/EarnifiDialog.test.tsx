@@ -28,6 +28,7 @@ describe('EarnifiDialog', () => {
   })
   it('should render', () => {
     render(<EarnifiDialog {...defaultProps} open={false} />)
+    expect(screen.queryByText('tabs.more.misc.bankless.title')).not.toBeInTheDocument()
   })
 
   it('should render dialog when open is true', () => {
