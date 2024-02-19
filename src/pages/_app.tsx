@@ -2,13 +2,14 @@ import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 
 import '@rainbow-me/rainbowkit/styles.css'
 
+import { QueryClientProvider } from '@tanstack/react-query'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { IntercomProvider } from 'react-use-intercom'
 import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
-import { WagmiConfig } from 'wagmi'
+import { WagmiProvider } from 'wagmi'
 
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
@@ -18,7 +19,7 @@ import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
-import { chains, wagmiConfig } from '@app/utils/query'
+import { queryClient, wagmiConfig } from '@app/utils/query'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 
@@ -149,28 +150,30 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <WagmiConfig config={wagmiConfig}>
-        <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
-          <TransactionStoreProvider>
-            <ThemeProvider theme={thorinLightTheme}>
-              <BreakpointProvider queries={breakpoints}>
-                <IntercomProvider appId={INTERCOM_ID}>
-                  <GlobalStyle />
-                  <ThorinGlobalStyles />
-                  <SyncProvider>
-                    <TransactionFlowProvider>
-                      <SyncDroppedTransaction>
-                        <Notifications />
-                        <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                      </SyncDroppedTransaction>
-                    </TransactionFlowProvider>
-                  </SyncProvider>
-                </IntercomProvider>
-              </BreakpointProvider>
-            </ThemeProvider>
-          </TransactionStoreProvider>
-        </RainbowKitProvider>
-      </WagmiConfig>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider theme={rainbowKitTheme}>
+            <TransactionStoreProvider>
+              <ThemeProvider theme={thorinLightTheme}>
+                <BreakpointProvider queries={breakpoints}>
+                  <IntercomProvider appId={INTERCOM_ID}>
+                    <GlobalStyle />
+                    <ThorinGlobalStyles />
+                    <SyncProvider>
+                      <TransactionFlowProvider>
+                        <SyncDroppedTransaction>
+                          <Notifications />
+                          <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                        </SyncDroppedTransaction>
+                      </TransactionFlowProvider>
+                    </SyncProvider>
+                  </IntercomProvider>
+                </BreakpointProvider>
+              </ThemeProvider>
+            </TransactionStoreProvider>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </I18nextProvider>
   )
 }
