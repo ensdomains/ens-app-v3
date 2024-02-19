@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { GetDnsImportDataReturnType } from '@ensdomains/ensjs/dns'
 
-import { createImportTransactionRequests } from './ImportTransaction'
+import { createImportTransactionRequests } from './utils'
 
 const address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' as const
 const testName = 'test.eth' as const

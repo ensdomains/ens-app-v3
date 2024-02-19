@@ -3,23 +3,18 @@ import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { GetDnsImportDataReturnType } from '@ensdomains/ensjs/dns'
 import { CurrencyToggle, Helper, Typography } from '@ensdomains/thorin'
 
 import { CurrencyText } from '@app/components/@atoms/CurrencyText/CurrencyText'
 import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import {
-  addStateOverride,
-  useEstimateGasWithStateOverride,
-} from '@app/hooks/chain/useEstimateGasWithStateOverride'
+import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useGasPrice } from '@app/hooks/chain/useGasPrice'
 import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useApprovedForAll } from '@app/hooks/useApprovedForAll'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 import useUserConfig from '@app/utils/useUserConfig'
@@ -36,7 +31,7 @@ import {
   DnsImportReducerDataItem,
   SelectedItemProperties,
 } from '../../useDnsImportReducer'
-import { checkDnsAddressMatch, DnsAddressStatus } from '../../utils'
+import { checkDnsAddressMatch, createImportTransactionRequests } from '../../utils'
 
 const OptionBar = styled.div(
   () => css`
@@ -96,69 +91,6 @@ const InvoiceDnsOwner = ({ dnsOwner }: { dnsOwner: Address }) => {
       <AvatarWithZorb size="10" address={dnsOwner} name={primary?.name} label="dns owner avatar" />
     </InvoiceDnsOwnerContainer>
   )
-}
-
-export const createImportTransactionRequests = ({
-  address,
-  name,
-  dnsOwnerStatus,
-  dnsImportData,
-  requiresApproval,
-  publicResolverAddress,
-  dnsRegistrarAddress,
-}: {
-  address: Address
-  name: string
-  dnsOwnerStatus: DnsAddressStatus
-  dnsImportData: GetDnsImportDataReturnType
-  requiresApproval: boolean
-  publicResolverAddress: Address
-  dnsRegistrarAddress: Address
-}) => {
-  const createApproveTx = () =>
-    createTransactionItem('approveDnsRegistrar', {
-      address,
-    })
-  const createClaimTx = () =>
-    createTransactionItem('claimDnsName', {
-      name,
-      dnsImportData,
-      address,
-    })
-  const createImportTx = () =>
-    createTransactionItem('importDnsName', {
-      name,
-      dnsImportData,
-    })
-
-  if (dnsOwnerStatus === 'matching') {
-    const claimTx = createClaimTx()
-    if (requiresApproval) {
-      const claimTxWithOverride = addStateOverride({
-        item: claimTx,
-        stateOverride: [
-          {
-            address: publicResolverAddress,
-            stateDiff: [
-              // `_operatorApprovals[owner][dnsRegistrarAddress] = true`
-              {
-                slot: 11,
-                keys: [address, dnsRegistrarAddress],
-                value: true,
-              },
-            ],
-          },
-        ],
-      })
-      const approvalTx = createApproveTx()
-      return {
-        transactions: [approvalTx, claimTx],
-        estimators: [approvalTx, claimTxWithOverride],
-      } as const
-    }
-    return { transactions: [claimTx] } as const
-  }
-  return { transactions: [createImportTx()] } as const
 }
 
 export const ImportTransaction = ({
