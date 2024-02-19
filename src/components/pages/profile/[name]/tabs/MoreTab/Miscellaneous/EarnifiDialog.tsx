@@ -2,9 +2,9 @@ import { ComponentProps, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
-import { Button, Dialog, Input, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dialog, Input, mq, Typography } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Spacer } from '@app/components/@atoms/Spacer'
@@ -13,7 +13,7 @@ import { useSubscribeToEarnifi } from '@app/components/pages/profile/[name]/tabs
 import { useChainId } from '@app/hooks/useChainId'
 
 export const EARNIFI_OUTLINK =
-  'https://earni.fi/?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'
+  'https://www.bankless.com/claimables?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$/i
 
