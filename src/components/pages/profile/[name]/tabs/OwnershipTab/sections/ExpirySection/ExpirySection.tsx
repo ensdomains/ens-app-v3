@@ -151,7 +151,7 @@ export const ExpirySection = ({ name, details }: Props) => {
                         items={[
                           {
                             value: 'earnifi',
-                            label: t('tabs.more.misc.reminderOptions.earnifi', { ns: 'profile' }),
+                            label: t('tabs.more.misc.reminderOptions.bankless', { ns: 'profile' }),
                             onClick: () => {
                               setShowEarnifiDialog(true)
                             },
