@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { formatEther, parseAccount } from 'viem/utils'
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import {
   createTransactionRequest,

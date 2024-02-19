@@ -18,7 +18,7 @@ import {
   TransactionRequest,
   WalletClient,
 } from 'viem'
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import {

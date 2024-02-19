@@ -1,4 +1,4 @@
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { ParsedInputResult, parseInput } from '@ensdomains/ensjs/utils'
 

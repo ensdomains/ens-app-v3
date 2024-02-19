@@ -1,5 +1,5 @@
+import { useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { useQuery } from 'wagmi'
 
 import { PublicClientWithChain } from '@app/types'
 

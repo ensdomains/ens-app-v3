@@ -1,7 +1,6 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { useMemo } from 'react'
-import { useQuery } from 'wagmi'
 
 import {
   getDecodedName,

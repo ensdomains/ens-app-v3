@@ -1,4 +1,4 @@
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { tryBeautify } from '@app/utils/beautify'
 

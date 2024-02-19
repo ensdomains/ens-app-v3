@@ -1,5 +1,5 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { CreateQueryKey, QueryConfig } from '@app/types'
 

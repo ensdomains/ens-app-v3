@@ -1,7 +1,7 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useQueryClient } from 'wagmi'
 
 import { Button, Toast } from '@ensdomains/thorin'
 

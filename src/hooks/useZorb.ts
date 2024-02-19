@@ -1,5 +1,5 @@
 import { useTheme } from 'styled-components'
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { zorbImageDataURI } from '@app/utils/gradient'
 
