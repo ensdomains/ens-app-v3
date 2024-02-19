@@ -2,9 +2,9 @@ import { ComponentProps, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { match, P } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 
-import { Button, Dialog, Input, mq, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Input, Typography, mq } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Spacer } from '@app/components/@atoms/Spacer'
