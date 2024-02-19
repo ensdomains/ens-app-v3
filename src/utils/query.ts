@@ -35,7 +35,7 @@ const initializeTransports = (c: Chain) => {
     // since we don't want to allow all domains to access infura
     transportArray.push(
       http(
-        `https://mainnet.infura.io/v3/${
+        `https://${c.id === 1 ? 'mainnet' : c.name.toLowerCase()}.infura.io/v3/${
           process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
         }`,
       ),
@@ -43,9 +43,7 @@ const initializeTransports = (c: Chain) => {
   }
   // fallback cloudflare gateway if infura is down or for IPFS
   transportArray.push(
-    http(
-      `https://web3.ens.domains/v1/${c.name === 'homestead' ? 'mainnet' : c.name.toLowerCase()}`,
-    ),
+    http(`https://web3.ens.domains/v1/${c.id === 1 ? 'mainnet' : c.name.toLowerCase()}`),
   )
 
   return fallback(transportArray)
