@@ -49,10 +49,10 @@ export const useResolverIsAuthorised = ({
     enabled: enabled && !isDependentDataLoading && !!resolverAddress,
   })
   const {
-    data: contractEstimate,
-    isLoading: isContractEstimateLoading,
-    isError: isContractEstimateError,
-    isFetching: isContractEstimateFetching,
+    data: preparedContractWrite,
+    isLoading: isPreparedContractWriteLoading,
+    isError: isPreparedContractWriteError,
+    isFetching: isPreparedContractWriteFetching,
   } = usePrepareContractWrite({
     abi: publicResolverSetAddrSnippet,
     address: resolverAddress,
@@ -72,7 +72,7 @@ export const useResolverIsAuthorised = ({
   const isLoading =
     isDependentDataLoading ||
     isResolverHasInterfacesLoading ||
-    isContractEstimateLoading ||
+    isPreparedContractWriteLoading ||
     isWrappedLoading
 
   const data = useMemo(() => {
@@ -85,7 +85,7 @@ export const useResolverIsAuthorised = ({
       }
     return {
       isValid: true,
-      isAuthorised: !isContractEstimateError && contractEstimate?.request?.gas !== undefined,
+      isAuthorised: !isPreparedContractWriteError && preparedContractWrite?.request !== undefined,
     }
   }, [
     enabled,
@@ -93,8 +93,8 @@ export const useResolverIsAuthorised = ({
     resolverSupportsMultiAddress,
     knownResolverData,
     isWrapped,
-    isContractEstimateError,
-    contractEstimate,
+    isPreparedContractWriteError,
+    preparedContractWrite,
   ])
 
   return {
@@ -103,7 +103,7 @@ export const useResolverIsAuthorised = ({
     isFetching:
       profile.isFetching ||
       isResolverHasInterfacesFetching ||
-      isContractEstimateFetching ||
+      isPreparedContractWriteFetching ||
       isWrappedFetching,
   }
 }
