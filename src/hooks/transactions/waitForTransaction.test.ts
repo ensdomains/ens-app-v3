@@ -24,7 +24,7 @@ const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as unknown as MockedFunc
 
 const mockRequest = vi.fn()
 const mockWaitForTransactionReceipt = vi.fn<
-  Promise<WaitForTransactionReceiptReturnType>,
+  [Promise<WaitForTransactionReceiptReturnType>],
   [WaitForTransactionReceiptParameters]
 >()
 
@@ -55,6 +55,7 @@ const mockTransactionReceiptData: WaitForTransactionReceiptReturnType = {
 
 describe('waitForTransaction', () => {
   it('should wait for standard transaction', async () => {
+    // @ts-ignore vi.fn is messing with types
     mockWaitForTransactionReceipt.mockResolvedValueOnce(mockTransactionReceiptData)
 
     const result = await waitForTransaction({
@@ -64,6 +65,7 @@ describe('waitForTransaction', () => {
     expect(result).toStrictEqual(mockTransactionReceiptData)
   })
   it('should pass onReplaced tx to waitForTransactionReceipt', async () => {
+    // @ts-ignore vi.fn is messing with types
     mockWaitForTransactionReceipt.mockResolvedValueOnce(mockTransactionReceiptData)
 
     const onReplaced = vi.fn()

@@ -1,9 +1,5 @@
 // Only overwrite this if we are in test mode. This is an env var we happen to have in our repo
 class ESBuildAndJSDOMCompatibleTextEncoder extends TextEncoder {
-  constructor() {
-    super()
-  }
-
   encode(input: string) {
     if (typeof input !== 'string') {
       throw new TypeError('`input` must be a string')
