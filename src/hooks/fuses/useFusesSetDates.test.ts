@@ -1,6 +1,7 @@
 import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
 import { GetBlockParameters } from 'viem'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { usePublicClient } from 'wagmi'
 
 import { GetNameHistoryReturnType } from '@ensdomains/ensjs/subgraph'

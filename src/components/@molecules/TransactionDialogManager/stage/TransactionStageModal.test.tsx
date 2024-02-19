@@ -1,8 +1,10 @@
 /* eslint-disable no-promise-executor-return */
 import { act, fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
+import type { MockedFunctionDeep } from '@vitest/spy'
 import { ComponentProps } from 'react'
 import { TransactionRequest } from 'viem'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { usePublicClient, useSendTransaction, useWalletClient } from 'wagmi'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
@@ -44,7 +46,7 @@ const mockTransaction: GenericTransaction = {
 }
 
 vi.mock('@app/transaction-flow/transaction', () => {
-  const originalModule = vi.requireActual('@app/transaction-flow/transaction')
+  const originalModule = vi.importActual('@app/transaction-flow/transaction')
   return {
     __esModule: true,
     ...originalModule,
@@ -61,7 +63,7 @@ const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseChainName = mockFunction(useChainName)
 const mockUseSendTransaction = mockFunction(useSendTransaction)
-const mockCheckIsSafeApp = checkIsSafeApp as vi.MockedFunctionDeep<typeof checkIsSafeApp>
+const mockCheckIsSafeApp = checkIsSafeApp as MockedFunctionDeep<typeof checkIsSafeApp>
 
 const mockEstimateGas = vi.fn()
 const mockOnDismiss = vi.fn()
@@ -252,7 +254,7 @@ describe('TransactionStageModal', () => {
         await renderHelper({ transaction: mockTransaction })
         await clickRequest()
         await waitFor(() =>
-          expect(mockUseSendTransaction.mock.lastCall[0]!).toStrictEqual(
+          expect(mockUseSendTransaction.mock.lastCall![0]!).toStrictEqual(
             expect.objectContaining({
               ...mockTransactionRequest,
               gas: 1n,
@@ -267,9 +269,9 @@ describe('TransactionStageModal', () => {
         mockCheckIsSafeApp.mockResolvedValue(false)
         await renderHelper({ transaction: mockTransaction })
         await waitFor(() =>
-          expect(mockUseSendTransaction.mock.lastCall[0]!.onSuccess).toBeDefined(),
+          expect(mockUseSendTransaction.mock.lastCall![0]!.onSuccess).toBeDefined(),
         )
-        await (mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({
+        await (mockUseSendTransaction.mock.lastCall![0] as any).onSuccess({
           hash: '0x123',
         })
         expect(mockAddTransaction).toBeCalledWith(
@@ -292,9 +294,9 @@ describe('TransactionStageModal', () => {
         mockCheckIsSafeApp.mockResolvedValue('iframe')
         await renderHelper({ transaction: mockTransaction })
         await waitFor(() =>
-          expect(mockUseSendTransaction.mock.lastCall[0]!.onSuccess).toBeDefined(),
+          expect(mockUseSendTransaction.mock.lastCall![0]!.onSuccess).toBeDefined(),
         )
-        await (mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({
+        await (mockUseSendTransaction.mock.lastCall![0] as any).onSuccess({
           hash: '0x123',
         })
         expect(mockAddTransaction).toBeCalledWith(

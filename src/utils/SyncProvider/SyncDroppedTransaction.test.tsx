@@ -2,6 +2,7 @@ import { mockFunction, render } from '@app/test-utils'
 
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
@@ -38,7 +39,9 @@ export const server = setupServer(...handlers)
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/transactions/useRecentTransactions')
 vi.mock('@app/hooks/transactions/TransactionStoreContext')
-vi.mock('@app/hooks/usePublicClient')
+vi.mock('@app/hooks/usePublicClient', () => ({
+  usePublicClient: vi.fn(),
+}))
 
 const mockUsePublicClient = mockFunction(usePublicClient)
 const mockUseAccountSafely = mockFunction(useAccountSafely)

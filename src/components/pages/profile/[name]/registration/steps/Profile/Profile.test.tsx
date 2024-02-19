@@ -1,6 +1,7 @@
 import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { PointerEventsCheckLevel } from '@testing-library/user-event'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount, useNetwork } from 'wagmi'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
@@ -8,7 +9,6 @@ import { useLocalStorage } from '@app/hooks/useLocalStorage'
 
 import { RegistrationReducerDataItem } from '../../types'
 import Profile from './Profile'
-import { vi, beforeEach, expect,describe,it } from 'vitest'
 
 const name = 'test.eth'
 
@@ -102,8 +102,9 @@ describe('Profile', () => {
       />,
     )
     await userEvent.click(screen.getByTestId('profile-back-button'))
-    // Jest does not include submitter in event callback so we can not test that back is true
-    await waitFor(() => expect(mockCallback).toHaveBeenCalledWith(makeExpectedCallbackData()))
+    await waitFor(() =>
+      expect(mockCallback).toHaveBeenCalledWith(makeExpectedCallbackData({ back: true })),
+    )
   })
 
   it('should return callback with clearRecords as false if resolver value is different from public resolver', async () => {

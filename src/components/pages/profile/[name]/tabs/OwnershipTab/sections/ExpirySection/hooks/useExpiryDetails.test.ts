@@ -25,12 +25,10 @@ const mockUseRegistrationData = vi.fn().mockReturnValue({
   },
   isLoading: false,
 })
-vi.mock(
-  '@app/hooks/useRegistrationData',
-  () =>
-    ({ name, enabled }: any) =>
-      enabled && checkETH2LDFromName(name) ? mockUseRegistrationData() : { isLoading: false },
-)
+vi.mock('@app/hooks/useRegistrationData', () => ({
+  default: ({ name, enabled }: any) =>
+    enabled && checkETH2LDFromName(name) ? mockUseRegistrationData() : { isLoading: false },
+}))
 
 vi.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: () => 'goerli',

@@ -1,6 +1,7 @@
 import { render, screen } from '@app/test-utils'
 
 import { ComponentProps } from 'react'
+import { describe, expect, it, vi } from 'vitest'
 
 import { NameDetailSnippet } from './NameSnippet'
 
@@ -9,7 +10,8 @@ type NameDetailSnippetProps = ComponentProps<typeof NameDetailSnippet>
 vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
 vi.mock('@app/utils/BreakpointProvider')
 
-vi.setTimeout(5000)
+vi.setConfig({ testTimeout: 5000 })
+
 describe('NameSnippetMobile', () => {
   const baseMockData = {
     name: 'nick.eth',

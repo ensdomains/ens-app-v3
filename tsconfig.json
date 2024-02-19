@@ -58,7 +58,7 @@
     /* TODO (tate): revert to initial val after refactor */ "src/**/*.tsx",
     "next.config.js",
     "vitest.config.mts",
-    "vitest-setup.mts"
+    "test/*.mts"
   ],
   "exclude": ["**/*.ignore.ts", "**/*.ignore.tsx", "functions/**/*"]
 }

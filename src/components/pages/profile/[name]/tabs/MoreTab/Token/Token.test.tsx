@@ -17,8 +17,8 @@ vi.mock('@app/hooks/chain/useContractAddress')
 vi.mock('@app/hooks/fuses/useFusesStates')
 vi.mock('@app/utils/BreakpointProvider')
 
-vi.mock('./WrapButton', () => () => <div data-testid="wrap-button" />)
-vi.mock('./UnwrapButton', () => () => <div data-testid="unwrap-button" />)
+vi.mock('./WrapButton', () => ({ default: () => <div data-testid="wrap-button" /> }))
+vi.mock('./UnwrapButton', () => ({ default: () => <div data-testid="unwrap-button" /> }))
 
 const mockUseFusesStates = mockFunction(useFusesStates)
 const mockUseChainName = mockFunction(useChainName)

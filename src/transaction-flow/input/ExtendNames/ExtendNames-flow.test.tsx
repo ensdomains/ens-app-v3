@@ -7,7 +7,7 @@ import { usePrice } from '@app/hooks/ensjs/public/usePrice'
 
 import ExtendNames from './ExtendNames-flow'
 
-vi.mock('@app/hooks/gasEstimation/useEstimateGasLimitForTransactions')
+vi.mock('@app/hooks/chain/useEstimateGasWithStateOverride')
 vi.mock('@app/hooks/ensjs/public/usePrice')
 
 const mockUseEstimateGasWithStateOverride = mockFunction(useEstimateGasWithStateOverride)

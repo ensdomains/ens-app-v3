@@ -1,5 +1,7 @@
 import { render, screen, userEvent } from '@app/test-utils'
 
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
+
 import SendName from './SendName-flow'
 
 vi.mock('@app/hooks/account/useAccountSafely', () => ({
@@ -16,30 +18,32 @@ vi.mock('@app/hooks/useBasicName', () => ({
   }),
 }))
 
-vi.mock('@app/hooks/ownership/useRoles/useRoles', () => () => ({
-  data: [
-    {
-      role: 'owner',
-      address: '0xowner',
-    },
-    {
-      role: 'manager',
-      address: '0xmanager',
-    },
-    {
-      role: 'eth-record',
-      address: '0xeth-record',
-    },
-    {
-      role: 'parent-owner',
-      address: '0xparent-address',
-    },
-    {
-      role: 'dns-owner',
-      address: '0xdns-owner',
-    },
-  ],
-  isLoading: false,
+vi.mock('@app/hooks/ownership/useRoles/useRoles', () => ({
+  default: () => ({
+    data: [
+      {
+        role: 'owner',
+        address: '0xowner',
+      },
+      {
+        role: 'manager',
+        address: '0xmanager',
+      },
+      {
+        role: 'eth-record',
+        address: '0xeth-record',
+      },
+      {
+        role: 'parent-owner',
+        address: '0xparent-address',
+      },
+      {
+        role: 'dns-owner',
+        address: '0xdns-owner',
+      },
+    ],
+    isLoading: false,
+  }),
 }))
 
 vi.mock('@app/hooks/abilities/useAbilities', () => ({
@@ -82,15 +86,17 @@ vi.mock('@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier', 
   ),
 }))
 
-const mockIntersectionObserver = vi.fn().mockReturnValue({
-  observe: () => null,
-  unobserve: () => null,
-  disconnect: () => null,
-})
-window.IntersectionObserver = mockIntersectionObserver
-window.scroll = vi.fn()
-
 const mockDispatch = vi.fn()
+
+beforeAll(() => {
+  const spyiedScroll = vi.spyOn(window, 'scroll')
+  spyiedScroll.mockImplementation(() => {})
+  window.IntersectionObserver = vi.fn().mockReturnValue({
+    observe: () => null,
+    unobserve: () => null,
+    disconnect: () => null,
+  })
+})
 
 afterEach(() => {
   vi.clearAllMocks()
