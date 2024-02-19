@@ -1,5 +1,5 @@
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { Config, useConfig } from 'wagmi'
 
 import { getExpiry, GetExpiryParameters, GetExpiryReturnType } from '@ensdomains/ensjs/public'
 
@@ -12,21 +12,23 @@ type UseExpiryReturnType = GetExpiryReturnType
 
 type UseExpiryConfig = QueryConfig<UseExpiryReturnType, Error>
 
-type QueryKey<TParams extends UseExpiryParameters> = CreateQueryKey<
+export type UseExpiryQueryKey<TParams extends UseExpiryParameters> = CreateQueryKey<
   TParams,
   'getExpiry',
   'standard'
 >
 
-export const getExpiryQueryFn = async <TParams extends UseExpiryParameters>({
-  queryKey: [{ name, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getExpiryQueryFn =
+  (config: Config) =>
+  async <TParams extends UseExpiryParameters>({
+    queryKey: [{ name, ...params }, chainId],
+  }: QueryFunctionContext<UseExpiryQueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
 
-  return getExpiry(publicClient, { name, ...params })
-}
+    return getExpiry(publicClient, { name, ...params })
+  }
 
 export const useExpiry = <TParams extends UseExpiryParameters>({
   // config
@@ -45,13 +47,15 @@ export const useExpiry = <TParams extends UseExpiryParameters>({
     queryDependencyType: 'standard',
   })
 
+  const config = useConfig()
+
   const query = useQuery({
     queryKey,
-    queryFn: getExpiryQueryFn,
+    queryFn: getExpiryQueryFn(config),
     gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-    select: (data) => {
+    select: (data: UseExpiryReturnType) => {
       if (!data) return null
       return {
         ...data,

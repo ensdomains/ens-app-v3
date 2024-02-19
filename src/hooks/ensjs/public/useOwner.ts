@@ -1,6 +1,5 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
-import { useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
+import { Config, useConfig } from 'wagmi'
 
 import { getOwner, GetOwnerParameters, GetOwnerReturnType } from '@ensdomains/ensjs/public'
 
@@ -19,26 +18,23 @@ export type UseOwnerQueryKey<TParams extends UseOwnerParameters> = CreateQueryKe
   'standard'
 >
 
-export const getOwnerQueryFn = async <TParams extends UseOwnerParameters>({
-  queryKey: [{ name, ...params }, chainId],
-}: QueryFunctionContext<UseOwnerQueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getOwnerQueryFn =
+  (config: Config) =>
+  async <TParams extends UseOwnerParameters>({
+    queryKey: [{ name, ...params }, chainId],
+  }: QueryFunctionContext<UseOwnerQueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
 
-  return getOwner(publicClient, { name, ...params })
-}
+    return getOwner(publicClient, { name, ...params })
+  }
 
 export const useOwner = <TParams extends UseOwnerParameters>({
-  // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
-  // params
   ...params
 }: TParams & UseOwnerConfig) => {
   const queryKey = useQueryKeyFactory({
@@ -48,13 +44,14 @@ export const useOwner = <TParams extends UseOwnerParameters>({
     queryDependencyType: 'standard',
   })
 
-  const query = useQuery(queryKey, getOwnerQueryFn, {
-    cacheTime,
+  const config = useConfig()
+
+  const query = useQuery({
+    queryKey,
+    queryFn: getOwnerQueryFn(config),
+    gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
   })
 
   return {
