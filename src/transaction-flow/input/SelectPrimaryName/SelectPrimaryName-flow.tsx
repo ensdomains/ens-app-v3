@@ -1,9 +1,9 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { useForm, UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address, labelhash } from 'viem'
-import { useMutation, useQueryClient } from 'wagmi'
 
 import { getDecodedName, Name } from '@ensdomains/ensjs/subgraph'
 import { decodeLabelhash, isEncodedLabelhash, saveName } from '@ensdomains/ensjs/utils'
@@ -225,9 +225,10 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     if (!transactionFlowItem) return
     const transactionCount = transactionFlowItem.transactions.length
     if (transactionCount === 1) {
+      // TODO: Fix typescript transactions error
       dispatch({
         name: 'setTransactions',
-        payload: transactionFlowItem.transactions,
+        payload: transactionFlowItem.transactions as any[],
       })
       dispatch({
         name: 'setFlowStage',
@@ -249,8 +250,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       params: { input },
       functionName: 'validate',
     })
-  const { mutate: mutateName, isLoading: isMutationLoading } = useMutation(
-    async (data: FormData) => {
+  const { mutate: mutateName, isPending: isMutationLoading } = useMutation({
+    mutationFn: async (data: FormData) => {
       if (!data.name?.name) throw new Error('no_name')
 
       let validName = data.name.name
@@ -277,19 +278,17 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
 
       throw new Error('invalid_name')
     },
-    {
-      onSuccess: (name) => {
-        dispatchTransactions(name)
-      },
-      onError: (error, variables) => {
-        if (!(error instanceof Error)) return
-        if (error.message === 'invalid_name') {
-          setValue('unknownLabels', nameToFormData(variables.name?.name || '').unknownLabels)
-          setView('decrypt')
-        }
-      },
+    onSuccess: (name) => {
+      dispatchTransactions(name)
     },
-  )
+    onError: (error, variables) => {
+      if (!(error instanceof Error)) return
+      if (error.message === 'invalid_name') {
+        setValue('unknownLabels', nameToFormData(variables.name?.name || '').unknownLabels)
+        setView('decrypt')
+      }
+    },
+  })
 
   const onConfirm = () => {
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))

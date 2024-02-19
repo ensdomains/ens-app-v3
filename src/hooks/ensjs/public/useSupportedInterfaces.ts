@@ -1,7 +1,6 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { Hex } from 'viem'
-import { useQuery } from '@tanstack/react-query'
 
 import {
   getSupportedInterfaces,
@@ -47,13 +46,11 @@ export const useSupportedInterfaces = <
     UseSupportedInterfacesParameters<TInterfaces> = UseSupportedInterfacesParameters<TInterfaces>,
 >({
   // config
-  cacheTime,
+  gcTime,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseSupportedInterfacesConfig<TParams>) => {
@@ -64,13 +61,12 @@ export const useSupportedInterfaces = <
     queryDependencyType: 'standard',
   })
 
-  const query = useQuery(queryKey, getSupportedInterfacesQueryFn, {
-    cacheTime,
+  const query = useQuery({
+    queryKey,
+    queryFn: getSupportedInterfacesQueryFn,
+    gcTime,
     staleTime,
     enabled: enabled && !!params.address && params.interfaces.length > 0,
-    onError,
-    onSettled,
-    onSuccess,
   })
 
   return {

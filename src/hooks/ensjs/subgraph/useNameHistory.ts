@@ -1,6 +1,5 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { useQuery } from '@tanstack/react-query'
 
 import {
   getNameHistory,
@@ -35,13 +34,11 @@ export const getNameHistoryQueryFn = async <TParams extends UseNameHistoryParame
 
 export const useNameHistory = <TParams extends UseNameHistoryParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseNameHistoryConfig) => {
@@ -52,13 +49,12 @@ export const useNameHistory = <TParams extends UseNameHistoryParameters>({
     queryDependencyType: 'graph',
   })
 
-  const query = useQuery(queryKey, getNameHistoryQueryFn, {
-    cacheTime,
+  const query = useQuery({
+    queryKey,
+    queryFn: getNameHistoryQueryFn,
+    gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
   })
 
   return {

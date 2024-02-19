@@ -1,7 +1,6 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { Address, namehash } from 'viem'
-import { useQuery } from '@tanstack/react-query'
 
 import { getChainContractAddress, registryResolverSnippet } from '@ensdomains/ensjs/contracts'
 
@@ -88,7 +87,9 @@ export const useReverseRegistryName = <TParams extends UseReverseRegistryNamePar
     queryDependencyType: 'standard',
   })
 
-  return useQuery(queryKey, getReverseRegistryNameQueryFn, {
+  return useQuery({
+    queryKey,
+    queryFn: getReverseRegistryNameQueryFn,
     enabled: _enabled && !!address,
     retryOnMount: true,
   })

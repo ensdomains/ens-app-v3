@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { namehash, type Address } from 'viem'
 
@@ -63,7 +63,7 @@ export const getResolverExistsQueryFn = async <TParams extends UseResolverExists
  */
 export const useResolverExists = <TParams extends UseResolverExistsParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
@@ -80,8 +80,10 @@ export const useResolverExists = <TParams extends UseResolverExistsParameters>({
     queryDependencyType: 'graph',
   })
 
-  return useQuery(queryKey, getResolverExistsQueryFn, {
-    cacheTime,
+  return useQuery({
+    queryKey,
+    queryFn: getResolverExistsQueryFn,
+    gcTime,
     enabled: enabled && !!params.name && !!params.address,
     staleTime,
     onError,

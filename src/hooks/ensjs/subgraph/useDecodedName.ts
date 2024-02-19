@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { useMemo } from 'react'
 
@@ -36,13 +36,11 @@ export const getDecodedNameQueryFn = async <TParams extends UseDecodedNameParame
 
 export const useDecodedName = <TParams extends UseDecodedNameParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseDecodedNameConfig) => {
@@ -58,13 +56,12 @@ export const useDecodedName = <TParams extends UseDecodedNameParameters>({
     [params.name],
   )
 
-  const query = useQuery(queryKey, getDecodedNameQueryFn, {
-    cacheTime,
+  const query = useQuery({
+    queryKey,
+    queryFn: getDecodedNameQueryFn,
+    gcTime,
     enabled: enabled && !!params.name && nameIsEncrypted,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
   })
 
   return {
