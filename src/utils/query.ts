@@ -13,7 +13,6 @@ import {
   mainnetWithEns,
   sepoliaWithEns,
 } from '@app/constants/chains'
-import { makePersistent } from '@app/utils/persist'
 
 import { WC_PROJECT_ID } from './constants'
 import { getDefaultWallets } from './getDefaultWallets'
@@ -73,8 +72,6 @@ export const wagmiConfig = createConfig({
   chains: chainsWithEns as unknown as [Chain, ...Chain[]],
   transports,
 })
-
-makePersistent(queryClient)
 
 export const refetchOptions: DefaultOptions<Error> = {
   queries: {

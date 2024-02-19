@@ -2,7 +2,7 @@ import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 
 import '@rainbow-me/rainbowkit/styles.css'
 
-import { QueryClientProvider } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
@@ -19,6 +19,7 @@ import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
+import { createPersistConfig } from '@app/utils/persist'
 import { queryClient, wagmiConfig } from '@app/utils/query'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
@@ -151,7 +152,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <I18nextProvider i18n={i18n}>
       <WagmiProvider config={wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={createPersistConfig({ queryClient })}
+        >
           <RainbowKitProvider theme={rainbowKitTheme}>
             <TransactionStoreProvider>
               <ThemeProvider theme={thorinLightTheme}>
@@ -172,7 +176,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
               </ThemeProvider>
             </TransactionStoreProvider>
           </RainbowKitProvider>
-        </QueryClientProvider>
+        </PersistQueryClientProvider>
       </WagmiProvider>
     </I18nextProvider>
   )
