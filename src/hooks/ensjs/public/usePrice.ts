@@ -1,5 +1,5 @@
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { Config, useConfig } from 'wagmi'
 
 import { getPrice, GetPriceParameters, GetPriceReturnType } from '@ensdomains/ensjs/public'
 
@@ -12,26 +12,29 @@ type UsePriceReturnType = GetPriceReturnType
 
 type UsePriceConfig = QueryConfig<UsePriceReturnType, Error>
 
-type QueryKey<TParams extends UsePriceParameters> = CreateQueryKey<TParams, 'getPrice', 'standard'>
+export type UsePriceQueryKey<TParams extends UsePriceParameters> = CreateQueryKey<
+  TParams,
+  'getPrice',
+  'standard'
+>
 
-export const getPriceQueryFn = async <TParams extends UsePriceParameters>({
-  queryKey: [{ nameOrNames, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!nameOrNames) throw new Error('nameOrNames is required')
+export const getPriceQueryFn =
+  (config: Config) =>
+  async <TParams extends UsePriceParameters>({
+    queryKey: [{ nameOrNames, ...params }, chainId],
+  }: QueryFunctionContext<UsePriceQueryKey<TParams>>) => {
+    if (!nameOrNames) throw new Error('nameOrNames is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
 
-  return getPrice(publicClient, { nameOrNames, ...params })
-}
+    return getPrice(publicClient, { nameOrNames, ...params })
+  }
 
 export const usePrice = <TParams extends UsePriceParameters>({
-  // config
   gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-
-  // params
   ...params
 }: TParams & UsePriceConfig) => {
   const queryKey = useQueryKeyFactory({
@@ -41,14 +44,15 @@ export const usePrice = <TParams extends UsePriceParameters>({
     queryDependencyType: 'standard',
   })
 
+  const config = useConfig()
+
   const query = useQuery({
     queryKey,
-    queryFn: getPriceQueryFn,
+    queryFn: getPriceQueryFn(config),
     gcTime,
     enabled: enabled && !!params.nameOrNames,
     staleTime,
-
-    select: (data) => {
+    select: (data: UsePriceReturnType) => {
       if (!data) return data
       return {
         base: BigInt(data.base),

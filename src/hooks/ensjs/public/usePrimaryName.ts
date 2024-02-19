@@ -1,5 +1,5 @@
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { Config, useConfig } from 'wagmi'
 
 import { getName, GetNameParameters, GetNameReturnType } from '@ensdomains/ensjs/public'
 
@@ -16,37 +16,36 @@ type UsePrimaryNameReturnType = (NonNullable<GetNameReturnType> & { beautifiedNa
 
 type UsePrimaryNameConfig = QueryConfig<UsePrimaryNameReturnType, Error>
 
-type QueryKey<TParams extends UsePrimaryNameParameters> = CreateQueryKey<
+export type UsePrimaryNameQueryKey<TParams extends UsePrimaryNameParameters> = CreateQueryKey<
   TParams,
   'getName',
   'standard'
 >
 
-export const getPrimaryNameQueryFn = async <TParams extends UsePrimaryNameParameters>({
-  queryKey: [{ address, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!address) throw new Error('address is required')
+export const getPrimaryNameQueryFn =
+  (config: Config) =>
+  async <TParams extends UsePrimaryNameParameters>({
+    queryKey: [{ address, ...params }, chainId],
+  }: QueryFunctionContext<UsePrimaryNameQueryKey<TParams>>) => {
+    if (!address) throw new Error('address is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
 
-  const res = await getName(publicClient, { address, ...params })
+    const res = await getName(publicClient, { address, ...params })
 
-  if (!res || !res.name || (!res.match && !params.allowMismatch)) return null
+    if (!res || !res.name || (!res.match && !params.allowMismatch)) return null
 
-  return {
-    ...res,
-    beautifiedName: tryBeautify(res.name),
+    return {
+      ...res,
+      beautifiedName: tryBeautify(res.name),
+    }
   }
-}
 
 export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
-  // config
   gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-
-  // params
   allowMismatch = false,
   ...params
 }: TParams & UsePrimaryNameConfig) => {
@@ -57,9 +56,11 @@ export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
     queryDependencyType: 'standard',
   })
 
+  const config = useConfig()
+
   const query = useQuery({
     queryKey,
-    queryFn: getPrimaryNameQueryFn,
+    queryFn: getPrimaryNameQueryFn(config),
     gcTime,
     enabled: enabled && !!params.address && params.address !== emptyAddress,
     staleTime,
