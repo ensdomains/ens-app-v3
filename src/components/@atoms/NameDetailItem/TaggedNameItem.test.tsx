@@ -1,6 +1,7 @@
 import { mockFunction, render } from '@app/test-utils'
 
 import { ReactNode } from 'react'
+import { describe, expect, it, vi } from 'vitest'
 
 import { decodeFuses, encodeFuses } from '@ensdomains/ensjs/utils'
 

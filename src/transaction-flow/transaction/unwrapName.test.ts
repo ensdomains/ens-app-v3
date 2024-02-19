@@ -1,5 +1,7 @@
 import { mockFunction } from '@app/test-utils'
 
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import { unwrapName } from '@ensdomains/ensjs/wallet'
 
 import { PublicClientWithChain, WalletClientWithAccount } from '@app/types'

@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { Profile } from '@app/types'
 import { createDateAndValue } from '@app/utils/utils'

@@ -2,6 +2,8 @@ import '@app/test-utils'
 
 import { render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { OwnerArray } from '@app/types'
 
 import { ownershipInfoCalc, ProfileDetails } from './ProfileDetails'

@@ -1,5 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import type { useNameDetails } from '@app/hooks/useNameDetails'
 import { useOwners } from '@app/hooks/useOwners'
 

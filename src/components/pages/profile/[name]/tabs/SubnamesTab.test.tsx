@@ -1,7 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
 import { labelhash, namehash } from 'viem'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
 import { Name } from '@ensdomains/ensjs/subgraph'

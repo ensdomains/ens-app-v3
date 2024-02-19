@@ -1,6 +1,7 @@
 import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 
 import { ComponentProps } from 'react'
+import { describe, expect, it, vi } from 'vitest'
 
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'

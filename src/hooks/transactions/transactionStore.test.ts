@@ -2,6 +2,7 @@ import type { PartialMockedFunction } from '@app/test-utils'
 
 import { waitFor } from '@testing-library/react'
 import { getPublicClient } from '@wagmi/core'
+import { describe, expect, it, MockedFunction, vi } from 'vitest'
 
 import {
   createTransactionStore,
@@ -32,13 +33,13 @@ const mockPublicClient = {
   getBlock: vi.fn(async () => ({ timestamp: 1 })),
 }
 
-const mockGetPublicClient = getPublicClient as unknown as vi.MockedFunction<
+const mockGetPublicClient = getPublicClient as unknown as MockedFunction<
   PartialMockedFunction<typeof getPublicClient>
 >
 
 mockGetPublicClient.mockReturnValue(mockPublicClient)
 
-const mockWaitForTransaction = waitForTransaction as unknown as vi.MockedFunction<
+const mockWaitForTransaction = waitForTransaction as unknown as MockedFunction<
   PartialMockedFunction<typeof waitForTransaction>
 >
 

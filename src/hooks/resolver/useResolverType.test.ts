@@ -1,5 +1,7 @@
 import { mockFunction, PartialMockedFunction, renderHook } from '@app/test-utils'
 
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 import { emptyAddress } from '@app/utils/constants'
 

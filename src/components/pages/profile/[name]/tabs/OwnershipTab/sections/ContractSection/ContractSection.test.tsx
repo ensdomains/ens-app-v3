@@ -1,5 +1,7 @@
 import { render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { BreakpointProvider, useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { ContractSection } from './ContractSection'

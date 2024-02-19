@@ -2,6 +2,7 @@ import type { PartialMockedFunction } from '@app/test-utils'
 
 import { getPublicClient, PublicClient } from '@wagmi/core'
 import { WaitForTransactionReceiptParameters, WaitForTransactionReceiptReturnType } from 'viem'
+import { describe, expect, it, MockedFunction, vi } from 'vitest'
 
 import { fetchTxFromSafeTxHash } from '@app/utils/safe'
 
@@ -13,11 +14,11 @@ vi.mock('@wagmi/core', () => ({
   getPublicClient: vi.fn(),
 }))
 
-const mockGetPublicClient = getPublicClient as unknown as vi.MockedFunction<
+const mockGetPublicClient = getPublicClient as unknown as MockedFunction<
   PartialMockedFunction<typeof getPublicClient>
 >
 
-const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as unknown as vi.MockedFunctionDeep<
+const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as unknown as MockedFunction<
   typeof fetchTxFromSafeTxHash
 >
 

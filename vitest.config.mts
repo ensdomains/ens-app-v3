@@ -6,7 +6,6 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [svg({ target: 'react' }), react()],
   test: {
-    globals: true,
     environment: 'jsdom',
     alias: {
       // eslint-disable-next-line @typescript-eslint/naming-convention

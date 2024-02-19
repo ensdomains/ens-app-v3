@@ -1,5 +1,7 @@
 import { act, renderHook } from '@app/test-utils'
 
+import { describe, expect, it } from 'vitest'
+
 import registerI18n from '@app/../public/locales/en/register.json'
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 

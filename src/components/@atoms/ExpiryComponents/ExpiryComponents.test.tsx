@@ -1,5 +1,7 @@
 import { render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { ExpiryClock, ShortExpiry } from './ExpiryComponents'
 
 vi.mock('@app/hooks/chain/useBlockTimestamp', () => ({

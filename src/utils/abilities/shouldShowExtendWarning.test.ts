@@ -1,3 +1,5 @@
+import { expect, it } from 'vitest'
+
 import { shouldShowExtendWarning } from './shouldShowExtendWarning'
 
 it('should return true when can edit', () => {

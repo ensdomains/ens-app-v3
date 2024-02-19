@@ -1,5 +1,7 @@
 import { render, screen, userEvent } from '@app/test-utils'
 
+import { describe, expect, it } from 'vitest'
+
 import { QuestionTooltip } from './QuestionTooltip'
 
 describe('QuestionTooltip', () => {

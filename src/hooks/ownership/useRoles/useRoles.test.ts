@@ -72,23 +72,23 @@ it('should grouped falsy address together', () => {
   mockGetRoles.mockReturnValueOnce([
     {
       address: '',
-      role: 'owner'
+      role: 'owner',
     },
     {
       address: undefined,
-      role: 'manager'
+      role: 'manager',
     },
     {
       address: false,
-      role: 'eth-record'
-    }
+      role: 'eth-record',
+    },
   ])
-  const { result } = renderHook(() => useRoles('test.eth', { grouped: true }));
+  const { result } = renderHook(() => useRoles('test.eth', { grouped: true }))
   expect(mockGetRoles).toHaveBeenCalled()
   expect(result.current.data).toEqual([
     {
       address: null,
-      roles: ['owner', 'manager', 'eth-record']
-    }
-  ]);
+      roles: ['owner', 'manager', 'eth-record'],
+    },
+  ])
 })

@@ -1,5 +1,6 @@
 import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { useSignTypedData } from 'wagmi'
 
 import { useChainName } from '@app/hooks/chain/useChainName'

@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@app/test-utils'
 
 import { act } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { BreakpointProvider, useBreakpoint } from './BreakpointProvider'
 

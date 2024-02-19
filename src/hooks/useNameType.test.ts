@@ -1,6 +1,6 @@
 import { renderHook } from '@app/test-utils'
 
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { useNameType } from './useNameType'
 

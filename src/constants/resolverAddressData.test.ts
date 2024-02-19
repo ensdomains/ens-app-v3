@@ -1,4 +1,5 @@
 import { getChainContractAddress } from 'viem/utils'
+import { describe, expect, it } from 'vitest'
 
 import { goerliWithEns, localhostWithEns, mainnetWithEns, sepoliaWithEns } from './chains'
 

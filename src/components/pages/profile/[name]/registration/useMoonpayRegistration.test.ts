@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from '@app/test-utils'
 
 import { labelhash } from 'viem'
+import { describe, expect, it, vi } from 'vitest'
 
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'
 

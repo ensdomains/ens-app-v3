@@ -1,5 +1,7 @@
 import { mockFunction } from '@app/test-utils'
 
+import { expect, it, vi } from 'vitest'
+
 import { getPrice } from '@ensdomains/ensjs/public'
 import { registerName } from '@ensdomains/ensjs/wallet'
 

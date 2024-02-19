@@ -1,5 +1,7 @@
 import { mockFunction } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { getName } from '@ensdomains/ensjs/public'
 
 import { getPrimaryNameQueryFn } from './usePrimaryName'

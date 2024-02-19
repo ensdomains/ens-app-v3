@@ -1,6 +1,7 @@
 import { mockFunction, render, screen, userEvent } from '@app/test-utils'
 
 import { act, waitFor } from '@testing-library/react'
+import { describe, expect, it, Mock, vi } from 'vitest'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -19,12 +20,12 @@ const mockSearchResult = mockFunction(SearchResult)
 
 mockSearchResult.mockImplementation(({ value }) => <div>{value}</div>)
 
-window.scroll = vi.fn()
+window.scroll = vi.fn() as () => void
 
 describe('SearchInput', () => {
   mockUseLocalStorage.mockReturnValue([[]])
   window.ResizeObserver = vi.fn()
-  ;(window.ResizeObserver as vi.Mock).mockImplementation(() => ({
+  ;(window.ResizeObserver as Mock).mockImplementation(() => ({
     observe: vi.fn(),
     disconnect: vi.fn(),
   }))

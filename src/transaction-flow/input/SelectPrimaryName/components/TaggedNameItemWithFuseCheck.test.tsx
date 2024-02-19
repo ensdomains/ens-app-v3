@@ -1,5 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 
 import { TaggedNameItemWithFuseCheck } from './TaggedNameItemWithFuseCheck'

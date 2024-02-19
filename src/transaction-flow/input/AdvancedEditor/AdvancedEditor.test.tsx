@@ -10,6 +10,8 @@ import {
   within,
 } from '@app/test-utils'
 
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { useProfile } from '@app/hooks/useProfile'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
@@ -139,7 +141,7 @@ describe('AdvancedEditor', () => {
       disconnect: () => null,
     })
     window.IntersectionObserver = mockIntersectionObserver
-    window.scroll = vi.fn()
+    window.scroll = vi.fn() as () => void
   })
 
   afterEach(() => {

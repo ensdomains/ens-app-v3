@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor } from '@app/test-utils'
 
 import { ReactNode, useContext, useEffect } from 'react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useQuery, WagmiConfig } from 'wagmi'
 
 import { wagmiConfigWithRefetch } from '@app/utils/query'

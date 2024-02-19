@@ -1,6 +1,7 @@
 import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 
 import { act } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 import type { Transaction } from '@app/hooks/transactions/transactionStore'
@@ -29,7 +30,7 @@ const makeRecentTransaction =
       hash: `0x${i.toString(16).padStart(32, '0')}`,
     }) as Transaction
 
-window.scroll = vi.fn()
+window.scroll = vi.fn() as () => void
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 let cb: UpdateCallback = (_) => {}
 mockUseCallbackOnTransaction.mockImplementation((_cb: UpdateCallback) => (cb = _cb))

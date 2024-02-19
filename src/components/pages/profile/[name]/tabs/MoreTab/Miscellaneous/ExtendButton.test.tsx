@@ -1,5 +1,6 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'

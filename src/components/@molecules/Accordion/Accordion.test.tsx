@@ -1,5 +1,7 @@
 import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import Accordion, { AccordionData } from './Accordion'

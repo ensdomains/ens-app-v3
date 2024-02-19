@@ -1,5 +1,7 @@
 import { render, screen } from '@app/test-utils'
 
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import { AvatarWithIdentifier } from './AvatarWithIdentifier'
 
 const mockUsePrimary = vi.fn().mockImplementation(({ address }) => {

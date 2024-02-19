@@ -1,5 +1,7 @@
 import { mockFunction, render } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { createDateAndValue } from '@app/utils/utils'
@@ -22,7 +24,7 @@ mockIntersectionObserver.mockReturnValue({
   disconnect: () => null,
 })
 window.IntersectionObserver = mockIntersectionObserver
-window.scroll = vi.fn()
+window.scroll = vi.fn() as () => void
 
 describe('NameListView', () => {
   it('should render if there are results', () => {

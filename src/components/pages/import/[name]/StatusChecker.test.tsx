@@ -1,5 +1,7 @@
 import { fireEvent, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { StatusChecker } from './StatusChecker'
 
 describe('StatusChecker', () => {

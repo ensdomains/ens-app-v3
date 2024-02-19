@@ -1,6 +1,6 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { useAccountSafely } from '../account/useAccountSafely'
 import { useResolverIsAuthorised } from '../resolver/useResolverIsAuthorised'

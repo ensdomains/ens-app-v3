@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getUtm, setupAnalytics, setUtm, trackEvent } from './analytics'
 
