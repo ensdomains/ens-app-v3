@@ -1,5 +1,5 @@
 import type { Address } from 'viem'
-import { useAccount } from 'wagmi'
+import { Config, useAccount, useConfig } from 'wagmi'
 
 import { CreateQueryKey, QueryDependencyType } from '@app/types'
 
@@ -71,46 +71,86 @@ export function createQueryKey<TParams extends {}, TFunctionName extends string>
   >
 }
 
-export function useQueryKeyFactory<TParams extends {}, TFunctionName extends string>(
-  params: QueryKeyConfig<TParams, TFunctionName, 'independent'>,
-): CreateQueryKey<TParams, TFunctionName, 'independent'>
-export function useQueryKeyFactory<TParams extends {}, TFunctionName extends string>(
-  params: QueryKeyConfig<TParams, TFunctionName, 'graph'>,
-): CreateQueryKey<TParams, TFunctionName, 'graph'>
-export function useQueryKeyFactory<TParams extends {}, TFunctionName extends string>(
-  params: QueryKeyConfig<TParams, TFunctionName, 'standard'>,
-): CreateQueryKey<TParams, TFunctionName, 'standard'>
-export function useQueryKeyFactory<TParams extends {}, TFunctionName extends string>({
+export function useQueryOptions<
+  TParams extends {},
+  TFunctionName extends string,
+  TQueryKey extends CreateQueryKey<TParams, TFunctionName, 'independent'>,
+  TQueryFn extends (config: Config) => unknown,
+  TQueryInnerFn = TQueryFn extends (config: Config) => infer F ? F : never,
+>(
+  params: QueryKeyConfig<TParams, TFunctionName, 'independent'> & { queryFn: TQueryFn },
+): {
+  queryKey: CreateQueryKey<TParams, TFunctionName, 'independent'>
+  queryFn: TQueryInnerFn
+}
+export function useQueryOptions<
+  TParams extends {},
+  TFunctionName extends string,
+  TQueryKey extends CreateQueryKey<TParams, TFunctionName, 'graph'>,
+  TQueryFn extends (config: Config) => unknown,
+  TQueryInnerFn = TQueryFn extends (config: Config) => infer F ? F : never,
+>(
+  params: QueryKeyConfig<TParams, TFunctionName, 'graph'> & { queryFn: TQueryFn },
+): {
+  queryKey: CreateQueryKey<TParams, TFunctionName, 'graph'>
+  queryFn: TQueryInnerFn
+}
+export function useQueryOptions<
+  TParams extends {},
+  TFunctionName extends string,
+  TQueryKey extends CreateQueryKey<TParams, TFunctionName, 'standard'>,
+  TQueryFn extends (config: Config) => unknown,
+  TQueryInnerFn = TQueryFn extends (config: Config) => infer F ? F : never,
+>(
+  params: QueryKeyConfig<TParams, TFunctionName, 'standard'> & { queryFn: TQueryFn },
+): {
+  queryKey: CreateQueryKey<TParams, TFunctionName, 'standard'>
+  queryFn: TQueryInnerFn
+}
+export function useQueryOptions<
+  TParams extends {},
+  TFunctionName extends string,
+  TQueryFn extends (config: Config) => unknown,
+>({
   params,
   scopeKey,
   functionName,
   queryDependencyType,
-}: QueryKeyConfig<TParams, TFunctionName, QueryDependencyType>): CreateQueryKey<
-  TParams,
-  TFunctionName,
-  QueryDependencyType
-> {
+  queryFn,
+}: QueryKeyConfig<TParams, TFunctionName, QueryDependencyType> & { queryFn: TQueryFn }) {
   const chainId = useChainId()
   const { address } = useAccount()
+  const config = useConfig()
+
+  const queryFnWithConfig = queryFn(config)
 
   if (queryDependencyType === 'independent')
-    return createQueryKey({ params, scopeKey, functionName, queryDependencyType })
+    return {
+      queryKey: createQueryKey({ params, scopeKey, functionName, queryDependencyType }),
+      queryFn: queryFnWithConfig,
+    }
   if (queryDependencyType === 'graph')
-    return createQueryKey({
+    return {
+      queryKey: createQueryKey({
+        chainId,
+        address,
+        params,
+        scopeKey,
+        functionName,
+        queryDependencyType,
+      }),
+      queryFn: queryFnWithConfig,
+    }
+
+  return {
+    queryKey: createQueryKey({
       chainId,
       address,
       params,
       scopeKey,
       functionName,
       queryDependencyType,
-    })
-
-  return createQueryKey({
-    chainId,
-    address,
-    params,
-    scopeKey,
-    functionName,
-    queryDependencyType,
-  })
+    }),
+    queryFn: queryFnWithConfig,
+  }
 }

@@ -1,9 +1,9 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { Config } from 'wagmi'
 
 import { getResolver, GetResolverParameters, GetResolverReturnType } from '@ensdomains/ensjs/public'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseResolverParameters = PartialBy<GetResolverParameters, 'name'>
@@ -18,15 +18,17 @@ type QueryKey<TParams extends UseResolverParameters> = CreateQueryKey<
   'standard'
 >
 
-export const getResolverQueryFn = async <TParams extends UseResolverParameters>({
-  queryKey: [{ name }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getResolverQueryFn =
+  (config: Config) =>
+  async <TParams extends UseResolverParameters>({
+    queryKey: [{ name }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
 
-  return getResolver(publicClient, { name })
-}
+    return getResolver(publicClient, { name })
+  }
 
 export const useResolver = <TParams extends UseResolverParameters>({
   // config
@@ -38,18 +40,23 @@ export const useResolver = <TParams extends UseResolverParameters>({
   // params
   ...params
 }: TParams & UseResolverConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getResolver',
     queryDependencyType: 'standard',
+    queryFn: getResolverQueryFn,
+  })
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
   })
 
   const query = useQuery({
-    queryKey,
-    queryFn: getResolverQueryFn,
-    gcTime,
+    ...preparedOptions,
     enabled: enabled && !!params.name,
+    gcTime,
     staleTime,
   })
 

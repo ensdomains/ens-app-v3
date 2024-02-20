@@ -1,18 +1,46 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { Config, useConfig } from 'wagmi'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { Config } from 'wagmi'
 
 import { getRecords, GetRecordsParameters, GetRecordsReturnType } from '@ensdomains/ensjs/public'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
-type UseRecordsParameters = PartialBy<GetRecordsParameters, 'name'>
-type UseRecordsConfig = QueryConfig<GetRecordsReturnType | null, Error>
-type QueryKey = CreateQueryKey<UseRecordsParameters, 'getRecords', 'standard'>
+type UseRecordsParameters<
+  TTexts extends readonly string[] | undefined = undefined,
+  TCoins extends readonly (string | number)[] | undefined = undefined,
+  TContentHash extends boolean = false,
+  TAbi extends boolean = false,
+> = PartialBy<GetRecordsParameters<TTexts, TCoins, TContentHash, TAbi>, 'name'>
+
+type UseRecordsConfig<
+  TTexts extends readonly string[] | undefined = undefined,
+  TCoins extends readonly (string | number)[] | undefined = undefined,
+  TContentHash extends boolean = false,
+  TAbi extends boolean = false,
+> = QueryConfig<GetRecordsReturnType<TTexts, TCoins, TContentHash, TAbi> | null, Error>
+
+type QueryKey<
+  TTexts extends readonly string[] | undefined = undefined,
+  TCoins extends readonly (string | number)[] | undefined = undefined,
+  TContentHash extends boolean = false,
+  TAbi extends boolean = false,
+> = CreateQueryKey<
+  UseRecordsParameters<TTexts, TCoins, TContentHash, TAbi>,
+  'getRecords',
+  'standard'
+>
 
 export const getRecordsQueryFn =
   (config: Config) =>
-  async ({ queryKey: [{ name, ...params }, chainId] }: QueryFunctionContext<QueryKey>) => {
+  async <
+    TTexts extends readonly string[] | undefined = undefined,
+    TCoins extends readonly (string | number)[] | undefined = undefined,
+    TContentHash extends boolean = false,
+    TAbi extends boolean = false,
+  >({
+    queryKey: [{ name, ...params }, chainId],
+  }: QueryFunctionContext<QueryKey<TTexts, TCoins, TContentHash, TAbi>>) => {
     if (!name) throw new Error('name is required')
 
     const publicClient = config.getClient({ chainId }) as PublicClientWithChain
@@ -24,27 +52,39 @@ export const getRecordsQueryFn =
     return res
   }
 
-export const useRecords = ({
+export const useRecords = <
+  const TTexts extends readonly string[] | undefined = undefined,
+  const TCoins extends readonly (string | number)[] | undefined = undefined,
+  const TContentHash extends boolean = false,
+  const TAbi extends boolean = false,
+>({
+  // config
   gcTime,
   enabled = true,
   staleTime,
   scopeKey,
+  // params
   ...params
-}: UseRecordsParameters & UseRecordsConfig) => {
-  const config = useConfig()
-  const queryKey = useQueryKeyFactory({
+}: UseRecordsParameters<TTexts, TCoins, TContentHash, TAbi> &
+  UseRecordsConfig<TTexts, TCoins, TContentHash, TAbi>) => {
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getRecords',
     queryDependencyType: 'standard',
+    queryFn: getRecordsQueryFn,
+  })
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
   })
 
   const query = useQuery({
-    queryKey,
-    queryFn: getRecordsQueryFn(config),
+    ...preparedOptions,
+    enabled: enabled && !!params.name,
     gcTime,
     staleTime,
-    enabled: enabled && !!params.name,
   })
 
   return {

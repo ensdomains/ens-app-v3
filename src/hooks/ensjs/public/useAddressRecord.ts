@@ -1,5 +1,5 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { Config } from 'wagmi'
 
 import {
   getAddressRecord,
@@ -7,7 +7,7 @@ import {
   GetAddressRecordReturnType,
 } from '@ensdomains/ensjs/public'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseAddressRecordParameters = PartialBy<GetAddressRecordParameters, 'name'>
@@ -22,15 +22,17 @@ type QueryKey<TParams extends UseAddressRecordParameters> = CreateQueryKey<
   'standard'
 >
 
-export const getAddressRecordQueryFn = async <TParams extends UseAddressRecordParameters>({
-  queryKey: [{ name, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getAddressRecordQueryFn =
+  (config: Config) =>
+  async <TParams extends UseAddressRecordParameters>({
+    queryKey: [{ name, ...params }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
 
-  return getAddressRecord(publicClient, { name, ...params })
-}
+    return getAddressRecord(publicClient, { name, ...params })
+  }
 
 export const useAddressRecord = <TParams extends UseAddressRecordParameters>({
   // config
@@ -41,18 +43,23 @@ export const useAddressRecord = <TParams extends UseAddressRecordParameters>({
   // params
   ...params
 }: TParams & UseAddressRecordConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getAddressRecord',
     queryDependencyType: 'standard',
+    queryFn: getAddressRecordQueryFn,
+  })
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
   })
 
   const query = useQuery({
-    queryKey,
-    queryFn: getAddressRecordQueryFn,
-    gcTime,
+    ...preparedOptions,
     enabled: enabled && !!params.name,
+    gcTime,
     staleTime,
   })
 

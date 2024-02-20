@@ -1,6 +1,6 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { Config } from 'wagmi'
 
 import {
   getDecodedName,
@@ -9,7 +9,7 @@ import {
 } from '@ensdomains/ensjs/subgraph'
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseDecodedNameParameters = PartialBy<GetDecodedNameParameters, 'name'>
@@ -24,15 +24,17 @@ type QueryKey<TParams extends UseDecodedNameParameters> = CreateQueryKey<
   'graph'
 >
 
-export const getDecodedNameQueryFn = async <TParams extends UseDecodedNameParameters>({
-  queryKey: [{ name, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getDecodedNameQueryFn =
+  (config: Config) =>
+  async <TParams extends UseDecodedNameParameters>({
+    queryKey: [{ name, ...params }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
 
-  return getDecodedName(publicClient, { name, ...params })
-}
+    return getDecodedName(publicClient, { name, ...params })
+  }
 
 export const useDecodedName = <TParams extends UseDecodedNameParameters>({
   // config
@@ -40,15 +42,20 @@ export const useDecodedName = <TParams extends UseDecodedNameParameters>({
   enabled = true,
   staleTime,
   scopeKey,
-
   // params
   ...params
 }: TParams & UseDecodedNameConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getDecodedName',
     queryDependencyType: 'graph',
+    queryFn: getDecodedNameQueryFn,
+  })
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
   })
 
   const nameIsEncrypted = useMemo(
@@ -57,10 +64,9 @@ export const useDecodedName = <TParams extends UseDecodedNameParameters>({
   )
 
   const query = useQuery({
-    queryKey,
-    queryFn: getDecodedNameQueryFn,
-    gcTime,
+    ...preparedOptions,
     enabled: enabled && !!params.name && nameIsEncrypted,
+    gcTime,
     staleTime,
   })
 

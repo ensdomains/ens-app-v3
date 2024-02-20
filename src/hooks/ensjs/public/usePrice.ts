@@ -1,9 +1,9 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { Config, useConfig } from 'wagmi'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { Config } from 'wagmi'
 
 import { getPrice, GetPriceParameters, GetPriceReturnType } from '@ensdomains/ensjs/public'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UsePriceParameters = PartialBy<GetPriceParameters, 'nameOrNames'>
@@ -12,17 +12,13 @@ type UsePriceReturnType = GetPriceReturnType
 
 type UsePriceConfig = QueryConfig<UsePriceReturnType, Error>
 
-export type UsePriceQueryKey<TParams extends UsePriceParameters> = CreateQueryKey<
-  TParams,
-  'getPrice',
-  'standard'
->
+type QueryKey<TParams extends UsePriceParameters> = CreateQueryKey<TParams, 'getPrice', 'standard'>
 
 export const getPriceQueryFn =
   (config: Config) =>
   async <TParams extends UsePriceParameters>({
     queryKey: [{ nameOrNames, ...params }, chainId],
-  }: QueryFunctionContext<UsePriceQueryKey<TParams>>) => {
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!nameOrNames) throw new Error('nameOrNames is required')
 
     const publicClient = config.getClient({ chainId }) as PublicClientWithChain
@@ -31,28 +27,33 @@ export const getPriceQueryFn =
   }
 
 export const usePrice = <TParams extends UsePriceParameters>({
+  // config
   gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
+  // params
   ...params
 }: TParams & UsePriceConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getPrice',
     queryDependencyType: 'standard',
+    queryFn: getPriceQueryFn,
   })
 
-  const config = useConfig()
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
 
   const query = useQuery({
-    queryKey,
-    queryFn: getPriceQueryFn(config),
-    gcTime,
+    ...preparedOptions,
     enabled: enabled && !!params.nameOrNames,
+    gcTime,
     staleTime,
-    select: (data: UsePriceReturnType) => {
+    select: (data) => {
       if (!data) return data
       return {
         base: BigInt(data.base),
