@@ -214,6 +214,10 @@
     "extendNames": {
       "title_one": "Extend Name",
       "title_other": "Extend {{count}} Names",
+      "ownershipWarning": {
+        "title": "You do not own this name",
+        "description": "Extending this name will extend the current owner's registration length. This will not give you ownership of it."
+      },
       "invoice": {
         "extension": "{{count}} year extension",
         "transaction": "Transaction fee",

@@ -1,4 +1,4 @@
-import { mockFunction, render, screen } from '@app/test-utils'
+import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 
@@ -61,10 +61,72 @@ describe('Extendnames', () => {
       />,
     )
   })
+  it('should go directly to registration if isSelf is true and names.length is 1', () => {
+    mockUseEstimateGasWithStateOverride.mockReturnValueOnce({
+      data: { gasEstimate: 21000n, gasCost: 100n },
+      gasPrice: 100n,
+      error: null,
+      isLoading: false,
+    })
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['nick.eth'], isSelf: true },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+    expect(screen.getByText('RegistrationTimeComparisonBanner')).toBeVisible()
+  })
+  it('should show warning message before registration if isSelf is false and names.length is 1', async () => {
+    mockUseEstimateGasWithStateOverride.mockReturnValueOnce({
+      data: { gasEstimate: 21000n, gasCost: 100n },
+      gasPrice: 100n,
+      error: null,
+      isLoading: false,
+    })
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['nick.eth'], isSelf: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+    expect(screen.getByText('input.extendNames.ownershipWarning.description')).toBeVisible()
+    await userEvent.click(screen.getByRole('button', { name: 'action.understand' }))
+    await waitFor(() => expect(screen.getByText('RegistrationTimeComparisonBanner')).toBeVisible())
+  })
+  it('should show a list of names before registration if names.length is greater than 1', async () => {
+    mockUseEstimateGasWithStateOverride.mockReturnValueOnce({
+      data: { gasEstimate: 21000n, gasCost: 100n },
+      gasPrice: 100n,
+      error: null,
+      isLoading: false,
+    })
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['nick.eth', 'atnight.eth'], isSelf: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+    expect(screen.getByTestId('extend-names-names-list')).toBeVisible()
+    await userEvent.click(screen.getByRole('button', { name: 'action.next' }))
+    await waitFor(() => expect(screen.getByText('RegistrationTimeComparisonBanner')).toBeVisible())
+  })
   it('should have RegistrationTimeComparisonBanner greyed out if gas limit estimation is still loading', () => {
     render(
       <ExtendNames
-        {...{ data: { names: ['nick.eth'] }, dispatch: () => null, onDismiss: () => null }}
+        {...{
+          data: { names: ['nick.eth'], isSelf: true },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
       />,
     )
     const optionBar = screen.getByText('RegistrationTimeComparisonBanner')
@@ -74,7 +136,11 @@ describe('Extendnames', () => {
   it('should have Invoice greyed out if gas limit estimation is still loading', () => {
     render(
       <ExtendNames
-        {...{ data: { names: ['nick.eth'] }, dispatch: () => null, onDismiss: () => null }}
+        {...{
+          data: { names: ['nick.eth'], isSelf: true },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
       />,
     )
     const optionBar = screen.getByText('Invoice')
@@ -84,7 +150,11 @@ describe('Extendnames', () => {
   it('should disabled next button if gas limit estimation is still loading', () => {
     render(
       <ExtendNames
-        {...{ data: { names: ['nick.eth'] }, dispatch: () => null, onDismiss: () => null }}
+        {...{
+          data: { names: ['nick.eth'], isSelf: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
       />,
     )
     const trailingButton = screen.getByTestId('extend-names-confirm')
