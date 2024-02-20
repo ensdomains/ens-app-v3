@@ -83,7 +83,7 @@ const Page = () => {
               )}
             </DetailsContainer>
           ),
-          trailing: <NameListView address={address} isSelf={isSelf} setError={setIsError} />,
+          trailing: <NameListView address={address} selfAddress={_address} setError={setIsError} />,
         }}
       </Content>
     </>

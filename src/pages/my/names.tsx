@@ -20,7 +20,7 @@ export default function Page() {
   return (
     <Content title={t('title')} singleColumnContent loading={isLoading}>
       {{
-        trailing: <NameListView address={address} isSelf />,
+        trailing: <NameListView address={address} selfAddress={address} />,
       }}
     </Content>
   )
