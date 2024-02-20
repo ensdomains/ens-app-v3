@@ -216,9 +216,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const flow: View[] = useMemo(
     () =>
       match([names.length, isSelf])
-      .with([P.when((length) => length > 1), true], () => [ 'name-list', 'registration'] as View[])
-        .with([P.when((length) => length > 1), P._], () => ['no-ownership-warning', 'name-list', 'registration'] as View[])
-        .with([P._, true], () => [ 'registration'] as View[])
+        .with([P.when((length) => length > 1), true], () => ['name-list', 'registration'] as View[])
+        .with(
+          [P.when((length) => length > 1), P._],
+          () => ['no-ownership-warning', 'name-list', 'registration'] as View[],
+        )
+        .with([P._, true], () => ['registration'] as View[])
         .otherwise(() => ['no-ownership-warning', 'registration'] as View[]),
     [names.length, isSelf],
   )

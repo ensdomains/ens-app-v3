@@ -2,7 +2,6 @@ import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
-import { useAccount } from 'wagmi'
 
 import { Name } from '@ensdomains/ensjs/subgraph'
 import { Button, Spinner } from '@ensdomains/thorin'
@@ -132,7 +131,9 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
     if (selectedNames.length === 0) return
     showExtendNamesInput(`extend-names-${selectedNames.join('-')}`, {
       names: selectedNames.map((n) => n.name!),
-      isSelf: selectedNames.every((n) => n.registrant === selfAddress || n.wrappedOwner === selfAddress),
+      isSelf: selectedNames.every(
+        (n) => n.registrant === selfAddress || n.wrappedOwner === selfAddress,
+      ),
     })
   }
 

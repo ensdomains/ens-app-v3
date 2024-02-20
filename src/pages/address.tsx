@@ -31,7 +31,6 @@ const Page = () => {
   const { address: _address } = useAccountSafely()
 
   const address = query.address as Address
-  const isSelf = _address === address
 
   const { data: primaryProfile, isLoading: isPrimaryProfileLoading } = usePrimaryProfile({
     address,

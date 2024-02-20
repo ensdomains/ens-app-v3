@@ -42,11 +42,11 @@ test('should be able to register multiple names on the address page', async ({
   }
   await addresPage.extendNamesButton.click()
 
-  // warning message 
+  // warning message
   await expect(page.getByText('You do not own all these names')).toBeVisible()
-  await page.getByRole('button', { name: 'I understand'}).click()
+  await page.getByRole('button', { name: 'I understand' }).click()
 
-  // name list 
+  // name list
   await addresPage.extendNamesModalNextButton.click()
 
   // check the invoice details
@@ -101,7 +101,7 @@ test('should be able to extend a single unwrapped name from profile', async ({
   const extendNamesModal = makePageObject('ExtendNamesModal')
   await test.step('should show warning message', async () => {
     await expect(page.getByText('You do not own this name')).toBeVisible()
-    await page.getByRole('button', { name: 'I understand'}).click()
+    await page.getByRole('button', { name: 'I understand' }).click()
   })
 
   await test.step('should show the correct price data', async () => {
@@ -236,7 +236,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   await test.step('should show warning message', async () => {
     await expect(page.getByText('You do not own this name')).toBeVisible()
-    await page.getByRole('button', { name: 'I understand'}).click()
+    await page.getByRole('button', { name: 'I understand' }).click()
   })
 
   await test.step('should show the correct price data', async () => {
