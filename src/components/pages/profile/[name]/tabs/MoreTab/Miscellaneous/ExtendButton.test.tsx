@@ -38,7 +38,7 @@ describe('ExtendButton', () => {
     render(<ExtendButton name="test.eth" />)
     screen.queryByText('action.extend')?.click()
     expect(mockusePreparedDataInput).toHaveBeenCalledWith('extend-names-test.eth', {
-      isSelf: undefined,
+      isSelf: false,
       names: ['test.eth'],
     })
   })
