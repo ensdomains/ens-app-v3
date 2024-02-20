@@ -1,5 +1,5 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { Config } from 'wagmi'
 
 import {
   getWrapperData,
@@ -7,7 +7,7 @@ import {
   GetWrapperDataReturnType,
 } from '@ensdomains/ensjs/public'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseWrapperDataParameters = PartialBy<GetWrapperDataParameters, 'name'>
@@ -22,15 +22,17 @@ type QueryKey<TParams extends UseWrapperDataParameters> = CreateQueryKey<
   'standard'
 >
 
-export const getWrapperDataQueryFn = async <TParams extends UseWrapperDataParameters>({
-  queryKey: [{ name }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getWrapperDataQueryFn =
+  (config: Config) =>
+  async <TParams extends UseWrapperDataParameters>({
+    queryKey: [{ name }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
 
-  return getWrapperData(publicClient, { name })
-}
+    return getWrapperData(publicClient, { name })
+  }
 
 export const useWrapperData = <TParams extends UseWrapperDataParameters>({
   // config
@@ -38,24 +40,27 @@ export const useWrapperData = <TParams extends UseWrapperDataParameters>({
   enabled = true,
   staleTime,
   scopeKey,
-
   // params
   ...params
 }: TParams & UseWrapperDataConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getWrapperData',
     queryDependencyType: 'standard',
+    queryFn: getWrapperDataQueryFn,
+  })
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
   })
 
   const query = useQuery({
-    queryKey,
-    queryFn: getWrapperDataQueryFn,
-    gcTime,
+    ...preparedOptions,
     enabled: enabled && !!params.name,
+    gcTime,
     staleTime,
-
     select: (data) => {
       if (!data) return null
       return {

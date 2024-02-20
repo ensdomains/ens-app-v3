@@ -1,5 +1,5 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { Config } from 'wagmi'
 
 import {
   getNameHistory,
@@ -7,7 +7,7 @@ import {
   GetNameHistoryReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseNameHistoryParameters = PartialBy<GetNameHistoryParameters, 'name'>
@@ -22,15 +22,17 @@ type QueryKey<TParams extends UseNameHistoryParameters> = CreateQueryKey<
   'graph'
 >
 
-export const getNameHistoryQueryFn = async <TParams extends UseNameHistoryParameters>({
-  queryKey: [{ name }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getNameHistoryQueryFn =
+  (config: Config) =>
+  async <TParams extends UseNameHistoryParameters>({
+    queryKey: [{ name }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
 
-  return getNameHistory(publicClient, { name })
-}
+    return getNameHistory(publicClient, { name })
+  }
 
 export const useNameHistory = <TParams extends UseNameHistoryParameters>({
   // config
@@ -42,18 +44,23 @@ export const useNameHistory = <TParams extends UseNameHistoryParameters>({
   // params
   ...params
 }: TParams & UseNameHistoryConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getNameHistory',
     queryDependencyType: 'graph',
+    queryFn: getNameHistoryQueryFn,
+  })
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
   })
 
   const query = useQuery({
-    queryKey,
-    queryFn: getNameHistoryQueryFn,
-    gcTime,
+    ...preparedOptions,
     enabled: enabled && !!params.name,
+    gcTime,
     staleTime,
   })
 

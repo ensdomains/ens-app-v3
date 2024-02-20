@@ -1,9 +1,9 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { Config, useConfig } from 'wagmi'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { Config } from 'wagmi'
 
 import { getExpiry, GetExpiryParameters, GetExpiryReturnType } from '@ensdomains/ensjs/public'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseExpiryParameters = PartialBy<GetExpiryParameters, 'name'>
@@ -36,26 +36,28 @@ export const useExpiry = <TParams extends UseExpiryParameters>({
   enabled = true,
   staleTime,
   scopeKey,
-
   // params
   ...params
 }: TParams & UseExpiryConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getExpiry',
     queryDependencyType: 'standard',
+    queryFn: getExpiryQueryFn,
   })
 
-  const config = useConfig()
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
 
   const query = useQuery({
-    queryKey,
-    queryFn: getExpiryQueryFn(config),
-    gcTime,
+    ...preparedOptions,
     enabled: enabled && !!params.name,
+    gcTime,
     staleTime,
-    select: (data: UseExpiryReturnType) => {
+    select: (data) => {
       if (!data) return null
       return {
         ...data,
