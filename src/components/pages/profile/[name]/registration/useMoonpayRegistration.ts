@@ -1,6 +1,6 @@
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { labelhash } from 'viem'
-import { useMutation, useQuery } from 'wagmi'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useChainId } from '@app/hooks/chain/useChainId'
@@ -51,9 +51,9 @@ export const useMoonpayRegistration = (
   })
 
   // Monitor current transaction
-  const { data: transactionData } = useQuery(
+  const { data: transactionData } = useQuery({
     queryKey,
-    async ({ queryKey: [{ externalTransactionId }] }) => {
+    queryFn: async ({ queryKey: [{ externalTransactionId }] }) => {
       const response = await fetch(
         `${MOONPAY_WORKER_URL[chainId]}/transactionInfo?externalTransactionId=${externalTransactionId}`,
       )
@@ -71,14 +71,12 @@ export const useMoonpayRegistration = (
 
       return result || {}
     },
-    {
-      refetchOnWindowFocus: true,
-      refetchOnMount: true,
-      refetchInterval: 1000,
-      refetchIntervalInBackground: true,
-      enabled: !!currentExternalTransactionId && !isCompleted,
-    },
-  )
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchInterval: 1000,
+    refetchIntervalInBackground: true,
+    enabled: !!currentExternalTransactionId && !isCompleted,
+  })
 
   return {
     moonpayUrl,

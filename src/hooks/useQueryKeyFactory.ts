@@ -74,7 +74,6 @@ export function createQueryKey<TParams extends {}, TFunctionName extends string>
 export function useQueryOptions<
   TParams extends {},
   TFunctionName extends string,
-  TQueryKey extends CreateQueryKey<TParams, TFunctionName, 'independent'>,
   TQueryFn extends (config: Config) => unknown,
   TQueryInnerFn = TQueryFn extends (config: Config) => infer F ? F : never,
 >(
@@ -86,7 +85,6 @@ export function useQueryOptions<
 export function useQueryOptions<
   TParams extends {},
   TFunctionName extends string,
-  TQueryKey extends CreateQueryKey<TParams, TFunctionName, 'graph'>,
   TQueryFn extends (config: Config) => unknown,
   TQueryInnerFn = TQueryFn extends (config: Config) => infer F ? F : never,
 >(
@@ -98,7 +96,6 @@ export function useQueryOptions<
 export function useQueryOptions<
   TParams extends {},
   TFunctionName extends string,
-  TQueryKey extends CreateQueryKey<TParams, TFunctionName, 'standard'>,
   TQueryFn extends (config: Config) => unknown,
   TQueryInnerFn = TQueryFn extends (config: Config) => infer F ? F : never,
 >(

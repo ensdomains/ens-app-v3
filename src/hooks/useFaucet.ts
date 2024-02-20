@@ -1,13 +1,12 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { useMutation, useQuery, useQueryClient } from 'wagmi'
 
+import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import { CreateQueryKey } from '@app/types'
 import { FAUCET_WORKER_URL } from '@app/utils/constants'
 
 import { useAccountSafely } from './account/useAccountSafely'
 import { useChainName } from './chain/useChainName'
-import { useQueryKeyFactory } from './useQueryKeyFactory'
 
 type BaseJsonRPC<Result> = {
   jsonrpc: string
@@ -82,7 +81,9 @@ const useFaucet = () => {
     queryDependencyType: 'standard',
   })
 
-  const { data, error, isLoading } = useQuery(queryKey, getFaucetQueryFn, {
+  const { data, error, isLoading } = useQuery({
+    queryKey,
+    queryFn: getFaucetQueryFn,
     enabled: !!address && (chainName === 'goerli' || chainName === 'sepolia'),
   })
   //   const queryKey = useQueryKeys().faucet(address)
@@ -120,8 +121,8 @@ const useFaucet = () => {
   //   )
   // >>>>>>> main
 
-  const mutation = useMutation(
-    async () => {
+  const mutation = useMutation({
+    mutationFn: async () => {
       const result: JsonRpc<{ id: string }> = await fetch(createEndpoint(chainName), {
         method: 'POST',
         body: JSON.stringify({
@@ -140,12 +141,10 @@ const useFaucet = () => {
 
       return result.result
     },
-    {
-      onSuccess: () => {
-        queryClient.resetQueries(queryKey)
-      },
+    onSuccess: () => {
+      queryClient.resetQueries(queryKey)
     },
-  )
+  })
 
   useEffect(() => {
     mutation.reset()

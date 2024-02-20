@@ -1,7 +1,6 @@
-import { getPublicClient } from '@wagmi/core'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Address, isAddress } from 'viem'
-import { useMutation, useQueryClient } from 'wagmi'
 
 import { getAddressRecord, getName } from '@ensdomains/ensjs/public'
 import { normalise } from '@ensdomains/ensjs/utils'
@@ -70,13 +69,13 @@ export const useSimpleSearch = (options: Options = {}) => {
 
   useEffect(() => {
     return () => {
-      queryClient.removeQueries(['simpleSearch'], { exact: false })
+      queryClient.removeQueries({ queryKey: ['simpleSearch'], exact: false })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { mutate, isLoading, ...rest } = useMutation(
-    async (query: string) => {
+  const { mutate, isPending, ...rest } = useMutation({
+    mutationFn: async (query: string) => {
       if (query.length < 3) throw new Error('Query too short')
       if (cache) {
         const cachedData = queryClient.getQueryData<Result[]>(createQueryKey(query))
@@ -101,17 +100,15 @@ export const useSimpleSearch = (options: Options = {}) => {
         }, {})
       return Object.values(filteredData) as Result[]
     },
-    {
-      onSuccess: (data, variables) => {
-        queryClient.setQueryData(createQueryKey(variables), data)
-      },
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(createQueryKey(variables), data)
     },
-  )
+  })
   const debouncedMutate = useDebouncedCallback(mutate, 500)
 
   return {
     ...rest,
     mutate: debouncedMutate,
-    isLoading: isLoading || !chainId,
+    isLoading: isPending || !chainId,
   }
 }

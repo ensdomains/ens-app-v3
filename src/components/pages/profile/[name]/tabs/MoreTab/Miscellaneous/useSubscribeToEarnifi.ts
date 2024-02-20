@@ -1,5 +1,4 @@
-import { UseMutationOptions } from '@tanstack/react-query'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 
 export const EARNIFI_ENDPOINT = 'https://notifications-api.vercel.app/api/v1/ens/subscribe'
 
