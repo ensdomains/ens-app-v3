@@ -1,5 +1,5 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { Config } from 'wagmi'
 
 import {
   getDnsImportData,
@@ -22,15 +22,17 @@ type QueryKey<TParams extends UseDnsImportDataParameters> = CreateQueryKey<
   'standard'
 >
 
-export const getDnsImportDataQueryFn = async <TParams extends UseDnsImportDataParameters>({
-  queryKey: [{ name, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getDnsImportDataQueryFn =
+  (config: Config) =>
+  async <TParams extends UseDnsImportDataParameters>({
+    queryKey: [{ name, ...params }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
 
-  return getDnsImportData(publicClient, { name, ...params })
-}
+    return getDnsImportData(publicClient, { name, ...params })
+  }
 
 export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
   // config
@@ -38,30 +40,33 @@ export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
   enabled = true,
   staleTime,
   scopeKey,
-
   // params
   ...params
 }: TParams & UseDnsImportDataConfig) => {
-  const { queryKey } = useQueryOptions({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getDnsImportData',
     queryDependencyType: 'standard',
+    queryFn: getDnsImportDataQueryFn,
+  })
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
   })
 
   const query = useQuery({
-    queryKey,
-    queryFn: getDnsImportDataQueryFn,
-    gcTime,
+    ...preparedOptions,
     enabled:
       enabled &&
       !!params.name &&
       !params.name?.endsWith('.eth') &&
       params.name !== 'eth' &&
       params.name !== '[root]',
-    staleTime,
-
+    gcTime,
     retry: 2,
+    staleTime,
   })
 
   return {

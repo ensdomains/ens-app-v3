@@ -74,13 +74,12 @@ export function createQueryKey<TParams extends {}, TFunctionName extends string>
 export function useQueryOptions<
   TParams extends {},
   TFunctionName extends string,
-  TQueryFn extends (config: Config) => unknown,
-  TQueryInnerFn = TQueryFn extends (config: Config) => infer F ? F : never,
+  TQueryFn extends unknown,
 >(
   params: QueryKeyConfig<TParams, TFunctionName, 'independent'> & { queryFn: TQueryFn },
 ): {
   queryKey: CreateQueryKey<TParams, TFunctionName, 'independent'>
-  queryFn: TQueryInnerFn
+  queryFn: TQueryFn
 }
 export function useQueryOptions<
   TParams extends {},
@@ -120,13 +119,14 @@ export function useQueryOptions<
   const { address } = useAccount()
   const config = useConfig()
 
-  const queryFnWithConfig = queryFn(config)
-
   if (queryDependencyType === 'independent')
     return {
       queryKey: createQueryKey({ params, scopeKey, functionName, queryDependencyType }),
-      queryFn: queryFnWithConfig,
+      // independent queries should never require config passthrough, since they don't use chain data
+      queryFn,
     }
+
+  const queryFnWithConfig = queryFn(config)
   if (queryDependencyType === 'graph')
     return {
       queryKey: createQueryKey({
