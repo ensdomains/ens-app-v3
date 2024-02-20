@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 
 import {
@@ -14,7 +14,7 @@ import {
   GetDnsOffchainDataReturnType,
 } from '@ensdomains/ensjs/dns'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseDnsOffchainDataParameters = PartialBy<GetDnsOffchainDataParameters, 'name'>
@@ -57,7 +57,7 @@ export const useDnsOffchainData = <TParams extends UseDnsOffchainDataParameters>
   // params
   ...params
 }: TParams & UseDnsOffchainDataConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getDnsOffchainData',
@@ -73,9 +73,7 @@ export const useDnsOffchainData = <TParams extends UseDnsOffchainDataParameters>
       params.name !== 'eth' &&
       params.name !== '[root]',
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
+
     retry: 2,
   })
 

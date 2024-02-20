@@ -6,12 +6,12 @@ import { useAccount } from 'wagmi'
 import { checkIsSafeApp } from '@app/utils/safe'
 
 import { useIsSafeApp } from './useIsSafeApp'
-import { useQueryKeyFactory } from './useQueryKeyFactory'
+import { useQueryOptions } from './useQueryOptions'
 
-vi.mock('./useQueryKeyFactory')
+vi.mock('./useQueryOptions')
 vi.mock('@app/utils/safe')
 
-const mockUseQueryKeyFactory = mockFunction(useQueryKeyFactory)
+const mockUseQueryKeyFactory = mockFunction(useQueryOptions)
 const mockCheckIsSafeApp = mockFunction(checkIsSafeApp)
 const mockUseAccount = mockFunction(useAccount)
 

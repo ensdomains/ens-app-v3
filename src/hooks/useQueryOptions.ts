@@ -104,6 +104,7 @@ export function useQueryOptions<
   queryKey: CreateQueryKey<TParams, TFunctionName, 'standard'>
   queryFn: TQueryInnerFn
 }
+
 export function useQueryOptions<
   TParams extends {},
   TFunctionName extends string,
@@ -114,7 +115,7 @@ export function useQueryOptions<
   functionName,
   queryDependencyType,
   queryFn,
-}: QueryKeyConfig<TParams, TFunctionName, QueryDependencyType> & { queryFn: TQueryFn }) {
+}: QueryKeyConfig<TParams, TFunctionName, QueryDependencyType> & { queryFn?: TQueryFn }) {
   const chainId = useChainId()
   const { address } = useAccount()
   const config = useConfig()

@@ -1,7 +1,7 @@
 import { QueryFunctionContext, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey } from '@app/types'
 import { FAUCET_WORKER_URL } from '@app/utils/constants'
 
@@ -75,7 +75,7 @@ const useFaucet = () => {
   const chainName = useChainName()
   const { address } = useAccountSafely()
 
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params: { chainName },
     functionName: 'getFaucetAddress',
     queryDependencyType: 'standard',

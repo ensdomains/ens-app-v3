@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 
 import { saveName } from '@ensdomains/ensjs/utils'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 
 import { TransactionDialogPassthrough, TransactionFlowItem } from '../../types'
 import { FormData, nameToFormData, UnknownLabelsForm } from './views/UnknownLabelsForm'
@@ -37,7 +37,7 @@ const UnknownLabels = ({
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
   }
 
-  const validateKey = useQueryKeyFactory({
+  const validateKey = useQueryOptions({
     params: { input: name },
     functionName: 'validate',
     queryDependencyType: 'independent',

@@ -21,7 +21,7 @@ import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { createQueryKey } from '@app/hooks/useQueryKeyFactory'
+import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate, validate, ValidationResult } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'

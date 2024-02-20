@@ -8,7 +8,7 @@ import {
   GetSupportedInterfacesReturnType,
 } from '@ensdomains/ensjs/public'
 
-import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseSupportedInterfacesParameters<TInterfaces extends readonly Hex[] = readonly Hex[]> =

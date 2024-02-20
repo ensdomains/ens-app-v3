@@ -2,7 +2,7 @@ import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 
 import { CreateQueryKey, QueryConfig } from '@app/types'
 
-import { useQueryKeyFactory } from '../useQueryKeyFactory'
+import { useQueryOptions } from '../useQueryOptions'
 
 export const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query'
 
@@ -75,7 +75,7 @@ export const useDnsSecEnabled = <TParams extends UseDnsSecEnabledParameters>({
   // params
   ...params
 }: TParams & UseDnsSecEnabledConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getDnsSecEnabled',
@@ -86,9 +86,7 @@ export const useDnsSecEnabled = <TParams extends UseDnsSecEnabledParameters>({
     gcTime,
     enabled: enabled && !!params.name && params.name !== 'eth' && params.name !== '[root]',
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
+
     retry: 2,
   })
 

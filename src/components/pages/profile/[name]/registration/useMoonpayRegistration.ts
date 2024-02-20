@@ -4,7 +4,7 @@ import { labelhash } from 'viem'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useChainId } from '@app/hooks/chain/useChainId'
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'
 import { getLabelFromName } from '@app/utils/utils'
@@ -44,7 +44,7 @@ export const useMoonpayRegistration = (
     setHasMoonpayModal(true)
   })
 
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params: { externalTransactionId: currentExternalTransactionId },
     functionName: 'getMoonpayStatus',
     queryDependencyType: 'standard',

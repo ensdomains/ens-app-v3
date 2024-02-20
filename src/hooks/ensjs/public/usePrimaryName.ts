@@ -3,7 +3,7 @@ import { Config } from 'wagmi'
 
 import { getName, GetNameParameters, GetNameReturnType } from '@ensdomains/ensjs/public'
 
-import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
 import { emptyAddress } from '@app/utils/constants'

@@ -3,14 +3,14 @@ import { useQuery } from '@tanstack/react-query'
 
 import { PublicClientWithChain } from '@app/types'
 
-import { useQueryKeyFactory } from '../useQueryKeyFactory'
+import { useQueryOptions } from '../useQueryOptions'
 
 type UseBlockTimestampParameters = {
   enabled?: boolean
 }
 
 export const useBlockTimestamp = ({ enabled = true }: UseBlockTimestampParameters = {}) => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params: {},
     functionName: 'getBlockTimestamp',
     queryDependencyType: 'standard',

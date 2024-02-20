@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createConfig, WagmiConfig } from 'wagmi'
 
-import { createQueryKey } from '../useQueryKeyFactory'
+import { createQueryKey } from '../useQueryOptions'
 import { Transaction } from './transactionStore'
 import { useRegisterOrImportNameCallback } from './useRegisterOrImportNameCallback'
 

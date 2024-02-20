@@ -29,7 +29,7 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { usePublicClient } from '@app/hooks/usePublicClient'
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { createTransactionRequest, TransactionName } from '@app/transaction-flow/transaction'
 import {
   GetUniqueTransactionParameters,
@@ -435,7 +435,7 @@ export const TransactionStageModal = ({
     [transaction, walletClient?.account, safeAppStatusLoading, stage, isUniquenessDefined],
   )
 
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params: uniqueTxIdentifiers,
     functionName: 'prepareTransaction',
     queryDependencyType: 'standard',
@@ -623,7 +623,7 @@ export const TransactionStageModal = ({
     return 'inProgress'
   }, [stage])
 
-  const errorQueryKey = useQueryKeyFactory({
+  const errorQueryKey = useQueryOptions({
     params: { hash: transaction.hash, status: transactionStatus },
     functionName: 'getTransactionError',
     queryDependencyType: 'standard',

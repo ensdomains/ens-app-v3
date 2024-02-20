@@ -3,11 +3,11 @@ import { useAccount } from 'wagmi'
 
 import { checkIsSafeApp } from '@app/utils/safe'
 
-import { useQueryKeyFactory } from './useQueryKeyFactory'
+import { useQueryOptions } from './useQueryOptions'
 
 export const useIsSafeApp = () => {
   const { connector } = useAccount()
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params: { id: connector?.id },
     functionName: 'isSafeApp',
     queryDependencyType: 'independent',

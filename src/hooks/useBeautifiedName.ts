@@ -2,10 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 
 import { tryBeautify } from '@app/utils/beautify'
 
-import { useQueryKeyFactory } from './useQueryKeyFactory'
+import { useQueryOptions } from './useQueryOptions'
 
 export const useBeautifiedName = (name: string): string => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params: { name },
     functionName: 'getBeautifiedName',
     queryDependencyType: 'independent',

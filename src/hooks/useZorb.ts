@@ -3,13 +3,13 @@ import { useTheme } from 'styled-components'
 
 import { zorbImageDataURI } from '@app/utils/gradient'
 
-import { useQueryKeyFactory } from './useQueryKeyFactory'
+import { useQueryOptions } from './useQueryOptions'
 
 export const useZorb = (input: string, type: 'address' | 'name' | 'hash') => {
   const {
     colors: { background: bg, text: fg, accentLight: accent },
   } = useTheme()
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params: { input, type, colors: { bg, fg, accent } },
     functionName: 'zorb',
     queryDependencyType: 'independent',

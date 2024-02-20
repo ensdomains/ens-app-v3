@@ -16,7 +16,7 @@ import { AnyFuseKey, CreateQueryKey, PublicClientWithChain } from '@app/types'
 
 import { useNameHistory } from '../ensjs/subgraph/useNameHistory'
 import { usePublicClient } from '../usePublicClient'
-import { createQueryKey } from '../useQueryKeyFactory'
+import { createQueryKey } from '../useQueryOptions'
 
 type UseFusesSetDatesParameters = {
   name: string

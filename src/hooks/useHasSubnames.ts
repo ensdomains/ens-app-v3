@@ -1,13 +1,12 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { useQuery } from '@tanstack/react-query'
 
 import { getSubnames, Name } from '@ensdomains/ensjs/subgraph'
 
 import { CreateQueryKey, PublicClientWithChain } from '@app/types'
 
 import { emptyAddress } from '../utils/constants'
-import { useQueryKeyFactory } from './useQueryKeyFactory'
+import { useQueryOptions } from './useQueryOptions'
 
 const FETCH_PAGE_SIZE = 50
 
@@ -56,7 +55,7 @@ export const useHasSubnames = (name: string) => {
   const isSubname = !!name && name.split('.').length > 2
   const enabled = !!name && isSubname
 
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params: { name },
     functionName: 'hasSubnames',
     queryDependencyType: 'graph',

@@ -11,7 +11,7 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { useChainId } from '@app/hooks/chain/useChainId'
 import { useAddressRecord } from '@app/hooks/ensjs/public/useAddressRecord'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
-import { createQueryKey } from '@app/hooks/useQueryKeyFactory'
+import { createQueryKey } from '@app/hooks/useQueryOptions'
 
 import { DisplayItems } from './TransactionDialogManager/DisplayItems'
 

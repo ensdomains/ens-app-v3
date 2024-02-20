@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 
 import {
@@ -7,7 +7,7 @@ import {
   GetDnsImportDataReturnType,
 } from '@ensdomains/ensjs/dns'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseDnsImportDataParameters = PartialBy<GetDnsImportDataParameters, 'name'>
@@ -42,14 +42,16 @@ export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
   // params
   ...params
 }: TParams & UseDnsImportDataConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getDnsImportData',
     queryDependencyType: 'standard',
   })
 
-  const query = useQuery(queryKey, getDnsImportDataQueryFn, {
+  const query = useQuery({
+    queryKey,
+    queryFn: getDnsImportDataQueryFn,
     gcTime,
     enabled:
       enabled &&
@@ -58,9 +60,7 @@ export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
       params.name !== 'eth' &&
       params.name !== '[root]',
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
+
     retry: 2,
   })
 

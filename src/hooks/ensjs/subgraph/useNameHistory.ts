@@ -7,7 +7,7 @@ import {
   GetNameHistoryReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
-import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseNameHistoryParameters = PartialBy<GetNameHistoryParameters, 'name'>

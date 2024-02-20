@@ -9,7 +9,7 @@ import {
   GetSubnamesReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, InfiniteQueryConfig, PartialBy, PublicClientWithChain } from '@app/types'
 
 type UseSubnamesParameters = Omit<PartialBy<GetSubnamesParameters, 'name'>, 'previousPage'>
@@ -45,7 +45,7 @@ export const useSubnames = <TParams extends UseSubnamesParameters>({
   // params
   ...params
 }: TParams & UseSubnamesConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getSubnames',

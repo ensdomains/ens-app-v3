@@ -23,7 +23,7 @@ import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { usePublicClient } from '@app/hooks/usePublicClient'
-import { createQueryKey } from '@app/hooks/useQueryKeyFactory'
+import { createQueryKey } from '@app/hooks/useQueryOptions'
 import {
   nameToFormData,
   UnknownLabelsForm,

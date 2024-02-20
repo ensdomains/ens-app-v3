@@ -7,7 +7,7 @@ import {
   GetSubgraphRecordsReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseSubgraphRecordsParameters = PartialBy<GetSubgraphRecordsParameters, 'name'>
@@ -42,7 +42,7 @@ export const useSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>
   // params
   ...params
 }: TParams & UseSubgraphRecordsConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getSubgraphRecords',

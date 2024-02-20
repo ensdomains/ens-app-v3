@@ -10,7 +10,7 @@ import {
 } from '@ensdomains/ensjs'
 import { getDnsOwner, GetDnsOwnerParameters, GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseDnsOwnerParameters = PartialBy<GetDnsOwnerParameters, 'name'>
@@ -52,7 +52,7 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
   // params
   ...params
 }: TParams & UseDnsOwnerConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getDnsOwner',
@@ -68,9 +68,7 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
       params.name !== 'eth' &&
       params.name !== '[root]',
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
+
     retry: 2,
   })
 

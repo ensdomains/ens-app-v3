@@ -6,7 +6,7 @@ import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
 import { CreateQueryKey, PublicClientWithChain, QueryConfig } from '@app/types'
 
-import { useQueryKeyFactory } from './useQueryKeyFactory'
+import { useQueryOptions } from './useQueryOptions'
 
 type UseResolverExistsParameters = {
   name?: string | undefined | null
@@ -71,7 +71,7 @@ export const useResolverExists = <TParams extends UseResolverExistsParameters>({
   // params
   ...params
 }: TParams & UseResolverExistsConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getResolverExists',
@@ -84,8 +84,5 @@ export const useResolverExists = <TParams extends UseResolverExistsParameters>({
     gcTime,
     enabled: enabled && !!params.name && !!params.address,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
   })
 }

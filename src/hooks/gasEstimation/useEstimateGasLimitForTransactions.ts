@@ -14,7 +14,7 @@ import { fetchTenderlyEstimate } from '@app/utils/tenderly'
 import { useWalletClientWithAccount } from '../account/useWalletClient'
 import { useGasPrice } from '../chain/useGasPrice'
 import { usePublicClient } from '../usePublicClient'
-import { useQueryKeyFactory } from '../useQueryKeyFactory'
+import { useQueryOptions } from '../useQueryOptions'
 
 type UseEstimateGasLimitForTransactionParameters<TName extends TransactionName> = Omit<
   TransactionParameters<TName>,
@@ -89,7 +89,7 @@ export const useEstimateGasLimitForTransaction = <TName extends TransactionName>
   const publicClient = usePublicClient()
   const { data: walletClient, isLoading: isWalletClientLoading } = useWalletClientWithAccount()
 
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params,
     scopeKey,
     functionName: 'estimateGasLimitForTransaction',

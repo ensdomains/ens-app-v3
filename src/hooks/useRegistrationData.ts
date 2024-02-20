@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { labelhash } from 'viem'
 
@@ -7,7 +7,7 @@ import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 import { CreateQueryKey, PublicClientWithChain, QueryConfig } from '@app/types'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
-import { useQueryKeyFactory } from './useQueryKeyFactory'
+import { useQueryOptions } from './useQueryOptions'
 
 type UseRegistrationDataParameters = {
   name?: string | undefined | null
@@ -67,7 +67,7 @@ const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
   // params
   ...params
 }: TParams & UseRegistrationDataConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params,
     functionName: 'getRegistrationData',
     queryDependencyType: 'graph',
@@ -77,9 +77,7 @@ const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
     gcTime,
     enabled: enabled && !!params.name && checkETH2LDFromName(params.name),
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
+
     select: (data) => {
       if (!data?.registration) return null
       return {

@@ -3,7 +3,7 @@ import { Config } from 'wagmi'
 
 import { getExpiry, GetExpiryParameters, GetExpiryReturnType } from '@ensdomains/ensjs/public'
 
-import { useQueryOptions } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
 
 type UseExpiryParameters = PartialBy<GetExpiryParameters, 'name'>

@@ -8,7 +8,7 @@ import {
   GetNamesForAddressReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, InfiniteQueryConfig, PartialBy, PublicClientWithChain } from '@app/types'
 
 type UseNamesForAddressParameters = Omit<
@@ -47,7 +47,7 @@ export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>
   // params
   ...params
 }: TParams & UseNamesForAddressConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getNamesForAddress',

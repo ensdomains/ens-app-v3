@@ -3,11 +3,11 @@ import { getPublicClient } from '@wagmi/core'
 
 import { PublicClientWithChain } from '@app/types'
 
-import { useQueryKeyFactory } from '../useQueryKeyFactory'
+import { useQueryOptions } from '../useQueryOptions'
 import { useInvalidateOnBlock } from './useInvalidateOnBlock'
 
 const useCurrentBlockTimestamp = ({ enabled = true }: { enabled?: boolean } = {}) => {
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params: {},
     functionName: 'getCurrentBlockTimestamp',
     queryDependencyType: 'standard',

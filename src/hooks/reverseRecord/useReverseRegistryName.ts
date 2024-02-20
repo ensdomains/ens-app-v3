@@ -4,7 +4,7 @@ import { Address, namehash } from 'viem'
 
 import { getChainContractAddress, registryResolverSnippet } from '@ensdomains/ensjs/contracts'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, PublicClientWithChain, QueryConfig } from '@app/types'
 
 const publicResolverNameSnippet = [
@@ -81,7 +81,7 @@ export const useReverseRegistryName = <TParams extends UseReverseRegistryNamePar
 }: TParams & UseReverseRegistryNameConfig) => {
   const _enabled = enabled ?? true
 
-  const queryKey = useQueryKeyFactory({
+  const { queryKey } = useQueryOptions({
     params: { address },
     functionName: 'getReverseRegistryName',
     queryDependencyType: 'standard',
