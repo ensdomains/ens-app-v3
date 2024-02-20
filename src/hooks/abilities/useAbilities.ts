@@ -110,11 +110,15 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
     hasSubnamesData.isLoading ||
     resolverAuthorisation.isLoading
 
-  const isCachedData = basicNameData.isCachedData || hasSubnamesData.isCachedData
+  const isCachedData =
+    basicNameData.isCachedData ||
+    hasSubnamesData.isCachedData ||
+    resolverAuthorisation.isCachedData ||
+    parentBasicNameData.isCachedData
 
   const data: Abilities | undefined = useMemo(
     () => {
-      if (!name || !address || isLoading) return DEFAULT_ABILITIES
+      if (!name || !address) return DEFAULT_ABILITIES
       return {
         canExtend: !!name && checkETH2LDFromName(name),
         ...getSendAbilities({

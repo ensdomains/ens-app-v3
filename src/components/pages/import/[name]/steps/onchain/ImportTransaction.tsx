@@ -9,13 +9,14 @@ import { CurrencyText } from '@app/components/@atoms/CurrencyText/CurrencyText'
 import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useGasPrice } from '@app/hooks/chain/useGasPrice'
+import { useTransactionGasEstimates } from '@app/hooks/chain/useTransactionGasEstimates'
 import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useApprovedForAll } from '@app/hooks/useApprovedForAll'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { getTransactionGasCost } from '@app/utils/getTransactionGasCost'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 import useUserConfig from '@app/utils/useUserConfig'
 import { shortenAddress } from '@app/utils/utils'
@@ -159,12 +160,14 @@ export const ImportTransaction = ({
     ],
   )
 
-  const {
-    data: { gasCost },
-    isLoading: isEstimateLoading,
-  } = useEstimateGasWithStateOverride({
-    transactions: estimators || transactions,
-    enabled: !!dnsImportData && (!requiresApproval || isApprovalFetched),
+  const { data: transactionGasEstimateData, isLoading: isEstimateLoading } =
+    useTransactionGasEstimates({
+      transactions: estimators || transactions,
+      enabled: !!dnsImportData && (!requiresApproval || isApprovalFetched),
+    })
+  const gasCost = getTransactionGasCost({
+    gasPrice,
+    gasEstimate: transactionGasEstimateData?.reduced,
   })
 
   const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()

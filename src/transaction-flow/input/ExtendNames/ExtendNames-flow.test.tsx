@@ -2,15 +2,18 @@ import { mockFunction, render, screen } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 
-import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
+import { useGasPrice } from '@app/hooks/chain/useGasPrice'
+import { useTransactionGasEstimates } from '@app/hooks/chain/useTransactionGasEstimates'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
 
 import ExtendNames from './ExtendNames-flow'
 
-vi.mock('@app/hooks/chain/useEstimateGasWithStateOverride')
+vi.mock('@app/hooks/chain/useGasPrice')
+vi.mock('@app/hooks/chain/useTransactionGasEstimates')
 vi.mock('@app/hooks/ensjs/public/usePrice')
 
-const mockUseEstimateGasWithStateOverride = mockFunction(useEstimateGasWithStateOverride)
+const mockUseGasPrice = mockFunction(useGasPrice)
+const mockUseTransactionGasEstimates = mockFunction(useTransactionGasEstimates)
 const mockUsePrice = mockFunction(usePrice)
 
 vi.mock('@ensdomains/thorin', async () => {
@@ -41,9 +44,11 @@ vi.mock(
 )
 
 describe('Extendnames', () => {
-  mockUseEstimateGasWithStateOverride.mockReturnValue({
-    data: { gasEstimate: 21000n, gasCost: 100n },
+  mockUseGasPrice.mockReturnValue({
     gasPrice: 100n,
+  })
+  mockUseTransactionGasEstimates.mockReturnValue({
+    data: { reduced: 21000n },
     error: null,
     isLoading: true,
   })

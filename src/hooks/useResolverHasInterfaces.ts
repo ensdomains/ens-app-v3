@@ -71,6 +71,7 @@ export const useResolverHasInterfaces = <
     isLoading,
     isFetching,
     status,
+    isCachedData,
   } = useSupportedInterfaces<GetInterfaceIds<TInterfaceNames>>({
     address: resolverAddress,
     interfaces: interfaceIds,
@@ -94,6 +95,7 @@ export const useResolverHasInterfaces = <
     knownResolverData,
     isLoading,
     isFetching,
+    isCachedData,
     status,
     errors: errors.length > 0 ? errors : undefined,
   }

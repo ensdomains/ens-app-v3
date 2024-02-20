@@ -1,12 +1,10 @@
 import { useMemo } from 'react'
-import { namehash } from 'viem'
-import { usePrepareContractWrite, useWalletClient } from 'wagmi'
-
-import { publicResolverSetAddrSnippet } from '@ensdomains/ensjs/contracts'
+import { useWalletClient } from 'wagmi'
 
 import { useProfile } from '@app/hooks/useProfile'
 import { emptyAddress } from '@app/utils/constants'
 
+import { useTransactionGasEstimates } from '../chain/useTransactionGasEstimates'
 import { useIsWrapped } from '../useIsWrapped'
 import { useResolverHasInterfaces } from '../useResolverHasInterfaces'
 
@@ -34,6 +32,7 @@ export const useResolverIsAuthorised = ({
     data: isWrapped,
     isLoading: isWrappedLoading,
     isFetching: isWrappedFetching,
+    isCachedData: isWrappedCachedData,
   } = useIsWrapped({ name, enabled })
 
   const isDependentDataLoading = profile.isLoading || walletClient.isLoading
@@ -43,24 +42,32 @@ export const useResolverIsAuthorised = ({
     knownResolverData,
     isLoading: isResolverHasInterfacesLoading,
     isFetching: isResolverHasInterfacesFetching,
+    isCachedData: isResolverHasInterfacesCachedData,
   } = useResolverHasInterfaces({
     interfaceNames: ['MultiCoinAddressResolver'],
     resolverAddress: resolverAddress!,
     enabled: enabled && !isDependentDataLoading && !!resolverAddress,
   })
+
   const {
-    data: preparedContractWrite,
-    isLoading: isPreparedContractWriteLoading,
-    isError: isPreparedContractWriteError,
-    isFetching: isPreparedContractWriteFetching,
-  } = usePrepareContractWrite({
-    abi: publicResolverSetAddrSnippet,
-    address: resolverAddress,
-    account: walletClient.data?.account,
-
-    functionName: 'setAddr',
-    args: [namehash(name), 60n, emptyAddress],
-
+    data: transactionGasEstimateData,
+    isLoading: isEstimateLoading,
+    isError: isEstimateError,
+    isFetching: isEstimateFetching,
+    isCachedData: isEstimateCachedData,
+  } = useTransactionGasEstimates({
+    transactions: [
+      {
+        name: 'updateProfile',
+        data: {
+          name,
+          resolverAddress: resolverAddress!,
+          records: {
+            coins: [{ coin: 'eth', value: emptyAddress }],
+          },
+        },
+      },
+    ],
     enabled:
       enabled &&
       !isDependentDataLoading &&
@@ -72,11 +79,11 @@ export const useResolverIsAuthorised = ({
   const isLoading =
     isDependentDataLoading ||
     isResolverHasInterfacesLoading ||
-    isPreparedContractWriteLoading ||
+    isEstimateLoading ||
     isWrappedLoading
 
   const data = useMemo(() => {
-    if (!enabled || isLoading) return undefined
+    if (!enabled) return undefined
     if (!resolverSupportsMultiAddress) return { isValid: false, isAuthorised: false }
     if (knownResolverData)
       return {
@@ -85,16 +92,15 @@ export const useResolverIsAuthorised = ({
       }
     return {
       isValid: true,
-      isAuthorised: !isPreparedContractWriteError && preparedContractWrite?.request !== undefined,
+      isAuthorised: !isEstimateError && transactionGasEstimateData?.reduced !== undefined,
     }
   }, [
     enabled,
-    isLoading,
     resolverSupportsMultiAddress,
     knownResolverData,
     isWrapped,
-    isPreparedContractWriteError,
-    preparedContractWrite,
+    isEstimateError,
+    transactionGasEstimateData,
   ])
 
   return {
@@ -103,7 +109,12 @@ export const useResolverIsAuthorised = ({
     isFetching:
       profile.isFetching ||
       isResolverHasInterfacesFetching ||
-      isPreparedContractWriteFetching ||
+      isEstimateFetching ||
       isWrappedFetching,
+    isCachedData:
+      profile.isCachedData ||
+      isResolverHasInterfacesCachedData ||
+      isEstimateCachedData ||
+      isWrappedCachedData,
   }
 }

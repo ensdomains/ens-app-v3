@@ -120,7 +120,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         contentHash={profile?.contentHash}
         owners={owners}
         name={normalisedName}
-        actions={profileActions.profileActions}
+        actions={profileActions}
         gracePeriodEndDate={gracePeriodEndDate}
       />
     </DetailsWrapper>

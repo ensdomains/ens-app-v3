@@ -46,14 +46,35 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
 
   const enabled = enabled_ && !!address
 
-  const { data: abilities, isLoading: isAbilitiesLoading } = useAbilities({ name, enabled })
+  const {
+    data: abilities,
+    isLoading: isAbilitiesLoading,
+    isCachedData: isAbilitiesCachedData,
+  } = useAbilities({ name, enabled })
 
-  const { data: profile, isLoading: isProfileLoading } = useProfile({ name, enabled })
-  const { data: ownerData, isLoading: isOwnerLoading } = useOwner({ name, enabled })
-  const { data: wrapperData, isLoading: isWrapperDataLoading } = useWrapperData({ name, enabled })
-  const { data: expiryData, isLoading: isExpiryLoading } = useExpiry({ name, enabled })
+  const {
+    data: profile,
+    isLoading: isProfileLoading,
+    isCachedData: isProfileCachedData,
+  } = useProfile({ name, enabled })
+  const {
+    data: ownerData,
+    isLoading: isOwnerLoading,
+    isCachedData: isOwnerCachedData,
+  } = useOwner({ name, enabled })
+  const {
+    data: wrapperData,
+    isLoading: isWrapperDataLoading,
+    isCachedData: isWrapperDataCachedData,
+  } = useWrapperData({ name, enabled })
+  const {
+    data: expiryData,
+    isLoading: isExpiryLoading,
+    isCachedData: isExpiryCachedData,
+  } = useExpiry({ name, enabled })
   const expiryDate = expiryData?.expiry?.date
 
+  // TODO: add cached data check here
   const { data: resolverStatus, isLoading: isResolverStatusLoading } = useResolverStatus({
     name,
     migratedRecordsMatch: address
@@ -62,7 +83,11 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     enabled: enabled && !!ownerData,
   })
 
-  const { data: primaryData, isLoading: isPrimaryNameLoading } = usePrimaryName({
+  const {
+    data: primaryData,
+    isLoading: isPrimaryNameLoading,
+    isCachedData: isPrimaryNameCachedData,
+  } = usePrimaryName({
     address,
     enabled,
   })
@@ -114,9 +139,17 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     isResolverStatusLoading ||
     getPrimaryNameTransactionFlowItem.isLoading
 
+  const isCachedData =
+    isAbilitiesCachedData ||
+    isProfileCachedData ||
+    isOwnerCachedData ||
+    isWrapperDataCachedData ||
+    isExpiryCachedData ||
+    isPrimaryNameCachedData
+
   const profileActions = useMemo(() => {
     const actions: Action[] = []
-    if (!address || isLoading) return actions
+    if (!address) return actions
 
     const transactionFlowItem = getPrimaryNameTransactionFlowItem?.callBack?.(name)
     if (isAvailablePrimaryName && !!transactionFlowItem) {
@@ -288,5 +321,6 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
   return {
     profileActions,
     isLoading,
+    isCachedData,
   }
 }

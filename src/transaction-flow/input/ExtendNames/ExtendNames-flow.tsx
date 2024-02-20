@@ -11,12 +11,14 @@ import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
-import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
+import { useGasPrice } from '@app/hooks/chain/useGasPrice'
+import { useTransactionGasEstimates } from '@app/hooks/chain/useTransactionGasEstimates'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
 import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { getTransactionGasCost } from '@app/utils/getTransactionGasCost'
 import useUserConfig from '@app/utils/useUserConfig'
 import { yearsToSeconds } from '@app/utils/utils'
 
@@ -215,12 +217,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     createTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee!, isSelf }),
   ]
 
+  const { gasPrice } = useGasPrice()
   const {
-    data: { gasEstimate: estimatedGasLimit, gasCost: transactionFee },
+    data: transactionGasEstimateData, // { gasEstimate: estimatedGasLimit, gasCost: transactionFee },
     error: estimateGasLimitError,
     isLoading: isEstimateGasLoading,
-    gasPrice,
-  } = useEstimateGasWithStateOverride({
+  } = useTransactionGasEstimates({
     transactions: [
       {
         name: 'extendNames',
@@ -241,6 +243,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     ],
     enabled: !!rentFee,
   })
+  const estimatedGasLimit = transactionGasEstimateData?.reduced
+  const transactionFee = getTransactionGasCost({ gasPrice, gasEstimate: estimatedGasLimit })
 
   const items: InvoiceItem[] = [
     {

@@ -103,7 +103,7 @@ const RecordsStack = styled.div(
   `,
 )
 
-const ActionsContainer = styled.div(({ theme }) => [
+const ActionsContainer = styled(CacheableComponent)(({ theme }) => [
   css`
     border-top: ${theme.space.px} solid ${theme.colors.border};
     padding: ${theme.space['4']};
@@ -297,7 +297,7 @@ export const ProfileDetails = ({
   expiryDate: Date | undefined
   pccExpired: boolean
   owners: ReturnType<typeof useOwners>
-  actions: ReturnType<typeof useProfileActions>['profileActions']
+  actions: ReturnType<typeof useProfileActions>
   isCached?: boolean
   name: string
   gracePeriodEndDate?: Date
@@ -324,9 +324,11 @@ export const ProfileDetails = ({
 
   const is2LDEth = checkETH2LDFromName(name)
 
-  const actionWarnings = actions
+  const actionWarnings = actions.profileActions
     ?.filter((action) => !!action.warning)
     .map((action) => action.warning)
+
+  console.log(actions)
 
   return (
     <ProfileInfoBox $isCached={isCached}>
@@ -365,8 +367,8 @@ export const ProfileDetails = ({
           button={OwnerProfileButton}
         />
       </RecordsStack>
-      {actions && actions?.length > 0 && (
-        <ActionsContainer>
+      {actions.profileActions && actions.profileActions?.length > 0 && (
+        <ActionsContainer $isCached={actions.isCachedData}>
           {!!actionWarnings &&
             actionWarnings.length > 0 &&
             actionWarnings.map((warning) => (
@@ -375,7 +377,7 @@ export const ProfileDetails = ({
               </Helper>
             ))}
           <Actions data-testid="profile-actions">
-            {actions.map((action) => (
+            {actions.profileActions.map((action) => (
               <ActionWrapper
                 key={action.label}
                 leading={!!action.red}

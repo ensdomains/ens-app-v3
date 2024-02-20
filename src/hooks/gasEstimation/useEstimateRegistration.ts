@@ -4,12 +4,13 @@ import { parseEther } from 'viem'
 import { makeCommitment } from '@ensdomains/ensjs/utils'
 
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
+import { getTransactionGasCost } from '@app/utils/getTransactionGasCost'
 
 import { useAccountSafely } from '../account/useAccountSafely'
 import { useBlockTimestamp } from '../chain/useBlockTimestamp'
 import { useContractAddress } from '../chain/useContractAddress'
-import { useEstimateGasWithStateOverride } from '../chain/useEstimateGasWithStateOverride'
 import { useGasPrice } from '../chain/useGasPrice'
+import { useTransactionGasEstimates } from '../chain/useTransactionGasEstimates'
 import { usePrice } from '../ensjs/public/usePrice'
 import useRegistrationParams from '../useRegistrationParams'
 
@@ -53,7 +54,7 @@ export const useEstimateFullRegistration = ({
     [timestampReference],
   )
 
-  const { data, isLoading } = useEstimateGasWithStateOverride({
+  const { data, isLoading } = useTransactionGasEstimates({
     transactions: [
       {
         name: 'commitName',
@@ -82,6 +83,7 @@ export const useEstimateFullRegistration = ({
     ],
     enabled: !!ethRegistrarControllerAddress && !!price,
   })
+  const gasCost = getTransactionGasCost({ gasPrice, gasEstimate: data?.reduced })
 
   const yearlyFee = price?.base
   const premiumFee = price?.premium
@@ -89,7 +91,7 @@ export const useEstimateFullRegistration = ({
   const totalYearlyFee = yearlyFee || 0n
 
   return {
-    estimatedGasFee: data.gasCost,
+    estimatedGasFee: gasCost,
     estimatedGasLoading: isLoading || gasPriceLoading,
     yearlyFee,
     totalYearlyFee,
