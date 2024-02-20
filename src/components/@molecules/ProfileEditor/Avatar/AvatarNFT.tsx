@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useInfiniteQuery } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import {
   Button,
@@ -184,9 +185,9 @@ export const AvatarNFT = ({
     data: NFTPages,
     fetchNextPage,
     isLoading,
-  } = useInfiniteQuery(
-    [chain, address, 'NFTs'],
-    async ({ pageParam }: { pageParam?: string }) => {
+  } = useInfiniteQuery({
+    queryKey: [chain, address, 'NFTs'],
+    queryFn: async ({ pageParam }) => {
       const urlParams = new URLSearchParams()
       urlParams.append('owner', address)
       urlParams.append('filters[]', 'SPAM')
@@ -214,13 +215,12 @@ export const AvatarNFT = ({
                 contract: 'ensNameWrapper',
               }),
         ),
-      } as NFTResponse
+      }
     },
-    {
-      keepPreviousData: true,
-      getNextPageParam: (lastPage) => lastPage.pageKey,
-    },
-  )
+    initialPageParam: '',
+    placeholderData: keepPreviousData,
+    getNextPageParam: (lastPage) => lastPage.pageKey,
+  })
 
   const [searchedInput, setSearchedInput] = useState('')
   const [selectedNFT, setSelectedNFT] = useState<number | null>(null)

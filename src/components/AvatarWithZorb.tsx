@@ -39,7 +39,6 @@ const Wrapper = styled.div<{ $size?: QuerySpace }>(
 
 type BaseProps = {
   size?: QuerySpace
-  noCache?: boolean
 }
 
 type Name = {
@@ -54,10 +53,9 @@ export const NameAvatar = ({
   src: _,
   name,
   size,
-  noCache = false,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
-  const { data: avatar } = useEnsAvatar({ name, cacheTime: noCache ? 0 : undefined })
+  const { data: avatar } = useEnsAvatar({ name })
   const zorb = useZorb(name, 'name')
 
   const [src, setSrc] = useState<string | undefined>(undefined)
@@ -77,10 +75,9 @@ export const AvatarWithZorb = ({
   name,
   address,
   size,
-  noCache = false,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Address & Name) => {
-  const { data: avatar } = useEnsAvatar({ name, cacheTime: noCache ? 0 : undefined })
+  const { data: avatar } = useEnsAvatar({ name })
   const zorb = useZorb(address || name || '', address ? 'address' : 'name')
   return (
     <Wrapper $size={size}>

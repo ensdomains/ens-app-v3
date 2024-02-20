@@ -6,7 +6,7 @@ import { QueryConfig, WalletClientWithAccount } from '@app/types'
 
 type UseWalletClientConfig<TWalletClient extends WalletClientWithAccount> = Omit<
   QueryConfig<TWalletClient, Error>,
-  'cacheTime' | 'staleTime' | 'enabled'
+  'gcTime' | 'staleTime' | 'enabled'
 > &
   GetWalletClientArgs
 
@@ -45,7 +45,4 @@ export const useWalletClientWithAccount = useWalletClient_ as <
   TWalletClient extends WalletClientWithAccount,
 >({
   chainId,
-  onError,
-  onSettled,
-  onSuccess,
 }?: UseWalletClientConfig<TWalletClient>) => UseQueryResult<TWalletClient, Error>

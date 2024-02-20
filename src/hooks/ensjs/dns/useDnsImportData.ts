@@ -1,6 +1,5 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { useQuery } from '@tanstack/react-query'
 
 import {
   getDnsImportData,
@@ -35,13 +34,11 @@ export const getDnsImportDataQueryFn = async <TParams extends UseDnsImportDataPa
 
 export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseDnsImportDataConfig) => {
@@ -53,7 +50,7 @@ export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
   })
 
   const query = useQuery(queryKey, getDnsImportDataQueryFn, {
-    cacheTime,
+    gcTime,
     enabled:
       enabled &&
       !!params.name &&

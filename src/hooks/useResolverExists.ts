@@ -67,9 +67,7 @@ export const useResolverExists = <TParams extends UseResolverExistsParameters>({
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseResolverExistsConfig) => {

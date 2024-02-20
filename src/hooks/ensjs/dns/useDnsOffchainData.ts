@@ -1,6 +1,5 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
-import { useQuery } from '@tanstack/react-query'
 
 import {
   DnsDnssecVerificationFailedError,
@@ -50,13 +49,11 @@ export const getDnsOffchainDataQueryFn = async <TParams extends UseDnsOffchainDa
 
 export const useDnsOffchainData = <TParams extends UseDnsOffchainDataParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseDnsOffchainDataConfig) => {
@@ -68,7 +65,7 @@ export const useDnsOffchainData = <TParams extends UseDnsOffchainDataParameters>
   })
 
   const query = useQuery(queryKey, getDnsOffchainDataQueryFn, {
-    cacheTime,
+    gcTime,
     enabled:
       enabled &&
       !!params.name &&

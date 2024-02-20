@@ -1,4 +1,4 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery , useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core'
 import { useMemo } from 'react'
 import {
@@ -18,7 +18,6 @@ import {
   TransactionRequest,
   WalletClient,
 } from 'viem'
-import { useQuery } from '@tanstack/react-query'
 
 import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
 import {
@@ -257,13 +256,11 @@ export const useEstimateGasWithStateOverride = <
   const TransactionItems extends TransactionItem[] | readonly TransactionItem[],
 >({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: UseEstimateGasWithStateOverrideParameters<TransactionItems> &
@@ -280,7 +277,7 @@ export const useEstimateGasWithStateOverride = <
   const { gasPrice, isLoading: isGasPriceLoading, isFetching: isGasPriceFetching } = useGasPrice()
 
   const query = useQuery(queryKey, estimateGasWithStateOverrideQueryFn(walletClient), {
-    cacheTime,
+    gcTime,
     enabled: enabled && !isWalletClientLoading,
     staleTime,
     onError,

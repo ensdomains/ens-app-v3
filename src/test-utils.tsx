@@ -77,7 +77,7 @@ vi.mock('react-i18next', () => ({
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      cacheTime: Infinity,
+      gcTime: Infinity,
       retry: false,
     },
   },

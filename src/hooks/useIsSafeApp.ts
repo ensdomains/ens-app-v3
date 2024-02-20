@@ -1,4 +1,5 @@
-import { useAccount, useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
+import { useAccount } from 'wagmi'
 
 import { checkIsSafeApp } from '@app/utils/safe'
 
@@ -11,13 +12,11 @@ export const useIsSafeApp = () => {
     functionName: 'isSafeApp',
     queryDependencyType: 'independent',
   })
-  return useQuery(
+  return useQuery({
     queryKey,
-    async () => {
+    queryFn: async () => {
       return checkIsSafeApp(connector)
     },
-    {
-      enabled: !!connector,
-    },
-  )
+    enabled: !!connector,
+  })
 }

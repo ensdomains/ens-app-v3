@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { formatEther, parseAccount } from 'viem/utils'
-import { useQuery } from '@tanstack/react-query'
 
 import {
   createTransactionRequest,
@@ -77,13 +77,11 @@ export const fetchEstimateWithConfig = async <TName extends TransactionName>({
 
 export const useEstimateGasLimitForTransaction = <TName extends TransactionName>({
   // config
-  cacheTime = 60,
+  gcTime = 60,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: UseEstimateGasLimitForTransactionParameters<TName> &
@@ -105,11 +103,9 @@ export const useEstimateGasLimitForTransaction = <TName extends TransactionName>
     ({ queryKey: [innerParams] }) =>
       fetchEstimateWithConfig({ ...innerParams, publicClient, walletClient: walletClient! }),
     {
-      cacheTime,
+      gcTime,
       staleTime,
-      onError,
-      onSettled,
-      onSuccess,
+
       enabled: enabled && !!walletClient && !isWalletClientLoading,
       select: (result) => ({
         ...result,
