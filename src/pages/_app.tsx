@@ -13,6 +13,7 @@ import { WagmiConfig } from 'wagmi'
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
 import { Notifications } from '@app/components/Notifications'
+import { TestnetWarning } from '@app/components/TestnetWarning'
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
@@ -161,6 +162,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                     <TransactionFlowProvider>
                       <SyncDroppedTransaction>
                         <Notifications />
+                        <TestnetWarning />
                         <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
                       </SyncDroppedTransaction>
                     </TransactionFlowProvider>
