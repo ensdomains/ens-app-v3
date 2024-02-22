@@ -76,8 +76,11 @@ const wagmiConfig = {
   _isEns: true,
 } as unknown as Register['config']
 
-vi.mock('@app/utils/query', () => ({
-  wagmiConfigWithRefetch: wagmiConfig,
+vi.mock('@app/utils/query', async () => ({
+  wagmiConfig,
+  queryClientWithRefetch: await vi
+    .importActual<typeof import('@app/utils/query')>('@app/utils/query')
+    .then((m) => m.queryClientWithRefetch),
 }))
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {

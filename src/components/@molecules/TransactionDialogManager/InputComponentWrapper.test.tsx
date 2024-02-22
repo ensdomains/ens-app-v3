@@ -1,15 +1,15 @@
 import { act, render, screen, waitFor } from '@app/test-utils'
 
+import { QueryClientProvider, useQuery } from '@tanstack/react-query'
 import { ReactNode, useContext, useEffect } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useQuery, WagmiConfig } from 'wagmi'
+import { WagmiProvider } from 'wagmi'
 
-import { wagmiConfigWithRefetch } from '@app/utils/query'
+import { queryClientWithRefetch as queryClient, wagmiConfig } from '@app/utils/query'
 
 import DynamicLoadingContext from './DynamicLoadingContext'
 import InputComponentWrapper from './InputComponentWrapper'
 
-const { queryClient } = wagmiConfigWithRefetch
 const cache = queryClient.getQueryCache()
 queryClient.setDefaultOptions({
   queries: {
@@ -27,9 +27,11 @@ const ComponentHelper = ({ children }: { children: ReactNode }) => {
   return (
     <div className="modal" data-testid="modal-card">
       <div>
-        <WagmiConfig config={wagmiConfigWithRefetch}>
-          <InputComponentWrapper>{children}</InputComponentWrapper>
-        </WagmiConfig>
+        <WagmiProvider config={wagmiConfig}>
+          <QueryClientProvider client={queryClient}>
+            <InputComponentWrapper>{children}</InputComponentWrapper>
+          </QueryClientProvider>
+        </WagmiProvider>
       </div>
     </div>
   )
@@ -39,13 +41,13 @@ const mockObserve = vi.fn()
 const mockDisconnect = vi.fn()
 
 const ComponentWithHook = ({ timeout }: { timeout: number }) => {
-  useQuery(
-    ['test', '123'],
-    () =>
+  useQuery({
+    queryKey: ['test', '123'],
+    queryFn: () =>
       new Promise((resolve) => {
         setTimeout(() => resolve('value-updated'), timeout)
       }),
-  )
+  })
   return <div data-testid="test" />
 }
 
@@ -180,11 +182,13 @@ describe('<InputComponentWrapper />', () => {
   it('should remove cacheable-component class from modal card on unmount', async () => {
     render(<div className="modal" data-testid="modal-card" />)
     const { unmount } = render(
-      <WagmiConfig config={wagmiConfigWithRefetch}>
-        <InputComponentWrapper>
-          <div data-testid="test" />
-        </InputComponentWrapper>
-      </WagmiConfig>,
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <InputComponentWrapper>
+            <div data-testid="test" />
+          </InputComponentWrapper>
+        </QueryClientProvider>
+      </WagmiProvider>,
     )
     mutationObserverCb()
     await waitFor(() => {

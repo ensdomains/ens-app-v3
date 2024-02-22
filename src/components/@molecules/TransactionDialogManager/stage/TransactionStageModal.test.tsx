@@ -15,12 +15,8 @@ import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { checkIsSafeApp } from '@app/utils/safe'
 
-import {
-  calculateGasLimit,
-  handleBackToInput,
-  TransactionStageModal,
-  transactionSuccessHandler,
-} from './TransactionStageModal'
+import { calculateGasLimit, transactionSuccessHandler } from './query'
+import { handleBackToInput, TransactionStageModal } from './TransactionStageModal'
 
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/chain/useChainName')
