@@ -31,6 +31,7 @@ import {
   CreateQueryKey,
 } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
+import { CheckIsSafeAppReturnType } from '@app/utils/safe'
 
 type AccessListResponse = {
   accessList: {
@@ -44,13 +45,11 @@ export const getUniqueTransaction = ({
   txKey,
   currentStep,
   transaction,
-  isSafeApp,
 }: GetUniqueTransactionParameters): UniqueTransaction => ({
   key: txKey!,
   step: currentStep,
   name: transaction.name,
   data: transaction.data,
-  isSafeApp: !!isSafeApp,
 })
 
 export const transactionSuccessHandler =
@@ -169,7 +168,13 @@ type CreateTransactionRequestQueryKey = CreateQueryKey<
 
 export const createTransactionRequestQueryFn =
   (config: ConfigWithEns) =>
-  (connectorClient: ConnectorClientWithEns | undefined) =>
+  ({
+    connectorClient,
+    isSafeApp,
+  }: {
+    connectorClient: ConnectorClientWithEns | undefined
+    isSafeApp: CheckIsSafeAppReturnType | undefined
+  }) =>
   async ({
     queryKey: [params, chainId, address],
   }: QueryFunctionContext<CreateTransactionRequestQueryKey>) => {
@@ -195,7 +200,7 @@ export const createTransactionRequestQueryFn =
     const { gasLimit, accessList } = await calculateGasLimit({
       client,
       connectorClient,
-      isSafeApp: params.isSafeApp,
+      isSafeApp: !!isSafeApp,
       txWithZeroGas,
       transactionName: params.name,
     })
@@ -206,8 +211,8 @@ export const createTransactionRequestQueryFn =
       account: connectorClient.account,
       data: transactionRequest.data,
       gas: gasLimit,
-      value: 'value' in transactionRequest ? transactionRequest.value : undefined,
       parameters: ['fees', 'nonce', 'type'],
+      ...('value' in transactionRequest ? { value: transactionRequest.value } : {}),
     })
 
     return {

@@ -104,14 +104,18 @@ export const generateGetBlockQueryArray = (
 export const generateMatchedFuseBlockData = ({
   fuseSetBlocks,
   blockDatas,
+  queries,
 }: {
   fuseSetBlocks: FuseSetBlocks
   blockDatas: UseQueryResult<GetBlockReturnType<ChainWithEns, boolean, BlockTag>, unknown>[]
+  queries: ReturnType<typeof generateGetBlockQueryArray>
 }) => {
   if (fuseSetBlocks.length === 0)
     return { data: undefined, hasLoadingBlocks: false, hasFetchingBlocks: false }
   const data: FuseSetEntries = {}
-  const blockMap = new Map(blockDatas.map((query) => [query.data?.number?.toString(), query]))
+  const blockMap = new Map(
+    blockDatas.map((query, i) => [queries[i].queryKey[0].blockNumber.toString(), query]),
+  )
 
   let hasLoadingBlocks = false
   let hasFetchingBlocks = false
@@ -119,18 +123,20 @@ export const generateMatchedFuseBlockData = ({
   let hasAllSuccessData = true
 
   for (const [fuseKey, blockNumber] of fuseSetBlocks) {
-    const blockData = blockMap.get(blockNumber.toString())
+    const blockQuery = blockMap.get(blockNumber.toString())
+    if (blockQuery?.isLoading) hasLoadingBlocks = true
+    if (blockQuery?.isFetching) hasFetchingBlocks = true
     // don't allow incomplete data to be returned
-    if (!blockData) {
+    if (!blockQuery?.data) {
       hasIncompleteData = true
+      hasAllSuccessData = false
       // eslint-disable-next-line no-continue
       continue
     }
-    if (blockData.isLoading) hasLoadingBlocks = true
-    if (blockData.isFetching) hasFetchingBlocks = true
-    if (!blockData.isSuccess) hasAllSuccessData = false
-    const { data: block } = blockData
-    const dateString = new Date(Number(block!.timestamp) * 1000).toLocaleDateString(undefined, {
+    if (!blockQuery.isSuccess) hasAllSuccessData = false
+
+    const { data: block } = blockQuery
+    const dateString = new Date(Number(block.timestamp) * 1000).toLocaleDateString(undefined, {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -163,16 +169,16 @@ export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParam
     [nameHistory],
   )
 
-  const blockDatas = useQueries(
-    {
-      queries: generateGetBlockQueryArray(client, { address, blocksNeeded }),
-    },
-    queryClient,
+  const queries = useMemo(
+    () => generateGetBlockQueryArray(client, { address, blocksNeeded }),
+    [client, address, blocksNeeded],
   )
 
+  const blockDatas = useQueries({ queries }, queryClient)
+
   const { data, hasLoadingBlocks, hasFetchingBlocks, hasAllSuccessData } = useMemo(
-    () => generateMatchedFuseBlockData({ fuseSetBlocks, blockDatas }),
-    [fuseSetBlocks, blockDatas],
+    () => generateMatchedFuseBlockData({ fuseSetBlocks, blockDatas, queries }),
+    [fuseSetBlocks, blockDatas, queries],
   )
 
   return {

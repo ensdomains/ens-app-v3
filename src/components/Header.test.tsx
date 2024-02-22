@@ -18,6 +18,7 @@ vi.mock('@app/hooks/useInitial')
 vi.mock('@app/utils/BreakpointProvider')
 vi.mock('./@molecules/Hamburger/Hamburger')
 vi.mock('./ConnectButton')
+vi.mock('wagmi')
 
 const mockUseAccount = mockFunction(useAccount)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)

@@ -3,9 +3,10 @@ import { act, fireEvent, mockFunction, render, screen, userEvent, waitFor } from
 
 import type { MockedFunctionDeep } from '@vitest/spy'
 import { ComponentProps } from 'react'
-import { TransactionRequest } from 'viem'
+import { Account, TransactionRequest } from 'viem'
+import { estimateGas, prepareTransactionRequest } from 'viem/actions'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { usePublicClient, useSendTransaction, useWalletClient } from 'wagmi'
+import { useClient, useConnectorClient, useSendTransaction } from 'wagmi'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useChainName } from '@app/hooks/chain/useChainName'
@@ -15,6 +16,7 @@ import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { checkIsSafeApp } from '@app/utils/safe'
 
+import { useMockedUseQueryOptions } from '../../../../../test/mock/useMockedUseQueryOptions'
 import { calculateGasLimit, transactionSuccessHandler } from './query'
 import { handleBackToInput, TransactionStageModal } from './TransactionStageModal'
 
@@ -23,7 +25,11 @@ vi.mock('@app/hooks/chain/useChainName')
 vi.mock('@app/hooks/useIsSafeApp')
 vi.mock('@app/hooks/transactions/useAddRecentTransaction')
 vi.mock('@app/hooks/transactions/useRecentTransactions')
+vi.mock('@app/hooks/chain/useInvalidateOnBlock')
 vi.mock('@app/utils/safe')
+
+vi.mock('wagmi')
+vi.mock('viem/actions')
 
 const mockTransactionRequest: TransactionRequest = {
   data: '0x1896f70a516f53deb2dac3f055f1db1fbd64c12640aa29059477103c3ef28806f15929250000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41',
@@ -50,8 +56,17 @@ vi.mock('@app/transaction-flow/transaction', () => {
   }
 })
 
-const mockUsePublicClient = mockFunction(usePublicClient)
-const mockUseWalletClient = mockFunction(useWalletClient)
+const mockClient = {
+  request: vi.fn(),
+}
+
+const mockUseClient = mockFunction(useClient)
+const mockUseConnectorClient = mockFunction(useConnectorClient)
+
+const mockEstimateGas = mockFunction(estimateGas)
+const mockPrepareTransactionRequest = prepareTransactionRequest as MockedFunctionDeep<
+  typeof prepareTransactionRequest
+>
 
 const mockUseIsSafeApp = mockFunction(useIsSafeApp)
 const mockUseAddRecentTransaction = mockFunction(useAddRecentTransaction)
@@ -61,7 +76,6 @@ const mockUseChainName = mockFunction(useChainName)
 const mockUseSendTransaction = mockFunction(useSendTransaction)
 const mockCheckIsSafeApp = checkIsSafeApp as MockedFunctionDeep<typeof checkIsSafeApp>
 
-const mockEstimateGas = vi.fn()
 const mockOnDismiss = vi.fn()
 const mockDispatch = vi.fn()
 
@@ -103,10 +117,23 @@ describe('TransactionStageModal', () => {
   mockUseSendTransaction.mockReturnValue({})
 
   beforeEach(() => {
-    mockUsePublicClient.mockReturnValue({ estimateGas: mockEstimateGas })
-    mockUseWalletClient.mockReturnValue({ data: { account: { address: '0x1234' } } })
+    mockUseClient.mockReturnValue({})
+    useMockedUseQueryOptions({
+      chainId: 1,
+      address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      client: mockClient,
+    })
+    mockUseConnectorClient.mockReturnValue({
+      data: { account: { address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' } },
+    })
     mockUseIsSafeApp.mockReturnValue({ data: false })
     mockEstimateGas.mockReset()
+    mockPrepareTransactionRequest.mockReset()
+    // passthrough for the transaction request
+    mockPrepareTransactionRequest.mockImplementation(
+      async (_, { parameters: _parameters, account, ...data }) =>
+        ({ ...data, from: (account as Account).address }) as any,
+    )
     mockUseAccountSafely.mockReturnValue({ address: '0x1234' })
     mockUseChainName.mockReturnValue('ethereum')
     mockUseRecentTransactions.mockReturnValue([
@@ -219,7 +246,7 @@ describe('TransactionStageModal', () => {
         const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
-          isLoading: true,
+          isPending: true,
         })
         mockSendTransaction.mockImplementation(async () => new Promise(() => {}))
         await renderHelper({ transaction: mockTransaction })
@@ -231,7 +258,7 @@ describe('TransactionStageModal', () => {
         const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
-          error: new Error('error123'),
+          error: new Error('error123') as any,
         })
         await renderHelper({ transaction: mockTransaction })
         await clickRequest()
@@ -250,7 +277,7 @@ describe('TransactionStageModal', () => {
         await renderHelper({ transaction: mockTransaction })
         await clickRequest()
         await waitFor(() =>
-          expect(mockUseSendTransaction.mock.lastCall![0]!).toStrictEqual(
+          expect(mockSendTransaction.mock.lastCall![0]!).toStrictEqual(
             expect.objectContaining({
               ...mockTransactionRequest,
               gas: 1n,
@@ -265,11 +292,9 @@ describe('TransactionStageModal', () => {
         mockCheckIsSafeApp.mockResolvedValue(false)
         await renderHelper({ transaction: mockTransaction })
         await waitFor(() =>
-          expect(mockUseSendTransaction.mock.lastCall![0]!.onSuccess).toBeDefined(),
+          expect(mockUseSendTransaction.mock.lastCall![0]!.mutation!.onSuccess).toBeDefined(),
         )
-        await (mockUseSendTransaction.mock.lastCall![0] as any).onSuccess({
-          hash: '0x123',
-        })
+        await mockUseSendTransaction.mock.lastCall![0]!.mutation!.onSuccess!('0x123', {} as any, {})
         expect(mockAddTransaction).toBeCalledWith(
           expect.objectContaining({
             hash: '0x123',
@@ -290,11 +315,9 @@ describe('TransactionStageModal', () => {
         mockCheckIsSafeApp.mockResolvedValue('iframe')
         await renderHelper({ transaction: mockTransaction })
         await waitFor(() =>
-          expect(mockUseSendTransaction.mock.lastCall![0]!.onSuccess).toBeDefined(),
+          expect(mockUseSendTransaction.mock.lastCall![0]!.mutation!.onSuccess).toBeDefined(),
         )
-        await (mockUseSendTransaction.mock.lastCall![0] as any).onSuccess({
-          hash: '0x123',
-        })
+        await mockUseSendTransaction.mock.lastCall![0]!.mutation!.onSuccess!('0x123', {} as any, {})
         expect(mockAddTransaction).toBeCalledWith(
           expect.objectContaining({
             hash: '0x123',
@@ -364,10 +387,10 @@ describe('TransactionStageModal', () => {
           hash: '0x0',
         })
         await renderHelper({ transaction: { ...mockTransaction, hash: '0x123', stage: 'failed' } })
+        await waitFor(() =>
+          expect(screen.getByTestId('transaction-modal-failed-button')).toBeEnabled(),
+        )
         await act(async () => {
-          await waitFor(() =>
-            expect(screen.getByTestId('transaction-modal-failed-button')).toBeEnabled(),
-          )
           fireEvent.click(screen.getByTestId('transaction-modal-failed-button'))
         })
         expect(mockSendTransaction).toHaveBeenCalled()
@@ -396,9 +419,9 @@ describe('transactionSuccessHandler', () => {
       addRecentTransaction: mockAddRecentTransaction,
       dispatch: vi.fn(),
       isSafeApp: false,
-      publicClient: { request: vi.fn(async () => ({ testKey: 'testVal' })) } as any,
-      walletClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
-    })({ hash: '0xhash' })
+      client: { request: vi.fn(async () => ({ testKey: 'testVal' })) } as any,
+      connectorClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
+    })('0xhash')
 
     await waitFor(() =>
       expect(mockAddRecentTransaction).toBeCalledWith(
@@ -416,9 +439,9 @@ describe('transactionSuccessHandler', () => {
       addRecentTransaction: vi.fn(),
       dispatch: mockDispatch,
       isSafeApp: false,
-      publicClient: { request: vi.fn(async () => ({ testKey: 'testVal' })) } as any,
-      walletClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
-    })({ hash: '0xhash' })
+      client: { request: vi.fn(async () => ({ testKey: 'testVal' })) } as any,
+      connectorClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
+    })('0xhash')
 
     await waitFor(() =>
       expect(mockDispatch).toBeCalledWith(
@@ -436,20 +459,16 @@ describe('transactionSuccessHandler', () => {
       addRecentTransaction: mockAddRecentTransaction,
       dispatch: vi.fn(),
       isSafeApp: false,
-      publicClient: { request: vi.fn(async () => Promise.reject(new Error('Error'))) } as any,
-      walletClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
-    })({ hash: '0xhash' })
+      client: { request: vi.fn(async () => Promise.reject(new Error('Error'))) } as any,
+      connectorClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
+    })('0xhash')
 
     await waitFor(() => expect(mockAddRecentTransaction).toBeCalled())
   })
 })
 
 describe('calculateGasLimit', () => {
-  const mockPublicClient = {
-    request: vi.fn(),
-    estimateGas: vi.fn(),
-  }
-  const mockWalletClient = {
+  const mockConnectorClient = {
     account: {
       address: '0x1234',
     },
@@ -467,19 +486,19 @@ describe('calculateGasLimit', () => {
   })
 
   it('should calculate gas limit for non-safe apps', async () => {
-    mockPublicClient.estimateGas.mockResolvedValueOnce(100000n)
+    mockEstimateGas.mockResolvedValueOnce(100000n)
     const result = await calculateGasLimit({
       isSafeApp: mockIsSafeApp,
       txWithZeroGas: mockTxWithZeroGas,
       transactionName: mockTransactionName,
-      publicClient: mockPublicClient as any,
-      walletClient: mockWalletClient as any,
+      client: mockClient as any,
+      connectorClient: mockConnectorClient as any,
     })
     expect(result.gasLimit).toEqual(105000n)
     expect(result.accessList).toBeUndefined()
-    expect(mockPublicClient.estimateGas).toHaveBeenCalledWith({
+    expect(mockEstimateGas).toHaveBeenCalledWith(mockClient, {
       ...mockTxWithZeroGas,
-      account: mockWalletClient.account,
+      account: mockConnectorClient.account,
     })
   })
 
@@ -493,21 +512,21 @@ describe('calculateGasLimit', () => {
         },
       ],
     }
-    mockPublicClient.request.mockResolvedValueOnce(mockAccessListResponse)
+    mockClient.request.mockResolvedValueOnce(mockAccessListResponse)
     const result = await calculateGasLimit({
       isSafeApp: true,
       txWithZeroGas: mockTxWithZeroGas,
       transactionName: mockTransactionName,
-      publicClient: mockPublicClient as any,
-      walletClient: mockWalletClient as any,
+      client: mockClient as any,
+      connectorClient: mockConnectorClient as any,
     })
     expect(result.gasLimit).toEqual(5100n)
     expect(result.accessList).toEqual(mockAccessListResponse.accessList)
-    expect(mockPublicClient.request).toHaveBeenCalledWith({
+    expect(mockClient.request).toHaveBeenCalledWith({
       method: 'eth_createAccessList',
       params: [
         {
-          from: mockWalletClient.account.address,
+          from: mockConnectorClient.account.address,
           ...mockTxWithZeroGas,
           value: '0x0',
         },

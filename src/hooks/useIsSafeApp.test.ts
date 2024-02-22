@@ -10,8 +10,9 @@ import { useQueryOptions } from './useQueryOptions'
 
 vi.mock('./useQueryOptions')
 vi.mock('@app/utils/safe')
+vi.mock('wagmi')
 
-const mockUseQueryKeyFactory = mockFunction(useQueryOptions)
+const mockUseQueryOptions = mockFunction(useQueryOptions)
 const mockCheckIsSafeApp = mockFunction(checkIsSafeApp)
 const mockUseAccount = mockFunction(useAccount)
 
@@ -21,7 +22,10 @@ describe('useIsSafeApp', () => {
   })
 
   it('should not run if connector is not defined', async () => {
-    mockUseQueryKeyFactory.mockReturnValue([{ id: undefined }])
+    mockUseQueryOptions.mockImplementation(({ queryFn }) => ({
+      queryKey: [{ id: undefined }],
+      queryFn,
+    }))
     mockUseAccount.mockReturnValue({ connector: undefined })
     const { result } = renderHook(() => useIsSafeApp())
 
@@ -32,7 +36,10 @@ describe('useIsSafeApp', () => {
   })
 
   it('should return the result of checkIsSafeApp if connector is defined', async () => {
-    mockUseQueryKeyFactory.mockReturnValue([{ id: '1234' }])
+    mockUseQueryOptions.mockImplementation(({ queryFn }) => ({
+      queryKey: [{ id: '1234' }],
+      queryFn,
+    }))
     mockUseAccount.mockReturnValue({ connector: { id: '1234' } })
     mockCheckIsSafeApp.mockImplementation(async () => 'iframe')
 

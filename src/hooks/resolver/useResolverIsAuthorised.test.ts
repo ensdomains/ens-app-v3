@@ -1,21 +1,24 @@
 import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { usePrepareContractWrite, useWalletClient } from 'wagmi'
+import { useConnectorClient, useEstimateGas } from 'wagmi'
 
 import { useIsWrapped } from '../useIsWrapped'
 import { useProfile } from '../useProfile'
 import { useResolverHasInterfaces } from '../useResolverHasInterfaces'
 import { useResolverIsAuthorised } from './useResolverIsAuthorised'
 
+vi.mock('wagmi')
+
 vi.mock('@app/hooks/useProfile')
 vi.mock('@app/hooks/useIsWrapped')
 vi.mock('@app/hooks/useResolverHasInterfaces')
 
+const mockUseEstimateGas = mockFunction(useEstimateGas)
+const mockUseConnectorClient = mockFunction(useConnectorClient)
+
 const mockUseProfile = mockFunction(useProfile)
 const mockUseIsWrapped = mockFunction(useIsWrapped)
-const mockUseWalletClient = mockFunction(useWalletClient)
-const mockUsePrepareContractWrite = mockFunction(usePrepareContractWrite)
 const mockUseResolverHasInterfaces = mockFunction(useResolverHasInterfaces)
 
 describe('useResolverIsAuthorised', () => {
@@ -24,7 +27,7 @@ describe('useResolverIsAuthorised', () => {
     mockUseIsWrapped.mockReturnValue({
       data: false,
     })
-    mockUseWalletClient.mockReturnValue({
+    mockUseConnectorClient.mockReturnValue({
       data: {
         account: {
           type: 'json-rpc',
@@ -32,7 +35,7 @@ describe('useResolverIsAuthorised', () => {
         },
       },
     })
-    mockUsePrepareContractWrite.mockReturnValue({
+    mockUseEstimateGas.mockReturnValue({
       data: {
         request: {
           gas: 0x1234n,
@@ -141,7 +144,7 @@ describe('useResolverIsAuthorised', () => {
     mockUseResolverHasInterfaces.mockReturnValue({
       data: [true],
     })
-    mockUsePrepareContractWrite.mockReturnValue({
+    mockUseEstimateGas.mockReturnValue({
       isError: true,
     })
     const { result } = renderHook(() => useResolverIsAuthorised({ name: 'test.eth' }))

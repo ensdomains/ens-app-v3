@@ -66,27 +66,27 @@ export async function waitForTransaction(
   config: ConfigWithEns,
   { chainId, confirmations = 1, hash, onReplaced, timeout = 0, isSafeTx }: WaitForTransactionArgs,
 ): Promise<WaitForTransactionResult> {
-  let publicClient = config.getClient({ chainId })
+  let client = config.getClient({ chainId })
 
   if (isSafeTx) {
-    publicClient = {
-      ...publicClient,
+    client = {
+      ...client,
       request: ((args: RequestParameters) =>
-        requestWithSafeOverride(publicClient, args)) as EIP1193RequestFn<PublicRpcSchema>,
+        requestWithSafeOverride(client, args)) as EIP1193RequestFn<PublicRpcSchema>,
     }
   }
 
-  const receipt = await waitForTransactionReceipt(publicClient, {
+  const receipt = await waitForTransactionReceipt(client, {
     hash,
     confirmations,
     onReplaced,
     timeout,
   })
   if (receipt.status === 'reverted') {
-    const txn = await getTransaction(publicClient, {
+    const txn = await getTransaction(client, {
       hash: receipt.transactionHash,
     })
-    const code = (await call(publicClient, {
+    const code = (await call(client, {
       ...txn,
       gasPrice: txn.type !== 'eip1559' ? txn.gasPrice : undefined,
       maxFeePerGas: txn.type === 'eip1559' ? txn.maxFeePerGas : undefined,

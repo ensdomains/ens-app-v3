@@ -5,16 +5,19 @@ import user from '@testing-library/user-event'
 import { mock } from '@wagmi/core'
 import React, { FC, ReactElement } from 'react'
 import { ThemeProvider } from 'styled-components'
-import { createClient, http } from 'viem'
-import { privateKeyToAccount } from 'viem/accounts'
 import { beforeEach, expect, MockedFunction, vi } from 'vitest'
-import { createConfig, Register, WagmiProvider } from 'wagmi'
+import type { Register } from 'wagmi'
 
 import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
 
 import { mainnetWithEns } from '@app/constants/chains'
 
 import { DeepPartial } from './types'
+
+const { createClient, http } = await vi.importActual<typeof import('viem')>('viem')
+const { privateKeyToAccount } =
+  await vi.importActual<typeof import('viem/accounts')>('viem/accounts')
+const { createConfig, WagmiProvider } = await vi.importActual<typeof import('wagmi')>('wagmi')
 
 // @ts-ignore: Unreachable code error
 // eslint-disable-next-line no-extend-native, func-names
@@ -112,7 +115,7 @@ export type MockHookData<THookFn extends (...args: any[]) => { data: any }> = De
   ReturnType<THookFn>['data']
 >
 
-export const expectEnabledHook = (fn: PartialMockedFunction<any>, enabled: boolean) =>
+export const expectEnabledHook = <TFn extends (...args: any[]) => any>(fn: TFn, enabled: boolean) =>
   expect(fn).toHaveBeenCalledWith(expect.objectContaining({ enabled }))
 
 export const mockFunction = <T extends (...args: any) => any>(func: T) =>

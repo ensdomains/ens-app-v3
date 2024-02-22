@@ -151,7 +151,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <WagmiProvider config={wagmiConfig}>
+      <WagmiProvider config={wagmiConfig} reconnectOnMount={typeof window !== 'undefined'}>
         <PersistQueryClientProvider
           client={queryClient}
           persistOptions={createPersistConfig({ queryClient })}

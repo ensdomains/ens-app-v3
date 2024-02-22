@@ -18,9 +18,11 @@ const checkIsSafeConnector = (c: Connector | undefined): c is ConnectorType<type
 
 export type SafeAppType = 'iframe' | 'walletconnect'
 
+export type CheckIsSafeAppReturnType = false | SafeAppType
+
 export const checkIsSafeApp = async (
   connector: Connector | undefined,
-): Promise<false | SafeAppType> => {
+): Promise<CheckIsSafeAppReturnType> => {
   const isWcConnector = checkIsWcConnector(connector)
   const isSafeConnector = checkIsSafeConnector(connector)
 

@@ -175,7 +175,6 @@ export type ManagedDialogProps = {
 
 export type GetUniqueTransactionParameters = Pick<ManagedDialogProps, 'txKey' | 'currentStep'> & {
   transaction: Pick<GenericTransaction, 'name' | 'data'>
-  isSafeApp: boolean
 }
 
 export type UniqueTransaction<TName extends TransactionName = TransactionName> = {
@@ -183,5 +182,4 @@ export type UniqueTransaction<TName extends TransactionName = TransactionName> =
   step: number
   name: TName
   data: TransactionData<TName>
-  isSafeApp: boolean
 }

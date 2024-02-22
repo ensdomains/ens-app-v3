@@ -1,40 +1,37 @@
-import type { PartialMockedFunction } from '@app/test-utils'
+import { type PartialMockedFunction } from '@app/test-utils'
 
-import { getPublicClient } from '@wagmi/core'
-import { PublicClient, WaitForTransactionReceiptParameters, WaitForTransactionReceiptReturnType } from 'viem'
-import { describe, expect, it, MockedFunction, vi } from 'vitest'
+import { PartiallyMockedFunction } from '@vitest/spy'
+import { WaitForTransactionReceiptReturnType } from 'viem'
+import { waitForTransactionReceipt } from 'viem/actions'
+import { describe, expect, it, vi } from 'vitest'
 
+import { ClientWithEns, ConfigWithEns } from '@app/types'
 import { fetchTxFromSafeTxHash } from '@app/utils/safe'
 
 import { requestWithSafeOverride, waitForTransaction } from './waitForTransaction'
 
+vi.mock('viem/actions')
+
 vi.mock('@app/utils/safe')
 
-vi.mock('@wagmi/core', () => ({
-  getPublicClient: vi.fn(),
-}))
-
-const mockGetPublicClient = getPublicClient as unknown as MockedFunction<
-  PartialMockedFunction<typeof getPublicClient>
+const mockWaitForTransactionReceipt = waitForTransactionReceipt as unknown as PartialMockedFunction<
+  typeof waitForTransactionReceipt
 >
 
-const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as unknown as MockedFunction<
+const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as unknown as PartiallyMockedFunction<
   typeof fetchTxFromSafeTxHash
 >
 
 const mockRequest = vi.fn()
-const mockWaitForTransactionReceipt = vi.fn<
-  [Promise<WaitForTransactionReceiptReturnType>],
-  [WaitForTransactionReceiptParameters]
->()
-
-mockGetPublicClient.mockReturnValue({
+const mockClient = {
   chain: {
     id: 1,
   },
   request: mockRequest,
-  waitForTransactionReceipt: mockWaitForTransactionReceipt,
-})
+} as unknown as ClientWithEns
+const mockConfig = {
+  getClient: () => mockClient,
+} as unknown as ConfigWithEns
 
 const mockTransactionReceiptData: WaitForTransactionReceiptReturnType = {
   blockHash: '0xblockhash',
@@ -58,7 +55,7 @@ describe('waitForTransaction', () => {
     // @ts-ignore vi.fn is messing with types
     mockWaitForTransactionReceipt.mockResolvedValueOnce(mockTransactionReceiptData)
 
-    const result = await waitForTransaction({
+    const result = await waitForTransaction(mockConfig, {
       hash: '0xtest',
     })
 
@@ -70,12 +67,13 @@ describe('waitForTransaction', () => {
 
     const onReplaced = vi.fn()
 
-    await waitForTransaction({
+    await waitForTransaction(mockConfig, {
       hash: '0xtest',
       onReplaced,
     })
 
     expect(mockWaitForTransactionReceipt).toHaveBeenCalledWith(
+      mockClient,
       expect.objectContaining({
         onReplaced,
       }),
@@ -101,7 +99,7 @@ describe('requestWithSafeOverride', () => {
 
     mockRequest.mockResolvedValue(expectedResult)
 
-    const result = await requestWithSafeOverride(mockGetPublicClient({}, {}) as PublicClient, {
+    const result = await requestWithSafeOverride(mockClient, {
       method: 'eth_getTransactionReceipt',
       params: [SAFE_TX_HASH],
     })

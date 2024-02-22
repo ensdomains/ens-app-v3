@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Address, bytesToHex, decodeFunctionResult, encodeFunctionData, namehash } from 'viem'
-import { usePublicClient, useReadContract } from 'wagmi'
+import { useClient, useReadContract } from 'wagmi'
 
 import {
   getChainContractAddress,
@@ -8,7 +8,7 @@ import {
 } from '@ensdomains/ensjs/contracts'
 import { packetToBytes } from '@ensdomains/ensjs/utils'
 
-import { ConfigWithEns, QueryConfig } from '@app/types'
+import { QueryConfig } from '@app/types'
 
 const publicResolverNameSnippet = [
   {
@@ -56,13 +56,13 @@ export const useReverseRegistryName = <TParams extends UseReverseRegistryNamePar
   address,
   enabled = true,
 }: TParams & UseReverseRegistryNameConfig) => {
-  const publicClient = usePublicClient<ConfigWithEns>()
+  const client = useClient()
 
   const args = useMemo(() => getContractArgs(address), [address])
 
   const query = useReadContract({
     abi: universalResolverResolveSnippet,
-    address: getChainContractAddress({ client: publicClient, contract: 'ensUniversalResolver' }),
+    address: getChainContractAddress({ client, contract: 'ensUniversalResolver' }),
     functionName: 'resolve',
     args,
     query: {

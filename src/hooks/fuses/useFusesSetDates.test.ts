@@ -1,13 +1,13 @@
 import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
-import { GetBlockParameters } from 'viem'
+import { getBlock } from 'viem/actions'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { usePublicClient } from 'wagmi'
+import { useAccount, useClient } from 'wagmi'
 
 import { GetNameHistoryReturnType } from '@ensdomains/ensjs/subgraph'
 import { encodeFuses } from '@ensdomains/ensjs/utils'
 
-import { PublicClientWithChain } from '@app/types'
+import { ClientWithEns } from '@app/types'
 
 import { useNameHistory } from '../ensjs/subgraph/useNameHistory'
 import {
@@ -18,18 +18,26 @@ import {
   useFusesSetDates,
 } from './useFusesSetDates'
 
+vi.mock('wagmi')
+vi.mock('viem/actions')
+
 vi.mock('../ensjs/subgraph/useNameHistory')
 
+const mockUseAccount = mockFunction(useAccount).mockImplementation(() => ({ address: '0x123' }))
+const mockUseClient = mockFunction(useClient)
+const mockGetBlock = mockFunction(getBlock)
+
 const mockUseNameHistory = mockFunction(useNameHistory)
-const mockUsePublicClient = mockFunction(usePublicClient)
 
 describe('getBlockQueryFn', () => {
   it('calls getBlock with the correct parameters', async () => {
-    const publicClient = {
-      getBlock: vi.fn(),
-    } as unknown as PublicClientWithChain
-    await getBlockQueryFn(publicClient)({ queryKey: [{ blockNumber: 1123n }] as any, meta: {} })
-    expect(publicClient.getBlock).toHaveBeenCalledWith({ blockNumber: 1123n })
+    const client = {} as ClientWithEns
+    await getBlockQueryFn(client)({
+      queryKey: [{ blockNumber: 1123n }] as any,
+      meta: {},
+      signal: undefined as any,
+    })
+    expect(mockGetBlock).toHaveBeenCalledWith(client, { blockNumber: 1123n })
   })
 })
 
@@ -167,15 +175,15 @@ describe('generateFuseSetBlocks', () => {
 })
 
 describe('generateGetBlockQueryArray', () => {
-  const publicClient = {
+  const client = {
     chain: {
       id: 1,
     },
-  } as PublicClientWithChain
+  } as ClientWithEns
 
   it('returns an array of query objects with the correct block numbers', () => {
     const blockNumbers = [1123n, 1124n, 1125n]
-    const queryArray = generateGetBlockQueryArray(publicClient, {
+    const queryArray = generateGetBlockQueryArray(client, {
       address: '0x123',
       blocksNeeded: new Set(blockNumbers),
     })
@@ -193,7 +201,7 @@ describe('generateGetBlockQueryArray', () => {
   })
 
   it('returns an empty array if no block numbers are provided', () => {
-    const queryArray = generateGetBlockQueryArray(publicClient, {
+    const queryArray = generateGetBlockQueryArray(client, {
       address: '0x123',
       blocksNeeded: new Set(),
     })
@@ -206,6 +214,7 @@ describe('generateMatchedFuseBlockData', () => {
     const { data, hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
       fuseSetBlocks: [],
       blockDatas: [],
+      queries: [],
     })
     expect(data).toBeUndefined()
     expect(hasLoadingBlocks).toBe(false)
@@ -216,6 +225,7 @@ describe('generateMatchedFuseBlockData', () => {
     const { data, hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
       fuseSetBlocks: [['PARENT_CANNOT_CONTROL', 1234]],
       blockDatas: [],
+      queries: [{ queryKey: [{ blockNumber: 1234n }] } as any],
     })
     expect(data).toBeUndefined()
     expect(hasLoadingBlocks).toBe(false)
@@ -232,6 +242,7 @@ describe('generateMatchedFuseBlockData', () => {
           isFetching: false,
         } as any,
       ],
+      queries: [{ queryKey: [{ blockNumber: 1234n }] } as any],
     })
     expect(data).toBeUndefined()
     expect(hasLoadingBlocks).toBe(false)
@@ -262,6 +273,11 @@ describe('generateMatchedFuseBlockData', () => {
           isLoading: false,
           isFetching: false,
         } as any,
+      ],
+      queries: [
+        { queryKey: [{ blockNumber: 1234n }] } as any,
+        { queryKey: [{ blockNumber: 1233n }] } as any,
+        { queryKey: [{ blockNumber: 1232n }] } as any,
       ],
     })
     expect(data).toEqual({
@@ -299,6 +315,11 @@ describe('generateMatchedFuseBlockData', () => {
           isFetching: false,
         } as any,
       ],
+      queries: [
+        { queryKey: [{ blockNumber: 1234n }] } as any,
+        { queryKey: [{ blockNumber: 1233n }] } as any,
+        { queryKey: [{ blockNumber: 1232n }] } as any,
+      ],
     })
     expect(data).toEqual({
       PARENT_CANNOT_CONTROL: 'Jul 29, 2021',
@@ -324,6 +345,7 @@ describe('generateMatchedFuseBlockData', () => {
           isFetching: true,
         } as any,
       ],
+      queries: [{ queryKey: [{ blockNumber: 1234n }] } as any],
     })
     expect(data).toEqual({
       PARENT_CANNOT_CONTROL: 'Jul 29, 2021',
@@ -359,6 +381,11 @@ describe('generateMatchedFuseBlockData', () => {
           isFetching: false,
         } as any,
       ],
+      queries: [
+        { queryKey: [{ blockNumber: 1234n }] } as any,
+        { queryKey: [{ blockNumber: 1233n }] } as any,
+        { queryKey: [{ blockNumber: 1232n }] } as any,
+      ],
     })
     expect(data).toEqual({
       PARENT_CANNOT_CONTROL: 'Jul 29, 2021',
@@ -377,20 +404,21 @@ describe('useFusesSetDates', () => {
     '1233': 1627497600n,
     '1232': 1627411200n,
   }
-  const publicClient = {
+  const client = {
     chain: {
       id: 1,
     },
-    getBlock: vi.fn(({ blockNumber }: GetBlockParameters) => {
+  }
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseClient.mockReturnValue(client)
+    mockGetBlock.mockImplementation(async (_client, params) => {
+      const { blockNumber } = params!
       return {
         number: blockNumber!,
         timestamp: timestamps[blockNumber!.toString(10) as keyof typeof timestamps],
       }
-    }),
-  }
-  beforeEach(() => {
-    vi.clearAllMocks()
-    mockUsePublicClient.mockReturnValue(publicClient)
+    })
   })
   it('returns correct data when empty', async () => {
     mockUseNameHistory.mockReturnValue({

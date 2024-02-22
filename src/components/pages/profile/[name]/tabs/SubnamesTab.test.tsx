@@ -2,7 +2,7 @@ import { mockFunction, render, screen } from '@app/test-utils'
 
 import { labelhash, namehash } from 'viem'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
-import { useAccount } from 'wagmi'
+import { useAccount, useEnsAvatar } from 'wagmi'
 
 import { Name } from '@ensdomains/ensjs/subgraph'
 
@@ -13,12 +13,16 @@ import { createDateAndValue } from '@app/utils/utils'
 import { SubnamesTab } from './SubnamesTab'
 
 vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
+vi.mock('wagmi')
+
 vi.mock('@app/hooks/ensjs/subgraph/useSubnames')
 vi.mock('@app/hooks/useZorb')
 
+const mockUseAccount = mockFunction(useAccount)
+const mockUseEnsAvatar = mockFunction(useEnsAvatar)
+
 const mockUseSubnames = mockFunction(useSubnames)
 const mockUseZorb = mockFunction(useZorb)
-const mockUseAccount = mockFunction(useAccount)
 const mockIntersectionObserver = vi.fn()
 
 const makeSubname = (_: any, i: number): Name => {
@@ -50,6 +54,7 @@ const makeSubname = (_: any, i: number): Name => {
 describe('SubnamesTab', () => {
   beforeAll(() => {
     mockUseZorb.mockReturnValue('')
+    mockUseEnsAvatar.mockReturnValue({ data: null })
     mockUseAccount.mockReturnValue({
       address: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
     })

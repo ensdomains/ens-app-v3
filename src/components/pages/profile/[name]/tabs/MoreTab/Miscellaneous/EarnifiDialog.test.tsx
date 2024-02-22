@@ -50,7 +50,7 @@ describe('EarnifiDialog', () => {
   it('should disable button when loading', async () => {
     ;(useSubscribeToEarnifi as Mock).mockReturnValue({
       subscribe: vi.fn(),
-      status: 'loading',
+      status: 'pending',
     })
 
     render(<EarnifiDialog {...defaultProps} />)

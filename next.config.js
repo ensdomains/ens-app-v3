@@ -1,8 +1,10 @@
-const { withPlugins } = require('next-compose-plugins')
-const path = require('path')
-const StylelintPlugin = require('stylelint-webpack-plugin')
-const { withSentryConfig } = require('@sentry/nextjs')
-const { execSync } = require('child_process')
+import { execSync } from 'child_process'
+import path, { dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+import StylelintPlugin from 'stylelint-webpack-plugin'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const babelIncludeRegexes = [
   /next[\\/]dist[\\/]shared[\\/]lib/,
@@ -25,7 +27,6 @@ let nextConfig = {
   images: {
     domains: ['metadata.ens.domains'],
   },
-  transpilePackages: ['multiformats'],
   async rewrites() {
     return [
       {
@@ -127,6 +128,8 @@ let nextConfig = {
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
     fileLoaderRule.exclude = /\.svg$/i
 
+    config.resolve.mainFields = ['browser', 'module', 'main']
+
     config.plugins.push(
       new StylelintPlugin({
         files: './src/**/*.tsx',
@@ -208,9 +211,7 @@ const withSentry = (config) => {
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options.
   }
-  if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_IPFS)
-    return withSentryConfig(config, sentryWebpackPluginOptions)
   return config
 }
 
-module.exports = withSentry(withPlugins(plugins, nextConfig))
+export default plugins.reduce((acc, next) => next(acc), nextConfig)

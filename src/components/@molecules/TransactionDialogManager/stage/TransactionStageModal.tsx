@@ -258,7 +258,7 @@ export const TransactionStageModal = ({
   const { t } = useTranslation()
   const chainName = useChainName()
 
-  const { data: safeAppStatus, isLoading: safeAppStatusLoading } = useIsSafeApp()
+  const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
   const { data: connectorClient } = useConnectorClient<ConfigWithEns>()
   const client = useClient()
 
@@ -277,10 +277,9 @@ export const TransactionStageModal = ({
         txKey,
         currentStep,
         transaction,
-        isSafeApp: !!safeAppStatus,
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [txKey, currentStep, transaction?.name, transaction?.data, safeAppStatus],
+    [txKey, currentStep, transaction?.name, transaction?.data],
   )
 
   // if not all unique identifiers are defined, there could be incorrect cached data
@@ -309,7 +308,7 @@ export const TransactionStageModal = ({
 
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
-    queryFn: initialOptions.queryFn(connectorClient),
+    queryFn: initialOptions.queryFn({ connectorClient, isSafeApp }),
   })
 
   const {
@@ -340,7 +339,7 @@ export const TransactionStageModal = ({
         request,
         addRecentTransaction,
         dispatch,
-        isSafeApp: safeAppStatus,
+        isSafeApp,
       }),
     },
   })

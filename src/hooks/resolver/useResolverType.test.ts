@@ -36,14 +36,17 @@ const createProfileData = (
   ...overwrite,
 })
 
-const createRegistryResolverData = (
-  overwrite: ReturnType<PartialMockedFunction<typeof useRegistryResolver>> = {},
-) => ({
-  data: KNOWN_RESOLVER_DATA['1']![0].address,
-  isLoading: false,
-  isSuccess: true,
-  ...overwrite,
-})
+const createRegistryResolverData = <
+  TOverwrite extends ReturnType<PartialMockedFunction<typeof useRegistryResolver>>,
+>(
+  overwrite: TOverwrite = {} as TOverwrite,
+) =>
+  ({
+    data: KNOWN_RESOLVER_DATA['1']![0].address,
+    isLoading: false,
+    isSuccess: true,
+    ...overwrite,
+  }) as const
 
 beforeEach(() => {
   vi.clearAllMocks()
