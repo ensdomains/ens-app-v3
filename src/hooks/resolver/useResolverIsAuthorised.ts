@@ -85,7 +85,7 @@ export const useResolverIsAuthorised = ({
       }
     return {
       isValid: true,
-      isAuthorised: !isPreparedContractWriteError && preparedContractWrite?.result !== undefined, // TODO: Check with tate if this is correct
+      isAuthorised: !isPreparedContractWriteError && preparedContractWrite?.request !== undefined,
     }
   }, [
     enabled,
