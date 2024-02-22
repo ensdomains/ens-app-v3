@@ -1,5 +1,4 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
-import { Config } from 'wagmi'
 
 import {
   getNameHistory,
@@ -8,7 +7,7 @@ import {
 } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseNameHistoryParameters = PartialBy<GetNameHistoryParameters, 'name'>
 
@@ -23,15 +22,15 @@ type QueryKey<TParams extends UseNameHistoryParameters> = CreateQueryKey<
 >
 
 export const getNameHistoryQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <TParams extends UseNameHistoryParameters>({
     queryKey: [{ name }, chainId],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
+    const client = config.getClient({ chainId })
 
-    return getNameHistory(publicClient, { name })
+    return getNameHistory(client, { name })
   }
 
 export const useNameHistory = <TParams extends UseNameHistoryParameters>({

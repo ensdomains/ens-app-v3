@@ -1,6 +1,8 @@
 /* eslint-disable no-await-in-loop */
 import { useEffect, useRef } from 'react'
 import { TransactionNotFoundError, type Address } from 'viem'
+import { getTransaction, getTransactionCount } from 'viem/actions'
+import { useClient } from 'wagmi'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import type {
@@ -10,8 +12,7 @@ import type {
 } from '@app/hooks/transactions/transactionStore'
 import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { usePublicClient } from '@app/hooks/usePublicClient'
-import { PublicClientWithChain } from '@app/types'
+import { ClientWithEns } from '@app/types'
 
 const TRANSACTION_SEARCH_INTERVAL = 10000
 
@@ -51,7 +52,7 @@ function useInterval(callback: () => void, delay: number | null, dependencies: a
 }
 
 export const findDroppedTransactions = async (
-  publicClient: PublicClientWithChain,
+  client: ClientWithEns,
   {
     transactions,
     address,
@@ -62,7 +63,7 @@ export const findDroppedTransactions = async (
     store: TransactionStore | undefined
   },
 ) => {
-  const chainId = publicClient.chain.id
+  const chainId = client.chain.id
   const pendingTransactions = transactions.filter(
     (transaction) => transaction.status === 'pending' && transaction.searchStatus === 'found',
   )
@@ -75,7 +76,7 @@ export const findDroppedTransactions = async (
     !address ||
     !store ||
     !chainId ||
-    !publicClient ||
+    !client ||
     !transactions?.length ||
     (!pendingTransactions.length && !searchingTransactions.length)
   ) {
@@ -136,12 +137,12 @@ export const findDroppedTransactions = async (
     }
 
     // If for some reason the transaction was not found, was not a replacement etc, try to find it again.
-    const result = await publicClient
-      .getTransaction({ hash: searchingTransaction.hash })
-      .catch((e: unknown) => {
+    const result = await getTransaction(client, { hash: searchingTransaction.hash }).catch(
+      (e: unknown) => {
         if (e instanceof TransactionNotFoundError) return null
         throw e
-      })
+      },
+    )
     if (result) {
       store.foundTransaction(address, chainId, searchingTransaction.hash, result.nonce)
       return
@@ -162,7 +163,7 @@ export const findDroppedTransactions = async (
   }
 
   for (const pendingTransaction of pendingTransactions) {
-    const currentNonce = await publicClient.getTransactionCount({ address })
+    const currentNonce = await getTransactionCount(client, { address })
 
     if (currentNonce > (pendingTransaction?.nonce ?? -1)) {
       // Transaction either got replaced or has been cancelled
@@ -199,7 +200,7 @@ export const findDroppedTransactions = async (
     }
 
     // If the transaction has not been cancelled or replaced, it may have been dropped
-    const result = await publicClient.getTransaction({ hash: pendingTransaction.hash })
+    const result = await getTransaction(client, { hash: pendingTransaction.hash })
     if (!result) {
       // If a pending transaction is not found, it has been dropped
       store.setFailedTransaction(address, chainId, pendingTransaction.hash)
@@ -209,15 +210,15 @@ export const findDroppedTransactions = async (
 }
 
 export const SyncDroppedTransaction = ({ children }: { children: React.ReactNode }) => {
-  const publicClient = usePublicClient()
+  const client = useClient()
   const { address } = useAccountSafely()
   const transactions = useRecentTransactions()
   const store = useTransactionStore()
 
   useInterval(
-    () => findDroppedTransactions(publicClient, { address, store, transactions }),
+    () => findDroppedTransactions(client, { address, store, transactions }),
     TRANSACTION_SEARCH_INTERVAL,
-    [address, publicClient.chain.id, store, transactions.length],
+    [address, client.chain.id, store, transactions.length],
   )
 
   return <div>{children}</div>

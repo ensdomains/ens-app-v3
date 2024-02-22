@@ -1,10 +1,9 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
-import { Config } from 'wagmi'
 
 import { getName, GetNameParameters, GetNameReturnType } from '@ensdomains/ensjs/public'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
 import { emptyAddress } from '@app/utils/constants'
 
@@ -23,15 +22,15 @@ type QueryKey<TParams extends UsePrimaryNameParameters> = CreateQueryKey<
 >
 
 export const getPrimaryNameQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <TParams extends UsePrimaryNameParameters>({
     queryKey: [{ address, ...params }, chainId],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!address) throw new Error('address is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
+    const client = config.getClient({ chainId })
 
-    const res = await getName(publicClient, { address, ...params })
+    const res = await getName(client, { address, ...params })
 
     if (!res || !res.name || (!res.match && !params.allowMismatch)) return null
 

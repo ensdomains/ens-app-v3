@@ -43,10 +43,10 @@ const publicResolverSetApprovalForAllSnippet = [
   },
 ] as const
 
-const transaction = async ({ publicClient }: TransactionFunctionParameters<Data>) => {
+const transaction = async ({ client }: TransactionFunctionParameters<Data>) => {
   return {
     to: getChainContractAddress({
-      client: publicClient,
+      client,
       contract: 'ensPublicResolver',
     }),
     data: encodeFunctionData({
@@ -54,8 +54,8 @@ const transaction = async ({ publicClient }: TransactionFunctionParameters<Data>
       functionName: 'setApprovalForAll',
       args: [
         getChainContractAddress({
-          client: publicClient,
-          contract: 'ensDnsRegistrar' as 'ensRegistry', // TODO: fix this lol
+          client,
+          contract: 'ensDnsRegistrar',
         }),
         true,
       ],

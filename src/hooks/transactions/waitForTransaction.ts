@@ -1,4 +1,3 @@
-import { getPublicClient, type PublicClient } from '@wagmi/core'
 import type {
   CallParameters,
   EIP1193Parameters,
@@ -9,12 +8,14 @@ import type {
   WaitForTransactionReceiptReturnType,
 } from 'viem'
 import { hexToString } from 'viem'
+import { call, getTransaction, waitForTransactionReceipt } from 'viem/actions'
 
+import { ConfigWithEns } from '@app/types'
 import { fetchTxFromSafeTxHash } from '@app/utils/safe'
 
 export type WaitForTransactionArgs = {
   /** Chain id to use for Public Client. */
-  chainId?: number
+  chainId?: ConfigWithEns['state']['chainId']
   /**
    * Number of blocks to wait for after transaction is mined
    * @default 1
@@ -40,7 +41,7 @@ type RequestReturnType = Extract<
   { Method: RequestParameters['method'] }
 >['ReturnType']
 export async function requestWithSafeOverride(
-  client: PublicClient,
+  client: ReturnType<ConfigWithEns['getClient']>,
   args: RequestParameters,
 ): Promise<RequestReturnType> {
   if (args.method === 'eth_getTransactionReceipt') {
@@ -61,15 +62,11 @@ export async function requestWithSafeOverride(
   return client.request(args)
 }
 
-export async function waitForTransaction({
-  chainId,
-  confirmations = 1,
-  hash,
-  onReplaced,
-  timeout = 0,
-  isSafeTx,
-}: WaitForTransactionArgs): Promise<WaitForTransactionResult> {
-  let publicClient = getPublicClient({ chainId })
+export async function waitForTransaction(
+  config: ConfigWithEns,
+  { chainId, confirmations = 1, hash, onReplaced, timeout = 0, isSafeTx }: WaitForTransactionArgs,
+): Promise<WaitForTransactionResult> {
+  let publicClient = config.getClient({ chainId })
 
   if (isSafeTx) {
     publicClient = {
@@ -79,17 +76,17 @@ export async function waitForTransaction({
     }
   }
 
-  const receipt = await publicClient.waitForTransactionReceipt({
+  const receipt = await waitForTransactionReceipt(publicClient, {
     hash,
     confirmations,
     onReplaced,
     timeout,
   })
   if (receipt.status === 'reverted') {
-    const txn = await publicClient.getTransaction({
+    const txn = await getTransaction(publicClient, {
       hash: receipt.transactionHash,
     })
-    const code = (await publicClient.call({
+    const code = (await call(publicClient, {
       ...txn,
       gasPrice: txn.type !== 'eip1559' ? txn.gasPrice : undefined,
       maxFeePerGas: txn.type === 'eip1559' ? txn.maxFeePerGas : undefined,

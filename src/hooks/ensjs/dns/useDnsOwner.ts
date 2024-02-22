@@ -28,7 +28,7 @@ export type UseDnsOwnerError =
 
 type UseDnsOwnerConfig = QueryConfig<UseDnsOwnerReturnType, UseDnsOwnerError>
 
-type QueryKey<TParams extends UseDnsOwnerParameters> = CreateQueryKey<
+export type GetDnsOwnerQueryKey<TParams extends UseDnsOwnerParameters> = CreateQueryKey<
   TParams,
   'getDnsOwner',
   'independent'
@@ -36,7 +36,7 @@ type QueryKey<TParams extends UseDnsOwnerParameters> = CreateQueryKey<
 
 export const getDnsOwnerQueryFn = async <TParams extends UseDnsOwnerParameters>({
   queryKey: [{ name, ...params }],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
+}: QueryFunctionContext<GetDnsOwnerQueryKey<TParams>>) => {
   if (!name) throw new Error('name is required')
 
   return getDnsOwner({ name, ...params })

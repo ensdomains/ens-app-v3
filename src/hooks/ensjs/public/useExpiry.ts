@@ -1,10 +1,9 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
-import { Config } from 'wagmi'
 
 import { getExpiry, GetExpiryParameters, GetExpiryReturnType } from '@ensdomains/ensjs/public'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseExpiryParameters = PartialBy<GetExpiryParameters, 'name'>
 
@@ -19,15 +18,15 @@ export type UseExpiryQueryKey<TParams extends UseExpiryParameters> = CreateQuery
 >
 
 export const getExpiryQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <TParams extends UseExpiryParameters>({
     queryKey: [{ name, ...params }, chainId],
   }: QueryFunctionContext<UseExpiryQueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
+    const client = config.getClient({ chainId })
 
-    return getExpiry(publicClient, { name, ...params })
+    return getExpiry(client, { name, ...params })
   }
 
 export const useExpiry = <TParams extends UseExpiryParameters>({

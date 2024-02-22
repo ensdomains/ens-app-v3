@@ -1,3 +1,5 @@
+import { useChainId } from 'wagmi'
+
 import { randomSecret } from '@ensdomains/ensjs/utils'
 
 import { childFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
@@ -7,7 +9,6 @@ import {
   RegistrationReducerDataItem,
   SelectedItemProperties,
 } from '@app/components/pages/profile/[name]/registration/types'
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 
 const defaultData: RegistrationReducerDataItem = {

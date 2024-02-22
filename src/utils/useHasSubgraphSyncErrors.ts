@@ -1,6 +1,6 @@
 'use client'
 
-import { QueryCache, useQueryClient , useQueryClient } from '@tanstack/react-query'
+import { QueryCache, useQueryClient } from '@tanstack/react-query'
 import { useRef, useSyncExternalStore, type RefObject } from 'react'
 
 type EventData = {
@@ -13,7 +13,7 @@ type EventData = {
 const SLOW_THRESHOLD = 5000
 
 const getBadQueries = (queryCache: QueryCache, eventData: RefObject<EventData>) => {
-  const queries = queryCache.findAll([], {
+  const queries = queryCache.findAll({
     // only get subgraph queries that are pending or errored
     predicate: (query) => query.queryKey.at(-1) === 'graph' && query.state.status !== 'success',
   })

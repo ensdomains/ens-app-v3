@@ -1,5 +1,4 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
-import { Config } from 'wagmi'
 
 import {
   getSubgraphRecords,
@@ -8,7 +7,7 @@ import {
 } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseSubgraphRecordsParameters = PartialBy<GetSubgraphRecordsParameters, 'name'>
 
@@ -23,15 +22,15 @@ type QueryKey<TParams extends UseSubgraphRecordsParameters> = CreateQueryKey<
 >
 
 export const getSubgraphRecordsQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <TParams extends UseSubgraphRecordsParameters>({
     queryKey: [{ name, ...params }, chainId],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
+    const client = config.getClient({ chainId })
 
-    return getSubgraphRecords(publicClient, { name, ...params })
+    return getSubgraphRecords(client, { name, ...params })
   }
 
 export const useSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>({

@@ -1,5 +1,4 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
-import { Config } from 'wagmi'
 
 import {
   getAddressRecord,
@@ -8,7 +7,7 @@ import {
 } from '@ensdomains/ensjs/public'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseAddressRecordParameters = PartialBy<GetAddressRecordParameters, 'name'>
 
@@ -23,15 +22,15 @@ type QueryKey<TParams extends UseAddressRecordParameters> = CreateQueryKey<
 >
 
 export const getAddressRecordQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <TParams extends UseAddressRecordParameters>({
     queryKey: [{ name, ...params }, chainId],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
+    const client = config.getClient({ chainId })
 
-    return getAddressRecord(publicClient, { name, ...params })
+    return getAddressRecord(client, { name, ...params })
   }
 
 export const useAddressRecord = <TParams extends UseAddressRecordParameters>({

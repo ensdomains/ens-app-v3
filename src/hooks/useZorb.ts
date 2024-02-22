@@ -13,6 +13,7 @@ export const useZorb = (input: string, type: 'address' | 'name' | 'hash') => {
     params: { input, type, colors: { bg, fg, accent } },
     functionName: 'zorb',
     queryDependencyType: 'independent',
+    keyOnly: true,
   })
   const { data: zorb } = useQuery({
     queryKey,

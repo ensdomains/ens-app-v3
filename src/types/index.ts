@@ -1,17 +1,8 @@
 import { UseInfiniteQueryOptions, UseQueryOptions } from '@tanstack/react-query'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
-import type {
-  Account,
-  Address,
-  Hex,
-  PublicClient,
-  TransactionReceipt,
-  Transport,
-  WalletClient,
-} from 'viem'
+import type { Account, Address, Client, Hex, TransactionReceipt, Transport } from 'viem'
 
-import { ChainWithEns } from '@ensdomains/ensjs/dist/types/contracts/consts'
 import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
 import { GetSubgraphRecordsReturnType } from '@ensdomains/ensjs/subgraph'
 import {
@@ -23,6 +14,7 @@ import {
 import { Helper, Space } from '@ensdomains/thorin'
 
 import { SupportedChain } from '@app/constants/chains'
+import type { wagmiConfig } from '@app/utils/query'
 
 export type Profile = Partial<
   GetRecordsReturnType &
@@ -98,8 +90,8 @@ export type BasicTransactionRequest = {
 }
 
 export type TransactionFunctionParameters<TData> = {
-  publicClient: PublicClientWithChain
-  walletClient: WalletClientWithAccount
+  client: ClientWithEns
+  connectorClient: ConnectorClientWithEns
   data: TData
 }
 
@@ -163,8 +155,9 @@ export type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {}
 
-export type PublicClientWithChain = PublicClient<Transport, SupportedChain>
-export type WalletClientWithAccount = WalletClient<Transport, ChainWithEns, Account>
+export type ConnectorClientWithEns = Client<Transport, SupportedChain, Account>
+export type ConfigWithEns = typeof wagmiConfig
+export type ClientWithEns = ReturnType<ConfigWithEns['getClient']>
 
 export type QueryConfig<TData, TError, TSelectData = TData> = Pick<
   UseQueryOptions<TData, TError, TSelectData>,
@@ -189,7 +182,7 @@ export type CreateQueryKey<
 > = TQueryDependencyType extends 'graph'
   ? readonly [
       params: TParams,
-      chainId: number,
+      chainId: SupportedChain['id'],
       address: Address | undefined,
       scopeKey: string | undefined,
       functionName: TFunctionName,
@@ -197,7 +190,7 @@ export type CreateQueryKey<
     ]
   : readonly [
       params: TParams,
-      chainId: TQueryDependencyType extends 'independent' ? undefined : number,
+      chainId: TQueryDependencyType extends 'independent' ? undefined : SupportedChain['id'],
       address: TQueryDependencyType extends 'independent' ? undefined : Address | undefined,
       scopeKey: string | undefined,
       functionName: TFunctionName,

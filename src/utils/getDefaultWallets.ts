@@ -1,4 +1,4 @@
-import { Chain, connectorsForWallets, WalletList } from '@rainbow-me/rainbowkit'
+import { connectorsForWallets, WalletList } from '@rainbow-me/rainbowkit'
 import {
   argentWallet,
   braveWallet,
@@ -14,30 +14,31 @@ import {
 export const getDefaultWallets = ({
   appName,
   projectId,
-  chains,
 }: {
   appName: string
   projectId: string
-  chains: Chain[]
 }) => {
   const wallets: WalletList = [
     {
       groupName: 'Popular',
       wallets: [
         // injected / not always shown
-        injectedWallet({ chains }),
-        safeWallet({ chains }),
-        braveWallet({ chains }),
+        injectedWallet,
+        safeWallet,
+        braveWallet,
         // always shown
-        walletConnectWallet({ chains, projectId }),
-        rainbowWallet({ chains, projectId }),
-        coinbaseWallet({ appName, chains }),
-        metaMaskWallet({ chains, projectId }),
-        ledgerWallet({ chains, projectId }),
-        argentWallet({ chains, projectId }),
+        walletConnectWallet,
+        rainbowWallet,
+        coinbaseWallet,
+        metaMaskWallet,
+        ledgerWallet,
+        argentWallet,
       ],
     },
   ]
 
-  return connectorsForWallets(wallets)
+  return connectorsForWallets(wallets, {
+    appName,
+    projectId,
+  })
 }

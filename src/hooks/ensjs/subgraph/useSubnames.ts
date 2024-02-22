@@ -1,6 +1,5 @@
 import { infiniteQueryOptions, QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { Config } from 'wagmi'
 
 import {
   getSubnames,
@@ -9,7 +8,7 @@ import {
 } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, InfiniteQueryConfig, PartialBy, PublicClientWithChain } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, InfiniteQueryConfig, PartialBy } from '@app/types'
 
 type UseSubnamesParameters = Omit<PartialBy<GetSubnamesParameters, 'name'>, 'previousPage'>
 
@@ -24,16 +23,16 @@ type QueryKey<TParams extends UseSubnamesParameters> = CreateQueryKey<
 >
 
 export const getSubnamesQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <TParams extends UseSubnamesParameters>({
     queryKey: [{ name, ...params }, chainId],
     pageParam,
   }: QueryFunctionContext<QueryKey<TParams>, GetSubnamesReturnType>) => {
     if (!name) throw new Error('name is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
+    const client = config.getClient({ chainId })
 
-    return getSubnames(publicClient, { name, ...params, previousPage: pageParam })
+    return getSubnames(client, { name, ...params, previousPage: pageParam })
   }
 
 const getNextPageParam =

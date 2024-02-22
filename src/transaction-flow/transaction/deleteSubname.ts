@@ -30,8 +30,8 @@ const displayItems = (
   },
 ]
 
-const transaction = async ({ walletClient, data }: TransactionFunctionParameters<Data>) =>
-  deleteSubname.makeFunctionData(walletClient, {
+const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) =>
+  deleteSubname.makeFunctionData(connectorClient, {
     name: data.name,
     contract: data.contract,
     asOwner: data.method === 'setRecord',

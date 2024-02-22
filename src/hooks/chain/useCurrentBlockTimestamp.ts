@@ -1,35 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
-
-import { PublicClientWithChain } from '@app/types'
-
-import { useQueryOptions } from '../useQueryOptions'
-import { useInvalidateOnBlock } from './useInvalidateOnBlock'
+import { useBlock } from 'wagmi'
 
 const useCurrentBlockTimestamp = ({ enabled = true }: { enabled?: boolean } = {}) => {
-  const { queryKey } = useQueryOptions({
-    params: {},
-    functionName: 'getCurrentBlockTimestamp',
-    queryDependencyType: 'standard',
-  })
-
-  const { data } = useQuery(
-    queryKey,
-    async ({ queryKey: [, chainId] }) => {
-      const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
-      const { timestamp } = await publicClient.getBlock({ blockTag: 'latest' })
-      return timestamp
-    },
-    {
-      enabled,
-    },
-  )
-
-  useInvalidateOnBlock({
-    enabled,
-    queryKey,
-  })
-
+  const { data } = useBlock({ watch: true, query: { enabled, select: (d) => d.timestamp } })
   return data
 }
 

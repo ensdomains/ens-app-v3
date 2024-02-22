@@ -218,7 +218,7 @@ const NetworkSection = () => {
   const { t } = useTranslation('common')
   const graphOutOfSync = useGraphOutOfSync()
   const chainName = useChainName()
-  const { gasPrice } = useGasPrice()
+  const { data: gasPrice } = useGasPrice()
 
   return (
     <NetworkSectionContainer>

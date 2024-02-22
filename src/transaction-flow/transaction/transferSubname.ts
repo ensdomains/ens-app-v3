@@ -26,8 +26,8 @@ const displayItems = (
   },
 ]
 
-const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
-  return transferName.makeFunctionData(walletClient, {
+const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  return transferName.makeFunctionData(connectorClient, {
     ...data,
     asParent: true,
   })

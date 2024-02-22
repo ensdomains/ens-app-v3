@@ -1,6 +1,5 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { Config } from 'wagmi'
 
 import {
   getDecodedName,
@@ -10,7 +9,7 @@ import {
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseDecodedNameParameters = PartialBy<GetDecodedNameParameters, 'name'>
 
@@ -25,15 +24,15 @@ type QueryKey<TParams extends UseDecodedNameParameters> = CreateQueryKey<
 >
 
 export const getDecodedNameQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <TParams extends UseDecodedNameParameters>({
     queryKey: [{ name, ...params }, chainId],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
+    const client = config.getClient({ chainId })
 
-    return getDecodedName(publicClient, { name, ...params })
+    return getDecodedName(client, { name, ...params })
   }
 
 export const useDecodedName = <TParams extends UseDecodedNameParameters>({

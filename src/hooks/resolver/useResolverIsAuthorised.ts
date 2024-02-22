@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { namehash } from 'viem'
-import { usePrepareContractWrite, useWalletClient } from 'wagmi'
+import { encodeFunctionData, namehash } from 'viem'
+import { useConnectorClient, useEstimateGas } from 'wagmi'
 
 import { publicResolverSetAddrSnippet } from '@ensdomains/ensjs/contracts'
 
@@ -22,7 +22,7 @@ export const useResolverIsAuthorised = ({
 }: UseResolverIsAuthorisedParameters) => {
   const enabled = enabled_ && !!name
 
-  const walletClient = useWalletClient()
+  const connector = useConnectorClient()
 
   const profile = useProfile({
     name,
@@ -36,7 +36,7 @@ export const useResolverIsAuthorised = ({
     isFetching: isWrappedFetching,
   } = useIsWrapped({ name, enabled })
 
-  const isDependentDataLoading = profile.isLoading || walletClient.isLoading
+  const isDependentDataLoading = profile.isLoading || connector.isLoading
 
   const {
     data: [resolverSupportsMultiAddress] = [false],
@@ -49,30 +49,32 @@ export const useResolverIsAuthorised = ({
     enabled: enabled && !isDependentDataLoading && !!resolverAddress,
   })
   const {
-    data: preparedContractWrite,
-    isLoading: isPreparedContractWriteLoading,
-    isError: isPreparedContractWriteError,
-    isFetching: isPreparedContractWriteFetching,
-  } = usePrepareContractWrite({
-    abi: publicResolverSetAddrSnippet,
-    address: resolverAddress,
-    account: walletClient.data?.account,
+    data: estimateGasData,
+    isLoading: isEstimateGasLoading,
+    isError: isEstimateGasError,
+    isFetching: isEstimateGasFetching,
+  } = useEstimateGas({
+    to: resolverAddress,
+    account: connector.data?.account,
+    data: encodeFunctionData({
+      abi: publicResolverSetAddrSnippet,
+      args: [namehash(name), 60n, emptyAddress],
+    }),
 
-    functionName: 'setAddr',
-    args: [namehash(name), 60n, emptyAddress],
-
-    enabled:
-      enabled &&
-      !isDependentDataLoading &&
-      !knownResolverData &&
-      resolverSupportsMultiAddress &&
-      !!resolverAddress,
+    query: {
+      enabled:
+        enabled &&
+        !isDependentDataLoading &&
+        !knownResolverData &&
+        resolverSupportsMultiAddress &&
+        !!resolverAddress,
+    },
   })
 
   const isLoading =
     isDependentDataLoading ||
     isResolverHasInterfacesLoading ||
-    isPreparedContractWriteLoading ||
+    isEstimateGasLoading ||
     isWrappedLoading
 
   const data = useMemo(() => {
@@ -85,7 +87,7 @@ export const useResolverIsAuthorised = ({
       }
     return {
       isValid: true,
-      isAuthorised: !isPreparedContractWriteError && preparedContractWrite?.request !== undefined,
+      isAuthorised: !isEstimateGasError && estimateGasData !== undefined && estimateGasData > 0n,
     }
   }, [
     enabled,
@@ -93,8 +95,8 @@ export const useResolverIsAuthorised = ({
     resolverSupportsMultiAddress,
     knownResolverData,
     isWrapped,
-    isPreparedContractWriteError,
-    preparedContractWrite,
+    isEstimateGasError,
+    estimateGasData,
   ])
 
   return {
@@ -103,7 +105,7 @@ export const useResolverIsAuthorised = ({
     isFetching:
       profile.isFetching ||
       isResolverHasInterfacesFetching ||
-      isPreparedContractWriteFetching ||
+      isEstimateGasFetching ||
       isWrappedFetching,
   }
 }

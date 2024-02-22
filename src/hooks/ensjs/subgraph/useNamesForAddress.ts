@@ -1,6 +1,5 @@
 import { infiniteQueryOptions, QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
-import { Config } from 'wagmi'
 
 import {
   getNamesForAddress,
@@ -9,7 +8,7 @@ import {
 } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, InfiniteQueryConfig, PartialBy, PublicClientWithChain } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, InfiniteQueryConfig, PartialBy } from '@app/types'
 
 type UseNamesForAddressParameters = Omit<
   PartialBy<GetNamesForAddressParameters, 'address'>,
@@ -27,16 +26,16 @@ type QueryKey<TParams extends UseNamesForAddressParameters> = CreateQueryKey<
 >
 
 export const getNamesForAddressQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <TParams extends UseNamesForAddressParameters>({
     queryKey: [{ address, ...params }, chainId],
     pageParam,
   }: QueryFunctionContext<QueryKey<TParams>, GetNamesForAddressReturnType>) => {
     if (!address) throw new Error('address is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
+    const client = config.getClient({ chainId })
 
-    return getNamesForAddress(publicClient, { address, ...params, previousPage: pageParam })
+    return getNamesForAddress(client, { address, ...params, previousPage: pageParam })
   }
 
 const getNextPageParam =

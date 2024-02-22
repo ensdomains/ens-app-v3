@@ -4,6 +4,7 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
+import { useChainId } from 'wagmi'
 
 import { Button, Dialog, mq, PlusSVG, ScrollBox } from '@ensdomains/thorin'
 
@@ -19,7 +20,6 @@ import {
   profileToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'

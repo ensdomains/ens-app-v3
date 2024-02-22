@@ -1,10 +1,9 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
-import { Config } from 'wagmi'
 
 import { getRecords, GetRecordsParameters, GetRecordsReturnType } from '@ensdomains/ensjs/public'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseRecordsParameters<
   TTexts extends readonly string[] | undefined = undefined,
@@ -32,7 +31,7 @@ type QueryKey<
 >
 
 export const getRecordsQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <
     TTexts extends readonly string[] | undefined = undefined,
     TCoins extends readonly (string | number)[] | undefined = undefined,
@@ -43,8 +42,8 @@ export const getRecordsQueryFn =
   }: QueryFunctionContext<QueryKey<TTexts, TCoins, TContentHash, TAbi>>) => {
     if (!name) throw new Error('name is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
-    const res = await getRecords(publicClient, {
+    const client = config.getClient({ chainId })
+    const res = await getRecords(client, {
       name,
       ...params,
     })

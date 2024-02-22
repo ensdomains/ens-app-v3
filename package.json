@@ -64,6 +64,7 @@
     "@tanstack/query-sync-storage-persister": "5.22.2",
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-persist-client": "5.22.2",
+    "@wagmi/core": "^2.6.5",
     "@web3modal/standalone": "^2.4.3",
     "calendar-link": "^2.2.0",
     "dns-packet": "^5.4.0",

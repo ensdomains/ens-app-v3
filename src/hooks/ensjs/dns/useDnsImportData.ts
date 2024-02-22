@@ -1,5 +1,4 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
-import { Config } from 'wagmi'
 
 import {
   getDnsImportData,
@@ -8,7 +7,7 @@ import {
 } from '@ensdomains/ensjs/dns'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseDnsImportDataParameters = PartialBy<GetDnsImportDataParameters, 'name'>
 
@@ -23,15 +22,15 @@ type QueryKey<TParams extends UseDnsImportDataParameters> = CreateQueryKey<
 >
 
 export const getDnsImportDataQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <TParams extends UseDnsImportDataParameters>({
     queryKey: [{ name, ...params }, chainId],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
+    const client = config.getClient({ chainId })
 
-    return getDnsImportData(publicClient, { name, ...params })
+    return getDnsImportData(client, { name, ...params })
   }
 
 export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({

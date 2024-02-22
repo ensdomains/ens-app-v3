@@ -24,7 +24,7 @@ const displayItems = (
   },
 ]
 
-const transaction = async ({ walletClient }: TransactionFunctionParameters<Data>) =>
-  setPrimaryName.makeFunctionData(walletClient, { name: '' })
+const transaction = async ({ connectorClient }: TransactionFunctionParameters<Data>) =>
+  setPrimaryName.makeFunctionData(connectorClient, { name: '' })
 
 export default { displayItems, transaction } satisfies Transaction<Data>
