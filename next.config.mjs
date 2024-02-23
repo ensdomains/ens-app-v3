@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-param-reassign */
 import { execSync } from 'child_process'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -16,8 +19,8 @@ const babelIncludeRegexes = [
 
 /**
  * @type {import('next').NextConfig}
- **/
-let nextConfig = {
+ * */
+const nextConfig = {
   reactStrictMode: true,
   compiler: {
     styledComponents: true,
@@ -141,6 +144,7 @@ let nextConfig = {
     )
     config.plugins.push(
       new options.webpack.DefinePlugin({
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         'process.env.CONFIG_BUILD_ID': JSON.stringify(options.buildId),
       }),
     )
@@ -157,7 +161,7 @@ let nextConfig = {
           firefoxMetamask: {
             import: [
               './src/utils/metamask/firefox.ts',
-              '@metamask/inpage-provider',
+              '@metamask/providers',
               '@metamask/post-message-stream',
             ],
             filename: 'static/chunks/initialise-metamask.js',
@@ -190,7 +194,7 @@ let nextConfig = {
 /**
  * @type {((config: import('next').NextConfig) => import('next').NextConfig)[]}
  */
-let plugins = []
+const plugins = []
 
 if (process.env.ANALYZE) {
   const withBundleAnalyzer = await import('@next/bundle-analyzer').then((n) => n.default)

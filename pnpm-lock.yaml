@@ -38,15 +38,15 @@ importers:
       '@ensdomains/thorin':
         specifier: 0.6.44
         version: 0.6.44(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.6)
-      '@metamask/inpage-provider':
-        specifier: ^8.1.0
-        version: 8.1.0
       '@metamask/mobile-provider':
         specifier: ^2.1.0
         version: 2.1.0
       '@metamask/post-message-stream':
         specifier: ^6.1.2
         version: 6.1.2
+      '@metamask/providers':
+        specifier: ^14.0.2
+        version: 14.0.2
       '@noble/hashes':
         specifier: ^1.3.2
         version: 1.3.3
@@ -3667,25 +3667,6 @@ packages:
       tweetnacl-util: 0.15.1
     dev: true
 
-  /@metamask/inpage-provider@8.1.0:
-    resolution: {integrity: sha512-RB2tUfj3DITNqjsFB0UvBGQYtsUHMGccsbA+2BkeE6h/UNTmc3onwmLY6z2yrEPZywpHJvj1FMiORdvtQPhOVg==}
-    engines: {node: '>=12.0.0'}
-    deprecated: Package renamed to @metamask/providers
-    dependencies:
-      '@metamask/object-multiplex': 1.2.0
-      '@metamask/safe-event-emitter': 2.0.0
-      '@types/chrome': 0.0.136
-      detect-browser: 5.3.0
-      eth-rpc-errors: 4.0.2
-      extension-port-stream: 2.0.1
-      fast-deep-equal: 2.0.1
-      is-stream: 2.0.1
-      json-rpc-engine: 6.1.0
-      json-rpc-middleware-stream: 3.0.0
-      pump: 3.0.0
-      webextension-polyfill-ts: 0.25.0
-    dev: false
-
   /@metamask/json-rpc-engine@7.3.2:
     resolution: {integrity: sha512-dVjBPlni4CoiBpESVqrxh6k4OR14w6GRXKSSXHFuITjuhALE42gNCkXTpL4cjNeOBUgTba3eGe5EI8cyc2QLRg==}
     engines: {node: '>=16.0.0'}
@@ -3702,15 +3683,6 @@ packages:
     engines: {node: '>=12.0.0'}
     dev: false
 
-  /@metamask/object-multiplex@1.2.0:
-    resolution: {integrity: sha512-hksV602d3NWE2Q30Mf2Np1WfVKaGqfJRy9vpHAmelbaD0OkDt06/0KQkRR6UVYdMbTbkuEu8xN5JDUU80inGwQ==}
-    engines: {node: '>=12.0.0'}
-    dependencies:
-      end-of-stream: 1.4.4
-      once: 1.4.0
-      readable-stream: 2.3.7
-    dev: false
-
   /@metamask/object-multiplex@1.3.0:
     resolution: {integrity: sha512-czcQeVYdSNtabd+NcYQnrM69MciiJyd1qvKH8WM2Id3C0ZiUUX5Xa/MK+/VUk633DBhVOwdNzAKIQ33lGyA+eQ==}
     engines: {node: '>=12.0.0'}
@@ -3718,6 +3690,14 @@ packages:
       end-of-stream: 1.4.4
       once: 1.4.0
       readable-stream: 2.3.8
+    dev: false
+
+  /@metamask/object-multiplex@2.0.0:
+    resolution: {integrity: sha512-+ItrieVZie3j2LfYE0QkdW3dsEMfMEp419IGx1zyeLqjRZ14iQUPRO0H6CGgfAAoC0x6k2PfCAGRwJUA9BMrqA==}
+    engines: {node: ^16.20 || ^18.16 || >=20}
+    dependencies:
+      once: 1.4.0
+      readable-stream: 3.6.2
     dev: false
 
   /@metamask/onboarding@1.0.1:
@@ -3753,6 +3733,26 @@ packages:
       json-rpc-middleware-stream: 4.2.3
       pump: 3.0.0
       webextension-polyfill-ts: 0.25.0
+    dev: false
+
+  /@metamask/providers@14.0.2:
+    resolution: {integrity: sha512-6KuCLQVzE/8IA1r8LkTo0FbG4fgm7ryjzleda0lMsz5XMxinNGuXAoh7Y08bX5OHVpDEjkHREPhuLw4dFK9wIQ==}
+    engines: {node: '>=16.0.0'}
+    dependencies:
+      '@metamask/json-rpc-engine': 7.3.2
+      '@metamask/object-multiplex': 2.0.0
+      '@metamask/rpc-errors': 6.1.0
+      '@metamask/safe-event-emitter': 3.0.0
+      '@metamask/utils': 8.3.0
+      detect-browser: 5.3.0
+      extension-port-stream: 3.0.0
+      fast-deep-equal: 3.1.3
+      is-stream: 2.0.1
+      json-rpc-middleware-stream: 5.0.1
+      readable-stream: 3.6.2
+      webextension-polyfill: 0.10.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@metamask/rpc-errors@6.1.0:
@@ -10887,17 +10887,18 @@ packages:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
     dev: true
 
-  /extension-port-stream@2.0.1:
-    resolution: {integrity: sha512-ltrv4Dh/979I04+D4Te6TFygfRSOc5EBzzlHRldWMS8v73V80qWluxH88hqF0qyUsBXTb8NmzlmSipcre6a+rg==}
-    engines: {node: '>=12.0.0'}
-    dependencies:
-      webextension-polyfill-ts: 0.22.0
-    dev: false
-
   /extension-port-stream@2.1.1:
     resolution: {integrity: sha512-qknp5o5rj2J9CRKfVB8KJr+uXQlrojNZzdESUPhKYLXf97TPcGf6qWWKmpsNNtUyOdzFhab1ON0jzouNxHHvow==}
     engines: {node: '>=12.0.0'}
     dependencies:
+      webextension-polyfill: 0.10.0
+    dev: false
+
+  /extension-port-stream@3.0.0:
+    resolution: {integrity: sha512-an2S5quJMiy5bnZKEf6AkfH/7r8CzHvhchU40gxN+OM6HPhe7Z9T1FUychcf2M9PpPOO0Hf7BAEfJkw2TDIBDw==}
+    engines: {node: '>=12.0.0'}
+    dependencies:
+      readable-stream: 4.5.2
       webextension-polyfill: 0.10.0
     dev: false
 
@@ -13141,13 +13142,6 @@ packages:
       eth-rpc-errors: 4.0.2
     dev: false
 
-  /json-rpc-middleware-stream@3.0.0:
-    resolution: {integrity: sha512-JmZmlehE0xF3swwORpLHny/GvW3MZxCsb2uFNBrn8TOqMqivzCfz232NSDLLOtIQlrPlgyEjiYpyzyOPFOzClw==}
-    dependencies:
-      '@metamask/safe-event-emitter': 2.0.0
-      readable-stream: 2.3.7
-    dev: false
-
   /json-rpc-middleware-stream@4.2.3:
     resolution: {integrity: sha512-4iFb0yffm5vo3eFKDbQgke9o17XBcLQ2c3sONrXSbcOLzP8LTojqo8hRGVgtJShhm5q4ZDSNq039fAx9o65E1w==}
     engines: {node: '>=14.0.0'}
@@ -13155,6 +13149,18 @@ packages:
       '@metamask/safe-event-emitter': 3.0.0
       json-rpc-engine: 6.1.0
       readable-stream: 2.3.8
+    dev: false
+
+  /json-rpc-middleware-stream@5.0.1:
+    resolution: {integrity: sha512-PMrzifccjdilqU0xftUkusJq0J9O73q66YdVduEmu6vkiTh3V1akliYJGWBAbhg+vhFPC8btUSANa5FNo7a6bg==}
+    engines: {node: ^16.20 || ^18.16 || >=20}
+    dependencies:
+      '@metamask/json-rpc-engine': 7.3.2
+      '@metamask/safe-event-emitter': 3.0.0
+      '@metamask/utils': 8.3.0
+      readable-stream: 3.6.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /json-rpc-random-id@1.0.1:
@@ -19951,13 +19957,6 @@ packages:
       - supports-color
       - utf-8-validate
     dev: true
-
-  /webextension-polyfill-ts@0.22.0:
-    resolution: {integrity: sha512-3P33ClMwZ/qiAT7UH1ROrkRC1KM78umlnPpRhdC/292UyoTTW9NcjJEqDsv83HbibcTB6qCtpVeuB2q2/oniHQ==}
-    deprecated: This project has moved to @types/webextension-polyfill
-    dependencies:
-      webextension-polyfill: 0.7.0
-    dev: false
 
   /webextension-polyfill-ts@0.25.0:
     resolution: {integrity: sha512-ikQhwwHYkpBu00pFaUzIKY26I6L87DeRI+Q6jBT1daZUNuu8dSrg5U9l/ZbqdaQ1M/TTSPKeAa3kolP5liuedw==}
