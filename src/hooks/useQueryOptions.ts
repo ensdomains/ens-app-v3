@@ -24,13 +24,13 @@ export function createQueryKey<TParams extends {}, TFunctionName extends string>
 export function createQueryKey<TParams extends {}, TFunctionName extends string>(
   params: {
     chainId: SupportedChain['id']
-    address: Address | undefined
+    address?: Address
   } & QueryKeyConfig<TParams, TFunctionName, 'graph'>,
 ): CreateQueryKey<TParams, TFunctionName, 'graph'>
 export function createQueryKey<TParams extends {}, TFunctionName extends string>(
   params: {
     chainId: SupportedChain['id']
-    address: Address | undefined
+    address?: Address
   } & QueryKeyConfig<TParams, TFunctionName, 'standard'>,
 ): CreateQueryKey<TParams, TFunctionName, 'standard'>
 export function createQueryKey<TParams extends {}, TFunctionName extends string>({
@@ -42,7 +42,7 @@ export function createQueryKey<TParams extends {}, TFunctionName extends string>
   queryDependencyType,
 }: {
   chainId?: SupportedChain['id']
-  address?: Address | undefined
+  address?: Address
 } & QueryKeyConfig<TParams, TFunctionName, QueryDependencyType>): CreateQueryKey<
   TParams,
   TFunctionName,
