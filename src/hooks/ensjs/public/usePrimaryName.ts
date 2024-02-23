@@ -42,7 +42,7 @@ export const getPrimaryNameQueryFn =
 
 export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
   // config
-  gcTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,

@@ -31,7 +31,7 @@ export const getResolverQueryFn =
 
 export const useResolver = <TParams extends UseResolverParameters>({
   // config
-  gcTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,

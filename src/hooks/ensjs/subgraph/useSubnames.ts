@@ -46,7 +46,7 @@ const initialPageParam = [] as GetSubnamesReturnType
 
 export const useSubnames = <TParams extends UseSubnamesParameters>({
   // config
-  gcTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,

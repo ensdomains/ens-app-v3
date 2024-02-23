@@ -67,7 +67,7 @@ export const getRegistrationDataQueryFn =
 
 const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
   // config
-  gcTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,

@@ -49,7 +49,7 @@ const initialPageParam = [] as GetNamesForAddressReturnType
 
 export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>({
   // config
-  gcTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,

@@ -35,7 +35,7 @@ export const useOwner = <
   TContract extends OwnerContract | undefined = undefined,
   const TParams extends UseOwnerParameters<TContract> = UseOwnerParameters<TContract>,
 >({
-  gcTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,
