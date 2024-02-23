@@ -7,8 +7,8 @@ import { useAccount, useChainId } from 'wagmi'
 import { Dialog } from '@ensdomains/thorin'
 
 import { transactions } from '@app/transaction-flow/transaction'
-import { createPersistConfig } from '@app/utils/persist'
-import { queryClientWithRefetch } from '@app/utils/query'
+import { createPersistConfig } from '@app/utils/query/persist'
+import { queryClientWithRefetch } from '@app/utils/query/reactQuery'
 
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'

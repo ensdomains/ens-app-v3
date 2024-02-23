@@ -5,7 +5,7 @@ import { PartiallyMockedFunction } from '@vitest/spy'
 import { getBlock } from 'viem/actions'
 import { describe, expect, it, vi } from 'vitest'
 
-import { wagmiConfig } from '@app/utils/query'
+import { wagmiConfig } from '@app/utils/query/wagmi'
 
 import {
   createTransactionStore,

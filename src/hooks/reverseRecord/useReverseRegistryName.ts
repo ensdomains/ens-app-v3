@@ -33,14 +33,15 @@ const publicResolverNameSnippet = [
 ] as const
 
 type UseReverseRegistryNameParameters = {
-  address: Address
+  address: Address | undefined
 }
 
 type UseReverseRegistryNameReturnType = string
 
 type UseReverseRegistryNameConfig = QueryConfig<UseReverseRegistryNameReturnType, Error>
 
-const getContractArgs = (address: Address) => {
+const getContractArgs = (address: Address | undefined) => {
+  if (!address) return
   const reverseNode = `${address.toLowerCase().slice(2)}.addr.reverse`
   return [
     bytesToHex(packetToBytes(reverseNode)),

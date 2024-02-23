@@ -14,7 +14,7 @@ import {
 import { Helper, Space } from '@ensdomains/thorin'
 
 import { SupportedChain } from '@app/constants/chains'
-import type { wagmiConfig } from '@app/utils/query'
+import type { wagmiConfig } from '@app/utils/query/wagmi'
 
 export type Profile = Partial<
   GetRecordsReturnType &

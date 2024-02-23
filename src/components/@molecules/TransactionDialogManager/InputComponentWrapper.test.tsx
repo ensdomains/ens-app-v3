@@ -5,7 +5,8 @@ import { ReactNode, useContext, useEffect } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { WagmiProvider } from 'wagmi'
 
-import { queryClientWithRefetch as queryClient, wagmiConfig } from '@app/utils/query'
+import { queryClientWithRefetch as queryClient } from '@app/utils/query/reactQuery'
+import { wagmiConfig } from '@app/utils/query/wagmi'
 
 import DynamicLoadingContext from './DynamicLoadingContext'
 import InputComponentWrapper from './InputComponentWrapper'

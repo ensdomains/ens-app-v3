@@ -62,6 +62,7 @@ export const useResolverIsAuthorised = ({
     }),
 
     query: {
+      retry: 0,
       enabled:
         enabled &&
         !isDependentDataLoading &&

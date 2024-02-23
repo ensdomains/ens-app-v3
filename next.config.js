@@ -2,6 +2,7 @@ import { execSync } from 'child_process'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
 
+import { withSentryConfig } from '@sentry/nextjs'
 import StylelintPlugin from 'stylelint-webpack-plugin'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -147,11 +148,6 @@ let nextConfig = {
       config.resolve.alias['../styles.css'] = path.resolve(__dirname, 'src/stub.css')
     }
 
-    config.resolve.alias['@ethersproject/strings/lib/idna.js'] = path.resolve(
-      __dirname,
-      'src/stub.js',
-    )
-
     if (!options.isServer && !options.dev) {
       const originalEntry = config.entry
       config.entry = async (...args) => {
@@ -191,27 +187,23 @@ let nextConfig = {
     : {}),
 }
 
+/**
+ * @type {((config: import('next').NextConfig) => import('next').NextConfig)[]}
+ */
 let plugins = []
 
 if (process.env.ANALYZE) {
-  const withBundleAnalyzer = require('@next/bundle-analyzer')({
-    enabled: true,
-  })
-  plugins.push([withBundleAnalyzer])
+  const withBundleAnalyzer = await import('@next/bundle-analyzer').then((n) => n.default)
+  console.log(withBundleAnalyzer({ enabled: true }))
+  plugins.push(withBundleAnalyzer({ enabled: true }))
 }
 
-const withSentry = (config) => {
-  const sentryWebpackPluginOptions = {
-    // Additional config options for the Sentry Webpack plugin. Keep in mind that
-    // the following options are set automatically, and overriding them is not
-    // recommended:
-    //   release, url, org, project, authToken, configFile, stripPrefix,
-    //   urlPrefix, include, ignore
-    silent: false, // Suppresses all logs
-    // For all available options, see:
-    // https://github.com/getsentry/sentry-webpack-plugin#options.
-  }
-  return config
+if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_IPFS) {
+  plugins.push((config) =>
+    withSentryConfig(config, {
+      silent: false,
+    }),
+  )
 }
 
 export default plugins.reduce((acc, next) => next(acc), nextConfig)
