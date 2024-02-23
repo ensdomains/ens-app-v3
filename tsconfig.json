@@ -1,5 +1,7 @@
 {
   "ts-node": {
+    "experimentalResolver": true,
+    "files": true,
     "compilerOptions": {
       "module": "CommonJS",
       "target": "ESNext",
@@ -68,6 +70,6 @@
     "**/*.ignore.tsx",
     "functions/**/*",
     "deploy/**/*",
-    "hardhat.config.ts"
+    "hardhat.config.cts"
   ]
 }

@@ -19,5 +19,5 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 
 FORMATTED=$(join_by " " "${devDeps[@]}")
 
-rm -rf ./e2e ./deploy ./contracts ./jest.setup.ts ./hardhat.config.ts
+rm -rf ./e2e ./deploy ./contracts ./jest.setup.ts ./hardhat.config.cts
 yarn remove $FORMATTED
