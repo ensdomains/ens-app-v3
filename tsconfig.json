@@ -55,7 +55,7 @@
     "next-env.d.ts",
     "mdx.d.ts",
     "**/*.ts",
-    "src/**/*.tsx",
+    "**/*.tsx",
     "next.config.js",
     "vitest.config.mts",
     "test/*.mts",
