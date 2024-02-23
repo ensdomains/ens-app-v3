@@ -18,7 +18,7 @@ import SocialDiscourseColour from '@app/assets/social/SocialDiscourseColour.svg'
 import SocialGithub from '@app/assets/social/SocialGithub.svg'
 import SocialMirror from '@app/assets/social/SocialMirror.svg'
 import SocialMirrorColour from '@app/assets/social/SocialMirrorColour.svg'
-import SocialTwitter from '@app/assets/social/SocialTwitter.svg'
+import SocialX from '@app/assets/social/SocialX.svg'
 import SocialYoutube from '@app/assets/social/SocialYoutube.svg'
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { SocialIcon } from '@app/components/SocialIcon'
@@ -295,7 +295,7 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
         ))}
       </RoutesSection>
       <SocialSection>
-        <SocialIcon Icon={SocialTwitter} color="#5298FF" href="https://twitter.com/ensdomains" />
+        <SocialIcon Icon={SocialX} color="black" href="https://x.com/ensdomains" />
         <SocialIcon Icon={SocialGithub} color="#0F0F0F" href="https://github.com/ensdomains" />
         <SocialIcon Icon={SocialDiscord} color="#7F83FF" href="https://chat.ens.domains" />
         <SocialIcon
