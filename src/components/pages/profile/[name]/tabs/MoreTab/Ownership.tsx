@@ -1,10 +1,10 @@
-import { GetDnsOwnerReturnType } from '@root/.yalc/@ensdomains/ensjs/dist/types/dns'
 import { Query, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
 import { Button, Helper, mq, Tag, Typography } from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
