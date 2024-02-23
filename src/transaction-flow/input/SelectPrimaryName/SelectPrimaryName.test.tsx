@@ -258,7 +258,7 @@ describe('SelectPrimaryName', () => {
     expect(mockDispatch).toHaveBeenCalled()
   })
 
-  it.only('should be able to decrpyt name and dispatch', async () => {
+  it('should be able to decrpyt name and dispatch', async () => {
     mockUseNamesForAddress.mockReturnValue({
       data: {
         pages: [
