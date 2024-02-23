@@ -58,7 +58,7 @@
     "mdx.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "next.config.js",
+    "next.config.mjs",
     "vitest.config.mts",
     "test/*.mts",
     "test/**/*.ts",
@@ -70,6 +70,6 @@
     "**/*.ignore.tsx",
     "functions/**/*",
     "deploy/**/*",
-    "hardhat.config.cts"
+    "hardhat.config.ts"
   ]
 }

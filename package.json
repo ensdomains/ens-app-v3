@@ -1,7 +1,6 @@
 {
   "name": "ens-app-v2",
   "version": "0.1.123",
-  "type": "module",
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
     "dev:https": "next-dev-https --https --qr --port 3000",

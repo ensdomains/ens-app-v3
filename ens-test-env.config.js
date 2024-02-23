@@ -1,24 +1,23 @@
-import * as dotenv from 'dotenv'
-
-dotenv.config({ path: process.env.INIT_CWD + '/.env.local' })
-
-dotenv.config({
+require('dotenv').config({ path: process.env.INIT_CWD + '/.env.local' })
+require('dotenv').config({
   path: process.env.INIT_CWD + '/.env',
   override: true,
 })
-dotenv.config({
+require('dotenv').config({
   path: process.env.INIT_CWD + '/.env.development.local',
   override: true,
 })
 
 process.env.ADDRESS_ETH_REGISTRAR = '0xc5a5C42992dECbae36851359345FE25997F5C42d'
 process.env.ADDRESS_NAME_WRAPPER = '0x9E545E3C0baAB3E08CdfD552C960A1050f373042'
-process.env.BATCH_GATEWAY_URLS = JSON.stringify(['https://ccip-v2.ens.xyz/'])
+process.env.BATCH_GATEWAY_URLS = JSON.stringify([
+  'https://universal-offchain-unwrapper.ens-cf.workers.dev/',
+])
 
 /**
  * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}
  **/
-export default {
+module.exports = {
   deployCommand: 'pnpm hardhat deploy',
   buildCommand: 'pnpm build:glocal && pnpm export',
   scripts: [
@@ -28,10 +27,8 @@ export default {
       prefixColor: 'magenta.bold',
     },
     {
-      command: `pnpm wait-on http://127.0.0.1:8788 && ${
-        process.env.CI
-          ? `npx playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}`
-          : 'npx playwright'
+      command: `pnpm wait-on http://localhost:8788 && ${
+        process.env.CI ? `npx playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}` : 'npx playwright'
       }`,
       name: 'playwright',
       prefixColor: 'yellow.bold',
