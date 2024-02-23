@@ -20,7 +20,7 @@ export const socialIconColors = {
   'com.discourse': undefined,
   'com.github': '#000000',
   'com.medium': '#000000',
-  'com.twitter': '#65C5FC',
+  'com.twitter': '#000000',
   'com.youtube': '#FF0000',
   'org.telegram': '#2BABEE',
   'xyz.mirror': undefined,

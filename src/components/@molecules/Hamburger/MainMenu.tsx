@@ -295,7 +295,7 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
         ))}
       </RoutesSection>
       <SocialSection>
-        <SocialIcon Icon={SocialX} color="black" href="https://twitter.com/ensdomains" />
+        <SocialIcon Icon={SocialX} color="black" href="https://x.com/ensdomains" />
         <SocialIcon Icon={SocialGithub} color="#0F0F0F" href="https://github.com/ensdomains" />
         <SocialIcon Icon={SocialDiscord} color="#7F83FF" href="https://chat.ens.domains" />
         <SocialIcon
