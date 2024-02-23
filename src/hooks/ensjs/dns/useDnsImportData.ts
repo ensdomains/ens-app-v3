@@ -35,7 +35,7 @@ export const getDnsImportDataQueryFn =
 
 export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
   // config
-  gcTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,

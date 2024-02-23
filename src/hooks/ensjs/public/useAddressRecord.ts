@@ -35,7 +35,7 @@ export const getAddressRecordQueryFn =
 
 export const useAddressRecord = <TParams extends UseAddressRecordParameters>({
   // config
-  gcTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,

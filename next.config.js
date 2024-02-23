@@ -198,7 +198,7 @@ if (process.env.ANALYZE) {
   plugins.push(withBundleAnalyzer({ enabled: true }))
 }
 
-if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_IPFS) {
+if (process.env.CI && process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_IPFS) {
   plugins.push((config) =>
     withSentryConfig(config, {
       silent: false,

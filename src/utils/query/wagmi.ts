@@ -48,6 +48,12 @@ const wagmiConfig_ = createConfig({
   connectors,
   ssr: true,
   multiInjectedProviderDiscovery: true,
+  batch: {
+    multicall: {
+      batchSize: 2048,
+      wait: 50,
+    },
+  },
   chains: [
     ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
     mainnetWithEns,
