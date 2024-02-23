@@ -1,9 +1,12 @@
-require('dotenv').config({ path: process.env.INIT_CWD + '/.env.local' })
-require('dotenv').config({
+import * as dotenv from 'dotenv'
+
+dotenv.config({ path: process.env.INIT_CWD + '/.env.local' })
+
+dotenv.config({
   path: process.env.INIT_CWD + '/.env',
   override: true,
 })
-require('dotenv').config({
+dotenv.config({
   path: process.env.INIT_CWD + '/.env.development.local',
   override: true,
 })
@@ -15,7 +18,7 @@ process.env.BATCH_GATEWAY_URLS = JSON.stringify(['https://ccip-v2.ens.xyz/'])
 /**
  * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}
  **/
-module.exports = {
+export default {
   deployCommand: 'pnpm hardhat deploy',
   buildCommand: 'pnpm build:glocal && pnpm export',
   scripts: [
