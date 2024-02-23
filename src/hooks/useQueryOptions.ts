@@ -1,9 +1,8 @@
 import type { Address } from 'viem'
-import { Config, useAccount, useConfig } from 'wagmi'
+import { useAccount, useChainId, useConfig } from 'wagmi'
 
-import { CreateQueryKey, QueryDependencyType } from '@app/types'
-
-import { useChainId } from './chain/useChainId'
+import { SupportedChain } from '@app/constants/chains'
+import { ConfigWithEns, CreateQueryKey, QueryDependencyType } from '@app/types'
 
 type QueryKeyConfig<
   TParams extends {},
@@ -24,13 +23,13 @@ export function createQueryKey<TParams extends {}, TFunctionName extends string>
 ): CreateQueryKey<TParams, TFunctionName, 'independent'>
 export function createQueryKey<TParams extends {}, TFunctionName extends string>(
   params: {
-    chainId: number
+    chainId: SupportedChain['id']
     address: Address | undefined
   } & QueryKeyConfig<TParams, TFunctionName, 'graph'>,
 ): CreateQueryKey<TParams, TFunctionName, 'graph'>
 export function createQueryKey<TParams extends {}, TFunctionName extends string>(
   params: {
-    chainId: number
+    chainId: SupportedChain['id']
     address: Address | undefined
   } & QueryKeyConfig<TParams, TFunctionName, 'standard'>,
 ): CreateQueryKey<TParams, TFunctionName, 'standard'>
@@ -42,7 +41,7 @@ export function createQueryKey<TParams extends {}, TFunctionName extends string>
   functionName,
   queryDependencyType,
 }: {
-  chainId?: number
+  chainId?: SupportedChain['id']
   address?: Address | undefined
 } & QueryKeyConfig<TParams, TFunctionName, QueryDependencyType>): CreateQueryKey<
   TParams,
@@ -71,44 +70,72 @@ export function createQueryKey<TParams extends {}, TFunctionName extends string>
   >
 }
 
+// ensure that keyOnly is set to true if queryFn is not provided
+type RequireKeyOnlyAssert<TQueryFn> = [TQueryFn] extends [undefined] ? { keyOnly: true } : {}
+type GetConfig<T> = T extends (config: infer F) => unknown ? F : never
+
 export function useQueryOptions<
   TParams extends {},
   TFunctionName extends string,
-  TQueryFn extends (config: Config) => unknown,
-  TQueryInnerFn = TQueryFn extends (config: Config) => infer F ? F : never,
+  TQueryFn extends unknown | undefined = undefined,
 >(
-  params: QueryKeyConfig<TParams, TFunctionName, 'independent'> & { queryFn: TQueryFn },
+  params: QueryKeyConfig<TParams, TFunctionName, 'independent'> & {
+    queryFn?: TQueryFn
+  } & RequireKeyOnlyAssert<TQueryFn>,
 ): {
   queryKey: CreateQueryKey<TParams, TFunctionName, 'independent'>
-  queryFn: TQueryInnerFn
+  queryFn: TQueryFn
 }
 export function useQueryOptions<
   TParams extends {},
   TFunctionName extends string,
-  TQueryFn extends (config: Config) => unknown,
-  TQueryInnerFn = TQueryFn extends (config: Config) => infer F ? F : never,
+  TQueryFn = undefined,
+  TConfig extends GetConfig<TQueryFn> = GetConfig<TQueryFn>,
+  TIsEnsConfig extends TConfig extends { _isEns: true } ? true : false = TConfig extends {
+    _isEns: true
+  }
+    ? true
+    : false,
 >(
-  params: QueryKeyConfig<TParams, TFunctionName, 'graph'> & { queryFn: TQueryFn },
+  params: QueryKeyConfig<TParams, TFunctionName, 'graph'> & {
+    queryFn?: TQueryFn
+  } & RequireKeyOnlyAssert<TQueryFn>,
 ): {
   queryKey: CreateQueryKey<TParams, TFunctionName, 'graph'>
-  queryFn: TQueryInnerFn
-}
-export function useQueryOptions<
-  TParams extends {},
-  TFunctionName extends string,
-  TQueryFn extends (config: Config) => unknown,
-  TQueryInnerFn = TQueryFn extends (config: Config) => infer F ? F : never,
->(
-  params: QueryKeyConfig<TParams, TFunctionName, 'standard'> & { queryFn: TQueryFn },
-): {
-  queryKey: CreateQueryKey<TParams, TFunctionName, 'standard'>
-  queryFn: TQueryInnerFn
+  queryFn: TIsEnsConfig extends true
+    ? TQueryFn extends (config: ConfigWithEns) => infer F
+      ? F
+      : never
+    : 'Ensure config param is ConfigWithEns'
 }
 
 export function useQueryOptions<
   TParams extends {},
   TFunctionName extends string,
-  TQueryFn extends (config: Config) => unknown,
+  TQueryFn = undefined,
+  TConfig extends GetConfig<TQueryFn> = GetConfig<TQueryFn>,
+  TIsEnsConfig extends TConfig extends { _isEns: true } ? true : false = TConfig extends {
+    _isEns: true
+  }
+    ? true
+    : false,
+>(
+  params: QueryKeyConfig<TParams, TFunctionName, 'standard'> & {
+    queryFn?: TQueryFn
+  } & RequireKeyOnlyAssert<TQueryFn>,
+): {
+  queryKey: CreateQueryKey<TParams, TFunctionName, 'standard'>
+  queryFn: TIsEnsConfig extends true
+    ? TQueryFn extends (config: ConfigWithEns) => infer F
+      ? F
+      : never
+    : 'Ensure config param is ConfigWithEns'
+}
+
+export function useQueryOptions<
+  TParams extends {},
+  TFunctionName extends string,
+  TQueryFn extends (config: ConfigWithEns) => unknown,
 >({
   params,
   scopeKey,
@@ -120,13 +147,14 @@ export function useQueryOptions<
   const { address } = useAccount()
   const config = useConfig()
 
-  const queryFnWithConfig = queryFn(config)
-
   if (queryDependencyType === 'independent')
     return {
       queryKey: createQueryKey({ params, scopeKey, functionName, queryDependencyType }),
-      queryFn: queryFnWithConfig,
+      // independent queries should never require config passthrough, since they don't use chain data
+      queryFn,
     }
+
+  const queryFnWithConfig = queryFn ? queryFn(config) : undefined
   if (queryDependencyType === 'graph')
     return {
       queryKey: createQueryKey({

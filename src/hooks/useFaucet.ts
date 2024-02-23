@@ -1,9 +1,16 @@
-import { QueryFunctionContext, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  QueryFunctionContext,
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { useEffect } from 'react'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey } from '@app/types'
+import { ConfigWithEns, CreateQueryKey } from '@app/types'
 import { FAUCET_WORKER_URL } from '@app/utils/constants'
+import { getChainName } from '@app/utils/getChainName'
 
 import { useAccountSafely } from './account/useAccountSafely'
 import { useChainName } from './chain/useChainName'
@@ -37,37 +44,39 @@ const createEndpoint = (chainName: string) =>
     ? `http://localhost:8787/${chainName}`
     : `${FAUCET_WORKER_URL}/${chainName}`
 
-type QueryKey = CreateQueryKey<{ chainName: string }, 'getFaucetAddress', 'standard'>
+type QueryKey = CreateQueryKey<{}, 'getFaucetAddress', 'standard'>
 
-const getFaucetQueryFn = async ({
-  queryKey: [{ chainName }, , address],
-}: QueryFunctionContext<QueryKey>) => {
-  if (!address) throw new Error('address is required')
+const getFaucetQueryFn =
+  (config: ConfigWithEns) =>
+  async ({ queryKey: [, chainId, address] }: QueryFunctionContext<QueryKey>) => {
+    if (!address) throw new Error('address is required')
 
-  const result: JsonRpc<{
-    eligible: boolean
-    amount: `0x${string}`
-    interval: number
-    next: number
-    status: FaucetStatus
-  }> = await fetch(createEndpoint(chainName), {
-    method: 'POST',
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      method: 'faucet_getAddress',
-      params: [address],
-      id: 1,
-    }),
-    headers: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      'Content-Type': 'application/json',
-    },
-  }).then((res) => res.json())
+    const chainName = getChainName(config, { chainId })
 
-  if (result.error) throw new Error(result.error.message)
+    const result: JsonRpc<{
+      eligible: boolean
+      amount: `0x${string}`
+      interval: number
+      next: number
+      status: FaucetStatus
+    }> = await fetch(createEndpoint(chainName), {
+      method: 'POST',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        method: 'faucet_getAddress',
+        params: [address],
+        id: 1,
+      }),
+      headers: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'Content-Type': 'application/json',
+      },
+    }).then((res) => res.json())
 
-  return result.result
-}
+    if (result.error) throw new Error(result.error.message)
+
+    return result.result
+  }
 
 const useFaucet = () => {
   const queryClient = useQueryClient()
@@ -75,51 +84,22 @@ const useFaucet = () => {
   const chainName = useChainName()
   const { address } = useAccountSafely()
 
-  const { queryKey } = useQueryOptions({
-    params: { chainName },
+  const initialOptions = useQueryOptions({
+    params: {},
     functionName: 'getFaucetAddress',
     queryDependencyType: 'standard',
+    queryFn: getFaucetQueryFn,
+  })
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
   })
 
   const { data, error, isLoading } = useQuery({
-    queryKey,
-    queryFn: getFaucetQueryFn,
+    ...preparedOptions,
     enabled: !!address && (chainName === 'goerli' || chainName === 'sepolia'),
   })
-  //   const queryKey = useQueryKeys().faucet(address)
-
-  //   const { data, error, isLoading } = useQuery(
-  //     queryKey,
-  //     async () => {
-  //       const result: JsonRpc<{
-  //         eligible: boolean
-  //         amount: `0x${string}`
-  //         interval: number
-  //         next: number
-  //         status: FaucetStatus
-  //       }> = await fetch(createEndpoint(chainName), {
-  //         method: 'POST',
-  //         body: JSON.stringify({
-  //           jsonrpc: '2.0',
-  //           method: 'faucet_getAddress',
-  //           params: [address],
-  //           id: 1,
-  //         }),
-  //         headers: {
-  //           // eslint-disable-next-line @typescript-eslint/naming-convention
-  //           'Content-Type': 'application/json',
-  //         },
-  //       }).then((res) => res.json())
-
-  //       if (result.error) throw new Error(result.error.message)
-
-  //       return result.result
-  //     },
-  //     {
-  //       enabled: !!address && (chainName === 'goerli' || chainName === 'sepolia'),
-  //     },
-  //   )
-  // >>>>>>> main
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -142,7 +122,7 @@ const useFaucet = () => {
       return result.result
     },
     onSuccess: () => {
-      queryClient.resetQueries(queryKey)
+      queryClient.resetQueries({ queryKey: preparedOptions.queryKey })
     },
   })
 

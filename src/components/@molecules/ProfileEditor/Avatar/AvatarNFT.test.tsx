@@ -2,29 +2,21 @@
 import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest'
-import { useAccount } from 'wagmi'
+import { useAccount, useClient } from 'wagmi'
 
 import * as ThorinComponents from '@ensdomains/thorin'
 
 import { AvatarNFT } from './AvatarNFT'
 
+vi.mock('wagmi')
+
 vi.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: () => 'mainnet',
 }))
 
-vi.mock('@app/hooks/usePublicClient', () => ({
-  usePublicClient: () => ({
-    chain: {
-      id: 1,
-      contracts: {
-        ensBaseRegistrarImplementation: { address: '0xensBaseRegistrarImplementation' },
-        ensNameWrapper: { address: '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85' },
-      },
-    },
-  }),
-}))
-
+const mockUseClient = mockFunction(useClient)
 const mockUseAccount = mockFunction(useAccount)
+
 const mockHandleSubmit = vi.fn()
 const mockHandleCancel = vi.fn()
 
@@ -81,6 +73,15 @@ global.fetch = vi.fn(() => Promise.resolve({ json: mockFetch }))
 beforeEach(() => {
   mockFetch.mockClear()
   mockUseAccount.mockReturnValue({ address: `0x${Date.now()}` })
+  mockUseClient.mockReturnValue({
+    chain: {
+      id: 1,
+      contracts: {
+        ensBaseRegistrarImplementation: { address: '0xensBaseRegistrarImplementation' },
+        ensNameWrapper: { address: '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85' },
+      },
+    },
+  })
 })
 
 describe('<AvatarNFT />', () => {

@@ -1,24 +1,23 @@
 import { Address } from 'viem'
-import { useContractRead } from 'wagmi'
+import { useChainId, useReadContract } from 'wagmi'
+import { goerli } from 'wagmi/chains'
 
 import { useAddressRecord } from './ensjs/public/useAddressRecord'
-import { usePublicClient } from './usePublicClient'
 
 const ORACLE_ENS = 'eth-usd.data.eth'
 const ORACLE_GOERLI = '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e' as const
 
 export const useEthPrice = () => {
-  const publicClient = usePublicClient()
+  const chainId = useChainId()
 
   const { data: address_ } = useAddressRecord({
     name: ORACLE_ENS,
-    enabled: publicClient.chain.id !== 5,
+    enabled: chainId !== goerli.id,
   })
 
-  const address =
-    publicClient.chain.id === 5 ? ORACLE_GOERLI : (address_?.value as Address) || undefined
+  const address = chainId === 5 ? ORACLE_GOERLI : (address_?.value as Address) || undefined
 
-  return useContractRead({
+  return useReadContract({
     abi: [
       {
         inputs: [],
@@ -27,9 +26,11 @@ export const useEthPrice = () => {
         stateMutability: 'view',
         type: 'function',
       },
-    ] as const,
+    ],
     address,
     functionName: 'latestAnswer',
-    select: (r) => BigInt(r),
+    query: {
+      select: (r) => BigInt(r),
+    },
   })
 }

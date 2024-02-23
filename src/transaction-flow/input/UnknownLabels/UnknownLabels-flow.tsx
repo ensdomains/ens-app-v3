@@ -1,6 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQueryClient } from '@tanstack/react-query'
 
 import { saveName } from '@ensdomains/ensjs/utils'
 
@@ -37,10 +37,11 @@ const UnknownLabels = ({
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
   }
 
-  const validateKey = useQueryOptions({
+  const { queryKey: validateKey } = useQueryOptions({
     params: { input: name },
     functionName: 'validate',
     queryDependencyType: 'independent',
+    keyOnly: true,
   })
   const onSubmit = (data: FormData) => {
     const newName = [
@@ -68,7 +69,7 @@ const UnknownLabels = ({
           }
         : intro
 
-    queryClient.resetQueries(validateKey)
+    queryClient.resetQueries({ queryKey: validateKey, exact: true })
 
     dispatch({
       name: 'startFlow',

@@ -1,14 +1,14 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { isAddress } from 'viem'
-import { useAccount, useQueryClient } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
 import { Input } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useAddressRecord } from '@app/hooks/ensjs/public/useAddressRecord'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { createQueryKey } from '@app/hooks/useQueryOptions'

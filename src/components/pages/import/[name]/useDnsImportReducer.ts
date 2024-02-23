@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Address } from 'viem'
+import { useChainId } from 'wagmi'
 
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { isBrowser } from '@app/utils/utils'
 

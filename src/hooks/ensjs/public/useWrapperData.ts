@@ -1,5 +1,4 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
-import { Config } from 'wagmi'
 
 import {
   getWrapperData,
@@ -8,7 +7,7 @@ import {
 } from '@ensdomains/ensjs/public'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseWrapperDataParameters = PartialBy<GetWrapperDataParameters, 'name'>
 
@@ -23,15 +22,15 @@ type QueryKey<TParams extends UseWrapperDataParameters> = CreateQueryKey<
 >
 
 export const getWrapperDataQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <TParams extends UseWrapperDataParameters>({
     queryKey: [{ name }, chainId],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
+    const client = config.getClient({ chainId })
 
-    return getWrapperData(publicClient, { name })
+    return getWrapperData(client, { name })
   }
 
 export const useWrapperData = <TParams extends UseWrapperDataParameters>({

@@ -30,10 +30,10 @@ const displayItems = (
   },
 ]
 
-const transaction = async ({ walletClient, data }: TransactionFunctionParameters<Data>) =>
-  createSubname.makeFunctionData(walletClient, {
+const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) =>
+  createSubname.makeFunctionData(connectorClient, {
     name: `${data.label}.${data.parent}`,
-    owner: walletClient.account.address,
+    owner: connectorClient.account.address,
     contract: data.contract,
   })
 

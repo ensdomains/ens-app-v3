@@ -36,13 +36,13 @@ const displayItems = (
 ]
 
 const transaction = async ({
-  publicClient,
-  walletClient,
+  client,
+  connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
   const resolverAddress = data?.latestResolver
-    ? getChainContractAddress({ client: publicClient, contract: 'ensPublicResolver' })
-    : await getResolver(publicClient, { name: data.name })
+    ? getChainContractAddress({ client, contract: 'ensPublicResolver' })
+    : await getResolver(client, { name: data.name })
   if (!resolverAddress) throw new Error('No resolver found')
   let address
   try {
@@ -50,7 +50,7 @@ const transaction = async ({
   } catch (e) {
     throw new Error('Invalid address')
   }
-  return setAddressRecord.makeFunctionData(walletClient, {
+  return setAddressRecord.makeFunctionData(connectorClient, {
     name: data.name,
     resolverAddress,
     coin: 'eth',

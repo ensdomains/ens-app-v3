@@ -1,6 +1,5 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 import { Hex } from 'viem'
-import { Config } from 'wagmi'
 
 import {
   getSupportedInterfaces,
@@ -9,7 +8,7 @@ import {
 } from '@ensdomains/ensjs/public'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseSupportedInterfacesParameters<TInterfaces extends readonly Hex[] = readonly Hex[]> =
   PartialBy<GetSupportedInterfacesParameters<TInterfaces>, 'address'>
@@ -29,15 +28,15 @@ type QueryKey<TParams extends UseSupportedInterfacesParameters> = CreateQueryKey
 >
 
 export const getSupportedInterfacesQueryFn =
-  (config: Config) =>
+  (config: ConfigWithEns) =>
   async <TParams extends UseSupportedInterfacesParameters>({
     queryKey: [{ address, ...params }, chainId],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!address) throw new Error('address is required')
 
-    const publicClient = config.getClient({ chainId }) as PublicClientWithChain
+    const client = config.getClient({ chainId })
 
-    return getSupportedInterfaces(publicClient, { address, ...params })
+    return getSupportedInterfaces(client, { address, ...params })
   }
 
 export const useSupportedInterfaces = <

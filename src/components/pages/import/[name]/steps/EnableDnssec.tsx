@@ -32,7 +32,8 @@ export const EnableDnssec = ({
     isLoading,
     refetch,
     isRefetching,
-    internal: { dataUpdatedAt, errorUpdatedAt },
+    dataUpdatedAt,
+    errorUpdatedAt,
   } = useDnsSecEnabled({
     name: selected.name,
   })

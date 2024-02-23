@@ -1,7 +1,6 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { createConfig, WagmiConfig } from 'wagmi'
 
 import { createQueryKey } from '../useQueryOptions'
 import { Transaction } from './transactionStore'
@@ -38,11 +37,9 @@ const createTestQueryKey = (name: string, override: object = {}) =>
   })
 
 const createWrapper = () => {
-  const wagmiConfig = createConfig({
-    queryClient,
-    publicClient: {} as any,
-  })
-  return ({ children }: any) => <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>
+  return ({ children }: any) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  )
 }
 
 describe('useRegisterOrImportNameCallback', () => {

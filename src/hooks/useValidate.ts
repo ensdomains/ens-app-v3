@@ -63,9 +63,12 @@ export const useValidate = ({ input, enabled = true }: UseValidateParameters): V
     params: { input },
     functionName: 'validate',
     queryDependencyType: 'independent',
+    keyOnly: true,
   })
 
-  const { data } = useQuery(queryKey, ({ queryKey: [params] }) => validate(params.input), {
+  const { data } = useQuery({
+    queryKey,
+    queryFn: ({ queryKey: [params] }) => validate(params.input),
     enabled,
     initialData: () => (enabled ? validate(input) : defaultData),
     select: (d) =>

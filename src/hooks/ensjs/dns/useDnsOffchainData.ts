@@ -1,5 +1,4 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
 import {
   DnsDnssecVerificationFailedError,
@@ -15,7 +14,7 @@ import {
 } from '@ensdomains/ensjs/dns'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseDnsOffchainDataParameters = PartialBy<GetDnsOffchainDataParameters, 'name'>
 
@@ -37,15 +36,17 @@ type QueryKey<TParams extends UseDnsOffchainDataParameters> = CreateQueryKey<
   'standard'
 >
 
-export const getDnsOffchainDataQueryFn = async <TParams extends UseDnsOffchainDataParameters>({
-  queryKey: [{ name, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getDnsOffchainDataQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UseDnsOffchainDataParameters>({
+    queryKey: [{ name, ...params }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const client = config.getClient({ chainId })
 
-  return getDnsOffchainData(publicClient, { name, ...params })
-}
+    return getDnsOffchainData(client, { name, ...params })
+  }
 
 export const useDnsOffchainData = <TParams extends UseDnsOffchainDataParameters>({
   // config
@@ -53,28 +54,33 @@ export const useDnsOffchainData = <TParams extends UseDnsOffchainDataParameters>
   enabled = true,
   staleTime,
   scopeKey,
-
   // params
   ...params
 }: TParams & UseDnsOffchainDataConfig) => {
-  const { queryKey } = useQueryOptions({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getDnsOffchainData',
     queryDependencyType: 'standard',
+    queryFn: getDnsOffchainDataQueryFn,
   })
 
-  const query = useQuery(queryKey, getDnsOffchainDataQueryFn, {
-    gcTime,
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
+
+  const query = useQuery({
+    ...preparedOptions,
     enabled:
       enabled &&
       !!params.name &&
       !params.name?.endsWith('.eth') &&
       params.name !== 'eth' &&
       params.name !== '[root]',
-    staleTime,
-
+    gcTime,
     retry: 2,
+    staleTime,
   })
 
   return {

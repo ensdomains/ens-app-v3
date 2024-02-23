@@ -1,5 +1,4 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
 import {
   getDnsImportData,
@@ -8,7 +7,7 @@ import {
 } from '@ensdomains/ensjs/dns'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseDnsImportDataParameters = PartialBy<GetDnsImportDataParameters, 'name'>
 
@@ -22,15 +21,17 @@ type QueryKey<TParams extends UseDnsImportDataParameters> = CreateQueryKey<
   'standard'
 >
 
-export const getDnsImportDataQueryFn = async <TParams extends UseDnsImportDataParameters>({
-  queryKey: [{ name, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getDnsImportDataQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UseDnsImportDataParameters>({
+    queryKey: [{ name, ...params }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const client = config.getClient({ chainId })
 
-  return getDnsImportData(publicClient, { name, ...params })
-}
+    return getDnsImportData(client, { name, ...params })
+  }
 
 export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
   // config
@@ -38,30 +39,33 @@ export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
   enabled = true,
   staleTime,
   scopeKey,
-
   // params
   ...params
 }: TParams & UseDnsImportDataConfig) => {
-  const { queryKey } = useQueryOptions({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getDnsImportData',
     queryDependencyType: 'standard',
+    queryFn: getDnsImportDataQueryFn,
+  })
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
   })
 
   const query = useQuery({
-    queryKey,
-    queryFn: getDnsImportDataQueryFn,
-    gcTime,
+    ...preparedOptions,
     enabled:
       enabled &&
       !!params.name &&
       !params.name?.endsWith('.eth') &&
       params.name !== 'eth' &&
       params.name !== '[root]',
-    staleTime,
-
+    gcTime,
     retry: 2,
+    staleTime,
   })
 
   return {

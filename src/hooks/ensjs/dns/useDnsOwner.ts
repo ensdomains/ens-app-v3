@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
 import {
   DnsDnssecVerificationFailedError,
@@ -28,7 +28,7 @@ export type UseDnsOwnerError =
 
 type UseDnsOwnerConfig = QueryConfig<UseDnsOwnerReturnType, UseDnsOwnerError>
 
-type QueryKey<TParams extends UseDnsOwnerParameters> = CreateQueryKey<
+export type GetDnsOwnerQueryKey<TParams extends UseDnsOwnerParameters> = CreateQueryKey<
   TParams,
   'getDnsOwner',
   'independent'
@@ -36,7 +36,7 @@ type QueryKey<TParams extends UseDnsOwnerParameters> = CreateQueryKey<
 
 export const getDnsOwnerQueryFn = async <TParams extends UseDnsOwnerParameters>({
   queryKey: [{ name, ...params }],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
+}: QueryFunctionContext<GetDnsOwnerQueryKey<TParams>>) => {
   if (!name) throw new Error('name is required')
 
   return getDnsOwner({ name, ...params })
@@ -48,28 +48,33 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
   enabled = true,
   staleTime,
   scopeKey,
-
   // params
   ...params
 }: TParams & UseDnsOwnerConfig) => {
-  const { queryKey } = useQueryOptions({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getDnsOwner',
     queryDependencyType: 'independent',
+    queryFn: getDnsOwnerQueryFn,
   })
 
-  const query = useQuery(queryKey, getDnsOwnerQueryFn, {
-    gcTime,
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
+
+  const query = useQuery({
+    ...preparedOptions,
     enabled:
       enabled &&
       !!params.name &&
       !params.name?.endsWith('.eth') &&
       params.name !== 'eth' &&
       params.name !== '[root]',
-    staleTime,
-
+    gcTime,
     retry: 2,
+    staleTime,
   })
 
   return {

@@ -1,5 +1,4 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
 import {
   getSubgraphRecords,
@@ -8,7 +7,7 @@ import {
 } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseSubgraphRecordsParameters = PartialBy<GetSubgraphRecordsParameters, 'name'>
 
@@ -22,15 +21,17 @@ type QueryKey<TParams extends UseSubgraphRecordsParameters> = CreateQueryKey<
   'graph'
 >
 
-export const getSubgraphRecordsQueryFn = async <TParams extends UseSubgraphRecordsParameters>({
-  queryKey: [{ name, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getSubgraphRecordsQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UseSubgraphRecordsParameters>({
+    queryKey: [{ name, ...params }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const client = config.getClient({ chainId })
 
-  return getSubgraphRecords(publicClient, { name, ...params })
-}
+    return getSubgraphRecords(client, { name, ...params })
+  }
 
 export const useSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>({
   // config
@@ -42,18 +43,23 @@ export const useSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>
   // params
   ...params
 }: TParams & UseSubgraphRecordsConfig) => {
-  const { queryKey } = useQueryOptions({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getSubgraphRecords',
     queryDependencyType: 'graph',
+    queryFn: getSubgraphRecordsQueryFn,
+  })
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
   })
 
   const query = useQuery({
-    queryKey,
-    queryFn: getSubgraphRecordsQueryFn,
-    gcTime,
+    ...preparedOptions,
     enabled: enabled && !!params.name,
+    gcTime,
     staleTime,
   })
 

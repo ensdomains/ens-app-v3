@@ -1,5 +1,4 @@
-import { QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { infiniteQueryOptions, QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 
 import {
@@ -9,7 +8,7 @@ import {
 } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { CreateQueryKey, InfiniteQueryConfig, PartialBy, PublicClientWithChain } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, InfiniteQueryConfig, PartialBy } from '@app/types'
 
 type UseNamesForAddressParameters = Omit<
   PartialBy<GetNamesForAddressParameters, 'address'>,
@@ -26,16 +25,27 @@ type QueryKey<TParams extends UseNamesForAddressParameters> = CreateQueryKey<
   'graph'
 >
 
-export const getNamesForAddressQueryFn = async <TParams extends UseNamesForAddressParameters>({
-  queryKey: [{ address, ...params }, chainId],
-  pageParam,
-}: QueryFunctionContext<QueryKey<TParams>, GetNamesForAddressReturnType>) => {
-  if (!address) throw new Error('address is required')
+export const getNamesForAddressQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UseNamesForAddressParameters>({
+    queryKey: [{ address, ...params }, chainId],
+    pageParam,
+  }: QueryFunctionContext<QueryKey<TParams>, GetNamesForAddressReturnType>) => {
+    if (!address) throw new Error('address is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const client = config.getClient({ chainId })
 
-  return getNamesForAddress(publicClient, { address, ...params, previousPage: pageParam })
-}
+    return getNamesForAddress(client, { address, ...params, previousPage: pageParam })
+  }
+
+const getNextPageParam =
+  <TParams extends UseNamesForAddressParameters>(params: TParams) =>
+  (lastPage: GetNamesForAddressReturnType) => {
+    if (lastPage?.length < (params.pageSize || 100)) return null
+    return lastPage
+  }
+
+const initialPageParam = [] as GetNamesForAddressReturnType
 
 export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>({
   // config
@@ -43,31 +53,33 @@ export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>
   enabled = true,
   staleTime,
   scopeKey,
-
   // params
   ...params
 }: TParams & UseNamesForAddressConfig) => {
-  const { queryKey } = useQueryOptions({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getNamesForAddress',
     queryDependencyType: 'graph',
+    queryFn: getNamesForAddressQueryFn,
   })
 
-  const [unfilteredPages, setUnfilteredPages] = useState<GetNamesForAddressReturnType>([])
+  const preparedOptions = infiniteQueryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+    getNextPageParam: getNextPageParam(params),
+    initialPageParam,
+  })
 
   const { data, status, isFetched, isFetching, isLoading, isFetchedAfterMount, ...rest } =
     useInfiniteQuery({
-      queryKey,
-      queryFn: getNamesForAddressQueryFn,
-      gcTime,
+      ...preparedOptions,
       enabled: enabled && !!params.address,
+      gcTime,
       staleTime,
-      getNextPageParam: (lastPage) => {
-        if (lastPage?.length < (params.pageSize || 100)) return false
-        return lastPage
-      },
     })
+
+  const [unfilteredPages, setUnfilteredPages] = useState<GetNamesForAddressReturnType>([])
 
   const infiniteData = useMemo(
     () => (data?.pages ? data?.pages.reduce((acc, page) => [...acc, ...page], []) : []),

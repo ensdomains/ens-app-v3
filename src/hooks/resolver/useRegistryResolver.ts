@@ -1,9 +1,7 @@
 import { namehash } from 'viem'
-import { useContractRead } from 'wagmi'
+import { useClient, useReadContract } from 'wagmi'
 
 import { getChainContractAddress, registryResolverSnippet } from '@ensdomains/ensjs/contracts'
-
-import { usePublicClient } from '../usePublicClient'
 
 type UseRegistryResolverParameters = {
   name: string
@@ -12,12 +10,14 @@ type UseRegistryResolverParameters = {
 }
 
 export const useRegistryResolver = ({ name, enabled = true }: UseRegistryResolverParameters) => {
-  const publicClient = usePublicClient()
-  return useContractRead({
+  const client = useClient()
+  return useReadContract({
     abi: registryResolverSnippet,
-    address: getChainContractAddress({ client: publicClient, contract: 'ensRegistry' }),
+    address: getChainContractAddress({ client, contract: 'ensRegistry' }),
     functionName: 'resolver',
     args: [namehash(name)],
-    enabled: enabled && !!name,
+    query: {
+      enabled: enabled && !!name,
+    },
   })
 }

@@ -4,6 +4,7 @@ import { useForm, UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address, labelhash } from 'viem'
+import { useClient } from 'wagmi'
 
 import { getDecodedName, Name } from '@ensdomains/ensjs/subgraph'
 import { decodeLabelhash, isEncodedLabelhash, saveName } from '@ensdomains/ensjs/utils'
@@ -22,7 +23,6 @@ import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
-import { usePublicClient } from '@app/hooks/usePublicClient'
 import { createQueryKey } from '@app/hooks/useQueryOptions'
 import {
   nameToFormData,
@@ -166,7 +166,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   })
   const { handleSubmit, control, setValue } = form
 
-  const publicClient = usePublicClient()
+  const client = useClient()
 
   const [view, setView] = useState<'main' | 'decrypt'>('main')
 
@@ -261,18 +261,18 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       validName = getNameFromUnknownLabels(validName, data.unknownLabels)
       if (!hasEncodedLabel(validName)) {
         saveName(validName)
-        queryClient.resetQueries(validateKey(data.name?.name))
+        queryClient.resetQueries({ queryKey: validateKey(data.name?.name) })
         return validName
       }
 
       // Attempt to decrypt name
-      validName = (await getDecodedName(publicClient, {
+      validName = (await getDecodedName(client, {
         name: validName,
         allowIncomplete: true,
       })) as string
       if (!hasEncodedLabel(validName)) {
         saveName(validName)
-        queryClient.resetQueries(validateKey(data.name?.name))
+        queryClient.resetQueries({ queryKey: validateKey(data.name?.name) })
         return validName
       }
 

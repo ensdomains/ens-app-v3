@@ -1,10 +1,9 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 import { namehash, type Address } from 'viem'
 
 import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
-import { CreateQueryKey, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 
 import { useQueryOptions } from './useQueryOptions'
 
@@ -37,25 +36,27 @@ type GraphResponse = {
   }
 }
 
-export const getResolverExistsQueryFn = async <TParams extends UseResolverExistsParameters>({
-  queryKey: [{ name, address }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
-  if (!address) throw new Error('address is required')
+export const getResolverExistsQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UseResolverExistsParameters>({
+    queryKey: [{ name, address }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
+    if (!address) throw new Error('address is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
-  const subgraphClient = createSubgraphClient({ client: publicClient })
+    const client = config.getClient({ chainId })
+    const subgraphClient = createSubgraphClient({ client })
 
-  try {
-    const { resolver } = await subgraphClient.request<GraphResponse>(gqlQuery, {
-      id: `${address}-${namehash(name)}`,
-    })
-    return !!resolver
-  } catch (e) {
-    // If the graph is down or has an error, we assume the resolver exists for safety
-    return true
+    try {
+      const { resolver } = await subgraphClient.request<GraphResponse>(gqlQuery, {
+        id: `${address}-${namehash(name)}`,
+      })
+      return !!resolver
+    } catch (e) {
+      // If the graph is down or has an error, we assume the resolver exists for safety
+      return true
+    }
   }
-}
 
 /**
  * Check if a resolver exists for a given name. Used in registration to check if the
@@ -71,18 +72,23 @@ export const useResolverExists = <TParams extends UseResolverExistsParameters>({
   // params
   ...params
 }: TParams & UseResolverExistsConfig) => {
-  const { queryKey } = useQueryOptions({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getResolverExists',
     queryDependencyType: 'graph',
+    queryFn: getResolverExistsQueryFn,
+  })
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
   })
 
   return useQuery({
-    queryKey,
-    queryFn: getResolverExistsQueryFn,
-    gcTime,
+    ...preparedOptions,
     enabled: enabled && !!params.name && !!params.address,
+    gcTime,
     staleTime,
   })
 }

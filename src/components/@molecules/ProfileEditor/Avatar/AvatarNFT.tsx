@@ -3,7 +3,7 @@ import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
+import { useAccount, useClient } from 'wagmi'
 
 import {
   Button,
@@ -18,7 +18,6 @@ import {
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainName } from '@app/hooks/chain/useChainName'
-import { usePublicClient } from '@app/hooks/usePublicClient'
 import { getSupportedChainContractAddress } from '@app/utils/getSupportedChainContractAddress'
 
 type OwnedNFT = {
@@ -179,7 +178,7 @@ export const AvatarNFT = ({
   const { address: _address } = useAccount()
   const address = _address!
 
-  const publicClient = usePublicClient()
+  const client = useClient()
 
   const {
     data: NFTPages,
@@ -206,12 +205,12 @@ export const AvatarNFT = ({
             (nft.media?.[0]?.thumbnail || nft.media?.[0]?.gateway) &&
             nft.contract.address !==
               getSupportedChainContractAddress({
-                client: publicClient,
+                client,
                 contract: 'ensBaseRegistrarImplementation',
               }) &&
             nft.contract.address !==
               getSupportedChainContractAddress({
-                client: publicClient,
+                client,
                 contract: 'ensNameWrapper',
               }),
         ),

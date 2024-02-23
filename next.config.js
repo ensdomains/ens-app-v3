@@ -1,8 +1,11 @@
-const { withPlugins } = require('next-compose-plugins')
-const path = require('path')
-const StylelintPlugin = require('stylelint-webpack-plugin')
-const { withSentryConfig } = require('@sentry/nextjs')
-const { execSync } = require('child_process')
+import { execSync } from 'child_process'
+import path, { dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+import { withSentryConfig } from '@sentry/nextjs'
+import StylelintPlugin from 'stylelint-webpack-plugin'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const babelIncludeRegexes = [
   /next[\\/]dist[\\/]shared[\\/]lib/,
@@ -25,7 +28,6 @@ let nextConfig = {
   images: {
     domains: ['metadata.ens.domains'],
   },
-  transpilePackages: ['multiformats'],
   async rewrites() {
     return [
       {
@@ -127,6 +129,8 @@ let nextConfig = {
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
     fileLoaderRule.exclude = /\.svg$/i
 
+    config.resolve.mainFields = ['browser', 'module', 'main']
+
     config.plugins.push(
       new StylelintPlugin({
         files: './src/**/*.tsx',
@@ -143,11 +147,6 @@ let nextConfig = {
     if (process.env.NEXT_PUBLIC_IPFS) {
       config.resolve.alias['../styles.css'] = path.resolve(__dirname, 'src/stub.css')
     }
-
-    config.resolve.alias['@ethersproject/strings/lib/idna.js'] = path.resolve(
-      __dirname,
-      'src/stub.js',
-    )
 
     if (!options.isServer && !options.dev) {
       const originalEntry = config.entry
@@ -188,29 +187,23 @@ let nextConfig = {
     : {}),
 }
 
+/**
+ * @type {((config: import('next').NextConfig) => import('next').NextConfig)[]}
+ */
 let plugins = []
 
 if (process.env.ANALYZE) {
-  const withBundleAnalyzer = require('@next/bundle-analyzer')({
-    enabled: true,
-  })
-  plugins.push([withBundleAnalyzer])
+  const withBundleAnalyzer = await import('@next/bundle-analyzer').then((n) => n.default)
+  console.log(withBundleAnalyzer({ enabled: true }))
+  plugins.push(withBundleAnalyzer({ enabled: true }))
 }
 
-const withSentry = (config) => {
-  const sentryWebpackPluginOptions = {
-    // Additional config options for the Sentry Webpack plugin. Keep in mind that
-    // the following options are set automatically, and overriding them is not
-    // recommended:
-    //   release, url, org, project, authToken, configFile, stripPrefix,
-    //   urlPrefix, include, ignore
-    silent: false, // Suppresses all logs
-    // For all available options, see:
-    // https://github.com/getsentry/sentry-webpack-plugin#options.
-  }
-  if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_IPFS)
-    return withSentryConfig(config, sentryWebpackPluginOptions)
-  return config
+if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_IPFS) {
+  plugins.push((config) =>
+    withSentryConfig(config, {
+      silent: false,
+    }),
+  )
 }
 
-module.exports = withSentry(withPlugins(plugins, nextConfig))
+export default plugins.reduce((acc, next) => next(acc), nextConfig)

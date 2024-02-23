@@ -24,16 +24,16 @@ const displayItems = (
   },
 ]
 
-const transaction = async ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
-  const { address } = walletClient.account
+const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  const { address } = connectorClient.account
 
   if (checkETH2LDFromName(data.name))
-    return unwrapName.makeFunctionData(walletClient, {
+    return unwrapName.makeFunctionData(connectorClient, {
       name: data.name,
       newOwnerAddress: address,
       newRegistrantAddress: address,
     })
-  return unwrapName.makeFunctionData(walletClient, {
+  return unwrapName.makeFunctionData(connectorClient, {
     name: data.name,
     newOwnerAddress: address,
   })

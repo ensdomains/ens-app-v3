@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
 import { CreateQueryKey, QueryConfig } from '@app/types'
 
@@ -75,19 +75,25 @@ export const useDnsSecEnabled = <TParams extends UseDnsSecEnabledParameters>({
   // params
   ...params
 }: TParams & UseDnsSecEnabledConfig) => {
-  const { queryKey } = useQueryOptions({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getDnsSecEnabled',
     queryDependencyType: 'independent',
+    queryFn: getDnsSecEnabledQueryFn,
   })
 
-  const query = useQuery(queryKey, getDnsSecEnabledQueryFn, {
-    gcTime,
-    enabled: enabled && !!params.name && params.name !== 'eth' && params.name !== '[root]',
-    staleTime,
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
 
+  const query = useQuery({
+    ...preparedOptions,
+    enabled: enabled && !!params.name && params.name !== 'eth' && params.name !== '[root]',
+    gcTime,
     retry: 2,
+    staleTime,
   })
 
   return {
