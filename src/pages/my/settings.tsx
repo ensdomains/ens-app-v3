@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -22,9 +23,12 @@ const OtherWrapper = styled.div(
 
 export default function Page() {
   const { t } = useTranslation('settings')
+  const router = useRouter()
   const { address, isConnecting, isReconnecting } = useAccount()
 
-  useProtectedRoute('/', isConnecting || isReconnecting ? true : address)
+  const isLoading = !router.isReady || isConnecting || isReconnecting
+
+  useProtectedRoute('/', isLoading ? true : address)
 
   const showDevPanel =
     process.env.NEXT_PUBLIC_ENSJS_DEBUG ||

@@ -47,9 +47,9 @@ export class Login {
     await expect(this.page.getByText('Confirm connection in the extension')).toBeVisible({
       timeout: 15000,
     })
-    await expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(1)
+    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
-    await expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
+    expect(this.wallet.getPendingRequestCount(Web3RequestKind.Accounts)).toEqual(0)
     await expect(this.getProfileButton).toBeVisible()
   }
 
