@@ -104,4 +104,5 @@ export const dynamicAddressIcons = {
   base: dynamic(() => import('./BaseIcon.svg')),
   linea: dynamic(() => import('./LineaIcon.svg')),
   strk: dynamic(() => import('./StrkIcon.svg')),
+  zora: dynamic(() => import('./ZoraIcon.svg')),
 }
