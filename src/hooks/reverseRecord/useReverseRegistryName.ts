@@ -68,6 +68,7 @@ export const useReverseRegistryName = <TParams extends UseReverseRegistryNamePar
     args,
     query: {
       enabled,
+      retry: 0,
     },
   })
 
