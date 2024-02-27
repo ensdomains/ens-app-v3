@@ -8,6 +8,7 @@ import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySe
 import { TransactionSection } from '@app/components/pages/profile/settings/TransactionSection/TransactionSection'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
+import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
 
 const OtherWrapper = styled.div(
   ({ theme }) => css`
@@ -30,11 +31,6 @@ export default function Page() {
 
   useProtectedRoute('/', isLoading ? true : address)
 
-  const showDevPanel =
-    process.env.NEXT_PUBLIC_ENSJS_DEBUG ||
-    process.env.NODE_ENV === 'development' ||
-    process.env.NEXT_PUBLIC_PROVIDER
-
   return (
     <Content singleColumnContent title={t('title')}>
       {{
@@ -42,7 +38,7 @@ export default function Page() {
           <OtherWrapper>
             <PrimarySection />
             <TransactionSection />
-            {showDevPanel && <DevSection />}
+            {IS_DEV_ENVIRONMENT && <DevSection />}
           </OtherWrapper>
         ),
       }}

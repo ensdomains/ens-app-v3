@@ -7,6 +7,7 @@ import { mq } from '@ensdomains/thorin'
 
 import FeedbackSVG from '@app/assets/Feedback.svg'
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
+import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
 
 import { Navigation } from './Navigation'
 
@@ -67,7 +68,7 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
 
   useEffect(() => {
     // Do not initialise with uid and email without implementing identity verification first
-    boot()
+    if (!IS_DEV_ENVIRONMENT) boot()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

@@ -19,3 +19,8 @@ export const WC_PROJECT_ID = '9b14144d470af1e03ab9d88aaa127332'
 export const CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE = 102n
 
 export const OG_IMAGE_URL = 'https://ens-og-image.ens-cf.workers.dev'
+
+export const IS_DEV_ENVIRONMENT =
+  process.env.NEXT_PUBLIC_ENSJS_DEBUG ||
+  process.env.NODE_ENV === 'development' ||
+  process.env.NEXT_PUBLIC_PROVIDER

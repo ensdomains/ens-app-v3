@@ -58,6 +58,15 @@ type UseValidateParameters = {
   enabled?: boolean
 }
 
+const tryValidate = (input: string) => {
+  if (!input) return defaultData
+  try {
+    return validate(input)
+  } catch {
+    return defaultData
+  }
+}
+
 export const useValidate = ({ input, enabled = true }: UseValidateParameters): ValidationResult => {
   const { queryKey } = useQueryOptions({
     params: { input },
@@ -66,16 +75,17 @@ export const useValidate = ({ input, enabled = true }: UseValidateParameters): V
     keyOnly: true,
   })
 
-  const { data } = useQuery({
+  const { data, error } = useQuery({
     queryKey,
     queryFn: ({ queryKey: [params] }) => validate(params.input),
     enabled,
-    initialData: () => (enabled ? validate(input) : defaultData),
+    staleTime: Infinity,
+    gcTime: Infinity,
     select: (d) =>
       Object.fromEntries(
         Object.entries(d).map(([k, v]) => [k, v === 'undefined' ? '' : v]),
       ) as ValidationResult,
   })
 
-  return data
+  return data || (error ? defaultData : tryValidate(input))
 }
