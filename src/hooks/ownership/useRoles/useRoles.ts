@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { Address } from 'viem'
 
-import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useNameType } from '@app/hooks/nameType/useNameType'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useParentBasicName } from '@app/hooks/useParentBasicName'
 
 import { getRoles } from './utils/getRoles'

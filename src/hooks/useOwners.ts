@@ -22,7 +22,6 @@ export const useOwners = ({
   wrapperData,
   dnsOwner,
   abilities = DEFAULT_ABILITIES,
-  registrationStatus,
 }: UseOwnersParameters) => {
   const owners = useMemo(() => {
     const _owners: OwnerArray = []

@@ -5,11 +5,12 @@ import { Address } from 'viem'
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useOwners } from '@app/hooks/useOwners'
-import { useParentBasicName } from '@app/hooks/useParentBasicName'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { parentName } from '@app/utils/name'
 
 import { CenterAlignedTypography } from '../RevokePermissions/components/CenterAlignedTypography'
 
@@ -38,11 +39,16 @@ const DeleteSubnameNotParentWarning = ({ data, dispatch, onDismiss }: Props) => 
   const {
     ownerData: parentOwnerData,
     wrapperData: parentWrapperData,
+    registrationStatus,
+    dnsOwner,
     isLoading: parentBasicLoading,
-  } = useParentBasicName(data.name)
+  } = useNameDetails({ name: parentName(data.name) })
+
   const [ownerTarget] = useOwners({
     ownerData: parentOwnerData!,
     wrapperData: parentWrapperData!,
+    registrationStatus,
+    dnsOwner,
   })
   const { data: parentPrimaryOrAddress, isLoading: parentPrimaryLoading } = usePrimaryNameOrAddress(
     {
