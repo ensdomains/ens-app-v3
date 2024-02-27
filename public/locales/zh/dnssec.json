@@ -1,5 +1,9 @@
 {
-  "title": "将 {{name}} 引入 ENS",
+  "title": "导入 {{name}} - ENS",
+  "gasless": {
+    "title": "免 Gas 费导入 DNS 名称!",
+    "description": "目前，出于维护原因禁用了在链上导入 DNS 名称的功能。 不过，您现在可以免费导入 DNS 名称，无需进行交易。"
+  },
   "general": {
     "connectWallet": "请先连接您的钱包",
     "importDNSSECName": "导入 DNSSEC 域名",
