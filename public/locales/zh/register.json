@@ -77,13 +77,13 @@
             "itemLabel": "{{coin}} 地址",
             "placeholder": {
               "default": "在此添加地址",
-              "eth": "0xD9hbQK...",
-              "bnb": "bnb1grpf...",
-              "btc": "3FZbgi29...",
-              "ltc": "ltc1qdp7p...",
-              "sol": "D4kA7VzHnmV...",
-              "dot": "1D4kA7VxH...",
-              "doge": "DFabcd12..."
+              "ETH": "0xD9hbQK...",
+              "BNB": "bnb1grpf...",
+              "BTC": "3FZbgi29...",
+              "LTC": "ltc1qdp7p...",
+              "SOL": "D4kA7VzHnmV...",
+              "DOT": "1D4kA7VxH...",
+              "DOGE": "DFabcd12..."
             }
           },
           "website": {
