@@ -12,6 +12,9 @@ overrides:
   '@walletconnect/modal': 2.6.2
 
 patchedDependencies:
+  '@wagmi/core@2.6.5':
+    hash: 3wfslilgwgfno5impyfcc33yqu
+    path: patches/@wagmi__core@2.6.5.patch
   next-dev-https@0.1.2:
     hash: q5l3x5627ujg3rak6l6v24c2cq
     path: patches/next-dev-https@0.1.2.patch
@@ -73,7 +76,7 @@ importers:
         version: 5.22.2(@tanstack/react-query@5.22.2)(react@18.2.0)
       '@wagmi/core':
         specifier: ^2.6.5
-        version: 2.6.5(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.7.13)
+        version: 2.6.5(patch_hash=3wfslilgwgfno5impyfcc33yqu)(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.7.13)
       '@walletconnect/ethereum-provider':
         specifier: 2.11.1
         version: 2.11.1(@types/react@18.2.21)(encoding@0.1.13)(react@18.2.0)
@@ -6702,7 +6705,7 @@ packages:
       '@metamask/sdk': 0.14.3(@types/react@18.2.21)(encoding@0.1.13)(react-dom@18.2.0)(react-native@0.73.5)(react@18.2.0)
       '@safe-global/safe-apps-provider': 0.18.1(typescript@5.3.3)
       '@safe-global/safe-apps-sdk': 8.1.0(typescript@5.3.3)
-      '@wagmi/core': 2.6.5(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.7.13)
+      '@wagmi/core': 2.6.5(patch_hash=3wfslilgwgfno5impyfcc33yqu)(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.7.13)
       '@walletconnect/ethereum-provider': 2.11.1(@types/react@18.2.21)(encoding@0.1.13)(react@18.2.0)
       '@walletconnect/modal': 2.6.2(@types/react@18.2.21)(react@18.2.0)
       typescript: 5.3.3
@@ -6733,7 +6736,7 @@ packages:
       - zod
     dev: false
 
-  /@wagmi/core@2.6.5(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.7.13):
+  /@wagmi/core@2.6.5(patch_hash=3wfslilgwgfno5impyfcc33yqu)(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.7.13):
     resolution: {integrity: sha512-DLyrc0o+dx05oIhBJuxnS7ekS5e6rB5mytlqPme+Km7aLdeBdcfYB4yJyYCyWoi93OLa7M5sbflTttz3o56bKw==}
     peerDependencies:
       '@tanstack/query-core': '>=5.0.0'
@@ -6758,6 +6761,7 @@ packages:
       - utf-8-validate
       - zod
     dev: false
+    patched: true
 
   /@walletconnect/core@2.11.1:
     resolution: {integrity: sha512-T57Vd7YdbHPsy3tthBuwrhaZNafN0+PqjISFRNeJy/bsKdXxpJg2hGSARuOTpCO7V6VcaatqlaSMuG3DrnG5rA==}
@@ -13117,14 +13121,14 @@ packages:
   /jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
     optionalDependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
 
   /jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
     dependencies:
       universalify: 2.0.0
     optionalDependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
     dev: true
 
   /jsprim@1.4.2:
@@ -18934,7 +18938,7 @@ packages:
     dependencies:
       '@tanstack/react-query': 5.22.2(react@18.2.0)
       '@wagmi/connectors': 4.1.14(@types/react@18.2.21)(@wagmi/core@2.6.5)(encoding@0.1.13)(react-dom@18.2.0)(react-native@0.73.5)(react@18.2.0)(typescript@5.3.3)(viem@2.7.13)
-      '@wagmi/core': 2.6.5(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.7.13)
+      '@wagmi/core': 2.6.5(patch_hash=3wfslilgwgfno5impyfcc33yqu)(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.7.13)
       react: 18.2.0
       typescript: 5.3.3
       use-sync-external-store: 1.2.0(react@18.2.0)
