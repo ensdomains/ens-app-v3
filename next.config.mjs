@@ -1,3 +1,5 @@
+// @ts-check
+
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-param-reassign */
@@ -27,7 +29,6 @@ const nextConfig = {
   },
   // change to true once infinite loop is fixed
   swcMinify: false,
-  // @ts-ignore
   images: {
     domains: ['metadata.ens.domains'],
   },
@@ -92,6 +93,10 @@ const nextConfig = {
       if (rule.oneOf && rule.oneOf.length > 5) {
         for (const item of rule.oneOf) {
           if (typeof item.exclude === 'function' && item.test.toString().includes('js')) {
+            /**
+             * @param {string} excludePath
+             * @returns {boolean}
+             */
             item.exclude = (excludePath) => {
               if (babelIncludeRegexes.some((r) => r.test(excludePath))) {
                 return false
@@ -144,7 +149,6 @@ const nextConfig = {
     )
     config.plugins.push(
       new options.webpack.DefinePlugin({
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         'process.env.CONFIG_BUILD_ID': JSON.stringify(options.buildId),
       }),
     )
@@ -154,6 +158,9 @@ const nextConfig = {
 
     if (!options.isServer && !options.dev) {
       const originalEntry = config.entry
+      /**
+       * @param  {...any} args
+       */
       config.entry = async (...args) => {
         const entryConfig = await originalEntry(...args)
         return {
@@ -173,6 +180,10 @@ const nextConfig = {
       const originalSplitChunks = config.optimization.splitChunks
       config.optimization.splitChunks = {
         ...originalSplitChunks,
+        /**
+         * @param {{ name: string }} chunk
+         * @returns {boolean}
+         */
         chunks: (chunk) => !/^(firefoxMetamask|polyfills|main|pages\/_app)$/.test(chunk.name),
       }
     }
@@ -198,7 +209,6 @@ const plugins = []
 
 if (process.env.ANALYZE) {
   const withBundleAnalyzer = await import('@next/bundle-analyzer').then((n) => n.default)
-  console.log(withBundleAnalyzer({ enabled: true }))
   plugins.push(withBundleAnalyzer({ enabled: true }))
 }
 

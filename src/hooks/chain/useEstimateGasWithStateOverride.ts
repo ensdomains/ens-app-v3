@@ -126,7 +126,7 @@ const calculateStorageValue = (value: UserStateValue['value']) => {
 const mapUserState = (state: UserStateValue[]) =>
   Object.fromEntries(
     state.map(({ slot, keys, value }) => {
-      const storageKey = keys.reverse().reduce(concatKey, leftPadBytes32(toHex(slot)))
+      const storageKey = keys.reduce(concatKey, leftPadBytes32(toHex(slot)))
       const storageValue = calculateStorageValue(value)
       return [storageKey, storageValue]
     }),
