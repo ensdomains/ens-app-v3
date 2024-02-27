@@ -26,18 +26,29 @@ type Props = {
 }
 
 const MoreTab = ({ name, nameDetails, abilities }: Props) => {
-  const { canBeWrapped, ownerData, wrapperData, isWrapped, isCachedData, profile } = nameDetails
+  const {
+    canBeWrapped,
+    ownerData,
+    wrapperData,
+    isWrapped,
+    isCachedData,
+    profile,
+    pccExpired,
+    registrationStatus,
+  } = nameDetails
 
   return (
     <MoreContainer>
       {ownerData && (
         <Token
           isWrapped={isWrapped}
-          wrapperData={wrapperData}
           name={name}
           canBeWrapped={canBeWrapped}
           ownerData={ownerData}
+          wrapperData={wrapperData}
           profile={profile}
+          pccExpired={pccExpired}
+          registrationStatus={registrationStatus}
         />
       )}
       <Resolver
@@ -46,6 +57,7 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
         canEditResolver={abilities.canEditResolver}
         isCachedData={isCachedData}
         resolverAddress={profile?.resolverAddress}
+        canEditResolverError={abilities.canEditResolverError}
       />
     </MoreContainer>
   )

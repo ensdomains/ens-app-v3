@@ -1,7 +1,7 @@
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
-import type { NameType } from '@app/hooks/useNameType'
+import type { NameType } from '@app/hooks/nameType/useNameType'
 
 export const checkCanSyncManager = ({
   address,
@@ -29,13 +29,16 @@ export const checkCanSyncManager = ({
         'tld',
         'eth-emancipated-2ld',
         'eth-locked-2ld',
+        'eth-grace-period-unwrapped-2ld',
+        'eth-grace-period-emancipated-2ld',
+        'eth-grace-period-unwrapped-2ld',
         'eth-unwrapped-subname',
         'eth-wrapped-subname',
         'eth-emancipated-subname',
         'eth-locked-subname',
         'eth-pcc-expired-subname',
-        'dns-emancipated-2ld',
         'dns-locked-2ld',
+        'dns-emancipated-2ld',
         'dns-unwrapped-subname',
         'dns-wrapped-subname',
         'dns-emancipated-subname',

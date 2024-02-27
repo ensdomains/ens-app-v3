@@ -9,7 +9,7 @@ import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@
 
 type UseOwnerParameters = PartialBy<GetOwnerParameters, 'name'>
 
-type UseOwnerReturnType = GetOwnerReturnType
+export type UseOwnerReturnType = GetOwnerReturnType
 
 type UseOwnerConfig = QueryConfig<UseOwnerReturnType, Error>
 

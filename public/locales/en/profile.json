@@ -450,6 +450,8 @@
     "keyInUse": "{{value}} is already in use",
     "hasSubnames": "This name has subnames",
     "permissionRevoked": "This name has revoked the permissions needed to perform this action.",
+    "gracePeriod": "This cannot be done because the name has expired",
+    "default": "This action is not available",
     "invalidJSON": "Invalid JSON"
   }
 }

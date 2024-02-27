@@ -5,7 +5,7 @@ import { useChainId } from '@app/hooks/chain/useChainId'
 import { useRegistryResolver } from '@app/hooks/resolver/useRegistryResolver'
 import { emptyAddress } from '@app/utils/constants'
 
-import { useBasicName } from '../useBasicName'
+import { useIsWrapped } from '../useIsWrapped'
 import { useProfile } from '../useProfile'
 
 type UseResolverTypeParameters = {
@@ -33,11 +33,11 @@ export const useResolverType = ({ name, enabled: enabled_ = true }: UseResolverT
 
   const chainId = useChainId()
 
-  const basicName = useBasicName({
+  const isWrappedQuery = useIsWrapped({
     name,
     enabled,
   })
-  const { isWrapped } = basicName
+  const { data: isWrapped } = isWrappedQuery
 
   const profile = useProfile({
     name,
@@ -50,7 +50,7 @@ export const useResolverType = ({ name, enabled: enabled_ = true }: UseResolverT
     enabled,
   })
 
-  const isLoading = basicName.isLoading || profile.isLoading || registryResolver.isLoading
+  const isLoading = isWrappedQuery.isLoading || profile.isLoading || registryResolver.isLoading
   const { isFetching } = registryResolver
   const { isError } = registryResolver
 

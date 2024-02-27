@@ -625,6 +625,74 @@ test.describe('Send name', () => {
     await page.waitForTimeout(2000)
     await expect(profilePage.record('text', 'nickname')).toHaveCount(0)
   })
+
+  test.skip('should not be able to send owner or manager if user is owner and manager of a name in grace period', async ({
+    page,
+    login,
+    accounts,
+    makeName,
+    makePageObject,
+  }) => {
+    const name = await makeName({
+      label: 'wrapped',
+      type: 'wrapped',
+      owner: 'user',
+      duration: -24 * 60 * 60,
+      subnames: [
+        {
+          label: 'test',
+          owner: 'user',
+        },
+      ],
+    })
+
+    const ownershipPage = makePageObject('OwnershipPage')
+    const profilePage = makePageObject('ProfilePage')
+    const sendNameModal = makePageObject('SendNameModal')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await profilePage.goto(name)
+    await login.connect()
+
+    await ownershipPage.goto(name)
+    await page.pause()
+
+    await transactionModal.autoComplete()
+
+    await page.pause()
+    await ownershipPage.extendButton.click()
+    await page.getByTestId('ext')
+    await transactionModal.autoComplete()
+
+    await ownershipPage.sendNameButton.click()
+    await sendNameModal.searchInput.fill(accounts.getAddress('user3'))
+    await sendNameModal.searchResult(accounts.getAddress('user3')).click()
+    await sendNameModal.resetProfileSwitch.check()
+
+    await page.pause()
+    // Should not be able to set owner because name is unwrapped
+    // Should not be able to set eth record because user is not the manager
+    // Should not be able to reset profile since old resolver does not support VersionableResolver
+    await sendNameModal.summaryHeader.click()
+    await expect(sendNameModal.summaryItem('owner')).toBeVisible()
+    await expect(sendNameModal.summaryItem('manager')).toHaveCount(0)
+    await expect(sendNameModal.summaryItem('eth-record')).toBeVisible()
+    await expect(sendNameModal.summaryItem('reset-profile')).toBeVisible()
+
+    await sendNameModal.sendButton.click()
+    await sendNameModal.confirmButton.click()
+
+    await transactionModal.autoComplete()
+    await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('owner', {
+      timeout: 15000,
+    })
+    await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).not.toContainText('manager')
+    await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('ETH record')
+
+    await profilePage.goto(name)
+    await page.waitForTimeout(2000)
+    await expect(profilePage.record('text', 'nickname')).toHaveCount(0)
+  })
 })
 
 test.describe('Edit roles: Happy ', () => {
@@ -932,6 +1000,7 @@ test.describe('Edit roles: Unwrapped name', () => {
 
 test.describe('Edit roles: Wrapped subnames', () => {
   test('should allow namewrapper subname owner to send name', async ({
+    page,
     login,
     accounts,
     makeName,
@@ -958,6 +1027,7 @@ test.describe('Edit roles: Wrapped subnames', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
+    await page.pause()
     await ownershipPage.editRolesButton.click()
 
     await editRolesModal.roleCardChangeButton('manager').click()

@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { match, P } from 'ts-pattern'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
+import { useNameType } from '@app/hooks/nameType/useNameType'
 import { useBasicName } from '@app/hooks/useBasicName'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
-import { useNameType } from '@app/hooks/useNameType'
 import useRegistrationData from '@app/hooks/useRegistrationData'
 import { GRACE_PERIOD } from '@app/utils/constants'
 import { safeDateObj } from '@app/utils/date'
@@ -21,6 +21,15 @@ type Input = {
 type Options = {
   enabled?: boolean
 }
+
+const getExpiryDate = (expiryDate: Date | undefined, wrapperExpiryDate: Date | undefined) =>
+  match([expiryDate, wrapperExpiryDate])
+    .with([P.when((date) => !!safeDateObj(date)), P._], ([date]) => safeDateObj(date))
+    .with(
+      [P._, P.when((date) => !!safeDateObj(date))],
+      ([, date]) => new Date(safeDateObj(date)!.getTime() - GRACE_PERIOD),
+    )
+    .otherwise(() => undefined)
 
 export const useExpiryDetails = ({ name, details }: Input, options: Options = {}) => {
   const enabled = options.enabled ?? true
@@ -44,37 +53,48 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
   const data = useMemo(
     () => {
       if (isLoading) return undefined
-      const expiry = safeDateObj(details.expiryDate || details.wrapperData?.expiry?.date)
-      const parentExpiry = safeDateObj(
-        parentData?.expiryDate || parentData?.wrapperData?.expiry?.date,
+      const expiry = getExpiryDate(details?.expiryDate, details?.wrapperData?.expiry?.date)
+      const parentExpiry = getExpiryDate(
+        parentData?.expiryDate,
+        parentData?.wrapperData?.expiry?.date,
       )
 
       return match(nameType.data!)
-        .with(P.union('eth-unwrapped-2ld', 'eth-emancipated-2ld', 'eth-locked-2ld'), () => [
-          ...(expiry
-            ? [
-                {
-                  type: 'expiry',
-                  date: expiry,
-                },
-                {
-                  type: 'grace-period',
-                  date: expiry ? new Date(expiry.getTime() + GRACE_PERIOD) : undefined,
-                  tooltip: t('tabs.ownership.sections.expiry.panel.grace-period.tooltip'),
-                  supportLink: getSupportLink('grace-period'),
-                },
-              ]
-            : []),
-          ...(registrationData?.data
-            ? [
-                {
-                  type: 'registration',
-                  date: registrationData?.data?.registrationDate,
-                  link: makeEtherscanLink(registrationData?.data?.transactionHash!, chainName),
-                },
-              ]
-            : []),
-        ])
+        .with(
+          P.union(
+            'eth-unwrapped-2ld',
+            'eth-emancipated-2ld',
+            'eth-locked-2ld',
+            'eth-grace-period-emancipated-2ld',
+            'eth-grace-period-locked-2ld',
+            'eth-grace-period-unwrapped-2ld',
+          ),
+          () => [
+            ...(expiry
+              ? [
+                  {
+                    type: 'expiry',
+                    date: expiry,
+                  },
+                  {
+                    type: 'grace-period',
+                    date: expiry ? new Date(expiry.getTime() + GRACE_PERIOD) : undefined,
+                    tooltip: t('tabs.ownership.sections.expiry.panel.grace-period.tooltip'),
+                    supportLink: getSupportLink('grace-period'),
+                  },
+                ]
+              : []),
+            ...(registrationData?.data
+              ? [
+                  {
+                    type: 'registration',
+                    date: registrationData?.data?.registrationDate,
+                    link: makeEtherscanLink(registrationData?.data?.transactionHash!, chainName),
+                  },
+                ]
+              : []),
+          ],
+        )
         .with(P.union('eth-emancipated-subname', 'eth-locked-subname'), () => [
           ...(expiry
             ? [

@@ -82,12 +82,14 @@ const Resolver = ({
   canEdit,
   resolverAddress,
   isCachedData,
+  canEditResolverError,
 }: {
   name: string
   canEditResolver: boolean
   canEdit: boolean
   resolverAddress: string | undefined
   isCachedData: boolean
+  canEditResolverError?: string
 }) => {
   const { t } = useTranslation('profile')
 
@@ -147,7 +149,7 @@ const Resolver = ({
               <DisabledButtonWithTooltip
                 {...{
                   buttonId: 'set-resolver-disabled-button',
-                  content: t(`errors.permissionRevoked`),
+                  content: t(`errors.${canEditResolverError}`),
                   buttonText: 'Edit',
                   mobileWidth: 150,
                   buttonWidth: '15',

@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Address } from 'viem'
 
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { useNameType } from '@app/hooks/useNameType'
+import { useNameType } from '@app/hooks/nameType/useNameType'
 import { useParentBasicName } from '@app/hooks/useParentBasicName'
 
 import { getRoles } from './utils/getRoles'
@@ -65,17 +65,22 @@ function useRoles(name: string, options?: Options): Result {
       nameType: nameType.data!,
       owner: details.ownerData?.owner,
       registrant: details.ownerData?.registrant,
-      parentOwner: parentData.ownerData?.owner,
+      wrapperOwner: details.wrapperData?.owner,
       ethAddress: details.profile?.address,
       dnsOwner: details.dnsOwner ?? undefined,
+      parentOwner: parentData.ownerData?.owner,
+      parentWrapperOwner: parentData.wrapperData?.owner,
     })
   }, [
     isLoading,
     nameType.data,
-    details.ownerData,
+    details.ownerData?.owner,
+    details.ownerData?.registrant,
     details.dnsOwner,
     details.profile?.address,
-    parentData.ownerData,
+    details.wrapperData?.owner,
+    parentData.ownerData?.owner,
+    parentData.wrapperData?.owner,
   ])
 
   const groupedData = useMemo(() => {

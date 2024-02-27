@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { useAccountSafely } from '../account/useAccountSafely'
+import { useContractAddress } from '../chain/useContractAddress'
 import { useResolverIsAuthorised } from '../resolver/useResolverIsAuthorised'
 import { useBasicName } from '../useBasicName'
 import { useHasSubnames } from '../useHasSubnames'
@@ -33,6 +34,8 @@ export type EditAbilities = {
   canEditPermissions: boolean
   canCreateSubdomains: boolean
   canEditTTL: boolean
+  canCreateSubdomainsError?: string
+  canEditResolverError?: string
 }
 
 export type ReclaimAbilities = {
@@ -103,6 +106,8 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
   // useHasSubnames checks internally if name exists & if it is subname before it enables itself
   const hasSubnamesData = useHasSubnames(name)
 
+  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
+
   const isLoading =
     !address ||
     basicNameData.isLoading ||
@@ -127,6 +132,7 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
           address,
           basicNameData,
           hasAuthorisedResolver: resolverAuthorisation.data?.isAuthorised,
+          nameWrapperAddress,
         }),
         ...getDeleteAbilities({
           name,

@@ -1,25 +1,29 @@
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
-import type { NameType } from '@app/hooks/useNameType'
+import type { NameType } from '@app/hooks/nameType/getNameType'
 
 export const getRoles = ({
   nameType,
   registrant,
   owner,
-  ethAddress,
-  parentOwner,
+  wrapperOwner,
   dnsOwner,
+  parentOwner,
+  parentWrapperOwner,
+  ethAddress,
 }: {
   nameType?: NameType
   registrant?: Address | null
   owner?: Address
+  wrapperOwner?: Address | null
   dnsOwner?: Address | null
-  ethAddress?: Address
   parentOwner?: Address
+  parentWrapperOwner?: Address | null
+  ethAddress?: Address
 }) => {
   return match(nameType)
-    .with(P.union('eth-unwrapped-2ld'), () => [
+    .with(P.union('eth-unwrapped-2ld', 'eth-grace-period-unwrapped-2ld'), () => [
       { address: registrant || undefined, role: 'owner' as const },
       { address: owner, role: 'manager' as const },
       { address: ethAddress, role: 'eth-record' as const },
@@ -31,6 +35,10 @@ export const getRoles = ({
         { address: ethAddress, role: 'eth-record' as const },
       ],
     )
+    .with(P.union('eth-grace-period-emancipated-2ld', 'eth-grace-period-locked-2ld'), () => [
+      { address: wrapperOwner, role: 'owner' as const },
+      { address: ethAddress, role: 'eth-record' as const },
+    ])
     .with(
       P.union(
         'eth-unwrapped-subname',
@@ -42,7 +50,7 @@ export const getRoles = ({
       ),
       () => [
         {
-          address: parentOwner,
+          address: parentWrapperOwner || parentOwner,
           role: 'parent-owner' as const,
         },
         { address: owner, role: 'manager' as const },

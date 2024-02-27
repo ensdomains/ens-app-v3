@@ -13,7 +13,7 @@ import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@
 
 type UseWrapperDataParameters = PartialBy<GetWrapperDataParameters, 'name'>
 
-type UseWrapperDataReturnType = GetWrapperDataReturnType
+export type UseWrapperDataReturnType = GetWrapperDataReturnType
 
 type UseWrapperDataConfig = QueryConfig<UseWrapperDataReturnType, Error>
 
