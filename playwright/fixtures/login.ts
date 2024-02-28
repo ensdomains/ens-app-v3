@@ -44,7 +44,7 @@ export class Login {
     })
     expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
-    expect(this.wallet.getPendingRequestCount(Web3RequestKind.Accounts)).toEqual(0)
+    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
     await expect(this.getProfileButton).toBeVisible()
   }
 
@@ -52,5 +52,11 @@ export class Login {
     await this.waitForLoad()
     await this.getConnectButton.click()
     await this.page.getByText('Browser Wallet').click()
+    await expect(this.page.getByText('Confirm connection in the extension')).toBeVisible({
+      timeout: 15000,
+    })
+    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(1)
+    await this.wallet.authorize(Web3RequestKind.RequestPermissions)
+    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(0)
   }
 }
