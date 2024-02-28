@@ -129,8 +129,8 @@ const Title = styled(Typography)(
     text-overflow: ellipsis;
 
     ${mq.sm.min(css`
-      font-size: ${theme.fontSizes.headingTwo};
-      line-height: ${theme.lineHeights.headingTwo};
+      font-size: ${theme.fontSizes.headingOne};
+      line-height: ${theme.lineHeights.headingOne};
     `)}
   `,
 )
@@ -206,7 +206,7 @@ const CompactTitle = ({
         <TitleContainer style={{ maxWidth: 'fit-content' }}>
           <Title
             className="shrinkable-title"
-            weight="bold"
+            weight="extraBold"
             style={{ maxWidth: titleWidth, overflow: 'hidden' }}
           >
             {title || ''}
@@ -252,6 +252,7 @@ export const Content = ({
     header?: React.ReactNode
     leading?: React.ReactNode
     trailing: React.ReactNode
+    titleExtra?: React.ReactNode
   }
 }) => {
   const router = useRouterWithHistory()
@@ -306,6 +307,7 @@ export const Content = ({
                 subtitle={subtitle && (!isDesktopMode || alwaysShowSubtitle) ? subtitle : undefined}
                 titleButton={titleButton}
               />
+              {isDesktopMode && children.titleExtra}
               {inlineHeading && children.header && isDesktopMode && (
                 <ContentContainer>
                   <Skeleton loading={loading}>{children.header}</Skeleton>

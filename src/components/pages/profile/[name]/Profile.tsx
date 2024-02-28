@@ -2,19 +2,28 @@ import Head from 'next/head'
 import { useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { labelhash, namehash } from 'viem/ens'
 import { useAccount } from 'wagmi'
 
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
+import { Outlink } from '@app/components/Outlink'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content, ContentWarning } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
-import { formatFullExpiry, getEncodedLabelAmount } from '@app/utils/utils'
+import {
+  checkETH2LDFromName,
+  formatFullExpiry,
+  getEncodedLabelAmount,
+  makeEtherscanLink,
+  shortenAddress,
+} from '@app/utils/utils'
 
 import MoreTab from './tabs/MoreTab/MoreTab'
 import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
@@ -228,6 +237,19 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
 
   const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
 
+  const is2ldEth = checkETH2LDFromName(normalisedName)
+
+  const hasToken = is2ldEth || isWrapped
+
+  const hex = isWrapped ? namehash(normalisedName) : labelhash(normalisedName.split('.')[0])
+  const tokenId = BigInt(hex).toString(10)
+
+  const networkName = useChainName()
+
+  const profileAddress = profile?.address!
+
+  const etherscanLink = makeEtherscanLink(profileAddress, networkName, 'address')
+
   return (
     <>
       <Head>
@@ -240,7 +262,12 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
         <meta property="twitter:title" content={titleContent} />
         <meta property="twitter:description" content={descriptionContent} />
       </Head>
-      <Content noTitle title={beautifiedName} loading={isLoading} copyValue={beautifiedName}>
+      <Content
+        noTitle
+        title={shortenAddress(profileAddress)}
+        loading={isLoading}
+        copyValue={profileAddress}
+      >
         {{
           info: infoBanner,
           warning,
@@ -259,6 +286,11 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
                 </TabButton>
               ))}
             </TabButtonContainer>
+          ),
+          titleExtra: (
+            <Outlink href={etherscanLink} fontVariant="bodyBold">
+              {t('etherscan', { ns: 'common' })}
+            </Outlink>
           ),
           trailing: {
             profile: <ProfileTab name={normalisedName} nameDetails={nameDetails} />,
@@ -292,7 +324,15 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
               />
             ),
             more: (
-              <MoreTab name={normalisedName} nameDetails={nameDetails} abilities={abilities.data} />
+              <MoreTab
+                name={normalisedName}
+                nameDetails={nameDetails}
+                abilities={abilities.data}
+                etherscanLink={etherscanLink}
+                hasToken={hasToken}
+                tokenId={tokenId}
+                hex={hex}
+              />
             ),
           }[tab],
         }}
