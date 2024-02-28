@@ -67,9 +67,13 @@ describe('useRegisterOrImportNameCallback', () => {
       wrapper: createWrapper(),
     })
 
-    result.current(
-      createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'importDnsName' }),
-    )
+    result.current({
+      action: 'importDnsName',
+      status: 'confirmed',
+      key: `import-test.eth-0x1234567890123456789012345678901234567890`,
+      hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
+      searchRetries: 0,
+    } as Transaction)
 
     expect(queryClient.getQueryData(queryKey)).toBeUndefined()
   })

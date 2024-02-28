@@ -50,7 +50,7 @@ const wagmiConfig_ = createConfig({
   multiInjectedProviderDiscovery: true,
   batch: {
     multicall: {
-      batchSize: 2048,
+      batchSize: 8196,
       wait: 50,
     },
   },

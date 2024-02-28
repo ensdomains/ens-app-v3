@@ -143,7 +143,8 @@ const reducer = (state: DnsImportReducerData, action: DnsImportReducerAction) =>
       break
     case 'cleanupNonMatching':
       for (let i = 0; i < state.items.length; i += 1) {
-        if (i !== selectedItemInx && state.items[i].started === false) {
+        const item = state.items[i]
+        if (item !== selectedItem && state.items[i].started === false) {
           state.items.splice(i, 1)
           i -= 1
         }
