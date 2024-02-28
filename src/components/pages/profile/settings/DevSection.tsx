@@ -1,12 +1,18 @@
 import { useMemo } from 'react'
-import { revert as evmRevert, snapshot as evmSnapshot, mine, setAutomine } from 'viem/test'
-import { usePrepareSendTransaction, useSendTransaction } from 'wagmi'
+import {
+  revert as evmRevert,
+  snapshot as evmSnapshot,
+  getBlockNumber,
+  mine,
+  setAutomine,
+} from 'viem/actions'
+import { Config, useClient, useSendTransaction } from 'wagmi'
 
 import { Button } from '@ensdomains/thorin'
 
+import { localhostWithEns } from '@app/constants/chains'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { usePublicClient } from '@app/hooks/usePublicClient'
 import { DetailedSwitch } from '@app/transaction-flow/input/ProfileEditor/components/DetailedSwitch'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -30,28 +36,24 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
     ),
   })
 
+type TestConfig = Config<[typeof localhostWithEns]>
+
 export const DevSection = () => {
-  const publicClient = usePublicClient()
-  const testClient = useMemo(() => ({ ...publicClient, mode: 'anvil' }) as const, [publicClient])
+  const client = useClient<TestConfig>()
+  const testClient = useMemo(() => ({ ...client, mode: 'anvil' }) as const, [client])
 
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()
-  const { config: successConfig } = usePrepareSendTransaction({
-    to: '0x0000000000000000000000000000000000000000',
-    value: 0n,
-  })
-  const { sendTransactionAsync: sendFailure } = useSendTransaction({
-    mode: 'prepared',
-    to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
-    data: '0x1231237123423423',
-    gas: 1000000n,
-  })
-  const { sendTransactionAsync: sendSuccess } = useSendTransaction(successConfig)
+  const { sendTransactionAsync } = useSendTransaction()
 
   const addSuccess = async () => {
-    const transaction = await sendSuccess!()
+    const hash = await sendTransactionAsync({
+      to: '0x0000000000000000000000000000000000000000',
+      value: 0n,
+      gas: 21000n,
+    })
     addTransaction({
-      hash: transaction.hash,
+      hash,
       action: 'test',
       searchRetries: 0,
     })
@@ -64,9 +66,13 @@ export const DevSection = () => {
   }
 
   const addFailure = async () => {
-    const transaction = await sendFailure!()
+    const hash = await sendTransactionAsync({
+      to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+      data: '0x1231237123423423',
+      gas: 1000000n,
+    })
     addTransaction({
-      hash: transaction.hash,
+      hash,
       action: 'test',
       searchRetries: 0,
     })
@@ -78,10 +84,10 @@ export const DevSection = () => {
   const stopAutoMine = async () => setAutomine(testClient, false)
 
   const revert = async () => {
-    const currBlock = await publicClient.getBlockNumber()
+    const currBlock = await getBlockNumber(client)
     await evmRevert(testClient, { id: '0x1' })
     await evmSnapshot(testClient)
-    const revertBlock = await publicClient.getBlockNumber()
+    const revertBlock = await getBlockNumber(client)
     const blocksToMine = currBlock - revertBlock
     await rpcSendBatch(
       Array.from({ length: Number(blocksToMine) + 1 }, () => ({ method: 'evm_mine', params: [] })),

@@ -51,8 +51,8 @@ const displayItems = ({ name, records }: Data, t: TFunction): TransactionDisplay
   ]
 }
 
-const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
-  return setRecords.makeFunctionData(walletClient, {
+const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  return setRecords.makeFunctionData(connectorClient, {
     name: data.name,
     ...data.records,
     clearRecords: true,

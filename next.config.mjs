@@ -1,8 +1,16 @@
-const { withPlugins } = require('next-compose-plugins')
-const path = require('path')
-const StylelintPlugin = require('stylelint-webpack-plugin')
-const { withSentryConfig } = require('@sentry/nextjs')
-const { execSync } = require('child_process')
+// @ts-check
+
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-param-reassign */
+import { execSync } from 'child_process'
+import path, { dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+import { withSentryConfig } from '@sentry/nextjs'
+import StylelintPlugin from 'stylelint-webpack-plugin'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const babelIncludeRegexes = [
   /next[\\/]dist[\\/]shared[\\/]lib/,
@@ -13,19 +21,17 @@ const babelIncludeRegexes = [
 
 /**
  * @type {import('next').NextConfig}
- **/
-let nextConfig = {
+ * */
+const nextConfig = {
   reactStrictMode: true,
   compiler: {
     styledComponents: true,
   },
   // change to true once infinite loop is fixed
   swcMinify: false,
-  // @ts-ignore
   images: {
     domains: ['metadata.ens.domains'],
   },
-  transpilePackages: ['multiformats'],
   async rewrites() {
     return [
       {
@@ -87,6 +93,10 @@ let nextConfig = {
       if (rule.oneOf && rule.oneOf.length > 5) {
         for (const item of rule.oneOf) {
           if (typeof item.exclude === 'function' && item.test.toString().includes('js')) {
+            /**
+             * @param {string} excludePath
+             * @returns {boolean}
+             */
             item.exclude = (excludePath) => {
               if (babelIncludeRegexes.some((r) => r.test(excludePath))) {
                 return false
@@ -127,6 +137,8 @@ let nextConfig = {
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
     fileLoaderRule.exclude = /\.svg$/i
 
+    config.resolve.mainFields = ['browser', 'module', 'main']
+
     config.plugins.push(
       new StylelintPlugin({
         files: './src/**/*.tsx',
@@ -144,13 +156,11 @@ let nextConfig = {
       config.resolve.alias['../styles.css'] = path.resolve(__dirname, 'src/stub.css')
     }
 
-    config.resolve.alias['@ethersproject/strings/lib/idna.js'] = path.resolve(
-      __dirname,
-      'src/stub.js',
-    )
-
     if (!options.isServer && !options.dev) {
       const originalEntry = config.entry
+      /**
+       * @param  {...any} args
+       */
       config.entry = async (...args) => {
         const entryConfig = await originalEntry(...args)
         return {
@@ -158,7 +168,7 @@ let nextConfig = {
           firefoxMetamask: {
             import: [
               './src/utils/metamask/firefox.ts',
-              '@metamask/inpage-provider',
+              '@metamask/providers',
               '@metamask/post-message-stream',
             ],
             filename: 'static/chunks/initialise-metamask.js',
@@ -170,6 +180,10 @@ let nextConfig = {
       const originalSplitChunks = config.optimization.splitChunks
       config.optimization.splitChunks = {
         ...originalSplitChunks,
+        /**
+         * @param {{ name: string }} chunk
+         * @returns {boolean}
+         */
         chunks: (chunk) => !/^(firefoxMetamask|polyfills|main|pages\/_app)$/.test(chunk.name),
       }
     }
@@ -188,29 +202,22 @@ let nextConfig = {
     : {}),
 }
 
-let plugins = []
+/**
+ * @type {((config: import('next').NextConfig) => import('next').NextConfig)[]}
+ */
+const plugins = []
 
 if (process.env.ANALYZE) {
-  const withBundleAnalyzer = require('@next/bundle-analyzer')({
-    enabled: true,
-  })
-  plugins.push([withBundleAnalyzer])
+  const withBundleAnalyzer = await import('@next/bundle-analyzer').then((n) => n.default)
+  plugins.push(withBundleAnalyzer({ enabled: true }))
 }
 
-const withSentry = (config) => {
-  const sentryWebpackPluginOptions = {
-    // Additional config options for the Sentry Webpack plugin. Keep in mind that
-    // the following options are set automatically, and overriding them is not
-    // recommended:
-    //   release, url, org, project, authToken, configFile, stripPrefix,
-    //   urlPrefix, include, ignore
-    silent: false, // Suppresses all logs
-    // For all available options, see:
-    // https://github.com/getsentry/sentry-webpack-plugin#options.
-  }
-  if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_IPFS)
-    return withSentryConfig(config, sentryWebpackPluginOptions)
-  return config
+if (process.env.CI && process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_IPFS) {
+  plugins.push((config) =>
+    withSentryConfig(config, {
+      silent: false,
+    }),
+  )
 }
 
-module.exports = withSentry(withPlugins(plugins, nextConfig))
+export default plugins.reduce((acc, next) => next(acc), nextConfig)

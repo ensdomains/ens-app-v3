@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { SafeConnector } from 'wagmi/connectors/safe'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { Connector } from 'wagmi'
+import { safe, walletConnect } from 'wagmi/connectors'
 
 import { checkIsSafeApp } from './safe'
 
@@ -10,16 +10,16 @@ describe('checkIsSafeApp', () => {
     expect(result).toBe(false)
   })
 
-  it('should return "iframe" if connector is a SafeConnector', async () => {
-    const connector = new SafeConnector({})
+  it('should return "iframe" if connector is a safe', async () => {
+    const connector = safe({})({} as any) as Connector
     const result = await checkIsSafeApp(connector)
     expect(result).toBe('iframe')
   })
 
-  it('should return "walletconnect" if connector is a WalletConnectConnector and connected to Safe app', async () => {
-    const connector = Object.create(WalletConnectConnector.prototype)
+  it('should return "walletconnect" if connector is a walletConnect and connected to Safe app', async () => {
+    const connector = walletConnect({ projectId: 'abcdef' })({} as any) as unknown as Connector
 
-    connector.getProvider = () => ({
+    connector.getProvider = async () => ({
       session: {
         peer: {
           metadata: {
@@ -34,8 +34,8 @@ describe('checkIsSafeApp', () => {
   })
 
   it('should return false if connector is a WalletConnectConnector but not connected to Safe app', async () => {
-    const connector = Object.create(WalletConnectConnector.prototype)
-    connector.getProvider = () => ({
+    const connector = walletConnect({ projectId: 'abcdef' })({} as any) as unknown as Connector
+    connector.getProvider = async () => ({
       session: {
         peer: {
           metadata: {

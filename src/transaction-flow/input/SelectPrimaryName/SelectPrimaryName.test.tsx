@@ -20,14 +20,12 @@ import SelectPrimaryName, {
 
 const encodeLabel = (label: string) => `[${labelhash(label).slice(2)}]`
 
-const mockInvalidateQueries = vi.fn()
-vi.mock('wagmi', () =>
-  vi.fn().mockReturnValue({
-    useQueryClient: vi.fn().mockReturnValue({
-      invalidateQueries: mockInvalidateQueries,
-    }),
+vi.mock('@tanstack/react-query', async () => ({
+  ...(await vi.importActual<typeof import('@tanstack/react-query')>('@tanstack/react-query')),
+  useQueryClient: vi.fn().mockReturnValue({
+    resetQueries: vi.fn(),
   }),
-)
+}))
 
 vi.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem', () => ({
   TaggedNameItem: ({ name, ...props }: any) => <div {...props}>{name}</div>,

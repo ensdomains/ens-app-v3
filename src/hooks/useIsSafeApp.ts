@@ -1,23 +1,24 @@
-import { useAccount, useQuery } from 'wagmi'
+import { queryOptions, useQuery } from '@tanstack/react-query'
+import { useAccount } from 'wagmi'
 
 import { checkIsSafeApp } from '@app/utils/safe'
 
-import { useQueryKeyFactory } from './useQueryKeyFactory'
+import { useQueryOptions } from './useQueryOptions'
 
 export const useIsSafeApp = () => {
   const { connector } = useAccount()
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params: { id: connector?.id },
     functionName: 'isSafeApp',
     queryDependencyType: 'independent',
+    queryFn: async () => checkIsSafeApp(connector),
   })
-  return useQuery(
-    queryKey,
-    async () => {
-      return checkIsSafeApp(connector)
-    },
-    {
-      enabled: !!connector,
-    },
-  )
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
+  return useQuery({
+    ...preparedOptions,
+    enabled: !!connector,
+  })
 }

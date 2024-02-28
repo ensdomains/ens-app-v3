@@ -67,8 +67,11 @@ tsconfig.tsbuildinfo
 # hardhat
 /cache
 /artifacts
+/typings-custom/generated
 
 # Sentry
 .sentryclirc
 
 .dev.vars
+
+*yalc*

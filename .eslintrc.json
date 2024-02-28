@@ -29,7 +29,8 @@
     "next.config.js",
     "deploy/**/*",
     "src/**/*.test.tsx",
-    "src/**/*.test.ts"
+    "src/**/*.test.ts",
+    "playwright/**/*.ts"
   ],
   "rules": {
     "react/react-in-jsx-scope": "off",

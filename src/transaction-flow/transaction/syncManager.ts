@@ -31,8 +31,8 @@ const displayItems = (
   },
 ]
 
-const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
-  return importDnsName.makeFunctionData(walletClient, data)
+const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  return importDnsName.makeFunctionData(connectorClient, data)
 }
 
 export default {

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Address } from 'viem'
+import { useChainId } from 'wagmi'
 
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { isBrowser } from '@app/utils/utils'
 
@@ -143,7 +143,8 @@ const reducer = (state: DnsImportReducerData, action: DnsImportReducerAction) =>
       break
     case 'cleanupNonMatching':
       for (let i = 0; i < state.items.length; i += 1) {
-        if (i !== selectedItemInx && state.items[i].started === false) {
+        const item = state.items[i]
+        if (item !== selectedItem && state.items[i].started === false) {
           state.items.splice(i, 1)
           i -= 1
         }

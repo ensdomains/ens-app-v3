@@ -7,10 +7,13 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 
 import UnwrapButton from './UnwrapButton'
 
+vi.mock('wagmi')
+
 vi.mock('@app/transaction-flow/TransactionFlowProvider')
 
-const mockUseTransaction = mockFunction(useTransactionFlow)
 const mockUseAccount = mockFunction(useAccount)
+
+const mockUseTransaction = mockFunction(useTransactionFlow)
 
 const mockCreateTransactionFlow = vi.fn()
 

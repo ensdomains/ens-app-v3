@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { match, P } from 'ts-pattern'
 import { hexToString } from 'viem'
+import { useClient } from 'wagmi'
 
 import { encodeAbi, EncodedAbi, RecordOptions } from '@ensdomains/ensjs/utils'
 
@@ -19,8 +20,6 @@ import {
   formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
-
-import { usePublicClient } from './usePublicClient'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEditorType) => {
   const entries = []
@@ -80,7 +79,7 @@ type Props = {
 
 const useAdvancedEditor = ({ name, profile, isLoading, overwrites, callback }: Props) => {
   const { t } = useTranslation('profile')
-  const publicClient = usePublicClient()
+  const client = useClient()
 
   const {
     register,
@@ -299,7 +298,7 @@ const useAdvancedEditor = ({ name, profile, isLoading, overwrites, callback }: P
         return encodeAbi({ encodeAs: 'json', data: JSON.parse(data!) })
       })
       .with([P.union(1, 2, 4, 8), P.union(P.nullish, '')], async () => {
-        const encodedAs = await getUsedAbiEncodeAs(publicClient, { name })
+        const encodedAs = await getUsedAbiEncodeAs(client, { name })
         return Promise.all(encodedAs.map((encodeAs) => encodeAbi({ encodeAs, data: null })))
       })
       .otherwise(() => undefined)

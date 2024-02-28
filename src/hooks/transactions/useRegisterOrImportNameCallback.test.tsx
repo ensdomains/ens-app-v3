@@ -1,9 +1,8 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { createConfig, WagmiConfig } from 'wagmi'
 
-import { createQueryKey } from '../useQueryKeyFactory'
+import { createQueryKey } from '../useQueryOptions'
 import { Transaction } from './transactionStore'
 import { useRegisterOrImportNameCallback } from './useRegisterOrImportNameCallback'
 
@@ -38,11 +37,9 @@ const createTestQueryKey = (name: string, override: object = {}) =>
   })
 
 const createWrapper = () => {
-  const wagmiConfig = createConfig({
-    queryClient,
-    publicClient: {} as any,
-  })
-  return ({ children }: any) => <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>
+  return ({ children }: any) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  )
 }
 
 describe('useRegisterOrImportNameCallback', () => {
@@ -70,9 +67,13 @@ describe('useRegisterOrImportNameCallback', () => {
       wrapper: createWrapper(),
     })
 
-    result.current(
-      createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'importDnsName' }),
-    )
+    result.current({
+      action: 'importDnsName',
+      status: 'confirmed',
+      key: `import-test.eth-0x1234567890123456789012345678901234567890`,
+      hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
+      searchRetries: 0,
+    } as Transaction)
 
     expect(queryClient.getQueryData(queryKey)).toBeUndefined()
   })

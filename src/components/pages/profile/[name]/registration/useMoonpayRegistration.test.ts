@@ -7,6 +7,10 @@ import { MOONPAY_WORKER_URL } from '@app/utils/constants'
 
 import { useMoonpayRegistration } from './useMoonpayRegistration'
 
+vi.mock('@app/hooks/account/useAccountSafely', () => ({
+  useAccountSafely: () => ({ address: '0x123' }),
+}))
+
 describe('useMoonpayRegistration', () => {
   it('should check up on transaction status every second if a there is a currentExternalTransactionId', async () => {
     const mockDispatch = vi.fn()

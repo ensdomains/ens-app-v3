@@ -14,6 +14,8 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import ProfileEditor from './ProfileEditor-flow'
 
+vi.mock('wagmi')
+
 const mockProfileData = {
   data: {
     address: '0x70643CB203137b9b9eE19deA56080CD2BA01dBFd' as const,

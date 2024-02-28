@@ -1,33 +1,18 @@
-import { getPublicClient } from '@wagmi/core'
-import { useQuery } from 'wagmi'
-
-import { PublicClientWithChain } from '@app/types'
-
-import { useQueryKeyFactory } from '../useQueryKeyFactory'
+import { useBlock } from 'wagmi'
 
 type UseBlockTimestampParameters = {
   enabled?: boolean
 }
 
 export const useBlockTimestamp = ({ enabled = true }: UseBlockTimestampParameters = {}) => {
-  const queryKey = useQueryKeyFactory({
-    params: {},
-    functionName: 'getBlockTimestamp',
-    queryDependencyType: 'standard',
-  })
-
-  return useQuery(
-    queryKey,
-    async ({ queryKey: [, chainId] }) => {
-      const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
-      const block = await publicClient.getBlock({ blockTag: 'latest' })
-      return block.timestamp * 1000n
-    },
-    {
+  return useBlock({
+    blockTag: 'latest',
+    query: {
       enabled,
       refetchOnMount: true,
-      refetchInterval: 1000 * 60 * 5, // 5 minutes
-      staleTime: 1000 * 60, // 1 minute
+      refetchInterval: 1000 * 60 * 5 /* 5 minutes */,
+      staleTime: 1000 * 60 /* 1 minute */,
+      select: (b) => b.timestamp * 1000n,
     },
-  )
+  })
 }

@@ -124,6 +124,6 @@ test('should allow import (not owned by user)', async ({ page, login, makePageOb
   await expect(page.getByText('Congratulations!')).toBeVisible()
   await expect(page.getByText(`${name} has been imported`)).toBeVisible()
 
-  await page.getByTestId('view-name').click()
+  await page.getByTestId('view-name').click({ delay: 1000 })
   await page.waitForURL(`/${name}`)
 })
