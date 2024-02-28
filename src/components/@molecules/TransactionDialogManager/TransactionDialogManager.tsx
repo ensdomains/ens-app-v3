@@ -1,13 +1,14 @@
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { Dispatch, useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import usePrevious from 'react-use/lib/usePrevious'
-import { useAccount, WagmiConfig } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
 import { Dialog } from '@ensdomains/thorin'
 
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { transactions } from '@app/transaction-flow/transaction'
-import { wagmiConfigWithRefetch } from '@app/utils/query'
+import { createPersistConfig } from '@app/utils/query/persist'
+import { queryClientWithRefetch } from '@app/utils/query/reactQuery'
 
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
@@ -65,7 +66,10 @@ export const TransactionDialogManager = ({
       if (selectedItem.input && selectedItem.currentFlowStage === 'input') {
         const Component = DataInputComponents[selectedItem.input.name]
         return (
-          <WagmiConfig config={wagmiConfigWithRefetch}>
+          <PersistQueryClientProvider
+            client={queryClientWithRefetch}
+            persistOptions={createPersistConfig({ queryClient: queryClientWithRefetch })}
+          >
             <InputComponentWrapper>
               <Component
                 {...{
@@ -76,7 +80,7 @@ export const TransactionDialogManager = ({
                 }}
               />
             </InputComponentWrapper>
-          </WagmiConfig>
+          </PersistQueryClientProvider>
         )
       }
       if (selectedItem.intro && selectedItem.currentFlowStage === 'intro') {

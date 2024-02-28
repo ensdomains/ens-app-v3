@@ -23,7 +23,7 @@ export const useEstimateFullRegistration = ({
   name,
 }: UseEstimateFullRegistrationParameters) => {
   const { address } = useAccountSafely()
-  const { gasPrice, isLoading: gasPriceLoading } = useGasPrice()
+  const { data: gasPrice, isLoading: gasPriceLoading } = useGasPrice()
 
   const registrationParams = useRegistrationParams({
     name,

@@ -4,6 +4,7 @@ import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 import { useBalance } from 'wagmi'
+import { GetBalanceData } from 'wagmi/query'
 
 import {
   Button,
@@ -374,7 +375,7 @@ export type ActionButtonProps = {
     typeof useMoonpayRegistration
   >['initiateMoonpayRegistrationMutation']
   years: number
-  balance: ReturnType<typeof useBalance>['data']
+  balance: GetBalanceData | undefined
   totalRequiredBalance?: bigint
 }
 
@@ -415,10 +416,10 @@ export const ActionButton = ({
   if (paymentMethodChoice === PaymentMethod.moonpay) {
     return (
       <Button
-        loading={initiateMoonpayRegistrationMutation.isLoading}
+        loading={initiateMoonpayRegistrationMutation.isPending}
         data-testid="next-button"
         onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
-        disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isLoading}
+        disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isPending}
       >
         {t('action.next', { ns: 'common' })}
       </Button>

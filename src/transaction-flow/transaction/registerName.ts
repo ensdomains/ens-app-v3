@@ -31,15 +31,15 @@ const displayItems = (
 ]
 
 const transaction = async ({
-  publicClient,
-  walletClient,
+  client,
+  connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
-  const price = await getPrice(publicClient, { nameOrNames: data.name, duration: data.duration })
+  const price = await getPrice(client, { nameOrNames: data.name, duration: data.duration })
   const value = price.base + price.premium
   const valueWithBuffer = calculateValueWithBuffer(value)
 
-  return registerName.makeFunctionData(walletClient, {
+  return registerName.makeFunctionData(connectorClient, {
     ...data,
     value: valueWithBuffer,
   })

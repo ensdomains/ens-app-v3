@@ -7,14 +7,16 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 
 import { AvatarUpload } from './AvatarUpload'
 
+vi.mock('wagmi')
+
 vi.mock('@app/hooks/chain/useChainName')
 
 const mockUseChainName = mockFunction(useChainName)
+const mockUseSignTypedData = mockFunction(useSignTypedData)
 
 const mockHandleCancel = vi.fn()
 const mockHandleSubmit = vi.fn()
 const mockFile = new File([], 'avatar.png')
-const mockUseSignTypedData = mockFunction(useSignTypedData)
 const mockFileDataURL = 'data:image/jpeg;base64,00'
 
 const mockSignTypedDataAsync = vi.fn()

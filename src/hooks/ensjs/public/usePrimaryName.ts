@@ -1,11 +1,9 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
-import { useQuery } from 'wagmi'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
 import { getName, GetNameParameters, GetNameReturnType } from '@ensdomains/ensjs/public'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
 import { emptyAddress } from '@app/utils/constants'
 
@@ -23,50 +21,54 @@ type QueryKey<TParams extends UsePrimaryNameParameters> = CreateQueryKey<
   'standard'
 >
 
-export const getPrimaryNameQueryFn = async <TParams extends UsePrimaryNameParameters>({
-  queryKey: [{ address, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!address) throw new Error('address is required')
+export const getPrimaryNameQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UsePrimaryNameParameters>({
+    queryKey: [{ address, ...params }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!address) throw new Error('address is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const client = config.getClient({ chainId })
 
-  const res = await getName(publicClient, { address, ...params })
+    const res = await getName(client, { address, ...params })
 
-  if (!res || !res.name || (!res.match && !params.allowMismatch)) return null
+    if (!res || !res.name || (!res.match && !params.allowMismatch)) return null
 
-  return {
-    ...res,
-    beautifiedName: tryBeautify(res.name),
+    return {
+      ...res,
+      beautifiedName: tryBeautify(res.name),
+    }
   }
-}
 
 export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   allowMismatch = false,
   ...params
 }: TParams & UsePrimaryNameConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params: { ...params, allowMismatch },
     scopeKey,
     functionName: 'getName',
     queryDependencyType: 'standard',
+    queryFn: getPrimaryNameQueryFn,
   })
 
-  const query = useQuery(queryKey, getPrimaryNameQueryFn, {
-    cacheTime,
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
+
+  const query = useQuery({
+    ...preparedOptions,
     enabled: enabled && !!params.address && params.address !== emptyAddress,
+    gcTime,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
   })
 
   return {

@@ -1,16 +1,16 @@
-import { Client, getChainContractAddress, Transport } from 'viem'
+import { getChainContractAddress } from 'viem'
 
-import { SupportedChain } from '@app/constants/chains'
+import { ClientWithEns } from '@app/types'
 
 export const getSupportedChainContractAddress = <
-  const TClient extends Client<Transport, SupportedChain>,
-  TContract extends string = Extract<keyof TClient['chain']['contracts'], string>,
+  TContract extends Extract<keyof ClientWithEns['chain']['contracts'], string>,
+  TContractObject extends ClientWithEns['chain']['contracts'][TContract],
 >({
   client,
   contract,
   blockNumber,
 }: {
-  client: TClient
+  client: ClientWithEns
   contract: TContract
   blockNumber?: bigint
 }) =>
@@ -18,4 +18,4 @@ export const getSupportedChainContractAddress = <
     chain: client.chain,
     contract,
     blockNumber,
-  })
+  }) as TContractObject['address']

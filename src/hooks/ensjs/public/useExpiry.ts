@@ -1,11 +1,9 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
-import { useQuery } from 'wagmi'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
 import { getExpiry, GetExpiryParameters, GetExpiryReturnType } from '@ensdomains/ensjs/public'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseExpiryParameters = PartialBy<GetExpiryParameters, 'name'>
 
@@ -13,48 +11,51 @@ type UseExpiryReturnType = GetExpiryReturnType
 
 type UseExpiryConfig = QueryConfig<UseExpiryReturnType, Error>
 
-type QueryKey<TParams extends UseExpiryParameters> = CreateQueryKey<
+export type UseExpiryQueryKey<TParams extends UseExpiryParameters> = CreateQueryKey<
   TParams,
   'getExpiry',
   'standard'
 >
 
-export const getExpiryQueryFn = async <TParams extends UseExpiryParameters>({
-  queryKey: [{ name, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getExpiryQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UseExpiryParameters>({
+    queryKey: [{ name, ...params }, chainId],
+  }: QueryFunctionContext<UseExpiryQueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const client = config.getClient({ chainId })
 
-  return getExpiry(publicClient, { name, ...params })
-}
+    return getExpiry(client, { name, ...params })
+  }
 
 export const useExpiry = <TParams extends UseExpiryParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
   // params
   ...params
 }: TParams & UseExpiryConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getExpiry',
     queryDependencyType: 'standard',
+    queryFn: getExpiryQueryFn,
   })
 
-  const query = useQuery(queryKey, getExpiryQueryFn, {
-    cacheTime,
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
+
+  const query = useQuery({
+    ...preparedOptions,
     enabled: enabled && !!params.name,
+    gcTime,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
     select: (data) => {
       if (!data) return null
       return {

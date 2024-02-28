@@ -2,19 +2,27 @@ import { mockFunction, render } from '@app/test-utils'
 
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
+import { getTransaction, getTransactionCount } from 'viem/actions'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { useClient } from 'wagmi'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { usePublicClient } from '@app/hooks/usePublicClient'
-import { PublicClientWithChain } from '@app/types'
+import { ClientWithEns } from '@app/types'
 
 import {
   findDroppedTransactions,
   getAccountHistoryEndpoint,
   SyncDroppedTransaction,
 } from './SyncDroppedTransaction'
+
+vi.mock('wagmi')
+vi.mock('viem/actions')
+
+vi.mock('@app/hooks/account/useAccountSafely')
+vi.mock('@app/hooks/transactions/useRecentTransactions')
+vi.mock('@app/hooks/transactions/TransactionStoreContext')
 
 const ADDRESS = '0x1234567890abcdef'
 
@@ -36,27 +44,21 @@ export const handlers = [
 
 export const server = setupServer(...handlers)
 
-vi.mock('@app/hooks/account/useAccountSafely')
-vi.mock('@app/hooks/transactions/useRecentTransactions')
-vi.mock('@app/hooks/transactions/TransactionStoreContext')
-vi.mock('@app/hooks/usePublicClient', () => ({
-  usePublicClient: vi.fn(),
-}))
-
-const mockUsePublicClient = mockFunction(usePublicClient)
+const mockGetTransaction = mockFunction(getTransaction)
+const mockGetTransactionCount = mockFunction(getTransactionCount)
+const mockUseClient = mockFunction(useClient)
 const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseTransactionStore = mockFunction(useTransactionStore)
 
 describe('SyncDroppedTransaction', () => {
-  const mockPublicClient = { chain: { id: 1 } }
+  const mockClient = { chain: { id: 1 } }
   const mockAddress = '0x1234567890abcdef'
   const mockTransactions = [{ hash: '0xabc123' as const }, { hash: '0xdef456' as const }]
   const mockStore = { test: 'store' }
 
   beforeEach(() => {
-    // @ts-ignore
-    mockUsePublicClient.mockReturnValue(mockPublicClient)
+    mockUseClient.mockReturnValue(mockClient)
     mockUseAccountSafely.mockReturnValue({ address: mockAddress })
     mockUseRecentTransactions.mockReturnValue(mockTransactions)
     mockUseTransactionStore.mockReturnValue(mockStore as any)
@@ -118,12 +120,12 @@ describe('findDroppedTransactions', () => {
 
   describe('searchingTransactions', () => {
     it('should exit early if there is no connected account', async () => {
-      const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
+      const mockClient = { chain: { id: 1 } } as ClientWithEns
       const mockTransactions: any[] = []
       const mockAddress = undefined
       const mockStore = undefined
 
-      const result = await findDroppedTransactions(mockPublicClient, {
+      const result = await findDroppedTransactions(mockClient, {
         address: mockAddress,
         store: mockStore,
         transactions: mockTransactions,
@@ -144,9 +146,9 @@ describe('findDroppedTransactions', () => {
 
       const mockAddress = '0x1234567890abcdef'
       const mockStore = {} as any
-      const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
+      const mockClient = { chain: { id: 1 } } as ClientWithEns
 
-      const result = await findDroppedTransactions(mockPublicClient, {
+      const result = await findDroppedTransactions(mockClient, {
         address: mockAddress,
         store: mockStore,
         transactions: mockTransactions,
@@ -164,9 +166,9 @@ describe('findDroppedTransactions', () => {
       ] as any
       const mockAddress = '0x1234567890abcdef'
       const mockStore = { foundMinedTransaction: vi.fn() } as any
-      const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
+      const mockClient = { chain: { id: 1 } } as ClientWithEns
 
-      await findDroppedTransactions(mockPublicClient, {
+      await findDroppedTransactions(mockClient, {
         address: mockAddress,
         store: mockStore,
         transactions: mockTransactions,
@@ -202,9 +204,9 @@ describe('findDroppedTransactions', () => {
       ] as any
       const mockAddress = '0x1234567890abcdef'
       const mockStore = { setReplacedTransaction: vi.fn() } as any
-      const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
+      const mockClient = { chain: { id: 1 } } as ClientWithEns
 
-      await findDroppedTransactions(mockPublicClient, {
+      await findDroppedTransactions(mockClient, {
         address: mockAddress,
         store: mockStore,
         transactions: mockTransactions,
@@ -221,9 +223,9 @@ describe('findDroppedTransactions', () => {
       ] as any
       const mockAddress = '0x1234567890abcdef'
       const mockStore = { setReplacedTransaction: vi.fn() } as any
-      const mockPublicClient = { chain: { id: 1 } } as PublicClientWithChain
+      const mockClient = { chain: { id: 1 } } as ClientWithEns
 
-      await findDroppedTransactions(mockPublicClient, {
+      await findDroppedTransactions(mockClient, {
         address: mockAddress,
         store: mockStore,
         transactions: mockTransactions,
@@ -240,12 +242,12 @@ describe('findDroppedTransactions', () => {
       ] as any
       const mockAddress = '0x1234567890abcdef'
       const mockStore = { foundTransaction: vi.fn() } as any
-      const mockPublicClient = {
+      const mockClient = {
         chain: { id: 1 },
-        getTransaction: () => Promise.resolve({}),
-      } as unknown as PublicClientWithChain
+      } as ClientWithEns
+      mockGetTransaction.mockImplementation(() => Promise.resolve({}))
 
-      await findDroppedTransactions(mockPublicClient, {
+      await findDroppedTransactions(mockClient, {
         address: mockAddress,
         store: mockStore,
         transactions: mockTransactions,
@@ -262,12 +264,12 @@ describe('findDroppedTransactions', () => {
       ] as any
       const mockAddress = '0x1234567890abcdef'
       const mockStore = { setFailedTransaction: vi.fn() } as any
-      const mockPublicClient = {
+      const mockClient = {
         chain: { id: 1 },
-        getTransaction: () => Promise.resolve(null),
-      } as unknown as PublicClientWithChain
+      } as ClientWithEns
+      mockGetTransaction.mockImplementation(() => Promise.resolve(null))
 
-      await findDroppedTransactions(mockPublicClient, {
+      await findDroppedTransactions(mockClient, {
         address: mockAddress,
         store: mockStore,
         transactions: mockTransactions,
@@ -284,12 +286,12 @@ describe('findDroppedTransactions', () => {
       ] as any
       const mockAddress = '0x1234567890abcdef'
       const mockStore = { updateRetries: vi.fn() } as any
-      const mockPublicClient = {
+      const mockClient = {
         chain: { id: 1 },
-        getTransaction: () => Promise.resolve(null),
-      } as unknown as PublicClientWithChain
+      } as ClientWithEns
+      mockGetTransaction.mockImplementation(() => Promise.resolve(null))
 
-      await findDroppedTransactions(mockPublicClient, {
+      await findDroppedTransactions(mockClient, {
         address: mockAddress,
         store: mockStore,
         transactions: mockTransactions,
@@ -311,13 +313,13 @@ describe('findDroppedTransactions', () => {
       ] as any
       const mockAddress = '0x1234567890abcdef'
       const mockStore = { setReplacedTransactionByNonce: vi.fn() } as any
-      const mockPublicClient = {
+      const mockClient = {
         chain: { id: 1 },
-        getTransaction: () => Promise.resolve(null),
-        getTransactionCount: () => Promise.resolve(1),
-      } as unknown as PublicClientWithChain
+      } as ClientWithEns
+      mockGetTransaction.mockImplementation(() => Promise.resolve(null))
+      mockGetTransactionCount.mockImplementation(() => Promise.resolve(1))
 
-      await findDroppedTransactions(mockPublicClient, {
+      await findDroppedTransactions(mockClient, {
         address: mockAddress,
         store: mockStore,
         transactions: mockTransactions,
@@ -340,13 +342,13 @@ describe('findDroppedTransactions', () => {
         setReplacedTransactionByNonce: vi.fn(),
         setFailedTransaction: vi.fn(),
       } as any
-      const mockPublicClient = {
+      const mockClient = {
         chain: { id: 1 },
-        getTransaction: () => Promise.resolve(null),
-        getTransactionCount: () => Promise.resolve(3),
-      } as unknown as PublicClientWithChain
+      } as unknown as ClientWithEns
+      mockGetTransaction.mockImplementation(() => Promise.resolve(null))
+      mockGetTransactionCount.mockImplementation(() => Promise.resolve(3))
 
-      await findDroppedTransactions(mockPublicClient, {
+      await findDroppedTransactions(mockClient, {
         address: mockAddress,
         store: mockStore,
         transactions: mockTransactions,
@@ -367,13 +369,13 @@ describe('findDroppedTransactions', () => {
       ] as any
       const mockAddress = '0x1234567890abcdef'
       const mockStore = { setFailedTransaction: vi.fn() } as any
-      const mockPublicClient = {
+      const mockClient = {
         chain: { id: 1 },
-        getTransaction: () => Promise.resolve(null),
-        getTransactionCount: () => Promise.resolve(1),
-      } as unknown as PublicClientWithChain
+      } as ClientWithEns
+      mockGetTransaction.mockImplementation(() => Promise.resolve(null))
+      mockGetTransactionCount.mockImplementation(() => Promise.resolve(1))
 
-      await findDroppedTransactions(mockPublicClient, {
+      await findDroppedTransactions(mockClient, {
         address: mockAddress,
         store: mockStore,
         transactions: mockTransactions,
@@ -394,13 +396,13 @@ describe('findDroppedTransactions', () => {
     ] as any
     const mockAddress = '0x1234567890abcdef'
     const mockStore = { setFailedTransaction: vi.fn() } as any
-    const mockPublicClient = {
+    const mockClient = {
       chain: { id: 1 },
-      getTransaction: () => Promise.resolve(null),
-      getTransactionCount: () => Promise.resolve(1),
-    } as unknown as PublicClientWithChain
+    } as ClientWithEns
+    mockGetTransaction.mockImplementation(() => Promise.resolve(null))
+    mockGetTransactionCount.mockImplementation(() => Promise.resolve(1))
 
-    await findDroppedTransactions(mockPublicClient, {
+    await findDroppedTransactions(mockClient, {
       address: mockAddress,
       store: mockStore,
       transactions: mockTransactions,

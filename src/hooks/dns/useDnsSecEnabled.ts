@@ -1,9 +1,8 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { useQuery } from 'wagmi'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
 import { CreateQueryKey, QueryConfig } from '@app/types'
 
-import { useQueryKeyFactory } from '../useQueryKeyFactory'
+import { useQueryOptions } from '../useQueryOptions'
 
 export const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query'
 
@@ -68,31 +67,33 @@ export const getDnsSecEnabledQueryFn = async <TParams extends UseDnsSecEnabledPa
 
 export const useDnsSecEnabled = <TParams extends UseDnsSecEnabledParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseDnsSecEnabledConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getDnsSecEnabled',
     queryDependencyType: 'independent',
+    queryFn: getDnsSecEnabledQueryFn,
   })
 
-  const query = useQuery(queryKey, getDnsSecEnabledQueryFn, {
-    cacheTime,
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
+
+  const query = useQuery({
+    ...preparedOptions,
     enabled: enabled && !!params.name && params.name !== 'eth' && params.name !== '[root]',
-    staleTime,
-    onError,
-    onSettled,
-    onSuccess,
+    gcTime,
     retry: 2,
+    staleTime,
   })
 
   return {

@@ -21,6 +21,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useCopied } from '@app/hooks/useCopied'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { shortenAddress } from '@app/utils/utils'
@@ -130,7 +131,16 @@ const HeaderProfile = ({ address }: { address: Address }) => {
   const { data: primary } = usePrimaryName({ address })
   const { data: avatar } = useEnsAvatar({ name: primary?.name })
   const zorb = useZorb(address, 'address')
-  const { disconnect } = useDisconnect()
+
+  const router = useRouterWithHistory()
+
+  const { disconnect } = useDisconnect({
+    mutation: {
+      onSuccess: () => {
+        router.push('/')
+      },
+    },
+  })
   const { copy, copied } = useCopied(300)
   const hasPendingTransactions = useHasPendingTransactions()
 

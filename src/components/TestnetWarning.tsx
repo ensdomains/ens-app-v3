@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -14,7 +14,7 @@ const Container = styled.div(
 )
 
 export const TestnetWarning = () => {
-  const { chain } = useNetwork()
+  const { chain } = useAccount()
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {

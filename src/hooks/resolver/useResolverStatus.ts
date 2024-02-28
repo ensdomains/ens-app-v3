@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
+import { useChainId } from 'wagmi'
 
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverIsAuthorised } from '@app/hooks/resolver/useResolverIsAuthorised'
 import { useResolverType } from '@app/hooks/resolver/useResolverType'

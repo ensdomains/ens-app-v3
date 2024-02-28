@@ -1,5 +1,7 @@
 {
   "ts-node": {
+    "experimentalResolver": true,
+    "files": true,
     "compilerOptions": {
       "module": "CommonJS",
       "target": "ESNext",
@@ -56,9 +58,18 @@
     "mdx.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "next.config.js",
+    "next.config.mjs",
     "vitest.config.mts",
-    "test/*.mts"
+    "test/*.mts",
+    "test/**/*.ts",
+    "typings-custom/generated/*.d.ts",
+    "typings-custom/local-contracts.d.ts"
   ],
-  "exclude": ["**/*.ignore.ts", "**/*.ignore.tsx", "functions/**/*"]
+  "exclude": [
+    "**/*.ignore.ts",
+    "**/*.ignore.tsx",
+    "functions/**/*",
+    "deploy/**/*",
+    "hardhat.config.ts"
+  ]
 }

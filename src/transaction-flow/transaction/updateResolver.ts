@@ -34,8 +34,8 @@ const displayItems = (
   },
 ]
 
-const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
-  return setResolver.makeFunctionData(walletClient, {
+const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  return setResolver.makeFunctionData(connectorClient, {
     name: data.name,
     contract: data.contract,
     resolverAddress: data.resolverAddress,

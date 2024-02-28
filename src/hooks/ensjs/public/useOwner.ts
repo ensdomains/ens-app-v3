@@ -1,60 +1,64 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
-import { useQuery } from 'wagmi'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
 import { getOwner, GetOwnerParameters, GetOwnerReturnType } from '@ensdomains/ensjs/public'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
-type UseOwnerParameters = PartialBy<GetOwnerParameters, 'name'>
+type OwnerContract = 'nameWrapper' | 'registry' | 'registrar'
 
-type UseOwnerReturnType = GetOwnerReturnType
+type UseOwnerParameters<TContract extends OwnerContract | undefined = OwnerContract | undefined> =
+  PartialBy<GetOwnerParameters<TContract>, 'name'>
 
-type UseOwnerConfig = QueryConfig<UseOwnerReturnType, Error>
+type UseOwnerReturnType<TContract extends OwnerContract | undefined = undefined> =
+  GetOwnerReturnType<TContract>
 
-export type UseOwnerQueryKey<TParams extends UseOwnerParameters> = CreateQueryKey<
-  TParams,
-  'getOwner',
-  'standard'
->
+type UseOwnerConfig<TContract extends OwnerContract | undefined = OwnerContract | undefined> =
+  QueryConfig<UseOwnerReturnType<TContract>, Error>
 
-export const getOwnerQueryFn = async <TParams extends UseOwnerParameters>({
-  queryKey: [{ name, ...params }, chainId],
-}: QueryFunctionContext<UseOwnerQueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export type UseOwnerQueryKey<TContract extends OwnerContract | undefined = undefined> =
+  CreateQueryKey<UseOwnerParameters<TContract>, 'getOwner', 'standard'>
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+export const getOwnerQueryFn =
+  (config: ConfigWithEns) =>
+  async <TContract extends OwnerContract | undefined = undefined>({
+    queryKey: [{ name, ...params }, chainId],
+  }: QueryFunctionContext<UseOwnerQueryKey<TContract>>) => {
+    if (!name) throw new Error('name is required')
 
-  return getOwner(publicClient, { name, ...params })
-}
+    const client = config.getClient({ chainId })
 
-export const useOwner = <TParams extends UseOwnerParameters>({
-  // config
-  cacheTime = 60,
+    return getOwner(client, { name, ...params })
+  }
+
+export const useOwner = <
+  TContract extends OwnerContract | undefined = undefined,
+  const TParams extends UseOwnerParameters<TContract> = UseOwnerParameters<TContract>,
+>({
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
-  // params
   ...params
-}: TParams & UseOwnerConfig) => {
-  const queryKey = useQueryKeyFactory({
+}: TParams & UseOwnerConfig<TContract>) => {
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getOwner',
     queryDependencyType: 'standard',
+    queryFn: getOwnerQueryFn,
   })
 
-  const query = useQuery(queryKey, getOwnerQueryFn, {
-    cacheTime,
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
+
+  const query = useQuery({
+    ...preparedOptions,
+    gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
   })
 
   return {

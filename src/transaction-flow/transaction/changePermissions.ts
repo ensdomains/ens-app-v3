@@ -83,10 +83,10 @@ const displayItems = (
   ]
 }
 
-const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
+const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
   const { contract } = data
   if (contract === 'setChildFuses') {
-    return setChildFuses.makeFunctionData(walletClient, {
+    return setChildFuses.makeFunctionData(connectorClient, {
       name: data.name,
       fuses: {
         parent: {
@@ -99,7 +99,7 @@ const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>
       expiry: data.expiry,
     })
   }
-  return setFuses.makeFunctionData(walletClient, {
+  return setFuses.makeFunctionData(connectorClient, {
     name: data.name,
     fuses: {
       named: data.fuses,

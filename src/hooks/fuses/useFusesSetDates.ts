@@ -1,22 +1,22 @@
 import {
-  QueryClient,
   QueryFunctionContext,
   useQueries,
+  useQueryClient,
   UseQueryResult,
 } from '@tanstack/react-query'
-import { Context, createContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Address, BlockTag, GetBlockParameters, GetBlockReturnType } from 'viem'
-import { useAccount, useQueryClient } from 'wagmi'
+import { getBlock } from 'viem/actions'
+import { useAccount, useClient } from 'wagmi'
 
 import { ChainWithEns } from '@ensdomains/ensjs/contracts'
 import { GetNameHistoryReturnType } from '@ensdomains/ensjs/subgraph'
 import { ChildFuseKeys, decodeFuses, ParentFuseKeys } from '@ensdomains/ensjs/utils'
 
-import { AnyFuseKey, CreateQueryKey, PublicClientWithChain } from '@app/types'
+import { AnyFuseKey, ClientWithEns, CreateQueryKey } from '@app/types'
 
 import { useNameHistory } from '../ensjs/subgraph/useNameHistory'
-import { usePublicClient } from '../usePublicClient'
-import { createQueryKey } from '../useQueryKeyFactory'
+import { createQueryKey } from '../useQueryOptions'
 
 type UseFusesSetDatesParameters = {
   name: string
@@ -35,11 +35,11 @@ type GetBlockQueryKey<
 > = CreateQueryKey<GetBlockParameters<TIncludeTransactions, TBlockTag>, 'getBlock', 'standard'>
 
 export const getBlockQueryFn =
-  (publicClient: PublicClientWithChain) =>
+  (client: ClientWithEns) =>
   async <TIncludeTransactions extends boolean = false, TBlockTag extends BlockTag = 'latest'>({
     queryKey: [params],
   }: QueryFunctionContext<GetBlockQueryKey<TIncludeTransactions, TBlockTag>>) => {
-    return publicClient.getBlock(params)
+    return getBlock(client, params)
   }
 
 export const generateFuseSetBlocks = (
@@ -82,20 +82,20 @@ export const generateFuseSetBlocks = (
 }
 
 export const generateGetBlockQueryArray = (
-  publicClient: PublicClientWithChain,
+  client: ClientWithEns,
   { address, blocksNeeded }: { address: Address | undefined; blocksNeeded: Set<bigint> },
 ) => {
   return [...blocksNeeded].map(
     (blockNumber) =>
       ({
         queryKey: createQueryKey({
-          chainId: publicClient.chain.id,
+          chainId: client.chain.id,
           address,
           functionName: 'getBlock',
           params: { blockNumber },
           queryDependencyType: 'standard',
         }),
-        queryFn: getBlockQueryFn(publicClient),
+        queryFn: getBlockQueryFn(client),
         staleTime: Infinity,
       }) as const,
   )
@@ -104,14 +104,18 @@ export const generateGetBlockQueryArray = (
 export const generateMatchedFuseBlockData = ({
   fuseSetBlocks,
   blockDatas,
+  queries,
 }: {
   fuseSetBlocks: FuseSetBlocks
   blockDatas: UseQueryResult<GetBlockReturnType<ChainWithEns, boolean, BlockTag>, unknown>[]
+  queries: ReturnType<typeof generateGetBlockQueryArray>
 }) => {
   if (fuseSetBlocks.length === 0)
     return { data: undefined, hasLoadingBlocks: false, hasFetchingBlocks: false }
   const data: FuseSetEntries = {}
-  const blockMap = new Map(blockDatas.map((query) => [query.data?.number?.toString(), query]))
+  const blockMap = new Map(
+    blockDatas.map((query, i) => [queries[i].queryKey[0].blockNumber.toString(), query]),
+  )
 
   let hasLoadingBlocks = false
   let hasFetchingBlocks = false
@@ -119,18 +123,20 @@ export const generateMatchedFuseBlockData = ({
   let hasAllSuccessData = true
 
   for (const [fuseKey, blockNumber] of fuseSetBlocks) {
-    const blockData = blockMap.get(blockNumber.toString())
+    const blockQuery = blockMap.get(blockNumber.toString())
+    if (blockQuery?.isLoading) hasLoadingBlocks = true
+    if (blockQuery?.isFetching) hasFetchingBlocks = true
     // don't allow incomplete data to be returned
-    if (!blockData) {
+    if (!blockQuery?.data) {
       hasIncompleteData = true
+      hasAllSuccessData = false
       // eslint-disable-next-line no-continue
       continue
     }
-    if (blockData.isLoading) hasLoadingBlocks = true
-    if (blockData.isFetching) hasFetchingBlocks = true
-    if (!blockData.isSuccess) hasAllSuccessData = false
-    const { data: block } = blockData
-    const dateString = new Date(Number(block!.timestamp) * 1000).toLocaleDateString(undefined, {
+    if (!blockQuery.isSuccess) hasAllSuccessData = false
+
+    const { data: block } = blockQuery
+    const dateString = new Date(Number(block.timestamp) * 1000).toLocaleDateString(undefined, {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -148,10 +154,8 @@ export const generateMatchedFuseBlockData = ({
 
 export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParameters) => {
   const queryClient = useQueryClient()
-  // wrap queryClient in context because useQueries needs it
-  const context = useMemo(() => createContext(queryClient), [queryClient])
 
-  const publicClient = usePublicClient()
+  const client = useClient()
   const { address } = useAccount()
 
   const {
@@ -165,14 +169,16 @@ export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParam
     [nameHistory],
   )
 
-  const blockDatas = useQueries({
-    queries: generateGetBlockQueryArray(publicClient, { address, blocksNeeded }),
-    context: context as Context<QueryClient | undefined>,
-  })
+  const queries = useMemo(
+    () => generateGetBlockQueryArray(client, { address, blocksNeeded }),
+    [client, address, blocksNeeded],
+  )
+
+  const blockDatas = useQueries({ queries }, queryClient)
 
   const { data, hasLoadingBlocks, hasFetchingBlocks, hasAllSuccessData } = useMemo(
-    () => generateMatchedFuseBlockData({ fuseSetBlocks, blockDatas }),
-    [fuseSetBlocks, blockDatas],
+    () => generateMatchedFuseBlockData({ fuseSetBlocks, blockDatas, queries }),
+    [fuseSetBlocks, blockDatas, queries],
   )
 
   return {

@@ -1,7 +1,5 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { infiniteQueryOptions, QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { useInfiniteQuery } from 'wagmi'
 
 import {
   getSubnames,
@@ -9,8 +7,8 @@ import {
   GetSubnamesReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
-import { CreateQueryKey, InfiniteQueryConfig, PartialBy, PublicClientWithChain } from '@app/types'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
+import { ConfigWithEns, CreateQueryKey, InfiniteQueryConfig, PartialBy } from '@app/types'
 
 type UseSubnamesParameters = Omit<PartialBy<GetSubnamesParameters, 'name'>, 'previousPage'>
 
@@ -24,52 +22,58 @@ type QueryKey<TParams extends UseSubnamesParameters> = CreateQueryKey<
   'graph'
 >
 
-export const getSubnamesQueryFn = async <TParams extends UseSubnamesParameters>({
-  queryKey: [{ name, ...params }, chainId],
-  pageParam,
-}: QueryFunctionContext<QueryKey<TParams>, GetSubnamesReturnType>) => {
-  if (!name) throw new Error('name is required')
+export const getSubnamesQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UseSubnamesParameters>({
+    queryKey: [{ name, ...params }, chainId],
+    pageParam,
+  }: QueryFunctionContext<QueryKey<TParams>, GetSubnamesReturnType>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const client = config.getClient({ chainId })
 
-  return getSubnames(publicClient, { name, ...params, previousPage: pageParam })
-}
+    return getSubnames(client, { name, ...params, previousPage: pageParam })
+  }
+
+const getNextPageParam =
+  <TParams extends UseSubnamesParameters>(params: TParams) =>
+  (lastPage: GetSubnamesReturnType) => {
+    if (lastPage?.length < (params.pageSize || 100)) return null
+    return lastPage
+  }
+
+const initialPageParam = [] as GetSubnamesReturnType
 
 export const useSubnames = <TParams extends UseSubnamesParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
   // params
   ...params
 }: TParams & UseSubnamesConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getSubnames',
     queryDependencyType: 'graph',
+    queryFn: getSubnamesQueryFn,
   })
 
-  const { data, status, isFetched, isFetchedAfterMount, ...rest } = useInfiniteQuery(
-    queryKey,
-    getSubnamesQueryFn,
-    {
-      cacheTime,
-      enabled: enabled && !!params.name,
-      staleTime,
-      onError,
-      onSettled,
-      onSuccess,
-      getNextPageParam: (lastPage) => {
-        if (lastPage?.length < (params.pageSize || 100)) return false
-        return lastPage
-      },
-    },
-  )
+  const preparedOptions = infiniteQueryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+    getNextPageParam: getNextPageParam(params),
+    initialPageParam,
+  })
+
+  const { data, status, isFetched, isFetchedAfterMount, ...rest } = useInfiniteQuery({
+    ...preparedOptions,
+    enabled: enabled && !!params.name,
+    gcTime,
+    staleTime,
+  })
 
   const pageCount = data?.pages.length || 0
   const nameCount = data?.pages.reduce((acc, page) => acc + page.length, 0) || 0
