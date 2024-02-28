@@ -1,5 +1,5 @@
 import { FallbackTransport, HttpTransport } from 'viem'
-import { createConfig, fallback, http } from 'wagmi'
+import { createConfig, createStorage, fallback, http } from 'wagmi'
 import { goerli, holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import {
@@ -44,6 +44,40 @@ const initialiseTransports = <const UrlFuncArray extends SupportedUrlFunc[]>(
   return fallback(transportArray)
 }
 
+const prefix = 'wagmi'
+
+const localStorageWithInvertMiddleware = (): Storage | undefined => {
+  if (typeof window === 'undefined') return undefined
+  const storage = window.localStorage
+  const isMatchingKey = (key: string) => {
+    if (!key.startsWith(prefix)) return false
+    if (!key.endsWith('.disconnected')) return false
+    return true
+  }
+  return {
+    ...storage,
+    getItem: (key_) => {
+      if (!isMatchingKey(key_)) return storage.getItem(key_)
+
+      const key = key_.replace('.disconnected', '.connected')
+      const connectedStatus = storage.getItem(key)
+      return connectedStatus ? null : 'true'
+    },
+    removeItem: (key_) => {
+      if (!isMatchingKey(key_)) return storage.removeItem(key_)
+
+      const key = key_.replace('.disconnected', '.connected')
+      storage.setItem(key, 'true')
+    },
+    setItem: (key_, value) => {
+      if (!isMatchingKey(key_)) return storage.setItem(key_, value)
+
+      const key = key_.replace('.disconnected', '.connected')
+      storage.removeItem(key)
+    },
+  }
+}
+
 const wagmiConfig_ = createConfig({
   connectors,
   ssr: true,
@@ -54,6 +88,7 @@ const wagmiConfig_ = createConfig({
       wait: 50,
     },
   },
+  storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
   chains: [
     ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
     mainnetWithEns,
