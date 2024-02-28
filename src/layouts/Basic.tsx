@@ -2,11 +2,14 @@ import { useEffect } from 'react'
 import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
 import { useIntercom } from 'react-use-intercom'
 import styled, { css } from 'styled-components'
+import { useAccount, useSwitchChain } from 'wagmi'
 
 import { mq } from '@ensdomains/thorin'
 
 import FeedbackSVG from '@app/assets/Feedback.svg'
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
+import { getSupportedChainById } from '@app/constants/chains'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
 
 import { Navigation } from './Navigation'
@@ -59,10 +62,10 @@ const BottomPlaceholder = styled.div(
 export const StyledFeedbackSVG = styled(FeedbackSVG)(() => css``)
 
 export const Basic = withErrorBoundary(({ children }: { children: React.ReactNode }) => {
-  // const { isLoading, error: connectorClientError } = useConnectorClient()
-  // const { switchChain } = useSwitchChain()
+  const { chainId, isConnected } = useAccount()
+  const { switchChain } = useSwitchChain()
 
-  // const router = useRouter()
+  const router = useRouterWithHistory()
   const [error] = useErrorBoundary()
   const { boot } = useIntercom()
 
@@ -72,18 +75,12 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // TODO: reimplement unsupported network?
-  // useEffect(() => {
-  //   if (
-  //     !isLoading &&
-  //     connectorClientError &&
-  //     connectorClientError instanceof ConnectorAccountNotFoundError
-  //   ) {
-  //     switchChain({ chainId: 1 })
-  //     router.push('/unsupportedNetwork')
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [isLoading, connectorClientError])
+  useEffect(() => {
+    if (isConnected && !getSupportedChainById(chainId)) {
+      switchChain({ chainId: 1 })
+      router.push('/unsupportedNetwork')
+    }
+  }, [isConnected, chainId, switchChain, router])
 
   return (
     <Container className="min-safe">

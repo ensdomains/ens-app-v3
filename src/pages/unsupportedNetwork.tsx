@@ -1,8 +1,12 @@
-import { ReactElement } from 'react'
+import { ReactElement, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount, useSwitchChain } from 'wagmi'
 
 import { Button, Helper, mq } from '@ensdomains/thorin'
+
+import { getSupportedChainById } from '@app/constants/chains'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 
 const Card = styled.div(
   ({ theme }) => css`
@@ -35,16 +39,19 @@ const Container = styled.div`
 export default function Page() {
   const { t } = useTranslation()
 
-  // TODO: reimplement ?
-  // useEffect(() => {
-  //   if (currentChain?.id && getSupportedChainById(currentChain.id)) {
-  //     router.push('/')
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [currentChain?.id])
+  const router = useRouterWithHistory()
+
+  const { chainId, isConnected } = useAccount()
+  const { switchChain } = useSwitchChain()
+
+  useEffect(() => {
+    if (isConnected && getSupportedChainById(chainId)) {
+      router.push('/')
+    }
+  }, [isConnected, chainId, router])
 
   const handleChangeNetwork = () => {
-    // switchNetwork?.(1)
+    switchChain({ chainId: 1 })
   }
 
   return (
