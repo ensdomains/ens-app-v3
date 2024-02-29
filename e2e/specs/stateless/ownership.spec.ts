@@ -627,6 +627,7 @@ test.describe('Send name', () => {
   })
 
   test.skip('should not be able to send owner or manager if user is owner and manager of a name in grace period', async ({
+  test('should not be able to send owner or manager if user is owner and manager of a name in grace period', async ({
     page,
     login,
     accounts,

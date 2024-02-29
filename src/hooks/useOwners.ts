@@ -12,7 +12,6 @@ type BasicNameReturnType = ReturnType<typeof useBasicName>
 type UseOwnersParameters = {
   ownerData: BasicNameReturnType['ownerData']
   wrapperData: BasicNameReturnType['wrapperData']
-  registrationStatus: BasicNameReturnType['registrationStatus']
   dnsOwner?: GetDnsOwnerReturnType
   abilities?: ReturnType<typeof useAbilities>['data']
 }
@@ -25,18 +24,6 @@ export const useOwners = ({
 }: UseOwnersParameters) => {
   const owners = useMemo(() => {
     const _owners: OwnerArray = []
-    // if (wrapperData) {
-    //   if (ownerData?.owner === nameWrapperAddress) {
-    //     _owners.push({
-    //       address: wrapperData!.owner,
-    //       canTransfer: abilities.canSendOwner,
-    //       transferType: 'owner',
-    //       label: 'name.owner',
-    //       description: 'details.descriptions.owner',
-    //       testId: 'owner-button-owner',
-    //     })
-    //   }
-    // } else
     if (wrapperData) {
       _owners.push({
         address: wrapperData.owner!,

@@ -87,7 +87,6 @@ const CONTRACT_INFO = {
               child: { CANNOT_TRANSFER: false },
             },
           },
-          registrationStatus: 'registered',
         },
         {
           ownerData: {
@@ -98,7 +97,6 @@ const CONTRACT_INFO = {
               parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
             },
           },
-          registrationStatus: 'registered',
         },
       ],
       guard:
@@ -146,7 +144,6 @@ const CONTRACT_INFO = {
               child: { CANNOT_TRANSFER: false },
             },
           },
-          registrationStatus: 'registered',
         },
         {
           ownerData: {
@@ -154,7 +151,6 @@ const CONTRACT_INFO = {
             owner: P.select('parentOwner'),
             registrant: P.optional(P.select('parentRegistrant')),
           },
-          registrationStatus: 'registered',
         },
       ],
       guard:
@@ -202,14 +198,12 @@ const CONTRACT_INFO = {
             ownershipLevel: P.not('nameWrapper'),
             owner: P.select('subnameOwner'),
           },
-          registrationStatus: 'registered',
         },
         {
           ownerData: {
             ownershipLevel: P.not('nameWrapper'),
             owner: P.select('parentOwner'),
           },
-          registrationStatus: 'registered',
         },
       ],
       guard:
@@ -245,7 +239,6 @@ const CONTRACT_INFO = {
             ownershipLevel: P.not('nameWrapper'),
             owner: P.select('subnameOwner'),
           },
-          registrationStatus: 'registered',
         },
         {
           ownerData: { ownershipLevel: 'nameWrapper' },
@@ -254,7 +247,6 @@ const CONTRACT_INFO = {
               parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
             },
           },
-          registrationStatus: 'registered',
         },
       ],
       guard:

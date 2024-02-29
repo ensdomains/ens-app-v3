@@ -6,7 +6,11 @@ import { useAccountSafely } from '../account/useAccountSafely'
 import { useResolverIsAuthorised } from '../resolver/useResolverIsAuthorised'
 import { useBasicName } from '../useBasicName'
 import { useHasSubnames } from '../useHasSubnames'
-import { useAbilities } from './useAbilities'
+import { DEFAULT_ABILITIES, useAbilities } from './useAbilities'
+import { NameType } from '../nameType/getNameType'
+import { match, P } from 'ts-pattern'
+import { createAccounts } from '@root/playwright/fixtures/accounts'
+import { Address } from 'viem'
 
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/useBasicName')
@@ -17,6 +21,23 @@ const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseBasicName = mockFunction(useBasicName)
 const mockUseResolverIsAuthorised = mockFunction(useResolverIsAuthorised)
 const mockUseHasSubnames = mockFunction(useHasSubnames)
+
+const MockUseAbilitesTestConfig = {
+  'test1': {
+    basicName: '',
+    parentBasicName: ''
+  },
+  'test2': {}
+}
+
+type MockUseAbilitiesType = keyof typeof MockUseAbilitesTestConfig
+const MockUseAbilitesTypes = Object.keys(MockUseAbilitesTestConfig) as MockUseAbilitiesType[]
+
+export const createMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
+  return match(type).with('test1', () => ({}))
+  .with('test2', () => ({}))
+  .otherwise(() => DEFAULT_ABILITIES)
+}
 
 describe('useAbilities', () => {
   describe('basic abilities', () => {
@@ -71,6 +92,19 @@ describe('useAbilities', () => {
       const { result } = renderHook(() => useAbilities({ name }))
 
       expect(result.current.data?.canEditRecords).toBe(true)
+    })
+  })
+
+
+  // ownerdata , registrationStatus, pccExpired
+  describe('matrix', () => {
+    it.each(MockUseAbilitesTypes)('', (type, ) => {
+      const mockData = createMockUseAbilitiesData(type)
+      mockUseAccountSafely.mockReturnValue({ address: createAccounts().getAddress('user') as Address })
+      mockUseBasicName.mockReturnValue(createMockBasicNameData(''))
+      mockUseResolverIsAuthorised.mockReturnValue({ data: { isAuthorised: true, isValid: true }, isLoading: false, isFetching: false })
+      const { result } = renderHook(() => useAbilities({ name: 'test.eth' }))
+      expect(result.current.data).toEqual(data)
     })
   })
 })

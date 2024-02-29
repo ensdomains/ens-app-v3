@@ -20,7 +20,7 @@ import { useValidate } from './useValidate'
 
 const EXPIRY_LIVE_WATCH_TIME = 1_000 * 60 * 5 // 5 minutes
 
-type UseBasicNameOptions = {
+export type UseBasicNameOptions = {
   name?: string | null
   normalised?: boolean
   enabled?: boolean
@@ -31,7 +31,7 @@ export const useBasicName = ({
   name,
   normalised = false,
   enabled = true,
-  subgraphEnabled = false,
+  subgraphEnabled = true,
 }: UseBasicNameOptions) => {
   const validation = useValidate({ input: name!, enabled: enabled && !!name })
 
@@ -93,34 +93,12 @@ export const useBasicName = ({
       ? new Date(expiryDate.getTime() + expiryData.gracePeriod * 1000)
       : undefined
 
-  const isGracePeriod =
-    !!expiryDate &&
-    !!gracePeriodEndDate &&
-    Date.now() > expiryDate?.getTime() &&
-    Date.now() < gracePeriodEndDate.getTime()
-
   // gracePeriodEndDate is +/- 5 minutes from Date.now()
   const isTempPremiumDesynced = !!(
     gracePeriodEndDate &&
     Date.now() + EXPIRY_LIVE_WATCH_TIME > gracePeriodEndDate.getTime() &&
     gracePeriodEndDate.getTime() > Date.now() - EXPIRY_LIVE_WATCH_TIME
   )
-
-  const { data: subgraphRegistrant } = useSubgraphRegistrant({
-    name: normalisedName,
-    enabled: enabled && subgraphEnabled && isGracePeriod && is2LD && isETH,
-  })
-
-  const ownerDataWithSubgraphRegistrant = useMemo(() => {
-    if (!ownerData) return undefined
-    const checkSumSubgraphRegistrant = subgraphRegistrant
-      ? getAddress(subgraphRegistrant)
-      : undefined
-    return {
-      ...ownerData,
-      registrant: ownerData?.registrant || checkSumSubgraphRegistrant,
-    } as UseOwnerReturnType
-  }, [ownerData, subgraphRegistrant])
 
   const blockTimestamp = useCurrentBlockTimestamp({ enabled: isTempPremiumDesynced })
 
@@ -143,19 +121,28 @@ export const useBasicName = ({
       })
     : undefined
 
+  const { data: subgraphRegistrant } = useSubgraphRegistrant({
+    name: normalisedName,
+    enabled: enabled && subgraphEnabled && registrationStatus === 'gracePeriod' && is2LD && isETH,
+  })
+
+  const ownerDataWithSubgraphRegistrant = useMemo(() => {
+    if (!ownerData) return undefined
+    const checkSumSubgraphRegistrant = subgraphRegistrant
+      ? getAddress(subgraphRegistrant)
+      : undefined
+    return {
+      ...ownerData,
+      registrant: ownerData?.registrant || checkSumSubgraphRegistrant,
+    } as UseOwnerReturnType
+  }, [ownerData, subgraphRegistrant])
+
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
   const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
 
   const pccExpired = usePccExpired({ ownerData, wrapperData })
-  // const nameType = getNameType({
-  //   name: normalisedName,
-  //   ownerData,
-  //   wrapperData,
-  //   pccExpired,
-  //   registrationStatus,
-  //   nameWrapperAddress,
-  // })
+
   const isWrapped = !!wrapperData
   const canBeWrapped = useMemo(
     () =>

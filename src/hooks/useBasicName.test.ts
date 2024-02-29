@@ -14,6 +14,7 @@ import { useWrapperData } from './ensjs/public/useWrapperData'
 import { useBasicName } from './useBasicName'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
+import { match } from 'ts-pattern'
 
 vi.mock('./chain/useCurrentBlockTimestamp')
 vi.mock('./chain/useContractAddress')
@@ -494,5 +495,24 @@ describe('useBasicName', () => {
         expect.objectContaining({ timestamp: 1234567890 - ms5Minutes }),
       )
     })
+  })
+})
+
+const TEST_MATRIX_CONFIG = {
+  "eth-unwrapped-2ld": {},
+  "eth-grace-period-unwrapped-2ld": {}
+} as const
+
+type TestMatrix = keyof typeof TEST_MATRIX_CONFIG
+const TEST_MATRIX = Object.keys(TEST_MATRIX_CONFIG) as unknown as TestMatrix[]
+
+const createMockUseBasicName = (testMatrix: TestMatrix, overrides?: any) => match(testMatrix)
+.with('eth-unwrapped-2ld', () => ({}))
+.with('eth-grace-period-unwrapped-2ld', () => ({}))
+.exhaustive()
+
+describe('useBasicName Test Matric', () => {
+  it.each(TEST_MATRIX)('should call useBasicName', (testMatrix) => {
+
   })
 })

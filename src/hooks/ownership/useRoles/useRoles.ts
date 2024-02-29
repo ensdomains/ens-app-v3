@@ -54,7 +54,7 @@ function useRoles(name: string, options?: Options): Result {
 
   const nameType = useNameType(name)
   const details = useNameDetails({ name })
-  const parentData = useParentBasicName(name)
+  const parentData = useParentBasicName({ name })
 
   const isLoading = nameType.isLoading || details.isLoading || parentData.isLoading
   const isCachedData = nameType.isCachedData || details.isCachedData || parentData.isCachedData

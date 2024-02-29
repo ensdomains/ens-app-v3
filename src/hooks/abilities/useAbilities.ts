@@ -12,6 +12,7 @@ import { getDeleteAbilities } from './utils/getDeleteAbilities'
 import { getEditAbilities } from './utils/getEditAbilities'
 import { getReclaimAbilities } from './utils/getReclaimAbilities'
 import { getSendAbilities } from './utils/getSendAbilities'
+import { useParentBasicName } from '../useParentBasicName'
 
 type ExtendAbilities = {
   canExtend: boolean
@@ -98,7 +99,7 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
     enabled: enabled && !!name && !!address,
   })
 
-  const parentBasicNameData = useBasicName({
+  const parentBasicNameData = useParentBasicName({
     name: parent,
     enabled: enabled && !!parent && !!address,
   })

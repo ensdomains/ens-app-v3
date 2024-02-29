@@ -17,7 +17,7 @@ type Input = {
 export const useOwnershipWarning = ({ name, nameType, details }: Input) => {
   const { t } = useTranslation('profile')
   const account = useAccountSafely()
-  const parent = useParentBasicName(name)
+  const parent = useParentBasicName({ name })
   const isLoading = !account.address || nameType.isLoading || details.isLoading || parent.isLoading
 
   const data = useMemo(() => {

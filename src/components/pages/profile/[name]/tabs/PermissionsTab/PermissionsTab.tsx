@@ -43,7 +43,7 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
 
   const abilities = useAbilities({ name })
   const { wrapperData: parentWrapperData, isCachedData: isParentBasicCachedData } =
-    useParentBasicName(name)
+    useParentBasicName({ name })
 
   const { data: fusesSetDates } = useFusesSetDates({ name })
   const fusesStatus = useFusesStates({
