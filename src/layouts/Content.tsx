@@ -252,6 +252,7 @@ export const Content = ({
     header?: React.ReactNode
     leading?: React.ReactNode
     trailing: React.ReactNode
+    titleExtra?: React.ReactNode
   }
 }) => {
   const router = useRouterWithHistory()
@@ -306,6 +307,7 @@ export const Content = ({
                 subtitle={subtitle && (!isDesktopMode || alwaysShowSubtitle) ? subtitle : undefined}
                 titleButton={titleButton}
               />
+              {isDesktopMode && children.titleExtra}
               {inlineHeading && children.header && isDesktopMode && (
                 <ContentContainer>
                   <Skeleton loading={loading}>{children.header}</Skeleton>
@@ -313,13 +315,13 @@ export const Content = ({
               )}
               {!isDesktopMode && <Hamburger />}
             </CustomLeadingHeading>
+            {!isDesktopMode && children.titleExtra}
           </Skeleton>
         </HeadingItems>
       )}
 
       {!isDesktopMode && WarningComponent}
       {!isDesktopMode && InfoComponent}
-
       {LeadingComponent}
 
       {!inlineHeading && children.header && (
