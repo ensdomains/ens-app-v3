@@ -99,4 +99,12 @@ export const dynamicAddressIcons = {
   clo: dynamic(() => import('./CloIcon.svg')),
   nrg: dynamic(() => import('./NrgIcon.svg')),
   celo: dynamic(() => import('./CeloIcon.svg')),
+  op: dynamic(() => import('./OpIcon.svg')),
+  arb1: dynamic(() => import('./ArbIcon.svg')),
+  base: dynamic(() => import('./BaseIcon.svg')),
+  linea: dynamic(() => import('./LineaIcon.svg')),
+  strk: dynamic(() => import('./StrkIcon.svg')),
+  zora: dynamic(() => import('./ZoraIcon.svg')),
+  zksync: dynamic(() => import('./ZkSyncIcon.svg')),
+  metis: dynamic(() => import('./MetisIcon.svg')),
 }
