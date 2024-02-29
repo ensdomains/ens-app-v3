@@ -44,7 +44,7 @@
     },
     "plugins": [
       {
-        "name": "typescript-styled-plugin",
+        "name": "@styled/typescript-styled-plugin",
         "tags": ["styled", "css", "mq"],
         "validate": false,
         "lint": {
