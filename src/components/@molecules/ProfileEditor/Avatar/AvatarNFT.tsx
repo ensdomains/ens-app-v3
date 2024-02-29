@@ -236,6 +236,7 @@ const NftItem = ({
           onError={() => setLoadState('error')}
           onLoad={() => setLoadState('loaded')}
           data-image-state={loadState}
+          data-testid={`nft-image-${nft.id.tokenId}-${nft.contract.address}`}
         />
       ) : (
         <LoadFailureContainer>
