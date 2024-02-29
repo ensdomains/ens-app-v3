@@ -1,16 +1,35 @@
-import { useQuery } from 'wagmi'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
+import { CreateQueryKey } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
 
-import { useQueryKeyFactory } from './useQueryKeyFactory'
+import { useQueryOptions } from './useQueryOptions'
+
+type GetBeautifiedNameQueryKey = CreateQueryKey<
+  { name: string },
+  'getBeautifiedName',
+  'independent'
+>
+
+const getBeautifiedNameQueryFn = ({
+  queryKey: [{ name }],
+}: QueryFunctionContext<GetBeautifiedNameQueryKey>) => {
+  return tryBeautify(name)
+}
 
 export const useBeautifiedName = (name: string): string => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params: { name },
     functionName: 'getBeautifiedName',
     queryDependencyType: 'independent',
+    queryFn: getBeautifiedNameQueryFn,
   })
-  const { data } = useQuery(queryKey, ({ queryKey: [{ name: name_ }] }) => tryBeautify(name_), {
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
+  const { data } = useQuery({
+    ...preparedOptions,
     initialData: () => tryBeautify(name),
   })
 

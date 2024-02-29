@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
+import { useChainId } from 'wagmi'
 
 import { getKnownResolverData } from '@app/constants/resolverAddressData'
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useRegistryResolver } from '@app/hooks/resolver/useRegistryResolver'
 import { emptyAddress } from '@app/utils/constants'
 

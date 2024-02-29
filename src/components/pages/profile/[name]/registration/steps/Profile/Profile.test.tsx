@@ -1,14 +1,23 @@
 import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
-import { PointerEventsCheckLevel } from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 
 import { RegistrationReducerDataItem } from '../../types'
 import Profile from './Profile'
+
+vi.mock('wagmi')
+
+vi.mock('@app/hooks/chain/useContractAddress')
+vi.mock('@app/hooks/useLocalStorage')
+
+const mockUseAccount = mockFunction(useAccount)
+
+const mockUseContractAddress = mockFunction(useContractAddress)
+const mockUseLocalStorage = mockFunction(useLocalStorage)
 
 const name = 'test.eth'
 
@@ -37,24 +46,12 @@ const makeExpectedCallbackData = (overwrites: any = {}): any => {
   }
 }
 
-vi.mock('@app/hooks/chain/useContractAddress')
-vi.mock('@app/hooks/useLocalStorage')
-
-const mockUseNetwork = mockFunction(useNetwork)
-mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
-
-const mockUseAccount = mockFunction(useAccount)
 mockUseAccount.mockReturnValue({ address: '0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7' })
 
-const mockUseContractAddress = mockFunction(useContractAddress)
-// @ts-ignore
-mockUseContractAddress.mockReturnValue('0x123')
-
-const mockUseLocalStorage = mockFunction(useLocalStorage)
+mockUseContractAddress.mockReturnValue('0x123' as any)
 mockUseLocalStorage.mockReturnValue([false, () => {}])
 
-const mockIntersectionObserver = vi.fn()
-mockIntersectionObserver.mockReturnValue({
+const mockIntersectionObserver = vi.fn().mockReturnValue({
   observe: () => null,
   unobserve: () => null,
   disconnect: () => null,
@@ -164,9 +161,7 @@ describe('Profile', () => {
       />,
     )
 
-    await userEvent.click(screen.getByTestId('profile-record-input-eth-delete-button'), {
-      pointerEventsCheck: PointerEventsCheckLevel.Never,
-    })
+    await userEvent.click(screen.getByTestId('profile-record-input-eth-delete-button'))
     await waitFor(() =>
       expect(screen.getByText('steps.profile.confirmations.clearEth.title')).toBeInTheDocument(),
     )

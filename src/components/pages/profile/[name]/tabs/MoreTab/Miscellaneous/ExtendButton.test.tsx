@@ -8,10 +8,13 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 
 import { ExtendButton } from './ExtendButton'
 
+vi.mock('wagmi')
+
 vi.mock('@app/hooks/abilities/useAbilities')
 vi.mock('@app/transaction-flow/TransactionFlowProvider')
 
 const mockUseAccount = mockFunction(useAccount)
+
 const mockUseAbilities = mockFunction(useAbilities)
 const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 

@@ -43,9 +43,9 @@ const displayItems = (
   },
 ]
 
-const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
+const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
   return transferName.makeFunctionData(
-    walletClient,
+    connectorClient,
     data.contract === 'registrar'
       ? data
       : {

@@ -1,8 +1,11 @@
-import type { PartialMockedFunction } from '@app/test-utils'
+import { mockFunction } from '@app/test-utils'
 
 import { waitFor } from '@testing-library/react'
-import { getPublicClient } from '@wagmi/core'
-import { describe, expect, it, MockedFunction, vi } from 'vitest'
+import { PartiallyMockedFunction } from '@vitest/spy'
+import { getBlock } from 'viem/actions'
+import { describe, expect, it, vi } from 'vitest'
+
+import { wagmiConfig } from '@app/utils/query/wagmi'
 
 import {
   createTransactionStore,
@@ -23,30 +26,24 @@ BigInt.prototype.toJSON = function () {
   return this.toString()
 }
 
+vi.mock('viem/actions')
+
 vi.mock('./waitForTransaction', () => ({
   waitForTransaction: vi.fn(),
 }))
 
-vi.mock('@wagmi/core')
+const mockGetBlock = mockFunction(getBlock).mockImplementation(async () => ({ timestamp: 1 }))
 
-const mockPublicClient = {
-  getBlock: vi.fn(async () => ({ timestamp: 1 })),
-}
-
-const mockGetPublicClient = getPublicClient as unknown as MockedFunction<
-  PartialMockedFunction<typeof getPublicClient>
->
-
-mockGetPublicClient.mockReturnValue(mockPublicClient)
-
-const mockWaitForTransaction = waitForTransaction as unknown as MockedFunction<
-  PartialMockedFunction<typeof waitForTransaction>
+const mockWaitForTransaction = waitForTransaction as unknown as PartiallyMockedFunction<
+  typeof waitForTransaction
 >
 
 const setup = () => {
-  const store = createTransactionStore()
+  const store = createTransactionStore(wagmiConfig)
   return store
 }
+
+const client = wagmiConfig.getClient()
 
 type MockUpdateFn = (_account: any, _chainId: any, updateFn: (...args: any[]) => any) => void
 
@@ -61,7 +58,7 @@ describe('transactionStore', () => {
     } as const
     const newHash = '0x1f53b764ec83d9e77f6c62e6ab8fb9327daa6d78b6de61a69a8a80d77c9e4db4'
 
-    mockWaitForTransaction.mockImplementation(async ({ onReplaced }) => {
+    mockWaitForTransaction.mockImplementation(async (_config, { onReplaced }) => {
       setTimeout(() => {
         onReplaced!({
           reason: 'repriced',
@@ -72,8 +69,8 @@ describe('transactionStore', () => {
       }, 0)
 
       return {
-        status: 'confirmed',
-        blockHash: 'blockHash',
+        status: 'success',
+        blockHash: '0xblockHash',
       }
     })
 
@@ -83,13 +80,13 @@ describe('transactionStore', () => {
 
     const transactions = store.getTransactions('account', 1)
 
-    expect(mockPublicClient.getBlock).toHaveBeenCalledWith({ blockHash: 'blockHash' })
+    expect(mockGetBlock).toHaveBeenCalledWith(client, { blockHash: '0xblockHash' })
 
     expect(transactions[1]).toStrictEqual({
       ...transaction,
       newHash,
       status: 'repriced',
-      minedData: { status: 'confirmed', blockHash: 'blockHash', timestamp: 1000 },
+      minedData: { status: 'success', blockHash: '0xblockHash', timestamp: 1000 },
       searchRetries: 0,
       searchStatus: 'searching',
     })
@@ -98,7 +95,7 @@ describe('transactionStore', () => {
       hash: newHash,
       isSafeTx: false,
       status: 'confirmed',
-      minedData: { status: 'confirmed', blockHash: 'blockHash', timestamp: 1000 },
+      minedData: { status: 'success', blockHash: '0xblockHash', timestamp: 1000 },
       searchRetries: 0,
       searchStatus: 'searching',
     })
@@ -116,7 +113,7 @@ describe('transactionStore', () => {
     mockWaitForTransaction.mockImplementation(async () => {
       return {
         status: 'reverted',
-        blockHash: 'blockHash',
+        blockHash: '0xblockHash',
         hash: cancelledHash,
       }
     })
@@ -124,7 +121,7 @@ describe('transactionStore', () => {
     store.addTransaction('account', 1, transaction)
 
     await waitFor(() =>
-      expect(mockPublicClient.getBlock).toHaveBeenCalledWith({ blockHash: 'blockHash' }),
+      expect(mockGetBlock).toHaveBeenCalledWith(client, { blockHash: '0xblockHash' }),
     )
 
     const transactions = store.getTransactions('account', 1)
@@ -135,7 +132,7 @@ describe('transactionStore', () => {
       minedData: {
         status: 'reverted',
         hash: cancelledHash,
-        blockHash: 'blockHash',
+        blockHash: '0xblockHash',
         timestamp: 1000,
       },
       searchRetries: 0,

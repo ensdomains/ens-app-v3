@@ -1,14 +1,12 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 import { labelhash } from 'viem'
-import { useQuery } from 'wagmi'
 
 import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
-import { CreateQueryKey, PublicClientWithChain, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
-import { useQueryKeyFactory } from './useQueryKeyFactory'
+import { useQueryOptions } from './useQueryOptions'
 
 type UseRegistrationDataParameters = {
   name?: string | undefined | null
@@ -38,56 +36,67 @@ const gqlQuery = `
   }
 `
 
-export const getRegistrationDataQueryFn = async <TParams extends UseRegistrationDataParameters>({
-  queryKey: [{ name }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!name) throw new Error('name is required')
+export const getRegistrationDataQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UseRegistrationDataParameters>({
+    queryKey: [{ name }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
-  const subgraphClient = createSubgraphClient({ client: publicClient })
+    const client = config.getClient({ chainId })
+    const subgraphClient = createSubgraphClient({ client })
 
-  return subgraphClient.request<{
-    registration?: {
-      registrationDate: string
+    const result = await subgraphClient.request<{
+      registration?: {
+        registrationDate: string
+      }
+      nameRegistereds: {
+        transactionID: string
+      }[]
+    }>(gqlQuery, {
+      id: labelhash(name.split('.')[0]),
+    })
+
+    if (!result.registration) return null
+
+    return {
+      registrationDate: new Date(parseInt(result.registration.registrationDate) * 1000),
+      transactionHash: result.nameRegistereds[0]?.transactionID,
     }
-    nameRegistereds: {
-      transactionID: string
-    }[]
-  }>(gqlQuery, {
-    id: labelhash(name.split('.')[0]),
-  })
-}
+  }
 
 const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: TParams & UseRegistrationDataConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     functionName: 'getRegistrationData',
     queryDependencyType: 'graph',
+    queryFn: getRegistrationDataQueryFn,
   })
 
-  const query = useQuery(queryKey, getRegistrationDataQueryFn, {
-    cacheTime,
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
+
+  const query = useQuery({
+    ...preparedOptions,
     enabled: enabled && !!params.name && checkETH2LDFromName(params.name),
+    gcTime,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
     select: (data) => {
-      if (!data?.registration) return null
+      if (!data) return data
       return {
-        registrationDate: new Date(parseInt(data.registration.registrationDate) * 1000),
-        transactionHash: data.nameRegistereds[0]?.transactionID,
+        registrationDate: new Date(data.registrationDate),
+        transactionHash: data.transactionHash,
       }
     },
   })

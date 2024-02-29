@@ -1,15 +1,16 @@
-import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
 import { useIntercom } from 'react-use-intercom'
 import styled, { css } from 'styled-components'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 
 import { mq } from '@ensdomains/thorin'
 
 import FeedbackSVG from '@app/assets/Feedback.svg'
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { getSupportedChainById } from '@app/constants/chains'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
 
 import { Navigation } from './Navigation'
 
@@ -61,25 +62,25 @@ const BottomPlaceholder = styled.div(
 export const StyledFeedbackSVG = styled(FeedbackSVG)(() => css``)
 
 export const Basic = withErrorBoundary(({ children }: { children: React.ReactNode }) => {
-  const { chain: currentChain } = useNetwork()
-  const { switchNetwork } = useSwitchNetwork()
-  const router = useRouter()
+  const { chainId, isConnected } = useAccount()
+  const { switchChain } = useSwitchChain()
+
+  const router = useRouterWithHistory()
   const [error] = useErrorBoundary()
   const { boot } = useIntercom()
 
   useEffect(() => {
     // Do not initialise with uid and email without implementing identity verification first
-    boot()
+    if (!IS_DEV_ENVIRONMENT) boot()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    if (currentChain && !getSupportedChainById(currentChain.id)) {
-      switchNetwork?.(1)
+    if (isConnected && !getSupportedChainById(chainId)) {
+      switchChain({ chainId: 1 })
       router.push('/unsupportedNetwork')
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentChain?.id, router.pathname])
+  }, [isConnected, chainId, switchChain, router])
 
   return (
     <Container className="min-safe">

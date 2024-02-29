@@ -1,7 +1,7 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
-import { useQuery, useQueryClient } from 'wagmi'
+import { useChainId } from 'wagmi'
 
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useSubgraphClient } from '@app/hooks/ensjs/subgraph/useSubgraphClient'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
@@ -59,46 +59,46 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   )
 
   const hasGlobalError = useHasGlobalError()
-  const { data: currentGraphBlock } = useQuery<number>(
-    ['graphBlock', chainId, transactions],
-    () =>
+  const { data: currentGraphBlock } = useQuery<number>({
+    queryKey: ['graphBlock', chainId, transactions],
+    queryFn: () =>
       subgraphClient.request<GraphResponse>(query).then((res) => {
         return res!._meta.block.number
       }),
-    {
-      initialData: 0,
-      refetchInterval: (data) => {
-        if (hasGlobalError) return false
-        if (!data) return 1000
-        const waitingForBlock = findTransactionHigherThanBlock(data)
-        if (waitingForBlock) {
-          return 1000
-        }
-        return false
-      },
-      enabled:
-        !!subgraphClient && !!transactions.find((x) => x.minedData?.blockNumber) && !hasGlobalError,
-      onSuccess: (data) => {
-        if (!data) return
-        const waitingForBlock = findTransactionHigherThanBlock(data)
-        if (waitingForBlock) return
-        queryClient
-          .resetQueries({
-            predicate: (q) => {
-              const { queryKey } = q
-              const functionName = queryKey[4]
-              if (typeof functionName !== 'string') return false
-              return functionName === 'getSubnames'
-            },
-          })
-          .then(() =>
-            queryClient.invalidateQueries({
-              predicate: (q) => q.queryKey[q.queryKey.length - 1] === 'graph',
-            }),
-          )
-      },
+    initialData: 0,
+    refetchInterval: (q) => {
+      if (hasGlobalError) return false
+      if (!q.state.data) return 1000
+      const waitingForBlock = findTransactionHigherThanBlock(q.state.data)
+      if (waitingForBlock) {
+        return 1000
+      }
+      return false
     },
-  )
+    enabled:
+      !!subgraphClient && !!transactions.find((x) => x.minedData?.blockNumber) && !hasGlobalError,
+  })
+
+  // reset getSubnames and graph queries when the graph block is updated
+  useEffect(() => {
+    // only run when the graph block is updated and there are no transactions waiting for a higher block
+    if (currentGraphBlock && !findTransactionHigherThanBlock(currentGraphBlock)) {
+      queryClient
+        .resetQueries({
+          predicate: (q) => {
+            const { queryKey } = q
+            const functionName = queryKey[4]
+            if (typeof functionName !== 'string') return false
+            return functionName === 'getSubnames'
+          },
+        })
+        .then(() =>
+          queryClient.invalidateQueries({
+            predicate: (q) => q.queryKey[q.queryKey.length - 1] === 'graph',
+          }),
+        )
+    }
+  }, [currentGraphBlock, findTransactionHigherThanBlock, queryClient])
 
   // finds transactions that have been updated and calls the callbacks
   useEffect(() => {

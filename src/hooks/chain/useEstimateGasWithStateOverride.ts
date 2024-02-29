@@ -1,5 +1,4 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import {
   Address,
@@ -16,25 +15,23 @@ import {
   RpcTransactionRequest,
   toHex,
   TransactionRequest,
-  WalletClient,
 } from 'viem'
-import { useQuery } from 'wagmi'
+import { useConnectorClient } from 'wagmi'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import {
   createTransactionRequest,
   TransactionName,
   TransactionParameters,
 } from '@app/transaction-flow/transaction'
 import {
+  ConfigWithEns,
+  ConnectorClientWithEns,
   CreateQueryKey,
   Prettify,
-  PublicClientWithChain,
   QueryConfig,
-  WalletClientWithAccount,
 } from '@app/types'
 
-import { useWalletClientWithAccount } from '../account/useWalletClient'
 import { useGasPrice } from './useGasPrice'
 
 type UserStateValue = {
@@ -77,10 +74,10 @@ type StateOverride<Quantity256 = bigint, Quantity = number> = {
 }
 
 type TransactionItem = {
-  [TName in TransactionName]: Omit<
-    TransactionParameters<TName>,
-    'publicClient' | 'walletClient'
-  > & { name: TName; stateOverride?: UserStateOverrides }
+  [TName in TransactionName]: Omit<TransactionParameters<TName>, 'client' | 'connectorClient'> & {
+    name: TName
+    stateOverride?: UserStateOverrides
+  }
 }[TransactionName]
 
 type UseEstimateGasWithStateOverrideParameters<
@@ -129,7 +126,7 @@ const calculateStorageValue = (value: UserStateValue['value']) => {
 const mapUserState = (state: UserStateValue[]) =>
   Object.fromEntries(
     state.map(({ slot, keys, value }) => {
-      const storageKey = keys.reverse().reduce(concatKey, leftPadBytes32(toHex(slot)))
+      const storageKey = keys.reduce(concatKey, leftPadBytes32(toHex(slot)))
       const storageValue = calculateStorageValue(value)
       return [storageKey, storageValue]
     }),
@@ -154,29 +151,29 @@ const estimateIndividualGas = async <TName extends TransactionName>({
   data,
   name,
   stateOverride,
-  walletClient,
-  publicClient,
+  connectorClient,
+  client,
 }: { name: TName; stateOverride?: UserStateOverrides } & TransactionParameters<TName>) => {
   const generatedRequest = await createTransactionRequest({
-    publicClient,
-    walletClient,
+    client,
+    connectorClient,
     data,
     name,
   })
 
   const formattedRequest = formatTransactionRequest({
     ...generatedRequest,
-    from: walletClient.account.address,
+    from: connectorClient.account.address,
   } as TransactionRequest)
 
   const stateOverrideWithBalance = stateOverride?.find(
-    (s) => s.address === walletClient.account.address,
+    (s) => s.address === connectorClient.account.address,
   )
     ? stateOverride
     : [
         ...(stateOverride || []),
         {
-          address: walletClient.account.address,
+          address: connectorClient.account.address,
           balance:
             ('value' in generatedRequest && generatedRequest.value ? generatedRequest.value : 0n) +
             parseEther('10'),
@@ -196,7 +193,7 @@ const estimateIndividualGas = async <TName extends TransactionName>({
     ]),
   )
 
-  return publicClient
+  return client
     .request<{
       Method: 'eth_estimateGas'
       Parameters:
@@ -216,18 +213,19 @@ const estimateIndividualGas = async <TName extends TransactionName>({
 }
 
 export const estimateGasWithStateOverrideQueryFn =
-  (walletClient: WalletClient | undefined) =>
+  (config: ConfigWithEns) =>
+  (connectorClient: ConnectorClientWithEns | undefined) =>
   async <
     TransactionItems extends TransactionItem[] | readonly TransactionItem[],
     TParams extends UseEstimateGasWithStateOverrideParameters<TransactionItems>,
   >({
     queryKey: [{ transactions }, chainId],
   }: QueryFunctionContext<QueryKey<TransactionItems, TParams>>) => {
-    const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const client = config.getClient({ chainId })
 
-    const walletClientWithAccount = {
-      ...(walletClient ?? publicClient),
-      ...(walletClient?.account?.address
+    const connectorClientWithAccount = {
+      ...(connectorClient ?? client),
+      ...(connectorClient?.account?.address
         ? {}
         : {
             account: {
@@ -235,14 +233,14 @@ export const estimateGasWithStateOverrideQueryFn =
               type: 'json-rpc',
             },
           }),
-    } as WalletClientWithAccount
+    } as ConnectorClientWithEns
 
     const gasEstimates = await Promise.all(
       transactions.map((t) =>
         estimateIndividualGas({
           ...t,
-          publicClient,
-          walletClient: walletClientWithAccount,
+          client,
+          connectorClient: connectorClientWithAccount,
         }),
       ),
     )
@@ -257,40 +255,47 @@ export const useEstimateGasWithStateOverride = <
   const TransactionItems extends TransactionItem[] | readonly TransactionItem[],
 >({
   // config
-  cacheTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
+
   // params
   ...params
 }: UseEstimateGasWithStateOverrideParameters<TransactionItems> &
   UseEstimateGasWithStateOverrideConfig) => {
-  const { data: walletClient, isLoading: isWalletClientLoading } = useWalletClientWithAccount()
+  const { data: connectorClient, isLoading: isConnectorLoading } =
+    useConnectorClient<ConfigWithEns>()
 
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'estimateGasWithStateOverride',
     queryDependencyType: 'standard',
+    queryFn: estimateGasWithStateOverrideQueryFn,
   })
 
-  const { gasPrice, isLoading: isGasPriceLoading, isFetching: isGasPriceFetching } = useGasPrice()
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn(connectorClient),
+  })
 
-  const query = useQuery(queryKey, estimateGasWithStateOverrideQueryFn(walletClient), {
-    cacheTime,
-    enabled: enabled && !isWalletClientLoading,
+  const query = useQuery({
+    ...preparedOptions,
+    enabled: enabled && !isConnectorLoading,
+    gcTime,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
     select: (r) => ({
       reduced: BigInt(r.reduced),
       gasEstimates: r.gasEstimates.map((g) => BigInt(g)),
     }),
   })
+
+  const {
+    data: gasPrice,
+    isLoading: isGasPriceLoading,
+    isFetching: isGasPriceFetching,
+  } = useGasPrice()
 
   const data = useMemo(() => {
     if (!gasPrice || !query.data) {
@@ -314,7 +319,7 @@ export const useEstimateGasWithStateOverride = <
     }
   }, [gasPrice, params.transactions, query.data])
 
-  const isLoading = query.isLoading || isGasPriceLoading || isWalletClientLoading
+  const isLoading = query.isLoading || isGasPriceLoading || isConnectorLoading
   const isFetching = query.isFetching || isGasPriceFetching
 
   return useMemo(

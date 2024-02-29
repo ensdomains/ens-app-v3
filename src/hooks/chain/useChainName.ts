@@ -1,11 +1,14 @@
-import { useNetwork } from 'wagmi'
+import { useMemo } from 'react'
+import { useChainId, useConfig } from 'wagmi'
+
+import { getChainName } from '@app/utils/getChainName'
 
 export const useChainName = () => {
-  const { chain } = useNetwork()
-  if (chain) {
-    if (!chain.network) throw new Error('Chain network is not defined')
-    const name = chain.network.toLowerCase()
-    return name === 'homestead' ? 'mainnet' : name
-  }
-  return 'mainnet'
+  const config = useConfig()
+  const chainId = useChainId()
+
+  return useMemo(() => {
+    return getChainName(config, { chainId })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainId])
 }

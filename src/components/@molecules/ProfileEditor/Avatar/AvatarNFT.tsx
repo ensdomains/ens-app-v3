@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useInfiniteQuery } from 'wagmi'
+import { useAccount, useClient } from 'wagmi'
 
 import {
   Button,
@@ -17,7 +18,6 @@ import {
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainName } from '@app/hooks/chain/useChainName'
-import { usePublicClient } from '@app/hooks/usePublicClient'
 import { getSupportedChainContractAddress } from '@app/utils/getSupportedChainContractAddress'
 
 type OwnedNFT = {
@@ -178,15 +178,15 @@ export const AvatarNFT = ({
   const { address: _address } = useAccount()
   const address = _address!
 
-  const publicClient = usePublicClient()
+  const client = useClient()
 
   const {
     data: NFTPages,
     fetchNextPage,
     isLoading,
-  } = useInfiniteQuery(
-    [chain, address, 'NFTs'],
-    async ({ pageParam }: { pageParam?: string }) => {
+  } = useInfiniteQuery({
+    queryKey: [chain, address, 'NFTs'],
+    queryFn: async ({ pageParam }) => {
       const urlParams = new URLSearchParams()
       urlParams.append('owner', address)
       urlParams.append('filters[]', 'SPAM')
@@ -205,22 +205,21 @@ export const AvatarNFT = ({
             (nft.media?.[0]?.thumbnail || nft.media?.[0]?.gateway) &&
             nft.contract.address !==
               getSupportedChainContractAddress({
-                client: publicClient,
+                client,
                 contract: 'ensBaseRegistrarImplementation',
               }) &&
             nft.contract.address !==
               getSupportedChainContractAddress({
-                client: publicClient,
+                client,
                 contract: 'ensNameWrapper',
               }),
         ),
-      } as NFTResponse
+      }
     },
-    {
-      keepPreviousData: true,
-      getNextPageParam: (lastPage) => lastPage.pageKey,
-    },
-  )
+    initialPageParam: '',
+    placeholderData: keepPreviousData,
+    getNextPageParam: (lastPage) => lastPage.pageKey,
+  })
 
   const [searchedInput, setSearchedInput] = useState('')
   const [selectedNFT, setSelectedNFT] = useState<number | null>(null)

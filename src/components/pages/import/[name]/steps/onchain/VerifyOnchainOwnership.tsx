@@ -76,7 +76,8 @@ export const VerifyOnchainOwnership = ({
     isRefetching,
     error,
     refetch,
-    internal: { dataUpdatedAt, errorUpdatedAt },
+    dataUpdatedAt,
+    errorUpdatedAt,
   } = useDnsOwner({ name: selected.name, strict: true })
 
   const { openConnectModal } = useConnectModal()

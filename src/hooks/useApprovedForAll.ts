@@ -1,5 +1,5 @@
 import type { Address } from 'viem'
-import { useContractRead } from 'wagmi'
+import { useReadContract } from 'wagmi'
 
 import { SupportedChain } from '@app/constants/chains'
 
@@ -45,13 +45,15 @@ export const useApprovedForAll = ({
 }: UseApprovedForAllParameters) => {
   const contractAddress = useContractAddress({ contract })
   const operatorAddress = useContractAddress({
-    contract: operatorContract as 'ensRegistry' /* TODO: fix this */,
+    contract: operatorContract,
   })
-  return useContractRead({
+  return useReadContract({
     abi: isApprovedForAllSnippet,
     address: contractAddress,
     functionName: 'isApprovedForAll',
     args: [address, operatorAddress],
-    enabled: enabled && !!address && !!contractAddress && !!operatorAddress,
+    query: {
+      enabled: enabled && !!address && !!contractAddress && !!operatorAddress,
+    },
   })
 }

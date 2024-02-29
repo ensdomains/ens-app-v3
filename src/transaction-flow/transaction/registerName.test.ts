@@ -18,8 +18,8 @@ mockRegisterName.mockImplementation((...args: any[]) => args as any)
 
 it('adds a 2% value buffer to the transaction from the real price', async () => {
   const result = (await registerNameFlowTransaction.transaction({
-    publicClient: {} as any,
-    walletClient: { walletClient: true } as any,
+    client: {} as any,
+    connectorClient: { walletClient: true } as any,
     data: { name: 'test.eth' } as any,
   })) as unknown as [{ walletClient: true }, { name: string; value: bigint }]
   const data = result[1]

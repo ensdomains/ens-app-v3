@@ -17,7 +17,7 @@ describe('useRegistrationParams()', () => {
           records: [
             {
               key: 'eth',
-              value: '0x4b2d639aC1B0497e932F8cE234eFd3B3Df9a9B74',
+              value: '0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74',
               group: 'address',
               type: 'addr',
             },
@@ -63,7 +63,7 @@ describe('useRegistrationParams()', () => {
           records: [
             {
               key: 'eth',
-              value: '0x4b2d639aC1B0497e932F8cE234eFd3B3Df9a9B74',
+              value: '0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74',
               group: 'address',
               type: 'addr',
             },
