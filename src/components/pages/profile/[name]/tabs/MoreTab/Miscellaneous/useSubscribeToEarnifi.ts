@@ -1,5 +1,4 @@
-import { UseMutationOptions } from '@tanstack/react-query'
-import { useMutation } from 'wagmi'
+import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 
 export const EARNIFI_ENDPOINT = 'https://notifications-api.vercel.app/api/v1/ens/subscribe'
 
@@ -37,7 +36,7 @@ const subscribeToEarnifi = async (params: Variables): Promise<void> => {
 type Props = UseMutationOptions<void, unknown, Variables, unknown>
 
 export const useSubscribeToEarnifi = (options: Props) => {
-  const { mutate: subscribe, ...rest } = useMutation(subscribeToEarnifi, options)
+  const { mutate: subscribe, ...rest } = useMutation({ mutationFn: subscribeToEarnifi, ...options })
   return {
     subscribe,
     ...rest,

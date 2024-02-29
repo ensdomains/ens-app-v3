@@ -1,10 +1,11 @@
 /* eslint-disable no-multi-assign */
 import { sha256 } from '@noble/hashes/sha256'
-import { useMemo, useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { bytesToHex } from 'viem'
-import { useMutation, useQueryClient, useSignTypedData } from 'wagmi'
+import { useSignTypedData } from 'wagmi'
 
 import { Button, Dialog, Helper, mq } from '@ensdomains/thorin'
 
@@ -60,77 +61,80 @@ const UploadComponent = ({
 }) => {
   const { t } = useTranslation('transactionFlow')
   const queryClient = useQueryClient()
-  const urlHash = useMemo(() => bytesToHex(sha256(dataURLToBytes(dataURL))), [dataURL])
-  const expiry = useMemo(() => `${Date.now() + 1000 * 60 * 60 * 24 * 7}`, [])
-  const network = useChainName()
+  const chainName = useChainName()
 
-  const { signTypedDataAsync } = useSignTypedData({
-    primaryType: 'Upload',
-    domain: {
-      name: 'Ethereum Name Service',
-      version: '1',
-    },
-    types: {
-      Upload: [
-        { name: 'upload', type: 'string' },
-        { name: 'expiry', type: 'string' },
-        { name: 'name', type: 'string' },
-        { name: 'hash', type: 'string' },
-      ],
-    },
-    message: {
-      upload: 'avatar',
-      expiry,
-      name,
-      hash: urlHash,
-    },
-  })
+  const { signTypedDataAsync } = useSignTypedData()
 
   const {
     mutate: signAndUpload,
-    isLoading,
+    isPending,
     error,
-  } = useMutation<void, Error>(async () => {
-    let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
-    if (network !== 'mainnet') {
-      baseURL = `${baseURL}/${network}`
-    }
-    const endpoint = `${baseURL}/${name}`
+  } = useMutation<void, Error>({
+    mutationFn: async () => {
+      let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
+      if (chainName !== 'mainnet') {
+        baseURL = `${baseURL}/${chainName}`
+      }
+      const endpoint = `${baseURL}/${name}`
 
-    const sig = await signTypedDataAsync()
-    const fetched = (await fetch(endpoint, {
-      method: 'PUT',
-      headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        expiry,
-        dataURL,
-        sig,
-      }),
-    }).then((res) => res.json())) as AvatarUploadResult
+      const urlHash = bytesToHex(sha256(dataURLToBytes(dataURL)))
+      const expiry = `${Date.now() + 1000 * 60 * 60 * 24 * 7}`
 
-    if ('message' in fetched && fetched.message === 'uploaded') {
-      queryClient.invalidateQueries({
-        predicate: (query) => {
-          const {
-            queryKey: [params],
-          } = query
-          if (typeof params !== 'object' || params === null) return false
-          if (!('entity' in params)) return false
-          if (params.entity !== 'ensAvatar') return false
-          return true
+      const sig = await signTypedDataAsync({
+        primaryType: 'Upload',
+        domain: {
+          name: 'Ethereum Name Service',
+          version: '1',
+        },
+        types: {
+          Upload: [
+            { name: 'upload', type: 'string' },
+            { name: 'expiry', type: 'string' },
+            { name: 'name', type: 'string' },
+            { name: 'hash', type: 'string' },
+          ],
+        },
+        message: {
+          upload: 'avatar',
+          expiry,
+          name,
+          hash: urlHash,
         },
       })
-      return handleSubmit('upload', endpoint, dataURL)
-    }
+      const fetched = (await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          expiry,
+          dataURL,
+          sig,
+        }),
+      }).then((res) => res.json())) as AvatarUploadResult
 
-    if ('error' in fetched) {
-      throw new Error(fetched.error)
-    }
+      if ('message' in fetched && fetched.message === 'uploaded') {
+        queryClient.invalidateQueries({
+          predicate: (query) => {
+            const {
+              queryKey: [params],
+            } = query
+            if (typeof params !== 'object' || params === null) return false
+            if (!('entity' in params)) return false
+            if (params.entity !== 'ensAvatar') return false
+            return true
+          },
+        })
+        return handleSubmit('upload', endpoint, dataURL)
+      }
 
-    throw new Error('Unknown error')
+      if ('error' in fetched) {
+        throw new Error(fetched.error)
+      }
+
+      throw new Error('Unknown error')
+    },
   })
 
   return (
@@ -151,7 +155,7 @@ const UploadComponent = ({
         leading={<AvCancelButton handleCancel={handleCancel} />}
         trailing={
           <Button
-            disabled={isLoading}
+            disabled={isPending}
             colorStyle={error ? 'redSecondary' : undefined}
             onClick={() => signAndUpload()}
             data-testid="upload-button"

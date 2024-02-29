@@ -1,31 +1,28 @@
-import { getPublicClient } from '@wagmi/core'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Address, isAddress } from 'viem'
-import { useMutation, useQueryClient } from 'wagmi'
+import { useChainId, useConfig } from 'wagmi'
 
 import { getAddressRecord, getName } from '@ensdomains/ensjs/public'
 import { normalise } from '@ensdomains/ensjs/utils'
 
-import { useChainId } from '@app/hooks/chain/useChainId'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
-import { PublicClientWithChain } from '@app/types'
+import { ClientWithEns } from '@app/types'
 
 type Result = { name?: string; address: Address }
 type Options = { cache?: boolean }
 
-type QueryBaseParams = {
-  chainId: number
-}
-
 type QueryByNameParams = {
   name: string
-} & QueryBaseParams
+}
 
-const queryByName = async ({ name, chainId }: QueryByNameParams): Promise<Result | null> => {
+const queryByName = async (
+  client: ClientWithEns,
+  { name }: QueryByNameParams,
+): Promise<Result | null> => {
   try {
-    const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
     const normalisedName = normalise(name)
-    const record = await getAddressRecord(publicClient, { name: normalisedName })
+    const record = await getAddressRecord(client, { name: normalisedName })
     const address = record?.value as Address
     if (!address) throw new Error('No address found')
     return {
@@ -37,15 +34,14 @@ const queryByName = async ({ name, chainId }: QueryByNameParams): Promise<Result
   }
 }
 
-type QueryByAddressParams = { address: Address } & QueryBaseParams
+type QueryByAddressParams = { address: Address }
 
-const queryByAddress = async ({
-  address,
-  chainId,
-}: QueryByAddressParams): Promise<Result | null> => {
+const queryByAddress = async (
+  client: ClientWithEns,
+  { address }: QueryByAddressParams,
+): Promise<Result | null> => {
   try {
-    const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
-    const name = await getName(publicClient, { address })
+    const name = await getName(client, { address })
     return {
       name: name?.name,
       address,
@@ -67,25 +63,27 @@ export const useSimpleSearch = (options: Options = {}) => {
   const queryClient = useQueryClient()
   const chainId = useChainId()
   const createQueryKey = createQueryKeyWithChain(chainId)
+  const config = useConfig()
 
   useEffect(() => {
     return () => {
-      queryClient.removeQueries(['simpleSearch'], { exact: false })
+      queryClient.removeQueries({ queryKey: ['simpleSearch'], exact: false })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { mutate, isLoading, ...rest } = useMutation(
-    async (query: string) => {
+  const { mutate, isPending, ...rest } = useMutation({
+    mutationFn: async (query: string) => {
       if (query.length < 3) throw new Error('Query too short')
       if (cache) {
         const cachedData = queryClient.getQueryData<Result[]>(createQueryKey(query))
         if (cachedData) return cachedData
       }
+      const client = config.getClient({ chainId })
       const results = await Promise.allSettled([
-        queryByName({ name: query, chainId }),
-        queryByName({ name: `${query}.eth`, chainId }),
-        ...(isAddress(query) ? [queryByAddress({ address: query, chainId })] : []),
+        queryByName(client, { name: query }),
+        queryByName(client, { name: `${query}.eth` }),
+        ...(isAddress(query) ? [queryByAddress(client, { address: query })] : []),
       ])
       const filteredData = results
         .filter<PromiseFulfilledResult<Result>>(
@@ -101,17 +99,15 @@ export const useSimpleSearch = (options: Options = {}) => {
         }, {})
       return Object.values(filteredData) as Result[]
     },
-    {
-      onSuccess: (data, variables) => {
-        queryClient.setQueryData(createQueryKey(variables), data)
-      },
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(createQueryKey(variables), data)
     },
-  )
+  })
   const debouncedMutate = useDebouncedCallback(mutate, 500)
 
   return {
     ...rest,
     mutate: debouncedMutate,
-    isLoading: isLoading || !chainId,
+    isLoading: isPending || !chainId,
   }
 }

@@ -46,19 +46,19 @@ const displayItems = (
 ]
 
 const transaction = async ({
-  publicClient,
-  walletClient,
+  client,
+  connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
   const { names, duration } = data
-  const price = await getPrice(publicClient, {
+  const price = await getPrice(client, {
     nameOrNames: names,
     duration,
   })
   if (!price) throw new Error('No price found')
 
   const priceWithBuffer = calculateValueWithBuffer(price.base)
-  return renewNames.makeFunctionData(walletClient, {
+  return renewNames.makeFunctionData(connectorClient, {
     nameOrNames: names,
     duration,
     value: priceWithBuffer,

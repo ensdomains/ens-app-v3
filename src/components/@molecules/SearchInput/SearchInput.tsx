@@ -3,13 +3,14 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
+import { useQueryClient } from '@tanstack/react-query'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 import { isAddress } from 'viem'
-import { useAccount, useQueryClient } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
 import {
   GetExpiryReturnType,
@@ -19,9 +20,8 @@ import {
 } from '@ensdomains/ensjs/public'
 import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { createQueryKey } from '@app/hooks/useQueryKeyFactory'
+import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate, validate, ValidationResult } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'

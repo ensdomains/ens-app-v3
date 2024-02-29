@@ -174,7 +174,7 @@ test.describe('migrations', () => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
-      owner: 'user',
+      owner: 'user2',
       resolver: ownedResolverAddress as Address,
       records: await makeRecords(),
     })
@@ -184,7 +184,7 @@ test.describe('migrations', () => {
     const transactionModal = makePageObject('TransactionModal')
 
     await morePage.goto(name)
-    await login.connect()
+    await login.connect('user2')
     await page.pause()
 
     await expect(morePage.resolver.getByText(ownedResolverAddress)).toBeVisible()

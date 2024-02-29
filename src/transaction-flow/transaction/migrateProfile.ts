@@ -34,13 +34,13 @@ const displayItems = (
 ]
 
 const transaction = async ({
-  publicClient,
-  walletClient,
+  client,
+  connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
-  const subgraphRecords = await getSubgraphRecords(publicClient, data)
+  const subgraphRecords = await getSubgraphRecords(client, data)
   if (!subgraphRecords) throw new Error('No subgraph records found')
-  const profile = await getRecords(publicClient, {
+  const profile = await getRecords(connectorClient, {
     name: data.name,
     texts: subgraphRecords.texts,
     coins: subgraphRecords.coins,
@@ -54,12 +54,12 @@ const transaction = async ({
       : undefined,
   })
   const resolverAddress = getChainContractAddress({
-    client: publicClient,
+    client,
     contract: 'ensPublicResolver',
   })
   if (!profile) throw new Error('No profile found')
   const records = await profileRecordsToKeyValue(profile)
-  return setRecords.makeFunctionData(walletClient, {
+  return setRecords.makeFunctionData(connectorClient, {
     name: data.name,
     resolverAddress,
     ...records,

@@ -33,16 +33,16 @@ const displayItems = ({ name }: Data, t: TFunction): TransactionDisplayItem[] =>
 }
 
 const transaction = async ({
-  publicClient,
-  walletClient,
+  client,
+  connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
   const { name, resolverAddress } = data
-  const subgraphRecords = await getSubgraphRecords(publicClient, {
+  const subgraphRecords = await getSubgraphRecords(client, {
     name,
     resolverAddress,
   })
-  const profile = await getRecords(publicClient, {
+  const profile = await getRecords(client, {
     name,
     texts: subgraphRecords?.texts || [],
     coins: subgraphRecords?.coins || [],
@@ -58,11 +58,11 @@ const transaction = async ({
 
   const profileRecords = await profileRecordsToKeyValue(profile)
   const latestResolverAddress = getChainContractAddress({
-    client: publicClient,
+    client,
     contract: 'ensPublicResolver',
   })
 
-  return setRecords.makeFunctionData(walletClient, {
+  return setRecords.makeFunctionData(connectorClient, {
     name: data.name,
     ...profileRecords,
     clearRecords: true,

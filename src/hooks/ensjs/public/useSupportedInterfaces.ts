@@ -1,7 +1,5 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 import { Hex } from 'viem'
-import { useQuery } from 'wagmi'
 
 import {
   getSupportedInterfaces,
@@ -9,8 +7,8 @@ import {
   GetSupportedInterfacesReturnType,
 } from '@ensdomains/ensjs/public'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
-import { CreateQueryKey, PartialBy, PublicClientWithChain, QueryConfig } from '@app/types'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
 type UseSupportedInterfacesParameters<TInterfaces extends readonly Hex[] = readonly Hex[]> =
   PartialBy<GetSupportedInterfacesParameters<TInterfaces>, 'address'>
@@ -18,8 +16,8 @@ type UseSupportedInterfacesParameters<TInterfaces extends readonly Hex[] = reado
 type UseSupportedInterfacesReturnType<TInterfaces extends readonly Hex[]> =
   GetSupportedInterfacesReturnType<TInterfaces>
 
-type UseSupportedInterfacesConfig<TParams extends UseSupportedInterfacesParameters> = QueryConfig<
-  UseSupportedInterfacesReturnType<TParams['interfaces']>,
+type UseSupportedInterfacesConfig<TInterfaces extends readonly Hex[]> = QueryConfig<
+  UseSupportedInterfacesReturnType<TInterfaces>,
   Error
 >
 
@@ -29,17 +27,17 @@ type QueryKey<TParams extends UseSupportedInterfacesParameters> = CreateQueryKey
   'standard'
 >
 
-export const getSupportedInterfacesQueryFn = async <
-  TParams extends UseSupportedInterfacesParameters,
->({
-  queryKey: [{ address, ...params }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  if (!address) throw new Error('address is required')
+export const getSupportedInterfacesQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UseSupportedInterfacesParameters>({
+    queryKey: [{ address, ...params }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!address) throw new Error('address is required')
 
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
+    const client = config.getClient({ chainId })
 
-  return getSupportedInterfaces(publicClient, { address, ...params })
-}
+    return getSupportedInterfaces(client, { address, ...params })
+  }
 
 export const useSupportedInterfaces = <
   const TInterfaces extends readonly Hex[],
@@ -47,30 +45,31 @@ export const useSupportedInterfaces = <
     UseSupportedInterfacesParameters<TInterfaces> = UseSupportedInterfacesParameters<TInterfaces>,
 >({
   // config
-  cacheTime,
+  gcTime,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
   // params
   ...params
-}: TParams & UseSupportedInterfacesConfig<TParams>) => {
-  const queryKey = useQueryKeyFactory({
+}: TParams & UseSupportedInterfacesConfig<TInterfaces>) => {
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getSupportedInterfaces',
     queryDependencyType: 'standard',
+    queryFn: getSupportedInterfacesQueryFn,
   })
 
-  const query = useQuery(queryKey, getSupportedInterfacesQueryFn, {
-    cacheTime,
-    staleTime,
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
+
+  const query = useQuery({
+    ...preparedOptions,
     enabled: enabled && !!params.address && params.interfaces.length > 0,
-    onError,
-    onSettled,
-    onSuccess,
+    gcTime,
+    staleTime,
   })
 
   return {

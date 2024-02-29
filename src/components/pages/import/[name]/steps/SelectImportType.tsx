@@ -1,14 +1,13 @@
 import { Dispatch, forwardRef, ReactNode, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
 import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
 import { RadioButton, RadioButtonGroup, Tag, Typography } from '@ensdomains/thorin'
 
 import { SupportOutlink } from '@app/components/@atoms/SupportOutlink'
 import { OFFCHAIN_DNS_RESOLVER_MAP } from '@app/constants/resolverAddressData'
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'

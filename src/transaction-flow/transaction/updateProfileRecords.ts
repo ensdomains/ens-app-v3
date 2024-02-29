@@ -74,18 +74,18 @@ const displayItems = (
 }
 
 const transaction = async ({
-  walletClient,
-  publicClient,
+  client,
+  connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
   const { name, resolverAddress, records, previousRecords = [], clearRecords } = data
   const submitRecords = getProfileRecordsDiff(records, previousRecords)
-  const recordOptions = await profileRecordsToRecordOptionsWithDeleteAbiArray(publicClient, {
+  const recordOptions = await profileRecordsToRecordOptionsWithDeleteAbiArray(client, {
     name,
     profileRecords: submitRecords,
     clearRecords,
   })
-  return setRecords.makeFunctionData(walletClient, {
+  return setRecords.makeFunctionData(connectorClient, {
     name,
     resolverAddress,
     ...recordOptions,

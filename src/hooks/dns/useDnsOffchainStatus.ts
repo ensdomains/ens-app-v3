@@ -1,13 +1,12 @@
 import { useMemo } from 'react'
 import type { Address } from 'viem'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
 import { GetDnsOffchainDataReturnType } from '@ensdomains/ensjs/dns'
 
 import { checkDnsAddressMatch, checkDnsError } from '@app/components/pages/import/[name]/utils'
 import { EXTENDED_DNS_RESOLVER_MAP } from '@app/constants/resolverAddressData'
 
-import { useChainId } from '../chain/useChainId'
 import { useDnsOffchainData } from '../ensjs/dns/useDnsOffchainData'
 import { useAddressRecord } from '../ensjs/public/useAddressRecord'
 
@@ -41,7 +40,8 @@ export const useDnsOffchainStatus = ({ name, enabled = true }: UseDnsOffchainSta
     isCachedData: isDnsOffchainDataCachedData,
     isError,
     isRefetching,
-    internal: { dataUpdatedAt, errorUpdatedAt },
+    dataUpdatedAt,
+    errorUpdatedAt,
     refetch,
   } = useDnsOffchainData({
     name,

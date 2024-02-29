@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -7,6 +8,7 @@ import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySe
 import { TransactionSection } from '@app/components/pages/profile/settings/TransactionSection/TransactionSection'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
+import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
 
 const OtherWrapper = styled.div(
   ({ theme }) => css`
@@ -22,14 +24,12 @@ const OtherWrapper = styled.div(
 
 export default function Page() {
   const { t } = useTranslation('settings')
+  const router = useRouter()
   const { address, isConnecting, isReconnecting } = useAccount()
 
-  useProtectedRoute('/', isConnecting || isReconnecting ? true : address)
+  const isLoading = !router.isReady || isConnecting || isReconnecting
 
-  const showDevPanel =
-    process.env.NEXT_PUBLIC_ENSJS_DEBUG ||
-    process.env.NODE_ENV === 'development' ||
-    process.env.NEXT_PUBLIC_PROVIDER
+  useProtectedRoute('/', isLoading ? true : address)
 
   return (
     <Content singleColumnContent title={t('title')}>
@@ -38,7 +38,7 @@ export default function Page() {
           <OtherWrapper>
             <PrimarySection />
             <TransactionSection />
-            {showDevPanel && <DevSection />}
+            {IS_DEV_ENVIRONMENT && <DevSection />}
           </OtherWrapper>
         ),
       }}

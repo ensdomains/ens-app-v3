@@ -8,17 +8,17 @@ import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { IntercomProvider } from 'react-use-intercom'
 import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
-import { WagmiConfig } from 'wagmi'
 
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
 import { Notifications } from '@app/components/Notifications'
+import { TestnetWarning } from '@app/components/TestnetWarning'
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
-import { chains, wagmiConfig } from '@app/utils/query'
+import { QueryProviders } from '@app/utils/query/providers'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 
@@ -149,8 +149,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <WagmiConfig config={wagmiConfig}>
-        <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
+      <QueryProviders>
+        <RainbowKitProvider theme={rainbowKitTheme}>
           <TransactionStoreProvider>
             <ThemeProvider theme={thorinLightTheme}>
               <BreakpointProvider queries={breakpoints}>
@@ -161,6 +161,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                     <TransactionFlowProvider>
                       <SyncDroppedTransaction>
                         <Notifications />
+                        <TestnetWarning />
                         <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
                       </SyncDroppedTransaction>
                     </TransactionFlowProvider>
@@ -170,7 +171,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             </ThemeProvider>
           </TransactionStoreProvider>
         </RainbowKitProvider>
-      </WagmiConfig>
+      </QueryProviders>
     </I18nextProvider>
   )
 }

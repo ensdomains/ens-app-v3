@@ -2,16 +2,23 @@
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // this is taken from rainbowkit
-import { getPublicClient } from '@wagmi/core'
 import { Address, Block, Hash, Hex } from 'viem'
+import { getBlock } from 'viem/actions'
 
-import { MinedData } from '@app/types'
+import { SupportedChain } from '@app/constants/chains'
+import { ConfigWithEns, MinedData } from '@app/types'
 
 import { waitForTransaction } from './waitForTransaction'
 
 const storageKey = 'transaction-data'
 
-type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'repriced' | 'unknown' | 'searching'
+export type TransactionStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'failed'
+  | 'repriced'
+  | 'unknown'
+  | 'searching'
 
 interface BaseTransaction {
   hash: Hash
@@ -142,11 +149,11 @@ export const foundTransaction =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, hash: string, nonce: number): void => {
+  (account: string, chainId: SupportedChain['id'], hash: string, nonce: number): void => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
@@ -164,11 +171,16 @@ export const setReplacedTransaction =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, input: string, minedData: EtherscanMinedData) => {
+  (
+    account: string,
+    chainId: SupportedChain['id'],
+    input: string,
+    minedData: EtherscanMinedData,
+  ) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) => {
         return transaction.input === input
@@ -187,11 +199,16 @@ export const setReplacedTransactionByNonce =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, input: string, minedData: EtherscanMinedData) => {
+  (
+    account: string,
+    chainId: SupportedChain['id'],
+    input: string,
+    minedData: EtherscanMinedData,
+  ) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.input === input && transaction.nonce === parseInt(minedData.nonce, 10)
@@ -210,11 +227,11 @@ export const foundMinedTransaction =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, hash: string, minedData: EtherscanMinedData) => {
+  (account: string, chainId: SupportedChain['id'], hash: string, minedData: EtherscanMinedData) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
@@ -233,11 +250,11 @@ export const updateRetries =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, hash: string) => {
+  (account: string, chainId: SupportedChain['id'], hash: string) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
@@ -254,11 +271,11 @@ export const setFailedTransaction =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, hash: string) => {
+  (account: string, chainId: SupportedChain['id'], hash: string) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
@@ -272,18 +289,27 @@ export const setFailedTransaction =
     })
   }
 
-export function createTransactionStore() {
+export function createTransactionStore(config_: ConfigWithEns) {
+  let config: ConfigWithEns = config_
   let data: Data = loadData()
 
   const listeners: Set<() => void> = new Set()
   const transactionRequestCache: Map<string, Promise<void>> = new Map()
   const blockRequestCache: Map<string, Promise<Block>> = new Map()
 
-  function getTransactions(account: string, chainId: number): Transaction[] {
+  function setConfig(newConfig: ConfigWithEns) {
+    config = newConfig
+  }
+
+  function getTransactions(account: string, chainId: SupportedChain['id']): Transaction[] {
     return data[account]?.[chainId] ?? []
   }
 
-  function getCurrentTransactionHash(account: string, chainId: number, hash: string): string {
+  function getCurrentTransactionHash(
+    account: string,
+    chainId: SupportedChain['id'],
+    hash: string,
+  ): string {
     const allTransactions = getTransactions(account, chainId)
     const currentTransaction = allTransactions.find((transaction) => transaction.hash === hash)
     if (currentTransaction && currentTransaction.status === 'repriced')
@@ -291,7 +317,11 @@ export function createTransactionStore() {
     return hash
   }
 
-  function addTransaction(account: string, chainId: number, transaction: NewTransaction): void {
+  function addTransaction(
+    account: string,
+    chainId: SupportedChain['id'],
+    transaction: NewTransaction,
+  ): void {
     const errors = validateTransaction(transaction)
 
     if (errors.length > 0) {
@@ -309,7 +339,7 @@ export function createTransactionStore() {
     })
   }
 
-  function clearTransactions(account: string, chainId: number): void {
+  function clearTransactions(account: string, chainId: SupportedChain['id']): void {
     updateTransactions(account, chainId, () => {
       return []
     })
@@ -317,21 +347,21 @@ export function createTransactionStore() {
 
   function setTransactionStatus(
     account: string,
-    chainId: number,
+    chainId: SupportedChain['id'],
     hash: string,
     status: 'confirmed' | 'failed',
     minedData: MinedData,
   ): void
   function setTransactionStatus(
     account: string,
-    chainId: number,
+    chainId: SupportedChain['id'],
     hash: string,
     status: 'repriced',
     newHash: string,
   ): void
   function setTransactionStatus(
     account: string,
-    chainId: number,
+    chainId: SupportedChain['id'],
     hash: string,
     status: 'confirmed' | 'failed' | 'repriced',
     minedData: MinedData | string,
@@ -349,7 +379,10 @@ export function createTransactionStore() {
     })
   }
 
-  async function waitForPendingTransactions(account: string, chainId: number): Promise<void> {
+  async function waitForPendingTransactions(
+    account: string,
+    chainId: SupportedChain['id'],
+  ): Promise<void> {
     await Promise.all(
       getTransactions(account, chainId)
         .filter((transaction) => transaction.status === 'pending')
@@ -362,7 +395,7 @@ export function createTransactionStore() {
             return existingRequest
           }
 
-          const requestPromise = waitForTransaction({
+          const requestPromise = waitForTransaction(config, {
             confirmations: 1,
             hash: hash as `0x${string}`,
             onReplaced: (replacedTransaction) => {
@@ -388,8 +421,10 @@ export function createTransactionStore() {
             const { status, blockHash } = receipt
             let blockRequest = blockRequestCache.get(blockHash)
             if (!blockRequest) {
-              const publicClient = getPublicClient()
-              blockRequest = publicClient.getBlock({ blockHash })
+              const client = config.getClient({
+                chainId,
+              })
+              blockRequest = getBlock(client, { blockHash })
               blockRequestCache.set(blockHash, blockRequest)
             }
             const { timestamp } = await blockRequest
@@ -418,7 +453,7 @@ export function createTransactionStore() {
 
   function updateTransactions(
     account: string,
-    chainId: number,
+    chainId: SupportedChain['id'],
     updateFn: (transactions: Transaction[]) => Transaction[],
   ): void {
     // Ensure we're always operating on the latest data in case we have
@@ -462,6 +497,7 @@ export function createTransactionStore() {
   }
 
   return {
+    setConfig,
     addTransaction,
     clearTransactions,
     getTransactions,

@@ -1,12 +1,14 @@
-import { renderHook } from '@app/test-utils'
+import { mockFunction, renderHook } from '@app/test-utils'
 
-import { hashQueryKey } from '@tanstack/react-query'
+import { hashKey, useQueryClient } from '@tanstack/react-query'
 import { describe, expect, it, vi } from 'vitest'
-import * as wagmi from 'wagmi'
 
 import { useHasSubgraphSyncErrors } from './useHasSubgraphSyncErrors'
 
-const mockUseQueryClient = vi.spyOn(wagmi, 'useQueryClient')
+vi.mock('@tanstack/react-query', async () => ({
+  ...(await vi.importActual<typeof import('@tanstack/react-query')>('@tanstack/react-query')),
+  useQueryClient: vi.fn(),
+}))
 
 vi.mock('react', async () => ({
   ...(await vi.importActual('react')),
@@ -19,13 +21,15 @@ vi.mock('react', async () => ({
   }),
 }))
 
+const mockUseQueryClient = mockFunction(useQueryClient)
+
 describe('useHasSubgraphSyncErrors', () => {
   it('it reports a subgraph error if it was found in query cache', async () => {
     mockUseQueryClient.mockImplementation((): any => {
       const event = {
         query: {
           queryKey: ['someKey', 'graph'],
-          queryHash: hashQueryKey(['someKey', 'graph']),
+          queryHash: hashKey(['someKey', 'graph']),
           state: {
             fetchStatus: 'fetching',
             status: 'error',
@@ -61,7 +65,7 @@ describe('useHasSubgraphSyncErrors', () => {
         type: 'updated',
         query: {
           queryKey: ['someKey', 'graph'],
-          queryHash: hashQueryKey(['someKey', 'graph']),
+          queryHash: hashKey(['someKey', 'graph']),
           state: {
             fetchStatus: 'fetching',
             status: 'loading',

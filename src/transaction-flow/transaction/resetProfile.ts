@@ -29,8 +29,8 @@ const displayItems = ({ name, resolverAddress }: Data, t: TFunction): Transactio
   ]
 }
 
-const transaction = ({ walletClient, data }: TransactionFunctionParameters<Data>) => {
-  return clearRecords.makeFunctionData(walletClient, data)
+const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  return clearRecords.makeFunctionData(connectorClient, data)
 }
 
 export default {

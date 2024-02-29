@@ -1,14 +1,10 @@
-import { Address, Client, Transport } from 'viem'
+import { useClient } from 'wagmi'
 
-import { SupportedChain } from '@app/constants/chains'
+import { ClientWithEns } from '@app/types'
 import { getSupportedChainContractAddress } from '@app/utils/getSupportedChainContractAddress'
 
-import { usePublicClient } from '../usePublicClient'
-
 export const useContractAddress = <
-  TContracts extends Client<Transport, SupportedChain>['chain']['contracts'],
-  TContractName extends Extract<keyof TContracts, string>,
-  TContract extends TContracts[TContractName] = TContracts[TContractName],
+  TContractName extends Extract<keyof ClientWithEns['chain']['contracts'], string>,
 >({
   contract,
   blockNumber,
@@ -16,11 +12,11 @@ export const useContractAddress = <
   contract: TContractName
   blockNumber?: bigint
 }) => {
-  const publicClient = usePublicClient()
+  const client = useClient()
 
-  return getSupportedChainContractAddress<typeof publicClient, TContractName>({
-    client: publicClient,
+  return getSupportedChainContractAddress({
+    client,
     contract,
     blockNumber,
-  }) as TContract extends { address: infer A } ? (A extends Address ? A : never) : Address
+  })
 }

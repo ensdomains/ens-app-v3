@@ -105,11 +105,16 @@ export const ImportTransaction = ({
   const { t } = useTranslation('dnssec', { keyPrefix: 'steps.transaction' })
   const { t: tc } = useTranslation('common')
 
-  const { gasPrice } = useGasPrice()
+  const { data: gasPrice } = useGasPrice()
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
-  const { data: dnsOwner, isLoading, isError, isRefetching } = useDnsOwner({ name: selected.name })
+  const {
+    data: dnsOwner,
+    isLoading,
+    isError,
+    isRefetching,
+  } = useDnsOwner({ name: selected.name, strict: true })
 
   const { address } = selected
 
@@ -169,7 +174,7 @@ export const ImportTransaction = ({
 
   const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
 
-  const key = `importDnsName-${selected.name}`
+  const key = `import-${selected.name}-${selected.address}`
 
   const resumable = getResumable(key)
 

@@ -1,8 +1,10 @@
+import { Query, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useQueryClient } from 'wagmi'
+import { useAccount } from 'wagmi'
 
+import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
 import { Button, Helper, mq, Tag, Typography } from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
@@ -11,6 +13,7 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
+import { GetDnsOwnerQueryKey, UseDnsOwnerError } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useOwners } from '@app/hooks/useOwners'
 import { makeIntroItem } from '@app/transaction-flow/intro'
@@ -179,6 +182,17 @@ const ButtonsContainer = styled.div(
   `,
 )
 
+const isGetDnsOwnerQuery = (
+  query: Query<any, any, any, any>,
+): query is Query<
+  GetDnsOwnerReturnType,
+  UseDnsOwnerError,
+  GetDnsOwnerReturnType,
+  GetDnsOwnerQueryKey<{ name: string }>
+> => {
+  return query.queryKey[4] === 'getDnsOwner'
+}
+
 const DNSOwnerSection = ({
   name,
   owners,
@@ -236,7 +250,12 @@ const DNSOwnerSection = ({
   }
 
   const handleRefresh = () => {
-    queryClient.resetQueries({ exact: true, queryKey: ['getDNSOwner', name] })
+    queryClient.resetQueries({
+      predicate: (q) => {
+        if (!isGetDnsOwnerQuery(q)) return false
+        return q.queryKey[0].name === name
+      },
+    })
   }
 
   if (!canShow) return null

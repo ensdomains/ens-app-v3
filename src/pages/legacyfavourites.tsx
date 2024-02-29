@@ -1,6 +1,7 @@
 import { ReactElement, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
+import { useChainId } from 'wagmi'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils'
 import { Helper, Typography } from '@ensdomains/thorin'
@@ -8,7 +9,6 @@ import { Helper, Typography } from '@ensdomains/thorin'
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
-import { useChainId } from '@app/hooks/chain/useChainId'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 

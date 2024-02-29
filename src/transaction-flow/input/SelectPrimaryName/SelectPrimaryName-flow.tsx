@@ -1,9 +1,10 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { useForm, UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address, labelhash } from 'viem'
-import { useMutation, useQueryClient } from 'wagmi'
+import { useClient } from 'wagmi'
 
 import { getDecodedName, Name } from '@ensdomains/ensjs/subgraph'
 import { decodeLabelhash, isEncodedLabelhash, saveName } from '@ensdomains/ensjs/utils'
@@ -22,8 +23,7 @@ import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
-import { usePublicClient } from '@app/hooks/usePublicClient'
-import { createQueryKey } from '@app/hooks/useQueryKeyFactory'
+import { createQueryKey } from '@app/hooks/useQueryOptions'
 import {
   nameToFormData,
   UnknownLabelsForm,
@@ -166,7 +166,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   })
   const { handleSubmit, control, setValue } = form
 
-  const publicClient = usePublicClient()
+  const client = useClient()
 
   const [view, setView] = useState<'main' | 'decrypt'>('main')
 
@@ -225,9 +225,10 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     if (!transactionFlowItem) return
     const transactionCount = transactionFlowItem.transactions.length
     if (transactionCount === 1) {
+      // TODO: Fix typescript transactions error
       dispatch({
         name: 'setTransactions',
-        payload: transactionFlowItem.transactions,
+        payload: transactionFlowItem.transactions as any[],
       })
       dispatch({
         name: 'setFlowStage',
@@ -249,8 +250,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       params: { input },
       functionName: 'validate',
     })
-  const { mutate: mutateName, isLoading: isMutationLoading } = useMutation(
-    async (data: FormData) => {
+  const { mutate: mutateName, isPending: isMutationLoading } = useMutation({
+    mutationFn: async (data: FormData) => {
       if (!data.name?.name) throw new Error('no_name')
 
       let validName = data.name.name
@@ -260,36 +261,34 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       validName = getNameFromUnknownLabels(validName, data.unknownLabels)
       if (!hasEncodedLabel(validName)) {
         saveName(validName)
-        queryClient.resetQueries(validateKey(data.name?.name))
+        queryClient.resetQueries({ queryKey: validateKey(data.name?.name) })
         return validName
       }
 
       // Attempt to decrypt name
-      validName = (await getDecodedName(publicClient, {
+      validName = (await getDecodedName(client, {
         name: validName,
         allowIncomplete: true,
       })) as string
       if (!hasEncodedLabel(validName)) {
         saveName(validName)
-        queryClient.resetQueries(validateKey(data.name?.name))
+        queryClient.resetQueries({ queryKey: validateKey(data.name?.name) })
         return validName
       }
 
       throw new Error('invalid_name')
     },
-    {
-      onSuccess: (name) => {
-        dispatchTransactions(name)
-      },
-      onError: (error, variables) => {
-        if (!(error instanceof Error)) return
-        if (error.message === 'invalid_name') {
-          setValue('unknownLabels', nameToFormData(variables.name?.name || '').unknownLabels)
-          setView('decrypt')
-        }
-      },
+    onSuccess: (name) => {
+      dispatchTransactions(name)
     },
-  )
+    onError: (error, variables) => {
+      if (!(error instanceof Error)) return
+      if (error.message === 'invalid_name') {
+        setValue('unknownLabels', nameToFormData(variables.name?.name || '').unknownLabels)
+        setView('decrypt')
+      }
+    },
+  })
 
   const onConfirm = () => {
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))

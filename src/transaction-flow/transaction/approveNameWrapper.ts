@@ -47,10 +47,10 @@ const registrySetApprovalForAllSnippet = [
   },
 ] as const
 
-const transaction = async ({ publicClient }: TransactionFunctionParameters<Data>) => {
+const transaction = async ({ client }: TransactionFunctionParameters<Data>) => {
   return {
     to: getChainContractAddress({
-      client: publicClient,
+      client,
       contract: 'ensRegistry',
     }),
     data: encodeFunctionData({
@@ -58,7 +58,7 @@ const transaction = async ({ publicClient }: TransactionFunctionParameters<Data>
       functionName: 'setApprovalForAll',
       args: [
         getChainContractAddress({
-          client: publicClient,
+          client,
           contract: 'ensNameWrapper',
         }),
         true,

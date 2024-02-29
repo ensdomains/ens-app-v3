@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 import type { Address } from 'viem'
+import { useChainId } from 'wagmi'
 
 import { GetSupportedInterfacesReturnType } from '@ensdomains/ensjs/public'
 
 import { getKnownResolverData } from '@app/constants/resolverAddressData'
 import { RESOLVER_INTERFACE_IDS, ResolverInterfaceName } from '@app/constants/resolverInterfaceIds'
 
-import { useChainId } from './chain/useChainId'
 import { useSupportedInterfaces } from './ensjs/public/useSupportedInterfaces'
 
 type UseResolverHasInterfacesParameters<TInterfaceNames extends readonly ResolverInterfaceName[]> =

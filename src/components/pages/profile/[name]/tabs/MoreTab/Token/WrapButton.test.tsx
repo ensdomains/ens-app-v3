@@ -8,6 +8,8 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 
 import WrapButton from './WrapButton'
 
+vi.mock('wagmi')
+
 vi.mock('@app/transaction-flow/TransactionFlowProvider')
 vi.mock('@app/hooks/useWrapperApprovedForAll')
 
@@ -24,8 +26,9 @@ vi.mock('@app/hooks/resolver/useResolverStatus', () => ({
   useResolverStatus: () => mockUseResolverStatus(),
 }))
 
-const mockUseTransaction = mockFunction(useTransactionFlow)
 const mockUseAccount = mockFunction(useAccount)
+
+const mockUseTransaction = mockFunction(useTransactionFlow)
 const mockUseWrapperApprovedForAll = mockFunction(useWrapperApprovedForAll)
 
 const mockCreateTransactionFlow = vi.fn()

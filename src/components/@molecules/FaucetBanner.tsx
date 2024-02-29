@@ -58,7 +58,7 @@ const FaucetBanner = () => {
   const {
     data,
     isLoading,
-    mutation: { isLoading: mutationLoading, isError, mutate, isSuccess, error },
+    mutation: { isPending: mutationLoading, isError, mutate, isSuccess, error },
   } = useFaucet()
   const dialogStage = isSuccess ? 'success' : 'default'
   const [dialogOpen, setDialogOpen] = useState(false)
