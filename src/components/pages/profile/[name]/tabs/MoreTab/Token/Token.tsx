@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { Hex } from 'viem'
+import { labelhash, namehash } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { mq, Tag, Typography } from '@ensdomains/thorin'
@@ -9,9 +9,12 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
+import { useChainName } from '@app/hooks/chain/useChainName'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
 import { useParentBasicName } from '@app/hooks/useParentBasicName'
 import { Profile } from '@app/types'
+import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../../TabWrapper'
 import UnwrapButton from './UnwrapButton'
@@ -24,10 +27,6 @@ type Props = {
   wrapperData: GetWrapperDataReturnType | undefined
   ownerData: GetOwnerReturnType | undefined
   profile: Profile | undefined
-  etherscanLink: string
-  hasToken: boolean
-  hex: Hex
-  tokenId: string
 }
 
 const Container = styled(TabWrapper)(
@@ -115,19 +114,10 @@ const NftBox = styled(NFTWithPlaceholder)(
   `,
 )
 
-const Token = ({
-  name,
-  isWrapped,
-  canBeWrapped,
-  wrapperData,
-  ownerData,
-  profile,
-  etherscanLink,
-  hasToken,
-  hex,
-  tokenId,
-}: Props) => {
+const Token = ({ name, isWrapped, canBeWrapped, wrapperData, ownerData, profile }: Props) => {
   const { t } = useTranslation('profile')
+
+  const networkName = useChainName()
 
   const { wrapperData: parentWrapperData, isCachedData: isParentBasicCachedData } =
     useParentBasicName(name)
@@ -136,13 +126,27 @@ const Token = ({
     parentWrapperData,
   })
   const status = isWrapped ? fusesStatus.state : 'unwrapped'
+  const is2ldEth = checkETH2LDFromName(name)
+
+  const hex = isWrapped ? namehash(name) : labelhash(name.split('.')[0])
+  const tokenId = BigInt(hex).toString(10)
+
+  const wrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
+  const registrarAddress = useContractAddress({ contract: 'ensBaseRegistrarImplementation' })
+
+  const contractAddress = isWrapped ? wrapperAddress : registrarAddress
+
+  const hasToken = is2ldEth || isWrapped
 
   return (
     <Container>
       <HeaderContainer>
         <Typography fontVariant="headingFour">{t('tabs.more.token.label')}</Typography>
         {hasToken ? (
-          <Outlink data-testid="etherscan-nft-link" href={etherscanLink}>
+          <Outlink
+            data-testid="etherscan-nft-link"
+            href={makeEtherscanLink(`${contractAddress}/${tokenId}`, networkName, 'nft')}
+          >
             {t('etherscan', { ns: 'common' })}
           </Outlink>
         ) : (

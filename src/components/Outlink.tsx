@@ -5,7 +5,6 @@ import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Typography } from '@ensdomains/thorin'
-import { FontVariant } from '@ensdomains/thorin/dist/types/types'
 
 import OutlinkSVG from '@app/assets/Outlink.svg'
 
@@ -40,16 +39,14 @@ export const OutlinkTypography = styled(Typography)(
 export const Outlink = ({
   href,
   children,
-  fontVariant = 'smallBold',
   ...props
 }: Omit<ComponentProps<'a'>, 'href' | 'target' | 'rel'> &
   ComponentProps<typeof StyledAnchor> & {
     href: string | UrlObject
-    fontVariant?: FontVariant
   }) => {
   const InnerContent = (
     <StyledAnchor {...props} rel="noreferrer noopener" target="_blank" role="link">
-      <OutlinkTypography fontVariant={fontVariant} color="blue">
+      <OutlinkTypography fontVariant="smallBold" color="blue">
         {children}
       </OutlinkTypography>
       <OutlinkIcon as={OutlinkSVG} />

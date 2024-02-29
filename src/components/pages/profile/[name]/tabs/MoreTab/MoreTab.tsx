@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components'
-import { Hex } from 'viem'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
@@ -24,21 +23,9 @@ type Props = {
   name: string
   nameDetails: ReturnType<typeof useNameDetails>
   abilities: ReturnType<typeof useAbilities>['data']
-  etherscanLink: string
-  hasToken: boolean
-  hex: Hex
-  tokenId: string
 }
 
-const MoreTab = ({
-  name,
-  nameDetails,
-  abilities,
-  etherscanLink,
-  hasToken,
-  hex,
-  tokenId,
-}: Props) => {
+const MoreTab = ({ name, nameDetails, abilities }: Props) => {
   const { canBeWrapped, ownerData, wrapperData, isWrapped, isCachedData, profile } = nameDetails
 
   return (
@@ -51,10 +38,6 @@ const MoreTab = ({
           canBeWrapped={canBeWrapped}
           ownerData={ownerData}
           profile={profile}
-          etherscanLink={etherscanLink}
-          hasToken={hasToken}
-          hex={hex}
-          tokenId={tokenId}
         />
       )}
       <Resolver
