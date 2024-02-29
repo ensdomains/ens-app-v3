@@ -224,8 +224,8 @@ const NftItem = ({
       data-testid={`nft-${nft.id.tokenId}-${nft.contract.address}`}
       as="button"
       onClick={(e) => {
+        e.preventDefault()
         if (loadState === 'loaded') setSelectedNft(i)
-        else e.preventDefault()
       }}
       aria-disabled={loadState !== 'loaded'}
     >
