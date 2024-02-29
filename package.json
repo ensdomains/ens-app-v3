@@ -113,7 +113,6 @@
     "@next/bundle-analyzer": "^13.4.19",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.7.3",
-    "@openzeppelin/test-helpers": "^0.5.16",
     "@playwright/test": "^1.36.2",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.0.0",

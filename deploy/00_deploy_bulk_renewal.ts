@@ -3,13 +3,30 @@ import { Interface } from '@ethersproject/abi'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { namehash } from 'viem'
+import { namehash,keccak256, Hex } from 'viem'
 
-const { makeInterfaceId } = require('@openzeppelin/test-helpers')
+function makeInterfaceId(functionSignatures: Hex[] = []) {
+  const INTERFACE_ID_LENGTH = 4;
 
-function computeInterfaceId(iface: any): any {
-  return makeInterfaceId.ERC165(
-    Object.values(iface.functions).map((frag: any) => frag.format('sighash')),
+  const interfaceIdBuffer = functionSignatures
+    .map(signature => keccak256(signature)) // keccak256
+    .map(h =>
+      Buffer
+        .from(h.substring(2), 'hex')
+        .subarray(0, 4) // bytes4()
+    )
+    .reduce((memo, bytes) => {
+      for (let i = 0; i < INTERFACE_ID_LENGTH; i++) {
+        memo[i] = memo[i] ^ bytes[i]; // xor
+      }
+      return memo;
+    }, Buffer.alloc(INTERFACE_ID_LENGTH));
+
+  return `0x${interfaceIdBuffer.toString('hex')}`;
+}
+function computeInterfaceId(iface: Interface): any {
+  return makeInterfaceId(
+    Object.values(iface.functions).map((frag) => frag.format('sighash') as Hex),
   )
 }
 
