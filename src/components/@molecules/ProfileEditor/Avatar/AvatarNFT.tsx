@@ -51,9 +51,8 @@ type NFTResponse = {
   totalCount: number
 }
 
-const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY || 'no-key'
 const makeBaseURL = (network: string) =>
-  `https://eth-${network}.alchemyapi.io/nft/v2/${alchemyKey}/getNFTs/`
+  `https://ens-nft-worker.ens-cf.workers.dev/v1/${network}/getNfts/`
 
 const InnerScrollBox = styled.div(
   ({ theme }) => css`
