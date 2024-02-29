@@ -7,14 +7,16 @@ import { useAccount } from 'wagmi'
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
+import { Outlink } from '@app/components/Outlink'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content, ContentWarning } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
-import { formatFullExpiry, getEncodedLabelAmount } from '@app/utils/utils'
+import { formatFullExpiry, getEncodedLabelAmount, makeEtherscanLink } from '@app/utils/utils'
 
 import MoreTab from './tabs/MoreTab/MoreTab'
 import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
@@ -228,6 +230,8 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
 
   const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
 
+  const chainName = useChainName()
+
   return (
     <>
       <Head>
@@ -260,6 +264,14 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
               ))}
             </TabButtonContainer>
           ),
+          titleExtra: profile?.address ? (
+            <Outlink
+              fontVariant="bodyBold"
+              href={makeEtherscanLink(profile.address!, chainName, 'address')}
+            >
+              {t('etherscan', { ns: 'common' })}
+            </Outlink>
+          ) : null,
           trailing: {
             profile: <ProfileTab name={normalisedName} nameDetails={nameDetails} />,
             records: (
