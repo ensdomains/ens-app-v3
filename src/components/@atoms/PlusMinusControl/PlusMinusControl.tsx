@@ -7,7 +7,6 @@ import {
   useCallback,
   useState,
 } from 'react'
-import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import MinusIcon from '@app/assets/Minus.svg'
@@ -147,7 +146,6 @@ export const PlusMinusControl = forwardRef(
       // maxValue is needed to prevent exceeding NUMBER.MAX_SAFE_INTEGER
       maxValue = Number.MAX_SAFE_INTEGER - 1,
       name = 'plus-minus-control',
-      unit = 'years',
       onChange,
       onBlur,
       highlighted,
@@ -155,7 +153,6 @@ export const PlusMinusControl = forwardRef(
     }: Props,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
-    const { t } = useTranslation('common')
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
 
     const getDefaultValue = useCallback(() => {
@@ -218,6 +215,8 @@ export const PlusMinusControl = forwardRef(
       onBlur?.(e)
     }
 
+    const expiryDate = new Date(Date.now() + (value ?? 0) * 31536000000)
+
     return (
       <Container $highlighted={highlighted}>
         <Button
@@ -252,7 +251,13 @@ export const PlusMinusControl = forwardRef(
             }}
             onBlur={handleBlur}
           />
-          <Label $highlighted={highlighted}>{t(`unit.${unit}`, { count: value })}</Label>
+          <Label $highlighted={highlighted}>
+            {expiryDate.toLocaleDateString(undefined, {
+              month: 'short',
+              day: '2-digit',
+              year: 'numeric',
+            })}
+          </Label>
         </LabelContainer>
         <Button
           type="button"
