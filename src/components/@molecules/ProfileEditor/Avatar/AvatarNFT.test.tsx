@@ -74,6 +74,8 @@ describe('<AvatarNFT />', () => {
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
+    fireEvent.load(screen.getByTestId('nft-image-0-0x0'))
+    await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeEnabled())
     fireEvent.click(screen.getByTestId('nft-0-0x0'))
     await waitFor(() => expect(screen.getByText('NFT 0 description')).toBeVisible(), {
       timeout: 1000,
@@ -91,6 +93,8 @@ describe('<AvatarNFT />', () => {
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
+    fireEvent.load(screen.getByTestId('nft-image-0-0x0'))
+    await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeEnabled())
     fireEvent.click(screen.getByTestId('nft-0-0x0'))
     await waitFor(() => expect(screen.getByText('NFT 0 description')).toBeVisible())
     fireEvent.click(screen.getByText('action.confirm'))
