@@ -4,7 +4,7 @@ import { Address } from 'viem'
 import { GetOwnerReturnType } from '@ensdomains/ensjs/public'
 
 import { createAccounts } from '../../playwright/fixtures/accounts'
-import { getContractAddress } from '../../playwright/fixtures/contracts/utils/addTestContracts'
+import { makeMockUseContractAddress } from './makeMockUseContractAddress'
 
 const mockUseOwnerTypes = [
   'eth',
@@ -15,6 +15,7 @@ const mockUseOwnerTypes = [
   'eth-wrapped-2ld',
   'eth-grace-period-wrapped-2ld',
   'eth-expired-2ld',
+  'eth-wrapped-subname',
 ] as const
 
 export type MockUseOwnerType = (typeof mockUseOwnerTypes)[number]
@@ -53,14 +54,14 @@ export const makeMockUseOwnerData = (
       ownershipLevel: 'registrar' as const,
       registrant: userAddress,
     }))
-    .with('eth-wrapped-2ld', () => ({
+    .with(P.union('eth-wrapped-2ld', 'eth-wrapped-subname'), () => ({
       owner: userAddress,
       ownershipLevel: 'nameWrapper' as const,
     }))
     .with(P.union('eth-grace-period-wrapped-2ld'), () => ({
-      owner: getContractAddress('NameWrapper'),
+      owner: makeMockUseContractAddress({ contract: 'ensNameWrapper' }),
       ownershipLevel: 'registrar' as const,
-      registrant: getContractAddress('NameWrapper'),
+      registrant: makeMockUseContractAddress({ contract: 'ensNameWrapper' }),
     }))
     .with('eth-expired-2ld', () => ({
       owner: userAddress,

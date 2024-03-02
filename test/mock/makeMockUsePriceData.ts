@@ -6,6 +6,7 @@ const mockUsePriceTypes = [
   'tld',
   'eth-available-normal-2ld', // Is the price data always the same
   'eth-available-premium-2ld',
+  'undefined',
 ] as const
 export type MockUsePriceType = (typeof mockUsePriceTypes)[number]
 
@@ -17,4 +18,5 @@ export const makeMockUsePriceData = (type: MockUsePriceType): GetPriceReturnType
       base: 3203936997786453n,
       premium: 3203936997786453n,
     }))
+    .with('undefined', () => undefined)
     .exhaustive()

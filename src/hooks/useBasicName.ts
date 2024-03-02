@@ -86,8 +86,9 @@ export const useBasicName = ({
     isPriceCachedData &&
     isAddrCachedData
 
-  console.log('expiryData', expiryData)
-  console.log('priceData', priceData)
+  console.log('now', Date.now())
+  console.log('expiryData', name, expiryData)
+  console.log('priceData', name, priceData)
   const expiryDate = expiryData?.expiry?.date
 
   const gracePeriodEndDate =

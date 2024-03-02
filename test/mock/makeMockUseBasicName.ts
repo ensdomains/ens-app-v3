@@ -44,6 +44,13 @@ export const mockUseBasicNameConfig = {
     useExpiryType: 'eth-registered-2ld',
     usePriceType: 'eth-available-normal-2ld',
   } as MockUseBasicNameConfig,
+  'eth-locked-2ld': {
+    useValidateType: 'valid-2ld',
+    useOwnerType: 'eth-wrapped-2ld',
+    useWrapperDataType: 'eth-locked-2ld',
+    useExpiryType: 'eth-registered-2ld',
+    usePriceType: 'eth-available-normal-2ld',
+  } as MockUseBasicNameConfig,
   'eth-grace-period-unwrapped-2ld': {
     useValidateType: 'valid-2ld',
     useOwnerType: 'eth-grace-period-unwrapped-2ld',
@@ -51,12 +58,19 @@ export const mockUseBasicNameConfig = {
     useExpiryType: 'eth-grace-period-2ld',
     usePriceType: 'eth-available-normal-2ld',
   } as MockUseBasicNameConfig,
-  'eth-unwrapped-subname': {
-    useValidateType: 'valid-2ld',
-    useOwnerType: 'eth-grace-period-unwrapped-2ld',
-    useWrapperDataType: 'unwrapped-or-available',
-    useExpiryType: 'eth-grace-period-2ld',
-    usePriceType: 'eth-available-normal-2ld',
+  'eth-wrapped-subname': {
+    useValidateType: 'valid-subname',
+    useOwnerType: 'eth-wrapped-subname',
+    useWrapperDataType: 'wrapped',
+    useExpiryType: 'undefined',
+    usePriceType: 'undefined',
+  } as MockUseBasicNameConfig,
+  'eth-emancipated-subname': {
+    useValidateType: 'valid-subname',
+    useOwnerType: 'eth-wrapped-subname',
+    useWrapperDataType: 'emancipated',
+    useExpiryType: 'undefined',
+    usePriceType: 'undefined',
   } as MockUseBasicNameConfig,
 } as const
 
@@ -99,12 +113,12 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
     }))
     .with('eth-available-2ld', () => ({
       ...BaseBasicName,
-      normalisedName: 'eth',
-      truncatedName: 'eth',
+      normalisedName: 'name.eth',
+      truncatedName: 'name.eth',
       isWrapped: false,
       pccExpired: false,
       canBeWrapped: true,
-      registrationStatus: 'owned',
+      registrationStatus: 'available',
       isLoading: false,
       isCachedData: false,
     }))
@@ -130,6 +144,17 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
       isLoading: false,
       isCachedData: false,
     }))
+    .with('eth-locked-2ld', () => ({
+      ...BaseBasicName,
+      normalisedName: 'name.eth',
+      truncatedName: 'name.eth',
+      isWrapped: true,
+      pccExpired: false,
+      canBeWrapped: false,
+      registrationStatus: 'registered',
+      isLoading: false,
+      isCachedData: false,
+    }))
     .with('eth-grace-period-unwrapped-2ld', () => ({
       ...BaseBasicName,
       ownerData: makeMockUseOwnerData('eth-grace-period-unwrapped-2ld-with-registry-registrant'),
@@ -139,6 +164,28 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
       isWrapped: false,
       pccExpired: false,
       canBeWrapped: true,
+      isLoading: false,
+      isCachedData: false,
+    }))
+    .with('eth-wrapped-subname', () => ({
+      ...BaseBasicName,
+      normalisedName: 'subname.name.eth',
+      truncatedName: 'subname.name.eth',
+      registrationStatus: 'owned',
+      isWrapped: true,
+      pccExpired: false,
+      canBeWrapped: false,
+      isLoading: false,
+      isCachedData: false,
+    }))
+    .with('eth-emancipated-subname', () => ({
+      ...BaseBasicName,
+      normalisedName: 'subname.name.eth',
+      truncatedName: 'subname.name.eth',
+      registrationStatus: 'owned',
+      isWrapped: true,
+      pccExpired: false,
+      canBeWrapped: false,
       isLoading: false,
       isCachedData: false,
     }))

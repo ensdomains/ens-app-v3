@@ -7,6 +7,7 @@ const mockUseExpiryTypes = [
   'eth-available-2ld',
   'eth-registered-2ld',
   'eth-grace-period-2ld',
+  'undefined',
 ] as const
 export type MockUseExpiryType = (typeof mockUseExpiryTypes)[number]
 
@@ -37,4 +38,5 @@ export const makeMockUseExpiryData = (type: MockUseExpiryType): GetExpiryReturnT
       gracePeriod: 7776000,
       status: 'active' as const,
     }))
+    .with('undefined', () => undefined)
     .otherwise(() => null)
