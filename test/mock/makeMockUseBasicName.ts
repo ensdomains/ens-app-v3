@@ -51,6 +51,13 @@ export const mockUseBasicNameConfig = {
     useExpiryType: 'eth-grace-period-2ld',
     usePriceType: 'eth-available-normal-2ld',
   } as MockUseBasicNameConfig,
+  'eth-unwrapped-subname': {
+    useValidateType: 'valid-2ld',
+    useOwnerType: 'eth-grace-period-unwrapped-2ld',
+    useWrapperDataType: 'unwrapped-or-available',
+    useExpiryType: 'eth-grace-period-2ld',
+    usePriceType: 'eth-available-normal-2ld',
+  } as MockUseBasicNameConfig,
 } as const
 
 type MockUseBasicNameType = keyof typeof mockUseBasicNameConfig

@@ -512,7 +512,7 @@ describe('useBasicName', () => {
     })
   })
   describe('mocks', () => {
-    it.only.each(mockUseBasicNameTypes)('should return expect value for %s', async (type) => {
+    it.each(mockUseBasicNameTypes)('should return expect value for %s', async (type) => {
       const config = mockUseBasicNameConfig[type]
       const { useValidateType, useOwnerType, useWrapperDataType, useExpiryType, usePriceType } = config
       mockUseValidate.mockReturnValue(makeMockUseValidate(useValidateType))
