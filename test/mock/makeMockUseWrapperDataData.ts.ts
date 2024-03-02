@@ -1,17 +1,29 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
 import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
-import { NameType } from '@app/hooks/nameType/getNameType'
+import { GRACE_PERIOD } from '@app/utils/constants'
 
-export const createMockWrapperData = (
-  nameType: NameType,
-  overides?: GetWrapperDataReturnType,
-): GetWrapperDataReturnType | undefined =>
-  match(nameType)
-    .with(P.union('eth-unwrapped-2ld', 'eth-grace-period-unwrapped-2ld'), () => null)
-    .with(P.union('eth-emancipated-2ld', 'eth-locked-2ld', 'eth-grace-period-emancipated-2ld', 'eth-grace-period-locked-2ld'), () => ({
+import { createAccounts } from '../../playwright/fixtures/accounts'
+
+const mockUseWrapperDataTypes = [
+  'unwrapped-or-available',
+  'eth-emancipated-2ld',
+  'eth-locked-2ld',
+] as const
+export type MockUseWrapperDataType = (typeof mockUseWrapperDataTypes)[number]
+
+const useAddress = createAccounts().getAddress('user') as Address
+
+export const makeMockUseWrapperDataData = (
+  type: MockUseWrapperDataType,
+): GetWrapperDataReturnType | undefined => {
+  return match(type)
+    .with(P.union('unwrapped-or-available'), () => null)
+    .with(P.union('eth-emancipated-2ld', 'eth-locked-2ld'), () => ({
       fuses: {
         parent: {
           PARENT_CANNOT_CONTROL: true,
@@ -27,7 +39,7 @@ export const createMockWrapperData = (
           },
         },
         child: {
-          CANNOT_UNWRAP: nameType.includes('-locked-'),
+          CANNOT_UNWRAP: type.includes('-locked-'),
           CANNOT_BURN_FUSES: false,
           CANNOT_TRANSFER: false,
           CANNOT_SET_RESOLVER: false,
@@ -45,14 +57,15 @@ export const createMockWrapperData = (
             '0x4000': false,
             '0x8000': false,
           },
-          CAN_DO_EVERYTHING: nameType.includes('-emancipated-'),
+          CAN_DO_EVERYTHING: type.includes('-emancipated-'),
         },
         value: 196608,
       },
       expiry: {
-        date: new Date(),
-        value: 1746423254n,
+        date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
+        value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
       },
-      owner: overides?.owner || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' as Address,
+      owner: useAddress,
     }))
     .otherwise(() => null)
+}

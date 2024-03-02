@@ -25,6 +25,16 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     gracePeriodEndDate,
     ...basicName
   } = useBasicName({ name })
+  console.log('basicName', {
+    isValid,
+    normalisedName,
+    isLoading: isBasicLoading,
+    isCachedData: isBasicCachedData,
+    registrationStatus,
+    expiryDate,
+    gracePeriodEndDate,
+    ...basicName,
+  })
 
   const {
     data: profile,

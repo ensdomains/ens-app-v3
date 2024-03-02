@@ -5,6 +5,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { createDateAndValue } from '@app/utils/utils'
 
+import { makeMockUseContractAddress } from '../../test/mock/makeMockUseContractAddress'
+import { makeMockUseBasicName, mockUseBasicNameConfig, mockUseBasicNameTypes } from '../../test/mock/makeMockUseBasicName'
+import { makeMockUseExpiryData } from '../../test/mock/makeMockUseExpiryData'
+import { makeMockUseOwnerData } from '../../test/mock/makeMockUseOwnerData'
+import { makeMockUsePriceData } from '../../test/mock/makeMockUsePriceData'
+import { makeMockUseValidate } from '../../test/mock/makeMockUseValidate'
+import { makeMockUseWrapperDataData } from '../../test/mock/makeMockUseWrapperDataData.ts'
 import { useContractAddress } from './chain/useContractAddress'
 import useCurrentBlockTimestamp from './chain/useCurrentBlockTimestamp'
 import { useExpiry } from './ensjs/public/useExpiry'
@@ -14,7 +21,8 @@ import { useWrapperData } from './ensjs/public/useWrapperData'
 import { useBasicName } from './useBasicName'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
-import { match } from 'ts-pattern'
+import { useSubgraphRegistrant } from './ensjs/subgraph/useSubgraphRegistrant'
+import { makeMockUseSubgraphRegistrantData } from '../../test/mock/makeMockUseSubgraphRegistrantData'
 
 vi.mock('./chain/useCurrentBlockTimestamp')
 vi.mock('./chain/useContractAddress')
@@ -26,6 +34,8 @@ vi.mock('./ensjs/public/useOwner')
 vi.mock('./ensjs/public/useExpiry')
 vi.mock('./ensjs/public/useWrapperData')
 vi.mock('./ensjs/public/usePrice')
+vi.mock('./ensjs/subgraph/useSubgraphRegistrant')
+vi.setSystemTime(new Date())
 
 const mockUseValidate = mockFunction(useValidate)
 const mockUseContractAddress = mockFunction(useContractAddress)
@@ -37,6 +47,7 @@ const mockUseOwner = mockFunction(useOwner)
 const mockUseExpiry = mockFunction(useExpiry)
 const mockUseWrapperData = mockFunction(useWrapperData)
 const mockUsePrice = mockFunction(usePrice)
+const mockUseSubgraphRegistrant = mockFunction(useSubgraphRegistrant)
 
 describe('useBasicName', () => {
   beforeEach(() => {
@@ -47,7 +58,11 @@ describe('useBasicName', () => {
     mockUseWrapperData.mockReturnValue({ data: undefined, isLoading: false })
     mockUsePrice.mockReturnValue({ data: undefined, isLoading: false })
     // @ts-ignore
-    mockUseContractAddress.mockReturnValue('0x123')
+    mockUseContractAddress.mockImplementation((arg) => makeMockUseContractAddress(arg))
+    mockUseSubgraphRegistrant.mockImplementation(({ enabled }) => ({
+      data: enabled ? makeMockUseSubgraphRegistrantData('eth-grace-period-unwrapped-2ld') : undefined,
+      isLoading: false
+    }))
   })
   describe('2LD .eth', () => {
     beforeEach(() => {
@@ -496,23 +511,39 @@ describe('useBasicName', () => {
       )
     })
   })
-})
-
-const TEST_MATRIX_CONFIG = {
-  "eth-unwrapped-2ld": {},
-  "eth-grace-period-unwrapped-2ld": {}
-} as const
-
-type TestMatrix = keyof typeof TEST_MATRIX_CONFIG
-const TEST_MATRIX = Object.keys(TEST_MATRIX_CONFIG) as unknown as TestMatrix[]
-
-const createMockUseBasicName = (testMatrix: TestMatrix, overrides?: any) => match(testMatrix)
-.with('eth-unwrapped-2ld', () => ({}))
-.with('eth-grace-period-unwrapped-2ld', () => ({}))
-.exhaustive()
-
-describe('useBasicName Test Matric', () => {
-  it.each(TEST_MATRIX)('should call useBasicName', (testMatrix) => {
-
+  describe('mocks', () => {
+    it.only.each(mockUseBasicNameTypes)('should return expect value for %s', async (type) => {
+      const config = mockUseBasicNameConfig[type]
+      const { useValidateType, useOwnerType, useWrapperDataType, useExpiryType, usePriceType } = config
+      mockUseValidate.mockReturnValue(makeMockUseValidate(useValidateType))
+      mockUseSupportsTLD.mockReturnValue({ data: true, isLoading: false })
+      mockUseOwner.mockReturnValue({
+        data: makeMockUseOwnerData(useOwnerType),
+        isLoading: false,
+        isCachedData: false,
+      })
+      mockUseWrapperData.mockReturnValue({
+        data: makeMockUseWrapperDataData(useWrapperDataType),
+        isLoading: false,
+        isCachedData: false,
+      })
+      mockUseExpiry.mockReturnValue({
+        data: makeMockUseExpiryData(useExpiryType),
+        isLoading: false,
+        isCachedData: false,
+      })
+      mockUsePrice.mockReturnValue({
+        data: makeMockUsePriceData(usePriceType),
+        isLoading: false,
+        isCachedData: false,
+      })
+      const test = await vi.importActual<typeof import('@app/utils/registrationStatus')>(
+        '@app/utils/registrationStatus',
+      )
+      mockGetRegistrationStatus.mockImplementation((args) => test.getRegistrationStatus(args))
+      const { result } = renderHook(() => useBasicName({ name: 'name.eth' }))
+      const expected = makeMockUseBasicName(type)
+      expect(expected).toEqual(result.current)
+    })
   })
 })

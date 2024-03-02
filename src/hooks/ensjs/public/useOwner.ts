@@ -11,7 +11,7 @@ export type UseOwnerParameters<
   TContract extends OwnerContract | undefined = OwnerContract | undefined,
 > = PartialBy<GetOwnerParameters<TContract>, 'name'>
 
-type UseOwnerReturnType<TContract extends OwnerContract | undefined = undefined> =
+export type UseOwnerReturnType<TContract extends OwnerContract | undefined = undefined> =
   GetOwnerReturnType<TContract>
 
 type UseOwnerConfig<TContract extends OwnerContract | undefined = OwnerContract | undefined> =

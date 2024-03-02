@@ -48,7 +48,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     isWrapped,
     pccExpired,
     gracePeriodEndDate,
-    registrationStatus,
   } = nameDetails
 
   const abilities = useAbilities({ name })
@@ -60,7 +59,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     wrapperData: wrapperData!,
     dnsOwner,
     abilities: abilities.data,
-    registrationStatus,
   })
 
   const profileActions = useProfileActions({

@@ -1,19 +1,17 @@
-import { QueryFunctionContext } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 import { gql } from 'graphql-request'
-import { namehash } from 'viem'
-import { Address, useQuery } from 'wagmi'
+import { Address, namehash } from 'viem'
 
 import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
-import { useQueryKeyFactory } from '@app/hooks/useQueryKeyFactory'
-import { CreateQueryKey, PublicClientWithChain, QueryConfig } from '@app/types'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
+import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 
-type UseSubgraphRegistrantParameters = { name: string }
+export type UseSubgraphRegistrantParameters = { name: string }
 
-type UseSubgraphRegistrantReturnType = Address | undefined | null
+export type UseSubgraphRegistrantReturnType = Address | undefined | null
 
-type UseSubgraphRegistrantConfig = QueryConfig<UseSubgraphRegistrantReturnType, Error>
+export type UseSubgraphRegistrantConfig = QueryConfig<UseSubgraphRegistrantReturnType, Error>
 
 type QueryKey<TParams extends UseSubgraphRegistrantParameters> = CreateQueryKey<
   TParams,
@@ -31,54 +29,55 @@ type SubgraphResult = {
   }
 }
 
-export const getSubgraphRegistrantQueryFn = async <
-  TParams extends UseSubgraphRegistrantParameters,
->({
-  queryKey: [{ name }, chainId],
-}: QueryFunctionContext<QueryKey<TParams>>) => {
-  const publicClient = getPublicClient<PublicClientWithChain>({ chainId })
-  const subgraphClient = createSubgraphClient({ client: publicClient })
-  const query = gql`
-    query GetRegistrant($namehash: String!) {
-      domain(id: $namehash) {
-        registration {
-          registrant {
-            id
+export const getSubgraphRegistrantQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UseSubgraphRegistrantParameters>({
+    queryKey: [{ name }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    const client = config.getClient({ chainId })
+    const subgraphClient = createSubgraphClient({ client })
+    const query = gql`
+      query GetRegistrant($namehash: String!) {
+        domain(id: $namehash) {
+          registration {
+            registrant {
+              id
+            }
           }
         }
       }
-    }
-  `
-  const result = await subgraphClient.request<SubgraphResult>(query, { namehash: namehash(name) })
-  const registrant = result?.domain?.registration?.registrant?.id
-  if (!registrant) return null
-  return registrant
-}
+    `
+    const result = await subgraphClient.request<SubgraphResult>(query, { namehash: namehash(name) })
+    const registrant = result?.domain?.registration?.registrant?.id
+    if (!registrant) return null
+    return registrant
+  }
 
 export const useSubgraphRegistrant = <TParams extends UseSubgraphRegistrantParameters>({
   // config
-  cacheTime = 60,
+  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
   staleTime,
   scopeKey,
-  onError,
-  onSettled,
-  onSuccess,
-  // params
   ...params
 }: TParams & UseSubgraphRegistrantConfig) => {
-  const queryKey = useQueryKeyFactory({
+  const initialOptions = useQueryOptions({
     params,
     scopeKey,
     functionName: 'getSubgraphRegistrant',
     queryDependencyType: 'graph',
+    queryFn: getSubgraphRegistrantQueryFn,
   })
-  return useQuery(queryKey, getSubgraphRegistrantQueryFn, {
-    cacheTime,
+
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
+
+  return useQuery({
+    ...preparedOptions,
+    gcTime,
     enabled: enabled && !!params.name,
     staleTime,
-    onError,
-    onSettled,
-    onSuccess,
   })
 }

@@ -86,6 +86,8 @@ export const useBasicName = ({
     isPriceCachedData &&
     isAddrCachedData
 
+  console.log('expiryData', expiryData)
+  console.log('priceData', priceData)
   const expiryDate = expiryData?.expiry?.date
 
   const gracePeriodEndDate =
@@ -101,6 +103,19 @@ export const useBasicName = ({
   )
 
   const blockTimestamp = useCurrentBlockTimestamp({ enabled: isTempPremiumDesynced })
+
+  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
+  const isWrapped = !!wrapperData
+  const canBeWrapped = useMemo(
+    () =>
+      !!(
+        nameWrapperAddress &&
+        !isWrapped &&
+        normalisedName?.endsWith('.eth') &&
+        !isLabelTooLong(normalisedName)
+      ),
+    [nameWrapperAddress, isWrapped, normalisedName],
+  )
 
   const registrationStatusTimestamp = useMemo(() => {
     if (!isTempPremiumDesynced) return Date.now()
@@ -123,39 +138,31 @@ export const useBasicName = ({
 
   const { data: subgraphRegistrant } = useSubgraphRegistrant({
     name: normalisedName,
-    enabled: enabled && subgraphEnabled && registrationStatus === 'gracePeriod' && is2LD && isETH,
+    enabled:
+      enabled &&
+      subgraphEnabled &&
+      registrationStatus === 'gracePeriod' &&
+      is2LD &&
+      isETH &&
+      !isWrapped,
   })
 
   const ownerDataWithSubgraphRegistrant = useMemo(() => {
-    if (!ownerData) return undefined
+    if (!ownerData) return ownerData
     const checkSumSubgraphRegistrant = subgraphRegistrant
       ? getAddress(subgraphRegistrant)
       : undefined
     return {
       ...ownerData,
-      registrant: ownerData?.registrant || checkSumSubgraphRegistrant,
+      registrant: ownerData?.registrant ?? checkSumSubgraphRegistrant,
     } as UseOwnerReturnType
   }, [ownerData, subgraphRegistrant])
 
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
-  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
-
   const pccExpired = usePccExpired({ ownerData, wrapperData })
 
-  const isWrapped = !!wrapperData
-  const canBeWrapped = useMemo(
-    () =>
-      !!(
-        nameWrapperAddress &&
-        !isWrapped &&
-        normalisedName?.endsWith('.eth') &&
-        !isLabelTooLong(normalisedName)
-      ),
-    [nameWrapperAddress, isWrapped, normalisedName],
-  )
   const isLoading = publicCallsLoading || supportedTLDLoading
-
   return {
     ...validation,
     normalisedName,
