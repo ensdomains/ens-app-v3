@@ -11,6 +11,7 @@ import styled, { css } from 'styled-components'
 
 import MinusIcon from '@app/assets/Minus.svg'
 import PlusIcon from '@app/assets/Plus.svg'
+import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
 
 const Container = styled.div<{ $highlighted?: boolean }>(
@@ -98,13 +99,18 @@ type Props = {
   name?: string
   onChange?: (year: number) => void
   onBlur?: (year: number) => void
-} & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'onChange' | 'onBlur'>
+} & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'onChange' | 'onBlur' | 'name'>
+
+const ONE_YEAR = 31536000000
+
+const getLaterDate = (date1: Date, date2: Date) => [date1, date2].reduce((a, b) => (a > b ? a : b))
 
 export const PlusMinusControl = forwardRef(
   (
     {
       value,
       defaultValue,
+      name,
       minValue = 1,
       // maxValue is needed to prevent exceeding NUMBER.MAX_SAFE_INTEGER
       maxValue = Number.MAX_SAFE_INTEGER - 1,
@@ -141,13 +147,27 @@ export const PlusMinusControl = forwardRef(
       [minValue, maxValue],
     )
 
-    const now = Date.now()
-    const expiryDate = new Date(now + (value ?? 0) * 31536000000)
-    const minDate = new Date(now + 31536000000).toISOString().split('T')[0]
+    const { data } = useExpiry({ name })
 
-    const [inputValue, setInputValue] = useState<string>(
-      new Date(now + 31536000000).toISOString().split('T')[0],
+    const now = Date.now()
+
+    const yearAfterExpiry = new Date(
+      data!.expiry.date.getFullYear() + (value ?? 0),
+      data!.expiry.date.getMonth(),
+      data!.expiry.date.getDate(),
     )
+
+    const minDate = data
+      ? getLaterDate(yearAfterExpiry, new Date(now + (value ?? 0) * ONE_YEAR))
+      : new Date(now + (value ?? 0) * ONE_YEAR)
+
+    console.log(
+      { minDate, value },
+      new Date(now + (value ?? 0) * ONE_YEAR).getFullYear(),
+      yearAfterExpiry.getFullYear(),
+    )
+
+    const [inputValue, setInputValue] = useState<string>(() => minDate.toISOString().split('T')[0])
     const [focused, setFocused] = useState(false)
 
     const minusDisabled = typeof value === 'number' && value <= minValue
@@ -157,14 +177,17 @@ export const PlusMinusControl = forwardRef(
       const newValue = (value || 0) + inc
       const normalizedValue = normalizeValue(newValue)
       if (normalizedValue === value) return
-      const newInputValue = expiryDate
-      newInputValue.setFullYear(expiryDate.getFullYear() + inc)
+      const newInputValue = minDate
+      newInputValue.setFullYear(minDate.getFullYear() + inc)
       setInputValue(newInputValue.toISOString().split('T')[0])
       onChange?.(newValue)
     }
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-      const year = e.currentTarget.valueAsDate!.getFullYear() - new Date(now).getFullYear()
+      const year = (e.currentTarget.valueAsDate || minDate).getFullYear() - minDate.getFullYear()
+
+      console.log({ year }, 'change')
+
       const normalizedValue = normalizeValue(year)
       setInputValue(e.currentTarget.value)
 
@@ -174,9 +197,12 @@ export const PlusMinusControl = forwardRef(
     }
 
     const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-      const year = e.currentTarget.valueAsDate!.getFullYear() - new Date(now).getFullYear()
+      const year = (e.currentTarget.valueAsDate || minDate).getFullYear() - minDate.getFullYear()
+
       const normalizedValue = normalizeValue(year)
       setInputValue(e.currentTarget.value)
+
+      console.log({ year }, 'blur', e.currentTarget.value, minDate)
 
       if (normalizedValue !== value) {
         onChange?.(year)
@@ -210,14 +236,14 @@ export const PlusMinusControl = forwardRef(
             ref={inputRef}
             value={inputValue}
             onChange={handleChange}
-            min={minDate}
+            min={minDate.toISOString().split('T')[0]}
             onFocus={(e) => {
               e.target.select()
               setFocused(true)
             }}
             onBlur={handleBlur}
           />
-          {expiryDate.toLocaleDateString(undefined, {
+          {minDate.toLocaleDateString(undefined, {
             month: 'short',
             day: '2-digit',
             year: 'numeric',

@@ -283,6 +283,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
             <>
               <PlusMinusWrapper>
                 <PlusMinusControl
+                  name={names.length === 1 ? names[0] : undefined}
                   minValue={1}
                   value={years}
                   onChange={(newYears) => {
