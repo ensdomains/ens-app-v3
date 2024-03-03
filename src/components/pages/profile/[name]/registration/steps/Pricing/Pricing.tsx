@@ -547,7 +547,6 @@ const Pricing = ({
         minValue={1}
         value={years}
         onChange={(newYears) => {
-          console.log(newYears)
           if (!Number.isNaN(newYears)) setYears(newYears)
         }}
         highlighted
