@@ -489,6 +489,7 @@ const Pricing = ({
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
   const [years, setYears] = useState(registrationData.years)
+
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,
   )
@@ -545,8 +546,8 @@ const Pricing = ({
       <PlusMinusControl
         minValue={1}
         value={years}
-        onChange={(e) => {
-          const newYears = parseInt(e.target.value)
+        onChange={(newYears) => {
+          console.log(newYears)
           if (!Number.isNaN(newYears)) setYears(newYears)
         }}
         highlighted
