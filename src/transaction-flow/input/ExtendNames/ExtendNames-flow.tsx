@@ -9,6 +9,7 @@ import { Avatar, Button, CurrencyToggle, Dialog, Helper, mq, ScrollBox } from '@
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
+import { PlusMinusControlWithCalendar } from '@app/components/@atoms/PlusMinusControl/PlusMinusControlWithCalendar'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
@@ -195,8 +196,10 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     address,
   })
 
+  const isBulkRenewal = names.length > 1
+
   const [view, setView] = useState<'name-list' | 'registration'>(
-    names.length > 1 ? 'name-list' : 'registration',
+    isBulkRenewal ? 'name-list' : 'registration',
   )
 
   const [years, setYears] = useState(1)
@@ -282,14 +285,25 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           ) : (
             <>
               <PlusMinusWrapper>
-                <PlusMinusControl
-                  name={names.length === 1 ? names[0] : undefined}
-                  minValue={1}
-                  value={years}
-                  onChange={(newYears) => {
-                    if (!Number.isNaN(newYears)) setYears(newYears)
-                  }}
-                />
+                {isBulkRenewal ? (
+                  <PlusMinusControl
+                    minValue={1}
+                    value={years}
+                    onChange={(e) => {
+                      const newYears = parseInt(e.target.value)
+                      if (!Number.isNaN(newYears)) setYears(newYears)
+                    }}
+                  />
+                ) : (
+                  <PlusMinusControlWithCalendar
+                    name={names[0]}
+                    minValue={1}
+                    value={years}
+                    onChange={(newYears) => {
+                      if (!Number.isNaN(newYears)) setYears(newYears)
+                    }}
+                  />
+                )}
               </PlusMinusWrapper>
               <OptionBar $isCached={isPriceLoading}>
                 <GasDisplay gasPrice={gasPrice} />

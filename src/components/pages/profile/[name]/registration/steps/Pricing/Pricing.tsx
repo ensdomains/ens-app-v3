@@ -20,7 +20,7 @@ import {
 
 import MoonpayLogo from '@app/assets/MoonpayLogo.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
+import { PlusMinusControlWithCalendar } from '@app/components/@atoms/PlusMinusControl/PlusMinusControlWithCalendar'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Card } from '@app/components/Card'
@@ -543,7 +543,7 @@ const Pricing = ({
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
-      <PlusMinusControl
+      <PlusMinusControlWithCalendar
         minValue={1}
         value={years}
         onChange={(newYears) => {
