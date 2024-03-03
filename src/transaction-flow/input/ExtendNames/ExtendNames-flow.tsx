@@ -285,8 +285,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                 <PlusMinusControl
                   minValue={1}
                   value={years}
-                  onChange={(e) => {
-                    const newYears = parseInt(e.target.value)
+                  onChange={(newYears) => {
                     if (!Number.isNaN(newYears)) setYears(newYears)
                   }}
                 />
