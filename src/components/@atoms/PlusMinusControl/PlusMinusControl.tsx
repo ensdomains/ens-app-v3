@@ -1,6 +1,5 @@
 import {
   ChangeEventHandler,
-  FocusEvent,
   ForwardedRef,
   forwardRef,
   InputHTMLAttributes,
@@ -98,8 +97,7 @@ type Props = {
   unit?: string
   name?: string
   onChange?: (year: number) => void
-  onBlur?: (year: number) => void
-} & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'onChange' | 'onBlur' | 'name'>
+} & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'onChange' | 'name'>
 
 const ONE_YEAR = 31536000000
 
@@ -167,8 +165,6 @@ export const PlusMinusControl = forwardRef(
     const minusDisabled = typeof value === 'number' && value <= minValue
     const plusDisabled = typeof value === 'number' && value >= maxValue
 
-    console.log(minusDisabled, value, minValue)
-
     const incrementHandler = (inc: number) => () => {
       const newValue = (value || 0) + inc
       const normalizedValue = normalizeValue(newValue)
@@ -181,7 +177,7 @@ export const PlusMinusControl = forwardRef(
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
       const { valueAsDate } = e.currentTarget
-      const year = (valueAsDate || expiryDate).getFullYear() - expiryDate.getFullYear()
+      const year = (valueAsDate || minDate).getFullYear() - minDate.getFullYear()
 
       const normalizedValue = normalizeValue(year)
       if (valueAsDate) setInputValue(valueAsDate)
@@ -189,21 +185,6 @@ export const PlusMinusControl = forwardRef(
       const newValue = normalizedValue
       if (!isValidValue(newValue)) return
       onChange?.(year)
-    }
-
-    const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-      const { valueAsDate } = e.currentTarget
-      const year = (valueAsDate || expiryDate).getFullYear() - expiryDate.getFullYear()
-
-      const normalizedValue = normalizeValue(year)
-      if (valueAsDate) setInputValue(valueAsDate)
-
-      if (normalizedValue !== value) {
-        onChange?.(year)
-      }
-
-      setFocused(false)
-      onBlur?.(year)
     }
 
     return (
@@ -235,7 +216,6 @@ export const PlusMinusControl = forwardRef(
               e.target.select()
               setFocused(true)
             }}
-            onBlur={handleBlur}
           />
           {expiryDate.toLocaleDateString(undefined, {
             month: 'short',
