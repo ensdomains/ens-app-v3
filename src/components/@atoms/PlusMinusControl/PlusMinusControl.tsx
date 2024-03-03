@@ -149,11 +149,13 @@ export const PlusMinusControl = forwardRef(
 
     const now = Date.now()
 
-    const yearAfterExpiry = new Date(
-      data!.expiry.date.getFullYear() + (value ?? 0),
-      data!.expiry.date.getMonth(),
-      data!.expiry.date.getDate(),
-    )
+    const yearAfterExpiry = data
+      ? new Date(
+          data!.expiry.date.getFullYear() + (value ?? 0),
+          data!.expiry.date.getMonth(),
+          data!.expiry.date.getDate(),
+        )
+      : new Date(now + ONE_YEAR)
 
     const [inputValue, setInputValue] = useState<Date>(new Date(now + (value ?? 0) * ONE_YEAR))
 
