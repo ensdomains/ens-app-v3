@@ -12,7 +12,6 @@ import styled, { css } from 'styled-components'
 import MinusIcon from '@app/assets/Minus.svg'
 import PlusIcon from '@app/assets/Plus.svg'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
-import { createChangeEvent } from '@app/utils/syntheticEvent'
 
 const Container = styled.div<{ $highlighted?: boolean }>(
   ({ theme, $highlighted }) => css`
@@ -134,8 +133,9 @@ type Props = {
   defaultValue?: number
   unit?: string
   name?: string
-  onChange?: ChangeEventHandler<HTMLInputElement>
-} & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max'>
+  onChange?: (year: number) => void
+  onBlur?: (year: number) => void
+} & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'onChange' | 'onBlur'>
 
 export const PlusMinusControl = forwardRef(
   (
@@ -145,7 +145,6 @@ export const PlusMinusControl = forwardRef(
       minValue = 1,
       // maxValue is needed to prevent exceeding NUMBER.MAX_SAFE_INTEGER
       maxValue = Number.MAX_SAFE_INTEGER - 1,
-      name = 'plus-minus-control',
       onChange,
       onBlur,
       highlighted,
@@ -179,7 +178,13 @@ export const PlusMinusControl = forwardRef(
       [minValue, maxValue],
     )
 
-    const [inputValue, setInputValue] = useState<string>(getDefaultValue().toFixed(0))
+    const now = Date.now()
+    const expiryDate = new Date(now + (value ?? 0) * 31536000000)
+    const minDate = new Date(now + 31536000000).toISOString().split('T')[0]
+
+    const [inputValue, setInputValue] = useState<string>(
+      new Date(now + 31536000000).toISOString().split('T')[0],
+    )
     const [focused, setFocused] = useState(false)
 
     const minusDisabled = typeof value === 'number' && value <= minValue
@@ -189,33 +194,34 @@ export const PlusMinusControl = forwardRef(
       const newValue = (value || 0) + inc
       const normalizedValue = normalizeValue(newValue)
       if (normalizedValue === value) return
-      setInputValue(normalizedValue.toFixed(0))
-      const newEvent = createChangeEvent(normalizedValue, name)
-      onChange?.(newEvent)
+      const newInputValue = expiryDate
+      newInputValue.setFullYear(expiryDate.getFullYear() + inc)
+      setInputValue(newInputValue.toISOString().split('T')[0])
+      onChange?.(newValue)
     }
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-      setInputValue(e.target.value)
+      const year = e.currentTarget.valueAsDate!.getFullYear() - new Date(now).getFullYear()
+      const normalizedValue = normalizeValue(year)
+      setInputValue(e.currentTarget.value)
 
-      const newValue = parseInt(e.target.value)
+      const newValue = normalizedValue
       if (!isValidValue(newValue)) return
-      onChange?.(e)
+      onChange?.(year)
     }
 
     const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-      const normalizedValue = normalizeValue(parseInt(e.target.value))
-      setInputValue(normalizedValue.toFixed(0))
+      const year = e.currentTarget.valueAsDate!.getFullYear() - new Date(now).getFullYear()
+      const normalizedValue = normalizeValue(year)
+      setInputValue(e.currentTarget.value)
 
       if (normalizedValue !== value) {
-        const newEvent = createChangeEvent(normalizedValue, name)
-        onChange?.(newEvent)
+        onChange?.(year)
       }
 
       setFocused(false)
-      onBlur?.(e)
+      onBlur?.(year)
     }
-
-    const expiryDate = new Date(Date.now() + (value ?? 0) * 31536000000)
 
     return (
       <Container $highlighted={highlighted}>
@@ -231,13 +237,12 @@ export const PlusMinusControl = forwardRef(
           <LabelInput
             data-testid="plus-minus-control-input"
             $highlighted={highlighted}
-            type="number"
+            type="date"
             {...props}
             ref={inputRef}
             value={inputValue}
             onChange={handleChange}
-            min={minValue}
-            max={maxValue}
+            min={minDate}
             inputMode="numeric"
             pattern="[0-9]*"
             onKeyDown={(e) => {
