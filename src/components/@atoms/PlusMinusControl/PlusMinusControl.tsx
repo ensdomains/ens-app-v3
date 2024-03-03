@@ -218,6 +218,7 @@ export const PlusMinusControl = forwardRef(
               e.target.select()
               setFocused(true)
             }}
+            onBlur={() => setFocused(false)}
           />
           {expiryDate.toLocaleDateString(undefined, {
             month: 'short',
