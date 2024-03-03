@@ -154,7 +154,6 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-testing-library": "^6.0.2",
     "eslint-plugin-vitest": "^0.3.22",
-    "eth-ens-namehash": "^2.0.8",
     "ethers": "^5.7.2",
     "ganache": "^7.4.1",
     "graphql-request": "5.1.0",
