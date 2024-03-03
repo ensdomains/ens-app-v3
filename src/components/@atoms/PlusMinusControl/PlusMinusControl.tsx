@@ -157,39 +157,34 @@ export const PlusMinusControl = forwardRef(
       data!.expiry.date.getDate(),
     )
 
-    const minDate = data
-      ? getLaterDate(yearAfterExpiry, new Date(now + (value ?? 0) * ONE_YEAR))
-      : new Date(now + (value ?? 0) * ONE_YEAR)
+    const [inputValue, setInputValue] = useState<Date>(new Date(now + (value ?? 0) * ONE_YEAR))
 
-    console.log(
-      { minDate, value },
-      new Date(now + (value ?? 0) * ONE_YEAR).getFullYear(),
-      yearAfterExpiry.getFullYear(),
-    )
+    const expiryDate = data ? getLaterDate(yearAfterExpiry, inputValue) : inputValue
+    const minDate = data ? data.expiry.date : new Date(now + ONE_YEAR)
 
-    const [inputValue, setInputValue] = useState<string>(() => minDate.toISOString().split('T')[0])
     const [focused, setFocused] = useState(false)
 
     const minusDisabled = typeof value === 'number' && value <= minValue
     const plusDisabled = typeof value === 'number' && value >= maxValue
 
+    console.log(minusDisabled, value, minValue)
+
     const incrementHandler = (inc: number) => () => {
       const newValue = (value || 0) + inc
       const normalizedValue = normalizeValue(newValue)
       if (normalizedValue === value) return
-      const newInputValue = minDate
-      newInputValue.setFullYear(minDate.getFullYear() + inc)
-      setInputValue(newInputValue.toISOString().split('T')[0])
+      const newInputValue = expiryDate
+      newInputValue.setFullYear(expiryDate.getFullYear() + inc)
+      setInputValue(newInputValue)
       onChange?.(newValue)
     }
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-      const year = (e.currentTarget.valueAsDate || minDate).getFullYear() - minDate.getFullYear()
-
-      console.log({ year }, 'change')
+      const { valueAsDate } = e.currentTarget
+      const year = (valueAsDate || expiryDate).getFullYear() - expiryDate.getFullYear()
 
       const normalizedValue = normalizeValue(year)
-      setInputValue(e.currentTarget.value)
+      if (valueAsDate) setInputValue(valueAsDate)
 
       const newValue = normalizedValue
       if (!isValidValue(newValue)) return
@@ -197,12 +192,11 @@ export const PlusMinusControl = forwardRef(
     }
 
     const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-      const year = (e.currentTarget.valueAsDate || minDate).getFullYear() - minDate.getFullYear()
+      const { valueAsDate } = e.currentTarget
+      const year = (valueAsDate || expiryDate).getFullYear() - expiryDate.getFullYear()
 
       const normalizedValue = normalizeValue(year)
-      setInputValue(e.currentTarget.value)
-
-      console.log({ year }, 'blur', e.currentTarget.value, minDate)
+      if (valueAsDate) setInputValue(valueAsDate)
 
       if (normalizedValue !== value) {
         onChange?.(year)
@@ -234,7 +228,7 @@ export const PlusMinusControl = forwardRef(
             type="date"
             {...props}
             ref={inputRef}
-            value={inputValue}
+            value={inputValue?.toISOString().split('T')[0]}
             onChange={handleChange}
             min={minDate.toISOString().split('T')[0]}
             onFocus={(e) => {
@@ -243,7 +237,7 @@ export const PlusMinusControl = forwardRef(
             }}
             onBlur={handleBlur}
           />
-          {minDate.toLocaleDateString(undefined, {
+          {expiryDate.toLocaleDateString(undefined, {
             month: 'short',
             day: '2-digit',
             year: 'numeric',
