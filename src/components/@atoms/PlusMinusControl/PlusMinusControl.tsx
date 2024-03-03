@@ -53,36 +53,14 @@ const Button = styled.button(
   `,
 )
 
-const LabelContainer = styled.div(
-  ({ theme }) => css`
+const Label = styled.label<{ $highlighted?: boolean }>(
+  ({ theme, $highlighted }) => css`
     position: relative;
     flex: 1;
     height: ${theme.space['11']};
     border-radius: ${theme.radii.full};
     background-color: transparent;
-    transition: background-color 150ms ease-in-out;
-    overflow: hidden;
-
-    :hover {
-      background-color: ${theme.colors.accentSurface};
-    }
-
-    :focus-within label {
-      opacity: 0;
-    }
-    :focus-within input {
-      opacity: 1;
-    }
-  `,
-)
-
-const Label = styled.label<{ $highlighted?: boolean }>(
-  ({ theme, $highlighted }) => css`
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: ${theme.space['11']};
     display: block;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -93,34 +71,19 @@ const Label = styled.label<{ $highlighted?: boolean }>(
     line-height: ${theme.space['11']};
     text-align: center;
     color: ${$highlighted ? theme.colors.accent : theme.colors.text};
-    pointer-events: none;
     opacity: 1;
     transition: opacity 150ms ease-in-out;
   `,
 )
 
 const LabelInput = styled.input<{ $highlighted?: boolean }>(
-  ({ theme, $highlighted }) => css`
+  () => css`
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    text-align: center;
-    font-style: normal;
-    font-weight: ${theme.fontWeights.bold};
-    font-size: ${$highlighted ? theme.fontSizes.headingTwo : theme.fontSizes.large};
-    line-height: ${$highlighted ? theme.lineHeights.headingTwo : theme.lineHeights.large};
-    color: ${$highlighted ? theme.colors.accent : theme.colors.text};
     opacity: 0;
-    transition: opacity 150ms ease-in-out;
-    background-color: ${theme.colors.accentSurface};
-
-    /* stylelint-disable property-no-vendor-prefix */
-    ::-webkit-outer-spin-button,
-    ::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    -moz-appearance: textfield;
-    /* stylelint-enable property-no-vendor-prefix */
   `,
 )
 
@@ -233,8 +196,13 @@ export const PlusMinusControl = forwardRef(
         >
           <MinusIcon />
         </Button>
-        <LabelContainer>
+        <Label
+          htmlFor="year-input"
+          $highlighted={highlighted}
+          onClick={() => inputRef.current!.showPicker()}
+        >
           <LabelInput
+            id="year-input"
             data-testid="plus-minus-control-input"
             $highlighted={highlighted}
             type="date"
@@ -243,27 +211,18 @@ export const PlusMinusControl = forwardRef(
             value={inputValue}
             onChange={handleChange}
             min={minDate}
-            inputMode="numeric"
-            pattern="[0-9]*"
-            onKeyDown={(e) => {
-              // rely on type="number" to prevent non-numeric input
-              // additionally prevent . and -
-              if (['.', '-'].includes(e.key)) e.preventDefault()
-            }}
             onFocus={(e) => {
               e.target.select()
               setFocused(true)
             }}
             onBlur={handleBlur}
           />
-          <Label $highlighted={highlighted}>
-            {expiryDate.toLocaleDateString(undefined, {
-              month: 'short',
-              day: '2-digit',
-              year: 'numeric',
-            })}
-          </Label>
-        </LabelContainer>
+          {expiryDate.toLocaleDateString(undefined, {
+            month: 'short',
+            day: '2-digit',
+            year: 'numeric',
+          })}
+        </Label>
         <Button
           type="button"
           onClick={incrementHandler(1)}
