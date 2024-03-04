@@ -1,4 +1,5 @@
 name: 'Upload playwright report shard'
+description: 'Upload a playwright report blob identified by the job name and shard index'
 runs:
   using: 'composite'
   steps:

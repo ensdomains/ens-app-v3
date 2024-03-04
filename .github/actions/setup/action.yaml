@@ -1,9 +1,9 @@
 name: 'Setup'
+description: 'Download and install dependencies'
 inputs:
   playwright:
     description: 'Whether or not to install playwright browsers'
     required: false
-    default: false
   build-download:
     description: 'Build download artifact name'
     required: false
@@ -15,12 +15,15 @@ runs:
         bun-version: latest
 
     - name: Install node-gyp-build
+      shell: bash
       run: bun add --global node-gyp-build
 
     - name: Install dependencies
+      shell: bash
       run: bun install --frozen-lockfile
 
     - name: Install playwright browsers
+      shell: bash
       if: ${{ inputs.playwright }}
       run: bunx playwright install chromium
 
@@ -32,5 +35,6 @@ runs:
         name: ${{ inputs.build-download }}
 
     - name: Untar build files
+      shell: bash
       if: ${{ inputs.build-download }}
       run: tar -xvf ${{ inputs.build-download }}.tar
