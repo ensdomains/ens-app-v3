@@ -15,7 +15,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp
+      - run: bun add --global node-gyp-build
 
       - run: bun install --frozen-lockfile
 
@@ -35,7 +35,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp
+      - run: bun add --global node-gyp-build
 
       - run: bun install --frozen-lockfile
 
@@ -68,7 +68,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp
+      - run: bun add --global node-gyp-build
 
       - run: bun install --frozen-lockfile
 
@@ -99,7 +99,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp
+      - run: bun add --global node-gyp-build
 
       - run: bun install --frozen-lockfile
 
@@ -131,7 +131,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp
+      - run: bun add --global node-gyp-build
 
       - run: bun install --frozen-lockfile
 
@@ -179,7 +179,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp
+      - run: bun add --global node-gyp-build
 
       - run: bun install --frozen-lockfile
 
