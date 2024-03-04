@@ -15,7 +15,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp-build
+      - run: bun add --global node-gyp
 
       - run: bun install --frozen-lockfile
 
@@ -35,7 +35,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp-build
+      - run: bun add --global node-gyp
 
       - run: bun install --frozen-lockfile
 
@@ -43,8 +43,8 @@ jobs:
         run: bunx playwright install chromium
 
       - name: Run tests
-        run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "bun run build:glocal && bun run export && bun run wrangle" \
+        run: 'parallel --lb --halt now,success=2,fail=1 ::: \
+          "bun run build:glocal && bun run export" \
           "bun run e2e:ci -nb"'
         env:
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
@@ -68,7 +68,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp-build
+      - run: bun add --global node-gyp
 
       - run: bun install --frozen-lockfile
 
@@ -99,7 +99,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp-build
+      - run: bun add --global node-gyp
 
       - run: bun install --frozen-lockfile
 
@@ -131,7 +131,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp-build
+      - run: bun add --global node-gyp
 
       - run: bun install --frozen-lockfile
 
@@ -179,7 +179,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun add --global node-gyp-build
+      - run: bun add --global node-gyp
 
       - run: bun install --frozen-lockfile
 
