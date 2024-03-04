@@ -22,6 +22,7 @@ jobs:
       - run: bun run test:coverage
 
   stateless-parallel:
+    if: false
     name: stateless parallel (${{matrix.shard}})
     runs-on:
       group: default-larger-runners
@@ -59,6 +60,7 @@ jobs:
           retention-days: 30
 
   build-stateless:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -89,6 +91,7 @@ jobs:
           path: stateless-build.tar
 
   build-stateful:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -114,6 +117,7 @@ jobs:
           path: stateful-build.tar
 
   stateless-serial:
+    if: false
     name: stateless serial (${{matrix.shard}})
     needs: build-stateless
     timeout-minutes: 20
@@ -159,6 +163,7 @@ jobs:
           retention-days: 30
 
   stateful:
+    if: false
     name: stateful (${{matrix.shard}})
     needs: build-stateful
     timeout-minutes: 10

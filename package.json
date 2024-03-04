@@ -1,6 +1,10 @@
 {
   "name": "ens-app-v2",
   "version": "0.1.123",
+  "trustedDependencies": [
+    "rollup",
+    "next"
+  ],
   "scripts": {
     "postinstall": "bunx patch-package && husky install",
     "dev": "NODE_NO_WARNINGS=1 next dev",
