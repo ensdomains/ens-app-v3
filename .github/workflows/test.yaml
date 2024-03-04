@@ -23,7 +23,6 @@ jobs:
     name: stateless parallel (${{matrix.shard}})
     runs-on:
       group: default-larger-runners
-      labels: Ubuntu-32gb
     strategy:
       matrix:
         shard: [1, 2, 3, 4]
