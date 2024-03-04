@@ -10,12 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - name: Download and install dependencies
+        uses: ./.github/actions/setup
       - name: Run tests
         run: bun run test:coverage
 
   stateless-parallel:
     name: stateless parallel (${{matrix.shard}})
+    timeout-minutes: 20
     runs-on:
       group: default-larger-runners
     strategy:
@@ -23,7 +25,8 @@ jobs:
         shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - name: Download and install dependencies
+        uses: ./.github/actions/setup
         with:
           playwright: true
       - name: Run tests
@@ -34,14 +37,17 @@ jobs:
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
           PLAYWRIGHT_TOTAL: ${{ strategy.job-total }}
           PLAYWRIGHT_PROJECT: stateless-parallel
-      - uses: ./.github/actions/upload-report-shard
+      - name: Upload report shard
+        uses: ./.github/actions/upload-report-shard
         if: always()
 
   build-stateless:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - name: Download and install dependencies
+        uses: ./.github/actions/setup
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "bun run tenv start -ng -ns -nb" \
@@ -51,22 +57,24 @@ jobs:
       - name: Tar stateless files
         run: tar -cvf stateless-build.tar out
       - name: Upload stateless
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: stateless-build
           path: stateless-build.tar
 
   build-stateful:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - name: Download and install dependencies
+        uses: ./.github/actions/setup
       - name: Build stateful and export
         run: bun run build && bun run export
       - name: Tar stateful files
         run: tar -cvf stateful-build.tar out
       - name: Upload stateful
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: stateful-build
           path: stateful-build.tar
@@ -81,7 +89,8 @@ jobs:
         shard: [1, 2, 3, 4, 5]
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - name: Download and install dependencies
+        uses: ./.github/actions/setup
         with:
           playwright: true
           build-download: stateless-build
@@ -91,7 +100,8 @@ jobs:
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
           PLAYWRIGHT_TOTAL: ${{ strategy.job-total }}
           PLAYWRIGHT_PROJECT: stateless-serial
-      - uses: ./.github/actions/upload-report-shard
+      - name: Upload report shard
+        uses: ./.github/actions/upload-report-shard
         if: always()
 
   stateful:
@@ -104,7 +114,8 @@ jobs:
         shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - name: Download and install dependencies
+        uses: ./.github/actions/setup
         with:
           playwright: true
           build-download: stateful-build
@@ -115,7 +126,8 @@ jobs:
           "bun run wait-on http://127.0.0.1:8788 && bunx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
-      - uses: ./.github/actions/upload-report-shard
+      - name: Upload report shard
+        uses: ./.github/actions/upload-report-shard
         if: always()
 
   merge-reports:

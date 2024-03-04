@@ -30,7 +30,7 @@ runs:
     - name: Download build
       if: ${{ inputs.build-download }}
       id: download
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: ${{ inputs.build-download }}
 
