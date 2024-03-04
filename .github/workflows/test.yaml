@@ -45,7 +45,7 @@ jobs:
       - name: Run tests
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "bun run build:glocal && bun run export && bun run wrangle" \
-          "bun run e2e:ci"'
+          "bun run e2e:ci -nb"'
         env:
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
           PLAYWRIGHT_TOTAL: ${{ strategy.job-total }}
