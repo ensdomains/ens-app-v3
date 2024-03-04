@@ -3,11 +3,9 @@ import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { addEnsContracts } from '@ensdomains/ensjs'
 
-import type { Register } from '@app/local-contracts'
+import { deploymentAddresses } from './generatedContracts'
 
-export const deploymentAddresses = JSON.parse(
-  process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
-) as Register['deploymentAddresses']
+export { deploymentAddresses }
 
 export const localhostWithEns = {
   ...localhost,

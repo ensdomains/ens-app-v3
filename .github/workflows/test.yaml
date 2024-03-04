@@ -15,6 +15,8 @@ jobs:
         with:
           bun-version: latest
 
+      - run: bun add --global node-gyp-build
+
       - run: bun install --frozen-lockfile
 
       - run: bun run test:coverage
@@ -37,14 +39,11 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
-      - name: Build stateless and export
-        run: bun run build:glocal && bun run export
-
       - name: Install playwright
         run: bunx playwright install chromium
 
       - name: Run tests
-        run: bun run e2e:ci
+        run: (bun run build:glocal && bun run export) & bun run e2e:ci
         env:
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
           PLAYWRIGHT_TOTAL: ${{ strategy.job-total }}
@@ -65,6 +64,8 @@ jobs:
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+
+      - run: bun add --global node-gyp-build
 
       - run: bun install --frozen-lockfile
 
@@ -94,6 +95,8 @@ jobs:
         with:
           bun-version: latest
 
+      - run: bun add --global node-gyp-build
+
       - run: bun install --frozen-lockfile
 
       - name: Build stateful and export
@@ -122,6 +125,8 @@ jobs:
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+
+      - run: bun add --global node-gyp-build
 
       - run: bun install --frozen-lockfile
 
@@ -167,6 +172,8 @@ jobs:
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+
+      - run: bun add --global node-gyp-build
 
       - run: bun install --frozen-lockfile
 
