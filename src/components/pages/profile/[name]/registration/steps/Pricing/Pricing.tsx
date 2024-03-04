@@ -19,11 +19,10 @@ import {
 } from '@ensdomains/thorin'
 
 import MoonpayLogo from '@app/assets/MoonpayLogo.svg'
-import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { YearSelection } from '@app/components/@molecules/YearSelection/YearSelection'
 import { Card } from '@app/components/Card'
 import { ConnectButton } from '@app/components/ConnectButton'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
@@ -195,15 +194,6 @@ const CheckboxWrapper = styled.div(
     width: 100%;
   `,
   gridAreaStyle,
-)
-
-const YearsViewSwitch = styled.button(
-  ({ theme }) => css`
-    color: ${theme.colors.bluePrimary};
-    cursor: pointer;
-    font-size: ${theme.fontSizes.small};
-    font-weight: ${theme.fontWeights.bold};
-  `,
 )
 
 const OutlinedContainerDescription = styled(Typography)(gridAreaStyle)
@@ -549,38 +539,11 @@ const Pricing = ({
     ? yearlyRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)
     : undefined
 
-  const [yearPickView, setYearPickView] = useState<'years' | 'calendar'>('years')
-  const yearPickSelection = yearPickView === 'calendar' ? 'years' : 'calendar'
-
   const showPaymentChoice = !isPrimaryLoading && address
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
-      {yearPickView === 'calendar' ? (
-        <Calendar
-          minValue={1}
-          value={years}
-          onChange={(newYears) => {
-            if (!Number.isNaN(newYears)) setYears(newYears)
-          }}
-          highlighted
-        />
-      ) : (
-        <PlusMinusControl
-          minValue={1}
-          value={years}
-          onChange={(e) => {
-            const newYears = parseInt(e.target.value)
-            if (!Number.isNaN(newYears)) setYears(newYears)
-          }}
-        />
-      )}
-      <Typography color="greyPrimary" fontVariant="smallBold">
-        Registering for {years} years.{' '}
-        <YearsViewSwitch onClick={() => setYearPickView(yearPickSelection)}>
-          Pick by {yearPickSelection}
-        </YearsViewSwitch>
-      </Typography>
+      <YearSelection {...{ years, setYears }} />
       <FullInvoice {...fullEstimate} />
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={name} />

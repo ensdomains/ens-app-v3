@@ -7,11 +7,11 @@ import { useAccount, useBalance, useEnsAvatar } from 'wagmi'
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, mq, ScrollBox } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
-import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
+import { YearSelection } from '@app/components/@molecules/YearSelection/YearSelection'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
@@ -57,15 +57,13 @@ const InnerContainer = styled.div(
   `,
 )
 
-const PlusMinusWrapper = styled.div(({ theme }) => [
-  css`
+const PlusMinusWrapper = styled.div(
+  () => css`
     width: 100%;
-    max-width: ${theme.space['80']};
     overflow: hidden;
     display: flex;
   `,
-  mq.sm.min(css``),
-])
+)
 
 const OptionBar = styled(CacheableComponent)(
   () => css`
@@ -295,14 +293,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     }}
                   />
                 ) : (
-                  <Calendar
-                    name={names[0]}
-                    minValue={1}
-                    value={years}
-                    onChange={(newYears) => {
-                      if (!Number.isNaN(newYears)) setYears(newYears)
-                    }}
-                  />
+                  <YearSelection name={names[0]} {...{ years, setYears }} />
                 )}
               </PlusMinusWrapper>
               <OptionBar $isCached={isPriceLoading}>
