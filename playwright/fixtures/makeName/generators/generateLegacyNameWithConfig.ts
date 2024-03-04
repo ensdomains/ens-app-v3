@@ -5,7 +5,7 @@
 import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { setResolver, transferName } from '@ensdomains/ensjs/wallet'
 
-import { Accounts, createAccounts, User } from '../../accounts'
+import { Accounts, User } from '../../accounts'
 import { Contracts } from '../../contracts'
 import {
   testClient,
@@ -59,6 +59,8 @@ export const generateLegacyNameWithConfig =
     const _owner = accounts.getAddress(owner)
     const _addr = accounts.getAddress(addr)
 
+    const ownerAccount = accounts.getAccount(owner)
+
     // Registration will fail if resolver is not valid. If an invalid resolver is entered
     // we will set the resolver after the name has been registered.
     const hasValidResolver = [LEGACY_RESOLVER, PUBLIC_RESOLVER].includes(resolver)
@@ -67,6 +69,13 @@ export const generateLegacyNameWithConfig =
 
     console.log('making commitment:', name)
     const controller = contracts.get('LegacyETHRegistrarController', { signer: owner })
+    console.log({
+      label,
+      _owner,
+      secret,
+      _resolver,
+      _addr,
+    })
     const commitment = await controller.makeCommitmentWithConfig(
       label,
       _owner,
@@ -78,7 +87,7 @@ export const generateLegacyNameWithConfig =
     await commitTx.wait()
 
     await provider.increaseTime(120)
-    await provider.mine()
+    await walletClient.mine({ account: ownerAccount })
 
     console.log('registering name:', name)
     const price = await controller.rentPrice(label, duration)
@@ -91,12 +100,13 @@ export const generateLegacyNameWithConfig =
       _addr,
       {
         value: price,
+        gasLimit: 1000000,
       },
     )
     await registrationTx.wait()
 
     // Create records
-    await generateRecords()({ name: `${label}.eth`, owner, resolver, records })
+    await generateRecords({ accounts })({ name: `${label}.eth`, owner, resolver, records })
 
     // Create subnames
     const _subnames = (subnames || []).map((subname) => ({
@@ -115,7 +125,7 @@ export const generateLegacyNameWithConfig =
         name,
         contract: 'registry',
         resolverAddress: resolver,
-        account: createAccounts().getAddress(owner) as `0x${string}`,
+        account: ownerAccount,
       })
       await waitForTransaction(tx)
     }
@@ -124,12 +134,12 @@ export const generateLegacyNameWithConfig =
       console.log('setting manager:', name, manager)
       const tx = await transferName(walletClient, {
         name,
-        newOwnerAddress: createAccounts().getAddress(manager) as `0x${string}`,
+        newOwnerAddress: accounts.getAddress(manager) as `0x${string}`,
         contract: 'registry',
-        account: createAccounts().getAddress(owner) as `0x${string}`,
+        account: ownerAccount,
       })
       await waitForTransaction(tx)
     }
 
-    await provider.mine()
+    await walletClient.mine({ account: ownerAccount })
   }

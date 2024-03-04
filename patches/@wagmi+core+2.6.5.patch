@@ -1,0 +1,37 @@
+diff --git a/node_modules/@wagmi/core/dist/esm/actions/reconnect.js b/node_modules/@wagmi/core/dist/esm/actions/reconnect.js
+index 59c109d..a115c19 100644
+--- a/node_modules/@wagmi/core/dist/esm/actions/reconnect.js
++++ b/node_modules/@wagmi/core/dist/esm/actions/reconnect.js
+@@ -83,16 +83,22 @@ export async function reconnect(config, parameters = {}) {
+         providers.push(provider_);
+         connected = true;
+     }
+-    // If connecting didn't succeed, set to disconnected
+-    if (!connected)
+-        config.setState((x) => ({
+-            ...x,
+-            connections: new Map(),
+-            current: undefined,
+-            status: 'disconnected',
+-        }));
+-    else
+-        config.setState((x) => ({ ...x, status: 'connected' }));
++    // Prevent overwriting connected status from race condition
++    if (
++        config.state.status === 'reconnecting' ||
++        config.state.status === 'connecting'
++    ) {
++        // If connecting didn't succeed, set to disconnected
++        if (!connected)
++            config.setState((x) => ({
++                ...x,
++                connections: new Map(),
++                current: undefined,
++                status: 'disconnected',
++            }));
++        else
++            config.setState((x) => ({ ...x, status: 'connected' }))
++    }
+     isReconnecting = false;
+     return connections;
+ }

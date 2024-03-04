@@ -11,39 +11,39 @@ The all new, all cool version of the ENS manager.
 ### Quick start
 
 ```bash
-pnpm install
-pnpm denv
-pnpm dev:glocal
+bun install
+bun run denv
+bun run dev:glocal
 ```
 
 ### Install
 
 ```bash
-pnpm install
+bun install
 ```
 
 ### Running Dev Server
 
 ```bash
 # For mainnet
-pnpm dev
+bun run dev
 
 # Or with the test environment running
-pnpm dev:glocal
+bun run dev:glocal
 ```
 
 ### Lint
 
 ```bash
-pnpm lint
+bun run lint
 ```
 
 ### Unit Test
 
 ```bash
-pnpm test
-pnpm test:watch
-pnpm test:coverage
+bun run test
+bun run test:watch
+bun run test:coverage
 ```
 
 We recommend installing [this](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) vscode plugin for a better unit testing experience.
@@ -56,7 +56,7 @@ For more information on the environment, see [ens-test-env](https://github.com/e
 Once installed, you can run:
 
 ```bash
-pnpm denv
+bun run denv
 ```
 
 #### **If you need to deploy a new subgraph**
@@ -66,7 +66,7 @@ You shouldn't deploy the subgraph on top of the existing dataset, instead you sh
 1. Start the test environment
 
 ```bash
-pnpm denv --save
+bun run denv --save
 ```
 
 2. Deploy the subgraph
@@ -98,18 +98,19 @@ Once exited, you can commit the data to your branch. You do not need to run a se
 **Note: You don't need to run the test environment command. It is all handled in the e2e script.**
 
 ```bash
-pnpm e2e
+bun run e2e
 ```
 
 ### Building and Starting
 
 ```bash
-pnpm build
-pnpm start
+bun run build
+bun run export
+bun run wrangle
 
 # Or with the test environment running
-pnpm build:glocal
-pnpm buildandstart:glocal
+bun run build:glocal
+bun run buildandstart:glocal
 ```
 
 ## PR builds
@@ -131,10 +132,10 @@ npm i -g yalc
 pnpm publish:local:ensjs
 ```
 
-3. Run pnpm install within this repo:
+3. Run bun install within this repo:
 
 ```bash
-pnpm install
+bun install
 ```
 
 If updating an existing yalc installation, you can add the `--force` flag.

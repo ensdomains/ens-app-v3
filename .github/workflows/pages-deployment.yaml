@@ -32,38 +32,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install Misc. Deps
-        run: sudo apt-get install -y libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
-
       - name: Check Yalc
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         run: if [ ${{ needs.yalc_check.outputs.can_deploy }} != true ]; then exit 1; else exit 0; fi
 
-      - uses: pnpm/action-setup@v2.2.2
+      - uses: oven-sh/setup-bun@v1
         with:
-          version: 8.11.0
+          bun-version: latest
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
+      - run: bun install --frozen-lockfile
 
       - name: Build and Export
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: pnpm build && pnpm export
+        run: bun run build && bun run export
 
       - name: Build and Export with Profiler
         if: ${{ github.ref != 'refs/heads/main' }}
-        run: pnpm build:preview && pnpm export
+        run: bun run build:preview && bun run export
 
       - name: Generate sitemap
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           mkdir -p ./out/sitemaps
-          pnpm generate:sitemaps
+          bun run generate:sitemaps
 
       - name: Publish
         uses: cloudflare/pages-action@v1

@@ -20,7 +20,7 @@ export const adjustName = (names: Name[], offset = 0) => {
   const timestamp = Math.floor(Date.now() / 1000)
   return names.map((name) => {
     const durationAdjustedName = adjustDurations(name, offset)
-    const uniqueLabel = `${name.label}-${timestamp}`
+    const uniqueLabel = `${name.label}-${timestamp}-${Math.random().toString(36).substring(3, 9)}`
     return {
       ...durationAdjustedName,
       label: uniqueLabel,

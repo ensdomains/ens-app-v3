@@ -260,7 +260,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     view === 'name-list'
       ? { onClick: () => setView('registration'), children: t('action.next', { ns: 'common' }) }
       : {
-          disabled: !!estimateGasLimitError,
+          disabled: !totalRentFee || !!estimateGasLimitError,
           onClick: () => {
             if (!totalRentFee) return
             dispatch({
@@ -330,7 +330,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           <Button
             {...trailingButtonProps}
             data-testid="extend-names-confirm"
-            disabled={isEstimateGasLoading}
+            disabled={trailingButtonProps.disabled || isEstimateGasLoading}
           />
         }
       />

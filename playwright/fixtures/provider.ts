@@ -6,7 +6,11 @@ export type Provider = ReturnType<typeof createProvider>
 
 class ExtendedProvider extends ethers.providers.JsonRpcProvider {
   async mine() {
-    return this.send('evm_mine', [])
+    return this.getSigner(9).sendTransaction({
+      to: '0x0000000000000000000000000000000000000000',
+      data: '0x',
+      gasLimit: 21000,
+    })
   }
 
   async increaseTime(seconds: number) {
@@ -36,7 +40,7 @@ class ExtendedProvider extends ethers.providers.JsonRpcProvider {
 export const createProvider = (stateful = false) => {
   // const apiKey = process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
   // Using public rpc node because infura settings is blocking transactions from settings
-  const rpcUrl = stateful ? 'https://ethereum-goerli.publicnode.com' : 'http://localhost:8545'
+  const rpcUrl = stateful ? 'https://ethereum-goerli.publicnode.com' : 'http://127.0.0.1:8545'
   const chainId = stateful ? 5 : 1337
   return new ExtendedProvider(rpcUrl, chainId)
 }

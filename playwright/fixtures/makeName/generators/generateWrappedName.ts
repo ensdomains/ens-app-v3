@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
+
 import { getPrice } from '@ensdomains/ensjs/public'
 import {
   EncodeChildFusesInputObject,
@@ -9,7 +10,7 @@ import {
 } from '@ensdomains/ensjs/utils'
 import { commitName, registerName, setResolver } from '@ensdomains/ensjs/wallet'
 
-import { Accounts, createAccounts, User } from '../../accounts'
+import { Accounts, User } from '../../accounts'
 import { Contracts } from '../../contracts'
 import {
   testClient,
@@ -57,8 +58,10 @@ export const generateWrappedName =
     subnames,
   }: Name) => {
     const name = `${label}.eth`
-    const _owner = createAccounts().getAddress(owner) as `0x${string}`
+    const _owner = accounts.getAddress(owner) as `0x${string}`
     console.log('generating wrapped name:', name, 'with owner:', _owner)
+
+    const ownerAccount = accounts.getAccount(owner)
 
     const hasValidResolver =
       resolver.toLocaleLowerCase() ===
@@ -70,19 +73,19 @@ export const generateWrappedName =
     const params: RegistrationParameters = {
       name,
       duration,
-      owner: _owner as `0x${string}`,
+      owner: ownerAccount.address,
       secret: secret as `0x${string}`,
       fuses,
       resolverAddress: _resolver as `0x${string}`,
     }
     const commitTx = await commitName(walletClient, {
       ...params,
-      account: _owner as `0x${string}`,
+      account: ownerAccount,
     })
     await waitForTransaction(commitTx)
 
     await testClient.increaseTime({ seconds: 120 }) // I use 120 because sometimes with anvil you need to wait a bit longer when registering multiple names at once
-    await testClient.mine({ blocks: 1 })
+    await walletClient.mine({ account: ownerAccount })
 
     const price = await getPrice(walletClient, {
       nameOrNames: params.name,
@@ -92,8 +95,9 @@ export const generateWrappedName =
 
     const tx = await registerName(walletClient, {
       ...params,
-      account: _owner as `0x${string}`,
+      account: ownerAccount,
       value: total,
+      gas: 1000000n,
     })
     await waitForTransaction(tx)
 
@@ -108,7 +112,7 @@ export const generateWrappedName =
     }
 
     if (records) {
-      await generateRecords()({
+      await generateRecords({ accounts })({
         name,
         owner,
         resolver: _resolver as `0x${string}`,
@@ -122,10 +126,10 @@ export const generateWrappedName =
         name,
         contract: 'nameWrapper',
         resolverAddress: resolver,
-        account: _owner as `0x${string}`,
+        account: ownerAccount,
       })
       await waitForTransaction(resolverTx)
     }
 
-    await provider.mine()
+    await walletClient.mine({ account: ownerAccount })
   }

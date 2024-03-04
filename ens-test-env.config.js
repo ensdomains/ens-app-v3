@@ -18,17 +18,19 @@ process.env.BATCH_GATEWAY_URLS = JSON.stringify([
  * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}
  **/
 module.exports = {
-  deployCommand: 'pnpm hardhat deploy',
-  buildCommand: 'pnpm build:glocal && pnpm export',
+  deployCommand: 'bun run hardhat deploy',
+  buildCommand: 'bun run build:glocal && bun run export',
   scripts: [
     {
-      command: 'pnpm wrangle',
+      command: 'bun run wrangle',
       name: 'wrangler',
       prefixColor: 'magenta.bold',
     },
     {
-      command: `pnpm wait-on http://localhost:8788 && ${
-        process.env.CI ? `npx playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}` : 'npx playwright'
+      command: `bun run wait-on http://localhost:8788 && ${
+        process.env.CI
+          ? `bunx playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}`
+          : 'bunx playwright'
       }`,
       name: 'playwright',
       prefixColor: 'yellow.bold',
@@ -38,5 +40,6 @@ module.exports = {
   ],
   paths: {
     data: './data',
+    composeFile: './docker-compose.yml',
   },
 }

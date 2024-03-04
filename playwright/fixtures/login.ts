@@ -32,16 +32,19 @@ export class Login {
   }
 
   async connect(user: User = 'user') {
-    if (user !== 'user') {
-      const pk = this.accounts.getPrivateKey(user)
-      await this.wallet.changeAccounts([pk!])
-    }
+    const pk = this.accounts.getPrivateKey(user)
+    await this.wallet.changeAccounts([pk!])
     await this.waitForLoad()
     await this.getConnectButton.click()
     await this.page.getByText('Browser Wallet').click()
     await expect(this.page.getByText('Confirm connection in the extension')).toBeVisible({
       timeout: 15000,
     })
+    try {
+      expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(1)
+    } catch {
+      throw new Error(JSON.stringify(this.wallet.getPendingRequests()))
+    }
     expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
     expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
