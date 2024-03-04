@@ -33,6 +33,8 @@ jobs:
         with:
           bun-version: latest
 
+      - run: bun add --global node-gyp-build
+
       - run: bun install --frozen-lockfile
 
       - name: Build stateless and export
