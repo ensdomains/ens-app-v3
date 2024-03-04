@@ -15,10 +15,10 @@ import PlusIcon from '@app/assets/Plus.svg'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
 import { createChangeEvent } from '@app/utils/syntheticEvent'
 
-const Container = styled.div<{ $highlighted?: boolean }>(
-  ({ theme, $highlighted }) => css`
+const Container = styled.div(
+  ({ theme }) => css`
     width: 100%;
-    padding: ${$highlighted ? theme.space['4'] : theme.space['1']};
+    padding: ${theme.space['4']};
     border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii.full};
     display: flex;
@@ -29,8 +29,8 @@ const Container = styled.div<{ $highlighted?: boolean }>(
 
 const Button = styled.button(
   ({ theme }) => css`
-    height: ${theme.space['11']};
-    width: ${theme.space['11']};
+    height: ${theme.space['12']};
+    width: ${theme.space['12']};
     border-radius: 50%;
     cursor: pointer;
     background: ${theme.colors.accent};
@@ -84,7 +84,7 @@ const Label = styled.label<{ $highlighted?: boolean }>(
     top: 0;
     left: 0;
     width: 100%;
-    height: ${theme.space['11']};
+    height: ${theme.space['12']};
     display: block;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -92,7 +92,7 @@ const Label = styled.label<{ $highlighted?: boolean }>(
     font-style: normal;
     font-weight: ${theme.fontWeights.bold};
     font-size: ${$highlighted ? theme.fontSizes.headingTwo : theme.fontSizes.large};
-    line-height: ${theme.space['11']};
+    line-height: ${theme.space['12']};
     text-align: center;
     color: ${$highlighted ? theme.colors.accent : theme.colors.text};
     pointer-events: none;
@@ -219,7 +219,7 @@ export const PlusMinusControl = forwardRef(
     }
 
     return (
-      <Container $highlighted={highlighted}>
+      <Container>
         <Button
           type="button"
           onClick={incrementHandler(-1)}
