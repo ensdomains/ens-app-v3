@@ -19,8 +19,8 @@ import {
 } from '@ensdomains/thorin'
 
 import MoonpayLogo from '@app/assets/MoonpayLogo.svg'
+import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import { PlusMinusControlWithCalendar } from '@app/components/@atoms/PlusMinusControl/PlusMinusControlWithCalendar'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Card } from '@app/components/Card'
@@ -543,7 +543,7 @@ const Pricing = ({
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
-      <PlusMinusControlWithCalendar
+      <Calendar
         minValue={1}
         value={years}
         onChange={(newYears) => {

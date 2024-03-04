@@ -9,7 +9,7 @@ import { Avatar, Button, CurrencyToggle, Dialog, Helper, mq, ScrollBox } from '@
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { PlusMinusControlWithCalendar } from '@app/components/@atoms/PlusMinusControl/PlusMinusControlWithCalendar'
+import { Calendar } from '@app/components/@atoms/PlusMinusControl/Calendar'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
@@ -295,7 +295,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     }}
                   />
                 ) : (
-                  <PlusMinusControlWithCalendar
+                  <Calendar
                     name={names[0]}
                     minValue={1}
                     value={years}
