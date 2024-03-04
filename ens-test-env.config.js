@@ -21,11 +21,15 @@ module.exports = {
   deployCommand: 'bun run hardhat deploy',
   buildCommand: 'bun run build:glocal && bun run export',
   scripts: [
-    {
-      command: 'bun run wrangle',
-      name: 'wrangler',
-      prefixColor: 'magenta.bold',
-    },
+    ...(process.env.PLAYWRIGHT_PROJECT === 'stateless-parallel'
+      ? []
+      : [
+          {
+            command: 'bun run wrangle',
+            name: 'wrangler',
+            prefixColor: 'magenta.bold',
+          },
+        ]),
     {
       command: `bun run wait-on http://localhost:8788 && ${
         process.env.CI
