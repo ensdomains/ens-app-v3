@@ -1,0 +1,10 @@
+name: 'Upload playwright report shard'
+runs:
+  using: 'composite'
+  steps:
+    - name: Upload blob report
+      uses: actions/upload-artifact@v3
+      with:
+        name: blob-report-${{ github.job }}-${{ matrix.shardIndex }}
+        path: blob-report
+        retention-days: 1

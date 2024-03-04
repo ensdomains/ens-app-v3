@@ -10,16 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
-      - run: bun add --global node-gyp-build
-
-      - run: bun install --frozen-lockfile
-
-      - run: bun run test:coverage
+      - uses: ./.github/actions/setup
+      - name: Run tests
+        run: bun run test:coverage
 
   stateless-parallel:
     name: stateless parallel (${{matrix.shard}})
@@ -30,18 +23,9 @@ jobs:
         shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v3
-
-      - uses: oven-sh/setup-bun@v1
+      - uses: ./.github/actions/setup
         with:
-          bun-version: latest
-
-      - run: bun add --global node-gyp-build
-
-      - run: bun install --frozen-lockfile
-
-      - name: Install playwright
-        run: bunx playwright install chromium
-
+          playwright: true
       - name: Run tests
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "bun run build:glocal && bun run export && bun run wrangle" \
@@ -50,39 +34,22 @@ jobs:
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
           PLAYWRIGHT_TOTAL: ${{ strategy.job-total }}
           PLAYWRIGHT_PROJECT: stateless-parallel
-
-      - uses: actions/upload-artifact@v3
+      - uses: ./.github/actions/upload-report-shard
         if: always()
-        with:
-          name: stateless-parallel-report
-          path: playwright-report/
-          retention-days: 30
 
   build-stateless:
-    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
-      - run: bun add --global node-gyp-build
-
-      - run: bun install --frozen-lockfile
-
+      - uses: ./.github/actions/setup
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "bun run tenv start -ng -ns -nb" \
           "bun run wait-on ./.env.local"'
-
       - name: Build stateless and export
         run: bun run build:glocal && bun run export
-
       - name: Tar stateless files
         run: tar -cvf stateless-build.tar out
-
       - name: Upload stateless
         uses: actions/upload-artifact@v3
         with:
@@ -90,25 +57,14 @@ jobs:
           path: stateless-build.tar
 
   build-stateful:
-    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
-      - run: bun add --global node-gyp-build
-
-      - run: bun install --frozen-lockfile
-
+      - uses: ./.github/actions/setup
       - name: Build stateful and export
         run: bun run build && bun run export
-
       - name: Tar stateful files
         run: tar -cvf stateful-build.tar out
-
       - name: Upload stateful
         uses: actions/upload-artifact@v3
         with:
@@ -116,7 +72,6 @@ jobs:
           path: stateful-build.tar
 
   stateless-serial:
-    if: false
     name: stateless serial (${{matrix.shard}})
     needs: build-stateless
     timeout-minutes: 20
@@ -126,43 +81,20 @@ jobs:
         shard: [1, 2, 3, 4, 5]
     steps:
       - uses: actions/checkout@v3
-
-      - uses: oven-sh/setup-bun@v1
+      - uses: ./.github/actions/setup
         with:
-          bun-version: latest
-
-      - run: bun add --global node-gyp-build
-
-      - run: bun install --frozen-lockfile
-
-      - name: Download build
-        id: download
-        uses: actions/download-artifact@v3
-        with:
-          name: stateless-build
-
-      - name: Untar files
-        run: tar -xvf stateless-build.tar
-
-      - name: Install playwright
-        run: bunx playwright install chromium
-
+          playwright: true
+          build-download: stateless-build
       - name: Run tests
         run: bun run e2e:ci -nb
         env:
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
           PLAYWRIGHT_TOTAL: ${{ strategy.job-total }}
           PLAYWRIGHT_PROJECT: stateless-serial
-
-      - uses: actions/upload-artifact@v3
+      - uses: ./.github/actions/upload-report-shard
         if: always()
-        with:
-          name: stateless-serial-report
-          path: playwright-report/
-          retention-days: 30
 
   stateful:
-    if: false
     name: stateful (${{matrix.shard}})
     needs: build-stateful
     timeout-minutes: 10
@@ -170,31 +102,12 @@ jobs:
     strategy:
       matrix:
         shard: [1, 2, 3]
-
     steps:
       - uses: actions/checkout@v3
-      - run: ./scripts/check-chrome.sh
-
-      - uses: oven-sh/setup-bun@v1
+      - uses: ./.github/actions/setup
         with:
-          bun-version: latest
-
-      - run: bun add --global node-gyp-build
-
-      - run: bun install --frozen-lockfile
-
-      - name: Download build
-        id: download
-        uses: actions/download-artifact@v3
-        with:
-          name: stateful-build
-
-      - name: Untar files
-        run: tar -xvf stateful-build.tar
-
-      - name: Install playwright
-        run: bunx playwright install chromium
-
+          playwright: true
+          build-download: stateful-build
       - name: Run tests
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
@@ -202,10 +115,30 @@ jobs:
           "bun run wait-on http://127.0.0.1:8788 && bunx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
-
-      - uses: actions/upload-artifact@v3
+      - uses: ./.github/actions/upload-report-shard
         if: always()
+
+  merge-reports:
+    name: Merge playwright reports
+    if: always()
+    needs: [stateless-parallel, stateless-serial, stateful]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oven-sh/setup-bun@v1
         with:
-          name: stateful-report
-          path: playwright-report/
-          retention-days: 30
+          bun-version: latest
+      - name: Download blob reports
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+      - name: Merge into single report
+        run: bunx playwright merge-reports --reporter json,github ./all-blob-reports
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: results.json
+      - uses: daun/playwright-report-summary@v3
+        with:
+          report-file: results.json

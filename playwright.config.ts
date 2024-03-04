@@ -6,9 +6,9 @@ export default defineConfig({
   testMatch: '*.spec.ts',
   retries: process.env.CI ? 2 : 0,
   timeout: 120000, // add extra time for loading
-  fullyParallel: true, // required to evenly shard
-  workers: '100%', // keep tests serial for now
-  reporter: [['html', { open: 'always' }]],
+  fullyParallel: true,
+  workers: '100%',
+  reporter: process.env.CI ? [['blob']] : [['html', { open: 'always' }]],
   projects: [
     {
       name: 'setup balances',
