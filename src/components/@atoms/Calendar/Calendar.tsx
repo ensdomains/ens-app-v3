@@ -8,8 +8,7 @@ import {
 } from 'react'
 import styled, { css } from 'styled-components'
 
-import MinusIcon from '@app/assets/Minus.svg'
-import PlusIcon from '@app/assets/Plus.svg'
+import CalendarSVG from '@app/assets/Calendar.svg'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
 
@@ -25,34 +24,6 @@ const Container = styled.div<{ $highlighted?: boolean }>(
   `,
 )
 
-const Button = styled.button(
-  ({ theme }) => css`
-    height: ${theme.space['11']};
-    width: ${theme.space['11']};
-    border-radius: 50%;
-    cursor: pointer;
-    background: ${theme.colors.accent};
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: background-color 150ms ease-in-out;
-
-    svg {
-      display: block;
-      transform: scale(0.67);
-      pointer-events: none;
-      path {
-        fill: ${theme.colors.backgroundPrimary};
-      }
-    }
-
-    &:disabled {
-      background-color: ${theme.colors.greyBright};
-      cursor: not-allowed;
-    }
-  `,
-)
-
 const Label = styled.label<{ $highlighted?: boolean }>(
   ({ theme, $highlighted }) => css`
     position: relative;
@@ -61,7 +32,8 @@ const Label = styled.label<{ $highlighted?: boolean }>(
     border-radius: ${theme.radii.full};
     background-color: transparent;
     width: 100%;
-    display: block;
+    display: flex;
+    flex-direction: row;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -73,6 +45,20 @@ const Label = styled.label<{ $highlighted?: boolean }>(
     color: ${$highlighted ? theme.colors.accent : theme.colors.text};
     opacity: 1;
     transition: opacity 150ms ease-in-out;
+  `,
+)
+
+const CalendarIcon = styled.span(
+  ({ theme }) => css`
+    background-color: ${theme.colors.bluePrimary};
+    color: ${theme.colors.textAccent};
+    height: 48px;
+    width: 48px;
+    border-radius: ${theme.radii.full};
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `,
 )
 
@@ -103,7 +89,7 @@ const ONE_YEAR = 31536000000
 
 const getLaterDate = (date1: Date, date2: Date) => [date1, date2].reduce((a, b) => (a > b ? a : b))
 
-export const PlusMinusControlWithCalendar = forwardRef(
+export const Calendar = forwardRef(
   (
     {
       value,
@@ -162,21 +148,6 @@ export const PlusMinusControlWithCalendar = forwardRef(
     const expiryDate = data ? getLaterDate(yearAfterExpiry, inputValue) : inputValue
     const minDate = data ? data.expiry.date : new Date(now + ONE_YEAR)
 
-    const [focused, setFocused] = useState(false)
-
-    const minusDisabled = typeof value === 'number' && value <= minValue
-    const plusDisabled = typeof value === 'number' && value >= maxValue
-
-    const incrementHandler = (inc: number) => () => {
-      const newValue = (value || 0) + inc
-      const normalizedValue = normalizeValue(newValue)
-      if (normalizedValue === value) return
-      const newInputValue = expiryDate
-      newInputValue.setFullYear(expiryDate.getFullYear() + inc)
-      setInputValue(newInputValue)
-      onChange?.(newValue)
-    }
-
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
       const { valueAsDate } = e.currentTarget
       const year = (valueAsDate || minDate).getFullYear() - minDate.getFullYear()
@@ -191,14 +162,6 @@ export const PlusMinusControlWithCalendar = forwardRef(
 
     return (
       <Container $highlighted={highlighted}>
-        <Button
-          type="button"
-          onClick={incrementHandler(-1)}
-          data-testid="plus-minus-control-minus"
-          disabled={focused || minusDisabled}
-        >
-          <MinusIcon />
-        </Button>
         <Label
           htmlFor="year-input"
           $highlighted={highlighted}
@@ -216,24 +179,19 @@ export const PlusMinusControlWithCalendar = forwardRef(
             min={minDate.toISOString().split('T')[0]}
             onFocus={(e) => {
               e.target.select()
-              setFocused(true)
             }}
-            onBlur={() => setFocused(false)}
           />
-          {expiryDate.toLocaleDateString(undefined, {
-            month: 'short',
-            day: '2-digit',
-            year: 'numeric',
-          })}
+          <span>
+            {expiryDate.toLocaleDateString(undefined, {
+              month: 'short',
+              day: '2-digit',
+              year: 'numeric',
+            })}
+          </span>
+          <CalendarIcon>
+            <CalendarSVG height={16} width={16} />
+          </CalendarIcon>
         </Label>
-        <Button
-          type="button"
-          onClick={incrementHandler(1)}
-          data-testid="plus-minus-control-plus"
-          disabled={focused || plusDisabled}
-        >
-          <PlusIcon />
-        </Button>
       </Container>
     )
   },
