@@ -22,7 +22,6 @@ jobs:
       - run: bun run test:coverage
 
   stateless-parallel:
-    if: false
     name: stateless parallel (${{matrix.shard}})
     runs-on:
       group: default-larger-runners
