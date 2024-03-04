@@ -1,4 +1,4 @@
-import { match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 import { GetPriceReturnType } from '@ensdomains/ensjs/public'
 
@@ -8,7 +8,7 @@ const mockUsePriceTypes = [
   'eth-available-premium-2ld',
   'undefined',
 ] as const
-export type MockUsePriceType = (typeof mockUsePriceTypes)[number]
+export type MockUsePriceType = (typeof mockUsePriceTypes)[number] | undefined
 
 export const makeMockUsePriceData = (type: MockUsePriceType): GetPriceReturnType | undefined =>
   match(type)
@@ -19,4 +19,5 @@ export const makeMockUsePriceData = (type: MockUsePriceType): GetPriceReturnType
       premium: 3203936997786453n,
     }))
     .with('undefined', () => undefined)
+    .with(P.nullish, () => undefined)
     .exhaustive()

@@ -1,4 +1,4 @@
-import { match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 import { GetExpiryReturnType } from '@ensdomains/ensjs/public'
 
@@ -9,7 +9,7 @@ const mockUseExpiryTypes = [
   'eth-grace-period-2ld',
   'undefined',
 ] as const
-export type MockUseExpiryType = (typeof mockUseExpiryTypes)[number]
+export type MockUseExpiryType = (typeof mockUseExpiryTypes)[number] | undefined
 
 export const makeMockUseExpiryData = (type: MockUseExpiryType): GetExpiryReturnType | undefined =>
   match(type)
@@ -39,4 +39,5 @@ export const makeMockUseExpiryData = (type: MockUseExpiryType): GetExpiryReturnT
       status: 'active' as const,
     }))
     .with('undefined', () => undefined)
+    .with(P.nullish, () => null)
     .otherwise(() => null)

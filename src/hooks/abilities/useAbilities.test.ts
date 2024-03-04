@@ -1,43 +1,35 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
+import { match, P } from 'ts-pattern'
+import { Address } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
+import { createAccounts } from '../../../playwright/fixtures/accounts'
+import {
+  makeMockUseAbilitiesData,
+  mockUseAbilitiesConfig,
+  mockUseAbilitiesTypes,
+} from '../../../test/mock/makeMockUseAbilitiesData'
 import { useAccountSafely } from '../account/useAccountSafely'
+import { NameType } from '../nameType/getNameType'
 import { useResolverIsAuthorised } from '../resolver/useResolverIsAuthorised'
 import { useBasicName } from '../useBasicName'
 import { useHasSubnames } from '../useHasSubnames'
 import { DEFAULT_ABILITIES, useAbilities } from './useAbilities'
-import { NameType } from '../nameType/getNameType'
-import { match, P } from 'ts-pattern'
-import { createAccounts } from '@root/playwright/fixtures/accounts'
-import { Address } from 'viem'
+import { useParentBasicName } from '../useParentBasicName'
+import { makeMockUseBasicName } from '../../../test/mock/makeMockUseBasicName'
 
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/useBasicName')
+vi.mock('@app/hooks/useParentBasicName')
 vi.mock('@app/hooks/resolver/useResolverIsAuthorised')
 vi.mock('@app/hooks/useHasSubnames')
 
 const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseBasicName = mockFunction(useBasicName)
+const mockUseParentBasicName = mockFunction(useParentBasicName)
 const mockUseResolverIsAuthorised = mockFunction(useResolverIsAuthorised)
 const mockUseHasSubnames = mockFunction(useHasSubnames)
-
-const MockUseAbilitesTestConfig = {
-  'test1': {
-    basicName: '',
-    parentBasicName: ''
-  },
-  'test2': {}
-}
-
-type MockUseAbilitiesType = keyof typeof MockUseAbilitesTestConfig
-const MockUseAbilitesTypes = Object.keys(MockUseAbilitesTestConfig) as MockUseAbilitiesType[]
-
-export const createMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
-  return match(type).with('test1', () => ({}))
-  .with('test2', () => ({}))
-  .otherwise(() => DEFAULT_ABILITIES)
-}
 
 describe('useAbilities', () => {
   describe('basic abilities', () => {
@@ -95,16 +87,24 @@ describe('useAbilities', () => {
     })
   })
 
-
   // ownerdata , registrationStatus, pccExpired
-  describe('matrix', () => {
-    it.each(MockUseAbilitesTypes)('', (type, ) => {
-      const mockData = createMockUseAbilitiesData(type)
-      mockUseAccountSafely.mockReturnValue({ address: createAccounts().getAddress('user') as Address })
-      mockUseBasicName.mockReturnValue(createMockBasicNameData(''))
-      mockUseResolverIsAuthorised.mockReturnValue({ data: { isAuthorised: true, isValid: true }, isLoading: false, isFetching: false })
+  describe('mocks', () => {
+    it.each(mockUseAbilitiesTypes)('should return expected data for %s', (type) => {
+      const config = mockUseAbilitiesConfig[type]
+      const { basicNameType, parentNameType, name } = config
+      mockUseAccountSafely.mockReturnValue({
+        address: createAccounts().getAddress('user') as Address,
+      })
+      mockUseBasicName.mockReturnValue(makeMockUseBasicName(basicNameType))
+      mockUseParentBasicName.mockReturnValue(makeMockUseBasicName(parentNameType))
+      mockUseResolverIsAuthorised.mockReturnValue({
+        data: { isAuthorised: true, isValid: true },
+        isLoading: false,
+        isFetching: false,
+      })
       const { result } = renderHook(() => useAbilities({ name: 'test.eth' }))
-      expect(result.current.data).toEqual(data)
+      const expected = makeMockUseAbilitiesData(type)
+      expect(result.current.data).toEqual(expected)
     })
   })
 })

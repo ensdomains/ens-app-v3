@@ -14,19 +14,23 @@ const mockUseWrapperDataTypes = [
   'eth-emancipated-2ld',
   'eth-locked-2ld',
   'wrapped',
+  'wrapped:unowned',
   'emancipated',
+  'emancipated:unowned',
   'locked',
+  'burnt',
 ] as const
-export type MockUseWrapperDataType = (typeof mockUseWrapperDataTypes)[number]
+export type MockUseWrapperDataType = (typeof mockUseWrapperDataTypes)[number] | undefined
 
-const useAddress = createAccounts().getAddress('user') as Address
+const userAddress = createAccounts().getAddress('user') as Address
+const user2Address = createAccounts().getAddress('user2') as Address
 
 export const makeMockUseWrapperDataData = (
   type: MockUseWrapperDataType,
 ): GetWrapperDataReturnType | undefined => {
   return match(type)
-    .with(P.union('unwrapped-or-available'), () => null)
-    .with(P.union('eth-emancipated-2ld', 'eth-locked-2ld'), () => ({
+    .with(P.union('unwrapped-or-available', P.nullish), () => null)
+    .with(P.union('eth-emancipated-2ld', 'eth-locked-2ld'), (_type) => ({
       fuses: {
         parent: {
           PARENT_CANNOT_CONTROL: true,
@@ -42,7 +46,7 @@ export const makeMockUseWrapperDataData = (
           },
         },
         child: {
-          CANNOT_UNWRAP: type.includes('-locked-'),
+          CANNOT_UNWRAP: _type.includes('-locked-'),
           CANNOT_BURN_FUSES: false,
           CANNOT_TRANSFER: false,
           CANNOT_SET_RESOLVER: false,
@@ -60,7 +64,7 @@ export const makeMockUseWrapperDataData = (
             '0x4000': false,
             '0x8000': false,
           },
-          CAN_DO_EVERYTHING: type.includes('-emancipated-'),
+          CAN_DO_EVERYTHING: _type.includes('-emancipated-'),
         },
         value: 196608,
       },
@@ -68,9 +72,9 @@ export const makeMockUseWrapperDataData = (
         date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
         value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
       },
-      owner: useAddress,
+      owner: userAddress,
     }))
-    .with('wrapped', () => ({
+    .with(P.union('wrapped', 'wrapped:unowned'), (_type) => ({
       fuses: {
         parent: {
           PARENT_CANNOT_CONTROL: false,
@@ -112,9 +116,9 @@ export const makeMockUseWrapperDataData = (
         date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
         value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
       },
-      owner: useAddress,
+      owner: _type.endsWith('unowned') ? user2Address : userAddress,
     }))
-    .with('emancipated', () => ({
+    .with(P.union('emancipated', 'emancipated:unowned'), (_type) => ({
       fuses: {
         parent: {
           PARENT_CANNOT_CONTROL: true,
@@ -130,7 +134,7 @@ export const makeMockUseWrapperDataData = (
           },
         },
         child: {
-          CANNOT_UNWRAP: true,
+          CANNOT_UNWRAP: false,
           CANNOT_BURN_FUSES: false,
           CANNOT_TRANSFER: false,
           CANNOT_SET_RESOLVER: false,
@@ -148,15 +152,15 @@ export const makeMockUseWrapperDataData = (
             '0x4000': false,
             '0x8000': false,
           },
-          CAN_DO_EVERYTHING: false,
+          CAN_DO_EVERYTHING: true,
         },
-        value: 65536,
+        value: 196608,
       },
       expiry: {
         date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
         value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
       },
-      owner: useAddress,
+      owner: _type.endsWith('unowned') ? user2Address : userAddress,
     }))
     .with('locked', () => ({
       fuses: {
@@ -200,7 +204,52 @@ export const makeMockUseWrapperDataData = (
         date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
         value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
       },
-      owner: useAddress,
+      owner: userAddress,
     }))
+    .with('burnt', () => ({
+      fuses: {
+        parent: {
+          PARENT_CANNOT_CONTROL: true,
+          CAN_EXTEND_EXPIRY: false,
+          IS_DOT_ETH: true,
+          unnamed: {
+            '0x80000': false,
+            '0x100000': false,
+            '0x200000': false,
+            '0x400000': false,
+            '0x800000': false,
+            '0x1000000': false,
+          },
+        },
+        child: {
+          CANNOT_UNWRAP: true,
+          CANNOT_BURN_FUSES: true,
+          CANNOT_TRANSFER: true,
+          CANNOT_SET_RESOLVER: true,
+          CANNOT_SET_TTL: true,
+          CANNOT_CREATE_SUBDOMAIN: true,
+          CANNOT_APPROVE: true,
+          unnamed: {
+            '0x80': true,
+            '0x100': true,
+            '0x200': true,
+            '0x400': true,
+            '0x800': true,
+            '0x1000': true,
+            '0x2000': true,
+            '0x4000': true,
+            '0x8000': true,
+          },
+          CAN_DO_EVERYTHING: false,
+        },
+        value: 196735,
+      },
+      expiry: {
+        date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
+        value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
+      },
+      owner: userAddress,
+    }))
+    .with(P.nullish, () => null)
     .exhaustive()
 }
