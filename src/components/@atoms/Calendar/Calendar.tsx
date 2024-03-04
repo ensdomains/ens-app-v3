@@ -12,28 +12,17 @@ import CalendarSVG from '@app/assets/Calendar.svg'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
 
-const Container = styled.div<{ $highlighted?: boolean }>(
-  ({ theme, $highlighted }) => css`
-    width: 100%;
-    padding: ${$highlighted ? theme.space['4'] : theme.space['1']};
-    border: 1px solid ${theme.colors.border};
-    border-radius: ${theme.radii.full};
-    display: flex;
-    align-items: center;
-    gap: ${theme.space['4']};
-  `,
-)
-
 const Label = styled.label<{ $highlighted?: boolean }>(
   ({ theme, $highlighted }) => css`
     position: relative;
     flex: 1;
-    height: ${theme.space['11']};
+    border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii.full};
     background-color: transparent;
     width: 100%;
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -44,7 +33,11 @@ const Label = styled.label<{ $highlighted?: boolean }>(
     text-align: center;
     color: ${$highlighted ? theme.colors.accent : theme.colors.text};
     opacity: 1;
-    transition: opacity 150ms ease-in-out;
+    transition: background-color 150ms ease-in-out;
+    padding: ${theme.space['4']} ${theme.space['4']} ${theme.space['4']} ${theme.space['8']};
+    :hover {
+      background-color: ${theme.colors.blueSurface};
+    }
   `,
 )
 
@@ -52,13 +45,14 @@ const CalendarIcon = styled.span(
   ({ theme }) => css`
     background-color: ${theme.colors.bluePrimary};
     color: ${theme.colors.textAccent};
-    height: 48px;
-    width: 48px;
+    height: ${theme.space['12']};
+    width: ${theme.space['12']};
     border-radius: ${theme.radii.full};
-    padding: 16px;
+    padding: ${theme.space['1']};
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
   `,
 )
 
@@ -70,6 +64,7 @@ const LabelInput = styled.input<{ $highlighted?: boolean }>(
     width: 100%;
     height: 100%;
     opacity: 0;
+    cursor: pointer;
   `,
 )
 
@@ -161,38 +156,36 @@ export const Calendar = forwardRef(
     }
 
     return (
-      <Container $highlighted={highlighted}>
-        <Label
-          htmlFor="year-input"
+      <Label
+        htmlFor="year-input"
+        $highlighted={highlighted}
+        onClick={() => inputRef.current!.showPicker()}
+      >
+        <LabelInput
+          id="year-input"
+          data-testid="plus-minus-control-input"
           $highlighted={highlighted}
-          onClick={() => inputRef.current!.showPicker()}
-        >
-          <LabelInput
-            id="year-input"
-            data-testid="plus-minus-control-input"
-            $highlighted={highlighted}
-            type="date"
-            {...props}
-            ref={inputRef}
-            value={inputValue?.toISOString().split('T')[0]}
-            onChange={handleChange}
-            min={minDate.toISOString().split('T')[0]}
-            onFocus={(e) => {
-              e.target.select()
-            }}
-          />
-          <span>
-            {expiryDate.toLocaleDateString(undefined, {
-              month: 'short',
-              day: '2-digit',
-              year: 'numeric',
-            })}
-          </span>
-          <CalendarIcon>
-            <CalendarSVG height={16} width={16} />
-          </CalendarIcon>
-        </Label>
-      </Container>
+          type="date"
+          {...props}
+          ref={inputRef}
+          value={inputValue?.toISOString().split('T')[0]}
+          onChange={handleChange}
+          min={minDate.toISOString().split('T')[0]}
+          onFocus={(e) => {
+            e.target.select()
+          }}
+        />
+        <span>
+          {expiryDate.toLocaleDateString(undefined, {
+            month: 'short',
+            day: '2-digit',
+            year: 'numeric',
+          })}
+        </span>
+        <CalendarIcon>
+          <CalendarSVG height={16} width={16} />
+        </CalendarIcon>
+      </Label>
     )
   },
 )
