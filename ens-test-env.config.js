@@ -29,7 +29,7 @@ module.exports = {
     {
       command: `bun run wait-on http://localhost:8788 && ${
         process.env.CI
-          ? `bunx playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}`
+          ? `bunx playwright test --project=${project.env.PLAYWRIGHT_PROJECT} --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}`
           : 'bunx playwright'
       }`,
       name: 'playwright',
