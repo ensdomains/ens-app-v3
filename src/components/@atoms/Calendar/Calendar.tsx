@@ -130,7 +130,7 @@ export const Calendar = forwardRef(
 
     const now = Date.now()
 
-    const yearAfterExpiry = data
+    const yearsAfterExpiry = data
       ? new Date(
           data!.expiry.date.getFullYear() + (value ?? 0),
           data!.expiry.date.getMonth(),
@@ -140,7 +140,7 @@ export const Calendar = forwardRef(
 
     const [inputValue, setInputValue] = useState<Date>(new Date(now + (value ?? 0) * ONE_YEAR))
 
-    const expiryDate = data ? getLaterDate(yearAfterExpiry, inputValue) : inputValue
+    const expiryDate = data ? getLaterDate(yearsAfterExpiry, inputValue) : inputValue
     const minDate = data ? data.expiry.date : new Date(now + ONE_YEAR)
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
