@@ -129,8 +129,8 @@ const Title = styled(Typography)(
     text-overflow: ellipsis;
 
     ${mq.sm.min(css`
-      font-size: ${theme.fontSizes.headingOne};
-      line-height: ${theme.lineHeights.headingOne};
+      font-size: ${theme.fontSizes.headingTwo};
+      line-height: ${theme.lineHeights.headingTwo};
     `)}
   `,
 )
@@ -206,7 +206,7 @@ const CompactTitle = ({
         <TitleContainer style={{ maxWidth: 'fit-content' }}>
           <Title
             className="shrinkable-title"
-            weight="extraBold"
+            weight="bold"
             style={{ maxWidth: titleWidth, overflow: 'hidden' }}
           >
             {title || ''}
@@ -315,13 +315,13 @@ export const Content = ({
               )}
               {!isDesktopMode && <Hamburger />}
             </CustomLeadingHeading>
+            {!isDesktopMode && children.titleExtra}
           </Skeleton>
         </HeadingItems>
       )}
 
       {!isDesktopMode && WarningComponent}
       {!isDesktopMode && InfoComponent}
-
       {LeadingComponent}
 
       {!inlineHeading && children.header && (

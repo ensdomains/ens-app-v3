@@ -2,7 +2,6 @@ import Head from 'next/head'
 import { useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { labelhash, namehash } from 'viem/ens'
 import { useAccount } from 'wagmi'
 
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
@@ -17,13 +16,7 @@ import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content, ContentWarning } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
-import {
-  checkETH2LDFromName,
-  formatFullExpiry,
-  getEncodedLabelAmount,
-  makeEtherscanLink,
-  shortenAddress,
-} from '@app/utils/utils'
+import { formatFullExpiry, getEncodedLabelAmount, makeEtherscanLink } from '@app/utils/utils'
 
 import MoreTab from './tabs/MoreTab/MoreTab'
 import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
@@ -237,18 +230,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
 
   const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
 
-  const is2ldEth = checkETH2LDFromName(normalisedName)
-
-  const hasToken = is2ldEth || isWrapped
-
-  const hex = isWrapped ? namehash(normalisedName) : labelhash(normalisedName.split('.')[0])
-  const tokenId = BigInt(hex).toString(10)
-
-  const networkName = useChainName()
-
-  const profileAddress = profile?.address!
-
-  const etherscanLink = makeEtherscanLink(profileAddress, networkName, 'address')
+  const chainName = useChainName()
 
   return (
     <>
@@ -262,12 +244,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
         <meta property="twitter:title" content={titleContent} />
         <meta property="twitter:description" content={descriptionContent} />
       </Head>
-      <Content
-        noTitle
-        title={shortenAddress(profileAddress)}
-        loading={isLoading}
-        copyValue={profileAddress}
-      >
+      <Content noTitle title={beautifiedName} loading={isLoading} copyValue={beautifiedName}>
         {{
           info: infoBanner,
           warning,
@@ -287,11 +264,14 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
               ))}
             </TabButtonContainer>
           ),
-          titleExtra: (
-            <Outlink href={etherscanLink} fontVariant="bodyBold">
+          titleExtra: profile?.address ? (
+            <Outlink
+              fontVariant="bodyBold"
+              href={makeEtherscanLink(profile.address!, chainName, 'address')}
+            >
               {t('etherscan', { ns: 'common' })}
             </Outlink>
-          ),
+          ) : null,
           trailing: {
             profile: <ProfileTab name={normalisedName} nameDetails={nameDetails} />,
             records: (
@@ -324,15 +304,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
               />
             ),
             more: (
-              <MoreTab
-                name={normalisedName}
-                nameDetails={nameDetails}
-                abilities={abilities.data}
-                etherscanLink={etherscanLink}
-                hasToken={hasToken}
-                tokenId={tokenId}
-                hex={hex}
-              />
+              <MoreTab name={normalisedName} nameDetails={nameDetails} abilities={abilities.data} />
             ),
           }[tab],
         }}
