@@ -3,8 +3,6 @@ import { labelhash } from 'viem'
 
 import { registrySetApprovalForAllSnippet } from '@ensdomains/ensjs/contracts'
 
-import { emptyAddress } from '@app/utils/constants'
-
 import { test } from '../../../../playwright'
 import {
   testClient,
@@ -241,10 +239,7 @@ test('should calculate needed steps without localstorage', async ({
     args: [testClient.chain.contracts.ensNameWrapper.address, false],
     account: accounts.getAccount('user'),
   })
-  await walletClient.sendTransaction({
-    to: emptyAddress,
-    data: '0x',
-  })
+  await walletClient.mine({ account: accounts.getAccount('user') })
 
   const name = await makeName({
     label: 'unwrapped',

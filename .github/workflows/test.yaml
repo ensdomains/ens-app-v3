@@ -19,6 +19,43 @@ jobs:
 
       - run: bun run test:coverage
 
+  stateless-parallel:
+    name: stateless parallel (${{matrix.shard}})
+    runs-on:
+      group: default-larger-runners
+      labels: Ubuntu-32gb
+    strategy:
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - name: Build stateless and export
+        run: bun run build:glocal && bun run export
+
+      - name: Install playwright
+        run: bunx playwright install chromium
+
+      - name: Run tests
+        run: bun run e2e:ci
+        env:
+          PLAYWRIGHT_SHARD: ${{ matrix.shard }}
+          PLAYWRIGHT_TOTAL: ${{ strategy.job-total }}
+          PLAYWRIGHT_PROJECT: stateless-parallel
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: stateless-parallel-report
+          path: playwright-report/
+          retention-days: 30
+
   build-stateless:
     runs-on: ubuntu-latest
     steps:
@@ -69,49 +106,6 @@ jobs:
         with:
           name: stateful-build
           path: stateful-build.tar
-
-  stateless-parallel:
-    name: stateless parallel (${{matrix.shard}})
-    needs: build-stateless
-    timeout-minutes: 20
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        shard: [1, 2, 3, 4]
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
-      - run: bun install --frozen-lockfile
-
-      - name: Download build
-        id: download
-        uses: actions/download-artifact@v3
-        with:
-          name: stateless-build
-
-      - name: Untar files
-        run: tar -xvf stateless-build.tar
-
-      - name: Install playwright
-        run: bunx playwright install chromium
-
-      - name: Run tests
-        run: bun run e2e:ci -nb
-        env:
-          PLAYWRIGHT_SHARD: ${{ matrix.shard }}
-          PLAYWRIGHT_TOTAL: ${{ strategy.job-total }}
-          PLAYWRIGHT_PROJECT: stateless-parallel
-
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: stateless-report
-          path: playwright-report/
-          retention-days: 30
 
   stateless-serial:
     name: stateless serial (${{matrix.shard}})
