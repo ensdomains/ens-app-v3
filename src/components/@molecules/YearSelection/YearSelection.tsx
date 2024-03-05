@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
+import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { formatExtensionPeriod } from '@app/utils/utils'
 
 // import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
@@ -27,6 +28,14 @@ const Container = styled.div(
   `,
 )
 
+const now = new Date()
+
+function addYears(date: Date, years: number): Date {
+  const result = new Date(date)
+  result.setFullYear(now.getFullYear() + years)
+  return result
+}
+
 export const YearSelection = ({
   date,
   setDate,
@@ -43,29 +52,31 @@ export const YearSelection = ({
 
   const extensionPeriod = formatExtensionPeriod(date)
 
+  const dateInYears = date.getFullYear() - now.getFullYear()
+
   return (
     <Container>
-      {yearPickView === 'years' ? (
+      {yearPickView === 'calendar' ? (
         <Calendar
           value={date}
           defaultValue={defaultDate}
           onChange={(e) => {
             const { valueAsDate } = e.target
-            if (valueAsDate) setDate(valueAsDate)
+            if (valueAsDate && valueAsDate > now) setDate(valueAsDate)
           }}
           highlighted
           name={name}
         />
       ) : (
-        <></>
-        // <PlusMinusControl
-        //   minValue={1}
-        //   value={date}
-        //   onChange={(e) => {
-        //     const newYears = parseInt(e.target.value)
-        //     if (!Number.isNaN(newYears)) setDate(newYears)
-        //   }}
-        // />
+        <PlusMinusControl
+          minValue={1}
+          value={dateInYears}
+          onChange={(e) => {
+            const newYears = parseInt(e.target.value)
+
+            if (!Number.isNaN(newYears)) setDate(addYears(date, newYears))
+          }}
+        />
       )}
       <Typography color="greyPrimary" fontVariant="smallBold">
         {extensionPeriod === 'Invalid date'

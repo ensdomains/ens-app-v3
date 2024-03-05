@@ -71,12 +71,14 @@ type Props = {
   name?: string
 } & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'name'>
 
-function add25Days(date: Date): Date {
-  const newDate = new Date(date.getTime() + 25 * 24 * 60 * 60 * 1000)
+function add28Days(date: Date): Date {
+  const newDate = new Date(date.getTime() + 28 * 24 * 60 * 60 * 1000)
   return newDate
 }
 
 const dateToInput = (date: Date) => date.toISOString().split('T')[0]
+
+const now = new Date()
 
 export const Calendar = forwardRef(
   (
@@ -87,7 +89,7 @@ export const Calendar = forwardRef(
 
     const { data } = useExpiry({ name })
 
-    const minDate = data ? add25Days(data.expiry.date) : add25Days(new Date())
+    const minDate = add28Days(data ? data.expiry.date : now)
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
       const { valueAsDate } = e.target
