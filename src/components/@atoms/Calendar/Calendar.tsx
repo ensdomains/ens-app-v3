@@ -75,9 +75,6 @@ const now = new Date()
 
 const dateToInput = (date: Date) => date.toISOString().split('T')[0]
 
-const addYearToDate = (date: Date) =>
-  new Date(date.getFullYear() + 1, date.getMonth(), date.getDate())
-
 export const Calendar = forwardRef(
   (
     { value, name, onChange, onBlur, highlighted, defaultValue, ...props }: Props,
@@ -87,7 +84,7 @@ export const Calendar = forwardRef(
 
     const { data } = useExpiry({ name })
 
-    const minDate = addYearToDate(add28Days(data ? data.expiry.date : now))
+    const minDate = add28Days(data ? data.expiry.date : now)
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
       const { valueAsDate } = e.target
