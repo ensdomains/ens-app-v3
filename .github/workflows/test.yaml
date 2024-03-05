@@ -21,6 +21,7 @@ jobs:
     runs-on:
       group: default-larger-runners
     strategy:
+      fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
     steps:
@@ -85,6 +86,7 @@ jobs:
     timeout-minutes: 20
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         shard: [1, 2, 3, 4, 5]
     steps:
@@ -110,6 +112,7 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         shard: [1, 2, 3]
     steps:
@@ -147,10 +150,14 @@ jobs:
           path: all-blob-reports
           pattern: blob-report-*
           merge-multiple: true
+      - name: log 1
+        run: ls ./all-blob-reports
       - name: Merge into single report
         run: bunx playwright merge-reports -c merge.config.ts ./all-blob-reports
-        env:
-          PLAYWRIGHT_JSON_OUTPUT_NAME: results.json
+      - name: log 2
+        run: ls ./all-blob-reports
+      - name: log 3
+        run: ls ./
       - uses: daun/playwright-report-summary@v3
         with:
           report-file: results.json
