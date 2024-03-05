@@ -74,6 +74,7 @@ export const YearSelection = ({
         />
       ) : (
         <PlusMinusControl
+          highlighted
           minValue={1}
           value={dateInYears}
           onChange={(e) => {
