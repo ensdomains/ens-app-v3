@@ -29,6 +29,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { yearsToSeconds } from '@app/utils/utils'
 
 import FullInvoice from '../../FullInvoice'
 import {
@@ -470,12 +471,10 @@ export type PricingProps = {
   >['initiateMoonpayRegistrationMutation']
 }
 
-const add28Days = (date: Date) => new Date(date.getTime() + 28 * 24 * 60 * 60 * 1000)
-
 const now = new Date()
 
 function getSecondsDifference(date: Date) {
-  // @ts-ignore typescript doesn't support date
+  // @ts-ignore typescript doesn't support date operators
   return Math.floor((date - now) / 1000)
 }
 
@@ -498,7 +497,7 @@ const Pricing = ({
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
   const [date, setDate] = useState(
-    () => new Date(add28Days(now).getTime() + (registrationData.seconds ?? 0)),
+    () => new Date(now.getTime() + yearsToSeconds(1) * 1000 + (registrationData.seconds ?? 0)),
   )
 
   const seconds = getSecondsDifference(date)
