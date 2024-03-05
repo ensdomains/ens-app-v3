@@ -488,7 +488,12 @@ const Pricing = ({
   const { data: balance } = useBalance({ address })
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
-  const [years, setYears] = useState(registrationData.years)
+  const [date, setDate] = useState(
+    registrationData.years
+      ? new Date(new Date().getTime() + registrationData.years * 31536000000)
+      : new Date(),
+  )
+  const { years } = registrationData
 
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,
@@ -543,7 +548,7 @@ const Pricing = ({
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
-      <YearSelection {...{ years, setYears }} />
+      <YearSelection {...{ date, setDate }} />
       <FullInvoice {...fullEstimate} />
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={name} />

@@ -44,6 +44,27 @@ export const formatDateTime = (date: Date) => {
 export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
 
+export const formatExtensionPeriod = (expiryDate: Date) => {
+  const currentDate = new Date()
+  const diffInYears = expiryDate.getFullYear() - currentDate.getFullYear()
+  if (diffInYears > 1) {
+    return `${diffInYears} years`
+  }
+  if (diffInYears === 1) return '1 year'
+
+  const diffInMonths = expiryDate.getMonth() - currentDate.getMonth()
+  if (diffInMonths > 1) {
+    return `${diffInMonths} months`
+  }
+  if (diffInMonths === 1) return '1 month'
+
+  const diffInDays = expiryDate.getDate() - currentDate.getDate()
+  if (diffInDays > 24) {
+    return `${diffInDays} days`
+  }
+  return 'Invalid date'
+}
+
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
   `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`
 
