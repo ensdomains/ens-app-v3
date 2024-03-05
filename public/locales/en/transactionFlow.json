@@ -215,7 +215,7 @@
       "title_one": "Extend Name",
       "title_other": "Extend {{count}} Names",
       "invoice": {
-        "extension": "{{count}} year extension",
+        "extension": "{{time}} extension",
         "transaction": "Transaction fee",
         "total": "Estimated total"
       },

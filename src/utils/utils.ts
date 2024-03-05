@@ -27,6 +27,19 @@ export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365
 
 export const add28Days = (date: Date) => new Date(date.getTime() + 28 * 24 * 60 * 60 * 1000)
 
+const now = new Date()
+
+export const getDurationFromDate = (date: Date) => {
+  // @ts-ignore typescript doesn't support date operators
+  return Math.floor((date - now) / 1000)
+}
+
+export function addYears(date: Date, years: number): Date {
+  const result = new Date(date)
+  result.setFullYear(now.getFullYear() + years)
+  return result
+}
+
 export const formatExpiry = (expiry: Date) =>
   `${expiry.toLocaleDateString(undefined, {
     month: 'long',

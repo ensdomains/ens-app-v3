@@ -29,7 +29,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { yearsToSeconds } from '@app/utils/utils'
+import { getDurationFromDate, yearsToSeconds } from '@app/utils/utils'
 
 import FullInvoice from '../../FullInvoice'
 import {
@@ -473,11 +473,6 @@ export type PricingProps = {
 
 const now = new Date()
 
-function getSecondsDifference(date: Date) {
-  // @ts-ignore typescript doesn't support date operators
-  return Math.floor((date - now) / 1000)
-}
-
 const Pricing = ({
   name,
   gracePeriodEndDate,
@@ -500,7 +495,7 @@ const Pricing = ({
     () => new Date(now.getTime() + yearsToSeconds(1) * 1000 + (registrationData.seconds ?? 0)),
   )
 
-  const seconds = getSecondsDifference(date)
+  const seconds = getDurationFromDate(date)
 
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,
