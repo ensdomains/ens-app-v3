@@ -96,6 +96,6 @@ export const useEstimateFullRegistration = ({
     hasPremium,
     premiumFee,
     gasPrice,
-    years: registrationData.years,
+    seconds: registrationData.seconds,
   }
 }

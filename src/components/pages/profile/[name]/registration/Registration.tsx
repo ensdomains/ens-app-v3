@@ -17,7 +17,7 @@ import { useResolverExists } from '@app/hooks/useResolverExists'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { isLabelTooLong } from '@app/utils/utils'
+import { isLabelTooLong, secondsToYears } from '@app/utils/utils'
 
 import Complete from './steps/Complete'
 import Info from './steps/Info'
@@ -138,15 +138,19 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   } = useMoonpayRegistration(dispatch, normalisedName, selected, item)
 
   const pricingCallback = ({
-    years,
+    seconds,
     reverseRecord,
     paymentMethodChoice,
   }: RegistrationStepData['pricing']) => {
     if (paymentMethodChoice === PaymentMethod.moonpay) {
-      initiateMoonpayRegistrationMutation.mutate(years)
+      initiateMoonpayRegistrationMutation.mutate(secondsToYears(seconds))
       return
     }
-    dispatch({ name: 'setPricingData', payload: { years, reverseRecord }, selected })
+    dispatch({
+      name: 'setPricingData',
+      payload: { seconds, reverseRecord },
+      selected,
+    })
     if (!item.queue.includes('profile')) {
       // if profile is not in queue, set the default profile data
       dispatch({

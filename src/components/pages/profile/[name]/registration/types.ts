@@ -20,7 +20,7 @@ export enum PaymentMethod {
 
 export type RegistrationStepData = {
   pricing: {
-    years: number
+    seconds: number
     reverseRecord: boolean
     paymentMethodChoice: PaymentMethod | ''
   }
