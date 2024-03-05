@@ -13,5 +13,5 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: blob-report-${{ github.job }}-${{ matrix.shard }}
-        path: ${{ env.REPORT_NAME }}
+        path: blob-report/${{ env.REPORT_NAME }}
         retention-days: 1
