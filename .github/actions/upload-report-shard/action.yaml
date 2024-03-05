@@ -3,9 +3,12 @@ description: 'Upload a playwright report blob identified by the job name and sha
 runs:
   using: 'composite'
   steps:
+    - name: Rename report
+      shell: bash
+      run: mv report.zip report-${{ github.job }-${{ matrix.shard }}.zip
     - name: Upload blob report
       uses: actions/upload-artifact@v4
       with:
         name: blob-report-${{ github.job }}-${{ matrix.shard }}
-        path: blob-report
+        path: report-${{ github.job }-${{ matrix.shard }}.zip
         retention-days: 1

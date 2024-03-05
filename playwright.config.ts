@@ -8,7 +8,9 @@ export default defineConfig({
   timeout: 120000, // add extra time for loading
   fullyParallel: true,
   workers: '100%',
-  reporter: process.env.CI ? [['blob']] : [['html', { open: 'always' }]],
+  reporter: process.env.CI
+    ? [['blob', { fileName: 'report.zip' }]]
+    : [['html', { open: 'always' }]],
   projects: [
     {
       name: 'setup balances',
