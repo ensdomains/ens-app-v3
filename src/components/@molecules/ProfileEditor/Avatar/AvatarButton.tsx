@@ -157,7 +157,7 @@ const AvatarButton = ({
       shortThrow
       {...dropdownProps}
     >
-      <Container $validated={validated} $error={error} $dirty={dirty} type="button">
+      <Container $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
         <Avatar label="profile-button-avatar" src={src} noBorder />
         {!validated && !error && (
           <IconMask>
