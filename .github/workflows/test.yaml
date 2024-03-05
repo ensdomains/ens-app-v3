@@ -30,7 +30,7 @@ jobs:
         with:
           playwright: true
       - name: Run tests
-        run: 'parallel --lb --halt now,success=1,fail=1 ::: \
+        run: 'parallel --lb --halt now,done=1 ::: \
           "bun run build:glocal && bun run export && bun run wrangle" \
           "bun run e2e:ci -nb"'
         env:
@@ -49,7 +49,7 @@ jobs:
       - name: Download and install dependencies
         uses: ./.github/actions/setup
       - name: Get contract addresses
-        run: 'parallel --lb --halt now,success=1,fail=1 ::: \
+        run: 'parallel --lb --halt now,done=1 ::: \
           "bun run tenv start -ng -ns -nb" \
           "bun run wait-on ./.env.local"'
       - name: Build stateless and export
@@ -121,7 +121,7 @@ jobs:
           build-download: stateful-build
       - name: Run tests
         run: |
-          parallel --lb --halt now,success=1,fail=1 ::: \
+          parallel --lb --halt now,done=1 ::: \
           "bun run wrangle" \
           "bun run wait-on http://127.0.0.1:8788 && bunx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
