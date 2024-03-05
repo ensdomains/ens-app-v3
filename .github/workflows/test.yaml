@@ -2,10 +2,6 @@ name: Test
 
 on: [push]
 
-permissions:
-  issues: write
-  pull-requests: write
-
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
@@ -139,6 +135,7 @@ jobs:
     needs: [stateless-parallel, stateless-serial, stateful]
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions: write-all
     steps:
       - uses: actions/checkout@v3
       - uses: oven-sh/setup-bun@v1
