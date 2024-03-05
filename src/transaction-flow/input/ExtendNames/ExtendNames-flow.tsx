@@ -19,7 +19,13 @@ import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import useUserConfig from '@app/utils/useUserConfig'
-import { yearsToSeconds } from '@app/utils/utils'
+import {
+  addYears,
+  formatExtensionPeriod,
+  getDurationFromDate,
+  secondsToYears,
+  yearsToSeconds,
+} from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
@@ -186,6 +192,8 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
+const now = new Date()
+
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
@@ -200,18 +208,19 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     isBulkRenewal ? 'name-list' : 'registration',
   )
 
-  const [years, setYears] = useState(1)
-  const duration = yearsToSeconds(years)
+  const [date, setDate] = useState(() => new Date(now.getTime() + yearsToSeconds(1) * 1000))
+
+  const duration = getDurationFromDate(date)
+  const years = secondsToYears(duration)
 
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
-  const { data: priceData, isLoading: isPriceLoading } = usePrice({
+  const { data: priceData = undefined, isLoading: isPriceLoading } = usePrice({
     nameOrNames: names,
-    duration: yearsToSeconds(1),
+    duration,
   })
-  const rentFee = priceData ? priceData.base + priceData.premium : undefined
-  const totalRentFee = rentFee ? BigInt(rentFee) * BigInt(years) : undefined
+  const totalRentFee = priceData ? priceData.base + priceData.premium : undefined
   const transactions = [
     createTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee!, isSelf }),
   ]
@@ -240,12 +249,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
         ],
       },
     ],
-    enabled: !!rentFee,
+    enabled: !!totalRentFee,
   })
 
   const items: InvoiceItem[] = [
     {
-      label: t('input.extendNames.invoice.extension', { count: years }),
+      label: t('input.extendNames.invoice.extension', { time: formatExtensionPeriod(date) }),
       value: totalRentFee,
       bufferPercentage: 102n,
     },
@@ -289,11 +298,11 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     value={years}
                     onChange={(e) => {
                       const newYears = parseInt(e.target.value)
-                      if (!Number.isNaN(newYears)) setYears(newYears)
+                      if (!Number.isNaN(newYears)) setDate(addYears(date, newYears))
                     }}
                   />
                 ) : (
-                  <YearSelection name={names[0]} {...{ years, setYears }} />
+                  <YearSelection name={names[0]} {...{ setDate, date }} />
                 )}
               </PlusMinusWrapper>
               <OptionBar $isCached={isPriceLoading}>
@@ -313,9 +322,9 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     balance.value < estimatedGasLimit)) && (
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}
-                {!!rentFee && !!transactionFee && (
+                {!!totalRentFee && !!transactionFee && (
                   <RegistrationTimeComparisonBanner
-                    rentFee={rentFee}
+                    rentFee={totalRentFee}
                     transactionFee={transactionFee}
                     message={t('input.extendNames.bannerMsg')}
                   />

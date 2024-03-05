@@ -5,7 +5,7 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { add28Days, formatExtensionPeriod } from '@app/utils/utils'
+import { add28Days, addYears, formatExtensionPeriod } from '@app/utils/utils'
 
 // import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 
@@ -29,12 +29,6 @@ const Container = styled.div(
 )
 
 const now = new Date()
-
-function addYears(date: Date, years: number): Date {
-  const result = new Date(date)
-  result.setFullYear(now.getFullYear() + years)
-  return result
-}
 
 export const YearSelection = ({
   date,
