@@ -148,7 +148,7 @@ jobs:
           pattern: blob-report-*
           merge-multiple: true
       - name: Merge into single report
-        run: bunx playwright merge-reports --reporter json,github ./all-blob-reports
+        run: bunx playwright merge-reports -c merge.config.ts ./all-blob-reports
         env:
           PLAYWRIGHT_JSON_OUTPUT_NAME: results.json
       - uses: daun/playwright-report-summary@v3
