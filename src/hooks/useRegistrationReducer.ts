@@ -10,11 +10,12 @@ import {
   SelectedItemProperties,
 } from '@app/components/pages/profile/[name]/registration/types'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
+import { yearsToSeconds } from '@app/utils/utils'
 
 const defaultData: RegistrationReducerDataItem = {
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
-  years: 1,
+  seconds: yearsToSeconds(1),
   reverseRecord: false,
   records: [],
   clearRecords: false,
@@ -38,7 +39,7 @@ const isBrowser = !!(
 const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
-  years: 1,
+  seconds: yearsToSeconds(1),
   reverseRecord: false,
   records: [],
   resolverAddress: '0x',
@@ -97,7 +98,7 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       break
     }
     case 'setPricingData': {
-      item.years = action.payload.years
+      item.seconds = action.payload.seconds
       item.reverseRecord = action.payload.reverseRecord
       break
     }

@@ -374,7 +374,7 @@ export type ActionButtonProps = {
   initiateMoonpayRegistrationMutation: ReturnType<
     typeof useMoonpayRegistration
   >['initiateMoonpayRegistrationMutation']
-  years: number
+  seconds: number
   balance: GetBalanceData | undefined
   totalRequiredBalance?: bigint
 }
@@ -387,7 +387,7 @@ export const ActionButton = ({
   reverseRecord,
   callback,
   initiateMoonpayRegistrationMutation,
-  years,
+  seconds,
   balance,
   totalRequiredBalance,
 }: ActionButtonProps) => {
@@ -407,7 +407,7 @@ export const ActionButton = ({
     return (
       <Button
         data-testid="next-button"
-        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+        onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
       >
         {t('action.tryAgain', { ns: 'common' })}
       </Button>
@@ -418,7 +418,7 @@ export const ActionButton = ({
       <Button
         loading={initiateMoonpayRegistrationMutation.isPending}
         data-testid="next-button"
-        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+        onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
         disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isPending}
       >
         {t('action.next', { ns: 'common' })}
@@ -446,7 +446,7 @@ export const ActionButton = ({
   return (
     <Button
       data-testid="next-button"
-      onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+      onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
       disabled={!paymentMethodChoice}
     >
       {t('action.next', { ns: 'common' })}
@@ -470,6 +470,15 @@ export type PricingProps = {
   >['initiateMoonpayRegistrationMutation']
 }
 
+const add28Days = (date: Date) => new Date(date.getTime() + 28 * 24 * 60 * 60 * 1000)
+
+const now = new Date()
+
+function getSecondsDifference(date: Date) {
+  // @ts-ignore typescript doesn't support date
+  return Math.floor((date - now) / 1000)
+}
+
 const Pricing = ({
   name,
   gracePeriodEndDate,
@@ -489,11 +498,10 @@ const Pricing = ({
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
   const [date, setDate] = useState(
-    registrationData.years
-      ? new Date(new Date().getTime() + registrationData.years * 31536000000)
-      : new Date(),
+    () => new Date(add28Days(now).getTime() + (registrationData.seconds ?? 0)),
   )
-  const { years } = registrationData
+
+  const seconds = getSecondsDifference(date)
 
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,
@@ -530,7 +538,7 @@ const Pricing = ({
     registrationData: {
       ...registrationData,
       reverseRecord,
-      years,
+      seconds,
       records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
       clearRecords: resolverExists,
       resolverAddress,
@@ -538,6 +546,8 @@ const Pricing = ({
   })
   const { hasPremium, premiumFee, gasPrice, yearlyFee, totalYearlyFee, estimatedGasFee } =
     fullEstimate
+
+  console.log({ estimatedGasFee })
 
   const yearlyRequiredBalance = totalYearlyFee ? (totalYearlyFee * 110n) / 100n : undefined
   const totalRequiredBalance = yearlyRequiredBalance
@@ -589,7 +599,7 @@ const Pricing = ({
             reverseRecord,
             callback,
             initiateMoonpayRegistrationMutation,
-            years,
+            seconds,
             balance,
             totalRequiredBalance,
           }}
