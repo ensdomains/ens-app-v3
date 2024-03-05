@@ -5,7 +5,9 @@ runs:
   steps:
     - name: Rename report
       shell: bash
-      run: mv report.zip report-${{ github.job }-${{ matrix.shard }}.zip
+      run: mv report.zip $REPORT_NAME
+      env:
+        REPORT_NAME: report-${{ github.job }-${{ matrix.shard }}.zip
     - name: Upload blob report
       uses: actions/upload-artifact@v4
       with:

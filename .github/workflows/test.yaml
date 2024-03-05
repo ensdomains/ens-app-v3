@@ -2,6 +2,10 @@ name: Test
 
 on: [push]
 
+permissions:
+  issues: write
+  pull-requests: write
+
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
@@ -17,7 +21,7 @@ jobs:
 
   stateless-parallel:
     name: stateless parallel (${{matrix.shard}})
-    timeout-minutes: 20
+    timeout-minutes: 10
     runs-on:
       group: default-larger-runners
     strategy:
