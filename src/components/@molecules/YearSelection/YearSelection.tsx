@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Typography } from '@ensdomains/thorin'
@@ -53,6 +53,11 @@ export const YearSelection = ({
   const extensionPeriod = formatExtensionPeriod(date)
 
   const dateInYears = date.getFullYear() - now.getFullYear()
+
+  useEffect(() => {
+    if (dateInYears < 1) setDate(addYears(date, 1))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [yearPickView])
 
   return (
     <Container>
