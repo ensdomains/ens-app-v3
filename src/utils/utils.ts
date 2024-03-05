@@ -25,6 +25,8 @@ export const yearsToSeconds = (years: number) => years * 60 * 60 * 24 * 365
 
 export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365)
 
+export const add28Days = (date: Date) => new Date(date.getTime() + 28 * 24 * 60 * 60 * 1000)
+
 export const formatExpiry = (expiry: Date) =>
   `${expiry.toLocaleDateString(undefined, {
     month: 'long',
@@ -59,7 +61,7 @@ export const formatExtensionPeriod = (expiryDate: Date) => {
   if (diffInMonths === 1) return '1 month'
 
   const diffInDays = expiryDate.getDate() - currentDate.getDate()
-  if (diffInDays > 24) {
+  if (diffInDays > 28) {
     return `${diffInDays} days`
   }
   return 'Invalid date'
