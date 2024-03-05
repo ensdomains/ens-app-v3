@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import CalendarSVG from '@app/assets/Calendar.svg'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
-import { formatExpiry } from '@app/utils/utils'
+import { add28Days, formatExpiry } from '@app/utils/utils'
 
 const Label = styled.label<{ $highlighted?: boolean }>(
   ({ theme, $highlighted }) => css`
@@ -71,14 +71,12 @@ type Props = {
   name?: string
 } & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'name'>
 
-function add28Days(date: Date): Date {
-  const newDate = new Date(date.getTime() + 28 * 24 * 60 * 60 * 1000)
-  return newDate
-}
+const now = new Date()
 
 const dateToInput = (date: Date) => date.toISOString().split('T')[0]
 
-const now = new Date()
+const addYearToDate = (date: Date) =>
+  new Date(date.getFullYear() + 1, date.getMonth(), date.getDate())
 
 export const Calendar = forwardRef(
   (
@@ -89,7 +87,7 @@ export const Calendar = forwardRef(
 
     const { data } = useExpiry({ name })
 
-    const minDate = add28Days(data ? data.expiry.date : now)
+    const minDate = addYearToDate(add28Days(data ? data.expiry.date : now))
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
       const { valueAsDate } = e.target

@@ -9,7 +9,7 @@ import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import useUserConfig from '@app/utils/useUserConfig'
-import { secondsToYears } from '@app/utils/utils'
+import { formatExtensionPeriod } from '@app/utils/utils'
 
 const OptionBar = styled.div(
   () => css`
@@ -31,6 +31,8 @@ const InvoiceContainer = styled.div(
   `,
 )
 
+const now = new Date()
+
 type Props = ReturnType<typeof useEstimateFullRegistration>
 
 const FullInvoice = ({
@@ -49,7 +51,9 @@ const FullInvoice = ({
   const invoiceItems = useMemo(
     () => [
       {
-        label: t('invoice.yearRegistration', { years: secondsToYears(seconds) }),
+        label: t('invoice.timeRegistration', {
+          time: formatExtensionPeriod(new Date(now.getTime() + seconds * 1000)),
+        }),
         bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
         value: totalYearlyFee,
       },

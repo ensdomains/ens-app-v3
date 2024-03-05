@@ -5,7 +5,7 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { formatExtensionPeriod } from '@app/utils/utils'
+import { add28Days, formatExtensionPeriod } from '@app/utils/utils'
 
 // import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 
@@ -62,7 +62,7 @@ export const YearSelection = ({
           defaultValue={defaultDate}
           onChange={(e) => {
             const { valueAsDate } = e.target
-            if (valueAsDate && valueAsDate > now) setDate(valueAsDate)
+            if (valueAsDate && valueAsDate >= add28Days(now)) setDate(valueAsDate)
           }}
           highlighted
           name={name}
