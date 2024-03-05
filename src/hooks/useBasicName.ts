@@ -40,21 +40,25 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
     data: ownerData,
     isLoading: isOwnerLoading,
     isCachedData: isOwnerCachedData,
+    refetchIfEnabled: refetchOwner,
   } = useOwner({ name: normalisedName, enabled: commonEnabled })
   const {
     data: wrapperData,
     isLoading: isWrapperDataLoading,
     isCachedData: isWrapperDataCachedData,
+    refetchIfEnabled: refetchWrapperData,
   } = useWrapperData({ name: normalisedName, enabled: commonEnabled && !isRoot })
   const {
     data: expiryData,
     isLoading: isExpiryLoading,
     isCachedData: isExpiryCachedData,
+    refetchIfEnabled: refetchExpiry,
   } = useExpiry({ name: normalisedName, enabled: commonEnabled && !isRoot && isETH && is2LD })
   const {
     data: priceData,
     isLoading: isPriceLoading,
     isCachedData: isPriceCachedData,
+    refetchIfEnabled: refetchPrice,
   } = usePrice({
     nameOrNames: normalisedName,
     duration: yearsToSeconds(1),
@@ -64,6 +68,7 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
     data: addrData,
     isLoading: isAddrLoading,
     isCachedData: isAddrCachedData,
+    refetchIfEnabled: refetchAddr,
   } = useAddressRecord({
     name: normalisedName,
     enabled: commonEnabled && !isRoot && !isETH,
@@ -72,10 +77,10 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
   const publicCallsLoading =
     isOwnerLoading || isWrapperDataLoading || isExpiryLoading || isPriceLoading || isAddrLoading
   const publicCallsCachedData =
-    isOwnerCachedData &&
-    isWrapperDataCachedData &&
-    isExpiryCachedData &&
-    isPriceCachedData &&
+    isOwnerCachedData ||
+    isWrapperDataCachedData ||
+    isExpiryCachedData ||
+    isPriceCachedData ||
     isAddrCachedData
 
   const expiryDate = expiryData?.expiry?.date
@@ -146,5 +151,12 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
     pccExpired,
     canBeWrapped,
     isCachedData: publicCallsCachedData,
+    refetchIfEnabled: () => {
+      refetchOwner()
+      refetchWrapperData()
+      refetchExpiry()
+      refetchPrice()
+      refetchAddr()
+    },
   }
 }

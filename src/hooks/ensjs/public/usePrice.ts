@@ -4,6 +4,7 @@ import { getPrice, GetPriceParameters, GetPriceReturnType } from '@ensdomains/en
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 
 type UsePriceParameters = PartialBy<GetPriceParameters, 'nameOrNames'>
 
@@ -29,7 +30,7 @@ export const usePrice = <TParams extends UsePriceParameters>({
   // config
   gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime,
+  staleTime = 1_000 * 60 * 5,
   scopeKey,
   // params
   ...params
@@ -45,11 +46,11 @@ export const usePrice = <TParams extends UsePriceParameters>({
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
+    enabled: enabled && !!params.nameOrNames,
   })
 
   const query = useQuery({
     ...preparedOptions,
-    enabled: enabled && !!params.nameOrNames,
     gcTime,
     staleTime,
     select: (data) => {
@@ -63,6 +64,7 @@ export const usePrice = <TParams extends UsePriceParameters>({
 
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

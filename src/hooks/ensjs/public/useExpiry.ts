@@ -4,6 +4,7 @@ import { getExpiry, GetExpiryParameters, GetExpiryReturnType } from '@ensdomains
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 
 type UseExpiryParameters = PartialBy<GetExpiryParameters, 'name'>
 
@@ -33,7 +34,7 @@ export const useExpiry = <TParams extends UseExpiryParameters>({
   // config
   gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime,
+  staleTime = 1_000 * 60 * 5,
   scopeKey,
   // params
   ...params
@@ -49,11 +50,11 @@ export const useExpiry = <TParams extends UseExpiryParameters>({
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
+    enabled: enabled && !!params.name,
   })
 
   const query = useQuery({
     ...preparedOptions,
-    enabled: enabled && !!params.name,
     gcTime,
     staleTime,
     select: (data) => {
@@ -70,6 +71,7 @@ export const useExpiry = <TParams extends UseExpiryParameters>({
 
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

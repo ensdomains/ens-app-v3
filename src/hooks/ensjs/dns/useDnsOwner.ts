@@ -12,6 +12,7 @@ import { getDnsOwner, GetDnsOwnerParameters, GetDnsOwnerReturnType } from '@ensd
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 
 type UseDnsOwnerParameters = PartialBy<GetDnsOwnerParameters, 'name'>
 
@@ -46,7 +47,7 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
   // config
   gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime,
+  staleTime = 1_000 * 60 * 5,
   scopeKey,
   // params
   ...params
@@ -62,16 +63,16 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     enabled:
       enabled &&
       !!params.name &&
       !params.name?.endsWith('.eth') &&
       params.name !== 'eth' &&
       params.name !== '[root]',
+  })
+
+  const query = useQuery({
+    ...preparedOptions,
     gcTime,
     retry: 2,
     staleTime,
@@ -79,6 +80,7 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
 
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

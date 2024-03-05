@@ -51,7 +51,7 @@ export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>
   // config
   gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime,
+  staleTime = 1_000 * 60 * 5,
   scopeKey,
   // params
   ...params

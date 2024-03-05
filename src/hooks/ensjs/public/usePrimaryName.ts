@@ -6,6 +6,7 @@ import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
 import { emptyAddress } from '@app/utils/constants'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 
 type UsePrimaryNameParameters = PartialBy<GetNameParameters, 'address'> & {
   allowMismatch?: boolean
@@ -44,7 +45,7 @@ export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
   // config
   gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime,
+  staleTime = 1_000 * 60 * 5,
   scopeKey,
 
   // params
@@ -62,17 +63,18 @@ export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
+    enabled: enabled && !!params.address && params.address !== emptyAddress,
   })
 
   const query = useQuery({
     ...preparedOptions,
-    enabled: enabled && !!params.address && params.address !== emptyAddress,
     gcTime,
     staleTime,
   })
 
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

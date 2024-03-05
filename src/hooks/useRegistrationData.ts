@@ -4,6 +4,7 @@ import { labelhash } from 'viem'
 import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { useQueryOptions } from './useQueryOptions'
@@ -69,7 +70,7 @@ const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
   // config
   gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime,
+  staleTime = 1_000 * 60 * 5,
   scopeKey,
 
   // params
@@ -85,11 +86,11 @@ const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
+    enabled: enabled && !!params.name && checkETH2LDFromName(params.name),
   })
 
   const query = useQuery({
     ...preparedOptions,
-    enabled: enabled && !!params.name && checkETH2LDFromName(params.name),
     gcTime,
     staleTime,
     select: (data) => {
@@ -103,7 +104,8 @@ const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
 
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }
 

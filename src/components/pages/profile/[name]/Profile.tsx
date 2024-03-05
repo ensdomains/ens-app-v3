@@ -101,7 +101,7 @@ export const NameAvailableBanner = ({
   )
 }
 
-const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
+const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const { address } = useAccount()
@@ -121,9 +121,10 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     isLoading: detailsLoading,
     wrapperData,
     registrationStatus,
+    refetchIfEnabled,
   } = nameDetails
 
-  const isLoading = _isLoading || detailsLoading
+  const isLoading = parentIsLoading || detailsLoading
 
   useProtectedRoute(
     '/',
@@ -161,7 +162,11 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     ]
   }, [isSelf, beautifiedName, isValid, name, t])
 
-  const [tab, setTab] = useQueryParameterState<Tab>('tab', 'profile')
+  const [tab, setTab_] = useQueryParameterState<Tab>('tab', 'profile')
+  const setTab: typeof setTab_ = (value) => {
+    refetchIfEnabled()
+    setTab_(value)
+  }
   const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
 
   const abilities = useAbilities({ name: normalisedName })
@@ -244,7 +249,12 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
         <meta property="twitter:title" content={titleContent} />
         <meta property="twitter:description" content={descriptionContent} />
       </Head>
-      <Content noTitle title={beautifiedName} loading={isLoading} copyValue={beautifiedName}>
+      <Content
+        noTitle
+        title={beautifiedName}
+        loading={!isCachedData && isLoading}
+        copyValue={beautifiedName}
+      >
         {{
           info: infoBanner,
           warning,

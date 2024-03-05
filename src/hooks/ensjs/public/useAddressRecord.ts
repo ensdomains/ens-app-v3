@@ -8,6 +8,7 @@ import {
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 
 type UseAddressRecordParameters = PartialBy<GetAddressRecordParameters, 'name'>
 
@@ -37,7 +38,7 @@ export const useAddressRecord = <TParams extends UseAddressRecordParameters>({
   // config
   gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime,
+  staleTime = 1_000 * 60 * 5,
   scopeKey,
   // params
   ...params
@@ -53,17 +54,18 @@ export const useAddressRecord = <TParams extends UseAddressRecordParameters>({
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
+    enabled: enabled && !!params.name,
   })
 
   const query = useQuery({
     ...preparedOptions,
-    enabled: enabled && !!params.name,
     gcTime,
     staleTime,
   })
 
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

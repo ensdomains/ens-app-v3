@@ -1,6 +1,7 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
 import { CreateQueryKey, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 
 import { useQueryOptions } from '../useQueryOptions'
 
@@ -69,7 +70,7 @@ export const useDnsSecEnabled = <TParams extends UseDnsSecEnabledParameters>({
   // config
   gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime,
+  staleTime = 1_000 * 60 * 5,
   scopeKey,
 
   // params
@@ -86,11 +87,11 @@ export const useDnsSecEnabled = <TParams extends UseDnsSecEnabledParameters>({
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
+    enabled: enabled && !!params.name && params.name !== 'eth' && params.name !== '[root]',
   })
 
   const query = useQuery({
     ...preparedOptions,
-    enabled: enabled && !!params.name && params.name !== 'eth' && params.name !== '[root]',
     gcTime,
     retry: 2,
     staleTime,
@@ -98,6 +99,7 @@ export const useDnsSecEnabled = <TParams extends UseDnsSecEnabledParameters>({
 
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

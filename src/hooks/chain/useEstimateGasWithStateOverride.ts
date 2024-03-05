@@ -31,6 +31,7 @@ import {
   Prettify,
   QueryConfig,
 } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 
 import { useGasPrice } from './useGasPrice'
 
@@ -257,7 +258,7 @@ export const useEstimateGasWithStateOverride = <
   // config
   gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime,
+  staleTime = 1_000 * 60 * 5,
   scopeKey,
 
   // params
@@ -278,11 +279,11 @@ export const useEstimateGasWithStateOverride = <
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn(connectorClient),
+    enabled: enabled && !isConnectorLoading,
   })
 
   const query = useQuery({
     ...preparedOptions,
-    enabled: enabled && !isConnectorLoading,
     gcTime,
     staleTime,
     select: (r) => ({
@@ -329,8 +330,9 @@ export const useEstimateGasWithStateOverride = <
       gasPrice,
       isLoading,
       isFetching,
-      isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+      refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+      isCachedData: getIsCachedData(query),
     }),
-    [data, gasPrice, isFetching, isLoading, query],
+    [data, gasPrice, isFetching, isLoading, query, preparedOptions.enabled],
   )
 }
