@@ -5,9 +5,7 @@ runs:
   steps:
     - name: Set report name
       shell: bash
-      run: echo "REPORT_NAME=(echo $TEMP_REPORT_NAME)" >> $GITHUB_ENV
-      env:
-        TEMP_REPORT_NAME: report-${{ github.job }-${{ matrix.shard }}.zip
+      run: echo "REPORT_NAME=report-${{ github.job }}-${{ matrix.shard }}.zip" >> $GITHUB_ENV
     - name: Rename report
       shell: bash
       run: mv report.zip $REPORT_NAME
