@@ -40,6 +40,8 @@ export function addYears(date: Date, years: number): Date {
   return result
 }
 
+export const dateToInput = (date: Date) => date.toISOString().split('T')[0]
+
 export const formatExpiry = (expiry: Date) =>
   `${expiry.toLocaleDateString(undefined, {
     month: 'long',

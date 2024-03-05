@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import CalendarSVG from '@app/assets/Calendar.svg'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
-import { add28Days, formatExpiry } from '@app/utils/utils'
+import { add28Days, dateToInput, formatExpiry } from '@app/utils/utils'
 
 const Label = styled.label<{ $highlighted?: boolean }>(
   ({ theme, $highlighted }) => css`
@@ -73,8 +73,6 @@ type Props = {
 
 const now = new Date()
 
-const dateToInput = (date: Date) => date.toISOString().split('T')[0]
-
 export const Calendar = forwardRef(
   (
     { value, name, onChange, onBlur, highlighted, defaultValue, ...props }: Props,
@@ -95,13 +93,13 @@ export const Calendar = forwardRef(
 
     return (
       <Label
-        htmlFor="year-input"
+        htmlFor="calendar"
         $highlighted={highlighted}
         onClick={() => inputRef.current!.showPicker()}
       >
         <LabelInput
-          id="year-input"
-          data-testid="plus-minus-control-input"
+          id="calendar"
+          data-testid="calendar"
           type="date"
           {...props}
           ref={inputRef}
@@ -113,7 +111,7 @@ export const Calendar = forwardRef(
             e.target.select()
           }}
         />
-        <span>{formatExpiry(value)}</span>
+        <span data-testid="calendar-date">{formatExpiry(value)}</span>
         <CalendarIcon>
           <CalendarSVG height={16} width={16} />
         </CalendarIcon>
