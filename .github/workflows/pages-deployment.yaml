@@ -4,7 +4,7 @@ env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   NEXT_PUBLIC_INTERCOM_ID: re9q5yti
 
-on: []
+on: [push]
 jobs:
   yalc_check:
     runs-on: ubuntu-latest
@@ -36,11 +36,8 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         run: if [ ${{ needs.yalc_check.outputs.can_deploy }} != true ]; then exit 1; else exit 0; fi
 
-      - uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
-      - run: bun install --frozen-lockfile
+      - name: Download and install dependencies
+        uses: ./.github/actions/setup
 
       - name: Build and Export
         if: ${{ github.ref == 'refs/heads/main' }}

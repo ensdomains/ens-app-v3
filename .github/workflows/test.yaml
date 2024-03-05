@@ -1,6 +1,6 @@
 name: Test
 
-on: [push]
+on: [pull_request]
 
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -79,7 +79,7 @@ jobs:
   stateless-serial:
     name: stateless serial (${{matrix.shard}})
     needs: build-stateless
-    timeout-minutes: 20
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
