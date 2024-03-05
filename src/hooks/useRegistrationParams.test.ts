@@ -3,6 +3,7 @@ import { renderHook } from '@app/test-utils'
 import { describe, expect, it } from 'vitest'
 
 import useRegistrationParams from './useRegistrationParams'
+import { yearsToSeconds } from '@app/utils/utils'
 
 describe('useRegistrationParams()', () => {
   it('should return correct default registration params', () => {
@@ -11,7 +12,7 @@ describe('useRegistrationParams()', () => {
         name: 'test',
         owner: '0xowner',
         registrationData: {
-          years: 1,
+          seconds: yearsToSeconds(1),
           resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [
@@ -57,7 +58,7 @@ describe('useRegistrationParams()', () => {
         name: 'test',
         owner: '0xowner',
         registrationData: {
-          years: 1,
+          seconds: yearsToSeconds(1),
           resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [
@@ -125,7 +126,7 @@ describe('useRegistrationParams()', () => {
         name: 'test',
         owner: '0xowner',
         registrationData: {
-          years: 1,
+          seconds: yearsToSeconds(1),
           resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [],
@@ -158,7 +159,7 @@ describe('useRegistrationParams()', () => {
         name: 'test',
         owner: '0xowner',
         registrationData: {
-          years: 1,
+          seconds: yearsToSeconds(1),
           resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [],
