@@ -53,10 +53,6 @@ jobs:
       - uses: actions/checkout@v3
       - name: Download and install dependencies
         uses: ./.github/actions/setup
-      - name: Get contract addresses
-        run: 'parallel --lb --halt now,done=1 ::: \
-          "bun run tenv start -ng -ns -nb" \
-          "bun run wait-on ./.env.local"'
       - name: Build stateless and export
         run: bun run build:glocal && bun run export
       - name: Tar stateless files
