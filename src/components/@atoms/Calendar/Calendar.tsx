@@ -1,16 +1,10 @@
-import {
-  ChangeEventHandler,
-  ForwardedRef,
-  forwardRef,
-  InputHTMLAttributes,
-  useCallback,
-  useState,
-} from 'react'
+import { ChangeEventHandler, ForwardedRef, forwardRef, InputHTMLAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
+import { formatExpiry } from '@app/utils/utils'
 
 const Label = styled.label<{ $highlighted?: boolean }>(
   ({ theme, $highlighted }) => css`
@@ -56,7 +50,7 @@ const CalendarIcon = styled.span(
   `,
 )
 
-const LabelInput = styled.input<{ $highlighted?: boolean }>(
+const LabelInput = styled.input(
   () => css`
     position: absolute;
     left: 0;
@@ -71,88 +65,35 @@ const LabelInput = styled.input<{ $highlighted?: boolean }>(
 type InputProps = InputHTMLAttributes<HTMLInputElement>
 type Props = {
   highlighted?: boolean
-  value?: number
-  minValue?: number
-  maxValue?: number
-  defaultValue?: number
+  value: Date
+  defaultValue?: Date
   unit?: string
   name?: string
-  onChange?: (year: number) => void
-} & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'onChange' | 'name'>
+} & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'name'>
 
-const ONE_YEAR = 31536000000
+function add25Days(date: Date): Date {
+  const newDate = new Date(date.getTime() + 25 * 24 * 60 * 60 * 1000)
+  return newDate
+}
 
-const getLaterDate = (date1: Date, date2: Date) => [date1, date2].reduce((a, b) => (a > b ? a : b))
+const dateToInput = (date: Date) => date.toISOString().split('T')[0]
 
 export const Calendar = forwardRef(
   (
-    {
-      value,
-      defaultValue,
-      name,
-      minValue = 1,
-      // maxValue is needed to prevent exceeding NUMBER.MAX_SAFE_INTEGER
-      maxValue = Number.MAX_SAFE_INTEGER - 1,
-      onChange,
-      onBlur,
-      highlighted,
-      ...props
-    }: Props,
+    { value, name, onChange, onBlur, highlighted, defaultValue, ...props }: Props,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
 
-    const getDefaultValue = useCallback(() => {
-      return value || defaultValue || minValue
-    }, [value, defaultValue, minValue])
-
-    const normalizeValue = useCallback(
-      (val: number) => {
-        if (Number.isNaN(val)) return getDefaultValue()
-        if (val < minValue) return minValue
-        if (val > maxValue) return maxValue
-        return val
-      },
-      [minValue, maxValue, getDefaultValue],
-    )
-
-    const isValidValue = useCallback(
-      (val: number) => {
-        if (Number.isNaN(val)) return false
-        if (val < minValue) return false
-        if (val > maxValue) return false
-        return true
-      },
-      [minValue, maxValue],
-    )
-
     const { data } = useExpiry({ name })
 
-    const now = Date.now()
-
-    const yearsAfterExpiry = data
-      ? new Date(
-          data!.expiry.date.getFullYear() + (value ?? 0),
-          data!.expiry.date.getMonth(),
-          data!.expiry.date.getDate(),
-        )
-      : new Date(now + ONE_YEAR)
-
-    const [inputValue, setInputValue] = useState<Date>(new Date(now + (value ?? 0) * ONE_YEAR))
-
-    const expiryDate = data ? getLaterDate(yearsAfterExpiry, inputValue) : inputValue
-    const minDate = data ? data.expiry.date : new Date(now + ONE_YEAR)
+    const minDate = data ? add25Days(data.expiry.date) : add25Days(new Date())
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-      const { valueAsDate } = e.currentTarget
-      const year = (valueAsDate || minDate).getFullYear() - minDate.getFullYear()
+      const { valueAsDate } = e.target
+      if (!valueAsDate) return
 
-      const normalizedValue = normalizeValue(year)
-      if (valueAsDate) setInputValue(valueAsDate)
-
-      const newValue = normalizedValue
-      if (!isValidValue(newValue)) return
-      onChange?.(year)
+      onChange?.(e)
     }
 
     return (
@@ -164,24 +105,18 @@ export const Calendar = forwardRef(
         <LabelInput
           id="year-input"
           data-testid="plus-minus-control-input"
-          $highlighted={highlighted}
           type="date"
           {...props}
           ref={inputRef}
-          value={inputValue?.toISOString().split('T')[0]}
+          defaultValue={defaultValue ? dateToInput(defaultValue) : undefined}
+          value={dateToInput(value)}
           onChange={handleChange}
-          min={minDate.toISOString().split('T')[0]}
+          min={dateToInput(minDate)}
           onFocus={(e) => {
             e.target.select()
           }}
         />
-        <span>
-          {expiryDate.toLocaleDateString(undefined, {
-            month: 'short',
-            day: '2-digit',
-            year: 'numeric',
-          })}
-        </span>
+        <span>{formatExpiry(value)}</span>
         <CalendarIcon>
           <CalendarSVG height={16} width={16} />
         </CalendarIcon>
