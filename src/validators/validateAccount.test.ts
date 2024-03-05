@@ -109,6 +109,12 @@ describe('validateAccount', () => {
       value: 'Valid-Username',
       expected: true,
     },
+    {
+      description: 'GitHub username with mixed case',
+      key: 'com.github',
+      value: 'Valid-Username-123-456',
+      expected: true,
+    },
 
     // Discord tests
     {
