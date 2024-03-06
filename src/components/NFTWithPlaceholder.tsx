@@ -18,9 +18,7 @@ export const NFTWithPlaceholder = ({
 }: {
   name: string
 } & Omit<ComponentProps<'div'>, 'ref'>) => {
-  const { data: avatar, error } = useEnsAvatar({ name })
-
-  console.log(error)
+  const { data: avatar } = useEnsAvatar({ name })
 
   const isCompatible = !!(name && name.split('.').length === 2 && name.endsWith('.eth'))
 
