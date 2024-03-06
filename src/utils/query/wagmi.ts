@@ -78,6 +78,14 @@ const localStorageWithInvertMiddleware = (): Storage | undefined => {
   }
 }
 
+const chains = [
+  ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
+  mainnetWithEns,
+  goerliWithEns,
+  sepoliaWithEns,
+  holeskyWithEns,
+] as const
+
 const wagmiConfig_ = createConfig({
   connectors,
   ssr: true,
@@ -89,13 +97,7 @@ const wagmiConfig_ = createConfig({
     },
   },
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
-  chains: [
-    ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
-    mainnetWithEns,
-    goerliWithEns,
-    sepoliaWithEns,
-    holeskyWithEns,
-  ],
+  chains,
   transports: {
     ...(isLocalProvider
       ? ({
@@ -111,6 +113,25 @@ const wagmiConfig_ = createConfig({
     [holesky.id]: initialiseTransports('holesky', [tenderlyUrl]),
   },
 })
+
+const isSupportedChain = (chainId: number): chainId is (typeof chains)[number]['id'] =>
+  chains.some((c) => c.id === chainId)
+
+// hotfix for wagmi bug
+wagmiConfig_.subscribe(
+  ({ connections, current }) => (current ? connections.get(current)?.chainId : undefined),
+  (chainId_) => {
+    const chainId = chainId_ || chains[0].id
+    // If chain is not configured, then don't switch over to it.
+    const isChainConfigured = isSupportedChain(chainId)
+    if (!isChainConfigured) return
+
+    return wagmiConfig_.setState((x) => ({
+      ...x,
+      chainId: chainId ?? x.chainId,
+    }))
+  },
+)
 
 export const wagmiConfig = wagmiConfig_ as typeof wagmiConfig_ & {
   _isEns: true
