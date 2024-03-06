@@ -36,7 +36,7 @@ export const getContentHashLink = ({
     return `https://${hash}.ipfs.cf-ipfs.com` // using ipfs's secured origin gateway
   }
   if (protocol === 'ipns') {
-    return `https://ipfs.ens.domains/ipns/${hash}`
+    return `https://ipfs.euc.li/ipns/${hash}`
   }
   if (protocol === 'bzz') {
     return `https://gateway.ethswarm.org/bzz/${hash}`

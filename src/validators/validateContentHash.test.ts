@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest'
 
 import { validateContentHash } from './validateContentHash'
 
-const ipfsHttp = 'https://ipfs.ens.domains/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu'
+const ipfsHttp = 'https://ipfs.euc.li/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu'
 const ipnsHttp =
-  'https://ipfs.ens.domains/ipns/k51qzi5uqu5dlvj2baxnqndepeb86cbk3ng7n3i46uzyxzyqj2xjonzllnv0v8'
+  'https://ipfs.euc.li/ipns/k51qzi5uqu5dlvj2baxnqndepeb86cbk3ng7n3i46uzyxzyqj2xjonzllnv0v8'
 const ipfs = 'ipfs://Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu'
 const ipns = 'ipns://k51qzi5uqu5dlvj2baxnqndepeb86cbk3ng7n3i46uzyxzyqj2xjonzllnv0v8'
 const swarm = 'bzz://d1de9994b4d039f6548d191eb26786769f580809256b4685ef316805265ea162'
