@@ -1,10 +1,11 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 
 import { getRecords, GetRecordsParameters, GetRecordsReturnType } from '@ensdomains/ensjs/public'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 type UseRecordsParameters<
   TTexts extends readonly string[] | undefined = undefined,
@@ -59,9 +60,9 @@ export const useRecords = <
   const TAbi extends boolean = false,
 >({
   // config
-  gcTime,
   enabled = true,
-  staleTime = 1_000 * 60 * 5,
+  gcTime,
+  staleTime,
   scopeKey,
   // params
   ...params
@@ -75,17 +76,15 @@ export const useRecords = <
     queryFn: getRecordsQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
     enabled: enabled && !!params.name,
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     gcTime,
     staleTime,
   })
+
+  const query = useQuery(preparedOptions)
 
   return {
     ...query,

@@ -22,7 +22,7 @@ export const cacheableComponentStyles = ({ $isCached }: { $isCached?: boolean })
   css`
     opacity: 0.5;
     pointer-events: none;
-    animation: ${anim} 0.25s ease-in-out 0.5s backwards;
+    animation: ${anim} 0.25s ease-in-out 1s backwards;
   `}
 `
 

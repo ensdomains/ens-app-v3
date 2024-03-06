@@ -1,4 +1,4 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 
 import {
   getDnsImportData,
@@ -9,6 +9,7 @@ import {
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 type UseDnsImportDataParameters = PartialBy<GetDnsImportDataParameters, 'name'>
 
@@ -36,9 +37,9 @@ export const getDnsImportDataQueryFn =
 
 export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime = 1_000 * 60 * 5,
+  gcTime,
+  staleTime,
   scopeKey,
   // params
   ...params
@@ -51,7 +52,7 @@ export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
     queryFn: getDnsImportDataQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
     enabled:
@@ -60,14 +61,12 @@ export const useDnsImportData = <TParams extends UseDnsImportDataParameters>({
       !params.name?.endsWith('.eth') &&
       params.name !== 'eth' &&
       params.name !== '[root]',
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     gcTime,
     retry: 2,
     staleTime,
   })
+
+  const query = useQuery(preparedOptions)
 
   return {
     ...query,

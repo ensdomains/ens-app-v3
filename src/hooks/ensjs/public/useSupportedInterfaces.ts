@@ -1,4 +1,4 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { Hex } from 'viem'
 
 import {
@@ -10,6 +10,7 @@ import {
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 type UseSupportedInterfacesParameters<TInterfaces extends readonly Hex[] = readonly Hex[]> =
   PartialBy<GetSupportedInterfacesParameters<TInterfaces>, 'address'>
@@ -46,9 +47,9 @@ export const useSupportedInterfaces = <
     UseSupportedInterfacesParameters<TInterfaces> = UseSupportedInterfacesParameters<TInterfaces>,
 >({
   // config
-  gcTime,
   enabled = true,
-  staleTime = 1_000 * 60 * 5,
+  gcTime,
+  staleTime,
   scopeKey,
   // params
   ...params
@@ -61,17 +62,15 @@ export const useSupportedInterfaces = <
     queryFn: getSupportedInterfacesQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
     enabled: enabled && !!params.address && params.interfaces.length > 0,
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     gcTime,
     staleTime,
   })
+
+  const query = useQuery(preparedOptions)
 
   return {
     ...query,

@@ -49,9 +49,9 @@ const initialPageParam = [] as GetNamesForAddressReturnType
 
 export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime = 1_000 * 60 * 5,
+  gcTime,
+  staleTime,
   scopeKey,
   // params
   ...params
@@ -69,15 +69,13 @@ export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>
     queryFn: initialOptions.queryFn,
     getNextPageParam: getNextPageParam(params),
     initialPageParam,
+    enabled: enabled && !!params.address,
+    gcTime,
+    staleTime,
   })
 
   const { data, status, isFetched, isFetching, isLoading, isFetchedAfterMount, ...rest } =
-    useInfiniteQuery({
-      ...preparedOptions,
-      enabled: enabled && !!params.address,
-      gcTime,
-      staleTime,
-    })
+    useInfiniteQuery(preparedOptions)
 
   const [unfilteredPages, setUnfilteredPages] = useState<GetNamesForAddressReturnType>([])
 

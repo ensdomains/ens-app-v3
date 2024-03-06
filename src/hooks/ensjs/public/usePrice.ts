@@ -1,10 +1,11 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 
 import { getPrice, GetPriceParameters, GetPriceReturnType } from '@ensdomains/ensjs/public'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 type UsePriceParameters = PartialBy<GetPriceParameters, 'nameOrNames'>
 
@@ -28,9 +29,9 @@ export const getPriceQueryFn =
 
 export const usePrice = <TParams extends UsePriceParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime = 1_000 * 60 * 5,
+  gcTime,
+  staleTime,
   scopeKey,
   // params
   ...params
@@ -43,17 +44,15 @@ export const usePrice = <TParams extends UsePriceParameters>({
     queryFn: getPriceQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
     enabled: enabled && !!params.nameOrNames,
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     gcTime,
     staleTime,
   })
+
+  const query = useQuery(preparedOptions)
 
   return {
     ...query,
