@@ -55,7 +55,6 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
     isSubname && fusesStatus.isUserParentOwner && fusesStatus.parentState !== 'locked'
 
   const isCached = isBasicCached || isParentBasicCachedData
-  console.log('isCached', isCached, isBasicCached, isParentBasicCachedData)
   return (
     <Container $isCached={isCached}>
       {showUnwrapWarning && (

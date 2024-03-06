@@ -33,7 +33,6 @@ type ResolverStatus = ReturnType<typeof useResolverStatus>['data']
 const isAuthorized =
   (resolverStatus: ResolverStatus) =>
   (n: Pick<CheckPrimaryNameInputName, 'fuses' | 'relation'>) => {
-    console.log('isAuthorised', n.relation, n.fuses, resolverStatus)
     if (
       !n.relation.resolvedAddress &&
       n.relation.wrappedOwner &&

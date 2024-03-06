@@ -2,22 +2,16 @@ import { match, P } from 'ts-pattern'
 
 import { GetPriceReturnType } from '@ensdomains/ensjs/public'
 
-const mockUsePriceTypes = [
-  'tld',
-  'eth-available-normal-2ld', // Is the price data always the same
-  'eth-available-premium-2ld',
-  'undefined',
-] as const
+const mockUsePriceTypes = ['tld', 'base', 'premium'] as const
 export type MockUsePriceType = (typeof mockUsePriceTypes)[number] | undefined
 
 export const makeMockUsePriceData = (type: MockUsePriceType): GetPriceReturnType | undefined =>
   match(type)
     .with('tld', () => undefined)
-    .with('eth-available-normal-2ld', () => ({ base: 3203936997786453n, premium: 0n }))
-    .with('eth-available-premium-2ld', () => ({
+    .with('base', () => ({ base: 3203936997786453n, premium: 0n }))
+    .with('premium', () => ({
       base: 3203936997786453n,
       premium: 3203936997786453n,
     }))
-    .with('undefined', () => undefined)
     .with(P.nullish, () => undefined)
     .exhaustive()

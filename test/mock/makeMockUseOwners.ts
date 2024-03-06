@@ -17,15 +17,15 @@ type MockUseOwnersConfig = {
 }
 export const mockUseOwnersConfigMap = {
   'eth-unwrapped-2ld': {
-    ownerType: 'eth-unwrapped-2ld',
+    ownerType: 'registrar',
     abilitiesType: 'eth-unwrapped-2ld',
   } as MockUseOwnersConfig,
   'eth-unwrapped-2ld:manager': {
-    ownerType: 'eth-unwrapped-2ld:manager',
+    ownerType: 'registrar:manager',
     abilitiesType: 'eth-unwrapped-2ld:manager',
   } as MockUseOwnersConfig,
   'eth-unwrapped-2ld:owner': {
-    ownerType: 'eth-unwrapped-2ld:owner',
+    ownerType: 'registrar:owner',
     abilitiesType: 'eth-unwrapped-2ld:owner',
   } as MockUseOwnersConfig,
   'eth-emancipated-2ld': {
@@ -38,21 +38,21 @@ export const mockUseOwnersConfigMap = {
     wrapperDataType: 'emancipated:unowned',
     abilitiesType: 'eth-emancipated-2ld:unowned',
   } as MockUseOwnersConfig,
-  'eth-grace-period-unwrapped-2ld': {
-    ownerType: 'eth-grace-period-unwrapped-2ld-with-registry-registrant',
-    abilitiesType: 'eth-grace-period-unwrapped-2ld',
+  'eth-unwrapped-2ld:grace-period': {
+    ownerType: 'registrar:grace-period:subgraph-registrant',
+    abilitiesType: 'eth-unwrapped-2ld:grace-period',
   } as MockUseOwnersConfig,
-  'eth-grace-period-wrapped-2ld': {
-    ownerType: 'eth-grace-period-wrapped-2ld',
+  'eth-emancipated-2ld:grace-period': {
+    ownerType: 'namewrapper:grace-period',
     wrapperDataType: 'emancipated',
-    abilitiesType: 'eth-grace-period-wrapped-2ld',
+    abilitiesType: 'eth-emancipated-2ld:grace-period',
   } as MockUseOwnersConfig,
   'eth-unwrapped-subname': {
     ownerType: 'registry',
     abilitiesType: 'eth-unwrapped-subname+unwrapped-2ld:unowned',
   } as MockUseOwnersConfig,
   'eth-wrapped-subname': {
-    ownerType: 'eth-grace-period-wrapped-2ld',
+    ownerType: 'namewrapper',
     wrapperDataType: 'wrapped',
     abilitiesType: 'eth-wrapped-subname+emancipated-2ld:unowned',
   } as MockUseOwnersConfig,
@@ -147,7 +147,7 @@ export const makeMockUseOwners = (
         transferType: 'owner' as const,
       },
     ])
-    .with('eth-grace-period-unwrapped-2ld', () => [
+    .with('eth-unwrapped-2ld:grace-period', () => [
       {
         address: userAddress,
         canTransfer: false,
@@ -165,7 +165,7 @@ export const makeMockUseOwners = (
         transferType: 'owner' as const,
       },
     ])
-    .with('eth-grace-period-wrapped-2ld', () => [
+    .with('eth-emancipated-2ld:grace-period', () => [
       {
         address: userAddress,
         canTransfer: false,
@@ -206,5 +206,5 @@ export const makeMockUseOwners = (
       },
     ])
     .with(P.nullish, () => undefined)
-    .otherwise(() => [])
+    .exhaustive()
 }

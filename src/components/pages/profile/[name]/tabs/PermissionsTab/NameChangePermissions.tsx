@@ -124,21 +124,12 @@ export const NameChangePermissions = ({
     })
   }
 
-  console.log('wrapperData', wrapperData)
   const ButtonComponent = useMemo(() => {
     const showButton =
       isUserOwner &&
       ['emancipated', 'locked'].includes(state) &&
       permissions.unburned.length > 0 &&
       canEditPermissions
-    console.log(
-      'showButton',
-      showButton,
-      isUserOwner,
-      state,
-      permissions.unburned,
-      canEditPermissions,
-    )
     if (!showButton) return null
     if (wrapperData?.fuses.child.CANNOT_BURN_FUSES)
       return (

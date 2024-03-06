@@ -24,7 +24,6 @@ export default function Page() {
 
   // Skip graph for for initial load and router redirect
   const nameDetails = useNameDetails({ name })
-  console.log('nameDetails', nameDetails)
   const { isLoading: detailsLoading, registrationStatus, gracePeriodEndDate } = nameDetails
 
   const isLoading = detailsLoading || primary.isLoading || initial || !router.isReady

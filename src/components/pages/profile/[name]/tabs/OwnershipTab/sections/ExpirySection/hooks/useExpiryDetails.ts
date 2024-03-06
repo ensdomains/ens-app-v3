@@ -63,11 +63,11 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
         .with(
           P.union(
             'eth-unwrapped-2ld',
+            'eth-unwrapped-2ld:grace-period',
             'eth-emancipated-2ld',
+            'eth-emancipated-2ld:grace-period',
             'eth-locked-2ld',
-            'eth-grace-period-emancipated-2ld',
-            'eth-grace-period-locked-2ld',
-            'eth-grace-period-unwrapped-2ld',
+            'eth-locked-2ld:grace-period',
           ),
           () => [
             ...(expiry

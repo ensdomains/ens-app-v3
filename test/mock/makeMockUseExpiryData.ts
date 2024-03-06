@@ -2,13 +2,7 @@ import { match, P } from 'ts-pattern'
 
 import { GetExpiryReturnType } from '@ensdomains/ensjs/public'
 
-const mockUseExpiryTypes = [
-  'eth',
-  'eth-available-2ld',
-  'eth-registered-2ld',
-  'eth-grace-period-2ld',
-  'undefined',
-] as const
+const mockUseExpiryTypes = ['eth', 'active', 'grace-period'] as const
 export type MockUseExpiryType = (typeof mockUseExpiryTypes)[number] | undefined
 
 export const makeMockUseExpiryData = (type: MockUseExpiryType): GetExpiryReturnType | undefined =>
@@ -21,8 +15,7 @@ export const makeMockUseExpiryData = (type: MockUseExpiryType): GetExpiryReturnT
       gracePeriod: 0,
       status: 'active' as const,
     }))
-    .with('eth-available-2ld', () => null)
-    .with('eth-registered-2ld', () => ({
+    .with('active', () => ({
       expiry: {
         date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
         value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365),
@@ -30,7 +23,7 @@ export const makeMockUseExpiryData = (type: MockUseExpiryType): GetExpiryReturnT
       gracePeriod: 7776000,
       status: 'active' as const,
     }))
-    .with('eth-grace-period-2ld', () => ({
+    .with('grace-period', () => ({
       expiry: {
         date: new Date(Date.now() - 7776000 / 2),
         value: BigInt(Date.now() - 7776000 / 2),
@@ -38,6 +31,5 @@ export const makeMockUseExpiryData = (type: MockUseExpiryType): GetExpiryReturnT
       gracePeriod: 7776000,
       status: 'active' as const,
     }))
-    .with('undefined', () => undefined)
     .with(P.nullish, () => null)
-    .otherwise(() => null)
+    .exhaustive()

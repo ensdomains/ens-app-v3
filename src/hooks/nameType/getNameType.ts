@@ -10,11 +10,11 @@ export type NameType =
   | 'root'
   | 'tld'
   | 'eth-unwrapped-2ld'
+  | 'eth-unwrapped-2ld:grace-period'
   | 'eth-emancipated-2ld'
+  | 'eth-emancipated-2ld:grace-period'
   | 'eth-locked-2ld'
-  | 'eth-grace-period-unwrapped-2ld'
-  | 'eth-grace-period-emancipated-2ld'
-  | 'eth-grace-period-locked-2ld'
+  | 'eth-locked-2ld:grace-period'
   | 'eth-unwrapped-subname'
   | 'eth-wrapped-subname'
   | 'eth-emancipated-subname'
@@ -69,11 +69,11 @@ export const getNameType = ({
   return match([tldType, wrapLevel, level, registrationStatus])
     .with([P._, P._, P.union('root', 'tld'), P._], ([, , _level]) => _level)
     .with(['eth', P._, '2ld', 'gracePeriod'], () => {
-      if (ownerData?.owner !== nameWrapperAddress) return 'eth-grace-period-unwrapped-2ld' as const
-      if (wrapperData?.fuses?.child?.CANNOT_UNWRAP) return 'eth-grace-period-locked-2ld' as const
+      if (ownerData?.owner !== nameWrapperAddress) return 'eth-unwrapped-2ld:grace-period' as const
+      if (wrapperData?.fuses?.child?.CANNOT_UNWRAP) return 'eth-locked-2ld:grace-period' as const
       if (wrapperData?.fuses?.parent?.PARENT_CANNOT_CONTROL)
-        return 'eth-grace-period-emancipated-2ld' as const
-      return 'eth-grace-period-unwrapped-2ld' as const
+        return 'eth-emancipated-2ld:grace-period' as const
+      return 'eth-unwrapped-2ld:grace-period' as const
     })
     .with(
       ['eth', P._, '2ld', P._],

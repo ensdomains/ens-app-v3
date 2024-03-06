@@ -18,7 +18,7 @@ export const checkCanSyncManager = ({
 }) => {
   return match(nameType)
     .with(
-      P.union('eth-unwrapped-2ld', 'eth-grace-period-unwrapped-2ld'),
+      P.union('eth-unwrapped-2ld', 'eth-unwrapped-2ld:grace-period'),
       () => registrant === address && owner !== address,
     )
     .with(
@@ -31,9 +31,9 @@ export const checkCanSyncManager = ({
         'root',
         'tld',
         'eth-emancipated-2ld',
+        'eth-emancipated-2ld:grace-period',
         'eth-locked-2ld',
-        'eth-grace-period-emancipated-2ld',
-        'eth-grace-period-locked-2ld',
+        'eth-locked-2ld:grace-period',
         'eth-unwrapped-subname',
         'eth-wrapped-subname',
         'eth-emancipated-subname',

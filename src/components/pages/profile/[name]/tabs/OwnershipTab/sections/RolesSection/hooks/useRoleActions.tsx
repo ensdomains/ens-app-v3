@@ -47,7 +47,6 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
   const showEditRolesInput = usePreparedDataInput('EditRoles')
   const showSyncManagerInput = usePreparedDataInput('SyncManager')
 
-  console.log('isLoading', account.address, nameType, abilities.isLoading, details.isLoading)
   const isLoading =
     !account.address || nameType.isLoading || abilities.isLoading || details.isLoading
 
