@@ -59,8 +59,6 @@ export const useExpiry = <TParams extends UseExpiryParameters>({
     staleTime,
   })
 
-  console.log(query.data)
-
   return {
     ...query,
     refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
