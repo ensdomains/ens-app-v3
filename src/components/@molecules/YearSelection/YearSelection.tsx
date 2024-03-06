@@ -41,8 +41,8 @@ export const YearSelection = ({
   name?: string
   defaultDate?: Date
 }) => {
-  const [yearPickView, setYearPickView] = useState<'years' | 'calendar'>('years')
-  const yearPickSelection = yearPickView === 'calendar' ? 'years' : 'calendar'
+  const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
+  const yearPickSelection = yearPickView === 'date' ? 'years' : 'date'
 
   const extensionPeriod = formatExtensionPeriod(date)
 
@@ -55,7 +55,7 @@ export const YearSelection = ({
 
   return (
     <Container>
-      {yearPickView === 'calendar' ? (
+      {yearPickView === 'date' ? (
         <Calendar
           value={date}
           defaultValue={defaultDate}
