@@ -5,13 +5,8 @@ const anim = keyframes`
     opacity: 1;
   }
 
-  0%, 99% {
-    pointer-events: auto;
-  }
-
   100% {
     opacity: 0.5;
-    pointer-events: none;
   }
 `
 
