@@ -26,7 +26,7 @@ const userAddress = createAccounts().getAddress('user') as Address
 const user2Address = createAccounts().getAddress('user2') as Address
 
 export const makeMockUseWrapperDataData = (
-  type: MockUseWrapperDataType,
+  type?: MockUseWrapperDataType,
 ): GetWrapperDataReturnType | undefined => {
   return match(type)
     .with(P.union('unwrapped-or-available', P.nullish), () => null)

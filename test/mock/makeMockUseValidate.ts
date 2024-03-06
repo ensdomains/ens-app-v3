@@ -5,7 +5,9 @@ import { ValidationResult } from '@app/hooks/useValidate'
 
 export const mockUseValidateConfig = {
   eth: { input: 'eth' },
+  dns: { input: 'com' },
   'valid-2ld': { input: 'name.eth' },
+  'valid-2ld:dns': { input: 'name.com' },
   'invalid-2ld': { input: 'name❤️.eth' },
   'valid-subname': { input: 'subname.name.eth' },
 } as const
@@ -34,6 +36,26 @@ export const makeMockUseValidate = (type: MockUseValidateType): ValidationResult
       isNonASCII: false,
       labelCount: 1,
     }))
+    .with('dns', () => ({
+      type: 'label' as const,
+      isShort: false,
+      isValid: true,
+      is2LD: false,
+      isETH: false,
+      labelDataArray: [
+        {
+          input: [99, 111, 109],
+          offset: 0,
+          tokens: [[99, 111, 109]],
+          type: 'ASCII',
+          output: [99, 111, 109],
+        },
+      ],
+      name: 'com',
+      beautifiedName: 'com',
+      isNonASCII: false,
+      labelCount: 1,
+    }))
     .with('valid-2ld', () => ({
       type: 'name' as const,
       isShort: false,
@@ -58,6 +80,33 @@ export const makeMockUseValidate = (type: MockUseValidateType): ValidationResult
       ],
       name: 'name.eth',
       beautifiedName: 'name.eth',
+      isNonASCII: false,
+      labelCount: 2,
+    }))
+    .with('valid-2ld:dns', () => ({
+      type: 'name' as const,
+      isShort: false,
+      isValid: true,
+      is2LD: true,
+      isETH: false,
+      labelDataArray: [
+        {
+          input: [110, 97, 109, 101],
+          offset: 0,
+          tokens: [[110, 97, 109, 101]],
+          type: 'ASCII',
+          output: [110, 97, 109, 101],
+        },
+        {
+          input: [99, 111, 109],
+          offset: 5,
+          tokens: [[99, 111, 109]],
+          type: 'ASCII',
+          output: [99, 111, 109],
+        },
+      ],
+      name: 'name.com',
+      beautifiedName: 'name.com',
       isNonASCII: false,
       labelCount: 2,
     }))
@@ -101,22 +150,22 @@ export const makeMockUseValidate = (type: MockUseValidateType): ValidationResult
       isETH: true,
       labelDataArray: [
         {
-          input: [120, 121, 122],
+          input: [115, 117, 98, 110, 97, 109, 101],
           offset: 0,
-          tokens: [[120, 121, 122]],
+          tokens: [[115, +117, +98, +110, +97, +109, +101]],
           type: 'ASCII',
-          output: [120, 121, 122],
+          output: [115, +117, +98, +110, +97, +109, +101],
         },
         {
-          input: [119, 114, 97, 112, 112, 101, 100],
-          offset: 4,
-          tokens: [[119, 114, 97, 112, 112, 101, 100]],
+          input: [110, 97, 109, 101],
+          offset: 8,
+          tokens: [[110, 97, 109, 101]],
           type: 'ASCII',
-          output: [119, 114, 97, 112, 112, 101, 100],
+          output: [110, 97, 109, 101],
         },
         {
           input: [101, 116, 104],
-          offset: 12,
+          offset: 13,
           tokens: [[101, 116, 104]],
           type: 'ASCII',
           output: [101, 116, 104],

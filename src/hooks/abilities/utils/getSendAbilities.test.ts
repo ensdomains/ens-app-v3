@@ -46,56 +46,12 @@ const partialUserStates = {
   },
   // TODO: add dns states
   unwrappedDNSOwner: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: '0xnotOwner',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {},
-          child: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: '0xdnsowner',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {},
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('dns-unwrapped-2ld:owner'),
+    parentBasicNameData: makeMockUseBasicName('dns')
   },
   unwrappedDNSManager: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {},
-          child: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: '0xdnsowner',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {},
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('dns-unwrapped-2ld:manager'),
+    parentBasicNameData: makeMockUseBasicName('dns')
   },
   unwrappedSubnameManagerHolderUnwrappedParentManager: {
     basicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager'),
@@ -943,7 +899,6 @@ const makeMockGetSendAbilities = (type: MockGetSendAbilitiesType) => {
 
 describe('mocks', () => {
   it.each([mockGetSendAbilitiesTypes])('should return for %s', (type) => {
-    console.log(type)
     const config = mockGetSendAbilitiesConfig[type]
     const { basicNameType, parentBasicNameType, name: name_ } = config
     const result = getSendAbilities({

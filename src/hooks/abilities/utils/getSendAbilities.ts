@@ -73,6 +73,18 @@ const CONTRACT_INFO = {
     // A wrapped name cannot be a manager since PCC is automatically burned
     manager: undefined,
   },
+  gracePeriodName: {
+    pattern: {
+      registrationStatus: 'gracePeriod',
+    },
+    guard: (address?: string) => (name: BasicName) => {
+      return (
+        name.ownerData?.owner === address ||
+        name.ownerData?.registrant === address ||
+        name.wrapperData?.owner === address
+      )
+    },
+  },
   wrappedSubname: {
     wrappedParent: {
       pattern: [
@@ -312,6 +324,15 @@ const get2LDEthAbilities = ({
           sendNameFunctionCallDetails,
         } as SendAbilities
       },
+    )
+    .with(
+      CONTRACT_INFO.gracePeriodName.pattern,
+      CONTRACT_INFO.gracePeriodName.guard(address),
+      () =>
+        ({
+          ...BASE_RESPONSE,
+          canSendError: 'gracePeriod',
+        }) as SendAbilities,
     )
     .otherwise(({ wrapperData }) => ({
       ...BASE_RESPONSE,

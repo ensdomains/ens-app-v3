@@ -8,11 +8,11 @@ import { useContractAddress } from '../chain/useContractAddress'
 import { useResolverIsAuthorised } from '../resolver/useResolverIsAuthorised'
 import { useBasicName } from '../useBasicName'
 import { useHasSubnames } from '../useHasSubnames'
+import { useParentBasicName } from '../useParentBasicName'
 import { getDeleteAbilities } from './utils/getDeleteAbilities'
 import { getEditAbilities } from './utils/getEditAbilities'
 import { getReclaimAbilities } from './utils/getReclaimAbilities'
 import { getSendAbilities } from './utils/getSendAbilities'
-import { useParentBasicName } from '../useParentBasicName'
 
 type ExtendAbilities = {
   canExtend: boolean
@@ -100,7 +100,7 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
   })
 
   const parentBasicNameData = useParentBasicName({
-    name: parent,
+    name,
     enabled: enabled && !!parent && !!address,
   })
 

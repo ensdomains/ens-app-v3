@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { match, P } from 'ts-pattern'
 
+import { MockUseAddrRecordType } from './makeMockUseAddrRecordData'
 import { makeMockUseExpiryData, MockUseExpiryType } from './makeMockUseExpiryData'
 import { makeMockUseOwnerData, MockUseOwnerType } from './makeMockUseOwnerData'
 import { makeMockUsePriceData, MockUsePriceType } from './makeMockUsePriceData'
+import { MockUseSubgraphRegistrantType } from './makeMockUseSubgraphRegistrantData'
 import { makeMockUseValidate, MockUseValidateType } from './makeMockUseValidate'
 import { makeMockUseWrapperDataData, MockUseWrapperDataType } from './makeMockUseWrapperDataData.ts'
 
@@ -13,6 +15,8 @@ type MockUseBasicNameConfig = {
   useWrapperDataType: MockUseWrapperDataType
   useExpiryType: MockUseExpiryType
   usePriceType: MockUsePriceType
+  useAddrRecordType: MockUseAddrRecordType
+  useSubgraphRegistrantType: MockUseSubgraphRegistrantType
 }
 
 export const mockUseBasicNameConfig = {
@@ -22,7 +26,7 @@ export const mockUseBasicNameConfig = {
     useWrapperDataType: 'unwrapped-or-available',
     useExpiryType: 'eth',
     usePriceType: 'tld',
-  },
+  } as MockUseBasicNameConfig,
   'eth-available-2ld': {
     useValidateType: 'valid-2ld',
     useOwnerType: 'eth-available-2ld',
@@ -91,6 +95,42 @@ export const mockUseBasicNameConfig = {
     useWrapperDataType: 'unwrapped-or-available',
     useExpiryType: 'eth-grace-period-2ld',
     usePriceType: 'eth-available-normal-2ld',
+    useSubgraphRegistrantType: 'owned',
+  } as MockUseBasicNameConfig,
+  'eth-grace-period-unwrapped-2ld:unowned': {
+    useValidateType: 'valid-2ld',
+    useOwnerType: 'eth-grace-period-unwrapped-2ld:unowned',
+    useExpiryType: 'eth-grace-period-2ld',
+    usePriceType: 'eth-available-normal-2ld',
+    useSubgraphRegistrantType: 'unowned',
+  } as MockUseBasicNameConfig,
+  'eth-grace-period-wrapped-2ld': {
+    useValidateType: 'valid-2ld',
+    useOwnerType: 'eth-grace-period-wrapped-2ld',
+    useWrapperDataType: 'wrapped',
+    useExpiryType: 'eth-grace-period-2ld',
+    usePriceType: 'eth-available-normal-2ld',
+  } as MockUseBasicNameConfig,
+  'eth-grace-period-wrapped-2ld:unowned': {
+    useValidateType: 'valid-2ld',
+    useOwnerType: 'eth-grace-period-wrapped-2ld',
+    useWrapperDataType: 'wrapped:unowned',
+    useExpiryType: 'eth-grace-period-2ld',
+    usePriceType: 'eth-available-normal-2ld',
+  } as MockUseBasicNameConfig,
+  'eth-grace-period-emancipated-2ld': {
+    useValidateType: 'valid-2ld',
+    useOwnerType: 'eth-grace-period-wrapped-2ld',
+    useWrapperDataType: 'emancipated',
+    useExpiryType: 'eth-grace-period-2ld',
+    usePriceType: 'eth-available-normal-2ld',
+  } as MockUseBasicNameConfig,
+  'eth-grace-period-emancipated-2ld:unowned': {
+    useValidateType: 'valid-2ld',
+    useOwnerType: 'eth-grace-period-wrapped-2ld',
+    useWrapperDataType: 'emancipated:unowned',
+    useExpiryType: 'eth-grace-period-2ld',
+    usePriceType: 'eth-available-normal-2ld',
   } as MockUseBasicNameConfig,
   'eth-unwrapped-subname': {
     useValidateType: 'valid-subname',
@@ -132,16 +172,48 @@ export const mockUseBasicNameConfig = {
     useExpiryType: 'undefined',
     usePriceType: 'undefined',
   } as MockUseBasicNameConfig,
-  'dns-offchain-2ld': {
-    useValidateType: 'valid-2ld',
-    useOwnerType: undefined,
+  dns: {
+    useValidateType: 'dns',
+    useOwnerType: 'dns',
     useWrapperDataType: undefined,
     useExpiryType: undefined,
     usePriceType: undefined,
   } as MockUseBasicNameConfig,
+  'dns-unwrapped-2ld': {
+    useValidateType: 'valid-2ld:dns',
+    useOwnerType: 'registry',
+    useAddrRecordType: 'user',
+    useWrapperDataType: undefined,
+    useExpiryType: undefined,
+    usePriceType: undefined,
+  } as MockUseBasicNameConfig,
+  'dns-unwrapped-2ld:owner': {
+    useValidateType: 'valid-2ld:dns',
+    useOwnerType: 'registry:unowned',
+    useAddrRecordType: 'user',
+    useWrapperDataType: undefined,
+    useExpiryType: undefined,
+    usePriceType: undefined,
+  } as MockUseBasicNameConfig,
+  'dns-unwrapped-2ld:manager': {
+    useValidateType: 'valid-2ld:dns',
+    useOwnerType: 'registry',
+    useAddrRecordType: 'user2',
+    useWrapperDataType: undefined,
+    useExpiryType: undefined,
+    usePriceType: undefined,
+  } as MockUseBasicNameConfig,
+  'dns-offchain-2ld': {
+    useValidateType: 'valid-2ld:dns',
+    useOwnerType: undefined,
+    useWrapperDataType: undefined,
+    useExpiryType: undefined,
+    usePriceType: undefined,
+    useAddrRecordType: 'user',
+  } as MockUseBasicNameConfig,
 } as const
 
-type MockUseBasicNameType = keyof typeof mockUseBasicNameConfig
+export type MockUseBasicNameType = keyof typeof mockUseBasicNameConfig
 
 export const mockUseBasicNameTypes = Object.keys(
   mockUseBasicNameConfig,
@@ -207,28 +279,25 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
         isWrapped: false,
       }),
     )
-    .with(P.union('eth-emancipated-2ld', 'eth-emancipated-2ld:unowned'), () => ({
-      ...BaseBasicName,
-      normalisedName: 'name.eth',
-      truncatedName: 'name.eth',
-      isWrapped: true,
-      pccExpired: false,
-      canBeWrapped: false,
-      registrationStatus: 'registered' as const,
-      isLoading: false,
-      isCachedData: false,
-    }))
-    .with(P.union('eth-locked-2ld', 'eth-burnt-2ld'), () => ({
-      ...BaseBasicName,
-      normalisedName: 'name.eth',
-      truncatedName: 'name.eth',
-      isWrapped: true,
-      pccExpired: false,
-      canBeWrapped: false,
-      registrationStatus: 'registered' as const,
-      isLoading: false,
-      isCachedData: false,
-    }))
+    .with(
+      P.union(
+        'eth-emancipated-2ld',
+        'eth-emancipated-2ld:unowned',
+        'eth-locked-2ld',
+        'eth-burnt-2ld',
+      ),
+      () => ({
+        ...BaseBasicName,
+        normalisedName: 'name.eth',
+        truncatedName: 'name.eth',
+        isWrapped: true,
+        pccExpired: false,
+        canBeWrapped: false,
+        registrationStatus: 'registered' as const,
+        isLoading: false,
+        isCachedData: false,
+      }),
+    )
     .with('eth-grace-period-unwrapped-2ld', () => ({
       ...BaseBasicName,
       ownerData: makeMockUseOwnerData('eth-grace-period-unwrapped-2ld-with-registry-registrant'),
@@ -241,10 +310,43 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
       isLoading: false,
       isCachedData: false,
     }))
-    .with(P.union('eth-unwrapped-subname', 'eth-unwrapped-subname:unowned'), () => ({
+    .with('eth-grace-period-unwrapped-2ld:unowned', () => ({
       ...BaseBasicName,
+      ownerData: makeMockUseOwnerData(
+        'eth-grace-period-unwrapped-2ld-with-registry-registrant:unowned',
+      ),
       normalisedName: 'name.eth',
       truncatedName: 'name.eth',
+      registrationStatus: 'gracePeriod' as const,
+      isWrapped: false,
+      pccExpired: false,
+      canBeWrapped: true,
+      isLoading: false,
+      isCachedData: false,
+    }))
+    .with(
+      P.union(
+        'eth-grace-period-wrapped-2ld',
+        'eth-grace-period-wrapped-2ld:unowned',
+        'eth-grace-period-emancipated-2ld',
+        'eth-grace-period-emancipated-2ld:unowned',
+      ),
+      () => ({
+        ...BaseBasicName,
+        normalisedName: 'name.eth',
+        truncatedName: 'name.eth',
+        registrationStatus: 'gracePeriod' as const,
+        isWrapped: true,
+        pccExpired: false,
+        canBeWrapped: false,
+        isLoading: false,
+        isCachedData: false,
+      }),
+    )
+    .with(P.union('eth-unwrapped-subname', 'eth-unwrapped-subname:unowned'), () => ({
+      ...BaseBasicName,
+      normalisedName: 'subname.name.eth',
+      truncatedName: 'subname.name.eth',
       registrationStatus: 'owned' as const,
       isWrapped: false,
       pccExpired: false,
@@ -265,6 +367,36 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
         truncatedName: 'subname.name.eth',
         registrationStatus: 'owned' as const,
         isWrapped: true,
+        pccExpired: false,
+        canBeWrapped: false,
+        isLoading: false,
+        isCachedData: false,
+      }),
+    )
+    .with('dns', () => ({
+      ...BaseBasicName,
+      normalisedName: 'com',
+      truncatedName: 'com',
+      registrationStatus: 'owned' as const,
+      isLoading: false,
+      isWrapped: false,
+      pccExpired: false,
+      canBeWrapped: false,
+      isCachedData: false,
+    }))
+    .with(
+      P.union(
+        'dns-unwrapped-2ld',
+        'dns-unwrapped-2ld:owner',
+        'dns-unwrapped-2ld:manager',
+        'dns-offchain-2ld',
+      ),
+      () => ({
+        ...BaseBasicName,
+        normalisedName: 'name.com',
+        truncatedName: 'name.com',
+        registrationStatus: 'imported' as const,
+        isWrapped: false,
         pccExpired: false,
         canBeWrapped: false,
         isLoading: false,

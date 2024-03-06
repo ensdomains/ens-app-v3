@@ -4,12 +4,15 @@ import { Address } from 'viem'
 import { createAccounts } from '../../playwright/fixtures/accounts'
 import { UseSubgraphRegistrantReturnType } from '../../src/hooks/ensjs/subgraph/useSubgraphRegistrant'
 
-const mockUseSubgraphRegistrantTypes = ['eth-grace-period-unwrapped-2ld'] as const
-export type MockUsePriceType = (typeof mockUseSubgraphRegistrantTypes)[number]
+const mockUseSubgraphRegistrantTypes = ['owned', 'unowned'] as const
+export type MockUseSubgraphRegistrantType =
+  | (typeof mockUseSubgraphRegistrantTypes)[number]
+  | undefined
 
 export const makeMockUseSubgraphRegistrantData = (
-  type: MockUsePriceType,
+  type: MockUseSubgraphRegistrantType,
 ): UseSubgraphRegistrantReturnType | undefined =>
   match(type)
-    .with('eth-grace-period-unwrapped-2ld', () => createAccounts().getAddress('user') as Address)
+    .with('owned', () => createAccounts().getAddress('user') as Address)
+    .with('unowned', () => createAccounts().getAddress('user2') as Address)
     .otherwise(() => undefined)

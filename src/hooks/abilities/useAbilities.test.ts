@@ -1,4 +1,7 @@
 import { mockFunction, renderHook } from '@app/test-utils'
+import { readFileSync, writeFileSync, existsSync} from 'fs'
+import { afterAll } from 'vitest'
+import * as _ from 'lodash'
 
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
@@ -11,25 +14,32 @@ import {
   mockUseAbilitiesTypes,
 } from '../../../test/mock/makeMockUseAbilitiesData'
 import { useAccountSafely } from '../account/useAccountSafely'
-import { NameType } from '../nameType/getNameType'
 import { useResolverIsAuthorised } from '../resolver/useResolverIsAuthorised'
 import { useBasicName } from '../useBasicName'
 import { useHasSubnames } from '../useHasSubnames'
-import { DEFAULT_ABILITIES, useAbilities } from './useAbilities'
+import { useAbilities } from './useAbilities'
 import { useParentBasicName } from '../useParentBasicName'
 import { makeMockUseBasicName } from '../../../test/mock/makeMockUseBasicName'
+import { useContractAddress } from '../chain/useContractAddress'
+import { makeMockUseContractAddress } from '../../../test/mock/makeMockUseContractAddress'
 
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/useBasicName')
 vi.mock('@app/hooks/useParentBasicName')
 vi.mock('@app/hooks/resolver/useResolverIsAuthorised')
 vi.mock('@app/hooks/useHasSubnames')
+vi.mock('@app/hooks/chain/useContractAddress')
+vi.mock('')
 
 const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseBasicName = mockFunction(useBasicName)
 const mockUseParentBasicName = mockFunction(useParentBasicName)
 const mockUseResolverIsAuthorised = mockFunction(useResolverIsAuthorised)
 const mockUseHasSubnames = mockFunction(useHasSubnames)
+const mockUseContractAddress = mockFunction(useContractAddress)
+
+// @ts-ignore
+mockUseContractAddress.mockImplementation(makeMockUseContractAddress)
 
 describe('useAbilities', () => {
   describe('basic abilities', () => {
@@ -89,7 +99,13 @@ describe('useAbilities', () => {
 
   // ownerdata , registrationStatus, pccExpired
   describe('mocks', () => {
-    it.each(mockUseAbilitiesTypes)('should return expected data for %s', (type) => {
+    let group: [string[], any][] = []
+    afterAll(() => {
+      const code = group.map(([types, data]) => `.with(P.union(${types.map((t) => `'${t}'`).join(',')}), () => (${JSON.stringify(data)}))`).join('\n')
+      // writeFileSync('./testcode.ts', code)
+    })
+    it.only.each(mockUseAbilitiesTypes)('should return expected data for %s', (type) => {
+      
       const config = mockUseAbilitiesConfig[type]
       const { basicNameType, parentNameType, name } = config
       mockUseAccountSafely.mockReturnValue({
@@ -102,7 +118,15 @@ describe('useAbilities', () => {
         isLoading: false,
         isFetching: false,
       })
-      const { result } = renderHook(() => useAbilities({ name: 'test.eth' }))
+      mockUseHasSubnames.mockReturnValue({ hasSubnames: false, isLoading: false})
+
+      const { result } = renderHook(() => useAbilities({ name }))
+
+      
+      let index = group.findIndex(([,item]) => _.isEqual(item, result.current.data))
+      if (index == -1) group.push([[type],result.current.data])
+      else group[index][0].push(type)
+
       const expected = makeMockUseAbilitiesData(type)
       expect(result.current.data).toEqual(expected)
     })

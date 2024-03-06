@@ -26,16 +26,7 @@ type Props = {
 }
 
 const MoreTab = ({ name, nameDetails, abilities }: Props) => {
-  const {
-    canBeWrapped,
-    ownerData,
-    wrapperData,
-    isWrapped,
-    isCachedData,
-    profile,
-    pccExpired,
-    registrationStatus,
-  } = nameDetails
+  const { canBeWrapped, ownerData, wrapperData, isWrapped, isCachedData, profile } = nameDetails
 
   return (
     <MoreContainer>
@@ -47,8 +38,6 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
           ownerData={ownerData}
           wrapperData={wrapperData}
           profile={profile}
-          pccExpired={pccExpired}
-          registrationStatus={registrationStatus}
         />
       )}
       <Resolver

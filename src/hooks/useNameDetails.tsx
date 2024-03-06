@@ -25,16 +25,6 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     gracePeriodEndDate,
     ...basicName
   } = useBasicName({ name })
-  console.log('basicName', {
-    isValid,
-    normalisedName,
-    isLoading: isBasicLoading,
-    isCachedData: isBasicCachedData,
-    registrationStatus,
-    expiryDate,
-    gracePeriodEndDate,
-    ...basicName,
-  })
 
   const {
     data: profile,
@@ -51,7 +41,6 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     isLoading: isDnsOwnerLoading,
     isCachedData: isDnsOwnerCachedData,
   } = useDnsOwner({ name: normalisedName, enabled: isValid })
-
   const error: string | ReactNode | null = useMemo(() => {
     if (isValid === false) {
       return t('errors.invalidName')

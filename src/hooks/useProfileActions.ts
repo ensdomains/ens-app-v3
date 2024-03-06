@@ -62,6 +62,8 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     enabled: enabled && !!ownerData,
   })
 
+  console.log('resolverStatus', resolverStatus)
+
   const { data: primaryData, isLoading: isPrimaryNameLoading } = usePrimaryName({
     address,
     enabled,

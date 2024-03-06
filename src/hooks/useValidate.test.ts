@@ -19,7 +19,7 @@ describe('useValidate', () => {
     expect(result.current.isValid).toEqual(false)
   })
 
-  describe('matrix', () => {
+  describe('mocks', () => {
     it.each(mockUseValidateTypes)('should return expect value for %s ', (type) => {
       const config = mockUseValidateConfig[type]
       const { input } = config

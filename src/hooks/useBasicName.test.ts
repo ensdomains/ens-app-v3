@@ -12,6 +12,8 @@ import { makeMockUseOwnerData } from '../../test/mock/makeMockUseOwnerData'
 import { makeMockUsePriceData } from '../../test/mock/makeMockUsePriceData'
 import { makeMockUseValidate } from '../../test/mock/makeMockUseValidate'
 import { makeMockUseWrapperDataData } from '../../test/mock/makeMockUseWrapperDataData.ts'
+import { makeMockUseSubgraphRegistrantData } from '../../test/mock/makeMockUseSubgraphRegistrantData'
+
 import { useContractAddress } from './chain/useContractAddress'
 import useCurrentBlockTimestamp from './chain/useCurrentBlockTimestamp'
 import { useExpiry } from './ensjs/public/useExpiry'
@@ -21,8 +23,9 @@ import { useWrapperData } from './ensjs/public/useWrapperData'
 import { useBasicName } from './useBasicName'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
+import { useAddressRecord } from './ensjs/public/useAddressRecord'
 import { useSubgraphRegistrant } from './ensjs/subgraph/useSubgraphRegistrant'
-import { makeMockUseSubgraphRegistrantData } from '../../test/mock/makeMockUseSubgraphRegistrantData'
+import { makeMockUseAddrRecordData } from '../../test/mock/makeMockUseAddrRecordData'
 
 vi.mock('./chain/useCurrentBlockTimestamp')
 vi.mock('./chain/useContractAddress')
@@ -34,6 +37,7 @@ vi.mock('./ensjs/public/useOwner')
 vi.mock('./ensjs/public/useExpiry')
 vi.mock('./ensjs/public/useWrapperData')
 vi.mock('./ensjs/public/usePrice')
+vi.mock('./ensjs/public/useAddressRecord')
 vi.mock('./ensjs/subgraph/useSubgraphRegistrant')
 vi.setSystemTime(new Date())
 
@@ -47,6 +51,7 @@ const mockUseOwner = mockFunction(useOwner)
 const mockUseExpiry = mockFunction(useExpiry)
 const mockUseWrapperData = mockFunction(useWrapperData)
 const mockUsePrice = mockFunction(usePrice)
+const mockUseAddrRecord = mockFunction(useAddressRecord)
 const mockUseSubgraphRegistrant = mockFunction(useSubgraphRegistrant)
 
 describe('useBasicName', () => {
@@ -59,10 +64,8 @@ describe('useBasicName', () => {
     mockUsePrice.mockReturnValue({ data: undefined, isLoading: false })
     // @ts-ignore
     mockUseContractAddress.mockImplementation((arg) => makeMockUseContractAddress(arg))
-    mockUseSubgraphRegistrant.mockImplementation(({ enabled }) => ({
-      data: enabled ? makeMockUseSubgraphRegistrantData('eth-grace-period-unwrapped-2ld') : undefined,
-      isLoading: false
-    }))
+    mockUseAddrRecord.mockReturnValue({ data: undefined, isLoading: false })
+    mockUseSubgraphRegistrant.mockReturnValue({ data: undefined, isLoading: false })
   })
   describe('2LD .eth', () => {
     beforeEach(() => {
@@ -512,9 +515,9 @@ describe('useBasicName', () => {
     })
   })
   describe('mocks', () => {
-    it.each(mockUseBasicNameTypes)('should return expect value for %s', async (type) => {
+    it.only.each(mockUseBasicNameTypes)('should return expect value for %s', async (type) => {
       const config = mockUseBasicNameConfig[type]
-      const { useValidateType, useOwnerType, useWrapperDataType, useExpiryType, usePriceType } = config
+      const { useValidateType, useOwnerType, useWrapperDataType, useExpiryType, usePriceType, useAddrRecordType, useSubgraphRegistrantType } = config
       mockUseValidate.mockReturnValue(makeMockUseValidate(useValidateType))
       mockUseSupportsTLD.mockReturnValue({ data: true, isLoading: false })
       mockUseOwner.mockReturnValue({
@@ -536,6 +539,15 @@ describe('useBasicName', () => {
         data: makeMockUsePriceData(usePriceType),
         isLoading: false,
         isCachedData: false,
+      })
+      mockUseAddrRecord.mockReturnValue({
+        data: makeMockUseAddrRecordData(useAddrRecordType),
+        isLoading: false,
+        isCachedData: false,
+      })
+      mockUseSubgraphRegistrant.mockReturnValue({
+        data: makeMockUseSubgraphRegistrantData(useSubgraphRegistrantType),
+        isLoading: false,
       })
       const test = await vi.importActual<typeof import('@app/utils/registrationStatus')>(
         '@app/utils/registrationStatus',

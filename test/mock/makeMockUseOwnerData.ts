@@ -15,6 +15,8 @@ const mockUseOwnerTypes = [
   'eth-unwrapped-2ld:unowned',
   'eth-grace-period-unwrapped-2ld',
   'eth-grace-period-unwrapped-2ld-with-registry-registrant',
+  'eth-grace-period-unwrapped-2ld:unowned',
+  'eth-grace-period-unwrapped-2ld-with-registry-registrant:unowned',
   'eth-wrapped-2ld',
   'eth-grace-period-wrapped-2ld',
   'eth-expired-2ld',
@@ -24,6 +26,9 @@ const mockUseOwnerTypes = [
   'eth-wrapped-subname:unowned',
   'namewrapper',
   'namewrapper:unowned',
+  'registry',
+  'registry:unowned',
+  'dns',
 ] as const
 
 export type MockUseOwnerType = (typeof mockUseOwnerTypes)[number] | undefined
@@ -72,10 +77,20 @@ export const makeMockUseOwnerData = (
       ownershipLevel: 'registrar' as const,
       registrant: null,
     }))
+    .with(P.union('eth-grace-period-unwrapped-2ld:unowned'), () => ({
+      owner: user2Address,
+      ownershipLevel: 'registrar' as const,
+      registrant: null,
+    }))
     .with(P.union('eth-grace-period-unwrapped-2ld-with-registry-registrant'), () => ({
       owner: userAddress,
       ownershipLevel: 'registrar' as const,
       registrant: userAddress,
+    }))
+    .with(P.union('eth-grace-period-unwrapped-2ld-with-registry-registrant:unowned'), () => ({
+      owner: user2Address,
+      ownershipLevel: 'registrar' as const,
+      registrant: user2Address,
     }))
     .with(P.union('eth-wrapped-2ld', 'eth-wrapped-subname'), (type_) => ({
       owner: type_.endsWith('unowned') ? user2Address : userAddress,
@@ -106,6 +121,14 @@ export const makeMockUseOwnerData = (
     .with(P.union('namewrapper', 'namewrapper:unowned'), (_type) => ({
       owner: _type.endsWith('unowned') ? user2Address : userAddress,
       ownershipLevel: 'nameWrapper' as const,
+    }))
+    .with(P.union('registry', 'registry:unowned'), (_type) => ({
+      owner: _type.endsWith('unowned') ? user2Address : userAddress,
+      ownershipLevel: 'registry' as const,
+    }))
+    .with('dns', () => ({
+      owner: '0xB32cB5677a7C971689228EC835800432B339bA2B' as Address,
+      ownershipLevel: 'registry' as const,
     }))
     .with(P.nullish, () => null)
     .exhaustive()

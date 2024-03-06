@@ -25,13 +25,14 @@ export const useOwners = ({
   const owners = useMemo(() => {
     const _owners: OwnerArray = []
     if (wrapperData) {
+      const isPCCBurned = !!wrapperData?.fuses.parent.PARENT_CANNOT_CONTROL
       _owners.push({
         address: wrapperData.owner!,
-        canTransfer: abilities.canSendOwner,
-        transferType: 'owner',
-        label: wrapperData?.fuses.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
-        description: 'details.descriptions.owner',
-        testId: 'owner-button-owner',
+        canTransfer: isPCCBurned ? abilities.canSendOwner : abilities.canSendManager,
+        transferType: isPCCBurned ? 'owner' : 'manager',
+        label: isPCCBurned ? 'name.owner' : 'name.manager',
+        description: isPCCBurned ? 'details.descriptions.owner' : 'details.descriptions.manager',
+        testId: isPCCBurned ? 'owner-button-owner' : 'owner-button-manager',
       })
     } else {
       if (ownerData?.owner) {

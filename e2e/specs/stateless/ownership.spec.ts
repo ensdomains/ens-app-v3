@@ -626,7 +626,6 @@ test.describe('Send name', () => {
     await expect(profilePage.record('text', 'nickname')).toHaveCount(0)
   })
 
-  test.skip('should not be able to send owner or manager if user is owner and manager of a name in grace period', async ({
   test('should not be able to send owner or manager if user is owner and manager of a name in grace period', async ({
     page,
     login,
@@ -642,7 +641,8 @@ test.describe('Send name', () => {
       subnames: [
         {
           label: 'test',
-          owner: 'user',
+          owner: 'user2',
+          type: 'wrapped',
         },
       ],
     })
