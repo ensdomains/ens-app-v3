@@ -11,7 +11,7 @@ export const useGetSegmentLength = () => {
       ;(async () => {
         const { createIntlSegmenterPolyfill } = await import('intl-segmenter-polyfill')
         ;(window.Intl.Segmenter as (typeof Intl)['Segmenter']) = (await createIntlSegmenterPolyfill(
-          fetch('/break_iterator.wasm'),
+          fetch('/wasm/break_iterator.wasm'),
         )) as any
         setLoading(false)
       })()
