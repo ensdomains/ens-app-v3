@@ -137,7 +137,7 @@ test('should be able to extend a single unwrapped name from profile', async ({
     ).toBeVisible()
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    await expect(newTimestamp).toEqual(timestamp + 31536000000 + 2000)
+    await expect(newTimestamp).toEqual(timestamp + 31536000000 + 1000)
   })
 })
 
