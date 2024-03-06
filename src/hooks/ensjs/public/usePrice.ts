@@ -53,13 +53,6 @@ export const usePrice = <TParams extends UsePriceParameters>({
     ...preparedOptions,
     gcTime,
     staleTime,
-    select: (data) => {
-      if (!data) return data
-      return {
-        base: BigInt(data.base),
-        premium: BigInt(data.premium),
-      }
-    },
   })
 
   return {

@@ -61,18 +61,6 @@ export const useWrapperData = <TParams extends UseWrapperDataParameters>({
     ...preparedOptions,
     gcTime,
     staleTime,
-    select: (data) => {
-      if (!data) return null
-      return {
-        ...data,
-        expiry: data.expiry
-          ? {
-              ...data.expiry,
-              date: new Date(data.expiry.date),
-            }
-          : null,
-      }
-    },
   })
 
   return {

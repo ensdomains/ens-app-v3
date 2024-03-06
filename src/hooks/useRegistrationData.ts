@@ -93,13 +93,6 @@ const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
     ...preparedOptions,
     gcTime,
     staleTime,
-    select: (data) => {
-      if (!data) return data
-      return {
-        registrationDate: new Date(data.registrationDate),
-        transactionHash: data.transactionHash,
-      }
-    },
   })
 
   return {

@@ -286,10 +286,6 @@ export const useEstimateGasWithStateOverride = <
     ...preparedOptions,
     gcTime,
     staleTime,
-    select: (r) => ({
-      reduced: BigInt(r.reduced),
-      gasEstimates: r.gasEstimates.map((g) => BigInt(g)),
-    }),
   })
 
   const {

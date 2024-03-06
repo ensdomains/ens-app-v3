@@ -57,17 +57,9 @@ export const useExpiry = <TParams extends UseExpiryParameters>({
     ...preparedOptions,
     gcTime,
     staleTime,
-    select: (data) => {
-      if (!data) return null
-      return {
-        ...data,
-        expiry: {
-          ...data.expiry,
-          date: new Date(data.expiry.date),
-        },
-      }
-    },
   })
+
+  console.log(query.data)
 
   return {
     ...query,
