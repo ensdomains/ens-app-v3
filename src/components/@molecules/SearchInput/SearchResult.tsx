@@ -15,6 +15,7 @@ import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useZorb } from '@app/hooks/useZorb'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 
@@ -245,7 +246,7 @@ const PlaceholderResultItem = ({ input }: { input: string }) => {
 
 const NameResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
   ({ name, ...props }, ref) => {
-    const { data: avatar } = useEnsAvatar({ name })
+    const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
     const zorb = useZorb(name, 'name')
     const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
 
