@@ -1,5 +1,5 @@
 import { mockFunction, renderHook } from '@app/test-utils'
-import { readFileSync, writeFileSync, existsSync} from 'fs'
+// import { existsSync} from 'fs'
 import { afterAll } from 'vitest'
 import * as _ from 'lodash'
 
@@ -29,14 +29,14 @@ vi.mock('@app/hooks/useParentBasicName')
 vi.mock('@app/hooks/resolver/useResolverIsAuthorised')
 vi.mock('@app/hooks/useHasSubnames')
 vi.mock('@app/hooks/chain/useContractAddress')
-vi.mock('')
 
 const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseBasicName = mockFunction(useBasicName)
-const mockUseParentBasicName = mockFunction(useParentBasicName)
 const mockUseResolverIsAuthorised = mockFunction(useResolverIsAuthorised)
 const mockUseHasSubnames = mockFunction(useHasSubnames)
 const mockUseContractAddress = mockFunction(useContractAddress)
+const mockUseParentBasicName = mockFunction(useParentBasicName)
+mockUseParentBasicName.mockReturnValue(makeMockUseBasicName('eth'))
 
 // @ts-ignore
 mockUseContractAddress.mockImplementation(makeMockUseContractAddress)
@@ -101,10 +101,11 @@ describe('useAbilities', () => {
   describe('mocks', () => {
     let group: [string[], any][] = []
     afterAll(() => {
+      // Group the tests by the data returned
       const code = group.map(([types, data]) => `.with(P.union(${types.map((t) => `'${t}'`).join(',')}), () => (${JSON.stringify(data)}))`).join('\n')
       // writeFileSync('./testcode.ts', code)
     })
-    it.only.each(mockUseAbilitiesTypes)('should return expected data for %s', (type) => {
+    it.each(mockUseAbilitiesTypes)('should return expected data for %s', (type) => {
       
       const config = mockUseAbilitiesConfig[type]
       const { basicNameType, parentNameType, name } = config
