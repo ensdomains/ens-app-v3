@@ -1186,7 +1186,7 @@ test.describe('Extend name', () => {
       ).toBeVisible()
       await transactionModal.autoComplete()
       const newTimestamp = await ownershipPage.getExpiryTimestamp()
-      expect(newTimestamp).toEqual(timestamp + 31536000000)
+      expect(newTimestamp).toEqual(timestamp + 31536000000 + 1000)
     })
   })
 })

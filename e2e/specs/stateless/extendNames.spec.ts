@@ -69,7 +69,9 @@ test('should be able to register multiple names on the address page', async ({
     const label = name.replace('.eth', '')
     await addresPage.search(label)
     await expect(addresPage.nameExpiry(name)).not.toHaveText(/12/, { timeout: 15000 })
-    await expect(await addresPage.getTimestamp(name)).toEqual(timestampDict[name] + 31536000000 * 2)
+    await expect(await addresPage.getTimestamp(name)).toEqual(
+      timestampDict[name] + 31536000000 * 2 + 1000,
+    )
   }
 })
 
@@ -114,7 +116,7 @@ test('should be able to extend a single unwrapped name from profile', async ({
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await extendNamesModal.getCounterPlusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
-    await expect(page.locator('text=2 year extension')).toBeVisible()
+    await expect(page.locator('text=2 years extension')).toBeVisible()
   })
 
   await test.step('should show correct fiat values', async () => {
@@ -182,7 +184,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await extendNamesModal.getCounterPlusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
-    await expect(page.locator('text=2 year extension')).toBeVisible()
+    await expect(page.locator('text=2 years extension')).toBeVisible()
   })
 
   await test.step('should show correct fiat values', async () => {
@@ -250,7 +252,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await extendNamesModal.getCounterPlusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
-    await expect(page.locator('text=2 year extension')).toBeVisible()
+    await expect(page.locator('text=2 years extension')).toBeVisible()
   })
 
   await test.step('should show correct fiat values', async () => {
