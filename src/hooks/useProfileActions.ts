@@ -9,6 +9,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { checkAvailablePrimaryName } from '@app/utils/checkAvailablePrimaryName'
 import { nameParts } from '@app/utils/name'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 import { useAbilities } from './abilities/useAbilities'
 import { useAccountSafely } from './account/useAccountSafely'
@@ -16,7 +17,6 @@ import { useExpiry } from './ensjs/public/useExpiry'
 import { useOwner } from './ensjs/public/useOwner'
 import { usePrimaryName } from './ensjs/public/usePrimaryName'
 import { useWrapperData } from './ensjs/public/useWrapperData'
-import { useHasGlobalError } from './errors/useHasGlobalError'
 import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from './resolver/useResolverStatus'
 import { useProfile } from './useProfile'
@@ -93,7 +93,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     resolverStatus,
   })
 
-  const hasGlobalError = useHasGlobalError()
+  const hasGraphError = useHasGraphError()
 
   const showUnknownLabelsInput = usePreparedDataInput('UnknownLabels')
   const showProfileEditorInput = usePreparedDataInput('ProfileEditor')
@@ -123,7 +123,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
       const key = `setPrimaryName-${name}-${address}`
       actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),
-        tooltipContent: hasGlobalError
+        tooltipContent: hasGraphError
           ? t('errors.networkError.blurb', { ns: 'common' })
           : undefined,
         tooltipPlacement: 'left',
@@ -141,7 +141,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     if (abilities.canEdit && (abilities.canEditRecords || abilities.canEditResolver)) {
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
-        tooltipContent: hasGlobalError
+        tooltipContent: hasGraphError
           ? t('errors.networkError.blurb', { ns: 'common' })
           : undefined,
         tooltipPlacement: 'left',
@@ -157,7 +157,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     if (abilities.canDelete && abilities.canDeleteContract) {
       const base = {
         label: t('tabs.profile.actions.deleteSubname.label'),
-        tooltipContent: hasGlobalError
+        tooltipContent: hasGraphError
           ? t('errors.networkError.blurb', { ns: 'common' })
           : undefined,
         red: true,
@@ -277,7 +277,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     abilities.isParentOwner,
     abilities.canDeleteMethod,
     t,
-    hasGlobalError,
+    hasGraphError,
     showUnknownLabelsInput,
     createTransactionFlow,
     showProfileEditorInput,

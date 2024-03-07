@@ -4,7 +4,6 @@ import { GetOwnerReturnType } from '@ensdomains/ensjs/public'
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
-import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useWrapperApprovedForAll } from '@app/hooks/useWrapperApprovedForAll'
 import { makeIntroItem } from '@app/transaction-flow/intro'
@@ -12,6 +11,7 @@ import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { Profile } from '@app/types'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 import BaseWrapButton from './BaseWrapButton'
 
@@ -25,7 +25,7 @@ type Props = {
 const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
-  const hasGlobalError = useHasGlobalError()
+  const hasGraphError = useHasGraphError()
   const { address } = useAccountSafely()
   const resolverStatus = useResolverStatus({ name })
 
@@ -106,7 +106,7 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
 
   const isLoading = isApprovalLoading || resolverStatus.isLoading
 
-  if (!_canBeWrapped || hasGlobalError) return null
+  if (!_canBeWrapped || hasGraphError) return null
 
   return (
     <BaseWrapButton data-testid="wrap-name-btn" disabled={isLoading} onClick={handleWrapClick}>

@@ -15,11 +15,11 @@ import { useContractAddress } from './chain/useContractAddress'
 import { useExpiry } from './ensjs/public/useExpiry'
 import { useOwner } from './ensjs/public/useOwner'
 import { useWrapperData } from './ensjs/public/useWrapperData'
-import { useHasGlobalError } from './errors/useHasGlobalError'
 import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from './resolver/useResolverStatus'
 import { useProfile } from './useProfile'
 import { useProfileActions } from './useProfileActions'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 const NOW_TIMESTAMP = 1588994800000
 vi.spyOn(Date, 'now').mockImplementation(() => NOW_TIMESTAMP)
@@ -37,7 +37,7 @@ vi.mock('./ensjs/public/useExpiry')
 vi.mock('./resolver/useResolverStatus')
 vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
-vi.mock('./errors/useHasGlobalError')
+vi.mock('@app/utils/SyncProvider/SyncProvider')
 
 vi.mock('./chain/useContractAddress')
 
@@ -56,7 +56,7 @@ const mockUseExpiry = mockFunction(useExpiry)
 const mockUseResolverStatus = mockFunction(useResolverStatus)
 const mockUsePrimaryName = mockFunction(usePrimaryName)
 
-const mockUseHasGlobalError = mockFunction(useHasGlobalError)
+const mockUseHasGraphError = mockFunction(useHasGraphError)
 
 const mockUseContractAddress = mockFunction(useContractAddress)
 
@@ -148,7 +148,7 @@ describe('useProfileActions', () => {
           mockUsePreparedDataInput(...args),
       createTransactionFlow: (...args: any[]) => mockCreateTransactionFlow(...args),
     })
-    mockUseHasGlobalError.mockReturnValue(false)
+    mockUseHasGraphError.mockReturnValue(false)
 
     // @ts-ignore
     mockUseContractAddress.mockReturnValue('0xresolver')
