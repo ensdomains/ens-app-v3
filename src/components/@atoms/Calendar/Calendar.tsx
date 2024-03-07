@@ -90,7 +90,7 @@ export const Calendar = forwardRef(
           {...props}
           ref={inputRef}
           value={dateToInput(value)}
-          min={min ? dateToInput(min) : undefined}
+          min={dateToInput(min ?? value)}
           onFocus={(e) => {
             e.target.select()
           }}
