@@ -27,16 +27,14 @@ export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365
 
 export const add28Days = (date: Date) => new Date(date.getTime() + 28 * 24 * 60 * 60 * 1000)
 
-const now = new Date()
-
-export const getDurationFromDate = (date: Date) => {
+export const getDurationFromDate = (date: Date, now: Date) => {
   // @ts-ignore typescript doesn't support date operators
   return Math.floor((date - now) / 1000)
 }
 
-export function setYearsForDate(date: Date, years: number, minDate?: Date): Date {
+export function setYearsForDate(date: Date, years: number, minDate: Date): Date {
   const result = new Date(date)
-  result.setFullYear((minDate ?? now).getFullYear() + years)
+  result.setFullYear(minDate.getFullYear() + years)
   return result
 }
 

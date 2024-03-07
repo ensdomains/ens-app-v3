@@ -495,7 +495,7 @@ const Pricing = ({
     () => new Date(now.getTime() + yearsToSeconds(1) * 1000 + (registrationData.seconds ?? 0)),
   )
 
-  const seconds = getDurationFromDate(date)
+  const seconds = getDurationFromDate(date, now)
 
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,

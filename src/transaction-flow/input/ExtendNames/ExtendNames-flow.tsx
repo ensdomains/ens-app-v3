@@ -239,7 +239,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
 
   const [date, setDate] = useState(() => new Date(now.getTime() + yearsToSeconds(1) * 1000))
 
-  const duration = getDurationFromDate(date)
+  const duration = getDurationFromDate(date, now)
   const years = secondsToYears(duration)
 
   const { userConfig, setCurrency } = useUserConfig()
@@ -344,7 +344,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                       value={years}
                       onChange={(e) => {
                         const newYears = parseInt(e.target.value)
-                        if (!Number.isNaN(newYears)) setDate(setYearsForDate(date, newYears))
+                        if (!Number.isNaN(newYears)) setDate(setYearsForDate(date, newYears, now))
                       }}
                     />
                   )}
