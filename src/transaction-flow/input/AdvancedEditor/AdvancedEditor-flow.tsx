@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -91,12 +91,13 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
     (item: TransactionItem) => item.name === 'updateProfile',
   ) as TransactionItem<'updateProfile'>
 
-  const { data: profile_, isLoading: isProfileLoading } = useProfile({ name })
-  const profileRef = useRef<Profile>()
+  const { data: profileData, isLoading: isProfileLoading } = useProfile({ name })
+  const [profile, setLoadedProfile] = useState<Profile | undefined>(undefined)
 
-  if (profile_ && !profileRef.current) profileRef.current = profile_
-  // this is safe because the profile data update will trigger a re-render anyway
-  const profile = profileRef.current
+  // inline to prevent unnecessary re-renders
+  if (profileData && !profile) {
+    setLoadedProfile(profileData)
+  }
 
   const handleCreateTransaction = useCallback(
     (records: RecordOptions) => {
