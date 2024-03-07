@@ -91,12 +91,12 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
     (item: TransactionItem) => item.name === 'updateProfile',
   ) as TransactionItem<'updateProfile'>
 
-  const { data: profileData, isLoading: isProfileLoading } = useProfile({ name })
-  const [profile, setLoadedProfile] = useState<Profile | undefined>(undefined)
+  const { data: fetchedProfile, isLoading: isProfileLoading } = useProfile({ name })
+  const [profile, setProfile] = useState<Profile | undefined>(undefined)
 
   // inline to prevent unnecessary re-renders
-  if (profileData && !profile) {
-    setLoadedProfile(profileData)
+  if (fetchedProfile && !profile) {
+    setProfile(fetchedProfile)
   }
 
   const handleCreateTransaction = useCallback(
@@ -106,14 +106,14 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
         payload: [
           createTransactionItem('updateProfile', {
             name,
-            resolverAddress: profile!.resolverAddress!,
+            resolverAddress: fetchedProfile!.resolverAddress!,
             records,
           }),
         ],
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
     },
-    [profile, dispatch, name],
+    [fetchedProfile, dispatch, name],
   )
 
   const advancedEditorForm = useAdvancedEditor({
