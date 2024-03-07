@@ -64,7 +64,7 @@ export const getDnsSecEnabledQueryFn = async <TParams extends UseDnsSecEnabledPa
   const result: DohResponse = await response.json()
   // NXDOMAIN
   if (result?.Status === 3) return false
-  return result?.AD
+  return result?.AD ?? false
 }
 
 export const useDnsSecEnabled = <TParams extends UseDnsSecEnabledParameters>({
