@@ -41,7 +41,7 @@ export const useExpiryActions = ({
       onClick: () => {
         showExtendNamesInput(`extend-names-${name}`, {
           names: [name],
-          isSelf: abilities.data?.canEdit,
+          isSelf: abilities.data?.canSendOwner,
         })
       },
     },

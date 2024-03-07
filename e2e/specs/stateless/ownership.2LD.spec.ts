@@ -368,6 +368,7 @@ test.describe('Unwrapped 2LD - Manager Only', () => {
     await ownershipPage.goto(name)
     await login.connect()
 
+    await page.pause()
     expect(await ownershipPage.getExpiryTimestamp()).toBeGreaterThan(0)
     await expect(ownershipPage.expiryPanelRegistrationDate).toHaveCount(1)
     await expect(ownershipPage.expiryPanelGracePeriod).toHaveCount(1)
@@ -375,6 +376,7 @@ test.describe('Unwrapped 2LD - Manager Only', () => {
     await expect(ownershipPage.expiryPanelParentGracePeriod).toHaveCount(0)
     await expect(ownershipPage.setReminder).toBeVisible()
     await ownershipPage.extendButton.click()
+    await page.getByRole('button', { name: 'I understand' }).click()
     await extendNamesModal.getExtendButton.click()
     await expect(page.getByText('Confirm Details')).toBeVisible()
   })

@@ -33,7 +33,6 @@ const Page = () => {
   const { address: _address } = useAccountSafely()
 
   const address = query.address as Address
-  const isSelf = _address === address
 
   const { data: primaryProfile, isLoading: isPrimaryProfileLoading } = usePrimaryProfile({
     address,
@@ -92,7 +91,7 @@ const Page = () => {
               {t('etherscan', { ns: 'common' })}
             </Outlink>
           ),
-          trailing: <NameListView address={address} isSelf={isSelf} setError={setIsError} />,
+          trailing: <NameListView address={address} selfAddress={_address} setError={setIsError} />,
         }}
       </Content>
     </>
