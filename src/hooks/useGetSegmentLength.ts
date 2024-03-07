@@ -9,10 +9,9 @@ export const useGetSegmentLength = () => {
       // track the status here: https://bugzilla.mozilla.org/show_bug.cgi?id=1423593
       console.warn('Intl.Segmenter is not supported, loading polyfill')
       ;(async () => {
-        const { createIntlSegmenterPolyfill } = await import('intl-segmenter-polyfill')
-        ;(window.Intl.Segmenter as (typeof Intl)['Segmenter']) = (await createIntlSegmenterPolyfill(
-          fetch('/wasm/break_iterator.wasm'),
-        )) as any
+        const { createIntlSegmenterPolyfill } = await import('intl-segmenter-polyfill/dist/bundled')
+        ;(window.Intl.Segmenter as (typeof Intl)['Segmenter']) =
+          (await createIntlSegmenterPolyfill()) as any
         setLoading(false)
       })()
     } else {
