@@ -54,6 +54,7 @@ const ProfileSection = ({
   button,
   supported,
   type,
+  name = '',
 }: {
   condition: any
   label: string
@@ -61,6 +62,7 @@ const ProfileSection = ({
   button: any
   supported?: Array<string>
   type?: 'address' | 'text'
+  name?: string
 }) => {
   const { t } = useTranslation('profile')
   const ButtonComponent = button
@@ -76,12 +78,12 @@ const ProfileSection = ({
       <SectionTitle weight="bold">{t(label)}</SectionTitle>
       <Stack>
         {supportedArray.map((item: { key: string; value: string; type?: 'text' | 'address' }) => (
-          <ButtonComponent {...{ ...item, iconKey: item.key }} />
+          <ButtonComponent {...{ ...item, iconKey: item.key, name }} />
         ))}
         {unsupportedArray.length > 0 &&
           unsupportedArray.map(
             (item: { key: string; value: string; type?: 'text' | 'address' }) => (
-              <OtherProfileButton {...{ ...item, iconKey: item.key }} />
+              <OtherProfileButton {...{ ...item, iconKey: item.key, name }} />
             ),
           )}
       </Stack>
@@ -357,6 +359,7 @@ export const ProfileDetails = ({
           condition={otherRecords && otherRecords.length > 0}
           array={otherRecords}
           button={OtherProfileButton}
+          name={name}
         />
         <ProfileSection
           label="ownership"
