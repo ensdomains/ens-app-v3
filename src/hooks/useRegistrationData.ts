@@ -1,10 +1,11 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { labelhash } from 'viem'
 
 import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { useQueryOptions } from './useQueryOptions'
@@ -68,11 +69,10 @@ export const getRegistrationDataQueryFn =
 
 const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime = 1_000 * 60 * 5,
+  gcTime,
+  staleTime,
   scopeKey,
-
   // params
   ...params
 }: TParams & UseRegistrationDataConfig) => {
@@ -83,24 +83,15 @@ const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
     queryFn: getRegistrationDataQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
     enabled: enabled && !!params.name && checkETH2LDFromName(params.name),
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     gcTime,
     staleTime,
-    select: (data) => {
-      if (!data) return data
-      return {
-        registrationDate: new Date(data.registrationDate),
-        transactionHash: data.transactionHash,
-      }
-    },
   })
+
+  const query = useQuery(preparedOptions)
 
   return {
     ...query,

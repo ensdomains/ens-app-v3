@@ -1,4 +1,4 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 
 import {
   getAddressRecord,
@@ -9,6 +9,7 @@ import {
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 type UseAddressRecordParameters = PartialBy<GetAddressRecordParameters, 'name'>
 
@@ -36,9 +37,9 @@ export const getAddressRecordQueryFn =
 
 export const useAddressRecord = <TParams extends UseAddressRecordParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
-  staleTime = 1_000 * 60 * 5,
+  gcTime,
+  staleTime,
   scopeKey,
   // params
   ...params
@@ -51,17 +52,15 @@ export const useAddressRecord = <TParams extends UseAddressRecordParameters>({
     queryFn: getAddressRecordQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
     enabled: enabled && !!params.name,
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     gcTime,
     staleTime,
   })
+
+  const query = useQuery(preparedOptions)
 
   return {
     ...query,

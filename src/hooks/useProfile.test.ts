@@ -1,6 +1,6 @@
 import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, expect, it, vi } from 'vitest'
 
 import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
 import { GetSubgraphRecordsReturnType } from '@ensdomains/ensjs/subgraph'
@@ -140,6 +140,7 @@ it('should return the correct data', () => {
       "isCachedData": false,
       "isFetching": false,
       "isLoading": false,
+      "refetchIfEnabled": [Function],
     }
   `)
 })
