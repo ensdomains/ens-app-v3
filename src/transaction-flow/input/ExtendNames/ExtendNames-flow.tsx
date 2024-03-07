@@ -337,7 +337,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
               <>
                 <PlusMinusWrapper>
                   {names.length === 1 ? (
-                    <YearSelection {...{ date, setDate }} name={names[0]} />
+                    <YearSelection {...{ date, setDate }} flow="extend" name={names[0]} />
                   ) : (
                     <PlusMinusControl
                       minValue={1}

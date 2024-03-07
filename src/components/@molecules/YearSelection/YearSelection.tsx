@@ -5,7 +5,8 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { add28Days, addYears, formatExtensionPeriod } from '@app/utils/utils'
+import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
+import { add28Days, formatExtensionPeriod, setYearsForDate } from '@app/utils/utils'
 
 // import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 
@@ -34,37 +35,46 @@ export const YearSelection = ({
   date,
   setDate,
   name,
-  defaultDate,
+  flow = 'register',
 }: {
   date: Date
   setDate: (date: Date) => void
   name?: string
-  defaultDate?: Date
+  flow?: 'register' | 'extend'
 }) => {
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
   const yearPickSelection = yearPickView === 'date' ? 'years' : 'date'
 
-  const extensionPeriod = formatExtensionPeriod(date)
+  const { data } = useExpiry({ name })
 
-  const dateInYears = date.getFullYear() - now.getFullYear()
+  const minDate = add28Days(data ? data.expiry.date : now)
+
+  const extensionPeriod = formatExtensionPeriod(date, flow === 'register' ? now : minDate)
 
   useEffect(() => {
-    if (dateInYears < 1) setDate(addYears(date, 1))
+    if (minDate > date) setDate(minDate)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [yearPickView])
+  }, [minDate, date])
+
+  const dateInYears = date.getFullYear() - minDate.getFullYear()
+
+  useEffect(() => {
+    if (yearPickView === 'years' && dateInYears < 1) setDate(setYearsForDate(date, 1, minDate))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateInYears, yearPickView])
 
   return (
     <Container>
       {yearPickView === 'date' ? (
         <Calendar
           value={date}
-          defaultValue={defaultDate}
           onChange={(e) => {
             const { valueAsDate } = e.target
             if (valueAsDate && valueAsDate >= add28Days(now)) setDate(valueAsDate)
           }}
           highlighted
           name={name}
+          min={minDate}
         />
       ) : (
         <PlusMinusControl
@@ -74,14 +84,14 @@ export const YearSelection = ({
           onChange={(e) => {
             const newYears = parseInt(e.target.value)
 
-            if (!Number.isNaN(newYears)) setDate(addYears(date, newYears))
+            if (!Number.isNaN(newYears)) setDate(setYearsForDate(date, newYears, minDate))
           }}
         />
       )}
       <Typography color="greyPrimary" fontVariant="smallBold">
         {extensionPeriod === 'Invalid date'
           ? extensionPeriod
-          : `Registering for ${extensionPeriod}`}
+          : `${flow === 'register' ? 'Registering' : 'Extending'} for ${extensionPeriod}`}
         .{' '}
         <YearsViewSwitch type="button" onClick={() => setYearPickView(yearPickSelection)}>
           Pick by {yearPickSelection}

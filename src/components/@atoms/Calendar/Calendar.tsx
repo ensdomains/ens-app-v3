@@ -1,10 +1,9 @@
-import { ChangeEventHandler, ForwardedRef, forwardRef, InputHTMLAttributes } from 'react'
+import { ForwardedRef, forwardRef, InputHTMLAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
-import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
-import { add28Days, dateToInput, formatExpiry } from '@app/utils/utils'
+import { dateToInput, formatExpiry } from '@app/utils/utils'
 
 const Label = styled.label<{ $highlighted?: boolean }>(
   ({ theme, $highlighted }) => css`
@@ -66,30 +65,17 @@ type InputProps = InputHTMLAttributes<HTMLInputElement>
 type Props = {
   highlighted?: boolean
   value: Date
-  defaultValue?: Date
   unit?: string
   name?: string
+  min?: Date
 } & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'name'>
-
-const now = new Date()
 
 export const Calendar = forwardRef(
   (
-    { value, name, onChange, onBlur, highlighted, defaultValue, ...props }: Props,
+    { value, name, onBlur, highlighted, min, ...props }: Props,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
-
-    const { data } = useExpiry({ name })
-
-    const minDate = add28Days(data ? data.expiry.date : now)
-
-    const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-      const { valueAsDate } = e.target
-      if (!valueAsDate) return
-
-      onChange?.(e)
-    }
 
     return (
       <Label
@@ -103,10 +89,8 @@ export const Calendar = forwardRef(
           type="date"
           {...props}
           ref={inputRef}
-          defaultValue={defaultValue ? dateToInput(defaultValue) : undefined}
           value={dateToInput(value)}
-          onChange={handleChange}
-          min={dateToInput(minDate)}
+          min={min ? dateToInput(min) : undefined}
           onFocus={(e) => {
             e.target.select()
           }}

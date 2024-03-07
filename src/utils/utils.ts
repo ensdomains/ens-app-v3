@@ -34,9 +34,9 @@ export const getDurationFromDate = (date: Date) => {
   return Math.floor((date - now) / 1000)
 }
 
-export function addYears(date: Date, years: number): Date {
+export function setYearsForDate(date: Date, years: number, minDate?: Date): Date {
   const result = new Date(date)
-  result.setFullYear(now.getFullYear() + years)
+  result.setFullYear((minDate ?? now).getFullYear() + years)
   return result
 }
 
@@ -61,25 +61,23 @@ export const formatDateTime = (date: Date) => {
 export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
 
-export const formatExtensionPeriod = (expiryDate: Date) => {
-  const currentDate = new Date()
-  const diffInYears = expiryDate.getFullYear() - currentDate.getFullYear()
+export const formatExtensionPeriod = (newExpiryDate: Date, oldExpiryDate = new Date()) => {
+  const diffInYears = newExpiryDate.getFullYear() - oldExpiryDate.getFullYear()
   if (diffInYears > 1) {
     return `${diffInYears} years`
   }
   if (diffInYears === 1) return '1 year'
 
-  const diffInMonths = expiryDate.getMonth() - currentDate.getMonth()
+  const diffInMonths = newExpiryDate.getMonth() - oldExpiryDate.getMonth()
+
   if (diffInMonths > 1) {
     return `${diffInMonths} months`
   }
   if (diffInMonths === 1) return '1 month'
 
-  const diffInDays = expiryDate.getDate() - currentDate.getDate()
-  if (diffInDays > 28) {
-    return `${diffInDays} days`
-  }
-  return 'Invalid date'
+  const diffInDays = newExpiryDate.getDate() - oldExpiryDate.getDate()
+
+  return `${diffInDays} days`
 }
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
