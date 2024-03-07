@@ -8,6 +8,8 @@ import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useRegisterOrImportNameCallback } from '@app/hooks/transactions/useRegisterOrImportNameCallback'
 
+import { parse, stringify } from '../query/persist'
+
 export type UpdateCallback = (transaction: Transaction) => void
 type AddCallback = (key: string, callback: UpdateCallback) => void
 type RemoveCallback = (key: string) => void
@@ -113,7 +115,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       }
       return false
     })
-    previousTransactions.current = JSON.parse(JSON.stringify(transactions))
+    previousTransactions.current = parse(stringify(transactions))
     const callbacksRef = Object.values(callbacks.current)
     updatedTransactions.forEach((transaction) => {
       registerOrImportNameCallback(transaction)

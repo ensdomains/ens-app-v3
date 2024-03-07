@@ -1,4 +1,5 @@
 import { DefaultOptions, QueryClient } from '@tanstack/react-query'
+import { hashFn } from 'wagmi/query'
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -7,6 +8,7 @@ export const queryClient = new QueryClient({
       refetchOnMount: true,
       staleTime: 1_000 * 12,
       gcTime: 1_000 * 60 * 60 * 24,
+      queryKeyHashFn: hashFn,
     },
   },
 })
@@ -20,6 +22,7 @@ export const refetchOptions: DefaultOptions<Error> = {
       isRefetchQuery: true,
     },
     refetchOnMount: true,
+    queryKeyHashFn: hashFn,
   },
 }
 
