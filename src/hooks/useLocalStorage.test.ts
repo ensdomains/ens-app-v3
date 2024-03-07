@@ -14,4 +14,16 @@ describe('useLocalStorage', () => {
     const { result } = renderHook(() => useLocalStorage('test123', 'default'))
     expect(result.current[0]).toEqual('setValue')
   })
+  it('should allow setting a bigint value', () => {
+    const { result, rerender } = renderHook(() => useLocalStorage('test123', 0n))
+    result.current[1](1n)
+    rerender()
+    expect(result.current[0]).toEqual(1n)
+    expect(localStorage.getItem('test123')).toMatchInlineSnapshot(`"{"__type":"bigint","value":"1"}"`)
+  })
+  it('should allow retrieving a bigint value', () => {
+    localStorage.setItem('test123', JSON.stringify({ __type: 'bigint', value: '1' }))
+    const { result } = renderHook(() => useLocalStorage('test123', 0n))
+    expect(result.current[0]).toEqual(1n)
+  })
 })

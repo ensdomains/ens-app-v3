@@ -1,4 +1,4 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import {
   Address,
@@ -31,6 +31,8 @@ import {
   Prettify,
   QueryConfig,
 } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 import { useGasPrice } from './useGasPrice'
 
@@ -255,11 +257,10 @@ export const useEstimateGasWithStateOverride = <
   const TransactionItems extends TransactionItem[] | readonly TransactionItem[],
 >({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
-
   // params
   ...params
 }: UseEstimateGasWithStateOverrideParameters<TransactionItems> &
@@ -275,21 +276,15 @@ export const useEstimateGasWithStateOverride = <
     queryFn: estimateGasWithStateOverrideQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn(connectorClient),
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     enabled: enabled && !isConnectorLoading,
     gcTime,
     staleTime,
-    select: (r) => ({
-      reduced: BigInt(r.reduced),
-      gasEstimates: r.gasEstimates.map((g) => BigInt(g)),
-    }),
   })
+
+  const query = useQuery(preparedOptions)
 
   const {
     data: gasPrice,
@@ -329,8 +324,9 @@ export const useEstimateGasWithStateOverride = <
       gasPrice,
       isLoading,
       isFetching,
-      isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+      refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+      isCachedData: getIsCachedData(query),
     }),
-    [data, gasPrice, isFetching, isLoading, query],
+    [data, gasPrice, isFetching, isLoading, query, preparedOptions.enabled],
   )
 }

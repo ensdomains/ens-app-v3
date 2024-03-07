@@ -1,12 +1,16 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Query, QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import { useChainId } from 'wagmi'
 
+import { SupportedChain } from '@app/constants/chains'
 import { useSubgraphClient } from '@app/hooks/ensjs/subgraph/useSubgraphClient'
 import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
+import { clearRelevantNameQueriesFromRegisterOrImport } from '@app/hooks/transactions/clearRelevantNameQueriesFromRegisterOrImport'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useRegisterOrImportNameCallback } from '@app/hooks/transactions/useRegisterOrImportNameCallback'
+import { CreateQueryKey } from '@app/types'
+
+import { parse, stringify } from '../query/persist'
 
 export type UpdateCallback = (transaction: Transaction) => void
 type AddCallback = (key: string, callback: UpdateCallback) => void
@@ -42,12 +46,40 @@ const Context = createContext<SyncContext>({
   currentGraphBlock: undefined,
 })
 
+type ChainDependentQueryKey = CreateQueryKey<object, string, 'standard'>
+
+const filterByChainDependentQuery =
+  (chainId: SupportedChain['id']) =>
+  ({ queryKey: queryKey_ }: Query) => {
+    const queryKey = queryKey_ as ChainDependentQueryKey | never[]
+    if (queryKey[1] !== chainId) return false
+    if (typeof queryKey[0] !== 'object' || queryKey[0] === null) return false
+    // don't invalidate graph queries, which are handled separately
+    if (queryKey[5] === 'graph') return false
+    return true
+  }
+
+const invalidateAllCurrentChainQueries = async ({
+  queryClient,
+  chainId,
+  updatedTransactions,
+}: {
+  queryClient: QueryClient
+  chainId: SupportedChain['id']
+  updatedTransactions: Transaction[]
+}) => {
+  // only invalidate all queries if a transaction has actually been confirmed
+  if (!updatedTransactions.some((x) => x.status === 'confirmed')) return false
+  return queryClient.invalidateQueries({
+    predicate: filterByChainDependentQuery(chainId),
+  })
+}
+
 export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient()
   const chainId = useChainId()
   const subgraphClient = useSubgraphClient()
 
-  const registerOrImportNameCallback = useRegisterOrImportNameCallback()
   const callbacks = useRef<Record<string, UpdateCallback>>({})
 
   const transactions = useRecentTransactions()
@@ -113,13 +145,14 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       }
       return false
     })
-    previousTransactions.current = JSON.parse(JSON.stringify(transactions))
+    previousTransactions.current = parse(stringify(transactions))
     const callbacksRef = Object.values(callbacks.current)
+    invalidateAllCurrentChainQueries({ queryClient, chainId, updatedTransactions })
+    clearRelevantNameQueriesFromRegisterOrImport({ queryClient, chainId, updatedTransactions })
     updatedTransactions.forEach((transaction) => {
-      registerOrImportNameCallback(transaction)
       callbacksRef.forEach((callback) => callback(transaction))
     })
-  }, [transactions, registerOrImportNameCallback])
+  }, [queryClient, chainId, transactions])
 
   const isOutOfSync = useMemo(() => {
     if (typeof currentGraphBlock !== 'number') return false

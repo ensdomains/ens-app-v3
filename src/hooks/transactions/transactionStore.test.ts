@@ -20,12 +20,6 @@ import {
 } from './transactionStore'
 import { waitForTransaction } from './waitForTransaction'
 
-// @ts-ignore: Unreachable code error
-// eslint-disable-next-line no-extend-native, func-names
-BigInt.prototype.toJSON = function () {
-  return this.toString()
-}
-
 vi.mock('viem/actions')
 
 vi.mock('./waitForTransaction', () => ({

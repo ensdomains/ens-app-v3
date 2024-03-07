@@ -26,9 +26,8 @@ export const useProfile = ({
 }: UseProfileParameters) => {
   const {
     data: subgraphRecords,
-    isLoading: isSubgraphRecordsLoading,
-    isCachedData: isSubgraphRecordsCachedData,
     isFetching: isSubgraphRecordsFetching,
+    refetchIfEnabled: refetchSubgraphRecords,
   } = useSubgraphRecords({ name, resolverAddress, enabled: enabled && subgraphEnabled })
 
   const {
@@ -36,6 +35,7 @@ export const useProfile = ({
     isLoading: isProfileLoading,
     isCachedData: isProfileCachedData,
     isFetching: isProfileFetching,
+    refetchIfEnabled: refetchProfile,
   } = useRecords({
     name,
     resolver: resolverAddress
@@ -93,8 +93,13 @@ export const useProfile = ({
 
   return {
     data: returnProfile,
-    isLoading: isSubgraphRecordsLoading || isProfileLoading,
-    isCachedData: isSubgraphRecordsCachedData && isProfileCachedData,
+    // we only need to depend on profile for loading/cached state because subgraph records are not required to load the profile
+    isLoading: isProfileLoading,
+    isCachedData: isProfileCachedData,
     isFetching: isSubgraphRecordsFetching || isProfileFetching,
+    refetchIfEnabled: () => {
+      refetchSubgraphRecords()
+      refetchProfile()
+    },
   }
 }

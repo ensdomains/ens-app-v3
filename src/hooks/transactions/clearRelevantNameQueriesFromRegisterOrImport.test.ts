@@ -1,10 +1,9 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { renderHook } from '@testing-library/react'
+import { QueryClient } from '@tanstack/react-query'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { createQueryKey } from '../useQueryOptions'
+import { clearRelevantNameQueriesFromRegisterOrImport } from './clearRelevantNameQueriesFromRegisterOrImport'
 import { Transaction } from './transactionStore'
-import { useRegisterOrImportNameCallback } from './useRegisterOrImportNameCallback'
 
 const createTransactionData = ({
   name,
@@ -36,26 +35,20 @@ const createTestQueryKey = (name: string, override: object = {}) =>
     ...override,
   })
 
-const createWrapper = () => {
-  return ({ children }: any) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  )
-}
-
-describe('useRegisterOrImportNameCallback', () => {
+describe('clearRelevantNameQueriesFromRegisterOrImport', () => {
   beforeEach(() => {
     queryClient = new QueryClient()
   })
   it('should remove queries with name if registerName transaction is complete', () => {
     const queryKey = createTestQueryKey('test.eth')
     queryClient.setQueryData(queryKey, 'initial')
-    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
-      wrapper: createWrapper(),
+    clearRelevantNameQueriesFromRegisterOrImport({
+      queryClient,
+      chainId: 1,
+      updatedTransactions: [
+        createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'registerName' }),
+      ],
     })
-
-    result.current(
-      createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'registerName' }),
-    )
 
     expect(queryClient.getQueryData(queryKey)).toBeUndefined()
   })
@@ -63,17 +56,19 @@ describe('useRegisterOrImportNameCallback', () => {
   it('should remove queries with name if importDnsName transaction is complete', () => {
     const queryKey = createTestQueryKey('test.eth')
     queryClient.setQueryData(queryKey, 'initial')
-    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
-      wrapper: createWrapper(),
+    clearRelevantNameQueriesFromRegisterOrImport({
+      queryClient,
+      chainId: 1,
+      updatedTransactions: [
+        {
+          action: 'importDnsName',
+          status: 'confirmed',
+          key: `import-test.eth-0x1234567890123456789012345678901234567890`,
+          hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
+          searchRetries: 0,
+        } as Transaction,
+      ],
     })
-
-    result.current({
-      action: 'importDnsName',
-      status: 'confirmed',
-      key: `import-test.eth-0x1234567890123456789012345678901234567890`,
-      hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
-      searchRetries: 0,
-    } as Transaction)
 
     expect(queryClient.getQueryData(queryKey)).toBeUndefined()
   })
@@ -81,31 +76,30 @@ describe('useRegisterOrImportNameCallback', () => {
   it('should remove queries with name if claimDnsName transaction is complete', () => {
     const queryKey = createTestQueryKey('test.eth')
     queryClient.setQueryData(queryKey, 'initial')
-    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
-      wrapper: createWrapper(),
+    clearRelevantNameQueriesFromRegisterOrImport({
+      queryClient,
+      chainId: 1,
+      updatedTransactions: [
+        createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'claimDnsName' }),
+      ],
     })
-
-    result.current(
-      createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'claimDnsName' }),
-    )
-
     expect(queryClient.getQueryData(queryKey)).toBeUndefined()
   })
 
   it('should call queryKey with correct name even if it has a lot of dashes ', () => {
     const queryKey = createTestQueryKey('-test-test-test-test-.eth')
     queryClient.setQueryData(queryKey, 'initial')
-    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
-      wrapper: createWrapper(),
+    clearRelevantNameQueriesFromRegisterOrImport({
+      queryClient,
+      chainId: 1,
+      updatedTransactions: [
+        createTransactionData({
+          name: '-test-test-test-test-.eth',
+          status: 'confirmed',
+          action: 'registerName',
+        }),
+      ],
     })
-
-    result.current(
-      createTransactionData({
-        name: '-test-test-test-test-.eth',
-        status: 'confirmed',
-        action: 'registerName',
-      }),
-    )
 
     expect(queryClient.getQueryData(queryKey)).toBeUndefined()
   })
@@ -113,21 +107,14 @@ describe('useRegisterOrImportNameCallback', () => {
   it('should call not call queryKey if status or action are incorrect ', () => {
     const queryKey = createTestQueryKey('test.eth')
     queryClient.setQueryData(queryKey, 'initial')
-    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
-      wrapper: createWrapper(),
+    clearRelevantNameQueriesFromRegisterOrImport({
+      queryClient,
+      chainId: 1,
+      updatedTransactions: [
+        createTransactionData({ name: 'test.eth', status: 'pending', action: 'registerName' }),
+        createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'commitName' }),
+      ],
     })
-
-    result.current(
-      createTransactionData({
-        name: 'test.eth',
-        status: 'pending',
-        action: 'registerName',
-      }),
-    )
-
-    result.current(
-      createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'commitName' }),
-    )
 
     expect(queryClient.getQueryData(queryKey)).toBe('initial')
   })
@@ -137,13 +124,13 @@ describe('useRegisterOrImportNameCallback', () => {
     const queryKey2 = createTestQueryKey('test.eth', { functionName: 'getSomethingElse' })
     queryClient.setQueryData(queryKey, 'initial')
     queryClient.setQueryData(queryKey2, 'initial')
-    const { result } = renderHook(() => useRegisterOrImportNameCallback(), {
-      wrapper: createWrapper(),
+    clearRelevantNameQueriesFromRegisterOrImport({
+      queryClient,
+      chainId: 1,
+      updatedTransactions: [
+        createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'registerName' }),
+      ],
     })
-
-    result.current(
-      createTransactionData({ name: 'test.eth', status: 'confirmed', action: 'registerName' }),
-    )
 
     expect(queryClient.getQueryData(queryKey)).toBeUndefined()
     expect(queryClient.getQueryData(queryKey2)).toBeUndefined()
