@@ -226,7 +226,7 @@ export const SubnamesTab = ({
               {...{
                 size: 'medium',
                 buttonId: 'add-subname-disabled-button',
-                content: t(`errors.${canCreateSubdomainsError}`),
+                content: t(`errors.${canCreateSubdomainsError || 'default'}`),
                 buttonText: t('details.tabs.subnames.addSubname.action'),
                 mobileWidth: 200,
                 mobilePlacement: 'top',

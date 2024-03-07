@@ -149,7 +149,7 @@ const Resolver = ({
               <DisabledButtonWithTooltip
                 {...{
                   buttonId: 'set-resolver-disabled-button',
-                  content: t(`errors.${canEditResolverError}`),
+                  content: t(`errors.${canEditResolverError || 'default'}`),
                   buttonText: 'Edit',
                   mobileWidth: 150,
                   buttonWidth: '15',
