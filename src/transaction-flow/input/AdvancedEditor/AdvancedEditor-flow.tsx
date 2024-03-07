@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -12,6 +12,7 @@ import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { Profile } from '@app/types'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -90,7 +91,12 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
     (item: TransactionItem) => item.name === 'updateProfile',
   ) as TransactionItem<'updateProfile'>
 
-  const { data: profile, isLoading: isProfileLoading } = useProfile({ name })
+  const { data: profile_, isLoading: isProfileLoading } = useProfile({ name })
+  const profileRef = useRef<Profile>()
+
+  if (profile_ && !profileRef.current) profileRef.current = profile_
+  // this is safe because the profile data update will trigger a re-render anyway
+  const profile = profileRef.current
 
   const handleCreateTransaction = useCallback(
     (records: RecordOptions) => {
