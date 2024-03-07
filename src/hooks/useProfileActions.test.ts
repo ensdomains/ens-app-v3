@@ -148,7 +148,7 @@ describe('useProfileActions', () => {
           mockUsePreparedDataInput(...args),
       createTransactionFlow: (...args: any[]) => mockCreateTransactionFlow(...args),
     })
-    mockUseHasGraphError.mockReturnValue(false)
+    mockUseHasGraphError.mockReturnValue({ data: false, isLoading: false })
 
     // @ts-ignore
     mockUseContractAddress.mockReturnValue('0xresolver')

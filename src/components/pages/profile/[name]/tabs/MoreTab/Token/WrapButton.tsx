@@ -25,7 +25,7 @@ type Props = {
 const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
-  const hasGraphError = useHasGraphError()
+  const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
   const { address } = useAccountSafely()
   const resolverStatus = useResolverStatus({ name })
 
@@ -104,12 +104,17 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
     return createTransactionFlow(key, transactionFlowItem)
   }
 
-  const isLoading = isApprovalLoading || resolverStatus.isLoading
+  const isLoading = isApprovalLoading || resolverStatus.isLoading || hasGraphErrorLoading
 
   if (!_canBeWrapped || hasGraphError) return null
 
   return (
-    <BaseWrapButton data-testid="wrap-name-btn" disabled={isLoading} onClick={handleWrapClick}>
+    <BaseWrapButton
+      data-testid="wrap-name-btn"
+      disabled={isLoading}
+      loading={isLoading}
+      onClick={handleWrapClick}
+    >
       {t('tabs.more.token.wrapName')}
     </BaseWrapButton>
   )

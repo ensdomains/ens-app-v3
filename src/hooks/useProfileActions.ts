@@ -31,6 +31,7 @@ type Action = {
   skip2LDEth?: boolean
   warning?: string
   fullMobileWidth?: boolean
+  loading?: boolean
 }
 
 type Props = {
@@ -93,7 +94,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     resolverStatus,
   })
 
-  const hasGraphError = useHasGraphError()
+  const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
 
   const showUnknownLabelsInput = usePreparedDataInput('UnknownLabels')
   const showProfileEditorInput = usePreparedDataInput('ProfileEditor')
@@ -127,6 +128,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
           ? t('errors.networkError.blurb', { ns: 'common' })
           : undefined,
         tooltipPlacement: 'left',
+        loading: hasGraphErrorLoading,
         onClick: !checkIsDecrypted(name)
           ? () =>
               showUnknownLabelsInput(key, {
@@ -145,6 +147,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
           ? t('errors.networkError.blurb', { ns: 'common' })
           : undefined,
         tooltipPlacement: 'left',
+        loading: hasGraphErrorLoading,
         onClick: () =>
           showProfileEditorInput(
             `edit-profile-${name}`,
@@ -162,6 +165,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
           : undefined,
         red: true,
         skip2LDEth: true,
+        loading: hasGraphErrorLoading,
       }
       if (abilities.canDeleteRequiresWrap) {
         const transactions: GenericTransaction[] = [
@@ -232,6 +236,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         onClick: () => {},
         disabled: true,
         red: true,
+        loading: hasGraphErrorLoading,
         skip2LDEth: true,
         tooltipContent: abilities.canDeleteError,
       })
@@ -243,6 +248,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         label: t('tabs.profile.actions.reclaim.label'),
         warning: t('tabs.profile.actions.reclaim.warning'),
         fullMobileWidth: true,
+        loading: hasGraphErrorLoading,
         onClick: () => {
           createTransactionFlow(`reclaim-${name}`, {
             transactions: [
@@ -278,6 +284,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     abilities.canDeleteMethod,
     t,
     hasGraphError,
+    hasGraphErrorLoading,
     showUnknownLabelsInput,
     createTransactionFlow,
     showProfileEditorInput,

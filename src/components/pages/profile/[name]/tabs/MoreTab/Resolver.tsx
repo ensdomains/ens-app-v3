@@ -93,7 +93,7 @@ const Resolver = ({
 
   const { md } = useBreakpoint()
 
-  const hasGraphError = useHasGraphError()
+  const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
 
   const { usePreparedDataInput } = useTransactionFlow()
   const showEditResolverInput = usePreparedDataInput('EditResolver')
@@ -140,6 +140,8 @@ const Resolver = ({
                 width={md ? 'max' : 'full'}
                 onClick={handleEditClick}
                 data-testid="edit-resolver-button"
+                loading={hasGraphErrorLoading}
+                disabled={hasGraphErrorLoading}
               >
                 {t('action.edit', { ns: 'common' })}
               </Button>
@@ -153,6 +155,7 @@ const Resolver = ({
                   buttonWidth: '15',
                   mobileButtonWidth: 'initial',
                   colorStyle: 'disabled',
+                  loading: hasGraphErrorLoading,
                 }}
               />
             )}

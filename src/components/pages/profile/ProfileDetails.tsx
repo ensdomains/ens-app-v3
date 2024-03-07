@@ -175,6 +175,7 @@ const getAction = (action: Action, is2LDEth: boolean) => {
         mobileWidth={150}
         mobilePlacement="top"
         placement={action.tooltipPlacement || 'right'}
+        loading={action.loading}
       />
     )
   }
@@ -184,6 +185,8 @@ const getAction = (action: Action, is2LDEth: boolean) => {
       onClick={action.onClick}
       size="small"
       colorStyle={action.red ? 'redSecondary' : 'accentPrimary'}
+      loading={action.loading}
+      disabled={action.loading}
     >
       {action.label}
     </Button>
