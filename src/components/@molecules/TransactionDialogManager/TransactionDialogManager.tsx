@@ -12,7 +12,6 @@ import { queryClientWithRefetch } from '@app/utils/query/reactQuery'
 
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
-import InputComponentWrapper from './InputComponentWrapper'
 import { IntroStageModal } from './stage/Intro'
 import { TransactionStageModal } from './stage/TransactionStageModal'
 
@@ -70,16 +69,14 @@ export const TransactionDialogManager = ({
             client={queryClientWithRefetch}
             persistOptions={createPersistConfig({ queryClient: queryClientWithRefetch })}
           >
-            <InputComponentWrapper>
-              <Component
-                {...{
-                  data: selectedItem.input.data,
-                  transactions: selectedItem.transactions,
-                  dispatch,
-                  onDismiss,
-                }}
-              />
-            </InputComponentWrapper>
+            <Component
+              {...{
+                data: selectedItem.input.data,
+                transactions: selectedItem.transactions,
+                dispatch,
+                onDismiss,
+              }}
+            />
           </PersistQueryClientProvider>
         )
       }

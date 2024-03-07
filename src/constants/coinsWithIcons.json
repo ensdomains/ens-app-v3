@@ -65,6 +65,7 @@
   "nuls",
   "one",
   "ont",
+  "op",
   "poa",
   "ppc",
   "qtum",
@@ -94,5 +95,12 @@
   "xvg",
   "zec",
   "zen",
-  "zil"
+  "zil",
+  "arb1",
+  "base",
+  "linea",
+  "strk",
+  "zora",
+  "zksync",
+  "metis"
 ]
