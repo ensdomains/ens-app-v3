@@ -41,10 +41,15 @@ test('should be able to register multiple names on the address page', async ({
     await addresPage.getNameRow(name).click()
   }
   await addresPage.extendNamesButton.click()
+
+  // warning message
+  await expect(page.getByText('You do not own all these names')).toBeVisible()
+  await page.getByRole('button', { name: 'I understand' }).click()
+
+  // name list
   await addresPage.extendNamesModalNextButton.click()
 
   // check the invoice details
-  await page.pause()
   await expect(page.getByTestId('invoice-item-0-amount')).toContainText('0.0065')
   await expect(page.getByTestId('invoice-item-1-amount')).toContainText('0.0002')
   await expect(page.getByTestId('invoice-total')).toContainText('0.0067')
@@ -58,9 +63,7 @@ test('should be able to register multiple names on the address page', async ({
   // increment and save
   await page.getByTestId('plus-minus-control-plus').click()
   await page.getByTestId('extend-names-confirm').click()
-  await expect(
-    page.getByText('Extending this name will not give you ownership of it'),
-  ).toBeVisible()
+
   await transactionModal.autoComplete()
 
   await subgraph.sync()
@@ -98,6 +101,11 @@ test('should be able to extend a single unwrapped name from profile', async ({
   await profilePage.getExtendButton.click()
 
   const extendNamesModal = makePageObject('ExtendNamesModal')
+  await test.step('should show warning message', async () => {
+    await expect(page.getByText('You do not own this name')).toBeVisible()
+    await page.getByRole('button', { name: 'I understand' }).click()
+  })
+
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
@@ -132,9 +140,6 @@ test('should be able to extend a single unwrapped name from profile', async ({
 
   await test.step('should extend', async () => {
     await extendNamesModal.getExtendButton.click()
-    await expect(
-      page.getByText('Extending this name will not give you ownership of it'),
-    ).toBeVisible()
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
     await expect(newTimestamp).toEqual(timestamp + 31536000000 + 1000)
@@ -150,7 +155,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
   const name = await makeName({
     label: 'legacy',
     type: 'legacy',
-    owner: 'user2',
+    owner: 'user',
     duration: -24 * 60 * 60,
   })
 
@@ -163,9 +168,15 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   const timestamp = await profilePage.getExpiryTimestamp()
 
+  await page.pause()
   await profilePage.getExtendButton.click()
 
   const extendNamesModal = makePageObject('ExtendNamesModal')
+  await test.step('should show warning message', async () => {
+    await expect(page.getByText('You do not own this name')).toBeVisible()
+    await page.getByRole('button', { name: 'I understand' }).click()
+  })
+
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
@@ -200,9 +211,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   await test.step('should extend', async () => {
     await extendNamesModal.getExtendButton.click()
-    await expect(
-      page.getByText('Extending this name will not give you ownership of it'),
-    ).toBeVisible()
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
 
@@ -234,6 +242,11 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   await profilePage.getExtendButton.click()
 
+  await test.step('should show warning message', async () => {
+    await expect(page.getByText('You do not own this name')).toBeVisible()
+    await page.getByRole('button', { name: 'I understand' }).click()
+  })
+
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
@@ -268,9 +281,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   await test.step('should extend', async () => {
     await extendNamesModal.getExtendButton.click()
-    await expect(
-      page.getByText('Extending this name will not give you ownership of it'),
-    ).toBeVisible()
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()

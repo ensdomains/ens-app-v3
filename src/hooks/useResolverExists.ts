@@ -1,9 +1,10 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { namehash, type Address } from 'viem'
 
 import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 import { useQueryOptions } from './useQueryOptions'
 
@@ -64,11 +65,10 @@ export const getResolverExistsQueryFn =
  */
 export const useResolverExists = <TParams extends UseResolverExistsParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
-
   // params
   ...params
 }: TParams & UseResolverExistsConfig) => {
@@ -80,15 +80,13 @@ export const useResolverExists = <TParams extends UseResolverExistsParameters>({
     queryFn: getResolverExistsQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-  })
-
-  return useQuery({
-    ...preparedOptions,
     enabled: enabled && !!params.name && !!params.address,
     gcTime,
     staleTime,
   })
+
+  return useQuery(preparedOptions)
 }

@@ -110,7 +110,11 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
     hasSubnamesData.isLoading ||
     resolverAuthorisation.isLoading
 
-  const isCachedData = basicNameData.isCachedData || hasSubnamesData.isCachedData
+  const isCachedData =
+    basicNameData.isCachedData ||
+    hasSubnamesData.isCachedData ||
+    resolverAuthorisation.isCachedData ||
+    parentBasicNameData.isCachedData
 
   const data: Abilities | undefined = useMemo(
     () => {
@@ -133,7 +137,7 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
           address,
           basicNameData,
           parentBasicNameData,
-          hasSubnames: hasSubnamesData.hasSubnames!,
+          hasSubnames: hasSubnamesData.data!,
           t,
         }),
         ...getReclaimAbilities({
@@ -154,7 +158,7 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
       parentBasicNameData.wrapperData,
       isLoading,
       resolverAuthorisation.data?.isAuthorised,
-      hasSubnamesData.hasSubnames,
+      hasSubnamesData.data,
       t,
     ],
   )

@@ -46,8 +46,8 @@ const initialPageParam = [] as GetSubnamesReturnType
 
 export const useSubnames = <TParams extends UseSubnamesParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
   // params
@@ -71,14 +71,13 @@ export const useSubnames = <TParams extends UseSubnamesParameters>({
     queryFn: initialOptions.queryFn,
     getNextPageParam: getNextPageParam(paramsWithLowercaseSearchString),
     initialPageParam,
-  })
-
-  const { data, status, isFetched, isFetchedAfterMount, ...rest } = useInfiniteQuery({
-    ...preparedOptions,
     enabled: enabled && !!paramsWithLowercaseSearchString.name,
     gcTime,
     staleTime,
   })
+
+  const { data, status, isFetched, isFetchedAfterMount, ...rest } =
+    useInfiniteQuery(preparedOptions)
 
   const pageCount = data?.pages.length || 0
   const nameCount = data?.pages.reduce((acc, page) => acc + page.length, 0) || 0

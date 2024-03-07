@@ -1,4 +1,4 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import {
@@ -10,6 +10,8 @@ import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 type UseDecodedNameParameters = PartialBy<GetDecodedNameParameters, 'name'>
 
@@ -37,8 +39,8 @@ export const getDecodedNameQueryFn =
 
 export const useDecodedName = <TParams extends UseDecodedNameParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
   // params
@@ -52,25 +54,24 @@ export const useDecodedName = <TParams extends UseDecodedNameParameters>({
     queryFn: getDecodedNameQueryFn,
   })
 
-  const preparedOptions = queryOptions({
-    queryKey: initialOptions.queryKey,
-    queryFn: initialOptions.queryFn,
-  })
-
   const nameIsEncrypted = useMemo(
     () => (params.name ? !checkIsDecrypted(params.name) : false),
     [params.name],
   )
 
-  const query = useQuery({
-    ...preparedOptions,
+  const preparedOptions = prepareQueryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
     enabled: enabled && !!params.name && nameIsEncrypted,
     gcTime,
     staleTime,
   })
 
+  const query = useQuery(preparedOptions)
+
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

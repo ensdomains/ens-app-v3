@@ -1,4 +1,4 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 
 import {
   getWrapperData,
@@ -8,6 +8,8 @@ import {
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 type UseWrapperDataParameters = PartialBy<GetWrapperDataParameters, 'name'>
 
@@ -35,8 +37,8 @@ export const getWrapperDataQueryFn =
 
 export const useWrapperData = <TParams extends UseWrapperDataParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
   // params
@@ -50,32 +52,19 @@ export const useWrapperData = <TParams extends UseWrapperDataParameters>({
     queryFn: getWrapperDataQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     enabled: enabled && !!params.name,
     gcTime,
     staleTime,
-    select: (data) => {
-      if (!data) return null
-      return {
-        ...data,
-        expiry: data.expiry
-          ? {
-              ...data.expiry,
-              date: new Date(data.expiry.date),
-            }
-          : null,
-      }
-    },
   })
+
+  const query = useQuery(preparedOptions)
 
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

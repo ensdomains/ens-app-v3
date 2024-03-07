@@ -7,7 +7,7 @@ import { useInvalidateOnBlock } from './useInvalidateOnBlock'
 const gasPriceBlockInterval = 2n // get gas price every two blocks
 
 export const useGasPrice = () => {
-  const query = useWagmiGasPrice({ query: { select: (d) => BigInt(d) } })
+  const query = useWagmiGasPrice()
 
   const chainId = useChainId()
   const queryKey = useMemo(() => getGasPriceQueryKey({ chainId }), [chainId])

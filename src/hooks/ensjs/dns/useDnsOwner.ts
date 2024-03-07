@@ -1,4 +1,4 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 
 import {
   DnsDnssecVerificationFailedError,
@@ -12,6 +12,8 @@ import { getDnsOwner, GetDnsOwnerParameters, GetDnsOwnerReturnType } from '@ensd
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 type UseDnsOwnerParameters = PartialBy<GetDnsOwnerParameters, 'name'>
 
@@ -44,8 +46,8 @@ export const getDnsOwnerQueryFn = async <TParams extends UseDnsOwnerParameters>(
 
 export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
   // params
@@ -59,13 +61,9 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
     queryFn: getDnsOwnerQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     enabled:
       enabled &&
       !!params.name &&
@@ -77,8 +75,11 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
     staleTime,
   })
 
+  const query = useQuery(preparedOptions)
+
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

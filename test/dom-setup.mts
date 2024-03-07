@@ -3,6 +3,7 @@ import { afterEach, beforeAll, vi } from 'vitest'
 
 afterEach(() => {
   cleanup()
+  localStorage.clear()
 })
 
 beforeAll(() => {
