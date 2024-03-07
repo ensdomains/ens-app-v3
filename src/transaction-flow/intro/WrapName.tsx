@@ -6,6 +6,7 @@ import { Typography } from '@ensdomains/thorin'
 
 import { WrapNameGift } from '@app/assets/WrapNameGift'
 import { Outlink } from '@app/components/Outlink'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 const GiftWrapper = styled.div(
@@ -28,7 +29,7 @@ const DescriptionWrapper = styled(Typography)(
 
 export const WrapName = ({ name }: { name: string }) => {
   const { t } = useTranslation('profile')
-  const { data: nftUrl } = useEnsAvatar({ name })
+  const { data: nftUrl } = useEnsAvatar({ ...ensAvatarConfig, name })
 
   return (
     <>

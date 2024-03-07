@@ -27,6 +27,7 @@ import { usePrice } from '@app/hooks/ensjs/public/usePrice'
 import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import useUserConfig from '@app/utils/useUserConfig'
 import { yearsToSeconds } from '@app/utils/utils'
 
@@ -149,7 +150,7 @@ const CenteredMessage = styled(Typography)(
 )
 
 const NamesListItem = ({ name }: { name: string }) => {
-  const { data: avatar } = useEnsAvatar({ name })
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
   const { data: expiry, isLoading: isExpiryLoading } = useExpiry({ name })
 

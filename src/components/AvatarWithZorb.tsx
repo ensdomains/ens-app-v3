@@ -6,6 +6,7 @@ import { Avatar, mq, Space } from '@ensdomains/thorin'
 
 import { useZorb } from '@app/hooks/useZorb'
 import { QuerySpace } from '@app/types'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 
 const Wrapper = styled.div<{ $size?: QuerySpace }>(
   ({ theme, $size }) => css`
@@ -57,7 +58,11 @@ export const NameAvatar = ({
   noCache = false,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
-  const { data: avatar } = useEnsAvatar({ name, query: { gcTime: noCache ? 0 : undefined } })
+  const { data: avatar } = useEnsAvatar({
+    ...ensAvatarConfig,
+    name,
+    query: { gcTime: noCache ? 0 : undefined },
+  })
   const zorb = useZorb(name, 'name')
 
   const [src, setSrc] = useState<string | undefined>(undefined)
@@ -80,7 +85,11 @@ export const AvatarWithZorb = ({
   noCache = false,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Address & Name) => {
-  const { data: avatar } = useEnsAvatar({ name, query: { gcTime: noCache ? 0 : undefined } })
+  const { data: avatar } = useEnsAvatar({
+    ...ensAvatarConfig,
+    name,
+    query: { gcTime: noCache ? 0 : undefined },
+  })
   const zorb = useZorb(address || name || '', address ? 'address' : 'name')
   return (
     <Wrapper $size={size}>
