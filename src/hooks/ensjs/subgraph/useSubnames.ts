@@ -53,8 +53,13 @@ export const useSubnames = <TParams extends UseSubnamesParameters>({
   // params
   ...params
 }: TParams & UseSubnamesConfig) => {
+  const paramsWithLowercaseSearchString = {
+    ...params,
+    searchString: params.searchString?.toLocaleLowerCase(),
+  }
+
   const initialOptions = useQueryOptions({
-    params,
+    params: paramsWithLowercaseSearchString,
     scopeKey,
     functionName: 'getSubnames',
     queryDependencyType: 'graph',
@@ -64,9 +69,9 @@ export const useSubnames = <TParams extends UseSubnamesParameters>({
   const preparedOptions = infiniteQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-    getNextPageParam: getNextPageParam(params),
+    getNextPageParam: getNextPageParam(paramsWithLowercaseSearchString),
     initialPageParam,
-    enabled: enabled && !!params.name,
+    enabled: enabled && !!paramsWithLowercaseSearchString.name,
     gcTime,
     staleTime,
   })
