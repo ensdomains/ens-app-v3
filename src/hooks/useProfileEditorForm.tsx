@@ -35,7 +35,7 @@ export const isDirtyForRecordAtIndexCalc = (
   currentRecords: ProfileRecord[],
 ) => {
   const defaultRecord = defaultRecords[index]
-  const currentRecord = currentRecords.find((record) => record.key === defaultRecord.key)
+  const currentRecord = currentRecords.find((record) => record?.key === defaultRecord?.key)
   if (!currentRecord) return false
   return currentRecord?.value !== defaultRecord.value
 }
