@@ -2,10 +2,12 @@ import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { Button, Card, Dropdown, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
 import { EarnifiDialog } from '../../../MoreTab/Miscellaneous/EarnifiDialog'
@@ -119,6 +121,12 @@ export const ExpirySection = ({ name, details }: Props) => {
   const expiry = useExpiryDetails({ name, details })
   const actions = useExpiryActions({ name, expiryDetails: expiry.data })
 
+  const { address } = useAccount()
+
+  const { data: primaryName } = usePrimaryName({ address })
+
+  const isCurrentName = primaryName ? primaryName.name === name : false
+
   const [showEarnifiDialog, setShowEarnifiDialog] = useState(false)
 
   if (!expiry.data || expiry.data?.length === 0) return null
@@ -138,62 +146,64 @@ export const ExpirySection = ({ name, details }: Props) => {
               ))}
             </PanelsContainer>
           </Header>
-          <FooterWrapper>
-            <Footer>
-              {actions?.map((action) => {
-                if (action.type === 'set-reminder')
+          {isCurrentName ? (
+            <FooterWrapper>
+              <Footer>
+                {actions?.map((action) => {
+                  if (action.type === 'set-reminder')
+                    return (
+                      <div key={action.type}>
+                        <Dropdown
+                          shortThrow
+                          keepMenuOnTop
+                          width={220}
+                          items={[
+                            {
+                              value: 'earnifi',
+                              label: t('tabs.more.misc.reminderOptions.earnifi', { ns: 'profile' }),
+                              onClick: () => {
+                                setShowEarnifiDialog(true)
+                              },
+                            },
+                            ...calendarOptions.map((option) => ({
+                              label: t(option.label, { ns: 'profile' }),
+                              onClick: () =>
+                                window.open(
+                                  option.function(makeEvent(name, action.expiryDate)),
+                                  '_blank',
+                                ),
+                            })),
+                          ]}
+                        >
+                          <Button
+                            data-testid={`expiry-action-${action.type}`}
+                            id="remind-me-button"
+                            style={{ display: 'inline-flex' }}
+                            prefix={action.icon}
+                            colorStyle="accentSecondary"
+                          >
+                            {action.label}
+                          </Button>
+                        </Dropdown>
+                      </div>
+                    )
                   return (
                     <div key={action.type}>
-                      <Dropdown
-                        shortThrow
-                        keepMenuOnTop
-                        width={220}
-                        items={[
-                          {
-                            value: 'earnifi',
-                            label: t('tabs.more.misc.reminderOptions.earnifi', { ns: 'profile' }),
-                            onClick: () => {
-                              setShowEarnifiDialog(true)
-                            },
-                          },
-                          ...calendarOptions.map((option) => ({
-                            label: t(option.label, { ns: 'profile' }),
-                            onClick: () =>
-                              window.open(
-                                option.function(makeEvent(name, action.expiryDate)),
-                                '_blank',
-                              ),
-                          })),
-                        ]}
+                      <Button
+                        data-testid={`expiry-action-${action.type}`}
+                        key={action.label}
+                        prefix={action.icon}
+                        onClick={action.onClick}
+                        colorStyle={action.primary ? 'accentPrimary' : 'accentSecondary'}
                       >
-                        <Button
-                          data-testid={`expiry-action-${action.type}`}
-                          id="remind-me-button"
-                          style={{ display: 'inline-flex' }}
-                          prefix={action.icon}
-                          colorStyle="accentSecondary"
-                        >
-                          {action.label}
-                        </Button>
-                      </Dropdown>
+                        {action.label}
+                      </Button>
                     </div>
                   )
-                return (
-                  <div key={action.type}>
-                    <Button
-                      data-testid={`expiry-action-${action.type}`}
-                      key={action.label}
-                      prefix={action.icon}
-                      onClick={action.onClick}
-                      colorStyle={action.primary ? 'accentPrimary' : 'accentSecondary'}
-                    >
-                      {action.label}
-                    </Button>
-                  </div>
-                )
-              })}
-            </Footer>
-          </FooterWrapper>
+                })}
+              </Footer>
+            </FooterWrapper>
+          ) : null}
         </Container>
       </StyledCard>
     </>

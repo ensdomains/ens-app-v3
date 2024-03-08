@@ -29,6 +29,7 @@ export const OwnershipTab = ({ name, details }: Props) => {
   const roles = useRoles(name, { grouped: true })
   const nameType = useNameType(name)
   const warning = useOwnershipWarning({ name, details, nameType })
+
   const isLoading = roles.isLoading || details.isLoading
   if (isLoading) return null
   return (
