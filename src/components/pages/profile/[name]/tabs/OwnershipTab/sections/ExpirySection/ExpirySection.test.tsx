@@ -20,10 +20,6 @@ vi.mock('./hooks/useExpiryDetails', () => ({
   },
 }))
 
-vi.mock('@app/hooks/ensjs/public/usePrimaryName', () => ({
-  usePrimaryName: () => ( {data: {name: 'test.eth'}})
-}))
-
 const mockShowInput = vi.fn()
 vi.mock('./hooks/useExpiryActions', () => ({
   useExpiryActions: ({ name }: any) => {

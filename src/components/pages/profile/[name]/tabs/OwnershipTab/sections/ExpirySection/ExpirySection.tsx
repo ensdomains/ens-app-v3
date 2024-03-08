@@ -2,12 +2,10 @@ import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { Button, Card, Dropdown, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
-import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
 import { EarnifiDialog } from '../../../MoreTab/Miscellaneous/EarnifiDialog'
@@ -121,15 +119,12 @@ export const ExpirySection = ({ name, details }: Props) => {
   const expiry = useExpiryDetails({ name, details })
   const actions = useExpiryActions({ name, expiryDetails: expiry.data })
 
-  const { address } = useAccount()
-
-  const { data: primaryName } = usePrimaryName({ address })
-
-  const isCurrentName = primaryName ? primaryName.name === name : false
-
   const [showEarnifiDialog, setShowEarnifiDialog] = useState(false)
 
   if (!expiry.data || expiry.data?.length === 0) return null
+
+  const isOutOfGracePeriod = expiry.data.find((d) => d.type === 'grace-period')?.date! < new Date()
+
   return (
     <>
       <EarnifiDialog
@@ -146,7 +141,7 @@ export const ExpirySection = ({ name, details }: Props) => {
               ))}
             </PanelsContainer>
           </Header>
-          {isCurrentName ? (
+          {!isOutOfGracePeriod ? (
             <FooterWrapper>
               <Footer>
                 {actions?.map((action) => {
