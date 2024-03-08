@@ -1,4 +1,4 @@
-import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
+import { render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 
