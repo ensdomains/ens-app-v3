@@ -541,8 +541,6 @@ const Pricing = ({
   const { hasPremium, premiumFee, gasPrice, yearlyFee, totalYearlyFee, estimatedGasFee } =
     fullEstimate
 
-  console.log({ estimatedGasFee })
-
   const yearlyRequiredBalance = totalYearlyFee ? (totalYearlyFee * 110n) / 100n : undefined
   const totalRequiredBalance = yearlyRequiredBalance
     ? yearlyRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)

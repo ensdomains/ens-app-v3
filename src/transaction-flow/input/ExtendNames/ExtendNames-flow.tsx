@@ -30,6 +30,7 @@ import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import useUserConfig from '@app/utils/useUserConfig'
 import {
+  add28Days,
   formatExtensionPeriod,
   getDurationFromDate,
   secondsToYears,
@@ -280,9 +281,17 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     enabled: !!totalRentFee,
   })
 
+  const { data } = useExpiry({ name: names.length === 1 ? names[0] : undefined })
+
+  const expiry = data ? data.expiry.date : now
+
+  const minDate = add28Days(expiry)
+
   const items: InvoiceItem[] = [
     {
-      label: t('input.extendNames.invoice.extension', { time: formatExtensionPeriod(date) }),
+      label: t('input.extendNames.invoice.extension', {
+        time: formatExtensionPeriod(date, expiry),
+      }),
       value: totalRentFee,
       bufferPercentage: 102n,
     },
@@ -337,14 +346,20 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
               <>
                 <PlusMinusWrapper>
                   {names.length === 1 ? (
-                    <YearSelection {...{ date, setDate }} flow="extend" name={names[0]} />
+                    <YearSelection
+                      {...{ date, setDate }}
+                      name={names[0]}
+                      minDate={minDate}
+                      since={expiry}
+                    />
                   ) : (
                     <PlusMinusControl
                       minValue={1}
                       value={years}
                       onChange={(e) => {
                         const newYears = parseInt(e.target.value)
-                        if (!Number.isNaN(newYears)) setDate(setYearsForDate(date, newYears, now))
+                        if (!Number.isNaN(newYears))
+                          setDate(setYearsForDate(date, newYears, minDate))
                       }}
                     />
                   )}

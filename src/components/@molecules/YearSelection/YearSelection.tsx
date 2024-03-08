@@ -5,7 +5,6 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { add28Days, formatExtensionPeriod, setYearsForDate } from '@app/utils/utils'
 
 // import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
@@ -35,21 +34,19 @@ export const YearSelection = ({
   date,
   setDate,
   name,
-  flow = 'register',
+  minDate = add28Days(now),
+  since,
 }: {
   date: Date
   setDate: (date: Date) => void
   name?: string
-  flow?: 'register' | 'extend'
+  minDate?: Date
+  since?: Date
 }) => {
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
   const yearPickSelection = yearPickView === 'date' ? 'years' : 'date'
 
-  const { data } = useExpiry({ name })
-
-  const minDate = add28Days(data ? data.expiry.date : now)
-
-  const extensionPeriod = formatExtensionPeriod(date, flow === 'register' ? now : minDate)
+  const extensionPeriod = formatExtensionPeriod(date, since ?? now)
 
   useEffect(() => {
     if (minDate > date) setDate(minDate)
@@ -70,7 +67,7 @@ export const YearSelection = ({
           value={date}
           onChange={(e) => {
             const { valueAsDate } = e.target
-            if (valueAsDate && valueAsDate >= add28Days(now)) setDate(valueAsDate)
+            if (valueAsDate && valueAsDate >= minDate) setDate(valueAsDate)
           }}
           highlighted
           name={name}
@@ -91,7 +88,7 @@ export const YearSelection = ({
       <Typography color="greyPrimary" fontVariant="smallBold">
         {extensionPeriod === 'Invalid date'
           ? extensionPeriod
-          : `${flow === 'register' ? 'Registering' : 'Extending'} for ${extensionPeriod}`}
+          : `${since ? 'Extending' : 'Registering'} for ${extensionPeriod}`}
         .{' '}
         <YearsViewSwitch type="button" onClick={() => setYearPickView(yearPickSelection)}>
           Pick by {yearPickSelection}
