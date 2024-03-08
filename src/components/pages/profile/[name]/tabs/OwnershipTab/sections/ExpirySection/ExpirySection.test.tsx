@@ -1,4 +1,4 @@
-import { render, screen, userEvent, waitFor } from '@app/test-utils'
+import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 
@@ -18,6 +18,10 @@ vi.mock('./hooks/useExpiryDetails', () => ({
         isLoading: false,
       }
   },
+}))
+
+vi.mock('@app/hooks/ensjs/public/usePrimaryName', () => ({
+  usePrimaryName: () => ( {data: {name: 'test.eth'}})
 }))
 
 const mockShowInput = vi.fn()
