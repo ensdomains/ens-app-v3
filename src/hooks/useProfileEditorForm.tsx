@@ -29,8 +29,21 @@ export type ProfileEditorForm = {
   records: ProfileRecord[]
 } & AvatarEditorType
 
+export const isDirtyForRecordAtIndexCalc = (
+  index: number,
+  defaultRecords: ProfileRecord[],
+  currentRecords: ProfileRecord[],
+) => {
+  const defaultRecord = defaultRecords[index]
+  const currentRecord = currentRecords.find((record) => record.key === defaultRecord.key)
+  if (!currentRecord) return false
+  return currentRecord?.value !== defaultRecord.value
+}
+
 export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   const { t } = useTranslation('register')
+
+  const defaultValues = profileRecordsToProfileEditorForm(existingRecords)
 
   const {
     register,
@@ -43,7 +56,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     trigger,
   } = useForm<ProfileEditorForm>({
     mode: 'onChange',
-    defaultValues: profileRecordsToProfileEditorForm(existingRecords),
+    defaultValues,
   })
 
   const labelForRecord = (record: ProfileRecord) => {
@@ -127,10 +140,6 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     return getFieldState(`records.${index}.${keyOrValue}`, formState)?.error?.message
   }
 
-  const isDirtyForRecordAtIndex = (index: number) => {
-    return getFieldState(`records.${index}.value`, formState)?.isDirty
-  }
-
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
   const {
@@ -142,6 +151,10 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     control,
     name: 'records',
   })
+
+  const isDirtyForRecordAtIndex = (index: number) => {
+    return isDirtyForRecordAtIndexCalc(index, defaultValues.records, getValues('records'))
+  }
 
   const setAvatar = (avatar?: string) => {
     const existingRecord = existingRecords.find((r) => r.group === 'media' && r.key === 'avatar')
