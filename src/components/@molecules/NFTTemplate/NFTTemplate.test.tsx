@@ -48,7 +48,7 @@ describe('NFTTemplate', () => {
   })
 
   it('should use polyfill of Intl.Segmenter if browser does not support', async () => {
-    const breakIterator = readFileSync('./public/break_iterator.wasm')
+    const breakIterator = readFileSync('./public/wasm/break_iterator.wasm')
     ;(window.Intl.Segmenter as (typeof Intl)['Segmenter']) = undefined as any
     vi.spyOn(window, 'fetch').mockImplementation(
       async () =>
