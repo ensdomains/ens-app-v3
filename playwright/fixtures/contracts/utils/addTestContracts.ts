@@ -46,16 +46,29 @@ export const deploymentAddresses = JSON.parse(
 
 export const localhost = makeLocalhostWithEns(deploymentAddresses)
 
+const localHostWithAdditionalTestContracts = {
+  ...localhost,
+  contracts: {
+    ...localhost.contracts,
+    legacyPublicResolver: { 
+      address: deploymentAddresses.LegacyPublicResolver
+    },
+    publicResolver: {
+      address: deploymentAddresses.PublicResolver
+    },
+  }
+} as const
+
 const transport = http('http://localhost:8545')
 
-export const publicClient: PublicClient<typeof transport, typeof localhost> = createPublicClient({
-  chain: localhost,
+export const publicClient: PublicClient<typeof transport, typeof localHostWithAdditionalTestContracts> = createPublicClient({
+  chain: localHostWithAdditionalTestContracts,
   transport,
 })
 
-export const testClient: TestClient<'anvil', typeof transport, typeof localhost> = createTestClient(
+export const testClient: TestClient<'anvil', typeof transport, typeof localHostWithAdditionalTestContracts> = createTestClient(
   {
-    chain: localhost,
+    chain: localHostWithAdditionalTestContracts,
     transport,
     mode: 'anvil',
   },
