@@ -1152,9 +1152,9 @@ test.describe('Extend name', () => {
       await page.getByRole('button', { name: 'I understand' }).click()
     })
     await test.step('should show the correct price data', async () => {
-      await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
+      await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0030')
       await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-      await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
+      await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0031')
       await expect(page.getByText('1 year extension')).toBeVisible()
     })
 
@@ -1166,7 +1166,7 @@ test.describe('Extend name', () => {
 
     await test.step('should work correctly with plus minus control', async () => {
       await expect(extendNamesModal.getCounterMinusButton).toBeDisabled()
-      await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
+      await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0030')
       await extendNamesModal.getCounterPlusButton.click()
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
       await expect(page.locator('text=2 years extension')).toBeVisible()
