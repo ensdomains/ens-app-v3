@@ -6,6 +6,7 @@ import { Avatar, mq } from '@ensdomains/thorin'
 
 import CircleTick from '@app/assets/CircleTick.svg'
 import { useZorb } from '@app/hooks/useZorb'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { safeDateObj } from '../../../utils/date'
@@ -137,7 +138,7 @@ export const NameDetailItem = ({
   onClick?: () => void
   children: ReactNode
 }) => {
-  const { data: avatar } = useEnsAvatar()
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
 
   const handleClick = () => {
@@ -159,6 +160,7 @@ export const NameDetailItem = ({
         <NameItemContainer>
           <AvatarWrapper>
             <Avatar
+              placeholder={`url(${zorb})`}
               label={truncatedName || name}
               src={avatar || zorb}
               data-testid="name-detail-item-avatar"

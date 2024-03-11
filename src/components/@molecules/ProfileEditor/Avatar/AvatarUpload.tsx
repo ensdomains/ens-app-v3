@@ -120,9 +120,7 @@ const UploadComponent = ({
             const {
               queryKey: [params],
             } = query
-            if (typeof params !== 'object' || params === null) return false
-            if (!('entity' in params)) return false
-            if (params.entity !== 'ensAvatar') return false
+            if (params !== 'ensAvatar') return false
             return true
           },
         })
