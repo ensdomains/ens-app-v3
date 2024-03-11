@@ -1,15 +1,17 @@
 import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
-import { gql } from 'graphql-request'
-import { Address, namehash } from 'viem'
 
-import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
+import {
+  getSubgraphRegistrant,
+  GetSubgraphRegistrantParameters,
+  GetSubgraphRegistrantReturnType,
+} from '@ensdomains/ensjs/subgraph'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
+import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 
-export type UseSubgraphRegistrantParameters = { name: string }
+export type UseSubgraphRegistrantParameters = PartialBy<GetSubgraphRegistrantParameters, 'name'>
 
-export type UseSubgraphRegistrantReturnType = Address | undefined | null
+export type UseSubgraphRegistrantReturnType = GetSubgraphRegistrantReturnType
 
 export type UseSubgraphRegistrantConfig = QueryConfig<UseSubgraphRegistrantReturnType, Error>
 
@@ -19,38 +21,16 @@ type QueryKey<TParams extends UseSubgraphRegistrantParameters> = CreateQueryKey<
   'graph'
 >
 
-type SubgraphResult = {
-  domain: {
-    registration: {
-      registrant: {
-        id?: Address
-      }
-    }
-  }
-}
-
 export const getSubgraphRegistrantQueryFn =
   (config: ConfigWithEns) =>
   async <TParams extends UseSubgraphRegistrantParameters>({
-    queryKey: [{ name }, chainId],
+    queryKey: [{ name, ...params }, chainId],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
+
     const client = config.getClient({ chainId })
-    const subgraphClient = createSubgraphClient({ client })
-    const query = gql`
-      query GetRegistrant($namehash: String!) {
-        domain(id: $namehash) {
-          registration {
-            registrant {
-              id
-            }
-          }
-        }
-      }
-    `
-    const result = await subgraphClient.request<SubgraphResult>(query, { namehash: namehash(name) })
-    const registrant = result?.domain?.registration?.registrant?.id
-    if (!registrant) return null
-    return registrant
+
+    return getSubgraphRegistrant(client, { name, ...params })
   }
 
 export const useSubgraphRegistrant = <TParams extends UseSubgraphRegistrantParameters>({
@@ -59,6 +39,8 @@ export const useSubgraphRegistrant = <TParams extends UseSubgraphRegistrantParam
   enabled = true,
   staleTime,
   scopeKey,
+
+  // params
   ...params
 }: TParams & UseSubgraphRegistrantConfig) => {
   const initialOptions = useQueryOptions({
@@ -74,10 +56,15 @@ export const useSubgraphRegistrant = <TParams extends UseSubgraphRegistrantParam
     queryFn: initialOptions.queryFn,
   })
 
-  return useQuery({
+  const query = useQuery({
     ...preparedOptions,
     gcTime,
     enabled: enabled && !!params.name,
     staleTime,
   })
+
+  return {
+    ...query,
+    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+  }
 }

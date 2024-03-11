@@ -10,7 +10,6 @@ import {
   http,
   TransactionReceiptNotFoundError,
   type Account,
-  type Address,
   type Hash,
   type PublicClient,
   type TestClient,
@@ -18,6 +17,8 @@ import {
   type WalletClient,
 } from 'viem'
 import { localhost as _localhost } from 'viem/chains'
+import { makeLocalhostWithEns } from '@app/constants/chains'
+import { Register } from '@app/local-contracts'
 
 config({
   path: resolve(__dirname, '../../.env.local'),
@@ -39,68 +40,11 @@ type ContractName =
   | 'LegacyDNSRegistrar'
   | 'LegacyDNSSECImpl'
 
-const deploymentAddressesStr = process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}'
-export const deploymentAddresses = JSON.parse(deploymentAddressesStr) as Record<
-  | ContractName
-  | 'ENSRegistry'
-  | 'LegacyPublicResolver'
-  | 'NoMulticallResolver'
-  | 'LegacyETHRegistrarController',
-  Address
->
+export const deploymentAddresses = JSON.parse(
+  process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
+) as Register['deploymentAddresses']
 
-export const localhost = {
-  ..._localhost,
-  contracts: {
-    ensRegistry: {
-      address: deploymentAddresses.ENSRegistry,
-    },
-    ensUniversalResolver: {
-      address: deploymentAddresses.UniversalResolver,
-    },
-    multicall3: {
-      address: deploymentAddresses.Multicall,
-    },
-    ensBaseRegistrarImplementation: {
-      address: deploymentAddresses.BaseRegistrarImplementation,
-    },
-    ensDnsRegistrar: {
-      address: deploymentAddresses.LegacyDNSRegistrar,
-    },
-    ensEthRegistrarController: {
-      address: deploymentAddresses.ETHRegistrarController,
-    },
-    ensLegacyEthRegistrarController: {
-      address: deploymentAddresses.LegacyETHRegistrarController,
-    },
-    ensNameWrapper: {
-      address: deploymentAddresses.NameWrapper,
-    },
-    ensPublicResolver: {
-      address: deploymentAddresses.PublicResolver,
-    },
-    ensReverseRegistrar: {
-      address: deploymentAddresses.ReverseRegistrar,
-    },
-    ensBulkRenewal: {
-      address: deploymentAddresses.StaticBulkRenewal,
-    },
-    ensDnssecImpl: {
-      address: deploymentAddresses.LegacyDNSSECImpl,
-    },
-    legacyPublicResolver: {
-      address: deploymentAddresses.LegacyPublicResolver,
-    },
-    publicResolver: {
-      address: deploymentAddresses.PublicResolver,
-    },
-  },
-  subgraphs: {
-    ens: {
-      url: 'http://localhost:8000/subgraphs/name/graphprotocol/ens',
-    },
-  },
-} as const
+export const localhost = makeLocalhostWithEns(deploymentAddresses)
 
 const transport = http('http://localhost:8545')
 

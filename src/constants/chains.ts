@@ -9,49 +9,53 @@ export const deploymentAddresses = JSON.parse(
   process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
 ) as Register['deploymentAddresses']
 
-export const localhostWithEns = {
-  ...localhost,
-  contracts: {
-    ensRegistry: {
-      address: deploymentAddresses.ENSRegistry,
+export const makeLocalhostWithEns = (deploymentAddresses_: Register['deploymentAddresses']) => {
+  return {
+    ...localhost,
+    contracts: {
+      ensRegistry: {
+        address: deploymentAddresses_.ENSRegistry,
+      },
+      ensUniversalResolver: {
+        address: deploymentAddresses_.UniversalResolver,
+      },
+      multicall3: {
+        address: deploymentAddresses_.Multicall,
+      },
+      ensBaseRegistrarImplementation: {
+        address: deploymentAddresses_.BaseRegistrarImplementation,
+      },
+      ensDnsRegistrar: {
+        address: deploymentAddresses_.DNSRegistrar,
+      },
+      ensEthRegistrarController: {
+        address: deploymentAddresses_.ETHRegistrarController,
+      },
+      ensNameWrapper: {
+        address: deploymentAddresses_.NameWrapper,
+      },
+      ensPublicResolver: {
+        address: deploymentAddresses_.PublicResolver,
+      },
+      ensReverseRegistrar: {
+        address: deploymentAddresses_.ReverseRegistrar,
+      },
+      ensBulkRenewal: {
+        address: deploymentAddresses_.StaticBulkRenewal,
+      },
+      ensDnssecImpl: {
+        address: deploymentAddresses_.DNSSECImpl,
+      },
     },
-    ensUniversalResolver: {
-      address: deploymentAddresses.UniversalResolver,
+    subgraphs: {
+      ens: {
+        url: 'http://localhost:8000/subgraphs/name/graphprotocol/ens',
+      },
     },
-    multicall3: {
-      address: deploymentAddresses.Multicall,
-    },
-    ensBaseRegistrarImplementation: {
-      address: deploymentAddresses.BaseRegistrarImplementation,
-    },
-    ensDnsRegistrar: {
-      address: deploymentAddresses.DNSRegistrar,
-    },
-    ensEthRegistrarController: {
-      address: deploymentAddresses.ETHRegistrarController,
-    },
-    ensNameWrapper: {
-      address: deploymentAddresses.NameWrapper,
-    },
-    ensPublicResolver: {
-      address: deploymentAddresses.PublicResolver,
-    },
-    ensReverseRegistrar: {
-      address: deploymentAddresses.ReverseRegistrar,
-    },
-    ensBulkRenewal: {
-      address: deploymentAddresses.StaticBulkRenewal,
-    },
-    ensDnssecImpl: {
-      address: deploymentAddresses.DNSSECImpl,
-    },
-  },
-  subgraphs: {
-    ens: {
-      url: 'http://localhost:8000/subgraphs/name/graphprotocol/ens',
-    },
-  },
-} as const
+  } as const
+}
+
+export const localhostWithEns = makeLocalhostWithEns(deploymentAddresses)
 
 export const mainnetWithEns = addEnsContracts(mainnet)
 export const goerliWithEns = addEnsContracts(goerli)
