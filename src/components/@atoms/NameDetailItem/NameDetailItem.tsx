@@ -156,11 +156,11 @@ export const NameDetailItem = ({
       passHref
     >
       <NameItemWrapper
-        $disabled={disabled}
+        $disabled={name === INVALID_NAME || disabled}
         $highlight={mode === 'select' && selected}
         as={mode !== 'select' ? 'a' : 'div'}
         data-testid={`name-item-${name}`}
-        onClick={handleClick}
+        onClick={name !== INVALID_NAME ? handleClick : undefined}
       >
         <NameItemContainer>
           <AvatarWrapper>
