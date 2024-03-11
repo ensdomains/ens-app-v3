@@ -51,21 +51,20 @@ export const TaggedNameItem = ({
 
   const isNativeEthName = /\.eth$/.test(name!) && name!.split('.').length === 2
 
-  const tags: [enabled: boolean, translation: string][] = []
-
-  if (notOwned) {
-    tags.push([false, 'name.notOwned'])
-  } else if (!fuses) {
-    tags.push([!!relation?.owner, 'name.manager'])
-    if (isNativeEthName) {
-      tags.push([!!relation?.registrant, 'name.owner'])
-    }
-  } else {
-    tags.push([
-      !!relation?.wrappedOwner,
-      fuses.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
-    ])
-  }
+  const tags = (() => {
+    if (notOwned) return [[false, 'name.notOwned']] as const
+    if (fuses || relation?.wrappedOwner)
+      return [
+        [
+          !!relation?.wrappedOwner,
+          fuses?.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
+        ],
+      ] as const
+    return [
+      [!!relation?.owner, 'name.manager'],
+      ...(isNativeEthName ? ([[!!relation?.registrant, 'name.owner']] as const) : []),
+    ] as const
+  })()
 
   return (
     <NameDetailItem
