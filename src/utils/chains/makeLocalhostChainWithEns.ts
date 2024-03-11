@@ -1,9 +1,9 @@
-import { Address, Chain } from 'viem'
+import { Chain } from 'viem'
 
 import type { Register } from '@app/local-contracts'
 
-export const makeLocalhostChainWithEns = (
-  localhost: Chain,
+export const makeLocalhostChainWithEns = <T extends Chain>(
+  localhost: T,
   deploymentAddresses_: Register['deploymentAddresses'],
 ) => {
   return {
@@ -11,37 +11,37 @@ export const makeLocalhostChainWithEns = (
     contracts: {
       ...localhost.contracts,
       ensRegistry: {
-        address: deploymentAddresses_.ENSRegistry as Address,
+        address: deploymentAddresses_.ENSRegistry,
       },
       ensUniversalResolver: {
-        address: deploymentAddresses_.UniversalResolver as Address,
+        address: deploymentAddresses_.UniversalResolver,
       },
       multicall3: {
-        address: deploymentAddresses_.Multicall as Address,
+        address: deploymentAddresses_.Multicall,
       },
       ensBaseRegistrarImplementation: {
-        address: deploymentAddresses_.BaseRegistrarImplementation as Address,
+        address: deploymentAddresses_.BaseRegistrarImplementation,
       },
       ensDnsRegistrar: {
-        address: deploymentAddresses_.DNSRegistrar as Address,
+        address: deploymentAddresses_.DNSRegistrar,
       },
       ensEthRegistrarController: {
-        address: deploymentAddresses_.ETHRegistrarController as Address,
+        address: deploymentAddresses_.ETHRegistrarController,
       },
       ensNameWrapper: {
-        address: deploymentAddresses_.NameWrapper as Address,
+        address: deploymentAddresses_.NameWrapper,
       },
       ensPublicResolver: {
-        address: deploymentAddresses_.PublicResolver as Address,
+        address: deploymentAddresses_.PublicResolver,
       },
       ensReverseRegistrar: {
-        address: deploymentAddresses_.ReverseRegistrar as Address,
+        address: deploymentAddresses_.ReverseRegistrar,
       },
       ensBulkRenewal: {
-        address: deploymentAddresses_.StaticBulkRenewal as Address,
+        address: deploymentAddresses_.StaticBulkRenewal,
       },
       ensDnssecImpl: {
-        address: deploymentAddresses_.DNSSECImpl as Address,
+        address: deploymentAddresses_.DNSSECImpl,
       },
     },
     subgraphs: {

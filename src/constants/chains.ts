@@ -10,7 +10,10 @@ export const deploymentAddresses = JSON.parse(
   process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
 ) as Register['deploymentAddresses']
 
-export const localhostWithEns = makeLocalhostChainWithEns(localhost, deploymentAddresses)
+export const localhostWithEns = makeLocalhostChainWithEns<typeof localhost>(
+  localhost,
+  deploymentAddresses,
+)
 export const mainnetWithEns = addEnsContracts(mainnet)
 export const goerliWithEns = addEnsContracts(goerli)
 export const sepoliaWithEns = addEnsContracts(sepolia)
