@@ -54,7 +54,7 @@ describe('useHasSubgraphSyncErrors', () => {
 
     const { result } = renderHook(() => useHasSubgraphSyncErrors())
 
-    expect(result.current).toEqual({ error: 1, slow: 0 })
+    expect(result.current).toEqual({ error: 1, slow: 0, isFetching: true })
   })
   it('it reports a latency issue if a query took too long since render', async () => {
     vi.useFakeTimers()
@@ -92,7 +92,7 @@ describe('useHasSubgraphSyncErrors', () => {
 
     const { result } = renderHook(() => useHasSubgraphSyncErrors())
 
-    expect(result.current).toEqual({ error: 0, slow: 1 })
+    expect(result.current).toEqual({ error: 0, slow: 1, isFetching: true })
 
     vi.clearAllTimers()
   })

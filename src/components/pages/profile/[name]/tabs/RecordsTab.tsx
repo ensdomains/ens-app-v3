@@ -9,12 +9,12 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
-import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { AddressRecord, Profile, TextRecord } from '@app/types'
 import { abiDisplayValue } from '@app/utils/abi'
 import { emptyAddress } from '@app/utils/constants'
 import { getContentHashLink } from '@app/utils/contenthash'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
@@ -128,7 +128,7 @@ export const RecordsTab = ({
   resolverAddress?: string
 }) => {
   const { t } = useTranslation('profile')
-  const hasGlobalError = useHasGlobalError()
+  const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
 
   const chainId = useChainId()
 
@@ -245,15 +245,20 @@ export const RecordsTab = ({
       {canEdit && resolverAddress !== emptyAddress && (
         <Actions>
           <div>
-            {canEditRecords && !hasGlobalError ? (
-              <Button onClick={handleShowEditor} size="small">
+            {canEditRecords && !hasGraphError ? (
+              <Button
+                onClick={handleShowEditor}
+                size="small"
+                loading={hasGraphErrorLoading}
+                disabled={hasGraphErrorLoading}
+              >
                 {t('details.tabs.records.editRecords')}
               </Button>
             ) : (
               <DisabledButtonWithTooltip
                 buttonId="records-tab-edit-records-disabled"
                 content={
-                  hasGlobalError
+                  hasGraphError
                     ? t('errors.networkError.blurb', { ns: 'common' })
                     : t('details.tabs.records.editRecordsDisabled')
                 }
@@ -262,6 +267,7 @@ export const RecordsTab = ({
                 mobilePlacement="top"
                 placement="top"
                 size="small"
+                loading={hasGraphErrorLoading}
               />
             )}
           </div>
