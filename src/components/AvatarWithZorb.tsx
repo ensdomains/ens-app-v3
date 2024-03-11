@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useState } from 'react'
+import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import { useEnsAvatar } from 'wagmi'
 
@@ -65,14 +65,9 @@ export const NameAvatar = ({
   })
   const zorb = useZorb(name, 'name')
 
-  const [src, setSrc] = useState<string | undefined>(undefined)
-  useEffect(() => {
-    setSrc(avatar || zorb)
-  }, [avatar, zorb])
-
   return (
     <Wrapper $size={size}>
-      <Avatar {...props} src={src} />
+      <Avatar {...props} placeholder={`url(${zorb})`} src={avatar || zorb} />
     </Wrapper>
   )
 }
@@ -93,7 +88,7 @@ export const AvatarWithZorb = ({
   const zorb = useZorb(address || name || '', address ? 'address' : 'name')
   return (
     <Wrapper $size={size}>
-      <Avatar {...props} src={avatar || zorb} />
+      <Avatar {...props} placeholder={`url(${zorb})`} src={avatar || zorb} />
     </Wrapper>
   )
 }

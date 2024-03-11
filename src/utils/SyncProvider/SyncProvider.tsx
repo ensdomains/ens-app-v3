@@ -1,6 +1,7 @@
 import { Query, QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
-import { useChainId } from 'wagmi'
+import { Config, useChainId } from 'wagmi'
+import { GetEnsAvatarQueryKey } from 'wagmi/query'
 
 import { SupportedChain } from '@app/constants/chains'
 import { useSubgraphClient } from '@app/hooks/ensjs/subgraph/useSubgraphClient'
@@ -51,11 +52,21 @@ type ChainDependentQueryKey = CreateQueryKey<object, string, 'standard'>
 const filterByChainDependentQuery =
   (chainId: SupportedChain['id']) =>
   ({ queryKey: queryKey_ }: Query) => {
-    const queryKey = queryKey_ as ChainDependentQueryKey | never[]
+    const queryKey = queryKey_ as
+      | ChainDependentQueryKey
+      | CreateQueryKey<object, string, 'graph'>
+      | GetEnsAvatarQueryKey<Config>
+      | never[]
+
+    // useEnsAvatar query from wagmi
+    if (queryKey[0] === 'ensAvatar' && queryKey[1]?.chainId === chainId) return true
+
+    // internal queries
     if (queryKey[1] !== chainId) return false
     if (typeof queryKey[0] !== 'object' || queryKey[0] === null) return false
     // don't invalidate graph queries, which are handled separately
     if (queryKey[5] === 'graph') return false
+
     return true
   }
 
