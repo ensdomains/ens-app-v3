@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 import { resolve } from 'path'
+import { localhost } from 'viem/chains'
 
 import { config } from 'dotenv'
 import {
@@ -15,9 +16,9 @@ import {
   type TestClient,
   type TransactionReceipt,
   type WalletClient,
+  Address,
 } from 'viem'
-import { localhost as _localhost } from 'viem/chains'
-import { makeLocalhostWithEns } from '@app/constants/chains'
+import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
 import { Register } from '@app/local-contracts'
 
 config({
@@ -44,39 +45,39 @@ export const deploymentAddresses = JSON.parse(
   process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
 ) as Register['deploymentAddresses']
 
-export const localhost = makeLocalhostWithEns(deploymentAddresses)
+export const localhostWithEns = makeLocalhostChainWithEns(localhost, deploymentAddresses)
 
-const localHostWithAdditionalTestContracts = {
-  ...localhost,
+const localhostWithEnsAndAdditionalTestContracts = {
+  ...localhostWithEns,
   contracts: {
-    ...localhost.contracts,
+    ...localhostWithEns.contracts,
     legacyPublicResolver: { 
-      address: deploymentAddresses.LegacyPublicResolver
+      address: deploymentAddresses.LegacyPublicResolver as Address
     },
     publicResolver: {
-      address: deploymentAddresses.PublicResolver
+      address: deploymentAddresses.PublicResolver as Address
     },
   }
 } as const
 
 const transport = http('http://localhost:8545')
 
-export const publicClient: PublicClient<typeof transport, typeof localHostWithAdditionalTestContracts> = createPublicClient({
-  chain: localHostWithAdditionalTestContracts,
+export const publicClient: PublicClient<typeof transport, typeof localhostWithEnsAndAdditionalTestContracts> = createPublicClient({
+  chain: localhostWithEnsAndAdditionalTestContracts,
   transport,
 })
 
-export const testClient: TestClient<'anvil', typeof transport, typeof localHostWithAdditionalTestContracts> = createTestClient(
+export const testClient: TestClient<'anvil', typeof transport, typeof localhostWithEnsAndAdditionalTestContracts> = createTestClient(
   {
-    chain: localHostWithAdditionalTestContracts,
+    chain: localhostWithEnsAndAdditionalTestContracts,
     transport,
     mode: 'anvil',
   },
 )
 
-export const walletClient: WalletClient<typeof transport, typeof localhost, Account> =
+export const walletClient: WalletClient<typeof transport, typeof localhostWithEnsAndAdditionalTestContracts, Account> =
   createWalletClient({
-    chain: localhost,
+    chain: localhostWithEnsAndAdditionalTestContracts,
     transport,
   })
 
