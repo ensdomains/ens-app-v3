@@ -242,7 +242,11 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
 
   const [date, setDate] = useState(() => new Date(now.getTime() + yearsToSeconds(1) * 1000))
 
-  const duration = getDurationFromDate(date, now)
+  const { data } = useExpiry({ name: names.length === 1 ? names[0] : undefined })
+
+  const expiry = data ? data.expiry.date : now
+  const minDate = add28Days(expiry)
+  const duration = getDurationFromDate(date, minDate)
   const years = secondsToYears(duration)
 
   const { userConfig, setCurrency } = useUserConfig()
@@ -283,11 +287,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     enabled: !!totalRentFee,
   })
 
-  const { data } = useExpiry({ name: names.length === 1 ? names[0] : undefined })
-
-  const expiry = data ? data.expiry.date : now
-
-  const minDate = add28Days(expiry)
   const previousTransactionFee = usePreviousDistinct(transactionFee) || 0n
 
   const unsafeDisplayTransactionFee = transactionFee > 0n ? transactionFee : previousTransactionFee

@@ -547,6 +547,7 @@ const Pricing = ({
     : undefined
 
   const showPaymentChoice = !isPrimaryLoading && address
+
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
