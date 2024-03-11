@@ -252,11 +252,16 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
-  const { data: priceData = undefined, isLoading: isPriceLoading } = usePrice({
+  const { data: priceData, isLoading: isPriceLoading } = usePrice({
     nameOrNames: names,
     duration,
   })
-  const totalRentFee = priceData ? priceData.base + priceData.premium : undefined
+
+  const totalRentFee = priceData ? priceData.base + priceData.premium : 0n
+  const previousTotalRentFee = usePreviousDistinct(totalRentFee) || 0n
+  const unsafeDisplayTotalRentFee = totalRentFee !== 0n ? totalRentFee : previousTotalRentFee
+  const isShowingPreviousTotalRentFee = totalRentFee === 0n && previousTotalRentFee > 0n
+
   const transactions = [
     createTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee! }),
   ]
@@ -289,8 +294,9 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
 
   const previousTransactionFee = usePreviousDistinct(transactionFee) || 0n
 
-  const unsafeDisplayTransactionFee = transactionFee > 0n ? transactionFee : previousTransactionFee
-  const isShowingPrevious = transactionFee === 0n && previousTransactionFee > 0n
+  const unsafeDisplayTransactionFee =
+    transactionFee !== 0n ? transactionFee : previousTransactionFee
+  const isShowingPreviousTransactionFee = transactionFee === 0n && previousTransactionFee > 0n
 
   const items: InvoiceItem[] = [
     {
@@ -379,7 +385,11 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   />
                 </OptionBar>
                 <GasEstimationCacheableComponent
-                  $isCached={isEstimateGasLoading || isShowingPrevious}
+                  $isCached={
+                    isEstimateGasLoading ||
+                    isShowingPreviousTransactionFee ||
+                    isShowingPreviousTotalRentFee
+                  }
                 >
                   <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
                   {(!!estimateGasLimitError ||
@@ -388,9 +398,9 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                       balance.value < estimatedGasLimit)) && (
                     <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                   )}
-                  {!!totalRentFee && !!unsafeDisplayTransactionFee && (
+                  {!!unsafeDisplayTotalRentFee && !!unsafeDisplayTransactionFee && (
                     <RegistrationTimeComparisonBanner
-                      rentFee={totalRentFee}
+                      rentFee={unsafeDisplayTotalRentFee}
                       transactionFee={unsafeDisplayTransactionFee}
                       message={t('input.extendNames.bannerMsg')}
                     />
