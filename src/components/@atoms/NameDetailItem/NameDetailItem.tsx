@@ -138,7 +138,7 @@ export const NameDetailItem = ({
   onClick?: () => void
   children: ReactNode
 }) => {
-  const { data: avatar } = useEnsAvatar(ensAvatarConfig)
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
 
   const handleClick = () => {
@@ -160,6 +160,7 @@ export const NameDetailItem = ({
         <NameItemContainer>
           <AvatarWrapper>
             <Avatar
+              placeholder={`url(${zorb})`}
               label={truncatedName || name}
               src={avatar || zorb}
               data-testid="name-detail-item-avatar"
