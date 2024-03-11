@@ -13,7 +13,7 @@ import { Outlink } from '@app/components/Outlink'
 import { useSubscribeToEarnifi } from '@app/components/pages/profile/[name]/tabs/MoreTab/Miscellaneous/useSubscribeToEarnifi'
 
 export const EARNIFI_OUTLINK =
-  'https://earni.fi/?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'
+  'https://www.bankless.com/claimables?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$/i
 
@@ -50,7 +50,7 @@ export const EarnifiDialog = ({ name, open, onDismiss }: Props) => {
       const message =
         error instanceof Error && error.message
           ? error.message
-          : t('tabs.more.misc.earnfi.submitError', { ns: 'profile' })
+          : t('tabs.more.misc.bankless.submitError', { ns: 'profile' })
       setError('email', {
         type: 'submitError',
         message,
@@ -82,7 +82,7 @@ export const EarnifiDialog = ({ name, open, onDismiss }: Props) => {
             <Typography style={{ textAlign: 'center' }}>
               <Trans
                 style={{ textAlign: 'center' }}
-                i18nKey="tabs.more.misc.earnfi.enterEmail"
+                i18nKey="tabs.more.misc.bankless.enterEmail"
                 ns="profile"
                 components={{
                   a: <Outlink href={EARNIFI_OUTLINK} role="link" />,
@@ -125,7 +125,7 @@ export const EarnifiDialog = ({ name, open, onDismiss }: Props) => {
         .with('success', () => (
           <InnerDialog>
             <div style={{ textAlign: 'center' }}>
-              {t('tabs.more.misc.earnfi.emailConfirmation', { ns: 'profile' })}
+              {t('tabs.more.misc.bankless.emailConfirmation', { ns: 'profile' })}
             </div>
             <Dialog.Footer trailing={<Button onClick={_onDismiss}>{t('action.close')}</Button>} />
           </InnerDialog>

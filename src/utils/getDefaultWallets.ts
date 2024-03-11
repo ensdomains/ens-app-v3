@@ -6,6 +6,7 @@ import {
   injectedWallet,
   ledgerWallet,
   metaMaskWallet,
+  phantomWallet,
   rainbowWallet,
   safeWallet,
   walletConnectWallet,
@@ -26,6 +27,8 @@ export const getDefaultWallets = ({
         injectedWallet,
         safeWallet,
         braveWallet,
+        // TODO: Double check phantom wallet
+        phantomWallet,
         // always shown
         walletConnectWallet,
         rainbowWallet,

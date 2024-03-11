@@ -184,15 +184,39 @@ export const ExpirySection = ({ name, details }: Props) => {
                     )
                   return (
                     <div key={action.type}>
-                      <Button
-                        data-testid={`expiry-action-${action.type}`}
-                        key={action.label}
-                        prefix={action.icon}
-                        onClick={action.onClick}
-                        colorStyle={action.primary ? 'accentPrimary' : 'accentSecondary'}
+                      {/* This dropdown is questable */}
+                      <Dropdown
+                        shortThrow
+                        keepMenuOnTop
+                        width={220}
+                        items={[
+                          {
+                            value: 'earnifi',
+                            label: t('tabs.more.misc.reminderOptions.bankless', { ns: 'profile' }),
+                            onClick: () => {
+                              setShowEarnifiDialog(true)
+                            },
+                          },
+                          ...calendarOptions.map((option) => ({
+                            label: t(option.label, { ns: 'profile' }),
+                            onClick: () =>
+                              window.open(
+                                option.function(makeEvent(name, action.expiryDate)),
+                                '_blank',
+                              ),
+                          })),
+                        ]}
                       >
-                        {action.label}
-                      </Button>
+                        <Button
+                          data-testid={`expiry-action-${action.type}`}
+                          key={action.label}
+                          prefix={action.icon}
+                          onClick={action.onClick}
+                          colorStyle={action.primary ? 'accentPrimary' : 'accentSecondary'}
+                        >
+                          {action.label}
+                        </Button>
+                      </Dropdown>
                     </div>
                   )
                 })}

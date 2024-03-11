@@ -82,7 +82,6 @@ export const useSimpleSearch = (options: Options = {}) => {
       const client = config.getClient({ chainId })
       const results = await Promise.allSettled([
         queryByName(client, { name: query }),
-        queryByName(client, { name: `${query}.eth` }),
         ...(isAddress(query) ? [queryByAddress(client, { address: query })] : []),
       ])
       const filteredData = results
