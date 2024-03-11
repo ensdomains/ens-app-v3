@@ -72,7 +72,7 @@ export const EarnifiDialog = ({ name, open, onDismiss }: Props) => {
 
   return (
     <Dialog open={open} variant="blank" onDismiss={() => status !== 'pending' && _onDismiss()}>
-      <Dialog.Heading title={t('tabs.more.misc.earnfi.title', { ns: 'profile' })} />
+      <Dialog.Heading title={t('tabs.more.misc.bankless.title', { ns: 'profile' })} />
       {match(status)
         .with(P.not('success'), () => (
           <Form
