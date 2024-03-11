@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { usePreviousDistinct } from 'react-use'
 import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
@@ -538,15 +539,24 @@ const Pricing = ({
       resolverAddress,
     },
   })
-  const { hasPremium, premiumFee, gasPrice, yearlyFee, totalYearlyFee, estimatedGasFee } =
-    fullEstimate
+  const { hasPremium, premiumFee, gasPrice, totalYearlyFee, estimatedGasFee } = fullEstimate
 
-  const yearlyRequiredBalance = totalYearlyFee ? (totalYearlyFee * 110n) / 100n : undefined
+  const yearlyRequiredBalance = totalYearlyFee ? (totalYearlyFee * 110n) / 100n : 0n
   const totalRequiredBalance = yearlyRequiredBalance
     ? yearlyRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)
-    : undefined
+    : 0n
+
+  const previousRentFee = usePreviousDistinct(yearlyRequiredBalance) || 0n
+
+  const unsafeDisplayRentFee =
+    yearlyRequiredBalance !== 0n ? yearlyRequiredBalance : previousRentFee
 
   const showPaymentChoice = !isPrimaryLoading && address
+
+  const previousEstimatedGasFee = usePreviousDistinct(estimatedGasFee) || 0n
+
+  const unsafeDisplayEstimatedGasFee =
+    estimatedGasFee !== 0n ? estimatedGasFee : previousEstimatedGasFee
 
   return (
     <StyledCard>
@@ -556,12 +566,12 @@ const Pricing = ({
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={name} />
       ) : (
-        !!yearlyFee &&
-        !!estimatedGasFee &&
+        !!unsafeDisplayRentFee &&
+        !!unsafeDisplayEstimatedGasFee &&
         !!gasPrice && (
           <RegistrationTimeComparisonBanner
-            rentFee={yearlyFee}
-            transactionFee={estimatedGasFee}
+            rentFee={unsafeDisplayRentFee}
+            transactionFee={unsafeDisplayEstimatedGasFee}
             message={t('steps.pricing.multipleYearsMessage')}
           />
         )
