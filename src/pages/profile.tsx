@@ -35,12 +35,6 @@ export default function Page() {
   const isLoading =
     isBasicLoading || isProfileLoading || primary.isLoading || initial || !router.isReady
 
-  const isDns = checkDNS2LDFromName(name)
-  if (isDns && registrationStatus === 'notImported' && !isBasicLoading && !isDnsOwnerLoading) {
-    router.push(`/import/${name}`)
-    return null
-  }
-
   if (isViewingExpired && gracePeriodEndDate && gracePeriodEndDate > new Date()) {
     router.push(`/profile/${name}`)
     return null
@@ -52,6 +46,12 @@ export default function Page() {
     !isBasicLoading
   ) {
     router.push(`/register/${name}`)
+    return null
+  }
+
+  const isDns = checkDNS2LDFromName(name)
+  if (isDns && registrationStatus === 'notImported' && !isBasicLoading && !isDnsOwnerLoading) {
+    router.push(`/import/${name}`)
     return null
   }
 

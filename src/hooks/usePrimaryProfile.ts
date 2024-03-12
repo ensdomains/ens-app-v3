@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import { Hex } from 'viem'
 
+import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
+
 import { usePrimaryName } from './ensjs/public/usePrimaryName'
 import { useProfile } from './useProfile'
 
@@ -27,7 +29,7 @@ export const usePrimaryProfile = ({ address, enabled = true }: UsePrimaryProfile
     if (!primary && !profile) return undefined
     return {
       name: primary?.name,
-      ...profile,
+      ...(profile || ({} as GetRecordsReturnType)),
     }
   }, [primary, profile])
 
