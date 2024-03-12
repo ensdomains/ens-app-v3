@@ -118,18 +118,15 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     isValid,
     isCachedData,
     isWrapped,
-    isLoading: detailsLoading,
     wrapperData,
     registrationStatus,
     refetchIfEnabled,
   } = nameDetails
 
-  const isLoading = parentIsLoading || detailsLoading
-
   useProtectedRoute(
     '/',
     // When anything is loading, return true
-    isLoading
+    parentIsLoading
       ? true
       : // if is self, user must be connected
         (isSelf ? address : true) && typeof name === 'string' && name.length > 0,
@@ -252,7 +249,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
       <Content
         noTitle
         title={beautifiedName}
-        loading={!isCachedData && isLoading}
+        loading={!isCachedData && parentIsLoading}
         copyValue={beautifiedName}
       >
         {{
