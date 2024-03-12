@@ -555,7 +555,8 @@ describe('useBasicName', () => {
       mockGetRegistrationStatus.mockImplementation((args) => test.getRegistrationStatus(args))
       const { result } = renderHook(() => useBasicName({ name: 'name.eth' }))
       const expected = makeMockUseBasicName(type)
-      expect(expected).toEqual(result.current)
+      const { refetchIfEnabled, ...resultData} = result.current
+      expect(expected).toEqual(resultData)
     })
   })
 })
