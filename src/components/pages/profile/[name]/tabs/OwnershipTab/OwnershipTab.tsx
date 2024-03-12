@@ -3,9 +3,9 @@ import styled, { css } from 'styled-components'
 
 import { Banner } from '@ensdomains/thorin'
 
+import { useNameType } from '@app/hooks/nameType/useNameType'
 import useRoles from '@app/hooks/ownership/useRoles/useRoles'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
-import { useNameType } from '@app/hooks/useNameType'
 
 import { useOwnershipWarning } from './hooks/useOwnershipWarning'
 import { ContractSection } from './sections/ContractSection/ContractSection'

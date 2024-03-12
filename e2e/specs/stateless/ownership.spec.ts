@@ -932,6 +932,7 @@ test.describe('Edit roles: Unwrapped name', () => {
 
 test.describe('Edit roles: Wrapped subnames', () => {
   test('should allow namewrapper subname owner to send name', async ({
+    page,
     login,
     accounts,
     makeName,
@@ -958,6 +959,7 @@ test.describe('Edit roles: Wrapped subnames', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
+    await page.pause()
     await ownershipPage.editRolesButton.click()
 
     await editRolesModal.roleCardChangeButton('manager').click()

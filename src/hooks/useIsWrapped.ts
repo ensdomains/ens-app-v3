@@ -1,4 +1,4 @@
-import { useOwner } from './ensjs/public/useOwner'
+import { useWrapperData } from './ensjs/public/useWrapperData'
 
 type UseIsWrappedParameters = {
   name: string
@@ -6,10 +6,9 @@ type UseIsWrappedParameters = {
 }
 
 export const useIsWrapped = ({ name, enabled = true }: UseIsWrappedParameters) => {
-  const { data: ownerData, ...query } = useOwner({ name, enabled })
-
+  const { data: wrapperData, ...query } = useWrapperData({ name, enabled })
   return {
-    data: ownerData ? ownerData.ownershipLevel === 'nameWrapper' : undefined,
+    data: !!wrapperData,
     ...query,
   }
 }

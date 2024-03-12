@@ -1,8 +1,12 @@
+import { match } from 'ts-pattern'
 import { describe, expect, it } from 'vitest'
 
 import type { useBasicName } from '@app/hooks/useBasicName'
 
+import { createAccounts } from '../../../../playwright/fixtures/accounts'
+import { makeMockUseBasicName } from '../../../../test/mock/makeMockUseBasicName';
 import { getSendAbilities } from './getSendAbilities'
+import { makeMockUseAbilitiesData } from '../../../../test/mock/makeMockUseAbilitiesData'
 
 type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>
@@ -27,170 +31,37 @@ type MockData = {
 }
 
 const ownerAddress = '0x123'
-const account = ownerAddress
-const name = 'nick.eth'
+const account = createAccounts().getAddress('user')
+const name = 'name.eth'
 const subname = 'sub.nick.eth'
 
 const partialUserStates = {
   unwrappedNameOwner: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registrar',
-        owner: '0xnotOwner',
-        registrant: ownerAddress,
-      },
-      wrapperData: {
-        ownershipLevel: 'registry',
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-unwrapped-2ld:owner'),
+    parentBasicNameData: makeMockUseBasicName('eth'),
   },
   unwrappedNameManager: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registrar',
-        owner: ownerAddress,
-        registrant: '0xother',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager'),
+    parentBasicNameData: makeMockUseBasicName('eth'),
   },
+  // TODO: add dns states
   unwrappedDNSOwner: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: '0xnotOwner',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {},
-          child: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: '0xdnsowner',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {},
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('dns-unwrapped-2ld:owner'),
+    parentBasicNameData: makeMockUseBasicName('dns')
   },
   unwrappedDNSManager: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {},
-          child: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: '0xdnsowner',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {},
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('dns-unwrapped-2ld:manager'),
+    parentBasicNameData: makeMockUseBasicName('dns')
   },
   unwrappedSubnameManagerHolderUnwrappedParentManager: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: '0x000',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager'),
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-2ld:unowned'),
   },
   unwrappedSubnameUnwrappedParentManager: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: '0x000',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-unwrapped-2ld:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager')
   },
+  // This test doesn't make sense
   unwrappedSubnameManagerUnwrappedParentOwnerHolder: {
     basicNameData: {
       ownerData: {
@@ -217,634 +88,88 @@ const partialUserStates = {
     },
   },
   unwrappedSubnameManagerUnwrappedParentManagerHolder: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: '0x000',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-unwrapped-2ld:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager')
   },
   wrappedSubnameManagerHolderUnwrappedParentManager: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: '0x000',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-wrapped-subname'),
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname:unowned')
   },
   wrappedSubnameManagerUnwrappedParentManager: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-emancipated-subname:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname')
   },
   wrappedSubnameUnwrappedParentOwner: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-      },
-      wrapperData: {
-        fuses: {
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-          parent: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname')
   },
   wrappedNameOwner: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-emancipated-2ld'),
+    parentBasicNameData: makeMockUseBasicName('eth')
   },
   wrappedNameCTBurnedOwner: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          child: {
-            CANNOT_TRANSFER: true,
-          },
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-burnt-2ld'),
+    parentBasicNameData: makeMockUseBasicName('eth')
   },
   wrappedNameManager: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: '0xnotowner',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-wrapped-subname'),
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname:unowned')
   },
   wrappedSubnameManagerHolderWrappedParentOwner: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: '0x000',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-wrapped-subname'),
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld:unowned')
   },
   wrappedSubnameManagerWrappedParentOwnerHolder: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: '0x000',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld')
   },
   wrappedSubnameManagerWrappedParentManagerHolder: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: '0x000',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-wrapped-subname'),
   },
   wrappedSubnameOwnerWrappedParentManager: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: '0x000',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-emancipated-subname'),
+    parentBasicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
   },
   wrappedSubnameOwnerHolderWrappedParentOwnerHolder: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-emancipated-subname'),
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld'),
   },
   wrappedSubnameOwnerHolderUnwrappedParentOwnerHolder: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registrar',
-        owner: ownerAddress,
-        registrant: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-emancipated-subname'),
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-2ld'),
   },
   wrappedSubnameWrappedParentManager: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: '0x000',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-wrapped-subname'),
   },
   wrappedSubnameWrappedParentOwner: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: '0x000',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld'),
   },
   unwrappedSubnameManagerWrappedParentOwner: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-unwrapped-subname'),
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld:unowned')
   },
   unwrappedSubnameManagerWrappedParentOwnerHolder: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-unwrapped-subname:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld')
   },
   unwrappedSubnameManagerWrappedParentManagerHolder: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'registry',
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-unwrapped-subname:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-wrapped-subname')
   },
   wrappedSubnameManagerUnwrappedParentOwnerHolder: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registrar',
-        owner: ownerAddress,
-        registrant: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname')
   },
   wrappedSubnameManagerUnwrappedParentManagerHolder: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: false,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'registrar',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          child: {},
-          parent: {},
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager')
   },
   wrappedSubnameOwnerWrappedParentOwnerHolder: {
-    basicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-      },
-      wrapperData: {
-        fuses: {
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-        },
-      },
-    },
-    parentBasicNameData: {
-      ownerData: {
-        ownershipLevel: 'nameWrapper',
-        owner: ownerAddress,
-      },
-      wrapperData: {
-        fuses: {
-          parent: {
-            PARENT_CANNOT_CONTROL: true,
-          },
-          child: {
-            CANNOT_TRANSFER: false,
-          },
-        },
-      },
-    },
+    basicNameData: makeMockUseBasicName('eth-emancipated-subname:unowned'),
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld')
   },
 } as PartialMockData
 
@@ -1538,5 +863,51 @@ describe('getSendAbilities', () => {
         })
       })
     })
+  })
+})
+
+const mockGetSendAbilitiesConfig = {
+  'eth-unwrapped-2ld:owner': {
+    name: 'name.eth',
+    basicNameType: 'eth-unwrapped-2ld:owner',
+    parentBasicNameType: 'eth',
+  },
+} as const
+type MockGetSendAbilitiesType = keyof typeof mockGetSendAbilitiesConfig
+const mockGetSendAbilitiesTypes = Object.keys(
+  mockGetSendAbilitiesConfig,
+) as MockGetSendAbilitiesType[]
+const makeMockGetSendAbilities = (type: MockGetSendAbilitiesType) => {
+  return match(type)
+    .with('eth-unwrapped-2ld:owner', () => ({
+      canSend: true,
+      canSendOwner: true,
+      canSendManager: true,
+      sendNameFunctionCallDetails: {
+        sendManager: {
+          contract: 'registrar',
+          method: 'reclaim'
+        },
+        sendOwner: {
+          contract: 'registrar',
+          method: 'safeTransferFrom'
+        }
+      }
+    }))
+    .exhaustive()
+}
+
+describe('mocks', () => {
+  it.each([mockGetSendAbilitiesTypes])('should return for %s', (type) => {
+    const config = mockGetSendAbilitiesConfig[type]
+    const { basicNameType, parentBasicNameType, name: name_ } = config
+    const result = getSendAbilities({
+      basicNameData: makeMockUseBasicName(basicNameType),
+      parentBasicNameData: makeMockUseBasicName(parentBasicNameType),
+      address: account,
+      name: name_,
+    })
+    const expected = makeMockUseAbilitiesData(type)
+    expect(expected).toMatchObject(result)
   })
 })

@@ -5,26 +5,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 import { emptyAddress } from '@app/utils/constants'
 
-import { useBasicName } from '../useBasicName'
+import { useIsWrapped } from '../useIsWrapped'
 import { useProfile } from '../useProfile'
 import { useRegistryResolver } from './useRegistryResolver'
 import { isWildcardCalc, useResolverType } from './useResolverType'
 
-vi.mock('@app/hooks/useBasicName')
+vi.mock('@app/hooks/useIsWrapped')
 vi.mock('@app/hooks/useProfile')
 vi.mock('@app/hooks/resolver/useRegistryResolver')
 
-const mockUseBasicName = mockFunction(useBasicName)
+const mockUseIsWrapped = mockFunction(useIsWrapped)
 const mockUseProfile = mockFunction(useProfile)
 const mockUseRegistryResolver = mockFunction(useRegistryResolver)
-
-const createBasicNameData = (
-  overwrite: ReturnType<PartialMockedFunction<typeof useBasicName>> = {},
-) => ({
-  isWrapped: true,
-  isLoading: false,
-  ...overwrite,
-})
 
 const createProfileData = (
   overwrite: ReturnType<PartialMockedFunction<typeof useProfile>> = {},
@@ -50,7 +42,7 @@ const createRegistryResolverData = <
 
 beforeEach(() => {
   vi.clearAllMocks()
-  mockUseBasicName.mockReturnValue(createBasicNameData())
+  mockUseIsWrapped.mockReturnValue({data: true, isLoading: false})
   mockUseProfile.mockReturnValue(createProfileData())
   mockUseRegistryResolver.mockReturnValue(createRegistryResolverData())
 })
@@ -63,7 +55,7 @@ describe('useResolverType', () => {
         data: { type: 'latest', isWildcard: false, tone: 'greenSecondary' },
       }),
     )
-    expect(mockUseBasicName).toHaveBeenCalled()
+    expect(mockUseIsWrapped).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(mockUseRegistryResolver).toHaveBeenCalled()
   })
@@ -76,7 +68,7 @@ describe('useResolverType', () => {
         isLoading: false,
       }),
     )
-    expect(mockUseBasicName).toHaveBeenCalledWith(
+    expect(mockUseIsWrapped).toHaveBeenCalledWith(
       expect.objectContaining({
         enabled: false,
       }),
@@ -101,7 +93,7 @@ describe('useResolverType', () => {
         isLoading: false,
       }),
     )
-    expect(mockUseBasicName).toHaveBeenCalledWith(
+    expect(mockUseIsWrapped).toHaveBeenCalledWith(
       expect.objectContaining({
         enabled: false,
       }),
@@ -119,7 +111,7 @@ describe('useResolverType', () => {
   })
 
   it('should return isLoading is true and data is undefined if useBasicName is loading', () => {
-    mockUseBasicName.mockReturnValueOnce(createBasicNameData({ isLoading: true }))
+    mockUseIsWrapped.mockReturnValueOnce({ data: true, isLoading: true })
     const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
     expect(result.current).toMatchObject(
       expect.objectContaining({
@@ -127,7 +119,7 @@ describe('useResolverType', () => {
         isLoading: true,
       }),
     )
-    expect(mockUseBasicName).toHaveBeenCalledWith(
+    expect(mockUseIsWrapped).toHaveBeenCalledWith(
       expect.objectContaining({
         enabled: true,
       }),
@@ -153,7 +145,7 @@ describe('useResolverType', () => {
         isLoading: true,
       }),
     )
-    expect(mockUseBasicName).toHaveBeenCalledWith(
+    expect(mockUseIsWrapped).toHaveBeenCalledWith(
       expect.objectContaining({
         enabled: true,
       }),
@@ -195,10 +187,8 @@ describe('useResolverType', () => {
         },
       }),
     )
-    mockUseBasicName.mockReturnValueOnce(
-      createBasicNameData({
-        isWrapped: false,
-      }),
+    mockUseIsWrapped.mockReturnValueOnce(
+     {data: false, isLoading: false}
     )
     const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
     expect(result.current).toMatchObject(

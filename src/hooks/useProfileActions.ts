@@ -77,14 +77,14 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
       owner: ownerData?.owner === address,
       registrant: ownerData?.registrant === address,
       resolvedAddress: profile?.address === address,
-      wrappedOwner: ownerData?.ownershipLevel === 'nameWrapper' && ownerData?.owner === address,
+      wrappedOwner: wrapperData?.owner === address,
     },
     expiryDate,
     fuses: wrapperData?.fuses || null,
     isMigrated: !!profile?.isMigrated,
   })
 
-  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+  const isWrapped = !!wrapperData
 
   const getPrimaryNameTransactionFlowItem = useGetPrimaryNameTransactionFlowItem({
     address,
