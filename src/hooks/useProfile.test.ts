@@ -81,6 +81,7 @@ beforeEach(() => {
     isLoading: false,
     isFetching: false,
     isCachedData: false,
+    isPlaceholderData: false,
   })
   mockUseDecodedName.mockReturnValue({
     data: undefined,

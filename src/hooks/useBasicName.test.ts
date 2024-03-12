@@ -7,6 +7,7 @@ import { createDateAndValue } from '@app/utils/utils'
 
 import { useContractAddress } from './chain/useContractAddress'
 import useCurrentBlockTimestamp from './chain/useCurrentBlockTimestamp'
+import { useAddressRecord } from './ensjs/public/useAddressRecord'
 import { useExpiry } from './ensjs/public/useExpiry'
 import { useOwner } from './ensjs/public/useOwner'
 import { usePrice } from './ensjs/public/usePrice'
@@ -25,6 +26,7 @@ vi.mock('./ensjs/public/useOwner')
 vi.mock('./ensjs/public/useExpiry')
 vi.mock('./ensjs/public/useWrapperData')
 vi.mock('./ensjs/public/usePrice')
+vi.mock('./ensjs/public/useAddressRecord')
 
 const mockUseValidate = mockFunction(useValidate)
 const mockUseContractAddress = mockFunction(useContractAddress)
@@ -36,6 +38,7 @@ const mockUseOwner = mockFunction(useOwner)
 const mockUseExpiry = mockFunction(useExpiry)
 const mockUseWrapperData = mockFunction(useWrapperData)
 const mockUsePrice = mockFunction(usePrice)
+const mockUseAddressRecord = mockFunction(useAddressRecord)
 
 describe('useBasicName', () => {
   beforeEach(() => {
@@ -45,6 +48,7 @@ describe('useBasicName', () => {
     mockUseExpiry.mockReturnValue({ data: undefined, isLoading: false })
     mockUseWrapperData.mockReturnValue({ data: undefined, isLoading: false })
     mockUsePrice.mockReturnValue({ data: undefined, isLoading: false })
+    mockUseAddressRecord.mockReturnValue({ data: undefined, isLoading: false })
     // @ts-ignore
     mockUseContractAddress.mockReturnValue('0x123')
   })
