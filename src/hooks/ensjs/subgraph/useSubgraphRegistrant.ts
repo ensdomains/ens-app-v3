@@ -8,6 +8,7 @@ import {
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 
 export type UseSubgraphRegistrantParameters = PartialBy<GetSubgraphRegistrantParameters, 'name'>
 
@@ -65,6 +66,6 @@ export const useSubgraphRegistrant = <TParams extends UseSubgraphRegistrantParam
 
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    isCachedData: getIsCachedData(query),
   }
 }
