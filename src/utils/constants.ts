@@ -24,3 +24,5 @@ export const IS_DEV_ENVIRONMENT =
   process.env.NEXT_PUBLIC_ENSJS_DEBUG ||
   process.env.NODE_ENV === 'development' ||
   process.env.NEXT_PUBLIC_PROVIDER
+
+export const INVALID_NAME = '[Invalid ENS Name]'
