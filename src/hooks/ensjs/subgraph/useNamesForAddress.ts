@@ -49,15 +49,20 @@ const initialPageParam = [] as GetNamesForAddressReturnType
 
 export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
   // params
   ...params
 }: TParams & UseNamesForAddressConfig) => {
+  const paramsWithLowercaseSearchString = {
+    ...params,
+    filter: { ...params.filter, searchString: params.filter?.searchString?.toLocaleLowerCase() },
+  }
+
   const initialOptions = useQueryOptions({
-    params,
+    params: paramsWithLowercaseSearchString,
     scopeKey,
     functionName: 'getNamesForAddress',
     queryDependencyType: 'graph',
@@ -67,17 +72,15 @@ export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>
   const preparedOptions = infiniteQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-    getNextPageParam: getNextPageParam(params),
+    getNextPageParam: getNextPageParam(paramsWithLowercaseSearchString),
     initialPageParam,
+    enabled: enabled && !!paramsWithLowercaseSearchString.address,
+    gcTime,
+    staleTime,
   })
 
   const { data, status, isFetched, isFetching, isLoading, isFetchedAfterMount, ...rest } =
-    useInfiniteQuery({
-      ...preparedOptions,
-      enabled: enabled && !!params.address,
-      gcTime,
-      staleTime,
-    })
+    useInfiniteQuery(preparedOptions)
 
   const [unfilteredPages, setUnfilteredPages] = useState<GetNamesForAddressReturnType>([])
 
@@ -87,18 +90,25 @@ export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>
   )
 
   useEffect(() => {
-    if (!params.filter?.searchString) {
+    if (!paramsWithLowercaseSearchString.filter?.searchString) {
       setUnfilteredPages(infiniteData)
     }
-  }, [params.filter?.searchString, infiniteData])
+  }, [paramsWithLowercaseSearchString.filter?.searchString, infiniteData])
 
   const infiniteDataWithFetchingFill = useMemo(
     () =>
-      params.filter?.searchString && isFetching
-        ? unfilteredPages.filter((x) => x.labelName?.includes(params.filter!.searchString!))
+      paramsWithLowercaseSearchString.filter?.searchString && isFetching
+        ? unfilteredPages.filter(
+            (x) => x.labelName?.includes(paramsWithLowercaseSearchString.filter!.searchString!),
+          )
         : infiniteData,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isFetching, unfilteredPages, params.filter?.searchString, infiniteData],
+    [
+      isFetching,
+      unfilteredPages,
+      paramsWithLowercaseSearchString.filter?.searchString,
+      infiniteData,
+    ],
   )
 
   const nameCount = infiniteDataWithFetchingFill.length || 0
@@ -112,7 +122,7 @@ export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>
     isFetched,
     isFetching,
     isFetchedAfterMount,
-    isLoading: !params.filter?.searchString
+    isLoading: !paramsWithLowercaseSearchString.filter?.searchString
       ? isLoading
       : !infiniteDataWithFetchingFill.length && isLoading,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,

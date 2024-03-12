@@ -7,9 +7,9 @@ import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/Avatar
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
-import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 const SkeletonFiller = styled.div(
   ({ theme }) => css`
@@ -144,7 +144,7 @@ export const PrimarySection = () => {
     normalised: true,
   })
 
-  const hasGlobalError = useHasGlobalError()
+  const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
 
   const isLoading = basicLoading || primary.isLoading
 
@@ -179,7 +179,7 @@ export const PrimarySection = () => {
               <AvatarWithLink name={primary.data?.name} label="primary name avatar" />
             </AvatarContainer>
             <ActionsContainer>
-              {hasGlobalError ? (
+              {hasGraphError ? (
                 <>
                   <DisabledButtonWithTooltip
                     buttonId="disabled-reset-primary-name-button"
@@ -188,6 +188,7 @@ export const PrimarySection = () => {
                     prefix={<CrossSVG />}
                     size="medium"
                     mobilePlacement="top"
+                    loading={hasGraphErrorLoading}
                   />
                   <DisabledButtonWithTooltip
                     buttonId="disabled-change-primary-name-button"
@@ -196,6 +197,7 @@ export const PrimarySection = () => {
                     prefix={<PersonPlusSVG />}
                     size="medium"
                     mobilePlacement="top"
+                    loading={hasGraphErrorLoading}
                   />
                 </>
               ) : (
@@ -204,6 +206,8 @@ export const PrimarySection = () => {
                     data-testid="reset-primary-name-button"
                     prefix={<CrossSVG />}
                     colorStyle="redSecondary"
+                    disabled={hasGraphErrorLoading}
+                    loading={hasGraphErrorLoading}
                     onClick={resetPrimary}
                   >
                     {t('action.remove', { ns: 'common' })}
@@ -211,6 +215,8 @@ export const PrimarySection = () => {
                   <Button
                     data-testid="change-primary-name-button"
                     prefix={<PersonPlusSVG />}
+                    disabled={hasGraphErrorLoading}
+                    loading={hasGraphErrorLoading}
                     onClick={changePrimary}
                   >
                     {t('action.change', { ns: 'common' })}
@@ -222,7 +228,7 @@ export const PrimarySection = () => {
         ) : (
           <NoNameContainer data-testid="no-primary-name-section">
             <NoNameTitle fontVariant="headingFour">{t('section.primary.title')}</NoNameTitle>
-            {hasGlobalError ? (
+            {hasGraphError ? (
               <NoNameDisabledButtonContainer>
                 <DisabledButtonWithTooltip
                   buttonId="disabled-set-primary-name-button"
@@ -231,6 +237,7 @@ export const PrimarySection = () => {
                   content={t('errors.networkError.blurb', { ns: 'common' })}
                   prefix={<PersonPlusSVG />}
                   mobilePlacement="top"
+                  loading={hasGraphErrorLoading}
                 />
               </NoNameDisabledButtonContainer>
             ) : (
@@ -239,6 +246,8 @@ export const PrimarySection = () => {
                   data-testid="set-primary-name-button"
                   size="small"
                   prefix={<PersonPlusSVG />}
+                  loading={hasGraphErrorLoading}
+                  disabled={hasGraphErrorLoading}
                   onClick={changePrimary}
                 >
                   {t('section.primary.choosePrimaryName')}

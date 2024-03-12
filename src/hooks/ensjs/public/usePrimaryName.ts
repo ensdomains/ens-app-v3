@@ -1,4 +1,4 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 
 import { getName, GetNameParameters, GetNameReturnType } from '@ensdomains/ensjs/public'
 
@@ -6,6 +6,8 @@ import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
 import { emptyAddress } from '@app/utils/constants'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 type UsePrimaryNameParameters = PartialBy<GetNameParameters, 'address'> & {
   allowMismatch?: boolean
@@ -42,11 +44,10 @@ export const getPrimaryNameQueryFn =
 
 export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
-
   // params
   allowMismatch = false,
   ...params
@@ -59,20 +60,19 @@ export const usePrimaryName = <TParams extends UsePrimaryNameParameters>({
     queryFn: getPrimaryNameQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     enabled: enabled && !!params.address && params.address !== emptyAddress,
     gcTime,
     staleTime,
   })
 
+  const query = useQuery(preparedOptions)
+
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

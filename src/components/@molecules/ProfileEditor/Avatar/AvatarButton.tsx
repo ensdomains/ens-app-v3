@@ -32,7 +32,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
       transition: all 0.3s ease-out;
     }
 
-    ${$validated &&
+    ${$dirty &&
     css`
       :after {
         background-color: ${theme.colors.blue};
@@ -41,7 +41,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
       }
     `}
 
-    ${$dirty &&
+    ${$validated &&
     css`
       :after {
         background-color: ${theme.colors.green};
@@ -157,7 +157,7 @@ const AvatarButton = ({
       shortThrow
       {...dropdownProps}
     >
-      <Container $validated={validated} $error={error} $dirty={dirty} type="button">
+      <Container $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
         <Avatar label="profile-button-avatar" src={src} noBorder />
         {!validated && !error && (
           <IconMask>

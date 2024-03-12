@@ -26,12 +26,6 @@ import i18n from '../i18n'
 
 import '../styles.css'
 
-// @ts-ignore: Unreachable code error
-// eslint-disable-next-line no-extend-native, func-names
-BigInt.prototype.toJSON = function () {
-  return this.toString()
-}
-
 const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 'eotmigir'
 
 const rainbowKitTheme: Theme = {

@@ -54,6 +54,7 @@ const ProfileSection = ({
   button,
   supported,
   type,
+  name = '',
 }: {
   condition: any
   label: string
@@ -61,6 +62,7 @@ const ProfileSection = ({
   button: any
   supported?: Array<string>
   type?: 'address' | 'text'
+  name?: string
 }) => {
   const { t } = useTranslation('profile')
   const ButtonComponent = button
@@ -76,12 +78,12 @@ const ProfileSection = ({
       <SectionTitle weight="bold">{t(label)}</SectionTitle>
       <Stack>
         {supportedArray.map((item: { key: string; value: string; type?: 'text' | 'address' }) => (
-          <ButtonComponent {...{ ...item, iconKey: item.key }} />
+          <ButtonComponent {...{ ...item, iconKey: item.key, name }} />
         ))}
         {unsupportedArray.length > 0 &&
           unsupportedArray.map(
             (item: { key: string; value: string; type?: 'text' | 'address' }) => (
-              <OtherProfileButton {...{ ...item, iconKey: item.key }} />
+              <OtherProfileButton {...{ ...item, iconKey: item.key, name }} />
             ),
           )}
       </Stack>
@@ -175,6 +177,7 @@ const getAction = (action: Action, is2LDEth: boolean) => {
         mobileWidth={150}
         mobilePlacement="top"
         placement={action.tooltipPlacement || 'right'}
+        loading={action.loading}
       />
     )
   }
@@ -184,6 +187,8 @@ const getAction = (action: Action, is2LDEth: boolean) => {
       onClick={action.onClick}
       size="small"
       colorStyle={action.red ? 'redSecondary' : 'accentPrimary'}
+      loading={action.loading}
+      disabled={action.loading}
     >
       {action.label}
     </Button>
@@ -357,6 +362,7 @@ export const ProfileDetails = ({
           condition={otherRecords && otherRecords.length > 0}
           array={otherRecords}
           button={OtherProfileButton}
+          name={name}
         />
         <ProfileSection
           label="ownership"
@@ -370,7 +376,11 @@ export const ProfileDetails = ({
           {!!actionWarnings &&
             actionWarnings.length > 0 &&
             actionWarnings.map((warning) => (
-              <Helper type="warning" alignment={breakpoint.sm ? 'horizontal' : 'vertical'}>
+              <Helper
+                type="warning"
+                key={warning}
+                alignment={breakpoint.sm ? 'horizontal' : 'vertical'}
+              >
                 {warning}
               </Helper>
             ))}

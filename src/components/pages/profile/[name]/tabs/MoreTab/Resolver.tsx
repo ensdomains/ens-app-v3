@@ -8,10 +8,10 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
-import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { emptyAddress } from '@app/utils/constants'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 import { TabWrapper } from '../../../TabWrapper'
 
@@ -95,7 +95,7 @@ const Resolver = ({
 
   const { md } = useBreakpoint()
 
-  const hasGlobalError = useHasGlobalError()
+  const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
 
   const { usePreparedDataInput } = useTransactionFlow()
   const showEditResolverInput = usePreparedDataInput('EditResolver')
@@ -132,7 +132,7 @@ const Resolver = ({
           data-testid="resolver-address"
           value={registryOrSubgraphResolverAddress || ''}
         />
-        {canEdit && !hasGlobalError && (
+        {canEdit && !hasGraphError && (
           <>
             {canEditResolver ? (
               <Button
@@ -142,6 +142,8 @@ const Resolver = ({
                 width={md ? 'max' : 'full'}
                 onClick={handleEditClick}
                 data-testid="edit-resolver-button"
+                loading={hasGraphErrorLoading}
+                disabled={hasGraphErrorLoading}
               >
                 {t('action.edit', { ns: 'common' })}
               </Button>
@@ -155,6 +157,7 @@ const Resolver = ({
                   buttonWidth: '15',
                   mobileButtonWidth: 'initial',
                   colorStyle: 'disabled',
+                  loading: hasGraphErrorLoading,
                 }}
               />
             )}

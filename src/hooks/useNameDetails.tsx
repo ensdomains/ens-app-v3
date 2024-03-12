@@ -23,6 +23,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     registrationStatus,
     expiryDate,
     gracePeriodEndDate,
+    refetchIfEnabled: refetchBasicName,
     ...basicName
   } = useBasicName({ name })
 
@@ -30,6 +31,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     data: profile,
     isLoading: isProfileLoading,
     isCachedData: isProfileCachedData,
+    refetchIfEnabled: refetchProfile,
   } = useProfile({
     name: normalisedName,
     enabled: !!normalisedName && normalisedName !== '[root]',
@@ -40,6 +42,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     data: dnsOwner,
     isLoading: isDnsOwnerLoading,
     isCachedData: isDnsOwnerCachedData,
+    refetchIfEnabled: refetchDnsOwner,
   } = useDnsOwner({ name: normalisedName, enabled: isValid })
   const error: string | ReactNode | null = useMemo(() => {
     if (isValid === false) {
@@ -93,7 +96,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
   }, [registrationStatus, name, t, profile, isProfileLoading, normalisedName])
 
   const isLoading = isProfileLoading || isBasicLoading || isDnsOwnerLoading
-  const isCachedData = isBasicCachedData && isProfileCachedData && isDnsOwnerCachedData
+  const isCachedData = isBasicCachedData || isProfileCachedData || isDnsOwnerCachedData
 
   return {
     error,
@@ -107,6 +110,11 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     registrationStatus,
     gracePeriodEndDate,
     expiryDate,
+    refetchIfEnabled: () => {
+      refetchBasicName()
+      refetchProfile()
+      refetchDnsOwner()
+    },
     ...basicName,
   }
 }

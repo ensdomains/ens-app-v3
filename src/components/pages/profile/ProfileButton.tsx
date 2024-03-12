@@ -105,10 +105,12 @@ export const OtherProfileButton = ({
   iconKey,
   value,
   type = 'text',
+  name,
 }: {
   iconKey: string
   value: string
   type?: 'text' | 'address' | 'contenthash'
+  name: string
 }) => {
   const chainId = useChainId()
   const breakpoints = useBreakpoint()
@@ -130,7 +132,7 @@ export const OtherProfileButton = ({
     if (type === 'contenthash') {
       const decodedContentHash = getProtocolType(value)
       if (!decodedContentHash) return {}
-      const _link = getContentHashLink({ name: '', chainId, decodedContentHash })
+      const _link = getContentHashLink({ name, chainId, decodedContentHash })
       if (!_link) return {}
       return {
         as: 'a',
@@ -141,7 +143,7 @@ export const OtherProfileButton = ({
       as: 'a',
       link: value,
     } as const
-  }, [value, type, isLink, chainId])
+  }, [isLink, type, value, name, chainId])
 
   return (
     <RecordItem

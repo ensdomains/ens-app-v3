@@ -7,14 +7,16 @@ import { useAccount } from 'wagmi'
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
+import { Outlink } from '@app/components/Outlink'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content, ContentWarning } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
-import { formatFullExpiry, getEncodedLabelAmount } from '@app/utils/utils'
+import { formatFullExpiry, getEncodedLabelAmount, makeEtherscanLink } from '@app/utils/utils'
 
 import MoreTab from './tabs/MoreTab/MoreTab'
 import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
@@ -99,7 +101,7 @@ export const NameAvailableBanner = ({
   )
 }
 
-const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
+const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const { address } = useAccount()
@@ -119,9 +121,10 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     isLoading: detailsLoading,
     wrapperData,
     registrationStatus,
+    refetchIfEnabled,
   } = nameDetails
 
-  const isLoading = _isLoading || detailsLoading
+  const isLoading = parentIsLoading || detailsLoading
 
   useProtectedRoute(
     '/',
@@ -159,7 +162,11 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     ]
   }, [isSelf, beautifiedName, isValid, name, t])
 
-  const [tab, setTab] = useQueryParameterState<Tab>('tab', 'profile')
+  const [tab, setTab_] = useQueryParameterState<Tab>('tab', 'profile')
+  const setTab: typeof setTab_ = (value) => {
+    refetchIfEnabled()
+    setTab_(value)
+  }
   const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
 
   const abilities = useAbilities({ name: normalisedName })
@@ -228,6 +235,8 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
 
   const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
 
+  const chainName = useChainName()
+
   return (
     <>
       <Head>
@@ -240,7 +249,12 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
         <meta property="twitter:title" content={titleContent} />
         <meta property="twitter:description" content={descriptionContent} />
       </Head>
-      <Content noTitle title={beautifiedName} loading={isLoading} copyValue={beautifiedName}>
+      <Content
+        noTitle
+        title={beautifiedName}
+        loading={!isCachedData && isLoading}
+        copyValue={beautifiedName}
+      >
         {{
           info: infoBanner,
           warning,
@@ -260,6 +274,14 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
               ))}
             </TabButtonContainer>
           ),
+          titleExtra: profile?.address ? (
+            <Outlink
+              fontVariant="bodyBold"
+              href={makeEtherscanLink(profile.address!, chainName, 'address')}
+            >
+              {t('etherscan', { ns: 'common' })}
+            </Outlink>
+          ) : null,
           trailing: {
             profile: <ProfileTab name={normalisedName} nameDetails={nameDetails} />,
             records: (

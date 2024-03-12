@@ -33,10 +33,10 @@ export const getContentHashLink = ({
   }
 
   if (protocol === 'ipfs') {
-    return `https://cloudflare-ipfs.com/ipfs/${hash}` // using ipfs's secured origin gateway
+    return `https://${hash}.ipfs.cf-ipfs.com` // using ipfs's secured origin gateway
   }
   if (protocol === 'ipns') {
-    return `https://cloudflare-ipfs.com/ipns/${hash}`
+    return `https://ipfs.euc.li/ipns/${hash}`
   }
   if (protocol === 'bzz') {
     return `https://gateway.ethswarm.org/bzz/${hash}`

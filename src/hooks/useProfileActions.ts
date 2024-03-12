@@ -9,6 +9,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { checkAvailablePrimaryName } from '@app/utils/checkAvailablePrimaryName'
 import { nameParts } from '@app/utils/name'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 import { useAbilities } from './abilities/useAbilities'
 import { useAccountSafely } from './account/useAccountSafely'
@@ -16,7 +17,6 @@ import { useExpiry } from './ensjs/public/useExpiry'
 import { useOwner } from './ensjs/public/useOwner'
 import { usePrimaryName } from './ensjs/public/usePrimaryName'
 import { useWrapperData } from './ensjs/public/useWrapperData'
-import { useHasGlobalError } from './errors/useHasGlobalError'
 import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from './resolver/useResolverStatus'
 import { useProfile } from './useProfile'
@@ -31,6 +31,7 @@ type Action = {
   skip2LDEth?: boolean
   warning?: string
   fullMobileWidth?: boolean
+  loading?: boolean
 }
 
 type Props = {
@@ -93,7 +94,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     resolverStatus,
   })
 
-  const hasGlobalError = useHasGlobalError()
+  const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
 
   const showUnknownLabelsInput = usePreparedDataInput('UnknownLabels')
   const showProfileEditorInput = usePreparedDataInput('ProfileEditor')
@@ -123,10 +124,11 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
       const key = `setPrimaryName-${name}-${address}`
       actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),
-        tooltipContent: hasGlobalError
+        tooltipContent: hasGraphError
           ? t('errors.networkError.blurb', { ns: 'common' })
           : undefined,
         tooltipPlacement: 'left',
+        loading: hasGraphErrorLoading,
         onClick: !checkIsDecrypted(name)
           ? () =>
               showUnknownLabelsInput(key, {
@@ -141,10 +143,11 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     if (abilities.canEdit && (abilities.canEditRecords || abilities.canEditResolver)) {
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
-        tooltipContent: hasGlobalError
+        tooltipContent: hasGraphError
           ? t('errors.networkError.blurb', { ns: 'common' })
           : undefined,
         tooltipPlacement: 'left',
+        loading: hasGraphErrorLoading,
         onClick: () =>
           showProfileEditorInput(
             `edit-profile-${name}`,
@@ -157,11 +160,12 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     if (abilities.canDelete && abilities.canDeleteContract) {
       const base = {
         label: t('tabs.profile.actions.deleteSubname.label'),
-        tooltipContent: hasGlobalError
+        tooltipContent: hasGraphError
           ? t('errors.networkError.blurb', { ns: 'common' })
           : undefined,
         red: true,
         skip2LDEth: true,
+        loading: hasGraphErrorLoading,
       }
       if (abilities.canDeleteRequiresWrap) {
         const transactions: GenericTransaction[] = [
@@ -232,6 +236,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         onClick: () => {},
         disabled: true,
         red: true,
+        loading: hasGraphErrorLoading,
         skip2LDEth: true,
         tooltipContent: abilities.canDeleteError,
       })
@@ -243,6 +248,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         label: t('tabs.profile.actions.reclaim.label'),
         warning: t('tabs.profile.actions.reclaim.warning'),
         fullMobileWidth: true,
+        loading: hasGraphErrorLoading,
         onClick: () => {
           createTransactionFlow(`reclaim-${name}`, {
             transactions: [
@@ -277,7 +283,8 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     abilities.isParentOwner,
     abilities.canDeleteMethod,
     t,
-    hasGlobalError,
+    hasGraphError,
+    hasGraphErrorLoading,
     showUnknownLabelsInput,
     createTransactionFlow,
     showProfileEditorInput,

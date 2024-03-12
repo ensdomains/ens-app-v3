@@ -7,6 +7,7 @@ import { getBlock } from 'viem/actions'
 
 import { SupportedChain } from '@app/constants/chains'
 import { ConfigWithEns, MinedData } from '@app/types'
+import { parse, stringify } from '@app/utils/query/persist'
 
 import { waitForTransaction } from './waitForTransaction'
 
@@ -96,7 +97,7 @@ type Data = Record<string, Record<number, Transaction[] | undefined>>
 
 function safeParseJsonData(string: string | null): Data {
   try {
-    const value = string ? JSON.parse(string) : {}
+    const value = string ? parse<Data>(string) : {}
     return typeof value === 'object' ? value : {}
   } catch (err) {
     return {}
@@ -239,7 +240,7 @@ export const foundMinedTransaction =
               ...transaction,
               minedData: etherscanDataToMinedData(minedData),
               searchStatus: 'found',
-              status: 'confirmed',
+              status: parseInt(minedData.isError) === 1 ? 'failed' : 'confirmed',
             } as Transaction)
           : transaction,
       )
@@ -481,7 +482,7 @@ export function createTransactionStore(config_: ConfigWithEns) {
   }
 
   function persistData(): void {
-    localStorage.setItem(storageKey, JSON.stringify(data))
+    localStorage.setItem(storageKey, stringify(data))
   }
 
   function notifyListeners(): void {

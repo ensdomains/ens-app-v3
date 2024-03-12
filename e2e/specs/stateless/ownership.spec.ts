@@ -1149,6 +1149,10 @@ test.describe('Extend name', () => {
 
     await ownershipPage.extendButton.click()
 
+    await test.step('should show ownership warning', async () => {
+      await expect(page.getByText('You do not own this name')).toBeVisible()
+      await page.getByRole('button', { name: 'I understand' }).click()
+    })
     await test.step('should show the correct price data', async () => {
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
       await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
@@ -1183,9 +1187,6 @@ test.describe('Extend name', () => {
 
     await test.step('should extend', async () => {
       await extendNamesModal.getExtendButton.click()
-      await expect(
-        page.getByText('Extending this name will not give you ownership of it'),
-      ).toBeVisible()
       await transactionModal.autoComplete()
       const newTimestamp = await ownershipPage.getExpiryTimestamp()
       expect(newTimestamp).toEqual(timestamp + 31536000000)

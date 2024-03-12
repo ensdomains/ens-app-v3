@@ -2,18 +2,20 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'reac
 import { useEvent } from 'react-use'
 import { Reducer, useImmerReducer } from 'use-immer'
 
+import { parse, stringify } from '@app/utils/query/persist'
+
 const isBrowser = !!(
   typeof window !== 'undefined' &&
   window.document &&
   window.document.createElement
 )
 
-const getStorageValue = <D>(key: string, defaultValue: D): D => {
+export const getStorageValue = <D>(key: string, defaultValue: D): D => {
   // getting stored value
   const saved = isBrowser && localStorage.getItem(key)
 
   try {
-    return saved && saved !== 'undefined' ? JSON.parse(saved) : defaultValue
+    return saved && saved !== 'undefined' ? parse(saved) : defaultValue
   } catch (e) {
     console.error('parse error ', e)
     return defaultValue
@@ -30,15 +32,15 @@ export const useLocalStorage = <D>(
 
   useEffect(() => {
     if (value !== defaultValue) {
-      localStorage.setItem(key, JSON.stringify(value))
+      localStorage.setItem(key, stringify(value))
     }
-    window.dispatchEvent(new StorageEvent('storage', { key, newValue: JSON.stringify(value) }))
+    window.dispatchEvent(new StorageEvent('storage', { key, newValue: stringify(value) }))
   }, [key, value, defaultValue])
 
   const handleStorageChange = useCallback(
     (event: StorageEvent) => {
-      if (event.key === key && event.newValue && JSON.stringify(value) !== event.newValue) {
-        setValue(JSON.parse(event.newValue!))
+      if (event.key === key && event.newValue && stringify(value) !== event.newValue) {
+        setValue(parse(event.newValue!))
       }
     },
     [key, value],
@@ -92,7 +94,7 @@ export const useLocalStorageReducer = <S = any, A = any>(
 
   useEffect(() => {
     if (state !== initialState) {
-      localStorage.setItem(key, JSON.stringify(state))
+      localStorage.setItem(key, stringify(state))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, state])

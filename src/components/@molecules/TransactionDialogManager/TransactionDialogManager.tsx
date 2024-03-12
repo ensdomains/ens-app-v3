@@ -1,4 +1,4 @@
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { Dispatch, useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import usePrevious from 'react-use/lib/usePrevious'
@@ -7,12 +7,10 @@ import { useAccount, useChainId } from 'wagmi'
 import { Dialog } from '@ensdomains/thorin'
 
 import { transactions } from '@app/transaction-flow/transaction'
-import { createPersistConfig } from '@app/utils/query/persist'
 import { queryClientWithRefetch } from '@app/utils/query/reactQuery'
 
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
-import InputComponentWrapper from './InputComponentWrapper'
 import { IntroStageModal } from './stage/Intro'
 import { TransactionStageModal } from './stage/TransactionStageModal'
 
@@ -66,21 +64,16 @@ export const TransactionDialogManager = ({
       if (selectedItem.input && selectedItem.currentFlowStage === 'input') {
         const Component = DataInputComponents[selectedItem.input.name]
         return (
-          <PersistQueryClientProvider
-            client={queryClientWithRefetch}
-            persistOptions={createPersistConfig({ queryClient: queryClientWithRefetch })}
-          >
-            <InputComponentWrapper>
-              <Component
-                {...{
-                  data: selectedItem.input.data,
-                  transactions: selectedItem.transactions,
-                  dispatch,
-                  onDismiss,
-                }}
-              />
-            </InputComponentWrapper>
-          </PersistQueryClientProvider>
+          <QueryClientProvider client={queryClientWithRefetch}>
+            <Component
+              {...{
+                data: selectedItem.input.data,
+                transactions: selectedItem.transactions,
+                dispatch,
+                onDismiss,
+              }}
+            />
+          </QueryClientProvider>
         )
       }
       if (selectedItem.intro && selectedItem.currentFlowStage === 'intro') {

@@ -6,6 +6,7 @@ import {
   injectedWallet,
   ledgerWallet,
   metaMaskWallet,
+  phantomWallet,
   rainbowWallet,
   safeWallet,
   walletConnectWallet,
@@ -26,6 +27,12 @@ export const getDefaultWallets = ({
         injectedWallet,
         safeWallet,
         braveWallet,
+        () => ({
+          ...phantomWallet(),
+          iconUrl: async () => (await import('../assets/PhantomWallet')).default,
+          iconBackground: '#9A8AEE',
+          downloadUrls: {},
+        }),
         // always shown
         walletConnectWallet,
         rainbowWallet,
