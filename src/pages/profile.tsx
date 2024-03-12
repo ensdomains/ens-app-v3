@@ -6,7 +6,7 @@ import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { checkDNSName } from '@app/utils/utils'
+import { checkDNS2LDFromName } from '@app/utils/utils'
 
 export default function Page() {
   const router = useRouterWithHistory()
@@ -24,9 +24,22 @@ export default function Page() {
 
   // Skip graph for for initial load and router redirect
   const nameDetails = useNameDetails({ name })
-  const { isLoading: detailsLoading, registrationStatus, gracePeriodEndDate } = nameDetails
+  const {
+    isBasicLoading,
+    isProfileLoading,
+    isDnsOwnerLoading,
+    registrationStatus,
+    gracePeriodEndDate,
+  } = nameDetails
 
-  const isLoading = detailsLoading || primary.isLoading || initial || !router.isReady
+  const isLoading =
+    isBasicLoading || isProfileLoading || primary.isLoading || initial || !router.isReady
+
+  const isDns = checkDNS2LDFromName(name)
+  if (isDns && registrationStatus === 'notImported' && !isBasicLoading && !isDnsOwnerLoading) {
+    router.push(`/import/${name}`)
+    return null
+  }
 
   if (isViewingExpired && gracePeriodEndDate && gracePeriodEndDate > new Date()) {
     router.push(`/profile/${name}`)
@@ -36,15 +49,9 @@ export default function Page() {
   if (
     (registrationStatus === 'available' || registrationStatus === 'premium') &&
     !isViewingExpired &&
-    !detailsLoading
+    !isBasicLoading
   ) {
     router.push(`/register/${name}`)
-    return null
-  }
-
-  const isDNS = checkDNSName(name)
-  if (isDNS && registrationStatus === 'notImported') {
-    router.push(`/import/${name}`)
     return null
   }
 

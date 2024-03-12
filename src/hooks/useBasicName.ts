@@ -71,7 +71,7 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
     refetchIfEnabled: refetchAddr,
   } = useAddressRecord({
     name: normalisedName,
-    enabled: commonEnabled && !isRoot && !isETH,
+    enabled: commonEnabled && !isRoot,
   })
 
   const publicCallsLoading =
