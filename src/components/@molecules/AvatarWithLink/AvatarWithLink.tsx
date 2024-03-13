@@ -60,7 +60,7 @@ type Props = {
 }
 
 export const AvatarWithLink = ({ name, label }: Props) => {
-  const { data: avatar } = useEnsAvatar(ensAvatarConfig)
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name || '', 'name')
   const profileURL = getDestination(`/profile/${name}`) as string
   return (
