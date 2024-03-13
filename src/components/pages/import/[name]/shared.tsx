@@ -42,10 +42,15 @@ export const DnsImportHeading = forwardRef<HTMLDivElement, ComponentProps<typeof
 export const DnsImportActionsContainer = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: stretch;
+    width: 100%;
     gap: ${theme.space['2']};
+    ${mq.sm.min(css`
+      flex-direction: row;
+      align-items: center;
+    `)}
   `,
 )
 
@@ -83,8 +88,13 @@ const ButtonInner = styled.div(
     justify-content: space-between;
     width: 100%;
     align-items: center;
-    height: auto;
+
     padding: ${theme.space['4']};
+    white-space: normal;
+    overflow: hidden;
+    & > div {
+      max-width: 100%;
+    }
   `,
 )
 
@@ -116,6 +126,7 @@ const ButtonWithContent = styled(Button)(
 export const ValueText = styled(Typography)(
   () => css`
     text-align: right;
+    word-break: break-all;
   `,
 )
 
