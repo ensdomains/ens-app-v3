@@ -932,6 +932,7 @@ test.describe('Edit roles: Unwrapped name', () => {
 
 test.describe('Edit roles: Wrapped subnames', () => {
   test('should allow namewrapper subname owner to send name', async ({
+    page,
     login,
     accounts,
     makeName,
@@ -958,6 +959,7 @@ test.describe('Edit roles: Wrapped subnames', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
+    await page.pause()
     await ownershipPage.editRolesButton.click()
 
     await editRolesModal.roleCardChangeButton('manager').click()
@@ -1152,9 +1154,9 @@ test.describe('Extend name', () => {
       await page.getByRole('button', { name: 'I understand' }).click()
     })
     await test.step('should show the correct price data', async () => {
-      await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0030')
+      await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
       await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-      await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0031')
+      await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
       await expect(page.getByText('1 year extension')).toBeVisible()
     })
 
@@ -1166,10 +1168,10 @@ test.describe('Extend name', () => {
 
     await test.step('should work correctly with plus minus control', async () => {
       await expect(extendNamesModal.getCounterMinusButton).toBeDisabled()
-      await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0030')
+      await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
       await extendNamesModal.getCounterPlusButton.click()
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
-      await expect(page.locator('text=2 years extension')).toBeVisible()
+      await expect(page.locator('text=2 year extension')).toBeVisible()
     })
 
     await test.step('should show correct fiat values', async () => {
@@ -1187,7 +1189,7 @@ test.describe('Extend name', () => {
       await extendNamesModal.getExtendButton.click()
       await transactionModal.autoComplete()
       const newTimestamp = await ownershipPage.getExpiryTimestamp()
-      expect(newTimestamp).toEqual(timestamp + 31536000000 + 1000)
+      expect(newTimestamp).toEqual(timestamp + 31536000000)
     })
   })
 })

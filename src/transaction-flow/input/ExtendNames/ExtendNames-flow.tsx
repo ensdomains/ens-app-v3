@@ -249,7 +249,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   )
 
   const minDate = add28Days(expiry)
-  const duration = getDurationFromDate(date, minDate)
+  const duration = getDurationFromDate(date, minDate) + 28 * 24 * 60 * 60
   const years = secondsToYears(duration)
 
   const { userConfig, setCurrency } = useUserConfig()

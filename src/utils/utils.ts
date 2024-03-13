@@ -63,21 +63,19 @@ export const formatFullExpiry = (expiryDate?: Date) =>
 
 export const formatExtensionPeriod = (newExpiryDate: Date, oldExpiryDate = new Date()) => {
   const diffInYears = newExpiryDate.getFullYear() - oldExpiryDate.getFullYear()
-  if (diffInYears > 1) {
-    return `${diffInYears} years`
+  if (diffInYears >= 1) {
+    return `${diffInYears} year`
   }
-  if (diffInYears === 1) return '1 year'
 
   const diffInMonths = newExpiryDate.getMonth() - oldExpiryDate.getMonth()
 
-  if (diffInMonths > 1) {
-    return `${diffInMonths} months`
+  if (diffInMonths >= 1) {
+    return `${diffInMonths} month`
   }
-  if (diffInMonths === 1) return '1 month'
 
   const diffInDays = newExpiryDate.getDate() - oldExpiryDate.getDate()
 
-  return `${diffInDays} days`
+  return `${diffInDays} day`
 }
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>

@@ -53,7 +53,7 @@
   },
   "unit": {
     "years_one": "{{count}} year",
-    "years_other": "{{count}} years",
+    "years_other": "{{count}} year",
     "yrs_one": "{{count}} yr",
     "yrs_other": "{{count}} yrs",
     "gas": "{{value}} gas",
