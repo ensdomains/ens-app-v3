@@ -27,6 +27,8 @@ export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365
 
 export const add28Days = (date: Date) => new Date(date.getTime() + 28 * 24 * 60 * 60 * 1000)
 
+export const addOneYear = (date: Date) => new Date(date.getTime() + yearsToSeconds(1) * 1000)
+
 export const getDurationFromDate = (date: Date, now: Date) => {
   // @ts-ignore typescript doesn't support date operators
   return Math.floor((date - now) / 1000)

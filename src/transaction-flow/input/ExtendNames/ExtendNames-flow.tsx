@@ -33,11 +33,11 @@ import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import useUserConfig from '@app/utils/useUserConfig'
 import {
   add28Days,
+  addOneYear,
   formatExtensionPeriod,
   getDurationFromDate,
   secondsToYears,
   setYearsForDate,
-  yearsToSeconds,
 } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
@@ -214,6 +214,7 @@ export type Props = {
 } & TransactionDialogPassthrough
 
 const now = new Date()
+const defaultOneYear = addOneYear(now)
 
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
@@ -240,11 +241,13 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const decrementView = () => (viewIdx <= 0 ? onDismiss() : setViewIdx(viewIdx - 1))
   const view = flow[viewIdx]
 
-  const [date, setDate] = useState(() => new Date(now.getTime() + yearsToSeconds(1) * 1000))
-
   const { data } = useExpiry({ name: names.length === 1 ? names[0] : undefined })
-
   const expiry = data ? data.expiry.date : now
+
+  const [date, setDate] = useState(() =>
+    addOneYear(expiry) > defaultOneYear ? addOneYear(expiry) : defaultOneYear,
+  )
+
   const minDate = add28Days(expiry)
   const duration = getDurationFromDate(date, minDate)
   const years = secondsToYears(duration)
