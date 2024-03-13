@@ -105,6 +105,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
     pageSize: 20,
     filter: {
       searchString: searchQuery,
+      resolvedAddress: false,
     },
   })
 
