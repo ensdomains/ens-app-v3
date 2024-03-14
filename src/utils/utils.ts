@@ -15,23 +15,27 @@ export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, righ
   return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`
 }
 
+const ONE_YEAR = 60 * 60 * 24 * 365
+
 export const secondsToDays = (seconds: number) => Math.floor(seconds / (60 * 60 * 24))
 
 export const secondsToHours = (seconds: number) => Math.floor(seconds / (60 * 60))
 
 export const daysToSeconds = (days: number) => days * 60 * 60 * 24
 
-export const yearsToSeconds = (years: number) => years * 60 * 60 * 24 * 365
+export const yearsToSeconds = (years: number) => years * ONE_YEAR
 
-export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365)
+export const secondsToYears = (seconds: number) => seconds / ONE_YEAR
 
 export const add28Days = (date: Date) => new Date(date.getTime() + 28 * 24 * 60 * 60 * 1000)
 
 export const addOneYear = (date: Date) => new Date(date.getTime() + yearsToSeconds(1) * 1000)
 
-export const getDurationFromDate = (date: Date, now: Date) => {
+export const getSecondsFromDate = (date: Date, now: Date) => {
   // @ts-ignore typescript doesn't support date operators
-  return Math.floor((date - now) / 1000)
+  const value = Math.floor((date - now) / 1000)
+  const extraSeconds = value % ONE_YEAR
+  return value - extraSeconds
 }
 
 export function setYearsForDate(date: Date, years: number, minDate: Date): Date {

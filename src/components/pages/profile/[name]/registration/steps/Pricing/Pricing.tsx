@@ -30,7 +30,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { getDurationFromDate, yearsToSeconds } from '@app/utils/utils'
+import { add28Days, getSecondsFromDate, yearsToSeconds } from '@app/utils/utils'
 
 import FullInvoice from '../../FullInvoice'
 import {
@@ -495,8 +495,10 @@ const Pricing = ({
   const [date, setDate] = useState(
     () => new Date(now.getTime() + yearsToSeconds(1) * 1000 + (registrationData.seconds ?? 0)),
   )
+  const minDate = add28Days(now)
+  const seconds = getSecondsFromDate(date, now)
 
-  const seconds = getDurationFromDate(date, now)
+  console.log({ seconds })
 
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,
@@ -539,6 +541,9 @@ const Pricing = ({
       resolverAddress,
     },
   })
+
+  console.log(fullEstimate)
+
   const { hasPremium, premiumFee, gasPrice, totalYearlyFee, estimatedGasFee } = fullEstimate
 
   const yearlyRequiredBalance = totalYearlyFee ? (totalYearlyFee * 110n) / 100n : 0n
@@ -549,19 +554,21 @@ const Pricing = ({
   const previousRentFee = usePreviousDistinct(yearlyRequiredBalance) || 0n
 
   const unsafeDisplayRentFee =
-    yearlyRequiredBalance !== 0n ? yearlyRequiredBalance : previousRentFee
+    yearlyRequiredBalance === 0n ? previousRentFee : yearlyRequiredBalance
 
   const showPaymentChoice = !isPrimaryLoading && address
 
   const previousEstimatedGasFee = usePreviousDistinct(estimatedGasFee) || 0n
 
   const unsafeDisplayEstimatedGasFee =
-    estimatedGasFee !== 0n ? estimatedGasFee : previousEstimatedGasFee
+    estimatedGasFee === 0n ? previousEstimatedGasFee : estimatedGasFee
+
+  console.log(estimatedGasFee, yearlyRequiredBalance)
 
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
-      <YearSelection {...{ date, setDate }} />
+      <YearSelection {...{ date, setDate }} minDate={minDate} />
       <FullInvoice {...fullEstimate} />
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={name} />

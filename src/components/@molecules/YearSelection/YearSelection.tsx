@@ -5,9 +5,7 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { add28Days, formatExtensionPeriod, setYearsForDate } from '@app/utils/utils'
-
-// import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
+import { formatExtensionPeriod, setYearsForDate } from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
   ({ theme }) => css`
@@ -28,25 +26,23 @@ const Container = styled.div(
   `,
 )
 
-const now = new Date()
-
 export const YearSelection = ({
   date,
   setDate,
   name,
-  minDate = add28Days(now),
+  minDate,
   since,
 }: {
   date: Date
   setDate: (date: Date) => void
   name?: string
-  minDate?: Date
+  minDate: Date
   since?: Date
 }) => {
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
   const yearPickSelection = yearPickView === 'date' ? 'years' : 'date'
 
-  const extensionPeriod = formatExtensionPeriod(date, since ?? now)
+  const extensionPeriod = formatExtensionPeriod(date, since ?? minDate)
 
   useEffect(() => {
     if (minDate > date) setDate(minDate)
@@ -88,7 +84,7 @@ export const YearSelection = ({
       <Typography color="greyPrimary" fontVariant="smallBold">
         {extensionPeriod === 'Invalid date'
           ? extensionPeriod
-          : `${since ? 'Extending' : 'Registering'} for ${extensionPeriod}`}
+          : `${extensionPeriod} ${since ? 'extension' : 'registration'}`}
         .{' '}
         <YearsViewSwitch type="button" onClick={() => setYearPickView(yearPickSelection)}>
           Pick by {yearPickSelection}

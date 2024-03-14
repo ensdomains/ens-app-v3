@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 import { PaymentMethod } from '../../types'
 import { ActionButton, ActionButtonProps } from './Pricing'
+import { yearsToSeconds } from '@app/utils/utils'
 
 describe('ActionButton', () => {
   const baseMockData: ActionButtonProps = {
@@ -16,7 +17,7 @@ describe('ActionButton', () => {
     initiateMoonpayRegistrationMutation: {
       mutate: () => null,
     } as any,
-    years: 1,
+    seconds: yearsToSeconds(1),
     balance: { value: 100n } as any,
     totalRequiredBalance: 1n,
   }
