@@ -23,6 +23,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Get contract addresses
+        run: 'parallel --lb --halt now,success=1,fail=1 ::: \
+          "pnpm tenv start -ng -ns -nb" \
+          "pnpm wait-on ./.env.local"'
+
       - run: pnpm test:coverage
 
   build-stateless:
@@ -95,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
     steps:
       - uses: actions/checkout@v3
 

@@ -12,6 +12,7 @@
             "searchPlaceholder": "Search for an NFT",
             "loading": "Loading your NFTs",
             "unknown": "Unknown NFT",
+            "loadError": "NFT cannot be loaded",
             "noNFTs": "No NFTs found for this address.",
             "selected": {
               "title": "Selected NFT",
@@ -383,7 +384,7 @@
           "learnMore": "Learn about sending names"
         }
       }
-    }, 
+    },
     "syncManager": {
       "title": "Sync manager",
       "description": "Syncing the manager will make you the new manager of this name. The current manager <strong>({{manager}})</strong> will no longer be able to make changes.",

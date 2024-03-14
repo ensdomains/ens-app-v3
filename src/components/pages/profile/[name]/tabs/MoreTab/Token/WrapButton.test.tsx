@@ -12,6 +12,9 @@ vi.mock('wagmi')
 
 vi.mock('@app/transaction-flow/TransactionFlowProvider')
 vi.mock('@app/hooks/useWrapperApprovedForAll')
+vi.mock('@app/utils/SyncProvider/SyncProvider', () => ({
+  useHasGraphError: () => ({ data: false, isLoading: false})
+}))
 
 const createMockResolverStatus = (overides = {}) => ({
   data: {

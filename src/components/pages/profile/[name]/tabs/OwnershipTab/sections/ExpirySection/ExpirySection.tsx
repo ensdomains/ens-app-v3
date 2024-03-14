@@ -116,8 +116,14 @@ type Props = {
 
 export const ExpirySection = ({ name, details }: Props) => {
   const { t } = useTranslation('profile')
+
   const expiry = useExpiryDetails({ name, details })
-  const actions = useExpiryActions({ name, expiryDetails: expiry.data })
+  const actions = useExpiryActions({
+    name,
+    expiryDetails: expiry.data,
+    ownerData: details.ownerData,
+    wrapperData: details.wrapperData,
+  })
 
   const [showEarnifiDialog, setShowEarnifiDialog] = useState(false)
 
@@ -155,7 +161,7 @@ export const ExpirySection = ({ name, details }: Props) => {
                           items={[
                             {
                               value: 'earnifi',
-                              label: t('tabs.more.misc.reminderOptions.earnifi', { ns: 'profile' }),
+                              label: t('tabs.more.misc.reminderOptions.bankless'),
                               onClick: () => {
                                 setShowEarnifiDialog(true)
                               },

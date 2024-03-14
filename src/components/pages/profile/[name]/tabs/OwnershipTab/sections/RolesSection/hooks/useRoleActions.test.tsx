@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { useRoleActions } from './useRoleActions'
 
 const mockUseNameType = vi.fn()
-vi.mock('@app/hooks/useNameType', () => ({
+vi.mock('@app/hooks/nameType/useNameType', () => ({
   useNameType: () => ({ ...mockUseNameType(), isLoading: false }),
 }))
 
