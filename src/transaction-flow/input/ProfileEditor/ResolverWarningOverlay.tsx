@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Address } from 'viem'
 
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { makeIntroItem } from '@app/transaction-flow/intro'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { InvalidResolverView } from './views/InvalidResolverView'
@@ -27,8 +28,8 @@ type Props = {
   hasOldRegistry?: boolean
   hasMigratedProfile?: boolean
   hasNoResolver?: boolean
-  latestResolver: string
-  oldResolver: string
+  latestResolverAddress: Address
+  oldResolverAddress: Address
   status: ReturnType<typeof useResolverStatus>['data']
   onDismissOverlay: () => void
 } & TransactionDialogPassthrough
@@ -51,8 +52,8 @@ const ResolverWarningOverlay = ({
   status,
   isWrapped,
   hasOldRegistry = false,
-  latestResolver,
-  oldResolver,
+  latestResolverAddress,
+  oldResolverAddress,
   dispatch,
   onDismiss,
   onDismissOverlay,
@@ -88,7 +89,6 @@ const ResolverWarningOverlay = ({
     status?.isMigratedProfileEqual,
     selectedProfile,
   ])
-
   const [index, setIndex] = useState(0)
   const view = flow[index]
 
@@ -104,10 +104,10 @@ const ResolverWarningOverlay = ({
     dispatch({
       name: 'setTransactions',
       payload: [
-        makeTransactionItem('updateResolver', {
+        createTransactionItem('updateResolver', {
           name,
           contract: isWrapped ? 'nameWrapper' : 'registry',
-          resolver: latestResolver,
+          resolverAddress: latestResolverAddress,
         }),
       ],
     })
@@ -129,13 +129,13 @@ const ResolverWarningOverlay = ({
           }),
         },
         transactions: [
-          makeTransactionItem('migrateProfile', {
+          createTransactionItem('migrateProfile', {
             name,
           }),
-          makeTransactionItem('updateResolver', {
+          createTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
-            resolver: latestResolver,
+            resolverAddress: latestResolverAddress,
           }),
         ],
       },
@@ -154,14 +154,14 @@ const ResolverWarningOverlay = ({
           }),
         },
         transactions: [
-          makeTransactionItem('resetProfile', {
+          createTransactionItem('resetProfile', {
             name,
-            resolver: latestResolver,
+            resolverAddress: latestResolverAddress,
           }),
-          makeTransactionItem('updateResolver', {
+          createTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
-            resolver: latestResolver,
+            resolverAddress: latestResolverAddress,
           }),
         ],
       },
@@ -183,14 +183,14 @@ const ResolverWarningOverlay = ({
           }),
         },
         transactions: [
-          makeTransactionItem('migrateProfileWithReset', {
+          createTransactionItem('migrateProfileWithReset', {
             name,
-            resolver: latestResolver,
+            resolverAddress: oldResolverAddress,
           }),
-          makeTransactionItem('updateResolver', {
+          createTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
-            resolver: latestResolver,
+            resolverAddress: latestResolverAddress,
           }),
         ],
       },
@@ -203,8 +203,8 @@ const ResolverWarningOverlay = ({
     migrateProfileSelector: (
       <MigrateProfileSelectorView
         name={name}
-        currentResolver={oldResolver}
-        latestResolver={latestResolver}
+        currentResolverAddress={oldResolverAddress}
+        latestResolverAddress={latestResolverAddress}
         hasCurrentProfile={!!status?.hasProfile}
         selected={selectedProfile}
         onChangeSelected={setSelectedProfile}

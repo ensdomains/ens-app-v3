@@ -1,9 +1,8 @@
 import { useCallback } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
-import { useChainId } from '../useChainId'
-import { useTransactionStore } from './TransactionStoreContext'
 import { NewTransaction } from './transactionStore'
+import { useTransactionStore } from './TransactionStoreContext'
 
 export function useAddRecentTransaction(): (transaction: NewTransaction) => void {
   const store = useTransactionStore()

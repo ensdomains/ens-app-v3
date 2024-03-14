@@ -5,11 +5,11 @@ import styled, { css } from 'styled-components'
 import {
   CurrencyToggle,
   LanguageSVG,
+  mq,
   RightChevronSVG,
   Spinner,
   Typography,
   WalletSVG,
-  mq,
 } from '@ensdomains/thorin'
 
 import SocialDiscord from '@app/assets/social/SocialDiscord.svg'
@@ -18,15 +18,15 @@ import SocialDiscourseColour from '@app/assets/social/SocialDiscourseColour.svg'
 import SocialGithub from '@app/assets/social/SocialGithub.svg'
 import SocialMirror from '@app/assets/social/SocialMirror.svg'
 import SocialMirrorColour from '@app/assets/social/SocialMirrorColour.svg'
-import SocialTwitter from '@app/assets/social/SocialTwitter.svg'
+import SocialX from '@app/assets/social/SocialX.svg'
 import SocialYoutube from '@app/assets/social/SocialYoutube.svg'
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { SocialIcon } from '@app/components/SocialIcon'
-import { useChainName } from '@app/hooks/useChainName'
-import useGasPrice from '@app/hooks/useGasPrice'
+import { useChainName } from '@app/hooks/chain/useChainName'
+import { useGasPrice } from '@app/hooks/chain/useGasPrice'
 import { routes } from '@app/routes'
-import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 import { makeDisplay } from '@app/utils/currency'
+import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 import useUserConfig from '@app/utils/useUserConfig'
 
 const Container = styled.div(
@@ -218,7 +218,7 @@ const NetworkSection = () => {
   const { t } = useTranslation('common')
   const graphOutOfSync = useGraphOutOfSync()
   const chainName = useChainName()
-  const { gasPrice } = useGasPrice()
+  const { data: gasPrice } = useGasPrice()
 
   return (
     <NetworkSectionContainer>
@@ -227,8 +227,14 @@ const NetworkSection = () => {
         <Typography id="chain-name" weight="bold" color="text">
           {chainName}
         </Typography>
-        {gasPrice && (
-          <Typography color="grey">{makeDisplay(gasPrice, undefined, 'Gwei', 9)}</Typography>
+        {!!gasPrice && (
+          <Typography color="grey">
+            {makeDisplay({
+              value: gasPrice,
+              symbol: 'Gwei',
+              fromDecimals: 9,
+            })}
+          </Typography>
         )}
       </NetworkSectionRow>
       {graphOutOfSync && (
@@ -289,7 +295,7 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
         ))}
       </RoutesSection>
       <SocialSection>
-        <SocialIcon Icon={SocialTwitter} color="#5298FF" href="https://twitter.com/ensdomains" />
+        <SocialIcon Icon={SocialX} color="black" href="https://x.com/ensdomains" />
         <SocialIcon Icon={SocialGithub} color="#0F0F0F" href="https://github.com/ensdomains" />
         <SocialIcon Icon={SocialDiscord} color="#7F83FF" href="https://chat.ens.domains" />
         <SocialIcon

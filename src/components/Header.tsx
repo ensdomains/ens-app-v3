@@ -71,7 +71,9 @@ const RouteContainer = styled.div<{ $state: TransitionState }>(
     justify-content: flex-end;
     flex-gap: ${theme.space['1']};
     gap: ${theme.space['1']};
-    transition: transform 0.15s ease-in-out, opacity 0.15s ease-in-out;
+    transition:
+      transform 0.15s ease-in-out,
+      opacity 0.15s ease-in-out;
     position: absolute;
     right: 0;
     top: 0;

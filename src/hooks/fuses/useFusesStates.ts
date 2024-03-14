@@ -1,10 +1,8 @@
 import { useMemo } from 'react'
 
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import type { useEns } from '@app/utils/EnsProvider'
+import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
-type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
-type WrapperData = Awaited<ReturnType<GetWrapperDataFunc>>
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 
 export type NameWrapperState = 'unwrapped' | 'wrapped' | 'emancipated' | 'locked'
 
@@ -36,8 +34,8 @@ export const useFusesStates = ({
   wrapperData,
   parentWrapperData,
 }: {
-  wrapperData?: WrapperData
-  parentWrapperData?: WrapperData
+  wrapperData?: GetWrapperDataReturnType
+  parentWrapperData?: GetWrapperDataReturnType
 }) => {
   const { address } = useAccountSafely()
 
@@ -50,20 +48,21 @@ export const useFusesStates = ({
     }
 
     if (parentWrapperData) defaultValues.parentState = 'wrapped'
-    if (parentWrapperData?.parent.PARENT_CANNOT_CONTROL) defaultValues.parentState = 'emancipated'
-    if (parentWrapperData?.child.CANNOT_UNWRAP) defaultValues.parentState = 'locked'
+    if (parentWrapperData?.fuses.parent.PARENT_CANNOT_CONTROL)
+      defaultValues.parentState = 'emancipated'
+    if (parentWrapperData?.fuses.child.CANNOT_UNWRAP) defaultValues.parentState = 'locked'
     if (wrapperData) defaultValues.state = 'wrapped'
-    if (wrapperData?.parent.PARENT_CANNOT_CONTROL) defaultValues.state = 'emancipated'
-    if (wrapperData?.child.CANNOT_UNWRAP) defaultValues.state = 'locked'
+    if (wrapperData?.fuses.parent.PARENT_CANNOT_CONTROL) defaultValues.state = 'emancipated'
+    if (wrapperData?.fuses.child.CANNOT_UNWRAP) defaultValues.state = 'locked'
 
     if (wrapperData) {
-      const { expiry, expiryLabel } = makeExpiryNumberAndLabel(wrapperData.expiryDate)
+      const { expiry, expiryLabel } = makeExpiryNumberAndLabel(wrapperData.expiry?.date)
       defaultValues.expiry = expiry
       defaultValues.expiryLabel = expiryLabel
     }
 
     if (parentWrapperData) {
-      const { expiry, expiryLabel } = makeExpiryNumberAndLabel(parentWrapperData.expiryDate)
+      const { expiry, expiryLabel } = makeExpiryNumberAndLabel(parentWrapperData.expiry?.date)
       defaultValues.parentExpiry = expiry
       defaultValues.parentExpiryLabel = expiryLabel
     }

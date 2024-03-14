@@ -1,4 +1,4 @@
-import { ComponentProps, ReactNode, Ref, forwardRef } from 'react'
+import { ComponentProps, forwardRef, ReactNode, Ref } from 'react'
 import styled, { css } from 'styled-components'
 
 import { CrossSVG, Input } from '@ensdomains/thorin'

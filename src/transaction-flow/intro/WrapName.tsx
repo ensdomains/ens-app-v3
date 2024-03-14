@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useEnsAvatar } from 'wagmi'
 
 import { Typography } from '@ensdomains/thorin'
 
 import { WrapNameGift } from '@app/assets/WrapNameGift'
 import { Outlink } from '@app/components/Outlink'
-import { useNFTImage } from '@app/hooks/useAvatar'
-import { useChainId } from '@app/hooks/useChainId'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 const GiftWrapper = styled.div(
@@ -29,13 +29,12 @@ const DescriptionWrapper = styled(Typography)(
 
 export const WrapName = ({ name }: { name: string }) => {
   const { t } = useTranslation('profile')
-  const chainId = useChainId()
-  const nftUrl = useNFTImage(name, chainId)
+  const { data: nftUrl } = useEnsAvatar({ ...ensAvatarConfig, name })
 
   return (
     <>
       <GiftWrapper>
-        <WrapNameGift imageSrc={nftUrl.image || '/other/TemplateNFTImage.svg'} />
+        <WrapNameGift imageSrc={nftUrl || '/other/TemplateNFTImage.svg'} />
       </GiftWrapper>
       <DescriptionWrapper>
         <Typography>

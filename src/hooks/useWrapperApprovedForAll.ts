@@ -1,25 +1,24 @@
-import { useQuery } from 'wagmi'
+import type { Address } from 'viem'
 
-import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { useApprovedForAll } from './useApprovedForAll'
 
-import { useContractAddress } from './useContractAddress'
-
-const useWrapperApprovedForAll = (address: string, isSubdomain: boolean, canBeWrapped: boolean) => {
-  const { contracts } = useEns()
-  const nameWrapperAddress = useContractAddress('NameWrapper')
-  const { data: approvedForAll, isLoading } = useQuery(
-    useQueryKeys().wrapperApprovedForAll(address),
-    async () => {
-      const registry = await contracts!.getRegistry()
-      return registry.isApprovedForAll(address, nameWrapperAddress)
-    },
-    {
-      enabled: !!address && !!nameWrapperAddress && isSubdomain && canBeWrapped,
-    },
-  )
-
-  return { approvedForAll, isLoading }
+type UseWrapperApprovedForAllParameters = {
+  address: Address
+  isSubname?: boolean
+  canBeWrapped?: boolean
+  enabled?: boolean
 }
 
-export default useWrapperApprovedForAll
+export const useWrapperApprovedForAll = ({
+  address,
+  isSubname,
+  canBeWrapped,
+  enabled = true,
+}: UseWrapperApprovedForAllParameters) => {
+  return useApprovedForAll({
+    contract: 'ensRegistry',
+    address,
+    operatorContract: 'ensNameWrapper',
+    enabled: enabled && isSubname && canBeWrapped,
+  })
+}

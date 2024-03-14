@@ -1,6 +1,7 @@
 import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-link'
 import {
   ChangeEventHandler,
+  MouseEventHandler,
   RefObject,
   useCallback,
   useEffect,
@@ -9,13 +10,13 @@ import {
   useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { DefaultTheme, css } from 'styled-components'
+import styled, { css, DefaultTheme } from 'styled-components'
 
-import { Button, Dropdown, Helper, Input, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dropdown, Helper, Input, mq, Typography } from '@ensdomains/thorin'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import useCurrentBlockTimestamp from '@app/hooks/useCurrentBlockTimestamp'
+import useCurrentBlockTimestamp from '@app/hooks/chain/useCurrentBlockTimestamp'
 import { makeDisplay } from '@app/utils/currency'
 
 const VAR_PREFIX = '--premium-chart-'
@@ -67,18 +68,17 @@ const Container = styled.div(
 
 const dotStyle =
   ({ name, extraY = '0px', color }: { name: string; extraY?: string; color: string }) =>
-  ({ theme }: { theme: DefaultTheme }) =>
-    css`
-      content: '';
-      width: ${theme.space['3']};
-      height: ${theme.space['3']};
-      background: ${color};
-      border-radius: ${theme.radii.full};
+  ({ theme }: { theme: DefaultTheme }) => css`
+    content: '';
+    width: ${theme.space['3']};
+    height: ${theme.space['3']};
+    background: ${color};
+    border-radius: ${theme.radii.full};
 
-      position: absolute;
-      left: calc(var(--premium-chart-${name}-x) - ${theme.space['1.5']});
-      top: calc(var(--premium-chart-${name}-y) - ${extraY} - ${theme.space['1.5']});
-    `
+    position: absolute;
+    left: calc(var(--premium-chart-${name}-x) - ${theme.space['1.5']});
+    top: calc(var(--premium-chart-${name}-y) - ${extraY} - ${theme.space['1.5']});
+  `
 
 const ChartContainer = styled.div(
   ({ theme }) => css`
@@ -325,7 +325,9 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
   const currentBlockTimestamp = useCurrentBlockTimestamp()
 
   const { nowPoint, maxDate, nowDate } = useMemo(() => {
-    const _nowDate = new Date(currentBlockTimestamp ? currentBlockTimestamp * 1000 : Date.now())
+    const _nowDate = new Date(
+      currentBlockTimestamp ? Number(currentBlockTimestamp) * 1000 : Date.now(),
+    )
     const now = _nowDate.getTime()
     const relativeDate = now - startDate.getTime()
     const _nowPoint = (((relativeDate * 1e18) / duration) * chartResolution) / 1e18
@@ -448,12 +450,12 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
         }),
         true,
       )
-      setHoverProperty('price', makeDisplay(price, 2, 'usd'), true)
+      setHoverProperty('price', makeDisplay({ value: price, symbol: 'usd' }), true)
     },
     [getPointFromX, getPos, setProperty, getDateFromPoint],
   )
 
-  const handleClick = useCallback(
+  const handleClick: MouseEventHandler<HTMLDivElement> = useCallback(
     (e) => {
       const x = e.nativeEvent.offsetX
       const point = getPointFromX(x)
@@ -512,13 +514,13 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
   }, [bgRef, setProperty])
 
   useEffect(() => {
-    setPriceInput(makeDisplay(getPos(nowPoint).price, 2, 'usd').split('$')[1])
+    setPriceInput(makeDisplay({ value: getPos(nowPoint).price, symbol: 'usd' }).split('$')[1])
   }, [getPos, nowPoint])
 
   useEffect(() => {
     const priceInputEl = priceInputRef.current
     if (priceInputEl && document.activeElement !== priceInputEl && selectedPoint !== -1) {
-      setPriceInput(makeDisplay(selectedPrice, 2, 'usd').split('$')[1])
+      setPriceInput(makeDisplay({ value: selectedPrice, symbol: 'usd' }).split('$')[1])
     }
   }, [selectedPoint, selectedPrice])
 
@@ -539,7 +541,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
             }}
             onChange={handleCurrencyInput}
             onBlur={() => {
-              setPriceInput(makeDisplay(selectedPrice, 2, 'usd').split('$')[1])
+              setPriceInput(makeDisplay({ value: selectedPrice, symbol: 'usd' }).split('$')[1])
             }}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {

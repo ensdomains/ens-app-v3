@@ -1,11 +1,13 @@
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
+import { useEnsAvatar } from 'wagmi'
 
 import { Avatar, mq } from '@ensdomains/thorin'
 
 import CircleTick from '@app/assets/CircleTick.svg'
-import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
+import { INVALID_NAME } from '@app/utils/constants'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { safeDateObj } from '../../../utils/date'
@@ -24,7 +26,9 @@ const NameItemWrapper = styled.div<{ $highlight: boolean; $disabled: boolean }>(
     padding: ${theme.space['3']} ${theme.space['4']};
     gap: ${theme.space['2']};
     border-bottom: 1px solid ${theme.colors.border};
-    transition: all 0.15s ease-in-out, border 0s;
+    transition:
+      all 0.15s ease-in-out,
+      border 0s;
     background: ${$highlight ? theme.colors.blueSurface : theme.colors.backgroundPrimary};
     cursor: ${$disabled ? 'not-allowed' : 'pointer'};
     &:hover {
@@ -122,7 +126,6 @@ export const NameDetailItem = ({
   name,
   truncatedName,
   expiryDate,
-  network,
   mode,
   selected = false,
   disabled = false,
@@ -130,14 +133,13 @@ export const NameDetailItem = ({
   children,
 }: Name & {
   expiryDate?: Date
-  network: number
   mode?: 'view' | 'select'
   selected?: boolean
   disabled?: boolean
   onClick?: () => void
   children: ReactNode
 }) => {
-  const { avatar } = useAvatar(name, network)
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
 
   const handleClick = () => {
@@ -148,17 +150,22 @@ export const NameDetailItem = ({
   const _expiryDate = safeDateObj(expiryDate)
 
   return (
-    <OptionalLink active={mode !== 'select'} href={`/profile/${name}`} passHref>
+    <OptionalLink
+      active={mode !== 'select' && name !== INVALID_NAME}
+      href={`/profile/${name}`}
+      passHref
+    >
       <NameItemWrapper
-        $disabled={disabled}
+        $disabled={name === INVALID_NAME || disabled}
         $highlight={mode === 'select' && selected}
         as={mode !== 'select' ? 'a' : 'div'}
         data-testid={`name-item-${name}`}
-        onClick={handleClick}
+        onClick={name !== INVALID_NAME ? handleClick : undefined}
       >
         <NameItemContainer>
           <AvatarWrapper>
             <Avatar
+              placeholder={`url(${zorb})`}
               label={truncatedName || name}
               src={avatar || zorb}
               data-testid="name-detail-item-avatar"

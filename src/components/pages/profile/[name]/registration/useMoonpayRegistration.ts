@@ -1,12 +1,11 @@
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useMutation, useQuery } from 'wagmi'
+import { labelhash } from 'viem'
+import { useChainId } from 'wagmi'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
-
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { useChainId } from '@app/hooks/useChainId'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'
 import { getLabelFromName } from '@app/utils/utils'
 
@@ -25,36 +24,46 @@ export const useMoonpayRegistration = (
   const [isCompleted, setIsCompleted] = useState(false)
   const currentExternalTransactionId = item.externalTransactionId
 
-  const initiateMoonpayRegistrationMutation = useMutation(async (duration: number = 1) => {
-    const label = getLabelFromName(normalisedName)
-    const tokenId = labelhash(label)
+  const initiateMoonpayRegistrationMutation = useMutation({
+    mutationFn: async (duration: number = 1) => {
+      const label = getLabelFromName(normalisedName)
+      const tokenId = labelhash(label)
 
-    const requestUrl = `${
-      MOONPAY_WORKER_URL[chainId]
-    }/signedurl?tokenId=${tokenId}&name=${encodeURIComponent(
-      normalisedName,
-    )}&duration=${duration}&walletAddress=${address}`
-    const response = await fetch(requestUrl)
-    const textResponse = await response.text()
-    setMoonpayUrl(textResponse)
+      const requestUrl = `${
+        MOONPAY_WORKER_URL[chainId]
+      }/signedurl?tokenId=${tokenId}&name=${encodeURIComponent(
+        normalisedName,
+      )}&duration=${duration}&walletAddress=${address}`
+      const response = await fetch(requestUrl)
+      const textResponse = await response.text()
+      setMoonpayUrl(textResponse)
 
-    const params = new URLSearchParams(textResponse)
-    const externalTransactionId = params.get('externalTransactionId') || ''
+      const params = new URLSearchParams(textResponse)
+      const externalTransactionId = params.get('externalTransactionId') || ''
 
-    dispatch({
-      name: 'setExternalTransactionId',
-      externalTransactionId,
-      selected,
-    })
-    setHasMoonpayModal(true)
+      dispatch({
+        name: 'setExternalTransactionId',
+        externalTransactionId,
+        selected,
+      })
+      setHasMoonpayModal(true)
+    },
+  })
+
+  const { queryKey } = useQueryOptions({
+    params: { externalTransactionId: currentExternalTransactionId },
+    functionName: 'getMoonpayStatus',
+    queryDependencyType: 'standard',
+    keyOnly: true,
   })
 
   // Monitor current transaction
-  const { data: transactionData } = useQuery(
-    useQueryKeys().moonpayRegistration(currentExternalTransactionId),
-    async () => {
+  const { data: transactionData } = useQuery({
+    queryKey,
+    // TODO: refactor this func and pull query fn out of the hook
+    queryFn: async ({ queryKey: [{ externalTransactionId }] }) => {
       const response = await fetch(
-        `${MOONPAY_WORKER_URL[chainId]}/transactionInfo?externalTransactionId=${currentExternalTransactionId}`,
+        `${MOONPAY_WORKER_URL[chainId]}/transactionInfo?externalTransactionId=${externalTransactionId}`,
       )
       const jsonResult = (await response.json()) as Array<{ status: MoonpayTransactionStatus }>
       const result = jsonResult?.[0]
@@ -70,14 +79,12 @@ export const useMoonpayRegistration = (
 
       return result || {}
     },
-    {
-      refetchOnWindowFocus: true,
-      refetchOnMount: true,
-      refetchInterval: 1000,
-      refetchIntervalInBackground: true,
-      enabled: !!currentExternalTransactionId && !isCompleted,
-    },
-  )
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchInterval: 1000,
+    refetchIntervalInBackground: true,
+    enabled: !!currentExternalTransactionId && !isCompleted,
+  })
 
   return {
     moonpayUrl,

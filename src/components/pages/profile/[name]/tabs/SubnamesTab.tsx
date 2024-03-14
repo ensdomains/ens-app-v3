@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, PlusSVG, Spinner, Typography, mq } from '@ensdomains/thorin'
+import { GetSubnamesParameters } from '@ensdomains/ensjs/subgraph'
+import { Button, mq, PlusSVG, Spinner, Typography } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import {
@@ -14,7 +15,7 @@ import {
 import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-import { SubnameSortType, useSubnameInfiniteQuery } from '@app/hooks/useSubnameInfiniteQuery'
+import { useSubnames } from '@app/hooks/ensjs/subgraph/useSubnames'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { emptyAddress } from '@app/utils/constants'
 import { getSupportLink } from '@app/utils/supportLinks'
@@ -99,23 +100,25 @@ const SpinnerContainer = styled.div<{ $showBorder?: boolean }>(
 
 export const SubnamesTab = ({
   name,
-  network,
   canEdit,
   canCreateSubdomains,
+  canCreateSubdomainsError,
   isWrapped,
 }: {
   name: string
-  network: number
   canEdit: boolean
   canCreateSubdomains: boolean
+  canCreateSubdomainsError?: string
   isWrapped: boolean
 }) => {
   const { t } = useTranslation('profile')
   const { address } = useAccount()
-  const { prepareDataInput } = useTransactionFlow()
-  const showCreateSubnameInput = prepareDataInput('CreateSubname')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showCreateSubnameInput = usePreparedDataInput('CreateSubname')
 
-  const [sortType, setSortType] = useQueryParameterState<SubnameSortType>('sort', 'creationDate')
+  const [sortType, setSortType] = useQueryParameterState<
+    NonNullable<GetSubnamesParameters['orderBy']>
+  >('sort', 'createdAt')
   const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
     'direction',
     'desc',
@@ -124,12 +127,19 @@ export const SubnamesTab = ({
   const debouncedSetSearch = useDebouncedCallback(setSearchQuery, 500)
   const [searchInput, setSearchInput] = useState(searchQuery)
 
-  const { subnames, isLoading, isFetching, fetchNextPage, hasNextPage } = useSubnameInfiniteQuery(
+  const {
+    infiniteData: subnames,
+    nameCount,
+    isLoading,
+    isFetching,
+    fetchNextPage,
+    hasNextPage,
+  } = useSubnames({
     name,
-    sortType,
-    sortDirection,
-    searchQuery,
-  )
+    orderBy: sortType,
+    orderDirection: sortDirection,
+    searchString: searchQuery,
+  })
 
   const [isIntersecting, setIsIntersecting] = useState(false)
   useEffect(() => {
@@ -151,15 +161,15 @@ export const SubnamesTab = ({
         <Spinner size="small" color="accent" />
       </SpinnerContainer>
     )
-  } else if (subnames.length === 0 && searchQuery === '') {
+  } else if (nameCount === 0 && searchQuery === '') {
     InnerContent = (
       <NoMoreResultsContainer>{t('details.tabs.subnames.empty')}</NoMoreResultsContainer>
     )
-  } else if (subnames.length === 0) {
+  } else if (nameCount === 0) {
     InnerContent = (
       <NoMoreResultsContainer>{t('details.tabs.subnames.noResults')}</NoMoreResultsContainer>
     )
-  } else if (subnames.length > 0) {
+  } else if (nameCount) {
     InnerContent = (
       <InfiniteScrollContainer onIntersectingChange={setIsIntersecting}>
         <div>
@@ -168,21 +178,16 @@ export const SubnamesTab = ({
               key={subname.name}
               name={subname.name}
               truncatedName={subname.truncatedName}
-              network={network}
               mode="view"
-              isController={
-                subname.type === 'domain' && subname.owner
-                  ? subname.owner === address?.toLowerCase()
-                  : undefined
-              }
-              isWrappedOwner={
-                subname.type === 'wrappedDomain' && subname.owner
-                  ? subname.owner === address?.toLowerCase()
-                  : undefined
-              }
+              relation={{
+                owner: !!subname.owner && subname.owner === address,
+                registrant: !!subname.registrant && subname.registrant === address,
+                resolvedAddress: !!subname.resolvedAddress && subname.resolvedAddress === address,
+                wrappedOwner: !!subname.wrappedOwner && subname.wrappedOwner === address,
+              }}
               notOwned={!subname.owner || subname.owner === emptyAddress}
               fuses={subname.fuses}
-              pccExpired={subname.pccExpired}
+              pccExpired={false}
               expiryDate={subname.expiryDate}
             />
           ))}
@@ -221,7 +226,7 @@ export const SubnamesTab = ({
               {...{
                 size: 'medium',
                 buttonId: 'add-subname-disabled-button',
-                content: t('errors.permissionRevoked'),
+                content: t(`errors.${canCreateSubdomainsError || 'default'}`),
                 buttonText: t('details.tabs.subnames.addSubname.action'),
                 mobileWidth: 200,
                 mobilePlacement: 'top',
@@ -235,12 +240,13 @@ export const SubnamesTab = ({
         <NameTableHeader
           selectable={false}
           sortType={sortType}
-          sortTypeOptionValues={['creationDate', 'labelName']}
+          sortTypeOptionValues={['createdAt', 'labelName']}
           sortDirection={sortDirection}
           searchQuery={searchInput}
           mode="view"
           onSortTypeChange={(value: SortType) => {
-            if (['creationDate', 'labelName'].includes(value)) setSortType(value as SubnameSortType)
+            if (['createdAt', 'labelName'].includes(value))
+              setSortType(value as NonNullable<GetSubnamesParameters['orderBy']>)
           }}
           onSortDirectionChange={setSortDirection}
           onSearchChange={(s) => {

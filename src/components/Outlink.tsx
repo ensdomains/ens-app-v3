@@ -1,9 +1,11 @@
+import type { UrlObject } from 'url'
+
 import Link from 'next/link'
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
-import type { UrlObject } from 'url'
 
 import { Typography } from '@ensdomains/thorin'
+import { FontVariant } from '@ensdomains/thorin/dist/types/types'
 
 import OutlinkSVG from '@app/assets/Outlink.svg'
 
@@ -38,14 +40,16 @@ export const OutlinkTypography = styled(Typography)(
 export const Outlink = ({
   href,
   children,
+  fontVariant = 'smallBold',
   ...props
 }: Omit<ComponentProps<'a'>, 'href' | 'target' | 'rel'> &
   ComponentProps<typeof StyledAnchor> & {
     href: string | UrlObject
+    fontVariant?: FontVariant
   }) => {
   const InnerContent = (
     <StyledAnchor {...props} rel="noreferrer noopener" target="_blank" role="link">
-      <OutlinkTypography fontVariant="smallBold" color="blue">
+      <OutlinkTypography fontVariant={fontVariant} color="blue">
         {children}
       </OutlinkTypography>
       <OutlinkIcon as={OutlinkSVG} />
@@ -54,14 +58,14 @@ export const Outlink = ({
 
   if (typeof href === 'string' && href.startsWith('http')) {
     return (
-      <Link href={href} passHref>
+      <Link href={href} passHref legacyBehavior>
         {InnerContent}
       </Link>
     )
   }
 
   return (
-    <BaseLink href={href} passHref>
+    <BaseLink href={href} passHref legacyBehavior>
       {InnerContent}
     </BaseLink>
   )

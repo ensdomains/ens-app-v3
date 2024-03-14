@@ -6,15 +6,16 @@
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
+import { useEnsAvatar } from 'wagmi'
 
 import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 
-import { useAvatar } from '@app/hooks/useAvatar'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
-import useBeautifiedName from '@app/hooks/useBeautifiedName'
-import { useChainId } from '@app/hooks/useChainId'
-import { usePrimary } from '@app/hooks/usePrimary'
+import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useZorb } from '@app/hooks/useZorb'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 
@@ -147,11 +148,10 @@ const SpinnerWrapper = styled.div(
   `,
 )
 
-const AddressResultItem = ({ address }: { address: string }) => {
+const AddressResultItem = ({ address }: { address: Address }) => {
   const { t } = useTranslation('common')
-  const primary = usePrimary(address)
-  const network = useChainId()
-  const { avatar } = useAvatar(primary.data?.name, network)
+  const { data: primaryName } = usePrimaryName({ address })
+  const { data: avatar } = useEnsAvatar({ name: primaryName?.name })
   const zorb = useZorb(address, 'address')
 
   return (
@@ -162,7 +162,7 @@ const AddressResultItem = ({ address }: { address: string }) => {
         </AvatarWrapper>
         <AddressAndName>
           <Typography weight="bold">{shortenAddress(address, undefined, 8, 6)}</Typography>
-          {primary.data?.name && <AddressPrimary>{primary.data?.beautifiedName}</AddressPrimary>}
+          {primaryName?.name && <AddressPrimary>{primaryName?.beautifiedName}</AddressPrimary>}
         </AddressAndName>
       </LeadingSearchItem>
       <AddressTag>{t('address.label')}</AddressTag>
@@ -246,10 +246,9 @@ const PlaceholderResultItem = ({ input }: { input: string }) => {
 
 const NameResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
   ({ name, ...props }, ref) => {
-    const network = useChainId()
-    const { avatar } = useAvatar(name, network)
+    const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
     const zorb = useZorb(name, 'name')
-    const { registrationStatus, isLoading, beautifiedName } = useBasicName(name)
+    const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
 
     return (
       <SearchItem
@@ -342,7 +341,7 @@ export const SearchResult = ({
   if (type === 'address') {
     return (
       <SearchItem data-testid="search-result-address" $clickable {...props}>
-        <AddressResultItem address={input} />
+        <AddressResultItem address={input as Address} />
       </SearchItem>
     )
   }

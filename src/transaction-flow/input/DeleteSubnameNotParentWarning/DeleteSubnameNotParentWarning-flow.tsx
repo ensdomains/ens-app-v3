@@ -1,14 +1,16 @@
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
-import useOwners from '@app/hooks/useOwners'
-import useParentBasicName from '@app/hooks/useParentBasicName'
+import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useOwners } from '@app/hooks/useOwners'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { parentName } from '@app/utils/name'
 
 import { CenterAlignedTypography } from '../RevokePermissions/components/CenterAlignedTypography'
 
@@ -37,14 +39,20 @@ const DeleteSubnameNotParentWarning = ({ data, dispatch, onDismiss }: Props) => 
   const {
     ownerData: parentOwnerData,
     wrapperData: parentWrapperData,
+    dnsOwner,
     isLoading: parentBasicLoading,
-  } = useParentBasicName(data.name)
+  } = useNameDetails({ name: parentName(data.name) })
+
   const [ownerTarget] = useOwners({
-    ownerData: parentOwnerData,
-    wrapperData: parentWrapperData,
+    ownerData: parentOwnerData!,
+    wrapperData: parentWrapperData!,
+    dnsOwner,
   })
   const { data: parentPrimaryOrAddress, isLoading: parentPrimaryLoading } = usePrimaryNameOrAddress(
-    ownerTarget?.address || '',
+    {
+      address: ownerTarget?.address as Address,
+      enabled: !!ownerTarget,
+    },
   )
   const isLoading = parentBasicLoading || parentPrimaryLoading
 
@@ -52,7 +60,7 @@ const DeleteSubnameNotParentWarning = ({ data, dispatch, onDismiss }: Props) => 
     dispatch({
       name: 'setTransactions',
       payload: [
-        makeTransactionItem('deleteSubname', {
+        createTransactionItem('deleteSubname', {
           name: data.name,
           contract: data.contract,
           method: 'setRecord',

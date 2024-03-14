@@ -6,13 +6,12 @@ import { useAccount } from 'wagmi'
 import { Helper } from '@ensdomains/thorin'
 
 import { Outlink } from '@app/components/Outlink'
-import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
+import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useChainId } from '@app/hooks/useChainId'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import useOwners from '@app/hooks/useOwners'
-import { usePrimary } from '@app/hooks/usePrimary'
+import { useOwners } from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { getSupportLink } from '@app/utils/supportLinks'
 import { validateExpiry } from '@app/utils/utils'
@@ -36,14 +35,12 @@ type Props = {
 const ProfileTab = ({ nameDetails, name }: Props) => {
   const { t } = useTranslation('profile')
 
-  const chainId = useChainId()
   const { address } = useAccount()
 
   const {
     profile,
     normalisedName,
-    profileIsCachedData,
-    basicIsCachedData,
+    isCachedData,
     ownerData,
     wrapperData,
     expiryDate,
@@ -53,9 +50,9 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     gracePeriodEndDate,
   } = nameDetails
 
-  const abilities = useAbilities(name)
+  const abilities = useAbilities({ name })
 
-  const { data: primaryData } = usePrimary(address)
+  const { data: primaryData } = usePrimaryName({ address })
 
   const owners = useOwners({
     ownerData: ownerData!,
@@ -65,13 +62,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
   })
 
   const profileActions = useProfileActions({
-    address,
     name,
-    profile,
-    abilities: abilities.data,
-    ownerData,
-    wrapperData,
-    expiryDate,
   })
 
   const isExpired = useMemo(
@@ -83,13 +74,12 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     if (abilities.data?.canExtend) return 'extend'
   }, [isExpired, abilities.data?.canExtend])
 
-  const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
+  const getTextRecord = (key: string) => profile?.texts?.find((x) => x.key === key)
 
   return (
     <DetailsWrapper>
       <ProfileSnippet
         name={normalisedName}
-        network={chainId}
         getTextRecord={getTextRecord}
         button={snippetButton}
         isPrimary={name === primaryData?.name}
@@ -112,22 +102,22 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         )}
       </ProfileSnippet>
       <ProfileDetails
-        expiryDate={validateExpiry(
-          normalisedName,
-          wrapperData,
-          expiryDate || wrapperData?.expiryDate,
+        expiryDate={validateExpiry({
+          name: normalisedName,
+          expiry: expiryDate || wrapperData?.expiry?.date,
           pccExpired,
-        )}
+          fuses: wrapperData?.fuses,
+        })}
         pccExpired={!!pccExpired}
-        isCached={profileIsCachedData || basicIsCachedData || abilities.isCachedData}
-        addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
-          key: item.coin,
-          value: item.addr,
+        isCached={isCachedData || abilities.isCachedData}
+        addresses={(profile?.coins || []).map((item) => ({
+          key: item.name,
+          value: item.value,
         }))}
-        textRecords={(profile?.records?.texts || [])
+        textRecords={(profile?.texts || [])
           .map((item: any) => ({ key: item.key, value: item.value }))
           .filter((item: any) => item.value !== null)}
-        contentHash={profile?.records?.contentHash}
+        contentHash={profile?.contentHash}
         owners={owners}
         name={normalisedName}
         actions={profileActions.profileActions}

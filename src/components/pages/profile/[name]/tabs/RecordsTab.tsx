@@ -1,44 +1,22 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useChainId } from 'wagmi'
 
-import { Button, Typography, mq } from '@ensdomains/thorin'
+import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
-import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { AddressRecord, Profile, TextRecord } from '@app/types'
+import { abiDisplayValue } from '@app/utils/abi'
 import { emptyAddress } from '@app/utils/constants'
 import { getContentHashLink } from '@app/utils/contenthash'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
-
-type TextRecord = {
-  key: string
-  value: string
-}
-
-type AddressRecord = {
-  key: string
-  coin: string
-  addr: string
-}
-
-type ContentHash =
-  | {
-      protocolType?: any
-      decoded?: any
-      error?: any
-    }
-  | null
-  | string
-
-type AbiRecord = {
-  data: string
-  contentType?: number
-}
 
 const TabWrapper = styled(OriginalTabWrapper)(
   () => css`
@@ -130,7 +108,6 @@ const Actions = styled.div(
 
 export const RecordsTab = ({
   name,
-  network,
   texts,
   addresses,
   contentHash,
@@ -141,21 +118,22 @@ export const RecordsTab = ({
   resolverAddress,
 }: {
   name: string
-  network: number
   texts?: TextRecord[]
   addresses?: AddressRecord[]
-  contentHash?: ContentHash
-  abi?: AbiRecord
+  contentHash?: Profile['contentHash']
+  abi?: Profile['abi']
   canEdit?: boolean
   canEditRecords?: boolean
   isCached?: boolean
   resolverAddress?: string
 }) => {
   const { t } = useTranslation('profile')
-  const hasGlobalError = useHasGlobalError()
+  const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
+
+  const chainId = useChainId()
 
   const filteredTexts = useMemo(() => texts?.filter(({ value }) => value), [texts])
-  const filteredAddresses = useMemo(() => addresses?.filter(({ addr }) => addr), [addresses])
+  const filteredAddresses = useMemo(() => addresses?.filter(({ value }) => value), [addresses])
 
   const formattedContentHash = useMemo(() => {
     if (contentHash) {
@@ -171,12 +149,12 @@ export const RecordsTab = ({
 
   const formattedContentHashLink = useMemo(() => {
     if (contentHash) {
-      return getContentHashLink(name, network, contentHash as any)
+      return getContentHashLink({ name, chainId, decodedContentHash: contentHash })
     }
-  }, [name, network, contentHash])
+  }, [name, chainId, contentHash])
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showAdvancedEditorInput = prepareDataInput('AdvancedEditor')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showAdvancedEditorInput = usePreparedDataInput('AdvancedEditor')
   const handleShowEditor = () =>
     showAdvancedEditorInput(`advanced-editor-${name}`, { name }, { disableBackgroundClick: true })
 
@@ -215,10 +193,10 @@ export const RecordsTab = ({
             filteredAddresses.map((address) => (
               <RecordItem
                 type="address"
-                key={address.key}
-                itemKey={address.coin}
-                value={address.addr}
-                showLegacy={address.coin.endsWith('_LEGACY')}
+                key={address.id}
+                itemKey={address.name}
+                value={address.value}
+                showLegacy={address.name.endsWith('_LEGACY')}
               />
             ))}
         </RecordSection>
@@ -261,30 +239,35 @@ export const RecordsTab = ({
               )}
             </SectionTitleContainer>
           </SectionHeader>
-          {abi && <RecordItem type="abi" value={abi.data} />}
+          {abi && <RecordItem type="abi" value={abiDisplayValue(abi)} />}
         </RecordSection>
       </AllRecords>
       {canEdit && resolverAddress !== emptyAddress && (
         <Actions>
           <div>
-            {canEditRecords && !hasGlobalError ? (
-              <Button onClick={handleShowEditor} size="small">
+            {canEditRecords && !hasGraphError ? (
+              <Button
+                onClick={handleShowEditor}
+                size="small"
+                loading={hasGraphErrorLoading}
+                disabled={hasGraphErrorLoading}
+              >
                 {t('details.tabs.records.editRecords')}
               </Button>
             ) : (
               <DisabledButtonWithTooltip
                 buttonId="records-tab-edit-records-disabled"
                 content={
-                  hasGlobalError
+                  hasGraphError
                     ? t('errors.networkError.blurb', { ns: 'common' })
                     : t('details.tabs.records.editRecordsDisabled')
                 }
                 buttonText={t('details.tabs.records.editRecords')}
                 mobileWidth={150}
-                mobileButtonWidth="initial"
                 mobilePlacement="top"
                 placement="top"
                 size="small"
+                loading={hasGraphErrorLoading}
               />
             )}
           </div>

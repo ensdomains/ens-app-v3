@@ -1,7 +1,15 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+import { labelhash } from 'viem'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
+import { registrySetApprovalForAllSnippet } from '@ensdomains/ensjs/contracts'
+
+import { test } from '../../../playwright'
+import { createAccounts } from '../../../playwright/fixtures/accounts'
+import {
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 test('should not show wrap button if the connected wallet is not the registrant', async ({
   login,
@@ -124,13 +132,7 @@ test('should wrap name', async ({ makeName, login, makePageObject }) => {
   await expect(morePage.wrapButton).toHaveCount(0)
 })
 
-test('should allow wrapping a subdomain', async ({
-  provider,
-  contracts,
-  makeName,
-  login,
-  makePageObject,
-}) => {
+test('should allow wrapping a subdomain', async ({ page, makeName, login, makePageObject }) => {
   const name = await makeName({
     label: 'unwrapped-with-wrapped-subnames',
     type: 'legacy',
@@ -142,16 +144,22 @@ test('should allow wrapping a subdomain', async ({
   })
   const subname = `sub.${name}`
 
-  const registry = await contracts.get('ENSRegistry', { signer: 'user' })
-  const nameWrapper = await contracts.get('NameWrapper')
-  await registry.setApprovalForAll(nameWrapper.address, false)
-  await provider.mine()
+  const approveTx = await walletClient.writeContract({
+    abi: registrySetApprovalForAllSnippet,
+    address: testClient.chain.contracts.ensRegistry.address,
+    functionName: 'setApprovalForAll',
+    args: [testClient.chain.contracts.ensNameWrapper.address, true],
+    account: createAccounts().getAddress('user') as `0x${string}`,
+  })
+  await waitForTransaction(approveTx)
 
   const morePage = makePageObject('MorePage')
   const transactionModal = makePageObject('TransactionModal')
 
   await morePage.goto(subname)
   await login.connect()
+
+  await page.pause()
 
   // should approve name wrapper for address
   await morePage.wrapButton.click()
@@ -191,6 +199,7 @@ test('should allow wrapping a name with an unknown label', async ({
   await morePage.goto(subname)
   await login.connect()
 
+  await page.pause()
   await morePage.wrapButton.click()
 
   const input = page.getByTestId(`unknown-label-input-${unknownLabelhash}`)
@@ -213,7 +222,6 @@ test('should allow wrapping a name with an unknown label', async ({
 
 test('should calculate needed steps without localstorage', async ({
   page,
-  contracts,
   login,
   makeName,
   makePageObject,
@@ -221,11 +229,20 @@ test('should calculate needed steps without localstorage', async ({
   test.slow()
 
   // Reset name wrapper approval
-  const registry = contracts.get('ENSRegistry', { signer: 'user' })
-  const nameWrapper = contracts.get('NameWrapper')
+  // const registry = contracts.get('ENSRegistry', { signer: 'user' })
+  // const nameWrapper = contracts.get('NameWrapper')
 
-  const txn = await registry.setApprovalForAll(nameWrapper.address, false)
-  await txn.wait()
+  // const txn = await registry.setApprovalForAll(nameWrapper.address, false)
+  // await txn.wait()
+
+  await walletClient.writeContract({
+    abi: registrySetApprovalForAllSnippet,
+    address: testClient.chain.contracts.ensRegistry.address,
+    functionName: 'setApprovalForAll',
+    args: [testClient.chain.contracts.ensNameWrapper.address, false],
+    account: createAccounts().getAddress('user') as `0x${string}`,
+  })
+  await testClient.mine({ blocks: 1 })
 
   const name = await makeName({
     label: 'unwrapped',
@@ -248,10 +265,11 @@ test('should calculate needed steps without localstorage', async ({
   await morePage.goto(subname)
   await login.connect()
 
+  await page.pause()
   await expect(page.getByTestId('name-details-text-wrapper')).toContainText('unwrapped')
 
   await morePage.wrapButton.click()
-
+  await page.pause()
   await expect(page.getByTestId('display-item-Step 1-normal')).toContainText('Approve NameWrapper')
   await expect(page.getByTestId('display-item-Step 2-normal')).toContainText('Migrate profile')
   await expect(page.getByTestId('display-item-Step 3-normal')).toContainText('Wrap name')

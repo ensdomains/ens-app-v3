@@ -1,31 +1,32 @@
-import { BigNumberish } from '@ethersproject/bignumber'
-import { P, match as _match } from 'ts-pattern'
+import { Address, hexToString } from 'viem'
 
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import {
+  contentTypeToEncodeAs,
+  DecodedContentHash,
+  encodeAbi,
+  RecordOptions,
+} from '@ensdomains/ensjs/utils'
 
-import { ContentHash, Profile, RecordItem } from '@app/types'
+import { AddressRecord, Profile, TextRecord } from '@app/types'
 
 import { contentHashToString } from './contenthash'
 import { shortenAddress } from './utils'
 
-const contentHashTouple = (contentHash?: string, deleteLabel = 'delete'): [string, string][] => {
+const contentHashTouple = (
+  contentHash?: string | null,
+  deleteLabel = 'delete',
+): [string, string][] => {
   if (typeof contentHash !== 'string') return []
   if (contentHash.length === 0) return [[deleteLabel, 'contenthash']]
   return [['contenthash', contentHash]]
 }
 
-const abiTouple = (
-  abi?: { contentType?: BigNumberish; data: string | object } | string,
-  deleteLabel = 'delete',
-): [string, string][] => {
-  const abiStr = _match(abi)
-    .with(P.string, (_abi) => _abi)
-    .with({ data: P.string }, ({ data }) => data)
-    .with({ data: {} }, ({ data }) => JSON.stringify(data))
-    .otherwise(() => undefined)
-  if (abiStr === '') return [[deleteLabel, 'abi']]
-  if (!abiStr) return []
-  return [['abi', abiStr]]
+const abiTouple = (abi?: RecordOptions['abi'], deleteLabel = 'delete'): [string, string][] => {
+  const firstAbiData = Array.isArray(abi) ? abi?.[0]?.encodedData : abi?.encodedData
+  if (!firstAbiData) return []
+  const decodedAbiData = hexToString(firstAbiData)
+  if (decodedAbiData) return [['abi', decodedAbiData]]
+  return [[deleteLabel, 'abi']]
 }
 
 export const recordOptionsToToupleList = (
@@ -35,121 +36,137 @@ export const recordOptionsToToupleList = (
   return [
     ...contentHashTouple(records?.contentHash, deleteLabel),
     ...abiTouple(records?.abi, deleteLabel),
-    ...(records?.texts?.map(({ key, value }) => [key, value]) || []),
-    ...(records?.coinTypes?.map(({ key, value }) => [key, shortenAddress(value)]) || []),
+    ...(records?.texts?.map(({ key, value }) => [key, value!]) || []),
+    ...(records?.coins?.map(({ coin, value }) => [String(coin), shortenAddress(value!)]) || []),
   ].map(([key, value]) => (value ? [key, value] : [deleteLabel, key]))
 }
 
-export const mergeRecords = (a: RecordItem[] = [], b: RecordItem[] = []): RecordItem[] => {
-  return [...a, ...b].reduce<RecordItem[]>((acc, record) => {
-    const index = acc.findIndex((r) => r.key === record.key)
-    if (index === -1) return [...acc, record]
-    acc[index] = { ...acc[index], ...record }
-    return acc
-  }, [])
-}
+const mergeRecords =
+  <
+    TMatchObject extends Record<string, any>,
+    TMatchKey extends keyof TMatchObject = keyof TMatchObject,
+  >(
+    matchKey: TMatchKey,
+  ) =>
+  <TRecordItem extends TMatchObject>(
+    a: TRecordItem[] = [],
+    b: TRecordItem[] = [],
+  ): TRecordItem[] => {
+    return [...a, ...b].reduce<TRecordItem[]>((acc, record) => {
+      const index = acc.findIndex((r) => r[matchKey] === record[matchKey])
+      if (index === -1) return [...acc, record]
+      acc[index] = { ...acc[index], ...record }
+      return acc
+    }, [])
+  }
 
-export const checkRecordsEqual =
-  (type: 'texts' | 'coinTypes') =>
-  (a: RecordItem[] = [], b: RecordItem[] = []): boolean => {
-    if (type === 'coinTypes')
-      return Object.values(
-        [...a, ...b].reduce<{
-          [key: string]: number
-        }>((acc, coinType) => {
-          const key = `${coinType.coin}-${(coinType as any).addr}`
+export const mergeTextRecords = mergeRecords<TextRecord>('key')
+
+export const mergeAddressRecords = mergeRecords<AddressRecord>('id')
+
+const checkRecordsEqual =
+  <TMatchObject extends Record<string, any>>(keyFn: (item: TMatchObject) => string) =>
+  (a: TMatchObject[] = [], b: TMatchObject[] = []): boolean => {
+    return Object.values(
+      [...a, ...b].reduce(
+        (acc, item) => {
+          const key = keyFn(item)
           if (acc[key]) acc[key] += 1
           else acc[key] = 1
           return acc
-        }, {}),
-      ).every((count) => count === 2)
-    return Object.values(
-      [...a, ...b].reduce<{
-        [key: string]: number
-      }>((acc, text) => {
-        const key = `${text.key}-${text.value}`
-        if (acc[key]) acc[key] += 1
-        else acc[key] = 1
-        return acc
-      }, {}),
+        },
+        {} as Record<string, number>,
+      ),
     ).every((count) => count === 2)
   }
 
-export const checkContentHashEqual = (a?: ContentHash, b?: ContentHash): boolean => {
+const checkAddressRecordsEqual = checkRecordsEqual<AddressRecord>(
+  (item) => `${item.id}-${item.value}`,
+)
+const checkTextRecordsEqual = checkRecordsEqual<TextRecord>((item) => `${item.key}-${item.value}`)
+
+export const checkContentHashEqual = (
+  a?: DecodedContentHash | string | null,
+  b?: DecodedContentHash | string | null,
+): boolean => {
   return contentHashToString(a) === contentHashToString(b)
 }
 
-export const checkProfileRecordsEqual = (a: Profile['records'], b: Profile['records']): boolean => {
-  if (!checkRecordsEqual('texts')(a?.texts, b?.texts)) return false
-  if (!checkRecordsEqual('coinTypes')(a?.coinTypes, b?.coinTypes)) return false
+export const checkAbiEqual = (abi?: Profile['abi'], abi2?: Profile['abi']): boolean => {
+  if (!abi && !abi2) return true
+  const abiStr = typeof abi === 'object' ? JSON.stringify(abi?.abi || {}) : abi
+  const abiStr2 = typeof abi2 === 'object' ? JSON.stringify(abi2?.abi || {}) : abi2
+  return abi?.contentType === abi2?.contentType && abiStr === abiStr2
+}
+
+export const checkProfileRecordsEqual = (a: Profile, b: Profile): boolean => {
+  if (!checkTextRecordsEqual(a?.texts, b?.texts)) return false
+  if (!checkAddressRecordsEqual(a?.coins, b?.coins)) return false
   if (!checkContentHashEqual(a?.contentHash, b?.contentHash)) return false
+  if (!checkAbiEqual(a?.abi, b?.abi)) return false
   return true
 }
 
-export const mergeProfileRecords = (a?: Profile['records'], b?: Profile['records']) => {
-  const texts = mergeRecords(a?.texts, b?.texts)
-  const coinTypes = mergeRecords(a?.coinTypes, b?.coinTypes)
-  const contentHash = contentHashToString(b?.contentHash) || contentHashToString(a?.contentHash)
+export const makeEthRecordItem = (address: Address): AddressRecord => {
   return {
-    texts,
-    coinTypes,
-    contentHash,
+    id: 60,
+    name: 'ETH',
+    value: address,
   }
-}
-
-export const makeEthRecordItem = (addr: string): RecordItem => {
-  return {
-    coin: 'ETH',
-    key: '60',
-    type: 'addr',
-    addr,
-  } as unknown as RecordItem
 }
 
 export const makeProfileRecordsWithEthRecordItem = (
-  records: Profile['records'] = {},
-  addr?: string,
-): Profile['records'] => {
+  records: Profile = {},
+  address?: Address,
+): Profile => {
   return {
     ...records,
-    coinTypes: mergeRecords(records?.coinTypes, [...(addr ? [makeEthRecordItem(addr)] : [])]),
+    coins: mergeAddressRecords(records?.coins, [...(address ? [makeEthRecordItem(address)] : [])]),
   }
 }
 
-export const profileRecordsToKeyValue = (
-  records: Profile['records'],
-  abi?: { data: string; contentType: number },
-) => {
+export const profileRecordsToKeyValue = async (records: Profile): Promise<RecordOptions> => {
   const contentHash = contentHashToString(records?.contentHash)
   return {
     texts: records?.texts?.map(({ key, value }) => ({ key: key as string, value })),
-    coinTypes: records?.coinTypes?.map((coinType) => ({
-      key: coinType.key as string,
-      value: (coinType as any).addr,
+    coins: records?.coins?.map((coinType) => ({
+      coin: coinType.id,
+      value: coinType.value,
     })),
     ...(contentHash ? { contentHash } : {}),
-    ...(abi ? { abi } : {}),
+    ...(records.abi
+      ? {
+          abi: await encodeAbi({
+            data: records.abi.abi as any,
+            encodeAs: contentTypeToEncodeAs(records.abi.contentType as 1 | 2 | 4 | 8),
+          }),
+        }
+      : {}),
   }
 }
 
-export type RecordMatch =
-  | {
-      key: string
-      type: 'text'
-      value: string
-    }
-  | {
-      key: string
-      type: 'addr'
-      addr: string
-    }
+type ProfileMatchText = {
+  type: 'text'
+  match: TextRecord
+}
 
-export const checkProfileRecordsContains = (records: Profile['records'], match: RecordMatch) => {
-  if (match.type === 'text')
-    return !!records?.texts?.some(({ key, value }) => key === match.key && value === match.value)
-  if (match.type === 'addr')
-    return !!records?.coinTypes?.some(
-      (coinType) => coinType.key === match.key && (coinType as any).addr === match.addr,
-    )
+type ProfileMatchAddress = {
+  type: 'address'
+  match: Omit<AddressRecord, 'name'>
+}
+
+export type RecordMatch = ProfileMatchText | ProfileMatchAddress
+
+export const checkProfileRecordsContains = ({
+  profile,
+  type,
+  match,
+}: {
+  profile: Profile
+} & RecordMatch) => {
+  if (type === 'text')
+    return !!profile?.texts?.some(({ key, value }) => key === match.key && value === match.value)
+  if (type === 'address')
+    return !!profile?.coins?.some((coin) => coin.id === match.id && coin.value === match.value)
   return false
 }

@@ -1,10 +1,12 @@
 import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import Accordion, { AccordionData } from './Accordion'
 
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
 const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 
 const data: AccordionData[] = [
@@ -22,12 +24,12 @@ const data: AccordionData[] = [
 
 describe('Accordion', () => {
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render', () => {
     mockUseTransactionFlow.mockReturnValue({
-      prepareDataInput: () => () => {},
+      usePreparedDataInput: () => () => {},
     })
     render(<Accordion data={data} name="test" />)
   })
@@ -109,10 +111,10 @@ describe('Accordion', () => {
     expect(screen.getByText('Body 3')).not.toHaveStyle('height: 0px')
   })
   it('should display the correct dialog when edit is clicked', () => {
-    const mockShowDataInput = jest.fn()
+    const mockShowDataInput = vi.fn()
 
     mockUseTransactionFlow.mockReturnValue({
-      prepareDataInput: () => mockShowDataInput,
+      usePreparedDataInput: () => mockShowDataInput,
     })
     render(
       <Accordion

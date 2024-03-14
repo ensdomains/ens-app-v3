@@ -1,13 +1,15 @@
-import { formatFixed } from '@ethersproject/bignumber'
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
+import { formatUnits } from 'viem'
 
-export const makeDisplay = (
-  val: BigNumber | number,
-  decimals: number | undefined,
-  symbol: string,
-  fromDecimals: number = 18,
-) => {
-  const number = typeof val === 'number' ? val : Number(formatFixed(val, fromDecimals))
+export const makeDisplay = ({
+  value,
+  symbol,
+  fromDecimals = 18,
+}: {
+  value: bigint | number
+  symbol: string
+  fromDecimals?: number
+}) => {
+  const number = typeof value === 'number' ? value : Number(formatUnits(value, fromDecimals))
   const options: Intl.NumberFormatOptions & { [x: string]: string } = {
     style: 'currency',
     currency: symbol.toLowerCase(),

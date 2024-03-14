@@ -1,13 +1,15 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { usePrimary } from '@app/hooks/usePrimary'
+import { describe, expect, it, vi } from 'vitest'
+
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { TransactionDisplayItem } from '@app/types'
 
 import { DisplayItems } from './DisplayItems'
 
-jest.mock('@app/hooks/usePrimary')
+vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
-const mockUsePrimary = mockFunction(usePrimary)
+const mockUsePrimaryName = mockFunction(usePrimaryName)
 
 const genericItem: TransactionDisplayItem = {
   label: 'GenericItem',
@@ -38,7 +40,7 @@ describe('DisplayItems', () => {
     expect(screen.getByText('GenericValue')).toBeVisible()
   })
   it('should show an address item and primary name', () => {
-    mockUsePrimary.mockReturnValue({
+    mockUsePrimaryName.mockReturnValue({
       data: {
         name: 'test.eth',
         beautifiedName: 'test.eth',
@@ -52,7 +54,7 @@ describe('DisplayItems', () => {
     expect(screen.getByText('test.eth')).toBeVisible()
   })
   it('should show an address item and no primary name', () => {
-    mockUsePrimary.mockReturnValue({
+    mockUsePrimaryName.mockReturnValue({
       data: { name: undefined, beautifiedName: undefined },
       isLoading: false,
       status: 'success',
@@ -68,7 +70,7 @@ describe('DisplayItems', () => {
     expect(screen.getByText('test.eth')).toBeVisible()
   })
   it('should render multiple items', () => {
-    mockUsePrimary.mockReturnValue({
+    mockUsePrimaryName.mockReturnValue({
       data: { name: undefined, beautifiedName: undefined },
       isLoading: false,
       status: 'success',

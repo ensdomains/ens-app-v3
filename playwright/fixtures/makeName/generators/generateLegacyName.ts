@@ -6,13 +6,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Accounts, User } from 'playwright/fixtures/accounts'
-import { Contracts } from 'playwright/fixtures/contracts'
+import { transferName } from '@ensdomains/ensjs/wallet'
 
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
-
+import { Accounts, createAccounts, User } from '../../accounts'
+import { Contracts } from '../../contracts'
+import {
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../contracts/utils/addTestContracts.js'
 import { Provider } from '../../provider'
-import { LegacySubname, generateLegacySubname } from './generateLegacySubname'
+import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
 
 const DEFAULT_DURATION = 31536000
 
@@ -73,11 +77,16 @@ export const generateLegacyName =
     }
 
     if (!!manager && manager !== owner) {
-      const registry = contracts.get('ENSRegistry', { signer: owner })
-      const node = namehash(`${label}.eth`)
-      const _manager = accounts.getAddress(manager)
-      await registry.setOwner(node, _manager)
+      console.log('setting manager:', name, manager)
+      const tx = await transferName(walletClient, {
+        name,
+        newOwnerAddress: createAccounts().getAddress(manager) as `0x${string}`,
+        contract: 'registry',
+        account: createAccounts().getAddress(owner) as `0x${string}`,
+      })
+      await waitForTransaction(tx)
     }
 
-    await provider.mine()
+    await testClient.increaseTime({ seconds: 61 })
+    await testClient.mine({ blocks: 1 })
   }

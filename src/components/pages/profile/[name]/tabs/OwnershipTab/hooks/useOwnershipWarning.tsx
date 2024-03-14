@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import type { useNameType } from '@app/hooks/nameType/useNameType'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
-import type { useNameType } from '@app/hooks/useNameType'
-import useParentBasicName from '@app/hooks/useParentBasicName'
+import { useParentBasicName } from '@app/hooks/useParentBasicName'
 import { parentName } from '@app/utils/name'
 
 type Input = {
@@ -17,7 +17,7 @@ type Input = {
 export const useOwnershipWarning = ({ name, nameType, details }: Input) => {
   const { t } = useTranslation('profile')
   const account = useAccountSafely()
-  const parent = useParentBasicName(name)
+  const parent = useParentBasicName({ name })
   const isLoading = !account.address || nameType.isLoading || details.isLoading || parent.isLoading
 
   const data = useMemo(() => {

@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@app/test-utils'
 
 import { act } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { BreakpointProvider, useBreakpoint } from './BreakpointProvider'
 
@@ -23,7 +24,7 @@ describe('BreakpointProvider', () => {
     const mockMatchMedia = () => {
       return {
         addListener: (listener: any) => listeners.push(listener),
-        removeListener: jest.fn(),
+        removeListener: vi.fn(),
         matches: false,
       }
     }
@@ -48,7 +49,7 @@ describe('BreakpointProvider', () => {
     const listeners: any[] = []
     const returnObject = {
       addListener: (listener: any) => listeners.push(listener),
-      removeListener: jest.fn(),
+      removeListener: vi.fn(),
       matches: false,
     }
 

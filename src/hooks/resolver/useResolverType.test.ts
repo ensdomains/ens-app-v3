@@ -1,185 +1,253 @@
-import { renderHook } from '@app/test-utils'
+import { mockFunction, PartialMockedFunction, renderHook } from '@app/test-utils'
 
-import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
+import { emptyAddress } from '@app/utils/constants'
+
+import { useIsWrapped } from '../useIsWrapped'
+import { useProfile } from '../useProfile'
+import { useRegistryResolver } from './useRegistryResolver'
 import { isWildcardCalc, useResolverType } from './useResolverType'
 
-jest.mock('@app/hooks/useChainId', () => ({
-  useChainId: () => 1,
-}))
+vi.mock('@app/hooks/useIsWrapped')
+vi.mock('@app/hooks/useProfile')
+vi.mock('@app/hooks/resolver/useRegistryResolver')
 
-const makeMocBasicName = (overwrite: object = {}) => ({
-  isWrapped: true,
-  isLoading: false,
-  ...overwrite,
-})
-const mockUseBasicName = jest.fn().mockReturnValue(makeMocBasicName())
-jest.mock('@app/hooks/useBasicName', () => ({
-  useBasicName: (_: string, options: any) => {
-    if (options.enabled ?? true) return mockUseBasicName()
-    return { data: undefined, isLoading: false }
-  },
-}))
+const mockUseIsWrapped = mockFunction(useIsWrapped)
+const mockUseProfile = mockFunction(useProfile)
+const mockUseRegistryResolver = mockFunction(useRegistryResolver)
 
-const makeProfile = (overwrite: object = {}) => ({
-  profile: {
-    resolverAddress: RESOLVER_ADDRESSES['1'][0],
+const createProfileData = (
+  overwrite: ReturnType<PartialMockedFunction<typeof useProfile>> = {},
+) => ({
+  data: {
+    resolverAddress: KNOWN_RESOLVER_DATA['1']![0].address,
   },
   isLoading: false,
   ...overwrite,
 })
-const mockUseProfile = jest.fn().mockReturnValue(makeProfile())
-jest.mock('@app/hooks/useProfile', () => ({
-  useProfile: (_: string, options: any) => {
-    if (options?.skip ?? false) return { data: undefined, loading: false }
-    return mockUseProfile()
-  },
-}))
 
-const makeMockRegistryResolver = (overwrite: object = {}) => ({
-  data: RESOLVER_ADDRESSES['1'][0],
-  isLoading: false,
-  isSuccess: true,
-  ...overwrite,
-})
-const mockUseRegistryResolver = jest.fn().mockReturnValue(makeMockRegistryResolver())
-jest.mock('@app/hooks/resolver/useRegistryResolver', () => ({
-  useRegistryResolver: (_: string, options: any) => {
-    if (options?.enabled ?? true) return mockUseRegistryResolver()
-    return { data: undefined, isLoading: false }
-  },
-}))
+const createRegistryResolverData = <
+  TOverwrite extends ReturnType<PartialMockedFunction<typeof useRegistryResolver>>,
+>(
+  overwrite: TOverwrite = {} as TOverwrite,
+) =>
+  ({
+    data: KNOWN_RESOLVER_DATA['1']![0].address,
+    isLoading: false,
+    isSuccess: true,
+    ...overwrite,
+  }) as const
 
-afterEach(() => {
-  jest.clearAllMocks()
+beforeEach(() => {
+  vi.clearAllMocks()
+  mockUseIsWrapped.mockReturnValue({data: true, isLoading: false})
+  mockUseProfile.mockReturnValue(createProfileData())
+  mockUseRegistryResolver.mockReturnValue(createRegistryResolverData())
 })
 
 describe('useResolverType', () => {
   it('should return type is latest for base mock data', () => {
-    const { result } = renderHook(() => useResolverType('test.eth'))
-    expect(result.current).toMatchObject({
-      data: { type: 'latest' },
-      isLoading: false,
-    })
-    expect(mockUseBasicName).toHaveBeenCalled()
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: { type: 'latest', isWildcard: false, tone: 'greenSecondary' },
+      }),
+    )
+    expect(mockUseIsWrapped).toHaveBeenCalled()
     expect(mockUseProfile).toHaveBeenCalled()
     expect(mockUseRegistryResolver).toHaveBeenCalled()
   })
 
   it('should return isLoading is false and data is undefined if enabled is false', () => {
-    const { result } = renderHook(() => useResolverType('test.eth', { enabled: false }))
-    expect(result.current).toEqual({
-      data: undefined,
-      isLoading: false,
-    })
-    expect(mockUseBasicName).not.toHaveBeenCalled()
-    expect(mockUseProfile).not.toHaveBeenCalled()
-    expect(mockUseRegistryResolver).not.toHaveBeenCalled()
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth', enabled: false }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: undefined,
+        isLoading: false,
+      }),
+    )
+    expect(mockUseIsWrapped).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: false,
+      }),
+    )
+    expect(mockUseProfile).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: false,
+      }),
+    )
+    expect(mockUseRegistryResolver).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: false,
+      }),
+    )
   })
 
   it('should return isLoading is false and data is undefined if name is empty', () => {
-    const { result } = renderHook(() => useResolverType(''))
-    expect(result.current).toEqual({
-      data: undefined,
-      isLoading: false,
-    })
-    expect(mockUseBasicName).not.toHaveBeenCalled()
-    expect(mockUseProfile).not.toHaveBeenCalled()
-    expect(mockUseRegistryResolver).not.toHaveBeenCalled()
+    const { result } = renderHook(() => useResolverType({ name: '' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: undefined,
+        isLoading: false,
+      }),
+    )
+    expect(mockUseIsWrapped).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: false,
+      }),
+    )
+    expect(mockUseProfile).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: false,
+      }),
+    )
+    expect(mockUseRegistryResolver).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: false,
+      }),
+    )
   })
 
   it('should return isLoading is true and data is undefined if useBasicName is loading', () => {
-    mockUseBasicName.mockReturnValueOnce(makeMocBasicName({ isLoading: true }))
-    const { result } = renderHook(() => useResolverType('test.eth'))
-    expect(result.current).toEqual({
-      data: undefined,
-      isLoading: true,
-    })
-    expect(mockUseBasicName).toHaveBeenCalled()
-    expect(mockUseProfile).toHaveBeenCalled()
-    expect(mockUseRegistryResolver).toHaveBeenCalled()
+    mockUseIsWrapped.mockReturnValueOnce({ data: true, isLoading: true })
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: undefined,
+        isLoading: true,
+      }),
+    )
+    expect(mockUseIsWrapped).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: true,
+      }),
+    )
+    expect(mockUseProfile).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: true,
+      }),
+    )
+    expect(mockUseRegistryResolver).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: true,
+      }),
+    )
   })
 
   it('should return isLoading is true and data is undefined if useRegistryResolve is loading', () => {
-    mockUseRegistryResolver.mockReturnValueOnce(makeMockRegistryResolver({ isLoading: true }))
-    const { result } = renderHook(() => useResolverType('test.eth'))
-    expect(result.current).toEqual({
-      data: undefined,
-      isLoading: true,
-    })
-    expect(mockUseBasicName).toHaveBeenCalled()
-    expect(mockUseProfile).toHaveBeenCalled()
-    expect(mockUseRegistryResolver).toHaveBeenCalled()
+    mockUseRegistryResolver.mockReturnValueOnce(createRegistryResolverData({ isLoading: true }))
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: undefined,
+        isLoading: true,
+      }),
+    )
+    expect(mockUseIsWrapped).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: true,
+      }),
+    )
+    expect(mockUseProfile).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: true,
+      }),
+    )
+    expect(mockUseRegistryResolver).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: true,
+      }),
+    )
   })
 
-  it('should return type is outdated if resolver is second latest', () => {
-    mockUseProfile.mockReturnValueOnce({
-      profile: {
-        resolverAddress: RESOLVER_ADDRESSES['1'][1],
-      },
-      loading: false,
-    })
-    const { result } = renderHook(() => useResolverType('test.eth'))
-    expect(result.current).toMatchObject({
-      data: { type: 'outdated' },
-      isLoading: false,
-    })
-    expect(mockUseBasicName).toHaveBeenCalled()
-    expect(mockUseProfile).toHaveBeenCalled()
-    expect(mockUseRegistryResolver).toHaveBeenCalled()
+  it('should return type is null if resolver is second latest and is wrapped', () => {
+    mockUseProfile.mockReturnValueOnce(
+      createProfileData({
+        data: {
+          resolverAddress: KNOWN_RESOLVER_DATA['1']![1].address,
+        },
+      }),
+    )
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: { type: 'outdated', isWildcard: false, tone: 'redSecondary' },
+        isLoading: false,
+      }),
+    )
   })
 
   it('should return type is latest if resolver is second latest but name is not wrapped', () => {
-    mockUseBasicName.mockReturnValueOnce(
-      makeMocBasicName({
-        profile: { resolverAddress: RESOLVER_ADDRESSES['1'][1] },
-        isWrapped: false,
+    mockUseProfile.mockReturnValueOnce(
+      createProfileData({
+        data: {
+          resolverAddress: KNOWN_RESOLVER_DATA['1']![1].address,
+        },
       }),
     )
-    const { result } = renderHook(() => useResolverType('test.eth'))
-    expect(result.current).toMatchObject({
-      data: { type: 'latest' },
-      isLoading: false,
-    })
+    mockUseIsWrapped.mockReturnValueOnce(
+     {data: false, isLoading: false}
+    )
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: undefined,
+        isLoading: false,
+      }),
+    )
   })
 
   it('should return type is custom if resolver is not in resolver list', () => {
-    mockUseProfile.mockReturnValueOnce(makeProfile({ profile: { resolverAddress: '0xresolver' } }))
-    const { result } = renderHook(() => useResolverType('test.eth'))
-    expect(result.current).toMatchObject({
-      data: { type: 'custom' },
-      isLoading: false,
-    })
+    mockUseProfile.mockReturnValueOnce(
+      createProfileData({ data: { resolverAddress: '0xresolver' } }),
+    )
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: { type: 'custom', isWildcard: false, tone: 'greySecondary' },
+        isLoading: false,
+      }),
+    )
   })
 
   it('should return isWildcard is true if registry resolver is empty but profile resolver has value', () => {
-    mockUseRegistryResolver.mockReturnValueOnce(makeMockRegistryResolver({ data: emptyAddress }))
-    const { result } = renderHook(() => useResolverType('test.eth'))
-    expect(result.current).toMatchObject({
-      data: { isWildcard: true },
-      isLoading: false,
-    })
+    mockUseRegistryResolver.mockReturnValueOnce(createRegistryResolverData({ data: emptyAddress }))
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: { type: 'latest', isWildcard: true, tone: 'greenSecondary' },
+        isLoading: false,
+      }),
+    )
   })
 
   it('should return isWildcard is false if registry resolver is empty but profile resolver is also empty', () => {
-    mockUseRegistryResolver.mockReturnValueOnce(makeMockRegistryResolver({ data: emptyAddress }))
-    mockUseProfile.mockReturnValueOnce(makeProfile({ profile: { resolverAddress: emptyAddress } }))
-    const { result } = renderHook(() => useResolverType('test.eth'))
-    expect(result.current).toMatchObject({
-      data: { isWildcard: false },
-      isLoading: false,
-    })
+    mockUseRegistryResolver.mockReturnValueOnce(createRegistryResolverData({ data: emptyAddress }))
+    mockUseProfile.mockReturnValueOnce(
+      createProfileData({ data: { resolverAddress: emptyAddress } }),
+    )
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: { type: 'custom', isWildcard: false, tone: 'greySecondary' },
+        isLoading: false,
+      }),
+    )
   })
 })
 
 describe('isWildcardCalc', () => {
-  const registryResolver = { isError: false, data: null }
-  const resolverAddress = '0x123'
-  const profile = { isFetching: false }
+  const registryResolver = { isError: false, data: null } as unknown as ReturnType<
+    typeof useRegistryResolver
+  >
+  const resolverAddress = '0x123' as const
+  const profile = { isFetching: false } as unknown as ReturnType<typeof useProfile>
 
   it('returns true when registryResolver is not an error and data is null or empty address and resolverAddress is not equal to data and profile is not fetching', () => {
     registryResolver.isError = false
-    registryResolver.data = null
+    registryResolver.data = undefined
     expect(isWildcardCalc({ registryResolver, resolverAddress, profile })).toBe(true)
 
     registryResolver.data = '0x0000000000000000000000000000000000000000'
@@ -205,7 +273,7 @@ describe('isWildcardCalc', () => {
 
   it('returns false when profile is fetching', () => {
     registryResolver.isError = false
-    registryResolver.data = null
+    registryResolver.data = undefined
     profile.isFetching = true
     expect(isWildcardCalc({ registryResolver, resolverAddress, profile })).toBe(false)
   })

@@ -1,10 +1,11 @@
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
-import { ParsedInputResult, parseInput } from '@ensdomains/ensjs/utils/validation'
+import { ParsedInputResult, parseInput } from '@ensdomains/ensjs/utils'
 
 import { Prettify } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+
+import { useQueryOptions } from './useQueryOptions'
 
 export type ValidationResult = Prettify<
   Partial<Omit<ParsedInputResult, 'normalised' | 'labelDataArray'>> & {
@@ -52,11 +53,39 @@ const defaultData = Object.freeze({
   labelDataArray: [],
 })
 
-export const useValidate = (input: string, skip?: any): ValidationResult => {
-  const { data } = useQuery(useQueryKeys().validate(input), () => validate(input), {
-    enabled: !skip,
-    initialData: () => (skip ? defaultData : validate(input)),
+type UseValidateParameters = {
+  input: string
+  enabled?: boolean
+}
+
+const tryValidate = (input: string) => {
+  if (!input) return defaultData
+  try {
+    return validate(input)
+  } catch {
+    return defaultData
+  }
+}
+
+export const useValidate = ({ input, enabled = true }: UseValidateParameters): ValidationResult => {
+  const { queryKey } = useQueryOptions({
+    params: { input },
+    functionName: 'validate',
+    queryDependencyType: 'independent',
+    keyOnly: true,
   })
 
-  return data
+  const { data, error } = useQuery({
+    queryKey,
+    queryFn: ({ queryKey: [params] }) => validate(params.input),
+    enabled,
+    staleTime: Infinity,
+    gcTime: Infinity,
+    select: (d) =>
+      Object.fromEntries(
+        Object.entries(d).map(([k, v]) => [k, v === 'undefined' ? '' : v]),
+      ) as ValidationResult,
+  })
+
+  return data || (error ? defaultData : tryValidate(input))
 }

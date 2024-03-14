@@ -1,6 +1,8 @@
-/* eslint-disable no-await-in-loop, import/no-extraneous-dependencies */
+// @ts-nocheck
+/* eslint-disable */
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
+
 import { optimize } from 'svgo'
 
 import coinList from '../src/constants/coinList'

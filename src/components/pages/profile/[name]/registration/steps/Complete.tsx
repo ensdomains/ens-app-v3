@@ -1,20 +1,18 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import dynamic from 'next/dynamic'
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { decodeEventLog } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { ETHRegistrarController__factory } from '@ensdomains/ensjs/generated/factories/ETHRegistrarController__factory'
-import { tokenise } from '@ensdomains/ensjs/utils/normalise'
-import { Button, Typography, mq } from '@ensdomains/thorin'
+import { tokenise } from '@ensdomains/ensjs/utils'
+import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
 import { Card } from '@app/components/Card'
-import { useNameDetails } from '@app/hooks/useNameDetails'
 import useWindowSize from '@app/hooks/useWindowSize'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
@@ -103,6 +101,47 @@ const SubtitleWithGradient = styled(Typography)(
   `,
 )
 
+const nameRegisteredSnippet = [
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        name: 'name',
+        type: 'string',
+      },
+      {
+        indexed: true,
+        name: 'label',
+        type: 'bytes32',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        name: 'baseCost',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        name: 'premium',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        name: 'expires',
+        type: 'uint256',
+      },
+    ],
+    name: 'NameRegistered',
+    type: 'event',
+  },
+] as const
+
 const Confetti = dynamic(() =>
   import('react-confetti').then((mod) => mod.default as typeof ConfettiT),
 )
@@ -128,22 +167,17 @@ const useEthInvoice = (
 
   const registrationValue = useMemo(() => {
     if (!registerReceipt) return null
-    const registrarInterface = ETHRegistrarController__factory.createInterface()
     for (const log of registerReceipt.logs) {
       try {
-        const [, , , baseCost, premium] = registrarInterface.decodeEventLog(
-          'NameRegistered',
-          log.data,
-          log.topics,
-        ) as [
-          name: string,
-          labelhash: string,
-          owner: string,
-          base: BigNumber,
-          premium: BigNumber,
-          expiry: BigNumber,
-        ]
-        return baseCost.add(premium)
+        const {
+          args: { baseCost, premium },
+        } = decodeEventLog({
+          abi: nameRegisteredSnippet,
+          topics: log.topics,
+          data: log.data,
+          eventName: 'NameRegistered',
+        })
+        return baseCost + premium
         // eslint-disable-next-line no-empty
       } catch {}
     }
@@ -159,14 +193,20 @@ const useEthInvoice = (
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
-    const value = registrationValue || BigNumber.from(0)
+    const value = registrationValue || 0n
 
-    const commitGasUsed = BigNumber.from(commitReceipt?.gasUsed || 0)
-    const registerGasUsed = BigNumber.from(registerReceipt?.gasUsed || 0)
+    const commitGasUsed = commitReceipt?.gasUsed ? BigInt(commitReceipt.gasUsed) : 0n
+    const effectiveGasPrice = commitReceipt?.effectiveGasPrice
+      ? BigInt(commitReceipt.effectiveGasPrice)
+      : 0n
+    const registerGasUsed = registerReceipt?.gasUsed ? BigInt(registerReceipt.gasUsed) : 0n
+    const registerGasPrice = registerReceipt?.effectiveGasPrice
+      ? BigInt(registerReceipt.effectiveGasPrice)
+      : 0n
 
-    const commitNetFee = commitGasUsed.mul(commitReceipt!.effectiveGasPrice)
-    const registerNetFee = registerGasUsed.mul(registerReceipt!.effectiveGasPrice)
-    const totalNetFee = registerNetFee ? commitNetFee?.add(registerNetFee) : BigNumber.from(0)
+    const commitNetFee = commitGasUsed * effectiveGasPrice
+    const registerNetFee = registerGasUsed * registerGasPrice
+    const totalNetFee = commitNetFee && registerNetFee ? commitNetFee + registerNetFee : 0n
 
     return (
       <Invoice
@@ -185,16 +225,13 @@ const useEthInvoice = (
 }
 
 type Props = {
-  nameDetails: ReturnType<typeof useNameDetails>
+  name: string
+  beautifiedName: string
   callback: (toProfile: boolean) => void
   isMoonpayFlow: boolean
 }
 
-const Complete = ({
-  nameDetails: { normalisedName: name, beautifiedName },
-  callback,
-  isMoonpayFlow,
-}: Props) => {
+const Complete = ({ name, beautifiedName, callback, isMoonpayFlow }: Props) => {
   const { t } = useTranslation('register')
   const { width, height } = useWindowSize()
   const { InvoiceFilled, avatarSrc } = useEthInvoice(name, isMoonpayFlow)

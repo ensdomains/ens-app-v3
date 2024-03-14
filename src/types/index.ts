@@ -1,21 +1,33 @@
-import type { PopulatedTransaction } from '@ethersproject/contracts'
-import type { JsonRpcSigner, TransactionReceipt } from '@ethersproject/providers'
+import { UseInfiniteQueryOptions, UseQueryOptions } from '@tanstack/react-query'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
+import type { Account, Address, Client, Hex, TransactionReceipt, Transport } from 'viem'
 
-import type { ChildFuses, ENS } from '@ensdomains/ensjs'
-import { DecodedContentHash } from '@ensdomains/ensjs/utils/contentHash'
+import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
+import { GetSubgraphRecordsReturnType } from '@ensdomains/ensjs/subgraph'
+import {
+  ChildFuseReferenceType,
+  ChildFuses,
+  ParentFuseReferenceType,
+  ParentFuses,
+} from '@ensdomains/ensjs/utils'
 import { Helper, Space } from '@ensdomains/thorin'
 
-export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
+import { SupportedChain } from '@app/constants/chains'
+import type { wagmiConfig } from '@app/utils/query/wagmi'
 
-export type ProfileRecords = NonNullable<Profile['records']>
+export type Profile = Partial<
+  GetRecordsReturnType &
+    Pick<NonNullable<GetSubgraphRecordsReturnType>, 'isMigrated' | 'createdAt'> & {
+      address: Address | undefined
+    }
+>
 
-export type RecordItem = NonNullable<ProfileRecords['texts']>[number]
+export type TextRecord = NonNullable<Profile['texts']>[number]
 
-export type ContentHash = string | DecodedContentHash | undefined | null
+export type AddressRecord = NonNullable<Profile['coins']>[number]
 
-export type Name = NonNullable<Awaited<ReturnType<ENS['getNames']>>>[0]
+export type RecordItem = TextRecord | AddressRecord
 
 interface TransactionDisplayItemBase {
   label: string
@@ -46,8 +58,6 @@ export type TransactionDisplayItem =
 
 export type TransactionDisplayItemTypes = 'name' | 'address' | 'list' | 'records'
 
-type PublicInterface<Type> = { [Key in keyof Type]: Type[Key] }
-
 export type AvatarEditorType = {
   avatar?: string
 }
@@ -71,21 +81,32 @@ export type ProfileEditorType = {
   }
 } & AvatarEditorType
 
-export type PublicENS = PublicInterface<ENS>
-
 export type HelperProps = ComponentProps<typeof Helper>
-export type ReturnedENS = { [key in keyof PublicENS]: Awaited<ReturnType<PublicENS[key]>> }
 
-export interface Transaction<Data> {
-  displayItems: (data: any, t: TFunction<'translation', undefined>) => TransactionDisplayItem[]
-  transaction: (signer: JsonRpcSigner, ens: PublicENS, data: Data) => Promise<PopulatedTransaction>
-  helper?: (data: any, t: TFunction<'translation', undefined>) => undefined | HelperProps
+export type BasicTransactionRequest = {
+  to: Address
+  data: Hex
+  value?: bigint
+}
+
+export type TransactionFunctionParameters<TData> = {
+  client: ClientWithEns
+  connectorClient: ConnectorClientWithEns
+  data: TData
+}
+
+export interface Transaction<TData> {
+  displayItems: (data: TData, t: TFunction<'translation', undefined>) => TransactionDisplayItem[]
+  transaction: (
+    params: TransactionFunctionParameters<TData>,
+  ) => Promise<BasicTransactionRequest> | BasicTransactionRequest
+  helper?: (data: TData, t: TFunction<'translation', undefined>) => undefined | HelperProps
   backToInput?: boolean
 }
 
-export type AllChildFuses = Required<ChildFuses['options']>
-
-export type EthAddress = string
+export type ExtractTransactionData<TTransaction> = TTransaction extends Transaction<infer TData>
+  ? TData
+  : never
 
 export type UserTheme = 'light' | 'dark'
 // fiat is placeholder for now, not actually implemented
@@ -115,14 +136,16 @@ export type DeepPartial<T> = T extends object
     }
   : T
 
-export type OwnerArray = {
-  address: string
+export type OwnerItem = {
+  address: Address
   label: string
   description: string
   canTransfer: boolean
   transferType?: 'manager' | 'owner'
   testId: string
-}[]
+}
+
+export type OwnerArray = OwnerItem[]
 
 export type MinedData = TransactionReceipt & {
   timestamp: number
@@ -131,3 +154,56 @@ export type MinedData = TransactionReceipt & {
 export type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {}
+
+export type ConnectorClientWithEns = Client<Transport, SupportedChain, Account>
+export type ConfigWithEns = typeof wagmiConfig
+export type ClientWithEns = ReturnType<ConfigWithEns['getClient']>
+
+export type QueryConfig<TData, TError, TSelectData = TData> = Pick<
+  UseQueryOptions<TData, TError, TSelectData>,
+  'gcTime' | 'enabled' | 'staleTime'
+> & {
+  /** Scope the cache to a given context. */
+  scopeKey?: string
+}
+export type InfiniteQueryConfig<TData, TError, TSelectData = TData> = Pick<
+  UseInfiniteQueryOptions<TData, TError, TSelectData>,
+  'gcTime' | 'enabled' | 'staleTime'
+> & {
+  /** Scope the cache to a given context. */
+  scopeKey?: string
+}
+export type BaseQueryKeyParameters = { chainId: number; address: Address | undefined }
+export type QueryDependencyType = 'standard' | 'graph' | 'independent'
+export type CreateQueryKey<
+  TParams extends {},
+  TFunctionName extends string,
+  TQueryDependencyType extends QueryDependencyType,
+> = TQueryDependencyType extends 'graph'
+  ? readonly [
+      params: TParams,
+      chainId: SupportedChain['id'],
+      address: Address | undefined,
+      scopeKey: string | undefined,
+      functionName: TFunctionName,
+      graphKey: 'graph',
+    ]
+  : readonly [
+      params: TParams,
+      chainId: TQueryDependencyType extends 'independent' ? undefined : SupportedChain['id'],
+      address: TQueryDependencyType extends 'independent' ? undefined : Address | undefined,
+      scopeKey: string | undefined,
+      functionName: TFunctionName,
+    ]
+
+/**
+ * Makes {@link TKeys} optional in {@link TType} while preserving type inference.
+ */
+// s/o trpc (https://github.com/trpc/trpc/blob/main/packages/server/src/types.ts#L6)
+export type PartialBy<TType, TKeys extends keyof TType> = Partial<Pick<TType, TKeys>> &
+  Omit<TType, TKeys>
+
+export type AnyFuseKey = ParentFuseReferenceType['Key'] | ChildFuseReferenceType['Key']
+export type CurrentChildFuses = { -readonly [k in keyof ChildFuses]: boolean }
+export type CurrentParentFuses = { -readonly [k in keyof ParentFuses]: boolean }
+export type CurrentAnyFuses = CurrentChildFuses & CurrentParentFuses

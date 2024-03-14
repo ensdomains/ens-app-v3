@@ -2,7 +2,8 @@ import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Input, MagnifyingGlassSimpleSVG, Select, mq } from '@ensdomains/thorin'
+import { GetNamesForAddressParameters } from '@ensdomains/ensjs/subgraph'
+import { Input, MagnifyingGlassSimpleSVG, mq, Select } from '@ensdomains/thorin'
 
 import DownDirectionSVG from '@app/assets/SortAscending.svg'
 import UpDirectionSVG from '@app/assets/SortDescending.svg'
@@ -112,7 +113,7 @@ const DirectionButton = styled.button<{ $active: boolean }>(
   `,
 )
 
-export type SortType = 'expiryDate' | 'labelName' | 'creationDate'
+export type SortType = NonNullable<GetNamesForAddressParameters['orderBy']>
 
 export type SortDirection = 'asc' | 'desc'
 

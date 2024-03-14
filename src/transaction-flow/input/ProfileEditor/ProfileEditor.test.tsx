@@ -1,135 +1,117 @@
 /* eslint-disable no-await-in-loop */
 import { cleanup, mockFunction, render, screen, userEvent, waitFor, within } from '@app/test-utils'
 
-import { useNetwork } from 'wagmi'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { useEnsAvatar } from 'wagmi'
 
+import ensjsPackage from '@app/../node_modules/@ensdomains/ensjs/package.json'
+import appPackage from '@app/../package.json'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useBasicName } from '@app/hooks/useBasicName'
-import { useContractAddress } from '@app/hooks/useContractAddress'
-import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
-import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import ProfileEditor from './ProfileEditor-flow'
 
-const appPackage = require('@app/../package.json')
-const ensjsPackage = require('@app/../node_modules/@ensdomains/ensjs/package.json')
+vi.mock('wagmi')
 
 const mockProfileData = {
-  profile: {
-    address: '0x70643CB203137b9b9eE19deA56080CD2BA01dBFd',
-    records: {
-      contentHash: {},
-      texts: [
-        {
-          key: 'email',
-          type: 'text',
-          value: 'test@ens.domains',
-        },
-        {
-          key: 'url',
-          type: 'text',
-          value: 'https://ens.domains',
-        },
-        {
-          key: 'avatar',
-          type: 'text',
-          value: 'https://example.xyz/avatar/test.jpg',
-        },
-        {
-          key: 'com.discord',
-          type: 'text',
-          value: 'test',
-        },
-        {
-          key: 'com.reddit',
-          type: 'text',
-          value: 'https://www.reddit.com/user/test/',
-        },
-        {
-          key: 'com.twitter',
-          type: 'text',
-          value: 'https://twitter.com/test',
-        },
-        {
-          key: 'org.telegram',
-          type: 'text',
-          value: '@test',
-        },
-        {
-          key: 'com.linkedin.com',
-          type: 'text',
-          value: 'https://www.linkedin.com/in/test/',
-        },
-        {
-          key: 'xyz.lensfrens',
-          type: 'text',
-          value: 'https://www.lensfrens.xyz/test.lens',
-        },
-      ],
-      coinTypes: [
-        {
-          key: '60',
-          type: 'addr',
-          coin: 'ETH',
-          addr: '0xb794f5ea0ba39494ce839613fffba74279579268',
-        },
-        {
-          key: '0',
-          type: 'addr',
-          coin: 'BTC',
-          addr: '1JnJvEBykLcGHYxCZVWgDGDm7pkK3EBHwB',
-        },
-        {
-          key: '3030',
-          type: 'addr',
-          coin: 'HBAR',
-          addr: '0.0.123123',
-        },
-        {
-          key: '501',
-          type: 'addr',
-          coin: 'SOL',
-          addr: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH',
-        },
-      ],
-    },
-    resolverAddress: '0x0',
+  data: {
+    address: '0x70643CB203137b9b9eE19deA56080CD2BA01dBFd' as const,
+    contentHash: null,
+    texts: [
+      {
+        key: 'email',
+        value: 'test@ens.domains',
+      },
+      {
+        key: 'url',
+        value: 'https://ens.domains',
+      },
+      {
+        key: 'avatar',
+        value: 'https://example.xyz/avatar/test.jpg',
+      },
+      {
+        key: 'com.discord',
+        value: 'test',
+      },
+      {
+        key: 'com.reddit',
+        value: 'https://www.reddit.com/user/test/',
+      },
+      {
+        key: 'com.twitter',
+        value: 'https://twitter.com/test',
+      },
+      {
+        key: 'org.telegram',
+        value: '@test',
+      },
+      {
+        key: 'com.linkedin.com',
+        value: 'https://www.linkedin.com/in/test/',
+      },
+      {
+        key: 'xyz.lensfrens',
+        value: 'https://www.lensfrens.xyz/test.lens',
+      },
+    ],
+    coins: [
+      {
+        id: 60,
+        name: 'ETH',
+        value: '0xb794f5ea0ba39494ce839613fffba74279579268',
+      },
+      {
+        id: 0,
+        name: 'BTC',
+        value: '1JnJvEBykLcGHYxCZVWgDGDm7pkK3EBHwB',
+      },
+      {
+        id: 3030,
+        name: 'HBAR',
+        value: '0.0.123123',
+      },
+      {
+        id: 501,
+        name: 'SOL',
+        value: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH',
+      },
+    ],
+    resolverAddress: '0x0' as const,
     isMigrated: true,
-    createdAt: '1630553876',
+    createdAt: {
+      date: new Date('1630553876'),
+      value: 1630553876,
+    },
   },
   isLoading: false,
-  isWrapped: false,
 }
 
-jest.mock('@app/utils/BreakpointProvider')
-jest.mock('@app/hooks/useNameDetails')
-jest.mock('@app/utils/EnsProvider')
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
-jest.mock('@app/hooks/useContractAddress')
-jest.mock('@app/hooks/resolver/useResolverStatus')
-jest.mock('@app/hooks/useBasicName')
-jest.mock('@app/hooks/useProfile')
-jest.mock('@app/utils/cacheKeyFactory')
-jest.mock('@app/transaction-flow/input/ProfileEditor/components/ProfileBlurb', () => ({
+vi.mock('@app/hooks/chain/useContractAddress')
+
+vi.mock('@app/hooks/resolver/useResolverStatus')
+vi.mock('@app/hooks/useProfile')
+vi.mock('@app/hooks/useIsWrapped')
+
+vi.mock('@app/utils/BreakpointProvider')
+
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
+
+vi.mock('@app/transaction-flow/input/ProfileEditor/components/ProfileBlurb', () => ({
   ProfileBlurb: () => <div>Profile Blurb</div>,
 }))
-jest.mock('@app/hooks/useAvatar')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
-const mockUseNameDetails = mockFunction(useNameDetails)
 const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseResolverStatus = mockFunction(useResolverStatus)
-const mockUseNetwork = mockFunction(useNetwork)
-const mockUseBasicName = mockFunction(useBasicName)
 const mockUseProfile = mockFunction(useProfile)
-const mockUseQueryKeys = mockFunction(useQueryKeys)
-const mockUseAvatar = mockFunction(useAvatar)
+const mockUseIsWrapped = mockFunction(useIsWrapped)
+const mockUseEnsAvatar = mockFunction(useEnsAvatar)
 
-const mockDispatch = jest.fn()
+const mockDispatch = vi.fn()
 
 export function setupIntersectionObserverMock({
   root = null,
@@ -189,13 +171,14 @@ const makeResolverStatus = (keys?: string[], isLoading = false) => ({
   isLoading,
 })
 
+beforeEach(() => {
+  setupIntersectionObserverMock()
+})
+
 describe('ProfileEditor', () => {
   beforeEach(() => {
-    mockUseNameDetails.mockReturnValue(
-      mockProfileData as unknown as { profile: Profile; loading: boolean },
-    )
-
-    mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
+    mockUseProfile.mockReturnValue(mockProfileData)
+    mockUseIsWrapped.mockReturnValue({ data: false, isLoading: false })
 
     mockUseBreakpoint.mockReturnValue({
       xs: true,
@@ -205,34 +188,29 @@ describe('ProfileEditor', () => {
       xl: false,
     })
 
-    setupIntersectionObserverMock()
-    window.scroll = jest.fn()
+    window.scroll = vi.fn() as () => void
 
+    // @ts-ignore
     mockUseContractAddress.mockReturnValue('0x0')
 
     mockUseResolverStatus.mockReturnValue(
       makeResolverStatus(['hasResolver', 'hasLatestResolver', 'hasValidResolver']),
     )
-    mockUseBasicName.mockReturnValue({ isWrapped: false })
 
-    mockUseQueryKeys.mockReturnValue({
-      profile: () => ['profile', 'test.eth'],
-    })
-
-    mockUseAvatar.mockReturnValue({
-      avatar: 'avatar',
+    mockUseEnsAvatar.mockReturnValue({
+      data: 'avatar',
       isLoading: false,
     })
   })
 
   afterEach(() => {
     cleanup()
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   it('should have use the same version of address-encoder as ensjs', () => {
-    expect(appPackage.dependencies['address-encoder']).toEqual(
-      ensjsPackage.dependencies['address-encoder'],
+    expect(appPackage.dependencies['@ensdomains/address-encoder']).toEqual(
+      ensjsPackage.dependencies['@ensdomains/address-encoder'],
     )
   })
 
@@ -254,7 +232,7 @@ describe('ResolverWarningOverlay', () => {
         data: {
           contract,
           name: 'test.eth',
-          resolver: '0x123',
+          resolverAddress: '0x123',
         },
         name: 'updateResolver',
       },
@@ -290,7 +268,7 @@ describe('ResolverWarningOverlay', () => {
           data: {
             contract,
             name: 'test.eth',
-            resolver: '0x123',
+            resolverAddress: '0x123',
           },
           name: 'updateResolver',
         },
@@ -320,7 +298,7 @@ describe('ResolverWarningOverlay', () => {
         {
           data: {
             name: 'test.eth',
-            resolver: '0x123',
+            resolverAddress: '0x123',
           },
           name: 'resetProfile',
         },
@@ -328,7 +306,7 @@ describe('ResolverWarningOverlay', () => {
           data: {
             contract: 'registry',
             name: 'test.eth',
-            resolver: '0x123',
+            resolverAddress: '0x123',
           },
           name: 'updateResolver',
         },
@@ -358,7 +336,7 @@ describe('ResolverWarningOverlay', () => {
         {
           data: {
             name: 'test.eth',
-            resolver: '0x123',
+            resolverAddress: '0x0',
           },
           name: 'migrateProfileWithReset',
         },
@@ -366,7 +344,7 @@ describe('ResolverWarningOverlay', () => {
           data: {
             contract: 'registry',
             name: 'test.eth',
-            resolver: '0x123',
+            resolverAddress: '0x123',
           },
           name: 'updateResolver',
         },
@@ -375,21 +353,12 @@ describe('ResolverWarningOverlay', () => {
   }
 
   beforeEach(() => {
-    mockUseNameDetails.mockReturnValue(
-      mockProfileData as unknown as { profile: Profile; loading: boolean },
-    )
+    mockUseProfile.mockReturnValue(mockProfileData)
+    // @ts-ignore
     mockUseContractAddress.mockReturnValue('0x123')
-    mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
-    mockUseBasicName.mockReturnValue({ isWrapped: false })
-    mockUseProfile.mockReturnValue({
-      profile: mockProfileData.profile as any,
-      loading: false,
-    })
-    mockUseQueryKeys.mockReturnValue({
-      profile: () => ['profile', 'test.eth'],
-    })
-    mockUseAvatar.mockReturnValue({
-      avatar: 'avatar',
+    mockUseIsWrapped.mockReturnValue({ data: false, isLoading: false })
+    mockUseEnsAvatar.mockReturnValue({
+      data: 'avatar',
       isLoading: false,
     })
     mockDispatch.mockClear()
@@ -418,10 +387,7 @@ describe('ResolverWarningOverlay', () => {
 
   describe('Resolver not name wrapper aware', () => {
     beforeEach(() => {
-      mockUseNameDetails.mockReturnValue({ ...mockProfileData, isWrapped: true } as unknown as {
-        profile: Profile
-        loading: boolean
-      })
+      mockUseIsWrapped.mockReturnValue({ data: true, isLoading: false })
       mockUseResolverStatus.mockReturnValue(makeResolverStatus(['hasResolver', 'hasValidResolver']))
     })
 

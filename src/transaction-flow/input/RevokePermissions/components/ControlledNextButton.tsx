@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Button } from '@ensdomains/thorin'
 
-import type { Fuse } from '@app/transaction-flow/transaction/changePermissions'
+import { AnyFuseKey } from '@app/types'
 
 import type { FormData, View } from '../RevokePermissions-flow'
 
@@ -19,7 +19,7 @@ export const ControlledNextButton = ({
   view: View
   isLastView: boolean
   control: Control<FormData>
-  unburnedFuses: Fuse[]
+  unburnedFuses: AnyFuseKey[]
   onIncrement: () => void
   onSubmit: () => void
 }) => {
@@ -33,7 +33,7 @@ export const ControlledNextButton = ({
    * work properly.
    */
   const fusesBurnedDuringFlow = useMemo(() => {
-    const allFuses: { [key in Fuse]: boolean } = {
+    const allFuses: { [key in AnyFuseKey]: boolean } = {
       PARENT_CANNOT_CONTROL: parentFuses.PARENT_CANNOT_CONTROL,
       CAN_EXTEND_EXPIRY: parentFuses.CAN_EXTEND_EXPIRY,
       CANNOT_UNWRAP: childFuses.CANNOT_UNWRAP,
@@ -44,7 +44,7 @@ export const ControlledNextButton = ({
       CANNOT_APPROVE: childFuses.CANNOT_APPROVE,
       CANNOT_BURN_FUSES: childFuses.CANNOT_BURN_FUSES,
     }
-    const allFuseKeys = Object.keys(allFuses) as Fuse[]
+    const allFuseKeys = Object.keys(allFuses) as AnyFuseKey[]
     const burnedFuses = allFuseKeys.filter((fuse) => allFuses[fuse])
     return burnedFuses.filter((fuse) => unburnedFuses.includes(fuse))
   }, [

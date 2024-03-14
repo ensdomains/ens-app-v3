@@ -2,14 +2,14 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { validateName } from '@ensdomains/ensjs/utils/validation'
+import { validateName } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, Input } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 
 import { useValidateSubnameLabel } from '../../hooks/useValidateSubnameLabel'
-import { makeTransactionItem } from '../transaction'
+import { createTransactionItem } from '../transaction'
 import { TransactionDialogPassthrough } from '../types'
 
 type Data = {
@@ -43,7 +43,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
     error,
     expiryLabel,
     isLoading: isUseValidateSubnameLabelLoading,
-  } = useValidateSubnameLabel(parent, label, isWrapped)
+  } = useValidateSubnameLabel({ name: parent, label, isWrapped })
 
   const isLabelsInsync = label === _label
   const isLoading = isUseValidateSubnameLabelLoading || !isLabelsInsync
@@ -52,7 +52,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
     dispatch({
       name: 'setTransactions',
       payload: [
-        makeTransactionItem('createSubname', {
+        createTransactionItem('createSubname', {
           contract: isWrapped ? 'nameWrapper' : 'registry',
           label,
           parent,

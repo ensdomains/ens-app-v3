@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+
+import { test } from '../../../playwright/index.js'
 
 const profiles = [
   {
@@ -105,9 +106,9 @@ test.describe('Profile', () => {
     await page.goto('/')
     await login.connect()
 
-    await page.getByPlaceholder('Search for a name').fill('❤️❤️❤️.eth')
+    await page.getByPlaceholder('Search for a name').fill('❤️❤️❤️❤️❤️❤️.eth')
     await page.getByPlaceholder('Search for a name').press('Enter')
-    await expect(page).toHaveURL('/%E2%9D%A4%E2%9D%A4%E2%9D%A4.eth')
+    await expect(page).toHaveURL('/%E2%9D%A4%E2%9D%A4%E2%9D%A4%E2%9D%A4%E2%9D%A4%E2%9D%A4.eth')
     // This await is needed so that a headless provider can make it's function calls before the page closes.
     await page.waitForTimeout(5000)
   })

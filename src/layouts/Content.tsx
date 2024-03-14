@@ -2,13 +2,14 @@ import Head from 'next/head'
 import { ComponentProps, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Banner, Button, Skeleton, Typography, mq } from '@ensdomains/thorin'
+import { Banner, Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
 
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useContentWarning } from '@app/hooks/useContentWarning'
 import { useCopied } from '@app/hooks/useCopied'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 type BannerProps = ComponentProps<typeof Banner>
@@ -208,7 +209,7 @@ const CompactTitle = ({
             weight="bold"
             style={{ maxWidth: titleWidth, overflow: 'hidden' }}
           >
-            {title}
+            {title || ''}
           </Title>
           {subtitle && <Subtitle weight="bold">{subtitle}</Subtitle>}
         </TitleContainer>
@@ -251,8 +252,10 @@ export const Content = ({
     header?: React.ReactNode
     leading?: React.ReactNode
     trailing: React.ReactNode
+    titleExtra?: React.ReactNode
   }
 }) => {
+  const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
   const isDesktopMode = breakpoints.sm
 
@@ -279,11 +282,14 @@ export const Content = ({
 
   if (!children.leading && singleColumnContent) LeadingComponent = null
 
+  const fullTitle = `${title} - ENS`
+
+  if (!router.isReady) return null
   return (
     <>
       {!noTitle && (
         <Head>
-          <title>{title} - ENS</title>
+          <title>{fullTitle}</title>
         </Head>
       )}
 
@@ -301,6 +307,7 @@ export const Content = ({
                 subtitle={subtitle && (!isDesktopMode || alwaysShowSubtitle) ? subtitle : undefined}
                 titleButton={titleButton}
               />
+              {isDesktopMode && children.titleExtra}
               {inlineHeading && children.header && isDesktopMode && (
                 <ContentContainer>
                   <Skeleton loading={loading}>{children.header}</Skeleton>
@@ -308,13 +315,13 @@ export const Content = ({
               )}
               {!isDesktopMode && <Hamburger />}
             </CustomLeadingHeading>
+            {!isDesktopMode && children.titleExtra}
           </Skeleton>
         </HeadingItems>
       )}
 
       {!isDesktopMode && WarningComponent}
       {!isDesktopMode && InfoComponent}
-
       {LeadingComponent}
 
       {!inlineHeading && children.header && (

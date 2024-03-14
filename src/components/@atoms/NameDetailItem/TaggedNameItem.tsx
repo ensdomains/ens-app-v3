@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Tag, mq } from '@ensdomains/thorin'
+import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
+import { mq, Tag } from '@ensdomains/thorin'
 
-import { ReturnedName } from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
 import { validateExpiry } from '@app/utils/utils'
 
 import { NameDetailItem } from './NameDetailItem'
@@ -26,12 +26,9 @@ const OtherItemsContainer = styled.div(
 
 export const TaggedNameItem = ({
   name,
-  isController,
-  isRegistrant,
-  isWrappedOwner,
+  relation,
   fuses,
   expiryDate,
-  network,
   truncatedName,
   mode,
   selected,
@@ -40,43 +37,41 @@ export const TaggedNameItem = ({
   notOwned,
   pccExpired,
   hasOtherItems = true,
-}: Omit<ReturnedName, 'labelName' | 'labelhash' | 'isMigrated' | 'parent' | 'type' | 'id'> & {
-  notOwned?: boolean
-  network: number
-  selected?: boolean
-  mode?: 'select' | 'view'
-  disabled?: boolean
-  onClick?: () => void
-  pccExpired?: boolean
-  hasOtherItems?: boolean
-}) => {
+}: Pick<NameWithRelation, 'name' | 'expiryDate' | 'truncatedName'> &
+  Pick<Partial<NameWithRelation>, 'relation' | 'fuses'> & {
+    notOwned?: boolean
+    selected?: boolean
+    mode?: 'select' | 'view'
+    disabled?: boolean
+    onClick?: () => void
+    pccExpired?: boolean
+    hasOtherItems?: boolean
+  }) => {
   const { t } = useTranslation('common')
 
-  const isNativeEthName = /\.eth$/.test(name) && name.split('.').length === 2
+  const isNativeEthName = /\.eth$/.test(name!) && name!.split('.').length === 2
 
-  const tags: [enabled: boolean, translation: string][] = []
-
-  if (notOwned) {
-    tags.push([false, 'name.notOwned'])
-  } else if (!fuses) {
-    tags.push([!!isController, 'name.manager'])
-    if (isNativeEthName) {
-      tags.push([!!isRegistrant, 'name.owner'])
-    }
-  } else {
-    tags.push([
-      !!isWrappedOwner,
-      fuses.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
-    ])
-  }
+  const tags = (() => {
+    if (notOwned) return [[false, 'name.notOwned']] as const
+    if (fuses || relation?.wrappedOwner)
+      return [
+        [
+          !!relation?.wrappedOwner,
+          fuses?.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
+        ],
+      ] as const
+    return [
+      [!!relation?.owner, 'name.manager'],
+      ...(isNativeEthName ? ([[!!relation?.registrant, 'name.owner']] as const) : []),
+    ] as const
+  })()
 
   return (
     <NameDetailItem
       key={name}
-      network={network}
-      truncatedName={truncatedName}
-      expiryDate={validateExpiry(name, fuses, expiryDate, pccExpired)}
-      name={name}
+      truncatedName={truncatedName!}
+      expiryDate={validateExpiry({ name: name!, fuses, expiry: expiryDate?.date, pccExpired })}
+      name={name!}
       mode={mode}
       selected={selected}
       disabled={disabled}

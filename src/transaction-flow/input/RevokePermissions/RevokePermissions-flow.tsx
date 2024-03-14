@@ -2,20 +2,20 @@ import { Dispatch, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
-import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
+import {
+  ChildFuseKeys,
+  ChildFuseReferenceType,
+  ParentFuseKeys,
+  ParentFuseReferenceType,
+} from '@ensdomains/ensjs/utils'
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import type changePermissions from '@app/transaction-flow/transaction/changePermissions'
-import {
-  CHILD_FUSES,
-  ChildFuse,
-  Fuse,
-  PARENT_FUSES,
-  ParentFuse,
-} from '@app/transaction-flow/transaction/changePermissions'
 import { TransactionDialogPassthrough, TransactionFlowAction } from '@app/transaction-flow/types'
+import { ExtractTransactionData } from '@app/types'
 import { dateTimeLocalToDate, dateToDateTimeLocal } from '@app/utils/datetime-local'
 
 import { ControlledNextButton } from './components/ControlledNextButton'
@@ -36,13 +36,17 @@ export type FlowType =
   | 'grant-extend-expiry'
   | 'revoke-change-fuses'
 
+type CurrentParentFuses = {
+  [key in ParentFuseReferenceType['Key']]: boolean
+}
+
+type CurrentChildFuses = {
+  [key in ChildFuseReferenceType['Key']]: boolean
+}
+
 export type FormData = {
-  parentFuses: {
-    [key in ParentFuse]: boolean
-  }
-  childFuses: {
-    [key in ChildFuse]: boolean
-  }
+  parentFuses: CurrentParentFuses
+  childFuses: CurrentChildFuses
   expiry?: number
   expiryType?: 'max' | 'custom'
   expiryCustom?: string
@@ -63,9 +67,9 @@ type FlowWithoutExpiry = {
 type Data = {
   name: string
   flowType: FlowType
-  owner: string
-  parentFuses: AllCurrentFuses['parent']
-  childFuses: AllCurrentFuses['child']
+  owner: Address
+  parentFuses: CurrentParentFuses
+  childFuses: CurrentChildFuses
 } & (FlowWithExpiry | FlowWithoutExpiry)
 
 export type Props = {
@@ -85,18 +89,18 @@ export type View =
   | 'revokeChangeFuses'
   | 'revokeChangeFusesWarning'
 
-type TransactionData = Parameters<typeof changePermissions['transaction']>['2']
+type TransactionData = ExtractTransactionData<typeof changePermissions>
 
 /**
  * Gets default values for useForm as well as populating data from
  */
 const getFormDataDefaultValues = (data: Data, transactionData?: TransactionData): FormData => {
-  let parentFuseEntries = PARENT_FUSES.map((fuse) => [fuse, !!data.parentFuses[fuse]]) as [
-    ParentFuse,
+  let parentFuseEntries = ParentFuseKeys.map((fuse) => [fuse, !!data.parentFuses[fuse]]) as [
+    ParentFuseReferenceType['Key'],
     boolean,
   ][]
-  let childFuseEntries = CHILD_FUSES.map((fuse) => [fuse, !!data.childFuses[fuse]]) as [
-    ChildFuse,
+  let childFuseEntries = ChildFuseKeys.map((fuse) => [fuse, !!data.childFuses[fuse]]) as [
+    ChildFuseReferenceType['Key'],
     boolean,
   ][]
   const expiry = data.maxExpiry
@@ -139,8 +143,12 @@ const getFormDataDefaultValues = (data: Data, transactionData?: TransactionData)
     ])
   }
   return {
-    parentFuses: Object.fromEntries(parentFuseEntries) as { [key in ParentFuse]: boolean },
-    childFuses: Object.fromEntries(childFuseEntries) as { [key in ChildFuse]: boolean },
+    parentFuses: Object.fromEntries(parentFuseEntries) as {
+      [key in ParentFuseReferenceType['Key']]: boolean
+    },
+    childFuses: Object.fromEntries(childFuseEntries) as {
+      [key in ChildFuseReferenceType['Key']]: boolean
+    },
     expiry,
     expiryType,
     expiryCustom,
@@ -196,7 +204,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
       .filter(([, value]) => value === false)
       .map(([key]) => key)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) as Fuse[]
+  }, []) as (ParentFuseReferenceType['Key'] | ChildFuseReferenceType['Key'])[]
 
   /** The user flow depending on  */
   const flow = useMemo(() => {
@@ -250,11 +258,11 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
   const onSubmit = (form: FormData) => {
     // Only allow childfuses to be burned if CU is burned
     const childNamedFuses = form.childFuses.CANNOT_UNWRAP
-      ? CHILD_FUSES.filter((fuse) => unburnedFuses.includes(fuse) && form.childFuses[fuse])
+      ? ChildFuseKeys.filter((fuse) => unburnedFuses.includes(fuse) && form.childFuses[fuse])
       : []
 
     if (['revoke-pcc', 'grant-extend-expiry'].includes(flowType)) {
-      const parentNamedFuses = PARENT_FUSES.filter((fuse) => form.parentFuses[fuse])
+      const parentNamedFuses = ParentFuseKeys.filter((fuse) => form.parentFuses[fuse])
 
       const customExpiry = form.expiryCustom
         ? Math.floor(dateTimeLocalToDate(form.expiryCustom).getTime() / 1000)
@@ -264,7 +272,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
       dispatch({
         name: 'setTransactions',
         payload: [
-          makeTransactionItem('changePermissions', {
+          createTransactionItem('changePermissions', {
             name,
             contract: 'setChildFuses',
             fuses: {
@@ -279,7 +287,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
       dispatch({
         name: 'setTransactions',
         payload: [
-          makeTransactionItem('changePermissions', {
+          createTransactionItem('changePermissions', {
             name,
             contract: 'setFuses',
             fuses: childNamedFuses,
@@ -297,7 +305,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
         {
           revokeWarning: <RevokeWarningView />,
           revokePCC: (
-            <RevokePCCView managerAddr={owner} register={register} onDismiss={onDismiss} />
+            <RevokePCCView managerAddress={owner} register={register} onDismiss={onDismiss} />
           ),
           grantExtendExpiry: <GrantExtendExpiryView register={register} />,
           setExpiry: (
@@ -320,7 +328,10 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
             />
           ),
           revokePermissions: (
-            <RevokePermissionsView register={register} unburnedFuses={unburnedFuses} />
+            <RevokePermissionsView
+              register={register}
+              unburnedFuses={unburnedFuses as ChildFuseReferenceType['Key'][]}
+            />
           ),
           revokeChangeFuses: <RevokeChangeFusesView register={register} />,
           revokeChangeFusesWarning: <RevokeChangeFusesWarningView />,

@@ -1,13 +1,16 @@
 import { useMemo } from 'react'
+import { useChainId } from 'wagmi'
 
+import { getKnownResolverData } from '@app/constants/resolverAddressData'
 import { useRegistryResolver } from '@app/hooks/resolver/useRegistryResolver'
-import { useChainId } from '@app/hooks/useChainId'
-import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
+import { emptyAddress } from '@app/utils/constants'
 
-import { useBasicName } from '../useBasicName'
+import { useIsWrapped } from '../useIsWrapped'
 import { useProfile } from '../useProfile'
 
-type Options = {
+type UseResolverTypeParameters = {
+  name: string
+
   enabled?: boolean
 }
 
@@ -25,27 +28,29 @@ export const isWildcardCalc = ({
   resolverAddress !== registryResolver.data &&
   !profile.isFetching
 
-export const useResolverType = (name: string, options: Options = {}) => {
-  const enabled = (options.enabled ?? true) && !!name
+export const useResolverType = ({ name, enabled: enabled_ = true }: UseResolverTypeParameters) => {
+  const enabled = enabled_ && !!name
 
   const chainId = useChainId()
 
-  const basicName = useBasicName(name, {
-    skipGraph: false,
+  const isWrappedQuery = useIsWrapped({
+    name,
     enabled,
   })
-  const { isWrapped } = basicName
+  const { data: isWrapped } = isWrappedQuery
 
-  const profile = useProfile(name, {
-    skip: !enabled,
+  const profile = useProfile({
+    name,
+    enabled,
   })
-  const resolverAddress = profile.profile?.resolverAddress ?? ''
+  const resolverAddress = profile.data?.resolverAddress ?? ''
 
-  const registryResolver = useRegistryResolver(name, {
+  const registryResolver = useRegistryResolver({
+    name,
     enabled,
   })
 
-  const isLoading = basicName.isLoading || profile.loading || registryResolver.isLoading
+  const isLoading = isWrappedQuery.isLoading || profile.isLoading || registryResolver.isLoading
   const { isFetching } = registryResolver
   const { isError } = registryResolver
 
@@ -53,14 +58,17 @@ export const useResolverType = (name: string, options: Options = {}) => {
 
   const data = useMemo(() => {
     if (!enabled || isLoading) return
-    const resolverAddressIndex = RESOLVER_ADDRESSES[`${chainId}`]?.indexOf(resolverAddress)
-    if (resolverAddressIndex === -1) {
+    const knownResolverData = getKnownResolverData({ chainId, resolverAddress })
+    if (!knownResolverData) {
       return { type: 'custom', isWildcard, tone: 'greySecondary' } as const
     }
-    if (resolverAddressIndex === 0 || (!isWrapped && resolverAddressIndex === 1)) {
+    if (
+      (isWrapped && !knownResolverData.isNameWrapperAware) ||
+      knownResolverData.tag === 'outdated'
+    )
+      return { type: 'outdated', isWildcard, tone: 'redSecondary' } as const
+    if (knownResolverData.tag === 'latest')
       return { type: 'latest', isWildcard, tone: 'greenSecondary' } as const
-    }
-    return { type: 'outdated', isWildcard, tone: 'redSecondary' } as const
   }, [resolverAddress, isWrapped, enabled, chainId, isLoading, isWildcard])
 
   return { data, isLoading, isFetching, isError }

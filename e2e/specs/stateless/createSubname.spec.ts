@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+
+import { test } from '../../../playwright/index'
 
 test('should not show add subname button when the connected wallet is the registrant but not the controller', async ({
   page,
@@ -12,6 +13,21 @@ test('should not show add subname button when the connected wallet is the regist
     type: 'legacy',
     owner: 'user',
     manager: 'user2',
+    records: {
+      coins: [
+        {
+          coin: 'etcLegacy',
+          value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+        },
+      ],
+    },
+    subnames: [
+      {
+        label: 'test',
+        owner: 'user',
+        type: 'legacy',
+      },
+    ],
   })
   const subnamesPage = makePageObject('SubnamesPage')
 
@@ -174,13 +190,19 @@ test('should allow creating an expired wrapped subname', async ({
   const name = await makeName({
     label: 'wrapped',
     type: 'wrapped',
-    fuses: ['CANNOT_UNWRAP'],
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
     subnames: [
       {
         label: 'test',
         owner: 'user',
         duration: -60 * 60 * 24 * 30,
-        fuses: ['PARENT_CANNOT_CONTROL'],
+        fuses: {
+          parent: {
+            named: ['PARENT_CANNOT_CONTROL'],
+          },
+        },
       },
     ],
   })
@@ -215,13 +237,19 @@ test('should allow creating an expired wrapped subname from the profile page', a
   const name = await makeName({
     label: 'wrapped',
     type: 'wrapped',
-    fuses: ['CANNOT_UNWRAP'],
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
     subnames: [
       {
         label: 'test',
         owner: 'user',
         duration: -60 * 60 * 24 * 30,
-        fuses: ['PARENT_CANNOT_CONTROL'],
+        fuses: {
+          parent: {
+            named: ['PARENT_CANNOT_CONTROL'],
+          },
+        },
       },
     ],
   })

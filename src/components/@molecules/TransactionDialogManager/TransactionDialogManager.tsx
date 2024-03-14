@@ -1,20 +1,16 @@
-/* eslint-disable default-case */
-
-/* eslint-disable no-param-reassign */
+import { QueryClientProvider } from '@tanstack/react-query'
 import { Dispatch, useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import usePrevious from 'react-use/lib/usePrevious'
-import { WagmiConfig, useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
 import { Dialog } from '@ensdomains/thorin'
 
-import { useChainId } from '@app/hooks/useChainId'
 import { transactions } from '@app/transaction-flow/transaction'
-import { wagmiClientWithRefetch } from '@app/utils/query'
+import { queryClientWithRefetch } from '@app/utils/query/reactQuery'
 
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
-// import InputComponentWrapper from './InputComponentWrapper'
 import { IntroStageModal } from './stage/Intro'
 import { TransactionStageModal } from './stage/TransactionStageModal'
 
@@ -68,7 +64,7 @@ export const TransactionDialogManager = ({
       if (selectedItem.input && selectedItem.currentFlowStage === 'input') {
         const Component = DataInputComponents[selectedItem.input.name]
         return (
-          <WagmiConfig client={wagmiClientWithRefetch}>
+          <QueryClientProvider client={queryClientWithRefetch}>
             <Component
               {...{
                 data: selectedItem.input.data,
@@ -77,9 +73,7 @@ export const TransactionDialogManager = ({
                 onDismiss,
               }}
             />
-            {/* <InputComponentWrapper>
-            </InputComponentWrapper> */}
-          </WagmiConfig>
+          </QueryClientProvider>
         )
       }
       if (selectedItem.intro && selectedItem.currentFlowStage === 'intro') {
@@ -112,13 +106,17 @@ export const TransactionDialogManager = ({
       return (
         <TransactionStageModal
           actionName={transactionItem.name}
-          displayItems={transaction.displayItems(transactionItem.data, t)}
-          helper={transaction.helper?.(transactionItem.data, t)}
+          displayItems={transaction.displayItems(transactionItem.data as any, t)}
+          helper={
+            'helper' in transaction && typeof transaction.helper === 'function'
+              ? transaction.helper(transactionItem.data as any, t)
+              : undefined
+          }
           currentStep={selectedItem.currentTransaction}
           stepCount={selectedItem.transactions.length}
           transaction={transactionItem}
           txKey={selectedKey}
-          backToInput={transaction.backToInput ?? false}
+          backToInput={'backToInput' in transaction ? !!transaction.backToInput : false}
           {...{ dispatch, onDismiss }}
         />
       )

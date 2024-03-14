@@ -1,60 +1,102 @@
-import { useState } from 'react'
-import { useNetwork, useProvider, useQuery } from 'wagmi'
+import { useMemo } from 'react'
+import type { Address } from 'viem'
+import { useChainId } from 'wagmi'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
-import { ContractInterface } from '@app/validators/validateContract'
+import { GetSupportedInterfacesReturnType } from '@ensdomains/ensjs/public'
 
-import { errorToString } from '../utils/errorToString'
-import validateResolver from '../validators/validateResolver'
+import { getKnownResolverData } from '@app/constants/resolverAddressData'
+import { RESOLVER_INTERFACE_IDS, ResolverInterfaceName } from '@app/constants/resolverInterfaceIds'
 
-type Options = {
-  fallbackMsg?: string
+import { useSupportedInterfaces } from './ensjs/public/useSupportedInterfaces'
+
+type UseResolverHasInterfacesParameters<TInterfaceNames extends readonly ResolverInterfaceName[]> =
+  {
+    interfaceNames: TInterfaceNames
+    resolverAddress: Address
+
+    enabled?: boolean
+  }
+
+const getResolverInterfaceErrors = <
+  TInterfaceName extends string,
+  const TInterfaceNames extends readonly TInterfaceName[],
+>({
+  interfaceNames,
+  hasInterfaces,
+}: {
+  interfaceNames: TInterfaceNames
+  hasInterfaces: boolean[] | undefined
+}) => {
+  if (!hasInterfaces) return []
+  return interfaceNames.reduce(
+    (prev, curr, i) => {
+      const hasInterface = hasInterfaces[i]
+      if (!hasInterface) return [...prev, `Address does not support ${curr} interface`] as const
+      return prev
+    },
+    [] as readonly `Address does not support ${TInterfaceName} interface`[],
+  )
 }
 
-export const useResolverHasInterfaces = (
-  interfaceNames: ContractInterface[],
-  resolverAddress?: string,
-  skip?: boolean,
-  options?: Options,
-) => {
-  const fallbackMsg =
-    options?.fallbackMsg || 'Cannot determine if address supports resolver methods'
+type GetInterfaceIds<TInterfaceNames extends readonly ResolverInterfaceName[]> = {
+  -readonly [K in keyof TInterfaceNames]: (typeof RESOLVER_INTERFACE_IDS)[TInterfaceNames[K]]
+}
 
-  const provider = useProvider()
-  const { chain } = useNetwork()
-  const [errors, setErrors] = useState<string[]>([])
+type ArrayToUnion<T extends readonly unknown[]> = T[number]
 
-  const isEnabled = !!chain && !skip && !!resolverAddress
+export const useResolverHasInterfaces = <
+  const TInterfaceNames extends readonly ResolverInterfaceName[],
+  TInterfaceIds extends GetInterfaceIds<TInterfaceNames>,
+>({
+  enabled: enabled_ = true,
+  interfaceNames,
+  resolverAddress,
+}: UseResolverHasInterfacesParameters<TInterfaceNames>) => {
+  const chainId = useChainId()
 
-  const {
-    data: hasInterface,
-    isLoading,
-    status,
-    error,
-  } = useQuery(
-    useQueryKeys().resolverHasInterfaces(interfaceNames.join(','), resolverAddress),
-    async () => {
-      const results = await validateResolver(interfaceNames, resolverAddress!, provider, {
-        networkId: chain!.id,
-      })
-      if (results.length === 0) {
-        setErrors([])
-        return true
-      }
-      setErrors(results)
-      return false
-    },
-    {
-      enabled: isEnabled,
-    },
+  const interfaceIds = useMemo(
+    () => interfaceNames.map((name) => RESOLVER_INTERFACE_IDS[name]) as TInterfaceIds,
+    [interfaceNames],
   )
 
-  const combinedErrors = [...errors, ...(error ? [errorToString(error, fallbackMsg)] : [])]
+  const knownResolverData = useMemo(
+    () => getKnownResolverData({ chainId, resolverAddress }),
+    [chainId, resolverAddress],
+  )
+
+  const enabled = enabled_ && !!resolverAddress && interfaceNames.length > 0 && !knownResolverData
+
+  const {
+    data: data_,
+    isLoading,
+    isFetching,
+    status,
+    isCachedData,
+  } = useSupportedInterfaces<GetInterfaceIds<TInterfaceNames>>({
+    address: resolverAddress,
+    interfaces: interfaceIds,
+    enabled,
+  })
+
+  const data = useMemo(() => {
+    if (!knownResolverData) return data_
+    return interfaceIds.map((interfaceId) =>
+      knownResolverData.supportedInterfaces.includes(interfaceId),
+    ) as GetSupportedInterfacesReturnType<TInterfaceIds>
+  }, [knownResolverData, data_, interfaceIds])
+
+  const errors = getResolverInterfaceErrors<ArrayToUnion<TInterfaceNames>, TInterfaceNames>({
+    interfaceNames,
+    hasInterfaces: data,
+  })
 
   return {
-    hasInterface,
+    data,
+    knownResolverData,
     isLoading,
+    isFetching,
     status,
-    errors: combinedErrors.length > 0 ? combinedErrors : undefined,
+    isCachedData,
+    errors: errors.length > 0 ? errors : undefined,
   }
 }

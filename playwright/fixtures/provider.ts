@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-import { ethers } from 'ethers'
+// import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
+import { BigNumber, ethers } from 'ethers'
 
 export type Provider = ReturnType<typeof createProvider>
 

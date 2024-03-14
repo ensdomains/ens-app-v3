@@ -47,7 +47,9 @@ const Text = styled.text(
     font-variant-numeric: tabular-nums;
     font-weight: bold;
     font-variant-ligatures: none;
-    font-feature-settings: 'ss01' on, 'ss03' on;
+    font-feature-settings:
+      'ss01' on,
+      'ss03' on;
     line-height: 34px;
   `,
 )

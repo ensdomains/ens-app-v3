@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import type { Name } from '..'
+import type { Name } from '../index.js'
 
 const MIN_REGISTRATION_DURATION = 28 * 24 * 60 * 60 // 28 Days
 

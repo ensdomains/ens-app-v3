@@ -2,7 +2,8 @@ import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Key, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useDisconnect } from 'wagmi'
+import type { Address } from 'viem'
+import { useDisconnect, useEnsAvatar } from 'wagmi'
 
 import {
   Button,
@@ -10,20 +11,20 @@ import {
   CogSVG,
   CopySVG,
   ExitSVG,
+  mq,
   PersonSVG,
   Profile,
-  mq,
 } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useChainId } from '@app/hooks/useChainId'
 import { useCopied } from '@app/hooks/useCopied'
-import { usePrimary } from '@app/hooks/usePrimary'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { shortenAddress } from '@app/utils/utils'
 
 import BaseLink from './@atoms/BaseLink'
@@ -125,24 +126,32 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   )
 }
 
-const HeaderProfile = ({ address }: { address: string }) => {
+const HeaderProfile = ({ address }: { address: Address }) => {
   const { t } = useTranslation('common')
 
-  const primary = usePrimary(address!, !address)
-  const chainId = useChainId()
-  const { avatar } = useAvatar(primary.data?.name, chainId)
+  const { data: primary } = usePrimaryName({ address })
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name: primary?.name })
   const zorb = useZorb(address, 'address')
-  const { disconnect } = useDisconnect()
+
+  const router = useRouterWithHistory()
+
+  const { disconnect } = useDisconnect({
+    mutation: {
+      onSuccess: () => {
+        router.push('/')
+      },
+    },
+  })
   const { copy, copied } = useCopied(300)
   const hasPendingTransactions = useHasPendingTransactions()
 
   return (
     <Profile
       address={address}
-      ensName={primary.data?.beautifiedName}
+      ensName={primary?.beautifiedName}
       dropdownItems={
         [
-          ...(primary.data?.name
+          ...(primary?.name
             ? [
                 {
                   label: t('wallet.myProfile'),

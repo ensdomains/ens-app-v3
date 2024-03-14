@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
-import { type Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
+import { RoleRecord, type Role } from '@app/hooks/ownership/useRoles/useRoles'
 import { SearchViewResult } from '@app/transaction-flow/input/SendName/views/SearchView/components/SearchViewResult'
 
 import type { useSimpleSearch } from '../../../hooks/useSimpleSearch'
@@ -18,7 +19,7 @@ type Props = {
   role: Role
   roles: RoleRecord[]
   results: ReturnType<typeof useSimpleSearch>['data']
-  onSelect: (role: { role: Role; address: string }) => void
+  onSelect: (role: { role: Role; address: Address }) => void
 }
 
 export const EditRoleResultsView = ({ role, roles, onSelect, results = [] }: Props) => {

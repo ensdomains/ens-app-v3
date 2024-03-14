@@ -1,13 +1,8 @@
-import { mockFunction, render, screen } from '@app/test-utils'
+import { render, screen } from '@app/test-utils'
 
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-import { useRouter } from 'next/router'
+import { describe, expect, it } from 'vitest'
 
 import Fuses from './Fuses'
-
-jest.mock('next/router')
-
-const mockUseRouter = mockFunction(useRouter)
 
 const mockFusesResponse = {
   fuseObj: {
@@ -22,7 +17,7 @@ const mockFusesResponse = {
     CAN_DO_EVERYTHING: false,
     CAN_EXTEND_EXPIRY: true,
   },
-  rawFuses: BigNumber.from('0x40'),
+  rawFuses: 0x40n,
 }
 
 const defaultProps = {
@@ -33,25 +28,11 @@ const defaultProps = {
 }
 
 describe('Fuses', () => {
-  afterEach(() => {
-    jest.clearAllMocks()
-  })
-
   it('should render', () => {
-    mockUseRouter.mockReturnValue({
-      query: {
-        name: 'nick.eth',
-      },
-    })
     render(<Fuses {...defaultProps} />)
   })
 
   it('should show warning if PCC has NOT been burned', () => {
-    mockUseRouter.mockReturnValue({
-      query: {
-        name: 'nick.eth',
-      },
-    })
     const props = {
       ...defaultProps,
       fuseObj: { ...mockFusesResponse.fuseObj, PARENT_CANNOT_CONTROL: false },

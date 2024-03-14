@@ -1,4 +1,5 @@
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
+import type { Address } from 'viem'
 
 import { checkDNS2LDFromName, checkETH2LDFromName, checkSubname } from '@app/utils/utils'
 
@@ -24,6 +25,7 @@ const CONTRACT_INFO = {
         ownershipLevel: P.not('nameWrapper'),
         registrant: P.select('registrant'),
       },
+      registrationStatus: 'registered',
     },
     guard: (address?: string) => (name: BasicName) => {
       const registrant = name.ownerData?.registrant
@@ -32,11 +34,11 @@ const CONTRACT_INFO = {
     },
     owner: {
       sendManager: {
-        contract: 'baseRegistrar',
+        contract: 'registrar',
         method: 'reclaim',
       },
       sendOwner: {
-        contract: 'baseRegistrar',
+        contract: 'registrar',
         method: 'safeTransferFrom',
       },
     },
@@ -51,9 +53,12 @@ const CONTRACT_INFO = {
     pattern: {
       ownerData: { ownershipLevel: 'nameWrapper' },
       wrapperData: {
-        parent: { PARENT_CANNOT_CONTROL: true },
-        child: { CANNOT_TRANSFER: false },
+        fuses: {
+          parent: { PARENT_CANNOT_CONTROL: true },
+          child: { CANNOT_TRANSFER: false },
+        },
       },
+      registrationStatus: 'registered',
     },
     guard: (address?: string) => (name: BasicName) => {
       const owner = name.ownerData?.owner
@@ -68,6 +73,18 @@ const CONTRACT_INFO = {
     // A wrapped name cannot be a manager since PCC is automatically burned
     manager: undefined,
   },
+  gracePeriodName: {
+    pattern: {
+      registrationStatus: 'gracePeriod',
+    },
+    guard: (address?: string) => (name: BasicName) => {
+      return (
+        name.ownerData?.owner === address ||
+        name.ownerData?.registrant === address ||
+        name.wrapperData?.owner === address
+      )
+    },
+  },
   wrappedSubname: {
     wrappedParent: {
       pattern: [
@@ -77,8 +94,10 @@ const CONTRACT_INFO = {
             owner: P.select('subnameOwner'),
           },
           wrapperData: {
-            parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
-            child: { CANNOT_TRANSFER: false },
+            fuses: {
+              parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
+              child: { CANNOT_TRANSFER: false },
+            },
           },
         },
         {
@@ -86,7 +105,9 @@ const CONTRACT_INFO = {
             ownershipLevel: 'nameWrapper',
           },
           wrapperData: {
-            parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
+            fuses: {
+              parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
+            },
           },
         },
       ],
@@ -130,8 +151,10 @@ const CONTRACT_INFO = {
             owner: P.select('subnameOwner'),
           },
           wrapperData: {
-            parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
-            child: { CANNOT_TRANSFER: false },
+            fuses: {
+              parent: { PARENT_CANNOT_CONTROL: P.select('pccBurned') },
+              child: { CANNOT_TRANSFER: false },
+            },
           },
         },
         {
@@ -144,7 +167,17 @@ const CONTRACT_INFO = {
       ],
       guard:
         (address?: string) =>
-        ([subname, parent]: [BasicName, BasicName]) => {
+        <
+          TParent extends {
+            ownerData:
+              | {
+                  ownershipLevel: string
+                  owner: Address | null
+                  registrant?: Address | null | undefined
+                }
+              | undefined
+          },
+        >([subname, parent]: [BasicName, TParent]) => {
           const subnameOwner = subname.ownerData?.owner
           const parentOwner = parent.ownerData?.owner
           const parentRegistrant = parent.ownerData?.registrant
@@ -222,7 +255,9 @@ const CONTRACT_INFO = {
         {
           ownerData: { ownershipLevel: 'nameWrapper' },
           wrapperData: {
-            parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
+            fuses: {
+              parent: { PARENT_CANNOT_CONTROL: P.select('parentPCCBurned') },
+            },
           },
         },
       ],
@@ -290,9 +325,18 @@ const get2LDEthAbilities = ({
         } as SendAbilities
       },
     )
+    .with(
+      CONTRACT_INFO.gracePeriodName.pattern,
+      CONTRACT_INFO.gracePeriodName.guard(address),
+      () =>
+        ({
+          ...BASE_RESPONSE,
+          canSendError: 'gracePeriod',
+        }) as SendAbilities,
+    )
     .otherwise(({ wrapperData }) => ({
       ...BASE_RESPONSE,
-      ...(wrapperData?.child?.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
+      ...(wrapperData?.fuses.child?.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
     }))
 }
 
@@ -402,7 +446,7 @@ const getSubnameAbilities = ({
     )
     .otherwise(([{ wrapperData }]) => ({
       ...BASE_RESPONSE,
-      ...(wrapperData?.child?.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
+      ...(wrapperData?.fuses.child.CANNOT_TRANSFER ? { canSendError: 'permissionRevoked' } : {}),
     }))
 }
 

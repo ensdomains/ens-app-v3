@@ -1,14 +1,20 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
-import useWrapperApprovedForAll from '@app/hooks/useWrapperApprovedForAll'
+import { useWrapperApprovedForAll } from '@app/hooks/useWrapperApprovedForAll'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import WrapButton from './WrapButton'
 
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
-jest.mock('@app/hooks/useWrapperApprovedForAll')
+vi.mock('wagmi')
+
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
+vi.mock('@app/hooks/useWrapperApprovedForAll')
+vi.mock('@app/utils/SyncProvider/SyncProvider', () => ({
+  useHasGraphError: () => ({ data: false, isLoading: false})
+}))
 
 const createMockResolverStatus = (overides = {}) => ({
   data: {
@@ -16,33 +22,34 @@ const createMockResolverStatus = (overides = {}) => ({
     isNameWrapperAware: false,
     ...overides,
   },
-  isLoading: false
+  isLoading: false,
 })
-const mockUseResolverStatus = jest.fn().mockReturnValue(createMockResolverStatus())
-jest.mock('@app/hooks/resolver/useResolverStatus', () => ({
-  useResolverStatus: () => mockUseResolverStatus()
+const mockUseResolverStatus = vi.fn().mockReturnValue(createMockResolverStatus())
+vi.mock('@app/hooks/resolver/useResolverStatus', () => ({
+  useResolverStatus: () => mockUseResolverStatus(),
 }))
 
-const mockUseTransaction = mockFunction(useTransactionFlow)
 const mockUseAccount = mockFunction(useAccount)
+
+const mockUseTransaction = mockFunction(useTransactionFlow)
 const mockUseWrapperApprovedForAll = mockFunction(useWrapperApprovedForAll)
 
-const mockCreateTransactionFlow = jest.fn()
-const mockResumeTransactionFlow = jest.fn()
-const mockGetResumable = jest.fn()
-const mockShowDataInput = jest.fn()
-const mockPrepareDataInput = () => mockShowDataInput
+const mockCreateTransactionFlow = vi.fn()
+const mockResumeTransactionFlow = vi.fn()
+const mockGetResumable = vi.fn()
+const mockShowDataInput = vi.fn()
+const mockusePreparedDataInput = () => mockShowDataInput
 
 describe('WrapButton', () => {
   mockUseTransaction.mockReturnValue({
     resumeTransactionFlow: mockResumeTransactionFlow,
     createTransactionFlow: mockCreateTransactionFlow,
     getResumable: mockGetResumable,
-    prepareDataInput: mockPrepareDataInput,
+    usePreparedDataInput: mockusePreparedDataInput,
   })
   mockUseAccount.mockReturnValue({ address: '0x123' })
   mockUseWrapperApprovedForAll.mockReturnValue({
-    approvedForAll: true,
+    data: true,
     isLoading: false,
   })
 
@@ -89,7 +96,9 @@ describe('WrapButton', () => {
     expect(mockCreateTransactionFlow).toHaveBeenCalled()
   })
   it('should create a transaction flow for migrateProfile and wrapName', async () => {
-    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({ isMigratedProfileEqual: false }))
+    mockUseResolverStatus.mockReturnValue(
+      createMockResolverStatus({ isMigratedProfileEqual: false }),
+    )
     render(
       <WrapButton
         name="test123.eth"
@@ -174,7 +183,9 @@ describe('WrapButton', () => {
     expect(args[1].transactions[0].data).toEqual({ name: 'test123.eth' })
   })
   it('should create a transaction flow for a .eth 2LD with a profile and a different owner', () => {
-    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({ isMigratedProfileEqual: false }))
+    mockUseResolverStatus.mockReturnValue(
+      createMockResolverStatus({ isMigratedProfileEqual: false }),
+    )
     render(
       <WrapButton
         name="test123.eth"
@@ -240,7 +251,7 @@ describe('WrapButton', () => {
 
   it('should create a transaction flow for a subname with no registry approval', () => {
     mockUseWrapperApprovedForAll.mockReturnValue({
-      approvedForAll: false,
+      data: false,
       isLoading: false,
     })
     render(
@@ -267,7 +278,7 @@ describe('WrapButton', () => {
   })
   it('should create a transaction flow for a subname with existing registry approval', () => {
     mockUseWrapperApprovedForAll.mockReturnValue({
-      approvedForAll: true,
+      data: true,
       isLoading: false,
     })
     render(
@@ -292,7 +303,9 @@ describe('WrapButton', () => {
   })
 
   it('should create a transaction flow for a subname with a profile', () => {
-    mockUseResolverStatus.mockReturnValue(createMockResolverStatus({isMigratedProfileEqual: false}))
+    mockUseResolverStatus.mockReturnValue(
+      createMockResolverStatus({ isMigratedProfileEqual: false }),
+    )
     render(
       <WrapButton
         name="sub.test123.eth"
@@ -343,7 +356,7 @@ describe('WrapButton', () => {
     mockGetResumable.mockReturnValue(false)
     mockCreateTransactionFlow.mockClear()
     mockUseWrapperApprovedForAll.mockReturnValue({
-      approvedForAll: false,
+      data: false,
       isLoading: false,
     })
     // name is sub2.test123.eth
@@ -392,6 +405,6 @@ describe('WrapButton', () => {
     )
     expect(
       mockUseWrapperApprovedForAll.mock.calls[mockUseWrapperApprovedForAll.mock.calls.length - 1],
-    ).toEqual(['0x123', true, true])
+    ).toEqual([{ address: '0x123', canBeWrapped: true, isSubname: true }])
   })
 })

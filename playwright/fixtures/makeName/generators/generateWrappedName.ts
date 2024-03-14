@@ -1,24 +1,26 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Accounts, User } from 'playwright/fixtures/accounts'
-import { Contracts } from 'playwright/fixtures/contracts'
-import { Provider } from 'playwright/fixtures/provider'
+import { getPrice } from '@ensdomains/ensjs/public'
+import {
+  EncodeChildFusesInputObject,
+  RecordOptions,
+  RegistrationParameters,
+} from '@ensdomains/ensjs/utils'
+import { commitName, registerName, setResolver } from '@ensdomains/ensjs/wallet'
 
-import { PublicResolver } from '@ensdomains/ensjs/generated/PublicResolver'
-import { ChildFuses, CombinedFuseInput } from '@ensdomains/ensjs/utils/fuses'
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
-import { makeCommitment, makeRegistrationData } from '@ensdomains/ensjs/utils/registerHelpers'
-
-import { NAMEWRAPPER_AWARE_RESOLVERS } from '@app/utils/constants'
-
+import { Accounts, createAccounts, User } from '../../accounts'
+import { Contracts } from '../../contracts'
+import {
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../contracts/utils/addTestContracts'
+import { Provider } from '../../provider'
 import { generateRecords } from './generateRecords'
-import { WrappedSubname, generateWrappedSubname } from './generateWrappedSubname'
+import { generateWrappedSubname, WrappedSubname } from './generateWrappedSubname'
 
-const DEFAULT_RESOLVER = NAMEWRAPPER_AWARE_RESOLVERS['1337'][0] as `0x${string}`
-
-type Fuse = ChildFuses['fuse']
+const DEFAULT_RESOLVER = testClient.chain.contracts.ensPublicResolver.address
 
 export type Name = {
   label: string
@@ -27,7 +29,7 @@ export type Name = {
   secret?: string
   resolver?: `0x${string}`
   reverseRecord?: boolean
-  fuses?: Fuse[]
+  fuses?: EncodeChildFusesInputObject
   addr?: `0x${string}`
   records?: RecordOptions
   subnames?: Omit<WrappedSubname, 'name' | 'nameOwner'>[]
@@ -49,92 +51,80 @@ export const generateWrappedName =
     // eslint-disable-next-line no-restricted-syntax
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
     resolver = DEFAULT_RESOLVER,
-    reverseRecord = false,
+    // reverseRecord = false,
     fuses,
     records,
     subnames,
   }: Name) => {
     const name = `${label}.eth`
-    console.log('generating wrapped name:', name)
+    const _owner = createAccounts().getAddress(owner) as `0x${string}`
+    console.log('generating wrapped name:', name, 'with owner:', _owner)
 
-    const _owner = accounts.getAddress(owner)
-    const controller = contracts.get('ETHRegistrarController', { signer: owner })
-
-    // Check if resolver is valid
-    const hasValidResolver = resolver && NAMEWRAPPER_AWARE_RESOLVERS['1337'].includes(resolver)
-    const resolverAddress = hasValidResolver ? resolver : DEFAULT_RESOLVER
-    const _resolver = contracts.get('PublicResolver', {
-      address: resolverAddress,
-      signer: owner,
-    }) as PublicResolver
-
-    const _fuses = fuses
-      ? ({
-          named: fuses,
-        } as CombinedFuseInput['child'])
-      : undefined
+    const hasValidResolver =
+      resolver.toLocaleLowerCase() ===
+      testClient.chain.contracts.ensPublicResolver.address.toLowerCase()
+    const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 
     console.log('making commitment:', name)
-    const { commitment } = makeCommitment({
+
+    const params: RegistrationParameters = {
       name,
-      owner: _owner,
       duration,
-      secret,
-      records,
-      reverseRecord,
-      fuses: _fuses,
-      resolver: _resolver,
+      owner: _owner as `0x${string}`,
+      secret: secret as `0x${string}`,
+      fuses,
+      resolverAddress: _resolver as `0x${string}`,
+    }
+    const commitTx = await commitName(walletClient, {
+      ...params,
+      account: _owner as `0x${string}`,
     })
-    const commitTx = await controller.commit(commitment)
-    await commitTx.wait()
+    await waitForTransaction(commitTx)
 
-    await provider.increaseTime(120)
-    await provider.mine()
+    await testClient.increaseTime({ seconds: 120 }) // I use 120 because sometimes with anvil you need to wait a bit longer when registering multiple names at once
+    await testClient.mine({ blocks: 1 })
 
-    console.log('registering name:', name)
-    const price = await controller.rentPrice(label, duration)
-    const registrationTx = await controller.register(
-      ...makeRegistrationData({
-        name,
-        owner: _owner,
-        duration,
-        secret,
-        records,
-        reverseRecord,
-        resolver: _resolver,
-        fuses: _fuses,
-      }),
-      {
-        value: price[0],
-      },
-    )
-    await registrationTx.wait()
+    const price = await getPrice(walletClient, {
+      nameOrNames: params.name,
+      duration: params.duration,
+    })
+    const total = price!.base + price!.premium
+
+    const tx = await registerName(walletClient, {
+      ...params,
+      account: _owner as `0x${string}`,
+      value: total,
+    })
+    await waitForTransaction(tx)
 
     const _subnames = (subnames || []).map((subname) => ({
       ...subname,
       name: `${label}.eth`,
       nameOwner: owner,
-      resolver: subname.resolver ?? resolverAddress,
+      resolver: subname.resolver ?? _resolver,
     }))
     for (const subname of _subnames) {
       await generateWrappedSubname({ accounts, provider, contracts })({ ...subname })
     }
 
     if (records) {
-      await generateRecords({ contracts })({
-        name: `${label}.eth`,
+      await generateRecords()({
+        name,
         owner,
-        resolver: _resolver.address as `0x${string}`,
+        resolver: _resolver as `0x${string}`,
         records,
       })
     }
 
     if (!hasValidResolver && resolver) {
       console.log('setting resolver: ', name, resolver)
-      const nameWrapper = contracts.get('NameWrapper', { signer: owner })
-      const node = namehash(`${label}.eth`)
-      const nameWrapperTx = await nameWrapper.setResolver(node, resolver)
-      await nameWrapperTx.wait()
+      const resolverTx = await setResolver(walletClient, {
+        name,
+        contract: 'nameWrapper',
+        resolverAddress: resolver,
+        account: _owner as `0x${string}`,
+      })
+      await waitForTransaction(resolverTx)
     }
 
     await provider.mine()

@@ -1,12 +1,14 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
+import { Address } from 'viem'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import { GetDnsImportDataReturnType, importDnsName } from '@ensdomains/ensjs/dns'
+
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = {
   name: string
-  address: string
-  proverResult: any
+  address: Address
+  dnsImportData: GetDnsImportDataReturnType
 }
 
 const displayItems = (
@@ -29,16 +31,11 @@ const displayItems = (
   },
 ]
 
-const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const tx = ens.importDNSSECName.populateTransaction(data.name, {
-    address: data.address,
-    proverResult: data.proverResult,
-    signer,
-  })
-  return tx
+const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  return importDnsName.makeFunctionData(connectorClient, data)
 }
 
 export default {
   displayItems,
   transaction,
-} as Transaction<Data>
+} satisfies Transaction<Data>

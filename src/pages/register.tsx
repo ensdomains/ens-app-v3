@@ -1,8 +1,7 @@
 import { ReactElement } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
 import Registration from '@app/components/pages/profile/[name]/registration/Registration'
-import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { getSelectedIndex } from '@app/hooks/useRegistrationReducer'
@@ -11,14 +10,16 @@ import { ContentGrid } from '@app/layouts/ContentGrid'
 
 export default function Page() {
   const router = useRouterWithHistory()
-  const name = router.query.name as string
+  // Derive name from query or path
+  const name =
+    (router.query.name as string) || router.asPath.replace('/register', '').replace('/', '')
 
   const initial = useInitial()
 
   const { address } = useAccount()
   const chainId = useChainId()
 
-  const nameDetails = useNameDetails(name, true)
+  const nameDetails = useNameDetails({ name })
   const { isLoading: detailsLoading, registrationStatus } = nameDetails
 
   const isLoading = detailsLoading || initial

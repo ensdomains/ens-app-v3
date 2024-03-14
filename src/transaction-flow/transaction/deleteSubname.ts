@@ -1,10 +1,8 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { deleteSubname } from '@ensdomains/ensjs/wallet'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
-import { emptyAddress } from '@app/utils/constants'
+import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = {
   name: string
@@ -32,26 +30,14 @@ const displayItems = (
   },
 ]
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  // TEMP FIX FOR REGISTRY SETRECORD, NOT PERMANENT!!!
-  // THIS SHOULD BE IN ENSJS
-  // TODO: REMOVE THIS
-  if (data.contract === 'registry' && data.method === 'setRecord') {
-    const registry = await ens.contracts!.getRegistry()
-    return registry.populateTransaction.setRecord(
-      namehash(data.name),
-      emptyAddress,
-      emptyAddress,
-      0,
-    )
-  }
-  return ens.deleteSubname.populateTransaction(data.name, {
+const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) =>
+  deleteSubname.makeFunctionData(connectorClient, {
+    name: data.name,
     contract: data.contract,
-    method: data.method,
-    signer,
+    asOwner: data.method === 'setRecord',
   })
-}
+
 export default {
   displayItems,
   transaction,
-} as Transaction<Data>
+} satisfies Transaction<Data>

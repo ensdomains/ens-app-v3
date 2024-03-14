@@ -1,16 +1,17 @@
 import { useTranslation } from 'react-i18next'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 import { Dialog } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import useDNSProof from '@app/hooks/useDNSProof'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
+import { useNameType } from '@app/hooks/nameType/useNameType'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { useNameType } from '@app/hooks/useNameType'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
+import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { usePrimaryNameOrAddress } from '../../../hooks/reverseRecord/usePrimaryNameOrAddress'
@@ -30,10 +31,14 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const account = useAccountSafely()
-  const details = useNameDetails(name)
+  const details = useNameDetails({ name })
   const nameType = useNameType(name)
-  const abilities = useAbilities(name)
-  const primaryNameOrAddress = usePrimaryNameOrAddress(details?.ownerData?.owner, 5)
+  const abilities = useAbilities({ name })
+  const primaryNameOrAddress = usePrimaryNameOrAddress({
+    address: details?.ownerData?.owner!,
+    shortenedAddressLength: 5,
+    enabled: !!details?.ownerData?.owner,
+  })
 
   const baseCanSynManager = checkCanSyncManager({
     address: account.address,
@@ -45,13 +50,13 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
 
   const syncType = nameType.data?.startsWith('dns') ? 'dns' : 'eth'
   const needsProof = nameType.data?.startsWith('dns') || !baseCanSynManager
-  const proof = useDNSProof(name, !needsProof)
+  const dnsImportData = useDnsImportData({ name, enabled: needsProof })
 
   const canSyncEth =
     baseCanSynManager &&
     syncType === 'eth' &&
     !!abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract
-  const canSyncDNS = baseCanSynManager && syncType === 'dns' && !!proof.data
+  const canSyncDNS = baseCanSynManager && syncType === 'dns' && !!dnsImportData.data
   const canSyncManager = canSyncEth || canSyncDNS
 
   const isLoading =
@@ -60,31 +65,36 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
     abilities.isLoading ||
     nameType.isLoading ||
     primaryNameOrAddress.isLoading ||
-    proof.isLoading
+    dnsImportData.isLoading
 
   const showWarning = nameType.data === 'dns-wrapped-2ld'
 
   const onClickNext = () => {
     const transactions = [
       canSyncDNS
-        ? makeTransactionItem('syncManager', {
+        ? createTransactionItem('syncManager', {
             name,
             address: account.address!,
-            proverResult: proof.data,
+            dnsImportData: dnsImportData.data!,
           })
         : null,
-      canSyncEth &&
-      account.address &&
-      abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract
-        ? makeTransactionItem('transferName', {
+      canSyncEth && account.address
+        ? makeTransferNameOrSubnameTransactionItem({
             name,
-            newOwner: account.address,
+            newOwnerAddress: account.address,
             sendType: 'sendManager',
-            contract: abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract,
-            reclaim: abilities.data?.sendNameFunctionCallDetails?.sendManager?.method === 'reclaim',
+            isOwnerOrManager: true,
+            abilities: abilities.data!,
           })
         : null,
-    ].filter((transaction) => !!transaction)
+    ].filter(
+      (
+        transaction,
+      ): transaction is
+        | TransactionItem<'syncManager'>
+        | TransactionItem<'transferName'>
+        | TransactionItem<'transferSubname'> => !!transaction,
+    )
 
     if (transactions.length !== 1) return
 

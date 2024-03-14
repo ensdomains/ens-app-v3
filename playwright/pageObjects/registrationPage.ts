@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Locator, Page, expect } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 
 export class RegistrationPage {
   readonly page: Page
@@ -24,6 +24,7 @@ export class RegistrationPage {
   }
 
   async getGas() {
+    await expect(this.gas).not.toBeEmpty()
     await expect(this.gas).not.toHaveText('0.0000 ETH')
     const text = (await this.gas.textContent()) as string
     return parseFloat(text)

@@ -1,24 +1,24 @@
 import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 
 import { act } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 
+import { useChainName } from '@app/hooks/chain/useChainName'
 import type { Transaction } from '@app/hooks/transactions/transactionStore'
-import { useChainName } from '@app/hooks/useChainName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 
 import { Notifications } from './Notifications'
 
-jest.mock('@app/hooks/useChainName')
-jest.mock('@app/hooks/useChainId')
-jest.mock('@app/utils/SyncProvider/SyncProvider')
-jest.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/hooks/chain/useChainName')
+vi.mock('@app/utils/SyncProvider/SyncProvider')
+vi.mock('@app/utils/BreakpointProvider')
 
 const mockUseChainName = mockFunction(useChainName)
 const mockUseCallbackOnTransaction = mockFunction(useCallbackOnTransaction)
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 
-jest.useFakeTimers()
+vi.useFakeTimers()
 
 const makeRecentTransaction =
   (status = 'confirmed') =>
@@ -28,9 +28,9 @@ const makeRecentTransaction =
       action: `test-action-${i}`,
       key: 'any',
       hash: `0x${i.toString(16).padStart(32, '0')}`,
-    } as Transaction)
+    }) as Transaction
 
-window.scroll = jest.fn()
+window.scroll = vi.fn() as () => void
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 let cb: UpdateCallback = (_) => {}
 mockUseCallbackOnTransaction.mockImplementation((_cb: UpdateCallback) => (cb = _cb))
@@ -75,7 +75,7 @@ describe('Notifications', () => {
     }).then((el) => expect(el).toBeInTheDocument())
 
     act(() => {
-      jest.advanceTimersByTime(8350)
+      vi.advanceTimersByTime(8350)
     })
 
     await waitFor(() => screen.queryByText('transaction.status.confirmed2.notifyTitle'), {

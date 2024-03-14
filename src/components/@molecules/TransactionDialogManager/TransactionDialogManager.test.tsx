@@ -1,16 +1,17 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
 import { useResetSelectedKey } from './TransactionDialogManager'
 
-jest.mock('wagmi')
+vi.mock('wagmi')
 
 const mockUseAccount = mockFunction(useAccount)
 
 describe('useResetSelectedKey', () => {
   it('should stopFlow if account changes', async () => {
-    const dispatch = jest.fn()
+    const dispatch = vi.fn()
     mockUseAccount.mockReturnValue({ address: '0xAddress' })
     const { rerender } = renderHook(() => useResetSelectedKey(dispatch))
     mockUseAccount.mockReturnValue({ address: '0xOtherAddress' })
@@ -21,7 +22,7 @@ describe('useResetSelectedKey', () => {
   })
 
   it('should not call stopFlow if account stays the same', () => {
-    const dispatch = jest.fn()
+    const dispatch = vi.fn()
     mockUseAccount.mockReturnValue({ address: '0xAddress' })
     const { rerender } = renderHook(() => useResetSelectedKey(dispatch))
     mockUseAccount.mockReturnValue({ address: '0xAddress' })

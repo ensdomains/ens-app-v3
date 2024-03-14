@@ -1,35 +1,11 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
+import { toBytes, type Address } from 'viem'
 
-import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
+import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
+import { DecodedFuses } from '@ensdomains/ensjs/utils'
 
-import {
-  CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
-  NAMEWRAPPER_AWARE_RESOLVERS,
-  networkName,
-} from './constants'
+import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
-export const getSupportedNetworkName = (networkId: number) =>
-  networkName[`${networkId}` as keyof typeof networkName] || 'unknown'
-
-const baseMetadataURL = process.env.NEXT_PUBLIC_PROVIDER
-  ? 'http://localhost:8080'
-  : 'https://metadata.ens.domains'
-
-// eslint-disable-next-line consistent-return
-export function imageUrlUnknownRecord(name: string, network: number) {
-  const supported = getSupportedNetworkName(network)
-
-  return `${baseMetadataURL}/${supported}/avatar/${encodeURIComponent(
-    name,
-  )}?timestamp=${Date.now()}`
-}
-
-export function ensNftImageUrl(name: string, network: number, regAddr: string) {
-  const supported = getSupportedNetworkName(network)
-
-  return `${baseMetadataURL}/${supported}/${regAddr}/${encodeURIComponent(name)}/image`
-}
+import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
 
 export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice = 5) => {
   if (address.length < maxLength) {
@@ -83,7 +59,7 @@ export const checkDNSName = (name: string): boolean => {
   return !!labels && labels[labels.length - 1] !== 'eth'
 }
 
-export const checkETH2LDFromName = (name: string) => {
+export const checkETH2LDFromName = (name: string): name is Eth2ldName => {
   const labels = name.split('.')
   if (labels.length !== 2) return false
   if (labels[1] !== 'eth') return false
@@ -100,7 +76,7 @@ export const checkDNS2LDFromName = (name: string) => {
 export const checkSubname = (name: string) => name.split('.').length > 2
 
 export const isLabelTooLong = (label: string) => {
-  const bytes = toUtf8Bytes(label)
+  const bytes = toBytes(label)
   return bytes.byteLength > 255
 }
 
@@ -126,28 +102,40 @@ export const deleteProperties = <T extends Record<string, any>, K extends keyof 
 
 export const getLabelFromName = (name: string = '') => name.split('.')[0]
 
-export const validateExpiry = (
-  name: string,
-  fuses: AllCurrentFuses | undefined,
-  expiry: Date | undefined,
-  pccExpired?: boolean,
-) => {
+export const validateExpiry = ({
+  name,
+  fuses,
+  expiry,
+  pccExpired = false,
+}: {
+  name: string
+  fuses: DecodedFuses | undefined | null
+  expiry: Date | undefined
+  pccExpired?: boolean
+}) => {
   const isDotETH = checkETH2LDFromName(name)
   if (isDotETH) return expiry
   if (!fuses) return undefined
   return pccExpired || fuses.parent.PARENT_CANNOT_CONTROL ? expiry : undefined
 }
 
-export const canEditRecordsWhenWrappedCalc = (
-  isWrapped: boolean,
-  resolverAddress: string = '',
-  chainId: number = 1,
-) => {
-  if (!isWrapped) return true
-  return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
-}
+export const getResolverWrapperAwareness = ({
+  chainId,
+  resolverAddress,
+}: {
+  chainId: number
+  resolverAddress?: Address
+}) =>
+  !!resolverAddress &&
+  !!KNOWN_RESOLVER_DATA[chainId]?.find((x) => x.address === resolverAddress)?.isNameWrapperAware
 
-export const hexToNumber = (hex: string) => parseInt(hex, 16)
+export const calculateValueWithBuffer = (value: bigint) =>
+  (value * CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE) / 100n
 
-export const calculateValueWithBuffer = (value: BigNumber) =>
-  value.mul(CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE).div(100)
+const encodedLabelRegex = /\[[a-fA-F0-9]{64}\]/g
+export const getEncodedLabelAmount = (name: string) => name.match(encodedLabelRegex)?.length || 0
+
+export const createDateAndValue = <TValue extends bigint | number>(value: TValue) => ({
+  date: new Date(Number(value)),
+  value,
+})

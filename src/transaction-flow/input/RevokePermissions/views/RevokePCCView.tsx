@@ -1,6 +1,7 @@
 import { UseFormRegister } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import type { Address } from 'viem'
 
 import { CheckboxRow, Dialog, Typography } from '@ensdomains/thorin'
 
@@ -9,7 +10,7 @@ import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryName
 import type { FormData } from '../RevokePermissions-flow'
 
 type Props = {
-  managerAddr: string
+  managerAddress: Address
   register: UseFormRegister<FormData>
   onDismiss: () => void
 }
@@ -20,10 +21,10 @@ const CenterAlignedTypography = styled(Typography)(
   `,
 )
 
-export const RevokePCCView = ({ managerAddr, register }: Props) => {
+export const RevokePCCView = ({ managerAddress, register }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
-  const { data: { nameOrAddr } = {} } = usePrimaryNameOrAddress(managerAddr)
+  const { data: { nameOrAddr } = {} } = usePrimaryNameOrAddress({ address: managerAddress })
 
   return (
     <>

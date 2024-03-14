@@ -3,8 +3,7 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { namehash, labelhash } from 'viem'
 
 const ZERO_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'
 

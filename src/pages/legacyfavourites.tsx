@@ -1,13 +1,14 @@
 import { ReactElement, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
+import { useChainId } from 'wagmi'
 
+import { truncateFormat } from '@ensdomains/ensjs/utils'
 import { Helper, Typography } from '@ensdomains/thorin'
 
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
-import { useChainId } from '@app/hooks/useChainId'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 
@@ -19,6 +20,7 @@ const Container = styled.div(
   `,
 )
 
+// eslint-disable-next-line react/no-unused-prop-types
 type Favourite = { name: string; expiry: Date }
 type Favourites = Favourite[]
 
@@ -63,7 +65,13 @@ export default function Page() {
                     {_favourites.map(({ name, expiry }: Favourite) => (
                       <TaggedNameItem
                         key={name}
-                        {...{ name, network: chainId, hasOtherItems: false, expiryDate: expiry }}
+                        truncatedName={truncateFormat(name)}
+                        {...{
+                          name,
+                          network: chainId,
+                          hasOtherItems: false,
+                          expiryDate: { date: expiry, value: expiry.getTime() },
+                        }}
                       />
                     ))}
                   </Container>

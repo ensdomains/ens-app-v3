@@ -1,33 +1,31 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
-import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
+import { stringToBytes } from 'viem'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
+import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
 import { DeepPartial } from '@app/types'
-import { useEns } from '@app/utils/EnsProvider'
 import { emptyAddress } from '@app/utils/constants'
 
+import { useOwner } from './ensjs/public/useOwner'
+import { useWrapperData } from './ensjs/public/useWrapperData'
 import { usePccExpired } from './fuses/usePccExpired'
-import { useGetWrapperData } from './useGetWrapperData'
 import { useValidateSubnameLabel } from './useValidateSubnameLabel'
 
 const BYTE256 =
   '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
 
-jest.mock('@app/utils/EnsProvider')
-jest.mock('@app/hooks/useGetWrapperData')
-jest.mock('@app/hooks/fuses/usePccExpired')
+vi.mock('@app/hooks/ensjs/public/useWrapperData')
+vi.mock('@app/hooks/ensjs/public/useOwner')
+vi.mock('@app/hooks/fuses/usePccExpired')
 
-const mockUseEns = mockFunction(useEns)
-const mockGetOwner = jest.fn()
-mockUseEns.mockReturnValue({
-  ready: true,
-  getOwner: mockGetOwner,
-})
+const mockUseWrapperData = mockFunction(useWrapperData)
+const mockUseOwner = mockFunction(useOwner)
 
-const mockUseGetWrapperData = mockFunction(useGetWrapperData)
 const mockUsePccExpired = mockFunction(usePccExpired)
 
-type OwnerData = Awaited<ReturnType<ReturnType<typeof useEns>['getOwner']>>
+type OwnerData = NonNullable<GetOwnerReturnType>
 const makeOwnerData = (
   type: 'nameWrapper' | 'registrar' | 'registry',
   overrides: DeepPartial<OwnerData> = {},
@@ -54,24 +52,27 @@ const makeOwnerData = (
   } as OwnerData
 }
 
-type WrapperData = Awaited<ReturnType<ReturnType<typeof useEns>['getWrapperData']>>
+type WrapperData = NonNullable<GetWrapperDataReturnType>
 const makeWrapperData = (overrides: DeepPartial<WrapperData> = {}) => {
-  const { parent = {}, child = {}, ...data } = overrides
+  const { fuses: { parent, child, value } = { parent: {}, child: {} }, ...data } = overrides
   return {
-    parent: {
-      PARENT_CANNOT_CONTROL: false,
-      CAN_EXTEND_EXPIRY: false,
-      ...parent,
-    },
-    child: {
-      CANNOT_UNWRAP: false,
-      CANNOT_BURN_FUSES: false,
-      CANNOT_TRANSFER: false,
-      CANNOT_SET_RESOLVER: false,
-      CANNOT_SET_TTL: false,
-      CANNOT_APPROVE: false,
-      CANNOT_CREATE_SUBDOMAIN: false,
-      ...child,
+    fuses: {
+      parent: {
+        PARENT_CANNOT_CONTROL: false,
+        CAN_EXTEND_EXPIRY: false,
+        ...parent,
+      },
+      child: {
+        CANNOT_UNWRAP: false,
+        CANNOT_BURN_FUSES: false,
+        CANNOT_TRANSFER: false,
+        CANNOT_SET_RESOLVER: false,
+        CANNOT_SET_TTL: false,
+        CANNOT_APPROVE: false,
+        CANNOT_CREATE_SUBDOMAIN: false,
+        ...child,
+      },
+      value,
     },
     owner: '0x0000000000000000000000000000000000000000',
     ...data,
@@ -89,7 +90,6 @@ const groups = [
         label: 'test',
         ownerData: makeOwnerData('registrar'),
         wrapperData: makeWrapperData(),
-        skipWaitForNextUpdate: true,
         result: {
           valid: false,
           isLoading: false,
@@ -259,8 +259,13 @@ const groups = [
         label: 'pccburned',
         ownerData: makeOwnerData('nameWrapper'),
         wrapperData: makeWrapperData({
-          parent: { PARENT_CANNOT_CONTROL: true },
-          expiryDate: new Date('2020-01-01'),
+          fuses: {
+            parent: { PARENT_CANNOT_CONTROL: true },
+          },
+          expiry: {
+            date: new Date('2020-01-01'),
+            value: BigInt(new Date('2020-01-01').getTime()),
+          },
         }),
         result: {
           valid: false,
@@ -276,7 +281,6 @@ const groups = [
         label: 'hello world',
         ownerData: makeOwnerData('nameWrapper'),
         wrapperData: makeWrapperData(),
-        skipWaitForNextUpdate: true,
         result: {
           valid: false,
           isLoading: false,
@@ -290,7 +294,6 @@ const groups = [
         label: 'hello.world',
         ownerData: makeOwnerData('nameWrapper'),
         wrapperData: makeWrapperData(),
-        skipWaitForNextUpdate: true,
         result: {
           valid: false,
           isLoading: false,
@@ -304,7 +307,6 @@ const groups = [
         label: 'hello.world',
         ownerData: makeOwnerData('nameWrapper'),
         wrapperData: makeWrapperData(),
-        skipWaitForNextUpdate: true,
         pccBurned: true,
         result: {
           valid: false,
@@ -314,15 +316,15 @@ const groups = [
       },
     ],
   },
-]
+] as const
 
 afterEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('BYTE256', () => {
   it('should be 256 bytes', async () => {
-    expect(toUtf8Bytes(BYTE256).length).toEqual(256)
+    expect(stringToBytes(BYTE256).length).toEqual(256)
   })
 })
 
@@ -331,17 +333,23 @@ describe('useValidateSubnameLabel', () => {
     describe(group.description, () => {
       group.tests.forEach((test) => {
         it(test.description, async () => {
-          mockGetOwner.mockReturnValue(test.ownerData)
-          mockUseGetWrapperData.mockReturnValue({
-            wrapperData: test.wrapperData,
+          mockUseOwner.mockReturnValue({
+            data: test.ownerData as any,
+            isLoading: false,
+          })
+          mockUseWrapperData.mockReturnValue({
+            data: test.wrapperData,
             isLoading: false,
           })
           mockUsePccExpired.mockReturnValue(!!(test as any).pccExpired)
 
-          const { result, waitForNextUpdate } = renderHook(() =>
-            useValidateSubnameLabel(test.name, test.label, test.isWrapped),
+          const { result } = renderHook(() =>
+            useValidateSubnameLabel({
+              name: test.name,
+              label: test.label,
+              isWrapped: test.isWrapped,
+            }),
           )
-          if (!test.skipWaitForNextUpdate) await waitForNextUpdate()
           expect(result.current).toEqual(test.result)
         })
       })

@@ -3,24 +3,31 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { isAddress } from '@ethersproject/address'
+import { useQueryClient } from '@tanstack/react-query'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
-import { useQueryClient } from 'wagmi'
+import { isAddress } from 'viem'
+import { useAccount, useChainId } from 'wagmi'
 
-import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
+import {
+  GetExpiryReturnType,
+  GetOwnerReturnType,
+  GetPriceReturnType,
+  GetWrapperDataReturnType,
+} from '@ensdomains/ensjs/public'
+import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
-import { BatchReturn } from '@app/hooks/useBasicName'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
+import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { ValidationResult, useValidate, validate } from '@app/hooks/useValidate'
+import { useValidate, validate, ValidationResult } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
+import { yearsToSeconds } from '@app/utils/utils'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
@@ -60,7 +67,9 @@ const SearchResultsContainer = styled.div<{
     opacity: 0;
     z-index: 1000;
     transform: translateY(-${theme.space['2']});
-    transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0s border-color linear 0s,
+    transition:
+      0.35s all cubic-bezier(1, 0, 0.22, 1.6),
+      0s border-color linear 0s,
       0s width linear 0s;
 
     ${$state === 'entered'
@@ -186,7 +195,8 @@ export const SearchInput = ({
   const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
   const queryClient = useQueryClient()
-  const queryKeys = useQueryKeys()
+  const chainId = useChainId()
+  const { address } = useAccount()
 
   const [inputVal, setInputVal] = useState('')
 
@@ -214,10 +224,10 @@ export const SearchInput = ({
 
   const isEmpty = inputVal === ''
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
-  const { isValid, isETH, is2LD, isShort, type, name } = useValidate(
-    inputVal,
-    inputIsAddress || isEmpty,
-  )
+  const { isValid, isETH, is2LD, isShort, type, name } = useValidate({
+    input: inputVal,
+    enabled: !inputIsAddress && !isEmpty,
+  })
   const normalisedOutput = useMemo(
     () => (inputIsAddress ? inputVal : name),
     [inputIsAddress, inputVal, name],
@@ -299,7 +309,6 @@ export const SearchInput = ({
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
-  const validateKey = useQueryKeys().validate
   const handleSearch = useCallback(() => {
     let selectedItem = searchItems[selected] as SearchItem
     if (!selectedItem) return
@@ -326,16 +335,53 @@ export const SearchInput = ({
         : `/profile/${selectedItem.value}`
     if (selectedItem.type === 'nameWithDotEth' || selectedItem.type === 'name') {
       const currentValidation =
-        queryClient.getQueryData<ValidationResult>(validateKey(selectedItem.value)) ||
-        validate(selectedItem.value)
+        queryClient.getQueryData<ValidationResult>(
+          createQueryKey({
+            queryDependencyType: 'independent',
+            functionName: 'validate',
+            params: { input: selectedItem.value },
+          }),
+        ) || validate(selectedItem.value)
       if (currentValidation.is2LD && currentValidation.isETH && currentValidation.isShort) {
         return
       }
-      const queryKey = queryKeys.basicName(selectedItem.value, false)
-      const currentQuery = queryClient.getQueryData<any[]>(queryKey)
-      if (currentQuery) {
-        const { ownerData, wrapperData, expiryData, priceData, addrData } =
-          currentQuery as NonNullable<BatchReturn>
+      const ownerData = queryClient.getQueryData<GetOwnerReturnType>(
+        createQueryKey({
+          address,
+          chainId,
+          functionName: 'getOwner',
+          queryDependencyType: 'standard',
+          params: { name: selectedItem.value },
+        }),
+      )
+      const wrapperData = queryClient.getQueryData<GetWrapperDataReturnType>(
+        createQueryKey({
+          address,
+          chainId,
+          functionName: 'getWrapperData',
+          queryDependencyType: 'standard',
+          params: { name: selectedItem.value },
+        }),
+      )
+      const expiryData = queryClient.getQueryData<GetExpiryReturnType>(
+        createQueryKey({
+          address,
+          chainId,
+          functionName: 'getExpiry',
+          queryDependencyType: 'standard',
+          params: { name: selectedItem.value },
+        }),
+      )
+      const priceData = queryClient.getQueryData<GetPriceReturnType>(
+        createQueryKey({
+          address,
+          chainId,
+          functionName: 'getPrice',
+          queryDependencyType: 'standard',
+          params: { name: selectedItem.value, duration: yearsToSeconds(1) },
+        }),
+      )
+      if (ownerData) {
         const registrationStatus = getRegistrationStatus({
           timestamp: Date.now(),
           validation: currentValidation,
@@ -343,7 +389,6 @@ export const SearchInput = ({
           wrapperData,
           expiryData,
           priceData,
-          addrData,
         })
         if (registrationStatus === 'available') {
           path = `/register/${selectedItem.value}`
@@ -362,16 +407,7 @@ export const SearchInput = ({
     setInputVal('')
     searchInputRef.current?.blur()
     router.pushWithHistory(path)
-  }, [
-    normalisedOutput,
-    queryClient,
-    router,
-    searchItems,
-    selected,
-    setHistory,
-    queryKeys,
-    validateKey,
-  ])
+  }, [normalisedOutput, queryClient, router, searchItems, selected, setHistory, chainId, address])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

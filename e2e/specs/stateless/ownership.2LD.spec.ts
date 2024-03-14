@@ -1,13 +1,19 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+
+import { test } from '../../../playwright'
 
 test.describe('Unwrapped 2LD - Owner and Manager', () => {
-  test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Send feature', async ({ page, login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'owner-manager',
       type: 'legacy',
       records: {
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -24,12 +30,9 @@ test.describe('Unwrapped 2LD - Owner and Manager', () => {
     await expect(sendNameModal.resetProfileSwitch).toHaveCount(0)
 
     await sendNameModal.summaryHeader.click()
-    test.step(
-      'Should not be able to reset profile since old resolver does not support VersionableResolver',
-      async () => {
-        await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
-      },
-    )
+    test.step('Should not be able to reset profile since old resolver does not support VersionableResolver', async () => {
+      await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
+    })
     test.step('Should be able to send Owner', async () => {
       await expect(sendNameModal.summaryItem('owner')).toBeVisible()
     })
@@ -45,6 +48,7 @@ test.describe('Unwrapped 2LD - Owner and Manager', () => {
 
     await transactionModal.autoComplete()
 
+    await page.pause()
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('owner', {
       timeout: 15000,
     })
@@ -52,12 +56,17 @@ test.describe('Unwrapped 2LD - Owner and Manager', () => {
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('ETH record')
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'owner-manager',
       type: 'legacy',
       records: {
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -141,7 +150,12 @@ test.describe('Unwrapped 2LD - Owner Only', () => {
       owner: 'user',
       manager: 'user2',
       records: {
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -272,14 +286,19 @@ test.describe('Unwrapped 2LD - Owner Only', () => {
 })
 
 test.describe('Unwrapped 2LD - Manager Only', () => {
-  test('Send Feature', async ({ page, login, accounts, makeName, makePageObject }) => {
+  test('Send Feature', async ({ page, login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'other-manager',
       type: 'legacy',
       owner: 'user2',
       manager: 'user',
       records: {
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -349,6 +368,7 @@ test.describe('Unwrapped 2LD - Manager Only', () => {
     await ownershipPage.goto(name)
     await login.connect()
 
+    await page.pause()
     expect(await ownershipPage.getExpiryTimestamp()).toBeGreaterThan(0)
     await expect(ownershipPage.expiryPanelRegistrationDate).toHaveCount(1)
     await expect(ownershipPage.expiryPanelGracePeriod).toHaveCount(1)
@@ -356,6 +376,7 @@ test.describe('Unwrapped 2LD - Manager Only', () => {
     await expect(ownershipPage.expiryPanelParentGracePeriod).toHaveCount(0)
     await expect(ownershipPage.setReminder).toBeVisible()
     await ownershipPage.extendButton.click()
+    await page.getByRole('button', { name: 'I understand' }).click()
     await extendNamesModal.getExtendButton.click()
     await expect(page.getByText('Confirm Details')).toBeVisible()
   })
@@ -369,7 +390,12 @@ test.describe('Wrapped and Emancipated 2LD - Owner', () => {
       type: 'wrapped',
       records: {
         texts: [{ key: 'name', value: 'test' }],
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -416,7 +442,12 @@ test.describe('Wrapped and Emancipated 2LD - Owner', () => {
       type: 'wrapped',
       records: {
         texts: [{ key: 'name', value: 'test' }],
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
     })
 
@@ -453,15 +484,242 @@ test.describe('Wrapped and Emancipated 2LD - Owner', () => {
     login,
     makeName,
     makePageObject,
-    accounts,
   }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
       records: {
         texts: [{ key: 'name', value: 'test' }],
-        coinTypes: [{ key: 'ETH', value: accounts.getAddress('user2') }],
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
       },
+    })
+
+    const ownershipPage = makePageObject('OwnershipPage')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
+
+    await ownershipPage.goto(name)
+    await login.connect()
+
+    expect(await ownershipPage.getExpiryTimestamp()).toBeGreaterThan(0)
+    await expect(ownershipPage.expiryPanelRegistrationDate).toHaveCount(1)
+    await expect(ownershipPage.expiryPanelGracePeriod).toHaveCount(1)
+    await expect(ownershipPage.expiryPanelParentExpiry).toHaveCount(0)
+    await expect(ownershipPage.expiryPanelParentGracePeriod).toHaveCount(0)
+    await expect(ownershipPage.setReminder).toBeVisible()
+    await ownershipPage.extendButton.click()
+    await extendNamesModal.getExtendButton.click()
+    await expect(page.getByText('Confirm Details')).toBeVisible()
+  })
+})
+
+test.describe('Grace Period Unwrapped 2LD', () => {
+  test('Send feature', async ({ page, login, makeName, makePageObject }) => {
+    const name = await makeName({
+      label: 'grace-period-unwrapped',
+      type: 'legacy',
+      records: {
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
+      },
+      duration: -24 * 60 * 60,
+    })
+
+    const ownershipPage = makePageObject('OwnershipPage')
+
+    await ownershipPage.goto(name)
+    await login.connect()
+
+    await page.pause()
+    await expect(ownershipPage.sendNameButton).toHaveCount(0)
+  })
+
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
+    const name = await makeName({
+      label: 'grace-period-unwrapped',
+      type: 'legacy',
+      owner: 'user',
+      manager: 'user2',
+      records: {
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
+      },
+      duration: -24 * 60 * 60,
+    })
+
+    const ownershipPage = makePageObject('OwnershipPage')
+
+    await ownershipPage.goto(name)
+    await login.connect()
+
+    await expect(ownershipPage.syncManagerButton).toHaveCount(0)
+  })
+
+  test('Edit Roles', async ({ page, login, accounts, makeName, makePageObject }) => {
+    const name = await makeName({
+      label: 'grace-period-unwrapped',
+      type: 'legacy',
+      duration: -24 * 60 * 60,
+    })
+
+    const ownershipPage = makePageObject('OwnershipPage')
+    const transactionModal = makePageObject('TransactionModal')
+    const editRolesModal = makePageObject('EditRolesModal')
+
+    await ownershipPage.goto(name)
+    await login.connect()
+    await page.pause()
+    await ownershipPage.editRolesButton.click()
+
+    await expect(editRolesModal.roleCardChangeButton('owner')).toHaveCount(0)
+    await expect(editRolesModal.roleCardChangeButton('manager')).toHaveCount(0)
+
+    await editRolesModal.roleCardChangeButton('eth-record').click()
+    await editRolesModal.searchInput.fill(accounts.getAddress('user3'))
+    await editRolesModal.searchResult(accounts.getAddress('user3')).click()
+
+    await editRolesModal.saveButton.click()
+    await transactionModal.autoComplete()
+    await expect(ownershipPage.roleRow(accounts.getAddress('user'))).toContainText('owner', {
+      timeout: 15000,
+    })
+    await expect(ownershipPage.roleRow(accounts.getAddress('user'))).toContainText('manager')
+    await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('ETH record')
+  })
+
+  test('Expiry Section, Extend & Set Reminder', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    const name = await makeName({
+      label: 'grace-period-unwrapped',
+      type: 'legacy',
+      duration: -24 * 60 * 60,
+    })
+
+    const ownershipPage = makePageObject('OwnershipPage')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
+
+    await ownershipPage.goto(name)
+    await login.connect()
+
+    expect(await ownershipPage.getExpiryTimestamp()).toBeGreaterThan(0)
+    await expect(ownershipPage.expiryPanelRegistrationDate).toHaveCount(1)
+    await expect(ownershipPage.expiryPanelGracePeriod).toHaveCount(1)
+    await expect(ownershipPage.expiryPanelParentExpiry).toHaveCount(0)
+    await expect(ownershipPage.expiryPanelParentGracePeriod).toHaveCount(0)
+    await expect(ownershipPage.setReminder).toBeVisible()
+    await ownershipPage.extendButton.click()
+    await extendNamesModal.getExtendButton.click()
+    await expect(page.getByText('Confirm Details')).toBeVisible()
+  })
+})
+
+test.describe('Grace Period Wrapped 2LD', () => {
+  test('Send feature', async ({ page, login, makeName, makePageObject }) => {
+    const name = await makeName({
+      label: 'grace-period-wrapped',
+      type: 'wrapped',
+      records: {
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
+      },
+      duration: -24 * 60 * 60,
+    })
+
+    const ownershipPage = makePageObject('OwnershipPage')
+
+    await ownershipPage.goto(name)
+    await login.connect()
+
+    await page.pause()
+    await expect(ownershipPage.sendNameButton).toHaveCount(0)
+  })
+
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
+    const name = await makeName({
+      label: 'grace-period-wrapped',
+      type: 'wrapped',
+      owner: 'user',
+      records: {
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
+      },
+      duration: -24 * 60 * 60,
+    })
+
+    const ownershipPage = makePageObject('OwnershipPage')
+
+    await ownershipPage.goto(name)
+    await login.connect()
+
+    await expect(ownershipPage.syncManagerButton).toHaveCount(0)
+  })
+
+  test('Edit Roles', async ({ page, login, accounts, makeName, makePageObject }) => {
+    const name = await makeName({
+      label: 'grace-period-wrapped',
+      type: 'wrapped',
+      duration: -24 * 60 * 60,
+    })
+
+    const ownershipPage = makePageObject('OwnershipPage')
+    const transactionModal = makePageObject('TransactionModal')
+    const editRolesModal = makePageObject('EditRolesModal')
+
+    await ownershipPage.goto(name)
+    await login.connect()
+    await page.pause()
+    await ownershipPage.editRolesButton.click()
+
+    await expect(editRolesModal.roleCardChangeButton('owner')).toHaveCount(0)
+    await expect(editRolesModal.roleCardChangeButton('manager')).toHaveCount(0)
+
+    await editRolesModal.roleCardChangeButton('eth-record').click()
+    await editRolesModal.searchInput.fill(accounts.getAddress('user3'))
+    await editRolesModal.searchResult(accounts.getAddress('user3')).click()
+
+    await editRolesModal.saveButton.click()
+    await transactionModal.autoComplete()
+    await expect(ownershipPage.roleRow(accounts.getAddress('user'))).toContainText('owner', {
+      timeout: 15000,
+    })
+    await expect(ownershipPage.roleRow(accounts.getAddress('user'))).toContainText('owner')
+    await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('ETH record')
+  })
+
+  test('Expiry Section, Extend & Set Reminder', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    const name = await makeName({
+      label: 'grace-period-unwrapped',
+      type: 'legacy',
+      duration: -24 * 60 * 60,
     })
 
     const ownershipPage = makePageObject('OwnershipPage')

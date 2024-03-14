@@ -1,23 +1,26 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Accounts, User } from 'playwright/fixtures/accounts'
-import { Contracts } from 'playwright/fixtures/contracts'
 
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import { RecordOptions } from '@ensdomains/ensjs/utils'
+import { setResolver, transferName } from '@ensdomains/ensjs/wallet'
 
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
-
+import { Accounts, createAccounts, User } from '../../accounts'
+import { Contracts } from '../../contracts'
+import {
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../contracts/utils/addTestContracts.js'
 import { Provider } from '../../provider'
-import { LegacySubname, generateLegacySubname } from './generateLegacySubname'
+import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
 import { generateRecords } from './generateRecords'
+import { Address } from 'viem'
 
+const LEGACY_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address as Address
+const PUBLIC_RESOLVER = testClient.chain.contracts.publicResolver.address as Address
 const DEFAULT_DURATION = 31536000
-const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
-const VALID_RESOLVERS = RESOLVER_ADDRESSES['1337'].filter(
-  (resolver) => resolver !== '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',
-)
+const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address as Address
 
 export type Name = {
   label: string
@@ -59,7 +62,8 @@ export const generateLegacyNameWithConfig =
 
     // Registration will fail if resolver is not valid. If an invalid resolver is entered
     // we will set the resolver after the name has been registered.
-    const hasValidResolver = resolver && VALID_RESOLVERS.includes(resolver)
+    const hasValidResolver = [LEGACY_RESOLVER, PUBLIC_RESOLVER].includes(resolver)
+    // && VALID_RESOLVERS.includes(resolver)
     const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 
     console.log('making commitment:', name)
@@ -93,7 +97,7 @@ export const generateLegacyNameWithConfig =
     await registrationTx.wait()
 
     // Create records
-    await generateRecords({ contracts })({ name: `${label}.eth`, owner, resolver, records })
+    await generateRecords()({ name: `${label}.eth`, owner, resolver, records })
 
     // Create subnames
     const _subnames = (subnames || []).map((subname) => ({
@@ -108,17 +112,24 @@ export const generateLegacyNameWithConfig =
 
     if (!hasValidResolver && resolver) {
       console.log('setting resolver:', name, resolver)
-      const registry = contracts.get('ENSRegistry', { signer: owner })
-      const node = namehash(`${label}.eth`)
-      await registry.setResolver(node, resolver)
+      const tx = await setResolver(walletClient, {
+        name,
+        contract: 'registry',
+        resolverAddress: resolver,
+        account: createAccounts().getAddress(owner) as `0x${string}`,
+      })
+      await waitForTransaction(tx)
     }
 
     if (!!manager && manager !== owner) {
       console.log('setting manager:', name, manager)
-      const registry = contracts.get('ENSRegistry', { signer: owner })
-      const node = namehash(`${label}.eth`)
-      const _manager = accounts.getAddress(manager)
-      await registry.setOwner(node, _manager)
+      const tx = await transferName(walletClient, {
+        name,
+        newOwnerAddress: createAccounts().getAddress(manager) as `0x${string}`,
+        contract: 'registry',
+        account: createAccounts().getAddress(owner) as `0x${string}`,
+      })
+      await waitForTransaction(tx)
     }
 
     await provider.mine()

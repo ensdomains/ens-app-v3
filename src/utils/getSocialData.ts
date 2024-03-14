@@ -4,11 +4,11 @@ export const getSocialData = (iconKey: string, value: string) => {
     case 'com.twitter':
       return {
         icon: 'com.twitter',
-        color: '#65C5FC',
-        label: 'Twitter',
+        color: '#000000',
+        label: 'X',
         value: `@${value.replace(/^@/, '')}`,
         type: 'link',
-        urlFormatter: `https://twitter.com/${value.replace(/^@/, '')}`,
+        urlFormatter: `https://x.com/${value.replace(/^@/, '')}`,
       }
     case 'github':
     case 'com.github':

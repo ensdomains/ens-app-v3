@@ -1,4 +1,18 @@
-import unwrapName from './unwrapName'
+import { mockFunction } from '@app/test-utils'
+
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
+import { unwrapName } from '@ensdomains/ensjs/wallet'
+
+import { ClientWithEns, ConnectorClientWithEns } from '@app/types'
+
+import unwrapNameFlowTransaction from './unwrapName'
+
+vi.mock('wagmi')
+
+vi.mock('@ensdomains/ensjs/wallet')
+
+const mockUnwrapName = mockFunction(unwrapName.makeFunctionData)
 
 describe('unwrapName', () => {
   const name = 'myname.eth'
@@ -7,7 +21,7 @@ describe('unwrapName', () => {
   describe('displayItems', () => {
     it('returns the correct display items', () => {
       const t = (key: string) => key
-      const items = unwrapName.displayItems(data, t)
+      const items = unwrapNameFlowTransaction.displayItems(data, t)
       expect(items).toEqual([
         {
           label: 'action',
@@ -24,36 +38,42 @@ describe('unwrapName', () => {
 
   describe('transaction', () => {
     const address = '0x123'
-    const signer: any = { getAddress: () => Promise.resolve(address) }
-    const mockPopulateTransaction = jest.fn()
-    const ens = { unwrapName: { populateTransaction: mockPopulateTransaction } } as any
+    const connectorClient = { account: { address } } as unknown as ConnectorClientWithEns
+    const client = {} as unknown as ClientWithEns
 
     afterEach(() => {
-      jest.clearAllMocks()
+      vi.clearAllMocks()
     })
 
     it('should provide controller and registrant when name is an eth 2ld', async () => {
-      await unwrapName.transaction(signer, ens, data)
-      expect(mockPopulateTransaction).toHaveBeenCalledWith(
-        name,
+      await unwrapNameFlowTransaction.transaction({
+        client,
+        connectorClient,
+        data: { name: 'test.eth' },
+      })
+      expect(mockUnwrapName).toHaveBeenCalledWith(
+        connectorClient,
         expect.objectContaining({
-          newController: address,
-          newRegistrant: address,
-          signer,
+          name: 'test.eth',
+          newOwnerAddress: address,
+          newRegistrantAddress: address,
         }),
       )
     })
 
     it('should not provide registrant when name is not an eth 2ld', async () => {
-      const subname = 'sub.myname.eth'
+      const subname = 'sub.test.eth'
       const dataWithSubname = { name: subname }
-      await unwrapName.transaction(signer, ens, dataWithSubname)
-      expect(mockPopulateTransaction).toHaveBeenCalledWith(
-        subname,
+      await unwrapNameFlowTransaction.transaction({
+        client,
+        connectorClient,
+        data: dataWithSubname,
+      })
+      expect(mockUnwrapName).toHaveBeenCalledWith(
+        connectorClient,
         expect.objectContaining({
-          newController: address,
-          newRegistrant: undefined,
-          signer,
+          name: 'sub.test.eth',
+          newOwnerAddress: address,
         }),
       )
     })

@@ -6,8 +6,16 @@
   "singleQuote": true,
   "tabWidth": 2,
   "trailingComma": "all",
-  "importOrder": ["@app/test-utils", "<THIRD_PARTY_MODULES>", "^@ensdomains/(.*)$", "^@app/(.*)$", "^[./]"],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
-  "plugins": ["@trivago/prettier-plugin-sort-imports"]
+  "importOrder": [
+    "@app/test-utils",
+    "",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^@ensdomains/(.*)$",
+    "",
+    "^@app/(.*)$",
+    "",
+    "^[./]"
+  ],
+  "plugins": ["@ianvs/prettier-plugin-sort-imports"]
 }

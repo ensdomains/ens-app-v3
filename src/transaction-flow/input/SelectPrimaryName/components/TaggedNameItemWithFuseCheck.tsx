@@ -3,11 +3,13 @@ import { ComponentProps, useMemo } from 'react'
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 
-type Props = { isResolvedAddress?: boolean } & ComponentProps<typeof TaggedNameItem>
-export const TaggedNameItemWithFuseCheck = ({ isResolvedAddress, ...props }: Props) => {
-  const skip = isResolvedAddress || !props.isWrappedOwner || !props.fuses?.child.CANNOT_SET_RESOLVER
+type Props = ComponentProps<typeof TaggedNameItem>
+export const TaggedNameItemWithFuseCheck = (props: Props) => {
+  const { relation, fuses, name } = props
+  const skip =
+    relation?.resolvedAddress || !relation?.wrappedOwner || !fuses?.child.CANNOT_SET_RESOLVER
 
-  const resolverStatus = useResolverStatus(props.name, { enabled: !skip })
+  const resolverStatus = useResolverStatus({ name: name!, enabled: !skip })
 
   const isFuseCheckSuccess = useMemo(() => {
     if (skip) return true

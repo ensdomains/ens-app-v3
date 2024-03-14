@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import styled, { css } from 'styled-components'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
+import { Address } from 'viem'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import useRoles, { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import { getAvailableRoles } from '@app/hooks/ownership/useRoles/utils/getAvailableRoles'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
+import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { EditRoleView } from './views/EditRoleView/EditRoleView'
@@ -39,8 +41,8 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const [selectedRoleIndex, setSelectedRoleIndex] = useState<number | null>(null)
 
   const roles = useRoles(name)
-  const abilities = useAbilities(name)
-  const basic = useBasicName(name)
+  const abilities = useAbilities({ name })
+  const basic = useBasicName({ name })
   const account = useAccountSafely()
   const isLoading = roles.isLoading || abilities.isLoading || basic.isLoading
 
@@ -69,7 +71,7 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
       .filter((_, i) => {
         return form.getFieldState(`roles.${i}.address`)?.isDirty
       })
-      .reduce<{ [key in Role]?: string }>((acc, { role, address }) => {
+      .reduce<{ [key in Role]?: Address }>((acc, { role, address }) => {
         return {
           ...acc,
           [role]: address,
@@ -81,35 +83,34 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
     )
     const transactions = [
       dirtyValues['eth-record']
-        ? makeTransactionItem('updateEthAddress', { name, address: dirtyValues['eth-record'] })
+        ? createTransactionItem('updateEthAddress', { name, address: dirtyValues['eth-record'] })
         : null,
-      dirtyValues.manager && !!abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract
-        ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+      dirtyValues.manager
+        ? makeTransferNameOrSubnameTransactionItem({
             name,
-            newOwner: dirtyValues.manager,
-            contract: abilities.data?.sendNameFunctionCallDetails?.sendManager?.contract,
+            newOwnerAddress: dirtyValues.manager,
             sendType: 'sendManager',
-            reclaim: abilities.data?.sendNameFunctionCallDetails?.sendManager?.method === 'reclaim',
+            isOwnerOrManager,
+            abilities: abilities.data,
           })
         : null,
-      dirtyValues.owner && !!abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract
-        ? makeTransactionItem('transferName', {
+      dirtyValues.owner
+        ? makeTransferNameOrSubnameTransactionItem({
             name,
-            newOwner: dirtyValues.owner,
-            contract: abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract,
+            newOwnerAddress: dirtyValues.owner,
             sendType: 'sendOwner',
+            isOwnerOrManager,
+            abilities: abilities.data,
           })
         : null,
-      dirtyValues['parent-owner'] &&
-      abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract
-        ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
-            name,
-            newOwner: dirtyValues['parent-owner'],
-            contract: abilities.data?.sendNameFunctionCallDetails?.sendOwner?.contract,
-            sendType: 'sendOwner',
-          })
-        : null,
-    ].filter((t) => !!t)
+    ].filter(
+      (
+        t,
+      ): t is
+        | TransactionItem<'transferName'>
+        | TransactionItem<'transferSubname'>
+        | TransactionItem<'updateEthAddress'> => !!t,
+    )
 
     dispatch({
       name: 'setTransactions',

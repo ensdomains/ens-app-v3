@@ -44,6 +44,9 @@ tsconfig.tsbuildinfo
 !.yarn/sdks
 !.yarn/versions
 
+# wrangler
+.wrangler/
+
 # jest coverage
 /coverage
 
@@ -64,8 +67,11 @@ tsconfig.tsbuildinfo
 # hardhat
 /cache
 /artifacts
+/typings-custom/generated
 
 # Sentry
 .sentryclirc
 
 .dev.vars
+
+*yalc*

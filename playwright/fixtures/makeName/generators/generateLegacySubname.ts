@@ -1,16 +1,20 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Accounts, User } from 'playwright/fixtures/accounts'
-import { Contracts } from 'playwright/fixtures/contracts'
+import {
+  getChainContractAddress,
+  registrySetApprovalForAllSnippet,
+} from '@ensdomains/ensjs/contracts'
+import { RecordOptions } from '@ensdomains/ensjs/utils'
+import { createSubname, wrapName } from '@ensdomains/ensjs/wallet'
 
-import { hexEncodeName } from '@ensdomains/ensjs/utils/hexEncodedName'
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
-
-import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
-
+import { Accounts, createAccounts, User } from '../../accounts'
+import { Contracts } from '../../contracts'
+import {
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../contracts/utils/addTestContracts'
 import { generateRecords } from './generateRecords'
 
 export type LegacySubname = {
@@ -29,7 +33,8 @@ type Dependencies = {
   accounts: Accounts
   contracts: Contracts
 }
-const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
+// const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
+const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address
 export const generateLegacySubname =
   ({ accounts, contracts }: Dependencies) =>
   async ({
@@ -45,21 +50,18 @@ export const generateLegacySubname =
     const subname = `${label}.${name}`
     console.log('generating legacy subname:', subname)
 
-    const _owner = accounts.getAddress(owner)
-    const registry = contracts.get('ENSRegistry', { signer: nameOwner })
-    const node = namehash(name)
-    const _labelhash = labelhash(label)
-
-    // Make subname without resolver
-    if (!resolver) {
-      await registry.setSubnodeOwner(node, _labelhash, _owner)
-    } else {
-      await registry.setSubnodeRecord(node, _labelhash, _owner, resolver, 0)
-    }
+    const tx = await createSubname(walletClient, {
+      name: `${label}.${name}`,
+      contract: 'registry',
+      owner: createAccounts().getAddress(owner) as `0x${string}`,
+      account: createAccounts().getAddress(nameOwner) as `0x${string}`,
+      resolverAddress: resolver ?? DEFAULT_RESOLVER,
+    })
+    await waitForTransaction(tx)
 
     // Make records
     if (records && resolver) {
-      await generateRecords({ contracts })({
+      await generateRecords()({
         name: subname,
         owner,
         resolver,
@@ -68,28 +70,39 @@ export const generateLegacySubname =
     }
 
     if (type === 'wrapped') {
-      const nameWrapper = contracts.get('NameWrapper', { signer: owner })
-      const registry2 = contracts.get('ENSRegistry', { signer: owner })
+      const approveTx = await walletClient.writeContract({
+        abi: registrySetApprovalForAllSnippet,
+        address: getChainContractAddress({
+          client: walletClient,
+          contract: 'ensRegistry',
+        }),
+        functionName: 'setApprovalForAll',
+        args: [
+          getChainContractAddress({
+            client: walletClient,
+            contract: 'ensNameWrapper',
+          }),
+          true,
+        ],
+        account: createAccounts().getAddress(owner) as `0x${string}`,
+      })
+      const approve = await waitForTransaction(approveTx)
+      if (approve.status === 'success') console.log('approved name wrapper')
+      else throw new Error(`failed to approve name wrapper`)
 
-      const isApproved = await registry.isApprovedForAll(
-        accounts.getAddress(owner),
-        nameWrapper.address,
-      )
-
-      if (!isApproved) {
-        console.log(`approving nameWrapper for user`, owner)
-        await registry2.setApprovalForAll(nameWrapper.address, true)
-      }
-
-      console.log(`wrapping legacy subname:`, subname)
-      const _resolver = resolver || emptyAddress
-      await nameWrapper.wrap(
-        hexEncodeName(`${label}.${name}`),
-        accounts.getAddress(owner),
-        _resolver,
-      )
+      const wrapTx = await wrapName(walletClient, {
+        name: subname,
+        newOwnerAddress: accounts.getAddress(owner) as `0x${string}`,
+        resolverAddress: getChainContractAddress({
+          client: walletClient,
+          contract: 'ensPublicResolver',
+        }),
+        account: accounts.getAddress(owner) as `0x${string}`,
+      })
+      const wrap = await waitForTransaction(wrapTx)
+      if (wrap.status === 'success') console.log('wrapped subname:', subname)
+      else throw new Error(`failed to wrap subname: ${subname}`)
     }
-
     // Create subnames
     const _subnames = (subnames || []).map((_subname) => ({
       ..._subname,

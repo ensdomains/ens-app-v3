@@ -1,9 +1,10 @@
 /* stylelint-disable no-descending-specificity */
 import { readFileSync } from 'fs'
+import path from 'path'
+
 import { glob } from 'glob'
 import Markdown from 'markdown-to-jsx'
 import { GetStaticPropsContext } from 'next'
-import path from 'path'
 import { ReactElement } from 'react'
 import styled, { css } from 'styled-components'
 

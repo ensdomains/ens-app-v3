@@ -1,13 +1,14 @@
+import approveDnsRegistrar from './approveDnsRegistrar'
 import approveNameWrapper from './approveNameWrapper'
 import burnFuses from './burnFuses'
 import changePermissions from './changePermissions'
+import claimDnsName from './claimDnsName'
 import commitName from './commitName'
 import createSubname from './createSubname'
 import deleteSubname from './deleteSubname'
 import extendNames from './extendNames'
-import importDNSSECName from './importDNSSECName'
+import importDnsName from './importDnsName'
 import migrateProfile from './migrateProfile'
-import migrateProfileWithEthAddress from './migrateProfileWithEthAddress'
 import migrateProfileWithReset from './migrateProfileWithReset'
 import registerName from './registerName'
 import resetPrimaryName from './resetPrimaryName'
@@ -27,16 +28,17 @@ import updateResolver from './updateResolver'
 import wrapName from './wrapName'
 
 export const transactions = {
+  approveDnsRegistrar,
   approveNameWrapper,
   burnFuses,
   changePermissions,
+  claimDnsName,
   commitName,
   createSubname,
   deleteSubname,
   extendNames,
-  importDNSSECName,
+  importDnsName,
   migrateProfile,
-  migrateProfileWithEthAddress,
   migrateProfileWithReset,
   registerName,
   resetPrimaryName,
@@ -59,11 +61,17 @@ export const transactions = {
 export type Transaction = typeof transactions
 export type TransactionName = keyof Transaction
 
-export type TransactionData<T extends TransactionName> = Parameters<
+export type TransactionParameters<T extends TransactionName> = Parameters<
   Transaction[T]['transaction']
->[2]
+>[0]
 
-export const makeTransactionItem = <T extends TransactionName>(
+export type TransactionData<T extends TransactionName> = TransactionParameters<T>['data']
+
+export type TransactionReturnType<T extends TransactionName> = ReturnType<
+  Transaction[T]['transaction']
+>
+
+export const createTransactionItem = <T extends TransactionName>(
   name: T,
   data: TransactionData<T>,
 ) => ({
@@ -71,4 +79,19 @@ export const makeTransactionItem = <T extends TransactionName>(
   data,
 })
 
-export type TransactionItem = ReturnType<typeof makeTransactionItem>
+export const createTransactionRequest = <TName extends TransactionName>({
+  name,
+  ...rest
+}: { name: TName } & TransactionParameters<TName>): TransactionReturnType<TName> => {
+  // i think this has to be any :(
+  return transactions[name].transaction({ ...rest } as any) as TransactionReturnType<TName>
+}
+
+export type TransactionItem<TName extends TransactionName = TransactionName> = {
+  name: TName
+  data: TransactionData<TName>
+}
+
+export type TransactionItemUnion = {
+  [TName in TransactionName]: TransactionItem<TName>
+}[TransactionName]

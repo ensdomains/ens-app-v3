@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useQueryClient } from 'wagmi'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
-import { useChainName } from '@app/hooks/useChainName'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
@@ -37,7 +36,6 @@ export const Notifications = () => {
 
   const [open, setOpen] = useState(false)
 
-  const queryClient = useQueryClient()
   const { resumeTransactionFlow, getResumable } = useTransactionFlow()
 
   const [notificationQueue, setNotificationQueue] = useState<Notification[]>([])
@@ -103,12 +101,6 @@ export const Notifications = () => {
       setOpen(true)
     }
   }, [currentNotification])
-
-  useEffect(() => {
-    if (currentNotification) {
-      queryClient.invalidateQueries()
-    }
-  }, [currentNotification, queryClient])
 
   return (
     <Toast

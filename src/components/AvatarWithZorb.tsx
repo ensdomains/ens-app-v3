@@ -1,11 +1,12 @@
-import { ComponentProps, useEffect, useState } from 'react'
+import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
+import { useEnsAvatar } from 'wagmi'
 
-import { Avatar, Space, mq } from '@ensdomains/thorin'
+import { Avatar, mq, Space } from '@ensdomains/thorin'
 
-import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
 import { QuerySpace } from '@app/types'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 
 const Wrapper = styled.div<{ $size?: QuerySpace }>(
   ({ theme, $size }) => css`
@@ -38,7 +39,6 @@ const Wrapper = styled.div<{ $size?: QuerySpace }>(
 )
 
 type BaseProps = {
-  network: number
   size?: QuerySpace
   noCache?: boolean
 }
@@ -54,22 +54,20 @@ type Address = {
 export const NameAvatar = ({
   src: _,
   name,
-  network,
   size,
   noCache = false,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
-  const { avatar } = useAvatar(name, network, noCache)
+  const { data: avatar } = useEnsAvatar({
+    ...ensAvatarConfig,
+    name,
+    query: { gcTime: noCache ? 0 : undefined },
+  })
   const zorb = useZorb(name, 'name')
-
-  const [src, setSrc] = useState<string | undefined>(undefined)
-  useEffect(() => {
-    setSrc(avatar || zorb)
-  }, [avatar, zorb])
 
   return (
     <Wrapper $size={size}>
-      <Avatar {...props} src={src} />
+      <Avatar {...props} placeholder={`url(${zorb})`} src={avatar || zorb} />
     </Wrapper>
   )
 }
@@ -78,16 +76,19 @@ export const AvatarWithZorb = ({
   src,
   name,
   address,
-  network,
   size,
   noCache = false,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Address & Name) => {
-  const { avatar } = useAvatar(name, network, noCache)
+  const { data: avatar } = useEnsAvatar({
+    ...ensAvatarConfig,
+    name,
+    query: { gcTime: noCache ? 0 : undefined },
+  })
   const zorb = useZorb(address || name || '', address ? 'address' : 'name')
   return (
     <Wrapper $size={size}>
-      <Avatar {...props} src={avatar || zorb} />
+      <Avatar {...props} placeholder={`url(${zorb})`} src={avatar || zorb} />
     </Wrapper>
   )
 }

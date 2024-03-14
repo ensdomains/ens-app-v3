@@ -1,17 +1,18 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { Button, mq } from '@ensdomains/thorin'
 
 import AddRecord from '@app/components/@molecules/AdvancedEditor/AddRecord'
 import AdvancedEditorContent from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabContent'
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
-import { useNameDetails } from '@app/hooks/useNameDetails'
-import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
+import { useProfile } from '@app/hooks/useProfile'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { Profile } from '@app/types'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -38,7 +39,10 @@ const NameContainer = styled.div(({ theme }) => [
     line-height: 45px;
     vertical-align: middle;
     text-align: center;
-    font-feature-settings: 'ss01' on, 'ss03' on, 'ss04' on;
+    font-feature-settings:
+      'ss01' on,
+      'ss03' on,
+      'ss04' on;
     font-weight: ${theme.fontWeights.bold};
     font-size: ${theme.space['6']};
     white-space: nowrap;
@@ -83,48 +87,50 @@ export type Props = {
 const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
   const name = data?.name || ''
-  const transaction = transactions.find((item: TransactionItem) => item.name === 'updateProfile')
+  const transaction = transactions.find(
+    (item: TransactionItem) => item.name === 'updateProfile',
+  ) as TransactionItem<'updateProfile'>
 
-  const { profile, isLoading: loading } = useNameDetails(name)
+  const { data: fetchedProfile, isLoading: isProfileLoading } = useProfile({ name })
+  const [profile, setProfile] = useState<Profile | undefined>(undefined)
+
+  // inline to prevent unnecessary re-renders
+  if (fetchedProfile && !profile) {
+    setProfile(fetchedProfile)
+  }
 
   const handleCreateTransaction = useCallback(
     (records: RecordOptions) => {
       dispatch({
         name: 'setTransactions',
         payload: [
-          makeTransactionItem('updateProfile', {
+          createTransactionItem('updateProfile', {
             name,
-            resolver: profile!.resolverAddress!,
+            resolverAddress: fetchedProfile!.resolverAddress!,
             records,
           }),
         ],
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
     },
-    [profile, dispatch, name],
+    [fetchedProfile, dispatch, name],
   )
 
   const advancedEditorForm = useAdvancedEditor({
+    name,
     profile,
-    loading,
+    isLoading: isProfileLoading,
     callback: handleCreateTransaction,
     overwrites: transaction?.data.records,
   })
-  const {
-    AddButtonProps,
-    hasErrors,
-    hasChanges,
-    control,
-    handleSubmit,
-    isLoadingABIInterface,
-    isLoadingPublicKeyInterface,
-  } = advancedEditorForm
+  const { AddButtonProps, hasErrors, hasChanges, control, handleSubmit } = advancedEditorForm
 
   const handleCancel = () => {
     onDismiss?.()
   }
 
-  if (loading || isLoadingABIInterface || isLoadingPublicKeyInterface) return null
+  if (isProfileLoading) return null
+
   return (
     <Container onSubmit={handleSubmit} data-testid="advanced-editor">
       <NameContainer>{t('advancedEditor.title', { name })}</NameContainer>

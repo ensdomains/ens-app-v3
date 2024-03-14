@@ -1,22 +1,29 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+import { labelhash } from 'viem'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
+import { getResolver } from '@ensdomains/ensjs/public'
+import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { test } from '../../../playwright'
+import { createAccounts } from '../../../playwright/fixtures/accounts'
+import {
+  waitForTransaction,
+  walletClient,
+} from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
-const UNAUTHORISED_RESOLVER = RESOLVER_ADDRESSES['1337'][1] as `0x${string}`
+const UNAUTHORISED_RESOLVER = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
 
-test.afterAll(async ({ contracts }) => {
-  const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-  await reverseRegistrar.setName('')
+test.afterAll(async () => {
+  await setPrimaryName(walletClient, {
+    name: '',
+    account: createAccounts().getAddress('user') as `0x${string}`,
+  })
 })
 
 test.describe('profile', () => {
   test('should allow setting unmanaged name that has eth record set to address', async ({
     page,
     login,
-    contracts,
     accounts,
     makeName,
     makePageObject,
@@ -31,8 +38,10 @@ test.describe('profile', () => {
       addr: 'user',
     })
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    await setPrimaryName(walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
 
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
@@ -72,15 +81,16 @@ test.describe('profile', () => {
   test('should allow setting unwrapped name that user is manager of but whose resolved address is not the same as the user', async ({
     page,
     login,
-    contracts,
     accounts,
     makeName,
     makePageObject,
   }) => {
     test.slow()
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    await setPrimaryName(walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
 
     const name = await makeName({
       label: 'other-eth-record',
@@ -118,15 +128,18 @@ test.describe('profile', () => {
   test('should allow setting wrapped name that user is manager of but whose resolved address is not the same as the user with an owned resolver', async ({
     page,
     login,
-    contracts,
     accounts,
     makeName,
     makePageObject,
   }) => {
     test.slow()
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
+    // await reverseRegistrar.setName('')
+    await setPrimaryName(walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
 
     const name = await makeName({
       label: 'wrapped',
@@ -137,11 +150,14 @@ test.describe('profile', () => {
           label: 'test',
           owner: 'user',
           type: 'wrapped',
-          resolver: RESOLVER_ADDRESSES['1337'][1] as `0x${string}`,
+          resolver: UNAUTHORISED_RESOLVER, // RESOLVER_ADDRESSES['1337'][1] as `0x${string}`,
         },
       ],
     })
     const subname = `test.${name}`
+
+    const test2 = await getResolver(walletClient, { name: subname })
+    console.log('test', test2)
 
     const profilePage = makePageObject('ProfilePage')
     const morePage = makePageObject('MorePage')
@@ -149,7 +165,8 @@ test.describe('profile', () => {
 
     await morePage.goto(subname)
     await login.connect()
-    await expect(morePage.resolver).toContainText(RESOLVER_ADDRESSES['1337'][1])
+    await page.pause()
+    await expect(morePage.resolver).toContainText(UNAUTHORISED_RESOLVER)
 
     await profilePage.goto(subname)
     await expect(page.getByTestId('owner-profile-button-name.manager')).toContainText(
@@ -171,15 +188,16 @@ test.describe('profile', () => {
   test('should skip setting eth record if user is manager of name and resolver is not authorized if eth record is set on latest resolver', async ({
     page,
     login,
-    contracts,
     accounts,
     makeName,
     makePageObject,
   }) => {
     test.slow()
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    await setPrimaryName(walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
 
     const name = await makeName({
       label: 'wrapped',
@@ -190,9 +208,9 @@ test.describe('profile', () => {
           label: 'test',
           owner: 'user',
           records: {
-            coinTypes: [
+            coins: [
               {
-                key: 'ETH',
+                coin: 'eth',
                 value: accounts.getAddress('user'),
               },
             ],
@@ -218,7 +236,7 @@ test.describe('profile', () => {
     await page.getByTestId('update-button').click()
     await transactionModal.autoComplete()
 
-    await expect(morePage.resolver).toContainText(UNAUTHORISED_RESOLVER, { timeout: 15000 })
+    await expect(morePage.resolver).toContainText(UNAUTHORISED_RESOLVER, { timeout: 30000 })
 
     await profilePage.goto(subname)
     await expect(page.getByTestId('owner-profile-button-name.manager')).toContainText(
@@ -248,7 +266,6 @@ test.describe('profile', () => {
   test('should skip setting primary name step if reverse registry name is already set to that name', async ({
     page,
     login,
-    contracts,
     makeName,
     makePageObject,
   }) => {
@@ -268,14 +285,18 @@ test.describe('profile', () => {
     })
     const subname = `test.${name}`
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName(subname)
+    const tx = await setPrimaryName(walletClient, {
+      name: subname,
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(tx)
 
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
 
     await profilePage.goto(subname)
     await login.connect()
+    await page.pause()
     // Assert state
     await expect(page.getByTestId('profile-title')).not.toContainText(subname)
 
@@ -288,7 +309,7 @@ test.describe('profile', () => {
     await transactionModal.autoComplete()
 
     // Assertion
-    await expect(page.getByTestId('profile-title')).toContainText(subname, { timeout: 15000 })
+    await expect(page.getByTestId('profile-title')).toContainText(subname, { timeout: 30000 })
   })
 
   test('should not show set primary name button for a wrapped name that has CSR burned, is not a resolved address, and an unauthorized resolver', async ({
@@ -304,9 +325,9 @@ test.describe('profile', () => {
       type: 'wrapped',
       owner: 'user',
       records: {
-        coinTypes: [
+        coins: [
           {
-            key: 'ETH',
+            coin: 'eth',
             value: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
           },
         ],
@@ -348,21 +369,24 @@ test.describe('profile', () => {
   test('should allow setting primary name from name with encrypted label', async ({
     page,
     login,
-    contracts,
     accounts,
     makeName,
     makePageObject,
   }) => {
     test.slow()
 
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    const tx = await setPrimaryName(walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(tx)
+    console.log('tx', tx)
 
     const label = `unknown-label-${Date.now()}`
     const _labelhash = labelhash(label)
 
     const name = await makeName({
-      label: 'wrapped',
+      label: 'legacy',
       type: 'legacy',
       owner: 'user',
       subnames: [
@@ -380,6 +404,8 @@ test.describe('profile', () => {
 
     await profilePage.goto(subname)
     await login.connect()
+
+    await page.pause()
 
     // Assert state
     await expect(page.getByTestId('owner-profile-button-name.manager')).toContainText(

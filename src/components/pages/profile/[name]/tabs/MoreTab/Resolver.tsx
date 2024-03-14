@@ -1,13 +1,17 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
 
-import { Typography, mq } from '@ensdomains/thorin'
+import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
-import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
+import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { emptyAddress } from '@app/utils/constants'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 import { TabWrapper } from '../../../TabWrapper'
 
@@ -59,31 +63,59 @@ const InnerHeading = styled.div(
   `,
 )
 
+const ButtonStack = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: ${theme.space['4']};
+
+    ${mq.md.max(css`
+      flex-direction: column;
+    `)}
+  `,
+)
+
 const Resolver = ({
   name,
   canEditResolver,
   canEdit,
   resolverAddress,
   isCachedData,
+  canEditResolverError,
 }: {
   name: string
-  isWrapped: boolean
   canEditResolver: boolean
   canEdit: boolean
   resolverAddress: string | undefined
   isCachedData: boolean
+  canEditResolverError?: string
 }) => {
   const { t } = useTranslation('profile')
 
-  const hasGlobalError = useHasGlobalError()
+  const { md } = useBreakpoint()
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showEditResolverInput = prepareDataInput('EditResolver')
+  const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
+
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showEditResolverInput = usePreparedDataInput('EditResolver')
   const handleEditClick = () => {
     showEditResolverInput(`resolver-upgrade-${name}`, {
       name,
     })
   }
+
+  const resolverQuery = useResolver({
+    name,
+    enabled: !resolverAddress || resolverAddress === emptyAddress,
+  })
+
+  const registryOrSubgraphResolverAddress = match([resolverAddress, resolverQuery.data])
+    .with(
+      [P.union(emptyAddress, P.nullish), P._],
+      ([, registryAddress]) => registryAddress || emptyAddress,
+    )
+    .otherwise(([subgraphResolver]) => subgraphResolver || emptyAddress)
 
   return (
     <Container $isCached={isCachedData}>
@@ -93,34 +125,45 @@ const Resolver = ({
             {t('tabs.more.resolver.label')}
           </Typography>
         </InnerHeading>
-        {canEdit && !hasGlobalError && (
+      </HeadingContainer>
+      <ButtonStack>
+        <RecordItem
+          type="text"
+          data-testid="resolver-address"
+          value={registryOrSubgraphResolverAddress || ''}
+        />
+        {canEdit && !hasGraphError && (
           <>
             {canEditResolver ? (
-              <button
-                style={{ cursor: 'pointer' }}
+              <Button
+                colorStyle="accentSecondary"
+                size="small"
                 type="button"
+                width={md ? 'max' : 'full'}
                 onClick={handleEditClick}
                 data-testid="edit-resolver-button"
+                loading={hasGraphErrorLoading}
+                disabled={hasGraphErrorLoading}
               >
                 {t('action.edit', { ns: 'common' })}
-              </button>
+              </Button>
             ) : (
               <DisabledButtonWithTooltip
                 {...{
                   buttonId: 'set-resolver-disabled-button',
-                  content: t(`errors.permissionRevoked`),
+                  content: t(`errors.${canEditResolverError || 'default'}`),
                   buttonText: 'Edit',
                   mobileWidth: 150,
                   buttonWidth: '15',
                   mobileButtonWidth: 'initial',
-                  colorStyle: 'transparent',
+                  colorStyle: 'disabled',
+                  loading: hasGraphErrorLoading,
                 }}
               />
             )}
           </>
         )}
-      </HeadingContainer>
-      <RecordItem type="text" data-testid="resolver-address" value={resolverAddress || ''} />
+      </ButtonStack>
     </Container>
   )
 }

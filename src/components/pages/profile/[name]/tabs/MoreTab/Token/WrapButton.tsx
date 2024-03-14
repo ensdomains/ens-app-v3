@@ -1,33 +1,33 @@
 import { useTranslation } from 'react-i18next'
 
-import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
+import { GetOwnerReturnType } from '@ensdomains/ensjs/public'
+import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
-import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { DetailedProfile } from '@app/hooks/useNameDetails'
-import useWrapperApprovedForAll from '@app/hooks/useWrapperApprovedForAll'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useWrapperApprovedForAll } from '@app/hooks/useWrapperApprovedForAll'
 import { makeIntroItem } from '@app/transaction-flow/intro'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
-import { ReturnedENS } from '@app/types'
+import { Profile } from '@app/types'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 import BaseWrapButton from './BaseWrapButton'
 
 type Props = {
   name: string
   canBeWrapped: boolean
-  ownerData: ReturnedENS['getOwner']
-  profile: DetailedProfile | undefined
+  ownerData: GetOwnerReturnType | undefined
+  profile: Profile | undefined
 }
 
 const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
-  const hasGlobalError = useHasGlobalError()
+  const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
   const { address } = useAccountSafely()
-  const resolverStatus = useResolverStatus(name)
+  const resolverStatus = useResolverStatus({ name })
 
   const hasOwnerData = !!ownerData
   const isManager = ownerData?.owner === address
@@ -42,16 +42,16 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
     !!address &&
     (ownerData?.ownershipLevel === 'registrar' ? isRegistrant : isManager)
 
-  const isSubdomain = name.split('.').length > 2
-  const { approvedForAll, isLoading: approvalLoading } = useWrapperApprovedForAll(
-    address!,
-    isSubdomain,
-    _canBeWrapped,
-  )
+  const isSubname = name.split('.').length > 2
+  const { data: approvedForAll, isLoading: isApprovalLoading } = useWrapperApprovedForAll({
+    address: address!,
+    isSubname,
+    canBeWrapped: _canBeWrapped,
+  })
 
-  const { createTransactionFlow, resumeTransactionFlow, getResumable, prepareDataInput } =
+  const { createTransactionFlow, resumeTransactionFlow, getResumable, usePreparedDataInput } =
     useTransactionFlow()
-  const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
+  const showUnknownLabelsInput = usePreparedDataInput('UnknownLabels')
   const resumable = getResumable(`wrapName-${name}`)
 
   const handleWrapClick = () => {
@@ -60,28 +60,28 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
 
     const isManagerAndShouldMigrate = isManager && shouldMigrate
     const isRegistrantAndShouldMigrate = !isManager && isRegistrant && shouldMigrate
-    const needsApproval = isManager && isSubdomain && !approvedForAll
+    const needsApproval = isManager && isSubname && !approvedForAll
 
     const transactions: GenericTransaction[] = [
       ...(needsApproval
         ? [
-            makeTransactionItem('approveNameWrapper', {
+            createTransactionItem('approveNameWrapper', {
               address: address!,
             }),
           ]
         : []),
       ...(isManagerAndShouldMigrate
         ? [
-            makeTransactionItem('migrateProfile', {
+            createTransactionItem('migrateProfile', {
               name,
             }),
           ]
         : []),
-      makeTransactionItem('wrapName', {
+      createTransactionItem('wrapName', {
         name,
       }),
       ...(isRegistrantAndShouldMigrate
-        ? [makeTransactionItem('migrateProfile', { name, resolverAddress })]
+        ? [createTransactionItem('migrateProfile', { name, resolverAddress })]
         : []),
     ]
 
@@ -104,12 +104,17 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
     return createTransactionFlow(key, transactionFlowItem)
   }
 
-  const isLoading = approvalLoading || resolverStatus.isLoading
+  const isLoading = isApprovalLoading || resolverStatus.isLoading || hasGraphErrorLoading
 
-  if (!_canBeWrapped || hasGlobalError) return null
+  if (!_canBeWrapped || hasGraphError) return null
 
   return (
-    <BaseWrapButton data-testid="wrap-name-btn" disabled={isLoading} onClick={handleWrapClick}>
+    <BaseWrapButton
+      data-testid="wrap-name-btn"
+      disabled={isLoading}
+      loading={isLoading}
+      onClick={handleWrapClick}
+    >
       {t('tabs.more.token.wrapName')}
     </BaseWrapButton>
   )

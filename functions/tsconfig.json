@@ -1,0 +1,22 @@
+{
+  "include": ["../src/utils/gradient.ts", "./**/*"],
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "types": ["@cloudflare/workers-types"],
+    "composite": true,
+    "rootDir": "../",
+    "paths": {
+      "@app/*": ["../src/*"]
+    }
+  }
+}

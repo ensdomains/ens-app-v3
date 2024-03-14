@@ -1,15 +1,16 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import type { Address } from 'viem'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 
-import { makeTransactionItem } from '../../transaction'
+import { createTransactionItem } from '../../transaction'
 import { TransactionDialogPassthrough } from '../../types'
 
 type Data = {
-  address: string
+  address: Address
   name: string
 }
 
@@ -30,7 +31,7 @@ const ResetPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) => 
     dispatch({
       name: 'setTransactions',
       payload: [
-        makeTransactionItem('resetPrimaryName', {
+        createTransactionItem('resetPrimaryName', {
           address,
         }),
       ],

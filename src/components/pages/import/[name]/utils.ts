@@ -1,47 +1,114 @@
-import { DNSProver } from '@ensdomains/dnsprovejs'
+import { Address } from 'viem'
 
-export const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query'
+import {
+  BaseError,
+  DnsDnssecVerificationFailedError,
+  DnsInvalidAddressChecksumError,
+  DnsInvalidTxtRecordError,
+  DnsNoTxtRecordError,
+  DnsResponseStatusError,
+} from '@ensdomains/ensjs'
+import type { GetDnsImportDataReturnType } from '@ensdomains/ensjs/dns'
 
-interface DNSRecord {
+import { addStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
+import type { UseDnsOwnerError } from '@app/hooks/ensjs/dns/useDnsOwner'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
+
+export type DnsNavigationFunction = (direction: 'prev' | 'next') => void
+
+export type DnsAddressStatus = 'matching' | 'mismatching' | null
+
+export const checkDnsAddressMatch = ({
+  address,
+  dnsAddress,
+}: {
+  address: Address | undefined | null
+  dnsAddress: Address | undefined | null
+}): DnsAddressStatus => {
+  if (!address || !dnsAddress) return null
+  if (dnsAddress !== address) return 'mismatching' as const
+  return 'matching' as const
+}
+
+export const checkDnsError = ({
+  error,
+  isLoading,
+}: {
+  error: UseDnsOwnerError | null | undefined
+  isLoading: boolean
+}) => {
+  if (!error || isLoading) return null
+  if (!(error instanceof BaseError)) return 'unknown'
+  if (error instanceof DnsResponseStatusError) {
+    if (error.responseStatus !== 'NXDOMAIN') return 'unknown'
+    return 'noTxtRecord'
+  }
+  if (error instanceof DnsDnssecVerificationFailedError) return 'dnssecFailure'
+  if (error instanceof DnsNoTxtRecordError) return 'noTxtRecord'
+  if (error instanceof DnsInvalidTxtRecordError) return 'invalidTxtRecord'
+  if (error instanceof DnsInvalidAddressChecksumError) return 'invalidAddressChecksum'
+  return 'unknown'
+}
+
+export const createImportTransactionRequests = ({
+  address,
+  name,
+  dnsOwnerStatus,
+  dnsImportData,
+  requiresApproval,
+  publicResolverAddress,
+  dnsRegistrarAddress,
+}: {
+  address: Address
   name: string
-  type: number
-  TTL: number
-  data: string
-}
-
-interface DNSQuestion {
-  name: string
-  type: number
-}
-
-interface DohResponse {
-  AD: boolean
-  Answer: DNSRecord[]
-  CD: false
-  Question: DNSQuestion[]
-  RA: boolean
-  RD: boolean
-  Status: number
-  TC: boolean
-}
-
-export const isDnsSecEnabled = async (name: string = '') => {
-  const response = await fetch(
-    `${DNS_OVER_HTTP_ENDPOINT}?${new URLSearchParams({
+  dnsOwnerStatus: DnsAddressStatus
+  dnsImportData: GetDnsImportDataReturnType
+  requiresApproval: boolean
+  publicResolverAddress: Address
+  dnsRegistrarAddress: Address
+}) => {
+  const createApproveTx = () =>
+    createTransactionItem('approveDnsRegistrar', {
+      address,
+    })
+  const createClaimTx = () =>
+    createTransactionItem('claimDnsName', {
       name,
-      do: 'true',
-    })}`,
-    {
-      headers: {
-        accept: 'application/dns-json',
-      },
-    },
-  )
-  const result: DohResponse = await response.json()
-  // NXDOMAIN
-  if (result?.Status === 3) return false
-  return result?.AD
-}
+      dnsImportData,
+      address,
+    })
+  const createImportTx = () =>
+    createTransactionItem('importDnsName', {
+      name,
+      dnsImportData,
+    })
 
-export const getDnsOwner = (dnsQueryResult: Awaited<ReturnType<DNSProver['queryWithProof']>>) =>
-  dnsQueryResult.answer.records[0].data.toString().split('=')[1]
+  if (dnsOwnerStatus === 'matching') {
+    const claimTx = createClaimTx()
+    if (requiresApproval) {
+      const claimTxWithOverride = addStateOverride({
+        item: claimTx,
+        stateOverride: [
+          {
+            address: publicResolverAddress,
+            stateDiff: [
+              // `_operatorApprovals[owner][dnsRegistrarAddress] = true`
+              {
+                slot: 11,
+                keys: [address, dnsRegistrarAddress],
+                value: true,
+              },
+            ],
+          },
+        ],
+      })
+      const approvalTx = createApproveTx()
+      return {
+        transactions: [approvalTx, claimTx],
+        estimators: [approvalTx, claimTxWithOverride],
+      } as const
+    }
+    return { transactions: [claimTx] } as const
+  }
+  return { transactions: [createImportTx()] } as const
+}

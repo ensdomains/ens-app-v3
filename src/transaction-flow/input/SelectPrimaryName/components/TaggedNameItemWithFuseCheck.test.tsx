@@ -1,26 +1,31 @@
-import { render, screen } from '@app/test-utils'
+import { mockFunction, render, screen } from '@app/test-utils'
+
+import { describe, expect, it, vi } from 'vitest'
+
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 
 import { TaggedNameItemWithFuseCheck } from './TaggedNameItemWithFuseCheck'
 
-jest.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem', () => ({
+vi.mock('@app/hooks/resolver/useResolverStatus')
+
+vi.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem', () => ({
   TaggedNameItem: ({ name }: any) => <div data-testid="item">{name}</div>,
 }))
 
-const mockUseResolverStatus = jest.fn().mockReturnValue({
+const mockUseResolverStatus = mockFunction(useResolverStatus)
+mockUseResolverStatus.mockReturnValue({
   data: {
     isAuthorized: true,
   },
   isLoading: false,
 })
 
-jest.mock('@app/hooks/resolver/useResolverStatus', () => ({
-  useResolverStatus: () => mockUseResolverStatus(),
-}))
-
 const baseProps: any = {
   name: 'test.eth',
-  isResolvedAddress: true,
-  isWrappedOwner: false,
+  relation: {
+    resolvedAddress: true,
+    wrappedOwner: false,
+  },
   fuses: {},
 }
 
@@ -41,8 +46,10 @@ describe('TaggedNameItemWithFuseCheck', () => {
       <TaggedNameItemWithFuseCheck
         {...{
           ...baseProps,
-          isResolvedAddress: false,
-          isWrappedOwner: true,
+          relation: {
+            resolvedAddress: false,
+            wrappedOwner: true,
+          },
           fuses: { child: { CANNOT_SET_RESOLVER: true } },
         }}
       />,
@@ -61,8 +68,10 @@ describe('TaggedNameItemWithFuseCheck', () => {
       <TaggedNameItemWithFuseCheck
         {...{
           ...baseProps,
-          isResolvedAddress: false,
-          isWrappedOwner: true,
+          relation: {
+            resolvedAddress: false,
+            wrappedOwner: true,
+          },
           fuses: { child: { CANNOT_SET_RESOLVER: true } },
         }}
       />,
@@ -81,8 +90,10 @@ describe('TaggedNameItemWithFuseCheck', () => {
       <TaggedNameItemWithFuseCheck
         {...{
           ...baseProps,
-          isResolvedAddress: true,
-          isWrappedOwner: true,
+          relation: {
+            resolvedAddress: true,
+            wrappedOwner: true,
+          },
           fuses: { child: { CANNOT_SET_RESOLVER: true } },
         }}
       />,
@@ -101,8 +112,10 @@ describe('TaggedNameItemWithFuseCheck', () => {
       <TaggedNameItemWithFuseCheck
         {...{
           ...baseProps,
-          isResolvedAddress: false,
-          isWrappedOwner: false,
+          relation: {
+            resolvedAddress: false,
+            wrappedOwner: false,
+          },
           fuses: { child: { CANNOT_SET_RESOLVER: true } },
         }}
       />,
@@ -121,8 +134,10 @@ describe('TaggedNameItemWithFuseCheck', () => {
       <TaggedNameItemWithFuseCheck
         {...{
           ...baseProps,
-          isResolvedAddress: false,
-          isWrappedOwner: true,
+          relation: {
+            resolvedAddress: false,
+            wrappedOwner: true,
+          },
           fuses: { child: { CANNOT_SET_RESOLVER: false } },
         }}
       />,

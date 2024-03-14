@@ -1,12 +1,18 @@
 /* eslint-disable no-await-in-loop */
 import { useEffect, useRef } from 'react'
-import { useProvider } from 'wagmi'
+import { TransactionNotFoundError, type Address } from 'viem'
+import { getTransaction, getTransactionCount } from 'viem/actions'
+import { useClient } from 'wagmi'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import type {
+  EtherscanMinedData,
+  Transaction,
+  TransactionStore,
+} from '@app/hooks/transactions/transactionStore'
 import { useTransactionStore } from '@app/hooks/transactions/TransactionStoreContext'
-import type { EtherscanMinedData } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { useChainId } from '@app/hooks/useChainId'
+import { ClientWithEns } from '@app/types'
 
 const TRANSACTION_SEARCH_INTERVAL = 10000
 
@@ -21,26 +27,6 @@ export const getAccountHistoryEndpoint = (address: string, chainId: number) => {
     default:
       return ''
   }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function useIntervalStrict(callback: () => void, delay: number | null) {
-  const savedCallback = useRef<() => void>(() => {})
-
-  useEffect(() => {
-    savedCallback.current = callback
-  }, [callback])
-
-  useEffect(() => {
-    function tick() {
-      savedCallback.current()
-    }
-
-    if (delay !== null) {
-      const id = setInterval(tick, delay)
-      return () => clearInterval(id)
-    }
-  }, [delay])
 }
 
 function useInterval(callback: () => void, delay: number | null, dependencies: any[]) {
@@ -66,12 +52,18 @@ function useInterval(callback: () => void, delay: number | null, dependencies: a
 }
 
 export const findDroppedTransactions = async (
-  transactions: ReturnType<typeof useRecentTransactions>,
-  address: ReturnType<typeof useAccountSafely>['address'],
-  store: ReturnType<typeof useTransactionStore>,
-  chainId: ReturnType<typeof useChainId>,
-  provider: ReturnType<typeof useProvider>,
+  client: ClientWithEns,
+  {
+    transactions,
+    address,
+    store,
+  }: {
+    transactions: Transaction[]
+    address: Address | undefined
+    store: TransactionStore | undefined
+  },
 ) => {
+  const chainId = client.chain.id
   const pendingTransactions = transactions.filter(
     (transaction) => transaction.status === 'pending' && transaction.searchStatus === 'found',
   )
@@ -84,7 +76,7 @@ export const findDroppedTransactions = async (
     !address ||
     !store ||
     !chainId ||
-    !provider ||
+    !client ||
     !transactions?.length ||
     (!pendingTransactions.length && !searchingTransactions.length)
   ) {
@@ -92,8 +84,15 @@ export const findDroppedTransactions = async (
   }
 
   const etherscanEndpoint = getAccountHistoryEndpoint(address, chainId)
-  const etherscanResponse = await fetch(etherscanEndpoint)
-  const etherscanJson: EtherscanMinedData[] = await etherscanResponse.json()
+  const etherscanResponse = etherscanEndpoint
+    ? await fetch(etherscanEndpoint).catch((e) => {
+        console.error(e)
+        return { ok: false } as const
+      })
+    : ({ ok: false } as const)
+  const etherscanJson: EtherscanMinedData[] = etherscanResponse.ok
+    ? await etherscanResponse.json()
+    : []
   const accountTransactionHistory = etherscanJson
 
   for (const searchingTransaction of searchingTransactions) {
@@ -138,7 +137,12 @@ export const findDroppedTransactions = async (
     }
 
     // If for some reason the transaction was not found, was not a replacement etc, try to find it again.
-    const result = await provider.getTransaction(searchingTransaction.hash)
+    const result = await getTransaction(client, { hash: searchingTransaction.hash }).catch(
+      (e: unknown) => {
+        if (e instanceof TransactionNotFoundError) return null
+        throw e
+      },
+    )
     if (result) {
       store.foundTransaction(address, chainId, searchingTransaction.hash, result.nonce)
       return
@@ -159,7 +163,7 @@ export const findDroppedTransactions = async (
   }
 
   for (const pendingTransaction of pendingTransactions) {
-    const currentNonce = await provider.getTransactionCount(address)
+    const currentNonce = await getTransactionCount(client, { address })
 
     if (currentNonce > (pendingTransaction?.nonce ?? -1)) {
       // Transaction either got replaced or has been cancelled
@@ -196,7 +200,7 @@ export const findDroppedTransactions = async (
     }
 
     // If the transaction has not been cancelled or replaced, it may have been dropped
-    const result = await provider.getTransaction(pendingTransaction.hash)
+    const result = await getTransaction(client, { hash: pendingTransaction.hash })
     if (!result) {
       // If a pending transaction is not found, it has been dropped
       store.setFailedTransaction(address, chainId, pendingTransaction.hash)
@@ -206,16 +210,15 @@ export const findDroppedTransactions = async (
 }
 
 export const SyncDroppedTransaction = ({ children }: { children: React.ReactNode }) => {
-  const provider = useProvider()
+  const client = useClient()
   const { address } = useAccountSafely()
   const transactions = useRecentTransactions()
   const store = useTransactionStore()
-  const chainId = useChainId()
 
   useInterval(
-    () => findDroppedTransactions(transactions, address, store, chainId, provider),
+    () => findDroppedTransactions(client, { address, store, transactions }),
     TRANSACTION_SEARCH_INTERVAL,
-    [address, chainId, store, provider, transactions.length],
+    [address, client.chain.id, store, transactions.length],
   )
 
   return <div>{children}</div>

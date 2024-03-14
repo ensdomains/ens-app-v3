@@ -1,35 +1,22 @@
+import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { ReactElement, useCallback, useEffect, useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
-import { Button, Spinner } from '@ensdomains/thorin'
-
-import FastForwardSVG from '@app/assets/FastForward.svg'
-import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
-import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/NameTableFooter'
-import { ProfileSnippet } from '@app/components/ProfileSnippet'
+import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
-import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-import {
-  ReturnedName,
-  useNamesFromAddress,
-} from '@app/hooks/names/useNamesFromAddress/useNamesFromAddress'
+import { Outlink } from '@app/components/Outlink'
+import { ProfileSnippet } from '@app/components/ProfileSnippet'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { shortenAddress } from '@app/utils/utils'
+import { OG_IMAGE_URL } from '@app/utils/constants'
+import { makeEtherscanLink, shortenAddress } from '@app/utils/utils'
 
-import {
-  NameTableHeader,
-  NameTableMode,
-  SortDirection,
-  SortType,
-} from '../components/@molecules/NameTableHeader/NameTableHeader'
-import { useAccountSafely } from '../hooks/useAccountSafely'
-import { useChainId } from '../hooks/useChainId'
-import { useQueryParameterState } from '../hooks/useQueryParameterState'
+import { useAccountSafely } from '../hooks/account/useAccountSafely'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -39,197 +26,75 @@ const DetailsContainer = styled.div(
   `,
 )
 
-const TabWrapperWithButtons = styled(TabWrapper)(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: normal;
-    justify-content: flex-start;
-    width: 100%;
-    max-width: 100%;
-    background: ${theme.colors.backgroundPrimary};
-  `,
-)
-
-const EmptyDetailContainer = styled.div(
-  ({ theme }) => css`
-    padding: ${theme.space['4']};
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  `,
-)
-
 const Page = () => {
   const { t } = useTranslation('address')
   const router = useRouter()
   const { isReady, query } = router
   const { address: _address } = useAccountSafely()
 
-  const address = query.address as string
-  const chainId = useChainId()
-  const isSelf = _address === address
+  const address = query.address as Address
 
-  const [mode, setMode] = useState<NameTableMode>('view')
-  const [selectedNames, setSelectedNames] = useState<string[]>([])
-  const handleClickName = (name: string) => () => {
-    if (selectedNames.includes(name)) {
-      setSelectedNames(selectedNames.filter((n) => n !== name))
-    } else {
-      setSelectedNames([...selectedNames, name])
-    }
-  }
-
-  const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
-  const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
-    'direction',
-    'asc',
-  )
-  const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
-
-  const { profile: primaryProfile, loading: primaryProfileLoading } = usePrimaryProfile(address)
-
-  const getTextRecord = (key: string) => primaryProfile?.records?.texts?.find((x) => x.key === key)
-
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-
-  const {
-    data: namesData,
-    isLoading: isNamesLoading,
-    status: namesStatus,
-  } = useNamesFromAddress({
+  const { data: primaryProfile, isLoading: isPrimaryProfileLoading } = usePrimaryProfile({
     address,
-    sort: {
-      type: sortType || 'expiryDate',
-      orderDirection: sortDirection,
-    },
-    page,
-    resultsPerPage: pageSize,
-    search: searchQuery,
   })
 
-  const isNameDisabled = useCallback(
-    (name: ReturnedName) => {
-      if (mode !== 'select') return false
-      return !name.expiryDate
-    },
-    [mode],
-  )
+  const [isError, setIsError] = useState(false)
 
-  const { prepareDataInput, getTransactionFlowStage } = useTransactionFlow()
-  const showExtendNamesInput = prepareDataInput('ExtendNames')
-  const transactionKey = `extend-names-${selectedNames.join('-')}`
-  const handleExtend = () => {
-    if (selectedNames.length === 0) return
-    showExtendNamesInput(transactionKey, {
-      names: selectedNames,
-      isSelf,
-    })
-  }
+  const getTextRecord = (key: string) => primaryProfile?.texts?.find((x) => x.key === key)
 
-  const stage = getTransactionFlowStage(transactionKey)
-  useEffect(() => {
-    if (stage === 'completed') {
-      setSelectedNames([])
-      setMode('view')
-      setPage(1)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stage])
+  const loading = !isReady || isPrimaryProfileLoading
 
-  const loading = !isReady || isNamesLoading || primaryProfileLoading || !namesData
+  const error = isError ? t('errors.names') : ''
 
-  const hasErrors = namesStatus === 'error'
+  const shortenedAddress = shortenAddress(address)
+  const titleContent = t('meta.title', { address: shortenedAddress })
+  const descriptionContent = t('meta.description', { address })
+  const ogImageUrl = `${OG_IMAGE_URL}/address/${address}`
 
-  const error = hasErrors ? t('errors.names') : ''
+  const chainName = useChainName()
 
   return (
-    <Content title={shortenAddress(address)} copyValue={address} loading={loading}>
-      {{
-        warning: error
-          ? {
-              type: 'warning',
-              message: error,
-            }
-          : undefined,
-        leading: (
-          <DetailsContainer>
-            {primaryProfile?.name ? (
-              <ProfileSnippet
-                name={primaryProfile.name}
-                network={chainId}
-                button="viewProfile"
-                getTextRecord={getTextRecord}
-              />
-            ) : (
-              <NoProfileSnippet />
-            )}
-          </DetailsContainer>
-        ),
-        trailing: (
-          <TabWrapperWithButtons>
-            <NameTableHeader
-              selectable={!!_address}
-              mode={mode}
-              sortType={sortType}
-              sortTypeOptionValues={['expiryDate', 'labelName', 'creationDate']}
-              sortDirection={sortDirection}
-              searchQuery={searchQuery}
-              selectedCount={selectedNames.length}
-              onModeChange={(m) => {
-                setMode(m)
-                setSelectedNames([])
-              }}
-              onSortTypeChange={setSortType}
-              onSortDirectionChange={setSortDirection}
-              onSearchChange={setSearchQuery}
-            >
-              {mode === 'select' && (
-                <Button
-                  size="small"
-                  onClick={handleExtend}
-                  data-testid="extend-names-button"
-                  prefix={<FastForwardSVG />}
-                  disabled={selectedNames.length === 0}
-                >
-                  {t('action.extend', { ns: 'common' })}
-                </Button>
+    <>
+      <Head>
+        <title>{titleContent}</title>
+        <meta name="description" content={descriptionContent} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:title" content={titleContent} />
+        <meta property="og:description" content={descriptionContent} />
+        <meta property="twitter:image" content={ogImageUrl} />
+        <meta property="twitter:title" content={titleContent} />
+        <meta property="twitter:description" content={descriptionContent} />
+      </Head>
+      <Content noTitle title={shortenedAddress} copyValue={address} loading={loading}>
+        {{
+          warning: error
+            ? {
+                type: 'warning',
+                message: error,
+              }
+            : undefined,
+          leading: (
+            <DetailsContainer>
+              {primaryProfile?.name ? (
+                <ProfileSnippet
+                  name={primaryProfile.name}
+                  button="viewProfile"
+                  getTextRecord={getTextRecord}
+                />
+              ) : (
+                <NoProfileSnippet />
               )}
-            </NameTableHeader>
-            <div>
-              {/* eslint-disable no-nested-ternary */}
-              {loading ? (
-                <EmptyDetailContainer>
-                  <Spinner color="accent" />
-                </EmptyDetailContainer>
-              ) : namesData.nameCount === 0 ? (
-                <EmptyDetailContainer>{t('noResults')}</EmptyDetailContainer>
-              ) : namesData ? (
-                namesData.names.map((name) => (
-                  <TaggedNameItem
-                    key={name.id}
-                    {...name}
-                    network={chainId}
-                    mode={mode}
-                    selected={selectedNames?.includes(name.name)}
-                    disabled={isNameDisabled(name)}
-                    onClick={handleClickName(name.name)}
-                  />
-                ))
-              ) : null}
-            </div>
-            <NameTableFooter
-              current={page}
-              onChange={setPage}
-              total={namesData?.nameCount ? namesData.pageCount : 0}
-              pageSize={pageSize}
-              onPageSizeChange={setPageSize}
-            />
-          </TabWrapperWithButtons>
-        ),
-      }}
-    </Content>
+            </DetailsContainer>
+          ),
+          titleExtra: (
+            <Outlink fontVariant="bodyBold" href={makeEtherscanLink(address, chainName, 'address')}>
+              {t('etherscan', { ns: 'common' })}
+            </Outlink>
+          ),
+          trailing: <NameListView address={address} selfAddress={_address} setError={setIsError} />,
+        }}
+      </Content>
+    </>
   )
 }
 

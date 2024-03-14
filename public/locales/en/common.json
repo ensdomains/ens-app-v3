@@ -47,7 +47,9 @@
     "migrate": "Migrate",
     "setToSelf": "Set to self",
     "editRoles": "Edit roles",
-    "setReminder": "Set reminder"
+    "setReminder": "Set reminder",
+    "import": "Import",
+    "connect": "Connect"
   },
   "unit": {
     "years_one": "{{count}} year",
@@ -151,7 +153,7 @@
   "sortTypes": {
     "expiryDate": "Expiry date",
     "labelName": "Name",
-    "creationDate": "Creation date"
+    "createdAt": "Creation date"
   },
   "errors": {
     "noResults": "No results found",
@@ -196,7 +198,9 @@
       "createSubname": "Create subname",
       "deleteSubname": "Delete subname",
       "extendNames": "Extend names",
-      "importDNSSECName": "import DNSSEC name",
+      "approveDnsRegistrar": "Approve DNS registrar",
+      "claimDnsName": "Claim DNS name",
+      "importDnsName": "Import DNS name",
       "commitName": "Start timer",
       "registerName": "Register name",
       "approveNameWrapper": "Approve NameWrapper",
@@ -313,10 +317,7 @@
       }
     },
     "error": {
-      "request": {
-        "INSUFFICIENT_FUNDS": "Insufficient funds in wallet",
-        "UNPREDICTABLE_GAS_LIMIT": "An unknown error occurred"
-      }
+      "unknown": "An unknown error occurred"
     },
     "viewEtherscan": "View on Etherscan",
     "viewMore": "View More"
@@ -339,6 +340,7 @@
       "notImported": "Not Imported",
       "short": "Too Short",
       "default": "Invalid",
+      "invalid": "Invalid",
       "unsupportedTLD": "Not Supported",
       "imported": "Imported",
       "owned": "Owned"

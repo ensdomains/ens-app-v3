@@ -1,28 +1,29 @@
-import { RainbowKitProvider, Theme, lightTheme } from '@rainbow-me/rainbowkit'
+import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
+
 import '@rainbow-me/rainbowkit/styles.css'
+
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { IntercomProvider } from 'react-use-intercom'
-import { ThemeProvider, createGlobalStyle, keyframes } from 'styled-components'
-import { WagmiConfig } from 'wagmi'
+import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
 
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
 import { Notifications } from '@app/components/Notifications'
+import { TestnetWarning } from '@app/components/TestnetWarning'
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
+import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
-import { EnsProvider } from '@app/utils/EnsProvider'
-import { GlobalErrorProvider } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
+import { QueryProviders } from '@app/utils/query/providers'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
-import { setupAnalytics } from '@app/utils/analytics'
-import { chains, wagmiClient } from '@app/utils/query'
 
 import i18n from '../i18n'
+
 import '../styles.css'
 
 const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 'eotmigir'
@@ -142,32 +143,29 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
+      <QueryProviders>
+        <RainbowKitProvider theme={rainbowKitTheme}>
           <TransactionStoreProvider>
-            <EnsProvider>
-              <ThemeProvider theme={thorinLightTheme}>
-                <BreakpointProvider queries={breakpoints}>
-                  <IntercomProvider appId={INTERCOM_ID}>
-                    <GlobalStyle />
-                    <ThorinGlobalStyles />
-                    <GlobalErrorProvider>
-                      <SyncProvider>
-                        <TransactionFlowProvider>
-                          <SyncDroppedTransaction>
-                            <Notifications />
-                            <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                          </SyncDroppedTransaction>
-                        </TransactionFlowProvider>
-                      </SyncProvider>
-                    </GlobalErrorProvider>
-                  </IntercomProvider>
-                </BreakpointProvider>
-              </ThemeProvider>
-            </EnsProvider>
+            <ThemeProvider theme={thorinLightTheme}>
+              <BreakpointProvider queries={breakpoints}>
+                <IntercomProvider appId={INTERCOM_ID}>
+                  <GlobalStyle />
+                  <ThorinGlobalStyles />
+                  <SyncProvider>
+                    <TransactionFlowProvider>
+                      <SyncDroppedTransaction>
+                        <Notifications />
+                        <TestnetWarning />
+                        <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                      </SyncDroppedTransaction>
+                    </TransactionFlowProvider>
+                  </SyncProvider>
+                </IntercomProvider>
+              </BreakpointProvider>
+            </ThemeProvider>
           </TransactionStoreProvider>
         </RainbowKitProvider>
-      </WagmiConfig>
+      </QueryProviders>
     </I18nextProvider>
   )
 }

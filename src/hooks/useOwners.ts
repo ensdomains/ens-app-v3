@@ -1,33 +1,44 @@
 import { useMemo } from 'react'
 
-import { OwnerArray, ReturnedENS } from '@app/types'
+import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
+
+import { useBasicName } from '@app/hooks/useBasicName'
+import { OwnerArray } from '@app/types'
 
 import { DEFAULT_ABILITIES, type useAbilities } from './abilities/useAbilities'
 
-type Props = {
-  ownerData: ReturnedENS['getOwner']
-  wrapperData: ReturnedENS['getWrapperData']
-  dnsOwner?: ReturnedENS['getDNSOwner']
+type BasicNameReturnType = ReturnType<typeof useBasicName>
+
+type UseOwnersParameters = {
+  ownerData: BasicNameReturnType['ownerData']
+  wrapperData: BasicNameReturnType['wrapperData']
+  dnsOwner?: GetDnsOwnerReturnType
   abilities?: ReturnType<typeof useAbilities>['data']
 }
 
-const useOwners = ({ ownerData, wrapperData, dnsOwner, abilities = DEFAULT_ABILITIES }: Props) => {
+export const useOwners = ({
+  ownerData,
+  wrapperData,
+  dnsOwner,
+  abilities = DEFAULT_ABILITIES,
+}: UseOwnersParameters) => {
   const owners = useMemo(() => {
     const _owners: OwnerArray = []
-    if (ownerData?.ownershipLevel === 'nameWrapper') {
+    if (wrapperData) {
+      const isPCCBurned = !!wrapperData?.fuses.parent.PARENT_CANNOT_CONTROL
       _owners.push({
-        address: ownerData.owner!,
-        canTransfer: abilities.canSend,
-        transferType: 'owner',
-        label: wrapperData?.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
-        description: 'details.descriptions.owner',
-        testId: 'owner-button-owner',
+        address: wrapperData.owner!,
+        canTransfer: isPCCBurned ? abilities.canSendOwner : abilities.canSendManager,
+        transferType: isPCCBurned ? 'owner' : 'manager',
+        label: isPCCBurned ? 'name.owner' : 'name.manager',
+        description: isPCCBurned ? 'details.descriptions.owner' : 'details.descriptions.manager',
+        testId: isPCCBurned ? 'owner-button-owner' : 'owner-button-manager',
       })
     } else {
       if (ownerData?.owner) {
         _owners.push({
           address: ownerData?.owner,
-          canTransfer: abilities.canSend,
+          canTransfer: abilities.canSendManager,
           transferType: 'manager',
           label: 'name.manager',
           description: 'details.descriptions.controller',
@@ -60,5 +71,3 @@ const useOwners = ({ ownerData, wrapperData, dnsOwner, abilities = DEFAULT_ABILI
 
   return owners
 }
-
-export default useOwners

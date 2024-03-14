@@ -1,4 +1,4 @@
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 export const nameParts = (name: string) => {
   const parts = name.split('.')
@@ -19,8 +19,14 @@ export const nameLevel = (name: string) => {
     .otherwise(() => (name === '[root]' ? ('root' as const) : ('tld' as const)))
 }
 
-export const parentName = (name: string) => {
+export const parentName = (name?: string | null) => {
   if (!name) return ''
   const parts = name.split('.').slice(1)
   return parts.length ? parts.join('.') : '[root]'
 }
+
+export const camelToConstant = (name: string) =>
+  name.replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase()
+
+export const constantToCamel = (name: string) =>
+  name.toLowerCase().replace(/_(.)/g, (_, char) => char.toUpperCase())

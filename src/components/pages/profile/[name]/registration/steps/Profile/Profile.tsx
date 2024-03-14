@@ -5,15 +5,14 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Dialog, PlusSVG, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dialog, mq, PlusSVG, Typography } from '@ensdomains/thorin'
 
 import { ConfirmationDialogView } from '@app/components/@molecules/ConfirmationDialogView/ConfirmationDialogView'
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
-import { useContractAddress } from '@app/hooks/useContractAddress'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { useNameDetails } from '@app/hooks/useNameDetails'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
 import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
@@ -21,8 +20,8 @@ import { AddProfileRecordView } from './AddProfileRecordView'
 import { CustomProfileRecordInput } from './CustomProfileRecordInput'
 import { ProfileRecordInput } from './ProfileRecordInput'
 import { ProfileRecordTextarea } from './ProfileRecordTextarea'
-import { WrappedAvatarButton } from './WrappedAvatarButton'
 import { profileEditorFormToProfileRecords } from './profileRecordUtils'
+import { WrappedAvatarButton } from './WrappedAvatarButton'
 
 const StyledCard = styled.form(({ theme }) => [
   css`
@@ -90,7 +89,7 @@ const SubmitButton = ({
     name: 'avatar',
   })
 
-  const hasEthRecord = records.some((record) => record.key === 'ETH' && record.value === address)
+  const hasEthRecord = records.some((record) => record.key === 'eth' && record.value === address)
   const hasAvatar = !!avatar
   const hasOneRecord = records.length === 1
   const isClean = hasEthRecord && !hasAvatar && hasOneRecord
@@ -109,20 +108,19 @@ const SubmitButton = ({
 type ModalOption = AvatarClickType | 'add-record' | 'clear-eth' | 'public-notice'
 
 type Props = {
-  nameDetails: ReturnType<typeof useNameDetails>
+  name: string
   registrationData: RegistrationReducerDataItem
   resolverExists: boolean | undefined
   callback: (data: RegistrationStepData['profile'] & BackObj) => void
 }
 
-const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Props) => {
+const Profile = ({ name, callback, registrationData, resolverExists }: Props) => {
   const { t } = useTranslation('register')
 
-  const defaultResolverAddress = useContractAddress('PublicResolver')
-  const clearRecords = registrationData.resolver === defaultResolverAddress ? resolverExists : false
+  const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
+  const clearRecords =
+    registrationData.resolverAddress === defaultResolverAddress ? resolverExists : false
   const backRef = useRef<HTMLButtonElement>(null)
-
-  const { normalisedName: name } = nameDetails
 
   const {
     records,
@@ -175,7 +173,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
   }
 
   const handleDeleteRecord = (record: ProfileRecord, index: number) => {
-    if (record.key === 'ETH') return setModalOption('clear-eth')
+    if (record.key === 'eth') return setModalOption('clear-eth')
     removeRecordAtIndex(index)
     process.nextTick(() => trigger())
   }
@@ -189,7 +187,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
     callback({
       records: newRecords,
       clearRecords,
-      resolver: registrationData.resolver,
+      resolverAddress: registrationData.resolverAddress,
       back: nativeEvent?.submitter === backRef.current,
     })
   }
@@ -247,7 +245,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
             confirmLabel={t('steps.profile.confirmations.clearEth.confirm')}
             declineLabel={t('steps.profile.confirmations.clearEth.decline')}
             onConfirm={() => {
-              removeRecordByTypeAndKey('address', 'ETH')
+              removeRecordByTypeAndKey('address', 'eth')
               setModalOpen(false)
             }}
             onDecline={() => setModalOpen(false)}
@@ -315,7 +313,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
               key={field.id}
               recordKey={field.key}
               group={field.group}
-              disabled={field.key === 'ETH' && registrationData.reverseRecord}
+              disabled={field.key === 'eth' && registrationData.reverseRecord}
               label={labelForRecord(field)}
               secondaryLabel={secondaryLabelForRecord(field)}
               placeholder={placeholderForRecord(field)}

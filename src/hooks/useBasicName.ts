@@ -1,170 +1,105 @@
 import { useMemo } from 'react'
-import { useQuery } from 'wagmi'
+import { getAddress } from 'viem'
 
-import { truncateFormat } from '@ensdomains/ensjs/utils/format'
+import { truncateFormat } from '@ensdomains/ensjs/utils'
 
-import { Prettify, ReturnedENS } from '@app/types'
-import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
-import { emptyAddress } from '@app/utils/constants'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
-import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
+import { useContractAddress } from './chain/useContractAddress'
+import useCurrentBlockTimestamp from './chain/useCurrentBlockTimestamp'
+import { useAddressRecord } from './ensjs/public/useAddressRecord'
+import { useExpiry } from './ensjs/public/useExpiry'
+import { useOwner, UseOwnerReturnType } from './ensjs/public/useOwner'
+import { usePrice } from './ensjs/public/usePrice'
+import { useWrapperData } from './ensjs/public/useWrapperData'
+import { useSubgraphRegistrant } from './ensjs/subgraph/useSubgraphRegistrant'
 import { usePccExpired } from './fuses/usePccExpired'
-import { useContractAddress } from './useContractAddress'
-import useCurrentBlockTimestamp from './useCurrentBlockTimestamp'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
-type PickToNotNever<T, U> = {
-  [K in keyof T]: K extends U ? T[K] : never
-}
-
-type ENS = ReturnType<typeof useEns>
-type BaseBatchReturn = {
-  ownerData?: ReturnedENS['getOwner']
-  wrapperData?: ReturnedENS['getWrapperData']
-  expiryData?: ReturnedENS['getExpiry']
-  priceData?: ReturnedENS['getPrice']
-  addrData?: ReturnedENS['getAddr']
-}
-type RootBatchReturn = PickToNotNever<BaseBatchReturn, 'ownerData'>
-type ShortBatchReturn = PickToNotNever<BaseBatchReturn, undefined>
-type NormalBatchReturn = PickToNotNever<BaseBatchReturn, 'ownerData' | 'wrapperData'>
-type DnsBatchReturn = PickToNotNever<BaseBatchReturn, 'ownerData' | 'wrapperData' | 'addrData'>
-type ETH2LDBatchReturn = PickToNotNever<
-  BaseBatchReturn,
-  'ownerData' | 'wrapperData' | 'expiryData' | 'priceData'
->
-export type BatchReturn = Prettify<
-  | RootBatchReturn
-  | ShortBatchReturn
-  | NormalBatchReturn
-  | DnsBatchReturn
-  | ETH2LDBatchReturn
-  | undefined
->
 const EXPIRY_LIVE_WATCH_TIME = 1_000 * 60 * 5 // 5 minutes
 
-const getBatchData = (
-  name: string,
-  validation: any,
-  ens: ENS,
-  skipGraph: boolean,
-): Promise<BatchReturn> => {
-  // exception for "[root]", get owner of blank name
-  if (name === '[root]') {
-    return ens.getOwner('', { contract: 'registry' }).then((ownerData) => ({ ownerData }))
-  }
-
-  const labels = name.split('.')
-  if (validation.isETH && validation.is2LD) {
-    if (validation.isShort) {
-      return Promise.resolve({})
-    }
-    return ens
-      .batch(
-        ens.getOwner.batch(name, { skipGraph }),
-        ens.getWrapperData.batch(name),
-        ens.getExpiry.batch(name),
-        ens.getPrice.batch(labels[0], yearsToSeconds(1), false),
-      )
-      .then((res) => ({
-        ownerData: res?.[0],
-        wrapperData: res?.[1],
-        expiryData: res?.[2],
-        priceData: res?.[3],
-      }))
-  }
-
-  if (!validation.isETH) {
-    const getAddrBatch = ens.getAddr.batch(name)
-
-    return ens
-      .batch(ens.getOwner.batch(name), ens.getWrapperData.batch(name), {
-        args: getAddrBatch.args,
-        raw: getAddrBatch.raw,
-        decode: async (...args) =>
-          getAddrBatch
-            .decode(...(args as Parameters<typeof getAddrBatch['decode']>))
-            .catch(() => undefined),
-      })
-      .then((res) => ({ ownerData: res?.[0], wrapperData: res?.[1], addrData: res?.[2] }))
-  }
-
-  return ens.batch(ens.getOwner.batch(name), ens.getWrapperData.batch(name)).then((res) => ({
-    ownerData: res?.[0],
-    wrapperData: res?.[1],
-  }))
-}
-
-type UseBasicNameOptions = {
+export type UseBasicNameOptions = {
+  name?: string | null
   normalised?: boolean
-  skipGraph?: boolean
   enabled?: boolean
+  subgraphEnabled?: boolean
 }
 
-export const useBasicName = (name?: string | null, options: UseBasicNameOptions = {}) => {
-  const { normalised = false, skipGraph = true, enabled = true } = options
-  const ens = useEns()
+export const useBasicName = ({
+  name,
+  normalised = false,
+  enabled = true,
+  subgraphEnabled = true,
+}: UseBasicNameOptions) => {
+  const validation = useValidate({ input: name!, enabled: enabled && !!name })
 
-  const { name: _normalisedName, isValid, ...validation } = useValidate(name!, !name)
+  const { name: _normalisedName, isValid, isShort, isETH, is2LD } = validation
 
   const normalisedName = normalised ? name! : _normalisedName
 
   const { data: supportedTLD, isLoading: supportedTLDLoading } = useSupportsTLD(normalisedName)
 
-  const queryKey = useQueryKeys().basicName(normalisedName, skipGraph)
-  const watchedGetBatchData = useGlobalErrorFunc<typeof getBatchData>({
-    queryKey,
-    func: getBatchData,
-    skip: skipGraph,
+  const commonEnabled = enabled && !!name && isValid && !isShort
+  const isRoot = name === '[root]'
+
+  const {
+    data: ownerData,
+    isLoading: isOwnerLoading,
+    isCachedData: isOwnerCachedData,
+    refetchIfEnabled: refetchOwner,
+  } = useOwner({ name: normalisedName, enabled: commonEnabled })
+  const {
+    data: wrapperData,
+    isLoading: isWrapperDataLoading,
+    isCachedData: isWrapperDataCachedData,
+    refetchIfEnabled: refetchWrapperData,
+  } = useWrapperData({ name: normalisedName, enabled: commonEnabled && !isRoot })
+  const {
+    data: expiryData,
+    isLoading: isExpiryLoading,
+    isCachedData: isExpiryCachedData,
+    refetchIfEnabled: refetchExpiry,
+  } = useExpiry({ name: normalisedName, enabled: commonEnabled && !isRoot && isETH && is2LD })
+  const {
+    data: priceData,
+    isLoading: isPriceLoading,
+    isCachedData: isPriceCachedData,
+    refetchIfEnabled: refetchPrice,
+  } = usePrice({
+    nameOrNames: normalisedName,
+    duration: yearsToSeconds(1),
+    enabled: commonEnabled && !isRoot && isETH && is2LD,
+  })
+  const {
+    data: addrData,
+    isLoading: isAddrLoading,
+    isCachedData: isAddrCachedData,
+    refetchIfEnabled: refetchAddr,
+  } = useAddressRecord({
+    name: normalisedName,
+    enabled: commonEnabled && !isRoot && !isETH,
   })
 
-  const {
-    data: batchData,
-    isLoading: batchLoading,
-    isFetched,
-    /** DO NOT REMOVE */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isFetching,
-    isFetchedAfterMount,
-    status,
-    refetch,
-    isRefetching,
-  } = useQuery(
-    queryKey,
-    async () =>
-      watchedGetBatchData(normalisedName, validation, ens, skipGraph).then((r) => r || null),
-    {
-      enabled: !!(enabled && ens.ready && name && isValid),
-    },
-  )
-  const {
-    ownerData,
-    wrapperData: _wrapperData,
-    expiryData,
-    priceData,
-    addrData,
-  } = batchData || ({} as NonNullable<BatchReturn>)
+  const publicCallsLoading =
+    isOwnerLoading || isWrapperDataLoading || isExpiryLoading || isPriceLoading || isAddrLoading
 
-  const wrapperData = useMemo(() => {
-    if (!_wrapperData) return undefined
-    const { expiryDate, ...rest } = _wrapperData
-    return {
-      ...rest,
-      expiryDate: expiryDate ? new Date(expiryDate) : undefined,
-    }
-  }, [_wrapperData])
+  const publicCallsCachedData =
+    isOwnerCachedData ||
+    isWrapperDataCachedData ||
+    isExpiryCachedData ||
+    isPriceCachedData ||
+    isAddrCachedData
 
-  const expiryDate = expiryData?.expiry ? new Date(expiryData.expiry) : undefined
+  const expiryDate = expiryData?.expiry?.date
 
   const gracePeriodEndDate =
     expiryDate && expiryData?.gracePeriod
-      ? new Date(expiryDate.getTime() + expiryData.gracePeriod)
+      ? new Date(expiryDate.getTime() + expiryData.gracePeriod * 1000)
       : undefined
 
+  // gracePeriodEndDate is +/- 5 minutes from Date.now()
   const isTempPremiumDesynced = !!(
     gracePeriodEndDate &&
     Date.now() + EXPIRY_LIVE_WATCH_TIME > gracePeriodEndDate.getTime() &&
@@ -173,13 +108,26 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
 
   const blockTimestamp = useCurrentBlockTimestamp({ enabled: isTempPremiumDesynced })
 
+  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
+  const isWrapped = !!wrapperData
+  const canBeWrapped = useMemo(
+    () =>
+      !!(
+        nameWrapperAddress &&
+        !isWrapped &&
+        normalisedName?.endsWith('.eth') &&
+        !isLabelTooLong(normalisedName)
+      ),
+    [nameWrapperAddress, isWrapped, normalisedName],
+  )
+
   const registrationStatusTimestamp = useMemo(() => {
     if (!isTempPremiumDesynced) return Date.now()
-    if (blockTimestamp) return blockTimestamp * 1000
+    if (blockTimestamp) return Number(blockTimestamp) * 1000
     return Date.now() - EXPIRY_LIVE_WATCH_TIME
   }, [isTempPremiumDesynced, blockTimestamp])
 
-  const registrationStatus = batchData
+  const registrationStatus = !publicCallsLoading
     ? getRegistrationStatus({
         timestamp: registrationStatusTimestamp,
         validation,
@@ -192,31 +140,37 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
       })
     : undefined
 
+  const { data: subgraphRegistrant } = useSubgraphRegistrant({
+    name: normalisedName,
+    enabled:
+      enabled &&
+      subgraphEnabled &&
+      registrationStatus === 'gracePeriod' &&
+      is2LD &&
+      isETH &&
+      !isWrapped,
+  })
+
+  const ownerDataWithSubgraphRegistrant = useMemo(() => {
+    if (!ownerData) return ownerData
+    const checkSumSubgraphRegistrant = subgraphRegistrant
+      ? getAddress(subgraphRegistrant)
+      : undefined
+    return {
+      ...ownerData,
+      registrant: ownerData?.registrant ?? checkSumSubgraphRegistrant,
+    } as UseOwnerReturnType
+  }, [ownerData, subgraphRegistrant])
+
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
-  const nameWrapperAddress = useContractAddress('NameWrapper')
-  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
-  const canBeWrapped = useMemo(
-    () =>
-      !!(
-        ens.ready &&
-        nameWrapperAddress &&
-        nameWrapperAddress !== emptyAddress &&
-        !isWrapped &&
-        normalisedName?.endsWith('.eth') &&
-        !isLabelTooLong(normalisedName)
-      ),
-    [ens.ready, nameWrapperAddress, isWrapped, normalisedName],
-  )
   const pccExpired = usePccExpired({ ownerData, wrapperData })
 
-  const isLoading = !ens.ready || batchLoading || supportedTLDLoading
-
+  const isLoading = publicCallsLoading || supportedTLDLoading
   return {
     ...validation,
     normalisedName,
-    isValid,
-    ownerData,
+    ownerData: ownerDataWithSubgraphRegistrant,
     wrapperData,
     priceData,
     expiryDate,
@@ -224,11 +178,16 @@ export const useBasicName = (name?: string | null, options: UseBasicNameOptions 
     isLoading,
     truncatedName,
     registrationStatus,
-    isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
+    isWrapped,
     pccExpired,
     canBeWrapped,
-    addrData: addrData as string | undefined,
-    refetch,
-    isCachedData: isRefetching || (status === 'success' && isFetched && !isFetchedAfterMount),
+    isCachedData: publicCallsCachedData,
+    refetchIfEnabled: () => {
+      refetchOwner()
+      refetchWrapperData()
+      refetchExpiry()
+      refetchPrice()
+      refetchAddr()
+    },
   }
 }

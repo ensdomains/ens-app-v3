@@ -1,14 +1,12 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = {}
 
 const displayItems = (
   // eslint-disable-next-line no-empty-pattern
-  {}: any,
+  {}: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
@@ -31,10 +29,11 @@ const displayItems = (
   },
 ]
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const transaction = async (_signer: JsonRpcSigner, _ens: PublicENS, _data: Data) => ({
-  to: '0x0000000000000000000000000000000000000000',
-  data: BigNumber.from('0').toHexString(),
-})
+// eslint-disable-next-line no-empty-pattern
+const transaction = async ({}: TransactionFunctionParameters<Data>) =>
+  ({
+    to: '0x0000000000000000000000000000000000000000',
+    data: '0x',
+  }) as const
 
-export default { displayItems, transaction } as Transaction<Data>
+export default { displayItems, transaction } satisfies Transaction<Data>

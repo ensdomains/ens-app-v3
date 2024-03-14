@@ -1,11 +1,11 @@
 import styled, { css } from 'styled-components'
+import { useEnsAvatar } from 'wagmi'
 
 import { Avatar, UpRightArrowSVG } from '@ensdomains/thorin'
 
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useChainId } from '@app/hooks/useChainId'
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination } from '@app/routes'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 
 const Container = styled.a(
   ({ theme }) => css`
@@ -60,8 +60,7 @@ type Props = {
 }
 
 export const AvatarWithLink = ({ name, label }: Props) => {
-  const chainId = useChainId()
-  const { avatar } = useAvatar(name, chainId)
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name || '', 'name')
   const profileURL = getDestination(`/profile/${name}`) as string
   return (

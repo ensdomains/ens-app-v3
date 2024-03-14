@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
+import { useChainName } from '@app/hooks/chain/useChainName'
+import { useNameType } from '@app/hooks/nameType/useNameType'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useChainName } from '@app/hooks/useChainName'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
-import { useNameType } from '@app/hooks/useNameType'
 import useRegistrationData from '@app/hooks/useRegistrationData'
 import { GRACE_PERIOD } from '@app/utils/constants'
 import { safeDateObj } from '@app/utils/date'
@@ -22,6 +22,15 @@ type Options = {
   enabled?: boolean
 }
 
+const getExpiryDate = (expiryDate: Date | undefined, wrapperExpiryDate: Date | undefined) =>
+  match([expiryDate, wrapperExpiryDate])
+    .with([P.when((date) => !!safeDateObj(date)), P._], ([date]) => safeDateObj(date))
+    .with(
+      [P._, P.when((date) => !!safeDateObj(date))],
+      ([, date]) => new Date(safeDateObj(date)!.getTime() - GRACE_PERIOD),
+    )
+    .otherwise(() => undefined)
+
 export const useExpiryDetails = ({ name, details }: Input, options: Options = {}) => {
   const enabled = options.enabled ?? true
 
@@ -29,14 +38,12 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
 
   const isETH2LD = checkETH2LDFromName(name)
   const nameType = useNameType(name, { enabled })
-  const parentData = useBasicName(parentName(name), {
-    skipGraph: false,
+  const parentData = useBasicName({
+    name: parentName(name),
     enabled: enabled && !!nameType.data && nameType.data!.includes('subname'),
   })
   const chainName = useChainName()
-  const registrationData = useRegistrationData(name, {
-    enabled: enabled && isETH2LD,
-  })
+  const registrationData = useRegistrationData({ name, enabled: enabled && isETH2LD })
 
   const isLoading =
     nameType.isLoading || details.isLoading || parentData.isLoading || registrationData.isLoading
@@ -46,37 +53,48 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
   const data = useMemo(
     () => {
       if (isLoading) return undefined
-      const expiry = safeDateObj(details.expiryDate || details.wrapperData?.expiryDate)
-      const parentExpiry = safeDateObj(
-        parentData?.expiryDate || parentData?.wrapperData?.expiryDate,
+      const expiry = getExpiryDate(details?.expiryDate, details?.wrapperData?.expiry?.date)
+      const parentExpiry = getExpiryDate(
+        parentData?.expiryDate,
+        parentData?.wrapperData?.expiry?.date,
       )
 
       return match(nameType.data!)
-        .with(P.union('eth-unwrapped-2ld', 'eth-emancipated-2ld', 'eth-locked-2ld'), () => [
-          ...(expiry
-            ? [
-                {
-                  type: 'expiry',
-                  date: expiry,
-                },
-                {
-                  type: 'grace-period',
-                  date: expiry ? new Date(expiry.getTime() + GRACE_PERIOD) : undefined,
-                  tooltip: t('tabs.ownership.sections.expiry.panel.grace-period.tooltip'),
-                  supportLink: getSupportLink('grace-period'),
-                },
-              ]
-            : []),
-          ...(registrationData?.data
-            ? [
-                {
-                  type: 'registration',
-                  date: registrationData?.data?.registrationDate,
-                  link: makeEtherscanLink(registrationData?.data?.transactionHash!, chainName),
-                },
-              ]
-            : []),
-        ])
+        .with(
+          P.union(
+            'eth-unwrapped-2ld',
+            'eth-unwrapped-2ld:grace-period',
+            'eth-emancipated-2ld',
+            'eth-emancipated-2ld:grace-period',
+            'eth-locked-2ld',
+            'eth-locked-2ld:grace-period',
+          ),
+          () => [
+            ...(expiry
+              ? [
+                  {
+                    type: 'expiry',
+                    date: expiry,
+                  },
+                  {
+                    type: 'grace-period',
+                    date: expiry ? new Date(expiry.getTime() + GRACE_PERIOD) : undefined,
+                    tooltip: t('tabs.ownership.sections.expiry.panel.grace-period.tooltip'),
+                    supportLink: getSupportLink('grace-period'),
+                  },
+                ]
+              : []),
+            ...(registrationData?.data
+              ? [
+                  {
+                    type: 'registration',
+                    date: registrationData?.data?.registrationDate,
+                    link: makeEtherscanLink(registrationData?.data?.transactionHash!, chainName),
+                  },
+                ]
+              : []),
+          ],
+        )
         .with(P.union('eth-emancipated-subname', 'eth-locked-subname'), () => [
           ...(expiry
             ? [

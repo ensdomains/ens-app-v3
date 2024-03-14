@@ -1,15 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { test as base } from '@playwright/test'
-import { Web3ProviderBackend, injectHeadlessWeb3Provider } from 'headless-web3-provider'
+import { injectHeadlessWeb3Provider, Web3ProviderBackend } from 'headless-web3-provider'
 
 import { Accounts, createAccounts } from './fixtures/accounts'
 import { createContracts } from './fixtures/contracts'
 import { Login } from './fixtures/login'
-import { createMakeNames } from './fixtures/makeName/index'
-import { Provider, createProvider } from './fixtures/provider'
-import { createSubgraph } from './fixtures/subgraph'
-import { createTime } from './fixtures/time'
-import { createPageObjectMaker } from './pageObjects'
+import { createMakeNames } from './fixtures/makeName/index.js'
+import { createProvider, Provider } from './fixtures/provider'
+import { createSubgraph } from './fixtures/subgraph.js'
+import { createTime } from './fixtures/time.js'
+import { createPageObjectMaker } from './pageObjects/index.js'
 
 type Fixtures = {
   accounts: Accounts

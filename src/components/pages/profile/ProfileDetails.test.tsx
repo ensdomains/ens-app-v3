@@ -1,20 +1,21 @@
 import '@app/test-utils'
 
-import { OwnerArray } from '@app/types'
-
-import { ownershipInfoCalc } from './ProfileDetails'
-
-import { ProfileDetails } from './ProfileDetails'
 import { render, screen } from '@app/test-utils'
 
-jest.mock('@app/utils/BreakpointProvider', () => ({
+import { describe, expect, it, vi } from 'vitest'
+
+import { OwnerArray } from '@app/types'
+
+import { ownershipInfoCalc, ProfileDetails } from './ProfileDetails'
+
+vi.mock('@app/utils/BreakpointProvider', () => ({
   useBreakpoint: () => ({
     xs: true,
     sm: true,
     md: true,
     lg: true,
     xl: false,
-  })
+  }),
 }))
 
 describe('onwershipInfoCalc', () => {
@@ -38,7 +39,7 @@ describe('onwershipInfoCalc', () => {
     const gracePeriodEndDate = new Date(2)
     const owners = [
       { transferType: 'manager', address: '0x123', label: 'name.manager' },
-    ] as OwnerArray
+    ] as unknown as OwnerArray
 
     const result = ownershipInfoCalc('eth', false, owners, gracePeriodEndDate, expiryDate)
 
@@ -64,7 +65,7 @@ describe('onwershipInfoCalc', () => {
     const owners = [
       { transferType: 'manager', address: '0x123', label: 'name.manager' },
       { transferType: 'owner', address: '0x123', label: 'name.owner' },
-    ] as OwnerArray
+    ] as unknown as OwnerArray
 
     // Date string is locale based. Ignore this test if it fails as March 4, 2073
     const result = ownershipInfoCalc('test.eth', false, owners, gracePeriodEndDate, expiryDate)
@@ -111,13 +112,35 @@ describe('onwershipInfoCalc', () => {
 
 describe('ProfileDetails', () => {
   it('should show content hash if there is valid contenthash', () => {
-    render(<ProfileDetails name="test.eth" expiryDate={undefined} textRecords={[]} addresses={[]} pccExpired={false} owners={[]} actions={[]} contentHash="ipfs://QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco" />)
+    render(
+      <ProfileDetails
+        name="test.eth"
+        expiryDate={undefined}
+        textRecords={[]}
+        addresses={[]}
+        pccExpired={false}
+        owners={[]}
+        actions={[]}
+        contentHash="ipfs://QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco"
+      />,
+    )
     expect(screen.getByTestId('other-profile-button-contenthash')).toBeVisible()
     expect(screen.getByText('ipfs://QmXoypiz...')).toBeVisible()
   })
 
   it('should not show content hash if contenthash is empty', () => {
-    render(<ProfileDetails name="test.eth" expiryDate={undefined} textRecords={[]} addresses={[]} pccExpired={false} owners={[]} actions={[]} contentHash={{}} />)
+    render(
+      <ProfileDetails
+        name="test.eth"
+        expiryDate={undefined}
+        textRecords={[]}
+        addresses={[]}
+        pccExpired={false}
+        owners={[]}
+        actions={[]}
+        contentHash={{} as any}
+      />,
+    )
     expect(screen.queryByTestId('other-profile-button-contenthash')).toBeNull()
   })
 })

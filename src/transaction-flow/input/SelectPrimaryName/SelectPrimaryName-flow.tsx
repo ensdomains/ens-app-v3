@@ -1,16 +1,14 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
-import { UseFormReturn, useForm, useWatch } from 'react-hook-form'
+import { useForm, UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useMutation, useQueryClient } from 'wagmi'
+import { Address, labelhash } from 'viem'
+import { useClient } from 'wagmi'
 
-import {
-  decodeLabelhash,
-  isEncodedLabelhash,
-  labelhash,
-  saveName,
-} from '@ensdomains/ensjs/utils/labels'
-import { Button, Dialog, Heading, Typography, mq } from '@ensdomains/thorin'
+import { getDecodedName, Name } from '@ensdomains/ensjs/subgraph'
+import { decodeLabelhash, isEncodedLabelhash, saveName } from '@ensdomains/ensjs/utils'
+import { Button, Dialog, Heading, mq, Typography } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import {
@@ -19,24 +17,19 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
-import {
-  Name,
-  useAvailablePrimaryNamesForAddress,
-} from '@app/hooks/names/useAvailablePrimaryNamesForAddress/useAvailablePrimaryNamesForAddress'
+import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useBasicName } from '@app/hooks/useBasicName'
-import { useChainId } from '@app/hooks/useChainId'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
+import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
+import { createQueryKey } from '@app/hooks/useQueryOptions'
 import {
+  nameToFormData,
   UnknownLabelsForm,
   FormData as UnknownLabelsFormData,
-  nameToFormData,
 } from '@app/transaction-flow/input/UnknownLabels/views/UnknownLabelsForm'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
 
 import { TaggedNameItemWithFuseCheck } from './components/TaggedNameItemWithFuseCheck'
 
@@ -66,7 +59,7 @@ export const getNameFromUnknownLabels = (
 }
 
 type Data = {
-  address: string
+  address: Address
 }
 
 export type Props = {
@@ -87,10 +80,9 @@ const LoadingContainer = styled(InnerDialog)(
 )
 
 const HeaderWrapper = styled.div(
-  ({ theme }) =>
-    css`
-      margin: 0 -${theme.space['4']};
-    `,
+  ({ theme }) => css`
+    margin: 0 -${theme.space['4']};
+  `,
 )
 
 const ContentContainer = styled.form(({ theme }) => [
@@ -174,9 +166,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   })
   const { handleSubmit, control, setValue } = form
 
-  const chainId = useChainId()
-
-  const { ready: isEnsReady, getDecryptedName } = useEns()
+  const client = useClient()
 
   const [view, setView] = useState<'main' | 'decrypt'>('main')
 
@@ -191,14 +181,14 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     hasNextPage,
     fetchNextPage: loadMoreNames,
     isLoading: isLoadingNames,
-  } = useAvailablePrimaryNamesForAddress({
+  } = useNamesForAddress({
     address,
-    sort: {
-      type: sortType,
-      orderDirection: sortDirection,
+    orderBy: sortType,
+    orderDirection: sortDirection,
+    filter: {
+      searchString: searchQuery,
     },
-    search: searchQuery,
-    resultsPerPage: DEFAULT_PAGE_SIZE,
+    pageSize: DEFAULT_PAGE_SIZE,
   })
 
   const selectedName = useWatch({
@@ -206,26 +196,27 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     name: 'name',
   })
 
-  const { isWrapped, isLoading: isBasicNameLoading } = useBasicName(selectedName?.name, {
+  const { data: isWrapped, isLoading: isWrappedLoading } = useIsWrapped({
+    name: selectedName?.name!,
     enabled: !!selectedName?.name,
-    skipGraph: true,
+  })
+  const { data: selectedNameProfile } = useProfile({
+    name: selectedName?.name!,
+    enabled: !!selectedName?.name,
+    subgraphEnabled: false,
   })
 
-  const selectedNameProfile = useProfile(selectedName?.name!, {
-    skip: !selectedName?.name,
-    skipGraph: true,
-  })
-
-  const resolverStatus = useResolverStatus(selectedName?.name!, {
-    enabled: !!selectedName && !isBasicNameLoading,
-    migratedRecordsMatch: { key: '60', type: 'addr', addr: address },
+  const resolverStatus = useResolverStatus({
+    name: selectedName?.name!,
+    enabled: !!selectedName && !isWrappedLoading,
+    migratedRecordsMatch: { type: 'address', match: { id: 60, value: address } },
   })
 
   const getPrimarynameTransactionFlowItem = useGetPrimaryNameTransactionFlowItem({
     address,
     isWrapped,
-    profileAddress: selectedNameProfile.profile?.address,
-    resolverAddress: selectedNameProfile.profile?.resolverAddress,
+    profileAddress: selectedNameProfile?.coins.find((c) => c.id === 60)?.value,
+    resolverAddress: selectedNameProfile?.resolverAddress,
     resolverStatus: resolverStatus.data,
   })
 
@@ -234,9 +225,10 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     if (!transactionFlowItem) return
     const transactionCount = transactionFlowItem.transactions.length
     if (transactionCount === 1) {
+      // TODO: Fix typescript transactions error
       dispatch({
         name: 'setTransactions',
-        payload: transactionFlowItem.transactions,
+        payload: transactionFlowItem.transactions as any[],
       })
       dispatch({
         name: 'setFlowStage',
@@ -251,11 +243,16 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     })
   }
 
-  // Checks if name has encrptyed labels and attempts decrypt them if they exist
-  const validateKey = useQueryKeys().validate
-  const { mutate: mutateName, isLoading: isMutationLoading } = useMutation(
-    async (data: FormData) => {
-      if (!data.name) throw new Error('no_name')
+  // Checks if name has encoded labels and attempts decrypt them if they exist
+  const validateKey = (input: string) =>
+    createQueryKey({
+      queryDependencyType: 'independent',
+      params: { input },
+      functionName: 'validate',
+    })
+  const { mutate: mutateName, isPending: isMutationLoading } = useMutation({
+    mutationFn: async (data: FormData) => {
+      if (!data.name?.name) throw new Error('no_name')
 
       let validName = data.name.name
       if (!hasEncodedLabel(validName)) return validName
@@ -264,41 +261,42 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       validName = getNameFromUnknownLabels(validName, data.unknownLabels)
       if (!hasEncodedLabel(validName)) {
         saveName(validName)
-        queryClient.resetQueries(validateKey(data.name?.name))
+        queryClient.resetQueries({ queryKey: validateKey(data.name?.name) })
         return validName
       }
 
       // Attempt to decrypt name
-      validName = await getDecryptedName(validName, true)
+      validName = (await getDecodedName(client, {
+        name: validName,
+        allowIncomplete: true,
+      })) as string
       if (!hasEncodedLabel(validName)) {
         saveName(validName)
-        queryClient.resetQueries(validateKey(data.name?.name))
+        queryClient.resetQueries({ queryKey: validateKey(data.name?.name) })
         return validName
       }
 
       throw new Error('invalid_name')
     },
-    {
-      onSuccess: (name) => {
-        dispatchTransactions(name)
-      },
-      onError: (error, variables) => {
-        if (!(error instanceof Error)) return
-        if (error.message === 'invalid_name') {
-          setValue('unknownLabels', nameToFormData(variables.name?.name || '').unknownLabels)
-          setView('decrypt')
-        }
-      },
+    onSuccess: (name) => {
+      dispatchTransactions(name)
     },
-  )
+    onError: (error, variables) => {
+      if (!(error instanceof Error)) return
+      if (error.message === 'invalid_name') {
+        setValue('unknownLabels', nameToFormData(variables.name?.name || '').unknownLabels)
+        setView('decrypt')
+      }
+    },
+  })
 
   const onConfirm = () => {
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
   }
 
-  const isLoading = !isEnsReady || isLoadingNames || isMutationLoading
+  const isLoading = isLoadingNames || isMutationLoading
   const isLoadingName =
-    resolverStatus.isLoading || isBasicNameLoading || getPrimarynameTransactionFlowItem.isLoading
+    resolverStatus.isLoading || isWrappedLoading || getPrimarynameTransactionFlowItem.isLoading
 
   // Show header if more than one page has been loaded, if only one page has been loaded but there is another page, or if there is an active search query
   const showHeader =
@@ -341,7 +339,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
                 mode="view"
                 selectable={false}
                 sortType={sortType}
-                sortTypeOptionValues={['labelName', 'creationDate', 'expiryDate']}
+                sortTypeOptionValues={['labelName', 'createdAt', 'expiryDate']}
                 sortDirection={sortDirection}
                 searchQuery={searchInput}
                 selectedCount={0}
@@ -364,7 +362,6 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
                   <TaggedNameItemWithFuseCheck
                     key={name.id}
                     {...name}
-                    network={chainId}
                     mode="select"
                     selected={selectedName?.name === name.name}
                     onClick={() => {

@@ -1,10 +1,7 @@
 import styled, { css } from 'styled-components'
 
-import {
-  ContentHashIconType,
-  DynamicContentHashIcon,
-} from '@app/assets/contentHash/DynamicContentHashIcon'
-import supportedContentHashKeys from '@app/constants/supportedContentHashKeys.json'
+import { DynamicContentHashIcon } from '@app/assets/contentHash/DynamicContentHashIcon'
+import { supportedContentHashKeys } from '@app/constants/supportedContentHashKeys'
 import { formSafeKey } from '@app/utils/editor'
 
 const IconWrapper = styled.div(
@@ -21,7 +18,7 @@ const LabelWrapper = styled.div(
   `,
 )
 
-export default (supportedContentHashKeys as ContentHashIconType[]).map((value) => ({
+export default supportedContentHashKeys.map((value) => ({
   value: formSafeKey(value),
   label: value.toUpperCase(),
   node: <LabelWrapper>{value.toUpperCase()}</LabelWrapper>,

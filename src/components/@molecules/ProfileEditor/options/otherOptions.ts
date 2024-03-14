@@ -2,9 +2,9 @@ import { ComponentProps } from 'react'
 
 import { Select } from '@ensdomains/thorin'
 
-import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
-import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
-import textRecords from '@app/constants/textRecords.json'
+import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
+import { textRecords } from '@app/constants/textRecords'
 import { formSafeKey } from '@app/utils/editor'
 
 const excludedKeys = ['avatar', 'banner']
@@ -12,8 +12,8 @@ const excludedKeys = ['avatar', 'banner']
 const otherOptions = textRecords
   .filter(
     (record) =>
-      !supportedTexts.includes(record) &&
-      !supportedProfileItems.includes(record) &&
+      !supportedGeneralRecordKeys.includes(record as (typeof supportedGeneralRecordKeys)[number]) &&
+      !supportedSocialRecordKeys.includes(record as (typeof supportedSocialRecordKeys)[number]) &&
       !excludedKeys.includes(record),
   )
   .map((key) => ({

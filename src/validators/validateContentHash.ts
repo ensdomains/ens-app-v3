@@ -1,9 +1,7 @@
-import {
-  ContentHashProtocol,
-  ContentHashProvider,
-  encodeContentId,
-  getProtocolTypeAndContentId,
-} from '@app/utils/contenthash'
+import { BaseError } from '@ensdomains/ensjs'
+import { encodeContentHash, getProtocolType } from '@ensdomains/ensjs/utils'
+
+import { ContentHashProvider } from '@app/utils/contenthash'
 
 export type ContentHashProviderOrAll = ContentHashProvider | 'all'
 
@@ -17,16 +15,29 @@ const contentHashToProtocols = {
 
 export const validateContentHash =
   (provider: ContentHashProviderOrAll) =>
-  (address?: string): string | boolean => {
-    if (!address) return true
+  (value?: string): string | boolean => {
+    if (!value) return true
 
-    const { protocolType, contentId, error } = getProtocolTypeAndContentId(address)
-    if (!contentId) return 'Missing content id'
-    if (error) return error
+    const output = getProtocolType(value)
+    if (!output) return 'Invalid protocol type'
+    const { protocolType, decoded } = output
     if (provider !== 'all' && !contentHashToProtocols[provider]?.includes(protocolType))
       return 'Invalid protocol type'
 
-    const encoded = encodeContentId(protocolType as ContentHashProtocol, contentId)
-    if (encoded.error) return encoded.error
-    return true
+    if (
+      (['ipfs', 'bzz'].includes(protocolType) && decoded.length < 4) ||
+      (protocolType === 'onion' && decoded.length !== 16) ||
+      (protocolType === 'onion3' && decoded.length !== 56) ||
+      (protocolType === 'sia' && decoded.length !== 46) ||
+      (['arweave', 'ar'].includes(protocolType) && decoded.length !== 43)
+    )
+      return 'Invalid content id'
+
+    try {
+      encodeContentHash(value)
+      return true
+    } catch (e: unknown) {
+      if (e instanceof BaseError) return e.message
+      return 'Invalid content hash'
+    }
   }

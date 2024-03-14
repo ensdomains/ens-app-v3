@@ -1,17 +1,18 @@
 import { fireEvent, render, screen } from '@app/test-utils'
 
 import { cleanup } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import AddressEthereumSVG from '@app/assets/address/AddressEth.svg'
+import AddressEthereumSVG from '@app/assets/address/EthIcon.svg'
 
 import { RecordInput } from './RecordInput'
 
-const mockCallback = jest.fn()
+const mockCallback = vi.fn()
 
 describe('RecordInput', () => {
   afterEach(() => {
     cleanup()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render', () => {

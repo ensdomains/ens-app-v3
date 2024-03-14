@@ -1,20 +1,19 @@
 import Head from 'next/head'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
-import { Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
+import { Dialog, Helper, mq, Typography } from '@ensdomains/thorin'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
-import { useChainId } from '@app/hooks/useChainId'
-import { useContractAddress } from '@app/hooks/useContractAddress'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { usePrimary } from '@app/hooks/usePrimary'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
-import useResolverExists from '@app/hooks/useResolverExists'
+import { useResolverExists } from '@app/hooks/useResolverExists'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -82,13 +81,12 @@ const StyledInnerDialog = styled(InnerDialog)(({ theme }) => [
 ])
 
 const MoonPayHeader = styled.div(
-  ({ theme }) =>
-    css`
-      width: 100%;
-      background-color: ${theme.colors.greySurface};
-      color: ${theme.colors.greyPrimary};
-      padding: ${theme.space['4']};
-    `,
+  ({ theme }) => css`
+    width: 100%;
+    background-color: ${theme.colors.greySurface};
+    color: ${theme.colors.greyPrimary};
+    padding: ${theme.space['4']};
+  `,
 )
 
 const MoonPayIFrame = styled.iframe(
@@ -109,14 +107,17 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const router = useRouterWithHistory()
   const chainId = useChainId()
   const { address } = useAccount()
-  const primary = usePrimary(address!, !address)
-  const selected = { name: nameDetails.normalisedName, address: address!, chainId }
-  const { normalisedName, beautifiedName } = nameDetails
-  const defaultResolverAddress = useContractAddress('PublicResolver')
-  const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists(
-    normalisedName,
-    defaultResolverAddress,
+  const primary = usePrimaryName({ address })
+  const selected = useMemo(
+    () => ({ name: nameDetails.normalisedName, address: address!, chainId }),
+    [address, chainId, nameDetails.normalisedName],
   )
+  const { normalisedName, beautifiedName = '' } = nameDetails
+  const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
+  const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists({
+    address: defaultResolverAddress,
+    name: normalisedName,
+  })
 
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
@@ -151,9 +152,9 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       dispatch({
         name: 'setProfileData',
         payload: {
-          records: [{ key: 'ETH', group: 'address', type: 'addr', value: address! }],
+          records: [{ key: 'eth', group: 'address', type: 'addr', value: address! }],
           clearRecords: resolverExists,
-          resolver: defaultResolverAddress,
+          resolverAddress: defaultResolverAddress,
         },
         selected,
       })
@@ -169,9 +170,9 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
     // If profile is in queue and reverse record is selected, make sure that eth record is included and is set to address
     if (item.queue.includes('profile') && reverseRecord) {
-      const recordsWithoutEth = item.records.filter((record) => record.key !== 'ETH')
+      const recordsWithoutEth = item.records.filter((record) => record.key !== 'eth')
       const newRecords: ProfileRecord[] = [
-        { key: 'ETH', group: 'address', type: 'addr', value: address! },
+        { key: 'eth', group: 'address', type: 'addr', value: address! },
         ...recordsWithoutEth,
       ]
       dispatch({ name: 'setProfileData', payload: { records: newRecords }, selected })
@@ -182,10 +183,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const profileCallback = ({
     records,
-    resolver,
+    resolverAddress,
     back,
   }: RegistrationStepData['profile'] & BackObj) => {
-    dispatch({ name: 'setProfileData', payload: { records, resolver }, selected })
+    dispatch({ name: 'setProfileData', payload: { records, resolverAddress }, selected })
     dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
   }
 
@@ -193,12 +194,16 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
   }
 
-  const transactionsCallback = ({ back, resetSecret }: BackObj & { resetSecret?: boolean }) => {
-    if (resetSecret) {
-      dispatch({ name: 'resetSecret', selected })
-    }
-    genericCallback({ back })
-  }
+  const transactionsCallback = useCallback(
+    ({ back, resetSecret }: BackObj & { resetSecret?: boolean }) => {
+      if (resetSecret) {
+        dispatch({ name: 'resetSecret', selected })
+      }
+      genericCallback({ back })
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selected],
+  )
 
   const infoProfileCallback = () => {
     dispatch({
@@ -269,8 +274,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
             {
               pricing: (
                 <Pricing
+                  name={normalisedName}
+                  beautifiedName={beautifiedName}
+                  gracePeriodEndDate={nameDetails.gracePeriodEndDate}
                   resolverExists={resolverExists}
-                  nameDetails={nameDetails}
                   callback={pricingCallback}
                   isPrimaryLoading={primary.isLoading}
                   hasPrimaryName={!!primary.data?.name}
@@ -281,15 +288,15 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               ),
               profile: (
                 <Profile
+                  name={normalisedName}
                   resolverExists={resolverExists}
-                  nameDetails={nameDetails}
                   registrationData={item}
                   callback={profileCallback}
                 />
               ),
               info: (
                 <Info
-                  nameDetails={nameDetails}
+                  name={normalisedName}
                   registrationData={item}
                   callback={genericCallback}
                   onProfileClick={infoProfileCallback}
@@ -297,7 +304,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               ),
               transactions: (
                 <Transactions
-                  nameDetails={nameDetails}
+                  name={normalisedName}
                   registrationData={item}
                   onStart={onStart}
                   callback={transactionsCallback}
@@ -305,7 +312,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               ),
               complete: (
                 <Complete
-                  nameDetails={nameDetails}
+                  name={normalisedName}
+                  beautifiedName={beautifiedName}
                   callback={onComplete}
                   isMoonpayFlow={item.isMoonpayFlow}
                 />

@@ -29,10 +29,13 @@ const BreakpointProvider = ({
     let isAttached = false
 
     const handleQueryListener = () => {
-      const updatedMatches = keys.reduce((acc, media) => {
-        acc[media] = !!(mediaQueryLists[media] && mediaQueryLists[media]?.matches)
-        return acc
-      }, {} as Record<QueryType, boolean>)
+      const updatedMatches = keys.reduce(
+        (acc, media) => {
+          acc[media] = !!(mediaQueryLists[media] && mediaQueryLists[media]?.matches)
+          return acc
+        },
+        {} as Record<QueryType, boolean>,
+      )
       setQueryMatch(updatedMatches)
     }
 
@@ -76,4 +79,4 @@ function useBreakpoint() {
   }
   return context
 }
-export { useBreakpoint, BreakpointProvider }
+export { BreakpointProvider, useBreakpoint }

@@ -2,25 +2,23 @@ import { useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { Button, Typography } from '@ensdomains/thorin'
 
 import { StyledLink } from '@app/components/@atoms/StyledLink'
+import type { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'
-import type { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import type { useEns } from '@app/utils/EnsProvider'
 
 import { Section, SectionFooter, SectionItem, SectionList } from './Section'
 
-type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
-type WrapperData = Awaited<ReturnType<GetWrapperDataFunc>>
-type FusesSetDates = ReturnType<typeof useGetFusesSetDates>['fusesSetDates']
+type FusesSetDates = ReturnType<typeof useFusesSetDates>['data']
 type FusesStatus = ReturnType<typeof useFusesStates>
 
 type Props = {
   name: string
-  wrapperData: WrapperData
-  parentWrapperData: WrapperData
+  wrapperData: GetWrapperDataReturnType | undefined
+  parentWrapperData: GetWrapperDataReturnType | undefined
   fusesSetDates: FusesSetDates
 } & FusesStatus
 
@@ -52,8 +50,8 @@ export const OwnershipPermissions = ({
 }: Props) => {
   const { t } = useTranslation('profile')
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showRevokePermissionsInput = prepareDataInput('RevokePermissions')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showRevokePermissionsInput = usePreparedDataInput('RevokePermissions')
 
   const nameParts = name.split('.')
   const parentName = nameParts.slice(1).join('.')
@@ -69,7 +67,7 @@ export const OwnershipPermissions = ({
 
   // Editor status
   const editorStatus = useMemo(() => {
-    if (wrapperData?.child.CANNOT_BURN_FUSES) return 'owner-cannot-change-permissions'
+    if (wrapperData?.fuses.child.CANNOT_BURN_FUSES) return 'owner-cannot-change-permissions'
     if (['emancipated', 'locked'].includes(state)) return 'owner-can-change-permissions'
     return 'parent-can-change-permissions'
   }, [wrapperData, state])
@@ -85,9 +83,9 @@ export const OwnershipPermissions = ({
           showRevokePermissionsInput(`revoke-permissions-${name}`, {
             name,
             flowType: 'revoke-pcc',
-            parentFuses: wrapperData.parent,
-            childFuses: wrapperData.child,
-            owner: wrapperData!.owner,
+            parentFuses: wrapperData.fuses.parent,
+            childFuses: wrapperData.fuses.child,
+            owner: wrapperData.owner,
             minExpiry: expiry,
             maxExpiry: parentExpiry,
           })
@@ -97,7 +95,7 @@ export const OwnershipPermissions = ({
     if (
       isUserOwner &&
       editorStatus === 'owner-can-change-permissions' &&
-      wrapperData.child.CANNOT_UNWRAP
+      wrapperData.fuses.child.CANNOT_UNWRAP
     )
       return {
         // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -106,9 +104,9 @@ export const OwnershipPermissions = ({
           showRevokePermissionsInput(`revoke-permissions-${name}`, {
             name,
             flowType: 'revoke-change-fuses',
-            parentFuses: wrapperData.parent,
-            childFuses: wrapperData.child,
-            owner: wrapperData!.owner,
+            parentFuses: wrapperData.fuses.parent,
+            childFuses: wrapperData.fuses.child,
+            owner: wrapperData.owner,
           })
         },
         children: t('tabs.permissions.ownership.action.revokePermission'),
@@ -139,7 +137,7 @@ export const OwnershipPermissions = ({
               components={{ parentLink: <StyledLink href={`/${parentName}`} /> }}
             />
           </Typography>
-          {fusesSetDates.PARENT_CANNOT_CONTROL && (
+          {fusesSetDates?.PARENT_CANNOT_CONTROL && (
             <TypographyGreyDim fontVariant="extraSmall">
               {t('tabs.permissions.revokedLabel', {
                 date: fusesSetDates.PARENT_CANNOT_CONTROL,
@@ -197,7 +195,7 @@ export const OwnershipPermissions = ({
           <Typography fontVariant="bodyBold">
             {t('tabs.permissions.ownership.ownerCannotChange.label')}
           </Typography>
-          {fusesSetDates.CANNOT_BURN_FUSES && (
+          {fusesSetDates?.CANNOT_BURN_FUSES && (
             <TypographyGreyDim fontVariant="extraSmall">
               {t('tabs.permissions.revokedLabel', { date: fusesSetDates.CANNOT_BURN_FUSES })}
             </TypographyGreyDim>

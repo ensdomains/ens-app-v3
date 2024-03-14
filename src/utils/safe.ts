@@ -1,19 +1,28 @@
-import { Connector } from 'wagmi'
-import { SafeConnector } from 'wagmi/connectors/safe'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { Hash } from 'viem'
+import { Connector, CreateConnectorFn } from 'wagmi'
+import { safe, walletConnect } from 'wagmi/connectors'
 
 export const SAFE_ENDPOINT = 'https://safe-client.safe.global'
 
-const checkIsWcConnector = (c: Connector | undefined): c is WalletConnectConnector =>
-  c instanceof WalletConnectConnector
-const checkIsSafeConnector = (c: Connector | undefined): c is SafeConnector =>
-  c instanceof SafeConnector
+type ConnectorType<TConnector extends (...args: any) => CreateConnectorFn> = ReturnType<
+  ReturnType<TConnector>
+> & {
+  emitter: any
+  uid: any
+}
+
+const checkIsWcConnector = (c: Connector | undefined): c is ConnectorType<typeof walletConnect> =>
+  c?.type === walletConnect.type
+const checkIsSafeConnector = (c: Connector | undefined): c is ConnectorType<typeof safe> =>
+  c?.type === safe.type
 
 export type SafeAppType = 'iframe' | 'walletconnect'
 
+export type CheckIsSafeAppReturnType = false | SafeAppType
+
 export const checkIsSafeApp = async (
   connector: Connector | undefined,
-): Promise<false | SafeAppType> => {
+): Promise<CheckIsSafeAppReturnType> => {
   const isWcConnector = checkIsWcConnector(connector)
   const isSafeConnector = checkIsSafeConnector(connector)
 
@@ -67,7 +76,7 @@ type SafeTx = {
     confirmations: object[]
     trusted: boolean
   }
-  txHash: string | null
+  txHash: Hash | null
 }
 
 type SafeError = {
@@ -83,14 +92,17 @@ export const fetchTxFromSafeTxHash = async ({
   safeTxHash,
 }: {
   chainId: number
-  safeTxHash: string
-}): Promise<{ transactionHash: string } | null> => {
-  const data = await fetch(`${SAFE_ENDPOINT}/v1/chains/${chainId}/transactions/${safeTxHash}`, {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
+  safeTxHash: Hash
+}): Promise<{ transactionHash: Hash } | null> => {
+  const data: SafeResponse = await fetch(
+    `${SAFE_ENDPOINT}/v1/chains/${chainId}/transactions/${safeTxHash}`,
+    {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+      },
     },
-  }).then((res) => res.json<SafeResponse>())
+  ).then((res) => res.json())
 
   // error
   if ('code' in data) {

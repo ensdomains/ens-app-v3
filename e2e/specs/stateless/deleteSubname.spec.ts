@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+
+import { test } from '../../../playwright/index'
 
 test.describe('unwrapped', () => {
   test('allows deletion when parent owner but NOT child owner', async ({
@@ -228,12 +229,18 @@ test.describe('emancipated', () => {
       label: 'emancipated-to-delete',
       type: 'wrapped',
       owner: 'user',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'parent-not-child',
           owner: 'user2',
-          fuses: ['PARENT_CANNOT_CONTROL'],
+          fuses: {
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
+            },
+          },
         },
       ],
     })
@@ -261,12 +268,18 @@ test.describe('emancipated', () => {
       label: 'emancipated-to-delete',
       type: 'wrapped',
       owner: 'user',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'parent-child',
           owner: 'user',
-          fuses: ['PARENT_CANNOT_CONTROL'],
+          fuses: {
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
+            },
+          },
         },
       ],
     })
@@ -300,12 +313,18 @@ test.describe('emancipated', () => {
       label: 'emancipated-to-delete',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'not-parent-child',
           owner: 'user',
-          fuses: ['PARENT_CANNOT_CONTROL'],
+          fuses: {
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
+            },
+          },
         },
       ],
     })
@@ -340,13 +359,19 @@ test('should not allow parent owner to delete if PCC is expired', async ({
     label: 'wrapped-expired-subname',
     type: 'wrapped',
     owner: 'user',
-    fuses: ['CANNOT_UNWRAP'],
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
     subnames: [
       {
         label: 'day-expired',
         owner: 'user',
         duration: -24 * 60 * 60,
-        fuses: ['PARENT_CANNOT_CONTROL'],
+        fuses: {
+          parent: {
+            named: ['PARENT_CANNOT_CONTROL'],
+          },
+        },
       },
     ],
   })
@@ -387,13 +412,13 @@ test.describe('subgraph errors', () => {
     await expect(profilePage.deleteSubnameButton).toBeVisible()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').check()
+    await page.getByTestId('subgraph-network-error').check()
 
     await profilePage.goto(subname)
     await expect(profilePage.disabledDeleteSubnameButton).toBeVisible()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').uncheck()
+    await page.getByTestId('subgraph-network-error').uncheck()
   })
 
   test('should disable delete button for wrapped subname', async ({
@@ -423,12 +448,12 @@ test.describe('subgraph errors', () => {
     await expect(profilePage.deleteSubnameButton).toBeVisible()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').check()
+    await page.getByTestId('subgraph-network-error').check()
 
     await profilePage.goto(subname)
     await expect(profilePage.disabledDeleteSubnameButton).toBeVisible()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').uncheck()
+    await page.getByTestId('subgraph-network-error').uncheck()
   })
 })

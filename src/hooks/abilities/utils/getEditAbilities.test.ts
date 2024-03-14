@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { getEditAbilities } from './getEditAbilities'
 
 describe('getEditAbilities', () => {
@@ -31,7 +33,9 @@ describe('getEditAbilities', () => {
         owner: '0x123',
       },
       wrapperData: {
-        child: {},
+        fuses: {
+          child: {},
+        },
       },
     }
     const result = getEditAbilities({
@@ -57,7 +61,9 @@ describe('getEditAbilities', () => {
         owner: '0x123',
       },
       wrapperData: {
-        child: {},
+        fuses: {
+          child: {},
+        },
       },
     }
     const result = getEditAbilities({
@@ -83,7 +89,9 @@ describe('getEditAbilities', () => {
         owner: '0x123',
       },
       wrapperData: {
-        child: {},
+        fuses: {
+          child: {},
+        },
       },
     }
     const result = getEditAbilities({
@@ -109,11 +117,13 @@ describe('getEditAbilities', () => {
         owner: '0x123',
       },
       wrapperData: {
-        child: {
-          CANNOT_CREATE_SUBDOMAIN: true,
-          CANNOT_SET_RESOLVER: true,
-          CANNOT_SET_TTL: true,
-          CANNOT_BURN_FUSES: true,
+        fuses: {
+          child: {
+            CANNOT_CREATE_SUBDOMAIN: true,
+            CANNOT_SET_RESOLVER: true,
+            CANNOT_SET_TTL: true,
+            CANNOT_BURN_FUSES: true,
+          },
         },
       },
     }
@@ -140,11 +150,13 @@ describe('getEditAbilities', () => {
         owner: '0x123',
       },
       wrapperData: {
-        child: {
-          CANNOT_CREATE_SUBDOMAIN: true,
-          CANNOT_SET_RESOLVER: true,
-          CANNOT_SET_TTL: true,
-          CANNOT_BURN_FUSES: true,
+        fuses: {
+          child: {
+            CANNOT_CREATE_SUBDOMAIN: true,
+            CANNOT_SET_RESOLVER: true,
+            CANNOT_SET_TTL: true,
+            CANNOT_BURN_FUSES: true,
+          },
         },
       },
     }

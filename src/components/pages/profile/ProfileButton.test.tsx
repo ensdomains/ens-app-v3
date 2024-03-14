@@ -1,13 +1,15 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { usePrimary } from '@app/hooks/usePrimary'
+import { describe, expect, it, vi } from 'vitest'
+
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry, shortenAddress } from '@app/utils/utils'
 
 import { OwnerProfileButton } from './ProfileButton'
 
-jest.mock('@app/utils/BreakpointProvider')
-jest.mock('@app/hooks/usePrimary')
+vi.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 mockUseBreakpoint.mockReturnValue({
@@ -22,15 +24,17 @@ const ADDRESS_TYPE = {
   NoPrimary: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
   Primary: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
 }
-const mockUsePrimary = mockFunction(usePrimary)
-mockUsePrimary.mockImplementation((address, skip) => {
+const mockUsePrimaryName = mockFunction(usePrimaryName)
+mockUsePrimaryName.mockImplementation(({ address, enabled }) => {
   const isNoPrimary = ADDRESS_TYPE.NoPrimary === address
   return {
-    data: {
-      // eslint-disable-next-line no-nested-ternary
-      name: skip ? undefined : isNoPrimary ? undefined : 'primary.eth',
-      beautifiedName: isNoPrimary ? undefined : 'primary.eth',
-    },
+    data: enabled
+      ? {
+          // eslint-disable-next-line no-nested-ternary
+          name: isNoPrimary ? undefined : 'primary.eth',
+          beautifiedName: isNoPrimary ? undefined : 'primary.eth',
+        }
+      : undefined,
     isLoading: false,
   }
 })

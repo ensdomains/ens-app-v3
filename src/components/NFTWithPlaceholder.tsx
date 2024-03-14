@@ -1,7 +1,8 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
+import { useEnsAvatar } from 'wagmi'
 
-import { useAvatar } from '@app/hooks/useAvatar'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 
 import NFTTemplate from './@molecules/NFTTemplate/NFTTemplate'
 
@@ -15,13 +16,11 @@ const StyledNftBox = styled.div(
 
 export const NFTWithPlaceholder = ({
   name,
-  network,
   ...props
 }: {
   name: string
-  network: number
 } & Omit<ComponentProps<'div'>, 'ref'>) => {
-  const { avatar } = useAvatar(name, network)
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
 
   const isCompatible = !!(name && name.split('.').length === 2 && name.endsWith('.eth'))
 

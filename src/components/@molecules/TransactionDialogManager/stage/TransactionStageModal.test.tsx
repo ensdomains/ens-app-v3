@@ -1,79 +1,83 @@
 /* eslint-disable no-promise-executor-return */
-import { act, fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+import { act, fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
+import type { MockedFunctionDeep } from '@vitest/spy'
 import { ComponentProps } from 'react'
-import { useSendTransaction, useSigner } from 'wagmi'
+import { Account, TransactionRequest } from 'viem'
+import { estimateGas, prepareTransactionRequest } from 'viem/actions'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useClient, useConnectorClient, useSendTransaction } from 'wagmi'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { useChainName } from '@app/hooks/useChainName'
-import { GenericTransaction } from '@app/transaction-flow/types'
-import { useEns } from '@app/utils/EnsProvider'
-import { checkIsSafeApp } from '@app/utils/safe'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
+import { GenericTransaction } from '@app/transaction-flow/types'
+import { checkIsSafeApp } from '@app/utils/safe'
 
-import {
-  TransactionStageModal,
-  handleBackToInput,
-  transactionSuccessHandler,
-  calculateGasLimit
-} from './TransactionStageModal'
-import { BigNumber } from '@ethersproject/bignumber'
+import { useMockedUseQueryOptions } from '../../../../../test/mock/useMockedUseQueryOptions'
+import { calculateGasLimit, transactionSuccessHandler } from './query'
+import { handleBackToInput, TransactionStageModal } from './TransactionStageModal'
 
-jest.mock('@app/hooks/useAccountSafely')
-jest.mock('@app/hooks/useChainName')
-jest.mock('@app/hooks/useIsSafeApp')
-jest.mock('@app/hooks/transactions/useAddRecentTransaction')
-jest.mock('@app/hooks/transactions/useRecentTransactions')
-jest.mock('@app/utils/EnsProvider')
-jest.mock('@app/utils/safe')
+vi.mock('@app/hooks/account/useAccountSafely')
+vi.mock('@app/hooks/chain/useChainName')
+vi.mock('@app/hooks/useIsSafeApp')
+vi.mock('@app/hooks/transactions/useAddRecentTransaction')
+vi.mock('@app/hooks/transactions/useRecentTransactions')
+vi.mock('@app/hooks/chain/useInvalidateOnBlock')
+vi.mock('@app/utils/safe')
 
-const mockPopulatedTransaction = {
+vi.mock('wagmi')
+vi.mock('viem/actions')
+
+const mockTransactionRequest: TransactionRequest = {
   data: '0x1896f70a516f53deb2dac3f055f1db1fbd64c12640aa29059477103c3ef28806f15929250000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41',
   to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
   from: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-  gasLimit: {
-    type: 'BigNumber',
-    hex: '0x798a',
-  },
+  gas: 0x798an,
 }
 const mockTransaction: GenericTransaction = {
   name: 'updateResolver',
   data: {
     name: 'other-registrant.eth',
     contract: 'registry',
-    resolver: '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
-    oldResolver: '0x1613beB3B2C4f22Ee086B2b38C1476A3cE7f78E8',
+    resolverAddress: '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
+    oldResolverAddress: '0x1613beB3B2C4f22Ee086B2b38C1476A3cE7f78E8',
   },
 }
 
-jest.mock('@app/transaction-flow/transaction', () => {
-  const originalModule = jest.requireActual('@app/transaction-flow/transaction')
+vi.mock('@app/transaction-flow/transaction', () => {
+  const originalModule = vi.importActual('@app/transaction-flow/transaction')
   return {
     __esModule: true,
     ...originalModule,
-    transactions: {
-      updateResolver: {
-        transaction: () => mockPopulatedTransaction,
-      },
-    },
+    createTransactionRequest: () => mockTransactionRequest,
   }
 })
 
-const mockUseEns = mockFunction(useEns)
+const mockClient = {
+  request: vi.fn(),
+}
+
+const mockUseClient = mockFunction(useClient)
+const mockUseConnectorClient = mockFunction(useConnectorClient)
+
+const mockEstimateGas = mockFunction(estimateGas)
+const mockPrepareTransactionRequest = prepareTransactionRequest as MockedFunctionDeep<
+  typeof prepareTransactionRequest
+>
+
 const mockUseIsSafeApp = mockFunction(useIsSafeApp)
 const mockUseAddRecentTransaction = mockFunction(useAddRecentTransaction)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseChainName = mockFunction(useChainName)
-const mockUseSigner = mockFunction(useSigner)
 const mockUseSendTransaction = mockFunction(useSendTransaction)
-const mockCheckIsSafeApp = checkIsSafeApp as jest.MockedFunctionDeep<typeof checkIsSafeApp>
+const mockCheckIsSafeApp = checkIsSafeApp as MockedFunctionDeep<typeof checkIsSafeApp>
 
-const mockEstimateGas = jest.fn()
-const mockOnDismiss = jest.fn()
-const mockDispatch = jest.fn()
+const mockOnDismiss = vi.fn()
+const mockDispatch = vi.fn()
 
 const ComponentWithDefaultProps = ({
   currentStep = 0,
@@ -104,27 +108,32 @@ const renderHelper = async (props: Partial<ComponentProps<typeof TransactionStag
 }
 
 const clickRequest = async () => {
-  await act(async () => {
-    await waitFor(() =>
-      expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled(),
-    )
-    fireEvent.click(screen.getByTestId('transaction-modal-confirm-button'))
-  })
+  await waitFor(() => expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled())
+  await userEvent.click(screen.getByTestId('transaction-modal-confirm-button'))
 }
 
 describe('TransactionStageModal', () => {
-  mockUseSigner.mockReturnValue({
-    data: {
-      estimateGas: mockEstimateGas,
-    } as any,
-  })
   mockUseRecentTransactions.mockReturnValue([])
   mockUseSendTransaction.mockReturnValue({})
-  mockUseEns.mockReturnValue({})
 
   beforeEach(() => {
-    mockUseIsSafeApp.mockReturnValue({ data: true })
+    mockUseClient.mockReturnValue({})
+    useMockedUseQueryOptions({
+      chainId: 1,
+      address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      client: mockClient,
+    })
+    mockUseConnectorClient.mockReturnValue({
+      data: { account: { address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' } },
+    })
+    mockUseIsSafeApp.mockReturnValue({ data: false })
     mockEstimateGas.mockReset()
+    mockPrepareTransactionRequest.mockReset()
+    // passthrough for the transaction request
+    mockPrepareTransactionRequest.mockImplementation(
+      async (_, { parameters: _parameters, account, ...data }) =>
+        ({ ...data, from: (account as Account).address }) as any,
+    )
     mockUseAccountSafely.mockReturnValue({ address: '0x1234' })
     mockUseChainName.mockReturnValue('ethereum')
     mockUseRecentTransactions.mockReturnValue([
@@ -172,7 +181,7 @@ describe('TransactionStageModal', () => {
       })
       it('should show confirm button as disabled if a unique identifier is undefined', async () => {
         mockUseIsSafeApp.mockReturnValue({ data: false })
-        mockEstimateGas.mockResolvedValue(1)
+        mockEstimateGas.mockResolvedValue(1n)
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: () => Promise.resolve(),
         })
@@ -183,7 +192,7 @@ describe('TransactionStageModal', () => {
         )
       })
       it('should disable confirm button and re-estimate gas if a unique identifier is changed', async () => {
-        mockEstimateGas.mockResolvedValue(1)
+        mockEstimateGas.mockResolvedValue(1n)
         mockUseIsSafeApp.mockReturnValue({ data: false })
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: () => Promise.resolve(),
@@ -210,7 +219,7 @@ describe('TransactionStageModal', () => {
         expect(mockEstimateGas).toHaveBeenCalledTimes(1)
       })
       it('should only show confirm button as enabled if gas is estimated and sendTransaction func is defined', async () => {
-        mockEstimateGas.mockResolvedValue(1)
+        mockEstimateGas.mockResolvedValue(1n)
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: () => Promise.resolve(),
         })
@@ -220,8 +229,8 @@ describe('TransactionStageModal', () => {
         )
       })
       it('should run set sendTransaction on action click', async () => {
-        mockEstimateGas.mockResolvedValue(1)
-        const mockSendTransaction = jest.fn()
+        mockEstimateGas.mockResolvedValue(1n)
+        const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
         })
@@ -233,11 +242,11 @@ describe('TransactionStageModal', () => {
         expect(mockSendTransaction).toHaveBeenCalled()
       })
       it('should show the waiting for wallet button if the transaction is loading', async () => {
-        mockEstimateGas.mockResolvedValue(1)
-        const mockSendTransaction = jest.fn()
+        mockEstimateGas.mockResolvedValue(1n)
+        const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
-          isLoading: true,
+          isPending: true,
         })
         mockSendTransaction.mockImplementation(async () => new Promise(() => {}))
         await renderHelper({ transaction: mockTransaction })
@@ -246,10 +255,10 @@ describe('TransactionStageModal', () => {
         )
       })
       it('should show the error message and reenable button if there is an error', async () => {
-        const mockSendTransaction = jest.fn()
+        const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
-          error: new Error('error123'),
+          error: new Error('error123') as any,
         })
         await renderHelper({ transaction: mockTransaction })
         await clickRequest()
@@ -260,35 +269,37 @@ describe('TransactionStageModal', () => {
       })
       it('should pass the request to send transaction', async () => {
         mockUseIsSafeApp.mockReturnValue({ data: false })
-        mockEstimateGas.mockResolvedValue(1)
-        const mockSendTransaction = jest.fn()
+        mockEstimateGas.mockResolvedValue(1n)
+        const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
         })
         await renderHelper({ transaction: mockTransaction })
         await clickRequest()
         await waitFor(() =>
-          expect(mockUseSendTransaction.mock.lastCall[0].request).toStrictEqual({
-            ...mockPopulatedTransaction,
-            gasLimit: 1,
-            accessList: undefined 
-          }),
+          expect(mockSendTransaction.mock.lastCall![0]!).toStrictEqual(
+            expect.objectContaining({
+              ...mockTransactionRequest,
+              gas: 1n,
+              accessList: undefined,
+            }),
+          ),
         )
       })
       it('should add to recent transactions and run dispatch from success callback', async () => {
-        const mockAddTransaction = jest.fn()
+        const mockAddTransaction = vi.fn()
         mockUseAddRecentTransaction.mockReturnValue(mockAddTransaction)
         mockCheckIsSafeApp.mockResolvedValue(false)
         await renderHelper({ transaction: mockTransaction })
-        await waitFor(() => expect(mockUseSendTransaction.mock.lastCall[0].onSuccess).toBeDefined())
-        await (mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({
-          hash: '0x123',
-        })
+        await waitFor(() =>
+          expect(mockUseSendTransaction.mock.lastCall![0]!.mutation!.onSuccess).toBeDefined(),
+        )
+        await mockUseSendTransaction.mock.lastCall![0]!.mutation!.onSuccess!('0x123', {} as any, {})
         expect(mockAddTransaction).toBeCalledWith(
           expect.objectContaining({
             hash: '0x123',
             action: 'test',
-            isSafeTx: true,
+            isSafeTx: false,
             key: 'test',
           }),
         )
@@ -298,15 +309,15 @@ describe('TransactionStageModal', () => {
         })
       })
       it('should add to recent transactions and run dispatch from success callback when isSafeTx', async () => {
-        const mockAddTransaction = jest.fn()
-        mockUseIsSafeApp.mockReturnValue({ data: true })
+        const mockAddTransaction = vi.fn()
+        mockUseIsSafeApp.mockReturnValue({ data: 'iframe' })
         mockUseAddRecentTransaction.mockReturnValue(mockAddTransaction)
         mockCheckIsSafeApp.mockResolvedValue('iframe')
         await renderHelper({ transaction: mockTransaction })
-        await waitFor(() => expect(mockUseSendTransaction.mock.lastCall[0].onSuccess).toBeDefined())
-        await (mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({
-          hash: '0x123',
-        })
+        await waitFor(() =>
+          expect(mockUseSendTransaction.mock.lastCall![0]!.mutation!.onSuccess).toBeDefined(),
+        )
+        await mockUseSendTransaction.mock.lastCall![0]!.mutation!.onSuccess!('0x123', {} as any, {})
         expect(mockAddTransaction).toBeCalledWith(
           expect.objectContaining({
             hash: '0x123',
@@ -367,8 +378,8 @@ describe('TransactionStageModal', () => {
         expect(screen.getByTestId('transaction-modal-failed-button')).toBeVisible()
       })
       it('should run sendTransaction on action click', async () => {
-        mockEstimateGas.mockResolvedValue(1)
-        const mockSendTransaction = jest.fn()
+        mockEstimateGas.mockResolvedValue(1n)
+        const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: mockSendTransaction,
         })
@@ -376,10 +387,10 @@ describe('TransactionStageModal', () => {
           hash: '0x0',
         })
         await renderHelper({ transaction: { ...mockTransaction, hash: '0x123', stage: 'failed' } })
+        await waitFor(() =>
+          expect(screen.getByTestId('transaction-modal-failed-button')).toBeEnabled(),
+        )
         await act(async () => {
-          await waitFor(() =>
-            expect(screen.getByTestId('transaction-modal-failed-button')).toBeEnabled(),
-          )
           fireEvent.click(screen.getByTestId('transaction-modal-failed-button'))
         })
         expect(mockSendTransaction).toHaveBeenCalled()
@@ -397,114 +408,99 @@ describe('handleBackToInput', () => {
   })
 })
 
-describe('transactionSuccessHanlder', () => {
+describe('transactionSuccessHandler', () => {
   it('should add recent transaction data', async () => {
-    const dependencies = {
-      provider: { getTransaction: jest.fn().mockResolvedValue({ testKey: 'testVal' }) },
-      connector: {},
+    const mockAddRecentTransaction = vi.fn()
+
+    transactionSuccessHandler({
       actionName: 'actionName',
       txKey: 'txKey',
-      request: {},
-      addRecentTransaction: jest.fn(),
-      dispatch: jest.fn(),
-    }
-
-    const mockTx = {}
-
-    transactionSuccessHandler(dependencies)(mockTx)
+      request: {} as any,
+      addRecentTransaction: mockAddRecentTransaction,
+      dispatch: vi.fn(),
+      isSafeApp: false,
+      client: { request: vi.fn(async () => ({ testKey: 'testVal' })) } as any,
+      connectorClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
+    })('0xhash')
 
     await waitFor(() =>
-      expect(dependencies.addRecentTransaction).toBeCalledWith(
+      expect(mockAddRecentTransaction).toBeCalledWith(
         expect.objectContaining({ testKey: 'testVal' }),
       ),
     )
   })
   it('should dispatch the correct action', async () => {
-    const dependencies = {
-      provider: { getTransaction: jest.fn().mockResolvedValue({ testKey: 'testVal' }) },
-      connector: {},
+    const mockDispatch = vi.fn()
+
+    transactionSuccessHandler({
       actionName: 'actionName',
       txKey: 'txKey',
-      request: {},
-      addRecentTransaction: jest.fn(),
-      dispatch: jest.fn(),
-    }
-
-    const mockTx = { hash: 'hash' }
-
-    transactionSuccessHandler(dependencies)(mockTx)
+      request: {} as any,
+      addRecentTransaction: vi.fn(),
+      dispatch: mockDispatch,
+      isSafeApp: false,
+      client: { request: vi.fn(async () => ({ testKey: 'testVal' })) } as any,
+      connectorClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
+    })('0xhash')
 
     await waitFor(() =>
-      expect(dependencies.dispatch).toBeCalledWith(
-        expect.objectContaining({ name: 'setTransactionHash', payload: 'hash' }),
+      expect(mockDispatch).toBeCalledWith(
+        expect.objectContaining({ name: 'setTransactionHash', payload: '0xhash' }),
       ),
     )
   })
   it('should handle a failed call to getTransaction', async () => {
-    const dependencies = {
-      provider: {
-        getTransaction: () => {
-          throw new Error('Error')
-        },
-      },
-      connector: {},
+    const mockAddRecentTransaction = vi.fn()
+
+    transactionSuccessHandler({
       actionName: 'actionName',
       txKey: 'txKey',
-      request: {},
-      addRecentTransaction: jest.fn(),
-      dispatch: jest.fn(),
-    }
+      request: {} as any,
+      addRecentTransaction: mockAddRecentTransaction,
+      dispatch: vi.fn(),
+      isSafeApp: false,
+      client: { request: vi.fn(async () => Promise.reject(new Error('Error'))) } as any,
+      connectorClient: { data: { account: { address: '0x1234' } }, request: vi.fn() } as any,
+    })('0xhash')
 
-    const mockTx = { hash: 'hash' }
-
-    transactionSuccessHandler(dependencies)(mockTx)
-
-    await waitFor(() =>
-      expect(dependencies.addRecentTransaction).not.toBeCalledWith(
-        expect.objectContaining({ testKey: 'testVal' }),
-      ),
-    )
+    await waitFor(() => expect(mockAddRecentTransaction).toBeCalled())
   })
 })
 
 describe('calculateGasLimit', () => {
-  const mockProvider = {
-    providerConfigs: [
-      {
-        provider: {
-          send: jest.fn(),
-        },
-      },
-    ],
-  };
-  const mockSigner = {
-    estimateGas: jest.fn(),
-  };
+  const mockConnectorClient = {
+    account: {
+      address: '0x1234',
+    },
+  }
   const mockTxWithZeroGas = {
     to: '0x1234567890123456789012345678901234567890',
-    value: BigNumber.from('0x0'),
+    value: 0n,
     data: '0x12345678',
-  };
-  const mockTransactionName = 'registerName';
-  const mockIsSafeApp = false;
+  } as const
+  const mockTransactionName = 'registerName'
+  const mockIsSafeApp = false
 
   beforeEach(() => {
-    jest.clearAllMocks();
-  });
+    vi.clearAllMocks()
+  })
 
   it('should calculate gas limit for non-safe apps', async () => {
-    mockSigner.estimateGas.mockReturnValue(BigNumber.from(100000));
+    mockEstimateGas.mockResolvedValueOnce(100000n)
     const result = await calculateGasLimit({
       isSafeApp: mockIsSafeApp,
-      provider: mockProvider,
       txWithZeroGas: mockTxWithZeroGas,
       transactionName: mockTransactionName,
-      signer: mockSigner,
-    });
-    expect(result.gasLimit.toNumber()).toEqual(105000);
-    expect(result.accessList).toBeUndefined();
-    expect(mockSigner.estimateGas).toHaveBeenCalledWith(mockTxWithZeroGas);
-  });
+      client: mockClient as any,
+      connectorClient: mockConnectorClient as any,
+    })
+    expect(result.gasLimit).toEqual(105000n)
+    expect(result.accessList).toBeUndefined()
+    expect(mockEstimateGas).toHaveBeenCalledWith(mockClient, {
+      ...mockTxWithZeroGas,
+      account: mockConnectorClient.account,
+    })
+  })
 
   it('should calculate gas limit for safe apps', async () => {
     const mockAccessListResponse = {
@@ -515,28 +511,27 @@ describe('calculateGasLimit', () => {
           storageKeys: ['0x1234567890123456789012345678901234567890123456789012345678901234'],
         },
       ],
-    };
-    (mockProvider.providerConfigs[0].provider as any).send.mockResolvedValueOnce(
-      mockAccessListResponse,
-    );
+    }
+    mockClient.request.mockResolvedValueOnce(mockAccessListResponse)
     const result = await calculateGasLimit({
       isSafeApp: true,
-      provider: mockProvider,
       txWithZeroGas: mockTxWithZeroGas,
       transactionName: mockTransactionName,
-      signer: mockSigner,
-    });
-    expect(result.gasLimit.toNumber()).toEqual(5100);
-    expect(result.accessList).toEqual(mockAccessListResponse.accessList);
-    expect(mockProvider.providerConfigs[0].provider.send).toHaveBeenCalledWith(
-      'eth_createAccessList',
-      [
+      client: mockClient as any,
+      connectorClient: mockConnectorClient as any,
+    })
+    expect(result.gasLimit).toEqual(5100n)
+    expect(result.accessList).toEqual(mockAccessListResponse.accessList)
+    expect(mockClient.request).toHaveBeenCalledWith({
+      method: 'eth_createAccessList',
+      params: [
         {
+          from: mockConnectorClient.account.address,
           ...mockTxWithZeroGas,
-          value: '0xf4240',
+          value: '0x0',
         },
         'latest',
       ],
-    );
-  });
-});
+    })
+  })
+})

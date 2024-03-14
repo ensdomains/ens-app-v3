@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 
@@ -6,7 +7,7 @@ const Container = styled.div(() => css``)
 
 type Props = {
   name: string
-  address: string
+  address: Address
   isManager: boolean
   isOwner: boolean
 }

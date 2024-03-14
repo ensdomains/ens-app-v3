@@ -8,6 +8,7 @@ const SUPPORT_LINKS = {
   fuses: 'https://support.ens.domains/en/articles/7902567-fuses',
   primaryName: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_b2baf0c02b',
   nameWrapper: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_cae4f1dea6',
+  dnsNames: 'https://support.ens.domains/en/collections/4027734-dns-names',
   gaslessDnssec:
     'https://support.ens.domains/en/articles/8834820-offchain-gasless-dnssec-names-in-ens#h_b92a64180f',
   owner: undefined,
@@ -25,5 +26,5 @@ const SUPPORT_LINKS = {
 
 type SupportTopic = keyof typeof SUPPORT_LINKS
 
-export const getSupportLink = <T extends SupportTopic>(topic: T): typeof SUPPORT_LINKS[T] =>
+export const getSupportLink = <T extends SupportTopic>(topic: T): (typeof SUPPORT_LINKS)[T] =>
   SUPPORT_LINKS[topic]

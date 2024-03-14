@@ -1,12 +1,33 @@
-import { useQuery } from 'wagmi'
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
+import { labelhash } from 'viem'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
+import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
-import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
-const query = `
+import { useQueryOptions } from './useQueryOptions'
+
+type UseRegistrationDataParameters = {
+  name?: string | undefined | null
+}
+
+type UseRegistrationDataReturnType = {
+  registrationDate: Date
+  transactionHash: string
+} | null
+
+type UseRegistrationDataConfig = QueryConfig<UseRegistrationDataReturnType, Error>
+
+type QueryKey<TParams extends UseRegistrationDataParameters> = CreateQueryKey<
+  TParams,
+  'getRegistrationData',
+  'graph'
+>
+
+const gqlQuery = `
   query getNameDates($id: String!) {
     registration(id: $id) {
       registrationDate
@@ -17,53 +38,65 @@ const query = `
   }
 `
 
-type Options = {
-  enabled?: boolean
-}
+export const getRegistrationDataQueryFn =
+  (config: ConfigWithEns) =>
+  async <TParams extends UseRegistrationDataParameters>({
+    queryKey: [{ name }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>) => {
+    if (!name) throw new Error('name is required')
 
-const useRegistrationData = (name: string, options: Options = {}) => {
-  const enabled = options.enabled ?? true
+    const client = config.getClient({ chainId })
+    const subgraphClient = createSubgraphClient({ client })
 
-  const { ready, gqlInstance } = useEns()
-  const is2LDEth = checkETH2LDFromName(name)
-  const {
-    data,
-    isLoading,
-    status,
-    isFetchedAfterMount,
-    isFetched,
-    // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isFetching: _isFetching,
-  } = useQuery(
-    useQueryKeys().registrationDate(name),
-    async () =>
-      gqlInstance.client.request<{
-        registration?: {
-          registrationDate: string
-        }
-        nameRegistereds: {
-          transactionID: string
-        }[]
-      }>(query, {
-        id: labelhash(name.split('.')[0]),
-      }),
-    {
-      enabled: ready && enabled && is2LDEth,
-      select: (queryResult) => {
-        if (!queryResult?.registration) return null
-        return {
-          registrationDate: new Date(parseInt(queryResult.registration.registrationDate) * 1000),
-          transactionHash: queryResult.nameRegistereds[0]?.transactionID,
-        }
-      },
-    },
-  )
+    const result = await subgraphClient.request<{
+      registration?: {
+        registrationDate: string
+      }
+      nameRegistereds: {
+        transactionID: string
+      }[]
+    }>(gqlQuery, {
+      id: labelhash(name.split('.')[0]),
+    })
+
+    if (!result.registration) return null
+
+    return {
+      registrationDate: new Date(parseInt(result.registration.registrationDate) * 1000),
+      transactionHash: result.nameRegistereds[0]?.transactionID,
+    }
+  }
+
+const useRegistrationData = <TParams extends UseRegistrationDataParameters>({
+  // config
+  enabled = true,
+  gcTime,
+  staleTime,
+  scopeKey,
+  // params
+  ...params
+}: TParams & UseRegistrationDataConfig) => {
+  const initialOptions = useQueryOptions({
+    params,
+    functionName: 'getRegistrationData',
+    queryDependencyType: 'graph',
+    queryFn: getRegistrationDataQueryFn,
+  })
+
+  const preparedOptions = prepareQueryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+    enabled: enabled && !!params.name && checkETH2LDFromName(params.name),
+    gcTime,
+    staleTime,
+  })
+
+  const query = useQuery(preparedOptions)
 
   return {
-    data: is2LDEth ? data : null,
-    isLoading,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    ...query,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }
 

@@ -1,22 +1,25 @@
+import { Query, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useQueryClient } from 'wagmi'
+import { useAccount } from 'wagmi'
 
-import { Button, Helper, Tag, Typography, mq } from '@ensdomains/thorin'
+import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
+import { Button, Helper, mq, Tag, Typography } from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
-import { useChainId } from '@app/hooks/useChainId'
-import useDNSProof from '@app/hooks/useDNSProof'
-import useOwners from '@app/hooks/useOwners'
-import { usePrimary } from '@app/hooks/usePrimary'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
+import { GetDnsOwnerQueryKey, UseDnsOwnerError } from '@app/hooks/ensjs/dns/useDnsOwner'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useOwners } from '@app/hooks/useOwners'
 import { makeIntroItem } from '@app/transaction-flow/intro'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { OwnerItem } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../TabWrapper'
@@ -123,10 +126,9 @@ const OwnerDetailContainer = styled.div(
   `,
 )
 
-const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
+const Owner = ({ address, label }: OwnerItem) => {
   const { t } = useTranslation('common')
-  const primary = usePrimary(address)
-  const network = useChainId()
+  const primary = usePrimaryName({ address })
 
   return (
     <BaseLinkWithHistory passHref href={`/address/${address}`}>
@@ -137,7 +139,6 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
             address={address}
             name={primary.data?.name}
             size="10"
-            network={network}
           />
           <TextContainer>
             <Name ellipsis data-testid={`owner-button-name-${label}`}>
@@ -181,6 +182,17 @@ const ButtonsContainer = styled.div(
   `,
 )
 
+const isGetDnsOwnerQuery = (
+  query: Query<any, any, any, any>,
+): query is Query<
+  GetDnsOwnerReturnType,
+  UseDnsOwnerError,
+  GetDnsOwnerReturnType,
+  GetDnsOwnerQueryKey<{ name: string }>
+> => {
+  return query.queryKey[4] === 'getDnsOwner'
+}
+
 const DNSOwnerSection = ({
   name,
   owners,
@@ -214,7 +226,10 @@ const DNSOwnerSection = ({
     return hasMatchingAddress && hasMismatchingAddress && hasDNSOwner
   }, [owners, address])
 
-  const { data, isLoading } = useDNSProof(name, !canShow || canSend)
+  const { data: dnsImportData, isLoading } = useDnsImportData({
+    name,
+    enabled: canShow && !canSend,
+  })
 
   const handleSyncManager = () => {
     const currentManager = owners.find((owner) => owner.label === 'name.manager')
@@ -225,13 +240,22 @@ const DNSOwnerSection = ({
         content: makeIntroItem('SyncManager', { isWrapped, manager: currentManager!.address }),
       },
       transactions: [
-        makeTransactionItem('syncManager', { address: address!, name, proverResult: data! }),
+        createTransactionItem('syncManager', {
+          address: address!,
+          name,
+          dnsImportData: dnsImportData!,
+        }),
       ],
     })
   }
 
   const handleRefresh = () => {
-    queryClient.resetQueries({ exact: true, queryKey: ['getDNSOwner', name] })
+    queryClient.resetQueries({
+      predicate: (q) => {
+        if (!isGetDnsOwnerQuery(q)) return false
+        return q.queryKey[0].name === name
+      },
+    })
   }
 
   if (!canShow) return null
@@ -246,7 +270,12 @@ const DNSOwnerSection = ({
           {t('tabs.more.ownership.refreshDNS')}
         </Button>
         {!canSend && (
-          <Button width="auto" onClick={handleSyncManager} loading={isLoading} disabled={!data}>
+          <Button
+            width="auto"
+            onClick={handleSyncManager}
+            loading={isLoading}
+            disabled={!dnsImportData}
+          >
             {t('tabs.more.ownership.dnsOwnerWarning.syncManager')}
           </Button>
         )}
@@ -272,8 +301,8 @@ const Ownership = ({
 }) => {
   const { t } = useTranslation('profile')
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showSendNameInput = prepareDataInput('SendName')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showSendNameInput = usePreparedDataInput('SendName')
   const handleSend = () => {
     showSendNameInput(`send-name-${name}`, {
       name,

@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+
+import { test } from '../../../playwright/index.js'
 
 const makeid = (length: number) => {
   let result = ''
@@ -22,7 +23,8 @@ test.describe('Moonpay registration', () => {
     await page.getByText('Credit or debit card').click()
     await page.getByText('Next').click()
 
+    // NOTE: Moonpay has shut down there testnet, so we only check for the existence of the iframe
     const moonpay = page.frameLocator('#moonpayIframe')
-    await expect(moonpay.getByText('Oops, something went wrong')).toBeVisible({ timeout: 25000 })
+    await expect(await moonpay.locator('html')).toHaveCount(1)
   })
 })

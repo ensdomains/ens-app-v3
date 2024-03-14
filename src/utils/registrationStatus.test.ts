@@ -1,31 +1,39 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
+import { describe, expect, it } from 'vitest'
 
-import { ReturnedENS } from '@app/types'
+import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
 import { getRegistrationStatus } from './registrationStatus'
 
-const ownerData: ReturnedENS['getOwner'] = {
+const ownerData: GetOwnerReturnType = {
   owner: '0x123',
+  registrant: '0x123',
   ownershipLevel: 'registrar',
 }
 
-const wrapperData: ReturnedENS['getWrapperData'] = {
-  child: {
-    CAN_DO_EVERYTHING: true,
-    CANNOT_BURN_FUSES: false,
-    CANNOT_TRANSFER: false,
-    CANNOT_UNWRAP: false,
-    CANNOT_SET_RESOLVER: false,
-    CANNOT_SET_TTL: false,
-    CANNOT_CREATE_SUBDOMAIN: false,
+const createDateWithValue = (value: number) => ({
+  date: new Date(value),
+  value: BigInt(value),
+})
+
+const wrapperData: GetWrapperDataReturnType = {
+  fuses: {
+    child: {
+      CAN_DO_EVERYTHING: true,
+      CANNOT_BURN_FUSES: false,
+      CANNOT_TRANSFER: false,
+      CANNOT_UNWRAP: false,
+      CANNOT_SET_RESOLVER: false,
+      CANNOT_SET_TTL: false,
+      CANNOT_CREATE_SUBDOMAIN: false,
+    } as any,
+    parent: {
+      PARENT_CANNOT_CONTROL: false,
+    } as any,
+    value: 0 as any,
   },
-  parent: {
-    PARENT_CANNOT_CONTROL: false,
-  },
-  expiryDate: new Date(),
-  rawFuses: 0,
+  expiry: createDateWithValue(Date.now()),
   owner: '0x123',
-} as ReturnedENS['getWrapperData']
+}
 
 describe('getRegistrationStatus', () => {
   describe('2LD .eth', () => {
@@ -44,9 +52,10 @@ describe('getRegistrationStatus', () => {
 
     it('should return registered if expiry is in the future', async () => {
       const expiryData = {
-        expiry: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+        expiry: createDateWithValue(Date.now() + 1000 * 60 * 60 * 24 * 30),
         gracePeriod: 60 * 60 * 24 * 1000,
-      }
+        status: 'active',
+      } as const
       const result = getRegistrationStatus({
         timestamp: Date.now(),
         validation: { is2LD: true, isETH: true },
@@ -59,9 +68,10 @@ describe('getRegistrationStatus', () => {
 
     it('should return grace period if expiry is in the past, but within grace period', async () => {
       const expiryData = {
-        expiry: new Date(Date.now() - 1000),
+        expiry: createDateWithValue(Date.now() - 1000),
         gracePeriod: 60 * 60 * 24 * 1000,
-      }
+        status: 'gracePeriod',
+      } as const
       const result = getRegistrationStatus({
         timestamp: Date.now(),
         validation: { is2LD: true, isETH: true },
@@ -74,13 +84,14 @@ describe('getRegistrationStatus', () => {
 
     it('should return premium if premium is greater than 0', async () => {
       const expiryData = {
-        expiry: new Date(Date.now() - 1000),
+        expiry: createDateWithValue(Date.now() - 1000),
         gracePeriod: 0,
-      }
+        status: 'expired',
+      } as const
 
       const priceData = {
-        base: BigNumber.from(1),
-        premium: BigNumber.from(1),
+        base: 1n,
+        premium: 1n,
       }
 
       const result = getRegistrationStatus({
@@ -96,12 +107,13 @@ describe('getRegistrationStatus', () => {
 
     it('should otherwise return available', async () => {
       const expiryData = {
-        expiry: new Date(Date.now() - 1000),
+        expiry: createDateWithValue(Date.now() - 1000),
         gracePeriod: 0,
-      }
+        status: 'expired',
+      } as const
       const priceData = {
-        base: BigNumber.from(1),
-        premium: BigNumber.from(0),
+        base: 1n,
+        premium: 0n,
       }
 
       const result = getRegistrationStatus({
@@ -123,8 +135,9 @@ describe('getRegistrationStatus', () => {
         ownerData,
         wrapperData,
         expiryData: {
-          expiry: new Date(Date.now() - 1_000 * 10),
+          expiry: createDateWithValue(Date.now() - 1_000 * 10),
           gracePeriod: 0,
+          status: 'active',
         },
         supportedTLD: true,
       })

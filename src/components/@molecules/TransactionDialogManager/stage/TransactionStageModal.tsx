@@ -1,13 +1,9 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { hexValue } from '@ethersproject/bytes'
-import type { FallbackProvider, JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
-import { toUtf8String } from '@ethersproject/strings'
-import { Provider } from '@wagmi/core'
-import type { PopulatedTransaction } from 'ethers'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
+import { BaseError } from 'viem'
+import { useClient, useConnectorClient, useSendTransaction } from 'wagmi'
 
 import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 
@@ -16,22 +12,29 @@ import CircleTickSVG from '@app/assets/CircleTick.svg'
 import WalletSVG from '@app/assets/Wallet.svg'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
+import { useChainName } from '@app/hooks/chain/useChainName'
+import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useChainName } from '@app/hooks/useChainName'
-import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
-import { transactions } from '@app/transaction-flow/transaction'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import {
-  ManagedDialogPropsTwo,
+  ManagedDialogProps,
   TransactionFlowAction,
   TransactionStage,
 } from '@app/transaction-flow/types'
-import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { ConfigWithEns } from '@app/types'
+import { getReadableError } from '@app/utils/errors'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
+import {
+  createTransactionRequestQueryFn,
+  getTransactionErrorQueryFn,
+  getUniqueTransaction,
+  transactionSuccessHandler,
+} from './query'
 
 const BarContainer = styled.div(
   ({ theme }) => css`
@@ -162,24 +165,6 @@ const InnerBar = styled.div(
   `,
 )
 
-type TxError = {
-  reason: string
-  code: string
-  method: string
-  transaction: object
-  error: Error
-}
-
-type AccessListResponse = {
-  accessList: {
-    address: string
-    storageKeys: string[]
-  }[]
-  gasUsed: string
-}
-
-const SUPPORTED_REQUEST_ERRORS = ['INSUFFICIENT_FUNDS', 'UNPREDICTABLE_GAS_LIMIT']
-
 export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
   const { t } = useTranslation()
 
@@ -259,104 +244,6 @@ export const handleBackToInput = (dispatch: Dispatch<TransactionFlowAction>) => 
   dispatch({ name: 'resetTransactionStep' })
 }
 
-export const uniqueTransactionIdentifierGenerator = (
-  txKey: ManagedDialogPropsTwo['txKey'],
-  currentStep: number,
-  transactionName: ManagedDialogPropsTwo['transaction']['name'],
-  transactionData: ManagedDialogPropsTwo['transaction']['data'],
-) => ({
-  key: txKey,
-  step: currentStep,
-  name: transactionName,
-  data: transactionData,
-})
-
-export const transactionSuccessHandler =
-  (dependencies: {
-    provider: Provider
-    actionName: ManagedDialogPropsTwo['actionName']
-    txKey: string | null
-    request: PopulatedTransaction | undefined
-    addRecentTransaction: ReturnType<typeof useAddRecentTransaction>
-    dispatch: Dispatch<TransactionFlowAction>
-    isSafeApp: ReturnType<typeof useIsSafeApp>['data']
-  }) =>
-  async (tx: any) => {
-    const { provider, actionName, txKey, request, addRecentTransaction, dispatch, isSafeApp } =
-      dependencies
-    let transactionData = null
-    try {
-      // If using private mempool, this won't error, will return null
-      transactionData = await provider.getTransaction(tx.hash)
-    } catch (e) {
-      console.error('Failed to get transaction info')
-    }
-
-    addRecentTransaction({
-      ...transactionData,
-      hash: tx.hash,
-      action: actionName,
-      key: txKey!,
-      input: request?.data,
-      timestamp: Math.floor(Date.now() / 1000),
-      isSafeTx: !!isSafeApp,
-      searchRetries: 0,
-    })
-    dispatch({ name: 'setTransactionHash', payload: tx.hash })
-  }
-
-export const registrationGasFeeModifier = (gasLimit: BigNumber, transactionName: string) =>
-  // this addition is arbitrary, something to do with a gas refund but not 100% sure
-  transactionName === 'registerName' ? gasLimit.add(5000) : gasLimit
-
-export const calculateGasLimit = async ({
-  isSafeApp,
-  provider,
-  txWithZeroGas,
-  transactionName,
-  signer,
-}: {
-  isSafeApp: string | boolean | undefined
-  provider: FallbackProvider
-  txWithZeroGas: {
-    maxFeePerGas: string
-    maxPriorityFeePerGas: string
-    value?: BigNumber
-  }
-  transactionName: string
-  signer: ReturnType<typeof useSigner>['data']
-}) => {
-  if (isSafeApp) {
-    const accessListResponse: AccessListResponse = await (
-      provider.providerConfigs[0].provider as JsonRpcProvider
-    ).send('eth_createAccessList', [
-      {
-        ...txWithZeroGas,
-        value: txWithZeroGas.value ? hexValue(txWithZeroGas.value.add(1000000)) : '0x0',
-      },
-      'latest',
-    ])
-
-    return {
-      gasLimit: registrationGasFeeModifier(
-        BigNumber.from(accessListResponse.gasUsed),
-        transactionName,
-      ),
-      accessList: accessListResponse.accessList,
-    }
-  }
-
-  if (!signer) {
-    throw new Error('Signer not found')
-  }
-
-  const gasEstimate = await signer.estimateGas(txWithZeroGas)
-  return {
-    gasLimit: registrationGasFeeModifier(gasEstimate, transactionName),
-    accessList: undefined,
-  }
-}
-
 export const TransactionStageModal = ({
   actionName,
   currentStep,
@@ -368,13 +255,15 @@ export const TransactionStageModal = ({
   txKey,
   onDismiss,
   backToInput,
-}: ManagedDialogPropsTwo) => {
+}: ManagedDialogProps) => {
   const { t } = useTranslation()
   const chainName = useChainName()
 
+  const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
+  const { data: connectorClient } = useConnectorClient<ConfigWithEns>()
+  const client = useClient()
+
   const addRecentTransaction = useAddRecentTransaction()
-  const { data: signer } = useSigner()
-  const ens = useEns()
 
   const stage = transaction.stage || 'confirm'
   const recentTransactions = useRecentTransactions()
@@ -383,17 +272,14 @@ export const TransactionStageModal = ({
     [recentTransactions, transaction.hash],
   )
 
-  const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
-  const provider = useProvider<FallbackProvider>()
-
   const uniqueTxIdentifiers = useMemo(
     () =>
-      uniqueTransactionIdentifierGenerator(
+      getUniqueTransaction({
         txKey,
         currentStep,
-        transaction?.name,
-        transaction?.data,
-      ),
+        transaction,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [txKey, currentStep, transaction?.name, transaction?.data],
   )
 
@@ -407,77 +293,56 @@ export const TransactionStageModal = ({
   const canEnableTransactionRequest = useMemo(
     () =>
       !!transaction &&
-      !!signer &&
+      !!connectorClient?.account &&
       !safeAppStatusLoading &&
-      !!ens &&
       !(stage === 'sent' || stage === 'complete') &&
       isUniquenessDefined,
-    [transaction, signer, safeAppStatusLoading, ens, stage, isUniquenessDefined],
+    [transaction, connectorClient?.account, safeAppStatusLoading, stage, isUniquenessDefined],
   )
 
-  const queryKeys = useQueryKeys()
+  const initialOptions = useQueryOptions({
+    params: uniqueTxIdentifiers,
+    functionName: 'createTransactionRequest',
+    queryDependencyType: 'standard',
+    queryFn: createTransactionRequestQueryFn,
+  })
 
-  const {
-    data: request,
-    isLoading: requestLoading,
-    error: _requestError,
-  } = useQuery(
-    queryKeys.transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
-    async () => {
-      const populatedTransaction = await transactions[transaction.name].transaction(
-        signer as JsonRpcSigner,
-        ens,
-        transaction.data,
-      )
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn({ connectorClient, isSafeApp }),
+  })
 
-      const txWithZeroGas = {
-        ...populatedTransaction,
-        maxFeePerGas: '0x0',
-        maxPriorityFeePerGas: '0x0',
-      }
-
-      const { gasLimit, accessList } = await calculateGasLimit({
-        isSafeApp,
-        provider,
-        txWithZeroGas,
-        signer,
-        transactionName: transaction.name,
-      })
-
-      return {
-        ...populatedTransaction,
-        to: populatedTransaction.to as `0x${string}`,
-        gasLimit,
-        accessList,
-      }
-    },
-    {
-      enabled: canEnableTransactionRequest,
-      onError: console.error,
-    },
-  )
-  const requestError = _requestError as TxError | null
-  useInvalidateOnBlock({
+  const transactionRequestQuery = useQuery({
+    ...preparedOptions,
     enabled: canEnableTransactionRequest,
-    queryKey: queryKeys.transactionStageModal.prepareTransaction(uniqueTxIdentifiers),
+    refetchOnMount: 'always',
+  })
+
+  const { data: request, isLoading: requestLoading, error: requestError } = transactionRequestQuery
+  const isTransactionRequestCachedData = getIsCachedData(transactionRequestQuery)
+
+  useInvalidateOnBlock({
+    enabled: canEnableTransactionRequest && process.env.NEXT_PUBLIC_ETH_NODE !== 'anvil',
+    queryKey: preparedOptions.queryKey,
   })
 
   const {
-    isLoading: transactionLoading,
+    isPending: transactionLoading,
     error: transactionError,
     sendTransaction,
   } = useSendTransaction({
-    mode: 'prepared',
-    request,
-    onSuccess: transactionSuccessHandler({
-      provider,
-      actionName,
-      txKey,
-      request,
-      addRecentTransaction,
-      dispatch,
-      isSafeApp,
-    }),
+    mutation: {
+      onSuccess: transactionSuccessHandler({
+        client,
+        connectorClient: connectorClient!,
+        actionName,
+        txKey,
+        request,
+        addRecentTransaction,
+        dispatch,
+        isSafeApp,
+      }),
+    },
   })
 
   const FilledDisplayItems = useMemo(
@@ -529,8 +394,8 @@ export const TransactionStageModal = ({
     if (stage === 'failed') {
       return (
         <Button
-          onClick={() => sendTransaction!()}
-          disabled={!canEnableTransactionRequest || requestLoading || !sendTransaction}
+          onClick={() => sendTransaction(request!)}
+          disabled={!canEnableTransactionRequest || requestLoading || !request}
           colorStyle="redSecondary"
           data-testid="transaction-modal-failed-button"
         >
@@ -563,9 +428,13 @@ export const TransactionStageModal = ({
     return (
       <Button
         disabled={
-          !canEnableTransactionRequest || requestLoading || !sendTransaction || !!requestError
+          !canEnableTransactionRequest ||
+          requestLoading ||
+          !request ||
+          !!requestError ||
+          isTransactionRequestCachedData
         }
-        onClick={() => sendTransaction!()}
+        onClick={() => sendTransaction(request!)}
         data-testid="transaction-modal-confirm-button"
       >
         {t('transaction.dialog.confirm.openWallet')}
@@ -583,6 +452,8 @@ export const TransactionStageModal = ({
     stepCount,
     t,
     transactionLoading,
+    request,
+    isTransactionRequestCachedData,
   ])
 
   const stepStatus = useMemo(() => {
@@ -592,37 +463,33 @@ export const TransactionStageModal = ({
     return 'inProgress'
   }, [stage])
 
-  const { data: upperError } = useQuery(
-    useQueryKeys().transactionStageModal.transactionError(transaction.hash),
-    async () => {
-      if (!transaction || !transaction.hash || transactionStatus !== 'failed') return null
-      const a = await provider.getTransaction(transaction.hash!)
-      try {
-        await provider.call(a as any, a.blockNumber)
-        return 'transaction.dialog.error.gasLimit'
-      } catch (err: any) {
-        const code = err.data.replace('Reverted ', '')
-        const reason = toUtf8String(`0x${code.substr(138)}`)
-        return reason
-      }
-    },
-    {
-      enabled: !!transaction && !!transaction.hash && transactionStatus === 'failed',
-    },
-  )
+  const initialErrorOptions = useQueryOptions({
+    params: { hash: transaction.hash, status: transactionStatus },
+    functionName: 'getTransactionError',
+    queryDependencyType: 'standard',
+    queryFn: getTransactionErrorQueryFn,
+  })
+
+  const preparedErrorOptions = queryOptions({
+    queryKey: initialErrorOptions.queryKey,
+    queryFn: initialErrorOptions.queryFn,
+  })
+
+  const { data: upperError } = useQuery({
+    ...preparedErrorOptions,
+    enabled: !!transaction && !!transaction.hash && transactionStatus === 'failed',
+  })
 
   const lowerError = useMemo(() => {
     if (stage === 'complete' || stage === 'sent') return null
-    if (transactionError) {
-      return transactionError.message.split('(')[0].trim()
+    const err = transactionError || requestError
+    if (!err) return null
+    if (!(err instanceof BaseError)) {
+      if ('message' in err) return err.message
+      return t('transaction.error.unknown')
     }
-    if (requestError) {
-      if (SUPPORTED_REQUEST_ERRORS.includes(requestError.code)) {
-        return t(`transaction.error.request.${requestError.code}`)
-      }
-      return requestError.reason
-    }
-    return null
+    const readableError = getReadableError(err)
+    return readableError || err.shortMessage
   }, [t, stage, transactionError, requestError])
 
   return (

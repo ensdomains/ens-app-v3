@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { Button, Typography, mq } from '@ensdomains/thorin'
+import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import GoDaddySVG from '@app/assets/GoDaddy.svg'
 

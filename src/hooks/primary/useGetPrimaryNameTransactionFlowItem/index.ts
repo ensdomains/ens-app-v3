@@ -1,24 +1,25 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { Address } from 'viem'
 
-import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
+import type { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
-import { useContractAddress } from '@app/hooks/useContractAddress'
 import { makeIntroItem } from '@app/transaction-flow/intro/index'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
+import { TransactionIntro } from '@app/transaction-flow/types'
 import { emptyAddress } from '@app/utils/constants'
 
 import {
-  IntroType,
   checkRequiresSetPrimaryNameTransaction,
   checkRequiresUpdateEthAddressTransaction,
   checkRequiresUpdateResolverTransaction,
   getIntroTranslation,
+  IntroType,
 } from './utils'
 
 type Inputs = {
-  address?: string
+  address?: Address
   isWrapped?: boolean
   reverseRegistryName?: string
   profileAddress?: string
@@ -38,8 +39,8 @@ export const useGetPrimaryNameTransactionFlowItem = (
 
   const _enabled = (options.enabled ?? true) && !!address
 
-  const reverseRegistryName = useReverseRegistryName({ enabled: _enabled })
-  const latestResolverAddress = useContractAddress('PublicResolver')
+  const reverseRegistryName = useReverseRegistryName({ address: address!, enabled: _enabled })
+  const latestResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
   const { isLoading, isFetching } = reverseRegistryName
 
@@ -49,15 +50,19 @@ export const useGetPrimaryNameTransactionFlowItem = (
     if (!isActive) return undefined
     return (name: string) => {
       let introType: IntroType = 'updateEthAddress'
-      const transactions: GenericTransaction[] = []
+      const transactions: (
+        | TransactionItem<'setPrimaryName'>
+        | TransactionItem<'updateResolver'>
+        | TransactionItem<'updateEthAddress'>
+      )[] = []
 
       if (
         checkRequiresSetPrimaryNameTransaction({
-          reverseRegistryName: reverseRegistryName.data,
+          reverseRegistryName: reverseRegistryName.data || '',
           name,
         })
       ) {
-        transactions.push(makeTransactionItem('setPrimaryName', { name, address }))
+        transactions.push(createTransactionItem('setPrimaryName', { name, address }))
       }
 
       if (
@@ -70,10 +75,10 @@ export const useGetPrimaryNameTransactionFlowItem = (
         introType =
           !resolverAddress || resolverAddress === emptyAddress ? 'noResolver' : 'invalidResolver'
         transactions.unshift(
-          makeTransactionItem('updateResolver', {
+          createTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
-            resolver: latestResolverAddress,
+            resolverAddress: latestResolverAddress,
           }),
         )
       }
@@ -87,7 +92,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
         })
       ) {
         transactions.unshift(
-          makeTransactionItem('updateEthAddress', {
+          createTransactionItem('updateEthAddress', {
             name,
             address,
             latestResolver: !resolverStatus?.isAuthorized,
@@ -104,7 +109,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
                 content: makeIntroItem('GenericWithDescription', {
                   description: t(getIntroTranslation(introType, 'description')),
                 }),
-              },
+              } as TransactionIntro,
             }
           : {}
 
@@ -112,7 +117,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
       return {
         transactions,
         ...introItem,
-      } as TransactionFlowItem
+      }
     }
   }, [
     isActive,

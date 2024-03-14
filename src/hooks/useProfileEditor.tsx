@@ -2,16 +2,17 @@ import React, { ComponentProps, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import { getInternalCodec, getProtocolType, RecordOptions } from '@ensdomains/ensjs/utils'
 
 import accountsOptions from '@app/components/@molecules/ProfileEditor/options/accountsOptions'
 import addressOptions from '@app/components/@molecules/ProfileEditor/options/addressOptions'
 import otherOptions from '@app/components/@molecules/ProfileEditor/options/otherOptions'
 import websiteOptions from '@app/components/@molecules/ProfileEditor/options/websiteOptions'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
-import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
-import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
+import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
+import type { Profile } from '@app/types'
 import { ProfileEditorType } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
 import {
@@ -20,15 +21,6 @@ import {
   formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
-import { validateCryptoAddress } from '@app/utils/validate'
-
-import {
-  ContentHashProvider,
-  contentHashProtocolToContentHashProvider,
-  getProtocolTypeAndContentId,
-} from '../utils/contenthash'
-import { validateContentHash } from '../validators/validateContentHash'
-import { DetailedProfile } from './useNameDetails'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
@@ -69,7 +61,7 @@ type ExpandableRecordsState = {
 
 export type Props = {
   callback: (data: RecordOptions, event?: React.BaseSyntheticEvent) => void
-  profile: DetailedProfile
+  profile: Profile
   overwrites?: RecordOptions
   returnAllFields?: boolean
 }
@@ -235,8 +227,8 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
   })()
 
   useEffect(() => {
-    if (profile) {
-      const newDefaultValues = convertProfileToProfileFormObject(profile)
+    const loadProfile = async (profile_: Profile) => {
+      const newDefaultValues = await convertProfileToProfileFormObject(profile_)
       const newExistingRecords: ExpandableRecordsState = {
         address: Object.keys(newDefaultValues.address) || [],
         other: Object.keys(newDefaultValues.other) || [],
@@ -245,9 +237,9 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
       reset(newDefaultValues)
 
       setHasExistingWebsite(!!newDefaultValues.website)
-      const { protocolType } = getProtocolTypeAndContentId(newDefaultValues.website)
-      if (protocolType) {
-        const contentHashProvider = contentHashProtocolToContentHashProvider(protocolType)
+      const protocolTypeData = getProtocolType(newDefaultValues.website || '')
+      if (protocolTypeData?.protocolType) {
+        const contentHashProvider = getInternalCodec(protocolTypeData.protocolType)
         const option = websiteOptions.find(({ value }) => value === contentHashProvider)
         setWebsiteOption(option)
       }
@@ -257,22 +249,26 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
         const formKey = formSafeKey(key.toString())
         if (['avatar', 'banner'].includes(key)) {
           setValue(formKey as any, value, { shouldDirty: true })
-        } else if (supportedProfileItems.includes(key)) {
-          setValue(`general.${formKey}`, value, { shouldDirty: true })
-        } else if (supportedAccounts.includes(key)) {
-          setValue(`accounts.${formKey}`, value, { shouldDirty: true })
+        } else if (
+          supportedGeneralRecordKeys.includes(key as (typeof supportedGeneralRecordKeys)[number])
+        ) {
+          setValue(`general.${formKey}`, value!, { shouldDirty: true })
+        } else if (
+          supportedSocialRecordKeys.includes(key as (typeof supportedSocialRecordKeys)[number])
+        ) {
+          setValue(`accounts.${formKey}`, value!, { shouldDirty: true })
           if (!newExistingRecords.accounts.includes(formKey))
             newExistingRecords.accounts.push(formKey)
         } else {
-          setValue(`other.${formKey}`, value, { shouldDirty: true })
+          setValue(`other.${formKey}`, value!, { shouldDirty: true })
           if (!newExistingRecords.other.includes(formKey)) newExistingRecords.other.push(formKey)
         }
       })
 
-      overwrites?.coinTypes?.forEach((record) => {
-        const { key, value } = record
-        const formKey = formSafeKey(key.toString())
-        setValue(`address.${formKey}`, value, { shouldDirty: true })
+      overwrites?.coins?.forEach((record) => {
+        const { coin, value } = record
+        const formKey = formSafeKey(coin.toString())
+        setValue(`address.${formKey}`, value!, { shouldDirty: true })
         if (!newExistingRecords.address.includes(formKey)) newExistingRecords.address.push(formKey)
       })
 
@@ -281,15 +277,14 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
       if (overwrites?.contentHash) {
         setValue('website', overwrites.contentHash, { shouldDirty: true })
         setHasExistingWebsite(true)
-        const { protocolType: newProtocolType } = getProtocolTypeAndContentId(
-          overwrites.contentHash,
-        )
+        const { protocolType: newProtocolType } = getProtocolType(overwrites.contentHash)!
         if (newProtocolType) {
           const option = websiteOptions.find(({ value }) => value === newProtocolType)
           setWebsiteOption(option || undefined)
         }
       }
     }
+    if (profile) loadProfile(profile)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile, reset, overwrites])
 
@@ -337,27 +332,6 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
-  const validateCustomInputKey = (key?: string) => () => {
-    if (!key) return true
-    const editor = getValues()
-    const allTextKeys = [
-      ...(editor.avatar ? ['avatar'] : []),
-      ...Object.keys(editor.general || {}),
-      ...Object.keys(editor.accounts || {}),
-      ...Object.keys(editor.other || {}),
-    ]
-    return allTextKeys.filter((existingKey) => existingKey === key.trim()).length > 1
-      ? t('errors.duplicateKey', { value: key })
-      : true
-  }
-
-  const validateForGroupAndKey = (group: string, key: string) => {
-    if (group === 'address') return validateCryptoAddress(key)
-    if (group === 'website') return validateContentHash(key as ContentHashProvider)
-    if (group === 'other') return validateCustomInputKey(key)
-    return () => true
-  }
-
   return {
     register,
     unregister,
@@ -403,7 +377,6 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
     AddButtonProps,
     setAvatar,
     hasChanges,
-    validateForGroupAndKey,
   }
 }
 

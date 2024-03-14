@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next'
 
 import { Card, Helper, RecordItem } from '@ensdomains/thorin'
 
-import { useChainName } from '@app/hooks/useChainName'
-import { useContractAddress } from '@app/hooks/useContractAddress'
+import { useChainName } from '@app/hooks/chain/useChainName'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
@@ -16,7 +16,7 @@ type Props = {
 
 export const ContractSection = ({ details }: Props) => {
   const { t } = useTranslation('profile')
-  const address = useContractAddress('NameWrapper')
+  const address = useContractAddress({ contract: 'ensNameWrapper' })
   const chainName = useChainName()
   const breakpoint = useBreakpoint()
 

@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin'
+import { Skeleton, Typography } from '@ensdomains/thorin'
 
 import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays, secondsToHours } from '@app/utils/utils'
 
-import { useBlockTimestamp } from '../../../hooks/useBlockTimestamp'
+import { useBlockTimestamp } from '../../../hooks/chain/useBlockTimestamp'
 
 const GRACE_PERIOD_S = 90 * 24 * 60 * 60
 
@@ -70,7 +70,7 @@ export const ShortExpiry = ({
 }) => {
   const { t } = useTranslation()
   const blockTimestamp = useBlockTimestamp()
-  const currentDate = new Date(blockTimestamp.data!)
+  const currentDate = blockTimestamp.data ? new Date(Number(blockTimestamp.data)) : new Date()
   let secondsDiff = (expiry.getTime() - currentDate.getTime()) / 1000
   const inverse = secondsDiff < 0
   if (inverse) {
@@ -111,17 +111,22 @@ export const ShortExpiry = ({
     color = 'red'
   }
 
-  if (textOnly) return <>{text}</>
   return (
-    <ExpiryText
-      data-testid="short-expiry"
-      data-color={color}
-      data-timestamp={expiry.getTime()}
-      $color={color}
-      fontVariant="small"
-    >
-      {text}
-    </ExpiryText>
+    <Skeleton loading={blockTimestamp.isLoading}>
+      {textOnly ? (
+        text
+      ) : (
+        <ExpiryText
+          data-testid="short-expiry"
+          data-color={color}
+          data-timestamp={expiry.getTime()}
+          $color={color}
+          fontVariant="small"
+        >
+          {text}
+        </ExpiryText>
+      )}
+    </Skeleton>
   )
 }
 

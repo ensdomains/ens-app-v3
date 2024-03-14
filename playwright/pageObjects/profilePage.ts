@@ -3,9 +3,11 @@
 /* eslint-disable no-await-in-loop */
 import { Locator, Page } from '@playwright/test'
 
-import coinsWithIcons from '@app/constants/coinsWithIcons.json'
-import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'
-import supportedSocialRecordKeys from '@app/constants/supportedSocialRecordKeys.json'
+import coinsWithIcons from '../../src/constants/coinsWithIcons.json'
+import { supportedGeneralRecordKeys } from '../../src/constants/supportedGeneralRecordKeys'
+import { supportedSocialRecordKeys } from '../../src/constants/supportedSocialRecordKeys'
+
+type SupportedSocialRecordsKeys = (typeof supportedSocialRecordKeys)[number]
 
 const PROFILE_SNIPPET_KEYS = ['nickname', ...supportedGeneralRecordKeys]
 export class ProfilePage {
@@ -54,7 +56,7 @@ export class ProfilePage {
   record(type: 'text' | 'address', key: string): Locator {
     if (type === 'text' && PROFILE_SNIPPET_KEYS.includes(key))
       return this.page.getByTestId(`profile-snippet-${key}`)
-    if (type === 'text' && supportedSocialRecordKeys.includes(key))
+    if (type === 'text' && supportedSocialRecordKeys.includes(key as SupportedSocialRecordsKeys))
       return this.page.getByTestId(`social-profile-button-${key}`)
     if (type === 'text') return this.page.getByTestId(`other-profile-button-${key}`)
     if (type === 'address' && coinsWithIcons.includes(key.toLowerCase()))
@@ -79,5 +81,11 @@ export class ProfilePage {
     if (key === 'description')
       return this.page.getByTestId('profile-record-input-description').locator('textarea')
     return this.page.getByTestId(`profile-record-input-input-${key}`)
+  }
+
+  profileEditorClearButton(key: string) {
+    if (key === 'description')
+      return this.page.getByTestId(`profile-record-input-${key}`).getByRole('button')
+    return this.page.getByTestId(`profile-record-input-${key}-delete-button`)
   }
 }

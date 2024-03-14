@@ -1,5 +1,7 @@
 import { renderHook } from '@app/test-utils'
 
+import { describe, expect, it } from 'vitest'
+
 import useRegistrationParams from './useRegistrationParams'
 
 describe('useRegistrationParams()', () => {
@@ -10,12 +12,12 @@ describe('useRegistrationParams()', () => {
         owner: '0xowner',
         registrationData: {
           years: 1,
-          resolver: '0xresolver',
+          resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [
             {
-              key: 'ETH',
-              value: '0x4b2d639aC1B0497e932F8cE234eFd3B3Df9a9B74',
+              key: 'eth',
+              value: '0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74',
               group: 'address',
               type: 'addr',
             },
@@ -26,20 +28,20 @@ describe('useRegistrationParams()', () => {
       }),
     )
     expect(result.current).toMatchInlineSnapshot(`
-      Object {
+      {
         "duration": 31536000,
-        "fuses": Object {
-          "named": Array [],
-          "unnamed": Array [],
+        "fuses": {
+          "named": [],
+          "unnamed": [],
         },
         "name": "test",
         "owner": "0xowner",
-        "records": Object {
+        "records": {
           "clearRecords": false,
-          "coinTypes": Array [
-            Object {
-              "key": "ETH",
-              "value": "0x4b2d639aC1B0497e932F8cE234eFd3B3Df9a9B74",
+          "coins": [
+            {
+              "coin": "eth",
+              "value": "0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74",
             },
           ],
         },
@@ -56,17 +58,17 @@ describe('useRegistrationParams()', () => {
         owner: '0xowner',
         registrationData: {
           years: 1,
-          resolver: '0xresolver',
+          resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [
             {
-              key: 'ETH',
-              value: '0x4b2d639aC1B0497e932F8cE234eFd3B3Df9a9B74',
+              key: 'eth',
+              value: '0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74',
               group: 'address',
               type: 'addr',
             },
             {
-              key: 'BTC',
+              key: 'btc',
               value: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
               group: 'address',
               type: 'addr',
@@ -84,28 +86,28 @@ describe('useRegistrationParams()', () => {
       }),
     )
     expect(result.current).toMatchInlineSnapshot(`
-      Object {
+      {
         "duration": 31536000,
-        "fuses": Object {
-          "named": Array [],
-          "unnamed": Array [],
+        "fuses": {
+          "named": [],
+          "unnamed": [],
         },
         "name": "test",
         "owner": "0xowner",
-        "records": Object {
+        "records": {
           "clearRecords": false,
-          "coinTypes": Array [
-            Object {
-              "key": "ETH",
-              "value": "0x4b2d639aC1B0497e932F8cE234eFd3B3Df9a9B74",
+          "coins": [
+            {
+              "coin": "eth",
+              "value": "0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74",
             },
-            Object {
-              "key": "BTC",
+            {
+              "coin": "btc",
               "value": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
             },
           ],
-          "texts": Array [
-            Object {
+          "texts": [
+            {
               "key": "description",
               "value": "This is a description",
             },
@@ -124,7 +126,7 @@ describe('useRegistrationParams()', () => {
         owner: '0xowner',
         registrationData: {
           years: 1,
-          resolver: '0xresolver',
+          resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [],
           clearRecords: true,
@@ -133,15 +135,15 @@ describe('useRegistrationParams()', () => {
       }),
     )
     expect(result.current).toMatchInlineSnapshot(`
-      Object {
+      {
         "duration": 31536000,
-        "fuses": Object {
-          "named": Array [],
-          "unnamed": Array [],
+        "fuses": {
+          "named": [],
+          "unnamed": [],
         },
         "name": "test",
         "owner": "0xowner",
-        "records": Object {
+        "records": {
           "clearRecords": true,
         },
         "resolverAddress": "0xresolver",
@@ -157,11 +159,10 @@ describe('useRegistrationParams()', () => {
         owner: '0xowner',
         registrationData: {
           years: 1,
-          resolver: '0xresolver',
+          resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [],
           permissions: {
-            CAN_DO_EVERYTHING: false,
             CANNOT_APPROVE: false,
             CANNOT_BURN_FUSES: false,
             CANNOT_CREATE_SUBDOMAIN: false,
@@ -176,17 +177,17 @@ describe('useRegistrationParams()', () => {
       }),
     )
     expect(result.current).toMatchInlineSnapshot(`
-      Object {
+      {
         "duration": 31536000,
-        "fuses": Object {
-          "named": Array [
+        "fuses": {
+          "named": [
             "CANNOT_UNWRAP",
           ],
-          "unnamed": Array [],
+          "unnamed": [],
         },
         "name": "test",
         "owner": "0xowner",
-        "records": Object {
+        "records": {
           "clearRecords": false,
         },
         "resolverAddress": "0xresolver",

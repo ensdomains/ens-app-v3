@@ -1,82 +1,48 @@
-import { mockFunction, renderHook, waitFor } from '@app/test-utils'
+import { mockFunction, renderHook } from '@app/test-utils'
 
-import { useEns } from '@app/utils/EnsProvider'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useContractAddress } from './useContractAddress'
+import { useDnsOwner } from './ensjs/dns/useDnsOwner'
+import { useBasicName } from './useBasicName'
 import { useNameDetails } from './useNameDetails'
 import { useProfile } from './useProfile'
-import { useValidate } from './useValidate'
 
-jest.mock('@app/utils/EnsProvider')
-jest.mock('./useProfile')
-jest.mock('./useValidate')
-jest.mock('./useContractAddress')
+vi.mock('./useBasicName')
+vi.mock('./useProfile')
+vi.mock('./ensjs/dns/useDnsOwner')
 
-const mockUseEns = mockFunction(useEns)
+const mockUseBasicName = mockFunction(useBasicName)
 const mockUseProfile = mockFunction(useProfile)
-const mockUseValidate = mockFunction(useValidate)
-const mockUseContractAddress = mockFunction(useContractAddress)
-
-const mockGetOwner = {
-  ...jest.fn(),
-  batch: jest.fn(),
-}
-const mockGetExpiry = {
-  ...jest.fn(),
-  batch: jest.fn(),
-}
-const mockBatch = jest.fn()
-const mockGetDNSOwner = jest.fn(
-  () =>
-    new Promise((resolve) => {
-      resolve('0xaddress')
-    }),
-)
+const mockUseDnsOwner = mockFunction(useDnsOwner)
 
 describe('useNameDetails', () => {
-  mockUseEns.mockReturnValue({
-    ready: true,
-    getOwner: mockGetOwner,
-    getExpiry: mockGetExpiry,
-    getDNSOwner: mockGetDNSOwner,
-    batch: mockBatch,
-  })
-  mockUseProfile.mockReturnValue({
-    loading: false,
-    profile: undefined,
-    status: 'success',
-  })
-  mockUseContractAddress.mockReturnValue('0x123')
-  afterEach(() => {
-    jest.clearAllMocks()
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseProfile.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+    })
+    mockUseDnsOwner.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+    })
   })
   it('should return an error message for an invalid name', () => {
-    mockUseValidate.mockReturnValue({
+    mockUseBasicName.mockReturnValue({
       isValid: false,
       name: 'invalid',
     })
 
-    const { result } = renderHook(() => useNameDetails('invalid'))
+    const { result } = renderHook(() => useNameDetails({ name: 'invalid' }))
     expect(result.current.error).toEqual('errors.invalidName')
   })
-  it('should call getDNSOwner if TLD is not .eth', () => {
-    mockUseValidate.mockReturnValue({
+  it('should not enable useProfile when normalisedName is [root]', () => {
+    mockUseBasicName.mockReturnValue({
       isValid: true,
-      name: 'test.com',
-      labelCount: 2,
+      name: '[root]',
+      normalisedName: '[root]',
     })
-
-    renderHook(() => useNameDetails('test.com'))
-    expect(mockGetDNSOwner).toHaveBeenCalledWith('test.com')
-  })
-  it('should return dnsOwner if TLD is not .eth and there is an owner', async () => {
-    mockUseValidate.mockReturnValue({
-      isValid: true,
-      name: 'test.com',
-      labelCount: 2,
-    })
-
-    const { result } = renderHook(() => useNameDetails('test.com'))
-    await waitFor(() => expect(result.current.dnsOwner).toEqual('0xaddress'))
+    renderHook(() => useNameDetails({ name: '[root]' }))
+    expect(mockUseProfile).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
   })
 })

@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
-import { useChainId } from '../useChainId'
 import { useTransactionStore } from './TransactionStoreContext'
 
 export function useClearRecentTransactions(): () => void {

@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { Button, Dialog, Field, ScrollBox } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
-import { useExpiry } from '@app/hooks/useExpiry'
+import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 
 import { DetailedSwitch } from '../../../ProfileEditor/components/DetailedSwitch'
@@ -13,11 +13,10 @@ import type { SendNameForm } from '../../SendName-flow'
 import { SummarySection } from './components/SummarySection'
 
 const StyledScrollBox = styled(ScrollBox)(
-  ({ theme }) =>
-    css`
-      width: 100%;
-      margin-right: -${theme.space[2]};
-    `,
+  ({ theme }) => css`
+    width: 100%;
+    margin-right: -${theme.space[2]};
+  `,
 )
 
 const NameContainer = styled.div(
@@ -49,10 +48,10 @@ export const SummaryView = ({ name, canResetProfile, onNext, onBack }: Props) =>
   const { t } = useTranslation('transactionFlow')
   const { control, register } = useFormContext<SendNameForm>()
   const recipient = useWatch({ control, name: 'recipient' })
-  const expiry = useExpiry(name)
-  const expiryLabel = expiry.expiry?.expiry
+  const expiry = useExpiry({ name })
+  const expiryLabel = expiry.data?.expiry?.date
     ? t('input.sendName.views.summary.fields.name.expires', {
-        date: expiry.expiry?.expiry?.toLocaleDateString(undefined, {
+        date: expiry.data?.expiry?.date.toLocaleDateString(undefined, {
           year: 'numeric',
           month: 'short',
           day: 'numeric',
@@ -60,7 +59,7 @@ export const SummaryView = ({ name, canResetProfile, onNext, onBack }: Props) =>
       })
     : undefined
 
-  const isLoading = expiry.loading
+  const isLoading = expiry.isLoading || !recipient
   if (isLoading) return <TransactionLoader />
   return (
     <>

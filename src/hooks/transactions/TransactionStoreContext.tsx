@@ -1,9 +1,9 @@
-import type { BaseProvider } from '@ethersproject/providers'
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useAccount, useProvider } from 'wagmi'
+import { useAccount, useChainId, useConfig } from 'wagmi'
 
-import { useChainId } from '../useChainId'
-import { TransactionStore, createTransactionStore } from './transactionStore'
+import { ConfigWithEns } from '@app/types'
+
+import { createTransactionStore, TransactionStore } from './transactionStore'
 
 // Only allow a single instance of the store to exist at once
 // so that multiple RainbowKitProvider instances can share the same store.
@@ -14,19 +14,14 @@ let storeSingleton: ReturnType<typeof createTransactionStore> | undefined
 const TransactionStoreContext = createContext<TransactionStore | null>(null)
 
 export function TransactionStoreProvider({ children }: { children: React.ReactNode }) {
-  const provider = useProvider<BaseProvider>()
+  const config = useConfig<ConfigWithEns>()
   const { address } = useAccount()
   const chainId = useChainId()
 
   // Use existing store if it exists, or lazily create one
   const [store] = useState(
-    () => storeSingleton ?? (storeSingleton = createTransactionStore({ provider })),
+    () => storeSingleton ?? (storeSingleton = createTransactionStore(config)),
   )
-
-  // Keep store provider up to date with any wagmi changes
-  useEffect(() => {
-    store.setProvider(provider)
-  }, [store, provider])
 
   // Wait for pending transactions whenever address or chainId changes
   useEffect(() => {
@@ -34,6 +29,10 @@ export function TransactionStoreProvider({ children }: { children: React.ReactNo
       store.waitForPendingTransactions(address, chainId)
     }
   }, [store, address, chainId])
+
+  useEffect(() => {
+    store.setConfig(config)
+  }, [store, config])
 
   return (
     <TransactionStoreContext.Provider value={store}>{children}</TransactionStoreContext.Provider>

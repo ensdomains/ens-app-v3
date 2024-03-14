@@ -1,14 +1,12 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-
-const SingleNameGasLimit = BigNumber.from('105000')
-const BulkRenewalBaseGasLimit = BigNumber.from('105000')
-const BulkRenewalGasLimitPerName = BigNumber.from('42000')
+const SingleNameGasLimit = 105000n
+const BulkRenewalBaseGasLimit = 105000n
+const BulkRenewalGasLimitPerName = 42000n
 const gasLimitDictionary = {
   RENEW: (numberOfNames: number) => {
-    if (!numberOfNames) return BigNumber.from('0')
+    if (!numberOfNames) return 0n
     return numberOfNames === 1
       ? SingleNameGasLimit
-      : BulkRenewalGasLimitPerName.mul(numberOfNames).add(BulkRenewalBaseGasLimit)
+      : BulkRenewalGasLimitPerName * BigInt(numberOfNames) + BulkRenewalBaseGasLimit
   },
 }
 

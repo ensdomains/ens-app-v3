@@ -1,7 +1,8 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import { createSubname } from '@ensdomains/ensjs/wallet'
+
+import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = {
   parent: string
@@ -29,14 +30,14 @@ const displayItems = (
   },
 ]
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
-  ens.createSubname.populateTransaction(`${data.label}.${data.parent}`, {
-    signer,
-    owner: await signer.getAddress(),
+const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) =>
+  createSubname.makeFunctionData(connectorClient, {
+    name: `${data.label}.${data.parent}`,
+    owner: connectorClient.account.address,
     contract: data.contract,
   })
 
 export default {
   displayItems,
   transaction,
-} as Transaction<Data>
+} satisfies Transaction<Data>

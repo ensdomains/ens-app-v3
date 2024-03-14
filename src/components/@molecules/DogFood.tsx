@@ -1,18 +1,19 @@
-import { isAddress } from '@ethersproject/address'
-import { useEffect, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useQuery, useQueryClient } from 'wagmi'
+import { isAddress } from 'viem'
+import { useAccount, useChainId } from 'wagmi'
 
 import { Input } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { useEns } from '@app/utils/EnsProvider'
-import useDebouncedCallback from '@app/hooks/useDebouncedCallback';
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
-import { DisplayItems } from './TransactionDialogManager/DisplayItems'
+import { useAddressRecord } from '@app/hooks/ensjs/public/useAddressRecord'
+import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
+import { createQueryKey } from '@app/hooks/useQueryOptions'
 
+import { DisplayItems } from './TransactionDialogManager/DisplayItems'
 
 const InnerContainer = styled.div(() => [
   css`
@@ -20,23 +21,23 @@ const InnerContainer = styled.div(() => [
   `,
 ])
 
-export const DogFood = (
-    { 
-      register, 
-      watch, 
-      formState,
-      setValue,
-      disabled,
-      validations,
-      label, 
-      hideLabel,
-      trigger
-    // eslint-disable-next-line prettier/prettier
-    }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'watch' | 'formState' | 'setValue' | 'trigger'> 
-    & { label?: string, validations?: any, disabled?: boolean, hideLabel?: boolean },
-) => {
+type DogFoodProps = Pick<
+  ReturnType<typeof useForm<any>>,
+  'register' | 'watch' | 'formState' | 'setValue' | 'trigger'
+> & { label?: string; validations?: any; disabled?: boolean; hideLabel?: boolean }
+
+export const DogFood = ({
+  register,
+  watch,
+  formState,
+  setValue,
+  disabled,
+  validations,
+  label,
+  hideLabel,
+  trigger,
+}: DogFoodProps) => {
   const { t } = useTranslation('profile')
-  const { getAddr, ready } = useEns()
   const queryClient = useQueryClient()
 
   const inputWatch: string | undefined = watch('dogfoodRaw')
@@ -45,33 +46,29 @@ export const DogFood = (
   const [ethNameInput, setEthNameInput] = useState('')
   const throttledSetEthNameInput = useDebouncedCallback(setEthNameInput, 500)
   useEffect(() => {
-      throttledSetEthNameInput((inputWatch || '').toLocaleLowerCase())
+    throttledSetEthNameInput((inputWatch || '').toLocaleLowerCase())
   }, [inputWatch, throttledSetEthNameInput])
 
-  const queryKeyGenerator = useQueryKeys().dogfood 
+  const chainId = useChainId()
+  const { address } = useAccount()
 
-  // Attempt to get address of ENS name
-  const { data: ethNameAddress } = useQuery(
-     queryKeyGenerator(ethNameInput),
-    async () => {
-      try {
-      const result = await getAddr(ethNameInput, '60')
-      return (result as any)?.addr || ''
-      } catch (e) {
-        return ''
-      }
-    },
-    { enabled: !!ethNameInput?.includes('.') && ready },
-  )
+  const { data: addressRecordData } = useAddressRecord({
+    enabled: !!ethNameInput?.includes('.'),
+    name: ethNameInput,
+  })
+
+  const ethNameAddress = useMemo(() => {
+    return addressRecordData?.value || ''
+  }, [addressRecordData?.value])
 
   // Update react value of address
   const finalValue = inputWatch?.includes('.') ? ethNameAddress : inputWatch
-  useEffect(() => { 
+  useEffect(() => {
     setValue('address', finalValue)
     if (finalValue) trigger('dogfoodRaw')
   }, [finalValue, setValue, trigger])
 
-  const errorMessage = formState.errors.dogfoodRaw?.message
+  const errorMessage = formState.errors.dogfoodRaw?.message as string
 
   return (
     <InnerContainer>
@@ -91,19 +88,29 @@ export const DogFood = (
               !disabled && !value?.includes('.') && !isAddress(value)
                 ? t('errors.invalidAddress')
                 : undefined,
-            hasAddressRecord: async (value) => {
-              if(value?.includes('.')) {
+            hasAddressRecord: async (value: string) => {
+              if (value?.includes('.')) {
                 try {
-                  const result = await queryClient.getQueryData(queryKeyGenerator(value.toLowerCase()))
-                  if (result) { return undefined }
-                // eslint-disable-next-line no-empty
-                } catch (e){
+                  const result = await queryClient.getQueryData(
+                    createQueryKey({
+                      chainId,
+                      address,
+                      queryDependencyType: 'standard',
+                      functionName: 'getAddressRecord',
+                      params: { name: value.toLowerCase() },
+                    }),
+                  )
+                  if (result) {
+                    return undefined
+                  }
+                  // eslint-disable-next-line no-empty
+                } catch (e) {
                   console.error('validation error: ', e)
                 }
                 return 'ENS Name has no address record'
-                }
-              },
-            ...validations
+              }
+            },
+            ...validations,
           },
         })}
         error={errorMessage}
@@ -111,10 +118,8 @@ export const DogFood = (
       />
       {!errorMessage && finalValue && !disabled && (
         <>
-         <Spacer $height='2' />
-          <DisplayItems displayItems={[
-            { label: 'address', value: finalValue, type: 'address' },
-          ]} />
+          <Spacer $height="2" />
+          <DisplayItems displayItems={[{ label: 'address', value: finalValue, type: 'address' }]} />
         </>
       )}
     </InnerContainer>

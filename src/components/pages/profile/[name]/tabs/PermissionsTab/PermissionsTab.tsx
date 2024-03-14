@@ -1,25 +1,23 @@
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { Banner } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
-import { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
-import useParentBasicName from '@app/hooks/useParentBasicName'
-import { useEns } from '@app/utils/EnsProvider'
+import { useParentBasicName } from '@app/hooks/useParentBasicName'
 
 import { ExpiryPermissions } from './ExpiryPermissions'
 import { NameChangePermissions } from './NameChangePermissions'
 import { OwnershipPermissions } from './OwnershipPermissions'
 
-type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
-type WrapperData = Awaited<ReturnType<GetWrapperDataFunc>>
-
 type Props = {
   name: string
-  wrapperData: WrapperData
+  wrapperData: GetWrapperDataReturnType | undefined
   isCached: boolean
 }
 
@@ -43,10 +41,11 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
   const is2LDEth = nameParts.length === 2 && nameParts[1] === 'eth'
   const isSubname = nameParts.length > 2
 
+  const abilities = useAbilities({ name })
   const { wrapperData: parentWrapperData, isCachedData: isParentBasicCachedData } =
-    useParentBasicName(name)
+    useParentBasicName({ name })
 
-  const { fusesSetDates } = useGetFusesSetDates(name)
+  const { data: fusesSetDates } = useFusesSetDates({ name })
   const fusesStatus = useFusesStates({
     wrapperData,
     parentWrapperData,
@@ -88,6 +87,7 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
         name={name}
         wrapperData={wrapperData}
         fusesSetDates={fusesSetDates}
+        canEditPermissions={abilities.data?.canEditPermissions}
         {...fusesStatus}
       />
     </Container>

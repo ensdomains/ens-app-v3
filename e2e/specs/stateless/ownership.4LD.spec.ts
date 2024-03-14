@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
-import { Name } from '@root/playwright/fixtures/makeName'
+
+import { test } from '../../../playwright'
+import { Name } from '../../../playwright/fixtures/makeName'
 
 test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () => {
   test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
@@ -14,7 +15,12 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -40,12 +46,9 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
     await expect(sendNameModal.resetProfileSwitch).not.toBeVisible()
 
     await sendNameModal.summaryHeader.click()
-    test.step(
-      'Should not be able to reset profile since old resolver does not support VersionableResolver',
-      async () => {
-        await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
-      },
-    )
+    test.step('Should not be able to reset profile since old resolver does not support VersionableResolver', async () => {
+      await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
+    })
     test.step('Should not be able to send Owner', async () => {
       await expect(sendNameModal.summaryItem('owner')).toHaveCount(0)
     })
@@ -72,7 +75,7 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
     })
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -83,7 +86,12 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -115,7 +123,12 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -159,12 +172,7 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
     })
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -175,7 +183,12 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -187,7 +200,7 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Parent Owner and Manager', () 
       ],
     })
 
-    const subname = `test.${name}`
+    const subname = `4ld.test.${name}`
     const ownershipPage = makePageObject('OwnershipPage')
 
     await ownershipPage.goto(subname)
@@ -216,7 +229,12 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
           owner: 'user2',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -242,12 +260,9 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
     await expect(sendNameModal.resetProfileSwitch).not.toBeVisible()
 
     await sendNameModal.summaryHeader.click()
-    test.step(
-      'Should not be able to reset profile since old resolver does not support VersionableResolver',
-      async () => {
-        await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
-      },
-    )
+    test.step('Should not be able to reset profile since old resolver does not support VersionableResolver', async () => {
+      await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
+    })
     test.step('Should not be able to send Owner', async () => {
       await expect(sendNameModal.summaryItem('owner')).toHaveCount(0)
     })
@@ -274,7 +289,7 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
     })
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -285,7 +300,12 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -317,7 +337,12 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -365,7 +390,7 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
     login,
     makeName,
     makePageObject,
-    accounts,
+    page,
   }) => {
     const name = await makeName({
       label: 'unwrapped',
@@ -377,7 +402,12 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -389,11 +419,12 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
       ],
     })
 
-    const subname = `test.${name}`
+    const subname = `4ld.test.${name}`
     const ownershipPage = makePageObject('OwnershipPage')
 
     await ownershipPage.goto(subname)
     await login.connect()
+    await page.pause()
 
     await expect(ownershipPage.expiryPanelExpiry).toHaveCount(0)
     await expect(ownershipPage.expiryPanelGracePeriod).toHaveCount(0)
@@ -418,7 +449,12 @@ test.describe('Unwrapped 4LD - Unwrapped 3LD,2LD - Parent only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -444,12 +480,9 @@ test.describe('Unwrapped 4LD - Unwrapped 3LD,2LD - Parent only', () => {
     await expect(sendNameModal.resetProfileSwitch).not.toBeVisible()
 
     await sendNameModal.summaryHeader.click()
-    test.step(
-      'Should not be able to reset profile since old resolver does not support VersionableResolver',
-      async () => {
-        await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
-      },
-    )
+    test.step('Should not be able to reset profile since old resolver does not support VersionableResolver', async () => {
+      await expect(sendNameModal.summaryItem('reset-profile')).toHaveCount(0)
+    })
     test.step('Should not be able to send Owner', async () => {
       await expect(sendNameModal.summaryItem('owner')).toHaveCount(0)
     })
@@ -479,7 +512,7 @@ test.describe('Unwrapped 4LD - Unwrapped 3LD,2LD - Parent only', () => {
     )
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -490,7 +523,12 @@ test.describe('Unwrapped 4LD - Unwrapped 3LD,2LD - Parent only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -522,7 +560,12 @@ test.describe('Unwrapped 4LD - Unwrapped 3LD,2LD - Parent only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -567,12 +610,7 @@ test.describe('Unwrapped 4LD - Unwrapped 3LD,2LD - Parent only', () => {
     )
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -583,7 +621,12 @@ test.describe('Unwrapped 4LD - Unwrapped 3LD,2LD - Parent only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -639,18 +682,15 @@ test.describe('Unwrapped 4LD - Wrapped 3LD,2LD - Parent Owner only', () => {
 
     await ownershipPage.goto(subname)
     await login.connect()
+
+    await page.pause()
     await page.waitForTimeout(2000)
     await expect(ownershipPage.sendNameButton).toHaveCount(0)
     await expect(ownershipPage.editRolesButton).toHaveCount(0)
     await expect(ownershipPage.syncManagerButton).toHaveCount(0)
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -662,7 +702,12 @@ test.describe('Unwrapped 4LD - Wrapped 3LD,2LD - Parent Owner only', () => {
           type: 'legacy',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -693,7 +738,7 @@ test.describe('Unwrapped 4LD - Wrapped 3LD,2LD - Parent Owner only', () => {
 })
 
 test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
-  test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Send feature', async ({ page, login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'wrapped',
@@ -705,7 +750,12 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
           type: 'wrapped',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -726,6 +776,7 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
+    await page.pause()
     await ownershipPage.sendNameButton.click()
     await sendNameModal.searchInput.fill(accounts.getAddress('user3'))
     await sendNameModal.searchResult(accounts.getAddress('user3')).click()
@@ -762,7 +813,7 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
     })
   })
 
-  test('Sync Manager', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Sync Manager', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -773,7 +824,12 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -805,7 +861,12 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -849,12 +910,7 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
     })
   })
 
-  test('Expiry Section, Extend & Set Reminder', async ({
-    login,
-    makeName,
-    makePageObject,
-    accounts,
-  }) => {
+  test('Expiry Section, Extend & Set Reminder', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -865,7 +921,12 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
           owner: 'user',
           records: {
             texts: [{ key: 'name', value: 'test' }],
-            coinTypes: [{ key: 'ETH', value: accounts.getAddress('user') }],
+            coins: [
+              {
+                coin: 'etcLegacy',
+                value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+              },
+            ],
           },
           subnames: [
             {
@@ -877,7 +938,7 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
       ],
     })
 
-    const subname = `test.${name}`
+    const subname = `4ld.test.${name}`
     const ownershipPage = makePageObject('OwnershipPage')
 
     await ownershipPage.goto(subname)
@@ -900,22 +961,35 @@ test.describe('Wrapped & Emancipated 4LD, Wrapped 3LD,2LD - Parent Owner and Man
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user2',
-          fuses: ['PARENT_CANNOT_CONTROL', 'CANNOT_UNWRAP'],
+          fuses: {
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
+            },
+            child: {
+              named: ['CANNOT_UNWRAP'],
+            },
+          },
           subnames: [
             {
               label: '4ld',
               owner: 'user',
-              fuses: ['PARENT_CANNOT_CONTROL'],
+              fuses: {
+                parent: {
+                  named: ['PARENT_CANNOT_CONTROL'],
+                },
+              },
             },
           ],
         },
       ],
-    } as Name)
+    } as unknown as Name)
     const subname = `4ld.test.${name}`
 
     const ownershipPage = makePageObject('OwnershipPage')
@@ -969,22 +1043,35 @@ test.describe('Wrapped & Emancipated 4LD, Wrapped 3LD,2LD - Parent Owner and Man
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user2',
-          fuses: ['PARENT_CANNOT_CONTROL', 'CANNOT_UNWRAP'],
+          fuses: {
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
+            },
+            child: {
+              named: ['CANNOT_UNWRAP'],
+            },
+          },
           subnames: [
             {
               label: '4ld',
               owner: 'user',
-              fuses: ['PARENT_CANNOT_CONTROL'],
+              fuses: {
+                parent: {
+                  named: ['PARENT_CANNOT_CONTROL'],
+                },
+              },
             },
           ],
         },
       ],
-    } as Name)
+    } as unknown as Name)
 
     const subname = `4ld.test.${name}`
     const ownershipPage = makePageObject('OwnershipPage')
@@ -1000,22 +1087,35 @@ test.describe('Wrapped & Emancipated 4LD, Wrapped 3LD,2LD - Parent Owner and Man
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user2',
-          fuses: ['PARENT_CANNOT_CONTROL', 'CANNOT_UNWRAP'],
+          fuses: {
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
+            },
+            child: {
+              named: ['CANNOT_UNWRAP'],
+            },
+          },
           subnames: [
             {
               label: '4ld',
               owner: 'user',
-              fuses: ['PARENT_CANNOT_CONTROL'],
+              fuses: {
+                parent: {
+                  named: ['PARENT_CANNOT_CONTROL'],
+                },
+              },
             },
           ],
         },
       ],
-    } as Name)
+    } as unknown as Name)
 
     const subname = `4ld.test.${name}`
     const ownershipPage = makePageObject('OwnershipPage')
@@ -1054,22 +1154,35 @@ test.describe('Wrapped & Emancipated 4LD, Wrapped 3LD,2LD - Parent Owner and Man
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user2',
-          fuses: ['PARENT_CANNOT_CONTROL', 'CANNOT_UNWRAP'],
+          fuses: {
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
+            },
+            child: {
+              named: ['CANNOT_UNWRAP'],
+            },
+          },
           subnames: [
             {
               label: '4ld',
               owner: 'user',
-              fuses: ['PARENT_CANNOT_CONTROL'],
+              fuses: {
+                parent: {
+                  named: ['PARENT_CANNOT_CONTROL'],
+                },
+              },
             },
           ],
         },
       ],
-    } as Name)
+    } as unknown as Name)
 
     const subname = `4ld.test.${name}`
     const ownershipPage = makePageObject('OwnershipPage')

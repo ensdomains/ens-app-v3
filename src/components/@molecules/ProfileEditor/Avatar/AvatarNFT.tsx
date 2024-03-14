@@ -1,16 +1,25 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
 import { ReactNode, useCallback, useState } from 'react'
 import { TFunction, useTranslation } from 'react-i18next'
-import styled, { DefaultTheme, css, keyframes } from 'styled-components'
-import { useAccount, useInfiniteQuery } from 'wagmi'
+import styled, { css, DefaultTheme, keyframes } from 'styled-components'
+import { useAccount, useClient } from 'wagmi'
 
-import { AlertSVG, Button, Dialog, Heading, Input, Typography, mq } from '@ensdomains/thorin'
+import {
+  AlertSVG,
+  Button,
+  Dialog,
+  Heading,
+  Input,
+  MagnifyingGlassSVG,
+  mq,
+  Typography,
+} from '@ensdomains/thorin'
 
-import MagnifyingGlassSVG from '@app/assets/MagnifyingGlass.svg'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
-import { useChainName } from '@app/hooks/useChainName'
+import { useChainName } from '@app/hooks/chain/useChainName'
+import { getSupportedChainContractAddress } from '@app/utils/getSupportedChainContractAddress'
 
 type OwnedNFT = {
   contract: {
@@ -264,13 +273,15 @@ export const AvatarNFT = ({
   const { address: _address } = useAccount()
   const address = _address!
 
+  const client = useClient()
+
   const {
     data: NFTPages,
     fetchNextPage,
     isLoading,
-  } = useInfiniteQuery(
-    [chain, address, 'NFTs'],
-    async ({ pageParam }: { pageParam?: string }) => {
+  } = useInfiniteQuery({
+    queryKey: [chain, address, 'NFTs'],
+    queryFn: async ({ pageParam }) => {
       const urlParams = new URLSearchParams()
       urlParams.append('owner', address)
       urlParams.append('filters[]', 'SPAM')
@@ -286,16 +297,24 @@ export const AvatarNFT = ({
         ...response,
         ownedNfts: response.ownedNfts.filter(
           (nft) =>
-            (nft.media[0].thumbnail || nft.media[0].gateway) &&
-            nft.contract.address !== '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
+            (nft.media?.[0]?.thumbnail || nft.media?.[0]?.gateway) &&
+            nft.contract.address !==
+              getSupportedChainContractAddress({
+                client,
+                contract: 'ensBaseRegistrarImplementation',
+              }) &&
+            nft.contract.address !==
+              getSupportedChainContractAddress({
+                client,
+                contract: 'ensNameWrapper',
+              }),
         ),
-      } as NFTResponse
+      }
     },
-    {
-      keepPreviousData: true,
-      getNextPageParam: (lastPage) => lastPage.pageKey,
-    },
-  )
+    initialPageParam: '',
+    placeholderData: keepPreviousData,
+    getNextPageParam: (lastPage) => lastPage.pageKey,
+  })
 
   const [searchedInput, setSearchedInput] = useState('')
   const [selectedNFT, setSelectedNFT] = useState<number | null>(null)
@@ -313,7 +332,7 @@ export const AvatarNFT = ({
     const handleConfirm = () => {
       const string = `eip155:1/${nftReference.id.tokenMetadata.tokenType.toLowerCase()}:${
         nftReference.contract.address
-      }/${BigNumber.from(nftReference.id.tokenId).toString()}`
+      }/${BigInt(nftReference.id.tokenId).toString()}`
       handleSubmit('nft', string, nftReference.media[0].gateway)
     }
 

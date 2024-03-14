@@ -3,8 +3,9 @@
 /* eslint-disable no-await-in-loop */
 
 /* eslint-disable no-promise-executor-return */
-import { GraphQLClient, gql } from 'graphql-request'
-import { Provider } from 'playwright/fixtures/provider'
+import { gql, GraphQLClient } from 'graphql-request'
+
+import { Provider } from './provider.js'
 
 export type Subgraph = ReturnType<typeof createSubgraph>
 

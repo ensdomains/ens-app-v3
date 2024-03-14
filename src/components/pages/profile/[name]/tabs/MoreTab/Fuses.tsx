@@ -1,13 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { ChildFuses, ParentFuses, userSettableFuseEnum } from '@ensdomains/ensjs/utils/fuses'
-import { Helper, Typography, mq } from '@ensdomains/thorin'
+import { UserSettableFuses } from '@ensdomains/ensjs/utils'
+import { Helper, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { TrafficLight } from '@app/components/TrafficLight'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { CurrentAnyFuses } from '@app/types'
 
 import { TabWrapper } from '../../../TabWrapper'
 
@@ -76,14 +77,14 @@ const Fuses = ({
   isCachedData,
 }: {
   name: string
-  fuseObj: ChildFuses['current'] & ParentFuses['current']
+  fuseObj: CurrentAnyFuses
   canEdit: boolean
   isCachedData: boolean
 }) => {
   const { t } = useTranslation('profile')
 
-  const { prepareDataInput } = useTransactionFlow()
-  const showBurnFusesInput = prepareDataInput('BurnFuses')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showBurnFusesInput = usePreparedDataInput('BurnFuses')
   const handleEditClick = () => {
     showBurnFusesInput(`burn-fuses-${name}`, {
       name,
@@ -115,10 +116,11 @@ const Fuses = ({
         <div>
           {Object.entries(fuseObj)
             .filter(([key]) => key !== 'CAN_DO_EVERYTHING')
-            .sort(
-              (a, b) =>
-                userSettableFuseEnum[a[0] as keyof typeof userSettableFuseEnum] -
-                userSettableFuseEnum[b[0] as keyof typeof userSettableFuseEnum],
+            .sort((a, b) =>
+              Number(
+                UserSettableFuses[a[0] as keyof typeof UserSettableFuses] -
+                  UserSettableFuses[b[0] as keyof typeof UserSettableFuses],
+              ),
             )
             .map(([key, value], inx) => (
               <FusesRow key={key}>

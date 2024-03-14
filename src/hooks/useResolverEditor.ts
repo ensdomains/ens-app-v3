@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { Address } from 'viem'
 
-import { useChainId } from '@app/hooks/useChainId'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+
+import { useContractAddress } from './chain/useContractAddress'
 
 type FormData = {
   resolverChoice: 'latest' | 'custom'
@@ -11,13 +12,12 @@ type FormData = {
 }
 
 export type Props = {
-  callback: (data: string) => void
+  callback: (data: Address) => void
   resolverAddress: string | undefined
 }
 
 const useResolverEditor = ({ callback, resolverAddress }: Props) => {
-  const chainId = useChainId()
-  const lastestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
+  const lastestResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
   const isResolverAddressLatest = resolverAddress === lastestResolverAddress
 
   const { register, formState, handleSubmit, reset, trigger, watch, getFieldState, setValue } =
@@ -33,14 +33,11 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
   const resolverChoice: 'latest' | 'custom' = watch('resolverChoice')
   const customResolver = watch('address')
 
-  const { errors: resolverWarnings } = useResolverHasInterfaces(
-    ['IAddrResolver', 'ITextResolver', 'IContentHashResolver'],
-    customResolver,
-    resolverChoice !== 'custom',
-    {
-      fallbackMsg: 'Cannot determine if address supports resolver methods',
-    },
-  )
+  const { errors: resolverWarnings } = useResolverHasInterfaces({
+    interfaceNames: ['AddressResolver', 'TextResolver', 'ContentHashResolver'],
+    resolverAddress: customResolver as Address,
+    enabled: resolverChoice === 'custom',
+  })
 
   const handleResolverSubmit = async (values: FormData) => {
     const { resolverChoice: choice, address } = values
@@ -52,7 +49,7 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
       newResolver = address
     }
     if (!newResolver) return
-    callback(newResolver)
+    callback(newResolver as Address)
   }
 
   const hasWarnings =

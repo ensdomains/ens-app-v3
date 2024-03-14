@@ -1,5 +1,6 @@
 import { TOptions } from 'i18next'
 import { ComponentProps, Dispatch, ReactNode } from 'react'
+import { Hash } from 'viem'
 
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
@@ -8,7 +9,7 @@ import { MinedData, TransactionDisplayItem } from '@app/types'
 
 import type { DataInputComponent } from './input'
 import type { IntroComponentName } from './intro'
-import type { TransactionItem, TransactionName, makeTransactionItem } from './transaction'
+import type { TransactionData, TransactionItem, TransactionName } from './transaction'
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'
 
@@ -19,10 +20,13 @@ type GenericDataInput = {
   data: any
 }
 
-export type GenericTransaction = {
-  name: TransactionName
-  data: any
-  hash?: string
+export type GenericTransaction<
+  TName extends TransactionName = TransactionName,
+  TData extends TransactionData<TName> = TransactionData<TName>,
+> = {
+  name: TName
+  data: TData
+  hash?: Hash
   sendTime?: number
   finaliseTime?: number
   stage?: TransactionStage
@@ -46,7 +50,7 @@ export type TransactionIntro = {
 export type TransactionFlowItem = {
   input?: GenericDataInput
   intro?: TransactionIntro
-  transactions: GenericTransaction[]
+  transactions: readonly GenericTransaction[] | GenericTransaction[]
   resumable?: boolean
   requiresManualCleanup?: boolean
   autoClose?: boolean
@@ -98,7 +102,12 @@ export type TransactionFlowAction =
     }
   | {
       name: 'setTransactions'
-      payload: ReturnType<typeof makeTransactionItem>[]
+      payload: {
+        [key in TransactionName]: {
+          name: key
+          data: TransactionData<key>
+        }
+      }[TransactionName][]
     }
   | {
       name: 'setFlowStage'
@@ -113,7 +122,7 @@ export type TransactionFlowAction =
     }
   | {
       name: 'setTransactionHash'
-      payload: string
+      payload: Hash
     }
   | {
       name: 'incrementTransaction'
@@ -148,21 +157,10 @@ export type TransactionDialogProps = ComponentProps<typeof Dialog> & {
 export type TransactionDialogPassthrough = {
   dispatch: Dispatch<TransactionFlowAction>
   onDismiss: () => void
-  transactions?: TransactionItem[]
+  transactions?: readonly TransactionItem[] | TransactionItem[]
 }
 
 export type ManagedDialogProps = {
-  transaction: GenericTransaction
-  onDismiss?: (success?: boolean) => void
-  onSuccess?: () => void
-  dismissBtnLabel?: string
-  completeBtnLabel?: string
-  completeTitle?: string
-  actionName: string
-  displayItems: TransactionDisplayItem[]
-}
-
-export type ManagedDialogPropsTwo = {
   dispatch: Dispatch<TransactionFlowAction>
   onDismiss: () => void
   transaction: GenericTransaction
@@ -173,4 +171,15 @@ export type ManagedDialogPropsTwo = {
   displayItems: TransactionDisplayItem[]
   helper?: ComponentProps<typeof Helper>
   backToInput: boolean
+}
+
+export type GetUniqueTransactionParameters = Pick<ManagedDialogProps, 'txKey' | 'currentStep'> & {
+  transaction: Pick<GenericTransaction, 'name' | 'data'>
+}
+
+export type UniqueTransaction<TName extends TransactionName = TransactionName> = {
+  key: string
+  step: number
+  name: TName
+  data: TransactionData<TName>
 }

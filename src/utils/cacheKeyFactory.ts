@@ -1,8 +1,9 @@
-import { useAccount } from 'wagmi'
+// TODO: Delete after checking that useFaucet refactor works
+// @ts-nocheck
+import { useAccount, useChainId } from 'wagmi'
 
 import type { uniqueTransactionIdentifierGenerator } from '@app/components/@molecules/TransactionDialogManager/stage/TransactionStageModal'
 import { ResolverInterfaceName } from '@app/constants/resolverInterfaceIds'
-import { useChainId } from '@app/hooks/useChainId'
 import type { RegistrationProps } from '@app/hooks/useEstimateRegistration'
 import type { TransactionItem } from '@app/transaction-flow/transaction'
 

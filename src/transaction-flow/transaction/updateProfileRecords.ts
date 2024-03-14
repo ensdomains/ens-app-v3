@@ -1,17 +1,20 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
-import { TFunction } from 'i18next'
+import type { TFunction } from 'i18next'
+import { Address } from 'viem'
+
+import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import {
   getProfileRecordsDiff,
   profileRecordsToRecordOptions,
+  profileRecordsToRecordOptionsWithDeleteAbiArray,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { recordOptionsToToupleList } from '@app/utils/records'
 
 type Data = {
   name: string
-  resolver: string
+  resolverAddress: Address
   records: ProfileRecord[]
   previousRecords?: ProfileRecord[]
   clearRecords: boolean
@@ -70,19 +73,26 @@ const displayItems = (
   ]
 }
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const { name, records, previousRecords = [], clearRecords } = data
+const transaction = async ({
+  client,
+  connectorClient,
+  data,
+}: TransactionFunctionParameters<Data>) => {
+  const { name, resolverAddress, records, previousRecords = [], clearRecords } = data
   const submitRecords = getProfileRecordsDiff(records, previousRecords)
-  const recordOptions = profileRecordsToRecordOptions(submitRecords, clearRecords)
-
-  return ens.setRecords.populateTransaction(name, {
-    records: recordOptions,
-    resolverAddress: data.resolver,
-    signer,
+  const recordOptions = await profileRecordsToRecordOptionsWithDeleteAbiArray(client, {
+    name,
+    profileRecords: submitRecords,
+    clearRecords,
+  })
+  return setRecords.makeFunctionData(connectorClient, {
+    name,
+    resolverAddress,
+    ...recordOptions,
   })
 }
 export default {
   displayItems,
   transaction,
   backToInput: true,
-} as Transaction<Data>
+} satisfies Transaction<Data>

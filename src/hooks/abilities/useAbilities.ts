@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next'
 
 import { checkETH2LDFromName } from '@app/utils/utils'
 
-import { useResolverIsAuthorized } from '../resolver/useResolverIsAuthorized'
-import { useAccountSafely } from '../useAccountSafely'
+import { useAccountSafely } from '../account/useAccountSafely'
+import { useContractAddress } from '../chain/useContractAddress'
+import { useResolverIsAuthorised } from '../resolver/useResolverIsAuthorised'
 import { useBasicName } from '../useBasicName'
 import { useHasSubnames } from '../useHasSubnames'
+import { useParentBasicName } from '../useParentBasicName'
 import { getDeleteAbilities } from './utils/getDeleteAbilities'
 import { getEditAbilities } from './utils/getEditAbilities'
 import { getReclaimAbilities } from './utils/getReclaimAbilities'
@@ -33,6 +35,8 @@ export type EditAbilities = {
   canEditPermissions: boolean
   canCreateSubdomains: boolean
   canEditTTL: boolean
+  canCreateSubdomainsError?: string
+  canEditResolverError?: string
 }
 
 export type ReclaimAbilities = {
@@ -45,11 +49,11 @@ export type SendAbilities = {
   canSendManager: boolean
   sendNameFunctionCallDetails?: {
     sendOwner?: {
-      contract: 'registry' | 'nameWrapper' | 'baseRegistrar'
+      contract: 'registry' | 'nameWrapper' | 'registrar'
       method: 'safeTransferFrom'
     }
     sendManager?: {
-      contract: 'registry' | 'nameWrapper' | 'baseRegistrar'
+      contract: 'registry' | 'nameWrapper' | 'registrar'
       method: 'safeTransferFrom' | 'reclaim' | 'setOwner' | 'setSubnodeOwner'
     }
   }
@@ -77,25 +81,33 @@ export const DEFAULT_ABILITIES: Abilities = {
   canSendManager: false,
 }
 
-export const useAbilities = (name: string) => {
+type UseAbilitiesParameters = {
+  name: string
+  enabled?: boolean
+}
+
+export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) => {
   const { t } = useTranslation('profile')
   const parent = name?.split('.')?.slice(1).join('.')
 
   const { address } = useAccountSafely()
 
-  const basicNameData = useBasicName(name, { skipGraph: false, enabled: !!name && !!address })
+  const basicNameData = useBasicName({ name, enabled: enabled && !!name && !!address })
 
-  const resolverAuthorisation = useResolverIsAuthorized(name, {
-    enabled: !!name && !!address,
+  const resolverAuthorisation = useResolverIsAuthorised({
+    name,
+    enabled: enabled && !!name && !!address,
   })
 
-  const parentBasicNameData = useBasicName(parent, {
-    skipGraph: false,
-    enabled: !!parent && !!address,
+  const parentBasicNameData = useParentBasicName({
+    name,
+    enabled: enabled && !!parent && !!address,
   })
 
   // useHasSubnames checks internally if name exists & if it is subname before it enables itself
   const hasSubnamesData = useHasSubnames(name)
+
+  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
 
   const isLoading =
     !address ||
@@ -104,7 +116,11 @@ export const useAbilities = (name: string) => {
     hasSubnamesData.isLoading ||
     resolverAuthorisation.isLoading
 
-  const isCachedData = basicNameData.isCachedData || hasSubnamesData.isCachedData
+  const isCachedData =
+    basicNameData.isCachedData ||
+    hasSubnamesData.isCachedData ||
+    resolverAuthorisation.isCachedData ||
+    parentBasicNameData.isCachedData
 
   const data: Abilities | undefined = useMemo(
     () => {
@@ -120,14 +136,15 @@ export const useAbilities = (name: string) => {
         ...getEditAbilities({
           address,
           basicNameData,
-          hasAuthorisedResolver: resolverAuthorisation.data?.isAuthorized,
+          hasAuthorisedResolver: resolverAuthorisation.data?.isAuthorised,
+          nameWrapperAddress,
         }),
         ...getDeleteAbilities({
           name,
           address,
           basicNameData,
           parentBasicNameData,
-          hasSubnames: hasSubnamesData.hasSubnames!,
+          hasSubnames: hasSubnamesData.data!,
           t,
         }),
         ...getReclaimAbilities({
@@ -147,8 +164,8 @@ export const useAbilities = (name: string) => {
       parentBasicNameData.ownerData,
       parentBasicNameData.wrapperData,
       isLoading,
-      resolverAuthorisation.data?.isAuthorized,
-      hasSubnamesData.hasSubnames,
+      resolverAuthorisation.data?.isAuthorised,
+      hasSubnamesData.data,
       t,
     ],
   )

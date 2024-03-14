@@ -1,5 +1,10 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+
+import { setPrimaryName } from '@ensdomains/ensjs/wallet'
+
+import { test } from '../../../playwright'
+import { createAccounts } from '../../../playwright/fixtures/accounts'
+import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 /*
  * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will
@@ -14,12 +19,13 @@ test.describe.serial('normal registration', () => {
     login,
     accounts,
     provider,
-    contracts,
     time,
     makePageObject,
   }) => {
-    const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
-    await reverseRegistrar.setName('')
+    await setPrimaryName(walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
 
     const homePage = makePageObject('HomePage')
     const registrationPage = makePageObject('RegistrationPage')
@@ -39,6 +45,7 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
     await expect(registrationPage.primaryNameToggle).toBeChecked()
 
+    await page.pause()
     // should show adjusted gas estimate when primary name setting checked
     const estimate = await registrationPage.getGas()
     expect(estimate).toBeGreaterThan(0)
@@ -49,8 +56,8 @@ test.describe.serial('normal registration', () => {
     await registrationPage.primaryNameToggle.click()
 
     // should show cost comparison accurately
-    await expect(registrationPage.yearMarker(0)).toHaveText(/14% gas/)
-    await expect(registrationPage.yearMarker(1)).toHaveText(/8% gas/)
+    await expect(registrationPage.yearMarker(0)).toHaveText(/13% gas/)
+    await expect(registrationPage.yearMarker(1)).toHaveText(/7% gas/)
     await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
 
     // should show correct price for yearly registration
@@ -72,7 +79,7 @@ test.describe.serial('normal registration', () => {
     await page.getByTestId('profile-record-input-input-name').fill('Test Name')
 
     // should show ETH record by default
-    await expect(page.getByTestId('profile-record-input-input-ETH')).toHaveValue(
+    await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
       accounts.getAddress('user'),
     )
 

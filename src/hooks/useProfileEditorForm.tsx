@@ -6,9 +6,11 @@ import {
   profileRecordsToProfileEditorForm,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord, ProfileRecordGroup } from '@app/constants/profileRecordOptions'
-import supportedAddresses from '@app/constants/supportedAddresses.json'
+import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { AvatarEditorType } from '@app/types'
-import { validateCryptoAddress } from '@app/utils/validate'
+import { normalizeCoinAddress } from '@app/utils/coin'
+import { validateAccount } from '@app/validators/validateAccount'
+import { validateCryptoAddress } from '@app/validators/validateAddress'
 import { validateContentHash } from '@app/validators/validateContentHash'
 import { validateUrl } from '@app/validators/validateUrl'
 
@@ -27,8 +29,21 @@ export type ProfileEditorForm = {
   records: ProfileRecord[]
 } & AvatarEditorType
 
+export const isDirtyForRecordAtIndexCalc = (
+  index: number,
+  defaultRecords: ProfileRecord[],
+  currentRecords: ProfileRecord[],
+) => {
+  const defaultRecord = defaultRecords[index]
+  const currentRecord = currentRecords.find((record) => record?.key === defaultRecord?.key)
+  if (!currentRecord) return false
+  return currentRecord?.value !== defaultRecord.value
+}
+
 export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   const { t } = useTranslation('register')
+
+  const defaultValues = profileRecordsToProfileEditorForm(existingRecords)
 
   const {
     register,
@@ -41,7 +56,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     trigger,
   } = useForm<ProfileEditorForm>({
     mode: 'onChange',
-    defaultValues: profileRecordsToProfileEditorForm(existingRecords),
+    defaultValues,
   })
 
   const labelForRecord = (record: ProfileRecord) => {
@@ -50,7 +65,9 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     if (record.group === 'social')
       return t(`steps.profile.options.groups.social.items.${record.key}`)
     if (record.group === 'address')
-      return t('steps.profile.options.groups.address.itemLabel', { coin: record.key })
+      return t('steps.profile.options.groups.address.itemLabel', {
+        coin: record.key,
+      })
     if (record.group === 'other') return t(`steps.profile.options.groups.other.items.${record.key}`)
     if (record.group === 'website')
       return t(`steps.profile.options.groups.website.items.${record.key}`)
@@ -70,7 +87,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     if (record.group === 'social')
       return t(`steps.profile.options.groups.social.placeholder.${record.key}`)
     if (record.group === 'address')
-      return supportedAddresses.includes(record.key.toLowerCase())
+      return supportedAddresses.includes(record.key as (typeof supportedAddresses)[number])
         ? t(`steps.profile.options.groups.address.placeholder.${record.key}`)
         : t(`steps.profile.options.groups.address.placeholder.default`)
     if (record.group === 'website')
@@ -83,7 +100,8 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     if (record.key === 'url') return validateUrl
     if (record.group === 'address')
       return (value?: string) => {
-        const result = validateCryptoAddress(record.key)(value)
+        const address_ = normalizeCoinAddress({ coin: record.key, address: value })
+        const result = validateCryptoAddress({ coin: record.key, address: address_ })
         if (typeof result === 'string') {
           if (result === 'addressRequired') return t('errors.addressRequired', { ns: 'common' })
           return t('errors.invalidAddress', { ns: 'common' })
@@ -108,15 +126,18 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
           return t('steps.profile.errors.duplicateRecord') as string
         return true
       }
+    if (record.group === 'social')
+      return (value?: string) => {
+        if (!value) return true
+        const isValid = validateAccount({ key: record.key, value })
+        if (!isValid) return t('steps.profile.errors.invalidValue') as string
+        return true
+      }
     return () => true
   }
 
   const errorForRecordAtIndex = (index: number, keyOrValue: 'value' | 'key' = 'value') => {
     return getFieldState(`records.${index}.${keyOrValue}`, formState)?.error?.message
-  }
-
-  const isDirtyForRecordAtIndex = (index: number) => {
-    return getFieldState(`records.${index}.value`, formState)?.isDirty
   }
 
   const hasErrors = Object.keys(formState.errors || {}).length > 0
@@ -130,6 +151,10 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     control,
     name: 'records',
   })
+
+  const isDirtyForRecordAtIndex = (index: number) => {
+    return isDirtyForRecordAtIndexCalc(index, defaultValues.records, getValues('records'))
+  }
 
   const setAvatar = (avatar?: string) => {
     const existingRecord = existingRecords.find((r) => r.group === 'media' && r.key === 'avatar')

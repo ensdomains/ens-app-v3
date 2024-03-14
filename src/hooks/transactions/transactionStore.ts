@@ -2,31 +2,38 @@
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // this is taken from rainbowkit
-import { BigNumber } from '@ethersproject/bignumber'
-import type { BaseProvider, Block, TransactionReceipt } from '@ethersproject/providers'
-import type { PopulatedTransaction } from 'ethers'
+import { Address, Block, Hash, Hex } from 'viem'
+import { getBlock } from 'viem/actions'
 
-import { MinedData } from '@app/types'
+import { SupportedChain } from '@app/constants/chains'
+import { ConfigWithEns, MinedData } from '@app/types'
+import { parse, stringify } from '@app/utils/query/persist'
 
 import { waitForTransaction } from './waitForTransaction'
 
 const storageKey = 'transaction-data'
 
-type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'repriced' | 'unknown' | 'searching'
+export type TransactionStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'failed'
+  | 'repriced'
+  | 'unknown'
+  | 'searching'
 
 interface BaseTransaction {
-  hash: string
+  hash: Hash
   action: string
   key?: string
   description?: string
   isSafeTx?: boolean
   status: TransactionStatus
   minedData?: MinedData
-  newHash?: string
+  newHash?: Hash
   nonce?: number
   searchRetries: number
   searchStatus?: 'searching' | 'found'
-  input?: string
+  input?: Hex
   timestamp?: number
 }
 
@@ -48,7 +55,7 @@ interface MinedTransaction extends BaseTransaction {
 
 interface RepricedTransaction extends BaseTransaction {
   status: 'repriced'
-  newHash: string
+  newHash: Hash
 }
 
 export interface EtherscanMinedData {
@@ -82,7 +89,7 @@ export type Transaction =
   | SearchingTransaction
 
 export type NewTransaction = Omit<Transaction, 'status' | 'minedData'> & {
-  input?: PopulatedTransaction['data']
+  input?: Hex
   timestamp?: number
 }
 
@@ -90,7 +97,7 @@ type Data = Record<string, Record<number, Transaction[] | undefined>>
 
 function safeParseJsonData(string: string | null): Data {
   try {
-    const value = string ? JSON.parse(string) : {}
+    const value = string ? parse<Data>(string) : {}
     return typeof value === 'object' ? value : {}
   } catch (err) {
     return {}
@@ -105,18 +112,21 @@ function loadData(): Data {
 
 export function etherscanDataToMinedData(etherscanMinedData: EtherscanMinedData): MinedData {
   return {
-    ...etherscanMinedData,
-    effectiveGasPrice: BigNumber.from(etherscanMinedData.gasPrice),
-    cumulativeGasUsed: BigNumber.from(etherscanMinedData.cumulativeGasUsed),
-    gasUsed: BigNumber.from(etherscanMinedData.gasUsed),
+    effectiveGasPrice: BigInt(etherscanMinedData.gasPrice),
+    cumulativeGasUsed: BigInt(etherscanMinedData.cumulativeGasUsed),
+    gasUsed: BigInt(etherscanMinedData.gasUsed),
     timestamp: parseInt(etherscanMinedData.timeStamp, 10),
-    blockNumber: parseInt(etherscanMinedData.blockNumber, 10),
-    confirmations: parseInt(etherscanMinedData.confirmations, 10),
-    logsBloom: '',
-    transactionHash: '',
+    blockNumber: BigInt(etherscanMinedData.blockNumber),
+    logsBloom: '0x',
+    transactionHash: '0x',
     logs: [],
-    byzantium: true,
-    type: 0,
+    type: 'legacy',
+    status: etherscanMinedData.txreceipt_status === '1' ? 'success' : 'reverted',
+    blockHash: etherscanMinedData.blockHash as Hash,
+    contractAddress: etherscanMinedData.contractAddress as Address | null,
+    from: etherscanMinedData.from as Address,
+    to: etherscanMinedData.to as Address,
+    transactionIndex: etherscanMinedData.transactionIndex,
   }
 }
 
@@ -140,11 +150,11 @@ export const foundTransaction =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, hash: string, nonce: number): void => {
+  (account: string, chainId: SupportedChain['id'], hash: string, nonce: number): void => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
@@ -162,11 +172,16 @@ export const setReplacedTransaction =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, input: string, minedData: EtherscanMinedData) => {
+  (
+    account: string,
+    chainId: SupportedChain['id'],
+    input: string,
+    minedData: EtherscanMinedData,
+  ) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) => {
         return transaction.input === input
@@ -185,11 +200,16 @@ export const setReplacedTransactionByNonce =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, input: string, minedData: EtherscanMinedData) => {
+  (
+    account: string,
+    chainId: SupportedChain['id'],
+    input: string,
+    minedData: EtherscanMinedData,
+  ) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.input === input && transaction.nonce === parseInt(minedData.nonce, 10)
@@ -208,11 +228,11 @@ export const foundMinedTransaction =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, hash: string, minedData: EtherscanMinedData) => {
+  (account: string, chainId: SupportedChain['id'], hash: string, minedData: EtherscanMinedData) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
@@ -231,11 +251,11 @@ export const updateRetries =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, hash: string) => {
+  (account: string, chainId: SupportedChain['id'], hash: string) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
@@ -252,11 +272,11 @@ export const setFailedTransaction =
   (
     updateTransactions: (
       account: string,
-      chainId: number,
+      chainId: SupportedChain['id'],
       updateFn: (transactions: Transaction[]) => Transaction[],
     ) => void,
   ) =>
-  (account: string, chainId: number, hash: string) => {
+  (account: string, chainId: SupportedChain['id'], hash: string) => {
     updateTransactions(account, chainId, (transactions: Transaction[]) => {
       return transactions.map((transaction) =>
         transaction.hash === hash
@@ -270,23 +290,27 @@ export const setFailedTransaction =
     })
   }
 
-export function createTransactionStore({ provider: initialProvider }: { provider: BaseProvider }) {
+export function createTransactionStore(config_: ConfigWithEns) {
+  let config: ConfigWithEns = config_
   let data: Data = loadData()
 
-  let provider = initialProvider
   const listeners: Set<() => void> = new Set()
   const transactionRequestCache: Map<string, Promise<void>> = new Map()
   const blockRequestCache: Map<string, Promise<Block>> = new Map()
 
-  function setProvider(newProvider: BaseProvider): void {
-    provider = newProvider
+  function setConfig(newConfig: ConfigWithEns) {
+    config = newConfig
   }
 
-  function getTransactions(account: string, chainId: number): Transaction[] {
+  function getTransactions(account: string, chainId: SupportedChain['id']): Transaction[] {
     return data[account]?.[chainId] ?? []
   }
 
-  function getCurrentTransactionHash(account: string, chainId: number, hash: string): string {
+  function getCurrentTransactionHash(
+    account: string,
+    chainId: SupportedChain['id'],
+    hash: string,
+  ): string {
     const allTransactions = getTransactions(account, chainId)
     const currentTransaction = allTransactions.find((transaction) => transaction.hash === hash)
     if (currentTransaction && currentTransaction.status === 'repriced')
@@ -294,7 +318,11 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     return hash
   }
 
-  function addTransaction(account: string, chainId: number, transaction: NewTransaction): void {
+  function addTransaction(
+    account: string,
+    chainId: SupportedChain['id'],
+    transaction: NewTransaction,
+  ): void {
     const errors = validateTransaction(transaction)
 
     if (errors.length > 0) {
@@ -312,7 +340,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     })
   }
 
-  function clearTransactions(account: string, chainId: number): void {
+  function clearTransactions(account: string, chainId: SupportedChain['id']): void {
     updateTransactions(account, chainId, () => {
       return []
     })
@@ -320,21 +348,21 @@ export function createTransactionStore({ provider: initialProvider }: { provider
 
   function setTransactionStatus(
     account: string,
-    chainId: number,
+    chainId: SupportedChain['id'],
     hash: string,
     status: 'confirmed' | 'failed',
     minedData: MinedData,
   ): void
   function setTransactionStatus(
     account: string,
-    chainId: number,
+    chainId: SupportedChain['id'],
     hash: string,
     status: 'repriced',
     newHash: string,
   ): void
   function setTransactionStatus(
     account: string,
-    chainId: number,
+    chainId: SupportedChain['id'],
     hash: string,
     status: 'confirmed' | 'failed' | 'repriced',
     minedData: MinedData | string,
@@ -352,7 +380,10 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     })
   }
 
-  async function waitForPendingTransactions(account: string, chainId: number): Promise<void> {
+  async function waitForPendingTransactions(
+    account: string,
+    chainId: SupportedChain['id'],
+  ): Promise<void> {
     await Promise.all(
       getTransactions(account, chainId)
         .filter((transaction) => transaction.status === 'pending')
@@ -365,62 +396,55 @@ export function createTransactionStore({ provider: initialProvider }: { provider
             return existingRequest
           }
 
-          const requestPromise = waitForTransaction({
+          const requestPromise = waitForTransaction(config, {
             confirmations: 1,
             hash: hash as `0x${string}`,
-            onSpeedUp: (speedUpTransaction) => {
-              setTransactionStatus(account, chainId, hash, 'repriced', speedUpTransaction.hash)
-              addTransaction(account, chainId, {
-                ...transaction,
-                isSafeTx: false,
-                hash: speedUpTransaction.hash,
-              })
-
-              transactionRequestCache.set(speedUpTransaction.hash, requestPromise)
-              transactionRequestCache.delete(hash)
+            onReplaced: (replacedTransaction) => {
+              if (replacedTransaction.reason === 'repriced') {
+                setTransactionStatus(
+                  account,
+                  chainId,
+                  hash,
+                  'repriced',
+                  replacedTransaction.transaction.hash,
+                )
+                addTransaction(account, chainId, {
+                  ...transaction,
+                  isSafeTx: false,
+                  hash: replacedTransaction.transaction.hash,
+                })
+                transactionRequestCache.set(replacedTransaction.transaction.hash, requestPromise)
+                transactionRequestCache.delete(hash)
+              }
             },
             isSafeTx: transaction.isSafeTx,
-          })
-            .catch((err) => {
-              if (err.cancelled) {
-                const replacement = err.replacement as TransactionReceipt
-                return { ...replacement, status: 0 }
-              }
-              return err
-            })
-            .then(async (receipt) => {
-              const { status, blockHash } = receipt
-              let blockRequest = blockRequestCache.get(blockHash)
-              if (!blockRequest) {
-                blockRequest = provider.getBlock(blockHash)
-                blockRequestCache.set(blockHash, blockRequest)
-              }
-              const { timestamp } = await blockRequest
-
-              const hashOfRequest = getCurrentTransactionHash(account, chainId, hash)
-
-              transactionRequestCache.delete(hashOfRequest)
-
-              if (status === undefined) {
-                if (receipt instanceof Error) {
-                  setTransactionStatus(account, chainId, hashOfRequest, 'failed', {
-                    timestamp: Date.now(),
-                  } as MinedData)
-                }
-                return
-              }
-
-              setTransactionStatus(
-                account,
+          }).then(async (receipt) => {
+            const { status, blockHash } = receipt
+            let blockRequest = blockRequestCache.get(blockHash)
+            if (!blockRequest) {
+              const client = config.getClient({
                 chainId,
-                hashOfRequest,
-                status === 0 ? 'failed' : 'confirmed',
-                {
-                  ...receipt,
-                  timestamp: timestamp * 1000,
-                },
-              )
-            })
+              })
+              blockRequest = getBlock(client, { blockHash })
+              blockRequestCache.set(blockHash, blockRequest)
+            }
+            const { timestamp } = await blockRequest
+
+            const hashOfRequest = getCurrentTransactionHash(account, chainId, hash)
+
+            transactionRequestCache.delete(hashOfRequest)
+
+            setTransactionStatus(
+              account,
+              chainId,
+              hashOfRequest,
+              status === 'reverted' ? 'failed' : 'confirmed',
+              {
+                ...receipt,
+                timestamp: Number(timestamp) * 1000,
+              },
+            )
+          })
 
           transactionRequestCache.set(hash, requestPromise)
           return requestPromise
@@ -430,7 +454,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
 
   function updateTransactions(
     account: string,
-    chainId: number,
+    chainId: SupportedChain['id'],
     updateFn: (transactions: Transaction[]) => Transaction[],
   ): void {
     // Ensure we're always operating on the latest data in case we have
@@ -458,7 +482,7 @@ export function createTransactionStore({ provider: initialProvider }: { provider
   }
 
   function persistData(): void {
-    localStorage.setItem(storageKey, JSON.stringify(data))
+    localStorage.setItem(storageKey, stringify(data))
   }
 
   function notifyListeners(): void {
@@ -474,11 +498,11 @@ export function createTransactionStore({ provider: initialProvider }: { provider
   }
 
   return {
+    setConfig,
     addTransaction,
     clearTransactions,
     getTransactions,
     onChange,
-    setProvider,
     waitForPendingTransactions,
     setTransactionStatus,
     foundTransaction: foundTransaction(updateTransactions),

@@ -1,9 +1,11 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
+import { Address, encodeFunctionData } from 'viem'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
 
-type Data = { address: string }
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+
+type Data = { address: Address }
 
 const displayItems = (
   { address }: Data,
@@ -24,11 +26,45 @@ const displayItems = (
   },
 ]
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, _: Data) => {
-  const registry = (await ens.contracts!.getRegistry()).connect(signer)
-  const nameWrapperAddress = (await ens.contracts!.getNameWrapper()).address
-  return registry.populateTransaction.setApprovalForAll(nameWrapperAddress, true)
+const registrySetApprovalForAllSnippet = [
+  {
+    constant: false,
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+      },
+      {
+        name: 'approved',
+        type: 'bool',
+      },
+    ],
+    name: 'setApprovalForAll',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const
+
+const transaction = async ({ client }: TransactionFunctionParameters<Data>) => {
+  return {
+    to: getChainContractAddress({
+      client,
+      contract: 'ensRegistry',
+    }),
+    data: encodeFunctionData({
+      abi: registrySetApprovalForAllSnippet,
+      functionName: 'setApprovalForAll',
+      args: [
+        getChainContractAddress({
+          client,
+          contract: 'ensNameWrapper',
+        }),
+        true,
+      ],
+    }),
+  }
 }
 
-export default { displayItems, transaction } as Transaction<Data>
+export default { displayItems, transaction } satisfies Transaction<Data>

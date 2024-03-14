@@ -1,10 +1,10 @@
 import { render, screen } from '@app/test-utils'
 
+import { describe, expect, it } from 'vitest'
+
 import { formatDateTime } from '@app/utils/utils'
 
 import { GraceEndDate } from './GraceEndDate'
-
-jest.mock('@app/hooks/useChainName')
 
 describe('GraceEndDate', () => {
   it('should render the grace end date', () => {

@@ -1,28 +1,23 @@
-import { UseQueryOptions } from '@tanstack/react-query'
-import { useQuery } from 'wagmi'
+import { namehash } from 'viem'
+import { useClient, useReadContract } from 'wagmi'
 
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { getChainContractAddress, registryResolverSnippet } from '@ensdomains/ensjs/contracts'
 
-import { useEns } from '@app/utils/EnsProvider'
+type UseRegistryResolverParameters = {
+  name: string
 
-import { useQueryKeys } from '../../utils/cacheKeyFactory'
+  enabled?: boolean
+}
 
-type Options = Pick<UseQueryOptions, 'enabled'>
-
-export const useRegistryResolver = (name: string, options: Options = {}) => {
-  const { ready, contracts } = useEns()
-
-  const enabled = options.enabled ?? true
-
-  return useQuery(
-    useQueryKeys().registryResolver(name),
-    async () => {
-      const registry = await contracts!.getRegistry()
-      const resolver = await registry.resolver(namehash(name))
-      return resolver
+export const useRegistryResolver = ({ name, enabled = true }: UseRegistryResolverParameters) => {
+  const client = useClient()
+  return useReadContract({
+    abi: registryResolverSnippet,
+    address: getChainContractAddress({ client, contract: 'ensRegistry' }),
+    functionName: 'resolver',
+    args: [namehash(name)],
+    query: {
+      enabled: enabled && !!name,
     },
-    {
-      enabled: ready && !!name && enabled,
-    },
-  )
+  })
 }

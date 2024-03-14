@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
+
+import { test } from '../../../playwright'
 
 test.describe('Permissions', () => {
   test('should show parent not locked warning', async ({
@@ -186,7 +187,9 @@ test.describe('Permissions', () => {
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'test',
@@ -217,7 +220,9 @@ test.describe('Permissions', () => {
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'test',
@@ -254,12 +259,18 @@ test.describe('Permissions', () => {
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user',
-          fuses: ['PARENT_CANNOT_CONTROL'],
+          fuses: {
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
+            },
+          },
         },
       ],
     })
@@ -298,12 +309,21 @@ test.describe('Permissions', () => {
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user',
-          fuses: ['PARENT_CANNOT_CONTROL', 'CANNOT_UNWRAP'],
+          fuses: {
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
+            },
+            child: {
+              named: ['CANNOT_UNWRAP'],
+            },
+          },
         },
       ],
     })
@@ -334,12 +354,21 @@ test.describe('Permissions', () => {
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user2',
-          fuses: ['PARENT_CANNOT_CONTROL', 'CANNOT_UNWRAP'],
+          fuses: {
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
+            },
+            child: {
+              named: ['CANNOT_UNWRAP'],
+            },
+          },
         },
       ],
     })
@@ -372,12 +401,21 @@ test.describe('Permissions', () => {
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
-      fuses: ['CANNOT_UNWRAP'],
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [
         {
           label: 'test',
           owner: 'user',
-          fuses: ['PARENT_CANNOT_CONTROL', 'CANNOT_UNWRAP'],
+          fuses: {
+            parent: {
+              named: ['PARENT_CANNOT_CONTROL'],
+            },
+            child: {
+              named: ['CANNOT_UNWRAP'],
+            },
+          },
         },
       ],
     })

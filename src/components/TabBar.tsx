@@ -2,16 +2,16 @@
 import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { useEnsAvatar } from 'wagmi'
 
-import { CrossSVG, LeftChevronSVG, PersonSVG, mq } from '@ensdomains/thorin'
+import { CrossSVG, LeftChevronSVG, mq, PersonSVG } from '@ensdomains/thorin'
 
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useChainId } from '@app/hooks/useChainId'
-import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination, getRoute, legacyFavouritesRoute } from '@app/routes'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 
 import { DisconnectButton, RouteItem } from './@atoms/RouteItem/RouteItem'
 import { ConnectButton } from './ConnectButton'
@@ -72,11 +72,9 @@ const TabWrapper = styled.div(
       ${theme.colors.backgroundSecondary} 60%
     );
     padding: ${theme.space['4']};
-    ${mq.sm.min(
-      css`
-        display: none;
-      `,
-    )}
+    ${mq.sm.min(css`
+      display: none;
+    `)}
   `,
 )
 
@@ -185,8 +183,7 @@ const TabBarProfile = ({
   name?: string
 }) => {
   const router = useRouter()
-  const chainId = useChainId()
-  const { avatar } = useAvatar(name, chainId)
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(address, 'address')
   const hasPendingTransactions = useHasPendingTransactions()
 
@@ -219,7 +216,7 @@ export const TabBar = () => {
   const router = useRouter()
 
   const { address } = useAccountSafely()
-  const primary = usePrimary(address!, !!address)
+  const primary = usePrimaryName({ address })
 
   const hasPrimary = !!primary.data?.name
   const hasBack = !!router.query.from

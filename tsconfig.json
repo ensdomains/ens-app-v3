@@ -1,5 +1,7 @@
 {
   "ts-node": {
+    "experimentalResolver": true,
+    "files": true,
     "compilerOptions": {
       "module": "CommonJS",
       "target": "ESNext",
@@ -7,7 +9,7 @@
       "strict": true,
       "esModuleInterop": true,
       "allowJs": true,
-      "checkJs": true,
+      "checkJs": false,
       "plugins": [
         {
           "name": "typescript-styled-plugin",
@@ -32,14 +34,13 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "rootDir": ".",
-    "baseUrl": ".",
-    "types": ["jest", "@cloudflare/workers-types"],
+    "baseUrl": "./",
     "incremental": true,
     "noErrorTruncation": true,
     "paths": {
       "@app/*": ["./src/*"],
       "@public/*": ["./public/*"],
-      "@root/*": ["./*"],
+      "@root/*": ["./*"]
     },
     "plugins": [
       {
@@ -52,6 +53,23 @@
       }
     ]
   },
-  "include": ["next-env.d.ts", "mdx.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["custom-test-env.js", "**/*.ignore.ts", "**/*.ignore.tsx"]
+  "include": [
+    "next-env.d.ts",
+    "mdx.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "next.config.mjs",
+    "vitest.config.mts",
+    "test/*.mts",
+    "test/**/*.ts",
+    "typings-custom/generated/*.d.ts",
+    "typings-custom/local-contracts.d.ts"
+  ],
+  "exclude": [
+    "**/*.ignore.ts",
+    "**/*.ignore.tsx",
+    "functions/**/*",
+    "deploy/**/*",
+    "hardhat.config.ts"
+  ]
 }

@@ -13,15 +13,20 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.8.0
+          version: 8.11.0
 
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Get contract addresses
+        run: 'parallel --lb --halt now,success=1,fail=1 ::: \
+          "pnpm tenv start -ng -ns -nb" \
+          "pnpm wait-on ./.env.local"'
 
       - run: pnpm test:coverage
 
@@ -32,12 +37,12 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.8.0
+          version: 8.11.0
 
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
@@ -66,12 +71,12 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.8.0
+          version: 8.11.0
 
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
@@ -95,18 +100,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
     steps:
       - uses: actions/checkout@v3
 
       - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.8.0
+          version: 8.11.0
 
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
@@ -127,7 +132,7 @@ jobs:
 
       - name: Run tests
         run: |
-          PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci -nb 
+          PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci -nb
 
       - uses: actions/upload-artifact@v3
         if: always()
@@ -151,12 +156,12 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.8.0
+          version: 8.11.0
 
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
@@ -179,7 +184,7 @@ jobs:
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm wrangle" \
-          "pnpm wait-on http://localhost:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
+          "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}

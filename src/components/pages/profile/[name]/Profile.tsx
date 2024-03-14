@@ -4,21 +4,20 @@ import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { getEncryptedLabelAmount } from '@ensdomains/ensjs/utils/labels'
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
+import { Outlink } from '@app/components/Outlink'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useChainId } from '@app/hooks/useChainId'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content, ContentWarning } from '@app/layouts/Content'
-import { formatFullExpiry } from '@app/utils/utils'
+import { OG_IMAGE_URL } from '@app/utils/constants'
+import { formatFullExpiry, getEncodedLabelAmount, makeEtherscanLink } from '@app/utils/utils'
 
-import { shouldShowSuccessPage } from '../../import/[name]/shared'
 import MoreTab from './tabs/MoreTab/MoreTab'
 import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
 import { PermissionsTab } from './tabs/PermissionsTab/PermissionsTab'
@@ -65,7 +64,7 @@ const TabButton = styled.button<{ $selected: boolean }>(
 )
 
 const tabs = ['profile', 'records', 'ownership', 'subnames', 'permissions', 'more'] as const
-type Tab = typeof tabs[number]
+type Tab = (typeof tabs)[number]
 
 type Props = {
   isSelf: boolean
@@ -102,14 +101,12 @@ export const NameAvailableBanner = ({
   )
 }
 
-const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
+const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
-  const chainId = useChainId()
   const { address } = useAccount()
-  const transactions = useRecentTransactions()
 
-  const nameDetails = useNameDetails(name)
+  const nameDetails = useNameDetails({ name })
   const {
     error,
     errorTitle,
@@ -119,16 +116,15 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     normalisedName,
     beautifiedName,
     isValid,
-    profileIsCachedData,
-    basicIsCachedData,
+    isCachedData,
     isWrapped,
     isLoading: detailsLoading,
     wrapperData,
     registrationStatus,
-    refetch,
+    refetchIfEnabled,
   } = nameDetails
 
-  const isLoading = _isLoading || detailsLoading
+  const isLoading = parentIsLoading || detailsLoading
 
   useProtectedRoute(
     '/',
@@ -168,33 +164,33 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
 
   const [tab, setTab_] = useQueryParameterState<Tab>('tab', 'profile')
   const setTab: typeof setTab_ = (value) => {
-    refetch()
+    refetchIfEnabled()
     setTab_(value)
   }
   const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
 
-  const abilities = useAbilities(normalisedName)
+  const abilities = useAbilities({ name: normalisedName })
 
   // hook for redirecting to the correct profile url
   // profile.decryptedName fetches labels from NW/subgraph
   // normalisedName fetches labels from localStorage
   useEffect(() => {
     if (
-      name !== profile?.decryptedName &&
-      profile?.decryptedName &&
+      name !== profile?.decodedName &&
+      profile?.decodedName &&
       !isSelf &&
-      getEncryptedLabelAmount(normalisedName) > getEncryptedLabelAmount(profile.decryptedName)
+      getEncodedLabelAmount(normalisedName) > getEncodedLabelAmount(profile.decodedName)
     ) {
       // if the fetched decrypted name is different to the current name
       // and the decrypted name has less encrypted labels than the normalised name
       // direct to the fetched decrypted name
-      router.replace(`/profile/${profile.decryptedName}`, { shallow: true, maintainHistory: true })
+      router.replace(`/profile/${profile.decodedName}`, { shallow: true, maintainHistory: true })
     } else if (
       name !== normalisedName &&
       normalisedName &&
       !isSelf &&
-      (!profile?.decryptedName ||
-        getEncryptedLabelAmount(profile.decryptedName) > getEncryptedLabelAmount(normalisedName)) &&
+      (!profile?.decodedName ||
+        getEncodedLabelAmount(profile.decodedName) > getEncodedLabelAmount(normalisedName)) &&
       decodeURIComponent(name) !== normalisedName
     ) {
       // if the normalised name is different to the current name
@@ -202,7 +198,7 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
       // direct to normalised name
       router.replace(`/profile/${normalisedName}`, { shallow: true, maintainHistory: true })
     }
-  }, [profile?.decryptedName, normalisedName, name, isSelf, router])
+  }, [profile?.decodedName, normalisedName, name, isSelf, router])
 
   useEffect(() => {
     if (isSelf && name) {
@@ -210,11 +206,11 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     }
   }, [isSelf, name, router])
 
-  useEffect(() => {
-    if (shouldShowSuccessPage(transactions)) {
-      router.push(`/import/${name}`)
-    }
-  }, [name, router, transactions])
+  // useEffect(() => {
+  //   if (shouldShowSuccessPage(transactions)) {
+  //     router.push(`/import/${name}`)
+  //   }
+  // }, [name, router, transactions])
 
   const infoBanner = useMemo(() => {
     if (
@@ -237,13 +233,28 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
     return undefined
   }, [error, errorTitle])
 
+  const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
+
+  const chainName = useChainName()
+
   return (
     <>
       <Head>
         <title>{titleContent}</title>
         <meta name="description" content={descriptionContent} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:title" content={titleContent} />
+        <meta property="og:description" content={descriptionContent} />
+        <meta property="twitter:image" content={ogImageUrl} />
+        <meta property="twitter:title" content={titleContent} />
+        <meta property="twitter:description" content={descriptionContent} />
       </Head>
-      <Content noTitle title={beautifiedName} loading={isLoading} copyValue={beautifiedName}>
+      <Content
+        noTitle
+        title={beautifiedName}
+        loading={!isCachedData && isLoading}
+        copyValue={beautifiedName}
+      >
         {{
           info: infoBanner,
           warning,
@@ -263,20 +274,27 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
               ))}
             </TabButtonContainer>
           ),
+          titleExtra: profile?.address ? (
+            <Outlink
+              fontVariant="bodyBold"
+              href={makeEtherscanLink(profile.address!, chainName, 'address')}
+            >
+              {t('etherscan', { ns: 'common' })}
+            </Outlink>
+          ) : null,
           trailing: {
             profile: <ProfileTab name={normalisedName} nameDetails={nameDetails} />,
             records: (
               <RecordsTab
-                network={chainId}
                 name={normalisedName}
-                texts={(profile?.records?.texts as any) || []}
-                addresses={(profile?.records?.coinTypes as any) || []}
-                contentHash={profile?.records?.contentHash}
-                abi={profile?.records?.abi}
+                texts={profile?.texts || []}
+                addresses={profile?.coins || []}
+                contentHash={profile?.contentHash}
+                abi={profile?.abi}
                 resolverAddress={profile?.resolverAddress}
                 canEdit={abilities.data?.canEdit}
                 canEditRecords={abilities.data?.canEditRecords}
-                isCached={profileIsCachedData}
+                isCached={isCachedData}
               />
             ),
             ownership: <OwnershipTab name={normalisedName} details={nameDetails} />,
@@ -286,14 +304,14 @@ const ProfileContent = ({ isSelf, isLoading: _isLoading, name }: Props) => {
                 isWrapped={isWrapped}
                 canEdit={!!abilities.data?.canEdit}
                 canCreateSubdomains={!!abilities.data?.canCreateSubdomains}
-                network={chainId}
+                canCreateSubdomainsError={abilities.data?.canCreateSubdomainsError}
               />
             ),
             permissions: (
               <PermissionsTab
                 name={normalisedName}
                 wrapperData={wrapperData}
-                isCached={basicIsCachedData}
+                isCached={isCachedData}
               />
             ),
             more: (

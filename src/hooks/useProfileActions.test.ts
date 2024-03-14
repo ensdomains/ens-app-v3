@@ -1,113 +1,201 @@
-import { mockFunction, renderHook } from '@app/test-utils'
+import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
+import { labelhash } from 'viem'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { usePrimary } from '@app/hooks/usePrimary'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { DeepPartial } from '@app/types'
+import { createDateAndValue } from '@app/utils/utils'
 
-import { useHasGlobalError } from './errors/useHasGlobalError'
+import { transactions } from '../transaction-flow/transaction/index'
+import { useAbilities } from './abilities/useAbilities'
+import { useAccountSafely } from './account/useAccountSafely'
+import { useContractAddress } from './chain/useContractAddress'
+import { useExpiry } from './ensjs/public/useExpiry'
+import { useOwner } from './ensjs/public/useOwner'
+import { useWrapperData } from './ensjs/public/useWrapperData'
+import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNameTransactionFlowItem'
+import { useResolverStatus } from './resolver/useResolverStatus'
+import { useProfile } from './useProfile'
 import { useProfileActions } from './useProfileActions'
-import useWrapperApprovedForAll from './useWrapperApprovedForAll'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 const NOW_TIMESTAMP = 1588994800000
-jest.spyOn(Date, 'now').mockImplementation(() => NOW_TIMESTAMP)
+vi.spyOn(Date, 'now').mockImplementation(() => NOW_TIMESTAMP)
 
-const mockUseResolverStatus = jest.fn().mockReturnValue({
-  data: {
-    isAuthorized: true,
-  },
-  isLoading: false,
-})
-jest.mock('@app/hooks/resolver/useResolverStatus', () => ({
-  useResolverStatus: () => mockUseResolverStatus(),
-}))
-jest.mock('@app/hooks/usePrimary')
-jest.mock('@app/transaction-flow/TransactionFlowProvider')
-jest.mock('./errors/useHasGlobalError')
-jest.mock('./useWrapperApprovedForAll')
+vi.mock('@app/transaction-flow/TransactionFlowProvider')
 
-const mockUsePrimary = mockFunction(usePrimary)
+vi.mock('@app/hooks/account/useAccountSafely')
+vi.mock('@app/hooks/abilities/useAbilities')
+
+vi.mock('./useProfile')
+vi.mock('./ensjs/public/useOwner')
+vi.mock('./ensjs/public/useWrapperData')
+vi.mock('./ensjs/public/useExpiry')
+
+vi.mock('./resolver/useResolverStatus')
+vi.mock('@app/hooks/ensjs/public/usePrimaryName')
+
+vi.mock('@app/utils/SyncProvider/SyncProvider')
+
+vi.mock('./chain/useContractAddress')
+
+vi.mock('@app/hooks/primary/useGetPrimaryNameTransactionFlowItem')
+
 const mockUseTransactionFlow = mockFunction(useTransactionFlow)
-const mockUseHasGlobalError = mockFunction(useHasGlobalError)
-const mockUseWrapperApprovedForAll = mockFunction(useWrapperApprovedForAll)
 
-const mockCreateTransactionFlow = jest.fn()
-const mockPrepareDataInput = jest.fn()
+const mockUseAccountSafely = mockFunction(useAccountSafely)
+const mockUseAbilities = mockFunction(useAbilities)
+
+const mockUseProfile = mockFunction(useProfile)
+const mockUseOwner = mockFunction(useOwner)
+const mockUseWrapperData = mockFunction(useWrapperData)
+const mockUseExpiry = mockFunction(useExpiry)
+
+const mockUseResolverStatus = mockFunction(useResolverStatus)
+const mockUsePrimaryName = mockFunction(usePrimaryName)
+
+const mockUseHasGraphError = mockFunction(useHasGraphError)
+
+const mockUseContractAddress = mockFunction(useContractAddress)
+
+const mockGetUseGetPrimaryNameTransactionFlowItem = mockFunction(
+  useGetPrimaryNameTransactionFlowItem,
+)
+
+const mockCreateTransactionFlow = vi.fn()
+const mockUsePreparedDataInput = vi.fn()
+
+type MockHookData<THookFn extends (...args: any[]) => { data: any }> = DeepPartial<
+  ReturnType<THookFn>['data']
+>
+
+const mockUseAbilitiesData: MockHookData<typeof useAbilities> = {
+  canEdit: true,
+  canDelete: true,
+  canDeleteContract: 'testcontract' as any,
+  canDeleteMethod: 'testmethod' as any,
+  canDeleteError: undefined,
+  canReclaim: true,
+  isPCCBurned: false,
+  isParentOwner: true,
+}
+
+const mockUseProfileData: MockHookData<typeof useProfile> = {
+  address: '0x1234567890',
+  isMigrated: true,
+}
+
+const mockUseOwnerData: MockHookData<typeof useOwner> = {
+  ownershipLevel: 'nameWrapper',
+  owner: '0x1234567890',
+}
+
+const mockUseWrapperDataData: MockHookData<typeof useWrapperData> = {
+  fuses: {
+    child: {
+      CANNOT_SET_RESOLVER: false,
+    },
+  },
+}
+
+const mockUseExpiryData: MockHookData<typeof useExpiry> = {
+  expiry: createDateAndValue(BigInt(NOW_TIMESTAMP + 1)),
+}
+
+const mockUseResolverStatusData: MockHookData<typeof useResolverStatus> = {
+  isAuthorized: true,
+}
 
 describe('useProfileActions', () => {
-  const props: any = {
-    name: 'test.eth',
-    address: '0x1234567890',
-    profile: {
-      address: '0x1234567890',
-      isMigrated: true,
-    },
-    abilities: {
-      canEdit: true,
-      canDelete: true,
-      canDeleteContract: 'testcontract',
-      canDeleteMethod: 'testmethod',
-      canDeleteError: null,
-      canReclaim: true,
-      isPCCBurned: false,
-      isParentOwner: true,
-    },
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: '0x1234567890',
-    },
-    wrapperData: {
-      child: {
-        CANNOT_SET_RESOLVER: false,
-      },
-    },
-    expiryDate: new Date(NOW_TIMESTAMP + 1),
-  }
-
   beforeEach(() => {
-    mockUsePrimary.mockReturnValue({
-      data: { name: undefined, beautifiedName: undefined },
+    mockUseAccountSafely.mockReturnValue({ address: '0x1234567890' })
+    mockUseAbilities.mockReturnValue({
+      data: mockUseAbilitiesData,
       isLoading: false,
-      status: 'success',
+    })
+
+    mockUseProfile.mockReturnValue({
+      data: mockUseProfileData,
+      isLoading: false,
+    })
+    mockUseOwner.mockReturnValue({
+      data: mockUseOwnerData,
+      isLoading: false,
+    })
+    mockUseWrapperData.mockReturnValue({
+      data: mockUseWrapperDataData,
+      isLoading: false,
+    })
+    mockUseExpiry.mockReturnValue({
+      data: mockUseExpiryData,
+      isLoading: false,
+    })
+
+    mockUseResolverStatus.mockReturnValue({
+      data: mockUseResolverStatusData,
+      isLoading: false,
+    })
+    mockUsePrimaryName.mockReturnValue({
+      data: null,
+      isLoading: false,
     })
     mockUseTransactionFlow.mockReturnValue({
-      prepareDataInput:
+      usePreparedDataInput:
         () =>
         (...args: any[]) =>
-          mockPrepareDataInput(...args),
+          mockUsePreparedDataInput(...args),
       createTransactionFlow: (...args: any[]) => mockCreateTransactionFlow(...args),
     })
-    mockUseHasGlobalError.mockReturnValue(false)
-    mockUseWrapperApprovedForAll.mockReturnValue({ approvedForAll: true, isLoading: false })
+    mockUseHasGraphError.mockReturnValue({ data: false, isLoading: false })
+
+    // @ts-ignore
+    mockUseContractAddress.mockReturnValue('0xresolver')
+
+    mockGetUseGetPrimaryNameTransactionFlowItem.mockReturnValue({
+      callBack: (name: string) => ({
+        transactions: [
+          {
+            data: {
+              name,
+              address: '0x1234567890',
+            },
+            name: 'updateEthAddress',
+          },
+        ],
+      }),
+      isLoading: false,
+    })
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
-  it('returns an object with profileActions and loading properties', () => {
-    const { result } = renderHook(() => useProfileActions(props))
+  it('returns an object with profileActions and isLoading properties', () => {
+    const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
     expect(result.current).toHaveProperty('profileActions')
-    expect(result.current).toHaveProperty('loading')
+    expect(result.current).toHaveProperty('isLoading')
   })
 
   it('returns an empty array for profileActions if address is falsy', () => {
-    const { result } = renderHook(() => useProfileActions({ ...props, address: '' }))
+    mockUseAccountSafely.mockReturnValue({ address: undefined })
+    const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
     expect(result.current.profileActions).toEqual([])
   })
 
   it('returns an empty array for profileActions if isLoading is true', () => {
-    mockUsePrimary.mockReturnValue({
-      data: { name: undefined, beautifiedName: undefined },
+    mockUsePrimaryName.mockReturnValue({
+      data: undefined,
       isLoading: true,
-      status: 'success',
     })
-    const { result } = renderHook(() => useProfileActions({ ...props, isLoading: true }))
+    const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
     expect(result.current.profileActions).toEqual([])
   })
 
   it('returns the correct action if subnameAbilities.canDelete is true', () => {
-    const { result } = renderHook(() => useProfileActions(props))
+    const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
     expect(result.current.profileActions).toContainEqual(
       expect.objectContaining({
         label: 'tabs.profile.actions.deleteSubname.label',
@@ -117,7 +205,7 @@ describe('useProfileActions', () => {
   })
 
   it('returns the correct action if subnameAbilities.canReclaim is true', () => {
-    const { result } = renderHook(() => useProfileActions(props))
+    const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
     expect(result.current.profileActions).toContainEqual(
       expect.objectContaining({
         label: 'tabs.profile.actions.reclaim.label',
@@ -127,16 +215,15 @@ describe('useProfileActions', () => {
   })
 
   it('should return the correct copy when subnameAbilities.canDeleteError has a string value', () => {
-    const { result } = renderHook(() =>
-      useProfileActions({
-        ...props,
-        abilities: {
-          ...props.abilities,
-          canDelete: false,
-          canDeleteError: 'test error',
-        },
-      }),
-    )
+    mockUseAbilities.mockReturnValue({
+      data: {
+        ...mockUseAbilitiesData,
+        canDelete: false,
+        canDeleteError: 'test error',
+      },
+      isLoading: false,
+    })
+    const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
     expect(result.current.profileActions).toContainEqual(
       expect.objectContaining({
         label: 'tabs.profile.actions.deleteSubname.label',
@@ -147,7 +234,7 @@ describe('useProfileActions', () => {
 
   describe('delete subname', () => {
     it('should return a single transaction with normal subname when address is parent owner', () => {
-      const { result } = renderHook(() => useProfileActions(props))
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const deleteAction = result.current.profileActions?.find(
         (a) => a.label === 'tabs.profile.actions.deleteSubname.label',
       )
@@ -166,31 +253,32 @@ describe('useProfileActions', () => {
       })
     })
     it('should show data input if normal subname but address is child owner', () => {
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          abilities: { ...props.abilities, isParentOwner: false },
-        }),
-      )
+      mockUseAbilities.mockReturnValue({
+        data: {
+          ...mockUseAbilitiesData,
+          isParentOwner: false,
+        },
+        isLoading: false,
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const deleteAction = result.current.profileActions?.find(
         (a) => a.label === 'tabs.profile.actions.deleteSubname.label',
       )
       deleteAction!.onClick()
-      expect(mockPrepareDataInput).toHaveBeenCalledWith(
+      expect(mockUsePreparedDataInput).toHaveBeenCalledWith(
         `delete-subname-not-parent-warning-test.eth`,
         { name: 'test.eth', contract: 'testcontract' },
       )
     })
     it('should return a two step transaction flow for an unwrapped subname with wrapped parent', () => {
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          abilities: {
-            ...props.abilities,
-            canDeleteRequiresWrap: true,
-          },
-        }),
-      )
+      mockUseAbilities.mockReturnValue({
+        data: {
+          ...mockUseAbilitiesData,
+          canDeleteRequiresWrap: true,
+        },
+        isLoading: false,
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const deleteAction = result.current.profileActions?.find(
         (a) => a.label === 'tabs.profile.actions.deleteSubname.label',
       )
@@ -202,7 +290,7 @@ describe('useProfileActions', () => {
             data: {
               contract: 'nameWrapper',
               name: 'test.eth',
-              newOwner: '0x1234567890',
+              newOwnerAddress: '0x1234567890',
             },
           },
           {
@@ -230,7 +318,7 @@ describe('useProfileActions', () => {
 
   describe('set primary name', () => {
     it('should return an action for a single transaction with base mock data', async () => {
-      const { result } = renderHook(() => useProfileActions(props))
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
@@ -244,15 +332,14 @@ describe('useProfileActions', () => {
     })
 
     it('should not return an action if profile is not migrated', () => {
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            isMigrated: false,
-          },
-        }),
-      )
+      mockUseProfile.mockReturnValue({
+        data: {
+          ...mockUseProfileData,
+          isMigrated: false,
+        },
+        isLoading: false,
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
@@ -260,18 +347,21 @@ describe('useProfileActions', () => {
     })
 
     it('should not return an action if profile user is not controller or wrapped owner or resolved address', () => {
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            address: '0xotheraddress',
-          },
-          ownerData: {
-            owner: '0xotherowner',
-          },
-        }),
-      )
+      mockUseProfile.mockReturnValue({
+        data: {
+          ...mockUseProfileData,
+          address: '0xotheraddress',
+        },
+        isLoading: false,
+      })
+      mockUseOwner.mockReturnValue({
+        data: {
+          ...mockUseOwnerData,
+          owner: '0xotherowner',
+        },
+        isLoading: false,
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
@@ -279,19 +369,21 @@ describe('useProfileActions', () => {
     })
 
     it('should return an action if profile user is controller but not wrapped owner or resolved address', () => {
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            address: '0xotheraddress',
-          },
-          ownerData: {
-            ...props.ownerData,
-            ownershipLevel: 'registry',
-          },
-        }),
-      )
+      mockUseProfile.mockReturnValue({
+        data: {
+          ...mockUseProfileData,
+          address: '0xotheraddress',
+        },
+        isLoading: false,
+      })
+      mockUseOwner.mockReturnValue({
+        data: {
+          ...mockUseOwnerData,
+          ownershipLevel: 'registry',
+        },
+        isLoading: false,
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
@@ -299,19 +391,14 @@ describe('useProfileActions', () => {
     })
 
     it('should return an action if profile user is wrapped owner but not controller or resolved address', () => {
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            address: '0xotheraddress',
-          },
-          ownerData: {
-            ...props.ownerData,
-            ownershipLevel: 'nameWrapper',
-          },
-        }),
-      )
+      mockUseProfile.mockReturnValue({
+        data: {
+          ...mockUseProfileData,
+          address: '0xotheraddress',
+        },
+        isLoading: false,
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
@@ -319,44 +406,40 @@ describe('useProfileActions', () => {
     })
 
     it('should return an action if profile user is resolved address but not controller or wrapped owner', () => {
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            address: '0x1234567890',
-          },
-          ownerData: {
-            ...props.ownerData,
-            owner: '0xotherowner',
-          },
-        }),
-      )
+      mockUseOwner.mockReturnValue({
+        data: {
+          ...mockUseOwnerData,
+          owner: '0xotherowner',
+        },
+        isLoading: false,
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
       expect(setPrimaryAction).toBeDefined()
     })
 
-    it('should return an action if expiry date is less than now', () => {
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          expiryDate: new Date(NOW_TIMESTAMP - 1),
-        }),
-      )
+    it('should not return an action if expiry date is less than now', () => {
+      mockUseExpiry.mockReturnValue({
+        data: {
+          expiry: createDateAndValue(BigInt(NOW_TIMESTAMP - 1)),
+        },
+        isLoading: false,
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
       expect(setPrimaryAction).toBeUndefined()
     })
 
-    it('should return not return action if primary name matches current name', () => {
-      mockUsePrimary.mockReturnValueOnce({
-        data: { name: 'test.eth' },
+    it('should not return an action if primary name matches current name', () => {
+      mockUsePrimaryName.mockReturnValue({
+        data: { name: 'test.eth', beautifiedName: 'test.eth' },
         isLoading: false,
       })
-      const { result } = renderHook(() => useProfileActions(props))
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
@@ -368,24 +451,25 @@ describe('useProfileActions', () => {
         data: { isAuthorized: false },
         isLoading: false,
       })
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            address: '0xotheraddress',
-          },
-          ownerData: {
-            ...props.ownerData,
-            ownershipLevel: 'nameWrapper',
-          },
-          wrapperData: {
+      mockUseProfile.mockReturnValue({
+        data: {
+          ...mockUseProfileData,
+          address: '0xotheraddress',
+        },
+        isLoading: false,
+      })
+      mockUseWrapperData.mockReturnValue({
+        data: {
+          fuses: {
             child: {
               CANNOT_SET_RESOLVER: true,
             },
           },
-        }),
-      )
+          owner: '0x1234567890'
+        },
+        isLoading: false,
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
@@ -393,28 +477,25 @@ describe('useProfileActions', () => {
     })
 
     it('should return action if profile address does not match, is wrapped owner and CSR fuse is burned and resolver status isAuthorized is true', () => {
-      mockUseResolverStatus.mockReturnValueOnce({
-        data: { isAuthorized: true },
+      mockUseProfile.mockReturnValue({
+        data: {
+          ...mockUseProfileData,
+          address: '0xotheraddress',
+        },
         isLoading: false,
       })
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            address: '0xotheraddress',
-          },
-          ownerData: {
-            ...props.ownerData,
-            ownershipLevel: 'nameWrapper',
-          },
-          wrapperData: {
+      mockUseWrapperData.mockReturnValue({
+        data: {
+          fuses: {
             child: {
               CANNOT_SET_RESOLVER: true,
             },
           },
-        }),
-      )
+          owner: '0x1234567890'
+        },
+        isLoading: false,
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
@@ -426,155 +507,35 @@ describe('useProfileActions', () => {
         data: { isAuthorized: false },
         isLoading: false,
       })
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            address: '0xotheraddress',
-          },
-          ownerData: {
-            ...props.ownerData,
-            ownershipLevel: 'nameWrapper',
-          },
-          wrapperData: {
-            child: {
-              CANNOT_SET_RESOLVER: false,
-            },
-          },
-        }),
-      )
+      mockUseProfile.mockReturnValue({
+        data: {
+          ...mockUseProfileData,
+          address: '0xotheraddress',
+        },
+        isLoading: false,
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
       expect(setPrimaryAction).toBeDefined()
     })
 
-    it('should return action if CSR is burned and resolver is not authorized but name is not wrapped owner (technically not possible)', () => {
-      mockUseResolverStatus.mockReturnValueOnce({
-        data: { isAuthorized: false },
-        isLoading: false,
-      })
+    it('should return an action that triggers unknownLable input if name is encrypted', async () => {
       const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            address: '0xotheraddress',
-          },
-          ownerData: {
-            ...props.ownerData,
-            ownershipLevel: 'registry',
-          },
-          wrapperData: {
-            child: {
-              CANNOT_SET_RESOLVER: true,
-            },
-          },
-        }),
-      )
-      const setPrimaryAction = result.current.profileActions?.find(
-        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
-      )
-      expect(setPrimaryAction).toBeDefined()
-    })
-
-    it('should return an action with 2 transaction steps if profile address does not match user address', () => {
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            address: '0xotheraddress',
-          },
-        }),
+        useProfileActions({ name: `[${labelhash('test').slice(2)}].eth` }),
       )
       const setPrimaryAction = result.current.profileActions?.find(
         (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
       )
       setPrimaryAction?.onClick()
-      expect(mockCreateTransactionFlow).toHaveBeenCalled()
-      expect(mockCreateTransactionFlow.mock.calls[0][1].transactions.length).toBe(2)
-    })
-
-    it('should return an action with 2 transaction steps if profile address does not match user address and resolver is not authorized but the latest resolver has eth record', () => {
-      mockUseResolverStatus.mockReturnValueOnce({
-        data: { isAuthorized: false, hasMigratedRecord: true },
-        isLoading: false,
-      })
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            address: '0xotheraddress',
-          },
-          selfAbilities: {
-            ...props.selfAbilites,
-            canEdit: true,
-          },
-          ownerData: {
-            ...props.ownerData,
-            ownershipLevel: 'nameWrapper',
-          },
-        }),
-      )
-      const setPrimaryAction = result.current.profileActions?.find(
-        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
-      )
-      setPrimaryAction?.onClick()
-      expect(mockCreateTransactionFlow).toHaveBeenCalled()
-      expect(mockCreateTransactionFlow.mock.calls[0][1].transactions.length).toBe(2)
-    })
-
-    it('should return an action with 3 transaction steps if profile address does not match user address and resolver is not authorized', () => {
-      mockUseResolverStatus.mockReturnValueOnce({
-        data: { isAuthorized: false, hasMigratedRecord: false },
-        isLoading: false,
-      })
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          profile: {
-            ...props.profile,
-            address: '0xotheraddress',
-          },
-          selfAbilities: {
-            ...props.selfAbilites,
-            canEdit: true,
-          },
-          ownerData: {
-            ...props.ownerData,
-            ownershipLevel: 'nameWrapper',
-          },
-        }),
-      )
-      const setPrimaryAction = result.current.profileActions?.find(
-        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
-      )
-      setPrimaryAction?.onClick()
-      expect(mockCreateTransactionFlow).toHaveBeenCalled()
-      expect(mockCreateTransactionFlow.mock.calls[0][1].transactions.length).toBe(3)
-    })
-
-    it('should return an action that triggers unknownLable input if name is encrypted', () => {
-      const { result } = renderHook(() =>
-        useProfileActions({
-          ...props,
-          name: `[${labelhash('test').slice(2)}].eth`,
-        }),
-      )
-      const setPrimaryAction = result.current.profileActions?.find(
-        (action: any) => action.label === 'tabs.profile.actions.setAsPrimaryName.label',
-      )
-      setPrimaryAction?.onClick()
-      expect(mockPrepareDataInput).toHaveBeenCalled()
-      expect(mockPrepareDataInput.mock.calls[0][0]).toBe(
+      expect(mockUsePreparedDataInput).toHaveBeenCalled()
+      expect(mockUsePreparedDataInput.mock.calls[0][0]).toBe(
         `setPrimaryName-[${labelhash('test').slice(2)}].eth-0x1234567890`,
       )
-      expect(mockPrepareDataInput.mock.calls[0][1].transactionFlowItem.transactions.length).toEqual(
-        1,
-      )
+      expect(
+        mockUsePreparedDataInput.mock.calls[0][1].transactionFlowItem.transactions.length,
+      ).toEqual(1)
     })
   })
 })

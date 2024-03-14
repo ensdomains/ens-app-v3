@@ -1,10 +1,12 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { describe, expect, it, vi } from 'vitest'
+
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { RecordsTab } from './RecordsTab'
 
-jest.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/utils/BreakpointProvider')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 mockUseBreakpoint.mockReturnValue({ sm: true, md: true, lg: true })
@@ -45,14 +47,14 @@ describe('RecordsTab', () => {
       ],
       addresses: [
         {
-          key: 'addr1',
-          coin: 'ADR1',
-          addr: 'addr1-value',
+          id: 1,
+          name: 'ADR1',
+          value: 'addr1-value',
         },
         {
-          key: 'addr2',
-          coin: 'ADR2',
-          addr: 'addr2-value',
+          id: 1,
+          name: 'ADR2',
+          value: 'addr2-value',
         },
       ],
     }
@@ -79,14 +81,14 @@ describe('RecordsTab', () => {
       ],
       addresses: [
         {
-          key: 'addr1',
-          coin: 'ADR1',
-          addr: 'addr1-value',
+          id: 1,
+          name: 'ADR1',
+          value: 'addr1-value',
         },
         {
-          key: 'addr2',
-          coin: 'ADR2',
-          addr: 'addr2-value',
+          id: 1,
+          name: 'ADR2',
+          value: 'addr2-value',
         },
       ],
     }
@@ -99,14 +101,14 @@ describe('RecordsTab', () => {
     })
     mockData.addresses.forEach((address) => {
       expect(
-        screen.getByTestId(`name-details-address-${address.coin.toLowerCase()}`),
-      ).toHaveTextContent(`${address.coin}${address.addr}`)
+        screen.getByTestId(`name-details-address-${address.name.toLowerCase()}`),
+      ).toHaveTextContent(`${address.name}${address.value}`)
     })
   })
   it('should show the content hash', () => {
     const mockData = {
       ...baseMockData,
-      contentHash: 'ipfs://1234',
+      contentHash: { protocolType: 'ipfs' as const, decoded: '1234' },
     }
 
     render(<RecordsTab {...mockData} />)

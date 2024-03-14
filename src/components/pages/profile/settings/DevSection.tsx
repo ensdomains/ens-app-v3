@@ -1,15 +1,21 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-// eslint-disable-next-line import/no-extraneous-dependencies
-import type { JsonRpcProvider } from '@ethersproject/providers'
-import { useEffect, useState } from 'react'
-import { usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
+import { useMemo } from 'react'
+import {
+  revert as evmRevert,
+  snapshot as evmSnapshot,
+  getBlockNumber,
+  mine,
+  setAutomine,
+} from 'viem/actions'
+import { Config, useClient, useSendTransaction } from 'wagmi'
 
 import { Button } from '@ensdomains/thorin'
 
+import { localhostWithEns } from '@app/constants/chains'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { DetailedSwitch } from '@app/transaction-flow/input/ProfileEditor/components/DetailedSwitch'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { SectionContainer } from './Section'
 
@@ -17,6 +23,7 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
   fetch('http://localhost:8545', {
     method: 'POST',
     headers: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(
@@ -29,43 +36,24 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
     ),
   })
 
-const useLocalStorageString = (key: string, defaultValue = '') => {
-  const [value, _setValue] = useState(defaultValue)
-  useEffect(() => {
-    _setValue(localStorage.getItem(key) || defaultValue)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  const setValue = (newValue: string) => {
-    localStorage.setItem(key, newValue)
-    _setValue(newValue)
-  }
-  return [value, setValue] as const
-}
+type TestConfig = Config<[typeof localhostWithEns]>
 
 export const DevSection = () => {
-  const provider: JsonRpcProvider = useProvider()
+  const client = useClient<TestConfig>()
+  const testClient = useMemo(() => ({ ...client, mode: 'anvil' }) as const, [client])
+
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()
-  const { config: successConfig } = usePrepareSendTransaction({
-    request: {
-      to: '0x0000000000000000000000000000000000000000',
-      value: '0',
-    },
-  })
-  const { sendTransactionAsync: sendFailure } = useSendTransaction({
-    mode: 'prepared',
-    request: {
-      to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
-      data: '0x1231237123423423',
-      gasLimit: '1000000',
-    },
-  })
-  const { sendTransactionAsync: sendSuccess } = useSendTransaction(successConfig)
+  const { sendTransactionAsync } = useSendTransaction()
 
   const addSuccess = async () => {
-    const transaction = await sendSuccess!()
+    const hash = await sendTransactionAsync({
+      to: '0x0000000000000000000000000000000000000000',
+      value: 0n,
+      gas: 21000n,
+    })
     addTransaction({
-      hash: transaction.hash,
+      hash,
       action: 'test',
       searchRetries: 0,
     })
@@ -73,37 +61,40 @@ export const DevSection = () => {
 
   const sendName = async () => {
     createTransactionFlow('dev-sendName', {
-      transactions: [makeTransactionItem('testSendName', {})],
+      transactions: [createTransactionItem('testSendName', {})],
     })
   }
 
   const addFailure = async () => {
-    const transaction = await sendFailure!()
+    const hash = await sendTransactionAsync({
+      to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+      data: '0x1231237123423423',
+      gas: 1000000n,
+    })
     addTransaction({
-      hash: transaction.hash,
+      hash,
       action: 'test',
       searchRetries: 0,
     })
   }
 
   const startAutoMine = async () =>
-    provider.send('evm_setAutomine', [true]).then(() => provider.send('evm_mine', []))
+    setAutomine(testClient, true).then(() => mine(testClient, { blocks: 1 }))
 
-  const stopAutoMine = async () => provider.send('evm_setAutomine', [false])
+  const stopAutoMine = async () => setAutomine(testClient, false)
 
   const revert = async () => {
-    const currBlock = await provider.getBlockNumber()
-    await provider.send('evm_revert', [1])
-    await provider.send('evm_snapshot', [])
-    const revertBlock = await provider.getBlockNumber()
+    const currBlock = await getBlockNumber(client)
+    await evmRevert(testClient, { id: '0x1' })
+    await evmSnapshot(testClient)
+    const revertBlock = await getBlockNumber(client)
     const blocksToMine = currBlock - revertBlock
     await rpcSendBatch(
-      Array.from({ length: blocksToMine + 1 }, () => ({ method: 'evm_mine', params: [] })),
+      Array.from({ length: Number(blocksToMine) + 1 }, () => ({ method: 'evm_mine', params: [] })),
     )
   }
 
-  const [ensjsError, setEnsjsError] = useLocalStorageString('ensjs-debug')
-  const [subgraphError, setSubgraphError] = useLocalStorageString('subgraph-debug')
+  const [subgraphError, setSubgraphError] = useLocalStorage<string | null>('subgraph-debug', null)
 
   return (
     <SectionContainer title="Developer">
@@ -118,35 +109,19 @@ export const DevSection = () => {
         </>
       )}
       <DetailedSwitch
-        title="ENSJS Subgraph Indexing Error"
-        description="An error caused by the subgraph not indexing. In theory, should still be able to get meta data from graph."
-        checked={
-          ensjsError === 'ENSJSSubgraphError' && subgraphError === 'ENSJSSubgraphIndexingError'
-        }
-        onChange={(e) => {
-          setSubgraphError(e.currentTarget.checked ? 'ENSJSSubgraphIndexingError' : '')
-          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
-        }}
-        data-testid="subgraph-indexing-error"
-      />
-      <DetailedSwitch
         title="ENSJS Network Error"
         description="An error caused by the subgraph network failing"
-        checked={
-          ensjsError === 'ENSJSSubgraphError' && subgraphError !== 'ENSJSSubgraphIndexingError'
-        }
+        checked={subgraphError === 'ENSJSSubgraphError'}
         onChange={(e) => {
-          setSubgraphError('')
-          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
+          setSubgraphError(e.currentTarget.checked ? 'ENSJSSubgraphError' : '')
         }}
         data-testid="subgraph-network-error"
       />
       <DetailedSwitch
         title="Network Latency Error"
-        checked={ensjsError === 'ENSJSSubgraphLatency'}
+        checked={subgraphError === 'ENSJSSubgraphLatency'}
         onChange={(e) => {
-          setEnsjsError(e.currentTarget.checked ? 'ENSJSSubgraphLatency' : '')
-          setSubgraphError('')
+          setSubgraphError(e.currentTarget.checked ? 'ENSJSSubgraphLatency' : '')
         }}
         data-testid="network-latency-error"
       />

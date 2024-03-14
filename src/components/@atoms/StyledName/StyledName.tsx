@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import useBeautifiedName from '@app/hooks/useBeautifiedName'
+import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 
 const Container = styled.div(
   ({ theme }) => css`

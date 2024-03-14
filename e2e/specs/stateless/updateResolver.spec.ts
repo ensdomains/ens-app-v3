@@ -1,8 +1,13 @@
 import { expect } from '@playwright/test'
-import { test } from '@root/playwright'
 
-const newResolver = '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF'
-const oldResolver = '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB'
+import { test } from '../../../playwright'
+import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+
+// const newResolver = '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF'
+// const oldResolver = '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB'
+
+const oldResolver = testClient.chain.contracts.legacyPublicResolver.address
+const newResolver = testClient.chain.contracts.publicResolver.address
 
 test.describe('Happy', () => {
   test.describe('When profile is updated to latest resolver', () => {
@@ -110,7 +115,7 @@ test.describe('subgraph errors', () => {
     await login.connect()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').check()
+    await page.getByTestId('subgraph-network-error').check()
 
     await morePage.goto(name)
     await expect(morePage.editResolverButton).toHaveCount(0)
@@ -133,9 +138,12 @@ test.describe('subgraph errors', () => {
     await login.connect()
 
     await page.goto('/my/settings')
-    await page.getByTestId('subgraph-indexing-error').check()
+    await page.getByTestId('subgraph-network-error').check()
 
     await morePage.goto(name)
     await expect(morePage.editResolverButton).toHaveCount(0)
+
+    await page.goto('/my/settings')
+    await page.getByTestId('subgraph-network-error').uncheck()
   })
 })

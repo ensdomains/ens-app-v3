@@ -1,59 +1,32 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { StaticJsonRpcProvider } from '@ethersproject/providers/lib/url-json-rpc-provider'
-import { Wallet } from '@ethersproject/wallet'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { RenderOptions, render } from '@testing-library/react'
-import { RenderHookOptions, renderHook } from '@testing-library/react-hooks'
-import userEvent from '@testing-library/user-event'
-import { MockConnector } from '@wagmi/core/connectors/mock'
+import { render, renderHook, RenderHookOptions, RenderOptions } from '@testing-library/react'
+import user from '@testing-library/user-event'
+import { mock } from '@wagmi/core'
 import React, { FC, ReactElement } from 'react'
 import { ThemeProvider } from 'styled-components'
-import { WagmiConfig, createClient } from 'wagmi'
+import { beforeEach, expect, MockedFunction, vi } from 'vitest'
+import type { Register } from 'wagmi'
+import { hashFn } from 'wagmi/query'
 
-import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
+import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
+
+import { mainnetWithEns } from '@app/constants/chains'
 
 import { DeepPartial } from './types'
 
-window.scroll = jest.fn()
+const { createClient, http } = await vi.importActual<typeof import('viem')>('viem')
+const { privateKeyToAccount } =
+  await vi.importActual<typeof import('viem/accounts')>('viem/accounts')
+const { createConfig, WagmiProvider } = await vi.importActual<typeof import('wagmi')>('wagmi')
 
-jest.mock('@app/hooks/useRegistrationReducer', () => jest.fn(() => ({ item: { stepIndex: 0 } })))
-jest.mock('@app/hooks/useChainId', () => ({ useChainId: () => 1 }))
+window.scroll = vi.fn() as (opts?: ScrollOptions) => void
+
+vi.mock('@app/hooks/useRegistrationReducer', () => vi.fn(() => ({ item: { stepIndex: 0 } })))
 
 export const mockUseAccountReturnValue = { address: '0x123' }
 
-jest.mock('wagmi', () => {
-  const {
-    useQuery,
-    useQueryClient,
-    useInfiniteQuery,
-    useMutation,
-    createClient: _createClient,
-    WagmiConfig: _WagmiConfig,
-  } = jest.requireActual('wagmi')
-
-  return {
-    useQuery,
-    useQueryClient,
-    useInfiniteQuery,
-    useMutation,
-    createClient: _createClient,
-    WagmiConfig: _WagmiConfig,
-    useAccount: jest.fn(() => mockUseAccountReturnValue),
-    useBalance: jest.fn(() => ({ data: { value: { lt: () => false } } })),
-    useNetwork: jest.fn(() => ({ chainId: 1 })),
-    useFeeData: jest.fn(),
-    useProvider: jest.fn(() => ({
-      providerConfigs: [{ provider: { send: jest.fn(() => ({ gasUsed: 0, accessList: [] })) } }],
-    })),
-    useSigner: jest.fn(),
-    useSignTypedData: jest.fn(),
-    useBlockNumber: jest.fn(),
-    useSendTransaction: jest.fn(),
-    configureChains: jest.fn(() => ({})),
-  }
-})
-
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (value: string, opts: any) => {
       const optsTxt = opts?.value || opts?.count || ''
@@ -70,53 +43,52 @@ jest.mock('react-i18next', () => ({
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      cacheTime: Infinity,
+      gcTime: Infinity,
       retry: false,
+      queryKeyHashFn: hashFn,
     },
-  },
-  logger: {
-    log: console.log,
-    warn: console.warn,
-    error: () => {},
   },
 })
 
 beforeEach(() => queryClient.clear())
 
-// eslint-disable-next-line no-restricted-syntax
-const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
-
-class EthersProviderWrapper extends StaticJsonRpcProvider {
-  toJSON() {
-    return `<Provider network={${this.network.chainId}} />`
-  }
-}
-
-const wagmiClient = createClient({
-  connectors: [
-    new MockConnector({
-      options: {
-        signer: new Wallet(privateKey, new EthersProviderWrapper()),
-      },
-    }) as any,
-  ],
-  provider: () => new EthersProviderWrapper(),
+const privateKeyAccount = privateKeyToAccount(
+  // eslint-disable-next-line no-restricted-syntax
+  '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
+)
+const client = createClient({
+  transport: http('http://mock.local'),
+  chain: mainnetWithEns,
 })
 
-jest.mock('@app/utils/query', () => ({
-  wagmiClientWithRefetch: wagmiClient,
+const wagmiConfig = {
+  ...createConfig({
+    connectors: [
+      mock({
+        accounts: [privateKeyAccount.address],
+        features: {},
+      }),
+    ],
+    chains: [mainnetWithEns],
+    client: () => client,
+  }),
+  _isEns: true,
+} as unknown as Register['config']
+
+vi.mock('@app/utils/query/wagmi', () => ({
+  wagmiConfig,
 }))
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <WagmiConfig client={wagmiClient}>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={lightTheme}>
           <ThorinGlobalStyles />
           {children}
         </ThemeProvider>
-      </WagmiConfig>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   )
 }
 
@@ -132,10 +104,18 @@ export type PartialMockedFunction<T extends (...args: any) => any> = (
   ...args: Parameters<T>
 ) => DeepPartial<ReturnType<T>>
 
+export type MockHookData<THookFn extends (...args: any[]) => { data: any }> = DeepPartial<
+  ReturnType<THookFn>['data']
+>
+
+export const expectEnabledHook = <TFn extends (...args: any[]) => any>(fn: TFn, enabled: boolean) =>
+  expect(fn).toHaveBeenCalledWith(expect.objectContaining({ enabled }))
+
 export const mockFunction = <T extends (...args: any) => any>(func: T) =>
-  func as unknown as jest.MockedFunction<PartialMockedFunction<T>>
+  func as unknown as MockedFunction<PartialMockedFunction<T>>
 
 export * from '@testing-library/react'
-export { customRender as render }
-export { customRenderHook as renderHook }
-export { userEvent }
+
+const userEvent = user.setup()
+
+export { customRender as render, customRenderHook as renderHook, userEvent }

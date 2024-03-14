@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Locator, Page, expect } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 import { Web3ProviderBackend, Web3RequestKind } from 'headless-web3-provider'
 
-import { Accounts, User } from './accounts'
+import { Accounts, User } from './accounts.js'
 
 export class Login {
   readonly page: Page
@@ -29,11 +29,6 @@ export class Login {
      * A bug in rainbow kit needs time to load the provider. Could be fixed in version 1.0.4
      * Also throws eror with walletconnect if not enough time has passed.
      */
-    await this.page.waitForTimeout(process.env.CI ? 15000 : 5000)
-    await this.page
-      .getByRole('button', { name: 'Close' })
-      .click({ timeout: 5000 })
-      .catch(() => {})
   }
 
   async connect(user: User = 'user') {
@@ -47,9 +42,9 @@ export class Login {
     await expect(this.page.getByText('Confirm connection in the extension')).toBeVisible({
       timeout: 15000,
     })
-    await expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(1)
+    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
-    await expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
+    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
     await expect(this.getProfileButton).toBeVisible()
   }
 
@@ -57,5 +52,11 @@ export class Login {
     await this.waitForLoad()
     await this.getConnectButton.click()
     await this.page.getByText('Browser Wallet').click()
+    await expect(this.page.getByText('Confirm connection in the extension')).toBeVisible({
+      timeout: 15000,
+    })
+    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(1)
+    await this.wallet.authorize(Web3RequestKind.RequestPermissions)
+    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(0)
   }
 }

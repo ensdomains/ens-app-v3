@@ -21,6 +21,7 @@ export const DisabledButtonWithTooltip = ({
   buttonWidth,
   colorStyle = 'disabled',
   prefix,
+  loading = false,
 }: {
   size?: Size
   content: string
@@ -32,8 +33,8 @@ export const DisabledButtonWithTooltip = ({
   mobileWidth?: number
   buttonWidth?: ButtonProps['width']
   colorStyle?: ButtonProps['colorStyle']
-  mobileButtonWidth?: string
   prefix?: ReactNodeNoStrings
+  loading?: boolean
 }) => {
   const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager(buttonId)
   return (
@@ -57,6 +58,7 @@ export const DisabledButtonWithTooltip = ({
           prefix={prefix}
           data-testid={buttonId}
           width={buttonWidth}
+          loading={loading}
         >
           {buttonText}
         </Button>

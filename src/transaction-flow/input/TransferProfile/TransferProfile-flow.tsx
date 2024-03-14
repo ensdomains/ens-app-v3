@@ -6,8 +6,8 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useProfile } from '@app/hooks/useProfile'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 
-import { useContractAddress } from '../../../hooks/useContractAddress'
-import { makeTransactionItem } from '../../transaction/index'
+import { useContractAddress } from '../../../hooks/chain/useContractAddress'
+import { createTransactionItem } from '../../transaction/index'
 import { TransactionDialogPassthrough } from '../../types'
 
 type Data = {
@@ -19,15 +19,15 @@ export type Props = { data: Data } & TransactionDialogPassthrough
 
 const TransferProfile = ({ data, dispatch }: Props) => {
   const { t } = useTranslation('transactionFlow')
-  const resolverAddress = useContractAddress('PublicResolver')
+  const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
-  const { profile, loading } = useProfile(data.name)
+  const { data: profile, isLoading } = useProfile({ name: data.name })
   const oldResolverAddress = profile?.resolverAddress
 
-  const updateResolverTransaction = makeTransactionItem('updateResolver', {
+  const updateResolverTransaction = createTransactionItem('updateResolver', {
     name: data.name,
-    resolver: resolverAddress,
-    oldResolver: oldResolverAddress,
+    resolverAddress,
+    oldResolverAddress,
     contract: data.isWrapped ? 'nameWrapper' : 'registry',
   })
 
@@ -51,7 +51,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
       key: `edit-profile-flow-${data.name}`,
       payload: {
         transactions: [
-          makeTransactionItem('migrateProfile', { name: data.name }),
+          createTransactionItem('migrateProfile', { name: data.name }),
           updateResolverTransaction,
         ],
         resumable: true,
@@ -75,7 +75,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
     </Button>
   )
 
-  if (loading) return <TransactionLoader />
+  if (isLoading) return <TransactionLoader />
   return (
     <>
       <Dialog.Heading title={t('input.transferProfile.title')} />

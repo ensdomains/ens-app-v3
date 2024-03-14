@@ -12,7 +12,7 @@ export const DynamicAddressIcon = ({
 }) => {
   if (name.toLowerCase() in dynamicAddressIcons) {
     const key = name.toLowerCase() as DynamicAddressIconName
-    const Icon = dynamicAddressIcons[key] as any
+    const Icon = dynamicAddressIcons[key]
     return <Icon {...props} />
   }
   if (showDefault) {

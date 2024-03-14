@@ -2,7 +2,8 @@ import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
+import { Address } from 'viem'
 
 import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, mq } from '@ensdomains/thorin'
 
@@ -56,7 +57,7 @@ const FooterWrapper = styled.div(({ theme }) => [
 type Props = {
   name: string
   senderRole?: 'owner' | 'manager' | null
-  onSelect: (address: string) => void
+  onSelect: (address: Address) => void
   onCancel: () => void
 }
 

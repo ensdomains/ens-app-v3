@@ -1,9 +1,9 @@
 import {
   Children,
-  ComponentProps,
-  ReactElement,
   cloneElement,
+  ComponentProps,
   isValidElement,
+  ReactElement,
   useCallback,
   useEffect,
   useRef,
@@ -108,12 +108,17 @@ const DropdownMenuContainer = styled.div<DropdownMenuContainerProps>(
     ${() => {
       if ($opened) {
         return css`
-          transition: all 0.35s cubic-bezier(1, 0, 0.22, 1.6), width 0s linear,
+          transition:
+            all 0.35s cubic-bezier(1, 0, 0.22, 1.6),
+            width 0s linear,
             z-index 0s linear 0.35s;
         `
       }
       return css`
-        transition: all 0.35s cubic-bezier(1, 0, 0.22, 1.6), width 0s linear, z-index 0s linear 0s;
+        transition:
+          all 0.35s cubic-bezier(1, 0, 0.22, 1.6),
+          width 0s linear,
+          z-index 0s linear 0s;
       `
     }}
 
@@ -361,11 +366,11 @@ const InnerMenuButton = styled.button<InnerMenuButtonProps>(
       if ($open)
         return css`
           border-${$direction === 'down' ? 'top' : 'bottom'}-left-radius: ${
-          theme.radii.almostExtraLarge
-        };
+            theme.radii.almostExtraLarge
+          };
           border-${$direction === 'down' ? 'top' : 'bottom'}-right-radius: ${
-          theme.radii.almostExtraLarge
-        };
+            theme.radii.almostExtraLarge
+          };
           border-${$direction === 'down' ? 'bottom' : 'top'}-left-radius: none;
           border-${$direction === 'down' ? 'bottom' : 'top'}-right-radius: none;
           border-${$direction === 'down' ? 'bottom' : 'top'}-width: 0;
@@ -382,8 +387,12 @@ const InnerMenuButton = styled.button<InnerMenuButtonProps>(
         return css`
           color: ${theme.colors.textSecondary};
           border-radius: ${theme.radii.almostExtraLarge};
-          transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0.15s color ease-in-out,
-            0s border-width 0.15s, 0.15s border-color ease-in-out, 0s padding linear;
+          transition:
+            0.35s all cubic-bezier(1, 0, 0.22, 1.6),
+            0.15s color ease-in-out,
+            0s border-width 0.15s,
+            0.15s border-color ease-in-out,
+            0s padding linear;
 
           &:hover {
             border-color: ${theme.colors.border};

@@ -1,40 +1,23 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
+/* eslint-disable @typescript-eslint/no-redeclare */
 import type { TFunction } from 'react-i18next'
 
-import {
-  ChildFuses as ENSJSChildFuses,
-  ParentFuses as ENSJSParentFuses,
-} from '@ensdomains/ensjs/utils/fuses'
+import { ChildFuseReferenceType, ParentFuseReferenceType } from '@ensdomains/ensjs/utils'
+import { setChildFuses, setFuses } from '@ensdomains/ensjs/wallet'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
-
-export type ParentFuse = ENSJSParentFuses['fuse']
-export type ChildFuse = ENSJSChildFuses['fuse']
-export type Fuse = ParentFuse | ChildFuse
-
-export const PARENT_FUSES: ParentFuse[] = ['PARENT_CANNOT_CONTROL', 'CAN_EXTEND_EXPIRY']
-export const CHILD_FUSES: ChildFuse[] = [
-  'CANNOT_UNWRAP',
-  'CANNOT_CREATE_SUBDOMAIN',
-  'CANNOT_TRANSFER',
-  'CANNOT_SET_RESOLVER',
-  'CANNOT_SET_TTL',
-  'CANNOT_APPROVE',
-  'CANNOT_BURN_FUSES',
-]
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type WithSetChildFuses = {
   contract: 'setChildFuses'
   fuses: {
-    parent: ParentFuse[]
-    child: ChildFuse[]
+    parent: ParentFuseReferenceType['Key'][]
+    child: ChildFuseReferenceType['Key'][]
   }
   expiry?: number
 }
 
 type WithSetFuses = {
   contract: 'setFuses'
-  fuses: ChildFuse[]
+  fuses: ChildFuseReferenceType['Key'][]
 }
 
 type Data = {
@@ -100,10 +83,11 @@ const displayItems = (
   ]
 }
 
-const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
+const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
   const { contract } = data
   if (contract === 'setChildFuses') {
-    return ens.setChildFuses.populateTransaction(data.name, {
+    return setChildFuses.makeFunctionData(connectorClient, {
+      name: data.name,
       fuses: {
         parent: {
           named: data.fuses.parent,
@@ -113,18 +97,18 @@ const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
         },
       },
       expiry: data.expiry,
-      signer,
     })
   }
-  const tx = ens.setFuses.populateTransaction(data.name, {
-    named: data.fuses,
-    signer,
+  return setFuses.makeFunctionData(connectorClient, {
+    name: data.name,
+    fuses: {
+      named: data.fuses,
+    },
   })
-  return tx
 }
 
 export default {
   displayItems,
   transaction,
   backToInput: true,
-} as Transaction<Data>
+} satisfies Transaction<Data>

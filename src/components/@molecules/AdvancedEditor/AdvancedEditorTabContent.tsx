@@ -6,8 +6,8 @@ import { ScrollBox } from '@ensdomains/thorin'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
-import { validateCryptoAddress } from '@app/utils/validate'
 import { validateAbi } from '@app/validators/validateAbi'
+import { validateCryptoAddress } from '@app/validators/validateAddress'
 import { validateContentHash } from '@app/validators/validateContentHash'
 
 const TabContentsContainer = styled.div(
@@ -53,7 +53,7 @@ const AdvancedEditorContent = ({
   register,
   getSelectedAddressOption,
   tab,
-  hasABIInterface,
+  hasAbiInterface,
   setValue,
 }: Props) => {
   const { t } = useTranslation('profile')
@@ -129,7 +129,7 @@ const AdvancedEditorContent = ({
                       }}
                       {...register(`address.${key}`, {
                         validate: (value: string) => {
-                          const result = validateCryptoAddress(key)(value)
+                          const result = validateCryptoAddress({ coin: key, address: value })
                           if (typeof result === 'string')
                             return t('errors.invalidAddress', { ns: 'common' })
                           return result
@@ -161,7 +161,7 @@ const AdvancedEditorContent = ({
                       }}
                       {...register(`address.${key}`, {
                         validate: (value: string) => {
-                          const result = validateCryptoAddress(key)(value)
+                          const result = validateCryptoAddress({ coin: key, address: value })
                           if (typeof result === 'string')
                             return t('errors.invalidAddress', { ns: 'common' })
                           return result
@@ -191,7 +191,7 @@ const AdvancedEditorContent = ({
                   />
                   <RecordInput
                     deletable={false}
-                    disabled={!hasABIInterface}
+                    disabled={!hasAbiInterface}
                     labelDisabled={t('advancedEditor.tabs.other.labelDisabled')}
                     label={t('advancedEditor.tabs.other.abi.label')}
                     placeholder={t('advancedEditor.tabs.other.abi.placeholder')}

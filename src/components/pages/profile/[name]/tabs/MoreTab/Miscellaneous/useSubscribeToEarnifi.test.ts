@@ -1,14 +1,14 @@
-import { act, renderHook } from '@app/test-utils'
+import { act, renderHook, waitFor } from '@app/test-utils'
 
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
-import fetch, { Request, Response } from 'node-fetch'
+import { afterAll, afterEach, beforeAll, describe, expect, it, test, vi } from 'vitest'
 
 import { EARNIFI_ENDPOINT, getErrorMessage, useSubscribeToEarnifi } from './useSubscribeToEarnifi'
 
 export const handlers = [
-  rest.post(EARNIFI_ENDPOINT, (req, res, ctx) => {
-    const { email, address, chainId } = req.body
+  rest.post(EARNIFI_ENDPOINT, async (req, res, ctx) => {
+    const { email, address, chainId } = await req.json()
     if (email && address && chainId) {
       return res(ctx.status(200))
     }
@@ -40,25 +40,19 @@ describe('getErrorMessage', () => {
 
 describe('useSubscribeToEarnifi', () => {
   beforeAll(() => {
-    global.fetch = fetch
-    global.Request = Request
-    global.Response = Response
     server.listen()
   })
 
   afterAll(async () => {
-    delete global.fetch
-    delete global.Request
-    delete global.Response
     if (server && typeof server.close === 'function') {
       // Add a check to make sure server is defined and has a close method
-      // server.close()
+      server.close()
     }
   })
   afterEach(() => server.resetHandlers())
 
   it('should return a successful response when subscribing with valid data', async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useSubscribeToEarnifi({}))
+    const { result } = renderHook(() => useSubscribeToEarnifi({}))
 
     act(() => {
       result.current.subscribe({
@@ -68,13 +62,12 @@ describe('useSubscribeToEarnifi', () => {
       })
     })
 
-    await waitForNextUpdate()
-    expect(result.current.isSuccess).toBe(true)
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
   })
 
   it('should call onError function when there is a server error', async () => {
-    const onError = jest.fn()
-    const { result, waitForNextUpdate } = renderHook(() => useSubscribeToEarnifi({ onError }))
+    const onError = vi.fn() as () => void
+    const { result } = renderHook(() => useSubscribeToEarnifi({ onError }))
 
     // Simulate a server error
     result.current.subscribe({
@@ -82,9 +75,8 @@ describe('useSubscribeToEarnifi', () => {
       chainId: 1,
       address: '',
     })
-    await waitForNextUpdate()
 
     // Check if the onError function was called
-    expect(onError).toHaveBeenCalled()
+    await waitFor(() => expect(onError).toHaveBeenCalled())
   })
 })

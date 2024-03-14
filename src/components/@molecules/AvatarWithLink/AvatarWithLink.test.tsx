@@ -1,5 +1,7 @@
 import { render, screen } from '@app/test-utils'
 
+import { describe, expect, it } from 'vitest'
+
 import { AvatarWithLink } from './AvatarWithLink'
 
 describe('AvatarWithLink', () => {

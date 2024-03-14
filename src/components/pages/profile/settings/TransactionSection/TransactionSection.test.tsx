@@ -1,23 +1,24 @@
 import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 
 import { act } from '@testing-library/react'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 
+import { useChainName } from '@app/hooks/chain/useChainName'
 import type { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useChainName } from '@app/hooks/useChainName'
 
 import { TransactionSection } from './TransactionSection'
 
-jest.mock('@app/hooks/useChainName')
-jest.mock('@app/hooks/transactions/useClearRecentTransactions')
-jest.mock('@app/hooks/transactions/useRecentTransactions')
+vi.mock('@app/hooks/chain/useChainName')
+vi.mock('@app/hooks/transactions/useClearRecentTransactions')
+vi.mock('@app/hooks/transactions/useRecentTransactions')
 
 const mockUseChainName = mockFunction(useChainName)
 const mockUseClearRecentTransactions = mockFunction(useClearRecentTransactions)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 
-const mockClearTransactions = jest.fn()
+const mockClearTransactions = vi.fn()
 
 const makeRecentTransaction =
   (status = 'confirmed') =>
@@ -26,7 +27,7 @@ const makeRecentTransaction =
       status,
       action: `test-action-${i}`,
       hash: `0x${i.toString(16).padStart(32, '0')}`,
-    } as Transaction)
+    }) as Transaction
 
 describe('TransactionSection', () => {
   mockUseChainName.mockReturnValue('mainnet')
@@ -37,7 +38,7 @@ describe('TransactionSection', () => {
       ({
         width: 300,
         height: 300,
-      } as any)
+      }) as any
   })
 
   it('should render', () => {

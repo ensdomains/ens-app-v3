@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { Select } from '@ensdomains/thorin'
 
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
-import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
+import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import { formSafeKey } from '@app/utils/editor'
 import { getSocialData } from '@app/utils/getSocialData'
 
@@ -16,24 +16,27 @@ const IconWrapper = styled.div(
   `,
 )
 
-const accountsOptions = supportedTexts.reduce((list, account) => {
-  const socialData = getSocialData(account, '')
-  if (!socialData) return list
-  return [
-    ...list,
-    {
-      value: formSafeKey(account),
-      label: socialData.label,
-      prefix: (
-        <IconWrapper>
-          <DynamicSocialIcon
-            name={socialData?.icon as keyof typeof socialIconTypes}
-            fill={socialData?.color}
-          />
-        </IconWrapper>
-      ),
-    },
-  ]
-}, [] as ComponentProps<typeof Select>['options'])
+const accountsOptions = supportedSocialRecordKeys.reduce(
+  (list, account) => {
+    const socialData = getSocialData(account, '')
+    if (!socialData) return list
+    return [
+      ...list,
+      {
+        value: formSafeKey(account),
+        label: socialData.label,
+        prefix: (
+          <IconWrapper>
+            <DynamicSocialIcon
+              name={socialData?.icon as keyof typeof socialIconTypes}
+              fill={socialData?.color}
+            />
+          </IconWrapper>
+        ),
+      },
+    ]
+  },
+  [] as ComponentProps<typeof Select>['options'],
+)
 
 export default accountsOptions

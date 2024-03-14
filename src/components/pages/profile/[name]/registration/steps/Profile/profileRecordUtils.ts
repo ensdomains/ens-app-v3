@@ -1,15 +1,16 @@
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import { hexToString, stringToHex } from 'viem'
+
+import { ClientWithEns } from '@ensdomains/ensjs/dist/types/contracts/consts'
+import { encodeAbi, EncodedAbi, getProtocolType, RecordOptions } from '@ensdomains/ensjs/utils'
 
 import { ProfileRecord, ProfileRecordGroup, sortValues } from '@app/constants/profileRecordOptions'
-import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'
-import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
-import { DetailedProfile } from '@app/hooks/useNameDetails'
+import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import {
-  contentHashProtocolToContentHashProvider,
-  contentHashToString,
-  getProtocolTypeAndContentId,
-} from '@app/utils/contenthash'
+import { Profile } from '@app/types'
+import { getUsedAbiEncodeAs } from '@app/utils/abi'
+import { normalizeCoinAddress } from '@app/utils/coin'
+import { contentHashToString, getContentHashProvider } from '@app/utils/contenthash'
 
 export const profileRecordsToRecordOptions = (
   profileRecords: ProfileRecord[] = [],
@@ -52,9 +53,12 @@ export const profileRecordsToRecordOptions = (
       if (record.type === 'addr') {
         return {
           ...options,
-          coinTypes: [
-            ...(options.coinTypes?.filter((r) => r.key !== recordItem.key) || []),
-            recordItem,
+          coins: [
+            ...(options.coins?.filter((r) => r.coin !== recordItem.key) || []),
+            {
+              coin: recordItem.key,
+              value: normalizeCoinAddress({ coin: recordItem.key, address: recordItem.value }),
+            },
           ],
         }
       }
@@ -70,7 +74,8 @@ export const profileRecordsToRecordOptions = (
         return {
           ...options,
           abi: {
-            data: recordItem.value,
+            contentType: 1,
+            encodedData: stringToHex(recordItem.value),
           },
         }
       }
@@ -79,8 +84,34 @@ export const profileRecordsToRecordOptions = (
     },
     {
       clearRecords: !!clearRecords,
-    },
+    } as RecordOptions,
   )
+}
+
+export const profileRecordsToRecordOptionsWithDeleteAbiArray = async (
+  client: ClientWithEns,
+  {
+    name = '',
+    profileRecords = [],
+    clearRecords = false,
+  }: {
+    name: string
+    profileRecords: ProfileRecord[]
+    clearRecords?: boolean
+  },
+) => {
+  const recordOptions = profileRecordsToRecordOptions(profileRecords, clearRecords)
+  if (!recordOptions.abi) return recordOptions
+  const abi = recordOptions.abi as EncodedAbi
+  if (hexToString(abi.encodedData)) return recordOptions
+  const allAbiEncodedAs = await getUsedAbiEncodeAs(client, { name })
+  const abis = await Promise.all(
+    allAbiEncodedAs.map((encodeAs) => encodeAbi({ encodeAs, data: null })),
+  )
+  return {
+    ...recordOptions,
+    abi: abis,
+  }
 }
 
 export const profileEditorFormToProfileRecords = (data: ProfileEditorForm): ProfileRecord[] => {
@@ -134,8 +165,8 @@ const sortProfileRecords = (recordA: ProfileRecord, recordB: ProfileRecord): num
   return recordAValue - recordBValue
 }
 
-export const profileToProfileRecords = (profile?: DetailedProfile): ProfileRecord[] => {
-  const records = profile?.records || {}
+export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
+  const records = profile || {}
   const texts: ProfileRecord[] =
     records.texts?.map(({ key, value }) => {
       if (key === 'avatar') {
@@ -147,9 +178,11 @@ export const profileToProfileRecords = (profile?: DetailedProfile): ProfileRecor
         }
       }
       /* eslint-disable no-nested-ternary */
-      const group: ProfileRecordGroup = supportedGeneralRecordKeys.includes(key as string)
+      const group: ProfileRecordGroup = supportedGeneralRecordKeys.includes(
+        key as (typeof supportedGeneralRecordKeys)[number],
+      )
         ? 'general'
-        : supportedAccounts.includes(key as string)
+        : supportedSocialRecordKeys.includes(key as (typeof supportedSocialRecordKeys)[number])
         ? 'social'
         : 'custom'
       /* eslint-enable no-nested-ternary */
@@ -161,25 +194,24 @@ export const profileToProfileRecords = (profile?: DetailedProfile): ProfileRecor
       }
     }) || []
   const addresses: ProfileRecord[] =
-    records.coinTypes?.map(({ addr, coin }: any) => {
+    records.coins?.map(({ name, value }) => {
       return {
-        key: coin,
+        key: name,
         type: 'addr',
         group: 'address',
-        value: addr,
+        value,
       }
     }) || []
 
   const contentHashStr = contentHashToString(records.contentHash)
-  const { protocolType, contentId } = getProtocolTypeAndContentId(contentHashStr)
-  const protocolKey = contentHashProtocolToContentHashProvider(protocolType || undefined)
-  const website: ProfileRecord[] =
-    protocolKey && contentId
-      ? [{ key: protocolKey, type: 'contenthash', group: 'website', value: contentHashStr }]
-      : []
+  const protocolTypeData = getProtocolType(contentHashStr)!
+  const protocolKey = protocolTypeData && getContentHashProvider(protocolTypeData.protocolType)
+  const website: ProfileRecord[] = protocolKey
+    ? [{ key: protocolKey, type: 'contenthash', group: 'website', value: contentHashStr }]
+    : []
 
-  const abi: ProfileRecord[] = records.abi?.data
-    ? [{ key: 'abi', type: 'abi', group: 'other', value: records.abi.data }]
+  const abi: ProfileRecord[] = records.abi?.abi
+    ? [{ key: 'abi', type: 'abi', group: 'other', value: JSON.stringify(records.abi.abi) }]
     : []
   const profileRecords = [...texts, ...addresses, ...website, ...abi]
   const sortedProfileRecords = profileRecords.sort(sortProfileRecords)

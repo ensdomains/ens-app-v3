@@ -1,11 +1,14 @@
+import { readFileSync } from 'fs'
 import { cleanup, render, waitFor } from '@app/test-utils'
+
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import NFTTemplate from './NFTTemplate'
 
 describe('NFTTemplate', () => {
   afterEach(() => {
     cleanup()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render', async () => {
@@ -45,7 +48,16 @@ describe('NFTTemplate', () => {
   })
 
   it('should use polyfill of Intl.Segmenter if browser does not support', async () => {
-    ;(window.Intl.Segmenter as typeof Intl['Segmenter']) = undefined as any
+    const breakIterator = readFileSync('./public/wasm/break_iterator.wasm')
+    ;(window.Intl.Segmenter as (typeof Intl)['Segmenter']) = undefined as any
+    vi.spyOn(window, 'fetch').mockImplementation(
+      async () =>
+        new Response(breakIterator, {
+          headers: {
+            'content-type': 'application/wasm',
+          },
+        }),
+    )
     const { getByText } = render(
       <NFTTemplate name="alisha.eth" backgroundImage={undefined} isNormalised />,
     )

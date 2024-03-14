@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
+import { Address } from 'viem'
 
-import { ChildFuses } from '@ensdomains/ensjs'
-import { BaseRegistrationParams } from '@ensdomains/ensjs/utils/registerHelpers'
+import { ChildFuseReferenceType, RegistrationParameters } from '@ensdomains/ensjs/utils'
 
 import { profileRecordsToRecordOptions } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
@@ -9,20 +9,26 @@ import { yearsToSeconds } from '@app/utils/utils'
 
 type Props = {
   name: string
-  owner: string
+  owner: Address
   registrationData: Pick<
     RegistrationReducerDataItem,
-    'years' | 'resolver' | 'secret' | 'records' | 'clearRecords' | 'permissions' | 'reverseRecord'
+    | 'years'
+    | 'resolverAddress'
+    | 'secret'
+    | 'records'
+    | 'clearRecords'
+    | 'permissions'
+    | 'reverseRecord'
   >
 }
 
 const useRegistrationParams = ({ name, owner, registrationData }: Props) => {
-  const registrationParams: BaseRegistrationParams & { name: string } = useMemo(
+  const registrationParams: RegistrationParameters = useMemo(
     () => ({
       name,
       owner,
       duration: yearsToSeconds(registrationData.years),
-      resolverAddress: registrationData.resolver,
+      resolverAddress: registrationData.resolverAddress,
       secret: registrationData.secret,
       records: profileRecordsToRecordOptions(
         registrationData.records,
@@ -31,8 +37,8 @@ const useRegistrationParams = ({ name, owner, registrationData }: Props) => {
       fuses: {
         named: registrationData.permissions
           ? (Object.keys(registrationData.permissions).filter(
-              (key) => !!registrationData.permissions?.[key as ChildFuses['fuse']],
-            ) as ChildFuses['fuse'][])
+              (key) => !!registrationData.permissions?.[key as ChildFuseReferenceType['Key']],
+            ) as ChildFuseReferenceType['Key'][])
           : [],
         unnamed: [],
       },

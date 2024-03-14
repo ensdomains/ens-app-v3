@@ -1,75 +1,79 @@
-import { useQuery } from 'wagmi'
+import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
 
-import { ReturnedENS } from '@app/types'
-import { useEns } from '@app/utils/EnsProvider'
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { getSubnames, Name } from '@ensdomains/ensjs/subgraph'
+
+import { ConfigWithEns, CreateQueryKey } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 
 import { emptyAddress } from '../utils/constants'
-import { useGlobalErrorFunc } from './errors/useGlobalErrorFunc'
+import { useQueryOptions } from './useQueryOptions'
 
 const FETCH_PAGE_SIZE = 50
 
-type Subnames = ReturnedENS['getSubnames']['subnames']
+type UseHasSubnamesParameters = {
+  name?: string | undefined | null
+}
+
+type QueryKey = CreateQueryKey<UseHasSubnamesParameters, 'hasSubnames', 'graph'>
+
+const hasSubnamesQueryFn =
+  (config: ConfigWithEns) =>
+  async ({ queryKey: [{ name }, chainId] }: QueryFunctionContext<QueryKey>) => {
+    if (!name) throw new Error('name is required')
+
+    const client = config.getClient({ chainId })
+
+    let cursor: Name[] = []
+    let done = false
+
+    while (!done) {
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        const result = await getSubnames(client, {
+          name,
+          previousPage: cursor,
+          orderBy: 'labelName',
+          orderDirection: 'desc',
+          pageSize: FETCH_PAGE_SIZE,
+        })
+        const subnames = result || []
+        const anyHasOwner = subnames.some((subname) => subname.owner !== emptyAddress)
+        if (anyHasOwner) {
+          return true
+        }
+        done = subnames.length !== FETCH_PAGE_SIZE
+        cursor = subnames
+      } catch {
+        return false
+      }
+    }
+
+    return false
+  }
 
 export const useHasSubnames = (name: string) => {
-  const { getSubnames, ready } = useEns()
+  const isSubname = !!name && name.split('.').length > 2
+  const enabled = !!name && isSubname
 
-  const isSubname = name && name.split('.').length > 2
-  const enabled = !!(ready && name && isSubname)
-
-  const queryKey = useQueryKeys().hasSubnames(name)
-  const watchedGetSubnames = useGlobalErrorFunc({
-    queryKey,
-    func: getSubnames,
+  const initialOptions = useQueryOptions({
+    params: { name },
+    functionName: 'hasSubnames',
+    queryDependencyType: 'graph',
+    queryFn: hasSubnamesQueryFn,
   })
 
-  const {
-    data: hasSubnames,
-    isLoading,
-    isFetched,
-    isFetchedAfterMount,
-    status,
-    // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isFetching: _isFetching,
-  } = useQuery(
-    queryKey,
-    async () => {
-      let cursor: Subnames = []
-      let done = false
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
 
-      while (!done) {
-        try {
-          // eslint-disable-next-line no-await-in-loop
-          const result = await watchedGetSubnames({
-            name,
-            lastSubnames: cursor,
-            orderBy: 'labelName',
-            orderDirection: 'desc',
-            pageSize: FETCH_PAGE_SIZE,
-          })
-          const { subnames } = result || { subnames: [] }
-          const anyHasOwner = subnames.some((subname) => subname.owner !== emptyAddress)
-          if (anyHasOwner) {
-            return true
-          }
-          done = subnames.length !== FETCH_PAGE_SIZE
-          cursor = subnames
-        } catch {
-          return false
-        }
-      }
-
-      return false
-    },
-    {
-      enabled,
-    },
-  )
+  const query = useQuery({
+    ...preparedOptions,
+    enabled,
+  })
 
   return {
-    hasSubnames,
-    isLoading,
-    isCachedData: enabled && status === 'success' && isFetched && !isFetchedAfterMount,
+    ...query,
+    isCachedData: getIsCachedData(query),
   }
 }

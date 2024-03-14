@@ -104,7 +104,7 @@
   "sortTypes": {
     "expiryDate": "Verloop Datum",
     "labelName": "Naam",
-    "creationDate": "Creation Datum"
+    "createdAt": "Creation Datum"
   },
   "errors": {
     "noResults": "Geen resultaten gevonden."

@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { Button, Dialog, RadioButton, ScrollBox, Typography } from '@ensdomains/thorin'
 
-import type { SelectedProfile } from '../ResolverWarningOverlay'
 import { CenteredTypography } from '../components/CenteredTypography'
 import { ProfileBlurb } from '../components/ProfileBlurb'
 import { StyledInnerDialog } from '../components/StyledInnerDialog'
+import type { SelectedProfile } from '../ResolverWarningOverlay'
 
 const ContentContainer = styled.div(
   ({ theme }) => css`
@@ -45,8 +46,8 @@ const RadioInfoContainer = styled.div(
 
 type Props = {
   name: string
-  currentResolver: string
-  latestResolver: string
+  currentResolverAddress: Address
+  latestResolverAddress: Address
   hasCurrentProfile: boolean
   selected: SelectedProfile
   onChangeSelected: (selected: SelectedProfile) => void
@@ -55,8 +56,8 @@ type Props = {
 }
 export const MigrateProfileSelectorView = ({
   name,
-  currentResolver,
-  latestResolver,
+  currentResolverAddress,
+  latestResolverAddress,
   hasCurrentProfile,
   selected,
   onChangeSelected,
@@ -87,7 +88,7 @@ export const MigrateProfileSelectorView = ({
                         )}
                       </Typography>
                     </RadioInfoContainer>
-                    <ProfileBlurb name={name} resolver={latestResolver} />
+                    <ProfileBlurb name={name} resolverAddress={latestResolverAddress} />
                   </RadioLabelContainer>
                 }
                 name="resolver-option"
@@ -107,7 +108,7 @@ export const MigrateProfileSelectorView = ({
                           )}
                         </Typography>
                       </RadioInfoContainer>
-                      <ProfileBlurb name={name} resolver={currentResolver} />
+                      <ProfileBlurb name={name} resolverAddress={currentResolverAddress} />
                     </RadioLabelContainer>
                   }
                   name="resolver-option"

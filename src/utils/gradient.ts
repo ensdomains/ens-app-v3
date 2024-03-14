@@ -1,6 +1,5 @@
-import { arrayify } from '@ethersproject/bytes/lib/index'
-
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
+import { Hex, hexToBytes } from 'viem'
+import { namehash } from 'viem/ens'
 
 import { emptyAddress } from './constants'
 
@@ -114,8 +113,8 @@ const lerpSaturationFn = (optionNum: number) => {
   }
 }
 
-export const gradientForBytes = (address: string) => {
-  const bytes = arrayify(address === '' ? emptyAddress : address).reverse()
+export const gradientForBytes = (address: Hex | '') => {
+  const bytes = hexToBytes(address === '' ? emptyAddress : address).reverse()
   const hueShiftFn = lerpHueFn(bytes[3], bytes[6] % 2)
   const startHue = bscale(bytes[12], 360)
   const startLightness = bScaleRange(bytes[2], 32, 69.5)
@@ -159,7 +158,7 @@ export const gradientForBytes = (address: string) => {
 }
 
 export const zorbImageSVG = (input: string, type: 'name' | 'address' | 'hash') => {
-  const bytes = type === 'name' ? namehash(input) : input
+  const bytes: Hex = type === 'name' ? namehash(input) : (input as Hex)
   const gradientInfo = gradientForBytes(bytes)
   return `
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110">
@@ -193,8 +192,8 @@ const makeEnsOutlineIcon = ({ bg, fg, accent }: EnsOutlineColours) => `
 </svg>
 `
 
-const makeBase64Svg = (svg: string) => {
-  return `data:image/svg+xml;base64,${Buffer.from(svg, 'utf-8').toString('base64')}`
+export const makeBase64Svg = (svg: string) => {
+  return `data:image/svg+xml;base64,${btoa(svg)}`
 }
 
 export const zorbImageDataURI = (

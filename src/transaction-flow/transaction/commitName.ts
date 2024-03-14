@@ -1,11 +1,11 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { BaseRegistrationParams } from '@ensdomains/ensjs/utils/registerHelpers'
+import { RegistrationParameters } from '@ensdomains/ensjs/utils'
+import { commitName } from '@ensdomains/ensjs/wallet'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
-type Data = BaseRegistrationParams & { name: string }
+type Data = RegistrationParameters & { name: string }
 
 const displayItems = (
   { name }: Data,
@@ -26,12 +26,8 @@ const displayItems = (
   },
 ]
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const { customData: _, ...tx } = await ens.commitName.populateTransaction(data.name, {
-    signer,
-    ...data,
-  })
-  return tx
+const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  return commitName.makeFunctionData(connectorClient, data)
 }
 
-export default { displayItems, transaction } as Transaction<Data>
+export default { displayItems, transaction } satisfies Transaction<Data>

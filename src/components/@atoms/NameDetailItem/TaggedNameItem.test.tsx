@@ -1,14 +1,15 @@
 import { mockFunction, render } from '@app/test-utils'
 
 import { ReactNode } from 'react'
+import { describe, expect, it, vi } from 'vitest'
 
-import { decodeFuses, encodeFuses } from '@ensdomains/ensjs/utils/fuses'
+import { decodeFuses, encodeFuses } from '@ensdomains/ensjs/utils'
 
 import { NameDetailItem } from './NameDetailItem'
 import { TaggedNameItem } from './TaggedNameItem'
 
-jest.mock('./NameDetailItem')
-jest.mock('@app/components/@atoms/ExpiryComponents/ExpiryComponents')
+vi.mock('./NameDetailItem')
+vi.mock('@app/components/@atoms/ExpiryComponents/ExpiryComponents')
 
 const mockNameDetailItem = mockFunction(NameDetailItem)
 
@@ -31,12 +32,14 @@ const renderHelper = ({
   render(
     <TaggedNameItem
       name={eth ? 'name.eth' : 'name'}
-      isController={controller}
-      isRegistrant={registrant}
-      isWrappedOwner={wrappedOwner}
-      fuses={typeof fuses !== 'undefined' ? decodeFuses(fuses) : undefined}
+      truncatedName={eth ? 'name.eth' : 'name'}
+      relation={{
+        owner: controller,
+        registrant: registrant,
+        wrappedOwner: wrappedOwner,
+      }}
+      fuses={typeof fuses !== 'undefined' && fuses > 0 ? decodeFuses(fuses) : undefined}
       notOwned={notOwned}
-      network={1}
       expiryDate={'2020-01-01' as any}
     />,
   )
@@ -85,7 +88,7 @@ describe('TaggedNameItem', () => {
         const { getByTestId, queryByText } = renderHelper({
           eth: true,
           wrappedOwner: false,
-          fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+          fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
         })
         expect(getByTestId('tag-name.owner-false')).toBeInTheDocument()
         expect(queryByText('name.manager')).not.toBeInTheDocument()
@@ -94,7 +97,7 @@ describe('TaggedNameItem', () => {
         const { getByTestId, queryByText } = renderHelper({
           eth: true,
           wrappedOwner: true,
-          fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+          fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
         })
         expect(getByTestId('tag-name.owner-true')).toBeInTheDocument()
         expect(queryByText('name.manager')).not.toBeInTheDocument()
@@ -114,7 +117,7 @@ describe('TaggedNameItem', () => {
         const { getByTestId, queryByText } = renderHelper({
           eth: false,
           wrappedOwner: false,
-          fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+          fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
         })
         expect(getByTestId('tag-name.owner-false')).toBeInTheDocument()
         expect(queryByText('name.manager')).not.toBeInTheDocument()
@@ -132,7 +135,7 @@ describe('TaggedNameItem', () => {
         const { getByTestId, queryByText } = renderHelper({
           eth: false,
           wrappedOwner: true,
-          fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+          fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
         })
         expect(getByTestId('tag-name.owner-true')).toBeInTheDocument()
         expect(queryByText('name.manager')).not.toBeInTheDocument()

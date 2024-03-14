@@ -1,12 +1,12 @@
 import { Dispatch } from 'react'
 
-import type { ChildFuses } from '@ensdomains/ensjs'
+import { ChildFuseReferenceType } from '@ensdomains/ensjs/utils'
 
 import BurnFusesContent from '@app/components/@molecules/BurnFuses/BurnFusesContent'
-import { useGetWrapperData } from '@app/hooks/useGetWrapperData'
+import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
 import { deleteProperties } from '@app/utils/utils'
 
-import { makeTransactionItem } from '../../transaction'
+import { createTransactionItem } from '../../transaction'
 import { TransactionDialogPassthrough, TransactionFlowAction } from '../../types'
 
 type Data = {
@@ -21,13 +21,13 @@ export type Props = {
 
 export const BurnFuses = ({ data, onDismiss, dispatch }: Props) => {
   const { name } = data
-  const { wrapperData } = useGetWrapperData((name as string) || '')
+  const { data: wrapperData } = useWrapperData({ name })
 
-  const onSubmit = (selectedFuses: ChildFuses['fuse'][], permissions: string[]) => {
+  const onSubmit = (selectedFuses: ChildFuseReferenceType['Key'][], permissions: string[]) => {
     dispatch({
       name: 'setTransactions',
       payload: [
-        makeTransactionItem('burnFuses', {
+        createTransactionItem('burnFuses', {
           name: name as string,
           selectedFuses,
           permissions,
@@ -41,7 +41,7 @@ export const BurnFuses = ({ data, onDismiss, dispatch }: Props) => {
     <BurnFusesContent
       fuseData={
         wrapperData
-          ? deleteProperties(wrapperData.child, 'unnamed', 'CAN_DO_EVERYTHING')
+          ? deleteProperties(wrapperData.fuses.child, 'unnamed', 'CAN_DO_EVERYTHING')
           : undefined
       }
       onDismiss={onDismiss}

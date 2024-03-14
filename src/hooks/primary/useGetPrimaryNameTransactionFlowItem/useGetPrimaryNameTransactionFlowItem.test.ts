@@ -1,27 +1,39 @@
-import { renderHook } from '@app/test-utils'
+import { mockFunction, renderHook } from '@app/test-utils'
 
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
+import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
 
 import { useGetPrimaryNameTransactionFlowItem } from '.'
 
-const mockUseReverseRegistryName = jest.fn().mockReturnValue({
-  data: 'test.eth',
-  isLoading: false,
-})
-jest.mock('@app/hooks/reverseRecord/useReverseRegistryName', () => ({
-  useReverseRegistryName: () => mockUseReverseRegistryName(),
-}))
+vi.mock('@app/hooks/reverseRecord/useReverseRegistryName')
+vi.mock('@app/hooks/chain/useContractAddress')
 
-const makeResovlerStatus = (
+const mockUseReverseRegistryName = mockFunction(useReverseRegistryName)
+const mockUseContractAddress = mockFunction(useContractAddress)
+
+const createResolverStatusData = (
   overwrites: { isAuthorized?: boolean; hasMigratedRecord?: boolean } = {},
 ) =>
   ({
     isAuthorized: true,
     hasMigratedRecord: true,
     ...overwrites,
-  } as unknown as ReturnType<typeof useResolverStatus>['data'])
+  }) as unknown as ReturnType<typeof useResolverStatus>['data']
 
 describe('useGetPrimaryNameTransactionFlowItem', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseReverseRegistryName.mockReturnValue({
+      data: 'test.eth',
+      isLoading: false,
+      isFetching: false,
+    })
+    // @ts-ignore
+    mockUseContractAddress.mockReturnValue('0xresolver')
+  })
   it('should return undefined if there are no transactions to be made', async () => {
     const { result } = renderHook(() =>
       useGetPrimaryNameTransactionFlowItem({
@@ -29,16 +41,17 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         isWrapped: false,
         profileAddress: '0x123',
         resolverAddress: '0xresolver',
-        resolverStatus: makeResovlerStatus(),
+        resolverStatus: createResolverStatusData(),
       }),
     )
     expect(result.current.callBack?.('test.eth')).toBeNull()
   })
 
   it('should return transaction SetPrimaryName if the reverseRegistryName is undefined.', async () => {
-    mockUseReverseRegistryName.mockReturnValueOnce({
+    mockUseReverseRegistryName.mockReturnValue({
       data: undefined,
       isLoading: false,
+      isFetching: false,
     })
     const { result } = renderHook(() =>
       useGetPrimaryNameTransactionFlowItem({
@@ -46,7 +59,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         isWrapped: false,
         profileAddress: '0x123',
         resolverAddress: '0xresolver',
-        resolverStatus: makeResovlerStatus(),
+        resolverStatus: createResolverStatusData(),
       }),
     )
     expect(result.current.callBack?.('test.eth')).toMatchObject({
@@ -69,7 +82,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         isWrapped: false,
         profileAddress: '0x123',
         resolverAddress: '0xresolver',
-        resolverStatus: makeResovlerStatus(),
+        resolverStatus: createResolverStatusData(),
       }),
     )
     expect(result.current.callBack?.('primary.eth')).toMatchObject({
@@ -91,7 +104,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         address: '0x123',
         isWrapped: false,
         resolverAddress: '0xresolver',
-        resolverStatus: makeResovlerStatus({ isAuthorized: false }),
+        resolverStatus: createResolverStatusData({ isAuthorized: false }),
       }),
     )
     expect(result.current.callBack?.('test.eth')).toMatchObject({
@@ -113,7 +126,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         address: '0x123',
         isWrapped: true,
         resolverAddress: '0xresolver',
-        resolverStatus: makeResovlerStatus({ isAuthorized: false }),
+        resolverStatus: createResolverStatusData({ isAuthorized: false }),
       }),
     )
     expect(result.current.callBack?.('test.eth')).toMatchObject({
@@ -135,7 +148,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         address: '0x123',
         isWrapped: false,
         resolverAddress: '0xresolver',
-        resolverStatus: makeResovlerStatus({ isAuthorized: false, hasMigratedRecord: false }),
+        resolverStatus: createResolverStatusData({ isAuthorized: false, hasMigratedRecord: false }),
       }),
     )
     expect(result.current.callBack?.('test.eth')).toMatchObject({
@@ -166,7 +179,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         isWrapped: false,
         profileAddress: '0x1234',
         resolverAddress: '0xresolver',
-        resolverStatus: makeResovlerStatus(),
+        resolverStatus: createResolverStatusData(),
       }),
     )
     expect(result.current.callBack?.('test.eth')).toMatchObject({
@@ -188,7 +201,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         address: '0x123',
         isWrapped: false,
         resolverAddress: '',
-        resolverStatus: makeResovlerStatus({ isAuthorized: false, hasMigratedRecord: false }),
+        resolverStatus: createResolverStatusData({ isAuthorized: false, hasMigratedRecord: false }),
       }),
     )
     expect(result.current.callBack?.('test.eth')).toMatchObject({
@@ -204,7 +217,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         address: '0x123',
         isWrapped: false,
         resolverAddress: '0xresolver',
-        resolverStatus: makeResovlerStatus({ isAuthorized: false, hasMigratedRecord: false }),
+        resolverStatus: createResolverStatusData({ isAuthorized: false, hasMigratedRecord: false }),
       }),
     )
     expect(result.current.callBack?.('test.eth')).toMatchObject({
@@ -220,7 +233,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         address: '0x1234',
         isWrapped: false,
         resolverAddress: '0xresolver',
-        resolverStatus: makeResovlerStatus(),
+        resolverStatus: createResolverStatusData(),
       }),
     )
     expect(result.current.callBack?.('primary.eth')).toMatchObject({
@@ -237,10 +250,23 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         isWrapped: false,
         profileAddress: '0x123',
         resolverAddress: '0xresolver',
-        resolverStatus: makeResovlerStatus(),
+        resolverStatus: createResolverStatusData(),
       }),
     )
     expect(result.current.callBack?.('primary.eth')?.transactions.length).toBe(1)
     expect(result.current.callBack?.('primary.eth')?.intro).toBeUndefined()
+  })
+
+  it('should return 3 transaction steps if profile address does not match user address and resolver is not authorized', () => {
+    const { result } = renderHook(() =>
+      useGetPrimaryNameTransactionFlowItem({
+        address: '0x123',
+        isWrapped: false,
+        profileAddress: '0x1234',
+        resolverAddress: '0xresolver',
+        resolverStatus: createResolverStatusData({ isAuthorized: false, hasMigratedRecord: false }),
+      }),
+    )
+    expect(result.current.callBack?.('primary.eth')?.transactions.length).toBe(3)
   })
 })

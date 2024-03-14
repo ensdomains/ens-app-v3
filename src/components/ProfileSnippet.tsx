@@ -2,11 +2,11 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, NametagSVG, Tag, Typography, mq } from '@ensdomains/thorin'
+import { Button, mq, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import useBeautifiedName from '@app/hooks/useBeautifiedName'
+import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { shouldShowExtendWarning } from '@app/utils/abilities/shouldShowExtendWarning'
 
@@ -14,31 +14,30 @@ import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
 
 const Container = styled.div<{ $banner?: string }>(
-  ({ theme, $banner }) =>
-    css`
-      width: 100%;
-      padding: ${theme.space['4']};
-      padding-top: ${theme.space['18']};
-      background-image: ${$banner ? `url(${$banner})` : theme.colors.gradients.blue};
-      background-repeat: no-repeat;
-      background-attachment: scroll;
-      background-size: 100% ${theme.space['28']};
-      background-position-y: -1px; // for overlap with border i think
-      background-color: ${theme.colors.background};
-      border-radius: ${theme.radii['2xLarge']};
-      border: ${theme.space.px} solid ${theme.colors.border};
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: center;
-      gap: ${theme.space['4']};
-      flex-gap: ${theme.space['4']};
+  ({ theme, $banner }) => css`
+    width: 100%;
+    padding: ${theme.space['4']};
+    padding-top: ${theme.space['18']};
+    background-image: ${$banner ? `url(${$banner})` : theme.colors.gradients.blue};
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-size: 100% ${theme.space['28']};
+    background-position-y: -1px; // for overlap with border i think
+    background-color: ${theme.colors.background};
+    border-radius: ${theme.radii['2xLarge']};
+    border: ${theme.space.px} solid ${theme.colors.border};
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: ${theme.space['4']};
+    flex-gap: ${theme.space['4']};
 
-      ${mq.sm.min(css`
-        padding: ${theme.space['6']};
-        padding-top: ${theme.space['12']};
-      `)}
-    `,
+    ${mq.sm.min(css`
+      padding: ${theme.space['6']};
+      padding-top: ${theme.space['12']};
+    `)}
+  `,
 )
 
 const DetailStack = styled.div(
@@ -160,7 +159,7 @@ export const ProfileSnippet = ({
   name,
   getTextRecord,
   button,
-  network,
+  // network,
   isPrimary,
   children,
 }: {
@@ -168,16 +167,14 @@ export const ProfileSnippet = ({
   getTextRecord?: (key: string) => { value: string } | undefined
   button?: 'viewProfile' | 'extend' | 'register'
   isPrimary?: boolean
-  network: number
   children?: React.ReactNode
 }) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
-  const abilities = useAbilities(name)
-
-  const { prepareDataInput } = useTransactionFlow()
-  const showExtendNamesInput = prepareDataInput('ExtendNames')
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showExtendNamesInput = usePreparedDataInput('ExtendNames')
+  const abilities = useAbilities({ name })
 
   const beautifiedName = useBeautifiedName(name)
 
@@ -235,8 +232,8 @@ export const ProfileSnippet = ({
           size={{ min: '24', sm: '32' }}
           label={name}
           name={name}
-          network={network}
-          noCache={abilities.data?.canEdit}
+          noCache={abilities.data.canEdit}
+          decoding="sync"
         />
         <ButtonStack>
           {ActionButton && <DetailButtonWrapper>{ActionButton}</DetailButtonWrapper>}

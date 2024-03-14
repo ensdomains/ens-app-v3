@@ -1,3 +1,7 @@
+import { describe, expect, it } from 'vitest'
+
+import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
+
 import { useBasicName } from '@app/hooks/useBasicName'
 import { DeepPartial } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
@@ -5,27 +9,29 @@ import { emptyAddress } from '@app/utils/constants'
 import { useAbilities } from '../useAbilities'
 import { getReclaimAbilities } from './getReclaimAbilities'
 
-type WrapperData = ReturnType<typeof useBasicName>['wrapperData']
+type WrapperData = NonNullable<GetWrapperDataReturnType>
 const makeWrapperData = (overrides: DeepPartial<WrapperData> = {}) => {
-  const { parent = {}, child = {}, ...data } = overrides
   return {
-    parent: {
-      PARENT_CANNOT_CONTROL: false,
-      CAN_EXTEND_EXPIRY: false,
-      ...parent,
-    },
-    child: {
-      CANNOT_UNWRAP: false,
-      CANNOT_BURN_FUSES: false,
-      CANNOT_TRANSFER: false,
-      CANNOT_SET_RESOLVER: false,
-      CANNOT_SET_TTL: false,
-      CANNOT_CREATE_SUBDOMAIN: false,
-      CANNOT_APPROVE: false,
-      ...child,
-    },
     owner: '0x0000000000000000000000000000000000000000',
-    ...data,
+    ...overrides,
+    fuses: {
+      ...overrides.fuses,
+      parent: {
+        PARENT_CANNOT_CONTROL: false,
+        CAN_EXTEND_EXPIRY: false,
+        ...overrides.fuses?.parent,
+      },
+      child: {
+        CANNOT_UNWRAP: false,
+        CANNOT_BURN_FUSES: false,
+        CANNOT_TRANSFER: false,
+        CANNOT_SET_RESOLVER: false,
+        CANNOT_SET_TTL: false,
+        CANNOT_CREATE_SUBDOMAIN: false,
+        CANNOT_APPROVE: false,
+        ...overrides.fuses?.child,
+      },
+    },
   } as WrapperData
 }
 
@@ -35,7 +41,6 @@ const makeOwnerData = (overrides: DeepPartial<OwnerData> = {}) => {
     registrant: '0xRegistrant',
     owner: '0x0000000000000000000000000000000000000000',
     ownershipLevel: 'registrar',
-    expired: false,
     ...overrides,
   } as OwnerData
 }
@@ -54,8 +59,10 @@ const expiredWrappedSubname = {
     owner: '0xParent',
   }),
   parentWrapperData: makeWrapperData({
-    parent: {
-      PARENT_CANNOT_CONTROL: true,
+    fuses: {
+      parent: {
+        PARENT_CANNOT_CONTROL: true,
+      },
     },
     owner: '0xParent',
   }),

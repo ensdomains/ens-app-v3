@@ -1,15 +1,16 @@
 import { useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
+import { Address } from 'viem'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { useNameType } from '@app/hooks/nameType/useNameType'
 import useRoles from '@app/hooks/ownership/useRoles/useRoles'
-import { useResolverSupportsInterfaces } from '@app/hooks/resolver/useResolverSupportsInterfaces'
-import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useNameType } from '@app/hooks/useNameType'
-import { useResolver } from '@app/hooks/useResolver'
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { checkCanSend, senderRole } from './utils/checkCanSend'
@@ -21,7 +22,7 @@ import { SummaryView } from './views/SummaryView/SummaryView'
 
 export type SendNameForm = {
   query: ''
-  recipient: string
+  recipient: Address | undefined
   transactions: {
     sendOwner: boolean
     sendManager: boolean
@@ -42,14 +43,15 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const ref = useRef<HTMLFormElement>(null)
 
   const account = useAccountSafely()
-  const abilities = useAbilities(name)
+  const abilities = useAbilities({ name })
   const nameType = useNameType(name)
-  const basic = useBasicName(name)
+  const basic = useBasicName({ name })
   const roles = useRoles(name)
-  const resolver = useResolver(name)
-  const resolverSupport = useResolverSupportsInterfaces({
-    resolverAddress: resolver.data,
-    interfaces: ['VersionableResolver'],
+  const resolver = useResolver({ name })
+  const resolverSupport = useResolverHasInterfaces({
+    interfaceNames: ['VersionableResolver'],
+    resolverAddress: resolver.data as Address,
+    enabled: !!resolver.data,
   })
   const _senderRole = senderRole(nameType.data)
 
@@ -75,7 +77,7 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   })
   const { setValue } = form
 
-  const onSelect = (recipient: string) => {
+  const onSelect = (recipient: Address) => {
     if (!recipient) return
     const currentOwner = roles.data?.find((role) => role.role === 'owner')?.address
     const currentManager = roles.data?.find((role) => role.role === 'manager')?.address
@@ -122,6 +124,8 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   }
 
   const canSend = checkCanSend({ abilities: abilities.data, nameType: nameType.data })
+  const canResetProfile =
+    abilities.data.canEditRecords && !!resolverSupport.data?.every((i) => !!i) && !!resolver.data
 
   return (
     <FormProvider {...form}>
@@ -134,9 +138,7 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
           .with([true, 'summary'], () => (
             <SummaryView
               name={name}
-              canResetProfile={
-                abilities.data.canEditRecords && !!resolverSupport.data?.VersionableResolver
-              }
+              canResetProfile={canResetProfile}
               onBack={onBack}
               onNext={onNext}
             />

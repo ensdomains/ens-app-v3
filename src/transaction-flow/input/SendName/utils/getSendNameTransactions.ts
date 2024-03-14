@@ -1,5 +1,8 @@
+import { Address } from 'viem'
+
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
+import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
 
 import type { SendNameForm } from '../SendName-flow'
 
@@ -16,42 +19,54 @@ export const getSendNameTransactions = ({
   transactions: SendNameForm['transactions']
   abilities: ReturnType<typeof useAbilities>['data']
   isOwnerOrManager: boolean
-  resolverAddress: string
+  resolverAddress?: Address | null
 }) => {
+  if (!recipient) return []
+
   const setEthRecordOnly = transactions.setEthRecord && !transactions.resetProfile
   // Anytime you reset the profile you will need to set the eth record as well
   const setEthRecordAndResetProfile = transactions.resetProfile
 
   const _transactions = [
-    setEthRecordOnly ? makeTransactionItem('updateEthAddress', { name, address: recipient }) : null,
-    setEthRecordAndResetProfile
-      ? makeTransactionItem('resetProfileWithRecords', {
+    setEthRecordOnly
+      ? createTransactionItem('updateEthAddress', { name, address: recipient })
+      : null,
+    setEthRecordAndResetProfile && resolverAddress
+      ? createTransactionItem('resetProfileWithRecords', {
           name,
           records: {
-            coinTypes: [{ key: 'ETH', value: recipient }],
+            coins: [{ coin: 'ETH', value: recipient }],
           },
-          resolver: resolverAddress,
+          resolverAddress,
         })
       : null,
-
-    transactions.sendManager && !!abilities?.sendNameFunctionCallDetails?.sendManager
-      ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+    transactions.sendManager
+      ? makeTransferNameOrSubnameTransactionItem({
           name,
-          newOwner: recipient,
+          newOwnerAddress: recipient,
           sendType: 'sendManager',
-          contract: abilities?.sendNameFunctionCallDetails?.sendManager?.contract,
-          reclaim: abilities?.sendNameFunctionCallDetails?.sendManager?.method === 'reclaim',
+          isOwnerOrManager,
+          abilities,
         })
       : null,
-    transactions.sendOwner && !!abilities?.sendNameFunctionCallDetails?.sendOwner
-      ? makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+    transactions.sendOwner
+      ? makeTransferNameOrSubnameTransactionItem({
           name,
-          newOwner: recipient,
+          newOwnerAddress: recipient,
           sendType: 'sendOwner',
-          contract: abilities?.sendNameFunctionCallDetails?.sendOwner?.contract,
+          isOwnerOrManager,
+          abilities,
         })
       : null,
-  ].filter((transaction) => !!transaction)
+  ].filter(
+    (
+      transaction,
+    ): transaction is
+      | TransactionItem<'transferName'>
+      | TransactionItem<'transferSubname'>
+      | TransactionItem<'updateEthAddress'>
+      | TransactionItem<'resetProfileWithRecords'> => !!transaction,
+  )
 
-  return _transactions
+  return _transactions as NonNullable<(typeof _transactions)[number]>[]
 }

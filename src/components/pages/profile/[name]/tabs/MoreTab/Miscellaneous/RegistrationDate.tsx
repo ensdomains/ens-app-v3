@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 
 import { OutlinkSVG, Typography } from '@ensdomains/thorin'
 
-import { useChainName } from '@app/hooks/useChainName'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import type useRegistrationDate from '@app/hooks/useRegistrationData'
 import { formatDateTime, formatExpiry, makeEtherscanLink } from '@app/utils/utils'
 

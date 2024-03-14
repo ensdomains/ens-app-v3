@@ -29,11 +29,9 @@ const LogoAndLanguage = styled.div(
 
 const StyledLeadingHeading = styled(LeadingHeading)(
   () => css`
-    ${mq.sm.min(
-      css`
-        display: none;
-      `,
-    )}
+    ${mq.sm.min(css`
+      display: none;
+    `)}
   `,
 )
 
@@ -42,7 +40,8 @@ export default function Page() {
   return (
     <>
       <Head>
-        <title>ENS - {t('notFound')}</title>
+        {/* this is wrapped in a string because of the way nextjs renders content, don't remove! */}
+        <title>{`ENS - ${t('notFound')}`}</title>
       </Head>
       <StyledLeadingHeading>
         <LogoAndLanguage>

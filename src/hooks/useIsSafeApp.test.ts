@@ -1,42 +1,53 @@
-import { renderHook, mockFunction, mockUseAccountReturnValue } from '@app/test-utils'
+import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useAccount } from 'wagmi'
+
 import { checkIsSafeApp } from '@app/utils/safe'
-import { useIsSafeApp } from './useIsSafeApp'
 
-jest.mock('@app/utils/cacheKeyFactory')
-jest.mock('@app/utils/safe')
+import { useIsSafeApp } from './useIsSafeApp'
+import { useQueryOptions } from './useQueryOptions'
+
+vi.mock('./useQueryOptions')
+vi.mock('@app/utils/safe')
+vi.mock('wagmi')
+
+const mockUseQueryOptions = mockFunction(useQueryOptions)
+const mockCheckIsSafeApp = mockFunction(checkIsSafeApp)
+const mockUseAccount = mockFunction(useAccount)
 
 describe('useIsSafeApp', () => {
-  const mockUseQueryKeys = mockFunction(useQueryKeys)
-  const mockCheckIsSafeApp = checkIsSafeApp as jest.MockedFunction<typeof checkIsSafeApp>
-
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should not run if connector is not defined', async () => {
-    mockUseQueryKeys.mockReturnValue({ isSafeApp: () => ['key'] })
-    mockUseAccountReturnValue.connector = false 
+    mockUseQueryOptions.mockImplementation(({ queryFn }) => ({
+      queryKey: [{ id: undefined }],
+      queryFn,
+    }))
+    mockUseAccount.mockReturnValue({ connector: undefined })
     const { result } = renderHook(() => useIsSafeApp())
 
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
 
     expect(result.current.data).toBe(undefined)
     expect(mockCheckIsSafeApp).not.toHaveBeenCalled()
   })
 
   it('should return the result of checkIsSafeApp if connector is defined', async () => {
-    mockUseAccountReturnValue.connector = true 
-    mockUseQueryKeys.mockReturnValue({ isSafeApp: () => ['key'] })
-    mockCheckIsSafeApp.mockResolvedValue(true)
+    mockUseQueryOptions.mockImplementation(({ queryFn }) => ({
+      queryKey: [{ id: '1234' }],
+      queryFn,
+    }))
+    mockUseAccount.mockReturnValue({ connector: { id: '1234' } })
+    mockCheckIsSafeApp.mockImplementation(async () => 'iframe')
 
-    const { result, waitFor } = renderHook(() => useIsSafeApp())
+    const { result } = renderHook(() => useIsSafeApp())
 
-    await waitFor(() => result.current.isSuccess)
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(result.current.data).toBe(true)
-    expect(mockUseQueryKeys).toHaveBeenCalled()
-    expect(mockCheckIsSafeApp).toHaveBeenCalledWith(true)
+    expect(result.current.data).toBe('iframe')
+    expect(mockCheckIsSafeApp).toHaveBeenCalledWith(expect.objectContaining({ id: '1234' }))
   })
 })

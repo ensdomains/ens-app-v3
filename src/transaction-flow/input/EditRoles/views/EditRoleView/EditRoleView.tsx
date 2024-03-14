@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { P, match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 
 import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, mq } from '@ensdomains/thorin'
 
@@ -10,8 +10,8 @@ import { SearchViewErrorView } from '@app/transaction-flow/input/SendName/views/
 import { SearchViewLoadingView } from '@app/transaction-flow/input/SendName/views/SearchView/views/SearchViewLoadingView'
 import { SearchViewNoResultsView } from '@app/transaction-flow/input/SendName/views/SearchView/views/SearchViewNoResultsView'
 
-import type { EditRolesForm } from '../../EditRoles-flow'
 import { EditRolesFooter } from '../../components/EditRolesFooter'
+import type { EditRolesForm } from '../../EditRoles-flow'
 import { useSimpleSearch } from '../../hooks/useSimpleSearch'
 import { EditRoleIntroView } from './views/EditRoleIntroView'
 import { EditRoleResultsView } from './views/EditRoleResultsView'

@@ -1,11 +1,19 @@
+import {
+  QueryFunctionContext,
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { useMutation, useQuery, useQueryClient } from 'wagmi'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
+import { ConfigWithEns, CreateQueryKey } from '@app/types'
 import { FAUCET_WORKER_URL } from '@app/utils/constants'
+import { getChainName } from '@app/utils/getChainName'
 
-import { useAccountSafely } from './useAccountSafely'
-import { useChainName } from './useChainName'
+import { useAccountSafely } from './account/useAccountSafely'
+import { useChainName } from './chain/useChainName'
 
 type BaseJsonRPC<Result> = {
   jsonrpc: string
@@ -36,47 +44,65 @@ const createEndpoint = (chainName: string) =>
     ? `http://localhost:8787/${chainName}`
     : `${FAUCET_WORKER_URL}/${chainName}`
 
+type QueryKey = CreateQueryKey<{}, 'getFaucetAddress', 'standard'>
+
+const getFaucetQueryFn =
+  (config: ConfigWithEns) =>
+  async ({ queryKey: [, chainId, address] }: QueryFunctionContext<QueryKey>) => {
+    if (!address) throw new Error('address is required')
+
+    const chainName = getChainName(config, { chainId })
+
+    const result: JsonRpc<{
+      eligible: boolean
+      amount: `0x${string}`
+      interval: number
+      next: number
+      status: FaucetStatus
+    }> = await fetch(createEndpoint(chainName), {
+      method: 'POST',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        method: 'faucet_getAddress',
+        params: [address],
+        id: 1,
+      }),
+      headers: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'Content-Type': 'application/json',
+      },
+    }).then((res) => res.json())
+
+    if (result.error) throw new Error(result.error.message)
+
+    return result.result
+  }
+
 const useFaucet = () => {
   const queryClient = useQueryClient()
 
-  const { address } = useAccountSafely()
   const chainName = useChainName()
-  const queryKey = useQueryKeys().faucet(address)
+  const { address } = useAccountSafely()
 
-  const { data, error, isLoading } = useQuery(
-    queryKey,
-    async () => {
-      const result: JsonRpc<{
-        eligible: boolean
-        amount: `0x${string}`
-        interval: number
-        next: number
-        status: FaucetStatus
-      }> = await fetch(createEndpoint(chainName), {
-        method: 'POST',
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          method: 'faucet_getAddress',
-          params: [address],
-          id: 1,
-        }),
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          'Content-Type': 'application/json',
-        },
-      }).then((res) => res.json())
+  const initialOptions = useQueryOptions({
+    params: {},
+    functionName: 'getFaucetAddress',
+    queryDependencyType: 'standard',
+    queryFn: getFaucetQueryFn,
+  })
 
-      if (result.error) throw new Error(result.error.message)
+  const preparedOptions = queryOptions({
+    queryKey: initialOptions.queryKey,
+    queryFn: initialOptions.queryFn,
+  })
 
-      return result.result
-    },
-    {
-      enabled: !!address && (chainName === 'goerli' || chainName === 'sepolia'),
-    },
-  )
+  const { data, error, isLoading } = useQuery({
+    ...preparedOptions,
+    enabled: !!address && (chainName === 'goerli' || chainName === 'sepolia'),
+  })
 
-  const mutation = useMutation(
-    async () => {
+  const mutation = useMutation({
+    mutationFn: async () => {
       const result: JsonRpc<{ id: string }> = await fetch(createEndpoint(chainName), {
         method: 'POST',
         body: JSON.stringify({
@@ -95,12 +121,10 @@ const useFaucet = () => {
 
       return result.result
     },
-    {
-      onSuccess: () => {
-        queryClient.resetQueries(queryKey)
-      },
+    onSuccess: () => {
+      queryClient.resetQueries({ queryKey: preparedOptions.queryKey })
     },
-  )
+  })
 
   useEffect(() => {
     mutation.reset()

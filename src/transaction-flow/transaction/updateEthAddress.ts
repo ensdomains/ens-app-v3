@@ -1,11 +1,15 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
+import { Address, getAddress } from 'viem'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
+import { getResolver } from '@ensdomains/ensjs/public'
+import { setAddressRecord } from '@ensdomains/ensjs/wallet'
+
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = {
   name: string
-  address: string
+  address: Address
   latestResolver?: boolean
 }
 
@@ -31,18 +35,27 @@ const displayItems = (
   },
 ]
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
+const transaction = async ({
+  client,
+  connectorClient,
+  data,
+}: TransactionFunctionParameters<Data>) => {
   const resolverAddress = data?.latestResolver
-    ? (await ens.contracts!.getPublicResolver()).address
-    : undefined
-  return ens.setRecord.populateTransaction(data.name, {
-    signer,
-    record: { key: 'ETH', value: data.address },
-    type: 'addr',
+    ? getChainContractAddress({ client, contract: 'ensPublicResolver' })
+    : await getResolver(client, { name: data.name })
+  if (!resolverAddress) throw new Error('No resolver found')
+  let address
+  try {
+    address = getAddress(data.address)
+  } catch (e) {
+    throw new Error('Invalid address')
+  }
+  return setAddressRecord.makeFunctionData(connectorClient, {
+    name: data.name,
     resolverAddress,
+    coin: 'eth',
+    value: address,
   })
 }
 
-const exports = { displayItems, transaction } as Transaction<Data>
-
-export default exports
+export default { displayItems, transaction } satisfies Transaction<Data>

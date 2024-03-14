@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -6,9 +6,10 @@ import { useAccount } from 'wagmi'
 import { DevSection } from '@app/components/pages/profile/settings/DevSection'
 import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySection'
 import { TransactionSection } from '@app/components/pages/profile/settings/TransactionSection/TransactionSection'
+import { useSubgraphMeta } from '@app/hooks/ensjs/subgraph/useSubgraphMeta'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
-import { useGlobalErrorDispatch } from '@app/utils/GlobalErrorProvider/GlobalErrorProvider'
+import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
 
 const OtherWrapper = styled.div(
   ({ theme }) => css`
@@ -24,35 +25,16 @@ const OtherWrapper = styled.div(
 
 export default function Page() {
   const { t } = useTranslation('settings')
+  const router = useRouter()
   const { address, isConnecting, isReconnecting } = useAccount()
 
-  // There are no subgraph calls on the settings page so we need to force
-  // an update in order to know if there is an error
-  const globalErrorDispatch = useGlobalErrorDispatch()
-  useEffect(() => {
-    globalErrorDispatch({
-      type: 'SET_META',
-      payload: {
-        forceUpdate: true,
-      },
-    })
-    return () => {
-      globalErrorDispatch({
-        type: 'SET_META',
-        payload: {
-          forceUpdate: false,
-        },
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // We need at least one graph call on this page to ensure that SyncProvider can correctly determine if the
+  // graph is erroring or not.
+  const subgraphMeta = useSubgraphMeta()
 
-  useProtectedRoute('/', isConnecting || isReconnecting ? true : address)
+  const isLoading = !router.isReady || isConnecting || isReconnecting || subgraphMeta.isLoading
 
-  const showDevPanel =
-    process.env.NEXT_PUBLIC_ENSJS_DEBUG ||
-    process.env.NODE_ENV === 'development' ||
-    process.env.NEXT_PUBLIC_PROVIDER
+  useProtectedRoute('/', isLoading ? true : address)
 
   return (
     <Content singleColumnContent title={t('title')}>
@@ -61,7 +43,7 @@ export default function Page() {
           <OtherWrapper>
             <PrimarySection />
             <TransactionSection />
-            {showDevPanel && <DevSection />}
+            {IS_DEV_ENVIRONMENT && <DevSection />}
           </OtherWrapper>
         ),
       }}

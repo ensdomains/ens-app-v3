@@ -19,9 +19,11 @@ export const IntroStageModal = ({
   trailingLabel,
   stepStatus,
 }: TransactionIntro & {
-  transactions: {
-    name: string
-  }[]
+  transactions:
+    | {
+        name: string
+      }[]
+    | readonly { name: string }[]
   stepStatus: 'inProgress' | 'notStarted' | 'completed'
   currentStep: number
   onDismiss: () => void
@@ -70,7 +72,7 @@ export const IntroStageModal = ({
                     label: t('transaction.dialog.intro.step', { step: index + 1 }),
                     value: t(`transaction.description.${name}`),
                     useRawLabel: true,
-                  } as TransactionDisplayItemSingle),
+                  }) as TransactionDisplayItemSingle,
               ) || []
             }
           />

@@ -1,11 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { ethers } from 'ethers'
+import { Address } from 'viem'
 
-import { shortenAddress } from '@app/utils/utils'
-
-import { Provider } from './provider'
+import { Provider } from './provider.js'
 
 const DEFAULT_MNEMONIC = 'test test test test test test test test test test test junk'
+
+const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice = 5) => {
+  if (address.length < maxLength) {
+    return address
+  }
+
+  return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`
+}
 
 export type Dependencies = {
   provider: Provider
@@ -24,12 +31,13 @@ export const createAccounts = (stateful = false) => {
       user: `user${index ? index + 1 : ''}` as User,
       address: address as `0x${string}`,
       privateKey: privateKey as `0x${string}`,
+      // privateKey: walletClient.account[index].privateKey,
     }
   })
 
   return {
     getAllPrivateKeys: () => accounts.map(({ privateKey }) => privateKey),
-    getAddress: (user: User, length?: number) => {
+    getAddress: (user: User, length?: number): Address | string => {
       const address = accounts.find(({ user: _user }) => _user === user)?.address
       if (!address) throw new Error(`Address not found: ${user}`)
       if (length) return shortenAddress(address, length)

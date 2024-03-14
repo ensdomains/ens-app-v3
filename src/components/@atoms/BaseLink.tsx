@@ -1,7 +1,8 @@
+import { UrlObject } from 'url'
+
 import Link, { LinkProps } from 'next/link'
 import { useRouter } from 'next/router'
 import { PropsWithChildren, useMemo } from 'react'
-import { UrlObject } from 'url'
 
 import { getDestination } from '@app/routes'
 
@@ -10,7 +11,7 @@ import { getDestination } from '@app/routes'
 const BaseLink = ({ href, ...rest }: PropsWithChildren<LinkProps>) => {
   const newHref = useMemo(() => getDestination(href), [href])
 
-  return <Link {...rest} href={newHref} />
+  return <Link {...rest} legacyBehavior href={newHref} />
 }
 
 export const BaseLinkWithHistory = ({
@@ -25,7 +26,7 @@ export const BaseLinkWithHistory = ({
     return getDestination({ pathname: href, query: initialQuery }) as UrlObject
   }, [href, router.asPath])
 
-  return <Link {...rest} href={newHref} as={newHref.pathname!} />
+  return <Link {...rest} legacyBehavior href={newHref} as={newHref.pathname!} />
 }
 
 export default BaseLink

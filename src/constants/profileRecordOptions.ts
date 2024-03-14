@@ -1,9 +1,9 @@
 import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import coinsWithoutIcons from '@app/constants/coinsWithoutIcons.json'
-import supportedContentHashKeys from '@app/constants/supportedContentHashKeys.json'
-import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'
-import supportedOtherRecordKeys from '@app/constants/supportedOtherRecordKeys.json'
-import supportedSocialRecordKeys from '@app/constants/supportedSocialRecordKeys.json'
+import { supportedContentHashKeys } from '@app/constants/supportedContentHashKeys'
+import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedOtherRecordKeys } from '@app/constants/supportedOtherRecordKeys'
+import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 
 export type ProfileRecordGroup =
   | 'general'
@@ -36,7 +36,7 @@ const social: ProfileRecord[] = supportedSocialRecordKeys.map((key) => ({
 }))
 
 const address = [...coinsWithIcons, ...coinsWithoutIcons].map((coin) => ({
-  key: coin.toUpperCase(),
+  key: coin,
   group: 'address',
   type: 'addr',
 })) as ProfileRecord[]

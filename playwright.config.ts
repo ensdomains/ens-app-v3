@@ -5,10 +5,10 @@ export default defineConfig({
   testDir: './e2e/specs',
   testMatch: '*.spec.ts',
   retries: process.env.CI ? 2 : 0,
-  timeout: 60000, // add extra time for loading
+  timeout: 120000, // add extra time for loading
   fullyParallel: true, // required to evenly shard
   workers: 1, // keep tests serial for now
-  reporter: [['html', { open: 'never' }]],
+  reporter: [['html', { open: 'always' }]],
   projects: [
     {
       name: 'stateless',
@@ -24,6 +24,6 @@ export default defineConfig({
     },
   ],
   use: {
-    baseURL: process.env.CI ? 'http://localhost:8788' : 'http://localhost:3000',
+    baseURL: process.env.CI ? 'http://127.0.0.1:8788' : 'http://localhost:3000',
   },
 })

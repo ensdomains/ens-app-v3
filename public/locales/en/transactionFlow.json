@@ -67,13 +67,13 @@
           "noOptions": "No address options available",
           "placeholder": {
             "default": "Add address here",
-            "ETH": "0xD9hbQK...",
-            "BNB": "0xD9hbQK...",
-            "BTC": "3FZbgi29...",
-            "LTC": "3FZbgi29...",
-            "SOL": "D4kA7VzHnmV...",
-            "DOT": "1D4kA7VxH...",
-            "DOGE": "DFabcd12..."
+            "eth": "0xD9hbQK...",
+            "bnb": "0xD9hbQK...",
+            "btc": "3FZbgi29...",
+            "ltc": "3FZbgi29...",
+            "sol": "D4kA7VzHnmV...",
+            "dot": "1D4kA7VxH...",
+            "doge": "DFabcd12..."
           }
         },
         "contentHash": {
@@ -215,6 +215,11 @@
     "extendNames": {
       "title_one": "Extend Name",
       "title_other": "Extend {{count}} Names",
+      "ownershipWarning": {
+        "title_one": "You do not own this name",
+        "title_other": "You do not own all these names",
+        "description_one": "Extending this name will extend the current owner's registration length. This will not give you ownership of it.",
+        "description_other": "Extending these names will extend the current owner's registration length. This will not give you ownership if you are not already the owner"      },
       "invoice": {
         "extension": "{{count}} year extension",
         "transaction": "Transaction fee",

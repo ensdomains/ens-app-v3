@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next'
 
 import { CheckboxRow, Dialog } from '@ensdomains/thorin'
 
-import type { FormData } from '../RevokePermissions-flow'
 import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
+import type { FormData } from '../RevokePermissions-flow'
 
 type Props = {
   register: UseFormRegister<FormData>

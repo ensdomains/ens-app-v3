@@ -1,26 +1,33 @@
 import { mockFunction, render, screen, userEvent } from '@app/test-utils'
 
 import { act, waitFor } from '@testing-library/react'
+import { describe, expect, it, Mock, vi } from 'vitest'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { SearchInput } from './SearchInput'
+import { SearchResult } from './SearchResult'
 
-jest.mock('@app/utils/BreakpointProvider')
-jest.mock('@app/hooks/useLocalStorage')
+vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
+vi.mock('@app/utils/BreakpointProvider')
+vi.mock('@app/hooks/useLocalStorage')
+vi.mock('./SearchResult')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseLocalStorage = mockFunction(useLocalStorage)
+const mockSearchResult = mockFunction(SearchResult)
 
-window.scroll = jest.fn()
+mockSearchResult.mockImplementation(({ value }) => <div>{value}</div>)
+
+window.scroll = vi.fn() as () => void
 
 describe('SearchInput', () => {
   mockUseLocalStorage.mockReturnValue([[]])
-  window.ResizeObserver = jest.fn()
-  ;(window.ResizeObserver as jest.Mock).mockImplementation(() => ({
-    observe: jest.fn(),
-    disconnect: jest.fn(),
+  window.ResizeObserver = vi.fn()
+  ;(window.ResizeObserver as Mock).mockImplementation(() => ({
+    observe: vi.fn(),
+    disconnect: vi.fn(),
   }))
 
   it('should render on desktop layouts', () => {
@@ -113,7 +120,7 @@ describe('SearchInput', () => {
     })
 
     expect(screen.getByText('nick.eth')).toBeInTheDocument()
-    expect(screen.getByText('0xb6E040...d28cd9')).toBeInTheDocument()
+    expect(screen.getByText('0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9')).toBeInTheDocument()
     expect(screen.getByText('test.eth')).toBeInTheDocument()
   })
   it('should show history items in correct order', async () => {
@@ -151,7 +158,7 @@ describe('SearchInput', () => {
       timeout: 500,
     })
 
-    expect(container.children[0]).toHaveTextContent('0xb6E040...d28cd9')
+    expect(container.children[0]).toHaveTextContent('0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9')
     expect(container.children[1]).toHaveTextContent('test.eth')
     expect(container.children[2]).toHaveTextContent('nick.eth')
   })

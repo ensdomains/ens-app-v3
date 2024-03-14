@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Heading, Typography, mq } from '@ensdomains/thorin'
+import { Button, Heading, mq, Typography } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
-import { useEstimateFullRegistration } from '@app/hooks/useEstimateRegistration'
-import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 
 import FullInvoice from '../FullInvoice'
 import { RegistrationReducerDataItem } from '../types'
@@ -99,23 +98,17 @@ const infoItemArr = Array.from({ length: 3 }, (_, i) => `steps.info.ethItems.${i
 
 type Props = {
   registrationData: RegistrationReducerDataItem
-  nameDetails: ReturnType<typeof useNameDetails>
+  name: string
   callback: (data: { back: boolean }) => void
   onProfileClick: () => void
 }
 
-const Info = ({
-  registrationData,
-  nameDetails: { normalisedName, priceData },
-  callback,
-  onProfileClick,
-}: Props) => {
+const Info = ({ registrationData, name, callback, onProfileClick }: Props) => {
   const { t } = useTranslation('register')
 
   const estimate = useEstimateFullRegistration({
-    name: normalisedName,
+    name,
     registrationData,
-    price: priceData,
   })
 
   return (

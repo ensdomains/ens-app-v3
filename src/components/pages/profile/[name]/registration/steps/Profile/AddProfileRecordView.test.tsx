@@ -3,6 +3,7 @@ import { render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { renderHook } from '@testing-library/react-hooks'
 import { useForm } from 'react-hook-form'
+import { describe, expect, it, vi } from 'vitest'
 
 import allOptionsArray, { grouped as options } from '@app/constants/profileRecordOptions'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
@@ -17,16 +18,16 @@ const { result } = renderHook(() =>
   }),
 )
 
-const mockIntersectionObserver = jest.fn()
+const mockIntersectionObserver = vi.fn()
 mockIntersectionObserver.mockReturnValue({
   observe: () => null,
   unobserve: () => null,
   disconnect: () => null,
 })
 window.IntersectionObserver = mockIntersectionObserver
-window.scroll = jest.fn()
+window.scroll = vi.fn() as () => void
 
-jest.setTimeout(30000)
+vi.setConfig({ testTimeout: 30000 })
 
 describe('AddProfileRecordView', () => {
   it('should render', () => {
@@ -139,12 +140,15 @@ describe('AddProfileRecordView', () => {
     result.current.reset({ records: [] })
     render(<AddProfileRecordView control={result.current.control} />)
     // array for only first 10 address items, to reduce test time
-    const itemsArray = options.reduce((prev, curr) => {
-      if (curr.group === 'address') {
-        return [...prev, ...curr.items.slice(0, 10)]
-      }
-      return [...prev, ...curr.items]
-    }, [] as typeof allOptionsArray)
+    const itemsArray = options.reduce(
+      (prev, curr) => {
+        if (curr.group === 'address') {
+          return [...prev, ...curr.items.slice(0, 10)]
+        }
+        return [...prev, ...curr.items]
+      },
+      [] as typeof allOptionsArray,
+    )
     for (const { key } of itemsArray) {
       await userEvent.clear(screen.getByTestId('profile-record-search-input'))
       await userEvent.type(screen.getByTestId('profile-record-search-input'), key)

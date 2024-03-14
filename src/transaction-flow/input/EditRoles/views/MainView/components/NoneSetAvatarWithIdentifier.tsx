@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Space, Typography, mq } from '@ensdomains/thorin'
+import { mq, Space, Typography } from '@ensdomains/thorin'
 
 import { QuerySpace } from '@app/types'
 

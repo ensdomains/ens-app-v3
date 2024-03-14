@@ -1,13 +1,13 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQueryClient } from 'wagmi'
 
-import { saveName } from '@ensdomains/ensjs/utils/labels'
+import { saveName } from '@ensdomains/ensjs/utils'
 
-import { useQueryKeys } from '@app/utils/cacheKeyFactory'
+import { useQueryOptions } from '@app/hooks/useQueryOptions'
 
 import { TransactionDialogPassthrough, TransactionFlowItem } from '../../types'
-import { FormData, UnknownLabelsForm, nameToFormData } from './views/UnknownLabelsForm'
+import { FormData, nameToFormData, UnknownLabelsForm } from './views/UnknownLabelsForm'
 
 type Data = {
   name: string
@@ -37,7 +37,12 @@ const UnknownLabels = ({
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
   }
 
-  const validateKey = useQueryKeys().validate
+  const { queryKey: validateKey } = useQueryOptions({
+    params: { input: name },
+    functionName: 'validate',
+    queryDependencyType: 'independent',
+    keyOnly: true,
+  })
   const onSubmit = (data: FormData) => {
     const newName = [
       ...data.unknownLabels.labels.map((label) => label.value),
@@ -51,7 +56,7 @@ const UnknownLabels = ({
     const newKey = key.replace(name, newName)
 
     const newTransactions = transactions.map((tx) =>
-      typeof tx.data === 'object' && tx.data.name
+      typeof tx.data === 'object' && 'name' in tx.data && tx.data.name
         ? { ...tx, data: { ...tx.data, name: newName } }
         : tx,
     )
@@ -64,7 +69,7 @@ const UnknownLabels = ({
           }
         : intro
 
-    queryClient.resetQueries(validateKey(name))
+    queryClient.resetQueries({ queryKey: validateKey, exact: true })
 
     dispatch({
       name: 'startFlow',

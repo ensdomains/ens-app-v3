@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import styled, { css } from 'styled-components'
 
 import { Skeleton } from '@ensdomains/thorin'
@@ -23,11 +22,13 @@ const Container = styled.div(
 )
 
 type Props = {
-  gasPrice: BigNumber | undefined
+  gasPrice: bigint | undefined
 }
 
 const GasDisplay = ({ gasPrice }: Props) => {
-  const gasLabel = gasPrice ? makeDisplay(gasPrice, 0, 'Gwei', 9) : '-'
+  const gasLabel = gasPrice
+    ? makeDisplay({ value: gasPrice, symbol: 'Gwei', fromDecimals: 9 })
+    : '-'
 
   return (
     <Container>
