@@ -51,7 +51,7 @@
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.2.0-beta.0",
-    "@ensdomains/ensjs": "3.5.0-beta.2",
+    "@ensdomains/ensjs": "3.5.0-beta.3",
     "@ensdomains/thorin": "0.6.44",
     "@metamask/mobile-provider": "^2.1.0",
     "@metamask/post-message-stream": "^6.1.2",
