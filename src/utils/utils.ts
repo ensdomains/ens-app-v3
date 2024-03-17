@@ -34,9 +34,11 @@ export const addOneYear = (date: Date) => new Date(date.getTime() + yearsToSecon
 export const getSecondsFromDate = (date: Date, now: Date) => {
   // @ts-ignore typescript doesn't support date operators
   const value = Math.floor((date - now) / 1000)
-  const extraSeconds = value % ONE_YEAR
-  return value - extraSeconds
+  const extraSeconds = value % (ONE_YEAR)
+  // return value - extraSeconds
+  return value
 }
+
 
 export function setYearsForDate(date: Date, years: number, minDate: Date): Date {
   const result = new Date(date)

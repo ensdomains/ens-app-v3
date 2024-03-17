@@ -493,10 +493,11 @@ const Pricing = ({
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
   const [date, setDate] = useState(
-    () => new Date(now.getTime() + yearsToSeconds(1) * 1000 + (registrationData.seconds ?? 0)),
+    () => new Date(now.getTime() + registrationData.seconds * 1000),
   )
   const minDate = add28Days(now)
-  const seconds = getSecondsFromDate(date, now)
+  const seconds = getSecondsFromDate(date, now) 
+  const secondsFromMinDate = getSecondsFromDate(date, minDate) 
 
   console.log({ seconds })
 
@@ -535,17 +536,28 @@ const Pricing = ({
     registrationData: {
       ...registrationData,
       reverseRecord,
-      seconds,
+      seconds: seconds,
       records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
       clearRecords: resolverExists,
       resolverAddress,
     },
   })
 
+  const fullEstimateMinusMin = useEstimateFullRegistration({
+    name,
+    registrationData: {
+      ...registrationData,
+      reverseRecord,
+      seconds: secondsFromMinDate,
+      records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
+      clearRecords: resolverExists,
+      resolverAddress,
+    },
+  })
+  
   console.log(fullEstimate)
 
-  const { hasPremium, premiumFee, gasPrice, totalYearlyFee, estimatedGasFee } = fullEstimate
-
+  const { hasPremium, premiumFee, gasPrice, totalYearlyFee, estimatedGasFee } = fullEstimateMinusMin
   const yearlyRequiredBalance = totalYearlyFee ? (totalYearlyFee * 110n) / 100n : 0n
   const totalRequiredBalance = yearlyRequiredBalance
     ? yearlyRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)
