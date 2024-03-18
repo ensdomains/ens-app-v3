@@ -22,7 +22,7 @@ import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
-import { YearSelection } from '@app/components/@molecules/YearSelection/YearSelection'
+import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
@@ -360,7 +360,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
               <>
                 <PlusMinusWrapper>
                   {names.length === 1 ? (
-                    <YearSelection
+                    <DateSelection
                       {...{ date, setDate }}
                       name={names[0]}
                       minDate={minDate}

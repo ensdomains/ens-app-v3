@@ -26,7 +26,7 @@ const Container = styled.div(
   `,
 )
 
-export const YearSelection = ({
+export const DateSelection = ({
   date,
   setDate,
   name,
