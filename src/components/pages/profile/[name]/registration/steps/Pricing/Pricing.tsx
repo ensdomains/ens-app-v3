@@ -30,7 +30,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { add28Days, getSecondsFromDate, yearsToSeconds } from '@app/utils/utils'
+import { add28Days, getSecondsFromDate } from '@app/utils/utils'
 
 import FullInvoice from '../../FullInvoice'
 import {
@@ -492,11 +492,10 @@ const Pricing = ({
   const { data: balance } = useBalance({ address })
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
-  const [date, setDate] = useState(
-    () => new Date(now.getTime() + yearsToSeconds(1) * 1000 + (registrationData.seconds ?? 0)),
-  )
+  const [date, setDate] = useState(() => new Date(now.getTime() + registrationData.seconds * 1000))
   const minDate = add28Days(now)
   const seconds = getSecondsFromDate(date, now)
+  const secondsFromMinDate = getSecondsFromDate(date, minDate)
 
   console.log({ seconds })
 
@@ -542,10 +541,19 @@ const Pricing = ({
     },
   })
 
-  console.log(fullEstimate)
+  const fullEstimateMinusMin = useEstimateFullRegistration({
+    name,
+    registrationData: {
+      ...registrationData,
+      reverseRecord,
+      seconds: secondsFromMinDate,
+      records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
+      clearRecords: resolverExists,
+      resolverAddress,
+    },
+  })
 
-  const { hasPremium, premiumFee, gasPrice, totalYearlyFee, estimatedGasFee } = fullEstimate
-
+  const { hasPremium, premiumFee, gasPrice, totalYearlyFee, estimatedGasFee } = fullEstimateMinusMin
   const yearlyRequiredBalance = totalYearlyFee ? (totalYearlyFee * 110n) / 100n : 0n
   const totalRequiredBalance = yearlyRequiredBalance
     ? yearlyRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)

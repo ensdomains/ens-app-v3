@@ -42,7 +42,7 @@ export const YearSelection = ({
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
   const yearPickSelection = yearPickView === 'date' ? 'years' : 'date'
 
-  const extensionPeriod = formatExtensionPeriod(date, since ?? minDate)
+  const extensionPeriod = formatExtensionPeriod(date, since)
 
   useEffect(() => {
     if (minDate > date) setDate(minDate)

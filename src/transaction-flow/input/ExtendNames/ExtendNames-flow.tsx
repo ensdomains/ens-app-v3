@@ -35,7 +35,7 @@ import {
   add28Days,
   addOneYear,
   formatExtensionPeriod,
-  getSecondsFromDate,
+  getSecondsFromDateForExpiry,
   secondsToYears,
   setYearsForDate,
 } from '@app/utils/utils'
@@ -244,10 +244,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const { data } = useExpiry({ name: names.length === 1 ? names[0] : undefined })
   const expiry = data ? data.expiry.date : now
 
-  const [date, setDate] = useState(() => (expiry > defaultOneYear ? expiry : defaultOneYear))
+  const [date, setDate] = useState(() =>
+    expiry > defaultOneYear ? addOneYear(expiry) : defaultOneYear,
+  )
 
   const minDate = add28Days(expiry)
-  const duration = getSecondsFromDate(date, minDate)
+  const duration = getSecondsFromDateForExpiry(date, expiry)
   const years = secondsToYears(duration)
 
   const { userConfig, setCurrency } = useUserConfig()
