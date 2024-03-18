@@ -73,9 +73,7 @@ test('should be able to register multiple names on the address page', async ({
     const label = name.replace('.eth', '')
     await addresPage.search(label)
     await expect(addresPage.nameExpiry(name)).not.toHaveText(/12/, { timeout: 30000 })
-    await expect(await addresPage.getTimestamp(name)).toEqual(
-      timestampDict[name] + 31536000000 * 3,
-    )
+    expect(await addresPage.getTimestamp(name)).toEqual(timestampDict[name] + 31536000000 * 3)
   }
 })
 
@@ -144,7 +142,7 @@ test('should be able to extend a single unwrapped name from profile', async ({
     await extendNamesModal.getExtendButton.click()
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    await expect(newTimestamp).toEqual(timestamp + 31536000000)
+    expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
 })
 
@@ -217,7 +215,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await transactionModal.autoComplete()
 
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    await expect(newTimestamp).toEqual(timestamp + 31536000000)
+    expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
 })
 
@@ -286,7 +284,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    await expect(newTimestamp).toEqual(timestamp + 31536000000)
+    expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
 })
 

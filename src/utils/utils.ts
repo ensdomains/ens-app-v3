@@ -34,19 +34,16 @@ export const addOneYear = (date: Date) => new Date(date.getTime() + yearsToSecon
 export const getSecondsFromDate = (date: Date, now: Date) => {
   // @ts-ignore typescript doesn't support date operators
   const value = Math.floor((date - now) / 1000)
-  const extraSeconds = value % (ONE_YEAR)
-  // return value - extraSeconds
   return value
 }
 
 export const getSecondsFromDateForExpiry = (date: Date, now: Date) => {
   // @ts-ignore typescript doesn't support date operators
   const value = Math.floor((date - now) / 1000)
-  const extraSeconds = value % (ONE_YEAR)
+  const extraSeconds = value % ONE_YEAR
   return value - extraSeconds
   // return value
 }
-
 
 export function setYearsForDate(date: Date, years: number, minDate: Date): Date {
   const result = new Date(date)
@@ -95,11 +92,7 @@ export const formatExtensionPeriod = (newExpiryDate: Date, oldExpiryDate = new D
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
   `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`
 
-export const isBrowser = !!(
-  typeof window !== 'undefined' &&
-  window.document &&
-  window.document.createElement
-)
+export const isBrowser = typeof window?.document?.createElement !== 'undefined'
 
 export const checkDNSName = (name: string): boolean => {
   const labels = name?.split('.')
