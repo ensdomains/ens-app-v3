@@ -12,6 +12,8 @@ import {
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { yearsToSeconds } from '@app/utils/utils'
 
+const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 2
+
 const defaultData: RegistrationReducerDataItem = {
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
@@ -28,6 +30,7 @@ const defaultData: RegistrationReducerDataItem = {
   isMoonpayFlow: false,
   externalTransactionId: '',
   chainId: 1,
+  version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
 }
 
 const isBrowser = !!(
@@ -48,6 +51,7 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   started: false,
   isMoonpayFlow: false,
   externalTransactionId: '',
+  version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   ...selected,
 })
 
@@ -57,7 +61,10 @@ export const getSelectedIndex = (
 ) =>
   state.items.findIndex(
     (x) =>
-      x.address === selected.address && x.name === selected.name && x.chainId === selected.chainId,
+      x.address === selected.address &&
+      x.name === selected.name &&
+      x.chainId === selected.chainId &&
+      x.version === REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   )
 
 /* eslint-disable no-param-reassign */
