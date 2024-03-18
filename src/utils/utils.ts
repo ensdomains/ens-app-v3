@@ -92,7 +92,11 @@ export const formatExtensionPeriod = (newExpiryDate: Date, oldExpiryDate = new D
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
   `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`
 
-export const isBrowser = typeof window?.document?.createElement !== 'undefined'
+export const isBrowser = !!(
+  typeof window !== 'undefined' &&
+  window.document &&
+  window.document.createElement
+)
 
 export const checkDNSName = (name: string): boolean => {
   const labels = name?.split('.')
