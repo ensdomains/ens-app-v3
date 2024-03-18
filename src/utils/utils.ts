@@ -37,6 +37,13 @@ export const getSecondsFromDate = (date: Date, now: Date) => {
   return value
 }
 
+export const getSecondsWithDatePrecisionFromDate = (date: Date, now: Date): number => {
+  const seconds = getSecondsFromDate(date, now)
+  const secondsInADay = 24 * 60 * 60
+
+  return seconds - (seconds % secondsInADay)
+}
+
 export function setYearsForDate(date: Date, years: number, minDate: Date): Date {
   const result = new Date(date)
   result.setFullYear(minDate.getFullYear() + years)
