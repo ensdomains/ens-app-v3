@@ -35,7 +35,7 @@ import {
   add28Days,
   addOneYear,
   formatExtensionPeriod,
-  getSecondsFromDateForExpiry,
+  getSecondsFromDate,
   secondsToYears,
   setYearsForDate,
 } from '@app/utils/utils'
@@ -249,7 +249,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   )
 
   const minDate = add28Days(expiry)
-  const duration = getSecondsFromDateForExpiry(date, expiry)
+  const duration = getSecondsFromDate(date, expiry)
   const years = secondsToYears(duration)
 
   const { userConfig, setCurrency } = useUserConfig()
