@@ -536,16 +536,16 @@ const Pricing = ({
     },
   })
 
-  const { hasPremium, premiumFee, gasPrice, totalYearlyFee, estimatedGasFee } = fullEstimate
-  const yearlyRequiredBalance = totalYearlyFee ? (totalYearlyFee * 110n) / 100n : 0n
-  const totalRequiredBalance = yearlyRequiredBalance
-    ? yearlyRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)
+  const { hasPremium, premiumFee, gasPrice, yearlyFee, totalDurationBasedFee, estimatedGasFee } =
+    fullEstimate
+  const durationRequiredBalance = totalDurationBasedFee ? (totalDurationBasedFee * 110n) / 100n : 0n
+  const totalRequiredBalance = durationRequiredBalance
+    ? durationRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)
     : 0n
 
-  const previousRentFee = usePreviousDistinct(yearlyRequiredBalance) || 0n
+  const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
 
-  const unsafeDisplayRentFee =
-    yearlyRequiredBalance === 0n ? previousRentFee : yearlyRequiredBalance
+  const unsafeDisplayYearlyFee = yearlyFee === 0n ? previousYearlyFee : yearlyFee
 
   const showPaymentChoice = !isPrimaryLoading && address
 
@@ -562,11 +562,11 @@ const Pricing = ({
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={name} />
       ) : (
-        !!unsafeDisplayRentFee &&
+        !!unsafeDisplayYearlyFee &&
         !!unsafeDisplayEstimatedGasFee &&
         !!gasPrice && (
           <RegistrationTimeComparisonBanner
-            rentFee={unsafeDisplayRentFee}
+            yearlyFee={unsafeDisplayYearlyFee}
             transactionFee={unsafeDisplayEstimatedGasFee}
             message={t('steps.pricing.multipleYearsMessage')}
           />

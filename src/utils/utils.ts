@@ -36,6 +36,17 @@ export const getSecondsFromDate = (date: Date) => {
   return value
 }
 
+export const deriveYearlyFee = ({
+  duration,
+  price,
+}: {
+  duration: number
+  price: { base: bigint }
+}) => {
+  const yearlyFee = (price.base * BigInt(ONE_YEAR)) / BigInt(duration)
+  return yearlyFee
+}
+
 export const secondsToDate = (seconds: number) => new Date(seconds * 1000)
 
 export function secondsToDateInput(seconds: number) {

@@ -31,7 +31,12 @@ import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import useUserConfig from '@app/utils/useUserConfig'
-import { formatExtensionPeriod, secondsToYears, yearsToSeconds } from '@app/utils/utils'
+import {
+  deriveYearlyFee,
+  formatExtensionPeriod,
+  secondsToYears,
+  yearsToSeconds,
+} from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
@@ -245,9 +250,10 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   })
 
   const totalRentFee = priceData ? priceData.base + priceData.premium : 0n
-  const previousTotalRentFee = usePreviousDistinct(totalRentFee) || 0n
-  const unsafeDisplayTotalRentFee = totalRentFee !== 0n ? totalRentFee : previousTotalRentFee
-  const isShowingPreviousTotalRentFee = totalRentFee === 0n && previousTotalRentFee > 0n
+  const yearlyFee = priceData?.base ? deriveYearlyFee({ duration: seconds, price: priceData }) : 0n
+  const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
+  const unsafeDisplayYearlyFee = yearlyFee !== 0n ? yearlyFee : previousYearlyFee
+  const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
 
   const transactions = [
     createTransactionItem('extendNames', { names, duration: seconds, rentPrice: totalRentFee! }),
@@ -374,7 +380,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   $isCached={
                     isEstimateGasLoading ||
                     isShowingPreviousTransactionFee ||
-                    isShowingPreviousTotalRentFee
+                    isShowingPreviousYearlyFee
                   }
                 >
                   <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
@@ -384,9 +390,9 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                       balance.value < estimatedGasLimit)) && (
                     <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                   )}
-                  {!!unsafeDisplayTotalRentFee && !!unsafeDisplayTransactionFee && (
+                  {!!unsafeDisplayYearlyFee && !!unsafeDisplayTransactionFee && (
                     <RegistrationTimeComparisonBanner
-                      rentFee={unsafeDisplayTotalRentFee}
+                      yearlyFee={unsafeDisplayYearlyFee}
                       transactionFee={unsafeDisplayTransactionFee}
                       message={t('input.extendNames.bannerMsg')}
                     />
