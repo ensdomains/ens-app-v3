@@ -16,6 +16,7 @@ export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, righ
 }
 
 const ONE_YEAR = 60 * 60 * 24 * 365
+const now = new Date()
 
 export const secondsToDays = (seconds: number) => Math.floor(seconds / (60 * 60 * 24))
 
@@ -27,30 +28,25 @@ export const yearsToSeconds = (years: number) => years * ONE_YEAR
 
 export const secondsToYears = (seconds: number) => seconds / ONE_YEAR
 
-export const add28Days = (date: Date) => new Date(date.getTime() + 28 * 24 * 60 * 60 * 1000)
+export const add28Days = (duration: number) => duration + 28 * 86400
 
-export const addOneYear = (date: Date) => new Date(date.getTime() + yearsToSeconds(1) * 1000)
+export const addOneYear = (duration: number) => duration + ONE_YEAR
 
-export const getSecondsFromDate = (date: Date, now: Date) => {
+export const getSecondsFromDate = (date: Date) => {
   // @ts-ignore typescript doesn't support date operators
   const value = Math.floor((date - now) / 1000)
   return value
 }
 
-export const getSecondsWithDatePrecisionFromDate = (date: Date, now: Date): number => {
-  const seconds = getSecondsFromDate(date, now)
-  const secondsInADay = 24 * 60 * 60
+export const secondsToDate = (seconds: number) => new Date(Date.now() + seconds * 1000)
 
-  return seconds - (seconds % secondsInADay)
+export function secondsToDateInput(seconds: number) {
+  const date = new Date(Date.now() + seconds * 1000) // Convert seconds to milliseconds
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
-
-export function setYearsForDate(date: Date, years: number, minDate: Date): Date {
-  const result = new Date(date)
-  result.setFullYear(minDate.getFullYear() + years)
-  return result
-}
-
-export const dateToInput = (date: Date) => date.toISOString().split('T')[0]
 
 export const formatExpiry = (expiry: Date) =>
   `${expiry.toLocaleDateString(undefined, {
@@ -71,21 +67,27 @@ export const formatDateTime = (date: Date) => {
 export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
 
-export const formatExtensionPeriod = (newExpiryDate: Date, oldExpiryDate = new Date()) => {
-  const diffInYears = newExpiryDate.getFullYear() - oldExpiryDate.getFullYear()
-  if (diffInYears >= 1) {
-    return `${diffInYears} year`
+export const formatExtensionPeriod = (duration: number) => {
+  const minute = 60
+  const hour = minute * 60
+  const day = hour * 24
+  const month = day * 30 // Assuming 30 days per month for simplicity
+  const year = day * 365 // Assuming 365 days per year for simplicity
+
+  if (duration >= year) {
+    const years = Math.floor(duration / year)
+    return `${years} year`
+  }
+  if (duration >= month) {
+    const months = Math.floor(duration / month)
+    return `${months} month`
+  }
+  if (duration >= day) {
+    const days = Math.floor(duration / day)
+    return `${days} day`
   }
 
-  const diffInMonths = newExpiryDate.getMonth() - oldExpiryDate.getMonth()
-
-  if (diffInMonths >= 1) {
-    return `${diffInMonths} month`
-  }
-
-  const diffInDays = newExpiryDate.getDate() - oldExpiryDate.getDate()
-
-  return `${diffInDays} day`
+  return `${duration} second`
 }
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>

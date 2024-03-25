@@ -31,8 +31,6 @@ const InvoiceContainer = styled.div(
   `,
 )
 
-const now = new Date()
-
 type Props = ReturnType<typeof useEstimateFullRegistration>
 
 const FullInvoice = ({
@@ -52,7 +50,7 @@ const FullInvoice = ({
     () => [
       {
         label: t('invoice.timeRegistration', {
-          time: formatExtensionPeriod(new Date(now.getTime() + seconds * 1000)),
+          time: formatExtensionPeriod(seconds),
         }),
         bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
         value: totalYearlyFee,

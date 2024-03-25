@@ -30,7 +30,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { add28Days, getSecondsFromDate } from '@app/utils/utils'
+import { add28Days, yearsToSeconds } from '@app/utils/utils'
 
 import FullInvoice from '../../FullInvoice'
 import {
@@ -472,8 +472,6 @@ export type PricingProps = {
   >['initiateMoonpayRegistrationMutation']
 }
 
-const now = new Date()
-
 const Pricing = ({
   name,
   gracePeriodEndDate,
@@ -492,12 +490,9 @@ const Pricing = ({
   const { data: balance } = useBalance({ address })
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
-  const [date, setDate] = useState(() => new Date(now.getTime() + registrationData.seconds * 1000))
-  const minDate = add28Days(now)
-  const seconds = getSecondsFromDate(date, now)
-  const secondsFromMinDate = getSecondsFromDate(date, minDate)
+  const [seconds, setSeconds] = useState(() => registrationData.seconds ?? 0)
 
-  console.log({ seconds })
+  const minDuration = add28Days(yearsToSeconds(1))
 
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,
@@ -541,19 +536,7 @@ const Pricing = ({
     },
   })
 
-  const fullEstimateMinusMin = useEstimateFullRegistration({
-    name,
-    registrationData: {
-      ...registrationData,
-      reverseRecord,
-      seconds: secondsFromMinDate,
-      records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
-      clearRecords: resolverExists,
-      resolverAddress,
-    },
-  })
-
-  const { hasPremium, premiumFee, gasPrice, totalYearlyFee, estimatedGasFee } = fullEstimateMinusMin
+  const { hasPremium, premiumFee, gasPrice, totalYearlyFee, estimatedGasFee } = fullEstimate
   const yearlyRequiredBalance = totalYearlyFee ? (totalYearlyFee * 110n) / 100n : 0n
   const totalRequiredBalance = yearlyRequiredBalance
     ? yearlyRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)
@@ -571,12 +554,10 @@ const Pricing = ({
   const unsafeDisplayEstimatedGasFee =
     estimatedGasFee === 0n ? previousEstimatedGasFee : estimatedGasFee
 
-  console.log(estimatedGasFee, yearlyRequiredBalance)
-
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
-      <DateSelection {...{ date, setDate }} minDate={minDate} />
+      <DateSelection {...{ seconds, setSeconds, minDuration }} />
       <FullInvoice {...fullEstimate} />
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={name} />

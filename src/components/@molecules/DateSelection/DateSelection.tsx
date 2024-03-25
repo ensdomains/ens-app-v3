@@ -5,7 +5,13 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { formatExtensionPeriod, setYearsForDate } from '@app/utils/utils'
+import {
+  addOneYear,
+  formatExtensionPeriod,
+  getSecondsFromDate,
+  secondsToYears,
+  yearsToSeconds,
+} from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
   ({ theme }) => css`
@@ -27,32 +33,32 @@ const Container = styled.div(
 )
 
 export const DateSelection = ({
-  date,
-  setDate,
+  seconds,
+  setSeconds,
   name,
-  minDate,
-  since,
+  minDuration,
+  mode = 'register',
 }: {
-  date: Date
-  setDate: (date: Date) => void
+  seconds: number
+  setSeconds: (seconds: number) => void
   name?: string
-  minDate: Date
-  since?: Date
+  minDuration: number
+  mode?: 'register' | 'extend'
 }) => {
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
   const yearPickSelection = yearPickView === 'date' ? 'years' : 'date'
 
-  const extensionPeriod = formatExtensionPeriod(date, since)
+  const extensionPeriod = formatExtensionPeriod(seconds)
 
   useEffect(() => {
-    if (minDate > date) setDate(minDate)
+    if (minDuration > seconds) setSeconds(minDuration)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [minDate, date])
+  }, [minDuration, seconds])
 
-  const dateInYears = date.getFullYear() - minDate.getFullYear()
+  const dateInYears = Math.floor(secondsToYears(seconds))
 
   useEffect(() => {
-    if (yearPickView === 'years' && dateInYears < 1) setDate(setYearsForDate(date, 1, minDate))
+    if (yearPickView === 'years' && dateInYears < 1) setSeconds(addOneYear(seconds))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateInYears, yearPickView])
 
@@ -60,14 +66,16 @@ export const DateSelection = ({
     <Container>
       {yearPickView === 'date' ? (
         <Calendar
-          value={date}
+          value={seconds}
           onChange={(e) => {
-            const { valueAsDate } = e.target
-            if (valueAsDate && valueAsDate >= minDate) setDate(valueAsDate)
+            const { valueAsDate } = e.currentTarget
+            if (valueAsDate) {
+              setSeconds(getSecondsFromDate(valueAsDate))
+            }
           }}
           highlighted
           name={name}
-          min={minDate}
+          min={minDuration}
         />
       ) : (
         <PlusMinusControl
@@ -77,14 +85,14 @@ export const DateSelection = ({
           onChange={(e) => {
             const newYears = parseInt(e.target.value)
 
-            if (!Number.isNaN(newYears)) setDate(setYearsForDate(date, newYears, minDate))
+            if (!Number.isNaN(newYears)) setSeconds(yearsToSeconds(newYears))
           }}
         />
       )}
       <Typography color="greyPrimary" fontVariant="smallBold">
         {extensionPeriod === 'Invalid date'
           ? extensionPeriod
-          : `${extensionPeriod} ${since ? 'extension' : 'registration'}`}
+          : `${extensionPeriod} ${mode === 'register' ? 'registration' : 'extension'}`}
         .{' '}
         <YearsViewSwitch type="button" onClick={() => setYearPickView(yearPickSelection)}>
           Pick by {yearPickSelection}
