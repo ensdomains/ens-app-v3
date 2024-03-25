@@ -32,6 +32,8 @@ const Container = styled.div(
   `,
 )
 
+const now = Date.now() / 1000
+
 export const DateSelection = ({
   seconds,
   setSeconds,
@@ -66,7 +68,7 @@ export const DateSelection = ({
     <Container>
       {yearPickView === 'date' ? (
         <Calendar
-          value={seconds}
+          value={now + seconds}
           onChange={(e) => {
             const { valueAsDate } = e.currentTarget
             if (valueAsDate) {
@@ -75,7 +77,7 @@ export const DateSelection = ({
           }}
           highlighted
           name={name}
-          min={minDuration}
+          min={now + minDuration}
         />
       ) : (
         <PlusMinusControl

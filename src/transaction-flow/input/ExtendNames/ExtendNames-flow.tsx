@@ -31,14 +31,7 @@ import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import useUserConfig from '@app/utils/useUserConfig'
-import {
-  add28Days,
-  addOneYear,
-  formatExtensionPeriod,
-  getSecondsWithDatePrecisionFromDate,
-  secondsToYears,
-  setYearsForDate,
-} from '@app/utils/utils'
+import { add28Days, formatExtensionPeriod, secondsToYears, yearsToSeconds } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
@@ -213,9 +206,6 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const now = new Date()
-const defaultOneYear = addOneYear(now)
-
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
@@ -241,23 +231,17 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const decrementView = () => (viewIdx <= 0 ? onDismiss() : setViewIdx(viewIdx - 1))
   const view = flow[viewIdx]
 
-  const { data } = useExpiry({ name: names.length === 1 ? names[0] : undefined })
-  const expiry = data ? data.expiry.date : now
+  const [seconds, setSeconds] = useState(() => yearsToSeconds(1))
 
-  const [date, setDate] = useState(() =>
-    expiry > defaultOneYear ? addOneYear(expiry) : defaultOneYear,
-  )
-
-  const minDate = add28Days(expiry)
-  const duration = getSecondsWithDatePrecisionFromDate(date, expiry)
-  const years = secondsToYears(duration)
+  const minDuration = 28 * 86400
+  const years = secondsToYears(seconds)
 
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
   const { data: priceData, isLoading: isPriceLoading } = usePrice({
     nameOrNames: names,
-    duration,
+    duration: seconds,
   })
 
   const totalRentFee = priceData ? priceData.base + priceData.premium : 0n
@@ -266,7 +250,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const isShowingPreviousTotalRentFee = totalRentFee === 0n && previousTotalRentFee > 0n
 
   const transactions = [
-    createTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee! }),
+    createTransactionItem('extendNames', { names, duration: seconds, rentPrice: totalRentFee! }),
   ]
 
   const {
@@ -279,8 +263,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
       {
         name: 'extendNames',
         data: {
+          duration: seconds,
           names,
-          duration,
           rentPrice: totalRentFee!,
         },
         stateOverride: [
@@ -304,7 +288,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const items: InvoiceItem[] = [
     {
       label: t('input.extendNames.invoice.extension', {
-        time: formatExtensionPeriod(date, expiry),
+        time: formatExtensionPeriod(seconds),
       }),
       value: totalRentFee,
       bufferPercentage: 102n,
@@ -361,10 +345,10 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                 <PlusMinusWrapper>
                   {names.length === 1 ? (
                     <DateSelection
-                      {...{ date, setDate }}
+                      {...{ seconds, setSeconds }}
                       name={names[0]}
-                      minDate={minDate}
-                      since={expiry}
+                      minDuration={minDuration}
+                      mode="extend"
                     />
                   ) : (
                     <PlusMinusControl
@@ -372,8 +356,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                       value={years}
                       onChange={(e) => {
                         const newYears = parseInt(e.target.value)
-                        if (!Number.isNaN(newYears))
-                          setDate(setYearsForDate(date, newYears, minDate))
+                        if (!Number.isNaN(newYears)) setSeconds(yearsToSeconds(newYears))
                       }}
                     />
                   )}

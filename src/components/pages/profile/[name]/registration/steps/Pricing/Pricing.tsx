@@ -30,7 +30,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { add28Days, yearsToSeconds } from '@app/utils/utils'
+import { yearsToSeconds } from '@app/utils/utils'
 
 import FullInvoice from '../../FullInvoice'
 import {
@@ -492,7 +492,7 @@ const Pricing = ({
 
   const [seconds, setSeconds] = useState(() => registrationData.seconds ?? 0)
 
-  const minDuration = add28Days(yearsToSeconds(1))
+  const minDuration = yearsToSeconds(1)
 
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,

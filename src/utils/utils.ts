@@ -28,8 +28,6 @@ export const yearsToSeconds = (years: number) => years * ONE_YEAR
 
 export const secondsToYears = (seconds: number) => seconds / ONE_YEAR
 
-export const add28Days = (duration: number) => duration + 28 * 86400
-
 export const addOneYear = (duration: number) => duration + ONE_YEAR
 
 export const getSecondsFromDate = (date: Date) => {
@@ -38,10 +36,10 @@ export const getSecondsFromDate = (date: Date) => {
   return value
 }
 
-export const secondsToDate = (seconds: number) => new Date(Date.now() + seconds * 1000)
+export const secondsToDate = (seconds: number) => new Date(seconds * 1000)
 
 export function secondsToDateInput(seconds: number) {
-  const date = new Date(Date.now() + seconds * 1000) // Convert seconds to milliseconds
+  const date = new Date(seconds * 1000) // Convert seconds to milliseconds
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
   const day = String(date.getDate()).padStart(2, '0')
