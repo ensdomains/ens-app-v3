@@ -31,7 +31,7 @@ import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import useUserConfig from '@app/utils/useUserConfig'
-import { add28Days, formatExtensionPeriod, secondsToYears, yearsToSeconds } from '@app/utils/utils'
+import { formatExtensionPeriod, secondsToYears, yearsToSeconds } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
