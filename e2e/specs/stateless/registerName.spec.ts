@@ -263,14 +263,7 @@ test('should allow registering a name and resuming from the commit toast', async
   // we don't need to test the rest of registration, just the resume part
 })
 
-test('should allow registering with a specific date', async ({
-  time,
-  page,
-  login,
-  makePageObject,
-}) => {
-  await time.sync(500)
-
+test('should allow registering with a specific date', async ({ page, login, makePageObject }) => {
   const registrationPage = makePageObject('RegistrationPage')
   const name = `registration-resume-${Date.now()}.eth`
 
