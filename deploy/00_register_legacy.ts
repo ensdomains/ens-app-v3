@@ -159,6 +159,7 @@ type Name = {
     namedOwner: string
   }[]
   customDuration?: number
+  isInvalid?: boolean
 }
 
 const names: Name[] = [
@@ -364,6 +365,12 @@ const names: Name[] = [
       ],
     },
   },
+  {
+    label: '.is-invalid.',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    isInvalid: true,
+  },
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -453,14 +460,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const makeRecords =
     (nonce: number) =>
     async (
-      { label, records: _records, registrant }: ReturnType<typeof makeData>,
+      { label, records: _records, registrant, isInvalid }: ReturnType<typeof makeData>,
       index: number,
     ) => {
       const records = _records!
       let nonceRef = nonce + index
       const _publicResolver = publicResolver.connect(await ethers.getSigner(registrant))
 
-      const hash = namehash(`${label}.eth`)
+      const hash = namehash(`${isInvalid ? `[${labelhash(label)}]` : label}.eth`)
       console.log(`Setting records for ${label}.eth...`)
       if (records.text) {
         console.log('TEXT')

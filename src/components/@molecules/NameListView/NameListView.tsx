@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 
 import { Name } from '@ensdomains/ensjs/subgraph'
-import { parseInput } from '@ensdomains/ensjs/utils'
 import { Button, Spinner } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
@@ -157,7 +156,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
   const isNameDisabled = useCallback(
     (name: Name) => {
       if (mode !== 'select') return false
-      return name.parentName !== 'eth' || (name.name ? !parseInput(name.name!).isValid : false)
+      return name.parentName !== 'eth' || !name.labelName
     },
     [mode],
   )
