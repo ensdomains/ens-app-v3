@@ -1,3 +1,5 @@
+import { CoinName, coinNameToTypeMap, coinTypeToNameMap } from '@ensdomains/address-encoder'
+
 import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import coinsWithoutIcons from '@app/constants/coinsWithoutIcons.json'
 import { supportedContentHashKeys } from '@app/constants/supportedContentHashKeys'
@@ -35,11 +37,18 @@ const social: ProfileRecord[] = supportedSocialRecordKeys.map((key) => ({
   type: 'text',
 }))
 
+const coinShortNameToLongName = (coin: string) => {
+  const coinType = coinNameToTypeMap[coin as CoinName]
+  const coinLongName = coinTypeToNameMap[coinType][1]
+  return coinLongName
+}
+
 const address = [...coinsWithIcons, ...coinsWithoutIcons].map((coin) => ({
   key: coin,
+  longName: coinShortNameToLongName(coin),
   group: 'address',
   type: 'addr',
-})) as ProfileRecord[]
+})) as (ProfileRecord & { longName: string })[]
 
 const website: ProfileRecord[] = supportedContentHashKeys.map((key) => ({
   key,
@@ -60,10 +69,7 @@ const other: ProfileRecord[] = supportedOtherRecordKeys.map((key) => ({
 }))
 
 export default [...general, ...social, ...address, ...website, ...other]
-export const grouped: {
-  group: ProfileRecordGroup
-  items: ProfileRecord[]
-}[] = [
+export const grouped = [
   {
     group: 'general',
     items: general,
@@ -84,7 +90,7 @@ export const grouped: {
     group: 'other',
     items: other,
   },
-]
+] as const
 
 export const sortValues: { [key: string]: { [key: string]: number } } = {
   media: {
