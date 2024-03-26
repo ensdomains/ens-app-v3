@@ -30,13 +30,9 @@ import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
+import { ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
-import {
-  deriveYearlyFee,
-  formatExtensionPeriod,
-  secondsToYears,
-  yearsToSeconds,
-} from '@app/utils/utils'
+import { deriveYearlyFee, formatExtensionPeriod } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
@@ -236,9 +232,9 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const decrementView = () => (viewIdx <= 0 ? onDismiss() : setViewIdx(viewIdx - 1))
   const view = flow[viewIdx]
 
-  const [seconds, setSeconds] = useState(() => yearsToSeconds(1))
+  const [seconds, setSeconds] = useState(ONE_YEAR)
 
-  const minDuration = 28 * 86400
+  const minSeconds = 28 * 86400
   const years = secondsToYears(seconds)
 
   const { userConfig, setCurrency } = useUserConfig()
@@ -353,7 +349,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     <DateSelection
                       {...{ seconds, setSeconds }}
                       name={names[0]}
-                      minDuration={minDuration}
+                      minSeconds={minSeconds}
                       mode="extend"
                     />
                   ) : (

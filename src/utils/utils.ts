@@ -68,7 +68,7 @@ export const formatExtensionPeriod = (duration: number) => {
     return `${days} day`
   }
 
-  return `${duration} second`
+  return 'Invalid Date'
 }
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>

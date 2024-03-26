@@ -1,6 +1,9 @@
 /* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
 
+import { secondsToDateInput } from '@app/utils/date'
+import { daysToSeconds } from '@app/utils/time'
+
 import { test } from '../../../playwright'
 
 test('should be able to register multiple names on the address page', async ({
@@ -314,4 +317,61 @@ test('should not show extend button on unwrapped subnames', async ({
   await login.connect()
 
   await expect(profilePage.getExtendButton).toHaveCount(0)
+})
+
+test('should be able to extend a name by a month', async ({
+  page,
+  login,
+  makePageObject,
+  makeName,
+}) => {
+  const name = await makeName({
+    label: 'legacy',
+    type: 'legacy',
+    owner: 'user',
+  })
+
+  const extendNamesModal = makePageObject('ExtendNamesModal')
+  const profilePage = makePageObject('ProfilePage')
+
+  await profilePage.goto(name)
+  await login.connect()
+
+  const timestamp = await profilePage.getExpiryTimestamp()
+
+  await profilePage.getExtendButton.click()
+
+  await test.step('should be able to pick by date', async () => {
+    const dateSelection = page.getByTestId('date-selection')
+    await expect(dateSelection).toHaveText('Pick by date')
+
+    await dateSelection.click()
+  })
+
+  await test.step('should set and render a date properly', async () => {
+    const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
+    const calendar = await page.getByTestId('calendar')
+
+    const monthLater = secondsToDateInput(browserTime + daysToSeconds(31))
+
+    await calendar.fill(monthLater)
+
+    await expect(page.getByTestId('calendar-date')).toHaveValue(monthLater)
+  })
+
+  await test.step('should show the correct price data', async () => {
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0003')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0004')
+    await expect(page.getByText('1 month extension', { exact: true })).toBeVisible()
+  })
+
+  await test.step('should extend', async () => {
+    await extendNamesModal.getExtendButton.click()
+    const transactionModal = makePageObject('TransactionModal')
+    await transactionModal.autoComplete()
+
+    const newTimestamp = await profilePage.getExpiryTimestamp()
+    expect(newTimestamp).toEqual(timestamp + daysToSeconds(31))
+  })
 })

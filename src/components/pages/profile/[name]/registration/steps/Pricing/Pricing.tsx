@@ -30,7 +30,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { yearsToSeconds } from '@app/utils/utils'
+import { ONE_YEAR } from '@app/utils/time'
 
 import FullInvoice from '../../FullInvoice'
 import {
@@ -472,7 +472,7 @@ export type PricingProps = {
   >['initiateMoonpayRegistrationMutation']
 }
 
-const minDuration = yearsToSeconds(1)
+const minSeconds = ONE_YEAR
 
 const Pricing = ({
   name,
@@ -492,7 +492,7 @@ const Pricing = ({
   const { data: balance } = useBalance({ address })
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
-  const [seconds, setSeconds] = useState(() => registrationData.seconds ?? yearsToSeconds(1))
+  const [seconds, setSeconds] = useState(() => registrationData.seconds ?? ONE_YEAR)
 
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,
@@ -557,7 +557,7 @@ const Pricing = ({
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
-      <DateSelection {...{ seconds, setSeconds, minDuration }} />
+      <DateSelection {...{ seconds, setSeconds, minSeconds }} />
       <FullInvoice {...fullEstimate} />
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={name} />

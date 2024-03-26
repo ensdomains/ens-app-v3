@@ -27,19 +27,19 @@ const Container = styled.div(
   `,
 )
 
-const now = Date.now() / 1000
+const now = Math.floor(Date.now() / 1000)
 
 export const DateSelection = ({
   seconds,
   setSeconds,
   name,
-  minDuration,
+  minSeconds,
   mode = 'register',
 }: {
   seconds: number
   setSeconds: (seconds: number) => void
   name?: string
-  minDuration: number
+  minSeconds: number
   mode?: 'register' | 'extend'
 }) => {
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
@@ -48,9 +48,9 @@ export const DateSelection = ({
   const extensionPeriod = formatExtensionPeriod(seconds)
 
   useEffect(() => {
-    if (minDuration > seconds) setSeconds(minDuration)
+    if (minSeconds > seconds) setSeconds(minSeconds)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [minDuration, seconds])
+  }, [minSeconds, seconds])
 
   const dateInYears = secondsToYears(seconds)
 
@@ -72,7 +72,7 @@ export const DateSelection = ({
           }}
           highlighted
           name={name}
-          min={now + minDuration}
+          min={now + minSeconds}
         />
       ) : (
         <PlusMinusControl
