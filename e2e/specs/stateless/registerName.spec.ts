@@ -2,6 +2,9 @@ import { expect } from '@playwright/test'
 
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
+import { secondsToDateInput } from '@app/utils/date'
+import { yearsToSeconds } from '@app/utils/time'
+
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
@@ -258,4 +261,27 @@ test('should allow registering a name and resuming from the commit toast', async
   await expect(page).toHaveURL(`/${name}/register`)
   await expect(page.getByTestId('countdown-circle')).toBeVisible()
   // we don't need to test the rest of registration, just the resume part
+})
+
+test('should allow registering with a specific date', async ({ time, page, login }) => {
+  await time.sync(500)
+
+  const name = `registration-resume-${Date.now()}.eth`
+
+  await page.goto(`/${name}/register`)
+  await login.connect()
+  await page.getByTestId('payment-choice-ethereum').click()
+
+  const dateSelection = page.getByTestId('date-selection')
+  await expect(dateSelection).toBeVisible()
+
+  await dateSelection.click()
+
+  const calendar = await page.getByTestId('calendar')
+
+  expect(calendar).toHaveValue(
+    secondsToDateInput(Math.floor(Date.now() / 1000) + yearsToSeconds(1)),
+  )
+
+  await calendar.click()
 })

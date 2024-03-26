@@ -6,6 +6,9 @@ import { DecodedFuses } from '@ensdomains/ensjs/utils'
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
+import { ONE_YEAR } from './time'
+
+export * from './time'
 
 export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice = 5) => {
   if (address.length < maxLength) {
@@ -13,27 +16,6 @@ export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, righ
   }
 
   return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`
-}
-
-const ONE_YEAR = 60 * 60 * 24 * 365
-const now = new Date()
-
-export const secondsToDays = (seconds: number) => Math.floor(seconds / (60 * 60 * 24))
-
-export const secondsToHours = (seconds: number) => Math.floor(seconds / (60 * 60))
-
-export const daysToSeconds = (days: number) => days * 60 * 60 * 24
-
-export const yearsToSeconds = (years: number) => years * ONE_YEAR
-
-export const secondsToYears = (seconds: number) => seconds / ONE_YEAR
-
-export const addOneYear = (duration: number) => duration + ONE_YEAR
-
-export const getSecondsFromDate = (date: Date) => {
-  // @ts-ignore typescript doesn't support date operators
-  const value = Math.floor((date - now) / 1000)
-  return value
 }
 
 export const deriveYearlyFee = ({
@@ -45,16 +27,6 @@ export const deriveYearlyFee = ({
 }) => {
   const yearlyFee = (price.base * BigInt(ONE_YEAR)) / BigInt(duration)
   return yearlyFee
-}
-
-export const secondsToDate = (seconds: number) => new Date(seconds * 1000)
-
-export function secondsToDateInput(seconds: number) {
-  const date = new Date(seconds * 1000) // Convert seconds to milliseconds
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
 }
 
 export const formatExpiry = (expiry: Date) =>

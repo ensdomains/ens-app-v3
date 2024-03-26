@@ -5,13 +5,8 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import {
-  addOneYear,
-  formatExtensionPeriod,
-  getSecondsFromDate,
-  secondsToYears,
-  yearsToSeconds,
-} from '@app/utils/utils'
+import { getSecondsFromDate } from '@app/utils/date'
+import { addOneYear, formatExtensionPeriod, secondsToYears, yearsToSeconds } from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
   ({ theme }) => css`
@@ -96,7 +91,11 @@ export const DateSelection = ({
           ? extensionPeriod
           : `${extensionPeriod} ${mode === 'register' ? 'registration' : 'extension'}`}
         .{' '}
-        <YearsViewSwitch type="button" onClick={() => setYearPickView(yearPickSelection)}>
+        <YearsViewSwitch
+          type="button"
+          data-testid="date-selection"
+          onClick={() => setYearPickView(yearPickSelection)}
+        >
           Pick by {yearPickSelection}
         </YearsViewSwitch>
       </Typography>

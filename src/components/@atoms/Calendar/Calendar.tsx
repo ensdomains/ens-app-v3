@@ -3,7 +3,8 @@ import styled, { css } from 'styled-components'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
-import { formatExpiry, secondsToDate, secondsToDateInput } from '@app/utils/utils'
+import { secondsToDate, secondsToDateInput } from '@app/utils/date'
+import { formatExpiry } from '@app/utils/utils'
 
 const Label = styled.label<{ $highlighted?: boolean }>(
   ({ theme, $highlighted }) => css`
@@ -78,11 +79,7 @@ export const Calendar = forwardRef(
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
 
     return (
-      <Label
-        htmlFor="calendar"
-        $highlighted={highlighted}
-        onClick={() => inputRef.current!.showPicker()}
-      >
+      <Label htmlFor="calendar" $highlighted={highlighted}>
         <LabelInput
           id="calendar"
           data-testid="calendar"
@@ -94,6 +91,7 @@ export const Calendar = forwardRef(
           onFocus={(e) => {
             e.target.select()
           }}
+          onClick={() => inputRef.current!.showPicker()}
         />
         <span data-testid="calendar-date">{formatExpiry(secondsToDate(value))}</span>
         <CalendarIcon>
