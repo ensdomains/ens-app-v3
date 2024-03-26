@@ -472,6 +472,8 @@ export type PricingProps = {
   >['initiateMoonpayRegistrationMutation']
 }
 
+const minDuration = yearsToSeconds(1)
+
 const Pricing = ({
   name,
   gracePeriodEndDate,
@@ -490,9 +492,7 @@ const Pricing = ({
   const { data: balance } = useBalance({ address })
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
-  const [seconds, setSeconds] = useState(() => registrationData.seconds ?? 0)
-
-  const minDuration = yearsToSeconds(1)
+  const [seconds, setSeconds] = useState(() => registrationData.seconds ?? yearsToSeconds(1))
 
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,

@@ -57,7 +57,7 @@ export const DateSelection = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minDuration, seconds])
 
-  const dateInYears = Math.floor(secondsToYears(seconds))
+  const dateInYears = secondsToYears(seconds)
 
   useEffect(() => {
     if (yearPickView === 'years' && dateInYears < 1) setSeconds(addOneYear(seconds))
