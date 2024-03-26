@@ -35,7 +35,7 @@ type Props = ReturnType<typeof useEstimateFullRegistration>
 
 const FullInvoice = ({
   seconds,
-  totalYearlyFee,
+  totalDurationBasedFee,
   estimatedGasFee,
   hasPremium,
   premiumFee,
@@ -53,7 +53,7 @@ const FullInvoice = ({
           time: formatExtensionPeriod(seconds),
         }),
         bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
-        value: totalYearlyFee,
+        value: totalDurationBasedFee,
       },
       {
         label: t('invoice.estimatedNetworkFee'),
@@ -70,7 +70,7 @@ const FullInvoice = ({
           ]
         : []),
     ],
-    [t, seconds, totalYearlyFee, estimatedGasFee, hasPremium, premiumFee],
+    [t, seconds, totalDurationBasedFee, estimatedGasFee, hasPremium, premiumFee],
   )
 
   return (
