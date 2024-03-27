@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -12,6 +12,7 @@ import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { Profile } from '@app/types'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -90,7 +91,13 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
     (item: TransactionItem) => item.name === 'updateProfile',
   ) as TransactionItem<'updateProfile'>
 
-  const { data: profile, isLoading: isProfileLoading } = useProfile({ name })
+  const { data: fetchedProfile, isLoading: isProfileLoading } = useProfile({ name })
+  const [profile, setProfile] = useState<Profile | undefined>(undefined)
+
+  // inline to prevent unnecessary re-renders
+  if (fetchedProfile && !profile) {
+    setProfile(fetchedProfile)
+  }
 
   const handleCreateTransaction = useCallback(
     (records: RecordOptions) => {
@@ -99,14 +106,14 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
         payload: [
           createTransactionItem('updateProfile', {
             name,
-            resolverAddress: profile!.resolverAddress!,
+            resolverAddress: fetchedProfile!.resolverAddress!,
             records,
           }),
         ],
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
     },
-    [profile, dispatch, name],
+    [fetchedProfile, dispatch, name],
   )
 
   const advancedEditorForm = useAdvancedEditor({

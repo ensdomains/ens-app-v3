@@ -265,6 +265,7 @@ test('should calculate needed steps without localstorage', async ({
   await morePage.goto(subname)
   await login.connect()
 
+  await page.pause()
   await expect(page.getByTestId('name-details-text-wrapper')).toContainText('unwrapped')
 
   await morePage.wrapButton.click()

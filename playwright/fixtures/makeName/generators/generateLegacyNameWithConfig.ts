@@ -15,11 +15,12 @@ import {
 import { Provider } from '../../provider'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
 import { generateRecords } from './generateRecords'
+import { Address } from 'viem'
 
-const LEGACY_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address
-const PUBLIC_RESOLVER = testClient.chain.contracts.publicResolver.address
+const LEGACY_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address as Address
+const PUBLIC_RESOLVER = testClient.chain.contracts.publicResolver.address as Address
 const DEFAULT_DURATION = 31536000
-const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address
+const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address as Address
 
 export type Name = {
   label: string

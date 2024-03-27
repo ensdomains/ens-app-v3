@@ -149,7 +149,7 @@ export const NameDetailSnippet = ({
 
   const owners: [translation: string, address: Address][] = []
 
-  if (ownerData?.ownershipLevel === 'nameWrapper') {
+  if (wrapperData) {
     owners.push([
       wrapperData?.fuses.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
       ownerData.owner!,

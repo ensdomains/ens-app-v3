@@ -20,6 +20,7 @@ type Props = {
   name: string
   wrapperData: GetWrapperDataReturnType | undefined
   fusesSetDates: FusesSetDates
+  canEditPermissions?: boolean
 } & FusesStates
 
 type FuseItem = {
@@ -82,6 +83,7 @@ export const NameChangePermissions = ({
   state,
   parentState,
   isUserOwner,
+  canEditPermissions,
 }: Props) => {
   const { t } = useTranslation('profile')
   const { usePreparedDataInput } = useTransactionFlow()
@@ -124,7 +126,10 @@ export const NameChangePermissions = ({
 
   const ButtonComponent = useMemo(() => {
     const showButton =
-      isUserOwner && ['emancipated', 'locked'].includes(state) && permissions.unburned.length > 0
+      isUserOwner &&
+      ['emancipated', 'locked'].includes(state) &&
+      permissions.unburned.length > 0 &&
+      canEditPermissions
     if (!showButton) return null
     if (wrapperData?.fuses.child.CANNOT_BURN_FUSES)
       return (

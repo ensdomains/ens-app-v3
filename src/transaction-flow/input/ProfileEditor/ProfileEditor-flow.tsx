@@ -161,7 +161,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const { data: profile, isLoading: isProfileLoading } = useProfile({ name })
   const { data: isWrapped = false, isLoading: isWrappedLoading } = useIsWrapped({ name })
-
   const isLoading = isProfileLoading || isWrappedLoading
 
   const existingRecords = profileToProfileRecords(profile)
@@ -261,7 +260,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   }, [resolverStatus.isLoading, resolverStatus.data?.hasLatestResolver, transactions.length])
 
   useEffect(() => {
-    if (!isProfileLoading && !profile?.isMigrated) {
+    if (!isProfileLoading && profile?.isMigrated === false) {
       setView('warning')
     }
   }, [isProfileLoading, profile?.isMigrated])
@@ -408,7 +407,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               name={name}
               status={resolverStatus.data}
               isWrapped={isWrapped}
-              hasOldRegistry={!profile?.isMigrated}
+              hasOldRegistry={profile?.isMigrated === false}
               resumable={resumable}
               hasNoResolver={!resolverStatus.data?.hasResolver}
               hasMigratedProfile={resolverStatus.data?.hasMigratedProfile}

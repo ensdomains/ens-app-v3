@@ -33,10 +33,10 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
       {ownerData && (
         <Token
           isWrapped={isWrapped}
-          wrapperData={wrapperData}
           name={name}
           canBeWrapped={canBeWrapped}
           ownerData={ownerData}
+          wrapperData={wrapperData}
           profile={profile}
         />
       )}
@@ -46,6 +46,7 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
         canEditResolver={abilities.canEditResolver}
         isCachedData={isCachedData}
         resolverAddress={profile?.resolverAddress}
+        canEditResolverError={abilities.canEditResolverError}
       />
     </MoreContainer>
   )

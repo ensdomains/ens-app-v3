@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 import { resolve } from 'path'
+import { localhost } from 'viem/chains'
 
 import { config } from 'dotenv'
 import {
@@ -10,14 +11,15 @@ import {
   http,
   TransactionReceiptNotFoundError,
   type Account,
-  type Address,
   type Hash,
   type PublicClient,
   type TestClient,
   type TransactionReceipt,
   type WalletClient,
+  Address,
 } from 'viem'
-import { localhost as _localhost } from 'viem/chains'
+import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
+import { Register } from '@app/local-contracts'
 
 config({
   path: resolve(__dirname, '../../.env.local'),
@@ -39,87 +41,43 @@ type ContractName =
   | 'LegacyDNSRegistrar'
   | 'LegacyDNSSECImpl'
 
-const deploymentAddressesStr = process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}'
-export const deploymentAddresses = JSON.parse(deploymentAddressesStr) as Record<
-  | ContractName
-  | 'ENSRegistry'
-  | 'LegacyPublicResolver'
-  | 'NoMulticallResolver'
-  | 'LegacyETHRegistrarController',
-  Address
->
+export const deploymentAddresses = JSON.parse(
+  process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
+) as Register['deploymentAddresses']
 
-export const localhost = {
-  ..._localhost,
+export const localhostWithEns = makeLocalhostChainWithEns<typeof localhost>(localhost, deploymentAddresses)
+
+const localhostWithEnsAndAdditionalTestContracts = {
+  ...localhostWithEns,
   contracts: {
-    ensRegistry: {
-      address: deploymentAddresses.ENSRegistry,
-    },
-    ensUniversalResolver: {
-      address: deploymentAddresses.UniversalResolver,
-    },
-    multicall3: {
-      address: deploymentAddresses.Multicall,
-    },
-    ensBaseRegistrarImplementation: {
-      address: deploymentAddresses.BaseRegistrarImplementation,
-    },
-    ensDnsRegistrar: {
-      address: deploymentAddresses.LegacyDNSRegistrar,
-    },
-    ensEthRegistrarController: {
-      address: deploymentAddresses.ETHRegistrarController,
-    },
-    ensLegacyEthRegistrarController: {
-      address: deploymentAddresses.LegacyETHRegistrarController,
-    },
-    ensNameWrapper: {
-      address: deploymentAddresses.NameWrapper,
-    },
-    ensPublicResolver: {
-      address: deploymentAddresses.PublicResolver,
-    },
-    ensReverseRegistrar: {
-      address: deploymentAddresses.ReverseRegistrar,
-    },
-    ensBulkRenewal: {
-      address: deploymentAddresses.StaticBulkRenewal,
-    },
-    ensDnssecImpl: {
-      address: deploymentAddresses.LegacyDNSSECImpl,
-    },
-    legacyPublicResolver: {
-      address: deploymentAddresses.LegacyPublicResolver,
+    ...localhostWithEns.contracts,
+    legacyPublicResolver: { 
+      address: deploymentAddresses.LegacyPublicResolver as Address
     },
     publicResolver: {
-      address: deploymentAddresses.PublicResolver,
+      address: deploymentAddresses.PublicResolver as Address
     },
-  },
-  subgraphs: {
-    ens: {
-      url: 'http://localhost:8000/subgraphs/name/graphprotocol/ens',
-    },
-  },
+  }
 } as const
 
 const transport = http('http://localhost:8545')
 
-export const publicClient: PublicClient<typeof transport, typeof localhost> = createPublicClient({
-  chain: localhost,
+export const publicClient: PublicClient<typeof transport, typeof localhostWithEnsAndAdditionalTestContracts> = createPublicClient({
+  chain: localhostWithEnsAndAdditionalTestContracts,
   transport,
 })
 
-export const testClient: TestClient<'anvil', typeof transport, typeof localhost> = createTestClient(
+export const testClient: TestClient<'anvil', typeof transport, typeof localhostWithEnsAndAdditionalTestContracts> = createTestClient(
   {
-    chain: localhost,
+    chain: localhostWithEnsAndAdditionalTestContracts,
     transport,
     mode: 'anvil',
   },
 )
 
-export const walletClient: WalletClient<typeof transport, typeof localhost, Account> =
+export const walletClient: WalletClient<typeof transport, typeof localhostWithEnsAndAdditionalTestContracts, Account> =
   createWalletClient({
-    chain: localhost,
+    chain: localhostWithEnsAndAdditionalTestContracts,
     transport,
   })
 

@@ -6,7 +6,7 @@ import registerI18n from '@app/../public/locales/en/register.json'
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 
 import profileRecordOptions, { grouped, ProfileRecord } from '../constants/profileRecordOptions'
-import { useProfileEditorForm } from './useProfileEditorForm'
+import { isDirtyForRecordAtIndexCalc, useProfileEditorForm } from './useProfileEditorForm'
 
 const baseRecord: ProfileRecord = {
   key: 'eth',
@@ -432,5 +432,64 @@ describe('useProfileEditorForm', () => {
       })
       expect(hasTranslation).toBe(true)
     })
+  })
+})
+
+describe('isDirtyForRecordAtIndexCalc', () => {
+  it('should return true if the record value has changed', () => {
+    const index = 0
+    const defaultRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        group: 'address',
+        type: 'addr',
+        value: '0xb794f5ea0ba39494ce839613fffba74279579268',
+      },
+    ]
+    const currentRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        group: 'address',
+        type: 'addr',
+        value: '0xdifferent',
+      },
+    ]
+    const result = isDirtyForRecordAtIndexCalc(index, defaultRecords, currentRecords)
+    expect(result).toBe(true)
+  })
+  it('should return false if the record is not dirty', () => {
+    const index = 0
+    const defaultRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        group: 'address',
+        type: 'addr',
+        value: '0xb794f5ea0ba39494ce839613fffba74279579268',
+      },
+    ]
+    const currentRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        group: 'address',
+        type: 'addr',
+        value: '0xb794f5ea0ba39494ce839613fffba74279579268',
+      },
+    ]
+    const result = isDirtyForRecordAtIndexCalc(index, defaultRecords, currentRecords)
+    expect(result).toBe(false)
+  })
+  it('should return false if the record is not found', () => {
+    const index = 0
+    const defaultRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        group: 'address',
+        type: 'addr',
+        value: '0xb794f5ea0ba39494ce839613fffba74279579268',
+      },
+    ]
+    const currentRecords: ProfileRecord[] = []
+    const result = isDirtyForRecordAtIndexCalc(index, defaultRecords, currentRecords)
+    expect(result).toBe(false)
   })
 })

@@ -22,7 +22,7 @@ vi.mock('./utils/getRoles', () => ({
   getRoles: () => mockGetRoles(),
 }))
 
-vi.mock('@app/hooks/useNameType', () => ({
+vi.mock('@app/hooks/nameType/useNameType', () => ({
   useNameType: () => ({
     isLoading: false,
   }),

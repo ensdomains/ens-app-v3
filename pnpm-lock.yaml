@@ -27,8 +27,8 @@ importers:
   .:
     dependencies:
       '@ensdomains/address-encoder':
-        specifier: 1.1.0
-        version: 1.1.0
+        specifier: 1.1.1
+        version: 1.1.1
       '@ensdomains/content-hash':
         specifier: ^3.0.0-beta.5
         version: 3.0.0
@@ -36,8 +36,8 @@ importers:
         specifier: 1.2.0-beta.0
         version: 1.2.0-beta.0
       '@ensdomains/ensjs':
-        specifier: 3.5.0-beta.1
-        version: 3.5.0-beta.1(encoding@0.1.13)(typescript@5.3.3)(viem@2.7.13)
+        specifier: 3.5.0-beta.2
+        version: 3.5.0-beta.2(encoding@0.1.13)(typescript@5.3.3)(viem@2.7.13)
       '@ensdomains/thorin':
         specifier: 0.6.44
         version: 0.6.44(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.6)
@@ -92,6 +92,9 @@ importers:
       glob:
         specifier: ^8.0.3
         version: 8.0.3
+      graphql-request:
+        specifier: 5.1.0
+        version: 5.1.0(encoding@0.1.13)(graphql@16.8.1)
       i18next:
         specifier: ^21.9.1
         version: 21.9.2
@@ -138,8 +141,8 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1(prop-types@15.8.1)(react@18.2.0)
       react-hook-form:
-        specifier: ^7.34.2
-        version: 7.36.1(react@18.2.0)
+        specifier: ^7.51.0
+        version: 7.51.0(react@18.2.0)
       react-i18next:
         specifier: ^11.18.5
         version: 11.18.6(i18next@21.9.2)(react-dom@18.2.0)(react-native@0.73.5)(react@18.2.0)
@@ -333,9 +336,6 @@ importers:
       ganache:
         specifier: ^7.4.1
         version: 7.4.3
-      graphql-request:
-        specifier: 5.1.0
-        version: 5.1.0(encoding@0.1.13)(graphql@16.8.1)
       hardhat:
         specifier: ^2.10.2
         version: 2.11.2(ts-node@10.9.1)(typescript@5.3.3)
@@ -2406,8 +2406,8 @@ packages:
       '@scure/base': 1.1.5
     dev: false
 
-  /@ensdomains/address-encoder@1.1.0:
-    resolution: {integrity: sha512-kc+VFq4ml6UB/s1TRjwx/QOeGmvbUWkMDps/nLDco40CpU3//Iw8vscQ12wQzmCzn760kkyOt6nNBP2L3nhtAA==}
+  /@ensdomains/address-encoder@1.1.1:
+    resolution: {integrity: sha512-yg7s+suCuKRhaGsgLu57W/jxIs/Lnqs/SU7jT7UwS4ATSnW94jbUCbmyyZ82CQwKsmwaUE8uYvvVb4N6lfz29A==}
     dependencies:
       '@noble/curves': 1.3.0
       '@noble/hashes': 1.3.3
@@ -2501,13 +2501,13 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@ensdomains/ensjs@3.5.0-beta.1(encoding@0.1.13)(typescript@5.3.3)(viem@2.7.13):
-    resolution: {integrity: sha512-m4CIahJQ9derCeAQwWLYDBudD8n6agwv7ri7URHvx3XQL+H4pD2f1sFNfgG7/UCprOaFVZVAgo/WkWQVbc98oQ==}
+  /@ensdomains/ensjs@3.5.0-beta.2(encoding@0.1.13)(typescript@5.3.3)(viem@2.7.13):
+    resolution: {integrity: sha512-QfzY4Zgcpis1fFBr80iZwcUjO5x2YeM/n0MZsR8P6F5YBy2EYI3GCZIRPx4G/g4A+NuJ30JddSjTOFis2osx1w==}
     peerDependencies:
       viem: ^2.5.0
     dependencies:
       '@adraffy/ens-normalize': 1.9.0
-      '@ensdomains/address-encoder': 1.1.0
+      '@ensdomains/address-encoder': 1.1.1
       '@ensdomains/content-hash': 3.1.0-rc.1
       '@ensdomains/dnsprovejs': 0.5.1
       abitype: 1.0.0(typescript@5.3.3)
@@ -3390,7 +3390,7 @@ packages:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
       graphql: 16.8.1
-    dev: true
+    dev: false
 
   /@graphql-typed-document-node/core@3.2.0(graphql@16.8.1):
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
@@ -7732,7 +7732,6 @@ packages:
 
   /asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
-    dev: true
 
   /atomic-sleep@1.0.0:
     resolution: {integrity: sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==}
@@ -8728,7 +8727,6 @@ packages:
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
-    dev: true
 
   /command-exists@1.2.9:
     resolution: {integrity: sha512-LTQ/SGc+s0Xc0Fu5WaKnR0YiygZkm9eKFvyS+fRsU7/ZWFF8ykFM6Pc9aCVf1+xasOOZpO3BAVgVrKvsqKHV7w==}
@@ -8997,6 +8995,7 @@ packages:
       node-fetch: 2.6.7(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
+    dev: false
 
   /cross-fetch@3.1.8(encoding@0.1.13):
     resolution: {integrity: sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==}
@@ -9403,7 +9402,6 @@ packages:
   /delayed-stream@1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
-    dev: true
 
   /delegates@1.0.0:
     resolution: {integrity: sha512-bd2L678uiWATM6m5Z1VzNCErI3jiGzt6HGY8OVICs40JQq/HALfbyNJmp0UDakEY4pMMaN0Ly5om/B1VI/+xfQ==}
@@ -10823,7 +10821,7 @@ packages:
   /extract-files@9.0.0:
     resolution: {integrity: sha512-CvdFfHkC95B4bBBk36hcEmvdR2awOdhhVUYH6S/zrVj3477zven/fJMYg7121h4T1xHZC+tetUpubpAhxwI7hQ==}
     engines: {node: ^10.17.0 || ^12.0.0 || >= 13.7.0}
-    dev: true
+    dev: false
 
   /extsprintf@1.3.0:
     resolution: {integrity: sha512-11Ndz7Nv+mvAC1j0ktTa7fAb0vLyGGX+rMHNBYQviQDGU0Hw7lhctJANqbPhu9nV9/izT/IntTgZ7Im/9LJs9g==}
@@ -11120,7 +11118,7 @@ packages:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
-    dev: true
+    dev: false
 
   /form-data@4.0.0:
     resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
@@ -11631,7 +11629,7 @@ packages:
       graphql: 16.8.1
     transitivePeerDependencies:
       - encoding
-    dev: true
+    dev: false
 
   /graphql-request@6.1.0(encoding@0.1.13)(graphql@16.8.1):
     resolution: {integrity: sha512-p+XPfS4q7aIpKVcgmnZKhMNqhltk20hfXtkaIkTfjjmiKMJ5xrt5c743cL03y/K7y1rg3WrIC49xGiEQ4mxdNw==}
@@ -15820,8 +15818,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-hook-form@7.36.1(react@18.2.0):
-    resolution: {integrity: sha512-EbYYkCG2p8ywe7ikOH2l02lAFMrrrslZi1I8fqd8ifDGNAkhomHZQzQsP6ksvzrWBKntRe8b5L5L7Zsd+Gm02Q==}
+  /react-hook-form@7.51.0(react@18.2.0):
+    resolution: {integrity: sha512-BggOy5j58RdhdMzzRUHGOYhSz1oeylFAv6jUSG86OvCIvlAvS7KvnRY7yoAf2pfEiPN7BesnR0xx73nEk3qIiw==}
     engines: {node: '>=12.22.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18

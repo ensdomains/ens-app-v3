@@ -233,6 +233,7 @@ export const ProfileSnippet = ({
           label={name}
           name={name}
           noCache={abilities.data.canEdit}
+          decoding="sync"
         />
         <ButtonStack>
           {ActionButton && <DetailButtonWrapper>{ActionButton}</DetailButtonWrapper>}

@@ -4,55 +4,16 @@ import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
 import { addEnsContracts } from '@ensdomains/ensjs'
 
 import type { Register } from '@app/local-contracts'
+import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
 
 export const deploymentAddresses = JSON.parse(
   process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
 ) as Register['deploymentAddresses']
 
-export const localhostWithEns = {
-  ...localhost,
-  contracts: {
-    ensRegistry: {
-      address: deploymentAddresses.ENSRegistry,
-    },
-    ensUniversalResolver: {
-      address: deploymentAddresses.UniversalResolver,
-    },
-    multicall3: {
-      address: deploymentAddresses.Multicall,
-    },
-    ensBaseRegistrarImplementation: {
-      address: deploymentAddresses.BaseRegistrarImplementation,
-    },
-    ensDnsRegistrar: {
-      address: deploymentAddresses.DNSRegistrar,
-    },
-    ensEthRegistrarController: {
-      address: deploymentAddresses.ETHRegistrarController,
-    },
-    ensNameWrapper: {
-      address: deploymentAddresses.NameWrapper,
-    },
-    ensPublicResolver: {
-      address: deploymentAddresses.PublicResolver,
-    },
-    ensReverseRegistrar: {
-      address: deploymentAddresses.ReverseRegistrar,
-    },
-    ensBulkRenewal: {
-      address: deploymentAddresses.StaticBulkRenewal,
-    },
-    ensDnssecImpl: {
-      address: deploymentAddresses.DNSSECImpl,
-    },
-  },
-  subgraphs: {
-    ens: {
-      url: 'http://localhost:8000/subgraphs/name/graphprotocol/ens',
-    },
-  },
-} as const
-
+export const localhostWithEns = makeLocalhostChainWithEns<typeof localhost>(
+  localhost,
+  deploymentAddresses,
+)
 export const mainnetWithEns = addEnsContracts(mainnet)
 export const goerliWithEns = addEnsContracts(goerli)
 export const sepoliaWithEns = addEnsContracts(sepolia)

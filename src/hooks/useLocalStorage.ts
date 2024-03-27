@@ -10,7 +10,7 @@ const isBrowser = !!(
   window.document.createElement
 )
 
-const getStorageValue = <D>(key: string, defaultValue: D): D => {
+export const getStorageValue = <D>(key: string, defaultValue: D): D => {
   // getting stored value
   const saved = isBrowser && localStorage.getItem(key)
 
