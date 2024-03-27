@@ -6,7 +6,7 @@ import { Typography } from '@ensdomains/thorin'
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { getSecondsFromDate } from '@app/utils/date'
-import { addOneYear, formatExtensionPeriod, secondsToYears, yearsToSeconds } from '@app/utils/utils'
+import { formatExtensionPeriod, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
   ({ theme }) => css`
@@ -55,7 +55,9 @@ export const DateSelection = ({
   const dateInYears = secondsToYears(seconds)
 
   useEffect(() => {
-    if (yearPickView === 'years' && dateInYears < 1) setSeconds(addOneYear(seconds))
+    if (yearPickView === 'years' && dateInYears < 1) {
+      setSeconds(ONE_YEAR)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateInYears, yearPickView])
 
