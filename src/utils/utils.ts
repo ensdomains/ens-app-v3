@@ -6,7 +6,7 @@ import { DecodedFuses } from '@ensdomains/ensjs/utils'
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
-import { ONE_YEAR } from './time'
+import { ONE_DAY, ONE_YEAR } from './time'
 
 export * from './time'
 
@@ -49,22 +49,18 @@ export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
 
 export const formatExtensionPeriod = (duration: number) => {
-  const minute = 60
-  const hour = minute * 60
-  const day = hour * 24
-  const month = day * 30 // Assuming 30 days per month for simplicity
-  const year = day * 365 // Assuming 365 days per year for simplicity
+  const month = ONE_DAY * 30 // Assuming 30 days per month for simplicity
 
-  if (duration >= year) {
-    const years = Math.floor(duration / year)
+  if (duration >= ONE_YEAR) {
+    const years = Math.floor(duration / ONE_YEAR)
     return `${years} year`
   }
   if (duration >= month) {
     const months = Math.floor(duration / month)
     return `${months} month`
   }
-  if (duration >= day) {
-    const days = Math.floor(duration / day)
+  if (duration >= ONE_DAY) {
+    const days = Math.floor(duration / ONE_DAY)
     return `${days} day`
   }
 

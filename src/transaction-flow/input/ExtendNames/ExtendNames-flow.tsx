@@ -30,7 +30,7 @@ import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
-import { ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
+import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
 import { deriveYearlyFee, formatExtensionPeriod } from '@app/utils/utils'
 
@@ -207,6 +207,8 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
+const minSeconds = 28 * ONE_DAY
+
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
@@ -234,7 +236,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
 
   const [seconds, setSeconds] = useState(ONE_YEAR)
 
-  const minSeconds = 28 * 86400
   const years = secondsToYears(seconds)
 
   const { userConfig, setCurrency } = useUserConfig()
