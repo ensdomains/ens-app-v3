@@ -348,6 +348,21 @@ test('should be able to extend a name by a month', async ({
   })
 
   await test.step('should set and render a date properly', async () => {
+    const browserTimezone = await page.evaluate(() => ({
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timestamp: Date.now(),
+    }))
+    const nodeTimezone = {
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timestamp: Date.now(),
+    }
+    console.log('Browser timezone:', browserTimezone)
+    console.log('Node timezone:', nodeTimezone)
+    console.log(
+      'Minutes offset',
+      (browserTimezone.timestamp - nodeTimezone.timestamp) / (1000 * 60),
+    )
+
     const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
     const calendar = await page.getByTestId('calendar')
     const monthLater = secondsToDateInput(browserTime + daysToSeconds(31))
