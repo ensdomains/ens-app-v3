@@ -19,7 +19,9 @@ describe('useLocalStorage', () => {
     result.current[1](1n)
     rerender()
     expect(result.current[0]).toEqual(1n)
-    expect(localStorage.getItem('test123')).toMatchInlineSnapshot(`"{"__type":"bigint","value":"1"}"`)
+    expect(localStorage.getItem('test123')).toMatchInlineSnapshot(
+      `"{"__type":"bigint","value":"1"}"`,
+    )
   })
   it('should allow retrieving a bigint value', () => {
     localStorage.setItem('test123', JSON.stringify({ __type: 'bigint', value: '1' }))

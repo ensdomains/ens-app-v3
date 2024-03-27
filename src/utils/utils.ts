@@ -6,6 +6,9 @@ import { DecodedFuses } from '@ensdomains/ensjs/utils'
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
+import { ONE_DAY, ONE_YEAR } from './time'
+
+export * from './time'
 
 export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice = 5) => {
   if (address.length < maxLength) {
@@ -15,15 +18,16 @@ export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, righ
   return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`
 }
 
-export const secondsToDays = (seconds: number) => Math.floor(seconds / (60 * 60 * 24))
-
-export const secondsToHours = (seconds: number) => Math.floor(seconds / (60 * 60))
-
-export const daysToSeconds = (days: number) => days * 60 * 60 * 24
-
-export const yearsToSeconds = (years: number) => years * 60 * 60 * 24 * 365
-
-export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365)
+export const deriveYearlyFee = ({
+  duration,
+  price,
+}: {
+  duration: number
+  price: { base: bigint }
+}) => {
+  const yearlyFee = (price.base * BigInt(ONE_YEAR)) / BigInt(duration)
+  return yearlyFee
+}
 
 export const formatExpiry = (expiry: Date) =>
   `${expiry.toLocaleDateString(undefined, {
@@ -43,6 +47,25 @@ export const formatDateTime = (date: Date) => {
 
 export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
+
+export const formatExtensionPeriod = (duration: number) => {
+  const month = ONE_DAY * 30 // Assuming 30 days per month for simplicity
+
+  if (duration >= ONE_YEAR) {
+    const years = Math.floor(duration / ONE_YEAR)
+    return `${years} year`
+  }
+  if (duration >= month) {
+    const months = Math.floor(duration / month)
+    return `${months} month`
+  }
+  if (duration >= ONE_DAY) {
+    const days = Math.floor(duration / ONE_DAY)
+    return `${days} day`
+  }
+
+  return 'Invalid Date'
+}
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
   `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`

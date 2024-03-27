@@ -2,6 +2,9 @@ import { expect } from '@playwright/test'
 
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
+import { secondsToDateInput } from '@app/utils/date'
+import { yearsToSeconds } from '@app/utils/time'
+
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
@@ -258,4 +261,49 @@ test('should allow registering a name and resuming from the commit toast', async
   await expect(page).toHaveURL(`/${name}/register`)
   await expect(page.getByTestId('countdown-circle')).toBeVisible()
   // we don't need to test the rest of registration, just the resume part
+})
+
+test('should allow registering with a specific date', async ({ page, login, makePageObject }) => {
+  const registrationPage = makePageObject('RegistrationPage')
+  const name = `registration-resume-${Date.now()}.eth`
+
+  await page.goto(`/${name}/register`)
+  await login.connect()
+  await page.getByTestId('payment-choice-ethereum').click()
+
+  await test.step('should be able to pick by date', async () => {
+    const dateSelection = page.getByTestId('date-selection')
+    await expect(dateSelection).toHaveText('Pick by date')
+
+    await dateSelection.click()
+  })
+
+  const calendar = await page.getByTestId('calendar')
+  const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
+  const oneYear = browserTime + yearsToSeconds(1)
+
+  await test.step('should have a correct default date', async () => {
+    expect(calendar).toHaveValue(secondsToDateInput(oneYear))
+    expect(page.getByText('1 year registration', { exact: true })).toBeVisible()
+  })
+
+  await test.step('should set a date', async () => {
+    const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
+
+    await calendar.fill(oneYearAndAHalfLater)
+
+    await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndAHalfLater)
+
+    expect(page.getByText('2 year registration', { exact: true })).toBeVisible()
+  })
+
+  // should have payment choice ethereum checked and show primary name setting as checked
+  await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
+  await expect(registrationPage.primaryNameToggle).toBeChecked()
+
+  await test.step('should show correct price data (for 2.5 years)', async () => {
+    await expect(registrationPage.yearMarker(0)).toHaveText(/14% gas/)
+    await expect(registrationPage.yearMarker(1)).toHaveText(/8% gas/)
+    await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
+  })
 })

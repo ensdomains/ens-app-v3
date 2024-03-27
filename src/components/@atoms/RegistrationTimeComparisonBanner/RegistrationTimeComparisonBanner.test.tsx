@@ -4,12 +4,12 @@ import { describe, expect, it } from 'vitest'
 
 import { RegistrationTimeComparisonBanner } from './RegistrationTimeComparisonBanner'
 
-describe('RegistrationUpsellBanner', () => {
+describe('RegistrationTimeComparisonBanner', () => {
   it('should render correctly', async () => {
     render(
       <RegistrationTimeComparisonBanner
         transactionFee={1000000000000000000n}
-        rentFee={1000000000000000000n}
+        yearlyFee={1000000000000000000n}
       />,
     )
 

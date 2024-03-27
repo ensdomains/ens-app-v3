@@ -1,6 +1,9 @@
 /* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
 
+import { secondsToDateInput } from '@app/utils/date'
+import { daysToSeconds } from '@app/utils/time'
+
 import { test } from '../../../playwright'
 
 test('should be able to register multiple names on the address page', async ({
@@ -53,7 +56,7 @@ test('should be able to register multiple names on the address page', async ({
   await expect(page.getByTestId('invoice-item-0-amount')).toContainText('0.0065')
   await expect(page.getByTestId('invoice-item-1-amount')).toContainText('0.0002')
   await expect(page.getByTestId('invoice-total')).toContainText('0.0067')
-  await expect(page.getByText('1 year extension')).toBeVisible()
+  await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
 
   // check the price comparison table
   await expect(page.getByTestId('year-marker-0')).toContainText('3% gas')
@@ -61,6 +64,7 @@ test('should be able to register multiple names on the address page', async ({
   await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
 
   // increment and save
+  await page.getByTestId('plus-minus-control-plus').click()
   await page.getByTestId('plus-minus-control-plus').click()
   await page.getByTestId('extend-names-confirm').click()
 
@@ -71,8 +75,8 @@ test('should be able to register multiple names on the address page', async ({
   for (const name of names) {
     const label = name.replace('.eth', '')
     await addresPage.search(label)
-    await expect(addresPage.nameExpiry(name)).not.toHaveText(/12/, { timeout: 15000 })
-    await expect(await addresPage.getTimestamp(name)).toEqual(timestampDict[name] + 31536000000 * 2)
+    await expect(addresPage.nameExpiry(name)).not.toHaveText(/12/, { timeout: 30000 })
+    expect(await addresPage.getTimestamp(name)).toEqual(timestampDict[name] + 31536000000 * 3)
   }
 })
 
@@ -108,7 +112,9 @@ test('should be able to extend a single unwrapped name from profile', async ({
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
-    await expect(page.getByText('1 year extension')).toBeVisible()
+    await expect(page.getByText('1 year extension', { exact: true })).toBeVisible({
+      timeout: 30000,
+    })
   })
 
   await test.step('should show the cost comparison data', async () => {
@@ -122,7 +128,9 @@ test('should be able to extend a single unwrapped name from profile', async ({
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await extendNamesModal.getCounterPlusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
-    await expect(page.locator('text=2 year extension')).toBeVisible()
+    await expect(page.getByText('2 year extension', { exact: true })).toBeVisible({
+      timeout: 30000,
+    })
   })
 
   await test.step('should show correct fiat values', async () => {
@@ -140,7 +148,7 @@ test('should be able to extend a single unwrapped name from profile', async ({
     await extendNamesModal.getExtendButton.click()
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    await expect(newTimestamp).toEqual(timestamp + 31536000000)
+    expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
 })
 
@@ -179,7 +187,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
-    await expect(page.locator('text=1 year extension')).toBeVisible()
+    await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
   await test.step('should show the cost comparison data', async () => {
@@ -193,7 +201,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await extendNamesModal.getCounterPlusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
-    await expect(page.locator('text=2 year extension')).toBeVisible()
+    await expect(page.getByText('2 year extension', { exact: true })).toBeVisible()
   })
 
   await test.step('should show correct fiat values', async () => {
@@ -213,7 +221,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await transactionModal.autoComplete()
 
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    await expect(newTimestamp).toEqual(timestamp + 31536000000)
+    expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
 })
 
@@ -249,7 +257,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
-    await expect(page.locator('text=1 year extension')).toBeVisible()
+    await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
   await test.step('should show the cost comparison data', async () => {
@@ -263,7 +271,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await extendNamesModal.getCounterPlusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
-    await expect(page.locator('text=2 year extension')).toBeVisible()
+    await expect(page.getByText('2 year extension', { exact: true })).toBeVisible()
   })
 
   await test.step('should show correct fiat values', async () => {
@@ -282,7 +290,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    await expect(newTimestamp).toEqual(timestamp + 31536000000)
+    expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
 })
 
@@ -309,4 +317,75 @@ test('should not show extend button on unwrapped subnames', async ({
   await login.connect()
 
   await expect(profilePage.getExtendButton).toHaveCount(0)
+})
+
+test('should be able to extend a name by a month', async ({
+  page,
+  login,
+  makePageObject,
+  makeName,
+}) => {
+  const name = await makeName({
+    label: 'legacy',
+    type: 'legacy',
+    owner: 'user',
+  })
+
+  const extendNamesModal = makePageObject('ExtendNamesModal')
+  const profilePage = makePageObject('ProfilePage')
+
+  await profilePage.goto(name)
+  await login.connect()
+
+  const timestamp = await profilePage.getExpiryTimestamp()
+  await profilePage.getExtendButton.click()
+
+  await test.step('should be able to pick by date', async () => {
+    const dateSelection = page.getByTestId('date-selection')
+    await expect(dateSelection).toHaveText('Pick by date')
+
+    await dateSelection.click()
+  })
+
+  await test.step('should set and render a date properly', async () => {
+    const browserTimezone = await page.evaluate(() => ({
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timestamp: Date.now(),
+    }))
+    const nodeTimezone = {
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timestamp: Date.now(),
+    }
+    console.log('Browser timezone:', browserTimezone)
+    console.log('Node timezone:', nodeTimezone)
+    console.log(
+      'Minutes offset',
+      (browserTimezone.timestamp - nodeTimezone.timestamp) / (1000 * 60),
+    )
+
+    const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
+    const calendar = await page.getByTestId('calendar')
+    const monthLater = secondsToDateInput(browserTime + daysToSeconds(31))
+
+    await calendar.fill(monthLater)
+
+    await expect(page.getByTestId('calendar-date')).toHaveValue(monthLater)
+  })
+
+  await test.step('should show the correct price data', async () => {
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0003')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0004')
+    await expect(page.getByText('1 month extension', { exact: true })).toBeVisible()
+  })
+
+  await test.step('should extend', async () => {
+    await extendNamesModal.getExtendButton.click()
+    const transactionModal = makePageObject('TransactionModal')
+    await transactionModal.autoComplete()
+
+    const newTimestamp = await profilePage.getExpiryTimestamp()
+    const comparativeTimestamp = timestamp + daysToSeconds(31) * 1000
+    expect(Math.abs(comparativeTimestamp - newTimestamp)).toBeLessThan(daysToSeconds(0.25) * 1000)
+  })
 })

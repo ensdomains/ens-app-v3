@@ -3,7 +3,7 @@
   "subtitle": "Register",
   "heading": "Register {{name}}",
   "invoice": {
-    "yearRegistration": "{{years}} year registration",
+    "timeRegistration": "{{time}} registration",
     "registration": "Registration",
     "estimatedNetworkFee": "Est. network fee",
     "networkFee": "Network fee",

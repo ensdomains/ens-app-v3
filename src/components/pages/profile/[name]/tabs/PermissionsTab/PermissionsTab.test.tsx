@@ -1,19 +1,19 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { mock } from '@wagmi/core'
 import { describe, expect, it, vi } from 'vitest'
 
 import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import { useParentBasicName } from '@app/hooks/useParentBasicName'
-import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { DeepPartial } from '@app/types/index'
 import { createDateAndValue } from '@app/utils/utils'
 
-import { PermissionsTab } from './PermissionsTab'
 import { makeMockUseAbilitiesData } from '../../../../../../../test/mock/makeMockUseAbilitiesData'
-import { mock } from '@wagmi/core'
+import { PermissionsTab } from './PermissionsTab'
 
 type WrapperData = GetWrapperDataReturnType
 
@@ -70,7 +70,10 @@ mockUseAccountSafely.mockReturnValue({
 
 const mockUseParentBasicName = mockFunction(useParentBasicName)
 const mockUseAbilities = mockFunction(useAbilities)
-mockUseAbilities.mockReturnValue({data: makeMockUseAbilitiesData('eth-emancipated-2ld'), isLoading: false})
+mockUseAbilities.mockReturnValue({
+  data: makeMockUseAbilitiesData('eth-emancipated-2ld'),
+  isLoading: false,
+})
 
 const components = [
   'banner-parent-not-locked',

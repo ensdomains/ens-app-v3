@@ -4,6 +4,7 @@ import { parseEther } from 'viem'
 import { makeCommitment } from '@ensdomains/ensjs/utils'
 
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
+import { deriveYearlyFee } from '@app/utils/utils'
 
 import { useAccountSafely } from '../account/useAccountSafely'
 import { useBlockTimestamp } from '../chain/useBlockTimestamp'
@@ -83,19 +84,21 @@ export const useEstimateFullRegistration = ({
     enabled: !!ethRegistrarControllerAddress && !!price,
   })
 
-  const yearlyFee = price?.base
   const premiumFee = price?.premium
   const hasPremium = !!premiumFee && premiumFee > 0n
-  const totalYearlyFee = yearlyFee || 0n
+  const yearlyFee = price?.base
+    ? deriveYearlyFee({ duration: registrationParams.duration, price })
+    : undefined
+  const totalDurationBasedFee = price?.base || 0n
 
   return {
     estimatedGasFee: data.gasCost,
     estimatedGasLoading: isLoading || gasPriceLoading,
     yearlyFee,
-    totalYearlyFee,
+    totalDurationBasedFee,
     hasPremium,
     premiumFee,
     gasPrice,
-    years: registrationData.years,
+    seconds: registrationData.seconds,
   }
 }
