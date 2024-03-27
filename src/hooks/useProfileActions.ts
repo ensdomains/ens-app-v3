@@ -81,7 +81,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     },
     expiryDate,
     fuses: wrapperData?.fuses || null,
-    isMigrated: !!profile?.isMigrated,
+    isMigrated: profile?.isMigrated !== false,
   })
 
   const isWrapped = !!wrapperData
