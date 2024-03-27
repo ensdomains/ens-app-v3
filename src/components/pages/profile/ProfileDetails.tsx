@@ -12,7 +12,6 @@ import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecor
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import { useOwners } from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
-import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { contentHashToString } from '@app/utils/contenthash'
 import { checkETH2LDFromName, formatExpiry } from '@app/utils/utils'
