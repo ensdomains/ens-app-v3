@@ -1,11 +1,20 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useCopyToClipboard } from 'react-use'
 import styled, { css } from 'styled-components'
 import { Address, isAddress } from 'viem'
 import { useChainId } from 'wagmi'
 
 import { getProtocolType } from '@ensdomains/ensjs/utils'
-import { RecordItem, Typography } from '@ensdomains/thorin'
+import {
+  CopySVG,
+  Dropdown,
+  RecordItem,
+  Typography,
+  UpRightArrowSVG,
+  VerticalDotsSVG,
+} from '@ensdomains/thorin'
+import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import { dynamicAddressIcons } from '@app/assets/address/dynamicAddressIcons'
@@ -15,7 +24,7 @@ import { getDestination } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { getSocialData } from '@app/utils/getSocialData'
-import { shortenAddress } from '@app/utils/utils'
+import { makeEtherscanLink, shortenAddress } from '@app/utils/utils'
 
 const StyledAddressIcon = styled(DynamicAddressIcon)(
   ({ theme }) => css`
@@ -200,7 +209,7 @@ export const OwnerProfileButton = ({
     enabled: dataType === 'address',
   })
 
-  const recordItemPartialProps = useMemo(() => {
+  const { link, ...recordItemPartialProps } = useMemo(() => {
     const base = {
       keyLabel: t(label).toLocaleLowerCase(),
       value: addressOrNameOrDate,
@@ -230,7 +239,6 @@ export const OwnerProfileButton = ({
     if (dataType === 'address')
       return {
         ...base,
-        as: 'a',
         link: primary.data?.name
           ? (getDestination(`/profile/${primary.data?.name}`) as string)
           : (getDestination(`/address/${addressOrNameOrDate}`) as string),
@@ -240,7 +248,7 @@ export const OwnerProfileButton = ({
       } as const
     return {
       ...base,
-      as: 'a',
+
       link: getDestination(`/profile/${addressOrNameOrDate}`) as string,
       children: addressOrNameOrDate,
     } as const
@@ -254,13 +262,64 @@ export const OwnerProfileButton = ({
     t,
   ])
 
+  const [_, copy] = useCopyToClipboard()
+
+  const items = [
+    link
+      ? {
+          icon: <UpRightArrowSVG />,
+          label: 'View profile',
+          onClick: () => window.open(link),
+        }
+      : undefined,
+    {
+      icon: <CopySVG />,
+      label: 'Copy name',
+      onClick: () => copy(recordItemPartialProps.value),
+    },
+    ...(dataType === 'address'
+      ? [
+          {
+            icon: <UpRightArrowSVG />,
+            label: 'View address',
+            onClick: () => window.open(getDestination(`/${addressOrNameOrDate}`) as string),
+          },
+          {
+            icon: <CopySVG />,
+            label: 'Copy address',
+            onClick: () => copy(addressOrNameOrDate),
+          },
+          {
+            icon: <UpRightArrowSVG />,
+            label: 'View on Etherscan',
+            onClick: () =>
+              window.open(makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address')),
+          },
+        ]
+      : []),
+  ].filter((item) => item !== undefined) as DropdownItem[]
+
+  if (dataType === 'expiry') {
+    return (
+      <RecordItem
+        {...recordItemPartialProps}
+        data-testid={`owner-profile-button-${label}`}
+        data-timestamp={timestamp}
+        inline
+        size={breakpoints.sm ? 'large' : 'small'}
+      />
+    )
+  }
   return (
-    <RecordItem
-      {...recordItemPartialProps}
-      data-testid={`owner-profile-button-${label}`}
-      data-timestamp={timestamp}
-      inline
-      size={breakpoints.sm ? 'large' : 'small'}
-    />
+    <Dropdown width={200} items={items}>
+      <RecordItem
+        {...recordItemPartialProps}
+        postfixIcon={VerticalDotsSVG}
+        data-testid={`owner-profile-button-${label}`}
+        data-timestamp={timestamp}
+        inline
+        size={breakpoints.sm ? 'large' : 'small'}
+      />
+    </Dropdown>
   )
 }

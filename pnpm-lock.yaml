@@ -39,8 +39,8 @@ importers:
         specifier: 3.5.0-beta.2
         version: 3.5.0-beta.2(encoding@0.1.13)(typescript@5.3.3)(viem@2.7.13)
       '@ensdomains/thorin':
-        specifier: 0.6.46-beta
-        version: 0.6.46-beta(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.6)
+        specifier: 0.6.46-beta.1
+        version: 0.6.46-beta.1(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.6)
       '@metamask/mobile-provider':
         specifier: ^2.1.0
         version: 2.1.0
@@ -2534,8 +2534,8 @@ packages:
       hash-test-vectors: 1.3.2
     dev: false
 
-  /@ensdomains/thorin@0.6.46-beta(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.6):
-    resolution: {integrity: sha512-D54yx7zHsDHRMu4COwTQVgyLmodIQ95ZTvRlOlzQALNNbVklo3xZQ83sshtDBzAvDVqkl5ej3sxRBJD6aelBcw==}
+  /@ensdomains/thorin@0.6.46-beta.1(react-dom@18.2.0)(react-transition-state@1.1.5)(react@18.2.0)(styled-components@5.3.6):
+    resolution: {integrity: sha512-//HwtYnuQ8lIcMBQbPm3bJgomW6zx8ljBpAHpi/Ui4xqt4BfVGYR4PvOZa1IXEzwHPBwudo2JkzRT+lZqzfdMQ==}
     peerDependencies:
       react: ^17
       react-dom: ^17
