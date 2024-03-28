@@ -2,10 +2,11 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { DecodedContentHash } from '@ensdomains/ensjs/utils'
-import { Button, Helper, mq, Typography } from '@ensdomains/thorin'
+import { Button, Helper, mq, RightArrowSVG, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
+import { Outlink } from '@app/components/Outlink'
 import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
@@ -44,6 +45,9 @@ const SectionTitle = styled(Typography)(({ theme }) => [
   css`
     color: ${theme.colors.greyPrimary};
     margin-left: ${theme.space['2']};
+    display: flex;
+    flex-direction: row;
+    gap: ${theme.space['2']};
   `,
 ])
 
@@ -75,7 +79,19 @@ const ProfileSection = ({
 
   return condition ? (
     <div>
-      <SectionTitle weight="bold">{t(label)}</SectionTitle>
+      <SectionTitle weight="bold">
+        {t(label)}
+        {label === 'ownership' ? (
+          <Outlink
+            fontVariant="bodyBold"
+            href={`/${name}?tab=ownership`}
+            target="_self"
+            icon={RightArrowSVG}
+          >
+            View
+          </Outlink>
+        ) : null}
+      </SectionTitle>
       <Stack>
         {supportedArray.map((item: { key: string; value: string; type?: 'text' | 'address' }) => (
           <ButtonComponent {...{ ...item, iconKey: item.key, name }} />
@@ -369,6 +385,7 @@ export const ProfileDetails = ({
           condition={!!mappedOwners}
           array={mappedOwners!}
           button={OwnerProfileButton}
+          name={name}
         />
       </RecordsStack>
       {actions && actions?.length > 0 && (
