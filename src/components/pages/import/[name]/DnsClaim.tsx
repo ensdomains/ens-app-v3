@@ -28,7 +28,6 @@ const getShouldRedirect = ({
   item: DnsImportReducerDataItem
   step: DnsStep
 }) => {
-  console.log({ isLoading, registrationStatus, item, step })
   if (isLoading) return false
   if (!registrationStatus) return false
   if (registrationStatus === 'notImported') return false
