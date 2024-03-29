@@ -22,6 +22,7 @@ export type NameType =
   | 'eth-pcc-expired-subname'
   | 'dns-unwrapped-2ld'
   | 'dns-wrapped-2ld'
+  | 'dns-offchain-2ld'
   | 'dns-emancipated-2ld' // *
   | 'dns-locked-2ld' // *
   | 'dns-unwrapped-subname'
@@ -85,6 +86,9 @@ export const getNameType = ({
       ]) => {
         return `${_tldType}-${_wrapLevel}-2ld` as const
       },
+    )
+    .with(['dns', 'unwrapped', '2ld', 'imported'], () =>
+      ownerData ? ('dns-unwrapped-2ld' as const) : ('dns-offchain-2ld' as const),
     )
     .with(['dns', P._, '2ld', P._], ([, _wrapLevel]) => `dns-${_wrapLevel}-2ld` as const)
     .with([P._, P._, 'subname', P._], ([_tldType, _wrapLevel]) =>

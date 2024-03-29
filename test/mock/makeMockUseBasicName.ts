@@ -20,6 +20,12 @@ type MockUseBasicNameConfig = {
 }
 
 export const mockUseBasicNameConfig = {
+  root: {
+    useValidateType: 'root',
+    useOwnerType: 'root',
+    useExpiryType: 'root',
+    usePriceType: 'root',
+  } as MockUseBasicNameConfig,
   eth: {
     useValidateType: 'eth',
     useOwnerType: 'eth',
@@ -179,6 +185,10 @@ export const mockUseBasicNameConfig = {
     useOwnerType: 'namewrapper:unowned',
     useWrapperDataType: 'locked:unowned',
   } as MockUseBasicNameConfig,
+  'eth-pcc-expired-subname': {
+    useValidateType: 'valid-subname',
+    useOwnerType: 'registry:pcc-expired',
+  } as MockUseBasicNameConfig,
   // DNS
   dns: {
     useValidateType: 'dns',
@@ -209,6 +219,17 @@ export const mockUseBasicNameConfig = {
     useValidateType: 'valid-2ld:dns',
     useAddrRecordType: 'owned',
   } as MockUseBasicNameConfig,
+  'dns-unwrapped-subname': {
+    useValidateType: 'valid-subname:dns',
+    useOwnerType: 'registry',
+    useAddrRecordType: 'owned',
+  } as MockUseBasicNameConfig,
+  'dns-wrapped-subname': {
+    useValidateType: 'valid-subname:dns',
+    useOwnerType: 'namewrapper',
+    useWrapperDataType: 'wrapped',
+    useAddrRecordType: 'owned',
+  } as MockUseBasicNameConfig,
 } as const
 
 export type MockUseBasicNameType = keyof typeof mockUseBasicNameConfig
@@ -236,6 +257,17 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
     gracePeriodEndDate,
   }
   return match(type)
+    .with('root', () => ({
+      ...BaseBasicName,
+      normalisedName: '[root]',
+      truncatedName: '[root]',
+      canBeWrapped: false,
+      pccExpired: false,
+      registrationStatus: 'owned' as const,
+      isCachedData: false,
+      isLoading: false,
+      isWrapped: false,
+    }))
     .with('eth', () => ({
       ...BaseBasicName,
       normalisedName: 'eth',
@@ -373,6 +405,17 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
         isCachedData: false,
       }),
     )
+    .with('eth-pcc-expired-subname', () => ({
+      ...BaseBasicName,
+      normalisedName: 'subname.name.eth',
+      truncatedName: 'subname.name.eth',
+      registrationStatus: 'owned' as const,
+      isWrapped: false,
+      pccExpired: true,
+      canBeWrapped: true,
+      isLoading: false,
+      isCachedData: false,
+    }))
     .with('dns', () => ({
       ...BaseBasicName,
       normalisedName: 'com',
@@ -408,6 +451,28 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
       normalisedName: 'name.com',
       truncatedName: 'name.com',
       registrationStatus: 'imported' as const,
+      isWrapped: true,
+      pccExpired: false,
+      canBeWrapped: false,
+      isLoading: false,
+      isCachedData: false,
+    }))
+    .with('dns-unwrapped-subname', () => ({
+      ...BaseBasicName,
+      normalisedName: 'subname.name.com',
+      truncatedName: 'subname.name.com',
+      registrationStatus: 'owned' as const,
+      isWrapped: false,
+      pccExpired: false,
+      canBeWrapped: false,
+      isLoading: false,
+      isCachedData: false,
+    }))
+    .with('dns-wrapped-subname', () => ({
+      ...BaseBasicName,
+      normalisedName: 'subname.name.com',
+      truncatedName: 'subname.name.com',
+      registrationStatus: 'owned' as const,
       isWrapped: true,
       pccExpired: false,
       canBeWrapped: false,

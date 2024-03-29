@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { useNameType } from './useNameType'
 import { makeMockUseContractAddress } from '../../../test/mock/makeMockUseContractAddress'
 import { makeMockUseBasicName } from '../../../test/mock/makeMockUseBasicName'
+import { mockUseNameTypeConfig, mockUseNameTypes } from '../../../test/mock/makeMockUseNameType'
 
 const mockBasicData = vi.fn()
 vi.mock('@app/hooks/useBasicName', () => ({
@@ -163,6 +164,15 @@ describe('useNameType', () => {
       mockBasicData.mockReturnValue(makeMockUseBasicName('eth-locked-2ld:grace-period'))
       const { result } = renderHook(() => useNameType('name.eth'))
       expect(result.current.data).toEqual('eth-locked-2ld:grace-period')
+    })
+  })
+
+  describe('mocks', () => {
+    it.each(mockUseNameTypes)('should return the correct data for: %s', async (type) => {
+      const config = mockUseNameTypeConfig[type]
+      mockBasicData.mockReturnValue(makeMockUseBasicName(config.basicNameType))
+      const { result } = renderHook(() => useNameType(config.name))
+      expect(result.current.data).toEqual(type)
     })
   })
 })

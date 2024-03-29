@@ -34,6 +34,7 @@ export const senderRole = (nameType: ReturnType<typeof useNameType>['data']) => 
       P.union(
         'dns-unwrapped-2ld',
         'dns-wrapped-2ld',
+        'dns-offchain-2ld',
         'eth-emancipated-2ld:grace-period',
         'eth-locked-2ld:grace-period',
         'eth-unwrapped-2ld:grace-period',

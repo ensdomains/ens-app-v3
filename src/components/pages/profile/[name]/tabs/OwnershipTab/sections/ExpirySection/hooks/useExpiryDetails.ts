@@ -141,6 +141,7 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
             'dns-wrapped-2ld',
             'dns-emancipated-2ld',
             'dns-locked-2ld',
+            'dns-offchain-2ld',
             'dns-unwrapped-subname',
             'dns-wrapped-subname',
             'dns-emancipated-subname',

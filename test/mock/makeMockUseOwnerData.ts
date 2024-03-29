@@ -7,6 +7,7 @@ import { createAccounts } from '../../playwright/fixtures/accounts'
 import { makeMockUseContractAddress } from './makeMockUseContractAddress'
 
 const mockUseOwnerTypes = [
+  'root',
   'eth',
   'registrar',
   'registrar:owner',
@@ -24,7 +25,9 @@ const mockUseOwnerTypes = [
   'namewrapper:grace-period',
   'registry',
   'registry:unowned',
+  'registry:pcc-expired',
   'dns',
+  'dns:offchain',
 ] as const
 
 export type MockUseOwnerType = (typeof mockUseOwnerTypes)[number] | undefined
@@ -34,6 +37,7 @@ const user2Address = createAccounts().getAddress('user2') as Address
 
 export const makeMockUseOwnerData = (type: MockUseOwnerType): GetOwnerReturnType | undefined =>
   match(type)
+    .with('root', () => undefined)
     .with('eth', () => ({
       owner: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0' as Address,
       ownershipLevel: 'registry' as const,
@@ -94,9 +98,14 @@ export const makeMockUseOwnerData = (type: MockUseOwnerType): GetOwnerReturnType
       owner: _type.endsWith('unowned') ? user2Address : userAddress,
       ownershipLevel: 'registry' as const,
     }))
+    .with('registry:pcc-expired', () => ({
+      owner: makeMockUseContractAddress({ contract: 'ensNameWrapper' }),
+      ownershipLevel: 'registry' as const,
+    }))
     .with('dns', () => ({
       owner: '0xB32cB5677a7C971689228EC835800432B339bA2B' as Address,
       ownershipLevel: 'registry' as const,
     }))
+    .with('dns:offchain', () => null)
     .with(P.nullish, () => null)
     .exhaustive()

@@ -35,7 +35,7 @@ export const validate = (input: string) => {
     ...parsedInput,
     name: outputName,
     beautifiedName: tryBeautify(outputName),
-    isNonASCII,
+    isNonASCII: input !== '[root]' && isNonASCII,
     labelCount: parsedInput.labelDataArray.length,
   }
 }

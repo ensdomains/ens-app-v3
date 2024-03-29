@@ -74,6 +74,10 @@ export const getRoles = ({
       { address: owner, role: 'manager' as const },
       { address: ethAddress, role: 'eth-record' as const },
     ])
+    .with('dns-offchain-2ld', () => [
+      { address: dnsOwner, role: 'dns-owner' as const },
+      { address: ethAddress, role: 'eth-record' as const },
+    ])
     .with(P.union(P.nullish, 'tld', 'root'), () => [])
     .exhaustive()
 }

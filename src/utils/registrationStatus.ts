@@ -23,6 +23,7 @@ export type RegistrationStatus =
   | 'unsupportedTLD'
 
 export const getRegistrationStatus = ({
+  name,
   timestamp,
   validation: { isETH, is2LD, isShort, type },
   ownerData,
@@ -32,6 +33,7 @@ export const getRegistrationStatus = ({
   addrData,
   supportedTLD,
 }: {
+  name: string
   timestamp: number
   validation: Partial<Omit<ParsedInputResult, 'normalised' | 'isValid'>>
   ownerData?: GetOwnerReturnType
@@ -41,6 +43,8 @@ export const getRegistrationStatus = ({
   addrData?: GetAddressRecordReturnType
   supportedTLD?: boolean | null
 }): RegistrationStatus => {
+  if (name === '[root]') return 'owned'
+
   if (isETH && is2LD && isShort) {
     return 'short'
   }

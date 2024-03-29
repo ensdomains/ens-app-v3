@@ -129,6 +129,7 @@ export const useBasicName = ({
 
   const registrationStatus = !publicCallsLoading
     ? getRegistrationStatus({
+        name: normalisedName,
         timestamp: registrationStatusTimestamp,
         validation,
         ownerData,
