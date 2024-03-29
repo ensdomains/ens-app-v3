@@ -15,6 +15,7 @@ export const ControlledNextButton = ({
   unburnedFuses,
   onIncrement,
   onSubmit,
+  disabled,
 }: {
   view: View
   isLastView: boolean
@@ -22,6 +23,7 @@ export const ControlledNextButton = ({
   unburnedFuses: AnyFuseKey[]
   onIncrement: () => void
   onSubmit: () => void
+  disabled?: boolean
 }) => {
   const { t } = useTranslation('transactionFlow')
   const [parentFuses, childFuses] = useWatch({ control, name: ['parentFuses', 'childFuses'] })
@@ -127,10 +129,18 @@ export const ControlledNextButton = ({
           ...defaultProps,
           count,
           disabled: fusesBurnedDuringFlow.length === 0,
-          onClick: childFuses.CANNOT_BURN_FUSES ? onIncrement : onSubmit,
+          onClick: onIncrement,
           children: buttonTitle,
         }
       }
+      case 'lastWarning':
+        return {
+          ...defaultProps,
+          onClick: onSubmit,
+          children: t('action.confirm', { ns: 'common' }),
+          colorStyle: 'redPrimary',
+          disabled,
+        }
       case 'revokeChangeFuses':
         return {
           ...defaultProps,
@@ -145,7 +155,15 @@ export const ControlledNextButton = ({
         return defaultProps
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, parentFuses, childFuses, unburnedFuses, fusesBurnedDuringFlow, isCustomExpiryValid])
+  }, [
+    view,
+    parentFuses,
+    childFuses,
+    unburnedFuses,
+    fusesBurnedDuringFlow,
+    isCustomExpiryValid,
+    disabled,
+  ])
 
   return <Button data-testid="permissions-next-button" {...props} />
 }
