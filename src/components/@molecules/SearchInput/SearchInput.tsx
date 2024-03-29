@@ -383,6 +383,7 @@ export const SearchInput = ({
       )
       if (ownerData) {
         const registrationStatus = getRegistrationStatus({
+          name: selectedItem.value,
           timestamp: Date.now(),
           validation: currentValidation,
           ownerData,
