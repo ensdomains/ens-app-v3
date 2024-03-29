@@ -248,7 +248,6 @@ export const OwnerProfileButton = ({
       } as const
     return {
       ...base,
-
       link: getDestination(`/profile/${addressOrNameOrDate}`) as string,
       children: addressOrNameOrDate,
     } as const
@@ -270,7 +269,8 @@ export const OwnerProfileButton = ({
       ? {
           icon: <UpRightArrowSVG />,
           label: 'View profile',
-          onClick: () => window.open(link),
+          as: 'a',
+          href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
         }
       : undefined,
     {
@@ -283,7 +283,8 @@ export const OwnerProfileButton = ({
           {
             icon: <UpRightArrowSVG />,
             label: 'View address',
-            onClick: () => window.open(getDestination(`/${addressOrNameOrDate}`) as string),
+            as: 'a',
+            href: getDestination(`/${addressOrNameOrDate}`) as string,
           },
           {
             icon: <CopySVG />,
@@ -293,8 +294,8 @@ export const OwnerProfileButton = ({
           {
             icon: <UpRightArrowSVG />,
             label: 'View on Etherscan',
-            onClick: () =>
-              window.open(makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address')),
+            as: 'a',
+            href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
           },
         ]
       : []),
