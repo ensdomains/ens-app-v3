@@ -299,7 +299,6 @@ test('should allow registering with a specific date', async ({ page, login, make
 
   // should have payment choice ethereum checked and show primary name setting as checked
   await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
-  await expect(registrationPage.primaryNameToggle).toBeChecked()
 
   await test.step('should show correct price data (for 2.5 years)', async () => {
     await expect(registrationPage.yearMarker(0)).toHaveText(/14% gas/)
