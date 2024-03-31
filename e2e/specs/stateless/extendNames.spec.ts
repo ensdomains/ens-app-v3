@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
 
-// import { secondsToDateInput } from '@app/utils/date'
 import { daysToSeconds } from '@app/utils/time'
 
 import { test } from '../../../playwright'
@@ -324,7 +323,6 @@ test('should be able to extend a name by a month', async ({
   login,
   makePageObject,
   makeName,
-  provider,
 }) => {
   const name = await makeName({
     label: 'legacy',
@@ -350,29 +348,11 @@ test('should be able to extend a name by a month', async ({
   })
 
   await test.step('should set and render a date properly', async () => {
-    const browserTimezone = await page.evaluate(() => ({
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      timestamp: Date.now(),
-    }))
-    const nodeTimezone = {
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      timestamp: Date.now(),
-    }
-    const blockTimestamp = await provider.getBlockTimestamp()
-    console.log('Browser timezone:', browserTimezone)
-    console.log('Node timezone:', nodeTimezone)
-    console.log('Block timestamp:', blockTimestamp)
-    console.log(
-      'Minutes offset',
-      (browserTimezone.timestamp - nodeTimezone.timestamp) / (1000 * 60),
-    )
-    console.log('block offset', (browserTimezone.timestamp - blockTimestamp * 1000) / (1000 * 60))
-
     const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
     const calendar = await page.getByTestId('calendar')
     const monthLater = await page.evaluate(
-      (_browserTime) => {
-        const _date = new Date(_browserTime)
+      (_timestamp) => {
+        const _date = new Date(_timestamp)
         const year = _date.getFullYear()
         const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
         const day = String(_date.getDate()).padStart(2, '0')
@@ -382,7 +362,6 @@ test('should be able to extend a name by a month', async ({
     )
 
     await calendar.fill(monthLater)
-
     await expect(page.getByTestId('calendar-date')).toHaveValue(monthLater)
   })
 
@@ -400,6 +379,6 @@ test('should be able to extend a name by a month', async ({
 
     const newTimestamp = await profilePage.getExpiryTimestamp()
     const comparativeTimestamp = timestamp + daysToSeconds(31) * 1000
-    expect(Math.abs(comparativeTimestamp - newTimestamp)).toBeLessThan(daysToSeconds(1) * 1000)
+    expect(comparativeTimestamp).toEqual(newTimestamp)
   })
 })
