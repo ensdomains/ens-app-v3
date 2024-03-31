@@ -272,7 +272,7 @@ test('should allow registering with a specific date', async ({ page, login, make
 
   await page.pause()
   await page.getByTestId('payment-choice-ethereum').check()
-  await registrationPage.primaryNameToggle.check()
+  await registrationPage.primaryNameToggle.uncheck()
 
   await test.step('should be able to pick by date', async () => {
     const dateSelection = page.getByTestId('date-selection')
@@ -322,11 +322,11 @@ test('should allow registering with a specific date', async ({ page, login, make
 
   // should have payment choice ethereum checked and show primary name setting as checked
   await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
-  await expect(registrationPage.primaryNameToggle).toBeChecked()
+  await expect(registrationPage.primaryNameToggle).not.toBeChecked()
 
   await test.step('should show correct price data (for 2.5 years)', async () => {
-    await expect(registrationPage.yearMarker(0)).toHaveText(/14% gas/)
-    await expect(registrationPage.yearMarker(1)).toHaveText(/8% gas/)
-    await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
+    await expect(registrationPage.yearMarker(0)).toHaveText(/11% gas/)
+    await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
+    await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
   })
 })
