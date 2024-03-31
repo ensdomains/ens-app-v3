@@ -17,9 +17,3 @@ export function secondsToDateInput(seconds: number) {
   const day = String(date.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
 }
-
-export const getSecondsFromDate = (date: Date) => {
-  // @ts-ignore typescript doesn't support date operators
-  const value = Math.floor((date - now) / 1000)
-  return value
-}

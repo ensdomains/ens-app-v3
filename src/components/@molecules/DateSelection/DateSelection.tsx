@@ -5,7 +5,6 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { getSecondsFromDate } from '@app/utils/date'
 import {
   formatExtensionPeriod,
   ONE_DAY,
@@ -75,7 +74,7 @@ export const DateSelection = ({
           onChange={(e) => {
             const { valueAsDate } = e.currentTarget
             if (valueAsDate) {
-              const valueAsSeconds = getSecondsFromDate(valueAsDate)
+              const valueAsSeconds = Math.floor(valueAsDate.getTime() / 1000) - now
               const dayDiff = valueAsSeconds % ONE_DAY
               setSeconds(valueAsSeconds + (ONE_DAY - dayDiff))
             }
