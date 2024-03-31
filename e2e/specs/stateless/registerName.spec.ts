@@ -2,7 +2,7 @@ import { expect } from '@playwright/test'
 
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
-import { secondsToDateInput } from '@app/utils/date'
+// import { secondsToDateInput } from '@app/utils/date'
 import { yearsToSeconds } from '@app/utils/time'
 
 import { test } from '../../../playwright'
@@ -269,6 +269,8 @@ test('should allow registering with a specific date', async ({ page, login, make
 
   await page.goto(`/${name}/register`)
   await login.connect()
+
+  await page.pause()
   await page.getByTestId('payment-choice-ethereum').check()
   await registrationPage.primaryNameToggle.check()
 
@@ -281,19 +283,39 @@ test('should allow registering with a specific date', async ({ page, login, make
 
   const calendar = await page.getByTestId('calendar')
   const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
-  const oneYear = browserTime + yearsToSeconds(1)
+  const oneYearLaterInput = await page.evaluate(
+    (timestamp) => {
+      const _date = new Date(timestamp)
+      const year = _date.getFullYear()
+      const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+      const day = String(_date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    },
+    (browserTime + yearsToSeconds(1)) * 1000,
+  )
+  // const oneYear = browserTime + yearsToSeconds(1)
 
   await test.step('should have a correct default date', async () => {
-    expect(calendar).toHaveValue(secondsToDateInput(oneYear))
+    expect(calendar).toHaveValue(oneYearLaterInput)
     expect(page.getByText('1 year registration', { exact: true })).toBeVisible()
   })
 
   await test.step('should set a date', async () => {
-    const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
+    const oneYearAndHalfLaterInput = await page.evaluate(
+      (timestamp) => {
+        const _date = new Date(timestamp)
+        const year = _date.getFullYear()
+        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
+      },
+      (browserTime + yearsToSeconds(2.5)) * 1000,
+    )
+    // const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
 
-    await calendar.fill(oneYearAndAHalfLater)
+    await calendar.fill(oneYearAndHalfLaterInput)
 
-    await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndAHalfLater)
+    await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndHalfLaterInput)
 
     expect(page.getByText('2 year registration', { exact: true })).toBeVisible()
   })
