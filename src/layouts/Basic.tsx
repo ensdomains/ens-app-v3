@@ -6,7 +6,6 @@ import { useAccount, useSwitchChain } from 'wagmi'
 
 import { mq } from '@ensdomains/thorin'
 
-import FeedbackSVG from '@app/assets/Feedback.svg'
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { getSupportedChainById } from '@app/constants/chains'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -59,11 +58,29 @@ const BottomPlaceholder = styled.div(
   `,
 )
 
-export const StyledFeedbackSVG = styled(FeedbackSVG)(() => css``)
+const shouldSwitchChain = ({
+  isConnected,
+  hasProgrammaticChainSwitching,
+  isPending,
+  isError,
+  chainId,
+}: {
+  isConnected: boolean
+  hasProgrammaticChainSwitching: boolean
+  isPending: boolean
+  isError: boolean
+  chainId?: number
+}) =>
+  isConnected &&
+  hasProgrammaticChainSwitching &&
+  !isPending &&
+  !isError &&
+  !getSupportedChainById(chainId)
 
 export const Basic = withErrorBoundary(({ children }: { children: React.ReactNode }) => {
-  const { chainId, isConnected } = useAccount()
-  const { switchChain } = useSwitchChain()
+  const { chainId, connector, isConnected } = useAccount()
+  const hasProgrammaticChainSwitching = Boolean(connector?.switchChain)
+  const { switchChain, isPending, isError } = useSwitchChain()
 
   const router = useRouterWithHistory()
   const [error] = useErrorBoundary()
@@ -76,11 +93,18 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   }, [])
 
   useEffect(() => {
-    if (isConnected && !getSupportedChainById(chainId)) {
+    if (
+      shouldSwitchChain({ isConnected, hasProgrammaticChainSwitching, isPending, isError, chainId })
+    ) {
       switchChain({ chainId: 1 })
+    }
+  }, [isConnected, hasProgrammaticChainSwitching, isPending, isError, chainId, switchChain])
+
+  useEffect(() => {
+    if (isConnected && !getSupportedChainById(chainId)) {
       router.push('/unsupportedNetwork')
     }
-  }, [isConnected, chainId, switchChain, router])
+  }, [isConnected, chainId, router])
 
   return (
     <Container className="min-safe">
