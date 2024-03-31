@@ -1,5 +1,3 @@
-const now = new Date()
-
 export const safeDateObj = (date: Date | string | number | undefined) => {
   if (!date) return undefined
   if (typeof date === 'string' && /^\d+$/.test(date)) return new Date(parseInt(date))
