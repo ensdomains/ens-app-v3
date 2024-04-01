@@ -12,7 +12,7 @@ import {
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { yearsToSeconds } from '@app/utils/utils'
 
-const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 2
+const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 3
 
 const defaultData: RegistrationReducerDataItem = {
   stepIndex: 0,

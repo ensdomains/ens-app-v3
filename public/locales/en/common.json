@@ -388,5 +388,9 @@
   },
   "dns": {
     "refresh": "Refresh DNS"
+  },
+  "calendar": {
+    "pick_by_years": "Pick by years",
+    "pick_by_date": "Pick by date"
   }
 }

@@ -99,16 +99,15 @@ export const DateSelection = ({
         />
       )}
       <Typography color="greyPrimary" fontVariant="smallBold">
-        {extensionPeriod === 'Invalid date'
+        {extensionPeriod === t('unit.invalid_date', { ns: 'common' })
           ? extensionPeriod
-          : `${extensionPeriod} ${mode === 'register' ? 'registration' : 'extension'}`}
-        .{' '}
+          : `${extensionPeriod} ${mode === 'register' ? 'registration.' : 'extension.'}`}{' '}
         <YearsViewSwitch
           type="button"
           data-testid="date-selection"
           onClick={() => toggleYearPickView()}
         >
-          Pick by {yearPickView === 'date' ? 'years' : 'date'}
+          {t(`calendar.pick_by_${yearPickView === 'date' ? 'years' : 'date'}`, { ns: 'common' })}
         </YearsViewSwitch>
       </Typography>
     </Container>

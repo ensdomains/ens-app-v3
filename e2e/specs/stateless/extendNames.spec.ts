@@ -200,7 +200,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await extendNamesModal.getCounterPlusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
-    await expect(page.getByText('2 year extension', { exact: true })).toBeVisible()
+    await expect(page.getByText('2 years extension', { exact: true })).toBeVisible()
   })
 
   await test.step('should show correct fiat values', async () => {
@@ -270,7 +270,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await extendNamesModal.getCounterPlusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
-    await expect(page.getByText('2 year extension', { exact: true })).toBeVisible()
+    await expect(page.getByText('2 years extension', { exact: true })).toBeVisible()
   })
 
   await test.step('should show correct fiat values', async () => {
