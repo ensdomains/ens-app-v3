@@ -127,7 +127,7 @@ test('should be able to extend a single unwrapped name from profile', async ({
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await extendNamesModal.getCounterPlusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
-    await expect(page.getByText('2 year extension', { exact: true })).toBeVisible({
+    await expect(page.getByText('2 years extension', { exact: true })).toBeVisible({
       timeout: 30000,
     })
   })

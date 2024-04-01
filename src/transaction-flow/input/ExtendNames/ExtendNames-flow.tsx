@@ -210,7 +210,7 @@ export type Props = {
 const minSeconds = 28 * ONE_DAY
 
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
-  const { t } = useTranslation('transactionFlow')
+  const { t } = useTranslation(['transactionFlow', 'common'])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
@@ -291,7 +291,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const items: InvoiceItem[] = [
     {
       label: t('input.extendNames.invoice.extension', {
-        time: formatExtensionPeriod(seconds),
+        time: formatExtensionPeriod(seconds, t),
       }),
       value: totalRentFee,
       bufferPercentage: 102n,

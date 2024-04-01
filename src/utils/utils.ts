@@ -1,6 +1,8 @@
+import { TFunction } from 'react-i18next'
 import { toBytes, type Address } from 'viem'
 
 import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
+import { GetPriceReturnType } from '@ensdomains/ensjs/public'
 import { DecodedFuses } from '@ensdomains/ensjs/utils'
 
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
@@ -23,7 +25,7 @@ export const deriveYearlyFee = ({
   price,
 }: {
   duration: number
-  price: { base: bigint }
+  price: GetPriceReturnType
 }) => {
   const yearlyFee = (price.base * BigInt(ONE_YEAR)) / BigInt(duration)
   return yearlyFee
@@ -48,23 +50,23 @@ export const formatDateTime = (date: Date) => {
 export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
 
-export const formatExtensionPeriod = (duration: number) => {
+export const formatExtensionPeriod = (duration: number, t: TFunction) => {
   const month = ONE_DAY * 30 // Assuming 30 days per month for simplicity
 
   if (duration >= ONE_YEAR) {
     const years = Math.floor(duration / ONE_YEAR)
-    return `${years} year`
+    return t(`unit.years_${years > 1 ? 'other' : 'one'}`, { count: years, ns: 'common' })
   }
   if (duration >= month) {
     const months = Math.floor(duration / month)
-    return `${months} month`
+    return t(`unit.months_${months > 1 ? 'other' : 'one'}`, { count: months, ns: 'common' })
   }
   if (duration >= ONE_DAY) {
     const days = Math.floor(duration / ONE_DAY)
-    return `${days} day`
+    return t(`unit.days_${days > 1 ? 'other' : 'one'}`, { count: days, ns: 'common' })
   }
 
-  return 'Invalid Date'
+  return t('unit.invalid_date', { ns: 'common' })
 }
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>

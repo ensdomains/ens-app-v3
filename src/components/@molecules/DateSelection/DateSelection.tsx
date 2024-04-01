@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Typography } from '@ensdomains/thorin'
@@ -48,9 +49,11 @@ export const DateSelection = ({
   mode?: 'register' | 'extend'
 }) => {
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
-  const yearPickSelection = yearPickView === 'date' ? 'years' : 'date'
+  const toggleYearPickView = () => setYearPickView(yearPickView === 'date' ? 'years' : 'date')
 
-  const extensionPeriod = formatExtensionPeriod(seconds)
+  const { t } = useTranslation()
+
+  const extensionPeriod = formatExtensionPeriod(seconds, t)
 
   useEffect(() => {
     if (minSeconds > seconds) setSeconds(minSeconds)
@@ -103,9 +106,9 @@ export const DateSelection = ({
         <YearsViewSwitch
           type="button"
           data-testid="date-selection"
-          onClick={() => setYearPickView(yearPickSelection)}
+          onClick={() => toggleYearPickView()}
         >
-          Pick by {yearPickSelection}
+          Pick by {yearPickView === 'date' ? 'years' : 'date'}
         </YearsViewSwitch>
       </Typography>
     </Container>

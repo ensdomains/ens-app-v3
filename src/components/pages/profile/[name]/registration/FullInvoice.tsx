@@ -41,7 +41,7 @@ const FullInvoice = ({
   premiumFee,
   gasPrice,
 }: Props) => {
-  const { t } = useTranslation('register')
+  const { t } = useTranslation(['register', 'common'])
 
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
@@ -50,7 +50,7 @@ const FullInvoice = ({
     () => [
       {
         label: t('invoice.timeRegistration', {
-          time: formatExtensionPeriod(seconds),
+          time: formatExtensionPeriod(seconds, t),
         }),
         bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
         value: totalDurationBasedFee,
