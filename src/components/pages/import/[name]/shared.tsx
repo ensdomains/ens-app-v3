@@ -49,7 +49,7 @@ export const DnsImportActionsContainer = styled.div(
     gap: ${theme.space['2']};
     ${mq.sm.min(css`
       flex-direction: row;
-      align-items: center;
+      justify-content: center;
     `)}
   `,
 )
