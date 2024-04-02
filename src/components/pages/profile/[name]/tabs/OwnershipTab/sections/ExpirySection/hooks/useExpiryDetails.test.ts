@@ -7,7 +7,7 @@ import { checkETH2LDFromName } from '@app/utils/utils'
 import { useExpiryDetails } from './useExpiryDetails'
 
 const mockUseNameType = vi.fn()
-vi.mock('@app/hooks/useNameType', () => ({
+vi.mock('@app/hooks/nameType/useNameType', () => ({
   useNameType: () => mockUseNameType(),
 }))
 

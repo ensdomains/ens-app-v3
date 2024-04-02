@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { ethers } from 'ethers'
+import { Address } from 'viem'
 
 import { Provider } from './provider.js'
 
@@ -36,7 +37,7 @@ export const createAccounts = (stateful = false) => {
 
   return {
     getAllPrivateKeys: () => accounts.map(({ privateKey }) => privateKey),
-    getAddress: (user: User, length?: number) => {
+    getAddress: (user: User, length?: number): Address | string => {
       const address = accounts.find(({ user: _user }) => _user === user)?.address
       if (!address) throw new Error(`Address not found: ${user}`)
       if (length) return shortenAddress(address, length)

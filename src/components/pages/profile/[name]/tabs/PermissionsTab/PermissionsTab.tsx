@@ -8,6 +8,7 @@ import { Banner } from '@ensdomains/thorin'
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { TransComponentName } from '@app/components/@atoms/Name/Name'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
 import { useParentBasicName } from '@app/hooks/useParentBasicName'
@@ -52,8 +53,9 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
   const is2LDEth = nameParts.length === 2 && nameParts[1] === 'eth'
   const isSubname = nameParts.length > 2
 
+  const abilities = useAbilities({ name })
   const { wrapperData: parentWrapperData, isCachedData: isParentBasicCachedData } =
-    useParentBasicName(name)
+    useParentBasicName({ name })
 
   const { data: fusesSetDates } = useFusesSetDates({ name })
   const fusesStatus = useFusesStates({
@@ -100,6 +102,7 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
         name={name}
         wrapperData={wrapperData}
         fusesSetDates={fusesSetDates}
+        canEditPermissions={abilities.data?.canEditPermissions}
         {...fusesStatus}
       />
     </Container>

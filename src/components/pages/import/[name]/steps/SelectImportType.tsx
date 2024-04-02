@@ -12,6 +12,7 @@ import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 import { DnsImportActionButton, DnsImportCard, DnsImportHeading } from '../shared'
@@ -23,17 +24,6 @@ import {
   SelectedItemProperties,
 } from '../useDnsImportReducer'
 import { checkDnsAddressMatch, DnsAddressStatus } from '../utils'
-
-const TypesSelectionContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    gap: ${theme.space['2']};
-    max-width: 100%;
-  `,
-)
 
 const StyledRadioButtonGroup = styled(RadioButtonGroup)(
   ({ theme }) => css`
@@ -51,6 +41,21 @@ const StyledRadioButtonGroup = styled(RadioButtonGroup)(
   `,
 )
 
+const TypesSelectionContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: ${theme.space['2']};
+    max-width: 100%;
+
+    & > :first-child {
+      padding: 0 ${theme.space['4']};
+    }
+  `,
+)
+
 const TypeLabelContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -58,8 +63,10 @@ const TypeLabelContainer = styled.div(
     align-items: flex-start;
     justify-content: flex-start;
     gap: ${theme.space['1']};
-    overflow: hidden;
-    word-wrap: normal;
+
+    div {
+      white-space: normal;
+    }
 
     &[aria-disabled='true'] {
       opacity: 0.5;
@@ -189,7 +196,7 @@ export const SelectImportType = ({
   return (
     <DnsImportCard>
       <DnsImportHeading>{t('title', { name: selected.name })}</DnsImportHeading>
-      <Typography>{t('subtitle')}</Typography>
+      <CenteredTypography>{t('subtitle')}</CenteredTypography>
       <SupportOutlink href={getSupportLink('dnsNames')}>{t('learnMore')}</SupportOutlink>
       <TypesSelectionContainer>
         <Typography weight="bold">{t('select.heading')}</Typography>

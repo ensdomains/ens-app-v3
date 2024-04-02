@@ -1,16 +1,17 @@
 import { Query, QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
-import { useChainId } from 'wagmi'
+import { Config, useChainId } from 'wagmi'
+import { GetEnsAvatarQueryKey } from 'wagmi/query'
 
 import { SupportedChain } from '@app/constants/chains'
 import { useSubgraphClient } from '@app/hooks/ensjs/subgraph/useSubgraphClient'
-import { useHasGlobalError } from '@app/hooks/errors/useHasGlobalError'
 import { clearRelevantNameQueriesFromRegisterOrImport } from '@app/hooks/transactions/clearRelevantNameQueriesFromRegisterOrImport'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { CreateQueryKey } from '@app/types'
 
 import { parse, stringify } from '../query/persist'
+import { useHasSubgraphSyncErrors } from '../useHasSubgraphSyncErrors'
 
 export type UpdateCallback = (transaction: Transaction) => void
 type AddCallback = (key: string, callback: UpdateCallback) => void
@@ -20,6 +21,9 @@ type SyncContext = {
   removeCallback: RemoveCallback
   isOutOfSync: boolean | undefined
   currentGraphBlock: number | undefined
+  isError: boolean | undefined
+  isSlow: boolean | undefined
+  isFetching: boolean
 }
 
 const query = `
@@ -44,6 +48,9 @@ const Context = createContext<SyncContext>({
   removeCallback: () => {},
   isOutOfSync: undefined,
   currentGraphBlock: undefined,
+  isError: undefined,
+  isSlow: undefined,
+  isFetching: false,
 })
 
 type ChainDependentQueryKey = CreateQueryKey<object, string, 'standard'>
@@ -51,11 +58,21 @@ type ChainDependentQueryKey = CreateQueryKey<object, string, 'standard'>
 const filterByChainDependentQuery =
   (chainId: SupportedChain['id']) =>
   ({ queryKey: queryKey_ }: Query) => {
-    const queryKey = queryKey_ as ChainDependentQueryKey | never[]
+    const queryKey = queryKey_ as
+      | ChainDependentQueryKey
+      | CreateQueryKey<object, string, 'graph'>
+      | GetEnsAvatarQueryKey<Config>
+      | never[]
+
+    // useEnsAvatar query from wagmi
+    if (queryKey[0] === 'ensAvatar' && queryKey[1]?.chainId === chainId) return true
+
+    // internal queries
     if (queryKey[1] !== chainId) return false
     if (typeof queryKey[0] !== 'object' || queryKey[0] === null) return false
     // don't invalidate graph queries, which are handled separately
     if (queryKey[5] === 'graph') return false
+
     return true
   }
 
@@ -90,7 +107,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     [transactions],
   )
 
-  const hasGlobalError = useHasGlobalError()
+  const hasSubgraphSyncErrors = useHasSubgraphSyncErrors()
   const { data: currentGraphBlock } = useQuery<number>({
     queryKey: ['graphBlock', chainId, transactions],
     queryFn: () =>
@@ -99,7 +116,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       }),
     initialData: 0,
     refetchInterval: (q) => {
-      if (hasGlobalError) return false
+      if (hasSubgraphSyncErrors.error) return false
       if (!q.state.data) return 1000
       const waitingForBlock = findTransactionHigherThanBlock(q.state.data)
       if (waitingForBlock) {
@@ -108,7 +125,9 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       return false
     },
     enabled:
-      !!subgraphClient && !!transactions.find((x) => x.minedData?.blockNumber) && !hasGlobalError,
+      !!subgraphClient &&
+      !!transactions.find((x) => x.minedData?.blockNumber) &&
+      !hasSubgraphSyncErrors.error,
   })
 
   // reset getSubnames and graph queries when the graph block is updated
@@ -171,8 +190,17 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       },
       isOutOfSync,
       currentGraphBlock,
+      isError: !!hasSubgraphSyncErrors.error,
+      isSlow: !!hasSubgraphSyncErrors.slow,
+      isFetching: hasSubgraphSyncErrors.isFetching,
     }),
-    [currentGraphBlock, isOutOfSync],
+    [
+      currentGraphBlock,
+      isOutOfSync,
+      hasSubgraphSyncErrors.error,
+      hasSubgraphSyncErrors.slow,
+      hasSubgraphSyncErrors.isFetching,
+    ],
   )
 
   return <Context.Provider value={value}>{children}</Context.Provider>
@@ -192,4 +220,17 @@ export const useCallbackOnTransaction = (callback: UpdateCallback) => {
 export const useGraphOutOfSync = () => {
   const { isOutOfSync } = useContext(Context)
   return !!isOutOfSync
+}
+
+export const useHasGraphError = () => {
+  const { isFetching, isError } = useContext(Context)
+  return { data: isError, isLoading: isFetching }
+}
+
+export const useGraphErrorType = () => {
+  const context = useContext(Context)
+  if (context.isError) return 'SubgraphError'
+  if (context.isSlow) return 'SubgraphLatency'
+  if (context.isOutOfSync) return 'SubgraphOutOfSync'
+  return null
 }
