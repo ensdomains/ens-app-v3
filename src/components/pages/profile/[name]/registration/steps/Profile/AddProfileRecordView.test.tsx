@@ -158,9 +158,10 @@ describe('AddProfileRecordView', () => {
       )
       const lowerCaseKey = key.toLowerCase()
       for (const { key: filteredKey } of allOptionsArray.filter(
-        ({ key: k, group: g }) =>
+        ({ key: k, group: g, ...rest }) =>
           k.toLowerCase().indexOf(lowerCaseKey) === -1 &&
           g.toLowerCase().indexOf(lowerCaseKey) === -1 &&
+          ('longName' in rest ? rest.longName.toLowerCase().indexOf(lowerCaseKey) === -1 : true) &&
           'steps.profile.options.groups.x.items'.indexOf(lowerCaseKey) === -1,
       )) {
         expect(screen.queryByTestId(`profile-record-option-${filteredKey}`)).not.toBeInTheDocument()
