@@ -216,12 +216,12 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
           icon={QuestionCircleSVG}
           href="https://support.ens.domains/en/articles/7982906-long-running-transactions"
         >
-          Learn about long running transactions
+          {t('transaction.dialog.sent.learn')}
         </Outlink>
       )
     }
     return null
-  }, [isTakingLongerThanExpected])
+  }, [isTakingLongerThanExpected, t])
 
   const EndElement = useMemo(() => {
     if (status === 'complete') {
