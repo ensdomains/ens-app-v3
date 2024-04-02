@@ -30,7 +30,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { ONE_YEAR } from '@app/utils/time'
+import { ONE_DAY, ONE_YEAR } from '@app/utils/time'
 
 import FullInvoice from '../../FullInvoice'
 import {
@@ -472,7 +472,7 @@ export type PricingProps = {
   >['initiateMoonpayRegistrationMutation']
 }
 
-const minSeconds = ONE_YEAR
+const minSeconds = 28 * ONE_DAY
 
 const Pricing = ({
   name,

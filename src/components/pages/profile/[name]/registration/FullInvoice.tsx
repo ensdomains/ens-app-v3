@@ -9,7 +9,7 @@ import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import useUserConfig from '@app/utils/useUserConfig'
-import { formatExtensionPeriod } from '@app/utils/utils'
+import { formatExtensionPeriod, ONE_DAY } from '@app/utils/utils'
 
 const OptionBar = styled.div(
   () => css`
@@ -54,6 +54,7 @@ const FullInvoice = ({
         }),
         bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
         value: totalDurationBasedFee,
+        color: seconds < 30 * ONE_DAY ? ('orangePrimary' as Colors) : undefined,
       },
       {
         label: t('invoice.estimatedNetworkFee'),
