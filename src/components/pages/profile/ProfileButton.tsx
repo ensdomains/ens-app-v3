@@ -270,14 +270,16 @@ export const OwnerProfileButton = ({
           icon: <UpRightArrowSVG />,
           label: 'View profile',
           as: 'a',
-          href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
+          href: link,
         }
       : undefined,
-    {
-      icon: <CopySVG />,
-      label: 'Copy name',
-      onClick: () => copy(recordItemPartialProps.value),
-    },
+    primary.data?.name
+      ? {
+          icon: <CopySVG />,
+          label: 'Copy name',
+          onClick: () => copy(primary.data?.name!),
+        }
+      : undefined,
     ...(dataType === 'address'
       ? [
           {
