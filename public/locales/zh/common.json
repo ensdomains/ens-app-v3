@@ -49,6 +49,11 @@
   "unit": {
     "years_one": "{{count}} 年",
     "years_other": "{{count}} 年",
+    "months_one": "{{count}} 月",
+    "months_other": "{{count}} 月",
+    "days_one": "{{count}} 天",
+    "days_other": "{{count}} 天",
+    "invalid_date": "时间无效",
     "yrs_one": "{{count}} 年",
     "yrs_other": "{{count}} 年",
     "gas": "{{value}} 网络费",
@@ -346,5 +351,9 @@
   "testnetFaucet": {
     "explanation": "{{ testnet }} 上的每个地址都可以申请 {{amount}} {{ ticker }} 来进行 ENS 管理器 app 或其他网络测试。",
     "note": "它可能在几分钟后才能出现在你的钱包里。"
+  },
+  "calendar": {
+    "pick_by_years": "选择年份",
+    "pick_by_date": "选择日期"
   }
 }
