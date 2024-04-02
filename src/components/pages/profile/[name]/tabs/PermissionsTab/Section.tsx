@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react'
+import { forwardRef, PropsWithChildren } from 'react'
 import styled, { css } from 'styled-components'
 
 import { DisabledSVG, InfoCircleSVG, Typography } from '@ensdomains/thorin'
@@ -68,6 +68,7 @@ const SectionItemIcon = styled.svg<{ $color: Color }>(
 const SectionItemContent = styled.div(
   ({ theme }) => css`
     display: flex;
+    overflow: hidden;
     flex-direction: column;
     gap: ${theme.space['1']};
   `,
@@ -77,23 +78,20 @@ type SectionItemProps = {
   icon?: 'info' | 'disabled'
   screen?: Screen
 }
-export const SectionItem = ({
-  icon,
-  screen,
-  children,
-  ...props
-}: PropsWithChildren<SectionItemProps>) => {
-  return (
-    <SectionItemContainer $screen={screen} {...props}>
-      {icon === 'info' ? (
-        <SectionItemIcon as={InfoCircleSVG} $color="yellow" />
-      ) : (
-        <SectionItemIcon as={DisabledSVG} $color="grey" />
-      )}
-      <SectionItemContent>{children}</SectionItemContent>
-    </SectionItemContainer>
-  )
-}
+export const SectionItem = forwardRef<HTMLDivElement, PropsWithChildren<SectionItemProps>>(
+  ({ icon, screen, children, ...props }, ref) => {
+    return (
+      <SectionItemContainer $screen={screen} {...props}>
+        {icon === 'info' ? (
+          <SectionItemIcon as={InfoCircleSVG} $color="yellow" />
+        ) : (
+          <SectionItemIcon as={DisabledSVG} $color="grey" />
+        )}
+        <SectionItemContent ref={ref}>{children}</SectionItemContent>
+      </SectionItemContainer>
+    )
+  },
+)
 
 type SectionListProps = {
   title: string

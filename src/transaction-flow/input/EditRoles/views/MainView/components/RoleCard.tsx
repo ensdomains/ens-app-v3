@@ -34,15 +34,24 @@ const Divider = styled.div(
 )
 
 const Footer = styled.button(
-  () => css`
+  ({ theme }) => css`
     display: flex;
+    overflow: hidden;
     justify-content: space-between;
     align-items: center;
+    gap: ${theme.space['4']};
   `,
 )
 
+const FooterLeft = styled.div(
+  () => css`
+    flex: 1;
+    overflow: hidden;
+  `,
+)
 const FooterRight = styled.div(
   ({ theme }) => css`
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     gap: ${theme.space['2']};
@@ -109,7 +118,9 @@ export const RoleCard = ({ address, role, dirty, onClick }: Props) => {
       <Footer data-testid="role-card-change-button" type="button" onClick={onClick}>
         {isAddressEmpty ? (
           <>
-            <NoneSetAvatarWithIdentifier size="8" dirty={dirty} />
+            <FooterLeft>
+              <NoneSetAvatarWithIdentifier size="8" dirty={dirty} />
+            </FooterLeft>
             <FooterRight>
               <Typography fontVariant="bodyBold" color="accent">
                 {t('action.add', { ns: 'common' })}
@@ -119,7 +130,9 @@ export const RoleCard = ({ address, role, dirty, onClick }: Props) => {
           </>
         ) : (
           <>
-            <AvatarWithIdentifier address={address} size="8" />
+            <FooterLeft>
+              <AvatarWithIdentifier address={address} size="8" />
+            </FooterLeft>
             <FooterRight>
               <Typography fontVariant="bodyBold" color="accent">
                 {t('action.change', { ns: 'common' })}

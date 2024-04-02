@@ -86,6 +86,29 @@ const StyledLeadingHeading = styled(LeadingHeading)(
   `,
 )
 
+const Test = styled.div`
+  resize: both;
+  overflow: hidden;
+  max-width: 1000px;
+  position: relative;
+`
+
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+`
+
+const Left = styled.div`
+  flex: 1;
+  overflow: ellipsis;
+`
+
+const Right = styled.div`
+  flex: 1;
+  overflow: ellipsis;
+`
+
 export default function Page() {
   const { t } = useTranslation('common')
 
@@ -109,6 +132,12 @@ export default function Page() {
               {t('description')}
             </Typography>
           </SubtitleWrapper>
+          <Test>
+            <Wrapper>
+              <Left>helooworld.</Left>
+              <Right>something.seomt.eth</Right>
+            </Wrapper>
+          </Test>
           <SearchInput />
         </Stack>
       </Container>

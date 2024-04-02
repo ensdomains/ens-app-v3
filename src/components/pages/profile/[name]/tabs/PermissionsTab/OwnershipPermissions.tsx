@@ -1,11 +1,11 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { Button, Typography } from '@ensdomains/thorin'
 
-import { StyledLink } from '@app/components/@atoms/StyledLink'
+import { TransComponentName } from '@app/components/@atoms/Name/Name'
 import type { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -49,6 +49,9 @@ export const OwnershipPermissions = ({
   isUserParentOwner,
 }: Props) => {
   const { t } = useTranslation('profile')
+
+  const ownershipStatusContainerRef = useRef<HTMLDivElement>(null)
+  const editorStatusContainerRef = useRef<HTMLDivElement>(null)
 
   const { usePreparedDataInput } = useTransactionFlow()
   const showRevokePermissionsInput = usePreparedDataInput('RevokePermissions')
@@ -128,13 +131,27 @@ export const OwnershipPermissions = ({
   return (
     <Section>
       {ownershipStatus === 'parent-cannot-control' && (
-        <SectionItem icon="disabled" data-testid="parent-cannot-control">
+        <SectionItem
+          icon="disabled"
+          data-testid="parent-cannot-control"
+          ref={ownershipStatusContainerRef}
+        >
           <Typography fontVariant="bodyBold">
             <Trans
               t={t}
               i18nKey="tabs.permissions.ownership.parentCannotControl.label"
               values={{ parent: parentName }}
-              components={{ parentLink: <StyledLink href={`/${parentName}`} /> }}
+              components={{
+                parentLink: (
+                  <TransComponentName
+                    href={`/${parentName}`}
+                    type="wrap"
+                    wrapLines={2}
+                    padding={10}
+                    containerRef={ownershipStatusContainerRef}
+                  />
+                ),
+              }}
             />
           </Typography>
           {fusesSetDates?.PARENT_CANNOT_CONTROL && (
@@ -163,13 +180,23 @@ export const OwnershipPermissions = ({
         </SectionItem>
       )}
       {ownershipStatus === 'parent-can-control' && (
-        <SectionItem icon="info" data-testid="parent-can-control">
-          <Typography fontVariant="bodyBold">
+        <SectionItem icon="info" data-testid="parent-can-control" ref={ownershipStatusContainerRef}>
+          <Typography fontVariant="bodyBold" ref={ownershipStatusContainerRef}>
             <Trans
               t={t}
               i18nKey="tabs.permissions.ownership.parentCanControl.label"
               values={{ parent: parentName }}
-              components={{ parentLink: <StyledLink href={`/${parentName}`} /> }}
+              components={{
+                parentLink: (
+                  <TransComponentName
+                    href={`/${parentName}`}
+                    containerRef={ownershipStatusContainerRef}
+                    padding={10}
+                    wrapLines={2}
+                    type="wrap"
+                  />
+                ),
+              }}
             />
           </Typography>
           <SectionList title={t('tabs.permissions.ownership.parentCanControl.list.title')}>
@@ -207,13 +234,27 @@ export const OwnershipPermissions = ({
         </SectionItem>
       )}
       {editorStatus === 'parent-can-change-permissions' && (
-        <SectionItem icon="info" data-testid="parent-can-change-permissions">
+        <SectionItem
+          icon="info"
+          data-testid="parent-can-change-permissions"
+          ref={editorStatusContainerRef}
+        >
           <Typography fontVariant="bodyBold">
             <Trans
               t={t}
               i18nKey="tabs.permissions.ownership.parentCanChange.label"
               values={{ parent: parentName }}
-              components={{ parentLink: <StyledLink href={`/${parentName}`} /> }}
+              components={{
+                parentLink: (
+                  <TransComponentName
+                    href={`/${parentName}`}
+                    containerRef={editorStatusContainerRef}
+                    padding={10}
+                    type="wrap"
+                    wrapLines={2}
+                  />
+                ),
+              }}
             />
           </Typography>
           <SectionList title={t('tabs.permissions.ownership.parentCanChange.list.title')}>

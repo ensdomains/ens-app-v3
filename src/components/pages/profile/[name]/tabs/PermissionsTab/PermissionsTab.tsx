@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -6,6 +7,7 @@ import { Banner } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
+import { TransComponentName } from '@app/components/@atoms/Name/Name'
 import { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
 import { useParentBasicName } from '@app/hooks/useParentBasicName'
@@ -31,8 +33,18 @@ const Container = styled(CacheableComponent)(
   `,
 )
 
+const BannerContent = styled.div(
+  () => css`
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+  `,
+)
+
 export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: Props) => {
   const { t } = useTranslation('profile')
+
+  const bannerRef = useRef<HTMLDivElement>(null)
 
   const nameParts = name.split('.')
   const parentName = nameParts.slice(1).join('.')
@@ -58,11 +70,14 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
       {showUnwrapWarning && (
         <BaseLink href={`/${parentName}?tab=permissions`} passHref>
           <Banner alert="warning" as="a" data-testid="banner-parent-not-locked">
-            <Trans
-              t={t}
-              i18nKey="tabs.permissions.parentUnlockedWarning"
-              values={{ parent: parentName }}
-            />
+            <BannerContent ref={bannerRef}>
+              <Trans
+                t={t}
+                i18nKey="tabs.permissions.parentUnlockedWarning"
+                values={{ parent: parentName }}
+                components={[<TransComponentName type="wrap" wrapLines={2} />]}
+              />
+            </BannerContent>
           </Banner>
         </BaseLink>
       )}

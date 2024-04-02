@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCopyToClipboard } from 'react-use'
 import styled, { css } from 'styled-components'
@@ -16,6 +16,7 @@ import {
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import { useChainName } from '@app/hooks/chain/useChainName'
+import { useElementDimensions } from '@app/hooks/dom/useElementDimensions'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import type { Role } from '@app/hooks/ownership/useRoles/useRoles'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -42,6 +43,7 @@ const InnerContainer = styled.div(
     flex-flow: row wrap;
     justify-content: space-between;
     align-items: center;
+    overflow: hidden;
 
     gap: ${theme.space[4]};
   `,
@@ -67,6 +69,7 @@ type Props = {
 export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipated }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const primary = usePrimaryName({ address: address!, enabled: !!address })
   const networkName = useChainName()
@@ -127,12 +130,20 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
 
   const { isLoading } = primary
 
+  const { width: maxContentWidth } = useElementDimensions({ ref: containerRef })
+  console.log('test', maxContentWidth)
+
   if (!address || address === emptyAddress || isLoading) return null
   return (
     <>
       <Container data-testid={`role-row-${address}`}>
-        <InnerContainer>
-          <AvatarWithIdentifier name={primary.data?.name} address={address} size="10" />
+        <InnerContainer ref={containerRef}>
+          <AvatarWithIdentifier
+            name={primary.data?.name}
+            address={address}
+            size="10"
+            maxWidth={maxContentWidth}
+          />
           <RoleTagContainer data-testid="role-tag-container">
             {roles?.map((role) => (
               <RoleTag key={role} name={name} role={role} isEmancipated={isEmancipated} />
