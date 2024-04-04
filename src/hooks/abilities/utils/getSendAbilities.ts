@@ -25,6 +25,7 @@ const CONTRACT_INFO = {
         ownershipLevel: P.not('nameWrapper'),
         registrant: P.select('registrant'),
       },
+      registrationStatus: 'registered',
     },
     guard: (address?: string) => (name: BasicName) => {
       const registrant = name.ownerData?.registrant
@@ -57,6 +58,7 @@ const CONTRACT_INFO = {
           child: { CANNOT_TRANSFER: false },
         },
       },
+      registrationStatus: 'registered',
     },
     guard: (address?: string) => (name: BasicName) => {
       const owner = name.ownerData?.owner
@@ -70,6 +72,18 @@ const CONTRACT_INFO = {
     },
     // A wrapped name cannot be a manager since PCC is automatically burned
     manager: undefined,
+  },
+  gracePeriodName: {
+    pattern: {
+      registrationStatus: 'gracePeriod',
+    },
+    guard: (address?: string) => (name: BasicName) => {
+      return (
+        name.ownerData?.owner === address ||
+        name.ownerData?.registrant === address ||
+        name.wrapperData?.owner === address
+      )
+    },
   },
   wrappedSubname: {
     wrappedParent: {
@@ -310,6 +324,15 @@ const get2LDEthAbilities = ({
           sendNameFunctionCallDetails,
         } as SendAbilities
       },
+    )
+    .with(
+      CONTRACT_INFO.gracePeriodName.pattern,
+      CONTRACT_INFO.gracePeriodName.guard(address),
+      () =>
+        ({
+          ...BASE_RESPONSE,
+          canSendError: 'gracePeriod',
+        }) as SendAbilities,
     )
     .otherwise(({ wrapperData }) => ({
       ...BASE_RESPONSE,

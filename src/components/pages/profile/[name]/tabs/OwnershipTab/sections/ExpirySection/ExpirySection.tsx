@@ -116,8 +116,14 @@ type Props = {
 
 export const ExpirySection = ({ name, details }: Props) => {
   const { t } = useTranslation('profile')
+
   const expiry = useExpiryDetails({ name, details })
-  const actions = useExpiryActions({ name, expiryDetails: expiry.data })
+  const actions = useExpiryActions({
+    name,
+    expiryDetails: expiry.data,
+    ownerData: details.ownerData,
+    wrapperData: details.wrapperData,
+  })
 
   const [showEarnifiDialog, setShowEarnifiDialog] = useState(false)
 

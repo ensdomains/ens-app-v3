@@ -26,7 +26,7 @@ describe('NameSnippetMobile', () => {
         owner: '0x983110309620D911731Ac0932219af06091b6744',
         ownershipLevel: 'registry',
       },
-      wrapperData: {} as any,
+      wrapperData: null,
     } as NameDetailSnippetProps
     render(<NameDetailSnippet {...mockData} />)
     expect(screen.getByText('June 9, 2022')).toBeVisible()
@@ -38,7 +38,7 @@ describe('NameSnippetMobile', () => {
         owner: '0x983110309620D911731Ac0932219af06091b6744',
         ownershipLevel: 'registry',
       },
-      wrapperData: {} as any,
+      wrapperData: null,
     } as NameDetailSnippetProps
     render(<NameDetailSnippet {...mockData} />)
     expect(screen.getByText('0x983...b6744')).toBeVisible()
@@ -51,7 +51,7 @@ describe('NameSnippetMobile', () => {
         registrant: '0x983110309620D911731Ac0932219af06091b6744',
         ownershipLevel: 'registrar',
       },
-      wrapperData: {} as any,
+      wrapperData: null,
     } as NameDetailSnippetProps
     render(<NameDetailSnippet {...mockData} />)
     expect(screen.getAllByText('0x983...b6744')).toHaveLength(2)
@@ -60,7 +60,7 @@ describe('NameSnippetMobile', () => {
     const mockData = {
       ...baseMockData,
       ownerData: {} as any,
-      wrapperData: {} as any,
+      wrapperData: null,
       dnsOwner: '0x983110309620D911731Ac0932219af06091b6744',
     } as NameDetailSnippetProps
     render(<NameDetailSnippet {...mockData} />)
@@ -70,7 +70,7 @@ describe('NameSnippetMobile', () => {
     const mockData = {
       ...baseMockData,
       ownerData: {} as any,
-      wrapperData: {} as any,
+      wrapperData: null,
       showButton: true,
     } as NameDetailSnippetProps
     render(<NameDetailSnippet {...mockData} />)

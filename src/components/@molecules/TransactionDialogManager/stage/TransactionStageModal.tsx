@@ -25,6 +25,7 @@ import {
 } from '@app/transaction-flow/types'
 import { ConfigWithEns } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
@@ -311,14 +312,14 @@ export const TransactionStageModal = ({
     queryFn: initialOptions.queryFn({ connectorClient, isSafeApp }),
   })
 
-  const {
-    data: request,
-    isLoading: requestLoading,
-    error: requestError,
-  } = useQuery({
+  const transactionRequestQuery = useQuery({
     ...preparedOptions,
     enabled: canEnableTransactionRequest,
+    refetchOnMount: 'always',
   })
+
+  const { data: request, isLoading: requestLoading, error: requestError } = transactionRequestQuery
+  const isTransactionRequestCachedData = getIsCachedData(transactionRequestQuery)
 
   useInvalidateOnBlock({
     enabled: canEnableTransactionRequest && process.env.NEXT_PUBLIC_ETH_NODE !== 'anvil',
@@ -426,7 +427,13 @@ export const TransactionStageModal = ({
     }
     return (
       <Button
-        disabled={!canEnableTransactionRequest || requestLoading || !request || !!requestError}
+        disabled={
+          !canEnableTransactionRequest ||
+          requestLoading ||
+          !request ||
+          !!requestError ||
+          isTransactionRequestCachedData
+        }
         onClick={() => sendTransaction(request!)}
         data-testid="transaction-modal-confirm-button"
       >
@@ -446,6 +453,7 @@ export const TransactionStageModal = ({
     t,
     transactionLoading,
     request,
+    isTransactionRequestCachedData,
   ])
 
   const stepStatus = useMemo(() => {

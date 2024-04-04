@@ -301,6 +301,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
                 isWrapped={isWrapped}
                 canEdit={!!abilities.data?.canEdit}
                 canCreateSubdomains={!!abilities.data?.canCreateSubdomains}
+                canCreateSubdomainsError={abilities.data?.canCreateSubdomainsError}
               />
             ),
             permissions: (

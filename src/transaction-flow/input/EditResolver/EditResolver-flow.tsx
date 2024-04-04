@@ -7,7 +7,7 @@ import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import EditResolverForm from '@app/components/@molecules/EditResolver/EditResolverForm'
 import EditResolverWarnings from '@app/components/@molecules/EditResolver/EditResolverWarnings'
-import { useBasicName } from '@app/hooks/useBasicName'
+import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import useResolverEditor from '@app/hooks/useResolverEditor'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -36,7 +36,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const { name } = data
-  const { isWrapped } = useBasicName({ name })
+  const { data: isWrapped } = useIsWrapped({ name })
   const formRef = useRef<HTMLFormElement>(null)
 
   const { data: profile = { resolverAddress: '' } } = useProfile({ name: name as string })

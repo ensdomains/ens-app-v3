@@ -44,7 +44,7 @@ export async function requestWithSafeOverride(
   client: ReturnType<ConfigWithEns['getClient']>,
   args: RequestParameters,
 ): Promise<RequestReturnType> {
-  if (args.method === 'eth_getTransactionReceipt') {
+  if (args.method === 'eth_getTransactionReceipt' || args.method === 'eth_getTransactionByHash') {
     const {
       params: [hash],
     } = args
@@ -54,7 +54,7 @@ export async function requestWithSafeOverride(
     })
     if (!realTxData) return null
     return client.request({
-      method: 'eth_getTransactionReceipt',
+      method: args.method,
       params: [realTxData.transactionHash],
     })
   }
@@ -66,13 +66,14 @@ export async function waitForTransaction(
   config: ConfigWithEns,
   { chainId, confirmations = 1, hash, onReplaced, timeout = 0, isSafeTx }: WaitForTransactionArgs,
 ): Promise<WaitForTransactionResult> {
-  let client = config.getClient({ chainId })
+  const initialClient = config.getClient({ chainId })
+  let client = { ...initialClient }
 
   if (isSafeTx) {
     client = {
       ...client,
       request: ((args: RequestParameters) =>
-        requestWithSafeOverride(client, args)) as EIP1193RequestFn<PublicRpcSchema>,
+        requestWithSafeOverride(initialClient, args)) as EIP1193RequestFn<PublicRpcSchema>,
     }
   }
 

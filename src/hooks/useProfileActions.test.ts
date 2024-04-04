@@ -465,6 +465,7 @@ describe('useProfileActions', () => {
               CANNOT_SET_RESOLVER: true,
             },
           },
+          owner: '0x1234567890'
         },
         isLoading: false,
       })
@@ -490,6 +491,7 @@ describe('useProfileActions', () => {
               CANNOT_SET_RESOLVER: true,
             },
           },
+          owner: '0x1234567890'
         },
         isLoading: false,
       })

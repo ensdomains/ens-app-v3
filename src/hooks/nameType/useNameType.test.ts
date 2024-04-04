@@ -3,6 +3,8 @@ import { renderHook } from '@app/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 
 import { useNameType } from './useNameType'
+import { makeMockUseContractAddress } from '../../../test/mock/makeMockUseContractAddress'
+import { makeMockUseBasicName } from '../../../test/mock/makeMockUseBasicName'
 
 const mockBasicData = vi.fn()
 vi.mock('@app/hooks/useBasicName', () => ({
@@ -10,7 +12,8 @@ vi.mock('@app/hooks/useBasicName', () => ({
 }))
 
 vi.mock('@app/hooks/chain/useContractAddress', () => ({
-  useContractAddress: () => '0xnamewrapper',
+  // @ts-ignore
+  useContractAddress: (args) => makeMockUseContractAddress(args),
 }))
 
 describe('useNameType', () => {
@@ -102,117 +105,64 @@ describe('useNameType', () => {
 
   describe('wrap level', () => {
     it('should return unwrapped', async () => {
-      mockBasicData.mockReturnValue({
-        ownerData: {},
-        wrapperData: {
-          fuses: {
-            child: {},
-            parent: {},
-          },
-        },
-        pccExpired: true,
-      })
+      mockBasicData.mockReturnValue(
+        makeMockUseBasicName('eth-unwrapped-2ld')
+      )
       const { result } = renderHook(() => useNameType('test.eth'))
       expect(result.current.data).toEqual('eth-unwrapped-2ld')
     })
 
     it('should return wrapped', async () => {
-      mockBasicData.mockReturnValue({
-        ownerData: {
-          ownershipLevel: 'nameWrapper',
-        },
-        wrapperData: {
-          fuses: {
-            child: {},
-            parent: {},
-          },
-        },
-        pccExpired: true,
-      })
+      mockBasicData.mockReturnValue(
+        makeMockUseBasicName('eth-wrapped-subname')
+      )
       const { result } = renderHook(() => useNameType('test.eth'))
       expect(result.current.data).toEqual('eth-wrapped-2ld')
     })
 
     it('should return emancipated', async () => {
-      mockBasicData.mockReturnValue({
-        ownerData: {
-          ownershipLevel: 'nameWrapper',
-        },
-        wrapperData: {
-          fuses: {
-            child: {},
-            parent: {
-              PARENT_CANNOT_CONTROL: true,
-            },
-          },
-        },
-        pccExpired: true,
-      })
+      mockBasicData.mockReturnValue(makeMockUseBasicName('eth-emancipated-2ld'))
       const { result } = renderHook(() => useNameType('test.eth'))
       expect(result.current.data).toEqual('eth-emancipated-2ld')
     })
 
     it('should return locked', async () => {
-      mockBasicData.mockReturnValue({
-        ownerData: {
-          ownershipLevel: 'nameWrapper',
-        },
-        wrapperData: {
-          fuses: {
-            child: {
-              CANNOT_UNWRAP: true,
-            },
-            parent: {
-              PARENT_CANNOT_CONTROL: true,
-            },
-          },
-        },
-        pccExpired: true,
-      })
+      mockBasicData.mockReturnValue(makeMockUseBasicName('eth-locked-2ld'))
       const { result } = renderHook(() => useNameType('test.eth'))
       expect(result.current.data).toEqual('eth-locked-2ld')
     })
 
     it('should return unwrapped subname', async () => {
-      mockBasicData.mockReturnValue({
-        ownerData: {
-          ownershipLevel: 'registry',
-        },
-        wrapperData: {
-          fuses: {
-            child: {
-              CANNOT_UNWRAP: false,
-            },
-            parent: {
-              PARENT_CANNOT_CONTROL: false,
-            },
-          },
-        },
-        pccExpired: false,
-      })
+      mockBasicData.mockReturnValue(makeMockUseBasicName('eth-unwrapped-subname'))
       const { result } = renderHook(() => useNameType('sub.test.eth'))
       expect(result.current.data).toEqual('eth-unwrapped-subname')
     })
 
     it('should return pcc expired subname', async () => {
       mockBasicData.mockReturnValue({
-        ownerData: {
-          ownershipLevel: 'nameWrapper',
-        },
-        wrapperData: {
-          fuses: {
-            child: {
-              CANNOT_UNWRAP: false,
-            },
-            parent: {
-              PARENT_CANNOT_CONTROL: false,
-            },
-          },
-        },
+       ...makeMockUseBasicName('eth-wrapped-subname'),
         pccExpired: true,
       })
       const { result } = renderHook(() => useNameType('sub.test.eth'))
       expect(result.current.data).toEqual('eth-pcc-expired-subname')
+    })
+
+    it('should return for grace period unwrapped', async () => {
+      mockBasicData.mockReturnValue(makeMockUseBasicName('eth-unwrapped-2ld:grace-period'))
+      const { result } = renderHook(() => useNameType('name.eth'))
+      expect(result.current.data).toEqual('eth-unwrapped-2ld:grace-period')
+    })
+
+    it('should return for grace period emancipated', async () => {
+      mockBasicData.mockReturnValue(makeMockUseBasicName('eth-emancipated-2ld:grace-period'))
+      const { result } = renderHook(() => useNameType('name.eth'))
+      expect(result.current.data).toEqual('eth-emancipated-2ld:grace-period')
+    })
+
+    it('should return for grace period licked', async () => {
+      mockBasicData.mockReturnValue(makeMockUseBasicName('eth-locked-2ld:grace-period'))
+      const { result } = renderHook(() => useNameType('name.eth'))
+      expect(result.current.data).toEqual('eth-locked-2ld:grace-period')
     })
   })
 })

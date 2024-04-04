@@ -425,4 +425,49 @@ test.describe('profile', () => {
       timeout: 15000,
     })
   })
+
+  test('should not allow owner but not manager to set primary name for unwrapped name', async ({
+    page,
+    login,
+    accounts,
+    makeName,
+    makePageObject,
+  }) => {
+    test.slow()
+
+    const tx = await setPrimaryName(walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(tx)
+
+    const name = await makeName({
+      label: 'legacy',
+      type: 'legacy',
+      owner: 'user',
+      manager: 'user2',
+      records: {
+        coins: [
+          {
+            coin: 'eth',
+            value: accounts.getAddress('user2'),
+          },
+        ],
+      },
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+
+    await profilePage.goto(name)
+    await login.connect()
+
+    await page.pause()
+
+    await expect(page.getByTestId('profile-action-Set as primary name')).toHaveCount(0)
+
+    // Assert state
+    await expect(page.getByTestId('owner-profile-button-name.manager')).toContainText(
+      accounts.getAddress('user2', 5),
+    )
+  })
 })

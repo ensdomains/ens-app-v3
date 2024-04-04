@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { getAddress } from 'viem'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils'
 
@@ -9,22 +10,29 @@ import { useContractAddress } from './chain/useContractAddress'
 import useCurrentBlockTimestamp from './chain/useCurrentBlockTimestamp'
 import { useAddressRecord } from './ensjs/public/useAddressRecord'
 import { useExpiry } from './ensjs/public/useExpiry'
-import { useOwner } from './ensjs/public/useOwner'
+import { useOwner, UseOwnerReturnType } from './ensjs/public/useOwner'
 import { usePrice } from './ensjs/public/usePrice'
 import { useWrapperData } from './ensjs/public/useWrapperData'
+import { useSubgraphRegistrant } from './ensjs/subgraph/useSubgraphRegistrant'
 import { usePccExpired } from './fuses/usePccExpired'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
 const EXPIRY_LIVE_WATCH_TIME = 1_000 * 60 * 5 // 5 minutes
 
-type UseBasicNameOptions = {
+export type UseBasicNameOptions = {
   name?: string | null
   normalised?: boolean
   enabled?: boolean
+  subgraphEnabled?: boolean
 }
 
-export const useBasicName = ({ name, normalised = false, enabled = true }: UseBasicNameOptions) => {
+export const useBasicName = ({
+  name,
+  normalised = false,
+  enabled = true,
+  subgraphEnabled = true,
+}: UseBasicNameOptions) => {
   const validation = useValidate({ input: name!, enabled: enabled && !!name })
 
   const { name: _normalisedName, isValid, isShort, isETH, is2LD } = validation
@@ -76,6 +84,7 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
 
   const publicCallsLoading =
     isOwnerLoading || isWrapperDataLoading || isExpiryLoading || isPriceLoading || isAddrLoading
+
   const publicCallsCachedData =
     isOwnerCachedData ||
     isWrapperDataCachedData ||
@@ -99,6 +108,19 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
 
   const blockTimestamp = useCurrentBlockTimestamp({ enabled: isTempPremiumDesynced })
 
+  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
+  const isWrapped = !!wrapperData
+  const canBeWrapped = useMemo(
+    () =>
+      !!(
+        nameWrapperAddress &&
+        !isWrapped &&
+        normalisedName?.endsWith('.eth') &&
+        !isLabelTooLong(normalisedName)
+      ),
+    [nameWrapperAddress, isWrapped, normalisedName],
+  )
+
   const registrationStatusTimestamp = useMemo(() => {
     if (!isTempPremiumDesynced) return Date.now()
     if (blockTimestamp) return Number(blockTimestamp) * 1000
@@ -118,28 +140,37 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
       })
     : undefined
 
+  const { data: subgraphRegistrant } = useSubgraphRegistrant({
+    name: normalisedName,
+    enabled:
+      enabled &&
+      subgraphEnabled &&
+      registrationStatus === 'gracePeriod' &&
+      is2LD &&
+      isETH &&
+      !isWrapped,
+  })
+
+  const ownerDataWithSubgraphRegistrant = useMemo(() => {
+    if (!ownerData) return ownerData
+    const checkSumSubgraphRegistrant = subgraphRegistrant
+      ? getAddress(subgraphRegistrant)
+      : undefined
+    return {
+      ...ownerData,
+      registrant: ownerData?.registrant ?? checkSumSubgraphRegistrant,
+    } as UseOwnerReturnType
+  }, [ownerData, subgraphRegistrant])
+
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
-  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
-  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
-  const canBeWrapped = useMemo(
-    () =>
-      !!(
-        nameWrapperAddress &&
-        !isWrapped &&
-        normalisedName?.endsWith('.eth') &&
-        !isLabelTooLong(normalisedName)
-      ),
-    [nameWrapperAddress, isWrapped, normalisedName],
-  )
   const pccExpired = usePccExpired({ ownerData, wrapperData })
 
   const isLoading = publicCallsLoading || supportedTLDLoading
-
   return {
     ...validation,
     normalisedName,
-    ownerData,
+    ownerData: ownerDataWithSubgraphRegistrant,
     wrapperData,
     priceData,
     expiryDate,
@@ -147,7 +178,7 @@ export const useBasicName = ({ name, normalised = false, enabled = true }: UseBa
     isLoading,
     truncatedName,
     registrationStatus,
-    isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
+    isWrapped,
     pccExpired,
     canBeWrapped,
     isCachedData: publicCallsCachedData,
