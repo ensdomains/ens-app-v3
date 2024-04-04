@@ -356,6 +356,7 @@ describe('TransactionStageModal', () => {
           },
         })
         expect(screen.getByText('transaction.dialog.sent.progress.message')).toBeVisible()
+        expect(screen.getByText('transaction.dialog.sent.learn')).toBeVisible()
       })
     })
     describe('complete', () => {
