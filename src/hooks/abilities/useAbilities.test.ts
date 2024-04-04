@@ -66,7 +66,7 @@ describe('useAbilities', () => {
         },
       })
       mockUseResolverIsAuthorised.mockReturnValue({ data: { isAuthorised: true, isValid: true } })
-      mockUseHasSubnames.mockReturnValue({ hasSubnames: false, isLoading: false })
+      mockUseHasSubnames.mockReturnValue({ data: false, isLoading: false })
 
       const { result } = renderHook(() => useAbilities({ name }))
 

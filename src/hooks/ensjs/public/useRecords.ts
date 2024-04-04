@@ -20,7 +20,12 @@ import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
-import { stringify } from '@app/utils/query/persist'
+import { matchExactOrNullParamItem } from '@app/utils/query/match/matchExactOrNullParamItem'
+import { matchQueryKeyMeta } from '@app/utils/query/match/matchQueryKeyMeta'
+import {
+  QueryKeyToInternalParams,
+  queryKeyToInternalParams,
+} from '@app/utils/query/match/queryKeyToInternalParams'
 
 type UseRecordsParameters<
   TTexts extends readonly string[] | undefined = undefined,
@@ -90,22 +95,45 @@ export const getRecordsQueryFn =
     return res as GetRecordsReturnType<TTexts, TCoins, TContentHash, TAbi>
   }
 
-const matchingMetaParam = <TKey extends string, TData, TParams extends object>({
-  key,
-  original,
-  params: params_,
-}: {
-  key: TKey
-  original: TData
-  params: TParams
-}) => {
-  const params = params_ as object & Record<TKey, unknown>
-  if (original) {
-    if (!(key in params) || !params[key]) return false
-    if (stringify(original) !== stringify(params[key])) return false
-  } else if (key in params && params[key]) return false
-  return true
-}
+export const matchGetRecordsQueryKeyWithInternalParams =
+  <
+    TTexts extends readonly string[] | undefined,
+    TCoins extends readonly (string | number)[] | undefined,
+    TContentHash extends boolean | undefined,
+    TAbi extends boolean | undefined,
+  >(
+    internalParams: QueryKeyToInternalParams<UseRecordQueryKey<TTexts, TCoins, TContentHash, TAbi>>,
+  ) =>
+  <
+    TQueryFnData = unknown,
+    TError = Error,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >({
+    queryKey: matchKey,
+  }: Query<TQueryFnData, TError, TData, TQueryKey>) => {
+    const {
+      functionName,
+      functionParams: { resolver, gatewayUrls },
+    } = internalParams
+    if (
+      !matchQueryKeyMeta(
+        { internalParams, matchFunctionName: functionName, matchParameters: ['name'] },
+        matchKey,
+      )
+    )
+      return false
+    if (!matchExactOrNullParamItem(matchKey[0], { key: 'resolver', original: resolver }))
+      return false
+    if (
+      !matchExactOrNullParamItem(matchKey[0], {
+        key: 'gatewayUrls',
+        original: gatewayUrls,
+      })
+    )
+      return false
+    return true
+  }
 
 const getRecordsPlaceholderData = <
   TTexts extends readonly string[] | undefined = undefined,
@@ -130,48 +158,21 @@ const getRecordsPlaceholderData = <
   | undefined => {
   if (!keepPreviousData) return undefined
 
-  const [{ name, resolver, gatewayUrls }, chainId, address, scopeKey, functionName] = queryKey
+  const internalParams = queryKeyToInternalParams(queryKey)
 
-  if (!name) return undefined
+  if (!internalParams.functionParams.name) return undefined
 
-  const matchingBasicMeta = <TFunctionName extends string>(
-    matchFunctionName: TFunctionName,
-    matchKey: QueryKey,
-  ): matchKey is CreateQueryKey<object & { name: string }, TFunctionName, 'standard'> => {
-    if (matchKey[4] !== matchFunctionName) return false
-    if (matchKey[1] !== chainId) return false
-    if (matchKey[2] !== address) return false
-    if (matchKey[3] !== scopeKey) return false
-    if (typeof matchKey[0] !== 'object' || !matchKey[0]) return false
-    if (!('name' in matchKey[0]) || matchKey[0].name !== name) return false
-    return true
-  }
-
-  const matchingGetRecordsQuery = <
-    TQueryFnData = unknown,
-    TError = Error,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-  >({
-    queryKey: matchKey,
-  }: Query<TQueryFnData, TError, TData, TQueryKey>) => {
-    if (!matchingBasicMeta(functionName, matchKey)) return false
-    if (!matchingMetaParam({ key: 'resolver', original: resolver, params: matchKey[0] }))
-      return false
-    if (!matchingMetaParam({ key: 'gatewayUrls', original: gatewayUrls, params: matchKey[0] }))
-      return false
-    return true
-  }
+  const matchGetRecordsQueryKey = matchGetRecordsQueryKeyWithInternalParams(internalParams)
 
   return (previousData, previousQuery) => {
     if (previousData && previousQuery) {
-      if (matchingGetRecordsQuery(previousQuery)) return previousData
+      if (matchGetRecordsQueryKey(previousQuery)) return previousData
     }
 
     const recordsQueries = queryClient.getQueriesData<
       GetRecordsReturnType<TTexts, TCoins, TContentHash, TAbi>
     >({
-      predicate: matchingGetRecordsQuery,
+      predicate: matchGetRecordsQueryKey,
     })
     const match = recordsQueries.find((x) => x[1])
     if (match)
@@ -179,7 +180,13 @@ const getRecordsPlaceholderData = <
 
     const addressRecordsQueries = queryClient.getQueriesData<GetAddressRecordReturnType>({
       predicate: ({ queryKey: matchKey }) => {
-        if (!matchingBasicMeta('getAddressRecord', matchKey)) return false
+        if (
+          !matchQueryKeyMeta(
+            { internalParams, matchFunctionName: 'getAddressRecord', matchParameters: ['name'] },
+            matchKey,
+          )
+        )
+          return false
         if ('coin' in matchKey[0]) return false
         return true
       },
