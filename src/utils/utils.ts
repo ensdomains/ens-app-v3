@@ -50,7 +50,7 @@ export const formatDateTime = (date: Date) => {
 export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
 
-export const formatExtensionPeriod = (duration: number, t: TFunction) => {
+export const formatDuration = (duration: number, t: TFunction) => {
   const month = ONE_DAY * 30 // Assuming 30 days per month for simplicity
 
   if (duration >= ONE_YEAR) {
@@ -67,6 +67,14 @@ export const formatExtensionPeriod = (duration: number, t: TFunction) => {
   }
 
   return t('unit.invalid_date', { ns: 'common' })
+}
+
+// add seconds to complete a day
+export const roundDurationWithDay = (valueAsDate: Date, now: number) => {
+  const valueAsSeconds = Math.floor(valueAsDate.getTime() / 1000) - now
+  const dayDiff = valueAsSeconds % ONE_DAY
+
+  return valueAsSeconds + (ONE_DAY - dayDiff)
 }
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>

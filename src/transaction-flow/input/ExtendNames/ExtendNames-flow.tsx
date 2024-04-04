@@ -32,7 +32,7 @@ import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
-import { deriveYearlyFee, formatExtensionPeriod } from '@app/utils/utils'
+import { deriveYearlyFee, formatDuration } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
@@ -291,7 +291,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const items: InvoiceItem[] = [
     {
       label: t('input.extendNames.invoice.extension', {
-        time: formatExtensionPeriod(seconds, t),
+        time: formatDuration(seconds, t),
       }),
       value: totalRentFee,
       bufferPercentage: 102n,

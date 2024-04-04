@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  ONE_DAY,
+  ONE_YEAR,
   calculateValueWithBuffer,
   checkDNSName,
   checkETH2LDFromName,
@@ -8,6 +10,7 @@ import {
   deleteProperties,
   deleteProperty,
   formatDateTime,
+  formatDuration,
   formatExpiry,
   formatFullExpiry,
   getEncodedLabelAmount,
@@ -15,11 +18,13 @@ import {
   getResolverWrapperAwareness,
   isLabelTooLong,
   makeEtherscanLink,
+  roundDurationWithDay,
   secondsToDays,
   shortenAddress,
   validateExpiry,
   yearsToSeconds,
 } from './utils'
+import { secondsToDate } from './date'
 
 describe('shortenAddress', () => {
   it('should NOT shorten address if it is below maxLength', () => {
@@ -80,6 +85,24 @@ describe('formatFullExpiry', () => {
   })
   it('should return empty if undefined', () => {
     expect(formatFullExpiry()).toEqual('')
+  })
+})
+
+describe('formatDuration', () => {
+  it('should return a year locale', () => {
+    expect(formatDuration(ONE_YEAR, (x) =>x)).toEqual('unit.years_one')
+    expect(formatDuration(2 * ONE_YEAR, (x) =>x)).toEqual('unit.years_other')
+  })
+  it('should return a month locale', () => {
+    expect(formatDuration(ONE_DAY * 31, (x) =>x)).toEqual('unit.months_one')
+    expect(formatDuration(ONE_DAY * 31 * 2, (x) =>x)).toEqual('unit.months_other')
+  })
+  it('should return a day locale', () => {
+    expect(formatDuration(ONE_DAY , (x) =>x)).toEqual('unit.days_one')
+    expect(formatDuration(ONE_DAY * 2, (x) =>x)).toEqual('unit.days_other')
+  })
+  it('should return invalid date if less than a day', () => {
+    expect(formatDuration(123, (x) => x)).toEqual('unit.invalid_date')
   })
 })
 
@@ -277,5 +300,14 @@ describe('getEncodedLabelAmount', () => {
       '[fa1ea47215815692a5f1391cff19abbaf694c82fb2151a4c351b6c0eeaaf317b].[fa1ea47215815692a5f1391cff19abbaf694c82fb2151a4c351b6c0eeaaf317b].eth'
     const result = getEncodedLabelAmount(name)
     expect(result).toEqual(2)
+  })
+})
+
+describe('durationWithFullDay', () => {
+  it('should make a duration have a complete day', () => {
+    const now = Date.now() /1000
+    const sourceDate = new Date(5049, 11, 11, 11 ,11)
+    const duration = roundDurationWithDay(sourceDate, now)
+    expect(secondsToDate(now + duration).getDate()).toEqual(sourceDate.getDate() + 1)
   })
 })

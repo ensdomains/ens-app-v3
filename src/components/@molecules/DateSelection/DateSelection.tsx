@@ -7,9 +7,9 @@ import { Typography } from '@ensdomains/thorin'
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import {
-  formatExtensionPeriod,
-  ONE_DAY,
+  formatDuration,
   ONE_YEAR,
+  roundDurationWithDay,
   secondsToYears,
   yearsToSeconds,
 } from '@app/utils/utils'
@@ -53,7 +53,7 @@ export const DateSelection = ({
 
   const { t } = useTranslation()
 
-  const extensionPeriod = formatExtensionPeriod(seconds, t)
+  const extensionPeriod = formatDuration(seconds, t)
 
   useEffect(() => {
     if (minSeconds > seconds) setSeconds(minSeconds)
@@ -77,9 +77,7 @@ export const DateSelection = ({
           onChange={(e) => {
             const { valueAsDate } = e.currentTarget
             if (valueAsDate) {
-              const valueAsSeconds = Math.floor(valueAsDate.getTime() / 1000) - now
-              const dayDiff = valueAsSeconds % ONE_DAY
-              setSeconds(valueAsSeconds + (ONE_DAY - dayDiff))
+              setSeconds(roundDurationWithDay(valueAsDate, now))
             }
           }}
           highlighted

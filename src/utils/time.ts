@@ -1,4 +1,4 @@
-const ONE_HOUR = 60 * 60
+export const ONE_HOUR = 60 * 60
 
 export const ONE_YEAR = ONE_HOUR * 24 * 365
 

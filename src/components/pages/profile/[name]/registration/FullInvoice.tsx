@@ -9,7 +9,7 @@ import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import useUserConfig from '@app/utils/useUserConfig'
-import { formatExtensionPeriod, ONE_DAY } from '@app/utils/utils'
+import { formatDuration, ONE_DAY } from '@app/utils/utils'
 
 const OptionBar = styled.div(
   () => css`
@@ -50,7 +50,7 @@ const FullInvoice = ({
     () => [
       {
         label: t('invoice.timeRegistration', {
-          time: formatExtensionPeriod(seconds, t),
+          time: formatDuration(seconds, t),
         }),
         bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
         value: totalDurationBasedFee,
