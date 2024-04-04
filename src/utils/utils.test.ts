@@ -90,16 +90,16 @@ describe('formatFullExpiry', () => {
 
 describe('formatDuration', () => {
   it('should return a year locale', () => {
-    expect(formatDuration(ONE_YEAR, (x) =>x)).toEqual('unit.years_one')
-    expect(formatDuration(2 * ONE_YEAR, (x) =>x)).toEqual('unit.years_other')
+    expect(formatDuration(ONE_YEAR, (x) =>x)).toEqual('unit.years')
+    expect(formatDuration(2 * ONE_YEAR, (x) =>x)).toEqual('unit.years')
   })
   it('should return a month locale', () => {
-    expect(formatDuration(ONE_DAY * 31, (x) =>x)).toEqual('unit.months_one')
-    expect(formatDuration(ONE_DAY * 31 * 2, (x) =>x)).toEqual('unit.months_other')
+    expect(formatDuration(ONE_DAY * 31, (x) =>x)).toEqual('unit.months')
+    expect(formatDuration(ONE_DAY * 31 * 2, (x) =>x)).toEqual('unit.months')
   })
   it('should return a day locale', () => {
-    expect(formatDuration(ONE_DAY , (x) =>x)).toEqual('unit.days_one')
-    expect(formatDuration(ONE_DAY * 2, (x) =>x)).toEqual('unit.days_other')
+    expect(formatDuration(ONE_DAY , (x) =>x)).toEqual('unit.days')
+    expect(formatDuration(ONE_DAY * 2, (x) =>x)).toEqual('unit.days')
   })
   it('should return invalid date if less than a day', () => {
     expect(formatDuration(123, (x) => x)).toEqual('unit.invalid_date')
@@ -305,9 +305,9 @@ describe('getEncodedLabelAmount', () => {
 
 describe('durationWithFullDay', () => {
   it('should make a duration have a complete day', () => {
-    const now = Date.now() /1000
-    const sourceDate = new Date(5049, 11, 11, 11 ,11)
-    const duration = roundDurationWithDay(sourceDate, now)
-    expect(secondsToDate(now + duration).getDate()).toEqual(sourceDate.getDate() + 1)
+    const now = Math.floor((new Date(2024, 11, 11, 11 ,11)).getTime() / 1000)
+    const date = new Date(2024, 12, 11, 11 ,11)
+    const duration = roundDurationWithDay(date, now)
+    expect(secondsToDate(now + duration).getDate()).toEqual(date.getDate() + 1)
   })
 })

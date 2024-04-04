@@ -2,9 +2,10 @@ import { render, screen } from '@app/test-utils'
 
 import { describe, expect, it } from 'vitest'
 
+import { yearsToSeconds } from '@app/utils/utils'
+
 import { PaymentMethod } from '../../types'
 import { ActionButton, ActionButtonProps } from './Pricing'
-import { yearsToSeconds } from '@app/utils/utils'
 
 describe('ActionButton', () => {
   const baseMockData: ActionButtonProps = {

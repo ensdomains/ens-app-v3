@@ -1,4 +1,4 @@
-import { TFunction } from 'react-i18next'
+import type { TFunction } from 'react-i18next'
 import { toBytes, type Address } from 'viem'
 
 import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
@@ -55,15 +55,15 @@ export const formatDuration = (duration: number, t: TFunction) => {
 
   if (duration >= ONE_YEAR) {
     const years = Math.floor(duration / ONE_YEAR)
-    return t(`unit.years_${years > 1 ? 'other' : 'one'}`, { count: years, ns: 'common' })
+    return t('unit.years', { count: years, ns: 'common' })
   }
   if (duration >= month) {
     const months = Math.floor(duration / month)
-    return t(`unit.months_${months > 1 ? 'other' : 'one'}`, { count: months, ns: 'common' })
+    return t('unit.months', { count: months, ns: 'common' })
   }
   if (duration >= ONE_DAY) {
     const days = Math.floor(duration / ONE_DAY)
-    return t(`unit.days_${days > 1 ? 'other' : 'one'}`, { count: days, ns: 'common' })
+    return t('unit.days', { count: days, ns: 'common' })
   }
 
   return t('unit.invalid_date', { ns: 'common' })

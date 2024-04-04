@@ -21,7 +21,7 @@ describe('DateSelection', () => {
 
     screen.getByTestId('date-selection').click()
 
-    expect(screen.getByText('unit.years_one.1 registration.')).toBeVisible()
+    expect(screen.getByText('unit.years.1 registration.')).toBeVisible()
   })
   it('should set back to one year when switching to a year toggle if previously was set to less', async () => {
     const { result } = renderHook(() => useState(ONE_YEAR))
@@ -45,7 +45,7 @@ describe('DateSelection', () => {
       <DateSelection minSeconds={0} seconds={result.current[0]} setSeconds={result.current[1]} />,
     )
 
-    expect(screen.getByText('unit.months_other.6 registration.')).toBeVisible()
+    expect(screen.getByText('unit.months.6 registration.')).toBeVisible()
 
     await userEvent.click(dateSelection)
 
@@ -57,6 +57,6 @@ describe('DateSelection', () => {
       <DateSelection minSeconds={0} seconds={result.current[0]} setSeconds={result.current[1]} />,
     )
 
-    expect(screen.getByText('unit.years_one.1 registration.')).toBeVisible()
+    expect(screen.getByText('unit.years.1 registration.')).toBeVisible()
   })
 })
