@@ -52,7 +52,8 @@
     "connect": "Connect"
   },
   "unit": {
-    "years": "{{count}} year",
+    "years_one": "{{count}} year",
+    "years_other": "{{count}} years",
     "months_one": "{{count}} month",
     "months_other": "{{count}} months",
     "days_one": "{{count}} day",
