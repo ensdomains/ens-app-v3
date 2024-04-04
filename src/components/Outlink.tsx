@@ -42,19 +42,22 @@ export const Outlink = ({
   children,
   fontVariant = 'smallBold',
   icon = OutlinkSVG,
+  iconPosition = 'before',
   ...props
 }: Omit<ComponentProps<'a'>, 'href' | 'target' | 'rel'> &
   ComponentProps<typeof StyledAnchor> & {
     href: string | UrlObject
     fontVariant?: FontVariant
     icon?: any
+    iconPosition?: 'before' | 'after'
   }) => {
   const InnerContent = (
     <StyledAnchor rel="noreferrer noopener" target="_blank" role="link" {...props}>
+      {iconPosition === 'before' ? <OutlinkIcon as={icon} /> : null}
       <OutlinkTypography fontVariant={fontVariant} color="blue">
         {children}
       </OutlinkTypography>
-      <OutlinkIcon as={icon} />
+      {iconPosition === 'after' ? <OutlinkIcon as={icon} /> : null}
     </StyledAnchor>
   )
 
