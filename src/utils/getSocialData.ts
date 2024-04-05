@@ -1,14 +1,21 @@
 export const getSocialData = (iconKey: string, value: string) => {
   switch (iconKey) {
-    case 'twitter':
-    case 'com.twitter':
+    case 'email':
       return {
-        icon: 'com.twitter',
+        icon: 'email',
         color: '#000000',
-        label: 'X',
-        value: `@${value.replace(/^@/, '')}`,
-        type: 'link',
-        urlFormatter: `https://x.com/${value.replace(/^@/, '')}`,
+        label: 'Email',
+        value,
+        type: 'copy',
+      }
+    case 'discord':
+    case 'com.discord':
+      return {
+        icon: 'com.discord',
+        color: '#5A57DD',
+        label: 'Discord',
+        value,
+        type: 'copy',
       }
     case 'github':
     case 'com.github':
@@ -20,15 +27,30 @@ export const getSocialData = (iconKey: string, value: string) => {
         type: 'link',
         urlFormatter: `https://github.com/${value}`,
       }
-    case 'discord':
-    case 'com.discord':
+    case 'twitter':
+    case 'com.x':
+    case 'com.twitter': {
+      const formattedValue = value.replace(/^@/, '')
       return {
-        icon: 'com.discord',
-        color: '#5A57DD',
-        label: 'Discord',
-        value,
-        type: 'copy',
+        icon: 'com.twitter',
+        color: '#000000',
+        label: 'X',
+        value: `@${formattedValue}`,
+        type: 'link',
+        urlFormatter: `https://x.com/${formattedValue}`,
       }
+    }
+    case 'eth.farcaster': {
+      const formattedValue = value.toLowerCase()
+      return {
+        icon: 'eth.farcaster',
+        color: '#8A63D2',
+        label: 'Farcaster',
+        value: formattedValue,
+        type: 'link',
+        urlFormatter: `https://warpcast.com/${formattedValue}`,
+      }
+    }
     case 'telegram':
     case 'org.telegram':
       return {
@@ -38,14 +60,6 @@ export const getSocialData = (iconKey: string, value: string) => {
         value,
         type: 'link',
         urlFormatter: `https://t.me/${value}`,
-      }
-    case 'email':
-      return {
-        icon: 'email',
-        color: '#000000',
-        label: 'Email',
-        value,
-        type: 'copy',
       }
     default:
       return null

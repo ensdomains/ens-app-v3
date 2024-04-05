@@ -62,14 +62,16 @@
               "com.github": "GitHub",
               "com.discord": "Discord",
               "org.telegram": "Telegram",
-              "email": "Email"
+              "email": "Email",
+              "eth.farcaster": "Farcaster"
             },
             "placeholder": {
               "com.twitter": "e.g. ensdomains",
               "com.github": "e.g. ensdomains",
               "com.discord": "e.g. nickjohnson",
               "org.telegram": "e.g. nicksdjohnson",
-              "email": "e.g. hello@example.com"
+              "email": "e.g. hello@example.com",
+              "eth.farcaster": "e.g. ensdomains"
             }
           },
           "address": {
@@ -77,7 +79,7 @@
             "itemLabel": "{{coin}} address",
             "placeholder": {
               "default": "Add address here",
-              "eth": "0xD9hbQK...",
+              "eth": "0xb8c2C2...",
               "bnb": "bnb1grpf...",
               "btc": "3FZbgi29...",
               "ltc": "ltc1qdp7p...",

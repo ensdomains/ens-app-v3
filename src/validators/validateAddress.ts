@@ -15,11 +15,13 @@ export const validateCryptoAddress = ({
     const coinTypeInstance = getCoderByCoinName(coin)
     coinTypeInstance.decode(_address)
     return true
-  } catch (e: any) {
+  } catch (e: unknown) {
     if (typeof e === 'string') return e
-    if (e.reason) return e.reason
-    if (e.message) return e.message
-    if (e.toString) return e.toString()
+    if (typeof e === 'object' && e) {
+      if ('reason' in e && e.reason) return e.reason as string
+      if ('message' in e && e.message) return e.message as string
+      if ('toString' in e && typeof e.toString === 'function') return e.toString()
+    }
     return 'Invalid address'
   }
 }

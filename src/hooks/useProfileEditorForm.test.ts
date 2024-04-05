@@ -266,6 +266,18 @@ describe('useProfileEditorForm', () => {
         username: 'test@example',
         isValid: 'steps.profile.errors.invalidValue',
       },
+      {
+        platform: 'Farcaster',
+        key: 'eth.farcaster',
+        username: 'valid-fname',
+        isValid: true,
+      },
+      {
+        platform: 'Farcaster',
+        key: 'eth.farcaster',
+        username: 'invalid_fname',
+        isValid: 'steps.profile.errors.invalidValue',
+      },
     ]
 
     testCases.forEach(({ platform, key, username, isValid }) => {

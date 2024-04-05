@@ -216,6 +216,86 @@ describe('validateAccount', () => {
       expected: true,
     },
 
+    // farcaster tests
+    {
+      description: 'farcaster fname: min length',
+      key: 'eth.farcaster',
+      value: 'v',
+      expected: true,
+    },
+    {
+      description: 'farcaster fname: max length',
+      key: 'eth.farcaster',
+      value: 'valid-fname12345',
+      expected: true,
+    },
+    {
+      description: 'farcaster fname: starts with hyphen',
+      key: 'eth.farcaster',
+      value: '-invalid',
+      expected: false,
+    },
+    {
+      description: 'farcaster fname: too long',
+      key: 'eth.farcaster',
+      value: 'a'.repeat(17),
+      expected: false,
+    },
+    {
+      description: 'farcaster fname: not lowercased',
+      key: 'eth.farcaster',
+      value: 'aBc',
+      expected: false,
+    },
+    {
+      description: 'farcaster fname: non alphanumeric',
+      key: 'eth.farcaster',
+      value: 'cõõl',
+      expected: false,
+    },
+    {
+      description: 'farcaster ens: min length',
+      key: 'eth.farcaster',
+      value: 'abc.eth',
+      expected: true,
+    },
+    {
+      description: 'farcaster ens: max length',
+      key: 'eth.farcaster',
+      value: 'valid-ensname123.eth',
+      expected: true,
+    },
+    {
+      description: 'farcaster ens: starts with hyphen',
+      key: 'eth.farcaster',
+      value: '-invalid.eth',
+      expected: false,
+    },
+    {
+      description: 'farcaster ens: too long',
+      key: 'eth.farcaster',
+      value: 'a'.repeat(17) + '.eth',
+      expected: false,
+    },
+    {
+      description: 'farcaster ens: too short',
+      key: 'eth.farcaster',
+      value: 'ab.eth',
+      expected: false,
+    },
+    {
+      description: 'farcaster ens: not lowercased',
+      key: 'eth.farcaster',
+      value: 'aBc.eth',
+      expected: false,
+    },
+    {
+      description: 'farcaster ens: not alphanumeric',
+      key: 'eth.farcaster',
+      value: 'cõõl.eth',
+      expected: false,
+    },
+
     // Test for unknown key
     { description: 'True for unknown key', key: 'unknown', value: 'value', expected: true },
   ]
