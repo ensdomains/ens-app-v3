@@ -24,7 +24,6 @@ export function secondsToDateInput(seconds: number) {
 
 // add seconds to complete a day
 export const roundDurationWithDay = (valueAsDate: Date, now: number) => {
-  console.log({ valueAsDate, now })
   const valueAsSeconds = Math.floor(valueAsDate.getTime() / 1000) - now
   const dayDiff = valueAsSeconds % ONE_DAY
 
