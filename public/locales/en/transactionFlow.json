@@ -54,11 +54,12 @@
           "noOptions": "No account options available",
           "placeholder": {
             "default": "Add username here",
-            "com.twitter": "e.g. nicksdjohnson",
-            "com.github": "e.g. arachnid",
+            "email": "e.g. hello@example.com",
             "com.discord": "e.g. nickjohnson",
-            "org.telegram": "e.g. nicksdjohnson",
-            "email": "e.g. hello@example.com"
+            "com.github": "e.g. arachnid",
+            "com.twitter": "e.g. nicksdjohnson",
+            "eth.farcaster": "e.g. nick.eth",
+            "org.telegram": "e.g. nicksdjohnson"
           }
         },
         "address": {
