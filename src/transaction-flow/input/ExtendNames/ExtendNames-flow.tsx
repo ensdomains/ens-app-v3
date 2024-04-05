@@ -331,6 +331,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
       children: t('action.next', { ns: 'common' }),
     }))
 
+  const { data: expiryData } = useExpiry({ enabled: names.length > 1, name: names[0] })
+
   return (
     <Container data-testid="extend-names-modal">
       <Dialog.Heading title={title} alert={alert} />
@@ -352,6 +354,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                       name={names[0]}
                       minSeconds={minSeconds}
                       mode="extend"
+                      expiry={Number(expiryData?.expiry.value)}
                     />
                   ) : (
                     <PlusMinusControl

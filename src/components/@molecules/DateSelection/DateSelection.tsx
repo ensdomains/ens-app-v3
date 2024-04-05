@@ -41,12 +41,14 @@ export const DateSelection = ({
   name,
   minSeconds,
   mode = 'register',
+  expiry,
 }: {
   seconds: number
   setSeconds: (seconds: number) => void
   name?: string
   minSeconds: number
   mode?: 'register' | 'extend'
+  expiry?: number
 }) => {
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
   const toggleYearPickView = () => setYearPickView(yearPickView === 'date' ? 'years' : 'date')
@@ -69,20 +71,22 @@ export const DateSelection = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateInYears, yearPickView])
 
+  const currentTime = expiry ?? now
+
   return (
     <Container>
       {yearPickView === 'date' ? (
         <Calendar
-          value={now + seconds}
+          value={currentTime + seconds}
           onChange={(e) => {
             const { valueAsDate } = e.currentTarget
             if (valueAsDate) {
-              setSeconds(roundDurationWithDay(valueAsDate, now))
+              setSeconds(roundDurationWithDay(valueAsDate, currentTime))
             }
           }}
           highlighted
           name={name}
-          min={now + minSeconds}
+          min={currentTime + minSeconds}
         />
       ) : (
         <PlusMinusControl
