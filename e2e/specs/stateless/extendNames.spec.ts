@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
 
+import { dateToDateInput, roundDurationWithDay, secondsToDateInput } from '@app/utils/date'
 import { daysToSeconds } from '@app/utils/time'
 
 import { test } from '../../../playwright'
@@ -348,21 +349,19 @@ test('should be able to extend a name by a month', async ({
   })
 
   await test.step('should set and render a date properly', async () => {
-    const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
-    const calendar = await page.getByTestId('calendar')
+    const expiryTime = (await profilePage.getExpiryTimestamp()) / 1000
+    const calendar = page.getByTestId('calendar')
     const monthLater = await page.evaluate(
-      (_timestamp) => {
-        const _date = new Date(_timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
+      (ts) => {
+        return new Date(ts)
       },
-      (browserTime + daysToSeconds(31)) * 1000,
+      (expiryTime + daysToSeconds(30)) * 1000,
     )
 
-    await calendar.fill(monthLater)
-    await expect(page.getByTestId('calendar-date')).toHaveValue(monthLater)
+    await calendar.fill(dateToDateInput(monthLater))
+    await expect(page.getByTestId('calendar-date')).toHaveValue(
+      secondsToDateInput(expiryTime + roundDurationWithDay(monthLater, expiryTime)),
+    )
   })
 
   await test.step('should show the correct price data', async () => {

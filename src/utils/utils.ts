@@ -69,14 +69,6 @@ export const formatDuration = (duration: number, t: TFunction) => {
   return t('unit.invalid_date', { ns: 'common' })
 }
 
-// add seconds to complete a day
-export const roundDurationWithDay = (valueAsDate: Date, now: number) => {
-  const valueAsSeconds = Math.floor(valueAsDate.getTime() / 1000) - now
-  const dayDiff = valueAsSeconds % ONE_DAY
-
-  return valueAsSeconds + (ONE_DAY - dayDiff)
-}
-
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
   `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`
 

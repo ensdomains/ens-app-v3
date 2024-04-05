@@ -18,13 +18,11 @@ import {
   getResolverWrapperAwareness,
   isLabelTooLong,
   makeEtherscanLink,
-  roundDurationWithDay,
   secondsToDays,
   shortenAddress,
   validateExpiry,
   yearsToSeconds,
 } from './utils'
-import { secondsToDate } from './date'
 
 describe('shortenAddress', () => {
   it('should NOT shorten address if it is below maxLength', () => {
@@ -300,14 +298,5 @@ describe('getEncodedLabelAmount', () => {
       '[fa1ea47215815692a5f1391cff19abbaf694c82fb2151a4c351b6c0eeaaf317b].[fa1ea47215815692a5f1391cff19abbaf694c82fb2151a4c351b6c0eeaaf317b].eth'
     const result = getEncodedLabelAmount(name)
     expect(result).toEqual(2)
-  })
-})
-
-describe('durationWithFullDay', () => {
-  it('should make a duration have a complete day', () => {
-    const now = Math.floor((new Date(2024, 11, 11, 11 ,11)).getTime() / 1000)
-    const date = new Date(2024, 12, 11, 11 ,11)
-    const duration = roundDurationWithDay(date, now)
-    expect(secondsToDate(now + duration).getDate()).toEqual(date.getDate() + 1)
   })
 })
