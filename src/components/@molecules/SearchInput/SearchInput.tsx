@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -32,6 +32,8 @@ import { yearsToSeconds } from '@app/utils/utils'
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
 import { AnyItem, HistoryItem, SearchItem } from './types'
+
+const BOX_SEARCH_ENDPOINT = 'https://dotbox-worker.ens-cf.workers.dev/search'
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
@@ -184,6 +186,39 @@ const MobileSearchInput = ({
   )
 }
 
+function useDebounce(value: any, delay: any) {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delay])
+
+  return debouncedValue
+}
+
+const useGetDotBox = (normalisedOutput: any) => {
+  const searchParam = useDebounce(normalisedOutput, 500)
+  console.log('serachParam: ', searchParam)
+
+  const { data, status } = useQuery({
+    queryKey: [searchParam],
+    queryFn: async () => {
+      const response = await fetch(`${BOX_SEARCH_ENDPOINT}?domain=${searchParam}`)
+      return response.json()
+    },
+    staleTime: 10 * 1000,
+    enabled: !!searchParam,
+  })
+
+  return { data, status }
+}
+
 export const SearchInput = ({
   size = 'extraLarge',
   setSearchState,
@@ -233,7 +268,9 @@ export const SearchInput = ({
     [inputIsAddress, inputVal, name],
   )
 
-  const searchItem: SearchItem = useMemo(() => {
+  const boxSearchResult = useGetDotBox(normalisedOutput)
+
+  const ethSearchItem: SearchItem = useMemo(() => {
     if (isEmpty) {
       return {
         type: 'text',
@@ -275,7 +312,7 @@ export const SearchInput = ({
           (item) =>
             item.value !== normalisedOutput &&
             item.value.includes(normalisedOutput) &&
-            (searchItem.type === 'nameWithDotEth'
+            (ethSearchItem.type === 'nameWithDotEth'
               ? item.value !== `${normalisedOutput}.eth`
               : true),
         )
@@ -285,15 +322,21 @@ export const SearchInput = ({
         .map((item) => ({ ...item, isHistory: true }))
     }
     return []
-  }, [history, normalisedOutput, searchItem.type])
+  }, [history, normalisedOutput, ethSearchItem.type])
 
   const searchItems: AnyItem[] = useMemo(() => {
-    const _searchItem = { ...searchItem, isHistory: false }
+    const _searchItem = { ...ethSearchItem, isHistory: false }
+    const boxSearchItemData = boxSearchResult.data
+    console.log('boxSearchItemData: ', boxSearchItemData)
+    const boxSearchItem = {
+      type: 'name',
+      value: boxSearchItemData?.data.domain,
+    }
     const _extraItems = extraItems
-    if (searchItem.type === 'error') {
+    if (ethSearchItem.type === 'error') {
       return [_searchItem]
     }
-    if (searchItem.type === 'text') {
+    if (ethSearchItem.type === 'text') {
       if (extraItems.length > 0) {
         return [..._extraItems.slice(0, 5)]
       }
@@ -303,11 +346,15 @@ export const SearchInput = ({
       _searchItem.type === 'nameWithDotEth'
         ? [_searchItem, { type: 'name', isHistory: false }]
         : [_searchItem]
-    return [..._searchItems, ...extraItems].slice(0, 5)
-  }, [searchItem, extraItems])
+    return [boxSearchItem, ..._searchItems, ...extraItems].slice(0, 5)
+  }, [ethSearchItem, extraItems, boxSearchResult])
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
+
+  console.log('searchItems: ', searchItems)
+  console.log('ethSearchItem: ', ethSearchItem)
+  console.log('extraItems: ', extraItems)
 
   const handleSearch = useCallback(() => {
     let selectedItem = searchItems[selected] as SearchItem
@@ -398,12 +445,14 @@ export const SearchInput = ({
     if ('isHistory' in selectedItem) {
       delete (selectedItem as SearchItem & { isHistory?: boolean }).isHistory
     }
+
     setHistory((prev) => [
       ...prev
         .filter((item) => !(item.value === selectedItem.value && item.type === selectedItem.type))
         .slice(0, 25),
       { ...selectedItem, lastAccessed: Date.now() } as HistoryItem,
     ])
+
     setInputVal('')
     searchInputRef.current?.blur()
     router.pushWithHistory(path)
@@ -496,7 +545,8 @@ export const SearchInput = ({
           index={index}
           selected={selected}
           type={item.type}
-          usingPlaceholder={item.isHistory ? false : usingPlaceholder}
+          // usingPlaceholder={item.isHistory ? false : usingPlaceholder}
+          usingPlaceholder
           key={`${item.type}-${item.value}`}
           value={item.value || normalisedOutput}
         />
