@@ -14,6 +14,7 @@ import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
+import { usePrefetchProfile } from '@app/hooks/useProfile'
 import { useZorb } from '@app/hooks/useZorb'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
@@ -249,6 +250,8 @@ const NameResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boo
     const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
     const zorb = useZorb(name, 'name')
     const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
+
+    usePrefetchProfile({ name })
 
     return (
       <SearchItem
