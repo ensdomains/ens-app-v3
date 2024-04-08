@@ -29,7 +29,7 @@
     "analyse": "pnpm analyze",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage --typecheck",
     "e2e:install": "npx playwright install chromium",
     "e2e": "npx playwright test --project=stateless",
     "e2e:stateful": "npx playwright test --project=stateful",

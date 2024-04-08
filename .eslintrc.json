@@ -11,7 +11,7 @@
   "parser": "@typescript-eslint/parser",
   "overrides": [
     {
-      "files": ["src/**/*.test.[jt]sx?"],
+      "files": ["src/**/*.test.[jt]sx?", "src/**/*.test-d.[jt]sx?"],
       "plugins": ["vitest"],
       "extends": ["plugin:vitest/recommended"]
     },
@@ -30,6 +30,7 @@
     "deploy/**/*",
     "src/**/*.test.tsx",
     "src/**/*.test.ts",
+    "src/**/*.test-d.ts",
     "playwright/**/*.ts"
   ],
   "rules": {
