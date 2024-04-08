@@ -108,8 +108,7 @@ export const ControlledNextButton = ({
           ...defaultProps,
           count,
           disabled: fusesBurnedDuringFlow.length === 0,
-          onClick:
-            childFuses.CANNOT_UNWRAP && childFuses.CANNOT_BURN_FUSES ? onIncrement : onSubmit,
+          onClick: onIncrement,
           children:
             count === 0
               ? t('action.skip', { ns: 'common' })
@@ -149,7 +148,7 @@ export const ControlledNextButton = ({
       case 'revokeChangeFusesWarning':
         return {
           ...defaultProps,
-          onClick: onSubmit,
+          onClick: onIncrement,
         }
       default:
         return defaultProps

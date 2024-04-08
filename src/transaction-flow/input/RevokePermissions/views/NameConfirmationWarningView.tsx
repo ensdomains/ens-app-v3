@@ -33,8 +33,8 @@ export const NameConfirmationWarningView = ({
       <Input
         placeholder="Enter your ENS name"
         label=""
-        onKeyPress={(e) => {
-          e.key === 'Enter' && e.preventDefault()
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') e.preventDefault()
         }}
         onChange={(e) => {
           setDisabled(e.currentTarget.value !== name)

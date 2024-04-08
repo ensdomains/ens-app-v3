@@ -225,6 +225,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
           ...(!isMinExpiryAtLeastEqualToMaxExpiry ? ['setExpiry'] : []),
           'parentRevokePermissions',
           'revokeChangeFusesWarning',
+          'lastWarning',
         ]
       }
       case 'grant-extend-expiry': {
@@ -243,7 +244,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
         ]
       }
       case 'revoke-change-fuses': {
-        return ['revokeWarning', 'revokeChangeFuses', 'revokeChangeFusesWarning']
+        return ['revokeWarning', 'revokeChangeFuses', 'revokeChangeFusesWarning', 'lastWarning']
       }
       default: {
         return []
