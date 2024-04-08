@@ -125,7 +125,7 @@ export const RecordsTab = ({
   canEdit?: boolean
   canEditRecords?: boolean
   isCached?: boolean
-  resolverAddress?: string
+  resolverAddress?: Profile['resolverAddress']
 }) => {
   const { t } = useTranslation('profile')
   const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()

@@ -179,7 +179,7 @@ describe('getRegistrationStatus', () => {
       validation: { is2LD: true },
       ownerData,
       wrapperData,
-      addrData: "0xF142B308cF687d4358410a4cB885513b30A42025",
+      addrData: { id: 60, name: 'eth', value: '0xF142B308cF687d4358410a4cB885513b30A42025' },
       supportedTLD: true,
     })
     expect(result).toBe('imported')
