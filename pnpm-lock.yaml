@@ -187,8 +187,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
       '@ensdomains/ens-test-env':
-        specifier: ^0.4.0-beta.0
-        version: 0.4.0-beta.0
+        specifier: ^0.5.0-beta.0
+        version: 0.5.0-beta.0
       '@ethersproject/abi':
         specifier: ^5.4.0
         version: 5.7.0
@@ -2450,16 +2450,16 @@ packages:
       dns-packet: 5.6.1
     dev: false
 
-  /@ensdomains/ens-test-env@0.4.0-beta.0:
-    resolution: {integrity: sha512-B/Kv0EhPQnwHbgHV1yH178es3EIejYf5LbRtTN1N69jbyoxjT+0cUE74YfaH9EZFQ6sLmpJP/Yk7vE3wTpBglQ==}
+  /@ensdomains/ens-test-env@0.5.0-beta.0:
+    resolution: {integrity: sha512-hUVdIXib+JioKJwG95PWzClWkXgSUjelAQVCJ0YIcI66TusQoFCDQYOWU3MVB7XMKEb1kPz3LoPhfFDUceYWIw==}
     hasBin: true
     dependencies:
       '@ethersproject/wallet': 5.7.0
       ansi-colors: 4.1.3
       cli-progress: 3.11.2
-      commander: 9.4.1
+      commander: 9.5.0
       concurrently: 7.4.0
-      docker-compose: 0.23.17
+      docker-compose: 0.24.7
       dotenv: 16.0.3
       fs-extra: 10.1.0
       ganache: 7.4.3
@@ -8742,15 +8742,9 @@ packages:
     resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
     engines: {node: '>= 10'}
 
-  /commander@9.4.1:
-    resolution: {integrity: sha512-5EEkTNyHNGFPD2H+c/dXXfQZYa/scCKasxWcXJaWnNJ99pnQN9Vnmqow+p+PlFPE63Q6mThaZws1T+HxfpgtPw==}
-    engines: {node: ^12.20.0 || >=14}
-    dev: true
-
   /commander@9.5.0:
     resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
     engines: {node: ^12.20.0 || >=14}
-    dev: false
 
   /commondir@1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
@@ -9526,11 +9520,11 @@ packages:
       '@leichtgewicht/ip-codec': 2.0.4
     dev: false
 
-  /docker-compose@0.23.17:
-    resolution: {integrity: sha512-YJV18YoYIcxOdJKeFcCFihE6F4M2NExWM/d4S1ITcS9samHKnNUihz9kjggr0dNtsrbpFNc7/Yzd19DWs+m1xg==}
+  /docker-compose@0.24.7:
+    resolution: {integrity: sha512-CdHl9n0S4+bl4i6MaxDQHNjqB1FdvuDirrDTzPKmdiMpheQqCjgsny0GZ2VhvN7qHTY0833lRlKWZgrkn1i6cg==}
     engines: {node: '>= 6.0.0'}
     dependencies:
-      yaml: 1.10.2
+      yaml: 2.4.0
     dev: true
 
   /doctrine@2.1.0:
@@ -11167,7 +11161,7 @@ packages:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
     engines: {node: '>=12'}
     dependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
       jsonfile: 6.1.0
       universalify: 2.0.0
     dev: true
@@ -13538,7 +13532,7 @@ packages:
     dependencies:
       buffer: 5.7.1
       cuint: 0.2.2
-      nan: 2.16.0
+      nan: 2.18.0
       xxhashjs: 0.2.2
     dev: true
 
@@ -14350,10 +14344,6 @@ packages:
 
   /mute-stream@0.0.8:
     resolution: {integrity: sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==}
-    dev: true
-
-  /nan@2.16.0:
-    resolution: {integrity: sha512-UdAqHyFngu7TfQKsCBgAA6pWDkT8MAO7d0jyOecVhN5354xbLqdn8mV9Tat9gepAupm0bt2DbeaSC8vS52MuFA==}
     dev: true
 
   /nan@2.18.0:
@@ -16126,17 +16116,6 @@ packages:
       util-deprecate: 1.0.2
     dev: false
 
-  /readable-stream@2.3.7:
-    resolution: {integrity: sha512-Ebho8K4jIbHAxnuxi7o42OrZgF/ZTNcsZj6nRKyUmkhLFq8CHItp/fy6hQZuZmP/n3yZ9VBUbp4zz/mX8hmYPw==}
-    dependencies:
-      core-util-is: 1.0.3
-      inherits: 2.0.4
-      isarray: 1.0.0
-      process-nextick-args: 2.0.1
-      safe-buffer: 5.1.2
-      string_decoder: 1.1.1
-      util-deprecate: 1.0.2
-
   /readable-stream@2.3.8:
     resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
     dependencies:
@@ -16147,7 +16126,6 @@ packages:
       safe-buffer: 5.1.2
       string_decoder: 1.1.1
       util-deprecate: 1.0.2
-    dev: false
 
   /readable-stream@3.6.0:
     resolution: {integrity: sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==}
@@ -17814,7 +17792,7 @@ packages:
       end-of-stream: 1.4.4
       fs-constants: 1.0.0
       inherits: 2.0.4
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
     dev: true
 
   /tar@4.4.19:
@@ -17924,7 +17902,7 @@ packages:
   /through2@2.0.5:
     resolution: {integrity: sha512-/mrRod8xqpA+IHSLyGCQ2s8SPHiCDEeQJSep1jqLYeEUClOFG2Qsh+4FU6G9VeqpZnGW/Su8LQGc4YKni5rYSQ==}
     dependencies:
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
       xtend: 4.0.2
 
   /through@2.3.8:
@@ -20091,7 +20069,6 @@ packages:
     resolution: {integrity: sha512-j9iR8g+/t0lArF4V6NE/QCfT+CO7iLqrXAHZbJdo+LfjqP1vR8Fg5bSiaq6Q2lOD1AUEVrEVIgABvBFYojJVYQ==}
     engines: {node: '>= 14'}
     hasBin: true
-    dev: false
 
   /yargs-parser@18.1.3:
     resolution: {integrity: sha512-o50j0JeToy/4K6OZcaQmW6lyXXKhq7csREXcDwk2omFPJEwUNOVtJKvmDr9EI1fAJZUyZcRF7kxGBWmRXudrCQ==}

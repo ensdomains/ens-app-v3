@@ -44,7 +44,7 @@ describe('NameListView', () => {
       nameCount: 1,
     })
 
-    const { getByText } = render(<NameListView address="0x123" isSelf={false} />)
+    const { getByText } = render(<NameListView address="0x123" selfAddress={undefined} />)
     expect(getByText('name.eth')).toBeInTheDocument()
   })
   it('should render no results if there are no results', () => {
@@ -52,7 +52,7 @@ describe('NameListView', () => {
       infiniteData: [],
       nameCount: 0,
     })
-    const { queryByText } = render(<NameListView address="0x123" isSelf={false} />)
+    const { queryByText } = render(<NameListView address="0x123" selfAddress={undefined} />)
     expect(queryByText('empty')).toBeInTheDocument()
   })
 })

@@ -26,6 +26,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 tsconfig.tsbuildinfo
+tsconfig.vitest-temp.json
 
 # local env files
 .env.local
