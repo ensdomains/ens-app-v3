@@ -269,7 +269,6 @@ export const OwnerProfileButton = ({
       ? {
           icon: <UpRightArrowSVG />,
           label: 'View profile',
-          as: 'a',
           href: link,
         }
       : undefined,
@@ -281,11 +280,10 @@ export const OwnerProfileButton = ({
         }
       : undefined,
     ...(dataType === 'address'
-      ? [
+      ? ([
           {
             icon: <UpRightArrowSVG />,
             label: 'View address',
-            as: 'a',
             href: getDestination(`/${addressOrNameOrDate}`) as string,
           },
           {
@@ -296,10 +294,9 @@ export const OwnerProfileButton = ({
           {
             icon: <UpRightArrowSVG />,
             label: 'View on Etherscan',
-            as: 'a',
             href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
           },
-        ]
+        ] as DropdownItem[])
       : []),
   ].filter((item) => item !== undefined) as DropdownItem[]
 
