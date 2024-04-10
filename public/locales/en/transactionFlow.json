@@ -242,7 +242,7 @@
         },
         "revokePCC": {
           "title": "Give up ownership",
-          "subtitle": "This will give ownership of this name to the manager ({{account}}). Unless you are also the manager, you will no longer be able to make changes to this name."
+          "subtitle": "This will give ownership of this name to the manager (<nameComponent>{{account}}</nameComponent>). Unless you are also the manager, you will no longer be able to make changes to this name."
         },
         "grantExtendExpiry": {
           "title": "Change permissions",
@@ -252,8 +252,8 @@
         },
         "setExpiry": {
           "title": "Set name expiry",
-          "subtitle": "Set a date when permissions will expire. This date cannot be longer than the expiry of its parent ({{parent}}).",
-          "subtitleWithCEE": "Set a date when this name will expire. This will replace it’s existing permission expiry ({{expiry}}), and cannot be later than the expiry of its parent ({{parent}}).",
+          "subtitle": "Set a date when permissions will expire. This date cannot be longer than the expiry of its parent (<nameComponent>{{parent}}</nameComponent>).",
+          "subtitleWithCEE": "Set a date when this name will expire. This will replace it’s existing permission expiry ({{expiry}}), and cannot be later than the expiry of its parent (<nameComponent>{{parent}}</nameComponent>).",
           "options": {
             "max": "Max",
             "custom": "Choose an earlier date"
@@ -319,7 +319,7 @@
     },
     "deleteSubnameNotParentWarning": {
       "title": "You cannot recreate this subname",
-      "message": "Only the {{ownershipTerm}} of the parent name (<b>{{parentOwner}}</b>) can recreate this subname. You will not be able to recreate this name yourself once it has been deleted."
+      "message": "Only the {{ownershipTerm}} of the parent name (<b><nameComponent>{{parentOwner}}</nameComponent></b>) can recreate this subname. You will not be able to recreate this name yourself once it has been deleted."
     },
     "selectPrimaryName": {
       "title": "Select a primary name",
@@ -387,7 +387,7 @@
     },
     "syncManager": {
       "title": "Sync manager",
-      "description": "Syncing the manager will make you the new manager of this name. The current manager <strong>({{manager}})</strong> will no longer be able to make changes.",
+      "description": "Syncing the manager will make you the new manager of this name. The current manager <strong>(<nameComponent>{{manager}}</nameComponent>)</strong> will no longer be able to make changes.",
       "warning": "Syncing the manager will also unwrap this name. This will burn the NFT and reset any permissions."
     }
   },
@@ -409,7 +409,7 @@
       "warning": "Note that if you cancel this at any point your changes will not be saved."
     },
     "syncManager": {
-      "description": "Syncing the manager will make you the new manager of this name. The current manager <b>({{manager}})</b> will no longer be able to make changes.",
+      "description": "Syncing the manager will make you the new manager of this name. The current manager <b>(<nameComponent>{{manager}}</nameComponent>)</b> will no longer be able to make changes.",
       "wrappedWarning": "Syncing the manager will also unwrap this name. This will burn the NFT and reset any permissions."
     },
     "selectPrimaryName": {

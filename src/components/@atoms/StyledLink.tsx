@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react'
+import { forwardRef, PropsWithChildren } from 'react'
 import styled, { css } from 'styled-components'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
@@ -25,14 +25,21 @@ const StyledAnchor = styled.a<{
     `}
   `,
 )
-export const StyledLink = ({
-  href,
-  color = 'accent',
-  children,
-}: PropsWithChildren<{ href: string; color?: 'accent' | 'grey' }>) => {
-  return (
-    <BaseLink href={href} passHref>
-      <StyledAnchor $color={color}>{children}</StyledAnchor>
-    </BaseLink>
-  )
-}
+export const StyledLink = forwardRef(
+  (
+    {
+      href,
+      color = 'accent',
+      children,
+    }: PropsWithChildren<{ href: string; color?: 'accent' | 'grey' }>,
+    ref,
+  ) => {
+    return (
+      <BaseLink href={href} passHref>
+        <StyledAnchor $color={color} ref={ref}>
+          {children}
+        </StyledAnchor>
+      </BaseLink>
+    )
+  },
+)

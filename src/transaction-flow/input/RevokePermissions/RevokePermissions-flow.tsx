@@ -217,7 +217,8 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
         return [
           'revokeWarning',
           'revokePCC',
-          ...(!isMinExpiryAtLeastEqualToMaxExpiry ? ['setExpiry'] : []),
+          // Double check this
+          ...(isMinExpiryAtLeastEqualToMaxExpiry ? ['setExpiry'] : []),
           'parentRevokePermissions',
           'revokeChangeFusesWarning',
         ]

@@ -1,10 +1,12 @@
 import { TOptions } from 'i18next'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { OutlinkSVG, QuestionCircleSVG, Tooltip, Typography } from '@ensdomains/thorin'
 
+import { TransComponentName } from '@app/components/@atoms/Name2/Name'
 import { Role } from '@app/hooks/ownership/useRoles/useRoles'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { parentName } from '@app/utils/name'
 import { getSupportLink } from '@app/utils/supportLinks'
 
@@ -17,6 +19,8 @@ const TooltipContent = styled.div(
     text-align: center;
     color: ${theme.colors.indigo};
     pointer-events: all;
+    position: relative;
+    overflow: hidden;
   `,
 )
 
@@ -59,8 +63,10 @@ export const RoleTag = ({
   isEmancipated: boolean
 }) => {
   const { t } = useTranslation('profile')
+  const breakpoints = useBreakpoint()
   const _role = isEmancipated && role === 'owner' ? 'owner-emancipated' : role
   const tOptions: TOptions = role === 'parent-owner' ? { parent: parentName(name) } : {}
+  const maxWidth = breakpoints.sm ? 200 : 120
   const link = getSupportLink(_role)
   return (
     <Tooltip
@@ -68,7 +74,15 @@ export const RoleTag = ({
         <TooltipContent>
           <QuestionCircleSVG />
           <Typography color="text" fontVariant="small">
-            {t(`tabs.ownership.tooltips.${_role}`, tOptions)}
+            <Trans
+              ns="profile"
+              i18nKey={`tabs.ownership.tooltips.${_role}`}
+              values={{ parent: parentName(name) }}
+              components={{
+                nameComponent: <TransComponentName type="inline" maxWidth={maxWidth} nextTick />,
+              }}
+            />
+            {/* {t(`tabs.ownership.tooltips.${_role}`, tOptions)} */}
           </Typography>
           {link && (
             <Link href={link} target="_blank" rel="noreferrer noopener">

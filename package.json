@@ -52,7 +52,7 @@
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.2.0-beta.0",
     "@ensdomains/ensjs": "3.5.0-beta.2",
-    "@ensdomains/thorin": "0.6.44",
+    "@ensdomains/thorin": "workspace:*",
     "@metamask/mobile-provider": "^2.1.0",
     "@metamask/post-message-stream": "^6.1.2",
     "@metamask/providers": "^14.0.2",
@@ -202,7 +202,9 @@
       "bn.js": "npm:bn.js@^5.2.0",
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
       "@walletconnect/ethereum-provider": "2.11.1",
-      "@walletconnect/modal": "2.6.2"
+      "@walletconnect/modal": "2.6.2",
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0"
     },
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",

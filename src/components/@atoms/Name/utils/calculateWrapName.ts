@@ -28,32 +28,50 @@ export const calculateWrapName = ({
   node,
   ellipsisWidth,
   maxWidth,
-  initialWidth: minWidth,
+  initialWidth = maxWidth,
+  minInitialWidth = 0,
   lines = Infinity,
+  debug = false,
 }: {
   name: string
   node: HTMLSpanElement | null
   ellipsisWidth: number
   maxWidth?: number
   initialWidth?: number
+  minInitialWidth?: number
   lines?: number
+  debug?: boolean
 }): string => {
-  if (!node) return name
-
-  const _maxWidth = maxWidth || node.parentElement?.offsetWidth || Infinity
-  const initialWidth =
-    minWidth || _maxWidth - (node.parentElement?.offsetLeft || 0) - node.offsetLeft
+  if (debug)
+    console.log(
+      'calculateWrapName',
+      name,
+      node,
+      ellipsisWidth,
+      maxWidth,
+      initialWidth,
+      minInitialWidth,
+      lines,
+    )
+  if (!node) {
+    console.error('node is null')
+    return name
+  }
 
   let currentGroup: number[] = []
   let currentGroupTotal = 0
   let result: number[][] = []
+
+  const initialWidth_ = initialWidth < minInitialWidth ? maxWidth : initialWidth
 
   const children = node?.children || []
   for (let index = 0; index < children.length; index += 1) {
     const element = children[index] as HTMLSpanElement
     const charWidth = element.offsetWidth
     currentGroupTotal += charWidth
-    const breakpoint = result.length === 0 ? initialWidth : _maxWidth
+    const breakpoint = result.length === 0 ? initialWidth_ : maxWidth
+    if (debug)
+      console.log('charWidth', charWidth, 'currentGroupTotal', currentGroupTotal, breakpoint)
     if (currentGroupTotal + ellipsisWidth > breakpoint) {
       result.push(currentGroup)
       currentGroup = [charWidth]
@@ -64,15 +82,15 @@ export const calculateWrapName = ({
   }
   if (currentGroup.length) result.push(currentGroup)
 
-  console.log(result.length, lines)
+  // console.log(result.length, lines)
   if (result.length > lines) {
     const left = result.slice(0, lines - 1)
     const right = result
       .slice(lines - 1)
       .reverse()
       .flat()
-    console.log('left', left, right)
-    const filteredRight = findNumbersAddingUpToSum(right, _maxWidth)
+    // console.log('left', left, right)
+    const filteredRight = findNumbersAddingUpToSum(right, maxWidth)
     result = [...left, filteredRight]
   }
 

@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi'
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
+import { TransComponentName } from '@app/components/@atoms/Name2/Name'
 import { Outlink } from '@app/components/Outlink'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useChainName } from '@app/hooks/chain/useChainName'
@@ -79,14 +80,24 @@ export const NameAvailableBanner = ({
   normalisedName: string
   expiryDate?: Date
 }) => {
-  const { t } = useTranslation('profile')
   return (
     <BaseLink href={`/register/${normalisedName}`} passHref legacyBehavior>
       <Banner
         alert="info"
         as="a"
         icon={<CheckCircleSVG />}
-        title={t('banner.available.title', { name: normalisedName })}
+        title={
+          <Trans
+            ns="profile"
+            i18nKey="banner.available.title"
+            values={{
+              name: normalisedName,
+            }}
+            components={{
+              nameComponent: <TransComponentName wrapLines={2} type="wrap" />,
+            }}
+          />
+        }
       >
         <Trans
           ns="profile"
@@ -94,7 +105,9 @@ export const NameAvailableBanner = ({
           values={{
             date: formatFullExpiry(expiryDate),
           }}
-          components={{ strong: <strong /> }}
+          components={{
+            strong: <strong />,
+          }}
         />
       </Banner>
     </BaseLink>

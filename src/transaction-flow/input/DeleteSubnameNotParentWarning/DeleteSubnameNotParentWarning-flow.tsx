@@ -4,6 +4,7 @@ import { Address } from 'viem'
 
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
+import { TransComponentName } from '@app/components/@atoms/Name2/Name'
 import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useOwners } from '@app/hooks/useOwners'
@@ -17,6 +18,8 @@ import { CenterAlignedTypography } from '../RevokePermissions/components/CenterA
 const MessageContainer = styled(CenterAlignedTypography)(({ theme }) => [
   css`
     width: 100%;
+    position: relative;
+    overflow: hidden;
   `,
   mq.sm.min(css`
     width: calc(80vw - 2 * ${theme.space['6']});
@@ -79,7 +82,10 @@ const DeleteSubnameNotParentWarning = ({ data, dispatch, onDismiss }: Props) => 
         <Trans
           i18nKey="input.deleteSubnameNotParentWarning.message"
           ns="transactionFlow"
-          components={{ b: <strong /> }}
+          components={{
+            b: <strong />,
+            nameComponent: <TransComponentName type="wrap" wrapLines={2} minInitialWidth={100} />,
+          }}
           values={{
             ownershipTerm: t(ownerTarget.label, { ns: 'common' }).toLocaleLowerCase(),
             parentOwner: parentPrimaryOrAddress.nameOrAddr,

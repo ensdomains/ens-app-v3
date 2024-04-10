@@ -1,8 +1,10 @@
 import { ReactNode, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 
+import { TransComponentName } from '@app/components/@atoms/Name2/Name'
 import { formatFullExpiry } from '@app/utils/utils'
 
+import i18n from '../i18n'
 import { useDnsOwner } from './ensjs/dns/useDnsOwner'
 import { useBasicName } from './useBasicName'
 import { useProfile } from './useProfile'
@@ -88,7 +90,16 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
 
   const errorTitle = useMemo(() => {
     if (registrationStatus === 'gracePeriod') {
-      return t('errors.hasExpired', { name })
+      return (
+        <Trans
+          ns="profile"
+          i18nKey="errors.hasExpired"
+          values={{ name }}
+          components={{
+            nameComponent: <TransComponentName type="wrap" wrapLines={2} debug />,
+          }}
+        />
+      )
     }
     if (normalisedName !== '[root]' && !profile && !isProfileLoading) {
       return t('errors.networkError.title', { ns: 'common' })

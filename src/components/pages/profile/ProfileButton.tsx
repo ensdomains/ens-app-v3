@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address, isAddress } from 'viem'
@@ -10,6 +10,9 @@ import { RecordItem, Typography } from '@ensdomains/thorin'
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import { dynamicAddressIcons } from '@app/assets/address/dynamicAddressIcons'
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
+import { Name } from '@app/components/@atoms/Name/Name'
+import { RecordItemWithName } from '@app/components/@molecules/RecordItemWithName/RecordItemWithName'
+import { useElementDimensions } from '@app/hooks/dom/useElementDimensions'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { getDestination } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -254,6 +257,24 @@ export const OwnerProfileButton = ({
     t,
   ])
 
+  const isAddressWithName = dataType === 'address' && primary.data?.name
+  const isParentWithName = dataType === 'name'
+  const isRecordItemWithName = isAddressWithName || isParentWithName
+  if (isRecordItemWithName) {
+    const name = isAddressWithName ? primary.data?.name : addressOrNameOrDate
+    return (
+      <RecordItemWithName
+        name={name}
+        keyLabel={t(label).toLocaleLowerCase()}
+        as="a"
+        link={getDestination(`/profile/${name}`)}
+        size={breakpoints.sm ? 'large' : 'small'}
+        data-testid={`owner-profile-button-${label}`}
+        data-timestamp={timestamp}
+        debug
+      />
+    )
+  }
   return (
     <RecordItem
       {...recordItemPartialProps}

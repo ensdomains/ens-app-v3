@@ -11,6 +11,7 @@ import styled, { css } from 'styled-components'
 
 import { Dialog, Input, RadioButton, Typography } from '@ensdomains/thorin'
 
+import { TransComponentName } from '@app/components/@atoms/Name2/Name'
 import { dateTimeLocalToDate, dateToDateTimeLocal, stripDateMs } from '@app/utils/datetime-local'
 
 import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
@@ -105,12 +106,18 @@ export const SetExpiryView = ({
             t={t}
             i18nKey="input.revokePermissions.views.setExpiry.subtitleWithCEE"
             values={{ parent: parentName, expiry: expiryLabel }}
+            components={{
+              nameComponent: <TransComponentName type="wrap" wrapLines={2} minInitialWidth={100} />,
+            }}
           />
         ) : (
           <Trans
             t={t}
             i18nKey="input.revokePermissions.views.setExpiry.subtitle"
             values={{ parent: parentName, expiry: expiryLabel }}
+            components={{
+              nameComponent: <TransComponentName type="wrap" wrapLines={2} minInitialWidth={100} />,
+            }}
           />
         )}
       </CenterAlignedTypography>

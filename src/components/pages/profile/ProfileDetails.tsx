@@ -40,6 +40,14 @@ const Stack = styled.div(
   `,
 )
 
+const SectionContainer = styled.div(
+  () => css`
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  `,
+)
+
 const SectionTitle = styled(Typography)(({ theme }) => [
   css`
     color: ${theme.colors.greyPrimary};
@@ -74,7 +82,7 @@ const ProfileSection = ({
     : []
 
   return condition ? (
-    <div>
+    <SectionContainer>
       <SectionTitle weight="bold">{t(label)}</SectionTitle>
       <Stack>
         {supportedArray.map((item: { key: string; value: string; type?: 'text' | 'address' }) => (
@@ -87,7 +95,7 @@ const ProfileSection = ({
             ),
           )}
       </Stack>
-    </div>
+    </SectionContainer>
   ) : null
 }
 

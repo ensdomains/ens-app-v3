@@ -75,7 +75,7 @@ export const Name = ({
     if (!node) return
     const _name = match(type)
       .with('wrap', () => {
-        console.log('wrapper offsets', ref.current?.offsetWidth, ref.current?.offsetLeft)
+        // console.log('wrapper offsets', ref.current?.offsetWidth, ref.current?.offsetLeft)
         const nodeRect = node.getBoundingClientRect()
         const initialWidth = containerWidth + containerLeft! - nodeRect.left
         const ellipsisWidth = ellipsisRef.current?.offsetWidth || 0
@@ -98,7 +98,7 @@ export const Name = ({
           maxWidth: containerWidth,
         })
       })
-    console.log('name', _name)
+    // console.log('name', _name)
     setName(_name)
   }
 

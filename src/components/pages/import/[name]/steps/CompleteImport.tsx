@@ -49,6 +49,7 @@ const TitleContainer = styled.div(
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    word-break: break-all;
     gap: ${theme.space['2']};
   `,
 )

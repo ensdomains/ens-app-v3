@@ -220,7 +220,7 @@
         },
         "revokePCC": {
           "title": "放弃所有权",
-          "subtitle": "此操作会把名称的所有权转让给管理员 ({{account}})。除非您同时也是管理员，否则您将无法再管理该名称。"
+          "subtitle": "此操作会把名称的所有权转让给管理员 (<accountWrapper>{{account}}</accountWrapper>)。除非您同时也是管理员，否则您将无法再管理该名称。"
         },
         "grantExtendExpiry": {
           "title": "更改权限",

@@ -68,6 +68,7 @@ const SectionItemIcon = styled.svg<{ $color: Color }>(
 const SectionItemContent = styled.div(
   ({ theme }) => css`
     display: flex;
+    position: relative;
     overflow: hidden;
     flex-direction: column;
     gap: ${theme.space['1']};

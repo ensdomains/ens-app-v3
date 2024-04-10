@@ -7,7 +7,7 @@ import { Banner } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
-import { TransComponentName } from '@app/components/@atoms/Name/Name'
+import { TransComponentName } from '@app/components/@atoms/Name2/Name'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
@@ -77,7 +77,11 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
                 t={t}
                 i18nKey="tabs.permissions.parentUnlockedWarning"
                 values={{ parent: parentName }}
-                components={[<TransComponentName type="wrap" wrapLines={2} />]}
+                components={{
+                  nameComponent: (
+                    <TransComponentName type="wrap" wrapLines={2} minInitialWidth={100} />
+                  ),
+                }}
               />
             </BannerContent>
           </Banner>

@@ -5,6 +5,7 @@ import type { Address } from 'viem'
 
 import { CheckboxRow, Dialog, Typography } from '@ensdomains/thorin'
 
+import { TransComponentName } from '@app/components/@atoms/Name2/Name'
 import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
 
 import type { FormData } from '../RevokePermissions-flow'
@@ -18,6 +19,8 @@ type Props = {
 const CenterAlignedTypography = styled(Typography)(
   () => css`
     text-align: center;
+    position: relative;
+    overflow: hidden;
   `,
 )
 
@@ -34,6 +37,9 @@ export const RevokePCCView = ({ managerAddress, register }: Props) => {
           i18nKey="input.revokePermissions.views.revokePCC.subtitle"
           t={t}
           values={{ account: nameOrAddr }}
+          components={{
+            nameComponent: <TransComponentName type="wrap" wrapLines={2} minInitialWidth={100} />,
+          }}
         />
       </CenterAlignedTypography>
       <CheckboxRow

@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { Button, Typography } from '@ensdomains/thorin'
 
-import { TransComponentName } from '@app/components/@atoms/Name/Name'
+import { TransComponentName } from '@app/components/@atoms/Name2/Name'
 import type { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -142,13 +142,13 @@ export const OwnershipPermissions = ({
               i18nKey="tabs.permissions.ownership.parentCannotControl.label"
               values={{ parent: parentName }}
               components={{
-                parentLink: (
+                nameComponent: (
                   <TransComponentName
                     href={`/${parentName}`}
                     type="wrap"
                     wrapLines={2}
-                    padding={10}
-                    containerRef={ownershipStatusContainerRef}
+                    minInitialWidth={100}
+                    debug
                   />
                 ),
               }}
@@ -187,13 +187,12 @@ export const OwnershipPermissions = ({
               i18nKey="tabs.permissions.ownership.parentCanControl.label"
               values={{ parent: parentName }}
               components={{
-                parentLink: (
+                nameComponent: (
                   <TransComponentName
                     href={`/${parentName}`}
-                    containerRef={ownershipStatusContainerRef}
-                    padding={10}
-                    wrapLines={2}
                     type="wrap"
+                    wrapLines={2}
+                    minInitialWidth={100}
                   />
                 ),
               }}
@@ -245,13 +244,13 @@ export const OwnershipPermissions = ({
               i18nKey="tabs.permissions.ownership.parentCanChange.label"
               values={{ parent: parentName }}
               components={{
-                parentLink: (
+                nameComponent: (
                   <TransComponentName
                     href={`/${parentName}`}
-                    containerRef={editorStatusContainerRef}
-                    padding={10}
                     type="wrap"
                     wrapLines={2}
+                    minInitialWidth={100}
+                    debug
                   />
                 ),
               }}

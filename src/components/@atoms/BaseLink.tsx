@@ -2,17 +2,17 @@ import { UrlObject } from 'url'
 
 import Link, { LinkProps } from 'next/link'
 import { useRouter } from 'next/router'
-import { PropsWithChildren, useMemo } from 'react'
+import { forwardRef, PropsWithChildren, useMemo } from 'react'
 
 import { getDestination } from '@app/routes'
 
 // from: https://github.com/Velenir/nextjs-ipfs-example
 
-const BaseLink = ({ href, ...rest }: PropsWithChildren<LinkProps>) => {
+const BaseLink = forwardRef(({ href, ...rest }: PropsWithChildren<LinkProps>, ref) => {
   const newHref = useMemo(() => getDestination(href), [href])
 
-  return <Link {...rest} legacyBehavior href={newHref} />
-}
+  return <Link {...rest} legacyBehavior href={newHref} ref={ref} />
+})
 
 export const BaseLinkWithHistory = ({
   href,

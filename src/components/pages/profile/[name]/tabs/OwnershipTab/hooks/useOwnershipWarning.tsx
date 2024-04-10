@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { match, P } from 'ts-pattern'
 
+import { TransComponentName } from '@app/components/@atoms/Name2/Name'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import type { useNameType } from '@app/hooks/nameType/useNameType'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
@@ -87,10 +88,13 @@ export const useOwnershipWarning = ({ name, nameType, details }: Input) => {
             t={t}
             i18nKey="tabs.ownership.warning.managerNotParentOwner"
             values={{ parent: parentName(name) }}
+            components={{
+              nameComponent: <TransComponentName type="wrap" wrapLines={2} minInitialWidth={100} />,
+            }}
           />
         ),
       )
-      .otherwise(() => undefined)
+      .otherwise(() => null)
   }, [
     isLoading,
     name,
