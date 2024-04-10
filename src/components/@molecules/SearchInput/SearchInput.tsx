@@ -1,13 +1,9 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-
-/* eslint-disable jsx-a11y/interactive-supports-focus */
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
+import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
 import { isAddress } from 'viem'
 import { useAccount, useChainId } from 'wagmi'
@@ -32,6 +28,12 @@ import { yearsToSeconds } from '@app/utils/utils'
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
 import { AnyItem, HistoryItem, SearchItem } from './types'
+
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+
+/* eslint-disable jsx-a11y/interactive-supports-focus */
 
 const BOX_SEARCH_ENDPOINT = 'https://dotbox-worker.ens-cf.workers.dev/search'
 
@@ -219,144 +221,87 @@ const useGetDotBox = (normalisedOutput: any) => {
   return { data, status }
 }
 
-export const SearchInput = ({
-  size = 'extraLarge',
-  setSearchState,
-}: {
-  size?: 'medium' | 'extraLarge'
-  setSearchState?: (value: TransitionState) => void
-}) => {
-  const { t } = useTranslation('common')
-  const router = useRouterWithHistory()
-  const breakpoints = useBreakpoint()
-  const queryClient = useQueryClient()
-  const chainId = useChainId()
-  const { address } = useAccount()
+const useEthSearchResult = () => {}
 
-  const [inputVal, setInputVal] = useState('')
+const useSearchResult = (normalisedOutput: any, inputVal: any) => {
+  const searchParam = useDebounce(normalisedOutput, 500)
+  // const prevSearchParam = usePrevious(searchParam)
 
-  const [state, toggle] = useTransition({
-    enter: true,
-    exit: true,
-    preEnter: true,
-    preExit: true,
-    mountOnEnter: true,
-    unmountOnExit: true,
-    timeout: {
-      enter: 0,
-      exit: 350,
+  // const { isValid, isETH, is2LD, isShort, type, name } = useValidate({
+  //   input: inputVal,
+  //   enabled: !inputIsAddress && !isEmpty,
+  // })
+
+  const { data, status } = useQuery({
+    queryKey: [searchParam],
+    queryFn: async () => {
+      const response = await fetch(`${BOX_SEARCH_ENDPOINT}?domain=${searchParam}`)
+
+      const validationResult = validate(searchParam)
+      console.log('validationResult: ', validationResult)
+
+      return response.json()
     },
+    staleTime: 10 * 1000,
+    enabled: !!searchParam,
   })
+}
 
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const searchInputContainerRef = useRef<HTMLDivElement>(null)
-  const { width } = useElementSize(searchInputContainerRef.current)
-
-  const [selected, setSelected] = useState(0)
-  const [usingPlaceholder, setUsingPlaceholder] = useState(false)
-
-  const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
-
-  const isEmpty = inputVal === ''
-  const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
-  const { isValid, isETH, is2LD, isShort, type, name } = useValidate({
-    input: inputVal,
-    enabled: !inputIsAddress && !isEmpty,
-  })
-  const normalisedOutput = useMemo(
-    () => (inputIsAddress ? inputVal : name),
-    [inputIsAddress, inputVal, name],
-  )
-
-  const boxSearchResult = useGetDotBox(normalisedOutput)
-
-  const ethSearchItem: SearchItem = useMemo(() => {
-    if (isEmpty) {
-      return {
-        type: 'text',
-        value: t('search.emptyText'),
-      }
+const useAddEventListeners = (
+  searchInputRef: any,
+  handleKeyDown: any,
+  handleFocusIn: any,
+  handleFocusOut: any,
+) => {
+  useEffect(() => {
+    const searchInput = searchInputRef.current
+    searchInput?.addEventListener('keydown', handleKeyDown)
+    searchInput?.addEventListener('focusin', handleFocusIn)
+    searchInput?.addEventListener('focusout', handleFocusOut)
+    return () => {
+      searchInput?.removeEventListener('keydown', handleKeyDown)
+      searchInput?.removeEventListener('focusin', handleFocusIn)
+      searchInput?.removeEventListener('focusout', handleFocusOut)
     }
-    if (inputIsAddress) {
-      return {
-        type: 'address',
-      }
-    }
-    if (!isValid) {
-      return {
-        type: 'error',
-        value: t('search.errors.invalid'),
-      }
-    }
-    if (isETH && is2LD && isShort) {
-      return {
-        type: 'error',
-        value: t('search.errors.tooShort'),
-      }
-    }
-    if (type === 'label') {
-      return {
-        type: 'nameWithDotEth',
-      }
-    }
-    return {
-      type: 'name',
-    }
-  }, [isEmpty, inputIsAddress, isValid, isETH, is2LD, isShort, type, t])
+  }, [handleFocusIn, handleFocusOut, handleKeyDown, searchInputRef])
+}
 
-  const extraItems = useMemo(() => {
-    if (history.length > 0) {
-      let historyRef = history
-      if (normalisedOutput !== '') {
-        historyRef = history.filter(
-          (item) =>
-            item.value !== normalisedOutput &&
-            item.value.includes(normalisedOutput) &&
-            (ethSearchItem.type === 'nameWithDotEth'
-              ? item.value !== `${normalisedOutput}.eth`
-              : true),
-        )
-      }
-      return historyRef
-        .sort((a, b) => b.lastAccessed - a.lastAccessed)
-        .map((item) => ({ ...item, isHistory: true }))
+const handleKeyDown =
+  (handleSearch: any, setSelected: any, searchItems: any) => (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      return handleSearch()
     }
-    return []
-  }, [history, normalisedOutput, ethSearchItem.type])
-
-  const searchItems: AnyItem[] = useMemo(() => {
-    const _searchItem = { ...ethSearchItem, isHistory: false }
-    const boxSearchItemData = boxSearchResult.data
-    console.log('boxSearchItemData: ', boxSearchItemData)
-    const boxSearchItem = {
-      type: 'name',
-      value: boxSearchItemData?.data.domain,
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setSelected((prev) => (prev - 1 + searchItems.length) % searchItems.length)
     }
-    const _extraItems = extraItems
-    if (ethSearchItem.type === 'error') {
-      return [_searchItem]
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setSelected((prev) => (prev + 1) % searchItems.length)
     }
-    if (ethSearchItem.type === 'text') {
-      if (extraItems.length > 0) {
-        return [..._extraItems.slice(0, 5)]
-      }
-      return [_searchItem]
-    }
-    const _searchItems: AnyItem[] =
-      _searchItem.type === 'nameWithDotEth'
-        ? [_searchItem, { type: 'name', isHistory: false }]
-        : [_searchItem]
-    return [boxSearchItem, ..._searchItems, ...extraItems].slice(0, 5)
-  }, [ethSearchItem, extraItems, boxSearchResult])
+  }
 
-  const handleFocusIn = useCallback(() => toggle(true), [toggle])
-  const handleFocusOut = useCallback(() => toggle(false), [toggle])
-
-  console.log('searchItems: ', searchItems)
-  console.log('ethSearchItem: ', ethSearchItem)
-  console.log('extraItems: ', extraItems)
-
-  const handleSearch = useCallback(() => {
+const handleSearch =
+  ({
+    normalisedOutput,
+    queryClient,
+    router,
+    searchItems,
+    selected,
+    setHistory,
+    chainId,
+    address,
+  }: {
+    normalisedOutput: string
+    queryClient: QueryClient
+    router: any
+    searchItems: any
+    selected: boolean
+    setHistory: () => void
+    chainId: number
+    address: string
+  }) =>
+  () => {
     let selectedItem = searchItems[selected] as SearchItem
     if (!selectedItem) return
     if (selectedItem.type === 'error' || selectedItem.type === 'text') return
@@ -456,67 +401,304 @@ export const SearchInput = ({
     setInputVal('')
     searchInputRef.current?.blur()
     router.pushWithHistory(path)
-  }, [normalisedOutput, queryClient, router, searchItems, selected, setHistory, chainId, address])
-
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        return handleSearch()
-      }
-      if (e.key === 'ArrowUp') {
-        e.preventDefault()
-        setSelected((prev) => (prev - 1 + searchItems.length) % searchItems.length)
-      }
-      if (e.key === 'ArrowDown') {
-        e.preventDefault()
-        setSelected((prev) => (prev + 1) % searchItems.length)
-      }
-    },
-    [handleSearch, searchItems.length],
-  )
-
-  const handleHover = (index: number) => {
-    if (selected !== index) {
-      setSelected(index)
-    }
   }
 
+const useSelectionManager = ({
+  inputVal,
+  setSelected,
+  state,
+}: {
+  inputVal: any
+  setSelected: any
+  state: any
+}) => {
   useEffect(() => {
     if (inputVal === '') {
       setSelected(-1)
     } else {
       setSelected(0)
     }
-  }, [inputVal])
+  }, [inputVal, setSelected])
 
   useEffect(() => {
     if (state === 'unmounted') {
       setSelected(-1)
     }
-  }, [state])
+  }, [state, setSelected])
+}
 
-  useEffect(() => {
-    debouncer(() => setUsingPlaceholder(false))
-    setUsingPlaceholder(true)
-  }, [inputVal])
-
-  useEffect(() => {
-    if (setSearchState) {
-      setSearchState(state)
+const thread = (operator, first, ...args) => {
+  let isThreadFirst: boolean
+  switch (operator) {
+    case '->>':
+      isThreadFirst = false
+      break
+    case '->':
+      isThreadFirst = true
+      break
+    default:
+      throw new Error('Operator not supported')
+      break
+  }
+  return args.reduce((prev, next) => {
+    if (Array.isArray(next)) {
+      const [head, ...tail] = next
+      return isThreadFirst ? head.apply(this, [prev, ...tail]) : head.apply(this, tail.concat(prev))
     }
-  }, [setSearchState, state])
 
-  useEffect(() => {
-    const searchInput = searchInputRef.current
-    searchInput?.addEventListener('keydown', handleKeyDown)
-    searchInput?.addEventListener('focusin', handleFocusIn)
-    searchInput?.addEventListener('focusout', handleFocusOut)
-    return () => {
-      searchInput?.removeEventListener('keydown', handleKeyDown)
-      searchInput?.removeEventListener('focusin', handleFocusIn)
-      searchInput?.removeEventListener('focusout', handleFocusOut)
+    return next.call(this, prev)
+  }, first)
+}
+
+interface SearchItem {
+  isLoading: boolean
+  isFromHistory: boolean
+  type: 'eth-name'
+  value?: string
+}
+
+const addEthDropdownItem = (dropdownItems: SearchItem[]) => [
+  {
+    text: 'leon.eth',
+    isLoading: true,
+    isFromHistory: false,
+  },
+  ...dropdownItems,
+]
+const addBoxDropdownItem = (dropdownItems: SearchItem[]) => [
+  {
+    text: 'leon.box',
+    isLoading: true,
+    isFromHistory: false,
+    type: 'eth-name',
+  },
+  ...dropdownItems,
+]
+const addTldDropdownItem = (dropdownItems: SearchItem[]) => [
+  {
+    text: 'leon',
+    isLoading: true,
+    isFromHistory: false,
+    type: 'eth-name',
+  },
+  ...dropdownItems,
+]
+const addHistoryDropdownItem = (dropdownItems: SearchItem[]) => [
+  {
+    text: 'leonleon.eth',
+    isLoading: true,
+    isFromHistory: false,
+    type: 'eth-name',
+  },
+  ...dropdownItems,
+]
+const addAddressItem = (dropdownItems: SearchItem[]) => [
+  {
+    text: '0x2ef2c9f9DaA42f56B393e36F8376C93313fe1B1e',
+    isLoading: true,
+    isFromHistory: false,
+    type: 'address',
+  },
+  ...dropdownItems,
+]
+
+const useBuildDropdownItems = (): SearchItem[] =>
+  thread(
+    '->',
+    [],
+    addEthDropdownItem,
+    addBoxDropdownItem,
+    addTldDropdownItem,
+    addHistoryDropdownItem,
+    addAddressItem,
+  ).reverse()
+
+export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraLarge' }) => {
+  const { t } = useTranslation('common')
+  const router = useRouterWithHistory()
+  const breakpoints = useBreakpoint()
+  const queryClient = useQueryClient()
+  const chainId = useChainId()
+  const { address } = useAccount()
+
+  const [inputVal, setInputVal] = useState('')
+
+  const [state, toggle] = useTransition({
+    enter: true,
+    exit: true,
+    preEnter: true,
+    preExit: true,
+    mountOnEnter: true,
+    unmountOnExit: true,
+    timeout: {
+      enter: 0,
+      exit: 350,
+    },
+  })
+
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchInputContainerRef = useRef<HTMLDivElement>(null)
+  const { width } = useElementSize(searchInputContainerRef.current)
+
+  const [selected, setSelected] = useState(0)
+  const [usingPlaceholder, setUsingPlaceholder] = useState(false)
+
+  const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
+
+  const isEmpty = inputVal === ''
+  const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
+  const { isValid, isETH, is2LD, isShort, type, name } = useValidate({
+    input: inputVal,
+    enabled: !inputIsAddress && !isEmpty,
+  })
+  const normalisedOutput = useMemo(
+    () => (inputIsAddress ? inputVal : name),
+    [inputIsAddress, inputVal, name],
+  )
+
+  // useSearchResult(normalisedOutput, inputVal)
+
+  const boxSearchResult = useGetDotBox(normalisedOutput)
+  const ethSearchResult = useEthSearchResult(normalisedOutput, inputVal)
+
+  const ethSearchItem: SearchItem = useMemo(() => {
+    if (isEmpty) {
+      return {
+        type: 'text',
+        value: t('search.emptyText'),
+      }
     }
-  }, [handleFocusIn, handleFocusOut, handleKeyDown, searchInputRef])
+    if (inputIsAddress) {
+      return {
+        type: 'address',
+      }
+    }
+    if (!isValid) {
+      return {
+        type: 'error',
+        value: t('search.errors.invalid'),
+      }
+    }
+    if (isETH && is2LD && isShort) {
+      return {
+        type: 'error',
+        value: t('search.errors.tooShort'),
+      }
+    }
+    if (type === 'label') {
+      return {
+        type: 'nameWithDotEth',
+      }
+    }
+    return {
+      type: 'name',
+    }
+  }, [isEmpty, inputIsAddress, isValid, isETH, is2LD, isShort, type, t])
+
+  const { data: suggestions } = useQuery({
+    queryKey: [boxSearchResult, ethSearchResult],
+    queryFn: async () => {
+      return []
+    },
+  })
+  console.log('suggestions: ', suggestions)
+
+  // const extraItems = useMemo(() => {
+  //   if (history.length > 0) {
+  //     let historyRef = history
+  //     if (normalisedOutput !== '') {
+  //       historyRef = history.filter(
+  //         (item) =>
+  //           item.value !== normalisedOutput &&
+  //           item.value.includes(normalisedOutput) &&
+  //           (ethSearchItem.type === 'nameWithDotEth'
+  //             ? item.value !== `${normalisedOutput}.eth`
+  //             : true),
+  //       )
+  //     }
+  //     return historyRef
+  //       .sort((a, b) => b.lastAccessed - a.lastAccessed)
+  //       .map((item) => ({ ...item, isHistory: true }))
+  //   }
+  //   return []
+  // }, [history, normalisedOutput, ethSearchItem.type])
+
+  // const searchItems: AnyItem[] = useMemo(() => {
+  //   const _searchItem = { ...ethSearchItem, isHistory: false }
+  //   const boxSearchItemData = boxSearchResult.data
+  //   console.log('boxSearchItemData: ', boxSearchItemData)
+  //   const boxSearchItem = {
+  //     type: 'name',
+  //     value: boxSearchItemData?.data.domain,
+  //   }
+  //   const _extraItems = extraItems
+  //   if (ethSearchItem.type === 'error') {
+  //     return [_searchItem]
+  //   }
+  //   if (ethSearchItem.type === 'text') {
+  //     if (extraItems.length > 0) {
+  //       return [..._extraItems.slice(0, 5)]
+  //     }
+  //     return [_searchItem]
+  //   }
+  //   const _searchItems: AnyItem[] =
+  //     _searchItem.type === 'nameWithDotEth'
+  //       ? [_searchItem, { type: 'name', isHistory: false }]
+  //       : [_searchItem]
+  //   return [boxSearchItem, ..._searchItems, ...extraItems].slice(0, 5)
+  // }, [ethSearchItem, extraItems, boxSearchResult])
+
+  const handleFocusIn = useCallback(() => toggle(true), [toggle])
+  const handleFocusOut = useCallback(() => toggle(false), [toggle])
+
+  const dropdownItems = useBuildDropdownItems()
+  console.log('dropdownItems: ', dropdownItems)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleSearchCb = useCallback(
+    handleSearch({
+      normalisedOutput,
+      queryClient,
+      router,
+      dropdownItems,
+      selected,
+      setHistory,
+      chainId,
+      address,
+    }),
+    [normalisedOutput, queryClient, router, dropdownItems, selected, setHistory, chainId, address],
+  )
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleKeyDownCb = useCallback(handleKeyDown(handleSearch, setSelected, dropdownItems), [
+    handleSearch,
+    setSelected,
+    dropdownItems.length,
+  ])
+
+  useAddEventListeners(searchInputRef, handleKeyDownCb, handleFocusIn, handleFocusOut)
+
+  const handleHoverCb = useCallback(
+    (index: number) => {
+      if (selected !== index) {
+        setSelected(index)
+      }
+    },
+    [setSelected, selected],
+  )
+
+  useSelectionManager({ inputVal, setSelected, state })
+
+  // useEffect(() => {
+  //   debouncer(() => setUsingPlaceholder(false))
+  //   setUsingPlaceholder(true)
+  // }, [inputVal])
+
+  // useEffect(() => {
+  //   if (setSearchState) {
+  //     setSearchState(state)
+  //   }
+  // }, [setSearchState, state])
 
   const SearchInputElement = (
     <SearchInputBox
@@ -538,17 +720,17 @@ export const SearchInput = ({
       data-testid="search-input-results"
       data-error={!isValid && !inputIsAddress && inputVal !== ''}
     >
-      {searchItems.map((item, index) => (
+      {dropdownItems.map((item, index) => (
         <SearchResult
           clickCallback={handleSearch}
-          hoverCallback={handleHover}
+          hoverCallback={handleHoverCb}
           index={index}
-          selected={selected}
+          // selected={selected}
           type={item.type}
           // usingPlaceholder={item.isHistory ? false : usingPlaceholder}
-          usingPlaceholder
+          // usingPlaceholder
           key={`${item.type}-${item.value}`}
-          value={item.value || normalisedOutput}
+          value={item.text || normalisedOutput}
         />
       ))}
     </SearchResultsContainer>
