@@ -51,7 +51,7 @@
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.2.0-beta.0",
-    "@ensdomains/ensjs": "3.5.0-beta.2",
+    "@ensdomains/ensjs": "3.6.0",
     "@ensdomains/thorin": "0.6.44",
     "@metamask/mobile-provider": "^2.1.0",
     "@metamask/post-message-stream": "^6.1.2",
@@ -64,7 +64,7 @@
     "@tanstack/query-sync-storage-persister": "5.22.2",
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-persist-client": "5.22.2",
-    "@wagmi/core": "^2.6.5",
+    "@wagmi/core": "^2.6.16",
     "@walletconnect/ethereum-provider": "^2.11.1",
     "@walletconnect/modal": "^2.6.2",
     "calendar-link": "^2.2.0",
@@ -96,8 +96,8 @@
     "styled-components": "^5.3.5",
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
-    "viem": "^2.7.13",
-    "wagmi": "2.5.7"
+    "viem": "^2.9.15",
+    "wagmi": "2.5.19"
   },
   "peerDependencies": {
     "react": "*",
@@ -206,8 +206,7 @@
     },
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
-      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
-      "@wagmi/core@2.6.5": "patches/@wagmi__core@2.6.5.patch"
+      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch"
     }
   }
 }
