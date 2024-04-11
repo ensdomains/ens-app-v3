@@ -1,12 +1,13 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
-import { isAddress } from 'viem'
-import { useAccount, useChainId } from 'wagmi'
+import { createPublicClient, getContract, http, isAddress, namehash } from 'viem'
+import { optimism } from 'viem/chains'
+import { useAccount, useChainId, useEnsAvatar } from 'wagmi'
 
 import {
   GetExpiryReturnType,
@@ -14,20 +15,24 @@ import {
   GetPriceReturnType,
   GetWrapperDataReturnType,
 } from '@ensdomains/ensjs/public'
+import { normalise } from '@ensdomains/ensjs/utils'
 import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
+import { useBasicName } from '@app/hooks/useBasicName'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate, validate, ValidationResult } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
+import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { yearsToSeconds } from '@app/utils/utils'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
-import { AnyItem, HistoryItem, SearchItem } from './types'
+import { AnyItem, HistoryItem } from './types'
 
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
@@ -221,7 +226,73 @@ const useGetDotBox = (normalisedOutput: any) => {
   return { data, status }
 }
 
-const useEthSearchResult = () => {}
+const THREE_DNS_ABI = [
+  {
+    type: 'function',
+    name: 'owner',
+    inputs: [
+      {
+        name: '_node',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    stateMutability: 'view',
+  },
+]
+
+const THREE_DNS_RESOLVER_ADDRESS = '0xF97aAc6C8dbaEBCB54ff166d79706E3AF7a813c8'
+
+const useGetDotBoxOnChain = (normalisedName: string) => {
+  const searchParam = useDebounce(normalisedName, 500)
+  const contractRef = useRef({ read: { owner: () => '' } })
+
+  useEffect(() => {
+    const publicClient = createPublicClient({
+      chain: optimism,
+      transport: http(),
+    })
+
+    const contract = getContract({
+      address: THREE_DNS_RESOLVER_ADDRESS,
+      abi: THREE_DNS_ABI,
+      client: publicClient,
+    })
+    contractRef.current = contract
+  }, [])
+
+  const { data, status } = useQuery({
+    queryKey: [searchParam, 'onchain'],
+    queryFn: async () => {
+      const result = contractRef.current.read.owner([namehash(searchParam)])
+      return result
+    },
+    staleTime: 10 * 1000,
+    enabled: !!searchParam,
+  })
+
+  console.log('*data: ', data)
+}
+
+const useEthSearchResult = (name: string, isETH?: boolean) => {
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
+  const zorb = useZorb(name, 'name')
+  const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
+
+  return {
+    image: avatar || zorb,
+    registrationStatus,
+    text: beautifiedName,
+    isLoading,
+  }
+}
 
 const useSearchResult = (normalisedOutput: any, inputVal: any) => {
   const searchParam = useDebounce(normalisedOutput, 500)
@@ -457,14 +528,18 @@ interface SearchItem {
   value?: string
 }
 
-const addEthDropdownItem = (dropdownItems: SearchItem[]) => [
-  {
-    text: 'leon.eth',
-    isLoading: true,
-    isFromHistory: false,
-  },
-  ...dropdownItems,
-]
+const addEthDropdownItem = (dropdownItems: SearchItem[], ethSearchresult: any) => {
+  console.log('ethSearchResult: ', ethSearchresult)
+  return [
+    {
+      text: 'leon.eth',
+      isLoading: true,
+      isFromHistory: false,
+    },
+    ...dropdownItems,
+  ]
+}
+
 const addBoxDropdownItem = (dropdownItems: SearchItem[]) => [
   {
     text: 'leon.box',
@@ -502,16 +577,35 @@ const addAddressItem = (dropdownItems: SearchItem[]) => [
   ...dropdownItems,
 ]
 
-const useBuildDropdownItems = (): SearchItem[] =>
-  thread(
+const useBuildDropdownItems = (inputVal: string): SearchItem[] => {
+  const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
+
+  const { isValid, isETH, is2LD, isShort, type, name } = useValidate({
+    input: inputVal,
+    enabled: !inputIsAddress && !inputVal,
+  })
+
+  const normalisedName = useMemo(
+    () => (inputIsAddress ? inputVal : name),
+    [inputIsAddress, inputVal, name],
+  )
+  const boxSearchResult = useGetDotBox(normalisedName)
+  const boxSearchResultOnchain = useGetDotBoxOnChain(normalisedName)
+  const ethSearchResult = useEthSearchResult(name, isETH)
+
+  console.log('boxSearchResult: ', boxSearchResult)
+  console.log('boxSearchResultOnchain: ', boxSearchResultOnchain)
+
+  return thread(
     '->',
     [],
-    addEthDropdownItem,
+    [addEthDropdownItem, ethSearchResult],
     addBoxDropdownItem,
     addTldDropdownItem,
     addHistoryDropdownItem,
     addAddressItem,
   ).reverse()
+}
 
 export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraLarge' }) => {
   const { t } = useTranslation('common')
@@ -541,26 +635,27 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const { width } = useElementSize(searchInputContainerRef.current)
 
   const [selected, setSelected] = useState(0)
-  const [usingPlaceholder, setUsingPlaceholder] = useState(false)
+  // const [usingPlaceholder, setUsingPlaceholder] = useState(false)
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
 
   const isEmpty = inputVal === ''
-  const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
-  const { isValid, isETH, is2LD, isShort, type, name } = useValidate({
-    input: inputVal,
-    enabled: !inputIsAddress && !isEmpty,
-  })
-  const normalisedOutput = useMemo(
-    () => (inputIsAddress ? inputVal : name),
-    [inputIsAddress, inputVal, name],
-  )
+  // const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
+  // const { isValid, isETH, is2LD, isShort, type, name } = useValidate({
+  //   input: inputVal,
+  //   enabled: !inputIsAddress && !isEmpty,
+  // })
+  // const normalisedOutput = useMemo(
+  //   () => (inputIsAddress ? inputVal : name),
+  //   [inputIsAddress, inputVal, name],
+  // )
 
   // useSearchResult(normalisedOutput, inputVal)
 
-  const boxSearchResult = useGetDotBox(normalisedOutput)
-  const ethSearchResult = useEthSearchResult(normalisedOutput, inputVal)
+  // const boxSearchResult = useGetDotBox(normalisedOutput)
+  // const ethSearchResult = useEthSearchResult(normalisedOutput, inputVal)
 
+  /*
   const ethSearchItem: SearchItem = useMemo(() => {
     if (isEmpty) {
       return {
@@ -594,14 +689,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       type: 'name',
     }
   }, [isEmpty, inputIsAddress, isValid, isETH, is2LD, isShort, type, t])
-
-  const { data: suggestions } = useQuery({
-    queryKey: [boxSearchResult, ethSearchResult],
-    queryFn: async () => {
-      return []
-    },
-  })
-  console.log('suggestions: ', suggestions)
+  */
 
   // const extraItems = useMemo(() => {
   //   if (history.length > 0) {
@@ -651,10 +739,11 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
-  const dropdownItems = useBuildDropdownItems()
+  const dropdownItems = useBuildDropdownItems(inputVal)
   console.log('dropdownItems: ', dropdownItems)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  /*
   const handleSearchCb = useCallback(
     handleSearch({
       normalisedOutput,
@@ -668,6 +757,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
     }),
     [normalisedOutput, queryClient, router, dropdownItems, selected, setHistory, chainId, address],
   )
+  */
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleKeyDownCb = useCallback(handleKeyDown(handleSearch, setSelected, dropdownItems), [
@@ -718,11 +808,11 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}
       data-testid="search-input-results"
-      data-error={!isValid && !inputIsAddress && inputVal !== ''}
+      // data-error={!isValid && !inputIsAddress && inputVal !== ''}
     >
       {dropdownItems.map((item, index) => (
         <SearchResult
-          clickCallback={handleSearch}
+          // clickCallback={handleSearch}
           hoverCallback={handleHoverCb}
           index={index}
           // selected={selected}
