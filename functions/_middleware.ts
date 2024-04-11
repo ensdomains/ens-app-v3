@@ -27,6 +27,33 @@ class AttributeModifier {
   }
 }
 
+class ElementsCreator {
+  private elements: {
+    tagName: string
+    attributes: Record<string, string>
+  }[]
+
+  constructor(
+    elements: {
+      tagName: string
+      attributes: Record<string, string>
+    }[],
+  ) {
+    this.elements = elements
+  }
+
+  element(element: Element) {
+    for (const { tagName, attributes } of this.elements) {
+      element.append(
+        `<${tagName} ${Object.entries(attributes)
+          .map(([key, value]) => `${key}="${value}"`)
+          .join(' ')}></${tagName}>`,
+        { html: true },
+      )
+    }
+  }
+}
+
 class ScriptWriter {
   private src: string
 
@@ -77,7 +104,7 @@ const firefoxRewrite: PagesFunction = async ({ request, next }) => {
   return next()
 }
 
-const baseOgImageUrl = 'https://ens-og-image.ens-cf.workers.dev'
+const baseOgImageUrl = 'https://ens-og-image-dev.ens-cf.workers.dev'
 
 const pathRewriter: PagesFunction = async ({ request, next }) => {
   const url = new URL(request.url)
@@ -153,19 +180,62 @@ const pathRewriter: PagesFunction = async ({ request, next }) => {
         ? `${baseOgImageUrl}/name/${normalisedName}`
         : `${baseOgImageUrl}/name/`
 
-      return new HTMLRewriter()
-        .on('title', new ContentModifier(newTitle))
+      const rewriter = new HTMLRewriter()
         .on('meta[name="description"]', new AttributeModifier('content', newDescription))
         .on('meta[property="og:image"]', new AttributeModifier('content', ogImageUrl))
         .on('meta[property="og:title"]', new AttributeModifier('content', newTitle))
         .on('meta[property="og:description"]', new AttributeModifier('content', newDescription))
-        .on('meta[property="twitter:image"]', new AttributeModifier('content', ogImageUrl))
-        .on('meta[property="twitter:title"]', new AttributeModifier('content', newTitle))
-        .on(
-          'meta[property="twitter:description"]',
-          new AttributeModifier('content', newDescription),
-        )
-        .transform(await nextWithUpdate())
+        .on('meta[name="twitter:image"]', new AttributeModifier('content', ogImageUrl))
+        .on('meta[name="twitter:title"]', new AttributeModifier('content', newTitle))
+        .on('meta[name="twitter:description"]', new AttributeModifier('content', newDescription))
+
+      if (normalisedName) {
+        rewriter
+          .on('meta[name="fc:frame:image"]', new AttributeModifier('content', ogImageUrl))
+          .on(
+            'meta[name="fc:frame:button:1:target"]',
+            new AttributeModifier('content', `https://ens.app/${normalisedName}`),
+          )
+
+        const userAgent = request.headers.get('user-agent')?.toLowerCase()
+        if (userAgent?.startsWith('fcbot/')) {
+          const { getEnsAddress } = await import('viem/ens')
+          const { createClient, http } = await import('viem')
+          const { mainnet } = await import('viem/chains')
+
+          const client = createClient({
+            chain: mainnet,
+            transport: http('https://mainnet.gateway.tenderly.co/4imxc4hQfRjxrVB2kWKvTo'),
+          })
+
+          const address = await getEnsAddress(client, { name: normalisedName })
+
+          if (address) {
+            rewriter.on(
+              'head',
+              new ElementsCreator([
+                {
+                  tagName: 'meta',
+                  attributes: { name: 'fc:frame:button:2', content: 'View address' },
+                },
+                {
+                  tagName: 'meta',
+                  attributes: { name: 'fc:frame:button:2:action', content: 'link' },
+                },
+                {
+                  tagName: 'meta',
+                  attributes: {
+                    name: 'fc:frame:button:2:target',
+                    content: `https://ens.app/address/${address}`,
+                  },
+                },
+              ]),
+            )
+          }
+        }
+      }
+
+      return rewriter.transform(await nextWithUpdate())
     }
 
     return nextWithUpdate()
