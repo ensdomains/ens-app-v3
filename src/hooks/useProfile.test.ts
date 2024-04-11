@@ -2,6 +2,7 @@ import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
 import { beforeEach, expect, it, vi } from 'vitest'
 
+import { evmChainIdToCoinType } from '@ensdomains/address-encoder/utils'
 import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
 import { GetSubgraphRecordsReturnType } from '@ensdomains/ensjs/subgraph'
 
@@ -235,7 +236,12 @@ it('should fetch union of supported coin records and subgraph coin records', () 
   expect(useRecords).toHaveBeenCalledWith(
     expect.objectContaining({
       coins: expect.arrayContaining([
-        /* some default coins */ 0, 3, 60, 714, /* subgraph coins */ 118, 128,
+        /* some default coins */ 0,
+        60,
+        501,
+        evmChainIdToCoinType(10),
+        /* subgraph coins */ 118,
+        128,
       ]),
     }),
   )
