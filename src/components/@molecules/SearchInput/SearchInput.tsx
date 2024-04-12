@@ -250,8 +250,7 @@ const THREE_DNS_ABI = [
 
 const THREE_DNS_RESOLVER_ADDRESS = '0xF97aAc6C8dbaEBCB54ff166d79706E3AF7a813c8'
 
-const useGetDotBoxOnChain = (normalisedName: string) => {
-  const searchParam = useDebounce(normalisedName, 500)
+const useGetTheeDnsResolverContract = () => {
   const contractRef = useRef({ read: { owner: () => '' } })
 
   useEffect(() => {
@@ -268,23 +267,34 @@ const useGetDotBoxOnChain = (normalisedName: string) => {
     contractRef.current = contract
   }, [])
 
-  const { data, status } = useQuery({
-    queryKey: [searchParam, 'onchain'],
+  return contractRef.current
+}
+
+const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolean) => {
+  const searchParam = useDebounce(normalisedName, 500)
+  const threeDnsResolverContract = useGetTheeDnsResolverContract()
+
+  const threeDnsOwnerQuery = useQuery({
+    queryKey: [searchParam, 'onchain', 'threeDnsOwner'],
     queryFn: async () => {
-      const result = contractRef.current.read.owner([namehash(searchParam)])
+      const result = threeDnsResolverContract.read.owner([namehash(searchParam)])
       return result
     },
     staleTime: 10 * 1000,
-    enabled: !!searchParam,
+    enabled: !!searchParam && isValid,
   })
 
-  console.log('*data: ', data)
+  return {
+    isAvailable: !threeDnsOwnerQuery.data,
+    isLoading: threeDnsOwnerQuery.isLoading,
+  }
 }
 
-const useEthSearchResult = (name: string, isETH?: boolean) => {
-  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
-  const zorb = useZorb(name, 'name')
-  const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
+const useEthSearchResult = (name: string, isValid: boolean, isETH?: boolean) => {
+  const _name = isValid ? name : ''
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name: _name })
+  const zorb = useZorb(_name, 'name')
+  const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name: _name })
 
   return {
     image: avatar || zorb,
@@ -524,17 +534,31 @@ const thread = (operator, first, ...args) => {
 interface SearchItem {
   isLoading: boolean
   isFromHistory: boolean
-  type: 'eth-name'
+  nameType: 'eth-name' | 'addresss' | 'dns'
   value?: string
 }
 
-const addEthDropdownItem = (dropdownItems: SearchItem[], ethSearchresult: any) => {
-  console.log('ethSearchResult: ', ethSearchresult)
+const formatEthText = (name: string, isETH: boolean) => {
+  if (!name) return ''
+  if (isETH) return name
+  if (name.includes('.')) return ''
+  return `${name}.eth`
+}
+
+const addEthDropdownItem = (
+  dropdownItems: SearchItem[],
+  name: any,
+  ethSearchResult: any,
+  isETH: boolean,
+) => {
+  const text = formatEthText(name, isETH)
+
   return [
     {
-      text: 'leon.eth',
-      isLoading: true,
+      text,
+      isLoading: ethSearchResult.isLoading,
       isFromHistory: false,
+      nameType: 'eth-name',
     },
     ...dropdownItems,
   ]
@@ -560,8 +584,8 @@ const addTldDropdownItem = (dropdownItems: SearchItem[]) => [
 ]
 const addHistoryDropdownItem = (dropdownItems: SearchItem[]) => [
   {
-    text: 'leonleon.eth',
-    isLoading: true,
+    text: 'history.eth',
+    isLoading: false,
     isFromHistory: false,
     type: 'eth-name',
   },
@@ -589,22 +613,23 @@ const useBuildDropdownItems = (inputVal: string): SearchItem[] => {
     () => (inputIsAddress ? inputVal : name),
     [inputIsAddress, inputVal, name],
   )
-  const boxSearchResult = useGetDotBox(normalisedName)
-  const boxSearchResultOnchain = useGetDotBoxOnChain(normalisedName)
-  const ethSearchResult = useEthSearchResult(name, isETH)
+  const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(normalisedName, isValid)
+  const ethSearchResult = useEthSearchResult(name, isValid, isETH)
 
-  console.log('boxSearchResult: ', boxSearchResult)
   console.log('boxSearchResultOnchain: ', boxSearchResultOnchain)
+  console.log('ethSearchResult: ', ethSearchResult)
 
   return thread(
     '->',
     [],
-    [addEthDropdownItem, ethSearchResult],
+    [addEthDropdownItem, name, ethSearchResult, isETH],
     addBoxDropdownItem,
     addTldDropdownItem,
     addHistoryDropdownItem,
     addAddressItem,
-  ).reverse()
+  )
+    .reverse()
+    .filter((item) => item.text)
 }
 
 export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraLarge' }) => {
@@ -806,7 +831,8 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
         width: width === Infinity ? undefined : width,
       }}
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
-      $state={state}
+      $state="entered"
+      // $state={state}
       data-testid="search-input-results"
       // data-error={!isValid && !inputIsAddress && inputVal !== ''}
     >
@@ -817,20 +843,26 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
           index={index}
           // selected={selected}
           type={item.type}
+          isLoading={item.isLoading}
           // usingPlaceholder={item.isHistory ? false : usingPlaceholder}
           // usingPlaceholder
-          key={`${item.type}-${item.value}`}
-          value={item.text || normalisedOutput}
+          // key={`${item.type}-${item.value}`}
+          key={index}
+          value={item.text}
+          nameType={item.nameType}
         />
       ))}
     </SearchResultsContainer>
   )
 
+  console.log('state: ', state)
+
   if (breakpoints.sm) {
     return (
       <Container data-testid="search-input-desktop" $size={size}>
         {SearchInputElement}
-        {state !== 'unmounted' && SearchResultsElement}
+        {/* {state !== 'unmounted' && SearchResultsElement} */}
+        {SearchResultsElement}
       </Container>
     )
   }

@@ -251,13 +251,15 @@ const NameResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boo
     const zorb = useZorb(name, 'name')
     const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
 
-    usePrefetchProfile({ name })
+    // usePrefetchProfile({ name })
 
     return (
       <SearchItem
         data-testid="search-result-name"
-        {...props}
-        $clickable={registrationStatus !== 'short'}
+        // {...props}
+        // $clickable={registrationStatus !== 'short'}
+        $clickable
+        $selected
         ref={ref}
       >
         <LeadingSearchItem>
@@ -289,6 +291,8 @@ export const SearchResult = ({
   clickCallback,
   index,
   selected,
+  isLoading,
+  nameType,
   usingPlaceholder = true,
 }: {
   type: SearchItemType
@@ -297,6 +301,8 @@ export const SearchResult = ({
   clickCallback: (index: number) => void
   index: number
   selected: number
+  isLoading: boolean
+  nameType: 'eth-name' | 'address' | 'dns'
   usingPlaceholder?: boolean
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -332,34 +338,41 @@ export const SearchResult = ({
     }),
     [index, hoverCallback, selected],
   )
-
-  if (usingPlaceholder && type !== 'error' && type !== 'text') {
+  if (isLoading) {
     return (
       <SearchItem data-testid="search-result-placeholder" {...props}>
-        <PlaceholderResultItem input={input} />
+        <PlaceholderResultItem input={value} />
       </SearchItem>
     )
   }
 
-  if (type === 'address') {
-    return (
-      <SearchItem data-testid="search-result-address" $clickable {...props}>
-        <AddressResultItem address={input as Address} />
-      </SearchItem>
-    )
+  // if (usingPlaceholder && type !== 'error' && type !== 'text') {
+  //   return (
+  //     <SearchItem data-testid="search-result-placeholder" {...props}>
+  //       <PlaceholderResultItem input={input} />
+  //     </SearchItem>
+  //   )
+  // }
+
+  // if (type === 'address') {
+  //   return (
+  //     <SearchItem data-testid="search-result-address" $clickable {...props}>
+  //       <AddressResultItem address={input as Address} />
+  //     </SearchItem>
+  //   )
+  // }
+
+  if (nameType === 'eth-name') {
+    return <NameResultItem name={input} {...{ ...props, $clickable: true }} />
   }
 
-  if (type === 'name' || type === 'nameWithDotEth') {
-    return <NameResultItem name={input} {...props} />
-  }
-
-  if (type === 'error') {
-    return (
-      <SearchItem data-testid="search-result-error" $selected $error>
-        <Typography weight="bold">{value}</Typography>
-      </SearchItem>
-    )
-  }
+  // if (type === 'error') {
+  //   return (
+  //     <SearchItem data-testid="search-result-error" $selected $error>
+  //       <Typography weight="bold">{value}</Typography>
+  //     </SearchItem>
+  //   )
+  // }
 
   return (
     <SearchItem data-testid="search-result-text">
