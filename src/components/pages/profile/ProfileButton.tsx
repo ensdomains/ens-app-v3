@@ -312,7 +312,7 @@ export const OwnerProfileButton = ({
     )
   }
   return (
-    <Dropdown width={200} items={items}>
+    <Dropdown width={200} items={items} direction="up">
       <RecordItem
         {...recordItemPartialProps}
         postfixIcon={VerticalDotsSVG}
