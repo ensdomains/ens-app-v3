@@ -140,7 +140,7 @@ describe('RevokePermissions', () => {
 
       const nameConfirmation = screen.getByTestId('input-name-confirmation')
 
-      fireEvent.change(nameConfirmation, {target: { value: 'sub.test.eth'} })
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
 
       await userEvent.click(nextButton)
 
@@ -256,7 +256,7 @@ describe('RevokePermissions', () => {
 
       const nameConfirmation = screen.getByTestId('input-name-confirmation')
 
-      fireEvent.change(nameConfirmation, {target: { value: 'sub.test.eth'} })
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
 
       await userEvent.click(nextButton)
 
@@ -471,7 +471,7 @@ describe('RevokePermissions', () => {
 
       const nameConfirmation = screen.getByTestId('input-name-confirmation')
 
-      fireEvent.change(nameConfirmation, {target: { value: 'sub.test.eth'} })
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
 
       await userEvent.click(nextButton)
 
@@ -542,7 +542,7 @@ describe('RevokePermissions', () => {
 
       const nameConfirmation = screen.getByTestId('input-name-confirmation')
 
-      fireEvent.change(nameConfirmation, {target: { value: 'sub.test.eth'} })
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
 
       await userEvent.click(nextButton)
 
@@ -616,7 +616,7 @@ describe('RevokePermissions', () => {
 
       const nameConfirmation = screen.getByTestId('input-name-confirmation')
 
-      fireEvent.change(nameConfirmation, {target: { value: 'sub.test.eth'} })
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
 
       await userEvent.click(nextButton)
 
@@ -689,7 +689,7 @@ describe('RevokePermissions', () => {
 
       const nameConfirmation = screen.getByTestId('input-name-confirmation')
 
-      fireEvent.change(nameConfirmation, {target: { value: 'sub.test.eth'} })
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
 
       await userEvent.click(nextButton)
 
