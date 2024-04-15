@@ -111,13 +111,13 @@ export const Name = ({
         const initialWidth_ = initialWidth ?? maxWidth_ - hiddenLeft + rootLeft
 
         return calculateWrapName({
-          name: children,
+          name_: children,
           node: hiddenRef.current,
           ellipsisWidth,
           maxWidth: Math.round(maxWidth_ * 0.95),
           initialWidth: Math.round(initialWidth_ * 0.95),
           minInitialWidth,
-          lines: wrapLines,
+          maxLines: wrapLines,
           debug,
         })
       })

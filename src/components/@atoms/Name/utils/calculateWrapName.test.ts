@@ -23,6 +23,8 @@ const createNode = (str: string) => {
   return dom.window.document.getElementById('root')
 }
 
+const removeSpecialCharacters = (str: string) => str.replace(/[\u2026\u200B\u200C]/g, '')
+
 describe('findNumbersAddingUpToSum', () => {
   it('should return numbers that add up just below the sum', () => {
     const result = findNumbersAddingUpToSum([1, 2, 3, 4, 5], 7)
@@ -63,27 +65,38 @@ describe('sliceStringByNumbers', () => {
 })
 
 describe('calculateWrapName', () => {
-  it('should return the correct result', () => {
+  const longName = 'areallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallylongname.eth'
+  it.only('should return the correct result', () => {
     const result = calculateWrapName({
-      name: 'helloworld!',
-      node: createNode('helloworld!'),
+      name: longName,
+      node: createNode(longName),
       ellipsisWidth: 5,
-      initialWidth: 10,
-      maxWidth: 20,
-      lines: Infinity
+      initialWidth: 100,
+      maxWidth: 500,
+      maxLines: Infinity
     })
-    expect(result).toEqual('h…​ell…​owo…​rld…​!')
+    expect(result).toEqual('areallyreallyreally…​reallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyrea…​llyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreally…​reallylongname.eth')
+    console.log('areallyreallyreally…​reallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyrea…​llyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreally…​eallylongname‌.eth')
+    const resultParts = result.split('…​')
+    expect(resultParts[0]).toHaveLength(19)
+    expect(resultParts[1]).toHaveLength(99)
+    expect(resultParts[2]).toHaveLength(99)
+    expect(resultParts[3]).toHaveLength(longName.length - 19 - 99 - 99)
   })
 
   it('should return the correct result', () => {
     const result = calculateWrapName({
-      name: 'helloworld!',
-      node: createNode('helloworld!'),
+      name: longName,
+      node: createNode(longName),
       ellipsisWidth: 5,
-      initialWidth: 10,
-      maxWidth: 20,
-      lines: 2
+      initialWidth: 100,
+      maxWidth: 500,
+      maxLines: 2
     })
-    expect(result).toEqual('h…​rld!')
+    expect(result).toEqual('areallyreallyreally…​allyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallylongname\u200C.eth')
+    console.log('areallyreallyreally…​llyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallylongname‌.eth')
+    const resultParts = result.split('…​')
+    expect(resultParts[0]).toHaveLength(19)
+    expect(resultParts[1]).toHaveLength(100)
   })
 })

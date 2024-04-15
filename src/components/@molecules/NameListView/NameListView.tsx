@@ -164,7 +164,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
   )
 
   const isLoading = isNamesLoading || !address
-
+  console.log('names', names)
   let InnerContent: ReactNode
   if (!isMounted) {
     InnerContent = null

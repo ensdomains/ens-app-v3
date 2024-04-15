@@ -1,3 +1,5 @@
+import { insertZeroWidthNonJoinerAtLabel } from './sharedFunctions'
+
 export const findNumbersAddingUpToSum = (numbers: number[], sum: number) => {
   let index = 0
   let total = 0
@@ -30,16 +32,18 @@ export const calculateWrapName = ({
   maxWidth,
   initialWidth = maxWidth,
   minInitialWidth = 0,
-  lines = Infinity,
+  maxLines = Infinity,
+  tolerance = 5,
   debug = false,
 }: {
   name: string
   node: HTMLSpanElement | null
   ellipsisWidth: number
-  maxWidth?: number
+  maxWidth: number
   initialWidth?: number
   minInitialWidth?: number
-  lines?: number
+  maxLines?: number
+  tolerance?: number
   debug?: boolean
 }): string => {
   if (debug)
@@ -51,12 +55,18 @@ export const calculateWrapName = ({
       maxWidth,
       initialWidth,
       minInitialWidth,
-      lines,
+      maxLines,
     )
+
+  const name_ = insertZeroWidthNonJoinerAtLabel(name)
   if (!node) {
     console.error('node is null')
-    return name
+    return name_
   }
+
+  const _maxWdth = maxWidth ?? node.parentElement?.offsetWidth ?? Infinity
+  const containerWidth = node.offsetWidth || Infinity
+  if (containerWidth <= _maxWdth) return name_
 
   let currentGroup: number[] = []
   let currentGroupTotal = 0
@@ -64,15 +74,19 @@ export const calculateWrapName = ({
 
   const initialWidth_ = initialWidth < minInitialWidth ? maxWidth : initialWidth
 
+  const decimalTolerance = 1 - Math.max(0, Math.min(100, tolerance)) / 100
+  const initialWidthWithTolerance = initialWidth_ * decimalTolerance
+  const maxWidthWithTolerance = maxWidth * decimalTolerance
+
   const children = node?.children || []
   for (let index = 0; index < children.length; index += 1) {
     const element = children[index] as HTMLSpanElement
     const charWidth = element.offsetWidth
     currentGroupTotal += charWidth
-    const breakpoint = result.length === 0 ? initialWidth_ : maxWidth
+    const currentMaxWidth = result.length === 0 ? initialWidthWithTolerance : maxWidthWithTolerance
     if (debug)
-      console.log('charWidth', charWidth, 'currentGroupTotal', currentGroupTotal, breakpoint)
-    if (currentGroupTotal + ellipsisWidth > breakpoint) {
+      console.log('charWidth', charWidth, 'currentGroupTotal', currentGroupTotal, currentMaxWidth)
+    if (currentGroupTotal + ellipsisWidth >= currentMaxWidth) {
       result.push(currentGroup)
       currentGroup = [charWidth]
       currentGroupTotal = charWidth
@@ -83,10 +97,10 @@ export const calculateWrapName = ({
   if (currentGroup.length) result.push(currentGroup)
 
   // console.log(result.length, lines)
-  if (result.length > lines) {
-    const left = result.slice(0, lines - 1)
+  if (result.length > maxLines) {
+    const left = result.slice(0, maxLines - 1)
     const right = result
-      .slice(lines - 1)
+      .slice(maxLines - 1)
       .reverse()
       .flat()
     // console.log('left', left, right)
@@ -97,7 +111,7 @@ export const calculateWrapName = ({
   const slices = result.map((group) => group.length)
   const [last, ...reversedFirstSegments] = slices.reverse()
   const firstSegments = reversedFirstSegments.reverse()
-  const firstNames = sliceStringByNumbers(firstSegments, name)
-  const lastSegment = name.slice(-last)
+  const firstNames = sliceStringByNumbers(firstSegments, name_)
+  const lastSegment = name_.slice(-last)
   return [...firstNames, lastSegment].join('\u2026\u200B')
 }

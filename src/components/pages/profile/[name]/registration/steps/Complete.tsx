@@ -70,6 +70,12 @@ const TitleContainer = styled.div(
   `,
 )
 
+const NameContainer = styled.span(
+  () => css`
+    word-break: break-all;
+  `,
+)
+
 const Title = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.headingOne};
@@ -282,7 +288,10 @@ const Complete = ({ name, beautifiedName, callback, isMoonpayFlow }: Props) => {
         <Title>{t('steps.complete.heading')}</Title>
         <Typography style={{ display: 'inline' }} fontVariant="headingThree" weight="bold">
           {t('steps.complete.subheading')}
-          <SubtitleWithGradient>{nameWithColourEmojis}</SubtitleWithGradient>
+          <br />
+          <NameContainer>
+            <SubtitleWithGradient>{nameWithColourEmojis}</SubtitleWithGradient>
+          </NameContainer>
         </Typography>
       </TitleContainer>
       <Typography>{t('steps.complete.description')}</Typography>

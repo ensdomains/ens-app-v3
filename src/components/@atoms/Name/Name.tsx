@@ -80,12 +80,12 @@ export const Name = ({
         const initialWidth = containerWidth + containerLeft! - nodeRect.left
         const ellipsisWidth = ellipsisRef.current?.offsetWidth || 0
         return calculateWrapName({
-          name: children,
+          name_: children,
           node,
           ellipsisWidth,
           maxWidth: containerWidth,
           initialWidth,
-          lines: wrapLines,
+          maxLines: wrapLines,
         })
       })
       .otherwise(() => {
