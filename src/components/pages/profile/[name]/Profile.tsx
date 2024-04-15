@@ -230,7 +230,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     return undefined
   }, [error, errorTitle])
 
-  const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
+  const ogImageUrl = `${OG_IMAGE_URL}/image/name/${normalisedName || name}`
 
   const chainName = useChainName()
 
@@ -253,13 +253,11 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
           <>
             <meta name="fc:frame:button:2" content="View address" />
             <meta name="fc:frame:button:2:action" content="link" />
-            <meta
-              name="fc:frame:button:2:target"
-              content={makeEtherscanLink(profile.address, chainName, 'address')}
-            />
+            <meta name="fc:frame:button:2:target" content={`https://ens.app/${profile.address}`} />
           </>
         )}
         {/* twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={ogImageUrl} />
         <meta name="twitter:title" content={titleContent} />
         <meta name="twitter:description" content={descriptionContent} />
