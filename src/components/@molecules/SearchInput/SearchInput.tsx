@@ -515,15 +515,23 @@ const addAddressItem = (dropdownItems: SearchItem[], name: string, inputIsAddres
   ...dropdownItems,
 ]
 
-const addHistoryDropdownItems = (dropdownItems: SearchItem[]) => [
-  {
-    text: 'history.eth',
-    type: 'eth-name',
-  },
-  ...dropdownItems,
-]
+const MAX_DROPDOWN_ITEMS = 6
+const addHistoryDropdownItems = (dropdownItems: SearchItem[], history: any) => {
+  console.log('history: ', history)
+  const historyItemDrawCount = MAX_DROPDOWN_ITEMS - dropdownItems.length
+  const historyItems = history?.slice(0, historyItemDrawCount + 1).map((item) => ({
+    text: item.value,
+    nameType: 'eth',
+  }))
 
-const useBuildDropdownItems = (inputVal: string): SearchItem[] => {
+  if (historyItemDrawCount > 0) {
+    return [...historyItems, ...dropdownItems]
+  }
+
+  return dropdownItems
+}
+
+const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => {
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
 
   const { isValid, isETH, name } = useValidate({
@@ -538,8 +546,6 @@ const useBuildDropdownItems = (inputVal: string): SearchItem[] => {
   // const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(normalisedName, isValid)
   // const ethSearchResult = useEthSearchResult(name, isValid, isETH)
 
-  console.log('inputIsAddress: ', inputIsAddress)
-
   return thread(
     '->',
     [],
@@ -547,7 +553,7 @@ const useBuildDropdownItems = (inputVal: string): SearchItem[] => {
     [addEthDropdownItem, name, isETH],
     [addBoxDropdownItem, name, isValid],
     [addTldDropdownItem, name],
-    addHistoryDropdownItems,
+    [addHistoryDropdownItems, history],
   )
     .reverse()
     .filter((item) => item.text)
@@ -685,7 +691,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
-  const dropdownItems = useBuildDropdownItems(inputVal)
+  const dropdownItems = useBuildDropdownItems(inputVal, history)
   console.log('dropdownItems: ', dropdownItems)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
