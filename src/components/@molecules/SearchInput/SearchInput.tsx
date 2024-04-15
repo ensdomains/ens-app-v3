@@ -464,7 +464,6 @@ const formatEthText = (name: string, isETH: boolean) => {
   if (name.includes('.')) return ''
   return `${name}.eth`
 }
-
 const addEthDropdownItem = (
   dropdownItems: SearchItem[],
   name: any,
@@ -474,7 +473,7 @@ const addEthDropdownItem = (
   {
     text: formatEthText(name, isETH),
     isFromHistory: false,
-    nameType: 'eth-name',
+    nameType: 'eth',
   },
   ...dropdownItems,
 ]
@@ -485,11 +484,10 @@ const formatBoxText = (name: string) => {
   if (name.includes('.')) return ''
   return `${name}.box`
 }
-
 const addBoxDropdownItem = (dropdownItems: SearchItem[], name: string, isValid: boolean) => [
   {
     text: formatBoxText(name),
-    nameType: 'box-name',
+    nameType: 'box',
     isValid,
   },
   ...dropdownItems,
@@ -500,20 +498,19 @@ const formatTldText = (name: string) => {
   if (name.includes('.')) return ''
   return name
 }
-
 const addTldDropdownItem = (dropdownItems: SearchItem[], name: string) => [
   {
     text: formatTldText(name),
     isLoading: true,
-    type: 'tld',
+    nameType: 'tld',
   },
   ...dropdownItems,
 ]
 
-const addAddressItem = (dropdownItems: SearchItem[]) => [
+const addAddressItem = (dropdownItems: SearchItem[], name: string, inputIsAddress: boolean) => [
   {
-    text: '0x2ef2c9f9DaA42f56B393e36F8376C93313fe1B1e',
-    type: 'address',
+    text: inputIsAddress ? name : '',
+    nameType: 'address',
   },
   ...dropdownItems,
 ]
@@ -529,7 +526,7 @@ const addHistoryDropdownItems = (dropdownItems: SearchItem[]) => [
 const useBuildDropdownItems = (inputVal: string): SearchItem[] => {
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
 
-  const { isValid, isETH, is2LD, isShort, type, name } = useValidate({
+  const { isValid, isETH, name } = useValidate({
     input: inputVal,
     enabled: !inputIsAddress && !inputVal,
   })
@@ -541,13 +538,15 @@ const useBuildDropdownItems = (inputVal: string): SearchItem[] => {
   // const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(normalisedName, isValid)
   // const ethSearchResult = useEthSearchResult(name, isValid, isETH)
 
+  console.log('inputIsAddress: ', inputIsAddress)
+
   return thread(
     '->',
     [],
+    [addAddressItem, name, inputIsAddress],
     [addEthDropdownItem, name, isETH],
     [addBoxDropdownItem, name, isValid],
     [addTldDropdownItem, name],
-    addAddressItem,
     addHistoryDropdownItems,
   )
     .reverse()

@@ -227,6 +227,7 @@ const TextWrapper = styled.div(
   `,
 )
 
+/*
 const PlaceholderResultItem = ({ input }: { input: string }) => {
   const zorb = useZorb('placeholder', 'name')
   const beautifiedName = useBeautifiedName(input)
@@ -247,6 +248,44 @@ const PlaceholderResultItem = ({ input }: { input: string }) => {
     </>
   )
 }
+*/
+
+const TldResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
+  ({ name, ...props }, ref) => {
+    const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
+    const zorb = useZorb(name, 'name')
+    const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
+
+    // usePrefetchProfile({ name })
+
+    console.log('name: ', name)
+
+    return (
+      <SearchItem
+        data-testid="search-result-name"
+        {...props}
+        $clickable={registrationStatus !== 'short'}
+        ref={ref}
+      >
+        <LeadingSearchItem>
+          <AvatarWrapper>
+            <Avatar src={avatar || zorb} label="name" />
+          </AvatarWrapper>
+          <TextWrapper>
+            <Typography weight="bold">{beautifiedName}</Typography>
+          </TextWrapper>
+        </LeadingSearchItem>
+        {!isLoading && registrationStatus ? (
+          <StatusTag status={registrationStatus} />
+        ) : (
+          <SpinnerWrapper>
+            <Spinner color="accent" />
+          </SpinnerWrapper>
+        )}
+      </SearchItem>
+    )
+  },
+)
 
 const EthResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
   ({ name, ...props }, ref) => {
@@ -350,18 +389,16 @@ const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolea
 }
 
 const BoxResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
-  ({ text, isValid }, ref) => {
+  ({ name, isValid }, ref) => {
     const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
     const zorb = useZorb(name, 'name')
-    const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(text, isValid)
+    const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(name, isValid)
 
     // usePrefetchProfile({ name })
     console.log('boxSearchResultOnchain: ', boxSearchResultOnchain)
     const registrationStatus: RegistrationStatus = boxSearchResultOnchain.isAvailable
       ? 'available'
       : 'registered'
-
-    console.log('text: ', text)
 
     return (
       <SearchItem
@@ -377,7 +414,7 @@ const BoxResultItem = forwardRef<HTMLDivElement, { name: string; $selected: bool
             <Avatar src={avatar || zorb} label="name" />
           </AvatarWrapper>
           <TextWrapper>
-            <Typography weight="bold">{text}</Typography>
+            <Typography weight="bold">{name}</Typography>
           </TextWrapper>
         </LeadingSearchItem>
         {!boxSearchResultOnchain.isLoading && registrationStatus ? (
@@ -466,20 +503,24 @@ export const SearchResult = ({
   //   )
   // }
 
-  // if (type === 'address') {
-  //   return (
-  //     <SearchItem data-testid="search-result-address" $clickable {...props}>
-  //       <AddressResultItem address={input as Address} />
-  //     </SearchItem>
-  //   )
-  // }
-
-  if (nameType === 'eth-name') {
-    return <EthResultItem {...{ registrationStatus, isLoading, name: text }} />
+  if (nameType === 'address') {
+    return (
+      <SearchItem data-testid="search-result-address" $clickable {...props}>
+        <AddressResultItem address={text} />
+      </SearchItem>
+    )
   }
 
-  if (nameType === 'box-name') {
-    return <BoxResultItem {...{ registrationStatus, isLoading, text }} />
+  if (nameType === 'eth') {
+    return <EthResultItem {...{ name: text }} />
+  }
+
+  if (nameType === 'box') {
+    return <BoxResultItem {...{ name: text }} />
+  }
+
+  if (nameType === 'tld') {
+    return <TldResultItem {...{ name: text }} />
   }
 
   // if (type === 'error') {
