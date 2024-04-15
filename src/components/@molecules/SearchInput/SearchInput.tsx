@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
-import { createPublicClient, getContract, http, isAddress, namehash } from 'viem'
-import { optimism } from 'viem/chains'
+import { isAddress } from 'viem'
 import { useAccount, useChainId, useEnsAvatar } from 'wagmi'
 
 import {
@@ -19,6 +18,7 @@ import { normalise } from '@ensdomains/ensjs/utils'
 import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
 import { useBasicName } from '@app/hooks/useBasicName'
+import { useDebounce } from '@app/hooks/useDebounce'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -193,22 +193,6 @@ const MobileSearchInput = ({
   )
 }
 
-function useDebounce(value: any, delay: any) {
-  const [debouncedValue, setDebouncedValue] = useState(value)
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
-
-    return () => {
-      clearTimeout(handler)
-    }
-  }, [value, delay])
-
-  return debouncedValue
-}
-
 const useGetDotBox = (normalisedOutput: any) => {
   const searchParam = useDebounce(normalisedOutput, 500)
   console.log('serachParam: ', searchParam)
@@ -224,70 +208,6 @@ const useGetDotBox = (normalisedOutput: any) => {
   })
 
   return { data, status }
-}
-
-const THREE_DNS_ABI = [
-  {
-    type: 'function',
-    name: 'owner',
-    inputs: [
-      {
-        name: '_node',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    stateMutability: 'view',
-  },
-]
-
-const THREE_DNS_RESOLVER_ADDRESS = '0xF97aAc6C8dbaEBCB54ff166d79706E3AF7a813c8'
-
-const useGetTheeDnsResolverContract = () => {
-  const contractRef = useRef({ read: { owner: () => '' } })
-
-  useEffect(() => {
-    const publicClient = createPublicClient({
-      chain: optimism,
-      transport: http(),
-    })
-
-    const contract = getContract({
-      address: THREE_DNS_RESOLVER_ADDRESS,
-      abi: THREE_DNS_ABI,
-      client: publicClient,
-    })
-    contractRef.current = contract
-  }, [])
-
-  return contractRef.current
-}
-
-const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolean) => {
-  const searchParam = useDebounce(normalisedName, 500)
-  const threeDnsResolverContract = useGetTheeDnsResolverContract()
-
-  const threeDnsOwnerQuery = useQuery({
-    queryKey: [searchParam, 'onchain', 'threeDnsOwner'],
-    queryFn: async () => {
-      const result = threeDnsResolverContract.read.owner([namehash(searchParam)])
-      return result
-    },
-    staleTime: 10 * 1000,
-    enabled: !!searchParam && isValid,
-  })
-
-  return {
-    isAvailable: !threeDnsOwnerQuery.data,
-    isLoading: threeDnsOwnerQuery.isLoading,
-  }
 }
 
 const useEthSearchResult = (name: string, isValid: boolean, isETH?: boolean) => {
@@ -550,53 +470,58 @@ const addEthDropdownItem = (
   name: any,
   ethSearchResult: any,
   isETH: boolean,
-) => {
-  const text = formatEthText(name, isETH)
+) => [
+  {
+    text: formatEthText(name, isETH),
+    isFromHistory: false,
+    nameType: 'eth-name',
+  },
+  ...dropdownItems,
+]
 
-  return [
-    {
-      text,
-      isLoading: ethSearchResult.isLoading,
-      isFromHistory: false,
-      nameType: 'eth-name',
-    },
-    ...dropdownItems,
-  ]
+const formatBoxText = (name: string) => {
+  if (!name) return ''
+  if (name?.endsWith('.box')) return name
+  if (name.includes('.')) return ''
+  return `${name}.box`
 }
 
-const addBoxDropdownItem = (dropdownItems: SearchItem[]) => [
+const addBoxDropdownItem = (dropdownItems: SearchItem[], name: string, isValid: boolean) => [
   {
-    text: 'leon.box',
+    text: formatBoxText(name),
+    nameType: 'box-name',
+    isValid,
+  },
+  ...dropdownItems,
+]
+
+const formatTldText = (name: string) => {
+  if (!name) return ''
+  if (name.includes('.')) return ''
+  return name
+}
+
+const addTldDropdownItem = (dropdownItems: SearchItem[], name: string) => [
+  {
+    text: formatTldText(name),
     isLoading: true,
-    isFromHistory: false,
-    type: 'eth-name',
+    type: 'tld',
   },
   ...dropdownItems,
 ]
-const addTldDropdownItem = (dropdownItems: SearchItem[]) => [
-  {
-    text: 'leon',
-    isLoading: true,
-    isFromHistory: false,
-    type: 'eth-name',
-  },
-  ...dropdownItems,
-]
-const addHistoryDropdownItem = (dropdownItems: SearchItem[]) => [
-  {
-    text: 'history.eth',
-    isLoading: false,
-    isFromHistory: false,
-    type: 'eth-name',
-  },
-  ...dropdownItems,
-]
+
 const addAddressItem = (dropdownItems: SearchItem[]) => [
   {
     text: '0x2ef2c9f9DaA42f56B393e36F8376C93313fe1B1e',
-    isLoading: true,
-    isFromHistory: false,
     type: 'address',
+  },
+  ...dropdownItems,
+]
+
+const addHistoryDropdownItems = (dropdownItems: SearchItem[]) => [
+  {
+    text: 'history.eth',
+    type: 'eth-name',
   },
   ...dropdownItems,
 ]
@@ -609,24 +534,21 @@ const useBuildDropdownItems = (inputVal: string): SearchItem[] => {
     enabled: !inputIsAddress && !inputVal,
   })
 
-  const normalisedName = useMemo(
-    () => (inputIsAddress ? inputVal : name),
-    [inputIsAddress, inputVal, name],
-  )
-  const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(normalisedName, isValid)
-  const ethSearchResult = useEthSearchResult(name, isValid, isETH)
-
-  console.log('boxSearchResultOnchain: ', boxSearchResultOnchain)
-  console.log('ethSearchResult: ', ethSearchResult)
+  // const normalisedName = useMemo(
+  //   () => (inputIsAddress ? inputVal : name),
+  //   [inputIsAddress, inputVal, name],
+  // )
+  // const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(normalisedName, isValid)
+  // const ethSearchResult = useEthSearchResult(name, isValid, isETH)
 
   return thread(
     '->',
     [],
-    [addEthDropdownItem, name, ethSearchResult, isETH],
-    addBoxDropdownItem,
-    addTldDropdownItem,
-    addHistoryDropdownItem,
+    [addEthDropdownItem, name, isETH],
+    [addBoxDropdownItem, name, isValid],
+    [addTldDropdownItem, name],
     addAddressItem,
+    addHistoryDropdownItems,
   )
     .reverse()
     .filter((item) => item.text)
@@ -848,7 +770,8 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
           // usingPlaceholder
           // key={`${item.type}-${item.value}`}
           key={index}
-          value={item.text}
+          text={item.text}
+          registrationStatus={item.registrationStatus}
           nameType={item.nameType}
         />
       ))}

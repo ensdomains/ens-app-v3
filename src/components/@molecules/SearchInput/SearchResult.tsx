@@ -3,10 +3,12 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
+import { useQuery } from '@tanstack/react-query'
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { Address } from 'viem'
+import { Address, createPublicClient, getContract, http, namehash, zeroAddress } from 'viem'
+import { optimism } from 'viem/chains'
 import { useEnsAvatar } from 'wagmi'
 
 import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
@@ -14,6 +16,7 @@ import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
+import { useDebounce } from '@app/hooks/useDebounce'
 import { usePrefetchProfile } from '@app/hooks/useProfile'
 import { useZorb } from '@app/hooks/useZorb'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
@@ -245,7 +248,7 @@ const PlaceholderResultItem = ({ input }: { input: string }) => {
   )
 }
 
-const NameResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
+const EthResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
   ({ name, ...props }, ref) => {
     const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
     const zorb = useZorb(name, 'name')
@@ -256,10 +259,8 @@ const NameResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boo
     return (
       <SearchItem
         data-testid="search-result-name"
-        // {...props}
-        // $clickable={registrationStatus !== 'short'}
-        $clickable
-        $selected
+        {...props}
+        $clickable={registrationStatus !== 'short'}
         ref={ref}
       >
         <LeadingSearchItem>
@@ -282,6 +283,115 @@ const NameResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boo
   },
 )
 
+const THREE_DNS_ABI = [
+  {
+    type: 'function',
+    name: 'owner',
+    inputs: [
+      {
+        name: '_node',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    stateMutability: 'view',
+  },
+]
+
+const THREE_DNS_RESOLVER_ADDRESS = '0xF97aAc6C8dbaEBCB54ff166d79706E3AF7a813c8'
+
+const useGetTheeDnsResolverContract = () => {
+  const contractRef = useRef({ read: { owner: () => '' } })
+
+  useEffect(() => {
+    const publicClient = createPublicClient({
+      chain: optimism,
+      transport: http(),
+    })
+
+    const contract = getContract({
+      address: THREE_DNS_RESOLVER_ADDRESS,
+      abi: THREE_DNS_ABI,
+      client: publicClient,
+    })
+    contractRef.current = contract
+  }, [])
+
+  return contractRef.current
+}
+
+const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolean) => {
+  const searchParam = useDebounce(normalisedName, 500)
+  const threeDnsResolverContract = useGetTheeDnsResolverContract()
+
+  const threeDnsOwnerQuery = useQuery({
+    queryKey: [searchParam, 'onchain', 'threeDnsOwner'],
+    queryFn: async () => {
+      const result = threeDnsResolverContract.read.owner([namehash(searchParam)])
+      return result
+    },
+    staleTime: 10 * 1000,
+    enabled: !!searchParam && isValid,
+  })
+
+  console.log('threeDnsOwnerQuery: ', threeDnsOwnerQuery)
+
+  return {
+    isAvailable: threeDnsOwnerQuery.data && threeDnsOwnerQuery.data === zeroAddress,
+    isLoading: threeDnsOwnerQuery.isLoading,
+  }
+}
+
+const BoxResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
+  ({ text, isValid }, ref) => {
+    const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
+    const zorb = useZorb(name, 'name')
+    const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(text, isValid)
+
+    // usePrefetchProfile({ name })
+    console.log('boxSearchResultOnchain: ', boxSearchResultOnchain)
+    const registrationStatus: RegistrationStatus = boxSearchResultOnchain.isAvailable
+      ? 'available'
+      : 'registered'
+
+    console.log('text: ', text)
+
+    return (
+      <SearchItem
+        data-testid="search-result-name"
+        // {...props}
+        // $clickable={registrationStatus !== 'short'}
+        $clickable
+        $selected
+        ref={ref}
+      >
+        <LeadingSearchItem>
+          <AvatarWrapper>
+            <Avatar src={avatar || zorb} label="name" />
+          </AvatarWrapper>
+          <TextWrapper>
+            <Typography weight="bold">{text}</Typography>
+          </TextWrapper>
+        </LeadingSearchItem>
+        {!boxSearchResultOnchain.isLoading && registrationStatus ? (
+          <StatusTag status={registrationStatus} />
+        ) : (
+          <SpinnerWrapper>
+            <Spinner color="accent" />
+          </SpinnerWrapper>
+        )}
+      </SearchItem>
+    )
+  },
+)
+
 type SearchItemType = 'text' | 'error' | 'address' | 'name' | 'nameWithDotEth'
 
 export const SearchResult = ({
@@ -293,6 +403,8 @@ export const SearchResult = ({
   selected,
   isLoading,
   nameType,
+  registrationStatus,
+  text,
   usingPlaceholder = true,
 }: {
   type: SearchItemType
@@ -338,13 +450,13 @@ export const SearchResult = ({
     }),
     [index, hoverCallback, selected],
   )
-  if (isLoading) {
-    return (
-      <SearchItem data-testid="search-result-placeholder" {...props}>
-        <PlaceholderResultItem input={value} />
-      </SearchItem>
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <SearchItem data-testid="search-result-placeholder" {...props}>
+  //       <PlaceholderResultItem input={value} />
+  //     </SearchItem>
+  //   )
+  // }
 
   // if (usingPlaceholder && type !== 'error' && type !== 'text') {
   //   return (
@@ -363,7 +475,11 @@ export const SearchResult = ({
   // }
 
   if (nameType === 'eth-name') {
-    return <NameResultItem name={input} {...{ ...props, $clickable: true }} />
+    return <EthResultItem {...{ registrationStatus, isLoading, name: text }} />
+  }
+
+  if (nameType === 'box-name') {
+    return <BoxResultItem {...{ registrationStatus, isLoading, text }} />
   }
 
   // if (type === 'error') {
