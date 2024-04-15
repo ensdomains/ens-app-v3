@@ -29,6 +29,10 @@ export default defineConfig({
     globalSetup: ['./test/global-setup.mts'],
     coverage: {
       provider: 'v8',
+      include: ['src/**/*'],
+    },
+    typecheck: {
+      ignoreSourceErrors: true,
     },
     environmentMatchGlobs: [['**/*.node.test.ts', 'node']],
     deps: {

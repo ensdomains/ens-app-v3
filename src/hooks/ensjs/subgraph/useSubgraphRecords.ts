@@ -6,14 +6,15 @@ import {
   GetSubgraphRecordsReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
+import { usePrefetchQuery } from '@app/hooks/usePrefetchQuery'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
-type UseSubgraphRecordsParameters = PartialBy<GetSubgraphRecordsParameters, 'name'>
+export type UseSubgraphRecordsParameters = PartialBy<GetSubgraphRecordsParameters, 'name'>
 
-type UseSubgraphRecordsReturnType = GetSubgraphRecordsReturnType
+export type UseSubgraphRecordsReturnType = GetSubgraphRecordsReturnType
 
 type UseSubgraphRecordsConfig = QueryConfig<UseSubgraphRecordsReturnType, Error>
 
@@ -67,4 +68,16 @@ export const useSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>
     refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
     isCachedData: getIsCachedData(query),
   }
+}
+
+export const usePrefetchSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>(
+  params: TParams,
+) => {
+  const initialOptions = useQueryOptions({
+    params,
+    functionName: 'getSubgraphRecords',
+    queryDependencyType: 'graph',
+    queryFn: getSubgraphRecordsQueryFn,
+  })
+  return usePrefetchQuery(initialOptions)
 }
