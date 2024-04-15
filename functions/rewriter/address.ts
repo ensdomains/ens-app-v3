@@ -33,9 +33,17 @@ export const addressRewriter = async ({
   const rewriter = new HTMLRewriter()
     .on('title', new ContentModifier(newTitle))
     .on('meta[name="description"]', new AttributeModifier('content', newDescription))
+    /* opengraph */
     .on('meta[property="og:image"]', new AttributeModifier('content', ogImageUrl))
     .on('meta[property="og:title"]', new AttributeModifier('content', newTitle))
     .on('meta[property="og:description"]', new AttributeModifier('content', newDescription))
+    /* farcaster */
+    .on('meta[name="fc:frame:image"]', new AttributeModifier('content', ogImageUrl))
+    .on(
+      'meta[name="fc:frame:button:1:target"]',
+      new AttributeModifier('content', `https://ens.app/${address}`),
+    )
+    /* twitter */
     .on('meta[name="twitter:image"]', new AttributeModifier('content', ogImageUrl))
     .on('meta[name="twitter:title"]', new AttributeModifier('content', newTitle))
     .on('meta[name="twitter:description"]', new AttributeModifier('content', newDescription))

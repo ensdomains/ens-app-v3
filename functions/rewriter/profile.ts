@@ -46,13 +46,16 @@ export const profileRewriter = async ({
   const rewriter = new HTMLRewriter()
     .on('title', new ContentModifier(newTitle))
     .on('meta[name="description"]', new AttributeModifier('content', newDescription))
+    /* opengraph */
     .on('meta[property="og:image"]', new AttributeModifier('content', ogImageUrl))
     .on('meta[property="og:title"]', new AttributeModifier('content', newTitle))
     .on('meta[property="og:description"]', new AttributeModifier('content', newDescription))
+    /* twitter */
     .on('meta[name="twitter:image"]', new AttributeModifier('content', ogImageUrl))
     .on('meta[name="twitter:title"]', new AttributeModifier('content', newTitle))
     .on('meta[name="twitter:description"]', new AttributeModifier('content', newDescription))
 
+  /* farcaster */
   if (normalisedName) {
     rewriter
       .on('meta[name="fc:frame:image"]', new AttributeModifier('content', ogImageUrl))
