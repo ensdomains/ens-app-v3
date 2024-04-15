@@ -58,31 +58,35 @@ const Page = () => {
       <Head>
         <title>{titleContent}</title>
         <meta name="description" content={descriptionContent} />
-        {/* opengraph */}
-        <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:title" content={titleContent} />
-        <meta property="og:description" content={descriptionContent} />
-        {/* farcaster */}
         <meta name="fc:frame" content="vNext" />
-        <meta name="fc:frame:image" content={ogImageUrl} />
-        <meta name="fc:frame:button:1" content="View address" />
-        <meta name="fc:frame:button:1:action" content="link" />
-        <meta name="fc:frame:button:1:target" content={`https://ens.app/${address}`} />
-        {primaryProfile && (
+        <meta name="twitter:card" content="summary_large_image" />
+        {!!process.env.NEXT_PUBLIC_IPFS && (
           <>
-            <meta name="fc:frame:button:2" content="View profile" />
-            <meta name="fc:frame:button:2:action" content="link" />
-            <meta
-              name="fc:frame:button:2:target"
-              content={`https://ens.app/${primaryProfile.name}`}
-            />
+            {/* opengraph */}
+            <meta property="og:image" content={ogImageUrl} />
+            <meta property="og:title" content={titleContent} />
+            <meta property="og:description" content={descriptionContent} />
+            {/* farcaster */}
+            <meta name="fc:frame:image" content={ogImageUrl} />
+            <meta name="fc:frame:button:1" content="View address" />
+            <meta name="fc:frame:button:1:action" content="link" />
+            <meta name="fc:frame:button:1:target" content={`https://ens.app/${address}`} />
+            {primaryProfile && (
+              <>
+                <meta name="fc:frame:button:2" content="View profile" />
+                <meta name="fc:frame:button:2:action" content="link" />
+                <meta
+                  name="fc:frame:button:2:target"
+                  content={`https://ens.app/${primaryProfile.name}`}
+                />
+              </>
+            )}
+            {/* twitter */}
+            <meta name="twitter:image" content={ogImageUrl} />
+            <meta name="twitter:title" content={titleContent} />
+            <meta name="twitter:description" content={descriptionContent} />
           </>
         )}
-        {/* twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={ogImageUrl} />
-        <meta name="twitter:title" content={titleContent} />
-        <meta name="twitter:description" content={descriptionContent} />
       </Head>
       <Content noTitle title={shortenedAddress} copyValue={address} loading={loading}>
         {{

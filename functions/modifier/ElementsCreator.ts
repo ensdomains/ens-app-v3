@@ -1,15 +1,12 @@
-export class ElementsCreator {
-  private elements: {
-    tagName: string
-    attributes: Record<string, string>
-  }[]
+export type ElementCreation = {
+  tagName: string
+  attributes: Record<string, string>
+}
 
-  constructor(
-    elements: {
-      tagName: string
-      attributes: Record<string, string>
-    }[],
-  ) {
+export class ElementsCreator {
+  private elements: ElementCreation[]
+
+  constructor(elements: ElementCreation[]) {
     this.elements = elements
   }
 
