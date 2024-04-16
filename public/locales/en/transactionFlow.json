@@ -307,7 +307,7 @@
         },
         "lastWarning": {
           "title": "Are you absolutely sure?",
-          "subtitle": "You are making changes that can only undone if the name expires ({{date}}).",
+          "subtitle": "You are making changes that can only undone when the name expires ({{date}}).",
           "message": "Please type your ENS name ({{name}}) to confirm."
         }
       },
