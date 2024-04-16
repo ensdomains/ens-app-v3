@@ -1,15 +1,15 @@
 import { renderHook } from '@app/test-utils'
 
-import {
-  makeMockUseOwners,
-  mockUseOwnersConfigMap,
-  mockUseOwnersTypes,
-} from '../../test/mock/makeMockUseOwners'
 import { describe, expect, it } from 'vitest'
 
 import { makeMockUseAbilitiesData } from '../../test/mock/makeMockUseAbilitiesData'
 import { makeMockUseDnsOwnerData } from '../../test/mock/makeMockUseDnsOwnerData'
 import { makeMockUseOwnerData } from '../../test/mock/makeMockUseOwnerData'
+import {
+  makeMockUseOwners,
+  mockUseOwnersConfigMap,
+  mockUseOwnersTypes,
+} from '../../test/mock/makeMockUseOwners'
 import { makeMockUseWrapperDataData } from '../../test/mock/makeMockUseWrapperDataData.ts'
 import { useOwners } from './useOwners'
 
