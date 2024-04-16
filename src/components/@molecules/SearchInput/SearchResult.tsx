@@ -389,7 +389,7 @@ const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolea
 }
 
 const BoxResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
-  ({ name, isValid }, ref) => {
+  ({ name, isValid, ...props }, ref) => {
     const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
     const zorb = useZorb(name, 'name')
     const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(name, isValid)
@@ -403,10 +403,9 @@ const BoxResultItem = forwardRef<HTMLDivElement, { name: string; $selected: bool
     return (
       <SearchItem
         data-testid="search-result-name"
-        // {...props}
+        {...props}
         // $clickable={registrationStatus !== 'short'}
         $clickable
-        $selected
         ref={ref}
       >
         <LeadingSearchItem>
@@ -442,7 +441,6 @@ export const SearchResult = ({
   nameType,
   registrationStatus,
   text,
-  usingPlaceholder = true,
 }: {
   type: SearchItemType
   value: string
@@ -452,7 +450,6 @@ export const SearchResult = ({
   selected: number
   isLoading: boolean
   nameType: 'eth-name' | 'address' | 'dns'
-  usingPlaceholder?: boolean
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null)
 
@@ -471,13 +468,6 @@ export const SearchResult = ({
       wrapper?.removeEventListener('click', handleClick)
     }
   }, [handleClick])
-
-  const input = useMemo(() => {
-    if (type === 'nameWithDotEth') {
-      return `${value!}.eth`
-    }
-    return value
-  }, [type, value])
 
   const props = useMemo(
     () => ({
@@ -506,21 +496,21 @@ export const SearchResult = ({
   if (nameType === 'address') {
     return (
       <SearchItem data-testid="search-result-address" $clickable {...props}>
-        <AddressResultItem address={text} />
+        <AddressResultItem {...{ address: text, selected }} />
       </SearchItem>
     )
   }
 
   if (nameType === 'eth') {
-    return <EthResultItem {...{ name: text }} />
+    return <EthResultItem {...{ name: text, $selected: selected }} />
   }
 
   if (nameType === 'box') {
-    return <BoxResultItem {...{ name: text }} />
+    return <BoxResultItem {...{ name: text, $selected: selected }} />
   }
 
   if (nameType === 'tld') {
-    return <TldResultItem {...{ name: text }} />
+    return <TldResultItem {...{ name: text, $selected: selected }} />
   }
 
   // if (type === 'error') {

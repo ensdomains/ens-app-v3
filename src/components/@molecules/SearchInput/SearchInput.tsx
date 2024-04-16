@@ -543,8 +543,6 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
   //   () => (inputIsAddress ? inputVal : name),
   //   [inputIsAddress, inputVal, name],
   // )
-  // const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(normalisedName, isValid)
-  // const ethSearchResult = useEthSearchResult(name, isValid, isETH)
 
   return thread(
     '->',
@@ -558,6 +556,8 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
     .reverse()
     .filter((item) => item.text)
 }
+
+const handleSearchh = () => {}
 
 export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraLarge' }) => {
   const { t } = useTranslation('common')
@@ -588,6 +588,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
 
   const [selected, setSelected] = useState(0)
   // const [usingPlaceholder, setUsingPlaceholder] = useState(false)
+  console.log('selected: ', selected)
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
 
@@ -768,12 +769,10 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
           // clickCallback={handleSearch}
           hoverCallback={handleHoverCb}
           index={index}
-          // selected={selected}
+          selected={index === selected}
           type={item.type}
           isLoading={item.isLoading}
-          // usingPlaceholder={item.isHistory ? false : usingPlaceholder}
-          // usingPlaceholder
-          // key={`${item.type}-${item.value}`}
+          key={`${item.nameType}-${item.text}`}
           key={index}
           text={item.text}
           registrationStatus={item.registrationStatus}
