@@ -27,5 +27,7 @@ export const roundDurationWithDay = (valueAsDate: Date, now: number) => {
   const valueAsSeconds = Math.floor(valueAsDate.getTime() / 1000) - now
   const dayDiff = valueAsSeconds % ONE_DAY
 
+  if (dayDiff < ONE_DAY / 2) return valueAsSeconds
+
   return valueAsSeconds + (ONE_DAY - dayDiff)
 }

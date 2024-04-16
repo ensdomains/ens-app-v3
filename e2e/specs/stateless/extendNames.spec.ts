@@ -355,7 +355,7 @@ test('should be able to extend a name by a month', async ({
       (ts) => {
         return new Date(ts)
       },
-      (expiryTime + daysToSeconds(30)) * 1000,
+      (expiryTime + daysToSeconds(31)) * 1000,
     )
 
     await calendar.fill(dateToDateInput(monthLater))

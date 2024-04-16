@@ -25,11 +25,22 @@ describe('safeDateObj', () => {
   })
 })
 
-
-describe('durationWithFullDay', () => {
-  it('should make a duration have a complete day', () => {
-    const now = Math.floor((new Date(2024, 11, 11, 11 ,11)).getTime() / 1000)
-    const date = new Date(2024, 12, 11, 11 ,11)
+describe('roundDurationWithDay', () => {
+  it('should return an exact second difference with precision to a day', () => {
+    const now = Math.floor(new Date(2024, 11, 11, 11, 11).getTime() / 1000)
+    const date = new Date(2024, 12, 11, 11, 11)
+    const duration = roundDurationWithDay(date, now)
+    expect(secondsToDate(now + duration).getDate()).toEqual(date.getDate())
+  })
+  it('should not add any extra seconds if the difference is less than 12 hours', () => {
+    const now = Math.floor(new Date(2024, 11, 11, 23, 59).getTime() / 1000)
+    const date = new Date(2024, 12, 12, 0, 1)
+    const duration = roundDurationWithDay(date, now)
+    expect(secondsToDate(now + duration).getDate()).toEqual(date.getDate())
+  })
+  it('should add extra seconds for a difference more than 12 hours', () => {
+    const now = Math.floor(new Date(2024, 11, 11, 8, 0).getTime() / 1000)
+    const date = new Date(2024, 12, 11, 20, 0)
     const duration = roundDurationWithDay(date, now)
     expect(secondsToDate(now + duration).getDate()).toEqual(date.getDate() + 1)
   })
