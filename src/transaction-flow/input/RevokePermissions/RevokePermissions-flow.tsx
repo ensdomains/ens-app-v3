@@ -224,7 +224,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
           'revokePCC',
           ...(!isMinExpiryAtLeastEqualToMaxExpiry ? ['setExpiry'] : []),
           'parentRevokePermissions',
-          'revokeChangeFusesWarning',
+          ...(childFuses.CANNOT_BURN_FUSES ? ['revokeChangeFusesWarning'] : []),
           'lastWarning',
         ]
       }
@@ -250,7 +250,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
         return []
       }
     }
-  }, [name, flowType, minExpiry, maxExpiry, childFuses.CANNOT_UNWRAP]) as View[]
+  }, [name, flowType, minExpiry, maxExpiry, childFuses]) as View[]
 
   const [currentIndex, setCurrentIndex] = useState(
     getIntialValueForCurrentIndex(flow, transactionData),
