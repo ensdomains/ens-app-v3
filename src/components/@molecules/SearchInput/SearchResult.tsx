@@ -387,7 +387,7 @@ const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolea
   console.log('threeDnsOwnerQuery: ', threeDnsOwnerQuery)
 
   return {
-    isAvailable: threeDnsOwnerQuery.data && threeDnsOwnerQuery.data === zeroAddress,
+    isAvailable: threeDnsOwnerQuery.data,
     isLoading: threeDnsOwnerQuery.isLoading,
   }
 }
@@ -433,28 +433,21 @@ const BoxResultItem = forwardRef<HTMLDivElement, { name: string; $selected: bool
   },
 )
 
-type SearchItemType = 'text' | 'error' | 'address' | 'name' | 'nameWithDotEth'
-
 export const SearchResult = ({
-  type,
   value,
   hoverCallback,
   clickCallback,
   index,
   selected,
-  isLoading,
   nameType,
-  registrationStatus,
   text,
 }: {
-  type: SearchItemType
   value: string
   hoverCallback: (index: number) => void
   clickCallback: (index: number) => void
   index: number
   selected: number
-  isLoading: boolean
-  nameType: 'eth-name' | 'address' | 'dns'
+  nameType: 'address' | 'dns' | 'eth' | 'box' | 'tld' | 'error'
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null)
 
@@ -474,32 +467,13 @@ export const SearchResult = ({
     }
   }, [handleClick])
 
-  // const props = useMemo(
-  //   () => ({
-  //     ref: wrapperRef,
-  //     onMouseEnter: () => hoverCallback(index),
-  //     $selected: index === selected,
-  //   }),
-  //   [index, hoverCallback, selected],
-  // )
-
-  // if (isLoading) {
-  //   return (
-  //     <SearchItem data-testid="search-result-placeholder" {...props}>
-  //       <PlaceholderResultItem input={value} />
-  //     </SearchItem>
-  //   )
-  // }
-
-  // if (usingPlaceholder && type !== 'error' && type !== 'text') {
-  //   return (
-  //     <SearchItem data-testid="search-result-placeholder" {...props}>
-  //       <PlaceholderResultItem input={input} />
-  //     </SearchItem>
-  //   )
-  // }
-
-  console.log('selected: ', selected)
+  if (nameType === 'error') {
+    return (
+      <SearchItem data-testid="search-result-error" $selected $error>
+        <Typography weight="bold">{text}</Typography>
+      </SearchItem>
+    )
+  }
 
   if (nameType === 'address') {
     return <AddressResultItem {...{ address: text, $selected: selected, hoverCallback, index }} />
@@ -520,14 +494,6 @@ export const SearchResult = ({
   if (nameType === 'tld') {
     return <TldResultItem {...{ name: text, $selected: selected, hoverCallback, index }} />
   }
-
-  // if (type === 'error') {
-  //   return (
-  //     <SearchItem data-testid="search-result-error" $selected $error>
-  //       <Typography weight="bold">{value}</Typography>
-  //     </SearchItem>
-  //   )
-  // }
 
   return (
     <SearchItem data-testid="search-result-text">

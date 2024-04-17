@@ -528,6 +528,7 @@ const addHistoryDropdownItems = (dropdownItems: SearchItem[], history: any) => {
 const formatDnsText = (name: string, isETH: boolean) => {
   if (!name) return ''
   if (!name.includes('.')) return ''
+  if (name.endsWith('.box')) return ''
   if (isETH) return ''
   return name
 }
@@ -539,6 +540,16 @@ const addDnsDropdownItem = (dropdownItems: SearchItem[], name: any, isETH: boole
   ...dropdownItems,
 ]
 
+const addErrorDropdownItem = (dropdownItems: SearchItem[], isValid: boolean) =>
+  isValid
+    ? dropdownItems
+    : [
+        {
+          text: 'Invalid name',
+          nameType: 'error',
+        },
+      ]
+
 const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => {
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
 
@@ -548,6 +559,7 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
   })
 
   console.log('isETH: ', isETH)
+  console.log('isValid: ', isValid)
 
   // const normalisedName = useMemo(
   //   () => (inputIsAddress ? inputVal : name),
@@ -563,6 +575,7 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
     [addBoxDropdownItem, name, isValid],
     [addTldDropdownItem, name],
     [addHistoryDropdownItems, history],
+    [addErrorDropdownItem, isValid],
   )
     .reverse()
     .filter((item) => item.text)
@@ -784,7 +797,6 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
           isLoading={item.isLoading}
           key={`${item.nameType}-${item.text}`}
           text={item.text}
-          registrationStatus={item.registrationStatus}
           nameType={item.nameType}
         />
       ))}
