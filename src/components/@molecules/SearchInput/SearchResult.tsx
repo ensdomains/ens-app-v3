@@ -152,14 +152,19 @@ const SpinnerWrapper = styled.div(
   `,
 )
 
-const AddressResultItem = ({ address }: { address: Address }) => {
+const AddressResultItem = ({ address, hoverCallback, index }: { address: Address }) => {
   const { t } = useTranslation('common')
   const { data: primaryName } = usePrimaryName({ address })
   const { data: avatar } = useEnsAvatar({ name: primaryName?.name })
   const zorb = useZorb(address, 'address')
 
   return (
-    <>
+    <SearchItem
+      data-testid="search-result-address"
+      $clickable
+      {...props}
+      onMouseEnter={() => hoverCallback(index)}
+    >
       <LeadingSearchItem>
         <AvatarWrapper>
           <Avatar src={avatar || zorb} label="avatar" />
@@ -170,7 +175,7 @@ const AddressResultItem = ({ address }: { address: Address }) => {
         </AddressAndName>
       </LeadingSearchItem>
       <AddressTag>{t('address.label')}</AddressTag>
-    </>
+    </SearchItem>
   )
 }
 
@@ -251,7 +256,7 @@ const PlaceholderResultItem = ({ input }: { input: string }) => {
 */
 
 const TldResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
-  ({ name, ...props }, ref) => {
+  ({ name, hoverCallback, index, ...props }, ref) => {
     const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
     const zorb = useZorb(name, 'name')
     const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
@@ -265,6 +270,7 @@ const TldResultItem = forwardRef<HTMLDivElement, { name: string; $selected: bool
         data-testid="search-result-name"
         {...props}
         $clickable={registrationStatus !== 'short'}
+        onMouseEnter={() => hoverCallback(index)}
         ref={ref}
       >
         <LeadingSearchItem>
@@ -287,40 +293,38 @@ const TldResultItem = forwardRef<HTMLDivElement, { name: string; $selected: bool
   },
 )
 
-const EthResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
-  ({ name, ...props }, ref) => {
-    const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
-    const zorb = useZorb(name, 'name')
-    const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
+const EthResultItem = ({ name, hoverCallback, index, ...props }) => {
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
+  const zorb = useZorb(name, 'name')
+  const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
 
-    // usePrefetchProfile({ name })
+  // usePrefetchProfile({ name })
 
-    return (
-      <SearchItem
-        data-testid="search-result-name"
-        {...props}
-        $clickable={registrationStatus !== 'short'}
-        ref={ref}
-      >
-        <LeadingSearchItem>
-          <AvatarWrapper>
-            <Avatar src={avatar || zorb} label="name" />
-          </AvatarWrapper>
-          <TextWrapper>
-            <Typography weight="bold">{beautifiedName}</Typography>
-          </TextWrapper>
-        </LeadingSearchItem>
-        {!isLoading && registrationStatus ? (
-          <StatusTag status={registrationStatus} />
-        ) : (
-          <SpinnerWrapper>
-            <Spinner color="accent" />
-          </SpinnerWrapper>
-        )}
-      </SearchItem>
-    )
-  },
-)
+  return (
+    <SearchItem
+      data-testid="search-result-name"
+      {...props}
+      $clickable={registrationStatus !== 'short'}
+      onMouseEnter={() => hoverCallback(index)}
+    >
+      <LeadingSearchItem>
+        <AvatarWrapper>
+          <Avatar src={avatar || zorb} label="name" />
+        </AvatarWrapper>
+        <TextWrapper>
+          <Typography weight="bold">{beautifiedName}</Typography>
+        </TextWrapper>
+      </LeadingSearchItem>
+      {!isLoading && registrationStatus ? (
+        <StatusTag status={registrationStatus} />
+      ) : (
+        <SpinnerWrapper>
+          <Spinner color="accent" />
+        </SpinnerWrapper>
+      )}
+    </SearchItem>
+  )
+}
 
 const THREE_DNS_ABI = [
   {
@@ -389,7 +393,7 @@ const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolea
 }
 
 const BoxResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
-  ({ name, isValid, ...props }, ref) => {
+  ({ name, isValid, hoverCallback, index, ...props }, ref) => {
     const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
     const zorb = useZorb(name, 'name')
     const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(name, isValid)
@@ -406,6 +410,7 @@ const BoxResultItem = forwardRef<HTMLDivElement, { name: string; $selected: bool
         {...props}
         // $clickable={registrationStatus !== 'short'}
         $clickable
+        onMouseEnter={() => hoverCallback(index)}
         ref={ref}
       >
         <LeadingSearchItem>
@@ -469,14 +474,15 @@ export const SearchResult = ({
     }
   }, [handleClick])
 
-  const props = useMemo(
-    () => ({
-      ref: wrapperRef,
-      onMouseEnter: () => hoverCallback(index),
-      $selected: index === selected,
-    }),
-    [index, hoverCallback, selected],
-  )
+  // const props = useMemo(
+  //   () => ({
+  //     ref: wrapperRef,
+  //     onMouseEnter: () => hoverCallback(index),
+  //     $selected: index === selected,
+  //   }),
+  //   [index, hoverCallback, selected],
+  // )
+
   // if (isLoading) {
   //   return (
   //     <SearchItem data-testid="search-result-placeholder" {...props}>
@@ -493,24 +499,22 @@ export const SearchResult = ({
   //   )
   // }
 
+  console.log('selected: ', selected)
+
   if (nameType === 'address') {
-    return (
-      <SearchItem data-testid="search-result-address" $clickable {...props}>
-        <AddressResultItem {...{ address: text, selected }} />
-      </SearchItem>
-    )
+    return <AddressResultItem {...{ address: text, $selected: selected, hoverCallback, index }} />
   }
 
   if (nameType === 'eth') {
-    return <EthResultItem {...{ name: text, $selected: selected }} />
+    return <EthResultItem {...{ name: text, $selected: selected, hoverCallback, index }} />
   }
 
   if (nameType === 'box') {
-    return <BoxResultItem {...{ name: text, $selected: selected }} />
+    return <BoxResultItem {...{ name: text, $selected: selected, hoverCallback, index }} />
   }
 
   if (nameType === 'tld') {
-    return <TldResultItem {...{ name: text, $selected: selected }} />
+    return <TldResultItem {...{ name: text, $selected: selected, hoverCallback, index }} />
   }
 
   // if (type === 'error') {

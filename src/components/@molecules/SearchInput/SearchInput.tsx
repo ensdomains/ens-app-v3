@@ -559,6 +559,11 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
 
 const handleSearchh = () => {}
 
+// const handleHover = (setSelected: any) => (hoverIndex: any) => {
+//     setSelected(elementIndex)
+//   }
+// }
+
 export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraLarge' }) => {
   const { t } = useTranslation('common')
   const router = useRouterWithHistory()
@@ -721,14 +726,8 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
 
   useAddEventListeners(searchInputRef, handleKeyDownCb, handleFocusIn, handleFocusOut)
 
-  const handleHoverCb = useCallback(
-    (index: number) => {
-      if (selected !== index) {
-        setSelected(index)
-      }
-    },
-    [setSelected, selected],
-  )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // const handleHoverCb = useCallback(handleHover(setSelected), [setSelected])
 
   useSelectionManager({ inputVal, setSelected, state })
 
@@ -767,13 +766,12 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       {dropdownItems.map((item, index) => (
         <SearchResult
           // clickCallback={handleSearch}
-          hoverCallback={handleHoverCb}
+          hoverCallback={setSelected}
           index={index}
           selected={index === selected}
           type={item.type}
           isLoading={item.isLoading}
           key={`${item.nameType}-${item.text}`}
-          key={index}
           text={item.text}
           registrationStatus={item.registrationStatus}
           nameType={item.nameType}
