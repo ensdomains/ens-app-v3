@@ -4,9 +4,9 @@ import { describe, expect, it } from 'vitest'
 import type { useBasicName } from '@app/hooks/useBasicName'
 
 import { createAccounts } from '../../../../playwright/fixtures/accounts'
-import { makeMockUseBasicName } from '../../../../test/mock/makeMockUseBasicName';
-import { getSendAbilities } from './getSendAbilities'
 import { makeMockUseAbilitiesData } from '../../../../test/mock/makeMockUseAbilitiesData'
+import { makeMockUseBasicName } from '../../../../test/mock/makeMockUseBasicName'
+import { getSendAbilities } from './getSendAbilities'
 
 type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>
@@ -47,11 +47,11 @@ const partialUserStates = {
   // TODO: add dns states
   unwrappedDNSOwner: {
     basicNameData: makeMockUseBasicName('dns-unwrapped-2ld:owner'),
-    parentBasicNameData: makeMockUseBasicName('dns')
+    parentBasicNameData: makeMockUseBasicName('dns'),
   },
   unwrappedDNSManager: {
     basicNameData: makeMockUseBasicName('dns-unwrapped-2ld:manager'),
-    parentBasicNameData: makeMockUseBasicName('dns')
+    parentBasicNameData: makeMockUseBasicName('dns'),
   },
   unwrappedSubnameManagerHolderUnwrappedParentManager: {
     basicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager'),
@@ -59,7 +59,7 @@ const partialUserStates = {
   },
   unwrappedSubnameUnwrappedParentManager: {
     basicNameData: makeMockUseBasicName('eth-unwrapped-2ld:unowned'),
-    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager')
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager'),
   },
   // This test doesn't make sense
   unwrappedSubnameManagerUnwrappedParentOwnerHolder: {
@@ -89,39 +89,39 @@ const partialUserStates = {
   },
   unwrappedSubnameManagerUnwrappedParentManagerHolder: {
     basicNameData: makeMockUseBasicName('eth-unwrapped-2ld:unowned'),
-    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager')
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager'),
   },
   wrappedSubnameManagerHolderUnwrappedParentManager: {
     basicNameData: makeMockUseBasicName('eth-wrapped-subname'),
-    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname:unowned')
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname:unowned'),
   },
   wrappedSubnameManagerUnwrappedParentManager: {
     basicNameData: makeMockUseBasicName('eth-emancipated-subname:unowned'),
-    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname')
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname'),
   },
   wrappedSubnameUnwrappedParentOwner: {
     basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
-    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname')
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname'),
   },
   wrappedNameOwner: {
     basicNameData: makeMockUseBasicName('eth-emancipated-2ld'),
-    parentBasicNameData: makeMockUseBasicName('eth')
+    parentBasicNameData: makeMockUseBasicName('eth'),
   },
   wrappedNameCTBurnedOwner: {
     basicNameData: makeMockUseBasicName('eth-burnt-2ld'),
-    parentBasicNameData: makeMockUseBasicName('eth')
+    parentBasicNameData: makeMockUseBasicName('eth'),
   },
   wrappedNameManager: {
     basicNameData: makeMockUseBasicName('eth-wrapped-subname'),
-    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname:unowned')
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname:unowned'),
   },
   wrappedSubnameManagerHolderWrappedParentOwner: {
     basicNameData: makeMockUseBasicName('eth-wrapped-subname'),
-    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld:unowned')
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld:unowned'),
   },
   wrappedSubnameManagerWrappedParentOwnerHolder: {
     basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
-    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld')
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld'),
   },
   wrappedSubnameManagerWrappedParentManagerHolder: {
     basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
@@ -149,27 +149,27 @@ const partialUserStates = {
   },
   unwrappedSubnameManagerWrappedParentOwner: {
     basicNameData: makeMockUseBasicName('eth-unwrapped-subname'),
-    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld:unowned')
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld:unowned'),
   },
   unwrappedSubnameManagerWrappedParentOwnerHolder: {
     basicNameData: makeMockUseBasicName('eth-unwrapped-subname:unowned'),
-    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld')
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld'),
   },
   unwrappedSubnameManagerWrappedParentManagerHolder: {
     basicNameData: makeMockUseBasicName('eth-unwrapped-subname:unowned'),
-    parentBasicNameData: makeMockUseBasicName('eth-wrapped-subname')
+    parentBasicNameData: makeMockUseBasicName('eth-wrapped-subname'),
   },
   wrappedSubnameManagerUnwrappedParentOwnerHolder: {
     basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
-    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname')
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-subname'),
   },
   wrappedSubnameManagerUnwrappedParentManagerHolder: {
     basicNameData: makeMockUseBasicName('eth-wrapped-subname:unowned'),
-    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager')
+    parentBasicNameData: makeMockUseBasicName('eth-unwrapped-2ld:manager'),
   },
   wrappedSubnameOwnerWrappedParentOwnerHolder: {
     basicNameData: makeMockUseBasicName('eth-emancipated-subname:unowned'),
-    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld')
+    parentBasicNameData: makeMockUseBasicName('eth-emancipated-2ld'),
   },
 } as PartialMockData
 
@@ -886,13 +886,13 @@ const makeMockGetSendAbilities = (type: MockGetSendAbilitiesType) => {
       sendNameFunctionCallDetails: {
         sendManager: {
           contract: 'registrar',
-          method: 'reclaim'
+          method: 'reclaim',
         },
         sendOwner: {
           contract: 'registrar',
-          method: 'safeTransferFrom'
-        }
-      }
+          method: 'safeTransferFrom',
+        },
+      },
     }))
     .exhaustive()
 }
