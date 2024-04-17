@@ -1,5 +1,3 @@
-import { ONE_DAY } from './time'
-
 export const safeDateObj = (date: Date | string | number | undefined) => {
   if (!date) return undefined
   if (typeof date === 'string' && /^\d+$/.test(date)) return new Date(parseInt(date))
@@ -24,10 +22,7 @@ export function secondsToDateInput(seconds: number) {
 
 // add seconds to complete a day
 export const roundDurationWithDay = (valueAsDate: Date, now: number) => {
-  const valueAsSeconds = Math.floor(valueAsDate.getTime() / 1000) - now
-  const dayDiff = valueAsSeconds % ONE_DAY
-
-  if (dayDiff < ONE_DAY / 2) return valueAsSeconds
-
-  return valueAsSeconds + (ONE_DAY - dayDiff)
+  const valueAsDateClone = new Date(valueAsDate.getTime()).setHours(0, 0, 0, 0)
+  const nowClone = new Date(now * 1000).setHours(0, 0, 0, 0)
+  return Math.floor((valueAsDateClone - nowClone) / 1000)
 }

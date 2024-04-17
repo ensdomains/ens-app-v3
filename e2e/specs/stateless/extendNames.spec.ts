@@ -378,6 +378,6 @@ test('should be able to extend a name by a month', async ({
 
     const newTimestamp = await profilePage.getExpiryTimestamp()
     const comparativeTimestamp = timestamp + daysToSeconds(31) * 1000
-    expect(comparativeTimestamp).toEqual(newTimestamp)
+    await expect(comparativeTimestamp).toEqual(newTimestamp)
   })
 })
