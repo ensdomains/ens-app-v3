@@ -49,6 +49,7 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
 
   const nameParts = name.split('.')
   const parentName = nameParts.slice(1).join('.')
+  console.log('>>>', parentName)
 
   const is2LDEth = nameParts.length === 2 && nameParts[1] === 'eth'
   const isSubname = nameParts.length > 2

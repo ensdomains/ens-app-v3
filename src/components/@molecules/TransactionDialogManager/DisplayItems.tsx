@@ -5,6 +5,7 @@ import { Address } from 'viem'
 
 import { Typography } from '@ensdomains/thorin'
 
+import { Name } from '@app/components/@atoms/Name2/Name'
 import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
@@ -134,7 +135,10 @@ const NameValue = ({ value }: { value: string }) => {
 
   return (
     <ValueWithAvatarContainer>
-      <ValueTypography fontVariant="bodyBold">{beautifiedName}</ValueTypography>
+      {/* <ValueTypography fontVariant="bodyBold">{beautifiedName}</ValueTypography> */}
+      <Name type="wrap" maxWidth={300} initialWidth={300} wrapLines={2}>
+        {beautifiedName}
+      </Name>
       <AvatarWrapper>
         <NameAvatar name={value} label={`${value}-avatar`} />
       </AvatarWrapper>

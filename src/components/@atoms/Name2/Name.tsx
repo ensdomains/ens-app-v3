@@ -23,12 +23,26 @@ const HiddenSpan = styled.span(
     pointer-events: none;
     visibility: hidden;
     white-space: nowrap;
+    font-weight: bold;
   `,
 )
 
 const VisibleSpan = styled.span<{ type: 'wrap' | 'inline' }>(
   ({ type }) => css`
     ${type === 'inline' && 'white-space: nowrap;'}
+  `,
+)
+
+const LeadSpan = styled.span(
+  () => css`
+    /* font-weight: bold; */
+  `,
+)
+
+const TrailingSpan = styled.span(
+  ({ theme }) => css`
+    color: ${theme.colors.textTertiary};
+    /* font-weight: bold; */
   `,
 )
 
@@ -42,6 +56,7 @@ type BaseProps = {
   rootRef?: React.RefObject<HTMLDivElement>
   nextTick?: boolean
   debug?: boolean
+  tolerance?: number
 }
 
 type InlineProps = {
@@ -70,6 +85,7 @@ export const Name = ({
   minInitialWidth,
   rootRef,
   nextTick,
+  tolerance,
   debug,
 }: Props) => {
   if (debug)
@@ -91,7 +107,8 @@ export const Name = ({
       'debug',
       debug,
     )
-  const charArray = children.split('')
+  const name = children
+  const charArray = name.split('')
 
   const ref = useRef<HTMLDivElement>(null)
   const hiddenRef = useRef<HTMLSpanElement>(null)
@@ -110,14 +127,16 @@ export const Name = ({
         const rootLeft = rootOrComponentRef.current?.offsetParent?.getBoundingClientRect().left ?? 0
         const initialWidth_ = initialWidth ?? maxWidth_ - hiddenLeft + rootLeft
 
+        console.log('maxWidth_', maxWidth_, initialWidth_)
         return calculateWrapName({
-          name_: children,
+          name: children,
           node: hiddenRef.current,
           ellipsisWidth,
-          maxWidth: Math.round(maxWidth_ * 0.95),
-          initialWidth: Math.round(initialWidth_ * 0.95),
+          maxWidth: maxWidth_,
+          initialWidth: initialWidth_,
           minInitialWidth,
           maxLines: wrapLines,
+          tolerance,
           debug,
         })
       })
@@ -128,6 +147,7 @@ export const Name = ({
           node: hiddenRef.current,
           ellipsisWidth,
           maxWidth,
+          tolerance,
           debug,
         })
       })
@@ -149,7 +169,7 @@ export const Name = ({
     () => '',
   )
 
-  console.log('name2', name2)
+  const nameParts = name2?.split('\u200C')
   return (
     <Container ref={ref}>
       <HiddenSpan ref={ellipsisRef}>…</HiddenSpan>
@@ -159,7 +179,10 @@ export const Name = ({
           <span key={`${i}`}>{char}</span>
         ))}
       </HiddenSpan>
-      <VisibleSpan type={type}>{name2}</VisibleSpan>
+      <VisibleSpan type={type}>
+        <LeadSpan>{nameParts?.[0]}</LeadSpan>
+        <TrailingSpan>{nameParts?.[1]}</TrailingSpan>
+      </VisibleSpan>
     </Container>
   )
 }
@@ -173,8 +196,8 @@ export const TransComponentName = ({
   children?: string[]
 } & Omit<Props, 'children'>) => {
   const rootRef = useRef<HTMLDivElement>(null)
-  const name = children?.[0] || ''
-  console.log('TRANS COMPONENT NAME', name, children)
+  const name = Array.isArray(children) ? children[0] : children
+  console.log('TRANS COMPONENT NAME', 'name', name, 'children', children)
   if (href) {
     return (
       <StyledLink href={href} ref={rootRef}>

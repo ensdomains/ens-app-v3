@@ -25,6 +25,35 @@ export const sliceStringByNumbers = (numbers: number[], str: string): string[] =
   return result
 }
 
+const sliceByLengthAndDirection = (str: string, start: number, length: number, reverse: boolean) =>
+  reverse ? str.slice(-length) : str.slice(start, start + length)
+
+export const insertSpecialSymbols = (name: string, slices: number[]): string => {
+  let slicedName = ''
+  let sliceStart = 0
+  let hasFoundZWNJ = false
+
+  for (let i = 0; i < slices.length; i += 1) {
+    const isLastSlice = i === slices.length - 1
+    const sliceLength = slices[i]
+    const slice = sliceByLengthAndDirection(name, sliceStart, sliceLength, isLastSlice)
+
+    const sliceContainsZWNJ = slice.includes('\u200C')
+    const adjustedSliceLength = sliceContainsZWNJ ? sliceLength + 1 : sliceLength
+    const adjustedSlice = sliceContainsZWNJ
+      ? sliceByLengthAndDirection(name, sliceStart, adjustedSliceLength, isLastSlice)
+      : slice
+
+    hasFoundZWNJ = hasFoundZWNJ || sliceContainsZWNJ
+    const prefix = isLastSlice && !hasFoundZWNJ ? '\u200C' : ''
+    const postfix = isLastSlice ? '' : '…\u200B'
+
+    sliceStart += adjustedSliceLength
+    slicedName += `${prefix}${adjustedSlice}${postfix}`
+  }
+  return slicedName
+}
+
 export const calculateWrapName = ({
   name,
   node,
@@ -33,7 +62,7 @@ export const calculateWrapName = ({
   initialWidth = maxWidth,
   minInitialWidth = 0,
   maxLines = Infinity,
-  tolerance = 5,
+  tolerance = 3,
   debug = false,
 }: {
   name: string
@@ -58,19 +87,12 @@ export const calculateWrapName = ({
       maxLines,
     )
 
-  const name_ = insertZeroWidthNonJoinerAtLabel(name)
+  const name_ = insertZeroWidthNonJoinerAtLabel(name) || ''
   if (!node) {
     console.error('node is null')
-    return name_
+
+    return name_ || ''
   }
-
-  const _maxWdth = maxWidth ?? node.parentElement?.offsetWidth ?? Infinity
-  const containerWidth = node.offsetWidth || Infinity
-  if (containerWidth <= _maxWdth) return name_
-
-  let currentGroup: number[] = []
-  let currentGroupTotal = 0
-  let result: number[][] = []
 
   const initialWidth_ = initialWidth < minInitialWidth ? maxWidth : initialWidth
 
@@ -78,15 +100,19 @@ export const calculateWrapName = ({
   const initialWidthWithTolerance = initialWidth_ * decimalTolerance
   const maxWidthWithTolerance = maxWidth * decimalTolerance
 
+  let currentGroup: number[] = []
+  let currentGroupTotal = 0
+  let result: number[][] = []
+  console.log('testing', maxWidth, maxWidthWithTolerance)
   const children = node?.children || []
   for (let index = 0; index < children.length; index += 1) {
     const element = children[index] as HTMLSpanElement
     const charWidth = element.offsetWidth
     currentGroupTotal += charWidth
     const currentMaxWidth = result.length === 0 ? initialWidthWithTolerance : maxWidthWithTolerance
-    if (debug)
-      console.log('charWidth', charWidth, 'currentGroupTotal', currentGroupTotal, currentMaxWidth)
-    if (currentGroupTotal + ellipsisWidth >= currentMaxWidth) {
+    // if (debug)
+    //   console.log('charWidth', charWidth, 'currentGroupTotal', currentGroupTotal, currentMaxWidth)
+    if (currentGroupTotal + ellipsisWidth > currentMaxWidth) {
       result.push(currentGroup)
       currentGroup = [charWidth]
       currentGroupTotal = charWidth
@@ -104,14 +130,12 @@ export const calculateWrapName = ({
       .reverse()
       .flat()
     // console.log('left', left, right)
-    const filteredRight = findNumbersAddingUpToSum(right, maxWidth)
+    const filteredRight = findNumbersAddingUpToSum(right, maxWidthWithTolerance)
     result = [...left, filteredRight]
   }
 
   const slices = result.map((group) => group.length)
-  const [last, ...reversedFirstSegments] = slices.reverse()
-  const firstSegments = reversedFirstSegments.reverse()
-  const firstNames = sliceStringByNumbers(firstSegments, name_)
-  const lastSegment = name_.slice(-last)
-  return [...firstNames, lastSegment].join('\u2026\u200B')
+  console.log('slices', slices)
+
+  return insertSpecialSymbols(name_, slices)
 }

@@ -9,7 +9,6 @@ const Container = styled.div(
     font-weight: ${theme.fontWeights.bold};
     line-height: 1.36;
     overflow: hidden;
-    background: yellow;
   `,
 )
 

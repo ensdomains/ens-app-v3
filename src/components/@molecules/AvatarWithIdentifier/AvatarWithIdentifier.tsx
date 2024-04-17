@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
@@ -5,6 +6,7 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Name } from '@app/components/@atoms/Name2/Name'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
+import { useElementDimensions } from '@app/hooks/dom/useElementDimensions'
 import { useRemPixelValue } from '@app/hooks/dom/useRemPixelValue'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { QuerySpace } from '@app/types'
@@ -17,6 +19,8 @@ const Container = styled.div(
     align-items: center;
     justify-content: flex-start;
     gap: ${theme.space['2']};
+    position: relative;
+    overflow: hidden;
   `,
 )
 
@@ -66,18 +70,21 @@ export const AvatarWithIdentifier = ({
   const _subtitle = subtitle || (_name ? shortenAddress(address) : undefined)
 
   const isTitleFullAddress = !shortenAddressAsTitle && !_name
-
+  const ref = useRef<HTMLDivElement>(null)
+  const { width } = useElementDimensions({ ref })
   const remPixelValue = useRemPixelValue()
 
+  console.log('remPixelValue', remPixelValue)
+  console.log('AvatarWithIdentifier', maxWidth, width)
   return (
-    <Container>
+    <Container ref={ref}>
       <AvatarWithZorb label={_title} address={address} name={_name} size={size} />
       <TextContainer>
         {isTitleFullAddress ? (
           <AddressTitleContainer data-testid="avatar-label-title">{_title}</AddressTitleContainer>
         ) : (
           <Typography fontVariant="bodyBold" data-testid="avatar-label-title">
-            <Name maxWidth={maxWidth! - 3 * remPixelValue}>{_title}</Name>
+            <Name maxWidth={width! - 3 * remPixelValue}>{_title}</Name>
           </Typography>
         )}
         {_subtitle && (

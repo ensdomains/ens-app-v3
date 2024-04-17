@@ -1,7 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { calculateWrapName, findNumbersAddingUpToSum, sliceStringByNumbers } from './calculateWrapName'
+import { calculateWrapName, findNumbersAddingUpToSum, insertSpecialSymbols, sliceStringByNumbers } from './calculateWrapName'
+import { insertZeroWidthNonJoinerAtLabel } from './sharedFunctions'
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom
+
+const longName = 'areallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallylongname.eth'
 
 const createNode = (str: string) => {
   const innerHtml = str.split('').map((char) => `<span>${char}</span>`).join('')
@@ -64,9 +67,51 @@ describe('sliceStringByNumbers', () => {
   })
 })
 
+describe('injectSpecialSymbols', () => {
+  const label = 'onetwothreefourfivesixseveneightnine'
+  const name = `${label}.eth`
+  const subname = `${label}.${name}`
+
+  it('should return name if array is slices is single value', () => {
+    const nameWithZWNJ = insertZeroWidthNonJoinerAtLabel(name)
+    const result = insertSpecialSymbols(nameWithZWNJ, [name.length])
+    expect(result).toEqual(nameWithZWNJ)
+  })
+
+  it('should return correct an ellipsis string ', () => {
+    const nameWithZWNJ = insertZeroWidthNonJoinerAtLabel(name)
+    const result = insertSpecialSymbols(nameWithZWNJ, [5,5])
+    expect(result).toEqual('onetw\u2026\u200Be\u200C.eth')
+  })
+
+  it('should return correct an ellipsis string ', () => {
+    const nameWithZWNJ = insertZeroWidthNonJoinerAtLabel(name)
+    const result = insertSpecialSymbols(nameWithZWNJ, [5,5,5])
+    expect(result).toEqual('onetw\u2026\u200Bothre\u2026\u200Be\u200C.eth')
+  })
+
+  it('should return correct an ellipsis string ', () => {
+    const nameWithZWNJ = insertZeroWidthNonJoinerAtLabel(name)
+    const result = insertSpecialSymbols(nameWithZWNJ, [10,10,10,10])
+    expect(result).toEqual('onetwothre\u2026\u200Befourfives\u2026\u200Bixseveneig\u2026\u200Bhtnine\u200C.eth')
+  })
+
+  it('should return correct result if ZWNJ is on left side', () => {
+    const nameWithZWNJ = insertZeroWidthNonJoinerAtLabel(`123.${name}`)
+    const result = insertSpecialSymbols(nameWithZWNJ, [5,5])
+    expect(result).toEqual('123\u200C.o\u2026\u200Be.eth')
+  })
+
+  it('should return correct result if ZWNJ is in middle side', () => {
+    const nameWithZWNJ = insertZeroWidthNonJoinerAtLabel(subname)
+    const result = insertSpecialSymbols(nameWithZWNJ, [5,5])
+    expect(result).toEqual('onetw\u2026\u200B\u200Ce.eth')
+  })
+
+})
+
 describe('calculateWrapName', () => {
-  const longName = 'areallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallylongname.eth'
-  it.only('should return the correct result', () => {
+  it('should return the correct result', () => {
     const result = calculateWrapName({
       name: longName,
       node: createNode(longName),
@@ -84,17 +129,17 @@ describe('calculateWrapName', () => {
     expect(resultParts[3]).toHaveLength(longName.length - 19 - 99 - 99)
   })
 
-  it('should return the correct result', () => {
+  it.only('should return the correct result', () => {
     const result = calculateWrapName({
       name: longName,
       node: createNode(longName),
       ellipsisWidth: 5,
       initialWidth: 100,
       maxWidth: 500,
-      maxLines: 2
+      maxLines: 2,
+      debug: true
     })
-    expect(result).toEqual('areallyreallyreally…​allyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallylongname\u200C.eth')
-    console.log('areallyreallyreally…​llyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallylongname‌.eth')
+    expect(result).toEqual('areallyreallyreall…​allyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallylongname\u200C.eth')
     const resultParts = result.split('…​')
     expect(resultParts[0]).toHaveLength(19)
     expect(resultParts[1]).toHaveLength(100)
