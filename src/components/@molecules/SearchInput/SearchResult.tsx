@@ -367,27 +367,27 @@ const useGetTheeDnsResolverContract = () => {
     contractRef.current = contract
   }, [])
 
-  return contractRef.current
+  return contractRef
 }
 
 const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolean) => {
   const searchParam = useDebounce(normalisedName, 500)
-  const threeDnsResolverContract = useGetTheeDnsResolverContract()
+  const threeDnsResolverContractRef = useGetTheeDnsResolverContract()
+
+  console.log('searchParam: ', searchParam)
 
   const threeDnsOwnerQuery = useQuery({
     queryKey: [searchParam, 'onchain', 'threeDnsOwner'],
     queryFn: async () => {
-      const result = threeDnsResolverContract.read.owner([namehash(searchParam)])
+      const result = await threeDnsResolverContractRef.current.read.owner([namehash(searchParam)])
       return result
     },
     staleTime: 10 * 1000,
     enabled: !!searchParam && isValid,
   })
 
-  console.log('threeDnsOwnerQuery: ', threeDnsOwnerQuery)
-
   return {
-    isAvailable: threeDnsOwnerQuery.data,
+    isAvailable: threeDnsOwnerQuery.data && threeDnsOwnerQuery.data === zeroAddress,
     isLoading: threeDnsOwnerQuery.isLoading,
   }
 }

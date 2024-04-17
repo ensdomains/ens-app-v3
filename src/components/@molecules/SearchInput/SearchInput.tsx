@@ -540,8 +540,8 @@ const addDnsDropdownItem = (dropdownItems: SearchItem[], name: any, isETH: boole
   ...dropdownItems,
 ]
 
-const addErrorDropdownItem = (dropdownItems: SearchItem[], isValid: boolean) =>
-  isValid
+const addErrorDropdownItem = (dropdownItems: SearchItem[], name: string, isValid: boolean) =>
+  isValid || name === ''
     ? dropdownItems
     : [
         {
@@ -575,7 +575,7 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
     [addBoxDropdownItem, name, isValid],
     [addTldDropdownItem, name],
     [addHistoryDropdownItems, history],
-    [addErrorDropdownItem, isValid],
+    [addErrorDropdownItem, name, isValid],
   )
     .reverse()
     .filter((item) => item.text)
