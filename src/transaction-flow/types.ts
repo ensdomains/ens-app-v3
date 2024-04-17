@@ -125,6 +125,10 @@ export type TransactionFlowAction =
       payload: Hash
     }
   | {
+      name: 'setTransactionHashFromUpdate'
+      payload: { hash: Hash; key: string }
+    }
+  | {
       name: 'incrementTransaction'
     }
   | {

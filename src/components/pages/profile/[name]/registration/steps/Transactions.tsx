@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { makeCommitment } from '@ensdomains/ensjs/utils'
 import {
   AlertSVG,
   Button,
@@ -17,6 +18,7 @@ import {
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
+import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -155,6 +157,14 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     name,
     owner: address!,
     registrationData,
+  })
+
+  const commitCouldBeFound =
+    !commitTx?.stage || commitTx.stage === 'confirm' || commitTx.stage === 'failed'
+  useExistingCommitment({
+    commitment: makeCommitment(registrationParams),
+    enabled: commitCouldBeFound,
+    commitKey,
   })
 
   const makeCommitNameFlow = useCallback(() => {
