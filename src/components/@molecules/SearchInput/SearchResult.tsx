@@ -152,7 +152,7 @@ const SpinnerWrapper = styled.div(
   `,
 )
 
-const AddressResultItem = ({ address, hoverCallback, index }: { address: Address }) => {
+const AddressResultItem = ({ address, hoverCallback, index, ...props }: { address: Address }) => {
   const { t } = useTranslation('common')
   const { data: primaryName } = usePrimaryName({ address })
   const { data: avatar } = useEnsAvatar({ name: primaryName?.name })
@@ -503,6 +503,10 @@ export const SearchResult = ({
 
   if (nameType === 'address') {
     return <AddressResultItem {...{ address: text, $selected: selected, hoverCallback, index }} />
+  }
+
+  if (nameType === 'dns') {
+    return <EthResultItem {...{ name: text, $selected: selected, hoverCallback, index }} />
   }
 
   if (nameType === 'eth') {

@@ -464,15 +464,9 @@ const formatEthText = (name: string, isETH: boolean) => {
   if (name.includes('.')) return ''
   return `${name}.eth`
 }
-const addEthDropdownItem = (
-  dropdownItems: SearchItem[],
-  name: any,
-  ethSearchResult: any,
-  isETH: boolean,
-) => [
+const addEthDropdownItem = (dropdownItems: SearchItem[], name: any, isETH: boolean) => [
   {
     text: formatEthText(name, isETH),
-    isFromHistory: false,
     nameType: 'eth',
   },
   ...dropdownItems,
@@ -531,6 +525,20 @@ const addHistoryDropdownItems = (dropdownItems: SearchItem[], history: any) => {
   return dropdownItems
 }
 
+const formatDnsText = (name: string, isETH: boolean) => {
+  if (!name) return ''
+  if (!name.includes('.')) return ''
+  if (isETH) return ''
+  return name
+}
+const addDnsDropdownItem = (dropdownItems: SearchItem[], name: any, isETH: boolean) => [
+  {
+    text: formatDnsText(name, isETH),
+    nameType: 'dns',
+  },
+  ...dropdownItems,
+]
+
 const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => {
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
 
@@ -538,6 +546,8 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
     input: inputVal,
     enabled: !inputIsAddress && !inputVal,
   })
+
+  console.log('isETH: ', isETH)
 
   // const normalisedName = useMemo(
   //   () => (inputIsAddress ? inputVal : name),
@@ -547,6 +557,7 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
   return thread(
     '->',
     [],
+    [addDnsDropdownItem, name, isETH],
     [addAddressItem, name, inputIsAddress],
     [addEthDropdownItem, name, isETH],
     [addBoxDropdownItem, name, isValid],
