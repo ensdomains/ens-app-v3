@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { roundDurationWithDay, safeDateObj, secondsToDate } from './date'
+import { ONE_DAY } from './time'
 
 describe('safeDateObj', () => {
   it('should return a date object for a date object', () => {
@@ -26,22 +27,32 @@ describe('safeDateObj', () => {
 })
 
 describe('roundDurationWithDay', () => {
-  it('should return an exact second difference with precision to a day', () => {
-    const now = Math.floor(new Date(2024, 11, 11, 11, 11).getTime() / 1000)
-    const date = new Date(2024, 12, 11, 11, 11)
+  it('should return a duration of 1 day if the difference is less than 12 hours', () => {
+    const now = Math.floor(new Date(2024, 11, 11, 20, 0).getTime() / 1000)
+    const date = new Date(2024, 11, 12, 0, 0)
     const duration = roundDurationWithDay(date, now)
-    expect(secondsToDate(now + duration).getDate()).toEqual(date.getDate())
+    expect(duration).toBe(ONE_DAY)
   })
-  it('should not add any extra seconds if the difference is less than 12 hours', () => {
-    const now = Math.floor(new Date(2024, 11, 11, 23, 59).getTime() / 1000)
-    const date = new Date(2024, 12, 12, 0, 1)
+
+  it('should return a duration of 1 day if difference is more than 12 hours', () => {
+    const now = Math.floor(new Date(2024, 11, 11, 0, 0 ).getTime() / 1000)
+    const date = new Date(2024, 11, 12, 0, 0)
     const duration = roundDurationWithDay(date, now)
-    expect(secondsToDate(now + duration).getDate()).toEqual(date.getDate())
+    expect(duration).toBe(ONE_DAY)
   })
-  it('should add extra seconds for a difference more than 12 hours', () => {
-    const now = Math.floor(new Date(2024, 11, 11, 8, 0).getTime() / 1000)
-    const date = new Date(2024, 12, 11, 20, 0)
+
+  it('should return a duration of 1 day if the difference is exactly 1/2 day', () => {
+    const now = Math.floor(new Date(2024, 11, 11, 12, 0 ).getTime() / 1000)
+    const date = new Date(2024, 11, 12, 0, 0)
     const duration = roundDurationWithDay(date, now)
-    expect(secondsToDate(now + duration).getDate()).toEqual(date.getDate() + 1)
+    expect(duration).toBe(ONE_DAY)
   })
+
+  it('should return a duration of 1 day if the difference is exactly 1 day', () => {
+    const now = Math.floor(new Date(2024, 11, 11, 0, 0 ).getTime() / 1000)
+    const date = new Date(2024, 11, 12, 0, 0)
+    const duration = roundDurationWithDay(date, now)
+    expect(duration).toBe(ONE_DAY)
+  })
+
 })
