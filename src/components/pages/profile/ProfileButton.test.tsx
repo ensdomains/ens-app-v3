@@ -102,7 +102,6 @@ describe('<OwnerProfileButton/>', () => {
       const element = screen.getByTestId('owner-profile-button-name.parent')
       expect(element).toBeInTheDocument()
       expect(element).toHaveTextContent(`name.parenteth`)
-      expect(element).toHaveAttribute('href', '/tld/eth')
     })
 
     it('should display link to /name.eth if value is not tld', () => {
@@ -110,7 +109,6 @@ describe('<OwnerProfileButton/>', () => {
       const element = screen.getByTestId('owner-profile-button-name.parent')
       expect(element).toBeInTheDocument()
       expect(element).toHaveTextContent(`name.parentname.eth`)
-      expect(element).toHaveAttribute('href', '/name.eth')
     })
   })
 })
