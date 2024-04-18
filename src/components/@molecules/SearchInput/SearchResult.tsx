@@ -378,46 +378,41 @@ const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolea
   }
 }
 
-const BoxResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
-  ({ name, isValid, hoverCallback, clickCallback, index, nameType, ...props }, ref) => {
-    const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
-    const zorb = useZorb(name, 'name')
-    const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(name, isValid)
+const BoxResultItem = ({ name, hoverCallback, clickCallback, index, nameType, ...props }) => {
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
+  const zorb = useZorb(name, 'name')
+  const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(name, props.isValid)
 
-    // usePrefetchProfile({ name })
-    console.log('boxSearchResultOnchain: ', boxSearchResultOnchain)
-    const registrationStatus: RegistrationStatus = boxSearchResultOnchain.isAvailable
-      ? 'available'
-      : 'registered'
+  // usePrefetchProfile({ name })
+  const registrationStatus: RegistrationStatus = boxSearchResultOnchain.isAvailable
+    ? 'available'
+    : 'registered'
 
-    return (
-      <SearchItem
-        data-testid="search-result-name"
-        {...props}
-        $clickable
-        onMouseEnter={() => hoverCallback(nameType, index)}
-        onClick={() => clickCallback(nameType, name)}
-        ref={ref}
-      >
-        <LeadingSearchItem>
-          <AvatarWrapper>
-            <Avatar src={avatar || zorb} label="name" />
-          </AvatarWrapper>
-          <TextWrapper>
-            <Typography weight="bold">{name}</Typography>
-          </TextWrapper>
-        </LeadingSearchItem>
-        {!boxSearchResultOnchain.isLoading && registrationStatus ? (
-          <StatusTag status={registrationStatus} />
-        ) : (
-          <SpinnerWrapper>
-            <Spinner color="accent" />
-          </SpinnerWrapper>
-        )}
-      </SearchItem>
-    )
-  },
-)
+  return (
+    <SearchItem
+      data-testid="search-result-name"
+      {...props}
+      onMouseEnter={() => hoverCallback(index)}
+      onClick={() => clickCallback(nameType, name)}
+    >
+      <LeadingSearchItem>
+        <AvatarWrapper>
+          <Avatar src={avatar || zorb} label="name" />
+        </AvatarWrapper>
+        <TextWrapper>
+          <Typography weight="bold">{name}</Typography>
+        </TextWrapper>
+      </LeadingSearchItem>
+      {!boxSearchResultOnchain.isLoading && registrationStatus ? (
+        <StatusTag status={registrationStatus} />
+      ) : (
+        <SpinnerWrapper>
+          <Spinner color="accent" />
+        </SpinnerWrapper>
+      )}
+    </SearchItem>
+  )
+}
 
 export const SearchResult = ({
   value,
