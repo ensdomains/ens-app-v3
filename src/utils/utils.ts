@@ -140,3 +140,26 @@ export const createDateAndValue = <TValue extends bigint | number>(value: TValue
   date: new Date(Number(value)),
   value,
 })
+
+export const thread = (operator: any, first: any, ...args: any) => {
+  let isThreadFirst: boolean
+  switch (operator) {
+    case '->>':
+      isThreadFirst = false
+      break
+    case '->':
+      isThreadFirst = true
+      break
+    default:
+      throw new Error('Operator not supported')
+      break
+  }
+  return args.reduce((prev, next) => {
+    if (Array.isArray(next)) {
+      const [head, ...tail] = next
+      return isThreadFirst ? head.apply(this, [prev, ...tail]) : head.apply(this, tail.concat(prev))
+    }
+
+    return next.call(this, prev)
+  }, first)
+}

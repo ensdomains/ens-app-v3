@@ -152,7 +152,16 @@ const SpinnerWrapper = styled.div(
   `,
 )
 
-const AddressResultItem = ({ address, hoverCallback, index, ...props }: { address: Address }) => {
+const AddressResultItem = ({
+  address,
+  hoverCallback,
+  clickCallback,
+  index,
+  nameType,
+  ...props
+}: {
+  address: Address
+}) => {
   const { t } = useTranslation('common')
   const { data: primaryName } = usePrimaryName({ address })
   const { data: avatar } = useEnsAvatar({ name: primaryName?.name })
@@ -162,6 +171,7 @@ const AddressResultItem = ({ address, hoverCallback, index, ...props }: { addres
     <SearchItem
       data-testid="search-result-address"
       $clickable
+      onClick={clickCallback(address, nameType)}
       {...props}
       onMouseEnter={() => hoverCallback(index)}
     >
@@ -256,7 +266,7 @@ const PlaceholderResultItem = ({ input }: { input: string }) => {
 */
 
 const TldResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
-  ({ name, hoverCallback, index, ...props }, ref) => {
+  ({ name, hoverCallback, clickCallback, index, nameType, ...props }, ref) => {
     const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
     const zorb = useZorb(name, 'name')
     const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
@@ -270,6 +280,7 @@ const TldResultItem = forwardRef<HTMLDivElement, { name: string; $selected: bool
         data-testid="search-result-name"
         {...props}
         $clickable={registrationStatus !== 'short'}
+        onClick={() => clickCallback(nameType, name)}
         onMouseEnter={() => hoverCallback(index)}
         ref={ref}
       >
@@ -293,7 +304,7 @@ const TldResultItem = forwardRef<HTMLDivElement, { name: string; $selected: bool
   },
 )
 
-const EthResultItem = ({ name, hoverCallback, index, ...props }) => {
+const EthResultItem = ({ name, hoverCallback, clickCallback, index, nameType, ...props }) => {
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
   const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
@@ -304,7 +315,7 @@ const EthResultItem = ({ name, hoverCallback, index, ...props }) => {
     <SearchItem
       data-testid="search-result-name"
       {...props}
-      $clickable={registrationStatus !== 'short'}
+      onClick={() => clickCallback(nameType, name)}
       onMouseEnter={() => hoverCallback(index)}
     >
       <LeadingSearchItem>
@@ -393,7 +404,7 @@ const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolea
 }
 
 const BoxResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
-  ({ name, isValid, hoverCallback, index, ...props }, ref) => {
+  ({ name, isValid, hoverCallback, clickCallback, index, nameType, ...props }, ref) => {
     const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
     const zorb = useZorb(name, 'name')
     const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(name, isValid)
@@ -408,9 +419,9 @@ const BoxResultItem = forwardRef<HTMLDivElement, { name: string; $selected: bool
       <SearchItem
         data-testid="search-result-name"
         {...props}
-        // $clickable={registrationStatus !== 'short'}
         $clickable
-        onMouseEnter={() => hoverCallback(index)}
+        onMouseEnter={() => hoverCallback(nameType, index)}
+        onClick={() => clickCallback(nameType, name)}
         ref={ref}
       >
         <LeadingSearchItem>
@@ -453,19 +464,13 @@ export const SearchResult = ({
 
   const handleMouseDown = (e: MouseEvent) => e.preventDefault()
 
-  const handleClick = useCallback(() => {
-    clickCallback(index)
-  }, [index, clickCallback])
-
   useEffect(() => {
     const wrapper = wrapperRef.current
     wrapper?.addEventListener('mousedown', handleMouseDown)
-    wrapper?.addEventListener('click', handleClick)
     return () => {
       wrapper?.removeEventListener('mousedown', handleMouseDown)
-      wrapper?.removeEventListener('click', handleClick)
     }
-  }, [handleClick])
+  }, [handleMouseDown])
 
   if (nameType === 'error') {
     return (
@@ -476,23 +481,43 @@ export const SearchResult = ({
   }
 
   if (nameType === 'address') {
-    return <AddressResultItem {...{ address: text, $selected: selected, hoverCallback, index }} />
+    return (
+      <AddressResultItem
+        {...{ address: text, $selected: selected, hoverCallback, index, clickCallback, nameType }}
+      />
+    )
   }
 
   if (nameType === 'dns') {
-    return <EthResultItem {...{ name: text, $selected: selected, hoverCallback, index }} />
+    return (
+      <EthResultItem
+        {...{ name: text, $selected: selected, hoverCallback, index, clickCallback, nameType }}
+      />
+    )
   }
 
   if (nameType === 'eth') {
-    return <EthResultItem {...{ name: text, $selected: selected, hoverCallback, index }} />
+    return (
+      <EthResultItem
+        {...{ name: text, $selected: selected, hoverCallback, index, clickCallback, nameType }}
+      />
+    )
   }
 
   if (nameType === 'box') {
-    return <BoxResultItem {...{ name: text, $selected: selected, hoverCallback, index }} />
+    return (
+      <BoxResultItem
+        {...{ name: text, $selected: selected, hoverCallback, index, clickCallback, nameType }}
+      />
+    )
   }
 
   if (nameType === 'tld') {
-    return <TldResultItem {...{ name: text, $selected: selected, hoverCallback, index }} />
+    return (
+      <TldResultItem
+        {...{ name: text, $selected: selected, hoverCallback, index, clickCallback, nameType }}
+      />
+    )
   }
 
   return (
