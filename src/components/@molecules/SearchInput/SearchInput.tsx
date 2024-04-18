@@ -41,8 +41,6 @@ import { AnyItem, HistoryItem } from './types'
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 
-const BOX_SEARCH_ENDPOINT = 'https://dotbox-worker.ens-cf.workers.dev/search'
-
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
     width: 100%;
@@ -192,47 +190,6 @@ const MobileSearchInput = ({
   )
 }
 
-const useGetDotBox = (normalisedOutput: any) => {
-  const searchParam = useDebounce(normalisedOutput, 500)
-  console.log('serachParam: ', searchParam)
-
-  const { data, status } = useQuery({
-    queryKey: [searchParam],
-    queryFn: async () => {
-      const response = await fetch(`${BOX_SEARCH_ENDPOINT}?domain=${searchParam}`)
-      return response.json()
-    },
-    staleTime: 10 * 1000,
-    enabled: !!searchParam,
-  })
-
-  return { data, status }
-}
-
-const useSearchResult = (normalisedOutput: any, inputVal: any) => {
-  const searchParam = useDebounce(normalisedOutput, 500)
-  // const prevSearchParam = usePrevious(searchParam)
-
-  // const { isValid, isETH, is2LD, isShort, type, name } = useValidate({
-  //   input: inputVal,
-  //   enabled: !inputIsAddress && !isEmpty,
-  // })
-
-  const { data, status } = useQuery({
-    queryKey: [searchParam],
-    queryFn: async () => {
-      const response = await fetch(`${BOX_SEARCH_ENDPOINT}?domain=${searchParam}`)
-
-      const validationResult = validate(searchParam)
-      console.log('validationResult: ', validationResult)
-
-      return response.json()
-    },
-    staleTime: 10 * 1000,
-    enabled: !!searchParam,
-  })
-}
-
 const useAddEventListeners = (
   searchInputRef: any,
   handleKeyDown: any,
@@ -270,133 +227,9 @@ const handleKeyDown =
     }
   }
 
-/*
-const handleSearch =
-  ({
-    normalisedOutput,
-    queryClient,
-    router,
-    searchItems,
-    selected,
-    setHistory,
-    chainId,
-    address,
-  }: {
-    normalisedOutput: string
-    queryClient: QueryClient
-    router: any
-    searchItems: any
-    selected: boolean
-    setHistory: () => void
-    chainId: number
-    address: string
-  }) =>
-  () => {
-    let selectedItem = searchItems[selected] as SearchItem
-    if (!selectedItem) return
-    if (selectedItem.type === 'error' || selectedItem.type === 'text') return
-    if (selectedItem.type === 'nameWithDotEth') {
-      selectedItem = {
-        type: 'name',
-        value: `${normalisedOutput}.eth`,
-      }
-    }
-    if (!selectedItem.value) {
-      selectedItem.value = normalisedOutput
-    }
-    if (selectedItem.type === 'name') {
-      const labels = selectedItem.value.split('.')
-      const isDotETH = labels.length === 2 && labels[1] === 'eth'
-      if (isDotETH && labels[0].length < 3) {
-        return
-      }
-    }
-    let path =
-      selectedItem.type === 'address'
-        ? `/address/${selectedItem.value}`
-        : `/profile/${selectedItem.value}`
-    if (selectedItem.type === 'nameWithDotEth' || selectedItem.type === 'name') {
-      const currentValidation =
-        queryClient.getQueryData<ValidationResult>(
-          createQueryKey({
-            queryDependencyType: 'independent',
-            functionName: 'validate',
-            params: { input: selectedItem.value },
-          }),
-        ) || validate(selectedItem.value)
-      if (currentValidation.is2LD && currentValidation.isETH && currentValidation.isShort) {
-        return
-      }
-      const ownerData = queryClient.getQueryData<GetOwnerReturnType>(
-        createQueryKey({
-          address,
-          chainId,
-          functionName: 'getOwner',
-          queryDependencyType: 'standard',
-          params: { name: selectedItem.value },
-        }),
-      )
-      const wrapperData = queryClient.getQueryData<GetWrapperDataReturnType>(
-        createQueryKey({
-          address,
-          chainId,
-          functionName: 'getWrapperData',
-          queryDependencyType: 'standard',
-          params: { name: selectedItem.value },
-        }),
-      )
-      const expiryData = queryClient.getQueryData<GetExpiryReturnType>(
-        createQueryKey({
-          address,
-          chainId,
-          functionName: 'getExpiry',
-          queryDependencyType: 'standard',
-          params: { name: selectedItem.value },
-        }),
-      )
-      const priceData = queryClient.getQueryData<GetPriceReturnType>(
-        createQueryKey({
-          address,
-          chainId,
-          functionName: 'getPrice',
-          queryDependencyType: 'standard',
-          params: { name: selectedItem.value, duration: yearsToSeconds(1) },
-        }),
-      )
-      if (ownerData) {
-        const registrationStatus = getRegistrationStatus({
-          timestamp: Date.now(),
-          validation: currentValidation,
-          ownerData,
-          wrapperData,
-          expiryData,
-          priceData,
-        })
-        if (registrationStatus === 'available') {
-          path = `/register/${selectedItem.value}`
-        }
-      }
-    }
-    if ('isHistory' in selectedItem) {
-      delete (selectedItem as SearchItem & { isHistory?: boolean }).isHistory
-    }
-
-    setHistory((prev) => [
-      ...prev
-        .filter((item) => !(item.value === selectedItem.value && item.type === selectedItem.type))
-        .slice(0, 25),
-      { ...selectedItem, lastAccessed: Date.now() } as HistoryItem,
-    ])
-
-    setInputVal('')
-    searchInputRef.current?.blur()
-    router.pushWithHistory(path)
-  }
-  */
-
 const handleSearch = (router: any, setHistory: any) => (nameType: any, text: string) => {
   setHistory((prev: any) => [
-    ...prev.filter((item) => item.text === text && item.nameType === nameType),
+    ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
     { lastAccessed: Date.now(), nameType, text },
   ])
   router.push(`/${text}`)
@@ -497,7 +330,7 @@ const addHistoryDropdownItems = (dropdownItems: SearchItem[], history: any) => {
             dropdownItem.text === historyItem.text,
         ) === -1,
     )
-    const historyItems = filteredHistoryItems?.slice(0, historyItemDrawCount + 1)
+    const historyItems = filteredHistoryItems?.slice(0, historyItemDrawCount)
     return [...historyItems, ...dropdownItems]
   }
 
@@ -643,8 +476,6 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       ))}
     </SearchResultsContainer>
   )
-
-  console.log('state: ', state)
 
   if (breakpoints.sm) {
     return (

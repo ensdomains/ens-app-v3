@@ -242,29 +242,6 @@ const TextWrapper = styled.div(
   `,
 )
 
-/*
-const PlaceholderResultItem = ({ input }: { input: string }) => {
-  const zorb = useZorb('placeholder', 'name')
-  const beautifiedName = useBeautifiedName(input)
-
-  return (
-    <>
-      <LeadingSearchItem>
-        <AvatarWrapper $isPlaceholder>
-          <Avatar src={zorb} label="name" />
-        </AvatarWrapper>
-        <TextWrapper>
-          <Typography weight="bold">{beautifiedName}</Typography>
-        </TextWrapper>
-      </LeadingSearchItem>
-      <SpinnerWrapper>
-        <Spinner color="accent" />
-      </SpinnerWrapper>
-    </>
-  )
-}
-*/
-
 const TldResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
   ({ name, hoverCallback, clickCallback, index, nameType, ...props }, ref) => {
     const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
@@ -384,8 +361,6 @@ const useGetTheeDnsResolverContract = () => {
 const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolean) => {
   const searchParam = useDebounce(normalisedName, 500)
   const threeDnsResolverContractRef = useGetTheeDnsResolverContract()
-
-  console.log('searchParam: ', searchParam)
 
   const threeDnsOwnerQuery = useQuery({
     queryKey: [searchParam, 'onchain', 'threeDnsOwner'],
