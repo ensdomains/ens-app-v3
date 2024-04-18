@@ -62,57 +62,83 @@ export class PermissionsPage {
     return results.every((result) => !!result)
   }
 
-  async burnChildPermissions(childPermissions: ChildFuses[]) {
+  async burnChildPermissions(childPermissions: ChildFuses[], name: string) {
     await this.getBurnChildPermissionsButton.click()
 
     const nextButton = this.page.getByTestId('permissions-next-button')
+
+    await nextButton.click()
+
+    const nameConfirmation = this.page.getByTestId('input-name-confirmation')
+
     let hasNextButton = (await nextButton.count()) > 0
     while (hasNextButton) {
       for (const permission of childPermissions) {
         const checkbox = this.page.getByTestId(`checkbox-${permission}`)
         if (await checkbox.count()) await checkbox.check()
       }
+      if (await nextButton.isDisabled() && await nameConfirmation.isVisible()) {
+        await nameConfirmation.fill(name)
+        await nameConfirmation.press('Enter')
+      }
       await nextButton.click()
       hasNextButton = (await nextButton.count()) > 0
     }
+
+   
   }
 
-  async burnExtendExpiry() {
+  async burnExtendExpiry(name: string) {
     await this.getBurnExtendExpiryButton.click()
     const nextButton = this.page.getByTestId('permissions-next-button')
+    const nameConfirmation = this.page.getByTestId('input-name-confirmation')
     let hasNextButton = (await nextButton.count()) > 0
     while (hasNextButton) {
       const checkbox = this.page.getByTestId(`checkbox-CAN_EXTEND_EXPIRY`)
       if (await checkbox.count()) await checkbox.check()
-      await nextButton.click()
-      hasNextButton = (await nextButton.count()) > 0
-    }
-  }
-
-  async burnPCC(permissions: Permission[] = []) {
-    await this.getBurnPCCButton.click()
-
-    const _permissions = ['pcc', ...permissions]
-    const nextButton = this.page.getByTestId('permissions-next-button')
-    let hasNextButton = (await nextButton.count()) > 0
-    while (hasNextButton) {
-      for (const permission of _permissions) {
-        const checkbox = this.page.getByTestId(`checkbox-${permission}`)
-        if (await checkbox.count()) await checkbox.check()
+      if (await nextButton.isDisabled() && await nameConfirmation.isVisible()) {
+        await nameConfirmation.fill(name)
+        await nameConfirmation.press('Enter')
       }
       await nextButton.click()
       hasNextButton = (await nextButton.count()) > 0
     }
   }
 
-  async burnCannotBurnFuses() {
+  async burnPCC(permissions: Permission[] = [], name: string) {
+    await this.getBurnPCCButton.click()
+
+    const _permissions = ['pcc', ...permissions]
+    const nextButton = this.page.getByTestId('permissions-next-button')
+    const nameConfirmation = this.page.getByTestId('input-name-confirmation')
+    let hasNextButton = (await nextButton.count()) > 0
+    while (hasNextButton) {
+      for (const permission of _permissions) {
+        const checkbox = this.page.getByTestId(`checkbox-${permission}`)
+        if (await checkbox.count()) await checkbox.check()
+      }
+      if (await nextButton.isDisabled() && await nameConfirmation.isVisible()) {
+        await nameConfirmation.fill(name)
+        await nameConfirmation.press('Enter')
+      }
+      await nextButton.click()
+      hasNextButton = (await nextButton.count()) > 0
+    }
+  }
+
+  async burnCannotBurnFuses(name: string) {
     await this.getBurnCannotBurnFusesButton.click()
 
     const nextButton = this.page.getByTestId('permissions-next-button')
+    const nameConfirmation = this.page.getByTestId('input-name-confirmation')
     let hasNextButton = (await nextButton.count()) > 0
     while (hasNextButton) {
       const checkbox = this.page.getByTestId(`checkbox-CANNOT_BURN_FUSES`)
       if (await checkbox.count()) await checkbox.check()
+      if (await nextButton.isDisabled() && await nameConfirmation.isVisible()) {
+        await nameConfirmation.fill(name)
+        await nameConfirmation.press('Enter')
+      }
       await nextButton.click()
       hasNextButton = (await nextButton.count()) > 0
     }

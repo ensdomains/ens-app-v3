@@ -1,32 +1,34 @@
 import { ComponentProps, useMemo } from 'react'
-import { Control, useFormState, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@ensdomains/thorin'
 
-import { AnyFuseKey } from '@app/types'
+import { AnyFuseKey, CurrentChildFuses, CurrentParentFuses } from '@app/types'
 
-import type { FormData, View } from '../RevokePermissions-flow'
+import type { View } from '../RevokePermissions-flow'
 
 export const ControlledNextButton = ({
   view,
   isLastView,
-  control,
   unburnedFuses,
   onIncrement,
   onSubmit,
+  disabled,
+  parentFuses,
+  childFuses,
+  isCustomExpiryValid,
 }: {
   view: View
   isLastView: boolean
-  control: Control<FormData>
+  parentFuses: CurrentParentFuses
+  childFuses: CurrentChildFuses
   unburnedFuses: AnyFuseKey[]
   onIncrement: () => void
   onSubmit: () => void
+  disabled?: boolean
+  isCustomExpiryValid: boolean
 }) => {
   const { t } = useTranslation('transactionFlow')
-  const [parentFuses, childFuses] = useWatch({ control, name: ['parentFuses', 'childFuses'] })
-  const formState = useFormState({ control, name: 'expiryCustom' })
-  const isCustomExpiryValid = formState.errors.expiryCustom === undefined
 
   /**
    * Fuses that have burned during this flow. Must breakdown the fuses individually for useMemo to
@@ -106,8 +108,7 @@ export const ControlledNextButton = ({
           ...defaultProps,
           count,
           disabled: fusesBurnedDuringFlow.length === 0,
-          onClick:
-            childFuses.CANNOT_UNWRAP && childFuses.CANNOT_BURN_FUSES ? onIncrement : onSubmit,
+          onClick: onIncrement,
           children:
             count === 0
               ? t('action.skip', { ns: 'common' })
@@ -127,10 +128,18 @@ export const ControlledNextButton = ({
           ...defaultProps,
           count,
           disabled: fusesBurnedDuringFlow.length === 0,
-          onClick: childFuses.CANNOT_BURN_FUSES ? onIncrement : onSubmit,
+          onClick: onIncrement,
           children: buttonTitle,
         }
       }
+      case 'lastWarning':
+        return {
+          ...defaultProps,
+          onClick: onSubmit,
+          children: t('action.confirm', { ns: 'common' }),
+          colorStyle: 'redPrimary',
+          disabled,
+        }
       case 'revokeChangeFuses':
         return {
           ...defaultProps,
@@ -139,13 +148,21 @@ export const ControlledNextButton = ({
       case 'revokeChangeFusesWarning':
         return {
           ...defaultProps,
-          onClick: onSubmit,
+          onClick: onIncrement,
         }
       default:
         return defaultProps
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, parentFuses, childFuses, unburnedFuses, fusesBurnedDuringFlow, isCustomExpiryValid])
+  }, [
+    view,
+    parentFuses,
+    childFuses,
+    unburnedFuses,
+    fusesBurnedDuringFlow,
+    isCustomExpiryValid,
+    disabled,
+  ])
 
   return <Button data-testid="permissions-next-button" {...props} />
 }
