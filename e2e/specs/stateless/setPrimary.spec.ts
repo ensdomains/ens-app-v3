@@ -358,7 +358,7 @@ test.describe('profile', () => {
 
     // Burn CSR fuse
     await permissionsPage.goto(name)
-    await permissionsPage.burnChildPermissions(['CANNOT_UNWRAP', 'CANNOT_SET_RESOLVER'])
+    await permissionsPage.burnChildPermissions(['CANNOT_UNWRAP', 'CANNOT_SET_RESOLVER'], name)
     await transactionModal.autoComplete()
 
     // Validate that the name is NOT in the list

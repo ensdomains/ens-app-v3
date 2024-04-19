@@ -2,9 +2,9 @@ import { renderHook } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 
-import { useNameType } from './useNameType'
-import { makeMockUseContractAddress } from '../../../test/mock/makeMockUseContractAddress'
 import { makeMockUseBasicName } from '../../../test/mock/makeMockUseBasicName'
+import { makeMockUseContractAddress } from '../../../test/mock/makeMockUseContractAddress'
+import { useNameType } from './useNameType'
 
 const mockBasicData = vi.fn()
 vi.mock('@app/hooks/useBasicName', () => ({
@@ -105,17 +105,13 @@ describe('useNameType', () => {
 
   describe('wrap level', () => {
     it('should return unwrapped', async () => {
-      mockBasicData.mockReturnValue(
-        makeMockUseBasicName('eth-unwrapped-2ld')
-      )
+      mockBasicData.mockReturnValue(makeMockUseBasicName('eth-unwrapped-2ld'))
       const { result } = renderHook(() => useNameType('test.eth'))
       expect(result.current.data).toEqual('eth-unwrapped-2ld')
     })
 
     it('should return wrapped', async () => {
-      mockBasicData.mockReturnValue(
-        makeMockUseBasicName('eth-wrapped-subname')
-      )
+      mockBasicData.mockReturnValue(makeMockUseBasicName('eth-wrapped-subname'))
       const { result } = renderHook(() => useNameType('test.eth'))
       expect(result.current.data).toEqual('eth-wrapped-2ld')
     })
@@ -140,7 +136,7 @@ describe('useNameType', () => {
 
     it('should return pcc expired subname', async () => {
       mockBasicData.mockReturnValue({
-       ...makeMockUseBasicName('eth-wrapped-subname'),
+        ...makeMockUseBasicName('eth-wrapped-subname'),
         pccExpired: true,
       })
       const { result } = renderHook(() => useNameType('sub.test.eth'))
