@@ -7,7 +7,16 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { Address, createPublicClient, getContract, http, namehash, zeroAddress } from 'viem'
+import {
+  Address,
+  createPublicClient,
+  getContract,
+  GetContractReturnType,
+  http,
+  namehash,
+  PublicClient,
+  zeroAddress,
+} from 'viem'
 import { optimism } from 'viem/chains'
 import { useEnsAvatar } from 'wagmi'
 
@@ -346,7 +355,7 @@ const THREE_DNS_ABI = [
 const THREE_DNS_RESOLVER_ADDRESS = '0xF97aAc6C8dbaEBCB54ff166d79706E3AF7a813c8'
 
 const useGetTheeDnsResolverContract = () => {
-  const contractRef = useRef({ read: { owner: () => '' } })
+  const contractRef = useRef<GetContractReturnType<typeof THREE_DNS_ABI, PublicClient> | null>(null)
 
   useEffect(() => {
     const publicClient = createPublicClient({
@@ -372,11 +381,13 @@ const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolea
   const threeDnsOwnerQuery = useQuery({
     queryKey: [searchParam, 'onchain', 'threeDnsOwner'],
     queryFn: async () => {
-      const result = await threeDnsResolverContractRef.current.read.owner([namehash(searchParam)])
+      const result = await threeDnsResolverContractRef?.current?.read?.owner([
+        namehash(searchParam),
+      ])
       return result
     },
     staleTime: 10 * 1000,
-    enabled: !!searchParam && isValid,
+    enabled: !!searchParam && isValid && !!threeDnsResolverContractRef.current,
   })
 
   return {

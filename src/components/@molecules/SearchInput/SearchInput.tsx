@@ -208,12 +208,12 @@ const handleKeyDown =
     }
     if (e.key === 'ArrowUp') {
       e.preventDefault()
-      setSelected((prev) => (prev - 1 + dropdownItems.length) % dropdownItems.length)
+      setSelected((prev: number) => (prev - 1 + dropdownItems.length) % dropdownItems.length)
       return
     }
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setSelected((prev) => (prev + 1) % dropdownItems.length)
+      setSelected((prev: number) => (prev + 1) % dropdownItems.length)
     }
   }
 
