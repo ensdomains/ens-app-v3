@@ -154,7 +154,7 @@ export const thread = (operator: any, first: any, ...args: any) => {
       throw new Error('Operator not supported')
       break
   }
-  return args.reduce((prev, next) => {
+  return args.reduce((prev: any, next: any) => {
     if (Array.isArray(next)) {
       const [head, ...tail] = next
       return isThreadFirst ? head.apply(this, [prev, ...tail]) : head.apply(this, tail.concat(prev))

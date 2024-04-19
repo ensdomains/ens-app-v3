@@ -118,7 +118,7 @@ export const DotBoxRegistration = () => {
   return (
     <>
       <Head>
-        <title>blabla{t('title', { name })}</title>
+        <title>{t('title', { name })}</title>
       </Head>
       <Content noTitle title={name} singleColumnContent inlineHeading>
         {{
@@ -128,9 +128,11 @@ export const DotBoxRegistration = () => {
               <SubHeading>
                 <SubHeadingRow>
                   <Typography fontVariant="extraLargeBold">{name}</Typography>
-                  <Tag colorStyle="greenSecondary" style={{ gap: 4 }}>
-                    <CheckSVG /> Available
-                  </Tag>
+                  {nameStatus === 'AVAILABLE' && (
+                    <Tag colorStyle="greenSecondary" style={{ gap: 4 }}>
+                      <CheckSVG /> Available
+                    </Tag>
+                  )}
                 </SubHeadingRow>
                 <Typography color="textSecondary">
                   .box combines the features of ENS and DNS domains

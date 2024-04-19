@@ -407,7 +407,7 @@ const BoxResultItem = ({
 }: ResultItemProps) => {
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
-  const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(name, isValid)
+  const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(name, !!isValid)
 
   // usePrefetchProfile({ name })
   const registrationStatus: RegistrationStatus = boxSearchResultOnchain.isAvailable
@@ -450,6 +450,7 @@ interface SearchResultProps {
   isValid?: boolean
 }
 
+// Renaming 'text' to 'name'
 type ResultItemProps = {
   [Property in keyof SearchResultProps as Property extends 'text'
     ? 'name'
