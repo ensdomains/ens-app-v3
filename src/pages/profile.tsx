@@ -43,13 +43,10 @@ export default function Page() {
     !router.isReady ||
     dotBoxResult.isLoading
 
-  console.log('dotboxresult: ', dotBoxResult)
-
   if (
     dotBoxResult?.data?.data.status === 'AVAILABLE' ||
     dotBoxResult?.data?.data.status === 'UNAVAILABLE'
   ) {
-    console.log('dotboxpush')
     router.push(`/dotbox/${name}`)
     return null
   }

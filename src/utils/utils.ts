@@ -152,7 +152,6 @@ export const thread = (operator: any, first: any, ...args: any) => {
       break
     default:
       throw new Error('Operator not supported')
-      break
   }
   return args.reduce((prev: any, next: any) => {
     if (Array.isArray(next)) {
