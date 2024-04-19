@@ -1,45 +1,26 @@
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
-import { filter } from 'lodash'
-import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
-import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
 import { isAddress } from 'viem'
-import { useAccount, useChainId, useEnsAvatar } from 'wagmi'
 
-import {
-  GetExpiryReturnType,
-  GetOwnerReturnType,
-  GetPriceReturnType,
-  GetWrapperDataReturnType,
-} from '@ensdomains/ensjs/public'
-import { normalise } from '@ensdomains/ensjs/utils'
 import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
-import { useBasicName } from '@app/hooks/useBasicName'
-import { useDebounce } from '@app/hooks/useDebounce'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { useValidate, validate, ValidationResult } from '@app/hooks/useValidate'
+import { useValidate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
-import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
-import { getRegistrationStatus } from '@app/utils/registrationStatus'
-import { thread, yearsToSeconds } from '@app/utils/utils'
+import { thread } from '@app/utils/utils'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
-import { AnyItem, HistoryItem } from './types'
+import { HistoryItem, SearchItem } from './types'
 
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-
-/* eslint-disable jsx-a11y/interactive-supports-focus */
+type HandleSearch = (
+  router: ReturnType<typeof useRouterWithHistory>,
+  setHistory: ReturnType<typeof useLocalStorage<HistoryItem[]>>[1],
+) => (nameType: any, text: string) => void
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
@@ -213,22 +194,31 @@ const useAddEventListeners = (
 }
 
 const handleKeyDown =
-  (handleSearch: any, setSelected: any, searchItems: any) => (e: KeyboardEvent) => {
+  (
+    handleSearch: (nameType: string, text: string) => void,
+    setSelected: any,
+    dropdownItems: any,
+    selected: number,
+  ) =>
+  (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
-      return handleSearch()
+      const { nameType, text } = dropdownItems[selected]
+      handleSearch(nameType, text)
+      return
     }
     if (e.key === 'ArrowUp') {
       e.preventDefault()
-      setSelected((prev) => (prev - 1 + searchItems.length) % searchItems.length)
+      setSelected((prev) => (prev - 1 + dropdownItems.length) % dropdownItems.length)
+      return
     }
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setSelected((prev) => (prev + 1) % searchItems.length)
+      setSelected((prev) => (prev + 1) % dropdownItems.length)
     }
   }
 
-const handleSearch = (router: any, setHistory: any) => (nameType: any, text: string) => {
-  setHistory((prev: any) => [
+const handleSearch: HandleSearch = (router, setHistory) => (nameType, text) => {
+  setHistory((prev: HistoryItem[]) => [
     ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
     { lastAccessed: Date.now(), nameType, text },
   ])
@@ -257,13 +247,6 @@ const useSelectionManager = ({
       setSelected(-1)
     }
   }, [state, setSelected])
-}
-
-interface SearchItem {
-  isLoading: boolean
-  isFromHistory: boolean
-  nameType: 'eth-name' | 'addresss' | 'dns'
-  value?: string
 }
 
 const formatEthText = (name: string, isETH: boolean) => {
@@ -303,7 +286,6 @@ const formatTldText = (name: string) => {
 const addTldDropdownItem = (dropdownItems: SearchItem[], name: string) => [
   {
     text: formatTldText(name),
-    isLoading: true,
     nameType: 'tld',
   },
   ...dropdownItems,
@@ -374,7 +356,7 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
     '->',
     [],
     [addDnsDropdownItem, name, isETH],
-    [addAddressItem, name, inputIsAddress],
+    [addAddressItem, inputVal, inputIsAddress],
     [addEthDropdownItem, name, isETH],
     [addBoxDropdownItem, name, isValid],
     [addTldDropdownItem, name],
@@ -386,12 +368,8 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
 }
 
 export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraLarge' }) => {
-  const { t } = useTranslation('common')
   const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
-  const queryClient = useQueryClient()
-  const chainId = useChainId()
-  const { address } = useAccount()
 
   const [inputVal, setInputVal] = useState('')
 
@@ -415,31 +393,24 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const [selected, setSelected] = useState(0)
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
-  console.log('history: ', history)
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
   const dropdownItems = useBuildDropdownItems(inputVal, history)
-  console.log('dropdownItems: ', dropdownItems)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSearchCb = useCallback(handleSearch(router, setHistory), [router, setHistory])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleKeyDownCb = useCallback(
-    handleKeyDown(handleSearch(router, setHistory), setSelected, dropdownItems),
-    [handleSearch, setSelected, dropdownItems.length],
+    handleKeyDown(handleSearchCb, setSelected, dropdownItems, selected),
+    [handleSearch, setSelected, dropdownItems.length, selected],
   )
 
   useAddEventListeners(searchInputRef, handleKeyDownCb, handleFocusIn, handleFocusOut)
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // const handleHoverCb = useCallback(handleHover(setSelected), [setSelected])
-
   useSelectionManager({ inputVal, setSelected, state })
-
-  console.log('selected: ', selected)
 
   const SearchInputElement = (
     <SearchInputBox
@@ -467,11 +438,8 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
           hoverCallback={setSelected}
           index={index}
           selected={index === selected}
-          type={item.type}
-          isLoading={item.isLoading}
           key={`${item.nameType}-${item.text}`}
-          text={item.text}
-          nameType={item.nameType}
+          {...item}
         />
       ))}
     </SearchResultsContainer>
