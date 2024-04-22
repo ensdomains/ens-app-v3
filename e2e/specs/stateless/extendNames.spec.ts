@@ -381,3 +381,88 @@ test('should be able to extend a name by a month', async ({
     await expect(comparativeTimestamp).toEqual(newTimestamp)
   })
 })
+
+test('should be able to extend a name in grace period by a month', async ({
+  page,
+  login,
+  makePageObject,
+  makeName,
+}) => {
+  const name = await makeName({
+    label: 'legacy',
+    type: 'legacy',
+    owner: 'user',
+    duration: -24 * 60 * 60,
+  })
+
+  const profilePage = makePageObject('ProfilePage')
+  await profilePage.goto(name)
+
+  await login.connect()
+
+  await expect(page.getByText(`${name} has expired`)).toBeVisible()
+
+  const timestamp = await profilePage.getExpiryTimestamp()
+
+  await page.pause()
+  await profilePage.getExtendButton.click()
+
+  const extendNamesModal = makePageObject('ExtendNamesModal')
+  await test.step('should show warning message', async () => {
+    await expect(page.getByText('You do not own this name')).toBeVisible()
+    await page.getByRole('button', { name: 'I understand' }).click()
+  })
+
+  await test.step('should show the correct price data', async () => {
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
+    await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
+  })
+
+  await test.step('should show the cost comparison data', async () => {
+    await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
+    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
+    await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
+  })
+
+  await test.step('should be able to pick by date', async () => {
+    const dateSelection = page.getByTestId('date-selection')
+    await expect(dateSelection).toHaveText('Pick by date')
+
+    await dateSelection.click()
+  })
+
+  await test.step('should set and render a date properly', async () => {
+    const expiryTime = (await profilePage.getExpiryTimestamp()) / 1000
+    const calendar = page.getByTestId('calendar')
+    const monthLater = await page.evaluate(
+      (ts) => {
+        return new Date(ts)
+      },
+      (expiryTime + daysToSeconds(31)) * 1000,
+    )
+
+    await calendar.fill(dateToDateInput(monthLater))
+    await expect(page.getByTestId('calendar-date')).toHaveValue(
+      secondsToDateInput(expiryTime + roundDurationWithDay(monthLater, expiryTime)),
+    )
+  })
+
+  await test.step('should show the correct price data', async () => {
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0003')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0004')
+    await expect(page.getByText('1 month extension', { exact: true })).toBeVisible()
+  })
+
+  await test.step('should extend', async () => {
+    await extendNamesModal.getExtendButton.click()
+    const transactionModal = makePageObject('TransactionModal')
+    await transactionModal.autoComplete()
+
+    const newTimestamp = await profilePage.getExpiryTimestamp()
+    const comparativeTimestamp = timestamp + daysToSeconds(31) * 1000
+    await expect(comparativeTimestamp).toEqual(newTimestamp)
+  })
+})

@@ -330,3 +330,87 @@ test('should allow registering with a specific date', async ({ page, login, make
     await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
   })
 })
+
+test('should allow registering a premium name with a specific date', async ({
+  page,
+  login,
+  provider,
+  accounts,
+  makeName,
+  makePageObject,
+}) => {
+  const premiumName = await makeName(
+    {
+      label: 'premium',
+      owner: 'user2',
+      type: 'legacy',
+      duration: -7890000 - 4 * 345600, // 3 months 4 days
+    },
+    { timeOffset: 500 },
+  )
+
+  const transactionModal = makePageObject('TransactionModal')
+
+  await page.goto(`/${premiumName}/register`)
+  await login.connect()
+
+  await test.step('should be able to pick by date', async () => {
+    const dateSelection = page.getByTestId('date-selection')
+    await expect(dateSelection).toHaveText('Pick by date')
+
+    await dateSelection.click()
+  })
+
+  const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
+  const calendar = await page.getByTestId('calendar')
+  const oneYearLaterInput = await page.evaluate(
+    (timestamp) => {
+      const _date = new Date(timestamp)
+      const year = _date.getFullYear()
+      const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+      const day = String(_date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    },
+    (browserTime + yearsToSeconds(1)) * 1000,
+  )
+
+  await test.step('should set a date', async () => {
+    const oneYearAndHalfLaterInput = await page.evaluate(
+      (timestamp) => {
+        const _date = new Date(timestamp)
+        const year = _date.getFullYear()
+        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
+      },
+      (browserTime + yearsToSeconds(2.5)) * 1000,
+    )
+    // const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
+
+    await calendar.fill(oneYearAndHalfLaterInput)
+
+    await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndHalfLaterInput)
+
+    expect(page.getByText('2 years registration', { exact: true })).toBeVisible()
+  })
+
+  await page.getByTestId('payment-choice-ethereum').click()
+  await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
+  await page.getByTestId('next-button').click()
+  if (await page.getByTestId('profile-submit-button').isVisible()) {
+    await page.getByTestId('profile-submit-button').click()
+  }
+
+  await page.getByTestId('next-button').click()
+  await transactionModal.confirm()
+
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await provider.increaseTime(120)
+  await page.getByTestId('finish-button').click()
+  await transactionModal.confirm()
+
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    new RegExp(accounts.getAddress('user', 5)),
+  )
+})
