@@ -362,17 +362,7 @@ test('should allow registering a premium name with a specific date', async ({
   })
 
   const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
-  const calendar = await page.getByTestId('calendar')
-  const oneYearLaterInput = await page.evaluate(
-    (timestamp) => {
-      const _date = new Date(timestamp)
-      const year = _date.getFullYear()
-      const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-      const day = String(_date.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
-    },
-    (browserTime + yearsToSeconds(1)) * 1000,
-  )
+  const calendar = page.getByTestId('calendar')
 
   await test.step('should set a date', async () => {
     const oneYearAndHalfLaterInput = await page.evaluate(
@@ -385,7 +375,6 @@ test('should allow registering a premium name with a specific date', async ({
       },
       (browserTime + yearsToSeconds(2.5)) * 1000,
     )
-    // const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
 
     await calendar.fill(oneYearAndHalfLaterInput)
 
