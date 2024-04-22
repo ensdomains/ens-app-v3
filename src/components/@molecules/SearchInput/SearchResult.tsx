@@ -171,8 +171,9 @@ const AddressResultItem = ({
   clickCallback,
   index,
   selected,
+  searchItem
 }: AddressItemProps) => {
-  const { text: address } = searchItem
+  const address = searchItem.text as Address
   const { t } = useTranslation('common')
   const { data: primaryName } = usePrimaryName({ address })
   const { data: avatar } = useEnsAvatar({ name: primaryName?.name })

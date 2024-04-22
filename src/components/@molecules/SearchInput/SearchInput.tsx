@@ -1,4 +1,13 @@
-import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
@@ -20,7 +29,7 @@ import { HistoryItem, SearchItem } from './types'
 type HandleSearch = (
   router: ReturnType<typeof useRouterWithHistory>,
   setHistory: ReturnType<typeof useLocalStorage<HistoryItem[]>>[1],
-) => (nameType: any, text: string) => void
+) => (arg: SearchItem) => void
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
@@ -172,10 +181,10 @@ const MobileSearchInput = ({
 }
 
 const useAddEventListeners = (
-  searchInputRef: any,
-  handleKeyDown: any,
-  handleFocusIn: any,
-  handleFocusOut: any,
+  searchInputRef: React.RefObject<HTMLInputElement>,
+  handleKeyDown: (e: KeyboardEvent) => void,
+  handleFocusIn: () => void,
+  handleFocusOut: () => void,
 ) => {
   useEffect(() => {
     const searchInput = searchInputRef.current
@@ -196,8 +205,8 @@ const useAddEventListeners = (
 const handleKeyDown =
   (
     handleSearch: (searchItem: SearchItem) => void,
-    setSelected: any,
-    dropdownItems: any,
+    setSelected: Dispatch<SetStateAction<number>>,
+    dropdownItems: SearchItem[],
     selected: number,
   ) =>
   (e: KeyboardEvent) => {
@@ -232,9 +241,9 @@ const useSelectionManager = ({
   setSelected,
   state,
 }: {
-  inputVal: any
-  setSelected: any
-  state: any
+  inputVal: string
+  setSelected: Dispatch<SetStateAction<number>>
+  state: TransitionState
 }) => {
   useEffect(() => {
     if (inputVal === '') {
@@ -257,7 +266,7 @@ const formatEthText = (name: string, isETH: boolean) => {
   if (name.includes('.')) return ''
   return `${name}.eth`
 }
-const addEthDropdownItem = (dropdownItems: SearchItem[], name: any, isETH: boolean) => [
+const addEthDropdownItem = (dropdownItems: SearchItem[], name: string, isETH: boolean) => [
   {
     text: formatEthText(name, isETH),
     nameType: 'eth',
@@ -321,12 +330,12 @@ const addAddressItem = (dropdownItems: SearchItem[], name: string, inputIsAddres
 ]
 
 const MAX_DROPDOWN_ITEMS = 6
-const addHistoryDropdownItems = (dropdownItems: SearchItem[], history: any) => {
+const addHistoryDropdownItems = (dropdownItems: SearchItem[], history: HistoryItem[]) => {
   const historyItemDrawCount = MAX_DROPDOWN_ITEMS - dropdownItems.filter((item) => item.text).length
 
   if (historyItemDrawCount > 0) {
     const filteredHistoryItems = history.filter(
-      (historyItem: any) =>
+      (historyItem: HistoryItem) =>
         dropdownItems.findIndex(
           (dropdownItem) =>
             dropdownItem.nameType === historyItem.nameType &&
@@ -347,7 +356,7 @@ const formatDnsText = (name: string, isETH: boolean) => {
   if (isETH) return ''
   return name
 }
-const addDnsDropdownItem = (dropdownItems: SearchItem[], name: any, isETH: boolean) => [
+const addDnsDropdownItem = (dropdownItems: SearchItem[], name: string, isETH: boolean) => [
   {
     text: formatDnsText(name, isETH),
     nameType: 'dns',
@@ -365,7 +374,7 @@ const addErrorDropdownItem = (dropdownItems: SearchItem[], name: string, isValid
         },
       ]
 
-const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => {
+const useBuildDropdownItems = (inputVal: string, history: string): SearchItem[] => {
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
 
   const { isValid, isETH, name } = useValidate({
@@ -374,7 +383,6 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
   })
 
   return thread(
-    '->',
     [],
     [addDnsDropdownItem, name, isETH],
     [addAddressItem, inputVal, inputIsAddress],
@@ -385,7 +393,7 @@ const useBuildDropdownItems = (inputVal: string, history: any): SearchItem[] => 
     [addErrorDropdownItem, name, isValid],
   )
     .reverse()
-    .filter((item: any) => item.text)
+    .filter((item: SearchItem) => item.text)
 }
 
 export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraLarge' }) => {

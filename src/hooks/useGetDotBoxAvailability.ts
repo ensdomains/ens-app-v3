@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 const BOX_SEARCH_ENDPOINT = 'https://dotbox-worker.ens-cf.workers.dev/search'
 
-export const useGetDotBoxAvailability = (name: any) => {
+export const useGetDotBoxAvailability = (name: string) => {
   const result = useQuery({
     queryKey: [name],
     queryFn: async () => {

@@ -141,24 +141,18 @@ export const createDateAndValue = <TValue extends bigint | number>(value: TValue
   value,
 })
 
-export const thread = (operator: any, first: any, ...args: any) => {
-  let isThreadFirst: boolean
-  switch (operator) {
-    case '->>':
-      isThreadFirst = false
-      break
-    case '->':
-      isThreadFirst = true
-      break
-    default:
-      throw new Error('Operator not supported')
-  }
-  return args.reduce((prev: any, next: any) => {
-    if (Array.isArray(next)) {
-      const [head, ...tail] = next
-      return isThreadFirst ? head.apply(this, [prev, ...tail]) : head.apply(this, tail.concat(prev))
+type FunctionWithMaybeArgs = [(...args: any[]) => any, ...any[]] | ((arg: any) => any)
+
+export const thread = <TInitialData>(
+  initialData: TInitialData,
+  ...functions: FunctionWithMaybeArgs[]
+) => {
+  return functions.reduce((accumulator: any, nextFunction: FunctionWithMaybeArgs) => {
+    if (Array.isArray(nextFunction)) {
+      const [fn, ...functionArgs] = nextFunction
+      return fn.apply(this, [accumulator, ...functionArgs])
     }
 
-    return next.call(this, prev)
-  }, first)
+    return nextFunction.call(this, accumulator)
+  }, initialData)
 }
