@@ -32,7 +32,7 @@ import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 
-import { NameType } from './types'
+import { NameType, SearchItem } from './types'
 
 const SearchItem = styled.div<{
   $selected?: boolean
@@ -53,6 +53,9 @@ const SearchItem = styled.div<{
     }
     position: relative;
     opacity: 0.6;
+
+    ${!$clickable && css`pointer-events: none;`}
+
     ${$clickable &&
     css`
       cursor: pointer;
@@ -164,13 +167,12 @@ const SpinnerWrapper = styled.div(
 )
 
 const AddressResultItem = ({
-  address,
   hoverCallback,
   clickCallback,
   index,
-  nameType,
   selected,
 }: AddressItemProps) => {
+  const { text: address } = searchItem
   const { t } = useTranslation('common')
   const { data: primaryName } = usePrimaryName({ address })
   const { data: avatar } = useEnsAvatar({ name: primaryName?.name })
@@ -180,7 +182,7 @@ const AddressResultItem = ({
     <SearchItem
       data-testid="search-result-address"
       $clickable
-      onClick={() => clickCallback(nameType, address)}
+      onClick={() => clickCallback(searchItem)}
       $selected={selected}
       onMouseEnter={() => hoverCallback(index)}
     >
@@ -252,13 +254,13 @@ const TextWrapper = styled.div(
 )
 
 const TldResultItem = ({
-  name,
   hoverCallback,
   clickCallback,
   index,
-  nameType,
   selected,
+  searchItem
 }: ResultItemProps) => {
+  const { text: name } = searchItem
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
   const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
@@ -268,9 +270,10 @@ const TldResultItem = ({
   return (
     <SearchItem
       data-testid="search-result-name"
-      onClick={() => clickCallback(nameType, name)}
+      onClick={() => clickCallback(searchItem)}
       onMouseEnter={() => hoverCallback(index)}
       $selected={selected}
+      $clickable
     >
       <LeadingSearchItem>
         <AvatarWrapper>
@@ -292,13 +295,13 @@ const TldResultItem = ({
 }
 
 const EthResultItem = ({
-  name,
   hoverCallback,
   clickCallback,
   index,
-  nameType,
   selected,
+  searchItem
 }: ResultItemProps) => {
+  const { text: name } = searchItem
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
   const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
@@ -309,8 +312,9 @@ const EthResultItem = ({
     <SearchItem
       data-testid="search-result-name"
       $selected={selected}
-      onClick={() => clickCallback(nameType, name)}
+      onClick={() => clickCallback(searchItem)}
       onMouseEnter={() => hoverCallback(index)}
+      $clickable
     >
       <LeadingSearchItem>
         <AvatarWrapper>
@@ -398,14 +402,13 @@ const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolea
 }
 
 const BoxResultItem = ({
-  name,
   hoverCallback,
   clickCallback,
   index,
-  nameType,
   selected,
-  isValid,
+  searchItem
 }: ResultItemProps) => {
+  const { text: name, isValid, nameType } = searchItem
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
   const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(name, !!isValid)
@@ -423,8 +426,9 @@ const BoxResultItem = ({
     <SearchItem
       data-testid="search-result-name"
       $selected={selected}
+      $clickable={isValid}
       onMouseEnter={() => hoverCallback(index)}
-      onClick={() => clickCallback(nameType, name)}
+      onClick={() => isValid && clickCallback(searchItem)}
     >
       <LeadingSearchItem>
         <AvatarWrapper>
@@ -450,9 +454,7 @@ interface SearchResultProps {
   clickCallback: (nameType: NameType, text: string) => void
   index: number
   selected: boolean
-  nameType: NameType
-  text: string
-  isValid?: boolean
+  searchItem: SearchItem
 }
 
 // Renaming 'text' to 'name'
@@ -471,62 +473,60 @@ export const SearchResult = ({
   clickCallback,
   index,
   selected,
-  nameType,
-  text,
-  isValid,
+  searchItem,
 }: SearchResultProps) => {
-  if (nameType === 'error') {
+  if (searchItem.nameType === 'error') {
     return (
       <SearchItem data-testid="search-result-error" $selected $error>
-        <Typography weight="bold">{text}</Typography>
+        <Typography weight="bold">{searchItem.text}</Typography>
       </SearchItem>
     )
   }
 
-  if (nameType === 'address') {
+  if (searchItem.nameType === 'address') {
     return (
       <AddressResultItem
         {...{
-          address: text as Address,
+          address: searchItem.text as Address,
           selected,
           hoverCallback,
           index,
           clickCallback,
-          nameType,
+          searchItem
         }}
       />
     )
   }
 
-  if (nameType === 'dns') {
+  if (searchItem.nameType === 'dns') {
     return (
-      <EthResultItem {...{ name: text, selected, hoverCallback, index, clickCallback, nameType }} />
+      <EthResultItem {...{ selected, hoverCallback, index, clickCallback, searchItem }} />
     )
   }
 
-  if (nameType === 'eth') {
+  if (searchItem.nameType === 'eth') {
     return (
-      <EthResultItem {...{ name: text, selected, hoverCallback, index, clickCallback, nameType }} />
+      <EthResultItem {...{ selected, hoverCallback, index, clickCallback, searchItem }} />
     )
   }
 
-  if (nameType === 'box') {
+  if (searchItem.nameType === 'box') {
     return (
       <BoxResultItem
-        {...{ name: text, selected, hoverCallback, index, clickCallback, nameType, isValid }}
+        {...{ selected, hoverCallback, index, clickCallback, searchItem }}
       />
     )
   }
 
-  if (nameType === 'tld') {
+  if (searchItem.nameType === 'tld') {
     return (
-      <TldResultItem {...{ name: text, selected, hoverCallback, index, clickCallback, nameType }} />
+      <TldResultItem {...{ selected, hoverCallback, index, clickCallback, searchItem }} />
     )
   }
 
   return (
     <SearchItem data-testid="search-result-text">
-      <NoInputYetTypography weight="bold">{text}</NoInputYetTypography>
+      <NoInputYetTypography weight="bold">{searchItem.text}</NoInputYetTypography>
     </SearchItem>
   )
 }

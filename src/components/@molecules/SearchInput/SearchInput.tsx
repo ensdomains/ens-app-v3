@@ -195,15 +195,14 @@ const useAddEventListeners = (
 
 const handleKeyDown =
   (
-    handleSearch: (nameType: string, text: string) => void,
+    handleSearch: (searchItem: SearchItem) => void,
     setSelected: any,
     dropdownItems: any,
     selected: number,
   ) =>
   (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
-      const { nameType, text } = dropdownItems[selected]
-      handleSearch(nameType, text)
+      handleSearch(dropdownItems[selected])
       return
     }
     if (e.key === 'ArrowUp') {
@@ -217,12 +216,15 @@ const handleKeyDown =
     }
   }
 
-const handleSearch: HandleSearch = (router, setHistory) => (nameType, text) => {
-  setHistory((prev: HistoryItem[]) => [
-    ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
-    { lastAccessed: Date.now(), nameType, text },
+const handleSearch: HandleSearch = (router, setHistory) => (searchItem: SearchItem) => {
+  setHistory((historyItems: HistoryItem[]) => [
+    ...historyItems.filter(
+      (historyItem) =>
+        !(historyItem.text === searchItem.text && historyItem.nameType === searchItem.nameType),
+    ),
+    { lastAccessed: Date.now(), ...searchItem },
   ])
-  router.push(`/${text}`)
+  router.push(`/${searchItem.text}`)
 }
 
 const useSelectionManager = ({
@@ -451,14 +453,14 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       data-testid="search-input-results"
       // data-error={!isValid && !inputIsAddress && inputVal !== ''}
     >
-      {dropdownItems.map((item, index) => (
+      {dropdownItems.map((searchItem, index) => (
         <SearchResult
           clickCallback={handleSearchCb}
           hoverCallback={setSelected}
           index={index}
           selected={index === selected}
-          key={`${item.nameType}-${item.text}`}
-          {...item}
+          key={`${searchItem.nameType}-${searchItem.text}`}
+          searchItem={searchItem}
         />
       ))}
     </SearchResultsContainer>

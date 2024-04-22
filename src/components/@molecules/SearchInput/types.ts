@@ -7,7 +7,7 @@ export type SearchItem = {
 }
 
 export type HistoryItem = {
-  nameType: 'name' | 'address'
+  nameType: NameType
   text: string
   lastAccessed: number
 }
