@@ -55,10 +55,28 @@ export const formatDuration = (duration: number, t: TFunction) => {
 
   if (duration >= ONE_YEAR) {
     const years = Math.floor(duration / ONE_YEAR)
+    const months = Math.floor((duration - years * ONE_YEAR) / month)
+
+    if (months !== 0)
+      return `${t('unit.years', { count: years, ns: 'common' })}, ${t('unit.months', {
+        count: months,
+        ns: 'common',
+      })}`
+
     return t('unit.years', { count: years, ns: 'common' })
   }
   if (duration >= month) {
     const months = Math.floor(duration / month)
+
+    const days = Math.floor((duration - months * month) / ONE_DAY)
+
+    // for 31-day months
+    if (days > 1)
+      return `${t('unit.months', { count: months, ns: 'common' })}, ${t('unit.days', {
+        count: days,
+        ns: 'common',
+      })}`
+
     return t('unit.months', { count: months, ns: 'common' })
   }
   if (duration >= ONE_DAY) {

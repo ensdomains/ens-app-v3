@@ -317,7 +317,7 @@ test('should allow registering with a specific date', async ({ page, login, make
 
     await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndHalfLaterInput)
 
-    expect(page.getByText('2 years registration', { exact: true })).toBeVisible()
+    expect(page.getByText('2 years, 6 months registration', { exact: true })).toBeVisible()
   })
 
   // should have payment choice ethereum checked and show primary name setting as checked
