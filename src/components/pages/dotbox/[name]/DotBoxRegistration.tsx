@@ -143,19 +143,19 @@ export const DotBoxRegistration = () => {
                   Core Features
                 </Typography>
                 <CoreFeaturesRow>
-                  <CoreFeatureENS />
+                  <CoreFeatureENS style={{ minWidth: 25 }} />
                   <Typography>ENS Powered Web3 username</Typography>
                 </CoreFeaturesRow>
                 <CoreFeaturesRow>
-                  <CoreFeatureNFT />
+                  <CoreFeatureNFT style={{ minWidth: 25 }} />
                   <Typography>NFT-bound ownership and control</Typography>
                 </CoreFeaturesRow>
                 <CoreFeaturesRow>
-                  <CoreFeatureWebsite />
+                  <CoreFeatureWebsite style={{ minWidth: 25 }} />
                   <Typography>Website and email hosting via ICANN DNS resolution</Typography>
                 </CoreFeaturesRow>
                 <CoreFeaturesRow>
-                  <CoreFeatureOnchain />
+                  <CoreFeatureOnchain style={{ minWidth: 25 }} />
                   <Typography>
                     Onchain management of name records (Avatar, Handles, A, CNAME, MX)
                   </Typography>
