@@ -3,7 +3,7 @@ import { act, render, renderHook, screen, userEvent, waitFor } from '@app/test-u
 import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { ONE_YEAR } from '@app/utils/time'
+import { ONE_DAY, ONE_YEAR } from '@app/utils/time'
 
 import { DateSelection } from './DateSelection'
 
@@ -38,14 +38,14 @@ describe('DateSelection', () => {
     })
 
     act(() => {
-      result.current[1](ONE_YEAR / 2)
+      result.current[1](ONE_DAY * 30)
     })
 
     rerender(
       <DateSelection minSeconds={0} seconds={result.current[0]} setSeconds={result.current[1]} />,
     )
 
-    expect(screen.getByText('unit.months.6 registration.')).toBeVisible()
+    expect(screen.getByText('unit.months.1 registration.')).toBeVisible()
 
     await userEvent.click(dateSelection)
 
