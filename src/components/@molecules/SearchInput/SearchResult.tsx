@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
 import {
   Address,
   createPublicClient,
@@ -410,9 +411,13 @@ const BoxResultItem = ({
   const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(name, !!isValid)
 
   // usePrefetchProfile({ name })
-  const registrationStatus: RegistrationStatus = boxSearchResultOnchain.isAvailable
-    ? 'available'
-    : 'registered'
+  const isValidData = { isValid, isAvailable: boxSearchResultOnchain.isAvailable }
+
+  const status = match(isValidData)
+    .with({ isValid: false }, () => 'invalid')
+    .with({ isAvailable: true }, () => 'available')
+    .with({ isAvailable: false }, () => 'registered')
+    .otherwise(() => 'invalid')
 
   return (
     <SearchItem
@@ -429,8 +434,8 @@ const BoxResultItem = ({
           <Typography weight="bold">{name}</Typography>
         </TextWrapper>
       </LeadingSearchItem>
-      {!boxSearchResultOnchain.isLoading && registrationStatus ? (
-        <StatusTag status={registrationStatus} />
+      {!boxSearchResultOnchain.isLoading ? (
+        <StatusTag status={status} />
       ) : (
         <SpinnerWrapper>
           <Spinner color="accent" />

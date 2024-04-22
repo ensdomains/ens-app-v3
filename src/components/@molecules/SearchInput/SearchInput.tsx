@@ -263,20 +263,39 @@ const addEthDropdownItem = (dropdownItems: SearchItem[], name: any, isETH: boole
   ...dropdownItems,
 ]
 
+const isBoxValid = (name: string) => {
+  /*
+    This regular expression will match any string that starts and ends with a letter or a digit, 
+    does not have a hyphen in the third or fourth position, does not include a space, and 
+    consists only of the characters a-z, A-Z, 0-9, and - in between, but does not start or end 
+    with a hyphen.
+
+    This is to comply with .box name rules. 
+  */
+  const regex = /^[a-zA-Z0-9]{2}(?!-)[a-zA-Z0-9-]*(?<!-)[a-zA-Z0-9]$/
+
+  if (!name.endsWith('.box')) return false
+  if (name.length > 63) return false
+  if (!regex.test(name.slice(0, -4))) return false
+  return true
+}
 const formatBoxText = (name: string) => {
   if (!name) return ''
   if (name?.endsWith('.box')) return name
   if (name.includes('.')) return ''
   return `${name}.box`
 }
-const addBoxDropdownItem = (dropdownItems: SearchItem[], name: string, isValid: boolean) => [
-  {
-    text: formatBoxText(name),
-    nameType: 'box',
-    isValid,
-  },
-  ...dropdownItems,
-]
+const addBoxDropdownItem = (dropdownItems: SearchItem[], name: string, isValid: boolean) => {
+  const formattedBoxName = formatBoxText(name)
+  return [
+    {
+      text: formattedBoxName,
+      nameType: 'box',
+      isValid: isValid && isBoxValid(formattedBoxName),
+    },
+    ...dropdownItems,
+  ]
+}
 
 const formatTldText = (name: string) => {
   if (!name) return ''
