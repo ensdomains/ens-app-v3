@@ -462,8 +462,6 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
 
   const [selected, setSelected] = useState(0)
 
-  console.log('selected', selected)
-
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history-v2', [])
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
@@ -518,7 +516,6 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
           hoverCallback={setSelected}
           index={index}
           selected={index === selected}
-          key={`${searchItem.nameType}-${searchItem.text}`}
           searchItem={searchItem}
         />
       ))}

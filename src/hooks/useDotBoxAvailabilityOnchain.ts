@@ -10,6 +10,8 @@ import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
+import { useDebounce } from './useDebounce'
+
 type UseDotBoxOwnerParameters = {
   name?: string
   isValid: boolean
@@ -66,8 +68,10 @@ export const useGetDotBoxAvailabilityOnChain = <TParams extends UseDotBoxOwnerPa
     queryFn: getOwnerQueryFn,
   })
 
+  const debouncedValued = useDebounce(initialOptions.queryKey, 500)
+
   const preparedOptions = prepareQueryOptions({
-    queryKey: initialOptions.queryKey,
+    queryKey: debouncedValued,
     queryFn: initialOptions.queryFn,
     enabled: enabled && !!params.name && params.isValid,
     gcTime,
