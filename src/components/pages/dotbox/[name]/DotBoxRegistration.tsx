@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import Link from 'next/link'
+// import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -162,28 +162,28 @@ export const DotBoxRegistration = () => {
               </CoreFeaturesContainer>
               <ButtonContainer>
                 {nameStatus === 'AVAILABLE' ? (
-                  <Link href={dotBoxResult?.data?.data.href} legacyBehavior>
+                  <a href={dotBoxResult?.data?.data.href} target="_blank" rel="noreferrer">
                     <Button width="45" size="small">
                       <OutlinkInner>
                         Register on my.box
                         <OutlinkSVG />
                       </OutlinkInner>
                     </Button>
-                  </Link>
+                  </a>
                 ) : (
                   <>
                     <Helper type="warning" alignment="horizontal">
                       Online registration for this domain is unavailable. Please contact the
                       registry directly for further information.
                     </Helper>
-                    <Link href={LEARN_MORE_URL} legacyBehavior>
+                    <a href={LEARN_MORE_URL} target="_blank" rel="noreferrer">
                       <Button width="52" size="small">
                         <OutlinkInner>
                           Learn more at my.box
                           <OutlinkSVG />
                         </OutlinkInner>
                       </Button>
-                    </Link>
+                    </a>
                   </>
                 )}
               </ButtonContainer>
