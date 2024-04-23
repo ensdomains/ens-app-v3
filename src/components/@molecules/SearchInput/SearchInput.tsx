@@ -184,6 +184,7 @@ const createSearchHandler =
     setHistory: Dispatch<SetStateAction<HistoryItem[]>>
   }): SearchHandler =>
   (searchItem: SearchItem) => {
+    if (!searchItem?.text) return
     const { text, nameType } = searchItem
     if (nameType === 'error') return
     setHistory((prev: HistoryItem[]) => [
@@ -267,7 +268,7 @@ const useSelectionManager = ({
 
   useEffect(() => {
     if (state === 'unmounted') {
-      setSelected(-1)
+      setSelected(0)
     }
   }, [state, setSelected])
 }
@@ -460,6 +461,8 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const { width } = useElementSize(searchInputContainerRef.current)
 
   const [selected, setSelected] = useState(0)
+
+  console.log('selected', selected)
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history-v2', [])
 
