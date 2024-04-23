@@ -91,6 +91,10 @@ export const DnsClaim = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, step, selected, router.asPath])
 
+  if (item?.name?.includes('.box')) {
+    router.push(`/`)
+  }
+
   if (router.isReady && getShouldRedirect({ isLoading, registrationStatus, item, step })) {
     router.push(`/profile/${name}`)
   }
