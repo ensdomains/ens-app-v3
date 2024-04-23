@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { match, P } from 'ts-pattern'
+import { match } from 'ts-pattern'
 import {
   Address,
   createPublicClient,
@@ -32,7 +32,7 @@ import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 
-import { NameType, SearchItem } from './types'
+import { NameType, SearchHandler } from './types'
 
 const SearchItem = styled.div<{
   $selected?: boolean
@@ -54,7 +54,10 @@ const SearchItem = styled.div<{
     position: relative;
     opacity: 0.6;
 
-    ${!$clickable && css`pointer-events: none;`}
+    ${!$clickable &&
+    css`
+      pointer-events: none;
+    `}
 
     ${$clickable &&
     css`
@@ -171,7 +174,7 @@ const AddressResultItem = ({
   clickCallback,
   index,
   selected,
-  searchItem
+  searchItem,
 }: AddressItemProps) => {
   const address = searchItem.text as Address
   const { t } = useTranslation('common')
@@ -183,7 +186,7 @@ const AddressResultItem = ({
     <SearchItem
       data-testid="search-result-address"
       $clickable
-      onClick={() => clickCallback(searchItem)}
+      onClick={() => clickCallback({ nameType, text: address })}
       $selected={selected}
       onMouseEnter={() => hoverCallback(index)}
     >
@@ -246,7 +249,6 @@ const TextWrapper = styled.div(
       white-space: nowrap;
       text-overflow: clip;
       text-align: left;
-      direction: rtl;
       &::before {
         content: '‎';
       }
@@ -259,9 +261,9 @@ const TldResultItem = ({
   clickCallback,
   index,
   selected,
-  searchItem
+  searchItem,
 }: ResultItemProps) => {
-  const { text: name } = searchItem
+  const { nameType, text: name } = searchItem
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
   const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
@@ -271,7 +273,7 @@ const TldResultItem = ({
   return (
     <SearchItem
       data-testid="search-result-name"
-      onClick={() => clickCallback(searchItem)}
+      onClick={() => clickCallback({ nameType, text: name })}
       onMouseEnter={() => hoverCallback(index)}
       $selected={selected}
       $clickable
@@ -300,9 +302,9 @@ const EthResultItem = ({
   clickCallback,
   index,
   selected,
-  searchItem
+  searchItem,
 }: ResultItemProps) => {
-  const { text: name } = searchItem
+  const { nameType, text: name } = searchItem
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
   const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
@@ -313,7 +315,7 @@ const EthResultItem = ({
     <SearchItem
       data-testid="search-result-name"
       $selected={selected}
-      onClick={() => clickCallback(searchItem)}
+      onClick={() => clickCallback({ nameType, text: name })}
       onMouseEnter={() => hoverCallback(index)}
       $clickable
     >
@@ -407,7 +409,7 @@ const BoxResultItem = ({
   clickCallback,
   index,
   selected,
-  searchItem
+  searchItem,
 }: ResultItemProps) => {
   const { text: name, isValid, nameType } = searchItem
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
@@ -418,18 +420,18 @@ const BoxResultItem = ({
   const isValidData = { isValid, isAvailable: boxSearchResultOnchain.isAvailable }
 
   const status = match(isValidData)
-    .with({ isValid: false }, () => 'invalid')
-    .with({ isAvailable: true }, () => 'available')
-    .with({ isAvailable: false }, () => 'registered')
-    .otherwise(() => 'invalid')
+    .with({ isValid: false }, () => 'invalid' as const)
+    .with({ isAvailable: true }, () => 'available' as const)
+    .with({ isAvailable: false }, () => 'registered' as const)
+    .otherwise(() => 'invalid' as const)
 
   return (
     <SearchItem
       data-testid="search-result-name"
       $selected={selected}
-      $clickable={isValid}
+      $clickable={status !== 'invalid'}
+      onClick={() => clickCallback({ nameType, text: name })}
       onMouseEnter={() => hoverCallback(index)}
-      onClick={() => isValid && clickCallback(searchItem)}
     >
       <LeadingSearchItem>
         <AvatarWrapper>
@@ -450,22 +452,20 @@ const BoxResultItem = ({
   )
 }
 
-interface SearchResultProps {
+type SearchResultProps = {
   hoverCallback: (index: number) => void
-  clickCallback: (nameType: NameType, text: string) => void
+  clickCallback: SearchHandler
   index: number
   selected: boolean
   searchItem: SearchItem
 }
 
 // Renaming 'text' to 'name'
-type ResultItemProps = {
-  [Property in keyof SearchResultProps as Property extends 'text'
-    ? 'name'
-    : Property]: SearchResultProps[Property]
+type ResultItemProps = Omit<SearchResultProps, 'text'> & {
+  name: string
 }
 
-interface AddressItemProps extends Omit<SearchResultProps, 'text'> {
+type AddressItemProps = Omit<SearchResultProps, 'text'> & {
   address: Address
 }
 
@@ -493,36 +493,26 @@ export const SearchResult = ({
           hoverCallback,
           index,
           clickCallback,
-          searchItem
+          searchItem,
         }}
       />
     )
   }
 
   if (searchItem.nameType === 'dns') {
-    return (
-      <EthResultItem {...{ selected, hoverCallback, index, clickCallback, searchItem }} />
-    )
+    return <EthResultItem {...{ selected, hoverCallback, index, clickCallback, searchItem }} />
   }
 
   if (searchItem.nameType === 'eth') {
-    return (
-      <EthResultItem {...{ selected, hoverCallback, index, clickCallback, searchItem }} />
-    )
+    return <EthResultItem {...{ selected, hoverCallback, index, clickCallback, searchItem }} />
   }
 
   if (searchItem.nameType === 'box') {
-    return (
-      <BoxResultItem
-        {...{ selected, hoverCallback, index, clickCallback, searchItem }}
-      />
-    )
+    return <BoxResultItem {...{ selected, hoverCallback, index, clickCallback, searchItem }} />
   }
 
   if (searchItem.nameType === 'tld') {
-    return (
-      <TldResultItem {...{ selected, hoverCallback, index, clickCallback, searchItem }} />
-    )
+    return <TldResultItem {...{ selected, hoverCallback, index, clickCallback, searchItem }} />
   }
 
   return (

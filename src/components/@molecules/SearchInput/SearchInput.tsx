@@ -24,12 +24,7 @@ import { thread } from '@app/utils/utils'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
-import { HistoryItem, SearchItem } from './types'
-
-type HandleSearch = (
-  router: ReturnType<typeof useRouterWithHistory>,
-  setHistory: ReturnType<typeof useLocalStorage<HistoryItem[]>>[1],
-) => (arg: SearchItem) => void
+import { HistoryItem, SearchHandler, SearchItem } from './types'
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
@@ -180,12 +175,34 @@ const MobileSearchInput = ({
   )
 }
 
-const useAddEventListeners = (
-  searchInputRef: React.RefObject<HTMLInputElement>,
-  handleKeyDown: (e: KeyboardEvent) => void,
-  handleFocusIn: () => void,
-  handleFocusOut: () => void,
-) => {
+const createSearchHandler =
+  ({
+    router,
+    setHistory,
+  }: {
+    router: ReturnType<typeof useRouterWithHistory>
+    setHistory: Dispatch<SetStateAction<HistoryItem[]>>
+  }): SearchHandler =>
+  ({ nameType, text }) => {
+    if (nameType === 'error') return
+    setHistory((prev: HistoryItem[]) => [
+      ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
+      { lastAccessed: Date.now(), nameType, text },
+    ])
+    router.push(`/${text}`)
+  }
+
+const useAddEventListeners = ({
+  searchInputRef,
+  handleKeyDown,
+  handleFocusIn,
+  handleFocusOut,
+}: {
+  searchInputRef: RefObject<HTMLInputElement>
+  handleKeyDown: (e: KeyboardEvent) => void
+  handleFocusIn: (e: FocusEvent) => void
+  handleFocusOut: (e: FocusEvent) => void
+}) => {
   useEffect(() => {
     const searchInput = searchInputRef.current
     if (searchInput) {
@@ -203,12 +220,17 @@ const useAddEventListeners = (
 }
 
 const handleKeyDown =
-  (
-    handleSearch: (searchItem: SearchItem) => void,
-    setSelected: Dispatch<SetStateAction<number>>,
-    dropdownItems: SearchItem[],
-    selected: number,
-  ) =>
+  ({
+    dropdownItems,
+    handleSearch,
+    selected,
+    setSelected,
+  }: {
+    dropdownItems: SearchItem[]
+    handleSearch: SearchHandler
+    selected: number
+    setSelected: Dispatch<SetStateAction<number>>
+  }) =>
   (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch(dropdownItems[selected])
@@ -224,17 +246,6 @@ const handleKeyDown =
       setSelected((prev: number) => (prev + 1) % dropdownItems.length)
     }
   }
-
-const handleSearch: HandleSearch = (router, setHistory) => (searchItem: SearchItem) => {
-  setHistory((historyItems: HistoryItem[]) => [
-    ...historyItems.filter(
-      (historyItem) =>
-        !(historyItem.text === searchItem.text && historyItem.nameType === searchItem.nameType),
-    ),
-    { lastAccessed: Date.now(), ...searchItem },
-  ])
-  router.push(`/${searchItem.text}`)
-}
 
 const useSelectionManager = ({
   inputVal,
@@ -260,19 +271,25 @@ const useSelectionManager = ({
   }, [state, setSelected])
 }
 
-const formatEthText = (name: string, isETH: boolean) => {
+const formatEthText = ({ name, isETH }: { name: string; isETH: boolean | undefined }) => {
   if (!name) return ''
   if (isETH) return name
   if (name.includes('.')) return ''
   return `${name}.eth`
 }
-const addEthDropdownItem = (dropdownItems: SearchItem[], name: string, isETH: boolean) => [
-  {
-    text: formatEthText(name, isETH),
-    nameType: 'eth',
-  },
-  ...dropdownItems,
-]
+const addEthDropdownItem =
+  ({ name, isETH }: { name: string; isETH: boolean | undefined }) =>
+  (dropdownItems: SearchItem[]) => {
+    const formattedEthName = formatEthText({ name, isETH })
+    if (formattedEthName === '') return dropdownItems
+    return [
+      {
+        text: formattedEthName,
+        nameType: 'eth',
+      } as const,
+      ...dropdownItems,
+    ]
+  }
 
 const isBoxValid = (name: string) => {
   /*
@@ -296,85 +313,109 @@ const formatBoxText = (name: string) => {
   if (name.includes('.')) return ''
   return `${name}.box`
 }
-const addBoxDropdownItem = (dropdownItems: SearchItem[], name: string, isValid: boolean) => {
-  const formattedBoxName = formatBoxText(name)
-  return [
-    {
-      text: formattedBoxName,
-      nameType: 'box',
-      isValid: isValid && isBoxValid(formattedBoxName),
-    },
-    ...dropdownItems,
-  ]
-}
+const addBoxDropdownItem =
+  ({ name, isValid }: { name: string; isValid: boolean | undefined }) =>
+  (dropdownItems: SearchItem[]) => {
+    const formattedBoxName = formatBoxText(name)
+    if (!formattedBoxName) return dropdownItems
+    return [
+      ...dropdownItems,
+      {
+        text: formattedBoxName,
+        nameType: 'box',
+        isValid: isValid && isBoxValid(formattedBoxName),
+      } as const,
+    ]
+  }
 
 const formatTldText = (name: string) => {
   if (!name) return ''
   if (name.includes('.')) return ''
   return name
 }
-const addTldDropdownItem = (dropdownItems: SearchItem[], name: string) => [
-  {
-    text: formatTldText(name),
-    nameType: 'tld',
-  },
-  ...dropdownItems,
-]
-
-const addAddressItem = (dropdownItems: SearchItem[], name: string, inputIsAddress: boolean) => [
-  {
-    text: inputIsAddress ? name : '',
-    nameType: 'address',
-  },
-  ...dropdownItems,
-]
-
-const MAX_DROPDOWN_ITEMS = 6
-const addHistoryDropdownItems = (dropdownItems: SearchItem[], history: HistoryItem[]) => {
-  const historyItemDrawCount = MAX_DROPDOWN_ITEMS - dropdownItems.filter((item) => item.text).length
-
-  if (historyItemDrawCount > 0) {
-    const filteredHistoryItems = history.filter(
-      (historyItem: HistoryItem) =>
-        dropdownItems.findIndex(
-          (dropdownItem) =>
-            dropdownItem.nameType === historyItem.nameType &&
-            dropdownItem.text === historyItem.text,
-        ) === -1,
-    )
-    const historyItems = filteredHistoryItems?.slice(0, historyItemDrawCount)
-    return [...historyItems, ...dropdownItems]
+const addTldDropdownItem =
+  ({ name }: { name: string }) =>
+  (dropdownItems: SearchItem[]) => {
+    const formattedTld = formatTldText(name)
+    if (!formattedTld) return dropdownItems
+    return [
+      ...dropdownItems,
+      {
+        text: formattedTld,
+        nameType: 'tld',
+      } as const,
+    ]
   }
 
-  return dropdownItems
-}
+const addAddressItem =
+  ({ name, inputIsAddress }: { name: string; inputIsAddress: boolean }) =>
+  (dropdownItems: SearchItem[]) => {
+    if (!inputIsAddress) return dropdownItems
+    return [
+      {
+        text: name,
+        nameType: 'address',
+      } as const,
+      ...dropdownItems,
+    ]
+  }
 
-const formatDnsText = (name: string, isETH: boolean) => {
+const MAX_DROPDOWN_ITEMS = 6
+const addHistoryDropdownItems =
+  ({ history }: { history: HistoryItem[] }) =>
+  (dropdownItems: SearchItem[]) => {
+    const historyItemDrawCount = MAX_DROPDOWN_ITEMS - dropdownItems.length
+
+    if (historyItemDrawCount > 0) {
+      const filteredHistoryItems = history.filter(
+        (historyItem: HistoryItem) =>
+          dropdownItems.findIndex(
+            (dropdownItem) =>
+              dropdownItem.nameType === historyItem.nameType &&
+              dropdownItem.text === historyItem.text,
+          ) === -1,
+      )
+      const historyItems = filteredHistoryItems?.slice(0, historyItemDrawCount)
+      return [...dropdownItems, ...historyItems]
+    }
+
+    return dropdownItems
+  }
+
+const formatDnsText = ({ name, isETH }: { name: string; isETH: boolean | undefined }) => {
   if (!name) return ''
   if (!name.includes('.')) return ''
   if (name.endsWith('.box')) return ''
   if (isETH) return ''
   return name
 }
-const addDnsDropdownItem = (dropdownItems: SearchItem[], name: string, isETH: boolean) => [
-  {
-    text: formatDnsText(name, isETH),
-    nameType: 'dns',
-  },
-  ...dropdownItems,
-]
+const addDnsDropdownItem =
+  ({ name, isETH }: { name: string; isETH: boolean | undefined }) =>
+  (dropdownItems: SearchItem[]) => {
+    const formattedDnsName = formatDnsText({ name, isETH })
+    if (!formattedDnsName) return dropdownItems
+    return [
+      ...dropdownItems,
+      {
+        text: formattedDnsName,
+        nameType: 'dns',
+      } as const,
+    ]
+  }
 
-const addErrorDropdownItem = (dropdownItems: SearchItem[], name: string, isValid: boolean) =>
-  isValid || name === ''
-    ? dropdownItems
-    : [
-        {
-          text: 'Invalid name',
-          nameType: 'error',
-        },
-      ]
+const addErrorDropdownItem =
+  ({ name, isValid }: { name: string; isValid: boolean | undefined }) =>
+  (dropdownItems: SearchItem[]) => {
+    if (isValid || name === '') return dropdownItems
+    return [
+      {
+        text: 'Invalid name',
+        nameType: 'error',
+      } as const,
+    ]
+  }
 
-const useBuildDropdownItems = (inputVal: string, history: string): SearchItem[] => {
+const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
 
   const { isValid, isETH, name } = useValidate({
@@ -384,16 +425,14 @@ const useBuildDropdownItems = (inputVal: string, history: string): SearchItem[] 
 
   return thread(
     [],
-    [addDnsDropdownItem, name, isETH],
-    [addAddressItem, inputVal, inputIsAddress],
-    [addEthDropdownItem, name, isETH],
-    [addBoxDropdownItem, name, isValid],
-    [addTldDropdownItem, name],
-    [addHistoryDropdownItems, history],
-    [addErrorDropdownItem, name, isValid],
+    addEthDropdownItem({ name, isETH }),
+    addBoxDropdownItem({ name, isValid }),
+    addDnsDropdownItem({ name, isETH }),
+    addAddressItem({ name, inputIsAddress }),
+    addTldDropdownItem({ name }),
+    addHistoryDropdownItems({ history }),
+    addErrorDropdownItem({ name, isValid }),
   )
-    .reverse()
-    .filter((item: SearchItem) => item.text)
 }
 
 export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraLarge' }) => {
@@ -429,15 +468,23 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const dropdownItems = useBuildDropdownItems(inputVal, history)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleSearchCb = useCallback(handleSearch(router, setHistory), [router, setHistory])
+  const handleSearch = useCallback(createSearchHandler({ router, setHistory }), [
+    router,
+    setHistory,
+  ])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleKeyDownCb = useCallback(
-    handleKeyDown(handleSearchCb, setSelected, dropdownItems, selected),
+    handleKeyDown({ dropdownItems, handleSearch, selected, setSelected }),
     [handleSearch, setSelected, dropdownItems.length, selected],
   )
 
-  useAddEventListeners(searchInputRef, handleKeyDownCb, handleFocusIn, handleFocusOut)
+  useAddEventListeners({
+    searchInputRef,
+    handleKeyDown: handleKeyDownCb,
+    handleFocusIn,
+    handleFocusOut,
+  })
 
   useSelectionManager({ inputVal, setSelected, state })
 
@@ -451,6 +498,8 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
     />
   )
 
+  // console.log('state: ', state)
+
   const SearchResultsElement = (
     <SearchResultsContainer
       style={{
@@ -463,7 +512,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
     >
       {dropdownItems.map((searchItem, index) => (
         <SearchResult
-          clickCallback={handleSearchCb}
+          clickCallback={handleSearch}
           hoverCallback={setSelected}
           index={index}
           selected={index === selected}

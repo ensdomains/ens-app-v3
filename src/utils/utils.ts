@@ -141,18 +141,20 @@ export const createDateAndValue = <TValue extends bigint | number>(value: TValue
   value,
 })
 
-type FunctionWithMaybeArgs = [(...args: any[]) => any, ...any[]] | ((arg: any) => any)
+type Lookup<T, K extends keyof any, Else = never> = K extends keyof T ? T[K] : Else
 
-export const thread = <TInitialData>(
-  initialData: TInitialData,
-  ...functions: FunctionWithMaybeArgs[]
-) => {
-  return functions.reduce((accumulator: any, nextFunction: FunctionWithMaybeArgs) => {
-    if (Array.isArray(nextFunction)) {
-      const [fn, ...functionArgs] = nextFunction
-      return fn.apply(this, [accumulator, ...functionArgs])
-    }
+type Tail<T extends any[]> = T extends [any, ...infer R] ? R : never
 
-    return nextFunction.call(this, accumulator)
-  }, initialData)
+type Func1 = (arg: any) => any
+type ArgType<F, Else = never> = F extends (arg: infer A) => any ? A : Else
+type AsChain<F extends [Func1, ...Func1[]], G extends Func1[] = Tail<F>> = {
+  [K in keyof F]: (arg: ArgType<F[K]>) => ArgType<Lookup<G, K, any>, any>
 }
+
+type Last<T extends any[]> = T extends [...any, infer L] ? L : never
+type LaxReturnType<F> = F extends (...args: any) => infer R ? R : never
+
+export const thread = <F extends [(arg: any) => any, ...Array<(arg: any) => any>]>(
+  arg: ArgType<F[0]>,
+  ...f: F & AsChain<F>
+): LaxReturnType<Last<F>> => f.reduce((acc, fn) => fn(acc), arg) as LaxReturnType<Last<F>>
