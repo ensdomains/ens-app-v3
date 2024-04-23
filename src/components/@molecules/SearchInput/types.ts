@@ -20,4 +20,4 @@ export type ResultItemProps = {
   name: string
 }
 
-export type SearchHandler = (params: { nameType: NameType; text: string }) => void
+export type SearchHandler = (params: SearchItem) => void

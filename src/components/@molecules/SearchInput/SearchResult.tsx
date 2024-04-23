@@ -352,7 +352,7 @@ const BoxResultItem = ({
       data-testid="search-result-name"
       $selected={selected}
       $clickable={status !== 'invalid'}
-      onClick={() => clickCallback({ nameType, text: name })}
+      onClick={() => clickCallback({ nameType, text: name, isValid: !!isValid  })}
       onMouseEnter={() => hoverCallback(index)}
     >
       <LeadingSearchItem>

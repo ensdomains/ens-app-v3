@@ -183,11 +183,12 @@ const createSearchHandler =
     router: ReturnType<typeof useRouterWithHistory>
     setHistory: Dispatch<SetStateAction<HistoryItem[]>>
   }): SearchHandler =>
-  ({ nameType, text }) => {
+  (searchItem: SearchItem) => {
+    const { text, nameType } = searchItem
     if (nameType === 'error') return
     setHistory((prev: HistoryItem[]) => [
       ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
-      { lastAccessed: Date.now(), nameType, text },
+      { lastAccessed: Date.now(), nameType, text, isValid: searchItem.isValid },
     ])
     router.push(`/${text}`)
   }
@@ -460,7 +461,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
 
   const [selected, setSelected] = useState(0)
 
-  const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
+  const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history-v2', [])
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
@@ -497,8 +498,6 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       size={size}
     />
   )
-
-  // console.log('state: ', state)
 
   const SearchResultsElement = (
     <SearchResultsContainer
