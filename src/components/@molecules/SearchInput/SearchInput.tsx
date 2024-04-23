@@ -413,7 +413,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
 
   const [selected, setSelected] = useState(0)
 
-  const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
+  const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history-v2', [])
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
