@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi'
 
 import ProfileContent from '@app/components/pages/profile/[name]/Profile'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useGetDotBoxAvailabilityOffChain } from '@app/hooks/useGetDotBoxAvailabilityOffchain'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -17,6 +18,8 @@ export default function Page() {
   const initial = useInitial()
 
   const { address } = useAccount()
+
+  const dotBoxResult = useGetDotBoxAvailabilityOffChain({ name: _name })
 
   const primary = usePrimaryName({ address: address as Hex })
 
@@ -33,7 +36,20 @@ export default function Page() {
   } = nameDetails
 
   const isLoading =
-    isBasicLoading || isProfileLoading || primary.isLoading || initial || !router.isReady
+    isBasicLoading ||
+    isProfileLoading ||
+    primary.isLoading ||
+    initial ||
+    !router.isReady ||
+    dotBoxResult.isLoading
+
+  if (
+    dotBoxResult?.data?.data.status === 'AVAILABLE' ||
+    dotBoxResult?.data?.data.status === 'UNAVAILABLE'
+  ) {
+    router.push(`/dotbox/${name}`)
+    return null
+  }
 
   if (isViewingExpired && gracePeriodEndDate && gracePeriodEndDate > new Date()) {
     router.push(`/profile/${name}`)

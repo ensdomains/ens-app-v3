@@ -1,16 +1,23 @@
-export type SearchItemType = 'text' | 'error' | 'address' | 'name'
+export type NameType = 'address' | 'dns' | 'eth' | 'box' | 'tld' | 'error'
 
 export type SearchItem = {
-  type: SearchItemType | 'nameWithDotEth'
-  value?: string
+  nameType: NameType
+  text: string
+  isValid?: boolean
 }
 
 export type HistoryItem = {
-  type: 'name' | 'address'
-  value: string
+  nameType: Exclude<NameType, 'error'>
+  text: string
   lastAccessed: number
 }
 
 export type AnyItem = (SearchItem | HistoryItem) & {
   isHistory: boolean
 }
+
+export type ResultItemProps = {
+  name: string
+}
+
+export type SearchHandler = (params: SearchItem) => void
