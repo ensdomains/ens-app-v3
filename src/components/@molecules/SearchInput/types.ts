@@ -7,7 +7,7 @@ export type SearchItem = {
 }
 
 export type HistoryItem = {
-  nameType: 'name' | 'address'
+  nameType: Exclude<NameType, 'error'>
   text: string
   lastAccessed: number
 }
@@ -19,3 +19,5 @@ export type AnyItem = (SearchItem | HistoryItem) & {
 export type ResultItemProps = {
   name: string
 }
+
+export type SearchHandler = (params: { nameType: NameType; text: string }) => void

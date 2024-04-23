@@ -80,7 +80,14 @@ const MagnifyingGlassIcon = styled.svg(
 //   `,
 // )
 
-export const SearchInputBox = forwardRef(
+type SearchInputBoxProps = {
+  size?: 'medium' | 'extraLarge'
+  input: string
+  setInput: Dispatch<SetStateAction<string>>
+  containerRef: ForwardedRef<HTMLDivElement>
+}
+
+export const SearchInputBox = forwardRef<HTMLInputElement, SearchInputBoxProps>(
   (
     {
       size = 'extraLarge',
@@ -105,7 +112,7 @@ export const SearchInputBox = forwardRef(
           placeholder={t('search.placeholder')}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          ref={ref as any}
+          ref={ref}
           clearable
           autoComplete="off"
           autoCorrect="off"
@@ -119,7 +126,12 @@ export const SearchInputBox = forwardRef(
   },
 )
 
-export const FakeSearchInputBox = forwardRef(
+type FakeSearchInputBoxProps = {
+  size?: 'medium' | 'extraLarge'
+  onClick: (e: MouseEvent<HTMLInputElement>) => void
+}
+
+export const FakeSearchInputBox = forwardRef<HTMLInputElement, FakeSearchInputBoxProps>(
   (
     {
       size = 'extraLarge',
@@ -138,7 +150,7 @@ export const FakeSearchInputBox = forwardRef(
           label={t('search.label')}
           hideLabel
           placeholder={t('search.placeholder')}
-          ref={ref as any}
+          ref={ref}
           onClick={onClick}
           readOnly
           autoComplete="off"

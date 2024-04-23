@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { match, P } from 'ts-pattern'
+import { match } from 'ts-pattern'
 import {
   Address,
   createPublicClient,
@@ -32,7 +32,7 @@ import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 
-import { NameType } from './types'
+import { NameType, SearchHandler } from './types'
 
 const SearchItem = styled.div<{
   $selected?: boolean
@@ -180,7 +180,7 @@ const AddressResultItem = ({
     <SearchItem
       data-testid="search-result-address"
       $clickable
-      onClick={() => clickCallback(nameType, address)}
+      onClick={() => clickCallback({ nameType, text: address })}
       $selected={selected}
       onMouseEnter={() => hoverCallback(index)}
     >
@@ -268,7 +268,7 @@ const TldResultItem = ({
   return (
     <SearchItem
       data-testid="search-result-name"
-      onClick={() => clickCallback(nameType, name)}
+      onClick={() => clickCallback({ nameType, text: name })}
       onMouseEnter={() => hoverCallback(index)}
       $selected={selected}
     >
@@ -309,7 +309,7 @@ const EthResultItem = ({
     <SearchItem
       data-testid="search-result-name"
       $selected={selected}
-      onClick={() => clickCallback(nameType, name)}
+      onClick={() => clickCallback({ nameType, text: name })}
       onMouseEnter={() => hoverCallback(index)}
     >
       <LeadingSearchItem>
@@ -414,17 +414,17 @@ const BoxResultItem = ({
   const isValidData = { isValid, isAvailable: boxSearchResultOnchain.isAvailable }
 
   const status = match(isValidData)
-    .with({ isValid: false }, () => 'invalid')
-    .with({ isAvailable: true }, () => 'available')
-    .with({ isAvailable: false }, () => 'registered')
-    .otherwise(() => 'invalid')
+    .with({ isValid: false }, () => 'invalid' as const)
+    .with({ isAvailable: true }, () => 'available' as const)
+    .with({ isAvailable: false }, () => 'registered' as const)
+    .otherwise(() => 'invalid' as const)
 
   return (
     <SearchItem
       data-testid="search-result-name"
       $selected={selected}
+      onClick={() => clickCallback({ nameType, text: name })}
       onMouseEnter={() => hoverCallback(index)}
-      onClick={() => clickCallback(nameType, name)}
     >
       <LeadingSearchItem>
         <AvatarWrapper>
@@ -445,9 +445,9 @@ const BoxResultItem = ({
   )
 }
 
-interface SearchResultProps {
+type SearchResultProps = {
   hoverCallback: (index: number) => void
-  clickCallback: (nameType: NameType, text: string) => void
+  clickCallback: SearchHandler
   index: number
   selected: boolean
   nameType: NameType
@@ -456,13 +456,11 @@ interface SearchResultProps {
 }
 
 // Renaming 'text' to 'name'
-type ResultItemProps = {
-  [Property in keyof SearchResultProps as Property extends 'text'
-    ? 'name'
-    : Property]: SearchResultProps[Property]
+type ResultItemProps = Omit<SearchResultProps, 'text'> & {
+  name: string
 }
 
-interface AddressItemProps extends Omit<SearchResultProps, 'text'> {
+type AddressItemProps = Omit<SearchResultProps, 'text'> & {
   address: Address
 }
 

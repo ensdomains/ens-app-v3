@@ -141,24 +141,20 @@ export const createDateAndValue = <TValue extends bigint | number>(value: TValue
   value,
 })
 
-export const thread = (operator: any, first: any, ...args: any) => {
-  let isThreadFirst: boolean
-  switch (operator) {
-    case '->>':
-      isThreadFirst = false
-      break
-    case '->':
-      isThreadFirst = true
-      break
-    default:
-      throw new Error('Operator not supported')
-  }
-  return args.reduce((prev: any, next: any) => {
-    if (Array.isArray(next)) {
-      const [head, ...tail] = next
-      return isThreadFirst ? head.apply(this, [prev, ...tail]) : head.apply(this, tail.concat(prev))
-    }
+type Lookup<T, K extends keyof any, Else = never> = K extends keyof T ? T[K] : Else
 
-    return next.call(this, prev)
-  }, first)
+type Tail<T extends any[]> = T extends [any, ...infer R] ? R : never
+
+type Func1 = (arg: any) => any
+type ArgType<F, Else = never> = F extends (arg: infer A) => any ? A : Else
+type AsChain<F extends [Func1, ...Func1[]], G extends Func1[] = Tail<F>> = {
+  [K in keyof F]: (arg: ArgType<F[K]>) => ArgType<Lookup<G, K, any>, any>
 }
+
+type Last<T extends any[]> = T extends [...any, infer L] ? L : never
+type LaxReturnType<F> = F extends (...args: any) => infer R ? R : never
+
+export const thread = <F extends [(arg: any) => any, ...Array<(arg: any) => any>]>(
+  arg: ArgType<F[0]>,
+  ...f: F & AsChain<F>
+): LaxReturnType<Last<F>> => f.reduce((acc, fn) => fn(acc), arg) as LaxReturnType<Last<F>>
