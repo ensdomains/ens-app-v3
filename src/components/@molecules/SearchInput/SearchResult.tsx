@@ -26,6 +26,7 @@ import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useDebounce } from '@app/hooks/useDebounce'
+import { useGetDotBoxAvailabilityOnChain } from '@app/hooks/useDotBoxAvailabilityOnchain'
 import { usePrefetchProfile } from '@app/hooks/useProfile'
 import { useZorb } from '@app/hooks/useZorb'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
@@ -338,72 +339,6 @@ const EthResultItem = ({
   )
 }
 
-const THREE_DNS_ABI = [
-  {
-    type: 'function',
-    name: 'owner',
-    inputs: [
-      {
-        name: '_node',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    stateMutability: 'view',
-  },
-]
-
-const THREE_DNS_RESOLVER_ADDRESS = '0xF97aAc6C8dbaEBCB54ff166d79706E3AF7a813c8'
-
-const useGetTheeDnsResolverContract = () => {
-  const contractRef = useRef<GetContractReturnType<typeof THREE_DNS_ABI, PublicClient> | null>(null)
-
-  useEffect(() => {
-    const publicClient = createPublicClient({
-      chain: optimism,
-      transport: http(),
-    })
-
-    const contract = getContract({
-      address: THREE_DNS_RESOLVER_ADDRESS,
-      abi: THREE_DNS_ABI,
-      client: publicClient,
-    })
-    contractRef.current = contract
-  }, [])
-
-  return contractRef
-}
-
-const useGetDotBoxAvailabilityOnChain = (normalisedName: string, isValid: boolean) => {
-  const searchParam = useDebounce(normalisedName, 500)
-  const threeDnsResolverContractRef = useGetTheeDnsResolverContract()
-
-  const threeDnsOwnerQuery = useQuery({
-    queryKey: [searchParam, 'onchain', 'threeDnsOwner'],
-    queryFn: async () => {
-      const result = await threeDnsResolverContractRef?.current?.read?.owner([
-        namehash(searchParam),
-      ])
-      return result
-    },
-    staleTime: 10 * 1000,
-    enabled: !!searchParam && isValid && !!threeDnsResolverContractRef.current,
-  })
-
-  return {
-    isAvailable: threeDnsOwnerQuery.data && threeDnsOwnerQuery.data === zeroAddress,
-    isLoading: threeDnsOwnerQuery.isLoading,
-  }
-}
-
 const BoxResultItem = ({
   hoverCallback,
   clickCallback,
@@ -414,10 +349,10 @@ const BoxResultItem = ({
   const { text: name, isValid, nameType } = searchItem
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
-  const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain(name, !!isValid)
+  const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain({ name, isValid })
 
   // usePrefetchProfile({ name })
-  const isValidData = { isValid, isAvailable: boxSearchResultOnchain.isAvailable }
+  const isValidData = { isValid, isAvailable: boxSearchResultOnchain.data }
 
   const status = match(isValidData)
     .with({ isValid: false }, () => 'invalid' as const)
