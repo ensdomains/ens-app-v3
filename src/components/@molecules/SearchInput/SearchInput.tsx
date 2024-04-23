@@ -302,7 +302,7 @@ const isBoxValid = (name: string) => {
 
     This is to comply with .box name rules. 
   */
-  const regex = /^[a-zA-Z0-9]{2}(?!-)(?:[a-zA-Z0-9-]*(?<!-)[a-zA-Z0-9])?$/
+  const regex = /^(?:[a-zA-Z0-9](?!-))?(?:[a-zA-Z0-9-]*(?<!-)[a-zA-Z0-9])?$/
 
   if (!name.endsWith('.box')) return false
   if (name.length > 63) return false
