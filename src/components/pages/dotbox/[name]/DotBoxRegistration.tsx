@@ -12,7 +12,7 @@ import CoreFeatureWebsite from '@app/assets/dotbox/CoreFeatureWebsite.svg'
 import DotBoxLogoSVG from '@app/assets/dotbox/DotBoxLogo.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
 import { Card } from '@app/components/Card'
-import { useGetDotBoxAvailability } from '@app/hooks/useGetDotBoxAvailability'
+import { useGetDotBoxAvailabilityOffChain } from '@app/hooks/useGetDotBoxAvailabilityOffchain'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 
@@ -100,7 +100,7 @@ export const DotBoxRegistration = () => {
   const router = useRouterWithHistory()
 
   const name = router.query.name as string
-  const dotBoxResult = useGetDotBoxAvailability(name)
+  const dotBoxResult = useGetDotBoxAvailabilityOffChain({ name })
   const nameStatus = dotBoxResult?.data?.data.status
 
   if (

@@ -3,29 +3,16 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
-import {
-  Address,
-  createPublicClient,
-  getContract,
-  GetContractReturnType,
-  http,
-  namehash,
-  PublicClient,
-  zeroAddress,
-} from 'viem'
-import { optimism } from 'viem/chains'
+import { Address } from 'viem'
 import { useEnsAvatar } from 'wagmi'
 
 import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useDebounce } from '@app/hooks/useDebounce'
 import { useGetDotBoxAvailabilityOnChain } from '@app/hooks/useDotBoxAvailabilityOnchain'
 import { usePrefetchProfile } from '@app/hooks/useProfile'
 import { useZorb } from '@app/hooks/useZorb'
@@ -33,7 +20,7 @@ import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 
-import { NameType, SearchHandler } from './types'
+import { SearchHandler, SearchItem } from './types'
 
 const SearchItem = styled.div<{
   $selected?: boolean
@@ -176,10 +163,10 @@ const AddressResultItem = ({
   index,
   selected,
   searchItem,
-}: AddressItemProps) => {
-  const address = searchItem.text as Address
+}: SearchResultProps) => {
+  const { nameType, text: address } = searchItem
   const { t } = useTranslation('common')
-  const { data: primaryName } = usePrimaryName({ address })
+  const { data: primaryName } = usePrimaryName({ address: address as Address })
   const { data: avatar } = useEnsAvatar({ name: primaryName?.name })
   const zorb = useZorb(address, 'address')
 
@@ -263,7 +250,7 @@ const TldResultItem = ({
   index,
   selected,
   searchItem,
-}: ResultItemProps) => {
+}: SearchResultProps) => {
   const { nameType, text: name } = searchItem
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
@@ -304,7 +291,7 @@ const EthResultItem = ({
   index,
   selected,
   searchItem,
-}: ResultItemProps) => {
+}: SearchResultProps) => {
   const { nameType, text: name } = searchItem
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
@@ -345,11 +332,11 @@ const BoxResultItem = ({
   index,
   selected,
   searchItem,
-}: ResultItemProps) => {
+}: SearchResultProps) => {
   const { text: name, isValid, nameType } = searchItem
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
-  const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain({ name, isValid })
+  const boxSearchResultOnchain = useGetDotBoxAvailabilityOnChain({ name, isValid: !!isValid })
 
   // usePrefetchProfile({ name })
   const isValidData = { isValid, isAvailable: boxSearchResultOnchain.data }
@@ -395,14 +382,6 @@ type SearchResultProps = {
   searchItem: SearchItem
 }
 
-// Renaming 'text' to 'name'
-type ResultItemProps = Omit<SearchResultProps, 'text'> & {
-  name: string
-}
-
-type AddressItemProps = Omit<SearchResultProps, 'text'> & {
-  address: Address
-}
 
 export const SearchResult = ({
   hoverCallback,

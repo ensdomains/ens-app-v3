@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi'
 
 import ProfileContent from '@app/components/pages/profile/[name]/Profile'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
-import { useGetDotBoxAvailability } from '@app/hooks/useGetDotBoxAvailability'
+import { useGetDotBoxAvailabilityOffChain } from '@app/hooks/useGetDotBoxAvailabilityOffchain'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -19,7 +19,7 @@ export default function Page() {
 
   const { address } = useAccount()
 
-  const dotBoxResult = useGetDotBoxAvailability(_name)
+  const dotBoxResult = useGetDotBoxAvailabilityOffChain({ name: _name })
 
   const primary = usePrimaryName({ address: address as Hex })
 
