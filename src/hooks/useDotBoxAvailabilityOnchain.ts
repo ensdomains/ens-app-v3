@@ -68,7 +68,7 @@ export const useGetDotBoxAvailabilityOnChain = <TParams extends UseDotBoxOwnerPa
     queryFn: getOwnerQueryFn,
   })
 
-  const debouncedValued = useDebounce(initialOptions.queryKey, 500)
+  const debouncedValued = useDebounce(initialOptions.queryKey, 250)
 
   const preparedOptions = prepareQueryOptions({
     queryKey: debouncedValued,
