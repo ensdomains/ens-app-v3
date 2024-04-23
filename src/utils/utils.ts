@@ -141,6 +141,10 @@ export const createDateAndValue = <TValue extends bigint | number>(value: TValue
   value,
 })
 
+/*
+  Following types are based on this solution: https://stackoverflow.com/questions/53173203/typescript-recursive-function-composition/53175538#53175538
+  Best to just move on and not try to understand it. (This is copilot's opintion!)
+*/
 type Lookup<T, K extends keyof any, Else = never> = K extends keyof T ? T[K] : Else
 
 type Tail<T extends any[]> = T extends [any, ...infer R] ? R : never

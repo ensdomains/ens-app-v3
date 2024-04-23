@@ -10,7 +10,7 @@ export const useGetDotBoxAvailability = (name: string) => {
       return response.json()
     },
     staleTime: 10 * 1000,
-    enabled: !!name && name?.endsWith('.box'),
+    enabled: !!name && name.endsWith('.box'),
   })
 
   return result

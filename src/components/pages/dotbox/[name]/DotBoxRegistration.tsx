@@ -3,9 +3,8 @@ import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Helper, mq, Tag, Typography } from '@ensdomains/thorin'
+import { Button, CheckSVG, Helper, mq, Tag, Typography } from '@ensdomains/thorin'
 
-import CheckSVG from '@app/assets/dotbox/Check.svg'
 import CoreFeatureENS from '@app/assets/dotbox/CoreFeatureENS.svg'
 import CoreFeatureNFT from '@app/assets/dotbox/CoreFeatureNFT.svg'
 import CoreFeatureOnchain from '@app/assets/dotbox/CoreFeatureOnchain.svg'
