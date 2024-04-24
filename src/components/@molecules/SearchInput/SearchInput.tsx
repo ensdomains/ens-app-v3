@@ -209,10 +209,7 @@ const createQueryDataGetter =
     chainId: SupportedChain['id']
     address: Address | undefined
   }) =>
-  <
-    TData,
-    TQueryKey extends readonly [object, number, Address | undefined, string | undefined, string],
-  >({
+  <TData, TQueryKey extends CreateQueryKey<object, string, 'standard'>>({
     functionName,
     params,
   }: {
