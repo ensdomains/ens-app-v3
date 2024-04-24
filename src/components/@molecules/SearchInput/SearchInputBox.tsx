@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { Dispatch, ForwardedRef, forwardRef, MouseEvent, SetStateAction } from 'react'
+import { ForwardedRef, forwardRef, MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -83,25 +83,12 @@ const MagnifyingGlassIcon = styled.svg(
 type SearchInputBoxProps = {
   size?: 'medium' | 'extraLarge'
   input: string
-  setInput: Dispatch<SetStateAction<string>>
+  setInput: (value: string) => void
   containerRef: ForwardedRef<HTMLDivElement>
 }
 
 export const SearchInputBox = forwardRef<HTMLInputElement, SearchInputBoxProps>(
-  (
-    {
-      size = 'extraLarge',
-      input,
-      setInput,
-      containerRef,
-    }: {
-      size?: 'medium' | 'extraLarge'
-      input: string
-      setInput: Dispatch<SetStateAction<string>>
-      containerRef: ForwardedRef<HTMLDivElement>
-    },
-    ref,
-  ) => {
+  ({ size = 'extraLarge', input, setInput, containerRef }, ref) => {
     const { t } = useTranslation('common')
     return (
       <SearchInputWrapper ref={containerRef} $size={size}>
@@ -132,16 +119,7 @@ type FakeSearchInputBoxProps = {
 }
 
 export const FakeSearchInputBox = forwardRef<HTMLInputElement, FakeSearchInputBoxProps>(
-  (
-    {
-      size = 'extraLarge',
-      onClick,
-    }: {
-      size?: 'medium' | 'extraLarge'
-      onClick: (e: MouseEvent<HTMLInputElement>) => void
-    },
-    ref,
-  ) => {
+  ({ size = 'extraLarge', onClick }, ref) => {
     const { t } = useTranslation('common')
     return (
       <SearchInputWrapper $size={size}>

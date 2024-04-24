@@ -1,3 +1,4 @@
+import debounce from 'lodash/debounce'
 import {
   Dispatch,
   RefObject,
@@ -8,7 +9,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 import { isAddress } from 'viem'
@@ -24,7 +25,7 @@ import { thread } from '@app/utils/utils'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
-import { HistoryItem, SearchHandler, SearchItem } from './types'
+import { AnyItem, HistoryItem, SearchHandler, SearchItem } from './types'
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
@@ -179,14 +180,18 @@ const createSearchHandler =
   ({
     router,
     setHistory,
+    dropdownItems,
   }: {
     router: ReturnType<typeof useRouterWithHistory>
     setHistory: Dispatch<SetStateAction<HistoryItem[]>>
+    dropdownItems: SearchItem[]
   }): SearchHandler =>
-  (searchItem: SearchItem) => {
+  (index: number) => {
+    if (index === -1) return
+    const searchItem = dropdownItems[index]
     if (!searchItem?.text) return
     const { text, nameType } = searchItem
-    if (nameType === 'error') return
+    if (nameType === 'error' || nameType === 'text') return
     setHistory((prev: HistoryItem[]) => [
       ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
       { lastAccessed: Date.now(), nameType, text, isValid: searchItem.isValid },
@@ -235,7 +240,7 @@ const handleKeyDown =
   }) =>
   (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleSearch(dropdownItems[selected])
+      handleSearch(selected)
       return
     }
     if (e.key === 'ArrowUp') {
@@ -268,7 +273,7 @@ const useSelectionManager = ({
 
   useEffect(() => {
     if (state === 'unmounted') {
-      setSelected(0)
+      setSelected(-1)
     }
   }, [state, setSelected])
 }
@@ -281,7 +286,7 @@ const formatEthText = ({ name, isETH }: { name: string; isETH: boolean | undefin
 }
 const addEthDropdownItem =
   ({ name, isETH }: { name: string; isETH: boolean | undefined }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: AnyItem[]): AnyItem[] => {
     const formattedEthName = formatEthText({ name, isETH })
     if (formattedEthName === '') return dropdownItems
     return [
@@ -317,7 +322,7 @@ const formatBoxText = (name: string) => {
 }
 const addBoxDropdownItem =
   ({ name, isValid }: { name: string; isValid: boolean | undefined }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: AnyItem[]): AnyItem[] => {
     const formattedBoxName = formatBoxText(name)
     if (!formattedBoxName) return dropdownItems
     return [
@@ -337,7 +342,7 @@ const formatTldText = (name: string) => {
 }
 const addTldDropdownItem =
   ({ name }: { name: string }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: AnyItem[]): AnyItem[] => {
     const formattedTld = formatTldText(name)
     if (!formattedTld) return dropdownItems
     return [
@@ -351,7 +356,7 @@ const addTldDropdownItem =
 
 const addAddressItem =
   ({ name, inputIsAddress }: { name: string; inputIsAddress: boolean }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: AnyItem[]): AnyItem[] => {
     if (!inputIsAddress) return dropdownItems
     return [
       {
@@ -364,20 +369,27 @@ const addAddressItem =
 
 const MAX_DROPDOWN_ITEMS = 6
 const addHistoryDropdownItems =
-  ({ history }: { history: HistoryItem[] }) =>
-  (dropdownItems: SearchItem[]) => {
+  ({ name, history }: { name: string; history: HistoryItem[] }) =>
+  (dropdownItems: AnyItem[]): AnyItem[] => {
     const historyItemDrawCount = MAX_DROPDOWN_ITEMS - dropdownItems.length
 
     if (historyItemDrawCount > 0) {
-      const filteredHistoryItems = history.filter(
-        (historyItem: HistoryItem) =>
-          dropdownItems.findIndex(
-            (dropdownItem) =>
-              dropdownItem.nameType === historyItem.nameType &&
-              dropdownItem.text === historyItem.text,
-          ) === -1,
-      )
-      const historyItems = filteredHistoryItems?.slice(0, historyItemDrawCount)
+      const filteredHistoryItems = history
+        .filter(
+          (historyItem: HistoryItem) =>
+            historyItem.text.includes(name) &&
+            dropdownItems.findIndex(
+              (dropdownItem) =>
+                dropdownItem.nameType === historyItem.nameType &&
+                dropdownItem.text === historyItem.text,
+            ) === -1,
+        )
+        .sort((a, b) => b.lastAccessed - a.lastAccessed)
+      const historyItems = filteredHistoryItems?.slice(0, historyItemDrawCount).map((item) => ({
+        nameType: item.nameType,
+        text: item.text,
+        isHistory: true,
+      }))
       return [...dropdownItems, ...historyItems]
     }
 
@@ -393,7 +405,7 @@ const formatDnsText = ({ name, isETH }: { name: string; isETH: boolean | undefin
 }
 const addDnsDropdownItem =
   ({ name, isETH }: { name: string; isETH: boolean | undefined }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: AnyItem[]): AnyItem[] => {
     const formattedDnsName = formatDnsText({ name, isETH })
     if (!formattedDnsName) return dropdownItems
     return [
@@ -407,7 +419,7 @@ const addDnsDropdownItem =
 
 const addErrorDropdownItem =
   ({ name, isValid }: { name: string; isValid: boolean | undefined }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: AnyItem[]): AnyItem[] => {
     if (isValid || name === '') return dropdownItems
     return [
       {
@@ -417,7 +429,21 @@ const addErrorDropdownItem =
     ]
   }
 
+const addInfoDropdownItem =
+  ({ t }: { t: TFunction }) =>
+  (dropdownItems: AnyItem[]): AnyItem[] => {
+    if (dropdownItems.length) return dropdownItems
+    return [
+      {
+        text: t('search.emptyText'),
+        nameType: 'text',
+      } as const,
+    ]
+  }
+
 const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
+  const { t } = useTranslation('common')
+
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
 
   const { isValid, isETH, name } = useValidate({
@@ -425,17 +451,24 @@ const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
     enabled: !inputIsAddress && !inputVal,
   })
 
-  return thread(
-    [],
-    addEthDropdownItem({ name, isETH }),
-    addBoxDropdownItem({ name, isValid }),
-    addDnsDropdownItem({ name, isETH }),
-    addAddressItem({ name, inputIsAddress }),
-    addTldDropdownItem({ name }),
-    addHistoryDropdownItems({ history }),
-    addErrorDropdownItem({ name, isValid }),
+  return useMemo(
+    () =>
+      thread(
+        [],
+        addEthDropdownItem({ name, isETH }),
+        addBoxDropdownItem({ name, isValid }),
+        addDnsDropdownItem({ name, isETH }),
+        addAddressItem({ name, inputIsAddress }),
+        addTldDropdownItem({ name }),
+        addHistoryDropdownItems({ name, history }),
+        addErrorDropdownItem({ name, isValid }),
+        addInfoDropdownItem({ t }),
+      ),
+    [inputIsAddress, name, isETH, isValid, history, t],
   )
 }
+
+const debouncer = debounce((setFunc: () => void) => setFunc(), 250)
 
 export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraLarge' }) => {
   const router = useRouterWithHistory()
@@ -461,6 +494,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const { width } = useElementSize(searchInputContainerRef.current)
 
   const [selected, setSelected] = useState(0)
+  const [usingPlaceholder, setUsingPlaceholder] = useState(false)
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history-v2', [])
 
@@ -470,9 +504,10 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const dropdownItems = useBuildDropdownItems(inputVal, history)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleSearch = useCallback(createSearchHandler({ router, setHistory }), [
+  const handleSearch = useCallback(createSearchHandler({ router, setHistory, dropdownItems }), [
     router,
     setHistory,
+    dropdownItems,
   ])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -490,12 +525,18 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
 
   useSelectionManager({ inputVal, setSelected, state })
 
+  const setInput = (val: string) => {
+    setInputVal(val)
+    setUsingPlaceholder(true)
+    debouncer(() => setUsingPlaceholder(false))
+  }
+
   const SearchInputElement = (
     <SearchInputBox
       containerRef={searchInputContainerRef}
       ref={searchInputRef}
       input={inputVal}
-      setInput={setInputVal}
+      setInput={setInput}
       size={size}
     />
   )
@@ -505,7 +546,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       style={{
         width: width === Infinity ? undefined : width,
       }}
-      onMouseLeave={() => inputVal === '' && setSelected(0)}
+      onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}
       data-testid="search-input-results"
       // data-error={!isValid && !inputIsAddress && inputVal !== ''}
@@ -517,6 +558,12 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
           index={index}
           selected={index === selected}
           searchItem={searchItem}
+          key={
+            searchItem.isHistory
+              ? `${searchItem.nameType}-${searchItem.text}`
+              : `${searchItem.nameType}`
+          }
+          usingPlaceholder={searchItem.isHistory ? false : usingPlaceholder}
         />
       ))}
     </SearchResultsContainer>
