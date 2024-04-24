@@ -41,7 +41,7 @@ import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate, validate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
-import { CreateQueryKey } from '@app/types'
+import { CreateQueryKey, GenericQueryKey } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { thread, yearsToSeconds } from '@app/utils/utils'
@@ -201,18 +201,17 @@ const MobileSearchInput = ({
   )
 }
 
-type CreateCachedQueryDataGetter = {
-  queryClient: QueryClient
-  chainId: SupportedChain['id']
-  address: Address | undefined
-}
-
-const createCachedQueryDataGetter =
-  ({ queryClient, chainId, address }: CreateCachedQueryDataGetter) =>
-  <
-    TData,
-    TQueryKey extends readonly [object, number, Address | undefined, string | undefined, string],
-  >({
+const createQueryDataGetter =
+  ({
+    queryClient,
+    chainId,
+    address,
+  }: {
+    queryClient: QueryClient
+    chainId: SupportedChain['id']
+    address: Address | undefined
+  }) =>
+  <TData, TQueryKey extends GenericQueryKey<'standard'>>({
     functionName,
     params,
   }: {
