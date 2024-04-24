@@ -4,6 +4,7 @@ export type SearchItem = {
   nameType: NameType
   text: string
   isValid?: boolean
+  isHistory?: boolean
 }
 
 export type HistoryItem = {

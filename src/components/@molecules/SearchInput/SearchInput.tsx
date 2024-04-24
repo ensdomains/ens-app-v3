@@ -48,7 +48,7 @@ import { thread, yearsToSeconds } from '@app/utils/utils'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { getBoxNameStatus, SearchResult } from './SearchResult'
-import { AnyItem, HistoryItem, SearchHandler, SearchItem } from './types'
+import { HistoryItem, SearchHandler, SearchItem } from './types'
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
@@ -201,7 +201,7 @@ const MobileSearchInput = ({
   )
 }
 
-const createQueryDataGetter =
+const createCachedQueryDataGetter =
   ({
     queryClient,
     chainId,
@@ -232,7 +232,7 @@ const createQueryDataGetter =
     )
   }
 
-const getPathForSearchItem = ({
+const getRouteForSearchItem = ({
   address,
   chainId,
   queryClient,
@@ -241,7 +241,7 @@ const getPathForSearchItem = ({
   address: Address | undefined
   chainId: SupportedChain['id']
   queryClient: QueryClient
-  selectedItem: Exclude<AnyItem, { nameType: 'error' } | { nameType: 'text' }>
+  selectedItem: Exclude<SearchItem, { nameType: 'error' } | { nameType: 'text' }>
 }) => {
   if (selectedItem.nameType === 'address') return `/address/${selectedItem.text}`
 
@@ -338,7 +338,7 @@ const createSearchHandler =
       { lastAccessed: Date.now(), nameType, text, isValid: selectedItem.isValid },
     ])
 
-    const path = getPathForSearchItem({ address, chainId, queryClient, selectedItem })
+    const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
     setInputVal('')
     searchInputRef.current?.blur()
     router.pushWithHistory(path)
@@ -430,7 +430,7 @@ const formatEthText = ({ name, isETH }: { name: string; isETH: boolean | undefin
 }
 const addEthDropdownItem =
   ({ name, isETH }: { name: string; isETH: boolean | undefined }) =>
-  (dropdownItems: AnyItem[]): AnyItem[] => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     const formattedEthName = formatEthText({ name, isETH })
     if (formattedEthName === '') return dropdownItems
     return [
@@ -466,7 +466,7 @@ const formatBoxText = (name: string) => {
 }
 const addBoxDropdownItem =
   ({ name, isValid }: { name: string; isValid: boolean | undefined }) =>
-  (dropdownItems: AnyItem[]): AnyItem[] => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     const formattedBoxName = formatBoxText(name)
     if (!formattedBoxName) return dropdownItems
     return [
@@ -486,7 +486,7 @@ const formatTldText = (name: string) => {
 }
 const addTldDropdownItem =
   ({ name }: { name: string }) =>
-  (dropdownItems: AnyItem[]): AnyItem[] => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     const formattedTld = formatTldText(name)
     if (!formattedTld) return dropdownItems
     return [
@@ -500,7 +500,7 @@ const addTldDropdownItem =
 
 const addAddressItem =
   ({ name, inputIsAddress }: { name: string; inputIsAddress: boolean }) =>
-  (dropdownItems: AnyItem[]): AnyItem[] => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     if (!inputIsAddress) return dropdownItems
     return [
       {
@@ -514,7 +514,7 @@ const addAddressItem =
 const MAX_DROPDOWN_ITEMS = 6
 const addHistoryDropdownItems =
   ({ name, history }: { name: string; history: HistoryItem[] }) =>
-  (dropdownItems: AnyItem[]): AnyItem[] => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     const historyItemDrawCount = MAX_DROPDOWN_ITEMS - dropdownItems.length
 
     if (historyItemDrawCount > 0) {
@@ -529,11 +529,13 @@ const addHistoryDropdownItems =
             ) === -1,
         )
         .sort((a, b) => b.lastAccessed - a.lastAccessed)
+
       const historyItems = filteredHistoryItems?.slice(0, historyItemDrawCount).map((item) => ({
         nameType: item.nameType,
         text: item.text,
         isHistory: true,
       }))
+
       return [...dropdownItems, ...historyItems]
     }
 
@@ -549,7 +551,7 @@ const formatDnsText = ({ name, isETH }: { name: string; isETH: boolean | undefin
 }
 const addDnsDropdownItem =
   ({ name, isETH }: { name: string; isETH: boolean | undefined }) =>
-  (dropdownItems: AnyItem[]): AnyItem[] => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     const formattedDnsName = formatDnsText({ name, isETH })
     if (!formattedDnsName) return dropdownItems
     return [
@@ -563,7 +565,7 @@ const addDnsDropdownItem =
 
 const addErrorDropdownItem =
   ({ name, isValid }: { name: string; isValid: boolean | undefined }) =>
-  (dropdownItems: AnyItem[]): AnyItem[] => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     if (isValid || name === '') return dropdownItems
     return [
       {
@@ -575,7 +577,7 @@ const addErrorDropdownItem =
 
 const addInfoDropdownItem =
   ({ t }: { t: TFunction }) =>
-  (dropdownItems: AnyItem[]): AnyItem[] => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     if (dropdownItems.length) return dropdownItems
     return [
       {
