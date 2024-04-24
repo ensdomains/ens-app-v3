@@ -142,19 +142,21 @@ const CancelButton = styled(Typography)(
   `,
 )
 
+type MobileSearchInputProps = {
+  state: TransitionState
+  toggle: (value: boolean) => void
+  searchInputRef: RefObject<HTMLInputElement>
+  SearchResultsElement: JSX.Element
+  SearchInputElement: JSX.Element
+}
+
 const MobileSearchInput = ({
   state,
   toggle,
   searchInputRef,
   SearchResultsElement,
   SearchInputElement,
-}: {
-  state: TransitionState
-  toggle: (value: boolean) => void
-  searchInputRef: RefObject<HTMLInputElement>
-  SearchResultsElement: JSX.Element
-  SearchInputElement: JSX.Element
-}) => {
+}: MobileSearchInputProps) => {
   const { t } = useTranslation('common')
 
   useEffect(() => {
@@ -199,16 +201,14 @@ const MobileSearchInput = ({
   )
 }
 
-const createQueryDataGetter =
-  ({
-    queryClient,
-    chainId,
-    address,
-  }: {
-    queryClient: QueryClient
-    chainId: SupportedChain['id']
-    address: Address | undefined
-  }) =>
+type CreateCachedQueryDataGetter = {
+  queryClient: QueryClient
+  chainId: SupportedChain['id']
+  address: Address | undefined
+}
+
+const createCachedQueryDataGetter =
+  ({ queryClient, chainId, address }: CreateCachedQueryDataGetter) =>
   <
     TData,
     TQueryKey extends readonly [object, number, Address | undefined, string | undefined, string],
@@ -233,7 +233,7 @@ const createQueryDataGetter =
     )
   }
 
-const getResultPath = ({
+const getPathForSearchItem = ({
   address,
   chainId,
   queryClient,
@@ -245,9 +245,10 @@ const getResultPath = ({
   selectedItem: Exclude<AnyItem, { nameType: 'error' } | { nameType: 'text' }>
 }) => {
   if (selectedItem.nameType === 'address') return `/address/${selectedItem.text}`
-  const getQueryData = createQueryDataGetter({ queryClient, chainId, address })
+
+  const getCachedQueryData = createCachedQueryDataGetter({ queryClient, chainId, address })
   if (selectedItem.nameType === 'box') {
-    const isAvailableOnchain = getQueryData<
+    const isAvailableOnchain = getCachedQueryData<
       UseDotBoxAvailabilityOnchainReturnType,
       UseDotBoxAvailabilityOnchainQueryKey
     >({
@@ -260,27 +261,29 @@ const getResultPath = ({
     })
     if (boxStatus === 'available') return `/dotbox/${selectedItem.text}`
   }
+
   if (selectedItem.nameType === 'eth' || selectedItem.nameType === 'dns') {
-    const ownerData = getQueryData<UseOwnerReturnType, UseOwnerQueryKey>({
+    const ownerData = getCachedQueryData<UseOwnerReturnType, UseOwnerQueryKey>({
       functionName: 'getOwner',
       params: { name: selectedItem.text },
     })
-    const wrapperData = getQueryData<GetWrapperDataReturnType, UseWrapperDataQueryKey>({
+    const wrapperData = getCachedQueryData<GetWrapperDataReturnType, UseWrapperDataQueryKey>({
       functionName: 'getWrapperData',
       params: { name: selectedItem.text },
     })
-    const expiryData = getQueryData<GetExpiryReturnType, UseExpiryQueryKey>({
+    const expiryData = getCachedQueryData<GetExpiryReturnType, UseExpiryQueryKey>({
       functionName: 'getExpiry',
       params: { name: selectedItem.text },
     })
-    const priceData = getQueryData<GetPriceReturnType, UsePriceQueryKey>({
+    const priceData = getCachedQueryData<GetPriceReturnType, UsePriceQueryKey>({
       functionName: 'getPrice',
       params: { nameOrNames: selectedItem.text, duration: yearsToSeconds(1) },
     })
-    const addrData = getQueryData<UseAddressRecordReturnType, UseAddressRecordQueryKey>({
+    const addrData = getCachedQueryData<UseAddressRecordReturnType, UseAddressRecordQueryKey>({
       functionName: 'getAddressRecord',
       params: { name: selectedItem.text },
     })
+
     if (typeof ownerData !== 'undefined') {
       const registrationStatus = getRegistrationStatus({
         timestamp: Date.now(),
@@ -296,7 +299,19 @@ const getResultPath = ({
       if (registrationStatus === 'notImported') return `/import/${selectedItem.text}`
     }
   }
+
   return `/profile/${selectedItem.text}`
+}
+
+type CreateSearchHandlerProps = {
+  address: Address | undefined
+  chainId: SupportedChain['id']
+  dropdownItems: SearchItem[]
+  router: ReturnType<typeof useRouterWithHistory>
+  searchInputRef: RefObject<HTMLInputElement>
+  setHistory: Dispatch<SetStateAction<HistoryItem[]>>
+  setInputVal: Dispatch<SetStateAction<string>>
+  queryClient: QueryClient
 }
 
 const createSearchHandler =
@@ -309,43 +324,40 @@ const createSearchHandler =
     setHistory,
     setInputVal,
     queryClient,
-  }: {
-    address: Address | undefined
-    chainId: SupportedChain['id']
-    dropdownItems: SearchItem[]
-    router: ReturnType<typeof useRouterWithHistory>
-    searchInputRef: RefObject<HTMLInputElement>
-    setHistory: Dispatch<SetStateAction<HistoryItem[]>>
-    setInputVal: Dispatch<SetStateAction<string>>
-    queryClient: QueryClient
-  }): SearchHandler =>
+  }: CreateSearchHandlerProps): SearchHandler =>
   (index: number) => {
     if (index === -1) return
+
     const selectedItem = dropdownItems[index]
     if (!selectedItem?.text) return
+
     const { text, nameType } = selectedItem
     if (nameType === 'error' || nameType === 'text') return
+
     setHistory((prev: HistoryItem[]) => [
       ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
       { lastAccessed: Date.now(), nameType, text, isValid: selectedItem.isValid },
     ])
-    const path = getResultPath({ address, chainId, queryClient, selectedItem })
+
+    const path = getPathForSearchItem({ address, chainId, queryClient, selectedItem })
     setInputVal('')
     searchInputRef.current?.blur()
     router.pushWithHistory(path)
   }
+
+type UseAddEventListenersProps = {
+  searchInputRef: RefObject<HTMLInputElement>
+  handleKeyDown: (e: KeyboardEvent) => void
+  handleFocusIn: (e: FocusEvent) => void
+  handleFocusOut: (e: FocusEvent) => void
+}
 
 const useAddEventListeners = ({
   searchInputRef,
   handleKeyDown,
   handleFocusIn,
   handleFocusOut,
-}: {
-  searchInputRef: RefObject<HTMLInputElement>
-  handleKeyDown: (e: KeyboardEvent) => void
-  handleFocusIn: (e: FocusEvent) => void
-  handleFocusOut: (e: FocusEvent) => void
-}) => {
+}: UseAddEventListenersProps) => {
   useEffect(() => {
     const searchInput = searchInputRef.current
     if (searchInput) {
@@ -362,18 +374,15 @@ const useAddEventListeners = ({
   }, [handleFocusIn, handleFocusOut, handleKeyDown, searchInputRef.current])
 }
 
+type HandleKeyDownProps = {
+  dropdownItems: SearchItem[]
+  handleSearch: SearchHandler
+  selected: number
+  setSelected: Dispatch<SetStateAction<number>>
+}
+
 const handleKeyDown =
-  ({
-    dropdownItems,
-    handleSearch,
-    selected,
-    setSelected,
-  }: {
-    dropdownItems: SearchItem[]
-    handleSearch: SearchHandler
-    selected: number
-    setSelected: Dispatch<SetStateAction<number>>
-  }) =>
+  ({ dropdownItems, handleSearch, selected, setSelected }: HandleKeyDownProps) =>
   (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch(selected)
