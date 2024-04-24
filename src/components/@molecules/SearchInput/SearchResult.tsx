@@ -392,6 +392,16 @@ const EthResultItem = ({
   )
 }
 
+export const getBoxNameStatus = (isValidData: {
+  isValid: boolean | undefined
+  isAvailable: boolean | undefined
+}) =>
+  match(isValidData)
+    .with({ isValid: false }, () => 'invalid' as const)
+    .with({ isAvailable: true }, () => 'available' as const)
+    .with({ isAvailable: false }, () => 'registered' as const)
+    .otherwise(() => null)
+
 const BoxResultItem = ({
   hoverCallback,
   clickCallback,
@@ -411,11 +421,7 @@ const BoxResultItem = ({
     useDotBoxAvailabilityOnchain({ name, isValid, enabled: !usingPlaceholder })
   const isValidData = { isValid, isAvailable: isDotBoxAvailableOnchain }
 
-  const status = match(isValidData)
-    .with({ isValid: false }, () => 'invalid' as const)
-    .with({ isAvailable: true }, () => 'available' as const)
-    .with({ isAvailable: false }, () => 'registered' as const)
-    .otherwise(() => null)
+  const status = getBoxNameStatus(isValidData)
 
   const { avatarUri, avatarIsPlaceholder } = getAvatarUri({ ensAvatar, usingPlaceholder, zorb })
 

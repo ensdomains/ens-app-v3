@@ -1,5 +1,5 @@
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { Address, createPublicClient, http, namehash, zeroAddress } from 'viem'
+import { createPublicClient, http, namehash, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 import { optimism } from 'viem/chains'
 
@@ -16,15 +16,13 @@ type UseDotBoxAvailabilityOnchainParameters = {
   isValid?: boolean
 }
 
-type UseDotBoxAvailabilityOnchainReturnType = Address | null
+export type UseDotBoxAvailabilityOnchainReturnType = boolean
 
 type UseDotBoxAvailabilityOnchainConfig = QueryConfig<UseDotBoxAvailabilityOnchainReturnType, Error>
 
-type QueryKey<TParams extends UseDotBoxAvailabilityOnchainParameters> = CreateQueryKey<
-  TParams,
-  'getDotBoxAvailabilityOnchain',
-  'standard'
->
+export type UseDotBoxAvailabilityOnchainQueryKey<
+  TParams extends UseDotBoxAvailabilityOnchainParameters = UseDotBoxAvailabilityOnchainParameters,
+> = CreateQueryKey<TParams, 'getDotBoxAvailabilityOnchain', 'standard'>
 
 const optimismPublicClient = createPublicClient({
   chain: optimism,
@@ -39,7 +37,7 @@ export const getDotBoxAvailabilityOnchain =
   /* eslint-enable @typescript-eslint/no-unused-vars */
   async <TParams extends UseDotBoxAvailabilityOnchainParameters>({
     queryKey: [{ name }],
-  }: QueryFunctionContext<QueryKey<TParams>>) => {
+  }: QueryFunctionContext<UseDotBoxAvailabilityOnchainQueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
     const owner = await readContract(optimismPublicClient, {

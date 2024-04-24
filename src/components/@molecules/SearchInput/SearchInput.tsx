@@ -1,3 +1,4 @@
+import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import debounce from 'lodash/debounce'
 import {
   Dispatch,
@@ -12,19 +13,41 @@ import {
 import { TFunction, useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
-import { isAddress } from 'viem'
+import { Address, isAddress } from 'viem'
+import { useAccount, useChainId } from 'wagmi'
 
+import {
+  GetExpiryReturnType,
+  GetPriceReturnType,
+  GetWrapperDataReturnType,
+} from '@ensdomains/ensjs/public'
 import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
+import { SupportedChain } from '@app/constants/chains'
+import {
+  UseDotBoxAvailabilityOnchainQueryKey,
+  UseDotBoxAvailabilityOnchainReturnType,
+} from '@app/hooks/dotbox/useDotBoxAvailabilityOnchain'
+import {
+  UseAddressRecordQueryKey,
+  UseAddressRecordReturnType,
+} from '@app/hooks/ensjs/public/useAddressRecord'
+import { UseExpiryQueryKey } from '@app/hooks/ensjs/public/useExpiry'
+import { UseOwnerQueryKey, UseOwnerReturnType } from '@app/hooks/ensjs/public/useOwner'
+import { UsePriceQueryKey } from '@app/hooks/ensjs/public/usePrice'
+import { UseWrapperDataQueryKey } from '@app/hooks/ensjs/public/useWrapperData'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
+import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { useValidate } from '@app/hooks/useValidate'
+import { useValidate, validate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
+import { CreateQueryKey } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { thread } from '@app/utils/utils'
+import { getRegistrationStatus } from '@app/utils/registrationStatus'
+import { thread, yearsToSeconds } from '@app/utils/utils'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
-import { SearchResult } from './SearchResult'
+import { getBoxNameStatus, SearchResult } from './SearchResult'
 import { AnyItem, HistoryItem, SearchHandler, SearchItem } from './types'
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
@@ -176,27 +199,140 @@ const MobileSearchInput = ({
   )
 }
 
+const createQueryDataGetter =
+  ({
+    queryClient,
+    chainId,
+    address,
+  }: {
+    queryClient: QueryClient
+    chainId: SupportedChain['id']
+    address: Address | undefined
+  }) =>
+  <
+    TData,
+    TQueryKey extends readonly [object, number, Address | undefined, string | undefined, string],
+  >({
+    functionName,
+    params,
+  }: {
+    functionName: TQueryKey[4]
+    params: TQueryKey[0]
+  }) => {
+    return queryClient.getQueryData<
+      TData,
+      CreateQueryKey<typeof params, typeof functionName, 'standard'>
+    >(
+      createQueryKey({
+        address,
+        chainId,
+        functionName,
+        queryDependencyType: 'standard',
+        params,
+      }),
+    )
+  }
+
+const getResultPath = ({
+  address,
+  chainId,
+  queryClient,
+  selectedItem,
+}: {
+  address: Address | undefined
+  chainId: SupportedChain['id']
+  queryClient: QueryClient
+  selectedItem: Exclude<AnyItem, { nameType: 'error' } | { nameType: 'text' }>
+}) => {
+  if (selectedItem.nameType === 'address') return `/address/${selectedItem.text}`
+  const getQueryData = createQueryDataGetter({ queryClient, chainId, address })
+  if (selectedItem.nameType === 'box') {
+    const isAvailableOnchain = getQueryData<
+      UseDotBoxAvailabilityOnchainReturnType,
+      UseDotBoxAvailabilityOnchainQueryKey
+    >({
+      functionName: 'getDotBoxAvailabilityOnchain',
+      params: { name: selectedItem.text, isValid: selectedItem.isValid },
+    })
+    const boxStatus = getBoxNameStatus({
+      isValid: selectedItem.isValid,
+      isAvailable: isAvailableOnchain,
+    })
+    if (boxStatus === 'available') return `/dotbox/${selectedItem.text}`
+  }
+  if (selectedItem.nameType === 'eth' || selectedItem.nameType === 'dns') {
+    const ownerData = getQueryData<UseOwnerReturnType, UseOwnerQueryKey>({
+      functionName: 'getOwner',
+      params: { name: selectedItem.text },
+    })
+    const wrapperData = getQueryData<GetWrapperDataReturnType, UseWrapperDataQueryKey>({
+      functionName: 'getWrapperData',
+      params: { name: selectedItem.text },
+    })
+    const expiryData = getQueryData<GetExpiryReturnType, UseExpiryQueryKey>({
+      functionName: 'getExpiry',
+      params: { name: selectedItem.text },
+    })
+    const priceData = getQueryData<GetPriceReturnType, UsePriceQueryKey>({
+      functionName: 'getPrice',
+      params: { nameOrNames: selectedItem.text, duration: yearsToSeconds(1) },
+    })
+    const addrData = getQueryData<UseAddressRecordReturnType, UseAddressRecordQueryKey>({
+      functionName: 'getAddressRecord',
+      params: { name: selectedItem.text },
+    })
+    if (typeof ownerData !== 'undefined') {
+      const registrationStatus = getRegistrationStatus({
+        timestamp: Date.now(),
+        validation: validate(selectedItem.text),
+        ownerData,
+        wrapperData,
+        expiryData,
+        priceData,
+        addrData,
+        supportedTLD: true,
+      })
+      if (registrationStatus === 'available') return `/register/${selectedItem.text}`
+      if (registrationStatus === 'notImported') return `/import/${selectedItem.text}`
+    }
+  }
+  return `/profile/${selectedItem.text}`
+}
+
 const createSearchHandler =
   ({
-    router,
-    setHistory,
+    address,
+    chainId,
     dropdownItems,
+    router,
+    searchInputRef,
+    setHistory,
+    setInputVal,
+    queryClient,
   }: {
-    router: ReturnType<typeof useRouterWithHistory>
-    setHistory: Dispatch<SetStateAction<HistoryItem[]>>
+    address: Address | undefined
+    chainId: SupportedChain['id']
     dropdownItems: SearchItem[]
+    router: ReturnType<typeof useRouterWithHistory>
+    searchInputRef: RefObject<HTMLInputElement>
+    setHistory: Dispatch<SetStateAction<HistoryItem[]>>
+    setInputVal: Dispatch<SetStateAction<string>>
+    queryClient: QueryClient
   }): SearchHandler =>
   (index: number) => {
     if (index === -1) return
-    const searchItem = dropdownItems[index]
-    if (!searchItem?.text) return
-    const { text, nameType } = searchItem
+    const selectedItem = dropdownItems[index]
+    if (!selectedItem?.text) return
+    const { text, nameType } = selectedItem
     if (nameType === 'error' || nameType === 'text') return
     setHistory((prev: HistoryItem[]) => [
       ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
-      { lastAccessed: Date.now(), nameType, text, isValid: searchItem.isValid },
+      { lastAccessed: Date.now(), nameType, text, isValid: selectedItem.isValid },
     ])
-    router.push(`/${text}`)
+    const path = getResultPath({ address, chainId, queryClient, selectedItem })
+    setInputVal('')
+    searchInputRef.current?.blur()
+    router.pushWithHistory(path)
   }
 
 const useAddEventListeners = ({
@@ -472,7 +608,11 @@ const debouncer = debounce((setFunc: () => void) => setFunc(), 250)
 
 export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraLarge' }) => {
   const router = useRouterWithHistory()
+  const queryClient = useQueryClient()
   const breakpoints = useBreakpoint()
+
+  const { address } = useAccount()
+  const chainId = useChainId()
 
   const [inputVal, setInputVal] = useState('')
 
@@ -504,11 +644,19 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const dropdownItems = useBuildDropdownItems(inputVal, history)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleSearch = useCallback(createSearchHandler({ router, setHistory, dropdownItems }), [
-    router,
-    setHistory,
-    dropdownItems,
-  ])
+  const handleSearch = useCallback(
+    createSearchHandler({
+      address,
+      chainId,
+      dropdownItems,
+      queryClient,
+      router,
+      searchInputRef,
+      setHistory,
+      setInputVal,
+    }),
+    [address, chainId, dropdownItems, queryClient, router, searchInputRef, setHistory, setInputVal],
+  )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleKeyDownCb = useCallback(
