@@ -41,7 +41,7 @@ import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate, validate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
-import { CreateQueryKey } from '@app/types'
+import { CreateQueryKey, GenericQueryKey } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { thread, yearsToSeconds } from '@app/utils/utils'
@@ -209,7 +209,7 @@ const createQueryDataGetter =
     chainId: SupportedChain['id']
     address: Address | undefined
   }) =>
-  <TData, TQueryKey extends CreateQueryKey<object, string, 'standard'>>({
+  <TData, TQueryKey extends GenericQueryKey<'standard'>>({
     functionName,
     params,
   }: {
