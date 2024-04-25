@@ -1,6 +1,4 @@
-import _ from 'lodash'
 import Head from 'next/head'
-// import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
