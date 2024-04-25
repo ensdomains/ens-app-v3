@@ -1,5 +1,5 @@
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { Address, createPublicClient, http, namehash, zeroAddress } from 'viem'
+import { createPublicClient, http, namehash, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 import { optimism } from 'viem/chains'
 
@@ -9,38 +9,35 @@ import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
+import { infuraUrl } from '@app/utils/query/wagmi'
 
-import { useDebounce } from './useDebounce'
-
-type UseDotBoxOwnerParameters = {
+type UseDotBoxAvailabilityOnchainParameters = {
   name?: string
-  isValid: boolean
+  isValid?: boolean
 }
 
-type UseDotBoxOwnerReturnType = Address | null
+export type UseDotBoxAvailabilityOnchainReturnType = boolean
 
-type UseDotBoxOwnerConfig = QueryConfig<UseDotBoxOwnerReturnType, Error>
+type UseDotBoxAvailabilityOnchainConfig = QueryConfig<UseDotBoxAvailabilityOnchainReturnType, Error>
 
-type QueryKey<TParams extends UseDotBoxOwnerParameters> = CreateQueryKey<
-  TParams,
-  'getDotBoxOwner',
-  'standard'
->
+export type UseDotBoxAvailabilityOnchainQueryKey<
+  TParams extends UseDotBoxAvailabilityOnchainParameters = UseDotBoxAvailabilityOnchainParameters,
+> = CreateQueryKey<TParams, 'getDotBoxAvailabilityOnchain', 'standard'>
 
 const optimismPublicClient = createPublicClient({
   chain: optimism,
-  transport: http('https://optimism-mainnet.infura.io/v3/cfa6ae2501cc4354a74e20432507317c'),
+  transport: http(infuraUrl('optimism-mainnet')),
 })
 
 const THREE_DNS_RESOLVER_ADDRESS = '0xF97aAc6C8dbaEBCB54ff166d79706E3AF7a813c8'
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export const getOwnerQueryFn =
+export const getDotBoxAvailabilityOnchain =
   (_config: ConfigWithEns) =>
   /* eslint-enable @typescript-eslint/no-unused-vars */
-  async <TParams extends UseDotBoxOwnerParameters>({
+  async <TParams extends UseDotBoxAvailabilityOnchainParameters>({
     queryKey: [{ name }],
-  }: QueryFunctionContext<QueryKey<TParams>>) => {
+  }: QueryFunctionContext<UseDotBoxAvailabilityOnchainQueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
     const owner = await readContract(optimismPublicClient, {
@@ -53,25 +50,25 @@ export const getOwnerQueryFn =
     return owner === zeroAddress
   }
 
-export const useGetDotBoxAvailabilityOnChain = <TParams extends UseDotBoxOwnerParameters>({
+export const useDotBoxAvailabilityOnchain = <
+  TParams extends UseDotBoxAvailabilityOnchainParameters,
+>({
   enabled = true,
   gcTime,
   staleTime,
   scopeKey,
   ...params
-}: TParams & UseDotBoxOwnerConfig) => {
+}: TParams & UseDotBoxAvailabilityOnchainConfig) => {
   const initialOptions = useQueryOptions({
     params,
     scopeKey,
-    functionName: 'getDotBoxOwner',
+    functionName: 'getDotBoxAvailabilityOnchain',
     queryDependencyType: 'standard',
-    queryFn: getOwnerQueryFn,
+    queryFn: getDotBoxAvailabilityOnchain,
   })
 
-  const debouncedValued = useDebounce(initialOptions.queryKey, 250)
-
   const preparedOptions = prepareQueryOptions({
-    queryKey: debouncedValued,
+    queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
     enabled: enabled && !!params.name && params.isValid,
     gcTime,

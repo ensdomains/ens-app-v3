@@ -13,21 +13,19 @@ import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 type UseAddressRecordParameters = PartialBy<GetAddressRecordParameters, 'name'>
 
-type UseAddressRecordReturnType = GetAddressRecordReturnType
+export type UseAddressRecordReturnType = GetAddressRecordReturnType
 
 type UseAddressRecordConfig = QueryConfig<UseAddressRecordReturnType, Error>
 
-type QueryKey<TParams extends UseAddressRecordParameters> = CreateQueryKey<
-  TParams,
-  'getAddressRecord',
-  'standard'
->
+export type UseAddressRecordQueryKey<
+  TParams extends UseAddressRecordParameters = UseAddressRecordParameters,
+> = CreateQueryKey<TParams, 'getAddressRecord', 'standard'>
 
 export const getAddressRecordQueryFn =
   (config: ConfigWithEns) =>
   async <TParams extends UseAddressRecordParameters>({
     queryKey: [{ name, ...params }, chainId],
-  }: QueryFunctionContext<QueryKey<TParams>>) => {
+  }: QueryFunctionContext<UseAddressRecordQueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
     const client = config.getClient({ chainId })

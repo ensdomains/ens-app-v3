@@ -1,3 +1,5 @@
+import { QueryClient, useQueryClient } from '@tanstack/react-query'
+import debounce from 'lodash/debounce'
 import {
   Dispatch,
   RefObject,
@@ -8,22 +10,44 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
-import { isAddress } from 'viem'
+import { Address, isAddress } from 'viem'
+import { useAccount, useChainId } from 'wagmi'
 
+import {
+  GetExpiryReturnType,
+  GetPriceReturnType,
+  GetWrapperDataReturnType,
+} from '@ensdomains/ensjs/public'
 import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
+import { SupportedChain } from '@app/constants/chains'
+import {
+  UseDotBoxAvailabilityOnchainQueryKey,
+  UseDotBoxAvailabilityOnchainReturnType,
+} from '@app/hooks/dotbox/useDotBoxAvailabilityOnchain'
+import {
+  UseAddressRecordQueryKey,
+  UseAddressRecordReturnType,
+} from '@app/hooks/ensjs/public/useAddressRecord'
+import { UseExpiryQueryKey } from '@app/hooks/ensjs/public/useExpiry'
+import { UseOwnerQueryKey, UseOwnerReturnType } from '@app/hooks/ensjs/public/useOwner'
+import { UsePriceQueryKey } from '@app/hooks/ensjs/public/usePrice'
+import { UseWrapperDataQueryKey } from '@app/hooks/ensjs/public/useWrapperData'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
+import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { useValidate } from '@app/hooks/useValidate'
+import { useValidate, validate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
+import { CreateQueryKey, GenericQueryKey } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { thread } from '@app/utils/utils'
+import { getRegistrationStatus } from '@app/utils/registrationStatus'
+import { thread, yearsToSeconds } from '@app/utils/utils'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
-import { SearchResult } from './SearchResult'
+import { getBoxNameStatus, SearchResult } from './SearchResult'
 import { HistoryItem, SearchHandler, SearchItem } from './types'
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
@@ -118,19 +142,21 @@ const CancelButton = styled(Typography)(
   `,
 )
 
+type MobileSearchInputProps = {
+  state: TransitionState
+  toggle: (value: boolean) => void
+  searchInputRef: RefObject<HTMLInputElement>
+  SearchResultsElement: JSX.Element
+  SearchInputElement: JSX.Element
+}
+
 const MobileSearchInput = ({
   state,
   toggle,
   searchInputRef,
   SearchResultsElement,
   SearchInputElement,
-}: {
-  state: TransitionState
-  toggle: (value: boolean) => void
-  searchInputRef: RefObject<HTMLInputElement>
-  SearchResultsElement: JSX.Element
-  SearchInputElement: JSX.Element
-}) => {
+}: MobileSearchInputProps) => {
   const { t } = useTranslation('common')
 
   useEffect(() => {
@@ -175,36 +201,162 @@ const MobileSearchInput = ({
   )
 }
 
+const createCachedQueryDataGetter =
+  ({
+    queryClient,
+    chainId,
+    address,
+  }: {
+    queryClient: QueryClient
+    chainId: SupportedChain['id']
+    address: Address | undefined
+  }) =>
+  <TData, TQueryKey extends GenericQueryKey<'standard'>>({
+    functionName,
+    params,
+  }: {
+    functionName: TQueryKey[4]
+    params: TQueryKey[0]
+  }) => {
+    return queryClient.getQueryData<
+      TData,
+      CreateQueryKey<typeof params, typeof functionName, 'standard'>
+    >(
+      createQueryKey({
+        address,
+        chainId,
+        functionName,
+        queryDependencyType: 'standard',
+        params,
+      }),
+    )
+  }
+
+const getRouteForSearchItem = ({
+  address,
+  chainId,
+  queryClient,
+  selectedItem,
+}: {
+  address: Address | undefined
+  chainId: SupportedChain['id']
+  queryClient: QueryClient
+  selectedItem: Exclude<SearchItem, { nameType: 'error' } | { nameType: 'text' }>
+}) => {
+  if (selectedItem.nameType === 'address') return `/address/${selectedItem.text}`
+
+  const getCachedQueryData = createCachedQueryDataGetter({ queryClient, chainId, address })
+  if (selectedItem.nameType === 'box') {
+    const isAvailableOnchain = getCachedQueryData<
+      UseDotBoxAvailabilityOnchainReturnType,
+      UseDotBoxAvailabilityOnchainQueryKey
+    >({
+      functionName: 'getDotBoxAvailabilityOnchain',
+      params: { name: selectedItem.text, isValid: selectedItem.isValid },
+    })
+    const boxStatus = getBoxNameStatus({
+      isValid: selectedItem.isValid,
+      isAvailable: isAvailableOnchain,
+    })
+    if (boxStatus === 'available') return `/dotbox/${selectedItem.text}`
+  }
+
+  if (selectedItem.nameType === 'eth' || selectedItem.nameType === 'dns') {
+    const ownerData = getCachedQueryData<UseOwnerReturnType, UseOwnerQueryKey>({
+      functionName: 'getOwner',
+      params: { name: selectedItem.text },
+    })
+    const wrapperData = getCachedQueryData<GetWrapperDataReturnType, UseWrapperDataQueryKey>({
+      functionName: 'getWrapperData',
+      params: { name: selectedItem.text },
+    })
+    const expiryData = getCachedQueryData<GetExpiryReturnType, UseExpiryQueryKey>({
+      functionName: 'getExpiry',
+      params: { name: selectedItem.text },
+    })
+    const priceData = getCachedQueryData<GetPriceReturnType, UsePriceQueryKey>({
+      functionName: 'getPrice',
+      params: { nameOrNames: selectedItem.text, duration: yearsToSeconds(1) },
+    })
+    const addrData = getCachedQueryData<UseAddressRecordReturnType, UseAddressRecordQueryKey>({
+      functionName: 'getAddressRecord',
+      params: { name: selectedItem.text },
+    })
+
+    if (typeof ownerData !== 'undefined') {
+      const registrationStatus = getRegistrationStatus({
+        timestamp: Date.now(),
+        validation: validate(selectedItem.text),
+        ownerData,
+        wrapperData,
+        expiryData,
+        priceData,
+        addrData,
+        supportedTLD: true,
+      })
+      if (registrationStatus === 'available') return `/register/${selectedItem.text}`
+      if (registrationStatus === 'notImported') return `/import/${selectedItem.text}`
+    }
+  }
+
+  return `/profile/${selectedItem.text}`
+}
+
+type CreateSearchHandlerProps = {
+  address: Address | undefined
+  chainId: SupportedChain['id']
+  dropdownItems: SearchItem[]
+  router: ReturnType<typeof useRouterWithHistory>
+  searchInputRef: RefObject<HTMLInputElement>
+  setHistory: Dispatch<SetStateAction<HistoryItem[]>>
+  setInputVal: Dispatch<SetStateAction<string>>
+  queryClient: QueryClient
+}
+
 const createSearchHandler =
   ({
+    address,
+    chainId,
+    dropdownItems,
     router,
+    searchInputRef,
     setHistory,
-  }: {
-    router: ReturnType<typeof useRouterWithHistory>
-    setHistory: Dispatch<SetStateAction<HistoryItem[]>>
-  }): SearchHandler =>
-  (searchItem: SearchItem) => {
-    if (!searchItem?.text) return
-    const { text, nameType } = searchItem
-    if (nameType === 'error') return
+    setInputVal,
+    queryClient,
+  }: CreateSearchHandlerProps): SearchHandler =>
+  (index: number) => {
+    if (index === -1) return
+
+    const selectedItem = dropdownItems[index]
+    if (!selectedItem?.text) return
+
+    const { text, nameType } = selectedItem
+    if (nameType === 'error' || nameType === 'text') return
+
     setHistory((prev: HistoryItem[]) => [
       ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
-      { lastAccessed: Date.now(), nameType, text, isValid: searchItem.isValid },
+      { lastAccessed: Date.now(), nameType, text, isValid: selectedItem.isValid },
     ])
-    router.push(`/${text}`)
+
+    const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
+    setInputVal('')
+    searchInputRef.current?.blur()
+    router.pushWithHistory(path)
   }
+
+type UseAddEventListenersProps = {
+  searchInputRef: RefObject<HTMLInputElement>
+  handleKeyDown: (e: KeyboardEvent) => void
+  handleFocusIn: (e: FocusEvent) => void
+  handleFocusOut: (e: FocusEvent) => void
+}
 
 const useAddEventListeners = ({
   searchInputRef,
   handleKeyDown,
   handleFocusIn,
   handleFocusOut,
-}: {
-  searchInputRef: RefObject<HTMLInputElement>
-  handleKeyDown: (e: KeyboardEvent) => void
-  handleFocusIn: (e: FocusEvent) => void
-  handleFocusOut: (e: FocusEvent) => void
-}) => {
+}: UseAddEventListenersProps) => {
   useEffect(() => {
     const searchInput = searchInputRef.current
     if (searchInput) {
@@ -221,21 +373,18 @@ const useAddEventListeners = ({
   }, [handleFocusIn, handleFocusOut, handleKeyDown, searchInputRef.current])
 }
 
+type HandleKeyDownProps = {
+  dropdownItems: SearchItem[]
+  handleSearch: SearchHandler
+  selected: number
+  setSelected: Dispatch<SetStateAction<number>>
+}
+
 const handleKeyDown =
-  ({
-    dropdownItems,
-    handleSearch,
-    selected,
-    setSelected,
-  }: {
-    dropdownItems: SearchItem[]
-    handleSearch: SearchHandler
-    selected: number
-    setSelected: Dispatch<SetStateAction<number>>
-  }) =>
+  ({ dropdownItems, handleSearch, selected, setSelected }: HandleKeyDownProps) =>
   (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleSearch(dropdownItems[selected])
+      handleSearch(selected)
       return
     }
     if (e.key === 'ArrowUp') {
@@ -268,7 +417,7 @@ const useSelectionManager = ({
 
   useEffect(() => {
     if (state === 'unmounted') {
-      setSelected(0)
+      setSelected(-1)
     }
   }, [state, setSelected])
 }
@@ -281,7 +430,7 @@ const formatEthText = ({ name, isETH }: { name: string; isETH: boolean | undefin
 }
 const addEthDropdownItem =
   ({ name, isETH }: { name: string; isETH: boolean | undefined }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     const formattedEthName = formatEthText({ name, isETH })
     if (formattedEthName === '') return dropdownItems
     return [
@@ -317,7 +466,7 @@ const formatBoxText = (name: string) => {
 }
 const addBoxDropdownItem =
   ({ name, isValid }: { name: string; isValid: boolean | undefined }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     const formattedBoxName = formatBoxText(name)
     if (!formattedBoxName) return dropdownItems
     return [
@@ -337,7 +486,7 @@ const formatTldText = (name: string) => {
 }
 const addTldDropdownItem =
   ({ name }: { name: string }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     const formattedTld = formatTldText(name)
     if (!formattedTld) return dropdownItems
     return [
@@ -351,7 +500,7 @@ const addTldDropdownItem =
 
 const addAddressItem =
   ({ name, inputIsAddress }: { name: string; inputIsAddress: boolean }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     if (!inputIsAddress) return dropdownItems
     return [
       {
@@ -364,20 +513,29 @@ const addAddressItem =
 
 const MAX_DROPDOWN_ITEMS = 6
 const addHistoryDropdownItems =
-  ({ history }: { history: HistoryItem[] }) =>
-  (dropdownItems: SearchItem[]) => {
+  ({ name, history }: { name: string; history: HistoryItem[] }) =>
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     const historyItemDrawCount = MAX_DROPDOWN_ITEMS - dropdownItems.length
 
     if (historyItemDrawCount > 0) {
-      const filteredHistoryItems = history.filter(
-        (historyItem: HistoryItem) =>
-          dropdownItems.findIndex(
-            (dropdownItem) =>
-              dropdownItem.nameType === historyItem.nameType &&
-              dropdownItem.text === historyItem.text,
-          ) === -1,
-      )
-      const historyItems = filteredHistoryItems?.slice(0, historyItemDrawCount)
+      const filteredHistoryItems = history
+        .filter(
+          (historyItem: HistoryItem) =>
+            historyItem.text.includes(name) &&
+            dropdownItems.findIndex(
+              (dropdownItem) =>
+                dropdownItem.nameType === historyItem.nameType &&
+                dropdownItem.text === historyItem.text,
+            ) === -1,
+        )
+        .sort((a, b) => b.lastAccessed - a.lastAccessed)
+
+      const historyItems = filteredHistoryItems?.slice(0, historyItemDrawCount).map((item) => ({
+        nameType: item.nameType,
+        text: item.text,
+        isHistory: true,
+      }))
+
       return [...dropdownItems, ...historyItems]
     }
 
@@ -393,7 +551,7 @@ const formatDnsText = ({ name, isETH }: { name: string; isETH: boolean | undefin
 }
 const addDnsDropdownItem =
   ({ name, isETH }: { name: string; isETH: boolean | undefined }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     const formattedDnsName = formatDnsText({ name, isETH })
     if (!formattedDnsName) return dropdownItems
     return [
@@ -407,7 +565,7 @@ const addDnsDropdownItem =
 
 const addErrorDropdownItem =
   ({ name, isValid }: { name: string; isValid: boolean | undefined }) =>
-  (dropdownItems: SearchItem[]) => {
+  (dropdownItems: SearchItem[]): SearchItem[] => {
     if (isValid || name === '') return dropdownItems
     return [
       {
@@ -417,7 +575,21 @@ const addErrorDropdownItem =
     ]
   }
 
+const addInfoDropdownItem =
+  ({ t }: { t: TFunction }) =>
+  (dropdownItems: SearchItem[]): SearchItem[] => {
+    if (dropdownItems.length) return dropdownItems
+    return [
+      {
+        text: t('search.emptyText'),
+        nameType: 'text',
+      } as const,
+    ]
+  }
+
 const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
+  const { t } = useTranslation('common')
+
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
 
   const { isValid, isETH, name } = useValidate({
@@ -425,21 +597,32 @@ const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
     enabled: !inputIsAddress && !inputVal,
   })
 
-  return thread(
-    [],
-    addEthDropdownItem({ name, isETH }),
-    addBoxDropdownItem({ name, isValid }),
-    addDnsDropdownItem({ name, isETH }),
-    addAddressItem({ name, inputIsAddress }),
-    addTldDropdownItem({ name }),
-    addHistoryDropdownItems({ history }),
-    addErrorDropdownItem({ name, isValid }),
+  return useMemo(
+    () =>
+      thread(
+        [],
+        addEthDropdownItem({ name, isETH }),
+        addBoxDropdownItem({ name, isValid }),
+        addDnsDropdownItem({ name, isETH }),
+        addAddressItem({ name, inputIsAddress }),
+        addTldDropdownItem({ name }),
+        addHistoryDropdownItems({ name, history }),
+        addErrorDropdownItem({ name, isValid }),
+        addInfoDropdownItem({ t }),
+      ),
+    [inputIsAddress, name, isETH, isValid, history, t],
   )
 }
 
+const debouncer = debounce((setFunc: () => void) => setFunc(), 250)
+
 export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraLarge' }) => {
   const router = useRouterWithHistory()
+  const queryClient = useQueryClient()
   const breakpoints = useBreakpoint()
+
+  const { address } = useAccount()
+  const chainId = useChainId()
 
   const [inputVal, setInputVal] = useState('')
 
@@ -461,6 +644,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const { width } = useElementSize(searchInputContainerRef.current)
 
   const [selected, setSelected] = useState(0)
+  const [usingPlaceholder, setUsingPlaceholder] = useState(false)
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history-v2', [])
 
@@ -470,10 +654,19 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const dropdownItems = useBuildDropdownItems(inputVal, history)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleSearch = useCallback(createSearchHandler({ router, setHistory }), [
-    router,
-    setHistory,
-  ])
+  const handleSearch = useCallback(
+    createSearchHandler({
+      address,
+      chainId,
+      dropdownItems,
+      queryClient,
+      router,
+      searchInputRef,
+      setHistory,
+      setInputVal,
+    }),
+    [address, chainId, dropdownItems, queryClient, router, searchInputRef, setHistory, setInputVal],
+  )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleKeyDownCb = useCallback(
@@ -490,12 +683,18 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
 
   useSelectionManager({ inputVal, setSelected, state })
 
+  const setInput = (val: string) => {
+    setInputVal(val)
+    setUsingPlaceholder(true)
+    debouncer(() => setUsingPlaceholder(false))
+  }
+
   const SearchInputElement = (
     <SearchInputBox
       containerRef={searchInputContainerRef}
       ref={searchInputRef}
       input={inputVal}
-      setInput={setInputVal}
+      setInput={setInput}
       size={size}
     />
   )
@@ -505,7 +704,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       style={{
         width: width === Infinity ? undefined : width,
       }}
-      onMouseLeave={() => inputVal === '' && setSelected(0)}
+      onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}
       data-testid="search-input-results"
       // data-error={!isValid && !inputIsAddress && inputVal !== ''}
@@ -517,6 +716,12 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
           index={index}
           selected={index === selected}
           searchItem={searchItem}
+          key={
+            searchItem.isHistory
+              ? `${searchItem.nameType}-${searchItem.text}`
+              : `${searchItem.nameType}`
+          }
+          usingPlaceholder={searchItem.isHistory ? false : usingPlaceholder}
         />
       ))}
     </SearchResultsContainer>

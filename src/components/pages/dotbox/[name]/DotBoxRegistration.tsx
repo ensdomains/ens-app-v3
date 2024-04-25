@@ -1,9 +1,9 @@
 import Head from 'next/head'
-// import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
 
-import { Button, CheckSVG, Helper, mq, Tag, Typography } from '@ensdomains/thorin'
+import { Button, CheckSVG, Helper, mq, Spinner, Tag, Typography } from '@ensdomains/thorin'
 
 import CoreFeatureENS from '@app/assets/dotbox/CoreFeatureENS.svg'
 import CoreFeatureNFT from '@app/assets/dotbox/CoreFeatureNFT.svg'
@@ -12,7 +12,7 @@ import CoreFeatureWebsite from '@app/assets/dotbox/CoreFeatureWebsite.svg'
 import DotBoxLogoSVG from '@app/assets/dotbox/DotBoxLogo.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
 import { Card } from '@app/components/Card'
-import { useGetDotBoxAvailabilityOffChain } from '@app/hooks/useGetDotBoxAvailabilityOffchain'
+import { useDotBoxAvailabilityOffchain } from '@app/hooks/dotbox/useDotBoxAvailabilityOffchain'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 
@@ -100,7 +100,7 @@ export const DotBoxRegistration = () => {
   const router = useRouterWithHistory()
 
   const name = router.query.name as string
-  const dotBoxResult = useGetDotBoxAvailabilityOffChain({ name })
+  const dotBoxResult = useDotBoxAvailabilityOffchain({ name })
   const nameStatus = dotBoxResult?.data?.data.status
 
   if (
@@ -111,6 +111,8 @@ export const DotBoxRegistration = () => {
   ) {
     router.push(`/profile/${name}`)
   }
+
+  console.log('dotBoxResult', dotBoxResult)
 
   const { t } = useTranslation('dnssec')
 
@@ -127,7 +129,7 @@ export const DotBoxRegistration = () => {
               <SubHeading>
                 <SubHeadingRow>
                   <Typography fontVariant="extraLargeBold">{name}</Typography>
-                  {nameStatus === 'AVAILABLE' && (
+                  {nameStatus === 'AVAILABLE' && !dotBoxResult.isLoading && (
                     <Tag colorStyle="greenSecondary" style={{ gap: 4 }}>
                       <CheckSVG /> Available
                     </Tag>
@@ -161,31 +163,35 @@ export const DotBoxRegistration = () => {
                 </CoreFeaturesRow>
               </CoreFeaturesContainer>
               <ButtonContainer>
-                {nameStatus === 'AVAILABLE' ? (
-                  <a href={dotBoxResult?.data?.data.href} target="_blank" rel="noreferrer">
-                    <Button width="45" size="small">
-                      <OutlinkInner>
-                        Register on my.box
-                        <OutlinkSVG />
-                      </OutlinkInner>
-                    </Button>
-                  </a>
-                ) : (
-                  <>
-                    <Helper type="warning" alignment="horizontal">
-                      Online registration for this domain is unavailable. Please contact the
-                      registry directly for further information.
-                    </Helper>
-                    <a href={LEARN_MORE_URL} target="_blank" rel="noreferrer">
-                      <Button width="52" size="small">
+                {match({ isLoading: dotBoxResult.isLoading, nameStatus })
+                  .with({ isLoading: true }, () => <Spinner size="medium" color="accent" />)
+                  .with({ isLoading: false, nameStatus: 'AVAILABLE' }, () => (
+                    <a href={dotBoxResult?.data?.data.href} target="_blank" rel="noreferrer">
+                      <Button width="45" size="small">
                         <OutlinkInner>
-                          Learn more at my.box
+                          Register on my.box
                           <OutlinkSVG />
                         </OutlinkInner>
                       </Button>
                     </a>
-                  </>
-                )}
+                  ))
+                  .with({ isLoading: false, nameStatus: P._ }, () => (
+                    <>
+                      <Helper type="warning" alignment="horizontal">
+                        Online registration for this domain is unavailable. Please contact the
+                        registry directly for further information.
+                      </Helper>
+                      <a href={LEARN_MORE_URL} target="_blank" rel="noreferrer">
+                        <Button width="52" size="small">
+                          <OutlinkInner>
+                            Learn more at my.box
+                            <OutlinkSVG />
+                          </OutlinkInner>
+                        </Button>
+                      </a>
+                    </>
+                  ))
+                  .otherwise(() => null)}
               </ButtonContainer>
             </DotBoxCard>
           ),

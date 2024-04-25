@@ -2,8 +2,8 @@ import type { Hex } from 'viem'
 import { useAccount } from 'wagmi'
 
 import ProfileContent from '@app/components/pages/profile/[name]/Profile'
+import { useDotBoxAvailabilityOffchain } from '@app/hooks/dotbox/useDotBoxAvailabilityOffchain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
-import { useGetDotBoxAvailabilityOffChain } from '@app/hooks/useGetDotBoxAvailabilityOffchain'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -19,7 +19,9 @@ export default function Page() {
 
   const { address } = useAccount()
 
-  const dotBoxResult = useGetDotBoxAvailabilityOffChain({ name: _name })
+  const dotBoxResult = useDotBoxAvailabilityOffchain({
+    name: _name,
+  })
 
   const primary = usePrimaryName({ address: address as Hex })
 

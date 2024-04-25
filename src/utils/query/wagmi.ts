@@ -23,7 +23,7 @@ const connectors = getDefaultWallets({
 const infuraKey = process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
 const tenderlyKey = process.env.NEXT_PUBLIC_TENDERLY_KEY || '4imxc4hQfRjxrVB2kWKvTo'
 
-const infuraUrl = (chainName: string) => `https://${chainName}.infura.io/v3/${infuraKey}`
+export const infuraUrl = (chainName: string) => `https://${chainName}.infura.io/v3/${infuraKey}`
 const cloudflareUrl = (chainName: string) => `https://web3.ens.domains/v1/${chainName}`
 const tenderlyUrl = (chainName: string) => `https://${chainName}.gateway.tenderly.co/${tenderlyKey}`
 
