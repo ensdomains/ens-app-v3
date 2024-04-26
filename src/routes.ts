@@ -230,6 +230,12 @@ export const rewrites = [
     tldPrefix: true,
   },
   {
+    source: '/dotbox/:name',
+    destination: '/dotbox?name=$2',
+    flattenedDestination: '/$2/dotbox',
+    tldPrefix: true,
+  },
+  {
     source: '/address/:address',
     destination: '/address?address=$2',
     flattenedDestination: '/$2',

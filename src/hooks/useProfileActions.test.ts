@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { DeepPartial } from '@app/types'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 import { createDateAndValue } from '@app/utils/utils'
 
 import { transactions } from '../transaction-flow/transaction/index'
@@ -19,7 +20,6 @@ import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNam
 import { useResolverStatus } from './resolver/useResolverStatus'
 import { useProfile } from './useProfile'
 import { useProfileActions } from './useProfileActions'
-import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 const NOW_TIMESTAMP = 1588994800000
 vi.spyOn(Date, 'now').mockImplementation(() => NOW_TIMESTAMP)
@@ -465,7 +465,7 @@ describe('useProfileActions', () => {
               CANNOT_SET_RESOLVER: true,
             },
           },
-          owner: '0x1234567890'
+          owner: '0x1234567890',
         },
         isLoading: false,
       })
@@ -491,7 +491,7 @@ describe('useProfileActions', () => {
               CANNOT_SET_RESOLVER: true,
             },
           },
-          owner: '0x1234567890'
+          owner: '0x1234567890',
         },
         isLoading: false,
       })

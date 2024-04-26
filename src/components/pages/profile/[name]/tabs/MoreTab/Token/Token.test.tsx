@@ -8,8 +8,8 @@ import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useParentBasicName } from '@app/hooks/useParentBasicName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
-import Token from './Token'
 import { makeMockUseWrapperDataData } from '../../../../../../../../test/mock/makeMockUseWrapperDataData.ts'
+import Token from './Token'
 
 vi.mock('@app/hooks/useParentBasicName')
 vi.mock('@app/hooks/chain/useChainName')
@@ -38,29 +38,46 @@ mockUseParentBasicName.mockImplementation(() => {
 describe('Token', () => {
   it('should show wrapped status for unwrapped name', () => {
     const name = 'nick.eth'
-    render(<Token {...({ name, isWrapped: false, wrapperData: makeMockUseWrapperDataData() } as any)} />)
+    render(
+      <Token {...({ name, isWrapped: false, wrapperData: makeMockUseWrapperDataData() } as any)} />,
+    )
     expect(screen.getByTestId('name-details-text-tabs.more.token.wrapper')).toHaveTextContent(
       'tabs.more.token.status.unwrapped',
     )
   })
   it('should show wrapped status for wrapped name', () => {
     const name = 'nick.eth'
-    render(<Token {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)} />)
+    render(
+      <Token
+        {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)}
+      />,
+    )
     expect(screen.getByTestId('name-details-text-tabs.more.token.wrapper')).toHaveTextContent(
       'tabs.more.token.status.wrapped',
     )
   })
   it('should show wrapped status for emancipated name', () => {
     const name = 'nick.eth'
-    render(<Token {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('emancipated') } as any)} />)
+    render(
+      <Token
+        {...({
+          name,
+          isWrapped: true,
+          wrapperData: makeMockUseWrapperDataData('emancipated'),
+        } as any)}
+      />,
+    )
     expect(screen.getByTestId('name-details-text-tabs.more.token.wrapper')).toHaveTextContent(
       'tabs.more.token.status.emancipated',
     )
   })
   it('should show wrapped status for locked name', () => {
-   
     const name = 'nick.eth'
-    render(<Token {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('locked') } as any)} />)
+    render(
+      <Token
+        {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('locked') } as any)}
+      />,
+    )
     expect(screen.getByTestId('name-details-text-tabs.more.token.wrapper')).toHaveTextContent(
       'tabs.more.token.status.locked',
     )
@@ -71,9 +88,12 @@ describe('Token', () => {
     expect(screen.getByTestId('wrap-button')).toBeVisible()
   })
   it('should show unwrap button if wrapped', () => {
-
     const name = 'nick.eth'
-    render(<Token {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)} />)
+    render(
+      <Token
+        {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)}
+      />,
+    )
     expect(screen.getByTestId('unwrap-button')).toBeVisible()
   })
   describe('tokenids', () => {
@@ -93,12 +113,19 @@ describe('Token', () => {
       expect(screen.getByText(tokenId)).toBeVisible()
     })
     it('should show correct decimal and hex for wrapped .eth 2ld name', () => {
-    
       const name = 'nick.eth'
       const hexId = namehash(name)
       const decId = BigInt(hexId).toString(10)
 
-      render(<Token {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)} />)
+      render(
+        <Token
+          {...({
+            name,
+            isWrapped: true,
+            wrapperData: makeMockUseWrapperDataData('wrapped'),
+          } as any)}
+        />,
+      )
       expect(screen.getByText(hexId)).toBeVisible()
       expect(screen.getByText(decId)).toBeVisible()
     })
@@ -107,7 +134,15 @@ describe('Token', () => {
       const hexId = namehash(name)
       const decId = BigInt(hexId).toString(10)
 
-      render(<Token {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)} />)
+      render(
+        <Token
+          {...({
+            name,
+            isWrapped: true,
+            wrapperData: makeMockUseWrapperDataData('wrapped'),
+          } as any)}
+        />,
+      )
       expect(screen.getByText(hexId)).toBeVisible()
       expect(screen.getByText(decId)).toBeVisible()
     })
@@ -135,7 +170,15 @@ describe('Token', () => {
       const hexId = namehash(name)
       const decId = BigInt(hexId).toString(10)
 
-      render(<Token {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)} />)
+      render(
+        <Token
+          {...({
+            name,
+            isWrapped: true,
+            wrapperData: makeMockUseWrapperDataData('wrapped'),
+          } as any)}
+        />,
+      )
       expect(screen.getByTestId('etherscan-nft-link')).toHaveAttribute(
         'href',
         `https://etherscan.io/nft/wrapped/${decId}`,
@@ -146,7 +189,15 @@ describe('Token', () => {
       const hexId = namehash(name)
       const decId = BigInt(hexId).toString(10)
 
-      render(<Token {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)} />)
+      render(
+        <Token
+          {...({
+            name,
+            isWrapped: true,
+            wrapperData: makeMockUseWrapperDataData('wrapped'),
+          } as any)}
+        />,
+      )
       expect(screen.getByTestId('etherscan-nft-link')).toHaveAttribute(
         'href',
         `https://etherscan.io/nft/wrapped/${decId}`,
