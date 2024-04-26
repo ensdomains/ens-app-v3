@@ -1,6 +1,8 @@
-import { FallbackTransport, HttpTransport } from 'viem'
+import { createClient, type FallbackTransport, type HttpTransport, type Transport } from 'viem'
 import { createConfig, createStorage, fallback, http } from 'wagmi'
 import { goerli, holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
+
+import { ccipRequest } from '@ensdomains/ensjs/utils'
 
 import {
   goerliWithEns,
@@ -86,31 +88,43 @@ const chains = [
   holeskyWithEns,
 ] as const
 
+const transports = {
+  ...(isLocalProvider
+    ? ({
+        [localhost.id]: http(process.env.NEXT_PUBLIC_PROVIDER!) as unknown as FallbackTransport,
+      } as const)
+    : ({} as unknown as {
+        // this is a hack to make the types happy, dont remove pls
+        [localhost.id]: HttpTransport
+      })),
+  [mainnet.id]: initialiseTransports('mainnet', [infuraUrl, cloudflareUrl, tenderlyUrl]),
+  [sepolia.id]: initialiseTransports('sepolia', [infuraUrl, cloudflareUrl, tenderlyUrl]),
+  [goerli.id]: initialiseTransports('goerli', [infuraUrl, cloudflareUrl, tenderlyUrl]),
+  [holesky.id]: initialiseTransports('holesky', [tenderlyUrl]),
+} as const
+
 const wagmiConfig_ = createConfig({
   connectors,
   ssr: true,
   multiInjectedProviderDiscovery: true,
-  batch: {
-    multicall: {
-      batchSize: 8196,
-      wait: 50,
-    },
-  },
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
   chains,
-  transports: {
-    ...(isLocalProvider
-      ? ({
-          [localhost.id]: http(process.env.NEXT_PUBLIC_PROVIDER!) as unknown as FallbackTransport,
-        } as const)
-      : ({} as unknown as {
-          // this is a hack to make the types happy, dont remove pls
-          [localhost.id]: HttpTransport
-        })),
-    [mainnet.id]: initialiseTransports('mainnet', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-    [sepolia.id]: initialiseTransports('sepolia', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-    [goerli.id]: initialiseTransports('goerli', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-    [holesky.id]: initialiseTransports('holesky', [tenderlyUrl]),
+  client: ({ chain }) => {
+    const chainId = chain.id
+
+    return createClient<Transport, typeof chain>({
+      chain,
+      batch: {
+        multicall: {
+          batchSize: 8196,
+          wait: 50,
+        },
+      },
+      transport: (params) => transports[chainId]({ ...params }),
+      ccipRead: {
+        request: ccipRequest(chain),
+      },
+    })
   },
 })
 

@@ -6,13 +6,14 @@ import {
   BlockTag,
   Hash,
   Hex,
-  PrepareTransactionRequestReturnType,
+  PrepareTransactionRequestRequest,
   toHex,
   Transaction,
   TransactionRequest,
 } from 'viem'
 import { call, estimateGas, getTransaction, prepareTransactionRequest } from 'viem/actions'
 
+import { SupportedChain } from '@app/constants/chains'
 import { TransactionStatus } from '@app/hooks/transactions/transactionStore'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
@@ -67,7 +68,7 @@ export const transactionSuccessHandler =
     connectorClient: ConnectorClientWithEns
     actionName: ManagedDialogProps['actionName']
     txKey: string | null
-    request: PrepareTransactionRequestReturnType | undefined
+    request: PrepareTransactionRequestRequest<SupportedChain> | undefined
     addRecentTransaction: ReturnType<typeof useAddRecentTransaction>
     dispatch: Dispatch<TransactionFlowAction>
     isSafeApp: ReturnType<typeof useIsSafeApp>['data']
@@ -220,6 +221,7 @@ export const createTransactionRequestQueryFn =
       chain: request.chain!,
       to: request.to!,
       gas: request.gas!,
+      chainId,
     }
   }
 
