@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { Dispatch, ForwardedRef, forwardRef, MouseEvent, SetStateAction } from 'react'
+import { ForwardedRef, forwardRef, MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -80,21 +80,15 @@ const MagnifyingGlassIcon = styled.svg(
 //   `,
 // )
 
-export const SearchInputBox = forwardRef(
-  (
-    {
-      size = 'extraLarge',
-      input,
-      setInput,
-      containerRef,
-    }: {
-      size?: 'medium' | 'extraLarge'
-      input: string
-      setInput: Dispatch<SetStateAction<string>>
-      containerRef: ForwardedRef<HTMLDivElement>
-    },
-    ref,
-  ) => {
+type SearchInputBoxProps = {
+  size?: 'medium' | 'extraLarge'
+  input: string
+  setInput: (value: string) => void
+  containerRef: ForwardedRef<HTMLDivElement>
+}
+
+export const SearchInputBox = forwardRef<HTMLInputElement, SearchInputBoxProps>(
+  ({ size = 'extraLarge', input, setInput, containerRef }, ref) => {
     const { t } = useTranslation('common')
     return (
       <SearchInputWrapper ref={containerRef} $size={size}>
@@ -105,7 +99,7 @@ export const SearchInputBox = forwardRef(
           placeholder={t('search.placeholder')}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          ref={ref as any}
+          ref={ref}
           clearable
           autoComplete="off"
           autoCorrect="off"
@@ -119,17 +113,13 @@ export const SearchInputBox = forwardRef(
   },
 )
 
-export const FakeSearchInputBox = forwardRef(
-  (
-    {
-      size = 'extraLarge',
-      onClick,
-    }: {
-      size?: 'medium' | 'extraLarge'
-      onClick: (e: MouseEvent<HTMLInputElement>) => void
-    },
-    ref,
-  ) => {
+type FakeSearchInputBoxProps = {
+  size?: 'medium' | 'extraLarge'
+  onClick: (e: MouseEvent<HTMLInputElement>) => void
+}
+
+export const FakeSearchInputBox = forwardRef<HTMLInputElement, FakeSearchInputBoxProps>(
+  ({ size = 'extraLarge', onClick }, ref) => {
     const { t } = useTranslation('common')
     return (
       <SearchInputWrapper $size={size}>
@@ -138,7 +128,7 @@ export const FakeSearchInputBox = forwardRef(
           label={t('search.label')}
           hideLabel
           placeholder={t('search.placeholder')}
-          ref={ref as any}
+          ref={ref}
           onClick={onClick}
           readOnly
           autoComplete="off"

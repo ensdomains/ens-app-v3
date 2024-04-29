@@ -2,8 +2,12 @@ import { renderHook } from '@app/test-utils'
 
 import { describe, expect, it } from 'vitest'
 
+import {
+  makeMockUseValidate,
+  mockUseValidateConfig,
+  mockUseValidateTypes,
+} from '../../test/mock/makeMockUseValidate'
 import { useValidate } from './useValidate'
-import { mockUseValidateTypes, mockUseValidateConfig, makeMockUseValidate } from '../../test/mock/makeMockUseValidate'
 
 describe('useValidate', () => {
   it('should return isNonASCII as false if all ascii', async () => {
