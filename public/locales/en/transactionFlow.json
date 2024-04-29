@@ -54,11 +54,12 @@
           "noOptions": "No account options available",
           "placeholder": {
             "default": "Add username here",
-            "com.twitter": "e.g. nicksdjohnson",
-            "com.github": "e.g. arachnid",
+            "email": "e.g. hello@example.com",
             "com.discord": "e.g. nickjohnson",
-            "org.telegram": "e.g. nicksdjohnson",
-            "email": "e.g. hello@example.com"
+            "com.github": "e.g. arachnid",
+            "com.twitter": "e.g. nicksdjohnson",
+            "eth.farcaster": "e.g. nick.eth",
+            "org.telegram": "e.g. nicksdjohnson"
           }
         },
         "address": {
@@ -67,10 +68,10 @@
           "noOptions": "No address options available",
           "placeholder": {
             "default": "Add address here",
-            "eth": "0xD9hbQK...",
-            "bnb": "0xD9hbQK...",
+            "eth": "0xb8c2C2...",
+            "bnb": "bnb1grpf...",
             "btc": "3FZbgi29...",
-            "ltc": "3FZbgi29...",
+            "ltc": "ltc1qdp7p...",
             "sol": "D4kA7VzHnmV...",
             "dot": "1D4kA7VxH...",
             "doge": "DFabcd12..."

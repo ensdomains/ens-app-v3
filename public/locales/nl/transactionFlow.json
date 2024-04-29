@@ -63,13 +63,13 @@
           "noOptions": "Geen adres opties beschikbaar",
           "placeholder": {
             "default": "Voeg adres hier toe",
-            "ETH": "0xD9hbQK...",
-            "BNB": "0xD9hbQK...",
-            "BTC": "3FZbgi29...",
-            "LTC": "3FZbgi29...",
-            "SOL": "D4kA7VzHnmV...",
-            "DOT": "1D4kA7VxH...",
-            "DOGE": "DFabcd12..."
+            "eth": "0xb8c2C2...",
+            "bnb": "bnb1grpf...",
+            "btc": "3FZbgi29...",
+            "ltc": "ltc1qdp7p...",
+            "sol": "D4kA7VzHnmV...",
+            "dot": "1D4kA7VxH...",
+            "doge": "DFabcd12..."
           }
         },
         "contentHash": {

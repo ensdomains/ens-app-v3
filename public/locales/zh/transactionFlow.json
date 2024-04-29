@@ -66,13 +66,13 @@
           "noOptions": "没有可用的地址",
           "placeholder": {
             "default": "在此添加地址",
-            "ETH": "0xD9hbQK...",
-            "BNB": "0xD9hbQK...",
-            "BTC": "3FZbgi29...",
-            "LTC": "3FZbgi29...",
-            "SOL": "D4kA7VzHnmV...",
-            "DOT": "1D4kA7VxH...",
-            "DOGE": "DFabcd12..."
+            "eth": "0xb8c2C2...",
+            "bnb": "bnb1grpf...",
+            "btc": "3FZbgi29...",
+            "ltc": "ltc1qdp7p...",
+            "sol": "D4kA7VzHnmV...",
+            "dot": "1D4kA7VxH...",
+            "doge": "DFabcd12..."
           }
         },
         "contentHash": {
@@ -344,7 +344,7 @@
       "invalidResolver": {
         "title": "未经授权的解析器",
         "description": "要使用此名称作为您的主名称，您需要先设置一个有效的解析器并更新该名称的 ETH 地址记录。"
-      }     
+      }
     },
     "multiStepSubnameDelete": {
       "title": "删除子名称",

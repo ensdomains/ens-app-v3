@@ -77,7 +77,7 @@
             "itemLabel": "{{coin}} 地址",
             "placeholder": {
               "default": "在此添加地址",
-              "eth": "0xD9hbQK...",
+              "eth": "0xb8c2C2...",
               "bnb": "bnb1grpf...",
               "btc": "3FZbgi29...",
               "ltc": "ltc1qdp7p...",
@@ -161,10 +161,7 @@
         "等待计时器完成 60 秒计时",
         "完成第二笔交易来获得该名称"
       ],
-      "moonpayItems": [
-        "创建或登录现有的 Moonpay 账户", 
-        "使用信用卡或借记卡完成单笔交易"
-      ],
+      "moonpayItems": ["创建或登录现有的 Moonpay 账户", "使用信用卡或借记卡完成单笔交易"],
       "setupProfile": "我希望先创建我的个人资料",
       "paymentMethod": "支付方式",
       "notEnoughEth": "钱包中的 ETH 不足",

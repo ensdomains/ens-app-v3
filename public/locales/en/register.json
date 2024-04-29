@@ -58,18 +58,20 @@
           "social": {
             "label": "Social",
             "items": {
-              "com.twitter": "Twitter",
-              "com.github": "GitHub",
+              "email": "Email",
               "com.discord": "Discord",
-              "org.telegram": "Telegram",
-              "email": "Email"
+              "com.github": "GitHub",
+              "com.twitter": "Twitter",
+              "eth.farcaster": "Farcaster",
+              "org.telegram": "Telegram"
             },
             "placeholder": {
-              "com.twitter": "e.g. ensdomains",
-              "com.github": "e.g. ensdomains",
+              "email": "e.g. hello@example.com",
               "com.discord": "e.g. nickjohnson",
-              "org.telegram": "e.g. nicksdjohnson",
-              "email": "e.g. hello@example.com"
+              "com.github": "e.g. ensdomains",
+              "com.twitter": "e.g. ensdomains",
+              "eth.farcaster": "e.g. ensdomains",
+              "org.telegram": "e.g. nicksdjohnson"
             }
           },
           "address": {
@@ -77,7 +79,7 @@
             "itemLabel": "{{coin}} address",
             "placeholder": {
               "default": "Add address here",
-              "eth": "0xD9hbQK...",
+              "eth": "0xb8c2C2...",
               "bnb": "bnb1grpf...",
               "btc": "3FZbgi29...",
               "ltc": "ltc1qdp7p...",
