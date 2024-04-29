@@ -725,7 +725,7 @@ test.describe('unwrapped', () => {
     await profilePage.profileEditorInput('eth').fill('')
     await expect(await profilePage.profileEditorInput('eth')).toHaveAttribute(
       'placeholder',
-      '0xb8c2C2...',
+      '0xD9hbQK...',
     )
     await profilePage.profileEditorClearButton('eth').click()
     await profilePage.profileEditorInput('btc').fill('')
