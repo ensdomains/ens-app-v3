@@ -30,7 +30,7 @@ const profiles = [
       {
         type: 'account',
         key: 'com.discord',
-        value: 'ens#0700',
+        value: 'ens0700',
       },
       {
         type: 'account',
@@ -52,9 +52,9 @@ const profiles = [
       {
         type: 'other',
         key: 'avatar',
-        value: 'https://avatar-...',
+        value: 'https://euc.li/...',
         fullValue:
-          'https://avatar-upload.ens-cf.workers.dev/goerli/wrapmebaby.eth?timestamp=1666267425956',
+          'https://euc.li/holesky/wrapmebaby.eth',
       },
       {
         type: 'account',
@@ -74,7 +74,7 @@ const profiles = [
         address: '0xFc5958B4B6F9a06D21E06429c8833f865577acf0',
       },
     ],
-    expiry: 'May 30, 2037',
+    expiry: 'Apr 30, 2025',
     contentHash: undefined,
   },
 ]
@@ -223,7 +223,7 @@ test.describe('Profile', () => {
       await page.getByTestId('ownership-tab').click()
       await expect(page.getByTestId('etherscan-registration-link')).toHaveAttribute(
         'href',
-        /https:\/\/goerli\.etherscan\.io\/tx\/0x[a-fA-F0-9]{64}/,
+        /https:\/\/holesky\.etherscan\.io\/tx\/0x[a-fA-F0-9]{64}/,
       )
 
       // should show the expiry of the name if available
@@ -249,7 +249,7 @@ test.describe('Profile', () => {
 
     await page.goto('/wrappeddnsname.com')
     await expect(page.getByTestId('profile-snippet')).toContainText(
-      'DNS names can be reclaimed by the DNS owner at any time. Do not purchase DNS names.',
+      'wrappeddnsname.com',
     )
   })
 })
