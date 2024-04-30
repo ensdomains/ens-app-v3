@@ -53,8 +53,7 @@ const profiles = [
         type: 'other',
         key: 'avatar',
         value: 'https://euc.li/...',
-        fullValue:
-          'https://euc.li/holesky/wrapmebaby.eth',
+        fullValue: 'https://euc.li/holesky/wrapmebaby.eth',
       },
       {
         type: 'account',
@@ -248,8 +247,6 @@ test.describe('Profile', () => {
     await login.connect()
 
     await page.goto('/wrappeddnsname.com')
-    await expect(page.getByTestId('profile-snippet')).toContainText(
-      'wrappeddnsname.com',
-    )
+    await expect(page.getByTestId('profile-snippet')).toContainText('wrappeddnsname.com')
   })
 })
