@@ -453,7 +453,7 @@ const BoxResultItem = ({
   )
 }
 
-type SearchResultProps = {
+export type SearchResultProps = {
   hoverCallback: (index: number) => void
   clickCallback: SearchHandler
   index: number
