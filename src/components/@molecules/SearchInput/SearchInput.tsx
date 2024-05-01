@@ -707,7 +707,6 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}
       data-testid="search-input-results"
-      // data-error={!isValid && !inputIsAddress && inputVal !== ''}
     >
       {dropdownItems.map((searchItem, index) => (
         <SearchResult

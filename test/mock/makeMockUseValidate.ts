@@ -120,10 +120,7 @@ export const makeMockUseValidate = (type: MockUseValidateType): ValidationResult
         {
           input: [110, 97, 109, 101, 10084],
           offset: 0,
-          tokens: [
-            [110, 97, 109, 101],
-            [10084, 65039],
-          ],
+          tokens: [[110, 97, 109, 101], [10084]],
           emoji: true,
           type: 'Latin',
           output: [110, 97, 109, 101, 10084],
@@ -133,6 +130,7 @@ export const makeMockUseValidate = (type: MockUseValidateType): ValidationResult
           offset: 6,
           tokens: [[101, 116, 104]],
           type: 'ASCII',
+          emoji: undefined,
           output: [101, 116, 104],
         },
       ],

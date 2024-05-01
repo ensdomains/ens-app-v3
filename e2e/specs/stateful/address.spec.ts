@@ -21,7 +21,7 @@ test('should go to the address page', async ({ page, login }) => {
   await page.pause()
   await page
     .getByPlaceholder('Search for a name')
-    .fill('0x866b3c4994e1416b7c738b9818b31dc246b95eee')
+    .fill('0xFc5958B4B6F9a06D21E06429c8833f865577acf0')
   await page.getByPlaceholder('Search for a name').press('Enter')
   await expect(page.getByTestId('profile-snippet')).toBeVisible({ timeout: 25000 })
 })
