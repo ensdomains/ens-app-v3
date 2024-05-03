@@ -7,9 +7,12 @@ import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 
-import { useRecords } from './ensjs/public/useRecords'
+import { usePrefetchRecords, useRecords } from './ensjs/public/useRecords'
 import { useDecodedName } from './ensjs/subgraph/useDecodedName'
-import { useSubgraphRecords } from './ensjs/subgraph/useSubgraphRecords'
+import {
+  useSubgraphRecords,
+  UseSubgraphRecordsReturnType,
+} from './ensjs/subgraph/useSubgraphRecords'
 
 type UseProfileParameters = {
   name?: string
@@ -18,25 +21,16 @@ type UseProfileParameters = {
   subgraphEnabled?: boolean
 }
 
-export const useProfile = ({
+const getProfileRecordsParameters = ({
   name,
   resolverAddress,
-  subgraphEnabled = true,
-  enabled = true,
-}: UseProfileParameters) => {
-  const {
-    data: subgraphRecords,
-    isFetching: isSubgraphRecordsFetching,
-    refetchIfEnabled: refetchSubgraphRecords,
-  } = useSubgraphRecords({ name, resolverAddress, enabled: enabled && subgraphEnabled })
-
-  const {
-    data: profile,
-    isLoading: isProfileLoading,
-    isCachedData: isProfileCachedData,
-    isFetching: isProfileFetching,
-    refetchIfEnabled: refetchProfile,
-  } = useRecords({
+  subgraphRecords,
+}: {
+  name?: string
+  resolverAddress?: Address
+  subgraphRecords?: UseSubgraphRecordsReturnType
+}) =>
+  ({
     name,
     resolver: resolverAddress
       ? {
@@ -67,7 +61,31 @@ export const useProfile = ({
     ] as [number, ...number[]],
     abi: true,
     contentHash: true,
+  }) as const
+
+export const useProfile = ({
+  name,
+  resolverAddress,
+  subgraphEnabled = true,
+  enabled = true,
+}: UseProfileParameters) => {
+  const {
+    data: subgraphRecords,
+    isFetching: isSubgraphRecordsFetching,
+    refetchIfEnabled: refetchSubgraphRecords,
+  } = useSubgraphRecords({ name, resolverAddress, enabled: enabled && subgraphEnabled })
+
+  const {
+    data: profile,
+    isLoading: isProfileLoading,
+    isCachedData: isProfileCachedData,
+    isPlaceholderData: isPlaceholderProfile,
+    isFetching: isProfileFetching,
+    refetchIfEnabled: refetchProfile,
+  } = useRecords({
+    ...getProfileRecordsParameters({ name, resolverAddress, subgraphRecords }),
     enabled: enabled && !!name,
+    keepPreviousData: true,
   })
 
   const { data: decodedName } = useDecodedName({
@@ -95,11 +113,16 @@ export const useProfile = ({
     data: returnProfile,
     // we only need to depend on profile for loading/cached state because subgraph records are not required to load the profile
     isLoading: isProfileLoading,
-    isCachedData: isProfileCachedData,
+    isCachedData: isProfileCachedData || isPlaceholderProfile,
     isFetching: isSubgraphRecordsFetching || isProfileFetching,
     refetchIfEnabled: () => {
       refetchSubgraphRecords()
       refetchProfile()
     },
   }
+}
+
+export const usePrefetchProfile = ({ name }: { name: string }) => {
+  const { data: subgraphRecords } = useSubgraphRecords({ name })
+  usePrefetchRecords(getProfileRecordsParameters({ name, subgraphRecords }))
 }

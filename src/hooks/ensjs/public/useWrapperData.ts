@@ -17,17 +17,15 @@ export type UseWrapperDataReturnType = GetWrapperDataReturnType
 
 type UseWrapperDataConfig = QueryConfig<UseWrapperDataReturnType, Error>
 
-type QueryKey<TParams extends UseWrapperDataParameters> = CreateQueryKey<
-  TParams,
-  'getWrapperData',
-  'standard'
->
+export type UseWrapperDataQueryKey<
+  TParams extends UseWrapperDataParameters = UseWrapperDataParameters,
+> = CreateQueryKey<TParams, 'getWrapperData', 'standard'>
 
 export const getWrapperDataQueryFn =
   (config: ConfigWithEns) =>
   async <TParams extends UseWrapperDataParameters>({
     queryKey: [{ name }, chainId],
-  }: QueryFunctionContext<QueryKey<TParams>>) => {
+  }: QueryFunctionContext<UseWrapperDataQueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
     const client = config.getClient({ chainId })

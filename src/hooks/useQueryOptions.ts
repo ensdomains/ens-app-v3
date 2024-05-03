@@ -4,7 +4,7 @@ import { useAccount, useChainId, useConfig } from 'wagmi'
 import { SupportedChain } from '@app/constants/chains'
 import { ConfigWithEns, CreateQueryKey, QueryDependencyType } from '@app/types'
 
-type QueryKeyConfig<
+export type QueryKeyConfig<
   TParams extends {},
   TFunctionName extends string,
   TQueryDependencyType extends QueryDependencyType,

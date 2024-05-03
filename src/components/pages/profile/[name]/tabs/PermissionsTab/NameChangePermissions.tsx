@@ -158,6 +158,7 @@ export const NameChangePermissions = ({
           <Typography fontVariant="bodyBold">
             {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.label`)}
           </Typography>
+
           <Typography fontVariant="small">
             {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.description`, {
               owner: isParentLocked

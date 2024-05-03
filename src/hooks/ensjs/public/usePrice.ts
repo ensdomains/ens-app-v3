@@ -13,13 +13,14 @@ type UsePriceReturnType = GetPriceReturnType
 
 type UsePriceConfig = QueryConfig<UsePriceReturnType, Error>
 
-type QueryKey<TParams extends UsePriceParameters> = CreateQueryKey<TParams, 'getPrice', 'standard'>
+export type UsePriceQueryKey<TParams extends UsePriceParameters = UsePriceParameters> =
+  CreateQueryKey<TParams, 'getPrice', 'standard'>
 
 export const getPriceQueryFn =
   (config: ConfigWithEns) =>
   async <TParams extends UsePriceParameters>({
     queryKey: [{ nameOrNames, ...params }, chainId],
-  }: QueryFunctionContext<QueryKey<TParams>>) => {
+  }: QueryFunctionContext<UsePriceQueryKey<TParams>>) => {
     if (!nameOrNames) throw new Error('nameOrNames is required')
 
     const client = config.getClient({ chainId })

@@ -5,7 +5,15 @@ import styled, { css } from 'styled-components'
 import { BaseError } from 'viem'
 import { useClient, useConnectorClient, useSendTransaction } from 'wagmi'
 
-import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
+import {
+  Button,
+  CrossCircleSVG,
+  Dialog,
+  Helper,
+  QuestionCircleSVG,
+  Spinner,
+  Typography,
+} from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import CircleTickSVG from '@app/assets/CircleTick.svg'
@@ -42,7 +50,7 @@ const BarContainer = styled.div(
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: ${theme.space['1']};
+    gap: ${theme.space['2']};
   `,
 )
 
@@ -198,12 +206,22 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
     return t('transaction.dialog.sent.message')
   }, [status, t])
 
+  const isTakingLongerThanExpected = status === 'sent' && progress === 100
+
   const progressMessage = useMemo(() => {
-    if (status === 'sent' && progress === 100) {
-      return t('transaction.dialog.sent.progress.message')
+    if (isTakingLongerThanExpected) {
+      return (
+        <Outlink
+          iconPosition="before"
+          icon={QuestionCircleSVG}
+          href="https://support.ens.domains/en/articles/7982906-long-running-transactions"
+        >
+          {t('transaction.dialog.sent.learn')}
+        </Outlink>
+      )
     }
     return null
-  }, [status, progress, t])
+  }, [isTakingLongerThanExpected, t])
 
   const EndElement = useMemo(() => {
     if (status === 'complete') {
@@ -223,7 +241,13 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
       <BarContainer data-testid="load-bar-container">
         <Bar $status={status} key={sendTime}>
           <BarPrefix>
-            <BarTypography>{t(`transaction.dialog.${status}.progress.title`)}</BarTypography>
+            <BarTypography>
+              {t(
+                isTakingLongerThanExpected
+                  ? 'transaction.dialog.sent.progress.message'
+                  : `transaction.dialog.${status}.progress.title`,
+              )}
+            </BarTypography>
           </BarPrefix>
           <InnerBar
             style={{ width: `${progress}%` }}
