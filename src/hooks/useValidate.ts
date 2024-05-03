@@ -79,8 +79,7 @@ export const useValidate = ({ input, enabled = true }: UseValidateParameters): V
     queryKey,
     queryFn: ({ queryKey: [params] }) => validate(params.input),
     enabled,
-    staleTime: Infinity,
-    gcTime: Infinity,
+    staleTime: 10 * 1000,
     select: (d) =>
       Object.fromEntries(
         Object.entries(d).map(([k, v]) => [k, v === 'undefined' ? '' : v]),

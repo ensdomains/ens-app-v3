@@ -66,8 +66,9 @@ export const checkETH2LDFromName = (name: string): name is Eth2ldName => {
   return true
 }
 
-export const checkDNS2LDFromName = (name: string) => {
-  const labels = name.split('.')
+export const checkDNS2LDFromName = (name?: string) => {
+  const labels = name?.split('.')
+  if (!labels) return false
   if (labels.length !== 2) return false
   if (labels[1] === 'eth') return false
   return true
@@ -139,3 +140,25 @@ export const createDateAndValue = <TValue extends bigint | number>(value: TValue
   date: new Date(Number(value)),
   value,
 })
+
+/*
+  Following types are based on this solution: https://stackoverflow.com/questions/53173203/typescript-recursive-function-composition/53175538#53175538
+  Best to just move on and not try to understand it. (This is copilot's opintion!)
+*/
+type Lookup<T, K extends keyof any, Else = never> = K extends keyof T ? T[K] : Else
+
+type Tail<T extends any[]> = T extends [any, ...infer R] ? R : never
+
+type Func1 = (arg: any) => any
+type ArgType<F, Else = never> = F extends (arg: infer A) => any ? A : Else
+type AsChain<F extends [Func1, ...Func1[]], G extends Func1[] = Tail<F>> = {
+  [K in keyof F]: (arg: ArgType<F[K]>) => ArgType<Lookup<G, K, any>, any>
+}
+
+type Last<T extends any[]> = T extends [...any, infer L] ? L : never
+type LaxReturnType<F> = F extends (...args: any) => infer R ? R : never
+
+export const thread = <F extends [(arg: any) => any, ...Array<(arg: any) => any>]>(
+  arg: ArgType<F[0]>,
+  ...f: F & AsChain<F>
+): LaxReturnType<Last<F>> => f.reduce((acc, fn) => fn(acc), arg) as LaxReturnType<Last<F>>
