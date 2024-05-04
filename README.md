@@ -141,7 +141,7 @@ If updating an existing yalc installation, you can add the `--force` flag.
 
 ## Architecture
 
-The structure of the `pages` folder is mimicked inside `components`. Components specific to a page can be found in the the `components` folder, in the folder corresponding to that page.
+The structure of the `pages` folder is mimicked inside `components`. Components specific to a page can be found in the `components` folder, in the folder corresponding to that page.
 
 Components that are used in multiple places will be found in the top level of the `components` folder.
 
