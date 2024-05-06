@@ -3,23 +3,27 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 import { Address } from 'viem'
 import { useEnsAvatar } from 'wagmi'
 
-import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
+import { Avatar, lightTheme, Spinner, Tag, Typography } from '@ensdomains/thorin'
 
+import { useDotBoxAvailabilityOnchain } from '@app/hooks/dotbox/useDotBoxAvailabilityOnchain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
+import { usePrefetchProfile } from '@app/hooks/useProfile'
 import { useZorb } from '@app/hooks/useZorb'
+import { zorbImageDataURI } from '@app/utils/gradient'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 
-const SearchItem = styled.div<{
+import type { SearchHandler, SearchItem } from './types'
+
+const SearchItemContainer = styled.div<{
   $selected?: boolean
   $clickable?: boolean
   $error?: boolean
@@ -38,6 +42,12 @@ const SearchItem = styled.div<{
     }
     position: relative;
     opacity: 0.6;
+
+    ${!$clickable &&
+    css`
+      pointer-events: none;
+    `}
+
     ${$clickable &&
     css`
       cursor: pointer;
@@ -77,6 +87,11 @@ const NoInputYetTypography = styled(Typography)(
   `,
 )
 
+const placeholderZorb = zorbImageDataURI('placeholder', 'name', {
+  accent: lightTheme.colors.accentLight,
+  fg: lightTheme.colors.text,
+  bg: lightTheme.colors.background,
+})
 const AvatarWrapper = styled.div<{ $isPlaceholder?: boolean }>(
   ({ theme, $isPlaceholder }) => css`
     display: flex;
@@ -86,10 +101,24 @@ const AvatarWrapper = styled.div<{ $isPlaceholder?: boolean }>(
     min-width: ${theme.space['8']};
     height: ${theme.space['8']};
     flex-grow: 1;
-    ${$isPlaceholder &&
-    css`
+    position: relative;
+    ::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url(${placeholderZorb});
+      z-index: 1;
       filter: grayscale(100%);
-    `}
+      transition: all 0.2s ease-in-out;
+      opacity: 0;
+      ${$isPlaceholder &&
+      css`
+        opacity: 1;
+      `}
+    }
   `,
 )
 
@@ -148,28 +177,6 @@ const SpinnerWrapper = styled.div(
   `,
 )
 
-const AddressResultItem = ({ address }: { address: Address }) => {
-  const { t } = useTranslation('common')
-  const { data: primaryName } = usePrimaryName({ address })
-  const { data: avatar } = useEnsAvatar({ name: primaryName?.name })
-  const zorb = useZorb(address, 'address')
-
-  return (
-    <>
-      <LeadingSearchItem>
-        <AvatarWrapper>
-          <Avatar src={avatar || zorb} label="avatar" />
-        </AvatarWrapper>
-        <AddressAndName>
-          <Typography weight="bold">{shortenAddress(address, undefined, 8, 6)}</Typography>
-          {primaryName?.name && <AddressPrimary>{primaryName?.beautifiedName}</AddressPrimary>}
-        </AddressAndName>
-      </LeadingSearchItem>
-      <AddressTag>{t('address.label')}</AddressTag>
-    </>
-  )
-}
-
 const GracePeriodTag = styled(StyledTag)(
   ({ theme }) => css`
     color: ${theme.colors.yellow};
@@ -215,7 +222,6 @@ const TextWrapper = styled.div(
       white-space: nowrap;
       text-overflow: clip;
       text-align: left;
-      direction: rtl;
       &::before {
         content: '‎';
       }
@@ -223,144 +229,304 @@ const TextWrapper = styled.div(
   `,
 )
 
-const PlaceholderResultItem = ({ input }: { input: string }) => {
-  const zorb = useZorb('placeholder', 'name')
-  const beautifiedName = useBeautifiedName(input)
+const getAvatarUri = ({
+  usingPlaceholder,
+  ensAvatar,
+  zorb,
+}: {
+  usingPlaceholder: boolean
+  ensAvatar: string | undefined | null
+  zorb: string | undefined
+}) => {
+  if (ensAvatar) return { avatarUri: ensAvatar, avatarIsPlaceholder: false }
+  if (usingPlaceholder || !zorb) return { avatarUri: undefined, avatarIsPlaceholder: true }
+  return { avatarUri: zorb, avatarIsPlaceholder: false }
+}
+
+const AddressResultItem = ({
+  hoverCallback,
+  clickCallback,
+  index,
+  selected,
+  searchItem,
+  usingPlaceholder,
+}: SearchResultProps) => {
+  const { text: address } = searchItem
+  const { t } = useTranslation('common')
+  const { data: primaryName } = usePrimaryName({
+    address: address as Address,
+    enabled: !usingPlaceholder,
+  })
+  const { data: ensAvatar } = useEnsAvatar({
+    name: primaryName?.name,
+    query: { enabled: !usingPlaceholder },
+  })
+  const zorb = useZorb(address, 'address')
+
+  const { avatarUri, avatarIsPlaceholder } = getAvatarUri({ ensAvatar, usingPlaceholder, zorb })
 
   return (
-    <>
+    <SearchItemContainer
+      data-testid="search-result-address"
+      onClick={() => clickCallback(index)}
+      onMouseDown={(e) => e.preventDefault()}
+      onMouseEnter={() => hoverCallback(index)}
+      $clickable
+      $selected={selected}
+    >
       <LeadingSearchItem>
-        <AvatarWrapper $isPlaceholder>
-          <Avatar src={zorb} label="name" />
+        <AvatarWrapper $isPlaceholder={avatarIsPlaceholder}>
+          <Avatar src={avatarUri} label="avatar" />
+        </AvatarWrapper>
+        <AddressAndName>
+          <Typography weight="bold">{shortenAddress(address, undefined, 8, 6)}</Typography>
+          {primaryName?.name && <AddressPrimary>{primaryName?.beautifiedName}</AddressPrimary>}
+        </AddressAndName>
+      </LeadingSearchItem>
+      <AddressTag>{t('address.label')}</AddressTag>
+    </SearchItemContainer>
+  )
+}
+
+const TldResultItem = ({
+  hoverCallback,
+  clickCallback,
+  index,
+  selected,
+  searchItem,
+  usingPlaceholder,
+}: SearchResultProps) => {
+  const { text: name } = searchItem
+  const { data: ensAvatar } = useEnsAvatar({
+    ...ensAvatarConfig,
+    name,
+    query: { enabled: !usingPlaceholder },
+  })
+  const zorb = useZorb(usingPlaceholder ? 'placeholder' : name, 'name')
+  const { registrationStatus, isLoading, beautifiedName } = useBasicName({
+    name,
+    enabled: !usingPlaceholder,
+  })
+
+  const { avatarUri, avatarIsPlaceholder } = getAvatarUri({ ensAvatar, usingPlaceholder, zorb })
+
+  return (
+    <SearchItemContainer
+      data-testid="search-result-name"
+      onClick={() => clickCallback(index)}
+      onMouseDown={(e) => e.preventDefault()}
+      onMouseEnter={() => hoverCallback(index)}
+      $clickable
+      $selected={selected}
+    >
+      <LeadingSearchItem>
+        <AvatarWrapper $isPlaceholder={avatarIsPlaceholder}>
+          <Avatar src={avatarUri} label="avatar" />
         </AvatarWrapper>
         <TextWrapper>
           <Typography weight="bold">{beautifiedName}</Typography>
         </TextWrapper>
       </LeadingSearchItem>
-      <SpinnerWrapper>
-        <Spinner color="accent" />
-      </SpinnerWrapper>
-    </>
+      {!isLoading && registrationStatus ? (
+        <StatusTag status={registrationStatus} />
+      ) : (
+        <SpinnerWrapper>
+          <Spinner color="accent" />
+        </SpinnerWrapper>
+      )}
+    </SearchItemContainer>
   )
 }
 
-const NameResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
-  ({ name, ...props }, ref) => {
-    const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
-    const zorb = useZorb(name, 'name')
-    const { registrationStatus, isLoading, beautifiedName } = useBasicName({ name })
-
-    return (
-      <SearchItem
-        data-testid="search-result-name"
-        {...props}
-        $clickable={registrationStatus !== 'short'}
-        ref={ref}
-      >
-        <LeadingSearchItem>
-          <AvatarWrapper>
-            <Avatar src={avatar || zorb} label="name" />
-          </AvatarWrapper>
-          <TextWrapper>
-            <Typography weight="bold">{beautifiedName}</Typography>
-          </TextWrapper>
-        </LeadingSearchItem>
-        {!isLoading && registrationStatus ? (
-          <StatusTag status={registrationStatus} />
-        ) : (
-          <SpinnerWrapper>
-            <Spinner color="accent" />
-          </SpinnerWrapper>
-        )}
-      </SearchItem>
-    )
-  },
-)
-
-type SearchItemType = 'text' | 'error' | 'address' | 'name' | 'nameWithDotEth'
-
-export const SearchResult = ({
-  type,
-  value,
+const EthResultItem = ({
   hoverCallback,
   clickCallback,
   index,
   selected,
-  usingPlaceholder = true,
-}: {
-  type: SearchItemType
-  value: string
-  hoverCallback: (index: number) => void
-  clickCallback: (index: number) => void
-  index: number
-  selected: number
-  usingPlaceholder?: boolean
-}) => {
-  const wrapperRef = useRef<HTMLDivElement>(null)
+  searchItem,
+  usingPlaceholder,
+}: SearchResultProps) => {
+  const { text: name } = searchItem
+  const { data: ensAvatar } = useEnsAvatar({
+    ...ensAvatarConfig,
+    name,
+    query: { enabled: !usingPlaceholder },
+  })
+  const zorb = useZorb(name, 'name')
+  const { registrationStatus, isLoading, beautifiedName } = useBasicName({
+    name,
+    enabled: !usingPlaceholder,
+  })
 
-  const handleMouseDown = (e: MouseEvent) => e.preventDefault()
+  const { avatarUri, avatarIsPlaceholder } = getAvatarUri({ ensAvatar, usingPlaceholder, zorb })
 
-  const handleClick = useCallback(() => {
-    clickCallback(index)
-  }, [index, clickCallback])
+  usePrefetchProfile({ name })
 
-  useEffect(() => {
-    const wrapper = wrapperRef.current
-    wrapper?.addEventListener('mousedown', handleMouseDown)
-    wrapper?.addEventListener('click', handleClick)
-    return () => {
-      wrapper?.removeEventListener('mousedown', handleMouseDown)
-      wrapper?.removeEventListener('click', handleClick)
-    }
-  }, [handleClick])
-
-  const input = useMemo(() => {
-    if (type === 'nameWithDotEth') {
-      return `${value!}.eth`
-    }
-    return value
-  }, [type, value])
-
-  const props = useMemo(
-    () => ({
-      ref: wrapperRef,
-      onMouseEnter: () => hoverCallback(index),
-      $selected: index === selected,
-    }),
-    [index, hoverCallback, selected],
+  return (
+    <SearchItemContainer
+      data-testid="search-result-name"
+      onClick={() => clickCallback(index)}
+      onMouseDown={(e) => e.preventDefault()}
+      onMouseEnter={() => hoverCallback(index)}
+      $clickable
+      $selected={selected}
+    >
+      <LeadingSearchItem>
+        <AvatarWrapper $isPlaceholder={avatarIsPlaceholder}>
+          <Avatar src={avatarUri} label="avatar" />
+        </AvatarWrapper>
+        <TextWrapper>
+          <Typography weight="bold">{beautifiedName}</Typography>
+        </TextWrapper>
+      </LeadingSearchItem>
+      {!isLoading &&
+      registrationStatus &&
+      (registrationStatus !== 'invalid' || !usingPlaceholder) ? (
+        <StatusTag status={registrationStatus} />
+      ) : (
+        <SpinnerWrapper>
+          <Spinner color="accent" />
+        </SpinnerWrapper>
+      )}
+    </SearchItemContainer>
   )
+}
 
-  if (usingPlaceholder && type !== 'error' && type !== 'text') {
+export const getBoxNameStatus = (isValidData: {
+  isValid: boolean | undefined
+  isAvailable: boolean | undefined
+}) =>
+  match(isValidData)
+    .with({ isValid: false }, () => 'invalid' as const)
+    .with({ isAvailable: true }, () => 'available' as const)
+    .with({ isAvailable: false }, () => 'registered' as const)
+    .otherwise(() => null)
+
+const BoxResultItem = ({
+  hoverCallback,
+  clickCallback,
+  index,
+  selected,
+  searchItem,
+  usingPlaceholder,
+}: SearchResultProps) => {
+  const { text: name, isValid } = searchItem
+  const { data: ensAvatar } = useEnsAvatar({
+    ...ensAvatarConfig,
+    name,
+    query: { enabled: !usingPlaceholder },
+  })
+  const zorb = useZorb(usingPlaceholder ? 'placeholder' : name, 'name')
+  const { data: isDotBoxAvailableOnchain, isLoading: isDotBoxAvailabilityLoading } =
+    useDotBoxAvailabilityOnchain({ name, isValid, enabled: !usingPlaceholder })
+  const isValidData = { isValid, isAvailable: isDotBoxAvailableOnchain }
+
+  const status = getBoxNameStatus(isValidData)
+
+  const { avatarUri, avatarIsPlaceholder } = getAvatarUri({ ensAvatar, usingPlaceholder, zorb })
+
+  return (
+    <SearchItemContainer
+      data-testid="search-result-name"
+      onClick={() => clickCallback(index)}
+      onMouseDown={(e) => e.preventDefault()}
+      onMouseEnter={() => hoverCallback(index)}
+      $clickable={status !== 'invalid'}
+      $selected={selected}
+    >
+      <LeadingSearchItem>
+        <AvatarWrapper $isPlaceholder={avatarIsPlaceholder}>
+          <Avatar src={avatarUri} label="avatar" />
+        </AvatarWrapper>
+        <TextWrapper>
+          <Typography weight="bold">{name}</Typography>
+        </TextWrapper>
+      </LeadingSearchItem>
+      {!isDotBoxAvailabilityLoading && status ? (
+        <StatusTag status={status} />
+      ) : (
+        <SpinnerWrapper>
+          <Spinner color="accent" />
+        </SpinnerWrapper>
+      )}
+    </SearchItemContainer>
+  )
+}
+
+export type SearchResultProps = {
+  hoverCallback: (index: number) => void
+  clickCallback: SearchHandler
+  index: number
+  selected: boolean
+  searchItem: SearchItem
+  usingPlaceholder: boolean
+}
+
+export const SearchResult = ({
+  hoverCallback,
+  clickCallback,
+  index,
+  selected,
+  searchItem,
+  usingPlaceholder,
+}: SearchResultProps) => {
+  if (searchItem.nameType === 'error') {
     return (
-      <SearchItem data-testid="search-result-placeholder" {...props}>
-        <PlaceholderResultItem input={input} />
-      </SearchItem>
+      <SearchItemContainer data-testid="search-result-error" $selected $error>
+        <Typography weight="bold">{searchItem.text}</Typography>
+      </SearchItemContainer>
     )
   }
 
-  if (type === 'address') {
+  if (searchItem.nameType === 'address') {
     return (
-      <SearchItem data-testid="search-result-address" $clickable {...props}>
-        <AddressResultItem address={input as Address} />
-      </SearchItem>
+      <AddressResultItem
+        {...{
+          selected,
+          hoverCallback,
+          index,
+          clickCallback,
+          searchItem,
+          usingPlaceholder,
+        }}
+      />
     )
   }
 
-  if (type === 'name' || type === 'nameWithDotEth') {
-    return <NameResultItem name={input} {...props} />
+  if (searchItem.nameType === 'dns' || searchItem.nameType === 'eth') {
+    return (
+      <EthResultItem
+        {...{
+          selected,
+          hoverCallback,
+          index,
+          clickCallback,
+          searchItem,
+          usingPlaceholder,
+        }}
+      />
+    )
   }
 
-  if (type === 'error') {
+  if (searchItem.nameType === 'box') {
     return (
-      <SearchItem data-testid="search-result-error" $selected $error>
-        <Typography weight="bold">{value}</Typography>
-      </SearchItem>
+      <BoxResultItem
+        {...{ selected, hoverCallback, index, clickCallback, searchItem, usingPlaceholder }}
+      />
+    )
+  }
+
+  if (searchItem.nameType === 'tld') {
+    return (
+      <TldResultItem
+        {...{ selected, hoverCallback, index, clickCallback, searchItem, usingPlaceholder }}
+      />
     )
   }
 
   return (
-    <SearchItem data-testid="search-result-text">
-      <NoInputYetTypography weight="bold">{value}</NoInputYetTypography>
-    </SearchItem>
+    <SearchItemContainer data-testid="search-result-text">
+      <NoInputYetTypography weight="bold">{searchItem.text}</NoInputYetTypography>
+    </SearchItemContainer>
   )
 }

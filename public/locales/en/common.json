@@ -297,7 +297,8 @@
         "progress": {
           "title": "Sent",
           "message": "Taking longer than expected"
-        }
+        },
+        "learn": "Learn about long running transactions"
       },
       "complete": {
         "title": "Transaction Complete",

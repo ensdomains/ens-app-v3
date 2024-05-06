@@ -17,6 +17,9 @@ vi.mock('@app/hooks/transactions/useRecentTransactions')
 vi.mock('@app/hooks/useInitial')
 vi.mock('@app/utils/BreakpointProvider')
 vi.mock('./@molecules/Hamburger/Hamburger')
+vi.mock('./@molecules/SearchInput/SearchInput', () => ({
+  SearchInput: () => <div data-testid="search-input-box">Search Input</div>,
+}))
 vi.mock('./ConnectButton')
 vi.mock('wagmi')
 
@@ -57,6 +60,7 @@ describe('Header', () => {
   mockUseBreakpoint.mockReturnValue(baseBreakpoints)
   mockHeaderConnect.mockImplementation(() => <div>Connect</div>)
   mockHamburger.mockImplementation(() => <div>burger</div>)
+
   describe('search', () => {
     it('should expand on focus and hide icons if sm breakpoint', () => {
       render(<Header />)

@@ -183,12 +183,13 @@ describe('<AvatarNFT />', () => {
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
-    await waitFor(() =>
-      // @ts-ignore
-      expect(fetch.mock.lastCall[1]).toEqual({
-        method: 'GET',
-        redirect: 'follow',
-      }),
+    await waitFor(
+      () =>
+        // @ts-ignore
+        expect(fetch.mock.lastCall[1]).toEqual({
+          method: 'GET',
+          redirect: 'follow',
+        }),
       // expect(mockedFetch.mock.lastCall).toEqual([
       //   `https://ens-nft-worker.ens-cf.workers.dev/v1/mainnet/getNfts/?owner=0x0000000000000000000000000000000000000001&filters%5B%5D=SPAM&pageKey=test123`,
       //   {
