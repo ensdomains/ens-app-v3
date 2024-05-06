@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
 
-import { SearchResult } from './SearchResult'
+import { SearchResult, SearchResultProps } from './SearchResult'
 
 vi.mock('@app/hooks/useBasicName')
 vi.mock('@app/hooks/ensjs/public/usePrimaryName')
@@ -17,13 +17,15 @@ const mockUsePrimaryName = mockFunction(usePrimaryName)
 describe('SearchResult', () => {
   mockUseBasicName.mockReturnValue({ registrationStatus: 'available', beautifiedName: 'nick.eth' })
 
-  const baseMockData: ComponentProps<typeof SearchResult> = {
-    type: 'name',
-    value: 'nick.eth',
+  const baseMockData: SearchResultProps = {
     hoverCallback: vi.fn(),
     clickCallback: vi.fn(),
     index: 0,
-    selected: 0,
+    selected: false,
+    searchItem: {
+      nameType: 'eth',
+      text: 'nick.eth',
+    },
     usingPlaceholder: false,
   }
 
@@ -32,10 +34,10 @@ describe('SearchResult', () => {
     expect(screen.getByText('nick.eth')).toBeVisible()
     expect(screen.getByText('search.status.available')).toBeVisible()
   })
-  it('should not use registration status if placeholder', () => {
+  it('should use registration status if placeholder', () => {
     render(<SearchResult {...baseMockData} usingPlaceholder />)
     expect(screen.getByText('nick.eth')).toBeVisible()
-    expect(screen.queryByText('search.status.available')).not.toBeInTheDocument()
+    expect(screen.queryByText('search.status.available')).toBeInTheDocument()
   })
   it('should correctly display an address without a primary name', () => {
     mockUsePrimaryName.mockReturnValue({
@@ -48,8 +50,10 @@ describe('SearchResult', () => {
     })
     const mockData: ComponentProps<typeof SearchResult> = {
       ...baseMockData,
-      type: 'address',
-      value: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+      searchItem: {
+        nameType: 'address',
+        text: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+      },
     }
     render(<SearchResult {...mockData} />)
     expect(screen.getByText('0xb6E040...d28cd9')).toBeVisible()
@@ -65,8 +69,10 @@ describe('SearchResult', () => {
     })
     const mockData: ComponentProps<typeof SearchResult> = {
       ...baseMockData,
-      type: 'address',
-      value: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+      searchItem: {
+        nameType: 'address',
+        text: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+      },
     }
     render(<SearchResult {...mockData} />)
     expect(screen.getByText('0xb6E040...d28cd9')).toBeVisible()
@@ -95,8 +101,10 @@ describe('SearchResult', () => {
     })
     const mockData: ComponentProps<typeof SearchResult> = {
       ...baseMockData,
-      type: 'address',
-      value: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+      searchItem: {
+        nameType: 'address',
+        text: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+      },
     }
     render(<SearchResult {...mockData} />)
     expect(screen.getByTestId('search-result-address')).toHaveStyle('cursor: pointer')

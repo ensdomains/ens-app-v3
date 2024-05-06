@@ -42,7 +42,7 @@ const createRegistryResolverData = <
 
 beforeEach(() => {
   vi.clearAllMocks()
-  mockUseIsWrapped.mockReturnValue({data: true, isLoading: false})
+  mockUseIsWrapped.mockReturnValue({ data: true, isLoading: false })
   mockUseProfile.mockReturnValue(createProfileData())
   mockUseRegistryResolver.mockReturnValue(createRegistryResolverData())
 })
@@ -187,9 +187,7 @@ describe('useResolverType', () => {
         },
       }),
     )
-    mockUseIsWrapped.mockReturnValueOnce(
-     {data: false, isLoading: false}
-    )
+    mockUseIsWrapped.mockReturnValueOnce({ data: false, isLoading: false })
     const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
     expect(result.current).toMatchObject(
       expect.objectContaining({

@@ -1,1 +1,1 @@
-export const supportedAddresses = ['eth', 'btc', 'bnb', 'doge', 'ltc', 'dot', 'sol'] as const
+export const supportedAddresses = ['eth', 'btc', 'sol', 'op', 'arb1', 'base', 'matic'] as const

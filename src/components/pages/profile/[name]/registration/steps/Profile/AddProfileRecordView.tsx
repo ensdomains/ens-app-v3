@@ -22,6 +22,8 @@ const Container = styled.div(({ theme }) => [
   css`
     display: flex;
     flex-direction: column;
+    overflow: auto;
+    overflow-x: hidden;
     width: 100%;
     max-height: 600px;
   `,

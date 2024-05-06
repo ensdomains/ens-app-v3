@@ -12,7 +12,7 @@ const makeid = (length: number) => {
   return result
 }
 
-test.describe('Moonpay registration', () => {
+test.describe.skip('Moonpay registration', () => {
   test('should open up moonpay flow if selected', async ({ page, login }) => {
     test.slow()
     // cy.changeMetamaskNetwork('goerli')

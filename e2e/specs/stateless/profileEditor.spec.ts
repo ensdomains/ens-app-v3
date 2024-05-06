@@ -725,7 +725,7 @@ test.describe('unwrapped', () => {
     await profilePage.profileEditorInput('eth').fill('')
     await expect(await profilePage.profileEditorInput('eth')).toHaveAttribute(
       'placeholder',
-      '0xD9hbQK...',
+      '0xb8c2C2...',
     )
     await profilePage.profileEditorClearButton('eth').click()
     await profilePage.profileEditorInput('btc').fill('')
@@ -854,7 +854,7 @@ test.describe('wrapped', () => {
     await profilePage.profileEditorInput('eth').fill('')
     await expect(await profilePage.profileEditorInput('eth')).toHaveAttribute(
       'placeholder',
-      '0xD9hbQK...',
+      '0xb8c2C2...',
     )
     await profilePage.profileEditorClearButton('eth').click()
     await profilePage.profileEditorInput('btc').fill('')

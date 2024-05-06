@@ -18,7 +18,9 @@ const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseLocalStorage = mockFunction(useLocalStorage)
 const mockSearchResult = mockFunction(SearchResult)
 
-mockSearchResult.mockImplementation(({ value }) => <div>{value}</div>)
+mockSearchResult.mockImplementation(({ searchItem }) => (
+  <div data-testid="search-result-text">{searchItem.text}</div>
+))
 
 window.scroll = vi.fn() as () => void
 
@@ -82,25 +84,27 @@ describe('SearchInput', () => {
     act(() => {
       screen.getByTestId('search-input-box').focus()
     })
-    await waitFor(() => screen.getByTestId('search-input-results'), {
+
+    await waitFor(() => screen.getByTestId('search-result-text'), {
       timeout: 500,
     }).then((el) => expect(el).toHaveTextContent('search.emptyText'))
+
     expect(screen.getByTestId('search-input-box')).not.toHaveTextContent('Search for a name')
   })
   it('should show history items if available', async () => {
     mockUseLocalStorage.mockReturnValue([
       [
         {
-          type: 'name',
-          value: 'nick.eth',
+          nameType: 'eth',
+          text: 'nick.eth',
         },
         {
-          type: 'address',
-          value: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+          nameType: 'address',
+          text: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
         },
         {
-          type: 'name',
-          value: 'test.eth',
+          nameType: 'eth',
+          text: 'test.eth',
         },
       ],
     ])
@@ -127,18 +131,18 @@ describe('SearchInput', () => {
     mockUseLocalStorage.mockReturnValue([
       [
         {
-          type: 'name',
-          value: 'nick.eth',
+          nameType: 'eth',
+          text: 'nick.eth',
           lastAccessed: 1,
         },
         {
-          type: 'address',
-          value: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+          nameType: 'address',
+          text: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
           lastAccessed: 3,
         },
         {
-          type: 'name',
-          value: 'test.eth',
+          nameType: 'name',
+          text: 'test.eth',
           lastAccessed: 2,
         },
       ],
@@ -162,32 +166,36 @@ describe('SearchInput', () => {
     expect(container.children[1]).toHaveTextContent('test.eth')
     expect(container.children[2]).toHaveTextContent('nick.eth')
   })
-  it('should show a maximum of 5 history items', async () => {
+  it('should show a maximum of 6 history items', async () => {
     mockUseLocalStorage.mockReturnValue([
       [
         {
-          type: 'name',
-          value: 'nick.eth',
+          nameType: 'eth',
+          text: 'nick.eth',
         },
         {
-          type: 'address',
-          value: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+          nameType: 'address',
+          text: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
         },
         {
-          type: 'name',
-          value: 'test.eth',
+          nameType: 'eth',
+          text: 'test.eth',
         },
         {
-          type: 'name',
-          value: 'test1.eth',
+          nameType: 'eth',
+          text: 'test1.eth',
         },
         {
-          type: 'name',
-          value: 'test2.eth',
+          nameType: 'eth',
+          text: 'test2.eth',
         },
         {
-          type: 'name',
-          value: 'test3.eth',
+          nameType: 'eth',
+          text: 'test3.eth',
+        },
+        {
+          nameType: 'eth',
+          text: 'test4.eth',
         },
       ],
     ])
@@ -207,9 +215,10 @@ describe('SearchInput', () => {
     })
 
     expect(screen.getByText('test2.eth')).toBeInTheDocument()
-    expect(screen.queryByText('test3.eth')).not.toBeInTheDocument()
+    expect(screen.queryByText('test4.eth')).not.toBeInTheDocument()
   })
   it('should show address search as valid', async () => {
+    const address = '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9'
     mockUseBreakpoint.mockReturnValue({
       xs: true,
       sm: true,
@@ -224,12 +233,11 @@ describe('SearchInput', () => {
     await waitFor(() => screen.getByTestId('search-input-results'), {
       timeout: 500,
     })
-    await userEvent.type(
-      screen.getByTestId('search-input-box'),
-      '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
-    )
+
+    await userEvent.type(screen.getByTestId('search-input-box'), address)
+
     await waitFor(() =>
-      expect(screen.getByTestId('search-input-results')).toHaveAttribute('data-error', 'false'),
+      expect(screen.queryByText(`${address.toLowerCase()}.eth`)).toBeInTheDocument(),
     )
   })
   it('should show invalid search as invalid', async () => {
@@ -248,8 +256,6 @@ describe('SearchInput', () => {
       timeout: 500,
     })
     await userEvent.type(screen.getByTestId('search-input-box'), '.')
-    await waitFor(() =>
-      expect(screen.getByTestId('search-input-results')).toHaveAttribute('data-error', 'true'),
-    )
+    await waitFor(() => expect(screen.queryByText(`Invalid name`)).toBeInTheDocument())
   })
 })
