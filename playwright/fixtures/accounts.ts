@@ -3,6 +3,9 @@ import { ethers } from 'ethers'
 import { Address } from 'viem'
 
 import { Provider } from './provider.js'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const DEFAULT_MNEMONIC = 'test test test test test test test test test test test junk'
 

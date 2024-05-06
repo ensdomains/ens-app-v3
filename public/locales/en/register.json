@@ -77,13 +77,13 @@
             "itemLabel": "{{coin}} address",
             "placeholder": {
               "default": "Add address here",
-              "eth": "0xD9hbQK...",
-              "bnb": "bnb1grpf...",
+              "eth": "0xb8c2C2...",
               "btc": "3FZbgi29...",
-              "ltc": "ltc1qdp7p...",
               "sol": "D4kA7VzHnmV...",
-              "dot": "1D4kA7VxH...",
-              "doge": "DFabcd12..."
+              "op": "0xb8c2C2...",
+              "arb1": "0xb8c2C2...",
+              "base": "0xb8c2C2...",
+              "matic": "0xb8c2C2..."
             }
           },
           "website": {

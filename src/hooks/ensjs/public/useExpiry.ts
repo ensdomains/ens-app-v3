@@ -13,11 +13,8 @@ type UseExpiryReturnType = GetExpiryReturnType
 
 type UseExpiryConfig = QueryConfig<UseExpiryReturnType, Error>
 
-export type UseExpiryQueryKey<TParams extends UseExpiryParameters> = CreateQueryKey<
-  TParams,
-  'getExpiry',
-  'standard'
->
+export type UseExpiryQueryKey<TParams extends UseExpiryParameters = UseExpiryParameters> =
+  CreateQueryKey<TParams, 'getExpiry', 'standard'>
 
 export const getExpiryQueryFn =
   (config: ConfigWithEns) =>
