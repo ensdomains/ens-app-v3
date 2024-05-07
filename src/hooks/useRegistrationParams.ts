@@ -5,14 +5,13 @@ import { ChildFuseReferenceType, RegistrationParameters } from '@ensdomains/ensj
 
 import { profileRecordsToRecordOptions } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
-import { yearsToSeconds } from '@app/utils/utils'
 
 type Props = {
   name: string
   owner: Address
   registrationData: Pick<
     RegistrationReducerDataItem,
-    | 'years'
+    | 'seconds'
     | 'resolverAddress'
     | 'secret'
     | 'records'
@@ -27,7 +26,7 @@ const useRegistrationParams = ({ name, owner, registrationData }: Props) => {
     () => ({
       name,
       owner,
-      duration: yearsToSeconds(registrationData.years),
+      duration: registrationData.seconds,
       resolverAddress: registrationData.resolverAddress,
       secret: registrationData.secret,
       records: profileRecordsToRecordOptions(

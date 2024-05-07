@@ -5,7 +5,7 @@ import { RegistrationParameters } from '@ensdomains/ensjs/utils'
 import { registerName } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { calculateValueWithBuffer, secondsToYears } from '@app/utils/utils'
+import { calculateValueWithBuffer, formatDuration } from '@app/utils/utils'
 
 type Data = RegistrationParameters
 
@@ -24,9 +24,7 @@ const displayItems = (
   },
   {
     label: 'duration',
-    value: t(secondsToYears(duration) > 1 ? 'unit.years_other' : 'unit.years_one', {
-      count: secondsToYears(duration),
-    }),
+    value: formatDuration(duration, t),
   },
 ]
 

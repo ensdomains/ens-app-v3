@@ -1,11 +1,16 @@
+import type { TFunction } from 'react-i18next'
 import { toBytes, type Address } from 'viem'
 
 import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
+import { GetPriceReturnType } from '@ensdomains/ensjs/public'
 import { DecodedFuses } from '@ensdomains/ensjs/utils'
 
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
+import { ONE_DAY, ONE_YEAR } from './time'
+
+export * from './time'
 
 export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice = 5) => {
   if (address.length < maxLength) {
@@ -15,15 +20,16 @@ export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, righ
   return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`
 }
 
-export const secondsToDays = (seconds: number) => Math.floor(seconds / (60 * 60 * 24))
-
-export const secondsToHours = (seconds: number) => Math.floor(seconds / (60 * 60))
-
-export const daysToSeconds = (days: number) => days * 60 * 60 * 24
-
-export const yearsToSeconds = (years: number) => years * 60 * 60 * 24 * 365
-
-export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365)
+export const deriveYearlyFee = ({
+  duration,
+  price,
+}: {
+  duration: number
+  price: GetPriceReturnType
+}) => {
+  const yearlyFee = (price.base * BigInt(ONE_YEAR)) / BigInt(duration)
+  return yearlyFee
+}
 
 export const formatExpiry = (expiry: Date) =>
   `${expiry.toLocaleDateString(undefined, {
@@ -43,6 +49,43 @@ export const formatDateTime = (date: Date) => {
 
 export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
+
+export const formatDuration = (duration: number, t: TFunction) => {
+  const month = ONE_DAY * 30 // Assuming 30 days per month for simplicity
+
+  if (duration >= ONE_YEAR) {
+    const years = Math.floor(duration / ONE_YEAR)
+    const months = Math.floor((duration - years * ONE_YEAR) / month)
+
+    if (months !== 0)
+      return `${t('unit.years', { count: years, ns: 'common' })}, ${t('unit.months', {
+        count: months,
+        ns: 'common',
+      })}`
+
+    return t('unit.years', { count: years, ns: 'common' })
+  }
+  if (duration >= month) {
+    const months = Math.floor(duration / month)
+
+    const days = Math.floor((duration - months * month) / ONE_DAY)
+
+    // for 31-day months
+    if (days > 1)
+      return `${t('unit.months', { count: months, ns: 'common' })}, ${t('unit.days', {
+        count: days,
+        ns: 'common',
+      })}`
+
+    return t('unit.months', { count: months, ns: 'common' })
+  }
+  if (duration >= ONE_DAY) {
+    const days = Math.floor(duration / ONE_DAY)
+    return t('unit.days', { count: days, ns: 'common' })
+  }
+
+  return t('unit.invalid_date', { ns: 'common' })
+}
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
   `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`

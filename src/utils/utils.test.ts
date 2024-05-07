@@ -8,6 +8,7 @@ import {
   deleteProperties,
   deleteProperty,
   formatDateTime,
+  formatDuration,
   formatExpiry,
   formatFullExpiry,
   getEncodedLabelAmount,
@@ -15,6 +16,8 @@ import {
   getResolverWrapperAwareness,
   isLabelTooLong,
   makeEtherscanLink,
+  ONE_DAY,
+  ONE_YEAR,
   secondsToDays,
   shortenAddress,
   validateExpiry,
@@ -80,6 +83,25 @@ describe('formatFullExpiry', () => {
   })
   it('should return empty if undefined', () => {
     expect(formatFullExpiry()).toEqual('')
+  })
+})
+
+describe('formatDuration', () => {
+  it('should return a year locale', () => {
+    expect(formatDuration(2 * ONE_YEAR, (x) => x)).toEqual('unit.years')
+  })
+  it('should return a month locale', () => {
+    expect(formatDuration(ONE_DAY * 30, (x) => x)).toEqual('unit.months')
+  })
+  it('should return a day locale', () => {
+    expect(formatDuration(ONE_DAY * 2, (x) => x)).toEqual('unit.days')
+  })
+  it('should return invalid date if less than a day', () => {
+    expect(formatDuration(123, (x) => x)).toEqual('unit.invalid_date')
+  })
+  it('if extra day or month, return multiple locales', () => {
+    expect(formatDuration(2 * ONE_YEAR + ONE_DAY * 30, (x) => x)).toEqual('unit.years, unit.months')
+    expect(formatDuration(ONE_DAY * 33, (x) => x)).toEqual('unit.months, unit.days')
   })
 })
 

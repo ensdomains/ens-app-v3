@@ -222,7 +222,7 @@
         "description_other": "Extending these names will extend the current owner's registration length. This will not give you ownership if you are not already the owner"
       },
       "invoice": {
-        "extension": "{{count}} year extension",
+        "extension": "{{time}} extension",
         "transaction": "Transaction fee",
         "total": "Estimated total"
       },
