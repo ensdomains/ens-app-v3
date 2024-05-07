@@ -207,7 +207,7 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const minSeconds = 28 * ONE_DAY
+const minSeconds = ONE_DAY
 
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation(['transactionFlow', 'common'])

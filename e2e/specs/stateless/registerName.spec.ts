@@ -404,7 +404,7 @@ test('should allow registering a premium name with a specific date', async ({
   )
 })
 
-test('should allow registering a premium name for a month', async ({
+test('should allow registering a premium name for two months', async ({
   page,
   login,
   provider,
@@ -454,6 +454,96 @@ test('should allow registering a premium name for a month', async ({
     await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndHalfLaterInput)
 
     expect(page.getByText('2 months registration', { exact: true })).toBeVisible()
+  })
+
+  await page.getByTestId('payment-choice-ethereum').click()
+  await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
+  await page.getByTestId('next-button').click()
+  if (await page.getByTestId('profile-submit-button').isVisible()) {
+    await page.getByTestId('profile-submit-button').click()
+  }
+
+  await page.getByTestId('next-button').click()
+  await transactionModal.confirm()
+
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await provider.increaseTime(120)
+  await page.getByTestId('finish-button').click()
+  await transactionModal.confirm()
+
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    new RegExp(accounts.getAddress('user', 5)),
+  )
+})
+
+test('should not allow registering a premium name for less than 28 days', async ({
+  page,
+  login,
+  provider,
+  accounts,
+  makeName,
+  makePageObject,
+}) => {
+  const premiumName = await makeName(
+    {
+      label: 'premium',
+      owner: 'user2',
+      type: 'legacy',
+      duration: -7890000 - 4 * 345600, // 3 months 4 days
+    },
+    { timeOffset: 500 },
+  )
+
+  const transactionModal = makePageObject('TransactionModal')
+
+  await page.goto(`/${premiumName}/register`)
+  await login.connect()
+
+  await test.step('should be able to pick by date', async () => {
+    const dateSelection = page.getByTestId('date-selection')
+    await expect(dateSelection).toHaveText('Pick by date')
+
+    await dateSelection.click()
+  })
+
+  const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
+  const calendar = page.getByTestId('calendar')
+
+  await test.step('should not allow less than 28 days', async () => {
+    const lessThan27Days = await page.evaluate(
+      (timestamp) => {
+        const _date = new Date(timestamp)
+        const year = _date.getFullYear()
+        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
+      },
+      (browserTime + daysToSeconds(27)) * 1000,
+    )
+
+    await calendar.fill(lessThan27Days)
+
+    await expect(page.getByTestId('calendar-date')).not.toHaveValue(lessThan27Days)
+  })
+
+  await test.step('should allow 28 days', async () => {
+    const set28days = await page.evaluate(
+      (timestamp) => {
+        const _date = new Date(timestamp)
+        const year = _date.getFullYear()
+        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
+      },
+      (browserTime + daysToSeconds(28)) * 1000,
+    )
+
+    await calendar.fill(set28days)
+
+    await expect(page.getByTestId('calendar-date')).toHaveValue(set28days)
+
+    expect(page.getByText('28 days registration', { exact: true })).toBeVisible()
   })
 
   await page.getByTestId('payment-choice-ethereum').click()
@@ -645,7 +735,20 @@ test('should not allow normal registration less than 28 days', async ({
   const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
 
   await test.step('should set a date', async () => {
-    const oneMonthLaterInput = await page.evaluate(
+    const lessThanMinDaysLaterInput = await page.evaluate(
+      (timestamp) => {
+        const _date = new Date(timestamp)
+        const year = _date.getFullYear()
+        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
+      },
+      (browserTime + daysToSeconds(27)) * 1000,
+    )
+    await calendar.fill(lessThanMinDaysLaterInput)
+    await expect(page.getByTestId('calendar-date')).not.toHaveValue(lessThanMinDaysLaterInput)
+    
+    const minDaysLaterInput = await page.evaluate(
       (timestamp) => {
         const _date = new Date(timestamp)
         const year = _date.getFullYear()
@@ -655,12 +758,10 @@ test('should not allow normal registration less than 28 days', async ({
       },
       (browserTime + daysToSeconds(28)) * 1000,
     )
-    // const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
 
-    await calendar.fill(oneMonthLaterInput)
+    await calendar.fill(minDaysLaterInput)
 
-    await expect(page.getByTestId('calendar-date')).toHaveValue(oneMonthLaterInput)
-
+    await expect(page.getByTestId('calendar-date')).toHaveValue(minDaysLaterInput)
     expect(page.getByText('28 days registration', { exact: true })).toBeVisible()
   })
 
