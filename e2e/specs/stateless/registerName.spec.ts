@@ -747,7 +747,7 @@ test('should not allow normal registration less than 28 days', async ({
     )
     await calendar.fill(lessThanMinDaysLaterInput)
     await expect(page.getByTestId('calendar-date')).not.toHaveValue(lessThanMinDaysLaterInput)
-    
+
     const minDaysLaterInput = await page.evaluate(
       (timestamp) => {
         const _date = new Date(timestamp)
