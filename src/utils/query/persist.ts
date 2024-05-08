@@ -1,6 +1,8 @@
 import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import type { QueryClient } from '@tanstack/react-query'
+import { del, get, set } from 'idb-keyval'
+import { PersistedClient, Persister } from 'react-query/persistQueryClient'
 import { deserialize } from 'wagmi'
 
 import { serialize } from './serialize'
@@ -17,13 +19,21 @@ export const parse = <TData = unknown>(data: string) =>
     if (value?.__type === 'Date') return new Date(value.value)
   })
 
-const persister = () =>
-  createSyncStoragePersister({
-    key: 'wagmi.cache',
-    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-    serialize: stringify,
-    deserialize: parse,
-  })
+function createIDBPersister(idbValidKey: IDBValidKey = 'reactQuery') {
+  return {
+    persistClient: async (client: PersistedClient) => {
+      set(idbValidKey, client)
+    },
+    restoreClient: async () => {
+      return get<PersistedClient>(idbValidKey)
+    },
+    removeClient: async () => {
+      await del(idbValidKey)
+    },
+  } as Persister
+}
+
+const persister = () => createIDBPersister('wagmi.cache')
 
 export const createPersistConfig = ({
   queryClient,
@@ -36,6 +46,5 @@ export const createPersistConfig = ({
     shouldDehydrateQuery: (query: any) =>
       query.gcTime !== 0 && query.queryHash !== JSON.stringify([{ entity: 'signer' }]),
   },
-  maxAge: 1_000 * 60 * 60 * 1,
   buster: process.env.CONFIG_BUILD_ID,
 })
