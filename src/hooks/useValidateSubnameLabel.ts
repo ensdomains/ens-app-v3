@@ -22,7 +22,7 @@ export const useValidateSubnameLabel = ({
   const isParentTLD = name.split('.').length === 1
 
   const validationEnabled = !!label && !!name && !isParentTLD
-  const validation = useValidate({ input: label, enabled: validationEnabled })
+  const validation = useValidate({ input: label })
 
   const ownerEnabled = validationEnabled && validation.isValid && validation.labelCount === 1
   const { data: ownership, isLoading: isOwnerLoading } = useOwner({

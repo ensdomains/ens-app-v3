@@ -33,7 +33,7 @@ export const useBasicName = ({
   enabled = true,
   subgraphEnabled = true,
 }: UseBasicNameOptions) => {
-  const validation = useValidate({ input: name!, enabled: enabled && !!name })
+  const validation = useValidate({ input: name! })
 
   const { name: _normalisedName, isValid, isShort, isETH, is2LD } = validation
 

@@ -1,11 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 import { ParsedInputResult, parseInput } from '@ensdomains/ensjs/utils'
 
 import { Prettify } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
-
-import { useQueryOptions } from './useQueryOptions'
 
 export type ValidationResult = Prettify<
   Partial<Omit<ParsedInputResult, 'normalised' | 'labelDataArray'>> & {
@@ -55,7 +53,6 @@ const defaultData = Object.freeze({
 
 type UseValidateParameters = {
   input: string
-  enabled?: boolean
 }
 
 const tryValidate = (input: string) => {
@@ -67,24 +64,7 @@ const tryValidate = (input: string) => {
   }
 }
 
-export const useValidate = ({ input, enabled = true }: UseValidateParameters): ValidationResult => {
-  const { queryKey } = useQueryOptions({
-    params: { input },
-    functionName: 'validate',
-    queryDependencyType: 'independent',
-    keyOnly: true,
-  })
-
-  const { data, error } = useQuery({
-    queryKey,
-    queryFn: ({ queryKey: [params] }) => validate(params.input),
-    enabled,
-    staleTime: 10 * 1000,
-    select: (d) =>
-      Object.fromEntries(
-        Object.entries(d).map(([k, v]) => [k, v === 'undefined' ? '' : v]),
-      ) as ValidationResult,
-  })
-
-  return data || (error ? defaultData : tryValidate(input))
+export const useValidate = ({ input }: UseValidateParameters): ValidationResult => {
+  const validationResult = useMemo(() => tryValidate(input), [input])
+  return validationResult
 }

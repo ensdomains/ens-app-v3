@@ -96,7 +96,7 @@ export const generateGetBlockQueryArray = (
           queryDependencyType: 'standard',
         }),
         queryFn: getBlockQueryFn(client),
-        staleTime: Infinity,
+        staleTime: 60 * 1000 * 60 * 24 * 7,
       }) as const,
   )
 }

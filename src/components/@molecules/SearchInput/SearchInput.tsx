@@ -594,7 +594,6 @@ const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
 
   const { isValid, isETH, name } = useValidate({
     input: inputVal,
-    enabled: !inputIsAddress && !inputVal,
   })
 
   return useMemo(
