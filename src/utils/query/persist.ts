@@ -1,8 +1,10 @@
-import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import type {
+  PersistedClient,
+  Persister,
+  PersistQueryClientOptions,
+} from '@tanstack/query-persist-client-core'
 import type { QueryClient } from '@tanstack/react-query'
 import { del, get, set } from 'idb-keyval'
-import { PersistedClient, Persister } from 'react-query/persistQueryClient'
 import { deserialize } from 'wagmi'
 
 import { serialize } from './serialize'
