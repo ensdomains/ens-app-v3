@@ -1157,7 +1157,7 @@ test.describe('Extend name', () => {
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
       await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
       await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
-      await expect(page.getByText('1 year extension')).toBeVisible()
+      await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
     })
 
     await test.step('should show the cost comparison data', async () => {
@@ -1171,7 +1171,7 @@ test.describe('Extend name', () => {
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
       await extendNamesModal.getCounterPlusButton.click()
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
-      await expect(page.locator('text=2 year extension')).toBeVisible()
+      await expect(page.getByText('2 years extension', { exact: true })).toBeVisible()
     })
 
     await test.step('should show correct fiat values', async () => {

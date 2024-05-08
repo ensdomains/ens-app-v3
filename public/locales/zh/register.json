@@ -3,7 +3,7 @@
   "subtitle": "注册",
   "heading": "注册 {{name}}",
   "invoice": {
-    "yearRegistration": "注册 {{years}} 年",
+    "timeRegistration": "注册{{time}}",
     "registration": "注册",
     "estimatedNetworkFee": "预估网络费",
     "networkFee": "网络费",
