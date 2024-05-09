@@ -36,6 +36,6 @@ export const createPersistConfig = ({
     shouldDehydrateQuery: (query: any) =>
       query.gcTime !== 0 && query.queryHash !== JSON.stringify([{ entity: 'signer' }]),
   },
-  maxAge: 1_000 * 60 * 60 * 1,
+  maxAge: 1_000 * 60 * 60 * 0.5,
   buster: process.env.CONFIG_BUILD_ID,
 })
