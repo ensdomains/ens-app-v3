@@ -24,7 +24,7 @@ export const parse = <TData = unknown>(data: string) =>
 function createIDBPersister(idbValidKey: IDBValidKey = 'reactQuery') {
   return {
     persistClient: async (client: PersistedClient) => {
-      set(idbValidKey, client)
+      await set(idbValidKey, client)
     },
     restoreClient: async () => {
       return get<PersistedClient>(idbValidKey)
