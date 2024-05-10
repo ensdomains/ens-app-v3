@@ -5,7 +5,6 @@ import { Button, Dialog } from '@ensdomains/thorin'
 
 import { CenteredTypography } from '../components/CenteredTypography'
 import { DetailedSwitch } from '../components/DetailedSwitch'
-import { StyledInnerDialog } from '../components/StyledInnerDialog'
 import type { SelectedProfile } from '../ResolverWarningOverlay'
 
 type Props = {
@@ -27,7 +26,7 @@ export const UpdateResolverOrResetProfileView = ({
       <Dialog.Heading
         title={t('input.profileEditor.warningOverlay.updateResolverOrResetProfile.title')}
       />
-      <StyledInnerDialog>
+      <Dialog.Content>
         <CenteredTypography>
           {t('input.profileEditor.warningOverlay.updateResolverOrResetProfile.subtitle')}
         </CenteredTypography>
@@ -39,7 +38,7 @@ export const UpdateResolverOrResetProfileView = ({
             'input.profileEditor.warningOverlay.updateResolverOrResetProfile.toggle.subtitle',
           )}
         />
-      </StyledInnerDialog>
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button

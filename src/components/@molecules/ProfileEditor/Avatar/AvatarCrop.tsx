@@ -12,8 +12,6 @@ import PlusCircleSVG from '@app/assets/PlusCircle.svg'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { calcMomentum, getVars } from '@app/utils/avatarUpload'
 
-import AvatarScrollBox from './AvatarScrollBox'
-
 const EditImageContainer = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
@@ -396,7 +394,7 @@ export const CropComponent = ({
   return (
     <>
       <Dialog.Heading title={t('input.profileEditor.tabs.avatar.image.title')} />
-      <AvatarScrollBox>
+      <Dialog.Content>
         <EditImageContainer data-testid="edit-image-container">
           <ImageWrapper>
             <ImageContainer>
@@ -418,7 +416,7 @@ export const CropComponent = ({
             <PlusCircleSVG />
           </SliderContainer>
         </EditImageContainer>
-      </AvatarScrollBox>
+      </Dialog.Content>
       <Dialog.Footer
         leading={<AvCancelButton handleCancel={handleCancel} />}
         trailing={

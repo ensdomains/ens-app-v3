@@ -14,7 +14,7 @@ import { Dialog, Input, RadioButton, Typography } from '@ensdomains/thorin'
 import { dateTimeLocalToDate, dateToDateTimeLocal, stripDateMs } from '@app/utils/datetime-local'
 
 import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
-import type { FormData } from '../RevokePermissions-flow'
+import type { FormData, RevokePermissionsDialogContentProps } from '../RevokePermissions-flow'
 
 type Props = {
   name: string
@@ -24,15 +24,7 @@ type Props = {
   control: Control<FormData>
   getValues: UseFormGetValues<FormData>
   trigger: UseFormTrigger<FormData>
-}
-
-const ExpiryOptionsContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space['4']};
-  `,
-)
+} & RevokePermissionsDialogContentProps
 
 const DateContainer = styled.div(
   ({ theme }) => css`
@@ -61,6 +53,7 @@ export const SetExpiryView = ({
   control,
   getValues,
   trigger,
+  ...dialogContentProps
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
@@ -114,7 +107,7 @@ export const SetExpiryView = ({
           />
         )}
       </CenterAlignedTypography>
-      <ExpiryOptionsContainer>
+      <Dialog.Content {...dialogContentProps}>
         <RadioButton
           data-testid="radio-max"
           value="max"
@@ -207,7 +200,7 @@ export const SetExpiryView = ({
           }
           {...register('expiryType')}
         />
-      </ExpiryOptionsContainer>
+      </Dialog.Content>
     </>
   )
 }

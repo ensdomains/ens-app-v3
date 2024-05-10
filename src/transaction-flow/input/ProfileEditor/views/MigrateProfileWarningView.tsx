@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { Button, Dialog } from '@ensdomains/thorin'
 
 import { CenteredTypography } from '../components/CenteredTypography'
-import { ContentContainer } from '../components/ContentContainer'
-import { StyledInnerDialog } from '../components/StyledInnerDialog'
 
 type Props = {
   onBack: () => void
@@ -19,13 +17,11 @@ export const MigrateProfileWarningView = ({ onNext, onBack }: Props) => {
         title={t('input.profileEditor.warningOverlay.migrateProfileWarning.title')}
         alert="warning"
       />
-      <StyledInnerDialog>
-        <ContentContainer>
-          <CenteredTypography>
-            {t('input.profileEditor.warningOverlay.migrateProfileWarning.subtitle')}
-          </CenteredTypography>
-        </ContentContainer>
-      </StyledInnerDialog>
+      <Dialog.Content>
+        <CenteredTypography>
+          {t('input.profileEditor.warningOverlay.migrateProfileWarning.subtitle')}
+        </CenteredTypography>
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button

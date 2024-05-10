@@ -1,6 +1,8 @@
 import { useWatch } from 'react-hook-form'
 import styled, { css } from 'styled-components'
 
+import { mq } from '@ensdomains/thorin'
+
 import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
 import useAdvancedEditor, { AdvancedEditorType } from '@app/hooks/useAdvancedEditor'
 
@@ -9,6 +11,9 @@ import { convertFormSafeKey } from '../../../utils/editor'
 const AddRecordContainer = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
+    ${mq.sm.min(css`
+      margin-top: -${theme.space['2']};
+    `)}
   `,
 )
 

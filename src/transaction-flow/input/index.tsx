@@ -5,7 +5,6 @@ import DynamicLoadingContext from '@app/components/@molecules/TransactionDialogM
 
 import TransactionLoader from '../TransactionLoader'
 import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor-flow'
-import type { Props as BurnFusesProps } from './BurnFuses/BurnFuses-flow'
 import type { Props as CreateSubnameProps } from './CreateSubname-flow'
 import type { Props as DeleteEmancipatedSubnameWarningProps } from './DeleteEmancipatedSubnameWarning/DeleteEmancipatedSubnameWarning-flow'
 import type { Props as DeleteSubnameNotParentWarningProps } from './DeleteSubnameNotParentWarning/DeleteSubnameNotParentWarning-flow'
@@ -18,7 +17,6 @@ import type { Props as RevokePermissionsProps } from './RevokePermissions/Revoke
 import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName/SelectPrimaryName-flow'
 import type { Props as SendNameProps } from './SendName/SendName-flow'
 import type { Props as SyncManagerProps } from './SyncManager/SyncManager-flow'
-import type { Props as TransferProfileProps } from './TransferProfile/TransferProfile-flow'
 import type { Props as UnknownLabelsProps } from './UnknownLabels/UnknownLabels-flow'
 
 const dynamicHelper = <P,>(name: string) =>
@@ -44,7 +42,6 @@ const dynamicHelper = <P,>(name: string) =>
   )
 
 const AdvancedEditor = dynamicHelper<AdvancedEditorProps>('AdvancedEditor/AdvancedEditor')
-const BurnFuses = dynamicHelper<BurnFusesProps>('BurnFuses/BurnFuses')
 const CreateSubname = dynamicHelper<CreateSubnameProps>('CreateSubname')
 const DeleteEmancipatedSubnameWarning = dynamicHelper<DeleteEmancipatedSubnameWarningProps>(
   'DeleteEmancipatedSubnameWarning/DeleteEmancipatedSubnameWarning',
@@ -65,12 +62,10 @@ const SelectPrimaryName = dynamicHelper<SelectPrimaryNameProps>(
 )
 const SendName = dynamicHelper<SendNameProps>('SendName/SendName')
 const SyncManager = dynamicHelper<SyncManagerProps>('SyncManager/SyncManager')
-const TransferProfile = dynamicHelper<TransferProfileProps>('TransferProfile/TransferProfile')
 const UnknownLabels = dynamicHelper<UnknownLabelsProps>('UnknownLabels/UnknownLabels')
 
 export const DataInputComponents = {
   AdvancedEditor,
-  BurnFuses,
   CreateSubname,
   DeleteEmancipatedSubnameWarning,
   DeleteSubnameNotParentWarning,
@@ -83,7 +78,6 @@ export const DataInputComponents = {
   SelectPrimaryName,
   SendName,
   SyncManager,
-  TransferProfile,
   UnknownLabels,
 }
 

@@ -1,30 +1,25 @@
 import { UseFormRegister } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 import { ChildFuseKeys, ChildFuseReferenceType } from '@ensdomains/ensjs/utils'
 import { CheckboxRow, Dialog } from '@ensdomains/thorin'
 
-import type { FormData } from '../RevokePermissions-flow'
+import type { FormData, RevokePermissionsDialogContentProps } from '../RevokePermissions-flow'
 
 type Props = {
   register: UseFormRegister<FormData>
   unburnedFuses: ChildFuseReferenceType['Key'][]
-}
+} & RevokePermissionsDialogContentProps
 
 const CHILD_FUSES_WITHOUT_CU_AND_CBF = ChildFuseKeys.filter(
   (fuse) => !['CANNOT_UNWRAP', 'CANNOT_BURN_FUSES'].includes(fuse),
 )
 
-const PermissionsList = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space[2]};
-  `,
-)
-
-export const RevokePermissionsView = ({ register, unburnedFuses }: Props) => {
+export const RevokePermissionsView = ({
+  register,
+  unburnedFuses,
+  ...dialogContentProps
+}: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const { burned, unburned } = CHILD_FUSES_WITHOUT_CU_AND_CBF.reduce<{
@@ -43,7 +38,7 @@ export const RevokePermissionsView = ({ register, unburnedFuses }: Props) => {
   return (
     <>
       <Dialog.Heading title={t('input.revokePermissions.views.revokePermissions.title')} />
-      <PermissionsList>
+      <Dialog.Content gap="2" {...dialogContentProps}>
         {unburned.map((fuse) => (
           <CheckboxRow
             data-testid={`checkbox-${fuse}`}
@@ -61,7 +56,7 @@ export const RevokePermissionsView = ({ register, unburnedFuses }: Props) => {
             {...register(`childFuses.${fuse}`)}
           />
         ))}
-      </PermissionsList>
+      </Dialog.Content>
     </>
   )
 }

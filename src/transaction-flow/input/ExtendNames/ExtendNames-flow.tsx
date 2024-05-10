@@ -6,16 +6,7 @@ import { match, P } from 'ts-pattern'
 import { parseEther } from 'viem'
 import { useAccount, useBalance, useEnsAvatar } from 'wagmi'
 
-import {
-  Avatar,
-  Button,
-  CurrencyToggle,
-  Dialog,
-  Helper,
-  mq,
-  ScrollBox,
-  Typography,
-} from '@ensdomains/thorin'
+import { Avatar, Button, CurrencyToggle, Dialog, Helper, mq, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
@@ -36,39 +27,6 @@ import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryC
 import GasDisplay from '../../../components/@atoms/GasDisplay'
 
 type View = 'name-list' | 'no-ownership-warning' | 'registration'
-
-const Container = styled.form(
-  ({ theme }) => css`
-    display: flex;
-    width: 100%;
-    max-height: 60vh;
-    flex-direction: column;
-    align-items: center;
-    gap: ${theme.space['4']};
-
-    ${mq.sm.min(css`
-      width: calc(80vw - 2 * ${theme.space['6']});
-      max-width: ${theme.space['128']};
-    `)}
-  `,
-)
-
-const ScrollBoxWrapper = styled(ScrollBox)(
-  ({ theme }) => css`
-    width: 100%;
-    padding-right: ${theme.space['2']};
-    margin-right: -${theme.space['2']};
-  `,
-)
-
-const InnerContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: ${theme.space['4']};
-  `,
-)
 
 const PlusMinusWrapper = styled.div(({ theme }) => [
   css`
@@ -321,60 +279,58 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     }))
 
   return (
-    <Container data-testid="extend-names-modal">
+    <>
       <Dialog.Heading title={title} alert={alert} />
-      <ScrollBoxWrapper>
-        <InnerContainer>
-          {match(view)
-            .with('name-list', () => <NamesList names={names} />)
-            .with('no-ownership-warning', () => (
-              <CenteredMessage>
-                {t('input.extendNames.ownershipWarning.description', { count: names.length })}
-              </CenteredMessage>
-            ))
-            .otherwise(() => (
-              <>
-                <PlusMinusWrapper>
-                  <PlusMinusControl
-                    minValue={1}
-                    value={years}
-                    onChange={(e) => {
-                      const newYears = parseInt(e.target.value)
-                      if (!Number.isNaN(newYears)) setYears(newYears)
-                    }}
+      <Dialog.Content data-testid="extend-names-modal">
+        {match(view)
+          .with('name-list', () => <NamesList names={names} />)
+          .with('no-ownership-warning', () => (
+            <CenteredMessage>
+              {t('input.extendNames.ownershipWarning.description', { count: names.length })}
+            </CenteredMessage>
+          ))
+          .otherwise(() => (
+            <>
+              <PlusMinusWrapper>
+                <PlusMinusControl
+                  minValue={1}
+                  value={years}
+                  onChange={(e) => {
+                    const newYears = parseInt(e.target.value)
+                    if (!Number.isNaN(newYears)) setYears(newYears)
+                  }}
+                />
+              </PlusMinusWrapper>
+              <OptionBar $isCached={isPriceLoading}>
+                <GasDisplay gasPrice={gasPrice} />
+                <CurrencyToggle
+                  size="small"
+                  checked={userConfig.currency === 'fiat'}
+                  onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
+                  data-testid="extend-names-currency-toggle"
+                />
+              </OptionBar>
+              <GasEstimationCacheableComponent
+                $isCached={isEstimateGasLoading || isShowingPrevious}
+              >
+                <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
+                {(!!estimateGasLimitError ||
+                  (!!estimatedGasLimit &&
+                    !!balance?.value &&
+                    balance.value < estimatedGasLimit)) && (
+                  <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
+                )}
+                {!!rentFee && !!unsafeDisplayTransactionFee && (
+                  <RegistrationTimeComparisonBanner
+                    rentFee={rentFee}
+                    transactionFee={unsafeDisplayTransactionFee}
+                    message={t('input.extendNames.bannerMsg')}
                   />
-                </PlusMinusWrapper>
-                <OptionBar $isCached={isPriceLoading}>
-                  <GasDisplay gasPrice={gasPrice} />
-                  <CurrencyToggle
-                    size="small"
-                    checked={userConfig.currency === 'fiat'}
-                    onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
-                    data-testid="extend-names-currency-toggle"
-                  />
-                </OptionBar>
-                <GasEstimationCacheableComponent
-                  $isCached={isEstimateGasLoading || isShowingPrevious}
-                >
-                  <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
-                  {(!!estimateGasLimitError ||
-                    (!!estimatedGasLimit &&
-                      !!balance?.value &&
-                      balance.value < estimatedGasLimit)) && (
-                    <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
-                  )}
-                  {!!rentFee && !!unsafeDisplayTransactionFee && (
-                    <RegistrationTimeComparisonBanner
-                      rentFee={rentFee}
-                      transactionFee={unsafeDisplayTransactionFee}
-                      message={t('input.extendNames.bannerMsg')}
-                    />
-                  )}
-                </GasEstimationCacheableComponent>
-              </>
-            ))}
-        </InnerContainer>
-      </ScrollBoxWrapper>
+                )}
+              </GasEstimationCacheableComponent>
+            </>
+          ))}
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={decrementView}>
@@ -389,7 +345,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           />
         }
       />
-    </Container>
+    </>
   )
 }
 

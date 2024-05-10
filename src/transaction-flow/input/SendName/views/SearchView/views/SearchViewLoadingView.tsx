@@ -3,9 +3,10 @@ import styled, { css } from 'styled-components'
 import { Spinner } from '@ensdomains/thorin'
 
 const Container = styled.div(
-  () => css`
+  ({ theme }) => css`
     width: 100%;
     height: 100%;
+    min-height: ${theme.space['40']};
     display: flex;
     align-items: center;
     justify-content: center;

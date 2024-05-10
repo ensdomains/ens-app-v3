@@ -1,6 +1,5 @@
 import { Control, UseFormRegister, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 import {
   ChildFuseKeys,
@@ -9,27 +8,24 @@ import {
 } from '@ensdomains/ensjs/utils'
 import { CheckboxRow, Dialog } from '@ensdomains/thorin'
 
-import type { FormData } from '../RevokePermissions-flow'
+import type { FormData, RevokePermissionsDialogContentProps } from '../RevokePermissions-flow'
 
 type Props = {
   register: UseFormRegister<FormData>
   control: Control<FormData>
   unburnedFuses: (ChildFuseReferenceType['Key'] | ParentFuseReferenceType['Key'])[]
-}
+} & RevokePermissionsDialogContentProps
 
 const CHILD_FUSES_WITHOUT_CU: ChildFuseReferenceType['Key'][] = ChildFuseKeys.filter(
   (fuse) => fuse !== 'CANNOT_UNWRAP',
 )
 
-const PermissionsList = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space[2]};
-  `,
-)
-
-export const ParentRevokePermissionsView = ({ register, control, unburnedFuses }: Props) => {
+export const ParentRevokePermissionsView = ({
+  register,
+  control,
+  unburnedFuses,
+  ...dialogContentProps
+}: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const unwrapped = useWatch({ control, name: 'childFuses.CANNOT_UNWRAP' })
@@ -39,7 +35,7 @@ export const ParentRevokePermissionsView = ({ register, control, unburnedFuses }
   return (
     <>
       <Dialog.Heading title={t('input.revokePermissions.views.revokePermissions.title')} />
-      <PermissionsList>
+      <Dialog.Content {...dialogContentProps} gap="2">
         {isCEEUnburned && (
           <CheckboxRow
             data-testid="checkbox-CAN_EXTEND_EXPIRY"
@@ -61,7 +57,7 @@ export const ParentRevokePermissionsView = ({ register, control, unburnedFuses }
             {...register(`childFuses.${fuse}`)}
           />
         ))}
-      </PermissionsList>
+      </Dialog.Content>
     </>
   )
 }

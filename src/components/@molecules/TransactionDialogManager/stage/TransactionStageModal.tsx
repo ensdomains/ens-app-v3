@@ -18,7 +18,6 @@ import {
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import CircleTickSVG from '@app/assets/CircleTick.svg'
 import WalletSVG from '@app/assets/Wallet.svg'
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
@@ -519,7 +518,7 @@ export const TransactionStageModal = ({
   return (
     <>
       <Dialog.Heading title={t(`transaction.dialog.${stage}.title`)} />
-      <InnerDialog data-testid="transaction-modal-inner">
+      <Dialog.Content data-testid="transaction-modal-inner">
         {MiddleContent}
         {upperError && <Helper type="error">{t(upperError)}</Helper>}
         {FilledDisplayItems}
@@ -530,7 +529,7 @@ export const TransactionStageModal = ({
           </Outlink>
         )}
         {lowerError && <Helper type="error">{lowerError}</Helper>}
-      </InnerDialog>
+      </Dialog.Content>
       <Dialog.Footer
         currentStep={currentStep}
         stepCount={stepCount > 1 ? stepCount : undefined}

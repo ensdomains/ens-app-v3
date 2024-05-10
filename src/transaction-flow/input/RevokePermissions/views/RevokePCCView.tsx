@@ -7,13 +7,13 @@ import { CheckboxRow, Dialog, Typography } from '@ensdomains/thorin'
 
 import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
 
-import type { FormData } from '../RevokePermissions-flow'
+import type { FormData, RevokePermissionsDialogContentProps } from '../RevokePermissions-flow'
 
 type Props = {
   managerAddress: Address
   register: UseFormRegister<FormData>
   onDismiss: () => void
-}
+} & RevokePermissionsDialogContentProps
 
 const CenterAlignedTypography = styled(Typography)(
   () => css`
@@ -21,7 +21,7 @@ const CenterAlignedTypography = styled(Typography)(
   `,
 )
 
-export const RevokePCCView = ({ managerAddress, register }: Props) => {
+export const RevokePCCView = ({ managerAddress, register, ...dialogContentProps }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const { data: { nameOrAddr } = {} } = usePrimaryNameOrAddress({ address: managerAddress })
@@ -29,18 +29,20 @@ export const RevokePCCView = ({ managerAddress, register }: Props) => {
   return (
     <>
       <Dialog.Heading title={t('input.revokePermissions.views.revokePCC.title')} />
-      <CenterAlignedTypography fontVariant="body" color="text">
-        <Trans
-          i18nKey="input.revokePermissions.views.revokePCC.subtitle"
-          t={t}
-          values={{ account: nameOrAddr }}
+      <Dialog.Content {...dialogContentProps}>
+        <CenterAlignedTypography fontVariant="body" color="text">
+          <Trans
+            i18nKey="input.revokePermissions.views.revokePCC.subtitle"
+            t={t}
+            values={{ account: nameOrAddr }}
+          />
+        </CenterAlignedTypography>
+        <CheckboxRow
+          data-testid="checkbox-pcc"
+          label={t('input.revokePermissions.views.revokePCC.title')}
+          {...register('parentFuses.PARENT_CANNOT_CONTROL')}
         />
-      </CenterAlignedTypography>
-      <CheckboxRow
-        data-testid="checkbox-pcc"
-        label={t('input.revokePermissions.views.revokePCC.title')}
-        {...register('parentFuses.PARENT_CANNOT_CONTROL')}
-      />
+      </Dialog.Content>
     </>
   )
 }

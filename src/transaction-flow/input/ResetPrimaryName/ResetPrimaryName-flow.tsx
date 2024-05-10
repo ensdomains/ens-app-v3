@@ -1,13 +1,11 @@
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
-
 import { createTransactionItem } from '../../transaction'
 import { TransactionDialogPassthrough } from '../../types'
+import { CenteredTypography } from '../ProfileEditor/components/CenteredTypography'
 
 type Data = {
   address: Address
@@ -17,12 +15,6 @@ type Data = {
 export type Props = {
   data: Data
 } & TransactionDialogPassthrough
-
-const StyledInnerDialog = styled(InnerDialog)(
-  () => css`
-    text-align: center;
-  `,
-)
 
 const ResetPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
@@ -45,7 +37,9 @@ const ResetPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) => 
   return (
     <>
       <Dialog.Heading alert="warning" title={t('input.resetPrimaryName.title')} />
-      <StyledInnerDialog>{t('input.resetPrimaryName.description')}</StyledInnerDialog>
+      <Dialog.Content>
+        <CenteredTypography>{t('input.resetPrimaryName.description')}</CenteredTypography>
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={onDismiss}>

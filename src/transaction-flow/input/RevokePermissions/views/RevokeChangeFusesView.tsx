@@ -4,26 +4,28 @@ import { useTranslation } from 'react-i18next'
 import { CheckboxRow, Dialog } from '@ensdomains/thorin'
 
 import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
-import type { FormData } from '../RevokePermissions-flow'
+import type { FormData, RevokePermissionsDialogContentProps } from '../RevokePermissions-flow'
 
 type Props = {
   register: UseFormRegister<FormData>
-}
+} & RevokePermissionsDialogContentProps
 
-export const RevokeChangeFusesView = ({ register }: Props) => {
+export const RevokeChangeFusesView = ({ register, ...dialogContentProps }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   return (
     <>
       <Dialog.Heading title={t('input.revokePermissions.views.revokeChangeFuses.title')} />
-      <CenterAlignedTypography>
-        {t('input.revokePermissions.views.revokeChangeFuses.subtitle')}
-      </CenterAlignedTypography>
-      <CheckboxRow
-        data-testid="checkbox-CANNOT_BURN_FUSES"
-        label={t('input.revokePermissions.views.revokeChangeFuses.fuses.CANNOT_BURN_FUSES')}
-        {...register('childFuses.CANNOT_BURN_FUSES')}
-      />
+      <Dialog.Content {...dialogContentProps}>
+        <CenterAlignedTypography>
+          {t('input.revokePermissions.views.revokeChangeFuses.subtitle')}
+        </CenterAlignedTypography>
+        <CheckboxRow
+          data-testid="checkbox-CANNOT_BURN_FUSES"
+          label={t('input.revokePermissions.views.revokeChangeFuses.fuses.CANNOT_BURN_FUSES')}
+          {...register('childFuses.CANNOT_BURN_FUSES')}
+        />
+      </Dialog.Content>
     </>
   )
 }

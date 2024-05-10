@@ -1,12 +1,12 @@
 /* eslint-disable no-nested-ternary */
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 import { useChainId } from 'wagmi'
 
-import { Button, Dialog, mq, PlusSVG, ScrollBox } from '@ensdomains/thorin'
+import { Button, Dialog, mq, PlusSVG } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
@@ -33,20 +33,6 @@ import { getResolverWrapperAwareness } from '@app/utils/utils'
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
 
-const Container = styled.form(({ theme }) => [
-  css`
-    width: 100%;
-    max-height: min(80vh, 600px);
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space['4']};
-  `,
-  mq.sm.min(css`
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-  `),
-])
-
 const AvatarWrapper = styled.div(
   () => css`
     display: flex;
@@ -54,43 +40,11 @@ const AvatarWrapper = styled.div(
   `,
 )
 
-const StyledScrollBox = styled(ScrollBox)(
-  ({ theme }) => css`
-    margin-right: -${theme.space['2']};
-    flex: 1;
-  `,
-)
-
-const ScrollContentContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 100%;
-    gap: ${theme.space['4']};
-    padding-right: ${theme.space['1']};
-    padding-bottom: ${theme.space['4']};
-  `,
-)
-
-const Divider = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space.full};
-    height: ${theme.space.px};
-    background: ${theme.colors.border};
-
-    /* stylelint-disable-next-line value-no-vendor-prefix */
-    position: -webkit-sticky;
-    position: sticky;
-    bottom: 0;
-  `,
-)
-
 const ButtonContainer = styled.div(
-  () => css`
+  ({ theme }) => css`
     display: flex;
     justify-content: center;
+    padding-bottom: ${theme.space['4']};
   `,
 )
 
@@ -119,11 +73,13 @@ const SubmitButton = ({
   previousRecords,
   disabled: _disabled,
   canEdit = true,
+  onClick,
 }: {
   control: Control<ProfileEditorForm>
   previousRecords: ProfileRecord[]
   disabled: boolean
   canEdit: boolean
+  onClick: () => void
 }) => {
   const { t } = useTranslation('common')
 
@@ -135,7 +91,7 @@ const SubmitButton = ({
   const disabled = _disabled || recordsDiff.length === 0
 
   return canEdit ? (
-    <Button type="submit" disabled={disabled} data-testid="profile-submit-button">
+    <Button disabled={disabled} data-testid="profile-submit-button" onClick={onClick}>
       {t('action.save', { ns: 'common' })}
     </Button>
   ) : (
@@ -155,6 +111,7 @@ const SubmitButton = ({
 const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('register')
 
+  const formRef = useRef<HTMLFormElement>(null)
   const [view, setView] = useState<'editor' | 'upload' | 'nft' | 'addRecord' | 'warning'>('editor')
 
   const { name = '', resumable = false } = data
@@ -283,89 +240,87 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
 
   return (
-    <Container
-      data-testid="profile-editor"
-      onSubmit={handleSubmit((_data, event) => {
-        event?.preventDefault()
-        handleCreateTransaction(_data)
-      })}
-    >
+    <>
       {
         {
           editor: (
             <>
               <Dialog.Heading title={t('steps.profile.title2')} />
-              <StyledScrollBox hideDividers={{ bottom: true }}>
-                <ScrollContentContainer>
-                  <AvatarWrapper>
-                    <WrappedAvatarButton
-                      name={name}
-                      control={control}
-                      src={avatarSrc}
-                      onSelectOption={(option) => setView(option)}
-                      onAvatarChange={(avatar) => setAvatar(avatar)}
-                      onAvatarFileChange={(file) => setAvatarFile(file)}
-                      onAvatarSrcChange={(src) => setAvatarSrc(src)}
+              <Dialog.Content
+                as="form"
+                ref={formRef}
+                onSubmit={handleSubmit((_data) => {
+                  handleCreateTransaction(_data)
+                })}
+                alwaysShowDividers={{ bottom: true }}
+              >
+                <AvatarWrapper>
+                  <WrappedAvatarButton
+                    name={name}
+                    control={control}
+                    src={avatarSrc}
+                    onSelectOption={(option) => setView(option)}
+                    onAvatarChange={(avatar) => setAvatar(avatar)}
+                    onAvatarFileChange={(file) => setAvatarFile(file)}
+                    onAvatarSrcChange={(src) => setAvatarSrc(src)}
+                  />
+                </AvatarWrapper>
+                {profileRecords.map((field, index) =>
+                  field.group === 'custom' ? (
+                    <CustomProfileRecordInput
+                      key={field.id}
+                      register={register}
+                      trigger={trigger}
+                      index={index}
+                      validator={validatorForRecord(field)}
+                      validated={isDirtyForRecordAtIndex(index)}
+                      error={errorForRecordAtIndex(index, 'key')}
+                      onDelete={() => handleDeleteRecord(field, index)}
                     />
-                  </AvatarWrapper>
-                  {profileRecords.map((field, index) =>
-                    field.group === 'custom' ? (
-                      <CustomProfileRecordInput
-                        key={field.id}
-                        register={register}
-                        trigger={trigger}
-                        index={index}
-                        validator={validatorForRecord(field)}
-                        validated={isDirtyForRecordAtIndex(index)}
-                        error={errorForRecordAtIndex(index, 'key')}
-                        onDelete={() => handleDeleteRecord(field, index)}
-                      />
-                    ) : field.key === 'description' ? (
-                      <ProfileRecordTextarea
-                        key={field.id}
-                        recordKey={field.key}
-                        label={labelForRecord(field)}
-                        secondaryLabel={secondaryLabelForRecord(field)}
-                        placeholder={placeholderForRecord(field)}
-                        error={errorForRecordAtIndex(index)}
-                        validated={isDirtyForRecordAtIndex(index)}
-                        onDelete={() => handleDeleteRecord(field, index)}
-                        {...register(`records.${index}.value`, {
-                          validate: validatorForRecord(field),
-                        })}
-                      />
-                    ) : (
-                      <ProfileRecordInput
-                        key={field.id}
-                        recordKey={field.key}
-                        group={field.group}
-                        label={labelForRecord(field)}
-                        secondaryLabel={secondaryLabelForRecord(field)}
-                        placeholder={placeholderForRecord(field)}
-                        error={errorForRecordAtIndex(index)}
-                        validated={isDirtyForRecordAtIndex(index)}
-                        onDelete={() => handleDeleteRecord(field, index)}
-                        {...register(`records.${index}.value`, {
-                          validate: validatorForRecord(field),
-                        })}
-                      />
-                    ),
-                  )}
-                  <ButtonContainer>
-                    <ButtonWrapper>
-                      <Button
-                        size="medium"
-                        onClick={handleShowAddRecordModal}
-                        data-testid="show-add-profile-records-modal-button"
-                        prefix={<PlusSVG />}
-                      >
-                        {t('steps.profile.addMore')}
-                      </Button>
-                    </ButtonWrapper>
-                  </ButtonContainer>
-                </ScrollContentContainer>
-                <Divider />
-              </StyledScrollBox>
+                  ) : field.key === 'description' ? (
+                    <ProfileRecordTextarea
+                      key={field.id}
+                      recordKey={field.key}
+                      label={labelForRecord(field)}
+                      secondaryLabel={secondaryLabelForRecord(field)}
+                      placeholder={placeholderForRecord(field)}
+                      error={errorForRecordAtIndex(index)}
+                      validated={isDirtyForRecordAtIndex(index)}
+                      onDelete={() => handleDeleteRecord(field, index)}
+                      {...register(`records.${index}.value`, {
+                        validate: validatorForRecord(field),
+                      })}
+                    />
+                  ) : (
+                    <ProfileRecordInput
+                      key={field.id}
+                      recordKey={field.key}
+                      group={field.group}
+                      label={labelForRecord(field)}
+                      secondaryLabel={secondaryLabelForRecord(field)}
+                      placeholder={placeholderForRecord(field)}
+                      error={errorForRecordAtIndex(index)}
+                      validated={isDirtyForRecordAtIndex(index)}
+                      onDelete={() => handleDeleteRecord(field, index)}
+                      {...register(`records.${index}.value`, {
+                        validate: validatorForRecord(field),
+                      })}
+                    />
+                  ),
+                )}
+                <ButtonContainer>
+                  <ButtonWrapper>
+                    <Button
+                      size="medium"
+                      onClick={handleShowAddRecordModal}
+                      data-testid="show-add-profile-records-modal-button"
+                      prefix={<PlusSVG />}
+                    >
+                      {t('steps.profile.addMore')}
+                    </Button>
+                  </ButtonWrapper>
+                </ButtonContainer>
+              </Dialog.Content>
               <Dialog.Footer
                 leading={
                   <Button
@@ -387,6 +342,11 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     disabled={hasErrors}
                     previousRecords={existingRecords}
                     canEdit={canEditRecordsWhenWrapped}
+                    onClick={() =>
+                      formRef.current?.dispatchEvent(
+                        new Event('submit', { cancelable: true, bubbles: true }),
+                      )
+                    }
                   />
                 }
               />
@@ -448,7 +408,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           ),
         }[view]
       }
-    </Container>
+    </>
   )
 }
 
