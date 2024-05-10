@@ -7,7 +7,7 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       refetchOnMount: true,
       staleTime: 1_000 * 12,
-      gcTime: 1_000 * 60 * 60 * 0.5,
+      gcTime: 1_000 * 60 * 60 * 24,
       queryKeyHashFn: hashFn,
     },
   },
