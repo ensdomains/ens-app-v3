@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { usePreviousDistinct } from 'react-use'
 import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
@@ -20,15 +21,16 @@ import {
 
 import MoonpayLogo from '@app/assets/MoonpayLogo.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
 import { Card } from '@app/components/Card'
 import { ConnectButton } from '@app/components/ConnectButton'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { ONE_DAY, ONE_YEAR } from '@app/utils/time'
 
 import FullInvoice from '../../FullInvoice'
 import {
@@ -374,7 +376,7 @@ export type ActionButtonProps = {
   initiateMoonpayRegistrationMutation: ReturnType<
     typeof useMoonpayRegistration
   >['initiateMoonpayRegistrationMutation']
-  years: number
+  seconds: number
   balance: GetBalanceData | undefined
   totalRequiredBalance?: bigint
 }
@@ -387,7 +389,7 @@ export const ActionButton = ({
   reverseRecord,
   callback,
   initiateMoonpayRegistrationMutation,
-  years,
+  seconds,
   balance,
   totalRequiredBalance,
 }: ActionButtonProps) => {
@@ -407,7 +409,7 @@ export const ActionButton = ({
     return (
       <Button
         data-testid="next-button"
-        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+        onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
       >
         {t('action.tryAgain', { ns: 'common' })}
       </Button>
@@ -418,7 +420,7 @@ export const ActionButton = ({
       <Button
         loading={initiateMoonpayRegistrationMutation.isPending}
         data-testid="next-button"
-        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+        onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
         disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isPending}
       >
         {t('action.next', { ns: 'common' })}
@@ -446,7 +448,7 @@ export const ActionButton = ({
   return (
     <Button
       data-testid="next-button"
-      onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+      onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
       disabled={!paymentMethodChoice}
     >
       {t('action.next', { ns: 'common' })}
@@ -470,6 +472,8 @@ export type PricingProps = {
   >['initiateMoonpayRegistrationMutation']
 }
 
+const minSeconds = 28 * ONE_DAY
+
 const Pricing = ({
   name,
   gracePeriodEndDate,
@@ -488,7 +492,8 @@ const Pricing = ({
   const { data: balance } = useBalance({ address })
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
-  const [years, setYears] = useState(registrationData.years)
+  const [seconds, setSeconds] = useState(() => registrationData.seconds ?? ONE_YEAR)
+
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,
   )
@@ -524,43 +529,45 @@ const Pricing = ({
     registrationData: {
       ...registrationData,
       reverseRecord,
-      years,
+      seconds,
       records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
       clearRecords: resolverExists,
       resolverAddress,
     },
   })
-  const { hasPremium, premiumFee, gasPrice, yearlyFee, totalYearlyFee, estimatedGasFee } =
-    fullEstimate
 
-  const yearlyRequiredBalance = totalYearlyFee ? (totalYearlyFee * 110n) / 100n : undefined
-  const totalRequiredBalance = yearlyRequiredBalance
-    ? yearlyRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)
-    : undefined
+  const { hasPremium, premiumFee, gasPrice, yearlyFee, totalDurationBasedFee, estimatedGasFee } =
+    fullEstimate
+  const durationRequiredBalance = totalDurationBasedFee ? (totalDurationBasedFee * 110n) / 100n : 0n
+  const totalRequiredBalance = durationRequiredBalance
+    ? durationRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)
+    : 0n
+
+  const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
+
+  const unsafeDisplayYearlyFee = yearlyFee === 0n ? previousYearlyFee : yearlyFee
 
   const showPaymentChoice = !isPrimaryLoading && address
+
+  const previousEstimatedGasFee = usePreviousDistinct(estimatedGasFee) || 0n
+
+  const unsafeDisplayEstimatedGasFee =
+    estimatedGasFee === 0n ? previousEstimatedGasFee : estimatedGasFee
+
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
-      <PlusMinusControl
-        minValue={1}
-        value={years}
-        onChange={(e) => {
-          const newYears = parseInt(e.target.value)
-          if (!Number.isNaN(newYears)) setYears(newYears)
-        }}
-        highlighted
-      />
+      <DateSelection {...{ seconds, setSeconds, minSeconds }} />
       <FullInvoice {...fullEstimate} />
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={name} />
       ) : (
-        !!yearlyFee &&
-        !!estimatedGasFee &&
+        !!unsafeDisplayYearlyFee &&
+        !!unsafeDisplayEstimatedGasFee &&
         !!gasPrice && (
           <RegistrationTimeComparisonBanner
-            rentFee={yearlyFee}
-            transactionFee={estimatedGasFee}
+            yearlyFee={unsafeDisplayYearlyFee}
+            transactionFee={unsafeDisplayEstimatedGasFee}
             message={t('steps.pricing.multipleYearsMessage')}
           />
         )
@@ -591,7 +598,7 @@ const Pricing = ({
             reverseRecord,
             callback,
             initiateMoonpayRegistrationMutation,
-            years,
+            seconds,
             balance,
             totalRequiredBalance,
           }}

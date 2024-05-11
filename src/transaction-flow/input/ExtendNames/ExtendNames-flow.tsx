@@ -6,13 +6,23 @@ import { match, P } from 'ts-pattern'
 import { parseEther } from 'viem'
 import { useAccount, useBalance, useEnsAvatar } from 'wagmi'
 
-import { Avatar, Button, CurrencyToggle, Dialog, Helper, mq, Typography } from '@ensdomains/thorin'
+import {
+  Avatar,
+  Button,
+  CurrencyToggle,
+  Dialog,
+  Helper,
+  mq,
+  ScrollBox,
+  Typography,
+} from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
+import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
@@ -20,23 +30,55 @@ import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
+import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
-import { yearsToSeconds } from '@app/utils/utils'
+import { deriveYearlyFee, formatDuration } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
 
 type View = 'name-list' | 'no-ownership-warning' | 'registration'
 
-const PlusMinusWrapper = styled.div(({ theme }) => [
-  css`
+const Container = styled.form(
+  ({ theme }) => css`
+    display: flex;
     width: 100%;
-    max-width: ${theme.space['80']};
+    max-height: 60vh;
+    flex-direction: column;
+    align-items: center;
+    gap: ${theme.space['4']};
+
+    ${mq.sm.min(css`
+      width: calc(80vw - 2 * ${theme.space['6']});
+      max-width: ${theme.space['128']};
+    `)}
+  `,
+)
+
+const ScrollBoxWrapper = styled(ScrollBox)(
+  ({ theme }) => css`
+    width: 100%;
+    padding-right: ${theme.space['2']};
+    margin-right: -${theme.space['2']};
+  `,
+)
+
+const InnerContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: ${theme.space['4']};
+  `,
+)
+
+const PlusMinusWrapper = styled.div(
+  () => css`
+    width: 100%;
     overflow: hidden;
     display: flex;
   `,
-  mq.sm.min(css``),
-])
+)
 
 const OptionBar = styled(CacheableComponent)(
   () => css`
@@ -165,8 +207,10 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
+const minSeconds = ONE_DAY
+
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
-  const { t } = useTranslation('transactionFlow')
+  const { t } = useTranslation(['transactionFlow', 'common'])
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
@@ -190,20 +234,26 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const decrementView = () => (viewIdx <= 0 ? onDismiss() : setViewIdx(viewIdx - 1))
   const view = flow[viewIdx]
 
-  const [years, setYears] = useState(1)
-  const duration = yearsToSeconds(years)
+  const [seconds, setSeconds] = useState(ONE_YEAR)
+
+  const years = secondsToYears(seconds)
 
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
   const { data: priceData, isLoading: isPriceLoading } = usePrice({
     nameOrNames: names,
-    duration: yearsToSeconds(1),
+    duration: seconds,
   })
-  const rentFee = priceData ? priceData.base + priceData.premium : undefined
-  const totalRentFee = rentFee ? BigInt(rentFee) * BigInt(years) : undefined
+
+  const totalRentFee = priceData ? priceData.base + priceData.premium : 0n
+  const yearlyFee = priceData?.base ? deriveYearlyFee({ duration: seconds, price: priceData }) : 0n
+  const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
+  const unsafeDisplayYearlyFee = yearlyFee !== 0n ? yearlyFee : previousYearlyFee
+  const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
+
   const transactions = [
-    createTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee! }),
+    createTransactionItem('extendNames', { names, duration: seconds, rentPrice: totalRentFee! }),
   ]
 
   const {
@@ -216,8 +266,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
       {
         name: 'extendNames',
         data: {
+          duration: seconds,
           names,
-          duration,
           rentPrice: totalRentFee!,
         },
         stateOverride: [
@@ -229,17 +279,20 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
         ],
       },
     ],
-    enabled: !!rentFee,
+    enabled: !!totalRentFee,
   })
 
   const previousTransactionFee = usePreviousDistinct(transactionFee) || 0n
 
-  const unsafeDisplayTransactionFee = transactionFee > 0n ? transactionFee : previousTransactionFee
-  const isShowingPrevious = transactionFee === 0n && previousTransactionFee > 0n
+  const unsafeDisplayTransactionFee =
+    transactionFee !== 0n ? transactionFee : previousTransactionFee
+  const isShowingPreviousTransactionFee = transactionFee === 0n && previousTransactionFee > 0n
 
   const items: InvoiceItem[] = [
     {
-      label: t('input.extendNames.invoice.extension', { count: years }),
+      label: t('input.extendNames.invoice.extension', {
+        time: formatDuration(seconds, t),
+      }),
       value: totalRentFee,
       bufferPercentage: 102n,
     },
@@ -278,59 +331,77 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
       children: t('action.next', { ns: 'common' }),
     }))
 
+  const { data: expiryData } = useExpiry({ enabled: names.length > 1, name: names[0] })
+
   return (
-    <>
+    <Container data-testid="extend-names-modal">
       <Dialog.Heading title={title} alert={alert} />
-      <Dialog.Content data-testid="extend-names-modal">
-        {match(view)
-          .with('name-list', () => <NamesList names={names} />)
-          .with('no-ownership-warning', () => (
-            <CenteredMessage>
-              {t('input.extendNames.ownershipWarning.description', { count: names.length })}
-            </CenteredMessage>
-          ))
-          .otherwise(() => (
-            <>
-              <PlusMinusWrapper>
-                <PlusMinusControl
-                  minValue={1}
-                  value={years}
-                  onChange={(e) => {
-                    const newYears = parseInt(e.target.value)
-                    if (!Number.isNaN(newYears)) setYears(newYears)
-                  }}
-                />
-              </PlusMinusWrapper>
-              <OptionBar $isCached={isPriceLoading}>
-                <GasDisplay gasPrice={gasPrice} />
-                <CurrencyToggle
-                  size="small"
-                  checked={userConfig.currency === 'fiat'}
-                  onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
-                  data-testid="extend-names-currency-toggle"
-                />
-              </OptionBar>
-              <GasEstimationCacheableComponent
-                $isCached={isEstimateGasLoading || isShowingPrevious}
-              >
-                <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
-                {(!!estimateGasLimitError ||
-                  (!!estimatedGasLimit &&
-                    !!balance?.value &&
-                    balance.value < estimatedGasLimit)) && (
-                  <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
-                )}
-                {!!rentFee && !!unsafeDisplayTransactionFee && (
-                  <RegistrationTimeComparisonBanner
-                    rentFee={rentFee}
-                    transactionFee={unsafeDisplayTransactionFee}
-                    message={t('input.extendNames.bannerMsg')}
+      <ScrollBoxWrapper>
+        <InnerContainer>
+          {match(view)
+            .with('name-list', () => <NamesList names={names} />)
+            .with('no-ownership-warning', () => (
+              <CenteredMessage>
+                {t('input.extendNames.ownershipWarning.description', { count: names.length })}
+              </CenteredMessage>
+            ))
+            .otherwise(() => (
+              <>
+                <PlusMinusWrapper>
+                  {names.length === 1 ? (
+                    <DateSelection
+                      {...{ seconds, setSeconds }}
+                      name={names[0]}
+                      minSeconds={minSeconds}
+                      mode="extend"
+                      expiry={Number(expiryData?.expiry.value)}
+                    />
+                  ) : (
+                    <PlusMinusControl
+                      minValue={1}
+                      value={years}
+                      onChange={(e) => {
+                        const newYears = parseInt(e.target.value)
+                        if (!Number.isNaN(newYears)) setSeconds(yearsToSeconds(newYears))
+                      }}
+                    />
+                  )}
+                </PlusMinusWrapper>
+                <OptionBar $isCached={isPriceLoading}>
+                  <GasDisplay gasPrice={gasPrice} />
+                  <CurrencyToggle
+                    size="small"
+                    checked={userConfig.currency === 'fiat'}
+                    onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
+                    data-testid="extend-names-currency-toggle"
                   />
-                )}
-              </GasEstimationCacheableComponent>
-            </>
-          ))}
-      </Dialog.Content>
+                </OptionBar>
+                <GasEstimationCacheableComponent
+                  $isCached={
+                    isEstimateGasLoading ||
+                    isShowingPreviousTransactionFee ||
+                    isShowingPreviousYearlyFee
+                  }
+                >
+                  <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
+                  {(!!estimateGasLimitError ||
+                    (!!estimatedGasLimit &&
+                      !!balance?.value &&
+                      balance.value < estimatedGasLimit)) && (
+                    <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
+                  )}
+                  {!!unsafeDisplayYearlyFee && !!unsafeDisplayTransactionFee && (
+                    <RegistrationTimeComparisonBanner
+                      yearlyFee={unsafeDisplayYearlyFee}
+                      transactionFee={unsafeDisplayTransactionFee}
+                      message={t('input.extendNames.bannerMsg')}
+                    />
+                  )}
+                </GasEstimationCacheableComponent>
+              </>
+            ))}
+        </InnerContainer>
+      </ScrollBoxWrapper>
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={decrementView}>
@@ -345,7 +416,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           />
         }
       />
-    </>
+    </Container>
   )
 }
 

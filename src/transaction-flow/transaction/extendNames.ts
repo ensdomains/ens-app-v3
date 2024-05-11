@@ -6,15 +6,13 @@ import { renewNames } from '@ensdomains/ensjs/wallet'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { makeDisplay } from '@app/utils/currency'
 
-import { calculateValueWithBuffer, secondsToYears } from '../../utils/utils'
+import { calculateValueWithBuffer, formatDuration } from '../../utils/utils'
 
 type Data = {
   names: string[]
   duration: number
   rentPrice: bigint
 }
-
-const toSingleDecimal = (duration: number) => parseFloat(secondsToYears(duration).toFixed(1))
 
 const displayItems = (
   { names, rentPrice, duration }: Data,
@@ -31,7 +29,7 @@ const displayItems = (
   },
   {
     label: 'duration',
-    value: t('unit.years', { count: toSingleDecimal(duration) }),
+    value: formatDuration(duration, t),
   },
   {
     label: 'cost',
@@ -39,7 +37,7 @@ const displayItems = (
       ns: 'transactionFlow',
       value: makeDisplay({
         value: calculateValueWithBuffer(rentPrice),
-        symbol: 'ETH',
+        symbol: 'eth',
       }),
     }),
   },

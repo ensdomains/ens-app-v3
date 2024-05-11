@@ -1,6 +1,8 @@
-import { FallbackTransport, HttpTransport } from 'viem'
+import { createClient, type FallbackTransport, type HttpTransport, type Transport } from 'viem'
 import { createConfig, createStorage, fallback, http } from 'wagmi'
 import { goerli, holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
+
+import { ccipRequest } from '@ensdomains/ensjs/utils'
 
 import {
   goerliWithEns,
@@ -23,7 +25,7 @@ const connectors = getDefaultWallets({
 const infuraKey = process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
 const tenderlyKey = process.env.NEXT_PUBLIC_TENDERLY_KEY || '4imxc4hQfRjxrVB2kWKvTo'
 
-const infuraUrl = (chainName: string) => `https://${chainName}.infura.io/v3/${infuraKey}`
+export const infuraUrl = (chainName: string) => `https://${chainName}.infura.io/v3/${infuraKey}`
 const cloudflareUrl = (chainName: string) => `https://web3.ens.domains/v1/${chainName}`
 const tenderlyUrl = (chainName: string) => `https://${chainName}.gateway.tenderly.co/${tenderlyKey}`
 
@@ -86,31 +88,43 @@ const chains = [
   holeskyWithEns,
 ] as const
 
+const transports = {
+  ...(isLocalProvider
+    ? ({
+        [localhost.id]: http(process.env.NEXT_PUBLIC_PROVIDER!) as unknown as FallbackTransport,
+      } as const)
+    : ({} as unknown as {
+        // this is a hack to make the types happy, dont remove pls
+        [localhost.id]: HttpTransport
+      })),
+  [mainnet.id]: initialiseTransports('mainnet', [infuraUrl, cloudflareUrl, tenderlyUrl]),
+  [sepolia.id]: initialiseTransports('sepolia', [infuraUrl, cloudflareUrl, tenderlyUrl]),
+  [goerli.id]: initialiseTransports('goerli', [infuraUrl, cloudflareUrl, tenderlyUrl]),
+  [holesky.id]: initialiseTransports('holesky', [tenderlyUrl]),
+} as const
+
 const wagmiConfig_ = createConfig({
   connectors,
   ssr: true,
   multiInjectedProviderDiscovery: true,
-  batch: {
-    multicall: {
-      batchSize: 8196,
-      wait: 50,
-    },
-  },
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
   chains,
-  transports: {
-    ...(isLocalProvider
-      ? ({
-          [localhost.id]: http(process.env.NEXT_PUBLIC_PROVIDER!) as unknown as FallbackTransport,
-        } as const)
-      : ({} as unknown as {
-          // this is a hack to make the types happy, dont remove pls
-          [localhost.id]: HttpTransport
-        })),
-    [mainnet.id]: initialiseTransports('mainnet', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-    [sepolia.id]: initialiseTransports('sepolia', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-    [goerli.id]: initialiseTransports('goerli', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-    [holesky.id]: initialiseTransports('holesky', [tenderlyUrl]),
+  client: ({ chain }) => {
+    const chainId = chain.id
+
+    return createClient<Transport, typeof chain>({
+      chain,
+      batch: {
+        multicall: {
+          batchSize: 8196,
+          wait: 50,
+        },
+      },
+      transport: (params) => transports[chainId]({ ...params }),
+      ccipRead: {
+        request: ccipRequest(chain),
+      },
+    })
   },
 })
 

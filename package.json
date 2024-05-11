@@ -7,7 +7,7 @@
     "dev:nlocal": "NEXT_PUBLIC_PROVIDER=http://localhost:8545 NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
     "dev:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_AVUP_ENDPOINT=\"http://$(\"hostname\"):8787\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm dev",
     "dev:glocal": "rm -rf .next && NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_ETH_NODE=anvil pnpm dev:nlocal",
-    "dev:gonline": "NEXT_PUBLIC_GRAPH_URI=https://api.thegraph.com/subgraphs/name/tateb/temp-goerli-ens pnpm dev",
+    "dev:gonline": "NEXT_PUBLIC_GRAPH_URI=https://api.studio.thegraph.com/query/49574/ensholesky/version/latest pnpm dev",
     "build": "next build",
     "build:preview": "NEXT_PUBLIC_ENSJS_DEBUG=true next build --profile",
     "build:local": "ANALYZE=true next build",
@@ -51,20 +51,20 @@
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.2.0-beta.0",
-    "@ensdomains/ensjs": "3.5.0-beta.2",
     "@ensdomains/thorin": "workspace:*",
+    "@ensdomains/ensjs": "3.7.0",
     "@metamask/mobile-provider": "^2.1.0",
     "@metamask/post-message-stream": "^6.1.2",
     "@metamask/providers": "^14.0.2",
     "@noble/hashes": "^1.3.2",
-    "@rainbow-me/rainbowkit": "2.0.1",
+    "@rainbow-me/rainbowkit": "2.0.5",
     "@sentry/nextjs": "^7.43.0",
     "@svgr/webpack": "^8.1.0",
     "@tanstack/query-persist-client-core": "5.22.2",
     "@tanstack/query-sync-storage-persister": "5.22.2",
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-persist-client": "5.22.2",
-    "@wagmi/core": "^2.6.5",
+    "@wagmi/core": "^2.6.16",
     "@walletconnect/ethereum-provider": "^2.11.1",
     "@walletconnect/modal": "^2.6.2",
     "calendar-link": "^2.2.0",
@@ -74,13 +74,13 @@
     "i18next": "^21.9.1",
     "i18next-browser-languagedetector": "^6.1.5",
     "i18next-http-backend": "^1.4.1",
+    "idb-keyval": "^6.2.1",
     "immer": "^9.0.15",
     "intl-segmenter-polyfill": "^0.4.4",
     "iso-639-1": "^2.1.15",
     "lodash": "^4.17.21",
     "markdown-to-jsx": "^7.1.7",
     "next": "13.5.6",
-    "p-memoize": "^7.1.1",
     "pino-pretty": "^10.3.1",
     "react": "^18.2.0",
     "react-confetti": "^6.1.0",
@@ -96,15 +96,15 @@
     "styled-components": "^5.3.5",
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
-    "viem": "^2.7.13",
-    "wagmi": "2.5.7"
+    "viem": "^2.9.15",
+    "wagmi": "2.5.19"
   },
   "peerDependencies": {
     "react": "*",
     "react-dom": "*"
   },
   "devDependencies": {
-    "@adraffy/ens-normalize": "^1.9.4",
+    "@adraffy/ens-normalize": "^1.10.1",
     "@cloudflare/workers-types": "^3.14.1",
     "@ensdomains/buffer": "^0.1.1",
     "@ensdomains/ens-test-env": "^0.5.0-beta.0",
@@ -208,8 +208,7 @@
     },
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
-      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
-      "@wagmi/core@2.6.5": "patches/@wagmi__core@2.6.5.patch"
+      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch"
     }
   }
 }

@@ -2,6 +2,7 @@ import type { Hex } from 'viem'
 import { useAccount } from 'wagmi'
 
 import ProfileContent from '@app/components/pages/profile/[name]/Profile'
+import { useDotBoxAvailabilityOffchain } from '@app/hooks/dotbox/useDotBoxAvailabilityOffchain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -18,6 +19,10 @@ export default function Page() {
 
   const { address } = useAccount()
 
+  const dotBoxResult = useDotBoxAvailabilityOffchain({
+    name: _name,
+  })
+
   const primary = usePrimaryName({ address: address as Hex })
 
   const name = isSelf && primary.data?.name ? primary.data.name : _name
@@ -33,7 +38,20 @@ export default function Page() {
   } = nameDetails
 
   const isLoading =
-    isBasicLoading || isProfileLoading || primary.isLoading || initial || !router.isReady
+    isBasicLoading ||
+    isProfileLoading ||
+    primary.isLoading ||
+    initial ||
+    !router.isReady ||
+    dotBoxResult.isLoading
+
+  if (
+    dotBoxResult?.data?.data.status === 'AVAILABLE' ||
+    dotBoxResult?.data?.data.status === 'UNAVAILABLE'
+  ) {
+    router.push(`/dotbox/${name}`)
+    return null
+  }
 
   if (isViewingExpired && gracePeriodEndDate && gracePeriodEndDate > new Date()) {
     router.push(`/profile/${name}`)

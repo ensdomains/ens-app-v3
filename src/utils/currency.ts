@@ -25,6 +25,9 @@ export const makeDisplay = ({
     options.currency = undefined
     customSymbol = ` ${symbol}`
   } else if (symbol === 'eth') {
+    if (number < 0.00001) {
+      options.maximumSignificantDigits = 1
+    }
     options.minimumFractionDigits = 4
     options.maximumFractionDigits = 4
     options.currencyDisplay = 'name'
