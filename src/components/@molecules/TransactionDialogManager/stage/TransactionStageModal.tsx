@@ -72,7 +72,7 @@ const Bar = styled.div<{ $status: Status }>(
     align-items: center;
     justify-content: flex-start;
 
-    --bar-color: ${theme.colors.blue};
+    --bar-color: ${theme.colors.pink};
 
     ${$status === 'complete' &&
     css`

@@ -135,7 +135,7 @@
         },
         "resetProfile": {
           "title": "Reset profile",
-          "subtitle": "You are resetting your profile records. You will lose all existing profile information, such as ETH address, avatar and social records. These can be re-added by editing your profile."
+          "subtitle": "You are resetting your profile records. You will lose all existing profile information, such as LYX address, avatar and social records. These can be re-added by editing your profile."
         },
         "resolverNotNameWrapperAware": {
           "title": "Resolver incompatible",
@@ -336,7 +336,7 @@
     },
     "resetPrimaryName": {
       "title": "Remove Primary Name",
-      "description": "This name will no longer appear as the name for this address. However, transactions to this name will still resolve to this address unless you remove the ETH record."
+      "description": "This name will no longer appear as the name for this address. However, transactions to this name will still resolve to this address unless you remove the LYX record."
     },
     "sendName": {
       "views": {
@@ -351,7 +351,7 @@
               "message": "Something went wrong. Please try again."
             },
             "intro": {
-              "message": "Search for an ENS name or ETH address"
+              "message": "Search for an UNS name or LYX address"
             },
             "noResults": {
               "message": "No results found"
@@ -375,7 +375,7 @@
               "title": "Summary of changes",
               "updates": {
                 "role": "Update {{role}} role to {{address}}",
-                "eth-record": "Update ETH record to {{address}}"
+                "eth-record": "Update LYX record to {{address}}"
               },
               "remove": {
                 "profile": "Remove profile records"
@@ -420,16 +420,16 @@
     },
     "selectPrimaryName": {
       "updateEthAddress": {
-        "title": "Update ETH address",
-        "description": "The ETH address for this name doesn't match this wallet. To use this as your primary name you will need to update the ETH address first."
+        "title": "Update LYX address",
+        "description": "The LYX address for this name doesn't match this wallet. To use this as your primary name you will need to update the LYX address first."
       },
       "noResolver": {
         "title": "No resolver set",
-        "description": "To use this as your primary name you will need to set a resolver and update the ETH address first."
+        "description": "To use this as your primary name you will need to set a resolver and update the LYX address first."
       },
       "invalidResolver": {
         "title": "Unauthorized resolver set",
-        "description": "To use this as your primary name you will need to set a valid resolver and update the ETH address first."
+        "description": "To use this as your primary name you will need to set a valid resolver and update the LYX address first."
       }
     },
     "multiStepSubnameDelete": {

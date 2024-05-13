@@ -1,10 +1,10 @@
 {
-  "title": "Your web3 username",
-  "description": "Your identity across web3, one name for all your crypto addresses, and your decentralised website.",
+  "title": "Your unique username(s) on LUKSO",
+  "description": "Your identity across dApps on the LUKSO Blockchain, one name for all your crypto addresses, and your decentralised website.",
   "loading": "Loading",
   "unsupportedNetwork": "Unsupported network",
   "notFound": "404 Not Found",
-  "etherscan": "Etherscan",
+  "blockscout": "Blockscout",
   "action": {
     "cancel": "Cancel",
     "change": "Change",
@@ -186,13 +186,13 @@
       "migrateProfile": "Migrate profile",
       "migrateProfileWithReset": "Migrate profile",
       "migrateProfileWithSync": "Migrate and update profile",
-      "migrateProfileWithEthAddress": "Migrate and update ETH address",
+      "migrateProfileWithLyxAddress": "Migrate and update LYX address",
       "wrapName": "Wrap name",
       "updateResolver": "Update resolver",
       "updateProfile": "Update profile",
       "setPrimaryName": "Set primary name",
       "resetPrimaryName": "Remove primary name",
-      "updateEthAddress": "Update ETH address",
+      "updateLyxAddress": "Update LYX address",
       "testSendName": "Send name",
       "burnFuses": "Burn permissions",
       "createSubname": "Create subname",
@@ -220,13 +220,13 @@
       "migrateProfile": "Set existing records on new resolver",
       "migrateProfileWithReset": "Set existing records on new resolver",
       "migrateProfileWithSync": "Set existing records on new resolver",
-      "migrateProfileWithEthAddress": "Set existing records and eth address on new resolver",
+      "migrateProfileWithLyxAddress": "Set existing records and LYX address on new resolver",
       "wrapName": "Wrap the name",
       "updateResolver": "Change resolver to",
       "updateProfile": "Update records on existing resolver",
       "setPrimaryName": "Set the primary name for your address",
-      "updateEthAddress": "Update ETH address to this address",
-      "updateEthAddressOnLatestResolver": "Update ETH address on latest resolver",
+      "updateLyxAddress": "Update LYX address to this address",
+      "updateLyxAddressOnLatestResolver": "Update LYX address on latest resolver",
       "testSendName": "Set the controller and registrant of the name",
       "createSubname": "Create a new subname on the name",
       "burnFuses": "Burn the chosen permissions until name expiry",
@@ -320,7 +320,7 @@
     "error": {
       "unknown": "An unknown error occurred"
     },
-    "viewEtherscan": "View on Etherscan",
+    "viewBlockscout": "View on Blockscout",
     "viewMore": "View More"
   },
   "search": {
@@ -377,8 +377,8 @@
       "title": "Profile editor",
       "description": "An address that can change the profile."
     },
-    "eth-record": {
-      "title": "ETH record",
+    "lyx-record": {
+      "title": "LYX record",
       "description": "The address that this name points to."
     }
   },

@@ -203,7 +203,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
           y2="-172.5"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#44BCF0" />
+          <stop stopColor="#DE3163" />
           <stop offset="0.428185" stopColor="#628BF3" />
           <stop offset="1" stopColor="#A099FF" />
         </linearGradient>

@@ -136,8 +136,8 @@
           "decline": "返回"
         },
         "clearEth": {
-          "title": "清除 ETH 地址?",
-          "description": "如果没有设置 ETH 地址，人们便无法向该名称发送资金。此项可在以后更新。",
+          "title": "清除 LYX 地址?",
+          "description": "如果没有设置 LYX 地址，人们便无法向该名称发送资金。此项可在以后更新。",
           "confirm": "清除",
           "decline": "取消"
         }
@@ -161,13 +161,10 @@
         "等待计时器完成 60 秒计时",
         "完成第二笔交易来获得该名称"
       ],
-      "moonpayItems": [
-        "创建或登录现有的 Moonpay 账户", 
-        "使用信用卡或借记卡完成单笔交易"
-      ],
+      "moonpayItems": ["创建或登录现有的 Moonpay 账户", "使用信用卡或借记卡完成单笔交易"],
       "setupProfile": "我希望先创建我的个人资料",
       "paymentMethod": "支付方式",
-      "notEnoughEth": "钱包中的 ETH 不足",
+      "notEnoughEth": "钱包中的 LYX 不足",
       "creditOrDebit": "信用卡或借记卡",
       "additionalFee": "附加手续费",
       "pendingMoonpayTransaction": "您的 Moonpay 交易正在处理中，这可能需要两分钟。您可以从收到的确认邮件中查看当前进度。",

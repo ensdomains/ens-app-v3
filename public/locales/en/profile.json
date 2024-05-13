@@ -25,7 +25,7 @@
         "setAsPrimaryName": {
           "label": "Set as primary name",
           "title": "Set your primary name",
-          "description": "To set your primary name to this name, the ETH address must match this address."
+          "description": "To set your primary name to this name, the LYX address must match this address."
         },
         "deleteSubname": {
           "label": "Delete subname"
@@ -71,7 +71,6 @@
             "grace-period": {
               "title": "Grace period ends",
               "tooltip": "A 90 day grace window after expiration, when the name can still be extended but not re-registered."
-              
             },
             "registration": {
               "title": "Registered"

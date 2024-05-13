@@ -2,8 +2,6 @@ import styled, { css } from 'styled-components'
 
 import { Button, mq, Typography } from '@ensdomains/thorin'
 
-import GoDaddySVG from '@app/assets/GoDaddy.svg'
-
 import { Card } from '../Card'
 
 const Container = styled(Card)(
@@ -40,13 +38,12 @@ export const Banner = () => {
   return (
     <Container>
       <Row>
-        <GoDaddySVG />
         <div>
           <Typography color="textPrimary" fontVariant="largeBold" weight="bold">
-            GoDaddy x ENS
+            Do not have a Universal Profile yet?
           </Typography>
           <Typography fontVariant="small" color="textSecondary">
-            Import DNS domains with <strong>zero gas</strong>!
+            Install the 🆙 <strong>Browser Extension</strong> 🧩 !
           </Typography>
         </div>
       </Row>

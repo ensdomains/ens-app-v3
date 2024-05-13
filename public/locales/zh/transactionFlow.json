@@ -66,7 +66,7 @@
           "noOptions": "没有可用的地址",
           "placeholder": {
             "default": "在此添加地址",
-            "ETH": "0xD9hbQK...",
+            "LYX": "0xD9hbQK...",
             "BNB": "0xD9hbQK...",
             "BTC": "3FZbgi29...",
             "LTC": "3FZbgi29...",
@@ -134,7 +134,7 @@
         },
         "resetProfile": {
           "title": "重置个人资料",
-          "subtitle": "正在重置您的个人资料记录。当前所有的个人资料信息将会丢失，如 ETH 地址，头像和社交平台等记录。通过编辑您的个人资料可以重新添加这些记录。"
+          "subtitle": "正在重置您的个人资料记录。当前所有的个人资料信息将会丢失，如 LYX 地址，头像和社交平台等记录。通过编辑您的个人资料可以重新添加这些记录。"
         },
         "resolverNotNameWrapperAware": {
           "title": "解析器不兼容",
@@ -308,7 +308,7 @@
     },
     "resetPrimaryName": {
       "title": "移除主名称",
-      "description": "移除后它不会再作为当前地址的名称来显示。但是，发送到该名称的交易仍将解析到当前地址，除非您删除该名称的 ETH 记录。"
+      "description": "移除后它不会再作为当前地址的名称来显示。但是，发送到该名称的交易仍将解析到当前地址，除非您删除该名称的 LYX 记录。"
     }
   },
   "transaction": {
@@ -334,17 +334,17 @@
     },
     "selectPrimaryName": {
       "updateEthAddress": {
-        "title": "更新 ETH 地址",
-        "description": "该名称的 ETH 地址和当前钱包无法匹配。要使用该名称作为您的主名称，您需要先更新该名称的 ETH 地址记录。"
+        "title": "更新 LYX 地址",
+        "description": "该名称的 LYX 地址和当前钱包无法匹配。要使用该名称作为您的主名称，您需要先更新该名称的 LYX 地址记录。"
       },
       "noResolver": {
         "title": "未设置解析器",
-        "description": "要使用该名称作为您的主名称，您需要先设置一个解析器并更新该名称的 ETH 地址记录。"
+        "description": "要使用该名称作为您的主名称，您需要先设置一个解析器并更新该名称的 LYX 地址记录。"
       },
       "invalidResolver": {
         "title": "未经授权的解析器",
-        "description": "要使用此名称作为您的主名称，您需要先设置一个有效的解析器并更新该名称的 ETH 地址记录。"
-      }     
+        "description": "要使用此名称作为您的主名称，您需要先设置一个有效的解析器并更新该名称的 LYX 地址记录。"
+      }
     },
     "multiStepSubnameDelete": {
       "title": "删除子名称",
