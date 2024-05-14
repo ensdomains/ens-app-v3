@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import { UseFormRegister } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -21,28 +22,30 @@ const CenterAlignedTypography = styled(Typography)(
   `,
 )
 
-export const RevokePCCView = ({ managerAddress, register, ...dialogContentProps }: Props) => {
-  const { t } = useTranslation('transactionFlow')
+export const RevokePCCView = forwardRef<HTMLFormElement, Props>(
+  ({ managerAddress, register, ...dialogContentProps }, ref) => {
+    const { t } = useTranslation('transactionFlow')
 
-  const { data: { nameOrAddr } = {} } = usePrimaryNameOrAddress({ address: managerAddress })
+    const { data: { nameOrAddr } = {} } = usePrimaryNameOrAddress({ address: managerAddress })
 
-  return (
-    <>
-      <Dialog.Heading title={t('input.revokePermissions.views.revokePCC.title')} />
-      <Dialog.Content {...dialogContentProps}>
-        <CenterAlignedTypography fontVariant="body" color="text">
-          <Trans
-            i18nKey="input.revokePermissions.views.revokePCC.subtitle"
-            t={t}
-            values={{ account: nameOrAddr }}
+    return (
+      <>
+        <Dialog.Heading title={t('input.revokePermissions.views.revokePCC.title')} />
+        <Dialog.Content {...dialogContentProps} ref={ref}>
+          <CenterAlignedTypography fontVariant="body" color="text">
+            <Trans
+              i18nKey="input.revokePermissions.views.revokePCC.subtitle"
+              t={t}
+              values={{ account: nameOrAddr }}
+            />
+          </CenterAlignedTypography>
+          <CheckboxRow
+            data-testid="checkbox-pcc"
+            label={t('input.revokePermissions.views.revokePCC.title')}
+            {...register('parentFuses.PARENT_CANNOT_CONTROL')}
           />
-        </CenterAlignedTypography>
-        <CheckboxRow
-          data-testid="checkbox-pcc"
-          label={t('input.revokePermissions.views.revokePCC.title')}
-          {...register('parentFuses.PARENT_CANNOT_CONTROL')}
-        />
-      </Dialog.Content>
-    </>
-  )
-}
+        </Dialog.Content>
+      </>
+    )
+  },
+)

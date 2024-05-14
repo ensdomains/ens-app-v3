@@ -1,4 +1,4 @@
-import { ComponentProps, Dispatch, RefObject, useMemo, useRef, useState } from 'react'
+import { ComponentProps, Dispatch, useMemo, useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Address } from 'viem'
@@ -73,9 +73,7 @@ type Data = {
   childFuses: CurrentChildFuses
 } & (FlowWithExpiry | FlowWithoutExpiry)
 
-export type RevokePermissionsDialogContentProps = ComponentProps<typeof Dialog.Content> & {
-  formRef: RefObject<HTMLFormElement>
-}
+export type RevokePermissionsDialogContentProps = ComponentProps<typeof Dialog.Content>
 
 export type Props = {
   data: Data
@@ -314,7 +312,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
 
   const dialogContentProps: RevokePermissionsDialogContentProps = {
     as: 'form',
-    formRef,
+    ref: formRef,
     onSubmit: handleSubmit(onSubmit),
   }
 

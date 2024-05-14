@@ -6,6 +6,7 @@ import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGas
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
 
 import ExtendNames from './ExtendNames-flow'
+import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('@app/hooks/chain/useEstimateGasWithStateOverride')
 vi.mock('@app/hooks/ensjs/public/usePrice')
@@ -39,6 +40,8 @@ vi.mock(
     }
   },
 )
+
+makeMockIntersectionObserver()
 
 describe('Extendnames', () => {
   mockUseEstimateGasWithStateOverride.mockReturnValue({

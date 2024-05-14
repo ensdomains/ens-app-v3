@@ -4,6 +4,9 @@ import { useState } from 'react'
 import { describe, expect, it } from 'vitest'
 
 import { NameConfirmationWarningView } from './NameConfirmationWarningView'
+import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
+
+makeMockIntersectionObserver()
 
 describe('NameConfirmationWarningView', () => {
   it('should disable if input does not match the name', () => {

@@ -249,6 +249,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               <Dialog.Content
                 as="form"
                 ref={formRef}
+                data-testid="profile-editor"
                 onSubmit={handleSubmit((_data) => {
                   handleCreateTransaction(_data)
                 })}

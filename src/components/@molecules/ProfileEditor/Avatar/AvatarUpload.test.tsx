@@ -6,6 +6,7 @@ import { useSignTypedData } from 'wagmi'
 import { useChainName } from '@app/hooks/chain/useChainName'
 
 import { AvatarUpload } from './AvatarUpload'
+import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('wagmi')
 
@@ -20,6 +21,8 @@ const mockFile = new File([], 'avatar.png')
 const mockFileDataURL = 'data:image/jpeg;base64,00'
 
 const mockSignTypedDataAsync = vi.fn()
+
+makeMockIntersectionObserver()
 
 const props = {
   handleCancel: mockHandleCancel,

@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import { Control, UseFormRegister, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
@@ -20,44 +21,41 @@ const CHILD_FUSES_WITHOUT_CU: ChildFuseReferenceType['Key'][] = ChildFuseKeys.fi
   (fuse) => fuse !== 'CANNOT_UNWRAP',
 )
 
-export const ParentRevokePermissionsView = ({
-  register,
-  control,
-  unburnedFuses,
-  ...dialogContentProps
-}: Props) => {
-  const { t } = useTranslation('transactionFlow')
+export const ParentRevokePermissionsView = forwardRef<HTMLFormElement, Props>(
+  ({ register, control, unburnedFuses, ...dialogContentProps }, ref) => {
+    const { t } = useTranslation('transactionFlow')
 
-  const unwrapped = useWatch({ control, name: 'childFuses.CANNOT_UNWRAP' })
+    const unwrapped = useWatch({ control, name: 'childFuses.CANNOT_UNWRAP' })
 
-  const isCEEUnburned = unburnedFuses.includes('CAN_EXTEND_EXPIRY')
+    const isCEEUnburned = unburnedFuses.includes('CAN_EXTEND_EXPIRY')
 
-  return (
-    <>
-      <Dialog.Heading title={t('input.revokePermissions.views.revokePermissions.title')} />
-      <Dialog.Content {...dialogContentProps} gap="2">
-        {isCEEUnburned && (
+    return (
+      <>
+        <Dialog.Heading title={t('input.revokePermissions.views.revokePermissions.title')} />
+        <Dialog.Content {...dialogContentProps} gap="2" ref={ref}>
+          {isCEEUnburned && (
+            <CheckboxRow
+              data-testid="checkbox-CAN_EXTEND_EXPIRY"
+              label={t('input.revokePermissions.views.revokePermissions.fuses.CAN_EXTEND_EXPIRY')}
+              {...register(`parentFuses.CAN_EXTEND_EXPIRY`)}
+            />
+          )}
           <CheckboxRow
-            data-testid="checkbox-CAN_EXTEND_EXPIRY"
-            label={t('input.revokePermissions.views.revokePermissions.fuses.CAN_EXTEND_EXPIRY')}
-            {...register(`parentFuses.CAN_EXTEND_EXPIRY`)}
+            data-testid="checkbox-CANNOT_UNWRAP"
+            label={t('input.revokePermissions.views.revokePermissions.fuses.CANNOT_UNWRAP')}
+            {...register('childFuses.CANNOT_UNWRAP')}
           />
-        )}
-        <CheckboxRow
-          data-testid="checkbox-CANNOT_UNWRAP"
-          label={t('input.revokePermissions.views.revokePermissions.fuses.CANNOT_UNWRAP')}
-          {...register('childFuses.CANNOT_UNWRAP')}
-        />
-        {CHILD_FUSES_WITHOUT_CU.map((fuse) => (
-          <CheckboxRow
-            data-testid={`checkbox-${fuse}`}
-            key={fuse}
-            label={t(`input.revokePermissions.views.revokePermissions.fuses.${fuse}`)}
-            disabled={!unwrapped}
-            {...register(`childFuses.${fuse}`)}
-          />
-        ))}
-      </Dialog.Content>
-    </>
-  )
-}
+          {CHILD_FUSES_WITHOUT_CU.map((fuse) => (
+            <CheckboxRow
+              data-testid={`checkbox-${fuse}`}
+              key={fuse}
+              label={t(`input.revokePermissions.views.revokePermissions.fuses.${fuse}`)}
+              disabled={!unwrapped}
+              {...register(`childFuses.${fuse}`)}
+            />
+          ))}
+        </Dialog.Content>
+      </>
+    )
+  },
+)

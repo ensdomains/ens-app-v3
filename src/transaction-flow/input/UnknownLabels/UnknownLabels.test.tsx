@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { encodeLabelhash } from '@ensdomains/ensjs/utils'
 
 import UnknownLabels from './UnknownLabels-flow'
+import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
 
 const mockDispatch = vi.fn()
 const mockOnDismiss = vi.fn()
@@ -34,6 +35,8 @@ const renderHelper = (data: Omit<ComponentProps<typeof UnknownLabels>['data'], '
   }
   return render(<UnknownLabels data={newData} dispatch={mockDispatch} onDismiss={mockOnDismiss} />)
 }
+
+makeMockIntersectionObserver()
 
 describe('UnknownLabels', () => {
   beforeEach(() => {

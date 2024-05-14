@@ -4,10 +4,13 @@ import { beforeEach, describe, expect, it, Mock, vi } from 'vitest'
 
 import { EarnifiDialog } from './EarnifiDialog'
 import { useSubscribeToEarnifi } from './useSubscribeToEarnifi'
+import { makeMockIntersectionObserver } from '../../../../../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('./useSubscribeToEarnifi', () => ({
   useSubscribeToEarnifi: vi.fn(),
 }))
+
+makeMockIntersectionObserver()
 
 const pageObject = {
   emailInput: () => screen.getByLabelText('action.enterEmail'),

@@ -63,7 +63,7 @@ type NFTResponse = {
 const makeBaseURL = (network: string) =>
   `https://ens-nft-worker.ens-cf.workers.dev/v1/${network}/getNfts/`
 
-const InnerScrollBox = styled.div(
+const ScrollBoxContent = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
     display: grid;
@@ -396,7 +396,7 @@ export const AvatarNFT = ({
             hideDividers={{ top: true }}
             onReachedBottom={fetchPage}
           >
-            <InnerScrollBox>
+            <ScrollBoxContent>
               {NFTs?.map((NFT, i) => (
                 <NftItem
                   t={t}
@@ -406,7 +406,7 @@ export const AvatarNFT = ({
                   key={`${NFT.id.tokenId}-${NFT.contract.address}`}
                 />
               ))}
-            </InnerScrollBox>
+            </ScrollBoxContent>
             {hasNextPage && <SpinnerRow />}
           </Dialog.Content>
         ) : (

@@ -12,6 +12,7 @@ overrides:
   '@walletconnect/modal': 2.6.2
   react: ^18.2.0
   react-dom: ^18.2.0
+  '@wagmi/core': 2.6.16
 
 patchedDependencies:
   next-dev-https@0.1.2:
@@ -74,8 +75,8 @@ importers:
         specifier: 5.22.2
         version: 5.22.2(@tanstack/react-query@5.22.2)(react@18.2.0)
       '@wagmi/core':
-        specifier: ^2.6.16
-        version: 2.9.6(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.10.3)
+        specifier: 2.6.16
+        version: 2.6.16(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.10.3)
       '@walletconnect/ethereum-provider':
         specifier: 2.11.1
         version: 2.11.1(@types/react@18.2.21)(encoding@0.1.13)(react@18.2.0)
@@ -6740,32 +6741,6 @@ packages:
 
   /@wagmi/core@2.6.16(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.10.3):
     resolution: {integrity: sha512-95r+2CCf4Yz4CWG7UZMALIcGSUfpr9YbZ2HOqmz6gJEBaW9Cf9xUEZj2MXOHZIP+Ri/3CZJtbBEclDot4enZWA==}
-    peerDependencies:
-      '@tanstack/query-core': '>=5.0.0'
-      typescript: '>=5.0.4'
-      viem: 2.x
-    peerDependenciesMeta:
-      '@tanstack/query-core':
-        optional: true
-      typescript:
-        optional: true
-    dependencies:
-      eventemitter3: 5.0.1
-      mipd: 0.0.5(typescript@5.3.3)
-      typescript: 5.3.3
-      viem: 2.10.3(typescript@5.3.3)
-      zustand: 4.4.1(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)
-    transitivePeerDependencies:
-      - '@types/react'
-      - bufferutil
-      - immer
-      - react
-      - utf-8-validate
-      - zod
-    dev: false
-
-  /@wagmi/core@2.9.6(@types/react@18.2.21)(immer@9.0.15)(react@18.2.0)(typescript@5.3.3)(viem@2.10.3):
-    resolution: {integrity: sha512-0zqFl8L1RIqZF3F5RehsCiBzNUJjAkCvoC/O1AhMR5aWi6XCx/Ghp2O/1tTfITI7hu/8IKHBZqSjlFBSrrjVZw==}
     peerDependencies:
       '@tanstack/query-core': '>=5.0.0'
       typescript: '>=5.0.4'
