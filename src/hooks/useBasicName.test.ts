@@ -122,7 +122,7 @@ describe('useBasicName', () => {
         is2LD: true,
         isETH: false,
         isShort: true,
-        name: 'test.eth',
+        name: 'te.pw',
         labelCount: 2,
       })
     })
