@@ -115,6 +115,34 @@ describe('useBasicName', () => {
       )
     })
   })
+  describe('2LD non .eth', () => {
+    beforeEach(() => {
+      mockUseValidate.mockReturnValue({
+        isValid: true,
+        is2LD: true,
+        isETH: false,
+        isShort: true,
+        name: 'test.eth',
+        labelCount: 2,
+      })
+    })
+    it('should query for the owner', () => {
+      renderHook(() => useBasicName({ name: 'test.eth' }))
+      expect(mockUseOwner).toHaveBeenCalledWith(
+        expect.objectContaining({
+          enabled: true,
+        }),
+      )
+    })
+    it('should query for the wrapper data', () => {
+      renderHook(() => useBasicName({ name: 'test.eth' }))
+      expect(mockUseWrapperData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          enabled: true,
+        }),
+      )
+    })
+  })
   describe('DNS', () => {
     beforeEach(() => {
       mockUseValidate.mockReturnValue({
