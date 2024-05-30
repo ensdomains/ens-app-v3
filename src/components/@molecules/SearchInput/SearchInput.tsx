@@ -426,6 +426,7 @@ const formatEthText = ({ name, isETH }: { name: string; isETH: boolean | undefin
   if (!name) return ''
   if (isETH) return name
   if (name.includes('.')) return ''
+  if (name === '[root]') return ''
   return `${name}.eth`
 }
 const addEthDropdownItem =
@@ -462,6 +463,7 @@ const formatBoxText = (name: string) => {
   if (!name) return ''
   if (name?.endsWith('.box')) return name
   if (name.includes('.')) return ''
+  if (name === '[root]') return ''
   return `${name}.box`
 }
 const addBoxDropdownItem =
@@ -547,6 +549,7 @@ const formatDnsText = ({ name, isETH }: { name: string; isETH: boolean | undefin
   if (!name.includes('.')) return ''
   if (name.endsWith('.box')) return ''
   if (isETH) return ''
+  if (name === '[root]') return ''
   return name
 }
 const addDnsDropdownItem =
