@@ -4,7 +4,6 @@ import {
   QueryClient,
   QueryFunctionContext,
   QueryKey,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
 
@@ -26,6 +25,7 @@ import {
   QueryKeyToInternalParams,
   queryKeyToInternalParams,
 } from '@app/utils/query/match/queryKeyToInternalParams'
+import { useQuery } from '@app/utils/query/useQuery'
 
 type UseRecordsParameters<
   TTexts extends readonly string[] | undefined = undefined,

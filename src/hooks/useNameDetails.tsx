@@ -69,6 +69,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     }
     if (
       // bypass unknown error for root name
+      !!normalisedName &&
       normalisedName !== '[root]' &&
       !profile &&
       !isProfileLoading
@@ -85,6 +86,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     t,
     isValid,
   ])
+  console.log('error', error)
 
   const errorTitle = useMemo(() => {
     if (registrationStatus === 'gracePeriod') {

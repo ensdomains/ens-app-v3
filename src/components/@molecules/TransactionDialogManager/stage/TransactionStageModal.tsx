@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/react-query'
+import { queryOptions } from '@tanstack/react-query'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -34,6 +34,7 @@ import {
 import { ConfigWithEns } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { useQuery } from '@app/utils/query/useQuery'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
