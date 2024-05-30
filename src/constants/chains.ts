@@ -14,7 +14,17 @@ export const localhostWithEns = makeLocalhostChainWithEns<typeof localhost>(
   localhost,
   deploymentAddresses,
 )
-export const mainnetWithEns = addEnsContracts(mainnet)
+
+const ENS_SUBGRAPH_API_KEY = '9ad5cff64d93ed2c33d1a57b3ec03ea9'
+
+export const mainnetWithEns = {
+  ...addEnsContracts(mainnet),
+  subgraphs: {
+    ens: {
+      url: `https://gateway-arbitrum.network.thegraph.com/api/${ENS_SUBGRAPH_API_KEY}/subgraphs/id/5XqPmWe6gjyrJtFn9cLy237i4cWw2j9HcUJEXsP5qGtH`,
+    },
+  },
+}
 export const goerliWithEns = addEnsContracts(goerli)
 export const sepoliaWithEns = addEnsContracts(sepolia)
 export const holeskyWithEns = addEnsContracts(holesky)
