@@ -137,6 +137,7 @@ export const useBasicName = ({
         priceData,
         addrData,
         supportedTLD,
+        name: normalisedName,
       })
     : undefined
 
