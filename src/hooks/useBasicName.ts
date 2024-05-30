@@ -41,7 +41,7 @@ export const useBasicName = ({
 
   const { data: supportedTLD, isLoading: supportedTLDLoading } = useSupportsTLD(normalisedName)
 
-  const commonEnabled = enabled && !!name && isValid && !isShort
+  const commonEnabled = enabled && !!name && isValid && !(isETH && isShort)
   const isRoot = name === '[root]'
 
   const {
