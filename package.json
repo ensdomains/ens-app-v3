@@ -86,7 +86,7 @@
     "react-confetti": "^6.1.0",
     "react-dom": "^18.2.0",
     "react-ga": "^3.3.1",
-    "react-hook-form": "^7.51.0",
+    "react-hook-form": "7.51.0",
     "react-i18next": "^11.18.5",
     "react-is": "^17.0.2",
     "react-transition-state": "^1.1.5",
@@ -208,5 +208,6 @@
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch"
     }
-  }
+  },
+  "packageManager": "pnpm@8.11.0"
 }

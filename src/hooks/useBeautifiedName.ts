@@ -18,7 +18,7 @@ const getBeautifiedNameQueryFn = ({
   return tryBeautify(name)
 }
 
-export const useBeautifiedName = (name: string): string | undefined => {
+export const useBeautifiedName = (name: string): string => {
   const initialOptions = useQueryOptions({
     params: { name },
     functionName: 'getBeautifiedName',
@@ -34,5 +34,5 @@ export const useBeautifiedName = (name: string): string | undefined => {
     initialData: () => tryBeautify(name),
   })
 
-  return data
+  return data ?? name // TODO: This shouldn't be necessary
 }
