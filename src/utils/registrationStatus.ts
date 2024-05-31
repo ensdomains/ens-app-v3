@@ -44,6 +44,7 @@ export const getRegistrationStatus = ({
   name?: string
 }): RegistrationStatus => {
   if (name === '[root]') return 'owned'
+
   if (isETH && is2LD && isShort) {
     return 'short'
   }
