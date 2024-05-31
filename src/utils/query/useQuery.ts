@@ -14,7 +14,7 @@ type UseQueryResultExcludingPendingResult<TData = unknown, TError = DefaultError
   QueryObserverPendingResult<TData, TError>
 >
 
-export interface QueryObserverCustomResult<TData = unknown, TError = DefaultError>
+interface QueryObserverCustomResult<TData = unknown, TError = DefaultError>
   extends QueryObserverBaseResult<TData, TError> {}
 
 export type CustomUseQueryResult<TData = unknown, TError = DefaultError> =

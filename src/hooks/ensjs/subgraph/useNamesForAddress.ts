@@ -1,4 +1,4 @@
-import { infiniteQueryOptions, QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query'
+import { infiniteQueryOptions, QueryFunctionContext } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 
 import {
@@ -9,6 +9,7 @@ import {
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, InfiniteQueryConfig, PartialBy } from '@app/types'
+import { useInfiniteQuery } from '@app/utils/query/useInfiniteQuery'
 
 type UseNamesForAddressParameters = Omit<
   PartialBy<GetNamesForAddressParameters, 'address'>,

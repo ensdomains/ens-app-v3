@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
+import { keepPreviousData } from '@tanstack/react-query'
 import { ReactNode, useCallback, useState } from 'react'
 import { TFunction, useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme, keyframes } from 'styled-components'
@@ -20,6 +20,7 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { getSupportedChainContractAddress } from '@app/utils/getSupportedChainContractAddress'
+import { useInfiniteQuery } from '@app/utils/query/useInfiniteQuery'
 
 type OwnedNFT = {
   contract: {
