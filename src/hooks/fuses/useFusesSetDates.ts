@@ -146,7 +146,7 @@ export const generateMatchedFuseBlockData = ({
 
   return {
     data: hasIncompleteData ? undefined : data,
-    hasLoadingBlocks: hasPendingBlocks,
+    hasPendingBlocks,
     hasFetchingBlocks,
     hasAllSuccessData,
   }
@@ -176,19 +176,14 @@ export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParam
 
   const blockDatas = useQueries({ queries }, queryClient)
 
-  const {
-    data,
-    hasPendingBlocks: hasLoadingBlocks,
-    hasFetchingBlocks,
-    hasAllSuccessData,
-  } = useMemo(
+  const { data, hasPendingBlocks, hasFetchingBlocks, hasAllSuccessData } = useMemo(
     () => generateMatchedFuseBlockData({ fuseSetBlocks, blockDatas, queries }),
     [fuseSetBlocks, blockDatas, queries],
   )
 
   return {
     data,
-    isLoading: isNameHistoryLoading || hasLoadingBlocks,
+    isLoading: isNameHistoryLoading || hasPendingBlocks,
     isFetching: isNameHistoryFetching || hasFetchingBlocks,
     isSuccess: isNameHistorySuccess && hasAllSuccessData,
   }
