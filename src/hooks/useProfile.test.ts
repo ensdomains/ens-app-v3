@@ -242,6 +242,7 @@ it('should fetch union of supported coin records and subgraph coin records', () 
         evmChainIdToCoinType(10),
         /* subgraph coins */ 118,
         128,
+        1815,
       ]),
     }),
   )
