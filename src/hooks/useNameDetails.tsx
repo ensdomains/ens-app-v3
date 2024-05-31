@@ -86,7 +86,6 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     t,
     isValid,
   ])
-  console.log('error', error)
 
   const errorTitle = useMemo(() => {
     if (registrationStatus === 'gracePeriod') {
