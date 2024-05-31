@@ -211,7 +211,7 @@ describe('generateGetBlockQueryArray', () => {
 
 describe('generateMatchedFuseBlockData', () => {
   it('returns undefined data and no loading or fetching blocks if no fuse set blocks are provided', () => {
-    const { data, hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
+    const { data, hasPendingBlocks: hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
       fuseSetBlocks: [],
       blockDatas: [],
       queries: [],
@@ -222,7 +222,7 @@ describe('generateMatchedFuseBlockData', () => {
   })
 
   it('returns undefined data and no loading or fetching blocks if no block datas are provided', () => {
-    const { data, hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
+    const { data, hasPendingBlocks: hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
       fuseSetBlocks: [['PARENT_CANNOT_CONTROL', 1234]],
       blockDatas: [],
       queries: [{ queryKey: [{ blockNumber: 1234n }] } as any],
@@ -233,7 +233,7 @@ describe('generateMatchedFuseBlockData', () => {
   })
 
   it('returns undefined data and no loading or fetching blocks if no block data is found for a fuse set block', () => {
-    const { data, hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
+    const { data, hasPendingBlocks: hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
       fuseSetBlocks: [['PARENT_CANNOT_CONTROL', 1234]],
       blockDatas: [
         {
@@ -250,7 +250,7 @@ describe('generateMatchedFuseBlockData', () => {
   })
 
   it('returns the correct data and loading/fetching block flags when given a valid set of fuse set blocks and block datas', () => {
-    const { data, hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
+    const { data, hasPendingBlocks: hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
       fuseSetBlocks: [
         ['PARENT_CANNOT_CONTROL', 1234],
         ['CANNOT_UNWRAP', 1234],
@@ -291,7 +291,7 @@ describe('generateMatchedFuseBlockData', () => {
   })
 
   it('returns the correct loading/fetching block flags when given a set of fuse set blocks and block datas with unused loading and fetching blocks', () => {
-    const { data, hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
+    const { data, hasPendingBlocks: hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
       fuseSetBlocks: [
         ['PARENT_CANNOT_CONTROL', 1234],
         ['CANNOT_UNWRAP', 1234],
@@ -331,7 +331,7 @@ describe('generateMatchedFuseBlockData', () => {
     expect(hasFetchingBlocks).toBe(false)
   })
   it('returns the correct loading/fetching block flags when given a set of fuse set blocks and block datas with used loading and fetching blocks', () => {
-    const { data, hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
+    const { data, hasPendingBlocks: hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
       fuseSetBlocks: [
         ['PARENT_CANNOT_CONTROL', 1234],
         ['CANNOT_UNWRAP', 1234],
@@ -357,7 +357,7 @@ describe('generateMatchedFuseBlockData', () => {
     expect(hasFetchingBlocks).toBe(true)
   })
   it('returns the correct data with multiple different block numbers', () => {
-    const { data, hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
+    const { data, hasPendingBlocks: hasLoadingBlocks, hasFetchingBlocks } = generateMatchedFuseBlockData({
       fuseSetBlocks: [
         ['PARENT_CANNOT_CONTROL', 1234],
         ['CANNOT_UNWRAP', 1233],
