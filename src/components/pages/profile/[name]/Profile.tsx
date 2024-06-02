@@ -230,7 +230,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     return undefined
   }, [error, errorTitle])
 
-  const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
+  const ogImageUrl = `${OG_IMAGE_URL}/image/name/${normalisedName || name}`
 
   const chainName = useChainName()
 
@@ -239,12 +239,35 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
       <Head>
         <title>{titleContent}</title>
         <meta name="description" content={descriptionContent} />
-        <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:title" content={titleContent} />
-        <meta property="og:description" content={descriptionContent} />
-        <meta property="twitter:image" content={ogImageUrl} />
-        <meta property="twitter:title" content={titleContent} />
-        <meta property="twitter:description" content={descriptionContent} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="fc:frame" content="vNext" />
+        {!!process.env.NEXT_PUBLIC_IPFS && (
+          <>
+            {/* opengraph */}
+            <meta property="og:image" content={ogImageUrl} />
+            <meta property="og:title" content={titleContent} />
+            <meta property="og:description" content={descriptionContent} />
+            {/* farcaster */}
+            <meta name="fc:frame:image" content={ogImageUrl} />
+            <meta name="fc:frame:button:1" content="View profile" />
+            <meta name="fc:frame:button:1:action" content="link" />
+            <meta name="fc:frame:button:1:target" content={`https://ens.app/${normalisedName}`} />
+            {profile?.address && (
+              <>
+                <meta name="fc:frame:button:2" content="View address" />
+                <meta name="fc:frame:button:2:action" content="link" />
+                <meta
+                  name="fc:frame:button:2:target"
+                  content={`https://ens.app/${profile.address}`}
+                />
+              </>
+            )}
+            {/* twitter */}
+            <meta name="twitter:image" content={ogImageUrl} />
+            <meta name="twitter:title" content={titleContent} />
+            <meta name="twitter:description" content={descriptionContent} />
+          </>
+        )}
       </Head>
       <Content
         noTitle
