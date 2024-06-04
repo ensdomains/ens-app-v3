@@ -1,6 +1,7 @@
-import { queryOptions, useQuery } from '@tanstack/react-query'
+import { queryOptions } from '@tanstack/react-query'
 import { useAccount } from 'wagmi'
 
+import { useQuery } from '@app/utils/query/useQuery'
 import { checkIsSafeApp } from '@app/utils/safe'
 
 import { useQueryOptions } from './useQueryOptions'

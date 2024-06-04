@@ -1,4 +1,4 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, queryOptions } from '@tanstack/react-query'
 
 import {
   getSubgraphRegistrant,
@@ -9,6 +9,7 @@ import {
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { useQuery } from '@app/utils/query/useQuery'
 
 export type UseSubgraphRegistrantParameters = PartialBy<GetSubgraphRegistrantParameters, 'name'>
 

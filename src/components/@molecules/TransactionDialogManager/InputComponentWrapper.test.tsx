@@ -1,6 +1,8 @@
 import { act, render, screen, waitFor } from '@app/test-utils'
 
-import { QueryClientProvider, useQuery } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { useQuery } from '@app/utils/query/useQuery'
+
 import { ReactNode, useContext, useEffect } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { WagmiProvider } from 'wagmi'

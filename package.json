@@ -64,7 +64,7 @@
     "@tanstack/query-sync-storage-persister": "5.22.2",
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-persist-client": "5.22.2",
-    "@wagmi/core": "^2.6.16",
+    "@wagmi/core": "2.6.16",
     "@walletconnect/ethereum-provider": "^2.11.1",
     "@walletconnect/modal": "^2.6.2",
     "calendar-link": "^2.2.0",
@@ -86,7 +86,7 @@
     "react-confetti": "^6.1.0",
     "react-dom": "^18.2.0",
     "react-ga": "^3.3.1",
-    "react-hook-form": "^7.51.0",
+    "react-hook-form": "7.51.0",
     "react-i18next": "^11.18.5",
     "react-is": "^17.0.2",
     "react-transition-state": "^1.1.5",
@@ -208,5 +208,6 @@
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch"
     }
-  }
+  },
+  "packageManager": "pnpm@8.11.0"
 }
