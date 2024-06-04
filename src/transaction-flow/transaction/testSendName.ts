@@ -5,8 +5,7 @@ import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters
 type Data = {}
 
 const displayItems = (
-  // eslint-disable-next-line no-empty-pattern
-  {}: Data,
+  _: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
@@ -29,8 +28,8 @@ const displayItems = (
   },
 ]
 
-// eslint-disable-next-line no-empty-pattern
-const transaction = async ({}: TransactionFunctionParameters<Data>) =>
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const transaction = async (_: TransactionFunctionParameters<Data>) =>
   ({
     to: '0x0000000000000000000000000000000000000000',
     data: '0x',
