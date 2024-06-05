@@ -1,4 +1,4 @@
-import { Query, QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Query, QueryClient, useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import { Config, useChainId } from 'wagmi'
 import { GetEnsAvatarQueryKey } from 'wagmi/query'
@@ -9,6 +9,7 @@ import { clearRelevantNameQueriesFromRegisterOrImport } from '@app/hooks/transac
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { CreateQueryKey } from '@app/types'
+import { useQuery } from '@app/utils/query/useQuery'
 
 import { parse, stringify } from '../query/persist'
 import { useHasSubgraphSyncErrors } from '../useHasSubgraphSyncErrors'

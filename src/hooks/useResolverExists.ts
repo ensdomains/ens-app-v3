@@ -1,10 +1,11 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext } from '@tanstack/react-query'
 import { namehash, type Address } from 'viem'
 
 import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
+import { useQuery } from '@app/utils/query/useQuery'
 
 import { useQueryOptions } from './useQueryOptions'
 

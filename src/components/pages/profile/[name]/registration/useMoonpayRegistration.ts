@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { labelhash } from 'viem'
 import { useChainId } from 'wagmi'
@@ -7,6 +7,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'
+import { useQuery } from '@app/utils/query/useQuery'
 import { getLabelFromName } from '@app/utils/utils'
 
 import { MoonpayTransactionStatus, SelectedItemProperties } from './types'

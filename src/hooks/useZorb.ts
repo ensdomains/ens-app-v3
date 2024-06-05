@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
 import { useTheme } from 'styled-components'
 
 import { zorbImageDataURI } from '@app/utils/gradient'
+import { useQuery } from '@app/utils/query/useQuery'
 
 import { useQueryOptions } from './useQueryOptions'
 
