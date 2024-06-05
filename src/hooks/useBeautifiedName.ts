@@ -1,7 +1,8 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, queryOptions } from '@tanstack/react-query'
 
 import { CreateQueryKey } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
+import { useQuery } from '@app/utils/query/useQuery'
 
 import { useQueryOptions } from './useQueryOptions'
 
@@ -33,5 +34,5 @@ export const useBeautifiedName = (name: string): string => {
     initialData: () => tryBeautify(name),
   })
 
-  return data
+  return data ?? name // TODO: This shouldn't be necessary
 }

@@ -93,15 +93,13 @@ const ProfileSection = ({
         ) : null}
       </SectionTitle>
       <Stack>
-        {supportedArray.map((item: { key: string; value: string; type?: 'text' | 'address' }) => (
-          <ButtonComponent {...{ ...item, iconKey: item.key, name }} />
+        {supportedArray.map(({ key, ...item }) => (
+          <ButtonComponent key={key} {...{ ...item, iconKey: key, name }} />
         ))}
         {unsupportedArray.length > 0 &&
-          unsupportedArray.map(
-            (item: { key: string; value: string; type?: 'text' | 'address' }) => (
-              <OtherProfileButton {...{ ...item, iconKey: item.key, name }} />
-            ),
-          )}
+          unsupportedArray.map(({ key, ...item }) => (
+            <OtherProfileButton key={key} {...{ ...item, iconKey: key, name }} />
+          ))}
       </Stack>
     </div>
   ) : null
