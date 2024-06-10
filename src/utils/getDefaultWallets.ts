@@ -12,7 +12,7 @@ import {
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 
-coinbaseWallet.preference = "all";
+coinbaseWallet.preference = "all"
 
 export const getDefaultWallets = ({
   appName,
