@@ -1,6 +1,9 @@
-import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
+import { lightTheme, Theme } from '@usecapsule/rainbowkit'
 
-import '@rainbow-me/rainbowkit/styles.css'
+import { RainbowKitWithCapsuleProvider } from '@app/utils/RainbowKitWithCapsuleProvider'
+
+// import '@rainbow-me/rainbowkit/styles.css'
+import '@usecapsule/rainbowkit/styles.css'
 
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
@@ -144,7 +147,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <I18nextProvider i18n={i18n}>
       <QueryProviders>
-        <RainbowKitProvider theme={rainbowKitTheme}>
+        <RainbowKitWithCapsuleProvider theme={rainbowKitTheme}>
           <TransactionStoreProvider>
             <ThemeProvider theme={thorinLightTheme}>
               <BreakpointProvider queries={breakpoints}>
@@ -164,7 +167,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
               </BreakpointProvider>
             </ThemeProvider>
           </TransactionStoreProvider>
-        </RainbowKitProvider>
+        </RainbowKitWithCapsuleProvider>
       </QueryProviders>
     </I18nextProvider>
   )

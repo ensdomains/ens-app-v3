@@ -1,4 +1,4 @@
-import { connectorsForWallets, WalletList } from '@rainbow-me/rainbowkit'
+import { connectorsForWallets, WalletList } from '@usecapsule/rainbowkit'
 import {
   argentWallet,
   braveWallet,
@@ -10,7 +10,9 @@ import {
   rainbowWallet,
   safeWallet,
   walletConnectWallet,
-} from '@rainbow-me/rainbowkit/wallets'
+} from '@usecapsule/rainbowkit/wallets'
+
+import { capsuleWallet } from './capsuleWallet'
 
 export const getDefaultWallets = ({
   appName,
@@ -40,6 +42,7 @@ export const getDefaultWallets = ({
         metaMaskWallet,
         ledgerWallet,
         argentWallet,
+        capsuleWallet,
       ],
     },
   ]
