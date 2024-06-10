@@ -105,7 +105,7 @@ const transports = {
 
 const wagmiConfig_ = createConfig({
   connectors,
-  ssr: true,
+  ssr: false, // TODO: CHeck if this is neccessary since usecapsule is client-only
   multiInjectedProviderDiscovery: true,
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
   chains,
