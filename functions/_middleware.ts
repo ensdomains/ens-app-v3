@@ -64,6 +64,12 @@ const firefoxRewrite: PagesFunction = async ({ request, next }) => {
         .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask.js'))
         .transform(await next())
     }
+    // double-set CSP
+    request.headers.set(
+      'Content-Security-Policy',
+      "worker-src 'self' ; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
+    )
+
     if (
       userAgent.indexOf('webview metamaskmobile') !== -1 &&
       userAgent.indexOf('applewebkit') !== -1
