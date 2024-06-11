@@ -68,7 +68,7 @@ export const firefoxRewrite: PagesFunction = async ({ request, next }) => {
     }
 
     // Double-set CSP for non-Firefox browsers or cases where other conditions apply
-    headers.append(
+    headers.set(
       'Content-Security-Policy',
       "worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
     )
