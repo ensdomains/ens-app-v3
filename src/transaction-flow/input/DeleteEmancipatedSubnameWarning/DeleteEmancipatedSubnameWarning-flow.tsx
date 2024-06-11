@@ -57,9 +57,11 @@ const DeleteEmancipatedSubnameWarning = ({ data, dispatch, onDismiss }: Props) =
   return (
     <>
       <Dialog.Heading title={t('input.deleteEmancipatedSubnameWarning.title')} alert="error" />
-      <MessageContainer>
-        {t('input.deleteEmancipatedSubnameWarning.message', { date: expiryLabel })}
-      </MessageContainer>
+      <Dialog.Content>
+        <MessageContainer>
+          {t('input.deleteEmancipatedSubnameWarning.message', { date: expiryLabel })}
+        </MessageContainer>
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={onDismiss}>

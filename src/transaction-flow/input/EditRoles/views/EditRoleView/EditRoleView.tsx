@@ -6,38 +6,26 @@ import { match, P } from 'ts-pattern'
 
 import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, mq } from '@ensdomains/thorin'
 
+import { DialogFooterWithBorder } from '@app/components/@molecules/DialogComponentVariants/DialogFooterWithBorder'
 import { SearchViewErrorView } from '@app/transaction-flow/input/SendName/views/SearchView/views/SearchViewErrorView'
 import { SearchViewLoadingView } from '@app/transaction-flow/input/SendName/views/SearchView/views/SearchViewLoadingView'
 import { SearchViewNoResultsView } from '@app/transaction-flow/input/SendName/views/SearchView/views/SearchViewNoResultsView'
 
-import { EditRolesFooter } from '../../components/EditRolesFooter'
 import type { EditRolesForm } from '../../EditRoles-flow'
 import { useSimpleSearch } from '../../hooks/useSimpleSearch'
 import { EditRoleIntroView } from './views/EditRoleIntroView'
 import { EditRoleResultsView } from './views/EditRoleResultsView'
 
-const SubviewContainer = styled.div(({ theme }) => [
+const InputWrapper = styled.div(({ theme }) => [
   css`
-    flex: 1;
-    width: calc(100% + 2 * ${theme.space['4']});
-    margin: 0 -${theme.space['4']};
-    min-height: ${theme.space['40']};
-  `,
-  mq.sm.min(css`
-    width: calc(100% + 2 * ${theme.space['6']});
-    margin: 0 -${theme.space['6']};
-  `),
-])
-
-const Content = styled.div(({ theme }) => [
-  css`
-    flex: 1;
+    flex: 0;
     width: 100%;
     display: flex;
     flex-direction: column;
+    margin-bottom: -${theme.space['4']};
   `,
   mq.sm.min(css`
-    margin: 0 -${theme.space['6']};
+    margin-bottom: -${theme.space['6']};
   `),
 ])
 
@@ -63,7 +51,7 @@ export const EditRoleView = ({ index, onBack }: Props) => {
           role: t(`roles.${currentRole.role}.title`, { ns: 'common' }),
         })}
       />
-      <Content>
+      <InputWrapper>
         <Input
           data-testid="edit-roles-search-input"
           name="role"
@@ -81,47 +69,48 @@ export const EditRoleView = ({ index, onBack }: Props) => {
             search.mutate(newQuery)
           }}
         />
-        <SubviewContainer>
-          {match([query, search])
-            .with([P._, { isError: true }], () => <SearchViewErrorView />)
-            .with([P.when((s) => s.length < 3), P._], () => (
-              <EditRoleIntroView
+      </InputWrapper>
+      <Dialog.Content hideDividers={{ bottom: true }} fullWidth horizontalPadding="0">
+        {match([query, search])
+          .with([P._, { isError: true }], () => <SearchViewErrorView />)
+          .with([P.when((s) => s.length < 3), P._], () => (
+            <EditRoleIntroView
+              role={currentRole.role}
+              address={currentRole.address}
+              onSelect={(newRole) => {
+                onBack()
+                update(index, newRole)
+              }}
+            />
+          ))
+          .with([P._, { isSuccess: false }], () => <SearchViewLoadingView />)
+          .with(
+            [P._, { isSuccess: true, data: P.when((d) => !!d && d.length > 0) }],
+            ([, { data }]) => (
+              <EditRoleResultsView
                 role={currentRole.role}
-                address={currentRole.address}
+                roles={roles}
+                results={data}
                 onSelect={(newRole) => {
                   onBack()
                   update(index, newRole)
                 }}
               />
-            ))
-            .with([P._, { isSuccess: false }], () => <SearchViewLoadingView />)
-            .with(
-              [P._, { isSuccess: true, data: P.when((d) => !!d && d.length > 0) }],
-              ([, { data }]) => (
-                <EditRoleResultsView
-                  role={currentRole.role}
-                  roles={roles}
-                  results={data}
-                  onSelect={(newRole) => {
-                    onBack()
-                    update(index, newRole)
-                  }}
-                />
-              ),
-            )
-            .with([P._, { isSuccess: true, data: P.when((d) => !d || d.length === 0) }], () => (
-              <SearchViewNoResultsView />
-            ))
-            .otherwise(() => null)}
-        </SubviewContainer>
-        <EditRolesFooter
-          trailing={
-            <Button colorStyle="accentSecondary" onClick={onBack}>
-              {t('action.cancel', { ns: 'common' })}
-            </Button>
-          }
-        />
-      </Content>
+            ),
+          )
+          .with([P._, { isSuccess: true, data: P.when((d) => !d || d.length === 0) }], () => (
+            <SearchViewNoResultsView />
+          ))
+          .otherwise(() => null)}
+      </Dialog.Content>
+      <DialogFooterWithBorder
+        fullWidth
+        trailing={
+          <Button colorStyle="accentSecondary" onClick={onBack}>
+            {t('action.cancel', { ns: 'common' })}
+          </Button>
+        }
+      />
     </>
   )
 }

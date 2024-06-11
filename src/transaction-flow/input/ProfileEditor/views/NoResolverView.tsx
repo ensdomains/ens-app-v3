@@ -6,8 +6,6 @@ import { Outlink } from '@app/components/Outlink'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 import { CenteredTypography } from '../components/CenteredTypography'
-import { ContentContainer } from '../components/ContentContainer'
-import { StyledInnerDialog } from '../components/StyledInnerDialog'
 
 type Props = {
   onConfirm: () => void
@@ -21,16 +19,14 @@ export const NoResolverView = ({ onConfirm, onCancel }: Props) => {
         title={t('input.profileEditor.warningOverlay.noResolver.title')}
         alert="error"
       />
-      <StyledInnerDialog>
-        <ContentContainer>
-          <CenteredTypography>
-            {t('input.profileEditor.warningOverlay.noResolver.subtitle')}
-          </CenteredTypography>
-          <Outlink href={getSupportLink('resolver')}>
-            {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
-          </Outlink>
-        </ContentContainer>
-      </StyledInnerDialog>
+      <Dialog.Content>
+        <CenteredTypography>
+          {t('input.profileEditor.warningOverlay.noResolver.subtitle')}
+        </CenteredTypography>
+        <Outlink href={getSupportLink('resolver')}>
+          {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
+        </Outlink>
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button

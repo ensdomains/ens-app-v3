@@ -8,7 +8,6 @@ import { getSupportLink } from '@app/utils/supportLinks'
 import { CenteredTypography } from '../components/CenteredTypography'
 import { ContentContainer } from '../components/ContentContainer'
 import { DetailedSwitch } from '../components/DetailedSwitch'
-import { StyledInnerDialog } from '../components/StyledInnerDialog'
 import type { SelectedProfile } from '../ResolverWarningOverlay'
 
 type Props = {
@@ -32,7 +31,7 @@ export const ResolverNotNameWrapperAwareView = ({
         title={t('input.profileEditor.warningOverlay.resolverNotNameWrapperAware.title')}
         alert="error"
       />
-      <StyledInnerDialog>
+      <Dialog.Content>
         <ContentContainer>
           <CenteredTypography>
             {t('input.profileEditor.warningOverlay.resolverNotNameWrapperAware.subtitle')}
@@ -51,7 +50,7 @@ export const ResolverNotNameWrapperAwareView = ({
             onChange={(e) => onChangeSelected(e.target.checked ? 'latest' : 'reset')}
           />
         )}
-      </StyledInnerDialog>
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button
