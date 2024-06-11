@@ -60,6 +60,11 @@ const firefoxRewrite: PagesFunction = async ({ request, next }) => {
       // firefox
       userAgent.indexOf('firefox/') !== -1
     ) {
+      request.headers.set(
+        'Content-Security-Policy',
+        "frame-ancestors 'self' https://app.safe.global;",
+      )
+
       return new HTMLRewriter()
         .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask.js'))
         .transform(await next())
