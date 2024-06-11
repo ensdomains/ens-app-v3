@@ -211,5 +211,6 @@
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch"
     }
-  }
+  },
+  "packageManager": "pnpm@8.11.0"
 }
