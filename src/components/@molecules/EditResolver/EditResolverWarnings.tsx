@@ -8,11 +8,9 @@ const EditResolverWarnings = ({ hasWarnings, resolverWarnings }: Props) => {
   if (!hasWarnings) return null
 
   return (
-    <>
-      <Banner alert="warning">
-        <ul>{resolverWarnings?.map((message) => <li key={message}>- {message}</li>)}</ul>
-      </Banner>
-    </>
+    <Banner alert="warning">
+      <ul>{resolverWarnings?.map((message) => <li key={message}>- {message}</li>)}</ul>
+    </Banner>
   )
 }
 
