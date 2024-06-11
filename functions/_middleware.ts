@@ -73,6 +73,8 @@ export const firefoxRewrite: PagesFunction = async ({ request, next }) => {
       "worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
     )
 
+
+
     if (userAgent.includes('webview metamaskmobile') && userAgent.includes('applewebkit')) {
       const modifiedRequest = new Request(request, { headers })
       const response = await next(modifiedRequest)
@@ -84,7 +86,12 @@ export const firefoxRewrite: PagesFunction = async ({ request, next }) => {
 
   // Continue with the modified request
   const modifiedRequest = new Request(request, { headers })
-  return next(modifiedRequest)
+  const response = await next(modifiedRequest)
+  response.headers.set(
+    'Content-Security-Policy',
+    "worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
+  )
+  return response
 }
 
 const baseOgImageUrl = 'https://ens-og-image.ens-cf.workers.dev'
