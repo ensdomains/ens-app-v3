@@ -127,7 +127,8 @@ export const useBasicName = ({
     return Date.now() - EXPIRY_LIVE_WATCH_TIME
   }, [isTempPremiumDesynced, blockTimestamp])
 
-  const registrationStatus = !publicCallsLoading
+  const isNameAndPublicCallsLoaded = !!name && !publicCallsLoading
+  const registrationStatus = isNameAndPublicCallsLoaded
     ? getRegistrationStatus({
         timestamp: registrationStatusTimestamp,
         validation,

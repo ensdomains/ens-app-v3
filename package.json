@@ -64,7 +64,7 @@
     "@tanstack/query-sync-storage-persister": "5.22.2",
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-persist-client": "5.22.2",
-    "@wagmi/core": "^2.6.16",
+    "@wagmi/core": "2.6.16",
     "@walletconnect/ethereum-provider": "^2.11.1",
     "@walletconnect/modal": "^2.6.2",
     "calendar-link": "^2.2.0",

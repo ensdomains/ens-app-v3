@@ -112,8 +112,6 @@ export const DotBoxRegistration = () => {
     router.push(`/profile/${name}`)
   }
 
-  console.log('dotBoxResult', dotBoxResult)
-
   const { t } = useTranslation('dnssec')
 
   return (

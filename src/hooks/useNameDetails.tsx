@@ -69,6 +69,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     }
     if (
       // bypass unknown error for root name
+      !!normalisedName &&
       normalisedName !== '[root]' &&
       !profile &&
       !isProfileLoading
