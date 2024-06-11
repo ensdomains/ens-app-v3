@@ -51,41 +51,40 @@ const staticHandler: PagesFunction = async ({ request, next, env }) => {
   return next()
 }
 
-const firefoxRewrite: PagesFunction = async ({ request, next }) => {
+export const firefoxRewrite: PagesFunction = async ({ request, next }) => {
   const userAgent = request.headers.get('user-agent')?.toLowerCase()
 
-  if (userAgent) {
-    if (
-      userAgent.indexOf('gecko/20100101') !== -1 &&
-      // firefox
-      userAgent.indexOf('firefox/') !== -1
-    ) {
-      request.headers.set(
-        'Content-Security-Policy',
-        "frame-ancestors 'self' https://app.safe.global;",
-      )
+  // Initialize headers
+  const headers = new Headers(request.headers)
 
+  if (userAgent) {
+    if (userAgent.includes('gecko/20100101') && userAgent.includes('firefox/')) {
+      headers.set('Content-Security-Policy', "frame-ancestors 'self' https://app.safe.global;")
+
+      const response = await next()
       return new HTMLRewriter()
         .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask.js'))
-        .transform(await next())
+        .transform(response)
     }
-    // double-set CSP
-    request.headers.append(
+
+    // Double-set CSP for non-Firefox browsers or cases where other conditions apply
+    headers.append(
       'Content-Security-Policy',
-      "worker-src 'self' ; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
+      "worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
     )
 
-    if (
-      userAgent.indexOf('webview metamaskmobile') !== -1 &&
-      userAgent.indexOf('applewebkit') !== -1
-    ) {
+    if (userAgent.includes('webview metamaskmobile') && userAgent.includes('applewebkit')) {
+      const modifiedRequest = new Request(request, { headers })
+      const response = await next(modifiedRequest)
       return new HTMLRewriter()
         .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask-ios.js'))
-        .transform(await next())
+        .transform(response)
     }
   }
 
-  return next()
+  // Continue with the modified request
+  const modifiedRequest = new Request(request, { headers })
+  return next(modifiedRequest)
 }
 
 const baseOgImageUrl = 'https://ens-og-image.ens-cf.workers.dev'
