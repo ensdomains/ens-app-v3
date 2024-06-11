@@ -64,7 +64,7 @@
     "@tanstack/query-sync-storage-persister": "5.22.2",
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-persist-client": "5.22.2",
-    "@wagmi/core": "2.6.16",
+    "@wagmi/core": "2.10.5",
     "@walletconnect/ethereum-provider": "^2.11.1",
     "@walletconnect/modal": "^2.6.2",
     "calendar-link": "^2.2.0",
@@ -96,8 +96,8 @@
     "styled-components": "^5.3.5",
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
-    "viem": "^2.9.15",
-    "wagmi": "2.5.19"
+    "viem": "^2.13.8",
+    "wagmi": "2.9.11"
   },
   "peerDependencies": {
     "react": "*",
