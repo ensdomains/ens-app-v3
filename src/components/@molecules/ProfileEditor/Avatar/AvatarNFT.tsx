@@ -10,17 +10,17 @@ import {
   Button,
   Dialog,
   Heading,
-  Input,
   MagnifyingGlassSVG,
   mq,
   Typography,
 } from '@ensdomains/thorin'
 
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
-import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
+import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { getSupportedChainContractAddress } from '@app/utils/getSupportedChainContractAddress'
 import { useInfiniteQuery } from '@app/utils/query/useInfiniteQuery'
+
+import { DialogInput } from '../../DialogComponentVariants/DialogInput'
 
 type OwnedNFT = {
   contract: {
@@ -64,7 +64,7 @@ type NFTResponse = {
 const makeBaseURL = (network: string) =>
   `https://ens-nft-worker.ens-cf.workers.dev/v1/${network}/getNfts/`
 
-const InnerScrollBox = styled.div(
+const ScrollBoxContent = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
     display: grid;
@@ -177,7 +177,7 @@ const SelectedNFTImage = styled.img(
 const LoadingContainer = styled.div(({ theme }) => [
   css`
     width: ${theme.space.full};
-    height: ${theme.space['32']};
+    min-height: ${theme.space['32']};
 
     display: flex;
     align-items: center;
@@ -187,8 +187,6 @@ const LoadingContainer = styled.div(({ theme }) => [
   `,
   mq.sm.min(css`
     gap: ${theme.space['6']};
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
   `),
 ])
 
@@ -324,6 +322,7 @@ export const AvatarNFT = ({
     .reduce((prev, curr) => [...prev, ...curr.ownedNfts], [] as OwnedNFT[])
     .filter((nft) => nft.title.toLowerCase().includes(searchedInput))
 
+  const hasNFTs = NFTs && (NFTs.length > 0 || searchedInput !== '')
   const hasNextPage = !!NFTPages?.pages[NFTPages.pages.length - 1].pageKey
   const fetchPage = useCallback(() => fetchNextPage(), [fetchNextPage])
 
@@ -343,15 +342,17 @@ export const AvatarNFT = ({
           title={t('input.profileEditor.tabs.avatar.nft.selected.title')}
           subtitle={t('input.profileEditor.tabs.avatar.nft.selected.subtitle')}
         />
-        <SelectedNFTContainer>
-          <SelectedNFTImageWrapper>
-            <SelectedNFTImage src={nftReference.media[0].gateway} />
-          </SelectedNFTImageWrapper>
-          <Typography weight="bold">
-            {nftReference.title || t('input.profileEditor.tabs.avatar.nft.unknown')}
-          </Typography>
-          <Typography>{nftReference.description}</Typography>
-        </SelectedNFTContainer>
+        <Dialog.Content>
+          <SelectedNFTContainer>
+            <SelectedNFTImageWrapper>
+              <SelectedNFTImage src={nftReference.media[0].gateway} />
+            </SelectedNFTImageWrapper>
+            <Typography weight="bold">
+              {nftReference.title || t('input.profileEditor.tabs.avatar.nft.unknown')}
+            </Typography>
+            <Typography>{nftReference.description}</Typography>
+          </SelectedNFTContainer>
+        </Dialog.Content>
         <Dialog.Footer
           leading={
             <Button colorStyle="accentSecondary" onClick={() => setSelectedNFT(null)}>
@@ -370,15 +371,17 @@ export const AvatarNFT = ({
 
   if (isLoading) {
     innerContent = (
-      <LoadingContainer>
-        <Heading>{t('input.profileEditor.tabs.avatar.nft.loading')}</Heading>
-        <SpinnerRow />
-      </LoadingContainer>
+      <Dialog.Content>
+        <LoadingContainer>
+          <Heading>{t('input.profileEditor.tabs.avatar.nft.loading')}</Heading>
+          <SpinnerRow />
+        </LoadingContainer>
+      </Dialog.Content>
     )
-  } else if (NFTs && (NFTs.length > 0 || searchedInput !== '')) {
+  } else if (hasNFTs) {
     innerContent = (
-      <InnerDialog style={{ overflow: 'hidden' }}>
-        <Input
+      <>
+        <DialogInput
           icon={<MagnifyingGlassSVG />}
           hideLabel
           label="search"
@@ -389,13 +392,12 @@ export const AvatarNFT = ({
           clearable
         />
         {NFTs.length > 0 ? (
-          <ScrollBoxWithSpinner
+          <Dialog.Content
             data-testid="nft-scroll-box"
-            style={{ width: '100%' }}
+            hideDividers={{ top: true }}
             onReachedBottom={fetchPage}
-            showSpinner={hasNextPage}
           >
-            <InnerScrollBox>
+            <ScrollBoxContent>
               {NFTs?.map((NFT, i) => (
                 <NftItem
                   t={t}
@@ -405,20 +407,25 @@ export const AvatarNFT = ({
                   key={`${NFT.id.tokenId}-${NFT.contract.address}`}
                 />
               ))}
-            </InnerScrollBox>
-          </ScrollBoxWithSpinner>
+            </ScrollBoxContent>
+            {hasNextPage && <SpinnerRow />}
+          </Dialog.Content>
         ) : (
-          <LoadingContainer>
-            <Heading>{t('input.profileEditor.tabs.avatar.nft.noResults')}</Heading>
-          </LoadingContainer>
+          <Dialog.Content hideDividers={{ top: true }}>
+            <LoadingContainer>
+              <Heading>{t('input.profileEditor.tabs.avatar.nft.noResults')}</Heading>
+            </LoadingContainer>
+          </Dialog.Content>
         )}
-      </InnerDialog>
+      </>
     )
   } else {
     innerContent = (
-      <LoadingContainer>
-        <Heading>{t('input.profileEditor.tabs.avatar.nft.noNFTs')}</Heading>
-      </LoadingContainer>
+      <Dialog.Content>
+        <LoadingContainer>
+          <Heading>{t('input.profileEditor.tabs.avatar.nft.noNFTs')}</Heading>
+        </LoadingContainer>
+      </Dialog.Content>
     )
   }
 

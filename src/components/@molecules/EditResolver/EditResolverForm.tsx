@@ -2,15 +2,15 @@ import { RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { RadioButton, Typography } from '@ensdomains/thorin'
+import { Dialog, RadioButton, Typography } from '@ensdomains/thorin'
 
-import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import useResolverEditor from '@app/hooks/useResolverEditor'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DogFood } from '../DogFood'
+import EditResolverWarnings from './EditResolverWarnings'
 
 const LatestResolverLabel = styled.div<{ $offset: boolean }>(
   ({ theme, $offset }) => css`
@@ -59,6 +59,8 @@ const EditResolverForm = ({
   setValue,
   watch,
   formState,
+  hasWarnings,
+  resolverWarnings,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const chainName = useChainName()
@@ -83,7 +85,13 @@ const EditResolverForm = ({
   )
 
   return (
-    <form data-testid="edit-resolver-form" onSubmit={handleSubmit} ref={formRef}>
+    <Dialog.Content
+      as="form"
+      data-testid="edit-resolver-form"
+      onSubmit={handleSubmit}
+      ref={formRef}
+    >
+      <EditResolverWarnings {...{ hasWarnings, resolverWarnings }} />
       <RadioButton
         label={latestResolverLabel}
         value="latest"
@@ -98,7 +106,6 @@ const EditResolverForm = ({
           },
         })}
       />
-      <Spacer $height="4" />
       <RadioButton
         label={t('input.editResolver.customLabel')}
         description={
@@ -125,7 +132,7 @@ const EditResolverForm = ({
         data-testid="custom-resolver-radio"
         {...register('resolverChoice')}
       />
-    </form>
+    </Dialog.Content>
   )
 }
 

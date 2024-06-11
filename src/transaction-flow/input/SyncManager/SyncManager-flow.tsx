@@ -3,7 +3,6 @@ import { match, P } from 'ts-pattern'
 
 import { Dialog } from '@ensdomains/thorin'
 
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
@@ -108,20 +107,18 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
   return (
     <>
       <Dialog.Heading title={t('input.syncManager.title')} />
-      <InnerDialog style={{ minHeight: '100px' }}>
-        {match([isLoading, canSyncManager])
-          .with([true, P._], () => <TransactionLoader />)
-          .with([false, true], () => (
-            <MainView
-              manager={primaryNameOrAddress.data.nameOrAddr}
-              showWarning={showWarning}
-              onCancel={onDismiss}
-              onConfirm={onClickNext}
-            />
-          ))
-          .with([false, false], () => <ErrorView onCancel={onDismiss} />)
-          .otherwise(() => null)}
-      </InnerDialog>
+      {match([isLoading, canSyncManager])
+        .with([true, P._], () => <TransactionLoader />)
+        .with([false, true], () => (
+          <MainView
+            manager={primaryNameOrAddress.data.nameOrAddr}
+            showWarning={showWarning}
+            onCancel={onDismiss}
+            onConfirm={onClickNext}
+          />
+        ))
+        .with([false, false], () => <ErrorView onCancel={onDismiss} />)
+        .otherwise(() => null)}
     </>
   )
 }

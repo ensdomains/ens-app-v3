@@ -5,32 +5,11 @@ import styled, { css } from 'styled-components'
 import { labelhash } from 'viem'
 
 import { decodeLabelhash, isEncodedLabelhash, validateName } from '@ensdomains/ensjs/utils'
-import { Button, Dialog, Input, mq, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Input } from '@ensdomains/thorin'
 
 import { isLabelTooLong } from '@app/utils/utils'
 
-const Container = styled.div(
-  ({ theme }) => css`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: stretch;
-    gap: ${theme.space['4']};
-
-    & > div {
-      text-align: center;
-      max-width: ${theme.space['112']};
-      margin: 0 auto;
-    }
-
-    ${mq.sm.min(css`
-      gap: ${theme.space['6']};
-      width: calc(80vw - 2 * ${theme.space['6']});
-      max-width: ${theme.space['128']};
-    `)}
-  `,
-)
+import { CenteredTypography } from '../../ProfileEditor/components/CenteredTypography'
 
 const LabelsContainer = styled.form(
   ({ theme }) => css`
@@ -39,6 +18,7 @@ const LabelsContainer = styled.form(
     justify-content: center;
     align-items: stretch;
     gap: ${theme.space['1']};
+    width: ${theme.space.full};
 
     & > div > div > label {
       visibility: hidden;
@@ -143,8 +123,8 @@ export const UnknownLabelsForm = forwardRef<HTMLFormElement, Props>(
     return (
       <>
         <Dialog.Heading title={t('input.unknownLabels.title')} />
-        <Container>
-          <Typography>{t('input.unknownLabels.subtitle')}</Typography>
+        <Dialog.Content>
+          <CenteredTypography>{t('input.unknownLabels.subtitle')}</CenteredTypography>
           <LabelsContainer
             ref={ref}
             onSubmit={handleSubmit(onSubmit)}
@@ -172,7 +152,7 @@ export const UnknownLabelsForm = forwardRef<HTMLFormElement, Props>(
               />
             ))}
           </LabelsContainer>
-        </Container>
+        </Dialog.Content>
         <Dialog.Footer
           leading={
             <Button colorStyle="accentSecondary" onClick={onCancel}>

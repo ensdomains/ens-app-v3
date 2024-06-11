@@ -3,14 +3,6 @@ import styled, { css } from 'styled-components'
 
 import { Button, Dialog, Helper, Typography } from '@ensdomains/thorin'
 
-const Container = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space[4]};
-  `,
-)
-
 const Description = styled.div(
   () => css`
     text-align: center;
@@ -27,13 +19,15 @@ type Props = {
 export const MainView = ({ manager, showWarning, onCancel, onConfirm }: Props) => {
   const { t } = useTranslation('transactionFlow')
   return (
-    <Container>
-      <Description>
-        <Typography color="text">
-          <Trans t={t} i18nKey="input.syncManager.description" values={{ manager }} />
-        </Typography>
-      </Description>
-      {showWarning && <Helper type="warning">{t('input.syncManager.warning')}</Helper>}
+    <>
+      <Dialog.Content>
+        <Description>
+          <Typography color="text">
+            <Trans t={t} i18nKey="input.syncManager.description" values={{ manager }} />
+          </Typography>
+        </Description>
+        {showWarning && <Helper type="warning">{t('input.syncManager.warning')}</Helper>}
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={onCancel}>
@@ -42,6 +36,6 @@ export const MainView = ({ manager, showWarning, onCancel, onConfirm }: Props) =
         }
         trailing={<Button onClick={onConfirm}>{t('action.next', { ns: 'common' })}</Button>}
       />
-    </Container>
+    </>
   )
 }

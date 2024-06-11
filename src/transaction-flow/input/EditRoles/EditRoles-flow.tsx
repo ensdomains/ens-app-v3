@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import useRoles, { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
@@ -16,13 +14,6 @@ import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { EditRoleView } from './views/EditRoleView/EditRoleView'
 import { MainView } from './views/MainView/MainView'
-
-const StyledInnerDialog = styled(InnerDialog)(
-  ({ theme }) => css`
-    flex: 1;
-    min-height: ${theme.space[72]};
-  `,
-)
 
 export type EditRolesForm = {
   roles: RoleRecord[]
@@ -37,7 +28,6 @@ export type Props = {
 } & TransactionDialogPassthrough
 
 const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
-  const ref = useRef<HTMLFormElement>(null)
   const [selectedRoleIndex, setSelectedRoleIndex] = useState<number | null>(null)
 
   const roles = useRoles(name)
@@ -125,27 +115,23 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
 
   return (
     <FormProvider {...form}>
-      <StyledInnerDialog as="form" ref={ref} onSubmit={form.handleSubmit(onSubmit)}>
-        {match(selectedRoleIndex)
-          .with(P.number, (index) => (
-            <EditRoleView
-              index={index}
-              onBack={() => {
-                form.trigger()
-                setSelectedRoleIndex(null)
-              }}
-            />
-          ))
-          .otherwise(() => (
-            <MainView
-              onSelectIndex={(index) => setSelectedRoleIndex(index)}
-              onCancel={onDismiss}
-              onSave={() => {
-                ref.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
-              }}
-            />
-          ))}
-      </StyledInnerDialog>
+      {match(selectedRoleIndex)
+        .with(P.number, (index) => (
+          <EditRoleView
+            index={index}
+            onBack={() => {
+              form.trigger()
+              setSelectedRoleIndex(null)
+            }}
+          />
+        ))
+        .otherwise(() => (
+          <MainView
+            onSelectIndex={(index) => setSelectedRoleIndex(index)}
+            onCancel={onDismiss}
+            onSubmit={form.handleSubmit(onSubmit)}
+          />
+        ))}
     </FormProvider>
   )
 }
