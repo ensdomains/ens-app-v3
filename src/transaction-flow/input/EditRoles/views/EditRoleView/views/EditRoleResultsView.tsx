@@ -7,9 +7,10 @@ import { SearchViewResult } from '@app/transaction-flow/input/SendName/views/Sea
 import type { useSimpleSearch } from '../../../hooks/useSimpleSearch'
 
 const Container = styled.div(
-  () => css`
+  ({ theme }) => css`
     width: 100%;
     height: 100%;
+    min-height: ${theme.space['40']};
     display: flex;
     flex-direction: column;
   `,

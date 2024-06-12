@@ -19,7 +19,7 @@ export class AddressPage {
     this.searchInput = this.page.getByTestId('name-table-header-search')
     this.selectToggle = this.page.getByTestId('check-button')
     this.extendNamesButton = this.page.getByTestId('extend-names-button')
-    this.extendNamesModal = this.page.getByTestId('extend-names-modal')
+    this.extendNamesModal = this.page.locator('.modal')
     this.extendNamesModalNextButton = this.extendNamesModal.getByRole('button', { name: 'Next' })
   }
 

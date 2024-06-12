@@ -8,7 +8,7 @@ export class AdvancedEditorModal {
 
   constructor(page: Page) {
     this.page = page
-    this.saveButton = this.page.getByTestId('advanced-editor').getByRole('button', { name: 'Save' })
+    this.saveButton = this.page.locator('.modal').getByRole('button', { name: 'Save' })
   }
 
   tab(tab: 'text' | 'address' | 'other') {

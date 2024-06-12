@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import {
-  AlertSVG,
   Button,
   CountdownCircle,
   Dialog,
@@ -14,10 +13,10 @@ import {
   Typography,
 } from '@ensdomains/thorin'
 
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
+import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
@@ -71,42 +70,6 @@ const StyledCountdown = styled(CountdownCircle)(
         stroke: ${theme.colors.grey};
       `}
     }
-  `,
-)
-
-const DialogTitle = styled(Typography)(
-  ({ theme }) => css`
-    font-size: ${theme.fontSizes.headingThree};
-    font-weight: bold;
-    text-align: center;
-  `,
-)
-
-const DialogHeading = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: ${theme.space['1']};
-
-    div:first-of-type {
-      padding: ${theme.space['2']};
-      background-color: ${theme.colors.yellow};
-      color: ${theme.colors.background};
-      border-radius: ${theme.radii.full};
-
-      svg {
-        display: block;
-        overflow: visible;
-      }
-    }
-  `,
-)
-
-const DialogContent = styled(Typography)(
-  () => css`
-    text-align: center;
   `,
 )
 
@@ -304,23 +267,22 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     <StyledCard>
       <Dialog variant="blank" open={resetOpen} onDismiss={() => setResetOpen(false)}>
         <Dialog.CloseButton onClick={() => setResetOpen(false)} />
-        <InnerDialog>
-          <DialogHeading>
-            <div>
-              <AlertSVG />
-            </div>
-            <DialogTitle>{t('steps.cancelRegistration.heading')}</DialogTitle>
-          </DialogHeading>
-          <DialogContent>{t('steps.cancelRegistration.contentOne')}</DialogContent>
-          <DialogContent>{t('steps.cancelRegistration.contentTwo')}</DialogContent>
-          <Dialog.Footer
-            trailing={
-              <Button onClick={resetTransactions} colorStyle="redSecondary">
-                {t('steps.cancelRegistration.footer')}
-              </Button>
-            }
-          />
-        </InnerDialog>
+        <Dialog.Heading
+          title={t('steps.cancelRegistration.heading')}
+          fontVariant="headingThree"
+          alert="warning"
+        />
+        <Dialog.Content>
+          <CenteredTypography>{t('steps.cancelRegistration.contentOne')}</CenteredTypography>
+          <CenteredTypography>{t('steps.cancelRegistration.contentTwo')}</CenteredTypography>
+        </Dialog.Content>
+        <Dialog.Footer
+          trailing={
+            <Button onClick={resetTransactions} colorStyle="redSecondary">
+              {t('steps.cancelRegistration.footer')}
+            </Button>
+          }
+        />
       </Dialog>
       <Heading>{t('steps.transactions.heading')}</Heading>
       <StyledCountdown

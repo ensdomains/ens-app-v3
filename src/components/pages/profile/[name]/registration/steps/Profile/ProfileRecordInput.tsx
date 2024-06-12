@@ -17,7 +17,6 @@ const Container = styled.div(
 const ButtonContainer = styled.div(
   ({ theme }) => css`
     width: ${theme.space['11']};
-    margin-right: -${theme.space['1']};
     display: flex;
     flex-direction: column;
     justify-content: flex-start;

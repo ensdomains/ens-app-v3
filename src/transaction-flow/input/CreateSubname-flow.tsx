@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components'
 import { validateName } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, Input } from '@ensdomains/thorin'
 
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 
 import { useValidateSubnameLabel } from '../../hooks/useValidateSubnameLabel'
@@ -68,7 +67,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
   return (
     <>
       <Dialog.Heading title={t('details.tabs.subnames.addSubname.dialog.title')} />
-      <InnerDialog>
+      <Dialog.Content>
         <Input
           data-testid="add-subname-input"
           label="Label"
@@ -90,7 +89,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
               : undefined
           }
         />
-      </InnerDialog>
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={onDismiss}>

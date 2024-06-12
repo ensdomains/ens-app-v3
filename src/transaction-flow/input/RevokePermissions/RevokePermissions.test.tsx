@@ -7,6 +7,7 @@ import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { DeepPartial } from '@app/types'
 
 import RevokePermissions, { Props } from './RevokePermissions-flow'
+import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
@@ -16,6 +17,8 @@ const mockUsePrimaryName = mockFunction(usePrimaryName)
 
 const mockDispatch = vi.fn()
 const mockOnDismiss = vi.fn()
+
+makeMockIntersectionObserver()
 
 type Data = Props['data']
 const makeData = (overrides: DeepPartial<Data> = {}) => {

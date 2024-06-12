@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { Button, Dialog } from '@ensdomains/thorin'
 
 import { CenteredTypography } from '../components/CenteredTypography'
-import { ContentContainer } from '../components/ContentContainer'
-import { StyledInnerDialog } from '../components/StyledInnerDialog'
 
 type Props = {
   name: string
@@ -18,13 +16,11 @@ export const MigrateRegistryView = ({ name, onCancel }: Props) => {
         title={t('input.profileEditor.warningOverlay.migrateRegistry.title')}
         alert="error"
       />
-      <StyledInnerDialog>
-        <ContentContainer>
-          <CenteredTypography>
-            {t('input.profileEditor.warningOverlay.migrateRegistry.subtitle')}
-          </CenteredTypography>
-        </ContentContainer>
-      </StyledInnerDialog>
+      <Dialog.Content>
+        <CenteredTypography>
+          {t('input.profileEditor.warningOverlay.migrateRegistry.subtitle')}
+        </CenteredTypography>
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button

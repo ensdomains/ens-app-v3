@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { GRACE_PERIOD } from '@app/utils/constants'
 
 import { ExpirySection } from './ExpirySection'
+import { makeMockIntersectionObserver } from '../../../../../../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('./hooks/useExpiryDetails', () => ({
   useExpiryDetails: ({ name }: any) => {
@@ -44,6 +45,8 @@ vi.mock('./hooks/useExpiryActions', () => ({
       ]
   },
 }))
+
+makeMockIntersectionObserver()
 
 describe('ExpirySection', () => {
   it('should be able to open earnify button modal', async () => {
