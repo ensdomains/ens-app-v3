@@ -55,26 +55,34 @@ const firefoxRewrite: PagesFunction = async ({ request, next }) => {
   const userAgent = request.headers.get('user-agent')?.toLowerCase()
 
   if (userAgent) {
-    if (
-      userAgent.indexOf('gecko/20100101') !== -1 &&
-      // firefox
-      userAgent.indexOf('firefox/') !== -1
-    ) {
+    if (userAgent.includes('gecko/20100101') && userAgent.includes('firefox/')) {
+      const response = await next()
+      response.headers.set(
+        'Content-Security-Policy',
+        "frame-ancestors 'self' https://app.safe.global;",
+      )
       return new HTMLRewriter()
         .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask.js'))
-        .transform(await next())
+        .transform(response)
     }
-    if (
-      userAgent.indexOf('webview metamaskmobile') !== -1 &&
-      userAgent.indexOf('applewebkit') !== -1
-    ) {
+
+    if (userAgent.includes('webview metamaskmobile') && userAgent.includes('applewebkit')) {
+      const response = await next()
+      response.headers.set(
+        'Content-Security-Policy',
+        "worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
+      )
       return new HTMLRewriter()
         .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask-ios.js'))
-        .transform(await next())
+        .transform(response)
     }
   }
-
-  return next()
+  const response = await next()
+  response.headers.set(
+    'Content-Security-Policy',
+    "worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
+  )
+  return response
 }
 
 const baseOgImageUrl = 'https://ens-og-image.ens-cf.workers.dev'
