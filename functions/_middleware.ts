@@ -54,37 +54,30 @@ const staticHandler: PagesFunction = async ({ request, next, env }) => {
 export const firefoxRewrite: PagesFunction = async ({ request, next }) => {
   const userAgent = request.headers.get('user-agent')?.toLowerCase()
 
-  // Initialize headers
-  const headers = new Headers(request.headers)
-
   if (userAgent) {
     if (userAgent.includes('gecko/20100101') && userAgent.includes('firefox/')) {
-      headers.set('Content-Security-Policy', "frame-ancestors 'self' https://app.safe.global;")
-      const modifiedRequest = new Request(request, { headers })
-      const response = await next(modifiedRequest)
+      const response = await next()
+      response.headers.set(
+        'Content-Security-Policy',
+        "frame-ancestors 'self' https://app.safe.global;",
+      )
       return new HTMLRewriter()
         .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask.js'))
         .transform(response)
     }
 
-    // Double-set CSP for non-Firefox browsers or cases where other conditions apply
-    headers.set(
-      'Content-Security-Policy',
-      "worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
-    )
-
     if (userAgent.includes('webview metamaskmobile') && userAgent.includes('applewebkit')) {
-      const modifiedRequest = new Request(request, { headers })
-      const response = await next(modifiedRequest)
+      const response = await next()
+      response.headers.set(
+        'Content-Security-Policy',
+        "worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
+      )
       return new HTMLRewriter()
         .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask-ios.js'))
         .transform(response)
     }
   }
-
-  // Continue with the modified request
-  const modifiedRequest = new Request(request, { headers })
-  const response = await next(modifiedRequest)
+  const response = await next()
   response.headers.set(
     'Content-Security-Policy',
     "worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
