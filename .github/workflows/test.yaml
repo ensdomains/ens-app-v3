@@ -13,7 +13,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 8.11.0
+          version: 9.3.0
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -37,7 +37,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 8.11.0
+          version: 9.3.0
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -71,7 +71,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 8.11.0
+          version: 9.3.0
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -106,7 +106,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 8.11.0
+          version: 9.3.0
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -156,7 +156,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 8.11.0
+          version: 9.3.0
 
       - name: Install Node.js
         uses: actions/setup-node@v3
