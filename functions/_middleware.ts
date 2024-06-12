@@ -51,7 +51,7 @@ const staticHandler: PagesFunction = async ({ request, next, env }) => {
   return next()
 }
 
-export const firefoxRewrite: PagesFunction = async ({ request, next }) => {
+const firefoxRewrite: PagesFunction = async ({ request, next }) => {
   const userAgent = request.headers.get('user-agent')?.toLowerCase()
 
   if (userAgent) {
