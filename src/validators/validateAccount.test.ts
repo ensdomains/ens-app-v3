@@ -104,7 +104,13 @@ describe('validateAccount', () => {
       expected: true,
     },
     {
-      description: 'GitHub username with mixed case',
+      description: 'GitHub username with a hyphen',
+      key: 'com.github',
+      value: 'valid-username',
+      expected: true,
+    },
+    {
+      description: 'GitHub username with a hyphen and mixed case',
       key: 'com.github',
       value: 'Valid-Username',
       expected: true,
