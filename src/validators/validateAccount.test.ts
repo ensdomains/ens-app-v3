@@ -121,6 +121,12 @@ describe('validateAccount', () => {
       value: 'Valid-Username-123-456',
       expected: true,
     },
+    {
+      description: 'Invalid empty string GitHub username',
+      key: 'com.github',
+      value: '',
+      expected: false,
+    },
 
     // Discord tests
     {
