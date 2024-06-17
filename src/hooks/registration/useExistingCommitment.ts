@@ -265,7 +265,8 @@ export const useExistingCommitment = <TParams extends UseExistingCommitmentParam
   const { setTransactionHashFromUpdate } = useTransactionFlow()
   const { data: isSafeApp, isLoading: isSafeAppLoading } = useIsSafeApp()
 
-  console.log('commit is:', params.commitment)
+  if (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ETH_NODE === 'anvil')
+    console.log('commit is:', params.commitment)
 
   const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
