@@ -1,9 +1,10 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, queryOptions } from '@tanstack/react-query'
 
 import { getSubnames, Name } from '@ensdomains/ensjs/subgraph'
 
 import { ConfigWithEns, CreateQueryKey } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { useQuery } from '@app/utils/query/useQuery'
 
 import { emptyAddress } from '../utils/constants'
 import { useQueryOptions } from './useQueryOptions'

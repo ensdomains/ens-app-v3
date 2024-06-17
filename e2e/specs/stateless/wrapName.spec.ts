@@ -278,6 +278,8 @@ test('should calculate needed steps without localstorage', async ({
   await transactionModal.confirm()
   await expect(transactionModal.completeButton).toBeEnabled()
 
+  await page.waitForTimeout(10000)
+
   await page.evaluate(() => localStorage.clear())
   await page.reload()
   await login.reconnect()

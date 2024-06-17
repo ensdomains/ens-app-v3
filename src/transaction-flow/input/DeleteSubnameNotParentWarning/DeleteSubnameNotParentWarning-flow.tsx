@@ -1,8 +1,7 @@
 import { Trans, useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { Button, Dialog, mq } from '@ensdomains/thorin'
+import { Button, Dialog } from '@ensdomains/thorin'
 
 import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -13,16 +12,6 @@ import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { parentName } from '@app/utils/name'
 
 import { CenterAlignedTypography } from '../RevokePermissions/components/CenterAlignedTypography'
-
-const MessageContainer = styled(CenterAlignedTypography)(({ theme }) => [
-  css`
-    width: 100%;
-  `,
-  mq.sm.min(css`
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-  `),
-])
 
 type Data = {
   name: string
@@ -75,17 +64,19 @@ const DeleteSubnameNotParentWarning = ({ data, dispatch, onDismiss }: Props) => 
   return (
     <>
       <Dialog.Heading title={t('input.deleteSubnameNotParentWarning.title')} alert="error" />
-      <MessageContainer>
-        <Trans
-          i18nKey="input.deleteSubnameNotParentWarning.message"
-          ns="transactionFlow"
-          components={{ b: <strong /> }}
-          values={{
-            ownershipTerm: t(ownerTarget.label, { ns: 'common' }).toLocaleLowerCase(),
-            parentOwner: parentPrimaryOrAddress.nameOrAddr,
-          }}
-        />
-      </MessageContainer>
+      <Dialog.Content>
+        <CenterAlignedTypography>
+          <Trans
+            i18nKey="input.deleteSubnameNotParentWarning.message"
+            ns="transactionFlow"
+            components={{ b: <strong /> }}
+            values={{
+              ownershipTerm: t(ownerTarget.label, { ns: 'common' }).toLocaleLowerCase(),
+              parentOwner: parentPrimaryOrAddress.nameOrAddr,
+            }}
+          />
+        </CenterAlignedTypography>
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={onDismiss}>

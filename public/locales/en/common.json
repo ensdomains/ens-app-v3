@@ -54,6 +54,11 @@
   "unit": {
     "years_one": "{{count}} year",
     "years_other": "{{count}} years",
+    "months_one": "{{count}} month",
+    "months_other": "{{count}} months",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "invalid_date": "Invalid Date",
     "yrs_one": "{{count}} yr",
     "yrs_other": "{{count}} yrs",
     "gas": "{{value}} gas",
@@ -384,5 +389,9 @@
   },
   "dns": {
     "refresh": "Refresh DNS"
+  },
+  "calendar": {
+    "pick_by_years": "Pick by years",
+    "pick_by_date": "Pick by date"
   }
 }

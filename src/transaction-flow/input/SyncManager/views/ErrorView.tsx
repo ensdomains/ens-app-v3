@@ -1,26 +1,8 @@
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
 import { SearchViewErrorView } from '../../SendName/views/SearchView/views/SearchViewErrorView'
-
-const Container = styled.div(
-  ({ theme }) => css`
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space[4]};
-  `,
-)
-
-const SubviewContainer = styled.div(
-  () => css`
-    position: relative;
-  `,
-)
 
 type Props = {
   onCancel: () => void
@@ -29,10 +11,10 @@ type Props = {
 export const ErrorView = ({ onCancel }: Props) => {
   const { t } = useTranslation('transactionFlow')
   return (
-    <Container>
-      <SubviewContainer>
+    <>
+      <Dialog.Content>
         <SearchViewErrorView />
-      </SubviewContainer>
+      </Dialog.Content>
       <Dialog.Footer
         trailing={
           <Button colorStyle="redSecondary" onClick={onCancel}>
@@ -40,6 +22,6 @@ export const ErrorView = ({ onCancel }: Props) => {
           </Button>
         }
       />
-    </Container>
+    </>
   )
 }

@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext } from '@tanstack/react-query'
 import { createPublicClient, http, namehash, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 import { optimism } from 'viem/chains'
@@ -9,6 +9,7 @@ import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
+import { useQuery } from '@app/utils/query/useQuery'
 import { infuraUrl } from '@app/utils/query/wagmi'
 
 type UseDotBoxAvailabilityOnchainParameters = {

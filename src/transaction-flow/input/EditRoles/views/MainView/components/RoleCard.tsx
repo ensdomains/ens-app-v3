@@ -59,7 +59,7 @@ const Container = styled.div<{ $dirty?: boolean }>(
     padding: ${theme.space[4]};
     border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii.large};
-    margin-right: ${theme.space[2]};
+    width: ${theme.space.full};
 
     ${$dirty &&
     css`

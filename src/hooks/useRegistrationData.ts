@@ -1,4 +1,4 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext } from '@tanstack/react-query'
 import { labelhash } from 'viem'
 
 import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
@@ -6,6 +6,7 @@ import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
+import { useQuery } from '@app/utils/query/useQuery'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { useQueryOptions } from './useQueryOptions'

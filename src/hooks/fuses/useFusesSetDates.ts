@@ -96,7 +96,7 @@ export const generateGetBlockQueryArray = (
           queryDependencyType: 'standard',
         }),
         queryFn: getBlockQueryFn(client),
-        staleTime: Infinity,
+        staleTime: 1_000 * 60 * 60 * 24 * 7,
       }) as const,
   )
 }
@@ -111,20 +111,20 @@ export const generateMatchedFuseBlockData = ({
   queries: ReturnType<typeof generateGetBlockQueryArray>
 }) => {
   if (fuseSetBlocks.length === 0)
-    return { data: undefined, hasLoadingBlocks: false, hasFetchingBlocks: false }
+    return { data: undefined, hasPendingBlocks: false, hasFetchingBlocks: false }
   const data: FuseSetEntries = {}
   const blockMap = new Map(
     blockDatas.map((query, i) => [queries[i].queryKey[0].blockNumber.toString(), query]),
   )
 
-  let hasLoadingBlocks = false
+  let hasPendingBlocks = false
   let hasFetchingBlocks = false
   let hasIncompleteData = false
   let hasAllSuccessData = true
 
   for (const [fuseKey, blockNumber] of fuseSetBlocks) {
     const blockQuery = blockMap.get(blockNumber.toString())
-    if (blockQuery?.isLoading) hasLoadingBlocks = true
+    if (blockQuery?.isPending) hasPendingBlocks = true
     if (blockQuery?.isFetching) hasFetchingBlocks = true
     // don't allow incomplete data to be returned
     if (!blockQuery?.data) {
@@ -146,7 +146,7 @@ export const generateMatchedFuseBlockData = ({
 
   return {
     data: hasIncompleteData ? undefined : data,
-    hasLoadingBlocks,
+    hasPendingBlocks,
     hasFetchingBlocks,
     hasAllSuccessData,
   }
@@ -176,14 +176,14 @@ export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParam
 
   const blockDatas = useQueries({ queries }, queryClient)
 
-  const { data, hasLoadingBlocks, hasFetchingBlocks, hasAllSuccessData } = useMemo(
+  const { data, hasPendingBlocks, hasFetchingBlocks, hasAllSuccessData } = useMemo(
     () => generateMatchedFuseBlockData({ fuseSetBlocks, blockDatas, queries }),
     [fuseSetBlocks, blockDatas, queries],
   )
 
   return {
     data,
-    isLoading: isNameHistoryLoading || hasLoadingBlocks,
+    isLoading: isNameHistoryLoading || hasPendingBlocks,
     isFetching: isNameHistoryFetching || hasFetchingBlocks,
     isSuccess: isNameHistorySuccess && hasAllSuccessData,
   }

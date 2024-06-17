@@ -9,6 +9,7 @@ import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRece
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 
 import { TransactionSection } from './TransactionSection'
+import { makeMockIntersectionObserver } from '../../../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('@app/hooks/chain/useChainName')
 vi.mock('@app/hooks/transactions/useClearRecentTransactions')
@@ -19,6 +20,8 @@ const mockUseClearRecentTransactions = mockFunction(useClearRecentTransactions)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 
 const mockClearTransactions = vi.fn()
+
+makeMockIntersectionObserver()
 
 const makeRecentTransaction =
   (status = 'confirmed') =>
