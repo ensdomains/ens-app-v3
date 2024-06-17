@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { makeCommitment } from '@ensdomains/ensjs/utils'
 import {
   Button,
   CountdownCircle,
@@ -15,6 +16,7 @@ import {
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
+import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
@@ -118,6 +120,14 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     name,
     owner: address!,
     registrationData,
+  })
+
+  const commitCouldBeFound =
+    !commitTx?.stage || commitTx.stage === 'confirm' || commitTx.stage === 'failed'
+  useExistingCommitment({
+    commitment: makeCommitment(registrationParams),
+    enabled: commitCouldBeFound,
+    commitKey,
   })
 
   const makeCommitNameFlow = useCallback(() => {

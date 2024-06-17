@@ -1,5 +1,7 @@
 import { expect } from '@playwright/test'
+import { Hash, isHash } from 'viem'
 
+import { ethRegistrarControllerCommitSnippet } from '@ensdomains/ensjs/contracts'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
 // import { secondsToDateInput } from '@app/utils/date'
@@ -7,7 +9,11 @@ import { daysToSeconds, yearsToSeconds } from '@app/utils/time'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
-import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import {
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 /*
  * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will
@@ -829,6 +835,95 @@ test('should not allow normal registration less than 28 days', async ({
 
   // should show the correct details on completion
   await expect(page.getByTestId('invoice-item-0-amount')).toHaveText(/0.0002 ETH/)
+
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    accounts.getAddress('user', 5),
+  )
+})
+
+test('should be able to detect an existing commit created on a private mempool', async ({
+  page,
+  login,
+  accounts,
+  provider,
+  time,
+  makePageObject,
+}) => {
+  test.slow()
+
+  const name = `registration-normal-${Date.now()}.eth`
+  const homePage = makePageObject('HomePage')
+  const registrationPage = makePageObject('RegistrationPage')
+  const transactionModal = makePageObject('TransactionModal')
+
+  await time.sync(500)
+
+  await homePage.goto()
+  await login.connect()
+
+  // should redirect to registration page
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+  await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+
+  await registrationPage.primaryNameToggle.uncheck()
+
+  // should go to profile editor step
+  await page.getByTestId('next-button').click()
+
+  await page.getByTestId('next-button').click()
+
+  await transactionModal.closeButton.click()
+
+  let commitHash: Hash | undefined
+  let attempts = 0
+  while (!commitHash && attempts < 4) {
+    // eslint-disable-next-line no-await-in-loop
+    const message = await page.waitForEvent('console')
+    // eslint-disable-next-line no-await-in-loop
+    const txt = await message.text()
+    const hash = txt.split(':')[1]?.trim() as Hash
+    if (isHash(hash)) commitHash = hash
+    attempts += 1
+  }
+  expect(commitHash!).toBeDefined()
+
+  const approveTx = await walletClient.writeContract({
+    abi: ethRegistrarControllerCommitSnippet,
+    address: testClient.chain.contracts.ensEthRegistrarController.address,
+    args: [commitHash!],
+    functionName: 'commit',
+    account: createAccounts().getAddress('user') as `0x${string}`,
+  })
+  await waitForTransaction(approveTx)
+
+  await page.route('https://api.findblock.xyz/**/*', async (route) => {
+    await route.fulfill({
+      json: {
+        ok: true,
+        data: {
+          hash: approveTx,
+        },
+      },
+    })
+  })
+
+  // should show countdown
+  await expect(page.getByTestId('countdown-circle')).toBeVisible()
+  await expect(page.getByTestId('countdown-circle')).toContainText(/^[0-6]?[0-9]$/)
+  await provider.increaseTime(60)
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible({ timeout: 10000 })
+  await expect(page.getByTestId('finish-button')).toBeEnabled()
+
+  // should save the registration state and the transaction status
+  await page.reload()
+  await expect(page.getByTestId('finish-button')).toBeEnabled()
+
+  // should allow finalising registration and automatically go to the complete step
+  await page.getByTestId('finish-button').click()
+  await expect(page.getByText('Open Wallet')).toBeVisible()
+  await transactionModal.confirm()
 
   await page.getByTestId('view-name').click()
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
