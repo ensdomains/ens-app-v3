@@ -51,7 +51,7 @@
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.2.0-beta.0",
-    "@ensdomains/ensjs": "3.5.0-beta.2",
+    "@ensdomains/ensjs": "./ensdomains-ensjs-3.6.0.tgz",
     "@ensdomains/thorin": "0.6.49",
     "@metamask/mobile-provider": "^2.1.0",
     "@metamask/post-message-stream": "^6.1.2",
@@ -96,7 +96,7 @@
     "styled-components": "^5.3.5",
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
-    "viem": "^2.7.13",
+    "viem": "^2.15.1",
     "wagmi": "2.5.7"
   },
   "peerDependencies": {

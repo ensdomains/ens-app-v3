@@ -1,5 +1,12 @@
 # ENS App V3
 
+
+Instructions:
+
+- pnpm i
+- upgrade viem to 2.15.1
+- pnpm run 
+
 The all new, all cool version of the ENS manager.
 
 ## EXTERNAL CONTRIBUTOR NOTICE
