@@ -129,6 +129,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
     }
     case 'setTransactionStage': {
       const selectedItem = getSelectedItem()
+      if (!selectedItem) break
       const currentTransaction = getCurrentTransaction(selectedItem)
 
       currentTransaction.stage = action.payload
@@ -136,6 +137,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
     }
     case 'setTransactionHash': {
       const selectedItem = getSelectedItem()
+      if (!selectedItem) break
       const currentTransaction = getCurrentTransaction(selectedItem)
 
       currentTransaction.hash = action.payload
