@@ -83,7 +83,6 @@ export const walletClient = (
     transport,
   }) as WalletClient<typeof transport, typeof localhost, Account>
 ).extend((client) => ({
-  ...(client as any),
   mine: async ({ account }: { account: Account }) =>
     client.sendTransaction({
       to: emptyAddress,
