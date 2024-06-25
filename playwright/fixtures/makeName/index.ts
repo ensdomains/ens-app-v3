@@ -72,7 +72,7 @@ export function createMakeNames({ accounts, provider, time, contracts, subgraph 
 
     await time.sync(_timeOffset)
 
-    const ethNames = _names.map((name) => `${name.label}.eth`)
+    const ethNames = _names.map((name) => `${name.label}.lyx`)
     if (ethNames.length === 1) return ethNames[0] as string
     return ethNames
   }

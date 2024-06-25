@@ -275,7 +275,7 @@ export const SearchInput = ({
             item.value !== normalisedOutput &&
             item.value.includes(normalisedOutput) &&
             (searchItem.type === 'nameWithDotEth'
-              ? item.value !== `${normalisedOutput}.eth`
+              ? item.value !== `${normalisedOutput}.lyx`
               : true),
         )
       }
@@ -315,7 +315,7 @@ export const SearchInput = ({
     if (selectedItem.type === 'nameWithDotEth') {
       selectedItem = {
         type: 'name',
-        value: `${normalisedOutput}.eth`,
+        value: `${normalisedOutput}.lyx`,
       }
     }
     if (!selectedItem.value) {

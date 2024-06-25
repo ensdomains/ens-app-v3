@@ -115,7 +115,7 @@ export const useBasicName = ({
       !!(
         nameWrapperAddress &&
         !isWrapped &&
-        normalisedName?.endsWith('.eth') &&
+        normalisedName?.endsWith('.lyx') &&
         !isLabelTooLong(normalisedName)
       ),
     [nameWrapperAddress, isWrapped, normalisedName],

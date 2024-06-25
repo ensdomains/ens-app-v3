@@ -49,7 +49,7 @@ export const TaggedNameItem = ({
   }) => {
   const { t } = useTranslation('common')
 
-  const isNativeEthName = /\.eth$/.test(name!) && name!.split('.').length === 2
+  const isNativeEthName = /\.lyx$/.test(name!) && name!.split('.').length === 2
 
   const tags = (() => {
     if (notOwned) return [[false, 'name.notOwned']] as const

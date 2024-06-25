@@ -95,7 +95,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
             />
           </Helper>
         )}
-        {isWrapped && !normalisedName.endsWith('.eth') && (
+        {/* TODO: can this be removed as we don't have wrapper? */}
+        {isWrapped && !normalisedName.endsWith('.lyx') && (
           <Helper type="warning" alignment="horizontal">
             {t('tabs.profile.warnings.wrappedDNS')}
           </Helper>

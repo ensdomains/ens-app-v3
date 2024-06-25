@@ -56,7 +56,7 @@ export const generateWrappedName =
     records,
     subnames,
   }: Name) => {
-    const name = `${label}.eth`
+    const name = `${label}.lyx`
     const _owner = createAccounts().getAddress(owner) as `0x${string}`
     console.log('generating wrapped name:', name, 'with owner:', _owner)
 
@@ -99,7 +99,7 @@ export const generateWrappedName =
 
     const _subnames = (subnames || []).map((subname) => ({
       ...subname,
-      name: `${label}.eth`,
+      name: `${label}.lyx`,
       nameOwner: owner,
       resolver: subname.resolver ?? _resolver,
     }))

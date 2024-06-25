@@ -46,7 +46,7 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   records: [],
   resolverAddress: '0x',
   permissions: childFuseObj,
-  secret: randomSecret({ platformDomain: 'enslabs.eth', campaign: 3 }),
+  secret: randomSecret({ platformDomain: 'enslabs.lyx', campaign: 3 }),
   started: false,
   isMoonpayFlow: false,
   externalTransactionId: '',

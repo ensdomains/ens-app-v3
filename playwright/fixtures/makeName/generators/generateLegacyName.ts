@@ -46,7 +46,7 @@ export const generateLegacyName =
     secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
     subnames,
   }: Name) => {
-    const name = `${label}.eth`
+    const name = `${label}.lyx`
     console.log('generating legacy name:', name)
     const _owner = accounts.getAddress(owner)
 
@@ -69,7 +69,7 @@ export const generateLegacyName =
     // Create subnames
     const _subnames = (subnames || []).map((subname) => ({
       ...subname,
-      name: `${label}.eth`,
+      name: `${label}.lyx`,
       nameOwner: owner,
     }))
     for (const subname of _subnames) {

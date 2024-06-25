@@ -62,35 +62,39 @@ export const getNameType = ({
   registrationStatus?: RegistrationStatus
   nameWrapperAddress: Address
 }): NameType => {
-  const tldType = name.endsWith('.eth') ? ('eth' as const) : ('dns' as const)
+  const tldType = name.endsWith('.lyx') ? ('eth' as const) : ('dns' as const)
   const level = nameLevel(name)
   const wrapLevel = getWrapLevel({ wrapperData, ownerData })
 
-  return match([tldType, wrapLevel, level, registrationStatus])
-    .with([P._, P._, P.union('root', 'tld'), P._], ([, , _level]) => _level)
-    .with(['eth', P._, '2ld', 'gracePeriod'], () => {
-      if (ownerData?.owner !== nameWrapperAddress) return 'eth-unwrapped-2ld:grace-period' as const
-      if (wrapperData?.fuses?.child?.CANNOT_UNWRAP) return 'eth-locked-2ld:grace-period' as const
-      if (wrapperData?.fuses?.parent?.PARENT_CANNOT_CONTROL)
-        return 'eth-emancipated-2ld:grace-period' as const
-      return 'eth-unwrapped-2ld:grace-period' as const
-    })
-    .with(
-      ['eth', P._, '2ld', P._],
-      ([_tldType, _wrapLevel]: [
-        'eth',
-        'unwrapped' | 'emancipated' | 'locked',
-        '2ld',
-        RegistrationStatus,
-      ]) => {
-        return `${_tldType}-${_wrapLevel}-2ld` as const
-      },
-    )
-    .with(['dns', P._, '2ld', P._], ([, _wrapLevel]) => `dns-${_wrapLevel}-2ld` as const)
-    .with([P._, P._, 'subname', P._], ([_tldType, _wrapLevel]) =>
-      pccExpired
-        ? (`${_tldType}-pcc-expired-subname` as const)
-        : (`${_tldType}-${_wrapLevel}-subname` as const),
-    )
-    .exhaustive()
+  return (
+    match([tldType, wrapLevel, level, registrationStatus])
+      .with([P._, P._, P.union('root', 'tld'), P._], ([, , _level]) => _level)
+      // TODO: should we change here to `.lyx`?
+      .with(['eth', P._, '2ld', 'gracePeriod'], () => {
+        if (ownerData?.owner !== nameWrapperAddress)
+          return 'eth-unwrapped-2ld:grace-period' as const
+        if (wrapperData?.fuses?.child?.CANNOT_UNWRAP) return 'eth-locked-2ld:grace-period' as const
+        if (wrapperData?.fuses?.parent?.PARENT_CANNOT_CONTROL)
+          return 'eth-emancipated-2ld:grace-period' as const
+        return 'eth-unwrapped-2ld:grace-period' as const
+      })
+      .with(
+        ['eth', P._, '2ld', P._],
+        ([_tldType, _wrapLevel]: [
+          'eth',
+          'unwrapped' | 'emancipated' | 'locked',
+          '2ld',
+          RegistrationStatus,
+        ]) => {
+          return `${_tldType}-${_wrapLevel}-2ld` as const
+        },
+      )
+      .with(['dns', P._, '2ld', P._], ([, _wrapLevel]) => `dns-${_wrapLevel}-2ld` as const)
+      .with([P._, P._, 'subname', P._], ([_tldType, _wrapLevel]) =>
+        pccExpired
+          ? (`${_tldType}-pcc-expired-subname` as const)
+          : (`${_tldType}-${_wrapLevel}-subname` as const),
+      )
+      .exhaustive()
+  )
 }
