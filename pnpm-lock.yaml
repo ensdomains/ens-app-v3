@@ -327,9 +327,6 @@ importers:
       ethers:
         specifier: ^5.7.2
         version: 5.7.2(bufferutil@4.0.7)(utf-8-validate@6.0.3)
-      ganache:
-        specifier: ^7.4.1
-        version: 7.9.2
       globby:
         specifier: ^14.0.1
         version: 14.0.1

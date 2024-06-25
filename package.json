@@ -43,7 +43,6 @@
     "wrangle:dev": "wrangler pages dev ./next",
     "wrangle:list": "wrangler deployments list",
     "generate:sitemaps": "node ./scripts/generate-site-map.mjs",
-    "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml",
     "subgraph:update": "ens-test-env subgraph --var NEXT_PUBLIC_DEPLOYMENT_ADDRESSES"
   },
@@ -154,7 +153,6 @@
     "eslint-plugin-testing-library": "^6.0.2",
     "eslint-plugin-vitest": "^0.4.0",
     "ethers": "^5.7.2",
-    "ganache": "^7.4.1",
     "globby": "^14.0.1",
     "hardhat": "^2.10.2",
     "hardhat-dependency-compiler": "^1.1.3",
