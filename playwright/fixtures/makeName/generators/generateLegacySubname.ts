@@ -8,7 +8,7 @@ import {
 import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { createSubname, wrapName } from '@ensdomains/ensjs/wallet'
 
-import { Accounts, createAccounts, User } from '../../accounts'
+import { Accounts, User } from '../../accounts'
 import { Contracts } from '../../contracts'
 import {
   testClient,
@@ -50,18 +50,21 @@ export const generateLegacySubname =
     const subname = `${label}.${name}`
     console.log('generating legacy subname:', subname)
 
+    const ownerAccount = accounts.getAccount(owner)
+    const nameOwnerAccount = accounts.getAccount(nameOwner)
+
     const tx = await createSubname(walletClient, {
       name: `${label}.${name}`,
       contract: 'registry',
-      owner: createAccounts().getAddress(owner) as `0x${string}`,
-      account: createAccounts().getAddress(nameOwner) as `0x${string}`,
+      owner: ownerAccount.address,
+      account: nameOwnerAccount,
       resolverAddress: resolver ?? DEFAULT_RESOLVER,
     })
     await waitForTransaction(tx)
 
     // Make records
     if (records && resolver) {
-      await generateRecords()({
+      await generateRecords({ accounts })({
         name: subname,
         owner,
         resolver,
@@ -84,7 +87,7 @@ export const generateLegacySubname =
           }),
           true,
         ],
-        account: createAccounts().getAddress(owner) as `0x${string}`,
+        account: ownerAccount,
       })
       const approve = await waitForTransaction(approveTx)
       if (approve.status === 'success') console.log('approved name wrapper')
@@ -92,12 +95,12 @@ export const generateLegacySubname =
 
       const wrapTx = await wrapName(walletClient, {
         name: subname,
-        newOwnerAddress: accounts.getAddress(owner) as `0x${string}`,
+        newOwnerAddress: ownerAccount.address,
         resolverAddress: getChainContractAddress({
           client: walletClient,
           contract: 'ensPublicResolver',
         }),
-        account: accounts.getAddress(owner) as `0x${string}`,
+        account: ownerAccount,
       })
       const wrap = await waitForTransaction(wrapTx)
       if (wrap.status === 'success') console.log('wrapped subname:', subname)

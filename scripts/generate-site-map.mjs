@@ -1,6 +1,5 @@
 import { createReadStream, createWriteStream, existsSync } from 'fs'
 import { gql, request } from 'graphql-request'
-import fetch from 'node-fetch'
 import {
   SitemapAndIndexStream,
   SitemapStream,

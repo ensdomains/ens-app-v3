@@ -2,7 +2,8 @@
 import { readFileSync } from 'fs'
 import path from 'path'
 
-import { glob } from 'glob'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { globbySync } from 'globby'
 import Markdown from 'markdown-to-jsx'
 import { GetStaticPropsContext } from 'next'
 import { ReactElement } from 'react'
@@ -99,7 +100,7 @@ Page.getLayout = function getLayout(page: ReactElement) {
 }
 
 const getFilePaths = () =>
-  glob.sync('./src/assets/legal/*.md', { cwd: process.cwd(), absolute: true })
+  globbySync('./src/assets/legal/*.md', { cwd: process.cwd(), absolute: true })
 
 const getPageName = (pathname: string) => {
   const pageName = path.basename(pathname, '.md')

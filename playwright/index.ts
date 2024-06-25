@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { test as base } from '@playwright/test'
+import { test as base, TestInfo } from '@playwright/test'
 import { injectHeadlessWeb3Provider, Web3ProviderBackend } from 'headless-web3-provider'
 
 import { Accounts, createAccounts } from './fixtures/accounts'
@@ -12,7 +12,7 @@ import { createTime } from './fixtures/time.js'
 import { createPageObjectMaker } from './pageObjects/index.js'
 
 type Fixtures = {
-  accounts: Accounts
+  testInfo: TestInfo
   wallet: Web3ProviderBackend
   provider: Provider
   login: InstanceType<typeof Login>
@@ -24,18 +24,27 @@ type Fixtures = {
   contracts: ReturnType<typeof createContracts>
 }
 
-export const test = base.extend<Fixtures>({
-  // eslint-disable-next-line no-empty-pattern
-  accounts: async ({}, use, testInfo) => {
-    const stateful = testInfo.project?.name === 'stateful'
-    use(createAccounts(stateful))
+type WorkerFixtures = {
+  accounts: Accounts
+}
+
+export const test = base.extend<Fixtures, WorkerFixtures>({
+  testInfo: ({}, use, testInfo) => {
+    use(testInfo)
   },
+  // eslint-disable-next-line no-empty-pattern
+  accounts: [
+    async ({}, use, workerInfo) => {
+      use(createAccounts(workerInfo))
+    },
+    { scope: 'worker' },
+  ],
   contracts: async ({ accounts, provider }, use) => {
     await use(createContracts({ accounts, provider }))
   },
   wallet: async ({ page, accounts, provider }, use) => {
     const chainId = provider.network?.chainId || 1337
-    const chainRpcUrl = provider.connection?.url || 'http://localhost:8545'
+    const chainRpcUrl = provider.connection?.url || 'http://127.0.0.1:8545'
     const privateKeys = accounts.getAllPrivateKeys()
     const wallet = await injectHeadlessWeb3Provider(page, privateKeys, chainId, chainRpcUrl)
     await use(wallet)

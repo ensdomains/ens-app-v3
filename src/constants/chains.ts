@@ -3,12 +3,11 @@ import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { addEnsContracts } from '@ensdomains/ensjs'
 
-import type { Register } from '@app/local-contracts'
 import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
 
-export const deploymentAddresses = JSON.parse(
-  process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
-) as Register['deploymentAddresses']
+import { deploymentAddresses } from './generatedContracts'
+
+export { deploymentAddresses }
 
 export const localhostWithEns = makeLocalhostChainWithEns<typeof localhost>(
   localhost,

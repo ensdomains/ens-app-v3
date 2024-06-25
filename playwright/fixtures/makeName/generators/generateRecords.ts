@@ -5,7 +5,7 @@
 import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { setRecords } from '@ensdomains/ensjs/wallet'
 
-import { createAccounts, User } from '../../accounts'
+import { Accounts, User } from '../../accounts'
 import { waitForTransaction, walletClient } from '../../contracts/utils/addTestContracts.js'
 
 type Input = {
@@ -15,8 +15,12 @@ type Input = {
   records?: RecordOptions
 }
 
+type Dependencies = {
+  accounts: Accounts
+}
+
 export const generateRecords =
-  () =>
+  ({ accounts }: Dependencies) =>
   async ({ name, owner, resolver, records }: Input) => {
     if (!resolver || !records || !owner) return
 
@@ -30,7 +34,7 @@ export const generateRecords =
       coins,
       texts,
       contentHash,
-      account: createAccounts().getAddress(owner) as `0x${string}`,
+      account: accounts.getAccount(owner),
       abi,
     })
     await waitForTransaction(tx)

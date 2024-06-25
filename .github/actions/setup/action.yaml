@@ -1,0 +1,40 @@
+name: 'Setup'
+description: 'Download and install dependencies'
+inputs:
+  playwright:
+    description: 'Whether or not to install playwright browsers'
+    required: false
+  build-download:
+    description: 'Build download artifact name'
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+
+    - name: Install node-gyp-build
+      shell: bash
+      run: bun add --global node-gyp-build
+
+    - name: Install dependencies
+      shell: bash
+      run: bun install --frozen-lockfile
+
+    - name: Install playwright browsers
+      shell: bash
+      if: ${{ inputs.playwright }}
+      run: bunx playwright install chromium
+
+    - name: Download build
+      if: ${{ inputs.build-download }}
+      id: download
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.build-download }}
+
+    - name: Untar build files
+      shell: bash
+      if: ${{ inputs.build-download }}
+      run: tar -xvf ${{ inputs.build-download }}.tar

@@ -1,0 +1,17 @@
+name: 'Upload playwright report shard'
+description: 'Upload a playwright report blob identified by the job name and shard index'
+runs:
+  using: 'composite'
+  steps:
+    - name: Set report name
+      shell: bash
+      run: echo "REPORT_NAME=report-${{ github.job }}-${{ matrix.shard }}.zip" >> $GITHUB_ENV
+    - name: Rename report
+      shell: bash
+      run: mv blob-report/report.zip $REPORT_NAME
+    - name: Upload blob report
+      uses: actions/upload-artifact@v4
+      with:
+        name: blob-report-${{ github.job }}-${{ matrix.shard }}
+        path: ${{ env.REPORT_NAME }}
+        retention-days: 1

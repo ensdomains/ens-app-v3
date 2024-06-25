@@ -8,7 +8,7 @@
 /* eslint-disable no-await-in-loop */
 import { transferName } from '@ensdomains/ensjs/wallet'
 
-import { Accounts, createAccounts, User } from '../../accounts'
+import { Accounts, User } from '../../accounts'
 import { Contracts } from '../../contracts'
 import {
   testClient,
@@ -57,7 +57,7 @@ export const generateLegacyName =
     await commitTx.wait()
 
     await provider.increaseTime(60)
-    await provider.mine()
+    await walletClient.mine({ account: accounts.getAccount(owner) })
 
     console.log('register name:', name)
     const price = await controller.rentPrice(label, duration)
@@ -80,13 +80,13 @@ export const generateLegacyName =
       console.log('setting manager:', name, manager)
       const tx = await transferName(walletClient, {
         name,
-        newOwnerAddress: createAccounts().getAddress(manager) as `0x${string}`,
+        newOwnerAddress: accounts.getAddress(manager) as `0x${string}`,
         contract: 'registry',
-        account: createAccounts().getAddress(owner) as `0x${string}`,
+        account: accounts.getAccount(owner),
       })
       await waitForTransaction(tx)
     }
 
     await testClient.increaseTime({ seconds: 61 })
-    await testClient.mine({ blocks: 1 })
+    await walletClient.mine({ account: accounts.getAccount(owner) })
   }

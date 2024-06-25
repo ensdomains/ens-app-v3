@@ -18,7 +18,7 @@
   "[svg]": {
     "editor.defaultFormatter": "jock.svg"
   },
-  "jest.jestCommandLine": "pnpm run test",
+  "jestrunner.jestCommand": "bun run test",
   "cSpell.words": [
     "ensjs"
   ],

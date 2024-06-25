@@ -20,7 +20,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { SectionContainer } from './Section'
 
 const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
-  fetch('http://localhost:8545', {
+  fetch('http://127.0.0.1:8545', {
     method: 'POST',
     headers: {
       // eslint-disable-next-line @typescript-eslint/naming-convention

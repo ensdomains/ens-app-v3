@@ -1,4 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { Wallet } from 'ethers'
+
 import { Accounts, User } from '../accounts'
 import { Provider } from '../provider'
 import { getContract } from './utils/getContract'
@@ -18,7 +20,7 @@ export const createContracts = ({ accounts, provider }: Dependencies) => ({
     { signer, address }: { signer?: User; address?: `0x${string}` } = {},
   ) => {
     const options = {
-      signer: signer ? provider.getSigner(accounts.getAddress(signer)) : undefined,
+      signer: signer ? new Wallet(accounts.getPrivateKey(signer)!, provider) : undefined,
       address,
     }
     return getContract(contract, options)

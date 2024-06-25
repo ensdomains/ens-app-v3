@@ -21,6 +21,8 @@ import {
 import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
 import { Register } from '@app/local-contracts'
 
+import { emptyAddress } from '@app/utils/constants'
+
 config({
   path: resolve(__dirname, '../../.env.local'),
   override: true,
@@ -60,7 +62,7 @@ const localhostWithEnsAndAdditionalTestContracts = {
   }
 } as const
 
-const transport = http('http://localhost:8545')
+const transport = http('http://127.0.0.1:8545')
 
 export const publicClient: PublicClient<typeof transport, typeof localhostWithEnsAndAdditionalTestContracts> = createPublicClient({
   chain: localhostWithEnsAndAdditionalTestContracts,
@@ -75,24 +77,33 @@ export const testClient: TestClient<'anvil', typeof transport, typeof localhostW
   },
 )
 
-export const walletClient: WalletClient<typeof transport, typeof localhostWithEnsAndAdditionalTestContracts, Account> =
+export const walletClient = (
   createWalletClient({
     chain: localhostWithEnsAndAdditionalTestContracts,
     transport,
-  })
+  }) as WalletClient<typeof transport, typeof localhost, Account>
+).extend((client) => ({
+  mine: async ({ account }: { account: Account }) =>
+    client.sendTransaction({
+      to: emptyAddress,
+      data: '0x',
+      account,
+    }),
+})) as WalletClient<typeof transport, typeof localhost, Account> & {
+  mine: (params: { account: Account }) => Promise<Hash>
+}
 
-export const waitForTransaction = async (hash: Hash) =>
-  new Promise<TransactionReceipt>((resolveFn, reject) => {
-    publicClient
-      .getTransactionReceipt({ hash })
-      .then(resolveFn)
-      .catch((e) => {
-        if (e instanceof TransactionReceiptNotFoundError) {
-          setTimeout(() => {
-            waitForTransaction(hash).then(resolveFn)
-          }, 100)
-        } else {
-          reject(e)
-        }
-      })
-  })
+export const waitForTransaction = async (hash: Hash): Promise<TransactionReceipt> =>
+  publicClient
+    .getTransactionReceipt({ hash })
+    .catch(async (err) => {
+      if (err instanceof TransactionReceiptNotFoundError) {
+        await new Promise((resolve) => setTimeout(resolve, 100))
+        return waitForTransaction(hash)
+      }
+      throw err
+    })
+    .then((receipt) => {
+      if (receipt.status === 'reverted') throw new Error(`Transaction ${hash} reverted`)
+      return receipt
+    })

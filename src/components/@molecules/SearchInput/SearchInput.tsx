@@ -1,5 +1,4 @@
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
-import debounce from 'lodash/debounce'
 import {
   Dispatch,
   RefObject,
@@ -12,6 +11,7 @@ import {
 } from 'react'
 import { TFunction, useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
+import { debounce } from 'remeda'
 import styled, { css } from 'styled-components'
 import { Address, isAddress } from 'viem'
 import { useAccount, useChainId } from 'wagmi'
