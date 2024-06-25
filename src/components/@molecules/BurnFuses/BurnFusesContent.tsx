@@ -1,6 +1,6 @@
-import isEqual from 'lodash/isEqual'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { isDeepEqual } from 'remeda'
 import styled, { css } from 'styled-components'
 
 import { ChildFuseKeys, ChildFuseReferenceType } from '@ensdomains/ensjs/utils'
@@ -144,7 +144,7 @@ const canContinue = (
     if (Object.values(fuseSelected).some((val) => val) && !fuseSelected.CANNOT_UNWRAP) return true
     return false
   }
-  return isEqual(filteredInitialFuseData, fuseSelected) || cannotUnwrap
+  return isDeepEqual(filteredInitialFuseData, fuseSelected) || cannotUnwrap
 }
 
 type BaseProps = {

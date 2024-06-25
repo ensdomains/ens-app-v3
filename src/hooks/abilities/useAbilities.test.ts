@@ -1,6 +1,6 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
-import * as _ from 'lodash'
+import { isDeepEqual } from 'remeda'
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 // import { writeFileSync} from 'fs'
@@ -128,7 +128,7 @@ describe('useAbilities', () => {
 
       const { result } = renderHook(() => useAbilities({ name }))
 
-      let index = group.findIndex(([, item]) => _.isEqual(item, result.current.data))
+      let index = group.findIndex(([, item]) => isDeepEqual(item, result.current.data))
       if (index == -1) group.push([[type], result.current.data])
       else group[index][0].push(type)
 
