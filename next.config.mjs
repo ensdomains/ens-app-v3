@@ -8,7 +8,6 @@ import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 import { withSentryConfig } from '@sentry/nextjs'
-import StylelintPlugin from 'stylelint-webpack-plugin'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -143,14 +142,6 @@ const nextConfig = {
 
     config.resolve.mainFields = ['browser', 'module', 'main']
 
-    config.plugins.push(
-      new StylelintPlugin({
-        files: './src/**/*.tsx',
-        extensions: ['tsx'],
-        failOnError: process.env.NODE_ENV !== 'development',
-        cache: false,
-      }),
-    )
     config.plugins.push(
       new options.webpack.DefinePlugin({
         'process.env.CONFIG_BUILD_ID': JSON.stringify(options.buildId),

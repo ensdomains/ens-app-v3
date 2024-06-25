@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
 
 import { dateToDateInput, roundDurationWithDay, secondsToDateInput } from '@app/utils/date'

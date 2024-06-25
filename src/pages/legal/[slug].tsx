@@ -2,6 +2,7 @@
 import { readFileSync } from 'fs'
 import path from 'path'
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { globbySync } from 'globby'
 import Markdown from 'markdown-to-jsx'
 import { GetStaticPropsContext } from 'next'

@@ -270,21 +270,26 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
       alert: undefined,
     }))
 
-  const trailingButtonProps =
-    view === 'name-list'
-      ? { onClick: () => setView('registration'), children: t('action.next', { ns: 'common' }) }
-      : {
-          disabled: !totalRentFee || !!estimateGasLimitError,
-          onClick: () => {
-            if (!totalRentFee) return
-            dispatch({
-              name: 'setTransactions',
-              payload: transactions,
-            })
-            dispatch({ name: 'setFlowStage', payload: 'transaction' })
-          },
-          children: t('action.next', { ns: 'common' }),
-        }
+  const trailingButtonProps = match(view)
+    .with('name-list', () => ({
+      onClick: incrementView,
+      children: t('action.next', { ns: 'common' }),
+    }))
+    .with('no-ownership-warning', () => ({
+      onClick: incrementView,
+      children: t('action.understand', { ns: 'common' }),
+    }))
+    .otherwise(() => ({
+      disabled: !!estimateGasLimitError,
+      onClick: () => {
+        if (!totalRentFee) return
+        dispatch({ name: 'setTransactions', payload: transactions })
+        dispatch({ name: 'setFlowStage', payload: 'transaction' })
+      },
+      children: t('action.next', { ns: 'common' }),
+    }))
+
+  const { data: expiryData } = useExpiry({ enabled: names.length > 1, name: names[0] })
 
   return (
     <>
@@ -363,7 +368,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           <Button
             {...trailingButtonProps}
             data-testid="extend-names-confirm"
-            disabled={trailingButtonProps.disabled || isEstimateGasLoading}
+            disabled={isEstimateGasLoading}
           />
         }
       />
