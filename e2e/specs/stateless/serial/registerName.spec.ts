@@ -4,11 +4,16 @@ import { Hash, isHash } from 'viem'
 import { ethRegistrarControllerCommitSnippet } from '@ensdomains/ensjs/contracts'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
-import { test } from '../../../../playwright'
-import { createAccounts } from '../../../../playwright/fixtures/accounts'
-import { walletClient, testClient, waitForTransaction } from '../../../../playwright/fixtures/contracts/utils/addTestContracts'
 // import { secondsToDateInput } from '@app/utils/date'
 import { daysToSeconds, yearsToSeconds } from '@app/utils/time'
+
+import { test } from '../../../../playwright'
+import { createAccounts } from '../../../../playwright/fixtures/accounts'
+import {
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 /*
  * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will

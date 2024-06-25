@@ -1,8 +1,9 @@
 import { expect } from '@playwright/test'
 
-import { test } from '../../../../playwright'
 import { dateToDateInput, roundDurationWithDay, secondsToDateInput } from '@app/utils/date'
 import { daysToSeconds } from '@app/utils/time'
+
+import { test } from '../../../../playwright'
 
 test('should be able to register multiple names on the address page', async ({
   page,
