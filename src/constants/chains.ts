@@ -1,5 +1,4 @@
-import { holesky } from 'viem/chains'
-import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
+import { localhost, luksoTestnet } from 'wagmi/chains'
 
 import { addEnsContracts } from '@ensdomains/ensjs'
 
@@ -14,25 +13,12 @@ export const localhostWithEns = makeLocalhostChainWithEns<typeof localhost>(
   localhost,
   deploymentAddresses,
 )
-export const mainnetWithEns = addEnsContracts(mainnet)
-export const goerliWithEns = addEnsContracts(goerli)
-export const sepoliaWithEns = addEnsContracts(sepolia)
-export const holeskyWithEns = addEnsContracts(holesky)
 
-export const chainsWithEns = [
-  mainnetWithEns,
-  goerliWithEns,
-  sepoliaWithEns,
-  holeskyWithEns,
-  localhostWithEns,
-] as const
+export const luksoTestnetWithEns = addEnsContracts(luksoTestnet)
+
+export const chainsWithEns = [localhostWithEns, luksoTestnetWithEns] as const
 
 export const getSupportedChainById = (chainId: number | undefined) =>
   chainId ? chainsWithEns.find((c) => c.id === chainId) : undefined
 
-export type SupportedChain =
-  | typeof mainnetWithEns
-  | typeof goerliWithEns
-  | typeof sepoliaWithEns
-  | typeof holeskyWithEns
-  | typeof localhostWithEns
+export type SupportedChain = typeof localhostWithEns | typeof luksoTestnetWithEns
