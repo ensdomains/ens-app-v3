@@ -19,5 +19,11 @@
     "editor.defaultFormatter": "jock.svg"
   },
   "jestrunner.jestCommand": "bun run test",
-  "cSpell.words": ["ensjs"]
+  "cSpell.words": [
+    "ensjs"
+  ],
+  "i18n-ally.localesPaths": [
+    "out/locales",
+    "public/locales"
+  ]
 }
