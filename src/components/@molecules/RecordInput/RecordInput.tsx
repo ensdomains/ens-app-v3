@@ -8,10 +8,11 @@ import UnsupportedSVG from '@app/assets/Unsupported.svg'
 import { useDefaultRef } from '../../../hooks/useDefaultRef'
 
 const Container = styled.div(
-  () => css`
+  ({ theme }) => css`
     display: flex;
     align-items: flex-end;
     position: relative;
+    width: ${theme.space.full};
   `,
 )
 

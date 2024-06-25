@@ -38,7 +38,7 @@ const renderHelper = ({
         registrant: registrant,
         wrappedOwner: wrappedOwner,
       }}
-      fuses={typeof fuses !== 'undefined' ? decodeFuses(fuses) : undefined}
+      fuses={typeof fuses !== 'undefined' && fuses > 0 ? decodeFuses(fuses) : undefined}
       notOwned={notOwned}
       expiryDate={'2020-01-01' as any}
     />,

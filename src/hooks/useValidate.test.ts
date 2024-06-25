@@ -2,6 +2,11 @@ import { renderHook } from '@app/test-utils'
 
 import { describe, expect, it } from 'vitest'
 
+import {
+  makeMockUseValidate,
+  mockUseValidateConfig,
+  mockUseValidateTypes,
+} from '../../test/mock/makeMockUseValidate'
 import { useValidate } from './useValidate'
 
 describe('useValidate', () => {
@@ -16,5 +21,15 @@ describe('useValidate', () => {
   it('should not error if % symbol is in input', async () => {
     const { result } = renderHook(() => useValidate({ input: '%' }))
     expect(result.current.isValid).toEqual(false)
+  })
+
+  describe('mocks', () => {
+    it.each(mockUseValidateTypes)('should return expect value for %s ', (type) => {
+      const config = mockUseValidateConfig[type]
+      const { input } = config
+      const { result } = renderHook(() => useValidate({ input }))
+      const expected = makeMockUseValidate(type)
+      expect(result.current).toEqual(expected)
+    })
   })
 })

@@ -7,6 +7,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { Hash } from 'viem'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
@@ -42,6 +43,7 @@ type ProviderValue = {
   getLatestTransaction: (key: string) => GenericTransaction | undefined
   stopCurrentFlow: () => void
   cleanupFlow: (key: string) => void
+  setTransactionHashFromUpdate: (key: string, hash: Hash) => void
 }
 
 const TransactionContext = React.createContext<ProviderValue>({
@@ -54,6 +56,7 @@ const TransactionContext = React.createContext<ProviderValue>({
   getLatestTransaction: () => undefined,
   stopCurrentFlow: () => {},
   cleanupFlow: () => {},
+  setTransactionHashFromUpdate: () => {},
 })
 
 export const TransactionFlowProvider = ({ children }: { children: ReactNode }) => {
@@ -147,6 +150,13 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     [state.items],
   )
 
+  const setTransactionHashFromUpdate = useCallback(
+    (key: string, hash: Hash) => {
+      dispatch({ name: 'setTransactionHashFromUpdate', payload: { key, hash } })
+    },
+    [dispatch],
+  )
+
   const resumeTransactionFlow = useCallback(
     (key: string) => {
       dispatch({ name: 'resumeFlowWithCheck', key, payload: { push: router.pushWithHistory } })
@@ -184,6 +194,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
       getLatestTransaction,
       stopCurrentFlow: () => dispatch({ name: 'stopFlow' }),
       cleanupFlow: (key: string) => dispatch({ name: 'forceCleanupTransaction', payload: key }),
+      setTransactionHashFromUpdate,
     }
   }, [
     dispatch,
@@ -193,6 +204,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     getLatestTransaction,
     getTransactionFlowStage,
     getTransaction,
+    setTransactionHashFromUpdate,
   ])
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null)

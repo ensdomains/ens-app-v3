@@ -173,6 +173,17 @@ describe('getRegistrationStatus', () => {
     })
     expect(result).toBe('imported')
   })
+  it('should return imported if DNS name has ETH record', async () => {
+    const result = getRegistrationStatus({
+      timestamp: Date.now(),
+      validation: { is2LD: true },
+      ownerData,
+      wrapperData,
+      addrData: { id: 60, name: 'eth', value: '0xF142B308cF687d4358410a4cB885513b30A42025' },
+      supportedTLD: true,
+    })
+    expect(result).toBe('imported')
+  })
   it('should return owned if DNS name subname has an owner', async () => {
     const result = getRegistrationStatus({
       timestamp: Date.now(),

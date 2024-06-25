@@ -102,11 +102,13 @@ export const SubnamesTab = ({
   name,
   canEdit,
   canCreateSubdomains,
+  canCreateSubdomainsError,
   isWrapped,
 }: {
   name: string
   canEdit: boolean
   canCreateSubdomains: boolean
+  canCreateSubdomainsError?: string
   isWrapped: boolean
 }) => {
   const { t } = useTranslation('profile')
@@ -224,7 +226,7 @@ export const SubnamesTab = ({
               {...{
                 size: 'medium',
                 buttonId: 'add-subname-disabled-button',
-                content: t('errors.permissionRevoked'),
+                content: t(`errors.${canCreateSubdomainsError || 'default'}`),
                 buttonText: t('details.tabs.subnames.addSubname.action'),
                 mobileWidth: 200,
                 mobilePlacement: 'top',

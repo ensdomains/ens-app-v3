@@ -1,4 +1,4 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext } from '@tanstack/react-query'
 
 import {
   getSubgraphRecords,
@@ -6,12 +6,16 @@ import {
   GetSubgraphRecordsReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
+import { usePrefetchQuery } from '@app/hooks/usePrefetchQuery'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
+import { useQuery } from '@app/utils/query/useQuery'
 
-type UseSubgraphRecordsParameters = PartialBy<GetSubgraphRecordsParameters, 'name'>
+export type UseSubgraphRecordsParameters = PartialBy<GetSubgraphRecordsParameters, 'name'>
 
-type UseSubgraphRecordsReturnType = GetSubgraphRecordsReturnType
+export type UseSubgraphRecordsReturnType = GetSubgraphRecordsReturnType
 
 type UseSubgraphRecordsConfig = QueryConfig<UseSubgraphRecordsReturnType, Error>
 
@@ -35,11 +39,10 @@ export const getSubgraphRecordsQueryFn =
 
 export const useSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
-
   // params
   ...params
 }: TParams & UseSubgraphRecordsConfig) => {
@@ -51,20 +54,31 @@ export const useSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>
     queryFn: getSubgraphRecordsQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     enabled: enabled && !!params.name,
     gcTime,
     staleTime,
   })
 
+  const query = useQuery(preparedOptions)
+
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
+}
+
+export const usePrefetchSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>(
+  params: TParams,
+) => {
+  const initialOptions = useQueryOptions({
+    params,
+    functionName: 'getSubgraphRecords',
+    queryDependencyType: 'graph',
+    queryFn: getSubgraphRecordsQueryFn,
+  })
+  return usePrefetchQuery(initialOptions)
 }

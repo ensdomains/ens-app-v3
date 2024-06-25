@@ -5,6 +5,7 @@ import { Avatar, UpRightArrowSVG } from '@ensdomains/thorin'
 
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination } from '@app/routes'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 
 const Container = styled.a(
   ({ theme }) => css`
@@ -59,7 +60,7 @@ type Props = {
 }
 
 export const AvatarWithLink = ({ name, label }: Props) => {
-  const { data: avatar } = useEnsAvatar()
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name || '', 'name')
   const profileURL = getDestination(`/profile/${name}`) as string
   return (

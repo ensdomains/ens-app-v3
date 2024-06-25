@@ -2,6 +2,8 @@ import { renderHook } from '@app/test-utils'
 
 import { describe, expect, it } from 'vitest'
 
+import { yearsToSeconds } from '@app/utils/utils'
+
 import useRegistrationParams from './useRegistrationParams'
 
 describe('useRegistrationParams()', () => {
@@ -11,7 +13,7 @@ describe('useRegistrationParams()', () => {
         name: 'test',
         owner: '0xowner',
         registrationData: {
-          years: 1,
+          seconds: yearsToSeconds(1),
           resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [
@@ -57,7 +59,7 @@ describe('useRegistrationParams()', () => {
         name: 'test',
         owner: '0xowner',
         registrationData: {
-          years: 1,
+          seconds: yearsToSeconds(1),
           resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [
@@ -125,7 +127,7 @@ describe('useRegistrationParams()', () => {
         name: 'test',
         owner: '0xowner',
         registrationData: {
-          years: 1,
+          seconds: yearsToSeconds(1),
           resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [],
@@ -158,7 +160,7 @@ describe('useRegistrationParams()', () => {
         name: 'test',
         owner: '0xowner',
         registrationData: {
-          years: 1,
+          seconds: yearsToSeconds(1),
           resolverAddress: '0xresolver',
           secret: '0xsecret',
           records: [],

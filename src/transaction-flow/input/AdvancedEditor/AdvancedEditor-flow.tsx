@@ -1,9 +1,9 @@
-import { useCallback } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { RecordOptions } from '@ensdomains/ensjs/utils'
-import { Button, mq } from '@ensdomains/thorin'
+import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import AddRecord from '@app/components/@molecules/AdvancedEditor/AddRecord'
 import AdvancedEditorContent from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabContent'
@@ -12,21 +12,7 @@ import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-
-const Container = styled.form(({ theme }) => [
-  css`
-    width: 100%;
-    max-height: min(80vh, 600px);
-    background: ${theme.colors.backgroundPrimary};
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  `,
-  mq.sm.min(css`
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-  `),
-])
+import { Profile } from '@app/types'
 
 const NameContainer = styled.div(({ theme }) => [
   css`
@@ -53,24 +39,16 @@ const NameContainer = styled.div(({ theme }) => [
   `),
 ])
 
-const ContentContainer = styled.div(
-  ({ theme }) => css`
-    flex: 1;
-    display: flex;
-    margin-top: ${theme.space['4.5']};
-    flex-direction: column;
-    overflow: hidden;
-    gap: ${theme.space['4']};
-  `,
-)
-
 const FooterContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     gap: ${theme.space['3']};
     width: 100%;
-    max-width: ${theme.space['96']};
     margin: 0 auto;
+
+    ${mq.sm.min(css`
+      margin-top: -${theme.space['2']};
+    `)}
   `,
 )
 
@@ -90,7 +68,15 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
     (item: TransactionItem) => item.name === 'updateProfile',
   ) as TransactionItem<'updateProfile'>
 
-  const { data: profile, isLoading: isProfileLoading } = useProfile({ name })
+  const { data: fetchedProfile, isLoading: isProfileLoading } = useProfile({ name })
+  const [profile, setProfile] = useState<Profile | undefined>(undefined)
+
+  // inline to prevent unnecessary re-renders
+  if (fetchedProfile && !profile) {
+    setProfile(fetchedProfile)
+  }
+
+  const ref = useRef<HTMLFormElement>(null)
 
   const handleCreateTransaction = useCallback(
     (records: RecordOptions) => {
@@ -99,14 +85,14 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
         payload: [
           createTransactionItem('updateProfile', {
             name,
-            resolverAddress: profile!.resolverAddress!,
+            resolverAddress: fetchedProfile!.resolverAddress!,
             records,
           }),
         ],
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
     },
-    [profile, dispatch, name],
+    [fetchedProfile, dispatch, name],
   )
 
   const advancedEditorForm = useAdvancedEditor({
@@ -125,22 +111,33 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
   if (isProfileLoading) return null
 
   return (
-    <Container onSubmit={handleSubmit} data-testid="advanced-editor">
+    <>
       <NameContainer>{t('advancedEditor.title', { name })}</NameContainer>
-      <ContentContainer>
-        <AdvancedEditorTabs {...advancedEditorForm} />
+      <AdvancedEditorTabs {...advancedEditorForm} />
+      <Dialog.Content
+        as="form"
+        ref={ref}
+        onSubmit={handleSubmit}
+        data-testid="advanced-editor"
+        gap="3"
+      >
         <AdvancedEditorContent {...advancedEditorForm} />
-        <AddRecord control={control} AddButtonProps={AddButtonProps} />
-        <FooterContainer>
-          <Button colorStyle="accentSecondary" onClick={handleCancel}>
-            {t('action.cancel', { ns: 'common' })}
-          </Button>
-          <Button disabled={hasErrors || !hasChanges} type="submit">
-            {t('action.save', { ns: 'common' })}
-          </Button>
-        </FooterContainer>
-      </ContentContainer>
-    </Container>
+      </Dialog.Content>
+      <AddRecord control={control} AddButtonProps={AddButtonProps} />
+      <FooterContainer>
+        <Button colorStyle="accentSecondary" onClick={handleCancel}>
+          {t('action.cancel', { ns: 'common' })}
+        </Button>
+        <Button
+          disabled={hasErrors || !hasChanges}
+          onClick={() => {
+            ref.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
+          }}
+        >
+          {t('action.save', { ns: 'common' })}
+        </Button>
+      </FooterContainer>
+    </>
   )
 }
 

@@ -7,22 +7,11 @@ import styled, { css } from 'styled-components'
 import { bytesToHex } from 'viem'
 import { useSignTypedData } from 'wagmi'
 
-import { Button, Dialog, Helper, mq } from '@ensdomains/thorin'
+import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 
 import { AvCancelButton, CropComponent } from './AvatarCrop'
-
-const Container = styled.div(({ theme }) => [
-  css`
-    display: flex;
-    justify-content: center;
-  `,
-  mq.sm.min(css`
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-  `),
-])
 
 const CroppedImagePreview = styled.img(
   ({ theme }) => css`
@@ -120,9 +109,7 @@ const UploadComponent = ({
             const {
               queryKey: [params],
             } = query
-            if (typeof params !== 'object' || params === null) return false
-            if (!('entity' in params)) return false
-            if (params.entity !== 'ensAvatar') return false
+            if (params !== 'ensAvatar') return false
             return true
           },
         })
@@ -143,9 +130,9 @@ const UploadComponent = ({
         title={t('input.profileEditor.tabs.avatar.image.upload.title')}
         subtitle={t('input.profileEditor.tabs.avatar.image.upload.subtitle')}
       />
-      <Container>
+      <Dialog.Content>
         <CroppedImagePreview data-testid="cropped-image-preview" src={dataURL} />
-      </Container>
+      </Dialog.Content>
       {error && (
         <Helper data-testid="avatar-upload-error" type="error">
           {error.message}

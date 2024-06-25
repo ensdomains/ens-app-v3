@@ -9,6 +9,7 @@ import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import useUserConfig from '@app/utils/useUserConfig'
+import { formatDuration, ONE_DAY } from '@app/utils/utils'
 
 const OptionBar = styled.div(
   () => css`
@@ -33,14 +34,14 @@ const InvoiceContainer = styled.div(
 type Props = ReturnType<typeof useEstimateFullRegistration>
 
 const FullInvoice = ({
-  years,
-  totalYearlyFee,
+  seconds,
+  totalDurationBasedFee,
   estimatedGasFee,
   hasPremium,
   premiumFee,
   gasPrice,
 }: Props) => {
-  const { t } = useTranslation('register')
+  const { t } = useTranslation(['register', 'common'])
 
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
@@ -48,9 +49,12 @@ const FullInvoice = ({
   const invoiceItems = useMemo(
     () => [
       {
-        label: t('invoice.yearRegistration', { years }),
+        label: t('invoice.timeRegistration', {
+          time: formatDuration(seconds, t),
+        }),
         bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
-        value: totalYearlyFee,
+        value: totalDurationBasedFee,
+        color: seconds < 30 * ONE_DAY ? ('orangePrimary' as Colors) : undefined,
       },
       {
         label: t('invoice.estimatedNetworkFee'),
@@ -67,7 +71,7 @@ const FullInvoice = ({
           ]
         : []),
     ],
-    [t, years, totalYearlyFee, estimatedGasFee, hasPremium, premiumFee],
+    [t, seconds, totalDurationBasedFee, estimatedGasFee, hasPremium, premiumFee],
   )
 
   return (

@@ -69,14 +69,17 @@ test.describe('Permissions', () => {
       ]),
     ).toBeTruthy()
 
-    await permissionsPage.burnChildPermissions([
-      'CANNOT_UNWRAP',
-      'CANNOT_CREATE_SUBDOMAIN',
-      'CANNOT_TRANSFER',
-      'CANNOT_SET_RESOLVER',
-      'CANNOT_SET_TTL',
-      'CANNOT_APPROVE',
-    ])
+    await permissionsPage.burnChildPermissions(
+      [
+        'CANNOT_UNWRAP',
+        'CANNOT_CREATE_SUBDOMAIN',
+        'CANNOT_TRANSFER',
+        'CANNOT_SET_RESOLVER',
+        'CANNOT_SET_TTL',
+        'CANNOT_APPROVE',
+      ],
+      name,
+    )
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
 
@@ -205,7 +208,7 @@ test.describe('Permissions', () => {
 
     await expect(permissionsPage.isPermissionUnburned('CAN_EXTEND_EXPIRY')).toBeTruthy()
 
-    await permissionsPage.burnExtendExpiry()
+    await permissionsPage.burnExtendExpiry(name)
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
 
@@ -238,7 +241,7 @@ test.describe('Permissions', () => {
 
     await expect(permissionsPage.isPermissionUnburned('PARENT_CANNOT_CONTROL')).toBeTruthy()
 
-    await permissionsPage.burnPCC(['CANNOT_UNWRAP'])
+    await permissionsPage.burnPCC(['CANNOT_UNWRAP'], subname)
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
 
@@ -290,7 +293,7 @@ test.describe('Permissions', () => {
     ]
 
     await expect(permissionsPage.arePermissionsUnburned(childPermissions)).toBeTruthy()
-    await permissionsPage.burnChildPermissions(childPermissions)
+    await permissionsPage.burnChildPermissions(childPermissions, subname)
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
 
@@ -335,7 +338,7 @@ test.describe('Permissions', () => {
 
     await expect(permissionsPage.isPermissionUnburned('CANNOT_BURN_FUSES')).toBeTruthy()
 
-    await permissionsPage.burnCannotBurnFuses()
+    await permissionsPage.burnCannotBurnFuses(subname)
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
 

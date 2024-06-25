@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { GRACE_PERIOD } from '@app/utils/constants'
 
 import { ExpirySection } from './ExpirySection'
+import { makeMockIntersectionObserver } from '../../../../../../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('./hooks/useExpiryDetails', () => ({
   useExpiryDetails: ({ name }: any) => {
@@ -45,6 +46,8 @@ vi.mock('./hooks/useExpiryActions', () => ({
   },
 }))
 
+makeMockIntersectionObserver()
+
 describe('ExpirySection', () => {
   it('should be able to open earnify button modal', async () => {
     render(<ExpirySection name="test.eth" details={{} as any} />)
@@ -52,11 +55,11 @@ describe('ExpirySection', () => {
     expect(screen.getByText('action.extend')).toBeVisible()
     await userEvent.click(screen.getByText('action.setReminder'))
     await waitFor(async () => {
-      expect(screen.getByText('tabs.more.misc.reminderOptions.earnifi')).toBeVisible()
-      await userEvent.click(screen.getByText('tabs.more.misc.reminderOptions.earnifi'))
+      expect(screen.getByText('tabs.more.misc.reminderOptions.bankless')).toBeVisible()
+      await userEvent.click(screen.getByText('tabs.more.misc.reminderOptions.bankless'))
     })
     await waitFor(() => {
-      expect(screen.getByText('tabs.more.misc.earnfi.title')).toBeVisible()
+      expect(screen.getByText('tabs.more.misc.bankless.title')).toBeVisible()
     })
   })
 

@@ -262,6 +262,7 @@ test('should calculate needed steps without localstorage', async ({
   await morePage.goto(subname)
   await login.connect()
 
+  await page.pause()
   await expect(page.getByTestId('name-details-text-wrapper')).toContainText('unwrapped')
 
   await morePage.wrapButton.click()
@@ -273,6 +274,8 @@ test('should calculate needed steps without localstorage', async ({
   await transactionModal.introButton.click()
   await transactionModal.confirm()
   await expect(transactionModal.completeButton).toBeEnabled()
+
+  await page.waitForTimeout(10000)
 
   await page.evaluate(() => localStorage.clear())
   await page.reload()

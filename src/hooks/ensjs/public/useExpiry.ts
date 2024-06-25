@@ -1,9 +1,12 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext } from '@tanstack/react-query'
 
 import { getExpiry, GetExpiryParameters, GetExpiryReturnType } from '@ensdomains/ensjs/public'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
+import { useQuery } from '@app/utils/query/useQuery'
 
 type UseExpiryParameters = PartialBy<GetExpiryParameters, 'name'>
 
@@ -11,11 +14,8 @@ type UseExpiryReturnType = GetExpiryReturnType
 
 type UseExpiryConfig = QueryConfig<UseExpiryReturnType, Error>
 
-export type UseExpiryQueryKey<TParams extends UseExpiryParameters> = CreateQueryKey<
-  TParams,
-  'getExpiry',
-  'standard'
->
+export type UseExpiryQueryKey<TParams extends UseExpiryParameters = UseExpiryParameters> =
+  CreateQueryKey<TParams, 'getExpiry', 'standard'>
 
 export const getExpiryQueryFn =
   (config: ConfigWithEns) =>
@@ -31,8 +31,8 @@ export const getExpiryQueryFn =
 
 export const useExpiry = <TParams extends UseExpiryParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
   // params
@@ -46,30 +46,19 @@ export const useExpiry = <TParams extends UseExpiryParameters>({
     queryFn: getExpiryQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     enabled: enabled && !!params.name,
     gcTime,
     staleTime,
-    select: (data) => {
-      if (!data) return null
-      return {
-        ...data,
-        expiry: {
-          ...data.expiry,
-          date: new Date(data.expiry.date),
-        },
-      }
-    },
   })
+
+  const query = useQuery(preparedOptions)
 
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

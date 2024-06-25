@@ -1,7 +1,6 @@
-import { Dispatch, useMemo, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { ComponentProps, Dispatch, useMemo, useRef, useState } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
 import {
@@ -10,8 +9,9 @@ import {
   ParentFuseKeys,
   ParentFuseReferenceType,
 } from '@ensdomains/ensjs/utils'
-import { Button, Dialog, mq } from '@ensdomains/thorin'
+import { Button, Dialog } from '@ensdomains/thorin'
 
+import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import type changePermissions from '@app/transaction-flow/transaction/changePermissions'
 import { TransactionDialogPassthrough, TransactionFlowAction } from '@app/transaction-flow/types'
@@ -20,6 +20,7 @@ import { dateTimeLocalToDate, dateToDateTimeLocal } from '@app/utils/datetime-lo
 
 import { ControlledNextButton } from './components/ControlledNextButton'
 import { GrantExtendExpiryView } from './views/GrantExtendExpiryView'
+import { NameConfirmationWarningView } from './views/NameConfirmationWarningView'
 import { ParentRevokePermissionsView } from './views/ParentRevokePermissionsView'
 import { RevokeChangeFusesView } from './views/RevokeChangeFusesView'
 import { RevokeChangeFusesWarningView } from './views/RevokeChangeFusesWarningView'
@@ -72,6 +73,8 @@ type Data = {
   childFuses: CurrentChildFuses
 } & (FlowWithExpiry | FlowWithoutExpiry)
 
+export type RevokePermissionsDialogContentProps = ComponentProps<typeof Dialog.Content>
+
 export type Props = {
   data: Data
   onDismiss: () => void
@@ -88,6 +91,7 @@ export type View =
   | 'revokePermissions'
   | 'revokeChangeFuses'
   | 'revokeChangeFusesWarning'
+  | 'lastWarning'
 
 type TransactionData = ExtractTransactionData<typeof changePermissions>
 
@@ -173,34 +177,36 @@ const getIntialValueForCurrentIndex = (flow: View[], transactionData?: Transacti
   return flow.length - 1
 }
 
-const Form = styled.form(({ theme }) => [
-  css`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space['6']};
-  `,
-  mq.sm.min(css`
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-  `),
-])
-
 const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) => {
-  const { name, flowType, owner, parentFuses, childFuses, minExpiry, maxExpiry } = data
+  const {
+    name,
+    flowType,
+    owner,
+    parentFuses: initialParentFuses,
+    childFuses: initialChildFuses,
+    minExpiry,
+    maxExpiry,
+  } = data
+
   const formRef = useRef<HTMLFormElement>(null)
   const { t } = useTranslation('transactionFlow')
+
+  const { data: expiry } = useExpiry({ name })
 
   const transactionData: any = transactions?.find((tx: any) => tx.name === 'changePermissions')
     ?.data as TransactionData | undefined
 
-  const { register, control, handleSubmit, getValues, trigger } = useForm<FormData>({
+  const { register, control, handleSubmit, getValues, trigger, formState } = useForm<FormData>({
     mode: 'onChange',
     defaultValues: getFormDataDefaultValues(data, transactionData),
   })
 
+  const isCustomExpiryValid = formState.errors.expiryCustom === undefined
+
+  const [parentFuses, childFuses] = useWatch({ control, name: ['parentFuses', 'childFuses'] })
+
   const unburnedFuses = useMemo(() => {
-    return Object.entries({ ...parentFuses, ...childFuses })
+    return Object.entries({ ...initialParentFuses, ...initialChildFuses })
       .filter(([, value]) => value === false)
       .map(([key]) => key)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -219,7 +225,10 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
           'revokePCC',
           ...(!isMinExpiryAtLeastEqualToMaxExpiry ? ['setExpiry'] : []),
           'parentRevokePermissions',
-          'revokeChangeFusesWarning',
+          ...(childFuses.CANNOT_UNWRAP && childFuses.CANNOT_BURN_FUSES
+            ? ['revokeChangeFusesWarning']
+            : []),
+          'lastWarning',
         ]
       }
       case 'grant-extend-expiry': {
@@ -232,18 +241,19 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
       case 'revoke-permissions': {
         return [
           'revokeWarning',
-          ...(childFuses.CANNOT_UNWRAP ? [] : ['revokeUnwrap']),
+          ...(initialChildFuses.CANNOT_UNWRAP ? [] : ['revokeUnwrap']),
           'revokePermissions',
+          'lastWarning',
         ]
       }
       case 'revoke-change-fuses': {
-        return ['revokeWarning', 'revokeChangeFuses', 'revokeChangeFusesWarning']
+        return ['revokeWarning', 'revokeChangeFuses', 'revokeChangeFusesWarning', 'lastWarning']
       }
       default: {
         return []
       }
     }
-  }, [name, flowType, minExpiry, maxExpiry, childFuses.CANNOT_UNWRAP]) as View[]
+  }, [name, flowType, minExpiry, maxExpiry, childFuses, initialChildFuses]) as View[]
 
   const [currentIndex, setCurrentIndex] = useState(
     getIntialValueForCurrentIndex(flow, transactionData),
@@ -267,7 +277,6 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
       const customExpiry = form.expiryCustom
         ? Math.floor(dateTimeLocalToDate(form.expiryCustom).getTime() / 1000)
         : undefined
-      const expiry = form.expiryType === 'max' ? maxExpiry : customExpiry
 
       dispatch({
         name: 'setTransactions',
@@ -279,7 +288,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
               parent: parentNamedFuses,
               child: childNamedFuses,
             },
-            expiry,
+            expiry: form.expiryType === 'max' ? maxExpiry : customExpiry,
           }),
         ],
       })
@@ -299,15 +308,28 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
     dispatch({ name: 'setFlowStage', payload: 'transaction' })
   }
 
+  const [isDisabled, setDisabled] = useState(true)
+
+  const dialogContentProps: RevokePermissionsDialogContentProps = {
+    as: 'form',
+    ref: formRef,
+    onSubmit: handleSubmit(onSubmit),
+  }
+
   return (
-    <Form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
+    <>
       {
         {
-          revokeWarning: <RevokeWarningView />,
+          revokeWarning: <RevokeWarningView {...dialogContentProps} />,
           revokePCC: (
-            <RevokePCCView managerAddress={owner} register={register} onDismiss={onDismiss} />
+            <RevokePCCView
+              managerAddress={owner}
+              register={register}
+              onDismiss={onDismiss}
+              {...dialogContentProps}
+            />
           ),
-          grantExtendExpiry: <GrantExtendExpiryView register={register} />,
+          grantExtendExpiry: <GrantExtendExpiryView register={register} {...dialogContentProps} />,
           setExpiry: (
             <SetExpiryView
               name={name}
@@ -317,24 +339,35 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
               maxExpiry={maxExpiry as FlowWithExpiry['maxExpiry']}
               getValues={getValues}
               trigger={trigger}
+              {...dialogContentProps}
             />
           ),
-          revokeUnwrap: <RevokeUnwrapView register={register} />,
+          revokeUnwrap: <RevokeUnwrapView register={register} {...dialogContentProps} />,
           parentRevokePermissions: (
             <ParentRevokePermissionsView
               control={control}
               register={register}
               unburnedFuses={unburnedFuses}
+              {...dialogContentProps}
             />
           ),
           revokePermissions: (
             <RevokePermissionsView
               register={register}
               unburnedFuses={unburnedFuses as ChildFuseReferenceType['Key'][]}
+              {...dialogContentProps}
             />
           ),
-          revokeChangeFuses: <RevokeChangeFusesView register={register} />,
-          revokeChangeFusesWarning: <RevokeChangeFusesWarningView />,
+          lastWarning: (
+            <NameConfirmationWarningView
+              expiry={expiry?.expiry.date!}
+              name={name}
+              setDisabled={setDisabled}
+              {...dialogContentProps}
+            />
+          ),
+          revokeChangeFuses: <RevokeChangeFusesView register={register} {...dialogContentProps} />,
+          revokeChangeFusesWarning: <RevokeChangeFusesWarningView {...dialogContentProps} />,
         }[view]
       }
       <Dialog.Footer
@@ -347,10 +380,9 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
         }
         trailing={
           <ControlledNextButton
-            control={control}
-            view={view}
+            {...{ childFuses, parentFuses, unburnedFuses, view, isCustomExpiryValid }}
+            disabled={isDisabled}
             isLastView={currentIndex >= flow.length - 1}
-            unburnedFuses={unburnedFuses}
             onIncrement={() => {
               setCurrentIndex((index) => index + 1)
             }}
@@ -362,7 +394,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
           />
         }
       />
-    </Form>
+    </>
   )
 }
 

@@ -24,6 +24,7 @@ import { useCopied } from '@app/hooks/useCopied'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { shortenAddress } from '@app/utils/utils'
 
 import BaseLink from './@atoms/BaseLink'
@@ -129,7 +130,7 @@ const HeaderProfile = ({ address }: { address: Address }) => {
   const { t } = useTranslation('common')
 
   const { data: primary } = usePrimaryName({ address })
-  const { data: avatar } = useEnsAvatar({ name: primary?.name })
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name: primary?.name })
   const zorb = useZorb(address, 'address')
 
   const router = useRouterWithHistory()

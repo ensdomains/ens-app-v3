@@ -34,7 +34,7 @@ export class ProfilePage {
     )
     this.getExtendButton = this.page.getByTestId('extend-button')
     this.editProfileButton = this.page.getByTestId('profile-action-Edit profile')
-    this.profileEditor = this.page.getByTestId('profile-editor')
+    this.profileEditor = this.page.locator('.modal')
   }
 
   async goto(name: string) {

@@ -23,7 +23,6 @@
     "ensjs"
   ],
   "i18n-ally.localesPaths": [
-    "out/locales",
     "public/locales"
   ]
 }

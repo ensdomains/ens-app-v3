@@ -230,6 +230,12 @@ export const rewrites = [
     tldPrefix: true,
   },
   {
+    source: '/dotbox/:name',
+    destination: '/dotbox?name=$2',
+    flattenedDestination: '/$2/dotbox',
+    tldPrefix: true,
+  },
+  {
     source: '/address/:address',
     destination: '/address?address=$2',
     flattenedDestination: '/$2',
@@ -245,9 +251,9 @@ export const getDestination = (url: UrlObject | string) => {
     const match = regex.exec(href)
     if (match) {
       const values = href.split('/')
-      let replacedDestination = (
-        isIPFS ? rewrite.destination : rewrite.flattenedDestination
-      ).replace(/\$(\d)/g, (_, n) => values[parseInt(n)])
+      let replacedDestination = (isIPFS ? rewrite.destination : rewrite.flattenedDestination)
+        .replace(/\$(\d)/g, (_, n) => values[parseInt(n)])
+        .replace('#', '%23')
       if (!isIPFS && rewrite.tldPrefix && !replacedDestination.includes('.')) {
         replacedDestination = `/tld${replacedDestination}`
       }

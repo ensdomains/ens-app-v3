@@ -4,7 +4,7 @@ import { test } from '../../../../playwright'
 import { testClient } from '../../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
-  test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
+  test('Send feature', async ({ page, login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -34,6 +34,7 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
+    await page.pause()
     await ownershipPage.sendNameButton.click()
     await sendNameModal.searchInput.fill(accounts.getAddress('user3'))
     await sendNameModal.searchResult(accounts.getAddress('user3')).click()

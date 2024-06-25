@@ -21,7 +21,6 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import useFaucet from '@app/hooks/useFaucet'
 
-import { InnerDialog } from '../@atoms/InnerDialog'
 import { DisplayItems } from './TransactionDialogManager/DisplayItems'
 
 const BannerWrapper = styled.div(
@@ -102,7 +101,7 @@ const FaucetBanner = () => {
             title="Faucet Claim"
             subtitle={`Claim once every ${msToDays(data.interval)} days`}
           />
-          <InnerDialog>
+          <Dialog.Content>
             <DisplayItems
               displayItems={[
                 {
@@ -114,7 +113,7 @@ const FaucetBanner = () => {
               ]}
             />
             {isError && <Helper type="error">{(error as Error).message}</Helper>}
-          </InnerDialog>
+          </Dialog.Content>
           <Dialog.Footer
             leading={
               <Button colorStyle="accentSecondary" onClick={closeDialog}>
@@ -131,10 +130,10 @@ const FaucetBanner = () => {
       ) : (
         <>
           <Dialog.Heading title="Your claim was submitted!" />
-          <InnerDialog>
+          <Dialog.Content>
             <LargeCheckIcon as={CheckCircleSVG} />
             <Typography>{t('testnetFaucet.note')}</Typography>
-          </InnerDialog>
+          </Dialog.Content>
           <Dialog.Footer trailing={<Button onClick={closeDialog}>{t('action.close')}</Button>} />
         </>
       )}

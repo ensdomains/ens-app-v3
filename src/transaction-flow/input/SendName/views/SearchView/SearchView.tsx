@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
-import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, mq } from '@ensdomains/thorin'
+import { Button, Dialog, MagnifyingGlassSimpleSVG } from '@ensdomains/thorin'
 
+import { DialogFooterWithBorder } from '@app/components/@molecules/DialogComponentVariants/DialogFooterWithBorder'
+import { DialogInput } from '@app/components/@molecules/DialogComponentVariants/DialogInput'
 import { useSimpleSearch } from '@app/transaction-flow/input/EditRoles/hooks/useSimpleSearch'
 
 import type { SendNameForm } from '../../SendName-flow'
@@ -15,44 +16,6 @@ import { SearchViewIntroView } from './views/SearchViewIntroView'
 import { SearchViewLoadingView } from './views/SearchViewLoadingView'
 import { SearchViewNoResultsView } from './views/SearchViewNoResultsView'
 import { SearchViewResultsView } from './views/SearchViewResultsView'
-
-const Content = styled.div(({ theme }) => [
-  css`
-    flex: 1;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  `,
-  mq.sm.min(css`
-    margin: 0 -${theme.space['6']};
-  `),
-])
-
-const SubviewContainer = styled.div(({ theme }) => [
-  css`
-    flex: 1;
-    width: calc(100% + 2 * ${theme.space['4']});
-    margin: 0 -${theme.space['4']};
-    min-height: ${theme.space['40']};
-  `,
-  mq.sm.min(css`
-    width: calc(100% + 2 * ${theme.space['6']});
-    margin: 0 -${theme.space['6']};
-  `),
-])
-
-const FooterWrapper = styled.div(({ theme }) => [
-  css`
-    width: calc(100% + 2 * ${theme.space['4']});
-    margin: 0 -${theme.space['4']};
-    padding: ${theme.space[4]} ${theme.space['4']} 0;
-    border-top: 1px solid ${theme.colors.border};
-  `,
-  mq.sm.min(css`
-    width: calc(100% + 2 * ${theme.space['6']});
-    margin: 0 -${theme.space['6']};
-  `),
-])
 
 type Props = {
   name: string
@@ -76,57 +39,54 @@ export const SearchView = ({ name, senderRole, onCancel, onSelect }: Props) => {
   return (
     <>
       <Dialog.Heading title="Send Name" />
-      <Content>
-        <Input
-          data-testid="send-name-search-input"
-          label="Name"
-          size="medium"
-          hideLabel
-          icon={<MagnifyingGlassSimpleSVG />}
-          clearable
-          {...register('query', {
-            onChange: (e) => {
-              const newQuery = e.currentTarget.value
-              if (newQuery.length < 3) return
-              search.mutate(newQuery)
-            },
-          })}
-          placeholder={t('input.sendName.views.search.placeholder')}
-          onClickAction={() => {
-            setValue('query', '')
-          }}
-        />
-        <SubviewContainer>
-          {match([query, search])
-            .with([P._, { isError: true }], () => <SearchViewErrorView />)
-            .with([P.when((s) => s.length < 3), P._], () => <SearchViewIntroView />)
-            .with([P._, { isSuccess: false }], () => <SearchViewLoadingView />)
-            .with(
-              [P._, { isSuccess: true, data: P.when((d) => !!d && d.length > 0) }],
-              ([, { data }]) => (
-                <SearchViewResultsView
-                  name={name}
-                  results={data}
-                  senderRole={senderRole}
-                  onSelect={onSelect}
-                />
-              ),
-            )
-            .with([P._, { isSuccess: true, data: P.when((d) => !d || d.length === 0) }], () => (
-              <SearchViewNoResultsView />
-            ))
-            .otherwise(() => null)}
-        </SubviewContainer>
-        <FooterWrapper>
-          <Dialog.Footer
-            trailing={
-              <Button colorStyle="accentSecondary" onClick={onCancel}>
-                {t('action.cancel', { ns: 'common' })}
-              </Button>
-            }
-          />
-        </FooterWrapper>
-      </Content>
+      <DialogInput
+        data-testid="send-name-search-input"
+        label="Name"
+        size="medium"
+        hideLabel
+        icon={<MagnifyingGlassSimpleSVG />}
+        clearable
+        {...register('query', {
+          onChange: (e) => {
+            const newQuery = e.currentTarget.value
+            if (newQuery.length < 3) return
+            search.mutate(newQuery)
+          },
+        })}
+        placeholder={t('input.sendName.views.search.placeholder')}
+        onClickAction={() => {
+          setValue('query', '')
+        }}
+      />
+      <Dialog.Content fullWidth horizontalPadding="0">
+        {match([query, search])
+          .with([P._, { isError: true }], () => <SearchViewErrorView />)
+          .with([P.when((s: string) => !s || s.length < 3), P._], () => <SearchViewIntroView />)
+          .with([P._, { isSuccess: false }], () => <SearchViewLoadingView />)
+          .with(
+            [P._, { isSuccess: true, data: P.when((d) => !!d && d.length > 0) }],
+            ([, { data }]) => (
+              <SearchViewResultsView
+                name={name}
+                results={data}
+                senderRole={senderRole}
+                onSelect={onSelect}
+              />
+            ),
+          )
+          .with([P._, { isSuccess: true, data: P.when((d) => !d || d.length === 0) }], () => (
+            <SearchViewNoResultsView />
+          ))
+          .otherwise(() => null)}
+      </Dialog.Content>
+      <DialogFooterWithBorder
+        fullWidth
+        trailing={
+          <Button colorStyle="accentSecondary" onClick={onCancel}>
+            {t('action.cancel', { ns: 'common' })}
+          </Button>
+        }
+      />
     </>
   )
 }

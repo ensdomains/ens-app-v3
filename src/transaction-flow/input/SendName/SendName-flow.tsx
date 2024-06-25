@@ -1,15 +1,14 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { useNameType } from '@app/hooks/nameType/useNameType'
 import useRoles from '@app/hooks/ownership/useRoles/useRoles'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useNameType } from '@app/hooks/useNameType'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
@@ -40,8 +39,6 @@ export type Props = {
 } & TransactionDialogPassthrough
 
 const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
-  const ref = useRef<HTMLFormElement>(null)
-
   const account = useAccountSafely()
   const abilities = useAbilities({ name })
   const nameType = useNameType(name)
@@ -60,8 +57,6 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const view = flow[viewIndex]
   const onNext = () => setViewIndex((i) => Math.min(i + 1, flow.length - 1))
   const onBack = () => setViewIndex((i) => Math.max(i - 1, 0))
-  const onConfirm = () =>
-    ref.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
 
   const form = useForm<SendNameForm>({
     defaultValues: {
@@ -129,30 +124,28 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
 
   return (
     <FormProvider {...form}>
-      <InnerDialog as="form" ref={ref} onSubmit={form.handleSubmit(onSubmit)}>
-        {match([canSend, view])
-          .with([false, P._], () => <CannotSendView onDismiss={onDismiss} />)
-          .with([true, 'confirmation'], () => (
-            <ConfirmationView onBack={onBack} onConfirm={onConfirm} />
-          ))
-          .with([true, 'summary'], () => (
-            <SummaryView
-              name={name}
-              canResetProfile={canResetProfile}
-              onBack={onBack}
-              onNext={onNext}
-            />
-          ))
-          .with([true, 'search'], () => (
-            <SearchView
-              name={name}
-              senderRole={_senderRole}
-              onCancel={onDismiss}
-              onSelect={onSelect}
-            />
-          ))
-          .exhaustive()}
-      </InnerDialog>
+      {match([canSend, view])
+        .with([false, P._], () => <CannotSendView onDismiss={onDismiss} />)
+        .with([true, 'confirmation'], () => (
+          <ConfirmationView onBack={onBack} onSubmit={form.handleSubmit(onSubmit)} />
+        ))
+        .with([true, 'summary'], () => (
+          <SummaryView
+            name={name}
+            canResetProfile={canResetProfile}
+            onBack={onBack}
+            onNext={onNext}
+          />
+        ))
+        .with([true, 'search'], () => (
+          <SearchView
+            name={name}
+            senderRole={_senderRole}
+            onCancel={onDismiss}
+            onSelect={onSelect}
+          />
+        ))
+        .exhaustive()}
     </FormProvider>
   )
 }

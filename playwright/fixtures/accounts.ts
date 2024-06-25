@@ -4,6 +4,9 @@ import { ethers } from 'ethers'
 import { privateKeyToAccount } from 'viem/accounts'
 
 import { Provider } from './provider.js'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const DEFAULT_MNEMONIC = 'test test test test test test test test test test test junk'
 

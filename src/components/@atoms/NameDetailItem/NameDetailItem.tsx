@@ -6,6 +6,8 @@ import { Avatar, mq } from '@ensdomains/thorin'
 
 import CircleTick from '@app/assets/CircleTick.svg'
 import { useZorb } from '@app/hooks/useZorb'
+import { INVALID_NAME } from '@app/utils/constants'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { safeDateObj } from '../../../utils/date'
@@ -137,7 +139,7 @@ export const NameDetailItem = ({
   onClick?: () => void
   children: ReactNode
 }) => {
-  const { data: avatar } = useEnsAvatar()
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
   const zorb = useZorb(name, 'name')
 
   const handleClick = () => {
@@ -148,17 +150,22 @@ export const NameDetailItem = ({
   const _expiryDate = safeDateObj(expiryDate)
 
   return (
-    <OptionalLink active={mode !== 'select'} href={`/profile/${name}`} passHref>
+    <OptionalLink
+      active={mode !== 'select' && name !== INVALID_NAME}
+      href={`/profile/${name}`}
+      passHref
+    >
       <NameItemWrapper
-        $disabled={disabled}
+        $disabled={name === INVALID_NAME || disabled}
         $highlight={mode === 'select' && selected}
         as={mode !== 'select' ? 'a' : 'div'}
         data-testid={`name-item-${name}`}
-        onClick={handleClick}
+        onClick={name !== INVALID_NAME ? handleClick : undefined}
       >
         <NameItemContainer>
           <AvatarWrapper>
             <Avatar
+              placeholder={`url(${zorb})`}
               label={truncatedName || name}
               src={avatar || zorb}
               data-testid="name-detail-item-avatar"

@@ -91,6 +91,7 @@ test.describe('Unhappy', () => {
     await login.connect()
 
     await morePage.editResolverButton.click()
+    await page.waitForTimeout(1000) // Sometimes the test will fail because modal hooks have not fully processed
     await page.getByTestId('custom-resolver-radio').click()
     await page.getByTestId('dogfood').type('0xInvalid')
     await expect(page.getByTestId('update-button')).toBeDisabled()

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
 import { labelhash, namehash } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
@@ -11,8 +12,7 @@ import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
-import { useParentBasicName } from '@app/hooks/useParentBasicName'
+import { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
 import { Profile } from '@app/types'
 import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
 
@@ -24,8 +24,8 @@ type Props = {
   name: string
   isWrapped: boolean
   canBeWrapped: boolean
-  wrapperData: GetWrapperDataReturnType | undefined
-  ownerData: GetOwnerReturnType | undefined
+  ownerData?: GetOwnerReturnType
+  wrapperData?: GetWrapperDataReturnType
   profile: Profile | undefined
 }
 
@@ -114,27 +114,27 @@ const NftBox = styled(NFTWithPlaceholder)(
   `,
 )
 
-const Token = ({ name, isWrapped, canBeWrapped, wrapperData, ownerData, profile }: Props) => {
+const getFuseStateFromWrapperData = (wrapperData?: GetWrapperDataReturnType): NameWrapperState =>
+  match(wrapperData)
+    .with(P.nullish, () => 'unwrapped' as const)
+    .with({ fuses: { child: { CANNOT_UNWRAP: true } } }, () => 'locked' as const)
+    .with({ fuses: { parent: { PARENT_CANNOT_CONTROL: true } } }, () => 'emancipated' as const)
+    .otherwise(() => 'wrapped')
+
+const Token = ({ name, isWrapped, canBeWrapped, ownerData, wrapperData, profile }: Props) => {
   const { t } = useTranslation('profile')
 
   const networkName = useChainName()
+  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
+  const registrarAddress = useContractAddress({ contract: 'ensBaseRegistrarImplementation' })
 
-  const { wrapperData: parentWrapperData, isCachedData: isParentBasicCachedData } =
-    useParentBasicName(name)
-  const fusesStatus = useFusesStates({
-    wrapperData,
-    parentWrapperData,
-  })
-  const status = isWrapped ? fusesStatus.state : 'unwrapped'
+  const status: NameWrapperState = getFuseStateFromWrapperData(wrapperData)
   const is2ldEth = checkETH2LDFromName(name)
 
   const hex = isWrapped ? namehash(name) : labelhash(name.split('.')[0])
   const tokenId = BigInt(hex).toString(10)
 
-  const wrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
-  const registrarAddress = useContractAddress({ contract: 'ensBaseRegistrarImplementation' })
-
-  const contractAddress = isWrapped ? wrapperAddress : registrarAddress
+  const contractAddress = isWrapped ? nameWrapperAddress : registrarAddress
 
   const hasToken = is2ldEth || isWrapped
 
@@ -162,7 +162,7 @@ const Token = ({ name, isWrapped, canBeWrapped, wrapperData, ownerData, profile 
           <NftBox id="nft" name={name} />
         </ItemsContainer>
       )}
-      <ItemsContainer $isCached={isParentBasicCachedData}>
+      <ItemsContainer>
         <RecordItem
           itemKey={t('tabs.more.token.wrapper')}
           value={t(`tabs.more.token.status.${status}`)}

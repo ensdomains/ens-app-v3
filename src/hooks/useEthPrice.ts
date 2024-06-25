@@ -29,8 +29,5 @@ export const useEthPrice = () => {
     ],
     address,
     functionName: 'latestAnswer',
-    query: {
-      select: (r) => BigInt(r),
-    },
   })
 }

@@ -199,7 +199,7 @@
       "title_one": "名称续期",
       "title_other": "续期 {{count}} 个名称",
       "invoice": {
-        "extension": "续期 {{count}} 年",
+        "extension": "续期 {{count}} ",
         "transaction": "交易费",
         "total": "预估总额"
       },

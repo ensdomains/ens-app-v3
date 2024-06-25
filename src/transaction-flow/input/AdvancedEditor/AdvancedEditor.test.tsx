@@ -340,7 +340,8 @@ describe('AdvancedEditor', () => {
                     value: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
                   },
                 ],
-                contentHash: 'https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
+                contentHash:
+                  'https://ipfs.euc.li/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
               },
             },
           },
@@ -390,7 +391,7 @@ describe('AdvancedEditor', () => {
         records: [
           {
             label: 'advancedEditor.tabs.other.contentHash.label',
-            value: 'https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
+            value: 'https://ipfs.euc.li/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
           },
         ],
       },

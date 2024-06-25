@@ -3,10 +3,12 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, mq, ScrollBox } from '@ensdomains/thorin'
+import { Button, Dialog, MagnifyingGlassSimpleSVG, mq, ScrollBox } from '@ensdomains/thorin'
 
 import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { DialogFooterWithBorder } from '@app/components/@molecules/DialogComponentVariants/DialogFooterWithBorder'
+import { DialogInput } from '@app/components/@molecules/DialogComponentVariants/DialogInput'
 import {
   grouped as options,
   ProfileRecord,
@@ -18,19 +20,6 @@ import useDebouncedCallback from '../../../../../../../hooks/useDebouncedCallbac
 import { OptionButton } from './OptionButton'
 import { OptionGroup } from './OptionGroup'
 
-const Container = styled.div(({ theme }) => [
-  css`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-height: 600px;
-  `,
-  mq.sm.min(css`
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-  `),
-])
-
 const Content = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -38,7 +27,11 @@ const Content = styled.div(
     width: 100%;
     gap: ${theme.space[6]};
     overflow: hidden;
-    max-height: calc(100vh - 17rem);
+
+    ${mq.sm.min(css`
+      width: 80vw;
+      max-width: ${theme.space['128']};
+    `)}
   `,
 )
 
@@ -79,16 +72,13 @@ const SideBarItem = styled.button<{
 )
 
 const OptionsContainer = styled.div(
-  ({ theme }) => css`
+  () => css`
     position: relative;
     flex: 1;
     overflow: hidden;
 
     > div {
       height: 100%;
-      padding-right: ${theme.space[1]};
-      padding-top: ${theme.space[4]};
-      padding-bottom: ${theme.space[4]};
     }
   `,
 )
@@ -110,20 +100,6 @@ const OptionsGrid = styled.div(
     row-gap: ${theme.space[2]};
   `,
 )
-
-const FooterWrapper = styled.div(({ theme }) => [
-  css`
-    border-top: 1px solid ${theme.colors.border};
-    padding: ${theme.space[4]};
-    padding-bottom: 0;
-    margin: 0 -${theme.space['4']};
-  `,
-  mq.sm.min(css`
-    padding: ${theme.space[6]};
-    padding-bottom: 0;
-    margin: 0 -${theme.space['6']};
-  `),
-])
 
 const DismissButtonWrapper = styled.div(
   ({ theme }) => css`
@@ -154,10 +130,19 @@ export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: P
     return options.map((option) => {
       // If search matches group label, return all items
       if (matchSearch(t(`steps.profile.options.groups.${option.group}.label`))) return option
+      if (option.group === 'address') {
+        const items = option.items.filter(
+          (item) => matchSearch(item.key) || matchSearch(item.longName),
+        )
+        return {
+          ...option,
+          items,
+        }
+      }
       const items = option.items.filter((item) => {
         const { key: record, group } = item
-        // if website or address match the record name, else match the translated record name
-        if (['address', 'website'].includes(group)) return matchSearch(record)
+        // if website - match the record name, else match the translated record name
+        if (group === 'website') return matchSearch(record)
         return matchSearch(t(`steps.profile.options.groups.${option.group}.items.${record}`))
       })
       return {
@@ -290,10 +275,9 @@ export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: P
   }
 
   return (
-    <Container>
+    <>
       <Dialog.Heading title={t('steps.profile.addProfile')} />
-      <Spacer $height="6" />
-      <Input
+      <DialogInput
         label=""
         hideLabel
         icon={<MagnifyingGlassSimpleSVG />}
@@ -322,6 +306,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: P
         <OptionsContainer ref={observerRootRef}>
           <ScrollBox hideDividers>
             <div ref={topRef} style={{ height: '1px' }} data-group="top" />
+            <Spacer $height="4" />
             {filteredOptions.map((option) => {
               const showLabel = !['address', 'website'].includes(option.group)
               if (option.items.length === 0 && option.group !== 'other') return null
@@ -370,43 +355,43 @@ export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: P
                 </OptionGroup>
               )
             })}
+            <Spacer $height="4" />
             <div ref={bottomRef} style={{ height: '1px' }} data-group="bottom" />
           </ScrollBox>
         </OptionsContainer>
       </Content>
-      <FooterWrapper>
-        <Dialog.Footer
-          leading={
-            !showDismiss &&
-            onClose && (
-              <Button
-                data-testid="add-profile-records-close"
-                onClick={() => onClose()}
-                colorStyle="accentSecondary"
-              >
-                {t('action.back', { ns: 'common' })}
-              </Button>
-            )
-          }
-          trailing={
+      <DialogFooterWithBorder
+        fullWidth
+        leading={
+          !showDismiss &&
+          onClose && (
             <Button
-              size="medium"
-              onClick={() => onAdd?.(selectedRecords)}
-              count={selectedRecords.length}
-              fullWidthContent
-              disabled={selectedRecords.length === 0}
-              data-testid="add-profile-records-button"
+              data-testid="add-profile-records-close"
+              onClick={() => onClose()}
+              colorStyle="accentSecondary"
             >
-              {t('action.add', { ns: 'common' })}
+              {t('action.back', { ns: 'common' })}
             </Button>
-          }
-        />
-      </FooterWrapper>
+          )
+        }
+        trailing={
+          <Button
+            size="medium"
+            onClick={() => onAdd?.(selectedRecords)}
+            count={selectedRecords.length}
+            fullWidthContent
+            disabled={selectedRecords.length === 0}
+            data-testid="add-profile-records-button"
+          >
+            {t('action.add', { ns: 'common' })}
+          </Button>
+        }
+      />
       {onClose && showDismiss && (
         <DismissButtonWrapper>
           <DismissDialogButton data-testid="dismiss-dialog-btn" onClick={onClose} />
         </DismissButtonWrapper>
       )}
-    </Container>
+    </>
   )
 }

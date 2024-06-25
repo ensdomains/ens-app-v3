@@ -1,16 +1,23 @@
-import { queryOptions, useQuery } from '@tanstack/react-query'
+import { queryOptions } from '@tanstack/react-query'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { BaseError } from 'viem'
 import { useClient, useConnectorClient, useSendTransaction } from 'wagmi'
 
-import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
+import {
+  Button,
+  CrossCircleSVG,
+  Dialog,
+  Helper,
+  QuestionCircleSVG,
+  Spinner,
+  Typography,
+} from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import CircleTickSVG from '@app/assets/CircleTick.svg'
 import WalletSVG from '@app/assets/Wallet.svg'
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
@@ -25,6 +32,8 @@ import {
 } from '@app/transaction-flow/types'
 import { ConfigWithEns } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { useQuery } from '@app/utils/query/useQuery'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
@@ -41,7 +50,7 @@ const BarContainer = styled.div(
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: ${theme.space['1']};
+    gap: ${theme.space['2']};
   `,
 )
 
@@ -197,12 +206,22 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
     return t('transaction.dialog.sent.message')
   }, [status, t])
 
+  const isTakingLongerThanExpected = status === 'sent' && progress === 100
+
   const progressMessage = useMemo(() => {
-    if (status === 'sent' && progress === 100) {
-      return t('transaction.dialog.sent.progress.message')
+    if (isTakingLongerThanExpected) {
+      return (
+        <Outlink
+          iconPosition="before"
+          icon={QuestionCircleSVG}
+          href="https://support.ens.domains/en/articles/7982906-long-running-transactions"
+        >
+          {t('transaction.dialog.sent.learn')}
+        </Outlink>
+      )
     }
     return null
-  }, [status, progress, t])
+  }, [isTakingLongerThanExpected, t])
 
   const EndElement = useMemo(() => {
     if (status === 'complete') {
@@ -222,7 +241,13 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
       <BarContainer data-testid="load-bar-container">
         <Bar $status={status} key={sendTime}>
           <BarPrefix>
-            <BarTypography>{t(`transaction.dialog.${status}.progress.title`)}</BarTypography>
+            <BarTypography>
+              {t(
+                isTakingLongerThanExpected
+                  ? 'transaction.dialog.sent.progress.message'
+                  : `transaction.dialog.${status}.progress.title`,
+              )}
+            </BarTypography>
           </BarPrefix>
           <InnerBar
             style={{ width: `${progress}%` }}
@@ -311,14 +336,14 @@ export const TransactionStageModal = ({
     queryFn: initialOptions.queryFn({ connectorClient, isSafeApp }),
   })
 
-  const {
-    data: request,
-    isLoading: requestLoading,
-    error: requestError,
-  } = useQuery({
+  const transactionRequestQuery = useQuery({
     ...preparedOptions,
     enabled: canEnableTransactionRequest,
+    refetchOnMount: 'always',
   })
+
+  const { data: request, isLoading: requestLoading, error: requestError } = transactionRequestQuery
+  const isTransactionRequestCachedData = getIsCachedData(transactionRequestQuery)
 
   useInvalidateOnBlock({
     enabled: canEnableTransactionRequest && process.env.NEXT_PUBLIC_ETH_NODE !== 'anvil',
@@ -426,7 +451,13 @@ export const TransactionStageModal = ({
     }
     return (
       <Button
-        disabled={!canEnableTransactionRequest || requestLoading || !request || !!requestError}
+        disabled={
+          !canEnableTransactionRequest ||
+          requestLoading ||
+          !request ||
+          !!requestError ||
+          isTransactionRequestCachedData
+        }
         onClick={() => sendTransaction(request!)}
         data-testid="transaction-modal-confirm-button"
       >
@@ -446,6 +477,7 @@ export const TransactionStageModal = ({
     t,
     transactionLoading,
     request,
+    isTransactionRequestCachedData,
   ])
 
   const stepStatus = useMemo(() => {
@@ -487,7 +519,7 @@ export const TransactionStageModal = ({
   return (
     <>
       <Dialog.Heading title={t(`transaction.dialog.${stage}.title`)} />
-      <InnerDialog data-testid="transaction-modal-inner">
+      <Dialog.Content data-testid="transaction-modal-inner">
         {MiddleContent}
         {upperError && <Helper type="error">{t(upperError)}</Helper>}
         {FilledDisplayItems}
@@ -498,7 +530,7 @@ export const TransactionStageModal = ({
           </Outlink>
         )}
         {lowerError && <Helper type="error">{lowerError}</Helper>}
-      </InnerDialog>
+      </Dialog.Content>
       <Dialog.Footer
         currentStep={currentStep}
         stepCount={stepCount > 1 ? stepCount : undefined}

@@ -3,55 +3,27 @@ import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { addEnsContracts } from '@ensdomains/ensjs'
 
+import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
+
 import { deploymentAddresses } from './generatedContracts'
 
 export { deploymentAddresses }
 
-export const localhostWithEns = {
-  ...localhost,
-  contracts: {
-    ensRegistry: {
-      address: deploymentAddresses.ENSRegistry,
-    },
-    ensUniversalResolver: {
-      address: deploymentAddresses.UniversalResolver,
-    },
-    multicall3: {
-      address: deploymentAddresses.Multicall,
-    },
-    ensBaseRegistrarImplementation: {
-      address: deploymentAddresses.BaseRegistrarImplementation,
-    },
-    ensDnsRegistrar: {
-      address: deploymentAddresses.DNSRegistrar,
-    },
-    ensEthRegistrarController: {
-      address: deploymentAddresses.ETHRegistrarController,
-    },
-    ensNameWrapper: {
-      address: deploymentAddresses.NameWrapper,
-    },
-    ensPublicResolver: {
-      address: deploymentAddresses.PublicResolver,
-    },
-    ensReverseRegistrar: {
-      address: deploymentAddresses.ReverseRegistrar,
-    },
-    ensBulkRenewal: {
-      address: deploymentAddresses.StaticBulkRenewal,
-    },
-    ensDnssecImpl: {
-      address: deploymentAddresses.DNSSECImpl,
-    },
-  },
+export const localhostWithEns = makeLocalhostChainWithEns<typeof localhost>(
+  localhost,
+  deploymentAddresses,
+)
+
+const ENS_SUBGRAPH_API_KEY = '9ad5cff64d93ed2c33d1a57b3ec03ea9'
+
+export const mainnetWithEns = {
+  ...addEnsContracts(mainnet),
   subgraphs: {
     ens: {
-      url: 'http://localhost:8000/subgraphs/name/graphprotocol/ens',
+      url: `https://gateway-arbitrum.network.thegraph.com/api/${ENS_SUBGRAPH_API_KEY}/subgraphs/id/5XqPmWe6gjyrJtFn9cLy237i4cWw2j9HcUJEXsP5qGtH`,
     },
   },
-} as const
-
-export const mainnetWithEns = addEnsContracts(mainnet)
+}
 export const goerliWithEns = addEnsContracts(goerli)
 export const sepoliaWithEns = addEnsContracts(sepolia)
 export const holeskyWithEns = addEnsContracts(holesky)

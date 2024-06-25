@@ -1,8 +1,10 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext, queryOptions } from '@tanstack/react-query'
 
 import { getSubnames, Name } from '@ensdomains/ensjs/subgraph'
 
 import { ConfigWithEns, CreateQueryKey } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { useQuery } from '@app/utils/query/useQuery'
 
 import { emptyAddress } from '../utils/constants'
 import { useQueryOptions } from './useQueryOptions'
@@ -66,23 +68,13 @@ export const useHasSubnames = (name: string) => {
     queryFn: initialOptions.queryFn,
   })
 
-  const {
-    data: hasSubnames,
-    isLoading,
-    isFetched,
-    isFetchedAfterMount,
-    status,
-    // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isFetching: _isFetching,
-  } = useQuery({
+  const query = useQuery({
     ...preparedOptions,
     enabled,
   })
 
   return {
-    hasSubnames,
-    isLoading,
-    isCachedData: enabled && status === 'success' && isFetched && !isFetchedAfterMount,
+    ...query,
+    isCachedData: getIsCachedData(query),
   }
 }

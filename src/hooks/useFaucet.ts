@@ -2,7 +2,6 @@ import {
   QueryFunctionContext,
   queryOptions,
   useMutation,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
 import { useEffect } from 'react'
@@ -11,6 +10,7 @@ import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey } from '@app/types'
 import { FAUCET_WORKER_URL } from '@app/utils/constants'
 import { getChainName } from '@app/utils/getChainName'
+import { useQuery } from '@app/utils/query/useQuery'
 
 import { useAccountSafely } from './account/useAccountSafely'
 import { useChainName } from './chain/useChainName'

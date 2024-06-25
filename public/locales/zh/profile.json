@@ -258,9 +258,9 @@
       "misc": {
         "registered": "已注册",
         "expires": "到期时间",
-        "earnfi": {
-          "title": "Earni.fi 提醒",
-          "enterEmail": "通过 Email、PUSH、XMTP、Blockscan Chat 以及 Mailchain 来接收 <a>Earni.fi</a> 的提醒。",
+        "bankless": {
+          "title": "Bankless 提醒",
+          "enterEmail": "通过 Email、PUSH、XMTP、Blockscan Chat 以及 Mailchain 来接收 <a>Bankless</a> 的提醒。",
           "emailConfirmation": "即将完成，请检查您的电子邮件并确认此次订阅。",
           "submitError": "提交失败，请重试。"
         },
@@ -270,7 +270,7 @@
           "office365": "Office 365 日历",
           "yahoo": "Yahoo 日历",
           "ical": "iCal 下载 (.ics)",
-          "earnifi": "Earni.fi 提醒"
+          "bankless": "Bankless 提醒"
         }
       }
     }

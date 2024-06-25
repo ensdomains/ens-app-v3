@@ -1,32 +1,18 @@
 import { ComponentProps, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { useChainId } from 'wagmi'
 
-import { Button, Dialog, Input, mq, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Input, Typography } from '@ensdomains/thorin'
 
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
-import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
 import { useSubscribeToEarnifi } from '@app/components/pages/profile/[name]/tabs/MoreTab/Miscellaneous/useSubscribeToEarnifi'
 
 export const EARNIFI_OUTLINK =
-  'https://earni.fi/?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'
+  'https://www.bankless.com/claimables?utm_source=ENS+Modal&utm_medium=Banner&utm_campaign=ENS_Partnership'
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$/i
-
-const Form = styled.form(
-  ({ theme }) => css`
-    width: ${theme.space.full};
-    max-width: 100vw;
-    ${mq.sm.min(css`
-      width: calc(80vw - 2 * ${theme.space['6']});
-      max-width: ${theme.space['128']};
-    `)}
-  `,
-)
 
 type Props = {
   name: string
@@ -50,7 +36,7 @@ export const EarnifiDialog = ({ name, open, onDismiss }: Props) => {
       const message =
         error instanceof Error && error.message
           ? error.message
-          : t('tabs.more.misc.earnfi.submitError', { ns: 'profile' })
+          : t('tabs.more.misc.bankless.submitError', { ns: 'profile' })
       setError('email', {
         type: 'submitError',
         message,
@@ -72,38 +58,39 @@ export const EarnifiDialog = ({ name, open, onDismiss }: Props) => {
 
   return (
     <Dialog open={open} variant="blank" onDismiss={() => status !== 'pending' && _onDismiss()}>
-      <Dialog.Heading title={t('tabs.more.misc.earnfi.title', { ns: 'profile' })} />
+      <Dialog.Heading title={t('tabs.more.misc.bankless.title', { ns: 'profile' })} />
       {match(status)
         .with(P.not('success'), () => (
-          <Form
-            ref={formRef}
-            onSubmit={handleSubmit(({ email }) => subscribe({ email, address: name, chainId }))}
-          >
-            <Typography style={{ textAlign: 'center' }}>
-              <Trans
-                style={{ textAlign: 'center' }}
-                i18nKey="tabs.more.misc.earnfi.enterEmail"
-                ns="profile"
-                components={{
-                  a: <Outlink href={EARNIFI_OUTLINK} role="link" />,
-                }}
+          <>
+            <Dialog.Content
+              as="form"
+              ref={formRef}
+              onSubmit={handleSubmit(({ email }) => subscribe({ email, address: name, chainId }))}
+            >
+              <Typography style={{ textAlign: 'center' }}>
+                <Trans
+                  style={{ textAlign: 'center' }}
+                  i18nKey="tabs.more.misc.bankless.enterEmail"
+                  ns="profile"
+                  components={{
+                    a: <Outlink href={EARNIFI_OUTLINK} role="link" />,
+                  }}
+                />
+              </Typography>
+              <Input
+                type="email"
+                id="email"
+                label={t('action.enterEmail')}
+                {...register('email', {
+                  required: t('errors.emailRequired'),
+                  pattern: {
+                    value: emailRegex,
+                    message: t('errors.emailInvalid'),
+                  },
+                })}
+                error={errors.email?.message}
               />
-            </Typography>
-            <Spacer $height="3" />
-            <Input
-              type="email"
-              id="email"
-              label={t('action.enterEmail')}
-              {...register('email', {
-                required: t('errors.emailRequired'),
-                pattern: {
-                  value: emailRegex,
-                  message: t('errors.emailInvalid'),
-                },
-              })}
-              error={errors.email?.message}
-            />
-            <Spacer $height="3" />
+            </Dialog.Content>
             <Dialog.Footer
               leading={
                 <Button onClick={_onDismiss} colorStyle="accentSecondary">
@@ -120,15 +107,17 @@ export const EarnifiDialog = ({ name, open, onDismiss }: Props) => {
                 </Button>
               }
             />
-          </Form>
+          </>
         ))
         .with('success', () => (
-          <InnerDialog>
-            <div style={{ textAlign: 'center' }}>
-              {t('tabs.more.misc.earnfi.emailConfirmation', { ns: 'profile' })}
-            </div>
+          <>
+            <Dialog.Content>
+              <div style={{ textAlign: 'center' }}>
+                {t('tabs.more.misc.bankless.emailConfirmation', { ns: 'profile' })}
+              </div>
+            </Dialog.Content>
             <Dialog.Footer trailing={<Button onClick={_onDismiss}>{t('action.close')}</Button>} />
-          </InnerDialog>
+          </>
         ))
         .exhaustive()}
     </Dialog>

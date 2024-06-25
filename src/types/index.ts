@@ -195,6 +195,9 @@ export type CreateQueryKey<
       scopeKey: string | undefined,
       functionName: TFunctionName,
     ]
+export type GenericQueryKey<
+  TQueryDependencyType extends QueryDependencyType = QueryDependencyType,
+> = CreateQueryKey<object, string, TQueryDependencyType>
 
 /**
  * Makes {@link TKeys} optional in {@link TType} while preserving type inference.

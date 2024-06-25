@@ -3,24 +3,16 @@ import type { TFunction } from 'react-i18next'
 import { getPrice } from '@ensdomains/ensjs/public'
 import { renewNames } from '@ensdomains/ensjs/wallet'
 
-import {
-  HelperProps,
-  Transaction,
-  TransactionDisplayItem,
-  TransactionFunctionParameters,
-} from '@app/types'
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { makeDisplay } from '@app/utils/currency'
 
-import { calculateValueWithBuffer, secondsToYears } from '../../utils/utils'
+import { calculateValueWithBuffer, formatDuration } from '../../utils/utils'
 
 type Data = {
   names: string[]
   duration: number
   rentPrice: bigint
-  isSelf?: boolean
 }
-
-const toSingleDecimal = (duration: number) => parseFloat(secondsToYears(duration).toFixed(1))
 
 const displayItems = (
   { names, rentPrice, duration }: Data,
@@ -37,7 +29,7 @@ const displayItems = (
   },
   {
     label: 'duration',
-    value: t('unit.years', { count: toSingleDecimal(duration) }),
+    value: formatDuration(duration, t),
   },
   {
     label: 'cost',
@@ -45,19 +37,11 @@ const displayItems = (
       ns: 'transactionFlow',
       value: makeDisplay({
         value: calculateValueWithBuffer(rentPrice),
-        symbol: 'ETH',
+        symbol: 'eth',
       }),
     }),
   },
 ]
-
-const helper = (data: Data, t: TFunction<'translation', undefined>): HelperProps | undefined => {
-  if (data.isSelf) return
-  return {
-    type: 'warning',
-    children: t('transaction.extendNames.warning', { ns: 'transactionFlow' }),
-  }
-}
 
 const transaction = async ({
   client,
@@ -78,4 +62,4 @@ const transaction = async ({
     value: priceWithBuffer,
   })
 }
-export default { transaction, displayItems, helper } satisfies Transaction<Data>
+export default { transaction, displayItems } satisfies Transaction<Data>

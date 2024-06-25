@@ -6,6 +6,7 @@ import { publicResolverSetAddrSnippet } from '@ensdomains/ensjs/contracts'
 
 import { useProfile } from '@app/hooks/useProfile'
 import { emptyAddress } from '@app/utils/constants'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
 
 import { useIsWrapped } from '../useIsWrapped'
 import { useResolverHasInterfaces } from '../useResolverHasInterfaces'
@@ -34,6 +35,7 @@ export const useResolverIsAuthorised = ({
     data: isWrapped,
     isLoading: isWrappedLoading,
     isFetching: isWrappedFetching,
+    isCachedData: isWrappedCachedData,
   } = useIsWrapped({ name, enabled })
 
   const isDependentDataLoading = profile.isLoading || connector.isLoading
@@ -43,17 +45,13 @@ export const useResolverIsAuthorised = ({
     knownResolverData,
     isLoading: isResolverHasInterfacesLoading,
     isFetching: isResolverHasInterfacesFetching,
+    isCachedData: isResolverHasInterfacesCachedData,
   } = useResolverHasInterfaces({
     interfaceNames: ['MultiCoinAddressResolver'],
     resolverAddress: resolverAddress!,
     enabled: enabled && !isDependentDataLoading && !!resolverAddress,
   })
-  const {
-    data: estimateGasData,
-    isLoading: isEstimateGasLoading,
-    isError: isEstimateGasError,
-    isFetching: isEstimateGasFetching,
-  } = useEstimateGas({
+  const estimateGasQuery = useEstimateGas({
     to: resolverAddress,
     account: connector.data?.account,
     data: encodeFunctionData({
@@ -71,6 +69,13 @@ export const useResolverIsAuthorised = ({
         !!resolverAddress,
     },
   })
+
+  const {
+    data: estimateGasData,
+    isLoading: isEstimateGasLoading,
+    isError: isEstimateGasError,
+    isFetching: isEstimateGasFetching,
+  } = estimateGasQuery
 
   const isLoading =
     isDependentDataLoading ||
@@ -108,5 +113,10 @@ export const useResolverIsAuthorised = ({
       isResolverHasInterfacesFetching ||
       isEstimateGasFetching ||
       isWrappedFetching,
+    isCachedData:
+      profile.isCachedData ||
+      isWrappedCachedData ||
+      isResolverHasInterfacesCachedData ||
+      getIsCachedData(estimateGasQuery),
   }
 }

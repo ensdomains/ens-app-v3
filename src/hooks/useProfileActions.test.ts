@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { DeepPartial } from '@app/types'
+import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 import { createDateAndValue } from '@app/utils/utils'
 
 import { transactions } from '../transaction-flow/transaction/index'
@@ -15,7 +16,6 @@ import { useContractAddress } from './chain/useContractAddress'
 import { useExpiry } from './ensjs/public/useExpiry'
 import { useOwner } from './ensjs/public/useOwner'
 import { useWrapperData } from './ensjs/public/useWrapperData'
-import { useHasGlobalError } from './errors/useHasGlobalError'
 import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from './resolver/useResolverStatus'
 import { useProfile } from './useProfile'
@@ -37,7 +37,7 @@ vi.mock('./ensjs/public/useExpiry')
 vi.mock('./resolver/useResolverStatus')
 vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
-vi.mock('./errors/useHasGlobalError')
+vi.mock('@app/utils/SyncProvider/SyncProvider')
 
 vi.mock('./chain/useContractAddress')
 
@@ -56,7 +56,7 @@ const mockUseExpiry = mockFunction(useExpiry)
 const mockUseResolverStatus = mockFunction(useResolverStatus)
 const mockUsePrimaryName = mockFunction(usePrimaryName)
 
-const mockUseHasGlobalError = mockFunction(useHasGlobalError)
+const mockUseHasGraphError = mockFunction(useHasGraphError)
 
 const mockUseContractAddress = mockFunction(useContractAddress)
 
@@ -148,7 +148,7 @@ describe('useProfileActions', () => {
           mockUsePreparedDataInput(...args),
       createTransactionFlow: (...args: any[]) => mockCreateTransactionFlow(...args),
     })
-    mockUseHasGlobalError.mockReturnValue(false)
+    mockUseHasGraphError.mockReturnValue({ data: false, isLoading: false })
 
     // @ts-ignore
     mockUseContractAddress.mockReturnValue('0xresolver')
@@ -465,6 +465,7 @@ describe('useProfileActions', () => {
               CANNOT_SET_RESOLVER: true,
             },
           },
+          owner: '0x1234567890',
         },
         isLoading: false,
       })
@@ -490,6 +491,7 @@ describe('useProfileActions', () => {
               CANNOT_SET_RESOLVER: true,
             },
           },
+          owner: '0x1234567890',
         },
         isLoading: false,
       })

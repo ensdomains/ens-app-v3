@@ -1,4 +1,4 @@
-import { QueryFunctionContext, queryOptions, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext } from '@tanstack/react-query'
 
 import {
   getWrapperData,
@@ -8,24 +8,25 @@ import {
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { getIsCachedData } from '@app/utils/getIsCachedData'
+import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
+import { useQuery } from '@app/utils/query/useQuery'
 
 type UseWrapperDataParameters = PartialBy<GetWrapperDataParameters, 'name'>
 
-type UseWrapperDataReturnType = GetWrapperDataReturnType
+export type UseWrapperDataReturnType = GetWrapperDataReturnType
 
 type UseWrapperDataConfig = QueryConfig<UseWrapperDataReturnType, Error>
 
-type QueryKey<TParams extends UseWrapperDataParameters> = CreateQueryKey<
-  TParams,
-  'getWrapperData',
-  'standard'
->
+export type UseWrapperDataQueryKey<
+  TParams extends UseWrapperDataParameters = UseWrapperDataParameters,
+> = CreateQueryKey<TParams, 'getWrapperData', 'standard'>
 
 export const getWrapperDataQueryFn =
   (config: ConfigWithEns) =>
   async <TParams extends UseWrapperDataParameters>({
     queryKey: [{ name }, chainId],
-  }: QueryFunctionContext<QueryKey<TParams>>) => {
+  }: QueryFunctionContext<UseWrapperDataQueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
 
     const client = config.getClient({ chainId })
@@ -35,8 +36,8 @@ export const getWrapperDataQueryFn =
 
 export const useWrapperData = <TParams extends UseWrapperDataParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
   // params
@@ -50,32 +51,19 @@ export const useWrapperData = <TParams extends UseWrapperDataParameters>({
     queryFn: getWrapperDataQueryFn,
   })
 
-  const preparedOptions = queryOptions({
+  const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-  })
-
-  const query = useQuery({
-    ...preparedOptions,
     enabled: enabled && !!params.name,
     gcTime,
     staleTime,
-    select: (data) => {
-      if (!data) return null
-      return {
-        ...data,
-        expiry: data.expiry
-          ? {
-              ...data.expiry,
-              date: new Date(data.expiry.date),
-            }
-          : null,
-      }
-    },
   })
+
+  const query = useQuery(preparedOptions)
 
   return {
     ...query,
-    isCachedData: query.status === 'success' && query.isFetched && !query.isFetchedAfterMount,
+    refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
+    isCachedData: getIsCachedData(query),
   }
 }

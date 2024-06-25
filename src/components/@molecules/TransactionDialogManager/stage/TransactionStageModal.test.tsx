@@ -19,6 +19,7 @@ import { checkIsSafeApp } from '@app/utils/safe'
 import { useMockedUseQueryOptions } from '../../../../../test/mock/useMockedUseQueryOptions'
 import { calculateGasLimit, transactionSuccessHandler } from './query'
 import { handleBackToInput, TransactionStageModal } from './TransactionStageModal'
+import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/chain/useChainName')
@@ -46,6 +47,8 @@ const mockTransaction: GenericTransaction = {
     oldResolverAddress: '0x1613beB3B2C4f22Ee086B2b38C1476A3cE7f78E8',
   },
 }
+
+makeMockIntersectionObserver()
 
 vi.mock('@app/transaction-flow/transaction', () => {
   const originalModule = vi.importActual('@app/transaction-flow/transaction')
@@ -356,6 +359,7 @@ describe('TransactionStageModal', () => {
           },
         })
         expect(screen.getByText('transaction.dialog.sent.progress.message')).toBeVisible()
+        expect(screen.getByText('transaction.dialog.sent.learn')).toBeVisible()
       })
     })
     describe('complete', () => {

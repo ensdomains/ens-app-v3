@@ -99,7 +99,7 @@ const Marker = styled.div<{ $percent: number }>(
 )
 
 type Props = {
-  rentFee: bigint
+  yearlyFee: bigint
   transactionFee: bigint
   message?: string
 }
@@ -124,11 +124,11 @@ const gasPercentToYears = (targetPercent: bigint, f: bigint, y: bigint, min: num
   return { gas: gasPercent, years: rounded }
 }
 
-export const RegistrationTimeComparisonBanner = ({ message, rentFee, transactionFee }: Props) => {
+export const RegistrationTimeComparisonBanner = ({ message, yearlyFee, transactionFee }: Props) => {
   const { t } = useTranslation('common')
-  const oneYearGasPercent = yearsToGasPercent(1n, transactionFee, rentFee)
-  const forty = gasPercentToYears(40n, transactionFee, rentFee, 2)
-  const twenty = gasPercentToYears(20n, transactionFee, rentFee, 5)
+  const oneYearGasPercent = yearsToGasPercent(1n, transactionFee, yearlyFee)
+  const forty = gasPercentToYears(40n, transactionFee, yearlyFee, 2)
+  const twenty = gasPercentToYears(20n, transactionFee, yearlyFee, 5)
 
   const twentyRounded = calcPercent(twenty.gas, 3)
 

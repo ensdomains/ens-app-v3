@@ -1,4 +1,4 @@
-import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
+import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -7,6 +7,7 @@ import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { DeepPartial } from '@app/types'
 
 import RevokePermissions, { Props } from './RevokePermissions-flow'
+import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
@@ -16,6 +17,8 @@ const mockUsePrimaryName = mockFunction(usePrimaryName)
 
 const mockDispatch = vi.fn()
 const mockOnDismiss = vi.fn()
+
+makeMockIntersectionObserver()
 
 type Data = Props['data']
 const makeData = (overrides: DeepPartial<Data> = {}) => {
@@ -138,6 +141,12 @@ describe('RevokePermissions', () => {
 
       await userEvent.click(nextButton)
 
+      const nameConfirmation = screen.getByTestId('input-name-confirmation')
+
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
+
+      await userEvent.click(nextButton)
+
       await waitFor(() => {
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactions',
@@ -244,6 +253,14 @@ describe('RevokePermissions', () => {
         await userEvent.click(screen.getByTestId(`checkbox-${fuse}`))
       }
       await userEvent.click(screen.getByTestId('checkbox-CANNOT_UNWRAP'))
+      await userEvent.click(nextButton)
+
+      await userEvent.click(nextButton)
+
+      const nameConfirmation = screen.getByTestId('input-name-confirmation')
+
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
+
       await userEvent.click(nextButton)
 
       await waitFor(() => {
@@ -455,6 +472,12 @@ describe('RevokePermissions', () => {
       })
       await userEvent.click(nextButton)
 
+      const nameConfirmation = screen.getByTestId('input-name-confirmation')
+
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
+
+      await userEvent.click(nextButton)
+
       await waitFor(() => {
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactions',
@@ -518,6 +541,12 @@ describe('RevokePermissions', () => {
       await waitFor(() => {
         expect(nextButton).toHaveTextContent('input.revokePermissions.action.revoke4')
       })
+      await userEvent.click(nextButton)
+
+      const nameConfirmation = screen.getByTestId('input-name-confirmation')
+
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
+
       await userEvent.click(nextButton)
 
       await waitFor(() => {
@@ -588,6 +617,12 @@ describe('RevokePermissions', () => {
       })
       await userEvent.click(nextButton)
 
+      const nameConfirmation = screen.getByTestId('input-name-confirmation')
+
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
+
+      await userEvent.click(nextButton)
+
       await waitFor(() => {
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactions',
@@ -653,6 +688,12 @@ describe('RevokePermissions', () => {
           screen.getByText('input.revokePermissions.views.revokeChangeFusesWarning.title'),
         ).toBeInTheDocument()
       })
+      await userEvent.click(nextButton)
+
+      const nameConfirmation = screen.getByTestId('input-name-confirmation')
+
+      fireEvent.change(nameConfirmation, { target: { value: 'sub.test.eth' } })
+
       await userEvent.click(nextButton)
 
       await waitFor(() => {

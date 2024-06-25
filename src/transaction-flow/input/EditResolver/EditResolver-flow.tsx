@@ -1,28 +1,16 @@
 import { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { Button, Dialog, mq } from '@ensdomains/thorin'
+import { Button, Dialog } from '@ensdomains/thorin'
 
 import EditResolverForm from '@app/components/@molecules/EditResolver/EditResolverForm'
-import EditResolverWarnings from '@app/components/@molecules/EditResolver/EditResolverWarnings'
-import { useBasicName } from '@app/hooks/useBasicName'
+import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import useResolverEditor from '@app/hooks/useResolverEditor'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { createTransactionItem } from '../../transaction'
-
-const EditResolverFormContainer = styled.div(({ theme }) => [
-  css`
-    width: 100%;
-  `,
-  mq.sm.min(css`
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-  `),
-])
 
 type Data = {
   name: string
@@ -36,7 +24,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const { name } = data
-  const { isWrapped } = useBasicName({ name })
+  const { data: isWrapped } = useIsWrapped({ name })
   const formRef = useRef<HTMLFormElement>(null)
 
   const { data: profile = { resolverAddress: '' } } = useProfile({ name: name as string })
@@ -69,10 +57,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   return (
     <>
       <Dialog.Heading title={t('input.editResolver.title')} />
-      <EditResolverFormContainer>
-        <EditResolverWarnings {...editResolverForm} />
-        <EditResolverForm {...{ ...editResolverForm, resolverAddress, formRef }} />
-      </EditResolverFormContainer>
+      <EditResolverForm {...{ ...editResolverForm, resolverAddress, formRef }} />
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={onDismiss}>

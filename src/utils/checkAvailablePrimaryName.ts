@@ -15,9 +15,8 @@ const isNotTLD = (n: Pick<CheckPrimaryNameInputName, 'name'>) =>
   n.name ? n.name.split('.').length > 1 : false
 
 const isResolvedOrManagedName = ({
-  relation: { owner, registrant, resolvedAddress, wrappedOwner },
-}: Pick<CheckPrimaryNameInputName, 'relation'>) =>
-  owner || registrant || wrappedOwner || resolvedAddress
+  relation: { owner, resolvedAddress, wrappedOwner },
+}: Pick<CheckPrimaryNameInputName, 'relation'>) => owner || wrappedOwner || resolvedAddress
 
 const isNotPrimaryName =
   (primaryName?: string | null) => (n: Pick<CheckPrimaryNameInputName, 'name'>) =>

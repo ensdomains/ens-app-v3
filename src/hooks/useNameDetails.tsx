@@ -23,6 +23,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     registrationStatus,
     expiryDate,
     gracePeriodEndDate,
+    refetchIfEnabled: refetchBasicName,
     ...basicName
   } = useBasicName({ name })
 
@@ -30,6 +31,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     data: profile,
     isLoading: isProfileLoading,
     isCachedData: isProfileCachedData,
+    refetchIfEnabled: refetchProfile,
   } = useProfile({
     name: normalisedName,
     enabled: !!normalisedName && normalisedName !== '[root]',
@@ -40,8 +42,8 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     data: dnsOwner,
     isLoading: isDnsOwnerLoading,
     isCachedData: isDnsOwnerCachedData,
+    refetchIfEnabled: refetchDnsOwner,
   } = useDnsOwner({ name: normalisedName, enabled: isValid })
-
   const error: string | ReactNode | null = useMemo(() => {
     if (isValid === false) {
       return t('errors.invalidName')
@@ -67,6 +69,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     }
     if (
       // bypass unknown error for root name
+      !!normalisedName &&
       normalisedName !== '[root]' &&
       !profile &&
       !isProfileLoading
@@ -94,7 +97,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
   }, [registrationStatus, name, t, profile, isProfileLoading, normalisedName])
 
   const isLoading = isProfileLoading || isBasicLoading || isDnsOwnerLoading
-  const isCachedData = isBasicCachedData && isProfileCachedData && isDnsOwnerCachedData
+  const isCachedData = isBasicCachedData || isProfileCachedData || isDnsOwnerCachedData
 
   return {
     error,
@@ -103,11 +106,19 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     isValid,
     profile,
     isLoading,
+    isProfileLoading,
+    isBasicLoading,
+    isDnsOwnerLoading,
     dnsOwner,
     isCachedData,
     registrationStatus,
     gracePeriodEndDate,
     expiryDate,
+    refetchIfEnabled: () => {
+      refetchBasicName()
+      refetchProfile()
+      refetchDnsOwner()
+    },
     ...basicName,
   }
 }

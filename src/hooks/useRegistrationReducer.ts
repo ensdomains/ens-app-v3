@@ -10,11 +10,14 @@ import {
   SelectedItemProperties,
 } from '@app/components/pages/profile/[name]/registration/types'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
+import { yearsToSeconds } from '@app/utils/utils'
+
+const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 3
 
 const defaultData: RegistrationReducerDataItem = {
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
-  years: 1,
+  seconds: yearsToSeconds(1),
   reverseRecord: false,
   records: [],
   clearRecords: false,
@@ -27,6 +30,7 @@ const defaultData: RegistrationReducerDataItem = {
   isMoonpayFlow: false,
   externalTransactionId: '',
   chainId: 1,
+  version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
 }
 
 const isBrowser = !!(
@@ -38,7 +42,7 @@ const isBrowser = !!(
 const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
-  years: 1,
+  seconds: yearsToSeconds(1),
   reverseRecord: false,
   records: [],
   resolverAddress: '0x',
@@ -47,6 +51,7 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   started: false,
   isMoonpayFlow: false,
   externalTransactionId: '',
+  version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   ...selected,
 })
 
@@ -56,7 +61,10 @@ export const getSelectedIndex = (
 ) =>
   state.items.findIndex(
     (x) =>
-      x.address === selected.address && x.name === selected.name && x.chainId === selected.chainId,
+      x.address === selected.address &&
+      x.name === selected.name &&
+      x.chainId === selected.chainId &&
+      x.version === REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   )
 
 /* eslint-disable no-param-reassign */
@@ -97,7 +105,7 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       break
     }
     case 'setPricingData': {
-      item.years = action.payload.years
+      item.seconds = action.payload.seconds
       item.reverseRecord = action.payload.reverseRecord
       break
     }

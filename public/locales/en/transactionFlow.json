@@ -12,6 +12,7 @@
             "searchPlaceholder": "Search for an NFT",
             "loading": "Loading your NFTs",
             "unknown": "Unknown NFT",
+            "loadError": "NFT cannot be loaded",
             "noNFTs": "No NFTs found for this address.",
             "selected": {
               "title": "Selected NFT",
@@ -214,8 +215,14 @@
     "extendNames": {
       "title_one": "Extend Name",
       "title_other": "Extend {{count}} Names",
+      "ownershipWarning": {
+        "title_one": "You do not own this name",
+        "title_other": "You do not own all these names",
+        "description_one": "Extending this name will extend the current owner's registration length. This will not give you ownership of it.",
+        "description_other": "Extending these names will extend the current owner's registration length. This will not give you ownership if you are not already the owner."
+      },
       "invoice": {
-        "extension": "{{count}} year extension",
+        "extension": "{{time}} extension",
         "transaction": "Transaction fee",
         "total": "Estimated total"
       },
@@ -297,6 +304,11 @@
         "revokeChangeFusesWarning": {
           "title": "Remaining permissions will be locked",
           "subtitle": "Permissions and custom fuses will be permanently locked in their current state after ‘change permissions’ is revoked. This will only be reset if the name expires."
+        },
+        "lastWarning": {
+          "title": "Are you absolutely sure?",
+          "subtitle": "You are making changes that can only undone when the name expires ({{date}}).",
+          "message": "Please type your ENS name ({{name}}) to confirm."
         }
       },
       "action": {
@@ -378,7 +390,7 @@
           "learnMore": "Learn about sending names"
         }
       }
-    }, 
+    },
     "syncManager": {
       "title": "Sync manager",
       "description": "Syncing the manager will make you the new manager of this name. The current manager <strong>({{manager}})</strong> will no longer be able to make changes.",

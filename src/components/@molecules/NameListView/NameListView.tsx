@@ -16,6 +16,7 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
+import { usePrefetchBlockTimestamp } from '@app/hooks/chain/useBlockTimestamp'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
@@ -54,14 +55,13 @@ const Footer = styled.div(
 
 type NameListViewProps = {
   address: Address | undefined
-  isSelf: boolean
+  selfAddress: Address | undefined
   setError?: (isError: boolean) => void
   setLoading?: (isLoading: boolean) => void
 }
 
-export const NameListView = ({ address, isSelf, setError, setLoading }: NameListViewProps) => {
+export const NameListView = ({ address, selfAddress, setError, setLoading }: NameListViewProps) => {
   const { t } = useTranslation('names')
-
   /**
    * Normal useQueries are in idle state until it reaches the client side, but useInfiniteQuery does not and
    * starts in success state when it has persistent data. This causes a hydration error
@@ -72,8 +72,8 @@ export const NameListView = ({ address, isSelf, setError, setLoading }: NameList
   }, [])
 
   const [mode, setMode] = useState<NameTableMode>('view')
-  const [selectedNames, setSelectedNames] = useState<string[]>([])
-  const handleClickName = (name: string) => () => {
+  const [selectedNames, setSelectedNames] = useState<Name[]>([])
+  const handleClickName = (name: Name) => () => {
     if (selectedNames.includes(name)) {
       setSelectedNames(selectedNames.filter((n) => n !== name))
     } else {
@@ -105,8 +105,16 @@ export const NameListView = ({ address, isSelf, setError, setLoading }: NameList
     pageSize: 20,
     filter: {
       searchString: searchQuery,
+      searchType: 'name',
+      resolvedAddress: false,
     },
   })
+
+  // useBlockTimestamp() is used in:
+  // <TaggedNameItem />
+  // => <NameDetailItem />
+  //   => <ShortExpiry />
+  usePrefetchBlockTimestamp()
 
   useEffect(() => {
     setError?.(isError)
@@ -131,8 +139,10 @@ export const NameListView = ({ address, isSelf, setError, setLoading }: NameList
   const handleExtend = () => {
     if (selectedNames.length === 0) return
     showExtendNamesInput(`extend-names-${selectedNames.join('-')}`, {
-      names: selectedNames,
-      isSelf,
+      names: selectedNames.map((n) => n.name!),
+      isSelf: selectedNames.every(
+        (n) => n.registrant === selfAddress || n.wrappedOwner === selfAddress,
+      ),
     })
   }
 
@@ -177,9 +187,9 @@ export const NameListView = ({ address, isSelf, setError, setLoading }: NameList
               key={name.id}
               {...name}
               mode={mode}
-              selected={selectedNames?.includes(name.name!)}
+              selected={!!selectedNames?.find((selectedName) => selectedName.name === name.name!)}
               disabled={isNameDisabled(name)}
-              onClick={handleClickName(name.name!)}
+              onClick={handleClickName(name)}
             />
           ))}
         </div>

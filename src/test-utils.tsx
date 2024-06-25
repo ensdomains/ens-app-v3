@@ -7,6 +7,7 @@ import React, { FC, ReactElement } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { beforeEach, expect, MockedFunction, vi } from 'vitest'
 import type { Register } from 'wagmi'
+import { hashFn } from 'wagmi/query'
 
 import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
 
@@ -18,12 +19,6 @@ const { createClient, http } = await vi.importActual<typeof import('viem')>('vie
 const { privateKeyToAccount } =
   await vi.importActual<typeof import('viem/accounts')>('viem/accounts')
 const { createConfig, WagmiProvider } = await vi.importActual<typeof import('wagmi')>('wagmi')
-
-// @ts-ignore: Unreachable code error
-// eslint-disable-next-line no-extend-native, func-names
-BigInt.prototype.toJSON = function () {
-  return this.toString()
-}
 
 window.scroll = vi.fn() as (opts?: ScrollOptions) => void
 
@@ -50,6 +45,7 @@ const queryClient = new QueryClient({
     queries: {
       gcTime: Infinity,
       retry: false,
+      queryKeyHashFn: hashFn,
     },
   },
 })
@@ -81,6 +77,7 @@ const wagmiConfig = {
 
 vi.mock('@app/utils/query/wagmi', () => ({
   wagmiConfig,
+  infuraUrl: () => 'http://infura.io',
 }))
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {

@@ -1,4 +1,4 @@
-import { infiniteQueryOptions, QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query'
+import { infiniteQueryOptions, QueryFunctionContext } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import {
@@ -9,6 +9,7 @@ import {
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, InfiniteQueryConfig, PartialBy } from '@app/types'
+import { useInfiniteQuery } from '@app/utils/query/useInfiniteQuery'
 
 type UseSubnamesParameters = Omit<PartialBy<GetSubnamesParameters, 'name'>, 'previousPage'>
 
@@ -46,15 +47,20 @@ const initialPageParam = [] as GetSubnamesReturnType
 
 export const useSubnames = <TParams extends UseSubnamesParameters>({
   // config
-  gcTime = 1_000 * 60 * 60 * 24,
   enabled = true,
+  gcTime,
   staleTime,
   scopeKey,
   // params
   ...params
 }: TParams & UseSubnamesConfig) => {
+  const paramsWithLowercaseSearchString = {
+    ...params,
+    searchString: params.searchString?.toLocaleLowerCase(),
+  }
+
   const initialOptions = useQueryOptions({
-    params,
+    params: paramsWithLowercaseSearchString,
     scopeKey,
     functionName: 'getSubnames',
     queryDependencyType: 'graph',
@@ -64,16 +70,15 @@ export const useSubnames = <TParams extends UseSubnamesParameters>({
   const preparedOptions = infiniteQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-    getNextPageParam: getNextPageParam(params),
+    getNextPageParam: getNextPageParam(paramsWithLowercaseSearchString),
     initialPageParam,
-  })
-
-  const { data, status, isFetched, isFetchedAfterMount, ...rest } = useInfiniteQuery({
-    ...preparedOptions,
-    enabled: enabled && !!params.name,
+    enabled: enabled && !!paramsWithLowercaseSearchString.name,
     gcTime,
     staleTime,
   })
+
+  const { data, status, isFetched, isFetchedAfterMount, ...rest } =
+    useInfiniteQuery(preparedOptions)
 
   const pageCount = data?.pages.length || 0
   const nameCount = data?.pages.reduce((acc, page) => acc + page.length, 0) || 0

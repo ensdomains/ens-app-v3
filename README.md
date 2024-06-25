@@ -113,6 +113,16 @@ bun run build:glocal
 bun run buildandstart:glocal
 ```
 
+### Debugging
+
+To debug a single test:
+
+```bash
+pnpm denv
+pnpm dev:glocal
+pnpm playwright test --project=stateless --ui stateless/extendNames
+```
+
 ## PR builds
 
 Cloudflare will automatically build and deploy a test site when pushed to a new PR branch.
