@@ -3,7 +3,7 @@ import { Interface } from '@ethersproject/abi'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { keccak256, namehash ,toBytes} from 'viem'
+import { keccak256, namehash , toBytes, labelhash } from 'viem'
 
 
 function makeInterfaceId(functionSignatures: string[] = []) {
@@ -32,7 +32,6 @@ function computeInterfaceId(iface: any): any {
   )
 }
 
-const labelHash = (label: string) => ethers.utils.keccak256(ethers.utils.toUtf8Bytes(label))
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, deployments, network } = hre
@@ -58,7 +57,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   })
 
   console.log('Temporarily setting owner of eth tld to owner ')
-  const tx = await root.setSubnodeOwner(labelHash('eth'), owner)
+  const tx = await root.setSubnodeOwner(labelhash('eth'), owner)
   await tx.wait()
 
   console.log('Set default resolver for eth tld to public resolver')
@@ -90,7 +89,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await tx4.wait()
 
   console.log('Set owner of eth tld back to registrar')
-  const tx11 = await root.setSubnodeOwner(labelHash('eth'), registrar.address)
+  const tx11 = await root.setSubnodeOwner(labelhash('eth'), registrar.address)
   await tx11.wait()
 
   return true
