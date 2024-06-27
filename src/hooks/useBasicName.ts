@@ -154,12 +154,10 @@ export const useBasicName = ({
   })
 
   const ownerDataWithSubgraphRegistrant = useMemo(() => {
-    // console.log(ownerData)
     if (!ownerData) return ownerData
     const checkSumSubgraphRegistrant = subgraphRegistrant
       ? getAddress(subgraphRegistrant)
       : undefined
-    // console.log(checkSumSubgraphRegistrant)
     return {
       ...ownerData,
       registrant: ownerData?.registrant ?? checkSumSubgraphRegistrant,

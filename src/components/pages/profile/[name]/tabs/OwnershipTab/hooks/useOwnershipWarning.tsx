@@ -22,7 +22,6 @@ export const useOwnershipWarning = ({ name, nameType, details }: Input) => {
 
   const data = useMemo(() => {
     if (isLoading) return undefined
-    console.log(details.ownerData?.registrant, account.address)
     return match([
       nameType.data,
       {
