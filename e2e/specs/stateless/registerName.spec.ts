@@ -115,6 +115,11 @@ test.describe.serial('normal registration', () => {
 
     // should allow finalising registration and automatically go to the complete step
     await page.getByTestId('finish-button').click()
+    await expect(
+      page.getByText(
+        'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
+      ),
+    ).toBeVisible()
     await expect(page.getByText('Open Wallet')).toBeVisible()
     await transactionModal.confirm()
 
