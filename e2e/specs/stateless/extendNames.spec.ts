@@ -178,10 +178,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await profilePage.getExtendButton.click()
 
   const extendNamesModal = makePageObject('ExtendNamesModal')
-  await test.step('should show warning message', async () => {
-    await expect(page.getByText('You do not own this name')).toBeVisible()
-    await page.getByRole('button', { name: 'I understand' }).click()
-  })
 
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')

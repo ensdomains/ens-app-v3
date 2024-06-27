@@ -8,7 +8,6 @@ import FastForwardSVG from '@app/assets/FastForward.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { shouldShowExtendWarning } from '@app/utils/abilities/shouldShowExtendWarning'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -195,7 +194,7 @@ export const ProfileSnippet = ({
           onClick={() => {
             showExtendNamesInput(`extend-names-${name}`, {
               names: [name],
-              isSelf: shouldShowExtendWarning(abilities.data),
+              isSelf: abilities.data?.canSelfExtend,
             })
           }}
         >
