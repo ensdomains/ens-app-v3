@@ -4,15 +4,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { makeCommitment } from '@ensdomains/ensjs/utils'
-import {
-  Button,
-  CountdownCircle,
-  Dialog,
-  Heading,
-  mq,
-  Spinner,
-  Typography,
-} from '@ensdomains/thorin'
+import { Button, CountdownCircle, Dialog, Heading, mq, Spinner } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
@@ -302,7 +294,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
         size="large"
         callback={() => setCommitComplete(true)}
       />
-      <Typography>{t('steps.transactions.subheading')}</Typography>
+      <CenteredTypography>{t('steps.transactions.subheading')}</CenteredTypography>
       <ButtonContainer>
         {BackButton}
         {ActionButton}
