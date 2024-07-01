@@ -12,7 +12,7 @@ const twitterRegex = /^[A-Za-z0-9_]{1,15}$/
  *  - cannot have consecutive hyphens
  *  - cannot end with hyphen for new users, but existing usernames can
  */
-const githubRegex = /^[a-z\d](?:[a-z\d]-?){0,38}$/i
+const githubRegex = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}(-?)?$/i
 
 /*  discord:
  *  - 2-32 chars
