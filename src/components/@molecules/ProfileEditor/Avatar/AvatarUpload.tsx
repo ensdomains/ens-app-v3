@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { bytesToHex } from 'viem'
-import { useSignTypedData } from 'wagmi'
+import { useAccount, useSignTypedData } from 'wagmi'
 
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
@@ -52,6 +52,7 @@ const UploadComponent = ({
   const queryClient = useQueryClient()
   const chainName = useChainName()
 
+  const { address } = useAccount()
   const { signTypedDataAsync } = useSignTypedData()
 
   const {
@@ -100,6 +101,7 @@ const UploadComponent = ({
           expiry,
           dataURL,
           sig,
+          unverifiedAddress: address,
         }),
       }).then((res) => res.json())) as AvatarUploadResult
 
