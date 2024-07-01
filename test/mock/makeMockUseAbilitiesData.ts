@@ -317,6 +317,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
   return match(type)
     .with(P.union('eth-unwrapped-2ld'), () => ({
       canExtend: true,
+      canSelfExtend: true,
       canSend: true,
       canSendOwner: true,
       canSendManager: true,
@@ -335,6 +336,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     }))
     .with(P.union('eth-unwrapped-2ld:owner'), () => ({
       canExtend: true,
+      canSelfExtend: true,
       canSend: true,
       canSendOwner: true,
       canSendManager: true,
@@ -353,6 +355,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     }))
     .with(P.union('eth-unwrapped-2ld:manager'), () => ({
       canExtend: true,
+      canSelfExtend: false,
       canSend: true,
       canSendOwner: false,
       canSendManager: true,
@@ -368,6 +371,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     }))
     .with(P.union('eth-unwrapped-2ld:unowned', 'eth-emancipated-2ld:unowned'), () => ({
       canExtend: true,
+      canSelfExtend: false,
       canSend: false,
       canSendOwner: false,
       canSendManager: false,
@@ -382,6 +386,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     }))
     .with(P.union('eth-unwrapped-2ld:grace-period'), () => ({
       canExtend: true,
+      canSelfExtend: true,
       canSend: false,
       canSendOwner: false,
       canSendManager: false,
@@ -397,6 +402,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     }))
     .with(P.union('eth-emancipated-2ld'), () => ({
       canExtend: true,
+      canSelfExtend: true,
       canSend: true,
       canSendOwner: true,
       canSendManager: false,
@@ -414,6 +420,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     }))
     .with(P.union('eth-emancipated-2ld:grace-period'), () => ({
       canExtend: true,
+      canSelfExtend: true,
       canSend: false,
       canSendOwner: false,
       canSendManager: false,
@@ -431,6 +438,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     }))
     .with(P.union('eth-burnt-2ld'), () => ({
       canExtend: true,
+      canSelfExtend: true,
       canSend: false,
       canSendOwner: false,
       canSendManager: false,
@@ -448,6 +456,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     }))
     .with(P.union('eth-burnt-2ld:unowned'), () => ({
       canExtend: true,
+      canSelfExtend: false,
       canSend: false,
       canSendOwner: false,
       canSendManager: false,
@@ -463,6 +472,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     }))
     .with(P.union('dns-unwrapped-2ld', 'dns-unwrapped-2ld:manager'), () => ({
       canExtend: false,
+      canSelfExtend: false,
       canSend: true,
       canSendOwner: false,
       canSendManager: true,
@@ -487,6 +497,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
       ),
       () => ({
         canExtend: false,
+        canSelfExtend: false,
         canSend: false,
         canSendOwner: false,
         canSendManager: false,
@@ -502,6 +513,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     )
     .with(P.union('dns-wrappped-2ld'), () => ({
       canExtend: false,
+      canSelfExtend: false,
       canSend: true,
       canSendOwner: false,
       canSendManager: true,
@@ -530,6 +542,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
       ),
       () => ({
         canExtend: false,
+        canSelfExtend: false,
         canSend: true,
         canSendOwner: false,
         canSendManager: true,
@@ -557,6 +570,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
       ),
       () => ({
         canExtend: false,
+        canSelfExtend: false,
         canSend: true,
         canSendOwner: false,
         canSendManager: true,
@@ -579,6 +593,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     )
     .with(P.union('eth-unwrapped-subname:unowned+unwrapped-2ld:owner'), () => ({
       canExtend: false,
+      canSelfExtend: false,
       canSend: false,
       canSendOwner: false,
       canSendManager: false,
@@ -599,6 +614,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
       ),
       () => ({
         canExtend: false,
+        canSelfExtend: false,
         canSend: false,
         canSendOwner: false,
         canSendManager: false,
@@ -629,6 +645,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
       ),
       () => ({
         canExtend: false,
+        canSelfExtend: false,
         canSend: true,
         canSendOwner: false,
         canSendManager: true,
@@ -657,6 +674,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
       ),
       () => ({
         canExtend: false,
+        canSelfExtend: false,
         canSend: false,
         canSendOwner: false,
         canSendManager: false,
@@ -682,6 +700,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
       ),
       () => ({
         canExtend: false,
+        canSelfExtend: false,
         canSend: true,
         canSendOwner: false,
         canSendManager: true,
@@ -710,6 +729,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
       ),
       () => ({
         canExtend: false,
+        canSelfExtend: false,
         canSend: true,
         canSendOwner: true,
         canSendManager: false,
@@ -732,6 +752,7 @@ export const makeMockUseAbilitiesData = (type: MockUseAbilitiesType) => {
     )
     .with(P.union('eth-emancipated-subname+locked-2ld:grace-period:unowned'), () => ({
       canExtend: false,
+      canSelfExtend: false,
       canSend: false,
       canSendOwner: false,
       canSendManager: false,
