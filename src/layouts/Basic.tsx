@@ -101,7 +101,11 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   }, [isConnected, hasProgrammaticChainSwitching, isPending, isError, chainId, switchChain])
 
   useEffect(() => {
-    if (isConnected && !getSupportedChainById(chainId)) {
+    if (
+      isConnected &&
+      !getSupportedChainById(chainId) &&
+      router.pathname !== '/unsupportedNetwork'
+    ) {
       router.push('/unsupportedNetwork')
     }
   }, [isConnected, chainId, router])
