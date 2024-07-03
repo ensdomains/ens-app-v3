@@ -107,7 +107,7 @@ export const transactionSuccessHandler =
       isSafeTx: !!isSafeApp,
       searchRetries: 0,
     })
-    dispatch({ name: 'setTransactionHash', payload: tx })
+    dispatch({ name: 'setTransactionHash', payload: { hash: tx, key: txKey! } })
   }
 
 export const registrationGasFeeModifier = (gasLimit: bigint, transactionName: TransactionName) =>
