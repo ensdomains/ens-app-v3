@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
@@ -8,6 +9,18 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { nameLevel } from '@app/utils/name'
 
 import type { useExpiryDetails } from './useExpiryDetails'
+
+export const isSelfExtendable = ({
+  ownerData,
+  wrapperData,
+  address,
+}: {
+  ownerData?: GetOwnerReturnType
+  wrapperData?: GetWrapperDataReturnType
+  address?: Address
+}) => {
+  return ownerData?.registrant === address || wrapperData?.owner === address
+}
 
 export const useExpiryActions = ({
   name,
@@ -28,8 +41,6 @@ export const useExpiryActions = ({
   // TODO: remove this when we add support for extending wrapped subnames
   const is2ld = nameLevel(name) === '2ld'
 
-  const isSelf = ownerData?.registrant === address || wrapperData?.owner === address
-
   const expiryDate = expiryDetails?.find(({ type }) => type === 'expiry')?.date
   if (!expiryDate || !is2ld) return null
   return [
@@ -48,7 +59,7 @@ export const useExpiryActions = ({
       onClick: () => {
         showExtendNamesInput(`extend-names-${name}`, {
           names: [name],
-          isSelf,
+          isSelf: isSelfExtendable({ ownerData, wrapperData, address }),
         })
       },
     },

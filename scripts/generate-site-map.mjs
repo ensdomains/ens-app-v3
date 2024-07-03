@@ -1,19 +1,21 @@
 import { createReadStream, createWriteStream, existsSync } from 'fs'
+import { Transform } from 'stream'
+
 import { gql, request } from 'graphql-request'
 import fetch from 'node-fetch'
 import {
+  parseSitemap,
+  parseSitemapIndex,
   SitemapAndIndexStream,
   SitemapStream,
   XMLToSitemapItemStream,
-  parseSitemap,
-  parseSitemapIndex,
 } from 'sitemap'
-import { Transform } from 'stream'
 
 import { normalise } from '@ensdomains/ensjs/utils'
 
+const ENS_SUBGRAPH_API_KEY = '9ad5cff64d93ed2c33d1a57b3ec03ea9'
 const baseURL = 'https://app.ens.domains'
-const graphAPI = 'https://api.thegraph.com/subgraphs/name/ensdomains/ens'
+const graphAPI = `https://gateway-arbitrum.network.thegraph.com/api/${ENS_SUBGRAPH_API_KEY}/subgraphs/id/5XqPmWe6gjyrJtFn9cLy237i4cWw2j9HcUJEXsP5qGtH`
 
 const queryAll = gql`
   query allNames($lastCreatedAt: String) {
