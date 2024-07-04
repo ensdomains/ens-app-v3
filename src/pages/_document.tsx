@@ -71,6 +71,12 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          {process.env.NODE_ENV === 'production' && (
+            <meta
+              httpEquiv="Content-Security-Policy"
+              content="worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval';"
+            />
+          )}
           {/* eslint-disable-next-line react/no-danger */}
           <script dangerouslySetInnerHTML={{ __html: hiddenCheckScript }} />
           {process.env.NEXT_PUBLIC_IPFS && (
@@ -99,6 +105,14 @@ export default class MyDocument extends Document {
           <link rel="mask-icon" href={makeIPFSURL('/safari-pinned-tab.svg')} color="#5bbad5" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#F7F7F7" />
+
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
+            rel="stylesheet"
+          />
+
           <script
             defer
             data-domain="app.ens.domains"

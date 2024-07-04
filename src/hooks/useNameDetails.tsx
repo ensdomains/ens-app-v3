@@ -69,6 +69,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     }
     if (
       // bypass unknown error for root name
+      !!normalisedName &&
       normalisedName !== '[root]' &&
       !profile &&
       !isProfileLoading
@@ -88,12 +89,12 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
 
   const errorTitle = useMemo(() => {
     if (registrationStatus === 'gracePeriod') {
-      return t('errors.hasExpired', { name })
+      return t('errors.hasExpired', { name: normalisedName })
     }
     if (normalisedName !== '[root]' && !profile && !isProfileLoading) {
       return t('errors.networkError.title', { ns: 'common' })
     }
-  }, [registrationStatus, name, t, profile, isProfileLoading, normalisedName])
+  }, [registrationStatus, t, profile, isProfileLoading, normalisedName])
 
   const isLoading = isProfileLoading || isBasicLoading || isDnsOwnerLoading
   const isCachedData = isBasicCachedData || isProfileCachedData || isDnsOwnerCachedData

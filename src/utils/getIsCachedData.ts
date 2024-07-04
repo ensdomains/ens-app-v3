@@ -1,7 +1,9 @@
-import type { UseQueryResult } from '@tanstack/react-query'
+import type { DefaultError } from '@tanstack/react-query'
 
-export const getIsCachedData = <TData = unknown, TError = Error>(
-  query: UseQueryResult<TData, TError>,
+import type { CustomUseQueryResult } from './query/useQuery'
+
+export const getIsCachedData = <TData = unknown, TError = DefaultError>(
+  query: CustomUseQueryResult<TData, TError>,
 ) =>
   query.status === 'success' &&
   query.isFetched &&

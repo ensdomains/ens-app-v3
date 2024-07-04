@@ -41,7 +41,7 @@ export const useBasicName = ({
 
   const { data: supportedTLD, isLoading: supportedTLDLoading } = useSupportsTLD(normalisedName)
 
-  const commonEnabled = enabled && !!name && isValid && !isShort
+  const commonEnabled = enabled && !!name && isValid && !(isETH && isShort)
   const isRoot = name === '[root]'
 
   const {
@@ -127,7 +127,8 @@ export const useBasicName = ({
     return Date.now() - EXPIRY_LIVE_WATCH_TIME
   }, [isTempPremiumDesynced, blockTimestamp])
 
-  const registrationStatus = !publicCallsLoading
+  const isNameAndPublicCallsLoaded = !!name && !publicCallsLoading
+  const registrationStatus = isNameAndPublicCallsLoaded
     ? getRegistrationStatus({
         timestamp: registrationStatusTimestamp,
         validation,
@@ -137,6 +138,7 @@ export const useBasicName = ({
         priceData,
         addrData,
         supportedTLD,
+        name: normalisedName,
       })
     : undefined
 

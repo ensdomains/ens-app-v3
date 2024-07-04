@@ -31,6 +31,7 @@ export const getRegistrationStatus = ({
   priceData,
   addrData,
   supportedTLD,
+  name,
 }: {
   timestamp: number
   validation: Partial<Omit<ParsedInputResult, 'normalised' | 'isValid'>>
@@ -40,7 +41,10 @@ export const getRegistrationStatus = ({
   priceData?: GetPriceReturnType
   addrData?: GetAddressRecordReturnType
   supportedTLD?: boolean | null
+  name?: string
 }): RegistrationStatus => {
+  if (name === '[root]') return 'owned'
+
   if (isETH && is2LD && isShort) {
     return 'short'
   }

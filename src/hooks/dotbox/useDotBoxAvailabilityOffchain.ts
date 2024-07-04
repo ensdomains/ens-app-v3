@@ -1,9 +1,10 @@
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
+import { QueryFunctionContext } from '@tanstack/react-query'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
+import { useQuery } from '@app/utils/query/useQuery'
 
 const BOX_SEARCH_ENDPOINT = 'https://dotbox-worker.ens-cf.workers.dev/search'
 

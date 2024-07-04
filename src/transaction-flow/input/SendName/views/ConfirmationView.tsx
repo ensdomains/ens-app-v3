@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -47,33 +48,36 @@ const OutlinkWrapper = styled.div(
 )
 
 type Props = {
-  onConfirm: () => void
+  onSubmit: () => void
   onBack: () => void
 }
 
-export const ConfirmationView = ({ onConfirm, onBack }: Props) => {
+export const ConfirmationView = ({ onSubmit, onBack }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const link = getSupportLink('sendingNames')
+  const formRef = useRef<HTMLFormElement>(null)
   return (
     <>
       <Dialog.Heading alert="warning" title={t('input.sendName.views.confirmation.title')} />
-      <CenteredTypography fontVariant="body">
-        {t('input.sendName.views.confirmation.description')}
-      </CenteredTypography>
-      <CenteredTypography fontVariant="body">
-        {t('input.sendName.views.confirmation.warning')}
-      </CenteredTypography>
-      {link && (
-        <Link href={link} target="_blank" rel="noreferrer noopener">
-          <IconWrapper>
-            <QuestionSVG />
-          </IconWrapper>
-          <Typography fontVariant="body" color="indigo">
-            {t('input.sendName.views.confirmation.learnMore')}
-          </Typography>
-          <OutlinkWrapper as={OutlinkSVG} />
-        </Link>
-      )}
+      <Dialog.Content as="form" ref={formRef} onSubmit={onSubmit}>
+        <CenteredTypography fontVariant="body">
+          {t('input.sendName.views.confirmation.description')}
+        </CenteredTypography>
+        <CenteredTypography fontVariant="body">
+          {t('input.sendName.views.confirmation.warning')}
+        </CenteredTypography>
+        {link && (
+          <Link href={link} target="_blank" rel="noreferrer noopener">
+            <IconWrapper>
+              <QuestionSVG />
+            </IconWrapper>
+            <Typography fontVariant="body" color="indigo">
+              {t('input.sendName.views.confirmation.learnMore')}
+            </Typography>
+            <OutlinkWrapper as={OutlinkSVG} />
+          </Link>
+        )}
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={onBack}>
@@ -81,7 +85,14 @@ export const ConfirmationView = ({ onConfirm, onBack }: Props) => {
           </Button>
         }
         trailing={
-          <Button data-testid="send-name-confirm-button" onClick={onConfirm}>
+          <Button
+            data-testid="send-name-confirm-button"
+            onClick={() => {
+              formRef.current?.dispatchEvent(
+                new Event('submit', { cancelable: true, bubbles: true }),
+              )
+            }}
+          >
             {t('action.understand', { ns: 'common' })}
           </Button>
         }
