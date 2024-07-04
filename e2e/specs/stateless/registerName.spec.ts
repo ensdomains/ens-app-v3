@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test'
+import { Web3RequestKind } from 'headless-web3-provider'
 import { Hash, isHash } from 'viem'
 
 import { ethRegistrarControllerCommitSnippet } from '@ensdomains/ensjs/contracts'
@@ -853,6 +854,7 @@ test('should be able to detect an existing commit created on a private mempool',
   accounts,
   provider,
   time,
+  wallet,
   makePageObject,
 }) => {
   test.slow()
@@ -867,6 +869,7 @@ test('should be able to detect an existing commit created on a private mempool',
   await homePage.goto()
   await login.connect()
 
+  await page.pause()
   // should redirect to registration page
   await homePage.searchInput.fill(name)
   await homePage.searchInput.press('Enter')
@@ -877,61 +880,73 @@ test('should be able to detect an existing commit created on a private mempool',
   // should go to profile editor step
   await page.getByTestId('next-button').click()
 
-  await page.getByTestId('next-button').click()
+  await test.step('should be able to find an existing commit', async () => {
+    await page.getByTestId('next-button').click()
 
-  await transactionModal.closeButton.click()
+    await transactionModal.closeButton.click()
 
-  let commitHash: Hash | undefined
-  let attempts = 0
-  while (!commitHash && attempts < 4) {
-    // eslint-disable-next-line no-await-in-loop
-    const message = await page.waitForEvent('console')
-    // eslint-disable-next-line no-await-in-loop
-    const txt = await message.text()
-    const hash = txt.split(':')[1]?.trim() as Hash
-    if (isHash(hash)) commitHash = hash
-    attempts += 1
-  }
-  expect(commitHash!).toBeDefined()
+    let commitHash: Hash | undefined
+    let attempts = 0
+    while (!commitHash && attempts < 4) {
+      // eslint-disable-next-line no-await-in-loop
+      const message = await page.waitForEvent('console')
+      // eslint-disable-next-line no-await-in-loop
+      const txt = await message.text()
+      const hash = txt.split(':')[1]?.trim() as Hash
+      if (isHash(hash)) commitHash = hash
+      attempts += 1
+    }
+    expect(commitHash!).toBeDefined()
 
-  const approveTx = await walletClient.writeContract({
-    abi: ethRegistrarControllerCommitSnippet,
-    address: testClient.chain.contracts.ensEthRegistrarController.address,
-    args: [commitHash!],
-    functionName: 'commit',
-    account: createAccounts().getAddress('user') as `0x${string}`,
-  })
-  await waitForTransaction(approveTx)
-
-  await page.route('https://api.findblock.xyz/**/*', async (route) => {
-    await route.fulfill({
-      json: {
-        ok: true,
-        data: {
-          hash: approveTx,
-        },
-      },
+    const approveTx = await walletClient.writeContract({
+      abi: ethRegistrarControllerCommitSnippet,
+      address: testClient.chain.contracts.ensEthRegistrarController.address,
+      args: [commitHash!],
+      functionName: 'commit',
+      account: createAccounts().getAddress('user') as `0x${string}`,
     })
+    await waitForTransaction(approveTx)
+
+    await page.route('https://api.findblock.xyz/**/*', async (route) => {
+      await route.fulfill({
+        json: {
+          ok: true,
+          data: {
+            hash: approveTx,
+          },
+        },
+      })
+    })
+
+    // should show countdown
+    await expect(page.getByTestId('countdown-circle')).toBeVisible()
+    await expect(page.getByTestId('countdown-circle')).toContainText(/^[0-6]?[0-9]$/)
+    await provider.increaseTime(60)
+    await expect(page.getByTestId('countdown-complete-check')).toBeVisible({ timeout: 10000 })
   })
 
-  // should show countdown
-  await expect(page.getByTestId('countdown-circle')).toBeVisible()
-  await expect(page.getByTestId('countdown-circle')).toContainText(/^[0-6]?[0-9]$/)
-  await provider.increaseTime(60)
-  await expect(page.getByTestId('countdown-complete-check')).toBeVisible({ timeout: 10000 })
-  await expect(page.getByTestId('finish-button')).toBeEnabled()
+  await test.step('should be able to complete registration when modal is closed', async () => {
+    await expect(page.getByTestId('finish-button')).toBeEnabled()
 
-  // should save the registration state and the transaction status
-  await page.reload()
-  await expect(page.getByTestId('finish-button')).toBeEnabled()
+    // should save the registration state and the transaction status
+    await page.reload()
+    await expect(page.getByTestId('finish-button')).toBeEnabled()
 
-  // should allow finalising registration and automatically go to the complete step
-  await page.getByTestId('finish-button').click()
-  await expect(page.getByText('Open Wallet')).toBeVisible()
-  await transactionModal.confirm()
+    // should allow finalising registration and automatically go to the complete step
+    await page.getByTestId('finish-button').click()
+    await expect(page.getByText('Open Wallet')).toBeVisible()
+    await transactionModal.confirmButton.click()
 
-  await page.getByTestId('view-name').click()
-  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
-    accounts.getAddress('user', 5),
-  )
+    await transactionModal.closeButton.click()
+
+    await expect(transactionModal.transactionModal).toHaveCount(0)
+
+    await wallet.authorize(Web3RequestKind.SendTransaction)
+    // await transactionModal.confirm()
+
+    await page.getByTestId('view-name').click()
+    await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+      accounts.getAddress('user', 5),
+    )
+  })
 })
