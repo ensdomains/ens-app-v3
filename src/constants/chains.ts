@@ -1,4 +1,4 @@
-import { localhost, luksoTestnet } from 'wagmi/chains'
+import { luksoTestnet } from 'wagmi/chains'
 
 import { addEnsContracts } from '@ensdomains/ensjs'
 
@@ -9,8 +9,8 @@ export const deploymentAddresses = JSON.parse(
   process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
 ) as Register['deploymentAddresses']
 
-export const localhostWithEns = makeLocalhostChainWithEns<typeof localhost>(
-  localhost,
+export const localhostWithEns = makeLocalhostChainWithEns<typeof luksoTestnet>(
+  luksoTestnet,
   deploymentAddresses,
 )
 

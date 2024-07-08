@@ -14,7 +14,7 @@ const connectors = getDefaultWallets({
   projectId: WC_PROJECT_ID,
 })
 
-const luksoTestnetRpcURL = 'https://rpc.testnet.lukso.network'
+const luksoTestnetRpcURL = 'https://4201.rpc.thirdweb.com'
 
 type SupportedUrlFunc = typeof luksoTestnetRpcURL
 // typeof infuraUrl | typeof cloudflareUrl | typeof tenderlyUrl
