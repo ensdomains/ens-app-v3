@@ -11,7 +11,7 @@ import { hashFn } from 'wagmi/query'
 
 import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
 
-import { mainnetWithEns } from '@app/constants/chains'
+import { luksoTestnetWithEns } from '@app/constants/chains'
 
 import { DeepPartial } from './types'
 
@@ -58,7 +58,7 @@ const privateKeyAccount = privateKeyToAccount(
 )
 const client = createClient({
   transport: http('http://mock.local'),
-  chain: mainnetWithEns,
+  chain: luksoTestnetWithEns,
 })
 
 const wagmiConfig = {
@@ -69,7 +69,7 @@ const wagmiConfig = {
         features: {},
       }),
     ],
-    chains: [mainnetWithEns],
+    chains: [luksoTestnetWithEns],
     client: () => client,
   }),
   _isEns: true,

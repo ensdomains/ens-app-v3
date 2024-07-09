@@ -1,5 +1,10 @@
 # ENS App V3
 
+Instructions:
+
+- pnpm i
+- pnpm run dev:glocal
+
 The all new, all cool version of the ENS manager.
 
 ## EXTERNAL CONTRIBUTOR NOTICE

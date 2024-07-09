@@ -27,7 +27,7 @@ export const getContentHashLink = ({
   const hash = decodedContentHash.decoded
 
   const useEthLink =
-    name.endsWith('.eth') && chainId === 1 && (protocol === 'ipfs' || protocol === 'ipns')
+    name.endsWith('.lyx') && chainId === 4201 && (protocol === 'ipfs' || protocol === 'ipns')
   if (useEthLink) {
     return `https://${name}.limo`
   }

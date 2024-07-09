@@ -4,15 +4,13 @@ import { getAddress } from 'viem'
 import { truncateFormat } from '@ensdomains/ensjs/utils'
 
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
-import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
+import { yearsToSeconds } from '@app/utils/utils'
 
-import { useContractAddress } from './chain/useContractAddress'
 import useCurrentBlockTimestamp from './chain/useCurrentBlockTimestamp'
 import { useAddressRecord } from './ensjs/public/useAddressRecord'
 import { useExpiry } from './ensjs/public/useExpiry'
 import { useOwner, UseOwnerReturnType } from './ensjs/public/useOwner'
 import { usePrice } from './ensjs/public/usePrice'
-import { useWrapperData } from './ensjs/public/useWrapperData'
 import { useSubgraphRegistrant } from './ensjs/subgraph/useSubgraphRegistrant'
 import { usePccExpired } from './fuses/usePccExpired'
 import { useSupportsTLD } from './useSupportsTLD'
@@ -51,12 +49,6 @@ export const useBasicName = ({
     refetchIfEnabled: refetchOwner,
   } = useOwner({ name: normalisedName, enabled: commonEnabled })
   const {
-    data: wrapperData,
-    isLoading: isWrapperDataLoading,
-    isCachedData: isWrapperDataCachedData,
-    refetchIfEnabled: refetchWrapperData,
-  } = useWrapperData({ name: normalisedName, enabled: commonEnabled && !isRoot })
-  const {
     data: expiryData,
     isLoading: isExpiryLoading,
     isCachedData: isExpiryCachedData,
@@ -82,15 +74,10 @@ export const useBasicName = ({
     enabled: commonEnabled && !isRoot,
   })
 
-  const publicCallsLoading =
-    isOwnerLoading || isWrapperDataLoading || isExpiryLoading || isPriceLoading || isAddrLoading
+  const publicCallsLoading = isOwnerLoading || isExpiryLoading || isPriceLoading || isAddrLoading
 
   const publicCallsCachedData =
-    isOwnerCachedData ||
-    isWrapperDataCachedData ||
-    isExpiryCachedData ||
-    isPriceCachedData ||
-    isAddrCachedData
+    isOwnerCachedData || isExpiryCachedData || isPriceCachedData || isAddrCachedData
 
   const expiryDate = expiryData?.expiry?.date
 
@@ -108,19 +95,6 @@ export const useBasicName = ({
 
   const blockTimestamp = useCurrentBlockTimestamp({ enabled: isTempPremiumDesynced })
 
-  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
-  const isWrapped = !!wrapperData
-  const canBeWrapped = useMemo(
-    () =>
-      !!(
-        nameWrapperAddress &&
-        !isWrapped &&
-        normalisedName?.endsWith('.eth') &&
-        !isLabelTooLong(normalisedName)
-      ),
-    [nameWrapperAddress, isWrapped, normalisedName],
-  )
-
   const registrationStatusTimestamp = useMemo(() => {
     if (!isTempPremiumDesynced) return Date.now()
     if (blockTimestamp) return Number(blockTimestamp) * 1000
@@ -132,7 +106,6 @@ export const useBasicName = ({
         timestamp: registrationStatusTimestamp,
         validation,
         ownerData,
-        wrapperData,
         expiryData,
         priceData,
         addrData,
@@ -142,13 +115,7 @@ export const useBasicName = ({
 
   const { data: subgraphRegistrant } = useSubgraphRegistrant({
     name: normalisedName,
-    enabled:
-      enabled &&
-      subgraphEnabled &&
-      registrationStatus === 'gracePeriod' &&
-      is2LD &&
-      isETH &&
-      !isWrapped,
+    enabled: enabled && subgraphEnabled && registrationStatus === 'gracePeriod' && is2LD && isETH,
   })
 
   const ownerDataWithSubgraphRegistrant = useMemo(() => {
@@ -164,27 +131,23 @@ export const useBasicName = ({
 
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
-  const pccExpired = usePccExpired({ ownerData, wrapperData })
+  const pccExpired = usePccExpired({ ownerData })
 
   const isLoading = publicCallsLoading || supportedTLDLoading
   return {
     ...validation,
     normalisedName,
     ownerData: ownerDataWithSubgraphRegistrant,
-    wrapperData,
     priceData,
     expiryDate,
     gracePeriodEndDate,
     isLoading,
     truncatedName,
     registrationStatus,
-    isWrapped,
     pccExpired,
-    canBeWrapped,
     isCachedData: publicCallsCachedData,
     refetchIfEnabled: () => {
       refetchOwner()
-      refetchWrapperData()
       refetchExpiry()
       refetchPrice()
       refetchAddr()

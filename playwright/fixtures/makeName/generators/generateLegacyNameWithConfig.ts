@@ -2,6 +2,8 @@
 
 /* eslint-disable no-await-in-loop */
 
+import { Address } from 'viem'
+
 import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { setResolver, transferName } from '@ensdomains/ensjs/wallet'
 
@@ -15,7 +17,6 @@ import {
 import { Provider } from '../../provider'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
 import { generateRecords } from './generateRecords'
-import { Address } from 'viem'
 
 const LEGACY_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address as Address
 const PUBLIC_RESOLVER = testClient.chain.contracts.publicResolver.address as Address
@@ -54,7 +55,7 @@ export const generateLegacyNameWithConfig =
     records,
     subnames,
   }: Name) => {
-    const name = `${label}.eth`
+    const name = `${label}.lyx`
     console.log('generating legacy name:', name)
 
     const _owner = accounts.getAddress(owner)
@@ -97,12 +98,12 @@ export const generateLegacyNameWithConfig =
     await registrationTx.wait()
 
     // Create records
-    await generateRecords()({ name: `${label}.eth`, owner, resolver, records })
+    await generateRecords()({ name: `${label}.lyx`, owner, resolver, records })
 
     // Create subnames
     const _subnames = (subnames || []).map((subname) => ({
       ...subname,
-      name: `${label}.eth`,
+      name: `${label}.lyx`,
       nameOwner: owner,
       resolver: subname.resolver ?? _resolver,
     }))

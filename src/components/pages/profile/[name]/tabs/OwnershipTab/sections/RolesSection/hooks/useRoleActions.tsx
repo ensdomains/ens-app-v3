@@ -55,10 +55,10 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
     const canSend = checkCanSend({ abilities: abilities.data, nameType: nameType.data })
     const canSendError = abilities.data?.canSendError
     const showSend = canSend || !!canSendError
-    const showSendDNS = showSend && name && !name.endsWith('.eth')
-    const showSendEth = showSend && name && name.endsWith('.eth')
+    const showSendDNS = showSend && name && !name.endsWith('.lyx')
+    const showSendEth = showSend && name && name.endsWith('.lyx')
     const canRefreshDNS =
-      !!account.address && name && !name.endsWith('.eth') && name.split('.').length === 2
+      !!account.address && name && !name.endsWith('.lyx') && name.split('.').length === 2
     const showSyncManager = checkCanSyncManager({
       address: account.address,
       nameType: nameType.data,

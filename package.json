@@ -43,7 +43,7 @@
     "wrangle:dev": "wrangler pages dev ./next",
     "wrangle:list": "wrangler deployments list",
     "generate:sitemaps": "node ./scripts/generate-site-map.mjs",
-    "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
+    "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 4201 --chain.networkId 4201 --chain.time 1659500634000",
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml",
     "subgraph:update": "ens-test-env subgraph --var NEXT_PUBLIC_DEPLOYMENT_ADDRESSES"
   },
@@ -51,7 +51,7 @@
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.2.0-beta.0",
-    "@ensdomains/ensjs": "3.5.0-beta.2",
+    "@ensdomains/ensjs": "./ensdomains-ensjs-3.7.0.tgz",
     "@ensdomains/thorin": "0.6.49",
     "@metamask/mobile-provider": "^2.1.0",
     "@metamask/post-message-stream": "^6.1.2",
@@ -96,8 +96,8 @@
     "styled-components": "^5.3.5",
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
-    "viem": "^2.7.13",
-    "wagmi": "2.5.7"
+    "viem": "^2.17.3",
+    "wagmi": "2.10.9"
   },
   "peerDependencies": {
     "react": "*",

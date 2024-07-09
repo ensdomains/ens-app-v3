@@ -2,7 +2,7 @@ import { render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 
-import { mainnetWithEns } from '@app/constants/chains'
+import { luksoTestnetWithEns } from '@app/constants/chains'
 
 import { RoleRow } from './RoleRow'
 
@@ -18,7 +18,7 @@ vi.mock('@app/hooks/ensjs/public/usePrimaryName', () => ({
 
 vi.mock('@app/hooks/usePublicClient', () => ({
   usePublicClient: () => ({
-    chain: mainnetWithEns,
+    chain: luksoTestnetWithEns,
   }),
 }))
 

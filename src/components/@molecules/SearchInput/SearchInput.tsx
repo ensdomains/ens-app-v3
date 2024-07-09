@@ -16,7 +16,6 @@ import {
   GetExpiryReturnType,
   GetOwnerReturnType,
   GetPriceReturnType,
-  GetWrapperDataReturnType,
 } from '@ensdomains/ensjs/public'
 import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
@@ -276,7 +275,7 @@ export const SearchInput = ({
             item.value !== normalisedOutput &&
             item.value.includes(normalisedOutput) &&
             (searchItem.type === 'nameWithDotEth'
-              ? item.value !== `${normalisedOutput}.eth`
+              ? item.value !== `${normalisedOutput}.lyx`
               : true),
         )
       }
@@ -316,7 +315,7 @@ export const SearchInput = ({
     if (selectedItem.type === 'nameWithDotEth') {
       selectedItem = {
         type: 'name',
-        value: `${normalisedOutput}.eth`,
+        value: `${normalisedOutput}.lyx`,
       }
     }
     if (!selectedItem.value) {
@@ -354,15 +353,7 @@ export const SearchInput = ({
           params: { name: selectedItem.value },
         }),
       )
-      const wrapperData = queryClient.getQueryData<GetWrapperDataReturnType>(
-        createQueryKey({
-          address,
-          chainId,
-          functionName: 'getWrapperData',
-          queryDependencyType: 'standard',
-          params: { name: selectedItem.value },
-        }),
-      )
+
       const expiryData = queryClient.getQueryData<GetExpiryReturnType>(
         createQueryKey({
           address,
@@ -386,7 +377,6 @@ export const SearchInput = ({
           timestamp: Date.now(),
           validation: currentValidation,
           ownerData,
-          wrapperData,
           expiryData,
           priceData,
         })

@@ -7,7 +7,7 @@ import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/type
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
-type OwnerContract = 'nameWrapper' | 'registry' | 'registrar'
+type OwnerContract = 'registry' | 'registrar'
 
 export type UseOwnerParameters<
   TContract extends OwnerContract | undefined = OwnerContract | undefined,

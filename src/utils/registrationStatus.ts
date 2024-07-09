@@ -3,7 +3,6 @@ import {
   GetExpiryReturnType,
   GetOwnerReturnType,
   GetPriceReturnType,
-  GetWrapperDataReturnType,
 } from '@ensdomains/ensjs/public'
 import { ParsedInputResult } from '@ensdomains/ensjs/utils'
 
@@ -26,7 +25,6 @@ export const getRegistrationStatus = ({
   timestamp,
   validation: { isETH, is2LD, isShort, type },
   ownerData,
-  wrapperData,
   expiryData,
   priceData,
   addrData,
@@ -35,7 +33,6 @@ export const getRegistrationStatus = ({
   timestamp: number
   validation: Partial<Omit<ParsedInputResult, 'normalised' | 'isValid'>>
   ownerData?: GetOwnerReturnType
-  wrapperData?: GetWrapperDataReturnType
   expiryData?: GetExpiryReturnType
   priceData?: GetPriceReturnType
   addrData?: GetAddressRecordReturnType
@@ -45,7 +42,8 @@ export const getRegistrationStatus = ({
     return 'short'
   }
 
-  if (!ownerData && ownerData !== null && !wrapperData) return 'invalid'
+  // TODO: temporarily disabling
+  // if (!ownerData && ownerData !== null) return 'invalid'
 
   if (!isETH && !supportedTLD) {
     return 'unsupportedTLD'

@@ -319,7 +319,7 @@ export const SearchResult = ({
 
   const input = useMemo(() => {
     if (type === 'nameWithDotEth') {
-      return `${value!}.eth`
+      return `${value!}.lyx`
     }
     return value
   }, [type, value])

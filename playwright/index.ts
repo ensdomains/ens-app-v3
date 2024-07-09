@@ -34,7 +34,7 @@ export const test = base.extend<Fixtures>({
     await use(createContracts({ accounts, provider }))
   },
   wallet: async ({ page, accounts, provider }, use) => {
-    const chainId = provider.network?.chainId || 1337
+    const chainId = provider.network?.chainId || 4201
     const chainRpcUrl = provider.connection?.url || 'http://localhost:8545'
     const privateKeys = accounts.getAllPrivateKeys()
     const wallet = await injectHeadlessWeb3Provider(page, privateKeys, chainId, chainRpcUrl)
