@@ -42,7 +42,8 @@ export const getRegistrationStatus = ({
     return 'short'
   }
 
-  if (!ownerData && ownerData !== null) return 'invalid'
+  // TODO: temporarily disabling
+  // if (!ownerData && ownerData !== null) return 'invalid'
 
   if (!isETH && !supportedTLD) {
     return 'unsupportedTLD'
