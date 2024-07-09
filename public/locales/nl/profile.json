@@ -18,7 +18,7 @@
         "setAsPrimaryName": {
           "label": "Zet als primaire naam",
           "title": "Zet je primaire naam",
-          "description": "Om dit als primaire naam te kunnen zetten, moet het ETH adres hetzelfde zijn als dit adres."
+          "description": "Om dit als primaire naam te kunnen zetten, moet het LYX adres hetzelfde zijn als dit adres."
         },
         "deleteSubname": {
           "label": "Verwijder subnaam"

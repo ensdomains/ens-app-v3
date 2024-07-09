@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name": "ENS App",
-  "short_name": "ENS",
+  "name": "UNS App",
+  "short_name": "UNS",
   "icons": [
     {
       "src": "icon/AppIcon@0.5x.png",
@@ -25,10 +25,10 @@
     }
   ],
   "orientation": "portrait-primary",
-  "theme_color": "#5298FF",
+  "theme_color": "#DE3163",
   "background_color": "#F7F7F7",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "description": "Decentralised naming for wallets, websites, & more"
+  "description": "Decentralised naming for Universal Profiles & more"
 }

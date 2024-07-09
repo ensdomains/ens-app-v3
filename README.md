@@ -10,9 +10,11 @@ The all new, all cool version of the ENS manager.
 
 ### Quick start
 
+> **Important:** make sure you have all the dependencies required for `canvas`. You can find the instructions per OS on how to install these in the README of [`canvas`](https://www.npmjs.com/package/canvas).
+
 ```bash
 pnpm install
-pnpm denv
+pnpm dev
 pnpm dev:glocal
 ```
 

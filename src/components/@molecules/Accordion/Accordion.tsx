@@ -139,7 +139,7 @@ const TitleAndButtonContainer = styled.div`
 
 const EditButton = styled(Button)(
   ({ theme }) => css`
-    color: ${theme.colors.blue};
+    color: ${theme.colors.pink};
     width: ${theme.space['24']};
   `,
 )

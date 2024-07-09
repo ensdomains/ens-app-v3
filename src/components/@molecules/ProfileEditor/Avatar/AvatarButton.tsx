@@ -35,7 +35,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
     ${$dirty &&
     css`
       :after {
-        background-color: ${theme.colors.blue};
+        background-color: ${theme.colors.pink};
         border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
       }

@@ -137,8 +137,8 @@
           "decline": "Back"
         },
         "clearEth": {
-          "title": "Clear ETH address?",
-          "description": "Without an ETH address set people will not be able to send money to this name. This can be updated later.",
+          "title": "Clear LYX address?",
+          "description": "Without a LYX address set people will not be able to send money to this name. This can be updated later.",
           "confirm": "Clear",
           "decline": "Cancel"
         }
@@ -168,7 +168,7 @@
       ],
       "setupProfile": "I'd like to set up my profile first",
       "paymentMethod": "Payment method",
-      "notEnoughEth": "Not enough ETH in wallet",
+      "notEnoughEth": "Not enough LYX in wallet",
       "creditOrDebit": "Credit or debit card",
       "additionalFee": "Additional processing fee",
       "pendingMoonpayTransaction": "Your MoonPay transaction is processing. This may take up to two minutes. You can check your progress from the confirmation email you recieved.",

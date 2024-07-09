@@ -25,7 +25,7 @@
         "setAsPrimaryName": {
           "label": "设置为主名称",
           "title": "设置您的主名称",
-          "description": "如果将该名称设置为主名称，ETH 地址记录必须与此地址相匹配。"
+          "description": "如果将该名称设置为主名称，LYX 地址记录必须与此地址相匹配。"
         },
         "deleteSubname": {
           "label": "删除子名称"
