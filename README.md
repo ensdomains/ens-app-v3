@@ -1,26 +1,34 @@
-# ENS App V3
+# The ENS Manager App (V3)
 
-The all new, all cool version of the ENS manager.
+## Quick start
 
-## EXTERNAL CONTRIBUTOR NOTICE
-
-**Please note that everything within this repo is currently in alpha. Some contracts are not yet deployed on mainnet which means some functionality may break on the network.**
-
-## Usage
-
-### Quick start
+Install [pnpm](https://pnpm.io/installation), then:
 
 ```bash
 pnpm install
-pnpm denv
-pnpm dev:glocal
+pnpm dev
 ```
 
-### Install
+Navigate to [localhost:3000](http://localhost:3000)
 
-```bash
-pnpm install
-```
+## Table of contents
+
+<b>1.</b> [Why does this app exist?](#why-does-this-app-exist)  
+&nbsp;&nbsp;<b>1.1</b> [Brief into to ENS](#brief-into-to-ens)  
+<b>2.</b> [Coming from web2?](#why-does-this-app-exist)
+
+### Why does this app exist?
+
+The puspose of the manager app is to expose the functionality of the ENS protocol in a user
+friendly manor.
+
+#### Brief intro to ENS
+
+ENS is a decentralised naming system that runs on the ethereum blockchain.
+The main purpose of ENS is to convert unfriendly blockchain addresses
+into human readable names (e.g. 0xb8c2c29ee19d8307cb7255e1cd9cbde883a267d5 -> nick.eth),
+but ENS has grown into so much more than that. For more info please visit our
+[docs site](https://docs.ens.domains/learn/protocol).
 
 ### Running Dev Server
 
@@ -32,12 +40,6 @@ pnpm dev
 pnpm dev:glocal
 ```
 
-### Lint
-
-```bash
-pnpm lint
-```
-
 ### Unit Test
 
 ```bash
@@ -45,6 +47,11 @@ pnpm test
 pnpm test:watch
 pnpm test:coverage
 ```
+
+## Coming from web2
+
+Most of the tech in this project will be familiar to web2 devs.
+Blockchains can be thought of as databases with special rules about how updates occur.
 
 We recommend installing [this](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) vscode plugin for a better unit testing experience.
 
@@ -154,6 +161,11 @@ If updating an existing yalc installation, you can add the `--force` flag.
 The structure of the `pages` folder is mimicked inside `components`. Components specific to a page can be found in the the `components` folder, in the folder corresponding to that page.
 
 Components that are used in multiple places will be found in the top level of the `components` folder.
+
+## Coding standards
+
+- `any` is strictly prohibited
+- Prefer small functions that do one thing.
 
 ## Testing philosophy
 
