@@ -291,7 +291,6 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
         ))}
       </RoutesSection>
       <SocialSection>
-        {/* TODO: clarify which socials we should put here */}
         <SocialIcon Icon={SocialX} color="black" href="https://x.com/ERC725Account" />
         <SocialIcon
           Icon={SocialGithub}
