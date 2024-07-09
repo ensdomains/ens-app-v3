@@ -376,7 +376,6 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
   ],
   ...(process.env.NEXT_PUBLIC_ETH_NODE === 'anvil'
     ? {
-        // '1337': [
         '4201': [
           {
             address: deploymentAddresses.PublicResolver,

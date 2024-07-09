@@ -17,7 +17,6 @@ const connectors = getDefaultWallets({
 const luksoTestnetRpcURL = 'https://4201.rpc.thirdweb.com'
 
 type SupportedUrlFunc = typeof luksoTestnetRpcURL
-// typeof infuraUrl | typeof cloudflareUrl | typeof tenderlyUrl
 
 const initialiseTransports = <const UrlFuncArray extends SupportedUrlFunc[]>(
   chainName: string,
@@ -94,7 +93,6 @@ const wagmiConfig_ = createConfig({
           // this is a hack to make the types happy, dont remove pls
           [localhost.id]: HttpTransport
         })),
-    // [sepolia.id]: initialiseTransports('sepolia', [infuraUrl, cloudflareUrl, tenderlyUrl]),
     [luksoTestnet.id]: initialiseTransports('luksoTestnet', [luksoTestnetRpcURL]),
   },
 })
