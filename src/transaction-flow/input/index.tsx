@@ -19,6 +19,7 @@ import type { Props as SendNameProps } from './SendName/SendName-flow'
 import type { Props as SyncManagerProps } from './SyncManager/SyncManager-flow'
 import type { Props as UnknownLabelsProps } from './UnknownLabels/UnknownLabels-flow'
 
+// Lazily load input components as needed
 const dynamicHelper = <P,>(name: string) =>
   dynamic<P>(
     () =>
