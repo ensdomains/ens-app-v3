@@ -107,7 +107,7 @@ export const DogFood = ({
                 } catch (e) {
                   console.error('validation error: ', e)
                 }
-                return 'ENS Name has no address record'
+                return 'UNS Name has no address record'
               }
             },
             ...validations,

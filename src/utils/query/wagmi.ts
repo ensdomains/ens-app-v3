@@ -10,7 +10,7 @@ import { getDefaultWallets } from '../getDefaultWallets'
 const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
 
 const connectors = getDefaultWallets({
-  appName: 'ENS',
+  appName: 'UNS',
   projectId: WC_PROJECT_ID,
 })
 

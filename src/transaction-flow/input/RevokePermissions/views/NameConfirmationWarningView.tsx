@@ -31,7 +31,7 @@ export const NameConfirmationWarningView = ({
         {t('input.revokePermissions.views.lastWarning.message', { name })}
       </CenterAlignedTypography>
       <Input
-        placeholder="Enter your ENS name"
+        placeholder="Enter your UNS name"
         label=""
         data-testid="input-name-confirmation"
         onKeyDown={(e) => {

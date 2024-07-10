@@ -1,5 +1,5 @@
 {
-  "title": "将 {{name}} 引入 ENS",
+  "title": "将 {{name}} 引入 UNS",
   "general": {
     "connectWallet": "请先连接您的钱包",
     "importDNSSECName": "导入 DNSSEC 域名",
@@ -20,7 +20,7 @@
   "addTextRecord": {
     "title": "添加文本记录",
     "explanation": "您需要利用这些信息为您的域名创建一个新的 DNS 记录，用于将您的以太坊地址认定为该域名的所有者。",
-    "syncWarningOne": "您可能不是该 DNS 域名的所有者，但您仍然可以将该域名添加到 ENS 注册表。",
+    "syncWarningOne": "您可能不是该 DNS 域名的所有者，但您仍然可以将该域名添加到 UNS 注册表。",
     "syncWarningTwo": "如果您持有该域名，请更改它的 _ens TXT 记录，使其包含您的以太坊地址，然后再次单击 “检查”。其他情况，请单击 “认领” 继续。",
     "type": "类型",
     "txt": "TXT",
@@ -42,7 +42,7 @@
   "claimComplete": {
     "title": "恭喜!",
     "ownerOf": "您现是该名称的所有者: ",
-    "successMessage": "您的域名已成功导入 ENS，现在可以查看和管理域名。",
+    "successMessage": "您的域名已成功导入 UNS，现在可以查看和管理域名。",
     "viewName": "查看域名",
     "claimAnother": "再认领一个"
   },

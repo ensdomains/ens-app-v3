@@ -70,11 +70,12 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ens-app-v3
+          projectName: uns-app-v3
           directory: out
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: '3'
 
-      - name: Submit sitemap
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: curl https://www.google.com/ping\?sitemap=https://app.ens.domains/sitemap.xml
+      # TODO: adjust the CI to submit the sitemap?
+      # - name: Submit sitemap
+      #   if: ${{ github.ref == 'refs/heads/main' }}
+      #   run: curl https://www.google.com/ping\?sitemap=https://app.ens.domains/sitemap.xml

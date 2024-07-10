@@ -1,11 +1,6 @@
-# ENS App V3
+# UNS App V3
 
-Instructions:
-
-- pnpm i
-- pnpm run dev:glocal
-
-The all new, all cool version of the ENS manager.
+> Based on ENS App V3
 
 ## EXTERNAL CONTRIBUTOR NOTICE
 
@@ -19,7 +14,6 @@ The all new, all cool version of the ENS manager.
 
 ```bash
 pnpm install
-pnpm dev
 pnpm dev:glocal
 ```
 
@@ -78,7 +72,7 @@ pnpm denv --save
 
 2. Deploy the subgraph
 
-After the deploy scripts have run, you can deploy the subgraph. Assuming you are in the [ens-subgraph](https://github.com/ensdomains/ens-subgraph) repo, you can use:
+After the deploy scripts have run, you can deploy the subgraph. Assuming you are in the [uns-subgraph](https://github.com/universal-everything/service-uns-subgraph) repo, you can use:
 
 ```bash
 yarn setup

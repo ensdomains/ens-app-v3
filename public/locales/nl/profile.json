@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "{{name}} op ENS",
+    "title": "{{name}} op UNS",
     "description": "{{name}}'s profiel op de Ethereum Name Service"
   },
   "title": "Profiel",
@@ -40,7 +40,7 @@
       "makeOwnerDescription": "De eigenaar can versturen naar een nieuwe eigenaar en de manager veranderen",
       "makeManager": "Maak Manager",
       "makeManagerDescription": "De manager can records zetten en aanpassen.",
-      "inputPlaceholder": "Vul in Ethereum adres of een ENS naam",
+      "inputPlaceholder": "Vul in Ethereum adres of een UNS naam",
       "transferSubname": "Transfer Naam",
       "transferController": "Transfer Controller"
     },
@@ -52,7 +52,7 @@
       "startLabel": "Upgrade",
       "resumeLabel": "Hervat Upgrade",
       "boxTitle": "Unlock nieuwe features",
-      "boxDescription": "Je naam upgraden unlockt de laatste functionaliteit van ENS"
+      "boxDescription": "Je naam upgraden unlockt de laatste functionaliteit van UNS"
     },
     "descriptions": {
       "owner": "Is eigenaar van en bestuurd de naam",

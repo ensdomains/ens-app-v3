@@ -282,7 +282,7 @@ export const Content = ({
 
   if (!children.leading && singleColumnContent) LeadingComponent = null
 
-  const fullTitle = `${title} - ENS`
+  const fullTitle = `${title} - UNS`
 
   if (!router.isReady) return null
   return (

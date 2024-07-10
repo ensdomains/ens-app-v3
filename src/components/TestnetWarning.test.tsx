@@ -16,7 +16,7 @@ describe('TestnetWarning', () => {
 
     render(<TestnetWarning />)
 
-    expect(screen.getByText(`You are viewing the ENS app on ${goerli.name} testnet.`)).toBeVisible()
+    expect(screen.getByText(`You are viewing the UNS app on ${goerli.name} testnet.`)).toBeVisible()
   })
   it('renders nothing if on mainnet', async () => {
     mockUseAccount.mockReturnValue({ chain: mainnet })
@@ -24,7 +24,7 @@ describe('TestnetWarning', () => {
     const { container } = render(<TestnetWarning />)
 
     expect(container).not.toHaveTextContent(
-      `You are viewing the ENS app on ${mainnet.name} testnet.`,
+      `You are viewing the UNS app on ${mainnet.name} testnet.`,
     )
   })
 })

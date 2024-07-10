@@ -92,8 +92,8 @@ const pathRewriter: PagesFunction = async ({ request, next }) => {
 
     const ogImageUrl = `${baseOgImageUrl}/address/${address}`
 
-    const newTitle = `${address.slice(0, 7)}...${address.slice(-5)} on ENS`
-    const newDescription = `${address}'s profile on the Ethereum Name Service`
+    const newTitle = `${address.slice(0, 7)}...${address.slice(-5)} on UNS`
+    const newDescription = `${address}'s profile on the Universal Name Service on LUKSO`
 
     return new HTMLRewriter()
       .on('title', new ContentModifier(newTitle))
@@ -137,14 +137,14 @@ const pathRewriter: PagesFunction = async ({ request, next }) => {
 
     if (url.pathname === '/profile') {
       const decodedName = decodeURIComponent(isTLD ? paths[2] : paths[1])
-      let newTitle = 'Invalid Name - ENS'
+      let newTitle = 'Invalid Name - UNS'
       let newDescription = 'An error occurred'
       let normalisedName: string | null = null
       try {
         const { normalize } = await import('viem/ens')
         normalisedName = normalize(decodedName)
-        newTitle = `${normalisedName} on ENS`
-        newDescription = `${normalisedName}'s profile on the Ethereum Name Service`
+        newTitle = `${normalisedName} on UNS`
+        newDescription = `${normalisedName}'s profile on the Universal Name Service on LUKSO`
       } catch {
         console.error('Name could not be normalised')
       }

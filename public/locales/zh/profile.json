@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "{{name}} - ENS",
-    "description": "{{name}} 在 ENS 中的个人资料"
+    "title": "{{name}} - UNS",
+    "description": "{{name}} 在 UNS 中的个人资料"
   },
   "title": "个人资料",
   "yourWallet": "您的钱包",
@@ -286,7 +286,7 @@
       "makeOwnerDescription": "所有者可以发送所有权以及更改管理员",
       "makeManager": "任命管理员",
       "makeManagerDescription": "管理员可以更改和设置记录",
-      "inputPlaceholder": "输入以太坊地址或 ENS 名称",
+      "inputPlaceholder": "输入以太坊地址或 UNS 名称",
       "transferSubname": "转移名称",
       "transferController": "转移管理员"
     },
@@ -298,7 +298,7 @@
       "startLabel": "升级",
       "resumeLabel": "继续升级",
       "boxTitle": "解锁新功能",
-      "boxDescription": "升级您的名称可以解锁 ENS 的最新功能"
+      "boxDescription": "升级您的名称可以解锁 UNS 的最新功能"
     },
     "descriptions": {
       "owner": "持有并掌控名称",

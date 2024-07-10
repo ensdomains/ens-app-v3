@@ -9,7 +9,7 @@
       "noRecentTransactions": "近期无交易",
       "clearTransactions": {
         "title": "清除交易历史",
-        "description": "这会在 ENS 应用程序中彻底清除交易历史记录。这些交易在区块链上仍然存在。",
+        "description": "这会在 UNS 应用程序中彻底清除交易历史记录。这些交易在区块链上仍然存在。",
         "actionLabel": "清除历史"
       }
     },

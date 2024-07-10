@@ -1,5 +1,5 @@
 {
-  "title": "Import {{name}} into ENS",
+  "title": "Import {{name}} into UNS",
   "error": {
     "unknown": "An unknown error occurred",
     "noTxtRecord": "No record found",
@@ -19,14 +19,14 @@
   "steps": {
     "selectType": {
       "title": "Claim {{name}}",
-      "subtitle": "Importing domain names allows them to be used as ENS names.",
+      "subtitle": "Importing domain names allows them to be used as UNS names.",
       "learnMore": "Learn more about importing names",
       "select": {
         "heading": "How would you like to import your domain?",
         "offchain": {
           "name": "Offchain",
           "tag": "Free",
-          "description": "Your name will not have an onchain token.<br/>This does not affect it's ability to receive transactions or be used as a primary name.<br/><b>You will not be able to edit your profile from within the ENS app.</b>"
+          "description": "Your name will not have an onchain token.<br/>This does not affect it's ability to receive transactions or be used as a primary name.<br/><b>You will not be able to edit your profile from within the UNS app.</b>"
         },
         "onchain": {
           "name": "Onchain",
@@ -82,7 +82,7 @@
       "title": "Congratulations!",
       "import": {
         "subtitle": "<gradient>{{name}}</gradient> has been imported",
-        "description": "This domain has been successfully imported into ENS. You can now view this name."
+        "description": "This domain has been successfully imported into UNS. You can now view this name."
       },
       "claim": {
         "subtitle": "You are now the owner of <gradient>{{name}}</gradient>",

@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "{{name}} on ENS",
-    "description": "{{name}}'s profile on the Ethereum Name Service"
+    "title": "{{name}} on UNS",
+    "description": "{{name}}'s profile on the Universal Name Service on LUKSO"
   },
   "title": "Profile",
   "yourWallet": "Your wallet",
@@ -85,7 +85,7 @@
         },
         "contract": {
           "title": "Contract address",
-          "tooltip": "The address of the contract that enables Wrapped ENS names.",
+          "tooltip": "The address of the contract that enables Wrapped UNS names.",
           "warning": "Some apps may show the contract address as the owner. This doesn't affect your ownership."
         }
       },
@@ -99,8 +99,8 @@
         "subname-manager": "An address or contract responsible for subname renewals.",
         "eth-record": "The address that will receive funds sent to this name on mainnet.",
         "grace-period": "A 90 day grace window after expiration, when the name can still be extended but not re-registered.",
-        "contract-address": "The address of the contract that enables Wrapped ENS names.",
-        "namewrapper": "The contract that enables Wrapped ENS names."
+        "contract-address": "The address of the contract that enables Wrapped UNS names.",
+        "namewrapper": "The contract that enables Wrapped UNS names."
       }
     },
     "subnames": {
@@ -340,7 +340,7 @@
       "makeOwnerDescription": "The owner can send to a new owner and change the manager",
       "makeManager": "Make manager",
       "makeManagerDescription": "The manager can change and set records.",
-      "inputPlaceholder": "Enter an Ethereum address or ENS name",
+      "inputPlaceholder": "Enter an Ethereum address or UNS name",
       "transferSubname": "Transfer Name",
       "transferController": "Transfer Controller"
     },
@@ -352,7 +352,7 @@
       "startLabel": "Upgrade",
       "resumeLabel": "Resume Upgrade",
       "boxTitle": "Unlock new features",
-      "boxDescription": "Upgrading your name unlocks the latest functionality of ENS"
+      "boxDescription": "Upgrading your name unlocks the latest functionality of UNS"
     },
     "descriptions": {
       "owner": "Owns and controls the name",

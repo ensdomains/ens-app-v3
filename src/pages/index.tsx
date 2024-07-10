@@ -93,7 +93,7 @@ export default function Page() {
   return (
     <>
       <Head>
-        <title>ENS</title>
+        <title>UNS</title>
       </Head>
       <StyledLeadingHeading>
         <LogoAndLanguage>

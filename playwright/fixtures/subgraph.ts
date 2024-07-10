@@ -26,6 +26,7 @@ export const waitForSubgraph = (provider: Provider) => async () => {
   let count = 0
   do {
     await new Promise((resolve) => setTimeout(resolve, 500))
+    // TODO: change last path to uns?
     const client = new GraphQLClient('http://localhost:8000/subgraphs/name/graphprotocol/ens')
     const res = await client.request(query)
     wait = blockNumber > res._meta.block.number

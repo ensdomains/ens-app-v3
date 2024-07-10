@@ -8,7 +8,7 @@
 - "subname": "子名称". 不同于 "subdomain"，这里的 "subname" 译为 "子名称" 更合适。
 - "parent", "parent name": "父名称"
 - "primary name": "主名称"
-- "primary ENS name": "ENS 主名称"
+- "primary UNS name": "UNS 主名称"
 - "profile": "个人资料"
 - "you": "您"
 - "your": "您的"

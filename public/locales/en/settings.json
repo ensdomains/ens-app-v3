@@ -9,7 +9,7 @@
       "noRecentTransactions": "No recent transactions",
       "clearTransactions": {
         "title": "Clear Transaction History",
-        "description": "Clearing your transaction history will permanently remove them from the ENS app. Your transactions will still be visible on the blockchain.",
+        "description": "Clearing your transaction history will permanently remove them from the UNS app. Your transactions will still be visible on the blockchain.",
         "actionLabel": "Clear History"
       }
     },

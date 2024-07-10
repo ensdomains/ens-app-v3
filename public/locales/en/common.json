@@ -165,7 +165,7 @@
     },
     "networkLatency": {
       "title": "Slow data syncing",
-      "message": "The ENS app is experiencing slow downs due to network latency issues."
+      "message": "The UNS app is experiencing slow downs due to network latency issues."
     }
   },
   "transaction": {
@@ -345,7 +345,7 @@
     "empty": "No options found"
   },
   "testnetFaucet": {
-    "explanation": "Each address on {{ testnet }} can claim {{ amount }} {{ ticker }} to test out the ENS manager app, as well as any other testnet usage.",
+    "explanation": "Each address on {{ testnet }} can claim {{ amount }} {{ ticker }} to test out the UNS manager app, as well as any other testnet usage.",
     "note": "It may take a few minutes to show up in your wallet."
   },
   "roles": {

@@ -308,7 +308,7 @@
         "lastWarning": {
           "title": "Are you absolutely sure?",
           "subtitle": "You are making changes that can only undone when the name expires ({{date}}).",
-          "message": "Please type your ENS name ({{name}}) to confirm."
+          "message": "Please type your UNS name ({{name}}) to confirm."
         }
       },
       "action": {
@@ -345,7 +345,7 @@
           "description": "You do not have permission to send this name."
         },
         "search": {
-          "placeholder": "ENS name or Ethereum address",
+          "placeholder": "UNS name or LUKSO address",
           "views": {
             "error": {
               "message": "Something went wrong. Please try again."

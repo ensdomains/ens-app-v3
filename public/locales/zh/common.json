@@ -68,10 +68,10 @@
     "terms": "使用条款",
     "privacy": "隐私策略",
     "back": "返回",
-    "oldApp": "旧版 ENS App",
+    "oldApp": "旧版 UNS App",
     "language": "语言",
     "currency": "货币",
-    "ipfsApp": "IPFS ENS App",
+    "ipfsApp": "IPFS UNS App",
     "feedback": "反馈",
     "syncMessage": "正在进行网络同步，您在交易中更改的内容可能还看不到。"
   },
@@ -167,7 +167,7 @@
     },
     "networkLatency": {
       "title": "数据同步缓慢",
-      "message": "由于网络延迟问题，ENS app 的运行速度正在受到影响。"
+      "message": "由于网络延迟问题，UNS app 的运行速度正在受到影响。"
     }
   },
   "transaction": {
@@ -344,7 +344,7 @@
     "empty": "未找到选项"
   },
   "testnetFaucet": {
-    "explanation": "{{ testnet }} 上的每个地址都可以申请 {{amount}} {{ ticker }} 来进行 ENS 管理器 app 或其他网络测试。",
+    "explanation": "{{ testnet }} 上的每个地址都可以申请 {{amount}} {{ ticker }} 来进行 UNS 管理器 app 或其他网络测试。",
     "note": "它可能在几分钟后才能出现在你的钱包里。"
   }
 }
