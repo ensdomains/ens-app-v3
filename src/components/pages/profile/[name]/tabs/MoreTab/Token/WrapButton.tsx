@@ -87,7 +87,6 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
 
     const transactionFlowItem: TransactionFlowItem = {
       transactions,
-      resumable: true,
       intro: {
         title: ['details.wrap.startTitle', { ns: 'profile' }],
         content: makeIntroItem('WrapName', { name }),
