@@ -7,6 +7,6 @@ export const Card = styled.div(
     justify-content: center;
     border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii['2xLarge']};
-    background-color: ${theme.colors.pink};
+    background-color: ${theme.colors.background};
   `,
 )

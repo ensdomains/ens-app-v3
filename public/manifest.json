@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name": "ENS App",
-  "short_name": "ENS",
+  "name": "UNS App",
+  "short_name": "UNS",
   "icons": [
     {
       "src": "icon/AppIcon@0.5x.png",
@@ -25,7 +25,7 @@
     }
   ],
   "orientation": "portrait-primary",
-  "theme_color": "#DE3163",
+  "theme_color": "#5298FF",
   "background_color": "#F6F6F6",
   "display": "standalone"
 }
