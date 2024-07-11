@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
 import { useAccount, useChainId } from 'wagmi'
 
 import { Dialog, Helper, mq, Typography } from '@ensdomains/thorin'
@@ -272,58 +273,55 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               </BaseLinkWithHistory>
             </ViewProfileContainer>
           ),
-          trailing: labelTooLong ? (
-            <Helper type="error">{t('error.nameTooLong')}</Helper>
-          ) : (
-            {
-              pricing: (
-                <Pricing
-                  name={normalisedName}
-                  beautifiedName={beautifiedName}
-                  gracePeriodEndDate={nameDetails.gracePeriodEndDate}
-                  resolverExists={resolverExists}
-                  callback={pricingCallback}
-                  isPrimaryLoading={primary.isLoading}
-                  hasPrimaryName={!!primary.data?.name}
-                  registrationData={item}
-                  moonpayTransactionStatus={moonpayTransactionStatus}
-                  initiateMoonpayRegistrationMutation={initiateMoonpayRegistrationMutation}
-                />
-              ),
-              profile: (
-                <Profile
-                  name={normalisedName}
-                  resolverExists={resolverExists}
-                  registrationData={item}
-                  callback={profileCallback}
-                />
-              ),
-              info: (
-                <Info
-                  name={normalisedName}
-                  registrationData={item}
-                  callback={genericCallback}
-                  onProfileClick={infoProfileCallback}
-                />
-              ),
-              transactions: (
-                <Transactions
-                  name={normalisedName}
-                  registrationData={item}
-                  onStart={onStart}
-                  callback={transactionsCallback}
-                />
-              ),
-              complete: (
-                <Complete
-                  name={normalisedName}
-                  beautifiedName={beautifiedName}
-                  callback={onComplete}
-                  isMoonpayFlow={item.isMoonpayFlow}
-                />
-              ),
-            }[step]
-          ),
+          trailing: match([labelTooLong, step])
+            .with([true, P._], () => <Helper type="error">{t('error.nameTooLong')}</Helper>)
+            .with([false, 'pricing'], () => (
+              <Pricing
+                name={normalisedName}
+                beautifiedName={beautifiedName}
+                gracePeriodEndDate={nameDetails.gracePeriodEndDate}
+                resolverExists={resolverExists}
+                callback={pricingCallback}
+                isPrimaryLoading={primary.isLoading}
+                hasPrimaryName={!!primary.data?.name}
+                registrationData={item}
+                moonpayTransactionStatus={moonpayTransactionStatus}
+                initiateMoonpayRegistrationMutation={initiateMoonpayRegistrationMutation}
+              />
+            ))
+            .with([false, 'profile'], () => (
+              <Profile
+                name={normalisedName}
+                resolverExists={resolverExists}
+                registrationData={item}
+                callback={profileCallback}
+              />
+            ))
+            .with([false, 'info'], () => (
+              <Info
+                name={normalisedName}
+                registrationData={item}
+                callback={genericCallback}
+                onProfileClick={infoProfileCallback}
+              />
+            ))
+            .with([false, 'transactions'], () => (
+              <Transactions
+                name={normalisedName}
+                registrationData={item}
+                onStart={onStart}
+                callback={transactionsCallback}
+              />
+            ))
+            .with([false, 'complete'], () => (
+              <Complete
+                name={normalisedName}
+                beautifiedName={beautifiedName}
+                callback={onComplete}
+                isMoonpayFlow={item.isMoonpayFlow}
+              />
+            ))
+            .exhaustive(),
         }}
       </Content>
       <Dialog
