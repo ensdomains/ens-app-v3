@@ -375,7 +375,8 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
         ))
         .with('revokeChangeFusesWarning', () => (
           <RevokeChangeFusesWarningView {...dialogContentProps} />
-        ))}
+        ))
+        .exhaustive()}
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={onDecrementIndex}>
