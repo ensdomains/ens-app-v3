@@ -405,7 +405,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               trigger()
             }}
           />
-        ))}
+        ))
+        .exhaustive()}
     </>
   )
 }
