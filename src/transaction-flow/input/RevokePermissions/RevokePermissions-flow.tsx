@@ -1,6 +1,7 @@
 import { ComponentProps, Dispatch, useMemo, useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { match } from 'ts-pattern'
 import { Address } from 'viem'
 
 import {
@@ -318,58 +319,63 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
 
   return (
     <>
-      {
-        {
-          revokeWarning: <RevokeWarningView {...dialogContentProps} />,
-          revokePCC: (
-            <RevokePCCView
-              managerAddress={owner}
-              register={register}
-              onDismiss={onDismiss}
-              {...dialogContentProps}
-            />
-          ),
-          grantExtendExpiry: <GrantExtendExpiryView register={register} {...dialogContentProps} />,
-          setExpiry: (
-            <SetExpiryView
-              name={name}
-              register={register}
-              control={control}
-              minExpiry={minExpiry as FlowWithExpiry['minExpiry']}
-              maxExpiry={maxExpiry as FlowWithExpiry['maxExpiry']}
-              getValues={getValues}
-              trigger={trigger}
-              {...dialogContentProps}
-            />
-          ),
-          revokeUnwrap: <RevokeUnwrapView register={register} {...dialogContentProps} />,
-          parentRevokePermissions: (
-            <ParentRevokePermissionsView
-              control={control}
-              register={register}
-              unburnedFuses={unburnedFuses}
-              {...dialogContentProps}
-            />
-          ),
-          revokePermissions: (
-            <RevokePermissionsView
-              register={register}
-              unburnedFuses={unburnedFuses as ChildFuseReferenceType['Key'][]}
-              {...dialogContentProps}
-            />
-          ),
-          lastWarning: (
-            <NameConfirmationWarningView
-              expiry={expiry?.expiry.date!}
-              name={name}
-              setDisabled={setDisabled}
-              {...dialogContentProps}
-            />
-          ),
-          revokeChangeFuses: <RevokeChangeFusesView register={register} {...dialogContentProps} />,
-          revokeChangeFusesWarning: <RevokeChangeFusesWarningView {...dialogContentProps} />,
-        }[view]
-      }
+      {match(view)
+        .with('revokeWarning', () => <RevokeWarningView {...dialogContentProps} />)
+        .with('revokePCC', () => (
+          <RevokePCCView
+            managerAddress={owner}
+            register={register}
+            onDismiss={onDismiss}
+            {...dialogContentProps}
+          />
+        ))
+        .with('grantExtendExpiry', () => (
+          <GrantExtendExpiryView register={register} {...dialogContentProps} />
+        ))
+        .with('setExpiry', () => (
+          <SetExpiryView
+            name={name}
+            register={register}
+            control={control}
+            minExpiry={minExpiry as FlowWithExpiry['minExpiry']}
+            maxExpiry={maxExpiry as FlowWithExpiry['maxExpiry']}
+            getValues={getValues}
+            trigger={trigger}
+            {...dialogContentProps}
+          />
+        ))
+        .with('revokeUnwrap', () => (
+          <RevokeUnwrapView register={register} {...dialogContentProps} />
+        ))
+        .with('parentRevokePermissions', () => (
+          <ParentRevokePermissionsView
+            control={control}
+            register={register}
+            unburnedFuses={unburnedFuses}
+            {...dialogContentProps}
+          />
+        ))
+        .with('revokePermissions', () => (
+          <RevokePermissionsView
+            register={register}
+            unburnedFuses={unburnedFuses as ChildFuseReferenceType['Key'][]}
+            {...dialogContentProps}
+          />
+        ))
+        .with('lastWarning', () => (
+          <NameConfirmationWarningView
+            expiry={expiry?.expiry.date!}
+            name={name}
+            setDisabled={setDisabled}
+            {...dialogContentProps}
+          />
+        ))
+        .with('revokeChangeFuses', () => (
+          <RevokeChangeFusesView register={register} {...dialogContentProps} />
+        ))
+        .with('revokeChangeFusesWarning', () => (
+          <RevokeChangeFusesWarningView {...dialogContentProps} />
+        ))}
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={onDecrementIndex}>
