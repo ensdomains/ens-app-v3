@@ -1,9 +1,9 @@
 /* eslint-disable no-nested-ternary */
-import { BaseSyntheticEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react'
 import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { match, P } from 'ts-pattern'
+import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
 import { Button, Dialog, mq, PlusSVG, Typography } from '@ensdomains/thorin'
