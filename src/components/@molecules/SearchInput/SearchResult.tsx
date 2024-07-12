@@ -5,7 +5,7 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 import { useEnsAvatar } from 'wagmi'
 
@@ -469,17 +469,14 @@ export const SearchResult = ({
   selected,
   searchItem,
   usingPlaceholder,
-}: SearchResultProps) => {
-  if (searchItem.nameType === 'error') {
-    return (
+}: SearchResultProps) =>
+  match(searchItem)
+    .with({ nameType: 'error' }, ({ text }) => (
       <SearchItemContainer data-testid="search-result-error" $selected $error>
-        <Typography weight="bold">{searchItem.text}</Typography>
+        <Typography weight="bold">{text}</Typography>
       </SearchItemContainer>
-    )
-  }
-
-  if (searchItem.nameType === 'address') {
-    return (
+    ))
+    .with({ nameType: 'address' }, () => (
       <AddressResultItem
         {...{
           selected,
@@ -490,43 +487,34 @@ export const SearchResult = ({
           usingPlaceholder,
         }}
       />
+    ))
+    .with(
+      P.when(({ nameType }) => nameType === 'eth' || nameType === 'dns'),
+      () => (
+        <EthResultItem
+          {...{
+            selected,
+            hoverCallback,
+            index,
+            clickCallback,
+            searchItem,
+            usingPlaceholder,
+          }}
+        />
+      ),
     )
-  }
-
-  if (searchItem.nameType === 'dns' || searchItem.nameType === 'eth') {
-    return (
-      <EthResultItem
-        {...{
-          selected,
-          hoverCallback,
-          index,
-          clickCallback,
-          searchItem,
-          usingPlaceholder,
-        }}
-      />
-    )
-  }
-
-  if (searchItem.nameType === 'box') {
-    return (
+    .with({ nameType: 'box' }, () => (
       <BoxResultItem
         {...{ selected, hoverCallback, index, clickCallback, searchItem, usingPlaceholder }}
       />
-    )
-  }
-
-  if (searchItem.nameType === 'tld') {
-    return (
+    ))
+    .with({ nameType: 'tld' }, () => (
       <TldResultItem
         {...{ selected, hoverCallback, index, clickCallback, searchItem, usingPlaceholder }}
       />
-    )
-  }
-
-  return (
-    <SearchItemContainer data-testid="search-result-text">
-      <NoInputYetTypography weight="bold">{searchItem.text}</NoInputYetTypography>
-    </SearchItemContainer>
-  )
-}
+    ))
+    .otherwise(() => (
+      <SearchItemContainer data-testid="search-result-text">
+        <NoInputYetTypography weight="bold">{searchItem.text}</NoInputYetTypography>
+      </SearchItemContainer>
+    ))
