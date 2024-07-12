@@ -206,11 +206,6 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
               <Spinner color="accent" />
             </EmptyDetailContainer>
           ))
-          .with([true, true, P._, P._], () => (
-            <EmptyDetailContainer>
-              <Spinner color="accent" />
-            </EmptyDetailContainer>
-          ))
           .with([true, false, 0, ''], () => (
             <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
           ))
