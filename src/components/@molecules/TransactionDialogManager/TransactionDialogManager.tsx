@@ -3,7 +3,6 @@ import { Dispatch, useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import usePrevious from 'react-use/lib/usePrevious'
 import { match, P } from 'ts-pattern'
-import { when } from 'ts-pattern/dist/patterns'
 import { useAccount, useChainId } from 'wagmi'
 
 import { Dialog } from '@ensdomains/thorin'
