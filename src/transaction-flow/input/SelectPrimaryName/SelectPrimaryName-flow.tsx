@@ -18,6 +18,7 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
@@ -133,6 +134,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const [searchQuery, _setSearchQuery] = useState('')
   const setSearchQuery = useDebouncedCallback(_setSearchQuery, 300, [])
 
+  const currentPrimary = usePrimaryName({ address })
   const {
     data: namesData,
     hasNextPage,
@@ -319,17 +321,19 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
         {!!namesData && namesData.pages[0].length > 0 ? (
           <>
             {namesData.pages?.map((page: Name[]) =>
-              page.map((name: Name) => (
-                <TaggedNameItemWithFuseCheck
-                  key={name.id}
-                  {...name}
-                  mode="select"
-                  selected={selectedName?.name === name.name}
-                  onClick={() => {
-                    setValue('name', selectedName?.name === name.name ? undefined : name)
-                  }}
-                />
-              )),
+              page
+                .filter((name: Name) => name?.name !== currentPrimary?.data?.name)
+                .map((name: Name) => (
+                  <TaggedNameItemWithFuseCheck
+                    key={name.id}
+                    {...name}
+                    mode="select"
+                    selected={selectedName?.name === name.name}
+                    onClick={() => {
+                      setValue('name', selectedName?.name === name.name ? undefined : name)
+                    }}
+                  />
+                )),
             )}
           </>
         ) : (
