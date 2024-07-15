@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
@@ -279,9 +280,9 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
               {t('etherscan', { ns: 'common' })}
             </Outlink>
           ) : null,
-          trailing: {
-            profile: <ProfileTab name={normalisedName} nameDetails={nameDetails} />,
-            records: (
+          trailing: match(tab)
+            .with('profile', () => <ProfileTab name={normalisedName} nameDetails={nameDetails} />)
+            .with('records', () => (
               <RecordsTab
                 name={normalisedName}
                 texts={profile?.texts || []}
@@ -293,9 +294,9 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
                 canEditRecords={abilities.data?.canEditRecords}
                 isCached={isCachedData}
               />
-            ),
-            ownership: <OwnershipTab name={normalisedName} details={nameDetails} />,
-            subnames: (
+            ))
+            .with('ownership', () => <OwnershipTab name={normalisedName} details={nameDetails} />)
+            .with('subnames', () => (
               <SubnamesTab
                 name={normalisedName}
                 isWrapped={isWrapped}
@@ -303,18 +304,18 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
                 canCreateSubdomains={!!abilities.data?.canCreateSubdomains}
                 canCreateSubdomainsError={abilities.data?.canCreateSubdomainsError}
               />
-            ),
-            permissions: (
+            ))
+            .with('permissions', () => (
               <PermissionsTab
                 name={normalisedName}
                 wrapperData={wrapperData}
                 isCached={isCachedData}
               />
-            ),
-            more: (
+            ))
+            .with('more', () => (
               <MoreTab name={normalisedName} nameDetails={nameDetails} abilities={abilities.data} />
-            ),
-          }[tab],
+            ))
+            .exhaustive(),
         }}
       </Content>
     </>
