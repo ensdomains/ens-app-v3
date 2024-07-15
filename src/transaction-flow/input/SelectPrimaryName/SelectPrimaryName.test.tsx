@@ -215,7 +215,7 @@ describe('SelectPrimaryName', () => {
     mockUsePrimaryName.mockReturnValue({
       data: {
         name: 'test2.eth',
-        beautifiedName: 'test1.eth',
+        beautifiedName: 'test2.eth',
       },
       isLoading: false,
       status: 'success',

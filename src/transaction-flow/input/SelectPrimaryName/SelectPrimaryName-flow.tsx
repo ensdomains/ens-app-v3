@@ -150,6 +150,12 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     pageSize: DEFAULT_PAGE_SIZE,
   })
 
+  // Filter out the primary name's data
+  const filteredNamesPages =
+    namesData?.pages?.map((page: Name[]) =>
+      page.filter((name: Name) => name?.name !== currentPrimary?.data?.name),
+    ) || []
+
   const selectedName = useWatch({
     control,
     name: 'name',
@@ -259,10 +265,10 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
 
   // Show header if more than one page has been loaded, if only one page has been loaded but there is another page, or if there is an active search query
   const showHeader =
-    (!!namesData && namesData?.pages.length > 1 && !searchQuery) || hasNextPage || !!searchQuery
+    (!!namesData && filteredNamesPages.length > 1 && !searchQuery) || hasNextPage || !!searchQuery
 
   const hasNoEligibleNames =
-    !searchQuery && namesData?.pages.length === 1 && namesData.pages[0].length === 0
+    !searchQuery && filteredNamesPages.length === 1 && filteredNamesPages[0].length === 0
 
   if (isLoading)
     return (
@@ -318,22 +324,20 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
         ref={formRef}
         onSubmit={handleSubmit((data) => mutateName(data))}
       >
-        {!!namesData && namesData.pages[0].length > 0 ? (
+        {!!namesData && filteredNamesPages[0].length > 0 ? (
           <>
-            {namesData.pages?.map((page: Name[]) =>
-              page
-                .filter((name: Name) => name?.name !== currentPrimary?.data?.name)
-                .map((name: Name) => (
-                  <TaggedNameItemWithFuseCheck
-                    key={name.id}
-                    {...name}
-                    mode="select"
-                    selected={selectedName?.name === name.name}
-                    onClick={() => {
-                      setValue('name', selectedName?.name === name.name ? undefined : name)
-                    }}
-                  />
-                )),
+            {filteredNamesPages?.map((page: Name[]) =>
+              page.map((name: Name) => (
+                <TaggedNameItemWithFuseCheck
+                  key={name.id}
+                  {...name}
+                  mode="select"
+                  selected={selectedName?.name === name.name}
+                  onClick={() => {
+                    setValue('name', selectedName?.name === name.name ? undefined : name)
+                  }}
+                />
+              )),
             )}
           </>
         ) : (
