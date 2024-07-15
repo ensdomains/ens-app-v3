@@ -214,7 +214,7 @@ describe('SelectPrimaryName', () => {
   it('should not show primary name in list', async () => {
     mockUsePrimaryName.mockReturnValue({
       data: {
-        name: 'test1.eth',
+        name: 'test2.eth',
         beautifiedName: 'test1.eth',
       },
       isLoading: false,
@@ -224,8 +224,8 @@ describe('SelectPrimaryName', () => {
       <SelectPrimaryName data={{ address: '0x123' }} dispatch={() => {}} onDismiss={() => {}} />,
     )
     await waitFor(() => {
-      expect(screen.queryByText('test1.eth')).not.toBeInTheDocument()
-      expect(screen.getByText('test2.eth')).toBeInTheDocument()
+      expect(screen.getByText('test1.eth')).toBeInTheDocument()
+      expect(screen.queryByText('test2.eth')).not.toBeInTheDocument()
       expect(screen.getByText('test3.eth')).toBeInTheDocument()
     })
   })
