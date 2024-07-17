@@ -31,6 +31,61 @@ export const deriveYearlyFee = ({
   return yearlyFee
 }
 
+export const getOneMonthDate = (date: Date) => {
+  let month = date.getMonth() + 2
+  let day = date.getDate()
+  let year = date.getFullYear()
+  if (month > 12) {
+    month = 1
+    year++
+  }
+
+  return new Date(month + '/' + day + '/' + year)
+}
+
+export const getMonthDifferenceDuration = (startDate: Date) => {
+  /* Determines the difference in seconds for one month from the start date 
+     Set the time to be at 0:00 so that the hours doesn't effect the duration.
+  */
+  const oneMonthDate = getOneMonthDate(startDate)
+  oneMonthDate.setHours(0, 0, 0)
+  startDate.setHours(0, 0, 0)
+  return Math.round((oneMonthDate.getTime() - startDate.getTime()) / 1000)
+}
+
+export const getTimeDifferenceDuration = (endDate: Date, startDate: Date) => {
+  /* Determines the time difference in seconds between the start and end date.  
+     Set the time to be at 0:00 so that the hours doesn't effect the duration.
+  */
+  startDate.setHours(0, 0, 0)
+  endDate.setHours(0, 0, 0)
+  return Math.round((endDate.getTime() - startDate.getTime()) / 1000)
+}
+
+export const getMonthsFromDuration = (currentDate: Date, duration: number) => {
+  /*  Calculates the amount of months based on each additional month from today's date due to the amount 
+      of different days in a month until duration is negative or less than the month's duration time 
+      meaning there are days left.  Can have the opportunity to return the left over time to be used as day calculation
+  */
+  let monthCount = 0
+  let durationLeft = duration
+
+  if (duration > 0) {
+    let startDate = currentDate
+    let oneMonthDate = getOneMonthDate(startDate)
+    let monthDuration = getTimeDifferenceDuration(oneMonthDate, startDate)
+    while (durationLeft > 0 && durationLeft >= monthDuration && monthCount < 12) {
+      durationLeft -= monthDuration
+      monthCount++
+      startDate = oneMonthDate
+      oneMonthDate = getOneMonthDate(startDate)
+      monthDuration = getTimeDifferenceDuration(oneMonthDate, startDate)
+    }
+  }
+
+  return { months: monthCount, secLeft: durationLeft }
+}
+
 export const formatExpiry = (expiry: Date) =>
   `${expiry.toLocaleDateString(undefined, {
     month: 'long',
@@ -83,48 +138,6 @@ export const formatDuration = (duration: number, t: TFunction) => {
   }
 
   return t('unit.invalid_date', { ns: 'common' })
-}
-
-export const getMonthsFromDuration = (currentDate: Date, duration: number) => {
-  /*  Calculates the amount of months based on each additional month from today's date due to the amount 
-      of different days in a month until duration is negative or less than the month's duration time 
-      meaning there are days left.  Can have the opportunity to return the left over time to be used as day calculation
-  */
-  let monthCount = 0
-  let durationLeft = duration
-
-  if (duration > 0) {
-    let startDate = currentDate
-    startDate
-    let oneMonthDate = new Date(
-      startDate.getMonth() + 2 + '/' + startDate.getDate() + '/' + startDate.getFullYear(),
-    )
-    let monthDuration = getTimeDifferenceDuration(oneMonthDate, startDate)
-    while (durationLeft > 0 && durationLeft >= monthDuration && monthCount < 12) {
-      durationLeft -= monthDuration
-      monthCount++
-      startDate = oneMonthDate
-      oneMonthDate = new Date(
-        startDate.getMonth() + 2 + '/' + startDate.getDate() + '/' + startDate.getFullYear(),
-      )
-      monthDuration = getTimeDifferenceDuration(oneMonthDate, startDate)
-    }
-  }
-
-  return { months: monthCount, secLeft: durationLeft }
-}
-
-export const getMonthDifferenceDuration = (startDate: Date) => {
-  /* Determines the difference in seconds for one month from the start date */
-  const oneMonthDate = new Date(
-    startDate.getMonth() + 2 + '/' + startDate.getDate() + '/' + startDate.getFullYear(),
-  )
-  return Math.round((oneMonthDate.getTime() - startDate.getTime()) / 1000)
-}
-
-export const getTimeDifferenceDuration = (endDate: Date, startDate: Date) => {
-  /* Determines the time difference in seconds between the start and end date */
-  return Math.round((endDate.getTime() - startDate.getTime()) / 1000)
 }
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
