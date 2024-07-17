@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { ONE_DAY, ONE_YEAR } from '@app/utils/time'
+import { getMonthDifferenceDuration } from '@app/utils/utils'
 
 import { DateSelection } from './DateSelection'
 
@@ -30,6 +31,7 @@ describe('DateSelection', () => {
     )
 
     const dateSelection = screen.getByTestId('date-selection')
+    const currentDate = new Date()
 
     await userEvent.click(dateSelection)
 
@@ -38,7 +40,9 @@ describe('DateSelection', () => {
     })
 
     act(() => {
-      result.current[1](ONE_DAY * 30)
+      result.current[1](
+        getMonthDifferenceDuration(currentDate) + currentDate.getTimezoneOffset() * 60 * 1000,
+      )
     })
 
     rerender(
