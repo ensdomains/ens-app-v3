@@ -51,12 +51,12 @@ export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
 
 export const formatDuration = (duration: number, t: TFunction) => {
-  const currentDate = new Date()
-  const month = getMonthDifferenceDuration(currentDate)
+  const month = ONE_DAY * 30 // Assuming 30 days per month for simplicity
 
   if (duration >= ONE_YEAR) {
     const years = Math.floor(duration / ONE_YEAR)
-    const { months } = getMonthsFromDuration(currentDate, duration - years * ONE_YEAR)
+    const months = Math.floor((duration - years * ONE_YEAR) / month)
+
     if (months !== 0)
       return `${t('unit.years', { count: years, ns: 'common' })}, ${t('unit.months', {
         count: months,
@@ -66,10 +66,12 @@ export const formatDuration = (duration: number, t: TFunction) => {
     return t('unit.years', { count: years, ns: 'common' })
   }
   if (duration >= month) {
-    const { months, secLeft } = getMonthsFromDuration(currentDate, duration)
-    const days = Math.floor(secLeft / ONE_DAY)
+    const months = Math.floor(duration / month)
 
-    if (days > 0)
+    const days = Math.floor((duration - months * month) / ONE_DAY)
+
+    // for 31-day months
+    if (days > 1)
       return `${t('unit.months', { count: months, ns: 'common' })}, ${t('unit.days', {
         count: days,
         ns: 'common',
@@ -83,48 +85,6 @@ export const formatDuration = (duration: number, t: TFunction) => {
   }
 
   return t('unit.invalid_date', { ns: 'common' })
-}
-
-export const getMonthsFromDuration = (currentDate: Date, duration: number) => {
-  /*  Calculates the amount of months based on each additional month from today's date due to the amount 
-      of different days in a month until duration is negative or less than the month's duration time 
-      meaning there are days left.  Can have the opportunity to return the left over time to be used as day calculation
-  */
-  let monthCount = 0
-  let durationLeft = duration
-
-  if (duration > 0) {
-    let startDate = currentDate
-    startDate
-    let oneMonthDate = new Date(
-      startDate.getMonth() + 2 + '/' + startDate.getDate() + '/' + startDate.getFullYear(),
-    )
-    let monthDuration = getTimeDifferenceDuration(oneMonthDate, startDate)
-    while (durationLeft > 0 && durationLeft >= monthDuration && monthCount < 12) {
-      durationLeft -= monthDuration
-      monthCount++
-      startDate = oneMonthDate
-      oneMonthDate = new Date(
-        startDate.getMonth() + 2 + '/' + startDate.getDate() + '/' + startDate.getFullYear(),
-      )
-      monthDuration = getTimeDifferenceDuration(oneMonthDate, startDate)
-    }
-  }
-
-  return { months: monthCount, secLeft: durationLeft }
-}
-
-export const getMonthDifferenceDuration = (startDate: Date) => {
-  /* Determines the difference in seconds for one month from the start date */
-  const oneMonthDate = new Date(
-    startDate.getMonth() + 2 + '/' + startDate.getDate() + '/' + startDate.getFullYear(),
-  )
-  return Math.round((oneMonthDate.getTime() - startDate.getTime()) / 1000)
-}
-
-export const getTimeDifferenceDuration = (endDate: Date, startDate: Date) => {
-  /* Determines the time difference in seconds between the start and end date */
-  return Math.round((endDate.getTime() - startDate.getTime()) / 1000)
 }
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>

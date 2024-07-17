@@ -22,10 +22,7 @@ export function secondsToDateInput(seconds: number) {
 
 // add seconds to complete a day
 export const roundDurationWithDay = (valueAsDate: Date, now: number) => {
-  // Have to add in the timezone offset to make sure that the date shows up correctly after calendar picking for UTC
-  const valueAsDateClone = new Date(
-    valueAsDate.getTime() + valueAsDate.getTimezoneOffset() * 60 * 1000,
-  ).setHours(0, 0, 0, 0)
+  const valueAsDateClone = new Date(valueAsDate.getTime()).setHours(0, 0, 0, 0)
   const nowClone = new Date(now * 1000).setHours(0, 0, 0, 0)
   return Math.floor((valueAsDateClone - nowClone) / 1000)
 }
