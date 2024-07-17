@@ -17,6 +17,7 @@ import { RegistrationPage } from './registrationPage'
 import { SendNameModal } from './sendNameModal'
 import { SubnamesPage } from './subnamePage'
 import { TransactionModal } from './transactionModal'
+import {MyNamesPage} from './myNamesPage'
 
 type Dependencies = { page: Page; wallet: Web3ProviderBackend }
 
@@ -36,6 +37,7 @@ const pageObjects = {
   TransactionModal,
   RecordsPage,
   AdvancedEditorModal,
+  MyNamesPage
 }
 
 type PageObjects = typeof pageObjects
