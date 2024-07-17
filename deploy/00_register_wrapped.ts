@@ -38,6 +38,19 @@ type ProcessedSubname = {
   fuses: number
 }
 
+const generateHourExpiringSubnames = (count: number, namedOwner: string) => {
+  const subnames: Name['subnames'] = [];
+  for (let i = 1; i <= count; i++) {
+    subnames.push({
+      label: `hour-expiring-${i}`,
+      namedOwner,
+      expiry: Math.floor(Date.now() / 1000) + 3600,
+      fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
+    });
+  }
+  return subnames;
+};
+
 const names: Name[] = [
   {
     name: 'wrapped.eth',
@@ -89,6 +102,7 @@ const names: Name[] = [
         expiry: Math.floor(Date.now() / 1000) + 3600,
         fuses: encodeFuses({ input: { parent: { named: ['PARENT_CANNOT_CONTROL'] } } }),
       },
+      ...generateHourExpiringSubnames(30, 'deployer'),
       {
         label: 'no-pcc',
         namedOwner: 'owner',
