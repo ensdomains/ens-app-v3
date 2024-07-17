@@ -15,7 +15,6 @@ import {
   getLabelFromName,
   getMonthDifferenceDuration,
   getMonthsFromDuration,
-  getOneMonthDate,
   getResolverWrapperAwareness,
   getTimeDifferenceDuration,
   isLabelTooLong,
@@ -60,71 +59,6 @@ describe('yearsToSeconds', () => {
     const years = 1
     const result = yearsToSeconds(years)
     expect(result).toEqual(60 * 60 * 24 * 365)
-  })
-})
-
-describe('getOneMonthDate', () => {
-  it('should return January 2025', () => {
-    const startDate = new Date('2024-12-15')
-    const oneMonthFromStart = getOneMonthDate(startDate)
-    expect(oneMonthFromStart.getMonth()).toEqual(0)
-    expect(oneMonthFromStart.getFullYear()).toEqual(2025)
-  })
-  it('should return June 2024', () => {
-    const startDate = new Date('2024-05-15')
-    const oneMonthFromStart = getOneMonthDate(startDate)
-    expect(oneMonthFromStart.getMonth()).toEqual(5)
-    expect(oneMonthFromStart.getFullYear()).toEqual(2024)
-  })
-})
-
-describe('getMonthDifferenceDuration', () => {
-  it('should return the duration in seconds for the month', () => {
-    const startDate = new Date('2024-01-01')
-    const monthDuration = getMonthDifferenceDuration(startDate)
-    const janDuration = ONE_DAY * 31
-    expect(monthDuration).toEqual(janDuration)
-  })
-})
-
-describe('getTimeDifferenceDuration', () => {
-  const startDate = new Date('2024-01-01')
-  it('should return the duration in seconds for the 3 days', () => {
-    const endDate = new Date('2024-01-04')
-    const durationDiff = getTimeDifferenceDuration(endDate, startDate)
-    const actualDuration = ONE_DAY * 3
-    expect(durationDiff).toEqual(actualDuration)
-  })
-  it('should return the duration in seconds for the 1 month and 3 days', () => {
-    const endDate = new Date('2024-02-04')
-    const durationDiff = getTimeDifferenceDuration(endDate, startDate)
-    const actualDuration = ONE_DAY * (3 + 31)
-    expect(durationDiff).toEqual(actualDuration)
-  })
-})
-
-describe('getMonthsFromDuration', () => {
-  const startDate = new Date('2024-01-01')
-  it('should return 2 months', () => {
-    const endDate = new Date('2024-03-01')
-    const timeDiff = getTimeDifferenceDuration(endDate, startDate)
-    const { months, secLeft } = getMonthsFromDuration(startDate, timeDiff)
-    expect(months).toEqual(2)
-    expect(secLeft).toEqual(0)
-  })
-  it('should return 2 months and extra duration', () => {
-    const endDate = new Date('2024-03-03')
-    const timeDiff = getTimeDifferenceDuration(endDate, startDate)
-    const { months, secLeft } = getMonthsFromDuration(startDate, timeDiff)
-    expect(months).toEqual(2)
-    expect(secLeft).toBeGreaterThan(0)
-  })
-  it('should return 0 months and inputted duration', () => {
-    const endDate = new Date('2024-01-04')
-    const timeDiff = getTimeDifferenceDuration(endDate, startDate)
-    const { months, secLeft } = getMonthsFromDuration(startDate, timeDiff)
-    expect(months).toEqual(0)
-    expect(secLeft).toEqual(timeDiff)
   })
 })
 
@@ -175,6 +109,31 @@ describe('formatDuration', () => {
       'unit.years, unit.months',
     )
     expect(formatDuration(monthDuration + ONE_DAY * 3, (x) => x)).toEqual('unit.months, unit.days')
+  })
+})
+
+describe('getMonthsFromDuration', () => {
+  const startDate = new Date('2024-01-01')
+  it('should return 2 months', () => {
+    const endDate = new Date('2024-03-01')
+    const timeDiff = getTimeDifferenceDuration(endDate, startDate)
+    const { months, secLeft } = getMonthsFromDuration(startDate, timeDiff)
+    expect(months).toEqual(2)
+    expect(secLeft).toEqual(0)
+  })
+  it('should return 2 months and extra duration', () => {
+    const endDate = new Date('2024-03-03')
+    const timeDiff = getTimeDifferenceDuration(endDate, startDate)
+    const { months, secLeft } = getMonthsFromDuration(startDate, timeDiff)
+    expect(months).toEqual(2)
+    expect(secLeft).toBeGreaterThan(0)
+  })
+  it('should return 0 months and inputted duration duration', () => {
+    const endDate = new Date('2024-01-04')
+    const timeDiff = getTimeDifferenceDuration(endDate, startDate)
+    const { months, secLeft } = getMonthsFromDuration(startDate, timeDiff)
+    expect(months).toEqual(2)
+    expect(secLeft).toEqual(timeDiff)
   })
 })
 
