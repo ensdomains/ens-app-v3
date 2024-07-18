@@ -39,6 +39,8 @@ type Props = {
   enabled?: boolean
 }
 
+const editButtonTooltip = () => {}
+
 export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => {
   const { t } = useTranslation('profile')
   const { createTransactionFlow, usePreparedDataInput } = useTransactionFlow()
@@ -140,7 +142,12 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
       })
     }
 
-    if (abilities.canEdit && (abilities.canEditRecords || abilities.canEditResolver)) {
+    // if (abilities.canEdit && (abilities.canEditRecords || abilities.canEditResolver)) {
+    // }
+    console.log('ownerData: ', ownerData)
+    console.log('wrapperData: ', wrapperData)
+    const isOwnerOrManager = address === ownerData?.owner || ownerData?.registrant === address
+    if (isOwnerOrManager) {
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
         tooltipContent: hasGraphError
