@@ -1,7 +1,7 @@
 import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 
 import { beforeAll, describe, expect, it, vi } from 'vitest'
-import { useSignTypedData } from 'wagmi'
+import { useAccount, useSignTypedData } from 'wagmi'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 
@@ -14,6 +14,7 @@ vi.mock('@app/hooks/chain/useChainName')
 
 const mockUseChainName = mockFunction(useChainName)
 const mockUseSignTypedData = mockFunction(useSignTypedData)
+const mockUseAccount = mockFunction(useAccount)
 
 const mockHandleCancel = vi.fn()
 const mockHandleSubmit = vi.fn()
@@ -34,6 +35,9 @@ const props = {
 describe('<AvatarUpload />', () => {
   mockUseSignTypedData.mockImplementation(() => ({
     signTypedDataAsync: mockSignTypedDataAsync,
+  }))
+  mockUseAccount.mockImplementation(() => ({
+    address: '0x80c5657CEE59A5a193EfDCfDf3D3913Fad977B61',
   }))
   mockUseChainName.mockImplementation(() => 'mainnet')
 
@@ -78,6 +82,7 @@ describe('<AvatarUpload />', () => {
           expiry: `${1588994800000 + 1000 * 60 * 60 * 24 * 7}`,
           dataURL: mockFileDataURL,
           sig: 'sig',
+          unverifiedAddress: '0x80c5657CEE59A5a193EfDCfDf3D3913Fad977B61',
         }),
       }),
     )
@@ -91,7 +96,7 @@ describe('<AvatarUpload />', () => {
     )
   })
   it('calls handleSubmit with network path if network is not mainnet', async () => {
-    mockUseChainName.mockImplementation(() => 'goerli')
+    mockUseChainName.mockImplementation(() => 'sepolia')
     global.fetch = vi.fn().mockImplementation(() =>
       Promise.resolve({
         json: () => ({ message: 'uploaded' }),
@@ -105,7 +110,7 @@ describe('<AvatarUpload />', () => {
     fireEvent.click(screen.getByTestId('continue-button'))
     fireEvent.click(screen.getByTestId('upload-button'))
     await waitFor(() =>
-      expect(global.fetch).toBeCalledWith('https://euc.li/goerli/test.eth', {
+      expect(global.fetch).toBeCalledWith('https://euc.li/sepolia/test.eth', {
         method: 'PUT',
         headers: {
           // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -115,6 +120,7 @@ describe('<AvatarUpload />', () => {
           expiry: `${1588994800000 + 1000 * 60 * 60 * 24 * 7}`,
           dataURL: mockFileDataURL,
           sig: 'sig',
+          unverifiedAddress: '0x80c5657CEE59A5a193EfDCfDf3D3913Fad977B61',
         }),
       }),
     )
