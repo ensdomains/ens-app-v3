@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
@@ -11,7 +11,7 @@ import { checkAvailablePrimaryName } from '@app/utils/checkAvailablePrimaryName'
 import { nameParts } from '@app/utils/name'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
-import { useAbilities } from './abilities/useAbilities'
+import { Abilities, useAbilities } from './abilities/useAbilities'
 import { useAccountSafely } from './account/useAccountSafely'
 import { useExpiry } from './ensjs/public/useExpiry'
 import { useOwner } from './ensjs/public/useOwner'
@@ -39,14 +39,18 @@ type Props = {
   enabled?: boolean
 }
 
-const editButtonTooltip = (toolTipConditions: {
+const editButtonTooltip = ({
+  hasGraphError,
+  abilities,
+  t,
+}: {
   hasGraphError: boolean
-  canEdit: boolean
+  abilities: Abilities
   t: TFunction
 }) => {
-  const { hasGraphError, canEdit, t } = toolTipConditions
   if (hasGraphError) return t('errors.networkError.blurb', { ns: 'common' })
-  if (!canEdit) return t('errors.isOwnerCannotEdit')
+  if (!abilities.canEdit) return t('errors.isOwnerCannotEdit')
+  if (!abilities.canEditRecords && !abilities.canEditResolver) return t('errors.cannotEdit')
   return undefined
 }
 
@@ -151,13 +155,15 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
       })
     }
 
-    // if (abilities.canEdit && (abilities.canEditRecords || abilities.canEditResolver)) {
-    // }
     const isOwnerOrManager = address === ownerData?.owner || ownerData?.registrant === address
     if (isOwnerOrManager) {
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
-        tooltipContent: editButtonTooltip({ hasGraphError, canEdit: abilities.canEdit }),
+        tooltipContent: editButtonTooltip({
+          hasGraphError: !!hasGraphError,
+          abilities,
+          t,
+        }),
         tooltipPlacement: 'left',
         loading: hasGraphErrorLoading,
         onClick: () =>

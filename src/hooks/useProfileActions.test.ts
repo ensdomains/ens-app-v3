@@ -20,6 +20,7 @@ import { useGetPrimaryNameTransactionFlowItem } from './primary/useGetPrimaryNam
 import { useResolverStatus } from './resolver/useResolverStatus'
 import { useProfile } from './useProfile'
 import { useProfileActions } from './useProfileActions'
+import { makeMockUseAbilitiesData } from '@root/test/mock/makeMockUseAbilitiesData'
 
 const NOW_TIMESTAMP = 1588994800000
 vi.spyOn(Date, 'now').mockImplementation(() => NOW_TIMESTAMP)
@@ -538,4 +539,42 @@ describe('useProfileActions', () => {
       ).toEqual(1)
     })
   })
+
+  describe.only('edit profile button', () => {
+    it('Should show edit profile button if user is manager', () => {
+      
+    })
+
+    it('Should show disabled profile button if there is a graph error', () => {
+      
+    })
+    it('Should show disabled edit profile button if user is owner but not manager', () => {
+      mockUseAbilities.mockReturnValue({
+        data: makeMockUseAbilitiesData('eth-unwrapped-2ld:owner'),
+        isLoading: false
+      })
+
+      const { result} = renderHook(() => useProfileActions({name: 'test.eth'}))
+      expect(result.current.profileActions).toEqual(expect.arrayContaining([expect.objectContaining({
+        label: "tabs.profile.actions.editProfile.label",
+        tooltipContent: "errors.isOwnerCannotEdit"
+      })]))
+    })
+
+    it('Should show disabled edit profile button if name is wrapped but fuse for edit resolver is burned and resolver is unauthorised', () => {
+      mockUseAbilities.mockReturnValue({
+        data: {
+          ...makeMockUseAbilitiesData('eth-burnt-2ld'),
+          canEditRecords: false
+        },
+        isLoading: false
+      })
+
+      const { result} = renderHook(() => useProfileActions({name: 'test.eth'}))
+      expect(result.current.profileActions).toEqual(expect.arrayContaining([expect.objectContaining({
+        label: "tabs.profile.actions.editProfile.label",
+        tooltipContent: "errors.cannotEdit"
+      })]))
+    })
+})
 })

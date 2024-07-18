@@ -452,6 +452,7 @@
     "gracePeriod": "This cannot be done because the name has expired",
     "default": "This action is not available",
     "invalidJSON": "Invalid JSON",
-    "isOwnerCannotEdit": "You must be the manager in order to edit the profile"
+    "isOwnerCannotEdit": "You must be the manager in order to edit the profile",
+    "cannotEdit": "You do not have permission to update to an authorised resolver"
   }
 }
