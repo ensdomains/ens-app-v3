@@ -6,7 +6,7 @@ import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import AddRecord from '@app/components/@molecules/AdvancedEditor/AddRecord'
-import AdvancedEditorContent from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabContent'
+import AdvancedEditorTabContent from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabContent'
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
@@ -121,7 +121,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
         data-testid="advanced-editor"
         gap="3"
       >
-        <AdvancedEditorContent {...advancedEditorForm} />
+        <AdvancedEditorTabContent {...advancedEditorForm} />
       </Dialog.Content>
       <AddRecord control={control} AddButtonProps={AddButtonProps} />
       <FooterContainer>
