@@ -29,12 +29,23 @@ test.describe('profile', () => {
     makePageObject,
   }) => {
     test.slow()
-
+    const delay = async (ms: number) =>
+      new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), ms)
+      })
     const name = await makeName({
       label: 'other-eth-record',
       type: 'legacy',
       owner: 'user2',
       manager: 'user2',
+      addr: 'user',
+    })
+
+    const anotherName = await makeName({
+      label: 'another-primary-name',
+      type: 'legacy',
+      owner: 'user',
+      manager: 'user',
       addr: 'user',
     })
 
@@ -45,6 +56,8 @@ test.describe('profile', () => {
 
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
+    const settingsPage = makePageObject('SettingsPage')
+    const selectPrimaryNameModal = makePageObject('SelectPrimaryNameModal')
     await profilePage.goto(name)
 
     await login.connect()
@@ -72,10 +85,23 @@ test.describe('profile', () => {
     // Assertion
     await expect(page.getByTestId('profile-title')).toHaveText(name)
 
-    // Should show changes in setting
-    await page.goto('/my/settings')
-
-    await expect(page.getByTestId('primary-name-label')).toHaveText(name, { timeout: 15000 })
+    await settingsPage.goto()
+    expect(settingsPage.getPrimaryNameLabel()).toHaveText(name, { timeout: 15000 })
+    await settingsPage.changePrimaryNameButton.click()
+    await selectPrimaryNameModal.waitForPageLoad()
+    const nameWithoutSuffix = name.slice(0, -4)
+    await selectPrimaryNameModal.searchInput.click()
+    await selectPrimaryNameModal.searchInput.fill(nameWithoutSuffix)
+    await selectPrimaryNameModal.searchInput.press('Enter')
+    await selectPrimaryNameModal.waitForPageLoad()
+    await delay(5000)
+    expect(page.getByText('No names found')).toBeVisible({ timeout: 30000 })
+    const otherNameWithoutSuffix = anotherName.slice(0, -4)
+    await selectPrimaryNameModal.searchInput.fill(otherNameWithoutSuffix)
+    await selectPrimaryNameModal.searchInput.press('Enter')
+    await selectPrimaryNameModal.waitForPageLoad()
+    await delay(5000)
+    expect(await selectPrimaryNameModal.getPrimaryNameItem(otherNameWithoutSuffix)).toBeVisible()
   })
 
   test('should allow setting unwrapped name that user is manager of but whose resolved address is not the same as the user', async ({
