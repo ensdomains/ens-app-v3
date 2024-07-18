@@ -29,7 +29,10 @@ test.describe('profile', () => {
     makePageObject,
   }) => {
     test.slow()
-
+    const delay = async (ms: number) =>
+      new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), ms)
+      })
     const name = await makeName({
       label: 'other-eth-record',
       type: 'legacy',
@@ -87,15 +90,18 @@ test.describe('profile', () => {
     await settingsPage.changePrimaryNameButton.click()
     await selectPrimaryNameModal.waitForPageLoad()
     const nameWithoutSuffix = name.slice(0, -4)
+    await selectPrimaryNameModal.searchInput.click()
     await selectPrimaryNameModal.searchInput.fill(nameWithoutSuffix)
+    await selectPrimaryNameModal.searchInput.press('Enter')
     await selectPrimaryNameModal.waitForPageLoad()
-    expect(selectPrimaryNameModal.page.getByText('No names found')).toBeVisible({ timeout: 30000 })
+    await delay(5000)
+    expect(page.getByText('No names found')).toBeVisible({ timeout: 30000 })
     const otherNameWithoutSuffix = anotherName.slice(0, -4)
     await selectPrimaryNameModal.searchInput.fill(otherNameWithoutSuffix)
+    await selectPrimaryNameModal.searchInput.press('Enter')
     await selectPrimaryNameModal.waitForPageLoad()
-    expect(selectPrimaryNameModal.page.getByText(otherNameWithoutSuffix)).toBeVisible({
-      timeout: 30000,
-    })
+    await delay(5000)
+    expect(await selectPrimaryNameModal.getPrimaryNameItem(otherNameWithoutSuffix)).toBeVisible()
   })
 
   test('should allow setting unwrapped name that user is manager of but whose resolved address is not the same as the user', async ({
