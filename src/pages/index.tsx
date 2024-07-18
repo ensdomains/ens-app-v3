@@ -111,7 +111,6 @@ export default function Page() {
             </Typography>
           </SubtitleWrapper>
           <SearchInput />
-          <Banner />
         </Stack>
       </Container>
     </>
