@@ -39,7 +39,16 @@ type Props = {
   enabled?: boolean
 }
 
-const editButtonTooltip = () => {}
+const editButtonTooltip = (toolTipConditions: {
+  hasGraphError: boolean
+  canEdit: boolean
+  t: TFunction
+}) => {
+  const { hasGraphError, canEdit, t } = toolTipConditions
+  if (hasGraphError) return t('errors.networkError.blurb', { ns: 'common' })
+  if (!canEdit) return t('errors.isOwnerCannotEdit')
+  return undefined
+}
 
 export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => {
   const { t } = useTranslation('profile')
@@ -144,15 +153,11 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
 
     // if (abilities.canEdit && (abilities.canEditRecords || abilities.canEditResolver)) {
     // }
-    console.log('ownerData: ', ownerData)
-    console.log('wrapperData: ', wrapperData)
     const isOwnerOrManager = address === ownerData?.owner || ownerData?.registrant === address
     if (isOwnerOrManager) {
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
-        tooltipContent: hasGraphError
-          ? t('errors.networkError.blurb', { ns: 'common' })
-          : undefined,
+        tooltipContent: editButtonTooltip({ hasGraphError, canEdit: abilities.canEdit }),
         tooltipPlacement: 'left',
         loading: hasGraphErrorLoading,
         onClick: () =>
