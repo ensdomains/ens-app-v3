@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Banner, QuestionCircleSVG } from '@ensdomains/thorin'
+import { Banner, QuestionCircleSVG, UpRightArrowSVG } from '@ensdomains/thorin'
 
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
@@ -35,7 +35,13 @@ export default function Page() {
         trailing: (
           <ContentContainer>
             <NameListView address={address} selfAddress={address} />
-            <Banner icon={<QuestionCircleSVG />} title={t('offchainWarning.title')}>
+            <Banner
+              as="a"
+              href="https://support.ens.domains/en/articles/9375254-why-is-my-ens-name-not-in-my-names"
+              icon={<QuestionCircleSVG />}
+              title={t('offchainWarning.title')}
+              actionIcon={<UpRightArrowSVG />}
+            >
               {t('offchainWarning.text')}
             </Banner>
           </ContentContainer>
