@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { isSelfExtendable } from '@app/components/pages/profile/[name]/tabs/OwnershipTab/sections/ExpirySection/hooks/useExpiryActions'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { useAccountSafely } from '../account/useAccountSafely'
@@ -16,6 +17,7 @@ import { getSendAbilities } from './utils/getSendAbilities'
 
 type ExtendAbilities = {
   canExtend: boolean
+  canSelfExtend: boolean
 }
 
 export type DeleteAbilities = {
@@ -68,6 +70,7 @@ export type Abilities = ExtendAbilities &
 
 export const DEFAULT_ABILITIES: Abilities = {
   canExtend: false,
+  canSelfExtend: false,
   canDelete: false,
   canEdit: false,
   canEditRecords: false,
@@ -125,8 +128,10 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
   const data: Abilities | undefined = useMemo(
     () => {
       if (!name || !address || isLoading) return DEFAULT_ABILITIES
+      const canExtend = !!name && checkETH2LDFromName(name)
       return {
-        canExtend: !!name && checkETH2LDFromName(name),
+        canExtend,
+        canSelfExtend: canExtend && isSelfExtendable({ ...basicNameData, address }),
         ...getSendAbilities({
           name,
           address,

@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
 import { useBasicName } from '@app/hooks/useBasicName'
@@ -112,23 +113,23 @@ export const DnsClaim = () => {
         inlineHeading
       >
         {{
-          trailing: {
-            selectType: () => (
+          trailing: match(step)
+            .with('selectType', () => (
               <SelectImportType dispatch={dispatch} item={item} selected={selected} />
-            ),
-            enableDnssec: () => <EnableDnssec dispatch={dispatch} selected={selected} />,
-            verifyOnchainOwnership: () => (
+            ))
+            .with('enableDnssec', () => <EnableDnssec dispatch={dispatch} selected={selected} />)
+            .with('verifyOnchainOwnership', () => (
               <VerifyOnchainOwnership dispatch={dispatch} selected={selected} />
-            ),
-            transaction: () => (
+            ))
+            .with('transaction', () => (
               <ImportTransaction dispatch={dispatch} selected={selected} item={item} />
-            ),
-            completeOnchain: () => <CompleteImport selected={selected} item={item} />,
-            verifyOffchainOwnership: () => (
+            ))
+            .with('completeOnchain', () => <CompleteImport selected={selected} item={item} />)
+            .with('verifyOffchainOwnership', () => (
               <VerifyOffchainOwnership dispatch={dispatch} selected={selected} />
-            ),
-            completeOffchain: () => <CompleteImport selected={selected} item={item} />,
-          }[step](),
+            ))
+            .with('completeOffchain', () => <CompleteImport selected={selected} item={item} />)
+            .exhaustive(),
         }}
       </Content>
     </>

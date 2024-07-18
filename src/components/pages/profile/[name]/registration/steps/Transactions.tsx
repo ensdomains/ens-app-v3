@@ -3,18 +3,12 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import {
-  Button,
-  CountdownCircle,
-  Dialog,
-  Heading,
-  mq,
-  Spinner,
-  Typography,
-} from '@ensdomains/thorin'
+import { makeCommitment } from '@ensdomains/ensjs/utils'
+import { Button, CountdownCircle, Dialog, Heading, mq, Spinner } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
+import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
@@ -118,6 +112,14 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     name,
     owner: address!,
     registrationData,
+  })
+
+  const commitCouldBeFound =
+    !commitTx?.stage || commitTx.stage === 'confirm' || commitTx.stage === 'failed'
+  useExistingCommitment({
+    commitment: makeCommitment(registrationParams),
+    enabled: commitCouldBeFound,
+    commitKey,
   })
 
   const makeCommitNameFlow = useCallback(() => {
@@ -292,7 +294,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
         size="large"
         callback={() => setCommitComplete(true)}
       />
-      <Typography>{t('steps.transactions.subheading')}</Typography>
+      <CenteredTypography>{t('steps.transactions.subheading')}</CenteredTypography>
       <ButtonContainer>
         {BackButton}
         {ActionButton}

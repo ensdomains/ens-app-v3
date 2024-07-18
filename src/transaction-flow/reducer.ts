@@ -129,16 +129,29 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
     }
     case 'setTransactionStage': {
       const selectedItem = getSelectedItem()
+      if (!selectedItem) break
       const currentTransaction = getCurrentTransaction(selectedItem)
 
       currentTransaction.stage = action.payload
       break
     }
     case 'setTransactionHash': {
-      const selectedItem = getSelectedItem()
+      const { hash, key } = action.payload
+      const selectedItem = draft.items[key]
+      if (!selectedItem) break
       const currentTransaction = getCurrentTransaction(selectedItem)
 
-      currentTransaction.hash = action.payload
+      currentTransaction.hash = hash
+      currentTransaction.stage = 'sent'
+      currentTransaction.sendTime = Date.now()
+      break
+    }
+    case 'setTransactionHashFromUpdate': {
+      const { hash, key } = action.payload
+      const selectedItem = draft.items[key!]
+      if (!selectedItem) break
+      const currentTransaction = getCurrentTransaction(selectedItem) || selectedItem.transactions[0]
+      currentTransaction.hash = hash
       currentTransaction.stage = 'sent'
       currentTransaction.sendTime = Date.now()
       break
