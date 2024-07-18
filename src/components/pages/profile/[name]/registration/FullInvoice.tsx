@@ -50,7 +50,7 @@ const FullInvoice = ({
     () => [
       {
         label: t('invoice.timeRegistration', {
-          time: formatDuration(seconds, t),
+          time: formatDuration(new Date(), seconds, t),
         }),
         bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
         value: totalDurationBasedFee,

@@ -1,9 +1,22 @@
+import { ONE_DAY } from './time'
+
 export const safeDateObj = (date: Date | string | number | undefined) => {
   if (!date) return undefined
   if (typeof date === 'string' && /^\d+$/.test(date)) return new Date(parseInt(date))
   const dateObj = date instanceof Date ? date : new Date(date)
   if (Number.isNaN(dateObj)) return undefined
   return dateObj
+}
+
+const isLeap = (year: number) => new Date(year, 1, 29).getDate() === 29
+
+export const addLeapYearDay = (time: number, duration: number) => {
+  //const initialTime = secondsToDate(time)
+  const convertedTime = secondsToDate(time + duration)
+  if (isLeap(convertedTime.getFullYear()) && convertedTime.getMonth() > 1) {
+    return ONE_DAY
+  }
+  return 0
 }
 
 export const secondsToDate = (seconds: number) => new Date(seconds * 1000)

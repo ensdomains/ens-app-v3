@@ -159,22 +159,24 @@ describe('formatDuration', () => {
   const currentDate = new Date()
   const monthDuration = getMonthDifferenceDuration(currentDate)
   it('should return a year locale', () => {
-    expect(formatDuration(2 * ONE_YEAR, (x) => x)).toEqual('unit.years')
+    expect(formatDuration(currentDate, 2 * ONE_YEAR, (x) => x)).toEqual('unit.years')
   })
   it('should return a month locale', () => {
-    expect(formatDuration(monthDuration, (x) => x)).toEqual('unit.months')
+    expect(formatDuration(currentDate, monthDuration, (x) => x)).toEqual('unit.months')
   })
   it('should return a day locale', () => {
-    expect(formatDuration(ONE_DAY * 2, (x) => x)).toEqual('unit.days')
+    expect(formatDuration(currentDate, ONE_DAY * 2, (x) => x)).toEqual('unit.days')
   })
   it('should return invalid date if less than a day', () => {
-    expect(formatDuration(123, (x) => x)).toEqual('unit.invalid_date')
+    expect(formatDuration(currentDate, 123, (x) => x)).toEqual('unit.invalid_date')
   })
   it('if extra day or month, return multiple locales', () => {
-    expect(formatDuration(2 * ONE_YEAR + monthDuration, (x) => x)).toEqual(
+    expect(formatDuration(currentDate, 2 * ONE_YEAR + monthDuration, (x) => x)).toEqual(
       'unit.years, unit.months',
     )
-    expect(formatDuration(monthDuration + ONE_DAY * 3, (x) => x)).toEqual('unit.months, unit.days')
+    expect(formatDuration(currentDate, monthDuration + ONE_DAY * 3, (x) => x)).toEqual(
+      'unit.months, unit.days',
+    )
   })
 })
 

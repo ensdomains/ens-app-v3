@@ -204,14 +204,22 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     duration: seconds,
   })
 
+  const { data: expiryData } = useExpiry({ enabled: names.length > 1, name: names[0] })
+
   const totalRentFee = priceData ? priceData.base + priceData.premium : 0n
   const yearlyFee = priceData?.base ? deriveYearlyFee({ duration: seconds, price: priceData }) : 0n
   const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
   const unsafeDisplayYearlyFee = yearlyFee !== 0n ? yearlyFee : previousYearlyFee
   const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
+  const expiryDate = new Date(Number(expiryData?.expiry.value) * 1000)
 
   const transactions = [
-    createTransactionItem('extendNames', { names, duration: seconds, rentPrice: totalRentFee! }),
+    createTransactionItem('extendNames', {
+      names,
+      startDate: expiryDate,
+      duration: seconds,
+      rentPrice: totalRentFee!,
+    }),
   ]
 
   const {
@@ -226,6 +234,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
         data: {
           duration: seconds,
           names,
+          startDate: expiryDate,
           rentPrice: totalRentFee!,
         },
         stateOverride: [
@@ -249,7 +258,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const items: InvoiceItem[] = [
     {
       label: t('input.extendNames.invoice.extension', {
-        time: formatDuration(seconds, t),
+        time: formatDuration(expiryDate, seconds, t),
       }),
       value: totalRentFee,
       bufferPercentage: 102n,
@@ -288,8 +297,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
       },
       children: t('action.next', { ns: 'common' }),
     }))
-
-  const { data: expiryData } = useExpiry({ enabled: names.length > 1, name: names[0] })
 
   return (
     <>

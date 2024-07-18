@@ -24,7 +24,7 @@ const displayItems = (
   },
   {
     label: 'duration',
-    value: formatDuration(duration, t),
+    value: formatDuration(new Date(), duration, t),
   },
 ]
 

@@ -11,11 +11,12 @@ import { calculateValueWithBuffer, formatDuration } from '../../utils/utils'
 type Data = {
   names: string[]
   duration: number
+  startDate: Date
   rentPrice: bigint
 }
 
 const displayItems = (
-  { names, rentPrice, duration }: Data,
+  { names, startDate, rentPrice, duration }: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
@@ -29,7 +30,7 @@ const displayItems = (
   },
   {
     label: 'duration',
-    value: formatDuration(duration, t),
+    value: formatDuration(startDate, duration, t),
   },
   {
     label: 'cost',

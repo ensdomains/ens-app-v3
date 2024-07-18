@@ -6,8 +6,8 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { roundDurationWithDay } from '@app/utils/date'
-import { formatDuration, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/utils'
+import { addLeapYearDay, roundDurationWithDay } from '@app/utils/date'
+import { formatDuration, ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
   ({ theme }) => css`
@@ -50,8 +50,6 @@ export const DateSelection = ({
 
   const { t } = useTranslation()
 
-  const extensionPeriod = formatDuration(seconds, t)
-
   useEffect(() => {
     if (minSeconds > seconds) setSeconds(minSeconds)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,13 +64,15 @@ export const DateSelection = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateInYears, yearPickView])
 
-  const currentTime = expiry ?? now
+  let currentTime = expiry ?? now
+  const currentDate = new Date(currentTime * 1000)
+  const extensionPeriod = formatDuration(currentDate, seconds, t)
 
   return (
     <Container>
       {yearPickView === 'date' ? (
         <Calendar
-          value={currentTime + seconds}
+          value={currentTime + seconds + addLeapYearDay(currentTime, seconds)}
           onChange={(e) => {
             const { valueAsDate } = e.currentTarget
             if (valueAsDate) {

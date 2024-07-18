@@ -33,14 +33,14 @@ export const deriveYearlyFee = ({
 
 export const getOneMonthDate = (date: Date) => {
   let month = date.getMonth() + 2
-  let day = date.getDate()
+  const day = date.getDate()
   let year = date.getFullYear()
   if (month > 12) {
     month = 1
-    year++
+    year += 1
   }
 
-  return new Date(month + '/' + day + '/' + year)
+  return new Date(`${month}-${day}-${year}`)
 }
 
 export const getMonthDifferenceDuration = (startDate: Date) => {
@@ -76,7 +76,7 @@ export const getMonthsFromDuration = (currentDate: Date, duration: number) => {
     let monthDuration = getTimeDifferenceDuration(oneMonthDate, startDate)
     while (durationLeft > 0 && durationLeft >= monthDuration && monthCount < 12) {
       durationLeft -= monthDuration
-      monthCount++
+      monthCount += 1
       startDate = oneMonthDate
       oneMonthDate = getOneMonthDate(startDate)
       monthDuration = getTimeDifferenceDuration(oneMonthDate, startDate)
@@ -105,14 +105,13 @@ export const formatDateTime = (date: Date) => {
 export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
 
-export const formatDuration = (duration: number, t: TFunction) => {
-  const currentDate = new Date()
-  const month = getMonthDifferenceDuration(currentDate)
+export const formatDuration = (startDate: Date, duration: number, t: TFunction) => {
+  const month = getMonthDifferenceDuration(startDate)
 
   if (duration >= ONE_YEAR) {
     const years = Math.floor(duration / ONE_YEAR)
-    const { months } = getMonthsFromDuration(currentDate, duration - years * ONE_YEAR)
-    if (months !== 0)
+    const { months } = getMonthsFromDuration(startDate, duration - years * ONE_YEAR)
+    if (months > 0)
       return `${t('unit.years', { count: years, ns: 'common' })}, ${t('unit.months', {
         count: months,
         ns: 'common',
@@ -121,7 +120,7 @@ export const formatDuration = (duration: number, t: TFunction) => {
     return t('unit.years', { count: years, ns: 'common' })
   }
   if (duration >= month) {
-    const { months, secLeft } = getMonthsFromDuration(currentDate, duration)
+    const { months, secLeft } = getMonthsFromDuration(startDate, duration)
     const days = Math.floor(secLeft / ONE_DAY)
 
     if (days > 0)
