@@ -540,7 +540,7 @@ describe('useProfileActions', () => {
     })
   })
 
-  describe.only('edit profile button', () => {
+  describe('edit profile button', () => {
     it('Should show edit profile button if user is manager', () => {
       mockUseAbilities.mockReturnValue({
         data: makeMockUseAbilitiesData('eth-unwrapped-2ld:manager'),
