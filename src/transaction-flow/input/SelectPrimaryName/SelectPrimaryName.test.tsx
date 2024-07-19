@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getDecodedName } from '@ensdomains/ensjs/subgraph'
 import { decodeLabelhash } from '@ensdomains/ensjs/utils'
 
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
@@ -38,8 +39,10 @@ vi.mock('@app/hooks/resolver/useResolverStatus')
 vi.mock('@app/hooks/useIsWrapped')
 vi.mock('@app/hooks/useProfile')
 vi.mock('@app/hooks/primary/useGetPrimaryNameTransactionFlowItem')
+vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
 const mockGetDecodedName = mockFunction(getDecodedName)
+const mockUsePrimaryName = mockFunction(usePrimaryName)
 mockGetDecodedName.mockImplementation((_: any, { name }) => Promise.resolve(name))
 
 const makeName = (index: number, overwrites?: any) => ({
@@ -204,6 +207,25 @@ describe('SelectPrimaryName', () => {
     await waitFor(() => {
       expect(screen.getByText('test1.eth')).toBeInTheDocument()
       expect(screen.getByText('test2.eth')).toBeInTheDocument()
+      expect(screen.getByText('test3.eth')).toBeInTheDocument()
+    })
+  })
+
+  it('should not show primary name in list', async () => {
+    mockUsePrimaryName.mockReturnValue({
+      data: {
+        name: 'test2.eth',
+        beautifiedName: 'test2.eth',
+      },
+      isLoading: false,
+      status: 'success',
+    })
+    render(
+      <SelectPrimaryName data={{ address: '0x123' }} dispatch={() => {}} onDismiss={() => {}} />,
+    )
+    await waitFor(() => {
+      expect(screen.getByText('test1.eth')).toBeInTheDocument()
+      expect(screen.queryByText('test2.eth')).not.toBeInTheDocument()
       expect(screen.getByText('test3.eth')).toBeInTheDocument()
     })
   })
