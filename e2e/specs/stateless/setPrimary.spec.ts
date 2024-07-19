@@ -29,10 +29,7 @@ test.describe('profile', () => {
     makePageObject,
   }) => {
     test.slow()
-    const delay = async (ms: number) =>
-      new Promise<void>((resolve) => {
-        setTimeout(() => resolve(), ms)
-      })
+
     const name = await makeName({
       label: 'other-eth-record',
       type: 'legacy',
@@ -94,13 +91,13 @@ test.describe('profile', () => {
     await selectPrimaryNameModal.searchInput.fill(nameWithoutSuffix)
     await selectPrimaryNameModal.searchInput.press('Enter')
     await selectPrimaryNameModal.waitForPageLoad()
-    await delay(5000)
+    await test.setTimeout(5000)
     expect(page.getByText('No names found')).toBeVisible({ timeout: 30000 })
     const otherNameWithoutSuffix = anotherName.slice(0, -4)
     await selectPrimaryNameModal.searchInput.fill(otherNameWithoutSuffix)
     await selectPrimaryNameModal.searchInput.press('Enter')
     await selectPrimaryNameModal.waitForPageLoad()
-    await delay(5000)
+    await test.setTimeout(5000)
     expect(await selectPrimaryNameModal.getPrimaryNameItem(otherNameWithoutSuffix)).toBeVisible()
   })
 
