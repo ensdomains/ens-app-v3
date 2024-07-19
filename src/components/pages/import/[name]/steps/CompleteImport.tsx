@@ -3,7 +3,7 @@ import type ConfettiT from 'react-confetti'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Helper, mq, Typography } from '@ensdomains/thorin'
+import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
@@ -152,7 +152,6 @@ export const CompleteImport = ({
         </Typography>
       </TitleContainer>
       <Typography>{t(addKeyPrefix('description'))}</Typography>
-      {item.type === 'offchain' && <Helper>{t('import.warning')}</Helper>}
       <ButtonContainer>
         <MobileFullWidth>
           <Button colorStyle="accentSecondary" onClick={goHome}>
