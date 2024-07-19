@@ -37,6 +37,8 @@ export default function Page() {
             <NameListView address={address} selfAddress={address} />
             <Banner
               as="a"
+              target="_blank"
+              rel="noopener noreferrer"
               href="https://support.ens.domains/en/articles/9375254-why-is-my-ens-name-not-in-my-names"
               icon={<QuestionCircleSVG />}
               title={t('offchainWarning.title')}
