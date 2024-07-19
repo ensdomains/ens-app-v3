@@ -181,7 +181,7 @@
     },
     "transactions": {
       "heading": "Almost there",
-      "subheading": "This timer helps prevent others from registering the name before you do. Your name is not registered until you've completed the second transaction.",
+      "subheading": "You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.",
       "startTimer": "Start timer",
       "wait": "Wait",
       "transactionFailed": "Transaction Failed",

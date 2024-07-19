@@ -50,11 +50,7 @@ test('should not show wrap notification if the name is already wrapped', async (
   await expect(morePage.wrapButton).not.toBeVisible()
 })
 
-test('should show wrap notification on unwrapped name', async ({
-  login,
-  makeName,
-  makePageObject,
-}) => {
+test('should show wrap button on unwrapped name', async ({ login, makeName, makePageObject }) => {
   const name = await makeName({
     label: 'to-be-wrapped',
     type: 'legacy',

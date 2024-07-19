@@ -1,5 +1,6 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import { CrossSVG, DynamicPopover, MenuSVG, Modal, Spinner } from '@ensdomains/thorin'
 
@@ -224,10 +225,10 @@ const Hamburger = () => {
 
   if (isInitial) return button
 
-  const currentComponent = {
-    main: <MainMenu {...{ setCurrentView }} />,
-    language: <LanguageMenu setCurrentView={setCurrentView} />,
-  }[currentView]
+  const currentComponent = match(currentView)
+    .with('main', () => <MainMenu {...{ setCurrentView }} />)
+    .with('language', () => <LanguageMenu setCurrentView={setCurrentView} />)
+    .exhaustive()
 
   const componentWithAnimation = (
     <>

@@ -159,13 +159,14 @@ export const ExpirySection = ({ name, details }: Props) => {
                           keepMenuOnTop
                           width={220}
                           items={[
-                            {
-                              value: 'earnifi',
-                              label: t('tabs.more.misc.reminderOptions.bankless'),
-                              onClick: () => {
-                                setShowEarnifiDialog(true)
-                              },
-                            },
+                            // Put this back once the reminders are working again
+                            // {
+                            //   value: 'earnifi',
+                            //   label: t('tabs.more.misc.reminderOptions.bankless'),
+                            //   onClick: () => {
+                            //     setShowEarnifiDialog(true)
+                            //   },
+                            // },
                             ...calendarOptions.map((option) => ({
                               label: t(option.label, { ns: 'profile' }),
                               onClick: () =>
