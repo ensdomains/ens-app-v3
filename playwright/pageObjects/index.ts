@@ -15,6 +15,8 @@ import { ProfilePage } from './profilePage'
 import { RecordsPage } from './recordsPage'
 import { RegistrationPage } from './registrationPage'
 import { SendNameModal } from './sendNameModal'
+import {SettingsPage} from './settingsPage'
+import {SelectPrimaryNameModal} from './selectPrimaryNameModal'
 import { SubnamesPage } from './subnamePage'
 import { TransactionModal } from './transactionModal'
 
@@ -33,6 +35,8 @@ const pageObjects = {
   RegistrationPage,
   SendNameModal,
   SubnamesPage,
+  SettingsPage,
+  SelectPrimaryNameModal,
   TransactionModal,
   RecordsPage,
   AdvancedEditorModal,
