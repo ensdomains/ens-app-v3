@@ -5,7 +5,7 @@ export default defineConfig({
   testDir: './e2e/specs',
   testMatch: '*.spec.ts',
   retries: process.env.CI ? 2 : 0,
-  timeout: 12000000, // add extra time for loading
+  timeout: 120000, // add extra time for loading
   fullyParallel: true, // required to evenly shard
   workers: 1, // keep tests serial for now
   reporter: [['html', { open: 'always' }]],
