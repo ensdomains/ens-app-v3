@@ -73,7 +73,7 @@ type Props = {
 
 export const Calendar = forwardRef(
   (
-    { value, name, onBlur, highlighted, min, ...props }: Props,
+    { value, name, onBlur, highlighted, min, onChange, ...props }: Props,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
@@ -90,6 +90,18 @@ export const Calendar = forwardRef(
           min={secondsToDateInput(min ?? value)}
           onFocus={(e) => {
             e.target.select()
+          }}
+          onChange={(e) => {
+            if (onChange) {
+              let { valueAsDate: newValueAsDate } = e.currentTarget
+              if (newValueAsDate) {
+                // Have to add in the timezone offset to make sure that the date shows up correctly after calendar picking for UTC
+                newValueAsDate = new Date(
+                  newValueAsDate.getTime() + newValueAsDate.getTimezoneOffset() * 60 * 1000,
+                )
+              }
+              onChange({ ...e, currentTarget: { ...e.currentTarget, valueAsDate: newValueAsDate } })
+            }
           }}
           onClick={() => inputRef.current!.showPicker()}
         />
