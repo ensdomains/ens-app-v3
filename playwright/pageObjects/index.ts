@@ -14,12 +14,11 @@ import { PermissionsPage } from './permissionsPage'
 import { ProfilePage } from './profilePage'
 import { RecordsPage } from './recordsPage'
 import { RegistrationPage } from './registrationPage'
+import { SelectPrimaryNameModal } from './selectPrimaryNameModal'
 import { SendNameModal } from './sendNameModal'
-import {SettingsPage} from './settingsPage'
-import {SelectPrimaryNameModal} from './selectPrimaryNameModal'
+import { SettingsPage } from './settingsPage'
 import { SubnamesPage } from './subnamePage'
 import { TransactionModal } from './transactionModal'
-import {MyNamesPage} from './myNamesPage'
 
 type Dependencies = { page: Page; wallet: Web3ProviderBackend }
 
@@ -41,7 +40,6 @@ const pageObjects = {
   TransactionModal,
   RecordsPage,
   AdvancedEditorModal,
-  MyNamesPage
 }
 
 type PageObjects = typeof pageObjects
