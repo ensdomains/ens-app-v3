@@ -27,6 +27,11 @@ const DetailsWrapper = styled.div(
   `,
 )
 
+const OutlinkWithMargin = styled(Outlink)`
+  margin-left: auto;
+  padding-right: 0;
+`
+
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   name: string
@@ -65,6 +70,13 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     name,
   })
 
+  const isOffchainImport =
+    nameDetails.registrationStatus === 'imported' &&
+    !dnsOwner &&
+    !!profile?.address &&
+    !name.endsWith('.eth') &&
+    name.split('.').length === 2
+
   const isExpired = useMemo(
     () => gracePeriodEndDate && gracePeriodEndDate < new Date(),
     [gracePeriodEndDate],
@@ -84,6 +96,21 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         button={snippetButton}
         isPrimary={name === primaryData?.name}
       >
+        {isOffchainImport && (
+          <Helper alignment="horizontal">
+            <Trans
+              i18nKey="tabs.profile.warnings.offchain"
+              ns="profile"
+              components={{
+                a: (
+                  <OutlinkWithMargin href={getSupportLink('offchain-not-in-names')}>
+                    {t('action.learnMore', { ns: 'common' })}
+                  </OutlinkWithMargin>
+                ),
+              }}
+            />
+          </Helper>
+        )}
         {nameDetails.isNonASCII && (
           <Helper type="warning" alignment="horizontal">
             <Trans
