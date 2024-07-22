@@ -18,6 +18,7 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
@@ -133,6 +134,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const [searchQuery, _setSearchQuery] = useState('')
   const setSearchQuery = useDebouncedCallback(_setSearchQuery, 300, [])
 
+  const currentPrimary = usePrimaryName({ address })
   const {
     data: namesData,
     hasNextPage,
@@ -147,6 +149,12 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     },
     pageSize: DEFAULT_PAGE_SIZE,
   })
+
+  // Filter out the primary name's data
+  const filteredNamesPages =
+    namesData?.pages?.map((page: Name[]) =>
+      page.filter((name: Name) => name?.name !== currentPrimary?.data?.name),
+    ) || []
 
   const selectedName = useWatch({
     control,
@@ -257,10 +265,10 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
 
   // Show header if more than one page has been loaded, if only one page has been loaded but there is another page, or if there is an active search query
   const showHeader =
-    (!!namesData && namesData?.pages.length > 1 && !searchQuery) || hasNextPage || !!searchQuery
+    (!!namesData && filteredNamesPages.length > 1 && !searchQuery) || hasNextPage || !!searchQuery
 
   const hasNoEligibleNames =
-    !searchQuery && namesData?.pages.length === 1 && namesData.pages[0].length === 0
+    !searchQuery && filteredNamesPages.length === 1 && filteredNamesPages[0].length === 0
 
   if (isLoading)
     return (
@@ -316,9 +324,9 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
         ref={formRef}
         onSubmit={handleSubmit((data) => mutateName(data))}
       >
-        {!!namesData && namesData.pages[0].length > 0 ? (
+        {!!namesData && filteredNamesPages[0].length > 0 ? (
           <>
-            {namesData.pages?.map((page: Name[]) =>
+            {filteredNamesPages?.map((page: Name[]) =>
               page.map((name: Name) => (
                 <TaggedNameItemWithFuseCheck
                   key={name.id}

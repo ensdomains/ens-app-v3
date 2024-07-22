@@ -82,7 +82,8 @@
       "title": "Congratulations!",
       "import": {
         "subtitle": "<gradient>{{name}}</gradient> has been imported",
-        "description": "This domain has been successfully imported into ENS. You can now view this name."
+        "description": "This domain has been successfully imported into ENS. You can now view this name.",
+        "warning": "Gasless DNS names do not currently appear in your \"Names\" list."
       },
       "claim": {
         "subtitle": "You are now the owner of <gradient>{{name}}</gradient>",
