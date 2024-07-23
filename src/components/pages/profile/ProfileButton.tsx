@@ -16,7 +16,6 @@ import {
 } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
-import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import { dynamicAddressIcons } from '@app/assets/address/dynamicAddressIcons'
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
@@ -25,13 +24,6 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { getSocialData } from '@app/utils/getSocialData'
 import { makeEtherscanLink, shortenAddress } from '@app/utils/utils'
-
-const StyledAddressIcon = styled(DynamicAddressIcon)(
-  ({ theme }) => css`
-    width: ${theme.space['5']};
-    height: ${theme.space['5']};
-  `,
-)
 
 export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value: string }) => {
   const breakpoints = useBreakpoint()
@@ -60,7 +52,7 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
 
 export const AddressProfileButton = ({
   iconKey: _iconKey,
-  value,
+  value: address,
 }: {
   iconKey: string
   value: string
@@ -68,21 +60,48 @@ export const AddressProfileButton = ({
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, copy] = useCopyToClipboard()
+
+  const items = [
+    ...(address
+      ? ([
+          {
+            icon: <UpRightArrowSVG />,
+            label: 'View address',
+            href: getDestination(`/${address}`) as string,
+          },
+          {
+            icon: <CopySVG />,
+            label: 'Copy address',
+            onClick: () => copy(address),
+          },
+          {
+            icon: <UpRightArrowSVG />,
+            label: 'View on Etherscan',
+            href: makeEtherscanLink(address, 'mainnet', 'address'),
+          },
+        ] as DropdownItem[])
+      : []),
+  ].filter((item) => item !== undefined) as DropdownItem[]
+
   return iconKey in dynamicAddressIcons ? (
-    <RecordItem
-      data-testid={`address-profile-button-${iconKey}`}
-      icon={<StyledAddressIcon name={iconKey} />}
-      value={value}
-      size={breakpoints.sm ? 'large' : 'small'}
-      inline
-    >
-      {shortenAddress(
-        value,
-        undefined,
-        breakpoints.sm ? undefined : 4,
-        breakpoints.sm ? undefined : 3,
-      )}
-    </RecordItem>
+    <Dropdown width={200} items={items} direction="up">
+      <RecordItem
+        data-testid={`address-profile-button-${iconKey}`}
+        postfixIcon={VerticalDotsSVG}
+        value={address}
+        size={breakpoints.sm ? 'large' : 'small'}
+        inline
+      >
+        {shortenAddress(
+          address,
+          undefined,
+          breakpoints.sm ? undefined : 4,
+          breakpoints.sm ? undefined : 3,
+        )}
+      </RecordItem>
+    </Dropdown>
   ) : null
 }
 
