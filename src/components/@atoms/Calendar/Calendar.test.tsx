@@ -1,14 +1,13 @@
 import { render, screen } from '@app/test-utils'
 
+import { fireEvent } from '@testing-library/react'
+import { InputHTMLAttributes, useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
 import { secondsToDate, secondsToDateInput } from '@app/utils/date'
 import { formatExpiry } from '@app/utils/utils'
 
 import { Calendar } from './Calendar'
-import { fireEvent } from '@testing-library/react';
-import { InputHTMLAttributes, useState } from 'react'
-
 
 const value = 3600
 const min = 0
@@ -33,22 +32,22 @@ describe('Calendar', () => {
   })
   it('should handle timezone offset correctly', () => {
     const onChangeHandler = vi.fn((e) => {
-      if (!e) return;
+      if (!e) return
 
-      let { valueAsDate: newValueAsDate } = e.currentTarget;
-      console.log('newValueAsDate', e.currentTarget);
+      let { valueAsDate: newValueAsDate } = e.currentTarget
+      console.log('newValueAsDate', e.currentTarget)
       if (newValueAsDate) {
         newValueAsDate = new Date(
           newValueAsDate.getTime() + newValueAsDate.getTimezoneOffset() * 60 * 1000,
-        );
+        )
       }
-      console.log('Updated date:', newValueAsDate);
-    });
-    render(<Calendar value={value}  onChange={onChangeHandler}/>)
+      console.log('Updated date:', newValueAsDate)
+    })
+    render(<Calendar value={value} onChange={onChangeHandler} />)
 
     const calendarInput = screen.getByTestId('calendar')
-    
-    fireEvent.change(calendarInput, { target: { value: Date.now()} })
+
+    fireEvent.change(calendarInput, { target: { value: secondsToDateInput(Date.now() / 1000) } })
 
     expect(onChangeHandler).toHaveBeenCalledTimes(1)
 
