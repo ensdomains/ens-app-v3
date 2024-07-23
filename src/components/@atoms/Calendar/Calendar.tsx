@@ -92,16 +92,16 @@ export const Calendar = forwardRef(
             e.target.select()
           }}
           onChange={(e) => {
-            if (onChange) {
-              let { valueAsDate: newValueAsDate } = e.currentTarget
-              if (newValueAsDate) {
-                // Have to add in the timezone offset to make sure that the date shows up correctly after calendar picking for UTC
-                newValueAsDate = new Date(
-                  newValueAsDate.getTime() + newValueAsDate.getTimezoneOffset() * 60 * 1000,
-                )
-              }
-              onChange({ ...e, currentTarget: { ...e.currentTarget, valueAsDate: newValueAsDate } })
+            if (!onChange) return
+
+            let { valueAsDate: newValueAsDate } = e.currentTarget
+            if (newValueAsDate) {
+              // Have to add in the timezone offset to make sure that the date shows up correctly after calendar picking for UTC
+              newValueAsDate = new Date(
+                newValueAsDate.getTime() + newValueAsDate.getTimezoneOffset() * 60 * 1000,
+              )
             }
+            onChange({ ...e, currentTarget: { ...e.currentTarget, valueAsDate: newValueAsDate } })
           }}
           onClick={() => inputRef.current!.showPicker()}
         />
