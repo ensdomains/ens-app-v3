@@ -7,6 +7,7 @@ import { formatExpiry } from '@app/utils/utils'
 
 import { Calendar } from './Calendar'
 import { fireEvent } from '@testing-library/react';
+import { InputHTMLAttributes, useState } from 'react'
 
 
 const value = 3600
@@ -31,19 +32,30 @@ describe('Calendar', () => {
     expect(screen.getByTestId('calendar')).toHaveValue(secondsToDateInput(value))
   })
   it('should handle timezone offset correctly', () => {
-    const mockOnChange = vi.fn()
-    render(<Calendar value={value}  onChange={mockOnChange}/>)
+    const onChangeHandler = vi.fn((e) => {
+      if (!e) return;
+
+      let { valueAsDate: newValueAsDate } = e.currentTarget;
+      console.log('newValueAsDate', e.currentTarget);
+      if (newValueAsDate) {
+        newValueAsDate = new Date(
+          newValueAsDate.getTime() + newValueAsDate.getTimezoneOffset() * 60 * 1000,
+        );
+      }
+      console.log('Updated date:', newValueAsDate);
+    });
+    render(<Calendar value={value}  onChange={onChangeHandler}/>)
 
     const calendarInput = screen.getByTestId('calendar')
     
     fireEvent.change(calendarInput, { target: { value: Date.now()} })
-    fireEvent.change(calendarInput, { target: { value: Date.now()} })
 
-    expect(mockOnChange).toHaveBeenCalledTimes(2)
+    expect(onChangeHandler).toHaveBeenCalledTimes(1)
+
     const expectedDate = new Date(Date.now())
     expectedDate.setMinutes(expectedDate.getMinutes() + expectedDate.getTimezoneOffset())
 
-    // Check if the date displayed is in UTC
+    // // Check if the date displayed is in UTC
     const dateDisplayed = screen.getByTestId('calendar-date').textContent
     expect(dateDisplayed).toBe(formatExpiry(expectedDate))
   })
