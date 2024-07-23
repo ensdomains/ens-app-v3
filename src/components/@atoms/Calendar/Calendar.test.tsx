@@ -7,7 +7,6 @@ import { formatExpiry } from '@app/utils/utils'
 
 import { Calendar } from './Calendar'
 import { fireEvent } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
 
 
 const value = 3600
