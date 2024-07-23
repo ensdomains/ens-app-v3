@@ -16,14 +16,23 @@ import {
 } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
+import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import { dynamicAddressIcons } from '@app/assets/address/dynamicAddressIcons'
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
+import { useCoinChain } from '@app/hooks/chain/useCoinChain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { getDestination } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { getSocialData } from '@app/utils/getSocialData'
 import { makeEtherscanLink, shortenAddress } from '@app/utils/utils'
+
+const StyledAddressIcon = styled(DynamicAddressIcon)(
+  ({ theme }) => css`
+    width: ${theme.space['5']};
+    height: ${theme.space['5']};
+  `,
+)
 
 export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value: string }) => {
   const breakpoints = useBreakpoint()
@@ -62,27 +71,30 @@ export const AddressProfileButton = ({
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, copy] = useCopyToClipboard()
+  const coinChainResults = useCoinChain({ nameorid: iconKey })
+  const { data } = coinChainResults
+  const defaultBlockExplorer = data?.data?.blockExplorers?.default
 
   const items = [
-    ...(address
-      ? ([
-          {
-            icon: <UpRightArrowSVG />,
-            label: 'View address',
-            href: getDestination(`/${address}`) as string,
-          },
-          {
-            icon: <CopySVG />,
-            label: 'Copy address',
-            onClick: () => copy(address),
-          },
-          {
-            icon: <UpRightArrowSVG />,
-            label: 'View on Etherscan',
-            href: makeEtherscanLink(address, 'mainnet', 'address'),
-          },
-        ] as DropdownItem[])
-      : []),
+    iconKey === 'eth'
+      ? {
+          icon: <UpRightArrowSVG />,
+          label: 'View address',
+          href: getDestination(`/${address}`) as string,
+        }
+      : undefined,
+    {
+      icon: <CopySVG />,
+      label: 'Copy address',
+      onClick: () => copy(address),
+    },
+    defaultBlockExplorer
+      ? {
+          icon: <UpRightArrowSVG />,
+          label: `View on ${defaultBlockExplorer?.name}`,
+          href: `${defaultBlockExplorer?.url}/address/${address}`,
+        }
+      : undefined,
   ].filter((item) => item !== undefined) as DropdownItem[]
 
   return iconKey in dynamicAddressIcons ? (
@@ -90,6 +102,7 @@ export const AddressProfileButton = ({
       <RecordItem
         data-testid={`address-profile-button-${iconKey}`}
         postfixIcon={VerticalDotsSVG}
+        icon={<StyledAddressIcon name={iconKey} />}
         value={address}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
