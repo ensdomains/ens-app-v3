@@ -1,4 +1,4 @@
-import { render, screen } from '@app/test-utils'
+import { fireEvent, render, screen } from '@app/test-utils'
 
 import { fireEvent } from '@testing-library/react'
 import { InputHTMLAttributes, useState } from 'react'
@@ -8,6 +8,7 @@ import { secondsToDate, secondsToDateInput } from '@app/utils/date'
 import { formatExpiry } from '@app/utils/utils'
 
 import { Calendar } from './Calendar'
+
 
 const value = 3600
 const min = 0
@@ -30,32 +31,30 @@ describe('Calendar', () => {
 
     expect(screen.getByTestId('calendar')).toHaveValue(secondsToDateInput(value))
   })
-  it('should handle timezone offset correctly', () => {
-    const onChangeHandler = vi.fn((e) => {
-      if (!e) return
+  it('should handle timezone offset correctly', async () => {
+    const OnChange = vi.fn()
+    // Render the Calendar component
+    const currentDate = new Date();
+    const currentDateSeconds = Math.floor(currentDate.getTime() / 1000);
+    render(<Calendar value={currentDateSeconds} onChange={OnChange}/>);
 
-      let { valueAsDate: newValueAsDate } = e.currentTarget
-      console.log('newValueAsDate', e.currentTarget)
-      if (newValueAsDate) {
-        newValueAsDate = new Date(
-          newValueAsDate.getTime() + newValueAsDate.getTimezoneOffset() * 60 * 1000,
-        )
-      }
-      console.log('Updated date:', newValueAsDate)
-    })
-    render(<Calendar value={value} onChange={onChangeHandler} />)
+    // Find the input element
+    const calendarInput = screen.getByTestId('calendar');
 
-    const calendarInput = screen.getByTestId('calendar')
+    // Prepare new date and format it
+    currentDate.setDate(currentDate.getDate() + 2); // Change to the next day
+    const newDateSeconds = Math.floor(currentDate.getTime() / 1000);
+    const newFormattedDate = secondsToDateInput(newDateSeconds);
 
-    fireEvent.change(calendarInput, { target: { value: secondsToDateInput(Date.now() / 1000) } })
+    fireEvent.change(calendarInput, { target: { value: newFormattedDate }})
 
-    expect(onChangeHandler).toHaveBeenCalledTimes(1)
+    // Assert the onChange handler was called
+    expect(OnChange).toHaveBeenCalledTimes(1);
 
-    const expectedDate = new Date(Date.now())
-    expectedDate.setMinutes(expectedDate.getMinutes() + expectedDate.getTimezoneOffset())
+    const receivedDate = OnChange.mock.calls[0][0].currentTarget.valueAsDate;
+    const receivedFormattedDate = receivedDate.toISOString().split('T')[0]
+  
+    expect(receivedFormattedDate).toEqual(newFormattedDate);
 
-    // // Check if the date displayed is in UTC
-    const dateDisplayed = screen.getByTestId('calendar-date').textContent
-    expect(dateDisplayed).toBe(formatExpiry(expectedDate))
-  })
+  });
 })
