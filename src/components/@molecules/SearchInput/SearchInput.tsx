@@ -39,7 +39,7 @@ import { UseWrapperDataQueryKey } from '@app/hooks/ensjs/public/useWrapperData'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { useValidate, validate } from '@app/hooks/useValidate'
+import { useValidateV2, validate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
 import { CreateQueryKey, GenericQueryKey } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -595,9 +595,9 @@ const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
 
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
 
-  const { isValid, isETH, name } = useValidate({
+  const { isValid, isETH, name } = useValidateV2({
     input: inputVal,
-    enabled: !inputIsAddress && !inputVal,
+    enabled: !inputIsAddress && !!inputVal,
   })
 
   return useMemo(
@@ -655,7 +655,6 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
   const dropdownItems = useBuildDropdownItems(inputVal, history)
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSearch = useCallback(
     createSearchHandler({

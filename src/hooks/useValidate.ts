@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react'
+
 import { ParsedInputResult, parseInput } from '@ensdomains/ensjs/utils'
 
 import { Prettify } from '@app/types'
@@ -81,9 +83,48 @@ export const useValidate = ({ input, enabled = true }: UseValidateParameters): V
     staleTime: 10 * 1000,
     select: (d) =>
       Object.fromEntries(
-        Object.entries(d).map(([k, v]) => [k, String(v)] as never),
+        Object.entries(d).map(([k, v]) => [k, v === 'undefined' ? '' : v]),
       ) as ValidationResult,
   })
 
   return data || (error ? defaultData : tryValidate(input))
+}
+
+const cache = (fn: Function) => {
+  const map = new Map()
+
+  return (...args: any[]) => {
+    const key = JSON.stringify(args)
+
+    if (!map.has(args)) {
+      map.set(key, fn(...args))
+      return map.get(key)
+    }
+
+    return map.get(key)
+  }
+}
+
+export const useValidateV2 = ({
+  input,
+  enabled = true,
+}: UseValidateParameters): ValidationResult => {
+  const cachedValidate = useRef(cache(validate))
+  const [data, setData] = useState<ValidationResult>(defaultData)
+
+  useEffect(() => {
+    setData(
+      (() => {
+        try {
+          if (!enabled) return defaultData
+
+          return cachedValidate.current(input)
+        } catch {
+          return tryValidate(input)
+        }
+      })(),
+    )
+  }, [])
+
+  return data
 }
