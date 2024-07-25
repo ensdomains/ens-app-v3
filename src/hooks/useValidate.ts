@@ -81,7 +81,7 @@ export const useValidate = ({ input, enabled = true }: UseValidateParameters): V
     staleTime: 10 * 1000,
     select: (d) =>
       Object.fromEntries(
-        Object.entries(d).map(([k, v]) => [k, v === 'undefined' ? '' : v]),
+        Object.entries(d).map(([k, v]) => [k, String(v)] as never),
       ) as ValidationResult,
   })
 
