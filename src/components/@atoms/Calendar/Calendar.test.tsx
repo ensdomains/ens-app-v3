@@ -1,11 +1,14 @@
-import { render, screen } from '@app/test-utils'
+import { fireEvent, render, screen } from '@app/test-utils'
 
-import { describe, expect, it } from 'vitest'
+import { fireEvent } from '@testing-library/react'
+import { InputHTMLAttributes, useState } from 'react'
+import { describe, expect, it, vi } from 'vitest'
 
 import { secondsToDate, secondsToDateInput } from '@app/utils/date'
 import { formatExpiry } from '@app/utils/utils'
 
 import { Calendar } from './Calendar'
+
 
 const value = 3600
 const min = 0
@@ -28,4 +31,30 @@ describe('Calendar', () => {
 
     expect(screen.getByTestId('calendar')).toHaveValue(secondsToDateInput(value))
   })
+  it('should handle timezone offset correctly', async () => {
+    const OnChange = vi.fn()
+    // Render the Calendar component
+    const currentDate = new Date();
+    const currentDateSeconds = Math.floor(currentDate.getTime() / 1000);
+    render(<Calendar value={currentDateSeconds} onChange={OnChange}/>);
+
+    // Find the input element
+    const calendarInput = screen.getByTestId('calendar');
+
+    // Prepare new date and format it
+    currentDate.setDate(currentDate.getDate() + 2); // Change to the next day
+    const newDateSeconds = Math.floor(currentDate.getTime() / 1000);
+    const newFormattedDate = secondsToDateInput(newDateSeconds);
+
+    fireEvent.change(calendarInput, { target: { value: newFormattedDate }})
+
+    // Assert the onChange handler was called
+    expect(OnChange).toHaveBeenCalledTimes(1);
+
+    const receivedDate = OnChange.mock.calls[0][0].currentTarget.valueAsDate;
+    const receivedFormattedDate = receivedDate.toISOString().split('T')[0]
+  
+    expect(receivedFormattedDate).toEqual(newFormattedDate);
+
+  });
 })
