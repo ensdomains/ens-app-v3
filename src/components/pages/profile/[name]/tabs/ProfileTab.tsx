@@ -28,6 +28,11 @@ const DetailsWrapper = styled.div(
   `,
 )
 
+const OutlinkWithMargin = styled(Outlink)`
+  margin-left: auto;
+  padding-right: 0;
+`
+
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   name: string
