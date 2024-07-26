@@ -302,6 +302,7 @@
         "hex": "hex",
         "decimal": "decimal",
         "wrapper": "wrapper",
+        "nameWrapper": "Name Wrapper",
         "wrapName": "Wrap Name",
         "unwrap": "Unwrap",
         "status": {
