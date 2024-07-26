@@ -6,8 +6,10 @@ import { useAccount, useChainId } from 'wagmi'
 
 import { Dialog } from '@ensdomains/thorin'
 
+import { useEthPrice } from '@app/hooks/useEthPrice'
 import { transactions } from '@app/transaction-flow/transaction'
 import { queryClientWithRefetch } from '@app/utils/query/reactQuery'
+import useUserConfig from '@app/utils/useUserConfig'
 
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
@@ -59,6 +61,9 @@ export const TransactionDialogManager = ({
     dispatch({ name: 'stopFlow' })
   }, [dispatch])
 
+  const { data: ethPrice } = useEthPrice()
+  const { userConfig } = useUserConfig()
+
   const InnerComponent = useMemo(() => {
     if (selectedKey && selectedItem) {
       if (selectedItem.input && selectedItem.currentFlowStage === 'input') {
@@ -106,7 +111,13 @@ export const TransactionDialogManager = ({
       return (
         <TransactionStageModal
           actionName={transactionItem.name}
-          displayItems={transaction.displayItems(transactionItem.data as any, t)}
+          displayItems={transaction.displayItems(
+            {
+              ...(transactionItem.data as any),
+              ethPrice: userConfig.currency === 'fiat' && ethPrice,
+            },
+            t,
+          )}
           helper={
             'helper' in transaction && typeof transaction.helper === 'function'
               ? transaction.helper(transactionItem.data as any, t)

@@ -12,36 +12,41 @@ type Data = {
   names: string[]
   duration: number
   rentPrice: bigint
+  ethPrice?: bigint
 }
 
 const displayItems = (
-  { names, rentPrice, duration }: Data,
+  { names, rentPrice, duration, ethPrice }: Data,
   t: TFunction<'translation', undefined>,
-): TransactionDisplayItem[] => [
-  {
-    label: 'name',
-    value: names.length > 1 ? `${names.length} names` : names[0],
-    type: names.length > 1 ? undefined : 'name',
-  },
-  {
-    label: 'action',
-    value: t('transaction.extendNames.actionValue', { ns: 'transactionFlow' }),
-  },
-  {
-    label: 'duration',
-    value: formatDuration(duration, t),
-  },
-  {
-    label: 'cost',
-    value: t('transaction.extendNames.costValue', {
-      ns: 'transactionFlow',
-      value: makeDisplay({
-        value: calculateValueWithBuffer(rentPrice),
-        symbol: 'eth',
+): TransactionDisplayItem[] => {
+  return [
+    {
+      label: 'name',
+      value: names.length > 1 ? `${names.length} names` : names[0],
+      type: names.length > 1 ? undefined : 'name',
+    },
+    {
+      label: 'action',
+      value: t('transaction.extendNames.actionValue', { ns: 'transactionFlow' }),
+    },
+    {
+      label: 'duration',
+      value: formatDuration(duration, t),
+    },
+    {
+      label: 'cost',
+      value: t('transaction.extendNames.costValue', {
+        ns: 'transactionFlow',
+        value: makeDisplay({
+          value: calculateValueWithBuffer(
+            ethPrice ? (rentPrice * ethPrice) / BigInt(1e8) : rentPrice,
+          ),
+          symbol: ethPrice ? 'usd' : 'eth',
+        }),
       }),
-    }),
-  },
-]
+    },
+  ]
+}
 
 const transaction = async ({
   client,
