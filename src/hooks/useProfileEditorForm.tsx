@@ -147,6 +147,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     append: addRecord,
     remove: removeRecordAtIndex,
     append: appendRecord,
+    update: updateRecordAtIndex,
   } = useFieldArray({
     control,
     name: 'records',
@@ -219,6 +220,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     getRecords,
     updateRecord,
     removeRecordAtIndex,
+    updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
     getAvatar,

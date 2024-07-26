@@ -131,6 +131,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     addRecords,
     updateRecord,
     removeRecordAtIndex,
+    updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
     labelForRecord,
@@ -144,6 +145,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   // Update profile records if transaction data exists
   const [isRecordsUpdated, setIsRecordsUpdated] = useState(false)
+  console.log(transactions)
   useEffect(() => {
     const updateProfileRecordsWithTransactionData = () => {
       const transaction = transactions.find(
@@ -275,7 +277,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     validator={validatorForRecord(field)}
                     validated={isDirtyForRecordAtIndex(index)}
                     error={errorForRecordAtIndex(index, 'key')}
-                    onDelete={() => handleDeleteRecord(field, index)}
+                    onDelete={() => updateRecordAtIndex(index, { ...field, value: '' })}
+                    // onDelete={() => handleDeleteRecord(field, index)}
                   />
                 ) : field.key === 'description' ? (
                   <ProfileRecordTextarea
@@ -286,7 +289,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     placeholder={placeholderForRecord(field)}
                     error={errorForRecordAtIndex(index)}
                     validated={isDirtyForRecordAtIndex(index)}
-                    onDelete={() => handleDeleteRecord(field, index)}
+                    onDelete={() => updateRecordAtIndex(index, { ...field, value: '' })}
                     {...register(`records.${index}.value`, {
                       validate: validatorForRecord(field),
                     })}
@@ -301,7 +304,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     placeholder={placeholderForRecord(field)}
                     error={errorForRecordAtIndex(index)}
                     validated={isDirtyForRecordAtIndex(index)}
-                    onDelete={() => handleDeleteRecord(field, index)}
+                    onDelete={() => updateRecordAtIndex(index, { ...field, value: '' })}
                     {...register(`records.${index}.value`, {
                       validate: validatorForRecord(field),
                     })}
