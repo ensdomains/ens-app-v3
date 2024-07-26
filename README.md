@@ -252,11 +252,195 @@ Once exited, you can commit the data to your branch. You do not need to run a se
 
 ### E2E Testing
 
-**Note: You don't need to run the test environment command. It is all handled in the e2e script.**
+#### Stateless vs Stateful
+
+Our e2e tests are split into two categories, stateless and stateful. Stateless test use the development environment, are faster, and is the general recommended way to write integration tests. Occasionally, you may need to test a feature that requires an external api or service. In this case, you can use the stateful tests. These tests are slower, 
+
+#### Running the tests
+
+Running the entire stateless test suite:
 
 ```bash
+pnpm denv
+pnpm dev:glocal
 pnpm e2e
 ```
+
+Running a single test within a browser:
+
+```bash
+pnpm denv
+pnpm dev:glocal
+pnpm e2e < filename >:< linenumber > --headed
+```
+
+Running the entire stateful test suite:
+
+```bash
+pnpm dev
+pnpm e2e:stateful
+```
+
+Running a single stateful test within a browser:
+
+```bash
+pnpm dev
+pnpm e2e:stateful < filename >:< linenumber > --headed
+```
+
+#### makeName
+
+The most important function in the e2e stateless tests is `makeName`. This function is used to create a unique name for each test. This is important because we want to avoid any conflicts between tests.
+
+##### Syntax
+
+```typescript
+  const name = await makeName({
+    label: 'name',
+    type: 'legacy',
+    owner: '0x1234567890123456789012345678901234567890',
+    manager: '0x1234567890123456789012345678901234567890',
+    resolver: '0x1234567890123456789012345678901234567890',
+    records: {
+      texts: [{
+        key: 'text',
+        value: 'value'
+      }],
+      coins: [{
+        coin: 'eth',
+        value: '0x1234567890123456789012345678901234567890'
+      }],
+      contentHash: 'bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
+      abi: await encodeAbi({ encodeAs: 'cbor', data: { test2: 'test2' } }),
+    }
+    subnames: [{
+      label: 'subname',
+      type: 'wrapped',
+      owner: '0x1234567890123456789012345678901234567890',
+      duration: 365,
+      resolver: '0x1234567890123456789012345678901234567890',
+      records: [{
+        key: 'text',
+        value: 'value'
+      }]
+    }]
+  })
+```
+
+##### Parameters
+
+###### nameOrNames
+
+A single or an array of names to create. Each name can have the following properties:
+
+**label**: *string*
+
+The label of the name.
+
+**type**: legacy | legacy-register | wrapped*
+
+The type of the name. *legacy* names adopt the original data structure of ENS and are not ERC1155 complaint. *wrapped* names are names that have been wrapped with the *NameWrapper* contract and are ERC1155 compliant. *legacy-register* names simulate how mass registration services register names, usually without a resolver of other options that may increase gas.
+
+**owner**: *user | user2 | user3*
+
+*defaults to owner*
+
+The address of the owner of the name.
+
+**manager**: *user | user2 | user3*
+
+*defaults to value of owner*
+
+The address of the manager of the name. Only applicable to *legacy* and *legacy-registr* names. 
+
+**duration**: *number*
+
+*defaults to 365 days in seconds*
+
+The number of seconds the name will be registered for. Negative values are allowed to simulate names that have expired or are in the grace period.
+
+**secret**: *hex*
+
+*defaults to a zero hex*
+
+The secret used during the register process. You will most likely not need to set this value.
+
+**resolver**: *address*
+
+*defaults to the legacy resolver for legacy names and the latest resolver for wrapped names*
+
+The address of the resolver for the name. Used to test cases where the resolver is misconfgured or not set.
+
+**addr**: *address*
+
+*defaults to the address of the owner*
+
+The address record for the name. Is used to test cases where the eth address is not set.
+
+**records**: *RecordOptions*
+
+The records for the name. Below is a type definition for the records object.
+
+```typescript
+type RecordOptions = {
+  texts: {
+    key: string,
+    value: string
+  }[]
+  coins: {
+    coin: string | number,
+    value: string
+  }[]
+  contentHash: string
+  abi: AbiObject
+}
+```
+
+**fuses**: *FusesType*
+
+*applicable to wrapped names only*
+
+The fuses to burn for a wrapped name. Below is a type definition for the fuses object. Note that *PARENT_CANNOT_CONTROL* is not fuse option as it is burned by default when a 2LD name is wrapped.
+
+```typescript
+type FusesType = {
+  named: Array<"CANNOT_UNWRAP" | "CANNOT_BURN_FUSES" | "CANNOT_TRANSFER" | "CANNOT_SET_RESOLVER" | "CANNOT_SET_TTL" | "CANNOT_CREATE_SUBDOMAIN" | "CANNOT_APPROVE">
+}
+```
+
+**subnames**: *SubnameType[]*
+
+The subnames for the name. Below is a type definition for the subname object.
+
+```typescript
+type SubnameType = {
+  label: string
+  type: 'legacy' | 'wrapped'
+  resolver: string
+  records: RecordOptions
+  duration: number
+  subnames: SubnameType[]
+  fuses: FusesType // Only applicable to wrapped names
+}
+```
+
+###### options
+
+**timeOffset**: *number*
+
+*defaults to 0*
+
+The duration in seconds to move the blockchain forward after the name has been registered. In rare use cases, usually when you are testing a name with a negative duration, the blockchain may need to be moved forward after all the transactions before it will resolve correctly.
+
+**syncSubgraph**: *boolean*
+
+*defaults to true*
+
+Whether to wait for the subgraph to sync before returning the name. It is useful to set this value to false when you are testing a feature that does not rely on the subgraph to speed up the tests.
+
+##### Returns
+
+Returns a string for the 2LD name that is made up of the label with a timestamp appended to it and .eth TLD. The appended timestamp ensures that each time that a name is generated that it is unique.
 
 ### Building and Starting
 
