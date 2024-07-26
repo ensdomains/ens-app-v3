@@ -90,6 +90,21 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         button={snippetButton}
         isPrimary={name === primaryData?.name}
       >
+        {isOffchainImport && (
+          <Helper alignment="horizontal">
+            <Trans
+              i18nKey="tabs.profile.warnings.offchain"
+              ns="profile"
+              components={{
+                a: (
+                  <OutlinkWithMargin href={getSupportLink('offchain-not-in-names')}>
+                    {t('action.learnMore', { ns: 'common' })}
+                  </OutlinkWithMargin>
+                ),
+              }}
+            />
+          </Helper>
+        )}
         {nameDetails.isNonASCII && (
           <Helper type="warning" alignment="horizontal">
             <Trans
