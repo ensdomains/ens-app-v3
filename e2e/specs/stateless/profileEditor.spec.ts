@@ -914,3 +914,71 @@ test.describe('subgraph errors', () => {
     await page.getByTestId('subgraph-network-error').uncheck()
   })
 })
+
+test('Should show edit profile button if user is manager', async ({
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'unwrapped',
+    type: 'legacy',
+    owner: 'user',
+    manager: 'user',
+  })
+
+  const profilePage = makePageObject('ProfilePage')
+
+  await profilePage.goto(name)
+  await login.connect()
+
+  await expect(profilePage.editProfileButton).toBeVisible()
+})
+
+test('Should show disabled edit profile button if user is owner but not manager', async ({
+  page,
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'unwrapped',
+    type: 'legacy',
+    owner: 'user',
+    manager: 'user2',
+  })
+
+  const profilePage = makePageObject('ProfilePage')
+
+  await profilePage.goto(name)
+  await login.connect()
+
+  await expect(page.getByTestId('disabled-profile-action-Edit profile')).toBeVisible()
+})
+
+// test('Should show disabled edit profile button if name is wrapped but use for edit resolver is burned and resolver is unauthorised', async ({
+//   page,
+//   login,
+//   makeName,
+//   makePageObject,
+// }) => {
+//   const name = await makeName({
+//     label: 'wrapped',
+//     type: 'wrapped',
+//     owner: 'user',
+//     fuses: {
+//       named: ['CANNOT_UNWRAP', 'CANNOT_SET_RESOLVER'],
+//     },
+//   })
+
+//   console.log('name', name)
+
+//   const profilePage = makePageObject('ProfilePage')
+
+//   await profilePage.goto(name)
+//   await login.connect()
+
+//   await page.pause()
+
+//   await expect(page.getByTestId('disabled-profile-action-Edit profile')).toBeVisible()
+// })
