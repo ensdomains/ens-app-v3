@@ -9,6 +9,7 @@ import { Outlink } from '@app/components/Outlink'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useIsOffchainName } from '@app/hooks/ensjs/dns/useIsOffchainName'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useOwners } from '@app/hooks/useOwners'
@@ -63,6 +64,11 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
 
   const profileActions = useProfileActions({
     name,
+  })
+
+  const isOffchainImport = useIsOffchainName({
+    name,
+    enabled: nameDetails.registrationStatus === 'imported',
   })
 
   const isExpired = useMemo(
