@@ -66,24 +66,13 @@ const tryValidate = (input: string) => {
   }
 }
 
-export const useValidate = ({ input, enabled = true }: UseValidateParameters): ValidationResult => {
-  const { queryKey } = useQueryOptions({
-    params: { input },
-    functionName: 'validate',
-    queryDependencyType: 'independent',
-    keyOnly: true,
-  })
+const map = new Map()
 
-  const { data, error } = useQuery({
-    queryKey,
-    queryFn: ({ queryKey: [params] }) => validate(params.input),
-    enabled,
-    staleTime: 10 * 1000,
-    select: (d) =>
-      Object.fromEntries(
-        Object.entries(d).map(([k, v]) => [k, v === 'undefined' ? '' : v]),
-      ) as ValidationResult,
-  })
+export const useValidate = ({ input }: UseValidateParameters): ValidationResult => {
+  const mapValue = map.get(input)
+  if (mapValue) return mapValue
 
-  return data || (error ? defaultData : tryValidate(input))
+  const value = tryValidate(input)
+  map.set(input, value)
+  return value
 }
