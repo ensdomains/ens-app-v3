@@ -924,7 +924,7 @@ test('Should show edit profile button if user is manager', async ({
     label: 'unwrapped',
     type: 'legacy',
     owner: 'user',
-    manager: 'user',
+    manager: 'user2',
   })
 
   const profilePage = makePageObject('ProfilePage')
@@ -966,12 +966,11 @@ test('Should show disabled edit profile button if user is owner but not manager'
 //     label: 'wrapped',
 //     type: 'wrapped',
 //     owner: 'user',
+//     resolver: ownedResolverAddress as Address,
 //     fuses: {
 //       named: ['CANNOT_UNWRAP', 'CANNOT_SET_RESOLVER'],
 //     },
 //   })
-
-//   console.log('name', name)
 
 //   const profilePage = makePageObject('ProfilePage')
 
