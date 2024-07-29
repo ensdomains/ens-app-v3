@@ -2,9 +2,6 @@ import { ParsedInputResult, parseInput } from '@ensdomains/ensjs/utils'
 
 import { Prettify } from '@app/types'
 import { tryBeautify } from '@app/utils/beautify'
-import { useQuery } from '@app/utils/query/useQuery'
-
-import { useQueryOptions } from './useQueryOptions'
 
 export type ValidationResult = Prettify<
   Partial<Omit<ParsedInputResult, 'normalised' | 'labelDataArray'>> & {
