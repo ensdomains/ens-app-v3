@@ -1,8 +1,9 @@
 /* eslint-disable no-nested-ternary */
-import { BaseSyntheticEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react'
 import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
 import { Button, Dialog, mq, PlusSVG, Typography } from '@ensdomains/thorin'
@@ -192,72 +193,6 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
     })
   }
 
-  const modalContent = useMemo(() => {
-    switch (modalOption) {
-      case 'upload':
-      case 'nft':
-        return (
-          <AvatarViewManager
-            name={name}
-            avatarFile={avatarFile}
-            handleCancel={() => setModalOpen(false)}
-            type={modalOption}
-            handleSubmit={(type: 'nft' | 'upload', uri: string, display?: string) => {
-              setAvatar(uri)
-              setAvatarSrc(display)
-              setModalOpen(false)
-              trigger()
-            }}
-          />
-        )
-      case 'add-record': {
-        return (
-          <AddProfileRecordView
-            control={control}
-            showDismiss
-            onAdd={(newRecords) => {
-              addRecords(newRecords)
-              setModalOpen(false)
-            }}
-          />
-        )
-      }
-      case 'public-notice': {
-        return (
-          <ConfirmationDialogView
-            title={t('steps.profile.confirmations.publicNotice.title')}
-            description={t('steps.profile.confirmations.publicNotice.description')}
-            confirmLabel={t('steps.profile.confirmations.publicNotice.confirm')}
-            declineLabel={t('steps.profile.confirmations.publicNotice.decline')}
-            onConfirm={() => {
-              setHasConfirmedPublicNotice(true)
-              setModalOption('add-record')
-            }}
-            onDecline={() => setModalOpen(false)}
-          />
-        )
-      }
-      case 'clear-eth': {
-        return (
-          <ConfirmationDialogView
-            title={t('steps.profile.confirmations.clearEth.title')}
-            description={t('steps.profile.confirmations.clearEth.description')}
-            confirmLabel={t('steps.profile.confirmations.clearEth.confirm')}
-            declineLabel={t('steps.profile.confirmations.clearEth.decline')}
-            onConfirm={() => {
-              removeRecordByTypeAndKey('address', 'eth')
-              setModalOpen(false)
-            }}
-            onDecline={() => setModalOpen(false)}
-          />
-        )
-      }
-
-      // no default
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, avatarFile, modalOption])
-
   return (
     <>
       <Dialog
@@ -266,7 +201,58 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
         variant="blank"
         open={modalOpen}
       >
-        {modalContent}
+        {match(modalOption)
+          .with('upload', 'nft', (_modalOption) => (
+            <AvatarViewManager
+              name={name}
+              avatarFile={avatarFile}
+              handleCancel={() => setModalOpen(false)}
+              type={_modalOption}
+              handleSubmit={(type: 'nft' | 'upload', uri: string, display?: string) => {
+                setAvatar(uri)
+                setAvatarSrc(display)
+                setModalOpen(false)
+                trigger()
+              }}
+            />
+          ))
+          .with('add-record', () => (
+            <AddProfileRecordView
+              control={control}
+              showDismiss
+              onAdd={(newRecords) => {
+                addRecords(newRecords)
+                setModalOpen(false)
+              }}
+            />
+          ))
+          .with('public-notice', () => (
+            <ConfirmationDialogView
+              title={t('steps.profile.confirmations.publicNotice.title')}
+              description={t('steps.profile.confirmations.publicNotice.description')}
+              confirmLabel={t('steps.profile.confirmations.publicNotice.confirm')}
+              declineLabel={t('steps.profile.confirmations.publicNotice.decline')}
+              onConfirm={() => {
+                setHasConfirmedPublicNotice(true)
+                setModalOption('add-record')
+              }}
+              onDecline={() => setModalOpen(false)}
+            />
+          ))
+          .with('clear-eth', () => (
+            <ConfirmationDialogView
+              title={t('steps.profile.confirmations.clearEth.title')}
+              description={t('steps.profile.confirmations.clearEth.description')}
+              confirmLabel={t('steps.profile.confirmations.clearEth.confirm')}
+              declineLabel={t('steps.profile.confirmations.clearEth.decline')}
+              onConfirm={() => {
+                removeRecordByTypeAndKey('address', 'eth')
+                setModalOpen(false)
+              }}
+              onDecline={() => setModalOpen(false)}
+            />
+          ))
+          .otherwise(() => null)}
       </Dialog>
       <StyledCard onSubmit={handleSubmit(onSubmit)}>
         <CenterAlignedTypography fontVariant="headingTwo">
@@ -283,48 +269,51 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
           setIsOpen={setIsAvatarDropdownOpen}
         />
         {records.map((field, index) =>
-          field.group === 'custom' ? (
-            <CustomProfileRecordInput
-              key={field.id}
-              register={register}
-              trigger={trigger}
-              index={index}
-              validator={validatorForRecord(field)}
-              validated={isDirtyForRecordAtIndex(index)}
-              error={errorForRecordAtIndex(index, 'key')}
-              onDelete={() => handleDeleteRecord(field, index)}
-            />
-          ) : field.key === 'description' ? (
-            <ProfileRecordTextarea
-              key={field.id}
-              recordKey={field.key}
-              label={labelForRecord(field)}
-              secondaryLabel={secondaryLabelForRecord(field)}
-              placeholder={placeholderForRecord(field)}
-              error={errorForRecordAtIndex(index)}
-              validated={isDirtyForRecordAtIndex(index)}
-              onDelete={() => handleDeleteRecord(field, index)}
-              {...register(`records.${index}.value`, {
-                validate: validatorForRecord(field),
-              })}
-            />
-          ) : (
-            <ProfileRecordInput
-              key={field.id}
-              recordKey={field.key}
-              group={field.group}
-              disabled={field.key === 'eth' && registrationData.reverseRecord}
-              label={labelForRecord(field)}
-              secondaryLabel={secondaryLabelForRecord(field)}
-              placeholder={placeholderForRecord(field)}
-              error={errorForRecordAtIndex(index)}
-              validated={isDirtyForRecordAtIndex(index)}
-              onDelete={() => handleDeleteRecord(field, index)}
-              {...register(`records.${index}.value`, {
-                validate: validatorForRecord(field),
-              })}
-            />
-          ),
+          match(field)
+            .with({ group: 'custom' }, () => (
+              <CustomProfileRecordInput
+                key={field.id}
+                register={register}
+                trigger={trigger}
+                index={index}
+                validator={validatorForRecord(field)}
+                validated={isDirtyForRecordAtIndex(index)}
+                error={errorForRecordAtIndex(index, 'key')}
+                onDelete={() => handleDeleteRecord(field, index)}
+              />
+            ))
+            .with({ key: 'description' }, () => (
+              <ProfileRecordTextarea
+                key={field.id}
+                recordKey={field.key}
+                label={labelForRecord(field)}
+                secondaryLabel={secondaryLabelForRecord(field)}
+                placeholder={placeholderForRecord(field)}
+                error={errorForRecordAtIndex(index)}
+                validated={isDirtyForRecordAtIndex(index)}
+                onDelete={() => handleDeleteRecord(field, index)}
+                {...register(`records.${index}.value`, {
+                  validate: validatorForRecord(field),
+                })}
+              />
+            ))
+            .otherwise(() => (
+              <ProfileRecordInput
+                key={field.id}
+                recordKey={field.key}
+                group={field.group}
+                disabled={field.key === 'eth' && registrationData.reverseRecord}
+                label={labelForRecord(field)}
+                secondaryLabel={secondaryLabelForRecord(field)}
+                placeholder={placeholderForRecord(field)}
+                error={errorForRecordAtIndex(index)}
+                validated={isDirtyForRecordAtIndex(index)}
+                onDelete={() => handleDeleteRecord(field, index)}
+                {...register(`records.${index}.value`, {
+                  validate: validatorForRecord(field),
+                })}
+              />
+            )),
         )}
         <ButtonWrapper>
           <Button
