@@ -2,6 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { Dispatch, useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import usePrevious from 'react-use/lib/usePrevious'
+import { match, P } from 'ts-pattern'
 import { useAccount, useChainId } from 'wagmi'
 
 import { Dialog } from '@ensdomains/thorin'
@@ -59,71 +60,6 @@ export const TransactionDialogManager = ({
     dispatch({ name: 'stopFlow' })
   }, [dispatch])
 
-  const InnerComponent = useMemo(() => {
-    if (selectedKey && selectedItem) {
-      if (selectedItem.input && selectedItem.currentFlowStage === 'input') {
-        const Component = DataInputComponents[selectedItem.input.name]
-        return (
-          <QueryClientProvider client={queryClientWithRefetch}>
-            <Component
-              {...{
-                data: selectedItem.input.data,
-                transactions: selectedItem.transactions,
-                dispatch,
-                onDismiss,
-              }}
-            />
-          </QueryClientProvider>
-        )
-      }
-      if (selectedItem.intro && selectedItem.currentFlowStage === 'intro') {
-        const currentTx = selectedItem.transactions[selectedItem.currentTransaction]
-        const currentStep =
-          currentTx.stage === 'complete'
-            ? selectedItem.currentTransaction + 1
-            : selectedItem.currentTransaction
-
-        const stepStatus =
-          currentTx.stage === 'sent' || currentTx.stage === 'failed' ? 'inProgress' : 'notStarted'
-
-        return (
-          <IntroStageModal
-            stepStatus={stepStatus}
-            currentStep={currentStep}
-            onSuccess={() => dispatch({ name: 'setFlowStage', payload: 'transaction' })}
-            {...{
-              ...selectedItem.intro,
-              onDismiss,
-              transactions: selectedItem.transactions,
-            }}
-          />
-        )
-      }
-
-      const transactionItem = selectedItem.transactions[selectedItem.currentTransaction]
-      const transaction = transactions[transactionItem.name]
-
-      return (
-        <TransactionStageModal
-          actionName={transactionItem.name}
-          displayItems={transaction.displayItems(transactionItem.data as any, t)}
-          helper={
-            'helper' in transaction && typeof transaction.helper === 'function'
-              ? transaction.helper(transactionItem.data as any, t)
-              : undefined
-          }
-          currentStep={selectedItem.currentTransaction}
-          stepCount={selectedItem.transactions.length}
-          transaction={transactionItem}
-          txKey={selectedKey}
-          backToInput={'backToInput' in transaction ? !!transaction.backToInput : false}
-          {...{ dispatch, onDismiss }}
-        />
-      )
-    }
-    return null
-  }, [selectedKey, selectedItem, onDismiss, dispatch, t])
-
   const onDismissDialog = useCallback(() => {
     if (selectedItem?.disableBackgroundClick && selectedItem?.currentFlowStage === 'input') return
     dispatch({
@@ -138,7 +74,78 @@ export const TransactionDialogManager = ({
       onDismiss={onDismissDialog}
       onClose={onDismiss}
     >
-      {InnerComponent}
+      {match([selectedKey, selectedItem])
+        .with(
+          [P.not(P.nullish), { input: P.not(P.nullish), currentFlowStage: 'input' }],
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          ([_, _selectedItem]) => {
+            const Component = DataInputComponents[_selectedItem.input.name]
+            return (
+              <QueryClientProvider client={queryClientWithRefetch}>
+                <Component
+                  {...{
+                    data: _selectedItem.input.data,
+                    transactions: _selectedItem.transactions,
+                    dispatch,
+                    onDismiss,
+                  }}
+                />
+              </QueryClientProvider>
+            )
+          },
+        )
+        .with(
+          [P.not(P.nullish), { intro: P.not(P.nullish), currentFlowStage: 'intro' }],
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          ([_, _selectedItem]) => {
+            const currentTx = _selectedItem.transactions[_selectedItem.currentTransaction]
+            const currentStep =
+              currentTx.stage === 'complete'
+                ? _selectedItem.currentTransaction + 1
+                : _selectedItem.currentTransaction
+
+            const stepStatus =
+              currentTx.stage === 'sent' || currentTx.stage === 'failed'
+                ? 'inProgress'
+                : 'notStarted'
+
+            return (
+              <IntroStageModal
+                stepStatus={stepStatus}
+                currentStep={currentStep}
+                onSuccess={() => dispatch({ name: 'setFlowStage', payload: 'transaction' })}
+                {...{
+                  ..._selectedItem.intro,
+                  onDismiss,
+                  transactions: _selectedItem.transactions,
+                }}
+              />
+            )
+          },
+        )
+        .otherwise(([_selectedKey, _selectedItem]) => {
+          if (!_selectedKey || !_selectedItem) return null
+          const transactionItem = _selectedItem.transactions[_selectedItem.currentTransaction]
+          const transaction = transactions[transactionItem.name]
+
+          return (
+            <TransactionStageModal
+              actionName={transactionItem.name}
+              displayItems={transaction.displayItems(transactionItem.data as any, t)}
+              helper={
+                'helper' in transaction && typeof transaction.helper === 'function'
+                  ? transaction.helper(transactionItem.data as any, t)
+                  : undefined
+              }
+              currentStep={_selectedItem.currentTransaction}
+              stepCount={_selectedItem.transactions.length}
+              transaction={transactionItem}
+              txKey={selectedKey}
+              backToInput={'backToInput' in transaction ? !!transaction.backToInput : false}
+              {...{ dispatch, onDismiss }}
+            />
+          )
+        })}
     </Dialog>
   )
 }
