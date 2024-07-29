@@ -1,6 +1,6 @@
 import { AppPropsType, AppType } from 'next/dist/shared/lib/utils'
 import Document, { DocumentContext, Head, Html, Main, NextScript } from 'next/document'
-import { ServerStyleSheet } from 'styled-components'
+import { ServerStyleSheet, StyleSheetManager } from 'styled-components'
 
 const ipfsPathScript = `
   (function () {
@@ -48,8 +48,11 @@ export default class MyDocument extends Document {
     try {
       ctx.renderPage = () =>
         originalRenderPage({
-          enhanceApp: (App: AppType) => (props: AppPropsType) =>
-            sheet.collectStyles(<App {...props} />),
+          enhanceApp: (App: AppType) => (props: AppPropsType) => (
+            <StyleSheetManager sheet={sheet.instance} disableVendorPrefixes>
+              <App {...props} />
+            </StyleSheetManager>
+          ),
         })
 
       const initialProps = await Document.getInitialProps(ctx)
