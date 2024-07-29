@@ -109,7 +109,6 @@ export default class MyDocument extends Document {
             sizes="16x16"
             href={makeIPFSURL('/favicon-16x16.png')}
           />
-          <link rel="mask-icon" href={makeIPFSURL('/safari-pinned-tab.svg')} color="#000000" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#F7F7F7" />
 
