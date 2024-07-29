@@ -130,7 +130,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     handleSubmit,
     addRecords,
     updateRecord,
-    removeRecordAtIndex,
     updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
@@ -224,10 +223,10 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     }
   }, [isProfileLoading, profile?.isMigrated])
 
-  const handleDeleteRecord = (record: ProfileRecord, index: number) => {
-    removeRecordAtIndex(index)
-    process.nextTick(() => trigger())
-  }
+  // const handleDeleteRecord = (record: ProfileRecord, index: number) => {
+  //   removeRecordAtIndex(index)
+  //   process.nextTick(() => trigger())
+  // }
 
   const handleShowAddRecordModal = () => {
     setView('addRecord')
