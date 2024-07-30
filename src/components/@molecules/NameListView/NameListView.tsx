@@ -76,10 +76,11 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
   const handleClickName = (name: Name) => () => {
     const isExists = selectedNames.find((n) => n.id === name.id)
 
-    setSelectedNames(
-      isExists ? selectedNames.filter((n) => n.id !== name.id) : [...selectedNames, name],
-    )
-    setMode('select')
+    const names = isExists
+      ? selectedNames.filter((n) => n.id !== name.id)
+      : [...selectedNames, name]
+    setSelectedNames(names)
+    setMode(names.length ? 'select' : 'view')
   }
 
   const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
@@ -186,7 +187,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
             <TaggedNameItem
               key={name.id}
               {...name}
-              mode={'select'}
+              mode="select"
               selected={!!selectedNames?.find((selectedName) => selectedName.name === name.name!)}
               disabled={isNameDisabled(name)}
               onClick={handleClickName(name)}
@@ -213,11 +214,11 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
         sortDirection={sortDirection}
         searchQuery={searchInput}
         selectedCount={selectedNames.length}
-        onModeChange={() => {
+        onModeChange={(value) => {
           const isSelectedAll = selectedNames.length === nameCount
 
-          setMode(isSelectedAll ? 'view' : 'select')
-          setSelectedNames(isSelectedAll ? [] : [...names])
+          setMode(value)
+          setSelectedNames(isSelectedAll || value === 'view' ? [] : [...names])
         }}
         onSortDirectionChange={setSortDirection}
         onSortTypeChange={setSortType}
