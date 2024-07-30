@@ -17,15 +17,11 @@ const DENTITY_ENV_CONFIGS = {
   dev: {
     iss: 'https://oidc.dev.dentity.com',
     clientId: 'afl0TofdrB4B1YrEcDwNA',
-    clientSecret:
-      'EJ9Tw_UDrk5nahJP0W92ta5-miUy9eu7Ce3S9mbjA6NacgQduM-kl9Ww4cJplqgXwWcFMZNWIIEwFvHqypao2A',
     endpoint: 'https://oidc.dev.dentity.com',
   },
   staging: {
     iss: 'https://oidc.staging.dentity.com',
     clientId: '-IG5wkHyetFAeDziNUkdu',
-    clientSecret:
-      'lYFZauZV_kDA-Tc-yq4KOBx6NzfBSPnc7lJn5JIoibqjC6WD5oyELpTvLJ9UatrLxW4LLbDRUa9hKGz1ZpbU1w',
     endpoint: 'https://oidc.staging.dentity.com',
   },
 } as const
@@ -41,9 +37,6 @@ export const DENTITY_VPTOKEN_ENDPOINT = `${DENTITY_BASE_ENDPOINT}/oidc/vp-token`
 export const DENTITY_CLIENT_ID = DENTITY_ENV_CONFIGS[DENTITY_ENV].clientId
 
 export const DENTITY_ISS = DENTITY_ENV_CONFIGS[DENTITY_ENV].iss
-
-// TODO: REMOVE THIS FROM THE CODEBASE
-export const DENTITY_CLIENT_SECRET = DENTITY_ENV_CONFIGS[DENTITY_ENV].clientSecret
 
 export const DENTITY_REDIRECT_URI = 'https://ens.domains'
 
