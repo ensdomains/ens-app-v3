@@ -1,21 +1,38 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
-import { Chain } from 'viem'
 
+import { CoinName, coinNameToTypeMap } from '@ensdomains/address-encoder'
+import { isEvmCoinType } from '@ensdomains/address-encoder/utils'
+
+import { SupportedAddress, supportedAddresses } from '@app/constants/supportedAddresses'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
 
-const COIN_FIND_CHAIN_ENDPOINT = 'https://cointype-worker.ens-cf.workers.dev'
-
 type UseCoinChainParameters = {
-  nameorid?: string | number
+  coinName?: string
+}
+
+type CoinBlockExplorer = {
+  name: string
+  nativeCurrency: {
+    name: string
+    symbol: string
+    decimals: number
+  }
+  blockExplorers: {
+    default: {
+      name: string
+      url: string
+      apiUrl?: string
+    }
+  }
 }
 
 type UseCoinChainReturnType = {
   error: boolean
-  data: Chain | undefined
+  data: CoinBlockExplorer | null
 }
 
 type UseCoinChainConfig = QueryConfig<UseCoinChainReturnType, Error>
@@ -27,17 +44,35 @@ type QueryKey<TParams extends UseCoinChainParameters> = CreateQueryKey<
 >
 
 export const getCoinChainQueryFn = async <TParams extends UseCoinChainParameters>({
-  queryKey: [{ nameorid }],
+  queryKey: [{ coinName }],
 }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseCoinChainReturnType> => {
-  if (!nameorid) throw new Error('name or id is required')
+  if (!coinName) throw new Error('name is required')
 
-  try {
-    const response = await fetch(`${COIN_FIND_CHAIN_ENDPOINT}/${nameorid}`)
-    const returnData = await response.json()
-    return { error: !!returnData?.error, data: returnData }
-  } catch {
-    return { error: true, data: undefined }
+  const lowerCoinName = coinName?.toLowerCase() || ''
+
+  if (supportedAddresses.includes(coinName?.toLowerCase() as SupportedAddress)) {
+    const supportedBlockExplorers = await import('../../constants/blockExplorers/supported.json')
+    const coinBlockExplorer = supportedBlockExplorers?.default.find(
+      (blockExplorer) =>
+        blockExplorer?.nativeCurrency?.symbol.toLowerCase() === lowerCoinName ||
+        blockExplorer?.name?.toLocaleLowerCase() === lowerCoinName,
+      // Also need to check the name since currency symbol doesn't necessarily equal to the coin name (Ex. zora)
+    )
+    return { error: false, data: coinBlockExplorer as CoinBlockExplorer }
   }
+
+  if (isEvmCoinType(coinNameToTypeMap[coinName as CoinName])) {
+    const evmBlockExplorers = await import('../../constants/blockExplorers/evm.json')
+    const coinBlockExplorer = evmBlockExplorers?.default.find(
+      (blockExplorer) =>
+        blockExplorer?.nativeCurrency?.symbol.toLowerCase() === lowerCoinName ||
+        blockExplorer?.name?.toLocaleLowerCase() === lowerCoinName,
+      // Also need to check the name since currency symbol doesn't necessarily equal to the coin name (Ex. zora)
+    )
+    return { error: false, data: coinBlockExplorer as CoinBlockExplorer }
+  }
+
+  return { error: false, data: null }
 }
 
 export const useCoinChain = <TParams extends UseCoinChainParameters>({
@@ -58,7 +93,7 @@ export const useCoinChain = <TParams extends UseCoinChainParameters>({
   const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-    enabled: enabled && !!params.nameorid,
+    enabled: enabled && !!params.coinName,
     gcTime,
     staleTime,
   })

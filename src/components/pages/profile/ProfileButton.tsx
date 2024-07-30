@@ -71,7 +71,7 @@ export const AddressProfileButton = ({
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, copy] = useCopyToClipboard()
-  const coinChainResults = useCoinChain({ nameorid: iconKey })
+  const coinChainResults = useCoinChain({ coinName: iconKey })
   const { data } = coinChainResults
   const defaultBlockExplorer = data?.data?.blockExplorers?.default
 

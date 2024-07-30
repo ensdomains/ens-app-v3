@@ -43,8 +43,8 @@ mockUsePrimaryName.mockImplementation(({ address, enabled }) => {
 })
 
 const mockUseCoinChain = mockFunction(useCoinChain)
-mockUseCoinChain.mockImplementation(({ nameorid }) => {
-  if (nameorid !== 'eth') {
+mockUseCoinChain.mockImplementation(({ coinName }) => {
+  if (coinName !== 'eth') {
     return {
       data: {
         error: true,
