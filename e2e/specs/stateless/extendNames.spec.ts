@@ -41,7 +41,7 @@ test('should be able to register multiple names on the address page', async ({
     await addresPage.search(label)
     const timestamp = await addresPage.getTimestamp(name)
     timestampDict[name] = timestamp
-    await addresPage.getNameRow(name).click()
+    await addresPage.getNameAvatarWrapper(name).click()
   }
   await addresPage.extendNamesButton.click()
 

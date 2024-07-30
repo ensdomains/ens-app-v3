@@ -74,11 +74,12 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
   const [mode, setMode] = useState<NameTableMode>('view')
   const [selectedNames, setSelectedNames] = useState<Name[]>([])
   const handleClickName = (name: Name) => () => {
-    if (selectedNames.includes(name)) {
-      setSelectedNames(selectedNames.filter((n) => n !== name))
-    } else {
-      setSelectedNames([...selectedNames, name])
-    }
+    const isExists = selectedNames.find((n) => n.id === name.id)
+
+    setSelectedNames(
+      isExists ? selectedNames.filter((n) => n.id !== name.id) : [...selectedNames, name],
+    )
+    setMode('select')
   }
 
   const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
@@ -164,7 +165,6 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
   )
 
   const isLoading = isNamesLoading || !address
-
   let InnerContent: ReactNode
   if (!isMounted) {
     InnerContent = null
@@ -186,7 +186,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
             <TaggedNameItem
               key={name.id}
               {...name}
-              mode={mode}
+              mode={'select'}
               selected={!!selectedNames?.find((selectedName) => selectedName.name === name.name!)}
               disabled={isNameDisabled(name)}
               onClick={handleClickName(name)}
@@ -213,9 +213,11 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
         sortDirection={sortDirection}
         searchQuery={searchInput}
         selectedCount={selectedNames.length}
-        onModeChange={(m) => {
-          setMode(m)
-          setSelectedNames([])
+        onModeChange={() => {
+          const isSelectedAll = selectedNames.length === nameCount
+
+          setMode(isSelectedAll ? 'view' : 'select')
+          setSelectedNames(isSelectedAll ? [] : [...names])
         }}
         onSortDirectionChange={setSortDirection}
         onSortTypeChange={setSortType}
@@ -224,7 +226,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
           debouncedSetSearch(s)
         }}
       >
-        {mode === 'select' && (
+        {(mode === 'select' || !!selectedNames.length) && (
           <Button
             size="small"
             onClick={handleExtend}
