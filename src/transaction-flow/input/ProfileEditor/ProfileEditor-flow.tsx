@@ -16,6 +16,7 @@ import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registr
 import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
 import {
   getProfileRecordsDiff,
+  isEthAddressRecord,
   profileEditorFormToProfileRecords,
   profileToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
@@ -130,6 +131,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     handleSubmit,
     addRecords,
     updateRecord,
+    removeRecordAtIndex,
     updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
@@ -223,10 +225,10 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     }
   }, [isProfileLoading, profile?.isMigrated])
 
-  // const handleDeleteRecord = (record: ProfileRecord, index: number) => {
-  //   removeRecordAtIndex(index)
-  //   process.nextTick(() => trigger())
-  // }
+  const handleDeleteRecord = (record: ProfileRecord, index: number) => {
+    removeRecordAtIndex(index)
+    process.nextTick(() => trigger())
+  }
 
   const handleShowAddRecordModal = () => {
     setView('addRecord')
@@ -276,8 +278,13 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     validator={validatorForRecord(field)}
                     validated={isDirtyForRecordAtIndex(index)}
                     error={errorForRecordAtIndex(index, 'key')}
-                    onDelete={() => updateRecordAtIndex(index, { ...field, value: '' })}
-                    // onDelete={() => handleDeleteRecord(field, index)}
+                    onDelete={() => {
+                      if (isEthAddressRecord(field)) {
+                        updateRecordAtIndex(index, { ...field, value: '' })
+                      } else {
+                        handleDeleteRecord(field, index)
+                      }
+                    }}
                   />
                 ) : field.key === 'description' ? (
                   <ProfileRecordTextarea
@@ -288,7 +295,13 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     placeholder={placeholderForRecord(field)}
                     error={errorForRecordAtIndex(index)}
                     validated={isDirtyForRecordAtIndex(index)}
-                    onDelete={() => updateRecordAtIndex(index, { ...field, value: '' })}
+                    onDelete={() => {
+                      if (isEthAddressRecord(field)) {
+                        updateRecordAtIndex(index, { ...field, value: '' })
+                      } else {
+                        handleDeleteRecord(field, index)
+                      }
+                    }}
                     {...register(`records.${index}.value`, {
                       validate: validatorForRecord(field),
                     })}
@@ -303,7 +316,13 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     placeholder={placeholderForRecord(field)}
                     error={errorForRecordAtIndex(index)}
                     validated={isDirtyForRecordAtIndex(index)}
-                    onDelete={() => updateRecordAtIndex(index, { ...field, value: '' })}
+                    onDelete={() => {
+                      if (isEthAddressRecord(field)) {
+                        updateRecordAtIndex(index, { ...field, value: '' })
+                      } else {
+                        handleDeleteRecord(field, index)
+                      }
+                    }}
                     {...register(`records.${index}.value`, {
                       validate: validatorForRecord(field),
                     })}
