@@ -1,23 +1,17 @@
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
-import {
-  AlertSVG,
-  Button,
-  CountdownCircle,
-  Dialog,
-  Heading,
-  mq,
-  Spinner,
-  Typography,
-} from '@ensdomains/thorin'
+import { makeCommitment } from '@ensdomains/ensjs/utils'
+import { Button, CountdownCircle, Dialog, Heading, mq, Spinner } from '@ensdomains/thorin'
 
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
+import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
+import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
@@ -74,42 +68,6 @@ const StyledCountdown = styled(CountdownCircle)(
   `,
 )
 
-const DialogTitle = styled(Typography)(
-  ({ theme }) => css`
-    font-size: ${theme.fontSizes.headingThree};
-    font-weight: bold;
-    text-align: center;
-  `,
-)
-
-const DialogHeading = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: ${theme.space['1']};
-
-    div:first-of-type {
-      padding: ${theme.space['2']};
-      background-color: ${theme.colors.yellow};
-      color: ${theme.colors.background};
-      border-radius: ${theme.radii.full};
-
-      svg {
-        display: block;
-        overflow: visible;
-      }
-    }
-  `,
-)
-
-const DialogContent = styled(Typography)(
-  () => css`
-    text-align: center;
-  `,
-)
-
 const FailedButton = ({ onClick, label }: { onClick: () => void; label: string }) => (
   <MobileFullWidth>
     <Button color="red" onClick={onClick}>
@@ -155,6 +113,14 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     name,
     owner: address!,
     registrationData,
+  })
+
+  const commitCouldBeFound =
+    !commitTx?.stage || commitTx.stage === 'confirm' || commitTx.stage === 'failed'
+  useExistingCommitment({
+    commitment: makeCommitment(registrationParams),
+    enabled: commitCouldBeFound,
+    commitKey,
   })
 
   const makeCommitNameFlow = useCallback(() => {
@@ -225,102 +191,26 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     [t],
   )
 
-  let BackButton: ReactNode = (
-    <MobileFullWidth>
-      <Button onClick={() => callback({ back: true })} colorStyle="accentSecondary">
-        {t('action.back', { ns: 'common' })}
-      </Button>
-    </MobileFullWidth>
-  )
-
-  let ActionButton: ReactNode = (
-    <MobileFullWidth>
-      <Button data-testid="start-timer-button" onClick={makeCommitNameFlow}>
-        {t('steps.transactions.startTimer')}
-      </Button>
-    </MobileFullWidth>
-  )
-
-  if (commitComplete) {
-    if (registerTx?.stage === 'failed') {
-      BackButton = ResetBackButton
-      ActionButton = (
-        <FailedButton
-          label={t('steps.transactions.transactionFailed')}
-          onClick={showRegisterTransaction}
-        />
-      )
-    } else if (registerTx?.stage === 'sent') {
-      BackButton = null
-      ActionButton = (
-        <ProgressButton
-          label={t('steps.transactions.transactionProgress')}
-          onClick={showRegisterTransaction}
-        />
-      )
-    } else {
-      BackButton = ResetBackButton
-      ActionButton = (
-        <MobileFullWidth>
-          <Button
-            data-testid="finish-button"
-            onClick={!registerTx ? makeRegisterNameFlow : showRegisterTransaction}
-          >
-            {t('action.finish', { ns: 'common' })}
-          </Button>
-        </MobileFullWidth>
-      )
-    }
-  } else if (commitTx?.stage) {
-    if (commitTx?.stage === 'failed') {
-      BackButton = NormalBackButton
-      ActionButton = (
-        <FailedButton
-          label={t('steps.transactions.transactionFailed')}
-          onClick={showCommitTransaction}
-        />
-      )
-    } else if (commitTx?.stage === 'sent') {
-      BackButton = null
-      ActionButton = (
-        <ProgressButton
-          label={t('steps.transactions.transactionProgress')}
-          onClick={showCommitTransaction}
-        />
-      )
-    } else if (commitTx?.stage === 'complete') {
-      BackButton = ResetBackButton
-      ActionButton = (
-        <MobileFullWidth>
-          <Button data-testid="wait-button" disabled suffix={<Spinner color="greyPrimary" />}>
-            {t('steps.transactions.wait')}
-          </Button>
-        </MobileFullWidth>
-      )
-    }
-  }
-
   return (
     <StyledCard>
       <Dialog variant="blank" open={resetOpen} onDismiss={() => setResetOpen(false)}>
         <Dialog.CloseButton onClick={() => setResetOpen(false)} />
-        <InnerDialog>
-          <DialogHeading>
-            <div>
-              <AlertSVG />
-            </div>
-            <DialogTitle>{t('steps.cancelRegistration.heading')}</DialogTitle>
-          </DialogHeading>
-          <DialogContent>{t('steps.cancelRegistration.contentOne')}</DialogContent>
-          <DialogContent>{t('steps.cancelRegistration.contentTwo')}</DialogContent>
-          <Dialog.Footer
-            trailing={
-              <Button onClick={resetTransactions} colorStyle="redSecondary">
-                {t('steps.cancelRegistration.footer')}
-              </Button>
-            }
-          />
-        </InnerDialog>
+        <Dialog.Heading
+          title={t('steps.cancelRegistration.heading')}
+          fontVariant="headingThree"
+          alert="warning"
+        />
+        <Dialog.Content>
+          <CenteredTypography>{t('steps.cancelRegistration.contentOne')}</CenteredTypography>
+          <CenteredTypography>{t('steps.cancelRegistration.contentTwo')}</CenteredTypography>
+        </Dialog.Content>
+        <Dialog.Footer
+          trailing={
+            <Button onClick={resetTransactions} colorStyle="redSecondary">
+              {t('steps.cancelRegistration.footer')}
+            </Button>
+          }
+        />
       </Dialog>
       <Heading>{t('steps.transactions.heading')}</Heading>
       <StyledCountdown
@@ -330,10 +220,76 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
         size="large"
         callback={() => setCommitComplete(true)}
       />
-      <Typography>{t('steps.transactions.subheading')}</Typography>
+      <CenteredTypography>{t('steps.transactions.subheading')}</CenteredTypography>
       <ButtonContainer>
-        {BackButton}
-        {ActionButton}
+        {match([commitComplete, registerTx, commitTx])
+          .with([true, { stage: 'failed' }, P._], () => (
+            <>
+              {ResetBackButton}
+              <FailedButton
+                label={t('steps.transactions.transactionFailed')}
+                onClick={showRegisterTransaction}
+              />
+            </>
+          ))
+          .with([true, { stage: 'sent' }, P._], () => (
+            <ProgressButton
+              label={t('steps.transactions.transactionProgress')}
+              onClick={showRegisterTransaction}
+            />
+          ))
+          .with([true, P._, P._], () => (
+            <>
+              {ResetBackButton}
+              <MobileFullWidth>
+                <Button
+                  data-testid="finish-button"
+                  onClick={!registerTx ? makeRegisterNameFlow : showRegisterTransaction}
+                >
+                  {t('action.finish', { ns: 'common' })}
+                </Button>
+              </MobileFullWidth>
+            </>
+          ))
+          .with([false, P._, { stage: 'failed' }], () => (
+            <>
+              {NormalBackButton}
+              <FailedButton
+                label={t('steps.transactions.transactionFailed')}
+                onClick={showCommitTransaction}
+              />
+            </>
+          ))
+          .with([false, P._, { stage: 'sent' }], () => (
+            <ProgressButton
+              label={t('steps.transactions.transactionProgress')}
+              onClick={showCommitTransaction}
+            />
+          ))
+          .with([false, P._, { stage: 'complete' }], () => (
+            <>
+              {ResetBackButton}
+              <MobileFullWidth>
+                <Button data-testid="wait-button" disabled suffix={<Spinner color="greyPrimary" />}>
+                  {t('steps.transactions.wait')}
+                </Button>
+              </MobileFullWidth>
+            </>
+          ))
+          .otherwise(() => (
+            <>
+              <MobileFullWidth>
+                <Button onClick={() => callback({ back: true })} colorStyle="accentSecondary">
+                  {t('action.back', { ns: 'common' })}
+                </Button>
+              </MobileFullWidth>
+              <MobileFullWidth>
+                <Button data-testid="start-timer-button" onClick={makeCommitNameFlow}>
+                  {t('steps.transactions.startTimer')}
+                </Button>
+              </MobileFullWidth>
+            </>
+          ))}
       </ButtonContainer>
     </StyledCard>
   )

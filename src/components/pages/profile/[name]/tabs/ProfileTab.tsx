@@ -9,6 +9,7 @@ import { Outlink } from '@app/components/Outlink'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useIsOffchainName } from '@app/hooks/ensjs/dns/useIsOffchainName'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useOwners } from '@app/hooks/useOwners'
@@ -26,6 +27,11 @@ const DetailsWrapper = styled.div(
     width: 100%;
   `,
 )
+
+const OutlinkWithMargin = styled(Outlink)`
+  margin-left: auto;
+  padding-right: 0;
+`
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
@@ -65,6 +71,11 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     name,
   })
 
+  const isOffchainImport = useIsOffchainName({
+    name,
+    enabled: nameDetails.registrationStatus === 'imported',
+  })
+
   const isExpired = useMemo(
     () => gracePeriodEndDate && gracePeriodEndDate < new Date(),
     [gracePeriodEndDate],
@@ -84,6 +95,21 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         button={snippetButton}
         isPrimary={name === primaryData?.name}
       >
+        {isOffchainImport && (
+          <Helper alignment="horizontal">
+            <Trans
+              i18nKey="tabs.profile.warnings.offchain"
+              ns="profile"
+              components={{
+                a: (
+                  <OutlinkWithMargin href={getSupportLink('offchain-not-in-names')}>
+                    {t('action.learnMore', { ns: 'common' })}
+                  </OutlinkWithMargin>
+                ),
+              }}
+            />
+          </Helper>
+        )}
         {nameDetails.isNonASCII && (
           <Helper type="warning" alignment="horizontal">
             <Trans

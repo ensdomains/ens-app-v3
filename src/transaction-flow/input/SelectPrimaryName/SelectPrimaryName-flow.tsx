@@ -10,13 +10,15 @@ import { getDecodedName, Name } from '@ensdomains/ensjs/subgraph'
 import { decodeLabelhash, isEncodedLabelhash, saveName } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, Heading, mq, Typography } from '@ensdomains/thorin'
 
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
+import { DialogFooterWithBorder } from '@app/components/@molecules/DialogComponentVariants/DialogFooterWithBorder'
+import { DialogHeadingWithBorder } from '@app/components/@molecules/DialogComponentVariants/DialogHeadinWithBorder'
 import {
   NameTableHeader,
   SortDirection,
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
-import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
+import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
@@ -70,8 +72,10 @@ type FormData = {
   name?: Name
 } & UnknownLabelsFormData
 
-const LoadingContainer = styled(InnerDialog)(
+const LoadingContainer = styled.div(
   ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
     min-height: ${theme.space['72']};
     justify-content: center;
     align-items: center;
@@ -79,64 +83,18 @@ const LoadingContainer = styled(InnerDialog)(
   `,
 )
 
-const HeaderWrapper = styled.div(
-  ({ theme }) => css`
-    margin: 0 -${theme.space['4']};
-  `,
-)
-
-const ContentContainer = styled.form(({ theme }) => [
-  css`
-    width: 100%;
-    max-height: 60vh;
-    display: flex;
-    flex-direction: column;
-  `,
-  mq.sm.min(css`
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-  `),
-])
-
-const Divider = styled.div(({ theme }) => [
-  css`
-    width: calc(100% + 2 * ${theme.space['4']});
-    margin: 0 -${theme.space['4']};
-    height: ${theme.space.px};
-    flex: 0 0 ${theme.space.px};
-    background: ${theme.colors.border};
-  `,
-  mq.sm.min(css`
-    width: calc(100% + 2 * ${theme.space['6']});
-    margin: 0 -${theme.space['6']};
-  `),
-])
-
 const NameTableHeaderWrapper = styled.div(({ theme }) => [
   css`
-    margin: 0 -${theme.space['4']};
+    width: calc(100% + 2 * ${theme.space['4']});
+    margin: 0 -${theme.space['4']} -${theme.space['4']};
+    border-bottom: 1px solid ${theme.colors.border};
     > div {
       border-bottom: none;
     }
   `,
   mq.sm.min(css`
-    margin: 0 -${theme.space['4.5']};
-  `),
-])
-
-const StyledScrollBox = styled(ScrollBoxWithSpinner)(({ theme }) => [
-  css`
-    width: calc(100% + 2 * ${theme.space['4']});
-    margin: 0 -${theme.space['4']};
-
-    & > div:nth-last-child(2) {
-      border-bottom: none;
-    }
-  `,
-  mq.sm.min(css`
     width: calc(100% + 2 * ${theme.space['6']});
-    margin: 0 -${theme.space['6']};
-    max-width: calc(${theme.space['128']} + 2 * ${theme.space['6']});
+    margin: 0 -${theme.space['6']} -${theme.space['6']};
   `),
 ])
 
@@ -176,6 +134,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const [searchQuery, _setSearchQuery] = useState('')
   const setSearchQuery = useDebouncedCallback(_setSearchQuery, 300, [])
 
+  const currentPrimary = usePrimaryName({ address })
   const {
     data: namesData,
     hasNextPage,
@@ -190,6 +149,12 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     },
     pageSize: DEFAULT_PAGE_SIZE,
   })
+
+  // Filter out the primary name's data
+  const filteredNamesPages =
+    namesData?.pages?.map((page: Name[]) =>
+      page.filter((name: Name) => name?.name !== currentPrimary?.data?.name),
+    ) || []
 
   const selectedName = useWatch({
     control,
@@ -300,17 +265,19 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
 
   // Show header if more than one page has been loaded, if only one page has been loaded but there is another page, or if there is an active search query
   const showHeader =
-    (!!namesData && namesData?.pages.length > 1 && !searchQuery) || hasNextPage || !!searchQuery
+    (!!namesData && filteredNamesPages.length > 1 && !searchQuery) || hasNextPage || !!searchQuery
 
   const hasNoEligibleNames =
-    !searchQuery && namesData?.pages.length === 1 && namesData.pages[0].length === 0
+    !searchQuery && filteredNamesPages.length === 1 && filteredNamesPages[0].length === 0
 
   if (isLoading)
     return (
-      <LoadingContainer>
-        <Heading>{t('loading', { ns: 'common' })}</Heading>
-        <SpinnerRow />
-      </LoadingContainer>
+      <Dialog.Content hideDividers fullWidth>
+        <LoadingContainer>
+          <Heading>{t('loading', { ns: 'common' })}</Heading>
+          <SpinnerRow />
+        </LoadingContainer>
+      </Dialog.Content>
     )
 
   return view === 'decrypt' ? (
@@ -326,64 +293,65 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     />
   ) : (
     <>
-      <HeaderWrapper>
-        <Dialog.Heading title={t('input.selectPrimaryName.title')} />
-      </HeaderWrapper>
-      <ContentContainer ref={formRef} onSubmit={handleSubmit((data) => mutateName(data))}>
-        <Divider />
-        {showHeader && (
+      <DialogHeadingWithBorder title={t('input.selectPrimaryName.title')} fullWidth />
+      {showHeader && (
+        <NameTableHeaderWrapper>
+          <NameTableHeader
+            data-testid="primary-names-modal-header"
+            mode="view"
+            selectable={false}
+            sortType={sortType}
+            sortTypeOptionValues={['labelName', 'createdAt', 'expiryDate']}
+            sortDirection={sortDirection}
+            searchQuery={searchInput}
+            selectedCount={0}
+            onSortTypeChange={(type) => setSortType(type as SortType)}
+            onSortDirectionChange={setSortDirection}
+            onSearchChange={(search) => {
+              setSearchInput(search)
+              setSearchQuery(search)
+            }}
+          />
+        </NameTableHeaderWrapper>
+      )}
+      <Dialog.Content
+        as="form"
+        hideDividers
+        onReachedBottom={loadMoreNames}
+        fullWidth
+        horizontalPadding="0"
+        gap="0"
+        ref={formRef}
+        onSubmit={handleSubmit((data) => mutateName(data))}
+      >
+        {!!namesData && filteredNamesPages[0].length > 0 ? (
           <>
-            <NameTableHeaderWrapper>
-              <NameTableHeader
-                data-testid="primary-names-modal-header"
-                mode="view"
-                selectable={false}
-                sortType={sortType}
-                sortTypeOptionValues={['labelName', 'createdAt', 'expiryDate']}
-                sortDirection={sortDirection}
-                searchQuery={searchInput}
-                selectedCount={0}
-                onSortTypeChange={(type) => setSortType(type as SortType)}
-                onSortDirectionChange={setSortDirection}
-                onSearchChange={(search) => {
-                  setSearchInput(search)
-                  setSearchQuery(search)
-                }}
-              />
-            </NameTableHeaderWrapper>
-            <Divider />
+            {filteredNamesPages?.map((page: Name[]) =>
+              page.map((name: Name) => (
+                <TaggedNameItemWithFuseCheck
+                  key={name.id}
+                  {...name}
+                  mode="select"
+                  selected={selectedName?.name === name.name}
+                  onClick={() => {
+                    setValue('name', selectedName?.name === name.name ? undefined : name)
+                  }}
+                />
+              )),
+            )}
           </>
+        ) : (
+          <ErrorContainer>
+            <Typography fontVariant="bodyBold" color="grey">
+              {hasNoEligibleNames
+                ? t('input.selectPrimaryName.errors.noEligibleNames')
+                : t('input.selectPrimaryName.errors.noNamesFound')}
+            </Typography>
+          </ErrorContainer>
         )}
-        <StyledScrollBox hideDividers onReachedBottom={loadMoreNames}>
-          {!!namesData && namesData.pages[0].length > 0 ? (
-            <>
-              {namesData.pages?.map((page: Name[]) =>
-                page.map((name: Name) => (
-                  <TaggedNameItemWithFuseCheck
-                    key={name.id}
-                    {...name}
-                    mode="select"
-                    selected={selectedName?.name === name.name}
-                    onClick={() => {
-                      setValue('name', selectedName?.name === name.name ? undefined : name)
-                    }}
-                  />
-                )),
-              )}
-            </>
-          ) : (
-            <ErrorContainer>
-              <Typography fontVariant="bodyBold" color="grey">
-                {hasNoEligibleNames
-                  ? t('input.selectPrimaryName.errors.noEligibleNames')
-                  : t('input.selectPrimaryName.errors.noNamesFound')}
-              </Typography>
-            </ErrorContainer>
-          )}
-        </StyledScrollBox>
-        <Divider />
-      </ContentContainer>
-      <Dialog.Footer
+      </Dialog.Content>
+      <DialogFooterWithBorder
+        fullWidth
         leading={
           <Button colorStyle="accentSecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}

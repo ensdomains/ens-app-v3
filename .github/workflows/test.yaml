@@ -11,9 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: pnpm/action-setup@v2.2.2
-        with:
-          version: 8.11.0
+      - name: Install pnpm
+        run: corepack enable pnpm
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -35,9 +34,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: pnpm/action-setup@v2.2.2
-        with:
-          version: 8.11.0
+      - name: Install pnpm
+        run: corepack enable pnpm
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -69,9 +67,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: pnpm/action-setup@v2.2.2
-        with:
-          version: 8.11.0
+      - name: Install pnpm
+        run: corepack enable pnpm
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -104,9 +101,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: pnpm/action-setup@v2.2.2
-        with:
-          version: 8.11.0
+      - name: Install pnpm
+        run: corepack enable pnpm
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -154,9 +150,8 @@ jobs:
       - uses: actions/checkout@v3
       - run: ./scripts/check-chrome.sh
 
-      - uses: pnpm/action-setup@v2.2.2
-        with:
-          version: 8.11.0
+      - name: Install pnpm
+        run: corepack enable pnpm
 
       - name: Install Node.js
         uses: actions/setup-node@v3

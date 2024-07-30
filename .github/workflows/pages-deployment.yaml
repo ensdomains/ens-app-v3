@@ -39,9 +39,8 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         run: if [ ${{ needs.yalc_check.outputs.can_deploy }} != true ]; then exit 1; else exit 0; fi
 
-      - uses: pnpm/action-setup@v2.2.2
-        with:
-          version: 8.11.0
+      - name: Install pnpm
+        run: corepack enable pnpm
 
       - name: Install Node.js
         uses: actions/setup-node@v3

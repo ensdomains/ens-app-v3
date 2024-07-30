@@ -6,9 +6,7 @@ import { Outlink } from '@app/components/Outlink'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 import { CenteredTypography } from '../components/CenteredTypography'
-import { ContentContainer } from '../components/ContentContainer'
 import { SkipButton } from '../components/SkipButton'
-import { StyledInnerDialog } from '../components/StyledInnerDialog'
 
 type Props = {
   onNext: () => void
@@ -23,22 +21,20 @@ export const ResolverOutOfSyncView = ({ onNext, onCancel, onSkip }: Props) => {
         title={t('input.profileEditor.warningOverlay.resolverOutOfSync.title')}
         alert="warning"
       />
-      <StyledInnerDialog>
-        <ContentContainer>
-          <CenteredTypography>
-            {t('input.profileEditor.warningOverlay.resolverOutOfSync.subtitle')}
-          </CenteredTypography>
-          <Outlink href={getSupportLink('resolver')}>
-            {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
-          </Outlink>
-        </ContentContainer>
+      <Dialog.Content>
+        <CenteredTypography>
+          {t('input.profileEditor.warningOverlay.resolverOutOfSync.subtitle')}
+        </CenteredTypography>
+        <Outlink href={getSupportLink('resolver')}>
+          {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
+        </Outlink>
         <SkipButton
           data-testid="warning-overlay-skip-button"
           description={t('input.profileEditor.warningOverlay.action.ignoreUpdate')}
           actionLabel={t('action.skip', { ns: 'common' })}
           onClick={onSkip}
         />
-      </StyledInnerDialog>
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button

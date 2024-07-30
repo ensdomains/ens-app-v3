@@ -1,21 +1,7 @@
 import { HTMLAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, mq, Typography } from '@ensdomains/thorin'
-
-const Container = styled.div(({ theme }) => [
-  css`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space['4']};
-  `,
-  mq.sm.min(css`
-    gap: ${theme.space['6']};
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-  `),
-])
+import { Button, Dialog, Typography } from '@ensdomains/thorin'
 
 const Description = styled(Typography)(
   () => css`
@@ -39,12 +25,13 @@ export const ConfirmationDialogView = ({
   declineLabel,
   onConfirm,
   onDecline,
-  ...props
 }: Props) => {
   return (
-    <Container {...props}>
+    <>
       <Dialog.Heading title={title} alert="warning" />
-      <Description>{description}</Description>
+      <Dialog.Content>
+        <Description>{description}</Description>
+      </Dialog.Content>
       <Dialog.Footer
         leading={
           <Button
@@ -66,6 +53,6 @@ export const ConfirmationDialogView = ({
           </Button>
         }
       />
-    </Container>
+    </>
   )
 }

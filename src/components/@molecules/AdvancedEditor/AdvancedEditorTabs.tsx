@@ -12,9 +12,11 @@ const TabButtonsContainer = styled.div(({ theme }) => [
     flex-wrap: wrap;
     gap: ${theme.space['1.25']} ${theme.space['3']};
     padding: 0 ${theme.space['4']} 0 ${theme.space['2']};
+    width: ${theme.space.full};
   `,
   mq.sm.min(css`
     padding: 0 ${theme.space['2']};
+    margin: -${theme.space['1.5']} 0 -${theme.space['2']};
   `),
 ])
 
