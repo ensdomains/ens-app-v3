@@ -923,14 +923,14 @@ test('Should show edit profile button if user is manager', async ({
   const name = await makeName({
     label: 'unwrapped',
     type: 'legacy',
-    owner: 'user',
-    manager: 'user2',
+    owner: 'user2',
+    manager: 'user',
   })
 
   const profilePage = makePageObject('ProfilePage')
 
   await profilePage.goto(name)
-  await login.connect('user2')
+  await login.connect()
 
   await expect(profilePage.editProfileButton).toBeVisible()
 })
