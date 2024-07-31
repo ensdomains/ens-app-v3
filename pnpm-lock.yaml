@@ -53,9 +53,6 @@ importers:
       '@noble/hashes':
         specifier: ^1.3.2
         version: 1.4.0
-      '@rainbow-me/rainbowkit':
-        specifier: 2.1.2
-        version: 2.1.2(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.2.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.13.8(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(wagmi@2.9.11(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.2.21)(bufferutil@4.0.7)(encoding@0.1.13)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react-i18next@11.18.6(i18next@21.10.0)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.1(@babel/core@7.24.6)(@babel/preset-env@7.24.6(@babel/core@7.24.6))(@types/react@18.2.21)(bufferutil@4.0.7)(react@18.3.1)(utf-8-validate@6.0.3))(react@18.3.1))(react-native@0.74.1(@babel/core@7.24.6)(@babel/preset-env@7.24.6(@babel/core@7.24.6))(@types/react@18.2.21)(bufferutil@4.0.7)(react@18.3.1)(utf-8-validate@6.0.3))(react@18.3.1)(rollup@2.78.0)(typescript@5.4.5)(utf-8-validate@6.0.3)(viem@2.13.8(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8))
       '@sentry/nextjs':
         specifier: ^7.43.0
         version: 7.43.0(encoding@0.1.13)(next@13.5.6(@babel/core@7.24.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.91.0(esbuild@0.17.19))
@@ -98,6 +95,9 @@ importers:
       dns-packet:
         specifier: ^5.4.0
         version: 5.6.1
+      form-data:
+        specifier: ^4.0.0
+        version: 4.0.0
       glob:
         specifier: ^8.0.3
         version: 8.1.0
@@ -2368,16 +2368,6 @@ packages:
     resolution: {integrity: sha512-bJ0UBsk0ESOs6RFcLXOt99a3yTDcOKlzfjad+rhFwdaG1Lu/Wzq58GHYCDTlZ9z6mldf4g+NTb+TXEfe0PpnsQ==}
     engines: {node: '>=18'}
     hasBin: true
-
-  '@rainbow-me/rainbowkit@2.1.2':
-    resolution: {integrity: sha512-nzhS4p7rtE9bAkOKSq+J761+gn6UseVxMdDpRBAr+0+ct/Hv1STErq9TT3GEXNrnAeSldtbxBVIkepa4uGykDA==}
-    engines: {node: '>=12.4'}
-    peerDependencies:
-      '@tanstack/react-query': '>=5.0.0'
-      react: ^18.2.0
-      react-dom: ^18.2.0
-      viem: 2.x
-      wagmi: ^2.9.0
 
   '@ramp-network/ramp-instant-sdk@4.0.5':
     resolution: {integrity: sha512-iQubpyGSy4wy/Pg7nZPclVOB+/edgAhmN1RUh9l+Ry+NbnUNu9e3c8x5o5hOHl//J1m0Roj+hKRt0qRVmWdNHA==}
@@ -12621,23 +12611,6 @@ snapshots:
       yargs: 17.7.2
     transitivePeerDependencies:
       - supports-color
-
-  '@rainbow-me/rainbowkit@2.1.2(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.2.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.13.8(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(wagmi@2.9.11(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.2.21)(bufferutil@4.0.7)(encoding@0.1.13)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react-i18next@11.18.6(i18next@21.10.0)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.1(@babel/core@7.24.6)(@babel/preset-env@7.24.6(@babel/core@7.24.6))(@types/react@18.2.21)(bufferutil@4.0.7)(react@18.3.1)(utf-8-validate@6.0.3))(react@18.3.1))(react-native@0.74.1(@babel/core@7.24.6)(@babel/preset-env@7.24.6(@babel/core@7.24.6))(@types/react@18.2.21)(bufferutil@4.0.7)(react@18.3.1)(utf-8-validate@6.0.3))(react@18.3.1)(rollup@2.78.0)(typescript@5.4.5)(utf-8-validate@6.0.3)(viem@2.13.8(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8))':
-    dependencies:
-      '@tanstack/react-query': 5.22.2(react@18.3.1)
-      '@vanilla-extract/css': 1.14.0
-      '@vanilla-extract/dynamic': 2.1.0
-      '@vanilla-extract/sprinkles': 1.6.1(@vanilla-extract/css@1.14.0)
-      clsx: 2.1.0
-      qrcode: 1.5.3
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-remove-scroll: 2.5.7(@types/react@18.2.21)(react@18.3.1)
-      ua-parser-js: 1.0.37
-      viem: 2.13.8(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8)
-      wagmi: 2.9.11(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.2.21)(bufferutil@4.0.7)(encoding@0.1.13)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react-i18next@11.18.6(i18next@21.10.0)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.1(@babel/core@7.24.6)(@babel/preset-env@7.24.6(@babel/core@7.24.6))(@types/react@18.2.21)(bufferutil@4.0.7)(react@18.3.1)(utf-8-validate@6.0.3))(react@18.3.1))(react-native@0.74.1(@babel/core@7.24.6)(@babel/preset-env@7.24.6(@babel/core@7.24.6))(@types/react@18.2.21)(bufferutil@4.0.7)(react@18.3.1)(utf-8-validate@6.0.3))(react@18.3.1)(rollup@2.78.0)(typescript@5.4.5)(utf-8-validate@6.0.3)(viem@2.13.8(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
-    transitivePeerDependencies:
-      - '@types/react'
 
   '@ramp-network/ramp-instant-sdk@4.0.5':
     dependencies:
