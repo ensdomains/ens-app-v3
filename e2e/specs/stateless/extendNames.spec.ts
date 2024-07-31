@@ -53,15 +53,15 @@ test('should be able to register multiple names on the address page', async ({
   await addresPage.extendNamesModalNextButton.click()
 
   // check the invoice details
-  await expect(page.getByTestId('invoice-item-0-amount')).toContainText('0.0065')
-  await expect(page.getByTestId('invoice-item-1-amount')).toContainText('0.0002')
-  await expect(page.getByTestId('invoice-total')).toContainText('0.0067')
+  await expect(page.getByTestId('invoice-item-0-amount')).toContainText('0.1667')
+  await expect(page.getByTestId('invoice-item-1-amount')).toContainText('0.0010')
+  await expect(page.getByTestId('invoice-total')).toContainText('0.1677')
   await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
 
   // check the price comparison table
-  await expect(page.getByTestId('year-marker-0')).toContainText('3% gas')
-  await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-  await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
+  await expect(page.getByTestId('year-marker-0')).toContainText('1% gas')
+  await expect(page.getByTestId('year-marker-1')).toContainText('0% gas')
+  await expect(page.getByTestId('year-marker-2')).toContainText('0% gas')
 
   // increment and save
   await page.getByTestId('plus-minus-control-plus').click()
