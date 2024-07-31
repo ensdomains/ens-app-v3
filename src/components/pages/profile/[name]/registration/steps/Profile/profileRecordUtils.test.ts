@@ -715,3 +715,32 @@ describe('profileToProfileRecords', () => {
     })
   })
 })
+
+describe('getProfileRecordsDiff', () => {
+  it('should return an eth record with value = "" if the eth record is cleared', () => {
+    const currentRecords: ProfileRecord[] = [
+      {
+        "key": "eth",
+        "type": "addr",
+        "group": "address",
+        "value": "",
+    }
+    ]
+
+    const previousRecords: ProfileRecord[] = [
+      {
+        "key": "eth",
+        "type": "addr",
+        "group": "address",
+        "value": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+    }
+    ]
+    const recordsDiff = getProfileRecordsDiff(currentRecords, previousRecords)
+    expect(recordsDiff).toEqual([{
+      key: "eth",
+      type: "addr",
+      group: "address",
+      value: ""
+    }])
+  })
+})

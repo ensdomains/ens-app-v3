@@ -228,8 +228,6 @@ export const getProfileRecordsDiff = (
 ): ProfileRecord[] => {
   const updatedAndNewRecords = currentRecords
     .map((currentRecord) => {
-      if (isEthAddressRecord(currentRecord)) return null
-
       const identicalRecord = previousRecords.find(
         (previousRecord) =>
           previousRecord.key === currentRecord.key && previousRecord.group === currentRecord.group,
@@ -246,7 +244,13 @@ export const getProfileRecordsDiff = (
     .filter((r) => !!r) as ProfileRecord[]
   const deletedRecords = previousRecords
     .filter((previousRecord) => {
-      if (isEthAddressRecord(previousRecord)) return true
+      if (isEthAddressRecord(previousRecord)) {
+        const previousEthAddress = previousRecord.value
+        const currentEthAddress = currentRecords.find(
+          (currentRecord) => currentRecord.group === 'address' && currentRecord.key === 'eth',
+        )?.value
+        if (previousEthAddress && currentEthAddress === '') return true
+      }
 
       // Can only have a single website, so check that no other website exists
       if (previousRecord.group === 'website')
