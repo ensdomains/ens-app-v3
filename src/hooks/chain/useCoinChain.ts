@@ -1,7 +1,7 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 
-import { CoinName, coinNameToTypeMap } from '@ensdomains/address-encoder'
-import { isEvmCoinType } from '@ensdomains/address-encoder/utils'
+import { CoinName, coinNameToTypeMap, EvmCoinType } from '@ensdomains/address-encoder'
+import { coinTypeToEvmChainId, isEvmCoinType } from '@ensdomains/address-encoder/utils'
 
 import { SupportedAddress, supportedAddresses } from '@app/constants/supportedAddresses'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
@@ -15,6 +15,7 @@ type UseCoinChainParameters = {
 }
 
 type CoinBlockExplorer = {
+  id: number
   name: string
   nativeCurrency: {
     name: string
@@ -49,25 +50,23 @@ export const getCoinChainQueryFn = async <TParams extends UseCoinChainParameters
   if (!coinName) throw new Error('name is required')
 
   const lowerCoinName = coinName?.toLowerCase() || ''
+  const coinType = coinNameToTypeMap[lowerCoinName as CoinName]
 
   if (supportedAddresses.includes(coinName?.toLowerCase() as SupportedAddress)) {
     const supportedBlockExplorers = await import('../../constants/blockExplorers/supported.json')
     const coinBlockExplorer = supportedBlockExplorers?.default.find(
       (blockExplorer) =>
-        blockExplorer?.nativeCurrency?.symbol.toLowerCase() === lowerCoinName ||
-        blockExplorer?.name?.toLocaleLowerCase() === lowerCoinName,
-      // Also need to check the name since currency symbol doesn't necessarily equal to the coin name (Ex. zora)
+        (isEvmCoinType(coinType) &&
+          blockExplorer?.id === coinTypeToEvmChainId(coinType as EvmCoinType)) ||
+        blockExplorer?.nativeCurrency?.symbol.toLowerCase() === lowerCoinName, // this is needed for btc and sol
     )
     return { error: false, data: coinBlockExplorer as CoinBlockExplorer }
   }
 
-  if (isEvmCoinType(coinNameToTypeMap[coinName as CoinName])) {
+  if (isEvmCoinType(coinType)) {
     const evmBlockExplorers = await import('../../constants/blockExplorers/evm.json')
     const coinBlockExplorer = evmBlockExplorers?.default.find(
-      (blockExplorer) =>
-        blockExplorer?.nativeCurrency?.symbol.toLowerCase() === lowerCoinName ||
-        blockExplorer?.name?.toLocaleLowerCase() === lowerCoinName,
-      // Also need to check the name since currency symbol doesn't necessarily equal to the coin name (Ex. zora)
+      (blockExplorer) => blockExplorer?.id === coinTypeToEvmChainId(coinType as EvmCoinType),
     )
     return { error: false, data: coinBlockExplorer as CoinBlockExplorer }
   }

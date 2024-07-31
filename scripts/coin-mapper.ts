@@ -49,7 +49,7 @@ const solBlockExplorer = {
   },
   blockExplorers: {
     default: {
-      name: 'Joseon Explorer',
+      name: 'Solana',
       url: 'https://explorer.solana.com/',
     },
   },
@@ -69,6 +69,7 @@ const supportedBlockExplorers = supportedCoins.map((address: string) => {
   })
   if (!coin) return {}
   return {
+    id: coin?.id,
     name: coin?.name,
     nativeCurrency: {
       ...coin?.nativeCurrency,
@@ -89,6 +90,7 @@ const evmBlockExplorers = evmCoins.map((address: string) => {
   })
   if (!coin) return {}
   return {
+    id: coin?.id,
     name: coin?.name,
     nativeCurrency: {
       ...coin?.nativeCurrency,
