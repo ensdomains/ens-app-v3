@@ -50,6 +50,58 @@ export const formatDateTime = (date: Date) => {
 export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
 
+export const formatDurationOfDates = (startDate: Date, endDate: Date, t: TFunction) => {
+  const newEndDate = new Date(endDate.getTime() + endDate.getTimezoneOffset() * 60 * 1000)
+
+  console.log('@@startDate', startDate)
+  console.log('@@newEndDate', newEndDate)
+  const startYear = startDate.getFullYear()
+  const february = (startYear % 4 === 0 && startYear % 100 !== 0) || startYear % 400 === 0 ? 29 : 28
+  const daysInMonth = [31, february, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+  let yearDiff = newEndDate.getFullYear() - startYear
+  let monthDiff = newEndDate.getMonth() - startDate.getMonth()
+  if (monthDiff < 0) {
+    yearDiff -= 1
+    monthDiff += 12
+  }
+  let dayDiff = newEndDate.getDate() - startDate.getDate()
+  if (dayDiff < 0) {
+    if (monthDiff > 0) {
+      monthDiff -= 1
+    } else {
+      yearDiff -= 1
+      monthDiff = 11
+    }
+    dayDiff += daysInMonth[startDate.getMonth()]
+  }
+
+  if (yearDiff > 0) {
+    if (monthDiff > 0) {
+      return `${t('unit.years', { count: yearDiff, ns: 'common' })}, ${t('unit.months', {
+        count: monthDiff,
+        ns: 'common',
+      })}`
+    }
+    return t('unit.years', { count: yearDiff, ns: 'common' })
+  }
+
+  if (monthDiff > 0) {
+    if (dayDiff > 0) {
+      return `${t('unit.months', { count: monthDiff, ns: 'common' })}, ${t('unit.days', {
+        count: dayDiff,
+        ns: 'common',
+      })}`
+    }
+    return t('unit.months', { count: monthDiff, ns: 'common' })
+  }
+
+  if (dayDiff > 0) {
+    return t('unit.days', { count: dayDiff, ns: 'common' })
+  }
+  return ''
+}
+
 export const formatDuration = (duration: number, t: TFunction) => {
   const month = ONE_DAY * 30 // Assuming 30 days per month for simplicity
 

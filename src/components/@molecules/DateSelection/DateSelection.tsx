@@ -6,8 +6,14 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { roundDurationWithDay } from '@app/utils/date'
-import { formatDuration, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/utils'
+import { roundDurationWithDay, secondsToDateInput } from '@app/utils/date'
+import {
+  formatDuration,
+  formatDurationOfDates,
+  ONE_YEAR,
+  secondsToYears,
+  yearsToSeconds,
+} from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
   ({ theme }) => css`
@@ -37,6 +43,7 @@ export const DateSelection = ({
   minSeconds,
   mode = 'register',
   expiry,
+  startDate,
 }: {
   seconds: number
   setSeconds: (seconds: number) => void
@@ -44,13 +51,17 @@ export const DateSelection = ({
   minSeconds: number
   mode?: 'register' | 'extend'
   expiry?: number
+  startDate?: Date
 }) => {
+  const currentTime = expiry ?? now
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
+  const [datePicked, setDatePicked] = useState<Date>(
+    new Date(secondsToDateInput(currentTime + seconds)),
+  )
   const toggleYearPickView = () => setYearPickView(yearPickView === 'date' ? 'years' : 'date')
 
   const { t } = useTranslation()
-
-  const extensionPeriod = formatDuration(seconds, t)
+  const extensionPeriod = formatDurationOfDates(startDate || new Date(), datePicked, t)
 
   useEffect(() => {
     if (minSeconds > seconds) setSeconds(minSeconds)
@@ -66,8 +77,6 @@ export const DateSelection = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateInYears, yearPickView])
 
-  const currentTime = expiry ?? now
-
   return (
     <Container>
       {yearPickView === 'date' ? (
@@ -76,6 +85,7 @@ export const DateSelection = ({
           onChange={(e) => {
             const { valueAsDate } = e.currentTarget
             if (valueAsDate) {
+              setDatePicked(valueAsDate)
               setSeconds(roundDurationWithDay(valueAsDate, currentTime))
             }
           }}
