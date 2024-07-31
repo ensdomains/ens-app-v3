@@ -73,15 +73,6 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
 
   const [mode, setMode] = useState<NameTableMode>('view')
   const [selectedNames, setSelectedNames] = useState<Name[]>([])
-  const handleClickName = (name: Name) => () => {
-    const isExists = selectedNames.find((n) => n.id === name.id)
-
-    const names = isExists
-      ? selectedNames.filter((n) => n.id !== name.id)
-      : [...selectedNames, name]
-    setSelectedNames(names)
-    setMode(names.length ? 'select' : 'view')
-  }
 
   const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
   const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
@@ -157,13 +148,27 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])
 
+  const isNameExtendable = useCallback((name: Name) => name.parentName === 'eth', [])
+
   const isNameDisabled = useCallback(
     (name: Name) => {
       if (mode !== 'select') return false
-      return name.parentName !== 'eth'
+      return !isNameExtendable(name)
     },
-    [mode],
+    [mode, isNameExtendable],
   )
+
+  const handleClickName = (name: Name) => () => {
+    if (!isNameExtendable(name)) return
+
+    const isExists = selectedNames.find((n) => n.id === name.id)
+
+    const _selectedNames = isExists
+      ? selectedNames.filter((n) => n.id !== name.id)
+      : [...selectedNames, name]
+    setSelectedNames(_selectedNames)
+    setMode(_selectedNames.length ? 'select' : 'view')
+  }
 
   const isLoading = isNamesLoading || !address
   let InnerContent: ReactNode
@@ -187,7 +192,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
             <TaggedNameItem
               key={name.id}
               {...name}
-              mode="select"
+              mode={mode}
               selected={!!selectedNames?.find((selectedName) => selectedName.name === name.name!)}
               disabled={isNameDisabled(name)}
               onClick={handleClickName(name)}
@@ -218,7 +223,9 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
           const isSelectedAll = selectedNames.length === nameCount
 
           setMode(value)
-          setSelectedNames(isSelectedAll || value === 'view' ? [] : [...names])
+          setSelectedNames(
+            isSelectedAll || value === 'view' ? [] : [...names].filter(isNameExtendable),
+          )
         }}
         onSortDirectionChange={setSortDirection}
         onSortTypeChange={setSortType}

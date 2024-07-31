@@ -167,7 +167,7 @@ export const NameDetailItem = ({
             onClick={(e) => {
               e.preventDefault()
 
-              if (name !== INVALID_NAME) {
+              if (name !== INVALID_NAME && !disabled) {
                 handleClick()
               }
             }}
