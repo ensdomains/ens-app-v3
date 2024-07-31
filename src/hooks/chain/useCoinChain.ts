@@ -58,7 +58,7 @@ export const getCoinChainQueryFn = async <TParams extends UseCoinChainParameters
       (blockExplorer) =>
         (isEvmCoinType(coinType) &&
           blockExplorer?.id === coinTypeToEvmChainId(coinType as EvmCoinType)) ||
-        blockExplorer?.nativeCurrency?.symbol.toLowerCase() === lowerCoinName, // this is needed for btc and sol
+        blockExplorer?.nativeCurrency?.symbol.toLowerCase() === lowerCoinName, // this is needed for certain coins such as eth, btc, sol, etc.
     )
     return { error: false, data: coinBlockExplorer as CoinBlockExplorer }
   }
