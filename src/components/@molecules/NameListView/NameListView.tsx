@@ -1,6 +1,7 @@
-import { ReactNode, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
 import type { Address } from 'viem'
 
 import { Name } from '@ensdomains/ensjs/subgraph'
@@ -171,44 +172,6 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
   }
 
   const isLoading = isNamesLoading || !address
-  let InnerContent: ReactNode
-  if (!isMounted) {
-    InnerContent = null
-  } else if (isLoading) {
-    InnerContent = (
-      <EmptyDetailContainer>
-        <Spinner color="accent" />
-      </EmptyDetailContainer>
-    )
-  } else if (nameCount === 0 && searchQuery === '') {
-    InnerContent = <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
-  } else if (nameCount === 0) {
-    InnerContent = <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
-  } else if (nameCount) {
-    InnerContent = (
-      <InfiniteScrollContainer onIntersectingChange={setIsIntersecting}>
-        <div>
-          {names.map((name) => (
-            <TaggedNameItem
-              key={name.id}
-              {...name}
-              mode={mode}
-              selected={!!selectedNames?.find((selectedName) => selectedName.name === name.name!)}
-              disabled={isNameDisabled(name)}
-              onClick={handleClickName(name)}
-            />
-          ))}
-        </div>
-        {isFetching && (
-          <EmptyDetailContainer>
-            <Spinner color="accent" />
-          </EmptyDetailContainer>
-        )}
-      </InfiniteScrollContainer>
-    )
-  } else {
-    InnerContent = `${names.length}`
-  }
 
   return (
     <TabWrapperWithButtons>
@@ -246,7 +209,45 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
           </Button>
         )}
       </NameTableHeader>
-      <div data-testid="names-list">{InnerContent}</div>
+      <div data-testid="names-list">
+        {match([isMounted, isLoading, nameCount, searchQuery])
+          .with([false, P._, P._, P._], () => null)
+          .with([true, true, P._, P._], () => (
+            <EmptyDetailContainer>
+              <Spinner color="accent" />
+            </EmptyDetailContainer>
+          ))
+          .with([true, false, 0, ''], () => (
+            <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
+          ))
+          .with([true, false, 0, P._], () => (
+            <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
+          ))
+          .with([true, false, P.when((_nameCount) => _nameCount), P._], () => (
+            <InfiniteScrollContainer onIntersectingChange={setIsIntersecting}>
+              <div>
+                {names.map((name) => (
+                  <TaggedNameItem
+                    key={name.id}
+                    {...name}
+                    mode={mode}
+                    selected={
+                      !!selectedNames?.find((selectedName) => selectedName.name === name.name!)
+                    }
+                    disabled={isNameDisabled(name)}
+                    onClick={handleClickName(name)}
+                  />
+                ))}
+              </div>
+              {isFetching && (
+                <EmptyDetailContainer>
+                  <Spinner color="accent" />
+                </EmptyDetailContainer>
+              )}
+            </InfiniteScrollContainer>
+          ))
+          .otherwise(() => `${names.length}`)}
+      </div>
       <Footer />
     </TabWrapperWithButtons>
   )
