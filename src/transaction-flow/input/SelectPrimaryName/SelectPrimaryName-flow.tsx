@@ -222,7 +222,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
       let validName = data.name.name
       if (!hasEncodedLabel(validName)) return validName
 
-      // build name from unkown labels
+      // build name from unknown labels
       validName = getNameFromUnknownLabels(validName, data.unknownLabels)
       if (!hasEncodedLabel(validName)) {
         saveName(validName)
