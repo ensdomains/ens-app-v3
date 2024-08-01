@@ -53,8 +53,6 @@ export const formatFullExpiry = (expiryDate?: Date) =>
 export const formatDurationOfDates = (startDate: Date, endDate: Date, t: TFunction) => {
   const newEndDate = new Date(endDate.getTime() + endDate.getTimezoneOffset() * 60 * 1000)
 
-  console.log('@@startDate', startDate)
-  console.log('@@newEndDate', newEndDate)
   const startYear = startDate.getFullYear()
   const february = (startYear % 4 === 0 && startYear % 100 !== 0) || startYear % 400 === 0 ? 29 : 28
   const daysInMonth = [31, february, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]

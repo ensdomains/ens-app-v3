@@ -23,7 +23,7 @@ import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
-import { deriveYearlyFee, formatDuration } from '@app/utils/utils'
+import { deriveYearlyFee, formatDurationOfDates } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
@@ -209,9 +209,17 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
   const unsafeDisplayYearlyFee = yearlyFee !== 0n ? yearlyFee : previousYearlyFee
   const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
+  const { data: expiryData } = useExpiry({ enabled: names.length > 1, name: names[0] })
+  const expireDate = expiryData?.expiry?.date ? new Date(expiryData?.expiry?.date) : new Date()
+  const extendedDate = new Date(expireDate.getTime() + seconds * 1000)
 
   const transactions = [
-    createTransactionItem('extendNames', { names, duration: seconds, rentPrice: totalRentFee! }),
+    createTransactionItem('extendNames', {
+      names,
+      duration: seconds,
+      rentPrice: totalRentFee!,
+      startDateTimestamp: expireDate.getTime(),
+    }),
   ]
 
   const {
@@ -227,6 +235,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
           duration: seconds,
           names,
           rentPrice: totalRentFee!,
+          startDateTimestamp: expireDate.getTime(),
         },
         stateOverride: [
           {
@@ -249,7 +258,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const items: InvoiceItem[] = [
     {
       label: t('input.extendNames.invoice.extension', {
-        time: formatDuration(seconds, t),
+        time: formatDurationOfDates(expireDate, extendedDate, t),
       }),
       value: totalRentFee,
       bufferPercentage: 102n,
@@ -289,8 +298,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
       children: t('action.next', { ns: 'common' }),
     }))
 
-  const { data: expiryData } = useExpiry({ enabled: names.length > 1, name: names[0] })
-
   return (
     <>
       <Dialog.Heading title={title} alert={alert} />
@@ -311,9 +318,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     name={names[0]}
                     minSeconds={minSeconds}
                     mode="extend"
-                    startDate={
-                      expiryData?.expiry?.date ? new Date(expiryData?.expiry?.date) : undefined
-                    }
+                    startDate={expireDate}
                     expiry={Number(expiryData?.expiry.value)}
                   />
                 ) : (

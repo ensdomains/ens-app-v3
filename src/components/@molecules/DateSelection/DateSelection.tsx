@@ -6,14 +6,8 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { roundDurationWithDay, secondsToDateInput } from '@app/utils/date'
-import {
-  formatDuration,
-  formatDurationOfDates,
-  ONE_YEAR,
-  secondsToYears,
-  yearsToSeconds,
-} from '@app/utils/utils'
+import { roundDurationWithDay } from '@app/utils/date'
+import { formatDurationOfDates, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
   ({ theme }) => css`
@@ -55,9 +49,7 @@ export const DateSelection = ({
 }) => {
   const currentTime = expiry ?? now
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
-  const [datePicked, setDatePicked] = useState<Date>(
-    new Date(secondsToDateInput(currentTime + seconds)),
-  )
+  const [datePicked, setDatePicked] = useState<Date>(new Date((currentTime + seconds) * 1000))
   const toggleYearPickView = () => setYearPickView(yearPickView === 'date' ? 'years' : 'date')
 
   const { t } = useTranslation()
@@ -73,6 +65,7 @@ export const DateSelection = ({
   useEffect(() => {
     if (yearPickView === 'years' && dateInYears < 1) {
       setSeconds(ONE_YEAR)
+      setDatePicked(new Date((currentTime + ONE_YEAR) * 1000))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateInYears, yearPickView])
