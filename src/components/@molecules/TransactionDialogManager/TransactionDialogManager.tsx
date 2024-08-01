@@ -61,9 +61,6 @@ export const TransactionDialogManager = ({
     dispatch({ name: 'stopFlow' })
   }, [dispatch])
 
-  const { data: ethPrice } = useEthPrice()
-  const { userConfig } = useUserConfig()
-
   const InnerComponent = useMemo(() => {
     if (selectedKey && selectedItem) {
       if (selectedItem.input && selectedItem.currentFlowStage === 'input') {
@@ -114,7 +111,6 @@ export const TransactionDialogManager = ({
           displayItems={transaction.displayItems(
             {
               ...(transactionItem.data as any),
-              ethPrice: userConfig.currency === 'fiat' && ethPrice,
             },
             t,
           )}

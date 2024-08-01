@@ -17,6 +17,7 @@ import { DateSelection } from '@app/components/@molecules/DateSelection/DateSele
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
+import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -169,6 +170,7 @@ const minSeconds = ONE_DAY
 
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation(['transactionFlow', 'common'])
+  const { data: ethPrice } = useEthPrice()
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
@@ -211,7 +213,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
 
   const transactions = [
-    createTransactionItem('extendNames', { names, duration: seconds, rentPrice: totalRentFee! }),
+    createTransactionItem('extendNames', {
+      names,
+      duration: seconds,
+      rentPrice: totalRentFee!,
+      ethPrice: userConfig.currency === 'fiat' ? ethPrice : undefined,
+    }),
   ]
 
   const {
