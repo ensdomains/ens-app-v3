@@ -56,10 +56,16 @@ const solBlockExplorer = {
 }
 
 // convert these into objects
-const supportedBlockExplorers = supportedCoins.map((address: string) => {
-  const coinType = coinNameToTypeMap[address as CoinName]
-  if (address === 'btc') return btcBlockExplorer
-  if (address === 'sol') return solBlockExplorer
+const supportedBlockExplorers = supportedCoins.map((coinName: string) => {
+  const coinType = coinNameToTypeMap[coinName as CoinName]
+  if (coinName === 'btc')
+    return {
+      [coinName]: { ...btcBlockExplorer },
+    }
+  if (coinName === 'sol')
+    return {
+      [coinName]: { ...solBlockExplorer },
+    }
 
   // Ethereum mainnet is 60, but we need to convert it to 1
   const coinId = coinType === 60 ? 1 : coinTypeToEvmChainId(coinType)
@@ -69,19 +75,21 @@ const supportedBlockExplorers = supportedCoins.map((address: string) => {
   })
   if (!coin) return {}
   return {
-    id: coin?.id,
-    name: coin?.name,
-    nativeCurrency: {
-      ...coin?.nativeCurrency,
-    },
-    blockExplorers: {
-      ...coin?.blockExplorers,
+    [coinName]: {
+      id: coin?.id,
+      name: coin?.name,
+      nativeCurrency: {
+        ...coin?.nativeCurrency,
+      },
+      blockExplorers: {
+        ...coin?.blockExplorers,
+      },
     },
   }
 })
 
-const evmBlockExplorers = evmCoins.map((address: string) => {
-  const coinType = coinNameToTypeMap[address as CoinName]
+const evmBlockExplorers = evmCoins.map((coinName: string) => {
+  const coinType = coinNameToTypeMap[coinName as CoinName]
   // Ethereum mainnet is 60, but we need to convert it to 1
   const coinId = coinType === 60 ? 1 : coinTypeToEvmChainId(coinType)
   const coin = extractChain({
@@ -90,17 +98,22 @@ const evmBlockExplorers = evmCoins.map((address: string) => {
   })
   if (!coin) return {}
   return {
-    id: coin?.id,
-    name: coin?.name,
-    nativeCurrency: {
-      ...coin?.nativeCurrency,
-    },
-    blockExplorers: {
-      ...coin?.blockExplorers,
+    [coinName]: {
+      id: coin?.id,
+      name: coin?.name,
+      nativeCurrency: {
+        ...coin?.nativeCurrency,
+      },
+      blockExplorers: {
+        ...coin?.blockExplorers,
+      },
     },
   }
 })
 
-writeFileSync(supportedBlockExplorersFile, JSON.stringify(supportedBlockExplorers))
-writeFileSync(blockExplorerEvmFile, JSON.stringify(evmBlockExplorers))
-writeFileSync(othersBlockExplorerFile, JSON.stringify([{}]))
+writeFileSync(
+  supportedBlockExplorersFile,
+  JSON.stringify(Object.assign({}, ...supportedBlockExplorers)),
+)
+writeFileSync(blockExplorerEvmFile, JSON.stringify(Object.assign({}, ...evmBlockExplorers)))
+writeFileSync(othersBlockExplorerFile, JSON.stringify({}))

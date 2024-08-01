@@ -1,7 +1,7 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 
-import { CoinName, coinNameToTypeMap, EvmCoinType } from '@ensdomains/address-encoder'
-import { coinTypeToEvmChainId, isEvmCoinType } from '@ensdomains/address-encoder/utils'
+import { CoinName, coinNameToTypeMap } from '@ensdomains/address-encoder'
+import { isEvmCoinType } from '@ensdomains/address-encoder/utils'
 
 import { SupportedAddress, supportedAddresses } from '@app/constants/supportedAddresses'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
@@ -49,26 +49,30 @@ export const getCoinChainQueryFn = async <TParams extends UseCoinChainParameters
 }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseCoinChainReturnType> => {
   if (!coinName) throw new Error('name is required')
 
-  const lowerCoinName = coinName?.toLowerCase() || ''
-  const coinType = coinNameToTypeMap[lowerCoinName as CoinName]
+  const coinType = coinNameToTypeMap[coinName as CoinName]
 
-  if (supportedAddresses.includes(coinName?.toLowerCase() as SupportedAddress)) {
+  if (supportedAddresses.includes(coinName as SupportedAddress)) {
     const supportedBlockExplorers = await import('../../constants/blockExplorers/supported.json')
-    const coinBlockExplorer = supportedBlockExplorers?.default.find(
-      (blockExplorer) =>
-        (isEvmCoinType(coinType) &&
-          blockExplorer?.id === coinTypeToEvmChainId(coinType as EvmCoinType)) ||
-        blockExplorer?.nativeCurrency?.symbol.toLowerCase() === lowerCoinName, // this is needed for certain coins such as eth, btc, sol, etc.
-    )
-    return { error: false, data: coinBlockExplorer as CoinBlockExplorer }
+    const blockExplorerResults = supportedBlockExplorers?.default
+    return {
+      error: false,
+      data:
+        (blockExplorerResults[
+          coinName as keyof typeof blockExplorerResults
+        ] as CoinBlockExplorer) || null,
+    }
   }
 
   if (isEvmCoinType(coinType)) {
     const evmBlockExplorers = await import('../../constants/blockExplorers/evm.json')
-    const coinBlockExplorer = evmBlockExplorers?.default.find(
-      (blockExplorer) => blockExplorer?.id === coinTypeToEvmChainId(coinType as EvmCoinType),
-    )
-    return { error: false, data: coinBlockExplorer as CoinBlockExplorer }
+    const blockExplorerResults = evmBlockExplorers?.default
+    return {
+      error: false,
+      data:
+        (blockExplorerResults[
+          coinName as keyof typeof blockExplorerResults
+        ] as CoinBlockExplorer) || null,
+    }
   }
 
   return { error: false, data: null }
