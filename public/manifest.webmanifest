@@ -4,23 +4,13 @@
   "short_name": "ENS",
   "icons": [
     {
-      "src": "icon/AppIcon@0.5x.png",
-      "sizes": "129x129",
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon/AppIcon.png",
-      "sizes": "256x256",
-      "type": "image/png"
-    },
-    {
-      "src": "icon/AppIcon@2x.png",
+      "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
-    },
-    {
-      "src": "icon/AppIcon@3x.png",
-      "sizes": "768x768",
       "type": "image/png"
     }
   ],
