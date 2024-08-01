@@ -12,6 +12,10 @@ import { getUsedAbiEncodeAs } from '@app/utils/abi'
 import { normalizeCoinAddress } from '@app/utils/coin'
 import { contentHashToString, getContentHashProvider } from '@app/utils/contenthash'
 
+export const isEthAddressRecord = (record: ProfileRecord): boolean => {
+  return record.group === 'address' && record.key === 'eth' && record.type === 'addr'
+}
+
 export const profileRecordsToRecordOptions = (
   profileRecords: ProfileRecord[] = [],
   clearRecords = false,
@@ -213,13 +217,19 @@ export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
   const abi: ProfileRecord[] = records.abi?.abi
     ? [{ key: 'abi', type: 'abi', group: 'other', value: JSON.stringify(records.abi.abi) }]
     : []
-  const profileRecords = [...texts, ...addresses, ...website, ...abi]
+  const eth: ProfileRecord[] = addresses.find(isEthAddressRecord)
+    ? []
+    : [
+        {
+          key: 'eth',
+          type: 'addr',
+          group: 'address',
+          value: '',
+        },
+      ]
+  const profileRecords = [...texts, ...addresses, ...website, ...abi, ...eth]
   const sortedProfileRecords = profileRecords.sort(sortProfileRecords)
   return sortedProfileRecords
-}
-
-export const isEthAddressRecord = (record: ProfileRecord): boolean => {
-  return record.group === 'address' && record.key === 'eth' && record.type === 'addr'
 }
 
 export const getProfileRecordsDiff = (
@@ -233,7 +243,7 @@ export const getProfileRecordsDiff = (
           previousRecord.key === currentRecord.key && previousRecord.group === currentRecord.group,
       )
       // remove records that are empty
-      if (!currentRecord.value) return null
+      if (!currentRecord.value && !isEthAddressRecord(currentRecord)) return null
       // record is new
       if (!identicalRecord) return currentRecord
       // record is updated
@@ -244,14 +254,6 @@ export const getProfileRecordsDiff = (
     .filter((r) => !!r) as ProfileRecord[]
   const deletedRecords = previousRecords
     .filter((previousRecord) => {
-      if (isEthAddressRecord(previousRecord)) {
-        const previousEthAddress = previousRecord.value
-        const currentEthAddress = currentRecords.find(
-          (currentRecord) => currentRecord.group === 'address' && currentRecord.key === 'eth',
-        )?.value
-        if (previousEthAddress && currentEthAddress === '') return true
-      }
-
       // Can only have a single website, so check that no other website exists
       if (previousRecord.group === 'website')
         return currentRecords.findIndex((currentRecord) => currentRecord.group === 'website') === -1
