@@ -183,12 +183,8 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
         searchQuery={searchInput}
         selectedCount={selectedNames.length}
         onModeChange={(value) => {
-          const isSelectedAll = selectedNames.length === nameCount
-
           setMode(value)
-          setSelectedNames(
-            isSelectedAll || value === 'view' ? [] : [...names].filter(isNameExtendable),
-          )
+          setSelectedNames(value === 'view' ? [] : [...names].filter(isNameExtendable))
         }}
         onSortDirectionChange={setSortDirection}
         onSortTypeChange={setSortType}
@@ -197,7 +193,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
           debouncedSetSearch(s)
         }}
       >
-        {(mode === 'select' || !!selectedNames.length) && (
+        {mode === 'select' && (
           <Button
             size="small"
             onClick={handleExtend}
