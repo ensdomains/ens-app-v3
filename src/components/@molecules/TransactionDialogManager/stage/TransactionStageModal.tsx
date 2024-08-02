@@ -25,12 +25,13 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
+// import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import {
   ManagedDialogProps,
   TransactionFlowAction,
   TransactionStage,
 } from '@app/transaction-flow/types'
-import { ConfigWithEns } from '@app/types'
+import { ConfigWithEns, TransactionDisplayItem } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { useQuery } from '@app/utils/query/useQuery'
@@ -268,6 +269,22 @@ export const handleBackToInput = (dispatch: Dispatch<TransactionFlowAction>) => 
   dispatch({ name: 'resetTransactionStep' })
 }
 
+function useCreateSubnameRedirect(
+  shouldTrigger: boolean,
+  subdomain?: TransactionDisplayItem['value'],
+) {
+  // const router = useRouterWithHistory()
+
+  useEffect(() => {
+    if (shouldTrigger && typeof subdomain === 'string') {
+      setTimeout(() => {
+        window.location.href = `/${subdomain}`
+      }, 1000)
+      // router.push(`/${subdomain}`)
+    }
+  }, [shouldTrigger, subdomain])
+}
+
 export const TransactionStageModal = ({
   actionName,
   currentStep,
@@ -368,6 +385,11 @@ export const TransactionStageModal = ({
       }),
     },
   })
+
+  useCreateSubnameRedirect(
+    stage === 'complete' && currentStep + 1 === stepCount,
+    displayItems.find((i) => i.label === 'subname' && i.type === 'name')?.value,
+  )
 
   const FilledDisplayItems = useMemo(
     () => <DisplayItems displayItems={[...(displayItems || [])]} />,
