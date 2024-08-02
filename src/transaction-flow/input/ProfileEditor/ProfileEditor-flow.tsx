@@ -146,7 +146,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   // Update profile records if transaction data exists
   const [isRecordsUpdated, setIsRecordsUpdated] = useState(false)
-  console.log(transactions)
+
   useEffect(() => {
     const updateProfileRecordsWithTransactionData = () => {
       const transaction = transactions.find(
@@ -279,11 +279,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     validated={isDirtyForRecordAtIndex(index)}
                     error={errorForRecordAtIndex(index, 'key')}
                     onDelete={() => {
-                      if (isEthAddressRecord(field)) {
-                        updateRecordAtIndex(index, { ...field, value: '' })
-                      } else {
-                        handleDeleteRecord(field, index)
-                      }
+                      handleDeleteRecord(field, index)
                     }}
                   />
                 ) : field.key === 'description' ? (
@@ -296,11 +292,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     error={errorForRecordAtIndex(index)}
                     validated={isDirtyForRecordAtIndex(index)}
                     onDelete={() => {
-                      if (isEthAddressRecord(field)) {
-                        updateRecordAtIndex(index, { ...field, value: '' })
-                      } else {
-                        handleDeleteRecord(field, index)
-                      }
+                      handleDeleteRecord(field, index)
                     }}
                     {...register(`records.${index}.value`, {
                       validate: validatorForRecord(field),
