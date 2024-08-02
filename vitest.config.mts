@@ -21,8 +21,10 @@ export default defineConfig({
     globals: false,
     environment: 'jsdom',
     alias: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
+      /* eslint-disable @typescript-eslint/naming-convention */
       '@app/': new URL('./src/', import.meta.url).pathname,
+      '@root/': new URL('./', import.meta.url).pathname,
+      /* eslint-enable @typescript-eslint/naming-convention */
     },
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     setupFiles: ['./test/textencoder-setup.mts', './test/websocket-setup.mts'],
