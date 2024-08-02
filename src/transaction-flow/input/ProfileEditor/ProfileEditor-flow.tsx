@@ -146,7 +146,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   // Update profile records if transaction data exists
   const [isRecordsUpdated, setIsRecordsUpdated] = useState(false)
-  console.log(transactions)
   useEffect(() => {
     const updateProfileRecordsWithTransactionData = () => {
       const transaction = transactions.find(
