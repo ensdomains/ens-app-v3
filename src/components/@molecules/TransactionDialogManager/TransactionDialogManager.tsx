@@ -6,10 +6,8 @@ import { useAccount, useChainId } from 'wagmi'
 
 import { Dialog } from '@ensdomains/thorin'
 
-import { useEthPrice } from '@app/hooks/useEthPrice'
 import { transactions } from '@app/transaction-flow/transaction'
 import { queryClientWithRefetch } from '@app/utils/query/reactQuery'
-import useUserConfig from '@app/utils/useUserConfig'
 
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
