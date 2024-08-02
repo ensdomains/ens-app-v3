@@ -149,14 +149,14 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])
 
-  const isNameExtendable = useCallback((name: Name) => name.parentName === 'eth', [])
+  const isNameExtendable = (name: Name) => name.parentName === 'eth'
 
   const isNameDisabled = useCallback(
     (name: Name) => {
       if (mode !== 'select') return false
       return !isNameExtendable(name)
     },
-    [mode, isNameExtendable],
+    [mode],
   )
 
   const handleClickName = (name: Name) => () => {
