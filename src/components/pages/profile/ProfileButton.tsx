@@ -69,11 +69,10 @@ export const AddressProfileButton = ({
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, copy] = useCopyToClipboard()
+  const [, copy] = useCopyToClipboard()
   const coinChainResults = useCoinChain({ coinName: iconKey })
   const { data } = coinChainResults
-  const defaultBlockExplorer = data?.data?.blockExplorers?.default
+  const defaultBlockExplorer = data?.blockExplorers?.default
 
   const items = [
     iconKey === 'eth'

@@ -31,10 +31,7 @@ type CoinBlockExplorer = {
   }
 }
 
-type UseCoinChainReturnType = {
-  error: boolean
-  data: CoinBlockExplorer | null
-}
+type UseCoinChainReturnType = CoinBlockExplorer | null
 
 type UseCoinChainConfig = QueryConfig<UseCoinChainReturnType, Error>
 
@@ -44,37 +41,37 @@ type QueryKey<TParams extends UseCoinChainParameters> = CreateQueryKey<
   'independent'
 >
 
+const isSupportedCoinName = (coinName: string): coinName is SupportedAddress =>
+  supportedAddresses.includes(coinName as SupportedAddress)
+
+const isEvmCoinName = (coinName: string): boolean => {
+  const coinType = coinNameToTypeMap[coinName as CoinName]
+  return !!coinType && isEvmCoinType(coinType)
+}
+
 export const getCoinChainQueryFn = async <TParams extends UseCoinChainParameters>({
   queryKey: [{ coinName }],
 }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseCoinChainReturnType> => {
   if (!coinName) throw new Error('name is required')
 
-  if (supportedAddresses.includes(coinName as SupportedAddress)) {
-    const supportedBlockExplorers = await import('../../constants/blockExplorers/supported.json')
-    const blockExplorerResults = supportedBlockExplorers?.default
-    return {
-      error: false,
-      data:
-        (blockExplorerResults[
-          coinName as keyof typeof blockExplorerResults
-        ] as CoinBlockExplorer) || null,
-    }
+  if (isSupportedCoinName(coinName)) {
+    const supportedBlockExplorers = (await import(
+      '../../constants/blockExplorers/supported.json'
+    ).then((m) => m.default)) as { [key in SupportedAddress]: CoinBlockExplorer }
+    return supportedBlockExplorers[coinName] || null
   }
 
-  const coinType = coinNameToTypeMap[coinName as CoinName]
-  if (isEvmCoinType(coinType)) {
-    const evmBlockExplorers = await import('../../constants/blockExplorers/evm.json')
-    const blockExplorerResults = evmBlockExplorers?.default
-    return {
-      error: false,
-      data:
-        (blockExplorerResults[
-          coinName as keyof typeof blockExplorerResults
-        ] as CoinBlockExplorer) || null,
-    }
+  if (isEvmCoinName(coinName)) {
+    const evmBlockExplorers = await import('../../constants/blockExplorers/evm.json').then(
+      (m) => m.default as { [key: string]: CoinBlockExplorer },
+    )
+    return evmBlockExplorers[coinName] || null
   }
 
-  return { error: false, data: null }
+  const otherBlockExplorers = await import('../../constants/blockExplorers/other.json').then(
+    (m) => m.default as { [key: string]: CoinBlockExplorer },
+  )
+  return otherBlockExplorers[coinName] || null
 }
 
 export const useCoinChain = <TParams extends UseCoinChainParameters>({
