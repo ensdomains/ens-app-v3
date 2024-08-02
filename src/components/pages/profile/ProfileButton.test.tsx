@@ -46,27 +46,21 @@ const mockUseCoinChain = mockFunction(useCoinChain)
 mockUseCoinChain.mockImplementation(({ coinName }) => {
   if (coinName !== 'eth') {
     return {
-      data: {
-        error: true,
-        data: { error: 'Error', message: 'Coin type is not an EVM chain' },
-      },
+      data:  null
     }
   }
   return {
-    data: {
-      error: false,
-      data: {
-        id: 1,
-        name: 'Ethereum',
-        blockExplorers: {
-          default: {
-            name: 'Etherscan',
-            url: 'https://etherscan.io',
-            apiUrl: 'https://api.etherscan.io/api',
-          },
+    data:  {
+      id: 1,
+      name: 'Ethereum',
+      blockExplorers: {
+        default: {
+          name: 'Etherscan',
+          url: 'https://etherscan.io',
+          apiUrl: 'https://api.etherscan.io/api',
         },
       },
-    },
+    },  
   }
 })
 
