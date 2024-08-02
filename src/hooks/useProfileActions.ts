@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
@@ -11,7 +11,7 @@ import { checkAvailablePrimaryName } from '@app/utils/checkAvailablePrimaryName'
 import { nameParts } from '@app/utils/name'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
-import { useAbilities } from './abilities/useAbilities'
+import { Abilities, useAbilities } from './abilities/useAbilities'
 import { useAccountSafely } from './account/useAccountSafely'
 import { useExpiry } from './ensjs/public/useExpiry'
 import { useOwner } from './ensjs/public/useOwner'
@@ -37,6 +37,21 @@ type Action = {
 type Props = {
   name: string
   enabled?: boolean
+}
+
+const editButtonTooltip = ({
+  hasGraphError,
+  abilities,
+  t,
+}: {
+  hasGraphError: boolean
+  abilities: Abilities
+  t: TFunction
+}) => {
+  if (hasGraphError) return t('errors.networkError.blurb', { ns: 'common' })
+  if (!abilities.canEdit) return t('errors.isOwnerCannotEdit')
+  if (!abilities.canEditRecords && !abilities.canEditResolver) return t('errors.cannotEdit')
+  return undefined
 }
 
 export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => {
@@ -140,12 +155,15 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
       })
     }
 
-    if (abilities.canEdit && (abilities.canEditRecords || abilities.canEditResolver)) {
+    const isOwnerOrManager = address === ownerData?.owner || ownerData?.registrant === address
+    if (isOwnerOrManager) {
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
-        tooltipContent: hasGraphError
-          ? t('errors.networkError.blurb', { ns: 'common' })
-          : undefined,
+        tooltipContent: editButtonTooltip({
+          hasGraphError: !!hasGraphError,
+          abilities,
+          t,
+        }),
         tooltipPlacement: 'left',
         loading: hasGraphErrorLoading,
         onClick: () =>
@@ -271,6 +289,8 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     getPrimaryNameTransactionFlowItem,
     name,
     isAvailablePrimaryName,
+    ownerData?.owner,
+    ownerData?.registrant,
     abilities.canEdit,
     abilities.canEditRecords,
     abilities.canEditResolver,
