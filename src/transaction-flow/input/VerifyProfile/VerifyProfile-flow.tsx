@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { match, P } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
+import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { useProfile } from '@app/hooks/useProfile'
 import { useVerifiedRecords } from '@app/hooks/verification/useVerifiedRecords/useVerifiedRecords'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 
 import { DentityView } from './views/DentityView'
 import { VerificationOptionsList } from './views/VerificationOptionsList'
@@ -47,9 +47,7 @@ const VerifyProfile = ({ data: { name }, dispatch, onDismiss }: Props) => {
               name={_name}
               address={_address!}
               resolverAddress={_resolverAddress!}
-              verified={
-                !!verificationData?.find(({ verifier }) => verifier === 'dentity')?.isVerified
-              }
+              verified
               dispatch={dispatch}
               onBack={() => setProtocol(null)}
             />

@@ -7,6 +7,7 @@ const mockRouter = { push: vi.fn() }
 
 const defaultProps = {
   verifier: 'dentity' as const,
+  verifiedPresentationUri: 'https://verifiedPresentationUri',
   address: '0xaddress',
   token: 'token',
   name: 'name.eth',

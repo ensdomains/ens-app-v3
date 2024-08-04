@@ -6,6 +6,7 @@ import { Locator, Page } from '@playwright/test'
 import coinsWithIcons from '../../src/constants/coinsWithIcons.json'
 import { supportedGeneralRecordKeys } from '../../src/constants/supportedGeneralRecordKeys'
 import { supportedSocialRecordKeys } from '../../src/constants/supportedSocialRecordKeys'
+import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 
 type SupportedSocialRecordsKeys = (typeof supportedSocialRecordKeys)[number]
 
@@ -53,7 +54,7 @@ export class ProfilePage {
     return 0
   }
 
-  record(type: 'text' | 'address', key: string): Locator {
+  record(type: 'text' | 'address' | 'verification', key: string): Locator {
     if (type === 'text' && PROFILE_SNIPPET_KEYS.includes(key))
       return this.page.getByTestId(`profile-snippet-${key}`)
     if (type === 'text' && supportedSocialRecordKeys.includes(key as SupportedSocialRecordsKeys))
@@ -62,6 +63,7 @@ export class ProfilePage {
     if (type === 'address' && coinsWithIcons.includes(key.toLowerCase()))
       return this.page.getByTestId(`address-profile-button-${key.toLowerCase()}`)
     if (type === 'address') return this.page.getByTestId(`other-profile-button-${key}`)
+    if (type === 'verification') return this.page.getByTestId(`verification-profile-button-${key}`)
     return this.page.getByTestId(`other-profile-button-${key}`)
   }
 

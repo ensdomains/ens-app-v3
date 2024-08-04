@@ -26,7 +26,7 @@ export type ProfileAccountRecord = NormalisedAccountsRecord & {
 
 export type ProfileOtherRecord = DecodedText & { type: 'text' | 'contenthash' } & WithIconKey
 
-export const categoriseProfileTextRecords = ({
+export const categoriseAndTransformTextRecords = ({
   texts = [],
   contentHash,
   getVerificationProps,

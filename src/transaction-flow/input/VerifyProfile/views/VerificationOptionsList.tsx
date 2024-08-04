@@ -70,7 +70,7 @@ export const VerificationOptionsList = ({
           {VERIFICATION_OPTIONS.map(({ label, value, icon }) => (
             <VerificationOptionButton
               key={value}
-              verified={!!verificationData?.find(({ verifier }) => verifier === value)?.isVerified}
+              verified={!!verificationData?.some(({ issuer }) => issuer === 'dentity')}
               icon={icon}
               onClick={() => onSelect?.(value)}
             >

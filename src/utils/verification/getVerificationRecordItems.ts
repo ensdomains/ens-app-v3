@@ -14,33 +14,29 @@ export const getVerificationRecordItemProps = ({
   verifiedRecordsData?: UseVerifiedRecordsReturnType
   showErrors: boolean
 }): GetVerificationRecordItemsReturnTyep => {
-  if (showErrors) {
-    return (
-      verifiedRecordsData?.map(({ verifier, isVerified, verifiedRecords: records }) => {
-        const hasPersonhood = !!records.personhood
-        return {
-          showBadge: hasPersonhood || !isVerified,
-          isVerified: isVerified && hasPersonhood,
-          key: verifier,
-          iconKey: verifier,
-          value: verifier,
+  const verificationItemsMap =
+    verifiedRecordsData?.reduce<{ [key: string]: VerificationRecordItem }>(
+      (acc, { issuer, key, verified }) => {
+        // Defaulte record item
+        const recordItem = acc[issuer] ?? {
+          showBadge: false,
+          isVerified: false,
+          key: issuer,
+          iconKey: issuer,
+          value: issuer,
         }
-      }) || []
-    )
-  }
-  return (
-    verifiedRecordsData
-      ?.map(({ verifier, isVerified, verifiedRecords: records }) => {
-        if (!isVerified) return null
-        const hasPersonhood = !!records.personhood
-        return {
-          showBadge: isVerified && hasPersonhood,
-          isVerified: isVerified && !!records.personhood,
-          key: verifier as string,
-          iconKey: verifier as string,
-          value: verifier as string,
+
+        if (key !== 'personhood') return { ...acc, [issuer]: recordItem }
+
+        if (showErrors) recordItem.showBadge = true
+        if (verified) {
+          recordItem.showBadge = true
+          recordItem.isVerified = true
         }
-      })
-      .filter((recordItem): recordItem is VerificationRecordItem => !!recordItem) || []
-  )
+
+        return { ...acc, [issuer]: recordItem }
+      },
+      {},
+    ) || {}
+  return Object.values(verificationItemsMap)
 }

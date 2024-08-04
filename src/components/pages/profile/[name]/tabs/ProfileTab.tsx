@@ -15,7 +15,7 @@ import { useProfileActions } from '@app/hooks/pages/profile/[name]/profile/usePr
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useOwners } from '@app/hooks/useOwners'
 import { useVerifiedRecords } from '@app/hooks/verification/useVerifiedRecords/useVerifiedRecords'
-import { categoriseProfileTextRecords } from '@app/utils/records/categoriseProfileTextRecords'
+import { categoriseAndTransformTextRecords } from '@app/utils/records/categoriseProfileTextRecords'
 import { getSupportLink } from '@app/utils/supportLinks'
 import { validateExpiry } from '@app/utils/utils'
 import { getVerificationRecordItemProps } from '@app/utils/verification/getVerificationRecordItems'
@@ -89,7 +89,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
 
   const getTextRecord = (key: string) => profile?.texts?.find((x) => x.key === key)
 
-  const categorisedRecord = categoriseProfileTextRecords({
+  const categorisedRecord = categoriseAndTransformTextRecords({
     texts: profile?.texts,
     contentHash: profile?.contentHash,
     getVerificationProps: getVerficationProps,
@@ -102,9 +102,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         getTextRecord={getTextRecord}
         button={snippetButton}
         isPrimary={name === primaryData?.name}
-        isVerified={verifiedData?.some(
-          ({ isVerified, verifiedRecords }) => !!isVerified && verifiedRecords.personhood,
-        )}
+        isVerified={verifiedData?.some(({ key, verified }) => key === 'personhood' && verified)}
       >
         {nameDetails.isNonASCII && (
           <Helper type="warning" alignment="horizontal">

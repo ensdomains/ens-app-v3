@@ -7,7 +7,7 @@ import { UseVerificationOAuthReturnType } from '../../useVerificationOAuth/useVe
 
 type Props = Pick<
   UseVerificationOAuthReturnType,
-  'verifier' | 'token' | 'name' | 'resolverAddress'
+  'name' | 'verifier' | 'resolverAddress' | 'verifiedPresentationUri'
 > & {
   userAddress?: Hash
   router?: any
@@ -15,9 +15,9 @@ type Props = Pick<
 }
 
 export const createVerificationTransactionFlow = ({
-  verifier,
-  token,
   name,
+  verifier,
+  verifiedPresentationUri,
   resolverAddress,
   createTransactionFlow,
 }: Props) => {
@@ -25,9 +25,9 @@ export const createVerificationTransactionFlow = ({
     transactions: [
       createTransactionItem('updateVerificationRecord', {
         name,
-        resolverAddress,
         verifier,
-        token,
+        resolverAddress,
+        verifiedPresentationUri,
       }),
     ],
   })

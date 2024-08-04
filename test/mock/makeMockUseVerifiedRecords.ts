@@ -14,23 +14,7 @@ export const makeMockUseVerifiedRecordsData = (
 ): UseVerifiedRecordsReturnType | undefined => {
   return match(type)
     .with('unverified', () => undefined)
-    .with('verified', () => [
-      {
-        verifier: 'dentity' as const,
-        isVerified: true,
-        isNameVerified: true,
-        isAddressVerified: true,
-        verifiedRecords: {},
-      },
-    ])
-    .with('verified-with-error', () => [
-      {
-        verifier: 'dentity' as const,
-        isVerified: false,
-        isNameVerified: false,
-        isAddressVerified: false,
-        verifiedRecords: {},
-      },
-    ])
+    .with('verified', () => undefined)
+    .with('verified-with-error', () => undefined)
     .exhaustive()
 }

@@ -356,19 +356,22 @@ export const VerificationProfileButton = ({
   iconKey,
   value,
   isVerified,
+  showBadge,
 }: {
   iconKey: string
   value: string
   isVerified?: boolean
+  showBadge?: boolean
 }) => {
   const breakpoints = useBreakpoint()
 
   if (!isVerificationProtocol(iconKey)) return null
 
   const verificationData = getVerifierData(iconKey, value)
+
   return verificationData ? (
     <VerificationBadge
-      showBadge
+      showBadge={showBadge}
       isVerified={isVerified}
       type="personhood"
       tooltipContent={<VerificationBadgeVerifierTooltipContent isVerified={!!isVerified} />}

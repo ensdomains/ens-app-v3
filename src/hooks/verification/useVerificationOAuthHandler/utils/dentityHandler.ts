@@ -24,14 +24,6 @@ export const makeIsOwnerNotManagerPattern = (userAddress?: Hash) => {
   } as const
 }
 
-export const makeCanVerifyPattern = (userAddress?: Hash) => {
-  return {
-    owner: P.string,
-    resolverAddress: P.string,
-    token: P.string,
-  }
-}
-
 export const dentityVerificationHandler =
   ({
     userAddress,
@@ -52,75 +44,86 @@ export const dentityVerificationHandler =
         {
           name: P.string,
           owner: P.string,
-          token: P.string,
+          verifiedPresentationUri: P.string,
           resolverAddress: P.string,
         },
         ({ owner, manager }) => {
           if (owner && manager) return manager === userAddress
           return owner === userAddress
         },
-        ({ verifier, name, token, resolverAddress }) => {
+        ({ verifier, name, resolverAddress, verifiedPresentationUri }) => {
           router.push(`/${name}`)
           createVerificationTransactionFlow({
             name,
             resolverAddress,
             verifier,
-            token,
+            verifiedPresentationUri,
             createTransactionFlow,
           })
           return undefined
         },
       )
-      .with({ resolverAddress: P.nullish }, () => ({
-        open: true,
-        onDismiss,
-        onClose,
-        title: 'Verification failed',
-        message: 'Resolver address is required to complete verification flow',
-        actions: {
-          leading: {
-            children: 'Close',
-            colorStyle: 'accentSecondary',
-            onClick: () => onClose(),
-          } as ButtonProps,
-          trailing: {
-            children: 'Go to profile',
-            as: 'a',
-            href: getDestination(`/${json.name}`),
-          } as ButtonProps,
-        },
-      }))
-      .with(makeIsOwnerNotManagerPattern(userAddress), () => ({
-        open: true,
-        title: 'Verification failed',
-        message:
-          'You must be connected as the Manager of this name to set the verification record. You can view and update the Manager under the Ownership tab.',
-        actions: {
-          trailing: {
-            children: 'Done',
-            onClick: () => onClose(),
-          } as ButtonProps,
-        },
-        onClose,
-        onDismiss,
-      }))
-      .otherwise(() => ({
-        open: true,
-        title: 'Verification failed',
-        message: "We could't verify your account. Please return to Dentity and try again.",
-        actions: {
-          leading: {
-            children: 'Close',
-            colorStyle: 'accentSecondary',
-            onClick: () => onClose(),
-          } as ButtonProps,
-          trailing: {
-            children: 'Try again',
-            as: 'a',
-            href: createDentityUrl({ name: json.name, address: json.address }),
-          } as ButtonProps,
-        },
-        onClose,
-        onDismiss,
-      }))
+      .with(
+        { resolverAddress: P.nullish },
+        () =>
+          ({
+            open: true,
+            onDismiss,
+            onClose,
+            title: 'Verification failed',
+            message: 'Resolver address is required to complete verification flow',
+            actions: {
+              leading: {
+                children: 'Close',
+                colorStyle: 'accentSecondary',
+                onClick: () => onClose(),
+              } as ButtonProps,
+              trailing: {
+                children: 'Go to profile',
+                as: 'a',
+                href: getDestination(`/${json.name}`),
+              } as ButtonProps,
+            },
+          }) as VerificationErrorDialogProps,
+      )
+      .with(
+        makeIsOwnerNotManagerPattern(userAddress),
+        () =>
+          ({
+            open: true,
+            title: 'Verification failed',
+            message:
+              'You must be connected as the Manager of this name to set the verification record. You can view and update the Manager under the Ownership tab.',
+            actions: {
+              trailing: {
+                children: 'Done',
+                onClick: () => onClose(),
+              } as ButtonProps,
+            },
+            onClose,
+            onDismiss,
+          }) as VerificationErrorDialogProps,
+      )
+      .otherwise(
+        () =>
+          ({
+            open: true,
+            title: 'Verification failed',
+            message: "We could't verify your account. Please return to Dentity and try again.",
+            actions: {
+              leading: {
+                children: 'Close',
+                colorStyle: 'accentSecondary',
+                onClick: () => onClose(),
+              } as ButtonProps,
+              trailing: {
+                children: 'Try again',
+                as: 'a',
+                href: createDentityUrl({ name: json.name, address: json.address }),
+              } as ButtonProps,
+            },
+            onClose,
+            onDismiss,
+          }) as VerificationErrorDialogProps,
+      )
   }

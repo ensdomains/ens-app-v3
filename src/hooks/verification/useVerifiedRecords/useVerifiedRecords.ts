@@ -1,31 +1,21 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
-import { match } from 'ts-pattern'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import type { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
 import { CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
 
 import { createGetVerificationProps } from './utils/createGetVerificationProps'
-import { fetchDentityVPToken } from './utils/fetchDentityVPToken'
-import { parseVerificationRecord } from './utils/parseVerificationRecord'
+import {
+  parseVerificationData,
+  VerifiedRecord,
+} from './utils/parseVerificationData/parseVerificationData'
 
 type UseVerifiedRecordsParameters = {
   name?: string
   address?: string
   verificationsRecord?: string
-}
-
-export type VerifiedRecord = {
-  verifier: VerificationProtocol
-  isVerified: boolean
-  isNameVerified: boolean
-  isAddressVerified: boolean
-  verifiedRecords: {
-    [key: string]: string
-  }
 }
 
 export type UseVerifiedRecordsReturnType = VerifiedRecord[]
@@ -39,19 +29,20 @@ type QueryKey<TParams extends UseVerifiedRecordsParameters> = CreateQueryKey<
 >
 
 export const getVerifiedRecords = async <TParams extends UseVerifiedRecordsParameters>({
-  queryKey: [{ name, address, verificationsRecord }],
+  queryKey: [{ verificationsRecord }],
 }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseVerifiedRecordsReturnType> => {
-  const protocolAndTokenTuples = parseVerificationRecord(verificationsRecord)
-
-  return Promise.all(
-    protocolAndTokenTuples.map(([verifier, token]) =>
-      match(verifier)
-        .with('dentity', () =>
-          fetchDentityVPToken({ federatedToken: token, address: address!, name: name! }),
-        )
-        .exhaustive(),
-    ),
+  const verifiablePresentationUris = JSON.parse(verificationsRecord!) as string[]
+  const responses = await Promise.allSettled(
+    verifiablePresentationUris.map((uri) => fetch(uri).then((resp) => resp.json())),
   )
+  return Promise.all(
+    responses
+      .filter(
+        (response): response is PromiseFulfilledResult<any> => response.status === 'fulfilled',
+      )
+      .map(({ value }) => value)
+      .map(parseVerificationData),
+  ).then((records) => records.flat())
 }
 
 export const useVerifiedRecords = <TParams extends UseVerifiedRecordsParameters>({

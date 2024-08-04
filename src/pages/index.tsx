@@ -118,7 +118,8 @@ export default function Page() {
           <Banner />
         </Stack>
       </Container>
-      <VerificationErrorDialog {...dialogProps} />
+      {/* TODO: FIX THIS type issue */}
+      <VerificationErrorDialog {...(dialogProps as any)} />
     </>
   )
 }

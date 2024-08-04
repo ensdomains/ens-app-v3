@@ -13,7 +13,7 @@ type Data = {
   name: string
   resolverAddress: Address
   verifier: VerificationProtocol
-  token: string
+  verifiedPresentationUri: string
 }
 
 const displayItems = ({ name, verifier }: Data, t: TFunction): TransactionDisplayItem[] => {
@@ -35,12 +35,13 @@ const displayItems = ({ name, verifier }: Data, t: TFunction): TransactionDispla
 }
 
 const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
-  const { name, resolverAddress, verifier, token } = data
+  const { name, resolverAddress, verifiedPresentationUri } = data
 
+  // TODO: Fetch and add to exiting value
   return setRecords.makeFunctionData(connectorClient, {
     name,
     resolverAddress,
-    texts: [{ key: VERIFICATION_RECORD_KEY, value: JSON.stringify([[verifier, token]]) }],
+    texts: [{ key: VERIFICATION_RECORD_KEY, value: JSON.stringify([verifiedPresentationUri]) }],
     clearRecords: false,
   })
 }

@@ -28,12 +28,10 @@ export const createGetVerificationProps =
   }: T): GenericReturnType<T> => {
     if (!verificationData) return { isVerified: false, value, normalisedKey, ...rest } as any
     const verifiers = verificationData
-      .filter(({ verifiedRecords, isVerified }) => {
-        return (
-          isVerified && verifiedRecords?.[normalisedKey]?.toLowerCase() === value?.toLowerCase()
-        )
+      .filter(({ verified, key, value: _value }) => {
+        return verified && key === normalisedKey && _value?.toLowerCase() === value?.toLowerCase()
       })
-      .map(({ verifier }) => verifier)
+      .map(({ issuer }) => issuer)
 
     const isVerified = verifiers.length > 0
     if (isVerified) return { isVerified, verifiers, value, normalisedKey, ...rest } as any

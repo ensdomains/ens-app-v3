@@ -1,5 +1,5 @@
 import { useSearchParams } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
@@ -9,12 +9,7 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-import {
-  useVerificationOAuth,
-  UseVerificationOAuthReturnType,
-} from '../useVerificationOAuth/useVerificationOAuth'
-import { checkCanCompleteVerificationFlow } from './utils/checkCanCompleteVerificationFlow'
-import { createVerificationTransactionFlow } from './utils/createVerificationTransactionFlow'
+import { useVerificationOAuth } from '../useVerificationOAuth/useVerificationOAuth'
 import { dentityVerificationHandler } from './utils/dentityHandler'
 
 const issToVerificationProtocol = (iss: string | null): VerificationProtocol | null => {
@@ -35,42 +30,22 @@ export const useVerificationOAuthHandler = (): UseVerificationOAuthHandlerReturn
 
   const { address: userAddress } = useAccount()
 
-  const onSuccessCallback = useCallback(
-    (resp: UseVerificationOAuthReturnType) => {
-      if (!checkCanCompleteVerificationFlow(userAddress)(resp)) return
-
-      const { name, verifier, address, token, resolverAddress } = resp
-      // Do I need to check ownerhsip here?
-      createVerificationTransactionFlow({
-        verifier,
-        name,
-        address,
-        userAddress,
-        resolverAddress,
-        token,
-        router,
-        createTransactionFlow,
-      })
-    },
-    [userAddress, router, createTransactionFlow],
-  )
-
   const isReady = !!createTransactionFlow && !!router && !!userAddress
 
-  console.log('isReady', isReady)
   const { data, isLoading, error } = useVerificationOAuth({
     verifier: issToVerificationProtocol(iss),
     code,
     enabled: isReady,
   })
-  console.log('data', data, issToVerificationProtocol(iss))
-  const [dialogProps, setDialogProps] =
-    useState<Omit<VerificationErrorDialogProps, 'onClose' | 'onDismiss'>>()
+
+  console.log('testing')
+
+  const [dialogProps, setDialogProps] = useState<VerificationErrorDialogProps>()
   const onClose = () => setDialogProps(undefined)
   const onDismiss = () => setDialogProps(undefined)
 
   useEffect(() => {
-    if (data && !isLoading) {
+    if (data && !isLoading && userAddress) {
       const newProps = match(data)
         .with(
           {
