@@ -106,12 +106,7 @@ export const TransactionDialogManager = ({
       return (
         <TransactionStageModal
           actionName={transactionItem.name}
-          displayItems={transaction.displayItems(
-            {
-              ...(transactionItem.data as any),
-            },
-            t,
-          )}
+          displayItems={transaction.displayItems(transactionItem.data as any, t)}
           helper={
             'helper' in transaction && typeof transaction.helper === 'function'
               ? transaction.helper(transactionItem.data as any, t)
