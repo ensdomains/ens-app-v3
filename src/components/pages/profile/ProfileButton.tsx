@@ -19,6 +19,7 @@ import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import { dynamicAddressIcons } from '@app/assets/address/dynamicAddressIcons'
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
+import { useCoinChain } from '@app/hooks/chain/useCoinChain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { getDestination } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -60,7 +61,7 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
 
 export const AddressProfileButton = ({
   iconKey: _iconKey,
-  value,
+  value: address,
 }: {
   iconKey: string
   value: string
@@ -68,21 +69,51 @@ export const AddressProfileButton = ({
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
 
+  const [, copy] = useCopyToClipboard()
+  const coinChainResults = useCoinChain({ coinName: iconKey })
+  const { data } = coinChainResults
+  const defaultBlockExplorer = data?.blockExplorers?.default
+
+  const items = [
+    iconKey === 'eth'
+      ? {
+          icon: <UpRightArrowSVG />,
+          label: 'View address',
+          href: getDestination(`/${address}`) as string,
+        }
+      : undefined,
+    {
+      icon: <CopySVG />,
+      label: 'Copy address',
+      onClick: () => copy(address),
+    },
+    defaultBlockExplorer
+      ? {
+          icon: <UpRightArrowSVG />,
+          label: `View on ${defaultBlockExplorer?.name}`,
+          href: `${defaultBlockExplorer?.url}/address/${address}`,
+        }
+      : undefined,
+  ].filter((item) => item !== undefined) as DropdownItem[]
+
   return iconKey in dynamicAddressIcons ? (
-    <RecordItem
-      data-testid={`address-profile-button-${iconKey}`}
-      icon={<StyledAddressIcon name={iconKey} />}
-      value={value}
-      size={breakpoints.sm ? 'large' : 'small'}
-      inline
-    >
-      {shortenAddress(
-        value,
-        undefined,
-        breakpoints.sm ? undefined : 4,
-        breakpoints.sm ? undefined : 3,
-      )}
-    </RecordItem>
+    <Dropdown width={200} items={items} direction="up">
+      <RecordItem
+        data-testid={`address-profile-button-${iconKey}`}
+        postfixIcon={VerticalDotsSVG}
+        icon={<StyledAddressIcon name={iconKey} />}
+        value={address}
+        size={breakpoints.sm ? 'large' : 'small'}
+        inline
+      >
+        {shortenAddress(
+          address,
+          undefined,
+          breakpoints.sm ? undefined : 4,
+          breakpoints.sm ? undefined : 3,
+        )}
+      </RecordItem>
+    </Dropdown>
   ) : null
 }
 
