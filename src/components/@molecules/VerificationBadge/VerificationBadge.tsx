@@ -37,6 +37,7 @@ const InnerContainer = styled.div(
   () => css`
     display: flex;
     transition: transform 0.2s;
+
     // Counteract the hover of child element
     &:hover {
       transform: translateY(1px);
