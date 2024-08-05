@@ -1,7 +1,5 @@
-import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 
-import '@rainbow-me/rainbowkit/styles.css'
-
+// prettier-ignore-file
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
@@ -22,6 +20,10 @@ import { QueryProviders } from '@app/utils/query/providers'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 
+import { lightTheme, Theme } from '@usecapsule/rainbowkit'
+import { RainbowKitWithCapsuleProvider } from '@app/utils/RainbowKitWithCapsuleProvider'
+import '@usecapsule/rainbowkit/styles.css'
+
 import i18n from '../i18n'
 
 import '../styles.css'
@@ -30,7 +32,7 @@ const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 'eotmigir'
 
 const rainbowKitTheme: Theme = {
   ...lightTheme({
-    accentColor: thorinLightTheme.colors.accent,
+    // accentColor: thorinLightTheme.colors.accent, // requires a hex string color but thorinLightTheme returns a hsl string
     borderRadius: 'medium',
   }),
   fonts: {
@@ -144,7 +146,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <I18nextProvider i18n={i18n}>
       <QueryProviders>
-        <RainbowKitProvider theme={rainbowKitTheme}>
+        <RainbowKitWithCapsuleProvider theme={rainbowKitTheme}>
           <TransactionStoreProvider>
             <ThemeProvider theme={thorinLightTheme}>
               <BreakpointProvider queries={breakpoints}>
@@ -164,7 +166,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
               </BreakpointProvider>
             </ThemeProvider>
           </TransactionStoreProvider>
-        </RainbowKitProvider>
+        </RainbowKitWithCapsuleProvider>
       </QueryProviders>
     </I18nextProvider>
   )
