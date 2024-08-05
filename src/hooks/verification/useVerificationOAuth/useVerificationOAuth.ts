@@ -3,6 +3,7 @@ import { Hash } from 'viem'
 
 import { getOwner, getRecords } from '@ensdomains/ensjs/public'
 
+import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
@@ -24,6 +25,7 @@ export type UseVerificationOAuthReturnType = {
   address: Hash
   resolverAddress: Hash
   verifiedPresentationUri: string
+  verificationRecord?: string
 }
 
 type UseVerificationOAuthConfig = QueryConfig<UseVerificationOAuthReturnType, Error>
@@ -52,7 +54,7 @@ export const getVerificationOAuth =
 
     // Get resolver address since it will be needed for setting verification record
     const client = config.getClient({ chainId })
-    const records = await getRecords(client, { name })
+    const records = await getRecords(client, { name, texts: [VERIFICATION_RECORD_KEY] })
 
     // Get owner data to
     const ownerData = await getOwner(client, { name })
@@ -67,6 +69,7 @@ export const getVerificationOAuth =
       owner: _owner,
       manager,
       resolverAddress: records.resolverAddress,
+      verificationRecord: records.texts.find((text) => text.key === VERIFICATION_RECORD_KEY)?.value,
     }
     return data
   }

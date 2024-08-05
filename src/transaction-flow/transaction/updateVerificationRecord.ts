@@ -37,7 +37,7 @@ const displayItems = ({ name, verifier }: Data, t: TFunction): TransactionDispla
 const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
   const { name, resolverAddress, verifiedPresentationUri } = data
 
-  // TODO: Fetch and add to exiting value
+  // TODO: Support multiple verifiers
   return setRecords.makeFunctionData(connectorClient, {
     name,
     resolverAddress,

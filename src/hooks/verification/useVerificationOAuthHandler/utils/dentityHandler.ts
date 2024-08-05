@@ -51,8 +51,12 @@ export const dentityVerificationHandler =
           if (owner && manager) return manager === userAddress
           return owner === userAddress
         },
-        ({ verifier, name, resolverAddress, verifiedPresentationUri }) => {
+        ({ verifier, name, resolverAddress, verifiedPresentationUri, verificationRecord }) => {
           router.push(`/${name}`)
+
+          const vcUris = verificationRecord ? JSON.parse(verificationRecord) : []
+          if (Array.isArray(vcUris) && vcUris.includes(verifiedPresentationUri)) return undefined
+
           createVerificationTransactionFlow({
             name,
             resolverAddress,
