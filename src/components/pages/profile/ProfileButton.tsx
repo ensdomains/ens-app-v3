@@ -319,8 +319,7 @@ export const OwnerProfileButton = ({
     t,
   ])
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, copy] = useCopyToClipboard()
+  const [, copy] = useCopyToClipboard()
 
   const items = [
     link
