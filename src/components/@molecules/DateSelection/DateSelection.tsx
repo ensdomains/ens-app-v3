@@ -68,12 +68,10 @@ export const DateSelection = ({
   useEffect(() => {
     if (yearPickView === 'years' && currentTime) {
       setSeconds(
-        dateInYears < 1
-          ? ONE_YEAR
-          : secondsFromDateDiff({
-              startDate: new Date(currentTime * 1000),
-              additionalYears: dateInYears,
-            }),
+        secondsFromDateDiff({
+          startDate: new Date(currentTime * 1000),
+          additionalYears: dateInYears < 1 ? 1 : dateInYears,
+        }),
       )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
