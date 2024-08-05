@@ -1,12 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Locator, Page } from '@playwright/test'
+import { Locator, Page, expect } from '@playwright/test'
 
 import coinsWithIcons from '../../src/constants/coinsWithIcons.json'
 import { supportedGeneralRecordKeys } from '../../src/constants/supportedGeneralRecordKeys'
 import { supportedSocialRecordKeys } from '../../src/constants/supportedSocialRecordKeys'
-import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 
 type SupportedSocialRecordsKeys = (typeof supportedSocialRecordKeys)[number]
 
@@ -26,6 +25,8 @@ export class ProfilePage {
 
   readonly profileEditor: Locator
 
+  readonly verificationsButton: Locator
+
   constructor(page: Page) {
     this.page = page
     this.getRecreateButton = this.page.getByTestId('profile-action-Recreate name')
@@ -36,6 +37,7 @@ export class ProfilePage {
     this.getExtendButton = this.page.getByTestId('extend-button')
     this.editProfileButton = this.page.getByTestId('profile-action-Edit profile')
     this.profileEditor = this.page.locator('.modal')
+    this.verificationsButton = this.page.getByTestId('profile-action-Verifications')
   }
 
   async goto(name: string) {
@@ -65,6 +67,17 @@ export class ProfilePage {
     if (type === 'address') return this.page.getByTestId(`other-profile-button-${key}`)
     if (type === 'verification') return this.page.getByTestId(`verification-profile-button-${key}`)
     return this.page.getByTestId(`other-profile-button-${key}`)
+  }
+
+  isRecordVerified(type: 'text' | 'verification', key: string, verified = true) {
+    const count = verified ? 1 : 0
+    const testId = type === 'text' ? 'verification-badge-record-icon' : 'verification-badge-person-icon'
+    return expect(this.record(type, key).locator('../..').getByTestId(testId)).toHaveCount(count)
+  }
+
+  isPersonhoodVerified(verified = true) {
+    const count = verified ? 1 : 0
+    return expect(this.page.getByTestId("profile-snippet-person-icon")).toHaveCount(count)
   }
 
   contentHash(): Locator {

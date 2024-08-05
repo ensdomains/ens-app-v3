@@ -54,13 +54,13 @@ const ArrowWrapper = styled.div(
 
 export const VerificationOptionButton = ({ icon, children, verified, ...props }: Props) => {
   return (
-    <Container {...props}>
+    <Container {...props} data-testid={`verification-option-${children}`}>
       {icon && <IconWrapper>{icon}</IconWrapper>}
       <Label>
         <Typography fontVariant="bodyBold">{children}</Typography>
       </Label>
       {verified && (
-        <Tag size="small" colorStyle="greenSecondary">
+        <Tag size="small" colorStyle="greenSecondary" data-testid="verification-option-added">
           Added
         </Tag>
       )}

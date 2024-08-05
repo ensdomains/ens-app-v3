@@ -1,9 +1,9 @@
 import { VerifiableCredential } from '@app/types/verification'
 
-export const tryVerifyVerifiableCredentials = async (data: VerifiableCredential) => {
+// TODO: Add proper verification logic
+export const tryVerifyVerifiableCredentials = async (data?: VerifiableCredential) => {
   try {
-    console.log(data)
-    return true
+    return !!data
   } catch (e) {
     return false
   }

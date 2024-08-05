@@ -54,6 +54,12 @@ export class Login {
     await expect(this.getProfileButton).toBeVisible()
   }
 
+  async switchTo(user: User) {
+    const pk = this.accounts.getPrivateKey(user)
+    await this.wallet.changeAccounts([pk!])
+    await this.wallet.authorize(Web3RequestKind.RequestPermissions)
+  }
+
   async reconnect() {
     await this.waitForLoad()
     await this.getConnectButton.click()

@@ -24,6 +24,14 @@ export const makeIsOwnerNotManagerPattern = (userAddress?: Hash) => {
   } as const
 }
 
+const tryJsonParse = (json: string) => {
+  try {
+    return JSON.parse(json)
+  } catch {
+    return undefined
+  }
+}
+
 export const dentityVerificationHandler =
   ({
     userAddress,
@@ -54,7 +62,8 @@ export const dentityVerificationHandler =
         ({ verifier, name, resolverAddress, verifiedPresentationUri, verificationRecord }) => {
           router.push(`/${name}`)
 
-          const vcUris = verificationRecord ? JSON.parse(verificationRecord) : []
+          const vcUris = verificationRecord ? tryJsonParse(verificationRecord) : []
+          console.log('vcUris', vcUris, verifiedPresentationUri)
           if (Array.isArray(vcUris) && vcUris.includes(verifiedPresentationUri)) return undefined
 
           createVerificationTransactionFlow({
@@ -109,7 +118,7 @@ export const dentityVerificationHandler =
           }) as VerificationErrorDialogProps,
       )
       .otherwise(
-        () =>
+        ({ name, owner }) =>
           ({
             open: true,
             title: 'Verification failed',
@@ -123,7 +132,7 @@ export const dentityVerificationHandler =
               trailing: {
                 children: 'Try again',
                 as: 'a',
-                href: createDentityUrl({ name: json.name, address: json.address }),
+                href: createDentityUrl({ name, address: owner }),
               } as ButtonProps,
             },
             onClose,

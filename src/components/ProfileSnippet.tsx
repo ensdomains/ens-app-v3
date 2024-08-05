@@ -262,7 +262,7 @@ export const ProfileSnippet = ({
             {beautifiedName}
             {isVerified && (
               <VerificationBadgeWrapper>
-                <VerifiedPersonSVG />
+                <VerifiedPersonSVG data-testid="profile-snippet-person-icon" />
               </VerificationBadgeWrapper>
             )}
           </Name>

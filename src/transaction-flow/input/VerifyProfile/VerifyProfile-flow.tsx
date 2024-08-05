@@ -47,7 +47,7 @@ const VerifyProfile = ({ data: { name }, dispatch, onDismiss }: Props) => {
               name={_name}
               address={_address!}
               resolverAddress={_resolverAddress!}
-              verified
+              verified={!!verificationData?.some(({ issuer }) => issuer === 'dentity')}
               dispatch={dispatch}
               onBack={() => setProtocol(null)}
             />

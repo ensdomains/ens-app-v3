@@ -83,6 +83,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     verificationsRecord: profile?.texts?.find(({ key }) => key === VERIFICATION_RECORD_KEY)?.value,
   })
 
+  console.log('profile', profile)
   console.log('verifiedData', verifiedData)
 
   const isOffchainImport = useIsOffchainName({

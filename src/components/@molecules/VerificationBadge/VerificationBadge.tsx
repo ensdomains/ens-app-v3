@@ -70,15 +70,17 @@ export const VerificationBadge = forwardRef<HTMLElement, Props>(
     const color = type === 'personhood' ? 'green' : 'accent'
     const finalColor = isVerified ? color : 'red'
     return (
-      <Container $color={finalColor}>
+      <Container $color={finalColor} data-testid={`verification-badge-${type}`}>
         <InnerContainer>{clonedChild}</InnerContainer>
         <Tooltip mobileWidth={250} content={tooltipContent}>
           <Badge $color={finalColor}>
             {match([isVerified, type])
-              .with([false, P._], () => <AlertSVG />)
-              .with([true, 'personhood'], () => <VerifiedPersonSVG />)
+              .with([false, P._], () => <AlertSVG data-testid="verification-badge-error-icon" />)
+              .with([true, 'personhood'], () => (
+                <VerifiedPersonSVG data-testid="verification-badge-person-icon" />
+              ))
               .otherwise(() => (
-                <VerifiedRecordSVG />
+                <VerifiedRecordSVG data-testid="verification-badge-record-icon" />
               ))}
           </Badge>
         </Tooltip>
