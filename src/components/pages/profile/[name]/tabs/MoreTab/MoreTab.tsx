@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
 import { NameWrapper } from './NameWrapper'
@@ -29,7 +30,9 @@ type Props = {
 
 const MoreTab = ({ name, nameDetails, abilities }: Props) => {
   const { canBeWrapped, ownerData, wrapperData, isWrapped, isCachedData, profile } = nameDetails
-  const { isConnected } = useAccount()
+
+  const { isConnected, address } = useAccount()
+  const { data: primary } = usePrimaryName({ address })
 
   return (
     <MoreContainer>
@@ -42,7 +45,18 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
         resolverAddress={profile?.resolverAddress}
         canEditResolverError={abilities.canEditResolverError}
       />
-      {isConnected && <NameWrapper {...{ isWrapped, wrapperData, canBeWrapped, name, profile }} />}
+      {(isConnected || isWrapped) && (
+        <NameWrapper
+          {...{
+            isWrapped,
+            wrapperData,
+            canBeWrapped,
+            name,
+            profile,
+            isPrimaryName: primary?.match,
+          }}
+        />
+      )}
     </MoreContainer>
   )
 }

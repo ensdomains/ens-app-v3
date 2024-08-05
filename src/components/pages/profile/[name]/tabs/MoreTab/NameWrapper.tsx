@@ -3,11 +3,11 @@ import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { mq, RecordItem, Typography } from '@ensdomains/thorin'
+import { AlertSVG, Button, CheckSVG, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
-import { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
-import { Profile } from '@app/types'
+import type { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
+import type { Profile } from '@app/types'
 
 import { TabWrapper } from '../../../TabWrapper'
 
@@ -18,6 +18,7 @@ type Props = {
   ownerData?: GetOwnerReturnType
   wrapperData?: GetWrapperDataReturnType
   profile: Profile | undefined
+  isPrimaryName: boolean | undefined
 }
 
 const getFuseStateFromWrapperData = (wrapperData?: GetWrapperDataReturnType): NameWrapperState =>
@@ -50,8 +51,40 @@ const TwoRows = styled.div(
     display: flex;
     flex-direction: row;
     gap: ${theme.space['4']};
+    justify-content: space-between;
   `,
 )
+
+const Record = styled.div(
+  ({ theme }) => css`
+    padding: ${theme.space[3]};
+    background: ${theme.colors.greenSurface};
+    border-radius: ${theme.radii.input};
+    border: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};
+    width: ${theme.space.full};
+    font-weight: ${theme.fontWeights.bold};
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  `,
+)
+
+const ParentControlRecord = styled(Record)<{ $isPCCBurned: boolean }>(
+  ({ theme, $isPCCBurned }) => css`
+    background: ${$isPCCBurned ? theme.colors.greenSurface : theme.colors.yellowSurface};
+    & > svg {
+      color: ${$isPCCBurned ? theme.colors.green : theme.colors.yellow};
+    }
+  `,
+)
+
+const HeaderContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`
 
 export const NameWrapper = ({
   name,
@@ -60,19 +93,31 @@ export const NameWrapper = ({
   wrapperData,
   canBeWrapped,
   profile,
+  isPrimaryName,
 }: Props) => {
   const { t } = useTranslation('profile')
   const status: NameWrapperState = getFuseStateFromWrapperData(wrapperData)
 
+  const isPCCBurned = !!wrapperData?.fuses.parent?.PARENT_CANNOT_CONTROL
+
   return (
     <Container>
-      <Typography fontVariant="headingFour">{t('tabs.more.token.nameWrapper')}</Typography>
-      <TwoRows>
-        <RecordItem value={t(`tabs.more.token.status.${status}`)}>
-          {t(`tabs.more.token.status.${status}`)}
-        </RecordItem>
-        <div>some div</div>
-      </TwoRows>
+      <HeaderContainer>
+        <Typography fontVariant="headingFour">{t('tabs.more.token.nameWrapper')}</Typography>
+        {isPrimaryName && <Button width="max">{t('tabs.more.token.wrapName')}</Button>}
+      </HeaderContainer>
+      {/* {JSON.stringify({ wrapperData, ownerData, canBeWrapped, name, isWrapped })} */}
+      {isWrapped ? (
+        <TwoRows>
+          <Record>{isWrapped ? 'Wrapped' : 'Unwrapped'}</Record>
+          <ParentControlRecord $isPCCBurned={isPCCBurned}>
+            {isPCCBurned ? 'Not parent-controllable' : 'Parent-controllable'}
+            {isPCCBurned ? <CheckSVG /> : <AlertSVG />}
+          </ParentControlRecord>
+        </TwoRows>
+      ) : (
+        <>{t('tabs.more.token.unwrappedText')}</>
+      )}
     </Container>
   )
 }

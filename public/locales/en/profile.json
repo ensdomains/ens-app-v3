@@ -303,14 +303,9 @@
         "decimal": "decimal",
         "wrapper": "wrapper",
         "nameWrapper": "Name Wrapper",
+        "unwrappedText": " Wrapping your name gives it new features and functionality, however some functionality on your name will change. Please make sure you understand these changes before wrapping your name.",
         "wrapName": "Wrap Name",
-        "unwrap": "Unwrap",
-        "status": {
-          "unwrapped": "unwrapped",
-          "wrapped": "wrapped",
-          "emancipated": "wrapped, emancipated",
-          "locked": "wrapped, locked"
-        }
+        "unwrap": "Unwrap"
       },
       "misc": {
         "registered": "Registered",
