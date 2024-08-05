@@ -66,7 +66,7 @@ export const DateSelection = ({
   }, [currentTime, seconds, t])
 
   useEffect(() => {
-    if (yearPickView === 'years') {
+    if (yearPickView === 'years' && currentTime) {
       setSeconds(
         dateInYears < 1
           ? ONE_YEAR
