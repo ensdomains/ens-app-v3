@@ -318,7 +318,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     name={names[0]}
                     minSeconds={minSeconds}
                     mode="extend"
-                    startDate={expireDate}
                     expiry={Number(expiryData?.expiry.value)}
                   />
                 ) : (

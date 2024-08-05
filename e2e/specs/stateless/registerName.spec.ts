@@ -5,8 +5,9 @@ import { Hash, isHash } from 'viem'
 import { ethRegistrarControllerCommitSnippet } from '@ensdomains/ensjs/contracts'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
+import { secondsFromDateDiff } from '@app/utils/date'
 // import { secondsToDateInput } from '@app/utils/date'
-import { daysToSeconds, yearsToSeconds } from '@app/utils/time'
+import { daysToSeconds } from '@app/utils/time'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
@@ -298,12 +299,15 @@ test('should allow registering with a specific date', async ({ page, login, make
   const oneYearLaterInput = await page.evaluate(
     (timestamp) => {
       const _date = new Date(timestamp)
-      const year = _date.getFullYear()
-      const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-      const day = String(_date.getDate()).padStart(2, '0')
+      const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
+      const year = _date2.getFullYear()
+      const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+      const day = String(_date2.getDate()).padStart(2, '0')
       return `${year}-${month}-${day}`
     },
-    (browserTime + yearsToSeconds(1)) * 1000,
+    (browserTime +
+      secondsFromDateDiff({ startDate: new Date(browserTime * 1000), additionalYears: 1 })) *
+      1000,
   )
   // const oneYear = browserTime + yearsToSeconds(1)
 
@@ -316,12 +320,19 @@ test('should allow registering with a specific date', async ({ page, login, make
     const oneYearAndHalfLaterInput = await page.evaluate(
       (timestamp) => {
         const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
+        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
+        const year = _date2.getFullYear()
+        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date2.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
       },
-      (browserTime + yearsToSeconds(2.5)) * 1000,
+      (browserTime +
+        secondsFromDateDiff({
+          startDate: new Date(browserTime * 1000),
+          additionalYears: 2,
+          additionalMonths: 6,
+        })) *
+        1000,
     )
     // const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
 
@@ -380,12 +391,19 @@ test('should allow registering a premium name with a specific date', async ({
     const oneYearAndHalfLaterInput = await page.evaluate(
       (timestamp) => {
         const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
+        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
+        const year = _date2.getFullYear()
+        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date2.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
       },
-      (browserTime + yearsToSeconds(2.5)) * 1000,
+      (browserTime +
+        secondsFromDateDiff({
+          startDate: new Date(browserTime * 1000),
+          additionalYears: 2,
+          additionalMonths: 6,
+        })) *
+        1000,
     )
 
     await calendar.fill(oneYearAndHalfLaterInput)
@@ -447,18 +465,22 @@ test('should allow registering a premium name for two months', async ({
   })
 
   const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
+
   const calendar = page.getByTestId('calendar')
 
   await test.step('should set a date', async () => {
     const oneYearAndHalfLaterInput = await page.evaluate(
       (timestamp) => {
         const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
+        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
+        const year = _date2.getFullYear()
+        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date2.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
       },
-      (browserTime + daysToSeconds(61)) * 1000,
+      (browserTime +
+        secondsFromDateDiff({ startDate: new Date(browserTime * 1000), additionalMonths: 2 })) *
+        1000,
     )
 
     await calendar.fill(oneYearAndHalfLaterInput)
@@ -526,9 +548,10 @@ test('should not allow registering a premium name for less than 28 days', async 
     const lessThan27Days = await page.evaluate(
       (timestamp) => {
         const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
+        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
+        const year = _date2.getFullYear()
+        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date2.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
       },
       (browserTime + daysToSeconds(27)) * 1000,
@@ -543,9 +566,10 @@ test('should not allow registering a premium name for less than 28 days', async 
     const set28days = await page.evaluate(
       (timestamp) => {
         const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
+        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
+        const year = _date2.getFullYear()
+        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date2.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
       },
       (browserTime + daysToSeconds(28)) * 1000,
@@ -621,12 +645,15 @@ test('should allow normal registration for a month', async ({
     const oneMonthLaterInput = await page.evaluate(
       (timestamp) => {
         const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
+        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
+        const year = _date2.getFullYear()
+        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date2.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
       },
-      (browserTime + daysToSeconds(31)) * 1000,
+      (browserTime +
+        secondsFromDateDiff({ startDate: new Date(browserTime * 1000), additionalMonths: 1 })) *
+        1000,
     )
     // const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
 
@@ -750,9 +777,10 @@ test('should not allow normal registration less than 28 days', async ({
     const lessThanMinDaysLaterInput = await page.evaluate(
       (timestamp) => {
         const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
+        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
+        const year = _date2.getFullYear()
+        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date2.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
       },
       (browserTime + daysToSeconds(27)) * 1000,
@@ -763,9 +791,10 @@ test('should not allow normal registration less than 28 days', async ({
     const minDaysLaterInput = await page.evaluate(
       (timestamp) => {
         const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
+        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
+        const year = _date2.getFullYear()
+        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+        const day = String(_date2.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
       },
       (browserTime + daysToSeconds(28)) * 1000,

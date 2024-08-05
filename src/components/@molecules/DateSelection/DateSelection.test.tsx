@@ -3,6 +3,7 @@ import { act, render, renderHook, screen, userEvent, waitFor } from '@app/test-u
 import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { getDaysOfMonthsFromYears } from '@app/utils/date'
 import { ONE_DAY, ONE_YEAR } from '@app/utils/time'
 
 import { DateSelection } from './DateSelection'
@@ -37,8 +38,13 @@ describe('DateSelection', () => {
       expect(screen.getByText('calendar.pick_by_years')).toBeVisible()
     })
 
+    const currentDate = new Date()
+    const getYearDays = getDaysOfMonthsFromYears(
+      currentDate.getFullYear(),
+      currentDate.getFullYear(),
+    )
     act(() => {
-      result.current[1](ONE_DAY * 30)
+      result.current[1](ONE_DAY * getYearDays[currentDate.getMonth() + 2])
     })
 
     rerender(

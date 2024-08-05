@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -37,7 +37,6 @@ export const DateSelection = ({
   minSeconds,
   mode = 'register',
   expiry,
-  startDate,
 }: {
   seconds: number
   setSeconds: (seconds: number) => void
@@ -45,15 +44,12 @@ export const DateSelection = ({
   minSeconds: number
   mode?: 'register' | 'extend'
   expiry?: number
-  startDate?: Date
 }) => {
   const currentTime = expiry ?? now
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
-  const [datePicked, setDatePicked] = useState<Date>(new Date((currentTime + seconds) * 1000))
   const toggleYearPickView = () => setYearPickView(yearPickView === 'date' ? 'years' : 'date')
 
   const { t } = useTranslation()
-  const extensionPeriod = formatDurationOfDates(startDate || new Date(), datePicked, t)
 
   useEffect(() => {
     if (minSeconds > seconds) setSeconds(minSeconds)
@@ -61,11 +57,17 @@ export const DateSelection = ({
   }, [minSeconds, seconds])
 
   const dateInYears = Math.floor(secondsToYears(seconds))
+  const extensionPeriod = useMemo(() => {
+    return formatDurationOfDates(
+      new Date(currentTime * 1000),
+      new Date((currentTime + seconds) * 1000),
+      t,
+    )
+  }, [currentTime, seconds, t])
 
   useEffect(() => {
-    if (yearPickView === 'years' && dateInYears < 1) {
-      setSeconds(ONE_YEAR)
-      setDatePicked(new Date((currentTime + ONE_YEAR) * 1000))
+    if (yearPickView === 'years') {
+      setSeconds(dateInYears < 1 ? ONE_YEAR : dateInYears * ONE_YEAR)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateInYears, yearPickView])
@@ -78,7 +80,6 @@ export const DateSelection = ({
           onChange={(e) => {
             const { valueAsDate } = e.currentTarget
             if (valueAsDate) {
-              setDatePicked(valueAsDate)
               setSeconds(roundDurationWithDay(valueAsDate, currentTime))
             }
           }}

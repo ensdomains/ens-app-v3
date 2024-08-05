@@ -8,7 +8,7 @@ import { DecodedFuses } from '@ensdomains/ensjs/utils'
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
-import { ONE_DAY, ONE_YEAR } from './time'
+import { ONE_YEAR } from './time'
 
 export * from './time'
 
@@ -54,6 +54,7 @@ export const formatDurationOfDates = (startDate: Date, endDate: Date, t: TFuncti
   const newEndDate = new Date(endDate.getTime() + endDate.getTimezoneOffset() * 60 * 1000)
 
   const startYear = startDate.getFullYear()
+  // Determines if it's a leap year
   const february = (startYear % 4 === 0 && startYear % 100 !== 0) || startYear % 400 === 0 ? 29 : 28
   const daysInMonth = [31, february, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
@@ -96,42 +97,6 @@ export const formatDurationOfDates = (startDate: Date, endDate: Date, t: TFuncti
 
   if (dayDiff > 0) {
     return t('unit.days', { count: dayDiff, ns: 'common' })
-  }
-  return ''
-}
-
-export const formatDuration = (duration: number, t: TFunction) => {
-  const month = ONE_DAY * 30 // Assuming 30 days per month for simplicity
-
-  if (duration >= ONE_YEAR) {
-    const years = Math.floor(duration / ONE_YEAR)
-    const months = Math.floor((duration - years * ONE_YEAR) / month)
-
-    if (months !== 0)
-      return `${t('unit.years', { count: years, ns: 'common' })}, ${t('unit.months', {
-        count: months,
-        ns: 'common',
-      })}`
-
-    return t('unit.years', { count: years, ns: 'common' })
-  }
-  if (duration >= month) {
-    const months = Math.floor(duration / month)
-
-    const days = Math.floor((duration - months * month) / ONE_DAY)
-
-    // for 31-day months
-    if (days > 1)
-      return `${t('unit.months', { count: months, ns: 'common' })}, ${t('unit.days', {
-        count: days,
-        ns: 'common',
-      })}`
-
-    return t('unit.months', { count: months, ns: 'common' })
-  }
-  if (duration >= ONE_DAY) {
-    const days = Math.floor(duration / ONE_DAY)
-    return t('unit.days', { count: days, ns: 'common' })
   }
 
   return t('unit.invalid_date', { ns: 'common' })
