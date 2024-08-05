@@ -16,6 +16,7 @@ import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registr
 import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
 import {
   getProfileRecordsDiff,
+  isEthAddressRecord,
   profileEditorFormToProfileRecords,
   profileToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
@@ -131,6 +132,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     addRecords,
     updateRecord,
     removeRecordAtIndex,
+    updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
     labelForRecord,
@@ -275,7 +277,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     validator={validatorForRecord(field)}
                     validated={isDirtyForRecordAtIndex(index)}
                     error={errorForRecordAtIndex(index, 'key')}
-                    onDelete={() => handleDeleteRecord(field, index)}
+                    onDelete={() => {
+                      handleDeleteRecord(field, index)
+                    }}
                   />
                 ) : field.key === 'description' ? (
                   <ProfileRecordTextarea
@@ -286,7 +290,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     placeholder={placeholderForRecord(field)}
                     error={errorForRecordAtIndex(index)}
                     validated={isDirtyForRecordAtIndex(index)}
-                    onDelete={() => handleDeleteRecord(field, index)}
+                    onDelete={() => {
+                      handleDeleteRecord(field, index)
+                    }}
                     {...register(`records.${index}.value`, {
                       validate: validatorForRecord(field),
                     })}
@@ -301,7 +307,13 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     placeholder={placeholderForRecord(field)}
                     error={errorForRecordAtIndex(index)}
                     validated={isDirtyForRecordAtIndex(index)}
-                    onDelete={() => handleDeleteRecord(field, index)}
+                    onDelete={() => {
+                      if (isEthAddressRecord(field)) {
+                        updateRecordAtIndex(index, { ...field, value: '' })
+                      } else {
+                        handleDeleteRecord(field, index)
+                      }
+                    }}
                     {...register(`records.${index}.value`, {
                       validate: validatorForRecord(field),
                     })}
