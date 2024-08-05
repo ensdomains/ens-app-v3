@@ -573,6 +573,12 @@ describe('profileToProfileRecords', () => {
       }
       const records = [
         {
+          key: 'eth',
+          type: 'addr',
+          group: 'address',
+          value: '',
+        },
+        {
           key: 'ipfs',
           type: 'contenthash',
           group: 'website',
@@ -592,6 +598,12 @@ describe('profileToProfileRecords', () => {
         createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
+        {
+          key: 'eth',
+          type: 'addr',
+          group: 'address',
+          value: '',
+        },
         {
           key: 'ipfs',
           type: 'contenthash',
@@ -613,6 +625,12 @@ describe('profileToProfileRecords', () => {
       }
       const records = [
         {
+          key: 'eth',
+          type: 'addr',
+          group: 'address',
+          value: '',
+        },
+        {
           key: 'skynet',
           type: 'contenthash',
           group: 'website',
@@ -632,6 +650,12 @@ describe('profileToProfileRecords', () => {
         createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
+        {
+          key: 'eth',
+          type: 'addr',
+          group: 'address',
+          value: '',
+        },
         {
           key: 'swarm',
           type: 'contenthash',
@@ -653,6 +677,12 @@ describe('profileToProfileRecords', () => {
       }
       const records = [
         {
+          key: 'eth',
+          type: 'addr',
+          group: 'address',
+          value: '',
+        },
+        {
           key: 'onion',
           type: 'contenthash',
           group: 'website',
@@ -672,6 +702,12 @@ describe('profileToProfileRecords', () => {
         createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
+        {
+          key: 'eth',
+          type: 'addr',
+          group: 'address',
+          value: '',
+        },
         {
           key: 'onion',
           type: 'contenthash',
@@ -693,6 +729,12 @@ describe('profileToProfileRecords', () => {
       }
       const records = [
         {
+          key: 'eth',
+          type: 'addr',
+          group: 'address',
+          value: '',
+        },
+        {
           key: 'arweave',
           type: 'contenthash',
           group: 'website',
@@ -711,7 +753,119 @@ describe('profileToProfileRecords', () => {
         isMigrated: true,
         createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
-      expect(profileToProfileRecords(profile)).toEqual([])
+      const records = [
+        {
+          key: 'eth',
+          type: 'addr',
+          group: 'address',
+          value: '',
+        },
+      ]
+      expect(profileToProfileRecords(profile)).toEqual(records)
     })
+  })
+})
+
+describe('getProfileRecordsDiff', () => {
+  it('should return an eth record with value = "" if the eth record is cleared', () => {
+    const currentRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        type: 'addr',
+        group: 'address',
+        value: '',
+      },
+    ]
+
+    const previousRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        type: 'addr',
+        group: 'address',
+        value: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+      },
+    ]
+    const recordsDiff = getProfileRecordsDiff(currentRecords, previousRecords)
+    expect(recordsDiff).toEqual([
+      {
+        key: 'eth',
+        type: 'addr',
+        group: 'address',
+        value: '',
+      },
+    ])
+  })
+
+  it('should return an empty array if both records have an empty eth record', () => {
+    const currentRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        type: 'addr',
+        group: 'address',
+        value: '',
+      },
+    ]
+
+    const previousRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        type: 'addr',
+        group: 'address',
+        value: '',
+      },
+    ]
+    const recordsDiff = getProfileRecordsDiff(currentRecords, previousRecords)
+    expect(recordsDiff).toEqual([])
+  })
+
+  it('should return an eth record with new value if the eth record is updated', () => {
+    const currentRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        type: 'addr',
+        group: 'address',
+        value: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      },
+    ]
+
+    const previousRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        type: 'addr',
+        group: 'address',
+        value: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+      },
+    ]
+    const recordsDiff = getProfileRecordsDiff(currentRecords, previousRecords)
+    expect(recordsDiff).toEqual([
+      {
+        key: 'eth',
+        type: 'addr',
+        group: 'address',
+        value: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      },
+    ])
+  })
+
+  it('should return an empty array if eth record exists but is not updated', () => {
+    const currentRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        type: 'addr',
+        group: 'address',
+        value: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+      },
+    ]
+
+    const previousRecords: ProfileRecord[] = [
+      {
+        key: 'eth',
+        type: 'addr',
+        group: 'address',
+        value: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+      },
+    ]
+    const recordsDiff = getProfileRecordsDiff(currentRecords, previousRecords)
+    expect(recordsDiff).toEqual([])
   })
 })
