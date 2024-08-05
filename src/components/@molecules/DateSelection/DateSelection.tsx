@@ -6,8 +6,8 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { roundDurationWithDay } from '@app/utils/date'
-import { formatDurationOfDates, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/utils'
+import { roundDurationWithDay, secondsFromDateDiff } from '@app/utils/date'
+import { formatDurationOfDates, ONE_YEAR, secondsToYears } from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
   ({ theme }) => css`
@@ -67,7 +67,14 @@ export const DateSelection = ({
 
   useEffect(() => {
     if (yearPickView === 'years') {
-      setSeconds(dateInYears < 1 ? ONE_YEAR : dateInYears * ONE_YEAR)
+      setSeconds(
+        dateInYears < 1
+          ? ONE_YEAR
+          : secondsFromDateDiff({
+              startDate: new Date(currentTime * 1000),
+              additionalYears: dateInYears,
+            }),
+      )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateInYears, yearPickView])
@@ -95,7 +102,13 @@ export const DateSelection = ({
           onChange={(e) => {
             const newYears = parseInt(e.target.value)
 
-            if (!Number.isNaN(newYears)) setSeconds(yearsToSeconds(newYears))
+            if (!Number.isNaN(newYears))
+              setSeconds(
+                secondsFromDateDiff({
+                  startDate: new Date(currentTime * 1000),
+                  additionalYears: newYears,
+                }),
+              )
           }}
         />
       )}

@@ -64,7 +64,7 @@ export const dateFromDateDiff = ({
     day -= daysInMonth[month - 1]
   }
 
-  return new Date(`${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`)
+  return new Date(year, month - 1, day)
 }
 
 export const secondsFromDateDiff = ({
@@ -79,5 +79,6 @@ export const secondsFromDateDiff = ({
   additionalDays?: number
 }) => {
   const newDate = dateFromDateDiff({ startDate, additionalYears, additionalMonths, additionalDays })
+  startDate.setHours(0, 0, 0)
   return Math.floor((newDate.getTime() - startDate.getTime()) / 1000)
 }
