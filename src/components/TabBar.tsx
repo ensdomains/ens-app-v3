@@ -65,7 +65,7 @@ const TabWrapper = styled.div(
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 100;
+    z-index: 80;
     background: linear-gradient(
       180deg,
       rgba(255, 255, 255, 0) 0%,

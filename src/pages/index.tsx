@@ -8,7 +8,6 @@ import FaucetBanner from '@app/components/@molecules/FaucetBanner'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LeadingHeading } from '@app/components/LeadingHeading'
-import { Banner } from '@app/components/pages/Banner'
 import { VerificationErrorDialog } from '@app/components/pages/VerificationErrorDialog'
 import { useVerificationOAuthHandler } from '@app/hooks/verification/useVerificationOAuthHandler/useVerificationOAuthHandler'
 
@@ -115,7 +114,6 @@ export default function Page() {
             </Typography>
           </SubtitleWrapper>
           <SearchInput />
-          <Banner />
         </Stack>
       </Container>
       {/* TODO: FIX THIS type issue */}

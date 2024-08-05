@@ -23,6 +23,7 @@ import { DynamicVerificationIcon } from '@app/assets/verification/DynamicVerific
 import { VerificationBadgeAccountTooltipContent } from '@app/components/@molecules/VerificationBadge/components/VerificationBadgeAccountTooltipContent'
 import { VerificationBadgeVerifierTooltipContent } from '@app/components/@molecules/VerificationBadge/components/VerificationBadgeVerifierTooltipContent'
 import { VerificationBadge } from '@app/components/@molecules/VerificationBadge/VerificationBadge'
+import { useCoinChain } from '@app/hooks/chain/useCoinChain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { getDestination } from '@app/routes'
 import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
@@ -87,7 +88,7 @@ export const SocialProfileButton = ({
 
 export const AddressProfileButton = ({
   iconKey: _iconKey,
-  value,
+  value: address,
 }: {
   iconKey: string
   value: string
@@ -95,21 +96,51 @@ export const AddressProfileButton = ({
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
 
+  const [, copy] = useCopyToClipboard()
+  const coinChainResults = useCoinChain({ coinName: iconKey })
+  const { data } = coinChainResults
+  const defaultBlockExplorer = data?.blockExplorers?.default
+
+  const items = [
+    iconKey === 'eth'
+      ? {
+          icon: <UpRightArrowSVG />,
+          label: 'View address',
+          href: getDestination(`/${address}`) as string,
+        }
+      : undefined,
+    {
+      icon: <CopySVG />,
+      label: 'Copy address',
+      onClick: () => copy(address),
+    },
+    defaultBlockExplorer
+      ? {
+          icon: <UpRightArrowSVG />,
+          label: `View on ${defaultBlockExplorer?.name}`,
+          href: `${defaultBlockExplorer?.url}/address/${address}`,
+        }
+      : undefined,
+  ].filter((item) => item !== undefined) as DropdownItem[]
+
   return iconKey in dynamicAddressIcons ? (
-    <RecordItem
-      data-testid={`address-profile-button-${iconKey}`}
-      icon={<StyledAddressIcon name={iconKey} />}
-      value={value}
-      size={breakpoints.sm ? 'large' : 'small'}
-      inline
-    >
-      {shortenAddress(
-        value,
-        undefined,
-        breakpoints.sm ? undefined : 4,
-        breakpoints.sm ? undefined : 3,
-      )}
-    </RecordItem>
+    <Dropdown width={200} items={items} direction="up">
+      <RecordItem
+        data-testid={`address-profile-button-${iconKey}`}
+        postfixIcon={VerticalDotsSVG}
+        icon={<StyledAddressIcon name={iconKey} />}
+        value={address}
+        size={breakpoints.sm ? 'large' : 'small'}
+        inline
+      >
+        {shortenAddress(
+          address,
+          undefined,
+          breakpoints.sm ? undefined : 4,
+          breakpoints.sm ? undefined : 3,
+        )}
+      </RecordItem>
+    </Dropdown>
   ) : null
 }
 

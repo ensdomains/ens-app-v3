@@ -83,19 +83,22 @@ test.describe('profile', () => {
     await expect(page.getByTestId('profile-title')).toHaveText(name)
 
     await settingsPage.goto()
-    expect(settingsPage.getPrimaryNameLabel()).toHaveText(name, { timeout: 15000 })
+    await expect(settingsPage.getPrimaryNameLabel()).toHaveText(name, { timeout: 15000 })
     await settingsPage.changePrimaryNameButton.click()
     await selectPrimaryNameModal.waitForPageLoad()
     const nameWithoutSuffix = name.slice(0, -4)
+    await selectPrimaryNameModal.searchInput.click()
     await selectPrimaryNameModal.searchInput.fill(nameWithoutSuffix)
+    await selectPrimaryNameModal.searchInput.press('Enter')
     await selectPrimaryNameModal.waitForPageLoad()
-    expect(selectPrimaryNameModal.page.getByText('No names found')).toBeVisible({ timeout: 30000 })
+    await expect(page.getByText('No names found')).toBeVisible({ timeout: 30000 })
     const otherNameWithoutSuffix = anotherName.slice(0, -4)
     await selectPrimaryNameModal.searchInput.fill(otherNameWithoutSuffix)
+    await selectPrimaryNameModal.searchInput.press('Enter')
     await selectPrimaryNameModal.waitForPageLoad()
-    expect(selectPrimaryNameModal.page.getByText(otherNameWithoutSuffix)).toBeVisible({
-      timeout: 30000,
-    })
+    await expect(
+      await selectPrimaryNameModal.getPrimaryNameItem(otherNameWithoutSuffix),
+    ).toBeVisible()
   })
 
   test('should allow setting unwrapped name that user is manager of but whose resolved address is not the same as the user', async ({

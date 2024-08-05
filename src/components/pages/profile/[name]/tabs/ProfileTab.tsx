@@ -10,6 +10,7 @@ import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useIsOffchainName } from '@app/hooks/ensjs/dns/useIsOffchainName'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useProfileActions } from '@app/hooks/pages/profile/[name]/profile/useProfileActions/useProfileActions'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -30,6 +31,11 @@ const DetailsWrapper = styled.div(
     width: 100%;
   `,
 )
+
+const OutlinkWithMargin = styled(Outlink)`
+  margin-left: auto;
+  padding-right: 0;
+`
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
@@ -78,6 +84,12 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
   })
 
   console.log('verifiedData', verifiedData)
+
+  const isOffchainImport = useIsOffchainName({
+    name,
+    enabled: nameDetails.registrationStatus === 'imported',
+  })
+
   const isExpired = useMemo(
     () => gracePeriodEndDate && gracePeriodEndDate < new Date(),
     [gracePeriodEndDate],
@@ -104,6 +116,21 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         isPrimary={name === primaryData?.name}
         isVerified={verifiedData?.some(({ key, verified }) => key === 'personhood' && verified)}
       >
+        {isOffchainImport && (
+          <Helper alignment="horizontal">
+            <Trans
+              i18nKey="tabs.profile.warnings.offchain"
+              ns="profile"
+              components={{
+                a: (
+                  <OutlinkWithMargin href={getSupportLink('offchain-not-in-names')}>
+                    {t('action.learnMore', { ns: 'common' })}
+                  </OutlinkWithMargin>
+                ),
+              }}
+            />
+          </Helper>
+        )}
         {nameDetails.isNonASCII && (
           <Helper type="warning" alignment="horizontal">
             <Trans

@@ -14,13 +14,11 @@ export class SelectPrimaryNameModal {
     this.nextButton = this.page.getByTestId('primary-next')
   }
 
-  async searchResult(address: string) {
-    return this.page.getByTestId(`search-result-${address}`)
-  }
-
   async waitForPageLoad() {
     await this.page.waitForLoadState('load', { timeout: 15000 })
   }
 
-  
+  async getPrimaryNameItem(name: string) {
+    return this.page.getByTestId(`name-item-${name}.eth`)
+  }
 }
