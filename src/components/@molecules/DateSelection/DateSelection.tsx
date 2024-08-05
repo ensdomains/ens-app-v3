@@ -7,7 +7,7 @@ import { Typography } from '@ensdomains/thorin'
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { roundDurationWithDay, secondsFromDateDiff } from '@app/utils/date'
-import { formatDurationOfDates, ONE_YEAR, secondsToYears } from '@app/utils/utils'
+import { formatDurationOfDates, secondsToYears } from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
   ({ theme }) => css`
