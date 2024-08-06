@@ -112,7 +112,9 @@ export const NameWrapper = ({
           </Button>
         )}
       </HeaderContainer>
-      {isWrapped ? (
+      {isOwned && !isWrapped ? (
+        <>{t('tabs.more.token.unwrappedText')}</>
+      ) : (
         <TwoRows>
           <Record>{isWrapped ? 'Wrapped' : 'Unwrapped'}</Record>
           <ParentControlRecord $isPCCBurned={isPCCBurned}>
@@ -120,8 +122,6 @@ export const NameWrapper = ({
             {isPCCBurned ? <CheckSVG /> : <AlertSVG />}
           </ParentControlRecord>
         </TwoRows>
-      ) : (
-        <>{t('tabs.more.token.unwrappedText')}</>
       )}
     </Container>
   )
