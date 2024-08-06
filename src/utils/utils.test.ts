@@ -334,3 +334,12 @@ describe('getEncodedLabelAmount', () => {
     expect(result).toEqual(2)
   })
 })
+
+
+describe('testing', () => {
+  it.only('should', () => {
+
+    const test = formatDurationOfDates(new Date('2025-08-06T18:21:46.000Z'), new Date('2025-09-06T10:21:46.000Z'), (i, {count}) => `${count} ${i}`)
+    console.log(test)
+  })
+})

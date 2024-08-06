@@ -48,23 +48,11 @@ export const dateFromDateDiff = ({
   additionalMonths?: number
   additionalDays?: number
 }) => {
-  let year = startDate.getFullYear() + additionalYears
-  let month = startDate.getMonth() + 1 + additionalMonths
-  let day = startDate.getDate() + additionalDays
-
-  const daysInMonth = getDaysOfMonthsFromYears(startDate.getFullYear(), year)
-
-  while (month > 12) {
-    year += 1
-    month -= 12
-  }
-
-  while (day > daysInMonth[month - 1]) {
-    month += 1
-    day -= daysInMonth[month - 1]
-  }
-
-  return new Date(year, month - 1, day)
+  const newDate = new Date(startDate.getTime())
+  newDate.setFullYear(newDate.getFullYear() + additionalYears)
+  newDate.setMonth(newDate.getMonth() + additionalMonths)
+  newDate.setDate(newDate.getDate() + additionalDays)
+  return newDate
 }
 
 export const secondsFromDateDiff = ({
@@ -80,5 +68,6 @@ export const secondsFromDateDiff = ({
 }) => {
   const newDate = dateFromDateDiff({ startDate, additionalYears, additionalMonths, additionalDays })
   startDate.setHours(0, 0, 0)
+  newDate.setHours(0, 0, 0)
   return Math.floor((newDate.getTime() - startDate.getTime()) / 1000)
 }
