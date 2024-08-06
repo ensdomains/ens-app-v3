@@ -633,6 +633,12 @@ test('should allow normal registration for a month', async ({
 
     await expect(page.getByTestId('calendar-date')).toHaveValue(oneMonthLaterInput)
 
+    console.log('calendar value', await page.getByTestId('calendar-date').textContent())
+    console.log('oneMonthLaterInput', oneMonthLaterInput)
+    console.log('invoice time', await page.getByTestId('invoice-item-0-amount').textContent())
+    console.log('date selection time', await page.getByTestId('date-selection-info').textContent())
+
+    await page.pause()
     await expect(page.getByText('1 month registration', { exact: true })).toBeVisible()
   })
 
