@@ -1,9 +1,18 @@
 import { ComponentProps, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 import type { Button } from '@ensdomains/thorin'
 
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
+import { useOwner } from '@app/hooks/ensjs/public/useOwner'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
+import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
+import { useProfile } from '@app/hooks/useProfile'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -12,23 +21,13 @@ import { checkAvailablePrimaryName } from '@app/utils/checkAvailablePrimaryName'
 import { nameParts } from '@app/utils/name'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
-import { useAbilities } from '../../../../../abilities/useAbilities'
-import { useAccountSafely } from '../../../../../account/useAccountSafely'
-import { useExpiry } from '../../../../../ensjs/public/useExpiry'
-import { useOwner } from '../../../../../ensjs/public/useOwner'
-import { usePrimaryName } from '../../../../../ensjs/public/usePrimaryName'
-import { useWrapperData } from '../../../../../ensjs/public/useWrapperData'
-import { useGetPrimaryNameTransactionFlowItem } from '../../../../../primary/useGetPrimaryNameTransactionFlowItem'
-import { useResolverStatus } from '../../../../../resolver/useResolverStatus'
-import { useProfile } from '../../../../../useProfile'
-
 type Action = {
   onClick: () => void
   label: string
   red?: boolean
   disabled?: boolean
   tooltipContent?: string
-  tooltipPlacement?: 'left' | 'right'
+  tooltipPlacement?: 'left' | 'right' | 'top'
   skip2LDEth?: boolean
   warning?: string
   fullMobileWidth?: boolean
@@ -38,6 +37,42 @@ type Action = {
 type Props = {
   name: string
   enabled?: boolean
+}
+
+const editButtonTooltip = ({
+  hasGraphError,
+  canEdit,
+  canEditRecords,
+  canEditResolver,
+  t,
+}: {
+  hasGraphError: boolean
+  canEdit: boolean
+  canEditRecords: boolean
+  canEditResolver: boolean
+  t: TFunction
+}) => {
+  if (hasGraphError) return t('errors.networkError.blurb', { ns: 'common' })
+  if (!canEdit) return t('errors.isOwnerCannotEdit')
+  if (!canEditRecords && !canEditResolver) return t('errors.cannotEdit')
+  return undefined
+}
+
+const verificationsButtonTooltip = ({
+  hasGraphError,
+  canEdit,
+  canEditRecords,
+  t,
+}: {
+  hasGraphError: boolean
+  canEdit: boolean
+  canEditRecords: boolean
+  t: TFunction
+}) => {
+  if (hasGraphError) return t('errors.networkError.blurb', { ns: 'common' })
+  if (!canEdit) return t('errors.isOwnerCannotVerify')
+  if (!canEditRecords) return t('errors.cannotVerify')
+  return undefined
 }
 
 export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => {
@@ -121,13 +156,18 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     const actions: Action[] = []
     if (!address || isLoading) return actions
 
-    if (abilities.canEdit && abilities.canEditRecords) {
+    const isOwnerOrManager = address === ownerData?.owner || ownerData?.registrant === address
+
+    if (isOwnerOrManager) {
       actions.push({
-        label: 'Verifications',
-        tooltipContent: hasGraphError
-          ? t('errors.networkError.blurb', { ns: 'common' })
-          : undefined,
-        tooltipPlacement: 'left',
+        label: t('tabs.profile.actions.verifyProfile.label'),
+        tooltipContent: verificationsButtonTooltip({
+          hasGraphError: !!hasGraphError,
+          canEdit: abilities.canEdit,
+          canEditRecords: abilities.canEditRecords,
+          t,
+        }),
+        tooltipPlacement: 'top',
         loading: hasGraphErrorLoading,
         colorStyle: 'accentSecondary',
         onClick: () => showVerifyProfileInput(`verify-profile-${name}`, { name }),
@@ -155,12 +195,16 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
       })
     }
 
-    if (abilities.canEdit && (abilities.canEditRecords || abilities.canEditResolver)) {
+    if (isOwnerOrManager) {
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
-        tooltipContent: hasGraphError
-          ? t('errors.networkError.blurb', { ns: 'common' })
-          : undefined,
+        tooltipContent: editButtonTooltip({
+          hasGraphError: !!hasGraphError,
+          canEdit: abilities.canEdit,
+          canEditRecords: abilities.canEditRecords,
+          canEditResolver: abilities.canEditResolver,
+          t,
+        }),
         tooltipPlacement: 'left',
         loading: hasGraphErrorLoading,
         onClick: () =>
@@ -300,6 +344,8 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     t,
     hasGraphError,
     hasGraphErrorLoading,
+    ownerData?.owner,
+    ownerData?.registrant,
     showUnknownLabelsInput,
     createTransactionFlow,
     showProfileEditorInput,

@@ -10,17 +10,18 @@ import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 import { createDateAndValue } from '@app/utils/utils'
 
 import { transactions } from '../../../../../../transaction-flow/transaction/index'
-import { useAbilities } from '../../../../../abilities/useAbilities'
-import { useAccountSafely } from '../../../../../account/useAccountSafely'
-import { useContractAddress } from '../../../../../chain/useContractAddress'
-import { useExpiry } from '../../../../../ensjs/public/useExpiry'
-import { useOwner } from '../../../../../ensjs/public/useOwner'
-import { useWrapperData } from '../../../../../ensjs/public/useWrapperData'
-import { useGetPrimaryNameTransactionFlowItem } from '../../../../../primary/useGetPrimaryNameTransactionFlowItem'
-import { useResolverStatus } from '../../../../../resolver/useResolverStatus'
-import { useProfile } from '../../../../../useProfile'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
+import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
+import { useOwner } from '@app/hooks/ensjs/public/useOwner'
+import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
+import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
+import { useProfile } from '@app/hooks/useProfile'
 import { useProfileActions } from './useProfileActions'
 import { makeMockUseAbilitiesData } from '@root/test/mock/makeMockUseAbilitiesData'
+import { makeMockUseOwnerData } from '@root/test/mock/makeMockUseOwnerData'
 
 const NOW_TIMESTAMP = 1588994800000
 vi.spyOn(Date, 'now').mockImplementation(() => NOW_TIMESTAMP)
@@ -30,17 +31,17 @@ vi.mock('@app/transaction-flow/TransactionFlowProvider')
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/abilities/useAbilities')
 
-vi.mock('./useProfile')
-vi.mock('./ensjs/public/useOwner')
-vi.mock('./ensjs/public/useWrapperData')
-vi.mock('./ensjs/public/useExpiry')
+vi.mock('@app/hooks/useProfile')
+vi.mock('@app/hooks/ensjs/public/useOwner')
+vi.mock('@app/hooks/ensjs/public/useWrapperData')
+vi.mock('@app/hooks/ensjs/public/useExpiry')
 
-vi.mock('./resolver/useResolverStatus')
+vi.mock('@app/hooks/resolver/useResolverStatus')
 vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
 vi.mock('@app/utils/SyncProvider/SyncProvider')
 
-vi.mock('./chain/useContractAddress')
+vi.mock('@app/hooks/chain/useContractAddress')
 
 vi.mock('@app/hooks/primary/useGetPrimaryNameTransactionFlowItem')
 
@@ -540,9 +541,153 @@ describe('useProfileActions', () => {
     })
   })
 
+   describe('edit profile button', () => {
+
+    it('Should show edit profile button if user is manager', () => {
+
+      mockUseAbilities.mockReturnValue({
+
+        data: makeMockUseAbilitiesData('eth-unwrapped-2ld:manager'),
+
+        isLoading: false,
+
+      })
+
+
+
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
+
+      expect(result.current.profileActions).toEqual(
+
+        expect.arrayContaining([
+
+          expect.objectContaining({
+
+            label: 'tabs.profile.actions.editProfile.label',
+
+            tooltipContent: undefined,
+
+          }),
+
+        ]),
+
+      )
+
+    })
+
+
+
+    it('Should show disabled profile button if there is a graph error', () => {
+
+      mockUseHasGraphError.mockReturnValue({
+
+        data: true,
+
+        isLoading: false,
+
+      })
+
+
+
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
+
+      expect(result.current.profileActions).toEqual(
+
+        expect.arrayContaining([
+
+          expect.objectContaining({
+
+            label: 'tabs.profile.actions.editProfile.label',
+
+            tooltipContent: 'errors.networkError.blurb',
+
+          }),
+
+        ]),
+
+      )
+
+    })
+
+
+
+    it('Should show disabled edit profile button if user is owner but not manager', () => {
+
+      mockUseAbilities.mockReturnValue({
+
+        data: makeMockUseAbilitiesData('eth-unwrapped-2ld:owner'),
+
+        isLoading: false,
+
+      })
+
+
+
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
+
+      expect(result.current.profileActions).toEqual(
+
+        expect.arrayContaining([
+
+          expect.objectContaining({
+
+            label: 'tabs.profile.actions.editProfile.label',
+
+            tooltipContent: 'errors.isOwnerCannotEdit',
+
+          }),
+
+        ]),
+
+      )
+
+    })
+
+
+
+    it('Should show disabled edit profile button if name is wrapped but fuse for edit resolver is burned and resolver is unauthorised', () => {
+
+      mockUseAbilities.mockReturnValue({
+
+        data: {
+
+          ...makeMockUseAbilitiesData('eth-burnt-2ld'),
+
+          canEditRecords: false,
+
+        },
+
+        isLoading: false,
+
+      })
+
+
+
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
+
+      expect(result.current.profileActions).toEqual(
+
+        expect.arrayContaining([
+
+          expect.objectContaining({
+
+            label: 'tabs.profile.actions.editProfile.label',
+
+            tooltipContent: 'errors.cannotEdit',
+
+          }),
+
+        ]),
+
+      )
+    })
+  })
+
+
   describe.only('verifications', () => {
     it('should return verifications button if the user is the manager', async () => {
       mockUseAbilities.mockReturnValue({ data: makeMockUseAbilitiesData('eth-unwrapped-2ld:manager'), isLoading: false})
+      mockUseOwner.mockReturnValue({ data: makeMockUseOwnerData('registrar:manager'), isLoading: false})
       const { result } = renderHook(() => useProfileActions({name: 'test.eth'}))
       expect(result.current.profileActions).toEqual(expect.arrayContaining([expect.objectContaining({
         label: 'Verifications',

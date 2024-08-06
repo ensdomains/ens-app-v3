@@ -30,15 +30,13 @@ export const useVerificationOAuthHandler = (): UseVerificationOAuthHandlerReturn
 
   const { address: userAddress } = useAccount()
 
-  const isReady = !!createTransactionFlow && !!router && !!userAddress
+  const isReady = !!createTransactionFlow && !!router && !!userAddress && !!iss && !!code
 
   const { data, isLoading, error } = useVerificationOAuth({
     verifier: issToVerificationProtocol(iss),
     code,
     enabled: isReady,
   })
-
-  console.log('testing')
 
   const [dialogProps, setDialogProps] = useState<VerificationErrorDialogProps>()
   const onClose = () => setDialogProps(undefined)

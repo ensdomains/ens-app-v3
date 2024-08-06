@@ -27,6 +27,8 @@ export class ProfilePage {
 
   readonly verificationsButton: Locator
 
+  readonly disabledVerificationsButton: Locator
+
   constructor(page: Page) {
     this.page = page
     this.getRecreateButton = this.page.getByTestId('profile-action-Recreate name')
@@ -38,6 +40,7 @@ export class ProfilePage {
     this.editProfileButton = this.page.getByTestId('profile-action-Edit profile')
     this.profileEditor = this.page.locator('.modal')
     this.verificationsButton = this.page.getByTestId('profile-action-Verifications')
+    this.disabledVerificationsButton = this.page.getByTestId('disabled-profile-action-Verifications')
   }
 
   async goto(name: string) {

@@ -175,7 +175,6 @@ test.describe('Verified records', () => {
     })
 
     await page.goto(`/${name}`)
-    // await login.connect()
 
     await page.pause()
 
@@ -239,7 +238,7 @@ test.describe('Verify profile', () => {
     await expect(verificationsModal.removeVerificationOption('Dentity')).toHaveCount(0)
   })
 
-  test('Should disabled verifications button if user is owner but not manager of a name', async ({
+  test('Should disable verifications button if user is owner but not manager of a name', async ({
     page,
     login,
     makeName,
@@ -252,6 +251,56 @@ test.describe('Verify profile', () => {
       manager: 'user2',
     })
 
+    const profilePage = makePageObject('ProfilePage')
+
+    await page.route(`${DENTITY_VPTOKEN_ENDPOINT}*`, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          vp_token: makeMockVPToken([
+            'personhood',
+            'com.twitter',
+            'com.github',
+            'com.discord',
+            'org.telegram',
+          ]),
+        }),
+      })
+    })
+
+    await profilePage.goto(name)
+    await login.connect()
+
+    await expect(profilePage.disabledVerificationsButton).toBeVisible()
+  })
+
+  test('Should be able to delete verifications record for name', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    const name = await makeName({
+      label: 'dentity',
+      type: 'legacy',
+      owner: 'user2',
+      manager: 'user',
+    })
+
+    await setRecords(testClient, {
+      name,
+      texts: [
+        {
+          key: VERIFICATION_RECORD_KEY,
+          value: JSON.stringify([
+            `${DENTITY_VPTOKEN_ENDPOINT}?name=${name}&federated_token=federated_token`,
+          ]),
+        },
+      ],
+      resolverAddress: testClient.chain.contracts.legacyPublicResolver.address,
+      account: createAccounts().getAddress('user') as Hash,
+    })
     const verificationsModal = makePageObject('VerificationsModal')
     const profilePage = makePageObject('ProfilePage')
 
@@ -280,10 +329,13 @@ test.describe('Verify profile', () => {
     await profilePage.verificationsButton.click()
 
     await expect(verificationsModal.verificationOption('Dentity')).toBeVisible()
-    await verificationsModal.isVerificationOptionAdded('Dentity', false)
+    await verificationsModal.isVerificationOptionAdded('Dentity')
     await verificationsModal.verificationOption('Dentity').click()
 
-    await expect(verificationsModal.removeVerificationOption('Dentity')).toHaveCount(0)
+    await expect(verificationsModal.removeVerificationOption('Dentity')).toHaveCount(1)
+    await verificationsModal.removeVerificationOption('Dentity').click()
+
+    await expect('is done').toEqual(false)
   })
 })
 

@@ -7,7 +7,6 @@ import {
 } from '@app/components/pages/VerificationErrorDialog'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getDestination } from '@app/routes'
-import { createDentityUrl } from '@app/transaction-flow/input/VerifyProfile/utils/createDentityUrl'
 import { CreateTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { UseVerificationOAuthReturnType } from '../../useVerificationOAuth/useVerificationOAuth'
@@ -118,21 +117,16 @@ export const dentityVerificationHandler =
           }) as VerificationErrorDialogProps,
       )
       .otherwise(
-        ({ name, owner }) =>
+        () =>
           ({
             open: true,
             title: 'Verification failed',
             message: "We could't verify your account. Please return to Dentity and try again.",
             actions: {
-              leading: {
+              trailing: {
                 children: 'Close',
                 colorStyle: 'accentSecondary',
                 onClick: () => onClose(),
-              } as ButtonProps,
-              trailing: {
-                children: 'Try again',
-                as: 'a',
-                href: createDentityUrl({ name, address: owner }),
               } as ButtonProps,
             },
             onClose,

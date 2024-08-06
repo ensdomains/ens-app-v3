@@ -38,7 +38,7 @@ export const DENTITY_CLIENT_ID = DENTITY_ENV_CONFIGS[DENTITY_ENV].clientId
 
 export const DENTITY_ISS = DENTITY_ENV_CONFIGS[DENTITY_ENV].iss
 
-export const DENTITY_REDIRECT_URI = 'https://ens.domains'
+export const DENTITY_REDIRECT_URI = 'https://dentity-integration.ens-app-v3.pages.dev'
 
 // https://oidc.staging.dentity.com/oidc/auth?client_id=-IG5wkHyetFAeDziNUkdu&redirect_uri=https://ens.domains&response_type=code&scope=openid%20federated_token&page=ens&ens_name=davidchu.eth&eth_address=0x538E35B2888eD5bc58Cf2825D76cf6265aA4e31e
 // https://receive-sms-free.cc/Free-USA-Phone-Number/16194310833/

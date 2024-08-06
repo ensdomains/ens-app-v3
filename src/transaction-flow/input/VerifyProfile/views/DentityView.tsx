@@ -10,7 +10,7 @@ import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionFlowAction } from '@app/transaction-flow/types'
 
 import { CenteredTypography } from '../../ProfileEditor/components/CenteredTypography'
-import { createDentityUrl } from '../utils/createDentityUrl'
+import { createDentityAuthUrl } from '../utils/createDentityUrl'
 
 const DeleteButton = styled.button(
   ({ theme }) => css`
@@ -97,7 +97,10 @@ export const DentityView = ({
         <CenteredTypography>{t('input.verifyProfile.dentity.description')}</CenteredTypography>
         <Helper>{t('input.verifyProfile.dentity.helper')}</Helper>
         {verified && (
-          <DeleteButton onClick={onRemoveVerification}>
+          <DeleteButton
+            onClick={onRemoveVerification}
+            data-testid="remove-verification-button-Dentity"
+          >
             <TrashSVG />
             <Typography fontVariant="bodyBold" color="inherit">
               {t('input.verifyProfile.dentity.remove')}
@@ -113,7 +116,7 @@ export const DentityView = ({
             </Button>
           }
           trailing={
-            <Button as="a" href={createDentityUrl({ name, address })} target="_blank">
+            <Button as="a" href={createDentityAuthUrl({ name, address })} target="_blank">
               {t('input.verifyProfile.dentity.link')}
             </Button>
           }
