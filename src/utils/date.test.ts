@@ -170,11 +170,3 @@ describe('secondsFromDateDiff', () => {
     expect(secondsFromDate).toBe(ONE_DAY * 60)
   })
 })
-
-
-it.only('testing', () => {
-  const now = new Date()
-  console.log(now)
-  now.setDate(now.getDate() + 25 + 31)
-  console.log(now)
-})

@@ -67,7 +67,7 @@ export const secondsFromDateDiff = ({
   additionalDays?: number
 }) => {
   const newDate = dateFromDateDiff({ startDate, additionalYears, additionalMonths, additionalDays })
-  startDate.setHours(0, 0, 0)
-  newDate.setHours(0, 0, 0)
+  // startDate.setHours(0, 0, 0)
+  // newDate.setHours(0, 0, 0)
   return Math.floor((newDate.getTime() - startDate.getTime()) / 1000)
 }

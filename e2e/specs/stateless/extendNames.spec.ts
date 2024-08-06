@@ -380,7 +380,7 @@ test('should be able to extend a name by a month', async ({
     const newTimestamp = await profilePage.getExpiryTimestamp()
     const comparativeTimestamp =
       timestamp +
-      secondsFromDateDiff({ startDate: new Date(timestamp * 1000), additionalMonths: 1 }) * 1000
+      secondsFromDateDiff({ startDate: new Date(timestamp), additionalMonths: 1 }) * 1000
     await expect(comparativeTimestamp).toEqual(newTimestamp)
   })
 })
@@ -526,7 +526,7 @@ test('should be able to extend a name in grace period by a month', async ({
     const newTimestamp = await profilePage.getExpiryTimestamp()
     const comparativeTimestamp =
       timestamp +
-      secondsFromDateDiff({ startDate: new Date(timestamp * 1000), additionalMonths: 1 }) * 1000
+      secondsFromDateDiff({ startDate: new Date(timestamp), additionalMonths: 1 }) * 1000
     await expect(comparativeTimestamp).toEqual(newTimestamp)
   })
 })
