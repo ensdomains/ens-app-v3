@@ -3,7 +3,6 @@ import { useAccount } from 'wagmi'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
 import { NameWrapper } from './NameWrapper'
@@ -32,7 +31,6 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
   const { canBeWrapped, ownerData, wrapperData, isWrapped, isCachedData, profile } = nameDetails
 
   const { isConnected, address } = useAccount()
-  const { data: primary } = usePrimaryName({ address })
 
   return (
     <MoreContainer>
@@ -53,7 +51,9 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
             canBeWrapped,
             name,
             profile,
-            isPrimaryName: primary?.match,
+            ownerData,
+            isConnected,
+            isOwned: address === ownerData?.owner,
           }}
         />
       )}

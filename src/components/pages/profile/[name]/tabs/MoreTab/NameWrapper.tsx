@@ -18,7 +18,8 @@ type Props = {
   ownerData?: GetOwnerReturnType
   wrapperData?: GetWrapperDataReturnType
   profile: Profile | undefined
-  isPrimaryName: boolean | undefined
+  isConnected: boolean
+  isOwned: boolean
 }
 
 const getFuseStateFromWrapperData = (wrapperData?: GetWrapperDataReturnType): NameWrapperState =>
@@ -93,7 +94,8 @@ export const NameWrapper = ({
   wrapperData,
   canBeWrapped,
   profile,
-  isPrimaryName,
+  isConnected,
+  isOwned,
 }: Props) => {
   const { t } = useTranslation('profile')
   const status: NameWrapperState = getFuseStateFromWrapperData(wrapperData)
@@ -104,9 +106,12 @@ export const NameWrapper = ({
     <Container>
       <HeaderContainer>
         <Typography fontVariant="headingFour">{t('tabs.more.token.nameWrapper')}</Typography>
-        {isPrimaryName && <Button width="max">{t('tabs.more.token.wrapName')}</Button>}
+        {isOwned && isConnected && (
+          <Button width="max">
+            {t(canBeWrapped ? 'tabs.more.token.wrapName' : 'tabs.more.token.unwrap')}
+          </Button>
+        )}
       </HeaderContainer>
-      {/* {JSON.stringify({ wrapperData, ownerData, canBeWrapped, name, isWrapped })} */}
       {isWrapped ? (
         <TwoRows>
           <Record>{isWrapped ? 'Wrapped' : 'Unwrapped'}</Record>
