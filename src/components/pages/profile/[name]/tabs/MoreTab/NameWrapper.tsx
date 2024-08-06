@@ -106,7 +106,7 @@ export const NameWrapper = ({
     <Container>
       <HeaderContainer>
         <Typography fontVariant="headingFour">{t('tabs.more.token.nameWrapper')}</Typography>
-        {isOwned && isConnected && (
+        {isOwned && isConnected && !isPCCBurned && (
           <Button width="max">
             {t(canBeWrapped ? 'tabs.more.token.wrapName' : 'tabs.more.token.unwrap')}
           </Button>
