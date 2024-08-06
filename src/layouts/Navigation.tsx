@@ -6,7 +6,6 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 export const Navigation = () => {
   const isInitial = useInitial()
   const breakpoints = useBreakpoint()
-
   if (!isInitial) {
     if (breakpoints.sm) {
       return <Header key="header-nav" />

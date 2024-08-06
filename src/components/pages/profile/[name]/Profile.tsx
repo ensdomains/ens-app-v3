@@ -124,6 +124,8 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     refetchIfEnabled,
   } = nameDetails
 
+  console.log('nameDetails', profile)
+
   useProtectedRoute(
     '/',
     // When anything is loading, return true

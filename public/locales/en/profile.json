@@ -9,6 +9,7 @@
   "accounts": "Accounts",
   "addresses": "Addresses",
   "otherRecords": "Other Records",
+  "verifications": "Verifications",
   "editProfile": "Edit Profile",
   "ownership": "Ownership",
   "viewDetails": "View Details",
@@ -39,6 +40,9 @@
         "reclaim": {
           "label": "Recreate name",
           "warning": "This subname has expired and is not owned. You can recreate this subname."
+        },
+        "verifyProfile": {
+          "label": "Verifications"
         }
       },
       "warnings": {
@@ -454,6 +458,8 @@
     "default": "This action is not available",
     "invalidJSON": "Invalid JSON",
     "isOwnerCannotEdit": "You must be the manager in order to edit the profile",
-    "cannotEdit": "You do not have permission to update to an authorised resolver"
+    "cannotEdit": "You do not have permission to update to an authorised resolver",
+    "isOwnerCannotVerify": "You must be the Manager to verify your profile",
+    "cannotVerify": "You do not have permission to verify your profile"
   }
 }
