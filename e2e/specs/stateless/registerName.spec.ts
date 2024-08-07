@@ -313,9 +313,10 @@ test('should allow registering with a specific date', async ({ page, login, make
     const twoYearsAndHalfLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
       _date.setFullYear(_date.getFullYear() + 2)
+      // Get the new month's last day
       const getEndDayOfMonth = new Date(
         _date.getFullYear(),
-        (_date.getMonth() + 6) % 12,
+        (_date.getMonth() + 7) % 12,
         0,
       ).getDate()
       if (_date.getDate() > getEndDayOfMonth) {
@@ -383,9 +384,10 @@ test('should allow registering a premium name with a specific date', async ({
     const twoYearsAndHalfLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
       _date.setFullYear(_date.getFullYear() + 2)
+      // Get the new month's last day
       const getEndDayOfMonth = new Date(
         _date.getFullYear(),
-        (_date.getMonth() + 6) % 12,
+        (_date.getMonth() + 7) % 12,
         0,
       ).getDate()
       if (_date.getDate() > getEndDayOfMonth) {
@@ -462,9 +464,10 @@ test('should allow registering a premium name for two months', async ({
   await test.step('should set a date', async () => {
     const twoMonthsLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
+      // Get the new month's last day
       const getEndDayOfMonth = new Date(
         _date.getFullYear(),
-        (_date.getMonth() + 2) % 12,
+        (_date.getMonth() + 3) % 12,
         0,
       ).getDate()
       if (_date.getDate() > getEndDayOfMonth) {
@@ -623,9 +626,10 @@ test('should allow normal registration for a month', async ({
   await test.step('should set a date', async () => {
     const oneMonthLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
+      // Get the new month's last day
       const getEndDayOfMonth = new Date(
         _date.getFullYear(),
-        (_date.getMonth() + 1) % 12,
+        (_date.getMonth() + 2) % 12,
         0,
       ).getDate()
       if (_date.getDate() > getEndDayOfMonth) {
@@ -642,7 +646,8 @@ test('should allow normal registration for a month', async ({
     console.log('browserTime', browserTime, new Date(browserTime * 1000))
 
     const _date = new Date(browserTime * 1000)
-    const getEndDayOfMonth = new Date(_date.getFullYear(), (_date.getMonth() + 1) % 12, 0).getDate()
+    // Get the new month's last day
+    const getEndDayOfMonth = new Date(_date.getFullYear(), (_date.getMonth() + 2) % 12, 0).getDate()
     if (_date.getDate() > getEndDayOfMonth) {
       _date.setDate(getEndDayOfMonth)
     }

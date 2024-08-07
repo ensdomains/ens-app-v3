@@ -40,9 +40,10 @@ export const dateFromDateDiff = ({
 }) => {
   const newDate = new Date(startDate.getTime())
   newDate.setFullYear(newDate.getFullYear() + additionalYears)
+  // Get the new month's last day
   const getEndDayOfMonth = new Date(
     newDate.getFullYear(),
-    (newDate.getMonth() + additionalMonths) % 12,
+    (newDate.getMonth() + 1 + additionalMonths) % 12,
     0,
   ).getDate()
   if (newDate.getDate() > getEndDayOfMonth) {
