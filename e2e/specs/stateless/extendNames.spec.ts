@@ -355,6 +355,14 @@ test('should be able to extend a name by a month', async ({
     const calendar = page.getByTestId('calendar')
     const monthLater = await page.evaluate((ts) => {
       const expiryDate = new Date(ts)
+      const getEndDayOfMonth = new Date(
+        expiryDate.getFullYear(),
+        expiryDate.getMonth() + 1,
+        0,
+      ).getDate()
+      if (expiryDate.getDate() > getEndDayOfMonth) {
+        expiryDate.setDate(getEndDayOfMonth)
+      }
       expiryDate.setMonth(expiryDate.getMonth() + 1)
       return expiryDate
     }, expiryTimestamp)
@@ -501,6 +509,14 @@ test('should be able to extend a name in grace period by a month', async ({
     const calendar = page.getByTestId('calendar')
     const monthLater = await page.evaluate((ts) => {
       const expiryDate = new Date(ts)
+      const getEndDayOfMonth = new Date(
+        expiryDate.getFullYear(),
+        expiryDate.getMonth() + 1,
+        0,
+      ).getDate()
+      if (expiryDate.getDate() > getEndDayOfMonth) {
+        expiryDate.setDate(getEndDayOfMonth)
+      }
       expiryDate.setMonth(expiryDate.getMonth() + 1)
       return expiryDate
     }, expiryTimestamp)

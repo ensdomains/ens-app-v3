@@ -313,6 +313,10 @@ test('should allow registering with a specific date', async ({ page, login, make
     const twoYearsAndHalfLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
       _date.setFullYear(_date.getFullYear() + 2)
+      const getEndDayOfMonth = new Date(_date.getFullYear(), _date.getMonth() + 6, 0).getDate()
+      if (_date.getDate() > getEndDayOfMonth) {
+        _date.setDate(getEndDayOfMonth)
+      }
       _date.setMonth(_date.getMonth() + 6)
       return _date
     }, browserTime * 1000)
@@ -375,6 +379,10 @@ test('should allow registering a premium name with a specific date', async ({
     const twoYearsAndHalfLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
       _date.setFullYear(_date.getFullYear() + 2)
+      const getEndDayOfMonth = new Date(_date.getFullYear(), _date.getMonth() + 6, 0).getDate()
+      if (_date.getDate() > getEndDayOfMonth) {
+        _date.setDate(getEndDayOfMonth)
+      }
       _date.setMonth(_date.getMonth() + 6)
       return _date
     }, browserTime * 1000)
@@ -446,6 +454,10 @@ test('should allow registering a premium name for two months', async ({
   await test.step('should set a date', async () => {
     const twoMonthsLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
+      const getEndDayOfMonth = new Date(_date.getFullYear(), _date.getMonth() + 2, 0).getDate()
+      if (_date.getDate() > getEndDayOfMonth) {
+        _date.setDate(getEndDayOfMonth)
+      }
       _date.setMonth(_date.getMonth() + 2)
       return _date
     }, browserTime * 1000)
@@ -599,6 +611,10 @@ test('should allow normal registration for a month', async ({
   await test.step('should set a date', async () => {
     const oneMonthLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
+      const getEndDayOfMonth = new Date(_date.getFullYear(), _date.getMonth() + 1, 0).getDate()
+      if (_date.getDate() > getEndDayOfMonth) {
+        _date.setDate(getEndDayOfMonth)
+      }
       _date.setMonth(_date.getMonth() + 1)
       return _date
     }, browserTime * 1000)
@@ -610,12 +626,12 @@ test('should allow normal registration for a month', async ({
     console.log('browserTime', browserTime, new Date(browserTime * 1000))
 
     const _date = new Date(browserTime * 1000)
+    const getEndDayOfMonth = new Date(_date.getFullYear(), _date.getMonth() + 1, 0).getDate()
+    if (_date.getDate() > getEndDayOfMonth) {
+      _date.setDate(getEndDayOfMonth)
+    }
     _date.setMonth(_date.getMonth() + 1)
-    const year = _date.getFullYear()
-    const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-    const day = String(_date.getDate()).padStart(2, '0')
-    const inputDate = `${year}-${month}-${day}`
-    console.log('inputDate', inputDate)
+    console.log('inputDate', dateToDateInput(_date))
     console.log('calendar value', await page.getByTestId('calendar-date').textContent())
     console.log('oneMonthLaterInput', oneMonthLater)
     console.log('invoice time', await page.getByTestId('invoice-item-0-amount').textContent())

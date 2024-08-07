@@ -40,6 +40,14 @@ export const dateFromDateDiff = ({
 }) => {
   const newDate = new Date(startDate.getTime())
   newDate.setFullYear(newDate.getFullYear() + additionalYears)
+  const getEndDayOfMonth = new Date(
+    newDate.getFullYear(),
+    newDate.getMonth() + additionalMonths,
+    0,
+  ).getDate()
+  if (newDate.getDate() > getEndDayOfMonth) {
+    newDate.setDate(getEndDayOfMonth)
+  }
   newDate.setMonth(newDate.getMonth() + additionalMonths)
   newDate.setDate(newDate.getDate() + additionalDays)
   return newDate
