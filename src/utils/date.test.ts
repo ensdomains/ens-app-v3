@@ -6,7 +6,6 @@ import {
   roundDurationWithDay,
   safeDateObj,
   secondsFromDateDiff,
-  secondsToDate,
 } from './date'
 import { ONE_DAY, ONE_YEAR } from './time'
 
@@ -153,7 +152,6 @@ describe('secondsFromDateDiff', () => {
   })
 
   it('should return 2 years and 1 months from Jan 1, 2024 by using months', () => {
-    const startDate = new Date(2024, 0, 1, 0, 0)
     const secondsFromDate = secondsFromDateDiff({
       startDate: new Date(2024, 0, 1, 0, 0),
       additionalMonths: 25,
