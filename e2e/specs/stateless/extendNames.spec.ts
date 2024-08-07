@@ -357,7 +357,7 @@ test('should be able to extend a name by a month', async ({
       const expiryDate = new Date(ts)
       const getEndDayOfMonth = new Date(
         expiryDate.getFullYear(),
-        expiryDate.getMonth() + 1,
+        (expiryDate.getMonth() + 1) % 12,
         0,
       ).getDate()
       if (expiryDate.getDate() > getEndDayOfMonth) {
@@ -511,7 +511,7 @@ test('should be able to extend a name in grace period by a month', async ({
       const expiryDate = new Date(ts)
       const getEndDayOfMonth = new Date(
         expiryDate.getFullYear(),
-        expiryDate.getMonth() + 1,
+        (expiryDate.getMonth() + 1) % 12,
         0,
       ).getDate()
       if (expiryDate.getDate() > getEndDayOfMonth) {

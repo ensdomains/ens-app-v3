@@ -42,7 +42,7 @@ export const dateFromDateDiff = ({
   newDate.setFullYear(newDate.getFullYear() + additionalYears)
   const getEndDayOfMonth = new Date(
     newDate.getFullYear(),
-    newDate.getMonth() + additionalMonths,
+    (newDate.getMonth() + additionalMonths) % 12,
     0,
   ).getDate()
   if (newDate.getDate() > getEndDayOfMonth) {
