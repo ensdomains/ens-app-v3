@@ -634,6 +634,14 @@ test('should allow normal registration for a month', async ({
     await expect(page.getByTestId('calendar-date')).toHaveValue(oneMonthLaterInput)
 
     console.log('browserTime', browserTime, new Date(browserTime * 1000))
+
+    const _date = new Date(browserTime * 1000)
+    _date.setMonth(_date.getMonth() + 1)
+    const year = _date.getFullYear()
+    const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+    const day = String(_date.getDate()).padStart(2, '0')
+    const inputDate = `${year}-${month}-${day}`
+    console.log('inputDate', inputDate)
     console.log('calendar value', await page.getByTestId('calendar-date').textContent())
     console.log('oneMonthLaterInput', oneMonthLaterInput)
     console.log('invoice time', await page.getByTestId('invoice-item-0-amount').textContent())
