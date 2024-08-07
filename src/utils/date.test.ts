@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 
 import {
   dateFromDateDiff,
-  getDaysOfMonthsFromYears,
   roundDurationWithDay,
   safeDateObj,
   secondsFromDateDiff,
@@ -60,23 +59,6 @@ describe('roundDurationWithDay', () => {
     const date = new Date(2024, 11, 12, 0, 0)
     const duration = roundDurationWithDay(date, now)
     expect(duration).toBe(ONE_DAY)
-  })
-})
-
-describe('getDaysOfMonthsFromYears', () => {
-  it('should return 29 days for feburary for leap year', () => {
-    const daysInMonths = getDaysOfMonthsFromYears(2024, 2024)
-    expect(daysInMonths[1]).toBe(29)
-  })
-
-  it('should return 28 days for feburary for regular year', () => {
-    const daysInMonths = getDaysOfMonthsFromYears(2023, 2023)
-    expect(daysInMonths[1]).toBe(28)
-  })
-
-  it('should return 29 days for feburary for leap year within the specified years', () => {
-    const daysInMonths = getDaysOfMonthsFromYears(2023, 2025)
-    expect(daysInMonths[13]).toBe(29)
   })
 })
 

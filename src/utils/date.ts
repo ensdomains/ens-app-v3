@@ -27,16 +27,6 @@ export const roundDurationWithDay = (valueAsDate: Date, now: number) => {
   return Math.floor((valueAsDateClone - nowClone) / 1000)
 }
 
-export const getDaysOfMonthsFromYears = (startYear: number, endYear: number) => {
-  let daysOfMonths: number[] = []
-  for (let year = startYear; year <= endYear; year += 1) {
-    // Calculates leap year
-    const february = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 29 : 28
-    daysOfMonths = [...daysOfMonths, 31, february, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-  }
-  return daysOfMonths
-}
-
 export const dateFromDateDiff = ({
   startDate,
   additionalYears = 0,
@@ -67,7 +57,5 @@ export const secondsFromDateDiff = ({
   additionalDays?: number
 }) => {
   const newDate = dateFromDateDiff({ startDate, additionalYears, additionalMonths, additionalDays })
-  // startDate.setHours(0, 0, 0)
-  // newDate.setHours(0, 0, 0)
   return Math.floor((newDate.getTime() - startDate.getTime()) / 1000)
 }
