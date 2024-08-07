@@ -76,7 +76,7 @@ export const useEstimateFullRegistration = ({
           },
           {
             address: registrationParams.owner,
-            balance: price ? price.base + price.premium + parseEther('10000') : undefined,
+            balance: price ? (price.base + price.premium) * 2n + parseEther('10000') : undefined,
           },
         ],
       },
