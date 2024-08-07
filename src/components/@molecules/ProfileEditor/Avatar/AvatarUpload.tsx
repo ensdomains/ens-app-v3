@@ -33,10 +33,14 @@ const UploadComponent = ({
   const { signAndUpload, isPending, error } = useUploadAvatar()
 
   const handleUpload = async () => {
-    const endpoint = await signAndUpload({ dataURL, name })
+    try {
+      const endpoint = await signAndUpload({ dataURL, name })
 
-    if (endpoint) {
-      handleSubmit('upload', endpoint, dataURL)
+      if (endpoint) {
+        handleSubmit('upload', endpoint, dataURL)
+      }
+    } catch (e) {
+      console.error(e)
     }
   }
 
