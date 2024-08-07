@@ -59,19 +59,19 @@ export const formatDurationOfDates = (startDate: Date, endDate: Date, t: TFuncti
     yearDiff -= 1
     monthDiff += 12
   }
+
   let dayDiff = endDate.getDate() - startDate.getDate()
   if (dayDiff < 0) {
     const lastDayOfStartMonth = new Date(startYear, startDate.getMonth() + 1, 0).getDate()
-    // get the last day of the end month to compare for shorter day months
-    const lastDayOfEndMonth = new Date(startYear, endDate.getMonth() + 1, 0).getDate()
+    const lastDayOfEndMonth = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0).getDate()
+    // Calculate if the day is still within the next month's last day
+    const calcEndDay = dayDiff + startDate.getDate()
     dayDiff += lastDayOfStartMonth
-    if (dayDiff < lastDayOfEndMonth) {
-      if (monthDiff > 0) {
-        monthDiff -= 1
-      } else {
-        yearDiff -= 1
-        monthDiff = 11
-      }
+    if (calcEndDay < lastDayOfEndMonth && monthDiff > 0) {
+      monthDiff -= 1
+    } else if (calcEndDay < lastDayOfEndMonth) {
+      yearDiff -= 1
+      monthDiff = 11
     } else {
       dayDiff = 0
     }
