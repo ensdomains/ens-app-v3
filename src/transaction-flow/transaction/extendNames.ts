@@ -4,19 +4,17 @@ import { getPrice } from '@ensdomains/ensjs/public'
 import { renewNames } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { makeDisplay } from '@app/utils/currency'
 
 import { calculateValueWithBuffer, formatDuration } from '../../utils/utils'
 
 type Data = {
   names: string[]
   duration: number
-  rentPrice: bigint
-  ethPrice?: bigint
+  displayPrice?: string
 }
 
 const displayItems = (
-  { names, rentPrice, duration, ethPrice }: Data,
+  { names, duration, displayPrice }: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => {
   return [
@@ -37,12 +35,7 @@ const displayItems = (
       label: 'cost',
       value: t('transaction.extendNames.costValue', {
         ns: 'transactionFlow',
-        value: makeDisplay({
-          value: calculateValueWithBuffer(
-            ethPrice ? (rentPrice * ethPrice) / BigInt(1e8) : rentPrice,
-          ),
-          symbol: ethPrice ? 'usd' : 'eth',
-        }),
+        value: displayPrice,
       }),
     },
   ]
