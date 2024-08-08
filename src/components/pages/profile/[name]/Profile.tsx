@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
@@ -14,7 +14,7 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
-import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { useRerouter } from '@app/hooks/useRerouter'
 import { Content, ContentWarning } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
 import { formatFullExpiry, getEncodedLabelAmount, makeEtherscanLink } from '@app/utils/utils'
@@ -103,7 +103,6 @@ export const NameAvailableBanner = ({
 }
 
 const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => {
-  const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const { address } = useAccount()
 
@@ -169,40 +168,37 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
 
   const abilities = useAbilities({ name: normalisedName })
 
-  // hook for redirecting to the correct profile url
-  // profile.decryptedName fetches labels from NW/subgraph
-  // normalisedName fetches labels from localStorage
-  useEffect(() => {
-    if (
-      name !== profile?.decodedName &&
-      profile?.decodedName &&
-      !isSelf &&
-      getEncodedLabelAmount(normalisedName) > getEncodedLabelAmount(profile.decodedName)
-    ) {
-      // if the fetched decrypted name is different to the current name
-      // and the decrypted name has less encrypted labels than the normalised name
-      // direct to the fetched decrypted name
-      router.replace(`/profile/${profile.decodedName}`, { shallow: true, maintainHistory: true })
-    } else if (
-      name !== normalisedName &&
-      normalisedName &&
-      !isSelf &&
-      (!profile?.decodedName ||
-        getEncodedLabelAmount(profile.decodedName) > getEncodedLabelAmount(normalisedName)) &&
-      decodeURIComponent(name) !== normalisedName
-    ) {
-      // if the normalised name is different to the current name
-      // and the normalised name has less encrypted labels than the decrypted name
-      // direct to normalised name
-      router.replace(`/profile/${normalisedName}`, { shallow: true, maintainHistory: true })
-    }
-  }, [profile?.decodedName, normalisedName, name, isSelf, router])
+  const isDecodedProfile = !!(
+    name !== profile?.decodedName &&
+    profile?.decodedName &&
+    !isSelf &&
+    getEncodedLabelAmount(normalisedName) > getEncodedLabelAmount(profile.decodedName)
+  )
 
-  useEffect(() => {
-    if (isSelf && name) {
-      router.replace(`/profile/${name}`)
-    }
-  }, [isSelf, name, router])
+  const isNormalizedProfile = !!(
+    name !== normalisedName &&
+    normalisedName &&
+    !isSelf &&
+    (!profile?.decodedName ||
+      getEncodedLabelAmount(profile.decodedName) > getEncodedLabelAmount(normalisedName)) &&
+    decodeURIComponent(name) !== normalisedName
+  )
+
+  useRerouter({
+    enabled: isDecodedProfile || isNormalizedProfile,
+    // eslint-disable-next-line no-nested-ternary
+    pathname: isDecodedProfile
+      ? `/profile/${profile.decodedName}`
+      : isNormalizedProfile
+      ? `/profile/${normalisedName}`
+      : '',
+    options: { shallow: true, maintainHistory: true },
+  })
+
+  useRerouter({
+    enabled: !!(isSelf && name),
+    pathname: `/profile/${name}`,
+  })
 
   // useEffect(() => {
   //   if (shouldShowSuccessPage(transactions)) {

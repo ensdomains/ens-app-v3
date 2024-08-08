@@ -2,19 +2,18 @@ import { useRouter } from 'next/router'
 
 import { getDestination } from '@app/routes'
 
+export type ReplaceOptions = {
+  shallow?: boolean
+  scroll?: boolean
+  maintainHistory?: boolean
+}
+
 export const useRouterWithHistory = () => {
   const router = useRouter()
 
   const _replace = router?.replace
 
-  const replace = (
-    pathname: string,
-    options?: {
-      shallow?: boolean
-      scroll?: boolean
-      maintainHistory?: boolean
-    },
-  ) => {
+  const replace = (pathname: string, options?: ReplaceOptions) => {
     if (typeof window === 'undefined') return
     const { maintainHistory, ...opts } = options || {}
     const destination =

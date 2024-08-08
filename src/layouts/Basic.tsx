@@ -8,6 +8,7 @@ import { mq } from '@ensdomains/thorin'
 
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { getSupportedChainById } from '@app/constants/chains'
+import { useRerouter } from '@app/hooks/useRerouter'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
 
@@ -100,15 +101,11 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
     }
   }, [isConnected, hasProgrammaticChainSwitching, isPending, isError, chainId, switchChain])
 
-  useEffect(() => {
-    if (
-      isConnected &&
-      !getSupportedChainById(chainId) &&
-      router.pathname !== '/unsupportedNetwork'
-    ) {
-      router.push('/unsupportedNetwork')
-    }
-  }, [isConnected, chainId, router])
+  useRerouter({
+    enabled:
+      isConnected && !getSupportedChainById(chainId) && router.pathname !== '/unsupportedNetwork',
+    pathname: '/unsupportedNetwork',
+  })
 
   return (
     <Container className="min-safe">
