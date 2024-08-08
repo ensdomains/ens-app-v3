@@ -52,9 +52,6 @@ export const formatFullExpiry = (expiryDate?: Date) =>
 
 export const formatDurationOfDates = (startDate: Date, endDate: Date, t: TFunction) => {
   const startYear = startDate.getFullYear()
-  // Determines if it's a leap year
-  const february = (startYear % 4 === 0 && startYear % 100 !== 0) || startYear % 400 === 0 ? 29 : 28
-  const daysInMonth = [31, february, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
   let yearDiff = endDate.getFullYear() - startYear
   let monthDiff = endDate.getMonth() - startDate.getMonth()
@@ -62,15 +59,22 @@ export const formatDurationOfDates = (startDate: Date, endDate: Date, t: TFuncti
     yearDiff -= 1
     monthDiff += 12
   }
+
   let dayDiff = endDate.getDate() - startDate.getDate()
   if (dayDiff < 0) {
-    if (monthDiff > 0) {
+    const lastDayOfStartMonth = new Date(startYear, startDate.getMonth() + 1, 0).getDate()
+    const lastDayOfEndMonth = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0).getDate()
+    // Calculate if the day is still within the next month's last day
+    const calcEndDay = dayDiff + startDate.getDate()
+    dayDiff += lastDayOfStartMonth
+    if (calcEndDay < lastDayOfEndMonth && monthDiff > 0) {
       monthDiff -= 1
-    } else {
+    } else if (calcEndDay < lastDayOfEndMonth) {
       yearDiff -= 1
       monthDiff = 11
+    } else {
+      dayDiff = 0
     }
-    dayDiff += daysInMonth[startDate.getMonth()]
   }
 
   if (yearDiff > 0) {

@@ -110,7 +110,7 @@ export const DateSelection = ({
           }}
         />
       )}
-      <Typography color="greyPrimary" fontVariant="smallBold">
+      <Typography color="greyPrimary" fontVariant="smallBold" data-testid="date-selection-info">
         {extensionPeriod === t('unit.invalid_date', { ns: 'common' })
           ? extensionPeriod
           : `${extensionPeriod} ${mode === 'register' ? 'registration.' : 'extension.'}`}{' '}
