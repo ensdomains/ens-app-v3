@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components'
 import { Avatar, Button, Dropdown } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
-import CameraIcon from '@app/assets/Camera.svg'
 import { LegacyDropdown } from '@app/components/@molecules/LegacyDropdown/LegacyDropdown'
 
 const AvatarWrapper = styled.button<{ $error?: boolean; $validated?: boolean; $dirty?: boolean }>(
@@ -58,28 +57,6 @@ const AvatarWrapper = styled.button<{ $error?: boolean; $validated?: boolean; $d
         transform: translate(-20%, 20%) scale(1);
       }
     `}
-  `,
-)
-
-const IconMask = styled.div(
-  ({ theme }) => css`
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
-    border: 4px solid ${theme.colors.grey};
-    overflow: hidden;
-
-    svg {
-      width: 40px;
-      display: block;
-    }
   `,
 )
 
@@ -150,11 +127,6 @@ const AvatarButton = ({
     <Container>
       <AvatarWrapper $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
         <Avatar label="profile-button-avatar" src={src} noBorder />
-        {!validated && !error && (
-          <IconMask>
-            <CameraIcon />
-          </IconMask>
-        )}
       </AvatarWrapper>
       <LegacyDropdown
         items={
@@ -190,9 +162,11 @@ const AvatarButton = ({
         {...dropdownProps}
       >
         <ActionContainer>
-          <Button disabled colorStyle="accentSecondary">
-            {src}
-          </Button>
+          {!!src && (
+            <Button disabled colorStyle="accentSecondary">
+              {src}
+            </Button>
+          )}
           <Button colorStyle="accentSecondary">
             {t('input.profileEditor.tabs.avatar.change')}
           </Button>
