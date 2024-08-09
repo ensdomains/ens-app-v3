@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react'
 import { TFunction, useTranslation } from 'react-i18next'
-import useTransition, { TransitionState } from 'react-transition-state'
+import useTransition, { type TransitionStatus } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 import { Address, isAddress } from 'viem'
 import { useAccount, useChainId } from 'wagmi'
@@ -63,7 +63,7 @@ const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
 )
 
 const SearchResultsContainer = styled.div<{
-  $state: TransitionState
+  $state: TransitionStatus
 }>(
   ({ theme, $state }) => css`
     position: absolute;
@@ -102,7 +102,7 @@ const SearchResultsContainer = styled.div<{
   `,
 )
 
-const FloatingSearchContainer = styled.div<{ $state: TransitionState }>(
+const FloatingSearchContainer = styled.div<{ $state: TransitionStatus }>(
   ({ theme, $state }) => css`
     width: 95%;
 
@@ -143,7 +143,7 @@ const CancelButton = styled(Typography)(
 )
 
 type MobileSearchInputProps = {
-  state: TransitionState
+  state: TransitionStatus
   toggle: (value: boolean) => void
   searchInputRef: RefObject<HTMLInputElement>
   SearchResultsElement: JSX.Element
@@ -405,7 +405,7 @@ const useSelectionManager = ({
 }: {
   inputVal: string
   setSelected: Dispatch<SetStateAction<number>>
-  state: TransitionState
+  state: TransitionStatus
 }) => {
   useEffect(() => {
     if (inputVal === '') {
@@ -683,7 +683,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
     handleFocusOut,
   })
 
-  useSelectionManager({ inputVal, setSelected, state })
+  useSelectionManager({ inputVal, setSelected, state: state.status })
 
   const setInput = (val: string) => {
     setInputVal(val)
@@ -707,7 +707,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
         width: width === Infinity ? undefined : width,
       }}
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
-      $state={state}
+      $state={state.status}
       data-testid="search-input-results"
     >
       {dropdownItems.map((searchItem, index) => (
@@ -732,7 +732,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
     return (
       <Container data-testid="search-input-desktop" $size={size}>
         {SearchInputElement}
-        {state !== 'unmounted' && SearchResultsElement}
+        {state.status !== 'unmounted' && SearchResultsElement}
       </Container>
     )
   }
@@ -744,7 +744,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
           SearchInputElement,
           SearchResultsElement,
           searchInputRef,
-          state,
+          state: state.status,
           toggle,
         }}
       />

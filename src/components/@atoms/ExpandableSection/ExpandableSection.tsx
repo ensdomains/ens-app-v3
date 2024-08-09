@@ -1,5 +1,5 @@
 import { PropsWithChildren, useRef, useState } from 'react'
-import { TransitionState, useTransition } from 'react-transition-state'
+import { useTransition, type TransitionStatus } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 
 import { DownChevronSVG, Typography } from '@ensdomains/thorin'
@@ -38,7 +38,7 @@ const IconWrapper = styled.div<{ $open: boolean }>(
   `,
 )
 
-const Body = styled.div<{ $state: TransitionState; $height: number }>(
+const Body = styled.div<{ $state: TransitionStatus; $height: number }>(
   ({ theme, $state, $height }) => css`
     overflow: hidden;
     width: 100%;
@@ -94,15 +94,15 @@ export const ExpandableSection = ({ title, children }: PropsWithChildren<Props>)
     timeout: 300,
     preEnter: true,
     preExit: true,
-    onChange: ({ state: _state }) => {
-      if (_state === 'preEnter' || _state === 'preExit') {
+    onStateChange: ({ current: newState }) => {
+      if (newState.status === 'preEnter' || newState.status === 'preExit') {
         const _heigth = ref.current?.getBoundingClientRect().height || 0
         setHeight(_heigth)
       }
     },
   })
 
-  const open = ['entered', 'entering', 'preEnter'].includes(state)
+  const open = ['entered', 'entering', 'preEnter'].includes(state.status)
 
   return (
     <Container>
@@ -112,7 +112,7 @@ export const ExpandableSection = ({ title, children }: PropsWithChildren<Props>)
           <DownChevronSVG />
         </IconWrapper>
       </Header>
-      <Body $state={state} $height={height}>
+      <Body $state={state.status} $height={height}>
         <Content ref={ref}>{children}</Content>
       </Body>
     </Container>

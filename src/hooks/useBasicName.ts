@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { getAddress } from 'viem'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils'
 
@@ -10,10 +9,9 @@ import { useContractAddress } from './chain/useContractAddress'
 import useCurrentBlockTimestamp from './chain/useCurrentBlockTimestamp'
 import { useAddressRecord } from './ensjs/public/useAddressRecord'
 import { useExpiry } from './ensjs/public/useExpiry'
-import { useOwner, UseOwnerReturnType } from './ensjs/public/useOwner'
+import { useOwner } from './ensjs/public/useOwner'
 import { usePrice } from './ensjs/public/usePrice'
 import { useWrapperData } from './ensjs/public/useWrapperData'
-import { useSubgraphRegistrant } from './ensjs/subgraph/useSubgraphRegistrant'
 import { usePccExpired } from './fuses/usePccExpired'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
@@ -27,12 +25,7 @@ export type UseBasicNameOptions = {
   subgraphEnabled?: boolean
 }
 
-export const useBasicName = ({
-  name,
-  normalised = false,
-  enabled = true,
-  subgraphEnabled = true,
-}: UseBasicNameOptions) => {
+export const useBasicName = ({ name, normalised = false, enabled = true }: UseBasicNameOptions) => {
   const validation = useValidate({ input: name!, enabled: enabled && !!name })
 
   const { name: _normalisedName, isValid, isShort, isETH, is2LD } = validation
@@ -49,7 +42,7 @@ export const useBasicName = ({
     isLoading: isOwnerLoading,
     isCachedData: isOwnerCachedData,
     refetchIfEnabled: refetchOwner,
-  } = useOwner({ name: normalisedName, enabled: commonEnabled })
+  } = useOwner({ name: normalisedName, forceUnexpired: true, enabled: commonEnabled })
   const {
     data: wrapperData,
     isLoading: isWrapperDataLoading,
@@ -142,28 +135,6 @@ export const useBasicName = ({
       })
     : undefined
 
-  const { data: subgraphRegistrant } = useSubgraphRegistrant({
-    name: normalisedName,
-    enabled:
-      enabled &&
-      subgraphEnabled &&
-      registrationStatus === 'gracePeriod' &&
-      is2LD &&
-      isETH &&
-      !isWrapped,
-  })
-
-  const ownerDataWithSubgraphRegistrant = useMemo(() => {
-    if (!ownerData) return ownerData
-    const checkSumSubgraphRegistrant = subgraphRegistrant
-      ? getAddress(subgraphRegistrant)
-      : undefined
-    return {
-      ...ownerData,
-      registrant: ownerData?.registrant ?? checkSumSubgraphRegistrant,
-    } as UseOwnerReturnType
-  }, [ownerData, subgraphRegistrant])
-
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
   const pccExpired = usePccExpired({ ownerData, wrapperData })
@@ -172,7 +143,7 @@ export const useBasicName = ({
   return {
     ...validation,
     normalisedName,
-    ownerData: ownerDataWithSubgraphRegistrant,
+    ownerData,
     wrapperData,
     priceData,
     expiryDate,

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { ReactNode, useCallback, useEffect, useRef } from 'react'
-import useTransition, { TransitionState } from 'react-transition-state'
+import useTransition, { type TransitionStatus } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -63,7 +63,7 @@ const NavContainer = styled.div(
   `,
 )
 
-const RouteContainer = styled.div<{ $state: TransitionState }>(
+const RouteContainer = styled.div<{ $state: TransitionStatus }>(
   ({ theme, $state }) => css`
     display: flex;
     flex-direction: row;
@@ -101,7 +101,7 @@ const RouteWrapper = styled.div(
   `,
 )
 
-const SearchWrapper = styled.div<{ $state: TransitionState }>(
+const SearchWrapper = styled.div<{ $state: TransitionStatus }>(
   ({ theme, $state }) => css`
     width: ${theme.space.full};
     max-width: ${theme.space['80']};
@@ -213,7 +213,7 @@ export const Header = () => {
             <SearchWrapper
               data-testid="search-wrapper"
               ref={searchWrapperRef}
-              $state={breakpoints.lg ? 'entered' : state}
+              $state={breakpoints.lg ? 'entered' : state.status}
             >
               <SearchInput size="medium" />
             </SearchWrapper>
@@ -224,7 +224,7 @@ export const Header = () => {
           <RouteContainer
             data-testid="route-container"
             ref={routeContainerRef}
-            $state={breakpoints.lg ? 'entered' : state}
+            $state={breakpoints.lg ? 'entered' : state.status}
           >
             {RouteItems}
           </RouteContainer>

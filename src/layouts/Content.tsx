@@ -20,6 +20,10 @@ export type ContentWarning =
       title?: BannerProps['title']
       message: BannerProps['children']
     }
+  | {
+      type: 'custom'
+      content: ReactNode
+    }
   | undefined
 
 const HeadingItems = styled.div(
@@ -262,9 +266,13 @@ export const Content = ({
   const warning = useContentWarning([children.warning])
   const WarningComponent = !loading && warning && (
     <WarningWrapper>
-      <Banner title={warning.title} alert={warning.type}>
-        {warning.message}
-      </Banner>
+      {warning.type === 'custom' ? (
+        warning.content
+      ) : (
+        <Banner title={warning.title} alert={warning.type}>
+          {warning.message}
+        </Banner>
+      )}
     </WarningWrapper>
   )
 

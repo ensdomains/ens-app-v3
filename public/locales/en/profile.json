@@ -16,6 +16,11 @@
     "available": {
       "title": "{{name}} is available",
       "description": "This name expired on <strong>{{date}}</strong>. Click here to view the registration page."
+    },
+    "expiryDesync": {
+      "title": "Name misconfigured",
+      "description": "A transaction is required to repair this name. Ownership data displayed may be inaccurate.",
+      "actionLabel": "Repair"
     }
   },
   "tabs": {

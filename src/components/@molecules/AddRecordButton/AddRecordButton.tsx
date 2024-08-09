@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import useTransition, { TransitionState } from 'react-transition-state'
+import useTransition, { TransitionStatus } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 
 import { Button, Input, MagnifyingGlassSimpleSVG, PlusSVG, Typography } from '@ensdomains/thorin'
@@ -8,7 +8,7 @@ import { Button, Input, MagnifyingGlassSimpleSVG, PlusSVG, Typography } from '@e
 import UnsupportedSVG from '@app/assets/Unsupported.svg'
 import { formSafeKey } from '@app/utils/editor'
 
-const Container = styled.div<{ $state: TransitionState }>(
+const Container = styled.div<{ $state: TransitionStatus }>(
   ({ theme, $state }) => css`
     position: relative;
     border: 1px solid ${theme.colors.border};
@@ -43,7 +43,7 @@ const Container = styled.div<{ $state: TransitionState }>(
   `,
 )
 
-const ControlsContainer = styled.div<{ $state: TransitionState }>(
+const ControlsContainer = styled.div<{ $state: TransitionStatus }>(
   ({ theme, $state }) => css`
     transition: all 0.3s ${theme.transitionTimingFunction.inOut};
     top: 0;
@@ -253,7 +253,7 @@ const SVGWrapper = styled.div(
   `,
 )
 
-const ButtonContainer = styled.div<{ $state: TransitionState }>(
+const ButtonContainer = styled.div<{ $state: TransitionStatus }>(
   ({ theme, $state }) => css`
     transition: all 0.3s ${theme.transitionTimingFunction.inOut};
     position: absolute;
@@ -368,8 +368,8 @@ export const AddRecordButton = ({
   }
 
   return (
-    <Container $state={state} ref={containerRef} data-testid="add-record-button">
-      <ControlsContainer $state={state} data-testid="add-record-button-controls">
+    <Container $state={state.status} ref={containerRef} data-testid="add-record-button">
+      <ControlsContainer $state={state.status} data-testid="add-record-button-controls">
         <ControlsHeader>
           <ControlsHeaderLeading>
             {inputType === 'placeholder' ? (
@@ -427,7 +427,7 @@ export const AddRecordButton = ({
           </ControlsBody>
         )}
       </ControlsContainer>
-      <ButtonContainer $state={state}>
+      <ButtonContainer $state={state.status}>
         <Button
           prefix={
             <SVGWrapper>

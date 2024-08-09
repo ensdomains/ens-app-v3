@@ -1,6 +1,8 @@
-import { ReactNode, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { NameExpiryDesyncBanner } from '@app/components/@molecules/NameExpiryDesyncBanner'
+import type { ContentWarning } from '@app/layouts/Content'
 import { formatFullExpiry } from '@app/utils/utils'
 
 import { useDnsOwner } from './ensjs/dns/useDnsOwner'
@@ -16,16 +18,23 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
   const { t } = useTranslation('profile')
 
   const {
-    isValid,
-    normalisedName,
     isLoading: isBasicLoading,
     isCachedData: isBasicCachedData,
-    registrationStatus,
-    expiryDate,
-    gracePeriodEndDate,
     refetchIfEnabled: refetchBasicName,
     ...basicName
   } = useBasicName({ name })
+
+  const {
+    isValid,
+    normalisedName,
+    registrationStatus,
+    expiryDate,
+    gracePeriodEndDate,
+    wrapperData,
+    isETH,
+    is2LD,
+    ownerData,
+  } = basicName
 
   const {
     data: profile,
@@ -44,28 +53,51 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     isCachedData: isDnsOwnerCachedData,
     refetchIfEnabled: refetchDnsOwner,
   } = useDnsOwner({ name: normalisedName, enabled: isValid })
-  const error: string | ReactNode | null = useMemo(() => {
+
+  const warning: ContentWarning = useMemo(() => {
     if (isValid === false) {
-      return t('errors.invalidName')
+      return { type: 'warning', message: t('errors.invalidName') }
     }
     if (registrationStatus === 'unsupportedTLD') {
-      return t('errors.unsupportedTLD')
+      return { type: 'warning', message: t('errors.unsupportedTLD') }
     }
+
+    if (
+      !wrapperData &&
+      ownerData?.ownershipLevel === 'nameWrapper' &&
+      isETH &&
+      is2LD &&
+      expiryDate &&
+      expiryDate > new Date()
+    ) {
+      return {
+        type: 'custom',
+        content: <NameExpiryDesyncBanner normalisedName={normalisedName} />,
+      }
+    }
+
     if (profile && !profile.isMigrated && typeof profile.isMigrated === 'boolean') {
-      return (
-        <>
-          {t('errors.migrationNotAvailable')}
-          <a href={`https://legacy.ens.domains/name/${normalisedName}`}>
-            {t('errors.migrationNotAvailableLink')}
-          </a>
-        </>
-      )
+      return {
+        type: 'warning',
+        message: (
+          <>
+            {t('errors.migrationNotAvailable')}
+            <a href={`https://legacy.ens.domains/name/${normalisedName}`}>
+              {t('errors.migrationNotAvailableLink')}
+            </a>
+          </>
+        ),
+      }
     }
     if (registrationStatus === 'invalid') {
-      return t('errors.invalidName')
+      return { type: 'warning', message: t('errors.invalidName') }
     }
     if (registrationStatus === 'gracePeriod') {
-      return `${t('errors.expiringSoon', { date: formatFullExpiry(gracePeriodEndDate) })}`
+      return {
+        type: 'warning',
+        title: t('errors.hasExpired', { name: normalisedName }),
+        message: `${t('errors.expiringSoon', { date: formatFullExpiry(gracePeriodEndDate) })}`,
+      }
     }
     if (
       // bypass unknown error for root name
@@ -74,36 +106,33 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
       !profile &&
       !isProfileLoading
     ) {
-      return t('errors.networkError.message', { ns: 'common' })
+      return {
+        type: 'warning',
+        title: t('errors.networkError.title', { ns: 'common' }),
+        message: t('errors.networkError.message', { ns: 'common' }),
+      }
     }
-    return null
+    return undefined
   }, [
-    gracePeriodEndDate,
-    normalisedName,
-    profile,
-    isProfileLoading,
-    registrationStatus,
-    t,
     isValid,
+    registrationStatus,
+    wrapperData,
+    ownerData?.ownershipLevel,
+    isETH,
+    is2LD,
+    expiryDate,
+    profile,
+    normalisedName,
+    isProfileLoading,
+    t,
+    gracePeriodEndDate,
   ])
-
-  const errorTitle = useMemo(() => {
-    if (registrationStatus === 'gracePeriod') {
-      return t('errors.hasExpired', { name: normalisedName })
-    }
-    if (normalisedName !== '[root]' && !profile && !isProfileLoading) {
-      return t('errors.networkError.title', { ns: 'common' })
-    }
-  }, [registrationStatus, t, profile, isProfileLoading, normalisedName])
 
   const isLoading = isProfileLoading || isBasicLoading || isDnsOwnerLoading
   const isCachedData = isBasicCachedData || isProfileCachedData || isDnsOwnerCachedData
 
   return {
-    error,
-    errorTitle,
-    normalisedName,
-    isValid,
+    warning,
     profile,
     isLoading,
     isProfileLoading,
@@ -111,9 +140,6 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     isDnsOwnerLoading,
     dnsOwner,
     isCachedData,
-    registrationStatus,
-    gracePeriodEndDate,
-    expiryDate,
     refetchIfEnabled: () => {
       refetchBasicName()
       refetchProfile()

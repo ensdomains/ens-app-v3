@@ -7,7 +7,6 @@ export const getRoles = ({
   nameType,
   registrant,
   owner,
-  wrapperOwner,
   dnsOwner,
   parentOwner,
   parentWrapperOwner,
@@ -16,13 +15,16 @@ export const getRoles = ({
   nameType?: NameType
   registrant?: Address | null
   owner?: Address
-  wrapperOwner?: Address | null
   dnsOwner?: Address | null
   parentOwner?: Address
   parentWrapperOwner?: Address | null
   ethAddress?: Address
 }) => {
   return match(nameType)
+    .with(P.union('eth-wrapped-2ld', 'eth-wrapped-2ld:grace-period'), () => [
+      { address: owner, role: 'owner' as const },
+      { address: ethAddress, role: 'eth-record' as const },
+    ])
     .with(P.union('eth-unwrapped-2ld', 'eth-unwrapped-2ld:grace-period'), () => [
       { address: registrant || undefined, role: 'owner' as const },
       { address: owner, role: 'manager' as const },
@@ -36,7 +38,7 @@ export const getRoles = ({
       ],
     )
     .with(P.union('eth-emancipated-2ld:grace-period', 'eth-locked-2ld:grace-period'), () => [
-      { address: wrapperOwner, role: 'owner' as const },
+      { address: owner, role: 'owner' as const },
       { address: ethAddress, role: 'eth-record' as const },
     ])
     .with(

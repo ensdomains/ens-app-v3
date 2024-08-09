@@ -218,7 +218,8 @@
       "syncManager": "Sync manager",
       "updateProfileRecords": "Update profile",
       "resetProfile": "Reset profile",
-      "unwrapName": "Unwrap name"
+      "unwrapName": "Unwrap name",
+      "syncWrappedExpiry": "Repair name"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
@@ -237,6 +238,7 @@
       "burnFuses": "Burn the chosen permissions until name expiry",
       "commitName": "Start timer to register name",
       "approveNameWrapper": "Approve the NameWrapper to manage your names",
+      "syncWrappedExpiry": "Sync the wrapped name expiry",
       "fuses": {
         "revoke": "Revoke",
         "grant": "Grant",

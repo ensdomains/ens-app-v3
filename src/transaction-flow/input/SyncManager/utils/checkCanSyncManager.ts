@@ -34,6 +34,8 @@ export const checkCanSyncManager = ({
         'eth-emancipated-2ld:grace-period',
         'eth-locked-2ld',
         'eth-locked-2ld:grace-period',
+        'eth-wrapped-2ld',
+        'eth-wrapped-2ld:grace-period',
         'eth-unwrapped-subname',
         'eth-wrapped-subname',
         'eth-emancipated-subname',

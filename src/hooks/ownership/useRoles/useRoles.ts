@@ -65,7 +65,6 @@ function useRoles(name: string, options?: Options): Result {
       nameType: nameType.data!,
       owner: details.ownerData?.owner,
       registrant: details.ownerData?.registrant,
-      wrapperOwner: details.wrapperData?.owner,
       ethAddress: details.profile?.address,
       dnsOwner: details.dnsOwner ?? undefined,
       parentOwner: parentData.ownerData?.owner,
@@ -78,7 +77,6 @@ function useRoles(name: string, options?: Options): Result {
     details.ownerData?.registrant,
     details.dnsOwner,
     details.profile?.address,
-    details.wrapperData?.owner,
     parentData.ownerData?.owner,
     parentData.wrapperData?.owner,
   ])

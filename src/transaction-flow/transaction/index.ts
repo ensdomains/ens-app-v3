@@ -16,6 +16,7 @@ import resetProfile from './resetProfile'
 import resetProfileWithRecords from './resetProfileWithRecords'
 import setPrimaryName from './setPrimaryName'
 import syncManager from './syncManager'
+import syncWrappedExpiry from './syncWrappedExpiry'
 import testSendName from './testSendName'
 import transferController from './transferController'
 import transferName from './transferName'
@@ -46,6 +47,7 @@ export const transactions = {
   resetProfileWithRecords,
   setPrimaryName,
   syncManager,
+  syncWrappedExpiry,
   testSendName,
   transferController,
   transferName,

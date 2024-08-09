@@ -15,7 +15,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { Content, ContentWarning } from '@app/layouts/Content'
+import { Content } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
 import { formatFullExpiry, getEncodedLabelAmount, makeEtherscanLink } from '@app/utils/utils'
 
@@ -109,8 +109,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
 
   const nameDetails = useNameDetails({ name })
   const {
-    error,
-    errorTitle,
+    warning,
     profile,
     gracePeriodEndDate,
     expiryDate,
@@ -220,16 +219,6 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     }
     return undefined
   }, [registrationStatus, gracePeriodEndDate, normalisedName, expiryDate])
-
-  const warning: ContentWarning = useMemo(() => {
-    if (error)
-      return {
-        type: 'warning',
-        message: error,
-        title: errorTitle,
-      }
-    return undefined
-  }, [error, errorTitle])
 
   const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
 
