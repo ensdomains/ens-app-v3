@@ -101,6 +101,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
 
   return {
     error,
+    unsupported: registrationStatus === 'unsupportedTLD',
     errorTitle,
     normalisedName,
     isValid,

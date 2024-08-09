@@ -109,6 +109,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
 
   const nameDetails = useNameDetails({ name })
   const {
+    unsupported,
     error,
     errorTitle,
     profile,
@@ -165,7 +166,9 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     refetchIfEnabled()
     setTab_(value)
   }
-  const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
+  const visibileTabs = (isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter(
+    (_tab) => (unsupported ? _tab === 'profile' : _tab),
+  )
 
   const abilities = useAbilities({ name: normalisedName })
 
