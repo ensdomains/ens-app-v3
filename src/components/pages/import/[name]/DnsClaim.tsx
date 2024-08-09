@@ -5,6 +5,7 @@ import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
 import { useBasicName } from '@app/hooks/useBasicName'
+import { useRerouter } from '@app/hooks/useRerouter'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -92,13 +93,15 @@ export const DnsClaim = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, step, selected, router.asPath])
 
-  if (item?.name?.includes('.box')) {
-    router.push(`/`)
-  }
+  useRerouter({
+    enabled: item?.name?.includes('.box'),
+    pathname: `/`,
+  })
 
-  if (router.isReady && getShouldRedirect({ isLoading, registrationStatus, item, step })) {
-    router.push(`/profile/${name}`)
-  }
+  useRerouter({
+    enabled: router.isReady && getShouldRedirect({ isLoading, registrationStatus, item, step }),
+    pathname: `/profile/${name}`,
+  })
 
   return (
     <>
