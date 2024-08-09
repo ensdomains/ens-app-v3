@@ -12,6 +12,7 @@ const AvatarWrapper = styled.button<{ $error?: boolean; $validated?: boolean; $d
     position: relative;
     width: 120px;
     height: 120px;
+    min-width: 120px;
     border-radius: 50%;
     background-color: ${theme.colors.backgroundPrimary};
     cursor: pointer;
@@ -65,7 +66,7 @@ const ActionContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space[2]};
-    max-width: 200px;
+    overflow: hidden;
   `,
 )
 
@@ -128,62 +129,62 @@ const AvatarButton = ({
       <AvatarWrapper $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
         <Avatar label="profile-button-avatar" src={src} noBorder />
       </AvatarWrapper>
-      <LegacyDropdown
-        items={
-          [
-            {
-              label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
-              color: 'black',
-              onClick: handleSelectOption('nft'),
-            },
-            {
-              label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
-              color: 'black',
-              onClick: handleSelectOption('upload'),
-            },
-            {
-              label: t('input.profileEditor.tabs.avatar.dropdown.enterManually'),
-              color: 'black',
-              onClick: handleSelectOption('manual'),
-            },
-            ...(validated
-              ? [
-                  {
-                    label: t('action.remove', { ns: 'common' }),
-                    color: 'red',
-                    onClick: handleSelectOption('remove'),
-                  },
-                ]
-              : []),
-          ] as DropdownItem[]
-        }
-        keepMenuOnTop
-        shortThrow
-        {...dropdownProps}
-      >
-        <ActionContainer>
-          {!!src && (
-            <Button disabled colorStyle="accentSecondary">
-              {src}
-            </Button>
-          )}
+      <ActionContainer>
+        {!!src && (
+          <Button disabled colorStyle="accentSecondary">
+            {src}
+          </Button>
+        )}
+        <LegacyDropdown
+          items={
+            [
+              {
+                label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
+                color: 'black',
+                onClick: handleSelectOption('nft'),
+              },
+              {
+                label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
+                color: 'black',
+                onClick: handleSelectOption('upload'),
+              },
+              {
+                label: t('input.profileEditor.tabs.avatar.dropdown.enterManually'),
+                color: 'black',
+                onClick: handleSelectOption('manual'),
+              },
+              ...(validated
+                ? [
+                    {
+                      label: t('action.remove', { ns: 'common' }),
+                      color: 'red',
+                      onClick: handleSelectOption('remove'),
+                    },
+                  ]
+                : []),
+            ] as DropdownItem[]
+          }
+          keepMenuOnTop
+          shortThrow
+          {...dropdownProps}
+        >
           <Button colorStyle="accentSecondary">
             {t('input.profileEditor.tabs.avatar.change')}
           </Button>
-        </ActionContainer>
-        <input
-          type="file"
-          style={{ display: 'none' }}
-          accept="image/*"
-          ref={fileInputRef}
-          onChange={(e) => {
-            if (e.target.files?.[0]) {
-              onSelectOption?.('upload')
-              onAvatarFileChange?.(e.target.files[0])
-            }
-          }}
-        />
-      </LegacyDropdown>
+          <input
+            type="file"
+            style={{ display: 'none' }}
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={(e) => {
+              if (e.target.files?.[0]) {
+                onSelectOption?.('upload')
+                onAvatarFileChange?.(e.target.files[0])
+              }
+            }}
+          />
+        </LegacyDropdown>
+      </ActionContainer>
     </Container>
   )
 }
