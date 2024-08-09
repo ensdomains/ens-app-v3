@@ -111,7 +111,7 @@ test('should be able to extend a single unwrapped name from profile', async ({
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible({
       timeout: 30000,
     })
@@ -182,7 +182,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
@@ -252,7 +252,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
@@ -471,7 +471,7 @@ test('should be able to extend a name in grace period by a month', async ({
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
@@ -552,7 +552,7 @@ test('should be able to extend a name in grace period by 1 day', async ({
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0033')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
