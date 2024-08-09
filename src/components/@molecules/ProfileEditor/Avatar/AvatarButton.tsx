@@ -2,17 +2,17 @@ import { ComponentProps, Dispatch, SetStateAction, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Avatar, Dropdown } from '@ensdomains/thorin'
+import { Avatar, Button, Dropdown } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
-import CameraIcon from '@app/assets/Camera.svg'
 import { LegacyDropdown } from '@app/components/@molecules/LegacyDropdown/LegacyDropdown'
 
-const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty?: boolean }>(
+const AvatarWrapper = styled.button<{ $error?: boolean; $validated?: boolean; $dirty?: boolean }>(
   ({ theme, $validated, $dirty, $error }) => css`
     position: relative;
-    width: 90px;
-    height: 90px;
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
     border-radius: 50%;
     background-color: ${theme.colors.backgroundPrimary};
     cursor: pointer;
@@ -61,29 +61,25 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
   `,
 )
 
-const IconMask = styled.div(
+const ActionContainer = styled.div(
   ({ theme }) => css`
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
-    border: 4px solid ${theme.colors.grey};
+    flex-direction: column;
+    gap: ${theme.space[2]};
     overflow: hidden;
-
-    svg {
-      width: 40px;
-      display: block;
-    }
   `,
 )
 
-export type AvatarClickType = 'upload' | 'nft'
+const Container = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: ${theme.space[4]};
+  `,
+)
+
+export type AvatarClickType = 'upload' | 'nft' | 'manual'
 
 type PickedDropdownProps = Pick<ComponentProps<typeof Dropdown>, 'isOpen' | 'setIsOpen'>
 
@@ -100,8 +96,8 @@ type Props = {
 
 const AvatarButton = ({
   validated,
-  dirty,
   error,
+  dirty,
   src,
   onSelectOption,
   onAvatarChange,
@@ -129,55 +125,67 @@ const AvatarButton = ({
     : ({} as { isOpen: never; setIsOpen: never })
 
   return (
-    <LegacyDropdown
-      items={
-        [
-          {
-            label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
-            color: 'black',
-            onClick: handleSelectOption('nft'),
-          },
-          {
-            label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
-            color: 'black',
-            onClick: handleSelectOption('upload'),
-          },
-          ...(validated
-            ? [
-                {
-                  label: t('action.remove', { ns: 'common' }),
-                  color: 'red',
-                  onClick: handleSelectOption('remove'),
-                },
-              ]
-            : []),
-        ] as DropdownItem[]
-      }
-      keepMenuOnTop
-      shortThrow
-      {...dropdownProps}
-    >
-      <Container $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
+    <Container>
+      <AvatarWrapper $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
         <Avatar label="profile-button-avatar" src={src} noBorder />
-        {!validated && !error && (
-          <IconMask>
-            <CameraIcon />
-          </IconMask>
+      </AvatarWrapper>
+      <ActionContainer>
+        {!!src && (
+          <Button disabled colorStyle="accentSecondary">
+            {src}
+          </Button>
         )}
-        <input
-          type="file"
-          style={{ display: 'none' }}
-          accept="image/*"
-          ref={fileInputRef}
-          onChange={(e) => {
-            if (e.target.files?.[0]) {
-              onSelectOption?.('upload')
-              onAvatarFileChange?.(e.target.files[0])
-            }
-          }}
-        />
-      </Container>
-    </LegacyDropdown>
+        <LegacyDropdown
+          items={
+            [
+              {
+                label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
+                color: 'black',
+                onClick: handleSelectOption('nft'),
+              },
+              {
+                label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
+                color: 'black',
+                onClick: handleSelectOption('upload'),
+              },
+              {
+                label: t('input.profileEditor.tabs.avatar.dropdown.enterManually'),
+                color: 'black',
+                onClick: handleSelectOption('manual'),
+              },
+              ...(validated
+                ? [
+                    {
+                      label: t('action.remove', { ns: 'common' }),
+                      color: 'red',
+                      onClick: handleSelectOption('remove'),
+                    },
+                  ]
+                : []),
+            ] as DropdownItem[]
+          }
+          keepMenuOnTop
+          shortThrow
+          {...dropdownProps}
+        >
+          <Button colorStyle="accentSecondary">
+            {t('input.profileEditor.tabs.avatar.change')}
+          </Button>
+          <input
+            type="file"
+            style={{ display: 'none' }}
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={(e) => {
+              if (e.target.files?.[0]) {
+                onSelectOption?.('upload')
+                onAvatarFileChange?.(e.target.files[0])
+              }
+            }}
+          />
+        </LegacyDropdown>
+      </ActionContainer>
+    </Container>
   )
 }
 
