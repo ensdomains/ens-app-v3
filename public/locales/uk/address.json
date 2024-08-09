@@ -1,0 +1,18 @@
+{
+  "meta": {
+    "title": "{{address}} на ENS",
+    "description": "Усі імена для {{address}} на Ethereum Name Service"
+  },
+  "addressDetails": "Деталі адреси",
+  "nameCount": "{{count}} імен",
+  "filter": "Фільтр",
+  "view": "Перегляд",
+  "noProfile": {
+    "title": "Основне ім'я не встановлено",
+    "message": "Цей гаманець повинен встановити основне ім'я для створення профілю"
+  },
+  "noResults": "Імен не знайдено",
+  "errors": {
+    "names": "Не вдалося знайти адресу"
+  }
+}
