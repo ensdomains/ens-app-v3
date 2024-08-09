@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -6,8 +6,8 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { roundDurationWithDay } from '@app/utils/date'
-import { formatDuration, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/utils'
+import { roundDurationWithDay, secondsFromDateDiff } from '@app/utils/date'
+import { formatDurationOfDates, secondsToYears } from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
   ({ theme }) => css`
@@ -45,12 +45,11 @@ export const DateSelection = ({
   mode?: 'register' | 'extend'
   expiry?: number
 }) => {
+  const currentTime = expiry ?? now
   const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
   const toggleYearPickView = () => setYearPickView(yearPickView === 'date' ? 'years' : 'date')
 
   const { t } = useTranslation()
-
-  const extensionPeriod = formatDuration(seconds, t)
 
   useEffect(() => {
     if (minSeconds > seconds) setSeconds(minSeconds)
@@ -58,15 +57,25 @@ export const DateSelection = ({
   }, [minSeconds, seconds])
 
   const dateInYears = Math.floor(secondsToYears(seconds))
+  const extensionPeriod = useMemo(() => {
+    return formatDurationOfDates(
+      new Date(currentTime * 1000),
+      new Date((currentTime + seconds) * 1000),
+      t,
+    )
+  }, [currentTime, seconds, t])
 
   useEffect(() => {
-    if (yearPickView === 'years' && dateInYears < 1) {
-      setSeconds(ONE_YEAR)
+    if (yearPickView === 'years' && currentTime) {
+      setSeconds(
+        secondsFromDateDiff({
+          startDate: new Date(currentTime * 1000),
+          additionalYears: dateInYears < 1 ? 1 : dateInYears,
+        }),
+      )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateInYears, yearPickView])
-
-  const currentTime = expiry ?? now
 
   return (
     <Container>
@@ -91,7 +100,13 @@ export const DateSelection = ({
           onChange={(e) => {
             const newYears = parseInt(e.target.value)
 
-            if (!Number.isNaN(newYears)) setSeconds(yearsToSeconds(newYears))
+            if (!Number.isNaN(newYears))
+              setSeconds(
+                secondsFromDateDiff({
+                  startDate: new Date(currentTime * 1000),
+                  additionalYears: newYears,
+                }),
+              )
           }}
         />
       )}

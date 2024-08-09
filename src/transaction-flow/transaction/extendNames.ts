@@ -6,16 +6,17 @@ import { renewNames } from '@ensdomains/ensjs/wallet'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { makeDisplay } from '@app/utils/currency'
 
-import { calculateValueWithBuffer, formatDuration } from '../../utils/utils'
+import { calculateValueWithBuffer, formatDurationOfDates } from '../../utils/utils'
 
 type Data = {
   names: string[]
   duration: number
   rentPrice: bigint
+  startDateTimestamp: number
 }
 
 const displayItems = (
-  { names, rentPrice, duration }: Data,
+  { names, rentPrice, duration, startDateTimestamp }: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
@@ -29,7 +30,11 @@ const displayItems = (
   },
   {
     label: 'duration',
-    value: formatDuration(duration, t),
+    value: formatDurationOfDates(
+      new Date(startDateTimestamp),
+      new Date(startDateTimestamp + duration * 1000),
+      t,
+    ),
   },
   {
     label: 'cost',
