@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi'
 
 import { DevSection } from '@app/components/pages/profile/settings/DevSection'
 import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySection'
+import { PrivacySection } from '@app/components/pages/profile/settings/PrivacySection'
 import { TransactionSection } from '@app/components/pages/profile/settings/TransactionSection/TransactionSection'
 import { useSubgraphMeta } from '@app/hooks/ensjs/subgraph/useSubgraphMeta'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
@@ -43,6 +44,7 @@ export default function Page() {
           <OtherWrapper>
             <PrimarySection />
             <TransactionSection />
+            <PrivacySection />
             {IS_DEV_ENVIRONMENT && <DevSection />}
           </OtherWrapper>
         ),
