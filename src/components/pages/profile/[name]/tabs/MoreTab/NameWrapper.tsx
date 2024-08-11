@@ -1,15 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { match, P } from 'ts-pattern'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { AlertSVG, Button, CheckSVG, mq, Typography } from '@ensdomains/thorin'
+import { AlertSVG, CheckSVG, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
-import type { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
 import type { Profile } from '@app/types'
 
 import { TabWrapper } from '../../../TabWrapper'
+import WrapButton from './Token/WrapButton'
 
 type Props = {
   name: string
@@ -21,13 +20,6 @@ type Props = {
   isConnected: boolean
   isOwned: boolean
 }
-
-const getFuseStateFromWrapperData = (wrapperData?: GetWrapperDataReturnType): NameWrapperState =>
-  match(wrapperData)
-    .with(P.nullish, () => 'unwrapped' as const)
-    .with({ fuses: { child: { CANNOT_UNWRAP: true } } }, () => 'locked' as const)
-    .with({ fuses: { parent: { PARENT_CANNOT_CONTROL: true } } }, () => 'emancipated' as const)
-    .otherwise(() => 'wrapped')
 
 const Container = styled(TabWrapper)(
   cacheableComponentStyles,
@@ -98,7 +90,6 @@ export const NameWrapper = ({
   isOwned,
 }: Props) => {
   const { t } = useTranslation('profile')
-  const status: NameWrapperState = getFuseStateFromWrapperData(wrapperData)
 
   const isPCCBurned = !!wrapperData?.fuses.parent?.PARENT_CANNOT_CONTROL
 
@@ -107,9 +98,7 @@ export const NameWrapper = ({
       <HeaderContainer>
         <Typography fontVariant="headingFour">{t('tabs.more.token.nameWrapper')}</Typography>
         {isOwned && isConnected && !isPCCBurned && (
-          <Button width="max">
-            {t(canBeWrapped ? 'tabs.more.token.wrapName' : 'tabs.more.token.unwrap')}
-          </Button>
+          <WrapButton {...{ profile, ownerData, canBeWrapped, name }} />
         )}
       </HeaderContainer>
       {isOwned && !isWrapped ? (
