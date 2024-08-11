@@ -50,6 +50,7 @@ export const getVerificationOAuth =
       body: JSON.stringify({ code }),
     })
     const json = await response.json()
+    console.log('json', json)
 
     const { name } = json as UseVerificationOAuthReturnType
 
