@@ -72,7 +72,6 @@
             "grace-period": {
               "title": "Grace period ends",
               "tooltip": "A 90 day grace window after expiration, when the name can still be extended but not re-registered."
-              
             },
             "registration": {
               "title": "Registered"
@@ -449,6 +448,8 @@
     "permissionRevoked": "This name has revoked the permissions needed to perform this action.",
     "gracePeriod": "This cannot be done because the name has expired",
     "default": "This action is not available",
-    "invalidJSON": "Invalid JSON"
+    "invalidJSON": "Invalid JSON",
+    "isOwnerCannotEdit": "You must be the manager in order to edit the profile",
+    "cannotEdit": "You do not have permission to update to an authorised resolver"
   }
 }

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { usePreviousDistinct } from 'react-use'
 import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
 import type { Address } from 'viem'
 import { useBalance } from 'wagmi'
 import { GetBalanceData } from 'wagmi/query'
@@ -381,79 +382,71 @@ export type ActionButtonProps = {
   totalRequiredBalance?: bigint
 }
 
-export const ActionButton = ({
-  address,
-  hasPendingMoonpayTransaction,
-  hasFailedMoonpayTransaction,
-  paymentMethodChoice,
-  reverseRecord,
-  callback,
-  initiateMoonpayRegistrationMutation,
-  seconds,
-  balance,
-  totalRequiredBalance,
-}: ActionButtonProps) => {
+export const ActionButton = (props: ActionButtonProps) => {
   const { t } = useTranslation('register')
 
-  if (!address) {
-    return <ConnectButton large />
-  }
-  if (hasPendingMoonpayTransaction) {
-    return (
+  return match(props)
+    .with({ address: P.nullish }, () => <ConnectButton large />)
+    .with({ hasPendingMoonpayTransaction: true }, () => (
       <Button data-testid="next-button" disabled loading>
         {t('steps.info.processing')}
       </Button>
-    )
-  }
-  if (hasFailedMoonpayTransaction && paymentMethodChoice === PaymentMethod.moonpay) {
-    return (
-      <Button
-        data-testid="next-button"
-        onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
-      >
-        {t('action.tryAgain', { ns: 'common' })}
+    ))
+    .with({ hasFailedMoonpayTransaction: true, paymentMethodChoice: PaymentMethod.moonpay }, () => (
+      <Button data-testid="next-button" disabled loading>
+        {t('steps.info.processing')}
       </Button>
+    ))
+    .with(
+      { paymentMethodChoice: PaymentMethod.moonpay },
+      ({
+        initiateMoonpayRegistrationMutation,
+        reverseRecord,
+        seconds,
+        paymentMethodChoice,
+        callback,
+      }) => (
+        <Button
+          loading={initiateMoonpayRegistrationMutation.isPending}
+          data-testid="next-button"
+          onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
+          disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isPending}
+        >
+          {t('action.next', { ns: 'common' })}
+        </Button>
+      ),
     )
-  }
-  if (paymentMethodChoice === PaymentMethod.moonpay) {
-    return (
+    .with(
+      P.when((_props) => typeof _props.balance?.value !== 'bigint' || !_props.totalRequiredBalance),
+      () => (
+        <Button data-testid="next-button" disabled>
+          {t('loading', { ns: 'common' })}
+        </Button>
+      ),
+    )
+    .with(
+      P.when(
+        (_props) =>
+          _props.totalRequiredBalance &&
+          typeof _props.balance?.value === 'bigint' &&
+          _props.balance.value < _props.totalRequiredBalance &&
+          _props.paymentMethodChoice === PaymentMethod.ethereum,
+      ),
+      () => (
+        <Button data-testid="next-button" disabled>
+          {t('steps.pricing.insufficientBalance')}
+        </Button>
+      ),
+    )
+    .otherwise(({ reverseRecord, seconds, paymentMethodChoice, callback }) => (
       <Button
-        loading={initiateMoonpayRegistrationMutation.isPending}
         data-testid="next-button"
         onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
-        disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isPending}
+        disabled={!paymentMethodChoice}
       >
         {t('action.next', { ns: 'common' })}
       </Button>
-    )
-  }
-  if (typeof balance?.value !== 'bigint' || !totalRequiredBalance) {
-    return (
-      <Button data-testid="next-button" disabled>
-        {t('loading', { ns: 'common' })}
-      </Button>
-    )
-  }
-  if (
-    typeof balance?.value === 'bigint' &&
-    balance.value < totalRequiredBalance &&
-    paymentMethodChoice === PaymentMethod.ethereum
-  ) {
-    return (
-      <Button data-testid="next-button" disabled>
-        {t('steps.pricing.insufficientBalance')}
-      </Button>
-    )
-  }
-  return (
-    <Button
-      data-testid="next-button"
-      onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
-      disabled={!paymentMethodChoice}
-    >
-      {t('action.next', { ns: 'common' })}
-    </Button>
-  )
+    ))
 }
 
 export type PricingProps = {

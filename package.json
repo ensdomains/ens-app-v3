@@ -23,6 +23,7 @@
     "lint:types": "tsc --noEmit",
     "lint:fix": "next lint --fix",
     "export:add-mm-ios-provider": "node ./scripts/add-mm-ios-provider.mjs",
+    "compare-locales": "node ./scripts/compare-locales.mjs",
     "export:base": "next export",
     "export": "pnpm export:base && pnpm export:add-mm-ios-provider",
     "analyze": "ANALYZE=true pnpm build",
@@ -43,7 +44,7 @@
     "wrangle:dev": "wrangler pages dev ./next",
     "wrangle:list": "wrangler deployments list",
     "generate:sitemaps": "node ./scripts/generate-site-map.mjs",
-    "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
+    "generate:coinMapper": "ts-node ./scripts/coin-mapper.ts",
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml",
     "subgraph:update": "ens-test-env subgraph --var NEXT_PUBLIC_DEPLOYMENT_ADDRESSES"
   },
@@ -64,7 +65,7 @@
     "@tanstack/query-sync-storage-persister": "5.22.2",
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-persist-client": "5.22.2",
-    "@wagmi/core": "2.10.6",
+    "@wagmi/core": "2.13.3",
     "@walletconnect/ethereum-provider": "^2.11.1",
     "@walletconnect/modal": "^2.6.2",
     "calendar-link": "^2.2.0",
@@ -96,8 +97,8 @@
     "styled-components": "^5.3.5",
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
-    "viem": "^2.13.8",
-    "wagmi": "2.9.11"
+    "viem": "2.19.0",
+    "wagmi": "2.12.4"
   },
   "peerDependencies": {
     "react": "*",
@@ -205,7 +206,7 @@
       "@walletconnect/modal": "2.6.2",
       "react": "^18.2.0",
       "react-dom": "^18.2.0",
-      "@wagmi/core": "2.10.6"
+      "@wagmi/core": "2.13.3"
     },
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
