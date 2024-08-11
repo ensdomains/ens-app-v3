@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useIsOffchainName } from '@app/hooks/ensjs/dns/useIsOffchainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
 import { NameWrapper } from './NameWrapper'
@@ -32,6 +33,11 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
 
   const { isConnected, address } = useAccount()
 
+  const isOffchainImport = useIsOffchainName({
+    name,
+    enabled: nameDetails.registrationStatus === 'imported',
+  })
+
   return (
     <MoreContainer>
       {ownerData && <Token isWrapped={isWrapped} name={name} />}
@@ -43,7 +49,7 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
         resolverAddress={profile?.resolverAddress}
         canEditResolverError={abilities.canEditResolverError}
       />
-      {(isConnected || isWrapped) && (
+      {(isConnected || isWrapped) && !isOffchainImport && (
         <NameWrapper
           {...{
             isWrapped,
