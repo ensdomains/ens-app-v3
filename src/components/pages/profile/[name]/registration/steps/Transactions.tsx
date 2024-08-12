@@ -106,7 +106,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
 
   const commitTimestamp = commitTx?.stage === 'complete' ? commitTx?.finaliseTime : undefined
   const [commitComplete, setCommitComplete] = useState(
-    commitTimestamp && commitTimestamp + 60000 < Date.now(),
+    !!commitTimestamp && commitTimestamp + 60000 < Date.now(),
   )
 
   const registrationParams = useRegistrationParams({
@@ -190,6 +190,8 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     ),
     [t],
   )
+
+  console.log({ commitComplete, registerTx, commitTx })
 
   return (
     <StyledCard>
