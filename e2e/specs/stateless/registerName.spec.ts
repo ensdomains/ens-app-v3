@@ -301,9 +301,6 @@ test('should allow registering with a specific date', async ({ page, login, make
     return _date
   }, browserTime * 1000)
 
-  console.log('browserTime', browserTime, new Date(browserTime * 1000))
-  console.log('oneyearlater', dateToDateInput(oneYearLater))
-
   await test.step('should have a correct default date', async () => {
     expect(calendar).toHaveValue(dateToDateInput(oneYearLater))
     expect(page.getByText('1 year registration', { exact: true })).toBeVisible()
@@ -642,23 +639,6 @@ test('should allow normal registration for a month', async ({
     await calendar.fill(dateToDateInput(oneMonthLater))
 
     await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(oneMonthLater))
-
-    console.log('browserTime', browserTime, new Date(browserTime * 1000))
-
-    const _date = new Date(browserTime * 1000)
-    // Get the new month's last day
-    const getEndDayOfMonth = new Date(_date.getFullYear(), (_date.getMonth() + 2) % 12, 0).getDate()
-    if (_date.getDate() > getEndDayOfMonth) {
-      _date.setDate(getEndDayOfMonth)
-    }
-    _date.setMonth(_date.getMonth() + 1)
-    console.log('inputDate', dateToDateInput(_date))
-    console.log('calendar value', await page.getByTestId('calendar-date').textContent())
-    console.log('oneMonthLaterInput', oneMonthLater)
-    console.log('invoice time', await page.getByTestId('invoice-item-0-amount').textContent())
-    console.log('date selection time', await page.getByTestId('date-selection-info').textContent())
-
-    await page.pause()
     await expect(page.getByText('1 month registration', { exact: true })).toBeVisible()
   })
 
