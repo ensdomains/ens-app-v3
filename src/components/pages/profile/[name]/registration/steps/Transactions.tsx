@@ -191,8 +191,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     [t],
   )
 
-  console.log({ commitComplete, registerTx, commitTx })
-
   return (
     <StyledCard>
       <Dialog variant="blank" open={resetOpen} onDismiss={() => setResetOpen(false)}>
