@@ -3,9 +3,12 @@
     "profileEditor": {
       "tabs": {
         "avatar": {
+          "change": "Change avatar",
+          "label": "Avatar",
           "dropdown": {
             "selectNFT": "Select NFT",
-            "uploadImage": "Upload Image"
+            "uploadImage": "Upload Image",
+            "enterManually": "Enter manually"
           },
           "nft": {
             "title": "Select an NFT",

@@ -202,13 +202,13 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
         open={modalOpen}
       >
         {match(modalOption)
-          .with('upload', 'nft', (_modalOption) => (
+          .with('upload', 'nft', 'manual', (_modalOption) => (
             <AvatarViewManager
               name={name}
               avatarFile={avatarFile}
               handleCancel={() => setModalOpen(false)}
               type={_modalOption}
-              handleSubmit={(type: 'nft' | 'upload', uri: string, display?: string) => {
+              handleSubmit={(type, uri, display) => {
                 setAvatar(uri)
                 setAvatarSrc(display)
                 setModalOpen(false)

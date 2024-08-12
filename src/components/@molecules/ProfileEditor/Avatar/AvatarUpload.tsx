@@ -1,17 +1,12 @@
 /* eslint-disable no-multi-assign */
-import { sha256 } from '@noble/hashes/sha256'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { bytesToHex } from 'viem'
-import { useAccount, useSignTypedData } from 'wagmi'
 
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
-import { useChainName } from '@app/hooks/chain/useChainName'
-
 import { AvCancelButton, CropComponent } from './AvatarCrop'
+import { useUploadAvatar } from './useUploadAvatar'
 
 const CroppedImagePreview = styled.img(
   ({ theme }) => css`
@@ -21,21 +16,6 @@ const CroppedImagePreview = styled.img(
     border-radius: ${theme.radii.extraLarge};
   `,
 )
-
-const dataURLToBytes = (dataURL: string) => {
-  const base64 = dataURL.split(',')[1]
-  const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
-  return bytes
-}
-
-type AvatarUploadResult =
-  | {
-      message: string
-    }
-  | {
-      error: string
-      status: number
-    }
 
 const UploadComponent = ({
   dataURL,
@@ -49,82 +29,20 @@ const UploadComponent = ({
   name: string
 }) => {
   const { t } = useTranslation('transactionFlow')
-  const queryClient = useQueryClient()
-  const chainName = useChainName()
 
-  const { address } = useAccount()
-  const { signTypedDataAsync } = useSignTypedData()
+  const { signAndUpload, isPending, error } = useUploadAvatar()
 
-  const {
-    mutate: signAndUpload,
-    isPending,
-    error,
-  } = useMutation<void, Error>({
-    mutationFn: async () => {
-      let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
-      if (chainName !== 'mainnet') {
-        baseURL = `${baseURL}/${chainName}`
+  const handleUpload = async () => {
+    try {
+      const endpoint = await signAndUpload({ dataURL, name })
+
+      if (endpoint) {
+        handleSubmit('upload', endpoint, dataURL)
       }
-      const endpoint = `${baseURL}/${name}`
-
-      const urlHash = bytesToHex(sha256(dataURLToBytes(dataURL)))
-      const expiry = `${Date.now() + 1000 * 60 * 60 * 24 * 7}`
-
-      const sig = await signTypedDataAsync({
-        primaryType: 'Upload',
-        domain: {
-          name: 'Ethereum Name Service',
-          version: '1',
-        },
-        types: {
-          Upload: [
-            { name: 'upload', type: 'string' },
-            { name: 'expiry', type: 'string' },
-            { name: 'name', type: 'string' },
-            { name: 'hash', type: 'string' },
-          ],
-        },
-        message: {
-          upload: 'avatar',
-          expiry,
-          name,
-          hash: urlHash,
-        },
-      })
-      const fetched = (await fetch(endpoint, {
-        method: 'PUT',
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          expiry,
-          dataURL,
-          sig,
-          unverifiedAddress: address,
-        }),
-      }).then((res) => res.json())) as AvatarUploadResult
-
-      if ('message' in fetched && fetched.message === 'uploaded') {
-        queryClient.invalidateQueries({
-          predicate: (query) => {
-            const {
-              queryKey: [params],
-            } = query
-            if (params !== 'ensAvatar') return false
-            return true
-          },
-        })
-        return handleSubmit('upload', endpoint, dataURL)
-      }
-
-      if ('error' in fetched) {
-        throw new Error(fetched.error)
-      }
-
-      throw new Error('Unknown error')
-    },
-  })
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   return (
     <>
@@ -146,7 +64,7 @@ const UploadComponent = ({
           <Button
             disabled={isPending}
             colorStyle={error ? 'redSecondary' : undefined}
-            onClick={() => signAndUpload()}
+            onClick={handleUpload}
             data-testid="upload-button"
           >
             {error
