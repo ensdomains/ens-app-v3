@@ -11,8 +11,9 @@ import {
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts'
-import { Provider } from '../../provider'
 import { generateRecords } from './generateRecords'
+import { TestClient } from 'viem'
+import { getBlock } from 'viem/actions'
 
 // type Fuse = ParentFuses['fuse'] | ChildFuses['fuse']
 
@@ -30,7 +31,7 @@ export type WrappedSubname = {
 }
 
 type Dependencies = {
-  provider: Provider
+  provider: TestClient<'anvil'>
   accounts: Accounts
   contracts: Contracts
 }
@@ -54,7 +55,7 @@ export const generateWrappedSubname =
     const subname = `${label}.${name}`
     console.log('generating wrapped subname:', subname)
 
-    const blockTimestamp = await provider.getBlockTimestamp()
+    const blockTimestamp = Number((await getBlock(provider)).timestamp)
     const expiry = duration + blockTimestamp
 
     // Make subname with resolver

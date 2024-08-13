@@ -1,12 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Page } from '@playwright/test'
-
-import { Provider } from './provider'
+import { TestClient } from 'viem'
+import { getBlock } from 'viem/actions'
 
 export type Time = ReturnType<typeof createTime>
 
 type Dependencies = {
-  provider: Provider
+  provider: TestClient<'anvil'>
   page: Page
 }
 
@@ -14,7 +14,7 @@ export const createTime = ({ provider, page }: Dependencies) => {
   return {
     sync: async (offset = 0) => {
       const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
-      const blockTime = await provider.getBlockTimestamp()
+      const blockTime = Number((await getBlock(provider)).timestamp)
       const browserOffset = (blockTime - browserTime + offset) * 1000
 
       console.log(`Browser time: ${new Date(Date.now() + browserOffset)}`)

@@ -16,9 +16,9 @@ import {
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts'
-import { Provider } from '../../provider'
 import { generateRecords } from './generateRecords'
 import { generateWrappedSubname, WrappedSubname } from './generateWrappedSubname'
+import { TestClient } from 'viem'
 
 const DEFAULT_RESOLVER = testClient.chain.contracts.ensPublicResolver.address
 
@@ -38,7 +38,7 @@ export type Name = {
 
 type Dependencies = {
   accounts: Accounts
-  provider: Provider
+  provider: TestClient<'anvil'>
   contracts: Contracts
 }
 
@@ -127,5 +127,5 @@ export const generateWrappedName =
       await waitForTransaction(resolverTx)
     }
 
-    await provider.mine()
+    await provider.mine({blocks: 1})
   }

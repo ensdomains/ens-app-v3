@@ -9,15 +9,16 @@ import { Accounts, createAccounts } from './fixtures/accounts'
 import { createContracts } from './fixtures/contracts'
 import { Login } from './fixtures/login'
 import { createMakeNames } from './fixtures/makeName/index.js'
-import { createProvider, Provider } from './fixtures/provider'
+import { createProvider } from './fixtures/provider'
 import { createSubgraph } from './fixtures/subgraph.js'
 import { createTime } from './fixtures/time.js'
 import { createPageObjectMaker } from './pageObjects/index.js'
+import { TestClient } from 'viem'
 
 type Fixtures = {
   accounts: Accounts
   wallet: Web3ProviderBackend
-  provider: Provider
+  provider: TestClient<'anvil'>
   login: InstanceType<typeof Login>
   getContract: (contract: string) => any
   makeName: ReturnType<typeof createMakeNames>

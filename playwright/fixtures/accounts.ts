@@ -1,7 +1,6 @@
 import { mnemonicToAccount } from 'viem/accounts'
-import { Address ,bytesToHex} from 'viem'
+import { Address ,TestClient,bytesToHex} from 'viem'
 
-import { Provider } from './provider.js'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -17,7 +16,7 @@ const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice 
 }
 
 export type Dependencies = {
-  provider: Provider
+  provider: TestClient<'anvil'>
 }
 
 export type Accounts = ReturnType<typeof createAccounts>

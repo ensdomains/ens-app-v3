@@ -12,10 +12,9 @@ import {
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
-import { Provider } from '../../provider'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
 import { generateRecords } from './generateRecords'
-import { Address } from 'viem'
+import { Address, TestClient } from 'viem'
 
 const LEGACY_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address as Address
 const PUBLIC_RESOLVER = testClient.chain.contracts.publicResolver.address as Address
@@ -35,7 +34,7 @@ export type Name = {
 }
 
 type Dependencies = {
-  provider: Provider
+  provider: TestClient<'anvil'>
   accounts: Accounts
   contracts: Contracts
 }
@@ -78,8 +77,8 @@ export const generateLegacyNameWithConfig =
     const commitTx = await controller.commit(commitment)
     await commitTx.wait()
 
-    await provider.increaseTime(120)
-    await provider.mine()
+    await provider.increaseTime({seconds:120})
+    await provider.mine({blocks:1})
 
     console.log('registering name:', name)
     const price = await controller.rentPrice(label, duration)
@@ -132,5 +131,5 @@ export const generateLegacyNameWithConfig =
       await waitForTransaction(tx)
     }
 
-    await provider.mine()
+    await provider.mine({blocks:1})
   }

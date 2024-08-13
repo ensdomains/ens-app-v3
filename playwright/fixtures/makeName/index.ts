@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { TestClient } from 'viem'
 import { Accounts } from '../accounts.js'
 import { Contracts } from '../contracts/index.js'
-import { Provider } from '../provider.js'
 import { Subgraph } from '../subgraph.js'
 import { Time } from '../time.js'
 import { generateLegacyName, Name as LegacyName } from './generators/generateLegacyName.js'
@@ -15,7 +15,7 @@ import { getTimeOffset } from './utils/getTimeOffset.js'
 
 type Dependencies = {
   accounts: Accounts
-  provider: Provider
+  provider: TestClient<'anvil'>
   time: Time
   contracts: Contracts
   subgraph: Subgraph
@@ -64,8 +64,8 @@ export function createMakeNames({ accounts, provider, time, contracts, subgraph 
 
     if (offset > 0) {
       console.warn('You are increasing the block timestamp. Do not run this test in parallel mode.')
-      await provider.increaseTime(offset)
-      await provider.mine()
+      await provider.increaseTime({seconds:offset})
+      await provider.mine({blocks:1})
     }
 
     if (_syncSubgraph) await subgraph.sync()

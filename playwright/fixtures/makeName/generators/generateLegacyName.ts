@@ -15,8 +15,8 @@ import {
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
-import { Provider } from '../../provider'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
+import { TestClient } from 'viem'
 
 const DEFAULT_DURATION = 31536000
 
@@ -30,7 +30,7 @@ export type Name = {
 }
 
 type Dependencies = {
-  provider: Provider
+  provider: TestClient<'anvil'>
   accounts: Accounts
   contracts: Contracts
 }
@@ -56,8 +56,8 @@ export const generateLegacyName =
     const commitTx = await controller.commit(commitment)
     await commitTx.wait()
 
-    await provider.increaseTime(60)
-    await provider.mine()
+    await provider.increaseTime({seconds:60})
+    await provider.mine({blocks:1})
 
     console.log('register name:', name)
     const price = await controller.rentPrice(label, duration)
