@@ -190,8 +190,8 @@ importers:
         specifier: ^0.5.0-beta.0
         version: 0.5.0-beta.0
       '@ensdomains/headless-web3-provider':
-        specifier: ^1.0.2
-        version: 1.0.2(viem@2.19.0(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))
+        specifier: ^1.0.1
+        version: 1.0.1(viem@2.19.0(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))
       '@ethersproject/abi':
         specifier: ^5.4.0
         version: 5.7.0
@@ -333,9 +333,6 @@ importers:
       eslint-plugin-vitest:
         specifier: ^0.4.0
         version: 0.4.1(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5)(vitest@1.6.0(@types/node@18.19.33)(jsdom@24.1.0(bufferutil@4.0.7)(canvas@2.11.2(encoding@0.1.13))(utf-8-validate@6.0.3))(terser@5.31.0))
-      ethers:
-        specifier: ^5.7.2
-        version: 5.7.2(bufferutil@4.0.7)(utf-8-validate@6.0.3)
       ganache:
         specifier: ^7.4.1
         version: 7.9.2
@@ -1333,8 +1330,8 @@ packages:
     peerDependencies:
       viem: ^2.9.2
 
-  '@ensdomains/headless-web3-provider@1.0.2':
-    resolution: {integrity: sha512-JhFguliAnpvojR9k7bLsFShyIyhD2nEEArhMQMuM8rIZq7SbR8iOPjmcshIBvpp6RVbeah5wy3yCT5uFriNOVQ==}
+  '@ensdomains/headless-web3-provider@1.0.1':
+    resolution: {integrity: sha512-CjPDy2eV/s7xt4kRLiTbT3a0Rz7pkPYikAJS4V/Kqh9cENffCY3828HDZB6WzVYUuDd1wMvUIvI3NTp7wjIZkQ==}
     engines: {node: 18.x || >=20}
     peerDependencies:
       viem: ^2.17.1
@@ -11223,7 +11220,7 @@ snapshots:
       - typescript
       - zod
 
-  '@ensdomains/headless-web3-provider@1.0.2(viem@2.19.0(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))':
+  '@ensdomains/headless-web3-provider@1.0.1(viem@2.19.0(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))':
     dependencies:
       '@metamask/json-rpc-engine': 9.0.2
       '@metamask/utils': 9.1.0
