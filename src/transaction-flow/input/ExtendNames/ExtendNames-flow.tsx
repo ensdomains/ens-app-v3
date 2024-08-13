@@ -9,6 +9,7 @@ import { useAccount, useBalance, useEnsAvatar } from 'wagmi'
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
+import { makeCurrencyDisplay } from '@app/components/@atoms/CurrencyText/CurrencyText'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
@@ -17,9 +18,11 @@ import { DateSelection } from '@app/components/@molecules/DateSelection/DateSele
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
+import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
@@ -169,6 +172,7 @@ const minSeconds = ONE_DAY
 
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation(['transactionFlow', 'common'])
+  const { data: ethPrice } = useEthPrice()
 
   const { address } = useAccount()
   const { data: balance } = useBalance({
@@ -217,8 +221,13 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     createTransactionItem('extendNames', {
       names,
       duration: seconds,
-      rentPrice: totalRentFee!,
       startDateTimestamp: expireDate.getTime(),
+      displayPrice: makeCurrencyDisplay({
+        eth: totalRentFee,
+        ethPrice,
+        bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
+        currency: userConfig.currency === 'fiat' ? 'usd' : 'eth',
+      }),
     }),
   ]
 
@@ -234,7 +243,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
         data: {
           duration: seconds,
           names,
-          rentPrice: totalRentFee!,
           startDateTimestamp: expireDate.getTime(),
         },
         stateOverride: [
@@ -261,11 +269,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
         time: formatDurationOfDates(expireDate, extendedDate, t),
       }),
       value: totalRentFee,
-      bufferPercentage: 102n,
+      bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
     },
     {
       label: t('input.extendNames.invoice.transaction'),
       value: transactionFee,
+      bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
     },
   ]
 

@@ -4,49 +4,47 @@ import { getPrice } from '@ensdomains/ensjs/public'
 import { renewNames } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { makeDisplay } from '@app/utils/currency'
 
 import { calculateValueWithBuffer, formatDurationOfDates } from '../../utils/utils'
 
 type Data = {
   names: string[]
   duration: number
-  rentPrice: bigint
   startDateTimestamp: number
+  displayPrice?: string
 }
 
 const displayItems = (
-  { names, rentPrice, duration, startDateTimestamp }: Data,
+  { names, duration, startDateTimestamp, displayPrice }: Data,
   t: TFunction<'translation', undefined>,
-): TransactionDisplayItem[] => [
-  {
-    label: 'name',
-    value: names.length > 1 ? `${names.length} names` : names[0],
-    type: names.length > 1 ? undefined : 'name',
-  },
-  {
-    label: 'action',
-    value: t('transaction.extendNames.actionValue', { ns: 'transactionFlow' }),
-  },
-  {
-    label: 'duration',
-    value: formatDurationOfDates(
-      new Date(startDateTimestamp),
-      new Date(startDateTimestamp + duration * 1000),
-      t,
-    ),
-  },
-  {
-    label: 'cost',
-    value: t('transaction.extendNames.costValue', {
-      ns: 'transactionFlow',
-      value: makeDisplay({
-        value: calculateValueWithBuffer(rentPrice),
-        symbol: 'eth',
+): TransactionDisplayItem[] => {
+  return [
+    {
+      label: 'name',
+      value: names.length > 1 ? `${names.length} names` : names[0],
+      type: names.length > 1 ? undefined : 'name',
+    },
+    {
+      label: 'action',
+      value: t('transaction.extendNames.actionValue', { ns: 'transactionFlow' }),
+    },
+    {
+      label: 'duration',
+      value: formatDurationOfDates(
+        new Date(startDateTimestamp),
+        new Date(startDateTimestamp + duration * 1000),
+        t,
+      ),
+    },
+    {
+      label: 'cost',
+      value: t('transaction.extendNames.costValue', {
+        ns: 'transactionFlow',
+        value: displayPrice,
       }),
-    }),
-  },
-]
+    },
+  ]
+}
 
 const transaction = async ({
   client,
