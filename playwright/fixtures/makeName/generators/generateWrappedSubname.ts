@@ -1,19 +1,20 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
+import { TestClient } from 'viem'
+import { getBlock } from 'viem/actions'
+
 import { EncodeFusesInputObject, RecordOptions } from '@ensdomains/ensjs/utils'
 import { createSubname, unwrapName } from '@ensdomains/ensjs/wallet'
 
 import { Accounts, createAccounts, User } from '../../accounts'
-import { Contracts } from '../../contracts'
 import {
+  publicClient,
   testClient,
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts'
 import { generateRecords } from './generateRecords'
-import { TestClient } from 'viem'
-import { getBlock } from 'viem/actions'
 
 // type Fuse = ParentFuses['fuse'] | ChildFuses['fuse']
 
@@ -31,15 +32,13 @@ export type WrappedSubname = {
 }
 
 type Dependencies = {
-  provider: TestClient<'anvil'>
   accounts: Accounts
-  contracts: Contracts
 }
 
 const DEFAULT_RESOLVER = testClient.chain.contracts.ensPublicResolver.address
 
 export const generateWrappedSubname =
-  ({ provider, accounts, contracts }: Dependencies) =>
+  ({  accounts }: Dependencies) =>
   async ({
     name,
     nameOwner,
@@ -55,7 +54,7 @@ export const generateWrappedSubname =
     const subname = `${label}.${name}`
     console.log('generating wrapped subname:', subname)
 
-    const blockTimestamp = Number((await getBlock(provider)).timestamp)
+    const blockTimestamp = Number((await publicClient.getBlock()).timestamp)
     const expiry = duration + blockTimestamp
 
     // Make subname with resolver
@@ -97,6 +96,6 @@ export const generateWrappedSubname =
       resolver: subName.resolver ?? DEFAULT_RESOLVER,
     }))
     for (const eachSubname of _subNames) {
-      await generateWrappedSubname({ accounts, provider, contracts })({ ...eachSubname })
+      await generateWrappedSubname({ accounts })({ ...eachSubname })
     }
   }

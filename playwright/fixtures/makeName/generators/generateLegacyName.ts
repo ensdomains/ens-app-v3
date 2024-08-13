@@ -6,17 +6,20 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
+
 import { transferName } from '@ensdomains/ensjs/wallet'
 
 import { Accounts, createAccounts, User } from '../../accounts'
-import { Contracts } from '../../contracts'
 import {
+  publicClient,
   testClient,
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
-import { TestClient } from 'viem'
+import { legacyControllerContractConfig } from '../../contracts/utils/legacyControllerContract'
+import { Address, Hex } from 'viem'
+import { privateKeyToAccount } from 'viem/accounts'
 
 const DEFAULT_DURATION = 31536000
 
@@ -25,18 +28,16 @@ export type Name = {
   owner?: User
   manager?: User
   duration?: number
-  secret?: string
+  secret?: Hex
   subnames?: Omit<LegacySubname, 'name' | 'nameOwner'>[]
 }
 
 type Dependencies = {
-  provider: TestClient<'anvil'>
   accounts: Accounts
-  contracts: Contracts
 }
 
 export const generateLegacyName =
-  ({ provider, accounts, contracts }: Dependencies) =>
+  ({ accounts }: Dependencies) =>
   async ({
     label,
     owner = 'user',
@@ -48,23 +49,31 @@ export const generateLegacyName =
   }: Name) => {
     const name = `${label}.eth`
     console.log('generating legacy name:', name)
-    const _owner = accounts.getAddress(owner)
+    const _owner = accounts.getAddress(owner) as Address
+
+
+    const ownerAccount = privateKeyToAccount(accounts.getPrivateKey(owner) as Address)
+
 
     console.log('make commit:', name)
-    const controller = contracts.get('LegacyETHRegistrarController', { signer: owner })
-    const commitment = await controller.makeCommitment(label, _owner, secret)
-    const commitTx = await controller.commit(commitment)
-    await commitTx.wait()
+    const commitment = await publicClient.readContract({...legacyControllerContractConfig,functionName:'makeCommitment',args:[label, _owner, secret]})
 
-    await provider.increaseTime({seconds:60})
-    await provider.mine({blocks:1})
+    await walletClient.writeContract({...legacyControllerContractConfig,functionName:'commit',args:[commitment]})
+
+    await testClient.increaseTime({ seconds: 60 })
+    await testClient.mine({ blocks: 1 })
 
     console.log('register name:', name)
-    const price = await controller.rentPrice(label, duration)
-    const registrationTx = await controller.register(label, _owner, duration, secret, {
-      value: price,
-    })
-    await registrationTx.wait()
+    const price = await publicClient.readContract({...legacyControllerContractConfig,functionName:'rentPrice', args:[label, BigInt(duration)]})
+    
+    await walletClient.writeContract(
+      {...legacyControllerContractConfig,functionName:'register',args:[  label,
+        _owner,
+        BigInt(duration),
+        secret,
+       ], value:price,account:ownerAccount}
+       
+      )
 
     // Create subnames
     const _subnames = (subnames || []).map((subname) => ({
@@ -73,7 +82,7 @@ export const generateLegacyName =
       nameOwner: owner,
     }))
     for (const subname of _subnames) {
-      await generateLegacySubname({ accounts, contracts })(subname)
+      await generateLegacySubname({ accounts })(subname)
     }
 
     if (!!manager && manager !== owner) {

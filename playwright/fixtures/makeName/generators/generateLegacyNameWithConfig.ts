@@ -2,19 +2,22 @@
 
 /* eslint-disable no-await-in-loop */
 
+import { Address,  Hex } from 'viem'
+
 import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { setResolver, transferName } from '@ensdomains/ensjs/wallet'
 
 import { Accounts, createAccounts, User } from '../../accounts'
-import { Contracts } from '../../contracts'
 import {
   testClient,
   waitForTransaction,
   walletClient,
+  publicClient
 } from '../../contracts/utils/addTestContracts.js'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname'
 import { generateRecords } from './generateRecords'
-import { Address, TestClient } from 'viem'
+import { legacyControllerContractConfig } from '../../contracts/utils/legacyControllerContract'
+import { privateKeyToAccount } from 'viem/accounts'
 
 const LEGACY_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address as Address
 const PUBLIC_RESOLVER = testClient.chain.contracts.publicResolver.address as Address
@@ -26,21 +29,21 @@ export type Name = {
   owner?: User
   manager?: User
   duration?: number
-  secret?: string
-  resolver?: `0x${string}`
+  secret?: Hex
+  resolver?: Hex
   addr?: User
   records?: RecordOptions
   subnames?: Omit<LegacySubname, 'name'>[]
 }
 
 type Dependencies = {
-  provider: TestClient<'anvil'>
   accounts: Accounts
-  contracts: Contracts
 }
 
+
+
 export const generateLegacyNameWithConfig =
-  ({ provider, accounts, contracts }: Dependencies) =>
+  ({ accounts }: Dependencies) =>
   async ({
     label,
     owner = 'user',
@@ -56,8 +59,8 @@ export const generateLegacyNameWithConfig =
     const name = `${label}.eth`
     console.log('generating legacy name:', name)
 
-    const _owner = accounts.getAddress(owner)
-    const _addr = accounts.getAddress(addr)
+    const _owner = accounts.getAddress(owner) as Address
+    const _addr = accounts.getAddress(addr) as Address
 
     // Registration will fail if resolver is not valid. If an invalid resolver is entered
     // we will set the resolver after the name has been registered.
@@ -66,34 +69,37 @@ export const generateLegacyNameWithConfig =
     const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 
     console.log('making commitment:', name)
-    const controller = contracts.get('LegacyETHRegistrarController', { signer: owner })
-    const commitment = await controller.makeCommitmentWithConfig(
-      label,
+
+    const ownerAccount = privateKeyToAccount(accounts.getPrivateKey(owner) as Address)
+
+   const commitment = await publicClient.readContract({...legacyControllerContractConfig, functionName:'makeCommitmentWithConfig',  
+    args: [ label,
       _owner,
       secret,
       _resolver,
-      _addr,
-    )
-    const commitTx = await controller.commit(commitment)
-    await commitTx.wait()
+      _addr,]})
 
-    await provider.increaseTime({seconds:120})
-    await provider.mine({blocks:1})
+
+    await walletClient.writeContract({...legacyControllerContractConfig,functionName:'commit', args:[commitment],account:ownerAccount})
+   
+
+    await testClient.increaseTime({ seconds: 120 })
+    await testClient.mine({ blocks: 1 })
 
     console.log('registering name:', name)
-    const price = await controller.rentPrice(label, duration)
-    const registrationTx = await controller.registerWithConfig(
-      label,
+    console.log('registering name:', name)
+
+    const price = await publicClient.readContract({...legacyControllerContractConfig,functionName:'rentPrice', args:[label, BigInt(duration)]})
+    await walletClient.writeContract(
+    {...legacyControllerContractConfig,functionName:'registerWithConfig',args:[  label,
       _owner,
-      duration,
+      BigInt(duration),
       secret,
       _resolver,
       _addr,
-      {
-        value: price,
-      },
+     ], value:price,account:ownerAccount}
+     
     )
-    await registrationTx.wait()
 
     // Create records
     await generateRecords()({ name: `${label}.eth`, owner, resolver, records })
@@ -106,7 +112,7 @@ export const generateLegacyNameWithConfig =
       resolver: subname.resolver ?? _resolver,
     }))
     for (const subname of _subnames) {
-      await generateLegacySubname({ accounts, contracts })(subname)
+      await generateLegacySubname({ accounts })(subname)
     }
 
     if (!hasValidResolver && resolver) {
@@ -131,5 +137,5 @@ export const generateLegacyNameWithConfig =
       await waitForTransaction(tx)
     }
 
-    await provider.mine({blocks:1})
+    await testClient.mine({ blocks: 1 })
   }

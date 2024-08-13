@@ -1,6 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
+import { TestClient } from 'viem'
+
 import { getPrice } from '@ensdomains/ensjs/public'
 import {
   EncodeChildFusesInputObject,
@@ -10,7 +12,6 @@ import {
 import { commitName, registerName, setResolver } from '@ensdomains/ensjs/wallet'
 
 import { Accounts, createAccounts, User } from '../../accounts'
-import { Contracts } from '../../contracts'
 import {
   testClient,
   waitForTransaction,
@@ -18,7 +19,6 @@ import {
 } from '../../contracts/utils/addTestContracts'
 import { generateRecords } from './generateRecords'
 import { generateWrappedSubname, WrappedSubname } from './generateWrappedSubname'
-import { TestClient } from 'viem'
 
 const DEFAULT_RESOLVER = testClient.chain.contracts.ensPublicResolver.address
 
@@ -38,12 +38,10 @@ export type Name = {
 
 type Dependencies = {
   accounts: Accounts
-  provider: TestClient<'anvil'>
-  contracts: Contracts
 }
 
 export const generateWrappedName =
-  ({ accounts, provider, contracts }: Dependencies) =>
+  ({ accounts }: Dependencies) =>
   async ({
     label,
     owner = 'user',
@@ -104,7 +102,7 @@ export const generateWrappedName =
       resolver: subname.resolver ?? _resolver,
     }))
     for (const subname of _subnames) {
-      await generateWrappedSubname({ accounts, provider, contracts })({ ...subname })
+      await generateWrappedSubname({ accounts })({ ...subname })
     }
 
     if (records) {
@@ -127,5 +125,5 @@ export const generateWrappedName =
       await waitForTransaction(resolverTx)
     }
 
-    await provider.mine({blocks: 1})
+    await testClient.mine({ blocks: 1 })
   }

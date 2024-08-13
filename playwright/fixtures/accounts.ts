@@ -1,7 +1,6 @@
-import { mnemonicToAccount } from 'viem/accounts'
-import { Address ,TestClient,bytesToHex} from 'viem'
-
 import dotenv from 'dotenv'
+import { Address, bytesToHex, TestClient } from 'viem'
+import { mnemonicToAccount } from 'viem/accounts'
 
 dotenv.config()
 
@@ -25,9 +24,9 @@ export type User = 'user' | 'user2' | 'user3'
 
 export const createAccounts = (stateful = false) => {
   const mnemonic = stateful ? process.env.SECRET_WORDS || DEFAULT_MNEMONIC : DEFAULT_MNEMONIC
-  
+
   const accounts = [0, 1, 2].map((index: number) => {
-    const { address, getHdKey } = mnemonicToAccount(mnemonic,{ addressIndex: index })
+    const { address, getHdKey } = mnemonicToAccount(mnemonic, { addressIndex: index })
 
     const privateKey = getHdKey().privateKey!
 
