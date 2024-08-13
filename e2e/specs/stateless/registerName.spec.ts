@@ -110,6 +110,8 @@ test.describe.serial('normal registration', () => {
     const waitButton = page.getByTestId('wait-button')
     await expect(waitButton).toBeVisible()
     await expect(waitButton).toBeDisabled()
+    const startTimerButton = page.getByTestId('start-timer-button')
+    await expect(startTimerButton).not.toBeVisible()
     await provider.increaseTime(60)
     await expect(page.getByTestId('finish-button')).toBeEnabled()
 
