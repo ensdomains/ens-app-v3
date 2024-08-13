@@ -56,7 +56,7 @@ const firefoxRewrite: PagesFunction = async ({ request, next }) => {
   const response = await next()
 
   // firefox CSP exception + metamask script
-  if (userAgent && userAgent.includes('gecko/20100101') && userAgent.includes('firefox/')) {
+  if (userAgent?.includes('gecko/20100101') && userAgent.includes('firefox/')) {
     response.headers.set(
       'Content-Security-Policy',
       "frame-ancestors 'self' https://app.safe.global;",
