@@ -34,8 +34,8 @@ const btcBlockExplorer = {
   },
   blockExplorers: {
     default: {
-      name: 'Joseon Explorer',
-      url: 'https://www.blockexplorer.com/',
+      name: 'Blockchair',
+      url: 'https://blockchair.com/bitcoin',
     },
   },
 }

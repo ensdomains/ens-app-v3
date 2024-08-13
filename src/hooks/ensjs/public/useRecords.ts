@@ -239,6 +239,7 @@ export const useRecords = <
     enabled: enabled && !!params.name,
     gcTime,
     staleTime,
+    refetchOnMount: 'always',
   })
 
   const query = useQuery({
