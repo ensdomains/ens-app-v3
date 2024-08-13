@@ -27,16 +27,6 @@ export const roundDurationWithDay = (valueAsDate: Date, now: number) => {
   return Math.floor((valueAsDateClone - nowClone) / 1000)
 }
 
-export const getDaysOfMonthsFromYears = (startYear: number, endYear: number) => {
-  let daysOfMonths: number[] = []
-  for (let year = startYear; year <= endYear; year += 1) {
-    // Calculates leap year
-    const february = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 29 : 28
-    daysOfMonths = [...daysOfMonths, 31, february, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-  }
-  return daysOfMonths
-}
-
 export const dateFromDateDiff = ({
   startDate,
   additionalYears = 0,
@@ -48,23 +38,20 @@ export const dateFromDateDiff = ({
   additionalMonths?: number
   additionalDays?: number
 }) => {
-  let year = startDate.getFullYear() + additionalYears
-  let month = startDate.getMonth() + 1 + additionalMonths
-  let day = startDate.getDate() + additionalDays
-
-  const daysInMonth = getDaysOfMonthsFromYears(startDate.getFullYear(), year)
-
-  while (month > 12) {
-    year += 1
-    month -= 12
+  const newDate = new Date(startDate.getTime())
+  newDate.setFullYear(newDate.getFullYear() + additionalYears)
+  // Get the new month's last day
+  const getEndDayOfMonth = new Date(
+    newDate.getFullYear(),
+    (newDate.getMonth() + 1 + additionalMonths) % 12,
+    0,
+  ).getDate()
+  if (newDate.getDate() > getEndDayOfMonth) {
+    newDate.setDate(getEndDayOfMonth)
   }
-
-  while (day > daysInMonth[month - 1]) {
-    month += 1
-    day -= daysInMonth[month - 1]
-  }
-
-  return new Date(year, month - 1, day)
+  newDate.setMonth(newDate.getMonth() + additionalMonths)
+  newDate.setDate(newDate.getDate() + additionalDays)
+  return newDate
 }
 
 export const secondsFromDateDiff = ({
@@ -79,6 +66,5 @@ export const secondsFromDateDiff = ({
   additionalDays?: number
 }) => {
   const newDate = dateFromDateDiff({ startDate, additionalYears, additionalMonths, additionalDays })
-  startDate.setHours(0, 0, 0)
   return Math.floor((newDate.getTime() - startDate.getTime()) / 1000)
 }

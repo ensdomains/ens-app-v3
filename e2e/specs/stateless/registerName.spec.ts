@@ -5,9 +5,7 @@ import { Hash, isHash } from 'viem'
 import { ethRegistrarControllerCommitSnippet } from '@ensdomains/ensjs/contracts'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
-import { secondsFromDateDiff } from '@app/utils/date'
-// import { secondsToDateInput } from '@app/utils/date'
-import { daysToSeconds } from '@app/utils/time'
+import { dateToDateInput } from '@app/utils/date'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
@@ -296,49 +294,41 @@ test('should allow registering with a specific date', async ({ page, login, make
 
   const calendar = await page.getByTestId('calendar')
   const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
-  const oneYearLaterInput = await page.evaluate(
-    (timestamp) => {
-      const _date = new Date(timestamp)
-      const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
-      const year = _date2.getFullYear()
-      const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-      const day = String(_date2.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
-    },
-    (browserTime +
-      secondsFromDateDiff({ startDate: new Date(browserTime * 1000), additionalYears: 1 })) *
-      1000,
-  )
-  // const oneYear = browserTime + yearsToSeconds(1)
+
+  const oneYearLater = await page.evaluate((timestamp) => {
+    const _date = new Date(timestamp)
+    _date.setFullYear(_date.getFullYear() + 1)
+    return _date
+  }, browserTime * 1000)
 
   await test.step('should have a correct default date', async () => {
-    expect(calendar).toHaveValue(oneYearLaterInput)
+    expect(calendar).toHaveValue(dateToDateInput(oneYearLater))
     expect(page.getByText('1 year registration', { exact: true })).toBeVisible()
   })
 
   await test.step('should set a date', async () => {
-    const oneYearAndHalfLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
-        const year = _date2.getFullYear()
-        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date2.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime +
-        secondsFromDateDiff({
-          startDate: new Date(browserTime * 1000),
-          additionalYears: 2,
-          additionalMonths: 6,
-        })) *
-        1000,
+    const twoYearsAndHalfLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setFullYear(_date.getFullYear() + 2)
+      // Get the new month's last day
+      const getEndDayOfMonth = new Date(
+        _date.getFullYear(),
+        (_date.getMonth() + 7) % 12,
+        0,
+      ).getDate()
+      if (_date.getDate() > getEndDayOfMonth) {
+        _date.setDate(getEndDayOfMonth)
+      }
+      _date.setMonth(_date.getMonth() + 6)
+      return _date
+    }, browserTime * 1000)
+
+    await calendar.fill(dateToDateInput(twoYearsAndHalfLater))
+
+    await page.pause()
+    await expect(page.getByTestId('calendar-date')).toHaveValue(
+      dateToDateInput(twoYearsAndHalfLater),
     )
-    // const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
-
-    await calendar.fill(oneYearAndHalfLaterInput)
-
-    await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndHalfLaterInput)
 
     expect(page.getByText('2 years, 6 months registration', { exact: true })).toBeVisible()
   })
@@ -388,27 +378,27 @@ test('should allow registering a premium name with a specific date', async ({
   const calendar = page.getByTestId('calendar')
 
   await test.step('should set a date', async () => {
-    const oneYearAndHalfLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
-        const year = _date2.getFullYear()
-        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date2.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime +
-        secondsFromDateDiff({
-          startDate: new Date(browserTime * 1000),
-          additionalYears: 2,
-          additionalMonths: 6,
-        })) *
-        1000,
+    const twoYearsAndHalfLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setFullYear(_date.getFullYear() + 2)
+      // Get the new month's last day
+      const getEndDayOfMonth = new Date(
+        _date.getFullYear(),
+        (_date.getMonth() + 7) % 12,
+        0,
+      ).getDate()
+      if (_date.getDate() > getEndDayOfMonth) {
+        _date.setDate(getEndDayOfMonth)
+      }
+      _date.setMonth(_date.getMonth() + 6)
+      return _date
+    }, browserTime * 1000)
+
+    await calendar.fill(dateToDateInput(twoYearsAndHalfLater))
+
+    await expect(page.getByTestId('calendar-date')).toHaveValue(
+      dateToDateInput(twoYearsAndHalfLater),
     )
-
-    await calendar.fill(oneYearAndHalfLaterInput)
-
-    await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndHalfLaterInput)
 
     expect(page.getByText('2 years, 6 months registration', { exact: true })).toBeVisible()
   })
@@ -469,23 +459,24 @@ test('should allow registering a premium name for two months', async ({
   const calendar = page.getByTestId('calendar')
 
   await test.step('should set a date', async () => {
-    const oneYearAndHalfLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
-        const year = _date2.getFullYear()
-        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date2.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime +
-        secondsFromDateDiff({ startDate: new Date(browserTime * 1000), additionalMonths: 2 })) *
-        1000,
-    )
+    const twoMonthsLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      // Get the new month's last day
+      const getEndDayOfMonth = new Date(
+        _date.getFullYear(),
+        (_date.getMonth() + 3) % 12,
+        0,
+      ).getDate()
+      if (_date.getDate() > getEndDayOfMonth) {
+        _date.setDate(getEndDayOfMonth)
+      }
+      _date.setMonth(_date.getMonth() + 2)
+      return _date
+    }, browserTime * 1000)
 
-    await calendar.fill(oneYearAndHalfLaterInput)
+    await calendar.fill(dateToDateInput(twoMonthsLater))
 
-    await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndHalfLaterInput)
+    await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(twoMonthsLater))
 
     expect(page.getByText('2 months registration', { exact: true })).toBeVisible()
   })
@@ -545,39 +536,27 @@ test('should not allow registering a premium name for less than 28 days', async 
   const calendar = page.getByTestId('calendar')
 
   await test.step('should not allow less than 28 days', async () => {
-    const lessThan27Days = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
-        const year = _date2.getFullYear()
-        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date2.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + daysToSeconds(27)) * 1000,
-    )
+    const lessThan27Days = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setDate(_date.getDate() + 27)
+      return _date
+    }, browserTime * 1000)
 
-    await calendar.fill(lessThan27Days)
+    await calendar.fill(dateToDateInput(lessThan27Days))
 
-    await expect(page.getByTestId('calendar-date')).not.toHaveValue(lessThan27Days)
+    await expect(page.getByTestId('calendar-date')).not.toHaveValue(dateToDateInput(lessThan27Days))
   })
 
   await test.step('should allow 28 days', async () => {
-    const set28days = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
-        const year = _date2.getFullYear()
-        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date2.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + daysToSeconds(28)) * 1000,
-    )
+    const set28days = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setDate(_date.getDate() + 28)
+      return _date
+    }, browserTime * 1000)
 
-    await calendar.fill(set28days)
+    await calendar.fill(dateToDateInput(set28days))
 
-    await expect(page.getByTestId('calendar-date')).toHaveValue(set28days)
+    await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(set28days))
 
     expect(page.getByText('28 days registration', { exact: true })).toBeVisible()
   })
@@ -642,26 +621,25 @@ test('should allow normal registration for a month', async ({
   const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
 
   await test.step('should set a date', async () => {
-    const oneMonthLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
-        const year = _date2.getFullYear()
-        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date2.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime +
-        secondsFromDateDiff({ startDate: new Date(browserTime * 1000), additionalMonths: 1 })) *
-        1000,
-    )
-    // const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
+    const oneMonthLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      // Get the new month's last day
+      const getEndDayOfMonth = new Date(
+        _date.getFullYear(),
+        (_date.getMonth() + 2) % 12,
+        0,
+      ).getDate()
+      if (_date.getDate() > getEndDayOfMonth) {
+        _date.setDate(getEndDayOfMonth)
+      }
+      _date.setMonth(_date.getMonth() + 1)
+      return _date
+    }, browserTime * 1000)
 
-    await calendar.fill(oneMonthLaterInput)
+    await calendar.fill(dateToDateInput(oneMonthLater))
 
-    await expect(page.getByTestId('calendar-date')).toHaveValue(oneMonthLaterInput)
-
-    expect(page.getByText('1 month registration', { exact: true })).toBeVisible()
+    await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(oneMonthLater))
+    await expect(page.getByText('1 month registration', { exact: true })).toBeVisible()
   })
 
   // should have payment choice ethereum checked and show primary name setting as checked
@@ -774,35 +752,26 @@ test('should not allow normal registration less than 28 days', async ({
   const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
 
   await test.step('should set a date', async () => {
-    const lessThanMinDaysLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
-        const year = _date2.getFullYear()
-        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date2.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + daysToSeconds(27)) * 1000,
-    )
-    await calendar.fill(lessThanMinDaysLaterInput)
-    await expect(page.getByTestId('calendar-date')).not.toHaveValue(lessThanMinDaysLaterInput)
+    const lessThanMinDaysLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setDate(_date.getDate() + 27)
+      return _date
+    }, browserTime * 1000)
 
-    const minDaysLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const _date2 = new Date(_date.getTime() + _date.getTimezoneOffset() * 60 * 1000)
-        const year = _date2.getFullYear()
-        const month = String(_date2.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date2.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + daysToSeconds(28)) * 1000,
+    await calendar.fill(dateToDateInput(lessThanMinDaysLater))
+    await expect(page.getByTestId('calendar-date')).not.toHaveValue(
+      dateToDateInput(lessThanMinDaysLater),
     )
 
-    await calendar.fill(minDaysLaterInput)
+    const minDaysLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setDate(_date.getDate() + 28)
+      return _date
+    }, browserTime * 1000)
 
-    await expect(page.getByTestId('calendar-date')).toHaveValue(minDaysLaterInput)
+    await calendar.fill(dateToDateInput(minDaysLater))
+
+    await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(minDaysLater))
     expect(page.getByText('28 days registration', { exact: true })).toBeVisible()
   })
 

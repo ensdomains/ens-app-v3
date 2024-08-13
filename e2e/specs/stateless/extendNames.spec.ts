@@ -350,17 +350,23 @@ test('should be able to extend a name by a month', async ({
   })
 
   await test.step('should set and render a date properly', async () => {
+    const expiryTimestamp = await profilePage.getExpiryTimestamp()
     const expiryTime = (await profilePage.getExpiryTimestamp()) / 1000
     const calendar = page.getByTestId('calendar')
-    const monthLater = await page.evaluate(
-      (ts) => {
-        const expiryDate = new Date(ts)
-        return new Date(expiryDate.getTime() + expiryDate.getTimezoneOffset() * 60 * 1000)
-      },
-      (expiryTime +
-        secondsFromDateDiff({ startDate: new Date(expiryTime * 1000), additionalMonths: 1 })) *
-        1000,
-    )
+    const monthLater = await page.evaluate((ts) => {
+      const expiryDate = new Date(ts)
+      // Get the new month's last day
+      const getEndDayOfMonth = new Date(
+        expiryDate.getFullYear(),
+        (expiryDate.getMonth() + 2) % 12,
+        0,
+      ).getDate()
+      if (expiryDate.getDate() > getEndDayOfMonth) {
+        expiryDate.setDate(getEndDayOfMonth)
+      }
+      expiryDate.setMonth(expiryDate.getMonth() + 1)
+      return expiryDate
+    }, expiryTimestamp)
 
     await calendar.fill(dateToDateInput(monthLater))
     await expect(page.getByTestId('calendar-date')).toHaveValue(
@@ -383,7 +389,7 @@ test('should be able to extend a name by a month', async ({
     const newTimestamp = await profilePage.getExpiryTimestamp()
     const comparativeTimestamp =
       timestamp +
-      secondsFromDateDiff({ startDate: new Date(timestamp * 1000), additionalMonths: 1 }) * 1000
+      secondsFromDateDiff({ startDate: new Date(timestamp), additionalMonths: 1 }) * 1000
     await expect(comparativeTimestamp).toEqual(newTimestamp)
   })
 })
@@ -418,15 +424,14 @@ test('should be able to extend a name by a day', async ({
   })
 
   await test.step('should set and render a date properly', async () => {
-    const expiryTime = (await profilePage.getExpiryTimestamp()) / 1000
+    const expiryTimestamp = await profilePage.getExpiryTimestamp()
+    const expiryTime = expiryTimestamp / 1000
     const calendar = page.getByTestId('calendar')
-    const dayLater = await page.evaluate(
-      (ts) => {
-        const expiryDate = new Date(ts)
-        return new Date(expiryDate.getTime() + expiryDate.getTimezoneOffset() * 60 * 1000)
-      },
-      (expiryTime + daysToSeconds(1)) * 1000,
-    )
+    const dayLater = await page.evaluate((ts) => {
+      const expiryDate = new Date(ts)
+      expiryDate.setDate(expiryDate.getDate() + 1)
+      return expiryDate
+    }, expiryTimestamp)
 
     await calendar.fill(dateToDateInput(dayLater))
     await expect(page.getByTestId('calendar-date')).toHaveValue(
@@ -500,17 +505,23 @@ test('should be able to extend a name in grace period by a month', async ({
   })
 
   await test.step('should set and render a date properly', async () => {
-    const expiryTime = (await profilePage.getExpiryTimestamp()) / 1000
+    const expiryTimestamp = await profilePage.getExpiryTimestamp()
+    const expiryTime = expiryTimestamp / 1000
     const calendar = page.getByTestId('calendar')
-    const monthLater = await page.evaluate(
-      (ts) => {
-        const expiryDate = new Date(ts)
-        return new Date(expiryDate.getTime() + expiryDate.getTimezoneOffset() * 60 * 1000)
-      },
-      (expiryTime +
-        secondsFromDateDiff({ startDate: new Date(expiryTime * 1000), additionalMonths: 1 })) *
-        1000,
-    )
+    const monthLater = await page.evaluate((ts) => {
+      const expiryDate = new Date(ts)
+      // Get the new month's last day
+      const getEndDayOfMonth = new Date(
+        expiryDate.getFullYear(),
+        (expiryDate.getMonth() + 2) % 12,
+        0,
+      ).getDate()
+      if (expiryDate.getDate() > getEndDayOfMonth) {
+        expiryDate.setDate(getEndDayOfMonth)
+      }
+      expiryDate.setMonth(expiryDate.getMonth() + 1)
+      return expiryDate
+    }, expiryTimestamp)
 
     await calendar.fill(dateToDateInput(monthLater))
     await expect(page.getByTestId('calendar-date')).toHaveValue(
@@ -533,7 +544,7 @@ test('should be able to extend a name in grace period by a month', async ({
     const newTimestamp = await profilePage.getExpiryTimestamp()
     const comparativeTimestamp =
       timestamp +
-      secondsFromDateDiff({ startDate: new Date(timestamp * 1000), additionalMonths: 1 }) * 1000
+      secondsFromDateDiff({ startDate: new Date(timestamp), additionalMonths: 1 }) * 1000
     await expect(comparativeTimestamp).toEqual(newTimestamp)
   })
 })
@@ -586,15 +597,14 @@ test('should be able to extend a name in grace period by 1 day', async ({
   })
 
   await test.step('should set and render a date properly', async () => {
-    const expiryTime = (await profilePage.getExpiryTimestamp()) / 1000
+    const expiryTimestamp = await profilePage.getExpiryTimestamp()
+    const expiryTime = expiryTimestamp / 1000
     const calendar = page.getByTestId('calendar')
-    const dayLater = await page.evaluate(
-      (ts) => {
-        const expiryDate = new Date(ts)
-        return new Date(expiryDate.getTime() + expiryDate.getTimezoneOffset() * 60 * 1000)
-      },
-      (expiryTime + daysToSeconds(1)) * 1000,
-    )
+    const dayLater = await page.evaluate((ts) => {
+      const expiryDate = new Date(ts)
+      expiryDate.setDate(expiryDate.getDate() + 1)
+      return expiryDate
+    }, expiryTimestamp)
 
     await calendar.fill(dateToDateInput(dayLater))
     await expect(page.getByTestId('calendar-date')).toHaveValue(
