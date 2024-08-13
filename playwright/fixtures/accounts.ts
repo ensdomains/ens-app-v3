@@ -1,6 +1,5 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import { ethers } from 'ethers'
-import { Address } from 'viem'
+import { mnemonicToAccount } from 'viem/accounts'
+import { Address ,bytesToHex} from 'viem'
 
 import { Provider } from './provider.js'
 import dotenv from 'dotenv'
@@ -27,14 +26,16 @@ export type User = 'user' | 'user2' | 'user3'
 
 export const createAccounts = (stateful = false) => {
   const mnemonic = stateful ? process.env.SECRET_WORDS || DEFAULT_MNEMONIC : DEFAULT_MNEMONIC
-  const hdNode = ethers.utils.HDNode.fromMnemonic(mnemonic)
+  
   const accounts = [0, 1, 2].map((index: number) => {
-    const { address, privateKey } = hdNode.derivePath(`m/44'/60'/0'/0/${index}`)
+    const { address, getHdKey } = mnemonicToAccount(mnemonic,{ addressIndex: index })
+
+    const privateKey = getHdKey().privateKey!
+
     return {
       user: `user${index ? index + 1 : ''}` as User,
       address: address as `0x${string}`,
-      privateKey: privateKey as `0x${string}`,
-      // privateKey: walletClient.account[index].privateKey,
+      privateKey: bytesToHex(privateKey) as `0x${string}`,
     }
   })
 

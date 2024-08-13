@@ -1,9 +1,9 @@
 import { expect } from '@playwright/test'
-import { Web3RequestKind } from 'headless-web3-provider'
 import { Hash, isHash } from 'viem'
 
 import { ethRegistrarControllerCommitSnippet } from '@ensdomains/ensjs/contracts'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
+import { Web3RequestKind } from '@ensdomains/headless-web3-provider/utils'
 
 // import { secondsToDateInput } from '@app/utils/date'
 import { daysToSeconds, yearsToSeconds } from '@app/utils/time'

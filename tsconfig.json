@@ -5,7 +5,7 @@
     "compilerOptions": {
       "module": "CommonJS",
       "target": "ESNext",
-      "moduleResolution": "node",
+      "moduleResolution": "Bundler",
       "strict": true,
       "esModuleInterop": true,
       "allowJs": true,
@@ -29,7 +29,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",

@@ -1,6 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { test as base } from '@playwright/test'
-import { injectHeadlessWeb3Provider, Web3ProviderBackend } from 'headless-web3-provider'
+import { anvil } from 'viem/chains'
+
+import type { Web3ProviderBackend } from '@ensdomains/headless-web3-provider/backend'
+import { injectHeadlessWeb3Provider } from '@ensdomains/headless-web3-provider/playwright'
 
 import { Accounts, createAccounts } from './fixtures/accounts'
 import { createContracts } from './fixtures/contracts'
@@ -34,10 +37,12 @@ export const test = base.extend<Fixtures>({
     await use(createContracts({ accounts, provider }))
   },
   wallet: async ({ page, accounts, provider }, use) => {
-    const chainId = provider.network?.chainId || 1337
-    const chainRpcUrl = provider.connection?.url || 'http://localhost:8545'
     const privateKeys = accounts.getAllPrivateKeys()
-    const wallet = await injectHeadlessWeb3Provider(page, privateKeys, chainId, chainRpcUrl)
+    const wallet = await injectHeadlessWeb3Provider({
+      page,
+      privateKeys,
+      chains: [{ ...anvil, id: 1337 }],
+    })
     await use(wallet)
   },
   // eslint-disable-next-line no-empty-pattern
