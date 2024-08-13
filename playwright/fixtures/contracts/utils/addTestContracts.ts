@@ -20,6 +20,10 @@ import {
 } from 'viem'
 import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
 import { Register } from '@app/local-contracts'
+import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path'
+    
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 config({
   path: resolve(__dirname, '../../.env.local'),

@@ -110,7 +110,7 @@ test.describe.serial('normal registration', () => {
     const waitButton = page.getByTestId('wait-button')
     await expect(waitButton).toBeVisible()
     await expect(waitButton).toBeDisabled()
-    await provider.increaseTime(60)
+    await provider.increaseTime({ seconds: 60 })
     await expect(page.getByTestId('finish-button')).toBeEnabled()
 
     // should save the registration state and the transaction status
@@ -190,7 +190,7 @@ test.describe.serial('normal registration', () => {
     await page.getByTestId('next-button').click()
     await transactionModal.confirm()
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-    await provider.increaseTime(60)
+    await provider.increaseTime({ seconds: 60 })
     await page.getByTestId('finish-button').click()
     await transactionModal.confirm()
     await page.getByTestId('view-name').click()
@@ -234,7 +234,7 @@ test('should allow registering a premium name', async ({
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(120)
+  await provider.increaseTime({ seconds: 120 })
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -409,7 +409,7 @@ test('should allow registering a premium name with a specific date', async ({
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(120)
+  await provider.increaseTime({ seconds: 120 })
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -482,7 +482,7 @@ test('should allow registering a premium name for two months', async ({
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(120)
+  await provider.increaseTime({ seconds: 120 })
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -572,7 +572,7 @@ test('should not allow registering a premium name for less than 28 days', async 
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(120)
+  await provider.increaseTime({ seconds: 120 })
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -690,7 +690,7 @@ test('should allow normal registration for a month', async ({
   // should show countdown
   await expect(page.getByTestId('countdown-circle')).toBeVisible()
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(60)
+  await provider.increaseTime({ seconds: 60 })
   await expect(page.getByTestId('finish-button')).toBeEnabled()
 
   // should save the registration state and the transaction status
@@ -830,7 +830,7 @@ test('should not allow normal registration less than 28 days', async ({
   // should show countdown
   await expect(page.getByTestId('countdown-circle')).toBeVisible()
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(60)
+  await provider.increaseTime({ seconds: 60 })
   await expect(page.getByTestId('finish-button')).toBeEnabled()
 
   // should save the registration state and the transaction status
@@ -924,7 +924,7 @@ test('should be able to detect an existing commit created on a private mempool',
     // should show countdown
     await expect(page.getByTestId('countdown-circle')).toBeVisible()
     await expect(page.getByTestId('countdown-circle')).toContainText(/^[0-6]?[0-9]$/)
-    await provider.increaseTime(60)
+    await provider.increaseTime({ seconds: 60 })
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible({ timeout: 10000 })
   })
 
