@@ -137,7 +137,7 @@ export const makeLegacyWithConfigNameGenerator = ({
       if (records) await generateRecords({ accounts })({ name: `${label}.eth`, owner, resolver, records })
 
       // Create subnames
-      await Promise.all(subnames.map((subname) => generateLegacySubname({ accounts, contracts})({...subname, name, nameOwner: subname.owner ?? owner, resolver: subname.resolver ?? _resolver})))
+      await Promise.all(subnames.map((subname) => generateLegacySubname({ accounts, contracts})({...subname, name, nameOwner: owner, resolver: subname.resolver ?? _resolver})))
      
       // Set resolver if not valid
       if (!hasValidResolver && resolver) {

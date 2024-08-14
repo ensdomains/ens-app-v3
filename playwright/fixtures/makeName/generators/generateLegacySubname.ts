@@ -53,8 +53,8 @@ export const generateLegacySubname =
     const tx = await createSubname(walletClient, {
       name: `${label}.${name}`,
       contract: 'registry',
-      owner: createAccounts().getAddress(owner) as `0x${string}`,
-      account: createAccounts().getAddress(nameOwner) as `0x${string}`,
+      owner: accounts.getAddress(owner) as `0x${string}`,
+      account: accounts.getAccountForUser(nameOwner),
       resolverAddress: resolver ?? DEFAULT_RESOLVER,
     })
     await waitForTransaction(tx)
