@@ -1,8 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { expect, Locator, Page } from '@playwright/test'
 
-import { Web3ProviderBackend } from '@ensdomains/headless-web3-provider/backend'
-import { Web3RequestKind } from '@ensdomains/headless-web3-provider/utils'
+import { Web3ProviderBackend,Web3RequestKind } from '@ensdomains/headless-web3-provider'
 
 import { Accounts, User } from './accounts.js'
 

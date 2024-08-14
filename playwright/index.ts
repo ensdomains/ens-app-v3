@@ -2,8 +2,8 @@
 import { test as base } from '@playwright/test'
 import { anvil } from 'viem/chains'
 
-import type { Web3ProviderBackend } from '@ensdomains/headless-web3-provider/backend'
-import { injectHeadlessWeb3Provider } from '@ensdomains/headless-web3-provider/playwright'
+import type { Web3ProviderBackend } from '@ensdomains/headless-web3-provider'
+import { injectHeadlessWeb3Provider } from '@ensdomains/headless-web3-provider'
 
 import { Accounts, createAccounts } from './fixtures/accounts'
 import { Login } from './fixtures/login'

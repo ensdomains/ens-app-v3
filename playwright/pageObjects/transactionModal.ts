@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Locator, Page } from '@playwright/test'
 
-import { Web3ProviderBackend } from '@ensdomains/headless-web3-provider/backend'
-import { Web3RequestKind } from '@ensdomains/headless-web3-provider/utils'
+import { Web3ProviderBackend } from '@ensdomains/headless-web3-provider'
+import { Web3RequestKind } from '@ensdomains/headless-web3-provider'
 
 export class TransactionModal {
   readonly page: Page
