@@ -272,6 +272,7 @@ test.describe('migrations', () => {
   test('should be able to update to latest resolver when profile has been migrated on current and latest resolver', async ({
     page,
     login,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -284,7 +285,7 @@ test.describe('migrations', () => {
     })
 
     // Add records to latest resolver
-    await generateRecords()({
+    await generateRecords({ accounts })({
       name,
       owner: 'user',
       resolver: newResolver,
@@ -341,6 +342,7 @@ test.describe('migrations', () => {
   test('should be able to reset the latest resolver when profile has been migrated on current and latest resolver', async ({
     page,
     login,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -353,7 +355,7 @@ test.describe('migrations', () => {
     })
 
     // Add records to latest resolver
-    await generateRecords()({
+    await generateRecords({ accounts })({
       name,
       owner: 'user',
       resolver: newResolver,
@@ -402,6 +404,7 @@ test.describe('migrations', () => {
   test('should be able to choose to migrate to the latest profile when the current and latest resolver are not in sync', async ({
     page,
     login,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -414,7 +417,7 @@ test.describe('migrations', () => {
     })
 
     // Add records to latest resolver
-    await generateRecords()({
+    await generateRecords({ accounts })({
       name,
       owner: 'user',
       resolver: newResolver,
@@ -473,6 +476,7 @@ test.describe('migrations', () => {
   test('should be able migrate the current profile when the current and latest resolver are not in sync', async ({
     page,
     login,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -485,7 +489,7 @@ test.describe('migrations', () => {
     })
 
     // Add records to latest resolver
-    await generateRecords()({
+    await generateRecords({ accounts })({
       name,
       owner: 'user',
       resolver: newResolver,
@@ -549,6 +553,7 @@ test.describe('migrations', () => {
   test('should be able to reset the profile when the current and latest resolver are not in sync', async ({
     page,
     login,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -561,7 +566,7 @@ test.describe('migrations', () => {
     })
 
     // Add records to latest resolver
-    await generateRecords()({
+    await generateRecords({ accounts })({
       name,
       owner: 'user',
       resolver: newResolver,

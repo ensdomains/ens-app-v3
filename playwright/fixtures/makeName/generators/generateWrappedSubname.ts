@@ -63,8 +63,8 @@ export const generateWrappedSubname =
       name: `${label}.${name}`,
       contract: 'nameWrapper',
       fuses,
-      owner: createAccounts().getAddress(owner) as `0x${string}`,
-      account: createAccounts().getAddress(nameOwner) as `0x${string}`,
+      owner: accounts.getAddress(owner) as `0x${string}`,
+      account: accounts.getAddress(nameOwner) as `0x${string}`,
       resolverAddress: resolver,
       expiry,
     })
@@ -72,7 +72,7 @@ export const generateWrappedSubname =
 
     // Make records
     if (records) {
-      await generateRecords()({
+      await generateRecords({ accounts})({
         name: `${label}.${name}`,
         owner,
         resolver,
@@ -83,8 +83,8 @@ export const generateWrappedSubname =
     if (type === 'legacy') {
       const wrapTx = await unwrapName(walletClient, {
         name: `${label}.${name}`,
-        newOwnerAddress: createAccounts().getAddress(owner) as `0x${string}`,
-        account: createAccounts().getAddress(owner) as `0x${string}`,
+        newOwnerAddress: accounts.getAddress(owner) as `0x${string}`,
+        account: accounts.getAccountForUser(owner),
       })
       await waitForTransaction(wrapTx)
     }
