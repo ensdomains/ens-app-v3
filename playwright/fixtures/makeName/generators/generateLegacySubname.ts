@@ -61,7 +61,7 @@ export const generateLegacySubname =
 
     // Make records
     if (records && resolver) {
-      await generateRecords()({
+      await generateRecords({ accounts })({
         name: subname,
         owner,
         resolver,
@@ -84,7 +84,7 @@ export const generateLegacySubname =
           }),
           true,
         ],
-        account: createAccounts().getAddress(owner) as `0x${string}`,
+        account: accounts.getAddress(owner) as `0x${string}`,
       })
       const approve = await waitForTransaction(approveTx)
       if (approve.status === 'success') console.log('approved name wrapper')
