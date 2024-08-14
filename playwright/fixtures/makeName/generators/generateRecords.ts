@@ -7,6 +7,7 @@ import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import { User, Accounts } from '../../accounts';
 import { waitForTransaction, walletClient } from '../../contracts/utils/addTestContracts.js'
+import { Hash } from 'viem';
 
 type Dependencies = {
   accounts: Accounts
@@ -34,7 +35,7 @@ export const generateRecords =
       coins,
       texts,
       contentHash,
-      account: accounts.getAccountForUser(owner),
+      account: accounts.getAddress(owner) as Hash,
       abi,
     })
     await waitForTransaction(tx)
