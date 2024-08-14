@@ -23,6 +23,7 @@
     "lint:types": "tsc --noEmit",
     "lint:fix": "next lint --fix",
     "export:add-mm-ios-provider": "node ./scripts/add-mm-ios-provider.mjs",
+    "compare-locales": "node ./scripts/compare-locales.mjs",
     "export:base": "next export",
     "export": "pnpm export:base && pnpm export:add-mm-ios-provider",
     "analyze": "ANALYZE=true pnpm build",
