@@ -34,7 +34,7 @@ export const generateRecords =
       coins,
       texts,
       contentHash,
-      account: accounts.getAddress(owner) as `0x${string}`,
+      account: accounts.getAccountForUser(owner),
       abi,
     })
     await waitForTransaction(tx)

@@ -84,7 +84,7 @@ export const generateWrappedSubname =
       const wrapTx = await unwrapName(walletClient, {
         name: `${label}.${name}`,
         newOwnerAddress: accounts.getAddress(owner) as `0x${string}`,
-        account: accounts.getAddress(owner) as `0x${string}`,
+        account: accounts.getAccountForUser(owner),
       })
       await waitForTransaction(wrapTx)
     }
