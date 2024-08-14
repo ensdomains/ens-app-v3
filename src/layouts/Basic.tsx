@@ -102,7 +102,7 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   }, [isConnected, hasProgrammaticChainSwitching, isPending, isError, chainId, switchChain])
 
   useEffect(() => {
-    shouldRedirect(router, '/unsupportedNetwork', { isConnected, chainId })
+    shouldRedirect(router, 'Basic.tsx', '/unsupportedNetwork', { isConnected, chainId })
   }, [isConnected, chainId, router])
 
   return (

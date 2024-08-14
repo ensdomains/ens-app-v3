@@ -104,7 +104,7 @@ export const DotBoxRegistration = () => {
   const dotBoxResult = useDotBoxAvailabilityOffchain({ name })
   const nameStatus = dotBoxResult?.data?.data.status
 
-  shouldRedirect(router, '/profile/<name>', dotBoxResult)
+  shouldRedirect(router, 'DotBoxRegistration.tsx', `/profile/${name}`, dotBoxResult)
 
   const { t } = useTranslation('dnssec')
 

@@ -6,29 +6,30 @@ import { useDotBoxAvailabilityOffchain } from '@app/hooks/dotbox/useDotBoxAvaila
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 
 type RouteParams = {
-  '/unsupportedNetwork': { isConnected: boolean; chainId: number | undefined }
-  '/profile/<name>': ReturnType<typeof useDotBoxAvailabilityOffchain>
+  'Basic.tsx': { isConnected: boolean; chainId: number | undefined }
+  'DotBoxRegistration.tsx': ReturnType<typeof useDotBoxAvailabilityOffchain>
 }
 
 export const shouldRedirect = (
   router: ReturnType<typeof useRouterWithHistory>,
-  destination: keyof RouteParams,
-  params: RouteParams[keyof RouteParams],
+  source: keyof RouteParams,
+  destination: string,
+  extraData: RouteParams[keyof RouteParams],
 ) => {
-  match([destination, params])
+  match([source, extraData])
     .with(
-      ['/unsupportedNetwork', { isConnected: true, chainId: P.number }],
+      ['Basic.tsx', { isConnected: true, chainId: P.number }],
       (_params) =>
         !getSupportedChainById(_params[1].chainId) && router.pathname !== '/unsupportedNetwork',
-      () => router.push('/unsupportedNetwork'),
+      () => router.push(destination),
     )
     .with(
-      ['/profile/<name>', { isLoading: false }],
+      ['DotBoxRegistration.tsx', { isLoading: false }],
       (_params) =>
         _params[1].data?.data.status !== 'AVAILABLE' &&
         _params[1].data?.data.status !== 'UNAVAILABLE' &&
         router.isReady,
-      () => router.push(router.query.name as string),
+      () => router.push(destination),
     )
     .otherwise(() => {
       // Do nothing
