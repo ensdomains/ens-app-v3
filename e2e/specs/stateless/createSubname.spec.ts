@@ -122,7 +122,9 @@ test('should allow creating a subname', async ({ page, makeName, login, makePage
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
 
-  await expect(page.getByText(`test.${name}`)).toBeVisible({ timeout: 15000 })
+  const subname = `test.${name}`
+
+  await expect(page).toHaveURL(new RegExp(`/${subname}`), { timeout: 15000 })
 })
 
 test('should allow creating a subnames if the user is the wrapped owner', async ({
@@ -152,7 +154,9 @@ test('should allow creating a subnames if the user is the wrapped owner', async 
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
 
-  await expect(page.getByText(`test.${name}`)).toBeVisible({ timeout: 15000 })
+  const subname = `test.${name}`
+
+  await expect(page).toHaveURL(new RegExp(`/${subname}`), { timeout: 15000 })
 })
 
 test('should not allow adding a subname that already exists', async ({
