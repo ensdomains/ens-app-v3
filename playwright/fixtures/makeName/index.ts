@@ -1,11 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Accounts } from '../accounts.js'
-import { Contracts } from '../contracts/index.js'
 import {
   testClient,
   waitForTransaction,
 } from '../contracts/utils/addTestContracts'
-import { Provider } from '../provider.js'
 import { Subgraph } from '../subgraph.js'
 import { Time } from '../time.js'
 import { makeLegacyNameGenerator, isLegacyName, LegacyName as LegacyName } from './generators/legacyNameGenerator.js'
@@ -23,9 +21,7 @@ import { getTimeOffset } from './utils/getTimeOffset.js'
 
 type Dependencies = {
   accounts: Accounts
-  provider: Provider
   time: Time
-  contracts: Contracts
   subgraph: Subgraph
 }
 
@@ -36,7 +32,7 @@ type Options = {
   syncSubgraph?: boolean
 }
 
-export function createMakeNames({ accounts, provider, time, contracts, subgraph }: Dependencies) {
+export function createMakeNames({ accounts, time, subgraph }: Dependencies) {
   async function makeNames(name: Name, options?: Options): Promise<string>
   async function makeNames(names: Name[], options?: Options): Promise<string[]>
   async function makeNames(
@@ -51,12 +47,12 @@ export function createMakeNames({ accounts, provider, time, contracts, subgraph 
     const _syncSubgraph = syncSubgraph ?? true
 
     // Create generators
-    const wrappedNameGenerator = makeWrappedNameGenerator({ accounts, provider, contracts })
-    const legacyNameGenerator = makeLegacyWithConfigNameGenerator({ provider, accounts, contracts })
-    const legacyRegisterNameGenerator = makeLegacyNameGenerator({ provider, accounts, contracts })
+    const wrappedNameGenerator = makeWrappedNameGenerator({ accounts })
+    const legacyNameGenerator = makeLegacyWithConfigNameGenerator({  accounts })
+    const legacyRegisterNameGenerator = makeLegacyNameGenerator({  accounts })
 
     // Set automine to false put all transactions on the same block
-    await provider.setAutomine(false)
+    await testClient.setAutomine(false)
 
     // Clear out any pending transactions
     await testClient.mine({ blocks: 1 })
@@ -107,8 +103,8 @@ export function createMakeNames({ accounts, provider, time, contracts, subgraph 
 
     if (offset > 0) {
       console.warn('You are increasing the block timestamp. Do not run this test in parallel mode.')
-      await provider.increaseTime(offset)
-      await provider.mine()
+      await testClient.increaseTime({ seconds: offset})
+      await testClient.mine({ blocks: 1})
     }
 
     if (_syncSubgraph) await subgraph.sync()

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import dotenv from 'dotenv'
-import { Account, Address, bytesToHex, TestClient } from 'viem'
+import { Account, Address, bytesToHex, Hash, TestClient } from 'viem'
 import { mnemonicToAccount, nonceManager } from 'viem/accounts';
 import { privateKeyToAccount } from 'viem/accounts'
 
@@ -29,26 +29,16 @@ export const createAccounts = (stateful = false) => {
 
   const users: User[] = ['user', 'user2', 'user3']
 
-  const { accounts, privateKeys} = users.reduce<{ accounts: Account[], privateKeys: Uint8Array[]}>((acc, _, index) => {
+  const { accounts, privateKeys} = users.reduce<{ accounts: Account[], privateKeys: Hash[]}>((acc, _, index) => {
     const { getHdKey } = mnemonicToAccount(mnemonic, { addressIndex: index })
-    const privateKey = getHdKey().privateKey!
-    const account = privateKeyToAccount(bytesToHex(privateKey), { nonceManager }) 
+    const privateKey = bytesToHex(getHdKey().privateKey!)
+    const account = privateKeyToAccount(privateKey, { nonceManager }) 
     return {
       accounts: [...acc.accounts, account],
       privateKeys: [...acc.privateKeys, privateKey]
     }
   }, {accounts: [], privateKeys: []})
-
-  // const accounts = [0, 1, 2].map((index: number) => {
-  //   const { getHdKey } = mnemonicToAccount(mnemonic, { addressIndex: index })
-  //   const privateKey = getHdKey().privateKey!
-  //   const account = privateKeyToAccount(privateKey, { nonceManager })
-
-  //   return {
-  //     user: `user${index ? index + 1 : ''}` as User,
-  //     address: address as `0x${string}`,
-  //     privateKey: bytesToHex(privateKey) as `0x${string}`,
-  //   }
+  
  return {
     getAccountForUser: (user: User) => {
       const index = users.indexOf(user)

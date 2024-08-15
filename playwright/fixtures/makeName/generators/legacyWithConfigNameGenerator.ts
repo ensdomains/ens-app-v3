@@ -8,14 +8,12 @@ import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { setResolver, transferName } from '@ensdomains/ensjs/wallet'
 
 import { Accounts, createAccounts, User } from '../../accounts.js'
-import { Contracts } from '../../contracts/index.js'
 import {
   publicClient,
   testClient,
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
-import { Provider } from '../../provider.js'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname.js'
 import { generateRecords } from './generateRecords.js'
 import { legacyEthRegistrarControllerAbi } from '../constants/abis.js'
@@ -40,9 +38,7 @@ export type LegacyName = {
 }
 
 type Dependencies = {
-  provider: Provider
   accounts: Accounts
-  contracts: Contracts
 }
 
 export const isLegacyName = (name: LegacyName): name is LegacyName => name.type === 'legacy'
@@ -58,9 +54,7 @@ const nameWithDefaults = (name: LegacyName) => ({
 })
 
 export const makeLegacyWithConfigNameGenerator = ({
-  provider,
   accounts,
-  contracts,
 }: Dependencies) => ({
   commit: async (nameConfig: LegacyName) => {
     const { label, addr, owner, resolver, secret } = nameWithDefaults(nameConfig)
@@ -137,7 +131,7 @@ export const makeLegacyWithConfigNameGenerator = ({
       if (records) await generateRecords({ accounts })({ name: `${label}.eth`, owner, resolver, records })
 
       // Create subnames
-      await Promise.all(subnames.map((subname) => generateLegacySubname({ accounts, contracts})({...subname, name, nameOwner: owner, resolver: subname.resolver ?? _resolver})))
+      await Promise.all(subnames.map((subname) => generateLegacySubname({ accounts })({...subname, name, nameOwner: owner, resolver: subname.resolver ?? _resolver})))
      
       // Set resolver if not valid
       if (!hasValidResolver && resolver) {
@@ -161,97 +155,5 @@ export const makeLegacyWithConfigNameGenerator = ({
         })
         await waitForTransaction(tx)
       }
-  },
-  generate: async ({
-    label,
-    owner = 'user',
-    manager,
-    duration = DEFAULT_DURATION,
-    // eslint-disable-next-line no-restricted-syntax
-    secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
-    resolver = DEFAULT_RESOLVER,
-    addr = owner,
-    records,
-    subnames,
-  }: LegacyName) => {
-    const name = `${label}.eth`
-    console.log('generating legacy name:', name)
-
-    const _owner = accounts.getAddress(owner)
-    const _addr = accounts.getAddress(addr)
-
-    // Registration will fail if resolver is not valid. If an invalid resolver is entered
-    // we will set the resolver after the name has been registered.
-    const hasValidResolver = [LEGACY_RESOLVER, PUBLIC_RESOLVER].includes(resolver)
-    // && VALID_RESOLVERS.includes(resolver)
-    const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
-
-    console.log('making commitment:', name)
-    const controller = contracts.get('LegacyETHRegistrarController', { signer: owner })
-    const commitment = await controller.makeCommitmentWithConfig(
-      label,
-      _owner,
-      secret,
-      _resolver,
-      _addr,
-    )
-    const commitTx = await controller.commit(commitment)
-    await commitTx.wait()
-
-    await provider.increaseTime(120)
-    await provider.mine()
-
-    console.log('registering name:', name)
-    const price = await controller.rentPrice(label, duration)
-    const registrationTx = await controller.registerWithConfig(
-      label,
-      _owner,
-      duration,
-      secret,
-      _resolver,
-      _addr,
-      {
-        value: price,
-      },
-    )
-    await registrationTx.wait()
-
-    // Create records
-    await generateRecords({ accounts })({ name: `${label}.eth`, owner, resolver, records })
-
-    // Create subnames
-    const _subnames = (subnames || []).map((subname) => ({
-      ...subname,
-      name: `${label}.eth`,
-      nameOwner: owner,
-      resolver: subname.resolver ?? _resolver,
-    }))
-    for (const subname of _subnames) {
-      await generateLegacySubname({ accounts, contracts })(subname)
-    }
-
-    if (!hasValidResolver && resolver) {
-      console.log('setting resolver:', name, resolver)
-      const tx = await setResolver(walletClient, {
-        name,
-        contract: 'registry',
-        resolverAddress: resolver,
-        account: createAccounts().getAddress(owner) as `0x${string}`,
-      })
-      await waitForTransaction(tx)
-    }
-
-    if (!!manager && manager !== owner) {
-      console.log('setting manager:', name, manager)
-      const tx = await transferName(walletClient, {
-        name,
-        newOwnerAddress: createAccounts().getAddress(manager) as `0x${string}`,
-        contract: 'registry',
-        account: createAccounts().getAddress(owner) as `0x${string}`,
-      })
-      await waitForTransaction(tx)
-    }
-
-    await provider.mine()
   },
 })

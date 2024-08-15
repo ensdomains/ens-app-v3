@@ -11,14 +11,12 @@ import { encodeFunctionData, Hash, hexToBigInt } from 'viem'
 import { transferName } from '@ensdomains/ensjs/wallet'
 
 import { Accounts, createAccounts, User } from '../../accounts.js'
-import { Contracts } from '../../contracts/index.js'
 import {
   publicClient,
   testClient,
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
-import { Provider } from '../../provider.js'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname.js'
 import { legacyEthRegistrarControllerAbi } from '../constants/abis.js'
 import { Name } from '../index';
@@ -37,9 +35,7 @@ export type LegacyName = {
 }
 
 type Dependencies = {
-  provider: Provider
   accounts: Accounts
-  contracts: Contracts
 }
 
 export const isLegacyName = (name: Name): name is LegacyName => name.type === 'legacy-register'
@@ -52,7 +48,7 @@ const nameWithDefaults = (name: LegacyName) => ({
   manager: name.manager ?? name.owner ?? 'user',
 })
 
-export const makeLegacyNameGenerator = ({ provider, accounts, contracts }: Dependencies) => ({
+export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
   commit: async (nameConfig: LegacyName) => {
     const { label, owner, secret } = nameWithDefaults(nameConfig)
     const name = `${label}.eth`
@@ -108,7 +104,7 @@ export const makeLegacyNameGenerator = ({ provider, accounts, contracts }: Depen
     const name = `${label}.eth`
      // Create subnames
      await Promise.all(subnames.map((subname) => {
-      return generateLegacySubname({ accounts, contracts })({
+      return generateLegacySubname({ accounts })({
         ...subname,
         name: `${label}.eth`,
         nameOwner: owner
@@ -125,58 +121,5 @@ export const makeLegacyNameGenerator = ({ provider, accounts, contracts }: Depen
       })
       await waitForTransaction(tx)
     }
-  },
-  generate: async ({
-    label,
-    owner = 'user',
-    manager,
-    duration = DEFAULT_DURATION,
-    // eslint-disable-next-line no-restricted-syntax
-    secret = '0x0000000000000000000000000000000000000000000000000000000000000000',
-    subnames,
-  }: LegacyName) => {
-    const name = `${label}.eth`
-    console.log('generating legacy name:', name)
-    const _owner = accounts.getAddress(owner)
-
-    console.log('make commit:', name)
-    const controller = contracts.get('LegacyETHRegistrarController', { signer: owner })
-    const commitment = await controller.makeCommitment(label, _owner, secret)
-    const commitTx = await controller.commit(commitment)
-    await commitTx.wait()
-
-    await provider.increaseTime(60)
-    await provider.mine()
-
-    console.log('register name:', name)
-    const price = await controller.rentPrice(label, duration)
-    const registrationTx = await controller.register(label, _owner, duration, secret, {
-      value: price,
-    })
-    await registrationTx.wait()
-
-    // Create subnames
-    const _subnames = (subnames || []).map((subname) => ({
-      ...subname,
-      name: `${label}.eth`,
-      nameOwner: owner,
-    }))
-    for (const subname of _subnames) {
-      await generateLegacySubname({ accounts, contracts })(subname)
-    }
-
-    if (!!manager && manager !== owner) {
-      console.log('setting manager:', name, manager)
-      const tx = await transferName(walletClient, {
-        name,
-        newOwnerAddress: createAccounts().getAddress(manager) as `0x${string}`,
-        contract: 'registry',
-        account: createAccounts().getAddress(owner) as `0x${string}`,
-      })
-      await waitForTransaction(tx)
-    }
-
-    await testClient.increaseTime({ seconds: 61 })
-    await testClient.mine({ blocks: 1 })
   },
 })
