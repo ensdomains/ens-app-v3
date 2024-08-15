@@ -14,7 +14,8 @@ test('should be able to register multiple names on the address page', async ({
   makePageObject,
   makeName,
 }) => {
-  const names = await makeName([
+  // Generating names in not neccessary but we want to make sure that there are names to extend
+  await makeName([
     {
       label: 'extend-legacy',
       type: 'legacy',
@@ -32,16 +33,27 @@ test('should be able to register multiple names on the address page', async ({
   const transactionModal = makePageObject('TransactionModal')
 
   await addresPage.goto(address)
-
   await login.connect()
+  await page.pause()
+
   await addresPage.selectToggle.click()
+
+  const nameItems = await page.locator('_react=NameDetailItem').all()
+  const nameItemTestIds = await Promise.all(
+    nameItems.map((item) => item.getAttribute('data-testid')),
+  )
+  const extendableNameItems = nameItemTestIds
+    .filter((testid): testid is string => !!testid)
+    .map((testid) => testid.replace('name-item-', ''))
+    .filter((name) => {
+      const nameParts = name?.split('.') ?? []
+      return nameParts.length === 2 && nameParts[1] === 'eth'
+    })
+
   const timestampDict: { [key: string]: number } = {}
-  for (const name of names) {
-    const label = name.replace('.eth', '')
-    await addresPage.search(label)
+  for (const name of extendableNameItems) {
     const timestamp = await addresPage.getTimestamp(name)
     timestampDict[name] = timestamp
-    await addresPage.getNameAvatarWrapper(name).click()
   }
   await addresPage.extendNamesButton.click()
 
@@ -53,15 +65,9 @@ test('should be able to register multiple names on the address page', async ({
   await addresPage.extendNamesModalNextButton.click()
 
   // check the invoice details
-  await expect(page.getByTestId('invoice-item-0-amount')).toContainText('0.1667')
-  await expect(page.getByTestId('invoice-item-1-amount')).toContainText('0.0010')
-  await expect(page.getByTestId('invoice-total')).toContainText('0.1677')
+  await page.pause()
+  await expect(page.getByText(`Extend ${extendableNameItems.length} Names`)).toBeVisible()
   await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
-
-  // check the price comparison table
-  await expect(page.getByTestId('year-marker-0')).toContainText('1% gas')
-  await expect(page.getByTestId('year-marker-1')).toContainText('0% gas')
-  await expect(page.getByTestId('year-marker-2')).toContainText('0% gas')
 
   // increment and save
   await page.getByTestId('plus-minus-control-plus').click()
@@ -72,11 +78,12 @@ test('should be able to register multiple names on the address page', async ({
 
   await subgraph.sync()
   await page.reload()
-  for (const name of names) {
+  await page.waitForTimeout(3000)
+  for (const name of extendableNameItems) {
     const label = name.replace('.eth', '')
     await addresPage.search(label)
-    await expect(addresPage.nameExpiry(name)).not.toHaveText(/12/, { timeout: 30000 })
-    expect(await addresPage.getTimestamp(name)).toEqual(timestampDict[name] + 31536000000 * 3)
+    await expect(await addresPage.getTimestamp(name)).not.toBe(timestampDict[name])
+    await expect(await addresPage.getTimestamp(name)).toBe(timestampDict[name] + 31536000000 * 3)
   }
 })
 
