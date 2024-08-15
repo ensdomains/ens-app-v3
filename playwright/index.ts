@@ -49,7 +49,7 @@ export const test = base.extend<Fixtures>({
   makePageObject: async ({ page, wallet }, use) => {
     await use(createPageObjectMaker({ page, wallet }))
   },
-  subgraph: async ({  }, use) => {
+  subgraph: async ({}, use) => {
     const subgraph = createSubgraph()
     await use(subgraph)
   },
