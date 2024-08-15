@@ -38,6 +38,7 @@ test('should be able to register multiple names on the address page', async ({
 
   await addresPage.selectToggle.click()
 
+  await expect(await page.locator('_react=NameDetailItem').count()).toBeGreaterThan(0)
   const nameItems = await page.locator('_react=NameDetailItem').all()
   const nameItemTestIds = await Promise.all(
     nameItems.map((item) => item.getAttribute('data-testid')),
