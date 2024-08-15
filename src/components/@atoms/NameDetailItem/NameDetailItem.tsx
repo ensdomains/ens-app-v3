@@ -160,6 +160,7 @@ export const NameDetailItem = ({
         $highlight={mode === 'select' && selected}
         as={mode !== 'select' ? 'a' : 'div'}
         data-testid={`name-item-${name}`}
+        className="name-detail-item"
       >
         <NameItemContainer>
           <AvatarWrapper
