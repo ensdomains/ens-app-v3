@@ -95,7 +95,7 @@
     "styled-components": "^5.3.5",
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
-    "viem": "2.19.0",
+    "viem": "2.19.4",
     "wagmi": "2.12.4"
   },
   "peerDependencies": {
