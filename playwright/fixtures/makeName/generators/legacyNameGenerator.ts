@@ -18,7 +18,6 @@ import {
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
-import { Provider } from '../../provider.js'
 import { generateLegacySubname, LegacySubname } from './generateLegacySubname.js'
 import { legacyEthRegistrarControllerAbi } from '../constants/abis.js'
 import { Name } from '../index';
