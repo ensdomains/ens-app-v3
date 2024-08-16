@@ -12,13 +12,11 @@ import {
 import { commitName, registerName, setResolver, setFuses } from '@ensdomains/ensjs/wallet'
 
 import { Accounts, createAccounts, User } from '../../accounts'
-import { Contracts } from '../../contracts'
 import {
   testClient,
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts'
-import { Provider } from '../../provider'
 import { generateRecords } from './generateRecords'
 import { generateWrappedSubname, WrappedSubname } from './generateWrappedSubname'
 import { Name } from '../index'
@@ -42,8 +40,6 @@ export type WrappedName = {
 
 type Dependencies = {
   accounts: Accounts
-  provider: Provider
-  contracts: Contracts
 }
 
 export const isWrappendName = (name: Name): name is WrappedName => name.type === 'wrapped'
@@ -70,7 +66,7 @@ const getChildFuses = (fuses?: EncodeChildFusesInputObject): EncodeChildFusesInp
   }
 }
 
-export const makeWrappedNameGenerator = ({ accounts, provider, contracts }: Dependencies) => ({
+export const makeWrappedNameGenerator = ({ accounts }: Dependencies) => ({
   commit: async (nameConfig: WrappedName) => {
     const { label, owner, resolver, duration, secret, fuses } = nameWithDefaults(nameConfig)
     const name = `${label}.eth`
@@ -159,7 +155,7 @@ export const makeWrappedNameGenerator = ({ accounts, provider, contracts }: Depe
       })
     }
 
-    await Promise.all(subnames.map((subname) => generateWrappedSubname({ accounts, provider, contracts})({
+    await Promise.all(subnames.map((subname) => generateWrappedSubname({ accounts })({
       ...subname,
       name: `${label}.eth`,
       nameOwner: owner,
@@ -247,7 +243,7 @@ export const makeWrappedNameGenerator = ({ accounts, provider, contracts }: Depe
       resolver: subname.resolver ?? _resolver,
     }))
     for (const subname of _subnames) {
-      await generateWrappedSubname({ accounts, provider, contracts })({ ...subname })
+      await generateWrappedSubname({ accounts })({ ...subname })
     }
 
     if (records) {
@@ -270,6 +266,6 @@ export const makeWrappedNameGenerator = ({ accounts, provider, contracts }: Depe
       await waitForTransaction(resolverTx)
     }
 
-    await provider.mine()
+    await testClient.mine({ blocks: 1 })
   },
 })
