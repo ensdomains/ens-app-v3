@@ -22,10 +22,8 @@
     "lint": "next lint && pnpm stylelint stylelint \"./src/**/*.tsx\"",
     "lint:types": "tsc --noEmit",
     "lint:fix": "next lint --fix",
-    "export:add-mm-ios-provider": "node ./scripts/add-mm-ios-provider.mjs",
+    "export": "next export",
     "compare-locales": "node ./scripts/compare-locales.mjs",
-    "export:base": "next export",
-    "export": "pnpm export:base && pnpm export:add-mm-ios-provider",
     "analyze": "ANALYZE=true pnpm build",
     "analyse": "pnpm analyze",
     "test": "vitest run",
@@ -97,7 +95,7 @@
     "styled-components": "^5.3.5",
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
-    "viem": "2.19.0",
+    "viem": "2.19.4",
     "wagmi": "2.12.4"
   },
   "peerDependencies": {

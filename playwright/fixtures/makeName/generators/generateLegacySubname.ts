@@ -51,15 +51,15 @@ export const generateLegacySubname =
     const tx = await createSubname(walletClient, {
       name: `${label}.${name}`,
       contract: 'registry',
-      owner: createAccounts().getAddress(owner) as `0x${string}`,
-      account: createAccounts().getAddress(nameOwner) as `0x${string}`,
+      owner: accounts.getAddress(owner) as `0x${string}`,
+      account: accounts.getAccountForUser(nameOwner),
       resolverAddress: resolver ?? DEFAULT_RESOLVER,
     })
     await waitForTransaction(tx)
 
     // Make records
     if (records && resolver) {
-      await generateRecords()({
+      await generateRecords({ accounts })({
         name: subname,
         owner,
         resolver,
@@ -82,7 +82,7 @@ export const generateLegacySubname =
           }),
           true,
         ],
-        account: createAccounts().getAddress(owner) as `0x${string}`,
+        account: accounts.getAddress(owner) as `0x${string}`,
       })
       const approve = await waitForTransaction(approveTx)
       if (approve.status === 'success') console.log('approved name wrapper')
