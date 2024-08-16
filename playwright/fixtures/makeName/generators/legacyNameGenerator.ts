@@ -37,9 +37,7 @@ export type LegacyName = {
 }
 
 type Dependencies = {
-  provider: Provider
   accounts: Accounts
-  contracts: Contracts
 }
 
 export const isLegacyName = (name: Name): name is LegacyName => name.type === 'legacy-register'
@@ -52,7 +50,7 @@ const nameWithDefaults = (name: LegacyName) => ({
   manager: name.manager ?? name.owner ?? 'user',
 })
 
-export const makeLegacyNameGenerator = ({ provider, accounts, contracts }: Dependencies) => ({
+export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
   commit: async (nameConfig: LegacyName) => {
     const { label, owner, secret } = nameWithDefaults(nameConfig)
     const name = `${label}.eth`
@@ -108,7 +106,7 @@ export const makeLegacyNameGenerator = ({ provider, accounts, contracts }: Depen
     const name = `${label}.eth`
      // Create subnames
      await Promise.all(subnames.map((subname) => {
-      return generateLegacySubname({ accounts, contracts })({
+      return generateLegacySubname({ accounts })({
         ...subname,
         name: `${label}.eth`,
         nameOwner: owner
@@ -140,13 +138,14 @@ export const makeLegacyNameGenerator = ({ provider, accounts, contracts }: Depen
     const _owner = accounts.getAddress(owner)
 
     console.log('make commit:', name)
+    // TODO: Replace with legacyEthRegistrarControllerAbi
     const controller = contracts.get('LegacyETHRegistrarController', { signer: owner })
     const commitment = await controller.makeCommitment(label, _owner, secret)
     const commitTx = await controller.commit(commitment)
     await commitTx.wait()
 
-    await provider.increaseTime(60)
-    await provider.mine()
+    await testClient.increaseTime({seconds: 60})
+    await testClient.mine({blocks:1})
 
     console.log('register name:', name)
     const price = await controller.rentPrice(label, duration)
@@ -162,7 +161,7 @@ export const makeLegacyNameGenerator = ({ provider, accounts, contracts }: Depen
       nameOwner: owner,
     }))
     for (const subname of _subnames) {
-      await generateLegacySubname({ accounts, contracts })(subname)
+      await generateLegacySubname({ accounts })(subname)
     }
 
     if (!!manager && manager !== owner) {
