@@ -1,13 +1,19 @@
+/* eslint-disable no-nested-ternary */
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
+import { Address } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { AlertSVG, CheckSVG, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
+import { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
 import type { Profile } from '@app/types'
 
 import { TabWrapper } from '../../../TabWrapper'
+import UnwrapButton from './Token/UnwrapButton'
 import WrapButton from './Token/WrapButton'
 
 type Props = {
@@ -17,7 +23,7 @@ type Props = {
   ownerData?: GetOwnerReturnType
   wrapperData?: GetWrapperDataReturnType
   profile: Profile | undefined
-  isConnected: boolean
+  address?: Address
   isOwned: boolean
 }
 
@@ -79,29 +85,66 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
 `
 
+const getFuseStateFromWrapperData = (wrapperData?: GetWrapperDataReturnType): NameWrapperState =>
+  match(wrapperData)
+    .with(P.nullish, () => 'unwrapped' as const)
+    .with({ fuses: { child: { CANNOT_UNWRAP: true } } }, () => 'locked' as const)
+    .with({ fuses: { parent: { PARENT_CANNOT_CONTROL: true } } }, () => 'emancipated' as const)
+    .otherwise(() => 'wrapped')
+
 export const NameWrapper = ({
   name,
   isWrapped,
   ownerData,
   wrapperData,
-  canBeWrapped,
+  canBeWrapped: _canBeWrapped,
   profile,
-  isConnected,
   isOwned,
+  address,
 }: Props) => {
   const { t } = useTranslation('profile')
 
   const isPCCBurned = !!wrapperData?.fuses.parent?.PARENT_CANNOT_CONTROL
 
+  const cannotUnwrap = !!wrapperData?.fuses.child.CANNOT_UNWRAP
+
+  const isButtonDisplayed = isOwned && address
+
+  const status = getFuseStateFromWrapperData(wrapperData)
+
+  const isManager = ownerData?.owner === address
+  const isRegistrant = ownerData?.registrant === address
+
+  const canBeWrapped =
+    _canBeWrapped &&
+    !!address &&
+    (ownerData?.ownershipLevel === 'registrar' ? isRegistrant : isManager)
+
   return (
     <Container>
       <HeaderContainer>
         <Typography fontVariant="headingFour">{t('tabs.more.token.nameWrapper')}</Typography>
-        {isOwned && isConnected && !isPCCBurned && (
-          <WrapButton {...{ profile, ownerData, canBeWrapped, name }} />
-        )}
+
+        {isButtonDisplayed ? (
+          isWrapped ? (
+            cannotUnwrap ? (
+              <DisabledButtonWithTooltip
+                buttonText={t('tabs.more.token.unwrap')}
+                content={t('tabs.more.token.unwrapWarning')}
+                buttonId="cannot-unwrap-disabled-button"
+                buttonWidth="max"
+                placement="top"
+              />
+            ) : (
+              <UnwrapButton status={status} {...{ name, ownerData }} />
+            )
+          ) : (
+            <WrapButton {...{ profile, ownerData, canBeWrapped, name }} />
+          )
+        ) : null}
+        <WrapButton {...{ profile, ownerData, canBeWrapped, name }} />
       </HeaderContainer>
-      {isOwned && !isWrapped ? (
+      {isOwned && canBeWrapped ? (
         <>{t('tabs.more.token.unwrappedText')}</>
       ) : (
         <TwoRows>

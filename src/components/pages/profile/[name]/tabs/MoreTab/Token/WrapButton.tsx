@@ -30,23 +30,16 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
   const resolverStatus = useResolverStatus({ name })
 
   const hasOwnerData = !!ownerData
-  const isManager = ownerData?.owner === address
-  const isRegistrant = ownerData?.registrant === address
 
   const shouldMigrate =
     !resolverStatus.data?.isMigratedProfileEqual && !resolverStatus.data?.isNameWrapperAware
   const resolverAddress = profile?.resolverAddress
 
-  const _canBeWrapped =
-    canBeWrapped &&
-    !!address &&
-    (ownerData?.ownershipLevel === 'registrar' ? isRegistrant : isManager)
-
   const isSubname = name.split('.').length > 2
   const { data: approvedForAll, isLoading: isApprovalLoading } = useWrapperApprovedForAll({
     address: address!,
     isSubname,
-    canBeWrapped: _canBeWrapped,
+    canBeWrapped,
   })
 
   const { createTransactionFlow, resumeTransactionFlow, getResumable, usePreparedDataInput } =
@@ -106,7 +99,7 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped }: Props) => {
 
   const isLoading = isApprovalLoading || resolverStatus.isLoading || hasGraphErrorLoading
 
-  if (!_canBeWrapped || hasGraphError) return null
+  if (!canBeWrapped || hasGraphError) return null
 
   return (
     <BaseWrapButton

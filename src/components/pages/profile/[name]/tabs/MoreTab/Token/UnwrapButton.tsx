@@ -13,9 +13,10 @@ type Props = {
   name: string
   ownerData: GetOwnerReturnType | undefined
   status: NameWrapperState
+  disabled?: boolean
 }
 
-const UnwrapButton = ({ name, ownerData, status }: Props) => {
+const UnwrapButton = ({ name, ownerData, status, disabled }: Props) => {
   const { t } = useTranslation('profile')
 
   const { address } = useAccountSafely()
@@ -31,7 +32,7 @@ const UnwrapButton = ({ name, ownerData, status }: Props) => {
   if (!canBeUnwrapped) return null
 
   return (
-    <BaseWrapButton data-testid="unwrap-name-btn" onClick={handleUnwrapClick}>
+    <BaseWrapButton disabled={disabled} data-testid="unwrap-name-btn" onClick={handleUnwrapClick}>
       {t('tabs.more.token.unwrap')}
     </BaseWrapButton>
   )

@@ -58,7 +58,7 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
             name,
             profile,
             ownerData,
-            isConnected,
+            address,
             isOwned: address === ownerData?.owner,
           }}
         />
