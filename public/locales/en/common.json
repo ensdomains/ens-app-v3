@@ -349,7 +349,8 @@
       "invalid": "Invalid",
       "unsupportedTLD": "Not Supported",
       "imported": "Imported",
-      "owned": "Owned"
+      "owned": "Owned",
+      "offChain": "View"
     }
   },
   "selectableInput": {
