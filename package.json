@@ -134,7 +134,7 @@
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
     "@vitejs/plugin-react": "^4.3.1",
-    "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/coverage-v8": "^2.0.5",
     "@vitest/spy": "^2.0.5",
     "canvas": "^2.9.3",
     "cbor": "^8.1.0",
