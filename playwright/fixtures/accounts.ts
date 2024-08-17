@@ -39,7 +39,6 @@ export const createAccounts = (stateful = false) => {
     }
   }, {accounts: [], privateKeys: []})
   
-  console.log('Accounts:', accounts.map(account => account.address))
  return {
     getAccountForUser: (user: User) => {
       const index = users.indexOf(user)
