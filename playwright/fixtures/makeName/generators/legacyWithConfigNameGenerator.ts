@@ -7,7 +7,7 @@ import { Address, encodeFunctionData, Hash } from 'viem'
 import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { setResolver, transferName } from '@ensdomains/ensjs/wallet'
 
-import { Accounts, createAccounts, User } from '../../accounts.js'
+import { Accounts, User } from '../../accounts.js'
 import {
   publicClient,
   testClient,
@@ -45,7 +45,7 @@ export const isLegacyName = (name: LegacyName): name is LegacyName => name.type 
 
 const nameWithDefaults = (name: LegacyName) => ({
   ...name,
-  duration: name.duration ?? 31536000,
+  duration: name.duration ?? DEFAULT_DURATION,
   secret: name.secret ?? '0x0000000000000000000000000000000000000000000000000000000000000000',
   resolver: name.resolver ?? DEFAULT_RESOLVER,
   owner: name.owner ?? 'user',

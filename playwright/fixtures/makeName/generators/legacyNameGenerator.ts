@@ -6,14 +6,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { encodeFunctionData, Hash, hexToBigInt } from 'viem'
+import { encodeFunctionData, Hash } from 'viem'
 
 import { transferName } from '@ensdomains/ensjs/wallet'
 
-import { Accounts, createAccounts, User } from '../../accounts.js'
+import { Accounts, User } from '../../accounts.js'
 import {
   publicClient,
-  testClient,
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
@@ -42,7 +41,7 @@ export const isLegacyName = (name: Name): name is LegacyName => name.type === 'l
 
 const nameWithDefaults = (name: LegacyName) => ({
   ...name,
-  duration: name.duration ?? 31536000,
+  duration: name.duration ?? DEFAULT_DURATION,
   secret: name.secret ?? '0x0000000000000000000000000000000000000000000000000000000000000000',
   owner: name.owner ?? 'user',
   manager: name.manager ?? name.owner ?? 'user',
@@ -90,7 +89,7 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
       data: encodeFunctionData({
         functionName: 'register',
         abi: legacyEthRegistrarControllerAbi,
-        args: [label, accounts.getAddress(owner), duration, secret],
+        args: [label, ownerAddress, duration, secret],
       }),
       value: price,
       gas: 1000000n,
