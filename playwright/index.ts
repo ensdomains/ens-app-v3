@@ -27,7 +27,6 @@ export const test = base.extend<Fixtures>({
   // eslint-disable-next-line no-empty-pattern
   accounts: async ({}, use, testInfo) => {
     const stateful = testInfo.project?.name === 'stateful'
-    console.log('stateful', stateful)
     use(createAccounts(stateful))
   },
   wallet: async ({ page, accounts }, use) => {
