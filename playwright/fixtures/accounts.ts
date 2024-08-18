@@ -16,10 +16,6 @@ const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice 
   return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`
 }
 
-export type Dependencies = {
-  provider: TestClient<'anvil'>
-}
-
 export type Accounts = ReturnType<typeof createAccounts>
 
 export type User = 'user' | 'user2' | 'user3'
