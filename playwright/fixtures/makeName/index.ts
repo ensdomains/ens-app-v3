@@ -1,8 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { TestClient } from 'viem'
-
 import { Accounts } from '../accounts.js'
 import {
+  testClient,
   waitForTransaction,
 } from '../contracts/utils/addTestContracts'
 import { Subgraph } from '../subgraph.js'
@@ -19,7 +18,6 @@ import {
 } from './generators/wrappedNameGenerator.js'
 import { adjustName } from './utils/adjustName.js'
 import { getTimeOffset } from './utils/getTimeOffset.js'
-import { testClient } from '../contracts/utils/addTestContracts.js'
 
 type Dependencies = {
   accounts: Accounts
@@ -49,9 +47,9 @@ export function createMakeNames({ accounts, time, subgraph }: Dependencies) {
     const _syncSubgraph = syncSubgraph ?? true
 
     // Create generators
-    const wrappedNameGenerator = makeWrappedNameGenerator({ accounts, contracts })
-    const legacyNameGenerator = makeLegacyWithConfigNameGenerator({ accounts, contracts })
-    const legacyRegisterNameGenerator = makeLegacyNameGenerator({ accounts, contracts })
+    const wrappedNameGenerator = makeWrappedNameGenerator({ accounts })
+    const legacyNameGenerator = makeLegacyWithConfigNameGenerator({  accounts })
+    const legacyRegisterNameGenerator = makeLegacyNameGenerator({  accounts })
 
     // Set automine to false put all transactions on the same block
     await testClient.setAutomine(false)
@@ -105,8 +103,8 @@ export function createMakeNames({ accounts, time, subgraph }: Dependencies) {
 
     if (offset > 0) {
       console.warn('You are increasing the block timestamp. Do not run this test in parallel mode.')
-      await testClient.increaseTime({ seconds: offset })
-      await testClient.mine({ blocks: 1 })
+      await testClient.increaseTime({ seconds: offset})
+      await testClient.mine({ blocks: 1})
     }
 
     if (_syncSubgraph) await subgraph.sync()
