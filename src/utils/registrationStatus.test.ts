@@ -157,7 +157,8 @@ describe('getRegistrationStatus', () => {
   it('should return offChain if name is not 2LD, is not owned and has an eth address record', async () => {
     const result = getRegistrationStatus({
       timestamp: Date.now(),
-      validation: { is2LD: false, isETH: true, type: 'name' },
+      validation: { is2LD: false, type: 'name' },
+      supportedTLD: true,
       wrapperData,
       addrData: { id: 60, name: 'eth', value: '0xF142B308cF687d4358410a4cB885513b30A42025' },
     })
