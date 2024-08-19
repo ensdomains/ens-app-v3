@@ -5,3 +5,9 @@
   position: relative;
   z-index: 998 !important;
 }
+
+.modal {
+  z-index: 9999;
+  position: fixed;
+  inset: 0px;
+}

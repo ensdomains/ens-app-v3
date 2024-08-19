@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useRef, useState } from 'react'
+import { ComponentProps, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -99,9 +99,9 @@ const AvatarButton = ({
   onAvatarChange,
   onAvatarSrcChange,
   onAvatarFileChange,
+  isOpen,
+  setIsOpen,
 }: Props) => {
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const modalRef = useRef<HTMLElement | null>(null)
   const { t } = useTranslation('transactionFlow')
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -116,52 +116,15 @@ const AvatarButton = ({
     }
   }
 
-  const [isOpen, setIsOpen] = useState(false)
-
-  useEffect(() => {
-    const findModal = (el: HTMLElement | null): HTMLElement | null => {
-      let node = el
-      while (node?.parentNode) {
-        node = node?.parentNode as HTMLElement
-        if (node.className === 'modal') return node
-      }
-      return null
-    }
-
-    const matched = matchMedia('(min-width: 640px)').matches
-
-    if (matched) return
-
-    if (isOpen) {
-      modalRef.current = findModal(containerRef.current)
-
-      if (modalRef.current) {
-        const container = modalRef.current.children[1] as HTMLElement
-
-        if (container) {
-          container.style.filter = 'blur(20px)'
-        }
-      }
-    } else if (modalRef.current) {
-      const container = modalRef.current.children[1] as HTMLElement
-
-      if (container) {
-        container.style.filter = ''
-      }
-    }
-  }, [isOpen])
-
-  // const dropdownProps = setIsOpen
-  //   ? ({ isOpen, setIsOpen } as { isOpen: boolean; setIsOpen: Dispatch<SetStateAction<boolean>> })
-  //   : ({} as { isOpen: never; setIsOpen: never })
-
-  const dropdownProps = {
-    isOpen,
-    setIsOpen,
-  }
+  const dropdownProps = setIsOpen
+    ? ({ isOpen, setIsOpen } as {
+        isOpen: boolean
+        setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+      })
+    : ({} as { isOpen: never; setIsOpen: never })
 
   return (
-    <Container ref={containerRef}>
+    <Container>
       <AvatarWrapper $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
         <Avatar label="profile-button-avatar" src={src} noBorder />
       </AvatarWrapper>
