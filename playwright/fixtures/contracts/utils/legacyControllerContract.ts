@@ -1,265 +1,265 @@
-import { Address } from "viem"
+import { Address } from 'viem'
 
-const LegacyETHRegistrarControllerABI=  [
+const LegacyETHRegistrarControllerABI = [
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "contract BaseRegistrar",
-        "name": "_base",
-        "type": "address"
+        internalType: 'contract BaseRegistrar',
+        name: '_base',
+        type: 'address',
       },
       {
-        "internalType": "contract PriceOracle",
-        "name": "_prices",
-        "type": "address"
+        internalType: 'contract PriceOracle',
+        name: '_prices',
+        type: 'address',
       },
       {
-        "internalType": "uint256",
-        "name": "_minCommitmentAge",
-        "type": "uint256"
+        internalType: 'uint256',
+        name: '_minCommitmentAge',
+        type: 'uint256',
       },
       {
-        "internalType": "uint256",
-        "name": "_maxCommitmentAge",
-        "type": "uint256"
-      }
+        internalType: 'uint256',
+        name: '_maxCommitmentAge',
+        type: 'uint256',
+      },
     ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'constructor',
   },
   {
-    "constant": false,
-    "inputs": [
+    constant: false,
+    inputs: [
       {
-        "internalType": "bytes32",
-        "name": "commitment",
-        "type": "bytes32"
-      }
+        internalType: 'bytes32',
+        name: 'commitment',
+        type: 'bytes32',
+      },
     ],
-    "name": "commit",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: 'commit',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
-    "constant": true,
-    "inputs": [
+    constant: true,
+    inputs: [
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
       },
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
       },
       {
-        "internalType": "bytes32",
-        "name": "secret",
-        "type": "bytes32"
-      }
+        internalType: 'bytes32',
+        name: 'secret',
+        type: 'bytes32',
+      },
     ],
-    "name": "makeCommitment",
-    "outputs": [
+    name: 'makeCommitment',
+    outputs: [
       {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
     ],
-    "payable": false,
-    "stateMutability": "pure",
-    "type": "function"
+    payable: false,
+    stateMutability: 'pure',
+    type: 'function',
   },
   {
-    "constant": true,
-    "inputs": [
+    constant: true,
+    inputs: [
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
       },
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
       },
       {
-        "internalType": "bytes32",
-        "name": "secret",
-        "type": "bytes32"
+        internalType: 'bytes32',
+        name: 'secret',
+        type: 'bytes32',
       },
       {
-        "internalType": "address",
-        "name": "resolver",
-        "type": "address"
+        internalType: 'address',
+        name: 'resolver',
+        type: 'address',
       },
       {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
+        internalType: 'address',
+        name: 'addr',
+        type: 'address',
+      },
     ],
-    "name": "makeCommitmentWithConfig",
-    "outputs": [
+    name: 'makeCommitmentWithConfig',
+    outputs: [
       {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
     ],
-    "payable": false,
-    "stateMutability": "pure",
-    "type": "function"
+    payable: false,
+    stateMutability: 'pure',
+    type: 'function',
   },
   {
-    "constant": true,
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
+    constant: true,
+    inputs: [],
+    name: 'owner',
+    outputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
     ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
   },
   {
-    "constant": false,
-    "inputs": [
+    constant: false,
+    inputs: [
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
       },
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
       },
       {
-        "internalType": "uint256",
-        "name": "duration",
-        "type": "uint256"
+        internalType: 'uint256',
+        name: 'duration',
+        type: 'uint256',
       },
       {
-        "internalType": "bytes32",
-        "name": "secret",
-        "type": "bytes32"
-      }
+        internalType: 'bytes32',
+        name: 'secret',
+        type: 'bytes32',
+      },
     ],
-    "name": "register",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
+    name: 'register',
+    outputs: [],
+    payable: true,
+    stateMutability: 'payable',
+    type: 'function',
   },
   {
-    "constant": false,
-    "inputs": [
+    constant: false,
+    inputs: [
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
       },
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
       },
       {
-        "internalType": "uint256",
-        "name": "duration",
-        "type": "uint256"
+        internalType: 'uint256',
+        name: 'duration',
+        type: 'uint256',
       },
       {
-        "internalType": "bytes32",
-        "name": "secret",
-        "type": "bytes32"
+        internalType: 'bytes32',
+        name: 'secret',
+        type: 'bytes32',
       },
       {
-        "internalType": "address",
-        "name": "resolver",
-        "type": "address"
+        internalType: 'address',
+        name: 'resolver',
+        type: 'address',
       },
       {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
+        internalType: 'address',
+        name: 'addr',
+        type: 'address',
+      },
     ],
-    "name": "registerWithConfig",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
+    name: 'registerWithConfig',
+    outputs: [],
+    payable: true,
+    stateMutability: 'payable',
+    type: 'function',
   },
   {
-    "constant": true,
-    "inputs": [
+    constant: true,
+    inputs: [
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
       },
       {
-        "internalType": "uint256",
-        "name": "duration",
-        "type": "uint256"
-      }
+        internalType: 'uint256',
+        name: 'duration',
+        type: 'uint256',
+      },
     ],
-    "name": "rentPrice",
-    "outputs": [
+    name: 'rentPrice',
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
     ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
   },
   {
-    "constant": false,
-    "inputs": [
+    constant: false,
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "_minCommitmentAge",
-        "type": "uint256"
+        internalType: 'uint256',
+        name: '_minCommitmentAge',
+        type: 'uint256',
       },
       {
-        "internalType": "uint256",
-        "name": "_maxCommitmentAge",
-        "type": "uint256"
-      }
+        internalType: 'uint256',
+        name: '_maxCommitmentAge',
+        type: 'uint256',
+      },
     ],
-    "name": "setCommitmentAges",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: 'setCommitmentAges',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
-    "constant": false,
-    "inputs": [
+    constant: false,
+    inputs: [
       {
-        "internalType": "contract PriceOracle",
-        "name": "_prices",
-        "type": "address"
-      }
+        internalType: 'contract PriceOracle',
+        name: '_prices',
+        type: 'address',
+      },
     ],
-    "name": "setPriceOracle",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: 'setPriceOracle',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
 ] as const
 

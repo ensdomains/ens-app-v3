@@ -59,7 +59,7 @@ const localhostWithEnsAndAdditionalTestContracts = {
       address: deploymentAddresses.LegacyPublicResolver as Address,
     },
     legacyRegistrarController: {
-      address: deploymentAddresses.LegacyETHRegistrarController as Address
+      address: deploymentAddresses.LegacyETHRegistrarController as Address,
     },
     publicResolver: {
       address: deploymentAddresses.PublicResolver as Address,

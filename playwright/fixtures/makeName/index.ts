@@ -1,12 +1,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Accounts } from '../accounts.js'
-import {
-  testClient,
-  waitForTransaction,
-} from '../contracts/utils/addTestContracts'
+import { testClient, waitForTransaction } from '../contracts/utils/addTestContracts'
 import { Subgraph } from '../subgraph.js'
 import { Time } from '../time.js'
-import { makeLegacyNameGenerator, isLegacyName, LegacyName as LegacyName } from './generators/legacyNameGenerator.js'
+import {
+  isLegacyName,
+  LegacyName,
+  makeLegacyNameGenerator,
+} from './generators/legacyNameGenerator.js'
 import {
   LegacyName as LegacyNameWithConfig,
   makeLegacyWithConfigNameGenerator,
@@ -48,8 +49,8 @@ export function createMakeNames({ accounts, time, subgraph }: Dependencies) {
 
     // Create generators
     const wrappedNameGenerator = makeWrappedNameGenerator({ accounts })
-    const legacyNameGenerator = makeLegacyWithConfigNameGenerator({  accounts })
-    const legacyRegisterNameGenerator = makeLegacyNameGenerator({  accounts })
+    const legacyNameGenerator = makeLegacyWithConfigNameGenerator({ accounts })
+    const legacyRegisterNameGenerator = makeLegacyNameGenerator({ accounts })
 
     // Set automine to false put all transactions on the same block
     await testClient.setAutomine(false)
@@ -91,20 +92,22 @@ export function createMakeNames({ accounts, time, subgraph }: Dependencies) {
     await testClient.setAutomine(true)
 
     // Finish setting up names
-    await Promise.all(adjustedNames.map((name) => {
-      if (isWrappendName(name)) {
-        return wrappedNameGenerator.configure(name)
-      } else if (isLegacyName(name)) {
-        return legacyRegisterNameGenerator.configure(name)
-      } else {
-        return legacyNameGenerator.configure(name)
-      }
-    }))
+    await Promise.all(
+      adjustedNames.map((name) => {
+        if (isWrappendName(name)) {
+          return wrappedNameGenerator.configure(name)
+        } else if (isLegacyName(name)) {
+          return legacyRegisterNameGenerator.configure(name)
+        } else {
+          return legacyNameGenerator.configure(name)
+        }
+      }),
+    )
 
     if (offset > 0) {
       console.warn('You are increasing the block timestamp. Do not run this test in parallel mode.')
-      await testClient.increaseTime({ seconds: offset})
-      await testClient.mine({ blocks: 1})
+      await testClient.increaseTime({ seconds: offset })
+      await testClient.mine({ blocks: 1 })
     }
 
     if (_syncSubgraph) await subgraph.sync()

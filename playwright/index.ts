@@ -2,8 +2,7 @@
 import { test as base } from '@playwright/test'
 import { anvil, holesky } from 'viem/chains'
 
-import type { Web3ProviderBackend } from '@ensdomains/headless-web3-provider'
-import { injectHeadlessWeb3Provider } from '@ensdomains/headless-web3-provider'
+import { injectHeadlessWeb3Provider, type Web3ProviderBackend } from '@ensdomains/headless-web3-provider'
 
 import { Accounts, createAccounts } from './fixtures/accounts'
 import { Login } from './fixtures/login'
@@ -51,7 +50,7 @@ export const test = base.extend<Fixtures>({
   makePageObject: async ({ page, wallet }, use) => {
     await use(createPageObjectMaker({ page, wallet }))
   },
-  subgraph: async ({}, use) => {
+  subgraph: async (_, use) => {
     const subgraph = createSubgraph()
     await use(subgraph)
   },

@@ -36,7 +36,7 @@ type Dependencies = {
 const DEFAULT_RESOLVER = testClient.chain.contracts.ensPublicResolver.address
 
 export const generateWrappedSubname =
-  ({  accounts }: Dependencies) =>
+  ({ accounts }: Dependencies) =>
   async ({
     name,
     nameOwner,
@@ -70,7 +70,7 @@ export const generateWrappedSubname =
 
     // Make records
     if (records) {
-      await generateRecords({ accounts})({
+      await generateRecords({ accounts })({
         name: `${label}.${name}`,
         owner,
         resolver,

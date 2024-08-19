@@ -14,10 +14,10 @@ import {
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
-import { generateLegacySubname, LegacySubname } from './generateLegacySubname.js'
-import { generateRecords } from './generateRecords.js'
 import { legacyEthRegistrarControllerAbi } from '../constants/abis.js'
 import { getLegacyRentPrice } from '../utils/getLegacyRentPrice.js'
+import { generateLegacySubname, LegacySubname } from './generateLegacySubname.js'
+import { generateRecords } from './generateRecords.js'
 
 const LEGACY_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address as Address
 const PUBLIC_RESOLVER = testClient.chain.contracts.publicResolver.address as Address
@@ -53,15 +53,13 @@ const nameWithDefaults = (name: LegacyName) => ({
   addr: name.addr ?? name.owner ?? 'user',
 })
 
-export const makeLegacyWithConfigNameGenerator = ({
-  accounts,
-}: Dependencies) => ({
+export const makeLegacyWithConfigNameGenerator = ({ accounts }: Dependencies) => ({
   commit: async (nameConfig: LegacyName) => {
     const { label, addr, owner, resolver, secret } = nameWithDefaults(nameConfig)
     const name = `${label}.eth`
 
     console.log('making commitment:', name)
-    
+
     const ownerAddress = accounts.getAddress(owner)
     const addrAddress = accounts.getAddress(addr)
 
@@ -106,7 +104,7 @@ export const makeLegacyWithConfigNameGenerator = ({
     const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 
     const price = await getLegacyRentPrice({ label, duration })
-    
+
     const prepared = await walletClient.prepareTransactionRequest({
       to: walletClient.chain.contracts.legacyRegistrarController.address,
       data: encodeFunctionData({
@@ -122,38 +120,48 @@ export const makeLegacyWithConfigNameGenerator = ({
     return walletClient.sendTransaction(prepared)
   },
   configure: async (nameConfig: LegacyName) => {
-    const { label, owner, resolver, manager, records, subnames = []} = nameWithDefaults(nameConfig)
+    const { label, owner, resolver, manager, records, subnames = [] } = nameWithDefaults(nameConfig)
     const name = `${label}.eth`
     const hasValidResolver = [LEGACY_RESOLVER, PUBLIC_RESOLVER].includes(resolver)
     const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 
-      // Create records
-      if (records) await generateRecords({ accounts })({ name: `${label}.eth`, owner, resolver, records })
+    // Create records
+    if (records)
+      await generateRecords({ accounts })({ name: `${label}.eth`, owner, resolver, records })
 
-      // Create subnames
-      await Promise.all(subnames.map((subname) => generateLegacySubname({ accounts })({...subname, name, nameOwner: owner, resolver: subname.resolver ?? _resolver})))
-     
-      // Set resolver if not valid
-      if (!hasValidResolver && resolver) {
-        console.log('setting resolver:', name, resolver)
-        const tx = await setResolver(walletClient, {
+    // Create subnames
+    await Promise.all(
+      subnames.map((subname) =>
+        generateLegacySubname({ accounts })({
+          ...subname,
           name,
-          contract: 'registry',
-          resolverAddress: resolver,
-          account: accounts.getAddress(owner) as `0x${string}`,
-        })
-        await waitForTransaction(tx)
-      }
-  
-      if (!!manager && manager !== owner) {
-        console.log('setting manager:', name, manager)
-        const tx = await transferName(walletClient, {
-          name,
-          newOwnerAddress: accounts.getAddress(manager) as `0x${string}`,
-          contract: 'registry',
-          account: accounts.getAccountForUser(owner),
-        })
-        await waitForTransaction(tx)
-      }
+          nameOwner: owner,
+          resolver: subname.resolver ?? _resolver,
+        }),
+      ),
+    )
+
+    // Set resolver if not valid
+    if (!hasValidResolver && resolver) {
+      console.log('setting resolver:', name, resolver)
+      const tx = await setResolver(walletClient, {
+        name,
+        contract: 'registry',
+        resolverAddress: resolver,
+        account: accounts.getAddress(owner) as `0x${string}`,
+      })
+      await waitForTransaction(tx)
+    }
+
+    if (!!manager && manager !== owner) {
+      console.log('setting manager:', name, manager)
+      const tx = await transferName(walletClient, {
+        name,
+        newOwnerAddress: accounts.getAddress(manager) as `0x${string}`,
+        contract: 'registry',
+        account: accounts.getAccountForUser(owner),
+      })
+      await waitForTransaction(tx)
+    }
   },
 })

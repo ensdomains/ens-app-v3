@@ -5,6 +5,7 @@
 /* eslint-disable no-promise-executor-return */
 import { gql, GraphQLClient } from 'graphql-request'
 import { getBlockNumber } from 'viem/actions'
+
 import { publicClient } from './contracts/utils/addTestContracts'
 
 export type Subgraph = ReturnType<typeof createSubgraph>
@@ -34,7 +35,6 @@ export const waitForSubgraph = () => async () => {
     console.log(`subgraph: ${res._meta.block.number} -> ${blockNumber} ${!wait ? '[IN SYNC]' : ''}`)
   } while (wait && count < 10)
 }
-
 
 export const createSubgraph = () => ({
   sync: waitForSubgraph(),

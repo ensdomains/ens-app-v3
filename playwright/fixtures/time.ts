@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Page } from '@playwright/test'
-import { TestClient } from 'viem'
-import { getBlock } from 'viem/actions'
+
 import { publicClient } from './contracts/utils/addTestContracts'
 
 export type Time = ReturnType<typeof createTime>

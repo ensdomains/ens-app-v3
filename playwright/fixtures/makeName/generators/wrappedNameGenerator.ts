@@ -9,7 +9,7 @@ import {
   RecordOptions,
   RegistrationParameters,
 } from '@ensdomains/ensjs/utils'
-import { commitName, registerName, setResolver, setFuses } from '@ensdomains/ensjs/wallet'
+import { commitName, registerName, setFuses, setResolver } from '@ensdomains/ensjs/wallet'
 
 import { Accounts, createAccounts, User } from '../../accounts'
 import {
@@ -17,9 +17,9 @@ import {
   waitForTransaction,
   walletClient,
 } from '../../contracts/utils/addTestContracts'
+import { Name } from '../index'
 import { generateRecords } from './generateRecords'
 import { generateWrappedSubname, WrappedSubname } from './generateWrappedSubname'
-import { Name } from '../index'
 
 const DEFAULT_RESOLVER = testClient.chain.contracts.ensPublicResolver.address
 
@@ -52,14 +52,18 @@ const nameWithDefaults = (name: WrappedName) => ({
   owner: name.owner ?? 'user',
 })
 
-const getParentFuses = (fuses?: EncodeChildFusesInputObject): EncodeChildFusesInputObject | undefined => {
+const getParentFuses = (
+  fuses?: EncodeChildFusesInputObject,
+): EncodeChildFusesInputObject | undefined => {
   if (!fuses) return undefined
   return {
     named: fuses.named?.filter((fuse) => ['CANNOT_UNWRAP'].includes(fuse)) ?? [],
   }
 }
 
-const getChildFuses = (fuses?: EncodeChildFusesInputObject): EncodeChildFusesInputObject | undefined => {
+const getChildFuses = (
+  fuses?: EncodeChildFusesInputObject,
+): EncodeChildFusesInputObject | undefined => {
   if (!fuses) return undefined
   return {
     named: fuses.named?.filter((fuse) => !['CANNOT_UNWRAP'].includes(fuse)) ?? [],
@@ -147,7 +151,7 @@ export const makeWrappedNameGenerator = ({ accounts }: Dependencies) => ({
     const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 
     if (records) {
-      await generateRecords({ accounts})({
+      await generateRecords({ accounts })({
         name,
         owner,
         resolver: _resolver as `0x${string}`,
@@ -155,12 +159,16 @@ export const makeWrappedNameGenerator = ({ accounts }: Dependencies) => ({
       })
     }
 
-    await Promise.all(subnames.map((subname) => generateWrappedSubname({ accounts })({
-      ...subname,
-      name: `${label}.eth`,
-      nameOwner: owner,
-      resolver: subname.resolver ?? _resolver
-    })))
+    await Promise.all(
+      subnames.map((subname) =>
+        generateWrappedSubname({ accounts })({
+          ...subname,
+          name: `${label}.eth`,
+          nameOwner: owner,
+          resolver: subname.resolver ?? _resolver,
+        }),
+      ),
+    )
 
     if (!hasValidResolver && resolver) {
       console.log('setting resolver: ', name, resolver)

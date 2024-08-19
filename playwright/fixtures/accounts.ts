@@ -1,8 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import dotenv from 'dotenv'
-import { Account, Address, bytesToHex, Hash, TestClient } from 'viem'
-import { mnemonicToAccount, nonceManager } from 'viem/accounts';
-import { privateKeyToAccount } from 'viem/accounts'
+import { Account, Address, bytesToHex, Hash } from 'viem'
+import { mnemonicToAccount, nonceManager, privateKeyToAccount } from 'viem/accounts'
 
 dotenv.config()
 
@@ -25,17 +24,20 @@ export const createAccounts = (stateful = false) => {
 
   const users: User[] = ['user', 'user2', 'user3']
 
-  const { accounts, privateKeys} = users.reduce<{ accounts: Account[], privateKeys: Hash[]}>((acc, _, index) => {
-    const { getHdKey } = mnemonicToAccount(mnemonic, { addressIndex: index })
-    const privateKey = bytesToHex(getHdKey().privateKey!)
-    const account = privateKeyToAccount(privateKey, { nonceManager }) 
-    return {
-      accounts: [...acc.accounts, account],
-      privateKeys: [...acc.privateKeys, privateKey]
-    }
-  }, {accounts: [], privateKeys: []})
-  
- return {
+  const { accounts, privateKeys } = users.reduce<{ accounts: Account[]; privateKeys: Hash[] }>(
+    (acc, _, index) => {
+      const { getHdKey } = mnemonicToAccount(mnemonic, { addressIndex: index })
+      const privateKey = bytesToHex(getHdKey().privateKey!)
+      const account = privateKeyToAccount(privateKey, { nonceManager })
+      return {
+        accounts: [...acc.accounts, account],
+        privateKeys: [...acc.privateKeys, privateKey],
+      }
+    },
+    { accounts: [], privateKeys: [] },
+  )
+
+  return {
     getAccountForUser: (user: User) => {
       const index = users.indexOf(user)
       if (index < 0) throw new Error(`User not found: ${user}`)
@@ -44,7 +46,7 @@ export const createAccounts = (stateful = false) => {
     getAllPrivateKeys: () => privateKeys,
     getAddress: (user: User, length?: number): Address | string => {
       const index = users.indexOf(user)
-      if ( index < 0) throw new Error(`User not found: ${user}`)
+      if (index < 0) throw new Error(`User not found: ${user}`)
       const address = accounts[index].address
       if (!address) throw new Error(`Address not found: ${user}`)
       if (length) return shortenAddress(address, length) as string
@@ -54,6 +56,6 @@ export const createAccounts = (stateful = false) => {
       const index = users.indexOf(user)
       if (index < 0) throw new Error(`User not found: ${user}`)
       return privateKeys[index]
-    }
+    },
   }
 }
