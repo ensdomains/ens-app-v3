@@ -41,14 +41,6 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
   return (
     <MoreContainer>
       {ownerData && <Token isWrapped={isWrapped} name={name} />}
-      <Resolver
-        name={name}
-        canEdit={abilities.canEdit}
-        canEditResolver={abilities.canEditResolver}
-        isCachedData={isCachedData}
-        resolverAddress={profile?.resolverAddress}
-        canEditResolverError={abilities.canEditResolverError}
-      />
       {(isConnected || isWrapped) && !isOffchainImport && (
         <NameWrapper
           {...{
@@ -62,6 +54,14 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
           }}
         />
       )}
+      <Resolver
+        name={name}
+        canEdit={abilities.canEdit}
+        canEditResolver={abilities.canEditResolver}
+        isCachedData={isCachedData}
+        resolverAddress={profile?.resolverAddress}
+        canEditResolverError={abilities.canEditResolverError}
+      />
     </MoreContainer>
   )
 }
