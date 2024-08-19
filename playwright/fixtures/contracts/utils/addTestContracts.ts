@@ -23,7 +23,7 @@ import { Register } from '@app/local-contracts'
 import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
 
 config({
-  path: resolve(__dirname, '../../.env.local'),
+  path: resolve(__dirname, '../../../../.env.local'),
   override: true,
 })
 

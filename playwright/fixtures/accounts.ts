@@ -1,9 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { ethers } from 'ethers'
-import { Address, Hash } from 'viem'
-
 import dotenv from 'dotenv'
-import { privateKeyToAccount, nonceManager } from 'viem/accounts'
+import { Account, Address, bytesToHex, Hash, TestClient } from 'viem'
+import { mnemonicToAccount, nonceManager } from 'viem/accounts';
+import { privateKeyToAccount } from 'viem/accounts'
 
 dotenv.config()
 
@@ -17,47 +16,43 @@ const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice 
   return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`
 }
 
-
 export type Accounts = ReturnType<typeof createAccounts>
 
 export type User = 'user' | 'user2' | 'user3'
 
 export const createAccounts = (stateful = false) => {
   const mnemonic = stateful ? process.env.SECRET_WORDS || DEFAULT_MNEMONIC : DEFAULT_MNEMONIC
-  const hdNode = ethers.utils.HDNode.fromMnemonic(mnemonic)
 
-  const usersMap = {
-    user: 0,
-    user2: 1,
-    user3: 2,
-  }
+  const users: User[] = ['user', 'user2', 'user3']
 
-  const privateKeys = Object.values(usersMap).map((index: number) => hdNode.derivePath(`m/44'/60'/0'/0/${index}`).privateKey)
-
-  const accounts = Object.values(usersMap).map((index: number) => {
-    return privateKeyToAccount(privateKeys[index] as Hash, { 
-      nonceManager
-    })
-  })
-
-  return {
+  const { accounts, privateKeys} = users.reduce<{ accounts: Account[], privateKeys: Hash[]}>((acc, _, index) => {
+    const { getHdKey } = mnemonicToAccount(mnemonic, { addressIndex: index })
+    const privateKey = bytesToHex(getHdKey().privateKey!)
+    const account = privateKeyToAccount(privateKey, { nonceManager }) 
+    return {
+      accounts: [...acc.accounts, account],
+      privateKeys: [...acc.privateKeys, privateKey]
+    }
+  }, {accounts: [], privateKeys: []})
+  
+ return {
     getAccountForUser: (user: User) => {
-      const index = usersMap[user]
-      if (typeof index === 'undefined') throw new Error(`User not found: ${user}`)
+      const index = users.indexOf(user)
+      if (index < 0) throw new Error(`User not found: ${user}`)
       return accounts[index]
     },
     getAllPrivateKeys: () => privateKeys,
     getAddress: (user: User, length?: number): Address | string => {
-      const index = usersMap[user]
-      if (typeof index === 'undefined') throw new Error(`User not found: ${user}`)
+      const index = users.indexOf(user)
+      if ( index < 0) throw new Error(`User not found: ${user}`)
       const address = accounts[index].address
       if (!address) throw new Error(`Address not found: ${user}`)
       if (length) return shortenAddress(address, length) as string
       return address as Address
     },
     getPrivateKey: (user: User) => {
-      const index = usersMap[user]
-      if (typeof index === 'undefined') throw new Error(`User not found: ${user}`)
+      const index = users.indexOf(user)
+      if (index < 0) throw new Error(`User not found: ${user}`)
       return privateKeys[index]
     }
   }

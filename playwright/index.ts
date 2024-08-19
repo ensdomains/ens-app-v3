@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { test as base } from '@playwright/test'
-import { anvil } from 'viem/chains'
+import { anvil, holesky } from 'viem/chains'
 
 import type { Web3ProviderBackend } from '@ensdomains/headless-web3-provider'
 import { injectHeadlessWeb3Provider } from '@ensdomains/headless-web3-provider'
@@ -29,12 +29,14 @@ export const test = base.extend<Fixtures>({
     const stateful = testInfo.project?.name === 'stateful'
     use(createAccounts(stateful))
   },
-  wallet: async ({ page, accounts }, use) => {
+  wallet: async ({ page, accounts }, use, testInfo) => {
+    const stateful = testInfo.project?.name === 'stateful'
+    const chains = stateful ? [holesky] : [{ ...anvil, id: 1337 }]
     const privateKeys = accounts.getAllPrivateKeys()
     const wallet = await injectHeadlessWeb3Provider({
       page,
       privateKeys,
-      chains: [{ ...anvil, id: 1337 }],
+      chains,
     })
     await use(wallet)
   },

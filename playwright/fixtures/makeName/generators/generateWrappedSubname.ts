@@ -1,13 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { TestClient } from 'viem'
-import { getBlock } from 'viem/actions'
 
 import { EncodeFusesInputObject, RecordOptions } from '@ensdomains/ensjs/utils'
 import { createSubname, unwrapName } from '@ensdomains/ensjs/wallet'
 
-import { Accounts, createAccounts, User } from '../../accounts'
+import { Accounts, User } from '../../accounts'
 import {
   publicClient,
   testClient,
