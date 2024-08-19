@@ -139,10 +139,9 @@ export const NameWrapper = ({
               <UnwrapButton status={status} {...{ name, ownerData }} />
             )
           ) : (
-            <WrapButton {...{ profile, ownerData, canBeWrapped, name }} />
+            <WrapButton {...{ profile, ownerData, canBeWrapped, name, isManager, isRegistrant }} />
           )
         ) : null}
-        <WrapButton {...{ profile, ownerData, canBeWrapped, name }} />
       </HeaderContainer>
       {isOwned && canBeWrapped ? (
         <>{t('tabs.more.token.unwrappedText')}</>
