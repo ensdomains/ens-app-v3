@@ -59,7 +59,6 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
             profile,
             ownerData,
             address,
-            isOwned: address === ownerData?.owner,
           }}
         />
       )}

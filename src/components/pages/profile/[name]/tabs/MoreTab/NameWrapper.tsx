@@ -24,7 +24,6 @@ type Props = {
   wrapperData?: GetWrapperDataReturnType
   profile: Profile | undefined
   address?: Address
-  isOwned: boolean
 }
 
 const Container = styled(TabWrapper)(
@@ -99,7 +98,6 @@ export const NameWrapper = ({
   wrapperData,
   canBeWrapped: _canBeWrapped,
   profile,
-  isOwned,
   address,
 }: Props) => {
   const { t } = useTranslation('profile')
@@ -108,23 +106,20 @@ export const NameWrapper = ({
 
   const cannotUnwrap = !!wrapperData?.fuses.child.CANNOT_UNWRAP
 
-  const isButtonDisplayed = isOwned && address
-
   const status = getFuseStateFromWrapperData(wrapperData)
 
   const isManager = ownerData?.owner === address
   const isRegistrant = ownerData?.registrant === address
 
-  const canBeWrapped =
-    _canBeWrapped &&
-    !!address &&
-    (ownerData?.ownershipLevel === 'registrar' ? isRegistrant : isManager)
+  const isOwned = ownerData?.ownershipLevel === 'registrar' ? isRegistrant : isManager
+  const isButtonDisplayed = isOwned && address
+
+  const canBeWrapped = _canBeWrapped && !!address && isOwned
 
   return (
     <Container>
       <HeaderContainer>
         <Typography fontVariant="headingFour">{t('tabs.more.token.nameWrapper')}</Typography>
-
         {isButtonDisplayed ? (
           isWrapped ? (
             cannotUnwrap ? (
