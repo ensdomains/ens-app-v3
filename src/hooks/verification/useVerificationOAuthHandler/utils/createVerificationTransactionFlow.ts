@@ -21,6 +21,8 @@ export const createVerificationTransactionFlow = ({
   resolverAddress,
   createTransactionFlow,
 }: Props) => {
+  if (!name || !createTransactionFlow || !verifier || !verifiedPresentationUri || !resolverAddress)
+    return
   createTransactionFlow?.(`update-verification-record-${name}`, {
     transactions: [
       createTransactionItem('updateVerificationRecord', {

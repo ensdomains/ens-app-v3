@@ -168,6 +168,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         verificationRecords={getVerificationRecordItemProps({
           showErrors: userHasOwnership,
           verifiedRecordsData: verifiedData,
+          name: normalisedName,
         })}
         owners={owners}
         name={normalisedName}

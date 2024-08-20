@@ -1,3 +1,4 @@
+import { createDentityPublicProfileUrl } from '@app/transaction-flow/input/VerifyProfile/utils/createDentityUrl'
 import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
 
 export const getVerifierData = (key: VerificationProtocol, value: string) => {
@@ -9,7 +10,7 @@ export const getVerifierData = (key: VerificationProtocol, value: string) => {
         label: 'Dentity',
         value,
         type: 'link',
-        urlFormatter: `https://dentity.com/${value}`, // TODO: GET THE CORRECT URL
+        urlFormatter: createDentityPublicProfileUrl({ name: value }), // TODO: GET THE CORRECT URL
       }
     default:
       return null

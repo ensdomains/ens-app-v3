@@ -6,15 +6,11 @@ const mockCreateTransaction = vi.fn()
 const mockRouter = { push: vi.fn() }
 
 const defaultProps = {
+  name: 'name.eth',
   verifier: 'dentity' as const,
   verifiedPresentationUri: 'https://verifiedPresentationUri',
-  address: '0xaddress',
-  token: 'token',
-  name: 'name.eth',
   resolverAddress: '0xresolver',
-  userAddress: '0xaddress',
   createTransactionFlow: mockCreateTransaction,
-  router: mockRouter
 } as const
 
 const makePropsWithoutProp = (key: keyof typeof defaultProps): any => {
@@ -29,22 +25,21 @@ describe('createVerificationTransactionFlow', () => {
 
   it('should return a transaction item', () => {
     createVerificationTransactionFlow(defaultProps)
-    expect(mockRouter.push).toBeCalledWith("/name.eth")
     expect(mockCreateTransaction).toBeCalledWith("update-verification-record-name.eth", {
      "transactions":  [
        {
          "data":{
            "name": "name.eth",
-           "resolverAddress": "0xresolver",
-           "token": "token",
            "verifier": "dentity",
+           "resolverAddress": "0xresolver",
+           "verifiedPresentationUri": "https://verifiedPresentationUri",
          },
          "name": "updateVerificationRecord",
        },
      ]})
   })
 
-  it.each(['verifier', 'address', 'name', 'createTransactionFlow', 'resolverAddress', 'userAddress', 'token'] as (keyof typeof defaultProps)[])('should return undefined if a parameter %s is missing', (key) => {
+  it.each(['verifier', 'name', 'createTransactionFlow', 'resolverAddress', 'verifiedPresentationUri'] as (keyof typeof defaultProps)[])('should return undefined if a parameter %s is missing', (key) => {
     expect(createVerificationTransactionFlow(makePropsWithoutProp(key))).toBeUndefined()
     expect(mockCreateTransaction).not.toBeCalled()
     expect(mockRouter.push).not.toBeCalled()

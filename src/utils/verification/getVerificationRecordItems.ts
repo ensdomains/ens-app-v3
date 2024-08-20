@@ -10,9 +10,11 @@ type GetVerificationRecordItemsReturnTyep = VerificationRecordItem[]
 export const getVerificationRecordItemProps = ({
   verifiedRecordsData,
   showErrors,
+  name,
 }: {
   verifiedRecordsData?: UseVerifiedRecordsReturnType
   showErrors: boolean
+  name: string
 }): GetVerificationRecordItemsReturnTyep => {
   const verificationItemsMap =
     verifiedRecordsData?.reduce<{ [key: string]: VerificationRecordItem }>(
@@ -23,7 +25,7 @@ export const getVerificationRecordItemProps = ({
           isVerified: false,
           key: issuer,
           iconKey: issuer,
-          value: issuer,
+          value: name,
         }
 
         if (key !== 'personhood') return { ...acc, [issuer]: recordItem }

@@ -13,11 +13,18 @@ export const parseVerifiableCredential = async (
 ): Promise<VerifiedRecord | null> => {
   const verified = await tryVerifyVerifiableCredentials(verifiableCredential)
   const baseResult = match(verifiableCredential)
-    .with({ type: P.when((type) => type?.includes('VerifiedTwitterAccount')) }, (vc) => ({
-      issuer: 'dentity',
-      key: 'com.twitter',
-      value: normaliseTwitterRecordValue(vc?.credentialSubject?.username),
-    }))
+    .with(
+      {
+        type: P.when(
+          (type) => type?.includes('VerifiedTwitterAccount') || type?.includes('VerifiedXAccount'),
+        ),
+      },
+      (vc) => ({
+        issuer: 'dentity',
+        key: 'com.twitter',
+        value: normaliseTwitterRecordValue(vc?.credentialSubject?.username),
+      }),
+    )
     .with({ type: P.when((type) => type?.includes('VerifiedDiscordAccount')) }, (vc) => ({
       issuer: 'dentity',
       key: 'com.discord',
