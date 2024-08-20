@@ -11,7 +11,7 @@ import {
 } from '@ensdomains/ensjs/utils'
 import { commitName, registerName, setFuses, setResolver } from '@ensdomains/ensjs/wallet'
 
-import { Accounts, createAccounts, User } from '../../accounts'
+import { Accounts, User } from '../../accounts'
 import {
   testClient,
   waitForTransaction,
