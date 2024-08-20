@@ -107,6 +107,11 @@ test.describe.serial('normal registration', () => {
     // should show countdown
     await expect(page.getByTestId('countdown-circle')).toBeVisible()
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+    const waitButton = page.getByTestId('wait-button')
+    await expect(waitButton).toBeVisible()
+    await expect(waitButton).toBeDisabled()
+    const startTimerButton = page.getByTestId('start-timer-button')
+    await expect(startTimerButton).not.toBeVisible()
     await provider.increaseTime(60)
     await expect(page.getByTestId('finish-button')).toBeEnabled()
 

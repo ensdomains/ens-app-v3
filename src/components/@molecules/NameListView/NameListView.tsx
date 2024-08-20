@@ -74,13 +74,6 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
 
   const [mode, setMode] = useState<NameTableMode>('view')
   const [selectedNames, setSelectedNames] = useState<Name[]>([])
-  const handleClickName = (name: Name) => () => {
-    if (selectedNames.includes(name)) {
-      setSelectedNames(selectedNames.filter((n) => n !== name))
-    } else {
-      setSelectedNames([...selectedNames, name])
-    }
-  }
 
   const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
   const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
@@ -156,13 +149,27 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])
 
+  const isNameExtendable = (name: Name) => name.parentName === 'eth'
+
   const isNameDisabled = useCallback(
     (name: Name) => {
       if (mode !== 'select') return false
-      return name.parentName !== 'eth'
+      return !isNameExtendable(name)
     },
     [mode],
   )
+
+  const handleClickName = (name: Name) => () => {
+    if (!isNameExtendable(name)) return
+
+    const isExists = selectedNames.find((n) => n.id === name.id)
+
+    const _selectedNames = isExists
+      ? selectedNames.filter((n) => n.id !== name.id)
+      : [...selectedNames, name]
+    setSelectedNames(_selectedNames)
+    setMode(_selectedNames.length ? 'select' : 'view')
+  }
 
   const isLoading = isNamesLoading || !address
 
@@ -175,9 +182,9 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
         sortDirection={sortDirection}
         searchQuery={searchInput}
         selectedCount={selectedNames.length}
-        onModeChange={(m) => {
-          setMode(m)
-          setSelectedNames([])
+        onModeChange={(value) => {
+          setMode(value)
+          setSelectedNames(value === 'view' ? [] : [...names].filter(isNameExtendable))
         }}
         onSortDirectionChange={setSortDirection}
         onSortTypeChange={setSortType}

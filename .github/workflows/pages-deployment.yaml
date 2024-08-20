@@ -50,6 +50,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Comparison of locales for missing keys
+        run: pnpm compare-locales
+
       - name: Build and Export
         if: ${{ github.ref == 'refs/heads/main' }}
         run: pnpm build && pnpm export
