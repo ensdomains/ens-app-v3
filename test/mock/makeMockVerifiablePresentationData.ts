@@ -59,7 +59,7 @@ export const makeMockVerifiablePresentationData = (type: MakeMockVerifiablePrese
             },
           ],
           id: 'urn:vc',
-          type: ['VerifiedIdentity', 'VerifiableCredential'],
+          type: ['VerifiedPersonhood', 'VerifiableCredential'],
           credentialSchema: {
             id: 'https://schema.trinsic.cloud/dentity-staging/verified-identity',
             type: 'JsonSchemaValidator2018',
