@@ -20,7 +20,7 @@ export const generateRecords =
   async ({ name, owner, resolver, records }: Input) => {
     if (!resolver || !records || !owner) return
 
-    console.log('generating records for:', name, records)
+    console.log('generating records for:', name)
 
     const { texts = [], coins = [], contentHash, abi } = records
 

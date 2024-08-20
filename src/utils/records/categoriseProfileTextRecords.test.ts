@@ -16,7 +16,6 @@ describe('categoriseProfileTextRecords', () => {
         verifiers: ['dentity'],
       }),
     })
-    console.log(result)
     expect(result).toEqual({
       general: [ { key: 'description', value: 'description' } ],
       accounts: [
@@ -55,7 +54,6 @@ describe('categoriseProfileTextRecords', () => {
         verifiers: ['dentity'],
       }),
     })
-    console.log(result)
     expect(result).toEqual({
       general: [ { key: 'description', value: 'description' } ],
       accounts: [

@@ -43,14 +43,11 @@ export const getVerificationOAuth =
   }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseVerificationOAuthReturnType> => {
     // Get federated token from oidc worker
     const url = getAPIEndpointForVerifier(verifier)
-    console.log('url', url)
-    // if (!url || !code) throw new Error('Invalid verifier or code')
     const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify({ code }),
     })
     const json = await response.json()
-    console.log('json', json)
 
     const { name } = json as UseVerificationOAuthReturnType
 

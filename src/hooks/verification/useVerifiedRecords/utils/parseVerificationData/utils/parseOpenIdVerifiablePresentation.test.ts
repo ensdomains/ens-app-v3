@@ -1,7 +1,6 @@
 import { vi, describe, it, expect } from 'vitest';
 import { isOpenIdVerifiablePresentation, parseOpenIdVerifiablePresentation } from './parseOpenIdVerifiablePresentation';
 import { makeMockVerifiablePresentationData } from '@root/test/mock/makeMockVerifiablePresentationData';
-import { parseVerifiableCredential } from '../../parseVerifiedCredential';
 import { match } from 'ts-pattern';
 
 vi.mock('../../parseVerifiedCredential', () => ({
@@ -40,6 +39,5 @@ describe('parseOpenIdVerifiablePresentation', () => {
   it('should return an array of verified credentials an exclude any null values', async () => {
     const result = await parseOpenIdVerifiablePresentation({ vp_token: ['twitter', 'error', 'other'] as any})
     expect(result).toEqual([{ issuer: 'dentity', key: 'com.twitter', value: 'name', verified: true}])
-    console.log(result)
   })
 })

@@ -7,6 +7,7 @@ import { useProfile } from '@app/hooks/useProfile'
 import { useVerifiedRecords } from '@app/hooks/verification/useVerifiedRecords/useVerifiedRecords'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
+import { SearchViewLoadingView } from '../SendName/views/SearchView/views/SearchViewLoadingView'
 import { DentityView } from './views/DentityView'
 import { VerificationOptionsList } from './views/VerificationOptionsList'
 
@@ -39,7 +40,7 @@ const VerifyProfile = ({ data: { name }, dispatch, onDismiss }: Props) => {
   return (
     <>
       {match({ protocol, name, address, resolverAddress: profile?.resolverAddress, isLoading })
-        .with({ isLoading: true }, () => <div>Loading</div>)
+        .with({ isLoading: true }, () => <SearchViewLoadingView />)
         .with(
           { protocol: 'dentity', name: P.not(P.nullish), resolverAddress: P.not(P.nullish) },
           ({ name: _name, address: _address, resolverAddress: _resolverAddress }) => (

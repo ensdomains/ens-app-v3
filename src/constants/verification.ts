@@ -3,11 +3,26 @@ import type { VerificationProtocol } from '@app/transaction-flow/input/VerifyPro
 /**
  * General Verification Constants
  */
+
+const VERIFICATION_ENV_CONFIGS = {
+  staging: {
+    authWorkerBaseUrl: 'https://auth-worker-staging.ens-cf.workers.dev/v1',
+  },
+  production: {
+    authWorkerBaseUrl: 'https://auth-worker.ens-cf.workers.dev/v1',
+  },
+} as const
+
+type VerificationEnv = keyof typeof VERIFICATION_ENV_CONFIGS
+
+const VERIFICATION_ENV: VerificationEnv = 'staging'
+
 export const VERIFICATION_RECORD_KEY = 'verifications'
 
 export const VERIFICATION_PROTOCOLS: VerificationProtocol[] = ['dentity']
 
-export const VERIFICATION_OAUTH_BASE_URL = 'https://auth-worker-staging.ens-cf.workers.dev/v1'
+export const VERIFICATION_OAUTH_BASE_URL =
+  VERIFICATION_ENV_CONFIGS[VERIFICATION_ENV].authWorkerBaseUrl
 
 /**
  * Dentity Constants
@@ -18,11 +33,19 @@ const DENTITY_ENV_CONFIGS = {
     iss: 'https://oidc.dev.dentity.com',
     clientId: 'afl0TofdrB4B1YrEcDwNA',
     endpoint: 'https://oidc.dev.dentity.com',
+    redirectUri: 'http://localhost:3000',
   },
   staging: {
     iss: 'https://oidc.staging.dentity.com',
     clientId: '-IG5wkHyetFAeDziNUkdu',
     endpoint: 'https://oidc.staging.dentity.com',
+    redirectUri: 'https://dentity-integration.ens-app-v3.pages.dev',
+  },
+  production: {
+    iss: 'https://oidc.dentity.com',
+    clientId: 'TWUfWhM_hs5osk9cR4adK',
+    endpoint: 'https://oidc.dentity.com',
+    redirectUri: 'https://ens.domains', // TODO: Update this
   },
 } as const
 
@@ -38,13 +61,4 @@ export const DENTITY_CLIENT_ID = DENTITY_ENV_CONFIGS[DENTITY_ENV].clientId
 
 export const DENTITY_ISS = DENTITY_ENV_CONFIGS[DENTITY_ENV].iss
 
-export const DENTITY_REDIRECT_URI = 'https://dentity-integration.ens-app-v3.pages.dev'
-
-// https://oidc.staging.dentity.com/oidc/auth?client_id=-IG5wkHyetFAeDziNUkdu&redirect_uri=https://ens.domains&response_type=code&scope=openid%20federated_token&page=ens&ens_name=davidchu.eth&eth_address=0x538E35B2888eD5bc58Cf2825D76cf6265aA4e31e
-// https://receive-sms-free.cc/Free-USA-Phone-Number/16194310833/
-
-// davidchu.eth
-// https://receive-sms-free.cc/Free-USA-Phone-Number/14245875980/
-
-// buzhidao.eth
-// https://receive-sms-free.cc/Free-USA-Phone-Number/12727860655/
+export const DENTITY_REDIRECT_URI = DENTITY_ENV_CONFIGS[DENTITY_ENV].redirectUri

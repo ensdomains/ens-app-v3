@@ -10,7 +10,7 @@ export const getVerifierData = (key: VerificationProtocol, value: string) => {
         label: 'Dentity',
         value,
         type: 'link',
-        urlFormatter: createDentityPublicProfileUrl({ name: value }), // TODO: GET THE CORRECT URL
+        urlFormatter: createDentityPublicProfileUrl({ name: value }),
       }
     default:
       return null

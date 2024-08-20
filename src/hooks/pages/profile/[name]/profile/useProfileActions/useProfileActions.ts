@@ -158,7 +158,6 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
 
     const isOwnerOrManager = address === ownerData?.owner || ownerData?.registrant === address
 
-    console.log('isOwnerOrManager', isOwnerOrManager, ownerData)
     if (isOwnerOrManager) {
       actions.push({
         label: t('tabs.profile.actions.verifyProfile.label'),

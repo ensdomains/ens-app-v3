@@ -116,8 +116,7 @@ export default function Page() {
           <SearchInput />
         </Stack>
       </Container>
-      {/* TODO: FIX THIS type issue */}
-      <VerificationErrorDialog {...(dialogProps as any)} />
+      {dialogProps && <VerificationErrorDialog {...dialogProps} />}
     </>
   )
 }

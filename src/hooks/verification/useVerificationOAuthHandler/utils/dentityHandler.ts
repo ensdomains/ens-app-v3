@@ -62,7 +62,7 @@ export const dentityVerificationHandler =
           router.push(`/${name}`)
 
           const vcUris = verificationRecord ? tryJsonParse(verificationRecord) : []
-          console.log('vcUris', vcUris, verifiedPresentationUri)
+
           if (Array.isArray(vcUris) && vcUris.includes(verifiedPresentationUri)) return undefined
 
           createVerificationTransactionFlow({
