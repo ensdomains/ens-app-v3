@@ -1,7 +1,7 @@
 import type { TFunction } from 'i18next'
 import { Address } from 'viem'
 
-import { setRecords } from '@ensdomains/ensjs/wallet'
+import { setTextRecord } from '@ensdomains/ensjs/wallet'
 
 import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
@@ -33,14 +33,16 @@ const displayItems = ({ name, verifier }: Data, t: TFunction): TransactionDispla
   ]
 }
 
+// TODO: Implement a function that identifies the url for the issuer and only removes that uri
+
 const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
   const { name, resolverAddress } = data
 
-  return setRecords.makeFunctionData(connectorClient, {
+  return setTextRecord.makeFunctionData(connectorClient, {
     name,
+    key: VERIFICATION_RECORD_KEY,
+    value: '',
     resolverAddress,
-    texts: [{ key: VERIFICATION_RECORD_KEY, value: '' }],
-    clearRecords: false,
   })
 }
 export default {

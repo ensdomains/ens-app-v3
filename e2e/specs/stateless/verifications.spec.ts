@@ -32,19 +32,16 @@ const makeMockVPToken = (
     ],
     credentialSubject: {
       credentialIssuer: 'Dentity',
-      name: 'name',
-      username: '@name',
+      ...(record === 'com.twitter' ? { username: '@name' } : {}),
+      ...(['com.twitter', 'com.github', 'com.discord', 'org.telegram'].includes(record)
+        ? { name: 'name' }
+        : {}),
     },
   }))
 }
 
 test.describe('Verified records', () => {
-  test('Should show badges if records match ', async ({
-    page,
-    accounts,
-    makePageObject,
-    makeName,
-  }) => {
+  test('Should show badges if records match ', async ({ page, makePageObject, makeName }) => {
     const name = await makeName({
       label: 'dentity',
       type: 'wrapped',
@@ -88,8 +85,6 @@ test.describe('Verified records', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          ens_name: name,
-          eth_address: accounts.getAddress('user2'),
           vp_token: makeMockVPToken([
             'com.twitter',
             'com.github',
@@ -286,23 +281,41 @@ test.describe('Verify profile', () => {
       type: 'legacy',
       owner: 'user2',
       manager: 'user',
+      records: {
+        texts: [
+          {
+            key: 'com.twitter',
+            value: '@name',
+          },
+          {
+            key: 'org.telegram',
+            value: 'name',
+          },
+          {
+            key: 'com.discord',
+            value: 'name',
+          },
+          {
+            key: 'com.github',
+            value: 'name',
+          },
+          {
+            key: VERIFICATION_RECORD_KEY,
+            value: JSON.stringify([
+              `${DENTITY_VPTOKEN_ENDPOINT}?name=name.eth&federated_token=federated_token`,
+            ]),
+          },
+          {
+            key: 'com.twitter',
+            value: '@name',
+          },
+        ],
+      },
     })
 
-    await setRecords(testClient, {
-      name,
-      texts: [
-        {
-          key: VERIFICATION_RECORD_KEY,
-          value: JSON.stringify([
-            `${DENTITY_VPTOKEN_ENDPOINT}?name=${name}&federated_token=federated_token`,
-          ]),
-        },
-      ],
-      resolverAddress: testClient.chain.contracts.legacyPublicResolver.address,
-      account: createAccounts().getAddress('user') as Hash,
-    })
     const verificationsModal = makePageObject('VerificationsModal')
     const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
 
     await page.route(`${DENTITY_VPTOKEN_ENDPOINT}*`, async (route) => {
       await route.fulfill({
@@ -325,6 +338,15 @@ test.describe('Verify profile', () => {
 
     await page.pause()
 
+    await expect(page.getByTestId('profile-section-verifications')).toBeVisible()
+
+    await profilePage.isRecordVerified('text', 'com.twitter')
+    await profilePage.isRecordVerified('text', 'org.telegram')
+    await profilePage.isRecordVerified('text', 'com.github')
+    await profilePage.isRecordVerified('text', 'com.discord')
+    await profilePage.isRecordVerified('verification', 'dentity')
+    await profilePage.isPersonhoodVerified()
+
     await expect(profilePage.verificationsButton).toBeVisible()
     await profilePage.verificationsButton.click()
 
@@ -335,7 +357,15 @@ test.describe('Verify profile', () => {
     await expect(verificationsModal.removeVerificationOption('Dentity')).toHaveCount(1)
     await verificationsModal.removeVerificationOption('Dentity').click()
 
-    await expect('is done').toEqual(false)
+    await transactionModal.autoComplete()
+
+    await profilePage.isRecordVerified('text', 'com.twitter', false)
+    await profilePage.isRecordVerified('text', 'org.telegram', false)
+    await profilePage.isRecordVerified('text', 'com.github', false)
+    await profilePage.isRecordVerified('text', 'com.discord', false)
+    await profilePage.isRecordVerified('verification', 'dentity', false)
+    await profilePage.isPersonhoodVerified(false)
+    await page.pause()
   })
 })
 
@@ -448,6 +478,8 @@ test.describe('OAuth flow', () => {
 
     await page.goto(`/?iss=${DENTITY_ISS}&code=dummyCode`)
     await login.connect()
+
+    await page.pause()
 
     await expect(page.getByText('Verification failed')).toBeVisible()
     await expect(

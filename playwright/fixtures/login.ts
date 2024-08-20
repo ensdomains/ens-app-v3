@@ -57,7 +57,6 @@ export class Login {
   async switchTo(user: User) {
     const pk = this.accounts.getPrivateKey(user)
     await this.wallet.changeAccounts([pk!])
-    await this.wallet.authorize(Web3RequestKind.RequestPermissions)
   }
 
   async reconnect() {

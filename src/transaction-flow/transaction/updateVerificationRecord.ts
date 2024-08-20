@@ -1,8 +1,7 @@
 import type { TFunction } from 'i18next'
 import { Address } from 'viem'
 
-import { getRecords, getTextRecord } from '@ensdomains/ensjs/public'
-import { setRecords } from '@ensdomains/ensjs/wallet'
+import { setTextRecord } from '@ensdomains/ensjs/wallet'
 
 import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
@@ -35,28 +34,16 @@ const displayItems = ({ name, verifier }: Data, t: TFunction): TransactionDispla
   ]
 }
 
+// TODO: Implement a function that identifies the url for the issuer and only updates that uri
+
 const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
   const { name, resolverAddress, verifiedPresentationUri } = data
 
-  // TODO: fix this
-  const currentRecords = await getTextRecord(connectorClient, {
+  return setTextRecord.makeFunctionData(connectorClient, {
     name,
     key: VERIFICATION_RECORD_KEY,
-  })
-
-  const records = await getRecords(connectorClient, {
-    name,
-    texts: [VERIFICATION_RECORD_KEY],
-    resolver: { address: resolverAddress, fallbackOnly: false },
-  })
-
-  console.log('currentRecord', currentRecords, records)
-  // TODO: Support multiple verifiers
-  return setRecords.makeFunctionData(connectorClient, {
-    name,
+    value: JSON.stringify([verifiedPresentationUri]),
     resolverAddress,
-    texts: [{ key: VERIFICATION_RECORD_KEY, value: JSON.stringify([verifiedPresentationUri]) }],
-    clearRecords: false,
   })
 }
 export default {
