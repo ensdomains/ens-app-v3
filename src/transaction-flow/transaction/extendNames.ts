@@ -4,44 +4,42 @@ import { getPrice } from '@ensdomains/ensjs/public'
 import { renewNames } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { makeDisplay } from '@app/utils/currency'
 
 import { calculateValueWithBuffer, formatDuration } from '../../utils/utils'
 
 type Data = {
   names: string[]
   duration: number
-  rentPrice: bigint
+  displayPrice?: string
 }
 
 const displayItems = (
-  { names, rentPrice, duration }: Data,
+  { names, duration, displayPrice }: Data,
   t: TFunction<'translation', undefined>,
-): TransactionDisplayItem[] => [
-  {
-    label: 'name',
-    value: names.length > 1 ? `${names.length} names` : names[0],
-    type: names.length > 1 ? undefined : 'name',
-  },
-  {
-    label: 'action',
-    value: t('transaction.extendNames.actionValue', { ns: 'transactionFlow' }),
-  },
-  {
-    label: 'duration',
-    value: formatDuration(duration, t),
-  },
-  {
-    label: 'cost',
-    value: t('transaction.extendNames.costValue', {
-      ns: 'transactionFlow',
-      value: makeDisplay({
-        value: calculateValueWithBuffer(rentPrice),
-        symbol: 'eth',
+): TransactionDisplayItem[] => {
+  return [
+    {
+      label: 'name',
+      value: names.length > 1 ? `${names.length} names` : names[0],
+      type: names.length > 1 ? undefined : 'name',
+    },
+    {
+      label: 'action',
+      value: t('transaction.extendNames.actionValue', { ns: 'transactionFlow' }),
+    },
+    {
+      label: 'duration',
+      value: formatDuration(duration, t),
+    },
+    {
+      label: 'cost',
+      value: t('transaction.extendNames.costValue', {
+        ns: 'transactionFlow',
+        value: displayPrice,
       }),
-    }),
-  },
-]
+    },
+  ]
+}
 
 const transaction = async ({
   client,
