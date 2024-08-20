@@ -1,27 +1,27 @@
 import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
+import { makeMockUseAbilitiesData } from '@root/test/mock/makeMockUseAbilitiesData'
+import { makeMockUseOwnerData } from '@root/test/mock/makeMockUseOwnerData'
 import { labelhash } from 'viem'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
+import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
+import { useOwner } from '@app/hooks/ensjs/public/useOwner'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
+import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
+import { useProfile } from '@app/hooks/useProfile'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { DeepPartial } from '@app/types'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 import { createDateAndValue } from '@app/utils/utils'
 
 import { transactions } from '../../../../../../transaction-flow/transaction/index'
-import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
-import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
-import { useOwner } from '@app/hooks/ensjs/public/useOwner'
-import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
-import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
-import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useProfile } from '@app/hooks/useProfile'
 import { useProfileActions } from './useProfileActions'
-import { makeMockUseAbilitiesData } from '@root/test/mock/makeMockUseAbilitiesData'
-import { makeMockUseOwnerData } from '@root/test/mock/makeMockUseOwnerData'
 
 const NOW_TIMESTAMP = 1588994800000
 vi.spyOn(Date, 'now').mockImplementation(() => NOW_TIMESTAMP)
@@ -541,185 +541,230 @@ describe('useProfileActions', () => {
     })
   })
 
-   describe('edit profile button', () => {
-
+  describe('edit profile button', () => {
     it('Should show edit profile button if user is manager', () => {
-
       mockUseAbilities.mockReturnValue({
-
         data: makeMockUseAbilitiesData('eth-unwrapped-2ld:manager'),
 
         isLoading: false,
-
       })
-
-
 
       const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
 
       expect(result.current.profileActions).toEqual(
-
         expect.arrayContaining([
-
           expect.objectContaining({
-
             label: 'tabs.profile.actions.editProfile.label',
 
             tooltipContent: undefined,
-
           }),
-
         ]),
-
       )
-
     })
 
-
-
     it('Should show disabled profile button if there is a graph error', () => {
-
       mockUseHasGraphError.mockReturnValue({
-
         data: true,
 
         isLoading: false,
-
       })
-
-
 
       const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
 
       expect(result.current.profileActions).toEqual(
-
         expect.arrayContaining([
-
           expect.objectContaining({
-
             label: 'tabs.profile.actions.editProfile.label',
 
             tooltipContent: 'errors.networkError.blurb',
-
           }),
-
         ]),
-
       )
-
     })
 
-
-
     it('Should show disabled edit profile button if user is owner but not manager', () => {
-
       mockUseAbilities.mockReturnValue({
-
         data: makeMockUseAbilitiesData('eth-unwrapped-2ld:owner'),
 
         isLoading: false,
-
       })
-
-
 
       const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
 
       expect(result.current.profileActions).toEqual(
-
         expect.arrayContaining([
-
           expect.objectContaining({
-
             label: 'tabs.profile.actions.editProfile.label',
 
             tooltipContent: 'errors.isOwnerCannotEdit',
-
           }),
-
         ]),
-
       )
-
     })
 
-
-
     it('Should show disabled edit profile button if name is wrapped but fuse for edit resolver is burned and resolver is unauthorised', () => {
-
       mockUseAbilities.mockReturnValue({
-
         data: {
-
           ...makeMockUseAbilitiesData('eth-burnt-2ld'),
 
           canEditRecords: false,
-
         },
 
         isLoading: false,
-
       })
-
-
 
       const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
 
       expect(result.current.profileActions).toEqual(
-
         expect.arrayContaining([
-
           expect.objectContaining({
-
             label: 'tabs.profile.actions.editProfile.label',
 
             tooltipContent: 'errors.cannotEdit',
-
           }),
-
         ]),
-
       )
     })
   })
 
-
-  describe.only('verifications', () => {
-    it('should return verifications button if the user is the manager', async () => {
-      mockUseAbilities.mockReturnValue({ data: makeMockUseAbilitiesData('eth-unwrapped-2ld:manager'), isLoading: false})
-      mockUseOwner.mockReturnValue({ data: makeMockUseOwnerData('registrar:manager'), isLoading: false})
-      const { result } = renderHook(() => useProfileActions({name: 'test.eth'}))
-      expect(result.current.profileActions).toEqual(expect.arrayContaining([expect.objectContaining({
-        label: 'Verifications',
-        tooltipContent: undefined
-      })]))
+  describe('verifications', () => {
+    it('should return active verifications button if the user is the manager of unwrapped 2ld eth name', async () => {
+      mockUseAbilities.mockReturnValue({
+        data: makeMockUseAbilitiesData('eth-unwrapped-2ld:manager'),
+        isLoading: false,
+      })
+      mockUseOwner.mockReturnValue({
+        data: makeMockUseOwnerData('registrar:manager'),
+        isLoading: false,
+      })
+      mockUseAccountSafely.mockReturnValue({
+        address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
+      expect(result.current.profileActions).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            label: 'tabs.profile.actions.verifyProfile.label',
+            tooltipContent: undefined,
+          }),
+        ]),
+      )
     })
 
-    it('should not return verifications button if the user is the unwrapped 2ld owner', async () => {
-      mockUseAbilities.mockReturnValue({ data: makeMockUseAbilitiesData('eth-unwrapped-2ld:owner'), isLoading: false})
-      const { result } = renderHook(() => useProfileActions({name: 'test.eth'}))
-      expect(result.current.profileActions).not.toEqual(expect.arrayContaining([expect.objectContaining({
-        label: 'Verifications',
-        tooltipContent: undefined
-      })]))
+    it('should return disabled verifications button if the user is only the owner the unwrapped 2ld eth name', async () => {
+      mockUseAbilities.mockReturnValue({
+        data: makeMockUseAbilitiesData('eth-unwrapped-2ld:owner'),
+        isLoading: false,
+      })
+      mockUseOwner.mockReturnValue({
+        data: makeMockUseOwnerData('registrar:owner'),
+        isLoading: false,
+      })
+      mockUseAccountSafely.mockReturnValue({
+        address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
+      expect(result.current.profileActions).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            label: 'tabs.profile.actions.verifyProfile.label',
+            tooltipContent: 'errors.isOwnerCannotVerify',
+          }),
+        ]),
+      )
     })
 
-    it('should return verifications button if the user is the unwrapped subname 2ld owner', async () => {
-      mockUseAbilities.mockReturnValue({ data: makeMockUseAbilitiesData('eth-unwrapped-subname'), isLoading: false})
-      const { result } = renderHook(() => useProfileActions({name: 'test.eth'}))
-      expect(result.current.profileActions).toEqual(expect.arrayContaining([expect.objectContaining({
-        label: 'Verifications',
-        tooltipContent: undefined
-      })]))
+    it('should return active verifications button if the user is the owner the wrapped 2ld eth name', async () => {
+      mockUseAbilities.mockReturnValue({
+        data: makeMockUseAbilitiesData('eth-emancipated-2ld'),
+        isLoading: false,
+      })
+      mockUseOwner.mockReturnValue({
+        data: makeMockUseOwnerData('namewrapper'),
+        isLoading: false,
+      })
+      mockUseAccountSafely.mockReturnValue({
+        address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
+      expect(result.current.profileActions).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            label: 'tabs.profile.actions.verifyProfile.label',
+            tooltipContent: undefined,
+          }),
+        ]),
+      )
     })
 
-    it('should not return verifications button if the user is the unwrapped 2ld owner', async () => {
-      mockUseAbilities.mockReturnValue({ data: makeMockUseAbilitiesData('eth-unwrapped-2ld:unowned'), isLoading: false})
-      const { result } = renderHook(() => useProfileActions({name: 'test.eth'}))
-      expect(result.current.profileActions).not.toEqual(expect.arrayContaining([expect.objectContaining({
-        label: 'Verifications',
-        tooltipContent: undefined
-      })]))
+    it('should return active verifications button if the user is the manager of a unwrapped subname 2ld', async () => {
+      mockUseAbilities.mockReturnValue({
+        data: makeMockUseAbilitiesData('eth-unwrapped-subname'),
+        isLoading: false,
+      })
+      mockUseOwner.mockReturnValue({
+        data: makeMockUseOwnerData('registry'),
+        isLoading: false,
+      })
+      mockUseAccountSafely.mockReturnValue({
+        address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      })
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
+      expect(result.current.profileActions).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            label: 'tabs.profile.actions.verifyProfile.label',
+            tooltipContent: undefined,
+          }),
+        ]),
+      )
+    })
+
+    it('should not return verifications button if the parent owner of a unwrapped subname', async () => {
+      mockUseAbilities.mockReturnValue({
+        data: makeMockUseAbilitiesData('eth-unwrapped-subname:unowned+unwrapped-2ld'),
+        isLoading: false,
+      })
+      mockUseOwner.mockReturnValue({
+        data: makeMockUseOwnerData('registry:unowned'),
+        isLoading: false,
+      })
+      mockUseAccountSafely.mockReturnValue({
+        address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      })
+
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
+      expect(result.current.profileActions).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            label: 'tabs.profile.actions.verifyProfile.label',
+          }),
+        ]),
+      )
+    })
+
+    it('should show active verifications button if the user is owner of wrapped subname', async () => {
+      mockUseAbilities.mockReturnValue({
+        data: makeMockUseAbilitiesData('eth-wrapped-subname'),
+        isLoading: false,
+      })
+      mockUseOwner.mockReturnValue({
+        data: makeMockUseOwnerData('namewrapper'),
+        isLoading: false,
+      })
+      mockUseAccountSafely.mockReturnValue({
+        address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      })
+
+      const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
+      expect(result.current.profileActions).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            label: 'tabs.profile.actions.verifyProfile.label',
+            tooltipContent: undefined,
+          }),
+        ]),
+      )
     })
   })
 })

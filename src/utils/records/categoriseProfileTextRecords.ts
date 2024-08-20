@@ -29,11 +29,11 @@ export type ProfileOtherRecord = DecodedText & { type: 'text' | 'contenthash' } 
 export const categoriseAndTransformTextRecords = ({
   texts = [],
   contentHash,
-  getVerificationProps,
+  appendVerificationProps,
 }: {
   texts?: DecodedText[]
   contentHash?: any
-  getVerificationProps?: (
+  appendVerificationProps?: (
     record: NormalisedAccountsRecord,
   ) => NormalisedAccountsRecord & { isVerified?: boolean; verifiers?: VerificationProtocol[] }
 }) => {
@@ -50,7 +50,7 @@ export const categoriseAndTransformTextRecords = ({
         )
       ) {
         const normalisedRecordWithVerifications =
-          getVerificationProps?.(normalisedRecord) || normalisedRecord
+          appendVerificationProps?.(normalisedRecord) || normalisedRecord
         return {
           ...acc,
           accounts: [

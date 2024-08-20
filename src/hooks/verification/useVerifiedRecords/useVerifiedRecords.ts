@@ -6,7 +6,7 @@ import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
 
-import { createGetVerificationProps } from './utils/createGetVerificationProps'
+import { makeAppendVerificationProps } from './utils/makeAppendVerificationProps'
 import {
   parseVerificationData,
   VerifiedRecord,
@@ -28,10 +28,24 @@ type QueryKey<TParams extends UseVerifiedRecordsParameters> = CreateQueryKey<
   'independent'
 >
 
+const isStringArray = (object: unknown): object is string[] =>
+  Array.isArray(object) && object.every((item) => typeof item === 'string')
+
+export const parseVerificationRecord = (verificationRecord?: string): string[] => {
+  try {
+    if (!verificationRecord) return []
+    const json = JSON.parse(verificationRecord)
+    if (isStringArray(json)) return json
+    return []
+  } catch {
+    return []
+  }
+}
+
 export const getVerifiedRecords = async <TParams extends UseVerifiedRecordsParameters>({
   queryKey: [{ verificationsRecord }],
 }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseVerifiedRecordsReturnType> => {
-  const verifiablePresentationUris = JSON.parse(verificationsRecord!) as string[]
+  const verifiablePresentationUris = parseVerificationRecord(verificationsRecord)
   const responses = await Promise.allSettled(
     verifiablePresentationUris.map((uri) => fetch(uri).then((resp) => resp.json())),
   )
@@ -71,7 +85,7 @@ export const useVerifiedRecords = <TParams extends UseVerifiedRecordsParameters>
 
   return {
     ...query,
-    getVerficationProps: createGetVerificationProps(query.data),
+    appendVerificationProps: makeAppendVerificationProps(query.data),
     refetchIfEnabled: preparedOptions.enabled ? query.refetch : () => {},
     isCachedData: getIsCachedData(query),
   }

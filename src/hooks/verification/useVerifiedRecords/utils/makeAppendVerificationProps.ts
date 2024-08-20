@@ -19,7 +19,7 @@ export type GetVerifiedRecordsPropsReturnType = BaseReturnType &
 
 type RecordItem = Record<'key' | 'value', string>
 
-export const createGetVerificationProps =
+export const makeAppendVerificationProps =
   (verificationData?: UseVerifiedRecordsReturnType) =>
   <T extends NormalisedAccountsRecord>({
     value,

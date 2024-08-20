@@ -6,7 +6,7 @@ import { normaliseTwitterRecordValue } from '@app/utils/records/normaliseTwitter
 import type { VerifiedRecord } from './parseVerificationData/parseVerificationData'
 import { tryVerifyVerifiableCredentials } from './parseVerificationData/utils/tryVerifyVerifiableCredentials'
 
-// TODO: Dentity needs to have a consistent foramtting of issuer and other props to fix this one
+// TODO: parse issuer from verifiableCredential when dentity fixes their verifiable credentials
 
 export const parseVerifiableCredential = async (
   verifiableCredential: VerifiableCredential,

@@ -77,7 +77,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     name,
   })
 
-  const { data: verifiedData, getVerficationProps } = useVerifiedRecords({
+  const { data: verifiedData, appendVerificationProps } = useVerifiedRecords({
     name: normalisedName,
     address: owners?.find(({ label }) => ['name.owner', 'name.dnsOwner'].includes(label))?.address,
     verificationsRecord: profile?.texts?.find(({ key }) => key === VERIFICATION_RECORD_KEY)?.value,
@@ -105,7 +105,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
   const categorisedRecord = categoriseAndTransformTextRecords({
     texts: profile?.texts,
     contentHash: profile?.contentHash,
-    getVerificationProps: getVerficationProps,
+    appendVerificationProps,
   })
 
   return (
