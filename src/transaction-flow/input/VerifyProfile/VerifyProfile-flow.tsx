@@ -30,8 +30,6 @@ const VerifyProfile = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const { address } = useAccount()
 
   const { data: verificationData, isLoading: isVerificationLoading } = useVerifiedRecords({
-    name,
-    address: profile?.coins?.find(({ id }) => id === 60)?.value,
     verificationsRecord: profile?.texts?.find(({ key }) => key === VERIFICATION_RECORD_KEY)?.value,
   })
 

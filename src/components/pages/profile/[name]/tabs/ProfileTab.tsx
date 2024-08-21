@@ -78,8 +78,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
   })
 
   const { data: verifiedData, appendVerificationProps } = useVerifiedRecords({
-    name: normalisedName,
-    address: owners?.find(({ label }) => ['name.owner', 'name.dnsOwner'].includes(label))?.address,
     verificationsRecord: profile?.texts?.find(({ key }) => key === VERIFICATION_RECORD_KEY)?.value,
   })
 
