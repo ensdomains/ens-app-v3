@@ -13,8 +13,6 @@ import {
 } from './utils/parseVerificationData/parseVerificationData'
 
 type UseVerifiedRecordsParameters = {
-  name?: string
-  address?: string
   verificationsRecord?: string
 }
 
@@ -76,7 +74,7 @@ export const useVerifiedRecords = <TParams extends UseVerifiedRecordsParameters>
   const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-    enabled: enabled && !!params.name && !!params.address && !!params.verificationsRecord,
+    enabled: enabled && !!params.verificationsRecord,
     gcTime,
     staleTime,
   })

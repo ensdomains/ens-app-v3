@@ -35,7 +35,7 @@ export const parseVerifiableCredential = async (
       key: 'com.github',
       value: vc?.credentialSubject?.name || '',
     }))
-    .with({ type: P.when((type) => type?.includes('VerifiedIdentity')) }, () => ({
+    .with({ type: P.when((type) => type?.includes('VerifiedPersonhood')) }, () => ({
       issuer: 'dentity',
       key: 'personhood',
       value: '',
@@ -44,6 +44,11 @@ export const parseVerifiableCredential = async (
       issuer: 'dentity',
       key: 'org.telegram',
       value: vc?.credentialSubject?.name || '',
+    }))
+    .with({ type: P.when((type) => type?.includes('VerifiedEmail')) }, (vc) => ({
+      issuer: 'dentity',
+      key: 'email',
+      value: vc?.credentialSubject?.verifiedEmail || '',
     }))
     .otherwise(() => null)
 
