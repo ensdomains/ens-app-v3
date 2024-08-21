@@ -45,6 +45,11 @@ export const parseVerifiableCredential = async (
       key: 'org.telegram',
       value: vc?.credentialSubject?.name || '',
     }))
+    .with({ type: P.when((type) => type?.includes('VerifiedEmail')) }, (vc) => ({
+      issuer: 'dentity',
+      key: 'email',
+      value: vc?.credentialSubject?.verifiedEmail || '',
+    }))
     .otherwise(() => null)
 
   if (!baseResult) return null

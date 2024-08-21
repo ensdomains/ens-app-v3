@@ -17,7 +17,9 @@ import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 const makeMockVPToken = (
-  records: Array<'com.twitter' | 'com.github' | 'com.discord' | 'org.telegram' | 'personhood'>,
+  records: Array<
+    'com.twitter' | 'com.github' | 'com.discord' | 'org.telegram' | 'personhood' | 'email'
+  >,
 ) => {
   return records.map((record) => ({
     type: [
@@ -27,7 +29,8 @@ const makeMockVPToken = (
         'com.github': 'VerifiedGithubAccount',
         'com.discord': 'VerifiedDiscordAccount',
         'org.telegram': 'VerifiedTelegramAccount',
-        personhood: 'VerifiedIdentity',
+        personhood: 'VerifiedPersonhood',
+        email: 'VerifiedEmail',
       }[record],
     ],
     credentialSubject: {
@@ -36,6 +39,7 @@ const makeMockVPToken = (
       ...(['com.twitter', 'com.github', 'com.discord', 'org.telegram'].includes(record)
         ? { name: 'name' }
         : {}),
+      ...(record === 'email' ? { verifiedEmail: 'name@email.com' } : {}),
     },
   }))
 }
@@ -65,6 +69,10 @@ test.describe('Verified records', () => {
             value: 'name',
           },
           {
+            key: 'email',
+            value: 'name@email.com',
+          },
+          {
             key: VERIFICATION_RECORD_KEY,
             value: JSON.stringify([
               `${DENTITY_VPTOKEN_ENDPOINT}?name=name.eth&federated_token=federated_token`,
@@ -91,6 +99,7 @@ test.describe('Verified records', () => {
             'com.discord',
             'org.telegram',
             'personhood',
+            'email',
           ]),
         }),
       })

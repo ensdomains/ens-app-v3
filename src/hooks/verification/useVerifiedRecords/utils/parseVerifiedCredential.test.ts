@@ -76,7 +76,7 @@ describe('parseVerifiedCredential', () => {
   it('should parse personhood verified credential', async () => {
     expect(
       await parseVerifiableCredential({
-        type: ['VerifiedIdentity'],
+        type: ['VerifiedPersonhood'],
         credentialSubject: { name: 'name' },
       } as any),
     ).toEqual({
