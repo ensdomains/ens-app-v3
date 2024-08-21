@@ -2,7 +2,7 @@
 
 import 'dotenv/config'
 import 'hardhat-deploy'
-import '@nomicfoundation/hardhat-viem'
+import '@nomicfoundation/hardhat-toolbox-viem'
 
 import { resolve } from 'path'
 
