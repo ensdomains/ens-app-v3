@@ -1,7 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import '@nomiclabs/hardhat-ethers'
+
 import 'dotenv/config'
 import 'hardhat-deploy'
+import '@nomicfoundation/hardhat-viem'
 
 import { resolve } from 'path'
 
