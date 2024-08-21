@@ -45,7 +45,7 @@ const DENTITY_ENV_CONFIGS = {
     iss: 'https://oidc.dentity.com',
     clientId: 'TWUfWhM_hs5osk9cR4adK',
     endpoint: 'https://oidc.dentity.com',
-    redirectUri: 'https://ens.domains', // TODO: Update this
+    redirectUri: 'https://app.ens.domains',
   },
 } as const
 
