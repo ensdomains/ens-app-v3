@@ -2,12 +2,13 @@
 
 /* eslint-disable no-await-in-loop */
 // import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
+import { Hash } from 'viem'
+
 import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { setRecords } from '@ensdomains/ensjs/wallet'
 
-import { User, Accounts } from '../../accounts';
+import { Accounts, User } from '../../accounts'
 import { waitForTransaction, walletClient } from '../../contracts/utils/addTestContracts.js'
-import { Hash } from 'viem';
 
 type Dependencies = {
   accounts: Accounts
@@ -21,7 +22,7 @@ type Input = {
 }
 
 export const generateRecords =
-  ({ accounts}: Dependencies) =>
+  ({ accounts }: Dependencies) =>
   async ({ name, owner, resolver, records }: Input) => {
     if (!resolver || !records || !owner) return
 
