@@ -65,6 +65,8 @@ describe('WrapButton', () => {
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
         profile={{ resolverAddress: '0x456' } as any}
+        isManager={false}
+        isRegistrant={false}
       />,
     )
     expect(screen.getByTestId('wrap-name-btn')).toBeVisible()
@@ -77,8 +79,7 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped={false}
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
-      />,
+        profile={{ resolverAddress: '0x456' } as any} isManager={false} isRegistrant={false}      />,
     )
     expect(screen.queryByTestId('wrap-name-btn')).toBeNull()
   })
@@ -89,8 +90,7 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
-      />,
+        profile={{ resolverAddress: '0x456' } as any} isManager={false} isRegistrant={false}      />,
     )
     screen.getByTestId('wrap-name-btn').click()
     expect(mockCreateTransactionFlow).toHaveBeenCalled()
@@ -104,25 +104,22 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
-      />,
+        profile={{
+          resolverAddress: '0x456',
+          records: {
+            coinTypes: [
+              {
+                key: 'coin1',
+              },
+              {
+                key: 'coin2',
+              },
+            ],
+          },
+        } as any} isManager={true} isRegistrant={false}      />,
     )
     screen.getByTestId('wrap-name-btn').click()
-    const args = mockCreateTransactionFlow.mock.lastCall
+    const args = mockCreateTransactionFlow.mock.lastCall!
 
     expect(args[0]).toBe('wrapName-test123.eth')
     expect(args[1].transactions[0].name).toEqual('migrateProfile')
@@ -136,25 +133,22 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
-      />,
+        profile={{
+          resolverAddress: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
+          records: {
+            coinTypes: [
+              {
+                key: 'coin1',
+              },
+              {
+                key: 'coin2',
+              },
+            ],
+          },
+        } as any} isManager={false} isRegistrant={false}      />,
     )
     screen.getByTestId('wrap-name-btn').click()
-    const args = mockCreateTransactionFlow.mock.lastCall
+    const args = mockCreateTransactionFlow.mock.lastCall!
 
     expect(args[0]).toBe('wrapName-test123.eth')
     expect(args[1].transactions[0].name).toEqual('wrapName')
@@ -167,16 +161,13 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {},
-          } as any
-        }
-      />,
+        profile={{
+          resolverAddress: '0x456',
+          records: {},
+        } as any} isManager={false} isRegistrant={false}      />,
     )
     screen.getByTestId('wrap-name-btn').click()
-    const args = mockCreateTransactionFlow.mock.lastCall
+    const args = mockCreateTransactionFlow.mock.lastCall!
 
     expect(args[0]).toBe('wrapName-test123.eth')
     expect(args[1].transactions[0].name).toEqual('wrapName')
@@ -191,25 +182,22 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ ownershipLevel: 'registrar', owner: '0x124', registrant: '0x123' }}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
-      />,
+        profile={{
+          resolverAddress: '0x456',
+          records: {
+            coinTypes: [
+              {
+                key: 'coin1',
+              },
+              {
+                key: 'coin2',
+              },
+            ],
+          },
+        } as any} isManager={false} isRegistrant={true}      />,
     )
     screen.getByTestId('wrap-name-btn').click()
-    const args = mockCreateTransactionFlow.mock.lastCall
+    const args = mockCreateTransactionFlow.mock.lastCall!
 
     expect(args[0]).toBe('wrapName-test123.eth')
     expect(args[1].transactions[0].name).toEqual('wrapName')
@@ -223,25 +211,22 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ ownershipLevel: 'registrar', owner: '0x124', registrant: '0x123' }}
-        profile={
-          {
-            resolverAddress: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
-      />,
+        profile={{
+          resolverAddress: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
+          records: {
+            coinTypes: [
+              {
+                key: 'coin1',
+              },
+              {
+                key: 'coin2',
+              },
+            ],
+          },
+        } as any} isManager={false} isRegistrant={false}      />,
     )
     screen.getByTestId('wrap-name-btn').click()
-    const args = mockCreateTransactionFlow.mock.lastCall
+    const args = mockCreateTransactionFlow.mock.lastCall!
 
     expect(args[0]).toBe('wrapName-test123.eth')
     expect(args[1].transactions[0].name).toEqual('wrapName')
@@ -259,16 +244,13 @@ describe('WrapButton', () => {
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {},
-          } as any
-        }
-      />,
+        profile={{
+          resolverAddress: '0x456',
+          records: {},
+        } as any} isManager={true} isRegistrant={false}      />,
     )
     screen.getByTestId('wrap-name-btn').click()
-    const args = mockCreateTransactionFlow.mock.lastCall
+    const args = mockCreateTransactionFlow.mock.lastCall!
 
     expect(args[0]).toBe('wrapName-sub.test123.eth')
     expect(args[1].transactions[0].name).toEqual('approveNameWrapper')
@@ -286,16 +268,13 @@ describe('WrapButton', () => {
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {},
-          } as any
-        }
-      />,
+        profile={{
+          resolverAddress: '0x456',
+          records: {},
+        } as any} isManager={false} isRegistrant={false}      />,
     )
     screen.getByTestId('wrap-name-btn').click()
-    const args = mockCreateTransactionFlow.mock.lastCall
+    const args = mockCreateTransactionFlow.mock.lastCall!
 
     expect(args[0]).toBe('wrapName-sub.test123.eth')
     expect(args[1].transactions[0].name).toEqual('wrapName')
@@ -311,25 +290,22 @@ describe('WrapButton', () => {
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
-      />,
+        profile={{
+          resolverAddress: '0x456',
+          records: {
+            coinTypes: [
+              {
+                key: 'coin1',
+              },
+              {
+                key: 'coin2',
+              },
+            ],
+          },
+        } as any} isManager={true} isRegistrant={false}      />,
     )
     screen.getByTestId('wrap-name-btn').click()
-    const args = mockCreateTransactionFlow.mock.lastCall
+    const args = mockCreateTransactionFlow.mock.lastCall!
 
     expect(args[0]).toBe('wrapName-sub.test123.eth')
     expect(args[1].transactions[0].name).toEqual('migrateProfile')
@@ -345,8 +321,7 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
-      />,
+        profile={{ resolverAddress: '0x456' } as any} isManager={false} isRegistrant={false}      />,
     )
     screen.getByTestId('wrap-name-btn').click()
     expect(mockResumeTransactionFlow).toHaveBeenCalled()
@@ -366,14 +341,13 @@ describe('WrapButton', () => {
         name="[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456', records: {} } as any}
-      />,
+        profile={{ resolverAddress: '0x456', records: {} } as any} isManager={true} isRegistrant={false}      />,
     )
     screen.getByTestId('wrap-name-btn').click()
     expect(mockCreateTransactionFlow).not.toHaveBeenCalled()
     expect(mockShowDataInput).toHaveBeenCalled()
 
-    const args = mockShowDataInput.mock.lastCall
+    const args = mockShowDataInput.mock.lastCall!
     expect(args[0]).toBe(
       // eslint-disable-next-line no-restricted-syntax
       'wrapName-[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
@@ -400,8 +374,7 @@ describe('WrapButton', () => {
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123', ownershipLevel: 'registrar', registrant: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
-      />,
+        profile={{ resolverAddress: '0x456' } as any} isManager={false} isRegistrant={false}      />,
     )
     expect(
       mockUseWrapperApprovedForAll.mock.calls[mockUseWrapperApprovedForAll.mock.calls.length - 1],
