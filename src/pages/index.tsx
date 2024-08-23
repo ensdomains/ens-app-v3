@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -9,7 +10,9 @@ import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { VerificationErrorDialog } from '@app/components/pages/VerificationErrorDialog'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useVerificationOAuthHandler } from '@app/hooks/verification/useVerificationOAuthHandler/useVerificationOAuthHandler'
+import { trackEvent } from '@app/utils/analytics'
 
 import ENSFull from '../assets/ENSFull.svg'
 
@@ -92,6 +95,13 @@ export default function Page() {
   const { t } = useTranslation('common')
 
   const { dialogProps } = useVerificationOAuthHandler()
+  const chainName = useChainName()
+
+  useEffect(() => {
+    if (chainName) {
+      trackEvent('Home page', chainName)
+    }
+  }, [chainName])
 
   return (
     <>

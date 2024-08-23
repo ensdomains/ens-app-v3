@@ -24,6 +24,7 @@ import {
 import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 
 import { SupportedChain } from '@app/constants/chains'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import {
   UseDotBoxAvailabilityOnchainQueryKey,
   UseDotBoxAvailabilityOnchainReturnType,
@@ -42,6 +43,7 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate, validate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
 import { CreateQueryKey, GenericQueryKey } from '@app/types'
+import { trackEvent } from '@app/utils/analytics'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { thread, yearsToSeconds } from '@app/utils/utils'
@@ -311,6 +313,7 @@ type CreateSearchHandlerProps = {
   setHistory: Dispatch<SetStateAction<HistoryItem[]>>
   setInputVal: Dispatch<SetStateAction<string>>
   queryClient: QueryClient
+  chainName: string
 }
 
 const createSearchHandler =
@@ -323,6 +326,7 @@ const createSearchHandler =
     setHistory,
     setInputVal,
     queryClient,
+    chainName,
   }: CreateSearchHandlerProps): SearchHandler =>
   (index: number) => {
     if (index === -1) return
@@ -332,6 +336,8 @@ const createSearchHandler =
 
     const { text, nameType } = selectedItem
     if (nameType === 'error' || nameType === 'text') return
+
+    trackEvent('Search selected', chainName)
 
     setHistory((prev: HistoryItem[]) => [
       ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
@@ -625,6 +631,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
 
   const { address } = useAccount()
   const chainId = useChainId()
+  const chainName = useChainName()
 
   const [inputVal, setInputVal] = useState('')
 
@@ -666,6 +673,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       searchInputRef,
       setHistory,
       setInputVal,
+      chainName,
     }),
     [address, chainId, dropdownItems, queryClient, router, searchInputRef, setHistory, setInputVal],
   )
@@ -688,7 +696,13 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const setInput = (val: string) => {
     setInputVal(val)
     setUsingPlaceholder(true)
-    debouncer(() => setUsingPlaceholder(false))
+    debouncer(() => {
+      setUsingPlaceholder(false)
+
+      if (val) {
+        trackEvent('Start searching', chainName, { keyword: val })
+      }
+    })
   }
 
   const SearchInputElement = (
