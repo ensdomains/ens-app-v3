@@ -9,7 +9,6 @@ artifacts
 cache
 coverage
 data
-ganache
 out
 subgraphs
 
