@@ -22,6 +22,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Cache Docker images.
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-coverage
+
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm tenv start -ng -ns -nb" \
@@ -44,6 +49,11 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Cache Docker images.
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-build-stateless
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -126,6 +136,10 @@ jobs:
       - name: Install playwright
         run: npx playwright install chromium
 
+      - name: Cache Docker images.
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-test-stateless
       - name: Run tests
         run: |
           PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci -nb
@@ -175,6 +189,10 @@ jobs:
       - name: Install playwright
         run: npx playwright install chromium
 
+      - name: Cache Docker images.
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-test-stateless
       - name: Run tests
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
