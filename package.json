@@ -24,6 +24,7 @@
     "lint:fix": "next lint --fix",
     "export": "next export",
     "compare-locales": "node ./scripts/compare-locales.mjs",
+    "scan-locales": "node ./scripts/scan-locales.mjs",
     "analyze": "ANALYZE=true pnpm build",
     "analyse": "pnpm analyze",
     "test": "vitest run",

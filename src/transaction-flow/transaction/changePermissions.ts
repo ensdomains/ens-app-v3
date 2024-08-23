@@ -73,7 +73,7 @@ const displayItems = (
     },
     {
       label: 'action',
-      value: t('transaction.description.changePermissions') as string,
+      value: t('transaction.description.changePermissions'),
     },
     {
       label: 'info',
