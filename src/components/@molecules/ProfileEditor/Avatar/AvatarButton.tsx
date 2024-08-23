@@ -2,7 +2,7 @@ import { ComponentProps, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Avatar, Button, Dropdown } from '@ensdomains/thorin'
+import { Avatar, Button, Dropdown, mq } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 const AvatarWrapper = styled.button<{ $error?: boolean; $validated?: boolean; $dirty?: boolean }>(
@@ -72,6 +72,9 @@ const Container = styled.div(
     grid-template-columns: 120px 1fr;
     align-items: center;
     gap: ${theme.space[4]};
+    ${mq.xs.max(css`
+      grid-template-columns: 80px 1fr;
+    `)}
   `,
 )
 
