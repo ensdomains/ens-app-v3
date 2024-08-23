@@ -68,6 +68,7 @@ const ActionContainer = styled.div(
 
 const Container = styled.div(
   ({ theme }) => css`
+    width: 100%;
     display: grid;
     grid-template-columns: 120px 1fr;
     align-items: center;
