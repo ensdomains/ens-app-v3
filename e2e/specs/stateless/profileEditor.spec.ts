@@ -272,6 +272,7 @@ test.describe('migrations', () => {
   test('should be able to update to latest resolver when profile has been migrated on current and latest resolver', async ({
     page,
     login,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -284,7 +285,7 @@ test.describe('migrations', () => {
     })
 
     // Add records to latest resolver
-    await generateRecords()({
+    await generateRecords({ accounts })({
       name,
       owner: 'user',
       resolver: newResolver,
@@ -341,6 +342,7 @@ test.describe('migrations', () => {
   test('should be able to reset the latest resolver when profile has been migrated on current and latest resolver', async ({
     page,
     login,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -353,7 +355,7 @@ test.describe('migrations', () => {
     })
 
     // Add records to latest resolver
-    await generateRecords()({
+    await generateRecords({ accounts })({
       name,
       owner: 'user',
       resolver: newResolver,
@@ -402,6 +404,7 @@ test.describe('migrations', () => {
   test('should be able to choose to migrate to the latest profile when the current and latest resolver are not in sync', async ({
     page,
     login,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -414,7 +417,7 @@ test.describe('migrations', () => {
     })
 
     // Add records to latest resolver
-    await generateRecords()({
+    await generateRecords({ accounts })({
       name,
       owner: 'user',
       resolver: newResolver,
@@ -473,6 +476,7 @@ test.describe('migrations', () => {
   test('should be able migrate the current profile when the current and latest resolver are not in sync', async ({
     page,
     login,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -485,7 +489,7 @@ test.describe('migrations', () => {
     })
 
     // Add records to latest resolver
-    await generateRecords()({
+    await generateRecords({ accounts })({
       name,
       owner: 'user',
       resolver: newResolver,
@@ -549,6 +553,7 @@ test.describe('migrations', () => {
   test('should be able to reset the profile when the current and latest resolver are not in sync', async ({
     page,
     login,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -561,7 +566,7 @@ test.describe('migrations', () => {
     })
 
     // Add records to latest resolver
-    await generateRecords()({
+    await generateRecords({ accounts })({
       name,
       owner: 'user',
       resolver: newResolver,
@@ -913,4 +918,85 @@ test.describe('subgraph errors', () => {
     await page.goto('/my/settings')
     await page.getByTestId('subgraph-network-error').uncheck()
   })
+})
+
+test('Should show edit profile button if user is manager', async ({
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'unwrapped',
+    type: 'legacy',
+    owner: 'user2',
+    manager: 'user',
+  })
+
+  const profilePage = makePageObject('ProfilePage')
+
+  await profilePage.goto(name)
+  await login.connect()
+
+  await expect(profilePage.editProfileButton).toBeVisible()
+})
+
+test('Should show disabled edit profile button if user is owner but not manager', async ({
+  page,
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'unwrapped',
+    type: 'legacy',
+    owner: 'user',
+    manager: 'user2',
+  })
+
+  const profilePage = makePageObject('ProfilePage')
+
+  await profilePage.goto(name)
+  await login.connect()
+
+  await expect(page.getByTestId('disabled-profile-action-Edit profile')).toBeVisible()
+})
+
+test('Should show disabled edit profile button if name is wrapped but use for edit resolver is burned and resolver is unauthorised', async ({
+  page,
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'wrapped',
+    type: 'wrapped',
+    owner: 'user',
+  })
+
+  const UNAUTHORISED_RESOLVER = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
+  const profilePage = makePageObject('ProfilePage')
+  const morePage = makePageObject('MorePage')
+  const permissionsPage = makePageObject('PermissionsPage')
+  const transactionModal = makePageObject('TransactionModal')
+
+  await profilePage.goto(name)
+  await login.connect()
+
+  // Set resolver to unauthorized resolver
+  await morePage.goto(name)
+  await morePage.editResolverButton.click()
+  await page.getByTestId('custom-resolver-radio').check()
+  await page.getByTestId('dogfood').fill(UNAUTHORISED_RESOLVER)
+  await page.getByTestId('update-button').click()
+  await transactionModal.autoComplete()
+
+  // Burn CSR fuse
+  await permissionsPage.goto(name)
+  await permissionsPage.burnChildPermissions(['CANNOT_UNWRAP', 'CANNOT_SET_RESOLVER'], name)
+  await transactionModal.autoComplete()
+
+  // Validate that the edit profile button is disabled
+  await profilePage.goto(name)
+
+  await expect(page.getByTestId('disabled-profile-action-Edit profile')).toBeVisible()
 })

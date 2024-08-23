@@ -2,6 +2,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import {
+  isEthAddressRecord,
   profileEditorFormToProfileRecords,
   profileRecordsToProfileEditorForm,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
@@ -98,16 +99,22 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   const validatorForRecord = (record: ProfileRecord) => {
     if (record.key === 'contentHash') return validateContentHash('all')
     if (record.key === 'url') return validateUrl
-    if (record.group === 'address')
+    if (record.group === 'address') {
       return (value?: string) => {
         const address_ = normalizeCoinAddress({ coin: record.key, address: value })
         const result = validateCryptoAddress({ coin: record.key, address: address_ })
+
+        if (isEthAddressRecord(record) && !value) {
+          return true
+        }
+
         if (typeof result === 'string') {
           if (result === 'addressRequired') return t('errors.addressRequired', { ns: 'common' })
           return t('errors.invalidAddress', { ns: 'common' })
         }
         return result
       }
+    }
     if (record.group === 'website') return validateContentHash(record.key as ContentHashProvider)
     if (record.type === 'abi') return validateAbi(t)
     if (record.group === 'custom')
@@ -147,6 +154,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     append: addRecord,
     remove: removeRecordAtIndex,
     append: appendRecord,
+    update: updateRecordAtIndex,
   } = useFieldArray({
     control,
     name: 'records',
@@ -219,6 +227,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     getRecords,
     updateRecord,
     removeRecordAtIndex,
+    updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
     getAvatar,

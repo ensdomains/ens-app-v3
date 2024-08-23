@@ -24,6 +24,6 @@ export const adjustName = (names: Name[], offset = 0) => {
     return {
       ...durationAdjustedName,
       label: uniqueLabel,
-    }
+    } as Name
   })
 }

@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Page } from '@playwright/test'
-import { Web3ProviderBackend } from 'headless-web3-provider'
+
+import { Web3ProviderBackend } from '@ensdomains/headless-web3-provider'
 
 import { AddressPage } from './addressPage'
 import { AdvancedEditorModal } from './advancedEditorModal'
@@ -14,11 +15,12 @@ import { PermissionsPage } from './permissionsPage'
 import { ProfilePage } from './profilePage'
 import { RecordsPage } from './recordsPage'
 import { RegistrationPage } from './registrationPage'
+import { SelectPrimaryNameModal } from './selectPrimaryNameModal'
 import { SendNameModal } from './sendNameModal'
-import {SettingsPage} from './settingsPage'
-import {SelectPrimaryNameModal} from './selectPrimaryNameModal'
+import { SettingsPage } from './settingsPage'
 import { SubnamesPage } from './subnamePage'
 import { TransactionModal } from './transactionModal'
+import { VerificationsModal } from './verificationsModal'
 
 type Dependencies = { page: Page; wallet: Web3ProviderBackend }
 
@@ -40,6 +42,7 @@ const pageObjects = {
   TransactionModal,
   RecordsPage,
   AdvancedEditorModal,
+  VerificationsModal,
 }
 
 type PageObjects = typeof pageObjects
