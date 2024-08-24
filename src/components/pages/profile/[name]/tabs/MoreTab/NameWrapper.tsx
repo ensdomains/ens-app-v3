@@ -5,7 +5,7 @@ import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { AlertSVG, CheckSVG, mq, Typography } from '@ensdomains/thorin'
+import { AlertSVG, CheckSVG, LockSVG, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -22,7 +22,7 @@ type Props = {
   canBeWrapped: boolean
   ownerData?: GetOwnerReturnType
   wrapperData?: GetWrapperDataReturnType
-  profile: Profile | undefined
+  profile?: Profile
   address?: Address
 }
 
@@ -67,9 +67,13 @@ const Record = styled.div(
   `,
 )
 
-const ParentControlRecord = styled(Record)<{ $isPCCBurned: boolean }>(
-  ({ theme, $isPCCBurned }) => css`
-    background: ${$isPCCBurned ? theme.colors.greenSurface : theme.colors.yellowSurface};
+const ParentControlRecord = styled(Record)<{ $isPCCBurned: boolean; $cannotUnwrap: boolean }>(
+  ({ theme, $isPCCBurned, $cannotUnwrap }) => css`
+    background: ${$cannotUnwrap
+      ? theme.colors.greySurface
+      : $isPCCBurned
+      ? theme.colors.greenSurface
+      : theme.colors.yellowSurface};
     & > svg {
       color: ${$isPCCBurned ? theme.colors.green : theme.colors.yellow};
     }
@@ -111,7 +115,8 @@ export const NameWrapper = ({
   const isRegistrant = ownerData?.registrant === address
 
   const isOwned = ownerData?.ownershipLevel === 'registrar' ? isRegistrant : isManager
-  const isButtonDisplayed = isOwned && address
+
+  const isButtonDisplayed = isOwned && !!address
 
   const canBeWrapped = _canBeWrapped && !!address && isOwned
 
@@ -141,10 +146,20 @@ export const NameWrapper = ({
         <>{t('tabs.more.token.unwrappedText')}</>
       ) : (
         <TwoRows>
-          <Record>{isWrapped ? 'Wrapped' : 'Unwrapped'}</Record>
-          <ParentControlRecord $isPCCBurned={isPCCBurned}>
-            {isPCCBurned ? 'Not parent-controllable' : 'Parent-controllable'}
-            {isPCCBurned ? <CheckSVG /> : <AlertSVG />}
+          <Record data-testid="namewrapper-status">
+            {isWrapped
+              ? t('tabs.more.token.status.wrapped')
+              : t('tabs.more.token.status.unwrapped')}
+          </Record>
+          <ParentControlRecord
+            data-testid="pcc-status"
+            $cannotUnwrap={cannotUnwrap}
+            $isPCCBurned={isPCCBurned}
+          >
+            {isPCCBurned
+              ? t('tabs.more.token.pcc.not-controllable')
+              : t('tabs.more.token.pcc.controllable')}
+            {cannotUnwrap ? <LockSVG /> : isPCCBurned ? <CheckSVG /> : <AlertSVG />}
           </ParentControlRecord>
         </TwoRows>
       )}

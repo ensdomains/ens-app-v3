@@ -309,7 +309,15 @@
         "unwrappedText": " Wrapping your name gives it new features and functionality, however some functionality on your name will change. Please make sure you understand these changes before wrapping your name.",
         "wrapName": "Wrap Name",
         "unwrap": "Unwrap Name",
-        "unwrapWarning": "This name has revoked the permissions needed for this action."
+        "unwrapWarning": "This name has revoked the permissions needed for this action.",
+        "status": {
+          "unwrapped": "Unwrapped",
+          "wrapped": "Wrapped"
+        },
+        "pcc": {
+          "controllable": "Parent-controllable",
+          "not-controllable": "Not parent-controllable"
+        }
       },
       "misc": {
         "registered": "Registered",
