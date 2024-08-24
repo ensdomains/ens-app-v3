@@ -399,7 +399,8 @@
     "verifyProfile": {
       "list": {
         "title": "Verify your profile",
-        "message": " You can verify profile information and add proofs of personhood. Verified records will be marked on your profile with a blue check."
+        "message": " You can verify profile information and add proofs of personhood. Verified records will be marked on your profile with a blue check.",
+        "added": "Added"
       },
       "dentity": {
         "title": "Dentity verification",

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 
@@ -42,6 +43,7 @@ export const VerificationBadgeVerifierTooltipContent = ({
 }: {
   isVerified: boolean
 }) => {
+  const { t } = useTranslation('common')
   return (
     <Container $color="green">
       {match(isVerified)
@@ -51,17 +53,15 @@ export const VerificationBadgeVerifierTooltipContent = ({
               <VerifiedPersonSVG />
             </IconWrapper>
             <Content>
-              <Typography>Personhood verified</Typography>
+              <Typography>{t('verification.personhoodVerified')}</Typography>
             </Content>
           </>
         ))
         .otherwise(() => (
           <Content>
-            <CenteredTypography>
-              Verification failed, please reverify your profile
-            </CenteredTypography>
+            <CenteredTypography>{t('verification.verificationFailed')}</CenteredTypography>
             {/* TODO: NEED DOCUMENTATION LINK */}
-            <SupportOutlink href="https://docs.ens.domains">Learn more</SupportOutlink>
+            <SupportOutlink href="https://docs.ens.domains">{t('action.learnMore')}</SupportOutlink>
           </Content>
         ))}
     </Container>

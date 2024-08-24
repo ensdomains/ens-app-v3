@@ -1,7 +1,7 @@
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { Hash } from 'viem'
 
-import { getOwner, getRecords } from '@ensdomains/ensjs/public'
+import { getName, getOwner, getRecords } from '@ensdomains/ensjs/public'
 
 import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
@@ -22,6 +22,7 @@ export type UseVerificationOAuthReturnType = {
   name: string
   owner: Hash
   manager?: Hash
+  primaryName?: string
   address: Hash
   resolverAddress: Hash
   verifiedPresentationUri: string
@@ -68,11 +69,17 @@ export const getVerificationOAuth =
     const _owner = ownershipLevel === 'registrar' ? registrant : owner
     const manager = ownershipLevel === 'registrar' ? owner : undefined
 
+    const userWithSetRecordAbility = manager ?? _owner
+    const primaryName = userWithSetRecordAbility
+      ? await getName(client, { address: userWithSetRecordAbility })
+      : undefined
+
     const data = {
       ...json,
       verifier,
       owner: _owner,
       manager,
+      primaryName,
       resolverAddress: records.resolverAddress,
       verificationRecord: records.texts.find((text) => text.key === VERIFICATION_RECORD_KEY)?.value,
     }
