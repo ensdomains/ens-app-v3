@@ -46,6 +46,9 @@ export const deploymentAddresses = JSON.parse(
   process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
 ) as Register['deploymentAddresses']
 
+console.log('deploymentAddresses', deploymentAddresses)
+console.log('process.env', process.env)
+
 export const localhostWithEns = makeLocalhostChainWithEns<typeof localhost>(
   localhost,
   deploymentAddresses,
