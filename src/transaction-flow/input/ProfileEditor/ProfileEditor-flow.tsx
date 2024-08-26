@@ -9,7 +9,10 @@ import { useChainId } from 'wagmi'
 import { Button, Dialog, mq, PlusSVG } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
-import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
+import {
+  AvatarViewManager,
+  type AvatarViewManagerType,
+} from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import { AddProfileRecordView } from '@app/components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
 import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
@@ -130,6 +133,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
+    getAvatar,
     labelForRecord,
     secondaryLabelForRecord,
     placeholderForRecord,
@@ -237,10 +241,14 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
 
-  const handleConfirm = (uri: string, display?: string) => {
+  const handleCancel = () => {
+    setView('editor')
+  }
+
+  const handleConfirm = (type: AvatarViewManagerType, uri: string, display?: string) => {
     setAvatar(uri)
     setAvatarSrc(display)
-    setView('editor')
+    handleCancel()
     trigger()
   }
 
@@ -391,37 +399,14 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             onDismissOverlay={() => setView('editor')}
           />
         ))
-        .with('upload', () => (
+        .with('upload', 'nft', 'manual', (_modalOption) => (
           <AvatarViewManager
             name={name}
+            avatar={getAvatar()}
             avatarFile={avatarFile}
-            handleCancel={() => setView('editor')}
-            type="upload"
-            handleSubmit={(type, uri, display) => {
-              handleConfirm(uri, display)
-            }}
-          />
-        ))
-        .with('manual', () => (
-          <AvatarViewManager
-            name={name}
-            avatarFile={avatarFile}
-            handleCancel={() => setView('editor')}
-            type="manual"
-            handleSubmit={(type, uri, display) => {
-              handleConfirm(uri, display)
-            }}
-          />
-        ))
-        .with('nft', () => (
-          <AvatarViewManager
-            name={name}
-            avatarFile={avatarFile}
-            handleCancel={() => setView('editor')}
-            type="nft"
-            handleSubmit={(type, uri, display) => {
-              handleConfirm(uri, display)
-            }}
+            handleCancel={handleCancel}
+            type={_modalOption}
+            handleSubmit={handleConfirm}
           />
         ))
         .exhaustive()}
