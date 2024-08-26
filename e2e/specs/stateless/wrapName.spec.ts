@@ -255,7 +255,7 @@ test('should calculate needed steps without localstorage', async ({
   await login.connect()
 
   await page.pause()
-  await expect(page.getByTestId('name-details-text-wrapper')).toContainText('unwrapped')
+  await expect(page.getByTestId('namewrapper-status')).toContainText('Unwrapped')
 
   await morePage.wrapButton.click()
   await page.pause()
@@ -291,7 +291,7 @@ test('should calculate needed steps without localstorage', async ({
   await transactionModal.introButton.click()
   await transactionModal.confirm()
   await transactionModal.complete()
-  await expect(page.getByTestId('name-details-text-wrapper')).not.toContainText('unwrapped')
+  await expect(page.getByTestId('')).not.toContainText('Unwrapped')
 
   await profilePage.goto(subname)
   await expect(profilePage.record('text', 'description')).toHaveText('test')
