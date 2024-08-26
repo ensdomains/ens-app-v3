@@ -177,13 +177,16 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
   // profile.decryptedName fetches labels from NW/subgraph
   // normalisedName fetches labels from localStorage
   useEffect(() => {
+    if (!tab || !tabs.includes(tab)) {
+      router.replace(`/${normalisedName}`)
+    }
     shouldRedirect(router, 'Profile.tsx', '/profile', {
       isSelf,
       name,
       decodedName: profile?.decodedName,
       normalisedName,
     })
-  }, [profile?.decodedName, normalisedName, name, isSelf, router])
+  }, [profile?.decodedName, normalisedName, name, isSelf, router, tab])
 
   // useEffect(() => {
   //   if (shouldShowSuccessPage(transactions)) {
@@ -296,7 +299,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
             .with('more', () => (
               <MoreTab name={normalisedName} nameDetails={nameDetails} abilities={abilities.data} />
             ))
-            .exhaustive(),
+            .otherwise(() => (<ProfileTab name={normalisedName} nameDetails={nameDetails} />)),
         }}
       </Content>
     </>
