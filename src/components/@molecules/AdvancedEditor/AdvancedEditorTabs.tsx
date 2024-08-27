@@ -2,23 +2,21 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
 
-import { mq } from '@ensdomains/thorin'
-
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 
-const TabButtonsContainer = styled.div(({ theme }) => [
-  css`
+const TabButtonsContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-wrap: wrap;
     gap: ${theme.space['1.25']} ${theme.space['3']};
     padding: 0 ${theme.space['4']} 0 ${theme.space['2']};
     width: ${theme.space.full};
+    @media (min-width: 640px) {
+      padding: 0 ${theme.space['2']};
+      margin: -${theme.space['1.5']} 0 -${theme.space['2']};
+    }
   `,
-  mq.sm.min(css`
-    padding: 0 ${theme.space['2']};
-    margin: -${theme.space['1.5']} 0 -${theme.space['2']};
-  `),
-])
+)
 
 const getIndicatorStyle = (
   theme: Theme,

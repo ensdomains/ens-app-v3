@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { ChildFuseKeys, ChildFuseReferenceType } from '@ensdomains/ensjs/utils'
-import { Button, FlameSVG, Helper, mq, Typography } from '@ensdomains/thorin'
+import { Button, FlameSVG, Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { CurrentChildFuses } from '@app/types'
@@ -13,15 +13,15 @@ export const childFuseObj = Object.fromEntries(
   ChildFuseKeys.map((key) => [key, false]),
 ) as CurrentChildFuses
 
-const FusesContainer = styled.div(({ theme }) => [
-  css`
+const FusesContainer = styled.div(
+  ({ theme }) => css`
     width: 100%;
     padding: ${theme.space['1.25']} ${theme.space['4']};
+    @media (min-width: 640px) {
+      min-width: ${theme.space['112']};
+    }
   `,
-  mq.sm.min(css`
-    min-width: ${theme.space['112']};
-  `),
-])
+)
 
 const BurnButtonsContainer = styled.div(
   ({ theme }) => css`

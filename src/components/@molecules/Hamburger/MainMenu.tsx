@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components'
 import {
   CurrencyToggle,
   LanguageSVG,
-  mq,
   RightChevronSVG,
   Spinner,
   Typography,
@@ -41,7 +40,7 @@ const Container = styled.div(
     padding: ${theme.space['4']};
     gap: ${theme.space['2']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: 0;
       gap: 0;
       & > div {
@@ -51,7 +50,7 @@ const Container = styled.div(
       & > div:last-child {
         border-bottom: none;
       }
-    `)}
+    }
   `,
 )
 
@@ -66,11 +65,11 @@ const SettingsSection = styled.div(
     margin-bottom: ${theme.space['2']};
     gap: ${theme.space['2']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['2']};
       margin: 0;
       gap: 0;
-    `)}
+    }
   `,
 )
 
@@ -99,9 +98,9 @@ const SettingsItem = styled.div(
       }
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       border: none;
-    `)}
+    }
   `,
 )
 
@@ -135,10 +134,10 @@ const miscSectionStyle = css(
     background-color: ${theme.colors.greySurface};
     border-radius: ${theme.radii.large};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       background-color: transparent;
       border-radius: none;
-    `)}
+    }
   `,
 )
 
@@ -164,9 +163,9 @@ const RouteItem = styled.a(
       background-color: ${theme.colors.greySurface};
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['2']} ${theme.space['4']};
-    `)}
+    }
   `,
 )
 
@@ -196,9 +195,9 @@ const NetworkSectionContainer = styled.div(
       text-transform: capitalize;
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['4']} ${theme.space['6']};
-    `)}
+    }
   `,
   miscSectionStyle,
 )

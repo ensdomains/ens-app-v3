@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { ComponentProps, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Banner, Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
+import { Banner, Button, Skeleton, Typography } from '@ensdomains/thorin'
 
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
@@ -128,10 +128,10 @@ const Title = styled(Typography)(
     white-space: nowrap;
     text-overflow: ellipsis;
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       font-size: ${theme.fontSizes.headingTwo};
       line-height: ${theme.lineHeights.headingTwo};
-    `)}
+    }
   `,
 )
 

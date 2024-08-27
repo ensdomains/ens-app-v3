@@ -1,6 +1,7 @@
 import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 
 import '@rainbow-me/rainbowkit/styles.css'
+import '@ensdomains/thorin/style.css'
 
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
@@ -9,7 +10,10 @@ import { I18nextProvider } from 'react-i18next'
 import { IntercomProvider } from 'react-use-intercom'
 import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
 
-import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
+import {
+  lightTheme as thorinLightTheme,
+  ThemeProvider as ThorinThemeProvider,
+} from '@ensdomains/thorin'
 
 import { Notifications } from '@app/components/Notifications'
 import { TestnetWarning } from '@app/components/TestnetWarning'
@@ -148,19 +152,20 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <TransactionStoreProvider>
             <ThemeProvider theme={thorinLightTheme}>
               <BreakpointProvider queries={breakpoints}>
-                <IntercomProvider appId={INTERCOM_ID}>
-                  <GlobalStyle />
-                  <ThorinGlobalStyles />
-                  <SyncProvider>
-                    <TransactionFlowProvider>
-                      <SyncDroppedTransaction>
-                        <Notifications />
-                        <TestnetWarning />
-                        <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                      </SyncDroppedTransaction>
-                    </TransactionFlowProvider>
-                  </SyncProvider>
-                </IntercomProvider>
+                <ThorinThemeProvider>
+                  <IntercomProvider appId={INTERCOM_ID}>
+                    <GlobalStyle />
+                    <SyncProvider>
+                      <TransactionFlowProvider>
+                        <SyncDroppedTransaction>
+                          <Notifications />
+                          <TestnetWarning />
+                          <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                        </SyncDroppedTransaction>
+                      </TransactionFlowProvider>
+                    </SyncProvider>
+                  </IntercomProvider>
+                </ThorinThemeProvider>
               </BreakpointProvider>
             </ThemeProvider>
           </TransactionStoreProvider>
