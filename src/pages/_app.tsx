@@ -19,6 +19,7 @@ import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowPr
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
+import { RegistrationTrackingProvider } from '@app/utils/RegistrationTrackingProvider'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 
@@ -152,13 +153,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                   <GlobalStyle />
                   <ThorinGlobalStyles />
                   <SyncProvider>
-                    <TransactionFlowProvider>
-                      <SyncDroppedTransaction>
-                        <Notifications />
-                        <TestnetWarning />
-                        <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                      </SyncDroppedTransaction>
-                    </TransactionFlowProvider>
+                    <RegistrationTrackingProvider>
+                      <TransactionFlowProvider>
+                        <SyncDroppedTransaction>
+                          <Notifications />
+                          <TestnetWarning />
+                          <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                        </SyncDroppedTransaction>
+                      </TransactionFlowProvider>
+                    </RegistrationTrackingProvider>
                   </SyncProvider>
                 </IntercomProvider>
               </BreakpointProvider>

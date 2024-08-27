@@ -1,8 +1,12 @@
+import { useEffect } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Colors, Skeleton } from '@ensdomains/thorin'
 
+import { useEthPrice } from '@app/hooks/useEthPrice'
 import { CurrencyDisplay } from '@app/types'
+import { makeDisplay } from '@app/utils/currency'
+import { useRegistrationTracking } from '@app/utils/RegistrationTrackingProvider'
 
 import { CurrencyText } from '../CurrencyText/CurrencyText'
 
@@ -48,6 +52,9 @@ type Props = {
 }
 
 export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }: Props) => {
+  const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
+  const registrationTracking = useRegistrationTracking()
+
   const filteredItems = items
     .map(({ value, bufferPercentage }) =>
       value && unit === 'eth' && bufferPercentage ? (value * bufferPercentage) / 100n : value,
@@ -55,6 +62,14 @@ export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }:
     .filter((x): x is bigint => !!x)
   const total = filteredItems.reduce((a, b) => a + b, 0n)
   const hasEmptyItems = filteredItems.length !== items.length
+
+  useEffect(() => {
+    if (isEthPriceLoading || !ethPrice || !total) return
+
+    const paymentAmount = makeDisplay({ value: (total * ethPrice) / BigInt(1e8), symbol: 'usd' })
+    registrationTracking.updatePaymentProperty('paymentAmount', paymentAmount)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ethPrice, isEthPriceLoading, total])
 
   return (
     <Container>

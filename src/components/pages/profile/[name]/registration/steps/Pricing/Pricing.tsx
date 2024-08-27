@@ -31,6 +31,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { useRegistrationTracking } from '@app/utils/RegistrationTrackingProvider'
 import { ONE_DAY, ONE_YEAR } from '@app/utils/time'
 
 import FullInvoice from '../../FullInvoice'
@@ -484,6 +485,7 @@ const Pricing = ({
   const { address } = useAccountSafely()
   const { data: balance } = useBalance({ address })
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
+  const registrationTracking = useRegistrationTracking()
 
   const [seconds, setSeconds] = useState(() => registrationData.seconds ?? ONE_YEAR)
 
@@ -516,6 +518,14 @@ const Pricing = ({
     previousMoonpayTransactionStatus,
     setPaymentMethodChoice,
   ])
+
+  useEffect(() => {
+    registrationTracking.updatePaymentProperty(
+      'paymentType',
+      paymentMethodChoice === 'moonpay' ? 'fiat' : 'eth',
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentMethodChoice])
 
   const fullEstimate = useEstimateFullRegistration({
     name,

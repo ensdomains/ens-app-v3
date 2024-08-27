@@ -10,9 +10,8 @@ import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { VerificationErrorDialog } from '@app/components/pages/VerificationErrorDialog'
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { useVerificationOAuthHandler } from '@app/hooks/verification/useVerificationOAuthHandler/useVerificationOAuthHandler'
-import { trackEvent } from '@app/utils/analytics'
+import { useRegistrationTracking } from '@app/utils/RegistrationTrackingProvider'
 
 import ENSFull from '../assets/ENSFull.svg'
 
@@ -95,13 +94,12 @@ export default function Page() {
   const { t } = useTranslation('common')
 
   const { dialogProps } = useVerificationOAuthHandler()
-  const chainName = useChainName()
+  const registrationTracking = useRegistrationTracking()
 
   useEffect(() => {
-    if (chainName) {
-      trackEvent('Home page', chainName)
-    }
-  }, [chainName])
+    registrationTracking.captureEvent('Home page')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>

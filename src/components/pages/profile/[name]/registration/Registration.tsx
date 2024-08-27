@@ -10,7 +10,6 @@ import { Dialog, Helper, mq, Typography } from '@ensdomains/thorin'
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -19,7 +18,7 @@ import { useResolverExists } from '@app/hooks/useResolverExists'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { trackEvent } from '@app/utils/analytics'
+import { useRegistrationTracking } from '@app/utils/RegistrationTrackingProvider'
 import { isLabelTooLong, secondsToYears } from '@app/utils/utils'
 
 import Complete from './steps/Complete'
@@ -109,7 +108,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const router = useRouterWithHistory()
   const chainId = useChainId()
-  const chainName = useChainName()
   const { address } = useAccount()
   const primary = usePrimaryName({ address })
   const selected = useMemo(
@@ -132,6 +130,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const registerKey = `register-${keySuffix}`
 
   const { cleanupFlow } = useTransactionFlow()
+  const registrationTracking = useRegistrationTracking()
 
   const {
     moonpayUrl,
@@ -187,6 +186,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     }
 
     dispatch({ name: 'increaseStep', selected })
+
+    registrationTracking.capturePaymentEvent()
   }
 
   const profileCallback = ({
@@ -201,7 +202,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const genericCallback = ({ back }: BackObj) => {
     dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
 
-    trackEvent('Payment selected', chainName)
+    registrationTracking.captureEvent('Commit started')
   }
 
   const transactionsCallback = useCallback(
@@ -225,6 +226,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const onStart = () => {
     dispatch({ name: 'setStarted', selected })
+    registrationTracking.captureEvent('Timer started')
   }
 
   const onComplete = (toProfile: boolean) => {

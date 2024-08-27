@@ -63,6 +63,7 @@ export const trackEvent = async (
       'Event triggered on local development',
       JSON.stringify({
         type,
+        chain,
         props,
       }),
     )

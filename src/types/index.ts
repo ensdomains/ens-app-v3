@@ -232,7 +232,7 @@ export type PlausibleProps = {
   duration?: number
   durationType?: 'year' | 'date'
   currencyUnit?: 'eth' | 'usd'
-  paymentType?: 'eth' | 'flat'
-  paymentAmount?: number
+  paymentType?: 'eth' | 'fiat'
+  paymentAmount?: string
   tld?: string
 }
