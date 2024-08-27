@@ -8,8 +8,7 @@ import {
 import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { createSubname, wrapName } from '@ensdomains/ensjs/wallet'
 
-import { Accounts, createAccounts, User } from '../../accounts'
-import { Contracts } from '../../contracts'
+import { Accounts, User } from '../../accounts'
 import {
   testClient,
   waitForTransaction,
@@ -31,12 +30,11 @@ export type LegacySubname = {
 
 type Dependencies = {
   accounts: Accounts
-  contracts: Contracts
 }
 // const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
 const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address
 export const generateLegacySubname =
-  ({ accounts, contracts }: Dependencies) =>
+  ({ accounts }: Dependencies) =>
   async ({
     name,
     nameOwner,
@@ -53,15 +51,15 @@ export const generateLegacySubname =
     const tx = await createSubname(walletClient, {
       name: `${label}.${name}`,
       contract: 'registry',
-      owner: createAccounts().getAddress(owner) as `0x${string}`,
-      account: createAccounts().getAddress(nameOwner) as `0x${string}`,
+      owner: accounts.getAddress(owner) as `0x${string}`,
+      account: accounts.getAccountForUser(nameOwner),
       resolverAddress: resolver ?? DEFAULT_RESOLVER,
     })
     await waitForTransaction(tx)
 
     // Make records
     if (records && resolver) {
-      await generateRecords()({
+      await generateRecords({ accounts })({
         name: subname,
         owner,
         resolver,
@@ -84,7 +82,7 @@ export const generateLegacySubname =
           }),
           true,
         ],
-        account: createAccounts().getAddress(owner) as `0x${string}`,
+        account: accounts.getAddress(owner) as `0x${string}`,
       })
       const approve = await waitForTransaction(approveTx)
       if (approve.status === 'success') console.log('approved name wrapper')
@@ -111,6 +109,6 @@ export const generateLegacySubname =
       resolver: _subname.resolver ?? DEFAULT_RESOLVER,
     }))
     for (const eachSubname of _subnames) {
-      await generateLegacySubname({ accounts, contracts })(eachSubname)
+      await generateLegacySubname({ accounts })(eachSubname)
     }
   }

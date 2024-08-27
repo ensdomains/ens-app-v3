@@ -15,7 +15,7 @@ describe('RecordsTab', () => {
   const baseMockData = {
     name: 'nick.eth',
     network: 1,
-    resolverAddress: '0x123',
+    resolverAddress: '0x123' as any,
     isWrapped: false,
   }
 

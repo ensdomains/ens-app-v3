@@ -59,4 +59,15 @@ test.describe('Import DNSSEC name', () => {
     await expect(page.getByTestId('status-checker-message')).toContainText('Invalid record found')
     await expect(page.getByTestId('import-next-button')).toBeDisabled()
   })
+
+  test('should resolve .pw domains', async ({ page, login }) => {
+    await page.goto('/test.pw')
+    await login.connect()
+
+    await page.getByTestId('onchain-radio').click()
+    await page.getByTestId('import-next-button').click()
+    await expect(page.getByTestId('import-heading')).toContainText('Enable DNSSEC')
+    await expect(page.getByTestId('status-checker-message')).toContainText('DNSSEC is not enabled')
+    await expect(page.getByTestId('import-next-button')).toBeDisabled()
+  })
 })
