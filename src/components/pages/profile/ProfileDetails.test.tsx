@@ -116,12 +116,12 @@ describe('ProfileDetails', () => {
       <ProfileDetails
         name="test.eth"
         expiryDate={undefined}
-        accountRecords={[]}
-        otherRecords={[{ iconKey: 'contenthash', key: 'contenthash', value: 'ipfs://QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco', type: 'contenthash' }]}
+        textRecords={[]}
         addresses={[]}
         pccExpired={false}
         owners={[]}
         actions={[]}
+        contentHash="ipfs://QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco"
       />,
     )
     expect(screen.getByTestId('other-profile-button-contenthash')).toBeVisible()
@@ -133,12 +133,12 @@ describe('ProfileDetails', () => {
       <ProfileDetails
         name="test.eth"
         expiryDate={undefined}
-        accountRecords={[]}
-        otherRecords={[]}
+        textRecords={[]}
         addresses={[]}
         pccExpired={false}
         owners={[]}
         actions={[]}
+        contentHash={{} as any}
       />,
     )
     expect(screen.queryByTestId('other-profile-button-contenthash')).toBeNull()

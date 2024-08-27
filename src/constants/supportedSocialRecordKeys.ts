@@ -5,5 +5,3 @@ export const supportedSocialRecordKeys = [
   'org.telegram',
   'email',
 ] as const
-
-export type SupportedSocialRecordKey = (typeof supportedSocialRecordKeys)[number]

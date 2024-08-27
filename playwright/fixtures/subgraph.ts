@@ -4,9 +4,8 @@
 
 /* eslint-disable no-promise-executor-return */
 import { gql, GraphQLClient } from 'graphql-request'
-import { getBlockNumber } from 'viem/actions'
 
-import { publicClient } from './contracts/utils/addTestContracts'
+import { Provider } from './provider.js'
 
 export type Subgraph = ReturnType<typeof createSubgraph>
 
@@ -21,9 +20,8 @@ const query = gql`
   }
 `
 
-export const waitForSubgraph = () => async () => {
-  const blockNumber = await getBlockNumber(publicClient)
-
+export const waitForSubgraph = (provider: Provider) => async () => {
+  const blockNumber = await provider.getBlockNumber()
   let wait = true
   let count = 0
   do {
@@ -36,6 +34,10 @@ export const waitForSubgraph = () => async () => {
   } while (wait && count < 10)
 }
 
-export const createSubgraph = () => ({
-  sync: waitForSubgraph(),
+type Dependencies = {
+  provider: Provider
+}
+
+export const createSubgraph = ({ provider }: Dependencies) => ({
+  sync: waitForSubgraph(provider),
 })

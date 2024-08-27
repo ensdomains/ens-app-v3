@@ -1,16 +1,12 @@
-import { normaliseTwitterRecordValue } from './records/normaliseTwitterRecordValue'
-
 export const getSocialData = (iconKey: string, value: string) => {
   switch (iconKey) {
     case 'twitter':
     case 'com.twitter':
-    case 'x':
-    case 'com.x':
       return {
         icon: 'com.twitter',
         color: '#000000',
         label: 'X',
-        value: normaliseTwitterRecordValue(value),
+        value: `@${value.replace(/^@/, '')}`,
         type: 'link',
         urlFormatter: `https://x.com/${value.replace(/^@/, '')}`,
       }

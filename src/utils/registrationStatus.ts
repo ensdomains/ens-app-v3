@@ -21,7 +21,6 @@ export type RegistrationStatus =
   | 'notImported'
   | 'notOwned'
   | 'unsupportedTLD'
-  | 'offChain'
 
 export const getRegistrationStatus = ({
   timestamp,
@@ -82,10 +81,6 @@ export const getRegistrationStatus = ({
   }
   if (type === 'name' && !is2LD) {
     // more than 2 labels
-
-    if (addrData?.value && addrData.value !== emptyAddress) {
-      return 'offChain'
-    }
     return 'notOwned'
   }
 

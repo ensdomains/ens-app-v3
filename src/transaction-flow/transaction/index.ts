@@ -11,7 +11,6 @@ import importDnsName from './importDnsName'
 import migrateProfile from './migrateProfile'
 import migrateProfileWithReset from './migrateProfileWithReset'
 import registerName from './registerName'
-import removeVerificationRecord from './removeVerificationRecord'
 import resetPrimaryName from './resetPrimaryName'
 import resetProfile from './resetProfile'
 import resetProfileWithRecords from './resetProfileWithRecords'
@@ -26,7 +25,6 @@ import updateEthAddress from './updateEthAddress'
 import updateProfile from './updateProfile'
 import updateProfileRecords from './updateProfileRecords'
 import updateResolver from './updateResolver'
-import updateVerificationRecord from './updateVerificationRecord'
 import wrapName from './wrapName'
 
 export const transactions = {
@@ -58,8 +56,6 @@ export const transactions = {
   updateProfileRecords,
   updateResolver,
   wrapName,
-  updateVerificationRecord,
-  removeVerificationRecord,
 }
 
 export type Transaction = typeof transactions

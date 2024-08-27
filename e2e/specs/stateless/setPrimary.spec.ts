@@ -157,6 +157,8 @@ test.describe('profile', () => {
   }) => {
     test.slow()
 
+    // const reverseRegistrar = await contracts.get('ReverseRegistrar', { signer: 'user' })
+    // await reverseRegistrar.setName('')
     await setPrimaryName(walletClient, {
       name: '',
       account: createAccounts().getAddress('user') as `0x${string}`,

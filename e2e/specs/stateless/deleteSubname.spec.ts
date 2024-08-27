@@ -26,7 +26,6 @@ test.describe('unwrapped', () => {
 
     await profilePage.goto(subname)
     await login.connect()
-    await page.pause()
 
     // Manager button should exist
     await expect(page.getByTestId('owner-profile-button-name.manager')).toBeVisible()

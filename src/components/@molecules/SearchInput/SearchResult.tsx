@@ -205,7 +205,6 @@ const StatusTag = ({ status }: { status: RegistrationStatus }) => {
     case 'available':
       return <StyledTag colorStyle="greenSecondary">{t(`search.status.${status}`)}</StyledTag>
     case 'notOwned':
-    case 'offChain':
     case 'notImported':
       return <StyledTag colorStyle="blueSecondary">{t(`search.status.${status}`)}</StyledTag>
     case 'short':

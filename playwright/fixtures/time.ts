@@ -1,19 +1,20 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Page } from '@playwright/test'
 
-import { publicClient } from './contracts/utils/addTestContracts'
+import { Provider } from './provider'
 
 export type Time = ReturnType<typeof createTime>
 
 type Dependencies = {
+  provider: Provider
   page: Page
 }
 
-export const createTime = ({ page }: Dependencies) => {
+export const createTime = ({ provider, page }: Dependencies) => {
   return {
     sync: async (offset = 0) => {
       const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
-      const blockTime = Number((await publicClient.getBlock()).timestamp)
+      const blockTime = await provider.getBlockTimestamp()
       const browserOffset = (blockTime - browserTime + offset) * 1000
 
       console.log(`Browser time: ${new Date(Date.now() + browserOffset)}`)

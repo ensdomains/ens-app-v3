@@ -160,19 +160,10 @@ export const NameDetailItem = ({
         $highlight={mode === 'select' && selected}
         as={mode !== 'select' ? 'a' : 'div'}
         data-testid={`name-item-${name}`}
-        className="name-detail-item"
+        onClick={name !== INVALID_NAME ? handleClick : undefined}
       >
         <NameItemContainer>
-          <AvatarWrapper
-            data-testid={`name-item-avatar-wrapper-${name}`}
-            onClick={(e) => {
-              e.preventDefault()
-
-              if (name !== INVALID_NAME && !disabled) {
-                handleClick()
-              }
-            }}
-          >
+          <AvatarWrapper>
             <Avatar
               placeholder={`url(${zorb})`}
               label={truncatedName || name}

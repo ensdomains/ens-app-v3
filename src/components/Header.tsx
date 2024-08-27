@@ -191,26 +191,24 @@ export const Header = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchWrapperRef.current])
 
-  const pathnameWithoutQuery = router.asPath.split('?')[0]
-
   return (
     <HeaderWrapper id="header">
       <NavContainer>
         <ConditionalWrapper
-          condition={pathnameWithoutQuery !== '/'}
+          condition={router.asPath !== '/'}
           wrapper={(children) => (
             <BaseLink passHref href="/">
               <LogoAnchor data-testid="home-button">{children}</LogoAnchor>
             </BaseLink>
           )}
         >
-          {pathnameWithoutQuery === '/' ? (
+          {router.asPath === '/' ? (
             <ENSFull height={space['12']} />
           ) : (
             <ENSWithGradient height={space['12']} />
           )}
         </ConditionalWrapper>
-        {pathnameWithoutQuery !== '/' && breakpoints.sm && (
+        {router.asPath !== '/' && breakpoints.sm && (
           <>
             <SearchWrapper
               data-testid="search-wrapper"

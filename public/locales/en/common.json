@@ -211,8 +211,6 @@
       "approveNameWrapper": "Approve NameWrapper",
       "clearRecords": "Clear records",
       "updateRecords": "Update records",
-      "updateRecord": "Update record",
-      "removeRecord": "Remove record",
       "resetProfileWithRecords": "Reset profile with records",
       "transferName": "Transfer name",
       "transferSubname": "Transfer subname",
@@ -220,9 +218,7 @@
       "syncManager": "Sync manager",
       "updateProfileRecords": "Update profile",
       "resetProfile": "Reset profile",
-      "unwrapName": "Unwrap name",
-      "updateVerificationRecord": "Update verification record",
-      "removeVerificationRecord": "Remove verification record"
+      "unwrapName": "Unwrap name"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
@@ -267,8 +263,7 @@
       "cost": "Cost",
       "update": "Update",
       "resolver": "Resolver",
-      "records": "Records",
-      "record": "Record"
+      "records": "Records"
     },
     "itemValue": {
       "records_one": "{{count}} record",
@@ -354,8 +349,7 @@
       "invalid": "Invalid",
       "unsupportedTLD": "Not Supported",
       "imported": "Imported",
-      "owned": "Owned",
-      "offChain": "View"
+      "owned": "Owned"
     }
   },
   "selectableInput": {

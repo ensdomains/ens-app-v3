@@ -15,7 +15,6 @@ import { Card } from '@app/components/Card'
 import { useDotBoxAvailabilityOffchain } from '@app/hooks/dotbox/useDotBoxAvailabilityOffchain'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
-import { shouldRedirect } from '@app/utils/shouldRedirect'
 
 const LEARN_MORE_URL = 'https://docs.my.box/docs/learn-more/reserved-names'
 
@@ -104,7 +103,14 @@ export const DotBoxRegistration = () => {
   const dotBoxResult = useDotBoxAvailabilityOffchain({ name })
   const nameStatus = dotBoxResult?.data?.data.status
 
-  shouldRedirect(router, 'DotBoxRegistration.tsx', `/profile/${name}`, dotBoxResult)
+  if (
+    !dotBoxResult.isLoading &&
+    nameStatus !== 'AVAILABLE' &&
+    nameStatus !== 'UNAVAILABLE' &&
+    router.isReady
+  ) {
+    router.push(`/profile/${name}`)
+  }
 
   const { t } = useTranslation('dnssec')
 

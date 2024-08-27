@@ -1,19 +1,19 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { DecodedContentHash } from '@ensdomains/ensjs/utils'
 import { Button, Helper, mq, RightArrowSVG, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { Outlink } from '@app/components/Outlink'
 import coinsWithIcons from '@app/constants/coinsWithIcons.json'
-import { useProfileActions } from '@app/hooks/pages/profile/[name]/profile/useProfileActions/useProfileActions'
+import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import { useOwners } from '@app/hooks/useOwners'
+import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import {
-  ProfileAccountRecord,
-  ProfileOtherRecord,
-} from '@app/utils/records/categoriseProfileTextRecords'
+import { contentHashToString } from '@app/utils/contenthash'
 import { checkETH2LDFromName, formatExpiry } from '@app/utils/utils'
 
 import {
@@ -21,7 +21,6 @@ import {
   OtherProfileButton,
   OwnerProfileButton,
   SocialProfileButton,
-  VerificationProfileButton,
 } from './ProfileButton'
 
 const ProfileInfoBox = styled(CacheableComponent)(
@@ -63,7 +62,7 @@ const ProfileSection = ({
 }: {
   condition: any
   label: string
-  array: Array<Record<'key' | 'value', string> & { iconKey?: string }>
+  array: Array<Record<'key' | 'value', string>>
   button: any
   supported?: Array<string>
   type?: 'address' | 'text'
@@ -79,7 +78,7 @@ const ProfileSection = ({
     : []
 
   return condition ? (
-    <div data-testid={`profile-section-${label}`}>
+    <div>
       <SectionTitle weight="bold">
         {t(label)}
         {label === 'ownership' ? (
@@ -94,12 +93,12 @@ const ProfileSection = ({
         ) : null}
       </SectionTitle>
       <Stack>
-        {supportedArray.map(({ key, iconKey, ...item }) => (
-          <ButtonComponent key={key} {...{ ...item, iconKey: iconKey || key, name }} />
+        {supportedArray.map(({ key, ...item }) => (
+          <ButtonComponent key={key} {...{ ...item, iconKey: key, name }} />
         ))}
         {unsupportedArray.length > 0 &&
-          unsupportedArray.map(({ key, iconKey, ...item }) => (
-            <OtherProfileButton key={key} {...{ ...item, iconKey: iconKey || key, name }} />
+          unsupportedArray.map(({ key, ...item }) => (
+            <OtherProfileButton key={key} {...{ ...item, iconKey: key, name }} />
           ))}
       </Stack>
     </div>
@@ -201,7 +200,7 @@ const getAction = (action: Action, is2LDEth: boolean) => {
       data-testid={`profile-action-${action.label}`}
       onClick={action.onClick}
       size="small"
-      colorStyle={action.red ? 'redSecondary' : action.colorStyle ?? 'accentPrimary'}
+      colorStyle={action.red ? 'redSecondary' : 'accentPrimary'}
       loading={action.loading}
       disabled={action.loading}
     >
@@ -300,10 +299,9 @@ export const ownershipInfoCalc = (
 }
 
 export const ProfileDetails = ({
-  accountRecords = [],
-  otherRecords = [],
+  textRecords = [],
   addresses = [],
-  verificationRecords = [],
+  contentHash,
   expiryDate,
   pccExpired,
   owners,
@@ -312,10 +310,9 @@ export const ProfileDetails = ({
   name,
   gracePeriodEndDate,
 }: {
-  accountRecords: ProfileAccountRecord[]
-  otherRecords: ProfileOtherRecord[]
+  textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
-  verificationRecords?: Array<Record<'key' | 'value', string>>
+  contentHash?: DecodedContentHash | string | null
   expiryDate: Date | undefined
   pccExpired: boolean
   owners: ReturnType<typeof useOwners>
@@ -325,6 +322,22 @@ export const ProfileDetails = ({
   gracePeriodEndDate?: Date
 }) => {
   const breakpoint = useBreakpoint()
+
+  const _contentHash = contentHashToString(contentHash)
+  const otherRecords = [
+    ...textRecords
+      .filter(
+        (x) =>
+          !supportedSocialRecordKeys.includes(
+            x.key.toLowerCase() as (typeof supportedSocialRecordKeys)[number],
+          ) &&
+          !supportedGeneralRecordKeys.includes(
+            x.key.toLowerCase() as (typeof supportedGeneralRecordKeys)[number],
+          ),
+      )
+      .map((x) => ({ ...x, type: 'text' })),
+    ...(_contentHash ? [{ key: 'contenthash', type: 'contenthash', value: _contentHash }] : []),
+  ]
 
   const mappedOwners = ownershipInfoCalc(name, pccExpired, owners, gracePeriodEndDate, expiryDate)
 
@@ -339,8 +352,15 @@ export const ProfileDetails = ({
       <RecordsStack>
         <ProfileSection
           label="accounts"
-          condition={accountRecords.length > 0}
-          array={accountRecords}
+          condition={
+            textRecords &&
+            textRecords.filter((x) =>
+              supportedSocialRecordKeys.includes(
+                x.key.toLowerCase() as (typeof supportedSocialRecordKeys)[number],
+              ),
+            ).length > 0
+          }
+          array={textRecords}
           button={SocialProfileButton}
         />
         <ProfileSection
@@ -363,13 +383,6 @@ export const ProfileDetails = ({
           condition={!!mappedOwners}
           array={mappedOwners!}
           button={OwnerProfileButton}
-          name={name}
-        />
-        <ProfileSection
-          label="verifications"
-          condition={!!verificationRecords && verificationRecords.length > 0}
-          array={verificationRecords}
-          button={VerificationProfileButton}
           name={name}
         />
       </RecordsStack>

@@ -34,7 +34,7 @@ const displayItems = (
       }
     : {
         label: 'action',
-        value: t('transaction.description.updateProfile'),
+        value: t('transaction.description.updateRecords'),
       }
 
   const recordsList = recordOptionsToToupleList(

@@ -1,9 +1,9 @@
 import { expect } from '@playwright/test'
+import { Web3RequestKind } from 'headless-web3-provider'
 import { Hash, isHash } from 'viem'
 
 import { ethRegistrarControllerCommitSnippet } from '@ensdomains/ensjs/contracts'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
-import { Web3RequestKind } from '@ensdomains/headless-web3-provider'
 
 // import { secondsToDateInput } from '@app/utils/date'
 import { daysToSeconds, yearsToSeconds } from '@app/utils/time'
@@ -28,6 +28,7 @@ test.describe.serial('normal registration', () => {
     page,
     login,
     accounts,
+    provider,
     time,
     makePageObject,
   }) => {
@@ -109,9 +110,7 @@ test.describe.serial('normal registration', () => {
     const waitButton = page.getByTestId('wait-button')
     await expect(waitButton).toBeVisible()
     await expect(waitButton).toBeDisabled()
-    const startTimerButton = page.getByTestId('start-timer-button')
-    await expect(startTimerButton).not.toBeVisible()
-    await testClient.increaseTime({ seconds: 60 })
+    await provider.increaseTime(60)
     await expect(page.getByTestId('finish-button')).toBeEnabled()
 
     // should save the registration state and the transaction status
@@ -158,6 +157,7 @@ test.describe.serial('normal registration', () => {
 
   test('should allow registering a non-primary name', async ({
     page,
+    provider,
     accounts,
     time,
     login,
@@ -190,7 +190,7 @@ test.describe.serial('normal registration', () => {
     await page.getByTestId('next-button').click()
     await transactionModal.confirm()
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-    await testClient.increaseTime({ seconds: 60 })
+    await provider.increaseTime(60)
     await page.getByTestId('finish-button').click()
     await transactionModal.confirm()
     await page.getByTestId('view-name').click()
@@ -203,6 +203,7 @@ test.describe.serial('normal registration', () => {
 test('should allow registering a premium name', async ({
   page,
   login,
+  provider,
   accounts,
   makeName,
   makePageObject,
@@ -233,7 +234,7 @@ test('should allow registering a premium name', async ({
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await testClient.increaseTime({ seconds: 120 })
+  await provider.increaseTime(120)
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -246,6 +247,7 @@ test('should allow registering a premium name', async ({
 test('should allow registering a name and resuming from the commit toast', async ({
   page,
   login,
+  provider,
   time,
   makePageObject,
 }) => {
@@ -262,13 +264,13 @@ test('should allow registering a name and resuming from the commit toast', async
   await page.getByTestId('next-button').click()
   await page.getByTestId('next-button').click()
 
-  await testClient.setAutomine(false)
+  await provider.setAutomine(false)
 
   await transactionModal.confirm()
 
   await page.getByTestId('transaction-modal-sent-button').click()
   await page.goto('/')
-  await testClient.setAutomine(true)
+  await provider.setAutomine(true)
 
   await page.getByTestId('notification-continue-button').click()
   await expect(page).toHaveURL(`/${name}/register`)
@@ -347,6 +349,7 @@ test('should allow registering with a specific date', async ({ page, login, make
 test('should allow registering a premium name with a specific date', async ({
   page,
   login,
+  provider,
   accounts,
   makeName,
   makePageObject,
@@ -406,7 +409,7 @@ test('should allow registering a premium name with a specific date', async ({
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await testClient.increaseTime({ seconds: 120 })
+  await provider.increaseTime(120)
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -419,6 +422,7 @@ test('should allow registering a premium name with a specific date', async ({
 test('should allow registering a premium name for two months', async ({
   page,
   login,
+  provider,
   accounts,
   makeName,
   makePageObject,
@@ -478,7 +482,7 @@ test('should allow registering a premium name for two months', async ({
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await testClient.increaseTime({ seconds: 120 })
+  await provider.increaseTime(120)
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -491,6 +495,7 @@ test('should allow registering a premium name for two months', async ({
 test('should not allow registering a premium name for less than 28 days', async ({
   page,
   login,
+  provider,
   accounts,
   makeName,
   makePageObject,
@@ -567,7 +572,7 @@ test('should not allow registering a premium name for less than 28 days', async 
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await testClient.increaseTime({ seconds: 120 })
+  await provider.increaseTime(120)
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -581,6 +586,7 @@ test('should allow normal registration for a month', async ({
   page,
   login,
   accounts,
+  provider,
   time,
   makePageObject,
 }) => {
@@ -684,7 +690,7 @@ test('should allow normal registration for a month', async ({
   // should show countdown
   await expect(page.getByTestId('countdown-circle')).toBeVisible()
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await testClient.increaseTime({ seconds: 60 })
+  await provider.increaseTime(60)
   await expect(page.getByTestId('finish-button')).toBeEnabled()
 
   // should save the registration state and the transaction status
@@ -709,6 +715,7 @@ test('should not allow normal registration less than 28 days', async ({
   page,
   login,
   accounts,
+  provider,
   time,
   makePageObject,
 }) => {
@@ -823,7 +830,7 @@ test('should not allow normal registration less than 28 days', async ({
   // should show countdown
   await expect(page.getByTestId('countdown-circle')).toBeVisible()
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await testClient.increaseTime({ seconds: 60 })
+  await provider.increaseTime(60)
   await expect(page.getByTestId('finish-button')).toBeEnabled()
 
   // should save the registration state and the transaction status
@@ -848,6 +855,7 @@ test('should be able to detect an existing commit created on a private mempool',
   page,
   login,
   accounts,
+  provider,
   time,
   wallet,
   makePageObject,
@@ -916,7 +924,7 @@ test('should be able to detect an existing commit created on a private mempool',
     // should show countdown
     await expect(page.getByTestId('countdown-circle')).toBeVisible()
     await expect(page.getByTestId('countdown-circle')).toContainText(/^[0-6]?[0-9]$/)
-    await testClient.increaseTime({ seconds: 60 })
+    await provider.increaseTime(60)
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible({ timeout: 10000 })
   })
 

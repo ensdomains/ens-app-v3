@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { expect, Locator, Page } from '@playwright/test'
-
-import { Web3ProviderBackend, Web3RequestKind } from '@ensdomains/headless-web3-provider'
+import { Web3ProviderBackend, Web3RequestKind } from 'headless-web3-provider'
 
 import { Accounts, User } from './accounts.js'
 
@@ -53,11 +52,6 @@ export class Login {
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
     expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
     await expect(this.getProfileButton).toBeVisible()
-  }
-
-  async switchTo(user: User) {
-    const pk = this.accounts.getPrivateKey(user)
-    await this.wallet.changeAccounts([pk!])
   }
 
   async reconnect() {
