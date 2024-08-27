@@ -80,10 +80,10 @@ const TableHeaderTrailing = styled.div<{
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       flex: ${$isDesktopFlexibleWidth ? '2' : `0 0 ${theme.space['32']}`};
       width: ${theme.space['32']};
-    `)}
+    }
   `,
 )
 

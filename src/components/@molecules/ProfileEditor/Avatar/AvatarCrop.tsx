@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, mq, Slider } from '@ensdomains/thorin'
+import { Button, Dialog, Slider } from '@ensdomains/thorin'
 
 import CropBorderSVG from '@app/assets/CropBorder.svg'
 import CropFrameSVG from '@app/assets/CropFrame.svg'
@@ -91,10 +91,9 @@ const SliderContainer = styled.div(
       height: ${theme.space['6']};
       opacity: 0.15;
     }
-
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['2']} ${theme.space['8']};
-    `)}
+    }
   `,
 )
 
