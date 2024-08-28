@@ -66,7 +66,7 @@ export const RoleTag = ({
     <Tooltip
       content={
         <TooltipContent>
-          <QuestionCircleSVG />
+          <QuestionCircleSVG height={16} width={16} />
           <Typography color="text" fontVariant="small">
             {t(`tabs.ownership.tooltips.${_role}`, tOptions)}
           </Typography>
