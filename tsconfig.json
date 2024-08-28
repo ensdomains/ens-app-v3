@@ -13,7 +13,7 @@
       "plugins": [
         {
           "name": "typescript-styled-plugin",
-          "tags": ["styled", "css", "mq"]
+          "tags": ["styled", "css"]
         }
       ]
     }
@@ -45,7 +45,7 @@
     "plugins": [
       {
         "name": "typescript-styled-plugin",
-        "tags": ["styled", "css", "mq"],
+        "tags": ["styled", "css"],
         "validate": false,
         "lint": {
           "validProperties": ["flex-gap"]
