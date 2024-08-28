@@ -105,7 +105,12 @@ test.describe('profile', () => {
     await expect(profilePage.contentHash()).toContainText('ipfs://bafybeic...')
   })
 
-  test('should redirect to profile tab if tab specified in query string does not exist', async ({ page, login, makeName, makePageObject }) => {
+  test('should redirect to profile tab if tab specified in query string does not exist', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
     const name = await makeName({
       label: 'profile',
       type: 'legacy',
@@ -116,27 +121,34 @@ test.describe('profile', () => {
 
     await profilePage.goto(name)
     await login.connect()
-    
-    const validTabs: Array<String> = ['profile', 'records', 'ownership', 'subnames', 'permissions', 'more'] as const
-    
+
+    const validTabs: Array<String> = [
+      'profile',
+      'records',
+      'ownership',
+      'subnames',
+      'permissions',
+      'more',
+    ] as const
+
     const generateRandomTab = () => {
-      const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      const length = 10;
-    
-      let randomTab = '';
-    
+      const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+      const length = 10
+
+      let randomTab = ''
+
       do {
         randomTab = Array.from({ length }, () =>
-          characters.charAt(Math.floor(Math.random() * characters.length))
-        ).join('');
-      } while (validTabs.includes(randomTab));
-    
-      return randomTab;
-    };
-    
-    await page.goto(`/${name}?tab=${generateRandomTab()}`);
+          characters.charAt(Math.floor(Math.random() * characters.length)),
+        ).join('')
+      } while (validTabs.includes(randomTab))
 
-    await expect(page).toHaveURL(`/${name}`);
+      return randomTab
+    }
+
+    await page.goto(`/${name}?tab=${generateRandomTab()}`)
+
+    await expect(page).toHaveURL(`/${name}`)
 
     await page.pause()
     await expect(profilePage.record('text', 'description')).toHaveText('Hello2')

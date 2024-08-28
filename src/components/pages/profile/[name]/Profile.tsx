@@ -299,7 +299,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
             .with('more', () => (
               <MoreTab name={normalisedName} nameDetails={nameDetails} abilities={abilities.data} />
             ))
-            .otherwise(() => (<ProfileTab name={normalisedName} nameDetails={nameDetails} />)),
+            .otherwise(() => <ProfileTab name={normalisedName} nameDetails={nameDetails} />),
         }}
       </Content>
     </>
