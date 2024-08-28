@@ -48,15 +48,15 @@ const makeEvent = (name: string, expiryDate: Date): CalendarEvent => ({
   url: window.location.href,
 })
 
-const Header = styled.div(({ theme }) => [
-  css`
+const Header = styled.div(
+  ({ theme }) => css`
     padding: ${theme.space['4']};
     border-bottom: 1px solid ${theme.colors.border};
+    @media (min-width: 640px) {
+      padding: ${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    padding: ${theme.space['6']};
-  `),
-])
+)
 
 const PanelsContainer = styled.div(({ theme }) => [
   css`
@@ -87,25 +87,25 @@ const Footer = styled.div(
   `,
 )
 
-const FooterWrapper = styled.div(({ theme }) => [
-  css`
+const FooterWrapper = styled.div(
+  ({ theme }) => css`
     padding: ${theme.space['4']};
+    @media (min-width: 640px) {
+      padding: ${theme.space['4']} ${theme.space['6']} ${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    padding: ${theme.space['4']} ${theme.space['6']} ${theme.space['6']};
-  `),
-])
+)
 
-const Container = styled.div(({ theme }) => [
-  css`
+const Container = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     margin: -${theme.space['4']};
+    @media (min-width: 640px) {
+      margin: -${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    margin: -${theme.space['6']};
-  `),
-])
+)
 
 const StyledCard = styled(Card)(cacheableComponentStyles)
 

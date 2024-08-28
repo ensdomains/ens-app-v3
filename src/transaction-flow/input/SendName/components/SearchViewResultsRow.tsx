@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { mq, Tag } from '@ensdomains/thorin'
+import { Tag } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 
@@ -32,10 +32,10 @@ const Container = styled.button(({ theme }) => [
         opacity: 0.5;
       }
     }
+    @media (min-width: 640px) {
+      padding: ${theme.space[4]} ${theme.space[6]};
+    }
   `,
-  mq.sm.min(css`
-    padding: ${theme.space[4]} ${theme.space[6]};
-  `),
 ])
 
 type Props = {

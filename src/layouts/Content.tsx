@@ -35,10 +35,10 @@ const HeadingItems = styled.div(
     align-self: center;
     align-items: center;
     min-height: ${theme.space['12']};
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       min-height: ${theme.space['10']};
       grid-column: span 2;
-    `)}
+    }
   `,
 )
 
@@ -65,9 +65,9 @@ const ContentPlaceholder = styled.div(
     display: none;
     height: 0;
     width: 0;
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       display: block;
-    `)}
+    }
   `,
 )
 
@@ -76,9 +76,9 @@ const WarningWrapper = styled.div(
     width: 100%;
     grid-column: span 1;
     height: min-content;
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       grid-column: span 2;
-    `)}
+    }
   `,
 )
 
@@ -109,7 +109,7 @@ const TitleWrapper = styled.div(
       align-items: flex-start;
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       justify-content: flex-start;
       width: max-content;
 
@@ -117,7 +117,7 @@ const TitleWrapper = styled.div(
         text-align: left;
         align-items: flex-start;
       }
-    `)}
+    }
   `,
 )
 
