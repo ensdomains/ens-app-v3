@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Banner, QuestionCircleSVG, UpRightArrowSVG } from '@ensdomains/thorin'
+import { Banner, QuestionCircleSVG } from '@ensdomains/thorin'
 
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
@@ -16,7 +16,10 @@ const ContentContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space[6]};
-    color: var(--thorin-color-indigoPrimary);
+
+    & > *:nth-child(2) svg {
+      color: var(--thorin-color-indigoPrimary);
+    }
   `,
 )
 
