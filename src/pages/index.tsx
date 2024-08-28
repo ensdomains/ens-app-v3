@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { mq, Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin'
 
 import FaucetBanner from '@app/components/@molecules/FaucetBanner'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
@@ -27,9 +27,9 @@ const GradientTitle = styled.h1(
     color: transparent;
     margin: 0;
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       font-size: ${theme.fontSizes.headingOne};
-    `)}
+    }
   `,
 )
 
@@ -80,13 +80,11 @@ const LogoAndLanguage = styled.div(
   `,
 )
 
-const StyledLeadingHeading = styled(LeadingHeading)(
-  () => css`
-    ${mq.sm.min(css`
-      display: none;
-    `)}
-  `,
-)
+const StyledLeadingHeading = styled(LeadingHeading)`
+  @media (min-width: 640px) {
+    display: none;
+  }
+`
 
 export default function Page() {
   const { t } = useTranslation('common')

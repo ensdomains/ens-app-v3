@@ -2,8 +2,6 @@ import Head from 'next/head'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { mq } from '@ensdomains/thorin'
-
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { LeadingHeading } from '@app/components/LeadingHeading'
@@ -27,13 +25,11 @@ const LogoAndLanguage = styled.div(
   `,
 )
 
-const StyledLeadingHeading = styled(LeadingHeading)(
-  () => css`
-    ${mq.sm.min(css`
-      display: none;
-    `)}
-  `,
-)
+const StyledLeadingHeading = styled(LeadingHeading)`
+  @media (min-width: 640px) {
+    display: none;
+  }
+`
 
 export default function Page() {
   const { t } = useTranslation()

@@ -40,11 +40,12 @@ const StyledCard = styled.form(({ theme }) => [
     align-items: center;
     justify-content: center;
     gap: ${theme.space['4']};
+
+    @media (min-width: 640px) {
+      padding: ${theme.space['6']};
+      gap: ${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    padding: ${theme.space['6']};
-    gap: ${theme.space['6']};
-  `),
 ])
 
 const CenterAlignedTypography = styled(Typography)(

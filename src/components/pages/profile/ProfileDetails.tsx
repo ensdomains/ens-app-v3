@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Helper, mq, RightArrowSVG, Typography } from '@ensdomains/thorin'
+import { Button, Helper, RightArrowSVG, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -159,26 +159,26 @@ const Actions = styled.div(
 const ActionWrapper = styled.div<{
   leading?: boolean
   fullMobileWidth?: boolean
-}>(({ leading, fullMobileWidth }) => [
-  css`
+}>(
+  ({ leading, fullMobileWidth }) => css`
     ${fullMobileWidth &&
     css`
       width: 100%;
     `}
+    @media (min-width: 640px) {
+      width: initial;
+      ${leading &&
+      css`
+        flex-grow: 1;
+        order: -1;
+        & > div,
+        button {
+          width: min-content;
+        }
+      `}
+    }
   `,
-  mq.sm.min(css`
-    width: initial;
-    ${leading &&
-    css`
-      flex-grow: 1;
-      order: -1;
-      & > div,
-      button {
-        width: min-content;
-      }
-    `}
-  `),
-])
+)
 
 type Action = NonNullable<ReturnType<typeof useProfileActions>['profileActions']>[number]
 const getAction = (action: Action, is2LDEth: boolean) => {
