@@ -13,7 +13,6 @@ import {
   Field,
   Heading,
   Helper,
-  mq,
   RadioButton,
   RadioButtonGroup,
   Toggle,
@@ -143,10 +142,10 @@ const InfoItems = styled.div(
     justify-content: flex-start;
     gap: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       flex-direction: row;
       align-items: stretch;
-    `)}
+    }
   `,
 )
 

@@ -4,7 +4,7 @@ import { match, P } from 'ts-pattern'
 import { labelhash, namehash } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { mq, Tag, Typography } from '@ensdomains/thorin'
+import { Tag, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
@@ -46,7 +46,7 @@ const Container = styled(TabWrapper)(
       border-bottom: none;
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       & > div {
         padding: ${theme.space['4']} ${theme.space['6']};
       }
@@ -54,7 +54,7 @@ const Container = styled(TabWrapper)(
       & > div:first-of-type {
         padding: ${theme.space['6']};
       }
-    `)}
+    }
   `,
 )
 
@@ -80,9 +80,9 @@ const IdsContainer = styled.div(
     justify-content: center;
     gap: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       gap: ${theme.space['2']};
-    `)}
+    }
   `,
 )
 
@@ -96,9 +96,9 @@ const ItemsContainer = styled(CacheableComponent)(
 
     overflow: hidden;
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       flex-direction: row;
-    `)}
+    }
   `,
 )
 
@@ -107,10 +107,10 @@ const NftBox = styled(NFTWithPlaceholder)(
     max-width: 100%;
     aspect-ratio: 1;
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       max-width: ${theme.space['36']};
       max-height: ${theme.space['36']};
-    `)}
+    }
   `,
 )
 

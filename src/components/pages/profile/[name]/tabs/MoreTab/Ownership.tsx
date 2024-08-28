@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
-import { Button, Helper, mq, Tag, Typography } from '@ensdomains/thorin'
+import { Button, Helper, Tag, Typography } from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
@@ -57,9 +57,9 @@ const HeadingContainer = styled.div(
     font-weight: ${theme.fontWeights.bold};
     font-size: ${theme.fontSizes.headingFour};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -87,9 +87,9 @@ const OwnerContainer = styled.div(
       background-color: ${theme.colors.backgroundSecondary};
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['4']} ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -166,9 +166,9 @@ const DNSOwnerSectionContainer = styled.div(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
