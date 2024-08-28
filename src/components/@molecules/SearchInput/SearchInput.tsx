@@ -38,10 +38,11 @@ import { UsePriceQueryKey } from '@app/hooks/ensjs/public/usePrice'
 import { UseWrapperDataQueryKey } from '@app/hooks/ensjs/public/useWrapperData'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { createQueryKey } from '@app/hooks/useQueryOptions'
+import { useRegistrationTrackingReducer } from '@app/hooks/useRegistrationTrackingReducer'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate, validate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
-import { CreateQueryKey, GenericQueryKey } from '@app/types'
+import { CreateQueryKey, GenericQueryKey, PlausibleType } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { thread, yearsToSeconds } from '@app/utils/utils'
@@ -311,6 +312,7 @@ type CreateSearchHandlerProps = {
   setHistory: Dispatch<SetStateAction<HistoryItem[]>>
   setInputVal: Dispatch<SetStateAction<string>>
   queryClient: QueryClient
+  captureRegistrationEvent: (type: PlausibleType) => void
 }
 
 const createSearchHandler =
@@ -323,6 +325,7 @@ const createSearchHandler =
     setHistory,
     setInputVal,
     queryClient,
+    captureRegistrationEvent,
   }: CreateSearchHandlerProps): SearchHandler =>
   (index: number) => {
     if (index === -1) return
@@ -337,6 +340,8 @@ const createSearchHandler =
       ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
       { lastAccessed: Date.now(), nameType, text, isValid: selectedItem.isValid },
     ])
+
+    captureRegistrationEvent('Search selected')
 
     const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
     setInputVal('')
@@ -625,6 +630,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
 
   const { address } = useAccount()
   const chainId = useChainId()
+  const { captureRegistrationEvent } = useRegistrationTrackingReducer()
 
   const [inputVal, setInputVal] = useState('')
 
@@ -666,6 +672,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       searchInputRef,
       setHistory,
       setInputVal,
+      captureRegistrationEvent,
     }),
     [address, chainId, dropdownItems, queryClient, router, searchInputRef, setHistory, setInputVal],
   )
@@ -689,6 +696,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
     setInputVal(val)
     setUsingPlaceholder(true)
     debouncer(() => setUsingPlaceholder(false))
+    debouncer(() => captureRegistrationEvent('Start searching', { keyword: val }))
   }
 
   const SearchInputElement = (

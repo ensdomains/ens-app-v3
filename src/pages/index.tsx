@@ -9,6 +9,7 @@ import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { VerificationErrorDialog } from '@app/components/pages/VerificationErrorDialog'
+import { useRegistrationTrackingReducer } from '@app/hooks/useRegistrationTrackingReducer'
 import { useVerificationOAuthHandler } from '@app/hooks/verification/useVerificationOAuthHandler/useVerificationOAuthHandler'
 
 import ENSFull from '../assets/ENSFull.svg'
@@ -92,6 +93,9 @@ export default function Page() {
   const { t } = useTranslation('common')
 
   const { dialogProps } = useVerificationOAuthHandler()
+  const { captureRegistrationEvent } = useRegistrationTrackingReducer()
+
+  captureRegistrationEvent('Home page')
 
   return (
     <>

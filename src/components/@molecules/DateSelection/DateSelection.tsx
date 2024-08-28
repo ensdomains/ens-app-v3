@@ -6,6 +6,7 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
+import { useRegistrationTrackingReducer } from '@app/hooks/useRegistrationTrackingReducer'
 import { roundDurationWithDay } from '@app/utils/date'
 import { formatDuration, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/utils'
 
@@ -49,6 +50,7 @@ export const DateSelection = ({
   const toggleYearPickView = () => setYearPickView(yearPickView === 'date' ? 'years' : 'date')
 
   const { t } = useTranslation()
+  const { dispatch: dispatchRegistrationTrackingData } = useRegistrationTrackingReducer()
 
   const extensionPeriod = formatDuration(seconds, t)
 
@@ -65,6 +67,18 @@ export const DateSelection = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateInYears, yearPickView])
+
+  useEffect(() => {
+    dispatchRegistrationTrackingData({
+      name: 'updatePayment',
+      payload: {
+        durationType: yearPickView === 'years' ? 'year' : 'date',
+        duration: yearPickView === 'years' ? Math.floor(secondsToYears(seconds)) : seconds,
+      },
+    })
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateInYears, seconds, yearPickView])
 
   const currentTime = expiry ?? now
 

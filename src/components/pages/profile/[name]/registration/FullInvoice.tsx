@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -7,6 +7,7 @@ import { Colors, CurrencyToggle } from '@ensdomains/thorin'
 import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
+import { useRegistrationTrackingReducer } from '@app/hooks/useRegistrationTrackingReducer'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import useUserConfig from '@app/utils/useUserConfig'
 import { formatDuration, ONE_DAY } from '@app/utils/utils'
@@ -42,6 +43,7 @@ const FullInvoice = ({
   gasPrice,
 }: Props) => {
   const { t } = useTranslation(['register', 'common'])
+  const { dispatch: dispatchRegistrationTrackingData } = useRegistrationTrackingReducer()
 
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
@@ -73,6 +75,17 @@ const FullInvoice = ({
     ],
     [t, seconds, totalDurationBasedFee, estimatedGasFee, hasPremium, premiumFee],
   )
+
+  useEffect(() => {
+    dispatchRegistrationTrackingData({
+      name: 'updatePayment',
+      payload: {
+        currencyUnit: userConfig.currency === 'fiat' ? 'usd' : 'eth',
+      },
+    })
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userConfig.currency])
 
   return (
     <InvoiceContainer>

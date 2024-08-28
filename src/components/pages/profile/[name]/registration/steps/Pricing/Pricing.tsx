@@ -30,6 +30,7 @@ import { ConnectButton } from '@app/components/ConnectButton'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
+import { useRegistrationTrackingReducer } from '@app/hooks/useRegistrationTrackingReducer'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { ONE_DAY, ONE_YEAR } from '@app/utils/time'
 
@@ -500,6 +501,8 @@ const Pricing = ({
     hasPendingMoonpayTransaction ? PaymentMethod.moonpay : PaymentMethod.ethereum,
   )
 
+  const { dispatch: dispatchRegistrationTrackingData } = useRegistrationTrackingReducer()
+
   // Keep radio button choice up to date
   useEffect(() => {
     if (moonpayTransactionStatus) {
@@ -516,6 +519,16 @@ const Pricing = ({
     previousMoonpayTransactionStatus,
     setPaymentMethodChoice,
   ])
+
+  useEffect(() => {
+    dispatchRegistrationTrackingData({
+      name: 'updatePayment',
+      payload: {
+        paymentType: paymentMethodChoice === 'moonpay' ? 'fiat' : 'eth',
+      },
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentMethodChoice])
 
   const fullEstimate = useEstimateFullRegistration({
     name,
