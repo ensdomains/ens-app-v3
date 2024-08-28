@@ -4,6 +4,8 @@ import styled, { css } from 'styled-components'
 
 import { AlertSVG, QuestionCircleSVG, Typography } from '@ensdomains/thorin'
 
+import { LoadingContainer, SpinnerRow } from '../@molecules/ScrollBoxWithSpinner'
+
 const Container = styled.div(
   ({ theme }) => css`
     --icon-color: ${theme.colors.red};
@@ -48,7 +50,16 @@ const LinkWrapper = ({ children }: { children?: React.ReactNode }) => (
 type ErrorType = 'not-found' | 'application-error'
 
 const ErrorScreen = ({ errorType }: { errorType: ErrorType }) => {
-  const { t } = useTranslation('error', { keyPrefix: errorType })
+  const { t, ready } = useTranslation('error', { keyPrefix: errorType })
+
+  if (!ready) {
+    console.log('loading')
+    return (
+      <LoadingContainer>
+        <SpinnerRow />
+      </LoadingContainer>
+    )
+  }
 
   return (
     <Container className={errorType}>
