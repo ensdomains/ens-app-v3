@@ -12,7 +12,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
 
-import { Button, Dropdown, Helper, Input, mq, Typography } from '@ensdomains/thorin'
+import { Button, Dropdown, Helper, Input, Typography } from '@ensdomains/thorin'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
@@ -224,9 +224,9 @@ const InputContainer = styled.div(
     margin-bottom: -${theme.space['2']};
     width: 100%;
 
-    ${mq.md.min(css`
+    @media (min-width: 768px) {
       flex-direction: row;
-    `)}
+    }
   `,
 )
 
