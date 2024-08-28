@@ -53,7 +53,6 @@ const ErrorScreen = ({ errorType }: { errorType: ErrorType }) => {
   const { t, ready } = useTranslation('error', { keyPrefix: errorType })
 
   if (!ready) {
-    console.log('loading')
     return (
       <LoadingContainer>
         <SpinnerRow />
