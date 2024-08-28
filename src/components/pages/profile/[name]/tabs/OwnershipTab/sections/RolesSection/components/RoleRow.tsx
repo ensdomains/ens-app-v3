@@ -6,7 +6,7 @@ import { Address } from 'viem'
 
 import {
   Button,
-  Card,
+  CardDivider,
   CopySVG,
   Dropdown,
   OutlinkSVG,
@@ -151,7 +151,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
           </Dropdown>
         </div>
       </Container>
-      <Card.Divider />
+      <CardDivider />
     </>
   )
 }
