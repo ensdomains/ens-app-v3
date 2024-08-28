@@ -57,7 +57,7 @@ export default function Page() {
   return (
     <Container>
       <Card>
-        <Helper type="error">{t('unsupportedNetwork')}</Helper>
+        <Helper alert="error">{t('unsupportedNetwork')}</Helper>
         <Button onClick={handleChangeNetwork}>{t('action.changeNetwork')}</Button>
       </Card>
     </Container>

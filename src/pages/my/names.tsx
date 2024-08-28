@@ -16,7 +16,7 @@ const ContentContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space[6]};
-    color: ${theme.colors.indigoPrimary};
+    color: var(--thorin-color-indigoPrimary);
   `,
 )
 
@@ -42,7 +42,6 @@ export default function Page() {
               href="https://support.ens.domains/en/articles/9375254-why-is-my-ens-name-not-in-my-names"
               icon={<QuestionCircleSVG />}
               title={t('offchainWarning.title')}
-              actionIcon={<UpRightArrowSVG />}
             >
               {t('offchainWarning.text')}
             </Banner>

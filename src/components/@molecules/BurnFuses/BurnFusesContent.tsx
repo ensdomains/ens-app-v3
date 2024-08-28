@@ -218,7 +218,7 @@ const BurnFusesContent = ({
       {!_fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP ? (
         <>
           <Spacer $height="1" />
-          <Helper type="info" style={{ textAlign: 'center' }}>
+          <Helper alert="info" style={{ textAlign: 'center' }}>
             <Typography>{t('fuses.info')}</Typography>
           </Helper>
         </>

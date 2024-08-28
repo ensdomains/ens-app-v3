@@ -133,7 +133,7 @@ export const RegistrationTimeComparisonBanner = ({ message, yearlyFee, transacti
   const twentyRounded = calcPercent(twenty.gas, 3)
 
   return (
-    <Helper type="info">
+    <Helper alert="info">
       <InnerContainer>
         <div>{message}</div>
         <Bar $highlightPercent={twentyRounded} />

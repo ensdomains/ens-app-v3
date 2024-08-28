@@ -1,7 +1,5 @@
 import styled, { css } from 'styled-components'
 
-import CircleTick from '@app/assets/CircleTick.svg'
-
 const Container = styled.button<{ $active: boolean }>(
   ({ theme, $active }) => css`
     cursor: pointer;

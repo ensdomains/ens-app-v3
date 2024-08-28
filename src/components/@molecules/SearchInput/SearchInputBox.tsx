@@ -33,30 +33,6 @@ const SearchInputWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   `,
 )
 
-const StyledInputParent = (size: 'medium' | 'extraLarge') =>
-  css(
-    ({ theme }) => css`
-      border-radius: ${theme.radii.full};
-      background-color: ${theme.colors.backgroundSecondary};
-      transition: background-color 0.35s ease-in-out;
-      ${size === 'medium' &&
-      css`
-        & > div {
-          border-radius: ${theme.radii.full};
-          input {
-            padding-left: ${theme.space['12']};
-          }
-        }
-      `}
-      &:focus-within {
-        background-color: ${theme.colors.backgroundPrimary};
-        & input::placeholder {
-          color: transparent;
-        }
-      }
-    `,
-  )
-
 const MagnifyingGlassIcon = styled.svg(
   ({ theme }) => css`
     width: ${theme.space['4']};
@@ -103,7 +79,6 @@ export const SearchInputBox = forwardRef<HTMLInputElement, SearchInputBoxProps>(
           clearable
           autoComplete="off"
           autoCorrect="off"
-          parentStyles={StyledInputParent(size)}
           icon={size === 'medium' ? <MagnifyingGlassIcon as={MagnifyingGlassSVG} /> : undefined}
           spellCheck="false"
           data-testid="search-input-box"
@@ -133,7 +108,6 @@ export const FakeSearchInputBox = forwardRef<HTMLInputElement, FakeSearchInputBo
           readOnly
           autoComplete="off"
           autoCorrect="off"
-          parentStyles={StyledInputParent(size)}
           spellCheck="false"
           data-testid="search-input-box-fake"
         />

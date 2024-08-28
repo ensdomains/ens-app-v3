@@ -300,7 +300,7 @@ const PaymentChoice = ({
           {paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth && (
             <>
               <Spacer $height="4" />
-              <Helper type="warning" alignment="horizontal">
+              <Helper alert="warning" alignment="horizontal">
                 {t('steps.info.notEnoughEth')}
               </Helper>
               <Spacer $height="2" />
@@ -351,7 +351,7 @@ const PaymentChoice = ({
               </InfoItems>
               <Spacer $height="4" />
               {hasFailedMoonpayTransaction && (
-                <Helper type="error">{t('steps.info.failedMoonpayTransaction')}</Helper>
+                <Helper alert="error">{t('steps.info.failedMoonpayTransaction')}</Helper>
               )}
               <Spacer $height="4" />
               <MoonpayContainer>

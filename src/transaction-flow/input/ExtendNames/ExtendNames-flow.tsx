@@ -358,7 +358,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   (!!estimatedGasLimit &&
                     !!balance?.value &&
                     balance.value < estimatedGasLimit)) && (
-                  <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
+                  <Helper alert="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}
                 {!!unsafeDisplayYearlyFee && !!unsafeDisplayTransactionFee && (
                   <RegistrationTimeComparisonBanner

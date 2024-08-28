@@ -262,7 +262,7 @@ const DNSOwnerSection = ({
 
   return (
     <DNSOwnerSectionContainer>
-      <Helper type="warning" alignment="horizontal">
+      <Helper alert="warning" alignment="horizontal">
         {t(`tabs.more.ownership.dnsOwnerWarning.${canSend ? 'isManager' : 'isDnsOwner'}`)}
       </Helper>
       <ButtonsContainer>

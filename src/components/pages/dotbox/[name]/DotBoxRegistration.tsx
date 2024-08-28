@@ -169,7 +169,7 @@ export const DotBoxRegistration = () => {
                   ))
                   .with({ isLoading: false, nameStatus: P._ }, () => (
                     <>
-                      <Helper type="warning" alignment="horizontal">
+                      <Helper alert="warning" alignment="horizontal">
                         Online registration for this domain is unavailable. Please contact the
                         registry directly for further information.
                       </Helper>

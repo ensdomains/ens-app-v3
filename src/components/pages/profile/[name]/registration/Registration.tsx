@@ -274,7 +274,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
             </ViewProfileContainer>
           ),
           trailing: match([labelTooLong, step])
-            .with([true, P._], () => <Helper type="error">{t('error.nameTooLong')}</Helper>)
+            .with([true, P._], () => <Helper alert="error">{t('error.nameTooLong')}</Helper>)
             .with([false, 'pricing'], () => (
               <Pricing
                 name={normalisedName}

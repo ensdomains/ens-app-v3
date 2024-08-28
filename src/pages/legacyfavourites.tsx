@@ -48,7 +48,7 @@ export default function Page() {
       {{
         trailing: (
           <>
-            <Helper type="warning" style={{ textAlign: 'center' }}>
+            <Helper alert="warning" style={{ textAlign: 'center' }}>
               <Typography>
                 Your favourites have been carried over from{' '}
                 <Outlink href="https://legacy.ens.domains" target="_blank" rel="noreferrer">
@@ -78,7 +78,7 @@ export default function Page() {
                 )
               })
               .otherwise(() => (
-                <Helper type="info">No Favourites found</Helper>
+                <Helper alert="info">No Favourites found</Helper>
               ))}
           </>
         ),

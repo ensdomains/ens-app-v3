@@ -238,7 +238,7 @@ export const ImportTransaction = ({
         </InvoiceItemBox>
       </InvoiceContainer>
       {dnsOwnerStatus === 'mismatching' && (
-        <Helper type="warning">
+        <Helper alert="warning">
           {tc('steps.verifyOwnership.status.mismatching.error.onchain', { ns: 'dnssec' })}
         </Helper>
       )}
