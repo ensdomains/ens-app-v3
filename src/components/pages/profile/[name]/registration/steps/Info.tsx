@@ -18,10 +18,10 @@ const StyledCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -33,10 +33,10 @@ const InfoItems = styled.div(
     justify-content: flex-start;
     gap: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       flex-direction: row;
       align-items: stretch;
-    `)}
+    }
   `,
 )
 

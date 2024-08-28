@@ -51,10 +51,10 @@ const StyledCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -70,9 +70,9 @@ const OutlinedContainer = styled.div(
     border-radius: ${theme.radii.large};
     background: ${theme.colors.backgroundSecondary};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       grid-template-areas: 'title checkbox' 'description checkbox';
-    `)}
+    }
   `,
 )
 

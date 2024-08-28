@@ -7,7 +7,7 @@ import { decodeEventLog } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { tokenise } from '@ensdomains/ensjs/utils'
-import { Button, mq, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
@@ -28,10 +28,10 @@ const StyledCard = styled(Card)(
       max-width: ${theme.space.full};
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -53,10 +53,10 @@ const NFTContainer = styled.div(
     border-radius: ${theme.radii['2xLarge']};
     overflow: hidden;
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       width: ${theme.space['80']};
       height: ${theme.space['80']};
-    `)}
+    }
   `,
 )
 

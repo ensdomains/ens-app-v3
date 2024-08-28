@@ -114,24 +114,24 @@ const RecordsStack = styled.div(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
-const ActionsContainer = styled.div(({ theme }) => [
-  css`
+const ActionsContainer = styled.div(
+  ({ theme }) => css`
     border-top: ${theme.space.px} solid ${theme.colors.border};
     padding: ${theme.space['4']};
     display: flex;
     flex-direction: column;
     gap: ${theme.space['4']};
+    @media (min-width: 640px) {
+      padding: ${theme.space['4']} ${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    padding: ${theme.space['4']} ${theme.space['6']};
-  `),
-])
+)
 
 const Actions = styled.div(
   ({ theme }) => css`
@@ -141,7 +141,7 @@ const Actions = styled.div(
     flex-flow: row wrap;
     gap: ${theme.space['2']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       & > .leading {
         flex-grow: 1;
         order: -1;
@@ -152,7 +152,7 @@ const Actions = styled.div(
           width: min-content;
         }
       }
-    `)}
+    }
   `,
 )
 

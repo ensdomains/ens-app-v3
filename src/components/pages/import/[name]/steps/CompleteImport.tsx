@@ -3,7 +3,7 @@ import type ConfettiT from 'react-confetti'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Helper, mq, Typography } from '@ensdomains/thorin'
+import { Button, Helper, Typography } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
@@ -25,10 +25,10 @@ const StyledCard = styled(Card)(
       max-width: ${theme.space.full};
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
