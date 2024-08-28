@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
-import { Button, Dialog, mq, PlusSVG, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, PlusSVG, Typography } from '@ensdomains/thorin'
 
 import { ConfirmationDialogView } from '@app/components/@molecules/ConfirmationDialogView/ConfirmationDialogView'
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
@@ -65,10 +65,10 @@ const Divider = styled.div(
 const ButtonWrapper = styled.div(({ theme }) => [
   css`
     width: ${theme.space.full};
+    @media (min-width: 360px) {
+      width: initial;
+    }
   `,
-  mq.xs.min(css`
-    width: initial;
-  `),
 ])
 
 const SubmitButton = ({
