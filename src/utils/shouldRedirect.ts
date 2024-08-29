@@ -20,6 +20,8 @@ type RouteParams = {
     name: string | undefined
     decodedName: string | undefined
     normalisedName: string | undefined
+    tabs: readonly string[]
+    tab: string | undefined
   }
 
   'DnsClaim.tsx': {
@@ -97,7 +99,7 @@ export const shouldRedirect = (
       ['Profile.tsx', { isSelf: P.boolean, name: P.string }],
       (_params) => _params && router.isReady,
       (_params) => {
-        const { name, isSelf, decodedName, normalisedName } = _params[1]
+        const { name, isSelf, decodedName, normalisedName, tabs, tab } = _params[1]
 
         if (
           name !== decodedName &&
@@ -133,6 +135,10 @@ export const shouldRedirect = (
 
         if (isSelf && name) {
           return router.replace(`${destination}/${name}`)
+        }
+
+        if (!tab || !tabs.includes(tab)) {
+          return router.replace(`${destination}/${normalisedName}`)
         }
       },
     )

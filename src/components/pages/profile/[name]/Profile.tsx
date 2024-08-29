@@ -177,14 +177,13 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
   // profile.decryptedName fetches labels from NW/subgraph
   // normalisedName fetches labels from localStorage
   useEffect(() => {
-    if (!tab || !tabs.includes(tab)) {
-      router.replace(`/${normalisedName}`)
-    }
     shouldRedirect(router, 'Profile.tsx', '/profile', {
       isSelf,
       name,
       decodedName: profile?.decodedName,
       normalisedName,
+      tabs,
+      tab,
     })
   }, [profile?.decodedName, normalisedName, name, isSelf, router, tab])
 
