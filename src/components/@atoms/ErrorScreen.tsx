@@ -4,8 +4,6 @@ import styled, { css } from 'styled-components'
 
 import { AlertSVG, QuestionCircleSVG, Typography } from '@ensdomains/thorin'
 
-import { LoadingContainer, SpinnerRow } from '../@molecules/ScrollBoxWithSpinner'
-
 const Container = styled.div(
   ({ theme }) => css`
     --icon-color: ${theme.colors.red};
@@ -53,11 +51,7 @@ const ErrorScreen = ({ errorType }: { errorType: ErrorType }) => {
   const { t, ready } = useTranslation('error', { keyPrefix: errorType })
 
   if (!ready) {
-    return (
-      <LoadingContainer>
-        <SpinnerRow />
-      </LoadingContainer>
-    )
+    return null
   }
 
   return (
