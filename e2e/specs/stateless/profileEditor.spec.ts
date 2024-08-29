@@ -131,22 +131,7 @@ test.describe('profile', () => {
       'more',
     ] as const
 
-    const generateRandomTab = () => {
-      const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-      const length = 10
-
-      let randomTab = ''
-
-      do {
-        randomTab = Array.from({ length }, () =>
-          characters.charAt(Math.floor(Math.random() * characters.length)),
-        ).join('')
-      } while (validTabs.includes(randomTab))
-
-      return randomTab
-    }
-
-    await page.goto(`/${name}?tab=${generateRandomTab()}`)
+    await page.goto(`/${name}?tab=customTab`)
 
     await expect(page).toHaveURL(`/${name}`)
 
