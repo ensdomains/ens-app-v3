@@ -122,15 +122,6 @@ test.describe('profile', () => {
     await profilePage.goto(name)
     await login.connect()
 
-    const validTabs: Array<String> = [
-      'profile',
-      'records',
-      'ownership',
-      'subnames',
-      'permissions',
-      'more',
-    ] as const
-
     await page.goto(`/${name}?tab=customTab`)
 
     await expect(page).toHaveURL(`/${name}`)
