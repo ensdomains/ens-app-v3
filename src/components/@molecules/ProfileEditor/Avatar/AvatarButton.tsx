@@ -135,6 +135,7 @@ const AvatarButton = ({
 
       <Dropdown
         width={150}
+        direction="down"
         items={
           [
             {

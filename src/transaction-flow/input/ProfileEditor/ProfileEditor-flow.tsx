@@ -9,10 +9,7 @@ import { useChainId } from 'wagmi'
 import { Button, Dialog, mq, PlusSVG } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
-import {
-  AvatarViewManager,
-  type AvatarViewManagerType,
-} from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
+import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import { AddProfileRecordView } from '@app/components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
 import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
@@ -241,14 +238,14 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
 
-  const handleCancel = () => {
+  const handleCancelAvatar = () => {
     setView('editor')
   }
 
-  const handleConfirm = (type: AvatarViewManagerType, uri: string, display?: string) => {
+  const handleConfirmAvatar = (uri: string, display?: string) => {
     setAvatar(uri)
     setAvatarSrc(display)
-    handleCancel()
+    handleCancelAvatar()
     trigger()
   }
 
@@ -404,9 +401,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             name={name}
             avatar={getAvatar()}
             avatarFile={avatarFile}
-            handleCancel={handleCancel}
+            handleCancel={handleCancelAvatar}
             type={_modalOption}
-            handleSubmit={handleConfirm}
+            handleSubmit={handleConfirmAvatar}
           />
         ))
         .exhaustive()}

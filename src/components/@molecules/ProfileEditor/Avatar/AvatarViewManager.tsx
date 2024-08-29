@@ -2,8 +2,6 @@ import { AvatarManual } from './AvatarManual'
 import { AvatarNFT } from './AvatarNFT'
 import { AvatarUpload } from './AvatarUpload'
 
-export type AvatarViewManagerType = 'upload' | 'manual' | 'nft'
-
 export const AvatarViewManager = ({
   type,
   avatar,
@@ -11,11 +9,11 @@ export const AvatarViewManager = ({
   ...props
 }: {
   handleCancel: () => void
-  handleSubmit: (type: AvatarViewManagerType, uri: string, display?: string) => void
+  handleSubmit: (uri: string, display?: string) => void
   name: string
   avatar?: string
   avatarFile?: File
-  type: AvatarViewManagerType
+  type: 'upload' | 'manual' | 'nft'
 }) => {
   if (type === 'upload') {
     return <AvatarUpload avatar={avatarFile!} {...props} />

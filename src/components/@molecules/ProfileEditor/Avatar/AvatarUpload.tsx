@@ -117,6 +117,13 @@ function useUploadAvatar() {
   }
 }
 
+type AvatarUploadProps = {
+  avatar: File
+  handleCancel: () => void
+  handleSubmit: (uri: string, display?: string) => void
+  name: string
+}
+
 const CroppedImagePreview = styled.img(
   ({ theme }) => css`
     aspect-ratio: 1;
@@ -131,11 +138,8 @@ const UploadComponent = ({
   handleCancel,
   handleSubmit,
   name,
-}: {
+}: Omit<AvatarUploadProps, 'avatar'> & {
   dataURL: string
-  handleCancel: () => void
-  handleSubmit: (type: 'upload', uri: string, display?: string) => void
-  name: string
 }) => {
   const { t } = useTranslation('transactionFlow')
 
@@ -146,7 +150,7 @@ const UploadComponent = ({
       const endpoint = await signAndUpload({ dataURL, name })
 
       if (endpoint) {
-        handleSubmit('upload', endpoint, dataURL)
+        handleSubmit(endpoint, dataURL)
       }
     } catch (e) {
       console.error(e)
@@ -186,17 +190,7 @@ const UploadComponent = ({
   )
 }
 
-export const AvatarUpload = ({
-  avatar,
-  handleCancel,
-  handleSubmit,
-  name,
-}: {
-  avatar: File
-  handleCancel: () => void
-  handleSubmit: (type: 'upload', uri: string, display?: string) => void
-  name: string
-}) => {
+export const AvatarUpload = ({ avatar, handleCancel, handleSubmit, name }: AvatarUploadProps) => {
   const [dataURL, setDataURL] = useState<string | null>(null)
 
   if (!dataURL) {

@@ -1,5 +1,3 @@
-/* eslint-disable no-multi-assign */
-
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -8,7 +6,7 @@ import { Button, Dialog, Input } from '@ensdomains/thorin'
 type AvatarManualProps = {
   avatar?: string
   handleCancel: () => void
-  handleSubmit: (type: 'manual', uri: string, display?: string) => void
+  handleSubmit: (uri: string, display?: string) => void
 }
 
 function isValidValue(value: string, prevValue?: string) {
@@ -20,9 +18,9 @@ export function AvatarManual({ avatar, handleCancel, handleSubmit }: AvatarManua
 
   const [value, setValue] = useState<string>('')
 
-  const handleUpload = async () => {
+  const handleConfirm = () => {
     try {
-      handleSubmit('manual', value, value)
+      handleSubmit(value, value)
     } catch (e) {
       console.error(e)
     }
@@ -45,7 +43,7 @@ export function AvatarManual({ avatar, handleCancel, handleSubmit }: AvatarManua
           </Button>
         }
         trailing={
-          <Button disabled={!isValidValue(value, avatar)} onClick={handleUpload}>
+          <Button disabled={!isValidValue(value, avatar)} onClick={handleConfirm}>
             {t('action.confirm', { ns: 'common' })}
           </Button>
         }

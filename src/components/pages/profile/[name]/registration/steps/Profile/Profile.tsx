@@ -208,7 +208,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
               avatarFile={avatarFile}
               handleCancel={() => setModalOpen(false)}
               type={_modalOption}
-              handleSubmit={(type, uri, display) => {
+              handleSubmit={(uri, display) => {
                 setAvatar(uri)
                 setAvatarSrc(display)
                 setModalOpen(false)
