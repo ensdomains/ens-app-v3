@@ -5,8 +5,8 @@ import { useAccount, useSignTypedData } from 'wagmi'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 
-import { AvatarUpload } from './AvatarUpload'
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
+import { AvatarUpload } from './AvatarUpload'
 
 vi.mock('wagmi')
 
@@ -88,11 +88,7 @@ describe('<AvatarUpload />', () => {
     )
 
     await waitFor(() =>
-      expect(mockHandleSubmit).toHaveBeenCalledWith(
-        'upload',
-        'https://euc.li/test.eth',
-        mockFileDataURL,
-      ),
+      expect(mockHandleSubmit).toHaveBeenCalledWith('https://euc.li/test.eth', mockFileDataURL),
     )
   })
   it('calls handleSubmit with network path if network is not mainnet', async () => {
