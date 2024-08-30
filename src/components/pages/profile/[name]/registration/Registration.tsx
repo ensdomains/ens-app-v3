@@ -13,6 +13,10 @@ import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import {
+  usePaymentSelectedEventTracker,
+  useRegistrationEventTracker,
+} from '@app/hooks/useRegistrationEventTracker'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import { useResolverExists } from '@app/hooks/useResolverExists'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -122,6 +126,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
+  const { trackRegistrationEvent } = useRegistrationEventTracker()
+  const { trackPaymentSelectedEvent } = usePaymentSelectedEventTracker(item)
   const step = item.queue[item.stepIndex]
 
   const keySuffix = `${nameDetails.normalisedName}-${address}`
@@ -143,6 +149,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     reverseRecord,
     paymentMethodChoice,
   }: RegistrationStepData['pricing']) => {
+    trackPaymentSelectedEvent(paymentMethodChoice)
+
     if (paymentMethodChoice === PaymentMethod.moonpay) {
       initiateMoonpayRegistrationMutation.mutate(secondsToYears(seconds))
       return
@@ -199,6 +207,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
   }
 
+  const infoCallback = ({ back }: BackObj) => {
+    genericCallback({ back })
+    trackRegistrationEvent('Commit started')
+  }
+
   const transactionsCallback = useCallback(
     ({ back, resetSecret }: BackObj & { resetSecret?: boolean }) => {
       if (resetSecret) {
@@ -220,6 +233,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const onStart = () => {
     dispatch({ name: 'setStarted', selected })
+    trackRegistrationEvent('Timer started')
   }
 
   const onComplete = (toProfile: boolean) => {
@@ -301,7 +315,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               <Info
                 name={normalisedName}
                 registrationData={item}
-                callback={genericCallback}
+                callback={infoCallback}
                 onProfileClick={infoProfileCallback}
               />
             ))

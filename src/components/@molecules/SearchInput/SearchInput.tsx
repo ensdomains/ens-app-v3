@@ -38,10 +38,11 @@ import { UsePriceQueryKey } from '@app/hooks/ensjs/public/usePrice'
 import { UseWrapperDataQueryKey } from '@app/hooks/ensjs/public/useWrapperData'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { createQueryKey } from '@app/hooks/useQueryOptions'
+import { useRegistrationEventTracker } from '@app/hooks/useRegistrationEventTracker'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate, validate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
-import { CreateQueryKey, GenericQueryKey } from '@app/types'
+import { CreateQueryKey, GenericQueryKey, PlausibleProps, PlausibleType } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { thread, yearsToSeconds } from '@app/utils/utils'
@@ -311,6 +312,7 @@ type CreateSearchHandlerProps = {
   setHistory: Dispatch<SetStateAction<HistoryItem[]>>
   setInputVal: Dispatch<SetStateAction<string>>
   queryClient: QueryClient
+  trackRegistrationEvent: (type: PlausibleType, customProps?: PlausibleProps | undefined) => void
 }
 
 const createSearchHandler =
@@ -323,6 +325,7 @@ const createSearchHandler =
     setHistory,
     setInputVal,
     queryClient,
+    trackRegistrationEvent,
   }: CreateSearchHandlerProps): SearchHandler =>
   (index: number) => {
     if (index === -1) return
@@ -337,6 +340,8 @@ const createSearchHandler =
       ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
       { lastAccessed: Date.now(), nameType, text, isValid: selectedItem.isValid },
     ])
+
+    trackRegistrationEvent('Search selected', { keyword: text })
 
     const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
     setInputVal('')
@@ -654,6 +659,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
   const dropdownItems = useBuildDropdownItems(inputVal, history)
+  const { trackRegistrationEvent } = useRegistrationEventTracker()
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSearch = useCallback(
@@ -666,6 +672,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       searchInputRef,
       setHistory,
       setInputVal,
+      trackRegistrationEvent,
     }),
     [address, chainId, dropdownItems, queryClient, router, searchInputRef, setHistory, setInputVal],
   )
@@ -689,6 +696,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
     setInputVal(val)
     setUsingPlaceholder(true)
     debouncer(() => setUsingPlaceholder(false))
+    debouncer(() => trackRegistrationEvent('Start searching', { keyword: val }))
   }
 
   const SearchInputElement = (

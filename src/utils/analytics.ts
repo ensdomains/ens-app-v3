@@ -1,3 +1,5 @@
+import { PlausibleProps, PlausibleType } from '@app/types'
+
 declare global {
   interface Window {
     plausible: any
@@ -31,15 +33,24 @@ export function getUtm() {
 export const setupAnalytics = () => {
   setUtm()
 }
-
-export const trackEvent = async (type: string, chain: string) => {
+export const trackEvent = async (
+  type: PlausibleType,
+  chain: string,
+  customProps?: PlausibleProps,
+) => {
   const referrer = getUtm()
+
+  let props = customProps
+  if (referrer) {
+    props = {
+      ...props,
+      referrer,
+    }
+  }
   function track() {
     if (typeof window !== 'undefined' && window.plausible) {
       window.plausible(type, {
-        props: {
-          referrer,
-        },
+        props,
       })
     }
   }
@@ -51,7 +62,8 @@ export const trackEvent = async (type: string, chain: string) => {
       'Event triggered on local development',
       JSON.stringify({
         type,
-        referrer,
+        chain,
+        props,
       }),
     )
   }

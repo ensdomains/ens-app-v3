@@ -10,6 +10,7 @@ import { Button, CountdownCircle, Dialog, Heading, mq, Spinner } from '@ensdomai
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
+import { useRegistrationEventTracker } from '@app/hooks/useRegistrationEventTracker'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
@@ -93,6 +94,7 @@ type Props = {
 
 const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const { t } = useTranslation('register')
+  const { trackRegistrationEvent } = useRegistrationEventTracker()
 
   const { address } = useAccount()
   const keySuffix = `${name}-${address}`
@@ -140,6 +142,8 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       autoClose: true,
       resumeLink: `/register/${name}`,
     })
+
+    trackRegistrationEvent('Finish started')
   }
 
   const showCommitTransaction = () => {
@@ -148,6 +152,8 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
 
   const showRegisterTransaction = () => {
     resumeTransactionFlow(registerKey)
+
+    trackRegistrationEvent('Finish started')
   }
 
   const resetTransactions = () => {

@@ -25,6 +25,7 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
+import { useRegistrationEventTracker } from '@app/hooks/useRegistrationEventTracker'
 import {
   ManagedDialogProps,
   TransactionFlowAction,
@@ -295,7 +296,7 @@ export const TransactionStageModal = ({
 }: ManagedDialogProps) => {
   const { t } = useTranslation()
   const chainName = useChainName()
-
+  const { trackRegistrationEvent } = useRegistrationEventTracker()
   const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
   const { data: connectorClient } = useConnectorClient<ConfigWithEns>()
   const client = useClient()
@@ -476,7 +477,12 @@ export const TransactionStageModal = ({
           !!requestError ||
           isTransactionRequestCachedData
         }
-        onClick={() => sendTransaction(request!)}
+        onClick={() => {
+          sendTransaction(request!)
+          trackRegistrationEvent(
+            actionName === 'commitName' ? 'Commit Wallet Opened' : 'Finish Wallet Opened',
+          )
+        }}
         data-testid="transaction-modal-confirm-button"
       >
         {t('transaction.dialog.confirm.openWallet')}
@@ -496,6 +502,8 @@ export const TransactionStageModal = ({
     transactionLoading,
     request,
     isTransactionRequestCachedData,
+    trackRegistrationEvent,
+    actionName,
   ])
 
   const stepStatus = useMemo(() => {
