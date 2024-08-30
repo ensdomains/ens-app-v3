@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Typography } from '@ensdomains/thorin'
+import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import StarsSVG from '@app/assets/Stars.svg'
 import { useProfileActions } from '@app/hooks/useProfileActions'
@@ -20,6 +20,13 @@ const Container = styled.div(
     border: 4px solid #fff;
     border-radius: 16px;
     background: linear-gradient(#e7f4ef 100%, #fdf0dd 100%);
+
+    ${mq.sm.max(css`
+      grid-template-columns: 1fr;
+      text-align: center;
+      gap: ${theme.space['4']};
+      padding: ${theme.space['4']};
+    `)}
   `,
 )
 
@@ -46,7 +53,9 @@ export function ProfileEmptyBanner({
 
   return (
     <Container>
-      <StarsSVG />
+      <div>
+        <StarsSVG />
+      </div>
       <div>
         <Typography fontVariant="large" weight="bold" color="textPrimary">
           {t('banner.empty.title')}
