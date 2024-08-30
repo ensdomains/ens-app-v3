@@ -63,8 +63,6 @@ tsconfig.vitest-temp.json
 /archives
 /data
 /test-environment
-/ganache
-
 # hardhat
 /cache
 /artifacts

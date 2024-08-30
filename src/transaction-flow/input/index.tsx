@@ -18,6 +18,7 @@ import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName/Select
 import type { Props as SendNameProps } from './SendName/SendName-flow'
 import type { Props as SyncManagerProps } from './SyncManager/SyncManager-flow'
 import type { Props as UnknownLabelsProps } from './UnknownLabels/UnknownLabels-flow'
+import type { Props as VerifyProfileProps } from './VerifyProfile/VerifyProfile-flow'
 
 // Lazily load input components as needed
 const dynamicHelper = <P,>(name: string) =>
@@ -64,6 +65,7 @@ const SelectPrimaryName = dynamicHelper<SelectPrimaryNameProps>(
 const SendName = dynamicHelper<SendNameProps>('SendName/SendName')
 const SyncManager = dynamicHelper<SyncManagerProps>('SyncManager/SyncManager')
 const UnknownLabels = dynamicHelper<UnknownLabelsProps>('UnknownLabels/UnknownLabels')
+const VerifyProfile = dynamicHelper<VerifyProfileProps>('VerifyProfile/VerifyProfile')
 
 export const DataInputComponents = {
   AdvancedEditor,
@@ -80,6 +82,7 @@ export const DataInputComponents = {
   SendName,
   SyncManager,
   UnknownLabels,
+  VerifyProfile,
 }
 
 export type DataInputName = keyof typeof DataInputComponents

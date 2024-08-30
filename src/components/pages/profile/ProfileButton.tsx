@@ -19,13 +19,20 @@ import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import { dynamicAddressIcons } from '@app/assets/address/dynamicAddressIcons'
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
+import { DynamicVerificationIcon } from '@app/assets/verification/DynamicVerificationIcon'
+import { VerificationBadgeAccountTooltipContent } from '@app/components/@molecules/VerificationBadge/components/VerificationBadgeAccountTooltipContent'
+import { VerificationBadgeVerifierTooltipContent } from '@app/components/@molecules/VerificationBadge/components/VerificationBadgeVerifierTooltipContent'
+import { VerificationBadge } from '@app/components/@molecules/VerificationBadge/VerificationBadge'
 import { useCoinChain } from '@app/hooks/chain/useCoinChain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { getDestination } from '@app/routes'
+import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { getSocialData } from '@app/utils/getSocialData'
 import { makeEtherscanLink, shortenAddress } from '@app/utils/utils'
+import { getVerifierData } from '@app/utils/verification/getVerifierData'
+import { isVerificationProtocol } from '@app/utils/verification/isVerificationProtocol'
 
 const StyledAddressIcon = styled(DynamicAddressIcon)(
   ({ theme }) => css`
@@ -34,29 +41,49 @@ const StyledAddressIcon = styled(DynamicAddressIcon)(
   `,
 )
 
-export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value: string }) => {
+export const SocialProfileButton = ({
+  iconKey,
+  value,
+  normalisedKey,
+  isVerified,
+  verifiers,
+}: {
+  iconKey: string
+  normalisedKey: string
+  value: string
+  isVerified?: boolean
+  verifiers?: VerificationProtocol[]
+}) => {
   const breakpoints = useBreakpoint()
-  const socialData = getSocialData(iconKey, value)
+  const socialData = getSocialData(normalisedKey, value)
 
-  return socialData ? (
-    <RecordItem
-      icon={
-        <DynamicSocialIcon
-          fill={socialData.color}
-          name={socialData.icon as keyof typeof socialIconTypes}
-        />
-      }
-      size={breakpoints.sm ? 'large' : 'small'}
-      inline
-      data-testid={`social-profile-button-${iconKey}`}
-      value={socialData.value}
-      {...(socialData.type === 'link'
-        ? { as: 'a' as const, link: socialData.urlFormatter }
-        : { as: 'button' as const })}
+  if (!socialData) return null
+  return (
+    <VerificationBadge
+      isVerified={isVerified}
+      showBadge={isVerified}
+      type="record"
+      tooltipContent={<VerificationBadgeAccountTooltipContent verifiers={verifiers} />}
     >
-      {socialData.value}
-    </RecordItem>
-  ) : null
+      <RecordItem
+        icon={
+          <DynamicSocialIcon
+            fill={socialData.color}
+            name={socialData.icon as keyof typeof socialIconTypes}
+          />
+        }
+        size={breakpoints.sm ? 'large' : 'small'}
+        inline
+        data-testid={`social-profile-button-${iconKey}`}
+        value={socialData.value}
+        {...(socialData.type === 'link'
+          ? { as: 'a' as const, link: socialData.urlFormatter }
+          : { as: 'button' as const })}
+      >
+        {socialData.value}
+      </RecordItem>
+    </VerificationBadge>
+  )
 }
 
 export const AddressProfileButton = ({
@@ -353,4 +380,43 @@ export const OwnerProfileButton = ({
       />
     </Dropdown>
   )
+}
+
+export const VerificationProfileButton = ({
+  iconKey,
+  value,
+  isVerified,
+  showBadge,
+}: {
+  iconKey: string
+  value: string
+  isVerified?: boolean
+  showBadge?: boolean
+}) => {
+  const breakpoints = useBreakpoint()
+
+  if (!isVerificationProtocol(iconKey)) return null
+
+  const verificationData = getVerifierData(iconKey, value)
+
+  return verificationData ? (
+    <VerificationBadge
+      showBadge={showBadge}
+      isVerified={isVerified}
+      type="personhood"
+      tooltipContent={<VerificationBadgeVerifierTooltipContent isVerified={!!isVerified} />}
+    >
+      <RecordItem
+        icon={<DynamicVerificationIcon name={iconKey} />}
+        size={breakpoints.sm ? 'large' : 'small'}
+        inline
+        data-testid={`verification-profile-button-${iconKey}`}
+        value={verificationData.value}
+        as="a"
+        link={verificationData.urlFormatter}
+      >
+        {verificationData.label}
+      </RecordItem>
+    </VerificationBadge>
+  ) : null
 }
