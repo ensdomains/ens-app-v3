@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { Button, mq, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
+import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -146,6 +147,21 @@ const PrimaryNameTag = styled(Tag)(
   `,
 )
 
+const VerificationBadgeWrapper = styled.div(
+  ({ theme }) => css`
+    display: inline-flex;
+    height: ${theme.space['10']};
+    margin-left: ${theme.space['2']};
+    color: ${theme.colors.greenPrimary};
+
+    svg {
+      display: block;
+      height: ${theme.space['6']};
+      width: ${theme.space['6']};
+    }
+  `,
+)
+
 export const getUserDefinedUrl = (url?: string) => {
   if (!url) return undefined
   if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -160,12 +176,14 @@ export const ProfileSnippet = ({
   button,
   // network,
   isPrimary,
+  isVerified,
   children,
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
   button?: 'viewProfile' | 'extend' | 'register'
   isPrimary?: boolean
+  isVerified?: boolean
   children?: React.ReactNode
 }) => {
   const router = useRouterWithHistory()
@@ -242,6 +260,11 @@ export const ProfileSnippet = ({
         <DetailStack>
           <Name fontVariant="headingTwo" data-testid="profile-snippet-name">
             {beautifiedName}
+            {isVerified && (
+              <VerificationBadgeWrapper>
+                <VerifiedPersonSVG data-testid="profile-snippet-person-icon" />
+              </VerificationBadgeWrapper>
+            )}
           </Name>
           {recordName && (
             <NameRecord data-testid="profile-snippet-nickname">{recordName}</NameRecord>
