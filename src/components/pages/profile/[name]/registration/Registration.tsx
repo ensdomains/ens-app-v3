@@ -1,10 +1,8 @@
 import Head from 'next/head'
 import { useCallback, useEffect, useMemo } from 'react'
-import { flushSync } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
-import { formatUnits } from 'viem'
 import { useAccount, useChainId } from 'wagmi'
 
 import { Dialog, Helper, mq, Typography } from '@ensdomains/thorin'
@@ -15,10 +13,7 @@ import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import {
-  usePaymentSelectedEventTracker,
-  useRegistrationEventTracker,
-} from '@app/hooks/useRegistrationEventTracker'
+import { useRegistrationEventTracker } from '@app/hooks/useRegistrationEventTracker'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import { useResolverExists } from '@app/hooks/useResolverExists'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -128,8 +123,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
-  const { trackRegistrationEvent } = useRegistrationEventTracker()
-  const { trackPaymentSelectedEvent } = usePaymentSelectedEventTracker(item)
+  const { trackRegistrationEvent, trackPaymentSelectedEvent } = useRegistrationEventTracker()
   const step = item.queue[item.stepIndex]
 
   const keySuffix = `${nameDetails.normalisedName}-${address}`
@@ -153,9 +147,12 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     estimatedTotal,
     ethPrice,
   }: RegistrationStepData['pricing']) => {
-    console.log('>>', seconds, reverseRecord, paymentMethodChoice, estimatedTotal, ethPrice)
-    console.log('paymentTotal', formatUnits((estimatedTotal * ethPrice) / BigInt(1e8), 18))
-    trackPaymentSelectedEvent(paymentMethodChoice)
+    trackPaymentSelectedEvent({
+      duration: seconds,
+      paymentMethod: paymentMethodChoice,
+      estimatedTotal,
+      ethPrice,
+    })
 
     if (paymentMethodChoice === PaymentMethod.moonpay) {
       initiateMoonpayRegistrationMutation.mutate(secondsToYears(seconds))
@@ -239,7 +236,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const onStart = () => {
     dispatch({ name: 'setStarted', selected })
-    trackRegistrationEvent('Timer started')
   }
 
   const onComplete = (toProfile: boolean) => {

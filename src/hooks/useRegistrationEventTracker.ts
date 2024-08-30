@@ -1,70 +1,56 @@
-import { uniq } from 'lodash'
 import { useCallback } from 'react'
+import { formatUnits } from 'viem'
 
-import {
-  PaymentMethod,
-  RegistrationReducerDataItem,
-} from '@app/components/pages/profile/[name]/registration/types'
+import { PaymentMethod } from '@app/components/pages/profile/[name]/registration/types'
 import { PlausibleProps, PlausibleType } from '@app/types'
 import { trackEvent } from '@app/utils/analytics'
 import { secondsToYears } from '@app/utils/time'
-import useUserConfig from '@app/utils/useUserConfig'
 
 import { useChainName } from './chain/useChainName'
-import { useLocalStorage } from './useLocalStorage'
 
 export const useRegistrationEventTracker = () => {
   const chain = useChainName()
-  const [trackedEvents, setTrackedEvents] = useLocalStorage<string[]>('registration-tracking', [])
-
-  const resetTrackedEvents = useCallback(() => {
-    setTrackedEvents((previousEvents) => previousEvents.filter((event) => event === 'Home page'))
-  }, [setTrackedEvents])
 
   const trackRegistrationEvent = useCallback(
     (type: PlausibleType, customProps?: PlausibleProps) => {
-      if (type === 'Home page' && trackedEvents.length > 1) {
-        resetTrackedEvents()
-      }
-
-      if (trackedEvents.includes(type)) return
-
       trackEvent(type, chain, customProps)
-      setTrackedEvents((previousEvents) => uniq([...previousEvents, type]))
     },
-    [chain, trackedEvents, resetTrackedEvents, setTrackedEvents],
+    [chain],
   )
 
-  return {
-    trackRegistrationEvent,
-  }
-}
-
-export const usePaymentSelectedEventTracker = (registrationData: RegistrationReducerDataItem) => {
-  const { userConfig } = useUserConfig()
-  const { trackRegistrationEvent } = useRegistrationEventTracker()
-
   const trackPaymentSelectedEvent = useCallback(
-    (paymentMethod: PaymentMethod | '') => {
-      if (!registrationData) return
+    ({
+      duration,
+      paymentMethod,
+      estimatedTotal,
+      ethPrice,
+    }: {
+      duration: number
+      paymentMethod: PaymentMethod | ''
+      estimatedTotal?: bigint
+      ethPrice?: bigint
+    }) => {
+      if (!estimatedTotal || !ethPrice) return
 
-      const year = secondsToYears(registrationData.seconds)
+      const year = secondsToYears(duration)
       const durationType = Number.isInteger(year) ? 'year' : 'date'
-      const currencyUnit = userConfig.currency === 'fiat' ? 'usd' : 'eth'
+      const paymentAmount = formatUnits((estimatedTotal * ethPrice) / BigInt(1e8), 18)
 
       const props: PlausibleProps = {
-        currencyUnit,
         durationType,
-        duration: durationType === 'year' ? year : registrationData.seconds,
+        duration: durationType === 'year' ? year : duration,
         paymentType: paymentMethod === PaymentMethod.ethereum ? 'eth' : 'fiat',
+        paymentAmount,
+        currencyUnit: 'usd',
       }
 
       trackRegistrationEvent('Payment selected', props)
     },
-    [registrationData, trackRegistrationEvent, userConfig.currency],
+    [trackRegistrationEvent],
   )
 
   return {
+    trackRegistrationEvent,
     trackPaymentSelectedEvent,
   }
 }

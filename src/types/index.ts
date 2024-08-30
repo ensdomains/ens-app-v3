@@ -220,7 +220,6 @@ export type PlausibleType =
   | 'Search selected'
   | 'Payment selected'
   | 'Commit started'
-  | 'Timer started'
   | 'Commit Wallet Opened'
   | 'Finish started'
   | 'Finish Wallet Opened'
