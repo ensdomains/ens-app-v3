@@ -30,6 +30,7 @@ import { ConnectButton } from '@app/components/ConnectButton'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
+import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { ONE_DAY, ONE_YEAR } from '@app/utils/time'
 
@@ -380,6 +381,8 @@ export type ActionButtonProps = {
   seconds: number
   balance: GetBalanceData | undefined
   totalRequiredBalance?: bigint
+  estimatedTotal?: bigint
+  ethPrice?: bigint
 }
 
 export const ActionButton = (props: ActionButtonProps) => {
@@ -404,12 +407,22 @@ export const ActionButton = (props: ActionButtonProps) => {
         reverseRecord,
         seconds,
         paymentMethodChoice,
+        estimatedTotal,
+        ethPrice,
         callback,
       }) => (
         <Button
           loading={initiateMoonpayRegistrationMutation.isPending}
           data-testid="next-button"
-          onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
+          onClick={() =>
+            callback({
+              reverseRecord,
+              seconds,
+              paymentMethodChoice,
+              estimatedTotal,
+              ethPrice,
+            })
+          }
           disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isPending}
         >
           {t('action.next', { ns: 'common' })}
@@ -417,7 +430,12 @@ export const ActionButton = (props: ActionButtonProps) => {
       ),
     )
     .with(
-      P.when((_props) => typeof _props.balance?.value !== 'bigint' || !_props.totalRequiredBalance),
+      P.when(
+        (_props) =>
+          typeof _props.balance?.value !== 'bigint' ||
+          !_props.totalRequiredBalance ||
+          !_props.ethPrice,
+      ),
       () => (
         <Button data-testid="next-button" disabled>
           {t('loading', { ns: 'common' })}
@@ -438,15 +456,25 @@ export const ActionButton = (props: ActionButtonProps) => {
         </Button>
       ),
     )
-    .otherwise(({ reverseRecord, seconds, paymentMethodChoice, callback }) => (
-      <Button
-        data-testid="next-button"
-        onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
-        disabled={!paymentMethodChoice}
-      >
-        {t('action.next', { ns: 'common' })}
-      </Button>
-    ))
+    .otherwise(
+      ({ reverseRecord, seconds, paymentMethodChoice, estimatedTotal, ethPrice, callback }) => (
+        <Button
+          data-testid="next-button"
+          onClick={() =>
+            callback({
+              reverseRecord,
+              seconds,
+              paymentMethodChoice,
+              estimatedTotal,
+              ethPrice,
+            })
+          }
+          disabled={!paymentMethodChoice}
+        >
+          {t('action.next', { ns: 'common' })}
+        </Button>
+      ),
+    )
 }
 
 export type PricingProps = {
@@ -484,6 +512,7 @@ const Pricing = ({
   const { address } = useAccountSafely()
   const { data: balance } = useBalance({ address })
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
+  const { data: ethPrice } = useEthPrice()
 
   const [seconds, setSeconds] = useState(() => registrationData.seconds ?? ONE_YEAR)
 
@@ -535,6 +564,8 @@ const Pricing = ({
   const totalRequiredBalance = durationRequiredBalance
     ? durationRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)
     : 0n
+  const estimatedTotal =
+    (totalDurationBasedFee || 0n) + (premiumFee || 0n) + (estimatedGasFee || 0n)
 
   const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
 
@@ -594,6 +625,8 @@ const Pricing = ({
             seconds,
             balance,
             totalRequiredBalance,
+            estimatedTotal,
+            ethPrice,
           }}
         />
       </MobileFullWidth>

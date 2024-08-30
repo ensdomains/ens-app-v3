@@ -1,8 +1,10 @@
 import Head from 'next/head'
 import { useCallback, useEffect, useMemo } from 'react'
+import { flushSync } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
+import { formatUnits } from 'viem'
 import { useAccount, useChainId } from 'wagmi'
 
 import { Dialog, Helper, mq, Typography } from '@ensdomains/thorin'
@@ -148,7 +150,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     seconds,
     reverseRecord,
     paymentMethodChoice,
+    estimatedTotal,
+    ethPrice,
   }: RegistrationStepData['pricing']) => {
+    console.log('>>', seconds, reverseRecord, paymentMethodChoice, estimatedTotal, ethPrice)
+    console.log('paymentTotal', formatUnits((estimatedTotal * ethPrice) / BigInt(1e8), 18))
     trackPaymentSelectedEvent(paymentMethodChoice)
 
     if (paymentMethodChoice === PaymentMethod.moonpay) {
