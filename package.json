@@ -44,7 +44,9 @@
     "generate:sitemaps": "node ./scripts/generate-site-map.mjs",
     "generate:coinMapper": "ts-node ./scripts/coin-mapper.ts",
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml",
-    "subgraph:update": "ens-test-env subgraph --var NEXT_PUBLIC_DEPLOYMENT_ADDRESSES"
+    "subgraph:update": "ens-test-env subgraph --var NEXT_PUBLIC_DEPLOYMENT_ADDRESSES",
+    "knip": "npx knip",
+    "knip:fix": "npx knip --fix --allow-remove-files"
   },
   "dependencies": {
     "@ensdomains/address-encoder": "1.1.1",
@@ -159,6 +161,7 @@
     "husky": "^7.0.4",
     "isows": "^1.0.3",
     "jsdom": "^24.0.0",
+    "knip": "^5.27.2",
     "lokijs": "^1.5.12",
     "msw": "^1.2.3",
     "multiformats": "^12.0.1",
