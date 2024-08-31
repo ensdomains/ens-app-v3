@@ -15,8 +15,5 @@ const StyledQuestion = styled.svg(
 )
 
 export const SupportQuestionIcon = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
-  (props, ref) => (
-    // @ts-expect-error styled-components not knowing how to properly type ref
-    <StyledQuestion as={QuestionSVG} ref={ref} {...props} />
-  ),
+  (props, ref) => <StyledQuestion as={QuestionSVG} ref={ref} {...props} />,
 )
