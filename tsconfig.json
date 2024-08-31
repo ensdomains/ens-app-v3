@@ -37,6 +37,7 @@
     "baseUrl": "./",
     "incremental": true,
     "noErrorTruncation": true,
+    "preserveSymlinks": true,
     "paths": {
       "@app/*": ["./src/*"],
       "@public/*": ["./public/*"],

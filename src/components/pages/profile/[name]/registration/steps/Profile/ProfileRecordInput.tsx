@@ -1,5 +1,5 @@
 import { ComponentProps, FocusEvent, forwardRef, ReactNode, Ref, RefObject, useMemo } from 'react'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { CrossSVG, Input } from '@ensdomains/thorin'
 
@@ -125,8 +125,6 @@ export const ProfileRecordInput = forwardRef(
     }: Props,
     ref: Ref<HTMLElement>,
   ) => {
-    const theme = useTheme()
-
     const prefix = useMemo(() => {
       if (!group) return null
       if (['address', 'website', 'social'].includes(group))
@@ -155,9 +153,6 @@ export const ProfileRecordInput = forwardRef(
           placeholder={placeholder}
           data-testid={`profile-record-input-input-${recordKey}`}
           validated={validated}
-          parentStyles={css`
-            height: ${theme.space['12']};
-          `}
           iconWidth="5.5"
           disabled={disabled}
           onFocus={onFocus}
