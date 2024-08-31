@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
