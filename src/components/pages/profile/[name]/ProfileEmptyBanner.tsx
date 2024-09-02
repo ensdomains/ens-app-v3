@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import StarsSVG from '@app/assets/Stars.svg'
-import { useProfileActions } from '@app/hooks/useProfileActions'
+import { useProfileActions } from '@app/hooks/pages/profile/[name]/profile/useProfileActions/useProfileActions'
 import { AddressRecord } from '@app/types'
 
 const Container = styled.div(
@@ -52,7 +52,7 @@ export function ProfileEmptyBanner({
   )
 
   return (
-    <Container>
+    <Container data-testid="profile-empty-banner">
       <div>
         <StarsSVG />
       </div>
