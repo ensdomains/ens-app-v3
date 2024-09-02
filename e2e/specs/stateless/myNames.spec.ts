@@ -1,16 +1,11 @@
-import { afterEach } from 'node:test'
-
 import { expect, Locator, Page } from '@playwright/test'
 import { createAccounts } from '@root/playwright/fixtures/accounts'
 import {
   testClient,
-  waitForTransaction,
   walletClient,
 } from '@root/playwright/fixtures/contracts/utils/addTestContracts'
-import { deleteSubnameFixture } from '@root/playwright/fixtures/makeName/generators/deleteSubname'
 import { WrappedSubname } from '@root/playwright/fixtures/makeName/generators/generateWrappedSubname'
 import { Address } from 'viem'
-import { afterAll, beforeAll } from 'vitest'
 
 import { deleteSubname } from '@ensdomains/ensjs/wallet'
 
@@ -49,7 +44,6 @@ test('myNames', async ({ page, login, makeName }) => {
 
   await page.goto('/')
   await login.connect('user2')
-  await page.pause()
 
   await page.goto('/my/names')
 
@@ -63,8 +57,6 @@ test('myNames', async ({ page, login, makeName }) => {
   )
 
   expect(timestamps.every((timestamp) => timestamp === timestamps[0])).toBe(true)
-
-  await page.pause()
 })
 
 /// ///
@@ -259,8 +251,6 @@ test('Should display all expiry data (no expiry time)', async ({ page, login, ma
   const nameLinks = page.locator('[data-testid="names-list"] div div a')
   const descButton = page.locator('[data-testid="direction-button-desc"]')
 
-  await page.pause()
-
   tempSubnames = temp.map(({ label }) => `${label}.${name}`)
 
   expect(await nameLinks.count()).toBe(20)
@@ -294,19 +284,6 @@ test('Should display all expiry data (no expiry time)', async ({ page, login, ma
   }
 
   expect(await nameLinks.count()).toBe(30)
-
-  console.log('Cleaning up temp subnames')
-  for (const subname of tempSubnames) {
-    console.log(`Deleting subname: ${subname}`)
-    // eslint-disable-next-line no-await-in-loop
-    await deleteSubname(walletClient, {
-      name: subname,
-      contract: 'nameWrapper',
-      account: createAccounts().getAddress('user3') as Address,
-    })
-  }
-  tempSubnames = []
-  await page.pause()
 })
 
 test('Should display all expiry data (10 same expiry)', async ({ page, login, makeName }) => {
@@ -470,8 +447,6 @@ test('Should display all expiry data (30 same expiry, legacy)', async ({
   const nameLinks = page.locator('[data-testid="names-list"] div div a')
   const descButton = page.locator('[data-testid="direction-button-desc"]')
 
-  await page.pause()
-
   expect(await nameLinks.count()).toBe(20)
 
   for (let i = 0; i < 20; i += 1) {
@@ -591,13 +566,10 @@ test('Should display all expiry data (30 same expiry, subnames)', async ({
   await login.connect('user3')
   await page.goto('/my/names')
 
-  await page.pause()
   await page.waitForSelector('[data-testid="names-list"]')
 
   const nameLinks = page.locator('[data-testid="names-list"] div div a')
   const descButton = page.locator('[data-testid="direction-button-desc"]')
-
-  // await page.pause()
 
   expect(await nameLinks.count()).toBe(20)
 
@@ -674,6 +646,14 @@ test('Should display all expiry data (mix expiry/no expiry)', async ({ page, log
     (_, i) => ({
       label: `subname-${i}`,
       owner: 'user3',
+      fuses: {
+        parent: {
+          named: ['PARENT_CANNOT_CONTROL'],
+        },
+        child: {
+          named: ['CANNOT_UNWRAP'],
+        },
+      },
     }),
   )
 
@@ -695,6 +675,9 @@ test('Should display all expiry data (mix expiry/no expiry)', async ({ page, log
       label: 'wrapped-no-expiry',
       type: 'wrapped',
       duration: 3600,
+      fuses: {
+        named: ['CANNOT_UNWRAP'],
+      },
       subnames: [...temp],
     },
     {
@@ -708,7 +691,9 @@ test('Should display all expiry data (mix expiry/no expiry)', async ({ page, log
     },
   ]
 
-  await makeName(tempNames)
+  const names = await makeName(tempNames)
+
+  tempSubnames = temp.map(({ label }) => `${label}.${names[0]}`)
 
   await page.goto('/')
   await login.connect('user3')
@@ -720,7 +705,6 @@ test('Should display all expiry data (mix expiry/no expiry)', async ({ page, log
   const descButton = page.locator('[data-testid="direction-button-desc"]')
 
   expect(await nameLinks.count()).toBe(20)
-  await page.pause()
   for (let i = 0; i < 10; i += 1) {
     // eslint-disable-next-line no-await-in-loop
     expect(await nameLinks.nth(i).textContent()).toMatch(/subname-\d+\.wrapped-expiry/)
