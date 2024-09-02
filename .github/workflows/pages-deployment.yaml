@@ -45,10 +45,13 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Comparison of locales for missing keys
+        run: pnpm compare-locales
 
       - name: Build and Export
         if: ${{ github.ref == 'refs/heads/main' }}
