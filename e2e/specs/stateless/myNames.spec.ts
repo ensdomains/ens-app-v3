@@ -1,4 +1,7 @@
+import { afterEach } from 'node:test'
+
 import { expect, Locator, Page } from '@playwright/test'
+import { createAccounts } from '@root/playwright/fixtures/accounts'
 import {
   testClient,
   waitForTransaction,
@@ -7,10 +10,30 @@ import {
 import { deleteSubnameFixture } from '@root/playwright/fixtures/makeName/generators/deleteSubname'
 import { WrappedSubname } from '@root/playwright/fixtures/makeName/generators/generateWrappedSubname'
 import { Address } from 'viem'
-import { beforeAll } from 'vitest'
+import { afterAll, beforeAll } from 'vitest'
+
+import { deleteSubname } from '@ensdomains/ensjs/wallet'
 
 import { test } from '../../../playwright'
 import { Name } from '../../../playwright/fixtures/makeName'
+
+// Set the tests as serial so that cleaning up data will not affect other tests
+test.describe.configure({ mode: 'serial' })
+
+let tempSubnames: string[] = []
+test.afterEach(async () => {
+  console.log('Cleaning up temp subnames')
+  for (const subname of tempSubnames) {
+    console.log(`Deleting subname: ${subname}`)
+    // eslint-disable-next-line no-await-in-loop
+    await deleteSubname(walletClient, {
+      name: subname,
+      contract: 'nameWrapper',
+      account: createAccounts().getAddress('user3') as Address,
+    })
+  }
+  tempSubnames = []
+})
 
 test('myNames', async ({ page, login, makeName }) => {
   await testClient.increaseTime({ seconds: 3 * 365 * 24 * 60 * 60 })
@@ -541,12 +564,18 @@ test('Should display all expiry data (30 same expiry, subnames)', async ({
     },
   ]
 
-  await makeName(tempNames)
+  const names = await makeName(tempNames)
+
+  tempSubnames = names.flatMap((name, i) => {
+    const subnames = i === 0 ? temp : temp2
+    return subnames.map(({ label }) => `${label}.${name}`)
+  })
 
   await page.goto('/')
   await login.connect('user3')
   await page.goto('/my/names')
 
+  await page.pause()
   await page.waitForSelector('[data-testid="names-list"]')
 
   const nameLinks = page.locator('[data-testid="names-list"] div div a')
