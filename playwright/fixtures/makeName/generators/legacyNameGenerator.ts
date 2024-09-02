@@ -19,10 +19,10 @@ import {
   walletClient,
 } from '../../contracts/utils/addTestContracts.js'
 import { Provider } from '../../provider.js'
-import { generateLegacySubname, LegacySubname } from './generateLegacySubname.js'
 import { legacyEthRegistrarControllerAbi } from '../constants/abis.js'
-import { Name } from '../index';
+import { Name } from '../index'
 import { getLegacyRentPrice } from '../utils/getLegacyRentPrice.js'
+import { generateLegacySubname, LegacySubname } from './generateLegacySubname.js'
 
 const DEFAULT_DURATION = 31536000
 
@@ -66,7 +66,7 @@ export const makeLegacyNameGenerator = ({ provider, accounts, contracts }: Depen
         functionName: 'makeCommitment',
         abi: legacyEthRegistrarControllerAbi,
         args: [label, ownerAddress, secret],
-      })
+      }),
     })
 
     const preparedTransaction = await walletClient.prepareTransactionRequest({
@@ -87,7 +87,7 @@ export const makeLegacyNameGenerator = ({ provider, accounts, contracts }: Depen
 
     const ownerAddress = accounts.getAddress(owner)
 
-    const price = await getLegacyRentPrice({ label, duration})
+    const price = await getLegacyRentPrice({ label, duration })
 
     const preparedTransaction = await walletClient.prepareTransactionRequest({
       to: walletClient.chain.contracts.legacyRegistrarController.address,
@@ -106,14 +106,21 @@ export const makeLegacyNameGenerator = ({ provider, accounts, contracts }: Depen
   configure: async (nameConfig: LegacyName) => {
     const { label, owner, manager, subnames = [], secret } = nameWithDefaults(nameConfig)
     const name = `${label}.eth`
-     // Create subnames
-     await Promise.all(subnames.map((subname) => {
-      return generateLegacySubname({ accounts, contracts })({
+    // Create subnames
+    //  await Promise.all(subnames.map((subname) => {
+    //   return generateLegacySubname({ accounts, contracts })({
+    //     ...subname,
+    //     name: `${label}.eth`,
+    //     nameOwner: owner
+    //   })
+    //  }))
+    for (let subname of subnames) {
+      return await generateLegacySubname({ accounts, contracts })({
         ...subname,
         name: `${label}.eth`,
-        nameOwner: owner
+        nameOwner: owner,
       })
-     }))
+    }
 
     if (!!manager && manager !== owner) {
       console.log('setting manager:', name, manager)
