@@ -76,7 +76,6 @@ export const TaggedNameItem = ({
       selected={selected}
       disabled={disabled}
       onClick={onClick}
-      data-testid="name-detail-item"
     >
       <OtherItemsContainer>
         {hasOtherItems &&
