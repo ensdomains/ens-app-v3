@@ -237,7 +237,7 @@ test('Should display all expiry data (no expiry time)', async ({ page, login, ma
     subnames: [...temp],
   }
 
-  await makeName(tempNames)
+  const name = await makeName(tempNames)
 
   await page.goto('/')
   await login.connect('user3')
@@ -247,14 +247,11 @@ test('Should display all expiry data (no expiry time)', async ({ page, login, ma
 
   const nameLinks = page.locator('[data-testid="names-list"] div div a')
   const descButton = page.locator('[data-testid="direction-button-desc"]')
-  const names = page.locator('.name-detail-item')
 
   await page.pause()
-  const fullText = (await names.nth(0).textContent()) as string
-  const trimmedText = `${fullText.split('.eth')[0]}.eth`
 
-  const receipt = await deleteSubnameFixture(trimmedText)
-  expect(receipt.status).toBe('reverted')
+  tempSubnames = temp.map(({ label }) => `${label}.${name}`)
+
   expect(await nameLinks.count()).toBe(20)
   for (let i = 0; i < 20; i += 1) {
     // eslint-disable-next-line no-await-in-loop
@@ -287,10 +284,18 @@ test('Should display all expiry data (no expiry time)', async ({ page, login, ma
 
   expect(await nameLinks.count()).toBe(30)
 
+  console.log('Cleaning up temp subnames')
+  for (const subname of tempSubnames) {
+    console.log(`Deleting subname: ${subname}`)
+    // eslint-disable-next-line no-await-in-loop
+    await deleteSubname(walletClient, {
+      name: subname,
+      contract: 'nameWrapper',
+      account: createAccounts().getAddress('user3') as Address,
+    })
+  }
+  tempSubnames = []
   await page.pause()
-
-  // const receipt = await deleteSubnameFixture(trimmedText)
-  // expect(receipt.status).toBe('success')
 })
 
 test('Should display all expiry data (10 same expiry)', async ({ page, login, makeName }) => {
