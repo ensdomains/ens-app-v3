@@ -46,23 +46,6 @@ const capsuleWalletItegratedOpts: GetCapsuleIntegratedOpts = {
   nameOverride: `Sign in with ${APP_NAME}`,
   iconOverride: 'https://cryptologos.cc/logos/ethereum-name-service-ens-logo.png',
   iconBackgroundOverride: '#ffffff',
-  onRampConfig: {
-    network: 'ETHEREUM',
-    // Supported values: 'BASE', 'OPTIMISM', 'ARBITRUM', 'POLYGON'
-    asset: 'ETH',
-    // Supported values: 'ETHEREUM', 'USDC', 'POLYGON', 'MATIC'
-    providers: [
-      { id: 'STRIPE' },
-      // Enables Stripe
-      {
-        id: 'RAMP',
-        hostApiKey: 'your-ramp-api-key',
-      },
-      // Enables Ramp
-    ],
-    testMode: false,
-    // Enable test mode by passing 'true'
-  },
 }
 
 export const capsuleWallet = getCapsuleWalletIntegrated(capsuleWalletItegratedOpts)

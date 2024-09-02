@@ -1,5 +1,5 @@
-
 // prettier-ignore-file
+import { lightTheme, Theme } from '@usecapsule/rainbowkit'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
@@ -17,11 +17,10 @@ import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowPr
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
+import { RainbowKitWithCapsuleProvider } from '@app/utils/RainbowKitWithCapsuleProvider'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 
-import { lightTheme, Theme } from '@usecapsule/rainbowkit'
-import { RainbowKitWithCapsuleProvider } from '@app/utils/RainbowKitWithCapsuleProvider'
 import '@usecapsule/rainbowkit/styles.css'
 
 import i18n from '../i18n'

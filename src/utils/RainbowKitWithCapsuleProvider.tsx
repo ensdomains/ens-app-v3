@@ -9,6 +9,7 @@ export const RainbowKitWithCapsuleProvider = (props: RainbowKitProviderProps) =>
   return (
     <RainbowKitProvider
       {...props}
+      // @ts-ignore
       capsule={capsuleClient}
       capsuleIntegratedProps={capsuleIntegratedProps}
     />

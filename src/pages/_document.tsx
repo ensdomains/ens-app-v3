@@ -127,9 +127,6 @@ export default class MyDocument extends Document {
             data-domain="app.ens.domains"
             src="https://plausible.io/js/script.outbound-links.js"
           />
-
-          <script src="https://js.stripe.com/v3/" />
-          <script src="https://crypto-js.stripe.com/crypto-onramp-outer.js" />
         </Head>
         <body>
           <Main />
