@@ -227,6 +227,14 @@ test('Should display all expiry data (no expiry time)', async ({ page, login, ma
     (_, i) => ({
       label: `subname-${i}`,
       owner: 'user3',
+      fuses: {
+        parent: {
+          named: ['PARENT_CANNOT_CONTROL'],
+        },
+        child: {
+          named: ['CANNOT_UNWRAP'],
+        },
+      },
     }),
   )
 
@@ -234,6 +242,9 @@ test('Should display all expiry data (no expiry time)', async ({ page, login, ma
     label: 'wrapped',
     type: 'wrapped',
     duration: 3600,
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
     subnames: [...temp],
   }
 
