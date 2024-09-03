@@ -186,7 +186,7 @@ const MenuButton = styled.button<MenuButtonProps>(
     }
     ${disabled &&
     css`
-      color: ${theme.colors.textTertiary};
+      color: ${theme.colors.grey};
       cursor: not-allowed;
     `}
 
@@ -374,7 +374,7 @@ const InnerMenuButton = styled.button<InnerMenuButtonProps>(
           border-${$direction === 'down' ? 'bottom' : 'top'}-left-radius: none;
           border-${$direction === 'down' ? 'bottom' : 'top'}-right-radius: none;
           border-${$direction === 'down' ? 'bottom' : 'top'}-width: 0;
-          color: ${theme.colors.textTertiary};
+          color: ${theme.colors.grey};
           transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6),
             0.3s color ease-in-out, 0.2s border-radius ease-in-out,
             0s border-width 0.1s, 0s padding linear;

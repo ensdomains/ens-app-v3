@@ -128,7 +128,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           </Helper>
         )}
         {nameDetails.isNonASCII && (
-          <Helper type="warning" alignment="horizontal">
+          <Helper alert="warning" alignment="horizontal">
             <Trans
               i18nKey="tabs.profile.warnings.homoglyph"
               ns="profile"
@@ -139,7 +139,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           </Helper>
         )}
         {isWrapped && !normalisedName.endsWith('.eth') && (
-          <Helper type="warning" alignment="horizontal">
+          <Helper alert="warning" alignment="horizontal">
             {t('tabs.profile.warnings.wrappedDNS')}
           </Helper>
         )}

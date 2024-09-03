@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 import { useChainId } from 'wagmi'
 
-import { Button, Dialog, mq, PlusSVG } from '@ensdomains/thorin'
+import { Button, Dialog, PlusSVG } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
@@ -49,14 +49,14 @@ const ButtonContainer = styled.div(
   `,
 )
 
-const ButtonWrapper = styled.div(({ theme }) => [
-  css`
+const ButtonWrapper = styled.div(
+  ({ theme }) => css`
     width: ${theme.space.full};
+    (min-width: 360px) {
+      width: max-content;
+    }
   `,
-  mq.xs.min(css`
-    width: max-content;
-  `),
-])
+)
 
 type Data = {
   name?: string

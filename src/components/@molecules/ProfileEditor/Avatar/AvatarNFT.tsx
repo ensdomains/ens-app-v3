@@ -11,7 +11,6 @@ import {
   Dialog,
   Heading,
   MagnifyingGlassSVG,
-  mq,
   Typography,
 } from '@ensdomains/thorin'
 
@@ -100,7 +99,7 @@ const NFTContainer = styled.div(
     &[aria-disabled='true'] {
       cursor: not-allowed;
       opacity: 1;
-      color: ${theme.colors.textTertiary};
+      color: ${theme.colors.grey};
     }
   `,
 )
@@ -142,8 +141,8 @@ const NFTName = styled(Typography)(
   `,
 )
 
-const SelectedNFTContainer = styled.div(({ theme }) => [
-  css`
+const SelectedNFTContainer = styled.div(
+  ({ theme }) => css`
     width: 100%;
     & div {
       padding: 0 ${theme.radii['2.5xLarge']};
@@ -151,12 +150,12 @@ const SelectedNFTContainer = styled.div(({ theme }) => [
         font-size: ${theme.fontSizes.headingThree};
       }
     }
+    @media (min-width: 640px) {
+      width: calc(80vw - 2 * ${theme.space['6']});
+      max-width: ${theme.space['128']};
+    }
   `,
-  mq.sm.min(css`
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-  `),
-])
+)
 
 const SelectedNFTImageWrapper = styled.div(
   () => css`
@@ -174,8 +173,8 @@ const SelectedNFTImage = styled.img(
   `,
 )
 
-const LoadingContainer = styled.div(({ theme }) => [
-  css`
+const LoadingContainer = styled.div(
+  ({ theme }) => css`
     width: ${theme.space.full};
     min-height: ${theme.space['32']};
 
@@ -184,11 +183,11 @@ const LoadingContainer = styled.div(({ theme }) => [
     justify-content: center;
     flex-direction: column;
     gap: ${theme.space['4']};
+    @media (min-width: 640px) {
+      gap: ${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    gap: ${theme.space['6']};
-  `),
-])
+)
 
 const LoadFailureContainer = styled.div(
   ({ theme }) => css`
@@ -206,7 +205,7 @@ const LoadFailureContainer = styled.div(
     border-radius: ${theme.radii['2xLarge']};
 
     background-color: ${theme.colors.greySurface};
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
 
     & > svg {
       width: ${theme.space['5']};
@@ -249,7 +248,7 @@ const NftItem = ({
       ) : (
         <LoadFailureContainer>
           <AlertSVG />
-          <Typography fontVariant="smallBold" color="textTertiary">
+          <Typography fontVariant="smallBold" color="grey">
             {t('input.profileEditor.tabs.avatar.nft.loadError')}
           </Typography>
         </LoadFailureContainer>

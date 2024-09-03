@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, mq, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
+import { Button, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
@@ -33,10 +33,10 @@ const Container = styled.div<{ $banner?: string }>(
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['6']};
       padding-top: ${theme.space['12']};
-    `)}
+    }
   `,
 )
 

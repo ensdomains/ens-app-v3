@@ -246,7 +246,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
                   $selected={tabItem === tab}
                   onClick={() => setTab(tabItem)}
                 >
-                  <Typography fontVariant="extraLargeBold" color="inherit">
+                  <Typography fontVariant="extraLargeBold" style={{ color: 'inherit' }}>
                     {t(`tabs.${tabItem}.name`)}
                   </Typography>
                 </TabButton>

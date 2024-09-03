@@ -5,16 +5,7 @@ import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 import { useDisconnect, useEnsAvatar } from 'wagmi'
 
-import {
-  Button,
-  CheckSVG,
-  CogSVG,
-  CopySVG,
-  ExitSVG,
-  mq,
-  PersonSVG,
-  Profile,
-} from '@ensdomains/thorin'
+import { Button, CheckSVG, CogSVG, CopySVG, ExitSVG, PersonSVG, Profile } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
@@ -45,9 +36,9 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
             height: ${theme.space['10']};
             border-radius: ${theme.radii.full};
             font-size: ${theme.fontSizes.body};
-            ${mq.xs.min(css`
+            @media (min-width: 360px) {
               padding: 0 ${theme.space['8']};
-            `)}
+            }
           }
         `
       : css`

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
-import { mq, Tag } from '@ensdomains/thorin'
+import { Tag } from '@ensdomains/thorin'
 
 import { validateExpiry } from '@app/utils/utils'
 
@@ -16,11 +16,11 @@ const OtherItemsContainer = styled.div(
     justify-content: center;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-    ${mq.md.min(css`
+    @media (min-width: 768px) {
       flex-direction: row;
       gap: ${theme.space['4']};
       flex-gap: ${theme.space['4']};
-    `)}
+    }
   `,
 )
 

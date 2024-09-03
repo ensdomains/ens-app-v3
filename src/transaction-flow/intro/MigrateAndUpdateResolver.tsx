@@ -24,7 +24,7 @@ export const MigrateAndUpdateResolver = () => {
   return (
     <>
       <DescriptionWrapper>
-        <Typography color="textTertiary">
+        <Typography color="grey">
           {t('intro.migrateAndUpdateResolver.heading')}
           &nbsp;
           <span>

@@ -1,8 +1,6 @@
 import { ComponentProps } from 'react'
 
-import { Button, Tooltip } from '@ensdomains/thorin'
-import { ButtonProps } from '@ensdomains/thorin/dist/types/components/atoms/Button'
-import { ReactNodeNoStrings } from '@ensdomains/thorin/dist/types/types/index'
+import { Button, ButtonProps, Tooltip, type ReactNodeNoStrings } from '@ensdomains/thorin'
 
 import { useTooltipSeenManager } from '@app/hooks/useTooltipSeenManager'
 

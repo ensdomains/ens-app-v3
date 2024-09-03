@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Card, Dropdown, mq } from '@ensdomains/thorin'
+import { Button, Card, Dropdown } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -48,18 +48,18 @@ const makeEvent = (name: string, expiryDate: Date): CalendarEvent => ({
   url: window.location.href,
 })
 
-const Header = styled.div(({ theme }) => [
-  css`
+const Header = styled.div(
+  ({ theme }) => css`
     padding: ${theme.space['4']};
     border-bottom: 1px solid ${theme.colors.border};
+    @media (min-width: 640px) {
+      padding: ${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    padding: ${theme.space['6']};
-  `),
-])
+)
 
-const PanelsContainer = styled.div(({ theme }) => [
-  css`
+const PanelsContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -67,15 +67,15 @@ const PanelsContainer = styled.div(({ theme }) => [
     > *:last-child {
       border-bottom: none;
     }
-  `,
-  mq.lg.min(css`
-    flex-direction: row;
-    margin: 0 -${theme.space['4']};
-    > *:last-child {
-      border-right: none;
+    @media (min-width: 1024px) {
+      flex-direction: row;
+      margin: 0 -${theme.space['4']};
+      > *:last-child {
+        border-right: none;
+      }
     }
-  `),
-])
+  `,
+)
 
 const Footer = styled.div(
   ({ theme }) => css`
@@ -87,25 +87,25 @@ const Footer = styled.div(
   `,
 )
 
-const FooterWrapper = styled.div(({ theme }) => [
-  css`
+const FooterWrapper = styled.div(
+  ({ theme }) => css`
     padding: ${theme.space['4']};
+    @media (min-width: 640px) {
+      padding: ${theme.space['4']} ${theme.space['6']} ${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    padding: ${theme.space['4']} ${theme.space['6']} ${theme.space['6']};
-  `),
-])
+)
 
-const Container = styled.div(({ theme }) => [
-  css`
+const Container = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     margin: -${theme.space['4']};
+    @media (min-width: 640px) {
+      margin: -${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    margin: -${theme.space['6']};
-  `),
-])
+)
 
 const StyledCard = styled(Card)(cacheableComponentStyles)
 

@@ -50,7 +50,7 @@ const OwnerWithEns = styled.div(
     flex-gap: ${theme.space['0.5']};
 
     & div:last-of-type {
-      color: ${theme.colors.textTertiary};
+      color: ${theme.colors.grey};
       font-size: ${theme.fontSizes.small};
     }
   `,
@@ -123,7 +123,7 @@ const ButtonWrapper = styled.div(
 
 const LeftText = styled(Typography)(
   ({ theme }) => css`
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
   `,
 )
 

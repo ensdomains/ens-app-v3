@@ -112,7 +112,7 @@ const FaucetBanner = () => {
                 { label: 'Address', value: address || '', type: 'address', useRawLabel: true },
               ]}
             />
-            {isError && <Helper type="error">{(error as Error).message}</Helper>}
+            {isError && <Helper alert="error">{(error as Error).message}</Helper>}
           </Dialog.Content>
           <Dialog.Footer
             leading={

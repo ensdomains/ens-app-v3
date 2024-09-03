@@ -539,7 +539,7 @@ export const TransactionStageModal = ({
       <Dialog.Heading title={t(`transaction.dialog.${stage}.title`)} />
       <Dialog.Content data-testid="transaction-modal-inner">
         {MiddleContent}
-        {upperError && <Helper type="error">{t(upperError)}</Helper>}
+        {upperError && <Helper alert="error">{t(upperError)}</Helper>}
         {FilledDisplayItems}
         {HelperContent}
         {transaction.hash && (
@@ -547,7 +547,7 @@ export const TransactionStageModal = ({
             {t('transaction.viewEtherscan')}
           </Outlink>
         )}
-        {lowerError && <Helper type="error">{lowerError}</Helper>}
+        {lowerError && <Helper alert="error">{lowerError}</Helper>}
       </Dialog.Content>
       <Dialog.Footer
         currentStep={currentStep}
