@@ -152,7 +152,7 @@ describe('secondsFromDateDiff', () => {
   })
 })
 
-describe.only('calculateDateDiff', () => {
+describe('calculateDateDiff', () => {
   it.each([
     ['2024-01-10', '2025-01-10', '1-0-0'],
     ['2024-01-10', '2024-02-10', '0-1-0' ], 
