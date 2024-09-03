@@ -254,7 +254,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
                   </TabButton>
                 ))}
               </TabButtonContainer>
-              <ProfileEmptyBanner name={normalisedName} addresses={profile?.coins || []} />
+              <ProfileEmptyBanner name={normalisedName} />
             </>
           ),
           titleExtra: profile?.address ? (

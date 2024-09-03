@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -6,7 +5,9 @@ import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import StarsSVG from '@app/assets/Stars.svg'
 import { useProfileActions } from '@app/hooks/pages/profile/[name]/profile/useProfileActions/useProfileActions'
-import { AddressRecord } from '@app/types'
+import { useProfile } from '@app/hooks/useProfile'
+
+import { profileToProfileRecords } from './registration/steps/Profile/profileRecordUtils'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -30,22 +31,18 @@ const Container = styled.div(
   `,
 )
 
-export function ProfileEmptyBanner({
-  name,
-  addresses,
-}: {
-  addresses: AddressRecord[]
-  name: string
-}) {
+export function ProfileEmptyBanner({ name }: { name: string }) {
   const { t } = useTranslation('profile')
 
+  const { data: profile, isLoading: isProfileLoading } = useProfile({ name })
+  const existingRecords = profileToProfileRecords(profile)
   const profileActions = useProfileActions({
     name,
   })
 
-  const filteredAddresses = useMemo(() => addresses.filter(({ value }) => value), [addresses])
+  const records = existingRecords.filter(({ value }) => value)
 
-  if (filteredAddresses.length) return null
+  if (records.length || isProfileLoading) return null
 
   const action = (profileActions.profileActions ?? []).find(
     (i) => i.label === t('tabs.profile.actions.editProfile.label'),
