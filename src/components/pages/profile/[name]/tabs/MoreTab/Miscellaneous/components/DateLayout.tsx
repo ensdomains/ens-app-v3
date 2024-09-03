@@ -10,7 +10,7 @@ export const DateLayout = styled.div(
     justify-content: center;
 
     & > div:first-of-type {
-      color: ${theme.colors.textTertiary};
+      color: ${theme.colors.grey};
       margin-bottom: ${theme.space['2']};
       font-weight: ${theme.fontWeights.bold};
     }
@@ -21,7 +21,7 @@ export const DateLayout = styled.div(
     }
 
     & > div:nth-of-type(3) {
-      color: ${theme.colors.textTertiary};
+      color: ${theme.colors.grey};
       font-weight: ${theme.fontWeights.normal};
       font-size: ${theme.fontSizes.small};
     }

@@ -85,7 +85,7 @@ const SectionTitle = styled(Typography)(
 
 const SectionSubtitle = styled(Typography)(
   ({ theme }) => css`
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
   `,
 )
 

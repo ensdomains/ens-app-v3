@@ -111,7 +111,7 @@ const TextContainer = styled.div(
 
     & > div:last-of-type {
       font-size: ${theme.fontSizes.small};
-      color: ${theme.colors.textTertiary};
+      color: ${theme.colors.grey};
     }
   `,
 )

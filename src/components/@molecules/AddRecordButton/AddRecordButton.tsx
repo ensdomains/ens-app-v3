@@ -239,7 +239,7 @@ const NoOptionsContainer = styled.div<{ $inline: boolean }>(
     padding: 0 ${theme.space['3']} ${theme.space['0.75']} ${theme.space['3']};
     display: flex;
     align-items: center;
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.text};
     font-style: italic;
     margin-bottom: ${theme.space['0.75']};
   `,

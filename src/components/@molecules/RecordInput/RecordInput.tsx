@@ -80,7 +80,7 @@ const LabelSecondary = styled.div(
   ({ theme }) => css`
     font-size: ${theme.space['3.5']};
     line-height: 1.2;
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
   `,
 )
 

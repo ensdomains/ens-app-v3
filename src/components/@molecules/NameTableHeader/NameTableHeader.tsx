@@ -106,7 +106,7 @@ const DirectionButton = styled.button<{ $active: boolean }>(
       width: ${theme.space['3']};
       height: ${theme.space['3']};
       path {
-        fill: ${$active ? theme.colors.accent : theme.colors.textTertiary};
+        fill: ${$active ? theme.colors.accent : theme.colors.grey};
       }
     }
     &:hover {

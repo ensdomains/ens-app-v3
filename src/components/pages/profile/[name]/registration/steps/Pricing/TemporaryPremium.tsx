@@ -240,7 +240,7 @@ const inputStyle = ({ theme }: { theme: DefaultTheme }) => css`
 const TimezoneText = styled(Typography)(
   ({ theme }) => css`
     margin-top: -${theme.space['2']};
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
   `,
 )
 

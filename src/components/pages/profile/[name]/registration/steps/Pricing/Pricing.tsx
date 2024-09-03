@@ -280,7 +280,7 @@ const PaymentChoice = ({
 
   return (
     <PaymentChoiceContainer>
-      <StyledTitle color="textTertiary" weight="bold">
+      <StyledTitle color="grey" weight="bold">
         {t('steps.info.paymentMethod')}
       </StyledTitle>
       <Spacer $height="2" />
@@ -329,7 +329,7 @@ const PaymentChoice = ({
             label={
               <LabelContainer>
                 <RadioLabel>{t('steps.info.creditOrDebit')}</RadioLabel>
-                <Typography color="textTertiary" weight="light">
+                <Typography color="grey" weight="light">
                   ({t('steps.info.additionalFee')})
                 </Typography>
               </LabelContainer>

@@ -23,7 +23,7 @@ const LineItem = styled.div<{ $color?: Colors }>(
     display: flex;
     justify-content: space-between;
     line-height: ${theme.space['5']};
-    color: ${$color ? theme.colors[$color] : theme.colors.textTertiary};
+    color: ${$color ? theme.colors[$color] : theme.colors.grey};
   `,
 )
 

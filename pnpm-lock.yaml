@@ -39,8 +39,8 @@ importers:
         specifier: 4.0.0
         version: 4.0.0(encoding@0.1.13)(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       '@ensdomains/thorin':
-        specifier: 1.0.0-beta.7
-        version: 1.0.0-beta.7(@vanilla-extract/css@1.14.0)(@vanilla-extract/dynamic@2.1.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 1.0.0-beta.9
+        version: 1.0.0-beta.9(@vanilla-extract/css@1.14.0)(@vanilla-extract/dynamic@2.1.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@metamask/mobile-provider':
         specifier: ^2.1.0
         version: 2.1.0
@@ -1824,8 +1824,8 @@ packages:
   '@ensdomains/solsha1@0.0.3':
     resolution: {integrity: sha512-uhuG5LzRt/UJC0Ux83cE2rCKwSleRePoYdQVcqPN1wyf3/ekMzT/KZUF9+v7/AG5w9jlMLCQkUM50vfjr0Yu9Q==}
 
-  '@ensdomains/thorin@1.0.0-beta.7':
-    resolution: {integrity: sha512-EKpU+n1OQP2tELqSMS2ZMiLpF/ot7Qgw4vI+cvzd+NgOT3piQ1fGb9np5+IYkUPq2Nl/Qi1pZij8MQhrhE3KLg==}
+  '@ensdomains/thorin@1.0.0-beta.9':
+    resolution: {integrity: sha512-n+4tZvTt5GtpG3GOZ4RyKpmoHKp1L3TYgOPVUKmDJKWxsqcAPzp54S23klYePadTlP9E+tGGyGRSpC3DOVI4PQ==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -12799,7 +12799,7 @@ snapshots:
     dependencies:
       hash-test-vectors: 1.3.2
 
-  '@ensdomains/thorin@1.0.0-beta.7(@vanilla-extract/css@1.14.0)(@vanilla-extract/dynamic@2.1.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@ensdomains/thorin@1.0.0-beta.9(@vanilla-extract/css@1.14.0)(@vanilla-extract/dynamic@2.1.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       clsx: 1.2.1
       rainbow-sprinkles: 0.17.0(@vanilla-extract/css@1.14.0)(@vanilla-extract/dynamic@2.1.2)

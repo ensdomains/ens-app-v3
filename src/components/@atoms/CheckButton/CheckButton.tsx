@@ -6,7 +6,7 @@ const Container = styled.button<{ $active: boolean }>(
     flex: 0 0 ${theme.space['9']};
     width: ${theme.space['9']};
     height: ${theme.space['9']};
-    color: ${$active ? theme.colors.accent : theme.colors.textTertiary};
+    color: ${$active ? theme.colors.accent : theme.colors.grey};
     svg {
       path,
       rect {

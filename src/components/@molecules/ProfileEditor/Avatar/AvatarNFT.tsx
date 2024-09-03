@@ -99,7 +99,7 @@ const NFTContainer = styled.div(
     &[aria-disabled='true'] {
       cursor: not-allowed;
       opacity: 1;
-      color: ${theme.colors.textTertiary};
+      color: ${theme.colors.grey};
     }
   `,
 )
@@ -205,7 +205,7 @@ const LoadFailureContainer = styled.div(
     border-radius: ${theme.radii['2xLarge']};
 
     background-color: ${theme.colors.greySurface};
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
 
     & > svg {
       width: ${theme.space['5']};
@@ -248,7 +248,7 @@ const NftItem = ({
       ) : (
         <LoadFailureContainer>
           <AlertSVG />
-          <Typography fontVariant="smallBold" color="textTertiary">
+          <Typography fontVariant="smallBold" color="grey">
             {t('input.profileEditor.tabs.avatar.nft.loadError')}
           </Typography>
         </LoadFailureContainer>

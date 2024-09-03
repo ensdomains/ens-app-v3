@@ -59,7 +59,7 @@ const TabButton = styled.button<{
     padding: 0;
     margin: 0;
     background: none;
-    color: ${$selected ? theme.colors.accent : theme.colors.textTertiary};
+    color: ${$selected ? theme.colors.accent : theme.colors.grey};
     font-size: 1.25rem;
     transition: all 0.15s ease-in-out;
     cursor: pointer;

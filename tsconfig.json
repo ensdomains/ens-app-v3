@@ -40,7 +40,8 @@
     "paths": {
       "@app/*": ["./src/*"],
       "@public/*": ["./public/*"],
-      "@root/*": ["./*"]
+      "@root/*": ["./*"],
+      "rainbow-sprinkles": ["./node_modules/rainbow-sprinkles/"]
     },
     "plugins": [
       {
