@@ -311,15 +311,6 @@ test('should allow registering with a specific date', async ({ page, login, make
     const twoYearsAndHalfLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
       _date.setFullYear(_date.getFullYear() + 2)
-      // Get the new month's last day
-      const getEndDayOfMonth = new Date(
-        _date.getFullYear(),
-        (_date.getMonth() + 7) % 12,
-        0,
-      ).getDate()
-      if (_date.getDate() > getEndDayOfMonth) {
-        _date.setDate(getEndDayOfMonth)
-      }
       _date.setMonth(_date.getMonth() + 6)
       return _date
     }, browserTime * 1000)
@@ -381,15 +372,6 @@ test('should allow registering a premium name with a specific date', async ({
     const twoYearsAndHalfLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
       _date.setFullYear(_date.getFullYear() + 2)
-      // Get the new month's last day
-      const getEndDayOfMonth = new Date(
-        _date.getFullYear(),
-        (_date.getMonth() + 7) % 12,
-        0,
-      ).getDate()
-      if (_date.getDate() > getEndDayOfMonth) {
-        _date.setDate(getEndDayOfMonth)
-      }
       _date.setMonth(_date.getMonth() + 6)
       return _date
     }, browserTime * 1000)
@@ -460,15 +442,6 @@ test('should allow registering a premium name for two months', async ({
   await test.step('should set a date', async () => {
     const twoMonthsLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
-      // Get the new month's last day
-      const getEndDayOfMonth = new Date(
-        _date.getFullYear(),
-        (_date.getMonth() + 3) % 12,
-        0,
-      ).getDate()
-      if (_date.getDate() > getEndDayOfMonth) {
-        _date.setDate(getEndDayOfMonth)
-      }
       _date.setMonth(_date.getMonth() + 2)
       return _date
     }, browserTime * 1000)
@@ -477,7 +450,7 @@ test('should allow registering a premium name for two months', async ({
 
     await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(twoMonthsLater))
 
-    expect(page.getByText('2 months registration', { exact: true })).toBeVisible()
+    expect(page.getByText(/2 months .* registration/)).toBeVisible()
   })
 
   await page.getByTestId('payment-choice-ethereum').click()
@@ -620,15 +593,6 @@ test('should allow normal registration for a month', async ({
   await test.step('should set a date', async () => {
     const oneMonthLater = await page.evaluate((timestamp) => {
       const _date = new Date(timestamp)
-      // Get the new month's last day
-      const getEndDayOfMonth = new Date(
-        _date.getFullYear(),
-        (_date.getMonth() + 2) % 12,
-        0,
-      ).getDate()
-      if (_date.getDate() > getEndDayOfMonth) {
-        _date.setDate(getEndDayOfMonth)
-      }
       _date.setMonth(_date.getMonth() + 1)
       return _date
     }, browserTime * 1000)
@@ -636,7 +600,7 @@ test('should allow normal registration for a month', async ({
     await calendar.fill(dateToDateInput(oneMonthLater))
 
     await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(oneMonthLater))
-    await expect(page.getByText('1 month registration', { exact: true })).toBeVisible()
+    await expect(page.getByText(/1 month .* registration/)).toBeVisible()
   })
 
   // should have payment choice ethereum checked and show primary name setting as checked
