@@ -197,6 +197,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const view = flow[viewIdx]
 
   const [seconds, setSeconds] = useState(ONE_YEAR)
+  const [durationType, setDurationType] = useState<'years' | 'date'>('years')
 
   const years = secondsToYears(seconds)
 
@@ -213,15 +214,15 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
   const unsafeDisplayYearlyFee = yearlyFee !== 0n ? yearlyFee : previousYearlyFee
   const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
-  const { data: expiryData } = useExpiry({ enabled: names.length > 1, name: names[0] })
-  const expireDate = expiryData?.expiry?.date ? new Date(expiryData?.expiry?.date) : new Date()
-  const extendedDate = new Date(expireDate.getTime() + seconds * 1000)
+  const { data: expiryData } = useExpiry({ enabled: names.length === 1, name: names[0] })
+  const expiryDate = expiryData?.expiry?.date
+  const extendedDate = expiryDate ? new Date(expiryDate.getTime() + seconds * 1000) : undefined
 
   const transactions = [
     createTransactionItem('extendNames', {
       names,
       duration: seconds,
-      startDateTimestamp: expireDate.getTime(),
+      startDateTimestamp: expiryDate?.getTime(),
       displayPrice: makeCurrencyDisplay({
         eth: totalRentFee,
         ethPrice,
@@ -243,7 +244,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
         data: {
           duration: seconds,
           names,
-          startDateTimestamp: expireDate.getTime(),
+          startDateTimestamp: expiryDate?.getTime(),
         },
         stateOverride: [
           {
@@ -266,7 +267,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const items: InvoiceItem[] = [
     {
       label: t('input.extendNames.invoice.extension', {
-        time: formatDurationOfDates(expireDate, extendedDate, t),
+        time: formatDurationOfDates({ startDate: expiryDate, endDate: extendedDate, t }),
       }),
       value: totalRentFee,
       bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
@@ -328,6 +329,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     minSeconds={minSeconds}
                     mode="extend"
                     expiry={Number(expiryData?.expiry.value)}
+                    durationType={durationType}
+                    onChangeDurationType={setDurationType}
                   />
                 ) : (
                   <PlusMinusControl

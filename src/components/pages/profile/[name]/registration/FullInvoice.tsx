@@ -51,7 +51,11 @@ const FullInvoice = ({
     return [
       {
         label: t('invoice.timeRegistration', {
-          time: formatDurationOfDates(new Date(), new Date(now + seconds * 1000), t),
+          time: formatDurationOfDates({
+            startDate: new Date(),
+            endDate: new Date(now + seconds * 1000),
+            t,
+          }),
         }),
         bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
         value: totalDurationBasedFee,

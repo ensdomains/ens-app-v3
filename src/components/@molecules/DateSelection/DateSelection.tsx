@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -33,6 +33,8 @@ const now = Math.floor(Date.now() / 1000)
 export const DateSelection = ({
   seconds,
   setSeconds,
+  durationType,
+  onChangeDurationType,
   name,
   minSeconds,
   mode = 'register',
@@ -40,14 +42,14 @@ export const DateSelection = ({
 }: {
   seconds: number
   setSeconds: (seconds: number) => void
+  durationType: 'years' | 'date'
   name?: string
   minSeconds: number
   mode?: 'register' | 'extend'
   expiry?: number
+  onChangeDurationType?: (type: 'years' | 'date') => void
 }) => {
   const currentTime = expiry ?? now
-  const [yearPickView, setYearPickView] = useState<'years' | 'date'>('years')
-  const toggleYearPickView = () => setYearPickView(yearPickView === 'date' ? 'years' : 'date')
 
   const { t } = useTranslation()
 
@@ -57,29 +59,23 @@ export const DateSelection = ({
   }, [minSeconds, seconds])
 
   const dateInYears = Math.floor(secondsToYears(seconds))
-  const extensionPeriod = useMemo(() => {
-    return formatDurationOfDates(
-      new Date(currentTime * 1000),
-      new Date((currentTime + seconds) * 1000),
-      t,
-    )
-  }, [currentTime, seconds, t])
 
+  // When the duration type is years, normalise the seconds to a year value
   useEffect(() => {
-    if (yearPickView === 'years' && currentTime) {
+    if (durationType === 'years' && currentTime) {
       setSeconds(
         secondsFromDateDiff({
           startDate: new Date(currentTime * 1000),
-          additionalYears: dateInYears < 1 ? 1 : dateInYears,
+          additionalYears: Math.max(1, dateInYears),
         }),
       )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateInYears, yearPickView])
+  }, [dateInYears, durationType])
 
   return (
     <Container>
-      {yearPickView === 'date' ? (
+      {durationType === 'date' ? (
         <Calendar
           value={currentTime + seconds}
           onChange={(e) => {
@@ -111,15 +107,18 @@ export const DateSelection = ({
         />
       )}
       <Typography color="greyPrimary" fontVariant="smallBold" data-testid="date-selection-info">
-        {extensionPeriod === t('unit.invalid_date', { ns: 'common' })
-          ? extensionPeriod
-          : `${extensionPeriod} ${mode === 'register' ? 'registration.' : 'extension.'}`}{' '}
+        {formatDurationOfDates({
+          startDate: new Date(currentTime * 1000),
+          endDate: new Date((currentTime + seconds) * 1000),
+          postFix: mode === 'register' ? ' registration. ' : ' extension. ',
+          t,
+        })}
         <YearsViewSwitch
           type="button"
           data-testid="date-selection"
-          onClick={() => toggleYearPickView()}
+          onClick={() => onChangeDurationType?.(durationType === 'years' ? 'date' : 'years')}
         >
-          {t(`calendar.pick_by_${yearPickView === 'date' ? 'years' : 'date'}`, { ns: 'common' })}
+          {t(`calendar.pick_by_${durationType === 'date' ? 'years' : 'date'}`, { ns: 'common' })}
         </YearsViewSwitch>
       </Typography>
     </Container>

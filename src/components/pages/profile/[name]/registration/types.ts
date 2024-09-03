@@ -23,6 +23,7 @@ export type RegistrationStepData = {
     seconds: number
     reverseRecord: boolean
     paymentMethodChoice: PaymentMethod | ''
+    durationType: 'date' | 'years'
   }
   profile: {
     records: ProfileRecord[]

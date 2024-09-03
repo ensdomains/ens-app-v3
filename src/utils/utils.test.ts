@@ -89,51 +89,59 @@ describe('formatFullExpiry', () => {
 describe('formatDurationOfDates', () => {
   it('should return a year locale', () => {
     expect(
-      formatDurationOfDates(
-        new Date(),
-        dateFromDateDiff({ startDate: new Date(), additionalYears: 1 }),
-        (x) => x,
-      ),
-    ).toEqual('unit.years')
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: dateFromDateDiff({ startDate: new Date(), additionalYears: 1 }),
+        t: (x, options: any) => x + options?.count,
+      }),
+    ).toEqual('unit.years1')
   })
   it('should return a month locale', () => {
     expect(
-      formatDurationOfDates(
-        new Date(),
-        dateFromDateDiff({ startDate: new Date(), additionalMonths: 1 }),
-        (x) => x,
-      ),
-    ).toEqual('unit.months')
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: dateFromDateDiff({ startDate: new Date(), additionalMonths: 1 }),
+        t: (x, options: any) => x + options?.count,
+      }),
+    ).toEqual('unit.months1')
   })
   it('should return a day locale', () => {
     expect(
-      formatDurationOfDates(
-        new Date(),
-        dateFromDateDiff({ startDate: new Date(), additionalDays: 1 }),
-        (x) => x,
-      ),
-    ).toEqual('unit.days')
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: dateFromDateDiff({ startDate: new Date(), additionalDays: 1 }),
+        t: (x, options: any) => x + options?.count,
+      }),
+    ).toEqual('unit.days1')
   })
   it('should return invalid date if less than a day', () => {
-    expect(formatDurationOfDates(new Date(), new Date(Date.now() + 123 * 1000), (x) => x)).toEqual(
-      'unit.invalid_date',
-    )
+    expect(
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 123 * 1000),
+        t: (x, options: any) =>  x + options?.count,
+      }),
+    ).toEqual('unit.days0')
   })
   it('if extra day or month, return multiple locales', () => {
     expect(
-      formatDurationOfDates(
-        new Date(),
-        dateFromDateDiff({
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: dateFromDateDiff({
           startDate: new Date(),
           additionalYears: 2,
           additionalMonths: 3,
           additionalDays: 1,
         }),
-        (x) => x,
-      ),
-    ).toEqual('unit.years, unit.months')
+        t: (x, options: any) => x + options?.count,
+      }),
+    ).toEqual('unit.years2, unit.months3')
     expect(
-      formatDurationOfDates(new Date(), new Date(Date.now() + ONE_DAY * 33 * 1000), (x) => x),
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: new Date(Date.now() + ONE_DAY * 33 * 1000),
+        t: (x) => x,
+      }),
     ).toEqual('unit.months, unit.days')
   })
 })

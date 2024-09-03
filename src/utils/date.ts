@@ -40,15 +40,6 @@ export const dateFromDateDiff = ({
 }) => {
   const newDate = new Date(startDate.getTime())
   newDate.setFullYear(newDate.getFullYear() + additionalYears)
-  // Get the new month's last day
-  const getEndDayOfMonth = new Date(
-    newDate.getFullYear(),
-    (newDate.getMonth() + 1 + additionalMonths) % 12,
-    0,
-  ).getDate()
-  if (newDate.getDate() > getEndDayOfMonth) {
-    newDate.setDate(getEndDayOfMonth)
-  }
   newDate.setMonth(newDate.getMonth() + additionalMonths)
   newDate.setDate(newDate.getDate() + additionalDays)
   return newDate
@@ -67,4 +58,46 @@ export const secondsFromDateDiff = ({
 }) => {
   const newDate = dateFromDateDiff({ startDate, additionalYears, additionalMonths, additionalDays })
   return Math.floor((newDate.getTime() - startDate.getTime()) / 1000)
+}
+
+export type DatesDiff = {
+  years: number
+  months: number
+  days: number
+}
+
+export const calculateDatesDiff = (
+  date1: Date,
+  date2: Date,
+): { diff: DatesDiff; isNegative: boolean } => {
+  const isNegative = date1 > date2
+  const [startDate, endDate] = isNegative ? [date2, date1] : [date1, date2]
+  const dateDiff = {
+    years: endDate.getFullYear() - startDate.getFullYear(),
+    months: endDate.getMonth() - startDate.getMonth(),
+    days: endDate.getDate() - startDate.getDate(),
+  }
+
+  if (dateDiff.days < 0) {
+    const numberOfDaysInMonthBeforeEndDate = new Date(
+      endDate.getFullYear(),
+      endDate.getMonth(),
+      0,
+    ).getDate()
+
+    const newDays = numberOfDaysInMonthBeforeEndDate - startDate.getDate() + endDate.getDate()
+
+    dateDiff.days = newDays
+    dateDiff.months -= 1
+  }
+
+  if (dateDiff.months < 0) {
+    dateDiff.years -= 1
+    dateDiff.months += 12
+  }
+
+  return {
+    diff: dateDiff,
+    isNegative,
+  }
 }

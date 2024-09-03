@@ -24,7 +24,11 @@ const displayItems = (
   },
   {
     label: 'duration',
-    value: formatDurationOfDates(new Date(), new Date(now + duration * 1000), t),
+    value: formatDurationOfDates({
+      startDate: new Date(),
+      endDate: new Date(now + duration * 1000),
+      t,
+    }),
   },
 ]
 

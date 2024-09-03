@@ -8,6 +8,7 @@ import { DecodedFuses } from '@ensdomains/ensjs/utils'
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
+import { calculateDatesDiff } from './date'
 import { ONE_YEAR } from './time'
 
 export * from './time'
@@ -50,58 +51,38 @@ export const formatDateTime = (date: Date) => {
 export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
 
-export const formatDurationOfDates = (startDate: Date, endDate: Date, t: TFunction) => {
-  const startYear = startDate.getFullYear()
+export const formatDurationOfDates = ({
+  startDate,
+  endDate,
+  postFix = '',
+  t,
+}: {
+  startDate?: Date
+  endDate?: Date
+  postFix?: string
+  t: TFunction
+}) => {
+  if (!startDate || !endDate) return t('unit.invalid_date', { ns: 'common' })
 
-  let yearDiff = endDate.getFullYear() - startYear
-  let monthDiff = endDate.getMonth() - startDate.getMonth()
-  if (monthDiff < 0) {
-    yearDiff -= 1
-    monthDiff += 12
-  }
+  const { isNegative, diff } = calculateDatesDiff(startDate, endDate)
 
-  let dayDiff = endDate.getDate() - startDate.getDate()
-  if (dayDiff < 0) {
-    const lastDayOfStartMonth = new Date(startYear, startDate.getMonth() + 1, 0).getDate()
-    const lastDayOfEndMonth = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0).getDate()
-    // Calculate if the day is still within the next month's last day
-    const calcEndDay = dayDiff + startDate.getDate()
-    dayDiff += lastDayOfStartMonth
-    if (calcEndDay < lastDayOfEndMonth && monthDiff > 0) {
-      monthDiff -= 1
-    } else if (calcEndDay < lastDayOfEndMonth) {
-      yearDiff -= 1
-      monthDiff = 11
-    } else {
-      dayDiff = 0
-    }
-  }
+  if (isNegative) return t('unit.invalid_date', { ns: 'common' })
 
-  if (yearDiff > 0) {
-    if (monthDiff > 0) {
-      return `${t('unit.years', { count: yearDiff, ns: 'common' })}, ${t('unit.months', {
-        count: monthDiff,
-        ns: 'common',
-      })}`
-    }
-    return t('unit.years', { count: yearDiff, ns: 'common' })
-  }
+  const diffEntries = [
+    ['years', diff.years],
+    ['months', diff.months],
+    ['days', diff.days],
+  ] as [string, number][]
 
-  if (monthDiff > 0) {
-    if (dayDiff > 0) {
-      return `${t('unit.months', { count: monthDiff, ns: 'common' })}, ${t('unit.days', {
-        count: dayDiff,
-        ns: 'common',
-      })}`
-    }
-    return t('unit.months', { count: monthDiff, ns: 'common' })
-  }
+  const durationStrings = diffEntries
+    .filter(([, value]) => value > 0)
+    .slice(0, 2)
+    .filter((value): value is [string, number] => !!value)
+    .map(([unit, count]) => t(`unit.${unit}`, { count, ns: 'common' }))
 
-  if (dayDiff > 0) {
-    return t('unit.days', { count: dayDiff, ns: 'common' })
-  }
+  if (durationStrings.length === 0) return t('unit.days', { count: 0, ns: 'common' }) + postFix
 
-  return t('unit.invalid_date', { ns: 'common' })
+  return durationStrings.join(', ') + postFix
 }
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>

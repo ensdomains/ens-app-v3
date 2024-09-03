@@ -10,7 +10,7 @@ import { calculateValueWithBuffer, formatDurationOfDates } from '../../utils/uti
 type Data = {
   names: string[]
   duration: number
-  startDateTimestamp: number
+  startDateTimestamp?: number
   displayPrice?: string
 }
 
@@ -30,11 +30,11 @@ const displayItems = (
     },
     {
       label: 'duration',
-      value: formatDurationOfDates(
-        new Date(startDateTimestamp),
-        new Date(startDateTimestamp + duration * 1000),
+      value: formatDurationOfDates({
+        startDate: startDateTimestamp ? new Date(startDateTimestamp) : undefined,
+        endDate: startDateTimestamp ? new Date(startDateTimestamp + duration * 1000) : undefined,
         t,
-      ),
+      }),
     },
     {
       label: 'cost',
