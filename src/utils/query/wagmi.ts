@@ -97,9 +97,8 @@ const transports = {
         // this is a hack to make the types happy, dont remove pls
         [localhost.id]: HttpTransport
       })),
-  [mainnet.id]: initialiseTransports('mainnet', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-  [sepolia.id]: initialiseTransports('sepolia', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-  [goerli.id]: initialiseTransports('goerli', [infuraUrl, cloudflareUrl, tenderlyUrl]),
+  [mainnet.id]: initialiseTransports('mainnet', [infuraUrl, tenderlyUrl]),
+  [sepolia.id]: initialiseTransports('sepolia', [infuraUrl, tenderlyUrl]),
   [holesky.id]: initialiseTransports('holesky', [tenderlyUrl]),
 } as const
 
