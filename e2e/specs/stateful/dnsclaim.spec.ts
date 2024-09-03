@@ -31,7 +31,6 @@ test.describe('Import DNSSEC name', () => {
     await expect(page.getByTestId('import-next-button')).toBeDisabled()
   })
 
-  // TODO: this is failing because stateful tests are still on goerli, we should switch to sepolia/holesky
   test.skip('should not allow the user to proceed if they have not set the correct TXT record - offchain', async ({
     page,
     login,

@@ -1,5 +1,5 @@
 import { holesky } from 'viem/chains'
-import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
+import { localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { addEnsContracts } from '@ensdomains/ensjs'
 
@@ -25,13 +25,11 @@ export const mainnetWithEns = {
     },
   },
 }
-export const goerliWithEns = addEnsContracts(goerli)
 export const sepoliaWithEns = addEnsContracts(sepolia)
 export const holeskyWithEns = addEnsContracts(holesky)
 
 export const chainsWithEns = [
   mainnetWithEns,
-  goerliWithEns,
   sepoliaWithEns,
   holeskyWithEns,
   localhostWithEns,
@@ -42,7 +40,6 @@ export const getSupportedChainById = (chainId: number | undefined) =>
 
 export type SupportedChain =
   | typeof mainnetWithEns
-  | typeof goerliWithEns
   | typeof sepoliaWithEns
   | typeof holeskyWithEns
   | typeof localhostWithEns

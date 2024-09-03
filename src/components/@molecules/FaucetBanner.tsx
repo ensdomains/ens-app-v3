@@ -72,7 +72,7 @@ const FaucetBanner = () => {
     closeDialog()
   }, [chainName, address])
 
-  if ((chainName !== 'goerli' && chainName !== 'sepolia') || !isReady || isLoading || !data)
+  if ((chainName !== 'holesky' && chainName !== 'sepolia') || !isReady || isLoading || !data)
     return null
 
   const BannerComponent = (

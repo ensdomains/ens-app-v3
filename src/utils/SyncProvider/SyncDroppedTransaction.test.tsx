@@ -88,15 +88,6 @@ describe('getAccountHistoryEndpoint', () => {
     expect(getAccountHistoryEndpoint(address, chainId)).toEqual(expectedEndpoint)
   })
 
-  it('returns the correct endpoint for goerli', () => {
-    const address = '0x1234567890123456789012345678901234567890'
-    const chainId = 5
-    const expectedEndpoint =
-      'https://etherscan-api-goerli.ens-cf.workers.dev/accountHistory?address=0x1234567890123456789012345678901234567890'
-
-    expect(getAccountHistoryEndpoint(address, chainId)).toEqual(expectedEndpoint)
-  })
-
   it('returns an empty string for unknown chainIds', () => {
     const address = '0x1234567890123456789012345678901234567890'
     const chainId = 123

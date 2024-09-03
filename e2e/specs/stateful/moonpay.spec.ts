@@ -15,7 +15,6 @@ const makeid = (length: number) => {
 test.describe.skip('Moonpay registration', () => {
   test('should open up moonpay flow if selected', async ({ page, login }) => {
     test.slow()
-    // cy.changeMetamaskNetwork('goerli')
     await page.goto(`/${makeid(230)}.eth/register`)
 
     await login.connect()

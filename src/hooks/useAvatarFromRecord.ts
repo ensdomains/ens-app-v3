@@ -6,7 +6,7 @@ const SUPPORTED_PROTOCOL_REGEX = /^(http|https|ar|ipfs|eip155):/
 
 const chainIdToNetwork = (chainId?: string) => {
   if (chainId === '1') return 'mainnet'
-  if (chainId === '5') return 'goerli'
+  if (chainId === '17000') return 'holesky'
   if (chainId === '11155111') return 'sepolia'
   return ''
 }
