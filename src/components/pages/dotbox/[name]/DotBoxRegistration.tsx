@@ -13,6 +13,7 @@ import DotBoxLogoSVG from '@app/assets/dotbox/DotBoxLogo.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
 import { Card } from '@app/components/Card'
 import { useDotBoxAvailabilityOffchain } from '@app/hooks/dotbox/useDotBoxAvailabilityOffchain'
+import { useRegistrationEventTracker } from '@app/hooks/useRegistrationEventTracker'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { shouldRedirect } from '@app/utils/shouldRedirect'
@@ -104,6 +105,8 @@ export const DotBoxRegistration = () => {
   const dotBoxResult = useDotBoxAvailabilityOffchain({ name })
   const nameStatus = dotBoxResult?.data?.data.status
 
+  const { trackRegistrationEvent } = useRegistrationEventTracker()
+
   shouldRedirect(router, 'DotBoxRegistration.tsx', `/profile/${name}`, dotBoxResult)
 
   const { t } = useTranslation('dnssec')
@@ -159,7 +162,11 @@ export const DotBoxRegistration = () => {
                   .with({ isLoading: true }, () => <Spinner size="medium" color="accent" />)
                   .with({ isLoading: false, nameStatus: 'AVAILABLE' }, () => (
                     <a href={dotBoxResult?.data?.data.href} target="_blank" rel="noreferrer">
-                      <Button width="45" size="small">
+                      <Button
+                        width="45"
+                        size="small"
+                        onClick={() => trackRegistrationEvent('Registration started')}
+                      >
                         <OutlinkInner>
                           Register on my.box
                           <OutlinkSVG />
