@@ -141,10 +141,8 @@ export const shouldRedirect = (
         const tabQuery = tab !== 'profile' && hasValidTab ? `?tab=${tab}` : ''
 
         if (!hasValidTab) {
-          console.log('rerouting to profile')
-          return router.replace(`${destination}/${normalisedName}`)
+          return router.replace(`${destination}/${name}`)
         } else {
-          console.log(`rerouting to ${tabQuery}`)
           return router.replace(`${destination}/${name}${tabQuery}`)
         }
       },
