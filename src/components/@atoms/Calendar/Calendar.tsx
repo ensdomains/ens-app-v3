@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, InputHTMLAttributes } from 'react'
+import { ForwardedRef, forwardRef, InputHTMLAttributes, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
@@ -77,6 +77,8 @@ export const Calendar = forwardRef(
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
+    const [minDuratiion] = useState(min ?? value)
+    const minDate = secondsToDate(minDuratiion)
 
     return (
       <Label htmlFor="calendar" $highlighted={highlighted}>
@@ -87,21 +89,27 @@ export const Calendar = forwardRef(
           {...props}
           ref={inputRef}
           value={secondsToDateInput(value)}
-          min={secondsToDateInput(min ?? value)}
+          min={secondsToDateInput(minDuratiion)}
           onFocus={(e) => {
             e.target.select()
           }}
           onChange={(e) => {
             if (!onChange) return
 
-            let { valueAsDate: newValueAsDate } = e.currentTarget
-            if (newValueAsDate) {
-              // Have to add in the timezone offset to make sure that the date shows up correctly after calendar picking for UTC
-              newValueAsDate = new Date(
-                newValueAsDate.getTime() + newValueAsDate.getTimezoneOffset() * 60 * 1000,
-              )
-            }
-            onChange({ ...e, currentTarget: { ...e.currentTarget, valueAsDate: newValueAsDate } })
+            const { valueAsDate: newValueAsDate } = e.currentTarget
+            if (!newValueAsDate) return
+
+            // Have to add in the timezone offset to make sure that the date shows up correctly after calendar picking for UTC
+            const normalizedValueAsDate = new Date(
+              newValueAsDate.getTime() + newValueAsDate.getTimezoneOffset() * 60 * 1000,
+            )
+
+            const limitedValueAsDate =
+              minDate > normalizedValueAsDate ? minDate : normalizedValueAsDate
+            onChange({
+              ...e,
+              currentTarget: { ...e.currentTarget, valueAsDate: limitedValueAsDate },
+            })
           }}
           onClick={() => inputRef.current!.showPicker()}
         />
