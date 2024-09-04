@@ -142,9 +142,9 @@ export const shouldRedirect = (
 
         if (!hasValidTab) {
           return router.replace(`${destination}/${name}`)
-        } else {
+        } /* else {
           return router.replace(`${destination}/${name}${tabQuery}`)
-        }
+        } */
       },
     )
     .otherwise(() => {
