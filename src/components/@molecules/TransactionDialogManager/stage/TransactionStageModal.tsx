@@ -479,9 +479,12 @@ export const TransactionStageModal = ({
         }
         onClick={() => {
           sendTransaction(request!)
-          trackRegistrationEvent(
-            actionName === 'commitName' ? 'Commit Wallet Opened' : 'Finish Wallet Opened',
-          )
+
+          if (['commitName', 'registerName'].includes(actionName)) {
+            trackRegistrationEvent(
+              actionName === 'commitName' ? 'Commit Wallet Opened' : 'Finish Wallet Opened',
+            )
+          }
         }}
         data-testid="transaction-modal-confirm-button"
       >

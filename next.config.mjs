@@ -23,7 +23,7 @@ const babelIncludeRegexes = [
  * @type {import('next').NextConfig}
  * */
 const nextConfig = {
-  reactStrictMode: process.env.NODE_ENV !== 'development',
+  reactStrictMode: true,
   compiler: {
     styledComponents: true,
   },
