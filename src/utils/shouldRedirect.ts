@@ -20,8 +20,8 @@ type RouteParams = {
     name: string | undefined
     decodedName: string | undefined
     normalisedName: string | undefined
-    tabs: readonly string[]
-    tab: string | undefined
+    visibileTabs: readonly string[]
+    tab: string
   }
 
   'DnsClaim.tsx': {
@@ -99,7 +99,7 @@ export const shouldRedirect = (
       ['Profile.tsx', { isSelf: P.boolean, name: P.string }],
       (_params) => _params && router.isReady,
       (_params) => {
-        const { name, isSelf, decodedName, normalisedName, tabs, tab } = _params[1]
+        const { name, isSelf, decodedName, normalisedName, visibileTabs, tab } = _params[1]
 
         if (
           name !== decodedName &&
@@ -137,8 +137,15 @@ export const shouldRedirect = (
           return router.replace(`${destination}/${name}`)
         }
 
-        if (!tab || !tabs.includes(tab)) {
+        const hasValidTab = visibileTabs.includes(tab)
+        const tabQuery = tab !== 'profile' && hasValidTab ? `?tab=${tab}` : ''
+
+        if (!hasValidTab) {
+          console.log('rerouting to profile')
           return router.replace(`${destination}/${normalisedName}`)
+        } else {
+          console.log(`rerouting to ${tabQuery}`)
+          return router.replace(`${destination}/${name}${tabQuery}`)
         }
       },
     )

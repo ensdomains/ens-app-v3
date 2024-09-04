@@ -182,7 +182,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
       name,
       decodedName: profile?.decodedName,
       normalisedName,
-      tabs,
+      visibileTabs,
       tab,
     })
   }, [profile?.decodedName, normalisedName, name, isSelf, router, tab])
