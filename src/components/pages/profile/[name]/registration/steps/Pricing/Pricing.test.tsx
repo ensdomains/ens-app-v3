@@ -21,6 +21,8 @@ describe('ActionButton', () => {
     seconds: yearsToSeconds(1),
     balance: { value: 100n } as any,
     totalRequiredBalance: 1n,
+    estimatedTotal: 1n,
+    ethPrice: 1n,
   }
 
   it('should have disabled "Next" button if no choice has been made', () => {
