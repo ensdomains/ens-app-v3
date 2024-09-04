@@ -40,7 +40,7 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
 
   return (
     <MoreContainer>
-      {ownerData && <Token isWrapped={isWrapped} name={name} />}
+      <Token isWrapped={isWrapped} name={name} />
       {(isConnected || isWrapped) && !isOffchainImport && (
         <NameWrapper
           {...{
