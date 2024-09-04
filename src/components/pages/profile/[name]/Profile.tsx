@@ -17,7 +17,8 @@ import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content, ContentWarning } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
-import { formatFullExpiry, getEncodedLabelAmount, makeEtherscanLink } from '@app/utils/utils'
+import { shouldRedirect } from '@app/utils/shouldRedirect'
+import { formatFullExpiry, makeEtherscanLink } from '@app/utils/utils'
 
 import MoreTab from './tabs/MoreTab/MoreTab'
 import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
@@ -176,36 +177,13 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
   // profile.decryptedName fetches labels from NW/subgraph
   // normalisedName fetches labels from localStorage
   useEffect(() => {
-    if (
-      name !== profile?.decodedName &&
-      profile?.decodedName &&
-      !isSelf &&
-      getEncodedLabelAmount(normalisedName) > getEncodedLabelAmount(profile.decodedName)
-    ) {
-      // if the fetched decrypted name is different to the current name
-      // and the decrypted name has less encrypted labels than the normalised name
-      // direct to the fetched decrypted name
-      router.replace(`/profile/${profile.decodedName}`, { shallow: true, maintainHistory: true })
-    } else if (
-      name !== normalisedName &&
-      normalisedName &&
-      !isSelf &&
-      (!profile?.decodedName ||
-        getEncodedLabelAmount(profile.decodedName) > getEncodedLabelAmount(normalisedName)) &&
-      decodeURIComponent(name) !== normalisedName
-    ) {
-      // if the normalised name is different to the current name
-      // and the normalised name has less encrypted labels than the decrypted name
-      // direct to normalised name
-      router.replace(`/profile/${normalisedName}`, { shallow: true, maintainHistory: true })
-    }
+    shouldRedirect(router, 'Profile.tsx', '/profile', {
+      isSelf,
+      name,
+      decodedName: profile?.decodedName,
+      normalisedName,
+    })
   }, [profile?.decodedName, normalisedName, name, isSelf, router])
-
-  useEffect(() => {
-    if (isSelf && name) {
-      router.replace(`/profile/${name}`)
-    }
-  }, [isSelf, name, router])
 
   // useEffect(() => {
   //   if (shouldShowSuccessPage(transactions)) {

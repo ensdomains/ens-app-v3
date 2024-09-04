@@ -45,7 +45,7 @@ test.describe('Transactions', () => {
 
     await transactionMocal.authorize()
 
-    await expect(page.getByText('Test transaction')).toBeVisible()
+    await expect(page.getByText('Test transaction', { exact: true })).toBeVisible()
 
     await expect(page.getByTestId('toast-desktop')).toBeVisible()
     await expect(page.getByTestId('toast-desktop')).toHaveText(/Transaction Successful/)

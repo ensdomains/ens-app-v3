@@ -224,13 +224,6 @@ test('should calculate needed steps without localstorage', async ({
 }) => {
   test.slow()
 
-  // Reset name wrapper approval
-  // const registry = contracts.get('ENSRegistry', { signer: 'user' })
-  // const nameWrapper = contracts.get('NameWrapper')
-
-  // const txn = await registry.setApprovalForAll(nameWrapper.address, false)
-  // await txn.wait()
-
   await walletClient.writeContract({
     abi: registrySetApprovalForAllSnippet,
     address: testClient.chain.contracts.ensRegistry.address,

@@ -31,6 +31,10 @@ export class AddressPage {
     return this.page.getByTestId(`name-item-${name}`)
   }
 
+  getNameAvatarWrapper(name: string) {
+    return this.page.getByTestId(`name-item-avatar-wrapper-${name}`)
+  }
+
   getNameRows(names: string[]) {
     return names.map(this.getNameRow.bind(this))
   }

@@ -154,6 +154,17 @@ describe('getRegistrationStatus', () => {
     expect(result).toBe('notOwned')
   })
 
+  it('should return offChain if name is not 2LD, is not owned and has an eth address record', async () => {
+    const result = getRegistrationStatus({
+      timestamp: Date.now(),
+      validation: { is2LD: false, type: 'name' },
+      supportedTLD: true,
+      wrapperData,
+      addrData: { id: 60, name: 'eth', value: '0xF142B308cF687d4358410a4cB885513b30A42025' },
+    })
+    expect(result).toBe('offChain')
+  })
+
   it('should not return short if subdomain is short', () => {
     const result = getRegistrationStatus({
       timestamp: Date.now(),

@@ -1,0 +1,397 @@
+{
+  "title": "Ваш веб3 ім'я користувача",
+  "description": "Ваша ідентичність у веб3, одне ім'я для всіх ваших криптоадрес і ваш децентралізований вебсайт.",
+  "loading": "Завантаження",
+  "unsupportedNetwork": "Мережева підтримка не підтримується",
+  "notFound": "404 Не знайдено",
+  "etherscan": "Etherscan",
+  "action": {
+    "cancel": "Скасувати",
+    "change": "Змінити",
+    "upload": "Завантажити",
+    "close": "Закрити",
+    "save": "Зберегти",
+    "edit": "Редагувати",
+    "view": "Переглянути",
+    "clear": "Очистити",
+    "update": "Оновити",
+    "learnMore": "Дізнатися більше",
+    "send": "Надіслати",
+    "next": "Далі",
+    "add": "Додати",
+    "set": "Встановити",
+    "search": "Пошук",
+    "back": "Назад",
+    "continue": "Продовжити",
+    "confirm": "Підтвердити",
+    "remove": "Видалити",
+    "sign": "Підписати",
+    "reset": "Скинути",
+    "transfer": "Передати",
+    "tryAgain": "Спробувати ще раз",
+    "done": "Готово",
+    "burnSelected": "Спалити вибране",
+    "extend": "Продовжити",
+    "delete": "Видалити",
+    "sort": "Сортувати",
+    "check": "Перевірити",
+    "claim": "Претендувати",
+    "remindMe": "Нагадати мені",
+    "begin": "Розпочати",
+    "finish": "Завершити",
+    "skip": "Пропустити",
+    "changeNetwork": "Змінити мережу",
+    "understand": "Я розумію",
+    "feedback": "Зворотний зв'язок",
+    "enterEmail": "Введіть вашу електронну пошту",
+    "migrate": "Міграція",
+    "setToSelf": "Встановити для себе",
+    "editRoles": "Редагувати ролі",
+    "setReminder": "Встановити нагадування",
+    "import": "Імпортувати",
+    "connect": "Підключити"
+  },
+  "unit": {
+    "years_one": "{{count}} рік",
+    "years_other": "{{count}} років",
+    "months_one": "{{count}} місяць",
+    "months_other": "{{count}} місяців",
+    "days_one": "{{count}} день",
+    "days_other": "{{count}} днів",
+    "invalid_date": "Неправильна дата",
+    "yrs_one": "{{count}} р.",
+    "yrs_other": "{{count}} р.",
+    "gas": "{{value}} газ",
+    "selected": "{{count}} вибрано",
+    "perPage": "{{count}} на сторінку"
+  },
+  "navigation": {
+    "home": "Головна",
+    "names": "Мої імена",
+    "favourites": "Улюблені",
+    "settings": "Налаштування",
+    "governance": "Управління",
+    "community": "Спільнота",
+    "developers": "Розробники",
+    "support": "Підтримка",
+    "bounty": "Баг-баунті",
+    "terms": "Умови використання",
+    "privacy": "Політика конфіденційності",
+    "back": "Назад",
+    "oldApp": "Стара програма ENS",
+    "language": "Мова",
+    "currency": "Валюта",
+    "ipfsApp": "IPFS ENS програма",
+    "feedback": "Зворотний зв'язок",
+    "syncMessage": "Синхронізація з мережею. Зміни від вашої транзакції можуть ще не відображатися."
+  },
+  "wallet": {
+    "myProfile": "Профіль",
+    "disconnect": "Відключити",
+    "connect": "Підключити",
+    "noPrimaryName": "Основне ім'я не встановлено",
+    "viewProfile": "Переглянути профіль",
+    "viewDetails": "Переглянути деталі",
+    "register": "Зареєструвати"
+  },
+  "name": {
+    "registered": "Зареєстровано",
+    "expires": "Термін дії закінчується",
+    "graceEnd": "Кінець пільгового періоду",
+    "noExpiry": "Без терміну дії",
+    "expiry": "Термін дії",
+    "parent": "Батьківське",
+    "noParent": "Без батьківського",
+    "registrant": "Реєстратор",
+    "controller": "Контролер",
+    "dnsOwner": "Власник DNS",
+    "owner": "Власник",
+    "notOwned": "Не належить",
+    "manager": "Менеджер",
+    "all": "Всі імена",
+    "copy": "Скопіювати ім'я",
+    "yourPrimaryName": "Ваше основне ім'я",
+    "expiresInYears_one": "Термін дії закінчується через {{count}} рік",
+    "expiresInYears_other": "Термін дії закінчується через {{count}} років",
+    "expiresInMonths_one": "Термін дії закінчується через {{count}} місяць",
+    "expiresInMonths_other": "Термін дії закінчується через {{count}} місяців",
+    "expiresInDays_one": "Термін дії закінчується через {{count}} день",
+    "expiresInDays_other": "Термін дії закінчується через {{count}} днів",
+    "expiresInHours_one": "Термін дії закінчується через {{count}} годину",
+    "expiresInHours_other": "Термін дії закінчується через {{count}} години",
+    "expiresInHours_zero": "Термін дії закінчується менш ніж за годину",
+    "expiredInHours_one": "Термін дії закінчився {{count}} годину тому",
+    "expiredInHours_other": "Термін дії закінчився {{count}} години тому",
+    "expiredInHours_zero": "Термін дії закінчився менш ніж годину тому",
+    "expiredInDays_one": "Термін дії закінчився {{count}} день тому",
+    "expiredInDays_other": "Термін дії закінчився {{count}} днів тому",
+    "expiredInMonths_one": "Термін дії закінчився {{count}} місяць тому",
+    "expiredInMonths_other": "Термін дії закінчився {{count}} місяців тому",
+    "expiredInYears_one": "Термін дії закінчився {{count}} рік тому",
+    "expiredInYears_other": "Термін дії закінчився {{count}} років тому",
+    "gracePeriod": {
+      "expiresInYears_one": "Пільговий період закінчується через {{count}} рік",
+      "expiresInYears_other": "Пільговий період закінчується через {{count}} років",
+      "expiresInMonths_one": "Пільговий період закінчується через {{count}} місяць",
+      "expiresInMonths_other": "Пільговий період закінчується через {{count}} місяців",
+      "expiresInDays_one": "Пільговий період закінчується через {{count}} день",
+      "expiresInDays_other": "Пільговий період закінчується через {{count}} днів",
+      "expiresInHours_one": "Пільговий період закінчується через {{count}} годину",
+      "expiresInHours_other": "Пільговий період закінчується через {{count}} години",
+      "expiresInHours_zero": "Пільговий період закінчується менш ніж за годину"
+    },
+    "extend": "Продовжити",
+    "send": "Надіслати",
+    "transfer": "Передати",
+    "sendManager": "Надіслати менеджеру",
+    "sendOwner": "Надіслати власнику",
+    "renew": "Оновити {{name}}"
+  },
+  "address": {
+    "label": "Адреса",
+    "viewAddress": "Переглянути адресу",
+    "copyAddress": "Скопіювати адресу"
+  },
+  "records": {
+    "label": "Записи"
+  },
+  "sortTypes": {
+    "expiryDate": "Дата закінчення терміну",
+    "labelName": "Ім'я",
+    "createdAt": "Дата створення"
+  },
+  "errors": {
+    "noResults": "Результатів не знайдено",
+    "emailRequired": "Електронна пошта обов'язкова",
+    "emailInvalid": "Неправильна електронна адреса",
+    "invalidAddress": "Неправильна адреса",
+    "addressRequired": "Адреса обов'язкова",
+    "indexingErrors": {
+      "title": "Помилка синхронізації даних",
+      "message": "Ці дані можуть бути застарілими. Будь ласка, будьте обережні.",
+      "message_datetime": "Ці дані були востаннє оновлені {{datetime}} і можуть бути застарілими. Будь ласка, будьте обережні"
+    },
+    "networkError": {
+      "title": "Помилка синхронізації даних",
+      "message": "Ці дані можуть бути застарілими. Будь ласка, будьте обережні.",
+      "blurb": "Ця кнопка в даний момент відключена через проблеми з синхронізацією даних."
+    },
+    "networkLatency": {
+      "title": "Повільна синхронізація даних",
+      "message": "Додаток ENS стикається з уповільненнями через проблеми з затримкою мережі."
+    }
+  },
+  "transaction": {
+    "description": {
+      "setName": "Встановити ім'я",
+      "setRecords": "Встановити записи",
+      "test": "Тестова транзакція",
+      "addSuccess": "Успішне додавання",
+      "sendName": "Надіслати ім'я",
+      "migrateProfile": "Мігрувати профіль",
+      "migrateProfileWithReset": "Мігрувати профіль",
+      "migrateProfileWithSync": "Мігрувати і оновити профіль",
+      "migrateProfileWithEthAddress": "Мігрувати і оновити ETH адресу",
+      "wrapName": "Огорнути ім'я",
+      "updateResolver": "Оновити резолвер",
+      "updateProfile": "Оновити профіль",
+      "setPrimaryName": "Встановити основне ім'я",
+      "resetPrimaryName": "Видалити основне ім'я",
+      "updateEthAddress": "Оновити ETH адресу",
+      "testSendName": "Надіслати ім'я",
+      "burnFuses": "Спалити дозволи",
+      "createSubname": "Створити підім'я",
+      "deleteSubname": "Видалити підім'я",
+      "extendNames": "Продовжити імена",
+      "approveDnsRegistrar": "Схвалити DNS реєстратора",
+      "claimDnsName": "Одержати DNS ім'я",
+      "importDnsName": "Імпортувати DNS ім'я",
+      "commitName": "Розпочати таймер",
+      "registerName": "Зареєструвати ім'я",
+      "approveNameWrapper": "Схвалити NameWrapper",
+      "clearRecords": "Очистити записи",
+      "updateRecords": "Оновити записи",
+      "resetProfileWithRecords": "Скинути профіль з записами",
+      "transferName": "Перенести ім'я",
+      "transferSubname": "Перенести підім'я",
+      "changePermissions": "Змінити дозволи",
+      "syncManager": "Синхронізувати менеджера",
+      "updateProfileRecords": "Оновити профіль",
+      "resetProfile": "Скинути профіль",
+      "unwrapName": "Відгорнути ім'я"
+    },
+    "info": {
+      "sendName": "Встановити контролера та реєстратора імені",
+      "migrateProfile": "Встановити існуючі записи на новому резолвері",
+      "migrateProfileWithReset": "Встановити існуючі записи на новому резолвері",
+      "migrateProfileWithSync": "Встановити існуючі записи на новому резолвері",
+      "migrateProfileWithEthAddress": "Встановити існуючі записи та ETH адресу на новому резолвері",
+      "wrapName": "Огорнути ім'я",
+      "updateResolver": "Змінити резолвер на",
+      "updateProfile": "Оновити записи на існуючому резолвері",
+      "setPrimaryName": "Встановити основне ім'я для вашої адреси",
+      "updateEthAddress": "Оновити ETH адресу на цю адресу",
+      "updateEthAddressOnLatestResolver": "Оновити ETH адресу на останньому резолвері",
+      "testSendName": "Встановити контролера та реєстратора імені",
+      "createSubname": "Створити нове підім'я для імені",
+      "burnFuses": "Спалити обрані дозволи до закінчення терміну імені",
+      "commitName": "Розпочати таймер для реєстрації імені",
+      "approveNameWrapper": "Схвалити NameWrapper для управління вашими іменами",
+      "fuses": {
+        "revoke": "Анулювати",
+        "grant": "Надати",
+        "setExpiry": "Встановити термін дії",
+        "PARENT_CANNOT_CONTROL": "Здати контроль над батьківським",
+        "CAN_EXTEND_EXPIRY": "Продовжити термін дії",
+        "CANNOT_UNWRAP": "Відгорнути це ім'я",
+        "CANNOT_CREATE_SUBDOMAIN": "Створити піддомен",
+        "CANNOT_SET_RESOLVER": "Встановити резолвер",
+        "CANNOT_SET_TTL": "Встановити TTL",
+        "CANNOT_TRANSFER": "Надіслати це ім'я",
+        "CANNOT_BURN_FUSES": "Змінити дозволи",
+        "CANNOT_APPROVE": "Змінити менеджера з продовження"
+      }
+    },
+    "itemLabel": {
+      "name": "Ім'я",
+      "address": "Адреса",
+      "action": "Дія",
+      "info": "Інформація",
+      "to": "До",
+      "subname": "Підім'я",
+      "duration": "Тривалість",
+      "cost": "Вартість",
+      "update": "Оновити",
+      "resolver": "Резолвер",
+      "records": "Записи"
+    },
+    "itemValue": {
+      "records_one": "{{count}} запис",
+      "records_other": "{{count}} записи"
+    },
+    "status": {
+      "pending": {
+        "regular": "Очікує"
+      },
+      "confirmed": {
+        "regular": "Підтверджено",
+        "notifyTitle": "Транзакцію успішно завершено",
+        "notifyMessage": "Ваша транзакція \"{{action}}\" була успішною"
+      },
+      "failed": {
+        "regular": "Не вдалося",
+        "notifyTitle": "Помилка транзакції",
+        "notifyMessage": "Ваша транзакція \"{{action}}\" не вдалася і була скасована"
+      }
+    },
+    "dialog": {
+      "intro": {
+        "trailingButton": "Розпочати",
+        "trailingButtonResume": "Продовжити",
+        "step": "Крок {{step}}"
+      },
+      "confirm": {
+        "title": "Підтвердіть деталі",
+        "message": "Подвійно перевірте ці деталі перед підтвердженням у вашому гаманці.",
+        "waitingForWallet": "Очікування на гаманець",
+        "openWallet": "Відкрити гаманець"
+      },
+      "sent": {
+        "title": "Транзакцію надіслано",
+        "message": "Ваша транзакція зараз у процесі, ви можете закрити це і повернутися пізніше.",
+        "progress": {
+          "title": "Надіслано",
+          "message": "Триває довше, ніж очікувалося"
+        },
+        "learn": "Дізнатися про тривалі транзакції"
+      },
+      "complete": {
+        "title": "Транзакцію завершено",
+        "message": "Ваша транзакція завершена!",
+        "progress": {
+          "title": "Зроблено"
+        }
+      },
+      "failed": {
+        "title": "Транзакція не вдалася",
+        "progress": {
+          "title": "Не вдалося"
+        }
+      },
+      "error": {
+        "gasLimit": "Ліміт газу у вашій транзакції був недостатнім, будь ласка, спробуйте ще раз."
+      }
+    },
+    "error": {
+      "unknown": "Сталася невідома помилка"
+    },
+    "viewEtherscan": "Переглянути на Etherscan",
+    "viewMore": "Переглянути більше"
+  },
+  "search": {
+    "label": "Пошук імені",
+    "placeholder": "Шукати ім'я",
+    "emptyText": "Введіть ім'я або адресу для пошуку...",
+    "address": "Адреса",
+    "errors": {
+      "tooShort": "Ім'я занадто коротке",
+      "invalid": "Неправильний формат імені"
+    },
+    "status": {
+      "registered": "Зареєстровано",
+      "gracePeriod": "Пільговий період",
+      "premium": "Тимчасовий преміум",
+      "available": "Доступно",
+      "notOwned": "Не належить",
+      "notImported": "Не імпортовано",
+      "short": "Занадто коротке",
+      "default": "Неправильне",
+      "invalid": "Неправильне",
+      "unsupportedTLD": "Не підтримується",
+      "imported": "Імпортовано",
+      "owned": "Належить"
+    }
+  },
+  "selectableInput": {
+    "add": "Додати",
+    "placeholder": "Вибрати опцію",
+    "empty": "Опцій не знайдено"
+  },
+  "testnetFaucet": {
+    "explanation": "Кожна адреса на {{ testnet }} може отримати {{ amount }} {{ ticker }} для тестування програми менеджера ENS, а також для іншого використання тестової мережі.",
+    "note": "Може знадобитися кілька хвилин, щоб відобразитися у вашому гаманці."
+  },
+  "roles": {
+    "owner": {
+      "title": "власник",
+      "description": "Адреса, яка володіє цим ім'ям."
+    },
+    "dns-owner": {
+      "title": "Власник DNS",
+      "description": "Адреса, яка володіє цим ім'ям."
+    },
+    "parent-owner": {
+      "title": "Власник батьківського",
+      "description": "Адреса, яка володіє батьківським ім'ям."
+    },
+    "manager": {
+      "title": "менеджер",
+      "description": "Адреса або контракт, який може змінювати профіль, налаштування та менеджерів профілю."
+    },
+    "profile-editor": {
+      "title": "Редактор профілю",
+      "description": "Адреса, яка може змінювати профіль."
+    },
+    "eth-record": {
+      "title": "ETH запис",
+      "description": "Адреса, на яку вказує це ім'я."
+    }
+  },
+  "dns": {
+    "refresh": "Оновити DNS"
+  },
+  "calendar": {
+    "pick_by_years": "Вибрати за роками",
+    "pick_by_date": "Вибрати за датою"
+  }
+}

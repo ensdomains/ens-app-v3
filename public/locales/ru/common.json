@@ -1,0 +1,397 @@
+{
+  "title": "Ваше веб3 имя пользователя",
+  "description": "Ваша идентификация в веб3, одно имя для всех ваших криптоадресов и вашего децентрализованного вебсайта.",
+  "loading": "Загрузка",
+  "unsupportedNetwork": "Неподдерживаемая сеть",
+  "notFound": "404 Не найдено",
+  "etherscan": "Etherscan",
+  "action": {
+    "cancel": "Отмена",
+    "change": "Изменить",
+    "upload": "Загрузить",
+    "close": "Закрыть",
+    "save": "Сохранить",
+    "edit": "Редактировать",
+    "view": "Просмотр",
+    "clear": "Очистить",
+    "update": "Обновить",
+    "learnMore": "Узнать больше",
+    "send": "Отправить",
+    "next": "Далее",
+    "add": "Добавить",
+    "set": "Установить",
+    "search": "Поиск",
+    "back": "Назад",
+    "continue": "Продолжить",
+    "confirm": "Подтвердить",
+    "remove": "Удалить",
+    "sign": "Подписать",
+    "reset": "Сбросить",
+    "transfer": "Передать",
+    "tryAgain": "Попробовать снова",
+    "done": "Готово",
+    "burnSelected": "Сжечь выбранное",
+    "extend": "Продлить",
+    "delete": "Удалить",
+    "sort": "Сортировать",
+    "check": "Проверить",
+    "claim": "Запросить",
+    "remindMe": "Напомнить",
+    "begin": "Начать",
+    "finish": "Завершить",
+    "skip": "Пропустить",
+    "changeNetwork": "Изменить сеть",
+    "understand": "Понимаю",
+    "feedback": "Обратная связь",
+    "enterEmail": "Введите ваш email",
+    "migrate": "Мигрировать",
+    "setToSelf": "Установить на себя",
+    "editRoles": "Редактировать роли",
+    "setReminder": "Установить напоминание",
+    "import": "Импортировать",
+    "connect": "Подключиться"
+  },
+  "unit": {
+    "years_one": "{{count}} год",
+    "years_other": "{{count}} лет",
+    "months_one": "{{count}} месяц",
+    "months_other": "{{count}} месяцев",
+    "days_one": "{{count}} день",
+    "days_other": "{{count}} дней",
+    "invalid_date": "Неверная дата",
+    "yrs_one": "{{count}} г",
+    "yrs_other": "{{count}} л",
+    "gas": "{{value}} газа",
+    "selected": "Выбрано: {{count}}",
+    "perPage": "{{count}} на странице"
+  },
+  "navigation": {
+    "home": "Главная",
+    "names": "Мои Имена",
+    "favourites": "Избранное",
+    "settings": "Настройки",
+    "governance": "Управление",
+    "community": "Сообщество",
+    "developers": "Разработчики",
+    "support": "Поддержка",
+    "bounty": "Награда за баги",
+    "terms": "Условия Использования",
+    "privacy": "Политика Конфиденциальности",
+    "back": "Назад",
+    "oldApp": "Старое Приложение ENS",
+    "language": "Язык",
+    "currency": "Валюта",
+    "ipfsApp": "IPFS Приложение ENS",
+    "feedback": "Обратная связь",
+    "syncMessage": "Синхронизация с сетью. Изменения от вашей транзакции могут еще не отображаться."
+  },
+  "wallet": {
+    "myProfile": "Профиль",
+    "disconnect": "Отключить",
+    "connect": "Подключить",
+    "noPrimaryName": "Нет Основного Имени",
+    "viewProfile": "Просмотреть Профиль",
+    "viewDetails": "Просмотреть Детали",
+    "register": "Зарегистрировать"
+  },
+  "name": {
+    "registered": "Зарегистрировано",
+    "expires": "Истекает",
+    "graceEnd": "Конец льготного периода",
+    "noExpiry": "Без срока действия",
+    "expiry": "Срок действия",
+    "parent": "Родитель",
+    "noParent": "Нет родителя",
+    "registrant": "Регистратор",
+    "controller": "Контролер",
+    "dnsOwner": "DNS Владелец",
+    "owner": "Владелец",
+    "notOwned": "Не принадлежит",
+    "manager": "Менеджер",
+    "all": "Все Имена",
+    "copy": "Скопировать имя",
+    "yourPrimaryName": "Ваше основное имя",
+    "expiresInYears_one": "Истекает через {{count}} год",
+    "expiresInYears_other": "Истекает через {{count}} года",
+    "expiresInMonths_one": "Истекает через {{count}} месяц",
+    "expiresInMonths_other": "Истекает через {{count}} месяца",
+    "expiresInDays_one": "Истекает через {{count}} день",
+    "expiresInDays_other": "Истекает через {{count}} дня",
+    "expiresInHours_one": "Истекает через {{count}} час",
+    "expiresInHours_other": "Истекает через {{count}} часов",
+    "expiresInHours_zero": "Истекает меньше чем через час",
+    "expiredInHours_one": "Истек {{count}} час назад",
+    "expiredInHours_other": "Истекло {{count}} часов назад",
+    "expiredInHours_zero": "Истекло меньше чем час назад",
+    "expiredInDays_one": "Истек {{count}} день назад",
+    "expiredInDays_other": "Истекло {{count}} дня назад",
+    "expiredInMonths_one": "Истек {{count}} месяц назад",
+    "expiredInMonths_other": "Истекло {{count}} месяца назад",
+    "expiredInYears_one": "Истек {{count}} год назад",
+    "expiredInYears_other": "Истекло {{count}} года назад",
+    "gracePeriod": {
+      "expiresInYears_one": "Льготный период истекает через {{count}} год",
+      "expiresInYears_other": "Льготный период истекает через {{count}} года",
+      "expiresInMonths_one": "Льготный период истекает через {{count}} месяц",
+      "expiresInMonths_other": "Льготный период истекает через {{count}} месяца",
+      "expiresInDays_one": "Льготный период истекает через {{count}} день",
+      "expiresInDays_other": "Льготный период истекает через {{count}} дня",
+      "expiresInHours_one": "Льготный период истекает через {{count}} час",
+      "expiresInHours_other": "Льготный период истекает через {{count}} часов",
+      "expiresInHours_zero": "Льготный период истекает менее чем через час"
+    },
+    "extend": "Продлить",
+    "send": "Отправить",
+    "transfer": "Передать",
+    "sendManager": "Отправить Менеджеру",
+    "sendOwner": "Отправить Владельцу",
+    "renew": "Продлить {{name}}"
+  },
+  "address": {
+    "label": "Адрес",
+    "viewAddress": "Просмотреть адрес",
+    "copyAddress": "Копировать адрес"
+  },
+  "records": {
+    "label": "Записи"
+  },
+  "sortTypes": {
+    "expiryDate": "Дата истечения",
+    "labelName": "Имя",
+    "createdAt": "Дата создания"
+  },
+  "errors": {
+    "noResults": "Результаты не найдены",
+    "emailRequired": "Необходим email",
+    "emailInvalid": "Недействительный адрес электронной почты",
+    "invalidAddress": "Недействительный адрес",
+    "addressRequired": "Необходим адрес",
+    "indexingErrors": {
+      "title": "Ошибка синхронизации данных",
+      "message": "Эти данные могут быть устаревшими. Пожалуйста, проявляйте осторожность.",
+      "message_datetime": "Эти данные были обновлены в {{datetime}} и могут быть устаревшими. Пожалуйста, проявляйте осторожность."
+    },
+    "networkError": {
+      "title": "Ошибка синхронизации данных",
+      "message": "Эти данные могут быть устаревшими. Пожалуйста, проявляйте осторожность.",
+      "blurb": "Эта кнопка в настоящее время отключена из-за проблем с синхронизацией данных."
+    },
+    "networkLatency": {
+      "title": "Медленная синхронизация данных",
+      "message": "Приложение ENS испытывает замедление из-за проблем с сетевой задержкой."
+    }
+  },
+  "transaction": {
+    "description": {
+      "setName": "Установить имя",
+      "setRecords": "Установить записи",
+      "test": "Тестовая транзакция",
+      "addSuccess": "Добавить успех",
+      "sendName": "Отправить имя",
+      "migrateProfile": "Мигрировать профиль",
+      "migrateProfileWithReset": "Мигрировать профиль",
+      "migrateProfileWithSync": "Мигрировать и обновить профиль",
+      "migrateProfileWithEthAddress": "Мигрировать и обновить ETH адрес",
+      "wrapName": "Объединить имя",
+      "updateResolver": "Обновить резолвер",
+      "updateProfile": "Обновить профиль",
+      "setPrimaryName": "Установить основное имя",
+      "resetPrimaryName": "Удалить основное имя",
+      "updateEthAddress": "Обновить ETH адрес",
+      "testSendName": "Отправить имя",
+      "burnFuses": "Сжечь разрешения",
+      "createSubname": "Создать подимя",
+      "deleteSubname": "Удалить подимя",
+      "extendNames": "Продлить имена",
+      "approveDnsRegistrar": "Одобрить DNS регистратор",
+      "claimDnsName": "Запросить DNS имя",
+      "importDnsName": "Импортировать DNS имя",
+      "commitName": "Запустить таймер",
+      "registerName": "Зарегистрировать имя",
+      "approveNameWrapper": "Одобрить NameWrapper",
+      "clearRecords": "Очистить записи",
+      "updateRecords": "Обновить записи",
+      "resetProfileWithRecords": "Сбросить профиль с записями",
+      "transferName": "Передать имя",
+      "transferSubname": "Передать подимя",
+      "changePermissions": "Изменить разрешения",
+      "syncManager": "Синхронизировать менеджера",
+      "updateProfileRecords": "Обновить профиль",
+      "resetProfile": "Сбросить профиль",
+      "unwrapName": "Развернуть имя"
+    },
+    "info": {
+      "sendName": "Установить контроллера и регистранта имени",
+      "migrateProfile": "Установить существующие записи на новом резолвере",
+      "migrateProfileWithReset": "Установить существующие записи на новом резолвере",
+      "migrateProfileWithSync": "Установить существующие записи на новом резолвере",
+      "migrateProfileWithEthAddress": "Установить существующие записи и ETH адрес на новом резолвере",
+      "wrapName": "Объединить имя",
+      "updateResolver": "Изменить резолвер на",
+      "updateProfile": "Обновить записи на существующем резолвере",
+      "setPrimaryName": "Установить основное имя для вашего адреса",
+      "updateEthAddress": "Обновить ETH адрес на этот адрес",
+      "updateEthAddressOnLatestResolver": "Обновить ETH адрес на последнем резолвере",
+      "testSendName": "Установить контроллера и регистранта имени",
+      "createSubname": "Создать новое подимя на имя",
+      "burnFuses": "Сжечь выбранные разрешения до истечения имени",
+      "commitName": "Запустить таймер для регистрации имени",
+      "approveNameWrapper": "Одобрить NameWrapper для управления вашими именами",
+      "fuses": {
+        "revoke": "Отозвать",
+        "grant": "Выдать",
+        "setExpiry": "Установить срок действия",
+        "PARENT_CANNOT_CONTROL": "Отказаться от контроля родителя",
+        "CAN_EXTEND_EXPIRY": "Продлить срок действия",
+        "CANNOT_UNWRAP": "Развернуть это имя",
+        "CANNOT_CREATE_SUBDOMAIN": "Создать поддомены",
+        "CANNOT_SET_RESOLVER": "Установить резолвер",
+        "CANNOT_SET_TTL": "Установить TTL",
+        "CANNOT_TRANSFER": "Отправить это имя",
+        "CANNOT_BURN_FUSES": "Изменить разрешения",
+        "CANNOT_APPROVE": "Изменить менеджера обновлений"
+      }
+    },
+    "itemLabel": {
+      "name": "Имя",
+      "address": "Адрес",
+      "action": "Действие",
+      "info": "Информация",
+      "to": "Кому",
+      "subname": "Подимя",
+      "duration": "Продолжительность",
+      "cost": "Стоимость",
+      "update": "Обновление",
+      "resolver": "Резолвер",
+      "records": "Записи"
+    },
+    "itemValue": {
+      "records_one": "{{count}} запись",
+      "records_other": "{{count}} записей"
+    },
+    "status": {
+      "pending": {
+        "regular": "В ожидании"
+      },
+      "confirmed": {
+        "regular": "Подтверждено",
+        "notifyTitle": "Транзакция успешна",
+        "notifyMessage": "Ваша транзакция \"{{action}}\" была успешной"
+      },
+      "failed": {
+        "regular": "Неудача",
+        "notifyTitle": "Сбой транзакции",
+        "notifyMessage": "Ваша транзакция \"{{action}}\" не удалась и была отменена"
+      }
+    },
+    "dialog": {
+      "intro": {
+        "trailingButton": "Начать",
+        "trailingButtonResume": "Возобновить",
+        "step": "Шаг {{step}}"
+      },
+      "confirm": {
+        "title": "Подтвердите данные",
+        "message": "Дважды проверьте эти данные перед подтверждением в вашем кошельке.",
+        "waitingForWallet": "Ожидание кошелька",
+        "openWallet": "Открыть кошелек"
+      },
+      "sent": {
+        "title": "Транзакция отправлена",
+        "message": "Ваша транзакция сейчас в процессе, вы можете закрыть это окно и вернуться позже.",
+        "progress": {
+          "title": "Отправлено",
+          "message": "Длится дольше, чем ожидалось"
+        },
+        "learn": "Узнать о длительных транзакциях"
+      },
+      "complete": {
+        "title": "Транзакция завершена",
+        "message": "Ваша транзакция завершена!",
+        "progress": {
+          "title": "Готово"
+        }
+      },
+      "failed": {
+        "title": "Транзакция не удалась",
+        "progress": {
+          "title": "Неудача"
+        }
+      },
+      "error": {
+        "gasLimit": "Лимит газа в вашей транзакции был недостаточно высоким, пожалуйста, попробуйте снова."
+      }
+    },
+    "error": {
+      "unknown": "Произошла неизвестная ошибка"
+    },
+    "viewEtherscan": "Посмотреть на Etherscan",
+    "viewMore": "Посмотреть больше"
+  },
+  "search": {
+    "label": "Поиск имени",
+    "placeholder": "Поиск имени",
+    "emptyText": "Введите имя или адрес для поиска...",
+    "address": "Адрес",
+    "errors": {
+      "tooShort": "Имя слишком короткое",
+      "invalid": "Неверный формат имени"
+    },
+    "status": {
+      "registered": "Зарегистрировано",
+      "gracePeriod": "Проблемный период",
+      "premium": "Временный премиум",
+      "available": "Доступно",
+      "notOwned": "Не принадлежит",
+      "notImported": "Не импортировано",
+      "short": "Слишком короткое",
+      "default": "Неверно",
+      "invalid": "Неверно",
+      "unsupportedTLD": "Не поддерживается",
+      "imported": "Импортировано",
+      "owned": "Принадлежит"
+    }
+  },
+  "selectableInput": {
+    "add": "Добавить",
+    "placeholder": "Выберите опцию",
+    "empty": "Опции не найдены"
+  },
+  "testnetFaucet": {
+    "explanation": "Каждый адрес на {{ testnet }} может получить {{ amount }} {{ ticker }} для тестирования приложения ENS manager, а также для других тестов на тестовой сети.",
+    "note": "Может занять несколько минут, чтобы появиться в вашем кошельке."
+  },
+  "roles": {
+    "owner": {
+      "title": "владелец",
+      "description": "Адрес, который владеет этим именем."
+    },
+    "dns-owner": {
+      "title": "DNS владелец",
+      "description": "Адрес, который владеет этим именем."
+    },
+    "parent-owner": {
+      "title": "Владелец родителя",
+      "description": "Адрес, который владеет родителем этого имени."
+    },
+    "manager": {
+      "title": "менеджер",
+      "description": "Адрес или контракт, который может изменять профиль, настройки и менеджеров профиля."
+    },
+    "profile-editor": {
+      "title": "Редактор профиля",
+      "description": "Адрес, который может изменять профиль."
+    },
+    "eth-record": {
+      "title": "ETH запись",
+      "description": "Адрес, на который указывает это имя."
+    }
+  },
+  "dns": {
+    "refresh": "Обновить DNS"
+  },
+  "calendar": {
+    "pick_by_years": "Выберите по годам",
+    "pick_by_date": "Выберите по дате"
+  }
+}

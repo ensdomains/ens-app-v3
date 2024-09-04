@@ -77,15 +77,13 @@ export class PermissionsPage {
         const checkbox = this.page.getByTestId(`checkbox-${permission}`)
         if (await checkbox.count()) await checkbox.check()
       }
-      if (await nextButton.isDisabled() && await nameConfirmation.isVisible()) {
+      if ((await nextButton.isDisabled()) && (await nameConfirmation.isVisible())) {
         await nameConfirmation.fill(name)
         await nameConfirmation.press('Enter')
       }
       await nextButton.click()
       hasNextButton = (await nextButton.count()) > 0
     }
-
-   
   }
 
   async burnExtendExpiry(name: string) {
@@ -96,7 +94,7 @@ export class PermissionsPage {
     while (hasNextButton) {
       const checkbox = this.page.getByTestId(`checkbox-CAN_EXTEND_EXPIRY`)
       if (await checkbox.count()) await checkbox.check()
-      if (await nextButton.isDisabled() && await nameConfirmation.isVisible()) {
+      if ((await nextButton.isDisabled()) && (await nameConfirmation.isVisible())) {
         await nameConfirmation.fill(name)
         await nameConfirmation.press('Enter')
       }
@@ -117,7 +115,7 @@ export class PermissionsPage {
         const checkbox = this.page.getByTestId(`checkbox-${permission}`)
         if (await checkbox.count()) await checkbox.check()
       }
-      if (await nextButton.isDisabled() && await nameConfirmation.isVisible()) {
+      if ((await nextButton.isDisabled()) && (await nameConfirmation.isVisible())) {
         await nameConfirmation.fill(name)
         await nameConfirmation.press('Enter')
       }
@@ -135,7 +133,7 @@ export class PermissionsPage {
     while (hasNextButton) {
       const checkbox = this.page.getByTestId(`checkbox-CANNOT_BURN_FUSES`)
       if (await checkbox.count()) await checkbox.check()
-      if (await nextButton.isDisabled() && await nameConfirmation.isVisible()) {
+      if ((await nextButton.isDisabled()) && (await nameConfirmation.isVisible())) {
         await nameConfirmation.fill(name)
         await nameConfirmation.press('Enter')
       }
