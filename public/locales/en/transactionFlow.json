@@ -4,6 +4,7 @@
       "tabs": {
         "avatar": {
           "change": "Change avatar",
+          "add": "Add avatar",
           "label": "Avatar",
           "dropdown": {
             "selectNFT": "Select NFT",

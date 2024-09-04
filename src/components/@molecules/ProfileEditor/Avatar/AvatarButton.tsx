@@ -174,7 +174,9 @@ const AvatarButton = ({
           )}
           <div>
             <Button colorStyle="accentSecondary">
-              {t('input.profileEditor.tabs.avatar.change')}
+              {!!src
+                ? t('input.profileEditor.tabs.avatar.change')
+                : t('input.profileEditor.tabs.avatar.add')}
             </Button>
           </div>
           <input
