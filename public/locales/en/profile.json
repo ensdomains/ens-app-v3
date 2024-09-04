@@ -310,6 +310,7 @@
         "wrapName": "Wrap Name",
         "unwrap": "Unwrap Name",
         "unwrapWarning": "This name has revoked the permissions needed for this action.",
+        "tooltip": "The Name Wrapper enables additional functionality on ENS names.",
         "status": {
           "unwrapped": "Unwrapped",
           "wrapped": "Wrapped"

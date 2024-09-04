@@ -9,6 +9,7 @@ import { AlertSVG, CheckSVG, LockSVG, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
+import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
 import { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
 import type { Profile } from '@app/types'
 
@@ -87,6 +88,14 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
 `
 
+const Header = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    gap: ${theme.space[2]};
+  `,
+)
+
 const getFuseStateFromWrapperData = (wrapperData?: GetWrapperDataReturnType): NameWrapperState =>
   match(wrapperData)
     .with(P.nullish, () => 'unwrapped' as const)
@@ -119,7 +128,10 @@ export const NameWrapper = ({
   return (
     <Container>
       <HeaderContainer>
-        <Typography fontVariant="headingFour">{t('tabs.more.token.nameWrapper')}</Typography>
+        <Header>
+          <Typography fontVariant="headingFour">{t('tabs.more.token.nameWrapper')}</Typography>
+          <QuestionTooltip content={t('tabs.more.token.tooltip')} />
+        </Header>
         {isButtonDisplayed ? (
           isWrapped ? (
             status === 'locked' ? (
