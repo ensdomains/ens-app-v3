@@ -105,10 +105,6 @@ export const NameWrapper = ({
 }: Props) => {
   const { t } = useTranslation('profile')
 
-  const isPCCBurned = !!wrapperData?.fuses.parent?.PARENT_CANNOT_CONTROL
-
-  const cannotUnwrap = !!wrapperData?.fuses.child.CANNOT_UNWRAP
-
   const status = getFuseStateFromWrapperData(wrapperData)
 
   const isManager = ownerData?.owner === address
@@ -126,7 +122,7 @@ export const NameWrapper = ({
         <Typography fontVariant="headingFour">{t('tabs.more.token.nameWrapper')}</Typography>
         {isButtonDisplayed ? (
           isWrapped ? (
-            cannotUnwrap ? (
+            status === 'locked' ? (
               <DisabledButtonWithTooltip
                 buttonText={t('tabs.more.token.unwrap')}
                 content={t('tabs.more.token.unwrapWarning')}
@@ -150,17 +146,26 @@ export const NameWrapper = ({
             {isWrapped
               ? t('tabs.more.token.status.wrapped')
               : t('tabs.more.token.status.unwrapped')}
+
+            {status === 'locked' ? <LockSVG /> : null}
           </Record>
-          <ParentControlRecord
-            data-testid="pcc-status"
-            $cannotUnwrap={cannotUnwrap}
-            $isPCCBurned={isPCCBurned}
-          >
-            {isPCCBurned
-              ? t('tabs.more.token.pcc.not-controllable')
-              : t('tabs.more.token.pcc.controllable')}
-            {cannotUnwrap ? <LockSVG /> : isPCCBurned ? <CheckSVG /> : <AlertSVG />}
-          </ParentControlRecord>
+          {isWrapped ? (
+            <ParentControlRecord
+              data-testid="pcc-status"
+              $cannotUnwrap={status === 'locked'}
+              $isPCCBurned={status === 'emancipated'}
+            >
+              {status === 'emancipated' ? (
+                <>
+                  {t('tabs.more.token.pcc.not-controllable')} <CheckSVG />
+                </>
+              ) : (
+                <>
+                  {t('tabs.more.token.pcc.controllable')} <AlertSVG />
+                </>
+              )}
+            </ParentControlRecord>
+          ) : null}
         </TwoRows>
       )}
     </Container>
