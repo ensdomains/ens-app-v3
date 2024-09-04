@@ -138,7 +138,7 @@ export const shouldRedirect = (
         }
 
         const hasValidTab = visibileTabs.includes(tab)
-        const tabQuery = tab !== 'profile' && hasValidTab ? `?tab=${tab}` : ''
+        // const tabQuery = tab !== 'profile' && hasValidTab ? `?tab=${tab}` : ''
 
         if (!hasValidTab) {
           return router.replace(`${destination}/${name}`)
