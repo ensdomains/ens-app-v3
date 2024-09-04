@@ -53,7 +53,6 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
     await expect(registrationPage.primaryNameToggle).toBeChecked()
 
-    await page.pause()
     // should show adjusted gas estimate when primary name setting checked
     const estimate = await registrationPage.getGas()
     expect(estimate).toBeGreaterThan(0)
@@ -141,12 +140,12 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('finish-button')).toBeEnabled()
 
     // should allow finalising registration and automatically go to the complete step
-    await page.getByTestId('finish-button').click()
     await expect(
       page.getByText(
-        'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
+        'Your name is not registered until you’ve completed the second transaction. You have 23 hours remaining to complete it.',
       ),
     ).toBeVisible()
+    await page.getByTestId('finish-button').click()
     await expect(page.getByText('Open Wallet')).toBeVisible()
     await transactionModal.confirm()
 
