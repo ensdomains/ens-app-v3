@@ -99,8 +99,24 @@ test.describe.serial('normal registration', () => {
     // should go to transactions step and open commit transaction immediately
     await expect(page.getByTestId('next-button')).toHaveText('Begin')
     await page.getByTestId('next-button').click()
+    await transactionModal.closeButton.click()
+
+    await expect(
+      page.getByText(
+        'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
+      ),
+    ).toBeVisible()
+    await page.getByTestId('start-timer-button').click()
+
     await expect(page.getByText('Open Wallet')).toBeVisible()
     await transactionModal.confirm()
+
+    // should show countdown text
+    await expect(
+      page.getByText(
+        'This wait prevents others from front running your transaction. You will be prompted to complete a second transaction when the timer is complete.',
+      ),
+    ).toBeVisible()
 
     // should show countdown
     await expect(page.getByTestId('countdown-circle')).toBeVisible()
@@ -111,6 +127,13 @@ test.describe.serial('normal registration', () => {
     const startTimerButton = page.getByTestId('start-timer-button')
     await expect(startTimerButton).not.toBeVisible()
     await testClient.increaseTime({ seconds: 60 })
+
+    // Should show registration text
+    await expect(
+      page.getByText(
+        'Your name is not registered until you’ve completed the second transaction. You have 23 hours remaining to complete it.',
+      ),
+    ).toBeVisible()
     await expect(page.getByTestId('finish-button')).toBeEnabled()
 
     // should save the registration state and the transaction status
