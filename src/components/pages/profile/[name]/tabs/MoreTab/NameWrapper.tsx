@@ -169,11 +169,11 @@ export const NameWrapper = ({
             >
               {status === 'emancipated' ? (
                 <>
-                  {t('tabs.more.token.pcc.not-controllable')} <CheckSVG />
+                  {t('tabs.more.token.pcc.controllable')} <AlertSVG />
                 </>
               ) : (
                 <>
-                  {t('tabs.more.token.pcc.controllable')} <AlertSVG />
+                  {t('tabs.more.token.pcc.not-controllable')} <CheckSVG />
                 </>
               )}
             </ParentControlRecord>
