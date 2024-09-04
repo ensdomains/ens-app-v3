@@ -147,7 +147,7 @@ export const NameWrapper = ({
               ? t('tabs.more.token.status.wrapped')
               : t('tabs.more.token.status.unwrapped')}
 
-            {status === 'locked' ? <LockSVG /> : null}
+            {status === 'locked' ? <LockSVG /> : <CheckSVG />}
           </Record>
           {isWrapped ? (
             <ParentControlRecord
