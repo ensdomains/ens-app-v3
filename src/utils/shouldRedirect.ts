@@ -101,6 +101,9 @@ export const shouldRedirect = (
       (_params) => {
         const { name, isSelf, decodedName, normalisedName, visibileTabs, tab } = _params[1]
 
+        const hasValidTab = visibileTabs.includes(tab)
+        const tabQuery = tab !== 'profile' && hasValidTab ? `?tab=${tab}` : ''
+
         if (
           name !== decodedName &&
           decodedName &&
@@ -110,7 +113,7 @@ export const shouldRedirect = (
           // if the fetched decrypted name is different to the current name
           // and the decrypted name has less encrypted labels than the normalised name
           // direct to the fetched decrypted name
-          return router.replace(`${destination}/${decodedName}`, {
+          return router.replace(`${destination}/${decodedName}${tabQuery}`, {
             shallow: true,
             maintainHistory: true,
           })
@@ -127,24 +130,19 @@ export const shouldRedirect = (
           // if the normalised name is different to the current name
           // and the normalised name has less encrypted labels than the decrypted name
           // direct to normalised name
-          return router.replace(`${destination}/${normalisedName}`, {
+          return router.replace(`${destination}/${normalisedName}${tabQuery}`, {
             shallow: true,
             maintainHistory: true,
           })
         }
 
         if (isSelf && name) {
-          return router.replace(`${destination}/${name}`)
+          return router.replace(`${destination}/${name}${tabQuery}`)
         }
-
-        const hasValidTab = visibileTabs.includes(tab)
-        // const tabQuery = tab !== 'profile' && hasValidTab ? `?tab=${tab}` : ''
 
         if (!hasValidTab) {
           return router.replace(`${destination}/${name}`)
-        } /* else {
-          return router.replace(`${destination}/${name}${tabQuery}`)
-        } */
+        }
       },
     )
     .otherwise(() => {

@@ -167,8 +167,12 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     refetchIfEnabled()
     setTab_(value)
   }
-  const visibileTabs = (isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter(
-    (_tab) => (unsupported ? _tab === 'profile' : _tab),
+  const visibileTabs = useMemo(
+    () =>
+      (isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter((_tab) =>
+        unsupported ? _tab === 'profile' : _tab,
+      ),
+    [isWrapped, unsupported],
   )
 
   const abilities = useAbilities({ name: normalisedName })
@@ -185,7 +189,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
       visibileTabs,
       tab,
     })
-  }, [profile?.decodedName, normalisedName, name, isSelf, router, tab])
+  }, [profile?.decodedName, normalisedName, name, isSelf, router, tab, visibileTabs])
 
   // useEffect(() => {
   //   if (shouldShowSuccessPage(transactions)) {
