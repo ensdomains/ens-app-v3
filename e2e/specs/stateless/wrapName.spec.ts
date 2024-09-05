@@ -48,6 +48,9 @@ test('should not show wrap notification if the name is already wrapped', async (
 
   await page.waitForTimeout(3000)
   await expect(morePage.wrapButton).not.toBeVisible()
+
+  await expect(morePage.pccStatus).toBeVisible()
+  await expect(morePage.nameWrapperStatus).toHaveText('Wrapped')
 })
 
 test('should show wrap button on unwrapped name', async ({ login, makeName, makePageObject }) => {
