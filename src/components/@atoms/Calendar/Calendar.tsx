@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { secondsToDate, secondsToDateInput } from '@app/utils/date'
 import { formatExpiry } from '@app/utils/utils'
 
@@ -80,6 +81,8 @@ export const Calendar = forwardRef(
     const [minDuratiion] = useState(min ?? value)
     const minDate = secondsToDate(minDuratiion)
 
+    const breakpoint = useBreakpoint()
+
     return (
       <Label htmlFor="calendar" $highlighted={highlighted}>
         <LabelInput
@@ -113,7 +116,9 @@ export const Calendar = forwardRef(
           }}
           onClick={() => inputRef.current!.showPicker()}
         />
-        <span data-testid="calendar-date">{formatExpiry(secondsToDate(value))}</span>
+        <span data-testid="calendar-date">
+          {formatExpiry(secondsToDate(value), { short: !breakpoint.sm })}
+        </span>
         <CalendarIcon>
           <CalendarSVG height={16} width={16} />
         </CalendarIcon>
