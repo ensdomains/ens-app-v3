@@ -77,14 +77,14 @@ const ParentControlRecord = styled(Record)<{ $status: NameWrapperState }>(
     background: ${$status === 'locked'
       ? theme.colors.greySurface
       : $status === 'emancipated'
-      ? theme.colors.yellowSurface
-      : theme.colors.greenSurface};
+      ? theme.colors.greenSurface
+      : theme.colors.yellowSurface};
     & > svg {
       color: ${$status === 'locked'
         ? theme.colors.grey
         : $status === 'emancipated'
-        ? theme.colors.yellow
-        : theme.colors.green};
+        ? theme.colors.green
+        : theme.colors.yellow};
     }
   `,
 )
