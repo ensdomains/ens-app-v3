@@ -160,7 +160,7 @@ export const NameWrapper = ({
           <TwoRows>
             <Record data-testid="namewrapper-status">
               {t('tabs.more.token.status.wrapped')}
-              {status === 'locked' ? <LockSVG /> : <CheckSVG />}
+              {status === 'locked' ? <LockSVG data-testid="namewrapper-lock-icon" /> : <CheckSVG />}
             </Record>
             <ParentControlRecord data-testid="pcc-status" $isPCC={isPCC}>
               {isPCC ? (

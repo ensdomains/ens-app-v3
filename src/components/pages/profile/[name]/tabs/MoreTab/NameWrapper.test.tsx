@@ -13,7 +13,7 @@ describe('NameWrapper', () => {
     const name = 'nick.eth'
     render(
       <NameWrapper
-        {...({ name, isWrapped: false, wrapperData: makeMockUseWrapperDataData() } as any)}
+        {...({ name, isWrapped: false, wrapperData: makeMockUseWrapperDataData(), canBeWrapped: true })}
       />,
     )
     expect(screen.getByTestId('namewrapper-status')).toHaveTextContent(
@@ -24,9 +24,10 @@ describe('NameWrapper', () => {
     const name = 'nick.eth'
     render(
       <NameWrapper
-        {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)}
+        {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped'),canBeWrapped:false } )}
         ownerData={{
           owner: '0xaaa',
+          ownershipLevel:'nameWrapper'
         }}
       />,
     )
@@ -61,5 +62,53 @@ describe('NameWrapper', () => {
       />,
     )
     expect(screen.getByTestId('unwrap-button')).toBeVisible()
+  })
+  it('should show lock icon and disable unwrap button if name is locked', () => {
+    const name = 'nick.eth'
+    render(
+      <NameWrapper
+        isWrapped
+        canBeWrapped={false}
+        address={'0xaaa'}
+        {...({ name, wrapperData: makeMockUseWrapperDataData('locked') })}
+        ownerData={{
+          owner: '0xaaa',
+          ownershipLevel: 'nameWrapper',
+        }}
+      />,
+    )
+    expect(screen.getByTestId('cannot-unwrap-disabled-button')).toBeDisabled()
+    expect(screen.getByTestId('namewrapper-lock-icon')).toBeVisible()
+  })
+  it('should show PCC record for wrapped names', () => {
+    render(
+      <NameWrapper
+        isWrapped
+        canBeWrapped={false}
+        address={'0xaaa'}
+        {...({ name: 'nick.eth', wrapperData: makeMockUseWrapperDataData('wrapped') })}
+        ownerData={{
+          owner: '0xaaa',
+          ownershipLevel: 'nameWrapper',
+        }}  
+        />
+      )
+      expect(screen.getByTestId('pcc-status')).toHaveTextContent('tabs.more.token.pcc.controllable')
+  })
+  it('should show PCC for emancipated names', () => {
+    render(
+      <NameWrapper
+        isWrapped
+        canBeWrapped={false}
+        address={'0xaaa'}
+        {...({ name: 'nick.eth', wrapperData: makeMockUseWrapperDataData('emancipated') })}
+        ownerData={{
+          owner: '0xaaa',
+          ownershipLevel: 'nameWrapper',
+        }}  
+        />
+      )
+
+      expect(screen.getByTestId('pcc-status')).toHaveTextContent('tabs.more.token.pcc.not-controllable')
   })
 })
