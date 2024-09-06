@@ -65,18 +65,26 @@ const Record = styled.div(
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+    & > svg {
+      color: ${theme.colors.green};
+    }
   `,
 )
 
-const ParentControlRecord = styled(Record)<{ $isPCCBurned: boolean; $cannotUnwrap: boolean }>(
-  ({ theme, $isPCCBurned, $cannotUnwrap }) => css`
-    background: ${$cannotUnwrap
+const ParentControlRecord = styled(Record)<{ $status: NameWrapperState }>(
+  ({ theme, $status }) => css`
+    background: ${$status === 'locked'
       ? theme.colors.greySurface
-      : $isPCCBurned
-      ? theme.colors.greenSurface
-      : theme.colors.yellowSurface};
+      : $status === 'emancipated'
+      ? theme.colors.yellowSurface
+      : theme.colors.greenSurface};
     & > svg {
-      color: ${$isPCCBurned ? theme.colors.green : theme.colors.yellow};
+      color: ${$status === 'locked'
+        ? theme.colors.grey
+        : $status === 'emancipated'
+        ? theme.colors.yellow
+        : theme.colors.green};
     }
   `,
 )
@@ -162,18 +170,14 @@ export const NameWrapper = ({
             {status === 'locked' ? <LockSVG /> : <CheckSVG />}
           </Record>
           {isWrapped ? (
-            <ParentControlRecord
-              data-testid="pcc-status"
-              $cannotUnwrap={status === 'locked'}
-              $isPCCBurned={status === 'emancipated'}
-            >
+            <ParentControlRecord data-testid="pcc-status" $status={status}>
               {status === 'emancipated' ? (
                 <>
-                  {t('tabs.more.token.pcc.controllable')} <AlertSVG />
+                  {t('tabs.more.token.pcc.not-controllable')} <CheckSVG />
                 </>
               ) : (
                 <>
-                  {t('tabs.more.token.pcc.not-controllable')} <CheckSVG />
+                  {t('tabs.more.token.pcc.controllable')} <AlertSVG />
                 </>
               )}
             </ParentControlRecord>
