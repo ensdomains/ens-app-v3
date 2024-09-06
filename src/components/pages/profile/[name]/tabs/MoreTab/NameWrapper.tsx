@@ -5,12 +5,12 @@ import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { AlertSVG, CheckSVG, LockSVG, mq, Typography } from '@ensdomains/thorin'
+import { AlertSVG, CheckSVG, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
-import { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
+import type { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
 import type { Profile } from '@app/types'
 
 import { TabWrapper } from '../../../TabWrapper'
@@ -166,8 +166,6 @@ export const NameWrapper = ({
             {isWrapped
               ? t('tabs.more.token.status.wrapped')
               : t('tabs.more.token.status.unwrapped')}
-
-            {status === 'locked' ? <LockSVG /> : <CheckSVG />}
           </Record>
           {isWrapped ? (
             <ParentControlRecord data-testid="pcc-status" $status={status}>
