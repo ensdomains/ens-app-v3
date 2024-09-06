@@ -42,11 +42,11 @@ export function ProfileEmptyBanner({ name }: { name: string }) {
 
   const records = existingRecords.filter(({ value }) => value)
 
-  if (records.length || isProfileLoading) return null
-
   const action = (profileActions.profileActions ?? []).find(
     (i) => i.label === t('tabs.profile.actions.editProfile.label'),
   )
+
+  if (records.length || isProfileLoading || !action) return null
 
   return (
     <Container data-testid="profile-empty-banner">
