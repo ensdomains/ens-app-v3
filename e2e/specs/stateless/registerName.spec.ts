@@ -21,6 +21,9 @@ import {
  * get stuck looking for the complete button
  */
 
+const chain = 'localhost'
+const trackEventPrefix = 'Event triggered on local development'
+
 test.describe.serial('normal registration', () => {
   const name = `registration-normal-${Date.now()}.eth`
 
@@ -36,6 +39,16 @@ test.describe.serial('normal registration', () => {
       account: createAccounts().getAddress('user') as `0x${string}`,
     })
 
+    const events: string[] = []
+
+    page.on('console', (msg) => {
+      const message = msg.text()
+
+      if (message.includes(trackEventPrefix)) {
+        events.push(message.replace(trackEventPrefix, '').trim())
+      }
+    })
+
     const homePage = makePageObject('HomePage')
     const registrationPage = makePageObject('RegistrationPage')
     const transactionModal = makePageObject('TransactionModal')
@@ -44,11 +57,18 @@ test.describe.serial('normal registration', () => {
 
     await homePage.goto()
     await login.connect()
+    await expect(events).toContain(JSON.stringify({ type: 'home_page', chain }))
 
     // should redirect to registration page
     await homePage.searchInput.fill(name)
     await homePage.searchInput.press('Enter')
+    await expect(events).toContain(
+      JSON.stringify({ type: 'start_searching', chain, props: { keyword: name } }),
+    )
     await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+    await expect(events).toContain(
+      JSON.stringify({ type: 'search_selected', chain, props: { keyword: name } }),
+    )
 
     // should have payment choice ethereum checked and show primary name setting as checked
     await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
