@@ -175,7 +175,7 @@ export const NameWrapper = ({
             </ParentControlRecord>
           </TwoRows>
         ))
-        .with({ ownedAndWrapped: false, isWrapped: false }, () => (
+        .with({ ownedAndCanWrap: false, isWrapped: false }, () => (
           <TwoRows>
             <Record data-testid="namewrapper-status">
               {t('tabs.more.token.status.unwrapped')}
