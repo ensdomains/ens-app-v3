@@ -5,7 +5,7 @@ import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { AlertSVG, CheckSVG, mq, Typography } from '@ensdomains/thorin'
+import { AlertSVG, CheckSVG, LockSVG, mq, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -72,19 +72,11 @@ const Record = styled.div(
   `,
 )
 
-const ParentControlRecord = styled(Record)<{ $status: NameWrapperState }>(
-  ({ theme, $status }) => css`
-    background: ${$status === 'locked'
-      ? theme.colors.greySurface
-      : $status === 'emancipated'
-      ? theme.colors.greenSurface
-      : theme.colors.yellowSurface};
+const ParentControlRecord = styled(Record)<{ $isPCC: boolean }>(
+  ({ theme, $isPCC }) => css`
+    background: ${$isPCC ? theme.colors.greenSurface : theme.colors.yellowSurface};
     & > svg {
-      color: ${$status === 'locked'
-        ? theme.colors.grey
-        : $status === 'emancipated'
-        ? theme.colors.green
-        : theme.colors.yellow};
+      color: ${$isPCC ? theme.colors.green : theme.colors.yellow};
     }
   `,
 )
@@ -133,6 +125,8 @@ export const NameWrapper = ({
 
   const canBeWrapped = _canBeWrapped && !!address && isOwned
 
+  const isPCC = !!wrapperData?.fuses?.parent?.PARENT_CANNOT_CONTROL
+
   return (
     <Container>
       <HeaderContainer>
@@ -166,10 +160,11 @@ export const NameWrapper = ({
             {isWrapped
               ? t('tabs.more.token.status.wrapped')
               : t('tabs.more.token.status.unwrapped')}
+            {status === 'locked' ? <LockSVG /> : <CheckSVG />}
           </Record>
           {isWrapped ? (
-            <ParentControlRecord data-testid="pcc-status" $status={status}>
-              {status === 'emancipated' ? (
+            <ParentControlRecord data-testid="pcc-status" $isPCC={isPCC}>
+              {isPCC ? (
                 <>
                   {t('tabs.more.token.pcc.not-controllable')} <CheckSVG />
                 </>
