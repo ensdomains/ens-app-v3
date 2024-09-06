@@ -482,7 +482,7 @@ export const TransactionStageModal = ({
 
           if (['commitName', 'registerName'].includes(actionName)) {
             trackRegistrationEvent(
-              actionName === 'commitName' ? 'Commit Wallet Opened' : 'Finish Wallet Opened',
+              actionName === 'commitName' ? 'commit_wallet_opened' : 'finish_wallet_opened',
             )
           }
         }}

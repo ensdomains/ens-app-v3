@@ -31,7 +31,7 @@ describe('useRegistrationEventTracker', () => {
   })
 
   it('should call trackEvent with correct arguments when trackRegistrationEvent is called', async () => {
-    const type: PlausibleType = 'Start searching'
+    const type: PlausibleType = 'start_searching'
     const props: PlausibleProps = { keyword: 'test' }
     const { result } = renderHook(() => useRegistrationEventTracker())
     result.current.trackRegistrationEvent(type, props)
@@ -49,7 +49,7 @@ describe('useRegistrationEventTracker', () => {
     const ethPrice = 156058000000n
     const paymentAmount = formatUnits((estimatedTotal * ethPrice) / BigInt(1e8), 18)
 
-    const type: PlausibleType = 'Payment selected'
+    const type: PlausibleType = 'payment_selected'
     const props: PlausibleProps = {
       duration,
       durationType: 'date',

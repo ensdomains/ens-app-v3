@@ -341,7 +341,7 @@ const createSearchHandler =
       { lastAccessed: Date.now(), nameType, text, isValid: selectedItem.isValid },
     ])
 
-    trackRegistrationEvent('Search selected', { keyword: text })
+    trackRegistrationEvent('search_selected', { keyword: text })
 
     const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
     setInputVal('')
@@ -696,7 +696,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
     setInputVal(val)
     setUsingPlaceholder(true)
     debouncer(() => setUsingPlaceholder(false))
-    debouncer(() => trackRegistrationEvent('Start searching', { keyword: val }))
+    debouncer(() => trackRegistrationEvent('start_searching', { keyword: val }))
   }
 
   const SearchInputElement = (

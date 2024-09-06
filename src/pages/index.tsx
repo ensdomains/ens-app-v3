@@ -97,7 +97,7 @@ export default function Page() {
   const { trackRegistrationEvent } = useRegistrationEventTracker()
 
   useEffect(() => {
-    trackRegistrationEvent('Home page')
+    trackRegistrationEvent('home_page')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

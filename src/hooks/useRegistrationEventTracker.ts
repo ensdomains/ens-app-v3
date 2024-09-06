@@ -44,7 +44,7 @@ export const useRegistrationEventTracker = () => {
         currencyUnit: 'usd',
       }
 
-      trackRegistrationEvent('Payment selected', props)
+      trackRegistrationEvent('payment_selected', props)
     },
     [trackRegistrationEvent],
   )

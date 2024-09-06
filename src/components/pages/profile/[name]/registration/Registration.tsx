@@ -212,7 +212,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const infoCallback = ({ back }: BackObj) => {
     genericCallback({ back })
-    trackRegistrationEvent('Commit started')
+    trackRegistrationEvent('commit_started')
   }
 
   const transactionsCallback = useCallback(

@@ -143,7 +143,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       resumeLink: `/register/${name}`,
     })
 
-    trackRegistrationEvent('Finish started')
+    trackRegistrationEvent('finish_started')
   }
 
   const showCommitTransaction = () => {
@@ -153,7 +153,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const showRegisterTransaction = () => {
     resumeTransactionFlow(registerKey)
 
-    trackRegistrationEvent('Finish started')
+    trackRegistrationEvent('finish_started')
   }
 
   const resetTransactions = () => {

@@ -165,7 +165,7 @@ export const DotBoxRegistration = () => {
                       <Button
                         width="45"
                         size="small"
-                        onClick={() => trackRegistrationEvent('Registration started')}
+                        onClick={() => trackRegistrationEvent('registration_started')}
                       >
                         <OutlinkInner>
                           Register on my.box
