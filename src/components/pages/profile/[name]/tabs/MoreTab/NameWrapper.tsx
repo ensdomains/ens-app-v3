@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
@@ -134,35 +133,35 @@ export const NameWrapper = ({
           <Typography fontVariant="headingFour">{t('tabs.more.token.nameWrapper')}</Typography>
           <QuestionTooltip content={t('tabs.more.token.tooltip')} />
         </Header>
-        {isButtonDisplayed ? (
-          isWrapped ? (
-            status === 'locked' ? (
-              <DisabledButtonWithTooltip
-                buttonText={t('tabs.more.token.unwrap')}
-                content={t('tabs.more.token.unwrapWarning')}
-                buttonId="cannot-unwrap-disabled-button"
-                buttonWidth="max"
-                placement="top"
-              />
-            ) : (
-              <UnwrapButton status={status} {...{ name, ownerData }} />
-            )
-          ) : (
+
+        {match({ isButtonDisplayed, isWrapped, status })
+          .with({ isButtonDisplayed: true, isWrapped: true, status: 'locked' }, () => (
+            <DisabledButtonWithTooltip
+              buttonText={t('tabs.more.token.unwrap')}
+              content={t('tabs.more.token.unwrapWarning')}
+              buttonId="cannot-unwrap-disabled-button"
+              buttonWidth="max"
+              placement="top"
+            />
+          ))
+          .with({ isButtonDisplayed: true, isWrapped: true }, () => (
+            <UnwrapButton status={status} {...{ name, ownerData }} />
+          ))
+          .with({ isButtonDisplayed: true, isWrapped: false }, () => (
             <WrapButton {...{ profile, ownerData, canBeWrapped, name, isManager, isRegistrant }} />
-          )
-        ) : null}
+          ))
+          .with({ isButtonDisplayed: false, isWrapped: false }, () => null)
+          .otherwise(() => null)}
       </HeaderContainer>
-      {isOwned && canBeWrapped ? (
-        <>{t('tabs.more.token.unwrappedText')}</>
-      ) : (
-        <TwoRows>
-          <Record data-testid="namewrapper-status">
-            {isWrapped
-              ? t('tabs.more.token.status.wrapped')
-              : t('tabs.more.token.status.unwrapped')}
-            {isWrapped ? status === 'locked' ? <LockSVG /> : <CheckSVG /> : null}
-          </Record>
-          {isWrapped ? (
+
+      {match({ ownedAndCanWrap: isOwned && canBeWrapped, isWrapped })
+        .with({ ownedAndCanWrap: true }, () => <>{t('tabs.more.token.unwrappedText')}</>)
+        .with({ ownedAndCanWrap: false, isWrapped: true }, () => (
+          <TwoRows>
+            <Record data-testid="namewrapper-status">
+              {t('tabs.more.token.status.wrapped')}
+              {status === 'locked' ? <LockSVG /> : <CheckSVG />}
+            </Record>
             <ParentControlRecord data-testid="pcc-status" $isPCC={isPCC}>
               {isPCC ? (
                 <>
@@ -174,9 +173,16 @@ export const NameWrapper = ({
                 </>
               )}
             </ParentControlRecord>
-          ) : null}
-        </TwoRows>
-      )}
+          </TwoRows>
+        ))
+        .with({ ownedAndWrapped: false, isWrapped: false }, () => (
+          <TwoRows>
+            <Record data-testid="namewrapper-status">
+              {t('tabs.more.token.status.unwrapped')}
+            </Record>
+          </TwoRows>
+        ))
+        .otherwise(() => null)}
     </Container>
   )
 }
