@@ -13,7 +13,12 @@ describe('NameWrapper', () => {
     const name = 'nick.eth'
     render(
       <NameWrapper
-        {...({ name, isWrapped: false, wrapperData: makeMockUseWrapperDataData(), canBeWrapped: true })}
+        {...{
+          name,
+          isWrapped: false,
+          wrapperData: makeMockUseWrapperDataData(),
+          canBeWrapped: true,
+        }}
       />,
     )
     expect(screen.getByTestId('namewrapper-status')).toHaveTextContent(
@@ -24,10 +29,15 @@ describe('NameWrapper', () => {
     const name = 'nick.eth'
     render(
       <NameWrapper
-        {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped'),canBeWrapped:false } )}
+        {...{
+          name,
+          isWrapped: true,
+          wrapperData: makeMockUseWrapperDataData('wrapped'),
+          canBeWrapped: false,
+        }}
         ownerData={{
           owner: '0xaaa',
-          ownershipLevel:'nameWrapper'
+          ownershipLevel: 'nameWrapper',
         }}
       />,
     )
@@ -61,7 +71,37 @@ describe('NameWrapper', () => {
         }}
       />,
     )
+    expect(screen.queryByTestId('unwrap-button')).toBeInTheDocument()
     expect(screen.getByTestId('unwrap-button')).toBeVisible()
+  })
+  it('should not show unwrap button if wrapped but not owned', () => {
+    const name = 'nick.eth'
+    render(
+      <NameWrapper
+        isWrapped
+        address={'0xaaa'}
+        {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)}
+        ownerData={{
+          owner: '0xaab',
+          ownershipLevel: 'nameWrapper',
+        }}
+      />,
+    )
+    expect(screen.queryByTestId('unwrap-button')).not.toBeInTheDocument()
+  })
+  it('should not show unwrap button if wrapped but disconnected', () => {
+    const name = 'nick.eth'
+    render(
+      <NameWrapper
+        isWrapped
+        {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)}
+        ownerData={{
+          owner: '0xaab',
+          ownershipLevel: 'nameWrapper',
+        }}
+      />,
+    )
+    expect(screen.queryByTestId('unwrap-button')).not.toBeInTheDocument()
   })
   it('should show lock icon and disable unwrap button if name is locked', () => {
     const name = 'nick.eth'
@@ -70,7 +110,7 @@ describe('NameWrapper', () => {
         isWrapped
         canBeWrapped={false}
         address={'0xaaa'}
-        {...({ name, wrapperData: makeMockUseWrapperDataData('locked') })}
+        {...{ name, wrapperData: makeMockUseWrapperDataData('locked') }}
         ownerData={{
           owner: '0xaaa',
           ownershipLevel: 'nameWrapper',
@@ -86,14 +126,14 @@ describe('NameWrapper', () => {
         isWrapped
         canBeWrapped={false}
         address={'0xaaa'}
-        {...({ name: 'nick.eth', wrapperData: makeMockUseWrapperDataData('wrapped') })}
+        {...{ name: 'nick.eth', wrapperData: makeMockUseWrapperDataData('wrapped') }}
         ownerData={{
           owner: '0xaaa',
           ownershipLevel: 'nameWrapper',
-        }}  
-        />
-      )
-      expect(screen.getByTestId('pcc-status')).toHaveTextContent('tabs.more.token.pcc.controllable')
+        }}
+      />,
+    )
+    expect(screen.getByTestId('pcc-status')).toHaveTextContent('tabs.more.token.pcc.controllable')
   })
   it('should show PCC for emancipated names', () => {
     render(
@@ -101,14 +141,47 @@ describe('NameWrapper', () => {
         isWrapped
         canBeWrapped={false}
         address={'0xaaa'}
-        {...({ name: 'nick.eth', wrapperData: makeMockUseWrapperDataData('emancipated') })}
+        {...{ name: 'nick.eth', wrapperData: makeMockUseWrapperDataData('emancipated') }}
         ownerData={{
           owner: '0xaaa',
           ownershipLevel: 'nameWrapper',
-        }}  
-        />
-      )
+        }}
+      />,
+    )
 
-      expect(screen.getByTestId('pcc-status')).toHaveTextContent('tabs.more.token.pcc.not-controllable')
+    expect(screen.getByTestId('pcc-status')).toHaveTextContent(
+      'tabs.more.token.pcc.not-controllable',
+    )
+  })
+  it('should show PCC record for wrapped names when disconnected', () => {
+    render(
+      <NameWrapper
+        isWrapped
+        canBeWrapped={false}
+        {...{ name: 'nick.eth', wrapperData: makeMockUseWrapperDataData('wrapped') }}
+        ownerData={{
+          owner: '0xaaa',
+          ownershipLevel: 'nameWrapper',
+        }}
+      />,
+    )
+    expect(screen.getByTestId('pcc-status')).toHaveTextContent('tabs.more.token.pcc.controllable')
+  })
+  it('should show PCC for emancipated names when disconnected', () => {
+    render(
+      <NameWrapper
+        isWrapped
+        canBeWrapped={false}
+        {...{ name: 'nick.eth', wrapperData: makeMockUseWrapperDataData('emancipated') }}
+        ownerData={{
+          owner: '0xaaa',
+          ownershipLevel: 'nameWrapper',
+        }}
+      />,
+    )
+
+    expect(screen.getByTestId('pcc-status')).toHaveTextContent(
+      'tabs.more.token.pcc.not-controllable',
+    )
   })
 })
