@@ -48,6 +48,9 @@ test('should not show wrap notification if the name is already wrapped', async (
 
   await page.waitForTimeout(3000)
   await expect(morePage.wrapButton).not.toBeVisible()
+
+  await expect(morePage.pccStatus).toBeVisible()
+  await expect(morePage.nameWrapperStatus).toHaveText('Wrapped')
 })
 
 test('should show wrap button on unwrapped name', async ({ login, makeName, makePageObject }) => {
@@ -255,7 +258,7 @@ test('should calculate needed steps without localstorage', async ({
   await login.connect()
 
   await page.pause()
-  await expect(page.getByTestId('name-details-text-wrapper')).toContainText('unwrapped')
+  await expect(page.getByTestId('namewrapper-status')).toContainText('Unwrapped')
 
   await morePage.wrapButton.click()
   await page.pause()
@@ -291,8 +294,187 @@ test('should calculate needed steps without localstorage', async ({
   await transactionModal.introButton.click()
   await transactionModal.confirm()
   await transactionModal.complete()
-  await expect(page.getByTestId('name-details-text-wrapper')).not.toContainText('unwrapped')
+  await expect(page.getByTestId('namewrapper-status')).not.toContainText('Unwrapped')
 
   await profilePage.goto(subname)
   await expect(profilePage.record('text', 'description')).toHaveText('test')
+})
+
+test('Wrapped, emancipated, 2LD', async ({ login, makeName, makePageObject }) => {
+  const name = await makeName({
+    label: 'wrapped',
+    type: 'wrapped',
+    owner: 'user',
+  })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(name)
+
+  await login.connect()
+
+  await expect(morePage.wrapButton).not.toBeVisible()
+  await expect(morePage.unwrapButton).toBeVisible()
+  await expect(morePage.nameWrapperStatus).toContainText('Wrapped')
+  await expect(morePage.pccStatus).toContainText('Not parent-controllable')
+  await expect(morePage.nameWrapperCheckIcon).toBeVisible()
+  await expect(morePage.npcIcon).toBeVisible()
+})
+
+test('Wrapped, locked, 2LD', async ({ login, makeName, makePageObject }) => {
+  const name = await makeName({
+    label: 'wrapped',
+    type: 'wrapped',
+    owner: 'user',
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
+  })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(name)
+
+  await login.connect()
+
+  await expect(morePage.wrapButton).not.toBeVisible()
+  await expect(morePage.unwrapButtonDisabled).toBeVisible()
+  await expect(morePage.nameWrapperStatus).toContainText('Wrapped')
+  await expect(morePage.pccStatus).toContainText('Not parent-controllable')
+  await expect(morePage.nameWrapperLockIcon).toBeVisible()
+  await expect(morePage.npcIcon).toBeVisible()
+})
+
+test('Wrapped, not-emancipated (PCC), 3LD', async ({ login, makeName, makePageObject }) => {
+  const name = await makeName({
+    label: 'wrapped',
+    type: 'wrapped',
+    owner: 'user',
+    subnames: [
+      {
+        label: 'test',
+        owner: 'user',
+      },
+    ],
+  })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(`test.${name}`)
+
+  await login.connect()
+
+  await expect(morePage.unwrapButton).toBeVisible()
+  await expect(morePage.nameWrapperStatus).toContainText('Wrapped')
+  await expect(morePage.pccStatus).toContainText('Parent-controllable')
+  await expect(morePage.nameWrapperCheckIcon).toBeVisible()
+  await expect(morePage.nameWrapperLockIcon).not.toBeVisible()
+  await expect(morePage.pccIcon).toBeVisible()
+  await expect(morePage.nameWrapperLockIcon).not.toBeVisible()
+})
+
+test('Wrapped, emancipated(NPC), 3LD', async ({ login, makeName, makePageObject }) => {
+  const name = await makeName({
+    label: 'wrapped',
+    type: 'wrapped',
+    owner: 'user',
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
+    subnames: [
+      {
+        label: 'test',
+        owner: 'user',
+        fuses: {
+          parent: {
+            named: ['PARENT_CANNOT_CONTROL'],
+          },
+        },
+      },
+    ],
+  })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(`test.${name}`)
+
+  await login.connect()
+
+  await expect(morePage.unwrapButton).toBeVisible()
+  await expect(morePage.nameWrapperStatus).toContainText('Wrapped')
+  await expect(morePage.pccStatus).toContainText('Not parent-controllable')
+  await expect(morePage.nameWrapperCheckIcon).toBeVisible()
+  await expect(morePage.npcIcon).toBeVisible()
+  await expect(morePage.nameWrapperLockIcon).not.toBeVisible()
+})
+
+test('Wrapped, emancipated(NPC), Locked, 3LD', async ({ login, makeName, makePageObject }) => {
+  const name = await makeName({
+    label: 'wrapped',
+    type: 'wrapped',
+    owner: 'user',
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
+    subnames: [
+      {
+        label: 'test',
+        owner: 'user',
+        fuses: {
+          parent: {
+            named: ['PARENT_CANNOT_CONTROL'],
+          },
+          child: {
+            named: ['CANNOT_UNWRAP'],
+          },
+        },
+      },
+    ],
+  })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(`test.${name}`)
+
+  await login.connect()
+
+  await expect(morePage.nameWrapperStatus).toContainText('Wrapped')
+  await expect(morePage.pccStatus).toContainText('Not parent-controllable')
+  await expect(morePage.nameWrapperLockIcon).toBeVisible()
+  await expect(morePage.npcIcon).toBeVisible()
+  await expect(morePage.unwrapButtonDisabled).toBeVisible()
+})
+
+test('Wrapped, emancipated(NPC), 3LD Manager', async ({ login, makeName, makePageObject }) => {
+  const name = await makeName({
+    label: 'wrapped',
+    type: 'wrapped',
+    owner: 'user2',
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
+    subnames: [
+      {
+        label: 'test',
+        owner: 'user',
+        fuses: {
+          parent: {
+            named: ['PARENT_CANNOT_CONTROL'],
+          },
+        },
+      },
+    ],
+  })
+
+  const morePage = makePageObject('MorePage')
+  const transactionModal = makePageObject('TransactionModal')
+  await morePage.goto(`test.${name}`)
+
+  await login.connect()
+
+  await expect(morePage.unwrapButton).toBeVisible()
+  await expect(morePage.nameWrapperStatus).toContainText('Wrapped')
+  await expect(morePage.pccStatus).toContainText('Not parent-controllable')
+  await expect(morePage.nameWrapperCheckIcon).toBeVisible()
+  await expect(morePage.npcIcon).toBeVisible()
+  await expect(morePage.nameWrapperLockIcon).not.toBeVisible()
+
+  await morePage.unwrapButton.click()
+  await transactionModal.autoComplete()
+  await expect(morePage.wrapButton).toBeVisible()
 })
