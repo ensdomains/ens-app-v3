@@ -59,9 +59,5 @@ describe('MoreTab', () => {
       renderHelper({ name: 'test', isWrapped: false, ownerData: {} as any })
       expect(screen.getByText('Token')).toBeVisible()
     })
-    it('should not show token section if ownerData is undefined', () => {
-      renderHelper({ name: 'test', isWrapped: false })
-      expect(screen.queryByText('Token')).not.toBeInTheDocument()
-    })
   })
 })

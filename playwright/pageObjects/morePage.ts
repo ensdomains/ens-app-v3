@@ -20,6 +20,20 @@ export class MorePage {
 
   readonly unwrapButton: Locator
 
+  readonly pccStatus: Locator
+
+  readonly nameWrapperStatus: Locator
+
+  readonly unwrapButtonDisabled: Locator
+
+  readonly nameWrapperLockIcon: Locator
+
+  readonly nameWrapperCheckIcon: Locator
+
+  readonly npcIcon: Locator
+
+  readonly pccIcon: Locator
+
   constructor(page: Page) {
     this.page = page
     this.getSendNameButton = this.page.getByTestId('send-name-button')
@@ -30,6 +44,13 @@ export class MorePage {
     this.resolver = this.page.getByTestId('name-details-text')
     this.wrapButton = this.page.getByTestId('wrap-name-btn')
     this.unwrapButton = this.page.getByTestId('unwrap-name-btn')
+    this.pccStatus = this.page.getByTestId('pcc-status')
+    this.nameWrapperStatus = this.page.getByTestId('namewrapper-status')
+    this.unwrapButtonDisabled = this.page.getByTestId('cannot-unwrap-disabled-button')
+    this.nameWrapperLockIcon = this.page.getByTestId('namewrapper-lock-icon')
+    this.nameWrapperCheckIcon = this.page.getByTestId('namewrapper-check-icon')
+    this.npcIcon = this.page.getByTestId('npc-icon')
+    this.pccIcon = this.page.getByTestId('pcc-icon')
   }
 
   async goto(name: string) {
