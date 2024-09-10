@@ -27,17 +27,17 @@ class AttributeModifier {
   }
 }
 
-class ScriptWriter {
-  private src: string
+// class ScriptWriter {
+//   private src: string
 
-  constructor(src: string) {
-    this.src = src
-  }
+//   constructor(src: string) {
+//     this.src = src
+//   }
 
-  element(element: Element) {
-    element.append(`<script src="${this.src}"></script>`, { html: true })
-  }
-}
+//   element(element: Element) {
+//     element.append(`<script src="${this.src}"></script>`, { html: true })
+//   }
+// }
 
 // exception for static files
 const staticHandler: PagesFunction = async ({ request, next, env }) => {
@@ -51,8 +51,8 @@ const staticHandler: PagesFunction = async ({ request, next, env }) => {
   return next()
 }
 
-const firefoxRewrite: PagesFunction = async ({ request, next }) => {
-  const userAgent = request.headers.get('user-agent')?.toLowerCase()
+const firefoxRewrite: PagesFunction = async ({ next }) => {
+  // const userAgent = request.headers.get('user-agent')?.toLowerCase()
   const response = await next()
 
   // ****************************************************** CSP HEADERS DEFAULTS ******************************************************
@@ -139,11 +139,11 @@ const firefoxRewrite: PagesFunction = async ({ request, next }) => {
 
   // ****************************************************** CSP HEADERS FOR FIREFOX DEFAULTS ******************************************************
   // firefox CSP exception + metamask script
-  if (userAgent?.includes('gecko/20100101') && userAgent.includes('firefox/')) {
-    return new HTMLRewriter()
-      .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask.js'))
-      .transform(response)
-  }
+  // if (userAgent?.includes('gecko/20100101') && userAgent.includes('firefox/')) {
+  //   return new HTMLRewriter()
+  //     .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask.js'))
+  //     .transform(response)
+  // }
 
   return response
 }
