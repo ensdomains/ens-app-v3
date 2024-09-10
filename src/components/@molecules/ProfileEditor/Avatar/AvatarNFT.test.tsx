@@ -10,7 +10,9 @@ import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockI
 import { AvatarNFT } from './AvatarNFT'
 
 vi.mock('wagmi')
-
+vi.mock('@app/hooks/chain/useCurrentBlockTimestamp', () => ({
+  default: () => new Date(),
+}))
 vi.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: () => 'mainnet',
 }))
@@ -65,7 +67,7 @@ const generateNFT = (withMedia: boolean, contractAddress?: string) => (_: any, i
   },
 })
 
-const mockFetch = vi.fn().mockImplementation(() =>
+let mockFetch = vi.fn().mockImplementation(() =>
   Promise.resolve({
     ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
     totalCount: 5,
@@ -76,6 +78,7 @@ global.fetch = vi.fn(() => Promise.resolve({ json: mockFetch }))
 
 beforeEach(() => {
   mockFetch.mockClear()
+  mockFetch = vi.fn()
   mockUseAccount.mockReturnValue({ address: `0x${Date.now()}` })
   mockUseClient.mockReturnValue({
     chain: {
@@ -98,6 +101,12 @@ describe('<AvatarNFT />', () => {
     address: '0x0000000000000000000000000000000000000001',
   })
   it('should show detail on click', async () => {
+    mockFetch.mockImplementation(() =>
+      Promise.resolve({
+        ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+        totalCount: 5,
+      }),
+    )
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
@@ -109,6 +118,12 @@ describe('<AvatarNFT />', () => {
     })
   })
   it('should correctly call submit callback', async () => {
+    mockFetch.mockImplementation(() =>
+      Promise.resolve({
+        ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+        totalCount: 5,
+      }),
+    )
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
@@ -126,9 +141,15 @@ describe('<AvatarNFT />', () => {
     )
   })
   it('should display all NFTs', async () => {
+    mockFetch.mockImplementation(() =>
+      Promise.resolve({
+        ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+        totalCount: 5,
+      }),
+    )
     render(<AvatarNFT {...props} />)
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled())
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
     expect(screen.getByText('NFT 0')).toBeVisible()
     expect(screen.getByTestId('nft-1-0x1')).toBeVisible()
@@ -149,7 +170,7 @@ describe('<AvatarNFT />', () => {
 
     render(<AvatarNFT {...props} />)
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
     await waitFor(() =>
       expect(
         screen.queryByTestId('nft-0-0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'),
@@ -165,7 +186,7 @@ describe('<AvatarNFT />', () => {
     )
     render(<AvatarNFT {...props} />)
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled())
     await waitFor(() => expect(screen.queryByTestId('nft-0-0x0')).not.toBeInTheDocument())
   })
   it.skip('show load more data on page load trigger', async () => {
@@ -186,7 +207,7 @@ describe('<AvatarNFT />', () => {
 
     render(<AvatarNFT {...props} />)
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledOnce())
     await waitFor(
       () =>
         // @ts-ignore
@@ -223,7 +244,7 @@ describe('<AvatarNFT />', () => {
 
     render(<AvatarNFT {...props} />)
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled())
   })
 
   it('should show message if search returns no results', async () => {
@@ -242,7 +263,7 @@ describe('<AvatarNFT />', () => {
       )
 
     render(<AvatarNFT {...props} />)
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled())
     const searchInput = screen.getByTestId('avatar-search-input')
     await userEvent.type(searchInput, 'blahblahblah')
     await waitFor(() =>

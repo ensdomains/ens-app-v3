@@ -339,6 +339,18 @@ const NftItem = ({
   )
 }
 
+function useProfileAddresses(name: string) {
+  const { profile } = useNameDetails({ name })
+
+  const addresses = (profile?.coins ?? []).filter((x) => ['eth'].includes(x.name.toLowerCase()))
+
+  const ethAddress = addresses[0]?.value
+
+  return {
+    ethAddress,
+  }
+}
+
 export const AvatarNFT = ({
   name,
   handleCancel,
@@ -354,10 +366,7 @@ export const AvatarNFT = ({
   const { address: _address } = useAccount()
   const address = _address!
 
-  const { profile } = useNameDetails({ name })
-
-  const addresses = (profile?.coins ?? []).filter((x) => ['eth'].includes(x.name.toLowerCase()))
-  const ethAddress = addresses[0]?.value
+  const { ethAddress } = useProfileAddresses(name)
 
   const [searchedInput, setSearchedInput] = useState('')
   const [selectedAddress, setSelectedAddress] = useState<string>(address)
@@ -365,7 +374,7 @@ export const AvatarNFT = ({
 
   const { data: NFTPages, fetchNextPage, isLoading } = useNtfs(chain, selectedAddress)
 
-  const NFTs = NFTPages?.pages
+  const NFTs = (NFTPages?.pages ?? [])
     .reduce((prev, curr) => [...prev, ...curr.ownedNfts], [] as OwnedNFT[])
     .filter((nft) => nft.title.toLowerCase().includes(searchedInput))
 
@@ -422,14 +431,28 @@ export const AvatarNFT = ({
 
   let innerContent: ReactNode
 
-  const toggleButton = address !== ethAddress && (
-    <Button onClick={handleSelectAddress}>
-      {t(
-        `input.profileEditor.tabs.avatar.nft.address.${
-          selectedAddress === address ? 'other' : 'owned'
-        }`,
+  const searchBox = (
+    <FilterContainer>
+      {address !== ethAddress && (
+        <Button onClick={handleSelectAddress}>
+          {t(
+            `input.profileEditor.tabs.avatar.nft.address.${
+              selectedAddress === address ? 'other' : 'owned'
+            }`,
+          )}
+        </Button>
       )}
-    </Button>
+      <DialogInput
+        icon={<MagnifyingGlassSVG />}
+        hideLabel
+        label="search"
+        value={searchedInput}
+        onChange={(e) => setSearchedInput(e.target.value)}
+        placeholder={t('input.profileEditor.tabs.avatar.nft.searchPlaceholder')}
+        data-testid="avatar-search-input"
+        clearable
+      />
+    </FilterContainer>
   )
 
   if (isLoading) {
@@ -444,19 +467,7 @@ export const AvatarNFT = ({
   } else if (hasNFTs) {
     innerContent = (
       <>
-        <FilterContainer>
-          {toggleButton}
-          <DialogInput
-            icon={<MagnifyingGlassSVG />}
-            hideLabel
-            label="search"
-            value={searchedInput}
-            onChange={(e) => setSearchedInput(e.target.value)}
-            placeholder={t('input.profileEditor.tabs.avatar.nft.searchPlaceholder')}
-            data-testid="avatar-search-input"
-            clearable
-          />
-        </FilterContainer>
+        {searchBox}
         {NFTs.length > 0 ? (
           <Dialog.Content
             data-testid="nft-scroll-box"
@@ -464,7 +475,7 @@ export const AvatarNFT = ({
             onReachedBottom={fetchPage}
           >
             <ScrollBoxContent>
-              {NFTs?.map((NFT, i) => (
+              {NFTs.map((NFT, i) => (
                 <NftItem
                   t={t}
                   nft={NFT}
@@ -488,7 +499,7 @@ export const AvatarNFT = ({
   } else {
     innerContent = (
       <Dialog.Content>
-        <FilterContainer>{toggleButton}</FilterContainer>
+        {searchBox}
         <LoadingContainer>
           <Heading>{t('input.profileEditor.tabs.avatar.nft.noNFTs')}</Heading>
         </LoadingContainer>
