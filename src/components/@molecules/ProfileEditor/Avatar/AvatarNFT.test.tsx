@@ -6,8 +6,8 @@ import { useAccount, useClient } from 'wagmi'
 
 import * as ThorinComponents from '@ensdomains/thorin'
 
-import { AvatarNFT } from './AvatarNFT'
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
+import { AvatarNFT } from './AvatarNFT'
 
 vi.mock('wagmi')
 
@@ -24,6 +24,7 @@ const mockHandleCancel = vi.fn()
 makeMockIntersectionObserver()
 
 const props = {
+  name: 'test',
   handleSubmit: mockHandleSubmit,
   handleCancel: mockHandleCancel,
 }
