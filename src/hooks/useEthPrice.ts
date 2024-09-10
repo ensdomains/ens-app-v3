@@ -1,21 +1,21 @@
 import { Address } from 'viem'
 import { useChainId, useReadContract } from 'wagmi'
-import { goerli } from 'wagmi/chains'
+import { sepolia } from 'wagmi/chains'
 
 import { useAddressRecord } from './ensjs/public/useAddressRecord'
 
 const ORACLE_ENS = 'eth-usd.data.eth'
-const ORACLE_GOERLI = '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e' as const
+const ORACLE_SEPOLIA = '0x694AA1769357215DE4FAC081bf1f309aDC325306' as const
 
 export const useEthPrice = () => {
   const chainId = useChainId()
 
   const { data: address_ } = useAddressRecord({
     name: ORACLE_ENS,
-    enabled: chainId !== goerli.id,
+    enabled: chainId !== sepolia.id,
   })
 
-  const address = chainId === 5 ? ORACLE_GOERLI : (address_?.value as Address) || undefined
+  const address = chainId === 11155111 ? ORACLE_SEPOLIA : (address_?.value as Address) || undefined
 
   return useReadContract({
     abi: [

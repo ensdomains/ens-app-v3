@@ -31,7 +31,7 @@ vi.mock('@app/hooks/useRegistrationData', () => ({
 }))
 
 vi.mock('@app/hooks/chain/useChainName', () => ({
-  useChainName: () => 'goerli',
+  useChainName: () => 'holesky',
 }))
 
 beforeEach(() => {

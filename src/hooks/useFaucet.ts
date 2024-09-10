@@ -98,7 +98,7 @@ const useFaucet = () => {
 
   const { data, error, isLoading } = useQuery({
     ...preparedOptions,
-    enabled: !!address && (chainName === 'goerli' || chainName === 'sepolia'),
+    enabled: !!address && chainName === 'sepolia',
   })
 
   const mutation = useMutation({

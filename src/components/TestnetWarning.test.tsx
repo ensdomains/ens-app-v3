@@ -2,7 +2,7 @@ import { mockFunction, render, screen } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
-import { goerli, mainnet } from 'wagmi/chains'
+import { holesky, mainnet } from 'wagmi/chains'
 
 import { TestnetWarning } from './TestnetWarning'
 
@@ -12,11 +12,13 @@ const mockUseAccount = mockFunction(useAccount)
 
 describe('TestnetWarning', () => {
   it('renders if testnet is used', async () => {
-    mockUseAccount.mockReturnValue({ chain: goerli })
+    mockUseAccount.mockReturnValue({ chain: holesky })
 
     render(<TestnetWarning />)
 
-    expect(screen.getByText(`You are viewing the ENS app on ${goerli.name} testnet.`)).toBeVisible()
+    expect(
+      screen.getByText(`You are viewing the ENS app on ${holesky.name} testnet.`),
+    ).toBeVisible()
   })
   it('renders nothing if on mainnet', async () => {
     mockUseAccount.mockReturnValue({ chain: mainnet })
