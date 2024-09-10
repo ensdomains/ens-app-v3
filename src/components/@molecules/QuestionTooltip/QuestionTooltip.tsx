@@ -10,6 +10,8 @@ const IconWrapper = styled.div(
     height: ${theme.space[4]};
     color: ${theme.colors.indigo};
 
+    cursor: pointer;
+
     svg {
       display: block;
     }
