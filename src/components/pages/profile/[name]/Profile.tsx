@@ -123,6 +123,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     isWrapped,
     wrapperData,
     registrationStatus,
+    isBasicLoading,
     refetchIfEnabled,
   } = nameDetails
 
@@ -167,12 +168,14 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     refetchIfEnabled()
     setTab_(value)
   }
+
+  const isWrappedOrLoding = isWrapped || isBasicLoading
   const visibileTabs = useMemo(
     () =>
-      (isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter((_tab) =>
+      (isWrappedOrLoding ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter((_tab) =>
         unsupported ? _tab === 'profile' : _tab,
       ),
-    [isWrapped, unsupported],
+    [isWrappedOrLoding, unsupported],
   )
 
   const abilities = useAbilities({ name: normalisedName })
