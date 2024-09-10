@@ -213,7 +213,7 @@ test('should allow wrapping a name with an unknown label', async ({
   await expect(morePage.wrapButton).toHaveCount(0)
 
   // should direct to the known label page
-  await expect(page).toHaveURL(`/${unknownLabel}.${name}`)
+  await expect(page).toHaveURL(`/${unknownLabel}.${name}?tag=more`)
 })
 
 test('should calculate needed steps without localstorage', async ({
