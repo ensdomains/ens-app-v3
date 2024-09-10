@@ -279,10 +279,11 @@ test('should allow registering a name and resuming from the commit toast', async
   await page.goto(`/${name}/register`)
   await login.connect()
 
+  await page.pause()
   await page.getByTestId('payment-choice-ethereum').click()
+  await page.getByTestId('primary-name-toggle').uncheck()
   await page.getByTestId('next-button').click()
   await page.getByTestId('next-button').click()
-  await page.getByTestId('profile-submit-button').click()
 
   await testClient.setAutomine(false)
 
