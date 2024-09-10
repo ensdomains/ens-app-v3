@@ -282,6 +282,7 @@ test('should allow registering a name and resuming from the commit toast', async
   await page.getByTestId('payment-choice-ethereum').click()
   await page.getByTestId('next-button').click()
   await page.getByTestId('next-button').click()
+  await page.getByTestId('profile-submit-button').click()
 
   await testClient.setAutomine(false)
 
