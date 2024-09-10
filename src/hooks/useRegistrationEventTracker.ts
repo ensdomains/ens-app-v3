@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { match, P } from 'ts-pattern'
 import { formatUnits } from 'viem'
 
 import { PaymentMethod } from '@app/components/pages/profile/[name]/registration/types'
@@ -8,8 +9,57 @@ import { secondsToYears } from '@app/utils/time'
 
 import { useChainName } from './chain/useChainName'
 
+// BEGIN: Sample code
+
+type SearchSelectEvent = {
+  eventName: 'search_select_eth' | 'search_select_box'
+  customProperties: { name: string }
+}
+
+type PaymentEevent = {
+  eventName: 'payment_selected'
+  customProperties: {
+    ethPrice: BigInt
+    duration: number
+  }
+}
+
+type DefaultEvent = {
+  eventName: 'register_started' | 'register_open_wallet'
+  customProperties?: never
+}
+
+type TrackEventParameters = SearchSelectEvent | DefaultEvent | PaymentEevent
+
+// END: Sample code
+
 export const useRegistrationEventTracker = () => {
   const chain = useChainName()
+
+  // BEGIN: Sample code
+  const trackEventSample = (props: TrackEventParameters) => {
+    match(props)
+      .with(
+        { eventName: P.union('register_started', 'register_open_wallet') },
+        ({ eventName, customProperties }) => trackEvent(eventName, chain, customProperties),
+      )
+      .with({ eventName: 'payment_selected' }, ({ eventName, customProperties }) => {
+        const { duration, ethPrice } = customProperties
+        trackEvent('payment_selected', chain, {
+          price: duration * Number(ethPrice),
+        })
+      })
+  }
+
+  // This should cause a type error
+  trackEventSample({ eventName: 'register_open_wallet', customProperties: { name: 'hello' } })
+
+  // This will cause a type error if the props are changed.
+  trackEventSample({
+    eventName: 'payment_selected',
+    customProperties: { ethPrice: 100n, duration: 20000 },
+  })
+  // END: Sample code
 
   const trackRegistrationEvent = useCallback(
     (type: PlausibleType, customProps?: PlausibleProps) => {
