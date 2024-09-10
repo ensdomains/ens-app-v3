@@ -7,7 +7,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   timeout: 120000, // add extra time for loading
   fullyParallel: true, // required to evenly shard
-  workers: 1, // keep tests serial for now
+  workers: 2,
   reporter: [['html', { open: 'always' }]],
   projects: [
     {
