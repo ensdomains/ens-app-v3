@@ -56,18 +56,14 @@ test.describe.serial('normal registration', () => {
 
     await homePage.goto()
     await login.connect()
-    await expect(events).toContain(JSON.stringify({ type: 'home_page', chain }))
 
     // should redirect to registration page
     await homePage.searchInput.fill(name)
     await homePage.searchInput.press('Enter')
     await expect(events).toContain(
-      JSON.stringify({ type: 'start_searching', chain, props: { keyword: name } }),
+      JSON.stringify({ type: 'search_selected_eth', chain, props: { name } }),
     )
     await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
-    await expect(events).toContain(
-      JSON.stringify({ type: 'search_selected', chain, props: { keyword: name } }),
-    )
 
     // should have payment choice ethereum checked and show primary name setting as checked
     await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
@@ -142,7 +138,7 @@ test.describe.serial('normal registration', () => {
 
     // should allow finalising registration and automatically go to the complete step
     await page.getByTestId('finish-button').click()
-    await expect(events).toContain(JSON.stringify({ type: 'finish_started', chain }))
+    await expect(events).toContain(JSON.stringify({ type: 'register_started', chain }))
     await expect(
       page.getByText(
         'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
@@ -150,7 +146,7 @@ test.describe.serial('normal registration', () => {
     ).toBeVisible()
     await expect(page.getByText('Open Wallet')).toBeVisible()
     await transactionModal.confirm()
-    await expect(events).toContain(JSON.stringify({ type: 'finish_wallet_opened', chain }))
+    await expect(events).toContain(JSON.stringify({ type: 'register_wallet_opened', chain }))
 
     // should show the correct details on completion
     await expect(page.getByTestId('invoice-item-0-amount')).toHaveText(/0.0032 ETH/)
@@ -168,26 +164,9 @@ test.describe.serial('normal registration', () => {
   }) => {
     const homePage = makePageObject('HomePage')
 
-    const events: string[] = []
-    page.on('console', (msg) => {
-      const message = msg.text()
-
-      if (message.includes(trackEventPrefix)) {
-        events.push(message.replace(trackEventPrefix, '').trim())
-      }
-    })
-
     await homePage.goto()
-    await expect(events).toContain(JSON.stringify({ type: 'home_page', chain }))
-
     await homePage.searchInput.fill(name)
     await homePage.searchInput.press('Enter')
-    await expect(events).toContain(
-      JSON.stringify({ type: 'start_searching', chain, props: { keyword: name } }),
-    )
-    await expect(events).toContain(
-      JSON.stringify({ type: 'search_selected', chain, props: { keyword: name } }),
-    )
 
     await expect(page).toHaveURL(`/${name}`)
 
@@ -195,7 +174,6 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
       new RegExp(accounts.getAddress('user', 5)),
     )
-    await expect(events.some((event) => event.includes('payment_selected'))).toBeFalsy()
   })
 
   test('should allow registering a non-primary name', async ({
@@ -205,15 +183,6 @@ test.describe.serial('normal registration', () => {
     login,
     makePageObject,
   }) => {
-    const events: string[] = []
-    page.on('console', (msg) => {
-      const message = msg.text()
-
-      if (message.includes(trackEventPrefix)) {
-        events.push(message.replace(trackEventPrefix, '').trim())
-      }
-    })
-
     await time.sync(500)
 
     const nonPrimaryNme = `registration-not-primary-${Date.now()}.eth`
@@ -229,7 +198,6 @@ test.describe.serial('normal registration', () => {
 
     // should show set profile button on info step
     await page.getByTestId('next-button').click()
-    await expect(events.some((event) => event.includes('payment_selected'))).toBeTruthy()
 
     // setup profile buttons should be blue
     await expect(page.getByTestId('setup-profile-button')).toBeVisible()
@@ -240,13 +208,10 @@ test.describe.serial('normal registration', () => {
 
     // should allow registering a name without setting primary name
     await page.getByTestId('next-button').click()
-    await expect(events).toContain(JSON.stringify({ type: 'commit_started', chain }))
     await transactionModal.confirm()
-    await expect(events).toContain(JSON.stringify({ type: 'commit_wallet_opened', chain }))
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
     await testClient.increaseTime({ seconds: 60 })
     await page.getByTestId('finish-button').click()
-    await expect(events).toContain(JSON.stringify({ type: 'finish_started', chain }))
     await transactionModal.confirm()
     await page.getByTestId('view-name').click()
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(

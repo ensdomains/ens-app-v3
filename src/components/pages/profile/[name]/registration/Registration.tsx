@@ -12,8 +12,8 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useEventTracker } from '@app/hooks/useEventTracker'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { useRegistrationEventTracker } from '@app/hooks/useRegistrationEventTracker'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import { useResolverExists } from '@app/hooks/useResolverExists'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -123,7 +123,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
-  const { trackRegistrationEvent, trackPaymentSelectedEvent } = useRegistrationEventTracker()
+  const { trackEvent } = useEventTracker()
   const step = item.queue[item.stepIndex]
 
   const keySuffix = `${nameDetails.normalisedName}-${address}`
@@ -147,12 +147,17 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     estimatedTotal,
     ethPrice,
   }: RegistrationStepData['pricing']) => {
-    trackPaymentSelectedEvent({
-      duration: seconds,
-      paymentMethod: paymentMethodChoice,
-      estimatedTotal,
-      ethPrice,
-    })
+    if (estimatedTotal && ethPrice) {
+      trackEvent({
+        eventName: 'payment_selected',
+        customProperties: {
+          duration: seconds,
+          paymentMethod: paymentMethodChoice,
+          estimatedTotal,
+          ethPrice,
+        },
+      })
+    }
 
     if (paymentMethodChoice === PaymentMethod.moonpay) {
       initiateMoonpayRegistrationMutation.mutate(secondsToYears(seconds))
@@ -212,7 +217,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const infoCallback = ({ back }: BackObj) => {
     genericCallback({ back })
-    trackRegistrationEvent('commit_started')
+    trackEvent({ eventName: 'commit_started' })
   }
 
   const transactionsCallback = useCallback(

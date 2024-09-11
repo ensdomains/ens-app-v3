@@ -210,28 +210,3 @@ export type AnyFuseKey = ParentFuseReferenceType['Key'] | ChildFuseReferenceType
 export type CurrentChildFuses = { -readonly [k in keyof ChildFuses]: boolean }
 export type CurrentParentFuses = { -readonly [k in keyof ParentFuses]: boolean }
 export type CurrentAnyFuses = CurrentChildFuses & CurrentParentFuses
-
-export type PlausibleType =
-  | 'register'
-  | 'commit'
-  | 'renew'
-  | 'home_page'
-  | 'start_searching'
-  | 'search_selected'
-  | 'payment_selected'
-  | 'commit_started'
-  | 'commit_wallet_opened'
-  | 'finish_started'
-  | 'finish_wallet_opened'
-  | 'registration_started'
-
-export type PlausibleProps = {
-  referrer?: string | null
-  keyword?: string
-  duration?: number
-  durationType?: 'year' | 'date'
-  currencyUnit?: 'eth' | 'usd'
-  paymentType?: 'eth' | 'fiat'
-  paymentAmount?: string
-  tld?: string
-}
