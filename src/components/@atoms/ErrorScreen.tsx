@@ -48,7 +48,11 @@ const LinkWrapper = ({ children }: { children?: React.ReactNode }) => (
 type ErrorType = 'not-found' | 'application-error'
 
 const ErrorScreen = ({ errorType }: { errorType: ErrorType }) => {
-  const { t } = useTranslation('error', { keyPrefix: errorType })
+  const { t, ready } = useTranslation('error', { keyPrefix: errorType })
+
+  if (!ready) {
+    return null
+  }
 
   return (
     <Container className={errorType}>
