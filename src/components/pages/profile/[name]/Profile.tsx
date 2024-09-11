@@ -169,13 +169,13 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     setTab_(value)
   }
 
-  const isWrappedOrLoding = isWrapped || isBasicLoading
+  const isWrappedOrLoading = isWrapped || isBasicLoading
   const visibileTabs = useMemo(
     () =>
-      (isWrappedOrLoding ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter((_tab) =>
+      (isWrappedOrLoading ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter((_tab) =>
         unsupported ? _tab === 'profile' : _tab,
       ),
-    [isWrappedOrLoding, unsupported],
+    [isWrappedOrLoading, unsupported],
   )
 
   const abilities = useAbilities({ name: normalisedName })
