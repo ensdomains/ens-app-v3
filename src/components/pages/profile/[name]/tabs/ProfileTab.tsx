@@ -8,14 +8,18 @@ import { Helper } from '@ensdomains/thorin'
 import { Outlink } from '@app/components/Outlink'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
+import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useIsOffchainName } from '@app/hooks/ensjs/dns/useIsOffchainName'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useProfileActions } from '@app/hooks/pages/profile/[name]/profile/useProfileActions/useProfileActions'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useOwners } from '@app/hooks/useOwners'
-import { useProfileActions } from '@app/hooks/useProfileActions'
+import { useVerifiedRecords } from '@app/hooks/verification/useVerifiedRecords/useVerifiedRecords'
+import { categoriseAndTransformTextRecords } from '@app/utils/records/categoriseProfileTextRecords'
 import { getSupportLink } from '@app/utils/supportLinks'
 import { validateExpiry } from '@app/utils/utils'
+import { getVerificationRecordItemProps } from '@app/utils/verification/getVerificationRecordItems'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
@@ -67,8 +71,14 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     abilities: abilities.data,
   })
 
+  const userHasOwnership = owners.some(({ address: _address }) => _address === address)
+
   const profileActions = useProfileActions({
     name,
+  })
+
+  const { data: verifiedData, appendVerificationProps } = useVerifiedRecords({
+    verificationsRecord: profile?.texts?.find(({ key }) => key === VERIFICATION_RECORD_KEY)?.value,
   })
 
   const isOffchainImport = useIsOffchainName({
@@ -87,6 +97,12 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
 
   const getTextRecord = (key: string) => profile?.texts?.find((x) => x.key === key)
 
+  const categorisedRecord = categoriseAndTransformTextRecords({
+    texts: profile?.texts,
+    contentHash: profile?.contentHash,
+    appendVerificationProps,
+  })
+
   return (
     <DetailsWrapper>
       <ProfileSnippet
@@ -94,6 +110,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         getTextRecord={getTextRecord}
         button={snippetButton}
         isPrimary={name === primaryData?.name}
+        isVerified={verifiedData?.some(({ key, verified }) => key === 'personhood' && verified)}
       >
         {isOffchainImport && (
           <Helper alignment="horizontal">
@@ -137,13 +154,17 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         pccExpired={!!pccExpired}
         isCached={isCachedData || abilities.isCachedData}
         addresses={(profile?.coins || []).map((item) => ({
+          iconKey: item.name,
           key: item.name,
           value: item.value,
         }))}
-        textRecords={(profile?.texts || [])
-          .map((item: any) => ({ key: item.key, value: item.value }))
-          .filter((item: any) => item.value !== null)}
-        contentHash={profile?.contentHash}
+        accountRecords={categorisedRecord.accounts}
+        otherRecords={categorisedRecord.other}
+        verificationRecords={getVerificationRecordItemProps({
+          showErrors: userHasOwnership,
+          verifiedRecordsData: verifiedData,
+          name: normalisedName,
+        })}
         owners={owners}
         name={normalisedName}
         actions={profileActions.profileActions}
