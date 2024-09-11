@@ -4,11 +4,6 @@ import { describe, expect, it, vi } from 'vitest'
 
 import ErrorScreen from './ErrorScreen'
 
-vi.mock('next/link', () => ({
-  __esModule: true,
-  default: ({ children, ...props }: { children: React.ReactNode }) => <a {...props}>{children}</a>,
-}))
-
 describe('ErrorScreen', () => {
   it('renders not-found error correctly', () => {
     render(<ErrorScreen errorType="not-found" />)
