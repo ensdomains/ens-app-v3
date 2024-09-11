@@ -6,11 +6,13 @@ import { useAccount, useClient } from 'wagmi'
 
 import * as ThorinComponents from '@ensdomains/thorin'
 
-import { AvatarNFT } from './AvatarNFT'
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
+import { AvatarNFT } from './AvatarNFT'
 
 vi.mock('wagmi')
-
+vi.mock('@app/hooks/chain/useBlockTimestamp', () => ({
+  useBlockTimestamp: () => ({ data: new Date().getTime() }),
+}))
 vi.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: () => 'mainnet',
 }))
