@@ -8,7 +8,7 @@ import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useParentBasicName } from '@app/hooks/useParentBasicName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
-import { makeMockUseWrapperDataData } from '../../../../../../../../test/mock/makeMockUseWrapperDataData.ts'
+import { makeMockUseWrapperDataData } from '@root/test/mock/makeMockUseWrapperDataData.ts'
 import Token from './Token'
 
 vi.mock('@app/hooks/useParentBasicName')
@@ -36,66 +36,6 @@ mockUseParentBasicName.mockImplementation(() => {
 })
 
 describe('Token', () => {
-  it('should show wrapped status for unwrapped name', () => {
-    const name = 'nick.eth'
-    render(
-      <Token {...({ name, isWrapped: false, wrapperData: makeMockUseWrapperDataData() } as any)} />,
-    )
-    expect(screen.getByTestId('name-details-text-tabs.more.token.wrapper')).toHaveTextContent(
-      'tabs.more.token.status.unwrapped',
-    )
-  })
-  it('should show wrapped status for wrapped name', () => {
-    const name = 'nick.eth'
-    render(
-      <Token
-        {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)}
-      />,
-    )
-    expect(screen.getByTestId('name-details-text-tabs.more.token.wrapper')).toHaveTextContent(
-      'tabs.more.token.status.wrapped',
-    )
-  })
-  it('should show wrapped status for emancipated name', () => {
-    const name = 'nick.eth'
-    render(
-      <Token
-        {...({
-          name,
-          isWrapped: true,
-          wrapperData: makeMockUseWrapperDataData('emancipated'),
-        } as any)}
-      />,
-    )
-    expect(screen.getByTestId('name-details-text-tabs.more.token.wrapper')).toHaveTextContent(
-      'tabs.more.token.status.emancipated',
-    )
-  })
-  it('should show wrapped status for locked name', () => {
-    const name = 'nick.eth'
-    render(
-      <Token
-        {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('locked') } as any)}
-      />,
-    )
-    expect(screen.getByTestId('name-details-text-tabs.more.token.wrapper')).toHaveTextContent(
-      'tabs.more.token.status.locked',
-    )
-  })
-  it('should show wrap button if unwrapped', () => {
-    const name = 'nick.eth'
-    render(<Token {...({ name, isWrapped: false } as any)} />)
-    expect(screen.getByTestId('wrap-button')).toBeVisible()
-  })
-  it('should show unwrap button if wrapped', () => {
-    const name = 'nick.eth'
-    render(
-      <Token
-        {...({ name, isWrapped: true, wrapperData: makeMockUseWrapperDataData('wrapped') } as any)}
-      />,
-    )
-    expect(screen.getByTestId('unwrap-button')).toBeVisible()
-  })
   describe('tokenids', () => {
     it('should not show tokenid section for unwrapped non .eth 2ld', () => {
       const name = 'sub.nick.eth'
