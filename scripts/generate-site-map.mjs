@@ -13,7 +13,7 @@ import {
 
 import { normalise } from '@ensdomains/ensjs/utils'
 
-const ENS_SUBGRAPH_API_KEY = 'fb9b07f6c149fbdbe946149837a1d673'
+const ENS_SUBGRAPH_API_KEY = process.env.SITEMAP_GRAPH_KEY
 const baseURL = 'https://app.ens.domains'
 const graphAPI = `https://gateway-arbitrum.network.thegraph.com/api/${ENS_SUBGRAPH_API_KEY}/subgraphs/id/5XqPmWe6gjyrJtFn9cLy237i4cWw2j9HcUJEXsP5qGtH`
 
