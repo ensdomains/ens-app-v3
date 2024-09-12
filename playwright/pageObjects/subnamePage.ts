@@ -5,12 +5,10 @@ export class SubnamesPage {
   readonly page: Page
 
   readonly getAddSubnameButton: Locator
-
   readonly getDisabledAddSubnameButton: Locator
-
   readonly getAddSubnameInput: Locator
-
   readonly getSubmitSubnameButton: Locator
+  readonly getSubmitSubnameProfileButton: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -18,6 +16,7 @@ export class SubnamesPage {
     this.getDisabledAddSubnameButton = this.page.getByTestId('add-subname-disabled-button')
     this.getAddSubnameInput = this.page.getByTestId('add-subname-input')
     this.getSubmitSubnameButton = this.page.getByTestId('create-subname-next')
+    this.getSubmitSubnameProfileButton = this.page.getByTestId('create-subname-profile-next')
   }
 
   async goto(name: string) {

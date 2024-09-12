@@ -118,6 +118,7 @@ test('should allow creating a subname', async ({ page, makeName, login, makePage
   await subnamesPage.getAddSubnameButton.click()
   await subnamesPage.getAddSubnameInput.type('test')
   await subnamesPage.getSubmitSubnameButton.click()
+  await subnamesPage.getSubmitSubnameProfileButton.click()
 
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
@@ -150,6 +151,7 @@ test('should allow creating a subnames if the user is the wrapped owner', async 
   await subnamesPage.getAddSubnameButton.click()
   await subnamesPage.getAddSubnameInput.fill('test')
   await subnamesPage.getSubmitSubnameButton.click()
+  await subnamesPage.getSubmitSubnameProfileButton.click()
 
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
@@ -226,6 +228,7 @@ test('should allow creating an expired wrapped subname', async ({
   await subnamesPage.getAddSubnameButton.click()
   await subnamesPage.getAddSubnameInput.fill('test')
   await subnamesPage.getSubmitSubnameButton.click()
+  await subnamesPage.getSubmitSubnameProfileButton.click()
 
   await transactionModal.autoComplete()
 
