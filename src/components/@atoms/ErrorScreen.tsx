@@ -56,7 +56,11 @@ const ErrorScreen = ({ errorType }: { errorType: ErrorType }) => {
 
   return (
     <Container className={errorType}>
-      {errorType === 'not-found' ? <QuestionCircleSVG /> : <AlertSVG />}
+      {errorType === 'not-found' ? (
+        <QuestionCircleSVG data-testid="question-circle-svg" />
+      ) : (
+        <AlertSVG data-testid="alert-svg" />
+      )}
       <Typography fontVariant="headingOne">{t('title')}</Typography>
       <Typography fontVariant="body">
         <Trans
