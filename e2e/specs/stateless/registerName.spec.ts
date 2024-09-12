@@ -23,6 +23,17 @@ import {
 
 const chain = 'localhost'
 const trackEventPrefix = 'Event triggered on local development'
+const validEventTypes = [
+  'search_selected_eth',
+  'search_selected_box',
+  'payment_selected',
+  'commit_started',
+  'commit_wallet_opened',
+  'register_started',
+  'register_started_box',
+  'register_wallet_opened',
+]
+const validEventTypesRegex = new RegExp(`"type":"(${validEventTypes.join('|')})"`)
 
 test.describe.serial('normal registration', () => {
   const name = `registration-normal-${Date.now()}.eth`
@@ -43,7 +54,7 @@ test.describe.serial('normal registration', () => {
     page.on('console', (msg) => {
       const message = msg.text()
 
-      if (message.includes(trackEventPrefix)) {
+      if (validEventTypesRegex.test(message)) {
         events.push(message.replace(trackEventPrefix, '').trim())
       }
     })
@@ -59,10 +70,19 @@ test.describe.serial('normal registration', () => {
 
     // should redirect to registration page
     await homePage.searchInput.fill(name)
+    // Wait for the search action to finish before proceeding.
+    // If the user enters a name and presses Enter immediately, the search path will always be /profile/<name>.
+    await page.waitForTimeout(500)
     await homePage.searchInput.press('Enter')
-    await expect(events).toContain(
-      JSON.stringify({ type: 'search_selected_eth', chain, props: { name } }),
-    )
+
+    await test.step('should fire tracking event: search_selected_eth', async () => {
+      await expect(events).toHaveLength(1)
+      await expect(events[0]).toContain(
+        JSON.stringify({ type: 'search_selected_eth', chain, props: { name } }),
+      )
+      events.length = 0
+    })
+
     await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
 
     // should have payment choice ethereum checked and show primary name setting as checked
@@ -92,7 +112,12 @@ test.describe.serial('normal registration', () => {
 
     // should go to profile editor step
     await page.getByTestId('next-button').click()
-    await expect(events.some((event) => event.includes('payment_selected'))).toBeTruthy()
+
+    await test.step('should fire tracking event: payment_selected', async () => {
+      await expect(events).toHaveLength(1)
+      await expect(events.some((event) => event.includes('payment_selected'))).toBeTruthy()
+      events.length = 0
+    })
 
     // should show a confirmation dialog that records are public
     await page.getByTestId('show-add-profile-records-modal-button').click()
@@ -116,10 +141,21 @@ test.describe.serial('normal registration', () => {
     // should go to transactions step and open commit transaction immediately
     await expect(page.getByTestId('next-button')).toHaveText('Begin')
     await page.getByTestId('next-button').click()
-    await expect(events).toContain(JSON.stringify({ type: 'commit_started', chain }))
+
+    await test.step('should fire tracking event: commit_started', async () => {
+      await expect(events).toHaveLength(1)
+      await expect(events).toContain(JSON.stringify({ type: 'commit_started', chain }))
+      events.length = 0
+    })
+
     await expect(page.getByText('Open Wallet')).toBeVisible()
     await transactionModal.confirm()
-    await expect(events).toContain(JSON.stringify({ type: 'commit_wallet_opened', chain }))
+
+    await test.step('should fire tracking event: commit_wallet_opened', async () => {
+      await expect(events).toHaveLength(1)
+      await expect(events).toContain(JSON.stringify({ type: 'commit_wallet_opened', chain }))
+      events.length = 0
+    })
 
     // should show countdown
     await expect(page.getByTestId('countdown-circle')).toBeVisible()
@@ -138,7 +174,13 @@ test.describe.serial('normal registration', () => {
 
     // should allow finalising registration and automatically go to the complete step
     await page.getByTestId('finish-button').click()
-    await expect(events).toContain(JSON.stringify({ type: 'register_started', chain }))
+
+    await test.step('should fire tracking event: register_started', async () => {
+      await expect(events).toHaveLength(1)
+      await expect(events).toContain(JSON.stringify({ type: 'register_started', chain }))
+      events.length = 0
+    })
+
     await expect(
       page.getByText(
         'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
@@ -146,7 +188,12 @@ test.describe.serial('normal registration', () => {
     ).toBeVisible()
     await expect(page.getByText('Open Wallet')).toBeVisible()
     await transactionModal.confirm()
-    await expect(events).toContain(JSON.stringify({ type: 'register_wallet_opened', chain }))
+
+    await test.step('should fire tracking event: register_wallet_opened', async () => {
+      await expect(events).toHaveLength(1)
+      await expect(events).toContain(JSON.stringify({ type: 'register_wallet_opened', chain }))
+      events.length = 0
+    })
 
     // should show the correct details on completion
     await expect(page.getByTestId('invoice-item-0-amount')).toHaveText(/0.0032 ETH/)
@@ -162,11 +209,24 @@ test.describe.serial('normal registration', () => {
     accounts,
     makePageObject,
   }) => {
+    const events: string[] = []
+    page.on('console', (msg) => {
+      const message = msg.text()
+
+      if (validEventTypesRegex.test(message)) {
+        events.push(message.replace(trackEventPrefix, '').trim())
+      }
+    })
+
     const homePage = makePageObject('HomePage')
 
     await homePage.goto()
     await homePage.searchInput.fill(name)
     await homePage.searchInput.press('Enter')
+
+    await test.step('should not fire tracking event: search_selected_eth', async () => {
+      await expect(events.some((event) => event.includes('search_selected_eth'))).toBeFalsy()
+    })
 
     await expect(page).toHaveURL(`/${name}`)
 

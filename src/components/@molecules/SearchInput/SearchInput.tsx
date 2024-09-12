@@ -341,14 +341,20 @@ const createSearchHandler =
       { lastAccessed: Date.now(), nameType, text, isValid: selectedItem.isValid },
     ])
 
-    if (nameType === 'eth' || nameType === 'box') {
+    const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
+
+    if (path === `/register/${text}`) {
       trackEvent({
-        eventName: `search_selected_${nameType}`,
+        eventName: 'search_selected_eth',
+        customProperties: { name: text },
+      })
+    } else if (path === `/dotbox/${text}`) {
+      trackEvent({
+        eventName: 'search_selected_box',
         customProperties: { name: text },
       })
     }
 
-    const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
     setInputVal('')
     searchInputRef.current?.blur()
     router.pushWithHistory(path)
