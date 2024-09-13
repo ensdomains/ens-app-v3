@@ -88,7 +88,6 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
     await expect(registrationPage.primaryNameToggle).toBeChecked()
 
-    await page.pause()
     // should show adjusted gas estimate when primary name setting checked
     const estimate = await registrationPage.getGas()
     expect(estimate).toBeGreaterThan(0)
@@ -362,7 +361,6 @@ test('should allow registering with a specific date', async ({ page, login, make
   await page.goto(`/${name}/register`)
   await login.connect()
 
-  await page.pause()
   await page.getByTestId('payment-choice-ethereum').check()
   await registrationPage.primaryNameToggle.uncheck()
 
@@ -717,7 +715,6 @@ test('should allow normal registration for a month', async ({
   await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
   await expect(registrationPage.primaryNameToggle).toBeChecked()
 
-  await page.pause()
   // should show adjusted gas estimate when primary name setting checked
   const estimate = await registrationPage.getGas()
   expect(estimate).toBeGreaterThan(0)
@@ -856,7 +853,6 @@ test('should not allow normal registration less than 28 days', async ({
   await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
   await expect(registrationPage.primaryNameToggle).toBeChecked()
 
-  await page.pause()
   // should show adjusted gas estimate when primary name setting checked
   const estimate = await registrationPage.getGas()
   expect(estimate).toBeGreaterThan(0)
@@ -943,7 +939,6 @@ test('should be able to detect an existing commit created on a private mempool',
   await homePage.goto()
   await login.connect()
 
-  await page.pause()
   // should redirect to registration page
   await homePage.searchInput.fill(name)
   await homePage.searchInput.press('Enter')
