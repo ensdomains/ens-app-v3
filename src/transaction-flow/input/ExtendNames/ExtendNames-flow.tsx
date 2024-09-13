@@ -275,11 +275,14 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
 
   const { title, alert } = match(view)
     .with('no-ownership-warning', () => ({
-      title: t('input.extendNames.ownershipWarning.title', { count: names.length }),
+      title: t('input.extendNames.ownershipWarning.title', {
+        name: names.at(0),
+        count: names.length,
+      }),
       alert: 'warning' as const,
     }))
     .otherwise(() => ({
-      title: t('input.extendNames.title', { count: names.length }),
+      title: t('input.extendNames.title', { name: names.at(0), count: names.length }),
       alert: undefined,
     }))
 

@@ -28,6 +28,7 @@ const displayItems = (
       value: t('transaction.extendNames.actionValue', { ns: 'transactionFlow' }),
     },
     {
+      type: 'duration',
       label: 'duration',
       value: formatDuration(duration, t),
     },

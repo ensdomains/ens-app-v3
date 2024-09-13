@@ -213,10 +213,10 @@
       }
     },
     "extendNames": {
-      "title_one": "Extend Name",
+      "title_one": "Extend {{name}}",
       "title_other": "Extend {{count}} Names",
       "ownershipWarning": {
-        "title_one": "You do not own this name",
+        "title_one": "You do not own {{name}}",
         "title_other": "You do not own all these names",
         "description_one": "Extending this name will extend the current owner's registration length. This will not give you ownership of it.",
         "description_other": "Extending these names will extend the current owner's registration length. This will not give you ownership if you are not already the owner."
@@ -414,7 +414,8 @@
     "extendNames": {
       "actionValue": "Extend registration",
       "costValue": "{{value}} + fees",
-      "warning": "Extending this name will not give you ownership of it"
+      "warning": "Extending this name will not give you ownership of it",
+      "newExpiry": "New expiry: {{date}}"
     },
     "deleteSubname": {
       "warning": "Hello out there"
