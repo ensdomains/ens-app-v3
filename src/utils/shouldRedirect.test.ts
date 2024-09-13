@@ -106,6 +106,8 @@ describe('shouldRedirect', () => {
       isSelf: false,
       decodedName,
       normalisedName,
+      visibileTabs: ['profile', 'records', 'ownership', 'subnames', 'more'],
+      tab: 'profile',
     }
     shouldRedirect(mockRouter as never, 'Profile.tsx', '/profile', params)
     expect(mockRouter.pathname).toBe(`/profile/${decodedName}`)
@@ -121,6 +123,8 @@ describe('shouldRedirect', () => {
       isSelf: false,
       decodedName,
       normalisedName,
+      visibileTabs: ['profile', 'records', 'ownership', 'subnames', 'more'],
+      tab: 'profile',
     }
     shouldRedirect(mockRouter as never, 'Profile.tsx', '/profile', params)
     expect(mockRouter.pathname).toBe(`/profile/${normalisedName}`)
@@ -136,6 +140,25 @@ describe('shouldRedirect', () => {
       isSelf: true,
       decodedName,
       normalisedName,
+      visibileTabs: ['profile', 'records', 'ownership', 'subnames', 'more'],
+      tab: 'profile',
+    }
+    shouldRedirect(mockRouter as never, 'Profile.tsx', '/profile', params)
+    expect(mockRouter.pathname).toBe(`/profile/${name}`)
+  })
+
+  it('Profile.tsx should "/profile/[name]" expected path if invalid tab', () => {
+    const name = 'test'
+    const decodedName = 'test.eth'
+    const normalisedName =
+      '[fa1ea47215815692a5f1391cff19abbaf694c82fb2151a4c351b6c0eeaaf317b].test.eth'
+    const params = {
+      name,
+      isSelf: true,
+      decodedName,
+      normalisedName,
+      visibileTabs: ['profile', 'records', 'ownership', 'subnames', 'more'],
+      tab: 'custom',
     }
     shouldRedirect(mockRouter as never, 'Profile.tsx', '/profile', params)
     expect(mockRouter.pathname).toBe(`/profile/${name}`)

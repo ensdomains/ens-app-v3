@@ -1,13 +1,27 @@
-import { act, render, renderHook, screen, userEvent, waitFor } from '@app/test-utils'
+import { act, mockFunction, render, renderHook, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { useState } from 'react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ONE_DAY, ONE_YEAR } from '@app/utils/time'
 
 import { DateSelection } from './DateSelection'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+
+vi.mock('@app/utils/BreakpointProvider')
+
+const mockUseBreakpoint = mockFunction(useBreakpoint)
 
 describe('DateSelection', () => {
+  beforeEach(() => {
+    mockUseBreakpoint.mockReturnValue({
+      xs: true,
+      sm: true,
+      md: true,
+      lg: false,
+      xl: false,
+    })
+  })
   afterEach(() => {
     vi.resetAllMocks()
   })

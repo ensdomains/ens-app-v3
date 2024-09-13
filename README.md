@@ -507,3 +507,62 @@ Our testing philosophy is user-centric, meaning we want to write out tests so th
 A user generally clicks, types and swipes, and so most tests should include one of these actions. A user may also load a page in a specific state (by clicking, typing or swiping outside of the app) so sometimes we just want to check a page renders correctly. The vast majority of our tests will be of these kinds.
 
 For deeper parts of the codebase that aren't directly related to a user interaction, such as utility functions, the user is the developer. So simply test the code in the way a developer would use it.
+
+## Knip Configuration Guide
+
+### 1. Install Knip:
+
+Install Knip as a development dependency in your project:
+
+```bash
+pnpm add -D knip
+```
+
+### 2. Add a knip script to your package.json:
+
+Add a script to your package.json for easy access to Knip:
+
+```json
+{
+  "scripts": {
+    ...,
+    "knip": "knip",
+    "knip:fix": "knip --fix --allow-remove-files"
+  }
+}
+```
+
+### 3. Create Knip Configuration File:
+
+Create a `knip.config.ts` file at the root of your project. For more detail of configuration options, refer to the [knip.config.ts file](knip.config.ts) in the ENSDomains repository.
+
+### 4. Run Knip:
+
+To analyze your project, run Knip using the following command:
+
+```bash
+pnpm knip
+```
+Knip will exit with code `1` if any issues are found, such as unused files, dependencies, or exports that need to be removed.
+
+### 5. Review and Remove Unused Files
+
+After Knip completes its analysis, review the results. Manually remove any unused files that are safe to delete, or let Knip handle it automatically with the following command:
+
+```bash
+pnpm knip:fix
+```
+
+Ensure you carefully examine any files marked for removal to avoid accidentally deleting necessary code.
+
+### 6. Run Unit Tests and E2E Tests:
+
+After removing files, it's important to run your unit and end-to-end tests to ensure that everything is still functioning correctly:
+
+```bash
+pnpm test:coverage
+```
+
+```bash
+pnpm e2e
+```

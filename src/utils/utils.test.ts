@@ -65,6 +65,18 @@ describe('formatExpiry', () => {
     const result = formatExpiry(expiry)
     expect(result).toEqual('January 1, 2020')
   })
+
+  it('should format the date with short month if options.short is true', () => {
+    const expiry = new Date('2020-01-01')
+    const result = formatExpiry(expiry, { short: true })
+    expect(result).toEqual('Jan 1, 2020')
+  })
+
+  it('should format the date with long month if options.short is false', () => {
+    const expiry = new Date('2020-01-01')
+    const result = formatExpiry(expiry, { short: false })
+    expect(result).toEqual('January 1, 2020')
+  })
 })
 
 describe('formatDateTime', () => {
