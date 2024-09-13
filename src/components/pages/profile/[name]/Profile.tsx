@@ -123,6 +123,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     isWrapped,
     wrapperData,
     registrationStatus,
+    isBasicLoading,
     refetchIfEnabled,
   } = nameDetails
 
@@ -167,8 +168,14 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     refetchIfEnabled()
     setTab_(value)
   }
-  const visibileTabs = (isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter(
-    (_tab) => (unsupported ? _tab === 'profile' : _tab),
+
+  const isWrappedOrLoading = isWrapped || isBasicLoading
+  const visibileTabs = useMemo(
+    () =>
+      (isWrappedOrLoading ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter((_tab) =>
+        unsupported ? _tab === 'profile' : _tab,
+      ),
+    [isWrappedOrLoading, unsupported],
   )
 
   const abilities = useAbilities({ name: normalisedName })
@@ -182,8 +189,10 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
       name,
       decodedName: profile?.decodedName,
       normalisedName,
+      visibileTabs,
+      tab,
     })
-  }, [profile?.decodedName, normalisedName, name, isSelf, router])
+  }, [profile?.decodedName, normalisedName, name, isSelf, router, tab, visibileTabs])
 
   // useEffect(() => {
   //   if (shouldShowSuccessPage(transactions)) {
@@ -262,7 +271,6 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
             </Outlink>
           ) : null,
           trailing: match(tab)
-            .with('profile', () => <ProfileTab name={normalisedName} nameDetails={nameDetails} />)
             .with('records', () => (
               <RecordsTab
                 name={normalisedName}
@@ -296,7 +304,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
             .with('more', () => (
               <MoreTab name={normalisedName} nameDetails={nameDetails} abilities={abilities.data} />
             ))
-            .exhaustive(),
+            .otherwise(() => <ProfileTab name={normalisedName} nameDetails={nameDetails} />),
         }}
       </Content>
     </>
