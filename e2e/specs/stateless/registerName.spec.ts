@@ -70,9 +70,8 @@ test.describe.serial('normal registration', () => {
 
     // should redirect to registration page
     await homePage.searchInput.fill(name)
-    // Wait for the search action to finish before proceeding.
-    // If the user enters a name and presses Enter immediately, the search path will always be /profile/<name>.
-    await page.waitForTimeout(500)
+    await page.locator(`[data-testid="search-result-name"]`, { hasText: name }).waitFor()
+    await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Available' }).waitFor()
     await homePage.searchInput.press('Enter')
 
     await test.step('should fire tracking event: search_selected_eth', async () => {
