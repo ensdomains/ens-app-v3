@@ -112,7 +112,7 @@ test('should be able to extend a single unwrapped name from profile', async ({
 
   const extendNamesModal = makePageObject('ExtendNamesModal')
   await test.step('should show warning message', async () => {
-    await expect(page.getByText('You do not own this name')).toBeVisible()
+    await expect(page.getByText(`You do not own ${name}`)).toBeVisible()
     await page.getByRole('button', { name: 'I understand' }).click()
   })
 
@@ -253,7 +253,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await profilePage.getExtendButton.click()
 
   await test.step('should show warning message', async () => {
-    await expect(page.getByText('You do not own this name')).toBeVisible()
+    await expect(page.getByText(`You do not own ${name}`)).toBeVisible()
     await page.getByRole('button', { name: 'I understand' }).click()
   })
 

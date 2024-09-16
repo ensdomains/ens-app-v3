@@ -1150,7 +1150,7 @@ test.describe('Extend name', () => {
     await ownershipPage.extendButton.click()
 
     await test.step('should show ownership warning', async () => {
-      await expect(page.getByText('You do not own this name')).toBeVisible()
+      await expect(page.getByText(`You do not own ${name}`)).toBeVisible()
       await page.getByRole('button', { name: 'I understand' }).click()
     })
     await test.step('should show the correct price data', async () => {

@@ -215,7 +215,7 @@ export const ProfileSnippet = ({
         isSelf: canSelfExtend,
       })
     }
-  }, [renew, canSelfExtend])
+  }, [renew, name, canSelfExtend])
 
   const ActionButton = useMemo(() => {
     if (button === 'extend')
