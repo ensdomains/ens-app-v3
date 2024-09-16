@@ -11,7 +11,6 @@ import { wagmiConfig } from './wagmi'
 const mockFetchData = vi.fn().mockResolvedValue('Test data')
 
 const TestComponentWrapper = ({ children }: { children: ReactNode }) => {
-  console.log('queryClient', queryClient.getDefaultOptions())
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
