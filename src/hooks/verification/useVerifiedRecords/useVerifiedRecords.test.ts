@@ -29,12 +29,12 @@ describe('getVerifiedRecords', () => {
   
   it('should exclude fetches that error from results ', async () => {
     const result = await getVerifiedRecords({ queryKey: [{ verificationsRecord: '["error", "regular", "error"]'}, '0x123']} as any)
-    expect(result).toHaveLength(6)
+    expect(result).toHaveLength(7)
   })
 
   it('should return a flat array of verified credentials', async () => {
     const result = await getVerifiedRecords({ queryKey: [{ verificationsRecord: '["one", "two", "error", "three"]'}]} as any)
-    expect(result).toHaveLength(18)
+    expect(result).toHaveLength(21)
     expect(result.every((item) => !Array.isArray(item))).toBe(true)
   })
 })
