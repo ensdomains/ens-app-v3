@@ -9,7 +9,7 @@ import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import useUserConfig from '@app/utils/useUserConfig'
-import { formatDuration, ONE_DAY } from '@app/utils/utils'
+import { formatDurationOfDates, ONE_DAY } from '@app/utils/utils'
 
 const OptionBar = styled.div(
   () => css`
@@ -46,11 +46,16 @@ const FullInvoice = ({
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
-  const invoiceItems = useMemo(
-    () => [
+  const invoiceItems = useMemo(() => {
+    const now = Math.floor(Date.now())
+    return [
       {
         label: t('invoice.timeRegistration', {
-          time: formatDuration(seconds, t),
+          time: formatDurationOfDates({
+            startDate: new Date(),
+            endDate: new Date(now + seconds * 1000),
+            t,
+          }),
         }),
         bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
         value: totalDurationBasedFee,
@@ -70,9 +75,8 @@ const FullInvoice = ({
             },
           ]
         : []),
-    ],
-    [t, seconds, totalDurationBasedFee, estimatedGasFee, hasPremium, premiumFee],
-  )
+    ]
+  }, [t, seconds, totalDurationBasedFee, estimatedGasFee, hasPremium, premiumFee])
 
   return (
     <InvoiceContainer>
