@@ -237,7 +237,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
                 tooltip: (
                   <TextWithTooltip
                     tooltipContent={t('steps.transactions.subheading.frontRunning')}
-                    link="https://ens.domains/docs/faq#what-is-front-running"
                   />
                 ),
               }}

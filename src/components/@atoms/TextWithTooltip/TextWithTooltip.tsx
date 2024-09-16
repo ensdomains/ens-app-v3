@@ -39,7 +39,7 @@ export const TextWithTooltip = ({
   children,
 }: {
   tooltipContent: string
-  link: string
+  link?: string
   children?: React.ReactNode
 }) => {
   const { t } = useTranslation('common')
