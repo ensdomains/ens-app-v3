@@ -194,6 +194,79 @@ test.describe('Verified records', () => {
     await expect(profilePage.record('verification', 'dentity')).toBeVisible()
     await expect(profilePage.record('verification', 'dentity')).toBeVisible()
   })
+
+  test('Should not show badges if records match but ens credential fails', async ({
+    page,
+    accounts,
+    makePageObject,
+    makeName,
+  }) => {
+    const name = await makeName({
+      label: 'dentity',
+      type: 'wrapped',
+      owner: 'user',
+      records: {
+        texts: [
+          {
+            key: 'com.twitter',
+            value: '@name2',
+          },
+          {
+            key: 'org.telegram',
+            value: 'name2',
+          },
+          {
+            key: 'com.discord',
+            value: 'name2',
+          },
+          {
+            key: 'com.github',
+            value: 'name2',
+          },
+          {
+            key: VERIFICATION_RECORD_KEY,
+            value: JSON.stringify([
+              `${DENTITY_VPTOKEN_ENDPOINT}?name=name.eth&federated_token=federated_token`,
+            ]),
+          },
+          {
+            key: 'com.twitter',
+            value: '@name2',
+          },
+        ],
+      },
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+
+    await page.route(`${DENTITY_VPTOKEN_ENDPOINT}*`, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          ens_name: name,
+          eth_address: accounts.getAddress('user2'),
+          vp_token: makeMockVPToken(['com.twitter', 'com.github', 'com.discord', 'org.telegram']),
+        }),
+      })
+    })
+
+    await page.goto(`/${name}`)
+
+    await page.pause()
+
+    await expect(page.getByTestId('profile-section-verifications')).toBeVisible()
+
+    await profilePage.isRecordVerified('text', 'com.twitter', false)
+    await profilePage.isRecordVerified('text', 'org.telegram', false)
+    await profilePage.isRecordVerified('text', 'com.github', false)
+    await profilePage.isRecordVerified('text', 'com.discord', false)
+    await profilePage.isRecordVerified('verification', 'dentity', false)
+    await profilePage.isPersonhoodVerified(false)
+
+    await expect(profilePage.record('verification', 'dentity')).toBeVisible()
+    await expect(profilePage.record('verification', 'dentity')).toBeVisible()
+  })
 })
 
 test.describe('Verify profile', () => {

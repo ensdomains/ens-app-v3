@@ -1,4 +1,5 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
+import { Hash } from 'viem'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, QueryConfig } from '@app/types'
@@ -14,6 +15,8 @@ import {
 
 type UseVerifiedRecordsParameters = {
   verificationsRecord?: string
+  ownerAddress?: Hash
+  name?: string
 }
 
 export type UseVerifiedRecordsReturnType = VerifiedRecord[]
@@ -41,7 +44,7 @@ export const parseVerificationRecord = (verificationRecord?: string): string[] =
 }
 
 export const getVerifiedRecords = async <TParams extends UseVerifiedRecordsParameters>({
-  queryKey: [{ verificationsRecord }],
+  queryKey: [{ verificationsRecord, ownerAddress }],
 }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseVerifiedRecordsReturnType> => {
   const verifiablePresentationUris = parseVerificationRecord(verificationsRecord)
   const responses = await Promise.allSettled(
@@ -53,7 +56,7 @@ export const getVerifiedRecords = async <TParams extends UseVerifiedRecordsParam
         (response): response is PromiseFulfilledResult<any> => response.status === 'fulfilled',
       )
       .map(({ value }) => value)
-      .map(parseVerificationData),
+      .map(parseVerificationData({ ownerAddress })),
   ).then((records) => records.flat())
 }
 
@@ -74,7 +77,7 @@ export const useVerifiedRecords = <TParams extends UseVerifiedRecordsParameters>
   const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-    enabled: enabled && !!params.verificationsRecord,
+    enabled: enabled && !!params.verificationsRecord && !!params.ownerAddress && !!params.name,
     gcTime,
     staleTime,
   })

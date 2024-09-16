@@ -1,6 +1,6 @@
 import { match } from 'ts-pattern';
 import { getVerifiedRecords, parseVerificationRecord } from './useVerifiedRecords';
-import { describe, it, vi, expect, afterAll } from 'vitest';
+import { describe, it, vi, expect } from 'vitest';
 import { makeMockVerifiablePresentationData } from '@root/test/mock/makeMockVerifiablePresentationData';
 
 describe('parseVerificationRecord', () => {
@@ -23,12 +23,12 @@ describe('parseVerificationRecord', () => {
 
 
 
-describe('getVerifiedRecords', () => {
+describe.only('getVerifiedRecords', () => {
   const mockFetch = vi.fn().mockImplementation(async (uri) => match(uri).with('error', () => Promise.reject('error')).otherwise(() => Promise.resolve({ json: () => Promise.resolve(makeMockVerifiablePresentationData('openid'))})))
   vi.stubGlobal('fetch', mockFetch)
   
   it('should exclude fetches that error from results ', async () => {
-    const result = await getVerifiedRecords({ queryKey: [{ verificationsRecord: '["error", "regular", "error"]'}]} as any)
+    const result = await getVerifiedRecords({ queryKey: [{ verificationsRecord: '["error", "regular", "error"]'}, '0x123']} as any)
     expect(result).toHaveLength(6)
   })
 
