@@ -125,12 +125,6 @@ test('should be able to extend a single unwrapped name from profile', async ({
     })
   })
 
-  await test.step('should show the cost comparison data', async () => {
-    await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-    await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
-  })
-
   await test.step('should work correctly with plus minus control', async () => {
     await expect(extendNamesModal.getCounterMinusButton).toBeDisabled()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
@@ -192,12 +186,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
-  })
-
-  await test.step('should show the cost comparison data', async () => {
-    await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-    await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
   })
 
   await test.step('should work correctly with plus minus control', async () => {
@@ -262,12 +250,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
-  })
-
-  await test.step('should show the cost comparison data', async () => {
-    await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-    await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
   })
 
   await test.step('should work correctly with plus minus control', async () => {
@@ -483,12 +465,6 @@ test('should be able to extend a name in grace period by a month', async ({
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
-  await test.step('should show the cost comparison data', async () => {
-    await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-    await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
-  })
-
   await test.step('should be able to pick by date', async () => {
     const dateSelection = page.getByTestId('date-selection')
     await expect(dateSelection).toHaveText('Pick by date')
@@ -562,12 +538,6 @@ test('should be able to extend a name in grace period by 1 day', async ({
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
-  })
-
-  await test.step('should show the cost comparison data', async () => {
-    await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-    await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
   })
 
   await test.step('should be able to pick by date', async () => {

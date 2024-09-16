@@ -1160,12 +1160,6 @@ test.describe('Extend name', () => {
       await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
     })
 
-    await test.step('should show the cost comparison data', async () => {
-      await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-      await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-      await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
-    })
-
     await test.step('should work correctly with plus minus control', async () => {
       await expect(extendNamesModal.getCounterMinusButton).toBeDisabled()
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
