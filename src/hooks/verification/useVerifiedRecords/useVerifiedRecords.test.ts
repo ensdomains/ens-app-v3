@@ -23,7 +23,7 @@ describe('parseVerificationRecord', () => {
 
 
 
-describe.only('getVerifiedRecords', () => {
+describe('getVerifiedRecords', () => {
   const mockFetch = vi.fn().mockImplementation(async (uri) => match(uri).with('error', () => Promise.reject('error')).otherwise(() => Promise.resolve({ json: () => Promise.resolve(makeMockVerifiablePresentationData('openid'))})))
   vi.stubGlobal('fetch', mockFetch)
   

@@ -57,6 +57,11 @@ export const parseVerifiableCredential =
         key: 'email',
         value: vc?.credentialSubject?.verifiedEmail || '',
       }))
+      .with({ type: P.when((type) => type?.includes('VerifiedENS')) }, () => ({
+        issuer: 'dentity',
+        key: 'ens',
+        value: '',
+      }))
       .otherwise(() => null)
 
     if (!baseResult) return null
