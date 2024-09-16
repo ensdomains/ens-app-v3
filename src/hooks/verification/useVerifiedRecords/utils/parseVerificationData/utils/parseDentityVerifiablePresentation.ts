@@ -14,14 +14,15 @@ export const isDentityVerifiablePresentation = (
 }
 
 export const parseDentityVerifiablePresentation =
-  ({ ownerAddress }: ParseVerificationDataDependencies) =>
+  ({ ownerAddress, name }: ParseVerificationDataDependencies) =>
   async (data: OpenIdVerifiablePresentation) => {
     const credentials = Array.isArray(data.vp_token) ? data.vp_token : [data.vp_token]
     const ownershipVerified = credentials.some(
       (credential) =>
         !!credential &&
         credential.type.includes('VerifiedENS') &&
-        credential.credentialSubject?.ethAddress?.toLowerCase() === ownerAddress?.toLowerCase(),
+        credential.credentialSubject?.ethAddress?.toLowerCase() === ownerAddress?.toLowerCase() &&
+        credential.credentialSubject?.ensName?.toLowerCase() === name.toLowerCase(),
     )
     return parseOpenIdVerifiablePresentation({ ownershipVerified })(data)
   }

@@ -7,6 +7,7 @@ import {
 
 export type ParseVerificationDataDependencies = {
   ownerAddress?: Hash
+  name?: string
 }
 
 export type VerifiedRecord = {
@@ -20,7 +21,6 @@ export type VerifiedRecord = {
 export const parseVerificationData =
   (dependencies: ParseVerificationDataDependencies) =>
   async (data: unknown): Promise<VerifiedRecord[]> => {
-    console.log('data', data)
     if (isDentityVerifiablePresentation(data))
       return parseDentityVerifiablePresentation(dependencies)(data)
     return []

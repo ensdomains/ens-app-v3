@@ -44,7 +44,7 @@ export const parseVerificationRecord = (verificationRecord?: string): string[] =
 }
 
 export const getVerifiedRecords = async <TParams extends UseVerifiedRecordsParameters>({
-  queryKey: [{ verificationsRecord, ownerAddress }],
+  queryKey: [{ verificationsRecord, ownerAddress, name }],
 }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseVerifiedRecordsReturnType> => {
   const verifiablePresentationUris = parseVerificationRecord(verificationsRecord)
   const responses = await Promise.allSettled(
@@ -56,7 +56,7 @@ export const getVerifiedRecords = async <TParams extends UseVerifiedRecordsParam
         (response): response is PromiseFulfilledResult<any> => response.status === 'fulfilled',
       )
       .map(({ value }) => value)
-      .map(parseVerificationData({ ownerAddress })),
+      .map(parseVerificationData({ ownerAddress, name })),
   ).then((records) => records.flat())
 }
 
