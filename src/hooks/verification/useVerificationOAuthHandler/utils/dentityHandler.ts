@@ -50,7 +50,6 @@ export const dentityVerificationHandler =
     t: TFunction
   }) =>
   (json: UseVerificationOAuthReturnType): VerificationErrorDialogProps => {
-    console.log('json', json)
     return match(json)
       .with(
         {

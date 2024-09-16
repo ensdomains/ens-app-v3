@@ -22,14 +22,12 @@ export type VerificationErrorDialogProps =
 export const VerificationErrorDialog = (
   props: VerificationErrorDialogProps = { open: false, title: '', message: '' },
 ) => {
-  console.log('verificaion error dialog')
   if (!props) return null
 
   const { title, message, actions, open, ...dialogProps } = props
 
   const _message = typeof message === 'string' ? message : <Trans {...message} />
 
-  console.log('verificaion error dialog', _message)
   return (
     <Dialog open={open ?? false} variant="blank" {...dialogProps}>
       <Dialog.Heading title={title} alert="warning" />
