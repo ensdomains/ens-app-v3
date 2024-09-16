@@ -31,9 +31,9 @@ export const deriveYearlyFee = ({
   return yearlyFee
 }
 
-export const formatExpiry = (expiry: Date) =>
+export const formatExpiry = (expiry: Date, options: { short?: boolean } = {}) =>
   `${expiry.toLocaleDateString(undefined, {
-    month: 'long',
+    month: options.short ? 'short' : 'long',
   })} ${expiry.getDate()}, ${expiry.getFullYear()}`
 
 export const formatDateTime = (date: Date) => {

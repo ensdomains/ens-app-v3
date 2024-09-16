@@ -1,6 +1,5 @@
-import { fireEvent, render, screen } from '@app/test-utils'
+import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 
-import { fireEvent } from '@testing-library/react'
 import { InputHTMLAttributes, useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -8,7 +7,18 @@ import { secondsToDate, secondsToDateInput } from '@app/utils/date'
 import { formatExpiry } from '@app/utils/utils'
 
 import { Calendar } from './Calendar'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
+vi.mock('@app/utils/BreakpointProvider')
+
+const mockUseBreakpoint = mockFunction(useBreakpoint)
+mockUseBreakpoint.mockReturnValue({
+  xs: true,
+  sm: true,
+  md: true,
+  lg: false,
+  xl: false,
+})
 
 const value = 3600
 const min = 0
