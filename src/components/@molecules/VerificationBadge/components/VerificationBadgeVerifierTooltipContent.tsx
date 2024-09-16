@@ -5,7 +5,6 @@ import { match } from 'ts-pattern'
 import { Colors, Typography } from '@ensdomains/thorin'
 
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
-import { SupportOutlink } from '@app/components/@atoms/SupportOutlink'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 
 const Container = styled.div<{ $color: Colors }>(
@@ -60,8 +59,6 @@ export const VerificationBadgeVerifierTooltipContent = ({
         .otherwise(() => (
           <Content>
             <CenteredTypography>{t('verification.verificationFailed')}</CenteredTypography>
-            {/* TODO: NEED DOCUMENTATION LINK */}
-            <SupportOutlink href="https://docs.ens.domains">{t('action.learnMore')}</SupportOutlink>
           </Content>
         ))}
     </Container>
