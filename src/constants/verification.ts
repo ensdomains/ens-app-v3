@@ -51,7 +51,7 @@ const DENTITY_ENV_CONFIGS = {
 
 type DentityEnvironment = keyof typeof DENTITY_ENV_CONFIGS
 
-const DENTITY_ENV: DentityEnvironment = 'production'
+const DENTITY_ENV: DentityEnvironment = 'staging'
 
 export const DENTITY_BASE_ENDPOINT = DENTITY_ENV_CONFIGS[DENTITY_ENV].endpoint
 
