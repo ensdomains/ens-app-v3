@@ -11,7 +11,6 @@ import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { TextWithTooltip } from '@app/components/@atoms/TextWithTooltip/TextWithTooltip'
 import { Card } from '@app/components/Card'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
-import { useSimulateRegistration } from '@app/hooks/registration/useSimulateRegistration'
 import { useDurationCountdown } from '@app/hooks/time/useDurationCountdown'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
@@ -127,17 +126,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     commitKey,
   })
 
-  const { isSuccess: canRegisterOveride } = useSimulateRegistration({
-    registrationParams,
-    query: {
-      enabled: true,
-      retry: true,
-      retryDelay: 10000,
-    },
-  })
-
-  const commitCompleteOrCanRegisterOveride = commitComplete || canRegisterOveride
-
   const makeCommitNameFlow = useCallback(() => {
     onStart()
     createTransactionFlow(commitKey, {
@@ -237,10 +225,10 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
         disabled={!commitTimestamp}
         startTimestamp={commitTimestamp}
         size="large"
-        callback={() => setCommitComplete(false)}
+        callback={() => setCommitComplete(true)}
       />
       <CenteredTypography>
-        {match([commitTx, commitCompleteOrCanRegisterOveride, duration])
+        {match([commitTx, commitComplete, duration])
           .with([{ stage: 'complete' }, false, P._], () => (
             <Trans
               i18nKey="steps.transactions.subheading.commiting"
@@ -266,7 +254,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
           .otherwise(() => t('steps.transactions.subheading.default'))}
       </CenteredTypography>
       <ButtonContainer>
-        {match([commitCompleteOrCanRegisterOveride, registerTx, commitTx])
+        {match([commitComplete, registerTx, commitTx])
           .with([true, { stage: 'failed' }, P._], () => (
             <>
               {ResetBackButton}
