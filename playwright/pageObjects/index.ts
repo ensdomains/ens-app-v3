@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Page } from '@playwright/test'
-import { Web3ProviderBackend } from 'headless-web3-provider'
+
+import { Web3ProviderBackend } from '@ensdomains/headless-web3-provider'
 
 import { AddressPage } from './addressPage'
 import { AdvancedEditorModal } from './advancedEditorModal'

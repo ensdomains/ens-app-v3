@@ -9,7 +9,6 @@ devDeps=(
     "@testing-library/jest-dom"
     "@testing-library/react"
     "ens-contracts"
-    "ganache"
     "hardhat"
     "hardhat-dependency-compiler"
     "hardhat-deploy"

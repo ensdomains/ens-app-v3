@@ -14,6 +14,11 @@
   "ownership": "Ownership",
   "viewDetails": "View Details",
   "banner": {
+    "empty": {
+      "title": "Personalize your profile",
+      "description": "Add crypto addresses, social links, an avatar and more!",
+      "action": "Get started"
+    },
     "available": {
       "title": "{{name}} is available",
       "description": "This name expired on <strong>{{date}}</strong>. Click here to view the registration page."
@@ -305,13 +310,19 @@
         "hex": "hex",
         "decimal": "decimal",
         "wrapper": "wrapper",
+        "nameWrapper": "Name Wrapper",
+        "unwrappedText": " Wrapping your name gives it new features and functionality, however some functionality on your name will change. Please make sure you understand these changes before wrapping your name.",
         "wrapName": "Wrap Name",
-        "unwrap": "Unwrap",
+        "unwrap": "Unwrap Name",
+        "unwrapWarning": "This name has revoked the permissions needed for this action.",
+        "tooltip": "The Name Wrapper enables additional functionality on ENS names.",
         "status": {
-          "unwrapped": "unwrapped",
-          "wrapped": "wrapped",
-          "emancipated": "wrapped, emancipated",
-          "locked": "wrapped, locked"
+          "unwrapped": "Unwrapped",
+          "wrapped": "Wrapped"
+        },
+        "pcc": {
+          "controllable": "Parent-controllable",
+          "not-controllable": "Not parent-controllable"
         }
       },
       "misc": {
