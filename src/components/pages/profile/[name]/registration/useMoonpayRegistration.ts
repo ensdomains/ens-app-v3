@@ -81,7 +81,7 @@ export const useMoonpayRegistration = (
       return result || {}
     },
     refetchOnWindowFocus: true,
-    refetchOnMount: 'always',
+    refetchOnMount: true,
     refetchInterval: 1000,
     refetchIntervalInBackground: true,
     enabled: !!currentExternalTransactionId && !isCompleted,

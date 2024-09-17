@@ -21,7 +21,7 @@ export const refetchOptions: DefaultOptions<Error> = {
     meta: {
       isRefetchQuery: true,
     },
-    refetchOnMount: 'always',
+    refetchOnMount: true,
     queryKeyHashFn: hashFn,
   },
 }
