@@ -5,10 +5,10 @@ import { RegistrationParameters } from '@ensdomains/ensjs/utils'
 import { registerName } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { calculateValueWithBuffer, formatDuration } from '@app/utils/utils'
+import { calculateValueWithBuffer, formatDurationOfDates } from '@app/utils/utils'
 
 type Data = RegistrationParameters
-
+const now = Math.floor(Date.now())
 const displayItems = (
   { name, duration }: Data,
   t: TFunction<'translation', undefined>,
@@ -24,7 +24,11 @@ const displayItems = (
   },
   {
     label: 'duration',
-    value: formatDuration(duration, t),
+    value: formatDurationOfDates({
+      startDate: new Date(),
+      endDate: new Date(now + duration * 1000),
+      t,
+    }),
   },
 ]
 
