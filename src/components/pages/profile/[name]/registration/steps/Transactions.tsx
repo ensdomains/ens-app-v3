@@ -11,6 +11,7 @@ import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { TextWithTooltip } from '@app/components/@atoms/TextWithTooltip/TextWithTooltip'
 import { Card } from '@app/components/Card'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
+import { useSimulateRegistration } from '@app/hooks/registration/useSimulateRegistration'
 import { useDurationCountdown } from '@app/hooks/time/useDurationCountdown'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
@@ -126,6 +127,17 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     commitKey,
   })
 
+  const { isSuccess: canRegisterOveride } = useSimulateRegistration({
+    registrationParams,
+    query: {
+      enabled: true,
+      retry: true,
+      retryDelay: 10000,
+    },
+  })
+
+  const commitCompleteOrCanRegisterOveride = commitComplete || canRegisterOveride
+
   const makeCommitNameFlow = useCallback(() => {
     onStart()
     createTransactionFlow(commitKey, {
@@ -225,10 +237,10 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
         disabled={!commitTimestamp}
         startTimestamp={commitTimestamp}
         size="large"
-        callback={() => setCommitComplete(true)}
+        callback={() => setCommitComplete(false)}
       />
       <CenteredTypography>
-        {match([commitTx, commitComplete, duration])
+        {match([commitTx, commitCompleteOrCanRegisterOveride, duration])
           .with([{ stage: 'complete' }, false, P._], () => (
             <Trans
               i18nKey="steps.transactions.subheading.commiting"
@@ -254,7 +266,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
           .otherwise(() => t('steps.transactions.subheading.default'))}
       </CenteredTypography>
       <ButtonContainer>
-        {match([commitComplete, registerTx, commitTx])
+        {match([commitCompleteOrCanRegisterOveride, registerTx, commitTx])
           .with([true, { stage: 'failed' }, P._], () => (
             <>
               {ResetBackButton}
