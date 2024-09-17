@@ -9,12 +9,13 @@ import { useAccount } from 'wagmi'
 import { tokenise } from '@ensdomains/ensjs/utils'
 import { Button, mq, Typography } from '@ensdomains/thorin'
 
-import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
 import { Card } from '@app/components/Card'
 import useWindowSize from '@app/hooks/useWindowSize'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+
+import { Invoice } from './Invoice'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -39,10 +40,14 @@ const ButtonContainer = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: ${theme.space['2']};
+
+    ${mq.sm.min(css`
+      flex-direction: row;
+    `)}
   `,
 )
 
@@ -56,6 +61,20 @@ const NFTContainer = styled.div(
     ${mq.sm.min(css`
       width: ${theme.space['80']};
       height: ${theme.space['80']};
+    `)}
+  `,
+)
+
+const InvoiceContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+    ${mq.sm.min(css`
+      gap: ${theme.space['6']};
+      flex-direction: row;
     `)}
   `,
 )
@@ -208,13 +227,17 @@ const useEthInvoice = (
     const registerNetFee = registerGasUsed * registerGasPrice
     const totalNetFee = commitNetFee && registerNetFee ? commitNetFee + registerNetFee : 0n
 
+    const date = new Date()
+    date.setFullYear(date.getFullYear() + 1)
+
     return (
       <Invoice
+        expiryDate={date}
+        expiryTitle={t('invoice.expiry')}
         items={[
           { label: t('invoice.registration'), value },
           { label: t('invoice.networkFee'), value: totalNetFee },
         ]}
-        totalLabel={t('invoice.totalPaid')}
       />
     )
   }, [isLoading, registrationValue, commitReceipt, registerReceipt, t])
@@ -275,9 +298,6 @@ const Complete = ({ name, beautifiedName, callback, isMoonpayFlow }: Props) => {
         gravity={0.25}
         initialVelocityY={20}
       />
-      <NFTContainer>
-        <NFTTemplate backgroundImage={avatarSrc} isNormalised name={name} />
-      </NFTContainer>
       <TitleContainer>
         <Title>{t('steps.complete.heading')}</Title>
         <Typography style={{ display: 'inline' }} fontVariant="headingThree" weight="bold">
@@ -285,8 +305,12 @@ const Complete = ({ name, beautifiedName, callback, isMoonpayFlow }: Props) => {
           <SubtitleWithGradient>{nameWithColourEmojis}</SubtitleWithGradient>
         </Typography>
       </TitleContainer>
-      <Typography>{t('steps.complete.description')}</Typography>
-      {InvoiceFilled}
+      <InvoiceContainer>
+        <NFTContainer>
+          <NFTTemplate backgroundImage={avatarSrc} isNormalised name={name} />
+        </NFTContainer>
+        {InvoiceFilled}
+      </InvoiceContainer>
       <ButtonContainer>
         <MobileFullWidth>
           <Button colorStyle="accentSecondary" onClick={() => callback(false)}>
