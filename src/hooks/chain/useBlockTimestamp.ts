@@ -12,7 +12,7 @@ export const useBlockTimestamp = ({ enabled = true }: UseBlockTimestampParameter
     blockTag: 'latest',
     query: {
       enabled,
-      refetchOnMount: 'always',
+      refetchOnMount: true,
       refetchInterval: 1000 * 60 * 5 /* 5 minutes */,
       staleTime: 1000 * 60 /* 1 minute */,
       select: (b) => b.timestamp * 1000n,

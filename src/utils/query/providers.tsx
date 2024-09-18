@@ -1,3 +1,4 @@
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import type { ReactNode } from 'react'
 import { WagmiProvider } from 'wagmi'
@@ -16,8 +17,13 @@ export function QueryProviders({ children }: Props) {
       <PersistQueryClientProvider
         client={queryClient}
         persistOptions={createPersistConfig({ queryClient })}
+        onSuccess={() => {
+          return queryClient.invalidateQueries()
+        }}
       >
         {children}
+
+        <ReactQueryDevtoolsPanel client={queryClient} />
       </PersistQueryClientProvider>
     </WagmiProvider>
   )
