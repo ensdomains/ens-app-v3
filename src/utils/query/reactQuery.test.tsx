@@ -44,7 +44,7 @@ describe('reactQuery', () => {
     expect(queryClient.getDefaultOptions()).toEqual({
       queries: {
         refetchOnWindowFocus: true,
-        refetchOnMount: 'always',
+        refetchOnMount: true,
         staleTime: 1_000 * 12,
         gcTime: 1_000 * 60 * 60 * 24,
         queryKeyHashFn: expect.any(Function),
@@ -70,13 +70,11 @@ describe('reactQuery', () => {
         <TestComponentWithHook />
       </TestComponentWrapper>,
     )
+    await queryClient.invalidateQueries()
 
-    await waitFor(
-      () => {
-        expect(mockFetchData).toHaveBeenCalledTimes(2)
-        expect(getByTestId2('test')).toHaveTextContent('Test data')
-      },
-      { timeout: 2000 },
-    )
+    await waitFor(() => {
+      expect(mockFetchData).toHaveBeenCalledTimes(2)
+      expect(getByTestId2('test')).toHaveTextContent('Test data')
+    })
   })
 })
