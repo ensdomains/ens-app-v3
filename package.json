@@ -76,7 +76,7 @@
     "i18next-browser-languagedetector": "^6.1.5",
     "i18next-http-backend": "^1.4.1",
     "idb-keyval": "^6.2.1",
-    "immer": "^9.0.15",
+    "immer": "^9.0.21",
     "intl-segmenter-polyfill": "^0.4.4",
     "iso-639-1": "^2.1.15",
     "lodash": "^4.17.21",
@@ -97,7 +97,8 @@
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
     "viem": "2.19.4",
-    "wagmi": "2.12.4"
+    "wagmi": "2.12.4",
+    "zustand": "5.0.0-rc.2"
   },
   "peerDependencies": {
     "react": "*",

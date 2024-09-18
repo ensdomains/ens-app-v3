@@ -100,7 +100,6 @@ export interface Transaction<TData> {
   transaction: (
     params: TransactionFunctionParameters<TData>,
   ) => Promise<BasicTransactionRequest> | BasicTransactionRequest
-  helper?: (data: TData, t: TFunction<'translation', undefined>) => undefined | HelperProps
   backToInput?: boolean
 }
 

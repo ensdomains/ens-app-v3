@@ -1,3 +1,7 @@
+import { mainnet } from 'viem/chains'
+
+import type { SupportedChain } from '@ensdomains/ensjs/contracts'
+
 declare global {
   interface Window {
     plausible: any
@@ -8,10 +12,6 @@ function isProduction() {
   if (typeof window !== 'undefined') {
     return !!window.location.host.match('ens.domains')
   }
-}
-
-function isMainnet(chain: string) {
-  return chain === 'mainnet'
 }
 
 export function setUtm() {
@@ -32,7 +32,7 @@ export const setupAnalytics = () => {
   setUtm()
 }
 
-export const trackEvent = async (type: string, chain: string) => {
+export const trackEvent = async (type: string, chainId: SupportedChain['id']) => {
   const referrer = getUtm()
   function track() {
     if (typeof window !== 'undefined' && window.plausible) {
@@ -43,8 +43,8 @@ export const trackEvent = async (type: string, chain: string) => {
       })
     }
   }
-  console.log('Event triggering', type, chain)
-  if (isProduction() && isMainnet(chain)) {
+  console.log('Event triggering', type, chainId)
+  if (isProduction() && chainId === mainnet.id) {
     track()
   } else {
     console.log(

@@ -65,37 +65,37 @@ export const transactions = {
 export type Transaction = typeof transactions
 export type TransactionName = keyof Transaction
 
-export type TransactionParameters<T extends TransactionName> = Parameters<
-  Transaction[T]['transaction']
+export type TransactionParameters<name extends TransactionName> = Parameters<
+  Transaction[name]['transaction']
 >[0]
 
-export type TransactionData<T extends TransactionName> = TransactionParameters<T>['data']
+export type TransactionData<name extends TransactionName> = TransactionParameters<name>['data']
 
-export type TransactionReturnType<T extends TransactionName> = ReturnType<
-  Transaction[T]['transaction']
+export type TransactionReturnType<name extends TransactionName> = ReturnType<
+  Transaction[name]['transaction']
 >
 
-export const createTransactionItem = <T extends TransactionName>(
-  name: T,
-  data: TransactionData<T>,
+export const createTransactionItem = <name extends TransactionName>(
+  name: name,
+  data: TransactionData<name>,
 ) => ({
   name,
   data,
 })
 
-export const createTransactionRequest = <TName extends TransactionName>({
+export const createTransactionRequest = <name extends TransactionName>({
   name,
   ...rest
-}: { name: TName } & TransactionParameters<TName>): TransactionReturnType<TName> => {
+}: { name: name } & TransactionParameters<name>): TransactionReturnType<name> => {
   // i think this has to be any :(
-  return transactions[name].transaction({ ...rest } as any) as TransactionReturnType<TName>
+  return transactions[name].transaction({ ...rest } as any) as TransactionReturnType<name>
 }
 
-export type TransactionItem<TName extends TransactionName = TransactionName> = {
-  name: TName
-  data: TransactionData<TName>
+export type TransactionItem<name extends TransactionName = TransactionName> = {
+  name: name
+  data: TransactionData<name>
 }
 
 export type TransactionItemUnion = {
-  [TName in TransactionName]: TransactionItem<TName>
+  [name in TransactionName]: TransactionItem<name>
 }[TransactionName]
