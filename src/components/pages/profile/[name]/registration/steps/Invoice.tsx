@@ -1,10 +1,21 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Colors, mq, Skeleton, Typography } from '@ensdomains/thorin'
+import { CalendarSVG, Colors, Dropdown, mq, Skeleton, Typography } from '@ensdomains/thorin'
 
 import { CurrencyText } from '@app/components/@atoms/CurrencyText/CurrencyText'
-import { CurrencyDisplay } from '@app/types'
+import { useCalendarOptions } from '@app/hooks/useCalendarOptions'
 import { formatExpiry } from '@app/utils/utils'
+
+const ReminderContainer = styled(Typography)(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    gap: ${theme.space['1']};
+  `,
+)
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -65,13 +76,16 @@ export type InvoiceItem = {
 }
 
 type Props = {
+  name: string
   expiryTitle: string
   expiryDate: Date
   items: InvoiceItem[]
-  unit?: CurrencyDisplay
 }
 
-export const Invoice = ({ expiryTitle, expiryDate, unit = 'eth', items }: Props) => {
+export const Invoice = ({ name, expiryTitle, expiryDate, items }: Props) => {
+  const { t } = useTranslation('common')
+  const { makeEvent, options } = useCalendarOptions(`Renew ${name}`)
+
   return (
     <Container>
       {items.map(({ label, value, bufferPercentage }, inx) => (
@@ -81,7 +95,14 @@ export const Invoice = ({ expiryTitle, expiryDate, unit = 'eth', items }: Props)
           </Typography>
           <Skeleton loading={!value}>
             <Typography color="textPrimary" data-testid={`invoice-item-${inx}-amount`}>
-              <CurrencyText bufferPercentage={bufferPercentage} eth={value || 0n} currency={unit} />
+              <CurrencyText bufferPercentage={bufferPercentage} eth={value || 0n} currency="eth" />
+            </Typography>
+            <Typography
+              fontVariant="small"
+              color="textTertiary"
+              data-testid={`invoice-item-${inx}-amount-usd`}
+            >
+              <CurrencyText bufferPercentage={bufferPercentage} eth={value || 0n} currency="usd" />
             </Typography>
           </Skeleton>
         </LineItem>
@@ -94,6 +115,21 @@ export const Invoice = ({ expiryTitle, expiryDate, unit = 'eth', items }: Props)
         <Typography color="textPrimary" data-testid="invoice-item-expiry-date">
           {formatExpiry(expiryDate)}
         </Typography>
+        <Dropdown
+          shortThrow
+          keepMenuOnTop
+          width={220}
+          items={[
+            ...options.map((option) => ({
+              label: t(option.label, { ns: 'profile' }),
+              onClick: () => window.open(option.function(makeEvent(expiryDate)), '_blank'),
+            })),
+          ]}
+        >
+          <ReminderContainer color="accentPrimary" fontVariant="small">
+            <CalendarSVG /> <span>{t('action.setReminder')}</span>
+          </ReminderContainer>
+        </Dropdown>
       </LineItem>
     </Container>
   )

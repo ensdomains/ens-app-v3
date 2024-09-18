@@ -232,6 +232,7 @@ const useEthInvoice = (
 
     return (
       <Invoice
+        name={name}
         expiryDate={date}
         expiryTitle={t('invoice.expiry')}
         items={[
@@ -240,7 +241,7 @@ const useEthInvoice = (
         ]}
       />
     )
-  }, [isLoading, registrationValue, commitReceipt, registerReceipt, t])
+  }, [isLoading, registrationValue, commitReceipt, registerReceipt, t, name])
 
   if (isMoonpayFlow) return { InvoiceFilled: null, avatarSrc }
 
