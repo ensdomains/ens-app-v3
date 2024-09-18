@@ -1,5 +1,6 @@
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
@@ -26,11 +27,12 @@ export const useVerificationOAuthHandler = (): UseVerificationOAuthHandlerReturn
   const iss = searchParams.get('iss')
   const code = searchParams.get('code')
   const router = useRouterWithHistory()
+  const { t } = useTranslation('common')
   const { createTransactionFlow } = useTransactionFlow()
 
   const { address: userAddress } = useAccount()
 
-  const isReady = !!createTransactionFlow && !!router && !!userAddress && !!iss && !!code
+  const isReady = !!createTransactionFlow && !!router && !!iss && !!code
 
   const { data, isLoading, error } = useVerificationOAuth({
     verifier: issToVerificationProtocol(iss),
@@ -43,7 +45,7 @@ export const useVerificationOAuthHandler = (): UseVerificationOAuthHandlerReturn
   const onDismiss = () => setDialogProps(undefined)
 
   useEffect(() => {
-    if (data && !isLoading && userAddress) {
+    if (data && !isLoading) {
       const newProps = match(data)
         .with(
           {
@@ -55,6 +57,7 @@ export const useVerificationOAuthHandler = (): UseVerificationOAuthHandlerReturn
             onDismiss,
             router,
             createTransactionFlow,
+            t,
           }),
         )
         .otherwise(() => undefined)
