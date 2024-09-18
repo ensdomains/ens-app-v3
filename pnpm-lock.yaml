@@ -108,7 +108,7 @@ importers:
         specifier: ^6.2.1
         version: 6.2.1
       immer:
-        specifier: ^9.0.15
+        specifier: ^9.0.21
         version: 9.0.21
       intl-segmenter-polyfill:
         specifier: ^0.4.4
@@ -173,6 +173,9 @@ importers:
       wagmi:
         specifier: 2.12.4
         version: 2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.2.21)(bufferutil@4.0.8)(encoding@0.1.13)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.1(@babel/core@7.24.6)(@babel/preset-env@7.24.6(@babel/core@7.24.6))(@types/react@18.2.21)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@2.78.0)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+      zustand:
+        specifier: 5.0.0-rc.2
+        version: 5.0.0-rc.2(@types/react@18.2.21)(immer@9.0.21)(react@18.3.1)(use-sync-external-store@1.2.0(react@18.3.1))
     devDependencies:
       '@adraffy/ens-normalize':
         specifier: ^1.10.1
@@ -10424,6 +10427,24 @@ packages:
       immer:
         optional: true
       react:
+        optional: true
+
+  zustand@5.0.0-rc.2:
+    resolution: {integrity: sha512-o2Nwuvnk8vQBX7CcHL8WfFkZNJdxB/VKeWw0tNglw8p4cypsZ3tRT7rTRTDNeUPFS0qaMBRSKe+fVwL5xpcE3A==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: ^18.2.0
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
         optional: true
 
 snapshots:
@@ -22967,3 +22988,10 @@ snapshots:
       '@types/react': 18.2.21
       immer: 9.0.21
       react: 18.3.1
+
+  zustand@5.0.0-rc.2(@types/react@18.2.21)(immer@9.0.21)(react@18.3.1)(use-sync-external-store@1.2.0(react@18.3.1)):
+    optionalDependencies:
+      '@types/react': 18.2.21
+      immer: 9.0.21
+      react: 18.3.1
+      use-sync-external-store: 1.2.0(react@18.3.1)

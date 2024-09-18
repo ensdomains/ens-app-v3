@@ -10,9 +10,12 @@ import AdvancedEditorTabContent from '@app/components/@molecules/AdvancedEditor/
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
-import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
-import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { useTransactionStore } from '@app/transaction/transactionStore'
+import type { StoredTransaction } from '@app/transaction/types'
 import { Profile } from '@app/types'
+
+import type { TransactionDialogPassthrough } from '../../../components/TransactionDialogManager'
+import { createTransactionItem } from '../../transaction'
 
 const NameContainer = styled.div(({ theme }) => [
   css`
@@ -61,12 +64,15 @@ export type Props = {
   onDismiss?: () => void
 } & TransactionDialogPassthrough
 
-const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props) => {
+const AdvancedEditor = ({ data, transactions = [], onDismiss }: Props) => {
   const { t } = useTranslation('profile')
   const name = data?.name || ''
   const transaction = transactions.find(
-    (item: TransactionItem) => item.name === 'updateProfile',
-  ) as TransactionItem<'updateProfile'>
+    (item: StoredTransaction): item is Extract<StoredTransaction, { name: 'updateProfile' }> =>
+      item.name === 'updateProfile',
+  )
+  const setTransactions = useTransactionStore((s) => s.flow.current.setTransactions)
+  const setStage = useTransactionStore((s) => s.flow.current.setStage)
 
   const { data: fetchedProfile, isLoading: isProfileLoading } = useProfile({ name })
   const [profile, setProfile] = useState<Profile | undefined>(undefined)
@@ -80,19 +86,16 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
 
   const handleCreateTransaction = useCallback(
     (records: RecordOptions) => {
-      dispatch({
-        name: 'setTransactions',
-        payload: [
-          createTransactionItem('updateProfile', {
-            name,
-            resolverAddress: fetchedProfile!.resolverAddress!,
-            records,
-          }),
-        ],
-      })
-      dispatch({ name: 'setFlowStage', payload: 'transaction' })
+      setTransactions([
+        createTransactionItem('updateProfile', {
+          name,
+          resolverAddress: fetchedProfile!.resolverAddress!,
+          records,
+        }),
+      ])
+      setStage({ stage: 'transaction' })
     },
-    [fetchedProfile, dispatch, name],
+    [fetchedProfile, setTransactions, setStage, name],
   )
 
   const advancedEditorForm = useAdvancedEditor({

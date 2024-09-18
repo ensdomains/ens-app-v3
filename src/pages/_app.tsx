@@ -11,11 +11,11 @@ import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
 
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
-import { Notifications } from '@app/components/Notifications'
+import { Notifications } from '@app/components/Notifications2'
 import { TestnetWarning } from '@app/components/TestnetWarning'
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
-import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
+import { TransactionDialogManager } from '@app/transaction/components/TransactionDialogManager'
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
@@ -152,13 +152,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                   <GlobalStyle />
                   <ThorinGlobalStyles />
                   <SyncProvider>
-                    <TransactionFlowProvider>
-                      <SyncDroppedTransaction>
-                        <Notifications />
-                        <TestnetWarning />
-                        <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                      </SyncDroppedTransaction>
-                    </TransactionFlowProvider>
+                    <SyncDroppedTransaction>
+                      <Notifications />
+                      <TransactionDialogManager />
+                      <TestnetWarning />
+                      <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                    </SyncDroppedTransaction>
                   </SyncProvider>
                 </IntercomProvider>
               </BreakpointProvider>

@@ -7,17 +7,20 @@ import { Button, Dialog, Helper } from '@ensdomains/thorin'
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { MinedData, TransactionDisplayItem } from '@app/types'
 
-import type { DataInputComponent } from './input'
+import type { DataInputComponent, DataInputName } from './input'
 import type { IntroComponentName } from './intro'
-import type { TransactionData, TransactionItem, TransactionName } from './transaction'
+import type { TransactionData, TransactionName } from './transaction'
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'
 
 export type TransactionStage = 'confirm' | 'sent' | 'complete' | 'failed'
 
-type GenericDataInput = {
-  name: keyof DataInputComponent
-  data: any
+export type GenericDataInput<
+  name extends DataInputName = DataInputName,
+  data extends ComponentProps<DataInputComponent[name]> = ComponentProps<DataInputComponent[name]>,
+> = {
+  name: name
+  data: data
 }
 
 export type GenericTransaction<
@@ -161,7 +164,7 @@ export type TransactionDialogProps = ComponentProps<typeof Dialog> & {
 export type TransactionDialogPassthrough = {
   dispatch: Dispatch<TransactionFlowAction>
   onDismiss: () => void
-  transactions?: readonly TransactionItem[] | TransactionItem[]
+  transactionIds?: string[]
 }
 
 export type ManagedDialogProps = {

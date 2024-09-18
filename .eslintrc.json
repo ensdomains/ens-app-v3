@@ -85,8 +85,13 @@
       {
         "selector": "typeLike",
         "format": ["PascalCase"]
+      },
+      {
+        "selector": "typeParameter",
+        "format": ["PascalCase", "camelCase"]
       }
     ],
+    "@typescript-eslint/no-redeclare": "off",
     "radix": "off",
     "consistent-return": "off",
     "jsx-a11y/anchor-is-valid": "off",
