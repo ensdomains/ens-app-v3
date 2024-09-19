@@ -228,6 +228,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
             <Dialog.Heading title={t('details.tabs.subnames.setProfile')} />
             <Dialog.Content>
               <WrappedAvatarButton
+                disabledUpload
                 control={control}
                 src={avatarSrc}
                 onSelectOption={setView}
