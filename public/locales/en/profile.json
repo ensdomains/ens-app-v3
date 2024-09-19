@@ -14,6 +14,11 @@
   "ownership": "Ownership",
   "viewDetails": "View Details",
   "banner": {
+    "empty": {
+      "title": "Personalize your profile",
+      "description": "Add crypto addresses, social links, an avatar and more!",
+      "action": "Get started"
+    },
     "available": {
       "title": "{{name}} is available",
       "description": "This name expired on <strong>{{date}}</strong>. Click here to view the registration page."
