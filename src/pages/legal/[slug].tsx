@@ -2,11 +2,11 @@
 import { readFileSync } from 'fs'
 import path from 'path'
 
-import { globSync } from 'tinyglobby'
 import Markdown from 'markdown-to-jsx'
 import { GetStaticPropsContext } from 'next'
 import { ReactElement } from 'react'
 import styled, { css } from 'styled-components'
+import { globSync } from 'tinyglobby'
 
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
