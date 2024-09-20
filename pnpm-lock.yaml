@@ -33,8 +33,8 @@ importers:
         specifier: ^3.0.0-beta.5
         version: 3.0.0
       '@ensdomains/ens-contracts':
-        specifier: 1.2.0-beta.0
-        version: 1.2.0-beta.0
+        specifier: ^1.2.2
+        version: 1.2.2
       '@ensdomains/ensjs':
         specifier: 4.0.0
         version: 4.0.0(encoding@0.1.13)(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
@@ -1562,8 +1562,8 @@ packages:
     resolution: {integrity: sha512-nfm4ggpK5YBVwVwLZKF9WPjRGRTL9aUxX2O4pqv/AnQCz3WeGHsW7VhVFLj2s4EoWSzCXwR1E6nuqgUwnH692w==}
     engines: {node: '>=16.8'}
 
-  '@ensdomains/ens-contracts@1.2.0-beta.0':
-    resolution: {integrity: sha512-mb/1cPtwhShyaP6fWqDix6GfrJwVWlKgCFxzDKmqNGeFQhBOD/ojYGsy96eJ9UlM/7Tsg7w4RAj7xWrOlHtYIA==}
+  '@ensdomains/ens-contracts@1.2.2':
+    resolution: {integrity: sha512-fX2rvqKJRpW+Dxnq91zhG39pRTC03gOamz7RvSEMHFPCUN7phcthq5u4+5tsEIXS6g7Xp5xmC5XTgcxK5Rd4HQ==}
 
   '@ensdomains/ens-test-env@0.5.0-beta.1':
     resolution: {integrity: sha512-ppHKJTRQ5vlWSAflv20cNtlhpLyjn375VD9FeeUgl8BTx3IMPwlLvupGQTK2chDln/FJRyp6+wD41uI4oorM9w==}
@@ -11780,7 +11780,7 @@ snapshots:
       dns-packet: 5.6.1
       typescript-logging: 1.0.1
 
-  '@ensdomains/ens-contracts@1.2.0-beta.0':
+  '@ensdomains/ens-contracts@1.2.2':
     dependencies:
       '@ensdomains/buffer': 0.1.1
       '@ensdomains/solsha1': 0.0.3

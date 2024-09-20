@@ -51,7 +51,7 @@
   "dependencies": {
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
-    "@ensdomains/ens-contracts": "1.2.0-beta.0",
+    "@ensdomains/ens-contracts": "^1.2.2",
     "@ensdomains/ensjs": "4.0.0",
     "@ensdomains/thorin": "0.6.50",
     "@metamask/mobile-provider": "^2.1.0",
