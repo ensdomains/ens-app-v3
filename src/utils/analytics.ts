@@ -34,7 +34,7 @@ export const setupAnalytics = () => {
 export const trackEvent = async (type: string, chain: string, customProperties?: any) => {
   const referrer = getUtm()
 
-  const props = referrer ? { ...customProperties, referrer } : customProperties
+  const props = { ...customProperties, referrer }
 
   function track() {
     if (typeof window !== 'undefined' && window.plausible) {

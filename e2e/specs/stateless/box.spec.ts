@@ -4,11 +4,11 @@ import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
+import { trackConsoleEvents } from '../../../playwright/fixtures/consoleListener'
 import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 const chain = 'localhost'
-const trackEventPrefix = 'Event triggered on local development'
-const validEventTypesRegex = /"type":"(search_selected_box|register_started_box)"/
+const validBoxRegistrationEventRegex = /"type":"(search_selected_box|register_started_box)"/
 
 test('should allow box registration with available name', async ({
   page,
@@ -23,14 +23,7 @@ test('should allow box registration with available name', async ({
     account: createAccounts().getAddress('user') as `0x${string}`,
   })
 
-  const events: string[] = []
-  page.on('console', (msg) => {
-    const message = msg.text()
-
-    if (validEventTypesRegex.test(message)) {
-      events.push(message.replace(trackEventPrefix, '').trim())
-    }
-  })
+  const consoleEvents = trackConsoleEvents(page, validBoxRegistrationEventRegex)
 
   const homePage = makePageObject('HomePage')
   await time.sync(500)
@@ -44,11 +37,11 @@ test('should allow box registration with available name', async ({
   await homePage.searchInput.press('Enter')
 
   await test.step('should fire tracking event: search_selected_box', async () => {
-    await expect(events).toHaveLength(1)
-    await expect(events[0]).toContain(
-      JSON.stringify({ type: 'search_selected_box', chain, props: { name } }),
+    await expect(consoleEvents).toHaveLength(1)
+    await expect(consoleEvents[0]).toContain(
+      JSON.stringify({ type: 'search_selected_box', chain, props: { name, referrer: null } }),
     )
-    events.length = 0
+    consoleEvents.length = 0
   })
 
   await page.waitForURL(new RegExp(`/${name}/dotbox`))
@@ -68,9 +61,9 @@ test('should allow box registration with available name', async ({
   )
 
   await test.step('should fire tracking event: register_started_box', async () => {
-    await expect(events).toHaveLength(1)
-    await expect(events[0]).toContain(JSON.stringify({ type: 'register_started_box', chain }))
-    events.length = 0
+    await expect(consoleEvents).toHaveLength(1)
+    await expect(consoleEvents[0]).toContain('register_started_box')
+    consoleEvents.length = 0
   })
 })
 
@@ -86,14 +79,7 @@ test('should not direct to the registration page if name is not available', asyn
 
   const name = 'google.box'
 
-  const events: string[] = []
-  page.on('console', (msg) => {
-    const message = msg.text()
-
-    if (validEventTypesRegex.test(message)) {
-      events.push(message.replace(trackEventPrefix, '').trim())
-    }
-  })
+  const consoleEvents = trackConsoleEvents(page, validBoxRegistrationEventRegex)
 
   const homePage = makePageObject('HomePage')
   await homePage.goto()
@@ -107,6 +93,6 @@ test('should not direct to the registration page if name is not available', asyn
   await expect(page).toHaveURL('/')
 
   await test.step('should not fire tracking event: search_selected_box', async () => {
-    await expect(events.some((event) => event.includes('search_selected_box'))).toBeFalsy()
+    await expect(consoleEvents.some((event) => event.includes('search_selected_box'))).toBeFalsy()
   })
 })
