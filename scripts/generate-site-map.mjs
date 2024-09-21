@@ -2,7 +2,6 @@ import { createReadStream, createWriteStream, existsSync } from 'fs'
 import { Transform } from 'stream'
 
 import { gql, request } from 'graphql-request'
-import fetch from 'node-fetch'
 import {
   parseSitemap,
   parseSitemapIndex,
