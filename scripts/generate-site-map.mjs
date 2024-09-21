@@ -114,12 +114,13 @@ const main = async () => {
         ? sitemapIndex.url
         : sitemapIndex.url.replace(`${baseURL}/`, `${baseURL}/sitemaps/`)
       const res = await fetch(url)
-      // only allow normalised names from backlog
-      res.body.pipe(new XMLToSitemapItemStream()).pipe(normaliseTransform).pipe(sitemap, {
-        end: false,
+
+      await res.body.pipeThrough(normaliseTransform).pipeTo(sitemap, {
+        preventClose: true,
       })
+
       await new Promise((resolve) => {
-        normaliseTransform.on('end', resolve)
+        normaliseTransform.readable.getReader().closed.then(resolve)
       })
     }
   }
