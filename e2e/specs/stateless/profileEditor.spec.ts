@@ -104,6 +104,36 @@ test.describe('profile', () => {
     await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
     await expect(profilePage.contentHash()).toContainText('ipfs://bafybeic...')
   })
+
+  test('should redirect to profile tab if tab specified in query string does not exist', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    const name = await makeName({
+      label: 'profile',
+      type: 'legacy',
+      records: await makeRecords(),
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+
+    await profilePage.goto(name)
+    await login.connect()
+
+    await page.goto(`/${name}?tab=customTab`)
+
+    await expect(page).toHaveURL(`/${name}`)
+
+    await page.pause()
+    await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
+    await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
+    await expect(profilePage.record('address', 'btc')).toHaveText('bc1qj...pwa6n')
+    await expect(profilePage.record('address', 'etcLegacy')).toHaveText('etcLegacy0x3C4...293BC')
+    await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
+    await expect(profilePage.contentHash()).toContainText('ipfs://bafybeic...')
+  })
 })
 
 test.describe('migrations', () => {

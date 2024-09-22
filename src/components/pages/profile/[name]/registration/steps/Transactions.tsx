@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { useAccount } from 'wagmi'
@@ -8,12 +8,15 @@ import { makeCommitment } from '@ensdomains/ensjs/utils'
 import { Button, CountdownCircle, Dialog, Heading, mq, Spinner } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
+import { TextWithTooltip } from '@app/components/@atoms/TextWithTooltip/TextWithTooltip'
 import { Card } from '@app/components/Card'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
+import { useDurationCountdown } from '@app/hooks/time/useDurationCountdown'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { ONE_DAY } from '@app/utils/time'
 
 import { RegistrationReducerDataItem } from '../types'
 
@@ -191,6 +194,10 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     [t],
   )
 
+  const duration = useDurationCountdown({
+    endDate: commitTimestamp ? new Date(commitTimestamp + ONE_DAY * 1000) : undefined,
+  })
+
   return (
     <StyledCard>
       <Dialog variant="blank" open={resetOpen} onDismiss={() => setResetOpen(false)}>
@@ -220,7 +227,32 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
         size="large"
         callback={() => setCommitComplete(true)}
       />
-      <CenteredTypography>{t('steps.transactions.subheading')}</CenteredTypography>
+      <CenteredTypography>
+        {match([commitTx, commitComplete, duration])
+          .with([{ stage: 'complete' }, false, P._], () => (
+            <Trans
+              i18nKey="steps.transactions.subheading.commiting"
+              t={t}
+              components={{
+                tooltip: (
+                  <TextWithTooltip
+                    tooltipContent={t('steps.transactions.subheading.frontRunning')}
+                  />
+                ),
+              }}
+            />
+          ))
+          .with([{ stage: 'complete' }, true, null], () =>
+            t('steps.transactions.subheading.commitExpired'),
+          )
+          .with([{ stage: 'complete' }, true, P.not(P.nullish)], ([, , d]) =>
+            t('steps.transactions.subheading.commitComplete', { duration: d }),
+          )
+          .with([{ stage: 'complete' }, true, P._], () =>
+            t('steps.transactions.subheading.commitCompleteNoDuration'),
+          )
+          .otherwise(() => t('steps.transactions.subheading.default'))}
+      </CenteredTypography>
       <ButtonContainer>
         {match([commitComplete, registerTx, commitTx])
           .with([true, { stage: 'failed' }, P._], () => (
