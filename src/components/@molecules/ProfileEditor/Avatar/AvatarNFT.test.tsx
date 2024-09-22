@@ -6,8 +6,8 @@ import { useAccount, useClient } from 'wagmi'
 
 import * as ThorinComponents from '@ensdomains/thorin'
 
-import { AvatarNFT } from './AvatarNFT'
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
+import { AvatarNFT } from './AvatarNFT'
 
 vi.mock('wagmi')
 
@@ -118,7 +118,6 @@ describe('<AvatarNFT />', () => {
     fireEvent.click(screen.getByText('action.confirm'))
     await waitFor(() =>
       expect(mockHandleSubmit).toHaveBeenCalledWith(
-        'nft',
         'eip155:1/erc1155:0x0/0',
         'https://localhost/test-media-gateway.png',
       ),

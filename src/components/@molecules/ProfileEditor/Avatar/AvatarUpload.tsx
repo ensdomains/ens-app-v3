@@ -1,4 +1,5 @@
 /* eslint-disable no-multi-assign */
+
 import { sha256 } from '@noble/hashes/sha256'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
@@ -13,21 +14,6 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 
 import { AvCancelButton, CropComponent } from './AvatarCrop'
 
-const CroppedImagePreview = styled.img(
-  ({ theme }) => css`
-    aspect-ratio: 1;
-    width: ${theme.space.full};
-    max-width: ${theme.space['72']};
-    border-radius: ${theme.radii.extraLarge};
-  `,
-)
-
-const dataURLToBytes = (dataURL: string) => {
-  const base64 = dataURL.split(',')[1]
-  const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
-  return bytes
-}
-
 type AvatarUploadResult =
   | {
       message: string
@@ -37,18 +23,13 @@ type AvatarUploadResult =
       status: number
     }
 
-const UploadComponent = ({
-  dataURL,
-  handleCancel,
-  handleSubmit,
-  name,
-}: {
-  dataURL: string
-  handleCancel: () => void
-  handleSubmit: (type: 'upload', uri: string, display?: string) => void
-  name: string
-}) => {
-  const { t } = useTranslation('transactionFlow')
+const dataURLToBytes = (dataURL: string) => {
+  const base64 = dataURL.split(',')[1]
+  const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
+  return bytes
+}
+
+function useUploadAvatar() {
   const queryClient = useQueryClient()
   const chainName = useChainName()
 
@@ -56,11 +37,11 @@ const UploadComponent = ({
   const { signTypedDataAsync } = useSignTypedData()
 
   const {
-    mutate: signAndUpload,
+    mutateAsync: signAndUpload,
     isPending,
     error,
-  } = useMutation<void, Error>({
-    mutationFn: async () => {
+  } = useMutation({
+    mutationFn: async ({ dataURL, name }: { dataURL: string; name: string }) => {
       let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
       if (chainName !== 'mainnet') {
         baseURL = `${baseURL}/${chainName}`
@@ -91,6 +72,7 @@ const UploadComponent = ({
           hash: urlHash,
         },
       })
+
       const fetched = (await fetch(endpoint, {
         method: 'PUT',
         headers: {
@@ -111,11 +93,13 @@ const UploadComponent = ({
             const {
               queryKey: [params],
             } = query
+
             if (params !== 'ensAvatar') return false
             return true
           },
         })
-        return handleSubmit('upload', endpoint, dataURL)
+
+        return endpoint
       }
 
       if ('error' in fetched) {
@@ -125,6 +109,53 @@ const UploadComponent = ({
       throw new Error('Unknown error')
     },
   })
+
+  return {
+    signAndUpload,
+    isPending,
+    error,
+  }
+}
+
+type AvatarUploadProps = {
+  avatar: File
+  handleCancel: () => void
+  handleSubmit: (uri: string, display?: string) => void
+  name: string
+}
+
+const CroppedImagePreview = styled.img(
+  ({ theme }) => css`
+    aspect-ratio: 1;
+    width: ${theme.space.full};
+    max-width: ${theme.space['72']};
+    border-radius: ${theme.radii.extraLarge};
+  `,
+)
+
+const UploadComponent = ({
+  dataURL,
+  handleCancel,
+  handleSubmit,
+  name,
+}: Omit<AvatarUploadProps, 'avatar'> & {
+  dataURL: string
+}) => {
+  const { t } = useTranslation('transactionFlow')
+
+  const { signAndUpload, isPending, error } = useUploadAvatar()
+
+  const handleUpload = async () => {
+    try {
+      const endpoint = await signAndUpload({ dataURL, name })
+
+      if (endpoint) {
+        handleSubmit(endpoint, dataURL)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   return (
     <>
@@ -146,7 +177,7 @@ const UploadComponent = ({
           <Button
             disabled={isPending}
             colorStyle={error ? 'redSecondary' : undefined}
-            onClick={() => signAndUpload()}
+            onClick={handleUpload}
             data-testid="upload-button"
           >
             {error
@@ -159,17 +190,7 @@ const UploadComponent = ({
   )
 }
 
-export const AvatarUpload = ({
-  avatar,
-  handleCancel,
-  handleSubmit,
-  name,
-}: {
-  avatar: File
-  handleCancel: () => void
-  handleSubmit: (type: 'upload', uri: string, display?: string) => void
-  name: string
-}) => {
+export const AvatarUpload = ({ avatar, handleCancel, handleSubmit, name }: AvatarUploadProps) => {
   const [dataURL, setDataURL] = useState<string | null>(null)
 
   if (!dataURL) {

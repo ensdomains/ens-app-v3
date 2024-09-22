@@ -34,13 +34,6 @@ import { getResolverWrapperAwareness } from '@app/utils/utils'
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
 
-const AvatarWrapper = styled.div(
-  () => css`
-    display: flex;
-    justify-content: center;
-  `,
-)
-
 const ButtonContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -113,7 +106,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const { t } = useTranslation('register')
 
   const formRef = useRef<HTMLFormElement>(null)
-  const [view, setView] = useState<'editor' | 'upload' | 'nft' | 'addRecord' | 'warning'>('editor')
+  const [view, setView] = useState<
+    'editor' | 'upload' | 'manual' | 'nft' | 'addRecord' | 'warning'
+  >('editor')
 
   const { name = '', resumable = false } = data
 
@@ -135,6 +130,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
+    getAvatar,
     labelForRecord,
     secondaryLabelForRecord,
     placeholderForRecord,
@@ -146,6 +142,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   // Update profile records if transaction data exists
   const [isRecordsUpdated, setIsRecordsUpdated] = useState(false)
+
   useEffect(() => {
     const updateProfileRecordsWithTransactionData = () => {
       const transaction = transactions.find(
@@ -241,6 +238,17 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
 
+  const handleCancelAvatar = () => {
+    setView('editor')
+  }
+
+  const handleConfirmAvatar = (uri: string, display?: string) => {
+    setAvatar(uri)
+    setAvatarSrc(display)
+    handleCancelAvatar()
+    trigger()
+  }
+
   return (
     <>
       {match(view)
@@ -256,17 +264,15 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               })}
               alwaysShowDividers={{ bottom: true }}
             >
-              <AvatarWrapper>
-                <WrappedAvatarButton
-                  name={name}
-                  control={control}
-                  src={avatarSrc}
-                  onSelectOption={(option) => setView(option)}
-                  onAvatarChange={(avatar) => setAvatar(avatar)}
-                  onAvatarFileChange={(file) => setAvatarFile(file)}
-                  onAvatarSrcChange={(src) => setAvatarSrc(src)}
-                />
-              </AvatarWrapper>
+              <WrappedAvatarButton
+                name={name}
+                control={control}
+                src={avatarSrc}
+                onSelectOption={(option) => setView(option)}
+                onAvatarChange={(avatar) => setAvatar(avatar)}
+                onAvatarFileChange={(file) => setAvatarFile(file)}
+                onAvatarSrcChange={(src) => setAvatarSrc(src)}
+              />
               {profileRecords.map((field, index) =>
                 field.group === 'custom' ? (
                   <CustomProfileRecordInput
@@ -390,32 +396,14 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             onDismissOverlay={() => setView('editor')}
           />
         ))
-        .with('upload', () => (
+        .with('upload', 'nft', 'manual', (_modalOption) => (
           <AvatarViewManager
             name={name}
+            avatar={getAvatar()}
             avatarFile={avatarFile}
-            handleCancel={() => setView('editor')}
-            type="upload"
-            handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
-              setAvatar(uri)
-              setAvatarSrc(display)
-              setView('editor')
-              trigger()
-            }}
-          />
-        ))
-        .with('nft', () => (
-          <AvatarViewManager
-            name={name}
-            avatarFile={avatarFile}
-            handleCancel={() => setView('editor')}
-            type="nft"
-            handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
-              setAvatar(uri)
-              setAvatarSrc(display)
-              setView('editor')
-              trigger()
-            }}
+            handleCancel={handleCancelAvatar}
+            type={_modalOption}
+            handleSubmit={handleConfirmAvatar}
           />
         ))
         .exhaustive()}

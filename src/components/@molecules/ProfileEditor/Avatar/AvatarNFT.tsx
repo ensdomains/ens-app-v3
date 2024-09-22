@@ -264,7 +264,7 @@ export const AvatarNFT = ({
   handleSubmit,
 }: {
   handleCancel: () => void
-  handleSubmit: (type: 'nft', uri: string, display: string) => void
+  handleSubmit: (uri: string, display: string) => void
 }) => {
   const chain = useChainName()
   const { t } = useTranslation('transactionFlow')
@@ -333,7 +333,7 @@ export const AvatarNFT = ({
       const string = `eip155:1/${nftReference.id.tokenMetadata.tokenType.toLowerCase()}:${
         nftReference.contract.address
       }/${BigInt(nftReference.id.tokenId).toString()}`
-      handleSubmit('nft', string, nftReference.media[0].gateway)
+      handleSubmit(string, nftReference.media[0].gateway)
     }
 
     return (
