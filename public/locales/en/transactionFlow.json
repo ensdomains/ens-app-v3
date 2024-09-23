@@ -14,6 +14,10 @@
             "unknown": "Unknown NFT",
             "loadError": "NFT cannot be loaded",
             "noNFTs": "No NFTs found for this address.",
+            "address": {
+              "owned": "Owned",
+              "other": "Other"
+            },
             "selected": {
               "title": "Selected NFT",
               "subtitle": "Are you sure you want to use this NFT?"
