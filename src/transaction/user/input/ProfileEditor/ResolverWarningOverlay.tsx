@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { Address } from 'viem'
 
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { makeIntroItem } from '@app/transaction-flow/intro'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
+import { useTransactionManager } from '@app/transaction/transactionManager'
 
 import { InvalidResolverView } from './views/InvalidResolverView'
 import { MigrateProfileSelectorView } from './views/MigrateProfileSelectorView.tsx'
@@ -54,12 +53,14 @@ const ResolverWarningOverlay = ({
   hasOldRegistry = false,
   latestResolverAddress,
   oldResolverAddress,
-  dispatch,
   onDismiss,
   onDismissOverlay,
+  setStage,
+  setTransactions,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const [selectedProfile, setSelectedProfile] = useState<SelectedProfile>('latest')
+  const startFlow = useTransactionManager((s) => s.startFlow)
 
   const flow: View[] = useMemo(() => {
     if (hasOldRegistry) return ['migrateRegistry']
@@ -101,99 +102,111 @@ const ResolverWarningOverlay = ({
   }
 
   const handleUpdateResolver = () => {
-    dispatch({
-      name: 'setTransactions',
-      payload: [
-        createTransactionItem('updateResolver', {
+    setTransactions([
+      {
+        name: 'updateResolver',
+        data: {
           name,
           contract: isWrapped ? 'nameWrapper' : 'registry',
           resolverAddress: latestResolverAddress,
-        }),
-      ],
-    })
-    dispatch({
-      name: 'setFlowStage',
-      payload: 'transaction',
-    })
+        },
+      },
+    ])
+    setStage('transaction')
   }
 
   const handleMigrateProfile = () => {
-    dispatch({
-      name: 'startFlow',
-      key: `migrate-profile-${name}`,
-      payload: {
-        intro: {
-          title: ['input.profileEditor.intro.migrateProfile.title', { ns: 'transactionFlow' }],
-          content: makeIntroItem('GenericWithDescription', {
+    startFlow({
+      flowId: `migrate-profile-${name}`,
+      intro: {
+        title: ['input.profileEditor.intro.migrateProfile.title', { ns: 'transactionFlow' }],
+        content: {
+          name: 'GenericWithDescription',
+          data: {
             description: t('input.profileEditor.intro.migrateProfile.description'),
-          }),
+          },
         },
-        transactions: [
-          createTransactionItem('migrateProfile', {
+      },
+      transactions: [
+        {
+          name: 'migrateProfile',
+          data: {
             name,
-          }),
-          createTransactionItem('updateResolver', {
+          },
+        },
+        {
+          name: 'updateResolver',
+          data: {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolverAddress: latestResolverAddress,
-          }),
-        ],
-      },
+          },
+        },
+      ],
     })
   }
 
   const handleResetProfile = () => {
-    dispatch({
-      name: 'startFlow',
-      key: `reset-profile-${name}`,
-      payload: {
-        intro: {
-          title: ['input.profileEditor.intro.resetProfile.title', { ns: 'transactionFlow' }],
-          content: makeIntroItem('GenericWithDescription', {
+    startFlow({
+      flowId: `reset-profile-${name}`,
+      intro: {
+        title: ['input.profileEditor.intro.resetProfile.title', { ns: 'transactionFlow' }],
+        content: {
+          name: 'GenericWithDescription',
+          data: {
             description: t('input.profileEditor.intro.resetProfile.description'),
-          }),
+          },
         },
-        transactions: [
-          createTransactionItem('resetProfile', {
+      },
+      transactions: [
+        {
+          name: 'resetProfile',
+          data: {
             name,
             resolverAddress: latestResolverAddress,
-          }),
-          createTransactionItem('updateResolver', {
+          },
+        },
+        {
+          name: 'updateResolver',
+          data: {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolverAddress: latestResolverAddress,
-          }),
-        ],
-      },
+          },
+        },
+      ],
     })
   }
 
   const handleMigrateCurrentProfileToLatest = async () => {
-    dispatch({
-      name: 'startFlow',
-      key: `migrate-profile-with-reset-${name}`,
-      payload: {
-        intro: {
-          title: [
-            'input.profileEditor.intro.migrateCurrentProfile.title',
-            { ns: 'transactionFlow' },
-          ],
-          content: makeIntroItem('GenericWithDescription', {
+    startFlow({
+      flowId: `migrate-profile-with-reset-${name}`,
+      intro: {
+        title: ['input.profileEditor.intro.migrateCurrentProfile.title', { ns: 'transactionFlow' }],
+        content: {
+          name: 'GenericWithDescription',
+          data: {
             description: t('input.profileEditor.intro.migrateCurrentProfile.description'),
-          }),
+          },
         },
-        transactions: [
-          createTransactionItem('migrateProfileWithReset', {
+      },
+      transactions: [
+        {
+          name: 'migrateProfileWithReset',
+          data: {
             name,
             resolverAddress: oldResolverAddress,
-          }),
-          createTransactionItem('updateResolver', {
+          },
+        },
+        {
+          name: 'updateResolver',
+          data: {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolverAddress: latestResolverAddress,
-          }),
-        ],
-      },
+          },
+        },
+      ],
     })
   }
 

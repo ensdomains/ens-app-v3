@@ -282,12 +282,12 @@
       "pending": {
         "regular": "Pending"
       },
-      "confirmed": {
+      "success": {
         "regular": "Confirmed",
         "notifyTitle": "Transaction Successful",
         "notifyMessage": "Your \"{{action}}\" transaction was successful"
       },
-      "failed": {
+      "reverted": {
         "regular": "Failed",
         "notifyTitle": "Transaction Failure",
         "notifyMessage": "Your \"{{action}}\" transaction failed and was reverted"
@@ -305,7 +305,7 @@
         "waitingForWallet": "Waiting for Wallet",
         "openWallet": "Open Wallet"
       },
-      "sent": {
+      "pending": {
         "title": "Transaction Sent",
         "message": "Your transaction is now in progress, you can close this and come back later.",
         "progress": {
@@ -314,14 +314,14 @@
         },
         "learn": "Learn about long running transactions"
       },
-      "complete": {
+      "success": {
         "title": "Transaction Complete",
         "message": "Your transaction is now complete!",
         "progress": {
           "title": "Done"
         }
       },
-      "failed": {
+      "reverted": {
         "title": "Transaction Failed",
         "progress": {
           "title": "Failed"

@@ -17,8 +17,8 @@ export type Props = {
 }
 
 const useResolverEditor = ({ callback, resolverAddress }: Props) => {
-  const lastestResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
-  const isResolverAddressLatest = resolverAddress === lastestResolverAddress
+  const latestResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
+  const isResolverAddressLatest = resolverAddress === latestResolverAddress
 
   const { register, formState, handleSubmit, reset, trigger, watch, getFieldState, setValue } =
     useForm<FormData>({
@@ -43,7 +43,7 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
     const { resolverChoice: choice, address } = values
     let newResolver
     if (choice === 'latest') {
-      newResolver = lastestResolverAddress
+      newResolver = latestResolverAddress
     }
     if (choice === 'custom') {
       newResolver = address
@@ -61,7 +61,7 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
   const hasErrors = Object.keys(formState.errors || {}).length > 0 && resolverChoice === 'custom'
 
   return {
-    lastestResolverAddress,
+    latestResolverAddress,
     isResolverAddressLatest,
     register,
     handleSubmit: handleSubmit(handleResolverSubmit),

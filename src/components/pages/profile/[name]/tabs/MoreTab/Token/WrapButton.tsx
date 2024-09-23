@@ -6,10 +6,10 @@ import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useWrapperApprovedForAll } from '@app/hooks/useWrapperApprovedForAll'
-import { makeIntroItem } from '@app/transaction-flow/intro'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
+import type { FlowInitialiserData } from '@app/transaction/slices/createFlowSlice'
+import { useTransactionManager } from '@app/transaction/transactionManager'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
+import { createUserTransaction } from '@app/transaction/user/transaction'
 import { Profile } from '@app/types'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
@@ -44,59 +44,66 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped, isManager, isRegis
     canBeWrapped,
   })
 
-  const { createTransactionFlow, resumeTransactionFlow, getResumable, usePreparedDataInput } =
-    useTransactionFlow()
+  const flowId = `wrapName-${name}`
+
+  const getResumable = useTransactionManager((s) => s.isFlowResumable)
+  const resumeFlow = useTransactionManager((s) => s.resumeFlow)
+  const startFlow = useTransactionManager((s) => s.startFlow)
+
   const showUnknownLabelsInput = usePreparedDataInput('UnknownLabels')
-  const resumable = getResumable(`wrapName-${name}`)
+  const resumable = getResumable(flowId)
 
   const handleWrapClick = () => {
     if (!hasOwnerData) return
-    if (resumable) return resumeTransactionFlow(`wrapName-${name}`)
+    if (resumable) return resumeFlow(flowId)
 
     const isManagerAndShouldMigrate = isManager && shouldMigrate
     const isRegistrantAndShouldMigrate = !isManager && isRegistrant && shouldMigrate
     const needsApproval = isManager && isSubname && !approvedForAll
 
-    const transactions: GenericTransaction[] = [
+    const transactions = [
       ...(needsApproval
         ? [
-            createTransactionItem('approveNameWrapper', {
+            createUserTransaction('approveNameWrapper', {
               address: address!,
             }),
           ]
         : []),
       ...(isManagerAndShouldMigrate
         ? [
-            createTransactionItem('migrateProfile', {
+            createUserTransaction('migrateProfile', {
               name,
             }),
           ]
         : []),
-      createTransactionItem('wrapName', {
+      createUserTransaction('wrapName', {
         name,
       }),
       ...(isRegistrantAndShouldMigrate
-        ? [createTransactionItem('migrateProfile', { name, resolverAddress })]
+        ? [createUserTransaction('migrateProfile', { name, resolverAddress })]
         : []),
     ]
 
-    const transactionFlowItem: TransactionFlowItem = {
+    const flow = {
+      flowId,
       transactions,
       resumable: true,
       intro: {
         title: ['details.wrap.startTitle', { ns: 'profile' }],
-        content: makeIntroItem('WrapName', { name }),
+        content: {
+          name: 'WrapName',
+          data: { name },
+        },
       },
-    }
+    } satisfies FlowInitialiserData
 
     const key = `wrapName-${name}`
     if (!checkIsDecrypted(name))
       return showUnknownLabelsInput(key, {
         name,
-        key,
-        transactionFlowItem,
+        flow,
       })
-    return createTransactionFlow(key, transactionFlowItem)
+    return startFlow(flow)
   }
 
   const isLoading = isApprovalLoading || resolverStatus.isLoading || hasGraphErrorLoading

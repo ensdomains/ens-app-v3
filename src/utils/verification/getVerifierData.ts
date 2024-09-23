@@ -1,5 +1,5 @@
-import { createDentityPublicProfileUrl } from '@app/transaction-flow/input/VerifyProfile/utils/createDentityUrl'
-import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
+import { createDentityPublicProfileUrl } from '@app/transaction/user/input/VerifyProfile/utils/createDentityUrl'
+import type { VerificationProtocol } from '@app/transaction/user/input/VerifyProfile/VerifyProfile-flow'
 
 export const getVerifierData = (key: VerificationProtocol, value: string) => {
   switch (key) {

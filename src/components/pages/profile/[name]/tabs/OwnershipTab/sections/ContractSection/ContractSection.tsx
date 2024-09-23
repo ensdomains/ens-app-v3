@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next'
+import { useChainId } from 'wagmi'
 
 import { Card, Helper, RecordItem } from '@ensdomains/thorin'
 
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { makeEtherscanLink } from '@app/utils/utils'
+import { createEtherscanLink } from '@app/utils/utils'
 
 import { Header } from './components/Header'
 
@@ -17,7 +17,7 @@ type Props = {
 export const ContractSection = ({ details }: Props) => {
   const { t } = useTranslation('profile')
   const address = useContractAddress({ contract: 'ensNameWrapper' })
-  const chainName = useChainName()
+  const chainId = useChainId()
   const breakpoint = useBreakpoint()
 
   const { isLoading } = details
@@ -26,7 +26,11 @@ export const ContractSection = ({ details }: Props) => {
   return (
     <Card>
       <Header />
-      <RecordItem as="a" value={address} link={makeEtherscanLink(address, chainName, 'address')}>
+      <RecordItem
+        as="a"
+        value={address}
+        link={createEtherscanLink({ data: address, chainId, route: 'address' })}
+      >
         {address}
       </RecordItem>
       <Helper type="info" alignment={breakpoint.sm ? 'horizontal' : 'vertical'}>

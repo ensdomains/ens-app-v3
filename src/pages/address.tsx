@@ -4,17 +4,17 @@ import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
+import { useChainId } from 'wagmi'
 
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
 import { Outlink } from '@app/components/Outlink'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { OG_IMAGE_URL } from '@app/utils/constants'
-import { makeEtherscanLink, shortenAddress } from '@app/utils/utils'
+import { createEtherscanLink, shortenAddress } from '@app/utils/utils'
 
 import { useAccountSafely } from '../hooks/account/useAccountSafely'
 
@@ -51,7 +51,7 @@ const Page = () => {
   const descriptionContent = t('meta.description', { address })
   const ogImageUrl = `${OG_IMAGE_URL}/address/${address}`
 
-  const chainName = useChainName()
+  const chainId = useChainId()
 
   return (
     <>
@@ -87,7 +87,10 @@ const Page = () => {
             </DetailsContainer>
           ),
           titleExtra: (
-            <Outlink fontVariant="bodyBold" href={makeEtherscanLink(address, chainName, 'address')}>
+            <Outlink
+              fontVariant="bodyBold"
+              href={createEtherscanLink({ data: address, chainId, route: 'address' })}
+            >
               {t('etherscan', { ns: 'common' })}
             </Outlink>
           ),

@@ -8,7 +8,7 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { emptyAddress } from '@app/utils/constants'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
@@ -97,7 +97,6 @@ const Resolver = ({
 
   const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
 
-  const { usePreparedDataInput } = useTransactionFlow()
   const showEditResolverInput = usePreparedDataInput('EditResolver')
   const handleEditClick = () => {
     showEditResolverInput(`resolver-upgrade-${name}`, {

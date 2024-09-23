@@ -5,7 +5,7 @@ import { Colors, Typography } from '@ensdomains/thorin'
 
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { SupportOutlink } from '@app/components/@atoms/SupportOutlink'
-import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
+import { CenteredTypography } from '@app/transaction/user/input/ProfileEditor/components/CenteredTypography'
 
 const Container = styled.div<{ $color: Colors }>(
   ({ theme, $color }) => css`

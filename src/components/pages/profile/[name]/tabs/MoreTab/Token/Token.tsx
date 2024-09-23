@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { labelhash, namehash } from 'viem'
+import { useChainId } from 'wagmi'
 
 import { mq, Tag, Typography } from '@ensdomains/thorin'
 
@@ -8,9 +9,8 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
+import { checkETH2LDFromName, createEtherscanLink } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../../TabWrapper'
 
@@ -107,7 +107,7 @@ const NftBox = styled(NFTWithPlaceholder)(
 const Token = ({ name, isWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
-  const networkName = useChainName()
+  const chainId = useChainId()
   const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
   const registrarAddress = useContractAddress({ contract: 'ensBaseRegistrarImplementation' })
 
@@ -127,7 +127,11 @@ const Token = ({ name, isWrapped }: Props) => {
         {hasToken ? (
           <Outlink
             data-testid="etherscan-nft-link"
-            href={makeEtherscanLink(`${contractAddress}/${tokenId}`, networkName, 'nft')}
+            href={createEtherscanLink({
+              data: `${contractAddress}/${tokenId}`,
+              chainId,
+              route: 'nft',
+            })}
           >
             {t('etherscan', { ns: 'common' })}
           </Outlink>

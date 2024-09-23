@@ -26,12 +26,13 @@ import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { createQueryKey } from '@app/hooks/useQueryOptions'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
+import { useTransactionManager } from '@app/transaction/transactionManager'
 import {
   nameToFormData,
   UnknownLabelsForm,
   FormData as UnknownLabelsFormData,
-} from '@app/transaction-flow/input/UnknownLabels/views/UnknownLabelsForm'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+} from '@app/transaction/user/input/UnknownLabels/views/UnknownLabelsForm'
 
 import { TaggedNameItemWithFuseCheck } from './components/TaggedNameItemWithFuseCheck'
 
@@ -107,10 +108,11 @@ const ErrorContainer = styled.div(
   `,
 )
 
-const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) => {
+const SelectPrimaryName = ({ data: { address }, onDismiss, setTransactions, setStage }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const formRef = useRef<HTMLFormElement>(null)
   const queryClient = useQueryClient()
+  const startFlow = useTransactionManager((s) => s.startFlow)
 
   const form = useForm<FormData>({
     mode: 'onChange',
@@ -191,20 +193,13 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     const transactionCount = transactionFlowItem.transactions.length
     if (transactionCount === 1) {
       // TODO: Fix typescript transactions error
-      dispatch({
-        name: 'setTransactions',
-        payload: transactionFlowItem.transactions as any[],
-      })
-      dispatch({
-        name: 'setFlowStage',
-        payload: 'transaction',
-      })
+      setTransactions(transactionFlowItem.transactions)
+      setStage('transaction')
       return
     }
-    dispatch({
-      name: 'startFlow',
-      key: 'ChangePrimaryName',
-      payload: transactionFlowItem,
+    startFlow({
+      flowId: 'ChangePrimaryName',
+      ...transactionFlowItem,
     })
   }
 

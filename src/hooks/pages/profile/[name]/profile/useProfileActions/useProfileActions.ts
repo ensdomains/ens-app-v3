@@ -13,10 +13,9 @@ import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useProfile } from '@app/hooks/useProfile'
-import { makeIntroItem } from '@app/transaction-flow/intro'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { GenericTransaction } from '@app/transaction-flow/types'
+import { useTransactionManager } from '@app/transaction/transactionManager'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
+import { createUserTransaction } from '@app/transaction/user/transaction'
 import { checkAvailablePrimaryName } from '@app/utils/checkAvailablePrimaryName'
 import { nameParts } from '@app/utils/name'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
@@ -77,7 +76,7 @@ const verificationsButtonTooltip = ({
 
 export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => {
   const { t } = useTranslation('profile')
-  const { createTransactionFlow, usePreparedDataInput } = useTransactionFlow()
+  const startFlow = useTransactionManager((s) => s.startFlow)
 
   const { address } = useAccountSafely()
 
@@ -174,9 +173,9 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
       })
     }
 
-    const transactionFlowItem = getPrimaryNameTransactionFlowItem?.callBack?.(name)
-    if (isAvailablePrimaryName && !!transactionFlowItem) {
-      const key = `setPrimaryName-${name}-${address}`
+    const flow = getPrimaryNameTransactionFlowItem?.callBack?.(name)
+    if (isAvailablePrimaryName && !!flow) {
+      const flowId = `setPrimaryName-${name}-${address}`
       actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),
         tooltipContent: hasGraphError
@@ -186,12 +185,11 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         loading: hasGraphErrorLoading,
         onClick: !checkIsDecrypted(name)
           ? () =>
-              showUnknownLabelsInput(key, {
+              showUnknownLabelsInput(flowId, {
                 name,
-                key,
-                transactionFlowItem,
+                flow: { ...flow, flowId },
               })
-          : () => createTransactionFlow(key, transactionFlowItem),
+          : () => startFlow({ ...flow, flowId }),
       })
     }
 
@@ -227,13 +225,13 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         loading: hasGraphErrorLoading,
       }
       if (abilities.canDeleteRequiresWrap) {
-        const transactions: GenericTransaction[] = [
-          createTransactionItem('transferSubname', {
+        const transactions = [
+          createUserTransaction('transferSubname', {
             name,
             contract: 'nameWrapper',
             newOwnerAddress: address,
           }),
-          createTransactionItem('deleteSubname', {
+          createUserTransaction('deleteSubname', {
             contract: 'nameWrapper',
             name,
             method: 'setRecord',
@@ -242,16 +240,20 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         actions.push({
           ...base,
           onClick: () =>
-            createTransactionFlow(`deleteSubname-${name}`, {
+            startFlow({
+              flowId: `deleteSubname-${name}`,
               transactions,
               resumable: true,
               intro: {
                 title: ['intro.multiStepSubnameDelete.title', { ns: 'transactionFlow' }],
-                content: makeIntroItem('GenericWithDescription', {
-                  description: t('intro.multiStepSubnameDelete.description', {
-                    ns: 'transactionFlow',
-                  }),
-                }),
+                content: {
+                  name: 'GenericWithDescription',
+                  data: {
+                    description: t('intro.multiStepSubnameDelete.description', {
+                      ns: 'transactionFlow',
+                    }),
+                  },
+                },
               },
             }),
         })
@@ -278,13 +280,17 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         actions.push({
           ...base,
           onClick: () =>
-            createTransactionFlow(`deleteSubname-${name}`, {
+            startFlow({
+              flowId: `deleteSubname-${name}`,
               transactions: [
-                createTransactionItem('deleteSubname', {
-                  name,
-                  contract: abilities.canDeleteContract!,
-                  method: abilities.canDeleteMethod,
-                }),
+                {
+                  name: 'deleteSubname',
+                  data: {
+                    name,
+                    contract: abilities.canDeleteContract!,
+                    method: abilities.canDeleteMethod,
+                  },
+                },
               ],
             }),
         })
@@ -309,13 +315,17 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         fullMobileWidth: true,
         loading: hasGraphErrorLoading,
         onClick: () => {
-          createTransactionFlow(`reclaim-${name}`, {
+          startFlow({
+            flowId: `reclaim-${name}`,
             transactions: [
-              createTransactionItem('createSubname', {
-                contract: 'nameWrapper',
-                label,
-                parent,
-              }),
+              {
+                name: 'createSubname',
+                data: {
+                  contract: 'nameWrapper',
+                  label,
+                  parent,
+                },
+              },
             ],
           })
         },
@@ -327,16 +337,18 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
   }, [
     address,
     isLoading,
+    ownerData?.owner,
+    ownerData?.registrant,
     getPrimaryNameTransactionFlowItem,
     name,
     isAvailablePrimaryName,
-    abilities.canEdit,
-    abilities.canEditRecords,
-    abilities.canEditResolver,
     abilities.canDelete,
     abilities.canDeleteContract,
     abilities.canDeleteError,
     abilities.canReclaim,
+    abilities.canEdit,
+    abilities.canEditRecords,
+    abilities.canEditResolver,
     abilities.canDeleteRequiresWrap,
     abilities.isPCCBurned,
     abilities.isParentOwner,
@@ -344,14 +356,12 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     t,
     hasGraphError,
     hasGraphErrorLoading,
-    ownerData?.owner,
-    ownerData?.registrant,
+    showVerifyProfileInput,
     showUnknownLabelsInput,
-    createTransactionFlow,
+    startFlow,
     showProfileEditorInput,
     showDeleteEmancipatedSubnameWarningInput,
     showDeleteSubnameNotParentWarningInput,
-    showVerifyProfileInput,
   ])
 
   return {

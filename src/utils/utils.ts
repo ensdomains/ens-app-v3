@@ -5,6 +5,11 @@ import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
 import { GetPriceReturnType } from '@ensdomains/ensjs/public'
 import { DecodedFuses } from '@ensdomains/ensjs/utils'
 
+import {
+  getSupportedChainById,
+  type GetSupportedChainById,
+  type SupportedChain,
+} from '@app/constants/chains'
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
@@ -85,8 +90,23 @@ export const formatDurationOfDates = ({
   return durationStrings.join(', ') + postFix
 }
 
-export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
-  `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`
+export const createEtherscanLink = <
+  const data extends string,
+  const chainId extends SupportedChain['id'],
+  const route extends string | undefined = 'tx',
+>({
+  data,
+  chainId,
+  route = 'tx',
+}: {
+  data: data
+  chainId: chainId
+  route?: route
+}) => {
+  const chain = getSupportedChainById(chainId)
+  const baseUrl = chain.blockExplorers.default.url
+  return `${baseUrl}/${route}/${data}` as `${GetSupportedChainById<chainId>['blockExplorers']['default']['url']}/${route}/${data}`
+}
 
 export const isBrowser = !!(
   typeof window !== 'undefined' &&

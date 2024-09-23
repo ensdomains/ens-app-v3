@@ -1,4 +1,3 @@
-import { Dispatch } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Hash } from 'viem'
@@ -6,8 +5,7 @@ import { Hash } from 'viem'
 import { Button, Dialog, Helper, Typography } from '@ensdomains/thorin'
 
 import TrashSVG from '@app/assets/Trash.svg'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import { TransactionFlowAction } from '@app/transaction-flow/types'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
 
 import { CenteredTypography } from '../../ProfileEditor/components/CenteredTypography'
 import { createDentityAuthUrl } from '../utils/createDentityUrl'
@@ -53,41 +51,35 @@ export const DentityView = ({
   verified,
   resolverAddress,
   onBack,
-  dispatch,
+  setStage,
+  setTransactions,
 }: {
   name: string
   address: Hash
   verified: boolean
   resolverAddress: Hash
   onBack?: () => void
-  dispatch: Dispatch<TransactionFlowAction>
-}) => {
+} & Omit<TransactionDialogPassthrough, 'onDismiss'>) => {
   const { t } = useTranslation('transactionFlow')
 
   // Clear transactions before going back
   const onBackAndCleanup = () => {
-    dispatch({
-      name: 'setTransactions',
-      payload: [],
-    })
+    setTransactions([])
     onBack?.()
   }
 
   const onRemoveVerification = () => {
-    dispatch({
-      name: 'setTransactions',
-      payload: [
-        createTransactionItem('removeVerificationRecord', {
+    setTransactions([
+      {
+        name: 'removeVerificationRecord',
+        data: {
           name,
           verifier: 'dentity',
           resolverAddress,
-        }),
-      ],
-    })
-    dispatch({
-      name: 'setFlowStage',
-      payload: 'transaction',
-    })
+        },
+      },
+    ])
+    setStage('transaction')
   }
 
   return (

@@ -4,9 +4,8 @@ import styled, { css } from 'styled-components'
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
 
-import { createTransactionItem } from '../../transaction/index'
 import { CenterAlignedTypography } from '../RevokePermissions/components/CenterAlignedTypography'
 
 const MessageContainer = styled(CenterAlignedTypography)(({ theme }) => [
@@ -27,7 +26,7 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const DeleteEmancipatedSubnameWarning = ({ data, dispatch, onDismiss }: Props) => {
+const DeleteEmancipatedSubnameWarning = ({ data, onDismiss, setTransactions, setStage }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const { data: wrapperData, isLoading } = useWrapperData({ name: data.name })
@@ -41,17 +40,17 @@ const DeleteEmancipatedSubnameWarning = ({ data, dispatch, onDismiss }: Props) =
   const expiryLabel = expiryStr ? ` (${expiryStr})` : ''
 
   const handleDelete = () => {
-    dispatch({
-      name: 'setTransactions',
-      payload: [
-        createTransactionItem('deleteSubname', {
+    setTransactions([
+      {
+        name: 'deleteSubname',
+        data: {
           name: data.name,
           contract: 'nameWrapper',
           method: 'setRecord',
-        }),
-      ],
-    })
-    dispatch({ name: 'setFlowStage', payload: 'transaction' })
+        },
+      },
+    ])
+    setStage('transaction')
   }
 
   return (

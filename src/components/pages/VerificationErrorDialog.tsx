@@ -2,7 +2,7 @@ import { ComponentProps } from 'react'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
-import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
+import { CenteredTypography } from '@app/transaction/user/input/ProfileEditor/components/CenteredTypography'
 
 export type ButtonProps = ComponentProps<typeof Button>
 

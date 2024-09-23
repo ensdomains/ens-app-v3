@@ -9,7 +9,7 @@ import {
   supportedSocialRecordKeys,
 } from '@app/constants/supportedSocialRecordKeys'
 import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
-import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
+import { VerificationProtocol } from '@app/transaction/user/VerifyProfile/VerifyProfile-flow'
 
 import { contentHashToString } from '../contenthash'
 import {

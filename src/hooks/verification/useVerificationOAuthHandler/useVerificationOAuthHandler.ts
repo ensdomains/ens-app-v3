@@ -6,8 +6,7 @@ import { useAccount } from 'wagmi'
 import type { VerificationErrorDialogProps } from '@app/components/pages/VerificationErrorDialog'
 import { DENTITY_ISS } from '@app/constants/verification'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import type { VerificationProtocol } from '@app/transaction/user/input/VerifyProfile/VerifyProfile-flow'
 
 import { useVerificationOAuth } from '../useVerificationOAuth/useVerificationOAuth'
 import { dentityVerificationHandler } from './utils/dentityHandler'
@@ -26,11 +25,10 @@ export const useVerificationOAuthHandler = (): UseVerificationOAuthHandlerReturn
   const iss = searchParams.get('iss')
   const code = searchParams.get('code')
   const router = useRouterWithHistory()
-  const { createTransactionFlow } = useTransactionFlow()
 
   const { address: userAddress } = useAccount()
 
-  const isReady = !!createTransactionFlow && !!router && !!userAddress && !!iss && !!code
+  const isReady = !!router && !!userAddress && !!iss && !!code
 
   const { data, isLoading, error } = useVerificationOAuth({
     verifier: issToVerificationProtocol(iss),
@@ -54,7 +52,6 @@ export const useVerificationOAuthHandler = (): UseVerificationOAuthHandlerReturn
             onClose,
             onDismiss,
             router,
-            createTransactionFlow,
           }),
         )
         .otherwise(() => undefined)

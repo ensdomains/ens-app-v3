@@ -8,9 +8,7 @@ import EditResolverForm from '@app/components/@molecules/EditResolver/EditResolv
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import useResolverEditor from '@app/hooks/useResolverEditor'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-
-import { createTransactionItem } from '../../transaction'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
 
 type Data = {
   name: string
@@ -20,7 +18,7 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
+export const EditResolver = ({ data, onDismiss, setTransactions, setStage }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const { name } = data
@@ -32,19 +30,19 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
 
   const handleCreateTransaction = useCallback(
     (newResolver: Address) => {
-      dispatch({
-        name: 'setTransactions',
-        payload: [
-          createTransactionItem('updateResolver', {
+      setTransactions([
+        {
+          name: 'updateResolver',
+          data: {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolverAddress: newResolver,
-          }),
-        ],
-      })
-      dispatch({ name: 'setFlowStage', payload: 'transaction' })
+          },
+        },
+      ])
+      setStage('transaction')
     },
-    [dispatch, name, isWrapped],
+    [setTransactions, setStage, name, isWrapped],
   )
 
   const editResolverForm = useResolverEditor({ resolverAddress, callback: handleCreateTransaction })

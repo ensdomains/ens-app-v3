@@ -26,11 +26,11 @@ import { VerificationBadge } from '@app/components/@molecules/VerificationBadge/
 import { useCoinChain } from '@app/hooks/chain/useCoinChain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { getDestination } from '@app/routes'
-import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
+import { VerificationProtocol } from '@app/transaction/user/VerifyProfile/VerifyProfile-flow'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { getSocialData } from '@app/utils/getSocialData'
-import { makeEtherscanLink, shortenAddress } from '@app/utils/utils'
+import { createEtherscanLink, shortenAddress } from '@app/utils/utils'
 import { getVerifierData } from '@app/utils/verification/getVerifierData'
 import { isVerificationProtocol } from '@app/utils/verification/isVerificationProtocol'
 
@@ -247,6 +247,7 @@ export const OwnerProfileButton = ({
 }) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
+  const chainId = useChainId()
 
   const dataType = useMemo(() => {
     if (!addressOrNameOrDate)
@@ -351,7 +352,7 @@ export const OwnerProfileButton = ({
           {
             icon: <UpRightArrowSVG />,
             label: 'View on Etherscan',
-            href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
+            href: createEtherscanLink({ data: addressOrNameOrDate, chainId, route: 'address' }),
           },
         ] as DropdownItem[])
       : []),

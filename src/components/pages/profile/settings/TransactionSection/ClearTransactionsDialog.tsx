@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
-import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
+import { CenteredTypography } from '@app/transaction/user/input/ProfileEditor/components/CenteredTypography'
 
 type Props = { onClear: () => void } & Omit<ComponentProps<typeof Dialog>, 'children' | 'variant'>
 

@@ -1,13 +1,13 @@
 import { RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useChainId } from 'wagmi'
 
 import { Dialog, RadioButton, Typography } from '@ensdomains/thorin'
 
 import { Outlink } from '@app/components/Outlink'
-import { useChainName } from '@app/hooks/chain/useChainName'
 import useResolverEditor from '@app/hooks/useResolverEditor'
-import { makeEtherscanLink } from '@app/utils/utils'
+import { createEtherscanLink } from '@app/utils/utils'
 
 import { DogFood } from '../DogFood'
 import EditResolverWarnings from './EditResolverWarnings'
@@ -48,7 +48,7 @@ type Props = ReturnType<typeof useResolverEditor> & {
 
 const EditResolverForm = ({
   isResolverAddressLatest,
-  lastestResolverAddress,
+  latestResolverAddress,
   resolverChoice,
   handleSubmit,
   register,
@@ -63,7 +63,7 @@ const EditResolverForm = ({
   resolverWarnings,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
-  const chainName = useChainName()
+  const chainId = useChainId()
 
   const latestResolverLabel = (
     <LatestResolverLabel $offset={isResolverAddressLatest}>
@@ -71,7 +71,7 @@ const EditResolverForm = ({
         <LatestResolverTitle>{t('input.editResolver.latestLabel')}</LatestResolverTitle>
         <Outlink
           data-testid="latest-resolver-etherscan"
-          href={makeEtherscanLink(lastestResolverAddress, chainName, 'address')}
+          href={createEtherscanLink({ data: latestResolverAddress, chainId, route: 'address' })}
         >
           {t('input.editResolver.etherscan')}
         </Outlink>

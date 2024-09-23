@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useTransactionManager } from '@app/transaction/transactionManager'
 import { shouldRedirect } from '@app/utils/shouldRedirect'
 
 import { CompleteImport } from './steps/CompleteImport'
@@ -52,7 +52,7 @@ export const DnsClaim = () => {
 
   const key = `importDnsName-${selected.name}`
 
-  const { cleanupFlow } = useTransactionFlow()
+  const cleanupFlow = useTransactionManager((s) => s.cleanupFlow)
 
   useEffect(() => {
     const handleRouteChange = (e: string) => {

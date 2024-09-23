@@ -19,8 +19,6 @@ import { TransactionDialogManager } from '@app/transaction/components/Transactio
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
-import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
-import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 
 import i18n from '../i18n'
 
@@ -151,14 +149,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 <IntercomProvider appId={INTERCOM_ID}>
                   <GlobalStyle />
                   <ThorinGlobalStyles />
-                  <SyncProvider>
-                    <SyncDroppedTransaction>
-                      <Notifications />
-                      <TransactionDialogManager />
-                      <TestnetWarning />
-                      <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                    </SyncDroppedTransaction>
-                  </SyncProvider>
+                  <Notifications />
+                  <TransactionDialogManager />
+                  <TestnetWarning />
+                  <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
                 </IntercomProvider>
               </BreakpointProvider>
             </ThemeProvider>

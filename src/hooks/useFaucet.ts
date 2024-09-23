@@ -47,11 +47,11 @@ const createEndpoint = (chainName: string) =>
 type QueryKey = CreateQueryKey<{}, 'getFaucetAddress', 'standard'>
 
 const getFaucetQueryFn =
-  (config: ConfigWithEns) =>
+  (_config: ConfigWithEns) =>
   async ({ queryKey: [, chainId, address] }: QueryFunctionContext<QueryKey>) => {
     if (!address) throw new Error('address is required')
 
-    const chainName = getChainName(config, { chainId })
+    const chainName = getChainName(chainId)
 
     const result: JsonRpc<{
       eligible: boolean
@@ -98,7 +98,7 @@ const useFaucet = () => {
 
   const { data, error, isLoading } = useQuery({
     ...preparedOptions,
-    enabled: !!address && (chainName === 'goerli' || chainName === 'sepolia'),
+    enabled: !!address && chainName === 'sepolia',
   })
 
   const mutation = useMutation({

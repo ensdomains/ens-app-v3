@@ -3,7 +3,7 @@ import { parseEther } from 'viem'
 
 import { makeCommitment } from '@ensdomains/ensjs/utils'
 
-import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
+import { RegistrationReducerDataItem } from '@app/components/registration/types'
 import { deriveYearlyFee } from '@app/utils/utils'
 
 import { useAccountSafely } from '../account/useAccountSafely'

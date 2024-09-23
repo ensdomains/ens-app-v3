@@ -8,7 +8,7 @@ import { Button, Typography } from '@ensdomains/thorin'
 
 import type { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
 
 import { DisabledButtonWithTooltip } from '../../../../../@molecules/DisabledButtonWithTooltip'
 import { Section, SectionFooter, SectionItem } from './Section'
@@ -86,7 +86,6 @@ export const NameChangePermissions = ({
   canEditPermissions,
 }: Props) => {
   const { t } = useTranslation('profile')
-  const { usePreparedDataInput } = useTransactionFlow()
   const showRevokePermissionsInput = usePreparedDataInput('RevokePermissions')
 
   const isParentLocked = parentState === 'locked' || wrapperData?.fuses?.parent.IS_DOT_ETH

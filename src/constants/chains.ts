@@ -1,5 +1,5 @@
 import { holesky } from 'viem/chains'
-import { goerli, localhost, mainnet, sepolia } from 'wagmi/chains'
+import { localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { addEnsContracts } from '@ensdomains/ensjs'
 
@@ -25,24 +25,41 @@ export const mainnetWithEns = {
     },
   },
 }
-export const goerliWithEns = addEnsContracts(goerli)
 export const sepoliaWithEns = addEnsContracts(sepolia)
 export const holeskyWithEns = addEnsContracts(holesky)
 
 export const chainsWithEns = [
   mainnetWithEns,
-  goerliWithEns,
   sepoliaWithEns,
   holeskyWithEns,
   localhostWithEns,
 ] as const
 
-export const getSupportedChainById = (chainId: number | undefined) =>
-  chainId ? chainsWithEns.find((c) => c.id === chainId) : undefined
+export type GetSupportedChainById<chainId extends SupportedChain['id']> = Extract<
+  SupportedChain,
+  { id: chainId }
+>
+
+export function getSupportedChainById<chainId extends SupportedChain['id']>(
+  chainId: chainId,
+): GetSupportedChainById<chainId>
+export function getSupportedChainById(chainId: number | undefined): SupportedChain | undefined
+export function getSupportedChainById(chainId: number | undefined) {
+  if (!chainId) return undefined
+  return chainsWithEns.find((c) => c.id === chainId)
+}
+
+export type SourceChain =
+  | typeof mainnetWithEns
+  | typeof sepoliaWithEns
+  | typeof holeskyWithEns
+  | typeof localhostWithEns
+
+// this will include L2s later
+export type TargetChain = SourceChain
 
 export type SupportedChain =
   | typeof mainnetWithEns
-  | typeof goerliWithEns
   | typeof sepoliaWithEns
   | typeof holeskyWithEns
   | typeof localhostWithEns

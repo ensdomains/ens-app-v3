@@ -3,14 +3,13 @@ import { useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { Outlink } from '@app/components/Outlink'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
@@ -18,7 +17,7 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content, ContentWarning } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
 import { shouldRedirect } from '@app/utils/shouldRedirect'
-import { formatFullExpiry, makeEtherscanLink } from '@app/utils/utils'
+import { createEtherscanLink, formatFullExpiry } from '@app/utils/utils'
 
 import { ProfileEmptyBanner } from './ProfileEmptyBanner'
 import MoreTab from './tabs/MoreTab/MoreTab'
@@ -224,7 +223,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
 
   const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
 
-  const chainName = useChainName()
+  const chainId = useChainId()
 
   return (
     <>
@@ -269,7 +268,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
           titleExtra: profile?.address ? (
             <Outlink
               fontVariant="bodyBold"
-              href={makeEtherscanLink(profile.address!, chainName, 'address')}
+              href={createEtherscanLink({ data: profile.address!, chainId, route: 'address' })}
             >
               {t('etherscan', { ns: 'common' })}
             </Outlink>

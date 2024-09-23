@@ -17,9 +17,9 @@ import { useNameType } from '@app/hooks/nameType/useNameType'
 import type { GroupedRoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import { getAvailableRoles } from '@app/hooks/ownership/useRoles/utils/getAvailableRoles'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
-import { checkCanSend } from '@app/transaction-flow/input/SendName/utils/checkCanSend'
-import { checkCanSyncManager } from '@app/transaction-flow/input/SyncManager/utils/checkCanSyncManager'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
+import { checkCanSend } from '@app/transaction/user/input/SendName/utils/checkCanSend'
+import { checkCanSyncManager } from '@app/transaction/user/input/SyncManager/utils/checkCanSyncManager'
 
 type Action = Omit<DropdownItemObject, 'onClick' | 'icon'> & {
   primary?: boolean
@@ -42,7 +42,6 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
   const abilities = useAbilities({ name })
   const queryClient = useQueryClient()
 
-  const { usePreparedDataInput } = useTransactionFlow()
   const showSendNameInput = usePreparedDataInput('SendName')
   const showEditRolesInput = usePreparedDataInput('EditRoles')
   const showSyncManagerInput = usePreparedDataInput('SyncManager')

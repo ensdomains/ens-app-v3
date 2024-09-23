@@ -1,4 +1,4 @@
-import { ComponentProps, Dispatch, useMemo, useRef, useState } from 'react'
+import { ComponentProps, useMemo, useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { match } from 'ts-pattern'
@@ -13,9 +13,8 @@ import {
 import { Button, Dialog } from '@ensdomains/thorin'
 
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import type changePermissions from '@app/transaction-flow/transaction/changePermissions'
-import { TransactionDialogPassthrough, TransactionFlowAction } from '@app/transaction-flow/types'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
+import type changePermissions from '@app/transaction/user/transaction/changePermissions'
 import { ExtractTransactionData } from '@app/types'
 import { dateTimeLocalToDate, dateToDateTimeLocal } from '@app/utils/datetime-local'
 
@@ -78,8 +77,6 @@ export type RevokePermissionsDialogContentProps = ComponentProps<typeof Dialog.C
 
 export type Props = {
   data: Data
-  onDismiss: () => void
-  dispatch: Dispatch<TransactionFlowAction>
 } & TransactionDialogPassthrough
 
 export type View =
@@ -178,7 +175,7 @@ const getIntialValueForCurrentIndex = (flow: View[], transactionData?: Transacti
   return flow.length - 1
 }
 
-const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) => {
+const RevokePermissions = ({ data, transactions, onDismiss, setTransactions, setStage }: Props) => {
   const {
     name,
     flowType,
@@ -279,10 +276,10 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
         ? Math.floor(dateTimeLocalToDate(form.expiryCustom).getTime() / 1000)
         : undefined
 
-      dispatch({
-        name: 'setTransactions',
-        payload: [
-          createTransactionItem('changePermissions', {
+      setTransactions([
+        {
+          name: 'changePermissions',
+          data: {
             name,
             contract: 'setChildFuses',
             fuses: {
@@ -290,23 +287,22 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
               child: childNamedFuses,
             },
             expiry: form.expiryType === 'max' ? maxExpiry : customExpiry,
-          }),
-        ],
-      })
+          },
+        },
+      ])
     } else {
-      dispatch({
-        name: 'setTransactions',
-        payload: [
-          createTransactionItem('changePermissions', {
+      setTransactions([
+        {
+          name: 'changePermissions',
+          data: {
             name,
             contract: 'setFuses',
             fuses: childNamedFuses,
-          }),
-        ],
-      })
+          },
+        },
+      ])
     }
-
-    dispatch({ name: 'setFlowStage', payload: 'transaction' })
+    setStage('transaction')
   }
 
   const [isDisabled, setDisabled] = useState(true)

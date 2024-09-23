@@ -6,47 +6,48 @@ import { wagmiConfig } from '@app/utils/query/wagmi'
 
 import { createTransactionListener } from './createTransactionListener'
 import { getTransactionKey } from './key'
-import { type UseTransactionStore } from './transactionStore'
-import type { TransactionList } from './types'
+import type { StoredTransactionList } from './slices/createTransactionSlice'
+import type { UseTransactionManager } from './transactionManager'
 
 const transactionRequestCache = new Map<string, Promise<void>>()
 const blockRequestCache = new Map<Hash, Promise<Block>>()
 
 const listenForTransaction = async (
-  store: UseTransactionStore,
-  transaction: TransactionList<'pending'>[number],
+  store: UseTransactionManager,
+  transaction: StoredTransactionList<'pending'>[number],
 ) => {
   const receipt = await waitForTransaction(wagmiConfig, {
     confirmations: 1,
     hash: transaction.currentHash,
     isSafeTx: transaction.transactionType === 'safe',
-    chainId: transaction.chainId,
+    chainId: transaction.targetChainId,
     onReplaced: (replacedTransaction) => {
       if (replacedTransaction.reason !== 'repriced') return
-      store.getState().transaction.setHash(transaction, replacedTransaction.transaction.hash)
+      store.getState().setTransactionHash(transaction, replacedTransaction.transaction.hash)
     },
   })
 
   const { status, blockHash } = receipt
   let blockRequest = blockRequestCache.get(blockHash)
   if (!blockRequest) {
-    const client = wagmiConfig.getClient({ chainId: transaction.chainId })
+    const client = wagmiConfig.getClient({ chainId: transaction.targetChainId })
     blockRequest = getBlock(client, { blockHash })
     blockRequestCache.set(blockHash, blockRequest)
   }
 
   // TODO(tate): figure out if timestamp is needed
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { timestamp: _ } = await blockRequest
-  store.getState().transaction.setStatus(transaction, status)
+  const { timestamp } = await blockRequest
+  store.getState().setTransactionReceipt(transaction, { timestamp: Number(timestamp) * 1000 })
+  store.getState().setTransactionStatus(transaction, status)
 
   const transactionKey = getTransactionKey(transaction)
   transactionRequestCache.delete(transactionKey)
 }
 
-export const transactionReceiptListener = (store: UseTransactionStore) =>
+export const transactionReceiptListener = (store: UseTransactionManager) =>
   createTransactionListener(
-    (s) => s.transaction.getByStatus('pending'),
+    (s) => s.getTransactionsByStatus('pending'),
     (pendingTransactions) => {
       for (const tx of pendingTransactions) {
         const transactionKey = getTransactionKey(tx)

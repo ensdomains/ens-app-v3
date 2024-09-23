@@ -6,43 +6,62 @@ import { Dialog } from '@ensdomains/thorin'
 
 import { queryClientWithRefetch } from '@app/utils/query/reactQuery'
 
-import { useTransactionStore } from '../transactionStore'
-import type { GenericDataInput, StoredFlow, StoredTransaction, TransactionIntro } from '../types'
-import { DataInputComponents, type DataInputName } from '../user/input'
+import type { StoredFlow } from '../slices/createFlowSlice'
+import type { StoredTransaction } from '../slices/createTransactionSlice'
+import type { AllSlices } from '../slices/types'
+import { useTransactionManager } from '../transactionManager'
+import {
+  transactionInputComponents,
+  type GenericTransactionInput,
+  type TransactionInputName,
+} from '../user/input'
+import type { TransactionIntro } from '../user/intro'
 import { userTransactions } from '../user/transaction'
 import { IntroStageModal } from './stage/intro/IntroStageModal'
 import { TransactionStageModal } from './stage/transaction/TransactionStageModal'
 
 export type TransactionDialogPassthrough = {
   onDismiss: () => void
+  setTransactions: AllSlices['setCurrentFlowTransactions']
+  setStage: AllSlices['setCurrentFlowStage']
   transactions?: StoredTransaction[]
 }
 
-const InputContent = <name extends DataInputName = DataInputName>({
+const InputContent = <name extends TransactionInputName = TransactionInputName>({
   flow,
 }: {
-  flow: StoredFlow & { input: GenericDataInput<name> }
+  flow: StoredFlow & { input: GenericTransactionInput<name> }
 }) => {
-  const transactions = useTransactionStore((s) => s.flow.current.getTransactions())
-  const onDismiss = useTransactionStore((s) => s.flow.current.stop)
-  const Component = DataInputComponents[flow.input.name] as ComponentType<
+  const transactions = useTransactionManager((s) => s.getFlowTransactions(flow.flowId))
+  const onDismiss = useTransactionManager((s) => s.stopCurrentFlow)
+  const setTransactions = useTransactionManager((s) => s.setCurrentFlowTransactions)
+  const setStage = useTransactionManager((s) => s.setCurrentFlowStage)
+  const Component = transactionInputComponents[flow.input.name] as ComponentType<
     { data: any } & TransactionDialogPassthrough
   >
   return (
     <QueryClientProvider client={queryClientWithRefetch}>
-      <Component data={flow.input.data} onDismiss={onDismiss} transactions={transactions} />
+      <Component
+        data={flow.input.data}
+        onDismiss={onDismiss}
+        setTransactions={setTransactions}
+        setStage={setStage}
+        transactions={transactions}
+      />
     </QueryClientProvider>
   )
 }
 
 const IntroContent = ({ flow }: { flow: StoredFlow & { intro: TransactionIntro } }) => {
-  const transactions = useTransactionStore((s) => s.flow.current.getTransactions())
-  const setFlowStage = useTransactionStore((s) => s.flow.current.setStage)
-  const onDismiss = useTransactionStore((s) => s.flow.current.stop)
+  const transactions = useTransactionManager((s) => s.getFlowTransactions(flow.flowId))
+  const setFlowStage = useTransactionManager((s) => s.setCurrentFlowStage)
+  const onDismiss = useTransactionManager((s) => s.stopCurrentFlow)
 
-  const currentTransaction = transactions[flow.currentTransaction]
+  const currentTransaction = transactions[flow.currentTransactionIndex]
   const currentStep =
-    currentTransaction.status === 'success' ? flow.currentTransaction + 1 : flow.currentTransaction
+    currentTransaction.status === 'success'
+      ? flow.currentTransactionIndex + 1
+      : flow.currentTransactionIndex
   const stepStatus =
     currentTransaction.status === 'pending' || currentTransaction.status === 'reverted'
       ? 'inProgress'
@@ -52,7 +71,7 @@ const IntroContent = ({ flow }: { flow: StoredFlow & { intro: TransactionIntro }
     <IntroStageModal
       stepStatus={stepStatus}
       currentStep={currentStep}
-      onSuccess={() => setFlowStage({ stage: 'transaction' })}
+      onSuccess={() => setFlowStage('transaction')}
       {...{
         ...flow.intro,
         onDismiss,
@@ -64,9 +83,9 @@ const IntroContent = ({ flow }: { flow: StoredFlow & { intro: TransactionIntro }
 
 const TransactionContent = ({ flow }: { flow: StoredFlow }) => {
   const { t } = useTranslation()
-  const transactions = useTransactionStore((s) => s.flow.current.getTransactions())
-  const onDismiss = useTransactionStore((s) => s.flow.current.stop)
-  const currentTransaction = transactions[flow.currentTransaction]
+  const transactions = useTransactionManager((s) => s.getFlowTransactions(flow.flowId))
+  const onDismiss = useTransactionManager((s) => s.stopCurrentFlow)
+  const currentTransaction = transactions[flow.currentTransactionIndex]
   const userTransaction = userTransactions[currentTransaction.name]
 
   const displayItems = userTransaction.displayItems(currentTransaction.data as never, t)
@@ -74,7 +93,7 @@ const TransactionContent = ({ flow }: { flow: StoredFlow }) => {
   return (
     <TransactionStageModal
       backToInput={'backToInput' in userTransaction ? !!userTransaction.backToInput : false}
-      currentTransactionIndex={flow.currentTransaction}
+      currentTransactionIndex={flow.currentTransactionIndex}
       displayItems={displayItems}
       onDismiss={onDismiss}
       transaction={currentTransaction}
@@ -87,16 +106,20 @@ const Content = ({ flow }: { flow: StoredFlow | null }) => {
   if (!flow) return null
 
   if (flow.input && flow.currentStage === 'input')
-    return <InputContent flow={flow as StoredFlow & { input: GenericDataInput<DataInputName> }} />
+    return (
+      <InputContent
+        flow={flow as StoredFlow & { input: GenericTransactionInput<TransactionInputName> }}
+      />
+    )
   if (flow.intro && flow.currentStage === 'intro')
     return <IntroContent flow={flow as StoredFlow & { intro: TransactionIntro }} />
   return <TransactionContent flow={flow} />
 }
 
 export const TransactionDialogManager = () => {
-  const { flow, isPrevious } = useTransactionStore((s) => s.flow.current.selectedOrPrevious())
-  const stopFlow = useTransactionStore((s) => s.flow.current.stop)
-  const attemptDismiss = useTransactionStore((s) => s.flow.current.attemptDismiss)
+  const { flow, isPrevious } = useTransactionManager((s) => s.getCurrentOrPreviousFlow())
+  const stopFlow = useTransactionManager((s) => s.stopCurrentFlow)
+  const attemptDismiss = useTransactionManager((s) => s.attemptCurrentFlowDismiss)
 
   return (
     <Dialog

@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi'
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { CalendarSVG, FastForwardSVG } from '@ensdomains/thorin'
 
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
 import { nameLevel } from '@app/utils/name'
 
 import type { useExpiryDetails } from './useExpiryDetails'
@@ -35,7 +35,6 @@ export const useExpiryActions = ({
 }) => {
   const { t } = useTranslation('common')
   const { address } = useAccount()
-  const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
 
   // TODO: remove this when we add support for extending wrapped subnames

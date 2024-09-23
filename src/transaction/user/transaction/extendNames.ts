@@ -5,7 +5,7 @@ import { renewNames } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
-import { calculateValueWithBuffer, formatDurationOfDates } from '../../utils/utils'
+import { calculateValueWithBuffer, formatDurationOfDates } from '../../../utils/utils'
 
 type Data = {
   names: string[]

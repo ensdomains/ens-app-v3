@@ -2,13 +2,16 @@ import { useTranslation } from 'react-i18next'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
-import { intros } from '@app/transaction-flow/intro'
-import { TransactionIntro } from '@app/transaction-flow/types'
+import {
+  AnyTransactionIntro,
+  type TransactionIntro,
+  type TransactionIntroComponentName,
+} from '@app/transaction/user/intro'
 import { TransactionDisplayItemSingle } from '@app/types'
 
 import { DisplayItems } from '../../DisplayItems'
 
-export const IntroStageModal = ({
+export const IntroStageModal = <name extends TransactionIntroComponentName>({
   transactions,
   onSuccess,
   currentStep,
@@ -17,7 +20,7 @@ export const IntroStageModal = ({
   title,
   trailingLabel,
   stepStatus,
-}: TransactionIntro & {
+}: TransactionIntro<name> & {
   transactions:
     | {
         name: string
@@ -53,13 +56,11 @@ export const IntroStageModal = ({
 
   const txCount = transactions.length
 
-  const Content = intros[content.name]
-
   return (
     <>
       <Dialog.Heading title={t(...title)} />
       <Dialog.Content data-testid="transaction-modal-inner">
-        <Content {...content.data} />
+        <AnyTransactionIntro {...content} />
         {txCount > 1 && (
           <DisplayItems
             displayItems={

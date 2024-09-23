@@ -4,17 +4,17 @@ import { Address, BlockTag, Hash, Hex, toHex, TransactionRequest } from 'viem'
 import { call, estimateGas, getTransaction, prepareTransactionRequest } from 'viem/actions'
 import type { SendTransactionVariables } from 'wagmi/query'
 
-import { SupportedChain } from '@app/constants/chains'
-import { useTransactionStore } from '@app/transaction/transactionStore'
+import { SupportedChain, type TargetChain } from '@app/constants/chains'
 import type {
   GenericStoredTransaction,
   StoredTransactionIdentifiers,
   StoredTransactionStatus,
-} from '@app/transaction/types'
+} from '@app/transaction/slices/createTransactionSlice'
+import { useTransactionManager } from '@app/transaction/transactionManager'
 import {
   createTransactionRequest,
-  type TransactionData,
-  type TransactionName,
+  type UserTransactionData,
+  type UserTransactionName,
 } from '@app/transaction/user/transaction'
 import {
   BasicTransactionRequest,
@@ -35,17 +35,19 @@ type AccessListResponse = {
   gasUsed: Hex
 }
 
-type TransactionIdentifiersWithData<name extends TransactionName = TransactionName> =
+type TransactionIdentifiersWithData<name extends UserTransactionName = UserTransactionName> =
   StoredTransactionIdentifiers & {
     name: name
-    data: TransactionData<name>
+    data: UserTransactionData<name>
   }
 
-export const getTransactionIdentifiersWithData = <name extends TransactionName = TransactionName>(
+export const getTransactionIdentifiersWithData = <
+  name extends UserTransactionName = UserTransactionName,
+>(
   transaction: GenericStoredTransaction<name>,
 ): TransactionIdentifiersWithData<name> => {
-  const { chainId, account, transactionId, flowId, name, data } = transaction
-  return { chainId, account, transactionId, flowId, name, data }
+  const { sourceChainId, targetChainId, account, transactionId, flowId, name, data } = transaction
+  return { sourceChainId, targetChainId, account, transactionId, flowId, name, data }
 }
 
 export const transactionMutateHandler =
@@ -57,10 +59,10 @@ export const transactionMutateHandler =
     isSafeApp: CheckIsSafeAppReturnType
   }) =>
   (request: SendTransactionVariables<typeof wagmiConfig, SupportedChain['id']>) => {
-    useTransactionStore.getState().transaction.setSubmission(transactionIdentifiers, {
+    useTransactionManager.getState().setTransactionSubmission(transactionIdentifiers, {
       input: request.data!,
       nonce: request.nonce!,
-      timestamp: Math.floor(Date.now() / 1000),
+      timestamp: Date.now(),
       transactionType: isSafeApp ? 'safe' : 'standard',
     })
   }
@@ -68,10 +70,13 @@ export const transactionMutateHandler =
 export const transactionSuccessHandler =
   (transactionIdentifiers: StoredTransactionIdentifiers) =>
   async (transactionHash: SendTransactionReturnType) => {
-    useTransactionStore.getState().transaction.setHash(transactionIdentifiers, transactionHash)
+    useTransactionManager.getState().setTransactionHash(transactionIdentifiers, transactionHash)
   }
 
-export const registrationGasFeeModifier = (gasLimit: bigint, transactionName: TransactionName) =>
+export const registrationGasFeeModifier = (
+  gasLimit: bigint,
+  transactionName: UserTransactionName,
+) =>
   // this addition is arbitrary, something to do with a gas refund but not 100% sure
   transactionName === 'registerName' ? gasLimit + 5000n : gasLimit
 
@@ -86,7 +91,7 @@ export const calculateGasLimit = async ({
   connectorClient: ConnectorClientWithEns
   isSafeApp: boolean
   txWithZeroGas: BasicTransactionRequest
-  transactionName: TransactionName
+  transactionName: UserTransactionName
 }) => {
   if (isSafeApp) {
     const accessListResponse = await client.request<{
@@ -122,8 +127,8 @@ export const calculateGasLimit = async ({
   }
 }
 
-type CreateTransactionRequestQueryKey = CreateQueryKey<
-  TransactionIdentifiersWithData,
+type CreateTransactionRequestQueryKey<name extends UserTransactionName> = CreateQueryKey<
+  TransactionIdentifiersWithData<name>,
   'createTransactionRequest',
   'standard'
 >
@@ -137,13 +142,13 @@ export const createTransactionRequestQueryFn =
     connectorClient: ConnectorClientWithEns | undefined
     isSafeApp: CheckIsSafeAppReturnType | undefined
   }) =>
-  async ({
-    queryKey: [params, chainId, address],
-  }: QueryFunctionContext<CreateTransactionRequestQueryKey>) => {
-    const client = config.getClient({ chainId })
+  async <name extends UserTransactionName>({
+    queryKey: [params],
+  }: QueryFunctionContext<CreateTransactionRequestQueryKey<name>>) => {
+    const client = config.getClient({ chainId: params.targetChainId })
 
     if (!connectorClient) throw new Error('connectorClient is required')
-    if (connectorClient.account.address !== address)
+    if (connectorClient.account.address !== params.account)
       throw new Error('address does not match connector')
 
     const transactionRequest = await createTransactionRequest({
@@ -167,13 +172,16 @@ export const createTransactionRequestQueryFn =
       transactionName: params.name,
     })
 
+    const prepareParameters =
+      params.name === '__dev_failure' ? [] : (['fees', 'nonce', 'type'] as const)
+
     const request = await prepareTransactionRequest(client, {
       to: transactionRequest.to,
       accessList,
       account: connectorClient.account,
       data: transactionRequest.data,
       gas: gasLimit,
-      parameters: ['fees', 'nonce', 'type'],
+      parameters: prepareParameters,
       ...('value' in transactionRequest ? { value: transactionRequest.value } : {}),
     })
 
@@ -182,12 +190,18 @@ export const createTransactionRequestQueryFn =
       chain: request.chain!,
       to: request.to!,
       gas: request.gas!,
-      chainId,
+      chainId: params.targetChainId,
     }
   }
 
+type GetTransactionErrorParameters = {
+  hash: Hash | null
+  status: StoredTransactionStatus | undefined
+  targetChainId: TargetChain['id']
+}
+
 type GetTransactionErrorQueryKey = CreateQueryKey<
-  { hash: Hash | null; status: StoredTransactionStatus | undefined },
+  GetTransactionErrorParameters,
   'getTransactionError',
   'standard'
 >
@@ -195,10 +209,10 @@ type GetTransactionErrorQueryKey = CreateQueryKey<
 export const getTransactionErrorQueryFn =
   (config: ConfigWithEns) =>
   async ({
-    queryKey: [{ hash, status }, chainId],
+    queryKey: [{ hash, status, targetChainId }],
   }: QueryFunctionContext<GetTransactionErrorQueryKey>) => {
     if (!hash || status !== 'reverted') return null
-    const client = config.getClient({ chainId })
+    const client = config.getClient({ chainId: targetChainId })
     const failedTransactionData = await getTransaction(client, { hash })
     try {
       await call(client, failedTransactionData as CallParameters<ConfigWithEns>)

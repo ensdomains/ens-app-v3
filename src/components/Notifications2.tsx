@@ -1,16 +1,13 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { usePreviousDistinct } from 'react-use'
 import styled, { css } from 'styled-components'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
-import { useTransactionStore } from '@app/transaction-flow/new/TransactionStore'
-import type { LastTransactionChange } from '@app/transaction/types'
+import type { StoredTransaction } from '@app/transaction/slices/createTransactionSlice'
+import { useTransactionManager } from '@app/transaction/transactionManager'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { getChainName } from '@app/utils/getChainName'
-import { wagmiConfig } from '@app/utils/query/wagmi'
-import { makeEtherscanLink } from '@app/utils/utils'
+import { createEtherscanLink } from '@app/utils/utils'
 
 const ButtonContainer = styled.div(
   ({ theme }) => css`
@@ -22,10 +19,7 @@ const ButtonContainer = styled.div(
   `,
 )
 
-type SuccessOrRevertedTransaction = Extract<
-  LastTransactionChange,
-  { status: 'success' | 'reverted' }
->
+type SuccessOrRevertedTransaction = Extract<StoredTransaction, { status: 'success' | 'reverted' }>
 
 const Notification = ({
   transaction,
@@ -38,21 +32,22 @@ const Notification = ({
 }) => {
   const { t } = useTranslation()
   const breakpoints = useBreakpoint()
-  const getResumable = useTransactionStore((s) => s.flow.getResumable)
-  const resumeFlow = useTransactionStore((s) => s.flow.resume)
+  const isFlowResumable = useTransactionManager((s) => s.isFlowResumable)
+  const resumeFlow = useTransactionManager((s) => s.resumeFlow)
 
-  const resumable = transaction && getResumable(transaction.flowKey)
-  const chainName = transaction && getChainName(wagmiConfig, { chainId: transaction.chainId })
+  const resumable = transaction && isFlowResumable(transaction.flowId)
 
   const button = (() => {
     if (!transaction) return null
+
+    const etherscanLink = createEtherscanLink({
+      data: transaction.currentHash,
+      chainId: transaction.targetChainId,
+    })
+
     if (!resumable)
       return (
-        <a
-          target="_blank"
-          href={makeEtherscanLink(transaction.currentHash, chainName!)}
-          rel="noreferrer"
-        >
+        <a target="_blank" href={etherscanLink} rel="noreferrer">
           <Button size="small" colorStyle="accentSecondary">
             {t('transaction.viewEtherscan')}
           </Button>
@@ -61,11 +56,7 @@ const Notification = ({
 
     return (
       <ButtonContainer>
-        <a
-          target="_blank"
-          href={makeEtherscanLink(transaction.currentHash, chainName!)}
-          rel="noreferrer"
-        >
+        <a target="_blank" href={etherscanLink} rel="noreferrer">
           <Button size="small" colorStyle="accentSecondary">
             {t('transaction.viewEtherscan')}
           </Button>
@@ -73,7 +64,7 @@ const Notification = ({
         <Button
           size="small"
           data-testid="notification-continue-button"
-          onClick={() => resumeFlow(transaction.flowKey)}
+          onClick={() => resumeFlow(transaction.flowId)}
         >
           {t('action.continue')}
         </Button>
@@ -85,7 +76,7 @@ const Notification = ({
     ? {
         title: t(`transaction.status.${transaction.status}.notifyTitle`),
         description: t(`transaction.status.${transaction.status}.notifyMessage`, {
-          action: t(`transaction.description.${transaction.action}`),
+          action: t(`transaction.description.${transaction.name}`),
         }),
         children: button,
       }
@@ -104,34 +95,23 @@ const Notification = ({
 }
 
 export const Notifications = () => {
-  const [open, setOpen] = useState(false)
-  const [transactionQueue, setTransactionQueue] = useState<SuccessOrRevertedTransaction[]>([])
-  const lastTransaction = useTransactionStore((s) => {
-    const tx = s.transaction.getLastTransactionChange()
-    if (!tx) return null
-    if (tx.status !== 'success' && tx.status !== 'reverted') return null
-    return tx
-  })
+  const [shouldHide, setShouldHide] = useState(false)
+  const currentNotification = useTransactionManager((s) => s.currentNotification)
+  const dismissNotification = useTransactionManager((s) => s.dismissNotification)
 
-  const prevLastTransaction = usePreviousDistinct(lastTransaction)
-
-  if (lastTransaction && prevLastTransaction !== lastTransaction) {
-    setTransactionQueue((q) => [...q, lastTransaction])
-  }
-
-  const currentTransaction = transactionQueue[0] ?? null
+  const open = currentNotification !== null && !shouldHide
 
   return (
     <Notification
       onClose={() => {
-        setOpen(false)
-        setTimeout(
-          () => setTransactionQueue((prev) => [...prev.filter((x) => x !== currentTransaction)]),
-          300,
-        )
+        setShouldHide(true)
+        setTimeout(() => {
+          dismissNotification()
+          setShouldHide(false)
+        }, 300)
       }}
       open={open}
-      transaction={currentTransaction}
+      transaction={currentNotification}
     />
   )
 }

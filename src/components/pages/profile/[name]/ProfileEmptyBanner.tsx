@@ -7,7 +7,7 @@ import StarsSVG from '@app/assets/Stars.svg'
 import { useProfileActions } from '@app/hooks/pages/profile/[name]/profile/useProfileActions/useProfileActions'
 import { useProfile } from '@app/hooks/useProfile'
 
-import { profileToProfileRecords } from './registration/steps/Profile/profileRecordUtils'
+import { profileToProfileRecords } from '../../register/steps/Profile/profileRecordUtils'
 
 const Container = styled.div(
   ({ theme }) => css`

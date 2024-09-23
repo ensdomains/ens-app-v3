@@ -1,4 +1,4 @@
-import type { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
+import type { VerificationProtocol } from '@app/transaction/user/VerifyProfile/VerifyProfile-flow'
 
 /**
  * General Verification Constants

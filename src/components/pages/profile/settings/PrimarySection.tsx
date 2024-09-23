@@ -8,7 +8,7 @@ import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledBu
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 const SkeletonFiller = styled.div(
@@ -133,7 +133,6 @@ export const PrimarySection = () => {
   const { t } = useTranslation('settings')
 
   const { address } = useAccountSafely()
-  const { usePreparedDataInput } = useTransactionFlow()
   const showSelectPrimaryNameInput = usePreparedDataInput('SelectPrimaryName')
   const showResetPrimaryNameInput = usePreparedDataInput('ResetPrimaryName')
 

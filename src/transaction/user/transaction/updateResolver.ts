@@ -5,7 +5,7 @@ import { setResolver } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
-import { shortenAddress } from '../../utils/utils'
+import { shortenAddress } from '../../../utils/utils'
 
 type Data = {
   name: string

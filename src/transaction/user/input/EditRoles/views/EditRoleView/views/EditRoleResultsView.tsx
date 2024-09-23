@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
 import { RoleRecord, type Role } from '@app/hooks/ownership/useRoles/useRoles'
-import { SearchViewResult } from '@app/transaction-flow/input/SendName/views/SearchView/components/SearchViewResult'
+import { SearchViewResult } from '@app/transaction/user/input/SendName/views/SearchView/components/SearchViewResult'
 
 import type { useSimpleSearch } from '../../../hooks/useSimpleSearch'
 

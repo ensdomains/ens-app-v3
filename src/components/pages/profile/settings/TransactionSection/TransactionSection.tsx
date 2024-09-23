@@ -1,17 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import type { Hash } from 'viem'
 
 import { Button, mq, Spinner, Typography } from '@ensdomains/thorin'
 
 import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
-import { useChainName } from '@app/hooks/chain/useChainName'
-import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
-import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import useThrottledCallback from '@app/hooks/useThrottledCallback'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { makeEtherscanLink } from '@app/utils/utils'
+import type { StoredTransaction } from '@app/transaction/slices/createTransactionSlice'
+import { useTransactionManager } from '@app/transaction/transactionManager'
+import type { UserTransaction } from '@app/transaction/user/transaction'
+import { createEtherscanLink } from '@app/utils/utils'
 
 import { SectionContainer } from '../Section'
 import { ClearTransactionsDialog } from './ClearTransactionsDialog'
@@ -128,37 +128,34 @@ const InfoContainer = styled.div(
   `,
 )
 
-const getTransactionExtraInfo = (action: string, key?: string) => {
-  if (!key) return ''
-  if (action === 'registerName' || action === 'commitName') {
-    return `: ${key.replace(/^(?:register|commit)-(.*)-0x[a-fA-F0-9]{40}$/g, '$1')}`
-  }
-  return ''
+const getTransactionExtraInfo = (transaction: UserTransaction) => {
+  if (transaction.name !== 'registerName' && transaction.name !== 'commitName') return ''
+  return `: ${transaction.data.name}`
 }
 
 export const TransactionSection = () => {
   const { t: tc } = useTranslation()
   const { t } = useTranslation('settings')
 
-  const chainName = useChainName()
-  const transactions = useRecentTransactions()
-  const clearTransactions = useClearRecentTransactions()
   const [viewAmt, setViewAmt] = useState(5)
 
-  const nonRepricedTransactions = transactions.filter((tx) => tx.status !== 'repriced')
+  const transactions = useTransactionManager((s) =>
+    s
+      .getAllTransactions()
+      .filter((tx): tx is Extract<StoredTransaction, { currentHash: Hash }> => !!tx.currentHash),
+  )
+  const visibleTransactions = transactions.slice(0, viewAmt)
 
-  const visibleTransactions = nonRepricedTransactions.slice(0, viewAmt)
+  const canClear = transactions.length > 0
 
-  const canClear = useMemo(() => {
-    return nonRepricedTransactions.length > 0
-  }, [nonRepricedTransactions.length])
-
-  const { getResumable, resumeTransactionFlow } = useTransactionFlow()
+  const clearAll = useTransactionManager((s) => s.clearTransactionsAndFlows)
+  const isTransactionResumable = useTransactionManager((s) => s.isTransactionResumable)
+  const resumeFlow = useTransactionManager((s) => s.resumeFlow)
 
   const ref = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState<string>('auto')
 
-  const hasViewMore = nonRepricedTransactions.length > viewAmt
+  const hasViewMore = transactions.length > viewAmt
 
   const [width, _setWidth] = useState(0)
   const setWidth = useThrottledCallback(_setWidth, 300)
@@ -177,7 +174,7 @@ export const TransactionSection = () => {
   useEffect(() => {
     const _height = ref.current?.getBoundingClientRect().height || 0
     setHeight(_height ? `${_height}px` : 'auto')
-  }, [nonRepricedTransactions.length, hasViewMore, width])
+  }, [transactions.length, hasViewMore, width])
 
   const [showClearDialog, setShowClearDialog] = useState(false)
 
@@ -201,15 +198,16 @@ export const TransactionSection = () => {
       >
         <TransactionSectionContainer $height={height} data-testid="transaction-section-container">
           <TransactionSectionInner ref={ref}>
-            {nonRepricedTransactions.length > 0 ? (
+            {transactions.length > 0 ? (
               <>
-                {visibleTransactions.map(({ hash, status, action, key }, i) => {
-                  const resumable = key && getResumable(key)
+                {visibleTransactions.map((transaction) => {
+                  const { currentHash, status, name, flowId } = transaction
+                  const resumable = isTransactionResumable(transaction)
                   return (
                     <TransactionContainer
                       data-testid={`transaction-${status}`}
                       // eslint-disable-next-line react/no-array-index-key
-                      key={`${hash}-${i}`}
+                      key={`${currentHash}`}
                     >
                       <InfoContainer>
                         {status === 'pending' && (
@@ -217,11 +215,14 @@ export const TransactionSection = () => {
                         )}
                         <TransactionInfoContainer>
                           <Typography weight="bold">{`${tc(
-                            `transaction.description.${action}`,
-                          )}${getTransactionExtraInfo(action, key)}`}</Typography>
+                            `transaction.description.${name}`,
+                          )}${getTransactionExtraInfo(transaction)}`}</Typography>
                           <StyledOutlink
-                            $error={status === 'failed'}
-                            href={makeEtherscanLink(hash, chainName)}
+                            $error={status === 'reverted'}
+                            href={createEtherscanLink({
+                              data: currentHash,
+                              chainId: transaction.targetChainId,
+                            })}
                             target="_blank"
                           >
                             {tc(`transaction.status.${status}.regular`)}
@@ -230,7 +231,7 @@ export const TransactionSection = () => {
                       </InfoContainer>
                       {resumable && (
                         <ContinueContainer>
-                          <Button size="small" onClick={() => resumeTransactionFlow(key)}>
+                          <Button size="small" onClick={() => resumeFlow(flowId, transaction)}>
                             {t('action.continue', { ns: 'common' })}
                           </Button>
                         </ContinueContainer>
@@ -260,7 +261,7 @@ export const TransactionSection = () => {
         onClose={() => setShowClearDialog(false)}
         onDismiss={() => setShowClearDialog(false)}
         onClear={() => {
-          clearTransactions()
+          clearAll()
           setShowClearDialog(false)
           setViewAmt(5)
         }}

@@ -10,25 +10,25 @@ import { Button, Dialog, mq, PlusSVG } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
-import { AddProfileRecordView } from '@app/components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
-import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
-import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
-import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
+import { AddProfileRecordView } from '@app/components/pages/register/steps/Profile/AddProfileRecordView'
+import { CustomProfileRecordInput } from '@app/components/pages/register/steps/Profile/CustomProfileRecordInput'
+import { ProfileRecordInput } from '@app/components/pages/register/steps/Profile/ProfileRecordInput'
+import { ProfileRecordTextarea } from '@app/components/pages/register/steps/Profile/ProfileRecordTextarea'
 import {
   getProfileRecordsDiff,
   isEthAddressRecord,
   profileEditorFormToProfileRecords,
   profileToProfileRecords,
-} from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+} from '@app/components/pages/register/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
-import TransactionLoader from '@app/transaction-flow/TransactionLoader'
-import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
+import TransactionLoader from '@app/transaction/components/TransactionLoader'
+import type { GenericStoredTransaction } from '@app/transaction/slices/createTransactionSlice'
 import { getResolverWrapperAwareness } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
@@ -109,7 +109,13 @@ const SubmitButton = ({
   )
 }
 
-const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Props) => {
+const ProfileEditor = ({
+  data = {},
+  transactions = [],
+  onDismiss,
+  setTransactions,
+  setStage,
+}: Props) => {
   const { t } = useTranslation('register')
 
   const formRef = useRef<HTMLFormElement>(null)
@@ -149,8 +155,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   useEffect(() => {
     const updateProfileRecordsWithTransactionData = () => {
       const transaction = transactions.find(
-        (item: TransactionItem) => item.name === 'updateProfileRecords',
-      ) as TransactionItem<'updateProfileRecords'>
+        (item): item is GenericStoredTransaction<'updateProfileRecords'> =>
+          item.name === 'updateProfileRecords',
+      )
       if (!transaction) return
       const updatedRecords: ProfileRecord[] = transaction?.data?.records || []
       updatedRecords.forEach((record) => {
@@ -188,21 +195,21 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     async (form: ProfileEditorForm) => {
       const records = profileEditorFormToProfileRecords(form)
       if (!profile?.resolverAddress) return
-      dispatch({
-        name: 'setTransactions',
-        payload: [
-          createTransactionItem('updateProfileRecords', {
+      setTransactions([
+        {
+          name: 'updateProfileRecords',
+          data: {
             name,
             resolverAddress: profile.resolverAddress,
             records,
             previousRecords: existingRecords,
             clearRecords: false,
-          }),
-        ],
-      })
-      dispatch({ name: 'setFlowStage', payload: 'transaction' })
+          },
+        },
+      ])
+      setStage('transaction')
     },
-    [profile, name, existingRecords, dispatch],
+    [profile, name, existingRecords, setTransactions, setStage],
   )
 
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
@@ -385,8 +392,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             hasMigratedProfile={resolverStatus.data?.hasMigratedProfile}
             latestResolverAddress={resolverAddress!}
             oldResolverAddress={profile?.resolverAddress!}
-            dispatch={dispatch}
-            onDismiss={() => dispatch({ name: 'stopFlow' })}
+            onDismiss={onDismiss}
+            setTransactions={setTransactions}
+            setStage={setStage}
             onDismissOverlay={() => setView('editor')}
           />
         ))

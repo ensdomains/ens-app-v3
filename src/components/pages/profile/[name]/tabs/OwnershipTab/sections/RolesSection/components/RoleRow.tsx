@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useCopyToClipboard } from 'react-use'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
+import { useChainId } from 'wagmi'
 
 import {
   Button,
@@ -15,13 +16,12 @@ import {
 } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import type { Role } from '@app/hooks/ownership/useRoles/useRoles'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getDestination } from '@app/routes'
 import { emptyAddress } from '@app/utils/constants'
-import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
+import { checkETH2LDFromName, createEtherscanLink } from '@app/utils/utils'
 
 import { useRoleActions } from '../hooks/useRoleActions'
 import { RoleTag } from './RoleTag'
@@ -69,7 +69,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
   const { t } = useTranslation('common')
 
   const primary = usePrimaryName({ address: address!, enabled: !!address })
-  const networkName = useChainName()
+  const chainId = useChainId()
   const [, copy] = useCopyToClipboard()
 
   const etherscanAction = useMemo(() => {
@@ -80,10 +80,11 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
     if (!hasToken) return null
     return {
       label: t('transaction.viewEtherscan', { ns: 'common' }),
-      onClick: () => window.open(makeEtherscanLink(address!, networkName, 'address'), '_blank'),
+      onClick: () =>
+        window.open(createEtherscanLink({ data: address!, chainId, route: 'address' }), '_blank'),
       icon: <OutlinkSVG />,
     }
-  }, [primary.data?.name, isWrapped, t, address, networkName])
+  }, [primary.data?.name, isWrapped, t, address, chainId])
 
   const editRolesAction = actions?.find(({ type, disabled }) => type === 'edit-roles' && !disabled)
 

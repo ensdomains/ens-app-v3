@@ -3,7 +3,7 @@ import { Address } from 'viem'
 
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
 
-import { createTransactionItem, TransactionItem } from '../../transaction'
+import { createUserTransaction, UserTransaction } from '../../transaction'
 
 type MakeTransferNameOrSubnameTransactionItemParams = {
   name: string
@@ -19,7 +19,7 @@ export const makeTransferNameOrSubnameTransactionItem = ({
   sendType,
   isOwnerOrManager,
   abilities,
-}: MakeTransferNameOrSubnameTransactionItemParams): TransactionItem | null => {
+}: MakeTransferNameOrSubnameTransactionItemParams): UserTransaction | null => {
   return (
     match([
       isOwnerOrManager,
@@ -27,7 +27,7 @@ export const makeTransferNameOrSubnameTransactionItem = ({
       abilities?.sendNameFunctionCallDetails?.[sendType]?.contract,
     ])
       .with([true, 'sendOwner', P.not(P.nullish)], ([, , contract]) =>
-        createTransactionItem('transferName', {
+        createUserTransaction('transferName', {
           name,
           newOwnerAddress,
           sendType: 'sendOwner',
@@ -35,7 +35,7 @@ export const makeTransferNameOrSubnameTransactionItem = ({
         }),
       )
       .with([true, 'sendManager', 'registrar'], () =>
-        createTransactionItem('transferName', {
+        createUserTransaction('transferName', {
           name,
           newOwnerAddress,
           sendType: 'sendManager',
@@ -44,7 +44,7 @@ export const makeTransferNameOrSubnameTransactionItem = ({
         }),
       )
       .with([true, 'sendManager', P.union('registry', 'nameWrapper')], ([, , contract]) =>
-        createTransactionItem('transferName', {
+        createUserTransaction('transferName', {
           name,
           newOwnerAddress,
           sendType: 'sendManager',
@@ -53,7 +53,7 @@ export const makeTransferNameOrSubnameTransactionItem = ({
       )
       // A parent name can only transfer the manager
       .with([false, 'sendManager', P.union('registry', 'nameWrapper')], ([, , contract]) =>
-        createTransactionItem('transferSubname', {
+        createUserTransaction('transferSubname', {
           name,
           newOwnerAddress,
           contract,

@@ -10,12 +10,10 @@ import AdvancedEditorTabContent from '@app/components/@molecules/AdvancedEditor/
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
-import { useTransactionStore } from '@app/transaction/transactionStore'
-import type { StoredTransaction } from '@app/transaction/types'
+import type { StoredTransaction } from '@app/transaction/slices/createTransactionSlice'
 import { Profile } from '@app/types'
 
 import type { TransactionDialogPassthrough } from '../../../components/TransactionDialogManager'
-import { createTransactionItem } from '../../transaction'
 
 const NameContainer = styled.div(({ theme }) => [
   css`
@@ -64,15 +62,19 @@ export type Props = {
   onDismiss?: () => void
 } & TransactionDialogPassthrough
 
-const AdvancedEditor = ({ data, transactions = [], onDismiss }: Props) => {
+const AdvancedEditor = ({
+  data,
+  transactions = [],
+  onDismiss,
+  setTransactions,
+  setStage,
+}: Props) => {
   const { t } = useTranslation('profile')
   const name = data?.name || ''
   const transaction = transactions.find(
     (item: StoredTransaction): item is Extract<StoredTransaction, { name: 'updateProfile' }> =>
       item.name === 'updateProfile',
   )
-  const setTransactions = useTransactionStore((s) => s.flow.current.setTransactions)
-  const setStage = useTransactionStore((s) => s.flow.current.setStage)
 
   const { data: fetchedProfile, isLoading: isProfileLoading } = useProfile({ name })
   const [profile, setProfile] = useState<Profile | undefined>(undefined)
@@ -87,13 +89,16 @@ const AdvancedEditor = ({ data, transactions = [], onDismiss }: Props) => {
   const handleCreateTransaction = useCallback(
     (records: RecordOptions) => {
       setTransactions([
-        createTransactionItem('updateProfile', {
-          name,
-          resolverAddress: fetchedProfile!.resolverAddress!,
-          records,
-        }),
+        {
+          name: 'updateProfile',
+          data: {
+            name,
+            resolverAddress: fetchedProfile!.resolverAddress!,
+            records,
+          },
+        },
       ])
-      setStage({ stage: 'transaction' })
+      setStage('transaction')
     },
     [fetchedProfile, setTransactions, setStage, name],
   )

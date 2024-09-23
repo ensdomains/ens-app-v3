@@ -3,8 +3,8 @@ import type { Address } from 'viem'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
-import { createTransactionItem } from '../../transaction'
-import { TransactionDialogPassthrough } from '../../types'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
+
 import { CenteredTypography } from '../ProfileEditor/components/CenteredTypography'
 
 type Data = {
@@ -16,22 +16,17 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const ResetPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) => {
+const ResetPrimaryName = ({ data: { address }, setTransactions, setStage, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const handleSubmit = async () => {
-    dispatch({
-      name: 'setTransactions',
-      payload: [
-        createTransactionItem('resetPrimaryName', {
-          address,
-        }),
-      ],
-    })
-    dispatch({
-      name: 'setFlowStage',
-      payload: 'transaction',
-    })
+    setTransactions([
+      {
+        name: 'resetPrimaryName',
+        data: { address },
+      },
+    ])
+    setStage('transaction')
   }
 
   return (

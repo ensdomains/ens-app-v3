@@ -1,21 +1,25 @@
 import type { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useTransactionStore } from './transactionStore'
-import { DataInputComponents, type DataInputComponent, type DataInputName } from './user/input'
+import { useTransactionManager } from './transactionManager'
+import {
+  transactionInputComponents,
+  type TransactionInputComponent,
+  type TransactionInputName,
+} from './user/input'
 
-type ShowDataInput<name extends DataInputName> = (
+type ShowDataInput<name extends TransactionInputName> = (
   flowId: string,
-  data: ComponentProps<DataInputComponent[name]>['data'],
+  data: ComponentProps<TransactionInputComponent[name]>['data'],
   options?: {
     disableBackgroundClick?: boolean
   },
 ) => void
 
-export const usePreparedDataInput = <name extends DataInputName>(name: name) => {
-  const showInput = useTransactionStore((s) => s.flow.showInput)
+export const usePreparedDataInput = <name extends TransactionInputName>(name: name) => {
+  const showInput = useTransactionManager((s) => s.showFlowInput)
   const { address } = useAccount()
-  if (address) (DataInputComponents[name] as any).render.preload()
+  if (address) (transactionInputComponents[name] as any).render.preload()
 
   const func: ShowDataInput<name> = (flowId, data, options) =>
     showInput(flowId, {

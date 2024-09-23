@@ -8,7 +8,7 @@ import { Button, Dialog, MagnifyingGlassSimpleSVG } from '@ensdomains/thorin'
 
 import { DialogFooterWithBorder } from '@app/components/@molecules/DialogComponentVariants/DialogFooterWithBorder'
 import { DialogInput } from '@app/components/@molecules/DialogComponentVariants/DialogInput'
-import { useSimpleSearch } from '@app/transaction-flow/input/EditRoles/hooks/useSimpleSearch'
+import { useSimpleSearch } from '@app/transaction/user/input/EditRoles/hooks/useSimpleSearch'
 
 import type { SendNameForm } from '../../SendName-flow'
 import { SearchViewErrorView } from './views/SearchViewErrorView'

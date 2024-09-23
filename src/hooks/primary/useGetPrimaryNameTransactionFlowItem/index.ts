@@ -5,9 +5,11 @@ import type { Address } from 'viem'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import type { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useReverseRegistryName } from '@app/hooks/reverseRecord/useReverseRegistryName'
-import { makeIntroItem } from '@app/transaction-flow/intro/index'
-import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
-import { TransactionIntro } from '@app/transaction-flow/types'
+import { createTransactionIntro, type TransactionIntro } from '@app/transaction/user/intro'
+import {
+  createUserTransaction,
+  type GenericUserTransaction,
+} from '@app/transaction/user/transaction'
 import { emptyAddress } from '@app/utils/constants'
 
 import {
@@ -51,9 +53,9 @@ export const useGetPrimaryNameTransactionFlowItem = (
     return (name: string) => {
       let introType: IntroType = 'updateEthAddress'
       const transactions: (
-        | TransactionItem<'setPrimaryName'>
-        | TransactionItem<'updateResolver'>
-        | TransactionItem<'updateEthAddress'>
+        | GenericUserTransaction<'setPrimaryName'>
+        | GenericUserTransaction<'updateResolver'>
+        | GenericUserTransaction<'updateEthAddress'>
       )[] = []
 
       if (
@@ -62,7 +64,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
           name,
         })
       ) {
-        transactions.push(createTransactionItem('setPrimaryName', { name, address }))
+        transactions.push(createUserTransaction('setPrimaryName', { name, address }))
       }
 
       if (
@@ -75,7 +77,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
         introType =
           !resolverAddress || resolverAddress === emptyAddress ? 'noResolver' : 'invalidResolver'
         transactions.unshift(
-          createTransactionItem('updateResolver', {
+          createUserTransaction('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolverAddress: latestResolverAddress,
@@ -92,7 +94,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
         })
       ) {
         transactions.unshift(
-          createTransactionItem('updateEthAddress', {
+          createUserTransaction('updateEthAddress', {
             name,
             address,
             latestResolver: !resolverStatus?.isAuthorized,
@@ -103,13 +105,13 @@ export const useGetPrimaryNameTransactionFlowItem = (
       const introItem =
         transactions.length > 1
           ? {
-              resumeable: true,
+              resumable: true,
               intro: {
                 title: [getIntroTranslation(introType, 'title'), { ns: 'transactionFlow' }],
-                content: makeIntroItem('GenericWithDescription', {
+                content: createTransactionIntro('GenericWithDescription', {
                   description: t(getIntroTranslation(introType, 'description')),
                 }),
-              } as TransactionIntro,
+              } satisfies TransactionIntro,
             }
           : {}
 

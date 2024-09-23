@@ -12,7 +12,7 @@ import type { GetDnsImportDataReturnType } from '@ensdomains/ensjs/dns'
 
 import { addStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import type { UseDnsOwnerError } from '@app/hooks/ensjs/dns/useDnsOwner'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
+import { createUserTransaction } from '@app/transaction/user/transaction'
 
 export type DnsNavigationFunction = (direction: 'prev' | 'next') => void
 
@@ -68,17 +68,17 @@ export const createImportTransactionRequests = ({
   dnsRegistrarAddress: Address
 }) => {
   const createApproveTx = () =>
-    createTransactionItem('approveDnsRegistrar', {
+    createUserTransaction('approveDnsRegistrar', {
       address,
     })
   const createClaimTx = () =>
-    createTransactionItem('claimDnsName', {
+    createUserTransaction('claimDnsName', {
       name,
       dnsImportData,
       address,
     })
   const createImportTx = () =>
-    createTransactionItem('importDnsName', {
+    createUserTransaction('importDnsName', {
       name,
       dnsImportData,
     })

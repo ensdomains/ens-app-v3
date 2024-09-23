@@ -21,9 +21,9 @@ import { useConnectorClient } from 'wagmi'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import {
   createTransactionRequest,
-  TransactionName,
-  TransactionParameters,
-} from '@app/transaction-flow/transaction'
+  type UserTransactionName,
+  type UserTransactionParameters,
+} from '@app/transaction/user/transaction'
 import {
   ConfigWithEns,
   ConnectorClientWithEns,
@@ -77,11 +77,14 @@ type StateOverride<Quantity256 = bigint, Quantity = number> = {
 }
 
 type TransactionItem = {
-  [TName in TransactionName]: Omit<TransactionParameters<TName>, 'client' | 'connectorClient'> & {
-    name: TName
+  [name in UserTransactionName]: Omit<
+    UserTransactionParameters<name>,
+    'client' | 'connectorClient'
+  > & {
+    name: name
     stateOverride?: UserStateOverrides
   }
-}[TransactionName]
+}[UserTransactionName]
 
 type UseEstimateGasWithStateOverrideParameters<
   TransactionItems extends TransactionItem[] | readonly TransactionItem[],
@@ -150,13 +153,13 @@ export const addStateOverride = <
     stateOverride,
   }) as Prettify<TTransactionItem & { stateOverride: TStateOverride }>
 
-const estimateIndividualGas = async <TName extends TransactionName>({
+const estimateIndividualGas = async <name extends UserTransactionName>({
   data,
   name,
   stateOverride,
   connectorClient,
   client,
-}: { name: TName; stateOverride?: UserStateOverrides } & TransactionParameters<TName>) => {
+}: { name: name; stateOverride?: UserStateOverrides } & UserTransactionParameters<name>) => {
   const generatedRequest = await createTransactionRequest({
     client,
     connectorClient,

@@ -100,7 +100,7 @@ vi.mock('@app/utils/BreakpointProvider')
 
 vi.mock('@app/transaction-flow/TransactionFlowProvider')
 
-vi.mock('@app/transaction-flow/input/ProfileEditor/components/ProfileBlurb', () => ({
+vi.mock('@app/transaction/user/ProfileEditor/components/ProfileBlurb', () => ({
   ProfileBlurb: () => <div>Profile Blurb</div>,
 }))
 

@@ -21,7 +21,8 @@ import { usePrefetchBlockTimestamp } from '@app/hooks/chain/useBlockTimestamp'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useTransactionManager } from '@app/transaction/transactionManager'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -120,7 +121,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNamesLoading])
 
-  const { usePreparedDataInput, getTransactionFlowStage } = useTransactionFlow()
+  const getTransactionFlowStage = useTransactionManager((s) => s.getFlowStageOrNull)
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
 
   const [isIntersecting, setIsIntersecting] = useState(false)
@@ -142,7 +143,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
 
   const stage = getTransactionFlowStage(`extend-names-${selectedNames.join('-')}`)
   useEffect(() => {
-    if (stage === 'completed') {
+    if (stage === 'complete') {
       setSelectedNames([])
       setMode('view')
     }

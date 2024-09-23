@@ -16,9 +16,8 @@ import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { GetDnsOwnerQueryKey, UseDnsOwnerError } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useOwners } from '@app/hooks/useOwners'
-import { makeIntroItem } from '@app/transaction-flow/intro'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useTransactionManager } from '@app/transaction/transactionManager'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
 import { OwnerItem } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
 
@@ -206,8 +205,8 @@ const DNSOwnerSection = ({
 }) => {
   const { address } = useAccount()
   const { t } = useTranslation('profile')
-  const { createTransactionFlow } = useTransactionFlow()
   const queryClient = useQueryClient()
+  const startFlow = useTransactionManager((s) => s.startFlow)
 
   const canShow = useMemo(() => {
     let hasMatchingAddress = false
@@ -234,17 +233,27 @@ const DNSOwnerSection = ({
   const handleSyncManager = () => {
     const currentManager = owners.find((owner) => owner.label === 'name.manager')
 
-    createTransactionFlow(`sync-manager-${name}-${address}`, {
+    startFlow({
+      flowId: `sync-manager-${name}-${address}`,
       intro: {
         title: ['tabs.more.ownership.dnsOwnerWarning.syncManager', { ns: 'profile' }],
-        content: makeIntroItem('SyncManager', { isWrapped, manager: currentManager!.address }),
+        content: {
+          name: 'SyncManager',
+          data: {
+            isWrapped,
+            manager: currentManager!.address,
+          },
+        },
       },
       transactions: [
-        createTransactionItem('syncManager', {
-          address: address!,
-          name,
-          dnsImportData: dnsImportData!,
-        }),
+        {
+          name: 'syncManager',
+          data: {
+            address: address!,
+            name,
+            dnsImportData: dnsImportData!,
+          },
+        },
       ],
     })
   }
@@ -301,7 +310,6 @@ const Ownership = ({
 }) => {
   const { t } = useTranslation('profile')
 
-  const { usePreparedDataInput } = useTransactionFlow()
   const showSendNameInput = usePreparedDataInput('SendName')
   const handleSend = () => {
     showSendNameInput(`send-name-${name}`, {

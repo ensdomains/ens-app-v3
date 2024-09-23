@@ -8,7 +8,7 @@ import { Button, Typography } from '@ensdomains/thorin'
 import { StyledLink } from '@app/components/@atoms/StyledLink'
 import type { useFusesSetDates } from '@app/hooks/fuses/useFusesSetDates'
 import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
 
 import { Section, SectionFooter, SectionItem, SectionList } from './Section'
 
@@ -50,7 +50,6 @@ export const OwnershipPermissions = ({
 }: Props) => {
   const { t } = useTranslation('profile')
 
-  const { usePreparedDataInput } = useTransactionFlow()
   const showRevokePermissionsInput = usePreparedDataInput('RevokePermissions')
 
   const nameParts = name.split('.')

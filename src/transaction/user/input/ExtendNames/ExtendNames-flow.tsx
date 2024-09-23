@@ -10,6 +10,8 @@ import { Avatar, Button, CurrencyToggle, Dialog, Helper, Typography } from '@ens
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { makeCurrencyDisplay } from '@app/components/@atoms/CurrencyText/CurrencyText'
+import { ShortExpiry } from '@app/components/@atoms/ExpiryComponents/ExpiryComponents'
+import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
@@ -20,16 +22,14 @@ import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useZorb } from '@app/hooks/useZorb'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
 import { deriveYearlyFee, formatDurationOfDates } from '@app/utils/utils'
 
-import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
-import GasDisplay from '../../../components/@atoms/GasDisplay'
+import { createUserTransaction } from '../../transaction'
 
 type View = 'name-list' | 'no-ownership-warning' | 'registration'
 
@@ -170,7 +170,7 @@ export type Props = {
 
 const minSeconds = ONE_DAY
 
-const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
+const ExtendNames = ({ data: { names, isSelf }, onDismiss, setTransactions, setStage }: Props) => {
   const { t } = useTranslation(['transactionFlow', 'common'])
   const { data: ethPrice } = useEthPrice()
 
@@ -219,7 +219,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const extendedDate = expiryDate ? new Date(expiryDate.getTime() + seconds * 1000) : undefined
 
   const transactions = [
-    createTransactionItem('extendNames', {
+    createUserTransaction('extendNames', {
       names,
       duration: seconds,
       startDateTimestamp: expiryDate?.getTime(),
@@ -302,8 +302,9 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
       disabled: !!estimateGasLimitError,
       onClick: () => {
         if (!totalRentFee) return
-        dispatch({ name: 'setTransactions', payload: transactions })
-        dispatch({ name: 'setFlowStage', payload: 'transaction' })
+        console.log('setting stage + transactions')
+        setTransactions(transactions)
+        setStage('transaction')
       },
       children: t('action.next', { ns: 'common' }),
     }))

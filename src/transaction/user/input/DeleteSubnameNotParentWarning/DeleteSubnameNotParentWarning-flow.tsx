@@ -6,9 +6,8 @@ import { Button, Dialog } from '@ensdomains/thorin'
 import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useOwners } from '@app/hooks/useOwners'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import TransactionLoader from '@app/transaction-flow/TransactionLoader'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
+import TransactionLoader from '@app/transaction/components/TransactionLoader'
 import { parentName } from '@app/utils/name'
 
 import { CenterAlignedTypography } from '../RevokePermissions/components/CenterAlignedTypography'
@@ -22,7 +21,7 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const DeleteSubnameNotParentWarning = ({ data, dispatch, onDismiss }: Props) => {
+const DeleteSubnameNotParentWarning = ({ data, onDismiss, setTransactions, setStage }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const {
@@ -46,17 +45,17 @@ const DeleteSubnameNotParentWarning = ({ data, dispatch, onDismiss }: Props) => 
   const isLoading = parentBasicLoading || parentPrimaryLoading
 
   const handleDelete = () => {
-    dispatch({
-      name: 'setTransactions',
-      payload: [
-        createTransactionItem('deleteSubname', {
+    setTransactions([
+      {
+        name: 'deleteSubname',
+        data: {
           name: data.name,
           contract: data.contract,
           method: 'setRecord',
-        }),
-      ],
-    })
-    dispatch({ name: 'setFlowStage', payload: 'transaction' })
+        },
+      },
+    ])
+    setStage('transaction')
   }
 
   if (isLoading) return <TransactionLoader />

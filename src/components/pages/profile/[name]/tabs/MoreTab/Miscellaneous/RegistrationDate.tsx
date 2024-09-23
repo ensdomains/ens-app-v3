@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next'
+import { useChainId } from 'wagmi'
 
 import { OutlinkSVG, Typography } from '@ensdomains/thorin'
 
-import { useChainName } from '@app/hooks/chain/useChainName'
 import type useRegistrationDate from '@app/hooks/useRegistrationData'
-import { formatDateTime, formatExpiry, makeEtherscanLink } from '@app/utils/utils'
+import { createEtherscanLink, formatDateTime, formatExpiry } from '@app/utils/utils'
 
 import { DateLayout } from './components/DateLayout'
 
@@ -14,7 +14,7 @@ export const RegistrationDate = ({
   registrationData: ReturnType<typeof useRegistrationDate>['data']
 }) => {
   const { t } = useTranslation('common')
-  const chainName = useChainName()
+  const chainId = useChainId()
   if (!registrationData) return null
   return (
     <DateLayout>
@@ -23,7 +23,7 @@ export const RegistrationDate = ({
       <Typography>{formatDateTime(registrationData.registrationDate)}</Typography>
       <a
         target="_blank"
-        href={makeEtherscanLink(registrationData.transactionHash, chainName)}
+        href={createEtherscanLink({ data: registrationData.transactionHash, chainId })}
         rel="noreferrer"
         data-testid="etherscan-registration-link"
       >

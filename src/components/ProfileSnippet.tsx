@@ -9,8 +9,8 @@ import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
 
-import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
 
 const Container = styled.div<{ $banner?: string }>(
@@ -189,7 +189,6 @@ export const ProfileSnippet = ({
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
-  const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const abilities = useAbilities({ name })
 

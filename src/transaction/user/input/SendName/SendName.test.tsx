@@ -66,7 +66,7 @@ vi.mock('@app/hooks/abilities/useAbilities', () => ({
 }))
 
 let searchData: any[] = []
-vi.mock('@app/transaction-flow/input/EditRoles/hooks/useSimpleSearch.ts', () => ({
+vi.mock('@app/transaction/user/EditRoles/hooks/useSimpleSearch.ts', () => ({
   useSimpleSearch: () => ({
     mutate: (query: string) => {
       searchData = [{ name: `${query}.eth`, address: `0x${query}` }]

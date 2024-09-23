@@ -1,3 +1,7 @@
+import type { TargetChain } from '@app/constants/chains'
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+import __dev_failure from './transaction/__dev_failure'
 import approveDnsRegistrar from './transaction/approveDnsRegistrar'
 import approveNameWrapper from './transaction/approveNameWrapper'
 import burnFuses from './transaction/burnFuses'
@@ -60,42 +64,46 @@ export const userTransactions = {
   wrapName,
   updateVerificationRecord,
   removeVerificationRecord,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  __dev_failure,
 }
 
 export type UserTransactionObject = typeof userTransactions
-export type TransactionName = keyof UserTransactionObject
+export type UserTransactionName = keyof UserTransactionObject
 
-export type TransactionParameters<name extends TransactionName> = Parameters<
+export type UserTransactionParameters<name extends UserTransactionName> = Parameters<
   UserTransactionObject[name]['transaction']
 >[0]
 
-export type TransactionData<name extends TransactionName> = TransactionParameters<name>['data']
+export type UserTransactionData<name extends UserTransactionName> =
+  UserTransactionParameters<name>['data']
 
-export type TransactionReturnType<name extends TransactionName> = ReturnType<
+export type UserTransactionReturnType<name extends UserTransactionName> = ReturnType<
   UserTransactionObject[name]['transaction']
 >
 
-export const createTransactionItem = <name extends TransactionName>(
+export const createUserTransaction = <name extends UserTransactionName>(
   name: name,
-  data: TransactionData<name>,
+  data: UserTransactionData<name>,
 ) => ({
   name,
   data,
 })
 
-export const createTransactionRequest = <name extends TransactionName>({
+export const createTransactionRequest = <name extends UserTransactionName>({
   name,
   ...rest
-}: { name: name } & TransactionParameters<name>): TransactionReturnType<name> => {
+}: { name: name } & UserTransactionParameters<name>): UserTransactionReturnType<name> => {
   // i think this has to be any :(
-  return userTransactions[name].transaction({ ...rest } as any) as TransactionReturnType<name>
+  return userTransactions[name].transaction({ ...rest } as any) as UserTransactionReturnType<name>
 }
 
-export type TransactionItem<name extends TransactionName = TransactionName> = {
+export type GenericUserTransaction<name extends UserTransactionName = UserTransactionName> = {
   name: name
-  data: TransactionData<name>
+  data: UserTransactionData<name>
+  targetChainId?: TargetChain['id']
 }
 
-export type TransactionItemUnion = {
-  [name in TransactionName]: TransactionItem<name>
-}[TransactionName]
+export type UserTransaction = {
+  [name in UserTransactionName]: GenericUserTransaction<name>
+}[UserTransactionName]

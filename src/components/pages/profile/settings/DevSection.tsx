@@ -6,16 +6,14 @@ import {
   mine,
   setAutomine,
 } from 'viem/actions'
-import { Config, useClient, useSendTransaction } from 'wagmi'
+import { Config, useClient } from 'wagmi'
 
 import { Button } from '@ensdomains/thorin'
 
 import { localhostWithEns } from '@app/constants/chains'
-import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { DetailedSwitch } from '@app/transaction-flow/input/ProfileEditor/components/DetailedSwitch'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useTransactionManager } from '@app/transaction/transactionManager'
+import { DetailedSwitch } from '@app/transaction/user/input/ProfileEditor/components/DetailedSwitch'
 
 import { SectionContainer } from './Section'
 
@@ -42,39 +40,19 @@ export const DevSection = () => {
   const client = useClient<TestConfig>()
   const testClient = useMemo(() => ({ ...client, mode: 'anvil' }) as const, [client])
 
-  const addTransaction = useAddRecentTransaction()
-  const { createTransactionFlow } = useTransactionFlow()
-  const { sendTransactionAsync } = useSendTransaction()
+  const startFlow = useTransactionManager((s) => s.startFlow)
 
-  const addSuccess = async () => {
-    const hash = await sendTransactionAsync({
-      to: '0x0000000000000000000000000000000000000000',
-      value: 0n,
-      gas: 21000n,
-    })
-    addTransaction({
-      hash,
-      action: 'test',
-      searchRetries: 0,
+  const sendName = () => {
+    startFlow({
+      flowId: 'dev-sendName',
+      transactions: [{ name: 'testSendName', data: {} }],
     })
   }
 
-  const sendName = async () => {
-    createTransactionFlow('dev-sendName', {
-      transactions: [createTransactionItem('testSendName', {})],
-    })
-  }
-
-  const addFailure = async () => {
-    const hash = await sendTransactionAsync({
-      to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
-      data: '0x1231237123423423',
-      gas: 1000000n,
-    })
-    addTransaction({
-      hash,
-      action: 'test',
-      searchRetries: 0,
+  const addFailure = () => {
+    startFlow({
+      flowId: 'dev-addFailure',
+      transactions: [{ name: '__dev_failure', data: {} }],
     })
   }
 
@@ -98,9 +76,8 @@ export const DevSection = () => {
 
   return (
     <SectionContainer title="Developer">
-      {process.env.NEXT_PUBLIC_PROVIDER && (
+      {true && (
         <>
-          <Button onClick={() => addSuccess()}>Add Successful Transaction</Button>
           <Button onClick={() => sendName()}>Test Send Name</Button>
           <Button onClick={() => addFailure()}>Add Failing Transaction</Button>
           <Button onClick={() => startAutoMine()}>Start Automine</Button>

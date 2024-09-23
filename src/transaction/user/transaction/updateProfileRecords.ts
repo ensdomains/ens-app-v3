@@ -7,7 +7,7 @@ import {
   getProfileRecordsDiff,
   profileRecordsToRecordOptions,
   profileRecordsToRecordOptionsWithDeleteAbiArray,
-} from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+} from '@app/components/pages/register/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { recordOptionsToToupleList } from '@app/utils/records'

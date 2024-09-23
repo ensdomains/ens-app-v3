@@ -5,7 +5,7 @@ import {
   isEthAddressRecord,
   profileEditorFormToProfileRecords,
   profileRecordsToProfileEditorForm,
-} from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+} from '@app/components/pages/register/steps/Profile/profileRecordUtils'
 import { ProfileRecord, ProfileRecordGroup } from '@app/constants/profileRecordOptions'
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { AvatarEditorType } from '@app/types'

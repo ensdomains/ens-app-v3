@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { match, P } from 'ts-pattern'
+import { useChainId } from 'wagmi'
 
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { useNameType } from '@app/hooks/nameType/useNameType'
 import { useBasicName } from '@app/hooks/useBasicName'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
@@ -11,7 +11,7 @@ import { GRACE_PERIOD } from '@app/utils/constants'
 import { safeDateObj } from '@app/utils/date'
 import { parentName } from '@app/utils/name'
 import { getSupportLink } from '@app/utils/supportLinks'
-import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
+import { checkETH2LDFromName, createEtherscanLink } from '@app/utils/utils'
 
 type Input = {
   name: string
@@ -42,7 +42,7 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
     name: parentName(name),
     enabled: enabled && !!nameType.data && nameType.data!.includes('subname'),
   })
-  const chainName = useChainName()
+  const chainId = useChainId()
   const registrationData = useRegistrationData({ name, enabled: enabled && isETH2LD })
 
   const isLoading =
@@ -89,7 +89,10 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
                   {
                     type: 'registration',
                     date: registrationData?.data?.registrationDate,
-                    link: makeEtherscanLink(registrationData?.data?.transactionHash!, chainName),
+                    link: createEtherscanLink({
+                      data: registrationData?.data?.transactionHash!,
+                      chainId,
+                    }),
                   },
                 ]
               : []),
@@ -160,7 +163,7 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
       parentData.wrapperData,
       parentData.expiryDate,
       registrationData.data,
-      chainName,
+      chainId,
     ],
   )
 

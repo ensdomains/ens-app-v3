@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Button, Spinner } from '@ensdomains/thorin'
 
-import type { StoredTransactionStatus } from '@app/transaction/types'
+import type { StoredTransactionStatus } from '@app/transaction/slices/createTransactionSlice'
 
 type TransactionModalActionButtonProps = {
   status: StoredTransactionStatus

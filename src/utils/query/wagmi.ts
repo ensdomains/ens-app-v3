@@ -1,11 +1,10 @@
 import { createClient, type FallbackTransport, type HttpTransport, type Transport } from 'viem'
 import { createConfig, createStorage, fallback, http } from 'wagmi'
-import { goerli, holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
+import { holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { ccipRequest } from '@ensdomains/ensjs/utils'
 
 import {
-  goerliWithEns,
   holeskyWithEns,
   localhostWithEns,
   mainnetWithEns,
@@ -83,7 +82,6 @@ const localStorageWithInvertMiddleware = (): Storage | undefined => {
 const chains = [
   ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
   mainnetWithEns,
-  goerliWithEns,
   sepoliaWithEns,
   holeskyWithEns,
 ] as const
@@ -99,7 +97,6 @@ const transports = {
       })),
   [mainnet.id]: initialiseTransports('mainnet', [infuraUrl, cloudflareUrl, tenderlyUrl]),
   [sepolia.id]: initialiseTransports('sepolia', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-  [goerli.id]: initialiseTransports('goerli', [infuraUrl, cloudflareUrl, tenderlyUrl]),
   [holesky.id]: initialiseTransports('holesky', [tenderlyUrl]),
 } as const
 

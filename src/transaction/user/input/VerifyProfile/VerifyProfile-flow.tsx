@@ -5,7 +5,7 @@ import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { useOwner } from '@app/hooks/ensjs/public/useOwner'
 import { useProfile } from '@app/hooks/useProfile'
 import { useVerifiedRecords } from '@app/hooks/verification/useVerifiedRecords/useVerifiedRecords'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
 
 import { SearchViewLoadingView } from '../SendName/views/SearchView/views/SearchViewLoadingView'
 import { DentityView } from './views/DentityView'
@@ -23,7 +23,7 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const VerifyProfile = ({ data: { name }, dispatch, onDismiss }: Props) => {
+const VerifyProfile = ({ data: { name }, onDismiss, setStage, setTransactions }: Props) => {
   const [protocol, setProtocol] = useState<VerificationProtocol | null>(null)
   const { data: profile, isLoading: isProfileLoading } = useProfile({ name })
 
@@ -59,7 +59,8 @@ const VerifyProfile = ({ data: { name }, dispatch, onDismiss }: Props) => {
               address={_address!}
               resolverAddress={_resolverAddress!}
               verified={!!verificationData?.some(({ issuer }) => issuer === 'dentity')}
-              dispatch={dispatch}
+              setStage={setStage}
+              setTransactions={setTransactions}
               onBack={() => setProtocol(null)}
             />
           ),

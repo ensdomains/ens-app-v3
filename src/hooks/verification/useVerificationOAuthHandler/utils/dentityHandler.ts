@@ -7,7 +7,6 @@ import {
 } from '@app/components/pages/VerificationErrorDialog'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getDestination } from '@app/routes'
-import { CreateTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { UseVerificationOAuthReturnType } from '../../useVerificationOAuth/useVerificationOAuth'
 import { createVerificationTransactionFlow } from './createVerificationTransactionFlow'
@@ -37,13 +36,11 @@ export const dentityVerificationHandler =
     onClose,
     onDismiss,
     router,
-    createTransactionFlow,
   }: {
     userAddress?: Hash
     onClose: () => void
     onDismiss: () => void
     router: ReturnType<typeof useRouterWithHistory>
-    createTransactionFlow: CreateTransactionFlow
   }) =>
   (json: UseVerificationOAuthReturnType): VerificationErrorDialogProps => {
     return match(json)
@@ -70,7 +67,6 @@ export const dentityVerificationHandler =
             resolverAddress,
             verifier,
             verifiedPresentationUri,
-            createTransactionFlow,
           })
           return undefined
         },

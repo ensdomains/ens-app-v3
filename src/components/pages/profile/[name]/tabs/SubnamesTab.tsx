@@ -16,7 +16,7 @@ import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useSubnames } from '@app/hooks/ensjs/subgraph/useSubnames'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
 import { emptyAddress } from '@app/utils/constants'
 import { getSupportLink } from '@app/utils/supportLinks'
 
@@ -113,7 +113,6 @@ export const SubnamesTab = ({
 }) => {
   const { t } = useTranslation('profile')
   const { address } = useAccount()
-  const { usePreparedDataInput } = useTransactionFlow()
   const showCreateSubnameInput = usePreparedDataInput('CreateSubname')
 
   const [sortType, setSortType] = useQueryParameterState<

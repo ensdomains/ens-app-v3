@@ -5,26 +5,27 @@ import { useForm } from 'react-hook-form'
 import { saveName } from '@ensdomains/ensjs/utils'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
+import type { FlowInitialiserData } from '@app/transaction/slices/createFlowSlice'
+import { useTransactionManager } from '@app/transaction/transactionManager'
 
-import { TransactionDialogPassthrough, TransactionFlowItem } from '../../types'
+import type { TransactionIntro } from '../../intro'
+import type { UserTransaction } from '../../transaction'
 import { FormData, nameToFormData, UnknownLabelsForm } from './views/UnknownLabelsForm'
 
 type Data = {
   name: string
-  key: string
-  transactionFlowItem: TransactionFlowItem
+  flow: Pick<FlowInitialiserData, 'resumable' | 'flowId' | 'intro' | 'transactions'>
 }
 
 export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const UnknownLabels = ({
-  data: { name, key, transactionFlowItem },
-  dispatch,
-  onDismiss,
-}: Props) => {
+const UnknownLabels = ({ data: { name, flow }, onDismiss }: Props) => {
   const queryClient = useQueryClient()
+  const getTransactions = useTransactionManager((s) => s.getFlowTransactions)
+  const startFlow = useTransactionManager((s) => s.startFlow)
 
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -51,34 +52,37 @@ const UnknownLabels = ({
 
     saveName(newName)
 
-    const { transactions, intro } = transactionFlowItem
+    const { flowId, intro } = flow
+    const transactions = getTransactions(flow.flowId)
 
-    const newKey = key.replace(name, newName)
+    const newFlowId = flowId.replace(name, newName)
 
     const newTransactions = transactions.map((tx) =>
       typeof tx.data === 'object' && 'name' in tx.data && tx.data.name
         ? { ...tx, data: { ...tx.data, name: newName } }
         : tx,
-    )
+    ) as UserTransaction[]
 
-    const newIntro =
-      intro && typeof intro.content.data === 'object' && intro.content.data.name
+    const newIntro = (
+      intro &&
+      typeof intro.content.data === 'object' &&
+      intro.content.data &&
+      'name' in intro.content.data &&
+      intro.content.data?.name
         ? {
             ...intro,
             content: { ...intro.content, data: { ...intro.content.data, name: newName } },
           }
         : intro
+    ) as TransactionIntro
 
     queryClient.resetQueries({ queryKey: validateKey, exact: true })
 
-    dispatch({
-      name: 'startFlow',
-      key: newKey,
-      payload: {
-        ...transactionFlowItem,
-        transactions: newTransactions,
-        intro: newIntro as any,
-      },
+    startFlow({
+      ...flow,
+      flowId: newFlowId,
+      transactions: newTransactions,
+      intro: newIntro,
     })
   }
 

@@ -3,14 +3,14 @@ import { Address } from 'viem'
 
 import { ChildFuseReferenceType, RegistrationParameters } from '@ensdomains/ensjs/utils'
 
-import { profileRecordsToRecordOptions } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
-import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
+import { profileRecordsToRecordOptions } from '@app/components/pages/register/steps/Profile/profileRecordUtils'
+import type { StoredRegistrationFlow } from '@app/transaction/slices/createRegistrationFlowSlice'
 
 type Props = {
   name: string
   owner: Address
   registrationData: Pick<
-    RegistrationReducerDataItem,
+    StoredRegistrationFlow,
     | 'seconds'
     | 'resolverAddress'
     | 'secret'
@@ -21,28 +21,33 @@ type Props = {
   >
 }
 
+export const getRegistrationParams = ({
+  name,
+  owner,
+  registrationData,
+}: Props): RegistrationParameters => {
+  return {
+    name,
+    owner,
+    duration: registrationData.seconds,
+    resolverAddress: registrationData.resolverAddress ?? undefined,
+    secret: registrationData.secret,
+    records: profileRecordsToRecordOptions(registrationData.records, registrationData.clearRecords),
+    fuses: {
+      named: registrationData.permissions
+        ? (Object.keys(registrationData.permissions).filter(
+            (key) => !!registrationData.permissions?.[key as ChildFuseReferenceType['Key']],
+          ) as ChildFuseReferenceType['Key'][])
+        : [],
+      unnamed: [],
+    },
+    reverseRecord: registrationData.reverseRecord,
+  }
+}
+
 const useRegistrationParams = ({ name, owner, registrationData }: Props) => {
   const registrationParams: RegistrationParameters = useMemo(
-    () => ({
-      name,
-      owner,
-      duration: registrationData.seconds,
-      resolverAddress: registrationData.resolverAddress,
-      secret: registrationData.secret,
-      records: profileRecordsToRecordOptions(
-        registrationData.records,
-        registrationData.clearRecords,
-      ),
-      fuses: {
-        named: registrationData.permissions
-          ? (Object.keys(registrationData.permissions).filter(
-              (key) => !!registrationData.permissions?.[key as ChildFuseReferenceType['Key']],
-            ) as ChildFuseReferenceType['Key'][])
-          : [],
-        unnamed: [],
-      },
-      reverseRecord: registrationData.reverseRecord,
-    }),
+    () => getRegistrationParams({ name, owner, registrationData }),
     [owner, name, registrationData],
   )
 

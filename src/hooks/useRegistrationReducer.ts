@@ -8,7 +8,7 @@ import {
   RegistrationReducerData,
   RegistrationReducerDataItem,
   SelectedItemProperties,
-} from '@app/components/pages/profile/[name]/registration/types'
+} from '@app/components/registration/types'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { yearsToSeconds } from '@app/utils/utils'
 

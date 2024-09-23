@@ -1,7 +1,6 @@
 import { Hash } from 'viem'
 
-import { createTransactionItem } from '@app/transaction-flow/transaction'
-import { CreateTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useTransactionManager } from '@app/transaction/transactionManager'
 
 import { UseVerificationOAuthReturnType } from '../../useVerificationOAuth/useVerificationOAuth'
 
@@ -11,7 +10,6 @@ type Props = Pick<
 > & {
   userAddress?: Hash
   router?: any
-  createTransactionFlow?: CreateTransactionFlow
 }
 
 export const createVerificationTransactionFlow = ({
@@ -19,18 +17,21 @@ export const createVerificationTransactionFlow = ({
   verifier,
   verifiedPresentationUri,
   resolverAddress,
-  createTransactionFlow,
 }: Props) => {
-  if (!name || !createTransactionFlow || !verifier || !verifiedPresentationUri || !resolverAddress)
-    return
-  createTransactionFlow?.(`update-verification-record-${name}`, {
+  if (!name || !verifier || !verifiedPresentationUri || !resolverAddress) return
+
+  useTransactionManager.getState().startFlow({
+    flowId: `update-verification-record-${name}`,
     transactions: [
-      createTransactionItem('updateVerificationRecord', {
-        name,
-        verifier,
-        resolverAddress,
-        verifiedPresentationUri,
-      }),
+      {
+        name: 'updateVerificationRecord',
+        data: {
+          name,
+          verifier,
+          resolverAddress,
+          verifiedPresentationUri,
+        },
+      },
     ],
   })
 }

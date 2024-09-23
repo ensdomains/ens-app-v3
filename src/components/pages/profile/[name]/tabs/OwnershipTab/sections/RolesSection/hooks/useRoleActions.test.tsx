@@ -22,12 +22,12 @@ vi.mock('@app/hooks/account/useAccountSafely', () => ({
 }))
 
 const mockCheckCanSend = vi.fn()
-vi.mock('@app/transaction-flow/input/SendName/utils/checkCanSend', () => ({
+vi.mock('@app/transaction/user/SendName/utils/checkCanSend', () => ({
   checkCanSend: () => mockCheckCanSend(),
 }))
 
 const mockCheckCanSyncManager = vi.fn()
-vi.mock('@app/transaction-flow/input/SyncManager/utils/checkCanSyncManager', () => ({
+vi.mock('@app/transaction/user/SyncManager/utils/checkCanSyncManager', () => ({
   checkCanSyncManager: () => mockCheckCanSyncManager(),
 }))
 

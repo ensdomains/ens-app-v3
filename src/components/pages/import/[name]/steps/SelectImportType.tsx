@@ -12,7 +12,7 @@ import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
-import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
+import { CenteredTypography } from '@app/transaction/user/ProfileEditor/components/CenteredTypography'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 import { DnsImportActionButton, DnsImportCard, DnsImportHeading } from '../shared'

@@ -7,8 +7,8 @@ import { CrossCircleSVG, QuestionCircleSVG, Spinner, Typography } from '@ensdoma
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import CircleTickSVG from '@app/assets/CircleTick.svg'
 import { Outlink } from '@app/components/Outlink'
-import { TransactionStage } from '@app/transaction-flow/types'
-import type { StoredTransactionStatus } from '@app/transaction/types'
+
+import type { DialogStatus } from './TransactionStageModal'
 
 const BarContainer = styled.div(
   ({ theme }) => css`
@@ -20,7 +20,7 @@ const BarContainer = styled.div(
   `,
 )
 
-const Bar = styled.div<{ $status: Status }>(
+const Bar = styled.div<{ $status: Exclude<DialogStatus, 'confirm'> }>(
   ({ theme, $status }) => css`
     width: ${theme.space.full};
     height: ${theme.space['9']};
@@ -34,11 +34,11 @@ const Bar = styled.div<{ $status: Status }>(
 
     --bar-color: ${theme.colors.blue};
 
-    ${$status === 'complete' &&
+    ${$status === 'success' &&
     css`
       --bar-color: ${theme.colors.green};
     `}
-    ${$status === 'failed' &&
+    ${$status === 'reverted' &&
     css`
       --bar-color: ${theme.colors.red};
     `}
@@ -81,8 +81,6 @@ const MessageTypography = styled(Typography)(
     text-align: center;
   `,
 )
-
-type Status = Omit<TransactionStage, 'confirm'>
 
 const BarPrefix = styled.div(
   ({ theme }) => css`
@@ -134,10 +132,10 @@ const InnerBar = styled.div(
 )
 
 export const LoadBar = ({
-  status,
+  dialogStatus,
   sendTime,
 }: {
-  status: StoredTransactionStatus
+  dialogStatus: Exclude<DialogStatus, 'confirm'>
   sendTime: number | undefined
 }) => {
   const { t } = useTranslation()
@@ -163,16 +161,16 @@ export const LoadBar = ({
   }, [intervalFunc])
 
   const message = useMemo(() => {
-    if (status === 'success') {
-      return t('transaction.dialog.complete.message')
+    if (dialogStatus === 'success') {
+      return t('transaction.dialog.success.message')
     }
-    if (status === 'reverted') {
+    if (dialogStatus === 'reverted') {
       return null
     }
-    return t('transaction.dialog.sent.message')
-  }, [status, t])
+    return t('transaction.dialog.pending.message')
+  }, [dialogStatus, t])
 
-  const isTakingLongerThanExpected = status === 'pending' && progress === 100
+  const isTakingLongerThanExpected = dialogStatus === 'pending' && progress === 100
 
   const progressMessage = useMemo(() => {
     if (isTakingLongerThanExpected) {
@@ -190,34 +188,34 @@ export const LoadBar = ({
   }, [isTakingLongerThanExpected, t])
 
   const EndElement = useMemo(() => {
-    if (status === 'success') {
+    if (dialogStatus === 'success') {
       return <CircleIcon as={CircleTickSVG} />
     }
-    if (status === 'reverted') {
+    if (dialogStatus === 'reverted') {
       return <CircleIcon as={CrossCircleSVG} />
     }
     if (progress !== 100) {
       return <AeroplaneIcon as={AeroplaneSVG} />
     }
     return <Spinner color="background" size="small" />
-  }, [progress, status])
+  }, [progress, dialogStatus])
 
   return (
     <>
       <BarContainer data-testid="load-bar-container">
-        <Bar $status={status} key={sendTime}>
+        <Bar $status={dialogStatus} key={sendTime}>
           <BarPrefix>
             <BarTypography>
               {t(
                 isTakingLongerThanExpected
-                  ? 'transaction.dialog.sent.progress.message'
-                  : `transaction.dialog.${status}.progress.title`,
+                  ? 'transaction.dialog.pending.progress.message'
+                  : `transaction.dialog.${dialogStatus}.progress.title`,
               )}
             </BarTypography>
           </BarPrefix>
           <InnerBar
             style={{ width: `${progress}%` }}
-            className={progress === 100 || status !== 'pending' ? 'progress-complete' : ''}
+            className={progress === 100 || dialogStatus !== 'pending' ? 'progress-complete' : ''}
           >
             {EndElement}
           </InnerBar>

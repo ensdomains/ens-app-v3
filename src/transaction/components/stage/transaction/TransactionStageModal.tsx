@@ -8,15 +8,17 @@ import { Dialog, Helper, Typography } from '@ensdomains/thorin'
 
 import WalletSVG from '@app/assets/Wallet.svg'
 import { Outlink } from '@app/components/Outlink'
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { useTransactionStore } from '@app/transaction/transactionStore'
-import type { GenericStoredTransaction, StoredTransactionStatus } from '@app/transaction/types'
-import type { TransactionName } from '@app/transaction/user/transaction'
+import type {
+  GenericStoredTransaction,
+  StoredTransactionStatus,
+} from '@app/transaction/slices/createTransactionSlice'
+import { useTransactionManager } from '@app/transaction/transactionManager'
+import type { UserTransactionName } from '@app/transaction/user/transaction'
 import { TransactionDisplayItem } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
 import { useQuery } from '@app/utils/query/useQuery'
-import { makeEtherscanLink } from '@app/utils/utils'
+import { createEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../../DisplayItems'
 import { TransactionModalActionButton } from './ActionButton'
@@ -50,7 +52,7 @@ function useCreateSubnameRedirect(
   }, [shouldTrigger, subdomain])
 }
 
-type TransactionStageModalProps<name extends TransactionName = TransactionName> = {
+type TransactionStageModalProps<name extends UserTransactionName = UserTransactionName> = {
   currentTransactionIndex: number
   transactionCount: number
   transaction: GenericStoredTransaction<name>
@@ -59,17 +61,18 @@ type TransactionStageModalProps<name extends TransactionName = TransactionName> 
   onDismiss: () => void
 }
 
+export type DialogStatus = Exclude<StoredTransactionStatus, 'empty' | 'waitingForUser'> | 'confirm'
+
 const MiddleContent = ({
-  status,
+  dialogStatus,
   sendTime,
 }: {
-  status: StoredTransactionStatus
+  dialogStatus: DialogStatus
   sendTime: number | undefined
 }) => {
   const { t } = useTranslation()
 
-  if (status !== 'empty' && status !== 'waitingForUser')
-    return <LoadBar status={status} sendTime={sendTime} />
+  if (dialogStatus !== 'confirm') return <LoadBar dialogStatus={dialogStatus} sendTime={sendTime} />
 
   return (
     <>
@@ -79,7 +82,7 @@ const MiddleContent = ({
   )
 }
 
-export const TransactionStageModal = <name extends TransactionName = TransactionName>({
+export const TransactionStageModal = <name extends UserTransactionName = UserTransactionName>({
   currentTransactionIndex,
   transactionCount,
   transaction,
@@ -88,9 +91,8 @@ export const TransactionStageModal = <name extends TransactionName = Transaction
   onDismiss,
 }: TransactionStageModalProps<name>) => {
   const { t } = useTranslation()
-  const chainName = useChainName()
 
-  const incrementTransaction = useTransactionStore((s) => s.flow.current.incrementTransaction)
+  const incrementTransaction = useTransactionManager((s) => s.incrementCurrentFlowTransactionIndex)
 
   const {
     transactionError,
@@ -121,7 +123,11 @@ export const TransactionStageModal = <name extends TransactionName = Transaction
   }, [transaction.status])
 
   const initialErrorOptions = useQueryOptions({
-    params: { hash: transaction.currentHash, status: transaction.status },
+    params: {
+      hash: transaction.currentHash,
+      status: transaction.status,
+      targetChainId: transaction.targetChainId,
+    },
     functionName: 'getTransactionError',
     queryDependencyType: 'standard',
     queryFn: getTransactionErrorQueryFn,
@@ -170,15 +176,32 @@ export const TransactionStageModal = <name extends TransactionName = Transaction
 
   const backButton = <BackButton status={transaction.status} backToInput={backToInput} />
 
+  console.log(transaction.status)
+
+  const dialogStatus = (() => {
+    switch (transaction.status) {
+      case 'empty':
+      case 'waitingForUser':
+        return 'confirm'
+      default:
+        return transaction.status
+    }
+  })()
+
   return (
     <>
-      <Dialog.Heading title={t(`transaction.dialog.${transaction.status}.title`)} />
+      <Dialog.Heading title={t(`transaction.dialog.${dialogStatus}.title`)} />
       <Dialog.Content data-testid="transaction-modal-inner">
-        <MiddleContent status={transaction.status} sendTime={transaction.submission?.timestamp} />
+        <MiddleContent dialogStatus={dialogStatus} sendTime={transaction.submission?.timestamp} />
         {upperError && <Helper type="error">{t(upperError)}</Helper>}
         {FilledDisplayItems}
         {transaction.currentHash && (
-          <Outlink href={makeEtherscanLink(transaction.currentHash, chainName)}>
+          <Outlink
+            href={createEtherscanLink({
+              data: transaction.currentHash,
+              chainId: transaction.targetChainId,
+            })}
+          >
             {t('transaction.viewEtherscan')}
           </Outlink>
         )}

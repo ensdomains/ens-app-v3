@@ -1,7 +1,9 @@
-import { Config } from 'wagmi'
+import { getSupportedChainById, type SupportedChain } from '@app/constants/chains'
 
-export const getChainName = (config: Config, { chainId }: { chainId: number }) => {
+export type ChainName = Lowercase<Exclude<SupportedChain['name'], 'Ethereum'>> | 'mainnet'
+
+export const getChainName = (chainId: SupportedChain['id'] | undefined): ChainName => {
   if (chainId === 1 || !chainId) return 'mainnet'
-  const chainName = config.getClient({ chainId }).chain.name
-  return chainName.toLowerCase()
+  const chain = getSupportedChainById(chainId)!
+  return chain.name.toLowerCase() as ChainName
 }

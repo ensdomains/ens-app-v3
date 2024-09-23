@@ -5,7 +5,7 @@ import { getOwner, getRecords } from '@ensdomains/ensjs/public'
 
 import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
+import { VerificationProtocol } from '@app/transaction/user/VerifyProfile/VerifyProfile-flow'
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 

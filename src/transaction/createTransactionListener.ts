@@ -1,7 +1,7 @@
-import type { TransactionStore } from './types'
+import type { AllSlices } from './slices/types'
 
 export type TransactionStoreListener<selected> = [
-  selector: (state: TransactionStore) => selected,
+  selector: (state: AllSlices) => selected,
   listener: (selectedState: selected, previousSelectedState: selected) => void,
   options?: {
     equalityFn?: (a: selected, b: selected) => boolean
@@ -10,7 +10,7 @@ export type TransactionStoreListener<selected> = [
 ]
 
 export const createTransactionListener = <selected>(
-  selector: (state: TransactionStore) => selected,
+  selector: (state: AllSlices) => selected,
   listener: (selectedState: selected, previousSelectedState: selected) => void,
   options?: {
     equalityFn?: (a: selected, b: selected) => boolean

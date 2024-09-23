@@ -8,10 +8,10 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import useRoles, { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import { getAvailableRoles } from '@app/hooks/ownership/useRoles/utils/getAvailableRoles'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
-import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
 
+import { createUserTransaction, type GenericUserTransaction } from '../../transaction'
+import { makeTransferNameOrSubnameTransactionItem } from '../../transaction/utils/makeTransferNameOrSubnameTransactionItem'
 import { EditRoleView } from './views/EditRoleView/EditRoleView'
 import { MainView } from './views/MainView/MainView'
 
@@ -27,7 +27,7 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
+const EditRoles = ({ data: { name }, onDismiss, setTransactions, setStage }: Props) => {
   const [selectedRoleIndex, setSelectedRoleIndex] = useState<number | null>(null)
 
   const roles = useRoles(name)
@@ -73,7 +73,7 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
     )
     const transactions = [
       dirtyValues['eth-record']
-        ? createTransactionItem('updateEthAddress', { name, address: dirtyValues['eth-record'] })
+        ? createUserTransaction('updateEthAddress', { name, address: dirtyValues['eth-record'] })
         : null,
       dirtyValues.manager
         ? makeTransferNameOrSubnameTransactionItem({
@@ -97,20 +97,13 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
       (
         t,
       ): t is
-        | TransactionItem<'transferName'>
-        | TransactionItem<'transferSubname'>
-        | TransactionItem<'updateEthAddress'> => !!t,
+        | GenericUserTransaction<'transferName'>
+        | GenericUserTransaction<'transferSubname'>
+        | GenericUserTransaction<'updateEthAddress'> => !!t,
     )
 
-    dispatch({
-      name: 'setTransactions',
-      payload: transactions,
-    })
-
-    dispatch({
-      name: 'setFlowStage',
-      payload: 'transaction',
-    })
+    setTransactions(transactions)
+    setStage('transaction')
   }
 
   return (

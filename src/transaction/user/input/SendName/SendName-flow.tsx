@@ -10,7 +10,7 @@ import { useNameType } from '@app/hooks/nameType/useNameType'
 import useRoles from '@app/hooks/ownership/useRoles/useRoles'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import type { TransactionDialogPassthrough } from '@app/transaction/components/TransactionDialogManager'
 
 import { checkCanSend, senderRole } from './utils/checkCanSend'
 import { getSendNameTransactions } from './utils/getSendNameTransactions'
@@ -38,7 +38,7 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
+const SendName = ({ data: { name }, onDismiss, setStage, setTransactions }: Props) => {
   const account = useAccountSafely()
   const abilities = useAbilities({ name })
   const nameType = useNameType(name)
@@ -107,15 +107,8 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
 
     if (_transactions.length === 0) return
 
-    dispatch({
-      name: 'setTransactions',
-      payload: _transactions,
-    })
-
-    dispatch({
-      name: 'setFlowStage',
-      payload: 'transaction',
-    })
+    setTransactions(_transactions)
+    setStage('transaction')
   }
 
   const canSend = checkCanSend({ abilities: abilities.data, nameType: nameType.data })

@@ -1,11 +1,16 @@
-import type { FlowKey, StoredFlow, StoredTransaction, TransactionKey } from './types'
+import type { FlowKey, StoredFlow } from './slices/createFlowSlice'
+import type { StoredTransaction, TransactionKey } from './slices/createTransactionSlice'
 
-export const getFlowKey = (flow: Pick<StoredFlow, 'flowId' | 'chainId' | 'account'>): FlowKey =>
-  JSON.stringify([flow.flowId, flow.chainId, flow.account]) as FlowKey
+export const getFlowKey = (
+  flow: Pick<StoredFlow, 'flowId' | 'sourceChainId' | 'account'>,
+): FlowKey => JSON.stringify([flow.flowId, flow.sourceChainId, flow.account]) as FlowKey
 export const getTransactionKey = ({
   transactionId,
   flowId,
-  chainId,
+  sourceChainId,
   account,
-}: Pick<StoredTransaction, 'transactionId' | 'flowId' | 'chainId' | 'account'>): TransactionKey =>
-  JSON.stringify([transactionId, flowId, chainId, account]) as TransactionKey
+}: Pick<
+  StoredTransaction,
+  'transactionId' | 'flowId' | 'sourceChainId' | 'account'
+>): TransactionKey =>
+  JSON.stringify([transactionId, flowId, sourceChainId, account]) as TransactionKey

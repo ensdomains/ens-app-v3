@@ -9,7 +9,7 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { usePreparedDataInput } from '@app/transaction/usePreparedDataInput'
 import { AddressRecord, Profile, TextRecord } from '@app/types'
 import { abiDisplayValue } from '@app/utils/abi'
 import { emptyAddress } from '@app/utils/constants'
@@ -153,7 +153,6 @@ export const RecordsTab = ({
     }
   }, [name, chainId, contentHash])
 
-  const { usePreparedDataInput } = useTransactionFlow()
   const showAdvancedEditorInput = usePreparedDataInput('AdvancedEditor')
   const handleShowEditor = () =>
     showAdvancedEditorInput(`advanced-editor-${name}`, { name }, { disableBackgroundClick: true })
