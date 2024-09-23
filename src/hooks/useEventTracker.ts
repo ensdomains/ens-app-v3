@@ -8,7 +8,7 @@ import useUserConfig from '@app/utils/useUserConfig'
 import { useChainName } from './chain/useChainName'
 
 type SearchSelectEvent = {
-  eventName: 'search_selected_eth' | 'search_selected_box'
+  eventName: 'search_selected_eth' | 'search_selected_box' | 'search_selected_dns'
   customProperties: { name: string }
 }
 
@@ -22,6 +22,14 @@ type PaymentEvent = {
   }
 }
 
+type DNSImportTypeEvent = {
+  eventName: 'import_type_selected_dns'
+  customProperties: {
+    importType: 'onchain' | 'offchain' | null
+    name: string
+  }
+}
+
 type DefaultEvent = {
   eventName:
     | 'commit_started'
@@ -29,10 +37,19 @@ type DefaultEvent = {
     | 'register_started'
     | 'register_started_box'
     | 'register_wallet_opened'
+    | 'verify_ownership_started_dns'
+    | 'claim_domain_started_dns'
+    | 'commit_wallet_opened_dns'
+    | 'register_started_dns'
+    | 'register_wallet_opened_dns'
   customProperties?: never
 }
 
-export type TrackEventParameters = SearchSelectEvent | PaymentEvent | DefaultEvent
+export type TrackEventParameters =
+  | SearchSelectEvent
+  | PaymentEvent
+  | DefaultEvent
+  | DNSImportTypeEvent
 
 export const useEventTracker = () => {
   const chain = useChainName()
@@ -41,7 +58,9 @@ export const useEventTracker = () => {
   const trackEvent = (props: TrackEventParameters) => {
     match(props)
       .with(
-        { eventName: P.union('search_selected_eth', 'search_selected_box') },
+        {
+          eventName: P.union('search_selected_eth', 'search_selected_box', 'search_selected_dns'),
+        },
         ({ eventName, customProperties }) => {
           const { name } = customProperties
           sendTrackEvent(eventName, chain, { name })
@@ -72,6 +91,29 @@ export const useEventTracker = () => {
           paymentAmount,
         })
       })
+      .with(
+        {
+          eventName: P.union('import_type_selected_dns'),
+        },
+        ({ eventName, customProperties }) => {
+          const { importType, name } = customProperties
+          sendTrackEvent(eventName, chain, { name, importType })
+        },
+      )
+      .with(
+        {
+          eventName: P.union(
+            'verify_ownership_started_dns',
+            'claim_domain_started_dns',
+            'commit_wallet_opened_dns',
+            'register_started_dns',
+            'register_wallet_opened_dns',
+          ),
+        },
+        ({ eventName }) => {
+          sendTrackEvent(eventName, chain)
+        },
+      )
       .exhaustive()
   }
 

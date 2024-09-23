@@ -15,6 +15,7 @@ import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useApprovedForAll } from '@app/hooks/useApprovedForAll'
+import { useEventTracker } from '@app/hooks/useEventTracker'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 import useUserConfig from '@app/utils/useUserConfig'
@@ -105,6 +106,7 @@ export const ImportTransaction = ({
   const { t } = useTranslation('dnssec', { keyPrefix: 'steps.transaction' })
   const { t: tc } = useTranslation('common')
 
+  const { trackEvent } = useEventTracker()
   const { data: gasPrice } = useGasPrice()
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
@@ -180,7 +182,13 @@ export const ImportTransaction = ({
 
   const startOrResumeFlow = () => {
     if (!item.started) dispatch({ name: 'setStarted', selected })
-    if (resumable) return resumeTransactionFlow(key)
+    if (resumable) {
+      trackEvent({
+        eventName: 'claim_domain_started_dns',
+      })
+      return resumeTransactionFlow(key)
+    }
+
     return createTransactionFlow(key, {
       transactions,
       resumable: true,
@@ -189,7 +197,6 @@ export const ImportTransaction = ({
       resumeLink: `/import/${selected.name}`,
     })
   }
-
   const txCallback: UpdateCallback = useCallback(
     ({ action, status, key: cbKey }) => {
       if (action !== 'claimDnsName' && action !== 'importDnsName') return

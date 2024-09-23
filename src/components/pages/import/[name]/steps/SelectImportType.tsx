@@ -12,6 +12,7 @@ import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { useEventTracker } from '@app/hooks/useEventTracker'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { getSupportLink } from '@app/utils/supportLinks'
 
@@ -155,6 +156,7 @@ export const SelectImportType = ({
 }) => {
   const { t } = useTranslation('dnssec', { keyPrefix: 'steps.selectType' })
   const { t: tc } = useTranslation('common')
+  const { trackEvent } = useEventTracker()
 
   const { address } = useAccount()
   const chainId = useChainId()
@@ -191,6 +193,11 @@ export const SelectImportType = ({
     })
     dispatch({ name: 'setSteps', selected, payload: steps })
     dispatch({ name: 'increaseStep', selected })
+
+    trackEvent({
+      eventName: 'import_type_selected_dns',
+      customProperties: { name: selected.name, importType: item.type },
+    })
   }
 
   return (
