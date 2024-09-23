@@ -1,5 +1,4 @@
 // prettier-ignore-file
-import { lightTheme, Theme } from '@usecapsule/rainbowkit'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
@@ -28,16 +27,6 @@ import i18n from '../i18n'
 import '../styles.css'
 
 const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 'eotmigir'
-
-const rainbowKitTheme: Theme = {
-  ...lightTheme({
-    // accentColor: thorinLightTheme.colors.accent, // requires a hex string color but thorinLightTheme returns a hsl string
-    borderRadius: 'medium',
-  }),
-  fonts: {
-    body: 'Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
-  },
-}
 
 const anim = keyframes`
   0% {
@@ -145,7 +134,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <I18nextProvider i18n={i18n}>
       <QueryProviders>
-        <RainbowKitWithCapsuleProvider theme={rainbowKitTheme}>
+        <RainbowKitWithCapsuleProvider>
           <TransactionStoreProvider>
             <ThemeProvider theme={thorinLightTheme}>
               <BreakpointProvider queries={breakpoints}>
