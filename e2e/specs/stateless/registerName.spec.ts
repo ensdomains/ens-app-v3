@@ -10,6 +10,7 @@ import { daysToSeconds, yearsToSeconds } from '@app/utils/time'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
+import { trackConsoleEvents } from '../../../playwright/fixtures/consoleListener'
 import {
   testClient,
   waitForTransaction,
@@ -22,7 +23,6 @@ import {
  */
 
 const chain = 'localhost'
-const trackEventPrefix = 'Event triggered on local development'
 const validEventTypes = [
   'search_selected_eth',
   'search_selected_box',
@@ -33,7 +33,7 @@ const validEventTypes = [
   'register_started_box',
   'register_wallet_opened',
 ]
-const validEventTypesRegex = new RegExp(`"type":"(${validEventTypes.join('|')})"`)
+const validEthRegistrationEventRegex = new RegExp(`"type":"(${validEventTypes.join('|')})"`)
 
 test.describe.serial('normal registration', () => {
   const name = `registration-normal-${Date.now()}.eth`
@@ -50,14 +50,7 @@ test.describe.serial('normal registration', () => {
       account: createAccounts().getAddress('user') as `0x${string}`,
     })
 
-    const events: string[] = []
-    page.on('console', (msg) => {
-      const message = msg.text()
-
-      if (validEventTypesRegex.test(message)) {
-        events.push(message.replace(trackEventPrefix, '').trim())
-      }
-    })
+    const consoleEvents = trackConsoleEvents(page, validEthRegistrationEventRegex)
 
     const homePage = makePageObject('HomePage')
     const registrationPage = makePageObject('RegistrationPage')
@@ -75,11 +68,11 @@ test.describe.serial('normal registration', () => {
     await homePage.searchInput.press('Enter')
 
     await test.step('should fire tracking event: search_selected_eth', async () => {
-      await expect(events).toHaveLength(1)
-      await expect(events[0]).toContain(
-        JSON.stringify({ type: 'search_selected_eth', chain, props: { name } }),
+      await expect(consoleEvents).toHaveLength(1)
+      await expect(consoleEvents[0]).toContain(
+        JSON.stringify({ type: 'search_selected_eth', chain, props: { name, referrer: null } }),
       )
-      events.length = 0
+      consoleEvents.length = 0
     })
 
     await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
@@ -112,9 +105,9 @@ test.describe.serial('normal registration', () => {
     await page.getByTestId('next-button').click()
 
     await test.step('should fire tracking event: payment_selected', async () => {
-      await expect(events).toHaveLength(1)
-      await expect(events.some((event) => event.includes('payment_selected'))).toBeTruthy()
-      events.length = 0
+      await expect(consoleEvents).toHaveLength(1)
+      await expect(consoleEvents.some((event) => event.includes('payment_selected'))).toBeTruthy()
+      consoleEvents.length = 0
     })
 
     // should show a confirmation dialog that records are public
@@ -141,18 +134,22 @@ test.describe.serial('normal registration', () => {
     await page.getByTestId('next-button').click()
 
     await test.step('should fire tracking event: commit_started', async () => {
-      await expect(events).toHaveLength(1)
-      await expect(events).toContain(JSON.stringify({ type: 'commit_started', chain }))
-      events.length = 0
+      await expect(consoleEvents).toHaveLength(1)
+      await expect(consoleEvents).toContain(
+        JSON.stringify({ type: 'commit_started', chain, props: { referrer: null } }),
+      )
+      consoleEvents.length = 0
     })
 
     await expect(page.getByText('Open Wallet')).toBeVisible()
     await transactionModal.confirm()
 
     await test.step('should fire tracking event: commit_wallet_opened', async () => {
-      await expect(events).toHaveLength(1)
-      await expect(events).toContain(JSON.stringify({ type: 'commit_wallet_opened', chain }))
-      events.length = 0
+      await expect(consoleEvents).toHaveLength(1)
+      await expect(consoleEvents).toContain(
+        JSON.stringify({ type: 'commit_wallet_opened', chain, props: { referrer: null } }),
+      )
+      consoleEvents.length = 0
     })
 
     // should show countdown
@@ -174,9 +171,11 @@ test.describe.serial('normal registration', () => {
     await page.getByTestId('finish-button').click()
 
     await test.step('should fire tracking event: register_started', async () => {
-      await expect(events).toHaveLength(1)
-      await expect(events).toContain(JSON.stringify({ type: 'register_started', chain }))
-      events.length = 0
+      await expect(consoleEvents).toHaveLength(1)
+      await expect(consoleEvents).toContain(
+        JSON.stringify({ type: 'register_started', chain, props: { referrer: null } }),
+      )
+      consoleEvents.length = 0
     })
 
     await expect(
@@ -188,9 +187,11 @@ test.describe.serial('normal registration', () => {
     await transactionModal.confirm()
 
     await test.step('should fire tracking event: register_wallet_opened', async () => {
-      await expect(events).toHaveLength(1)
-      await expect(events).toContain(JSON.stringify({ type: 'register_wallet_opened', chain }))
-      events.length = 0
+      await expect(consoleEvents).toHaveLength(1)
+      await expect(consoleEvents).toContain(
+        JSON.stringify({ type: 'register_wallet_opened', chain, props: { referrer: null } }),
+      )
+      consoleEvents.length = 0
     })
 
     // should show the correct details on completion
@@ -207,14 +208,7 @@ test.describe.serial('normal registration', () => {
     accounts,
     makePageObject,
   }) => {
-    const events: string[] = []
-    page.on('console', (msg) => {
-      const message = msg.text()
-
-      if (validEventTypesRegex.test(message)) {
-        events.push(message.replace(trackEventPrefix, '').trim())
-      }
-    })
+    const consoleEvents = trackConsoleEvents(page, validEthRegistrationEventRegex)
 
     const homePage = makePageObject('HomePage')
 
@@ -223,7 +217,7 @@ test.describe.serial('normal registration', () => {
     await homePage.searchInput.press('Enter')
 
     await test.step('should not fire tracking event: search_selected_eth', async () => {
-      await expect(events.some((event) => event.includes('search_selected_eth'))).toBeFalsy()
+      await expect(consoleEvents.some((event) => event.includes('search_selected_eth'))).toBeFalsy()
     })
 
     await expect(page).toHaveURL(`/${name}`)
