@@ -6,7 +6,7 @@ import { AlertSVG, Colors, Tooltip } from '@ensdomains/thorin'
 
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import VerifiedRecordSVG from '@app/assets/VerifiedRecord.svg'
-import { VerificationProtocol } from '@app/transaction/user/VerifyProfile/VerifyProfile-flow'
+import { VerificationProtocol } from '@app/transaction/user/input/VerifyProfile/VerifyProfile-flow'
 
 type Color = Extract<Colors, 'accent' | 'green' | 'red'>
 

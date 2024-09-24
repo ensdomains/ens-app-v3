@@ -70,6 +70,8 @@
     "**/*.ignore.tsx",
     "functions/**/*",
     "deploy/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx",
     "hardhat.config.ts"
   ]
 }

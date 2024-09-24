@@ -1,4 +1,4 @@
-import type { VerificationProtocol } from '@app/transaction/user/VerifyProfile/VerifyProfile-flow'
+import type { VerificationProtocol } from '@app/transaction/user/input/VerifyProfile/VerifyProfile-flow'
 import { NormalisedAccountsRecord } from '@app/utils/records/normaliseProfileAccountsRecord'
 
 import type { UseVerifiedRecordsReturnType } from '../useVerifiedRecords'

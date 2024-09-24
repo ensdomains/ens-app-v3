@@ -20,8 +20,7 @@ import {
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import useFaucet from '@app/hooks/useFaucet'
-
-import { DisplayItems } from './TransactionDialogManager/DisplayItems'
+import { DisplayItems } from '@app/transaction/components/DisplayItems'
 
 const BannerWrapper = styled.div(
   () => css`
@@ -72,8 +71,7 @@ const FaucetBanner = () => {
     closeDialog()
   }, [chainName, address])
 
-  if ((chainName !== 'goerli' && chainName !== 'sepolia') || !isReady || isLoading || !data)
-    return null
+  if (chainName !== 'sepolia' || !isReady || isLoading || !data) return null
 
   const BannerComponent = (
     <BannerWrapper>

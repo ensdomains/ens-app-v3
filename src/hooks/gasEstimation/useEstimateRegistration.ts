@@ -3,7 +3,7 @@ import { parseEther } from 'viem'
 
 import { makeCommitment } from '@ensdomains/ensjs/utils'
 
-import { RegistrationReducerDataItem } from '@app/components/registration/types'
+import type { StoredRegistrationFlow } from '@app/transaction/slices/createRegistrationFlowSlice'
 import { deriveYearlyFee } from '@app/utils/utils'
 
 import { useAccountSafely } from '../account/useAccountSafely'
@@ -15,7 +15,7 @@ import { usePrice } from '../ensjs/public/usePrice'
 import useRegistrationParams from '../useRegistrationParams'
 
 type UseEstimateFullRegistrationParameters = {
-  registrationData: RegistrationReducerDataItem
+  registrationData: StoredRegistrationFlow
   name: string
 }
 

@@ -12,8 +12,7 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { useAddressRecord } from '@app/hooks/ensjs/public/useAddressRecord'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { createQueryKey } from '@app/hooks/useQueryOptions'
-
-import { DisplayItems } from './TransactionDialogManager/DisplayItems'
+import { DisplayItems } from '@app/transaction/components/DisplayItems'
 
 const InnerContainer = styled.div(() => [
   css`

@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 
-import { VerificationProtocol } from '../../transaction-flow/input/VerifyProfile/VerifyProfile-flow'
+import { VerificationProtocol } from '@app/transaction/user/input/VerifyProfile/VerifyProfile-flow'
 
 export const verificationIconTypes: {
   [key in VerificationProtocol]: any

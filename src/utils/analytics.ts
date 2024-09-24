@@ -1,6 +1,6 @@
 import { mainnet } from 'viem/chains'
 
-import type { SupportedChain } from '@ensdomains/ensjs/contracts'
+import type { SupportedChain } from '@app/constants/chains'
 
 declare global {
   interface Window {

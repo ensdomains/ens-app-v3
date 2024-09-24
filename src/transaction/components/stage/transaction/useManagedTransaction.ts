@@ -5,8 +5,8 @@ import { useConnectorClient, useSendTransaction } from 'wagmi'
 import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
-import type { GenericStoredTransaction } from '@app/transaction/types'
-import type { TransactionName } from '@app/transaction/user/transaction'
+import type { GenericStoredTransaction } from '@app/transaction/slices/createTransactionSlice'
+import type { UserTransactionName } from '@app/transaction/user/transaction'
 import type { ConfigWithEns } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 
@@ -17,7 +17,7 @@ import {
   transactionSuccessHandler,
 } from './query'
 
-export const useManagedTransaction = <name extends TransactionName = TransactionName>(
+export const useManagedTransaction = <name extends UserTransactionName = UserTransactionName>(
   transaction: GenericStoredTransaction<name>,
 ) => {
   const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()

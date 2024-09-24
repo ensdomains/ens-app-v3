@@ -26,7 +26,7 @@ import { VerificationBadge } from '@app/components/@molecules/VerificationBadge/
 import { useCoinChain } from '@app/hooks/chain/useCoinChain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { getDestination } from '@app/routes'
-import { VerificationProtocol } from '@app/transaction/user/VerifyProfile/VerifyProfile-flow'
+import { VerificationProtocol } from '@app/transaction/user/input/VerifyProfile/VerifyProfile-flow'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { getSocialData } from '@app/utils/getSocialData'

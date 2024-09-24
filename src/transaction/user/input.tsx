@@ -1,8 +1,7 @@
 import dynamic from 'next/dynamic'
 import { useContext, useEffect, type ComponentProps } from 'react'
 
-import DynamicLoadingContext from '@app/components/@molecules/TransactionDialogManager/DynamicLoadingContext'
-
+import DynamicLoadingContext from '../components/DynamicLoadingContext'
 import TransactionLoader from '../components/TransactionLoader'
 import type { Props as AdvancedEditorProps } from './input/AdvancedEditor/AdvancedEditor-flow'
 import type { Props as CreateSubnameProps } from './input/CreateSubname/CreateSubname-flow'

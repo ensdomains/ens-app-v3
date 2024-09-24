@@ -4,9 +4,9 @@ import { useAccount, useChainId } from 'wagmi'
 import Registration from '@app/components/pages/register/Registration'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { getSelectedIndex } from '@app/hooks/useRegistrationReducer'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { ContentGrid } from '@app/layouts/ContentGrid'
+import { useTransactionManager } from '@app/transaction/transactionManager'
 
 export default function Page() {
   const router = useRouterWithHistory()
@@ -22,27 +22,21 @@ export default function Page() {
   const nameDetails = useNameDetails({ name })
   const { isLoading: detailsLoading, registrationStatus } = nameDetails
 
+  const getCurrentRegistrationFlowStep = useTransactionManager(
+    (s) => s.getCurrentRegistrationFlowStep,
+  )
+
   const isLoading = detailsLoading || initial
 
   if (!isLoading && registrationStatus !== 'available' && registrationStatus !== 'premium') {
     let redirect = true
 
     if (nameDetails.ownerData?.owner === address && !!address) {
-      const registrationData = JSON.parse(
-        localStorage.getItem('registration-status') || '{"items":[]}',
-      )
-      const index = getSelectedIndex(registrationData, {
-        address: address!,
-        name: nameDetails.normalisedName,
-        chainId,
+      const step = getCurrentRegistrationFlowStep(nameDetails.normalisedName, {
+        account: address!,
+        sourceChainId: chainId,
       })
-      if (index !== -1) {
-        const { stepIndex, queue } = registrationData.items[index]
-        const step = queue[stepIndex]
-        if (step === 'transactions' || step === 'complete') {
-          redirect = false
-        }
-      }
+      if (step === 'transactions' || step === 'complete') redirect = false
     }
 
     if (redirect) {

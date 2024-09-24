@@ -4,7 +4,7 @@ import { match } from 'ts-pattern'
 import { Colors, OutlinkSVG, Typography } from '@ensdomains/thorin'
 
 import DentitySVG from '@app/assets/verification/Dentity.svg'
-import { VerificationProtocol } from '@app/transaction/user/VerifyProfile/VerifyProfile-flow'
+import { VerificationProtocol } from '@app/transaction/user/input/VerifyProfile/VerifyProfile-flow'
 
 type Props = { verifiers?: VerificationProtocol[] }
 
