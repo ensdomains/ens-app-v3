@@ -181,11 +181,15 @@ export const ImportTransaction = ({
   const resumable = getResumable(key)
 
   const startOrResumeFlow = () => {
-    if (!item.started) dispatch({ name: 'setStarted', selected })
-    if (resumable) {
+    if (!item.started) {
       trackEvent({
         eventName: 'claim_domain_started_dns',
       })
+
+      dispatch({ name: 'setStarted', selected })
+    }
+
+    if (resumable) {
       return resumeTransactionFlow(key)
     }
 

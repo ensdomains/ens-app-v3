@@ -489,8 +489,6 @@ export const TransactionStageModal = ({
         onClick={() => {
           sendTransaction(request!)
 
-          console.log(actionName)
-
           if (['commitName', 'registerName'].includes(actionName)) {
             trackEvent({
               eventName: ['commitName'].includes(actionName)

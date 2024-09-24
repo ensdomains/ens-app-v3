@@ -8,6 +8,7 @@ import { CheckCircleSVG, Helper, Typography } from '@ensdomains/thorin'
 import RecordItem from '@app/components/RecordItem'
 import { DNS_TXT_RECORD_HELPER_LINKS } from '@app/constants/dnsLinks'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
+import { useEventTracker } from '@app/hooks/useEventTracker'
 import { shortenAddress } from '@app/utils/utils'
 
 import {
@@ -68,6 +69,7 @@ export const VerifyOnchainOwnership = ({
 }) => {
   const { t } = useTranslation('dnssec', { keyPrefix: 'steps.verifyOwnership' })
   const { t: tc } = useTranslation('common')
+  const { trackEvent } = useEventTracker()
 
   const {
     data: dnsOwner,
@@ -95,6 +97,16 @@ export const VerifyOnchainOwnership = ({
     if (!errorKey) return null
     return tc(`error.${errorKey}`, { ns: 'dnssec' })
   }, [tc, error, isLoading])
+
+  const handleDNSButtonClick = () => {
+    dispatch({ name: 'increaseStep', selected })
+
+    if (dnsOwnerStatus === 'mismatching') {
+      trackEvent({
+        eventName: 'verify_ownership_started_dns',
+      })
+    }
+  }
 
   return (
     <DnsImportCard>
@@ -160,7 +172,7 @@ export const VerifyOnchainOwnership = ({
         {isConnected ? (
           <DnsImportActionButton
             disabled={!dnsOwner || isLoading || isRefetching || isError}
-            onClick={() => dispatch({ name: 'increaseStep', selected })}
+            onClick={handleDNSButtonClick}
             data-testid="import-next-button"
             {...(dnsOwnerStatus === 'mismatching'
               ? {
