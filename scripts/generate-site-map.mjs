@@ -2,6 +2,7 @@ import { createReadStream, createWriteStream, existsSync } from 'fs'
 import { Transform } from 'stream'
 
 import { gql, request } from 'graphql-request'
+import fetch from 'node-fetch'
 import {
   parseSitemap,
   parseSitemapIndex,
@@ -113,13 +114,12 @@ const main = async () => {
         ? sitemapIndex.url
         : sitemapIndex.url.replace(`${baseURL}/`, `${baseURL}/sitemaps/`)
       const res = await fetch(url)
-
-      await res.body.pipeThrough(normaliseTransform).pipeTo(sitemap, {
-        preventClose: true,
+      // only allow normalised names from backlog
+      res.body.pipe(new XMLToSitemapItemStream()).pipe(normaliseTransform).pipe(sitemap, {
+        end: false,
       })
-
       await new Promise((resolve) => {
-        normaliseTransform.readable.getReader().closed.then(resolve)
+        normaliseTransform.on('end', resolve)
       })
     }
   }
