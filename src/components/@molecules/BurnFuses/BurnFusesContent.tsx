@@ -92,7 +92,7 @@ const BurnButton = ({
   handleBurnClick: (permission: ChildFuseReferenceType['Key']) => void
   isSelected: boolean
 }) => {
-  const { t } = useTranslation('profile', { keyPrefix: 'tabs.more.fuses' })
+  const { t } = useTranslation('profile')
 
   return (
     <StyledButton
@@ -109,10 +109,10 @@ const BurnButton = ({
       }
     >
       <ButtonInner data-testid={`burn-button-${permission}`}>
-        <Typography>{t(`permissions.${permission}`)}</Typography>
+        <Typography>{t(`tabs.more.fuses.permissions.${permission}`)}</Typography>
         {isBurned && (
           <BurnedFlameContainer $isBurned={isBurned}>
-            <Typography>{t('burned')}</Typography>
+            <Typography>{t('tabs.more.fuses.burned')}</Typography>
             <BurnedStyledFlameSVG width="24" height="24" />
           </BurnedFlameContainer>
         )}
@@ -171,8 +171,8 @@ const BurnFusesContent = ({
   canUnsetFuse = false,
   returnObject,
 }: PropsWithReturnArray | PropsWithReturnObject) => {
-  const { t } = useTranslation('profile', { keyPrefix: 'tabs.more' })
-  const { t: tc } = useTranslation()
+  const { t } = useTranslation('profile')
+  const { t: tc } = useTranslation('common')
   const [_fuseData, setFuseData] = useState<CurrentChildFuses>(childFuseObj)
   const [fuseSelected, setFuseSelected] = useState<CurrentChildFuses>(childFuseObj)
 
@@ -191,7 +191,7 @@ const BurnFusesContent = ({
       (key) => fuseSelected[key as ChildFuseReferenceType['Key']],
     ) as ChildFuseReferenceType['Key'][]
 
-    const permissions = selectedFuses.map((key) => t(`fuses.permissions.${key}`))
+    const permissions = selectedFuses.map((key) => t(`tabs.more.fuses.permissions.${key}`))
 
     onSubmit(selectedFuses, permissions)
   }
@@ -214,12 +214,12 @@ const BurnFusesContent = ({
 
   return (
     <FusesContainer>
-      <Typography fontVariant="headingFour">{t('fuses.burnFormTitle')}</Typography>
+      <Typography fontVariant="headingFour">{t('tabs.more.fuses.burnFormTitle')}</Typography>
       {!_fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP ? (
         <>
           <Spacer $height="1" />
           <Helper type="info" style={{ textAlign: 'center' }}>
-            <Typography>{t('fuses.info')}</Typography>
+            <Typography>{t('tabs.more.fuses.info')}</Typography>
           </Helper>
         </>
       ) : (

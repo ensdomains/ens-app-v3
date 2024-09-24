@@ -96,7 +96,7 @@ export const CompleteImport = ({
   selected: SelectedItemProperties
   item: DnsImportReducerDataItem
 }) => {
-  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.complete' })
+  const { t } = useTranslation('dnssec')
 
   const router = useRouterWithHistory()
   const { width, height } = useWindowSize()
@@ -107,7 +107,6 @@ export const CompleteImport = ({
   })
 
   const isImport = item.type === 'offchain' || addressRecord?.value !== selected.address
-  const addKeyPrefix = (key: string) => (isImport ? `import.${key}` : `claim.${key}`)
 
   const goHome = () => router.push('/')
 
@@ -137,11 +136,11 @@ export const CompleteImport = ({
         initialVelocityY={20}
       />
       <TitleContainer>
-        <Title>{t('title')}</Title>
+        <Title>{t('steps.complete.title')}</Title>
         <Typography style={{ display: 'inline' }} fontVariant="headingThree" weight="bold">
           <Trans
             t={t}
-            i18nKey={addKeyPrefix('subtitle')}
+            i18nKey={isImport ? 'steps.complete.import.subtitle' : 'steps.complete.claim.subtitle'}
             components={{
               gradient: <SubtitleWithGradient />,
             }}
@@ -151,17 +150,19 @@ export const CompleteImport = ({
           />
         </Typography>
       </TitleContainer>
-      <Typography>{t(addKeyPrefix('description'))}</Typography>
-      {item.type === 'offchain' && <Helper>{t('import.warning')}</Helper>}
+      <Typography>
+        {t(isImport ? 'steps.complete.import.description' : 'steps.complete.claim.description')}
+      </Typography>
+      {item.type === 'offchain' && <Helper>{t('steps.complete.import.warning')}</Helper>}
       <ButtonContainer>
         <MobileFullWidth>
           <Button colorStyle="accentSecondary" onClick={goHome}>
-            {t('action.claimAnother')}
+            {t('steps.complete.action.claimAnother')}
           </Button>
         </MobileFullWidth>
         <MobileFullWidth>
           <Button data-testid="view-name" onClick={goToProfile}>
-            {t('action.viewName')}
+            {t('steps.complete.action.viewName')}
           </Button>
         </MobileFullWidth>
       </ButtonContainer>
