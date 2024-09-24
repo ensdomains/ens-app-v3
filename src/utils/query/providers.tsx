@@ -16,9 +16,6 @@ export function QueryProviders({ children }: Props) {
       <PersistQueryClientProvider
         client={queryClient}
         persistOptions={createPersistConfig({ queryClient })}
-        onSuccess={() => {
-          return queryClient.invalidateQueries()
-        }}
       >
         {children}
       </PersistQueryClientProvider>

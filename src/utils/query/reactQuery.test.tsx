@@ -44,7 +44,7 @@ describe('reactQuery', () => {
     expect(queryClient.getDefaultOptions()).toEqual({
       queries: {
         refetchOnWindowFocus: true,
-        refetchOnMount: true,
+        refetchOnMount: 'always',
         staleTime: 1_000 * 12,
         gcTime: 1_000 * 60 * 60 * 24,
         queryKeyHashFn: expect.any(Function),
@@ -52,7 +52,30 @@ describe('reactQuery', () => {
     })
   })
 
-  it('should refetch queries on mount', async () => {
+  it('should not refetch query on rerender', async () => {
+    const { getByTestId, rerender } = render(
+      <TestComponentWrapper>
+        <TestComponentWithHook />
+      </TestComponentWrapper>,
+    )
+
+    await waitFor(() => {
+      expect(mockFetchData).toHaveBeenCalledTimes(1)
+      expect(getByTestId('test')).toHaveTextContent('Test data')
+    })
+
+    rerender(
+      <TestComponentWrapper>
+        <TestComponentWithHook />
+      </TestComponentWrapper>,
+    )
+
+    await waitFor(() => {
+      expect(mockFetchData).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it('should refetch query on mount', async () => {
     const { getByTestId, unmount } = render(
       <TestComponentWrapper>
         <TestComponentWithHook />
@@ -70,7 +93,6 @@ describe('reactQuery', () => {
         <TestComponentWithHook />
       </TestComponentWrapper>,
     )
-    await queryClient.invalidateQueries()
 
     await waitFor(() => {
       expect(mockFetchData).toHaveBeenCalledTimes(2)
