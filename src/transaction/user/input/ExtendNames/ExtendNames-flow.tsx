@@ -302,7 +302,6 @@ const ExtendNames = ({ data: { names, isSelf }, onDismiss, setTransactions, setS
       disabled: !!estimateGasLimitError,
       onClick: () => {
         if (!totalRentFee) return
-        console.log('setting stage + transactions')
         setTransactions(transactions)
         setStage('transaction')
       },

@@ -4,10 +4,10 @@ import { getBlock } from 'viem/actions'
 import { waitForTransaction } from '@app/hooks/transactions/waitForTransaction'
 import { wagmiConfig } from '@app/utils/query/wagmi'
 
+import { getTransactionKey } from '../key'
+import type { StoredTransactionList } from '../slices/createTransactionSlice'
+import type { UseTransactionManager } from '../transactionManager'
 import { createTransactionListener } from './createTransactionListener'
-import { getTransactionKey } from './key'
-import type { StoredTransactionList } from './slices/createTransactionSlice'
-import type { UseTransactionManager } from './transactionManager'
 
 const transactionRequestCache = new Map<string, Promise<void>>()
 const blockRequestCache = new Map<Hash, Promise<Block>>()
@@ -35,8 +35,6 @@ const listenForTransaction = async (
     blockRequestCache.set(blockHash, blockRequest)
   }
 
-  // TODO(tate): figure out if timestamp is needed
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { timestamp } = await blockRequest
   store.getState().setTransactionReceipt(transaction, { timestamp: Number(timestamp) * 1000 })
   store.getState().setTransactionStatus(transaction, status)

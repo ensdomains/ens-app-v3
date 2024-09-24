@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import type { StoredTransaction } from '@app/transaction/slices/createTransactionSlice'
 import { useTransactionManager } from '@app/transaction/transactionManager'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -31,9 +32,11 @@ const Notification = ({
   open: boolean
 }) => {
   const { t } = useTranslation()
+  const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
+
   const isFlowResumable = useTransactionManager((s) => s.isFlowResumable)
-  const resumeFlow = useTransactionManager((s) => s.resumeFlow)
+  const resumeFlow = useTransactionManager((s) => s.resumeFlowWithCheck)
 
   const resumable = transaction && isFlowResumable(transaction.flowId)
 
@@ -64,7 +67,7 @@ const Notification = ({
         <Button
           size="small"
           data-testid="notification-continue-button"
-          onClick={() => resumeFlow(transaction.flowId)}
+          onClick={() => resumeFlow(transaction.flowId, router)}
         >
           {t('action.continue')}
         </Button>

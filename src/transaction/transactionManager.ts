@@ -5,28 +5,14 @@ import { immer } from 'zustand/middleware/immer'
 import { createWithEqualityFn } from 'zustand/traditional'
 import { shallow } from 'zustand/vanilla/shallow'
 
+import { existingCommitListener } from './listeners/existingCommitListener'
+import { transactionReceiptListener } from './listeners/transactionReceiptListener'
 import { createCurrentSlice } from './slices/createCurrentSlice'
 import { createFlowSlice } from './slices/createFlowSlice'
 import { createNotificationSlice } from './slices/createNotificationSlice'
 import { createRegistrationFlowSlice } from './slices/createRegistrationFlowSlice'
 import { createTransactionSlice } from './slices/createTransactionSlice'
 import type { AllSlices } from './slices/types'
-import { transactionReceiptListener } from './transactionReceiptListener'
-
-// export const useTransactionStore = create<
-//   AllSlices,
-//   [
-//     ['zustand/persist', unknown],
-//     ['zustand/subscribeWithSelector', never],
-//     ['zustand/immer', never],
-//   ],
-//   [],
-// >()((...a) => ({
-//   ...createCurrentSlice(...a),
-//   ...createFlowSlice(...a),
-//   ...createTransactionSlice(...a),
-//   ...createNotificationSlice(...a),
-// }))
 
 enableMapSet()
 
@@ -59,7 +45,8 @@ export const useTransactionManager = createWithEqualityFn<AllSlices>()(
         ({
           flows: state.flows,
           transactions: state.transactions,
-        }) as Pick<AllSlices, 'flows' | 'transactions'>,
+          registrationFlows: state.registrationFlows,
+        }) as Pick<AllSlices, 'flows' | 'transactions' | 'registrationFlows'>,
     },
   ),
   shallow,
@@ -68,3 +55,4 @@ export const useTransactionManager = createWithEqualityFn<AllSlices>()(
 export type UseTransactionManager = typeof useTransactionManager
 
 useTransactionManager.subscribe(...transactionReceiptListener(useTransactionManager))
+useTransactionManager.subscribe(...existingCommitListener(useTransactionManager))

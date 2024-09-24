@@ -1,4 +1,4 @@
-import type { AllSlices } from './slices/types'
+import type { AllSlices } from '../slices/types'
 
 export type TransactionStoreListener<selected> = [
   selector: (state: AllSlices) => selected,

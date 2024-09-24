@@ -1,4 +1,4 @@
-import { zeroAddress, type Address, type Hex } from 'viem'
+import { zeroAddress, zeroHash, type Address, type Hex } from 'viem'
 import type { StateCreator } from 'zustand'
 
 import { randomSecret } from '@ensdomains/ensjs/utils'
@@ -69,6 +69,10 @@ export type StoredRegistrationFlow = RegistrationFlowIdentifiers &
 export type RegistrationFlowSlice = {
   registrationFlows: Map<RegistrationFlowKey, StoredRegistrationFlow>
 
+  getRegistrationFlow: (
+    name: RegistrationName,
+    identifiersOverride?: TransactionStoreIdentifiers,
+  ) => StoredRegistrationFlow | null
   getCurrentRegistrationFlowOrDefault: (
     name: RegistrationName,
     identifiersOverride?: TransactionStoreIdentifiers,
@@ -226,7 +230,7 @@ const createDefaultRegistrationFlowData = (
   records: [],
   resolverAddress: '0x',
   permissions: childFuseObj,
-  secret: randomSecret({ platformDomain: 'enslabs.eth', campaign: 3 }),
+  secret: zeroHash,
   isStarted: false,
   paymentMethodChoice: 'ethereum',
   externalTransactionData: null,
@@ -245,14 +249,18 @@ export const createRegistrationFlowSlice: StateCreator<
   RegistrationFlowSlice
 > = (set, get) => ({
   registrationFlows: new Map(),
+  getRegistrationFlow: (name, identifiersOverride) => {
+    const state = get()
+    const identifiers = getIdentifiers(state, identifiersOverride)
+    const registrationFlowKey = getFlowKey({ flowId: name, ...identifiers })
+    return state.registrationFlows.get(registrationFlowKey) ?? null
+  },
   getCurrentRegistrationFlowOrDefault: (name, identifiersOverride) => {
     const state = get()
     const identifiers = getIdentifiersWithDefault(state, identifiersOverride)
     const registrationFlowKey = getFlowKey({ flowId: name, ...identifiers })
-    return (
-      state.registrationFlows.get(registrationFlowKey) ??
-      createDefaultRegistrationFlowData({ name, ...identifiers })
-    )
+    const existing = state.registrationFlows.get(registrationFlowKey)
+    return existing ?? createDefaultRegistrationFlowData({ name, ...identifiers })
   },
   getCurrentRegistrationFlowStep: (name, identifiersOverride) => {
     const state = get()
@@ -260,7 +268,6 @@ export const createRegistrationFlowSlice: StateCreator<
       name,
       identifiersOverride,
     )
-    console.log('step:', currentRegistrationFlow.queue[currentRegistrationFlow.stepIndex])
     return currentRegistrationFlow.queue[currentRegistrationFlow.stepIndex]
   },
   getCurrentCommitTransaction: (name, identifiersOverride) => {
@@ -361,10 +368,10 @@ export const createRegistrationFlowSlice: StateCreator<
     set((state) => {
       const identifiers = getIdentifiers(state, identifiersOverride)
       const registrationFlowKey = getFlowKey({ flowId: name, ...identifiers })
-      state.registrationFlows.set(
-        registrationFlowKey,
-        createDefaultRegistrationFlowData({ name, ...identifiers }),
-      )
+      state.registrationFlows.set(registrationFlowKey, {
+        ...createDefaultRegistrationFlowData({ name, ...identifiers }),
+        secret: randomSecret({ platformDomain: 'enslabs.eth', campaign: 3 }),
+      })
     }),
   onRegistrationPricingStepCompleted: (name, data, identifiersOverride) => {
     const state = get()

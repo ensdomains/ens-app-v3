@@ -241,7 +241,7 @@ export const PaymentChoice = ({
             data-testid="payment-choice-ethereum"
             label={<RadioLabel>{t('steps.info.ethereum')}</RadioLabel>}
             name="RadioButtonGroup"
-            value={'ethereum'}
+            value="ethereum"
             disabled={moonpayTransactionStatus === 'pending'}
             checked={paymentMethodChoice === 'ethereum' || undefined}
           />
@@ -283,7 +283,7 @@ export const PaymentChoice = ({
               </LabelContainer>
             }
             name="RadioButtonGroup"
-            value={'moonpay'}
+            value="moonpay"
             checked={paymentMethodChoice === 'moonpay' || undefined}
           />
           {paymentMethodChoice === 'moonpay' && (

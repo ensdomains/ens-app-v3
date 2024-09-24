@@ -97,7 +97,7 @@ const transports = {
       })),
   [mainnet.id]: initialiseTransports('mainnet', [infuraUrl, cloudflareUrl, tenderlyUrl]),
   [sepolia.id]: initialiseTransports('sepolia', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-  [holesky.id]: initialiseTransports('holesky', [tenderlyUrl]),
+  [holesky.id]: initialiseTransports('holesky', [infuraUrl, tenderlyUrl]),
 } as const
 
 const wagmiConfig_ = createConfig({

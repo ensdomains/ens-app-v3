@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { getAccount, watchChainId } from '@wagmi/core'
+import { getAccount, getChainId, watchChainId } from '@wagmi/core'
 import type { Address } from 'viem'
 import type { StateCreator } from 'zustand'
 
@@ -62,6 +62,8 @@ export const createCurrentSlice: StateCreator<AllSlices, MiddlewareArray, [], Cu
     _setHasHydrated: (hasHydrated) =>
       set((state) => {
         state._hasHydrated = hasHydrated
+        onChainIdUpdate(getChainId(wagmiConfig))
+        onAccountUpdate(getAccount(wagmiConfig).address)
       }),
   }
 }

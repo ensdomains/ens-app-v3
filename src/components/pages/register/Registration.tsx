@@ -228,7 +228,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange)
     }
-  }, [currentRegistrationFlowStep, clearRegistrationFlow, router.asPath])
+  }, [
+    currentRegistrationFlowStep,
+    clearRegistrationFlow,
+    router.asPath,
+    router.events,
+    normalisedName,
+  ])
 
   const onDismissMoonpayModal = () => {
     if (moonpayTransactionStatus === 'waitingAuthorization') {

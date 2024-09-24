@@ -41,11 +41,6 @@ const transaction = async ({
   const value = price.base + price.premium
   const valueWithBuffer = calculateValueWithBuffer(value)
 
-  console.log('registerName transaction', {
-    ...data,
-    value: valueWithBuffer,
-  })
-
   return registerName.makeFunctionData(connectorClient, {
     ...data,
     value: valueWithBuffer,

@@ -7,6 +7,7 @@ import { match, P } from 'ts-pattern'
 import type { Address } from 'viem'
 import { useBalance } from 'wagmi'
 import { GetBalanceData } from 'wagmi/query'
+import { useShallow } from 'zustand/react/shallow'
 
 import { Button, Heading, mq } from '@ensdomains/thorin'
 
@@ -60,10 +61,6 @@ const StyledHeading = styled(Heading)(
     }
   `,
 )
-
-const gridAreaStyle = ({ $name }: { $name: string }) => css`
-  grid-area: ${$name};
-`
 
 export type ActionButtonProps = {
   address?: Address
@@ -164,8 +161,8 @@ const Pricing = ({
   const { data: balance } = useBalance({ address })
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
-  const existingRegistrationData = useTransactionManager((s) =>
-    s.getCurrentRegistrationFlowOrDefault(name),
+  const existingRegistrationData = useTransactionManager(
+    useShallow((s) => s.getCurrentRegistrationFlowOrDefault(name)),
   )
   const onRegistrationPricingStepCompleted = useTransactionManager(
     (s) => s.onRegistrationPricingStepCompleted,

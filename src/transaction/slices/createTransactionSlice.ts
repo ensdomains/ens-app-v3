@@ -3,6 +3,7 @@ import type { StateCreator } from 'zustand'
 
 import type { SourceChain, TargetChain } from '@app/constants/chains'
 
+import { getTransactionKey } from '../key'
 import type { TransactionStoreIdentifiers } from '../types'
 import type { UserTransactionData, UserTransactionName } from '../user/transaction'
 import {
@@ -118,11 +119,16 @@ export type StoredTransactionList<
   status extends StoredTransactionStatus = StoredTransactionStatus,
 > = StoredTransaction<status>[]
 
+export type StoredTransactionResult<
+  status extends StoredTransactionStatus | StoredTransactionStatus[],
+> = StoredTransaction<status extends StoredTransactionStatus[] ? status[number] : status>
+
 export type TransactionSlice = {
   transactions: Map<TransactionKey, StoredTransaction>
-  getTransactionsByStatus: <status extends StoredTransactionStatus>(
+  getTransaction: (identifiers: StoredTransactionIdentifiers) => StoredTransaction | null
+  getTransactionsByStatus: <status extends StoredTransactionStatus | StoredTransactionStatus[]>(
     status: status,
-  ) => StoredTransaction<status>[]
+  ) => StoredTransactionResult<status>[]
   getAllTransactions: () => StoredTransaction[]
   isTransactionResumable: (transaction: StoredTransaction) => boolean
   setTransactionStatus: (
@@ -145,14 +151,21 @@ export const createTransactionSlice: StateCreator<
   TransactionSlice
 > = (set, get) => ({
   transactions: new Map(),
-  getTransactionsByStatus: <status extends StoredTransactionStatus>(status: status) => {
+  getTransaction: (identifiers) => {
+    const state = get()
+    return state.transactions.get(getTransactionKey(identifiers)) ?? null
+  },
+  getTransactionsByStatus: <status extends StoredTransactionStatus | StoredTransactionStatus[]>(
+    status: status,
+  ) => {
     const state = get()
     const identifiers = getIdentifiersOrNull(state, undefined)
+    const statusArray: StoredTransactionStatus[] = Array.isArray(status) ? status : [status]
     if (!identifiers) return []
     return Array.from(state.transactions.values()).filter(
-      (t): t is StoredTransaction<status> =>
+      (t): t is StoredTransactionResult<status> =>
         !!t &&
-        t.status === status &&
+        statusArray.includes(t.status) &&
         t.sourceChainId === identifiers.sourceChainId &&
         t.account === identifiers.account,
     )

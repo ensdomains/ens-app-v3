@@ -176,8 +176,6 @@ export const TransactionStageModal = <name extends UserTransactionName = UserTra
 
   const backButton = <BackButton status={transaction.status} backToInput={backToInput} />
 
-  console.log(transaction.status)
-
   const dialogStatus = (() => {
     switch (transaction.status) {
       case 'empty':
