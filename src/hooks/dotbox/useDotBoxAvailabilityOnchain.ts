@@ -9,8 +9,8 @@ import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
+import { infuraUrl } from '@app/utils/query/providers'
 import { useQuery } from '@app/utils/query/useQuery'
-import { infuraUrl } from '@app/utils/query/wagmi'
 
 type UseDotBoxAvailabilityOnchainParameters = {
   name?: string
