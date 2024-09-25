@@ -22,7 +22,7 @@ type PaymentEvent = {
   }
 }
 
-type DNSImportTypeEvent = {
+type DNSImportTypeSelectedEvent = {
   eventName: 'import_type_selected_dns'
   customProperties: {
     importType: 'onchain' | 'offchain' | null
@@ -49,7 +49,7 @@ export type TrackEventParameters =
   | SearchSelectEvent
   | PaymentEvent
   | DefaultEvent
-  | DNSImportTypeEvent
+  | DNSImportTypeSelectedEvent
 
 export const useEventTracker = () => {
   const chain = useChainName()

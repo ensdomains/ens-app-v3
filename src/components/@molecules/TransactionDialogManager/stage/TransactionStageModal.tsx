@@ -411,7 +411,7 @@ export const TransactionStageModal = ({
   }, [helper])
 
   const ActionButton = useMemo(() => {
-    const handleClickActionButton = () => {
+    const handleCompleteTransaction = () => {
       dispatch({ name: 'incrementTransaction' })
 
       if (actionName === 'approveDnsRegistrar') {
@@ -437,7 +437,7 @@ export const TransactionStageModal = ({
       return (
         <Button
           data-testid="transaction-modal-complete-button"
-          onClick={() => handleClickActionButton()}
+          onClick={() => handleCompleteTransaction()}
         >
           {t('action.next')}
         </Button>
