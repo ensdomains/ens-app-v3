@@ -497,7 +497,7 @@ export const TransactionStageModal = ({
             })
           }
 
-          if (actionName === 'approveDnsRegistrar') {
+          if (['approveDnsRegistrar', 'importDnsName'].includes(actionName)) {
             trackEvent({
               eventName: 'commit_wallet_opened_dns',
             })
