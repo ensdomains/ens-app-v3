@@ -74,6 +74,11 @@ export const useEventTracker = () => {
             'register_started',
             'register_started_box',
             'register_wallet_opened',
+            'verify_ownership_started_dns',
+            'claim_domain_started_dns',
+            'commit_wallet_opened_dns',
+            'register_started_dns',
+            'register_wallet_opened_dns',
           ),
         },
         ({ eventName }) => sendTrackEvent(eventName, chain),
@@ -98,20 +103,6 @@ export const useEventTracker = () => {
         ({ eventName, customProperties }) => {
           const { importType, name } = customProperties
           sendTrackEvent(eventName, chain, { name, importType })
-        },
-      )
-      .with(
-        {
-          eventName: P.union(
-            'verify_ownership_started_dns',
-            'claim_domain_started_dns',
-            'commit_wallet_opened_dns',
-            'register_started_dns',
-            'register_wallet_opened_dns',
-          ),
-        },
-        ({ eventName }) => {
-          sendTrackEvent(eventName, chain)
         },
       )
       .exhaustive()

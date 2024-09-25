@@ -98,7 +98,7 @@ export const VerifyOnchainOwnership = ({
     return tc(`error.${errorKey}`, { ns: 'dnssec' })
   }, [tc, error, isLoading])
 
-  const handleDNSButtonClick = () => {
+  const handleStartDNSImport = () => {
     dispatch({ name: 'increaseStep', selected })
 
     trackEvent({
@@ -170,7 +170,7 @@ export const VerifyOnchainOwnership = ({
         {isConnected ? (
           <DnsImportActionButton
             disabled={!dnsOwner || isLoading || isRefetching || isError}
-            onClick={handleDNSButtonClick}
+            onClick={handleStartDNSImport}
             data-testid="import-next-button"
             {...(dnsOwnerStatus === 'mismatching'
               ? {

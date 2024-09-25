@@ -33,7 +33,7 @@ test('should allow claim (owned by user)', async ({ page, login, accounts, makeP
   await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Not Imported' }).waitFor()
   await homePage.searchInput.press('Enter')
 
-  await test.step('should fire DNS tracking event: search_selected_dns', async () => {
+  await test.step('should fire DNS import tracking event: search_selected_dns', async () => {
     await expect(consoleEvents).toHaveLength(1)
 
     await expect(consoleEvents[0]).toContain(
@@ -58,7 +58,7 @@ test('should allow claim (owned by user)', async ({ page, login, accounts, makeP
   // should jump straight to transaction step
   await expect(importPage.heading).toHaveText('Claim your domain')
 
-  await test.step('should fire DNS tracking event: import_type_selected_dns', async () => {
+  await test.step('should fire DNS import tracking event: import_type_selected_dns', async () => {
     await expect(consoleEvents).toHaveLength(1)
 
     await expect(consoleEvents[0]).toContain(
@@ -79,7 +79,7 @@ test('should allow claim (owned by user)', async ({ page, login, accounts, makeP
 
   await importPage.nextButton.click()
 
-  await test.step('should fire DNS tracking event: claim_domain_started_dns', async () => {
+  await test.step('should fire DNS import tracking event: claim_domain_started_dns', async () => {
     await expect(consoleEvents).toHaveLength(1)
 
     await expect(consoleEvents[0]).toContain(
@@ -93,7 +93,7 @@ test('should allow claim (owned by user)', async ({ page, login, accounts, makeP
 
   await transactionModal.confirm()
 
-  await test.step('should fire DNS tracking event: commit_wallet_opened_dns', async () => {
+  await test.step('should fire DNS import tracking event: commit_wallet_opened_dns', async () => {
     await expect(consoleEvents).toHaveLength(1)
 
     await expect(consoleEvents[0]).toContain(
@@ -112,7 +112,7 @@ test('should allow claim (owned by user)', async ({ page, login, accounts, makeP
   // should allow finalising
   await importPage.nextButton.click()
 
-  await test.step('should fire DNS tracking event: register_started_dns', async () => {
+  await test.step('should fire DNS import tracking event: register_started_dns', async () => {
     await expect(consoleEvents).toHaveLength(1)
 
     await expect(consoleEvents[0]).toContain(
@@ -127,7 +127,7 @@ test('should allow claim (owned by user)', async ({ page, login, accounts, makeP
   await expect(page.getByText('Open Wallet')).toBeVisible()
   await transactionModal.confirm()
 
-  await test.step('should fire DNS tracking event: register_wallet_opened_dns', async () => {
+  await test.step('should fire DNS import tracking event: register_wallet_opened_dns', async () => {
     await expect(consoleEvents).toHaveLength(1)
 
     await expect(consoleEvents[0]).toContain(
@@ -163,7 +163,7 @@ test('should allow import (not owned by user)', async ({ page, login, makePageOb
   await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Not Imported' }).waitFor()
   await homePage.searchInput.press('Enter')
 
-  await test.step('should fire DNS tracking event: search_selected_dns', async () => {
+  await test.step('should fire DNS import tracking event: search_selected_dns', async () => {
     await expect(consoleEvents).toHaveLength(1)
 
     await expect(consoleEvents[0]).toContain(
@@ -185,7 +185,7 @@ test('should allow import (not owned by user)', async ({ page, login, makePageOb
   await expect(importPage.nextButton).toBeEnabled({ timeout: 15000 })
   await importPage.nextButton.click()
 
-  await test.step('should fire DNS tracking event: import_type_selected_dns', async () => {
+  await test.step('should fire DNS import tracking event: import_type_selected_dns', async () => {
     await expect(consoleEvents).toHaveLength(1)
 
     await expect(consoleEvents[0]).toContain(
