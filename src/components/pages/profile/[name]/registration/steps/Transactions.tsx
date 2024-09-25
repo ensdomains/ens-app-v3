@@ -399,24 +399,19 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
           .with('registrationOverriden', () => (
             <Trans i18nKey="steps.transactions.subheading.commitCompleteNoDuration" t={t} />
           ))
-          .with(
-            'registrationReady',
-            'registrationSent',
-            'registrationFailed',
-            'registrationComplete',
-            () =>
-              match(duration)
-                .with(P.not(P.nullish), () => (
-                  <Trans
-                    i18nKey="steps.transactions.subheading.commitComplete"
-                    t={t}
-                    values={{ duration }}
-                  />
-                ))
-                .with(null, () => t('steps.transactions.subheading.commitExpired'))
-                .otherwise(() => (
-                  <Trans i18nKey="steps.transactions.subheading.commitCompleteNoDuration" t={t} />
-                )),
+          .with('registrationReady', 'registrationSent', 'registrationFailed', () =>
+            match(duration)
+              .with(P.not(P.nullish), () => (
+                <Trans
+                  i18nKey="steps.transactions.subheading.commitComplete"
+                  t={t}
+                  values={{ duration }}
+                />
+              ))
+              .with(null, () => t('steps.transactions.subheading.commitExpired'))
+              .otherwise(() => (
+                <Trans i18nKey="steps.transactions.subheading.commitCompleteNoDuration" t={t} />
+              )),
           )
           .with('commitComplete', () => (
             <Trans

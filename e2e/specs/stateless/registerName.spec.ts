@@ -938,7 +938,6 @@ test.describe('Error handling', () => {
     login,
     accounts,
     time,
-    wallet,
     makePageObject,
   }) => {
     test.slow()
