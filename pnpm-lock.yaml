@@ -19,6 +19,9 @@ patchedDependencies:
   next-dev-https@0.1.2:
     hash: q5l3x5627ujg3rak6l6v24c2cq
     path: patches/next-dev-https@0.1.2.patch
+  node-forge@1.3.1:
+    hash: nfdrir6ttlr77nd4pr3kkewsuy
+    path: patches/node-forge@1.3.1.patch
   react-confetti@6.1.0:
     hash: bbuxkxhxbyez4jmqgptuoucij4
     path: patches/react-confetti@6.1.0.patch
@@ -135,6 +138,9 @@ importers:
       next:
         specifier: 13.5.6
         version: 13.5.6(@babel/core@7.24.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      node-forge:
+        specifier: 1.3.1
+        version: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -14012,7 +14018,7 @@ snapshots:
       buffer: 6.0.3
       ethereumjs-util: 7.1.5
       libphonenumber-js: 1.11.2
-      node-forge: 1.3.1
+      node-forge: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
     transitivePeerDependencies:
       - debug
 
@@ -14026,7 +14032,7 @@ snapshots:
       buffer: 6.0.3
       ethereumjs-util: 7.1.5
       libphonenumber-js: 1.11.2
-      node-forge: 1.3.1
+      node-forge: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
     transitivePeerDependencies:
       - debug
 
@@ -14135,7 +14141,7 @@ snapshots:
       base64url: 3.0.1
       buffer: 6.0.3
       cbor-web: 8.1.0
-      node-forge: 1.3.1
+      node-forge: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
     transitivePeerDependencies:
       - debug
 
@@ -18444,7 +18450,7 @@ snapshots:
       http-shutdown: 1.2.2
       jiti: 1.21.0
       mlly: 1.7.0
-      node-forge: 1.3.1
+      node-forge: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
       pathe: 1.1.2
       std-env: 3.7.0
       ufo: 1.5.3
@@ -19220,7 +19226,7 @@ snapshots:
     optionalDependencies:
       encoding: 0.1.13
 
-  node-forge@1.3.1: {}
+  node-forge@1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy): {}
 
   node-gyp-build@4.8.1: {}
 
@@ -20460,7 +20466,7 @@ snapshots:
   selfsigned@2.4.1:
     dependencies:
       '@types/node-forge': 1.3.11
-      node-forge: 1.3.1
+      node-forge: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
 
   semver@5.7.2: {}
 

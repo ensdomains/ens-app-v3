@@ -235,5 +235,4 @@ if (process.env.CI && process.env.NODE_ENV === 'production' && !process.env.NEXT
   )
 }
 
-console.log(plugins.reduce((acc, next) => next(acc), nextConfig))
 export default plugins.reduce((acc, next) => next(acc), nextConfig)

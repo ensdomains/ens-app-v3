@@ -6,6 +6,7 @@ import {
   GetCapsuleIntegratedOpts,
   getCapsuleWalletIntegrated,
   OAuthMethod,
+  type CapsuleModalProps,
 } from '@usecapsule/rainbowkit-wallet'
 
 const APP_NAME = 'ENS'
@@ -26,6 +27,8 @@ const capsuleConstructorOpts: ConstructorOpts = {
   xUrl: 'https://twitter.com/ensdomains',
   homepageUrl: 'https://ens.domains/',
   supportUrl: 'mailto:help@ens.domains',
+
+  disableWorkers: true,
 }
 
 export const capsuleClient = new CapsuleWeb(CAPSULE_ENV, CAPSULE_API_KEY, capsuleConstructorOpts)
@@ -39,7 +42,7 @@ export const capsuleModalProps = {
     OAuthMethod.APPLE,
     OAuthMethod.FACEBOOK,
   ],
-}
+} as const satisfies Partial<CapsuleModalProps>
 
 const capsuleWalletItegratedOpts: GetCapsuleIntegratedOpts = {
   capsule: capsuleClient,
