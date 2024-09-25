@@ -26,14 +26,6 @@ export const useSimulateRegistration = ({
   const premium = price?.premium ?? 0n
   const value = base + premium
 
-  console.log(
-    'useSimulateRegistration',
-    client.chain.contracts.ensEthRegistrarController.address,
-    registrationParams,
-    query,
-    price,
-  )
-
   return useSimulateContract({
     abi: ethRegistrarControllerRegisterSnippet,
     address: client.chain.contracts.ensEthRegistrarController.address,

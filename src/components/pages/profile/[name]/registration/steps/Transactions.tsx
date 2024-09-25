@@ -212,7 +212,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     registrationData,
   })
 
-  const { isSuccess: canRegisterOverride, ...rest } = useSimulateRegistration({
+  const { isSuccess: canRegisterOverride } = useSimulateRegistration({
     registrationParams,
     query: {
       enabled: commitTx?.stage === 'sent',
@@ -247,8 +247,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     commitKey,
   })
 
-  console.log('canRegisterOverride', canRegisterOverride, rest, commitTx)
-
   const transactionState = match({
     commitComplete,
     canRegisterOverride,
@@ -265,8 +263,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     .with(PATTERNS.CommitSent, () => 'commitSent' as const)
     .with(PATTERNS.CommitReady, () => 'commitReady' as const)
     .exhaustive()
-
-  console.log('transactionState', transactionState)
 
   const makeCommitNameFlow = useCallback(() => {
     onStart()
@@ -339,6 +335,8 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const duration = useDurationCountdown({
     endDate: commitTimestamp ? new Date(commitTimestamp + ONE_DAY * 1000) : undefined,
   })
+
+  console.log('duration', duration, commitTimestamp)
 
   return (
     <StyledCard>
@@ -450,6 +448,11 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
               onClick={showRegisterTransaction}
             />
           ))
+          .with(
+            'registrationReady',
+            () => duration === null,
+            () => <>{ResetBackButton}</>,
+          )
           .with('registrationReady', 'registrationOverriden', () => (
             <>
               {ResetBackButton}
