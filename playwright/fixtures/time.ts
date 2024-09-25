@@ -12,6 +12,10 @@ type Dependencies = {
 export const createTime = ({ page }: Dependencies) => {
   return {
     sync: async (offset = 0) => {
+      const blockTime = Number((await publicClient.getBlock()).timestamp)
+      await page.clock.install({ time: new Date((blockTime + offset) * 1000)})
+    },
+    sync_old: async (offset = 0) => {
       const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
       const blockTime = Number((await publicClient.getBlock()).timestamp)
       const browserOffset = (blockTime - browserTime + offset) * 1000

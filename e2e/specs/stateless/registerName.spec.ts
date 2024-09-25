@@ -931,3 +931,94 @@ test('should be able to detect an existing commit created on a private mempool',
     )
   })
 })
+
+test.describe('Error handling', () => {
+  test.skip('should be able to detect an existing commit created on a private mempool', async ({
+    page,
+    login,
+    accounts,
+    time,
+    wallet,
+    makePageObject,
+  }) => {
+    test.slow()
+
+    const homePage = makePageObject('HomePage')
+    const registrationPage = makePageObject('RegistrationPage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await time.sync(500)
+
+    await homePage.goto()
+    await login.connect()
+
+    const name = `expired-commit-${Date.now()}.eth`
+    // should redirect to registration page
+    await homePage.searchInput.fill(name)
+    await homePage.searchInput.press('Enter')
+    await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+
+    // should have payment choice ethereum checked and show primary name setting as checked
+    await page.getByTestId('payment-choice-ethereum').check()
+    await registrationPage.primaryNameToggle.uncheck()
+
+    // should go to profile editor step
+    await page.getByTestId('next-button').click()
+
+    await expect(page.getByTestId('next-button')).toHaveText('Begin')
+    await page.getByTestId('next-button').click()
+    await transactionModal.closeButton.click()
+
+    await expect(
+      page.getByText(
+        'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
+      ),
+    ).toBeVisible()
+    await page.getByTestId('start-timer-button').click()
+
+    await expect(page.getByText('Open Wallet')).toBeVisible()
+    await transactionModal.confirm()
+
+    await page.pause()
+    // should show countdown
+    // await expect(page.getByTestId('countdown-circle')).toBeVisible()
+    // await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+    // const waitButton = page.getByTestId('wait-button')
+    // await expect(waitButton).toBeVisible()
+    // await expect(waitButton).toBeDisabled()
+    // const startTimerButton = page.getByTestId('start-timer-button')
+    // await expect(startTimerButton).not.toBeVisible()
+    await testClient.increaseTime({ seconds: 60 * 60 * 24 * 2 })
+    await time.sync(500)
+
+    // Should show registration text
+    // await expect(
+    //   page.getByText(
+    //     'Your name is not registered until you’ve completed the second transaction. You have 23 hours remaining to complete it.',
+    //   ),
+    // ).toBeVisible()
+    await expect(page.getByTestId('finish-button')).toBeEnabled()
+
+    // should save the registration state and the transaction status
+    await page.reload()
+    await expect(page.getByTestId('finish-button')).toBeEnabled()
+
+    // should allow finalising registration and automatically go to the complete step
+    // await expect(
+    //   page.getByText(
+    //     'Your name is not registered until you’ve completed the second transaction. You have 23 hours remaining to complete it.',
+    //   ),
+    // ).toBeVisible()
+    await page.getByTestId('finish-button').click()
+    await expect(page.getByText('Open Wallet')).toBeVisible()
+    await transactionModal.confirm()
+
+    // should show the correct details on completion
+    // await expect(page.getByTestId('invoice-item-0-amount')).toHaveText(/0.0032 ETH/)
+
+    await page.getByTestId('view-name').click()
+    await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+      accounts.getAddress('user', 5),
+    )
+  })
+})

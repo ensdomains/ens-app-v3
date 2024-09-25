@@ -35,6 +35,7 @@ type ProviderValue = {
   usePreparedDataInput: UsePreparedDataInput
   createTransactionFlow: CreateTransactionFlow
   resumeTransactionFlow: (key: string) => void
+  getSelectedKey: () => string | null
   getTransactionIndex: (key: string) => number
   getResumable: (key: string) => boolean
   getTransactionFlowStage: (
@@ -50,6 +51,7 @@ const TransactionContext = React.createContext<ProviderValue>({
   usePreparedDataInput: () => () => {},
   createTransactionFlow: () => {},
   resumeTransactionFlow: () => {},
+  getSelectedKey: () => null,
   getTransactionIndex: () => 0,
   getResumable: () => false,
   getTransactionFlowStage: () => 'undefined',
@@ -82,6 +84,8 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
       }
     },
   )
+
+  const getSelectedKey = useCallback(() => state.selectedKey, [state.selectedKey])
 
   const getTransactionIndex = useCallback(
     (key: string) => state.items[key]?.currentTransaction || 0,
@@ -187,6 +191,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
           payload: flow,
         })) as CreateTransactionFlow,
       resumeTransactionFlow,
+      getSelectedKey,
       getTransactionIndex,
       getTransaction,
       getResumable,
@@ -200,6 +205,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     dispatch,
     resumeTransactionFlow,
     getResumable,
+    getSelectedKey,
     getTransactionIndex,
     getLatestTransaction,
     getTransactionFlowStage,
