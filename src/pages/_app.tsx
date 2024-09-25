@@ -16,7 +16,7 @@ import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowPr
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
-import { RainbowKitWithCapsuleProvider } from '@app/utils/RainbowKitWithCapsuleProvider'
+import { RainbowKitWithCapsuleProvider } from '@app/utils/query/RainbowKitWithCapsuleProvider'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 

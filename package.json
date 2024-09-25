@@ -64,9 +64,9 @@
     "@tanstack/query-sync-storage-persister": "5.22.2",
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-persist-client": "5.22.2",
-    "@usecapsule/rainbowkit": "^2.1.6",
-    "@usecapsule/rainbowkit-wallet": "^0.9.6",
-    "@usecapsule/react-components": "^2.0.10",
+    "@usecapsule/rainbowkit": "2.1.6",
+    "@usecapsule/rainbowkit-wallet": "0.9.6",
+    "@usecapsule/react-components": "2.0.10",
     "@wagmi/core": "2.13.3",
     "@walletconnect/ethereum-provider": "^2.11.1",
     "@walletconnect/modal": "^2.6.2",
@@ -206,7 +206,8 @@
       "@walletconnect/modal": "2.6.2",
       "react": "^18.2.0",
       "react-dom": "^18.2.0",
-      "@wagmi/core": "2.13.3"
+      "@wagmi/core": "2.13.3",
+      "@usecapsule/react-sdk": "3.18.0"
     },
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",

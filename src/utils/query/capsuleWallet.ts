@@ -1,3 +1,4 @@
+import { connectorsForWallets } from '@usecapsule/rainbowkit'
 import {
   CapsuleWeb,
   ConstructorOpts,
@@ -29,7 +30,7 @@ const capsuleConstructorOpts: ConstructorOpts = {
 
 export const capsuleClient = new CapsuleWeb(CAPSULE_ENV, CAPSULE_API_KEY, capsuleConstructorOpts)
 
-export const capsuleIntegratedProps = {
+export const capsuleModalProps = {
   appName: '',
   oAuthMethods: [
     OAuthMethod.GOOGLE,
@@ -38,14 +39,25 @@ export const capsuleIntegratedProps = {
     OAuthMethod.APPLE,
     OAuthMethod.FACEBOOK,
   ],
-  logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvaJ1zKHDtEqPik1OsCoPvQ8S92j7-AI1Q6F2j4yyE-Q&s',
 }
 
 const capsuleWalletItegratedOpts: GetCapsuleIntegratedOpts = {
   capsule: capsuleClient,
-  nameOverride: `Sign in with ${APP_NAME}`,
-  iconOverride: 'https://cryptologos.cc/logos/ethereum-name-service-ens-logo.png',
+  nameOverride: 'Sign in with Capsule',
   iconBackgroundOverride: '#ffffff',
 }
 
 export const capsuleWallet = getCapsuleWalletIntegrated(capsuleWalletItegratedOpts)
+
+export const capsuleWalletConnectorFn = connectorsForWallets(
+  [
+    {
+      groupName: 'Managed',
+      wallets: [capsuleWallet],
+    },
+  ],
+  {
+    appName: APP_NAME,
+    projectId: '',
+  },
+)[0]

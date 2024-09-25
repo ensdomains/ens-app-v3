@@ -1,7 +1,7 @@
 import { lightTheme, RainbowKitProvider, Theme } from '@usecapsule/rainbowkit'
-import { ComponentProps } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 
-import { capsuleClient, capsuleIntegratedProps } from './capsuleWallet'
+import { loadCapsule } from './loadCapsule'
 
 type RainbowKitProviderProps = ComponentProps<typeof RainbowKitProvider>
 
@@ -16,13 +16,18 @@ const rainbowKitTheme: Theme = {
 }
 
 export const RainbowKitWithCapsuleProvider = (props: RainbowKitProviderProps) => {
+  const [capsuleData, setCapsule] = useState<Awaited<ReturnType<typeof loadCapsule>> | null>(null)
+
+  useEffect(() => {
+    loadCapsule().then(setCapsule)
+  }, [])
+
   return (
     <RainbowKitProvider
       theme={rainbowKitTheme}
       {...props}
-      // @ts-ignore
-      capsule={capsuleClient}
-      capsuleIntegratedProps={capsuleIntegratedProps}
+      capsule={capsuleData?.capsuleClient}
+      capsuleIntegratedProps={capsuleData?.capsuleModalProps}
     />
   )
 }
