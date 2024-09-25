@@ -217,7 +217,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     query: {
       enabled: commitTx?.stage === 'sent',
       retry: true,
-      retryDelay: 1000,
+      retryDelay: 5_000,
     },
   })
 
