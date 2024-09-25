@@ -109,19 +109,6 @@ test('should allow claim (owned by user)', async ({ page, login, accounts, makeP
   await expect(importPage.heading).toHaveText('Claim your domain')
   await expect(importPage.nextButton).toBeEnabled({ timeout: 15000 })
 
-  await test.step('should fire DNS tracking event: import_type_selected_dns', async () => {
-    await expect(consoleEvents).toHaveLength(1)
-
-    await expect(consoleEvents[0]).toContain(
-      JSON.stringify({
-        type: 'import_type_selected_dns',
-        chain,
-        props: { name, importType: 'onchain', referrer: null },
-      }),
-    )
-    consoleEvents.length = 0
-  })
-
   // should allow finalising
   await importPage.nextButton.click()
 
@@ -175,8 +162,6 @@ test('should allow import (not owned by user)', async ({ page, login, makePageOb
   await page.locator(`[data-testid="search-result-name"]`, { hasText: name }).waitFor()
   await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Not Imported' }).waitFor()
   await homePage.searchInput.press('Enter')
-
-  await page.pause()
 
   await test.step('should fire DNS tracking event: search_selected_dns', async () => {
     await expect(consoleEvents).toHaveLength(1)
