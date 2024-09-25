@@ -101,11 +101,9 @@ export const VerifyOnchainOwnership = ({
   const handleDNSButtonClick = () => {
     dispatch({ name: 'increaseStep', selected })
 
-    if (dnsOwnerStatus === 'mismatching') {
-      trackEvent({
-        eventName: 'verify_ownership_started_dns',
-      })
-    }
+    trackEvent({
+      eventName: 'verify_ownership_started_dns',
+    })
   }
 
   return (

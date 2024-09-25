@@ -99,9 +99,9 @@ export const VerifyOffchainOwnership = ({
     return null
   }, [tc, error])
 
-  const handleCompleteOffChainProcess = () => {
+  const handleCompleteOffchainProcess = () => {
     dispatch({ name: 'increaseStep', selected })
-    if (dnsOffchainStatus?.address?.status === 'mismatching') {
+    if (dnsOffchainStatus?.address?.status !== 'mismatching') {
       trackEvent({ eventName: 'register_started_dns' })
     }
   }
@@ -174,7 +174,7 @@ export const VerifyOffchainOwnership = ({
         {isConnected ? (
           <DnsImportActionButton
             disabled={!dnsOffchainStatus || isLoading || isRefetching || isError || !!error}
-            onClick={handleCompleteOffChainProcess}
+            onClick={handleCompleteOffchainProcess}
             {...(dnsOffchainStatus?.address?.status === 'mismatching'
               ? {
                   colorStyle: 'redPrimary',
