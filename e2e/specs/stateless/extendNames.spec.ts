@@ -84,7 +84,7 @@ test('should be able to register multiple names on the address page', async ({
 
   await subgraph.sync()
   await page.reload()
-  await page.waitForTimeout(3000)
+  await page.waitForTimeout(5000)
   for (const name of extendableNameItems) {
     const label = name.replace('.eth', '')
     await addresPage.search(label)
