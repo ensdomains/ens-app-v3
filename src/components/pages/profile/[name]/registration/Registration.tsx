@@ -146,6 +146,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     paymentMethodChoice,
     estimatedTotal,
     ethPrice,
+    durationType,
   }: RegistrationStepData['pricing']) => {
     if (estimatedTotal && ethPrice) {
       trackEvent({
@@ -165,7 +166,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     }
     dispatch({
       name: 'setPricingData',
-      payload: { seconds, reverseRecord },
+      payload: { seconds, reverseRecord, durationType },
       selected,
     })
     if (!item.queue.includes('profile')) {

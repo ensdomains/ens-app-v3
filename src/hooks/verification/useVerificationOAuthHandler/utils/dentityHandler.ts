@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next'
 import { match, P } from 'ts-pattern'
 import { Hash } from 'viem'
 
@@ -9,6 +10,7 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getDestination } from '@app/routes'
 import { CreateTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
+import { shortenAddress } from '../../../../utils/utils'
 import { UseVerificationOAuthReturnType } from '../../useVerificationOAuth/useVerificationOAuth'
 import { createVerificationTransactionFlow } from './createVerificationTransactionFlow'
 
@@ -38,12 +40,14 @@ export const dentityVerificationHandler =
     onDismiss,
     router,
     createTransactionFlow,
+    t,
   }: {
     userAddress?: Hash
     onClose: () => void
     onDismiss: () => void
     router: ReturnType<typeof useRouterWithHistory>
     createTransactionFlow: CreateTransactionFlow
+    t: TFunction
   }) =>
   (json: UseVerificationOAuthReturnType): VerificationErrorDialogProps => {
     return match(json)
@@ -55,14 +59,15 @@ export const dentityVerificationHandler =
           resolverAddress: P.string,
         },
         ({ owner, manager }) => {
-          if (owner && manager) return manager === userAddress
-          return owner === userAddress
+          if (owner && manager) return manager.toLowerCase() === userAddress?.toLowerCase()
+          return owner.toLowerCase() === userAddress?.toLowerCase()
         },
         ({ verifier, name, resolverAddress, verifiedPresentationUri, verificationRecord }) => {
           router.push(`/${name}`)
 
           const vcUris = verificationRecord ? tryJsonParse(verificationRecord) : []
 
+          // If the user has already verified the presentation, do not create a new transaction
           if (Array.isArray(vcUris) && vcUris.includes(verifiedPresentationUri)) return undefined
 
           createVerificationTransactionFlow({
@@ -82,16 +87,16 @@ export const dentityVerificationHandler =
             open: true,
             onDismiss,
             onClose,
-            title: 'Verification failed',
-            message: 'Resolver address is required to complete verification flow',
+            title: t('verificationErrorDialog.title'),
+            message: t('verificationErrorDialog.resolverRequired'),
             actions: {
               leading: {
-                children: 'Close',
+                children: t('action.close'),
                 colorStyle: 'accentSecondary',
                 onClick: () => onClose(),
               } as ButtonProps,
               trailing: {
-                children: 'Go to profile',
+                children: t('action.goToProfile'),
                 as: 'a',
                 href: getDestination(`/${json.name}`),
               } as ButtonProps,
@@ -103,12 +108,37 @@ export const dentityVerificationHandler =
         () =>
           ({
             open: true,
-            title: 'Verification failed',
-            message:
-              'You must be connected as the Manager of this name to set the verification record. You can view and update the Manager under the Ownership tab.',
+            title: t('verificationErrorDialog.title'),
+            message: t('verificationErrorDialog.ownerNotManager'),
             actions: {
               trailing: {
-                children: 'Done',
+                children: t('action.done'),
+                onClick: () => onClose(),
+              } as ButtonProps,
+            },
+            onClose,
+            onDismiss,
+          }) as VerificationErrorDialogProps,
+      )
+      .with(
+        {
+          owner: P.string,
+          name: P.string,
+          verifiedPresentationUri: P.string,
+          resolverAddress: P.string,
+        },
+        ({ manager, owner, primaryName }) =>
+          ({
+            open: true,
+            title: t('verificationErrorDialog.title'),
+            message: {
+              t,
+              i18nKey: 'verificationErrorDialog.wrongAccount',
+              values: { nameOrAddress: primaryName ?? shortenAddress(manager ?? owner) },
+            },
+            actions: {
+              trailing: {
+                children: t('action.done'),
                 onClick: () => onClose(),
               } as ButtonProps,
             },
@@ -120,11 +150,11 @@ export const dentityVerificationHandler =
         () =>
           ({
             open: true,
-            title: 'Verification failed',
-            message: "We could't verify your account. Please return to Dentity and try again.",
+            title: t('verificationErrorDialog.title'),
+            message: t('verificationErrorDialog.default'),
             actions: {
               trailing: {
-                children: 'Close',
+                children: t('action.close'),
                 colorStyle: 'accentSecondary',
                 onClick: () => onClose(),
               } as ButtonProps,

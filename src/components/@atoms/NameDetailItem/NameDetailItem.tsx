@@ -161,18 +161,15 @@ export const NameDetailItem = ({
         as={mode !== 'select' ? 'a' : 'div'}
         data-testid={`name-item-${name}`}
         className="name-detail-item"
+        onClick={(e: any) => {
+          e.preventDefault()
+          if (name !== INVALID_NAME && !disabled) {
+            handleClick()
+          }
+        }}
       >
         <NameItemContainer>
-          <AvatarWrapper
-            data-testid={`name-item-avatar-wrapper-${name}`}
-            onClick={(e) => {
-              e.preventDefault()
-
-              if (name !== INVALID_NAME && !disabled) {
-                handleClick()
-              }
-            }}
-          >
+          <AvatarWrapper data-testid={`name-item-avatar-wrapper-${name}`}>
             <Avatar
               placeholder={`url(${zorb})`}
               label={truncatedName || name}

@@ -25,6 +25,7 @@ export type RegistrationStepData = {
     paymentMethodChoice: PaymentMethod | ''
     estimatedTotal?: bigint
     ethPrice?: bigint
+    durationType: 'date' | 'years'
   }
   profile: {
     records: ProfileRecord[]

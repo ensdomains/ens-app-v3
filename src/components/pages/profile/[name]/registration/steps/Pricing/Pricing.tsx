@@ -383,6 +383,7 @@ export type ActionButtonProps = {
   totalRequiredBalance?: bigint
   estimatedTotal?: bigint
   ethPrice?: bigint
+  durationType: 'date' | 'years'
 }
 
 export const ActionButton = (props: ActionButtonProps) => {
@@ -409,6 +410,7 @@ export const ActionButton = (props: ActionButtonProps) => {
         paymentMethodChoice,
         estimatedTotal,
         ethPrice,
+        durationType,
         callback,
       }) => (
         <Button
@@ -421,6 +423,7 @@ export const ActionButton = (props: ActionButtonProps) => {
               paymentMethodChoice,
               estimatedTotal,
               ethPrice,
+              durationType,
             })
           }
           disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isPending}
@@ -457,7 +460,15 @@ export const ActionButton = (props: ActionButtonProps) => {
       ),
     )
     .otherwise(
-      ({ reverseRecord, seconds, paymentMethodChoice, estimatedTotal, ethPrice, callback }) => (
+      ({
+        reverseRecord,
+        seconds,
+        paymentMethodChoice,
+        estimatedTotal,
+        ethPrice,
+        durationType,
+        callback,
+      }) => (
         <Button
           data-testid="next-button"
           onClick={() =>
@@ -467,6 +478,7 @@ export const ActionButton = (props: ActionButtonProps) => {
               paymentMethodChoice,
               estimatedTotal,
               ethPrice,
+              durationType,
             })
           }
           disabled={!paymentMethodChoice}
@@ -515,6 +527,9 @@ const Pricing = ({
   const { data: ethPrice } = useEthPrice()
 
   const [seconds, setSeconds] = useState(() => registrationData.seconds ?? ONE_YEAR)
+  const [durationType, setDurationType] = useState<'date' | 'years'>(
+    registrationData.durationType ?? 'years',
+  )
 
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,
@@ -581,7 +596,10 @@ const Pricing = ({
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
-      <DateSelection {...{ seconds, setSeconds, minSeconds }} />
+      <DateSelection
+        {...{ seconds, setSeconds, minSeconds, durationType }}
+        onChangeDurationType={setDurationType}
+      />
       <FullInvoice {...fullEstimate} />
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={name} />
@@ -627,6 +645,7 @@ const Pricing = ({
             totalRequiredBalance,
             estimatedTotal,
             ethPrice,
+            durationType,
           }}
         />
       </MobileFullWidth>
