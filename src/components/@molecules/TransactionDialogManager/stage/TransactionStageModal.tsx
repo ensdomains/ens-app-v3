@@ -411,6 +411,15 @@ export const TransactionStageModal = ({
   }, [helper])
 
   const ActionButton = useMemo(() => {
+    const handleCompleteTransaction = () => {
+      dispatch({ name: 'incrementTransaction' })
+
+      if (actionName === 'approveDnsRegistrar') {
+        trackEvent({
+          eventName: 'register_started_dns',
+        })
+      }
+    }
     if (stage === 'complete') {
       const final = currentStep + 1 === stepCount
 
@@ -428,7 +437,7 @@ export const TransactionStageModal = ({
       return (
         <Button
           data-testid="transaction-modal-complete-button"
-          onClick={() => dispatch({ name: 'incrementTransaction' })}
+          onClick={() => handleCompleteTransaction()}
         >
           {t('action.next')}
         </Button>
@@ -482,8 +491,21 @@ export const TransactionStageModal = ({
 
           if (['commitName', 'registerName'].includes(actionName)) {
             trackEvent({
-              eventName:
-                actionName === 'commitName' ? 'commit_wallet_opened' : 'register_wallet_opened',
+              eventName: ['commitName'].includes(actionName)
+                ? 'commit_wallet_opened'
+                : 'register_wallet_opened',
+            })
+          }
+
+          if (['approveDnsRegistrar', 'importDnsName'].includes(actionName)) {
+            trackEvent({
+              eventName: 'commit_wallet_opened_dns',
+            })
+          }
+
+          if (actionName === 'claimDnsName') {
+            trackEvent({
+              eventName: 'register_wallet_opened_dns',
             })
           }
         }}
