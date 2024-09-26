@@ -225,9 +225,7 @@ test.describe.serial('normal registration', () => {
     consoleListener,
   }) => {
     await consoleListener.initialize({
-      regex: new RegExp(
-        `Event triggered on local development.*?(${['search_selected_eth'].join('|')})`,
-      ),
+      regex: /Event triggered on local development.*?search_selected_eth/,
     })
 
     const homePage = makePageObject('HomePage')
