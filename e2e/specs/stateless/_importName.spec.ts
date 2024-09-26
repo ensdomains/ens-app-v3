@@ -40,9 +40,7 @@ test('should allow claim (owned by user)', async ({
   await test.step('should fire DNS import tracking event: search_selected_dns', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
-    await expect(consoleListener.getMessages().toString()).toMatch(
-      new RegExp(`search_selected_dns`),
-    )
+    await expect(consoleListener.getMessages().toString()).toContain('search_selected_dns')
     consoleListener.clearMessages()
   })
 
