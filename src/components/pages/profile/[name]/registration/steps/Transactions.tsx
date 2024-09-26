@@ -371,9 +371,14 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
           callback={() => setCommitComplete(true)}
         />
         <CountDownInner
-          $hide={['commitComplete', 'registrationOverriden', 'registrationReady'].includes(
-            transactionState,
-          )}
+          $hide={match(transactionState)
+            .with('commitComplete', 'registrationOverriden', () => true)
+            .with(
+              'registrationReady',
+              () => duration !== null,
+              () => true,
+            )
+            .otherwise(() => false)}
         >
           <StatusDots
             animate={match(transactionState)
@@ -451,7 +456,13 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
           .with(
             'registrationReady',
             () => duration === null,
-            () => <>{ResetBackButton}</>,
+            () => (
+              <div>
+                <Button colorStyle="redSecondary" onClick={() => setResetOpen(true)}>
+                  {t('action.restart', { ns: 'common' })}
+                </Button>
+              </div>
+            ),
           )
           .with('registrationReady', 'registrationOverriden', () => (
             <>

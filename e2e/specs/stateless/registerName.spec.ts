@@ -991,7 +991,7 @@ test.describe('Error handling', () => {
     await expect(
       page.getByText('Your registration has expired. You will need to start the process again.'),
     ).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Back' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Restart' })).toBeVisible()
     await expect(page.getByTestId('finish-button')).toHaveCount(0)
   })
 
