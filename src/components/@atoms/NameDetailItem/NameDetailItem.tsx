@@ -161,12 +161,20 @@ export const NameDetailItem = ({
         as={mode !== 'select' ? 'a' : 'div'}
         data-testid={`name-item-${name}`}
         className="name-detail-item"
+        onClick={(e: any) => {
+          if (mode === 'select' && name !== INVALID_NAME && !disabled) {
+            e.preventDefault()
+            e.stopPropagation()
+            handleClick()
+          }
+        }}
       >
         <NameItemContainer>
           <AvatarWrapper
             data-testid={`name-item-avatar-wrapper-${name}`}
             onClick={(e: any) => {
               e.preventDefault()
+              e.stopPropagation()
               if (name !== INVALID_NAME && !disabled) {
                 handleClick()
               }
@@ -185,14 +193,7 @@ export const NameDetailItem = ({
               </AvatarOverlay>
             )}
           </AvatarWrapper>
-          <NameItemContent
-            onClick={(e: any) => {
-              if (mode === 'select') e.preventDefault()
-              if (name !== INVALID_NAME && !disabled) {
-                handleClick()
-              }
-            }}
-          >
+          <NameItemContent>
             <TitleWrapper name={truncatedName || name} disabled={disabled} />
             {_expiryDate && (
               <SubtitleWrapper>
