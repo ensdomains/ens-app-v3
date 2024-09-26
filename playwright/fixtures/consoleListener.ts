@@ -1,17 +1,33 @@
-import { Page } from '@playwright/test'
+import { ConsoleMessage, Page } from '@playwright/test'
 
-const trackEventConsolePrefix = 'Event triggered on local development'
+type Dependencies = {
+  page: Page
+}
 
-export function trackConsoleEvents(page: Page, validEventTypesRegex?: RegExp) {
-  const events: string[] = []
+export const createConsoleListener = ({ page }: Dependencies) => {
+  let messages: string[] = []
+  let internalRegex: RegExp | null = null
 
-  page.on('console', (msg) => {
+  const filter = (msg: ConsoleMessage) => {
     const message = msg.text()
+    if (internalRegex?.test(message)) messages.push(message)
+  }
 
-    if (validEventTypesRegex?.test(message) ?? true) {
-      events.push(message.replace(trackEventConsolePrefix, '').trim())
-    }
-  })
-
-  return events
+  return {
+    initialize: ({ regex }: { regex: RegExp }) => {
+      messages.length = 0
+      internalRegex = regex
+      page.on('console', filter)
+    },
+    clearMessages: () => {
+      messages.length = 0
+    },
+    reset: () => {
+      messages.length = 0
+      internalRegex = null
+      page.off('console', filter)
+    },
+    print: () => console.log(messages),
+    getMessages: () => messages,
+  }
 }

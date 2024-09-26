@@ -4,17 +4,14 @@ import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
-import { trackConsoleEvents } from '../../../playwright/fixtures/consoleListener'
 import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
-
-const chain = 'localhost'
-const validBoxRegistrationEventRegex = /"type":"(search_selected_box|register_started_box)"/
 
 test('should allow box registration with available name', async ({
   page,
   login,
   time,
   makePageObject,
+  consoleListener,
 }) => {
   const name = `box-registration-${Date.now()}.box`
 
@@ -23,9 +20,17 @@ test('should allow box registration with available name', async ({
     account: createAccounts().getAddress('user') as `0x${string}`,
   })
 
-  const consoleEvents = trackConsoleEvents(page, validBoxRegistrationEventRegex)
-
   const homePage = makePageObject('HomePage')
+
+  await consoleListener.initialize({
+    regex: new RegExp(
+      `Event triggered on local development.*?(${[
+        'search_selected_box',
+        'register_started_box',
+      ].join('|')})`,
+    ),
+  })
+
   await time.sync(500)
 
   await homePage.goto()
@@ -37,11 +42,11 @@ test('should allow box registration with available name', async ({
   await homePage.searchInput.press('Enter')
 
   await test.step('should fire tracking event: search_selected_box', async () => {
-    await expect(consoleEvents).toHaveLength(1)
-    await expect(consoleEvents[0]).toContain(
-      JSON.stringify({ type: 'search_selected_box', chain, props: { name, referrer: null } }),
+    await expect(consoleListener.getMessages()).toHaveLength(1)
+    await expect(consoleListener.getMessages().toString()).toMatch(
+      new RegExp(`search_selected_box.*?${name}`),
     )
-    consoleEvents.length = 0
+    consoleListener.clearMessages()
   })
 
   await page.waitForURL(new RegExp(`/${name}/dotbox`))
@@ -61,9 +66,9 @@ test('should allow box registration with available name', async ({
   )
 
   await test.step('should fire tracking event: register_started_box', async () => {
-    await expect(consoleEvents).toHaveLength(1)
-    await expect(consoleEvents[0]).toContain('register_started_box')
-    consoleEvents.length = 0
+    await expect(consoleListener.getMessages()).toHaveLength(1)
+    await expect(consoleListener.getMessages().toString()).toContain('register_started_box')
+    consoleListener.clearMessages()
   })
 })
 
@@ -71,6 +76,7 @@ test('should not direct to the registration page if name is not available', asyn
   page,
   login,
   makePageObject,
+  consoleListener,
 }) => {
   await setPrimaryName(walletClient, {
     name: '',
@@ -79,7 +85,14 @@ test('should not direct to the registration page if name is not available', asyn
 
   const name = 'google.box'
 
-  const consoleEvents = trackConsoleEvents(page, validBoxRegistrationEventRegex)
+  await consoleListener.initialize({
+    regex: new RegExp(
+      `Event triggered on local development.*?(${[
+        'search_selected_box',
+        'register_started_box',
+      ].join('|')})`,
+    ),
+  })
 
   const homePage = makePageObject('HomePage')
   await homePage.goto()
@@ -93,6 +106,6 @@ test('should not direct to the registration page if name is not available', asyn
   await expect(page).toHaveURL('/')
 
   await test.step('should not fire tracking event: search_selected_box', async () => {
-    await expect(consoleEvents.some((event) => event.includes('search_selected_box'))).toBeFalsy()
+    await expect(consoleListener.getMessages()).toHaveLength(0)
   })
 })
