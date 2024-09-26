@@ -119,3 +119,42 @@ test.describe('Transactions', () => {
     ).toBe(1)
   })
 })
+
+test.describe('Select Primary Name', () => {
+  test('should allow setting unmanaged name that has eth record set to address', async ({
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    test.slow()
+
+    const name = await makeName({
+      label: 'wrapped',
+      type: 'wrapped',
+      owner: 'user',
+    })
+
+    const transactionModal = makePageObject('TransactionModal')
+    const profilePage = makePageObject('ProfilePage')
+    await profilePage.goto(name)
+    await login.connect()
+    const settingsPage = makePageObject('SettingsPage')
+    const selectPrimaryNameModal = makePageObject('SelectPrimaryNameModal')
+    await settingsPage.goto()
+    await settingsPage.choosePrimaryNameButton.click()
+    await selectPrimaryNameModal.waitForPageLoad()
+    const nameWithoutSuffix = name.slice(0, -4)
+    await selectPrimaryNameModal.searchInput.click()
+    await selectPrimaryNameModal.searchInput.fill(nameWithoutSuffix)
+    await selectPrimaryNameModal.searchInput.press('Enter')
+    await selectPrimaryNameModal.waitForPageLoad()
+    expect(await selectPrimaryNameModal.getPrimaryNameItem(nameWithoutSuffix)).toBeVisible()
+    const nameItem = await selectPrimaryNameModal.getPrimaryNameItem(nameWithoutSuffix)
+    await nameItem.click()
+    await expect(selectPrimaryNameModal.nextButton).toBeEnabled()
+    await selectPrimaryNameModal.nextButton.click()
+    await transactionModal.autoComplete()
+    await settingsPage.goto()
+    await expect(settingsPage.getPrimaryNameLabel()).toHaveText(name, { timeout: 15000 })
+  })
+})
