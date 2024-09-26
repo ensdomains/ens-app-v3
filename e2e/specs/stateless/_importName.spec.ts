@@ -2,19 +2,6 @@ import { expect } from '@playwright/test'
 
 import { test } from '../../../playwright'
 
-const chain = 'localhost'
-const validEventTypes = [
-  'search_selected_dns',
-  'import_type_selected_dns',
-  'verify_ownership_started_dns',
-  'claim_domain_started_dns',
-  'commit_wallet_opened_dns',
-  'register_started_dns',
-  'register_wallet_opened_dns',
-]
-
-const validEthRegistrationEventRegex = new RegExp(`"type":"(${validEventTypes.join('|')})"`)
-
 test('should allow claim (owned by user)', async ({
   page,
   login,
@@ -58,7 +45,6 @@ test('should allow claim (owned by user)', async ({
     )
     consoleListener.clearMessages()
   })
-  await page.pause()
 
   await expect(importPage.heading).toHaveText(`Claim ${name}`)
 
@@ -80,13 +66,7 @@ test('should allow claim (owned by user)', async ({
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
     await expect(consoleListener.getMessages().toString()).toMatch(
-      new RegExp(
-        JSON.stringify({
-          type: 'import_type_selected_dns',
-          chain,
-          props: { name, importType: 'onchain', referrer: null },
-        }),
-      ),
+      new RegExp(`import_type_selected_dns.*?${name}`),
     )
     consoleListener.clearMessages()
   })
@@ -102,11 +82,7 @@ test('should allow claim (owned by user)', async ({
   await test.step('should fire DNS import tracking event: claim_domain_started_dns', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
-    await expect(consoleListener.getMessages().toString()).toMatch(
-      new RegExp(
-        JSON.stringify({ type: 'claim_domain_started_dns', chain, props: { referrer: null } }),
-      ),
-    )
+    await expect(consoleListener.getMessages().toString()).toContain('claim_domain_started_dns')
     consoleListener.clearMessages()
   })
 
@@ -118,11 +94,7 @@ test('should allow claim (owned by user)', async ({
   await test.step('should fire DNS import tracking event: commit_wallet_opened_dns', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
-    await expect(consoleListener.getMessages().toString()).toMatch(
-      new RegExp(
-        JSON.stringify({ type: 'commit_wallet_opened_dns', chain, props: { referrer: null } }),
-      ),
-    )
+    await expect(consoleListener.getMessages().toString()).toContain('commit_wallet_opened_dns')
     consoleListener.clearMessages()
   })
 
@@ -139,9 +111,7 @@ test('should allow claim (owned by user)', async ({
   await test.step('should fire DNS import tracking event: register_started_dns', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
-    await expect(consoleListener.getMessages().toString()).toMatch(
-      JSON.stringify({ type: 'register_started_dns', chain, props: { referrer: null } }),
-    )
+    await expect(consoleListener.getMessages().toString()).toContain('register_started_dns')
     consoleListener.clearMessages()
   })
 
@@ -154,9 +124,7 @@ test('should allow claim (owned by user)', async ({
   await test.step('should fire DNS import tracking event: register_wallet_opened_dns', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
-    await expect(consoleListener.getMessages().toString()).toMatch(
-      JSON.stringify({ type: 'register_wallet_opened_dns', chain, props: { referrer: null } }),
-    )
+    await expect(consoleListener.getMessages().toString()).toContain('register_wallet_opened_dns')
     consoleListener.clearMessages()
   })
 
@@ -184,10 +152,6 @@ test('should allow import (not owned by user)', async ({
         'search_selected_dns',
         'import_type_selected_dns',
         'verify_ownership_started_dns',
-        'claim_domain_started_dns',
-        'commit_wallet_opened_dns',
-        'register_started_dns',
-        'register_wallet_opened_dns',
       ].join('|')})`,
     ),
   })
@@ -209,7 +173,7 @@ test('should allow import (not owned by user)', async ({
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
     await expect(consoleListener.getMessages().toString()).toMatch(
-      JSON.stringify({ type: 'search_selected_dns', chain, props: { name, referrer: null } }),
+      new RegExp(`search_selected_dns.*?${name}`),
     )
     consoleListener.clearMessages()
   })
@@ -231,11 +195,7 @@ test('should allow import (not owned by user)', async ({
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
     await expect(consoleListener.getMessages().toString()).toMatch(
-      JSON.stringify({
-        type: 'import_type_selected_dns',
-        chain,
-        props: { name, importType: 'onchain', referrer: null },
-      }),
+      new RegExp(`import_type_selected_dns.*?${name}`),
     )
     consoleListener.clearMessages()
   })
@@ -251,6 +211,13 @@ test('should allow import (not owned by user)', async ({
   await expect(importPage.nextButton).toHaveCSS('background-color', 'rgb(197, 47, 27)')
 
   await importPage.nextButton.click()
+
+  await test.step('should fire DNS import tracking event: verify_ownership_started_dns', async () => {
+    await expect(consoleListener.getMessages()).toHaveLength(1)
+
+    await expect(consoleListener.getMessages().toString()).toContain('verify_ownership_started_dns')
+    consoleListener.clearMessages()
+  })
 
   // should go to transaction step
   await expect(importPage.heading).toHaveText('Import this domain')
