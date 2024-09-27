@@ -52,7 +52,7 @@
       },
       "warnings": {
         "wrappedDNS": "Los nombres DNS pueden ser reclamados por el propietario de DNS en cualquier momento. No compres nombres DNS.",
-        "offchain": "Los nombres fuera de la cadena no aparecen actualmente en tu lista de 'Nombres'. <a>Aprende más</a>",
+        "offchain": "Los nombres fuera de la blockchain no aparecen actualmente en tu lista de 'Nombres'. <a>Aprende más</a>",
         "homoglyph": "Este nombre contiene caracteres no ASCII. Puede haber caracteres que se vean idénticos o muy similares a otros caracteres, que podrían usarse para engañar a los lectores. <a>Aprende más sobre homoglifos</a>"
       }
     },
