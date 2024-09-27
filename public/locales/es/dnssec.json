@@ -1,0 +1,98 @@
+{
+  "title": "Importá {{name}} a ENS",
+  "error": {
+    "unknown": "Ocurrió un error desconocido",
+    "noTxtRecord": "No se encontró ningún registro",
+    "dnssecFailure": "DNSSEC no está activado",
+    "invalidTxtRecord": "Se encontró un registro inválido",
+    "invalidAddressChecksum": "La dirección no es válida",
+    "resolutionFailure": "El registro proporcionado no se pudo resolver"
+  },
+  "status": {
+    "checking": "Verificando...",
+    "error": "Ocurrió un error durante la verificación",
+    "secondsAgo": "Última verificación hace unos segundos",
+    "aWhileAgo": "Última verificación hace un rato",
+    "minutesAgo_one": "Última verificación hace {{count}} minuto",
+    "minutesAgo_other": "Última verificación hace {{count}} minutos"
+  },
+  "steps": {
+    "selectType": {
+      "title": "Reclamá {{name}}",
+      "subtitle": "Importar nombres de dominio te permite usarlos como nombres ENS.",
+      "learnMore": "Aprendé más sobre la importación de nombres",
+      "select": {
+        "heading": "¿Cómo querés importar tu dominio?",
+        "offchain": {
+          "name": "Fuera de la cadena",
+          "tag": "Gratis",
+          "description": "Tu nombre no tendrá un token en la cadena.<br/>Esto no afecta su capacidad para recibir transacciones o ser usado como nombre principal.<br/><b>No podrás editar tu perfil desde la app de ENS.</b>"
+        },
+        "onchain": {
+          "name": "En la cadena",
+          "description": "Tu nombre tendrá un token en la cadena."
+        }
+      }
+    },
+    "enableDnssec": {
+      "title": "Activá DNSSEC",
+      "help": {
+        "findOutRegistrar": "Averiguá quién es tu registrador"
+      },
+      "status": {
+        "enabled": "DNSSEC está activado en este dominio.",
+        "disabled": {
+          "heading": "Vas a tener que visitar tu registrador de dominio para activar DNSSEC.",
+          "message": "DNSSEC no está activado",
+          "help": "Ayuda para activar DNSSEC"
+        }
+      }
+    },
+    "verifyOwnership": {
+      "title": "Verificá la propiedad",
+      "status": {
+        "disconnected": "Conectá tu billetera para verificar la propiedad.",
+        "mismatching": {
+          "heading": "Agregá el registro DNS de abajo para verificar que sos el dueño de este dominio.",
+          "help": "Ayuda para agregar registros TXT",
+          "message": "No se encontró ningún registro",
+          "error": {
+            "onchain": "El registro encontrado no coincide con tu dirección conectada. Igual podés importar este nombre, pero no vas a tener la propiedad del mismo.",
+            "offchain": "El registro encontrado no coincide con tu dirección conectada. Igual podés importar este nombre, pero no va a apuntar a tu dirección conectada y no se podrá usar como tu nombre principal."
+          }
+        },
+        "matching": "Se encontró un registro que coincide con tu dirección conectada."
+      },
+      "action": {
+        "importWithoutOwnership": "Importar sin propiedad"
+      }
+    },
+    "transaction": {
+      "mismatching": {
+        "title": "Importá este dominio",
+        "subtitle": "Tu propiedad <b>no</b> ha sido verificada. Igual podés importar este dominio."
+      },
+      "matching": {
+        "title": "Reclamá tu dominio",
+        "subtitle": "Tu propiedad ha sido verificada."
+      },
+      "estimatedNetworkCost": "Costo estimado de red"
+    },
+    "complete": {
+      "title": "¡Felicitaciones!",
+      "import": {
+        "subtitle": "<gradient>{{name}}</gradient> ha sido importado",
+        "description": "Este dominio ha sido importado exitosamente a ENS. Ahora podés ver este nombre.",
+        "warning": "Los nombres DNS sin gas actualmente no aparecen en tu lista de \"Nombres\"."
+      },
+      "claim": {
+        "subtitle": "Ahora sos el dueño de <gradient>{{name}}</gradient>",
+        "description": "Tu dominio ha sido reclamado con éxito. Ahora podés ver y administrar tu nombre."
+      },
+      "action": {
+        "claimAnother": "Reclamar otro",
+        "viewName": "Ver nombre"
+      }
+    }
+  }
+}
