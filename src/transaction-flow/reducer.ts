@@ -7,6 +7,7 @@ import {
   TransactionFlowAction,
   TransactionFlowStage,
 } from './types'
+import { shouldSkipTransactionUpdateDuringTest } from './utils/shouldSkipTransactionUpdateDuringTest'
 
 export const initialState: InternalTransactionFlow = {
   selectedKey: null,
@@ -169,6 +170,9 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
           transaction.stage = 'sent'
           break
         }
+
+        if (shouldSkipTransactionUpdateDuringTest(transaction)) break
+
         const stage = status === 'confirmed' ? 'complete' : 'failed'
         transaction.stage = stage
         transaction.minedData = minedData

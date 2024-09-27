@@ -18,6 +18,7 @@ test('should be able to register multiple names on the address page', async ({
   subgraph,
   makePageObject,
   makeName,
+  time,
 }) => {
   // Generating names in not neccessary but we want to make sure that there are names to extend
   await makeName([
@@ -83,11 +84,16 @@ test('should be able to register multiple names on the address page', async ({
   await transactionModal.autoComplete()
 
   await subgraph.sync()
-  await page.reload()
   await page.waitForTimeout(3000)
+
+  // Should be able to remove this after useQuery is fixed. Using to force a refetch.
+  await time.increaseTime({ seconds: 15 })
+  await page.reload()
   for (const name of extendableNameItems) {
     const label = name.replace('.eth', '')
     await addresPage.search(label)
+    await expect(addresPage.getNameRow(name)).toBeVisible({ timeout: 5000 })
+    await page.pause()
     await expect(await addresPage.getTimestamp(name)).not.toBe(timestampDict[name])
     await expect(await addresPage.getTimestamp(name)).toBe(timestampDict[name] + 31536000000 * 3)
   }
