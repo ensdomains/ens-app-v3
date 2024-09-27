@@ -24,13 +24,13 @@
       "select": {
         "heading": "¿Cómo querés importar tu dominio?",
         "offchain": {
-          "name": "Fuera de la cadena",
+          "name": "Fuera de la blockchain",
           "tag": "Gratis",
-          "description": "Tu nombre no tendrá un token en la cadena.<br/>Esto no afecta su capacidad para recibir transacciones o ser usado como nombre principal.<br/><b>No podrás editar tu perfil desde la app de ENS.</b>"
+          "description": "Tu nombre no tendrá un token en la blockchain.<br/>Esto no afecta su capacidad para recibir transacciones o ser usado como nombre principal.<br/><b>No podrás editar tu perfil desde la app de ENS.</b>"
         },
         "onchain": {
-          "name": "En la cadena",
-          "description": "Tu nombre tendrá un token en la cadena."
+          "name": "En la blockchain",
+          "description": "Tu nombre tendrá un token en la blockchain."
         }
       }
     },
