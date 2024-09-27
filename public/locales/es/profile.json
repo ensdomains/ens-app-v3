@@ -1,0 +1,476 @@
+{
+  "meta": {
+    "title": "{{name}} en ENS",
+    "description": "{{name}}'s perfil en el Ethereum Name Service"
+  },
+  "title": "Perfil",
+  "yourWallet": "Tu billetera",
+  "yourProfile": "Tu perfil",
+  "accounts": "Cuentas",
+  "addresses": "Direcciones",
+  "otherRecords": "Otros registros",
+  "verifications": "Verificaciones",
+  "editProfile": "Editar perfil",
+  "ownership": "Propiedad",
+  "viewDetails": "Ver detalles",
+  "banner": {
+    "empty": {
+      "title": "Personaliza tu perfil",
+      "description": "Agregue direcciones de criptomonedas, enlaces sociales, un avatar y más!",
+      "action": "Empezar"
+    },
+    "available": {
+      "title": "{{name}} está disponible",
+      "description": "Este nombre expiró el <strong>{{date}}</strong>. Haga clic aquí para ver la página de registro."
+    }
+  },
+  "tabs": {
+    "profile": {
+      "name": "Perfil",
+      "actions": {
+        "setAsPrimaryName": {
+          "label": "Establecer como nombre principal",
+          "title": "Establezca su nombre principal",
+          "description": "Para configurar su nombre principal con este nombre, la dirección ETH debe coincidir con esta dirección."
+        },
+        "deleteSubname": {
+          "label": "Borrar subnombre"
+        },
+        "extend": {
+          "label": "Extender nombre"
+        },
+        "editProfile": {
+          "label": "Editar perfil"
+        },
+        "reclaim": {
+          "label": "Recrear nombre",
+          "warning": "Este subnombre ha expirado y no tiene propietario. Puede volver a crearlo."
+        },
+        "verifyProfile": {
+          "label": "Verificaciones"
+        }
+      },
+      "warnings": {
+        "wrappedDNS": "El propietario del DNS puede reclamar los nombres DNS en cualquier momento. No compre nombres DNS.",
+        "offchain": "Offchain nombres no aparecen actualmente en su 'Nombres' lista. <a>Más información</a>",
+        "homoglyph": "Este nombre contiene no-ASCII personajes. Puede haber personajes que parezcan idénticos o muy similares a otros personajes, lo que podría usarse para engañar a los lectores.. <a>Obtenga más información sobre homoglyphs</a>"
+      }
+    },
+    "records": {
+      "name": "Registros"
+    },
+    "ownership": {
+      "name": "Propiedad",
+      "warning": {
+        "ownerNotManager": "Eres el propietario, pero no el administrador. Esto puede ser involuntario si recientemente recibiste este nombre desde otra dirección.",
+        "managerNotParentOwner": "El propietario de <strong>{{parent}}</strong> puede cambiar la propiedad, los roles y la configuración. No puede cambiar el perfil.",
+        "managerNotDNSOwner": "Usted es el administrador, pero no el propietario del DNS de este nombre. El propietario del DNS puede reclamar los nombres DNS en cualquier momento. Puede enviar este nombre al propietario o actualizar el registro DNS para que coincida.",
+        "dnsOwnerNotManager": "No puedes realizar cambios en este nombre porque eres el propietario del DNS, pero no el administrador. Puedes sincronizar el administrador para solucionar este problema."
+      },
+      "sections": {
+        "roles": {
+          "title": "Roles",
+          "addresses_one": "{{count}} dirección",
+          "addresses_other": "{{count}} dirección"
+        },
+        "expiry": {
+          "panel": {
+            "expiry": {
+              "title": "Nombre caduca"
+            },
+            "grace-period": {
+              "title": "Período de gracia termina",
+              "tooltip": "Una ventana de gracia de 90 días después del vencimiento, durante la cual el nombre aún se puede extender, pero no volver a registrar."
+            },
+            "registration": {
+              "title": "Registrado"
+            },
+            "parent-expiry": {
+              "title": "Nombre del padre caduca"
+            },
+            "parent-grace-period": {
+              "title": "Finaliza el período de gracia para padres"
+            }
+          }
+        },
+        "contract": {
+          "title": "Contrato dirección",
+          "tooltip": "La dirección del contrato que habilita los nombres Wrapped ENS.",
+          "warning": "Algunas app pueden mostrar la contrato dirección como la del propietario. Esto no afecta a la propiedad."
+        }
+      },
+      "tooltips": {
+        "owner": "El propietario de este nombre. El propietario no puede cambiar el perfil.",
+        "owner-emancipated": "El dueño de este nombre.",
+        "parent-owner": "El propietario del padre de este nombre ({{parent}}).",
+        "dns-owner": "El propietario de este nombre, tal como lo establecen los registros DNS. El propietario no puede cambiar el perfil.",
+        "manager": "La dirección que puede cambiar el perfil, la configuración y los editores de perfil.",
+        "profile-editor": "Una dirección que solo puede cambiar el perfil",
+        "subname-manager": "Una dirección o contrato responsable de las renovaciones de subnombres.",
+        "eth-record": "La dirección que recibirá los fondos enviados a este nombre mainnet.",
+        "grace-period": "Una ventana de gracia de 90 días después del vencimiento, durante la cual el nombre aún se puede extender, pero no volver a registrar.",
+        "contract-address": "La dirección del contrato que habilita los nombres Wrapped ENS.",
+        "namewrapper": "El contrato que permite los nombres Wrapped ENS."
+      }
+    },
+    "subnames": {
+      "name": "Subnombres"
+    },
+    "permissions": {
+      "name": "Permisos",
+      "parentUnlockedWarning": "<strong>No puedes cambiar los permisos de este nombre.</strong> Primero debes revocar ‘desenvolver este nombre’ en el padre ({{parent}}). Haga clic aquí para ver los permisos de los padres.",
+      "revokedLabel": "Revocado {{date}}",
+      "grantedLabel": "Concedido {{date}}",
+      "role": {
+        "manager": "gerente",
+        "owner": "dueño",
+        "parent": "padre"
+      },
+      "ownership": {
+        "title": "Permisos de propiedad",
+        "parentCanControl": {
+          "label": "Este nombre puede ser controlado por su padre (<parentLink>{{parent}}</parentLink>)",
+          "list": {
+            "title": "El propietario del nombre del padre puede:",
+            "item1": "Controlar y modificar la configuración y los registros",
+            "item2": "Retomar o reasignar la propiedad de este nombre",
+            "item3": "Eliminar este nombre"
+          }
+        },
+        "parentCannotControl": {
+          "label": "Este nombre no puede ser controlado por su padre (<parentLink>{{parent}}</parentLink>)",
+          "sublabel": "El propietario del nombre principal no puede controlar, modificar, eliminar ni recuperar la propiedad de este nombre.",
+          "list": {
+            "title": "El propietario del nombre conservará la propiedad a menos que ocurra una de las siguientes situaciones:",
+            "item1": "El nombre caduca el {{date}} (puede ampliarse)",
+            "item2": "El nombre del padre caduca el {{date}}",
+            "item3": "La titularidad del nombre se envía a otra dirección"
+          }
+        },
+        "parentCanChange": {
+          "label": "El padre de este nombre (<parentLink>{{parent}}</parentLink>) puede cambiar los permisos",
+          "list": {
+            "title": "El padre puede:",
+            "item1": "Revocar permisos",
+            "item2": "Cambiar o quemar fusibles personalizados"
+          }
+        },
+        "ownerCanChange": {
+          "label": "El propietario de este nombre puede cambiar los permisos",
+          "list": {
+            "title": "El propietario puede:",
+            "item1": "Revocar permisos",
+            "item2": "Cambiar o quemar fusibles personalizados"
+          }
+        },
+        "ownerCannotChange": {
+          "label": "El propietario de este nombre no puede cambiar los permisos",
+          "list": {
+            "title": "El propietario no puede:",
+            "item1": "Revocar permisos",
+            "item2": "Cambiar o quemar fusibles personalizados"
+          }
+        },
+        "unwrapWarning": {
+          "message": "Unwrap los permisos deben ser revocados en el padre (<strong>{{parent}}</strong>) antes de renunciar al control parental.<br> <parentLink>Ir a permisos de los padres</parentLink>"
+        },
+        "action": {
+          "giveUpControl": "Renunciar al control parental",
+          "revokePermission": "Revocar permiso"
+        }
+      },
+      "expiry": {
+        "permissions": {
+          "canExtendExpiry": {
+            "label": "Puede ampliar la expiración",
+            "description": "El vencimiento del permiso de este nombre se puede extender mediante el {{managerOrOwner}}.",
+            "description_date": "Este nombre indica la expiración del permiso ({{date}}) puede ampliarse mediante el {{managerOrOwner}}."
+          },
+          "cannotExtendExpiry": {
+            "label": "No se puede extender el vencimiento",
+            "description": "El administrador no puede extender el vencimiento del permiso de este nombre.",
+            "description_date": "El administrador no puede extender el vencimiento del permiso de este nombre ({{date}})."
+          }
+        },
+        "manager": "gerente",
+        "owner": "dueño",
+        "action": {
+          "changePermissions": "Cambiar permisos"
+        }
+      },
+      "nameChangePermissions": {
+        "title": "Permisos de cambio de nombre",
+        "subtitle": {
+          "parent-can-change": "El padre de este nombre (<parentLink>{{parent}}</parentLink>) cambiar la configuración de este nombre.",
+          "owner-can-change": "El propietario de este nombre puede cambiar la configuración de este nombre."
+        },
+        "permissions": {
+          "canUnwrap": {
+            "label": "Puede unwrap este nombre",
+            "description": "El {{owner}} de este nombre puede desenvolver este nombre."
+          },
+          "cannotUnwrap": {
+            "label": "No se puede desenvolver este nombre",
+            "description": "El {{owner}} de este nombre no se puede desenvolver este nombre."
+          },
+          "canCreateSubnames": {
+            "label": "Puede crear subnombres",
+            "description": "El {{owner}} de este nombre se pueden crear nuevos subnombres."
+          },
+          "cannotCreateSubnames": {
+            "label": "No se pueden crear subnombres",
+            "description": "El {{owner}} de este nombre no se pueden crear nuevos subnombres."
+          },
+          "canSend": {
+            "label": "Puedo enviar este nombre",
+            "description": "El {{owner}} de este nombre puede enviarlo a un nuevo propietario."
+          },
+          "cannotSend": {
+            "label": "Cannot send this name",
+            "description": "El {{owner}} de este nombre no se puede enviar a un nuevo propietario."
+          },
+          "canSetResolver": {
+            "label": "Puede configurar el solucionador",
+            "description": "El {{owner}} de este nombre puede configurar y cambiar el solucionador."
+          },
+          "cannotSetResolver": {
+            "label": "No se puede configurar el solucionador",
+            "description": "El {{owner}} de este nombre no se puede configurar ni cambiar el solucionador."
+          },
+          "canSetTTL": {
+            "label": "Puede configurar TTL",
+            "description": "El {{owner}} de este nombre puede configurar y cambiar el TTL."
+          },
+          "cannotSetTTL": {
+            "label": "No se puede configurar TTL",
+            "description": "El {{owner}} de este nombre no se puede configurar ni cambiar TTL."
+          },
+          "canApprove": {
+            "label": "Puede cambiar el gerente de renovación",
+            "description": "El propietario de este nombre puede cambiar el administrador aprobado para renovar subnombres."
+          },
+          "cannotApprove": {
+            "label": "No se puede cambiar el gerente de renovación",
+            "description": "El propietario de este nombre no puede cambiar el administrador aprobado para renovar subnombres."
+          }
+        },
+        "action": {
+          "changePermissions": "Cambiar permisos"
+        }
+      }
+    },
+    "fuses": {
+      "name": "Fusibles"
+    },
+    "more": {
+      "name": "Más",
+      "resolver": {
+        "label": "Resolvedor",
+        "custom": "Costumbre",
+        "latest": "El último",
+        "outdated": "Anticuado",
+        "wildcard": "Comodín",
+        "version": "Versión",
+        "etherscan": "Etherscan"
+      },
+      "fuses": {
+        "label": "Fusibles",
+        "info": "Debes quemar 'Se puede desenvolver' para poder quemar otros fusibles",
+        "callToAction": "Por favor, escriba su nombre para desbloquear esta función",
+        "burnFormTitle": "Permisos de grabación",
+        "burned": "Quemado",
+        "permissions": {
+          "label": "Permisos",
+          "warning": "Los fusibles pueden ser cambiados por el padre",
+          "CAN_DO_EVERYTHING": "Puedo hacerlo todo",
+          "CANNOT_BURN_FUSES": "Puede quemar fusibles",
+          "CANNOT_CREATE_SUBDOMAIN": "Puede crear subdominios",
+          "CANNOT_SET_RESOLVER": "Configurar el resolver",
+          "CANNOT_SET_TTL": "Puede configurar TTL",
+          "CANNOT_TRANSFER": "Puede transferir",
+          "CANNOT_UNWRAP": "Se puede desenvolver",
+          "PARENT_CANNOT_CONTROL": "Los padres pueden controlar",
+          "CAN_EXTEND_EXPIRY": "No se puede extender el vencimiento",
+          "IS_DOT_ETH": "No es .eth"
+        }
+      },
+      "ownership": {
+        "label": "Propiedad",
+        "refreshDNS": "Refrescar DNS",
+        "dnsOwnerWarning": {
+          "isDnsOwner": "No puedes realizar cambios en este nombre porque eres el propietario del DNS, pero no el administrador. Puedes sincronizar el administrador para solucionar este problema.",
+          "isManager": "Usted es el administrador, pero no el propietario del DNS de este nombre. El propietario del DNS puede reclamar los nombres DNS en cualquier momento. Puede enviar este nombre al propietario o actualizar el registro DNS para que coincida.",
+          "refreshDNS": "Refrescar DNS",
+          "syncManager": "Gestor de sincronización"
+        }
+      },
+      "token": {
+        "label": "Token",
+        "noToken": "No token",
+        "hex": "hex",
+        "decimal": "decimal",
+        "wrapper": "wrapper",
+        "nameWrapper": "Nombre Wrapper",
+        "unwrappedText": " Wrapping su nombre le otorga nuevas características y funcionalidades, sin embargo, algunas funciones de su nombre cambiarán. Asegúrese de comprender estos cambios antes de envolver su nombre..",
+        "wrapName": "Wrap Nombre",
+        "unwrap": "Unwrap Nombre",
+        "unwrapWarning": "Este nombre ha revocado los permisos necesarios para esta acción..",
+        "tooltip": "El Name Wrapper permite una funcionalidad adicional en los nombres ENS.",
+        "status": {
+          "unwrapped": "Unwrapped",
+          "wrapped": "Wrapped"
+        },
+        "pcc": {
+          "controllable": "Controlable por los padres",
+          "not-controllable": "No controlable por los padres"
+        }
+      },
+      "misc": {
+        "registered": "Registrado",
+        "expires": "Caduca",
+        "bankless": {
+          "title": "Bankless Recordatorios",
+          "enterEmail": "Recibir <a>Bankless</a> Recordatorios por correo electrónico, PUSH, XMTP, Blockscan Chat, and Mailchain.",
+          "emailConfirmation": "Ya casi has terminado. Por favor revisa tu correo electrónico para confirmar tu suscripción.",
+          "submitError": "El envío ha fallado. Inténtalo de nuevo."
+        },
+        "reminderOptions": {
+          "google": "Google calendario",
+          "outlook": "Outlook calendario",
+          "office365": "Office 365 calendario",
+          "yahoo": "Yahoo calendario",
+          "ical": "iCal descargar (.ics)",
+          "bankless": "Bankless Recordatorios"
+        }
+      }
+    }
+  },
+  "details": {
+    "title": "Detalles del nombre",
+    "notWrapped": "No wrapped",
+    "sendName": {
+      "title": "Enviar nombre",
+      "description": "Al enviar un nombre, la nueva dirección tendrá control sobre él.",
+      "learnMore": "Obtenga más información sobre la propiedad del nombre.",
+      "makeOwner": "Hacer propietario",
+      "makeOwnerDescription": "El propietario puede enviar a un nuevo propietario y cambiar el administrador.",
+      "makeManager": "Hacer administrador",
+      "makeManagerDescription": "El administrador puede cambiar y establecer registros..",
+      "inputPlaceholder": "Introduzca una dirección Ethereum o un nombre ENS",
+      "transferSubname": "Nombre de transferencia",
+      "transferController": "Controlador de transferencia"
+    },
+    "wrap": {
+      "startTitle": "Mejora tu nombre",
+      "resumeTitle": "Reanudar su actualización",
+      "completeTitle": "Actualización completa",
+      "description": "Actualizar o \"wrapping\" su nombre le da nuevas características.",
+      "startLabel": "Actualizar",
+      "resumeLabel": "Reanudar actualización",
+      "boxTitle": "Desbloquea nuevas funciones",
+      "boxDescription": "Actualizar su nombre desbloquea la última funcionalidad de ENS"
+    },
+    "descriptions": {
+      "owner": "Posee y controla el nombre",
+      "controller": "Controla todos los registros del nombre",
+      "registrant": "El dueño de la NFT",
+      "dnsOwner": "Propietario del nombre DNS"
+    },
+    "tabs": {
+      "records": {
+        "label": "Archivos",
+        "text": "Texto",
+        "contentHash": "Hash de contenido",
+        "noContentHash": "Sin hash de contenido",
+        "editRecords": "Edit Records",
+        "noAbi": "No ABI",
+        "abi": "ABI",
+        "editRecordsDisabled": "El solucionador actual no es compatible con nombres encapsulados"
+      },
+      "subnames": {
+        "label": "Subnombres",
+        "loading": "Cargando subnombres",
+        "empty": "No se han añadido subnombres",
+        "noResults": "No resultados",
+        "noMoreResults": "No más resultados",
+        "addSubname": {
+          "title": "Los subnombres le permiten crear nombres adicionales a partir de su nombre existente.",
+          "learn": "Aprenda sobre los subnombres",
+          "action": "Nuevo subnombre",
+          "dialog": {
+            "title": "Crear subnombre",
+            "error": {
+              "invalidCharacters": "Contiene caracteres no válidos",
+              "mustUseLowercase": "Debe utilizar letras minúsculas",
+              "alreadyExists": "Nombre ya existe",
+              "nameTooLong": "Nombre es demasiado largo",
+              "pccBurned": "Nombre está bloqueado hasta {{date}}"
+            }
+          }
+        }
+      }
+    }
+  },
+  "advancedEditor": {
+    "title": "{{name}}'s registros",
+    "tabs": {
+      "text": {
+        "label": "Texto",
+        "addRecord": "Agregar registro",
+        "createRecord": "Escriba un nombre de registro...",
+        "placeholder": {
+          "default": "Añade un valor aquí..."
+        }
+      },
+      "address": {
+        "label": "Dirección",
+        "addRecord": "Agregar dirección",
+        "noOptions": "No hay opciones de dirección disponibles",
+        "placeholder": {
+          "default": "Añade la dirección aquí..."
+        }
+      },
+      "other": {
+        "label": "Otro",
+        "labelDisabled": "No compatible con el solucionador actual",
+        "contentHash": {
+          "label": "Hash de contenido",
+          "placeholder": "Por ejemplo ipfs://"
+        },
+        "publicKey": {
+          "label": "Clave pública",
+          "placeholder": "Por ejemplo pub_1231231231231"
+        },
+        "abi": {
+          "label": "ABI",
+          "placeholder": "Introduzca un ABI aquí..."
+        }
+      }
+    }
+  },
+  "errors": {
+    "invalidName": "Este nombre no es válido.",
+    "invalidAddress": "No es una dirección válida",
+    "expiringSoon": "El período de gracia para este nombre finaliza el {{date}}. Si no se extiende antes de esta fecha, quedará disponible para registro.",
+    "hasExpired": "{{ name }} ha expirado",
+    "ownerManagerChoice": "Debe enviar propietario o gerente",
+    "unknown": "Error desconocido",
+    "notMigrated": "Este nombre no se migra al nuevo registro.",
+    "featureNotAvailable": "Algunas funciones aún no están disponibles, pero aún puedes",
+    "featureNotAvailableLink": "ver este nombre en el antiguo app.",
+    "migrationNotAvailable": "Migración al nuevo registro aún no está disponible, pero aún puedes ",
+    "migrationNotAvailableLink": "migrar este nombre al antiguo app.",
+    "addressLength": "Si la dirección debe tener 42 caracteres",
+    "unsupportedTLD": "Este TLD no es compatible",
+    "keyInUse": "{{value}} ya está en uso",
+    "hasSubnames": "Este nombre tiene subnombres",
+    "permissionRevoked": "Este nombre ha revocado los permisos necesarios para realizar esta acción.",
+    "gracePeriod": "Esto no se puede hacer porque el nombre ha expirado",
+    "default": "Esta acción no está disponible",
+    "invalidJSON": "Inválido JSON",
+    "isOwnerCannotEdit": "Debes ser el gerente para poder editar el perfil.e",
+    "cannotEdit": "No tienes permiso para actualizar a un solucionador autorizado",
+    "isOwnerCannotVerify": "Debes ser el Gerente para verificar tu perfil",
+    "cannotVerify": "No tienes permiso para verificar tu perfil"
+  }
+}
