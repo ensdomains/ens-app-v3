@@ -3,7 +3,6 @@ import { existsSync, mkdirSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import fetch from 'node-fetch-commonjs'
 import { resolve } from 'path'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {

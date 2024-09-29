@@ -10,6 +10,7 @@ import { createMakeNames } from './fixtures/makeName/index.js'
 import { createSubgraph } from './fixtures/subgraph.js'
 import { createTime } from './fixtures/time.js'
 import { createPageObjectMaker } from './pageObjects/index.js'
+import { createConsoleListener } from './fixtures/consoleListener'
 
 type Fixtures = {
   accounts: Accounts
@@ -20,6 +21,7 @@ type Fixtures = {
   makePageObject: ReturnType<typeof createPageObjectMaker>
   subgraph: ReturnType<typeof createSubgraph>
   time: ReturnType<typeof createTime>
+  consoleListener: ReturnType<typeof createConsoleListener>
 }
 
 export const test = base.extend<Fixtures>({
@@ -57,4 +59,9 @@ export const test = base.extend<Fixtures>({
   time: async ({ page }, use) => {
     await use(createTime({ page }))
   },
+  consoleListener: async ({ page }, use) => {
+    const consoleListener = createConsoleListener({ page })
+    await use(consoleListener)
+    consoleListener.reset()
+  }
 })
