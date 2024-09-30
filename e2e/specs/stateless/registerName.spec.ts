@@ -192,11 +192,9 @@ test.describe.serial('normal registration', () => {
     await test.step('should show checkmark and registration ready state after countdown is finished', async () => {
       await time.increaseTime({ seconds: 60 })
       await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-      await expect(
-        page.getByText(
-          'Your name is not registered until you’ve completed the second transaction. You have 23 hours remaining to complete it.',
-        ),
-      ).toBeVisible()
+      await expect(page.getByTestId('transactions-subheading')).toHaveText(
+        'Your name is not registered until you’ve completed the second transaction. You have 23 hours remaining to complete it.',
+      )
       await expect(page.getByTestId('finish-button')).toBeEnabled()
     })
 

@@ -399,7 +399,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
           />
         </CountDownInner>
       </CountdownContainer>
-      <CenteredTypography>
+      <CenteredTypography data-testid="transactions-subheading">
         {match(transactionState)
           .with('registrationComplete', () => '')
           .with('registrationOverriden', () => (
