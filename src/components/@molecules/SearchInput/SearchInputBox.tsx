@@ -3,11 +3,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { ForwardedRef, forwardRef, MouseEvent } from 'react'
+import { ForwardedRef, forwardRef, MouseEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Input, MagnifyingGlassSVG } from '@ensdomains/thorin'
+
+import useDebounce from '@app/hooks/useDebounce'
 
 const SearchInputWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ theme, $size }) => css`
@@ -90,6 +92,13 @@ type SearchInputBoxProps = {
 export const SearchInputBox = forwardRef<HTMLInputElement, SearchInputBoxProps>(
   ({ size = 'extraLarge', input, setInput, containerRef }, ref) => {
     const { t } = useTranslation('common')
+    const [value, setValue] = useState(input)
+    const debounceValue = useDebounce(value, 500)
+
+    useEffect(() => {
+      setInput(debounceValue)
+    }, [debounceValue, setInput])
+
     return (
       <SearchInputWrapper ref={containerRef} $size={size}>
         <Input
@@ -97,8 +106,8 @@ export const SearchInputBox = forwardRef<HTMLInputElement, SearchInputBoxProps>(
           label={t('search.label')}
           hideLabel
           placeholder={t('search.placeholder')}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
           ref={ref}
           clearable
           autoComplete="off"
