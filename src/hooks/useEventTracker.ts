@@ -29,6 +29,7 @@ type DefaultEvent = {
     | 'register_started'
     | 'register_started_box'
     | 'register_wallet_opened'
+    | 'register-override-triggered'
   customProperties?: never
 }
 
@@ -55,6 +56,7 @@ export const useEventTracker = () => {
             'register_started',
             'register_started_box',
             'register_wallet_opened',
+            'register-override-triggered',
           ),
         },
         ({ eventName }) => sendTrackEvent(eventName, chain),

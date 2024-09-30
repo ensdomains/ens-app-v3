@@ -20,7 +20,6 @@ import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { trackEvent } from '@app/utils/analytics'
 import { ONE_DAY } from '@app/utils/time'
 
 import { RegistrationReducerDataItem } from '../types'
@@ -226,7 +225,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const chainName = useChainName()
   useEffect(() => {
     if (canRegisterOverride && commitTx?.stage !== 'complete') {
-      trackEvent('register-override-triggered', chainName)
+      trackEvent({ eventName: 'register-override-triggered' })
       if (getSelectedKey() === commitKey) stopCurrentFlow()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
