@@ -28,6 +28,6 @@ export const createConsoleListener = ({ page }: Dependencies) => {
       page.off('console', filter)
     },
     print: () => console.log(messages),
-    getMessages: () => messages,
+    getMessages: (regex?: RegExp) => regex ? messages.filter((message) => regex.test(message)) : messages,
   }
 }
