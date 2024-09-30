@@ -225,7 +225,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const chainName = useChainName()
   useEffect(() => {
     if (canRegisterOverride && commitTx?.stage !== 'complete') {
-      trackEvent({ eventName: 'register-override-triggered' })
+      trackEvent({ eventName: 'register_override_triggered' })
       if (getSelectedKey() === commitKey) stopCurrentFlow()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -292,8 +292,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
 
   const showRegisterTransaction = () => {
     resumeTransactionFlow(registerKey)
-
-    trackEvent({ eventName: 'register_started' })
   }
 
   const resetTransactions = () => {

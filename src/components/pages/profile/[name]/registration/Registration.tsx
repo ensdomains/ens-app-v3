@@ -153,6 +153,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         eventName: 'payment_selected',
         customProperties: {
           duration: seconds,
+          durationType,
           paymentMethod: paymentMethodChoice,
           estimatedTotal,
           ethPrice,

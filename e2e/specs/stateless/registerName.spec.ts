@@ -43,7 +43,7 @@ test.describe.serial('normal registration', () => {
     await consoleListener.initialize({
       regex: new RegExp(
         `Event triggered on local development.*?(${[
-          'register-override-triggered',
+          'register_override_triggered',
           'search_selected_eth',
           'search_selected_box',
           'payment_selected',
@@ -61,11 +61,12 @@ test.describe.serial('normal registration', () => {
     await homePage.goto()
     await login.connect()
 
-    // should redirect to registration page
-    await homePage.searchInput.fill(name)
-    await page.locator(`[data-testid="search-result-name"]`, { hasText: name }).waitFor()
-    await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Available' }).waitFor()
-    await homePage.searchInput.press('Enter')
+    await test.step('should redirect to registration page', async () => {
+      await homePage.searchInput.fill(name)
+      await page.locator(`[data-testid="search-result-name"]`, { hasText: name }).waitFor()
+      await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Available' }).waitFor()
+      await homePage.searchInput.press('Enter')
+    })
 
     await test.step('should fire tracking event: search_selected_eth', async () => {
       await expect(consoleListener.getMessages()).toHaveLength(1)
@@ -77,32 +78,39 @@ test.describe.serial('normal registration', () => {
 
     await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
 
-    // should have payment choice ethereum checked and show primary name setting as checked
-    await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
-    await expect(registrationPage.primaryNameToggle).toBeChecked()
+    await test.step('should have payment choice ethereum checked and show primary name setting as checked', async () => {
+      await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
+      await expect(registrationPage.primaryNameToggle).toBeChecked()
+    })
 
-    // should show adjusted gas estimate when primary name setting checked
-    const estimate = await registrationPage.getGas()
-    expect(estimate).toBeGreaterThan(0)
-    await registrationPage.primaryNameToggle.click()
-    const estimate2 = await registrationPage.getGas()
-    await expect(estimate2).toBeGreaterThan(0)
-    expect(estimate2).toBeLessThan(estimate)
-    await registrationPage.primaryNameToggle.click()
+    const estimate =
+      await test.step('should show adjusted gas estimate when primary name setting checked', async () => {
+        const estimate1 = await registrationPage.getGas()
+        expect(estimate1).toBeGreaterThan(0)
+        await registrationPage.primaryNameToggle.click()
+        const estimate2 = await registrationPage.getGas()
+        await expect(estimate2).toBeGreaterThan(0)
+        expect(estimate2).toBeLessThan(estimate1)
+        await registrationPage.primaryNameToggle.click()
+        return estimate1
+      })
 
-    // should show cost comparison accurately
-    await expect(registrationPage.yearMarker(0)).toHaveText(/13% gas/)
-    await expect(registrationPage.yearMarker(1)).toHaveText(/7% gas/)
-    await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
+    await test.step('should show cost comparison accurately', async () => {
+      await expect(registrationPage.yearMarker(0)).toHaveText(/13% gas/)
+      await expect(registrationPage.yearMarker(1)).toHaveText(/7% gas/)
+      await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
+    })
 
-    // should show correct price for yearly registration
-    await expect(registrationPage.fee).toHaveText(/0.0033/)
-    await registrationPage.plusYearButton.click()
-    await expect(registrationPage.fee).toHaveText(/0.0065/)
-    await registrationPage.minusYearButton.click()
+    await test.step('should show correct price for yearly registration', async () => {
+      await expect(registrationPage.fee).toHaveText(/0.0033/)
+      await registrationPage.plusYearButton.click()
+      await expect(registrationPage.fee).toHaveText(/0.0065/)
+      await registrationPage.minusYearButton.click()
+    })
 
-    // should go to profile editor step
-    await page.getByTestId('next-button').click()
+    await test.step('should go to profile editor step', async () => {
+      await page.getByTestId('next-button').click()
+    })
 
     await test.step('should fire tracking event: payment_selected', async () => {
       await expect(consoleListener.getMessages()).toHaveLength(1)
@@ -110,28 +118,33 @@ test.describe.serial('normal registration', () => {
       consoleListener.clearMessages()
     })
 
-    // should show a confirmation dialog that records are public
-    await page.getByTestId('show-add-profile-records-modal-button').click()
-    await page.getByTestId('confirmation-dialog-confirm-button').click()
+    await test.step('should show a confirmation dialog that records are public', async () => {
+      await page.getByTestId('show-add-profile-records-modal-button').click()
+      await page.getByTestId('confirmation-dialog-confirm-button').click()
+    })
 
-    // should all setting a gener text record
-    await page.getByTestId('profile-record-option-name').click()
-    await page.getByTestId('add-profile-records-button').click()
-    await page.getByTestId('profile-record-input-input-name').fill('Test Name')
+    await test.step('should allow setting a general text record', async () => {
+      await page.getByTestId('profile-record-option-name').click()
+      await page.getByTestId('add-profile-records-button').click()
+      await page.getByTestId('profile-record-input-input-name').fill('Test Name')
+    })
 
-    // should show ETH record by default
-    await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
-      accounts.getAddress('user'),
-    )
+    await test.step('should show ETH record by default', async () => {
+      await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
+        accounts.getAddress('user'),
+      )
+    })
 
-    // should show go to info step and show updated estimate
-    await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
-    await page.getByTestId('profile-submit-button').click()
-    await expect(registrationPage.gas).not.toHaveText(new RegExp(`${estimate} ETH`))
+    await test.step('should show go to info step and show updated estimate', async () => {
+      await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+      await page.getByTestId('profile-submit-button').click()
+      await expect(registrationPage.gas).not.toHaveText(new RegExp(`${estimate} ETH`))
+    })
 
-    // should go to transactions step and open commit transaction immediately
-    await expect(page.getByTestId('next-button')).toHaveText('Begin')
-    await page.getByTestId('next-button').click()
+    await test.step('should go to transactions step and open commit transaction immediately', async () => {
+      await expect(page.getByTestId('next-button')).toHaveText('Begin')
+      await page.getByTestId('next-button').click()
+    })
 
     await test.step('should fire tracking event: commit_started', async () => {
       await expect(consoleListener.getMessages()).toHaveLength(1)
@@ -139,13 +152,15 @@ test.describe.serial('normal registration', () => {
       consoleListener.clearMessages()
     })
 
-    await transactionModal.closeButton.click()
+    await test.step('should display the correct message in the registration page', async () => {
+      await transactionModal.closeButton.click()
+      await expect(
+        page.getByText(
+          'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
+        ),
+      ).toBeVisible()
+    })
 
-    await expect(
-      page.getByText(
-        'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
-      ),
-    ).toBeVisible()
     await page.getByTestId('start-timer-button').click()
 
     await expect(page.getByText('Open Wallet')).toBeVisible()

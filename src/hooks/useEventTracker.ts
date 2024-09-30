@@ -17,6 +17,7 @@ type PaymentEvent = {
   customProperties: {
     ethPrice: bigint
     duration: number
+    durationType: 'date' | 'years'
     estimatedTotal: bigint
     paymentMethod: PaymentMethod | ''
   }
@@ -29,7 +30,7 @@ type DefaultEvent = {
     | 'register_started'
     | 'register_started_box'
     | 'register_wallet_opened'
-    | 'register-override-triggered'
+    | 'register_override_triggered'
   customProperties?: never
 }
 
@@ -56,7 +57,7 @@ export const useEventTracker = () => {
             'register_started',
             'register_started_box',
             'register_wallet_opened',
-            'register-override-triggered',
+            'register_override_triggered',
           ),
         },
         ({ eventName }) => sendTrackEvent(eventName, chain),
