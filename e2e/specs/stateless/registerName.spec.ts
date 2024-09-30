@@ -142,7 +142,7 @@ test.describe.serial('normal registration', () => {
     await test.step('should go to transactions step and open commit transaction immediately', async () => {
       await expect(page.getByTestId('next-button')).toHaveText('Begin')
       await page.getByTestId('next-button').click()
-      // expect the transaction modal is open
+      await expect(page.getByTestId('transaction-modal-inner')).toBeVisible()
     })
 
     await test.step('should fire tracking event: commit_started', async () => {
@@ -190,7 +190,7 @@ test.describe.serial('normal registration', () => {
     })
 
     await test.step('should show checkmark and registration ready state after countdown is finished', async () => {
-      await testClient.increaseTime({ seconds: 60 })
+      await time.increaseTime({ seconds: 60 })
       await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
       await expect(
         page.getByText(
@@ -216,6 +216,7 @@ test.describe.serial('normal registration', () => {
 
     await test.step('should fire tracking event: register_started', async () => {
       await expect(consoleListener.getMessages()).toHaveLength(1)
+      // We can assume that 'register_override_triggered' was not called because the consoleListener only has one message
       await expect(consoleListener.getMessages().toString()).toContain('register_started')
       consoleListener.clearMessages()
     })
@@ -232,7 +233,7 @@ test.describe.serial('normal registration', () => {
     })
 
     await test.step('should redirect to completion page ', async () => {
-      // expect that page is on completion page
+      await expect(page.getByText(`You are now the owner of ${name}`)).toBeVisible()
       await expect(page.getByTestId('invoice-item-0-amount')).toHaveText(/0.0032 ETH/)
     })
 
