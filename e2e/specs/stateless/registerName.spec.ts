@@ -271,49 +271,49 @@ test.describe.serial('normal registration', () => {
       new RegExp(accounts.getAddress('user', 5)),
     )
   })
+})
 
-  test('should allow registering a non-primary name', async ({
-    page,
-    accounts,
-    time,
-    login,
-    makePageObject,
-  }) => {
-    await time.sync(500)
+test('should allow registering a non-primary name', async ({
+  page,
+  accounts,
+  time,
+  login,
+  makePageObject,
+}) => {
+  await time.sync(500)
 
-    const nonPrimaryNme = `registration-not-primary-${Date.now()}.eth`
+  const nonPrimaryNme = `registration-not-primary-${Date.now()}.eth`
 
-    const transactionModal = makePageObject('TransactionModal')
+  const transactionModal = makePageObject('TransactionModal')
 
-    // should show primary name setting as unchecked if primary already set
-    await page.goto(`/${nonPrimaryNme}/register`)
-    await login.connect()
+  // should show primary name setting as unchecked if primary already set
+  await page.goto(`/${nonPrimaryNme}/register`)
+  await login.connect()
 
-    await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
-    await expect(page.getByTestId('primary-name-toggle')).not.toBeChecked({ timeout: 1000 })
+  await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
+  await expect(page.getByTestId('primary-name-toggle')).not.toBeChecked({ timeout: 1000 })
 
-    // should show set profile button on info step
-    await page.getByTestId('next-button').click()
+  // should show set profile button on info step
+  await page.getByTestId('next-button').click()
 
-    // setup profile buttons should be blue
-    await expect(page.getByTestId('setup-profile-button')).toBeVisible()
-    await expect(page.getByTestId('setup-profile-button').locator('div')).toHaveCSS(
-      'color',
-      'rgb(56, 136, 255)',
-    )
+  // setup profile buttons should be blue
+  await expect(page.getByTestId('setup-profile-button')).toBeVisible()
+  await expect(page.getByTestId('setup-profile-button').locator('div')).toHaveCSS(
+    'color',
+    'rgb(56, 136, 255)',
+  )
 
-    // should allow registering a name without setting primary name
-    await page.getByTestId('next-button').click()
-    await transactionModal.confirm()
-    await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-    await testClient.increaseTime({ seconds: 60 })
-    await page.getByTestId('finish-button').click()
-    await transactionModal.confirm()
-    await page.getByTestId('view-name').click()
-    await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
-      new RegExp(accounts.getAddress('user', 5)),
-    )
-  })
+  // should allow registering a name without setting primary name
+  await page.getByTestId('next-button').click()
+  await transactionModal.confirm()
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await testClient.increaseTime({ seconds: 60 })
+  await page.getByTestId('finish-button').click()
+  await transactionModal.confirm()
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    new RegExp(accounts.getAddress('user', 5)),
+  )
 })
 
 test('should allow registering a premium name', async ({
