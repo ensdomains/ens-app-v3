@@ -6,7 +6,6 @@ import { match } from 'ts-pattern'
 import { validateName } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, Input, mq, PlusSVG } from '@ensdomains/thorin'
 
-import { ConfirmationDialogView } from '@app/components/@molecules/ConfirmationDialogView/ConfirmationDialogView'
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import { AddProfileRecordView } from '@app/components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
@@ -29,7 +28,7 @@ type Data = {
   isWrapped: boolean
 }
 
-type ModalOption = AvatarClickType | 'editor' | 'profile-editor' | 'add-record' | 'clear-eth'
+type ModalOption = AvatarClickType | 'editor' | 'profile-editor' | 'add-record'
 
 export type Props = {
   data: Data
@@ -129,7 +128,6 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
     addRecords,
     getValues,
     removeRecordAtIndex,
-    removeRecordByGroupAndKey: removeRecordByTypeAndKey,
     setAvatar,
     labelForRecord,
     secondaryLabelForRecord,
@@ -154,7 +152,8 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
         parent,
       }),
     ]
-    if (isDirty) {
+
+    if (isDirty && records.length) {
       payload.push(
         createTransactionItem('updateProfileRecords', {
           name,
@@ -177,8 +176,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
 
-  const handleDeleteRecord = (record: ProfileRecord, index: number) => {
-    if (record.key === 'eth') return setView('clear-eth')
+  const handleDeleteRecord = (_: ProfileRecord, index: number) => {
     removeRecordAtIndex(index)
     process.nextTick(() => trigger())
   }
@@ -337,19 +335,6 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
               setView('profile-editor')
               trigger()
             }}
-          />
-        ))
-        .with('clear-eth', () => (
-          <ConfirmationDialogView
-            title={registerT('steps.profile.confirmations.clearEth.title')}
-            description={registerT('steps.profile.confirmations.clearEth.description')}
-            confirmLabel={registerT('steps.profile.confirmations.clearEth.confirm')}
-            declineLabel={registerT('steps.profile.confirmations.clearEth.decline')}
-            onConfirm={() => {
-              removeRecordByTypeAndKey('address', 'eth')
-              setView('profile-editor')
-            }}
-            onDecline={() => setView('profile-editor')}
           />
         ))
         .exhaustive()}
