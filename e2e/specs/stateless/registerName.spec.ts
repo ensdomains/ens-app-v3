@@ -1090,7 +1090,7 @@ test.describe('Error handling', () => {
 
     await time.sync()
     await consoleListener.initialize({
-      regex: /Event triggered on local development.*register-override-triggered/,
+      regex: /Event triggered on local development.*register_override_triggered/,
     })
     await homePage.goto()
     await login.connect()
