@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic'
-import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -14,7 +14,11 @@ import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
 import { Card } from '@app/components/Card'
 import useWindowSize from '@app/hooks/useWindowSize'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { dateFromDateDiff } from '@app/utils/date'
+import { isMobileDevice } from '@app/utils/device'
+import { secondsToYears } from '@app/utils/time'
 
+import { RegistrationReducerDataItem } from '../types'
 import { Invoice } from './Invoice'
 
 const StyledCard = styled(Card)(
@@ -167,6 +171,7 @@ const Confetti = dynamic(() =>
 
 const useEthInvoice = (
   name: string,
+  seconds: number,
   isMoonpayFlow: boolean,
 ): { InvoiceFilled?: React.ReactNode; avatarSrc?: string } => {
   const { t } = useTranslation('register')
@@ -227,8 +232,9 @@ const useEthInvoice = (
     const registerNetFee = registerGasUsed * registerGasPrice
     const totalNetFee = commitNetFee && registerNetFee ? commitNetFee + registerNetFee : 0n
 
-    const date = new Date()
-    date.setFullYear(date.getFullYear() + 1)
+    const years = Math.floor(secondsToYears(seconds))
+
+    const date = dateFromDateDiff({ startDate: new Date(), additionalYears: years })
 
     return (
       <Invoice
@@ -236,12 +242,17 @@ const useEthInvoice = (
         expiryDate={date}
         expiryTitle={t('invoice.expiry')}
         items={[
-          { label: t('invoice.registration'), value },
-          { label: t('invoice.networkFee'), value: totalNetFee },
+          {
+            label: t('invoice.timeRegistration', {
+              time: t(isMobileDevice() ? 'unit.yrs' : 'unit.years', { count: years, ns: 'common' }),
+            }),
+            value,
+          },
+          { label: t('invoice.transactionFees'), value: totalNetFee },
         ]}
       />
     )
-  }, [isLoading, registrationValue, commitReceipt, registerReceipt, t, name])
+  }, [isLoading, registrationValue, commitReceipt, registerReceipt, t, name, seconds])
 
   if (isMoonpayFlow) return { InvoiceFilled: null, avatarSrc }
 
@@ -252,13 +263,14 @@ type Props = {
   name: string
   beautifiedName: string
   callback: (toProfile: boolean) => void
+  registrationData: RegistrationReducerDataItem
   isMoonpayFlow: boolean
 }
 
-const Complete = ({ name, beautifiedName, callback, isMoonpayFlow }: Props) => {
+const Complete = ({ name, beautifiedName, callback, isMoonpayFlow, registrationData }: Props) => {
   const { t } = useTranslation('register')
   const { width, height } = useWindowSize()
-  const { InvoiceFilled, avatarSrc } = useEthInvoice(name, isMoonpayFlow)
+  const { InvoiceFilled, avatarSrc } = useEthInvoice(name, registrationData.seconds, isMoonpayFlow)
 
   const nameWithColourEmojis = useMemo(() => {
     const data = tokenise(beautifiedName)

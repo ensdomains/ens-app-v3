@@ -4,9 +4,8 @@
   "heading": "Register {{name}}",
   "invoice": {
     "timeRegistration": "{{time}} registration",
-    "registration": "1yr registration",
     "estimatedNetworkFee": "Est. network fee",
-    "networkFee": "Network fee",
+    "transactionFees": "Transaction fees",
     "temporaryPremium": "Temporary premium",
     "total": "Estimated total",
     "totalPaid": "Total paid",
