@@ -10,6 +10,7 @@ import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { getSupportedChainById } from '@app/constants/chains'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
+import { shouldRedirect } from '@app/utils/shouldRedirect'
 
 import { Navigation } from './Navigation'
 
@@ -101,13 +102,7 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   }, [isConnected, hasProgrammaticChainSwitching, isPending, isError, chainId, switchChain])
 
   useEffect(() => {
-    if (
-      isConnected &&
-      !getSupportedChainById(chainId) &&
-      router.pathname !== '/unsupportedNetwork'
-    ) {
-      router.push('/unsupportedNetwork')
-    }
+    shouldRedirect(router, 'Basic.tsx', '/unsupportedNetwork', { isConnected, chainId })
   }, [isConnected, chainId, router])
 
   return (

@@ -1,12 +1,11 @@
 import { expect } from '@playwright/test'
-import { Web3RequestKind } from 'headless-web3-provider'
 import { Hash, isHash } from 'viem'
 
 import { ethRegistrarControllerCommitSnippet } from '@ensdomains/ensjs/contracts'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
+import { Web3RequestKind } from '@ensdomains/headless-web3-provider'
 
-// import { secondsToDateInput } from '@app/utils/date'
-import { daysToSeconds, yearsToSeconds } from '@app/utils/time'
+import { dateToDateInput } from '@app/utils/date'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
@@ -28,9 +27,9 @@ test.describe.serial('normal registration', () => {
     page,
     login,
     accounts,
-    provider,
     time,
     makePageObject,
+    consoleListener,
   }) => {
     await setPrimaryName(walletClient, {
       name: '',
@@ -41,8 +40,10 @@ test.describe.serial('normal registration', () => {
     const registrationPage = makePageObject('RegistrationPage')
     const transactionModal = makePageObject('TransactionModal')
 
-    await time.sync(500)
-
+    await consoleListener.initialize({
+      regex: /Event triggered on local development.*register-override-triggered/,
+    })
+    await time.sync()
     await homePage.goto()
     await login.connect()
 
@@ -55,7 +56,6 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
     await expect(registrationPage.primaryNameToggle).toBeChecked()
 
-    await page.pause()
     // should show adjusted gas estimate when primary name setting checked
     const estimate = await registrationPage.getGas()
     expect(estimate).toBeGreaterThan(0)
@@ -101,18 +101,46 @@ test.describe.serial('normal registration', () => {
     // should go to transactions step and open commit transaction immediately
     await expect(page.getByTestId('next-button')).toHaveText('Begin')
     await page.getByTestId('next-button').click()
+    await transactionModal.closeButton.click()
+
+    await page.pause()
+    await expect(
+      page.getByText(
+        'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
+      ),
+    ).toBeVisible()
+    await page.getByTestId('start-timer-button').click()
+
     await expect(page.getByText('Open Wallet')).toBeVisible()
     await transactionModal.confirm()
 
+    // should show countdown text
+    await expect(
+      page.getByText(
+        'This wait prevents others from front running your transaction. You will be prompted to complete a second transaction when the timer is complete.',
+      ),
+    ).toBeVisible()
+
+    await time.sync()
+
     // should show countdown
     await expect(page.getByTestId('countdown-circle')).toBeVisible()
-    await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+    await expect(page.getByTestId('countdown-complete-check')).not.toBeVisible()
     const waitButton = page.getByTestId('wait-button')
     await expect(waitButton).toBeVisible()
     await expect(waitButton).toBeDisabled()
+
+    await time.increaseTime({ seconds: 60 })
+    await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
     const startTimerButton = page.getByTestId('start-timer-button')
     await expect(startTimerButton).not.toBeVisible()
-    await provider.increaseTime(60)
+
+    // Should show registration text
+    await expect(
+      page.getByText(
+        'Your name is not registered until you’ve completed the second transaction. You have 23 hours remaining to complete it.',
+      ),
+    ).toBeVisible()
     await expect(page.getByTestId('finish-button')).toBeEnabled()
 
     // should save the registration state and the transaction status
@@ -120,12 +148,12 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('finish-button')).toBeEnabled()
 
     // should allow finalising registration and automatically go to the complete step
-    await page.getByTestId('finish-button').click()
     await expect(
       page.getByText(
-        'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
+        'Your name is not registered until you’ve completed the second transaction. You have 23 hours remaining to complete it.',
       ),
     ).toBeVisible()
+    await page.getByTestId('finish-button').click()
     await expect(page.getByText('Open Wallet')).toBeVisible()
     await transactionModal.confirm()
 
@@ -136,6 +164,10 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
       accounts.getAddress('user', 5),
     )
+
+    await test.step('confirm that track event was not called', async () => {
+      await expect(consoleListener.getMessages()).toHaveLength(0)
+    })
   })
 
   test('should not direct to the registration page on search, and show all records from registration', async ({
@@ -159,7 +191,6 @@ test.describe.serial('normal registration', () => {
 
   test('should allow registering a non-primary name', async ({
     page,
-    provider,
     accounts,
     time,
     login,
@@ -192,7 +223,7 @@ test.describe.serial('normal registration', () => {
     await page.getByTestId('next-button').click()
     await transactionModal.confirm()
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-    await provider.increaseTime(60)
+    await testClient.increaseTime({ seconds: 60 })
     await page.getByTestId('finish-button').click()
     await transactionModal.confirm()
     await page.getByTestId('view-name').click()
@@ -205,7 +236,6 @@ test.describe.serial('normal registration', () => {
 test('should allow registering a premium name', async ({
   page,
   login,
-  provider,
   accounts,
   makeName,
   makePageObject,
@@ -236,7 +266,7 @@ test('should allow registering a premium name', async ({
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(120)
+  await testClient.increaseTime({ seconds: 120 })
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -249,7 +279,6 @@ test('should allow registering a premium name', async ({
 test('should allow registering a name and resuming from the commit toast', async ({
   page,
   login,
-  provider,
   time,
   makePageObject,
 }) => {
@@ -262,17 +291,19 @@ test('should allow registering a name and resuming from the commit toast', async
   await page.goto(`/${name}/register`)
   await login.connect()
 
+  await page.pause()
   await page.getByTestId('payment-choice-ethereum').click()
+  await page.getByTestId('primary-name-toggle').uncheck()
   await page.getByTestId('next-button').click()
   await page.getByTestId('next-button').click()
 
-  await provider.setAutomine(false)
+  await testClient.setAutomine(false)
 
   await transactionModal.confirm()
 
   await page.getByTestId('transaction-modal-sent-button').click()
   await page.goto('/')
-  await provider.setAutomine(true)
+  await testClient.setAutomine(true)
 
   await page.getByTestId('notification-continue-button').click()
   await expect(page).toHaveURL(`/${name}/register`)
@@ -300,39 +331,32 @@ test('should allow registering with a specific date', async ({ page, login, make
 
   const calendar = await page.getByTestId('calendar')
   const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
-  const oneYearLaterInput = await page.evaluate(
-    (timestamp) => {
-      const _date = new Date(timestamp)
-      const year = _date.getFullYear()
-      const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-      const day = String(_date.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
-    },
-    (browserTime + yearsToSeconds(1)) * 1000,
-  )
-  // const oneYear = browserTime + yearsToSeconds(1)
+
+  const oneYearLater = await page.evaluate((timestamp) => {
+    const _date = new Date(timestamp)
+    _date.setFullYear(_date.getFullYear() + 1)
+    return _date
+  }, browserTime * 1000)
 
   await test.step('should have a correct default date', async () => {
-    expect(calendar).toHaveValue(oneYearLaterInput)
+    expect(calendar).toHaveValue(dateToDateInput(oneYearLater))
     expect(page.getByText('1 year registration', { exact: true })).toBeVisible()
   })
 
   await test.step('should set a date', async () => {
-    const oneYearAndHalfLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + yearsToSeconds(2.5)) * 1000,
+    const twoYearsAndHalfLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setFullYear(_date.getFullYear() + 2)
+      _date.setMonth(_date.getMonth() + 6)
+      return _date
+    }, browserTime * 1000)
+
+    await calendar.fill(dateToDateInput(twoYearsAndHalfLater))
+
+    await page.pause()
+    await expect(page.getByTestId('calendar-date')).toHaveValue(
+      dateToDateInput(twoYearsAndHalfLater),
     )
-    // const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
-
-    await calendar.fill(oneYearAndHalfLaterInput)
-
-    await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndHalfLaterInput)
 
     expect(page.getByText('2 years, 6 months registration', { exact: true })).toBeVisible()
   })
@@ -351,7 +375,6 @@ test('should allow registering with a specific date', async ({ page, login, make
 test('should allow registering a premium name with a specific date', async ({
   page,
   login,
-  provider,
   accounts,
   makeName,
   makePageObject,
@@ -382,20 +405,18 @@ test('should allow registering a premium name with a specific date', async ({
   const calendar = page.getByTestId('calendar')
 
   await test.step('should set a date', async () => {
-    const oneYearAndHalfLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + yearsToSeconds(2.5)) * 1000,
+    const twoYearsAndHalfLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setFullYear(_date.getFullYear() + 2)
+      _date.setMonth(_date.getMonth() + 6)
+      return _date
+    }, browserTime * 1000)
+
+    await calendar.fill(dateToDateInput(twoYearsAndHalfLater))
+
+    await expect(page.getByTestId('calendar-date')).toHaveValue(
+      dateToDateInput(twoYearsAndHalfLater),
     )
-
-    await calendar.fill(oneYearAndHalfLaterInput)
-
-    await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndHalfLaterInput)
 
     expect(page.getByText('2 years, 6 months registration', { exact: true })).toBeVisible()
   })
@@ -411,7 +432,7 @@ test('should allow registering a premium name with a specific date', async ({
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(120)
+  await testClient.increaseTime({ seconds: 120 })
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -424,7 +445,6 @@ test('should allow registering a premium name with a specific date', async ({
 test('should allow registering a premium name for two months', async ({
   page,
   login,
-  provider,
   accounts,
   makeName,
   makePageObject,
@@ -452,25 +472,21 @@ test('should allow registering a premium name for two months', async ({
   })
 
   const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
+
   const calendar = page.getByTestId('calendar')
 
   await test.step('should set a date', async () => {
-    const oneYearAndHalfLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + daysToSeconds(61)) * 1000,
-    )
+    const twoMonthsLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setMonth(_date.getMonth() + 2)
+      return _date
+    }, browserTime * 1000)
 
-    await calendar.fill(oneYearAndHalfLaterInput)
+    await calendar.fill(dateToDateInput(twoMonthsLater))
 
-    await expect(page.getByTestId('calendar-date')).toHaveValue(oneYearAndHalfLaterInput)
+    await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(twoMonthsLater))
 
-    expect(page.getByText('2 months registration', { exact: true })).toBeVisible()
+    expect(page.getByText(/2 months .* registration/)).toBeVisible()
   })
 
   await page.getByTestId('payment-choice-ethereum').click()
@@ -484,7 +500,7 @@ test('should allow registering a premium name for two months', async ({
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(120)
+  await testClient.increaseTime({ seconds: 120 })
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -497,7 +513,6 @@ test('should allow registering a premium name for two months', async ({
 test('should not allow registering a premium name for less than 28 days', async ({
   page,
   login,
-  provider,
   accounts,
   makeName,
   makePageObject,
@@ -528,37 +543,27 @@ test('should not allow registering a premium name for less than 28 days', async 
   const calendar = page.getByTestId('calendar')
 
   await test.step('should not allow less than 28 days', async () => {
-    const lessThan27Days = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + daysToSeconds(27)) * 1000,
-    )
+    const lessThan27Days = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setDate(_date.getDate() + 27)
+      return _date
+    }, browserTime * 1000)
 
-    await calendar.fill(lessThan27Days)
+    await calendar.fill(dateToDateInput(lessThan27Days))
 
-    await expect(page.getByTestId('calendar-date')).not.toHaveValue(lessThan27Days)
+    await expect(page.getByTestId('calendar-date')).not.toHaveValue(dateToDateInput(lessThan27Days))
   })
 
   await test.step('should allow 28 days', async () => {
-    const set28days = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + daysToSeconds(28)) * 1000,
-    )
+    const set28days = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setDate(_date.getDate() + 28)
+      return _date
+    }, browserTime * 1000)
 
-    await calendar.fill(set28days)
+    await calendar.fill(dateToDateInput(set28days))
 
-    await expect(page.getByTestId('calendar-date')).toHaveValue(set28days)
+    await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(set28days))
 
     expect(page.getByText('28 days registration', { exact: true })).toBeVisible()
   })
@@ -574,7 +579,7 @@ test('should not allow registering a premium name for less than 28 days', async 
   await transactionModal.confirm()
 
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(120)
+  await testClient.increaseTime({ seconds: 120 })
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
 
@@ -588,7 +593,6 @@ test('should allow normal registration for a month', async ({
   page,
   login,
   accounts,
-  provider,
   time,
   makePageObject,
 }) => {
@@ -623,23 +627,16 @@ test('should allow normal registration for a month', async ({
   const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
 
   await test.step('should set a date', async () => {
-    const oneMonthLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + daysToSeconds(31)) * 1000,
-    )
-    // const oneYearAndAHalfLater = secondsToDateInput(oneYear + yearsToSeconds(1.5))
+    const oneMonthLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setMonth(_date.getMonth() + 1)
+      return _date
+    }, browserTime * 1000)
 
-    await calendar.fill(oneMonthLaterInput)
+    await calendar.fill(dateToDateInput(oneMonthLater))
 
-    await expect(page.getByTestId('calendar-date')).toHaveValue(oneMonthLaterInput)
-
-    expect(page.getByText('1 month registration', { exact: true })).toBeVisible()
+    await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(oneMonthLater))
+    await expect(page.getByText(/1 month .* registration/)).toBeVisible()
   })
 
   // should have payment choice ethereum checked and show primary name setting as checked
@@ -692,7 +689,7 @@ test('should allow normal registration for a month', async ({
   // should show countdown
   await expect(page.getByTestId('countdown-circle')).toBeVisible()
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(60)
+  await testClient.increaseTime({ seconds: 60 })
   await expect(page.getByTestId('finish-button')).toBeEnabled()
 
   // should save the registration state and the transaction status
@@ -717,7 +714,6 @@ test('should not allow normal registration less than 28 days', async ({
   page,
   login,
   accounts,
-  provider,
   time,
   makePageObject,
 }) => {
@@ -752,33 +748,26 @@ test('should not allow normal registration less than 28 days', async ({
   const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
 
   await test.step('should set a date', async () => {
-    const lessThanMinDaysLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + daysToSeconds(27)) * 1000,
-    )
-    await calendar.fill(lessThanMinDaysLaterInput)
-    await expect(page.getByTestId('calendar-date')).not.toHaveValue(lessThanMinDaysLaterInput)
+    const lessThanMinDaysLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setDate(_date.getDate() + 27)
+      return _date
+    }, browserTime * 1000)
 
-    const minDaysLaterInput = await page.evaluate(
-      (timestamp) => {
-        const _date = new Date(timestamp)
-        const year = _date.getFullYear()
-        const month = String(_date.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-        const day = String(_date.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-      },
-      (browserTime + daysToSeconds(28)) * 1000,
+    await calendar.fill(dateToDateInput(lessThanMinDaysLater))
+    await expect(page.getByTestId('calendar-date')).not.toHaveValue(
+      dateToDateInput(lessThanMinDaysLater),
     )
 
-    await calendar.fill(minDaysLaterInput)
+    const minDaysLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setDate(_date.getDate() + 28)
+      return _date
+    }, browserTime * 1000)
 
-    await expect(page.getByTestId('calendar-date')).toHaveValue(minDaysLaterInput)
+    await calendar.fill(dateToDateInput(minDaysLater))
+
+    await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(minDaysLater))
     expect(page.getByText('28 days registration', { exact: true })).toBeVisible()
   })
 
@@ -832,7 +821,7 @@ test('should not allow normal registration less than 28 days', async ({
   // should show countdown
   await expect(page.getByTestId('countdown-circle')).toBeVisible()
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await provider.increaseTime(60)
+  await testClient.increaseTime({ seconds: 60 })
   await expect(page.getByTestId('finish-button')).toBeEnabled()
 
   // should save the registration state and the transaction status
@@ -857,7 +846,6 @@ test('should be able to detect an existing commit created on a private mempool',
   page,
   login,
   accounts,
-  provider,
   time,
   wallet,
   makePageObject,
@@ -926,7 +914,7 @@ test('should be able to detect an existing commit created on a private mempool',
     // should show countdown
     await expect(page.getByTestId('countdown-circle')).toBeVisible()
     await expect(page.getByTestId('countdown-circle')).toContainText(/^[0-6]?[0-9]$/)
-    await provider.increaseTime(60)
+    await testClient.increaseTime({ seconds: 60 })
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible({ timeout: 10000 })
   })
 
@@ -953,5 +941,121 @@ test('should be able to detect an existing commit created on a private mempool',
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
       accounts.getAddress('user', 5),
     )
+  })
+})
+
+test.describe('Error handling', () => {
+  test('should be able to detect an existing commit created on a private mempool', async ({
+    page,
+    login,
+    time,
+    makePageObject,
+  }) => {
+    test.slow()
+
+    const homePage = makePageObject('HomePage')
+    const registrationPage = makePageObject('RegistrationPage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await time.sync()
+
+    await homePage.goto()
+    await login.connect()
+
+    const name = `expired-commit-${Date.now()}.eth`
+    // should redirect to registration page
+    await homePage.searchInput.fill(name)
+    await homePage.searchInput.press('Enter')
+    await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+
+    await test.step('pricing page', async () => {
+      await page.getByTestId('payment-choice-ethereum').check()
+      await registrationPage.primaryNameToggle.uncheck()
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('info page', async () => {
+      await expect(page.getByTestId('next-button')).toHaveText('Begin')
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('transaction: commit', async () => {
+      await expect(page.getByText('Open Wallet')).toBeVisible()
+      await transactionModal.confirm()
+      await expect(page.getByText(`Your "Start timer" transaction was successful`)).toBeVisible()
+      await time.sync()
+      await page.waitForTimeout(1000)
+      await time.increaseTime({ seconds: 60 * 60 * 24 })
+    })
+
+    await expect(
+      page.getByText('Your registration has expired. You will need to start the process again.'),
+    ).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Restart' })).toBeVisible()
+    await expect(page.getByTestId('finish-button')).toHaveCount(0)
+  })
+
+  test('should be able to register name if the commit transaction does not update', async ({
+    page,
+    login,
+    accounts,
+    time,
+    makePageObject,
+    consoleListener,
+  }) => {
+    test.slow()
+
+    const homePage = makePageObject('HomePage')
+    const registrationPage = makePageObject('RegistrationPage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await time.sync()
+    await consoleListener.initialize({
+      regex: /Event triggered on local development.*register-override-triggered/,
+    })
+    await homePage.goto()
+    await login.connect()
+
+    const name = `stuck-commit-${Date.now()}.eth`
+    // should redirect to registration page
+    await homePage.searchInput.fill(name)
+    await homePage.searchInput.press('Enter')
+    await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+
+    await test.step('pricing page', async () => {
+      await page.getByTestId('payment-choice-ethereum').check()
+      await registrationPage.primaryNameToggle.uncheck()
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('info page', async () => {
+      await expect(page.getByTestId('next-button')).toHaveText('Begin')
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('transaction: commit', async () => {
+      await expect(page.getByText('Open Wallet')).toBeVisible()
+      await transactionModal.confirm()
+      await expect(page.getByText(`Your "Start timer" transaction was successful`)).toBeVisible()
+      await time.increaseTimeByTimestamp({ seconds: 120 })
+    })
+
+    await test.step('transaction: register', async () => {
+      await expect(page.getByTestId('finish-button')).toBeVisible({ timeout: 10000 })
+      await expect(page.getByTestId('finish-button')).toBeEnabled()
+
+      await page.getByTestId('finish-button').click()
+      await expect(page.getByText('Open Wallet')).toBeVisible()
+      await transactionModal.confirm()
+
+      await page.getByTestId('view-name').click()
+      await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+        accounts.getAddress('user', 5),
+      )
+    })
+
+    await test.step('confirm plausible event was fired once', async () => {
+      expect(consoleListener.getMessages()).toHaveLength(1)
+    })
   })
 })

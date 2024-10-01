@@ -8,8 +8,7 @@ import {
 import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { createSubname, wrapName } from '@ensdomains/ensjs/wallet'
 
-import { Accounts, createAccounts, User } from '../../accounts'
-import { Contracts } from '../../contracts'
+import { Accounts, User } from '../../accounts'
 import {
   testClient,
   waitForTransaction,
@@ -31,12 +30,11 @@ export type LegacySubname = {
 
 type Dependencies = {
   accounts: Accounts
-  contracts: Contracts
 }
 // const DEFAULT_RESOLVER = RESOLVER_ADDRESSES['1337'][2] as `0x${string}`
 const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address
 export const generateLegacySubname =
-  ({ accounts, contracts }: Dependencies) =>
+  ({ accounts }: Dependencies) =>
   async ({
     name,
     nameOwner,
@@ -111,6 +109,6 @@ export const generateLegacySubname =
       resolver: _subname.resolver ?? DEFAULT_RESOLVER,
     }))
     for (const eachSubname of _subnames) {
-      await generateLegacySubname({ accounts, contracts })(eachSubname)
+      await generateLegacySubname({ accounts })(eachSubname)
     }
   }

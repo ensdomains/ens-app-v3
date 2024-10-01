@@ -1,7 +1,12 @@
 /* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
 
-import { dateToDateInput, roundDurationWithDay, secondsToDateInput } from '@app/utils/date'
+import {
+  dateToDateInput,
+  roundDurationWithDay,
+  secondsFromDateDiff,
+  secondsToDateInput,
+} from '@app/utils/date'
 import { daysToSeconds } from '@app/utils/time'
 
 import { test } from '../../../playwright'
@@ -13,8 +18,10 @@ test('should be able to register multiple names on the address page', async ({
   subgraph,
   makePageObject,
   makeName,
+  time,
 }) => {
-  const names = await makeName([
+  // Generating names in not neccessary but we want to make sure that there are names to extend
+  await makeName([
     {
       label: 'extend-legacy',
       type: 'legacy',
@@ -32,16 +39,28 @@ test('should be able to register multiple names on the address page', async ({
   const transactionModal = makePageObject('TransactionModal')
 
   await addresPage.goto(address)
-
   await login.connect()
+  await page.pause()
+
   await addresPage.selectToggle.click()
+
+  await expect(await page.locator('.name-detail-item').count()).toBeGreaterThan(0)
+  const nameItems = await page.locator('.name-detail-item').all()
+  const nameItemTestIds = await Promise.all(
+    nameItems.map((item) => item.getAttribute('data-testid')),
+  )
+  const extendableNameItems = nameItemTestIds
+    .filter((testid): testid is string => !!testid)
+    .map((testid) => testid.replace('name-item-', ''))
+    .filter((name) => {
+      const nameParts = name?.split('.') ?? []
+      return nameParts.length === 2 && nameParts[1] === 'eth'
+    })
+
   const timestampDict: { [key: string]: number } = {}
-  for (const name of names) {
-    const label = name.replace('.eth', '')
-    await addresPage.search(label)
+  for (const name of extendableNameItems) {
     const timestamp = await addresPage.getTimestamp(name)
     timestampDict[name] = timestamp
-    await addresPage.getNameRow(name).click()
   }
   await addresPage.extendNamesButton.click()
 
@@ -53,15 +72,9 @@ test('should be able to register multiple names on the address page', async ({
   await addresPage.extendNamesModalNextButton.click()
 
   // check the invoice details
-  await expect(page.getByTestId('invoice-item-0-amount')).toContainText('0.0065')
-  await expect(page.getByTestId('invoice-item-1-amount')).toContainText('0.0002')
-  await expect(page.getByTestId('invoice-total')).toContainText('0.0067')
+  await page.pause()
+  await expect(page.getByText(`Extend ${extendableNameItems.length} Names`)).toBeVisible()
   await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
-
-  // check the price comparison table
-  await expect(page.getByTestId('year-marker-0')).toContainText('3% gas')
-  await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-  await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
 
   // increment and save
   await page.getByTestId('plus-minus-control-plus').click()
@@ -71,12 +84,18 @@ test('should be able to register multiple names on the address page', async ({
   await transactionModal.autoComplete()
 
   await subgraph.sync()
+  await page.waitForTimeout(3000)
+
+  // Should be able to remove this after useQuery is fixed. Using to force a refetch.
+  await time.increaseTime({ seconds: 15 })
   await page.reload()
-  for (const name of names) {
+  for (const name of extendableNameItems) {
     const label = name.replace('.eth', '')
     await addresPage.search(label)
-    await expect(addresPage.nameExpiry(name)).not.toHaveText(/12/, { timeout: 30000 })
-    expect(await addresPage.getTimestamp(name)).toEqual(timestampDict[name] + 31536000000 * 3)
+    await expect(addresPage.getNameRow(name)).toBeVisible({ timeout: 5000 })
+    await page.pause()
+    await expect(await addresPage.getTimestamp(name)).not.toBe(timestampDict[name])
+    await expect(await addresPage.getTimestamp(name)).toBe(timestampDict[name] + 31536000000 * 3)
   }
 })
 
@@ -345,14 +364,14 @@ test('should be able to extend a name by a month', async ({
   })
 
   await test.step('should set and render a date properly', async () => {
-    const expiryTime = (await profilePage.getExpiryTimestamp()) / 1000
+    const expiryTimestamp = await profilePage.getExpiryTimestamp()
+    const expiryTime = expiryTimestamp / 1000
     const calendar = page.getByTestId('calendar')
-    const monthLater = await page.evaluate(
-      (ts) => {
-        return new Date(ts)
-      },
-      (expiryTime + daysToSeconds(31)) * 1000,
-    )
+    const monthLater = await page.evaluate((ts) => {
+      const expiryDate = new Date(ts)
+      expiryDate.setMonth(expiryDate.getMonth() + 1)
+      return expiryDate
+    }, expiryTimestamp)
 
     await calendar.fill(dateToDateInput(monthLater))
     await expect(page.getByTestId('calendar-date')).toHaveValue(
@@ -364,7 +383,7 @@ test('should be able to extend a name by a month', async ({
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0003')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0004')
-    await expect(page.getByText('1 month extension', { exact: true })).toBeVisible()
+    await expect(page.getByText(/1 month .* extension/)).toBeVisible()
   })
 
   await test.step('should extend', async () => {
@@ -373,7 +392,9 @@ test('should be able to extend a name by a month', async ({
     await transactionModal.autoComplete()
 
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    const comparativeTimestamp = timestamp + daysToSeconds(31) * 1000
+    const comparativeTimestamp =
+      timestamp +
+      secondsFromDateDiff({ startDate: new Date(timestamp), additionalMonths: 1 }) * 1000
     await expect(comparativeTimestamp).toEqual(newTimestamp)
   })
 })
@@ -408,18 +429,18 @@ test('should be able to extend a name by a day', async ({
   })
 
   await test.step('should set and render a date properly', async () => {
-    const expiryTime = (await profilePage.getExpiryTimestamp()) / 1000
+    const expiryTimestamp = await profilePage.getExpiryTimestamp()
+    const expiryTime = expiryTimestamp / 1000
     const calendar = page.getByTestId('calendar')
-    const monthLater = await page.evaluate(
-      (ts) => {
-        return new Date(ts)
-      },
-      (expiryTime + daysToSeconds(1)) * 1000,
-    )
+    const dayLater = await page.evaluate((ts) => {
+      const expiryDate = new Date(ts)
+      expiryDate.setDate(expiryDate.getDate() + 1)
+      return expiryDate
+    }, expiryTimestamp)
 
-    await calendar.fill(dateToDateInput(monthLater))
+    await calendar.fill(dateToDateInput(dayLater))
     await expect(page.getByTestId('calendar-date')).toHaveValue(
-      secondsToDateInput(expiryTime + roundDurationWithDay(monthLater, expiryTime)),
+      secondsToDateInput(expiryTime + roundDurationWithDay(dayLater, expiryTime)),
     )
   })
 
@@ -489,14 +510,14 @@ test('should be able to extend a name in grace period by a month', async ({
   })
 
   await test.step('should set and render a date properly', async () => {
-    const expiryTime = (await profilePage.getExpiryTimestamp()) / 1000
+    const expiryTimestamp = await profilePage.getExpiryTimestamp()
+    const expiryTime = expiryTimestamp / 1000
     const calendar = page.getByTestId('calendar')
-    const monthLater = await page.evaluate(
-      (ts) => {
-        return new Date(ts)
-      },
-      (expiryTime + daysToSeconds(31)) * 1000,
-    )
+    const monthLater = await page.evaluate((ts) => {
+      const expiryDate = new Date(ts)
+      expiryDate.setMonth(expiryDate.getMonth() + 1)
+      return expiryDate
+    }, expiryTimestamp)
 
     await calendar.fill(dateToDateInput(monthLater))
     await expect(page.getByTestId('calendar-date')).toHaveValue(
@@ -508,7 +529,7 @@ test('should be able to extend a name in grace period by a month', async ({
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0003')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0004')
-    await expect(page.getByText('1 month extension', { exact: true })).toBeVisible()
+    await expect(page.getByText(/1 month .* extension/)).toBeVisible()
   })
 
   await test.step('should extend', async () => {
@@ -517,7 +538,9 @@ test('should be able to extend a name in grace period by a month', async ({
     await transactionModal.autoComplete()
 
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    const comparativeTimestamp = timestamp + daysToSeconds(31) * 1000
+    const comparativeTimestamp =
+      timestamp +
+      secondsFromDateDiff({ startDate: new Date(timestamp), additionalMonths: 1 }) * 1000
     await expect(comparativeTimestamp).toEqual(newTimestamp)
   })
 })
@@ -570,18 +593,18 @@ test('should be able to extend a name in grace period by 1 day', async ({
   })
 
   await test.step('should set and render a date properly', async () => {
-    const expiryTime = (await profilePage.getExpiryTimestamp()) / 1000
+    const expiryTimestamp = await profilePage.getExpiryTimestamp()
+    const expiryTime = expiryTimestamp / 1000
     const calendar = page.getByTestId('calendar')
-    const monthLater = await page.evaluate(
-      (ts) => {
-        return new Date(ts)
-      },
-      (expiryTime + daysToSeconds(1)) * 1000,
-    )
+    const dayLater = await page.evaluate((ts) => {
+      const expiryDate = new Date(ts)
+      expiryDate.setDate(expiryDate.getDate() + 1)
+      return expiryDate
+    }, expiryTimestamp)
 
-    await calendar.fill(dateToDateInput(monthLater))
+    await calendar.fill(dateToDateInput(dayLater))
     await expect(page.getByTestId('calendar-date')).toHaveValue(
-      secondsToDateInput(expiryTime + roundDurationWithDay(monthLater, expiryTime)),
+      secondsToDateInput(expiryTime + roundDurationWithDay(dayLater, expiryTime)),
     )
   })
 

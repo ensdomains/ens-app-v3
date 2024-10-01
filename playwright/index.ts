@@ -1,27 +1,27 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { test as base } from '@playwright/test'
-import { injectHeadlessWeb3Provider, Web3ProviderBackend } from 'headless-web3-provider'
+import { anvil, holesky } from 'viem/chains'
+
+import { injectHeadlessWeb3Provider, type Web3ProviderBackend } from '@ensdomains/headless-web3-provider'
 
 import { Accounts, createAccounts } from './fixtures/accounts'
-import { createContracts } from './fixtures/contracts'
 import { Login } from './fixtures/login'
 import { createMakeNames } from './fixtures/makeName/index.js'
-import { createProvider, Provider } from './fixtures/provider'
 import { createSubgraph } from './fixtures/subgraph.js'
 import { createTime } from './fixtures/time.js'
 import { createPageObjectMaker } from './pageObjects/index.js'
+import { createConsoleListener } from './fixtures/consoleListener'
 
 type Fixtures = {
   accounts: Accounts
   wallet: Web3ProviderBackend
-  provider: Provider
   login: InstanceType<typeof Login>
   getContract: (contract: string) => any
   makeName: ReturnType<typeof createMakeNames>
   makePageObject: ReturnType<typeof createPageObjectMaker>
   subgraph: ReturnType<typeof createSubgraph>
   time: ReturnType<typeof createTime>
-  contracts: ReturnType<typeof createContracts>
+  consoleListener: ReturnType<typeof createConsoleListener>
 }
 
 export const test = base.extend<Fixtures>({
@@ -30,38 +30,38 @@ export const test = base.extend<Fixtures>({
     const stateful = testInfo.project?.name === 'stateful'
     use(createAccounts(stateful))
   },
-  contracts: async ({ accounts, provider }, use) => {
-    await use(createContracts({ accounts, provider }))
-  },
-  wallet: async ({ page, accounts, provider }, use) => {
-    const chainId = provider.network?.chainId || 1337
-    const chainRpcUrl = provider.connection?.url || 'http://localhost:8545'
-    const privateKeys = accounts.getAllPrivateKeys()
-    const wallet = await injectHeadlessWeb3Provider(page, privateKeys, chainId, chainRpcUrl)
-    await use(wallet)
-  },
-  // eslint-disable-next-line no-empty-pattern
-  provider: async ({}, use, testInfo) => {
+  wallet: async ({ page, accounts }, use, testInfo) => {
     const stateful = testInfo.project?.name === 'stateful'
-    const provider = createProvider(stateful)
-    await use(provider)
+    const chains = stateful ? [holesky] : [{ ...anvil, id: 1337 }]
+    const privateKeys = accounts.getAllPrivateKeys()
+    const wallet = await injectHeadlessWeb3Provider({
+      page,
+      privateKeys,
+      chains,
+    })
+    await use(wallet)
   },
   login: async ({ page, wallet, accounts }, use) => {
     const login = new Login(page, wallet, accounts)
     await use(login)
   },
-  makeName: async ({ accounts, provider, time, contracts, subgraph }, use) => {
-    const makeNames = createMakeNames({ accounts, provider, time, contracts, subgraph })
+  makeName: async ({ accounts, time, subgraph }, use) => {
+    const makeNames = createMakeNames({ accounts, time, subgraph })
     await use(makeNames)
   },
   makePageObject: async ({ page, wallet }, use) => {
     await use(createPageObjectMaker({ page, wallet }))
   },
-  subgraph: async ({ provider }, use) => {
-    const subgraph = createSubgraph({ provider })
+  subgraph: async ({}, use) => {
+    const subgraph = createSubgraph()
     await use(subgraph)
   },
-  time: async ({ provider, page }, use) => {
-    await use(createTime({ provider, page }))
+  time: async ({ page }, use) => {
+    await use(createTime({ page }))
   },
+  consoleListener: async ({ page }, use) => {
+    const consoleListener = createConsoleListener({ page })
+    await use(consoleListener)
+    consoleListener.reset()
+  }
 })

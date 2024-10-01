@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { dateFromDateDiff } from './date'
 import {
   calculateValueWithBuffer,
   checkDNSName,
@@ -8,7 +9,7 @@ import {
   deleteProperties,
   deleteProperty,
   formatDateTime,
-  formatDuration,
+  formatDurationOfDates,
   formatExpiry,
   formatFullExpiry,
   getEncodedLabelAmount,
@@ -17,7 +18,6 @@ import {
   isLabelTooLong,
   makeEtherscanLink,
   ONE_DAY,
-  ONE_YEAR,
   secondsToDays,
   shortenAddress,
   validateExpiry,
@@ -65,6 +65,18 @@ describe('formatExpiry', () => {
     const result = formatExpiry(expiry)
     expect(result).toEqual('January 1, 2020')
   })
+
+  it('should format the date with short month if options.short is true', () => {
+    const expiry = new Date('2020-01-01')
+    const result = formatExpiry(expiry, { short: true })
+    expect(result).toEqual('Jan 1, 2020')
+  })
+
+  it('should format the date with long month if options.short is false', () => {
+    const expiry = new Date('2020-01-01')
+    const result = formatExpiry(expiry, { short: false })
+    expect(result).toEqual('January 1, 2020')
+  })
 })
 
 describe('formatDateTime', () => {
@@ -86,22 +98,63 @@ describe('formatFullExpiry', () => {
   })
 })
 
-describe('formatDuration', () => {
+describe('formatDurationOfDates', () => {
   it('should return a year locale', () => {
-    expect(formatDuration(2 * ONE_YEAR, (x) => x)).toEqual('unit.years')
+    expect(
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: dateFromDateDiff({ startDate: new Date(), additionalYears: 1 }),
+        t: (x, options: any) => x + options?.count,
+      }),
+    ).toEqual('unit.years1')
   })
   it('should return a month locale', () => {
-    expect(formatDuration(ONE_DAY * 30, (x) => x)).toEqual('unit.months')
+    expect(
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: dateFromDateDiff({ startDate: new Date(), additionalMonths: 1 }),
+        t: (x, options: any) => x + options?.count,
+      }),
+    ).toEqual('unit.months1')
   })
   it('should return a day locale', () => {
-    expect(formatDuration(ONE_DAY * 2, (x) => x)).toEqual('unit.days')
+    expect(
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: dateFromDateDiff({ startDate: new Date(), additionalDays: 1 }),
+        t: (x, options: any) => x + options?.count,
+      }),
+    ).toEqual('unit.days1')
   })
   it('should return invalid date if less than a day', () => {
-    expect(formatDuration(123, (x) => x)).toEqual('unit.invalid_date')
+    expect(
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 123 * 1000),
+        t: (x, options: any) =>  x + options?.count,
+      }),
+    ).toEqual('unit.days0')
   })
   it('if extra day or month, return multiple locales', () => {
-    expect(formatDuration(2 * ONE_YEAR + ONE_DAY * 30, (x) => x)).toEqual('unit.years, unit.months')
-    expect(formatDuration(ONE_DAY * 33, (x) => x)).toEqual('unit.months, unit.days')
+    expect(
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: dateFromDateDiff({
+          startDate: new Date(),
+          additionalYears: 2,
+          additionalMonths: 3,
+          additionalDays: 1,
+        }),
+        t: (x, options: any) => x + options?.count,
+      }),
+    ).toEqual('unit.years2, unit.months3')
+    expect(
+      formatDurationOfDates({
+        startDate: new Date(),
+        endDate: new Date(Date.now() + ONE_DAY * 33 * 1000),
+        t: (x) => x,
+      }),
+    ).toEqual('unit.months, unit.days')
   })
 })
 
