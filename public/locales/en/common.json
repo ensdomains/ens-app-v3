@@ -305,7 +305,8 @@
         "title": "Confirm Details",
         "message": "Double check these details before confirming in your wallet.",
         "waitingForWallet": "Waiting for Wallet",
-        "openWallet": "Open Wallet"
+        "openWallet": "Open Wallet",
+        "insufficientFunds": "Insufficient funds"
       },
       "sent": {
         "title": "Transaction Sent",
