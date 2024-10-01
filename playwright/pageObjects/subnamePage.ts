@@ -9,6 +9,7 @@ export class SubnamesPage {
   readonly getAddSubnameInput: Locator
   readonly getSubmitSubnameButton: Locator
   readonly getSubmitSubnameProfileButton: Locator
+  readonly addMoreToProfileButton: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -17,6 +18,7 @@ export class SubnamesPage {
     this.getAddSubnameInput = this.page.getByTestId('add-subname-input')
     this.getSubmitSubnameButton = this.page.getByTestId('create-subname-next')
     this.getSubmitSubnameProfileButton = this.page.getByTestId('create-subname-profile-next')
+    this.addMoreToProfileButton = this.page.getByTestId('show-add-profile-records-modal-button')
   }
 
   async goto(name: string) {

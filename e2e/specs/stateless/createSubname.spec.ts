@@ -116,14 +116,19 @@ test('should allow creating a subname', async ({ page, makeName, login, makePage
   await login.connect()
 
   await subnamesPage.getAddSubnameButton.click()
-  await subnamesPage.getAddSubnameInput.type('test')
+  await subnamesPage.getAddSubnameInput.fill('test')
   await subnamesPage.getSubmitSubnameButton.click()
+  await subnamesPage.addMoreToProfileButton.click()
+  await page.getByTestId('profile-record-option-name').click()
+  await page.getByTestId('add-profile-records-button').click()
+  await page.getByTestId('profile-record-input-input-name').fill('Test Name')
   await subnamesPage.getSubmitSubnameProfileButton.click()
 
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
 
   const subname = `test.${name}`
+  await subnamesPage.goto(subname)
 
   await expect(page).toHaveURL(new RegExp(`/${subname}`), { timeout: 15000 })
 })
