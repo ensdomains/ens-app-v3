@@ -4,6 +4,13 @@ import { useAccount, useChainId, useConfig } from 'wagmi'
 import { SupportedChain } from '@app/constants/chains'
 import { ConfigWithEns, CreateQueryKey, QueryDependencyType } from '@app/types'
 
+/*
+  Query types:
+  - independent: Query that is not dependent on chain data, specifically chainId and address 
+  - graph: Query that uses the graph 
+  - standard: Query that depends on chain data directly 
+*/
+
 export type QueryKeyConfig<
   TParams extends {},
   TFunctionName extends string,
