@@ -31,15 +31,15 @@ export function getUtm() {
 export const setupAnalytics = () => {
   setUtm()
 }
-
-export const trackEvent = async (type: string, chain: string) => {
+export const trackEvent = async (type: string, chain: string, customProperties?: any) => {
   const referrer = getUtm()
+
+  const props = { ...customProperties, referrer }
+
   function track() {
     if (typeof window !== 'undefined' && window.plausible) {
       window.plausible(type, {
-        props: {
-          referrer,
-        },
+        props,
       })
     }
   }
@@ -51,7 +51,8 @@ export const trackEvent = async (type: string, chain: string) => {
       'Event triggered on local development',
       JSON.stringify({
         type,
-        referrer,
+        chain,
+        props,
       }),
     )
   }

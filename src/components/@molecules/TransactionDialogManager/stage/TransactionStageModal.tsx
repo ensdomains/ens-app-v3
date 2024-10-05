@@ -24,6 +24,7 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { useEventTracker } from '@app/hooks/useEventTracker'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import {
@@ -318,7 +319,7 @@ export const TransactionStageModal = ({
 }: ManagedDialogProps) => {
   const { t } = useTranslation()
   const chainName = useChainName()
-
+  const { trackEvent } = useEventTracker()
   const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
   const { data: connectorClient } = useConnectorClient<ConfigWithEns>()
   const client = useClient()
@@ -538,7 +539,16 @@ export const TransactionStageModal = ({
           !!requestError ||
           isTransactionRequestCachedData
         }
-        onClick={() => sendTransaction(request!)}
+        onClick={() => {
+          sendTransaction(request!)
+
+          if (['commitName', 'registerName'].includes(actionName)) {
+            trackEvent({
+              eventName:
+                actionName === 'commitName' ? 'commit_wallet_opened' : 'register_wallet_opened',
+            })
+          }
+        }}
         data-testid="transaction-modal-confirm-button"
       >
         {t('transaction.dialog.confirm.openWallet')}
@@ -558,6 +568,8 @@ export const TransactionStageModal = ({
     transactionLoading,
     request,
     isTransactionRequestCachedData,
+    trackEvent,
+    actionName,
     preTransactionError,
   ])
 
