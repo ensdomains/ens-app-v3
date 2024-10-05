@@ -570,7 +570,6 @@ export const TransactionStageModal = ({
     isTransactionRequestCachedData,
     trackEvent,
     actionName,
-    lowerError,
     preTransactionError,
   ])
 
