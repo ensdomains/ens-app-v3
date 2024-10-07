@@ -68,7 +68,7 @@ export const transactionSuccessHandler =
     connectorClient: ConnectorClientWithEns
     actionName: ManagedDialogProps['actionName']
     txKey: string | null
-    request: PrepareTransactionRequestRequest<SupportedChain> | undefined
+    request: PrepareTransactionRequestRequest<SupportedChain> | null | undefined
     addRecentTransaction: ReturnType<typeof useAddRecentTransaction>
     dispatch: Dispatch<TransactionFlowAction>
     isSafeApp: ReturnType<typeof useIsSafeApp>['data']
@@ -167,6 +167,61 @@ type CreateTransactionRequestQueryKey = CreateQueryKey<
   'standard'
 >
 
+type CreateTransactionRequestUnsafeParameters = {
+  client: ClientWithEns
+  connectorClient: ConnectorClientWithEns
+  isSafeApp: CheckIsSafeAppReturnType | undefined
+  params: UniqueTransaction
+  chainId: SupportedChain['id']
+}
+
+const createTransactionRequestUnsafe = async ({
+  client,
+  connectorClient,
+  isSafeApp,
+  params,
+  chainId,
+}: CreateTransactionRequestUnsafeParameters) => {
+  const transactionRequest = await createTransactionRequest({
+    name: params.name,
+    data: params.data,
+    connectorClient,
+    client,
+  })
+
+  const txWithZeroGas = {
+    ...transactionRequest,
+    maxFeePerGas: 0n,
+    maxPriorityFeePerGas: 0n,
+  }
+
+  const { gasLimit, accessList } = await calculateGasLimit({
+    client,
+    connectorClient,
+    isSafeApp: !!isSafeApp,
+    txWithZeroGas,
+    transactionName: params.name,
+  })
+
+  const request = await prepareTransactionRequest(client, {
+    to: transactionRequest.to,
+    accessList,
+    account: connectorClient.account,
+    data: transactionRequest.data,
+    gas: gasLimit,
+    parameters: ['fees', 'nonce', 'type'],
+    ...('value' in transactionRequest ? { value: transactionRequest.value } : {}),
+  })
+
+  return {
+    ...request,
+    chain: request.chain!,
+    to: request.to!,
+    gas: request.gas!,
+    chainId,
+  }
+}
+
 export const createTransactionRequestQueryFn =
   (config: ConfigWithEns) =>
   ({
@@ -185,43 +240,22 @@ export const createTransactionRequestQueryFn =
     if (connectorClient.account.address !== address)
       throw new Error('address does not match connector')
 
-    const transactionRequest = await createTransactionRequest({
-      name: params.name,
-      data: params.data,
-      connectorClient,
-      client,
-    })
-
-    const txWithZeroGas = {
-      ...transactionRequest,
-      maxFeePerGas: 0n,
-      maxPriorityFeePerGas: 0n,
-    }
-
-    const { gasLimit, accessList } = await calculateGasLimit({
-      client,
-      connectorClient,
-      isSafeApp: !!isSafeApp,
-      txWithZeroGas,
-      transactionName: params.name,
-    })
-
-    const request = await prepareTransactionRequest(client, {
-      to: transactionRequest.to,
-      accessList,
-      account: connectorClient.account,
-      data: transactionRequest.data,
-      gas: gasLimit,
-      parameters: ['fees', 'nonce', 'type'],
-      ...('value' in transactionRequest ? { value: transactionRequest.value } : {}),
-    })
-
-    return {
-      ...request,
-      chain: request.chain!,
-      to: request.to!,
-      gas: request.gas!,
-      chainId,
+    try {
+      return {
+        data: await createTransactionRequestUnsafe({
+          client,
+          connectorClient,
+          isSafeApp,
+          params,
+          chainId,
+        }),
+        error: null,
+      }
+    } catch (e) {
+      return {
+        data: null,
+        error: e as Error,
+      }
     }
   }
 
@@ -242,7 +276,10 @@ export const getTransactionErrorQueryFn =
     try {
       await call(client, failedTransactionData as CallParameters<ConfigWithEns>)
       // TODO: better errors for this
-      return 'transaction.dialog.error.gasLimit'
+      return {
+        message: 'transaction.dialog.error.gasLimit',
+        type: 'unknown',
+      }
     } catch (err: unknown) {
       return getReadableError(err)
     }
