@@ -71,7 +71,7 @@ export const VerifyOffchainOwnership = ({
   dispatch: Dispatch<DnsImportReducerAction>
   selected: SelectedItemProperties
 }) => {
-  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.verifyOwnership' })
+  const { t } = useTranslation('dnssec')
   const { t: tc } = useTranslation('common')
 
   const { address, chainId } = selected
@@ -99,14 +99,15 @@ export const VerifyOffchainOwnership = ({
 
   return (
     <DnsImportCard>
-      <DnsImportHeading>{t('title')}</DnsImportHeading>
+      <DnsImportHeading>{t('steps.verifyOwnership.title')}</DnsImportHeading>
       {(() => {
-        if (!isConnected) return <Helper type="info">{t('status.disconnected')}</Helper>
+        if (!isConnected)
+          return <Helper type="info">{t('steps.verifyOwnership.status.disconnected')}</Helper>
         if (dnsOffchainStatus?.address?.status === 'matching')
           return (
             <SuccessHelper>
               <CheckCircleSVG />
-              {t('status.matching')}
+              {t('steps.verifyOwnership.status.matching')}
             </SuccessHelper>
           )
         return (
@@ -123,7 +124,7 @@ export const VerifyOffchainOwnership = ({
               />
             </ValueButtonsContainer>
             <SupportLinkList
-              title={t('status.mismatching.help')}
+              title={t('steps.verifyOwnership.status.mismatching.help')}
               items={DNS_TXT_RECORD_HELPER_LINKS}
             />
             <StatusChecker
@@ -132,7 +133,7 @@ export const VerifyOffchainOwnership = ({
               isLoading={isLoading}
               isRefetching={isRefetching}
               refetch={refetch}
-              message={errorMessage || t('status.mismatching.message')}
+              message={errorMessage || t('steps.verifyOwnership.status.mismatching.message')}
               statusElement={
                 dnsOffchainStatus?.address?.status === 'mismatching' &&
                 dnsOffchainStatus?.resolver && (
@@ -148,7 +149,9 @@ export const VerifyOffchainOwnership = ({
               }
               statusHelperElement={
                 dnsOffchainStatus?.address?.status === 'mismatching' && (
-                  <Helper type="error">{t('status.mismatching.error.offchain')}</Helper>
+                  <Helper type="error">
+                    {t('steps.verifyOwnership.status.mismatching.error.offchain')}
+                  </Helper>
                 )
               }
             />

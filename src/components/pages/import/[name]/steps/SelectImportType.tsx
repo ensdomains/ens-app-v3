@@ -153,7 +153,7 @@ export const SelectImportType = ({
   item: DnsImportReducerDataItem
   selected: SelectedItemProperties
 }) => {
-  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.selectType' })
+  const { t } = useTranslation('dnssec')
   const { t: tc } = useTranslation('common')
 
   const { address } = useAccount()
@@ -195,11 +195,13 @@ export const SelectImportType = ({
 
   return (
     <DnsImportCard>
-      <DnsImportHeading>{t('title', { name: selected.name })}</DnsImportHeading>
-      <CenteredTypography>{t('subtitle')}</CenteredTypography>
-      <SupportOutlink href={getSupportLink('dnsNames')}>{t('learnMore')}</SupportOutlink>
+      <DnsImportHeading>{t('steps.selectType.title', { name: selected.name })}</DnsImportHeading>
+      <CenteredTypography>{t('steps.selectType.subtitle')}</CenteredTypography>
+      <SupportOutlink href={getSupportLink('dnsNames')}>
+        {t('steps.selectType.learnMore')}
+      </SupportOutlink>
       <TypesSelectionContainer>
-        <Typography weight="bold">{t('select.heading')}</Typography>
+        <Typography weight="bold">{t('steps.selectType.select.heading')}</Typography>
         <StyledRadioButtonGroup
           value={item.type || undefined}
           onChange={(e) => {
@@ -214,13 +216,17 @@ export const SelectImportType = ({
               label={
                 <TypeLabelContainer aria-disabled={!tldResolverIsOffchainResolver}>
                   <TypeLabelHeading>
-                    <Typography fontVariant="bodyBold">{t('select.offchain.name')}</Typography>
-                    <Tag colorStyle="accentSecondary">{t('select.offchain.tag')}</Tag>
+                    <Typography fontVariant="bodyBold">
+                      {t('steps.selectType.select.offchain.name')}
+                    </Typography>
+                    <Tag colorStyle="accentSecondary">
+                      {t('steps.selectType.select.offchain.tag')}
+                    </Tag>
                   </TypeLabelHeading>
                   <Typography fontVariant="small">
                     <Trans
                       t={t}
-                      i18nKey="select.offchain.description"
+                      i18nKey="steps.selectType.select.offchain.description"
                       components={{
                         br: <br />,
                         b: <b />,
@@ -239,9 +245,13 @@ export const SelectImportType = ({
               label={
                 <TypeLabelContainer>
                   <TypeLabelHeading>
-                    <Typography fontVariant="bodyBold">{t('select.onchain.name')}</Typography>
+                    <Typography fontVariant="bodyBold">
+                      {t('steps.selectType.select.onchain.name')}
+                    </Typography>
                   </TypeLabelHeading>
-                  <Typography fontVariant="small">{t('select.onchain.description')}</Typography>
+                  <Typography fontVariant="small">
+                    {t('steps.selectType.select.onchain.description')}
+                  </Typography>
                 </TypeLabelContainer>
               }
               data-testid="onchain-radio"
