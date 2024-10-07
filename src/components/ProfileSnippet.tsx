@@ -2,6 +2,7 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { Button, mq, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
@@ -193,6 +194,7 @@ export const ProfileSnippet = ({
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const abilities = useAbilities({ name })
+  const { isConnected } = useAccount()
 
   const beautifiedName = useBeautifiedName(name)
 
@@ -209,13 +211,18 @@ export const ProfileSnippet = ({
   const { canSelfExtend, canEdit } = abilities.data ?? {}
 
   useEffect(() => {
+    if (renew && !isConnected) {
+      return router.push(`/${name}/register`)
+    }
+
     if (renew) {
       showExtendNamesInput(`extend-names-${name}`, {
         names: [name],
         isSelf: canSelfExtend,
       })
     }
-  }, [renew, name, canSelfExtend])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, renew, name, canSelfExtend])
 
   const ActionButton = useMemo(() => {
     if (button === 'extend')
