@@ -16,7 +16,8 @@ import useWindowSize from '@app/hooks/useWindowSize'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { dateFromDateDiff } from '@app/utils/date'
 import { isMobileDevice } from '@app/utils/device'
-import { secondsToYears } from '@app/utils/time'
+import { secondsToDays } from '@app/utils/time'
+import { formatDurationOfDates } from '@app/utils/utils'
 
 import { RegistrationReducerDataItem } from '../types'
 import { Invoice } from './Invoice'
@@ -232,9 +233,10 @@ const useEthInvoice = (
     const registerNetFee = registerGasUsed * registerGasPrice
     const totalNetFee = commitNetFee && registerNetFee ? commitNetFee + registerNetFee : 0n
 
-    const years = Math.floor(secondsToYears(seconds))
-
-    const date = dateFromDateDiff({ startDate: new Date(), additionalYears: years })
+    const date = dateFromDateDiff({
+      startDate: new Date(),
+      additionalDays: Math.floor(secondsToDays(seconds)),
+    })
 
     return (
       <Invoice
@@ -244,7 +246,12 @@ const useEthInvoice = (
         items={[
           {
             label: t('invoice.timeRegistration', {
-              time: t(isMobileDevice() ? 'unit.yrs' : 'unit.years', { count: years, ns: 'common' }),
+              time: formatDurationOfDates({
+                startDate: new Date(),
+                endDate: date,
+                shortYears: isMobileDevice(),
+                t,
+              }),
             }),
             value,
           },
