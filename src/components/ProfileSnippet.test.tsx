@@ -1,8 +1,12 @@
 import '@app/test-utils'
 
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { getUserDefinedUrl } from './ProfileSnippet'
+
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => new URLSearchParams(),
+}))
 
 describe('getUserDefinedUrl', () => {
   it('should return undefined if no URL is provided', () => {

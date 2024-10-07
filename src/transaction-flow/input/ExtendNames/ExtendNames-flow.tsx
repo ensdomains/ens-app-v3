@@ -12,7 +12,6 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { makeCurrencyDisplay } from '@app/components/@atoms/CurrencyText/CurrencyText'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
@@ -212,7 +211,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const totalRentFee = priceData ? priceData.base + priceData.premium : 0n
   const yearlyFee = priceData?.base ? deriveYearlyFee({ duration: seconds, price: priceData }) : 0n
   const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
-  const unsafeDisplayYearlyFee = yearlyFee !== 0n ? yearlyFee : previousYearlyFee
   const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
   const { data: expiryData } = useExpiry({ enabled: names.length === 1, name: names[0] })
   const expiryDate = expiryData?.expiry?.date
@@ -260,8 +258,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
 
   const previousTransactionFee = usePreviousDistinct(transactionFee) || 0n
 
-  const unsafeDisplayTransactionFee =
-    transactionFee !== 0n ? transactionFee : previousTransactionFee
   const isShowingPreviousTransactionFee = transactionFee === 0n && previousTransactionFee > 0n
 
   const items: InvoiceItem[] = [
@@ -281,11 +277,14 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
 
   const { title, alert } = match(view)
     .with('no-ownership-warning', () => ({
-      title: t('input.extendNames.ownershipWarning.title', { count: names.length }),
+      title: t('input.extendNames.ownershipWarning.title', {
+        name: names.at(0),
+        count: names.length,
+      }),
       alert: 'warning' as const,
     }))
     .otherwise(() => ({
-      title: t('input.extendNames.title', { count: names.length }),
+      title: t('input.extendNames.title', { name: names.at(0), count: names.length }),
       alert: undefined,
     }))
 
@@ -365,13 +364,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     !!balance?.value &&
                     balance.value < estimatedGasLimit)) && (
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
-                )}
-                {!!unsafeDisplayYearlyFee && !!unsafeDisplayTransactionFee && (
-                  <RegistrationTimeComparisonBanner
-                    yearlyFee={unsafeDisplayYearlyFee}
-                    transactionFee={unsafeDisplayTransactionFee}
-                    message={t('input.extendNames.bannerMsg')}
-                  />
                 )}
               </GasEstimationCacheableComponent>
             </>
