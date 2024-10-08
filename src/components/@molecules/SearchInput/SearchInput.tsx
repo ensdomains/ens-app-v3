@@ -685,11 +685,11 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
 
   useSelectionManager({ inputVal, setSelected, state })
 
-  const setInput = (val: string) => {
+  const setInput = useCallback((val: string) => {
     setInputVal(val)
     setUsingPlaceholder(true)
     debouncer(() => setUsingPlaceholder(false))
-  }
+  }, [])
 
   const SearchInputElement = (
     <SearchInputBox
