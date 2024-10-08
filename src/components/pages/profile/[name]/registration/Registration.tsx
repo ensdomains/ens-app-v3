@@ -142,6 +142,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     seconds,
     reverseRecord,
     paymentMethodChoice,
+    durationType,
   }: RegistrationStepData['pricing']) => {
     if (paymentMethodChoice === PaymentMethod.moonpay) {
       initiateMoonpayRegistrationMutation.mutate(secondsToYears(seconds))
@@ -149,7 +150,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     }
     dispatch({
       name: 'setPricingData',
-      payload: { seconds, reverseRecord },
+      payload: { seconds, reverseRecord, durationType },
       selected,
     })
     if (!item.queue.includes('profile')) {
@@ -318,6 +319,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 name={normalisedName}
                 beautifiedName={beautifiedName}
                 callback={onComplete}
+                registrationData={item}
                 isMoonpayFlow={item.isMoonpayFlow}
               />
             ))

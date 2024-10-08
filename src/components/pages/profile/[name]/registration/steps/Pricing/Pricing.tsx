@@ -380,6 +380,7 @@ export type ActionButtonProps = {
   seconds: number
   balance: GetBalanceData | undefined
   totalRequiredBalance?: bigint
+  durationType: 'date' | 'years'
 }
 
 export const ActionButton = (props: ActionButtonProps) => {
@@ -404,12 +405,13 @@ export const ActionButton = (props: ActionButtonProps) => {
         reverseRecord,
         seconds,
         paymentMethodChoice,
+        durationType,
         callback,
       }) => (
         <Button
           loading={initiateMoonpayRegistrationMutation.isPending}
           data-testid="next-button"
-          onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
+          onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice, durationType })}
           disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isPending}
         >
           {t('action.next', { ns: 'common' })}
@@ -438,10 +440,10 @@ export const ActionButton = (props: ActionButtonProps) => {
         </Button>
       ),
     )
-    .otherwise(({ reverseRecord, seconds, paymentMethodChoice, callback }) => (
+    .otherwise(({ reverseRecord, seconds, paymentMethodChoice, durationType, callback }) => (
       <Button
         data-testid="next-button"
-        onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice })}
+        onClick={() => callback({ reverseRecord, seconds, paymentMethodChoice, durationType })}
         disabled={!paymentMethodChoice}
       >
         {t('action.next', { ns: 'common' })}
@@ -486,6 +488,9 @@ const Pricing = ({
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
   const [seconds, setSeconds] = useState(() => registrationData.seconds ?? ONE_YEAR)
+  const [durationType, setDurationType] = useState<'date' | 'years'>(
+    registrationData.durationType ?? 'years',
+  )
 
   const [reverseRecord, setReverseRecord] = useState(() =>
     registrationData.started ? registrationData.reverseRecord : !hasPrimaryName,
@@ -550,7 +555,10 @@ const Pricing = ({
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
-      <DateSelection {...{ seconds, setSeconds, minSeconds }} />
+      <DateSelection
+        {...{ seconds, setSeconds, minSeconds, durationType }}
+        onChangeDurationType={setDurationType}
+      />
       <FullInvoice {...fullEstimate} />
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={name} />
@@ -594,6 +602,7 @@ const Pricing = ({
             seconds,
             balance,
             totalRequiredBalance,
+            durationType,
           }}
         />
       </MobileFullWidth>

@@ -20,6 +20,7 @@ import { OG_IMAGE_URL } from '@app/utils/constants'
 import { shouldRedirect } from '@app/utils/shouldRedirect'
 import { formatFullExpiry, makeEtherscanLink } from '@app/utils/utils'
 
+import { ProfileEmptyBanner } from './ProfileEmptyBanner'
 import MoreTab from './tabs/MoreTab/MoreTab'
 import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
 import { PermissionsTab } from './tabs/PermissionsTab/PermissionsTab'
@@ -247,20 +248,23 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
           info: infoBanner,
           warning,
           header: (
-            <TabButtonContainer>
-              {visibileTabs.map((tabItem) => (
-                <TabButton
-                  key={tabItem}
-                  data-testid={`${tabItem}-tab`}
-                  $selected={tabItem === tab}
-                  onClick={() => setTab(tabItem)}
-                >
-                  <Typography fontVariant="extraLargeBold" color="inherit">
-                    {t(`tabs.${tabItem}.name`)}
-                  </Typography>
-                </TabButton>
-              ))}
-            </TabButtonContainer>
+            <>
+              <TabButtonContainer>
+                {visibileTabs.map((tabItem) => (
+                  <TabButton
+                    key={tabItem}
+                    data-testid={`${tabItem}-tab`}
+                    $selected={tabItem === tab}
+                    onClick={() => setTab(tabItem)}
+                  >
+                    <Typography fontVariant="extraLargeBold" color="inherit">
+                      {t(`tabs.${tabItem}.name`)}
+                    </Typography>
+                  </TabButton>
+                ))}
+              </TabButtonContainer>
+              <ProfileEmptyBanner name={normalisedName} />
+            </>
           ),
           titleExtra: profile?.address ? (
             <Outlink
