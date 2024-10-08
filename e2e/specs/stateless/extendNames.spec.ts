@@ -40,7 +40,6 @@ test('should be able to register multiple names on the address page', async ({
 
   await addresPage.goto(address)
   await login.connect()
-  await page.pause()
 
   await addresPage.selectToggle.click()
 
@@ -72,7 +71,6 @@ test('should be able to register multiple names on the address page', async ({
   await addresPage.extendNamesModalNextButton.click()
 
   // check the invoice details
-  await page.pause()
   await expect(page.getByText(`Extend ${extendableNameItems.length} Names`)).toBeVisible()
   await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
 
@@ -83,11 +81,14 @@ test('should be able to register multiple names on the address page', async ({
 
   await transactionModal.autoComplete()
 
+  await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
+    timeout: 10000,
+  })
   await subgraph.sync()
-  await page.waitForTimeout(3000)
 
   // Should be able to remove this after useQuery is fixed. Using to force a refetch.
   await time.increaseTime({ seconds: 15 })
+  await page.pause()
   await page.reload()
   for (const name of extendableNameItems) {
     const label = name.replace('.eth', '')
