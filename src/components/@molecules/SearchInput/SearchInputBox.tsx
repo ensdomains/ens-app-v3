@@ -104,7 +104,6 @@ export const SearchInputBox = forwardRef<HTMLInputElement, SearchInputBoxProps>(
           placeholder={t('search.placeholder')}
           value={value}
           onChange={(e) => {
-            console.log('e.target.value', e.target.value)
             setValue(e.target.value)
             debouncedSetInput(e.target.value)
           }}
