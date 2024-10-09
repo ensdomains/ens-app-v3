@@ -116,13 +116,19 @@ test('should allow creating a subname', async ({ page, makeName, login, makePage
   await login.connect()
 
   await subnamesPage.getAddSubnameButton.click()
-  await subnamesPage.getAddSubnameInput.type('test')
+  await subnamesPage.getAddSubnameInput.fill('test')
   await subnamesPage.getSubmitSubnameButton.click()
+  await subnamesPage.addMoreToProfileButton.click()
+  await page.getByTestId('profile-record-option-name').click()
+  await page.getByTestId('add-profile-records-button').click()
+  await page.getByTestId('profile-record-input-input-name').fill('Test Name')
+  await subnamesPage.getSubmitSubnameProfileButton.click()
 
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
 
   const subname = `test.${name}`
+  await subnamesPage.goto(subname)
 
   await expect(page).toHaveURL(new RegExp(`/${subname}`), { timeout: 15000 })
 })
@@ -150,6 +156,7 @@ test('should allow creating a subnames if the user is the wrapped owner', async 
   await subnamesPage.getAddSubnameButton.click()
   await subnamesPage.getAddSubnameInput.fill('test')
   await subnamesPage.getSubmitSubnameButton.click()
+  await subnamesPage.getSubmitSubnameProfileButton.click()
 
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
@@ -226,6 +233,7 @@ test('should allow creating an expired wrapped subname', async ({
   await subnamesPage.getAddSubnameButton.click()
   await subnamesPage.getAddSubnameInput.fill('test')
   await subnamesPage.getSubmitSubnameButton.click()
+  await subnamesPage.getSubmitSubnameProfileButton.click()
 
   await transactionModal.autoComplete()
 
@@ -234,6 +242,7 @@ test('should allow creating an expired wrapped subname', async ({
 })
 
 test('should allow creating an expired wrapped subname from the profile page', async ({
+  page,
   makeName,
   login,
   makePageObject,
@@ -268,6 +277,8 @@ test('should allow creating an expired wrapped subname from the profile page', a
   await login.connect()
 
   await profilePage.getRecreateButton.click()
+
+  await page.getByTestId('reclaim-profile-next').click()
 
   await transactionModal.autoComplete()
 

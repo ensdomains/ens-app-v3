@@ -12,6 +12,7 @@ import type { Props as EditResolverProps } from './EditResolver/EditResolver-flo
 import type { Props as EditRolesProps } from './EditRoles/EditRoles-flow'
 import type { Props as ExtendNamesProps } from './ExtendNames/ExtendNames-flow'
 import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor-flow'
+import type { Props as ProfileReclaimProps } from './ProfileReclaim-flow'
 import type { Props as ResetPrimaryNameProps } from './ResetPrimaryName/ResetPrimaryName-flow'
 import type { Props as RevokePermissionsProps } from './RevokePermissions/RevokePermissions-flow'
 import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName/SelectPrimaryName-flow'
@@ -55,6 +56,7 @@ const EditResolver = dynamicHelper<EditResolverProps>('EditResolver/EditResolver
 const EditRoles = dynamicHelper<EditRolesProps>('EditRoles/EditRoles')
 const ExtendNames = dynamicHelper<ExtendNamesProps>('ExtendNames/ExtendNames')
 const ProfileEditor = dynamicHelper<ProfileEditorProps>('ProfileEditor/ProfileEditor')
+const ProfileReclaim = dynamicHelper<ProfileReclaimProps>('ProfileReclaim')
 const ResetPrimaryName = dynamicHelper<ResetPrimaryNameProps>('ResetPrimaryName/ResetPrimaryName')
 const RevokePermissions = dynamicHelper<RevokePermissionsProps>(
   'RevokePermissions/RevokePermissions',
@@ -76,6 +78,7 @@ export const DataInputComponents = {
   EditRoles,
   ExtendNames,
   ProfileEditor,
+  ProfileReclaim,
   ResetPrimaryName,
   RevokePermissions,
   SelectPrimaryName,

@@ -393,6 +393,7 @@
         "empty": "No subnames have been added",
         "noResults": "No results",
         "noMoreResults": "No more results",
+        "setProfile": "Set Profile",
         "addSubname": {
           "title": "Subnames let you create additional names from your existing name.",
           "learn": "Learn about subnames",
