@@ -134,6 +134,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
 
   const showUnknownLabelsInput = usePreparedDataInput('UnknownLabels')
   const showProfileEditorInput = usePreparedDataInput('ProfileEditor')
+  const showProfileReclaimInput = usePreparedDataInput('ProfileReclaim')
   const showDeleteEmancipatedSubnameWarningInput = usePreparedDataInput(
     'DeleteEmancipatedSubnameWarning',
   )
@@ -309,15 +310,21 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         fullMobileWidth: true,
         loading: hasGraphErrorLoading,
         onClick: () => {
-          createTransactionFlow(`reclaim-${name}`, {
-            transactions: [
-              createTransactionItem('createSubname', {
-                contract: 'nameWrapper',
-                label,
-                parent,
-              }),
-            ],
-          })
+          showProfileReclaimInput(
+            `reclaim-profile-${name}`,
+            { name, label, parent },
+            { disableBackgroundClick: true },
+          )
+
+          // createTransactionFlow(`reclaim-${name}`, {
+          //   transactions: [
+          //     createTransactionItem('createSubname', {
+          //       contract: 'nameWrapper',
+          //       label,
+          //       parent,
+          //     }),
+          //   ],
+          // })
         },
       })
     }
@@ -346,8 +353,9 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     hasGraphErrorLoading,
     ownerData?.owner,
     ownerData?.registrant,
-    showUnknownLabelsInput,
     createTransactionFlow,
+    showUnknownLabelsInput,
+    showProfileReclaimInput,
     showProfileEditorInput,
     showDeleteEmancipatedSubnameWarningInput,
     showDeleteSubnameNotParentWarningInput,
