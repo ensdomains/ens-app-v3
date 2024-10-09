@@ -336,8 +336,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     endDate: commitTimestamp ? new Date(commitTimestamp + ONE_DAY * 1000) : undefined,
   })
 
-  console.log('duration', duration, commitTimestamp)
-
   return (
     <StyledCard>
       <Dialog variant="blank" open={resetOpen} onDismiss={() => setResetOpen(false)}>
