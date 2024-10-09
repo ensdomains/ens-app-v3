@@ -205,7 +205,7 @@ const ProfileReclaim = ({ data: { name, label, parent }, dispatch, onDismiss }: 
                 </Button>
               }
               trailing={
-                <Button data-testid="create-subname-profile-next" onClick={handleSubmit}>
+                <Button data-testid="reclaim-profile-next" onClick={handleSubmit}>
                   {isDirty
                     ? t('action.next', { ns: 'common' })
                     : t('action.skip', { ns: 'common' })}

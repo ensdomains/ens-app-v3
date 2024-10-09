@@ -242,6 +242,7 @@ test('should allow creating an expired wrapped subname', async ({
 })
 
 test('should allow creating an expired wrapped subname from the profile page', async ({
+  page,
   makeName,
   login,
   makePageObject,
@@ -276,6 +277,8 @@ test('should allow creating an expired wrapped subname from the profile page', a
   await login.connect()
 
   await profilePage.getRecreateButton.click()
+
+  await page.getByTestId('reclaim-profile-next').click()
 
   await transactionModal.autoComplete()
 
