@@ -1,0 +1,10 @@
+{
+  "not-found": {
+    "title": "Extraviado",
+    "message": "La página que buscabas no fue encontrada. <br /> Puede <HomeLink>buscar un nombre</HomeLink> o <SupportLink>visita nuestro soporte</SupportLink> para obtener más ayuda."
+  },
+  "application-error": {
+    "title": "Error de aplicación",
+    "message": "Algo ha ido mal. <br /> Si este es un problema recurrente, por favor <SupportLink>visita nuestro soporte</SupportLink> para obtener más ayuda."
+  }
+}
