@@ -1,7 +1,8 @@
 import { render, waitFor } from '@app/test-utils'
 
-import { QueryClientProvider, useQuery } from '@tanstack/react-query'
-import { ReactNode } from 'react'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { useQuery } from './useQuery'
+import { PropsWithChildren, ReactNode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { WagmiProvider } from 'wagmi'
 
@@ -18,15 +19,24 @@ const TestComponentWrapper = ({ children }: { children: ReactNode }) => {
   )
 }
 
-const TestComponentWithHook = () => {
-  const { data, isFetching } = useQuery({
+const TestComponentWithHook = ({ children, ...props }: PropsWithChildren<{}>) => {
+  const { data, isFetching, isLoading } = useQuery({
     queryKey: ['test-hook'],
     queryFn: mockFetchData,
     enabled: true,
   })
 
   return (
-    <div data-testid="test">{isFetching ? <span>Loading...</span> : <span>Data: {data}</span>}</div>
+    <div {...props}>
+      {isLoading ? (
+        <span>Loading...</span>
+      ) : (
+        <span>
+          Data: {data}
+          {children}
+        </span>
+      )}
+    </div>
   )
 }
 
@@ -44,8 +54,8 @@ describe('reactQuery', () => {
     expect(queryClient.getDefaultOptions()).toEqual({
       queries: {
         refetchOnWindowFocus: true,
-        refetchOnMount: 'always',
-        staleTime: 1_000 * 12,
+        refetchOnMount: true,
+        staleTime: 0,
         gcTime: 1_000 * 60 * 60 * 24,
         queryKeyHashFn: expect.any(Function),
       },
@@ -55,7 +65,7 @@ describe('reactQuery', () => {
   it('should not refetch query on rerender', async () => {
     const { getByTestId, rerender } = render(
       <TestComponentWrapper>
-        <TestComponentWithHook />
+        <TestComponentWithHook data-testid="test"/>
       </TestComponentWrapper>,
     )
 
@@ -66,11 +76,12 @@ describe('reactQuery', () => {
 
     rerender(
       <TestComponentWrapper>
-        <TestComponentWithHook />
+        <TestComponentWithHook data-testid="test"/>
       </TestComponentWrapper>,
     )
 
     await waitFor(() => {
+      expect(getByTestId('test')).toHaveTextContent('Test data')
       expect(mockFetchData).toHaveBeenCalledTimes(1)
     })
   })
@@ -78,7 +89,7 @@ describe('reactQuery', () => {
   it('should refetch query on mount', async () => {
     const { getByTestId, unmount } = render(
       <TestComponentWrapper>
-        <TestComponentWithHook />
+        <TestComponentWithHook data-testid="test"/>
       </TestComponentWrapper>,
     )
 
@@ -90,13 +101,44 @@ describe('reactQuery', () => {
     unmount()
     const { getByTestId: getByTestId2 } = render(
       <TestComponentWrapper>
-        <TestComponentWithHook />
+        <TestComponentWithHook data-testid="test"/>
       </TestComponentWrapper>,
     )
 
     await waitFor(() => {
-      expect(mockFetchData).toHaveBeenCalledTimes(2)
       expect(getByTestId2('test')).toHaveTextContent('Test data')
+      expect(mockFetchData).toHaveBeenCalledTimes(2)
+    })
+  })
+
+  it('should not fetch twice on nested query', async () => {
+    const { getByTestId, unmount } = render(
+      <TestComponentWrapper>
+        <TestComponentWithHook data-testid="test">
+          <TestComponentWithHook data-testid="nested"/>
+        </TestComponentWithHook>
+      </TestComponentWrapper>,
+    )
+
+    await waitFor(() => {
+      expect(getByTestId('test')).toHaveTextContent('Test data')
+      expect(getByTestId('nested')).toHaveTextContent('Test data')
+      expect(mockFetchData).toHaveBeenCalledTimes(1)
+    })
+
+    unmount()
+    const { getByTestId: getByTestId2 } = render(
+      <TestComponentWrapper>
+        <TestComponentWithHook data-testid="test">
+          <TestComponentWithHook data-testid="nested"/>
+        </TestComponentWithHook>
+      </TestComponentWrapper>,
+    )
+
+    await waitFor(() => {
+      expect(getByTestId2('test')).toHaveTextContent('Test data')
+      expect(getByTestId2('nested')).toHaveTextContent('Test data')
+      expect(mockFetchData).toHaveBeenCalledTimes(2)
     })
   })
 })
