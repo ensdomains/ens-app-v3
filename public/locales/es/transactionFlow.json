@@ -1,0 +1,299 @@
+{
+  "input": {
+    "profileEditor": {
+      "tabs": {
+        "avatar": {
+          "dropdown": {
+            "selectNFT": "Seleccionar NFT",
+            "uploadImage": "Subir Imagen"
+          },
+          "nft": {
+            "title": "Seleccionar un NFT",
+            "searchPlaceholder": "Buscar un NFT",
+            "loading": "Cargando tus NFTs",
+            "unknown": "NFT desconocido",
+            "loadError": "No se puede cargar el NFT",
+            "noNFTs": "No se encontraron NFTs para esta dirección.",
+            "address": {
+              "owned": "Poseído",
+              "other": "Otro"
+            },
+            "selected": {
+              "title": "NFT seleccionado",
+              "subtitle": "¿Estás seguro de que quieres usar este NFT?"
+            },
+            "noResults": "No se encontraron resultados."
+          },
+          "image": {
+            "title": "Editar Imagen",
+            "upload": {
+              "title": "Subir Avatar",
+              "subtitle": "Necesitas firmar un mensaje para subir un avatar. No tendrá costo alguno.",
+              "action": "Firmar y Subir"
+            }
+          }
+        },
+        "general": {
+          "label": "General",
+          "name": {
+            "label": "Apodo",
+            "placeholder": "Juan Pérez"
+          },
+          "url": {
+            "label": "Sitio web",
+            "placeholder": "https://ens.domains"
+          },
+          "location": {
+            "label": "Ubicación",
+            "placeholder": "Metaverso"
+          },
+          "description": {
+            "label": "Biografía Corta",
+            "placeholder": "Soy un agricultor de rendimiento de Tennessee rural."
+          }
+        },
+        "accounts": {
+          "label": "Cuentas",
+          "addAccount": "Agregar cuenta",
+          "noOptions": "No hay opciones de cuenta disponibles",
+          "placeholder": {
+            "default": "Agregar nombre de usuario aquí",
+            "com.twitter": "ej. nicksdjohnson",
+            "com.github": "ej. arachnid",
+            "com.discord": "ej. nickjohnson",
+            "org.telegram": "ej. nicksdjohnson",
+            "email": "ej. hola@ejemplo.com"
+          }
+        },
+        "address": {
+          "label": "Dirección",
+          "addAddress": "Agregar dirección",
+          "noOptions": "No hay opciones de dirección disponibles",
+          "placeholder": {
+            "default": "Agregar dirección aquí",
+            "eth": "0xD9hbQK...",
+            "bnb": "0xD9hbQK...",
+            "btc": "3FZbgi29...",
+            "ltc": "3FZbgi29...",
+            "sol": "D4kA7VzHnmV...",
+            "dot": "1D4kA7VxH...",
+            "doge": "DFabcd12..."
+          }
+        },
+        "contentHash": {
+          "label": "Sitio web",
+          "addContentHash": "Agregar sitio web descentralizado",
+          "placeholder": {
+            "default": "Agregar URL aquí",
+            "ipfs": "ipfs://...",
+            "skynet": "sia://...",
+            "arweave": "ar://...",
+            "swarm": "bzz://...",
+            "onion": "onion3://..."
+          }
+        },
+        "other": {
+          "label": "Otro",
+          "addRecord": "Agregar registro",
+          "createRecord": "Escribe un nombre de registro...",
+          "placeholder": {
+            "default": "Agregar un valor aquí..."
+          }
+        }
+      },
+      "warningOverlay": {
+        "action": {
+          "learnMoreResolvers": "Aprender más sobre resolutores",
+          "updateResolver": "Actualizar resolutor",
+          "setResolver": "Configurar resolutor",
+          "ignoreUpdate": "Ignorar esto y continuar usando tu resolutor actual. Se te preguntará nuevamente la próxima vez."
+        },
+        "invalidResolver": {
+          "title": "Resolutor no autorizado",
+          "subtitle": "No tienes permiso para establecer registros para este resolutor. Necesitarás actualizar al resolutor más reciente para editar tu perfil.",
+          "action": "Actualizar resolutor"
+        },
+        "migrateProfileSelector": {
+          "title": "Perfil",
+          "subtitle": "Los registros del perfil en cada resolutor no coinciden. ¿Qué conjunto de registros te gustaría usar?",
+          "option": {
+            "latest": "Registros del perfil en el nuevo resolutor",
+            "current": "Registros del perfil actuales",
+            "reset": "Restablecer tu perfil",
+            "resetSubtitle": "Eliminar todos los registros del perfil"
+          }
+        },
+        "migrateProfileWarning": {
+          "title": "Migrar perfil",
+          "subtitle": "Estás migrando los registros de tu perfil al resolutor más reciente. Esto eliminará permanentemente cualquier registro existente en el resolutor más reciente y los reemplazará con tus registros actuales."
+        },
+        "migrateRegistry": {
+          "title": "Registro desactualizado",
+          "subtitle": "Necesitarás migrar el registro antes de hacer cambios en este nombre.",
+          "action": "Migrar"
+        },
+        "noResolver": {
+          "title": "No hay resolutor configurado",
+          "subtitle": "Se necesita un resolutor configurado antes de editar tu perfil.",
+          "action": "Actualizar"
+        },
+        "resetProfile": {
+          "title": "Restablecer perfil",
+          "subtitle": "Estás restableciendo los registros de tu perfil. Perderás toda la información del perfil existente, como la dirección de ETH, avatar y registros sociales. Estos pueden ser re-agregados al editar tu perfil."
+        },
+        "resolverNotNameWrapperAware": {
+          "title": "Resolutor incompatible",
+          "subtitle": "Tu resolutor actual es incompatible con nombres envueltos. Necesitarás actualizar el resolutor antes de editar tu perfil.",
+          "toggle": {
+            "title": "Transferir perfil actual",
+            "subtitle": "Desmarcar esto solo actualizará tu resolutor."
+          }
+        },
+        "resolverOutOfDate": {
+          "title": "Resolutor desactualizado",
+          "subtitle": "El resolutor está desactualizado. Se recomienda actualizarlo antes de editar tu perfil."
+        },
+        "resolverOutOfSync": {
+          "title": "Resolutor fuera de sincronización",
+          "subtitle": "No estás usando el resolutor público más reciente, pero tienes registros de perfil almacenados allí. Se recomienda cambiar al resolutor público más reciente antes de editar tu perfil."
+        },
+        "transferOrResetProfile": {
+          "title": "Perfil",
+          "subtitle": "Puedes transferir tu perfil actual al nuevo resolutor antes de actualizar tu resolutor.",
+          "toggle": {
+            "title": "Transferir perfil actual",
+            "subtitle": "Desmarcar esto solo actualizará tu resolutor."
+          }
+        },
+        "updateResolverOrResetProfile": {
+          "title": "Perfil",
+          "subtitle": "Puedes mantener tu perfil actual en el nuevo resolutor, o restablecerlo y eliminar todos los registros del perfil.",
+          "toggle": {
+            "title": "Mantener perfil actual",
+            "subtitle": "Desmarcar esto restablecerá tu perfil."
+          }
+        },
+        "links": {
+          "learnMoreResolvers": "Aprender más sobre resolutores"
+        }
+      },
+      "intro": {
+        "resetProfile": {
+          "title": "Restablecer perfil",
+          "description": "Esto eliminará todos los registros de perfil del resolutor más reciente y luego actualizará el resolutor."
+        },
+        "migrateProfile": {
+          "title": "Migrar perfil",
+          "description": "Esto migrará tus registros de perfil actuales al resolutor más reciente."
+        },
+        "migrateCurrentProfile": {
+          "title": "Migrar perfil",
+          "description": "Esto migrará tus registros de perfil actuales al resolutor más reciente."
+        }
+      }
+    },
+    "editResolver": {
+      "title": "Editar Resolutor",
+      "latestLabel": "Usar resolutor más reciente",
+      "etherscan": "Etherscan",
+      "latestMessage": "Estás en el resolutor más reciente",
+      "customLabel": "Resolutor personalizado",
+      "customPlaceholder": "Ingresar dirección de resolutor personalizada"
+    },
+    "editRoles": {
+      "views": {
+        "main": {
+          "title": "Editar roles",
+          "noneSet": "Ninguno establecido"
+        },
+        "editRole": {
+          "title": "Cambiar {{role}}",
+          "views": {
+            "intro": {
+              "current": "Actual {{role}}"
+            }
+          }
+        }
+      }
+    },
+    "extendNames": {
+      "title_one": "Extender Nombre",
+      "title_other": "Extender {{count}} Nombres",
+      "ownershipWarning": {
+        "title_one": "No eres dueño de este nombre",
+        "title_other": "No eres dueño de todos estos nombres",
+        "description_one": "Extender este nombre extenderá la duración de registro del actual propietario. Esto no te dará la propiedad del mismo.",
+        "description_other": "Extender estos nombres extenderá la duración de registro del actual propietario. Esto no te dará la propiedad si no eres ya el propietario."
+      },
+      "invoice": {
+        "extension": "Extensión",
+        "transfer": "Transferencia",
+        "title": "Factura",
+        "type": {
+          "registration": "Registro",
+          "renewal": "Renovación"
+        }
+      },
+      "options": {
+        "button": "Extender",
+        "duration": "Duración",
+        "renewal": "Renovación"
+      }
+    },
+    "ipfs": {
+      "title": "IPFS",
+      "subTitle": "La siguiente información se almacenará en IPFS",
+      "provider": "Proveedor IPFS",
+      "noData": "No se encontró información que enviar a IPFS."
+    },
+    "records": {
+      "title": "Registros",
+      "addRecord": "Agregar Registro",
+      "type": {
+        "social": "Social",
+        "email": "Email",
+        "url": "URL",
+        "content": "Contenido",
+        "eth": "ETH",
+        "btcpay": "BTC",
+        "litecoin": "Litecoin",
+        "dogecoin": "Doge",
+        "custom": "Personalizado"
+      },
+      "tooltip": {
+        "recordType": {
+          "default": "Escribe el nombre del registro",
+          "custom": "Escribe el nombre del registro"
+        },
+        "ipfs": {
+          "default": "Subir a IPFS",
+          "tooltip": "Los datos serán enviados a IPFS"
+        }
+      }
+    }
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "view": "Ver",
+    "add": "Agregar",
+    "remove": "Eliminar",
+    "edit": "Editar",
+    "update": "Actualizar",
+    "loading": "Cargando...",
+    "success": "Éxito",
+    "error": "Error",
+    "back": "Volver",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "noResults": "No se encontraron resultados",
+    "welcome": "Bienvenido",
+    "yourProfile": "Tu perfil",
+    "address": "Dirección",
+    "resolver": "Resolutor",
+    "roles": "Roles",
+    "settings": "Configuraciones"
+  }
+}
