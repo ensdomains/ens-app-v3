@@ -19,7 +19,7 @@ export function QueryProviders({ children }: Props) {
         persistOptions={createPersistConfig({ queryClient })}
       >
         {children}
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
       </PersistQueryClientProvider>
     </WagmiProvider>
   )

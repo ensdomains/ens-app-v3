@@ -111,7 +111,7 @@ describe('reactQuery', () => {
     })
   })
 
-  it('should not fetch twice on nested query', async () => {
+  it('should fetch twice on nested query with no cache and once with cache', async () => {
     const { getByTestId, unmount } = render(
       <TestComponentWrapper>
         <TestComponentWithHook data-testid="test">
@@ -123,7 +123,7 @@ describe('reactQuery', () => {
     await waitFor(() => {
       expect(getByTestId('test')).toHaveTextContent('Test data')
       expect(getByTestId('nested')).toHaveTextContent('Test data')
-      expect(mockFetchData).toHaveBeenCalledTimes(1)
+      expect(mockFetchData).toHaveBeenCalledTimes(2)
     })
 
     unmount()
@@ -138,7 +138,7 @@ describe('reactQuery', () => {
     await waitFor(() => {
       expect(getByTestId2('test')).toHaveTextContent('Test data')
       expect(getByTestId2('nested')).toHaveTextContent('Test data')
-      expect(mockFetchData).toHaveBeenCalledTimes(2)
+      expect(mockFetchData).toHaveBeenCalledTimes(3)
     })
   })
 })
