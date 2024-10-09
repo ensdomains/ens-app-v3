@@ -86,7 +86,6 @@ export const getRecordsQueryFn =
   > => {
     if (!name) throw new Error('name is required')
 
-    console.log('getRecordsQueryFn', name)
     const client = config.getClient({ chainId })
     const res = await getRecords(client, {
       name,
