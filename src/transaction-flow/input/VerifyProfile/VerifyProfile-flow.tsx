@@ -32,6 +32,8 @@ const VerifyProfile = ({ data: { name }, dispatch, onDismiss }: Props) => {
 
   const { data: verificationData, isLoading: isVerificationLoading } = useVerifiedRecords({
     verificationsRecord: profile?.texts?.find(({ key }) => key === VERIFICATION_RECORD_KEY)?.value,
+    ownerAddress,
+    name,
   })
 
   const isLoading = isProfileLoading || isVerificationLoading || isOwnerLoading
