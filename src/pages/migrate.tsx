@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 import Head from 'next/head'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, RightArrowSVG, Typography } from '@ensdomains/thorin'
+import { Button, Card, RightArrowSVG, Typography } from '@ensdomains/thorin'
 
 const Main = styled.main(
   ({ theme }) => css`
@@ -13,13 +14,15 @@ const Main = styled.main(
   `,
 )
 
-const Header = styled.header(
-  ({ theme }) => css`
+const Header = styled.header<{ $isConnected: boolean }>(
+  ({ theme, $isConnected }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     padding: ${theme.space['4']};
     gap: ${theme.space['4']};
+    min-height: ${$isConnected ? '529px' : 'unset'};
   `,
 )
 
@@ -78,6 +81,23 @@ const PartnershipAnnouncement = styled.div(
   `,
 )
 
+const CenteredCard = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`
+
+const CardWithEmoji = styled(CenteredCard)`
+  padding-top: 83px;
+  position: relative;
+
+  img {
+    position: absolute;
+    top: -72px;
+  }
+`
+
 export default function Page() {
   const { t } = useTranslation('migrate')
 
@@ -98,7 +118,7 @@ export default function Page() {
             {t('partnership.watch')} <RightArrowSVG />
           </a>
         </PartnershipAnnouncement>
-        <Header>
+        <Header $isConnected={isConnected}>
           <Heading>{title}</Heading>
           <Caption fontVariant="bodyLarge">
             {isConnected ? t('caption.connected') : t('caption.unconnected')}
@@ -110,6 +130,15 @@ export default function Page() {
             <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
           </ButtonContainer>
         </Header>
+        {isConnected ? (
+          <div>
+            <CardWithEmoji>
+              <img src="/confetti.png" width={108} height={108} alt="🎉" />
+              <Typography fontVariant="headingTwo">{t('accessible.title')}</Typography>
+              <Typography fontVariant="body">{t('accessible.caption')}</Typography>
+            </CardWithEmoji>
+          </div>
+        ) : null}
       </Main>
     </>
   )

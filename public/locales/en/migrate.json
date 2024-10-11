@@ -15,5 +15,10 @@
   "partnership": {
     "text": "We’re partnering with _______!",
     "watch": "Watch"
+  },
+  "accessible": {
+    "title": "Making ENS accessible to more people",
+    "caption": "We're taking our knowledge from the last 7 years at the frontier of web3 naming to re-envision the architecture from the ground up on L2 By utilizing L2s, we're excited to make ENS more accessible to a wider range of users.",
+    "link": "ENSv2 Project Plan"
   }
 }
