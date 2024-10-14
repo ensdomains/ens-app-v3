@@ -4,12 +4,12 @@
   "heading": "Register {{name}}",
   "invoice": {
     "timeRegistration": "{{time}} registration",
-    "registration": "Registration",
     "estimatedNetworkFee": "Est. network fee",
-    "networkFee": "Network fee",
+    "transactionFees": "Transaction fees",
     "temporaryPremium": "Temporary premium",
     "total": "Estimated total",
-    "totalPaid": "Total paid"
+    "totalPaid": "Total paid",
+    "expiry": "Name expires"
   },
   "error": {
     "nameTooLong": "The name you want to register is too long. Please choose a shorter name."
@@ -151,7 +151,6 @@
     "complete": {
       "heading": "Congratulations!",
       "subheading": "You are now the owner of ",
-      "description": "Your name was successfully registered. You can now view and manage your name.",
       "registerAnother": "Register another",
       "viewName": "View name"
     },

@@ -341,6 +341,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 name={normalisedName}
                 beautifiedName={beautifiedName}
                 callback={onComplete}
+                registrationData={item}
                 isMoonpayFlow={item.isMoonpayFlow}
               />
             ))

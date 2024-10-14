@@ -232,7 +232,21 @@ test.describe.serial('normal registration', () => {
 
     await test.step('should redirect to completion page ', async () => {
       await expect(page.getByText(`You are now the owner of ${name}`)).toBeVisible()
+
+      // calculate date one year from now
+      const date = new Date()
+      date.setFullYear(date.getFullYear() + 1)
+      const formattedDate = date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+
+      // should show the correct details on completion
       await expect(page.getByTestId('invoice-item-0-amount')).toHaveText(/0.0032 ETH/)
+      await expect(page.getByTestId('invoice-item-0')).toHaveText(/1 year registration/)
+      await expect(page.getByTestId('invoice-item-expiry')).toHaveText(/Name expires/)
+      await expect(page.getByTestId('invoice-item-expiry-date')).toHaveText(`${formattedDate}`)
     })
 
     await test.step('confirm that the registration is successful', async () => {
