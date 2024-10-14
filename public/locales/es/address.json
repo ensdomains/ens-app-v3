@@ -1,0 +1,18 @@
+{
+  "meta": {
+    "title": "{{address}} en ENS",
+    "description": "Todos los nombres para {{address}} en el Ethereum Name Service"
+  },
+  "addressDetails": "Detalles de la dirección",
+  "nameCount": "{{count}} nombres",
+  "filter": "Filtrar",
+  "view": "Vista",
+  "noProfile": {
+    "title": "No hay ningún nombre principal establecido",
+    "message": "Esta billetera debe establecer un nombre principal para crear un perfil"
+  },
+  "noResults": "No se encontraron nombres",
+  "errors": {
+    "names": "No se pudo encontrar la dirección"
+  }
+}
