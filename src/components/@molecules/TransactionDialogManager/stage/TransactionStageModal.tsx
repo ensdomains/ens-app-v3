@@ -2,6 +2,7 @@ import { queryOptions } from '@tanstack/react-query'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match, P } from 'ts-pattern'
 import { BaseError } from 'viem'
 import { useClient, useConnectorClient, useSendTransaction } from 'wagmi'
 
@@ -281,6 +282,28 @@ function useCreateSubnameRedirect(
   }, [shouldTrigger, subdomain])
 }
 
+const getPreTransactionError = ({
+  stage,
+  transactionError,
+  requestError,
+}: {
+  stage: TransactionStage
+  transactionError: Error | null
+  requestError: Error | null
+}) => {
+  return match({ stage, err: transactionError || requestError })
+    .with({ stage: P.union('complete', 'sent') }, () => null)
+    .with({ err: P.nullish }, () => null)
+    .with({ err: P.not(P.instanceOf(BaseError)) }, ({ err }) => ({
+      message: 'message' in err! ? err.message : 'transaction.error.unknown',
+      type: 'unknown' as const,
+    }))
+    .otherwise(({ err }) => {
+      const readableError = getReadableError(err)
+      return readableError || { message: (err as BaseError).shortMessage, type: 'unknown' as const }
+    })
+}
+
 export const TransactionStageModal = ({
   actionName,
   currentStep,
@@ -355,7 +378,13 @@ export const TransactionStageModal = ({
     refetchOnMount: 'always',
   })
 
-  const { data: request, isLoading: requestLoading, error: requestError } = transactionRequestQuery
+  const {
+    data: request_,
+    isLoading: requestLoading,
+    error: requestError_,
+  } = transactionRequestQuery
+  const request = request_?.data
+  const requestError = request_?.error || requestError_
   const isTransactionRequestCachedData = getIsCachedData(transactionRequestQuery)
 
   useInvalidateOnBlock({
@@ -385,6 +414,35 @@ export const TransactionStageModal = ({
   useCreateSubnameRedirect(
     stage === 'complete' && currentStep + 1 === stepCount,
     displayItems.find((i) => i.label === 'subname' && i.type === 'name')?.value,
+  )
+
+  const stepStatus = useMemo(() => {
+    if (stage === 'complete') {
+      return 'completed'
+    }
+    return 'inProgress'
+  }, [stage])
+
+  const initialErrorOptions = useQueryOptions({
+    params: { hash: transaction.hash, status: transactionStatus },
+    functionName: 'getTransactionError',
+    queryDependencyType: 'standard',
+    queryFn: getTransactionErrorQueryFn,
+  })
+
+  const preparedErrorOptions = queryOptions({
+    queryKey: initialErrorOptions.queryKey,
+    queryFn: initialErrorOptions.queryFn,
+  })
+
+  const { data: attemptedTransactionError } = useQuery({
+    ...preparedErrorOptions,
+    enabled: !!transaction && !!transaction.hash && transactionStatus === 'failed',
+  })
+
+  const preTransactionError = useMemo(
+    () => getPreTransactionError({ stage, transactionError, requestError }),
+    [stage, transactionError, requestError],
   )
 
   const FilledDisplayItems = useMemo(
@@ -467,6 +525,10 @@ export const TransactionStageModal = ({
         </Button>
       )
     }
+
+    if (preTransactionError?.type === 'insufficientFunds')
+      return <Button disabled>{t('transaction.dialog.confirm.insufficientFunds')}</Button>
+
     return (
       <Button
         disabled={
@@ -496,50 +558,17 @@ export const TransactionStageModal = ({
     transactionLoading,
     request,
     isTransactionRequestCachedData,
+    preTransactionError,
   ])
-
-  const stepStatus = useMemo(() => {
-    if (stage === 'complete') {
-      return 'completed'
-    }
-    return 'inProgress'
-  }, [stage])
-
-  const initialErrorOptions = useQueryOptions({
-    params: { hash: transaction.hash, status: transactionStatus },
-    functionName: 'getTransactionError',
-    queryDependencyType: 'standard',
-    queryFn: getTransactionErrorQueryFn,
-  })
-
-  const preparedErrorOptions = queryOptions({
-    queryKey: initialErrorOptions.queryKey,
-    queryFn: initialErrorOptions.queryFn,
-  })
-
-  const { data: upperError } = useQuery({
-    ...preparedErrorOptions,
-    enabled: !!transaction && !!transaction.hash && transactionStatus === 'failed',
-  })
-
-  const lowerError = useMemo(() => {
-    if (stage === 'complete' || stage === 'sent') return null
-    const err = transactionError || requestError
-    if (!err) return null
-    if (!(err instanceof BaseError)) {
-      if ('message' in err) return err.message
-      return t('transaction.error.unknown')
-    }
-    const readableError = getReadableError(err)
-    return readableError || err.shortMessage
-  }, [t, stage, transactionError, requestError])
 
   return (
     <>
       <Dialog.Heading title={t(`transaction.dialog.${stage}.title`)} />
       <Dialog.Content data-testid="transaction-modal-inner">
         {MiddleContent}
-        {upperError && <Helper type="error">{t(upperError)}</Helper>}
+        {attemptedTransactionError && (
+          <Helper type="error">{t(attemptedTransactionError.message)}</Helper>
+        )}
         {FilledDisplayItems}
         {HelperContent}
         {transaction.hash && (
@@ -547,7 +576,7 @@ export const TransactionStageModal = ({
             {t('transaction.viewEtherscan')}
           </Outlink>
         )}
-        {lowerError && <Helper type="error">{lowerError}</Helper>}
+        {preTransactionError && <Helper type="error">{preTransactionError.message}</Helper>}
       </Dialog.Content>
       <Dialog.Footer
         currentStep={currentStep}

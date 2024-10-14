@@ -18,6 +18,7 @@ test('should be able to register multiple names on the address page', async ({
   subgraph,
   makePageObject,
   makeName,
+  time,
 }) => {
   // Generating names in not neccessary but we want to make sure that there are names to extend
   await makeName([
@@ -39,7 +40,6 @@ test('should be able to register multiple names on the address page', async ({
 
   await addresPage.goto(address)
   await login.connect()
-  await page.pause()
 
   await addresPage.selectToggle.click()
 
@@ -71,7 +71,6 @@ test('should be able to register multiple names on the address page', async ({
   await addresPage.extendNamesModalNextButton.click()
 
   // check the invoice details
-  await page.pause()
   await expect(page.getByText(`Extend ${extendableNameItems.length} Names`)).toBeVisible()
   await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
 
@@ -82,12 +81,20 @@ test('should be able to register multiple names on the address page', async ({
 
   await transactionModal.autoComplete()
 
+  await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
+    timeout: 10000,
+  })
   await subgraph.sync()
+
+  // Should be able to remove this after useQuery is fixed. Using to force a refetch.
+  await time.increaseTime({ seconds: 15 })
+  await page.pause()
   await page.reload()
-  await page.waitForTimeout(3000)
   for (const name of extendableNameItems) {
     const label = name.replace('.eth', '')
     await addresPage.search(label)
+    await expect(addresPage.getNameRow(name)).toBeVisible({ timeout: 5000 })
+    await page.pause()
     await expect(await addresPage.getTimestamp(name)).not.toBe(timestampDict[name])
     await expect(await addresPage.getTimestamp(name)).toBe(timestampDict[name] + 31536000000 * 3)
   }

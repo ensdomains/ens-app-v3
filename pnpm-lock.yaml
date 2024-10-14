@@ -119,6 +119,9 @@ importers:
       next:
         specifier: 13.5.6
         version: 13.5.6(@babel/core@7.24.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      node-fetch:
+        specifier: ^3.3.2
+        version: 3.3.2
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -175,8 +178,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
       '@ensdomains/ens-test-env':
-        specifier: ^0.5.0-beta.1
-        version: 0.5.0-beta.1
+        specifier: 0.5.0-beta.2
+        version: 0.5.0-beta.2
       '@ensdomains/headless-web3-provider':
         specifier: ^1.0.8
         version: 1.0.8(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))
@@ -199,8 +202,8 @@ importers:
         specifier: ^0.5.16
         version: 0.5.16(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@playwright/test':
-        specifier: ^1.36.2
-        version: 1.44.1
+        specifier: ^1.45.0
+        version: 1.47.2
       '@testing-library/jest-dom':
         specifier: ^6.4.2
         version: 6.4.5(@types/jest@29.5.12)(vitest@2.0.5(@types/node@18.19.33)(jsdom@24.1.0(bufferutil@4.0.8)(canvas@2.11.2(encoding@0.1.13))(utf-8-validate@5.0.10))(terser@5.31.5))
@@ -1541,8 +1544,8 @@ packages:
   '@ensdomains/ens-contracts@1.2.0-beta.0':
     resolution: {integrity: sha512-mb/1cPtwhShyaP6fWqDix6GfrJwVWlKgCFxzDKmqNGeFQhBOD/ojYGsy96eJ9UlM/7Tsg7w4RAj7xWrOlHtYIA==}
 
-  '@ensdomains/ens-test-env@0.5.0-beta.1':
-    resolution: {integrity: sha512-ppHKJTRQ5vlWSAflv20cNtlhpLyjn375VD9FeeUgl8BTx3IMPwlLvupGQTK2chDln/FJRyp6+wD41uI4oorM9w==}
+  '@ensdomains/ens-test-env@0.5.0-beta.2':
+    resolution: {integrity: sha512-+9LdqGSrwiqjs8hcyKF0K0/eF9VMblJEAjigjHeeQTKNAMyP6KD8jau7VbpvvXEz77D+cQX6z6unDPoQK0l5ng==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -2571,9 +2574,9 @@ packages:
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@playwright/test@1.44.1':
-    resolution: {integrity: sha512-1hZ4TNvD5z9VuhNJ/walIjvMVvYkZKf71axoF/uiAqpntQJXpG64dlXhoDXE3OczPuTuvjf/M5KWFg5VAVUS3Q==}
-    engines: {node: '>=16'}
+  '@playwright/test@1.47.2':
+    resolution: {integrity: sha512-jTXRsoSPONAs8Za9QEQdyjFn+0ZQFjCiIztAIF6bi1HqhBzG9Ma7g1WotyiGqFSBRZjIEqMdT8RUlbk1QVhzCQ==}
+    engines: {node: '>=18'}
     hasBin: true
 
   '@polka/url@1.0.0-next.25':
@@ -4766,6 +4769,10 @@ packages:
   data-uri-to-buffer@2.0.2:
     resolution: {integrity: sha512-ND9qDTLc6diwj+Xe5cdAgVTbLVdXbtxTJRXRhli8Mowuaan+0EJOtdqJ0QCHNSSPyoXGx9HX2/VMnKeC34AChA==}
 
+  data-uri-to-buffer@4.0.1:
+    resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
+    engines: {node: '>= 12'}
+
   data-uri-to-buffer@6.0.2:
     resolution: {integrity: sha512-7hvf7/GW8e86rW0ptuwS3OcBGDjIi6SZva7hCyWC0yYry2cOPmLIjXAUHI6DK2HsnwJd9ifmt57i8eV2n4YNpw==}
     engines: {node: '>= 14'}
@@ -5610,6 +5617,10 @@ packages:
       picomatch:
         optional: true
 
+  fetch-blob@3.2.0:
+    resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
+    engines: {node: ^12.20 || >= 14.13}
+
   figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
     engines: {node: '>=8'}
@@ -5715,6 +5726,10 @@ packages:
   form-data@4.0.0:
     resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
     engines: {node: '>= 6'}
+
+  formdata-polyfill@4.0.10:
+    resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
+    engines: {node: '>=12.20.0'}
 
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
@@ -7411,12 +7426,12 @@ packages:
     resolution: {integrity: sha512-tmPX422rYgofd4epzrNoOXiE8XFZYOcCq1vD7MAXCDO+O+zndlA2ztdKKMa+EeuBG5tHETpr4ml4RGgpqDCCAg==}
     engines: {node: '>= 0.10.5'}
 
+  node-domexception@1.0.0:
+    resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
+    engines: {node: '>=10.5.0'}
+
   node-fetch-native@1.6.4:
     resolution: {integrity: sha512-IhOigYzAKHd244OC0JIMIUrjzctirCmPkaIfhDeGcEETWof5zKYUW7e7MYvChGWh/4CJeXEgsRyGzuF334rOOQ==}
-
-  node-fetch@2.6.1:
-    resolution: {integrity: sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==}
-    engines: {node: 4.x || >=6.0.0}
 
   node-fetch@2.6.7:
     resolution: {integrity: sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==}
@@ -7435,6 +7450,10 @@ packages:
     peerDependenciesMeta:
       encoding:
         optional: true
+
+  node-fetch@3.3.2:
+    resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   node-forge@1.3.1:
     resolution: {integrity: sha512-dPEtOeMvF9VMcYV/1Wb8CPoVAXtp6MKMlcbAt4ddqmGqUJ6fQZFXkNZNkNlfevtNkGtaSoXf/vNNNSvgrdXwtA==}
@@ -7878,14 +7897,14 @@ packages:
   pkg-types@1.1.1:
     resolution: {integrity: sha512-ko14TjmDuQJ14zsotODv7dBlwxKhUKQEhuhmbqo1uCi9BB0Z2alo/wAXg6q1dTR5TyuqYyWhjtfe/Tsh+X28jQ==}
 
-  playwright-core@1.44.1:
-    resolution: {integrity: sha512-wh0JWtYTrhv1+OSsLPgFzGzt67Y7BE/ZS3jEqgGBlp2ppp1ZDj8c+9IARNW4dwf1poq5MgHreEM2KV/GuR4cFA==}
-    engines: {node: '>=16'}
+  playwright-core@1.47.2:
+    resolution: {integrity: sha512-3JvMfF+9LJfe16l7AbSmU555PaTl2tPyQsVInqm3id16pdDfvZ8TTZ/pyzmkbDrZTQefyzU7AIHlZqQnxpqHVQ==}
+    engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.44.1:
-    resolution: {integrity: sha512-qr/0UJ5CFAtloI3avF95Y0L1xQo6r3LQArLIg/z/PoGJ6xa+EwzrwO5lpNr/09STxdHuUoP2mvuELJS+hLdtgg==}
-    engines: {node: '>=16'}
+  playwright@1.47.2:
+    resolution: {integrity: sha512-nx1cLMmQWqmA3UsnjaaokyoUpdVaaDhJhMoxX2qj3McpjnsqFHs516QAKYhqHAgOP+oCFTEOCOAaD1RgD/RQfA==}
+    engines: {node: '>=18'}
     hasBin: true
 
   pngjs@5.0.0:
@@ -9808,6 +9827,10 @@ packages:
 
   web-encoding@1.1.5:
     resolution: {integrity: sha512-HYLeVCdJ0+lBYV2FvNZmv3HJ2Nt0QYXqZojk3d9FJOLkwnuhzM9tmamh8d7HPM8QqjKH8DeHkFTx+CFlWpZZDA==}
+
+  web-streams-polyfill@3.3.3:
+    resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
+    engines: {node: '>= 8'}
 
   web3-bzz@1.10.0:
     resolution: {integrity: sha512-o9IR59io3pDUsXTsps5pO5hW1D5zBmg46iNc2t4j2DkaYHNdDLwk2IP9ukoM2wg47QILfPEJYzhTfkS/CcX0KA==}
@@ -11741,7 +11764,7 @@ snapshots:
       '@openzeppelin/contracts': 4.9.6
       dns-packet: 5.6.1
 
-  '@ensdomains/ens-test-env@0.5.0-beta.1':
+  '@ensdomains/ens-test-env@0.5.0-beta.2':
     dependencies:
       '@ethersproject/wallet': 5.7.0
       ansi-colors: 4.1.3
@@ -12671,7 +12694,7 @@ snapshots:
     dependencies:
       '@motionone/types': 10.17.0
       '@motionone/utils': 10.17.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@motionone/svelte@10.16.4':
     dependencies:
@@ -12963,9 +12986,9 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@playwright/test@1.44.1':
+  '@playwright/test@1.47.2':
     dependencies:
-      playwright: 1.44.1
+      playwright: 1.47.2
 
   '@polka/url@1.0.0-next.25': {}
 
@@ -14489,7 +14512,7 @@ snapshots:
       - immer
       - react
 
-  '@walletconnect/core@2.11.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@walletconnect/core@2.11.1(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)':
     dependencies:
       '@walletconnect/heartbeat': 1.2.1
       '@walletconnect/jsonrpc-provider': 1.0.13
@@ -14505,7 +14528,7 @@ snapshots:
       '@walletconnect/types': 2.11.1
       '@walletconnect/utils': 2.11.1
       events: 3.3.0
-      isomorphic-unfetch: 3.1.0
+      isomorphic-unfetch: 3.1.0(encoding@0.1.13)
       lodash.isequal: 4.5.0
       uint8arrays: 3.1.1
     transitivePeerDependencies:
@@ -14522,6 +14545,7 @@ snapshots:
       - '@upstash/redis'
       - '@vercel/kv'
       - bufferutil
+      - encoding
       - ioredis
       - uWebSockets.js
       - utf-8-validate
@@ -14537,7 +14561,7 @@ snapshots:
       '@walletconnect/jsonrpc-types': 1.0.4
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/modal': 2.6.2(@types/react@18.2.21)(react@18.3.1)
-      '@walletconnect/sign-client': 2.11.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@walletconnect/sign-client': 2.11.1(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@walletconnect/types': 2.11.1
       '@walletconnect/universal-provider': 2.11.1(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@walletconnect/utils': 2.11.1
@@ -14688,9 +14712,9 @@ snapshots:
     dependencies:
       tslib: 1.14.1
 
-  '@walletconnect/sign-client@2.11.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@walletconnect/sign-client@2.11.1(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)':
     dependencies:
-      '@walletconnect/core': 2.11.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@walletconnect/core': 2.11.1(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.1
       '@walletconnect/jsonrpc-utils': 1.0.8
@@ -14713,6 +14737,7 @@ snapshots:
       - '@upstash/redis'
       - '@vercel/kv'
       - bufferutil
+      - encoding
       - ioredis
       - uWebSockets.js
       - utf-8-validate
@@ -14752,7 +14777,7 @@ snapshots:
       '@walletconnect/jsonrpc-types': 1.0.4
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 2.1.2
-      '@walletconnect/sign-client': 2.11.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@walletconnect/sign-client': 2.11.1(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@walletconnect/types': 2.11.1
       '@walletconnect/utils': 2.11.1
       events: 3.3.0
@@ -15157,7 +15182,7 @@ snapshots:
 
   ast-types@0.13.4:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   ast-types@0.15.2:
     dependencies:
@@ -16047,6 +16072,8 @@ snapshots:
       assert-plus: 1.0.0
 
   data-uri-to-buffer@2.0.2: {}
+
+  data-uri-to-buffer@4.0.1: {}
 
   data-uri-to-buffer@6.0.2: {}
 
@@ -17241,6 +17268,11 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.2
 
+  fetch-blob@3.2.0:
+    dependencies:
+      node-domexception: 1.0.0
+      web-streams-polyfill: 3.3.3
+
   figures@3.2.0:
     dependencies:
       escape-string-regexp: 1.0.5
@@ -17362,6 +17394,10 @@ snapshots:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
+
+  formdata-polyfill@4.0.10:
+    dependencies:
+      fetch-blob: 3.2.0
 
   forwarded@0.2.0: {}
 
@@ -17950,7 +17986,7 @@ snapshots:
 
   i18next-browser-languagedetector@7.1.0:
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.25.0
 
   i18next-http-backend@1.4.5(encoding@0.1.13):
     dependencies:
@@ -17964,7 +18000,7 @@ snapshots:
 
   i18next@23.11.5:
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.25.0
 
   iconv-lite@0.4.24:
     dependencies:
@@ -18266,10 +18302,12 @@ snapshots:
 
   isobject@3.0.1: {}
 
-  isomorphic-unfetch@3.1.0:
+  isomorphic-unfetch@3.1.0(encoding@0.1.13):
     dependencies:
-      node-fetch: 2.6.1
+      node-fetch: 2.7.0(encoding@0.1.13)
       unfetch: 4.2.0
+    transitivePeerDependencies:
+      - encoding
 
   isows@1.0.4(ws@8.17.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)):
     dependencies:
@@ -18764,7 +18802,7 @@ snapshots:
 
   lower-case@2.0.2:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   lowercase-keys@2.0.0: {}
 
@@ -19427,9 +19465,9 @@ snapshots:
     dependencies:
       minimatch: 3.1.2
 
-  node-fetch-native@1.6.4: {}
+  node-domexception@1.0.0: {}
 
-  node-fetch@2.6.1: {}
+  node-fetch-native@1.6.4: {}
 
   node-fetch@2.6.7(encoding@0.1.13):
     dependencies:
@@ -19442,6 +19480,12 @@ snapshots:
       whatwg-url: 5.0.0
     optionalDependencies:
       encoding: 0.1.13
+
+  node-fetch@3.3.2:
+    dependencies:
+      data-uri-to-buffer: 4.0.1
+      fetch-blob: 3.2.0
+      formdata-polyfill: 4.0.10
 
   node-forge@1.3.1: {}
 
@@ -19887,11 +19931,11 @@ snapshots:
       mlly: 1.7.0
       pathe: 1.1.2
 
-  playwright-core@1.44.1: {}
+  playwright-core@1.47.2: {}
 
-  playwright@1.44.1:
+  playwright@1.47.2:
     dependencies:
-      playwright-core: 1.44.1
+      playwright-core: 1.47.2
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -20608,7 +20652,7 @@ snapshots:
 
   rxjs@7.8.1:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   safe-array-concat@1.1.2:
     dependencies:
@@ -22061,6 +22105,8 @@ snapshots:
       util: 0.12.5
     optionalDependencies:
       '@zxing/text-encoding': 0.9.0
+
+  web-streams-polyfill@3.3.3: {}
 
   web3-bzz@1.10.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     dependencies:

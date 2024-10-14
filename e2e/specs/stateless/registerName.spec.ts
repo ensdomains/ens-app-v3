@@ -29,6 +29,7 @@ test.describe.serial('normal registration', () => {
     accounts,
     time,
     makePageObject,
+    consoleListener,
   }) => {
     await setPrimaryName(walletClient, {
       name: '',
@@ -39,8 +40,10 @@ test.describe.serial('normal registration', () => {
     const registrationPage = makePageObject('RegistrationPage')
     const transactionModal = makePageObject('TransactionModal')
 
-    await time.sync(500)
-
+    await consoleListener.initialize({
+      regex: /Event triggered on local development.*register-override-triggered/,
+    })
+    await time.sync()
     await homePage.goto()
     await login.connect()
 
@@ -100,6 +103,7 @@ test.describe.serial('normal registration', () => {
     await page.getByTestId('next-button').click()
     await transactionModal.closeButton.click()
 
+    await page.pause()
     await expect(
       page.getByText(
         'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
@@ -117,15 +121,19 @@ test.describe.serial('normal registration', () => {
       ),
     ).toBeVisible()
 
+    await time.sync()
+
     // should show countdown
     await expect(page.getByTestId('countdown-circle')).toBeVisible()
-    await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+    await expect(page.getByTestId('countdown-complete-check')).not.toBeVisible()
     const waitButton = page.getByTestId('wait-button')
     await expect(waitButton).toBeVisible()
     await expect(waitButton).toBeDisabled()
+
+    await time.increaseTime({ seconds: 60 })
+    await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
     const startTimerButton = page.getByTestId('start-timer-button')
     await expect(startTimerButton).not.toBeVisible()
-    await testClient.increaseTime({ seconds: 60 })
 
     // Should show registration text
     await expect(
@@ -149,13 +157,29 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByText('Open Wallet')).toBeVisible()
     await transactionModal.confirm()
 
+    // calculate date one year from now
+    const date = new Date()
+    date.setFullYear(date.getFullYear() + 1)
+    const formattedDate = date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+
     // should show the correct details on completion
     await expect(page.getByTestId('invoice-item-0-amount')).toHaveText(/0.0032 ETH/)
+    await expect(page.getByTestId('invoice-item-0')).toHaveText(/1 year registration/)
+    await expect(page.getByTestId('invoice-item-expiry')).toHaveText(/Name expires/)
+    await expect(page.getByTestId('invoice-item-expiry-date')).toHaveText(`${formattedDate}`)
 
     await page.getByTestId('view-name').click()
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
       accounts.getAddress('user', 5),
     )
+
+    await test.step('confirm that track event was not called', async () => {
+      await expect(consoleListener.getMessages()).toHaveLength(0)
+    })
   })
 
   test('should not direct to the registration page on search, and show all records from registration', async ({
@@ -929,5 +953,121 @@ test('should be able to detect an existing commit created on a private mempool',
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
       accounts.getAddress('user', 5),
     )
+  })
+})
+
+test.describe('Error handling', () => {
+  test('should be able to detect an existing commit created on a private mempool', async ({
+    page,
+    login,
+    time,
+    makePageObject,
+  }) => {
+    test.slow()
+
+    const homePage = makePageObject('HomePage')
+    const registrationPage = makePageObject('RegistrationPage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await time.sync()
+
+    await homePage.goto()
+    await login.connect()
+
+    const name = `expired-commit-${Date.now()}.eth`
+    // should redirect to registration page
+    await homePage.searchInput.fill(name)
+    await homePage.searchInput.press('Enter')
+    await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+
+    await test.step('pricing page', async () => {
+      await page.getByTestId('payment-choice-ethereum').check()
+      await registrationPage.primaryNameToggle.uncheck()
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('info page', async () => {
+      await expect(page.getByTestId('next-button')).toHaveText('Begin')
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('transaction: commit', async () => {
+      await expect(page.getByText('Open Wallet')).toBeVisible()
+      await transactionModal.confirm()
+      await expect(page.getByText(`Your "Start timer" transaction was successful`)).toBeVisible()
+      await time.sync()
+      await page.waitForTimeout(1000)
+      await time.increaseTime({ seconds: 60 * 60 * 24 })
+    })
+
+    await expect(
+      page.getByText('Your registration has expired. You will need to start the process again.'),
+    ).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Restart' })).toBeVisible()
+    await expect(page.getByTestId('finish-button')).toHaveCount(0)
+  })
+
+  test('should be able to register name if the commit transaction does not update', async ({
+    page,
+    login,
+    accounts,
+    time,
+    makePageObject,
+    consoleListener,
+  }) => {
+    test.slow()
+
+    const homePage = makePageObject('HomePage')
+    const registrationPage = makePageObject('RegistrationPage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await time.sync()
+    await consoleListener.initialize({
+      regex: /Event triggered on local development.*register-override-triggered/,
+    })
+    await homePage.goto()
+    await login.connect()
+
+    const name = `stuck-commit-${Date.now()}.eth`
+    // should redirect to registration page
+    await homePage.searchInput.fill(name)
+    await homePage.searchInput.press('Enter')
+    await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+
+    await test.step('pricing page', async () => {
+      await page.getByTestId('payment-choice-ethereum').check()
+      await registrationPage.primaryNameToggle.uncheck()
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('info page', async () => {
+      await expect(page.getByTestId('next-button')).toHaveText('Begin')
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('transaction: commit', async () => {
+      await expect(page.getByText('Open Wallet')).toBeVisible()
+      await transactionModal.confirm()
+      await expect(page.getByText(`Your "Start timer" transaction was successful`)).toBeVisible()
+      await time.increaseTimeByTimestamp({ seconds: 120 })
+    })
+
+    await test.step('transaction: register', async () => {
+      await expect(page.getByTestId('finish-button')).toBeVisible({ timeout: 10000 })
+      await expect(page.getByTestId('finish-button')).toBeEnabled()
+
+      await page.getByTestId('finish-button').click()
+      await expect(page.getByText('Open Wallet')).toBeVisible()
+      await transactionModal.confirm()
+
+      await page.getByTestId('view-name').click()
+      await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+        accounts.getAddress('user', 5),
+      )
+    })
+
+    await test.step('confirm plausible event was fired once', async () => {
+      expect(consoleListener.getMessages()).toHaveLength(1)
+    })
   })
 })

@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic'
-import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -9,12 +9,18 @@ import { useAccount } from 'wagmi'
 import { tokenise } from '@ensdomains/ensjs/utils'
 import { Button, mq, Typography } from '@ensdomains/thorin'
 
-import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
 import { Card } from '@app/components/Card'
 import useWindowSize from '@app/hooks/useWindowSize'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { dateFromDateDiff } from '@app/utils/date'
+import { isMobileDevice } from '@app/utils/device'
+import { secondsToDays } from '@app/utils/time'
+import { formatDurationOfDates } from '@app/utils/utils'
+
+import { RegistrationReducerDataItem } from '../types'
+import { Invoice } from './Invoice'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -39,10 +45,14 @@ const ButtonContainer = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: ${theme.space['2']};
+
+    ${mq.sm.min(css`
+      flex-direction: row;
+    `)}
   `,
 )
 
@@ -56,6 +66,20 @@ const NFTContainer = styled.div(
     ${mq.sm.min(css`
       width: ${theme.space['80']};
       height: ${theme.space['80']};
+    `)}
+  `,
+)
+
+const InvoiceContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+    ${mq.sm.min(css`
+      gap: ${theme.space['6']};
+      flex-direction: row;
     `)}
   `,
 )
@@ -148,6 +172,7 @@ const Confetti = dynamic(() =>
 
 const useEthInvoice = (
   name: string,
+  seconds: number,
   isMoonpayFlow: boolean,
 ): { InvoiceFilled?: React.ReactNode; avatarSrc?: string } => {
   const { t } = useTranslation('register')
@@ -208,16 +233,33 @@ const useEthInvoice = (
     const registerNetFee = registerGasUsed * registerGasPrice
     const totalNetFee = commitNetFee && registerNetFee ? commitNetFee + registerNetFee : 0n
 
+    const date = dateFromDateDiff({
+      startDate: new Date(),
+      additionalDays: Math.floor(secondsToDays(seconds)),
+    })
+
     return (
       <Invoice
+        name={name}
+        expiryDate={date}
+        expiryTitle={t('invoice.expiry')}
         items={[
-          { label: t('invoice.registration'), value },
-          { label: t('invoice.networkFee'), value: totalNetFee },
+          {
+            label: t('invoice.timeRegistration', {
+              time: formatDurationOfDates({
+                startDate: new Date(),
+                endDate: date,
+                shortYears: isMobileDevice(),
+                t,
+              }),
+            }),
+            value,
+          },
+          { label: t('invoice.transactionFees'), value: totalNetFee },
         ]}
-        totalLabel={t('invoice.totalPaid')}
       />
     )
-  }, [isLoading, registrationValue, commitReceipt, registerReceipt, t])
+  }, [isLoading, registrationValue, commitReceipt, registerReceipt, t, name, seconds])
 
   if (isMoonpayFlow) return { InvoiceFilled: null, avatarSrc }
 
@@ -228,13 +270,14 @@ type Props = {
   name: string
   beautifiedName: string
   callback: (toProfile: boolean) => void
+  registrationData: RegistrationReducerDataItem
   isMoonpayFlow: boolean
 }
 
-const Complete = ({ name, beautifiedName, callback, isMoonpayFlow }: Props) => {
+const Complete = ({ name, beautifiedName, callback, isMoonpayFlow, registrationData }: Props) => {
   const { t } = useTranslation('register')
   const { width, height } = useWindowSize()
-  const { InvoiceFilled, avatarSrc } = useEthInvoice(name, isMoonpayFlow)
+  const { InvoiceFilled, avatarSrc } = useEthInvoice(name, registrationData.seconds, isMoonpayFlow)
 
   const nameWithColourEmojis = useMemo(() => {
     const data = tokenise(beautifiedName)
@@ -275,9 +318,6 @@ const Complete = ({ name, beautifiedName, callback, isMoonpayFlow }: Props) => {
         gravity={0.25}
         initialVelocityY={20}
       />
-      <NFTContainer>
-        <NFTTemplate backgroundImage={avatarSrc} isNormalised name={name} />
-      </NFTContainer>
       <TitleContainer>
         <Title>{t('steps.complete.heading')}</Title>
         <Typography style={{ display: 'inline' }} fontVariant="headingThree" weight="bold">
@@ -285,8 +325,12 @@ const Complete = ({ name, beautifiedName, callback, isMoonpayFlow }: Props) => {
           <SubtitleWithGradient>{nameWithColourEmojis}</SubtitleWithGradient>
         </Typography>
       </TitleContainer>
-      <Typography>{t('steps.complete.description')}</Typography>
-      {InvoiceFilled}
+      <InvoiceContainer>
+        <NFTContainer>
+          <NFTTemplate backgroundImage={avatarSrc} isNormalised name={name} />
+        </NFTContainer>
+        {InvoiceFilled}
+      </InvoiceContainer>
       <ButtonContainer>
         <MobileFullWidth>
           <Button colorStyle="accentSecondary" onClick={() => callback(false)}>
