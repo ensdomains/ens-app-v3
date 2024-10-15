@@ -8,11 +8,18 @@ import {
   Button,
   Card,
   GasPumpSVG,
+  InfoCircleSVG,
   KeySVG,
+  QuestionBubbleSVG,
+  QuestionCircleSVG,
   RightArrowSVG,
+  SpannerAltSVG,
   Typography,
   WalletSVG,
 } from '@ensdomains/thorin'
+
+import DAOSVG from '../assets/DAO.svg'
+import SocialX from '../assets/social/SocialX.svg'
 
 const Main = styled.main(
   ({ theme }) => css`
@@ -137,7 +144,34 @@ const Footer = styled.footer(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
-    gap: ${theme.space['2']};
+    gap: ${theme.space['4']};
+    h3 {
+      text-align: center;
+    }
+  `,
+)
+
+const FooterLayout = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+
+    & > div {
+      width: 100%;
+    }
+
+    & > div > span {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: ${theme.space['2']};
+      color: ${theme.colors.green};
+    }
+
+    @media (min-width: 360px) {
+      flex-direction: row;
+    }
   `,
 )
 
@@ -205,12 +239,36 @@ export default function Page() {
             </Card>
           </GridOneToThree>
         ) : null}
+        <Footer>
+          <Typography asProp="h3" fontVariant="headingThree">
+            {t('footer.title')}
+          </Typography>
+          <FooterLayout>
+            <Card title={t('footer.learn.title')}>
+              <span>
+                <QuestionBubbleSVG /> {t('footer.learn.faq')}
+              </span>
+              <span>
+                <SpannerAltSVG /> {t('footer.learn.plan')}
+              </span>
+              <span>
+                <InfoCircleSVG /> {t('footer.learn.base')}
+              </span>
+            </Card>
+            <Card title={t('footer.support.title')}>
+              <span>
+                <QuestionCircleSVG /> {t('footer.support.ticket')}
+              </span>
+              <span>
+                <SocialX height="16" width="16" /> {t('footer.support.twitter')}
+              </span>
+              <span>
+                <DAOSVG height="16" width="16" /> {t('footer.support.dao')}
+              </span>
+            </Card>
+          </FooterLayout>
+        </Footer>
       </Main>
-      <Footer>
-        <Typography asProp="h3" fontVariant="headingThree">
-          {t('footer.title')}
-        </Typography>
-      </Footer>
     </>
   )
 }
