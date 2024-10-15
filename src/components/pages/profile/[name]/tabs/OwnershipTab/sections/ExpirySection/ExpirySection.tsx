@@ -1,4 +1,3 @@
-import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-link'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -6,47 +5,13 @@ import styled, { css } from 'styled-components'
 import { Button, Card, Dropdown, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { useCalendarOptions } from '@app/hooks/useCalendarOptions'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
 import { EarnifiDialog } from '../../../MoreTab/Miscellaneous/EarnifiDialog'
 import { ExpiryPanel } from './components/ExpiryPanel'
 import { useExpiryActions } from './hooks/useExpiryActions'
 import { useExpiryDetails } from './hooks/useExpiryDetails'
-
-const calendarOptions = [
-  {
-    value: 'google',
-    label: 'tabs.more.misc.reminderOptions.google',
-    function: google,
-  },
-  {
-    value: 'outlook',
-    label: 'tabs.more.misc.reminderOptions.outlook',
-    function: outlook,
-  },
-  {
-    value: 'office365',
-    label: 'tabs.more.misc.reminderOptions.office365',
-    function: office365,
-  },
-  {
-    value: 'yahoo',
-    label: 'tabs.more.misc.reminderOptions.yahoo',
-    function: yahoo,
-  },
-  {
-    value: 'ics',
-    label: 'tabs.more.misc.reminderOptions.ical',
-    function: ics,
-  },
-]
-
-const makeEvent = (name: string, expiryDate: Date): CalendarEvent => ({
-  title: `Renew ${name}`,
-  start: expiryDate,
-  duration: [10, 'minute'],
-  url: window.location.href,
-})
 
 const Header = styled.div(({ theme }) => [
   css`
@@ -124,6 +89,7 @@ export const ExpirySection = ({ name, details }: Props) => {
     ownerData: details.ownerData,
     wrapperData: details.wrapperData,
   })
+  const { options: calendarOptions, makeEvent } = useCalendarOptions(`Renew ${name}`)
 
   const [showEarnifiDialog, setShowEarnifiDialog] = useState(false)
 
@@ -171,7 +137,7 @@ export const ExpirySection = ({ name, details }: Props) => {
                               label: t(option.label, { ns: 'profile' }),
                               onClick: () =>
                                 window.open(
-                                  option.function(makeEvent(name, action.expiryDate)),
+                                  option.function(makeEvent(action.expiryDate)),
                                   '_blank',
                                 ),
                             })),

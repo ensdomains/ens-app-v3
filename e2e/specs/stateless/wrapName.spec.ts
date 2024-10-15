@@ -216,7 +216,7 @@ test('should allow wrapping a name with an unknown label', async ({
   await expect(morePage.wrapButton).toHaveCount(0)
 
   // should direct to the known label page
-  await expect(page).toHaveURL(`/${unknownLabel}.${name}`)
+  await expect(page).toHaveURL(`/${unknownLabel}.${name}?tab=more`)
 })
 
 test('should calculate needed steps without localstorage', async ({
@@ -257,11 +257,9 @@ test('should calculate needed steps without localstorage', async ({
   await morePage.goto(subname)
   await login.connect()
 
-  await page.pause()
   await expect(page.getByTestId('namewrapper-status')).toContainText('Unwrapped')
 
   await morePage.wrapButton.click()
-  await page.pause()
   await expect(page.getByTestId('display-item-Step 1-normal')).toContainText('Approve NameWrapper')
   await expect(page.getByTestId('display-item-Step 2-normal')).toContainText('Migrate profile')
   await expect(page.getByTestId('display-item-Step 3-normal')).toContainText('Wrap name')

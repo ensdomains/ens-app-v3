@@ -762,6 +762,49 @@ test.describe('OAuth flow', () => {
     await page.pause()
   })
 
+  test('Should show an error message if user is not logged in', async ({
+    page,
+    login,
+    makeName,
+  }) => {
+    const name = await makeName({
+      label: 'dentity',
+      type: 'legacy',
+      owner: 'user',
+      manager: 'user2',
+    })
+
+    await page.route(`${VERIFICATION_OAUTH_BASE_URL}/dentity/token`, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          name,
+          verifiedPresentationUri: `${DENTITY_VPTOKEN_ENDPOINT}?name=${name}&federated_token=federated_token`,
+        }),
+      })
+    })
+
+    await page.goto(`/?iss=${DENTITY_ISS}&code=dummyCode`)
+
+    await page.pause()
+
+    await expect(page.getByText('Verification failed')).toBeVisible()
+    await expect(
+      page.getByText('You must be connected as 0x709...c79C8 to set the verification record.'),
+    ).toBeVisible()
+
+    await page.locator('.modal').getByRole('button', { name: 'Done' }).click()
+
+    await page.pause()
+    await login.connect('user2')
+
+    // Page should redirect to the profile page
+    await expect(page).toHaveURL(`/${name}`)
+
+    await page.pause()
+  })
+
   test('Should redirect to profile page without showing set verification record if it already set', async ({
     page,
     login,

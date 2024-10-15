@@ -6,7 +6,7 @@
     "timeRegistration": "{{time}} регистрация",
     "registration": "Регистрация",
     "estimatedNetworkFee": "Оценочная комиссия сети",
-    "networkFee": "Комиссия сети",
+    "transactionFees": "Комиссия транзакции",
     "temporaryPremium": "Временная премия",
     "total": "Оценочная общая сумма",
     "totalPaid": "Всего оплачено"
