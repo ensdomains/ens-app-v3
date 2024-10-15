@@ -92,7 +92,7 @@ const gridAreaStyle = ({ $name }: { $name: string }) => css`
   grid-area: ${$name};
 `
 
-const moonpayInfoItems = Array.from({ length: 2 }, (_, i) => `steps.info.moonpayItems.${i}`)
+const moonpayInfoItems = ['steps.info.moonpayItems.0', 'steps.info.moonpayItems.1']
 
 const PaymentChoiceContainer = styled.div`
   width: 100%;

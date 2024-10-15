@@ -1,13 +1,21 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import { mq, OutlinkSVG, Typography } from '@ensdomains/thorin'
 
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
 import { safeDateObj } from '@app/utils/date'
 
+type ExpiryType =
+  | 'expiry'
+  | 'grace-period'
+  | 'registration'
+  | 'parent-expiry'
+  | 'parent-grace-period'
+
 type Props = {
-  type: 'expiry' | 'grace-period' | 'registration' | 'parent-expiry' | 'parent-grace-period'
+  type: ExpiryType
   date: Date
   link?: string
   tooltip?: string
@@ -59,6 +67,18 @@ const Body = styled.div(
   `,
 )
 
+const getExpiryTranslationKey = (type: ExpiryType): string =>
+  match(type)
+    .with('expiry', () => 'tabs.ownership.sections.expiry.panel.expiry.title')
+    .with('grace-period', () => 'tabs.ownership.sections.expiry.panel.grace-period.title')
+    .with('registration', () => 'tabs.ownership.sections.expiry.panel.registration.title')
+    .with('parent-expiry', () => 'tabs.ownership.sections.expiry.panel.parent-expiry.title')
+    .with(
+      'parent-grace-period',
+      () => 'tabs.ownership.sections.expiry.panel.parent-grace-period.title',
+    )
+    .otherwise(() => '')
+
 export const ExpiryPanel = ({ type, date, link, tooltip, supportLink }: Props) => {
   const { t } = useTranslation('profile')
   const _date = safeDateObj(date)
@@ -67,7 +87,7 @@ export const ExpiryPanel = ({ type, date, link, tooltip, supportLink }: Props) =
     <Container data-testid={`expiry-panel-${type}`} data-timestamp={timestamp}>
       <Header>
         <Typography fontVariant="bodyBold" color="text">
-          {t(`tabs.ownership.sections.expiry.panel.${type}.title`)}
+          {t(getExpiryTranslationKey(type))}
         </Typography>
         {link && (
           <Link

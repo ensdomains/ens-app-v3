@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import type { TFunction } from 'react-i18next'
+import { match } from 'ts-pattern'
 
 import { ChildFuseReferenceType, ParentFuseReferenceType } from '@ensdomains/ensjs/utils'
 import { setChildFuses, setFuses } from '@ensdomains/ensjs/wallet'
@@ -24,6 +25,17 @@ type Data = {
   name: string
   contract: 'setChildFuses' | 'setFuses'
 } & (WithSetChildFuses | WithSetFuses)
+
+const getFuseTranslationKey = (fuse: ChildFuseReferenceType['Key']): string =>
+  match(fuse)
+    .with('CANNOT_UNWRAP', () => `transaction.info.fuses.CANNOT_UNWRAP`)
+    .with('CANNOT_BURN_FUSES', () => `transaction.info.fuses.CANNOT_BURN_FUSES`)
+    .with('CANNOT_TRANSFER', () => `transaction.info.fuses.CANNOT_TRANSFER`)
+    .with('CANNOT_SET_RESOLVER', () => `transaction.info.fuses.CANNOT_SET_RESOLVER`)
+    .with('CANNOT_SET_TTL', () => `transaction.info.fuses.CANNOT_SET_TTL`)
+    .with('CANNOT_CREATE_SUBDOMAIN', () => `transaction.info.fuses.CANNOT_CREATE_SUBDOMAIN`)
+    .with('CANNOT_APPROVE', () => `transaction.info.fuses.CANNOT_APPROVE`)
+    .otherwise(() => '')
 
 const displayItems = (
   { name, contract, fuses, ...data }: Data,
@@ -58,7 +70,7 @@ const displayItems = (
 
   const childInfoItems = childFuses.map((fuse) => [
     t('transaction.info.fuses.revoke'),
-    t(`transaction.info.fuses.${fuse}`),
+    t(getFuseTranslationKey(fuse)),
   ])
 
   const infoItemValue = [...parentInfoItems, setExpiryInfoItem, ...childInfoItems].filter(

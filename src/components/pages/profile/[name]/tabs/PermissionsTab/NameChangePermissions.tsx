@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { ChildFuseKeys, ChildFuseReferenceType } from '@ensdomains/ensjs/utils'
@@ -13,6 +14,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { DisabledButtonWithTooltip } from '../../../../../@molecules/DisabledButtonWithTooltip'
 import { Section, SectionFooter, SectionItem } from './Section'
 
+type FusePermission = ChildFuseReferenceType['Key']
 type FusesSetDates = ReturnType<typeof useFusesSetDates>['data']
 type FusesStates = ReturnType<typeof useFusesStates>
 
@@ -24,15 +26,75 @@ type Props = {
 } & FusesStates
 
 type FuseItem = {
-  fuse: ChildFuseReferenceType['Key']
-  translationKey: string
+  fuse: FusePermission
+  translationKey: { label: string; description: string }
   revoked?: string
 }
 
 const CHILD_FUSES_WITHOUT_CBF = ChildFuseKeys.filter((fuse) => fuse !== 'CANNOT_BURN_FUSES')
 
+const getPermissionTranslationKey = (
+  permission: FusePermission,
+  burned: boolean,
+): { label: string; description: string } =>
+  match([permission, burned])
+    .with(['CANNOT_UNWRAP', true], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.canUnwrap.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.canUnwrap.description`,
+    }))
+    .with(['CANNOT_UNWRAP', false], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.cannotUnwrap.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.cannotUnwrap.description`,
+    }))
+
+    .with(['CANNOT_CREATE_SUBDOMAIN', true], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.canCreateSubnames.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.canCreateSubnames.description`,
+    }))
+    .with(['CANNOT_CREATE_SUBDOMAIN', false], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.cannotCreateSubnames.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.cannotCreateSubnames.description`,
+    }))
+
+    .with(['CANNOT_TRANSFER', true], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.canSend.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.canSend.description`,
+    }))
+    .with(['CANNOT_TRANSFER', false], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.cannotSend.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.cannotSend.description`,
+    }))
+
+    .with(['CANNOT_SET_RESOLVER', true], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.canSetResolver.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.canSetResolver.description`,
+    }))
+    .with(['CANNOT_SET_RESOLVER', false], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.cannotSetResolver.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.cannotSetResolver.description`,
+    }))
+
+    .with(['CANNOT_SET_TTL', true], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.canSetTTL.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.canSetTTL.description`,
+    }))
+    .with(['CANNOT_SET_TTL', false], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.cannotSetTTL.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.cannotSetTTL.description`,
+    }))
+
+    .with(['CANNOT_APPROVE', true], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.canApprove.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.canApprove.description`,
+    }))
+    .with(['CANNOT_APPROVE', false], () => ({
+      label: `tabs.permissions.nameChangePermissions.permissions.cannotApprove.label`,
+      description: `tabs.permissions.nameChangePermissions.permissions.cannotApprove.description`,
+    }))
+    .otherwise(() => ({})) as { label: string; description: string }
+
 const PERMISSION_TRANSLATION_KEY: {
-  [key in ChildFuseReferenceType['Key']]?: {
+  [key in FusePermission]?: {
     burned: string
     unburned: string
   }
@@ -100,13 +162,13 @@ export const NameChangePermissions = ({
       if (isBurned && burnedTranslationKey)
         acc.burned.push({
           fuse: permission,
-          translationKey: burnedTranslationKey,
+          translationKey: getPermissionTranslationKey(permission, true),
         })
 
       if (!isBurned && unburnedTranslationKey)
         acc.unburned.push({
           fuse: permission,
-          translationKey: unburnedTranslationKey,
+          translationKey: getPermissionTranslationKey(permission, true),
         })
       return acc
     },
@@ -155,12 +217,10 @@ export const NameChangePermissions = ({
     <Section>
       {permissions.unburned.map(({ translationKey, fuse }) => (
         <SectionItem key={fuse} icon="info" data-testid={`unburned-${fuse}`}>
-          <Typography fontVariant="bodyBold">
-            {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.label`)}
-          </Typography>
+          <Typography fontVariant="bodyBold">{t(translationKey.label)}</Typography>
 
           <Typography fontVariant="small">
-            {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.description`, {
+            {t(translationKey.description, {
               owner: isParentLocked
                 ? t('tabs.permissions.role.owner')
                 : t('tabs.permissions.role.parent'),
