@@ -137,8 +137,8 @@ const getTransactionExtraInfo = (action: string, key?: string) => {
 }
 
 export const TransactionSection = () => {
-  const { t: tc } = useTranslation()
   const { t } = useTranslation('settings')
+  const { t: tc } = useTranslation('common')
 
   const chainName = useChainName()
   const transactions = useRecentTransactions()

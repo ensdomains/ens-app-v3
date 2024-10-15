@@ -24,7 +24,7 @@ export const EnableDnssec = ({
   dispatch: Dispatch<DnsImportReducerAction>
   selected: SelectedItemProperties
 }) => {
-  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.enableDnssec' })
+  const { t } = useTranslation('dnssec')
   const { t: tc } = useTranslation('common')
 
   const {
@@ -40,20 +40,20 @@ export const EnableDnssec = ({
 
   return (
     <DnsImportCard>
-      <DnsImportHeading>{t('title')}</DnsImportHeading>
+      <DnsImportHeading>{t('steps.enableDnssec.title')}</DnsImportHeading>
       {isDnsSecEnabled ? (
         <SuccessHelper>
           <CheckCircleSVG />
-          {t('status.enabled')}
+          {t('steps.enableDnssec.status.enabled')}
         </SuccessHelper>
       ) : (
         <>
-          <Typography>{t('status.disabled.heading')}</Typography>
+          <Typography>{t('steps.enableDnssec.status.disabled.heading')}</Typography>
           <SupportLinkList
-            title={t('status.disabled.help')}
+            title={t('steps.enableDnssec.status.disabled.help')}
             items={[
               {
-                label: t('help.findOutRegistrar'),
+                label: t('steps.enableDnssec.help.findOutRegistrar'),
                 href: `https://who.is/whois/${selected.name}`,
               },
               ...DNSSEC_HELP_LINKS,
@@ -64,7 +64,7 @@ export const EnableDnssec = ({
             errorUpdatedAt={errorUpdatedAt}
             isLoading={isLoading}
             isRefetching={isRefetching}
-            message={t('status.disabled.message')}
+            message={t('steps.enableDnssec.status.disabled.message')}
             refetch={refetch}
           />
         </>

@@ -66,7 +66,7 @@ export const VerifyOnchainOwnership = ({
   dispatch: Dispatch<DnsImportReducerAction>
   selected: SelectedItemProperties
 }) => {
-  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.verifyOwnership' })
+  const { t } = useTranslation('dnssec')
   const { t: tc } = useTranslation('common')
 
   const {
@@ -98,15 +98,18 @@ export const VerifyOnchainOwnership = ({
 
   return (
     <DnsImportCard>
-      <DnsImportHeading>{t('title')}</DnsImportHeading>
-      {dnsOwnerStatus !== 'matching' && <Typography>{t('status.mismatching.heading')}</Typography>}
+      <DnsImportHeading>{t('steps.verifyOwnership.title')}</DnsImportHeading>
+      {dnsOwnerStatus !== 'matching' && (
+        <Typography>{t('steps.verifyOwnership.status.mismatching.heading')}</Typography>
+      )}
       {(() => {
-        if (!isConnected) return <Helper type="info">{t('status.disconnected')}</Helper>
+        if (!isConnected)
+          return <Helper type="info">{t('steps.verifyOwnership.status.disconnected')}</Helper>
         if (dnsOwnerStatus === 'matching')
           return (
             <SuccessHelper>
               <CheckCircleSVG />
-              {t('status.matching')}
+              {t('steps.verifyOwnership.status.matching')}
             </SuccessHelper>
           )
         return (
@@ -119,7 +122,7 @@ export const VerifyOnchainOwnership = ({
               <DnsDisplayValue label="Value" value={`a=${address}`} copyable />
             </ValueButtonsContainer>
             <SupportLinkList
-              title={t('status.mismatching.help')}
+              title={t('steps.verifyOwnership.status.mismatching.help')}
               items={DNS_TXT_RECORD_HELPER_LINKS}
             />
             <StatusChecker
@@ -128,7 +131,7 @@ export const VerifyOnchainOwnership = ({
               isLoading={isLoading}
               isRefetching={isRefetching}
               refetch={refetch}
-              message={errorMessage || t('status.mismatching.message')}
+              message={errorMessage || t('steps.verifyOwnership.status.mismatching.message')}
               statusElement={
                 dnsOwnerStatus === 'mismatching' && (
                   <RecordItemWrapper>
@@ -143,7 +146,9 @@ export const VerifyOnchainOwnership = ({
               }
               statusHelperElement={
                 dnsOwnerStatus === 'mismatching' && (
-                  <Helper type="error">{t('status.mismatching.error.onchain')}</Helper>
+                  <Helper type="error">
+                    {t('steps.verifyOwnership.status.mismatching.error.onchain')}
+                  </Helper>
                 )
               }
             />
@@ -170,7 +175,7 @@ export const VerifyOnchainOwnership = ({
               : {})}
           >
             {dnsOwnerStatus === 'mismatching'
-              ? t('action.importWithoutOwnership')
+              ? t('steps.verifyOwnership.action.importWithoutOwnership')
               : tc('action.next')}
           </DnsImportActionButton>
         ) : (

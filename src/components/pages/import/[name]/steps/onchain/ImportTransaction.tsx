@@ -102,7 +102,7 @@ export const ImportTransaction = ({
   item: DnsImportReducerDataItem
   selected: SelectedItemProperties
 }) => {
-  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.transaction' })
+  const { t } = useTranslation('dnssec')
   const { t: tc } = useTranslation('common')
 
   const { data: gasPrice } = useGasPrice()
@@ -206,15 +206,19 @@ export const ImportTransaction = ({
     <DnsImportCard>
       {dnsOwnerStatus === 'mismatching' ? (
         <>
-          <DnsImportHeading>{t('mismatching.title')}</DnsImportHeading>
+          <DnsImportHeading>{t('steps.transaction.mismatching.title')}</DnsImportHeading>
           <Typography>
-            <Trans t={t} i18nKey="mismatching.subtitle" components={{ b: <b /> }} />
+            <Trans
+              t={t}
+              i18nKey="steps.transaction.mismatching.subtitle"
+              components={{ b: <b /> }}
+            />
           </Typography>
         </>
       ) : (
         <>
-          <DnsImportHeading>{t('matching.title')}</DnsImportHeading>
-          <Typography>{t('matching.subtitle')}</Typography>
+          <DnsImportHeading>{t('steps.transaction.matching.title')}</DnsImportHeading>
+          <Typography>{t('steps.transaction.matching.subtitle')}</Typography>
         </>
       )}
       <InvoiceContainer>
@@ -227,7 +231,7 @@ export const ImportTransaction = ({
           />
         </OptionBar>
         <InvoiceItemBox>
-          <Typography>{t('estimatedNetworkCost')}</Typography>
+          <Typography>{t('steps.transaction.estimatedNetworkCost')}</Typography>
           <Typography data-testid="import-cost">
             <CurrencyText eth={gasCost} currency={currencyDisplay} />
           </Typography>
