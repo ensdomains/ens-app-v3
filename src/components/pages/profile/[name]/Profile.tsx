@@ -68,6 +68,16 @@ const TabButton = styled.button<{ $selected: boolean }>(
 const tabs = ['profile', 'records', 'ownership', 'subnames', 'permissions', 'more'] as const
 type Tab = (typeof tabs)[number]
 
+const getTabTranslationKey = (tab: Tab): string =>
+  match(tab)
+    .with('profile', () => `tabs.profile.name`)
+    .with('records', () => 'tabs.records.name')
+    .with('ownership', () => 'tabs.ownership.name')
+    .with('subnames', () => 'tabs.subnames.name')
+    .with('permissions', () => 'tabs.permissions.name')
+    .with('more', () => 'tabs.more.name')
+    .otherwise(() => '')
+
 type Props = {
   isSelf: boolean
   isLoading: boolean
@@ -247,7 +257,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
                   onClick={() => setTab(tabItem)}
                 >
                   <Typography fontVariant="extraLargeBold" color="inherit">
-                    {t(`tabs.${tabItem}.name`)}
+                    {t(getTabTranslationKey(tabItem))}
                   </Typography>
                 </TabButton>
               ))}

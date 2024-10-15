@@ -10,6 +10,7 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import useThrottledCallback from '@app/hooks/useThrottledCallback'
+import { getStatusTranslationKeys } from '@app/intl/translationKeys'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
@@ -138,7 +139,6 @@ const getTransactionExtraInfo = (action: string, key?: string) => {
 
 export const TransactionSection = () => {
   const { t } = useTranslation('settings')
-  const { t: tc } = useTranslation('common')
 
   const chainName = useChainName()
   const transactions = useRecentTransactions()
@@ -194,7 +194,7 @@ export const TransactionSection = () => {
             disabled={!canClear}
             data-testid="transaction-clear-button"
           >
-            {tc('action.clear')}
+            {t('action.clear', { ns: 'common' })}
           </Button>
         }
         fill
@@ -216,15 +216,15 @@ export const TransactionSection = () => {
                           <Spinner data-testid="pending-spinner" color="accent" />
                         )}
                         <TransactionInfoContainer>
-                          <Typography weight="bold">{`${tc(
-                            `transaction.description.${action}`,
-                          )}${getTransactionExtraInfo(action, key)}`}</Typography>
+                          <Typography weight="bold">{`${
+                            (t(`transaction.description.${action}`), { ns: 'common' })
+                          }${getTransactionExtraInfo(action, key)}`}</Typography>
                           <StyledOutlink
                             $error={status === 'failed'}
                             href={makeEtherscanLink(hash, chainName)}
                             target="_blank"
                           >
-                            {tc(`transaction.status.${status}.regular`)}
+                            {t(getStatusTranslationKeys(status).regular, { ns: 'common' })}
                           </StyledOutlink>
                         </TransactionInfoContainer>
                       </InfoContainer>
@@ -243,7 +243,9 @@ export const TransactionSection = () => {
                     onClick={() => setViewAmt((curr) => curr + 5)}
                     data-testid="transaction-view-more-button"
                   >
-                    <ViewMoreInner weight="bold">{tc('transaction.viewMore')}</ViewMoreInner>
+                    <ViewMoreInner weight="bold">
+                      {t('transaction.viewMore', { ns: 'common' })}
+                    </ViewMoreInner>
                   </TransactionContainer>
                 )}
               </>

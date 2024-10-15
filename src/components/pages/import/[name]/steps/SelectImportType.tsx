@@ -154,7 +154,6 @@ export const SelectImportType = ({
   selected: SelectedItemProperties
 }) => {
   const { t } = useTranslation('dnssec')
-  const { t: tc } = useTranslation('common')
 
   const { address } = useAccount()
   const chainId = useChainId()
@@ -267,7 +266,7 @@ export const SelectImportType = ({
         onClick={() => setStepsAndNavigate()}
         data-testid="import-next-button"
       >
-        {tc('action.next')}
+        {t('action.next', { ns: 'common' })}
       </DnsImportActionButton>
     </DnsImportCard>
   )

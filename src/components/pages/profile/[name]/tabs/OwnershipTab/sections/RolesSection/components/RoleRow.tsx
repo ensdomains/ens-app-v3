@@ -79,7 +79,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
     const hasToken = is2ldEth || isWrapped
     if (!hasToken) return null
     return {
-      label: t('transaction.viewEtherscan', { ns: 'common' }),
+      label: t('transaction.viewEtherscan'),
       onClick: () => window.open(makeEtherscanLink(address!, networkName, 'address'), '_blank'),
       icon: <OutlinkSVG />,
     }

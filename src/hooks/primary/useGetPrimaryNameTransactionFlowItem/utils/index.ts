@@ -1,7 +1,22 @@
+import { match } from 'ts-pattern'
+
 export type IntroType = 'noResolver' | 'invalidResolver' | 'updateEthAddress'
 
-export const getIntroTranslation = (type: IntroType, part: 'title' | 'description') =>
-  `intro.selectPrimaryName.${type}.${part}`
+export const getIntroTranslation = (type: IntroType, part: 'title' | 'description'): string =>
+  match([type, part])
+    .with(['noResolver', 'title'], () => `intro.selectPrimaryName.noResolver.title`)
+    .with(['noResolver', 'description'], () => `intro.selectPrimaryName.noResolver.description`)
+    .with(['invalidResolver', 'title'], () => `intro.selectPrimaryName.invalidResolver.title`)
+    .with(
+      ['invalidResolver', 'description'],
+      () => `intro.selectPrimaryName.invalidResolver.description`,
+    )
+    .with(['updateEthAddress', 'title'], () => `intro.selectPrimaryName.updateEthAddress.title`)
+    .with(
+      ['updateEthAddress', 'description'],
+      () => `intro.selectPrimaryName.updateEthAddress.description`,
+    )
+    .otherwise(() => '')
 
 /**
  * Conditions:

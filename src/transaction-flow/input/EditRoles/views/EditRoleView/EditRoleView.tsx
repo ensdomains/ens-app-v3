@@ -7,6 +7,7 @@ import { match, P } from 'ts-pattern'
 import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, mq } from '@ensdomains/thorin'
 
 import { DialogFooterWithBorder } from '@app/components/@molecules/DialogComponentVariants/DialogFooterWithBorder'
+import { getRoleTranslationKeys } from '@app/intl/translationKeys'
 import { SearchViewErrorView } from '@app/transaction-flow/input/SendName/views/SearchView/views/SearchViewErrorView'
 import { SearchViewLoadingView } from '@app/transaction-flow/input/SendName/views/SearchView/views/SearchViewLoadingView'
 import { SearchViewNoResultsView } from '@app/transaction-flow/input/SendName/views/SearchView/views/SearchViewNoResultsView'
@@ -48,7 +49,7 @@ export const EditRoleView = ({ index, onBack }: Props) => {
     <>
       <Dialog.Heading
         title={t(`input.editRoles.views.editRole.title`, {
-          role: t(`roles.${currentRole.role}.title`, { ns: 'common' }),
+          role: t(getRoleTranslationKeys(currentRole.role).title, { ns: 'common' }),
         })}
       />
       <InputWrapper>

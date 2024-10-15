@@ -4,6 +4,13 @@ import glob from 'glob'
 
 import { BASE_LOCALE, getLocaleData, getLocalePaths } from './locale-utils.mjs'
 
+const whitelist = [
+  /(one|other)$/,
+  /^steps.profile.options.groups/,
+  /^transaction.itemLabel/,
+  /_zero$/,
+]
+
 const baseLocale = getLocalePaths(BASE_LOCALE)
 
 const { keys: translationKeys, namespaces } = getLocaleData(baseLocale)
@@ -49,14 +56,15 @@ function findUnusedKeys() {
   const unusedKeys = []
 
   for (const key of translationKeysWoNs) {
-    if (!usedKeys.has(key)) {
+    if (!usedKeys.has(key) && !whitelist.some((regex) => regex.test(key))) {
       unusedKeys.push(key)
     }
   }
-  console.log(`PROBABLY ${unusedKeys.length} UNSED KEYS:`)
+
   unusedKeys.forEach((key) => {
     console.log(key)
   })
+  console.log(`PROBABLY ${unusedKeys.length} UNSED KEYS:`)
 }
 
 findUnusedKeys()

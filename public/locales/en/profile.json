@@ -100,9 +100,9 @@
         "parent-owner": "The owner of this name's parent ({{parent}}).",
         "dns-owner": "The owner of this name, as set by DNS records. The owner cannot change the profile.",
         "manager": "The address that can change the profile, settings and profile editors.",
+        "eth-record": "The address that will receive funds sent to this name on mainnet.",
         "profile-editor": "An addres that can only change the profile",
         "subname-manager": "An address or contract responsible for subname renewals.",
-        "eth-record": "The address that will receive funds sent to this name on mainnet.",
         "grace-period": "A 90 day grace window after expiration, when the name can still be extended but not re-registered.",
         "contract-address": "The address of the contract that enables Wrapped ENS names.",
         "namewrapper": "The contract that enables Wrapped ENS names."

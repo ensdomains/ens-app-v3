@@ -230,16 +230,14 @@ export const NameChangePermissions = ({
       ))}
       {permissions.burned.map(({ translationKey, fuse }) => (
         <SectionItem key={fuse} icon="disabled" data-testid={`burned-${fuse}`}>
-          <Typography fontVariant="bodyBold">
-            {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.label`)}
-          </Typography>
+          <Typography fontVariant="bodyBold">{t(translationKey.label)}</Typography>
           {fusesSetDates?.[fuse] && (
             <TypographyGreyDim fontVariant="extraSmall">
               {t('tabs.permissions.revokedLabel', { date: fusesSetDates[fuse] })}
             </TypographyGreyDim>
           )}
           <Typography fontVariant="small">
-            {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.description`, {
+            {t(translationKey.description, {
               owner: isParentLocked
                 ? t('tabs.permissions.role.owner')
                 : t('tabs.permissions.role.parent'),

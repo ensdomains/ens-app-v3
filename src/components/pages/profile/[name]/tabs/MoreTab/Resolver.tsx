@@ -8,6 +8,7 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { getProfileErrorTranslationKey, ProfileError } from '@app/intl/translationKeys'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { emptyAddress } from '@app/utils/constants'
@@ -151,7 +152,11 @@ const Resolver = ({
               <DisabledButtonWithTooltip
                 {...{
                   buttonId: 'set-resolver-disabled-button',
-                  content: t(`errors.${canEditResolverError || 'default'}`),
+                  content: t(
+                    getProfileErrorTranslationKey(
+                      (canEditResolverError || 'default') as ProfileError,
+                    ),
+                  ),
                   buttonText: 'Edit',
                   mobileWidth: 150,
                   buttonWidth: '15',

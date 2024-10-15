@@ -7,6 +7,7 @@ import { Button, mq } from '@ensdomains/thorin'
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import type { Role } from '@app/hooks/ownership/useRoles/useRoles'
+import { getRoleTranslationKeys } from '@app/intl/translationKeys'
 import { SearchViewIntroView } from '@app/transaction-flow/input/SendName/views/SearchView/views/SearchViewIntroView'
 import { emptyAddress } from '@app/utils/constants'
 
@@ -68,7 +69,7 @@ export const EditRoleIntroView = ({ role, address, onSelect }: Props) => {
               <AvatarWithIdentifier
                 address={address}
                 subtitle={t('input.editRoles.views.editRole.views.intro.current', {
-                  role: t(`roles.${role}.title`, { ns: 'common' }),
+                  role: t(getRoleTranslationKeys(role).title, { ns: 'common' }),
                 })}
               />
               <Button

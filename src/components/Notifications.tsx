@@ -5,6 +5,11 @@ import styled, { css } from 'styled-components'
 import { Button, Toast } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
+import {
+  getStatusTranslationKeys,
+  getTransactionActionTranslationKeys,
+  TransactionAction,
+} from '@app/intl/translationKeys'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
@@ -27,6 +32,18 @@ const ButtonContainer = styled.div(
     gap: ${theme.space['2']};
   `,
 )
+
+// const getStatusTranslationKeys = (status?: 'confirmed' | 'failed' | 'pending'): string =>
+//   match(status)
+//     .with('confirmed', () => ({
+//       title: `transaction.status.confirmed.notifyTitle`,
+//       description: t(`transaction.status.confirmed.notifyMessage`, {
+//         action: t(`transaction.description.${action}`),
+//       }),
+//     }))
+//     .with('failed', () => 'action.extend')
+//     .with('register', () => 'wallet.register')
+//     .otherwise(() => '')
 
 export const Notifications = () => {
   const { t } = useTranslation()
@@ -61,9 +78,9 @@ export const Notifications = () => {
       }
       const resumable = key && getResumable(key)
       const item = {
-        title: t(`transaction.status.${status}.notifyTitle`),
-        description: t(`transaction.status.${status}.notifyMessage`, {
-          action: t(`transaction.description.${action}`),
+        title: t(getStatusTranslationKeys(status).notifyTitle),
+        description: t(getStatusTranslationKeys(status).notifyMessage, {
+          action: t(getTransactionActionTranslationKeys(action as TransactionAction)),
         }),
         children: resumable ? (
           <ButtonContainer>

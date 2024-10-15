@@ -8,6 +8,7 @@ import { PseudoActionButton } from '@app/components/@atoms/PseudoActionButton/Ps
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import type { GroupedRoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import type { useNameDetails } from '@app/hooks/useNameDetails'
+import { getProfileErrorTranslationKey, ProfileError } from '@app/intl/translationKeys'
 
 import { Header } from './components/Header'
 import { RoleRow } from './components/RoleRow'
@@ -70,7 +71,7 @@ export const RolesSection = ({ name, roles, details }: Props) => {
             return (
               <div>
                 <DisabledButtonWithTooltip
-                  content={t(`errors.${error}`)}
+                  content={t(getProfileErrorTranslationKey(error as ProfileError))}
                   buttonId="send-name-disabled-button"
                   buttonText={label}
                   mobileWidth={150}

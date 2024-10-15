@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import { AlertSVG, QuestionCircleSVG, Typography } from '@ensdomains/thorin'
 
@@ -47,17 +48,29 @@ const LinkWrapper = ({ children }: { children?: React.ReactNode }) => (
 
 type ErrorType = 'not-found' | 'application-error'
 
+const getErrorTranslationKey = (errorType: ErrorType): { title: string; message: string } =>
+  match(errorType)
+    .with('not-found', () => ({
+      title: 'not-found.title',
+      message: 'not-found.message',
+    }))
+    .with('application-error', () => ({
+      title: 'application-error.title',
+      message: 'application-error.message',
+    }))
+    .otherwise(() => ({ title: '', message: '' }))
+
 const ErrorScreen = ({ errorType }: { errorType: ErrorType }) => {
-  const { t } = useTranslation('error', { keyPrefix: errorType })
+  const { t } = useTranslation('error')
 
   return (
     <Container className={errorType}>
       {errorType === 'not-found' ? <QuestionCircleSVG /> : <AlertSVG />}
-      <Typography fontVariant="headingOne">{t('title')}</Typography>
+      <Typography fontVariant="headingOne">{t(getErrorTranslationKey(errorType).title)}</Typography>
       <Typography fontVariant="body">
         <Trans
           t={t}
-          i18nKey="message"
+          i18nKey={getErrorTranslationKey(errorType).message}
           components={{
             HomeLink: <LinkWrapper />,
             // eslint-disable-next-line jsx-a11y/control-has-associated-label, jsx-a11y/anchor-has-content

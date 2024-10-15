@@ -121,6 +121,14 @@ const getFuseStateFromWrapperData = (wrapperData?: GetWrapperDataReturnType): Na
     .with({ fuses: { parent: { PARENT_CANNOT_CONTROL: true } } }, () => 'emancipated' as const)
     .otherwise(() => 'wrapped')
 
+const getTokenStatusTranslationKey = (status: NameWrapperState): string =>
+  match(status)
+    .with('unwrapped', () => 'tabs.more.token.status.unwrapped')
+    .with('wrapped', () => 'tabs.more.token.status.wrapped')
+    .with('emancipated', () => 'tabs.more.token.status.emancipated')
+    .with('locked', () => 'tabs.more.token.status.locked')
+    .otherwise(() => '')
+
 const Token = ({ name, isWrapped, canBeWrapped, ownerData, wrapperData, profile }: Props) => {
   const { t } = useTranslation('profile')
 
@@ -165,7 +173,7 @@ const Token = ({ name, isWrapped, canBeWrapped, ownerData, wrapperData, profile 
       <ItemsContainer>
         <RecordItem
           itemKey={t('tabs.more.token.wrapper')}
-          value={t(`tabs.more.token.status.${status}`)}
+          value={t(getTokenStatusTranslationKey(status))}
           type="text"
         />
         {isWrapped ? (

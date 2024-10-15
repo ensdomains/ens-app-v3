@@ -1,6 +1,7 @@
 import { TOptions } from 'i18next'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import { OutlinkSVG, QuestionCircleSVG, Tooltip, Typography } from '@ensdomains/thorin'
 
@@ -49,6 +50,30 @@ const Container = styled.button(
   `,
 )
 
+const getRoleTranslationKey = (
+  role:
+    | Role
+    | 'owner-emancipated'
+    | 'profile-editor'
+    | 'subname-manager'
+    | 'grace-period'
+    | 'contract-address'
+    | 'namewrapper',
+): string =>
+  match(role)
+    .with('owner', () => 'tabs.ownership.tooltips.owner')
+    .with('owner-emancipated', () => 'tabs.ownership.tooltips.owner-emancipated')
+    .with('parent-owner', () => 'tabs.ownership.tooltips.parent-owner')
+    .with('dns-owner', () => 'tabs.ownership.tooltips.dns-owner')
+    .with('manager', () => 'tabs.ownership.tooltips.manager')
+    .with('eth-record', () => 'tabs.ownership.tooltips.eth-record')
+    .with('profile-editor', () => 'tabs.ownership.tooltips.profile-editor')
+    .with('subname-manager', () => 'tabs.ownership.tooltips.subname-manager')
+    .with('grace-period', () => 'tabs.ownership.tooltips.grace-period')
+    .with('contract-address', () => 'tabs.ownership.tooltips.contract-address')
+    .with('namewrapper', () => 'tabs.ownership.tooltips.namewrapper')
+    .otherwise(() => '')
+
 export const RoleTag = ({
   name,
   role,
@@ -68,7 +93,7 @@ export const RoleTag = ({
         <TooltipContent>
           <QuestionCircleSVG />
           <Typography color="text" fontVariant="small">
-            {t(`tabs.ownership.tooltips.${_role}`, tOptions)}
+            {t(getRoleTranslationKey(role), tOptions)}
           </Typography>
           {link && (
             <Link href={link} target="_blank" rel="noreferrer noopener">

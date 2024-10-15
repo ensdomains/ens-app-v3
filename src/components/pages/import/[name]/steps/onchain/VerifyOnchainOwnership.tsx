@@ -2,6 +2,7 @@ import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Dispatch, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import { CheckCircleSVG, Helper, Typography } from '@ensdomains/thorin'
 
@@ -59,6 +60,16 @@ const RecordItemWrapper = styled.div(
   `,
 )
 
+const getErrorTranslationKey = (error: ReturnType<typeof checkDnsError>): string =>
+  match(error)
+    .with('unknown', () => 'error.unknown')
+    .with('noTxtRecord', () => 'error.noTxtRecord')
+    .with('dnssecFailure', () => 'error.dnssecFailure')
+    .with('invalidTxtRecord', () => 'error.invalidTxtRecord')
+    .with('invalidAddressChecksum', () => 'error.invalidAddressChecksum')
+    .with('resolutionFailure', () => 'error.resolutionFailure')
+    .otherwise(() => '')
+
 export const VerifyOnchainOwnership = ({
   dispatch,
   selected,
@@ -67,7 +78,6 @@ export const VerifyOnchainOwnership = ({
   selected: SelectedItemProperties
 }) => {
   const { t } = useTranslation('dnssec')
-  const { t: tc } = useTranslation('common')
 
   const {
     data: dnsOwner,
@@ -93,8 +103,8 @@ export const VerifyOnchainOwnership = ({
   const errorMessage = useMemo(() => {
     const errorKey = checkDnsError({ error, isLoading })
     if (!errorKey) return null
-    return tc(`error.${errorKey}`, { ns: 'dnssec' })
-  }, [tc, error, isLoading])
+    return t(getErrorTranslationKey(errorKey), { ns: 'dnssec' })
+  }, [t, error, isLoading])
 
   return (
     <DnsImportCard>
@@ -160,7 +170,7 @@ export const VerifyOnchainOwnership = ({
           colorStyle="accentSecondary"
           onClick={() => dispatch({ name: 'decreaseStep', selected })}
         >
-          {tc('action.back')}
+          {t('action.back', { ns: 'common' })}
         </DnsImportActionButton>
         {isConnected ? (
           <DnsImportActionButton
@@ -176,11 +186,11 @@ export const VerifyOnchainOwnership = ({
           >
             {dnsOwnerStatus === 'mismatching'
               ? t('steps.verifyOwnership.action.importWithoutOwnership')
-              : tc('action.next')}
+              : t('action.next', { ns: 'common' })}
           </DnsImportActionButton>
         ) : (
           <DnsImportActionButton disabled={!openConnectModal} onClick={() => openConnectModal?.()}>
-            {tc('action.connect')}
+            {t('action.connect', { ns: 'common' })}
           </DnsImportActionButton>
         )}
       </DnsImportActionsContainer>

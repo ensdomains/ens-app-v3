@@ -25,7 +25,6 @@ export const EnableDnssec = ({
   selected: SelectedItemProperties
 }) => {
   const { t } = useTranslation('dnssec')
-  const { t: tc } = useTranslation('common')
 
   const {
     data: isDnsSecEnabled,
@@ -74,14 +73,14 @@ export const EnableDnssec = ({
           colorStyle="accentSecondary"
           onClick={() => dispatch({ name: 'decreaseStep', selected })}
         >
-          {tc('action.back')}
+          {t('action.back', { ns: 'common' })}
         </DnsImportActionButton>
         <DnsImportActionButton
           disabled={!isDnsSecEnabled || isLoading || isRefetching}
           onClick={() => dispatch({ name: 'increaseStep', selected })}
           data-testid="import-next-button"
         >
-          {tc('action.next')}
+          {t('action.next', { ns: 'common' })}
         </DnsImportActionButton>
       </DnsImportActionsContainer>
     </DnsImportCard>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import { validateName } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, Input } from '@ensdomains/thorin'
@@ -10,6 +11,13 @@ import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useValidateSubnameLabel } from '../../hooks/useValidateSubnameLabel'
 import { createTransactionItem } from '../transaction'
 import { TransactionDialogPassthrough } from '../types'
+
+type AddSubnameError =
+  | 'invalidCharacters'
+  | 'mustUseLowercase'
+  | 'alreadyExists'
+  | 'nameTooLong'
+  | 'pccBurned'
 
 type Data = {
   parent: string
@@ -28,6 +36,21 @@ const ParentLabel = styled.div(
     max-width: ${theme.space['48']};
   `,
 )
+
+const getErrorTranslationKey = (error: AddSubnameError): string =>
+  match(error)
+    .with(
+      'invalidCharacters',
+      () => 'details.tabs.subnames.addSubname.dialog.error.invalidCharacters',
+    )
+    .with(
+      'mustUseLowercase',
+      () => 'details.tabs.subnames.addSubname.dialog.error.mustUseLowercase',
+    )
+    .with('alreadyExists', () => 'details.tabs.subnames.addSubname.dialog.error.alreadyExists')
+    .with('nameTooLong', () => 'details.tabs.subnames.addSubname.dialog.error.nameTooLong')
+    .with('pccBurned', () => 'details.tabs.subnames.addSubname.dialog.error.pccBurned')
+    .otherwise(() => '')
 
 const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
@@ -85,7 +108,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
           }}
           error={
             error
-              ? t(`details.tabs.subnames.addSubname.dialog.error.${error}`, { date: expiryLabel })
+              ? t(getErrorTranslationKey(error as AddSubnameError), { date: expiryLabel })
               : undefined
           }
         />

@@ -103,7 +103,6 @@ export const ImportTransaction = ({
   selected: SelectedItemProperties
 }) => {
   const { t } = useTranslation('dnssec')
-  const { t: tc } = useTranslation('common')
 
   const { data: gasPrice } = useGasPrice()
   const { userConfig, setCurrency } = useUserConfig()
@@ -237,13 +236,13 @@ export const ImportTransaction = ({
           </Typography>
         </InvoiceItemBox>
         <InvoiceItemBox>
-          <Typography>{tc('name.owner')}</Typography>
+          <Typography>{t('name.owner', { ns: 'common' })}</Typography>
           {dnsOwner && <InvoiceDnsOwner dnsOwner={dnsOwner} />}
         </InvoiceItemBox>
       </InvoiceContainer>
       {dnsOwnerStatus === 'mismatching' && (
         <Helper type="warning">
-          {tc('steps.verifyOwnership.status.mismatching.error.onchain', { ns: 'dnssec' })}
+          {t('steps.verifyOwnership.status.mismatching.error.onchain', { ns: 'dnssec' })}
         </Helper>
       )}
       <DnsImportActionsContainer>
@@ -251,7 +250,7 @@ export const ImportTransaction = ({
           colorStyle="accentSecondary"
           onClick={() => dispatch({ name: 'decreaseStep', selected })}
         >
-          {tc('action.back')}
+          {t('action.back', { ns: 'common' })}
         </DnsImportActionButton>
         <DnsImportActionButton
           disabled={!dnsOwner || isLoading || isRefetching || isError || gasCost === 0n}
@@ -259,7 +258,9 @@ export const ImportTransaction = ({
           onClick={() => startOrResumeFlow()}
           data-testid="import-next-button"
         >
-          {dnsOwnerStatus === 'mismatching' ? tc('action.import') : tc('action.claim')}
+          {dnsOwnerStatus === 'mismatching'
+            ? t('action.import', { ns: 'common' })
+            : t('action.claim', { ns: 'common' })}
         </DnsImportActionButton>
       </DnsImportActionsContainer>
     </DnsImportCard>

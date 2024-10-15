@@ -187,7 +187,6 @@ const BurnFusesContent = ({
   returnObject,
 }: PropsWithReturnArray | PropsWithReturnObject) => {
   const { t } = useTranslation('profile')
-  const { t: tc } = useTranslation('common')
   const [_fuseData, setFuseData] = useState<CurrentChildFuses>(childFuseObj)
   const [fuseSelected, setFuseSelected] = useState<CurrentChildFuses>(childFuseObj)
 
@@ -256,7 +255,7 @@ const BurnFusesContent = ({
       <Spacer $height="6" />
       <ButtonsContainer>
         <Button colorStyle="accentSecondary" onClick={onDismiss}>
-          {tc('action.cancel')}
+          {t('action.cancel', { ns: 'common' })}
         </Button>
         <Button
           disabled={canContinue(_fuseData, fuseSelected, canUnsetFuse)}
@@ -264,7 +263,9 @@ const BurnFusesContent = ({
           color="red"
           data-testid="burn-form-continue"
         >
-          {canUnsetFuse ? tc('action.confirm') : tc('action.burnSelected')}
+          {canUnsetFuse
+            ? t('action.confirm', { ns: 'common' })
+            : t('action.burnSelected', { ns: 'common' })}
         </Button>
       </ButtonsContainer>
     </FusesContainer>

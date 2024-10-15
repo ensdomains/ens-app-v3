@@ -1,6 +1,7 @@
 import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import { GetNamesForAddressParameters } from '@ensdomains/ensjs/subgraph'
 import { Input, MagnifyingGlassSimpleSVG, mq, Select } from '@ensdomains/thorin'
@@ -138,6 +139,14 @@ type Props = {
   onSortDirectionChange?: (direction: SortDirection) => void
 }
 
+const getSortTypeTranslationKey = (sort: SortType): string =>
+  match(sort)
+    .with('name', () => 'sortTypes.name')
+    .with('createdAt', () => 'sortTypes.createdAt')
+    .with('expiryDate', () => 'sortTypes.expiryDate')
+    .with('labelName', () => 'sortTypes.labelName')
+    .otherwise(() => '')
+
 export const NameTableHeader = ({
   sortType,
   sortTypeOptionValues,
@@ -157,7 +166,7 @@ export const NameTableHeader = ({
   const inSelectMode = selectable && mode === 'select'
 
   const sortTypeOptions = sortTypeOptionValues.map((value) => ({
-    label: t(`sortTypes.${value}`),
+    label: t(getSortTypeTranslationKey(value)),
     value,
   }))
 

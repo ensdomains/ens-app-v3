@@ -6,7 +6,6 @@ import { Button } from '@ensdomains/thorin'
 import { SectionContainer } from './Section'
 
 export const WalletSection = () => {
-  const { t: tc } = useTranslation()
   const { t } = useTranslation('settings')
 
   const { disconnect } = useDisconnect()
@@ -21,7 +20,7 @@ export const WalletSection = () => {
           colorStyle="redSecondary"
           onClick={() => disconnect()}
         >
-          {tc('wallet.disconnect')}
+          {t('wallet.disconnect', { ns: 'common' })}
         </Button>
       }
       fill

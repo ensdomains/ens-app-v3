@@ -104,7 +104,9 @@ export const DateSelection = ({
           data-testid="date-selection"
           onClick={() => toggleYearPickView()}
         >
-          {t(`calendar.pick_by_${yearPickView === 'date' ? 'years' : 'date'}`, { ns: 'common' })}
+          {t(yearPickView === 'date' ? 'calendar.pick_by_years' : 'calendar.pick_by_date', {
+            ns: 'common',
+          })}
         </YearsViewSwitch>
       </Typography>
     </Container>
