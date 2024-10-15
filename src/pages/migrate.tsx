@@ -133,6 +133,14 @@ const GridOneToThree = styled.div(
   `,
 )
 
+const Footer = styled.footer(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['2']};
+  `,
+)
+
 export default function Page() {
   const { t } = useTranslation('migrate')
 
@@ -198,6 +206,11 @@ export default function Page() {
           </GridOneToThree>
         ) : null}
       </Main>
+      <Footer>
+        <Typography asProp="h3" fontVariant="headingThree">
+          {t('footer.title')}
+        </Typography>
+      </Footer>
     </>
   )
 }

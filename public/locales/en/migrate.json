@@ -32,5 +32,20 @@
       "title": "Improved Multi-Chain",
       "text": "Layer 2 enables seamless .eth name use across blockchains with trustless connections."
     }
+  },
+  "footer": {
+    "title": "Got questions?",
+    "learn": {
+      "title": "Learn",
+      "faq": "ENSv2 FAQs",
+      "plan": "ENSv2 Project Plan",
+      "base": "Knowledge base"
+    },
+    "support": {
+      "title": "Support",
+      "ticket": "Open a ticket",
+      "twitter": "X (Twitter)",
+      "dao": "DAO forums"
+    }
   }
 }
