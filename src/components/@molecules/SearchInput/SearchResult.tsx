@@ -191,27 +191,56 @@ const PremiumTag = styled(StyledTag)(
   `,
 )
 
+// const StatusTag = ({ status }: { status: RegistrationStatus }) => {
+//   const { t } = useTranslation('common')
+//   switch (status) {
+//     case 'owned':
+//     case 'imported':
+//     case 'registered':
+//       return <StyledTag>{t(`search.status.${status}`)}</StyledTag>
+//     case 'gracePeriod':
+//       return <GracePeriodTag>{t(`search.status.${status}`)}</GracePeriodTag>
+//     case 'premium':
+//       return <PremiumTag>{t(`search.status.${status}`)}</PremiumTag>
+//     case 'available':
+//       return <StyledTag colorStyle="greenSecondary">{t(`search.status.${status}`)}</StyledTag>
+//     case 'notOwned':
+//     case 'offChain':
+//     case 'notImported':
+//       return <StyledTag colorStyle="blueSecondary">{t(`search.status.${status}`)}</StyledTag>
+//     case 'short':
+//     default:
+//       return <StyledTag colorStyle="redSecondary">{t(`search.status.${status}`)}</StyledTag>
+//   }
+// }
+
+const getStatusTranslationKey = (status: RegistrationStatus): string =>
+  match(status)
+    .with('owned', () => 'search.status.owned')
+    .with('imported', () => 'search.status.imported')
+    .with('registered', () => 'search.status.registered')
+    .with('gracePeriod', () => 'search.status.gracePeriod')
+    .with('premium', () => 'search.status.premium')
+    .with('available', () => 'search.status.available')
+    .with('notOwned', () => 'search.status.notOwned')
+    .with('offChain', () => 'search.status.offChain')
+    .with('notImported', () => 'search.status.notImported')
+    .with('short', () => 'search.status.short')
+    .otherwise(() => 'search.status.short')
+
 const StatusTag = ({ status }: { status: RegistrationStatus }) => {
   const { t } = useTranslation('common')
-  switch (status) {
-    case 'owned':
-    case 'imported':
-    case 'registered':
-      return <StyledTag>{t(`search.status.${status}`)}</StyledTag>
-    case 'gracePeriod':
-      return <GracePeriodTag>{t(`search.status.${status}`)}</GracePeriodTag>
-    case 'premium':
-      return <PremiumTag>{t(`search.status.${status}`)}</PremiumTag>
-    case 'available':
-      return <StyledTag colorStyle="greenSecondary">{t(`search.status.${status}`)}</StyledTag>
-    case 'notOwned':
-    case 'offChain':
-    case 'notImported':
-      return <StyledTag colorStyle="blueSecondary">{t(`search.status.${status}`)}</StyledTag>
-    case 'short':
-    default:
-      return <StyledTag colorStyle="redSecondary">{t(`search.status.${status}`)}</StyledTag>
-  }
+  const translationKey = getStatusTranslationKey(status)
+
+  return match(status)
+    .with('owned', 'imported', 'registered', () => <StyledTag>{t(translationKey)}</StyledTag>)
+    .with('gracePeriod', () => <GracePeriodTag>{t(translationKey)}</GracePeriodTag>)
+    .with('premium', () => <PremiumTag>{t(translationKey)}</PremiumTag>)
+    .with('available', () => <StyledTag colorStyle="greenSecondary">{t(translationKey)}</StyledTag>)
+    .with('notOwned', 'offChain', 'notImported', () => (
+      <StyledTag colorStyle="blueSecondary">{t(translationKey)}</StyledTag>
+    ))
+    .otherwise(() => <StyledTag colorStyle="redSecondary">{t(translationKey)}</StyledTag>)
 }
 
 const TextWrapper = styled.div(
