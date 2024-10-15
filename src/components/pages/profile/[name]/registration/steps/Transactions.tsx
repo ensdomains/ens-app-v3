@@ -15,11 +15,11 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
 import { useSimulateRegistration } from '@app/hooks/registration/useSimulateRegistration'
 import { useDurationCountdown } from '@app/hooks/time/useDurationCountdown'
+import { useEventTracker } from '@app/hooks/useEventTracker'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { trackEvent } from '@app/utils/analytics'
 import { ONE_DAY } from '@app/utils/time'
 
 import { RegistrationReducerDataItem } from '../types'
@@ -189,6 +189,7 @@ type Props = {
 
 const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const { t } = useTranslation('register')
+  const { trackEvent } = useEventTracker()
 
   const { address } = useAccount()
   const keySuffix = `${name}-${address}`
@@ -224,7 +225,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const chainName = useChainName()
   useEffect(() => {
     if (canRegisterOverride && commitTx?.stage !== 'complete') {
-      trackEvent('register-override-triggered', chainName)
+      trackEvent({ eventName: 'register_override_triggered' })
       if (getSelectedKey() === commitKey) stopCurrentFlow()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -281,6 +282,8 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       autoClose: true,
       resumeLink: `/register/${name}`,
     })
+
+    trackEvent({ eventName: 'register_started' })
   }
 
   const showCommitTransaction = () => {
@@ -394,7 +397,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
           />
         </CountDownInner>
       </CountdownContainer>
-      <CenteredTypography>
+      <CenteredTypography data-testid="transactions-subheading">
         {match(transactionState)
           .with('registrationComplete', () => '')
           .with('registrationOverriden', () => (
