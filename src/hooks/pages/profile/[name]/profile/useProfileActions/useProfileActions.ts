@@ -315,16 +315,6 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
             { name, label, parent },
             { disableBackgroundClick: true },
           )
-
-          // createTransactionFlow(`reclaim-${name}`, {
-          //   transactions: [
-          //     createTransactionItem('createSubname', {
-          //       contract: 'nameWrapper',
-          //       label,
-          //       parent,
-          //     }),
-          //   ],
-          // })
         },
       })
     }
