@@ -47,11 +47,6 @@ describe('getOwnerQueryFn', () => {
     mockCall.mockResolvedValue({ data: '0x' })
     mockClient.request.mockImplementation(mockCall)
 
-    mockGetOwner.mockResolvedValue({
-      encode: () => ({ to: '0x1234', data: '0xabcd' }),
-      decode: () => ({ owner: '0x5678' }),
-    })
-
     mockGetSupportedChainContractAddress.mockReturnValue(
       '0x9876543210987654321098765432109876543210',
     )
