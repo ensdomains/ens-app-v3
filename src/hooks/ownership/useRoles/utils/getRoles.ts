@@ -3,6 +3,15 @@ import { Address } from 'viem'
 
 import type { NameType } from '@app/hooks/nameType/getNameType'
 
+/*
+  Roles relate to the type of ownership
+  - owner: The ultimate owner of the name 
+  - manager: Able to manager various details of the name, but is not the ultimate owner
+  - eth-record: Mostly for off-chain names, assume the owner is the eth record
+  - parent-owner: The owner of the parent name
+  - dns-owner: The owner of the DNS name
+*/
+
 export const getRoles = ({
   nameType,
   registrant,
