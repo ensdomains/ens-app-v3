@@ -23,6 +23,7 @@ import {
 } from '@ensdomains/thorin'
 
 import { Carousel } from '@app/components/pages/migrate/Carousel'
+import { MigrationNamesList } from '@app/components/pages/migrate/MigrationNamesList'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 
 import DAOSVG from '../assets/DAO.svg'
@@ -36,15 +37,15 @@ const Main = styled.main(
   `,
 )
 
-const Header = styled.header(
-  ({ theme }) => css`
+const Header = styled.header<{ $isLanding: boolean }>(
+  ({ theme, $isLanding }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: ${theme.space['4']};
     gap: ${theme.space['4']};
-    min-height: 530px;
+    min-height: ${$isLanding ? '530px' : 'unset'};
   `,
 )
 
@@ -241,16 +242,10 @@ export default function Page() {
 
   const { openConnectModal } = useConnectModal()
 
-  const title = isConnected ? t('title.connected') : t('title.unconnected')
-
   const [currentTab, setTab] = useQueryParameterState<Tab>('tab', 'ensv2')
 
   return (
     <>
-      <Head>
-        <title>{title}</title>
-      </Head>
-
       <Main>
         <TopNav>
           <PartnershipAnnouncement>
@@ -273,14 +268,29 @@ export default function Page() {
             ))}
           </TabManager>
         </TopNav>
-        <Header>
-          <Heading>{title}</Heading>
-          <Caption fontVariant="bodyLarge">
-            {match(currentTab)
-              .with('ensv2', () => t('caption.ensv2'))
-              .with('migrations', () => t('caption.migration'))
-              .otherwise(() => t('caption.ensv2'))}
-          </Caption>
+        <Header $isLanding={currentTab === 'ensv2'}>
+          {match(currentTab)
+            .with('ensv2', () => (
+              <>
+                <Head>
+                  <title>{t('title.landing')}</title>
+                </Head>
+                <Heading>{t('title.landing')}</Heading>
+                <Caption fontVariant="bodyLarge">{t('caption.ensv2')}</Caption>
+              </>
+            ))
+            .with('migrations', () => (
+              <>
+                <Head>
+                  <title>{t('title.migration')}</title>
+                </Head>
+                <Heading>{t('title.migration')}</Heading>
+                <Caption fontVariant="bodyLarge">{t('caption.migration')}</Caption>
+              </>
+            ))
+            .otherwise(() => (
+              <div>bloop</div>
+            ))}
           <ButtonContainer>
             <Button
               onClick={() => {
@@ -375,6 +385,7 @@ export default function Page() {
           ))
           .with('migrations', () => (
             <>
+              {isConnected ? <MigrationNamesList /> : null}
               <Section>
                 <Typography asProp="h3" fontVariant="headingThree">
                   {t('approval-benefits.title')}
