@@ -596,3 +596,93 @@ test('should be able to extend a name in grace period by 1 day', async ({
     await expect(comparativeTimestamp).toEqual(newTimestamp)
   })
 })
+
+test('should be able to extend a single wrapped name using deep link', async ({
+  page,
+  login,
+  makePageObject,
+  makeName,
+}) => {
+  const name = await makeName({
+    label: 'legacy',
+    type: 'wrapped',
+    owner: 'user2',
+  })
+
+  const profilePage = makePageObject('ProfilePage')
+  const transactionModal = makePageObject('TransactionModal')
+
+  const homePage = makePageObject('HomePage')
+  await homePage.goto()
+  await login.connect()
+  await page.goto(`/${name}?renew`)
+
+  const timestamp = await profilePage.getExpiryTimestamp()
+
+  const extendNamesModal = makePageObject('ExtendNamesModal')
+  await test.step('should show warning message', async () => {
+    await expect(page.getByText(`You do not own ${name}`)).toBeVisible()
+    await page.getByRole('button', { name: 'I understand' }).click()
+  })
+
+  await test.step('should show the correct price data', async () => {
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
+    await expect(page.getByText('1 year extension', { exact: true })).toBeVisible({
+      timeout: 30000,
+    })
+  })
+
+  await test.step('should work correctly with plus minus control', async () => {
+    await expect(extendNamesModal.getCounterMinusButton).toBeDisabled()
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
+    await extendNamesModal.getCounterPlusButton.click()
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
+    await expect(page.getByText('2 years extension', { exact: true })).toBeVisible({
+      timeout: 30000,
+    })
+  })
+
+  await test.step('should show correct fiat values', async () => {
+    await extendNamesModal.getCurrencyToggle.click({ force: true })
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.01')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.14')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.15')
+    await extendNamesModal.getCounterMinusButton.click()
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.00')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.14')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.14')
+  })
+
+  await test.step('should extend', async () => {
+    await extendNamesModal.getExtendButton.click()
+    await transactionModal.autoComplete()
+    const newTimestamp = await profilePage.getExpiryTimestamp()
+    expect(newTimestamp).toEqual(timestamp + 31536000000)
+  })
+})
+
+test('should not be able to extend a name which is not registered', async ({
+  page,
+  makePageObject,
+  login,
+}) => {
+  const name = 'this-name-does-not-exist.eth'
+  const homePage = makePageObject('HomePage')
+  await homePage.goto()
+  await login.connect()
+  await page.goto(`/${name}?renew`)
+  await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+})
+
+test('renew deep link should redirect to registration when not logged in', async ({
+  page,
+  makePageObject,
+}) => {
+  const name = 'this-name-does-not-exist.eth'
+  const homePage = makePageObject('HomePage')
+  await homePage.goto()
+  await page.goto(`/${name}?renew`)
+  await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+})
