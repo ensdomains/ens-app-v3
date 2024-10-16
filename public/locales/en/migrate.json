@@ -4,13 +4,13 @@
     "unconnected": "Upgrade to ENSv2 Seamlessly"
   },
   "caption": {
-    "unconnected": "Approve your ENS names now and enjoy the benefits as soon as ENSv2 launches.",
-    "connected": "Approve your ENS names now and enjoy the benefits as soon as ENSv2 launches."
+    "ensv2": "Approve your ENS names for ENSv2 now and enjoy automatic migration, paid for by ENS DAO.",
+    "migration": "Approve your ENS names now and enjoy the benefits as soon as ENSv2 launches."
   },
   "cta": {
     "learn-more": "Learn more",
     "unconnected": "Connect to Approve",
-    "connected": "Approve your names"
+    "approve": "Approve your names"
   },
   "partnership": {
     "text": "We’re partnering with _______!",
@@ -42,7 +42,7 @@
     "title": "Get Started",
     "upgrade": {
       "title": "Upgrade to ENSv2 Seamlessly",
-      "caption": "approved names will migrate automatically for a hassle-free transition.",
+      "caption": "Approved names will migrate automatically for a hassle-free transition.",
       "button": "Approve your names"
     }
   },

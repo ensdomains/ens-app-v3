@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 import Head from 'next/head'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -238,6 +239,8 @@ export default function Page() {
 
   const { isConnected } = useAccount()
 
+  const { openConnectModal } = useConnectModal()
+
   const title = isConnected ? t('title.connected') : t('title.unconnected')
 
   const [currentTab, setTab] = useQueryParameterState<Tab>('tab', 'ensv2')
@@ -273,11 +276,23 @@ export default function Page() {
         <Header>
           <Heading>{title}</Heading>
           <Caption fontVariant="bodyLarge">
-            {isConnected ? t('caption.connected') : t('caption.unconnected')}
+            {match(currentTab)
+              .with('ensv2', () => t('caption.ensv2'))
+              .with('migrations', () => t('caption.migration'))
+              .otherwise(() => t('caption.ensv2'))}
           </Caption>
           <ButtonContainer>
-            <Button colorStyle="greenPrimary">
-              {isConnected ? t('cta.connected') : t('cta.unconnected')}
+            <Button
+              onClick={() => {
+                if (isConnected) {
+                  setTab('extension')
+                } else {
+                  openConnectModal?.()
+                }
+              }}
+              colorStyle="greenPrimary"
+            >
+              {isConnected ? t('cta.approve') : t('cta.unconnected')}
             </Button>
             <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
           </ButtonContainer>
