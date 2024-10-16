@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { CheckCircleSVG, DisabledSVG, PlusCircleSVG } from '@ensdomains/thorin'
+import { CheckCircleSVG, Colors, DisabledSVG, PlusCircleSVG } from '@ensdomains/thorin'
 
 const tabs = ['eligible', 'ineligible', 'approved'] as const
 
@@ -10,6 +10,24 @@ const icons: Record<Tab, any> = {
   eligible: <PlusCircleSVG />,
   ineligible: <DisabledSVG />,
   approved: <CheckCircleSVG />,
+}
+
+const colors: Record<Tab, { fg: Colors; bg: Colors; hover: Colors }> = {
+  eligible: {
+    fg: 'bluePrimary',
+    bg: 'blueSurface',
+    hover: 'blueLight',
+  },
+  ineligible: {
+    fg: 'redPrimary',
+    bg: 'redSurface',
+    hover: 'redLight',
+  },
+  approved: {
+    fg: 'greenPrimary',
+    bg: 'greenSurface',
+    hover: 'greenLight',
+  },
 }
 
 type Tab = (typeof tabs)[number]
@@ -34,14 +52,14 @@ const TabsContainer = styled.div(
   `,
 )
 
-const TabButton = styled.button<{ $isActive?: boolean }>(
-  ({ theme, $isActive }) => css`
+const TabButton = styled.button<{ $isActive?: boolean; tab: Tab }>(
+  ({ theme, $isActive, tab }) => css`
     width: ${theme.space.full};
     padding: 0 ${theme.space['4']};
     height: ${theme.space['12']};
     border-radius: ${theme.radii.large};
-    color: ${$isActive ? theme.colors.blueDim : theme.colors.textTertiary};
-    background-color: ${$isActive ? theme.colors.blueSurface : theme.colors.background};
+    color: ${$isActive ? theme.colors[colors[tab].fg] : theme.colors.textTertiary};
+    background-color: ${$isActive ? theme.colors[colors[tab].bg] : theme.colors.background};
     cursor: pointer;
     display: flex;
     flex-direction: row;
@@ -49,6 +67,14 @@ const TabButton = styled.button<{ $isActive?: boolean }>(
     justify-content: center;
     font-weight: ${theme.fontWeights.bold};
     gap: ${theme.space['2']};
+
+    transition-property: background-color;
+    transition-duration: ${theme.transitionDuration['150']};
+    transition-timing-function: ${theme.transitionTimingFunction.inOut};
+
+    &:hover {
+      background-color: ${$isActive ? theme.colors[colors[tab].hover] : 'auto'};
+    }
   `,
 )
 
@@ -61,7 +87,7 @@ export const MigrationNamesList = () => {
     <Container>
       <TabsContainer>
         {tabs.map((tab) => (
-          <TabButton $isActive={tab === activeTab} key={tab} onClick={() => setTab(tab)}>
+          <TabButton tab={tab} $isActive={tab === activeTab} key={tab} onClick={() => setTab(tab)}>
             {icons[tab]} {t(`migration-list.${tab}`)}
           </TabButton>
         ))}
