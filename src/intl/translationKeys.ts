@@ -125,7 +125,7 @@ export const getRoleTranslationKeys: GetTranslationKeys<
     .otherwise(() => ({ title: '', description: '' }))
 
 export const getStatusTranslationKeys: GetTranslationKeys<
-  'pending' | 'confirmed' | 'failed' | 'searching',
+  'pending' | 'confirmed' | 'failed' | 'searching' | 'repriced',
   {
     regular: string
     notifyTitle: string
