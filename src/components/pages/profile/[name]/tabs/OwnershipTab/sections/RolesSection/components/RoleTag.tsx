@@ -93,7 +93,7 @@ export const RoleTag = ({
         <TooltipContent>
           <QuestionCircleSVG />
           <Typography color="text" fontVariant="small">
-            {t(getRoleTranslationKey(role), tOptions)}
+            {t(getRoleTranslationKey(_role), tOptions)}
           </Typography>
           {link && (
             <Link href={link} target="_blank" rel="noreferrer noopener">

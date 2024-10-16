@@ -216,9 +216,9 @@ export const TransactionSection = () => {
                           <Spinner data-testid="pending-spinner" color="accent" />
                         )}
                         <TransactionInfoContainer>
-                          <Typography weight="bold">{`${
-                            (t(`transaction.description.${action}`), { ns: 'common' })
-                          }${getTransactionExtraInfo(action, key)}`}</Typography>
+                          <Typography weight="bold">{`${t(`transaction.description.${action}`, {
+                            ns: 'common',
+                          })}${getTransactionExtraInfo(action, key)}`}</Typography>
                           <StyledOutlink
                             $error={status === 'failed'}
                             href={makeEtherscanLink(hash, chainName)}
