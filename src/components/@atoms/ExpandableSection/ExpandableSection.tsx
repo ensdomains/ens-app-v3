@@ -86,6 +86,15 @@ type Props = {
   title: string
 }
 
+export const stateChangeHandler =
+  (setHeight: React.Dispatch<React.SetStateAction<number>>, ref: React.RefObject<HTMLDivElement>) =>
+  ({ current: newState }: { current: { status: TransitionStatus } }) => {
+    if (newState.status === 'preEnter' || newState.status === 'preExit') {
+      const height = ref.current?.getBoundingClientRect().height || 0
+      setHeight(height)
+    }
+  }
+
 export const ExpandableSection = ({ title, children }: PropsWithChildren<Props>) => {
   const ref = useRef<HTMLDivElement>(null)
 
@@ -94,12 +103,7 @@ export const ExpandableSection = ({ title, children }: PropsWithChildren<Props>)
     timeout: 300,
     preEnter: true,
     preExit: true,
-    onStateChange: ({ current: newState }) => {
-      if (newState.status === 'preEnter' || newState.status === 'preExit') {
-        const _heigth = ref.current?.getBoundingClientRect().height || 0
-        setHeight(_heigth)
-      }
-    },
+    onStateChange: stateChangeHandler(setHeight, ref),
   })
 
   const open = ['entered', 'entering', 'preEnter'].includes(state.status)
