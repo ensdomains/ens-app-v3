@@ -78,6 +78,34 @@ const TabButton = styled.button<{ $isActive?: boolean; tab: Tab }>(
   `,
 )
 
+const NamesGrid = styled.div(
+  ({ theme }) => css`
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: ${theme.space['2']};
+  `,
+)
+
+const NameCard = styled.div(
+  ({ theme }) => css`
+    background: ${theme.colors.background};
+    border-radius: ${theme.radii['2xLarge']};
+    padding: ${theme.space['8']};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    & > span:nth-child(1) {
+      font-weight: ${theme.fontWeights.bold};
+    }
+    & > span:nth-child(2) {
+      color: ${theme.colors.textTertiary};
+      font-size: ${theme.fontSizes.small};
+    }
+  `,
+)
+
 export const MigrationNamesList = () => {
   const [activeTab, setTab] = useState<Tab>('eligible')
 
@@ -92,6 +120,24 @@ export const MigrationNamesList = () => {
           </TabButton>
         ))}
       </TabsContainer>
+      <NamesGrid>
+        <NameCard>
+          <span>ens.eth</span>
+          <span>Expires in 1 day</span>
+        </NameCard>
+        <NameCard>
+          <span>ens.eth</span>
+          <span>Expires in 1 day</span>
+        </NameCard>
+        <NameCard>
+          <span>ens.eth</span>
+          <span>Expires in 1 day</span>
+        </NameCard>
+        <NameCard>
+          <span>ens.eth</span>
+          <span>Expires in 1 day</span>
+        </NameCard>
+      </NamesGrid>
     </Container>
   )
 }

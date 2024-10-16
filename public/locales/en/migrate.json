@@ -10,7 +10,8 @@
   "cta": {
     "learn-more": "Learn more",
     "unconnected": "Connect to Approve",
-    "approve": "Approve your names"
+    "approve": "Approve your names",
+    "begin": "Begin approval"
   },
   "partnership": {
     "text": "We’re partnering with _______!",

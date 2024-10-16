@@ -292,18 +292,39 @@ export default function Page() {
               <div>bloop</div>
             ))}
           <ButtonContainer>
-            <Button
-              onClick={() => {
-                if (isConnected) {
-                  setTab('extension')
-                } else {
-                  openConnectModal?.()
-                }
-              }}
-              colorStyle="greenPrimary"
-            >
-              {isConnected ? t('cta.approve') : t('cta.unconnected')}
-            </Button>
+            {match(currentTab)
+              .with('ensv2', () => (
+                <Button
+                  onClick={() => {
+                    if (isConnected) {
+                      setTab('migrations')
+                    } else {
+                      openConnectModal?.()
+                    }
+                  }}
+                  colorStyle="greenPrimary"
+                >
+                  {isConnected ? t('cta.approve') : t('cta.unconnected')}
+                </Button>
+              ))
+              .with('migrations', () => (
+                <Button
+                  onClick={() => {
+                    if (isConnected) {
+                      // nothing for now
+                    } else {
+                      openConnectModal?.()
+                    }
+                  }}
+                  colorStyle="greenPrimary"
+                >
+                  {isConnected ? t('cta.begin') : t('cta.unconnected')}
+                </Button>
+              ))
+              .otherwise(() => (
+                <div>bloop</div>
+              ))}
+
             <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
           </ButtonContainer>
         </Header>
