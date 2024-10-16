@@ -30,26 +30,71 @@
           }
         },
         "general": {
-          "label": "General"
+          "label": "General",
+          "name": {
+            "label": "Nickname",
+            "placeholder": "John Smith"
+          },
+          "url": {
+            "label": "Website",
+            "placeholder": "https://ens.domains"
+          },
+          "location": {
+            "label": "Location",
+            "placeholder": "Metaverse"
+          },
+          "description": {
+            "label": "Short Bio",
+            "placeholder": "I'm a yield farmer from rural Tennessee."
+          }
         },
         "accounts": {
           "label": "Accounts",
           "addAccount": "Add account",
-          "noOptions": "No account options available"
+          "noOptions": "No account options available",
+          "placeholder": {
+            "default": "Add username here",
+            "com.twitter": "e.g. nicksdjohnson",
+            "com.github": "e.g. arachnid",
+            "com.discord": "e.g. nickjohnson",
+            "org.telegram": "e.g. nicksdjohnson",
+            "email": "e.g. hello@example.com"
+          }
         },
         "address": {
           "label": "Address",
           "addAddress": "Add address",
-          "noOptions": "No address options available"
+          "noOptions": "No address options available",
+          "placeholder": {
+            "default": "Add address here",
+            "eth": "0xD9hbQK...",
+            "bnb": "0xD9hbQK...",
+            "btc": "3FZbgi29...",
+            "ltc": "3FZbgi29...",
+            "sol": "D4kA7VzHnmV...",
+            "dot": "1D4kA7VxH...",
+            "doge": "DFabcd12..."
+          }
         },
         "contentHash": {
           "label": "Website",
-          "addContentHash": "Add decentralized website"
+          "addContentHash": "Add decentralized website",
+          "placeholder": {
+            "default": "Add url here",
+            "ipfs": "ipfs://...",
+            "skynet": "sia://...",
+            "arweave": "ar://...",
+            "swarm": "bzz://...",
+            "onion": "onion3://..."
+          }
         },
         "other": {
           "label": "Other",
           "addRecord": "Add record",
-          "createRecord": "Type a record name..."
+          "createRecord": "Type a record name...",
+          "placeholder": {
+            "default": "Add a value here..."
+          }
         }
       },
       "warningOverlay": {
@@ -61,7 +106,8 @@
         },
         "invalidResolver": {
           "title": "Unauthorised resolver",
-          "subtitle": "You do not have permission to set records for this resolver. You will need to update to the latest resolver to edit your profile."
+          "subtitle": "You do not have permission to set records for this resolver. You will need to update to the latest resolver to edit your profile.",
+          "action": "Update resolver"
         },
         "migrateProfileSelector": {
           "title": "Profile",
@@ -84,7 +130,8 @@
         },
         "noResolver": {
           "title": "No resolver set",
-          "subtitle": "A resolver needs to be set before editing your profile."
+          "subtitle": "A resolver needs to be set before editing your profile.",
+          "action": "Update"
         },
         "resetProfile": {
           "title": "Reset profile",
@@ -121,6 +168,9 @@
             "title": "Keep current profile",
             "subtitle": "Unselecting this will reset your profile."
           }
+        },
+        "links": {
+          "learnMoreResolvers": "Learn more about resolvers"
         }
       },
       "intro": {
@@ -143,11 +193,13 @@
       "latestLabel": "Use latest resolver",
       "etherscan": "Etherscan",
       "latestMessage": "You are on the latest resolver",
-      "customLabel": "Custom resolver"
+      "customLabel": "Custom resolver",
+      "customPlaceholder": "Enter custom resolver address"
     },
     "editRoles": {
       "views": {
         "main": {
+          "title": "Edit roles",
           "noneSet": "None set"
         },
         "editRole": {
@@ -171,10 +223,16 @@
       },
       "invoice": {
         "extension": "{{time}} extension",
-        "transaction": "Transaction fee"
+        "transaction": "Transaction fee",
+        "total": "Estimated total"
       },
       "bannerMsg": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
       "gasLimitError": "Insufficient funds"
+    },
+    "transferProfile": {
+      "title": "Transfer Profile",
+      "message1": "Before upgrading, you can transfer your current profile if you'd like, otherwise it will be reset when you upgrade.",
+      "message2": "Would you like to transfer your current profile?"
     },
     "revokePermissions": {
       "views": {
@@ -207,6 +265,14 @@
             "max": "Date must be less than {{date}}"
           }
         },
+        "revokeAdditional": {
+          "title": "Revoke permissions",
+          "subtitle": "Would you like to revoke permissions on this name before giving up ownership? This can only be done now.",
+          "action": {
+            "title": "Revoke additional permissions",
+            "description": "Unless you are also the manager, you will not be able to revoke additional permissions after this."
+          }
+        },
         "revokeUnwrap": {
           "title": "Revoke permissions",
           "subtitle": "You are required to revoke this permission before others can be revoked. This prevents permissions from being removed.",
@@ -216,6 +282,7 @@
         },
         "revokePermissions": {
           "title": "Revoke permissions",
+          "unwrapSubtitle": "Select this to enable the others",
           "fuses": {
             "CAN_EXTEND_EXPIRY": "Grant permission to: Extend expiry.",
             "CANNOT_UNWRAP": "Revoke permission to: Unwrap this name",
@@ -346,11 +413,16 @@
   "transaction": {
     "extendNames": {
       "actionValue": "Extend registration",
-      "costValue": "{{value}} + fees"
+      "costValue": "{{value}} + fees",
+      "warning": "Extending this name will not give you ownership of it"
+    },
+    "deleteSubname": {
+      "warning": "Hello out there"
     }
   },
   "intro": {
     "migrateAndUpdateResolver": {
+      "title": "Action Required",
       "heading": "The edits you want to save to your profile require that you upgrade your resolver.",
       "link": "Learn more about resolver upgrades",
       "warning": "Note that if you cancel this at any point your changes will not be saved."
@@ -377,5 +449,8 @@
       "title": "Delete Subname",
       "description": "Deleting this subname requires multiple transactions"
     }
+  },
+  "errors": {
+    "duplicateKey": "{{value}} is a duplicate key"
   }
 }

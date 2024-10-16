@@ -10,6 +10,7 @@
   },
   "status": {
     "checking": "Checking...",
+    "error": "An error occurred while checking",
     "secondsAgo": "Last checked seconds ago",
     "aWhileAgo": "Last checked a while ago",
     "minutesAgo_one": "Last checked {{count}} minute ago",

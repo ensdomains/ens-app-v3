@@ -31,6 +31,11 @@
     "profile": {
       "title": "Create your profile",
       "title2": "Edit your profile",
+      "default": "Default",
+      "advanced": "Advanced",
+      "permissions": "Permissions",
+      "resolver": "Resolver",
+      "visibilityMessage": "Your profile information will be stored on the blockchain. Anything you add will be publicly visible.",
       "addProfile": "Add profile fields",
       "addMore": "Add more to profile",
       "options": {
@@ -166,6 +171,7 @@
       "notEnoughEth": "Not enough ETH in wallet",
       "creditOrDebit": "Credit or debit card",
       "additionalFee": "Additional processing fee",
+      "pendingMoonpayTransaction": "Your MoonPay transaction is processing. This may take up to two minutes. You can check your progress from the confirmation email you recieved.",
       "failedMoonpayTransaction": "Your MoonPay transaction has failed. Please try again or choose the 'Ethereum' payment method.",
       "ethereum": "Ethereum",
       "processing": "Processing",

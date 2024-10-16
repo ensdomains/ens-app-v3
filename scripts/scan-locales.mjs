@@ -65,7 +65,12 @@ function findUnusedKeys() {
   unusedKeys.forEach((key) => {
     console.log(key)
   })
-  console.log(`PROBABLY ${unusedKeys.length} UNSED KEYS:`)
+
+  if (unusedKeys.length) {
+    console.log(`PROBABLY ${unusedKeys.length} UNSED KEYS:`)
+  } else {
+    console.log('NO UNSED KEYS')
+  }
 }
 
 findUnusedKeys()

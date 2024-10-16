@@ -4,12 +4,15 @@
     "description": "{{name}}'s profile on the Ethereum Name Service"
   },
   "title": "Profile",
+  "yourWallet": "Your wallet",
   "yourProfile": "Your profile",
   "accounts": "Accounts",
   "addresses": "Addresses",
   "otherRecords": "Other Records",
   "verifications": "Verifications",
+  "editProfile": "Edit Profile",
   "ownership": "Ownership",
+  "viewDetails": "View Details",
   "banner": {
     "available": {
       "title": "{{name}} is available",
@@ -22,10 +25,14 @@
       "actions": {
         "setAsPrimaryName": {
           "label": "Set as primary name",
+          "title": "Set your primary name",
           "description": "To set your primary name to this name, the ETH address must match this address."
         },
         "deleteSubname": {
           "label": "Delete subname"
+        },
+        "extend": {
+          "label": "Extend name"
         },
         "editProfile": {
           "label": "Edit profile"
@@ -110,10 +117,12 @@
       "revokedLabel": "Revoked {{date}}",
       "grantedLabel": "Granted {{date}}",
       "role": {
+        "manager": "manager",
         "owner": "owner",
         "parent": "parent"
       },
       "ownership": {
+        "title": "Ownership Permissions",
         "parentCanControl": {
           "label": "This name can be controlled by its parent (<parentLink>{{parent}}</parentLink>)",
           "list": {
@@ -152,8 +161,13 @@
         "ownerCannotChange": {
           "label": "The owner of this name cannot change permissions",
           "list": {
-            "title": "The owner cannot:"
+            "title": "The owner cannot:",
+            "item1": "Revoke permissions",
+            "item2": "Change or burn custom fuses"
           }
+        },
+        "unwrapWarning": {
+          "message": "Unwrap permissions must be revoked on the parent (<strong>{{parent}}</strong>) before giving up parent control.<br> <parentLink>Go to parent permissions</parentLink>"
         },
         "action": {
           "giveUpControl": "Give up parent control",
@@ -164,11 +178,13 @@
         "permissions": {
           "canExtendExpiry": {
             "label": "Can extend expiry",
-            "description": "This names permission expiry can be extended by the {{managerOrOwner}}."
+            "description": "This names permission expiry can be extended by the {{managerOrOwner}}.",
+            "description_date": "This names permission expiry ({{date}}) can be extended by the {{managerOrOwner}}."
           },
           "cannotExtendExpiry": {
             "label": "Cannot extend expiry",
-            "description": "This names permission expiry cannot be extended by the manager."
+            "description": "This names permission expiry cannot be extended by the manager.",
+            "description_date": "This names permission expiry ({{date}}) cannot be extended by the manager."
           }
         },
         "manager": "manager",
@@ -178,6 +194,11 @@
         }
       },
       "nameChangePermissions": {
+        "title": "Name Change Permissions",
+        "subtitle": {
+          "parent-can-change": "The parent of this name (<parentLink>{{parent}}</parentLink>) can change settings on this name.",
+          "owner-can-change": "The owner of this name can change settings on this name."
+        },
         "permissions": {
           "canUnwrap": {
             "label": "Can unwrap this name",
@@ -233,22 +254,39 @@
         }
       }
     },
+    "fuses": {
+      "name": "Fuses"
+    },
     "more": {
       "name": "More",
       "resolver": {
-        "label": "Resolver"
+        "label": "Resolver",
+        "custom": "Custom",
+        "latest": "Latest",
+        "outdated": "Outdated",
+        "wildcard": "Wildcard",
+        "version": "Version",
+        "etherscan": "Etherscan"
       },
       "fuses": {
+        "label": "Fuses",
         "info": "You must burn 'Can unwrap' in order to burn other fuses",
+        "callToAction": "Please wrap your name to unlock this feature",
         "burnFormTitle": "Burn Permissions",
         "burned": "Burned",
         "permissions": {
+          "label": "Permissions",
+          "warning": "Fuses can be changed by the parent",
+          "CAN_DO_EVERYTHING": "Can do everything",
           "CANNOT_UNWRAP": "Can unwrap",
           "CANNOT_BURN_FUSES": "Can burn fuses",
           "CANNOT_TRANSFER": "Can transfer",
           "CANNOT_SET_RESOLVER": "Can set resolver",
           "CANNOT_SET_TTL": "Can set TTL",
-          "CANNOT_CREATE_SUBDOMAIN": "Can create subdomains"
+          "CANNOT_CREATE_SUBDOMAIN": "Can create subdomains",
+          "PARENT_CANNOT_CONTROL": "Parent can control",
+          "CAN_EXTEND_EXPIRY": "Cannot extend expiry",
+          "IS_DOT_ETH": "Is not .eth"
         }
       },
       "ownership": {
@@ -257,6 +295,7 @@
         "dnsOwnerWarning": {
           "isDnsOwner": "You cannot make changes to this name because you are the DNS Owner, but not the Manager. You can sync the manager to fix this.",
           "isManager": "You are the Manager but not DNS Owner of this name. DNS names can be reclaimed by the DNS Owner at any time. You can send this name to the Owner, or update the DNS record to match.",
+          "refreshDNS": "Refresh DNS",
           "syncManager": "Sync manager"
         }
       },
@@ -276,6 +315,8 @@
         }
       },
       "misc": {
+        "registered": "Registered",
+        "expires": "Expires",
         "bankless": {
           "title": "Bankless Reminders",
           "enterEmail": "Receive <a>Bankless</a> Reminders through Email, PUSH, XMTP, Blockscan Chat, and Mailchain.",
@@ -294,14 +335,29 @@
     }
   },
   "details": {
+    "title": "Name Details",
+    "notWrapped": "Not wrapped",
     "sendName": {
+      "title": "Send Name",
+      "description": "Sending a name will give the new address control over it",
+      "learnMore": "Learn more about name ownership.",
+      "makeOwner": "Make owner",
+      "makeOwnerDescription": "The owner can send to a new owner and change the manager",
+      "makeManager": "Make manager",
+      "makeManagerDescription": "The manager can change and set records.",
       "inputPlaceholder": "Enter an Ethereum address or ENS name",
       "transferSubname": "Transfer Name",
       "transferController": "Transfer Controller"
     },
     "wrap": {
       "startTitle": "Upgrade your name",
-      "description": "Upgrading or \"wrapping\" your name gives it new features."
+      "resumeTitle": "Resume your upgrade",
+      "completeTitle": "Upgrade complete",
+      "description": "Upgrading or \"wrapping\" your name gives it new features.",
+      "startLabel": "Upgrade",
+      "resumeLabel": "Resume Upgrade",
+      "boxTitle": "Unlock new features",
+      "boxDescription": "Upgrading your name unlocks the latest functionality of ENS"
     },
     "descriptions": {
       "owner": "Owns and controls the name",
@@ -311,6 +367,7 @@
     },
     "tabs": {
       "records": {
+        "label": "Records",
         "text": "Text",
         "contentHash": "Content Hash",
         "noContentHash": "No Content Hash",
@@ -320,8 +377,11 @@
         "editRecordsDisabled": "Current resolver is not compatible with wrapped names"
       },
       "subnames": {
+        "label": "Subnames",
+        "loading": "Loading subnames",
         "empty": "No subnames have been added",
         "noResults": "No results",
+        "noMoreResults": "No more results",
         "addSubname": {
           "title": "Subnames let you create additional names from your existing name.",
           "learn": "Learn about subnames",
@@ -365,6 +425,10 @@
         "contentHash": {
           "label": "Content Hash",
           "placeholder": "e.g. ipfs://"
+        },
+        "publicKey": {
+          "label": "Public Key",
+          "placeholder": "e.g. pub_1231231231231"
         },
         "abi": {
           "label": "ABI",
