@@ -276,6 +276,7 @@ export default function Page() {
                   <title>{t('title.landing')}</title>
                 </Head>
                 <Heading>{t('title.landing')}</Heading>
+                {/** @ts-expect-error styled-components don't know how to inherit types */}
                 <Caption fontVariant="bodyLarge">{t('caption.ensv2')}</Caption>
               </>
             ))
@@ -285,6 +286,7 @@ export default function Page() {
                   <title>{t('title.migration')}</title>
                 </Head>
                 <Heading>{t('title.migration')}</Heading>
+                {/** @ts-expect-error styled-components don't know how to inherit types */}
                 <Caption fontVariant="bodyLarge">{t('caption.migration')}</Caption>
               </>
             ))
