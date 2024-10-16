@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import {
+  Banner,
   Button,
   Card,
   GasPumpSVG,
@@ -15,8 +16,11 @@ import {
   RightArrowSVG,
   SpannerAltSVG,
   Typography,
+  UpCircleSVG,
   WalletSVG,
 } from '@ensdomains/thorin'
+
+import { Carousel } from '@app/components/pages/migrate/Carousel'
 
 import DAOSVG from '../assets/DAO.svg'
 import SocialX from '../assets/social/SocialX.svg'
@@ -83,11 +87,11 @@ const PartnershipAnnouncement = styled.div(
     font-weight: ${theme.fontWeights.bold};
     display: flex;
     justify-content: space-between;
-    a {
+    & > a {
       color: ${theme.colors.greenDim};
       cursor: pointer;
     }
-    a:hover {
+    & > a:hover {
       color: ${theme.colors.green};
     }
     @media (min-width: 640px) {
@@ -140,37 +144,67 @@ const GridOneToThree = styled.div(
   `,
 )
 
-const Footer = styled.footer(
+const Section = styled.div(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
-    gap: ${theme.space['4']};
+    gap: ${theme.space['6']};
     h3 {
       text-align: center;
     }
+    & > div {
+      display: flex;
+      flex-direction: column;
+      gap: ${theme.space['4']};
+    }
+    & > div > div {
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+    @media (min-width: 360px) {
+      & > div {
+        flex-direction: row;
+      }
+    }
   `,
 )
-
-const FooterLayout = styled.div(
+const Footer = styled(Section)(
   ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space['4']};
-
-    & > div {
-      width: 100%;
-    }
-
-    & > div > span {
+    span {
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: ${theme.space['2']};
       color: ${theme.colors.green};
     }
+  `,
+)
 
-    @media (min-width: 360px) {
+const GetStarted = styled(Section)(
+  ({ theme }) => css`
+    & > div button span {
+      display: flex;
       flex-direction: row;
+      align-items: center;
+      gap: ${theme.space['2']};
+    }
+  `,
+)
+
+const AnnouncementSlide = ({ title, text }: { title: string; text: string }) => (
+  <Banner style={{ height: '100%' }} as="a" alert="info" href="#" title={title}>
+    {text}
+  </Banner>
+)
+
+const SlideshowContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['6']};
+    h3 {
+      text-align: center;
     }
   `,
 )
@@ -208,42 +242,85 @@ export default function Page() {
           </ButtonContainer>
         </Header>
         {isConnected ? (
-          <GridOneToThree>
-            <CardWithEmoji>
-              <img src="/confetti.png" width={108} height={108} alt="🎉" />
-              <Typography fontVariant="headingTwo" asProp="h2">
-                {t('accessible.title')}
+          <>
+            <GridOneToThree>
+              <CardWithEmoji>
+                <img src="/confetti.png" width={108} height={108} alt="🎉" />
+                <Typography fontVariant="headingTwo" asProp="h2">
+                  {t('accessible.title')}
+                </Typography>
+                <Typography fontVariant="body">{t('accessible.caption')}</Typography>
+                <Button width="max" colorStyle="greenSecondary">
+                  {t('accessible.link')}
+                </Button>
+              </CardWithEmoji>
+              <Card>
+                <CardHeader>
+                  <GasPumpSVG />
+                  {t('accessible.gas.title')}
+                </CardHeader>
+                {t('accessible.gas.text')}
+              </Card>
+              <Card>
+                <CardHeader>
+                  <KeySVG />
+                  {t('accessible.control.title')}
+                </CardHeader>
+                {t('accessible.control.text')}
+              </Card>
+              <Card>
+                <CardHeader>
+                  <WalletSVG />
+                  {t('accessible.multichain.title')}
+                </CardHeader>
+                {t('accessible.multichain.text')}
+              </Card>
+            </GridOneToThree>
+            <GetStarted>
+              <Typography asProp="h3" fontVariant="headingThree">
+                {t('get-started.title')}
               </Typography>
-              <Typography fontVariant="body">{t('accessible.caption')}</Typography>
-            </CardWithEmoji>
-            <Card>
-              <CardHeader>
-                <GasPumpSVG />
-                {t('accessible.gas.title')}
-              </CardHeader>
-              {t('accessible.gas.text')}
-            </Card>
-            <Card>
-              <CardHeader>
-                <KeySVG />
-                {t('accessible.control.title')}
-              </CardHeader>
-              {t('accessible.control.text')}
-            </Card>
-            <Card>
-              <CardHeader>
-                <WalletSVG />
-                {t('accessible.multichain.title')}
-              </CardHeader>
-              {t('accessible.multichain.text')}
-            </Card>
-          </GridOneToThree>
+              <div>
+                <Card>
+                  <CardHeader>
+                    <UpCircleSVG />
+                    {t('get-started.upgrade.title')}
+                  </CardHeader>
+                  {t('get-started.upgrade.caption')}
+                  <Button colorStyle="greenPrimary" width="max">
+                    <span>
+                      {t('cta.connected')} <RightArrowSVG />
+                    </span>
+                  </Button>
+                </Card>
+              </div>
+            </GetStarted>
+            <SlideshowContainer>
+              <Typography asProp="h3" fontVariant="headingThree">
+                {t('announcement.title')}
+              </Typography>
+              <Carousel>
+                <AnnouncementSlide
+                  title={t('announcement.l2.title')}
+                  text={t('announcement.l2.caption')}
+                />
+                <AnnouncementSlide
+                  title={t('announcement.ensv2.title')}
+                  text={t('announcement.ensv2.caption')}
+                />
+                <AnnouncementSlide
+                  title={t('announcement.nextgen.title')}
+                  text={t('announcement.nextgen.caption')}
+                />
+              </Carousel>
+            </SlideshowContainer>
+          </>
         ) : null}
-        <Footer>
+        <Footer as="footer">
           <Typography asProp="h3" fontVariant="headingThree">
             {t('footer.title')}
           </Typography>
-          <FooterLayout>
+          <div>
             <Card title={t('footer.learn.title')}>
               <span>
                 <QuestionBubbleSVG /> {t('footer.learn.faq')}
@@ -266,7 +343,7 @@ export default function Page() {
                 <DAOSVG height="16" width="16" /> {t('footer.support.dao')}
               </span>
             </Card>
-          </FooterLayout>
+          </div>
         </Footer>
       </Main>
     </>

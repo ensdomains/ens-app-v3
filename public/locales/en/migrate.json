@@ -33,6 +33,29 @@
       "text": "Layer 2 enables seamless .eth name use across blockchains with trustless connections."
     }
   },
+  "get-started": {
+    "title": "Get Started",
+    "upgrade": {
+      "title": "Upgrade to ENSv2 Seamlessly",
+      "caption": "approved names will migrate automatically for a hassle-free transition.",
+      "button": "Approve your names"
+    }
+  },
+  "announcement": {
+    "title": "Announcements",
+    "l2": {
+      "title": "L2 partner announcement",
+      "caption": "We’re announced that we’re partnering with _____! Watch Nick’s ___ presentation to see the full announcement."
+    },
+    "ensv2": {
+      "title": "ENSv2: An Update on our Progress",
+      "caption": "This update aims to be informative and slightly technical, allowing you, the ENS community, to stay connected with our progress."
+    },
+    "nextgen": {
+      "title": "ENSv2: The Next Generation of ENS",
+      "caption": "Our vision for the next iterations of the ENS protocol, on L2."
+    }
+  },
   "footer": {
     "title": "Got questions?",
     "learn": {
