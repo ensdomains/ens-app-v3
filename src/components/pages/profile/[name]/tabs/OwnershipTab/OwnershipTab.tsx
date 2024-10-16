@@ -27,6 +27,7 @@ type Props = {
 
 export const OwnershipTab = ({ name, details }: Props) => {
   const roles = useRoles(name, { grouped: true })
+  console.log('roles: ', roles)
   const nameType = useNameType(name)
   const warning = useOwnershipWarning({ name, details, nameType })
   const isLoading = roles.isLoading || details.isLoading
