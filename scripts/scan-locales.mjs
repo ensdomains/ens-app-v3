@@ -9,6 +9,7 @@ const whitelist = [
   /^steps.profile.options.groups/,
   /^transaction.itemLabel/,
   /_zero$/,
+  /(transaction.dialog.sent|transaction.dialog.complete|transaction.dialog.failed)/,
 ]
 
 const baseLocale = getLocalePaths(BASE_LOCALE)
