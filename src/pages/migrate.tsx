@@ -2,6 +2,7 @@
 import Head from 'next/head'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
 import {
@@ -21,6 +22,7 @@ import {
 } from '@ensdomains/thorin'
 
 import { Carousel } from '@app/components/pages/migrate/Carousel'
+import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 
 import DAOSVG from '../assets/DAO.svg'
 import SocialX from '../assets/social/SocialX.svg'
@@ -33,15 +35,15 @@ const Main = styled.main(
   `,
 )
 
-const Header = styled.header<{ $isConnected: boolean }>(
-  ({ theme, $isConnected }) => css`
+const Header = styled.header(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: ${theme.space['4']};
     gap: ${theme.space['4']};
-    min-height: ${$isConnected ? '529px' : 'unset'};
+    min-height: 530px;
   `,
 )
 
@@ -80,6 +82,7 @@ const Caption = styled(Typography)`
 
 const PartnershipAnnouncement = styled.div(
   ({ theme }) => css`
+    width: ${theme.space.full};
     padding: ${theme.space['4']};
     background-color: ${theme.colors.backgroundPrimary};
     border-radius: ${theme.radii['4xLarge']};
@@ -209,12 +212,35 @@ const SlideshowContainer = styled.div(
   `,
 )
 
+const TopNav = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['6']};
+    align-items: center;
+  `,
+)
+
+const TabManager = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    gap: ${theme.space['4']};
+  `,
+)
+
+const tabs = ['ensv2', 'migrations', 'extension'] as const
+
+type Tab = (typeof tabs)[number]
+
 export default function Page() {
   const { t } = useTranslation('migrate')
 
   const { isConnected } = useAccount()
 
   const title = isConnected ? t('title.connected') : t('title.unconnected')
+
+  const [currentTab, setTab] = useQueryParameterState<Tab>('tab', 'ensv2')
 
   return (
     <>
@@ -223,13 +249,28 @@ export default function Page() {
       </Head>
 
       <Main>
-        <PartnershipAnnouncement>
-          <span>{t('partnership.text')}</span>
-          <a>
-            {t('partnership.watch')} <RightArrowSVG />
-          </a>
-        </PartnershipAnnouncement>
-        <Header $isConnected={isConnected}>
+        <TopNav>
+          <PartnershipAnnouncement>
+            <span>{t('partnership.text')}</span>
+            <a>
+              {t('partnership.watch')} <RightArrowSVG />
+            </a>
+          </PartnershipAnnouncement>
+          <TabManager>
+            {tabs.map((tab) => (
+              <Button
+                key={tab}
+                onClick={() => setTab(tab)}
+                shape="rounded"
+                width="max"
+                colorStyle={currentTab === tab ? 'greenPrimary' : 'greenSecondary'}
+              >
+                {t(`nav.${tab}`)}
+              </Button>
+            ))}
+          </TabManager>
+        </TopNav>
+        <Header>
           <Heading>{title}</Heading>
           <Caption fontVariant="bodyLarge">
             {isConnected ? t('caption.connected') : t('caption.unconnected')}
@@ -241,81 +282,111 @@ export default function Page() {
             <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
           </ButtonContainer>
         </Header>
-        {isConnected ? (
-          <>
-            <GridOneToThree>
-              <CardWithEmoji>
-                <img src="/confetti.png" width={108} height={108} alt="🎉" />
-                <Typography fontVariant="headingTwo" asProp="h2">
-                  {t('accessible.title')}
-                </Typography>
-                <Typography fontVariant="body">{t('accessible.caption')}</Typography>
-                <Button width="max" colorStyle="greenSecondary">
-                  {t('accessible.link')}
-                </Button>
-              </CardWithEmoji>
-              <Card>
-                <CardHeader>
-                  <GasPumpSVG />
-                  {t('accessible.gas.title')}
-                </CardHeader>
-                {t('accessible.gas.text')}
-              </Card>
-              <Card>
-                <CardHeader>
-                  <KeySVG />
-                  {t('accessible.control.title')}
-                </CardHeader>
-                {t('accessible.control.text')}
-              </Card>
-              <Card>
-                <CardHeader>
-                  <WalletSVG />
-                  {t('accessible.multichain.title')}
-                </CardHeader>
-                {t('accessible.multichain.text')}
-              </Card>
-            </GridOneToThree>
-            <GetStarted>
-              <Typography asProp="h3" fontVariant="headingThree">
-                {t('get-started.title')}
-              </Typography>
-              <div>
+        {match(currentTab)
+          .with('ensv2', () => (
+            <>
+              <GridOneToThree>
+                <CardWithEmoji>
+                  <img src="/confetti.png" width={108} height={108} alt="🎉" />
+                  <Typography fontVariant="headingTwo" asProp="h2">
+                    {t('accessible.title')}
+                  </Typography>
+                  <Typography fontVariant="body">{t('accessible.caption')}</Typography>
+                  <Button width="max" colorStyle="greenSecondary">
+                    {t('accessible.link')}
+                  </Button>
+                </CardWithEmoji>
                 <Card>
                   <CardHeader>
-                    <UpCircleSVG />
-                    {t('get-started.upgrade.title')}
+                    <GasPumpSVG />
+                    {t('accessible.gas.title')}
                   </CardHeader>
-                  {t('get-started.upgrade.caption')}
-                  <Button colorStyle="greenPrimary" width="max">
-                    <span>
-                      {t('cta.connected')} <RightArrowSVG />
-                    </span>
-                  </Button>
+                  {t('accessible.gas.text')}
                 </Card>
-              </div>
-            </GetStarted>
-            <SlideshowContainer>
-              <Typography asProp="h3" fontVariant="headingThree">
-                {t('announcement.title')}
-              </Typography>
-              <Carousel>
-                <AnnouncementSlide
-                  title={t('announcement.l2.title')}
-                  text={t('announcement.l2.caption')}
-                />
-                <AnnouncementSlide
-                  title={t('announcement.ensv2.title')}
-                  text={t('announcement.ensv2.caption')}
-                />
-                <AnnouncementSlide
-                  title={t('announcement.nextgen.title')}
-                  text={t('announcement.nextgen.caption')}
-                />
-              </Carousel>
-            </SlideshowContainer>
-          </>
-        ) : null}
+                <Card>
+                  <CardHeader>
+                    <KeySVG />
+                    {t('accessible.control.title')}
+                  </CardHeader>
+                  {t('accessible.control.text')}
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <WalletSVG />
+                    {t('accessible.multichain.title')}
+                  </CardHeader>
+                  {t('accessible.multichain.text')}
+                </Card>
+              </GridOneToThree>
+              <GetStarted>
+                <Typography asProp="h3" fontVariant="headingThree">
+                  {t('get-started.title')}
+                </Typography>
+                <div>
+                  <Card>
+                    <CardHeader>
+                      <UpCircleSVG />
+                      {t('get-started.upgrade.title')}
+                    </CardHeader>
+                    {t('get-started.upgrade.caption')}
+                    <Button colorStyle="greenPrimary" width="max">
+                      <span>
+                        {t('cta.connected')} <RightArrowSVG />
+                      </span>
+                    </Button>
+                  </Card>
+                </div>
+              </GetStarted>
+              <SlideshowContainer>
+                <Typography asProp="h3" fontVariant="headingThree">
+                  {t('announcement.title')}
+                </Typography>
+                <Carousel>
+                  <AnnouncementSlide
+                    title={t('announcement.l2.title')}
+                    text={t('announcement.l2.caption')}
+                  />
+                  <AnnouncementSlide
+                    title={t('announcement.ensv2.title')}
+                    text={t('announcement.ensv2.caption')}
+                  />
+                  <AnnouncementSlide
+                    title={t('announcement.nextgen.title')}
+                    text={t('announcement.nextgen.caption')}
+                  />
+                </Carousel>
+              </SlideshowContainer>
+            </>
+          ))
+          .with('migrations', () => (
+            <>
+              <Section>
+                <Typography asProp="h3" fontVariant="headingThree">
+                  {t('approval-benefits.title')}
+                </Typography>
+                <div>
+                  <Card>
+                    <CardHeader>
+                      <UpCircleSVG />
+                      {t('approval-benefits.migration.title')}
+                    </CardHeader>
+                    {t('approval-benefits.migration.caption')}
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <GasPumpSVG />
+                      {t('approval-benefits.no-gas-cost.title')}
+                    </CardHeader>
+                    {t('approval-benefits.no-gas-cost.caption')}
+                  </Card>
+                </div>
+              </Section>
+            </>
+          ))
+          .otherwise(() => (
+            <p>bloop</p>
+          ))}
+
         <Footer as="footer">
           <Typography asProp="h3" fontVariant="headingThree">
             {t('footer.title')}

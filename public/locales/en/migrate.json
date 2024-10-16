@@ -16,6 +16,11 @@
     "text": "We’re partnering with _______!",
     "watch": "Watch"
   },
+  "nav": {
+    "ensv2": "ENSv2",
+    "migrations": "Name Migrations",
+    "extension": "Extension rebates"
+  },
   "accessible": {
     "title": "Making ENS accessible to more people",
     "caption": "We're taking our knowledge from the last 7 years at the frontier of web3 naming to re-envision the architecture from the ground up on L2 By utilizing L2s, we're excited to make ENS more accessible to a wider range of users.",
@@ -54,6 +59,17 @@
     "nextgen": {
       "title": "ENSv2: The Next Generation of ENS",
       "caption": "Our vision for the next iterations of the ENS protocol, on L2."
+    }
+  },
+  "approval-benefits": {
+    "title": "Approval Benefits",
+    "migration": {
+      "title": "Automatic Migration",
+      "caption": "approved names will migrate automatically for a hassle-free transition."
+    },
+    "no-gas-cost": {
+      "title": "No Gas Cost",
+      "caption": "The ENS DAO will cover the gas fees for approved names at launch—save your ETH."
     }
   },
   "footer": {
