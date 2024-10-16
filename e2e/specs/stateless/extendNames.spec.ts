@@ -77,6 +77,7 @@ test('should be able to register multiple names on the address page', async ({
   // increment and save
   await page.getByTestId('plus-minus-control-plus').click()
   await page.getByTestId('plus-minus-control-plus').click()
+  await page.waitForTimeout(500)
   await page.getByTestId('extend-names-confirm').click()
 
   await transactionModal.autoComplete()
@@ -88,13 +89,11 @@ test('should be able to register multiple names on the address page', async ({
 
   // Should be able to remove this after useQuery is fixed. Using to force a refetch.
   await time.increaseTime({ seconds: 15 })
-  await page.pause()
   await page.reload()
   for (const name of extendableNameItems) {
     const label = name.replace('.eth', '')
     await addresPage.search(label)
     await expect(addresPage.getNameRow(name)).toBeVisible({ timeout: 5000 })
-    await page.pause()
     await expect(await addresPage.getTimestamp(name)).not.toBe(timestampDict[name])
     await expect(await addresPage.getTimestamp(name)).toBe(timestampDict[name] + 31536000000 * 3)
   }
@@ -194,7 +193,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   const timestamp = await profilePage.getExpiryTimestamp()
 
-  await page.pause()
   await profilePage.getExtendButton.click()
 
   const extendNamesModal = makePageObject('ExtendNamesModal')
@@ -353,7 +351,6 @@ test('should be able to extend a name by a month', async ({
   await profilePage.goto(name)
   await login.connect()
 
-  await page.pause()
   const timestamp = await profilePage.getExpiryTimestamp()
   await profilePage.getExtendButton.click()
 
@@ -418,7 +415,6 @@ test('should be able to extend a name by a day', async ({
   await profilePage.goto(name)
   await login.connect()
 
-  await page.pause()
   const timestamp = await profilePage.getExpiryTimestamp()
   await profilePage.getExtendButton.click()
 
@@ -485,7 +481,6 @@ test('should be able to extend a name in grace period by a month', async ({
 
   const timestamp = await profilePage.getExpiryTimestamp()
 
-  await page.pause()
   await profilePage.getExtendButton.click()
 
   const extendNamesModal = makePageObject('ExtendNamesModal')
@@ -568,7 +563,6 @@ test('should be able to extend a name in grace period by 1 day', async ({
 
   const timestamp = await profilePage.getExpiryTimestamp()
 
-  await page.pause()
   await profilePage.getExtendButton.click()
 
   const extendNamesModal = makePageObject('ExtendNamesModal')

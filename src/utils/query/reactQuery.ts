@@ -4,9 +4,9 @@ import { hashFn } from 'wagmi/query'
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
       refetchOnMount: true,
-      staleTime: 1_000 * 12,
+      staleTime: 0,
       gcTime: 1_000 * 60 * 60 * 24,
       queryKeyHashFn: hashFn,
     },
