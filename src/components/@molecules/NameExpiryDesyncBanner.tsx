@@ -8,7 +8,7 @@ import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 const StyledButton = styled(Button)(
-  ({ theme }) => css`
+  () => css`
     width: 100%;
 
     ${mq.md.min(css`
