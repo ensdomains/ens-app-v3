@@ -11,15 +11,14 @@ import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { StatusDots } from '@app/components/@atoms/StatusDots/StatusDots'
 import { TextWithTooltip } from '@app/components/@atoms/TextWithTooltip/TextWithTooltip'
 import { Card } from '@app/components/Card'
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
 import { useSimulateRegistration } from '@app/hooks/registration/useSimulateRegistration'
 import { useDurationCountdown } from '@app/hooks/time/useDurationCountdown'
+import { useEventTracker } from '@app/hooks/useEventTracker'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { trackEvent } from '@app/utils/analytics'
 import { ONE_DAY } from '@app/utils/time'
 
 import { RegistrationReducerDataItem } from '../types'
@@ -189,6 +188,7 @@ type Props = {
 
 const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const { t } = useTranslation('register')
+  const { trackEvent } = useEventTracker()
 
   const { address } = useAccount()
   const keySuffix = `${name}-${address}`
@@ -212,26 +212,26 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     registrationData,
   })
 
-  const { isSuccess: canRegisterOverride } = useSimulateRegistration({
+  const { isSuccess: isSimulateRegistrationSuccess } = useSimulateRegistration({
     registrationParams,
     query: {
       enabled: commitTx?.stage === 'sent',
-      retry: true,
+      retry: commitTx?.stage === 'sent',
       retryDelay: 5_000,
     },
   })
+  const canRegisterOverride = isSimulateRegistrationSuccess && commitTx?.stage !== 'complete'
 
-  const chainName = useChainName()
   useEffect(() => {
-    if (canRegisterOverride && commitTx?.stage !== 'complete') {
-      trackEvent('register-override-triggered', chainName)
+    if (canRegisterOverride) {
+      trackEvent({ eventName: 'register_override_triggered' })
       if (getSelectedKey() === commitKey) stopCurrentFlow()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canRegisterOverride, chainName])
+  }, [canRegisterOverride])
 
   const commitTimestamp = match({ commitStage: commitTx?.stage, canRegisterOverride })
-    .with({ canRegisterOverride: true }, () => Math.floor(Date.now() / 1000) - 60)
+    .with({ canRegisterOverride: true }, () => Date.now() - 70_000)
     .with({ commitStage: 'complete' }, () => commitTx?.finaliseTime)
     .otherwise(() => undefined)
 
@@ -281,6 +281,8 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       autoClose: true,
       resumeLink: `/register/${name}`,
     })
+
+    trackEvent({ eventName: 'register_started' })
   }
 
   const showCommitTransaction = () => {
@@ -335,8 +337,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const duration = useDurationCountdown({
     endDate: commitTimestamp ? new Date(commitTimestamp + ONE_DAY * 1000) : undefined,
   })
-
-  console.log('duration', duration, commitTimestamp)
 
   return (
     <StyledCard>
@@ -396,7 +396,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
           />
         </CountDownInner>
       </CountdownContainer>
-      <CenteredTypography>
+      <CenteredTypography data-testid="transactions-subheading">
         {match(transactionState)
           .with('registrationComplete', () => '')
           .with('registrationOverriden', () => (
