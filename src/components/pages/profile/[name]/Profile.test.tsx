@@ -12,7 +12,9 @@ import ProfileContent, { NameAvailableBanner } from './Profile'
 vi.mock('@app/hooks/useBasicName')
 vi.mock('@app/hooks/useProfile')
 vi.mock('@app/hooks/useNameDetails')
-
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => new URLSearchParams(),
+}))
 vi.mock('@app/hooks/useProtectedRoute', () => ({
   useProtectedRoute: vi.fn(),
 }))
