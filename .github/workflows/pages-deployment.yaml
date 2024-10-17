@@ -70,7 +70,7 @@ jobs:
           SITEMAP_GRAPH_KEY: ${{ secrets.SITEMAP_GRAPH_KEY }}
 
       - name: Publish
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
