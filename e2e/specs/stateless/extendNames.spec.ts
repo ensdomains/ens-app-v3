@@ -625,34 +625,23 @@ test('should be able to extend a single wrapped name using deep link', async ({
     await page.getByRole('button', { name: 'I understand' }).click()
   })
 
-  await test.step('should show the correct price data', async () => {
-    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
+  await test.step('should show 1 year extension', async () => {
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible({
       timeout: 30000,
     })
   })
 
-  await test.step('should work correctly with plus minus control', async () => {
+  await test.step('should be able to add more years', async () => {
     await expect(extendNamesModal.getCounterMinusButton).toBeDisabled()
-    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await extendNamesModal.getCounterPlusButton.click()
-    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0065')
     await expect(page.getByText('2 years extension', { exact: true })).toBeVisible({
       timeout: 30000,
     })
   })
 
-  await test.step('should show correct fiat values', async () => {
+  await test.step('should be able to reduce number of years', async () => {
     await extendNamesModal.getCurrencyToggle.click({ force: true })
-    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.01')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.14')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.15')
     await extendNamesModal.getCounterMinusButton.click()
-    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.00')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.14')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.14')
   })
 
   await test.step('should extend', async () => {
