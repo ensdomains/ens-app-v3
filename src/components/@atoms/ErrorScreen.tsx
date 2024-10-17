@@ -61,12 +61,21 @@ const getErrorTranslationKey = (errorType: ErrorType): { title: string; message:
     .otherwise(() => ({ title: '', message: '' }))
 
 const ErrorScreen = ({ errorType }: { errorType: ErrorType }) => {
-  const { t } = useTranslation('error')
+  const { t, ready } = useTranslation('error')
+
+  if (!ready) {
+    return null
+  }
 
   return (
     <Container className={errorType}>
-      {errorType === 'not-found' ? <QuestionCircleSVG /> : <AlertSVG />}
+      {errorType === 'not-found' ? (
+        <QuestionCircleSVG data-testid="question-circle-svg" />
+      ) : (
+        <AlertSVG data-testid="alert-svg" />
+      )}
       <Typography fontVariant="headingOne">{t(getErrorTranslationKey(errorType).title)}</Typography>
+
       <Typography fontVariant="body">
         <Trans
           t={t}

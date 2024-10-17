@@ -14,6 +14,10 @@
             "unknown": "Unknown NFT",
             "loadError": "NFT cannot be loaded",
             "noNFTs": "No NFTs found for this address.",
+            "address": {
+              "owned": "Owned",
+              "other": "Other"
+            },
             "selected": {
               "title": "Selected NFT",
               "subtitle": "Are you sure you want to use this NFT?"
@@ -28,28 +32,6 @@
               "action": "Sign and Upload"
             }
           }
-        },
-        "general": {
-          "label": "General"
-        },
-        "accounts": {
-          "label": "Accounts",
-          "addAccount": "Add account",
-          "noOptions": "No account options available"
-        },
-        "address": {
-          "label": "Address",
-          "addAddress": "Add address",
-          "noOptions": "No address options available"
-        },
-        "contentHash": {
-          "label": "Website",
-          "addContentHash": "Add decentralized website"
-        },
-        "other": {
-          "label": "Other",
-          "addRecord": "Add record",
-          "createRecord": "Type a record name..."
         }
       },
       "warningOverlay": {
@@ -332,7 +314,8 @@
     "verifyProfile": {
       "list": {
         "title": "Verify your profile",
-        "message": " You can verify profile information and add proofs of personhood. Verified records will be marked on your profile with a blue check."
+        "message": " You can verify profile information and add proofs of personhood. Verified records will be marked on your profile with a blue check.",
+        "added": "Added"
       },
       "dentity": {
         "title": "Dentity verification",

@@ -20,6 +20,7 @@ import { OG_IMAGE_URL } from '@app/utils/constants'
 import { shouldRedirect } from '@app/utils/shouldRedirect'
 import { formatFullExpiry, makeEtherscanLink } from '@app/utils/utils'
 
+import { ProfileEmptyBanner } from './ProfileEmptyBanner'
 import MoreTab from './tabs/MoreTab/MoreTab'
 import { OwnershipTab } from './tabs/OwnershipTab/OwnershipTab'
 import { PermissionsTab } from './tabs/PermissionsTab/PermissionsTab'
@@ -133,6 +134,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     isWrapped,
     wrapperData,
     registrationStatus,
+    isBasicLoading,
     refetchIfEnabled,
   } = nameDetails
 
@@ -177,8 +179,14 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     refetchIfEnabled()
     setTab_(value)
   }
-  const visibileTabs = (isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter(
-    (_tab) => (unsupported ? _tab === 'profile' : _tab),
+
+  const isWrappedOrLoading = isWrapped || isBasicLoading
+  const visibileTabs = useMemo(
+    () =>
+      (isWrappedOrLoading ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter((_tab) =>
+        unsupported ? _tab === 'profile' : _tab,
+      ),
+    [isWrappedOrLoading, unsupported],
   )
 
   const abilities = useAbilities({ name: normalisedName })
@@ -192,8 +200,10 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
       name,
       decodedName: profile?.decodedName,
       normalisedName,
+      visibileTabs,
+      tab,
     })
-  }, [profile?.decodedName, normalisedName, name, isSelf, router])
+  }, [profile?.decodedName, normalisedName, name, isSelf, router, tab, visibileTabs])
 
   // useEffect(() => {
   //   if (shouldShowSuccessPage(transactions)) {
@@ -248,20 +258,23 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
           info: infoBanner,
           warning,
           header: (
-            <TabButtonContainer>
-              {visibileTabs.map((tabItem) => (
-                <TabButton
-                  key={tabItem}
-                  data-testid={`${tabItem}-tab`}
-                  $selected={tabItem === tab}
-                  onClick={() => setTab(tabItem)}
-                >
-                  <Typography fontVariant="extraLargeBold" color="inherit">
-                    {t(getTabTranslationKey(tabItem))}
-                  </Typography>
-                </TabButton>
-              ))}
-            </TabButtonContainer>
+            <>
+              <TabButtonContainer>
+                {visibileTabs.map((tabItem) => (
+                  <TabButton
+                    key={tabItem}
+                    data-testid={`${tabItem}-tab`}
+                    $selected={tabItem === tab}
+                    onClick={() => setTab(tabItem)}
+                  >
+                    <Typography fontVariant="extraLargeBold" color="inherit">
+                      {t(getTabTranslationKey(tabItem))}
+                    </Typography>
+                  </TabButton>
+                ))}
+              </TabButtonContainer>
+              <ProfileEmptyBanner name={normalisedName} />
+            </>
           ),
           titleExtra: profile?.address ? (
             <Outlink
@@ -272,7 +285,6 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
             </Outlink>
           ) : null,
           trailing: match(tab)
-            .with('profile', () => <ProfileTab name={normalisedName} nameDetails={nameDetails} />)
             .with('records', () => (
               <RecordsTab
                 name={normalisedName}
@@ -306,7 +318,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
             .with('more', () => (
               <MoreTab name={normalisedName} nameDetails={nameDetails} abilities={abilities.data} />
             ))
-            .exhaustive(),
+            .otherwise(() => <ProfileTab name={normalisedName} nameDetails={nameDetails} />),
         }}
       </Content>
     </>

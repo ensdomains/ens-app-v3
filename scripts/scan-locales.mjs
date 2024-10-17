@@ -5,6 +5,7 @@ import glob from 'glob'
 import { BASE_LOCALE, getLocaleData, getLocalePaths } from './locale-utils.mjs'
 
 const whitelist = [
+  /^unit./,
   /(one|other)$/,
   /^steps.profile.options.groups/,
   /^transaction.itemLabel/,

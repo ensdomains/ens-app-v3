@@ -1,9 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { match, P } from 'ts-pattern'
 import { labelhash, namehash } from 'viem'
 
-import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { mq, Tag, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
@@ -12,21 +10,13 @@ import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
-import { Profile } from '@app/types'
 import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../../TabWrapper'
-import UnwrapButton from './UnwrapButton'
-import WrapButton from './WrapButton'
 
 type Props = {
   name: string
   isWrapped: boolean
-  canBeWrapped: boolean
-  ownerData?: GetOwnerReturnType
-  wrapperData?: GetWrapperDataReturnType
-  profile: Profile | undefined
 }
 
 const Container = styled(TabWrapper)(
@@ -114,29 +104,13 @@ const NftBox = styled(NFTWithPlaceholder)(
   `,
 )
 
-const getFuseStateFromWrapperData = (wrapperData?: GetWrapperDataReturnType): NameWrapperState =>
-  match(wrapperData)
-    .with(P.nullish, () => 'unwrapped' as const)
-    .with({ fuses: { child: { CANNOT_UNWRAP: true } } }, () => 'locked' as const)
-    .with({ fuses: { parent: { PARENT_CANNOT_CONTROL: true } } }, () => 'emancipated' as const)
-    .otherwise(() => 'wrapped')
-
-const getTokenStatusTranslationKey = (status: NameWrapperState): string =>
-  match(status)
-    .with('unwrapped', () => 'tabs.more.token.status.unwrapped')
-    .with('wrapped', () => 'tabs.more.token.status.wrapped')
-    .with('emancipated', () => 'tabs.more.token.status.emancipated')
-    .with('locked', () => 'tabs.more.token.status.locked')
-    .otherwise(() => '')
-
-const Token = ({ name, isWrapped, canBeWrapped, ownerData, wrapperData, profile }: Props) => {
+const Token = ({ name, isWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
   const networkName = useChainName()
   const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
   const registrarAddress = useContractAddress({ contract: 'ensBaseRegistrarImplementation' })
 
-  const status: NameWrapperState = getFuseStateFromWrapperData(wrapperData)
   const is2ldEth = checkETH2LDFromName(name)
 
   const hex = isWrapped ? namehash(name) : labelhash(name.split('.')[0])
@@ -170,23 +144,6 @@ const Token = ({ name, isWrapped, canBeWrapped, ownerData, wrapperData, profile 
           <NftBox id="nft" name={name} />
         </ItemsContainer>
       )}
-      <ItemsContainer>
-        <RecordItem
-          itemKey={t('tabs.more.token.wrapper')}
-          value={t(getTokenStatusTranslationKey(status))}
-          type="text"
-        />
-        {isWrapped ? (
-          <UnwrapButton name={name} ownerData={ownerData} status={status} />
-        ) : (
-          <WrapButton
-            name={name}
-            ownerData={ownerData}
-            profile={profile}
-            canBeWrapped={canBeWrapped}
-          />
-        )}
-      </ItemsContainer>
     </Container>
   )
 }

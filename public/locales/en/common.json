@@ -23,6 +23,7 @@
     "continue": "Continue",
     "confirm": "Confirm",
     "remove": "Remove",
+    "restart": "Restart",
     "tryAgain": "Try Again",
     "done": "Done",
     "burnSelected": "Burn Selected",
@@ -41,7 +42,8 @@
     "editRoles": "Edit roles",
     "setReminder": "Set reminder",
     "import": "Import",
-    "connect": "Connect"
+    "connect": "Connect",
+    "goToProfile": "Go to profile"
   },
   "unit": {
     "years_one": "{{count}} year",
@@ -50,6 +52,10 @@
     "months_other": "{{count}} months",
     "days_one": "{{count}} day",
     "days_other": "{{count}} days",
+    "hours_one": "{{count}} hour",
+    "hours_other": "{{count}} hours",
+    "minutes_one": "{{count}} minute",
+    "minutes_other": "{{count}} minutes",
     "invalid_date": "Invalid Date",
     "yrs_one": "{{count}} yr",
     "yrs_other": "{{count}} yrs",
@@ -270,7 +276,8 @@
         "title": "Confirm Details",
         "message": "Double check these details before confirming in your wallet.",
         "waitingForWallet": "Waiting for Wallet",
-        "openWallet": "Open Wallet"
+        "openWallet": "Open Wallet",
+        "insufficientFunds": "Insufficient funds"
       },
       "sent": {
         "title": "Transaction Sent",
@@ -353,5 +360,17 @@
   "calendar": {
     "pick_by_years": "Pick by years",
     "pick_by_date": "Pick by date"
+  },
+  "verification": {
+    "verifiedBy": "Verified by {{ issuer }}",
+    "personhoodVerified": "Personhood verified",
+    "verificationFailed": "Verification failed, please reverify your profile"
+  },
+  "verificationErrorDialog": {
+    "title": "Verification failed",
+    "resolverRequired": "A valid resolver is required to complete the verification flow",
+    "ownerNotManager": "You must be connected as the Manager of this name to set the verification record. You can view and update the Manager under the Ownership tab.",
+    "wrongAccount": "You must be connected as <strong>{{ nameOrAddress }}</strong> to set the verification record.",
+    "default": "We could't verify your account. Please return to Dentity and try again."
   }
 }

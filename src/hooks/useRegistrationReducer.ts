@@ -30,6 +30,7 @@ const defaultData: RegistrationReducerDataItem = {
   isMoonpayFlow: false,
   externalTransactionId: '',
   chainId: 1,
+  durationType: 'years',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
 }
 
@@ -52,6 +53,7 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   isMoonpayFlow: false,
   externalTransactionId: '',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
+  durationType: 'years',
   ...selected,
 })
 
@@ -107,6 +109,7 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     case 'setPricingData': {
       item.seconds = action.payload.seconds
       item.reverseRecord = action.payload.reverseRecord
+      item.durationType = action.payload.durationType
       break
     }
     case 'setTransactionsData': {

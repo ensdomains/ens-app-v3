@@ -12,6 +12,7 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useEventTracker } from '@app/hooks/useEventTracker'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import { useResolverExists } from '@app/hooks/useResolverExists'
@@ -122,6 +123,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
+  const { trackEvent } = useEventTracker()
   const step = item.queue[item.stepIndex]
 
   const keySuffix = `${nameDetails.normalisedName}-${address}`
@@ -142,14 +144,30 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     seconds,
     reverseRecord,
     paymentMethodChoice,
+    estimatedTotal,
+    ethPrice,
+    durationType,
   }: RegistrationStepData['pricing']) => {
+    if (estimatedTotal && ethPrice) {
+      trackEvent({
+        eventName: 'payment_selected',
+        customProperties: {
+          duration: seconds,
+          durationType,
+          paymentMethod: paymentMethodChoice,
+          estimatedTotal,
+          ethPrice,
+        },
+      })
+    }
+
     if (paymentMethodChoice === PaymentMethod.moonpay) {
       initiateMoonpayRegistrationMutation.mutate(secondsToYears(seconds))
       return
     }
     dispatch({
       name: 'setPricingData',
-      payload: { seconds, reverseRecord },
+      payload: { seconds, reverseRecord, durationType },
       selected,
     })
     if (!item.queue.includes('profile')) {
@@ -197,6 +215,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const genericCallback = ({ back }: BackObj) => {
     dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
+  }
+
+  const infoCallback = ({ back }: BackObj) => {
+    genericCallback({ back })
+    trackEvent({ eventName: 'commit_started' })
   }
 
   const transactionsCallback = useCallback(
@@ -301,7 +324,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               <Info
                 name={normalisedName}
                 registrationData={item}
-                callback={genericCallback}
+                callback={infoCallback}
                 onProfileClick={infoProfileCallback}
               />
             ))
@@ -318,6 +341,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 name={normalisedName}
                 beautifiedName={beautifiedName}
                 callback={onComplete}
+                registrationData={item}
                 isMoonpayFlow={item.isMoonpayFlow}
               />
             ))

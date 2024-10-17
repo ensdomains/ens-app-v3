@@ -1,17 +1,20 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
+import * as ReactQuery from '@tanstack/react-query'
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest'
 import { useAccount, useClient } from 'wagmi'
 
 import * as ThorinComponents from '@ensdomains/thorin'
 
+import * as UseInfiniteQuery from '@app/utils/query/useInfiniteQuery'
+
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
 import { AvatarNFT } from './AvatarNFT'
 
 vi.mock('wagmi')
-vi.mock('@app/hooks/chain/useBlockTimestamp', () => ({
-  useBlockTimestamp: () => ({ data: new Date().getTime() }),
+vi.mock('@app/hooks/chain/useCurrentBlockTimestamp', () => ({
+  default: () => new Date(),
 }))
 vi.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: () => 'mainnet',
@@ -26,6 +29,7 @@ const mockHandleCancel = vi.fn()
 makeMockIntersectionObserver()
 
 const props = {
+  name: 'test',
   handleSubmit: mockHandleSubmit,
   handleCancel: mockHandleCancel,
 }
@@ -66,7 +70,7 @@ const generateNFT = (withMedia: boolean, contractAddress?: string) => (_: any, i
   },
 })
 
-const mockFetch = vi.fn().mockImplementation(() =>
+let mockFetch = vi.fn().mockImplementation(() =>
   Promise.resolve({
     ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
     totalCount: 5,
@@ -77,6 +81,7 @@ global.fetch = vi.fn(() => Promise.resolve({ json: mockFetch }))
 
 beforeEach(() => {
   mockFetch.mockClear()
+  mockFetch = vi.fn()
   mockUseAccount.mockReturnValue({ address: `0x${Date.now()}` })
   mockUseClient.mockReturnValue({
     chain: {
@@ -99,6 +104,12 @@ describe('<AvatarNFT />', () => {
     address: '0x0000000000000000000000000000000000000001',
   })
   it('should show detail on click', async () => {
+    mockFetch.mockImplementation(() =>
+      Promise.resolve({
+        ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+        totalCount: 5,
+      }),
+    )
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
@@ -110,6 +121,12 @@ describe('<AvatarNFT />', () => {
     })
   })
   it('should correctly call submit callback', async () => {
+    mockFetch.mockImplementation(() =>
+      Promise.resolve({
+        ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+        totalCount: 5,
+      }),
+    )
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
@@ -127,9 +144,15 @@ describe('<AvatarNFT />', () => {
     )
   })
   it('should display all NFTs', async () => {
+    mockFetch.mockImplementation(() =>
+      Promise.resolve({
+        ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+        totalCount: 5,
+      }),
+    )
     render(<AvatarNFT {...props} />)
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled())
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
     expect(screen.getByText('NFT 0')).toBeVisible()
     expect(screen.getByTestId('nft-1-0x1')).toBeVisible()
@@ -150,7 +173,7 @@ describe('<AvatarNFT />', () => {
 
     render(<AvatarNFT {...props} />)
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
     await waitFor(() =>
       expect(
         screen.queryByTestId('nft-0-0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'),
@@ -166,18 +189,26 @@ describe('<AvatarNFT />', () => {
     )
     render(<AvatarNFT {...props} />)
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled())
     await waitFor(() => expect(screen.queryByTestId('nft-0-0x0')).not.toBeInTheDocument())
   })
-  it.skip('show load more data on page load trigger', async () => {
-    mockFetch.mockImplementationOnce(() =>
-      Promise.resolve({
-        ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
-        totalCount: 10,
-        pageKey: 'test123',
-      }),
-    )
-
+  it('show load more data on page load trigger', async () => {
+    const useInfiniteQuerySpy = vi.spyOn(UseInfiniteQuery, 'useInfiniteQuery')
+    mockFetch
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+          totalCount: 5,
+          pageKey: 'test123',
+        }),
+      )
+      .mockImplementation(() =>
+        Promise.resolve({
+          ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+          totalCount: 5,
+          pageKey: 'test456',
+        }),
+      )
     vi.spyOn(ThorinComponents, 'ScrollBox').mockImplementationOnce(
       ({ children, onReachedBottom }) => {
         onReachedBottom!()
@@ -186,23 +217,23 @@ describe('<AvatarNFT />', () => {
     )
 
     render(<AvatarNFT {...props} />)
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled())
+    expect(useInfiniteQuerySpy).toHaveBeenCalledTimes(2)
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
-    await waitFor(
-      () =>
-        // @ts-ignore
-        expect(fetch.mock.lastCall[1]).toEqual({
-          method: 'GET',
-          redirect: 'follow',
-        }),
-      // expect(mockedFetch.mock.lastCall).toEqual([
-      //   `https://ens-nft-worker.ens-cf.workers.dev/v1/mainnet/getNfts/?owner=0x0000000000000000000000000000000000000001&filters%5B%5D=SPAM&pageKey=test123`,
-      //   {
-      //     method: 'GET',
-      //     redirect: 'follow',
-      //   },
-      // ]),
-    )
+    const lastCall = useInfiniteQuerySpy.mock.lastCall
+    if (!lastCall) {
+      throw new Error('useInfiniteQuery was not called as expected')
+    }
+    const options = lastCall[0]
+    if (typeof options !== 'object' || !options || !('queryFn' in options)) {
+      throw new Error('useInfiniteQuery options do not contain queryFn')
+    }
+    const { queryFn } = options as { queryFn: ReactQuery.QueryFunction }
+    const mockContext = {
+      pageParam: 'test123',
+    }
+    await queryFn(mockContext as any)
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(3))
     // @ts-ignore
     expect(fetch.mock.lastCall[0]).toMatch(/pageKey=test123/)
   })
@@ -224,7 +255,7 @@ describe('<AvatarNFT />', () => {
 
     render(<AvatarNFT {...props} />)
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled())
   })
 
   it('should show message if search returns no results', async () => {
@@ -243,7 +274,7 @@ describe('<AvatarNFT />', () => {
       )
 
     render(<AvatarNFT {...props} />)
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled())
     const searchInput = screen.getByTestId('avatar-search-input')
     await userEvent.type(searchInput, 'blahblahblah')
     await waitFor(() =>
