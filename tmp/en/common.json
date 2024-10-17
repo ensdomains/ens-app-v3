@@ -8,6 +8,7 @@
   "action": {
     "cancel": "Cancel",
     "change": "Change",
+    "upload": "Upload",
     "close": "Close",
     "save": "Save",
     "edit": "Edit",
@@ -18,18 +19,22 @@
     "send": "Send",
     "next": "Next",
     "add": "Add",
+    "set": "Set",
     "search": "Search",
     "back": "Back",
     "continue": "Continue",
     "confirm": "Confirm",
     "remove": "Remove",
-    "restart": "Restart",
+    "sign": "Sign",
+    "reset": "Reset",
+    "transfer": "Transfer",
     "tryAgain": "Try Again",
     "done": "Done",
     "burnSelected": "Burn Selected",
     "extend": "Extend",
     "delete": "Delete",
     "sort": "Sort",
+    "check": "Check",
     "claim": "Claim",
     "remindMe": "Remind Me",
     "begin": "Begin",
@@ -37,13 +42,14 @@
     "skip": "Skip",
     "changeNetwork": "Change Network",
     "understand": "I understand",
+    "feedback": "Feedback",
     "enterEmail": "Enter your email",
+    "migrate": "Migrate",
     "setToSelf": "Set to self",
     "editRoles": "Edit roles",
     "setReminder": "Set reminder",
     "import": "Import",
-    "connect": "Connect",
-    "goToProfile": "Go to profile"
+    "connect": "Connect"
   },
   "unit": {
     "years_one": "{{count}} year",
@@ -52,10 +58,6 @@
     "months_other": "{{count}} months",
     "days_one": "{{count}} day",
     "days_other": "{{count}} days",
-    "hours_one": "{{count}} hour",
-    "hours_other": "{{count}} hours",
-    "minutes_one": "{{count}} minute",
-    "minutes_other": "{{count}} minutes",
     "invalid_date": "Invalid Date",
     "yrs_one": "{{count}} yr",
     "yrs_other": "{{count}} yrs",
@@ -75,6 +77,7 @@
     "bounty": "Bug Bounty",
     "terms": "Terms of Use",
     "privacy": "Privacy Policy",
+    "back": "Back",
     "oldApp": "Old ENS App",
     "language": "Language",
     "currency": "Currency",
@@ -86,6 +89,7 @@
     "myProfile": "Profile",
     "disconnect": "Disconnect",
     "connect": "Connect",
+    "noPrimaryName": "No Primary Name",
     "viewProfile": "View Profile",
     "viewDetails": "View Details",
     "register": "Register"
@@ -98,10 +102,13 @@
     "expiry": "Expiry",
     "parent": "Parent",
     "noParent": "No parent",
+    "registrant": "Registrant",
+    "controller": "Controller",
     "dnsOwner": "DNS Owner",
     "owner": "Owner",
     "notOwned": "Not Owned",
     "manager": "Manager",
+    "all": "All Names",
     "copy": "Copy name",
     "yourPrimaryName": "Your primary name",
     "expiresInYears_one": "Expires in {{count}} year",
@@ -133,8 +140,12 @@
       "expiresInHours_other": "Grace period expires in {{count}} hours",
       "expiresInHours_zero": "Grace period expires in less than an hour"
     },
+    "extend": "Extend",
+    "send": "Send",
+    "transfer": "Transfer",
     "sendManager": "Send Manager",
-    "sendOwner": "Send Owner"
+    "sendOwner": "Send Owner",
+    "renew": "Renew {{name}}"
   },
   "address": {
     "label": "Address",
@@ -150,10 +161,16 @@
     "createdAt": "Creation date"
   },
   "errors": {
+    "noResults": "No results found",
     "emailRequired": "Email is required",
     "emailInvalid": "Invalid email address",
     "invalidAddress": "Invalid address",
     "addressRequired": "Address required",
+    "indexingErrors": {
+      "title": "Error syncing data",
+      "message": "This data may be out of date. Please use caution.",
+      "message_datetime": "This data was last update at {{datetime}} and may be out of date. Please use caution"
+    },
     "networkError": {
       "title": "Error syncing data",
       "message": "This data may be out of date. Please use caution.",
@@ -208,14 +225,20 @@
       "removeVerificationRecord": "Remove verification record"
     },
     "info": {
+      "sendName": "Set the controller and registrant of the name",
       "migrateProfile": "Set existing records on new resolver",
       "migrateProfileWithReset": "Set existing records on new resolver",
+      "migrateProfileWithSync": "Set existing records on new resolver",
+      "migrateProfileWithEthAddress": "Set existing records and eth address on new resolver",
       "wrapName": "Wrap the name",
       "updateResolver": "Change resolver to",
+      "updateProfile": "Update records on existing resolver",
       "setPrimaryName": "Set the primary name for your address",
       "updateEthAddress": "Update ETH address to this address",
       "updateEthAddressOnLatestResolver": "Update ETH address on latest resolver",
       "testSendName": "Set the controller and registrant of the name",
+      "createSubname": "Create a new subname on the name",
+      "burnFuses": "Burn the chosen permissions until name expiry",
       "commitName": "Start timer to register name",
       "approveNameWrapper": "Approve the NameWrapper to manage your names",
       "fuses": {
@@ -276,8 +299,7 @@
         "title": "Confirm Details",
         "message": "Double check these details before confirming in your wallet.",
         "waitingForWallet": "Waiting for Wallet",
-        "openWallet": "Open Wallet",
-        "insufficientFunds": "Insufficient funds"
+        "openWallet": "Open Wallet"
       },
       "sent": {
         "title": "Transaction Sent",
@@ -315,6 +337,11 @@
     "label": "Name search",
     "placeholder": "Search for a name",
     "emptyText": "Type a name or address to search...",
+    "address": "Address",
+    "errors": {
+      "tooShort": "Name too short",
+      "invalid": "Invalid format for name"
+    },
     "status": {
       "registered": "Registered",
       "gracePeriod": "Grace Period",
@@ -323,10 +350,18 @@
       "notOwned": "Not Owned",
       "notImported": "Not Imported",
       "short": "Too Short",
+      "default": "Invalid",
+      "invalid": "Invalid",
+      "unsupportedTLD": "Not Supported",
       "imported": "Imported",
       "owned": "Owned",
       "offChain": "View"
     }
+  },
+  "selectableInput": {
+    "add": "Add",
+    "placeholder": "Select an option",
+    "empty": "No options found"
   },
   "testnetFaucet": {
     "explanation": "Each address on {{ testnet }} can claim {{ amount }} {{ ticker }} to test out the ENS manager app, as well as any other testnet usage.",
@@ -349,6 +384,10 @@
       "title": "manager",
       "description": "An address or contract that can change the profile, settings, and profile managers."
     },
+    "profile-editor": {
+      "title": "Profile editor",
+      "description": "An address that can change the profile."
+    },
     "eth-record": {
       "title": "ETH record",
       "description": "The address that this name points to."
@@ -360,17 +399,5 @@
   "calendar": {
     "pick_by_years": "Pick by years",
     "pick_by_date": "Pick by date"
-  },
-  "verification": {
-    "verifiedBy": "Verified by {{ issuer }}",
-    "personhoodVerified": "Personhood verified",
-    "verificationFailed": "Verification failed, please reverify your profile"
-  },
-  "verificationErrorDialog": {
-    "title": "Verification failed",
-    "resolverRequired": "A valid resolver is required to complete the verification flow",
-    "ownerNotManager": "You must be connected as the Manager of this name to set the verification record. You can view and update the Manager under the Ownership tab.",
-    "wrongAccount": "You must be connected as <strong>{{ nameOrAddress }}</strong> to set the verification record.",
-    "default": "We could't verify your account. Please return to Dentity and try again."
   }
 }

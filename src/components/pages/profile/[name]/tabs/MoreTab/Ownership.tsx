@@ -16,6 +16,7 @@ import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { GetDnsOwnerQueryKey, UseDnsOwnerError } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useOwners } from '@app/hooks/useOwners'
+import { getProfileErrorTranslationKey, ProfileError } from '@app/intl/translationKeys'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -151,6 +152,7 @@ const Owner = ({ address, label }: OwnerItem) => {
             )}
           </TextContainer>
         </OwnerDetailContainer>
+        {/* TODO ? */}
         <Tag colorStyle="accentSecondary">{t(label)}</Tag>
       </OwnerContainer>
     </BaseLinkWithHistory>
@@ -263,7 +265,11 @@ const DNSOwnerSection = ({
   return (
     <DNSOwnerSectionContainer>
       <Helper type="warning" alignment="horizontal">
-        {t(`tabs.more.ownership.dnsOwnerWarning.${canSend ? 'isManager' : 'isDnsOwner'}`)}
+        {t(
+          canSend
+            ? `tabs.more.ownership.dnsOwnerWarning.isManager`
+            : `tabs.more.ownership.dnsOwnerWarning.isDnsOwner`,
+        )}
       </Helper>
       <ButtonsContainer>
         <Button width="auto" colorStyle="accentSecondary" onClick={handleRefresh}>
@@ -295,7 +301,7 @@ const Ownership = ({
   name: string
   owners: ReturnType<typeof useOwners>
   canSend: boolean
-  canSendError?: string
+  canSendError?: ProfileError
   isCachedData: boolean
   isWrapped: boolean
 }) => {
@@ -327,7 +333,7 @@ const Ownership = ({
           {!canSend && canSendError && (
             <DisabledButtonWithTooltip
               {...{
-                content: t(`errors.${canSendError}`),
+                content: t(getProfileErrorTranslationKey(canSendError)),
                 buttonId: 'send-name-disabled-button',
                 buttonText: t('action.send', { ns: 'common' }),
                 mobileWidth: 150,

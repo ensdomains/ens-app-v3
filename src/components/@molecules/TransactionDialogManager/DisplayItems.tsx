@@ -259,6 +259,7 @@ export const DisplayItem = ({
       key={`${label}-${value}`}
     >
       <DisplayItemLabel>
+        {/* TODO ? */}
         {useRawLabel ? label : t(`transaction.itemLabel.${label}`)}
       </DisplayItemLabel>
       <DisplayItemValue {...{ value, type }} />

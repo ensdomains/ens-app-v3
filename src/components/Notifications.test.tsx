@@ -65,12 +65,12 @@ describe('Notifications', () => {
     const { rerender } = render(<Notifications />)
     expect(screen.queryByTestId('toast-desktop')).not.toBeInTheDocument()
 
-    cb({ ...mockData[0], status: 'confirmed1' as any })
-    cb({ ...mockData[1], status: 'confirmed2' as any })
+    cb({ ...mockData[0], status: 'confirmed' as any })
+    cb({ ...mockData[1], status: 'confirmed' as any })
 
     rerender(<Notifications />)
 
-    await waitFor(() => screen.queryByText('transaction.status.confirmed1.notifyTitle'), {
+    await waitFor(() => screen.queryByText('transaction.status.confirmed.notifyTitle'), {
       timeout: 500,
     }).then((el) => expect(el).toBeInTheDocument())
 
@@ -78,7 +78,7 @@ describe('Notifications', () => {
       vi.advanceTimersByTime(8350)
     })
 
-    await waitFor(() => screen.queryByText('transaction.status.confirmed2.notifyTitle'), {
+    await waitFor(() => screen.queryByText('transaction.status.confirmed.notifyTitle'), {
       timeout: 500,
     }).then((el) => expect(el).toBeInTheDocument())
   })

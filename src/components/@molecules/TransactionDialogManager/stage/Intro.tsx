@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
+import { getTransactionActionTranslationKeys, TransactionAction } from '@app/intl/translationKeys'
 import { intros } from '@app/transaction-flow/intro'
 import { TransactionIntro } from '@app/transaction-flow/types'
 import { TransactionDisplayItemSingle } from '@app/types'
@@ -47,6 +48,7 @@ export const IntroStageModal = ({
 
   const TrailingButton = (
     <Button onClick={() => onSuccess()} data-testid="transaction-dialog-intro-trailing-btn">
+      {/* TODO ? */}
       {trailingLabel ? t(...trailingLabel) : tLabel}
     </Button>
   )
@@ -57,6 +59,7 @@ export const IntroStageModal = ({
 
   return (
     <>
+      {/* TODO ? */}
       <Dialog.Heading title={t(...title)} />
       <Dialog.Content data-testid="transaction-modal-inner">
         <Content {...content.data} />
@@ -69,7 +72,7 @@ export const IntroStageModal = ({
                     fade: currentStep > index,
                     shrink: true,
                     label: t('transaction.dialog.intro.step', { step: index + 1 }),
-                    value: t(`transaction.description.${name}`),
+                    value: t(getTransactionActionTranslationKeys(name as TransactionAction)),
                     useRawLabel: true,
                   }) as TransactionDisplayItemSingle,
               ) || []

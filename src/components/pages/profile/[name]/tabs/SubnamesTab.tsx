@@ -16,6 +16,7 @@ import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useSubnames } from '@app/hooks/ensjs/subgraph/useSubnames'
+import { getProfileErrorTranslationKey, ProfileError } from '@app/intl/translationKeys'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { emptyAddress } from '@app/utils/constants'
 import { getSupportLink } from '@app/utils/supportLinks'
@@ -226,7 +227,11 @@ export const SubnamesTab = ({
               {...{
                 size: 'medium',
                 buttonId: 'add-subname-disabled-button',
-                content: t(`errors.${canCreateSubdomainsError || 'default'}`),
+                content: t(
+                  getProfileErrorTranslationKey(
+                    (canCreateSubdomainsError || 'default') as ProfileError,
+                  ),
+                ),
                 buttonText: t('details.tabs.subnames.addSubname.action'),
                 mobileWidth: 200,
                 mobilePlacement: 'top',

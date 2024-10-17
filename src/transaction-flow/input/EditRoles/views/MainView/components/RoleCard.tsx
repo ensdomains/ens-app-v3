@@ -6,6 +6,7 @@ import { RightArrowSVG, Typography } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import type { Role } from '@app/hooks/ownership/useRoles/useRoles'
+import { getRoleTranslationKeys } from '@app/intl/translationKeys'
 import { emptyAddress } from '@app/utils/constants'
 
 import { NoneSetAvatarWithIdentifier } from './NoneSetAvatarWithIdentifier'
@@ -100,9 +101,11 @@ export const RoleCard = ({ address, role, dirty, onClick }: Props) => {
   return (
     <Container $dirty={dirty} data-testid={`role-card-${role}`}>
       <InfoContainer>
-        <Title fontVariant="bodyBold">{t(`roles.${role}.title`, { ns: 'common' })}</Title>
+        <Title fontVariant="bodyBold">
+          {t(getRoleTranslationKeys(role).title, { ns: 'common' })}
+        </Title>
         <Typography fontVariant="small" color="grey">
-          {t(`roles.${role}.description`, { ns: 'common' })}
+          {t(getRoleTranslationKeys(role).description, { ns: 'common' })}
         </Typography>
       </InfoContainer>
       <Divider />

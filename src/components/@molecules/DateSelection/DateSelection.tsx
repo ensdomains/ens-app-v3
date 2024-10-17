@@ -118,7 +118,9 @@ export const DateSelection = ({
           data-testid="date-selection"
           onClick={() => onChangeDurationType?.(durationType === 'years' ? 'date' : 'years')}
         >
-          {t(`calendar.pick_by_${durationType === 'date' ? 'years' : 'date'}`, { ns: 'common' })}
+          {t(durationType === 'date' ? 'calendar.pick_by_years' : 'calendar.pick_by_date', {
+            ns: 'common',
+          })}
         </YearsViewSwitch>
       </Typography>
     </Container>
