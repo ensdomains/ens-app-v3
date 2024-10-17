@@ -1,8 +1,16 @@
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
+import { useEnsAvatar } from 'wagmi'
 
+import { GetNamesForAddressParameters, NameWithRelation } from '@ensdomains/ensjs/subgraph'
 import { CheckCircleSVG, Colors, DisabledSVG, PlusCircleSVG } from '@ensdomains/thorin'
+
+import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
+import { calculateDatesDiff } from '@app/utils/date'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
+import { formatDurationOfDates } from '@app/utils/utils'
 
 const tabs = ['eligible', 'ineligible', 'approved'] as const
 
@@ -73,7 +81,9 @@ const TabButton = styled.button<{ $isActive?: boolean; tab: Tab }>(
     transition-timing-function: ${theme.transitionTimingFunction.inOut};
 
     &:hover {
-      background-color: ${$isActive ? theme.colors[colors[tab].hover] : 'auto'};
+      background-color: ${$isActive
+        ? theme.colors[colors[tab].hover]
+        : theme.colors[colors[tab].bg]};
     }
   `,
 )
@@ -81,7 +91,7 @@ const TabButton = styled.button<{ $isActive?: boolean; tab: Tab }>(
 const NamesGrid = styled.div(
   ({ theme }) => css`
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: ${theme.space['2']};
   `,
 )
@@ -96,20 +106,55 @@ const NameCard = styled.div(
     align-items: center;
     justify-content: center;
 
-    & > span:nth-child(1) {
+    & > span:nth-of-type(1) {
       font-weight: ${theme.fontWeights.bold};
     }
-    & > span:nth-child(2) {
+    & > span:nth-of-type(2) {
       color: ${theme.colors.textTertiary};
       font-size: ${theme.fontSizes.small};
+    }
+
+    & > img {
+      border-radius: ${theme.radii.full};
     }
   `,
 )
 
-export const MigrationNamesList = () => {
+const filter: Record<Tab, GetNamesForAddressParameters['filter']> = {
+  eligible: { owner: true },
+}
+
+const MigrationName = ({ name, t }: { name: NameWithRelation; t: TFunction }) => {
+  const now = new Date()
+  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name: name.name! })
+
+  const expiresIn = formatDurationOfDates({
+    startDate: now,
+    endDate: new Date(name.expiryDate?.date!),
+    t,
+  }).split(', ')[0]
+
+  return (
+    <NameCard>
+      {avatar && <img width="40" height="40" src={avatar} alt="" />}
+      <span>{name.name}</span>
+      <span>Expires in {expiresIn}</span>
+    </NameCard>
+  )
+}
+
+export const MigrationNamesList = ({ address }: { address?: Address }) => {
   const [activeTab, setTab] = useState<Tab>('eligible')
 
   const { t } = useTranslation('migrate')
+
+  const { infiniteData, isLoading, isFetching, isError } = useNamesForAddress({
+    address,
+    pageSize: 20,
+    filter: filter[activeTab],
+  })
+
+  const names = infiniteData.filter((name) => name.parentName === 'eth')
 
   return (
     <Container>
@@ -121,22 +166,9 @@ export const MigrationNamesList = () => {
         ))}
       </TabsContainer>
       <NamesGrid>
-        <NameCard>
-          <span>ens.eth</span>
-          <span>Expires in 1 day</span>
-        </NameCard>
-        <NameCard>
-          <span>ens.eth</span>
-          <span>Expires in 1 day</span>
-        </NameCard>
-        <NameCard>
-          <span>ens.eth</span>
-          <span>Expires in 1 day</span>
-        </NameCard>
-        <NameCard>
-          <span>ens.eth</span>
-          <span>Expires in 1 day</span>
-        </NameCard>
+        {names.map((name) => (
+          <MigrationName {...{ name, t }} />
+        ))}
       </NamesGrid>
     </Container>
   )

@@ -238,7 +238,7 @@ type Tab = (typeof tabs)[number]
 export default function Page() {
   const { t } = useTranslation('migrate')
 
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
 
   const { openConnectModal } = useConnectModal()
 
@@ -379,7 +379,7 @@ export default function Page() {
                     {t('get-started.upgrade.caption')}
                     <Button colorStyle="greenPrimary" width="max">
                       <span>
-                        {t('cta.connected')} <RightArrowSVG />
+                        {t('cta.approve')} <RightArrowSVG />
                       </span>
                     </Button>
                   </Card>
@@ -408,7 +408,7 @@ export default function Page() {
           ))
           .with('migrations', () => (
             <>
-              {isConnected ? <MigrationNamesList /> : null}
+              {isConnected ? <MigrationNamesList address={address} /> : null}
               <Section>
                 <Typography asProp="h3" fontVariant="headingThree">
                   {t('approval-benefits.title')}
