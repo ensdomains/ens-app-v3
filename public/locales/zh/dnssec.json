@@ -62,5 +62,100 @@
     "registrarHelp": "从下面的下拉框中选择您的注册商，查看相应的启用说明。",
     "findRegistrar": "查看您的注册商",
     "DNSSECNotEnabled": "该域名尚未启用 DNSSEC。"
+  },
+  "error": {
+    "dnssecFailure": "DNSSEC未启用",
+    "invalidAddressChecksum": "地址无效",
+    "invalidTxtRecord": "发现无效记录",
+    "noTxtRecord": "未找到记录",
+    "resolutionFailure": "提供的记录未解析",
+    "unknown": "发生未知错误"
+  },
+  "status": {
+    "aWhileAgo": "上次检查在一段时间前",
+    "checking": "正在检查...",
+    "error": "检查时发生错误",
+    "minutesAgo_one": "上次检查在{{count}}分钟之前",
+    "minutesAgo_other": "上次检查在{{count}}分钟之前",
+    "secondsAgo": "几秒钟前检查过"
+  },
+  "steps": {
+    "complete": {
+      "action": {
+        "claimAnother": "认领另一个",
+        "viewName": "查看名称"
+      },
+      "claim": {
+        "description": "您的域名已成功认领。您现在可以查看和管理您的名称。",
+        "subtitle": "您现在是<gradient>{{name}}</gradient>的所有者"
+      },
+      "import": {
+        "description": "该域名已成功导入到ENS中。您现在可以查看此名称。",
+        "subtitle": "<gradient>{{name}}</gradient>已被导入",
+        "warning": "Gasless DNS名称当前不会出现在您的“名称”列表中。"
+      },
+      "title": "恭喜！"
+    },
+    "enableDnssec": {
+      "help": {
+        "findOutRegistrar": "了解您的注册人"
+      },
+      "status": {
+        "disabled": {
+          "heading": "您需要访问您的域名注册人以启用DNSSEC。",
+          "help": "帮助启用DNSSEC",
+          "message": "DNSSEC未启用"
+        },
+        "enabled": "该域名已启用DNSSEC。"
+      },
+      "title": "启用DNSSEC"
+    },
+    "selectType": {
+      "learnMore": "了解更多关于导入名称的信息",
+      "select": {
+        "heading": "您希望如何导入您的域名？",
+        "offchain": {
+          "description": "您的名称将没有链上代币。<br/>这不会影响其接收交易或用作主名称的能力。<br/><b>您将无法从ENS应用中编辑您的个人资料。</b>",
+          "name": "离链",
+          "tag": "免费"
+        },
+        "onchain": {
+          "description": "您的名称将具有链上代币。",
+          "name": "链上"
+        }
+      },
+      "subtitle": "导入域名允许将其用作ENS名称。",
+      "title": "认领{{name}}"
+    },
+    "transaction": {
+      "estimatedNetworkCost": "预计网络费用",
+      "matching": {
+        "subtitle": "您的所有权已被验证。",
+        "title": "认领您的域名"
+      },
+      "mismatching": {
+        "subtitle": "您的所有权<b>未</b>被验证。您仍然可以导入该域名。",
+        "title": "导入该域名"
+      }
+    },
+    "verifyOwnership": {
+      "action": {
+        "importWithoutOwnership": "无所有权导入"
+      },
+      "status": {
+        "disconnected": "连接您的钱包以验证所有权。",
+        "matching": "找到与您连接的地址匹配的记录。",
+        "mismatching": {
+          "error": {
+            "offchain": "找到的记录与您连接的地址不匹配。您仍然可以导入此名称，但它不会指向您的连接地址，且不能用作您的主名称。",
+            "onchain": "找到的记录与您连接的地址不匹配。您仍然可以导入此名称，但您将没有其所有权。"
+          },
+          "heading": "添加下面的DNS记录以验证您对该域名的所有权。",
+          "help": "帮助添加TXT记录",
+          "message": "未找到记录"
+        }
+      },
+      "title": "验证所有权"
+    }
   }
 }

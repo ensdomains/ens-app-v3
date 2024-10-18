@@ -44,7 +44,14 @@
     "understand": "我了解",
     "feedback": "反馈",
     "enterEmail": "输入您的 Email",
-    "migrate": "迁移"
+    "migrate": "迁移",
+    "connect": "连接",
+    "editRoles": "编辑角色",
+    "goToProfile": "查看个人资料",
+    "import": "导入",
+    "restart": "重启",
+    "setReminder": "设置提醒",
+    "setToSelf": "设置为自己"
   },
   "unit": {
     "years_one": "{{count}} 年",
@@ -58,7 +65,11 @@
     "yrs_other": "{{count}} 年",
     "gas": "{{value}} 网络费",
     "selected": "{{count}} 个选中项",
-    "perPage": "{{count}} 个/页"
+    "perPage": "{{count}} 个/页",
+    "hours_one": "{{count}} 小时",
+    "hours_other": "{{count}} 小时",
+    "minutes_one": "{{count}} 分钟",
+    "minutes_other": "{{count}} 分钟"
   },
   "navigation": {
     "home": "首页",
@@ -139,7 +150,8 @@
     "transfer": "转移",
     "sendManager": "发送管理权",
     "sendOwner": "发送所有权",
-    "renew": "为 {{name}} 续期"
+    "renew": "为 {{name}} 续期",
+    "copy": "复制名称"
   },
   "address": {
     "label": "地址",
@@ -209,7 +221,15 @@
       "syncManager": "同步管理员",
       "updateProfileRecords": "更新个人资料",
       "resetProfile": "重置个人资料",
-      "unwrapName": "将名称解除包装"
+      "unwrapName": "将名称解除包装",
+      "approveDnsRegistrar": "批准DNS注册人",
+      "claimDnsName": "认领DNS名称",
+      "importDnsName": "导入DNS名称",
+      "removeRecord": "移除记录",
+      "removeVerificationRecord": "移除验证记录",
+      "resetProfileWithRecords": "重置带记录的个人资料",
+      "updateRecord": "更新记录",
+      "updateVerificationRecord": "更新验证记录"
     },
     "info": {
       "sendName": "设置名称的管理员和注册人",
@@ -253,7 +273,9 @@
       "duration": "时长",
       "cost": "费用",
       "update": "更新",
-      "resolver": "解析器"
+      "resolver": "解析器",
+      "record": "记录",
+      "records": "记录"
     },
     "itemValue": {
       "records_one": "{{count}} 条记录",
@@ -284,7 +306,8 @@
         "title": "确认详情",
         "message": "请您在钱包里确认之前，仔细检查这些细节。",
         "waitingForWallet": "等待钱包确认",
-        "openWallet": "打开钱包"
+        "openWallet": "打开钱包",
+        "insufficientFunds": "资金不足"
       },
       "sent": {
         "title": "交易已发送",
@@ -292,7 +315,8 @@
         "progress": {
           "title": "已发送",
           "message": "比预期耗费的时间要长"
-        }
+        },
+        "learn": "了解有关长期运行的交易"
       },
       "complete": {
         "title": "交易完成",
@@ -315,7 +339,8 @@
       "request": {
         "INSUFFICIENT_FUNDS": "钱包余额不足",
         "UNPREDICTABLE_GAS_LIMIT": "发生未知错误"
-      }
+      },
+      "unknown": "发生未知错误"
     },
     "viewEtherscan": "在 Etherscan 上查看",
     "viewMore": "查看详情"
@@ -340,7 +365,9 @@
       "default": "无效",
       "unsupportedTLD": "不支持",
       "imported": "已导入",
-      "owned": "已被持有"
+      "owned": "已被持有",
+      "invalid": "无效",
+      "offChain": "查看"
     }
   },
   "selectableInput": {
@@ -355,5 +382,46 @@
   "calendar": {
     "pick_by_years": "选择年份",
     "pick_by_date": "选择日期"
+  },
+  "dns": {
+    "refresh": "刷新DNS"
+  },
+  "roles": {
+    "dns-owner": {
+      "description": "拥有此名称的地址。",
+      "title": "DNS所有者"
+    },
+    "eth-record": {
+      "description": "此名称指向的地址。",
+      "title": "ETH记录"
+    },
+    "manager": {
+      "description": "可以更改个人资料、设置和个人资料管理者的地址或合约。",
+      "title": "管理员"
+    },
+    "owner": {
+      "description": "拥有此名称的地址。",
+      "title": "所有者"
+    },
+    "parent-owner": {
+      "description": "拥有此名称的父名称的地址。",
+      "title": "父名称所有者"
+    },
+    "profile-editor": {
+      "description": "可以更改个人资料的地址。",
+      "title": "个人资料编辑者"
+    }
+  },
+  "verification": {
+    "personhoodVerified": "身份验证已通过",
+    "verificationFailed": "验证失败，请重新验证您的个人资料",
+    "verifiedBy": "由 {{ issuer }} 验证"
+  },
+  "verificationErrorDialog": {
+    "default": "我们无法验证您的帐户。请返回Dentity并重试。",
+    "ownerNotManager": "您必须以此名称的管理员身份连接才能设置验证记录。您可以在所有权选项卡下查看和更新管理员。",
+    "resolverRequired": "完成验证流程需要有效的解析器",
+    "title": "验证失败",
+    "wrongAccount": "您必须以<strong>{{ nameOrAddress }}</strong> 的身份连接才能设置验证记录。"
   }
 }
