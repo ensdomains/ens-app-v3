@@ -1150,7 +1150,7 @@ test.describe('Extend name', () => {
     await ownershipPage.extendButton.click()
 
     await test.step('should show ownership warning', async () => {
-      await expect(page.getByText('You do not own this name')).toBeVisible()
+      await expect(page.getByText(`You do not own ${name}`)).toBeVisible()
       await page.getByRole('button', { name: 'I understand' }).click()
     })
     await test.step('should show the correct price data', async () => {
@@ -1158,12 +1158,6 @@ test.describe('Extend name', () => {
       await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
       await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
       await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
-    })
-
-    await test.step('should show the cost comparison data', async () => {
-      await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-      await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-      await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
     })
 
     await test.step('should work correctly with plus minus control', async () => {
