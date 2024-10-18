@@ -1,6 +1,7 @@
 import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 
 import '@rainbow-me/rainbowkit/styles.css'
+import '@splidejs/react-splide/css'
 
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'

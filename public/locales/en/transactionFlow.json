@@ -413,6 +413,10 @@
         "remove": "Remove Dentity from profile",
         "link": "Go to Dentity"
       }
+    },
+    "approveMigration": {
+      "title": "Approve ENSv2 migration",
+      "description": "Approving your names for migration now will automatically migrate them at the launch of ENSv2, without additional fees.\nOnly the address that owns the names can approve them, and all eligible names in your address must be approved together."
     }
   },
   "transaction": {
