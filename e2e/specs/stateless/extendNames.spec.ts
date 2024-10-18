@@ -65,19 +65,28 @@ test('should be able to register multiple names on the address page', async ({
 
   // warning message
   await expect(page.getByText('You do not own all these names')).toBeVisible()
-  await page.getByRole('button', { name: 'I understand' }).click()
+  await page.locator('button:has-text("I understand")').click()
 
   // name list
-  await addresPage.extendNamesModalNextButton.click()
+  await page.waitForLoadState('networkidle')
+  await expect(page.getByText(`Extend ${extendableNameItems.length} Names`)).toBeVisible()
+  page.locator('button:has-text("Next")').waitFor({ state: 'visible' })
+  await page.locator('button:has-text("Next")').click()
 
   // check the invoice details
-  await expect(page.getByText(`Extend ${extendableNameItems.length} Names`)).toBeVisible()
+  await page.waitForLoadState('networkidle')
   await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
-
   // increment and save
   await page.getByTestId('plus-minus-control-plus').click()
   await page.getByTestId('plus-minus-control-plus').click()
-  await page.getByTestId('extend-names-confirm').click()
+  await page.waitForLoadState('networkidle')
+  await expect(page.getByTestId('invoice-item-0-amount')).toContainText('0.1863')
+  await expect(page.getByTestId('invoice-item-1-amount')).toContainText('0.0010')
+  await expect(page.getByTestId('invoice-total')).toContainText('0.1873')
+
+  page.locator('button:has-text("Next")').waitFor({ state: 'visible' })
+  await page.locator('button:has-text("Next")').click()
+  await page.waitForLoadState('networkidle')
 
   await transactionModal.autoComplete()
 
@@ -88,15 +97,14 @@ test('should be able to register multiple names on the address page', async ({
 
   // Should be able to remove this after useQuery is fixed. Using to force a refetch.
   await time.increaseTime({ seconds: 15 })
-  await page.pause()
-  await page.reload()
+  // await page.reload()
+  await page.waitForLoadState('networkidle')
   for (const name of extendableNameItems) {
     const label = name.replace('.eth', '')
     await addresPage.search(label)
     await expect(addresPage.getNameRow(name)).toBeVisible({ timeout: 5000 })
-    await page.pause()
-    await expect(await addresPage.getTimestamp(name)).not.toBe(timestampDict[name])
-    await expect(await addresPage.getTimestamp(name)).toBe(timestampDict[name] + 31536000000 * 3)
+    expect(await addresPage.getTimestamp(name)).not.toBe(timestampDict[name])
+    expect(await addresPage.getTimestamp(name)).toBe(timestampDict[name] + 31536000000 * 3)
   }
 })
 
