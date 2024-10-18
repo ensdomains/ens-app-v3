@@ -120,10 +120,6 @@ const NameCard = styled.div(
   `,
 )
 
-const filter: Record<Tab, GetNamesForAddressParameters['filter']> = {
-  eligible: { owner: true },
-}
-
 const MigrationName = ({ name, t }: { name: NameWithRelation; t: TFunction }) => {
   const now = new Date()
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name: name.name! })
@@ -141,6 +137,11 @@ const MigrationName = ({ name, t }: { name: NameWithRelation; t: TFunction }) =>
       <span>Expires in {expiresIn}</span>
     </NameCard>
   )
+}
+
+const filter: Record<Tab, GetNamesForAddressParameters['filter']> = {
+  eligible: { owner: true, registrant: false, resolvedAddress: true, wrappedOwner: false },
+  ineligible: { owner: false },
 }
 
 export const MigrationNamesList = ({ address }: { address?: Address }) => {
