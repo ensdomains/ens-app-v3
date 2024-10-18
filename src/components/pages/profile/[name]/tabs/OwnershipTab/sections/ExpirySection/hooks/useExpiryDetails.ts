@@ -68,8 +68,8 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
             'eth-emancipated-2ld:grace-period',
             'eth-locked-2ld',
             'eth-locked-2ld:grace-period',
-            'eth-wrapped-2ld',
-            'eth-wrapped-2ld:grace-period',
+            'eth-desynced-2ld',
+            'eth-desynced-2ld:grace-period',
           ),
           () => [
             ...(expiry

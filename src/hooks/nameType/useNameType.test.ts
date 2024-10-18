@@ -113,7 +113,7 @@ describe('useNameType', () => {
     it('should return wrapped', async () => {
       mockBasicData.mockReturnValue(makeMockUseBasicName('eth-wrapped-subname'))
       const { result } = renderHook(() => useNameType('test.eth'))
-      expect(result.current.data).toEqual('eth-wrapped-2ld')
+      expect(result.current.data).toEqual('eth-desynced-2ld')
     })
 
     it('should return emancipated', async () => {

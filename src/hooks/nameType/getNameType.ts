@@ -15,8 +15,8 @@ export type NameType =
   | 'eth-emancipated-2ld:grace-period'
   | 'eth-locked-2ld'
   | 'eth-locked-2ld:grace-period'
-  | 'eth-wrapped-2ld'
-  | 'eth-wrapped-2ld:grace-period'
+  | 'eth-desynced-2ld'
+  | 'eth-desynced-2ld:grace-period'
   | 'eth-unwrapped-subname'
   | 'eth-wrapped-subname'
   | 'eth-emancipated-subname'
@@ -75,9 +75,13 @@ export const getNameType = ({
       if (wrapperData?.fuses?.child?.CANNOT_UNWRAP) return 'eth-locked-2ld:grace-period' as const
       if (wrapperData?.fuses?.parent?.PARENT_CANNOT_CONTROL)
         return 'eth-emancipated-2ld:grace-period' as const
+      // If wrapped eth 2ld without fuses set then it's desynced
+      if (wrapLevel === 'wrapped') return 'eth-desynced-2ld:grace-period' as const
       return 'eth-unwrapped-2ld:grace-period' as const
     })
     .with({ tldType: 'eth', level: '2ld' }, ({ tldType: _tldType, wrapLevel: _wrapLevel }) => {
+      // If wrapped eth 2ld without fuses set then it's desynced
+      if (wrapLevel === 'wrapped') return 'eth-desynced-2ld' as const
       return `${_tldType}-${_wrapLevel}-2ld` as const
     })
     .with(

@@ -3,8 +3,6 @@ import { describe, expect, it } from 'vitest'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
-import { RegistrationStatus } from '@app/utils/registrationStatus'
-
 import { getNameType } from './getNameType'
 
 describe('getNameType', () => {
@@ -46,7 +44,7 @@ describe('getNameType', () => {
     expect(result).toBe('eth-unwrapped-2ld')
   })
 
-  it('should return "eth-wrapped-2ld" for a wrapped .eth 2LD', () => {
+  it('should return "eth-desynced-2ld" for a desynced .eth 2LD', () => {
     const result = getNameType({
       name: 'test.eth',
       ownerData: { ownershipLevel: 'nameWrapper' } as GetOwnerReturnType,
@@ -55,7 +53,7 @@ describe('getNameType', () => {
       registrationStatus: 'registered',
       nameWrapperAddress: mockNameWrapperAddress,
     })
-    expect(result).toBe('eth-wrapped-2ld')
+    expect(result).toBe('eth-desynced-2ld')
   })
 
   it('should return "eth-locked-2ld" for a locked .eth 2LD', () => {
@@ -144,5 +142,20 @@ describe('getNameType', () => {
       nameWrapperAddress: mockNameWrapperAddress,
     })
     expect(result).toBe('dns-wrapped-subname')
+  })
+
+  it('should return "eth-desynced-2ld:grace-period" for a desynced .eth 2LD in grace period', () => {
+    const result = getNameType({
+      name: 'test.eth',
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: mockNameWrapperAddress,
+      } as GetOwnerReturnType,
+      wrapperData: undefined,
+      pccExpired: false,
+      registrationStatus: 'gracePeriod',
+      nameWrapperAddress: mockNameWrapperAddress,
+    })
+    expect(result).toBe('eth-desynced-2ld:grace-period')
   })
 })

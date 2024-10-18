@@ -37,8 +37,8 @@ export const senderRole = (nameType: ReturnType<typeof useNameType>['data']) => 
         'eth-emancipated-2ld:grace-period',
         'eth-locked-2ld:grace-period',
         'eth-unwrapped-2ld:grace-period',
-        'eth-wrapped-2ld',
-        'eth-wrapped-2ld:grace-period',
+        'eth-synced-2ld',
+        'eth-desynced-2ld:grace-period',
       ),
       () => null,
     )

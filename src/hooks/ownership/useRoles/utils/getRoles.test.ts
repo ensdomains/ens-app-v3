@@ -23,7 +23,7 @@ describe('getRoles', () => {
   it('should return a list of roles for a wrapped 2LD', () => {
     expect(
       getRoles({
-        nameType: 'eth-wrapped-2ld',
+        nameType: 'eth-desynced-2ld',
         registrant: '0xregistrant',
         owner: '0xowner',
         ethAddress: '0xethAddress',
