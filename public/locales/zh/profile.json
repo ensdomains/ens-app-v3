@@ -16,6 +16,11 @@
     "available": {
       "title": "{{name}} 可以注册",
       "description": "该名称在 <strong>{{date}}</strong> 已经过期。点击此处查看注册页面。"
+    },
+    "empty": {
+      "action": "开始使用",
+      "description": "添加加密地址、社交链接、头像等更多内容！",
+      "title": "个性化您的个人资料"
     }
   },
   "tabs": {
@@ -39,11 +44,15 @@
         "reclaim": {
           "label": "重新创建名称",
           "warning": "该子名称已过期，并且无人持有。您可以重新创建此子名称。"
+        },
+        "verifyProfile": {
+          "label": "验证"
         }
       },
       "warnings": {
         "wrappedDNS": "一个 DNS 的所有者可以随时收回他的 DNS 域名。不要购买 DNS 域名。",
-        "homoglyph": "该名称包含非 ASCII 字符。有些字符可能看起来与其他字符相同或非常相似，这可能会用于欺骗用户。<a>了解更多关于同形文字的知识</a>"
+        "homoglyph": "该名称包含非 ASCII 字符。有些字符可能看起来与其他字符相同或非常相似，这可能会用于欺骗用户。<a>了解更多关于同形文字的知识</a>",
+        "offchain": "离链名称目前不会出现在您的“名称”列表中。<a>了解更多</a>"
       }
     },
     "records": {
@@ -253,7 +262,15 @@
           "wrapped": "已包装",
           "emancipated": "已包装, 已解放",
           "locked": "已包装, 已锁定"
-        }
+        },
+        "nameWrapper": "名称包装器",
+        "pcc": {
+          "controllable": "可由父级控制",
+          "not-controllable": "不可由父级控制"
+        },
+        "tooltip": "名称包装器为ENS名称提供了额外功能。",
+        "unwrapWarning": "此名称已撤销执行此操作所需的权限。",
+        "unwrappedText": "包装您的名称将赋予其新功能，但某些功能将发生变化。在包装名称之前，请确保您理解这些变化。"
       },
       "misc": {
         "registered": "已注册",
@@ -272,6 +289,60 @@
           "ical": "iCal 下载 (.ics)",
           "bankless": "Bankless 提醒"
         }
+      }
+    },
+    "ownership": {
+      "name": "所有权",
+      "sections": {
+        "contract": {
+          "title": "合约地址",
+          "tooltip": "启用包装ENS名称的合约地址。",
+          "warning": "某些应用可能将合约地址显示为所有者。这不会影响您的所有权。"
+        },
+        "expiry": {
+          "panel": {
+            "expiry": {
+              "title": "名称到期"
+            },
+            "grace-period": {
+              "title": "宽限期结束",
+              "tooltip": "到期后的90天宽限期，在此期间名称仍可以续期但不能重新注册。"
+            },
+            "parent-expiry": {
+              "title": "父名称到期"
+            },
+            "parent-grace-period": {
+              "title": "父级宽限期结束"
+            },
+            "registration": {
+              "title": "已注册"
+            }
+          }
+        },
+        "roles": {
+          "addresses_one": "{{count}} 个地址",
+          "addresses_other": "{{count}} 个地址",
+          "title": "角色"
+        }
+      },
+      "tooltips": {
+        "contract-address": "启用包装ENS名称的合约地址。",
+        "dns-owner": "通过DNS记录设置的此名称的所有者。所有者无法更改个人资料。",
+        "eth-record": "将接收发送到此名称的主网资金的地址。",
+        "grace-period": "到期后的90天宽限期，在此期间名称仍可以续期但不能重新注册。",
+        "manager": "可以更改个人资料、设置和个人资料编辑者的地址。",
+        "namewrapper": "启用包装ENS名称的合约。",
+        "owner": "此名称的所有者。所有者无法更改个人资料。",
+        "owner-emancipated": "此名称的所有者。",
+        "parent-owner": "此名称父级的所有者（{{parent}}）。",
+        "profile-editor": "只能更改个人资料的地址",
+        "subname-manager": "负责子名称续期的地址或合约。"
+      },
+      "warning": {
+        "dnsOwnerNotManager": "您无法更改此名称，因为您是DNS所有者，而不是管理员。您可以同步管理员以修复此问题。",
+        "managerNotDNSOwner": "您是管理员但不是此名称的DNS所有者。DNS名称可以随时由DNS所有者回收。您可以将此名称发送给所有者，或更新DNS记录以匹配。",
+        "managerNotParentOwner": "拥有<strong>{{parent}}</strong>的所有者可以更改所有权、角色和设置，但无法更改个人资料。",
+        "ownerNotManager": "您是所有者但不是管理员。如果您最近从另一个地址接收此名称，这可能不是您所期望的。"
       }
     }
   },
@@ -395,6 +466,13 @@
     "keyInUse": "{{value}} 已经在使用了",
     "hasSubnames": "该名称拥有子名称",
     "permissionRevoked": "该名称撤销了执行此操作所需的权限。",
-    "invalidJSON": "无效 JSON"
-  }
+    "invalidJSON": "无效 JSON",
+    "cannotEdit": "您没有权限更新为授权解析器",
+    "cannotVerify": "您没有权限验证您的个人资料",
+    "default": "此操作不可用",
+    "gracePeriod": "由于名称已过期，无法执行此操作",
+    "isOwnerCannotEdit": "您必须是管理员才能编辑个人资料",
+    "isOwnerCannotVerify": "您必须是管理员才能验证您的个人资料"
+  },
+  "verifications": "验证"
 }
