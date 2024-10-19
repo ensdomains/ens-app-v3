@@ -589,18 +589,24 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const allNamedAccts = await getNamedAccounts()
 
   const registry = await ethers.getContract('ENSRegistry')
-  const controller = await ethers.getContract('LegacyETHRegistrarController')
+  const legacyController = await ethers.getContract('LegacyETHRegistrarController')
+  // const controller = await ethers.getContract('ETHRegistrarController')
   const publicResolver = await ethers.getContract('LegacyPublicResolver')
 
   const allNameData = names.map(makeNameData(allNamedAccts, publicResolver.address))
 
   await network.provider.send('evm_setAutomine', [false])
-  await getNonceAndApply('registrant', makeCommitment(controller), allNamedAccts, allNameData)
+  await getNonceAndApply('registrant', makeCommitment(legacyController), allNamedAccts, allNameData)
   await network.provider.send('evm_mine')
   const oldTimestamp = (await ethers.provider.getBlock('latest')).timestamp
   await network.provider.send('evm_setNextBlockTimestamp', [oldTimestamp + 60])
   await network.provider.send('evm_mine')
-  await getNonceAndApply('registrant', makeRegistration(controller), allNamedAccts, allNameData)
+  await getNonceAndApply(
+    'registrant',
+    makeRegistration(legacyController),
+    allNamedAccts,
+    allNameData,
+  )
   await network.provider.send('evm_mine')
   const tempNonces = await getNonceAndApply(
     'registrant',
@@ -626,6 +632,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     tempNonces2,
   )
   await network.provider.send('evm_mine')
+
+  //Register wrapped names
+  // await getNonceAndApply('owner', makeCommitment(controller, allNamedAccts, allNameData))
+  // await network.provider.send('evm_mine')
+  // const oldTimestamp = (await ethers.provider.getBlock('latest')).timestamp
+  // await network.provider.send('evm_setNextBlockTimestamp', [oldTimestamp + 60])
+  // await network.provider.send('evm_mine')
+  // await getNonceAndApply('owner', makeRegistration(controller))
+  // await network.provider.send('evm_mine')
+  // await getNonceAndApply('owner', makeSubname)
+  // await network.provider.send('evm_mine')
 
   // Skip forward 28 + 90 days so that minimum exp names go into premium
   await network.provider.send('anvil_setBlockTimestampInterval', [2419200 + 7776000])
@@ -653,7 +670,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 func.id = 'register-unwrapped-names'
 func.tags = ['register-unwrapped-names']
-func.dependencies = ['LegacyETHRegistrarController']
+func.dependencies = ['LegacyETHRegistrarController', 'ETHRegistrarController']
 func.runAtTheEnd = true
 
 export default func

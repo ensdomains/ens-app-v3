@@ -6,15 +6,10 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { Address, namehash } from 'viem'
 
-import {
-  encodeFuses,
-  makeCommitment as generateCommitment,
-  makeRegistrationTuple,
-  RecordOptions,
-  RegistrationParameters,
-} from '@ensdomains/ensjs/utils'
+import { encodeFuses, RecordOptions, RegistrationParameters } from '@ensdomains/ensjs/utils'
 
 import { nonceManager } from './.utils/nonceManager'
+import { makeWrappedCommitment, makeWrappedRegistration } from './.utils/wrappedNameHelpers'
 
 type Name = {
   name: string
@@ -191,36 +186,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     }
   }
 
-  const makeCommitment =
-    (nonce: number) =>
-    async ({ owner, name, ...rest }: ProcessedNameData, index: number) => {
-      const commitment = generateCommitment({ owner, name, ...rest })
-
-      const _controller = controller.connect(await ethers.getSigner(owner))
-      const commitTx = await _controller.commit(commitment, { nonce: nonce + index })
-      console.log(`Commiting commitment for ${name} (tx: ${commitTx.hash})...`)
-      return 1
-    }
-
-  const makeRegistration =
-    (nonce: number) =>
-    async ({ owner, name, duration, label, ...rest }: ProcessedNameData, index: number) => {
-      const [price] = await controller.rentPrice(label, duration)
-
-      const _controller = controller.connect(await ethers.getSigner(owner))
-
-      const registerTx = await _controller.register(
-        ...makeRegistrationTuple({ owner, name, duration, ...rest }),
-        {
-          value: price,
-          nonce: nonce + index,
-        },
-      )
-      console.log(`Registering name ${name} (tx: ${registerTx.hash})...`)
-
-      return 1
-    }
-
   const makeSubname =
     (nonce: number) =>
     async ({ name, subnames, owner }: ProcessedNameData, index: number) => {
@@ -247,12 +212,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const getNonceAndApply = nonceManager(ethers, allNamedAccts, allNameData)
 
   await network.provider.send('evm_setAutomine', [false])
-  await getNonceAndApply('owner', makeCommitment)
+  await getNonceAndApply('owner', makeWrappedCommitment(controller))
   await network.provider.send('evm_mine')
   const oldTimestamp = (await ethers.provider.getBlock('latest')).timestamp
   await network.provider.send('evm_setNextBlockTimestamp', [oldTimestamp + 60])
   await network.provider.send('evm_mine')
-  await getNonceAndApply('owner', makeRegistration)
+  await getNonceAndApply('owner', makeWrappedRegistration(controller))
   await network.provider.send('evm_mine')
   await getNonceAndApply('owner', makeSubname)
   await network.provider.send('evm_mine')
@@ -260,16 +225,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await network.provider.send('evm_setAutomine', [true])
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
   await network.provider.send('evm_mine')
-
-  /*
-  await network.provider.send('evm_setAutomine', [false])
-  // Skip forward 28 + 90 days so that minimum exp names go into premium
-  await network.provider.send('anvil_setBlockTimestampInterval', [2419200 + 7776000])
-  await network.provider.send('evm_mine')
-  await network.provider.send('evm_setAutomine', [true])
-  await network.provider.send('anvil_setBlockTimestampInterval', [1])
-  await network.provider.send('evm_mine')
-  */
 
   /*
   // Renew desynced.eth with the legacy ETH registrar
