@@ -9,7 +9,11 @@ import { Address, namehash } from 'viem'
 import { encodeFuses, RecordOptions, RegistrationParameters } from '@ensdomains/ensjs/utils'
 
 import { nonceManager } from './.utils/nonceManager'
-import { makeWrappedCommitment, makeWrappedRegistration } from './.utils/wrappedNameHelpers'
+import {
+  makeWrappedCommitment,
+  makeWrappedData,
+  makeWrappedRegistration,
+} from './.utils/wrappedNameHelpers'
 
 type Name = {
   name: string
@@ -132,11 +136,6 @@ const names: Name[] = [
       },
     ],
   },
-  {
-    name: 'desynced.eth',
-    namedOwner: 'owner',
-    customDuration: 2419200,
-  },
 ]
 
 type ProcessedNameData = RegistrationParameters & {
@@ -151,40 +150,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const controller = await ethers.getContract('ETHRegistrarController')
   const publicResolver = await ethers.getContract('PublicResolver')
   const nameWrapper = await ethers.getContract('NameWrapper')
-
-  const makeData = ({ namedOwner, customDuration, fuses, name, subnames, ...rest }: Name) => {
-    const resolverAddress = publicResolver.address as Address
-
-    const secret =
-      // eslint-disable-next-line no-restricted-syntax
-      '0x0000000000000000000000000000000000000000000000000000000000000000' as Address
-    const duration = customDuration || 31536000
-    // 1659467455 is the approximate time of the transaction, this is for keeping block hashes the same
-    const wrapperExpiry = 1659467455 + duration
-    const owner = allNamedAccts[namedOwner]
-
-    const processedSubnames: ProcessedSubname[] =
-      subnames?.map(
-        ({ label, namedOwner: subNamedOwner, fuses: subnameFuses, expiry: subnameExpiry }) => ({
-          label,
-          owner: allNamedAccts[subNamedOwner],
-          expiry: subnameExpiry || wrapperExpiry,
-          fuses: subnameFuses || 0,
-        }),
-      ) || []
-
-    return {
-      resolverAddress,
-      secret,
-      duration,
-      owner,
-      name,
-      label: name.split('.')[0],
-      subnames: processedSubnames,
-      fuses: fuses || undefined,
-      ...rest,
-    }
-  }
 
   const makeSubname =
     (nonce: number) =>
@@ -207,7 +172,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       return subnames.length
     }
 
-  const allNameData = names.map(makeData)
+  const allNameData = names.map(makeWrappedData(publicResolver.address, allNamedAccts))
 
   const getNonceAndApply = nonceManager(ethers, allNamedAccts, allNameData)
 

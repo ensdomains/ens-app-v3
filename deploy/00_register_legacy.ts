@@ -9,6 +9,12 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import pako from 'pako'
 import { Address, labelhash, namehash, stringToBytes } from 'viem'
 
+import {
+  makeWrappedCommitment,
+  makeWrappedData,
+  makeWrappedRegistration,
+} from './.utils/wrappedNameHelpers'
+
 const dummyABI = [
   {
     type: 'event',
@@ -587,10 +593,9 @@ const getNonceAndApply = async (
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, network } = hre
   const allNamedAccts = await getNamedAccounts()
-
   const registry = await ethers.getContract('ENSRegistry')
   const legacyController = await ethers.getContract('LegacyETHRegistrarController')
-  // const controller = await ethers.getContract('ETHRegistrarController')
+  const controller = await ethers.getContract('ETHRegistrarController')
   const publicResolver = await ethers.getContract('LegacyPublicResolver')
 
   const allNameData = names.map(makeNameData(allNamedAccts, publicResolver.address))
@@ -633,14 +638,49 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   )
   await network.provider.send('evm_mine')
 
-  //Register wrapped names
-  // await getNonceAndApply('owner', makeCommitment(controller, allNamedAccts, allNameData))
-  // await network.provider.send('evm_mine')
-  // const oldTimestamp = (await ethers.provider.getBlock('latest')).timestamp
-  // await network.provider.send('evm_setNextBlockTimestamp', [oldTimestamp + 60])
-  // await network.provider.send('evm_mine')
-  // await getNonceAndApply('owner', makeRegistration(controller))
-  // await network.provider.send('evm_mine')
+  const wrappedNames = [
+    {
+      name: 'desynced.eth',
+      namedOwner: 'owner',
+      customDuration: 2419200,
+    },
+  ]
+
+  // Register desynced name -------------------------
+  const wrappedFunctionData = wrappedNames.map(
+    makeWrappedData(publicResolver.address, allNamedAccts),
+  )
+  console.log('****wrappedFunctionData', wrappedFunctionData)
+  await getNonceAndApply(
+    'owner',
+    makeWrappedCommitment(controller),
+    allNamedAccts,
+    wrappedFunctionData,
+  )
+  await network.provider.send('evm_mine')
+  await network.provider.send('evm_setNextBlockTimestamp', [
+    (await ethers.provider.getBlock('latest')).timestamp + 60,
+  ])
+  await network.provider.send('evm_mine')
+  await getNonceAndApply(
+    'owner',
+    makeWrappedRegistration(controller),
+    allNamedAccts,
+    wrappedFunctionData,
+  )
+  await network.provider.send('evm_mine')
+
+  //Extend desynced.eth on the legacy controller
+  const [price] = await controller.rentPrice('desynced', 31556952)
+  const legacyControllerConnected = legacyController.connect(
+    await ethers.getSigner(allNamedAccts.owner),
+  )
+  await legacyControllerConnected.renew('desynced', 31556952, {
+    value: price,
+  })
+
+  //---------------------------------
+
   // await getNonceAndApply('owner', makeSubname)
   // await network.provider.send('evm_mine')
 
@@ -668,9 +708,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   return true
 }
 
-func.id = 'register-unwrapped-names'
-func.tags = ['register-unwrapped-names']
-func.dependencies = ['LegacyETHRegistrarController', 'ETHRegistrarController']
-func.runAtTheEnd = true
+func.id = 'register-legacy-names'
+func.tags = ['register-legacy-names']
+func.dependencies = ['ETHRegistrarController']
+// func.runAtTheEnd = true
 
 export default func
