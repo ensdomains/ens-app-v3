@@ -137,6 +137,11 @@ const names: Name[] = [
       },
     ],
   },
+  {
+    name: 'desynced.eth',
+    namedOwner: 'owner',
+    customDuration: 2419200,
+  },
 ]
 
 type ProcessedNameData = RegistrationParameters & {
@@ -255,6 +260,32 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await network.provider.send('evm_setAutomine', [true])
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
   await network.provider.send('evm_mine')
+
+  /*
+  await network.provider.send('evm_setAutomine', [false])
+  // Skip forward 28 + 90 days so that minimum exp names go into premium
+  await network.provider.send('anvil_setBlockTimestampInterval', [2419200 + 7776000])
+  await network.provider.send('evm_mine')
+  await network.provider.send('evm_setAutomine', [true])
+  await network.provider.send('anvil_setBlockTimestampInterval', [1])
+  await network.provider.send('evm_mine')
+  */
+
+  /*
+  // Renew desynced.eth with the legacy ETH registrar
+  const legacyETHRegistrarController = await ethers.getContract('LegacyETHRegistrarController')
+  const owner = allNamedAccts.owner
+  const _legacyETHRegistrarController = legacyETHRegistrarController.connect(
+    await ethers.getSigner(owner),
+  )
+
+  const label = 'desynced'
+  const duration = 31536000 // 1 year in seconds
+
+  const renewTx = await _legacyETHRegistrarController.renew(label, duration)
+  console.log(`Renewing desynced.eth for 1 year (tx: ${renewTx.hash})...`)
+  await renewTx.wait()
+  */
 
   return true
 }

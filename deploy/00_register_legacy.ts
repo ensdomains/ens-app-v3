@@ -2,11 +2,12 @@
 
 /* eslint-disable no-await-in-loop */
 import cbor from 'cbor'
+import { Contract } from 'ethers'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import pako from 'pako'
-import { labelhash, namehash, stringToBytes } from 'viem'
+import { Address, labelhash, namehash, stringToBytes } from 'viem'
 
 const dummyABI = [
   {
@@ -366,28 +367,15 @@ const names: Name[] = [
   },
 ]
 
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts, network } = hre
-  const allNamedAccts = await getNamedAccounts()
-
-  const registry = await ethers.getContract('ENSRegistry')
-  const controller = await ethers.getContract('LegacyETHRegistrarController')
-  const publicResolver = await ethers.getContract('LegacyPublicResolver')
-
-  const makeData = ({
-    namedOwner,
-    namedController,
-    namedAddr,
-    customDuration,
-    subnames,
-    ...rest
-  }: Name) => {
+const makeNameData =
+  (allNamedAccts: Record<string, Address>, publicResolverAddress: Address) =>
+  ({ namedOwner, namedController, namedAddr, customDuration, subnames, ...rest }: Name) => {
     // eslint-disable-next-line no-restricted-syntax
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
     const registrant = allNamedAccts[namedOwner]
     const owner = namedController ? allNamedAccts[namedController] : undefined
     const addr = allNamedAccts[namedAddr]
-    const resolver = rest.resolver ?? publicResolver.address
+    const resolver = rest.resolver ?? publicResolverAddress
     const duration = customDuration || 31536000
 
     return {
@@ -402,201 +390,241 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     }
   }
 
-  const makeCommitment =
-    (nonce: number) =>
-    async (
-      { label, registrant, secret, resolver, addr }: ReturnType<typeof makeData>,
-      index: number,
-    ) => {
-      const commitment = await controller.makeCommitmentWithConfig(
-        label,
-        registrant,
-        secret,
-        resolver,
-        addr,
-      )
-
-      const _controller = controller.connect(await ethers.getSigner(registrant))
-      const commitTx = await _controller.commit(commitment, { nonce: nonce + index })
-      console.log(`Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`)
-
-      return 1
-    }
-
-  const makeRegistration =
-    (nonce: number) =>
-    async (
-      { label, registrant, secret, resolver, addr, duration }: ReturnType<typeof makeData>,
-      index: number,
-    ) => {
-      const price = await controller.rentPrice(label, duration)
-
-      const _controller = controller.connect(await ethers.getSigner(registrant))
-
-      const registerTx = await _controller.registerWithConfig(
-        label,
-        registrant,
-        duration,
-        secret,
-        resolver,
-        addr,
-        {
-          value: price,
-          nonce: nonce + index,
-        },
-      )
-      console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
-
-      return 1
-    }
-
-  const makeRecords =
-    (nonce: number) =>
-    async (
-      { label, records: _records, registrant }: ReturnType<typeof makeData>,
-      index: number,
-    ) => {
-      const records = _records!
-      let nonceRef = nonce + index
-      const _publicResolver = publicResolver.connect(await ethers.getSigner(registrant))
-
-      const hash = namehash(`${label}.eth`)
-      console.log(`Setting records for ${label}.eth...`)
-      if (records.text) {
-        console.log('TEXT')
-        for (const { key, value } of records.text) {
-          const setTextTx = await _publicResolver.setText(hash, key, value, { nonce: nonceRef })
-          console.log(` - ${key} ${value} (tx: ${setTextTx.hash})...`)
-          nonceRef += 1
-        }
-      }
-      if (records.addr) {
-        console.log('ADDR')
-        for (const { key, value } of records.addr) {
-          const setAddrTx = await _publicResolver['setAddr(bytes32,uint256,bytes)'](
-            hash,
-            key,
-            value,
-            {
-              nonce: nonceRef,
-            },
-          )
-          console.log(` - ${key} ${value} (tx: ${setAddrTx.hash})...`)
-          nonceRef += 1
-        }
-      }
-      if (records.contenthash) {
-        console.log('CONTENTHASH')
-        const setContenthashTx = await _publicResolver.setContenthash(hash, records.contenthash, {
-          nonce: nonceRef,
-        })
-        console.log(` - ${records.contenthash} (tx: ${setContenthashTx.hash})...`)
-        nonceRef += 1
-      }
-      if (records.abi) {
-        const abis = Array.isArray(records.abi) ? records.abi : [records.abi]
-        for (const abi of abis) {
-          console.log('ABI')
-          const { contentType, data } = abi
-          let data_
-          if (contentType === 1) data_ = stringToBytes(JSON.stringify(data))
-          else if (contentType === 2) data_ = pako.deflate(JSON.stringify(abi.data))
-          else if (contentType === 4) data_ = cbor.encode(abi.data)
-          else data_ = stringToBytes(data)
-          const setAbiTx = await _publicResolver.setABI(hash, contentType, data_, {
-            nonce: nonceRef,
-          })
-          console.log(` - ${records.abi} (tx: ${setAbiTx.hash})...`)
-          nonceRef += 1
-        }
-      }
-      return nonceRef - nonce - index
-    }
-
-  const makeSubnames =
-    (nonce: number) =>
-    async (
-      { label, subnames, registrant, resolver }: ReturnType<typeof makeData>,
-      index: number,
-    ) => {
-      if (!subnames) return 0
-      for (let i = 0; i < subnames.length; i += 1) {
-        const { label: subnameLabel, namedOwner: namedSubOwner } = subnames[i]
-        const subOwner = allNamedAccts[namedSubOwner]
-        const _registry = registry.connect(await ethers.getSigner(registrant))
-        const subnameTx = await _registry.setSubnodeRecord(
-          namehash(`${label}.eth`),
-          labelhash(subnameLabel),
-          subOwner,
-          resolver,
-          0,
-          {
-            nonce: nonce + index + i,
-          },
-        )
-        console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTx.hash})...`)
-      }
-      return subnames.length
-    }
-
-  const makeController =
-    (nonce: number) =>
-    async ({ label, owner, registrant }: ReturnType<typeof makeData>, index: number) => {
-      const _registry = registry.connect(await ethers.getSigner(registrant))
-      const setControllerTx = await _registry.setOwner(namehash(`${label}.eth`), owner, {
-        nonce: nonce + index,
-      })
-      console.log(
-        `Setting controller for ${label}.eth to ${owner} (tx: ${setControllerTx.hash})...`,
-      )
-
-      return 1
-    }
-
-  const allNameData = names.map(makeData)
-
-  const getNonceAndApply = async (
-    property: keyof ReturnType<typeof makeData>,
-    _func: typeof makeCommitment,
-    filter?: (data: ReturnType<typeof makeData>) => boolean,
-    nonceMap?: Record<string, number>,
+const makeCommitment =
+  (controller: Contract) =>
+  (nonce: number) =>
+  async (
+    { label, registrant, secret, resolver, addr }: ReturnType<ReturnType<typeof makeNameData>>,
+    index: number,
   ) => {
-    const newNonceMap = nonceMap || {}
-    for (const account of Object.values(allNamedAccts)) {
-      const namesWithAccount = allNameData.filter(
-        (data) => data[property] === account && (filter ? filter(data) : true),
-      )
-      if (!newNonceMap[account]) {
-        const nonce = await ethers.provider.getTransactionCount(account)
-        newNonceMap[account] = nonce
-      }
-      let usedNonces = 0
+    const commitment = await controller.makeCommitmentWithConfig(
+      label,
+      registrant,
+      secret,
+      resolver,
+      addr,
+    )
 
-      for (let i = 0; i < namesWithAccount.length; i += 1) {
-        const data = namesWithAccount[i]
-        usedNonces += await _func(newNonceMap[account])(data, usedNonces)
-      }
-      newNonceMap[account] += usedNonces
-    }
-    return newNonceMap
+    const _controller = controller.connect(await ethers.getSigner(registrant))
+    const commitTx = await _controller.commit(commitment, { nonce: nonce + index })
+    console.log(`Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`)
+
+    return 1
   }
 
+const makeRegistration =
+  (controller: Contract) =>
+  (nonce: number) =>
+  async (
+    {
+      label,
+      registrant,
+      secret,
+      resolver,
+      addr,
+      duration,
+    }: ReturnType<ReturnType<typeof makeNameData>>,
+    index: number,
+  ) => {
+    const price = await controller.rentPrice(label, duration)
+
+    const _controller = controller.connect(await ethers.getSigner(registrant))
+
+    const registerTx = await _controller.registerWithConfig(
+      label,
+      registrant,
+      duration,
+      secret,
+      resolver,
+      addr,
+      {
+        value: price,
+        nonce: nonce + index,
+      },
+    )
+    console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
+
+    return 1
+  }
+
+const makeRecords =
+  (publicResolver: Contract) =>
+  (nonce: number) =>
+  async (
+    { label, records: _records, registrant }: ReturnType<ReturnType<typeof makeNameData>>,
+    index: number,
+  ) => {
+    const records = _records!
+    let nonceRef = nonce + index
+    const _publicResolver = publicResolver.connect(await ethers.getSigner(registrant))
+
+    const hash = namehash(`${label}.eth`)
+    console.log(`Setting records for ${label}.eth...`)
+    if (records.text) {
+      console.log('TEXT')
+      for (const { key, value } of records.text) {
+        const setTextTx = await _publicResolver.setText(hash, key, value, { nonce: nonceRef })
+        console.log(` - ${key} ${value} (tx: ${setTextTx.hash})...`)
+        nonceRef += 1
+      }
+    }
+    if (records.addr) {
+      console.log('ADDR')
+      for (const { key, value } of records.addr) {
+        const setAddrTx = await _publicResolver['setAddr(bytes32,uint256,bytes)'](
+          hash,
+          key,
+          value,
+          {
+            nonce: nonceRef,
+          },
+        )
+        console.log(` - ${key} ${value} (tx: ${setAddrTx.hash})...`)
+        nonceRef += 1
+      }
+    }
+    if (records.contenthash) {
+      console.log('CONTENTHASH')
+      const setContenthashTx = await _publicResolver.setContenthash(hash, records.contenthash, {
+        nonce: nonceRef,
+      })
+      console.log(` - ${records.contenthash} (tx: ${setContenthashTx.hash})...`)
+      nonceRef += 1
+    }
+    if (records.abi) {
+      const abis = Array.isArray(records.abi) ? records.abi : [records.abi]
+      for (const abi of abis) {
+        console.log('ABI')
+        const { contentType, data } = abi
+        let data_
+        if (contentType === 1) data_ = stringToBytes(JSON.stringify(data))
+        else if (contentType === 2) data_ = pako.deflate(JSON.stringify(abi.data))
+        else if (contentType === 4) data_ = cbor.encode(abi.data)
+        else data_ = stringToBytes(data)
+        const setAbiTx = await _publicResolver.setABI(hash, contentType, data_, {
+          nonce: nonceRef,
+        })
+        console.log(` - ${records.abi} (tx: ${setAbiTx.hash})...`)
+        nonceRef += 1
+      }
+    }
+    return nonceRef - nonce - index
+  }
+
+const makeController =
+  (registry: Contract) =>
+  (nonce: number) =>
+  async (
+    { label, owner, registrant }: ReturnType<ReturnType<typeof makeNameData>>,
+    index: number,
+  ) => {
+    const _registry = registry.connect(await ethers.getSigner(registrant))
+    const setControllerTx = await _registry.setOwner(namehash(`${label}.eth`), owner, {
+      nonce: nonce + index,
+    })
+    console.log(`Setting controller for ${label}.eth to ${owner} (tx: ${setControllerTx.hash})...`)
+
+    return 1
+  }
+
+const makeSubnames =
+  (allNamedAccts: Record<string, Address>, registry: Contract) =>
+  (nonce: number) =>
+  async (
+    { label, subnames, registrant, resolver }: ReturnType<ReturnType<typeof makeNameData>>,
+    index: number,
+  ) => {
+    if (!subnames) return 0
+    for (let i = 0; i < subnames.length; i += 1) {
+      const { label: subnameLabel, namedOwner: namedSubOwner } = subnames[i]
+      const subOwner = allNamedAccts[namedSubOwner]
+      const _registry = registry.connect(await ethers.getSigner(registrant))
+      const subnameTx = await _registry.setSubnodeRecord(
+        namehash(`${label}.eth`),
+        labelhash(subnameLabel),
+        subOwner,
+        resolver,
+        0,
+        {
+          nonce: nonce + index + i,
+        },
+      )
+      console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTx.hash})...`)
+    }
+    return subnames.length
+  }
+
+const getNonceAndApply = async (
+  property: keyof ReturnType<typeof makeNameData>,
+  _func: typeof makeCommitment,
+  allNamedAccts: Record<string, Address>,
+  allNameData: ReturnType<typeof makeNameData>[],
+  filter?: (data: ReturnType<typeof makeNameData>) => boolean,
+  nonceMap?: Record<string, number>,
+) => {
+  const newNonceMap = nonceMap || {}
+
+  for (const account of Object.values(allNamedAccts)) {
+    const namesWithAccount = allNameData.filter(
+      (data) => data[property] === account && (filter ? filter(data) : true),
+    )
+    if (!newNonceMap[account]) {
+      const nonce = await ethers.provider.getTransactionCount(account)
+      newNonceMap[account] = nonce
+    }
+    let usedNonces = 0
+
+    for (let i = 0; i < namesWithAccount.length; i += 1) {
+      const data = namesWithAccount[i]
+      usedNonces += await _func(newNonceMap[account])(data, usedNonces)
+    }
+    newNonceMap[account] += usedNonces
+  }
+
+  return newNonceMap
+}
+
+const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  const { getNamedAccounts, network } = hre
+  const allNamedAccts = await getNamedAccounts()
+
+  const registry = await ethers.getContract('ENSRegistry')
+  const controller = await ethers.getContract('LegacyETHRegistrarController')
+  const publicResolver = await ethers.getContract('LegacyPublicResolver')
+
+  const allNameData = names.map(makeNameData(allNamedAccts, publicResolver.address))
+
   await network.provider.send('evm_setAutomine', [false])
-  await getNonceAndApply('registrant', makeCommitment)
+  await getNonceAndApply('registrant', makeCommitment(controller), allNamedAccts, allNameData)
   await network.provider.send('evm_mine')
   const oldTimestamp = (await ethers.provider.getBlock('latest')).timestamp
   await network.provider.send('evm_setNextBlockTimestamp', [oldTimestamp + 60])
   await network.provider.send('evm_mine')
-  await getNonceAndApply('registrant', makeRegistration)
+  await getNonceAndApply('registrant', makeRegistration(controller), allNamedAccts, allNameData)
   await network.provider.send('evm_mine')
-  const tempNonces = await getNonceAndApply('registrant', makeRecords, (data) => !!data.records)
+  const tempNonces = await getNonceAndApply(
+    'registrant',
+    makeRecords(publicResolver),
+    allNamedAccts,
+    allNameData,
+    (data) => !!data.records,
+  )
   const tempNonces2 = await getNonceAndApply(
     'registrant',
-    makeController,
+    makeController(registry),
+    allNamedAccts,
+    allNameData,
     (data) => !!data.owner,
     tempNonces,
   )
-  await getNonceAndApply('registrant', makeSubnames, (data) => !!data.subnames, tempNonces2)
+  await getNonceAndApply(
+    'registrant',
+    makeSubnames(allNamedAccts, registry),
+    allNamedAccts,
+    allNameData,
+    (data) => !!data.subnames,
+    tempNonces2,
+  )
   await network.provider.send('evm_mine')
 
   // Skip forward 28 + 90 days so that minimum exp names go into premium
