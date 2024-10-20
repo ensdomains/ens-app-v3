@@ -284,3 +284,37 @@ test('should allow creating an expired wrapped subname from the profile page', a
 
   await expect(profilePage.getRecreateButton).toHaveCount(0)
 })
+
+test('should allow skipping records when creating a subname', async ({
+  page,
+  makeName,
+  login,
+  makePageObject,
+}) => {
+  test.slow()
+  const name = await makeName({
+    label: 'manager-only',
+    type: 'legacy',
+    owner: 'user',
+    manager: 'user',
+  })
+
+  const subnamesPage = makePageObject('SubnamesPage')
+
+  await subnamesPage.goto(name)
+  await login.connect()
+
+  await subnamesPage.getAddSubnameButton.click()
+  await subnamesPage.getAddSubnameInput.fill('test')
+  await subnamesPage.getSubmitSubnameButton.click()
+  expect(subnamesPage.addMoreToProfileButton).toBeVisible()
+  await page.getByTestId('create-subname-profile-next').click()
+
+  const transactionModal = makePageObject('TransactionModal')
+  await transactionModal.autoComplete()
+
+  const subname = `test.${name}`
+
+  await expect(page).toHaveURL(new RegExp(`/${subname}`), { timeout: 15000 })
+  await expect(page.getByTestId('profile-empty-banner')).toBeVisible()
+})
