@@ -390,27 +390,13 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             onDismissOverlay={() => setView('editor')}
           />
         ))
-        .with('upload', () => (
+        .with('upload', 'nft', (type) => (
           <AvatarViewManager
             name={name}
             avatarFile={avatarFile}
             handleCancel={() => setView('editor')}
-            type="upload"
-            handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
-              setAvatar(uri)
-              setAvatarSrc(display)
-              setView('editor')
-              trigger()
-            }}
-          />
-        ))
-        .with('nft', () => (
-          <AvatarViewManager
-            name={name}
-            avatarFile={avatarFile}
-            handleCancel={() => setView('editor')}
-            type="nft"
-            handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
+            type={type}
+            handleSubmit={(_, uri, display) => {
               setAvatar(uri)
               setAvatarSrc(display)
               setView('editor')

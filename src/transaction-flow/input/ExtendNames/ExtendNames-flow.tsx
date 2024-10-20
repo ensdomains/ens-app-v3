@@ -12,7 +12,6 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { makeCurrencyDisplay } from '@app/components/@atoms/CurrencyText/CurrencyText'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
@@ -26,7 +25,7 @@ import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
-import { deriveYearlyFee, formatDuration } from '@app/utils/utils'
+import { deriveYearlyFee, formatDurationOfDates } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
@@ -197,6 +196,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const view = flow[viewIdx]
 
   const [seconds, setSeconds] = useState(ONE_YEAR)
+  const [durationType, setDurationType] = useState<'years' | 'date'>('years')
 
   const years = secondsToYears(seconds)
 
@@ -211,13 +211,16 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const totalRentFee = priceData ? priceData.base + priceData.premium : 0n
   const yearlyFee = priceData?.base ? deriveYearlyFee({ duration: seconds, price: priceData }) : 0n
   const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
-  const unsafeDisplayYearlyFee = yearlyFee !== 0n ? yearlyFee : previousYearlyFee
   const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
+  const { data: expiryData } = useExpiry({ enabled: names.length === 1, name: names[0] })
+  const expiryDate = expiryData?.expiry?.date
+  const extendedDate = expiryDate ? new Date(expiryDate.getTime() + seconds * 1000) : undefined
 
   const transactions = [
     createTransactionItem('extendNames', {
       names,
       duration: seconds,
+      startDateTimestamp: expiryDate?.getTime(),
       displayPrice: makeCurrencyDisplay({
         eth: totalRentFee,
         ethPrice,
@@ -239,6 +242,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
         data: {
           duration: seconds,
           names,
+          startDateTimestamp: expiryDate?.getTime(),
         },
         stateOverride: [
           {
@@ -254,14 +258,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
 
   const previousTransactionFee = usePreviousDistinct(transactionFee) || 0n
 
-  const unsafeDisplayTransactionFee =
-    transactionFee !== 0n ? transactionFee : previousTransactionFee
   const isShowingPreviousTransactionFee = transactionFee === 0n && previousTransactionFee > 0n
 
   const items: InvoiceItem[] = [
     {
       label: t('input.extendNames.invoice.extension', {
-        time: formatDuration(seconds, t),
+        time: formatDurationOfDates({ startDate: expiryDate, endDate: extendedDate, t }),
       }),
       value: totalRentFee,
       bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
@@ -275,11 +277,14 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
 
   const { title, alert } = match(view)
     .with('no-ownership-warning', () => ({
-      title: t('input.extendNames.ownershipWarning.title', { count: names.length }),
+      title: t('input.extendNames.ownershipWarning.title', {
+        name: names.at(0),
+        count: names.length,
+      }),
       alert: 'warning' as const,
     }))
     .otherwise(() => ({
-      title: t('input.extendNames.title', { count: names.length }),
+      title: t('input.extendNames.title', { name: names.at(0), count: names.length }),
       alert: undefined,
     }))
 
@@ -302,8 +307,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
       children: t('action.next', { ns: 'common' }),
     }))
 
-  const { data: expiryData } = useExpiry({ enabled: names.length > 1, name: names[0] })
-
   return (
     <>
       <Dialog.Heading title={title} alert={alert} />
@@ -325,6 +328,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     minSeconds={minSeconds}
                     mode="extend"
                     expiry={Number(expiryData?.expiry.value)}
+                    durationType={durationType}
+                    onChangeDurationType={setDurationType}
                   />
                 ) : (
                   <PlusMinusControl
@@ -359,13 +364,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     !!balance?.value &&
                     balance.value < estimatedGasLimit)) && (
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
-                )}
-                {!!unsafeDisplayYearlyFee && !!unsafeDisplayTransactionFee && (
-                  <RegistrationTimeComparisonBanner
-                    yearlyFee={unsafeDisplayYearlyFee}
-                    transactionFee={unsafeDisplayTransactionFee}
-                    message={t('input.extendNames.bannerMsg')}
-                  />
                 )}
               </GasEstimationCacheableComponent>
             </>

@@ -9,7 +9,7 @@ import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { TransactionDisplayItem } from '@app/types'
-import { shortenAddress } from '@app/utils/utils'
+import { formatExpiry, shortenAddress } from '@app/utils/utils'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -204,6 +204,15 @@ const RecordContainer = styled.div(
   `,
 )
 
+const DurationContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    text-align: right;
+    flex-direction: column;
+    gap: ${theme.space[1]};
+  `,
+)
+
 const RecordsValue = ({ value }: { value: [string, string | undefined][] }) => {
   return (
     <RecordsContainer>
@@ -219,6 +228,34 @@ const RecordsValue = ({ value }: { value: [string, string | undefined][] }) => {
         </RecordContainer>
       ))}
     </RecordsContainer>
+  )
+}
+
+const DurationValue = ({ value }: { value: string | undefined }) => {
+  const { t } = useTranslation('transactionFlow')
+
+  if (!value) return null
+
+  const regex = /(\d+)\s*years?\s*(?:,?\s*(\d+)?\s*months?)?/
+  const matches = value.match(regex) ?? []
+
+  const years = parseInt(matches.at(1) ?? '0')
+  const months = parseInt(matches.at(2) ?? '0')
+
+  const date = new Date()
+
+  if (years > 0) date.setFullYear(date.getFullYear() + years)
+  if (months > 0) date.setMonth(date.getMonth() + months)
+
+  return (
+    <DurationContainer>
+      <Typography ellipsis>
+        <strong>{value}</strong>
+      </Typography>
+      <Typography color="textTertiary" fontVariant="small">
+        {t('transaction.extendNames.newExpiry', { date: formatExpiry(date) })}
+      </Typography>
+    </DurationContainer>
   )
 }
 
@@ -238,6 +275,9 @@ const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
   }
   if (type === 'records') {
     return <RecordsValue value={value} />
+  }
+  if (type === 'duration') {
+    return <DurationValue value={value} />
   }
   return <ValueTypography fontVariant="bodyBold">{value}</ValueTypography>
 }

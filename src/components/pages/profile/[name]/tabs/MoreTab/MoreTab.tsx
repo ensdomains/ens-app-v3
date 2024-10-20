@@ -1,9 +1,12 @@
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useIsOffchainName } from '@app/hooks/ensjs/dns/useIsOffchainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
+import { NameWrapper } from './NameWrapper'
 import Resolver from './Resolver'
 import Token from './Token/Token'
 
@@ -28,16 +31,27 @@ type Props = {
 const MoreTab = ({ name, nameDetails, abilities }: Props) => {
   const { canBeWrapped, ownerData, wrapperData, isWrapped, isCachedData, profile } = nameDetails
 
+  const { isConnected, address } = useAccount()
+
+  const isOffchainImport = useIsOffchainName({
+    name,
+    enabled: nameDetails.registrationStatus === 'imported',
+  })
+
   return (
     <MoreContainer>
-      {ownerData && (
-        <Token
-          isWrapped={isWrapped}
-          name={name}
-          canBeWrapped={canBeWrapped}
-          ownerData={ownerData}
-          wrapperData={wrapperData}
-          profile={profile}
+      <Token isWrapped={isWrapped} name={name} />
+      {(isConnected || isWrapped) && !isOffchainImport && (
+        <NameWrapper
+          {...{
+            isWrapped,
+            wrapperData,
+            canBeWrapped,
+            name,
+            profile,
+            ownerData,
+            address,
+          }}
         />
       )}
       <Resolver

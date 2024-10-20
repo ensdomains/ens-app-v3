@@ -2,11 +2,11 @@
 import { readFileSync } from 'fs'
 import path from 'path'
 
-import { glob } from 'glob'
 import Markdown from 'markdown-to-jsx'
 import { GetStaticPropsContext } from 'next'
 import { ReactElement } from 'react'
 import styled, { css } from 'styled-components'
+import { globSync } from 'tinyglobby'
 
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
@@ -99,7 +99,7 @@ Page.getLayout = function getLayout(page: ReactElement) {
 }
 
 const getFilePaths = () =>
-  glob.sync('./src/assets/legal/*.md', { cwd: process.cwd(), absolute: true })
+  globSync(['./src/assets/legal/*.md'], { cwd: process.cwd(), absolute: true })
 
 const getPageName = (pathname: string) => {
   const pageName = path.basename(pathname, '.md')
