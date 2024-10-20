@@ -83,6 +83,11 @@ export class ProfilePage {
     return expect(this.page.getByTestId("profile-snippet-person-icon")).toHaveCount(count)
   }
 
+  isPersonhoodErrored(errored = true) {
+    const count = errored ? 1 : 0
+    return expect(this.page.getByTestId("verification-badge-error-icon")).toHaveCount(count)
+  }
+
   contentHash(): Locator {
     return this.page.getByTestId('other-profile-button-contenthash')
   }

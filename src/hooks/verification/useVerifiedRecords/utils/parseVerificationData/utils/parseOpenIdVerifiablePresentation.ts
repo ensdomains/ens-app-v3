@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type { VerifiableCredential } from '@app/types/verification'
 
-import { parseVerifiableCredential } from '../../parseVerifiedCredential'
+import {
+  parseVerifiableCredential,
+  ParseVerifiedCredentialDependencies,
+} from '../../parseVerifiedCredential'
 import type { VerifiedRecord } from '../parseVerificationData'
 
 export type OpenIdVerifiablePresentation = {
-  vp_token: VerifiableCredential | VerifiableCredential[]
+  vp_token: VerifiableCredential | VerifiableCredential[] | undefined
 }
 
 export const isOpenIdVerifiablePresentation = (
@@ -20,9 +23,13 @@ export const isOpenIdVerifiablePresentation = (
   )
 }
 
-export const parseOpenIdVerifiablePresentation = async (data: OpenIdVerifiablePresentation) => {
-  const { vp_token } = data
-  const credentials = Array.isArray(vp_token) ? vp_token : [vp_token]
-  const verifiedRecords = await Promise.all(credentials.map(parseVerifiableCredential))
-  return verifiedRecords.filter((records): records is VerifiedRecord => !!records)
-}
+export const parseOpenIdVerifiablePresentation =
+  (dependencies: ParseVerifiedCredentialDependencies) =>
+  async (data: OpenIdVerifiablePresentation) => {
+    const { vp_token } = data
+    const credentials = Array.isArray(vp_token) ? vp_token : [vp_token]
+    const verifiedRecords = await Promise.all(
+      credentials.map(parseVerifiableCredential(dependencies)),
+    )
+    return verifiedRecords.filter((records): records is VerifiedRecord => !!records)
+  }
