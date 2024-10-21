@@ -1,0 +1,102 @@
+{
+  "title": {
+    "landing": "ENSv2: The Next Generation of ENS",
+    "migration": "Upgrade to ENSv2 Seamlessly"
+  },
+  "caption": {
+    "ensv2": "Approve your ENS names for ENSv2 now and enjoy automatic migration, paid for by ENS DAO.",
+    "migration": "Approve your ENS names now and enjoy the benefits as soon as ENSv2 launches."
+  },
+  "cta": {
+    "learn-more": "Learn more",
+    "unconnected": "Connect to Approve",
+    "approve": "Approve your names",
+    "begin": "Begin approval"
+  },
+  "partnership": {
+    "text": "We’re partnering with _______!",
+    "watch": "Watch"
+  },
+  "nav": {
+    "ensv2": "ENSv2",
+    "migrations": "Name Migrations",
+    "extension": "Extension rebates"
+  },
+  "migration-list": {
+    "eligible": "Eligible",
+    "ineligible": "Ineligible",
+    "approved": "Approved"
+  },
+  "accessible": {
+    "title": "Making ENS accessible to more people",
+    "caption": "We're taking our knowledge from the last 7 years at the frontier of web3 naming to re-envision the architecture from the ground up on L2 By utilizing L2s, we're excited to make ENS more accessible to a wider range of users.",
+    "link": "ENSv2 Project Plan",
+    "gas": {
+      "title": "Lower Gas Costs",
+      "text": "Layer 2 reduces gas fees, making .eth registrations and renewals cheaper and faster."
+    },
+    "control": {
+      "title": "Enhanced Control",
+      "text": "ENSv2 gives each .eth name its own registry, offering more flexibility and control."
+    },
+    "multichain": {
+      "title": "Improved Multi-Chain",
+      "text": "Layer 2 enables seamless .eth name use across blockchains with trustless connections."
+    }
+  },
+  "get-started": {
+    "title": "Get Started",
+    "upgrade": {
+      "title": "Upgrade to ENSv2 Seamlessly",
+      "caption": "Approved names will migrate automatically for a hassle-free transition.",
+      "button": "Approve your names"
+    }
+  },
+  "announcement": {
+    "title": "Announcements",
+    "l2": {
+      "title": "L2 partner announcement",
+      "caption": "We’re announced that we’re partnering with _____! Watch Nick’s ___ presentation to see the full announcement."
+    },
+    "ensv2": {
+      "title": "ENSv2: An Update on our Progress",
+      "caption": "This update aims to be informative and slightly technical, allowing you, the ENS community, to stay connected with our progress."
+    },
+    "nextgen": {
+      "title": "ENSv2: The Next Generation of ENS",
+      "caption": "Our vision for the next iterations of the ENS protocol, on L2."
+    }
+  },
+  "approval-benefits": {
+    "title": "Approval Benefits",
+    "migration": {
+      "title": "Automatic Migration",
+      "caption": "approved names will migrate automatically for a hassle-free transition."
+    },
+    "no-gas-cost": {
+      "title": "No Gas Cost",
+      "caption": "The ENS DAO will cover the gas fees for approved names at launch—save your ETH."
+    }
+  },
+  "footer": {
+    "title": "Got questions?",
+    "learn": {
+      "title": "Learn",
+      "faq": "ENSv2 FAQs",
+      "plan": "ENSv2 Project Plan",
+      "base": "Knowledge base"
+    },
+    "support": {
+      "title": "Support",
+      "ticket": "Open a ticket",
+      "twitter": "X (Twitter)",
+      "dao": "DAO forums"
+    }
+  },
+  "details": {
+    "approve": {
+      "title": "Approve ENSv2 migration",
+      "description": "Approving your names for migration now will automatically migrate them at the launch of ENSv2, without additional fees.\nOnly the address that owns the names can approve them, and all eligible names in your address must be approved together."
+    }
+  }
+}

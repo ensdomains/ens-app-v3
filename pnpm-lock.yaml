@@ -56,6 +56,9 @@ importers:
       '@sentry/nextjs':
         specifier: 7.43.x
         version: 7.43.0(encoding@0.1.13)(next@13.5.6(@babel/core@7.24.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.91.0(esbuild@0.17.19))
+      '@splidejs/react-splide':
+        specifier: ^0.7.12
+        version: 0.7.12
       '@svgr/webpack':
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.4.5)
@@ -2946,6 +2949,12 @@ packages:
 
   '@socket.io/component-emitter@3.1.2':
     resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
+
+  '@splidejs/react-splide@0.7.12':
+    resolution: {integrity: sha512-UfXH+j47jsMc4x5HA/aOwuuHPqn6y9+ZTNYPWDRD8iLKvIVMZlzq2unjUEvyDAU+TTVPZOXkG2Ojeoz0P4AkZw==}
+
+  '@splidejs/splide@4.1.4':
+    resolution: {integrity: sha512-5I30evTJcAJQXt6vJ26g2xEkG+l1nXcpEw4xpKh0/FWQ8ozmAeTbtniVtVmz2sH1Es3vgfC4SS8B2X4o5JMptA==}
 
   '@stablelib/aead@1.0.1':
     resolution: {integrity: sha512-q39ik6sxGHewqtO0nP4BuSe3db5G1fEJE8ukvngS2gLkBXyy6E7pLubhbYgnkDFv6V8cWaxcE4Xn0t6LWcJkyg==}
@@ -13628,6 +13637,12 @@ snapshots:
       p-map: 4.0.0
 
   '@socket.io/component-emitter@3.1.2': {}
+
+  '@splidejs/react-splide@0.7.12':
+    dependencies:
+      '@splidejs/splide': 4.1.4
+
+  '@splidejs/splide@4.1.4': {}
 
   '@stablelib/aead@1.0.1': {}
 
