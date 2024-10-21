@@ -25,6 +25,8 @@ import {
 import { Carousel } from '@app/components/pages/migrate/Carousel'
 import { MigrationNamesList } from '@app/components/pages/migrate/MigrationNamesList'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
+import { makeIntroItem } from '@app/transaction-flow/intro'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import DAOSVG from '../assets/DAO.svg'
@@ -317,8 +319,20 @@ export default function Page() {
                   onClick={() => {
                     if (isConnected) {
                       createTransactionFlow('migrate-names', {
+                        resumable: true,
+                        intro: {
+                          title: ['details.approve.title', { ns: 'migrate' }],
+                          content: makeIntroItem('GenericWithDescription', {
+                            description: t('details.approve.description'),
+                          }),
+                        },
                         transactions: [
-                          /* smth here */
+                          createTransactionItem('approveNameWrapper', {
+                            address: address!,
+                          }),
+                          createTransactionItem('approveNameWrapper', {
+                            address: address!,
+                          }),
                         ],
                       })
                     } else {
