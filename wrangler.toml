@@ -1,1 +1,2 @@
 # compatibility_flags = [ "streams_enable_constructors" ] // Prevents wrangle from launching
+name = "ens-app-v3"
