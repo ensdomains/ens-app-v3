@@ -25,6 +25,7 @@ import {
 import { Carousel } from '@app/components/pages/migrate/Carousel'
 import { MigrationNamesList } from '@app/components/pages/migrate/MigrationNamesList'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import DAOSVG from '../assets/DAO.svg'
 import SocialX from '../assets/social/SocialX.svg'
@@ -244,6 +245,8 @@ export default function Page() {
 
   const [currentTab, setTab] = useQueryParameterState<Tab>('tab', 'ensv2')
 
+  const { createTransactionFlow } = useTransactionFlow()
+
   return (
     <>
       <Main>
@@ -313,7 +316,11 @@ export default function Page() {
                 <Button
                   onClick={() => {
                     if (isConnected) {
-                      // nothing for now
+                      createTransactionFlow('migrate-names', {
+                        transactions: [
+                          /* smth here */
+                        ],
+                      })
                     } else {
                       openConnectModal?.()
                     }
