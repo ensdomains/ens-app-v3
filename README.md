@@ -123,8 +123,8 @@ have developed a design system in order to ensure consistent styling across the 
 Pages folder has basic route layout and basic react needed for rendering pages. These
 files should be kept relatively simple
 
-Components that pages consume are kept in the components folder. This folder has a strucutre
-that mimicks the strucutre of the pages folder. If a component is only used on a specific page
+Components that pages consume are kept in the components folder. This folder has a structure
+that mimics the structure of the pages folder. If a component is only used on a specific page
 then it goes into the corresponding folder in the components folder.
 
 If a component is used across multiple pages and other components,
@@ -254,7 +254,7 @@ Once exited, you can commit the data to your branch. You do not need to run a se
 
 #### Stateless vs Stateful
 
-Our e2e tests are split into two categories, stateless and stateful. Stateless test use the development environment, are faster, and is the general recommended way to write integration tests. Occasionally, you may need to test a feature that requires an external api or service. In this case, you can use the stateful tests. These tests are slower, 
+Our e2e tests are split into two categories, stateless and stateful. Stateless test use the development environment, are faster, and is the general recommended way to write integration tests. Occasionally, you may need to test a feature that requires an external API or service. In this case, you can use the stateful tests. These tests are slower, 
 
 #### Running the tests
 
