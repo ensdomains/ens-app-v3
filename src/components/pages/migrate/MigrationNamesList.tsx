@@ -105,6 +105,7 @@ const NameCard = styled.div(
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
 
     & > span:nth-of-type(1) {
       font-weight: ${theme.fontWeights.bold};
@@ -140,8 +141,8 @@ const MigrationName = ({ name, t }: { name: NameWithRelation; t: TFunction }) =>
 }
 
 const filter: Record<Tab, GetNamesForAddressParameters['filter']> = {
-  eligible: { owner: true, registrant: false, resolvedAddress: true, wrappedOwner: false },
-  ineligible: { owner: false },
+  eligible: { owner: false, wrappedOwner: true, registrant: true, resolvedAddress: false },
+  ineligible: { owner: true, wrappedOwner: false, registrant: false, resolvedAddress: false },
 }
 
 export const MigrationNamesList = ({ address }: { address?: Address }) => {
@@ -149,13 +150,17 @@ export const MigrationNamesList = ({ address }: { address?: Address }) => {
 
   const { t } = useTranslation('migrate')
 
-  const { infiniteData, isLoading, isFetching, isError } = useNamesForAddress({
+  const { infiniteData, isLoading } = useNamesForAddress({
     address,
     pageSize: 20,
     filter: filter[activeTab],
   })
 
-  const names = infiniteData.filter((name) => name.parentName === 'eth')
+  const names = infiniteData.filter(
+    (name) =>
+      name.parentName === 'eth' &&
+      (activeTab === 'ineligible' ? name.registrant !== name.owner : true),
+  )
 
   return (
     <Container>
