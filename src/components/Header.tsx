@@ -13,7 +13,6 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
-import { wagmiConfig } from '../utils/query/wagmi'
 import BaseLink from './@atoms/BaseLink'
 import { RouteItem } from './@atoms/RouteItem/RouteItem'
 import Hamburger from './@molecules/Hamburger/Hamburger'
@@ -129,13 +128,6 @@ const routesNoSearch = routes.filter(
   (route) => route.name !== 'search' && route.icon && !route.onlyDropdown && !route.disabled,
 )
 
-const getIsCapsuleConnected = (wagmiState: any) => {
-  const capsuleIntegratedConnection = Array.from(wagmiState.connections.values()).find(
-    (connection) => connection?.connector?.id === 'capsule-integrated',
-  )
-  return !!capsuleIntegratedConnection
-}
-
 export const Header = () => {
   const { space } = useTheme()
   const router = useRouter()
@@ -200,10 +192,6 @@ export const Header = () => {
   }, [searchWrapperRef.current])
 
   const pathnameWithoutQuery = router.asPath.split('?')[0]
-
-  useEffect(() => {
-    getIsCapsuleConnected(wagmiConfig.state)
-  }, [isConnected])
 
   return (
     <HeaderWrapper id="header">
