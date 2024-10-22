@@ -1,7 +1,14 @@
+import { Hash } from 'viem'
+
 import {
-  isOpenIdVerifiablePresentation,
-  parseOpenIdVerifiablePresentation,
-} from './utils/parseOpenIdVerifiablePresentation'
+  isDentityVerifiablePresentation,
+  parseDentityVerifiablePresentation,
+} from './utils/parseDentityVerifiablePresentation'
+
+export type ParseVerificationDataDependencies = {
+  ownerAddress?: Hash
+  name?: string
+}
 
 export type VerifiedRecord = {
   verified: boolean
@@ -11,7 +18,10 @@ export type VerifiedRecord = {
 }
 
 // TODO: Add more formats here
-export const parseVerificationData = async (data: unknown): Promise<VerifiedRecord[]> => {
-  if (isOpenIdVerifiablePresentation(data)) return parseOpenIdVerifiablePresentation(data)
-  return []
-}
+export const parseVerificationData =
+  (dependencies: ParseVerificationDataDependencies) =>
+  async (data: unknown): Promise<VerifiedRecord[]> => {
+    if (isDentityVerifiablePresentation(data))
+      return parseDentityVerifiablePresentation(dependencies)(data)
+    return []
+  }
