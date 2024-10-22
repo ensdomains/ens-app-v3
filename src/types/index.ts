@@ -37,7 +37,7 @@ interface TransactionDisplayItemBase {
 }
 
 export interface TransactionDisplayItemSingle extends TransactionDisplayItemBase {
-  type?: 'name' | 'subname' | 'address' | undefined
+  type?: 'name' | 'subname' | 'address' | 'duration' | undefined
   value: string
 }
 
@@ -56,7 +56,7 @@ export type TransactionDisplayItem =
   | TransactionDisplayItemList
   | TransactionDisplayItemRecords
 
-export type TransactionDisplayItemTypes = 'name' | 'address' | 'list' | 'records'
+export type TransactionDisplayItemTypes = 'name' | 'address' | 'list' | 'records' | 'duration'
 
 export type AvatarEditorType = {
   avatar?: string
