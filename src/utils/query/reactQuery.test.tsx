@@ -53,7 +53,6 @@ describe('reactQuery', () => {
   it('should create a query client with default options', () => {
     expect(queryClient.getDefaultOptions()).toEqual({
       queries: {
-        refetchOnWindowFocus: true,
         refetchOnMount: true,
         staleTime: 0,
         gcTime: 1_000 * 60 * 60 * 24,
