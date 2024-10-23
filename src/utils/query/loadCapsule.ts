@@ -12,19 +12,14 @@ const shouldAttemptReconnect = () => {
   return connected === 'true'
 }
 
-export const loadCapsule = async () => {
-  const { capsuleClient, capsuleWalletConnectorFn, capsuleModalProps } = await import(
-    /* webpackMode: "lazy" */
-    /* webpackFetchPriority: "low" */
-    './capsuleWallet'
-  )
-
-  const initialisedConnector = wagmiConfig._internal.connectors.setup(capsuleWalletConnectorFn)
+const addCapsuleConnector = (connector: Connector) => {
   wagmiConfig._internal.connectors.setState((existingConnectors) => [
     ...existingConnectors.filter((c) => c.id !== capsuleWalletId),
-    initialisedConnector,
+    connector,
   ])
+}
 
+const attemptReconnect = (initialisedCapsuleConnector: Connector) => {
   if (shouldAttemptReconnect() && wagmiConfig.state.status !== 'connected') {
     const unsubscribe = wagmiConfig.subscribe(
       (s) => s.status,
@@ -33,10 +28,26 @@ export const loadCapsule = async () => {
         if (state !== 'disconnected') return
 
         unsubscribe()
-        process.nextTick(() => reconnect(wagmiConfig, { connectors: [initialisedConnector] }))
+        process.nextTick(() =>
+          reconnect(wagmiConfig, { connectors: [initialisedCapsuleConnector] }),
+        )
       },
     )
   }
+}
+
+export const loadCapsule = async () => {
+  const { capsuleClient, capsuleWalletConnectorFn, capsuleModalProps } = await import(
+    /* webpackMode: "lazy" */
+    /* webpackFetchPriority: "low" */
+    './capsuleWallet'
+  )
+
+  const initialisedCapsuleConnector =
+    wagmiConfig._internal.connectors.setup(capsuleWalletConnectorFn)
+
+  addCapsuleConnector(initialisedCapsuleConnector)
+  attemptReconnect(initialisedCapsuleConnector)
 
   return { capsuleClient, capsuleModalProps }
 }
