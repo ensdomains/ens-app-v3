@@ -11,7 +11,6 @@ import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { StatusDots } from '@app/components/@atoms/StatusDots/StatusDots'
 import { TextWithTooltip } from '@app/components/@atoms/TextWithTooltip/TextWithTooltip'
 import { Card } from '@app/components/Card'
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
 import { useSimulateRegistration } from '@app/hooks/registration/useSimulateRegistration'
 import { useDurationCountdown } from '@app/hooks/time/useDurationCountdown'
@@ -213,26 +212,26 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     registrationData,
   })
 
-  const { isSuccess: canRegisterOverride } = useSimulateRegistration({
+  const { isSuccess: isSimulateRegistrationSuccess } = useSimulateRegistration({
     registrationParams,
     query: {
       enabled: commitTx?.stage === 'sent',
-      retry: true,
+      retry: commitTx?.stage === 'sent',
       retryDelay: 5_000,
     },
   })
+  const canRegisterOverride = isSimulateRegistrationSuccess && commitTx?.stage !== 'complete'
 
-  const chainName = useChainName()
   useEffect(() => {
-    if (canRegisterOverride && commitTx?.stage !== 'complete') {
+    if (canRegisterOverride) {
       trackEvent({ eventName: 'register_override_triggered' })
       if (getSelectedKey() === commitKey) stopCurrentFlow()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canRegisterOverride, chainName])
+  }, [canRegisterOverride])
 
   const commitTimestamp = match({ commitStage: commitTx?.stage, canRegisterOverride })
-    .with({ canRegisterOverride: true }, () => Math.floor(Date.now() / 1000) - 60)
+    .with({ canRegisterOverride: true }, () => Date.now() - 70_000)
     .with({ commitStage: 'complete' }, () => commitTx?.finaliseTime)
     .otherwise(() => undefined)
 
