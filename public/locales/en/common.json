@@ -215,6 +215,7 @@
       "commitName": "Start timer",
       "registerName": "Register name",
       "approveNameWrapper": "Approve NameWrapper",
+      "approveEthRegistrar": "Approve ETH Registrar",
       "clearRecords": "Clear records",
       "updateRecords": "Update records",
       "updateRecord": "Update record",
@@ -247,6 +248,7 @@
       "burnFuses": "Burn the chosen permissions until name expiry",
       "commitName": "Start timer to register name",
       "approveNameWrapper": "Approve the NameWrapper to manage your names",
+      "approveEthRegistrar": "Approve ETH Registrar to migrate your unwrapped names",
       "fuses": {
         "revoke": "Revoke",
         "grant": "Grant",

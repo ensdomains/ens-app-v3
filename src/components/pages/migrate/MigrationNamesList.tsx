@@ -1,18 +1,16 @@
-import { useState } from 'react'
 import { TFunction, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { Address } from 'viem'
 import { useEnsAvatar } from 'wagmi'
 
-import { GetNamesForAddressParameters, NameWithRelation } from '@ensdomains/ensjs/subgraph'
+import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
 import { CheckCircleSVG, Colors, DisabledSVG, PlusCircleSVG } from '@ensdomains/thorin'
 
-import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
-import { calculateDatesDiff } from '@app/utils/date'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { formatDurationOfDates } from '@app/utils/utils'
 
 const tabs = ['eligible', 'ineligible', 'approved'] as const
+
+type Tab = (typeof tabs)[number]
 
 const icons: Record<Tab, any> = {
   eligible: <PlusCircleSVG />,
@@ -37,8 +35,6 @@ const colors: Record<Tab, { fg: Colors; bg: Colors; hover: Colors }> = {
     hover: 'greenLight',
   },
 }
-
-type Tab = (typeof tabs)[number]
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -121,6 +117,10 @@ const NameCard = styled.div(
   `,
 )
 
+const nameListTabs = ['eligible', 'ineligible', 'approved'] as const
+
+export type NameListTab = (typeof nameListTabs)[number]
+
 const MigrationName = ({ name, t }: { name: NameWithRelation; t: TFunction }) => {
   const now = new Date()
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name: name.name! })
@@ -140,27 +140,16 @@ const MigrationName = ({ name, t }: { name: NameWithRelation; t: TFunction }) =>
   )
 }
 
-const filter: Record<Tab, GetNamesForAddressParameters['filter']> = {
-  eligible: { owner: false, wrappedOwner: true, registrant: true, resolvedAddress: false },
-  ineligible: { owner: true, wrappedOwner: false, registrant: false, resolvedAddress: false },
-}
-
-export const MigrationNamesList = ({ address }: { address?: Address }) => {
-  const [activeTab, setTab] = useState<Tab>('eligible')
-
+export const MigrationNamesList = ({
+  activeTab,
+  setTab,
+  names,
+}: {
+  activeTab: NameListTab
+  names: NameWithRelation[]
+  setTab: (tab: NameListTab) => void
+}) => {
   const { t } = useTranslation('migrate')
-
-  const { infiniteData, isLoading } = useNamesForAddress({
-    address,
-    pageSize: 20,
-    filter: filter[activeTab],
-  })
-
-  const names = infiniteData.filter(
-    (name) =>
-      name.parentName === 'eth' &&
-      (activeTab === 'ineligible' ? name.registrant !== name.owner : true),
-  )
 
   return (
     <Container>

@@ -1,11 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import Head from 'next/head'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
+import { GetNamesForAddressParameters } from '@ensdomains/ensjs/subgraph'
 import {
   Banner,
   Button,
@@ -23,10 +25,11 @@ import {
 } from '@ensdomains/thorin'
 
 import { Carousel } from '@app/components/pages/migrate/Carousel'
-import { MigrationNamesList } from '@app/components/pages/migrate/MigrationNamesList'
+import { MigrationNamesList, NameListTab } from '@app/components/pages/migrate/MigrationNamesList'
+import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { makeIntroItem } from '@app/transaction-flow/intro'
-import { createTransactionItem } from '@app/transaction-flow/transaction'
+import { createTransactionItem, TransactionData } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import DAOSVG from '../assets/DAO.svg'
@@ -236,6 +239,12 @@ const TabManager = styled.div(
 
 const tabs = ['ensv2', 'migrations', 'extension'] as const
 
+const filter: Record<NameListTab, GetNamesForAddressParameters['filter']> = {
+  eligible: { owner: false, wrappedOwner: true, registrant: true, resolvedAddress: false },
+  ineligible: { owner: true, wrappedOwner: false, registrant: false, resolvedAddress: false },
+  approved: {},
+}
+
 type Tab = (typeof tabs)[number]
 
 export default function Page() {
@@ -248,6 +257,20 @@ export default function Page() {
   const [currentTab, setTab] = useQueryParameterState<Tab>('tab', 'ensv2')
 
   const { createTransactionFlow } = useTransactionFlow()
+
+  const [activeNameListTab, setNameListTab] = useState<NameListTab>('eligible')
+
+  const { infiniteData } = useNamesForAddress({
+    address,
+    pageSize: 20,
+    filter: filter[activeNameListTab],
+  })
+
+  const names = infiniteData.filter(
+    (name) =>
+      name.parentName === 'eth' &&
+      (activeNameListTab === 'ineligible' ? name.registrant !== name.owner : true),
+  )
 
   return (
     <>
@@ -318,6 +341,26 @@ export default function Page() {
                 <Button
                   onClick={() => {
                     if (isConnected) {
+                      const transactions: {
+                        name: 'approveNameWrapper' | 'approveEthRegistrar'
+                        data: TransactionData<'approveNameWrapper' | 'approveEthRegistrar'>
+                      }[] = []
+
+                      if (names.find((name) => name.wrappedOwner)) {
+                        transactions.push(
+                          createTransactionItem('approveNameWrapper', {
+                            address: address!,
+                          }),
+                        )
+                      }
+                      if (names.find((name) => name.relation.registrant)) {
+                        transactions.push(
+                          createTransactionItem('approveEthRegistrar', {
+                            address: address!,
+                          }),
+                        )
+                      }
+
                       createTransactionFlow('migrate-names', {
                         resumable: true,
                         intro: {
@@ -326,14 +369,7 @@ export default function Page() {
                             description: t('details.approve.description'),
                           }),
                         },
-                        transactions: [
-                          createTransactionItem('approveNameWrapper', {
-                            address: address!,
-                          }),
-                          createTransactionItem('approveNameWrapper', {
-                            address: address!,
-                          }),
-                        ],
+                        transactions,
                       })
                     } else {
                       openConnectModal?.()
@@ -429,7 +465,13 @@ export default function Page() {
           ))
           .with('migrations', () => (
             <>
-              {isConnected ? <MigrationNamesList address={address} /> : null}
+              {isConnected ? (
+                <MigrationNamesList
+                  {...{ names }}
+                  activeTab={activeNameListTab}
+                  setTab={setNameListTab}
+                />
+              ) : null}
               <Section>
                 <Typography asProp="h3" fontVariant="headingThree">
                   {t('approval-benefits.title')}
