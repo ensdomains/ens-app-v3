@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Interface } from '@ethersproject/abi'
+import { utils } from 'ethers'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -49,7 +49,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log('Set interface implementor of eth tld for bulk renewal')
   const tx2 = await resolver.setInterface(
     ethers.utils.namehash('eth'),
-    computeInterfaceId(new Interface(bulkRenewal.abi)),
+    computeInterfaceId(new utils.Interface(bulkRenewal.abi)),
     bulkRenewal.address,
   )
   await tx2.wait()
@@ -57,7 +57,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log('Set interface implementor of eth tld for registrar controller')
   const tx3 = await resolver.setInterface(
     ethers.utils.namehash('eth'),
-    computeInterfaceId(new Interface(controllerArtifact.abi)),
+    computeInterfaceId(new utils.Interface(controllerArtifact.abi)),
     controller.address,
   )
   await tx3.wait()
