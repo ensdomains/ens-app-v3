@@ -9,6 +9,8 @@ import {
   type CapsuleModalProps,
 } from '@usecapsule/rainbowkit-wallet'
 
+import { ENS_LINKS } from '../constants'
+
 const APP_NAME = 'ENS'
 const CAPSULE_ENV: Environment = Environment.BETA
 const CAPSULE_API_KEY = 'ea5557d8aed418b3c195f28c5a8dd3bb'
@@ -23,10 +25,10 @@ const capsuleConstructorOpts: ConstructorOpts = {
   // User Email Branding
   emailTheme: 'light' as any,
   emailPrimaryColor: '#5298FF',
-  githubUrl: 'https://github.com/ensdomains',
-  xUrl: 'https://twitter.com/ensdomains',
-  homepageUrl: 'https://ens.domains/',
-  supportUrl: 'mailto:help@ens.domains',
+  githubUrl: ENS_LINKS.GITHUB,
+  xUrl: ENS_LINKS.X,
+  homepageUrl: ENS_LINKS.HOMEPAGE,
+  supportUrl: ENS_LINKS.EMAIL,
 
   disableWorkers: true,
 }

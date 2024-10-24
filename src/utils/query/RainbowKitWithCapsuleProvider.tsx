@@ -1,13 +1,16 @@
 import { lightTheme, RainbowKitProvider, Theme } from '@usecapsule/rainbowkit'
 import { ComponentProps, useEffect, useState } from 'react'
 
+import { lightTheme as thorinLightTheme } from '@ensdomains/thorin'
+
+import { hslToHex } from '../utils'
 import { loadCapsule } from './loadCapsule'
 
 type RainbowKitProviderProps = ComponentProps<typeof RainbowKitProvider>
 
 const rainbowKitTheme: Theme = {
   ...lightTheme({
-    // accentColor: thorinLightTheme.colors.accent, // requires a hex string color but thorinLightTheme returns a hsl string
+    accentColor: hslToHex(thorinLightTheme.colors.accent),
     borderRadius: 'medium',
   }),
   fonts: {

@@ -25,6 +25,7 @@ import { SocialIcon } from '@app/components/SocialIcon'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useGasPrice } from '@app/hooks/chain/useGasPrice'
 import { routes } from '@app/routes'
+import { ENS_LINKS } from '@app/utils/constants'
 import { makeDisplay } from '@app/utils/currency'
 import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 import useUserConfig from '@app/utils/useUserConfig'
@@ -295,24 +296,16 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
         ))}
       </RoutesSection>
       <SocialSection>
-        <SocialIcon Icon={SocialX} color="black" href="https://x.com/ensdomains" />
-        <SocialIcon Icon={SocialGithub} color="#0F0F0F" href="https://github.com/ensdomains" />
-        <SocialIcon Icon={SocialDiscord} color="#7F83FF" href="https://chat.ens.domains" />
-        <SocialIcon
-          Icon={SocialMirror}
-          ColoredIcon={SocialMirrorColour}
-          href="https://ens.mirror.xyz"
-        />
+        <SocialIcon Icon={SocialX} color="black" href={ENS_LINKS.X} />
+        <SocialIcon Icon={SocialGithub} color="#0F0F0F" href={ENS_LINKS.GITHUB} />
+        <SocialIcon Icon={SocialDiscord} color="#7F83FF" href={ENS_LINKS.DISCORD} />
+        <SocialIcon Icon={SocialMirror} ColoredIcon={SocialMirrorColour} href={ENS_LINKS.MIRROR} />
         <SocialIcon
           Icon={SocialDiscourse}
           ColoredIcon={SocialDiscourseColour}
-          href="https://discuss.ens.domains/"
+          href={ENS_LINKS.DISCOURSE}
         />
-        <SocialIcon
-          Icon={SocialYoutube}
-          color="#EE1919"
-          href="https://www.youtube.com/ensdomains"
-        />
+        <SocialIcon Icon={SocialYoutube} color="#EE1919" href={ENS_LINKS.YOUTUBE} />
       </SocialSection>
       <NetworkSection />
     </Container>

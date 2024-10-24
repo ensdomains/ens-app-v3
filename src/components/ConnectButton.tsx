@@ -3,7 +3,7 @@ import { Key, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
-import { Config, useDisconnect, useEnsAvatar } from 'wagmi'
+import { useConnections, useDisconnect, useEnsAvatar } from 'wagmi'
 
 import {
   Button,
@@ -26,7 +26,6 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
-import { wagmiConfig } from '@app/utils/query/wagmi'
 import { shortenAddress } from '@app/utils/utils'
 
 import BaseLink from './@atoms/BaseLink'
@@ -108,13 +107,6 @@ const calculateTestId = (isTabBar: boolean | undefined, inHeader: boolean | unde
   return 'connect-button'
 }
 
-const getIsCapsuleConnected = (wagmiState: Config['state']) => {
-  const capsuleIntegratedConnection = Array.from(wagmiState.connections.values()).find(
-    (connection) => connection?.connector?.id === 'capsule-integrated',
-  )
-  return !!capsuleIntegratedConnection
-}
-
 export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
@@ -154,7 +146,10 @@ const HeaderProfile = ({ address }: { address: Address }) => {
   const { copy, copied } = useCopied(300)
   const hasPendingTransactions = useHasPendingTransactions()
 
-  const isCapsuleConnected = getIsCapsuleConnected(wagmiConfig.state)
+  const connections = useConnections()
+  const isCapsuleConnected = connections.some(
+    (connection) => connection?.connector?.id === 'capsule-integrated',
+  )
 
   return (
     <Profile
@@ -196,25 +191,27 @@ const HeaderProfile = ({ address }: { address: Address }) => {
             onClick: () => copy(address),
             icon: copied ? <CheckSVG /> : <CopySVG />,
           },
-          isCapsuleConnected
-            ? {
-                label: t('wallet.myWallet'),
-                color: 'text',
-                icon: <WalletSVG />,
-                wrapper: (children: ReactNode, key: Key) => (
-                  <BaseLink href="https://connect.usecapsule.com/" key={key}>
-                    {children}
-                  </BaseLink>
-                ),
-              }
-            : null,
+          ...(isCapsuleConnected
+            ? [
+                {
+                  label: t('wallet.myWallet'),
+                  color: 'text',
+                  icon: <WalletSVG />,
+                  wrapper: (children: ReactNode, key: Key) => (
+                    <BaseLink href="https://connect.usecapsule.com/" key={key}>
+                      {children}
+                    </BaseLink>
+                  ),
+                },
+              ]
+            : []),
           {
             label: t('wallet.disconnect'),
             color: 'red',
             onClick: () => disconnect(),
             icon: <ExitSVG />,
           },
-        ].filter((dropdownItem) => !!dropdownItem) as DropdownItem[]
+        ] as DropdownItem[]
       }
       avatar={{
         src: avatar || zorb,
