@@ -3,10 +3,10 @@ import { Hash } from 'viem'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { CreateTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-import { UseVerificationOAuthReturnType } from '../../useVerificationOAuth/useVerificationOAuth'
+import { UseDentityProfileReturnType } from '../../useDentityProfile/useDentityProfile'
 
 type Props = Pick<
-  UseVerificationOAuthReturnType,
+  UseDentityProfileReturnType,
   'name' | 'verifier' | 'resolverAddress' | 'verifiedPresentationUri'
 > & {
   userAddress?: Hash

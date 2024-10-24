@@ -11,7 +11,7 @@ import { getDestination } from '@app/routes'
 import { CreateTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { shortenAddress } from '../../../../utils/utils'
-import { UseVerificationOAuthReturnType } from '../../useVerificationOAuth/useVerificationOAuth'
+import { UseDentityProfileReturnType } from '../../useDentityProfile/useDentityProfile'
 import { createVerificationTransactionFlow } from './createVerificationTransactionFlow'
 
 // Patterns
@@ -49,7 +49,7 @@ export const dentityVerificationHandler =
     createTransactionFlow: CreateTransactionFlow
     t: TFunction
   }) =>
-  (json: UseVerificationOAuthReturnType): VerificationErrorDialogProps => {
+  (json: UseDentityProfileReturnType): VerificationErrorDialogProps => {
     return match(json)
       .with(
         {

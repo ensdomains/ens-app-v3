@@ -108,8 +108,6 @@ test.describe('Verified records', () => {
     await page.goto(`/${name}`)
     // await login.connect()
 
-    await page.pause()
-
     await expect(page.getByTestId('profile-section-verifications')).toBeVisible()
 
     await profilePage.isRecordVerified('text', 'com.twitter')
@@ -179,8 +177,6 @@ test.describe('Verified records', () => {
     })
 
     await page.goto(`/${name}`)
-
-    await page.pause()
 
     await expect(page.getByTestId('profile-section-verifications')).toBeVisible()
 
@@ -345,8 +341,6 @@ test.describe('Verify profile', () => {
     await profilePage.goto(name)
     await login.connect()
 
-    await page.pause()
-
     await expect(page.getByTestId('profile-section-verifications')).toBeVisible()
 
     await profilePage.isRecordVerified('text', 'com.twitter')
@@ -374,7 +368,6 @@ test.describe('Verify profile', () => {
     await profilePage.isRecordVerified('text', 'com.discord', false)
     await profilePage.isRecordVerified('verification', 'dentity', false)
     await profilePage.isPersonhoodVerified(false)
-    await page.pause()
   })
 })
 
@@ -488,8 +481,6 @@ test.describe('OAuth flow', () => {
     await page.goto(`/?iss=${DENTITY_ISS}&code=dummyCode`)
     await login.connect()
 
-    await page.pause()
-
     await expect(page.getByText('Verification failed')).toBeVisible()
     await expect(
       page.getByText(
@@ -497,13 +488,10 @@ test.describe('OAuth flow', () => {
       ),
     ).toBeVisible()
 
-    await page.pause()
     await login.switchTo('user2')
 
     // Page should redirect to the profile page
     await expect(page).toHaveURL(`/${name}`)
-
-    await page.pause()
   })
 
   test('Should show an error message if user is not logged in', async ({
@@ -531,8 +519,6 @@ test.describe('OAuth flow', () => {
 
     await page.goto(`/?iss=${DENTITY_ISS}&code=dummyCode`)
 
-    await page.pause()
-
     await expect(page.getByText('Verification failed')).toBeVisible()
     await expect(
       page.getByText('You must be connected as 0x709...c79C8 to set the verification record.'),
@@ -540,13 +526,21 @@ test.describe('OAuth flow', () => {
 
     await page.locator('.modal').getByRole('button', { name: 'Done' }).click()
 
-    await page.pause()
+    await page.route(`${VERIFICATION_OAUTH_BASE_URL}/dentity/token`, async (route) => {
+      await route.fulfill({
+        status: 401,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          error_msg: 'Unauthorized',
+        }),
+      })
+    })
+
     await login.connect('user2')
+    await page.reload()
 
     // Page should redirect to the profile page
     await expect(page).toHaveURL(`/${name}`)
-
-    await page.pause()
   })
 
   test('Should redirect to profile page without showing set verification record if it already set', async ({
@@ -594,15 +588,9 @@ test.describe('OAuth flow', () => {
 
     await expect(page).toHaveURL(`/${name}`)
     await expect(transactionModal.transactionModal).not.toBeVisible()
-
-    await page.pause()
   })
 
-  test('Should show general error message if other problems occur', async ({
-    page,
-    login,
-    makeName,
-  }) => {
+  test('Should show general error message if other problems occur', async ({ page, makeName }) => {
     const name = await makeName({
       label: 'dentity',
       type: 'legacy',
@@ -622,9 +610,6 @@ test.describe('OAuth flow', () => {
     })
 
     await page.goto(`/?iss=${DENTITY_ISS}&code=dummyCode`)
-    await login.connect('user')
-
-    await page.pause()
 
     await expect(page.getByText('Verification failed')).toBeVisible()
     await expect(
