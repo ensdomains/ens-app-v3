@@ -98,7 +98,8 @@
     "noPrimaryName": "No Primary Name",
     "viewProfile": "View Profile",
     "viewDetails": "View Details",
-    "register": "Register"
+    "register": "Register",
+    "myWallet": "My Wallet"
   },
   "name": {
     "registered": "Registered",
