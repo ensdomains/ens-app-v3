@@ -68,7 +68,7 @@ export const useVerificationOAuthHandler = (): UseVerificationOAuthHandlerReturn
       setDialogProps(newProps)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, isDentityProfileLoading, error])
+  }, [data, isLoading, error])
 
   return {
     dialogProps,
