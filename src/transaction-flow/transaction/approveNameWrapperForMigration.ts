@@ -1,13 +1,12 @@
-import { TFunction } from 'react-i18next'
-import { Address } from 'viem/accounts'
-import { encodeFunctionData } from 'viem/utils'
+import type { TFunction } from 'react-i18next'
+import { Address, encodeFunctionData } from 'viem'
 
 import {
   getChainContractAddress,
   registrySetApprovalForAllSnippet,
 } from '@ensdomains/ensjs/contracts'
 
-import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = { address: Address }
 
@@ -22,11 +21,11 @@ const displayItems = (
   },
   {
     label: 'action',
-    value: t('transaction.description.approveEthRegistrar'),
+    value: t('transaction.description.approveNameWrapper'),
   },
   {
     label: 'info',
-    value: t('transaction.info.approveEthRegistrar'),
+    value: t('transaction.info.approveNameWrapper'),
   },
 ]
 
@@ -34,7 +33,7 @@ const transaction = async ({ client }: TransactionFunctionParameters<Data>) => {
   return {
     to: getChainContractAddress({
       client,
-      contract: 'ensBaseRegistrarImplementation',
+      contract: 'ensNameWrapper',
     }),
     data: encodeFunctionData({
       abi: registrySetApprovalForAllSnippet,
@@ -42,7 +41,7 @@ const transaction = async ({ client }: TransactionFunctionParameters<Data>) => {
       args: [
         getChainContractAddress({
           client,
-          contract: 'ensBaseRegistrarImplementation',
+          contract: 'migrator-contract-address-will-go-here',
         }),
         true,
       ],

@@ -27,6 +27,7 @@ import {
 import { Carousel } from '@app/components/pages/migrate/Carousel'
 import { MigrationNamesList, NameListTab } from '@app/components/pages/migrate/MigrationNamesList'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
+import { useApprovedNamesForMigration } from '@app/hooks/migration/useApprovedNamesForMigration'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { createTransactionItem, TransactionData } from '@app/transaction-flow/transaction'
@@ -242,7 +243,7 @@ const tabs = ['ensv2', 'migrations', 'extension'] as const
 const filter: Record<NameListTab, GetNamesForAddressParameters['filter']> = {
   eligible: { owner: false, wrappedOwner: true, registrant: true, resolvedAddress: false },
   ineligible: { owner: true, wrappedOwner: false, registrant: false, resolvedAddress: false },
-  approved: {},
+  approved: { owner: false, wrappedOwner: true, registrant: true, resolvedAddress: false },
 }
 
 type Tab = (typeof tabs)[number]
@@ -271,6 +272,8 @@ export default function Page() {
       name.parentName === 'eth' &&
       (activeNameListTab === 'ineligible' ? name.registrant !== name.owner : true),
   )
+
+  const approvedNames = useApprovedNamesForMigration({ names })
 
   return (
     <>
@@ -342,20 +345,22 @@ export default function Page() {
                   onClick={() => {
                     if (isConnected) {
                       const transactions: {
-                        name: 'approveNameWrapper' | 'approveEthRegistrar'
-                        data: TransactionData<'approveNameWrapper' | 'approveEthRegistrar'>
+                        name: 'approveNameWrapperForMigration' | 'approveRegistrarForMigration'
+                        data: TransactionData<
+                          'approveNameWrapperForMigration' | 'approveRegistrarForMigration'
+                        >
                       }[] = []
 
                       if (names.find((name) => name.wrappedOwner)) {
                         transactions.push(
-                          createTransactionItem('approveNameWrapper', {
+                          createTransactionItem('approveNameWrapperForMigration', {
                             address: address!,
                           }),
                         )
                       }
                       if (names.find((name) => name.relation.registrant)) {
                         transactions.push(
-                          createTransactionItem('approveEthRegistrar', {
+                          createTransactionItem('approveRegistrarForMigration', {
                             address: address!,
                           }),
                         )
@@ -467,7 +472,7 @@ export default function Page() {
             <>
               {isConnected ? (
                 <MigrationNamesList
-                  {...{ names }}
+                  names={activeNameListTab === 'approved' ? approvedNames : names}
                   activeTab={activeNameListTab}
                   setTab={setNameListTab}
                 />
