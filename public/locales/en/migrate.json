@@ -1,7 +1,11 @@
 {
   "title": {
     "landing": "ENSv2: The Next Generation of ENS",
-    "migration": "Upgrade to ENSv2 Seamlessly"
+    "migration": "Upgrade to ENSv2 Seamlessly",
+    "extension": {
+      "part1": "Extend names for",
+      "part2": "Governance Power"
+    }
   },
   "caption": {
     "ensv2": "Approve your ENS names for ENSv2 now and enjoy automatic migration, paid for by ENS DAO.",

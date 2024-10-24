@@ -63,6 +63,14 @@ const Heading = styled.h1(
     color: ${theme.colors.textPrimary};
     text-align: center;
     line-height: 104%;
+    & > span {
+      font-weight: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      background: linear-gradient(90deg, #199c75 2.87%, #9b9ba7 97.95%);
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
     @media (min-width: 360px) {
       font-size: 60px;
     }
@@ -321,9 +329,19 @@ export default function Page() {
                 <Caption fontVariant="bodyLarge">{t('caption.migration')}</Caption>
               </>
             ))
-            .otherwise(() => (
-              <div>bloop</div>
-            ))}
+            .with('extension', () => (
+              <>
+                <Head>
+                  <title>
+                    {t('title.extension.part1')} {t('title.extension.part2')}
+                  </title>
+                </Head>
+                <Heading>
+                  {t('title.extension.part1')} <span>{t('title.extension.part2')}</span>
+                </Heading>
+              </>
+            ))
+            .exhaustive()}
           <ButtonContainer>
             {match(currentTab)
               .with('ensv2', () => (
@@ -385,9 +403,12 @@ export default function Page() {
                   {isConnected ? t('cta.begin') : t('cta.unconnected')}
                 </Button>
               ))
-              .otherwise(() => (
-                <div>bloop</div>
-              ))}
+              .with('extension', () => (
+                <Button colorStyle="greenPrimary">
+                  {isConnected ? t('cta.begin') : t('cta.unconnected')}
+                </Button>
+              ))
+              .exhaustive()}
 
             <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
           </ButtonContainer>
