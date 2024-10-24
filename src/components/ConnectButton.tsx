@@ -1,9 +1,9 @@
 import { useConnectModal } from '@usecapsule/rainbowkit'
-import { Key, ReactNode, useEffect } from 'react'
+import { Key, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
-import { useAccount, useDisconnect, useEnsAvatar } from 'wagmi'
+import { Config, useDisconnect, useEnsAvatar } from 'wagmi'
 
 import {
   Button,
@@ -14,6 +14,7 @@ import {
   mq,
   PersonSVG,
   Profile,
+  WalletSVG,
 } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
@@ -107,7 +108,7 @@ const calculateTestId = (isTabBar: boolean | undefined, inHeader: boolean | unde
   return 'connect-button'
 }
 
-const getIsCapsuleConnected = (wagmiState: any) => {
+const getIsCapsuleConnected = (wagmiState: Config['state']) => {
   const capsuleIntegratedConnection = Array.from(wagmiState.connections.values()).find(
     (connection) => connection?.connector?.id === 'capsule-integrated',
   )
@@ -197,9 +198,9 @@ const HeaderProfile = ({ address }: { address: Address }) => {
           },
           isCapsuleConnected
             ? {
-                label: 'Capsule',
+                label: t('wallet.myWallet'),
                 color: 'text',
-                icon: <CheckSVG />,
+                icon: <WalletSVG />,
                 wrapper: (children: ReactNode, key: Key) => (
                   <BaseLink href="https://connect.usecapsule.com/" key={key}>
                     {children}

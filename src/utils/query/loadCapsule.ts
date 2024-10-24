@@ -1,4 +1,4 @@
-import { reconnect } from '@wagmi/core'
+import { Connector, reconnect } from '@wagmi/core'
 
 import { prefix, wagmiConfig } from './wagmi'
 
