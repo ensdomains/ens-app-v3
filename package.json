@@ -71,6 +71,7 @@
     "@walletconnect/modal": "^2.6.2",
     "calendar-link": "^2.2.0",
     "dns-packet": "^5.4.0",
+    "effect": "^3.10.3",
     "graphql-request": "5.1.0",
     "i18next": "^21.9.1",
     "i18next-browser-languagedetector": "^6.1.5",

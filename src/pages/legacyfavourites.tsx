@@ -1,3 +1,4 @@
+import { Effect, pipe } from 'effect'
 import { ReactElement, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
@@ -20,27 +21,80 @@ const Container = styled.div(
   `,
 )
 
+type LegacyFavorite = {
+  name: string
+  revealDate: number
+  registrationDate: number
+  migrationStartDate: number | null
+  currentBlockDate: string
+  transferEndDate: number | null
+  gracePeriodEndDate: number | null
+  value: number
+  highestBid: number
+  state: string
+  stateError: string | null
+  label: string
+  decrypted: boolean
+  price: number | null
+  rent: number | null
+  referralFeePPM: number | null
+  available: boolean
+  contentType: string
+  expiryTime: string
+  isNewRegistrar: boolean
+  isDNSRegistrar: boolean | null
+  dnsOwner: string | null
+  deedOwner: string
+  registrant: string
+  auctionEnds: number | null
+  labelhash: string
+  owner: string
+  resolver: string
+  addr: string
+  content: string
+  parent: string
+  parentOwner: string
+}
+
 // eslint-disable-next-line react/no-unused-prop-types
-type Favourite = { name: string; expiry: Date }
-type Favourites = Favourite[]
+type SimpleFavorite = { name: string; expiry: Date }
+
+class JsonParseError extends SyntaxError {}
+
+export const getLegacyFavorites = (): string =>
+  globalThis?.localStorage?.getItem('ensFavourites') || '{}'
+
+export const simplifyLegacyFavorites = (legacyFavorites: any): SimpleFavorite[] => {
+  if (!legacyFavorites?.length) {
+    return []
+  }
+  return legacyFavorites.map((favorite: any) => ({
+    name: favorite.name,
+    expiry: favorite.expiryTime ? new Date(favorite.expiryTime) : null,
+  }))
+}
+
+const jsonParseEffect = (input: string): Effect.Effect<LegacyFavorite[], JsonParseError> =>
+  Effect.try({
+    try: () => JSON.parse(input),
+    catch: (error) => new JsonParseError(error as string),
+  })
 
 export default function Page() {
-  const [favourites, setFavourites] = useState<Favourites | null>(null)
+  const [favorites, setFavorites] = useState<SimpleFavorite[] | null>(null)
   const chainId = useChainId()
 
   useEffect(() => {
-    const rawFavourites =
-      JSON.parse(globalThis?.localStorage?.getItem('ensFavourites') || '{}') || []
-
-    if (!rawFavourites?.length) {
-      return
-    }
-
-    const simplifiedFavourites = rawFavourites.map((favourite: any) => ({
-      name: favourite.name,
-      expiry: favourite.expiryTime ? new Date(favourite.expiryTime) : null,
-    }))
-    setFavourites(simplifiedFavourites)
+    pipe(
+      Effect.succeed(getLegacyFavorites()),
+      Effect.flatMap(jsonParseEffect),
+      Effect.map(simplifyLegacyFavorites),
+      Effect.match({
+        onFailure: console.error,
+        onSuccess: setFavorites,
+      }),
+      Effect.runSync,
+    )
   }, [])
 
   return (
@@ -50,19 +104,19 @@ export default function Page() {
           <>
             <Helper type="warning" style={{ textAlign: 'center' }}>
               <Typography>
-                Your favourites have been carried over from{' '}
+                Your favorites have been carried over from{' '}
                 <Outlink href="https://legacy.ens.domains" target="_blank" rel="noreferrer">
                   Legacy ENS
                 </Outlink>
-                . These will be uneditable until favourites are fully implemented.
+                . These will be uneditable until favorites are fully implemented.
               </Typography>
             </Helper>
             <Spacer $height="3" />
-            {match(favourites)
-              .with(P.array({ name: P.string, expiry: P._ }), (_favourites) => {
+            {match(favorites)
+              .with(P.array({ name: P.string, expiry: P._ }), (_favorites) => {
                 return (
                   <Container>
-                    {_favourites.map(({ name, expiry }: Favourite) => (
+                    {_favorites.map(({ name, expiry }: SimpleFavorite) => (
                       <TaggedNameItem
                         key={name}
                         truncatedName={truncateFormat(name)}
@@ -78,7 +132,7 @@ export default function Page() {
                 )
               })
               .otherwise(() => (
-                <Helper type="info">No Favourites found</Helper>
+                <Helper type="info">No Favorites found</Helper>
               ))}
           </>
         ),
