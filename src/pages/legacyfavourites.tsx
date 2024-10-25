@@ -1,7 +1,6 @@
 import { Effect, pipe } from 'effect'
 import { ReactElement, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { match, P } from 'ts-pattern'
 import { useChainId } from 'wagmi'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils'
@@ -112,28 +111,24 @@ export default function Page() {
               </Typography>
             </Helper>
             <Spacer $height="3" />
-            {match(favorites)
-              .with(P.array({ name: P.string, expiry: P._ }), (_favorites) => {
-                return (
-                  <Container>
-                    {_favorites.map(({ name, expiry }: SimpleFavorite) => (
-                      <TaggedNameItem
-                        key={name}
-                        truncatedName={truncateFormat(name)}
-                        {...{
-                          name,
-                          network: chainId,
-                          hasOtherItems: false,
-                          expiryDate: { date: expiry, value: expiry?.getTime() },
-                        }}
-                      />
-                    ))}
-                  </Container>
-                )
-              })
-              .otherwise(() => (
-                <Helper type="info">No Favorites found</Helper>
-              ))}
+            {favorites?.length ? (
+              <Container>
+                {favorites.map(({ name, expiry }: SimpleFavorite) => (
+                  <TaggedNameItem
+                    key={name}
+                    truncatedName={truncateFormat(name)}
+                    {...{
+                      name,
+                      network: chainId,
+                      hasOtherItems: false,
+                      expiryDate: { date: expiry, value: expiry?.getTime() },
+                    }}
+                  />
+                ))}
+              </Container>
+            ) : (
+              <Helper type="info">No Favorites found</Helper>
+            )}
           </>
         ),
       }}
