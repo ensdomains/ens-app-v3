@@ -59,7 +59,7 @@ const Caption = styled(Typography)`
   max-width: 538px;
 `
 
-const GetStarted = styled(MigrationSection)(
+const GetStarted = styled.div(
   ({ theme }) => css`
     & > div button span {
       display: flex;
