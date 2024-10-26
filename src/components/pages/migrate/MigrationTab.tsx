@@ -12,6 +12,7 @@ import {
   Banner,
   Button,
   Card,
+  FastForwardSVG,
   GasPumpSVG,
   KeySVG,
   RightArrowSVG,
@@ -59,9 +60,9 @@ const Caption = styled(Typography)`
   max-width: 538px;
 `
 
-const GetStarted = styled.div(
+const ContainerWithCenteredButton = styled.div(
   ({ theme }) => css`
-    & > div button span {
+    button span {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -171,6 +172,13 @@ const AllNamesAreApprovedBanner = styled.div(
   `,
 )
 
+const RebatesMigrationSection = styled(MigrationSection)`
+  & > div > div:nth-child(3) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+`
+
 export const migrationTabs = ['ensv2', 'migrations', 'extension'] as const
 
 export type MigrationTabType = (typeof migrationTabs)[number]
@@ -248,7 +256,7 @@ const LandingTab = ({
         <Typography asProp="h3" fontVariant="headingThree">
           {t('get-started.title')}
         </Typography>
-        <GetStarted>
+        <ContainerWithCenteredButton>
           <Card>
             <CardHeader>
               <UpCircleSVG />
@@ -261,7 +269,19 @@ const LandingTab = ({
               </span>
             </Button>
           </Card>
-        </GetStarted>
+          <Card>
+            <CardHeader>
+              <FastForwardSVG />
+              {t('get-started.extend.title')}
+            </CardHeader>
+            {t('get-started.extend.caption')}
+            <Button colorStyle="greenPrimary" width="max">
+              <span>
+                {t('cta.claim-rebates')} <RightArrowSVG />
+              </span>
+            </Button>
+          </Card>
+        </ContainerWithCenteredButton>
       </MigrationSection>
       <SlideshowContainer>
         <Typography asProp="h3" fontVariant="headingThree">
@@ -389,7 +409,7 @@ const MigrationsTab = ({
           setTab={setNameListTab}
         />
       ) : null}
-      <MigrationSection>
+      <RebatesMigrationSection>
         <Typography asProp="h3" fontVariant="headingThree">
           {t('approval-benefits.title')}
         </Typography>
@@ -408,8 +428,22 @@ const MigrationsTab = ({
             </CardHeader>
             {t('approval-benefits.no-gas-cost.caption')}
           </Card>
+          <Card>
+            <CardHeader>
+              <FastForwardSVG />
+              {t('approval-benefits.claim-rebates.title')}
+            </CardHeader>
+            {t('approval-benefits.claim-rebates.caption')}
+            <ContainerWithCenteredButton>
+              <Button colorStyle="greenPrimary" width="max">
+                <span>
+                  {t('cta.claim-rebates')} <RightArrowSVG />
+                </span>
+              </Button>
+            </ContainerWithCenteredButton>
+          </Card>
         </div>
-      </MigrationSection>
+      </RebatesMigrationSection>
     </>
   )
 }

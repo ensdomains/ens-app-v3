@@ -9,8 +9,8 @@ export const MigrationSection = styled.div(
       text-align: center;
     }
     & > div {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
       gap: ${theme.space['4']};
     }
     & > div > div {
@@ -18,9 +18,9 @@ export const MigrationSection = styled.div(
       display: flex;
       align-items: center;
     }
-    @media (min-width: 360px) {
+    @media (min-width: 480px) {
       & > div {
-        flex-direction: row;
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   `,
