@@ -157,6 +157,20 @@ const SlideshowContainer = styled.div(
   `,
 )
 
+const AllNamesAreApprovedBanner = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+    align-items: center;
+    border-radius: ${theme.radii['4xLarge']};
+    gap: ${theme.space['2']};
+    padding: ${theme.space['4']} ${theme.space['6']};
+    background: ${theme.colors.greenSurface};
+    border: 1px solid ${theme.colors.greenPrimary};
+  `,
+)
+
 export const migrationTabs = ['ensv2', 'migrations', 'extension'] as const
 
 export type MigrationTabType = (typeof migrationTabs)[number]
@@ -305,6 +319,8 @@ const MigrationsTab = ({
 
   const approvedNames = useApprovedNamesForMigration({ names })
 
+  const allNamesAreApproved = approvedNames.length === names.length
+
   const { createTransactionFlow } = useTransactionFlow()
 
   return (
@@ -363,6 +379,9 @@ const MigrationsTab = ({
           <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
         </ButtonContainer>
       </Header>
+      {allNamesAreApproved ? (
+        <AllNamesAreApprovedBanner>{t('banner.all-approved')}</AllNamesAreApprovedBanner>
+      ) : null}
       {isConnected ? (
         <MigrationNamesList
           names={activeNameListTab === 'approved' ? approvedNames : names}
