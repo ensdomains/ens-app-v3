@@ -395,7 +395,27 @@ const MigrationsTab = ({
   )
 }
 
-const ExtensionTab = ({ t, isConnected }: { t: TFunction; isConnected: boolean }) => {
+const ExtensionTab = ({
+  t,
+  isConnected,
+  address,
+}: {
+  t: TFunction
+  isConnected: boolean
+  address?: Address
+}) => {
+  const { infiniteData } = useNamesForAddress({
+    address,
+    pageSize: 20,
+    filter: filter.eligible,
+  })
+
+  const names = infiniteData.filter((name) => name.parentName === 'eth')
+
+  const approvedNames = useApprovedNamesForMigration({ names })
+
+  const allNamesAreApproved = approvedNames.length === names.length
+
   return (
     <>
       <Header>
@@ -410,7 +430,11 @@ const ExtensionTab = ({ t, isConnected }: { t: TFunction; isConnected: boolean }
         <Caption>bloop</Caption>
         <ButtonContainer>
           <Button colorStyle="greenPrimary">
-            {isConnected ? t('cta.begin') : t('cta.unconnected')}
+            {match({ isConnected, allNamesAreApproved })
+              .with({ isConnected: true, allNamesAreApproved: true }, () => t('cta.extend-names'))
+              .with({ isConnected: true, allNamesAreApproved: false }, () => t('cta.begin'))
+              .with({ isConnected: false }, () => t('cta.unconnected'))
+              .exhaustive()}
           </Button>
           <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
         </ButtonContainer>
@@ -434,6 +458,6 @@ export const MigrationTab = ({
   return match(tab)
     .with('ensv2', () => <LandingTab {...{ isConnected, openConnectModal, t, setTab }} />)
     .with('migrations', () => <MigrationsTab {...{ isConnected, openConnectModal, t, address }} />)
-    .with('extension', () => <ExtensionTab {...{ t, isConnected }} />)
+    .with('extension', () => <ExtensionTab {...{ t, isConnected, address }} />)
     .exhaustive()
 }
