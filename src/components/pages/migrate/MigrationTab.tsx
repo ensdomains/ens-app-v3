@@ -7,7 +7,7 @@ import { match } from 'ts-pattern'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { GetNamesForAddressParameters } from '@ensdomains/ensjs/subgraph'
+import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
 import {
   Banner,
   Button,
@@ -188,11 +188,15 @@ const LandingTab = ({
   isConnected,
   openConnectModal,
   setTab,
+  eligibleNames,
+  approvedNames,
 }: {
   t: TFunction
   isConnected: boolean
   openConnectModal?: () => void
   setTab: (tab: MigrationTabType) => void
+  eligibleNames: NameWithRelation[]
+  approvedNames: NameWithRelation[]
 }) => {
   return (
     <>
@@ -214,7 +218,18 @@ const LandingTab = ({
             }}
             colorStyle="greenPrimary"
           >
-            {isConnected ? t('cta.approve') : t('cta.unconnected')}
+            {match({
+              isConnected,
+              eligible: eligibleNames.length !== 0,
+              approved: approvedNames.length !== 0,
+            })
+              .with({ isConnected: true, eligible: true, approved: false }, () => t('cta.approve'))
+              .with({ isConnected: true, eligible: false, approved: false }, () => t('cta.begin'))
+              .with({ isConnected: true, eligible: true, approved: true }, () =>
+                t('cta.extend-names'),
+              )
+              .with({ isConnected: false }, () => t('cta.unconnected'))
+              .otherwise(() => null)}
           </Button>
           <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
         </ButtonContainer>
@@ -275,7 +290,7 @@ const LandingTab = ({
               {t('get-started.extend.title')}
             </CardHeader>
             {t('get-started.extend.caption')}
-            <Button colorStyle="greenPrimary" width="max">
+            <Button colorStyle="greenPrimary" width="max" onClick={() => setTab('extension')}>
               <span>
                 {t('cta.claim-rebates')} <RightArrowSVG />
               </span>
@@ -306,10 +321,44 @@ const LandingTab = ({
   )
 }
 
-const filter: Record<NameListTab, GetNamesForAddressParameters['filter']> = {
-  eligible: { owner: false, wrappedOwner: true, registrant: true, resolvedAddress: false },
-  ineligible: { owner: true, wrappedOwner: false, registrant: false, resolvedAddress: false },
-  approved: { owner: false, wrappedOwner: true, registrant: true, resolvedAddress: false },
+const filterNames = (names: NameWithRelation[]) => {
+  const eligibleNames: NameWithRelation[] = []
+  const inelegibleNames: NameWithRelation[] = []
+
+  for (const name of names) {
+    if (name.parentName === 'eth' && (name.relation.wrappedOwner || name.relation.registrant)) {
+      eligibleNames.push(name)
+    } else {
+      inelegibleNames.push(name)
+    }
+  }
+  return { eligibleNames, inelegibleNames }
+}
+
+const filterTabs = ({
+  approvedNames,
+  eligibleNames,
+  inelegibleNames,
+}: {
+  approvedNames: NameWithRelation[]
+  eligibleNames: NameWithRelation[]
+  inelegibleNames: NameWithRelation[]
+}) => {
+  const tabs: ('eligible' | 'ineligible' | 'approved')[] = []
+
+  if (eligibleNames.length) {
+    tabs.push('eligible')
+  }
+
+  if (inelegibleNames.length) {
+    tabs.push('ineligible')
+  }
+
+  if (approvedNames.length) {
+    tabs.push('approved')
+  }
+
+  return tabs
 }
 
 const MigrationsTab = ({
@@ -317,31 +366,24 @@ const MigrationsTab = ({
   isConnected,
   openConnectModal,
   address,
+  setTab,
+  eligibleNames,
+  inelegibleNames,
+  approvedNames,
 }: {
   t: TFunction
   isConnected: boolean
   openConnectModal?: () => void
   address?: Address
+  setTab: (tab: MigrationTabType) => void
+  eligibleNames: NameWithRelation[]
+  inelegibleNames: NameWithRelation[]
+  approvedNames: NameWithRelation[]
 }) => {
+  const { createTransactionFlow } = useTransactionFlow()
   const [activeNameListTab, setNameListTab] = useState<NameListTab>('eligible')
 
-  const { infiniteData } = useNamesForAddress({
-    address,
-    pageSize: 20,
-    filter: filter[activeNameListTab],
-  })
-
-  const names = infiniteData.filter(
-    (name) =>
-      name.parentName === 'eth' &&
-      (activeNameListTab === 'ineligible' ? name.registrant !== name.owner : true),
-  )
-
-  const approvedNames = useApprovedNamesForMigration({ names })
-
-  const allNamesAreApproved = approvedNames.length === names.length
-
-  const { createTransactionFlow } = useTransactionFlow()
+  const tabs = filterTabs({ approvedNames, eligibleNames, inelegibleNames })
 
   return (
     <>
@@ -363,14 +405,14 @@ const MigrationsTab = ({
                   >
                 }[] = []
 
-                if (names.find((name) => name.wrappedOwner)) {
+                if (eligibleNames.find((name) => name.wrappedOwner)) {
                   transactions.push(
                     createTransactionItem('approveNameWrapperForMigration', {
                       address: address!,
                     }),
                   )
                 }
-                if (names.find((name) => name.relation.registrant)) {
+                if (eligibleNames.find((name) => name.relation.registrant)) {
                   transactions.push(
                     createTransactionItem('approveRegistrarForMigration', {
                       address: address!,
@@ -399,14 +441,15 @@ const MigrationsTab = ({
           <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
         </ButtonContainer>
       </Header>
-      {allNamesAreApproved ? (
+      {approvedNames.length === eligibleNames.length ? (
         <AllNamesAreApprovedBanner>{t('banner.all-approved')}</AllNamesAreApprovedBanner>
       ) : null}
       {isConnected ? (
         <MigrationNamesList
-          names={activeNameListTab === 'approved' ? approvedNames : names}
+          names={activeNameListTab === 'eligible' ? eligibleNames : inelegibleNames}
           activeTab={activeNameListTab}
           setTab={setNameListTab}
+          tabs={tabs}
         />
       ) : null}
       <RebatesMigrationSection>
@@ -435,7 +478,7 @@ const MigrationsTab = ({
             </CardHeader>
             {t('approval-benefits.claim-rebates.caption')}
             <ContainerWithCenteredButton>
-              <Button colorStyle="greenPrimary" width="max">
+              <Button colorStyle="greenPrimary" width="max" onClick={() => setTab('extension')}>
                 <span>
                   {t('cta.claim-rebates')} <RightArrowSVG />
                 </span>
@@ -447,6 +490,10 @@ const MigrationsTab = ({
     </>
   )
 }
+
+const extensionTabs = ['eligible', 'claimed'] as const
+
+type ExtensionTabType = (typeof extensionTabs)[number]
 
 const ExtensionTab = ({
   t,
@@ -460,14 +507,16 @@ const ExtensionTab = ({
   const { infiniteData } = useNamesForAddress({
     address,
     pageSize: 20,
-    filter: filter.eligible,
+    filter: { owner: false, wrappedOwner: true, registrant: true, resolvedAddress: false },
   })
 
   const names = infiniteData.filter((name) => name.parentName === 'eth')
 
   const approvedNames = useApprovedNamesForMigration({ names })
 
-  const allNamesAreApproved = approvedNames.length === names.length
+  const allNamesAreApproved = approvedNames.length !== 0 && approvedNames.length === names.length
+
+  const [activeTab, setTab] = useState<ExtensionTabType>('eligible')
 
   return (
     <>
@@ -508,9 +557,34 @@ export const MigrationTab = ({
   const { isConnected, address } = useAccount()
   const { openConnectModal } = useConnectModal()
 
+  const { infiniteData: names } = useNamesForAddress({
+    address,
+    pageSize: 100,
+    filter: { registrant: true, owner: true, resolvedAddress: true, wrappedOwner: true },
+  })
+
+  const { eligibleNames, inelegibleNames } = filterNames(names)
+
+  const approvedNames = useApprovedNamesForMigration({ names: eligibleNames })
+
   return match(tab)
-    .with('ensv2', () => <LandingTab {...{ isConnected, openConnectModal, t, setTab }} />)
-    .with('migrations', () => <MigrationsTab {...{ isConnected, openConnectModal, t, address }} />)
+    .with('ensv2', () => (
+      <LandingTab {...{ isConnected, openConnectModal, t, setTab, eligibleNames, approvedNames }} />
+    ))
+    .with('migrations', () => (
+      <MigrationsTab
+        {...{
+          isConnected,
+          openConnectModal,
+          t,
+          address,
+          setTab,
+          eligibleNames,
+          inelegibleNames,
+          approvedNames,
+        }}
+      />
+    ))
     .with('extension', () => <ExtensionTab {...{ t, isConnected, address }} />)
     .exhaustive()
 }

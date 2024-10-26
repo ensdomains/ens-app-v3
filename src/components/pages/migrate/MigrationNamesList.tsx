@@ -8,17 +8,13 @@ import { CheckCircleSVG, Colors, DisabledSVG, PlusCircleSVG } from '@ensdomains/
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { formatDurationOfDates } from '@app/utils/utils'
 
-const tabs = ['eligible', 'ineligible', 'approved'] as const
-
-type Tab = (typeof tabs)[number]
-
-const icons: Record<Tab, any> = {
+const icons: Record<NameListTab, any> = {
   eligible: <PlusCircleSVG />,
   ineligible: <DisabledSVG />,
   approved: <CheckCircleSVG />,
 }
 
-const colors: Record<Tab, { fg: Colors; bg: Colors; hover: Colors }> = {
+const colors: Record<NameListTab, { fg: Colors; bg: Colors; hover: Colors }> = {
   eligible: {
     fg: 'bluePrimary',
     bg: 'blueSurface',
@@ -56,7 +52,7 @@ const TabsContainer = styled.div(
   `,
 )
 
-const TabButton = styled.button<{ $isActive?: boolean; tab: Tab }>(
+const TabButton = styled.button<{ $isActive?: boolean; tab: NameListTab }>(
   ({ theme, $isActive, tab }) => css`
     width: ${theme.space.full};
     padding: 0 ${theme.space['4']};
@@ -134,7 +130,7 @@ const MigrationName = ({ name, t }: { name: NameWithRelation; t: TFunction }) =>
   return (
     <NameCard>
       {avatar && <img width="40" height="40" src={avatar} alt="" />}
-      <span>{name.name}</span>
+      <span>{name.truncatedName}</span>
       <span>Expires in {expiresIn}</span>
     </NameCard>
   )
@@ -144,10 +140,12 @@ export const MigrationNamesList = ({
   activeTab,
   setTab,
   names,
+  tabs,
 }: {
   activeTab: NameListTab
   names: NameWithRelation[]
   setTab: (tab: NameListTab) => void
+  tabs: NameListTab[]
 }) => {
   const { t } = useTranslation('migrate')
 
