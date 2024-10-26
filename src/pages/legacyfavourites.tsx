@@ -1,5 +1,6 @@
-import { Effect, pipe } from 'effect'
-import { ReactElement, useEffect, useState } from 'react'
+/* eslint-disable max-classes-per-file */
+import { Context, Effect, pipe } from 'effect'
+import { Dispatch, ReactElement, SetStateAction, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useChainId } from 'wagmi'
 
@@ -11,6 +12,8 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
+
+const { succeed, flatMap, map, match, runSync, sync, tap } = Effect
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -79,21 +82,23 @@ const jsonParseEffect = (input: string): Effect.Effect<LegacyFavorite[], JsonPar
     catch: (error) => new JsonParseError(error as string),
   })
 
+const setFavoritesProgram = (setState: Dispatch<SetStateAction<SimpleFavorite[] | null>>) =>
+  pipe(
+    sync(getLegacyFavorites),
+    flatMap(jsonParseEffect),
+    map(simplifyLegacyFavorites),
+    match({
+      onFailure: console.error,
+      onSuccess: setState,
+    }),
+  )
+
 export default function Page() {
   const [favorites, setFavorites] = useState<SimpleFavorite[] | null>(null)
   const chainId = useChainId()
 
   useEffect(() => {
-    pipe(
-      Effect.succeed(getLegacyFavorites()),
-      Effect.flatMap(jsonParseEffect),
-      Effect.map(simplifyLegacyFavorites),
-      Effect.match({
-        onFailure: console.error,
-        onSuccess: setFavorites,
-      }),
-      Effect.runSync,
-    )
+    runSync(setFavoritesProgram(setFavorites))
   }, [])
 
   return (
