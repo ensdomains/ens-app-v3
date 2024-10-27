@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { Context, Effect, pipe } from 'effect'
+import { Effect, pipe } from 'effect'
 import { Dispatch, ReactElement, SetStateAction, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useChainId } from 'wagmi'
@@ -13,7 +13,7 @@ import { Outlink } from '@app/components/Outlink'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 
-const { succeed, flatMap, map, match, runSync, sync, tap } = Effect
+const { try: EffectTry, flatMap, map, match, runSync, sync } = Effect
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -63,6 +63,9 @@ type SimpleFavorite = { name: string; expiry: Date }
 
 class JsonParseError extends SyntaxError {}
 
+const invalidDateCheck = (favorite: SimpleFavorite) =>
+  favorite?.expiry?.toString() === 'Invalid Date' ? console.log('Invalid date') : null
+
 export const getLegacyFavorites = (): string =>
   globalThis?.localStorage?.getItem('ensFavourites') || '{}'
 
@@ -77,7 +80,7 @@ export const simplifyLegacyFavorites = (legacyFavorites: any): SimpleFavorite[] 
 }
 
 const jsonParseEffect = (input: string): Effect.Effect<LegacyFavorite[], JsonParseError> =>
-  Effect.try({
+  EffectTry({
     try: () => JSON.parse(input),
     catch: (error) => new JsonParseError(error as string),
   })
@@ -87,6 +90,8 @@ const setFavoritesProgram = (setState: Dispatch<SetStateAction<SimpleFavorite[] 
     sync(getLegacyFavorites),
     flatMap(jsonParseEffect),
     map(simplifyLegacyFavorites),
+    // Easy to 'interrupt' the computation at any point and do stuff
+    Effect.tap((simpleLegacyFavorites) => simpleLegacyFavorites.map(invalidDateCheck)),
     match({
       onFailure: console.error,
       onSuccess: setState,
