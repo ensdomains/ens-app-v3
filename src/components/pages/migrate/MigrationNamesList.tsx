@@ -157,6 +157,8 @@ export const MigrationNamesList = <T extends NameListTab>({
 }) => {
   const { t } = useTranslation('migrate')
 
+  if (!tabs.length) return null
+
   return (
     <Container>
       <TabsContainer>
