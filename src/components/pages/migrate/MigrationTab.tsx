@@ -188,15 +188,15 @@ const LandingTab = ({
   isConnected,
   openConnectModal,
   setTab,
-  eligibleNames,
-  approvedNames,
+  allNamesAreApproved,
+  eligibleToApprove,
 }: {
   t: TFunction
   isConnected: boolean
   openConnectModal?: () => void
   setTab: (tab: MigrationTabType) => void
-  eligibleNames: NameWithRelation[]
-  approvedNames: NameWithRelation[]
+  allNamesAreApproved: boolean
+  eligibleToApprove: boolean
 }) => {
   return (
     <>
@@ -211,7 +211,7 @@ const LandingTab = ({
           <Button
             onClick={() => {
               if (isConnected) {
-                setTab('migrations')
+                setTab(allNamesAreApproved ? 'extension' : 'migrations')
               } else {
                 openConnectModal?.()
               }
@@ -220,14 +220,14 @@ const LandingTab = ({
           >
             {match({
               isConnected,
-              eligible: eligibleNames.length !== 0,
-              approved: approvedNames.length !== 0,
+              allNamesAreApproved,
+              eligibleToApprove,
             })
-              .with({ isConnected: true, eligible: true, approved: false }, () => t('cta.approve'))
-              .with({ isConnected: true, eligible: false, approved: false }, () => t('cta.begin'))
-              .with({ isConnected: true, eligible: true, approved: true }, () =>
-                t('cta.extend-names'),
+              .with(
+                { isConnected: true, allNamesAreApproved: false, eligibleToApprove: true },
+                () => t('cta.approve'),
               )
+              .with({ isConnected: true, allNamesAreApproved: true }, () => t('cta.extend-names'))
               .with({ isConnected: false }, () => t('cta.unconnected'))
               .otherwise(() => null)}
           </Button>
@@ -374,6 +374,7 @@ const MigrationsTab = ({
   eligibleNames,
   inelegibleNames,
   approvedNames,
+  allNamesAreApproved,
 }: {
   t: TFunction
   isConnected: boolean
@@ -383,6 +384,7 @@ const MigrationsTab = ({
   eligibleNames: NameWithRelation[]
   inelegibleNames: NameWithRelation[]
   approvedNames: NameWithRelation[]
+  allNamesAreApproved: boolean
 }) => {
   const tabs = filterTabs({ approvedNames, eligibleNames, inelegibleNames })
 
@@ -451,7 +453,7 @@ const MigrationsTab = ({
           <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
         </ButtonContainer>
       </Header>
-      {approvedNames.length !== 0 && approvedNames.length === eligibleNames.length ? (
+      {allNamesAreApproved ? (
         <AllNamesAreApprovedBanner>{t('banner.all-approved')}</AllNamesAreApprovedBanner>
       ) : null}
       {isConnected ? (
@@ -593,9 +595,15 @@ export const MigrationTab = ({
 
   const eligibleNames = initialEligibleNames.filter((name) => !approvedNames.includes(name))
 
+  const allNamesAreApproved = approvedNames.length !== 0 && approvedNames.length === names.length
+
+  const eligibleToApprove = eligibleNames.length !== 0
+
   return match(tab)
     .with('ensv2', () => (
-      <LandingTab {...{ isConnected, openConnectModal, t, setTab, eligibleNames, approvedNames }} />
+      <LandingTab
+        {...{ isConnected, openConnectModal, t, setTab, eligibleToApprove, allNamesAreApproved }}
+      />
     ))
     .with('migrations', () => (
       <MigrationsTab
@@ -608,6 +616,7 @@ export const MigrationTab = ({
           eligibleNames,
           inelegibleNames,
           approvedNames,
+          allNamesAreApproved,
         }}
       />
     ))
