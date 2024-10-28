@@ -540,6 +540,17 @@ const ExtensionTab = ({
           </Button>
           <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
         </ButtonContainer>
+        {/*  {match({ isConnected, allNamesAreApproved })
+          .with({ isConnected: true, allNamesAreApproved: true }, () => (
+            <MigrationNamesList
+              names={approvedNames}
+              activeTab={activeTab}
+              setTab={setTab}
+              tabs={tabs}
+            />
+          ))
+          .with({ isConnected: false }, () => null)
+          .exhaustive()} */}
       </Header>
     </>
   )

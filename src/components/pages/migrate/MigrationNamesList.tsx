@@ -8,13 +8,16 @@ import { CheckCircleSVG, Colors, DisabledSVG, PlusCircleSVG } from '@ensdomains/
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { formatDurationOfDates } from '@app/utils/utils'
 
-const icons: Record<NameListTab, any> = {
+type Tab = 'eligible' | 'ineligible' | 'approved' | 'claimed'
+
+const icons: Record<Tab, any> = {
   eligible: <PlusCircleSVG />,
   ineligible: <DisabledSVG />,
   approved: <CheckCircleSVG />,
+  claimed: <CheckCircleSVG />,
 }
 
-const colors: Record<NameListTab, { fg: Colors; bg: Colors; hover: Colors }> = {
+const colors: Record<Tab, { fg: Colors; bg: Colors; hover: Colors }> = {
   eligible: {
     fg: 'bluePrimary',
     bg: 'blueSurface',
@@ -26,6 +29,11 @@ const colors: Record<NameListTab, { fg: Colors; bg: Colors; hover: Colors }> = {
     hover: 'redLight',
   },
   approved: {
+    fg: 'greenPrimary',
+    bg: 'greenSurface',
+    hover: 'greenLight',
+  },
+  claimed: {
     fg: 'greenPrimary',
     bg: 'greenSurface',
     hover: 'greenLight',
@@ -113,7 +121,7 @@ const NameCard = styled.div(
   `,
 )
 
-const nameListTabs = ['eligible', 'ineligible', 'approved'] as const
+const nameListTabs = ['eligible', 'ineligible', 'approved', 'claimed'] as const
 
 export type NameListTab = (typeof nameListTabs)[number]
 
