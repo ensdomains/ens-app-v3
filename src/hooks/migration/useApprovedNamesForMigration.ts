@@ -1,13 +1,17 @@
-import { erc721Abi } from 'viem'
+import { Address, erc721Abi } from 'viem'
 import { usePublicClient, useReadContracts } from 'wagmi'
 
 import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
 import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
 
+import { migrationHelperContract } from '@app/migrationHelper/migrationHelper'
+
 export const useApprovedNamesForMigration = ({
   names,
+  owner,
 }: {
   names: NameWithRelation[]
+  owner?: Address
 }): NameWithRelation[] => {
   const client = usePublicClient()
 
@@ -19,7 +23,7 @@ export const useApprovedNamesForMigration = ({
       }),
       abi: erc721Abi,
       functionName: 'isApprovedForAll',
-      args: ['contract-go-here', true],
+      args: [owner, migrationHelperContract[client.chain.id]],
     })),
     multicallAddress: getChainContractAddress({ client, contract: 'multicall3' }),
   })

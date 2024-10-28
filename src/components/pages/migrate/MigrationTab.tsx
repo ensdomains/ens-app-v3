@@ -321,11 +321,15 @@ const LandingTab = ({
   )
 }
 
+type MigrationHelperTab = Exclude<NameListTab, 'claimed'>
+
 const filterNames = (names: NameWithRelation[]) => {
   const eligibleNames: NameWithRelation[] = []
   const inelegibleNames: NameWithRelation[] = []
 
-  for (const name of names) {
+  for (const name of names.filter(
+    ({ expiryDate }) => expiryDate?.date && expiryDate?.date > new Date(),
+  )) {
     if (name.parentName === 'eth' && (name.relation.wrappedOwner || name.relation.registrant)) {
       eligibleNames.push(name)
     } else {
@@ -344,7 +348,7 @@ const filterTabs = ({
   eligibleNames: NameWithRelation[]
   inelegibleNames: NameWithRelation[]
 }) => {
-  const tabs: ('eligible' | 'ineligible' | 'approved')[] = []
+  const tabs: MigrationHelperTab[] = []
 
   if (eligibleNames.length) {
     tabs.push('eligible')
@@ -380,10 +384,16 @@ const MigrationsTab = ({
   inelegibleNames: NameWithRelation[]
   approvedNames: NameWithRelation[]
 }) => {
-  const { createTransactionFlow } = useTransactionFlow()
-  const [activeNameListTab, setNameListTab] = useState<NameListTab>('eligible')
-
   const tabs = filterTabs({ approvedNames, eligibleNames, inelegibleNames })
+
+  const { createTransactionFlow } = useTransactionFlow()
+  const [activeNameListTab, setNameListTab] = useState<MigrationHelperTab>(tabs[0])
+
+  const names: Record<MigrationHelperTab, NameWithRelation[]> = {
+    eligible: eligibleNames,
+    ineligible: inelegibleNames,
+    approved: approvedNames,
+  }
 
   return (
     <>
@@ -441,12 +451,12 @@ const MigrationsTab = ({
           <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
         </ButtonContainer>
       </Header>
-      {approvedNames.length === eligibleNames.length ? (
+      {approvedNames.length !== 0 && approvedNames.length === eligibleNames.length ? (
         <AllNamesAreApprovedBanner>{t('banner.all-approved')}</AllNamesAreApprovedBanner>
       ) : null}
       {isConnected ? (
         <MigrationNamesList
-          names={activeNameListTab === 'eligible' ? eligibleNames : inelegibleNames}
+          names={names[activeNameListTab]}
           activeTab={activeNameListTab}
           setTab={setNameListTab}
           tabs={tabs}
@@ -510,9 +520,9 @@ const ExtensionTab = ({
     filter: { owner: false, wrappedOwner: true, registrant: true, resolvedAddress: false },
   })
 
-  const names = infiniteData.filter((name) => name.parentName === 'eth')
+  const names = infiniteData.filter((name) => name.parentName === 'eth' && name.expiryDate)
 
-  const approvedNames = useApprovedNamesForMigration({ names })
+  const approvedNames = useApprovedNamesForMigration({ names, owner: address })
 
   const allNamesAreApproved = approvedNames.length !== 0 && approvedNames.length === names.length
 
@@ -574,9 +584,14 @@ export const MigrationTab = ({
     filter: { registrant: true, owner: true, resolvedAddress: true, wrappedOwner: true },
   })
 
-  const { eligibleNames, inelegibleNames } = filterNames(names)
+  const { eligibleNames: initialEligibleNames, inelegibleNames } = filterNames(names)
 
-  const approvedNames = useApprovedNamesForMigration({ names: eligibleNames })
+  const approvedNames = useApprovedNamesForMigration({
+    names: initialEligibleNames,
+    owner: address,
+  })
+
+  const eligibleNames = initialEligibleNames.filter((name) => !approvedNames.includes(name))
 
   return match(tab)
     .with('ensv2', () => (

@@ -144,16 +144,16 @@ const MigrationName = ({ name, t }: { name: NameWithRelation; t: TFunction }) =>
   )
 }
 
-export const MigrationNamesList = ({
+export const MigrationNamesList = <T extends NameListTab>({
   activeTab,
   setTab,
   names,
   tabs,
 }: {
-  activeTab: NameListTab
+  activeTab: T
   names: NameWithRelation[]
-  setTab: (tab: NameListTab) => void
-  tabs: NameListTab[]
+  setTab: (tab: T) => void
+  tabs: T[]
 }) => {
   const { t } = useTranslation('migrate')
 

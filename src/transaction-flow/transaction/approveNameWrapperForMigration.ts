@@ -6,6 +6,7 @@ import {
   registrySetApprovalForAllSnippet,
 } from '@ensdomains/ensjs/contracts'
 
+import { migrationHelperContract } from '@app/migrationHelper/migrationHelper'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = { address: Address }
@@ -38,13 +39,7 @@ const transaction = async ({ client }: TransactionFunctionParameters<Data>) => {
     data: encodeFunctionData({
       abi: registrySetApprovalForAllSnippet,
       functionName: 'setApprovalForAll',
-      args: [
-        getChainContractAddress({
-          client,
-          contract: 'contract-address-will-go-here',
-        }),
-        true,
-      ],
+      args: [migrationHelperContract[client.chain.id], true],
     }),
   }
 }
