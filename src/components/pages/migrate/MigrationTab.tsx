@@ -536,7 +536,7 @@ const ExtensionTab = ({
   const [activeTab, setNameListTab] = useState<ExtensionTabType>('eligible')
 
   const claimedNames = allNames.filter(
-    (name) => name.expiryDate && name.expiryDate.date > new Date(2030, 12, 31),
+    (name) => name.expiryDate && name.expiryDate.date > new Date(2030, 11, 31, 0, 0),
   )
 
   const eligibleNames = allNames.filter((name) => !claimedNames.includes(name))
