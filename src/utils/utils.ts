@@ -184,6 +184,16 @@ export const createDateAndValue = <TValue extends bigint | number>(value: TValue
   value,
 })
 
+type Result<T, E = undefined> = { ok: true; value: T } | { ok: false; error: E | undefined }
+
+const Ok = <T>(data: T): Result<T, never> => {
+  return { ok: true, value: data }
+}
+
+const Err = <E>(error?: E): Result<never, E> => {
+  return { ok: false, error }
+}
+
 /*
   Following types are based on this solution: https://stackoverflow.com/questions/53173203/typescript-recursive-function-composition/53175538#53175538
   Best to just move on and not try to understand it. (This is copilot's opintion!)
@@ -204,4 +214,22 @@ type LaxReturnType<F> = F extends (...args: any) => infer R ? R : never
 export const thread = <F extends [(arg: any) => any, ...Array<(arg: any) => any>]>(
   arg: ArgType<F[0]>,
   ...f: F & AsChain<F>
-): LaxReturnType<Last<F>> => f.reduce((acc, fn) => fn(acc), arg) as LaxReturnType<Last<F>>
+): Result<LaxReturnType<Last<F>>, any> => {
+  try {
+    const rslt = f.reduce((acc, fn) => {
+      if (acc && typeof acc === 'object' && 'ok' in acc) {
+        if (!acc.ok) return acc
+        return fn(acc.value)
+      }
+      return fn(acc)
+    }, arg)
+
+    if (rslt && typeof rslt === 'object' && 'ok' in rslt) {
+      return rslt
+    }
+
+    return Ok(rslt)
+  } catch (e) {
+    return Err(e)
+  }
+}

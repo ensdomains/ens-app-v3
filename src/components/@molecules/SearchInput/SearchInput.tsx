@@ -728,7 +728,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       $state={state}
       data-testid="search-input-results"
     >
-      {dropdownItems.map((searchItem, index) => (
+      {/* {dropdownItems.map((searchItem, index) => (
         <SearchResult
           clickCallback={handleSearch}
           hoverCallback={setSelected}
@@ -742,7 +742,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
           }
           usingPlaceholder={searchItem.isHistory ? false : usingPlaceholder}
         />
-      ))}
+      ))} */}
     </SearchResultsContainer>
   )
 
