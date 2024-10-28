@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
-import { Effect, pipe } from 'effect'
 import { Dispatch, ReactElement, SetStateAction, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 import { useChainId } from 'wagmi'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils'
@@ -12,8 +12,17 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
+import { thread } from '@app/utils/utils'
 
-const { try: EffectTry, flatMap, map, match, runSync, sync } = Effect
+type Result<T, E = undefined> = { ok: true; value: T } | { ok: false; error: E | undefined }
+
+const Ok = <T,>(data: T): Result<T, never> => {
+  return { ok: true, value: data }
+}
+
+const Err = <E,>(error?: E): Result<never, E> => {
+  return { ok: false, error }
+}
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -59,51 +68,54 @@ type LegacyFavorite = {
 }
 
 // eslint-disable-next-line react/no-unused-prop-types
-type SimpleFavorite = { name: string; expiry: Date }
+type SimpleFavorite = { name: string; expiry: Date | null }
 
 class JsonParseError extends SyntaxError {}
 
-const invalidDateCheck = (favorite: SimpleFavorite) =>
-  favorite?.expiry?.toString() === 'Invalid Date' ? console.log('Invalid date') : null
-
 export const getLegacyFavorites = (): string =>
-  globalThis?.localStorage?.getItem('ensFavourites') || '{}'
+  globalThis?.localStorage?.getItem('ensFavourites') || '[]'
 
-export const simplifyLegacyFavorites = (legacyFavorites: any): SimpleFavorite[] => {
+export const simplifyLegacyFavorites = (
+  legacyFavoritesResult: LegacyFavorite[],
+): SimpleFavorite[] => {
+  const legacyFavorites = legacyFavoritesResult
   if (!legacyFavorites?.length) {
     return []
   }
-  return legacyFavorites.map((favorite: any) => ({
+  return legacyFavorites.map((favorite: LegacyFavorite) => ({
     name: favorite.name,
     expiry: favorite.expiryTime ? new Date(favorite.expiryTime) : null,
   }))
 }
 
-const jsonParseEffect = (input: string): Effect.Effect<LegacyFavorite[], JsonParseError> =>
-  EffectTry({
-    try: () => JSON.parse(input),
-    catch: (error) => new JsonParseError(error as string),
-  })
-
-const setFavoritesProgram = (setState: Dispatch<SetStateAction<SimpleFavorite[] | null>>) =>
-  pipe(
-    sync(getLegacyFavorites),
-    flatMap(jsonParseEffect),
-    map(simplifyLegacyFavorites),
-    // Easy to 'interrupt' the computation at any point and do stuff
-    Effect.tap((simpleLegacyFavorites) => simpleLegacyFavorites.map(invalidDateCheck)),
-    match({
-      onFailure: console.error,
-      onSuccess: setState,
-    }),
-  )
+const jsonParse = (input: string): Result<LegacyFavorite[], JsonParseError> => {
+  try {
+    return Ok(JSON.parse(input))
+  } catch (error) {
+    return Err(new JsonParseError(error as string))
+  }
+}
 
 export default function Page() {
   const [favorites, setFavorites] = useState<SimpleFavorite[] | null>(null)
   const chainId = useChainId()
 
   useEffect(() => {
-    runSync(setFavoritesProgram(setFavorites))
+    const result: Result<SimpleFavorite[]> = thread(
+      {},
+      getLegacyFavorites,
+      jsonParse,
+      simplifyLegacyFavorites,
+    )
+    match(result)
+      .with({ ok: true }, ({ value }) => {
+        setFavorites(value)
+      })
+      .with({ ok: false }, ({ error }) => {
+        console.error(error)
+        setFavorites([])
+      })
+      .exhaustive()
   }, [])
 
   return (
