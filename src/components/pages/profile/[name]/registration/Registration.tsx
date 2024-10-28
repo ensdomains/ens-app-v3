@@ -153,6 +153,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         eventName: 'payment_selected',
         customProperties: {
           duration: seconds,
+          durationType,
           paymentMethod: paymentMethodChoice,
           estimatedTotal,
           ethPrice,
@@ -340,6 +341,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 name={normalisedName}
                 beautifiedName={beautifiedName}
                 callback={onComplete}
+                registrationData={item}
                 isMoonpayFlow={item.isMoonpayFlow}
               />
             ))

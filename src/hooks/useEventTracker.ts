@@ -17,6 +17,7 @@ type PaymentEvent = {
   customProperties: {
     ethPrice: bigint
     duration: number
+    durationType: 'date' | 'years'
     estimatedTotal: bigint
     paymentMethod: PaymentMethod | ''
   }
@@ -42,6 +43,7 @@ type DefaultEvent = {
     | 'commit_wallet_opened_dns'
     | 'register_started_dns'
     | 'register_wallet_opened_dns'
+    | 'register_override_triggered'
   customProperties?: never
 }
 
@@ -79,6 +81,7 @@ export const useEventTracker = () => {
             'commit_wallet_opened_dns',
             'register_started_dns',
             'register_wallet_opened_dns',
+            'register_override_triggered',
           ),
         },
         ({ eventName }) => sendTrackEvent(eventName, chain),

@@ -55,11 +55,13 @@ export const formatDurationOfDates = ({
   startDate,
   endDate,
   postFix = '',
+  shortYears,
   t,
 }: {
   startDate?: Date
   endDate?: Date
   postFix?: string
+  shortYears?: boolean
   t: TFunction
 }) => {
   if (!startDate || !endDate) return t('unit.invalid_date', { ns: 'common' })
@@ -69,7 +71,7 @@ export const formatDurationOfDates = ({
   if (isNegative) return t('unit.invalid_date', { ns: 'common' })
 
   const diffEntries = [
-    ['years', diff.years],
+    [shortYears ? 'yrs' : 'years', diff.years],
     ['months', diff.months],
     ['days', diff.days],
   ] as [string, number][]

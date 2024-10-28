@@ -86,12 +86,7 @@ test('should not direct to the registration page if name is not available', asyn
   const name = 'google.box'
 
   await consoleListener.initialize({
-    regex: new RegExp(
-      `Event triggered on local development.*?(${[
-        'search_selected_box',
-        'register_started_box',
-      ].join('|')})`,
-    ),
+    regex: /Event triggered on local development.*?search_selected_box/,
   })
 
   const homePage = makePageObject('HomePage')
