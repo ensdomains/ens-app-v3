@@ -2,17 +2,17 @@ import { expect } from '@playwright/test'
 
 import { test } from '../../../playwright'
 
-// When testing locally, reducers will be run twice
-const reducerEventCount = process.env.CI ? 1 : 2
+// When testing locally, reducers will be run twice because of strict mode
+const strictModeEventCount = process.env.CI ? 1 : 2
 
-test.only('should allow claim (owned by user)', async ({
+test('should allow claim (owned by user)', async ({
   page,
   login,
   accounts,
   makePageObject,
   consoleListener,
 }) => {
-  console.log(reducerEventCount)
+  console.log(strictModeEventCount)
   const name = 'swagabc.xyz'
   await consoleListener.initialize({
     regex: new RegExp(
@@ -69,7 +69,7 @@ test.only('should allow claim (owned by user)', async ({
   await expect(importPage.heading).toHaveText('Claim your domain')
 
   await test.step('should fire DNS import tracking event: dns_selected_import_type', async () => {
-    await expect(consoleListener.getMessages()).toHaveLength(reducerEventCount)
+    await expect(consoleListener.getMessages()).toHaveLength(strictModeEventCount)
 
     await expect(consoleListener.getMessages().toString()).toMatch(
       new RegExp(`dns_selected_import_type.*?${name}`),
@@ -149,8 +149,8 @@ test('should allow import (not owned by user)', async ({
     regex: new RegExp(
       `Event triggered on local development.*?(${[
         'search_selected_dns',
-        'import_type_selected_dns',
-        'verify_ownership_started_dns',
+        'dns_selected_import_type',
+        'dns_verified_ownership',
       ].join('|')})`,
     ),
   })
@@ -190,11 +190,11 @@ test('should allow import (not owned by user)', async ({
   await expect(importPage.nextButton).toBeEnabled({ timeout: 15000 })
   await importPage.nextButton.click()
 
-  await test.step('should fire DNS import tracking event: import_type_selected_dns', async () => {
-    await expect(consoleListener.getMessages()).toHaveLength(1)
+  await test.step('should fire DNS import tracking event: dns_selected_import_type', async () => {
+    await expect(consoleListener.getMessages()).toHaveLength(strictModeEventCount)
 
     await expect(consoleListener.getMessages().toString()).toMatch(
-      new RegExp(`import_type_selected_dns.*?${name}`),
+      new RegExp(`dns_selected_import_type.*?${name}`),
     )
     consoleListener.clearMessages()
   })
@@ -211,10 +211,10 @@ test('should allow import (not owned by user)', async ({
 
   await importPage.nextButton.click()
 
-  await test.step('should fire DNS import tracking event: verify_ownership_started_dns', async () => {
-    await expect(consoleListener.getMessages()).toHaveLength(1)
+  await test.step('should fire DNS import tracking event: dns_verified_ownership', async () => {
+    await expect(consoleListener.getMessages()).toHaveLength(strictModeEventCount)
 
-    await expect(consoleListener.getMessages().toString()).toContain('verify_ownership_started_dns')
+    await expect(consoleListener.getMessages().toString()).toContain('dns_verified_ownership')
     consoleListener.clearMessages()
   })
 

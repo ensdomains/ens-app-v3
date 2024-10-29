@@ -43,7 +43,6 @@ type DefaultEvent = {
     | 'register_started'
     | 'register_started_box'
     | 'register_wallet_opened'
-    | 'verify_ownership_started_dns'
     | 'claim_domain_started_dns'
     | 'commit_wallet_opened_dns'
     | 'register_started_dns'
@@ -84,7 +83,6 @@ export const useEventTracker = () => {
             'register_started',
             'register_started_box',
             'register_wallet_opened',
-            'verify_ownership_started_dns',
             'claim_domain_started_dns',
             'commit_wallet_opened_dns',
             'register_started_dns',
