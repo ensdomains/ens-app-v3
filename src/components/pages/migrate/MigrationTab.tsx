@@ -27,6 +27,7 @@ import { useApprovedNamesForMigration } from '@app/hooks/migration/useApprovedNa
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { createTransactionItem, TransactionData } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { REBATE_DATE } from '@app/utils/constants'
 
 import { MigrationNamesList, NameListTab } from './MigrationNamesList'
 import { MigrationSection } from './MigrationSection'
@@ -545,7 +546,7 @@ const ExtensionTab = ({
   const [activeTab, setNameListTab] = useState<ExtensionTabType>('eligible')
 
   const claimedNames = allNames.filter(
-    (name) => name.expiryDate && name.expiryDate.date > new Date(2030, 11, 31, 0, 0),
+    (name) => name.expiryDate && name.expiryDate.date > REBATE_DATE,
   )
 
   const eligibleNames = allNames.filter((name) => !claimedNames.includes(name))

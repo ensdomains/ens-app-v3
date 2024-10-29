@@ -26,3 +26,5 @@ export const IS_DEV_ENVIRONMENT =
   process.env.NEXT_PUBLIC_PROVIDER
 
 export const INVALID_NAME = '[Invalid ENS Name]'
+
+export const REBATE_DATE = new Date(2030, 11, 31, 0, 0)
