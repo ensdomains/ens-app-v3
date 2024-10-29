@@ -34,7 +34,6 @@ test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
-    await page.pause()
     await ownershipPage.sendNameButton.click()
     await sendNameModal.searchInput.fill(accounts.getAddress('user3'))
     await sendNameModal.searchResult(accounts.getAddress('user3')).click()
@@ -1193,7 +1192,6 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
-    await page.pause()
     await ownershipPage.sendNameButton.click()
     await sendNameModal.searchInput.fill(accounts.getAddress('user3'))
     await sendNameModal.searchResult(accounts.getAddress('user3')).click()
@@ -1390,7 +1388,6 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Parent only', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
-    await page.pause()
     await page.waitForTimeout(2000)
     await expect(ownershipPage.sendNameButton).toHaveCount(0)
     await expect(ownershipPage.editRolesButton).toHaveCount(0)

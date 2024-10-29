@@ -389,7 +389,7 @@ test.describe('Send name', () => {
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('manager', {
       timeout: 15000,
     })
-    await page.pause()
+
     await expect(ownershipPage.roleRow(accounts.getAddress('user2'))).toContainText('Parent owner')
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('ETH record')
   })
@@ -436,7 +436,6 @@ test.describe('Send name', () => {
     await profilePage.goto(subname)
     await login.connect()
     await expect(profilePage.record('text', 'nickname')).toContainText('test')
-    await page.pause()
 
     await ownershipPage.goto(subname)
     await ownershipPage.sendNameButton.click()
@@ -460,7 +459,7 @@ test.describe('Send name', () => {
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('manager', {
       timeout: 15000,
     })
-    await page.pause()
+
     await expect(ownershipPage.roleRow(accounts.getAddress('user'))).toContainText('Parent owner')
     await expect(ownershipPage.roleRow('0x42D63ae25990889E35F215bC95884039Ba354115')).toContainText(
       'ETH record',
@@ -535,7 +534,7 @@ test.describe('Send name', () => {
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('manager', {
       timeout: 15000,
     })
-    await page.pause()
+
     await expect(ownershipPage.roleRow(accounts.getAddress('user2'))).toContainText('Parent owner')
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('ETH record')
 
@@ -601,7 +600,6 @@ test.describe('Send name', () => {
     await sendNameModal.searchResult(accounts.getAddress('user3')).click()
     await sendNameModal.resetProfileSwitch.check()
 
-    await page.pause()
     // Should not be able to set owner because name is unwrapped
     // Should not be able to set eth record because user is not the manager
     // Should not be able to reset profile since old resolver does not support VersionableResolver
@@ -682,7 +680,7 @@ test.describe('Edit roles: Happy ', () => {
     // Should not allow the manager to change the owner
     await expect(editRolesModal.roleCard('owner')).toHaveCount(0)
     await editRolesModal.roleCardChangeButton('manager').click()
-    await page.pause()
+
     await editRolesModal.searchInput.fill(accounts.getAddress('user3'))
     await editRolesModal.searchResult(accounts.getAddress('user3')).click()
     await editRolesModal.saveButton.click()
@@ -889,7 +887,6 @@ test.describe('Edit roles: Unwrapped subnames', () => {
 
     await ownershipPage.goto(subname)
     await login.connect()
-    await page.pause()
 
     await page.waitForTimeout(2000)
     await expect(ownershipPage.sendNameButton).toHaveCount(0)
@@ -959,7 +956,6 @@ test.describe('Edit roles: Wrapped subnames', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
-    await page.pause()
     await ownershipPage.editRolesButton.click()
 
     await editRolesModal.roleCardChangeButton('manager').click()
@@ -1143,7 +1139,6 @@ test.describe('Extend name', () => {
 
     await ownershipPage.goto(name)
     await login.connect()
-    await page.pause()
 
     const timestamp = await ownershipPage.getExpiryTimestamp()
 
