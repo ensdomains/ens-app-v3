@@ -4,7 +4,7 @@ import { usePublicClient, useReadContracts } from 'wagmi'
 import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
 import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
 
-import { migrationHelperContract } from '@app/migrationHelper/migrationHelper'
+import { migrationHelperContract } from '@app/migration/migrationHelper'
 
 export const useApprovedNamesForMigration = ({
   names,

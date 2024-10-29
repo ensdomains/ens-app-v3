@@ -6,7 +6,7 @@ import {
   registrySetApprovalForAllSnippet,
 } from '@ensdomains/ensjs/contracts'
 
-import { migrationHelperContract } from '@app/migrationHelper/migrationHelper'
+import { migrationHelperContract } from '@app/migration/migrationHelper'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = { address: Address }

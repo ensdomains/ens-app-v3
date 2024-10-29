@@ -550,6 +550,9 @@ const ExtensionTab = ({
 
   const tabs = filterTabs<ExtensionTabType>({ claimedNames, eligibleNames })
 
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showExtendNamesInput = usePreparedDataInput('BulkRenewal')
+
   return (
     <>
       <Header>
@@ -565,7 +568,14 @@ const ExtensionTab = ({
         <ButtonContainer>
           {match({ isConnected, allNamesAreApproved })
             .with({ isConnected: true, allNamesAreApproved: true }, () => (
-              <Button colorStyle="greenPrimary">{t('cta.extend-names')}</Button>
+              <Button
+                colorStyle="greenPrimary"
+                onClick={() => {
+                  showExtendNamesInput('BulkRenewal', {})
+                }}
+              >
+                {t('cta.extend-names')}
+              </Button>
             ))
             .with({ isConnected: true, allNamesAreApproved: false }, () => (
               <Button colorStyle="greenPrimary" onClick={() => setTab('migrations')}>

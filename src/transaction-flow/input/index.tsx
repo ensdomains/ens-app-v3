@@ -5,6 +5,7 @@ import DynamicLoadingContext from '@app/components/@molecules/TransactionDialogM
 
 import TransactionLoader from '../TransactionLoader'
 import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor-flow'
+import type { Props as BulkRenewalProps } from './BulkRenewal/BulkRenewal-flow'
 import type { Props as CreateSubnameProps } from './CreateSubname-flow'
 import type { Props as DeleteEmancipatedSubnameWarningProps } from './DeleteEmancipatedSubnameWarning/DeleteEmancipatedSubnameWarning-flow'
 import type { Props as DeleteSubnameNotParentWarningProps } from './DeleteSubnameNotParentWarning/DeleteSubnameNotParentWarning-flow'
@@ -69,6 +70,8 @@ const SyncManager = dynamicHelper<SyncManagerProps>('SyncManager/SyncManager')
 const UnknownLabels = dynamicHelper<UnknownLabelsProps>('UnknownLabels/UnknownLabels')
 const VerifyProfile = dynamicHelper<VerifyProfileProps>('VerifyProfile/VerifyProfile')
 
+const BulkRenewal = dynamicHelper<BulkRenewalProps>('BulkRenewal/BulkRenewal')
+
 export const DataInputComponents = {
   AdvancedEditor,
   CreateSubname,
@@ -86,6 +89,7 @@ export const DataInputComponents = {
   SyncManager,
   UnknownLabels,
   VerifyProfile,
+  BulkRenewal,
 }
 
 export type DataInputName = keyof typeof DataInputComponents

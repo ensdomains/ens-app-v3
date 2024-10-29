@@ -12,8 +12,9 @@ export const Carousel = ({ children }: { children: ReactNode[] }) => {
         fixedWidth: 312,
       }}
     >
-      {children.map((child) => (
-        <SplideSlide>{child}</SplideSlide>
+      {children.map((child, i) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <SplideSlide key={i}>{child}</SplideSlide>
       ))}
     </Splide>
   )
