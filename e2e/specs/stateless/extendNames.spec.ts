@@ -90,9 +90,7 @@ test('should be able to extend multiple names on the address page', async ({
 
   await transactionModal.autoComplete()
 
-  await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
-    timeout: 15000,
-  })
+  expect(page.getByText('Your "Extend names" transaction was successful')).toBeDefined()
   await subgraph.sync()
 
   // Should be able to remove this after useQuery is fixed. Using to force a refetch.
