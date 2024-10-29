@@ -104,15 +104,15 @@ const GridOneToThree = styled.div(
   `,
 )
 
-const Heading = styled.h1(
-  ({ theme }) => css`
-    font-size: 52px;
-    font-size: 850;
+const Heading = styled.h1<{ $fontSize?: number }>(
+  ({ theme, $fontSize = 52 }) => css`
+    font-size: ${$fontSize}px;
+    font-weight: 850;
     color: ${theme.colors.textPrimary};
     text-align: center;
     line-height: 104%;
 
-    @media (min-width: 360px) {
+    @media (min-width: 480px) {
       font-size: 60px;
     }
     @media (min-width: 640px) {
@@ -572,7 +572,7 @@ const ExtensionTab = ({
             {t('title.extension.part1')} {t('title.extension.part2')}
           </title>
         </Head>
-        <Heading>
+        <Heading $fontSize={44}>
           {t('title.extension.part1')} <GradientText>{t('title.extension.part2')}</GradientText>
         </Heading>
         <Caption>bloop</Caption>

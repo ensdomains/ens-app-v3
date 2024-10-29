@@ -69,6 +69,14 @@ const TabManager = styled.div(
     display: flex;
     flex-direction: row;
     gap: ${theme.space['4']};
+
+    overflow-x: auto;
+    width: ${theme.space.full};
+
+    @media (min-width: 480px) {
+      width: auto;
+      overflow-x: none;
+    }
   `,
 )
 
