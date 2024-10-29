@@ -331,7 +331,7 @@ const filterNamesForMigration = (names: NameWithRelation[]) => {
   for (const name of names.filter(
     ({ expiryDate }) => expiryDate?.date && expiryDate?.date > new Date(),
   )) {
-    if (name.parentName === 'eth' && (name.relation.wrappedOwner || name.relation.registrant)) {
+    if (name.relation.wrappedOwner || name.relation.registrant) {
       eligibleNames.push(name)
     } else {
       inelegibleNames.push(name)
@@ -478,6 +478,7 @@ const MigrationsTab = ({
           activeTab={activeNameListTab}
           setTab={setNameListTab}
           tabs={tabs}
+          mode="migration"
         />
       ) : null}
       <RebatesMigrationSection>
@@ -603,6 +604,7 @@ const ExtensionTab = ({
       </Header>
       {isConnected ? (
         <MigrationNamesList
+          mode="extension"
           activeTab={activeTab}
           names={names[activeTab]}
           setTab={setNameListTab}
@@ -625,11 +627,13 @@ export const MigrationTab = ({
   const { isConnected, address } = useAccount()
   const { openConnectModal } = useConnectModal()
 
-  const { infiniteData: names } = useNamesForAddress({
+  const { infiniteData } = useNamesForAddress({
     address,
     pageSize: 100,
     filter: { registrant: true, owner: true, resolvedAddress: true, wrappedOwner: true },
   })
+
+  const names = infiniteData.filter((name) => name.parentName === 'eth')
 
   const { eligibleNames: initialEligibleNames, inelegibleNames } = filterNamesForMigration(names)
 

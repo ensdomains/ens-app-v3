@@ -1,9 +1,12 @@
+/* eslint-disable @next/next/no-img-element */
+import { ReactNode } from 'react'
 import { TFunction, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useEnsAvatar } from 'wagmi'
+import { Address } from 'viem'
+import { useAccount, useEnsAvatar } from 'wagmi'
 
 import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
-import { CheckCircleSVG, Colors, DisabledSVG, PlusCircleSVG } from '@ensdomains/thorin'
+import { Button, CheckCircleSVG, Colors, DisabledSVG, PlusCircleSVG, Tag } from '@ensdomains/thorin'
 
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { formatDurationOfDates } from '@app/utils/utils'
@@ -114,6 +117,14 @@ const NameCard = styled.div(
       color: ${theme.colors.textTertiary};
       font-size: ${theme.fontSizes.small};
     }
+    & > span[data-owner='not-owner'] {
+      color: ${theme.colors.redPrimary};
+      font-size: ${theme.fontSizes.small};
+      margin-top: ${theme.space['2']};
+    }
+    & > button {
+      margin-top: ${theme.space['6']};
+    }
 
     & > img {
       border-radius: ${theme.radii.full};
@@ -125,7 +136,33 @@ const nameListTabs = ['eligible', 'ineligible', 'approved', 'claimed'] as const
 
 export type NameListTab = (typeof nameListTabs)[number]
 
-const MigrationName = ({ name, t }: { name: NameWithRelation; t: TFunction }) => {
+const TagListContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    gap: ${theme.space['2']};
+    margin-top: ${theme.space['2']};
+  `,
+)
+
+const TagList = ({ name, address }: { name: NameWithRelation; address: Address }) => {
+  const tags: ReactNode[] = []
+  if (name.registrant === address || name.wrappedOwner === address) tags.push(<Tag>Owner</Tag>)
+  if (name.owner === address) tags.push(<Tag>Manager</Tag>)
+  return <TagListContainer>{tags.map((tag) => tag)}</TagListContainer>
+}
+
+const MigrationName = ({
+  name,
+  t,
+  address,
+  mode,
+}: {
+  name: NameWithRelation
+  t: TFunction
+  address?: Address
+  mode: 'migration' | 'extension'
+}) => {
   const now = new Date()
   const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name: name.name! })
 
@@ -135,11 +172,29 @@ const MigrationName = ({ name, t }: { name: NameWithRelation; t: TFunction }) =>
     t,
   }).split(', ')[0]
 
+  if (name.registrant === address || name.wrappedOwner === address) {
+    return (
+      <NameCard>
+        {avatar && <img width="40" height="40" src={avatar} alt="" />}
+        <span>{name.truncatedName}</span>
+        <span>Expires in {expiresIn}</span>
+        {mode === 'extension' ? (
+          <>
+            <TagList {...{ name, address }} />
+            <Button width="max" colorStyle="greenSecondary">
+              {t('action.extend', { ns: 'common' })}
+            </Button>
+          </>
+        ) : null}
+      </NameCard>
+    )
+  }
   return (
     <NameCard>
       {avatar && <img width="40" height="40" src={avatar} alt="" />}
       <span>{name.truncatedName}</span>
       <span>Expires in {expiresIn}</span>
+      <span data-owner="not-owner">Not owner</span>
     </NameCard>
   )
 }
@@ -149,13 +204,16 @@ export const MigrationNamesList = <T extends NameListTab>({
   setTab,
   names,
   tabs,
+  mode,
 }: {
   activeTab: T
   names: NameWithRelation[]
   setTab: (tab: T) => void
   tabs: T[]
+  mode: 'migration' | 'extension'
 }) => {
-  const { t } = useTranslation('migrate')
+  const { t } = useTranslation(['migrate', 'common'])
+  const { address } = useAccount()
 
   if (!tabs.length) return null
 
@@ -170,7 +228,7 @@ export const MigrationNamesList = <T extends NameListTab>({
       </TabsContainer>
       <NamesGrid>
         {names.map((name) => (
-          <MigrationName {...{ name, t }} />
+          <MigrationName {...{ name, t, address, mode }} />
         ))}
       </NamesGrid>
     </Container>
