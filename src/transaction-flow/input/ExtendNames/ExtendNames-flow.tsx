@@ -14,6 +14,7 @@ import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
+import { EligibleForTokens } from '@app/components/pages/migrate/EligibleForTokens'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
@@ -366,6 +367,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}
               </GasEstimationCacheableComponent>
+              <EligibleForTokens extendedDate={extendedDate} amount={names.length} />
             </>
           ))}
       </Dialog.Content>

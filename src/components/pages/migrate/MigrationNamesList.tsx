@@ -8,6 +8,7 @@ import { useAccount, useEnsAvatar } from 'wagmi'
 import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
 import { Button, CheckCircleSVG, Colors, DisabledSVG, PlusCircleSVG, Tag } from '@ensdomains/thorin'
 
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { formatDurationOfDates } from '@app/utils/utils'
 
@@ -152,6 +153,21 @@ const TagList = ({ name, address }: { name: NameWithRelation; address: Address }
   return <TagListContainer>{tags.map((tag) => tag)}</TagListContainer>
 }
 
+const ExtendableNameButton = ({ name, t }: { name: NameWithRelation; t: TFunction }) => {
+  const { usePreparedDataInput } = useTransactionFlow()
+  const showExtendNamesInput = usePreparedDataInput('ExtendNames')
+
+  return (
+    <Button
+      width="max"
+      colorStyle="greenSecondary"
+      onClick={() => showExtendNamesInput('ExtendNames', { names: [name.name!], isSelf: true })}
+    >
+      {t('action.extend', { ns: 'common' })}
+    </Button>
+  )
+}
+
 const MigrationName = ({
   name,
   t,
@@ -181,9 +197,7 @@ const MigrationName = ({
         {mode === 'extension' ? (
           <>
             <TagList {...{ name, address }} />
-            <Button width="max" colorStyle="greenSecondary">
-              {t('action.extend', { ns: 'common' })}
-            </Button>
+            <ExtendableNameButton {...{ name, t }} />
           </>
         ) : null}
       </NameCard>

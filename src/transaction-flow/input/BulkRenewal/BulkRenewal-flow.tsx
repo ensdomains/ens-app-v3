@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { ContractFunctionRevertedError, decodeErrorResult, namehash } from 'viem'
 import { useClient, useReadContract } from 'wagmi'
@@ -10,6 +9,7 @@ import { Dialog, Heading, Helper, OutlinkSVG, Typography } from '@ensdomains/tho
 
 import { InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
+import { EligibleForTokens } from '@app/components/pages/migrate/EligibleForTokens'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { bulkRenewalContract } from '@app/transaction-flow/transaction/bulkRenew'
 import { REBATE_DATE } from '@app/utils/constants'
@@ -55,28 +55,6 @@ const abi = [
   },
 ] as const
 
-const EligibleForTokens = styled.div(
-  ({ theme }) => css`
-    padding: ${theme.space['4']};
-    gap: ${theme.space['2']};
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    width: ${theme.space.full};
-    border-radius: ${theme.radii['2xLarge']};
-    background: ${theme.colors.greenSurface};
-
-    a {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: ${theme.space['2']};
-      color: ${theme.colors.greenPrimary};
-    }
-  `,
-)
-
 const BulkRenewalFlow = ({ data }: Props) => {
   // Sort from the ones that expire earlier to later
   const sortedNames = data.names.toSorted((a, b) => a.expiryDate!.value! - b.expiryDate!.value!)
@@ -107,8 +85,6 @@ const BulkRenewalFlow = ({ data }: Props) => {
     args: [data.names.map((name) => namehash(name.name!)), BigInt(seconds)],
   })
 
-  const { t } = useTranslation('common')
-
   return (
     <>
       <Dialog.Heading title={`Extend ${data.names.length} names`} />
@@ -122,16 +98,7 @@ const BulkRenewalFlow = ({ data }: Props) => {
       </Dialog.Content>
       {status}
       {error ? <Helper type="error">{error.message}</Helper> : null}
-      <EligibleForTokens>
-        <Typography fontVariant="largeBold">Eligible for {data.names.length} $ENS</Typography>
-        something something
-        <Link href="#" target="_blank" rel="noreferrer noopener">
-          <Typography color="greenPrimary" fontVariant="bodyBold">
-            {t('action.learnMore')}
-          </Typography>
-          <OutlinkSVG />
-        </Link>
-      </EligibleForTokens>
+      <EligibleForTokens amount={data.names.length} />
     </>
   )
 }
