@@ -4,7 +4,7 @@ import { test } from '../../../playwright'
 import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 test.describe('Unwrapped 3LD, Unwrapped 2LD - Parent Owner and Manager', () => {
-  test('Send feature', async ({ page, login, accounts, makeName, makePageObject }) => {
+  test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',
@@ -1160,7 +1160,7 @@ test.describe('Wrapped 3LD - Wrapped 2LD - Parent Owner only', () => {
 })
 
 test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
-  test('Send feature', async ({ page, login, accounts, makeName, makePageObject }) => {
+  test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'unwrapped',
       type: 'legacy',

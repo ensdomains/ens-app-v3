@@ -328,7 +328,6 @@ test.describe('Send name', () => {
   })
 
   test('should be able to send manager and eth-record if user is manager and not parent owner of unwrapped subname', async ({
-    page,
     login,
     accounts,
     makeName,
@@ -655,7 +654,6 @@ test.describe('Edit roles: Happy ', () => {
   })
 
   test('Should allow manager to change manager when they are not the owner', async ({
-    page,
     login,
     accounts,
     makeName,
@@ -929,7 +927,6 @@ test.describe('Edit roles: Unwrapped name', () => {
 
 test.describe('Edit roles: Wrapped subnames', () => {
   test('should allow namewrapper subname owner to send name', async ({
-    page,
     login,
     accounts,
     makeName,

@@ -131,7 +131,7 @@ test('should wrap name', async ({ makeName, login, makePageObject }) => {
   await expect(morePage.wrapButton).toHaveCount(0)
 })
 
-test('should allow wrapping a subdomain', async ({ page, makeName, login, makePageObject }) => {
+test('should allow wrapping a subdomain', async ({ makeName, login, makePageObject }) => {
   const name = await makeName({
     label: 'unwrapped-with-wrapped-subnames',
     type: 'legacy',

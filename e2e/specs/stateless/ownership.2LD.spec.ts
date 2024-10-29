@@ -3,7 +3,7 @@ import { expect } from '@playwright/test'
 import { test } from '../../../playwright'
 
 test.describe('Unwrapped 2LD - Owner and Manager', () => {
-  test('Send feature', async ({ page, login, accounts, makeName, makePageObject }) => {
+  test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'owner-manager',
       type: 'legacy',
@@ -516,7 +516,7 @@ test.describe('Wrapped and Emancipated 2LD - Owner', () => {
 })
 
 test.describe('Grace Period Unwrapped 2LD', () => {
-  test('Send feature', async ({ page, login, makeName, makePageObject }) => {
+  test('Send feature', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'grace-period-unwrapped',
       type: 'legacy',
@@ -564,7 +564,7 @@ test.describe('Grace Period Unwrapped 2LD', () => {
     await expect(ownershipPage.syncManagerButton).toHaveCount(0)
   })
 
-  test('Edit Roles', async ({ page, login, accounts, makeName, makePageObject }) => {
+  test('Edit Roles', async ({ login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'grace-period-unwrapped',
       type: 'legacy',
@@ -627,7 +627,7 @@ test.describe('Grace Period Unwrapped 2LD', () => {
 })
 
 test.describe('Grace Period Wrapped 2LD', () => {
-  test('Send feature', async ({ page, login, makeName, makePageObject }) => {
+  test('Send feature', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'grace-period-wrapped',
       type: 'wrapped',
@@ -674,7 +674,7 @@ test.describe('Grace Period Wrapped 2LD', () => {
     await expect(ownershipPage.syncManagerButton).toHaveCount(0)
   })
 
-  test('Edit Roles', async ({ page, login, accounts, makeName, makePageObject }) => {
+  test('Edit Roles', async ({ login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'grace-period-wrapped',
       type: 'wrapped',

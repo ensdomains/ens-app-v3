@@ -84,7 +84,7 @@ const makeRecords = async (overwrites: RecordOptions = {}): Promise<RecordOption
 }
 
 test.describe('profile', () => {
-  test('should display profile records', async ({ page, login, makeName, makePageObject }) => {
+  test('should display profile records', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'profile',
       type: 'legacy',
@@ -194,7 +194,6 @@ test.describe('migrations', () => {
   })
 
   test('should force a name with an unauthorised resolver to update their resolver', async ({
-    page,
     login,
     makeName,
     makePageObject,
@@ -228,7 +227,6 @@ test.describe('migrations', () => {
   })
 
   test('should force a name with an invalid resolver to update their resolver', async ({
-    page,
     login,
     makeName,
     makePageObject,
@@ -262,7 +260,6 @@ test.describe('migrations', () => {
   })
 
   test('should force a wrapped name with a resolver that is not name wrapper aware to migrate update their resolver', async ({
-    page,
     login,
     makeName,
     makePageObject,
@@ -636,7 +633,6 @@ test.describe('migrations', () => {
 
 test.describe('unwrapped', () => {
   test('should be able to add/update profile records without migration', async ({
-    page,
     login,
     makeName,
     makePageObject,
@@ -778,7 +774,6 @@ test.describe('unwrapped', () => {
 
 test.describe('wrapped', () => {
   test('should be able to add/update profile records without migration', async ({
-    page,
     login,
     makeName,
     makePageObject,
