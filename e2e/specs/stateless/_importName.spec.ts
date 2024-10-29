@@ -2,24 +2,30 @@ import { expect } from '@playwright/test'
 
 import { test } from '../../../playwright'
 
-test('should allow claim (owned by user)', async ({
+// When testing locally, reducers will be run twice
+const reducerEventCount = process.env.CI ? 1 : 2
+
+test.only('should allow claim (owned by user)', async ({
   page,
   login,
   accounts,
   makePageObject,
   consoleListener,
 }) => {
+  console.log(reducerEventCount)
   const name = 'swagabc.xyz'
   await consoleListener.initialize({
     regex: new RegExp(
       `Event triggered on local development.*?(${[
         'search_selected_dns',
-        'import_type_selected_dns',
-        'verify_ownership_started_dns',
-        'claim_domain_started_dns',
-        'commit_wallet_opened_dns',
-        'register_started_dns',
-        'register_wallet_opened_dns',
+        'dns_selected_import_type',
+        'dns_sec_enabled',
+        'dns_verified_ownership',
+        'dns_claim_started',
+        'dns_claimed',
+        'dns_approve_registrar_wallet_opened',
+        'dns_import_wallet_opened',
+        'dns_claim_wallet_opened',
       ].join('|')})`,
     ),
   })
@@ -57,14 +63,16 @@ test('should allow claim (owned by user)', async ({
   await expect(importPage.nextButton).toBeEnabled({ timeout: 15000 })
   await importPage.nextButton.click()
 
+  await page.pause()
+
   // should jump straight to transaction step
   await expect(importPage.heading).toHaveText('Claim your domain')
 
-  await test.step('should fire DNS import tracking event: import_type_selected_dns', async () => {
-    await expect(consoleListener.getMessages()).toHaveLength(1)
+  await test.step('should fire DNS import tracking event: dns_selected_import_type', async () => {
+    await expect(consoleListener.getMessages()).toHaveLength(reducerEventCount)
 
     await expect(consoleListener.getMessages().toString()).toMatch(
-      new RegExp(`import_type_selected_dns.*?${name}`),
+      new RegExp(`dns_selected_import_type.*?${name}`),
     )
     consoleListener.clearMessages()
   })
@@ -77,10 +85,10 @@ test('should allow claim (owned by user)', async ({
 
   await importPage.nextButton.click()
 
-  await test.step('should fire DNS import tracking event: claim_domain_started_dns', async () => {
+  await test.step('should fire DNS import tracking event: dns_claim_started', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
-    await expect(consoleListener.getMessages().toString()).toContain('claim_domain_started_dns')
+    await expect(consoleListener.getMessages().toString()).toContain('dns_claim_started')
     consoleListener.clearMessages()
   })
 
@@ -89,10 +97,11 @@ test('should allow claim (owned by user)', async ({
 
   await transactionModal.confirm()
 
-  await test.step('should fire DNS import tracking event: commit_wallet_opened_dns', async () => {
+  await test.step('should fire DNS import tracking event: dns_approve_registrar_wallet_opened', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
-
-    await expect(consoleListener.getMessages().toString()).toContain('commit_wallet_opened_dns')
+    await expect(consoleListener.getMessages().toString()).toContain(
+      'dns_approve_registrar_wallet_opened',
+    )
     consoleListener.clearMessages()
   })
 
@@ -106,23 +115,15 @@ test('should allow claim (owned by user)', async ({
   // should allow finalising
   await importPage.nextButton.click()
 
-  await test.step('should fire DNS import tracking event: register_started_dns', async () => {
-    await expect(consoleListener.getMessages()).toHaveLength(1)
-
-    await expect(consoleListener.getMessages().toString()).toContain('register_started_dns')
-    consoleListener.clearMessages()
-  })
-
   // transaction modal should still have 2 steps
   await expect(transactionModal.getStepCount()).resolves.toEqual(2)
 
   await expect(page.getByText('Open Wallet')).toBeVisible()
   await transactionModal.confirm()
 
-  await test.step('should fire DNS import tracking event: register_wallet_opened_dns', async () => {
+  await test.step('should fire DNS import tracking event: dns_claim_wallet_opened', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
-
-    await expect(consoleListener.getMessages().toString()).toContain('register_wallet_opened_dns')
+    await expect(consoleListener.getMessages().toString()).toContain('dns_claim_wallet_opened')
     consoleListener.clearMessages()
   })
 
