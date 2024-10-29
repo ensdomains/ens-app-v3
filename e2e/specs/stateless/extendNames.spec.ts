@@ -196,7 +196,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   const timestamp = await profilePage.getExpiryTimestamp()
 
-  await page.pause()
   await profilePage.getExtendButton.click()
 
   const extendNamesModal = makePageObject('ExtendNamesModal')
@@ -343,7 +342,6 @@ test('should be able to extend a name by a month', async ({
   await profilePage.goto(name)
   await login.connect()
 
-  await page.pause()
   const timestamp = await profilePage.getExpiryTimestamp()
   await profilePage.getExtendButton.click()
 
@@ -408,7 +406,6 @@ test('should be able to extend a name by a day', async ({
   await profilePage.goto(name)
   await login.connect()
 
-  await page.pause()
   const timestamp = await profilePage.getExpiryTimestamp()
   await profilePage.getExtendButton.click()
 
@@ -475,7 +472,6 @@ test('should be able to extend a name in grace period by a month', async ({
 
   const timestamp = await profilePage.getExpiryTimestamp()
 
-  await page.pause()
   await profilePage.getExtendButton.click()
 
   const extendNamesModal = makePageObject('ExtendNamesModal')
@@ -552,7 +548,6 @@ test('should be able to extend a name in grace period by 1 day', async ({
 
   const timestamp = await profilePage.getExpiryTimestamp()
 
-  await page.pause()
   await profilePage.getExtendButton.click()
 
   const extendNamesModal = makePageObject('ExtendNamesModal')

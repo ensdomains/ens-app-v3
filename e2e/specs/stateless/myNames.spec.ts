@@ -18,7 +18,6 @@ test('myNames', async ({ page, login, makeName }) => {
 
   await page.goto('/')
   await login.connect('user2')
-  await page.pause()
 
   await page.goto('/my/names')
 
@@ -32,6 +31,4 @@ test('myNames', async ({ page, login, makeName }) => {
   )
 
   expect(timestamps.every((timestamp) => timestamp === timestamps[0])).toBe(true)
-
-  await page.pause()
 })

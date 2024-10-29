@@ -48,7 +48,6 @@ test.describe('Unwrapped 2LD - Owner and Manager', () => {
 
     await transactionModal.autoComplete()
 
-    await page.pause()
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('owner', {
       timeout: 15000,
     })
@@ -368,7 +367,6 @@ test.describe('Unwrapped 2LD - Manager Only', () => {
     await ownershipPage.goto(name)
     await login.connect()
 
-    await page.pause()
     expect(await ownershipPage.getExpiryTimestamp()).toBeGreaterThan(0)
     await expect(ownershipPage.expiryPanelRegistrationDate).toHaveCount(1)
     await expect(ownershipPage.expiryPanelGracePeriod).toHaveCount(1)
@@ -538,7 +536,6 @@ test.describe('Grace Period Unwrapped 2LD', () => {
     await ownershipPage.goto(name)
     await login.connect()
 
-    await page.pause()
     await expect(ownershipPage.sendNameButton).toHaveCount(0)
   })
 
@@ -580,7 +577,7 @@ test.describe('Grace Period Unwrapped 2LD', () => {
 
     await ownershipPage.goto(name)
     await login.connect()
-    await page.pause()
+
     await ownershipPage.editRolesButton.click()
 
     await expect(editRolesModal.roleCardChangeButton('owner')).toHaveCount(0)
@@ -650,7 +647,6 @@ test.describe('Grace Period Wrapped 2LD', () => {
     await ownershipPage.goto(name)
     await login.connect()
 
-    await page.pause()
     await expect(ownershipPage.sendNameButton).toHaveCount(0)
   })
 
@@ -691,7 +687,7 @@ test.describe('Grace Period Wrapped 2LD', () => {
 
     await ownershipPage.goto(name)
     await login.connect()
-    await page.pause()
+
     await ownershipPage.editRolesButton.click()
 
     await expect(editRolesModal.roleCardChangeButton('owner')).toHaveCount(0)

@@ -63,8 +63,6 @@ test('should allow claim (owned by user)', async ({
   await expect(importPage.nextButton).toBeEnabled({ timeout: 15000 })
   await importPage.nextButton.click()
 
-  await page.pause()
-
   // should jump straight to transaction step
   await expect(importPage.heading).toHaveText('Claim your domain')
 

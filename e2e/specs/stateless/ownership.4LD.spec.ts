@@ -424,7 +424,6 @@ test.describe('Unwrapped 4LD, Unwrapped 3LD,2LD - Manager Only', () => {
 
     await ownershipPage.goto(subname)
     await login.connect()
-    await page.pause()
 
     await expect(ownershipPage.expiryPanelExpiry).toHaveCount(0)
     await expect(ownershipPage.expiryPanelGracePeriod).toHaveCount(0)
@@ -683,7 +682,6 @@ test.describe('Unwrapped 4LD - Wrapped 3LD,2LD - Parent Owner only', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
-    await page.pause()
     await page.waitForTimeout(2000)
     await expect(ownershipPage.sendNameButton).toHaveCount(0)
     await expect(ownershipPage.editRolesButton).toHaveCount(0)
@@ -776,7 +774,6 @@ test.describe('Unwrapped 4LD, Wrapped 3LD,2LD - Manager Only', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
-    await page.pause()
     await ownershipPage.sendNameButton.click()
     await sendNameModal.searchInput.fill(accounts.getAddress('user3'))
     await sendNameModal.searchResult(accounts.getAddress('user3')).click()

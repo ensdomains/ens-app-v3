@@ -158,8 +158,6 @@ test('should allow wrapping a subdomain', async ({ page, makeName, login, makePa
   await morePage.goto(subname)
   await login.connect()
 
-  await page.pause()
-
   // should approve name wrapper for address
   await morePage.wrapButton.click()
 
@@ -198,7 +196,6 @@ test('should allow wrapping a name with an unknown label', async ({
   await morePage.goto(subname)
   await login.connect()
 
-  await page.pause()
   await morePage.wrapButton.click()
 
   const input = page.getByTestId(`unknown-label-input-${unknownLabelhash}`)

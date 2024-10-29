@@ -124,7 +124,6 @@ const reducer =
       case 'increaseStep': {
         const currentStep = selectedItem.steps[selectedItem.stepIndex]
 
-        console.log('selectedItem', JSON.stringify(selectedItem))
         const eventName = match(currentStep)
           .with('selectType', () => 'dns_selected_import_type' as const)
           .with('enableDnssec', () => 'dns_sec_enabled' as const)
@@ -201,7 +200,6 @@ export const useDnsImportReducer = ({
   }
 
   useEffect(() => {
-    console.log('cleanupNonMatching')
     dispatch({ name: 'cleanupNonMatching', selected })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, name, chainId])
