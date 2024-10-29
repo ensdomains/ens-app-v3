@@ -413,49 +413,58 @@ const MigrationsTab = ({
         {/** @ts-expect-error styled-components don't know how to inherit types */}
         <Caption fontVariant="bodyLarge">{t('caption.migration')}</Caption>
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              if (isConnected) {
-                const transactions: {
-                  name: 'approveNameWrapperForMigration' | 'approveRegistrarForMigration'
-                  data: TransactionData<
-                    'approveNameWrapperForMigration' | 'approveRegistrarForMigration'
-                  >
-                }[] = []
+          {match({ isConnected, allNamesAreApproved })
+            .with({ isConnected: true, allNamesAreApproved: false }, () => (
+              <Button
+                onClick={() => {
+                  if (isConnected) {
+                    const transactions: {
+                      name: 'approveNameWrapperForMigration' | 'approveRegistrarForMigration'
+                      data: TransactionData<
+                        'approveNameWrapperForMigration' | 'approveRegistrarForMigration'
+                      >
+                    }[] = []
 
-                if (eligibleNames.find((name) => name.wrappedOwner)) {
-                  transactions.push(
-                    createTransactionItem('approveNameWrapperForMigration', {
-                      address: address!,
-                    }),
-                  )
-                }
-                if (eligibleNames.find((name) => name.relation.registrant)) {
-                  transactions.push(
-                    createTransactionItem('approveRegistrarForMigration', {
-                      address: address!,
-                    }),
-                  )
-                }
+                    if (eligibleNames.find((name) => name.wrappedOwner)) {
+                      transactions.push(
+                        createTransactionItem('approveNameWrapperForMigration', {
+                          address: address!,
+                        }),
+                      )
+                    }
+                    if (eligibleNames.find((name) => name.relation.registrant)) {
+                      transactions.push(
+                        createTransactionItem('approveRegistrarForMigration', {
+                          address: address!,
+                        }),
+                      )
+                    }
 
-                createTransactionFlow('migrate-names', {
-                  resumable: true,
-                  intro: {
-                    title: ['details.approve.title', { ns: 'migrate' }],
-                    content: makeIntroItem('GenericWithDescription', {
-                      description: t('details.approve.description'),
-                    }),
-                  },
-                  transactions,
-                })
-              } else {
-                openConnectModal?.()
-              }
-            }}
-            colorStyle="greenPrimary"
-          >
-            {isConnected ? t('cta.begin') : t('cta.unconnected')}
-          </Button>
+                    createTransactionFlow('migrate-names', {
+                      resumable: true,
+                      intro: {
+                        title: ['details.approve.title', { ns: 'migrate' }],
+                        content: makeIntroItem('GenericWithDescription', {
+                          description: t('details.approve.description'),
+                        }),
+                      },
+                      transactions,
+                    })
+                  } else {
+                    openConnectModal?.()
+                  }
+                }}
+                colorStyle="greenPrimary"
+              >
+                {t('cta.begin')}
+              </Button>
+            ))
+            .with({ isConnected: true, allNamesAreApproved: true }, () => null)
+            .with({ isConnected: false }, () => (
+              <Button colorStyle="greenPrimary">{t('cta.unconnected')}</Button>
+            ))
+            .exhaustive()}
+
           <Button colorStyle="greenSecondary">{t('cta.learn-more')}</Button>
         </ButtonContainer>
       </Header>
@@ -571,7 +580,7 @@ const ExtensionTab = ({
               <Button
                 colorStyle="greenPrimary"
                 onClick={() => {
-                  showExtendNamesInput('BulkRenewal', {})
+                  showExtendNamesInput('BulkRenewal', { names: eligibleNames })
                 }}
               >
                 {t('cta.extend-names')}
