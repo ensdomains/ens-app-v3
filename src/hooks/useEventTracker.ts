@@ -24,7 +24,12 @@ type PaymentEvent = {
 }
 
 type DNSImportTypeSelectedEvent = {
-  eventName: 'import_type_selected_dns'
+  eventName:
+    | 'dns_selected_import_type'
+    | 'dns_sec_enabled'
+    | 'dns_verified_ownership'
+    | 'dns_claim_started'
+    | 'dns_claimed'
   customProperties: {
     importType: 'onchain' | 'offchain' | null
     name: string
@@ -44,6 +49,9 @@ type DefaultEvent = {
     | 'register_started_dns'
     | 'register_wallet_opened_dns'
     | 'register_override_triggered'
+    | 'dns_approve_registrar_wallet_opened'
+    | 'dns_import_wallet_opened'
+    | 'dns_claim_wallet_opened'
   customProperties?: never
 }
 
@@ -82,6 +90,9 @@ export const useEventTracker = () => {
             'register_started_dns',
             'register_wallet_opened_dns',
             'register_override_triggered',
+            'dns_approve_registrar_wallet_opened',
+            'dns_import_wallet_opened',
+            'dns_claim_wallet_opened',
           ),
         },
         ({ eventName }) => sendTrackEvent(eventName, chain),
@@ -101,7 +112,13 @@ export const useEventTracker = () => {
       })
       .with(
         {
-          eventName: P.union('import_type_selected_dns'),
+          eventName: P.union(
+            'dns_selected_import_type',
+            'dns_sec_enabled',
+            'dns_verified_ownership',
+            'dns_claim_started',
+            'dns_claimed',
+          ),
         },
         ({ eventName, customProperties }) => {
           const { importType, name } = customProperties

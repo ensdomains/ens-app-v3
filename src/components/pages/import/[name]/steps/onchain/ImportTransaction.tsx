@@ -183,9 +183,9 @@ export const ImportTransaction = ({
   const startOrResumeFlow = () => {
     if (!item.started) {
       trackEvent({
-        eventName: 'claim_domain_started_dns',
+        eventName: 'dns_claim_started',
+        customProperties: { name: selected.name, importType: 'onchain' },
       })
-
       dispatch({ name: 'setStarted', selected })
     }
 

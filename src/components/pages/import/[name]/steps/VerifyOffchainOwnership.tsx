@@ -9,7 +9,6 @@ import RecordItem from '@app/components/RecordItem'
 import { DNS_TXT_RECORD_HELPER_LINKS } from '@app/constants/dnsLinks'
 import { EXTENDED_DNS_RESOLVER_MAP } from '@app/constants/resolverAddressData'
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
-import { useEventTracker } from '@app/hooks/useEventTracker'
 import { shortenAddress } from '@app/utils/utils'
 
 import {
@@ -74,7 +73,6 @@ export const VerifyOffchainOwnership = ({
 }) => {
   const { t } = useTranslation('dnssec', { keyPrefix: 'steps.verifyOwnership' })
   const { t: tc } = useTranslation('common')
-  const { trackEvent } = useEventTracker()
 
   const { address, chainId } = selected
   const isConnected = !!address
@@ -98,13 +96,6 @@ export const VerifyOffchainOwnership = ({
     if (error) return tc(`error.${error}`, { ns: 'dnssec' })
     return null
   }, [tc, error])
-
-  const handleCompleteOffchainProcess = () => {
-    dispatch({ name: 'increaseStep', selected })
-    if (dnsOffchainStatus?.address?.status !== 'mismatching') {
-      trackEvent({ eventName: 'register_started_dns' })
-    }
-  }
 
   return (
     <DnsImportCard>
@@ -174,7 +165,7 @@ export const VerifyOffchainOwnership = ({
         {isConnected ? (
           <DnsImportActionButton
             disabled={!dnsOffchainStatus || isLoading || isRefetching || isError || !!error}
-            onClick={handleCompleteOffchainProcess}
+            onClick={() => dispatch({ name: 'increaseStep', selected })}
             {...(dnsOffchainStatus?.address?.status === 'mismatching'
               ? {
                   colorStyle: 'redPrimary',

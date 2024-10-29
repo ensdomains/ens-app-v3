@@ -344,26 +344,12 @@ const createSearchHandler =
 
     const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
 
-    match(path)
-      .with(`/register/${text}`, () => {
-        trackEvent({
-          eventName: 'search_selected_eth',
-          customProperties: { name: text },
-        })
-      })
-      .with(`/dotbox/${text}`, () => {
-        trackEvent({
-          eventName: 'search_selected_box',
-          customProperties: { name: text },
-        })
-      })
-      .with(`/import/${text}`, () => {
-        trackEvent({
-          eventName: 'search_selected_dns',
-          customProperties: { name: text },
-        })
-      })
-      .otherwise(() => {})
+    const eventName = match(path)
+      .with(`/register/${text}`, () => 'search_selected_eth' as const)
+      .with(`/dotbox/${text}`, () => 'search_selected_box' as const)
+      .with(`/import/${text}`, () => 'search_selected_dns' as const)
+      .otherwise(() => undefined)
+    if (eventName) trackEvent({ eventName, customProperties: { name: text } })
 
     setInputVal('')
     searchInputRef.current?.blur()

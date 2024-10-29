@@ -551,25 +551,14 @@ export const TransactionStageModal = ({
         onClick={() => {
           sendTransaction(request!)
 
-          if (['commitName', 'registerName'].includes(actionName)) {
-            trackEvent({
-              eventName: ['commitName'].includes(actionName)
-                ? 'commit_wallet_opened'
-                : 'register_wallet_opened',
-            })
-          }
-
-          if (['approveDnsRegistrar', 'importDnsName'].includes(actionName)) {
-            trackEvent({
-              eventName: 'commit_wallet_opened_dns',
-            })
-          }
-
-          if (actionName === 'claimDnsName') {
-            trackEvent({
-              eventName: 'register_wallet_opened_dns',
-            })
-          }
+          const eventName = match(actionName)
+            .with('commitName', () => 'commit_wallet_opened' as const)
+            .with('registerName', () => 'register_wallet_opened' as const)
+            .with('approveDnsRegistrar', () => 'dns_approve_registrar_wallet_opened' as const)
+            .with('importDnsName', () => 'dns_import_wallet_opened' as const)
+            .with('claimDnsName', () => 'dns_claim_wallet_opened' as const)
+            .otherwise(() => undefined)
+          if (eventName) trackEvent({ eventName })
         }}
         data-testid="transaction-modal-confirm-button"
       >
