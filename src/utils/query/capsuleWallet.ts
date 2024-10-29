@@ -11,9 +11,11 @@ import {
 
 import { ENS_LINKS } from '../constants'
 
+const prodCapsuleApiKey = process.env.NEXT_PUBLIC_CAPSULE_API_KEY_PROD
+
 const APP_NAME = 'ENS'
-const CAPSULE_ENV: Environment = Environment.BETA
-const CAPSULE_API_KEY = 'ea5557d8aed418b3c195f28c5a8dd3bb'
+const CAPSULE_ENV: Environment = prodCapsuleApiKey ? Environment.PROD : Environment.BETA
+const CAPSULE_API_KEY = prodCapsuleApiKey || 'ea5557d8aed418b3c195f28c5a8dd3bb'
 
 const capsuleConstructorOpts: ConstructorOpts = {
   // Passkey Portal Branding

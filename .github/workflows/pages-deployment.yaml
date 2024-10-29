@@ -3,6 +3,7 @@ name: Cloudflare Pages
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   NEXT_PUBLIC_INTERCOM_ID: re9q5yti
+  NEXT_PUBLIC_CAPSULE_API_KEY_PROD: ${{ secrets.CAPSULE_API_KEY_PROD }}
 
 on: [push]
 jobs:
