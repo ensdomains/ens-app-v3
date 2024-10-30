@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import CalendarSVG from '@app/assets/Calendar.svg'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { secondsToDate, secondsToDateInput } from '@app/utils/date'
+import { dateToDateInput, secondsToDate, secondsToDateInput } from '@app/utils/date'
 import { formatExpiry } from '@app/utils/utils'
 
 const Label = styled.label<{ $highlighted?: boolean }>(
@@ -66,10 +66,10 @@ const LabelInput = styled.input(
 type InputProps = InputHTMLAttributes<HTMLInputElement>
 type Props = {
   highlighted?: boolean
-  value: number
+  value: number | Date
   unit?: string
   name?: string
-  min?: number
+  min?: number | Date
 } & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'name'>
 
 export const Calendar = forwardRef(
@@ -78,8 +78,8 @@ export const Calendar = forwardRef(
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
-    const [minDuratiion] = useState(min ?? value)
-    const minDate = secondsToDate(minDuratiion)
+    const [minDuration] = useState(min ?? value)
+    const minDate = typeof minDuration === 'number' ? secondsToDate(minDuration) : minDuration
 
     const breakpoint = useBreakpoint()
 
@@ -91,8 +91,12 @@ export const Calendar = forwardRef(
           type="date"
           {...props}
           ref={inputRef}
-          value={secondsToDateInput(value)}
-          min={secondsToDateInput(minDuratiion)}
+          value={typeof value === 'number' ? secondsToDateInput(value) : dateToDateInput(value)}
+          min={
+            typeof minDuration === 'number'
+              ? secondsToDateInput(minDuration)
+              : dateToDateInput(minDuration)
+          }
           onFocus={(e) => {
             e.target.select()
           }}
@@ -117,7 +121,9 @@ export const Calendar = forwardRef(
           onClick={() => inputRef.current!.showPicker()}
         />
         <span data-testid="calendar-date">
-          {formatExpiry(secondsToDate(value), { short: !breakpoint.sm })}
+          {formatExpiry(typeof value === 'number' ? secondsToDate(value) : value, {
+            short: !breakpoint.sm,
+          })}
         </span>
         <CalendarIcon>
           <CalendarSVG height={16} width={16} />
