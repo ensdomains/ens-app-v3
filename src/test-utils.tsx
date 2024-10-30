@@ -26,6 +26,13 @@ vi.mock('@app/hooks/useRegistrationReducer', () => vi.fn(() => ({ item: { stepIn
 
 export const mockUseAccountReturnValue = { address: '0x123' }
 
+vi.mock('@usecapsule/rainbowkit', () => ({
+  useConnectModal: () => ({
+    openConnectModal: vi.fn(),
+  }),
+  connectorsForWallets: () => [() => {}],
+}))
+
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (value: string, opts: any) => {

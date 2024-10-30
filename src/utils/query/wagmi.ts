@@ -12,15 +12,9 @@ import {
   sepoliaWithEns,
 } from '@app/constants/chains'
 
-import { WC_PROJECT_ID } from '../constants'
-import { getDefaultWallets } from '../getDefaultWallets'
+import { rainbowKitConnectors } from './wallets'
 
 const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
-
-const connectors = getDefaultWallets({
-  appName: 'ENS',
-  projectId: WC_PROJECT_ID,
-})
 
 const infuraKey = process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
 const tenderlyKey = process.env.NEXT_PUBLIC_TENDERLY_KEY || '4imxc4hQfRjxrVB2kWKvTo'
@@ -46,7 +40,7 @@ const initialiseTransports = <const UrlFuncArray extends SupportedUrlFunc[]>(
   return fallback(transportArray)
 }
 
-const prefix = 'wagmi'
+export const prefix = 'wagmi'
 
 const localStorageWithInvertMiddleware = (): Storage | undefined => {
   if (typeof window === 'undefined') return undefined
@@ -104,7 +98,7 @@ const transports = {
 } as const
 
 const wagmiConfig_ = createConfig({
-  connectors,
+  connectors: rainbowKitConnectors,
   ssr: true,
   multiInjectedProviderDiscovery: true,
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),

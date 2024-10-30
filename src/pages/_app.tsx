@@ -1,7 +1,3 @@
-import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
-
-import '@rainbow-me/rainbowkit/styles.css'
-
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
@@ -19,24 +15,17 @@ import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowPr
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
+import { RainbowKitWithCapsuleProvider } from '@app/utils/query/RainbowKitWithCapsuleProvider'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
+
+import '@usecapsule/rainbowkit/styles.css'
 
 import i18n from '../i18n'
 
 import '../styles.css'
 
 const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 'eotmigir'
-
-const rainbowKitTheme: Theme = {
-  ...lightTheme({
-    accentColor: thorinLightTheme.colors.accent,
-    borderRadius: 'medium',
-  }),
-  fonts: {
-    body: 'Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
-  },
-}
 
 const anim = keyframes`
   0% {
@@ -144,7 +133,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <I18nextProvider i18n={i18n}>
       <QueryProviders>
-        <RainbowKitProvider theme={rainbowKitTheme}>
+        <RainbowKitWithCapsuleProvider>
           <TransactionStoreProvider>
             <ThemeProvider theme={thorinLightTheme}>
               <BreakpointProvider queries={breakpoints}>
@@ -164,7 +153,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
               </BreakpointProvider>
             </ThemeProvider>
           </TransactionStoreProvider>
-        </RainbowKitProvider>
+        </RainbowKitWithCapsuleProvider>
       </QueryProviders>
     </I18nextProvider>
   )
