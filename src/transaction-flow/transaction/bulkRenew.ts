@@ -70,8 +70,8 @@ export const bulkRenewalContract = {
   [mainnet.id]: '0xnotdeployedyet',
   [goerli.id]: '0xdeprecated',
   [localhost.id]: '0xnotdeployedyet',
-  [holesky.id]: '0x76aafA281Ed5155f83926a12ACB92e237e322A8C',
-  [sepolia.id]: '0xf9c8c83adda8d52d9284cdbef23da10b5f9869bf',
+  [holesky.id]: '0x3dCE478E4C880E96Ad3BF022acae38bef43F13eB',
+  [sepolia.id]: '0x0E714019e4BC65164d29960805259C1fA70E508a',
 } as const
 
 const displayItems = (
