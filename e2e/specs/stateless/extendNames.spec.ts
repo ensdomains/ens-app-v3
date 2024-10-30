@@ -11,7 +11,7 @@ import { daysToSeconds } from '@app/utils/time'
 
 import { test } from '../../../playwright'
 
-test('should be able to register multiple names on the address page', async ({
+test('should be able to extend multiple names on the address page', async ({
   page,
   accounts,
   login,
@@ -89,6 +89,7 @@ test('should be able to register multiple names on the address page', async ({
   await page.waitForLoadState('networkidle')
 
   await transactionModal.autoComplete()
+  await page.waitForLoadState('networkidle')
 
   await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
     timeout: 10000,
