@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import styled, { css } from 'styled-components'
-import { ContractFunctionRevertedError, decodeErrorResult, namehash } from 'viem'
+import { ContractFunctionRevertedError, decodeErrorResult, labelhash, namehash } from 'viem'
 import { useClient, useReadContract } from 'wagmi'
 
 import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
@@ -115,7 +115,7 @@ const BulkRenewalFlow = ({ data }: Props) => {
     abi,
     address: bulkRenewalContract[client.chain.id!]!,
     functionName: 'getTargetExpiryPriceData',
-    args: [data.names.map((name) => namehash(name.name!)), BigInt(seconds)],
+    args: [data.names.map((name) => name.labelhash), BigInt(seconds)],
   })
 
   return (
