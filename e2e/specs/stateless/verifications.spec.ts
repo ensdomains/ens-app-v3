@@ -16,12 +16,19 @@ import {
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
+type MakeMockVPTokenRecordKey =
+  | 'com.twitter'
+  | 'com.github'
+  | 'com.discord'
+  | 'org.telegram'
+  | 'personhood'
+  | 'email'
+  | 'ens'
+
 const makeMockVPToken = (
-  records: Array<
-    'com.twitter' | 'com.github' | 'com.discord' | 'org.telegram' | 'personhood' | 'email'
-  >,
+  records: Array<{ key: MakeMockVPTokenRecordKey; value?: string; name?: string }>,
 ) => {
-  return records.map((record) => ({
+  return records.map(({ key, value, name }) => ({
     type: [
       'VerifiableCredential',
       {
@@ -31,15 +38,22 @@ const makeMockVPToken = (
         'org.telegram': 'VerifiedTelegramAccount',
         personhood: 'VerifiedPersonhood',
         email: 'VerifiedEmail',
-      }[record],
+        ens: 'VerifiedENS',
+      }[key],
     ],
     credentialSubject: {
       credentialIssuer: 'Dentity',
-      ...(record === 'com.twitter' ? { username: '@name' } : {}),
-      ...(['com.twitter', 'com.github', 'com.discord', 'org.telegram'].includes(record)
-        ? { name: 'name' }
+      ...(key === 'com.twitter' ? { username: value ?? '@name' } : {}),
+      ...(['com.twitter', 'com.github', 'com.discord', 'org.telegram'].includes(key)
+        ? { name: value ?? 'name' }
         : {}),
-      ...(record === 'email' ? { verifiedEmail: 'name@email.com' } : {}),
+      ...(key === 'email' ? { verifiedEmail: value ?? 'name@email.com' } : {}),
+      ...(key === 'ens'
+        ? {
+            ensName: name ?? 'name.eth',
+            ethAddress: value ?? (createAccounts().getAddress('user') as Hash),
+          }
+        : {}),
     },
   }))
 }
@@ -94,12 +108,13 @@ test.describe('Verified records', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           vp_token: makeMockVPToken([
-            'com.twitter',
-            'com.github',
-            'com.discord',
-            'org.telegram',
-            'personhood',
-            'email',
+            { key: 'com.twitter' },
+            { key: 'com.github' },
+            { key: 'com.discord' },
+            { key: 'org.telegram' },
+            { key: 'personhood' },
+            { key: 'email' },
+            { key: 'ens', name },
           ]),
         }),
       })
@@ -171,7 +186,13 @@ test.describe('Verified records', () => {
         body: JSON.stringify({
           ens_name: name,
           eth_address: accounts.getAddress('user2'),
-          vp_token: makeMockVPToken(['com.twitter', 'com.github', 'com.discord', 'org.telegram']),
+          vp_token: makeMockVPToken([
+            { key: 'com.twitter' },
+            { key: 'com.github' },
+            { key: 'com.discord' },
+            { key: 'org.telegram' },
+            { key: 'ens', name },
+          ]),
         }),
       })
     })
@@ -188,6 +209,239 @@ test.describe('Verified records', () => {
     await profilePage.isPersonhoodVerified(false)
 
     await expect(profilePage.record('verification', 'dentity')).toBeVisible()
+    await expect(profilePage.record('verification', 'dentity')).toBeVisible()
+  })
+
+  test('Should not show badges if records match but ens credential address does not match', async ({
+    page,
+    accounts,
+    makePageObject,
+    makeName,
+  }) => {
+    const name = await makeName({
+      label: 'dentity',
+      type: 'wrapped',
+      owner: 'user',
+      records: {
+        texts: [
+          {
+            key: 'com.twitter',
+            value: '@name',
+          },
+          {
+            key: 'org.telegram',
+            value: 'name',
+          },
+          {
+            key: 'com.discord',
+            value: 'name',
+          },
+          {
+            key: 'com.github',
+            value: 'name',
+          },
+          {
+            key: VERIFICATION_RECORD_KEY,
+            value: JSON.stringify([
+              `${DENTITY_VPTOKEN_ENDPOINT}?name=name.eth&federated_token=federated_token`,
+            ]),
+          },
+        ],
+      },
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+
+    await page.route(`${DENTITY_VPTOKEN_ENDPOINT}*`, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          ens_name: name,
+          eth_address: accounts.getAddress('user2'),
+          vp_token: makeMockVPToken([
+            { key: 'com.twitter' },
+            { key: 'com.github' },
+            { key: 'com.discord' },
+            { key: 'org.telegram' },
+            { key: 'ens', name, value: accounts.getAddress('user2') },
+          ]),
+        }),
+      })
+    })
+
+    await page.goto(`/${name}`)
+
+    await page.pause()
+
+    await expect(page.getByTestId('profile-section-verifications')).toBeVisible()
+
+    await profilePage.isRecordVerified('text', 'com.twitter', false)
+    await profilePage.isRecordVerified('text', 'org.telegram', false)
+    await profilePage.isRecordVerified('text', 'com.github', false)
+    await profilePage.isRecordVerified('text', 'com.discord', false)
+    await profilePage.isRecordVerified('verification', 'dentity', false)
+    await profilePage.isPersonhoodVerified(false)
+
+    await expect(profilePage.record('verification', 'dentity')).toBeVisible()
+    await expect(profilePage.record('verification', 'dentity')).toBeVisible()
+  })
+
+  test('Should not show badges if records match but ens credential name does not match', async ({
+    page,
+    accounts,
+    makePageObject,
+    makeName,
+  }) => {
+    const name = await makeName({
+      label: 'dentity',
+      type: 'wrapped',
+      owner: 'user',
+      records: {
+        texts: [
+          {
+            key: 'com.twitter',
+            value: '@name',
+          },
+          {
+            key: 'org.telegram',
+            value: 'name',
+          },
+          {
+            key: 'com.discord',
+            value: 'name',
+          },
+          {
+            key: 'com.github',
+            value: 'name',
+          },
+          {
+            key: VERIFICATION_RECORD_KEY,
+            value: JSON.stringify([
+              `${DENTITY_VPTOKEN_ENDPOINT}?name=name.eth&federated_token=federated_token`,
+            ]),
+          },
+        ],
+      },
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+
+    await page.route(`${DENTITY_VPTOKEN_ENDPOINT}*`, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          ens_name: name,
+          eth_address: accounts.getAddress('user2'),
+          vp_token: makeMockVPToken([
+            { key: 'com.twitter' },
+            { key: 'com.github' },
+            { key: 'com.discord' },
+            { key: 'org.telegram' },
+            { key: 'ens', name: 'differentName.eth' },
+          ]),
+        }),
+      })
+    })
+
+    await page.goto(`/${name}`)
+
+    await page.pause()
+
+    await expect(page.getByTestId('profile-section-verifications')).toBeVisible()
+
+    await profilePage.isRecordVerified('text', 'com.twitter', false)
+    await profilePage.isRecordVerified('text', 'org.telegram', false)
+    await profilePage.isRecordVerified('text', 'com.github', false)
+    await profilePage.isRecordVerified('text', 'com.discord', false)
+    await profilePage.isRecordVerified('verification', 'dentity', false)
+    await profilePage.isPersonhoodVerified(false)
+
+    await expect(profilePage.record('verification', 'dentity')).toBeVisible()
+    await expect(profilePage.record('verification', 'dentity')).toBeVisible()
+  })
+
+  test('Should show error icon on verication button if VerifiedENS credential is not validated', async ({
+    page,
+    login,
+    makePageObject,
+    makeName,
+  }) => {
+    const name = await makeName({
+      label: 'dentity',
+      type: 'wrapped',
+      owner: 'user',
+      records: {
+        texts: [
+          {
+            key: 'com.twitter',
+            value: '@name',
+          },
+          {
+            key: 'org.telegram',
+            value: 'name',
+          },
+          {
+            key: 'com.discord',
+            value: 'name',
+          },
+          {
+            key: 'com.github',
+            value: 'name',
+          },
+          {
+            key: 'email',
+            value: 'name@email.com',
+          },
+          {
+            key: VERIFICATION_RECORD_KEY,
+            value: JSON.stringify([
+              `${DENTITY_VPTOKEN_ENDPOINT}?name=name.eth&federated_token=federated_token`,
+            ]),
+          },
+          {
+            key: 'com.twitter',
+            value: '@name',
+          },
+        ],
+      },
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+
+    await page.route(`${DENTITY_VPTOKEN_ENDPOINT}*`, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          vp_token: makeMockVPToken([
+            { key: 'com.twitter' },
+            { key: 'com.github' },
+            { key: 'com.discord' },
+            { key: 'org.telegram' },
+            { key: 'personhood' },
+            { key: 'email' },
+            { key: 'ens', name: 'othername.eth' },
+          ]),
+        }),
+      })
+    })
+
+    await page.goto(`/${name}`)
+    await login.connect()
+
+    await page.pause()
+
+    await expect(page.getByTestId('profile-section-verifications')).toBeVisible()
+
+    await profilePage.isRecordVerified('text', 'com.twitter', false)
+    await profilePage.isRecordVerified('text', 'org.telegram', false)
+    await profilePage.isRecordVerified('text', 'com.github', false)
+    await profilePage.isRecordVerified('text', 'com.discord', false)
+    await profilePage.isRecordVerified('verification', 'dentity', false)
+    await profilePage.isPersonhoodErrored()
+
     await expect(profilePage.record('verification', 'dentity')).toBeVisible()
   })
 })
@@ -215,11 +469,11 @@ test.describe('Verify profile', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           vp_token: makeMockVPToken([
-            'personhood',
-            'com.twitter',
-            'com.github',
-            'com.discord',
-            'org.telegram',
+            { key: 'personhood' },
+            { key: 'com.twitter' },
+            { key: 'com.github' },
+            { key: 'com.discord' },
+            { key: 'org.telegram' },
           ]),
         }),
       })
@@ -259,11 +513,11 @@ test.describe('Verify profile', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           vp_token: makeMockVPToken([
-            'personhood',
-            'com.twitter',
-            'com.github',
-            'com.discord',
-            'org.telegram',
+            { key: 'personhood' },
+            { key: 'com.twitter' },
+            { key: 'com.github' },
+            { key: 'com.discord' },
+            { key: 'org.telegram' },
           ]),
         }),
       })
@@ -328,11 +582,12 @@ test.describe('Verify profile', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           vp_token: makeMockVPToken([
-            'personhood',
-            'com.twitter',
-            'com.github',
-            'com.discord',
-            'org.telegram',
+            { key: 'personhood' },
+            { key: 'com.twitter' },
+            { key: 'com.github' },
+            { key: 'com.discord' },
+            { key: 'org.telegram' },
+            { key: 'ens', name, value: createAccounts().getAddress('user2') },
           ]),
         }),
       })
@@ -425,11 +680,12 @@ test.describe('OAuth flow', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           vp_token: makeMockVPToken([
-            'personhood',
-            'com.twitter',
-            'com.github',
-            'com.discord',
-            'org.telegram',
+            { key: 'personhood' },
+            { key: 'com.twitter' },
+            { key: 'com.github' },
+            { key: 'com.discord' },
+            { key: 'org.telegram' },
+            { key: 'ens', name, value: createAccounts().getAddress('user2') },
           ]),
         }),
       })
