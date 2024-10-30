@@ -1,18 +1,21 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useClient, useReadContract } from 'wagmi'
+import { useAccount, useBalance, useClient, useEstimateGas, useReadContract } from 'wagmi'
 
 import { NameWithRelation } from '@ensdomains/ensjs/subgraph'
 import { Dialog, Heading, Helper, OutlinkSVG, Typography } from '@ensdomains/thorin'
 
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
-import { InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
+import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { EligibleForTokens } from '@app/components/pages/migrate/EligibleForTokens'
+import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { bulkRenewalContract } from '@app/transaction-flow/transaction/bulkRenew'
-import { REBATE_DATE } from '@app/utils/constants'
+import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE, REBATE_DATE } from '@app/utils/constants'
+import useUserConfig from '@app/utils/useUserConfig'
 import { formatDurationOfDates } from '@app/utils/utils'
 
 export type Props = { data: { names: NameWithRelation[] } }
@@ -106,14 +109,28 @@ const YearsViewSwitch = styled.button(
   `,
 )
 
-const BulkRenewalFlow = ({ data }: Props) => {
-  // Sort from the ones that expire earlier to later
-  const sortedNames = data.names.toSorted((a, b) => a.expiryDate!.value! - b.expiryDate!.value!)
+const GasEstimationCacheableComponent = styled(CacheableComponent)(
+  ({ theme }) => css`
+    width: 100%;
+    gap: ${theme.space['4']};
+    display: flex;
+    flex-direction: column;
+  `,
+)
 
+const BulkRenewalFlow = ({ data }: Props) => {
   const [date, setDate] = useState(REBATE_DATE)
   const [durationType, setDurationType] = useState<'years' | 'date'>('date')
 
   const client = useClient()
+
+  const { address } = useAccount()
+
+  const { data: balance } = useBalance({
+    address,
+  })
+
+  const dateAsBigInt = BigInt(date.getTime() / 1000)
 
   const {
     data: expiryData,
@@ -123,12 +140,51 @@ const BulkRenewalFlow = ({ data }: Props) => {
     abi,
     address: bulkRenewalContract[client.chain.id!]!,
     functionName: 'getTargetExpiryPriceData',
-    args: [data.names.map((name) => name.labelName!), BigInt(date.getTime() / 1000)],
+    args: [data.names.map((name) => name.labelName!), dateAsBigInt],
   })
 
-  const { t } = useTranslation()
+  const [total, durations, prices] = expiryData! as [bigint, bigint[], bigint[]]
+
+  const {
+    data: { gasEstimate: estimatedGasLimit, gasCost: transactionFee },
+    error: estimateGasLimitError,
+    isLoading: isEstimateGasLoading,
+    gasPrice,
+  } = useEstimateGasWithStateOverride({
+    transactions: [
+      {
+        name: 'bulkRenew',
+        data: {
+          names: data.names.map((name) => name.labelhash),
+          durations,
+          prices,
+        },
+        stateOverride: [{ address: address! }],
+      },
+    ],
+  })
+
+  const { t } = useTranslation(['transactionFlow', 'common'])
 
   const now = new Date()
+
+  const { userConfig, setCurrency } = useUserConfig()
+  const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
+
+  const items: InvoiceItem[] = [
+    {
+      label: t('input.extendNames.invoice.extension', {
+        time: formatDurationOfDates({ startDate: now, endDate: date, t }),
+      }),
+      value: dateAsBigInt,
+      bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
+    },
+    {
+      label: t('input.extendNames.invoice.transaction'),
+      value: transactionFee,
+      bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
+    },
+  ]
 
   return (
     <>
@@ -179,8 +235,14 @@ const BulkRenewalFlow = ({ data }: Props) => {
           </Typography>
         </CalendarContainer>
       </Dialog.Content>
-      {status}
       {error ? <Helper type="error">{error.message}</Helper> : null}
+      <GasEstimationCacheableComponent $isCached={isEstimateGasLoading}>
+        <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
+        {(!!estimateGasLimitError ||
+          (!!estimatedGasLimit && !!balance?.value && balance.value < estimatedGasLimit)) && (
+          <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
+        )}
+      </GasEstimationCacheableComponent>
       <EligibleForTokens amount={data.names.length} />
     </>
   )
