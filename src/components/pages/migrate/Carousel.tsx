@@ -8,7 +8,7 @@ export const Carousel = ({ children }: { children: ReactNode[] }) => {
         arrows: false,
         pagination: false,
         gap: '16px',
-        perPage: 2,
+        perPage: 1,
         fixedWidth: 312,
       }}
     >

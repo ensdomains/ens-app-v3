@@ -6,13 +6,20 @@ import {
   Button,
   Card,
   GasPumpSVG,
+  InfoCircleSVG,
   KeySVG,
+  QuestionBubbleSVG,
+  QuestionCircleSVG,
   RightArrowSVG,
+  SpannerAltSVG,
   Typography,
   WalletSVG,
 } from '@ensdomains/thorin'
 
 import { Carousel } from '@app/components/pages/migrate/Carousel'
+
+import DAOSVG from '../assets/DAO.svg'
+import SocialX from '../assets/social/SocialX.svg'
 
 const Title = styled.h1`
   font-weight: 830;
@@ -50,6 +57,54 @@ const Main = styled.main(
   `,
 )
 
+const Footer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['6']};
+    h3 {
+      text-align: center;
+    }
+    span {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: ${theme.space['2']};
+      color: ${theme.colors.green};
+    }
+    & > div {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: ${theme.space['4']};
+    }
+    & > div > div {
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+    @media (min-width: 480px) {
+      & > div {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  `,
+)
+
+const AnnouncementBanner = styled.div(
+  ({ theme }) => css`
+    height: ${theme.space.full};
+    text-align: center;
+    & > a {
+      height: ${theme.space.full};
+      justify-content: flex-start;
+      & > div {
+        height: ${theme.space.full};
+        justify-content: flex-start;
+      }
+    }
+  `,
+)
+
 const PartnershipAnnouncement = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
@@ -83,8 +138,9 @@ const TopNav = styled.div(
     gap: ${theme.space['6']};
     align-items: center;
     position: sticky;
-    top: 0;
+    top: ${theme.space['4']};
     left: 0;
+    z-index: 1;
   `,
 )
 
@@ -128,9 +184,11 @@ const CardHeader = styled.h3(
 )
 
 const AnnouncementSlide = ({ title, text }: { title: string; text: string }) => (
-  <Banner style={{ height: '100%' }} as="a" alert="info" href="#" title={title}>
-    {text}
-  </Banner>
+  <AnnouncementBanner>
+    <Banner as="a" alert="info" href="#" title={title}>
+      {text}
+    </Banner>
+  </AnnouncementBanner>
 )
 
 const SlideshowContainer = styled.div(
@@ -141,6 +199,15 @@ const SlideshowContainer = styled.div(
     h3 {
       text-align: center;
     }
+  `,
+)
+
+const Video = styled.video(
+  ({ theme }) => css`
+    height: ${theme.space.full};
+    width: ${theme.space.full};
+    border-radius: ${theme.radii.card};
+    margin-bottom: ${theme.space[18]};
   `,
 )
 
@@ -160,10 +227,12 @@ export default function ENSv2() {
         <Title>{t('title')}</Title>
         <Typography>{t('caption')}</Typography>
       </Header>
-      <div>video</div>
+      <Video poster="/migrate/preview.svg">
+        <track />
+      </Video>
       <GridOneToThree>
         <CardWithEmoji>
-          <img src="/confetti.png" width={108} height={108} alt="🎉" />
+          <img src="/migrate/confetti.png" width={108} height={108} alt="🎉" />
           <Typography fontVariant="headingTwo" asProp="h2">
             {t('accessible.title')}
           </Typography>
@@ -213,6 +282,35 @@ export default function ENSv2() {
           />
         </Carousel>
       </SlideshowContainer>
+      <Footer as="footer">
+        <Typography asProp="h3" fontVariant="headingThree">
+          {t('footer.title')}
+        </Typography>
+        <div>
+          <Card title={t('footer.learn.title')}>
+            <span>
+              <QuestionBubbleSVG /> {t('footer.learn.faq')}
+            </span>
+            <span>
+              <SpannerAltSVG /> {t('footer.learn.plan')}
+            </span>
+            <span>
+              <InfoCircleSVG /> {t('footer.learn.base')}
+            </span>
+          </Card>
+          <Card title={t('footer.support.title')}>
+            <span>
+              <QuestionCircleSVG /> {t('footer.support.ticket')}
+            </span>
+            <span>
+              <SocialX height="16" width="16" /> {t('footer.support.twitter')}
+            </span>
+            <span>
+              <DAOSVG height="16" width="16" /> {t('footer.support.dao')}
+            </span>
+          </Card>
+        </div>
+      </Footer>
     </Main>
   )
 }
