@@ -1,3 +1,4 @@
+import { useSearchParams } from 'next/dist/client/components/navigation'
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -12,6 +13,30 @@ const Container = styled.div(
     font-weight: ${theme.fontWeights.bold};
   `,
 )
+
+const getChainFromQueryString = (searchParams: URLSearchParams) => {
+  // Query param only possible in test/dev
+  if (
+    !(
+      window.location.hostname.endsWith('localhost') ||
+      window.location.hostname.endsWith('ens.pages.dev')
+    )
+  )
+    return
+
+  // If requested chain id is supported return it, otherwise default to mainnet
+  searchParams.get('chainId')
+}
+
+const getChainFromSubdomain = (subdomain: string) => {
+  if (subdomain === 'testnet') return chains[0]
+  if (subdomain === 'beta') return chains[1]
+  return chains[2]
+}
+
+const useGetConifguredChain = () => {
+  const searchParams = useSearchParams()
+}
 
 export const TestnetWarning = () => {
   const { chain } = useAccount()
