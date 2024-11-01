@@ -624,7 +624,7 @@ test('should be able to extend a single wrapped name using deep link', async ({
   const homePage = makePageObject('HomePage')
   await homePage.goto()
   await login.connect()
-  await page.goto(`/${name}?renew`)
+  await page.goto(`/${name}?renew=123`)
 
   const timestamp = await profilePage.getExpiryTimestamp()
 
@@ -670,7 +670,7 @@ test('should not be able to extend a name which is not registered', async ({
   const homePage = makePageObject('HomePage')
   await homePage.goto()
   await login.connect()
-  await page.goto(`/${name}?renew`)
+  await page.goto(`/${name}?renew=123`)
   await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
 })
 
@@ -681,6 +681,6 @@ test('renew deep link should redirect to registration when not logged in', async
   const name = 'this-name-does-not-exist.eth'
   const homePage = makePageObject('HomePage')
   await homePage.goto()
-  await page.goto(`/${name}?renew`)
+  await page.goto(`/${name}?renew=123`)
   await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
 })
