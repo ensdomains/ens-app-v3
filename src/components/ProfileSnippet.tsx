@@ -1,3 +1,4 @@
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -173,6 +174,14 @@ export const getUserDefinedUrl = (url?: string) => {
   return ``
 }
 
+const parseNumericString = (time: string | null) => {
+  if (!time) return
+
+  if (typeof +time === 'number' && !Number.isNaN(+time)) {
+    return +time
+  }
+}
+
 export const ProfileSnippet = ({
   name,
   getTextRecord,
@@ -192,6 +201,7 @@ export const ProfileSnippet = ({
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
+  const { openConnectModal } = useConnectModal()
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const abilities = useAbilities({ name })
@@ -208,24 +218,30 @@ export const ProfileSnippet = ({
 
   const searchParams = useSearchParams()
 
-  const renew = (searchParams.get('renew') ?? null) !== null
   const available = details.registrationStatus === 'available'
 
   const { canSelfExtend, canEdit } = abilities.data ?? {}
 
+  const renewSeconds = parseNumericString(searchParams.get('renew'))
+
   useEffect(() => {
-    if (renew && !isConnected) {
+    if (renewSeconds && available) {
       return router.push(`/${name}/register`)
     }
 
-    if (renew && !available) {
+    if (renewSeconds && !available && !isConnected) {
+      return openConnectModal?.()
+    }
+
+    if (renewSeconds && !available && isConnected) {
       showExtendNamesInput(`extend-names-${name}`, {
         names: [name],
         isSelf: canSelfExtend,
+        seconds: renewSeconds,
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, available, renew, name, canSelfExtend])
+  }, [isConnected, available, renewSeconds, name, canSelfExtend, openConnectModal])
 
   const ActionButton = useMemo(() => {
     if (button === 'extend')

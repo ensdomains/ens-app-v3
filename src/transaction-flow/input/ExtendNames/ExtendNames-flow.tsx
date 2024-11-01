@@ -160,6 +160,7 @@ const NamesList = ({ names }: NamesListProps) => {
 
 type Data = {
   names: string[]
+  seconds?: number
   isSelf?: boolean
 }
 
@@ -169,7 +170,11 @@ export type Props = {
 
 const minSeconds = ONE_DAY
 
-const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
+const ExtendNames = ({
+  data: { seconds: defaultSeconds = ONE_YEAR, names, isSelf },
+  dispatch,
+  onDismiss,
+}: Props) => {
   const { t } = useTranslation(['transactionFlow', 'common'])
   const { data: ethPrice } = useEthPrice()
 
@@ -195,7 +200,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const decrementView = () => (viewIdx <= 0 ? onDismiss() : setViewIdx(viewIdx - 1))
   const view = flow[viewIdx]
 
-  const [seconds, setSeconds] = useState(ONE_YEAR)
+  const [seconds, setSeconds] = useState(Math.max(defaultSeconds, ONE_YEAR))
   const [durationType, setDurationType] = useState<'years' | 'date'>('years')
 
   const years = secondsToYears(seconds)
