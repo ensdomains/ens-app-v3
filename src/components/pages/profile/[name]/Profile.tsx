@@ -1,9 +1,11 @@
 import Head from 'next/head'
-import { useEffect, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
@@ -16,6 +18,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content, ContentWarning } from '@app/layouts/Content'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { OG_IMAGE_URL } from '@app/utils/constants'
 import { shouldRedirect } from '@app/utils/shouldRedirect'
 import { formatFullExpiry, makeEtherscanLink } from '@app/utils/utils'
@@ -104,6 +107,67 @@ export const NameAvailableBanner = ({
   )
 }
 
+function useRenew(name: string) {
+  const parseNumericString = (time: string | null) => {
+    if (!time) return
+
+    if (typeof +time === 'number' && !Number.isNaN(+time)) {
+      return +time
+    }
+  }
+
+  const [opened, setOpened] = useState<boolean>(false)
+  const router = useRouterWithHistory()
+
+  const { registrationStatus, isLoading } = useNameDetails({ name })
+  const abilities = useAbilities({ name })
+  const searchParams = useSearchParams()
+  const { isConnected, isDisconnected } = useAccount()
+  const { usePreparedDataInput } = useTransactionFlow()
+  const { openConnectModal } = useConnectModal()
+  const showExtendNamesInput = usePreparedDataInput('ExtendNames')
+
+  const { data: { canSelfExtend } = {} } = abilities
+  const isAvailableName = registrationStatus === 'available'
+  const renewSeconds = parseNumericString(searchParams.get('renew'))
+
+  useEffect(() => {
+    if (opened || !renewSeconds || isLoading) return
+
+    if (isAvailableName) {
+      setOpened(true)
+      router.push(`/${name}/register`)
+      return
+    }
+
+    if (!isAvailableName && isDisconnected) {
+      setOpened(true)
+      openConnectModal?.()
+      return
+    }
+
+    if (!isAvailableName && isConnected) {
+      setOpened(true)
+      showExtendNamesInput(`extend-names-${name}`, {
+        names: [name],
+        isSelf: canSelfExtend,
+        seconds: renewSeconds,
+      })
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isAvailableName,
+    isLoading,
+    isConnected,
+    isDisconnected,
+    name,
+    canSelfExtend,
+    renewSeconds,
+    opened,
+  ])
+}
+
 const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
@@ -181,6 +245,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
 
   const abilities = useAbilities({ name: normalisedName })
 
+  useRenew(normalisedName)
   // hook for redirecting to the correct profile url
   // profile.decryptedName fetches labels from NW/subgraph
   // normalisedName fetches labels from localStorage
