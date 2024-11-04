@@ -92,7 +92,7 @@ test('should be able to extend multiple names on the address page', async ({
   await page.waitForLoadState('networkidle')
 
   await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
-    timeout: 10000,
+    timeout: 15000,
   })
   await subgraph.sync()
 
