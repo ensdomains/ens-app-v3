@@ -1,3 +1,4 @@
+/* stylelint-disable no-descending-specificity */
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -57,6 +58,32 @@ const Main = styled.main(
   `,
 )
 
+const PartnershipAnnouncement = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space.full};
+    padding: ${theme.space['4']};
+    background-color: ${theme.colors.backgroundPrimary};
+    border-radius: ${theme.radii['4xLarge']};
+    font-size: ${theme.fontSizes.body};
+    font-weight: ${theme.fontWeights.bold};
+    display: flex;
+    justify-content: space-between;
+    & > a {
+      color: ${theme.colors.greenDim};
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: ${theme.space['2']};
+    }
+    & > a:hover {
+      color: ${theme.colors.green};
+    }
+    @media (min-width: 640px) {
+      border-radius: ${theme.radii['3xLarge']};
+    }
+  `,
+)
+
 const Footer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -65,17 +92,21 @@ const Footer = styled.div(
     h3 {
       text-align: center;
     }
-    span {
+
+    & > div {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: ${theme.space['4']};
+    }
+    & > div a {
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: ${theme.space['2']};
       color: ${theme.colors.green};
     }
-    & > div {
-      display: grid;
-      grid-template-columns: repeat(1, 1fr);
-      gap: ${theme.space['4']};
+    & > div a:hover {
+      color: ${theme.colors.greenDim};
     }
     & > div > div {
       width: 100%;
@@ -101,32 +132,6 @@ const AnnouncementBanner = styled.div(
         height: ${theme.space.full};
         justify-content: flex-start;
       }
-    }
-  `,
-)
-
-const PartnershipAnnouncement = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space.full};
-    padding: ${theme.space['4']};
-    background-color: ${theme.colors.backgroundPrimary};
-    border-radius: ${theme.radii['4xLarge']};
-    font-size: ${theme.fontSizes.body};
-    font-weight: ${theme.fontWeights.bold};
-    display: flex;
-    justify-content: space-between;
-    & > a {
-      color: ${theme.colors.greenDim};
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: ${theme.space['2']};
-    }
-    & > a:hover {
-      color: ${theme.colors.green};
-    }
-    @media (min-width: 640px) {
-      border-radius: ${theme.radii['3xLarge']};
     }
   `,
 )
@@ -302,12 +307,12 @@ export default function ENSv2() {
             <span>
               <QuestionCircleSVG /> {t('footer.support.ticket')}
             </span>
-            <span>
+            <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/ensdomains">
               <SocialX height="16" width="16" /> {t('footer.support.twitter')}
-            </span>
-            <span>
+            </a>
+            <a target="_blank" rel="noopener noreferrer" href="https://discuss.ens.domains">
               <DAOSVG height="16" width="16" /> {t('footer.support.dao')}
-            </span>
+            </a>
           </Card>
         </div>
       </Footer>
