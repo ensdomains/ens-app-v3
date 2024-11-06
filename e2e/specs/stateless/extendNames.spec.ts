@@ -82,14 +82,117 @@ test('should be able to extend multiple names on the address page', async ({
   await page.waitForLoadState('networkidle')
   await expect(page.getByTestId('invoice-item-0-amount')).not.toBeEmpty()
   await expect(page.getByTestId('invoice-item-1-amount')).not.toBeEmpty()
-  await expect(page.getByTestId('invoice-total')).not.toBeEmpty()
+  await expect(page.getByTestId('invoice-total')).not.toHaveText('0.0000 ETH')
 
-  page.locator('button:has-text("Next")').waitFor({ state: 'visible' })
-  await page.locator('button:has-text("Next")').click()
-  await page.waitForLoadState('networkidle')
+  console.log(await page.getByTestId('invoice-total').textContent())
 
+  // await page.locator('button:has-text("Next")').waitFor({ state: 'visible' })
+  // await page.locator('button:has-text("Next")').click()
+  // await page.waitForLoadState('networkidle')
+  await page.getByTestId('extend-names-confirm').click()
+
+  await expect(transactionModal.transactionModal).toBeVisible({ timeout: 10000 })
   await transactionModal.autoComplete()
   await page.waitForLoadState('networkidle')
+
+  await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
+    timeout: 10000,
+  })
+  await subgraph.sync()
+
+  // Should be able to remove this after useQuery is fixed. Using to force a refetch.
+  await time.increaseTime({ seconds: 15 })
+  await page.reload()
+  await page.waitForLoadState('networkidle')
+  for (const name of extendableNameItems) {
+    const label = name.replace('.eth', '')
+    await addresPage.search(label)
+    await expect(addresPage.getNameRow(name)).toBeVisible({ timeout: 5000 })
+    await expect(await addresPage.getTimestamp(name)).not.toBe(timestampDict[name])
+    await expect(await addresPage.getTimestamp(name)).toBe(timestampDict[name] + 31536000000 * 3)
+  }
+})
+
+test('should be able to extend multiple names in grace period on the address page', async ({
+  page,
+  accounts,
+  login,
+  subgraph,
+  makePageObject,
+  makeName,
+  time,
+}) => {
+  // Generating names in not neccessary but we want to make sure that there are names to extend
+  await makeName([
+    {
+      label: 'extend-legacy',
+      type: 'legacy',
+      owner: 'user2',
+      duration: -24 * 60 * 60,
+    },
+    {
+      label: 'wrapped',
+      type: 'wrapped',
+      owner: 'user2',
+      duration: -24 * 60 * 60,
+    },
+  ])
+
+  const address = accounts.getAddress('user2')
+  const addresPage = makePageObject('AddressPage')
+  const transactionModal = makePageObject('TransactionModal')
+
+  await addresPage.goto(address)
+  await login.connect()
+
+  await addresPage.selectToggle.click()
+
+  // await page.pause()
+  await expect(await page.locator('.name-detail-item').count()).toBeGreaterThan(0)
+  const nameItems = await page.locator('.name-detail-item').all()
+  const nameItemTestIds = await Promise.all(
+    nameItems.map((item) => item.getAttribute('data-testid')),
+  )
+  const extendableNameItems = nameItemTestIds
+    .filter((testid): testid is string => !!testid)
+    .map((testid) => testid.replace('name-item-', ''))
+    .filter((name) => {
+      const nameParts = name?.split('.') ?? []
+      return nameParts.length === 2 && nameParts[1] === 'eth'
+    })
+
+  const timestampDict: { [key: string]: number } = {}
+  for (const name of extendableNameItems) {
+    const timestamp = await addresPage.getTimestamp(name)
+    timestampDict[name] = timestamp
+  }
+  await addresPage.extendNamesButton.click()
+
+  // warning message
+  await expect(page.getByText('You do not own all these names')).toBeVisible()
+  await page.getByTestId('extend-names-confirm').click()
+
+  // name list
+  await expect(page.getByText(`Extend ${extendableNameItems.length} Names`)).toBeVisible()
+  await page.locator('button:has-text("Next")').waitFor({ state: 'visible' })
+  await page.locator('button:has-text("Next")').click()
+
+  // check the invoice details
+  // TODO: Reimplement when date duration bug is fixed
+  // await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
+  await expect(page.getByTestId('plus-minus-control-label')).toHaveText('1 year')
+  await page.getByTestId('plus-minus-control-plus').click()
+  await expect(page.getByTestId('plus-minus-control-label')).toHaveText('2 years')
+  await page.getByTestId('plus-minus-control-plus').click()
+  await expect(page.getByTestId('plus-minus-control-label')).toHaveText('3 years')
+  await expect(page.getByTestId('invoice-item-0-amount')).not.toBeEmpty()
+  await expect(page.getByTestId('invoice-item-1-amount')).not.toBeEmpty()
+  await expect(page.getByTestId('invoice-total')).not.toHaveText('0.0000 ETH')
+
+  // increment and save
+  await page.getByTestId('extend-names-confirm').click()
+  await expect(transactionModal.transactionModal).toBeVisible({ timeout: 10000 })
+  await transactionModal.autoComplete()
 
   await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
     timeout: 10000,
