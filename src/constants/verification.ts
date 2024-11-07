@@ -15,7 +15,7 @@ const VERIFICATION_ENV_CONFIGS = {
 
 type VerificationEnv = keyof typeof VERIFICATION_ENV_CONFIGS
 
-const VERIFICATION_ENV: VerificationEnv = 'production'
+const VERIFICATION_ENV: VerificationEnv = 'staging'
 
 export const VERIFICATION_RECORD_KEY = 'verifications'
 
