@@ -47,5 +47,10 @@
       "twitter": "X (Twitter)",
       "dao": "DAO forums"
     }
+  },
+  "banner": {
+    "title": "Namechain is coming!",
+    "caption": "Keep up with ENSv2 development",
+    "cta": "ENSv2 hub"
   }
 }

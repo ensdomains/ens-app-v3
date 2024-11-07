@@ -217,7 +217,7 @@ const Video = styled.video(
 )
 
 export default function ENSv2() {
-  const { t } = useTranslation('ensvs2')
+  const { t } = useTranslation('ensv2')
   return (
     <Main>
       <TopNav>
