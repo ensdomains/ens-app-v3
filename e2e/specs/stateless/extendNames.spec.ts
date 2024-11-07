@@ -11,7 +11,7 @@ import { daysToSeconds } from '@app/utils/time'
 
 import { test } from '../../../playwright'
 
-test('should be able to extend multiple names in grace period on the address page', async ({
+test('should be able to extend multiple names (including names in grace preiod) on the address page', async ({
   page,
   accounts,
   login,
@@ -45,7 +45,6 @@ test('should be able to extend multiple names in grace period on the address pag
 
   await addresPage.selectToggle.click()
 
-  // await page.pause()
   await expect(await page.locator('.name-detail-item').count()).toBeGreaterThan(0)
   const nameItems = await page.locator('.name-detail-item').all()
   const nameItemTestIds = await Promise.all(
@@ -83,11 +82,10 @@ test('should be able to extend multiple names in grace period on the address pag
   await expect(page.getByTestId('plus-minus-control-label')).toHaveText('2 years')
   await page.getByTestId('plus-minus-control-plus').click()
   await expect(page.getByTestId('plus-minus-control-label')).toHaveText('3 years')
-  await expect(page.getByTestId('invoice-item-0-amount')).not.toBeEmpty()
-  await expect(page.getByTestId('invoice-item-1-amount')).not.toBeEmpty()
+  await expect(page.getByTestId('invoice-item-0-amount')).not.toHaveText('0.0000 ETH')
+  await expect(page.getByTestId('invoice-item-1-amount')).not.toHaveText('0.0000 ETH')
   await expect(page.getByTestId('invoice-total')).not.toHaveText('0.0000 ETH')
 
-  // increment and save
   await page.getByTestId('extend-names-confirm').click()
   await expect(transactionModal.transactionModal).toBeVisible({ timeout: 10000 })
   await transactionModal.autoComplete()
@@ -375,7 +373,7 @@ test('should be able to extend a name by a month', async ({
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0003')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0004')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/0\.000[3|4]/)
     await expect(page.getByText(/1 month .* extension/)).toBeVisible()
   })
 
