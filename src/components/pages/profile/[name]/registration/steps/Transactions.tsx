@@ -8,10 +8,13 @@ import { makeCommitment } from '@ensdomains/ensjs/utils'
 import { Button, CountdownCircle, Dialog, Heading, mq, Spinner } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
+import { StatusDots } from '@app/components/@atoms/StatusDots/StatusDots'
 import { TextWithTooltip } from '@app/components/@atoms/TextWithTooltip/TextWithTooltip'
 import { Card } from '@app/components/Card'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
+import { useSimulateRegistration } from '@app/hooks/registration/useSimulateRegistration'
 import { useDurationCountdown } from '@app/hooks/time/useDurationCountdown'
+import { useEventTracker } from '@app/hooks/useEventTracker'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
@@ -19,6 +22,63 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { ONE_DAY } from '@app/utils/time'
 
 import { RegistrationReducerDataItem } from '../types'
+
+const PATTERNS = {
+  RegistrationComplete: {
+    commitComplete: P._,
+    canRegisterOverride: P._,
+    commitStage: P._,
+    registerStage: 'complete',
+  },
+  RegistrationFailed: {
+    commitComplete: P._,
+    canRegisterOverride: P._,
+    commitStage: P._,
+    registerStage: 'failed',
+  },
+  RegistrationSent: {
+    commitComplete: P._,
+    canRegisterOverride: P._,
+    commitStage: P._,
+    registerStage: 'sent',
+  },
+  RegistrationReady: {
+    commitComplete: true,
+    canRegisterOverride: P._,
+    commitStage: P._,
+    registerStage: P.union(P.nullish, 'confirm' as const),
+  },
+  RegistrationOverriden: {
+    commitComplete: P._,
+    canRegisterOverride: true,
+    commitStage: P._,
+    registerStage: P.union(P.nullish, 'confirm' as const),
+  },
+  CommitFailed: {
+    commitComplete: P._,
+    canRegisterOverride: P._,
+    commitStage: 'failed',
+    registerStage: P._,
+  },
+  CommitComplete: {
+    commitComplete: false,
+    canRegisterOverride: P._,
+    commitStage: 'complete',
+    registerStage: P.union(P.nullish, 'confirm' as const),
+  },
+  CommitSent: {
+    commitComplete: false,
+    canRegisterOverride: false,
+    commitStage: 'sent',
+    registerStage: P.union(P.nullish, 'confirm' as const),
+  },
+  CommitReady: {
+    commitComplete: false,
+    canRegisterOverride: false,
+    commitStage: P.union(P.nullish, 'confirm' as const),
+    registerStage: P.union(P.nullish, 'confirm' as const),
+  },
+} as const
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -46,6 +106,12 @@ const ButtonContainer = styled.div(
   `,
 )
 
+const CountdownContainer = styled.div(
+  () => css`
+    position: relative;
+  `,
+)
+
 const StyledCountdown = styled(CountdownCircle)(
   ({ theme, disabled }) => css`
     width: ${theme.space['52']};
@@ -58,22 +124,48 @@ const StyledCountdown = styled(CountdownCircle)(
       color: ${theme.colors.accent};
       ${disabled &&
       css`
-        color: ${theme.colors.grey};
+        color: ${theme.colors.border};
       `}
     }
+
     svg {
       stroke-width: ${theme.space['0.5']};
+      stroke: ${theme.colors.accentPrimary};
       ${disabled &&
       css`
-        stroke: ${theme.colors.grey};
+        stroke: ${theme.colors.border};
       `}
     }
+
+    svg#countdown-complete-check {
+      width: ${theme.space['16']};
+      height: ${theme.space['16']};
+      stroke: initial;
+    }
+  `,
+)
+
+const CountDownInner = styled.div<{ $hide: boolean }>(
+  ({ theme, $hide }) => css`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    background-color: ${theme.colors.background};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: ${theme.radii.full};
+    opacity: ${$hide ? 0 : 1};
+    transition: opacity 0.3s ease-in-out;
   `,
 )
 
 const FailedButton = ({ onClick, label }: { onClick: () => void; label: string }) => (
   <MobileFullWidth>
-    <Button color="red" onClick={onClick}>
+    <Button colorStyle="redPrimary" onClick={onClick}>
       {label}
     </Button>
   </MobileFullWidth>
@@ -96,27 +188,56 @@ type Props = {
 
 const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const { t } = useTranslation('register')
+  const { trackEvent } = useEventTracker()
 
   const { address } = useAccount()
   const keySuffix = `${name}-${address}`
   const commitKey = `commit-${keySuffix}`
   const registerKey = `register-${keySuffix}`
-  const { getLatestTransaction, createTransactionFlow, resumeTransactionFlow, cleanupFlow } =
-    useTransactionFlow()
+  const {
+    getSelectedKey,
+    getLatestTransaction,
+    createTransactionFlow,
+    resumeTransactionFlow,
+    cleanupFlow,
+    stopCurrentFlow,
+  } = useTransactionFlow()
   const commitTx = getLatestTransaction(commitKey)
   const registerTx = getLatestTransaction(registerKey)
   const [resetOpen, setResetOpen] = useState(false)
-
-  const commitTimestamp = commitTx?.stage === 'complete' ? commitTx?.finaliseTime : undefined
-  const [commitComplete, setCommitComplete] = useState(
-    !!commitTimestamp && commitTimestamp + 60000 < Date.now(),
-  )
 
   const registrationParams = useRegistrationParams({
     name,
     owner: address!,
     registrationData,
   })
+
+  const { isSuccess: isSimulateRegistrationSuccess } = useSimulateRegistration({
+    registrationParams,
+    query: {
+      enabled: commitTx?.stage === 'sent',
+      retry: commitTx?.stage === 'sent',
+      retryDelay: 5_000,
+    },
+  })
+  const canRegisterOverride = isSimulateRegistrationSuccess && commitTx?.stage !== 'complete'
+
+  useEffect(() => {
+    if (canRegisterOverride) {
+      trackEvent({ eventName: 'register_override_triggered' })
+      if (getSelectedKey() === commitKey) stopCurrentFlow()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canRegisterOverride])
+
+  const commitTimestamp = match({ commitStage: commitTx?.stage, canRegisterOverride })
+    .with({ canRegisterOverride: true }, () => Date.now() - 70_000)
+    .with({ commitStage: 'complete' }, () => commitTx?.finaliseTime)
+    .otherwise(() => undefined)
+
+  const [commitComplete, setCommitComplete] = useState(
+    !!commitTimestamp && commitTimestamp + 60000 < Date.now(),
+  )
 
   const commitCouldBeFound =
     !commitTx?.stage || commitTx.stage === 'confirm' || commitTx.stage === 'failed'
@@ -125,6 +246,23 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     enabled: commitCouldBeFound,
     commitKey,
   })
+
+  const transactionState = match({
+    commitComplete,
+    canRegisterOverride,
+    commitStage: commitTx?.stage,
+    registerStage: registerTx?.stage,
+  })
+    .with(PATTERNS.RegistrationComplete, () => 'registrationComplete' as const)
+    .with(PATTERNS.RegistrationFailed, () => 'registrationFailed' as const)
+    .with(PATTERNS.RegistrationSent, () => 'registrationSent' as const)
+    .with(PATTERNS.RegistrationOverriden, () => 'registrationOverriden' as const)
+    .with(PATTERNS.RegistrationReady, () => 'registrationReady' as const)
+    .with(PATTERNS.CommitFailed, () => 'commitFailed' as const)
+    .with(PATTERNS.CommitComplete, () => 'commitComplete' as const)
+    .with(PATTERNS.CommitSent, () => 'commitSent' as const)
+    .with(PATTERNS.CommitReady, () => 'commitReady' as const)
+    .exhaustive()
 
   const makeCommitNameFlow = useCallback(() => {
     onStart()
@@ -143,6 +281,8 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       autoClose: true,
       resumeLink: `/register/${name}`,
     })
+
+    trackEvent({ eventName: 'register_started' })
   }
 
   const showCommitTransaction = () => {
@@ -220,16 +360,63 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
         />
       </Dialog>
       <Heading>{t('steps.transactions.heading')}</Heading>
-      <StyledCountdown
-        countdownSeconds={60}
-        disabled={!commitTimestamp}
-        startTimestamp={commitTimestamp}
-        size="large"
-        callback={() => setCommitComplete(true)}
-      />
-      <CenteredTypography>
-        {match([commitTx, commitComplete, duration])
-          .with([{ stage: 'complete' }, false, P._], () => (
+      <CountdownContainer>
+        <StyledCountdown
+          countdownSeconds={60}
+          disabled={match(transactionState)
+            .with('commitReady', 'commitSent', 'commitFailed', () => true)
+            .otherwise(() => false)}
+          startTimestamp={commitTimestamp}
+          size="large"
+          callback={() => setCommitComplete(true)}
+        />
+        <CountDownInner
+          $hide={match(transactionState)
+            .with('commitComplete', 'registrationOverriden', () => true)
+            .with(
+              'registrationReady',
+              () => duration !== null,
+              () => true,
+            )
+            .otherwise(() => false)}
+        >
+          <StatusDots
+            animate={match(transactionState)
+              .with('commitSent', 'registrationSent', () => true)
+              .otherwise(() => false)}
+            color={match(transactionState)
+              .with(
+                'commitReady',
+                'commitSent',
+                'commitComplete',
+                'commitFailed',
+                () => 'border' as const,
+              )
+              .otherwise(() => 'blueLight' as const)}
+          />
+        </CountDownInner>
+      </CountdownContainer>
+      <CenteredTypography data-testid="transactions-subheading">
+        {match(transactionState)
+          .with('registrationComplete', () => '')
+          .with('registrationOverriden', () => (
+            <Trans i18nKey="steps.transactions.subheading.commitCompleteNoDuration" t={t} />
+          ))
+          .with('registrationReady', 'registrationSent', 'registrationFailed', () =>
+            match(duration)
+              .with(P.not(P.nullish), () => (
+                <Trans
+                  i18nKey="steps.transactions.subheading.commitComplete"
+                  t={t}
+                  values={{ duration }}
+                />
+              ))
+              .with(null, () => t('steps.transactions.subheading.commitExpired'))
+              .otherwise(() => (
+                <Trans i18nKey="steps.transactions.subheading.commitCompleteNoDuration" t={t} />
+              )),
+          )
+          .with('commitComplete', () => (
             <Trans
               i18nKey="steps.transactions.subheading.commiting"
               t={t}
@@ -242,20 +429,16 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
               }}
             />
           ))
-          .with([{ stage: 'complete' }, true, null], () =>
-            t('steps.transactions.subheading.commitExpired'),
-          )
-          .with([{ stage: 'complete' }, true, P.not(P.nullish)], ([, , d]) =>
-            t('steps.transactions.subheading.commitComplete', { duration: d }),
-          )
-          .with([{ stage: 'complete' }, true, P._], () =>
-            t('steps.transactions.subheading.commitCompleteNoDuration'),
-          )
-          .otherwise(() => t('steps.transactions.subheading.default'))}
+          .with('commitSent', () => (
+            <Trans i18nKey="steps.transactions.subheading.commitSent" t={t} />
+          ))
+          .with('commitReady', 'commitFailed', () => t('steps.transactions.subheading.default'))
+          .exhaustive()}
       </CenteredTypography>
       <ButtonContainer>
-        {match([commitComplete, registerTx, commitTx])
-          .with([true, { stage: 'failed' }, P._], () => (
+        {match(transactionState)
+          .with('registrationComplete', () => null)
+          .with('registrationFailed', () => (
             <>
               {ResetBackButton}
               <FailedButton
@@ -264,13 +447,24 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
               />
             </>
           ))
-          .with([true, { stage: 'sent' }, P._], () => (
+          .with('registrationSent', () => (
             <ProgressButton
               label={t('steps.transactions.transactionProgress')}
               onClick={showRegisterTransaction}
             />
           ))
-          .with([true, P._, P._], () => (
+          .with(
+            'registrationReady',
+            () => duration === null,
+            () => (
+              <div>
+                <Button colorStyle="redSecondary" onClick={() => setResetOpen(true)}>
+                  {t('action.restart', { ns: 'common' })}
+                </Button>
+              </div>
+            ),
+          )
+          .with('registrationReady', 'registrationOverriden', () => (
             <>
               {ResetBackButton}
               <MobileFullWidth>
@@ -278,12 +472,12 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
                   data-testid="finish-button"
                   onClick={!registerTx ? makeRegisterNameFlow : showRegisterTransaction}
                 >
-                  {t('action.finish', { ns: 'common' })}
+                  {t('steps.transactions.completeRegistration')}
                 </Button>
               </MobileFullWidth>
             </>
           ))
-          .with([false, P._, { stage: 'failed' }], () => (
+          .with('commitFailed', () => (
             <>
               {NormalBackButton}
               <FailedButton
@@ -292,13 +486,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
               />
             </>
           ))
-          .with([false, P._, { stage: 'sent' }], () => (
-            <ProgressButton
-              label={t('steps.transactions.transactionProgress')}
-              onClick={showCommitTransaction}
-            />
-          ))
-          .with([false, P._, { stage: 'complete' }], () => (
+          .with('commitComplete', () => (
             <>
               {ResetBackButton}
               <MobileFullWidth>
@@ -308,7 +496,13 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
               </MobileFullWidth>
             </>
           ))
-          .otherwise(() => (
+          .with('commitSent', () => (
+            <ProgressButton
+              label={t('steps.transactions.transactionProgress')}
+              onClick={showCommitTransaction}
+            />
+          ))
+          .with('commitReady', () => (
             <>
               <MobileFullWidth>
                 <Button onClick={() => callback({ back: true })} colorStyle="accentSecondary">
@@ -321,7 +515,8 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
                 </Button>
               </MobileFullWidth>
             </>
-          ))}
+          ))
+          .exhaustive()}
       </ButtonContainer>
     </StyledCard>
   )

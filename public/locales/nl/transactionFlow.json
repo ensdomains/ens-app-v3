@@ -128,7 +128,7 @@
       "customPlaceholder": "Vul handmatige resolver adres hier"
     },
     "extendNames": {
-      "title_one": "Verleng Naam",
+      "title_one": "Verleng {{name}}",
       "title_other": "Verleng {{count}} Namen",
       "invoice": {
         "extension": "{{count}} jaar verlenging",
