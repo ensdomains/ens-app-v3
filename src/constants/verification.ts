@@ -15,7 +15,7 @@ const VERIFICATION_ENV_CONFIGS = {
 
 type VerificationEnv = keyof typeof VERIFICATION_ENV_CONFIGS
 
-const VERIFICATION_ENV: VerificationEnv = 'production'
+const VERIFICATION_ENV: VerificationEnv = 'staging'
 
 export const VERIFICATION_RECORD_KEY = 'verifications'
 
@@ -39,7 +39,7 @@ const DENTITY_ENV_CONFIGS = {
     iss: 'https://oidc.staging.dentity.com',
     clientId: '-IG5wkHyetFAeDziNUkdu',
     endpoint: 'https://oidc.staging.dentity.com',
-    redirectUri: 'https://dentity-integration.ens-app-v3.pages.dev',
+    redirectUri: 'https://dentity-dev-branch.ens-app-v3.pages.dev',
   },
   production: {
     iss: 'https://oidc.dentity.com',
