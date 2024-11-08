@@ -1,4 +1,10 @@
-import { createClient, type FallbackTransport, type HttpTransport, type Transport } from 'viem'
+import {
+  Chain,
+  createClient,
+  type FallbackTransport,
+  type HttpTransport,
+  type Transport,
+} from 'viem'
 import { createConfig, createStorage, fallback, http } from 'wagmi'
 import { goerli, holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
 
@@ -9,6 +15,7 @@ import {
   holeskyWithEns,
   localhostWithEns,
   mainnetWithEns,
+  odysseyWithEns,
   sepoliaWithEns,
 } from '@app/constants/chains'
 
@@ -86,6 +93,7 @@ const chains = [
   goerliWithEns,
   sepoliaWithEns,
   holeskyWithEns,
+  odysseyWithEns,
 ] as const
 
 const transports = {
@@ -101,6 +109,7 @@ const transports = {
   [sepolia.id]: initialiseTransports('sepolia', [infuraUrl, cloudflareUrl, tenderlyUrl]),
   [goerli.id]: initialiseTransports('goerli', [infuraUrl, cloudflareUrl, tenderlyUrl]),
   [holesky.id]: initialiseTransports('holesky', [tenderlyUrl]),
+  [odysseyWithEns.id]: http(odysseyWithEns.rpcUrls.default.http[0]),
 } as const
 
 const wagmiConfig_ = createConfig({

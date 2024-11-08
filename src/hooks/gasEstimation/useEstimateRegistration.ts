@@ -84,6 +84,8 @@ export const useEstimateFullRegistration = ({
     enabled: !!ethRegistrarControllerAddress && !!price,
   })
 
+  console.log('data', data, isLoading)
+
   const premiumFee = price?.premium
   const hasPremium = !!premiumFee && premiumFee > 0n
   const yearlyFee = price?.base

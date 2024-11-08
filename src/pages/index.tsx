@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useChainId } from 'wagmi'
 
 import { mq, Typography } from '@ensdomains/thorin'
 
@@ -93,6 +94,8 @@ export default function Page() {
 
   const { dialogProps } = useVerificationOAuthHandler()
 
+  const chain = useChainId()
+  console.log(chain)
   return (
     <>
       <Head>
