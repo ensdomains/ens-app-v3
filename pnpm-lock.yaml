@@ -156,12 +156,6 @@ importers:
       '@wagmi/core':
         specifier: 2.13.3
         version: 2.13.3(@tanstack/query-core@5.22.2)(@types/react@18.2.21)(immer@9.0.21)(react@18.3.1)(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))
-      '@walletconnect/ethereum-provider':
-        specifier: 2.11.1
-        version: 2.11.1(@types/react@18.2.21)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.3.1)(utf-8-validate@5.0.10)
-      '@walletconnect/modal':
-        specifier: 2.6.2
-        version: 2.6.2(@types/react@18.2.21)(react@18.3.1)
       calendar-link:
         specifier: ^2.2.0
         version: 2.6.0
@@ -397,9 +391,6 @@ importers:
       husky:
         specifier: ^7.0.4
         version: 7.0.4
-      isows:
-        specifier: ^1.0.3
-        version: 1.0.4(ws@8.17.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       jsdom:
         specifier: ^24.1.0
         version: 24.1.0(bufferutil@4.0.8)(canvas@2.11.2(encoding@0.1.13))(utf-8-validate@5.0.10)
@@ -4077,6 +4068,7 @@ packages:
 
   acorn-import-assertions@1.9.0:
     resolution: {integrity: sha512-cmMwop9x+8KFhxvKrKfPYmN6/pKTYYHBqLa0DfvVZcKMJWNyWLnaqND7dx/qn66R7ewM1UX5XMaDVP5wlVTaVA==}
+    deprecated: package has been renamed to acorn-import-attributes
     peerDependencies:
       acorn: ^8
 
@@ -17803,10 +17795,6 @@ snapshots:
       unfetch: 4.2.0
     transitivePeerDependencies:
       - encoding
-
-  isows@1.0.4(ws@8.17.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)):
-    dependencies:
-      ws: 8.17.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
   isows@1.0.4(ws@8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)):
     dependencies:
