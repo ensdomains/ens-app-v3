@@ -1,6 +1,6 @@
 {
-  "title": "ENSv2: The Next Generation of ENS",
-  "caption": "After seven years at the frontier of web3 naming, we're re-envisioning ENS on L2.",
+  "title": "Namechain is a Layer 2 designed for onchain identity",
+  "caption": "Built for everyone tired of addresses, numbers, and complexity. Namechain lets users and developers create onchain identities through the power of names, not numbers.",
   "accessible": {
     "title": "Making ENS accessible to more people",
     "caption": "We're taking our knowledge from the last 7 years at the frontier of web3 naming to re-envision the architecture from the ground up on L2 By utilizing L2s, we're excited to make ENS more accessible to a wider range of users.",
@@ -17,6 +17,11 @@
       "title": "Improved Multi-Chain",
       "text": "Layer 2 enables seamless .eth name use across blockchains with trustless connections."
     }
+  },
+  "learn-more": {
+    "title": "Want to learn more?",
+    "caption": "If you’re interested in learning more and building on Namechain, join the ENS Developer Telegram.",
+    "button": "Developer Telegram"
   },
   "announcement": {
     "title": "Announcements",

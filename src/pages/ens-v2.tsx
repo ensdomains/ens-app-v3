@@ -26,15 +26,11 @@ const Title = styled.h1`
   font-weight: 830;
   text-align: center;
 
-  font-size: 52px;
+  font-size: 36px;
   line-height: 104%;
 
   @media (min-width: 640px) {
-    font-size: 60px;
-  }
-
-  @media (min-width: 1024px) {
-    font-size: 76px;
+    font-size: 52px;
   }
 `
 
@@ -46,7 +42,8 @@ const Header = styled.header(
     justify-content: center;
     gap: ${theme.space[4]};
     padding: ${theme.space[4]};
-    min-height: 530px;
+    min-height: 330px;
+    text-align: center;
   `,
 )
 
@@ -149,18 +146,15 @@ const TopNav = styled.div(
   `,
 )
 
-const CardWithEmoji = styled(Card)`
+const CenteredCard = styled(Card)`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 83px;
-  position: relative;
+`
+
+const CardWithEmoji = styled(CenteredCard)`
   grid-column: 1 / -1;
-  & > img {
-    position: absolute;
-    top: -72px;
-  }
 `
 
 const GridOneToThree = styled.div(
@@ -212,7 +206,6 @@ const Video = styled.video(
     height: ${theme.space.full};
     width: ${theme.space.full};
     border-radius: ${theme.radii.card};
-    margin-bottom: ${theme.space[18]};
   `,
 )
 
@@ -230,14 +223,29 @@ export default function ENSv2() {
       </TopNav>
       <Header>
         <Title>{t('title')}</Title>
-        <Typography>{t('caption')}</Typography>
+        <Typography fontVariant="body">{t('caption')}</Typography>
       </Header>
       <Video poster="/migrate/preview.svg">
         <track />
       </Video>
+      <CenteredCard>
+        <Typography fontVariant="headingTwo" asProp="h2">
+          {t('learn-more.title')}
+        </Typography>
+        <Typography fontVariant="body">{t('learn-more.caption')}</Typography>
+        <Button
+          as="a"
+          href="https://t.me/+TJ_M02FbKwcyNjgx"
+          width="max"
+          colorStyle="greenPrimary"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t('learn-more.button')}
+        </Button>
+      </CenteredCard>
       <GridOneToThree>
         <CardWithEmoji>
-          <img src="/migrate/confetti.png" width={108} height={108} alt="🎉" />
           <Typography fontVariant="headingTwo" asProp="h2">
             {t('accessible.title')}
           </Typography>
