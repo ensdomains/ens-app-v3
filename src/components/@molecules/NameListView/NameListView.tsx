@@ -150,7 +150,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
   }, [stage])
 
   const isNameExtendable = (name: Name) =>
-    name.parentName === 'eth' && !!name.labelName && !name.labelName.includes('Invalid ENS Name')
+    name.parentName === 'eth' && !!name.name && !name.name.includes('Invalid ENS Name')
 
   const isNameDisabled = useCallback(
     (name: Name) => {
