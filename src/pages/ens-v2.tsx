@@ -7,20 +7,20 @@ import {
   Button,
   Card,
   GasPumpSVG,
-  InfoCircleSVG,
+  // InfoCircleSVG,
   KeySVG,
-  QuestionBubbleSVG,
-  QuestionCircleSVG,
-  RightArrowSVG,
-  SpannerAltSVG,
+  // QuestionBubbleSVG,
+  // QuestionCircleSVG,
+  // RightArrowSVG,
+  // SpannerAltSVG,
   Typography,
   WalletSVG,
 } from '@ensdomains/thorin'
 
 import { Carousel } from '@app/components/pages/migrate/Carousel'
 
-import DAOSVG from '../assets/DAO.svg'
-import SocialX from '../assets/social/SocialX.svg'
+// import DAOSVG from '../assets/DAO.svg'
+// import SocialX from '../assets/social/SocialX.svg'
 
 const Title = styled.h1`
   font-weight: 830;
@@ -55,7 +55,7 @@ const Main = styled.main(
   `,
 )
 
-const PartnershipAnnouncement = styled.div(
+/* const PartnershipAnnouncement = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
     padding: ${theme.space['4']};
@@ -79,9 +79,9 @@ const PartnershipAnnouncement = styled.div(
       border-radius: ${theme.radii['3xLarge']};
     }
   `,
-)
+) */
 
-const Footer = styled.div(
+/* const Footer = styled.div(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
@@ -116,7 +116,7 @@ const Footer = styled.div(
       }
     }
   `,
-)
+) */
 
 const AnnouncementBanner = styled.div(
   ({ theme }) => css`
@@ -133,7 +133,7 @@ const AnnouncementBanner = styled.div(
   `,
 )
 
-const TopNav = styled.div(
+/* const TopNav = styled.div(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
@@ -144,7 +144,7 @@ const TopNav = styled.div(
     left: 0;
     z-index: 1;
   `,
-)
+) */
 
 const CenteredCard = styled(Card)`
   display: flex;
@@ -182,9 +182,17 @@ const CardHeader = styled.h3(
   `,
 )
 
-const AnnouncementSlide = ({ title, text }: { title: string; text: string }) => (
+const AnnouncementSlide = ({
+  title,
+  text,
+  href = '#',
+}: {
+  title: string
+  text: string
+  href?: string
+}) => (
   <AnnouncementBanner>
-    <Banner as="a" alert="info" href="#" title={title}>
+    <Banner as="a" alert="info" target="_blank" rel="noopener noreferrer" href={href} title={title}>
       {text}
     </Banner>
   </AnnouncementBanner>
@@ -213,14 +221,14 @@ export default function ENSv2() {
   const { t } = useTranslation('ensv2')
   return (
     <Main>
-      <TopNav>
+      {/* <TopNav>
         <PartnershipAnnouncement>
           <span>{t('partnership.text')}</span>
           <a>
             {t('partnership.watch')} <RightArrowSVG />
           </a>
         </PartnershipAnnouncement>
-      </TopNav>
+      </TopNav> */}
       <Header>
         <Title>{t('title')}</Title>
         <Typography fontVariant="body">{t('caption')}</Typography>
@@ -250,7 +258,14 @@ export default function ENSv2() {
             {t('accessible.title')}
           </Typography>
           <Typography fontVariant="body">{t('accessible.caption')}</Typography>
-          <Button width="max" colorStyle="greenSecondary">
+          <Button
+            as="a"
+            href="https://roadmap.ens.domains/l2-roadmap"
+            width="max"
+            colorStyle="greenSecondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {t('accessible.link')}
           </Button>
         </CardWithEmoji>
@@ -288,14 +303,16 @@ export default function ENSv2() {
           <AnnouncementSlide
             title={t('announcement.ensv2.title')}
             text={t('announcement.ensv2.caption')}
+            href="https://blog.ens.domains/post/ensv2-update"
           />
           <AnnouncementSlide
             title={t('announcement.nextgen.title')}
             text={t('announcement.nextgen.caption')}
+            href="https://blog.ens.domains/post/ensv2"
           />
         </Carousel>
       </SlideshowContainer>
-      <Footer as="footer">
+      {/* <Footer as="footer">
         <Typography asProp="h3" fontVariant="headingThree">
           {t('footer.title')}
         </Typography>
@@ -323,7 +340,7 @@ export default function ENSv2() {
             </a>
           </Card>
         </div>
-      </Footer>
+      </Footer> */}
     </Main>
   )
 }
