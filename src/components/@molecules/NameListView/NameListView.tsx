@@ -149,7 +149,8 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])
 
-  const isNameExtendable = (name: Name) => name.parentName === 'eth'
+  const isNameExtendable = (name: Name) =>
+    name.parentName === 'eth' && !!name.name && !name.name.includes('Invalid ENS Name')
 
   const isNameDisabled = useCallback(
     (name: Name) => {
