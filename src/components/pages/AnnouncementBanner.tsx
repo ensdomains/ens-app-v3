@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 
 import { Button, Typography } from '@ensdomains/thorin'
 
-const Container = styled(Link)(
+const Container = styled.div(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
@@ -51,19 +51,21 @@ export const AnnouncementBanner = () => {
   const { t } = useTranslation('ensv2')
 
   return (
-    <Container href="/ens-v2">
-      <TextContainer>
-        <img src="/migrate/confetti.png" alt="" height={33} width={33} />
-        <Text>
-          <Typography fontVariant="largeBold">{t('banner.title')}</Typography>
-          <Typography fontVariant="small" color="grey">
-            {t('banner.caption')}
-          </Typography>
-        </Text>
-      </TextContainer>
-      <Button as="a" href="/ens-v2" colorStyle="greenPrimary" width="max">
-        {t('banner.cta')}
-      </Button>
-    </Container>
+    <Link href="/ens-v2" legacyBehavior passHref>
+      <Container>
+        <TextContainer>
+          <img src="/migrate/confetti.png" alt="" height={33} width={33} />
+          <Text>
+            <Typography fontVariant="largeBold">{t('banner.title')}</Typography>
+            <Typography fontVariant="small" color="grey">
+              {t('banner.caption')}
+            </Typography>
+          </Text>
+        </TextContainer>
+        <Button as="a" href="/ens-v2" colorStyle="greenPrimary" width="max">
+          {t('banner.cta')}
+        </Button>
+      </Container>
+    </Link>
   )
 }

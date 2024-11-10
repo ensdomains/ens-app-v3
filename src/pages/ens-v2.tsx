@@ -296,10 +296,10 @@ export default function ENSv2() {
           {t('announcement.title')}
         </Typography>
         <Carousel>
-          <AnnouncementSlide
+          {/* <AnnouncementSlide
             title={t('announcement.l2.title')}
             text={t('announcement.l2.caption')}
-          />
+          /> */}
           <AnnouncementSlide
             title={t('announcement.ensv2.title')}
             text={t('announcement.ensv2.caption')}
