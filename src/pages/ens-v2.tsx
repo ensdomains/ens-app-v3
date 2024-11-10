@@ -9,6 +9,7 @@ import {
   GasPumpSVG,
   // InfoCircleSVG,
   KeySVG,
+  mq,
   // QuestionBubbleSVG,
   // QuestionCircleSVG,
   // RightArrowSVG,
@@ -16,8 +17,6 @@ import {
   Typography,
   WalletSVG,
 } from '@ensdomains/thorin'
-
-import { Carousel } from '@app/components/pages/migrate/Carousel'
 
 // import DAOSVG from '../assets/DAO.svg'
 // import SocialX from '../assets/social/SocialX.svg'
@@ -120,7 +119,8 @@ const Main = styled.main(
 
 const AnnouncementBanner = styled.div(
   ({ theme }) => css`
-    height: ${theme.space.full};
+    width: 312px;
+    height: 182px;
     text-align: center;
     & > a {
       height: ${theme.space.full};
@@ -182,7 +182,23 @@ const CardHeader = styled.h3(
   `,
 )
 
-const AnnouncementSlide = ({
+// const AnnouncementSlide = ({
+//   title,
+//   text,
+//   href = '#',
+// }: {
+//   title: string
+//   text: string
+//   href?: string
+// }) => (
+//   <AnnouncementBanner>
+//     <Banner as="a" alert="info" target="_blank" rel="noopener noreferrer" href={href} title={title}>
+//       {text}
+//     </Banner>
+//   </AnnouncementBanner>
+// )
+
+const AnnouncementSlideTemp = ({
   title,
   text,
   href = '#',
@@ -196,6 +212,20 @@ const AnnouncementSlide = ({
       {text}
     </Banner>
   </AnnouncementBanner>
+)
+
+const AnnouncementContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+
+    ${mq.sm.min(css`
+      flex-direction: row;
+    `)}
+  `,
 )
 
 const SlideshowContainer = styled.div(
@@ -295,11 +325,11 @@ export default function ENSv2() {
         <Typography asProp="h3" fontVariant="headingThree">
           {t('announcement.title')}
         </Typography>
-        <Carousel>
-          {/* <AnnouncementSlide
+        {/* <Carousel>
+          <AnnouncementSlide
             title={t('announcement.l2.title')}
             text={t('announcement.l2.caption')}
-          /> */}
+          />
           <AnnouncementSlide
             title={t('announcement.ensv2.title')}
             text={t('announcement.ensv2.caption')}
@@ -310,7 +340,19 @@ export default function ENSv2() {
             text={t('announcement.nextgen.caption')}
             href="https://blog.ens.domains/post/ensv2"
           />
-        </Carousel>
+        </Carousel> */}
+        <AnnouncementContainer>
+          <AnnouncementSlideTemp
+            title={t('announcement.ensv2.title')}
+            text={t('announcement.ensv2.caption')}
+            href="https://blog.ens.domains/post/ensv2-update"
+          />
+          <AnnouncementSlideTemp
+            title={t('announcement.nextgen.title')}
+            text={t('announcement.nextgen.caption')}
+            href="https://blog.ens.domains/post/ensv2"
+          />
+        </AnnouncementContainer>
       </SlideshowContainer>
       {/* <Footer as="footer">
         <Typography asProp="h3" fontVariant="headingThree">
