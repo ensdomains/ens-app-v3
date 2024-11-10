@@ -319,6 +319,23 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       ],
     },
     {
+      address: '0x8FADE66B79cC9f707aB26799354482EB93a5B7dD',
+      deployer: 'ENS Labs',
+      tag: null,
+      isNameWrapperAware: true,
+      supportedInterfaces: [
+        RESOLVER_INTERFACE_IDS.AddressResolver,
+        RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
+        RESOLVER_INTERFACE_IDS.NameResolver,
+        RESOLVER_INTERFACE_IDS.AbiResolver,
+        RESOLVER_INTERFACE_IDS.TextResolver,
+        RESOLVER_INTERFACE_IDS.ContentHashResolver,
+        RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+        RESOLVER_INTERFACE_IDS.InterfaceResolver,
+        RESOLVER_INTERFACE_IDS.VersionableResolver,
+      ],
+    },
+    {
       address: '0x0CeEC524b2807841739D3B5E161F5bf1430FFA48',
       deployer: 'ENS Labs',
       tag: null,
