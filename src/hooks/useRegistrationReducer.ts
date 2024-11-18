@@ -14,7 +14,7 @@ import { yearsToSeconds } from '@app/utils/utils'
 
 const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 3
 
-const defaultData: RegistrationReducerDataItem = {
+export const defaultData: RegistrationReducerDataItem = {
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
   seconds: yearsToSeconds(1),
@@ -40,7 +40,7 @@ const isBrowser = !!(
   window.document.createElement
 )
 
-const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
+export const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
   seconds: yearsToSeconds(1),
@@ -70,11 +70,10 @@ export const getSelectedIndex = (
   )
 
 /* eslint-disable no-param-reassign */
-const reducer = (state: RegistrationReducerData, action: RegistrationReducerAction) => {
+export const reducer = (state: RegistrationReducerData, action: RegistrationReducerAction) => {
   let selectedItemInx = getSelectedIndex(state, action.selected)
 
   if (!isBrowser) return state
-
   if (selectedItemInx === -1) {
     selectedItemInx = state.items.push(makeDefaultData(action.selected)) - 1
   }
